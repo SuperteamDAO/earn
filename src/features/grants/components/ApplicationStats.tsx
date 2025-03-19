@@ -4,11 +4,11 @@ import { tokenList } from '@/constants/tokenList';
 import { cn } from '@/utils/cn';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 
-import { type GrantApplicationWithTranches } from '../queries/user-application';
+import { type GrantApplicationWithTranchesAndUser } from '../queries/user-application';
 import { type GrantWithApplicationCount } from '../types';
 
 interface ApplicationStats {
-  application: GrantApplicationWithTranches;
+  application: GrantApplicationWithTranchesAndUser;
   grant: GrantWithApplicationCount;
 }
 

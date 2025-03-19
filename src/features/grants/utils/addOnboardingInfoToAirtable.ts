@@ -14,6 +14,7 @@ interface GrantApplicationWithUserAndGrant extends GrantApplication {
   };
   user: {
     email: string;
+    kycName: string | null;
   };
 }
 
@@ -31,7 +32,7 @@ export function grantApplicationToAirtable(
   applicantRecordId: string,
 ): RecipientAirtableSchema {
   return {
-    Name: `${grantApplication.kycName}`,
+    Name: `${grantApplication.user.kycName}`,
     Applicants: [applicantRecordId],
     Grant: [grantApplication.grant.airtableId!],
     'Email ID': grantApplication.user.email,

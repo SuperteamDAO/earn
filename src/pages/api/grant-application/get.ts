@@ -34,6 +34,7 @@ async function application(req: NextApiRequestWithUser, res: NextApiResponse) {
             createdAt: 'asc',
           },
         },
+        user: true,
       },
     });
 

@@ -108,16 +108,17 @@ const handler = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
     if (result === 'verified') {
       const grantApplication = await prisma.grantApplication.findUniqueOrThrow({
         where: { id: grantApplicationId },
+        include: { user: true },
       });
 
-      if (grantApplication.kycStatus === 'Approved') {
+      if (grantApplication.user.isKYCVerified) {
         return res.status(200).json({ message: 'KYC already verified' });
       }
 
       const { fullName } = await getApplicantData(userId, secretKey, appToken);
-      await prisma.grantApplication.update({
-        where: { id: grantApplicationId, userId },
-        data: { kycStatus: 'Approved', kycName: fullName },
+      await prisma.user.update({
+        where: { id: userId },
+        data: { isKYCVerified: true, kycName: fullName },
       });
 
       await createTranche({

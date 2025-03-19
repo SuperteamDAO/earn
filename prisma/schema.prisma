@@ -249,9 +249,7 @@ model GrantApplication {
   decidedBy           String?
   notes               String?                @db.VarChar(1000)
   ai                  Json?
-  kycStatus           KYCStatus              @default(Pending)
   GrantTranche        GrantTranche[]
-  kycName             String?
 
   @@index([userId])
   @@index([grantId])
@@ -450,6 +448,7 @@ model User {
   isBlocked          Boolean              @default(false)
   privyDid           String               @unique
   isKYCVerified      Boolean              @default(false)
+  kycName            String?
 
   @@index([currentSponsorId])
   @@index([hackathonId])
@@ -813,10 +812,4 @@ enum GrantTrancheStatus {
   Approved
   Rejected
   Paid
-}
-
-enum KYCStatus {
-  Pending
-  Approved
-  Rejected
 }

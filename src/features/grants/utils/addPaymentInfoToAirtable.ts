@@ -17,6 +17,7 @@ interface GrantApplicationWithUserAndGrant extends GrantApplication {
   user: {
     email: string;
     location: string | null;
+    kycName: string | null;
   };
 }
 
@@ -38,7 +39,7 @@ export function grantApplicationToAirtable(
   grantTranche: GrantTranche,
 ): PaymentAirtableSchema {
   return {
-    Name: grantApplication.kycName || '',
+    Name: grantApplication.user.kycName || '',
     Amount: grantTranche.approvedAmount || 0,
     'Wallet Address': grantApplication.walletAddress || '',
     Category: ['recd0Kn3N4Ffhtwhd'], // Solana Grant

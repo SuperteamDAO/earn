@@ -7,11 +7,11 @@ import {
   type ApplicationState,
   applicationStateAtom,
 } from '../atoms/applicationStateAtom';
-import { type GrantApplicationWithTranches } from '../queries/user-application';
+import { type GrantApplicationWithTranchesAndUser } from '../queries/user-application';
 import { type GrantWithApplicationCount } from '../types';
 
 interface Props {
-  application: GrantApplicationWithTranches;
+  application: GrantApplicationWithTranchesAndUser;
   grant: GrantWithApplicationCount;
 }
 

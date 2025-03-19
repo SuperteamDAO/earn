@@ -2,11 +2,11 @@ import { useAtom } from 'jotai';
 import { useEffect } from 'react';
 
 import { applicationStateAtom } from '../atoms/applicationStateAtom';
-import { type GrantApplicationWithTranches } from '../queries/user-application';
+import { type GrantApplicationWithTranchesAndUser } from '../queries/user-application';
 import { type Grant } from '../types';
 
 export const useApplicationState = (
-  application: GrantApplicationWithTranches | undefined,
+  application: GrantApplicationWithTranchesAndUser | undefined,
   grant: Grant,
 ) => {
   const [applicationState, setApplicationState] = useAtom(
@@ -34,9 +34,9 @@ export const useApplicationState = (
       const trancheNumber = validTranches.length;
 
       if (isST) {
-        if (application.kycStatus === 'Pending') {
+        if (!application.user.isKYCVerified) {
           setApplicationState('KYC PENDING');
-        } else if (application.kycStatus === 'Approved') {
+        } else if (application.user.isKYCVerified) {
           if (trancheNumber === 0) {
             setApplicationState('KYC APPROVED');
           } else if (trancheNumber === 1) {
