@@ -109,14 +109,9 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         },
         data: { totalTranches },
       });
+
       try {
-        console.debug(
-          `Attempting to add payment info to Airtable for application ID: ${updatedApplication.id}`,
-        );
         await addPaymentInfoToAirtable(updatedApplication, currentTranche);
-        console.debug(
-          `Successfully added payment info to Airtable for application ID: ${updatedApplication.id}`,
-        );
       } catch (airtableError: any) {
         console.error(
           `Error adding payment info to Airtable: ${airtableError.message}`,
@@ -125,6 +120,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           `Airtable error details: ${safeStringify(airtableError.response?.data || airtableError)}`,
         );
       }
+
       sendEmailNotification({
         type: 'trancheApproved',
         id,

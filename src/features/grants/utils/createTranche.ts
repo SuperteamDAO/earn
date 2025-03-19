@@ -54,7 +54,8 @@ export async function createTranche({
 
   let trancheAmount = 0;
   const totalTranches = application.totalTranches ?? 0;
-  const remainingAmount = application.approvedAmount - application.totalPaid;
+  const approvedAmount = application.approvedAmount ?? 0;
+  const remainingAmount = approvedAmount - application.totalPaid;
 
   if (totalTranches === 2) {
     if (isFirstTranche) {
@@ -66,9 +67,9 @@ export async function createTranche({
 
   if (totalTranches === 3) {
     if (isFirstTranche) {
-      trancheAmount = Math.round(remainingAmount * 0.3);
+      trancheAmount = Math.round(approvedAmount * 0.3);
     } else if (existingTranches === 1) {
-      trancheAmount = Math.round(remainingAmount * 0.45);
+      trancheAmount = Math.round(approvedAmount * 0.3);
     } else if (existingTranches === 2) {
       trancheAmount = remainingAmount;
     }
@@ -76,14 +77,18 @@ export async function createTranche({
 
   if (totalTranches === 4) {
     if (isFirstTranche) {
-      trancheAmount = Math.round(remainingAmount * 0.3);
+      trancheAmount = Math.round(approvedAmount * 0.3);
     } else if (existingTranches === 1) {
-      trancheAmount = Math.round(remainingAmount * 0.45);
+      trancheAmount = Math.round(approvedAmount * 0.3);
     } else if (existingTranches === 2) {
       trancheAmount = remainingAmount;
     } else if (existingTranches === 3) {
       trancheAmount = remainingAmount;
     }
+  }
+
+  if (trancheAmount > remainingAmount) {
+    throw new Error('Tranche amount exceeds remaining amount');
   }
 
   const tranche = await prisma.grantTranche.create({
