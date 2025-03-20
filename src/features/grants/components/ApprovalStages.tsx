@@ -59,7 +59,10 @@ export const ApprovalStages = ({ application, grant }: Props) => {
 
   const tranches = Array.from({ length: tranchesCount }, (_, i) => {
     const approvedAmount = application?.approvedAmount ?? 0;
-    const currentTranche = application?.GrantTranche?.[i];
+    const currentTranche = application?.GrantTranche?.find(
+      (tranche) =>
+        tranche.trancheNumber === i + 1 && tranche.status !== 'Rejected',
+    );
     let amount;
 
     if (currentTranche) {

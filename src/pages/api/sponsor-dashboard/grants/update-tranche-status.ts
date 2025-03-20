@@ -93,6 +93,9 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       const existingTranches = await prisma.grantTranche.count({
         where: {
           applicationId: currentTranche.applicationId,
+          status: {
+            not: 'Rejected',
+          },
         },
       });
       if (
