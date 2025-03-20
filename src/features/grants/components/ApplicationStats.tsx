@@ -14,7 +14,8 @@ interface ApplicationStats {
 
 export const ApplicationStats = ({ application, grant }: ApplicationStats) => {
   const totalPaid = application.GrantTranche.reduce(
-    (acc, curr) => acc + (curr.status === 'Paid' ? curr.ask : 0),
+    (acc, curr) =>
+      acc + (curr.status === 'Paid' ? curr.approvedAmount || 0 : 0),
     0,
   );
   const totalPaidPercentage = (totalPaid / application.approvedAmount) * 100;
