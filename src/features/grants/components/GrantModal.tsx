@@ -33,9 +33,11 @@ export const GrantModal = ({
 
   const detailStates = ['APPLIED', 'ALLOW NEW', 'ALLOW EDIT'];
   const newTrancheFormStates =
-    tranches && tranches > 2
-      ? ['KYC APPROVED', 'TRANCHE1 PAID', 'TRANCHE2 PAID']
-      : ['KYC APPROVED', 'TRANCHE1 PAID'];
+    tranches === 4
+      ? ['KYC APPROVED', 'TRANCHE1 PAID', 'TRANCHE2 PAID', 'TRANCHE3 PAID']
+      : tranches && tranches === 3
+        ? ['KYC APPROVED', 'TRANCHE1 PAID', 'TRANCHE2 PAID']
+        : ['KYC APPROVED', 'TRANCHE1 PAID'];
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
