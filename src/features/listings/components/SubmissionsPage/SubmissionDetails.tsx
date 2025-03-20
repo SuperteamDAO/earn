@@ -92,7 +92,7 @@ export const SubmissionDetails = ({
   const status = sponsorshipSubmissionStatus(submission);
 
   const Content = () => (
-    <div className="flex h-full flex-col justify-between sm:w-full md:min-w-[500px]">
+    <div className="flex h-full w-full flex-col justify-between">
       <div className="h-full overflow-y-auto rounded-lg border border-slate-200 px-2 shadow-[0px_1px_3px_rgba(0,0,0,0.08),_0px_1px_2px_rgba(0,0,0,0.06)] md:px-4 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-slate-300 [&::-webkit-scrollbar-track]:w-1.5 [&::-webkit-scrollbar]:w-1">
         <div className="flex items-center justify-between">
           <h1 className="mt-3 text-xl">Submission Details</h1>
@@ -232,7 +232,11 @@ export const SubmissionDetails = ({
   );
 
   return (
-    <SideDrawer open={open} onClose={onClose}>
+    <SideDrawer
+      open={open}
+      onClose={onClose}
+      className="min-w-full md:min-w-[500px]"
+    >
       <SideDrawerContent className="h-full w-full">
         <Content />
       </SideDrawerContent>

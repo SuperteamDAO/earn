@@ -24,7 +24,6 @@ import {
   Table,
   TableBody,
   TableCell,
-  TableHead,
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
@@ -264,7 +263,6 @@ export const SubmissionTable = ({
                   </SortableTH>
                   <ListingTh>Community</ListingTh>
                   <ListingTh>Actions</ListingTh>
-                  <TableHead className="pl-0" />
                 </TableRow>
               </TableHeader>
               {
