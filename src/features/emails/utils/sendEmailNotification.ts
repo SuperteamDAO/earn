@@ -1,5 +1,5 @@
-import axios from 'axios';
-import jwt from 'jsonwebtoken';
+import { Queue } from 'bullmq';
+import Redis from 'ioredis';
 
 import logger from '@/lib/logger';
 
@@ -38,36 +38,39 @@ interface EmailNotificationParams {
   triggeredBy: any;
 }
 
+const redis = new Redis(process.env.REDIS_URL!, { maxRetriesPerRequest: null });
+const logicQueue = new Queue('logicQueue', { connection: redis });
+
 export function sendEmailNotification({
   type,
   id,
   userId, // pass userId of the person you are sending the email to
   otherInfo,
-  triggeredBy,
+  triggeredBy: _triggeredBy,
 }: EmailNotificationParams) {
-  const token = jwt.sign({ triggeredBy }, process.env.EMAIL_SECRET as string, {
-    expiresIn: '60s',
-  });
-
-  axios
-    .post(
-      process.env.EMAIL_BACKEND!,
-      {
-        type,
-        id,
-        userId,
-        otherInfo,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
+  try {
+    logicQueue
+      .add(
+        'processLogic',
+        {
+          type,
+          id,
+          userId,
+          otherInfo,
         },
-        // timeout: 5000,
-      },
-    )
-    .catch((error) => {
-      logger.error(
-        `failed to send email for ${type} to ${userId} with ID ${id}: ${error}`,
-      );
-    });
+        {
+          attempts: 3,
+          backoff: { type: 'exponential', delay: 1000 },
+        },
+      )
+      .catch((error: unknown) => {
+        logger.error(
+          `Failed to queue email job for ${type} to ${userId} with ID ${id}: ${error}`,
+        );
+      });
+  } catch (error: unknown) {
+    logger.error(
+      `Failed to initialize email queue for ${type} to ${userId} with ID ${id}: ${error}`,
+    );
+  }
 }
