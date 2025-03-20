@@ -11,21 +11,6 @@ import { cn } from '@/utils/cn';
 import { sponsorCountQuery } from '../../queries/sponsor-count';
 import { userCountQuery } from '../../queries/user-count';
 
-const avatars = [
-  {
-    name: 'Solana Foundation',
-    src: 'https://res.cloudinary.com/dgvnuwspr/image/upload/v1725023442/earn-sponsor/xa3pizu1cbd2wyjupkam.png',
-  },
-  {
-    name: 'Backpack',
-    src: 'https://res.cloudinary.com/dgvnuwspr/image/upload/v1713359167/earn-sponsor/bm9dnmvz2p8ryp03c0zu.png',
-  },
-  {
-    name: 'Jupiter',
-    src: 'https://res.cloudinary.com/dgvnuwspr/image/upload/earn-sponsors/f6alnn1jwwblr3si8ztr.jpg',
-  },
-];
-
 export function HomeSponsorBanner() {
   const posthog = usePostHog();
   const common = {
@@ -118,16 +103,6 @@ export function HomeSponsorBanner() {
           Get Started
         </button>
         <div className="flex items-center">
-          <div className="flex -space-x-2 md:hidden">
-            {avatars.map((avatar, index) => (
-              <img
-                key={index}
-                className="relative h-6 w-6 rounded-full border border-[#49139c] bg-black md:h-8 md:w-8"
-                src={avatar.src}
-                alt={avatar.name}
-              />
-            ))}
-          </div>
           {data?.totalSponsors !== null && (
             <p className="relative ml-[0.6875rem] text-[0.8rem] text-black md:text-[0.875rem]">
               Join {data?.totalSponsors?.toLocaleString('en-us')}+ others
