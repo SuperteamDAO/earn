@@ -50,9 +50,6 @@ export async function POST(request: NextRequest) {
   try {
     const currentTranche = await prisma.grantTranche.findUniqueOrThrow({
       where: { id },
-      include: {
-        GrantApplication: true,
-      },
     });
 
     const { error } = await checkGrantSponsorAuth(
@@ -134,22 +131,6 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    if (status === 'Approved') {
-      sendEmailNotification({
-        type: 'trancheApproved',
-        id: currentTranche.id,
-        userId: currentTranche.GrantApplication.userId,
-        triggeredBy: userId,
-      });
-    } else if (status === 'Rejected') {
-      sendEmailNotification({
-        type: 'trancheRejected',
-        id: currentTranche.id,
-        userId: currentTranche.GrantApplication.userId,
-        triggeredBy: userId,
-      });
-    }
-
     const result = await prisma.grantTranche.update({
       where: { id },
       data: updateData,
@@ -192,6 +173,21 @@ export async function POST(request: NextRequest) {
               `Airtable error details: ${safeStringify(airtableError.response?.data || airtableError)}`,
             );
           }
+          sendEmailNotification({
+            type: 'trancheApproved',
+            id: result.id,
+            userId: result.GrantApplication.userId,
+            triggeredBy: userId,
+          });
+        }
+
+        if (result.status === 'Rejected') {
+          sendEmailNotification({
+            type: 'trancheRejected',
+            id: result.id,
+            userId: result.GrantApplication.userId,
+            triggeredBy: userId,
+          });
         }
       })(),
     );
