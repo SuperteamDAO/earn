@@ -20,7 +20,11 @@ import { HomeTalentBanner } from './TalentBanner';
 
 export function BannerCarousel() {
   const plugin = React.useRef(
-    Autoplay({ delay: 6000, stopOnInteraction: false }),
+    Autoplay({
+      delay: 6000,
+      stopOnInteraction: false,
+      stopOnFocusIn: false,
+    }),
   );
   const isPopupOpen = useAtomValue(popupOpenAtom);
   const popupsShowed = useAtomValue(popupsShowedAtom);
@@ -36,13 +40,14 @@ export function BannerCarousel() {
         if (popupsShowed > 0) {
           const resumeTimer: ReturnType<typeof setTimeout> = setTimeout(() => {
             carouselApi.scrollNext();
-            autoplay.reset();
+            plugin.current.options.delay = 5000;
+            autoplay.play();
           }, 2000);
           return () => clearTimeout(resumeTimer);
         }
       }
     }
-  }, [isPopupOpen, carouselApi, popupsShowed]);
+  }, [isPopupOpen, carouselApi, popupsShowed, plugin]);
 
   return (
     <Carousel
