@@ -45,7 +45,11 @@ export async function createTranche({
 
   if (existingTranches > 0) {
     const previousTranche = application.GrantTranche[existingTranches - 1];
-    if (previousTranche && previousTranche.status !== 'Paid') {
+    if (
+      previousTranche &&
+      previousTranche.status !== 'Paid' &&
+      previousTranche.status !== 'Rejected'
+    ) {
       throw new Error(
         'Previous tranche must be paid before requesting a new tranche',
       );
