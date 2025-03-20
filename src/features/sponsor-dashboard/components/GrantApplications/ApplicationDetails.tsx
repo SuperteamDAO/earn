@@ -155,7 +155,7 @@ export const ApplicationDetails = ({
                   <>
                     <Button
                       className={cn(
-                        'bg-emerald-50 text-emerald-600 hover:bg-emerald-100',
+                        'bg-emerald-50 text-emerald-600 hover:bg-emerald-100 hover:text-emerald-600',
                         isMultiSelectOn && 'cursor-not-allowed opacity-50',
                       )}
                       disabled={isMultiSelectOn}
@@ -172,7 +172,7 @@ export const ApplicationDetails = ({
 
                     <Button
                       className={cn(
-                        'bg-rose-50 text-rose-600 hover:bg-rose-100',
+                        'bg-rose-50 text-rose-600 hover:bg-rose-100 hover:text-rose-600',
                         isMultiSelectOn && 'cursor-not-allowed opacity-50',
                       )}
                       disabled={isMultiSelectOn}
@@ -202,38 +202,40 @@ export const ApplicationDetails = ({
                     Completed
                   </Button>
                 )}
-                {isApproved && (
-                  <>
-                    <MarkCompleted
-                      isCompleted={isCompleted}
-                      applicationId={selectedApplication.id}
-                      onMarkCompleted={updateApplicationState}
-                    />
-                    {isNativeAndNonST &&
-                      selectedApplication.totalPaid !==
-                        selectedApplication.approvedAmount && (
-                        <RecordPaymentButton
-                          applicationId={selectedApplication.id}
-                          approvedAmount={selectedApplication.approvedAmount}
-                          totalPaid={selectedApplication.totalPaid}
-                          token={grant.token || 'USDC'}
-                          onPaymentRecorded={updateApplicationState}
-                        />
-                      )}
-                    <Button
-                      className="pointer-events-none bg-emerald-50 text-emerald-600 disabled:opacity-100"
-                      disabled={true}
-                      variant="ghost"
-                    >
-                      <div className="flex items-center">
-                        <div className="rounded-full bg-emerald-600 p-[5px]">
-                          <Check className="h-2.5 w-2.5 text-white" />
+                {isApproved &&
+                  (!grant?.airtableId ||
+                    grant?.title.toLowerCase().includes('coindcx')) && (
+                    <>
+                      <MarkCompleted
+                        isCompleted={isCompleted}
+                        applicationId={selectedApplication.id}
+                        onMarkCompleted={updateApplicationState}
+                      />
+                      {isNativeAndNonST &&
+                        selectedApplication.totalPaid !==
+                          selectedApplication.approvedAmount && (
+                          <RecordPaymentButton
+                            applicationId={selectedApplication.id}
+                            approvedAmount={selectedApplication.approvedAmount}
+                            totalPaid={selectedApplication.totalPaid}
+                            token={grant.token || 'USDC'}
+                            onPaymentRecorded={updateApplicationState}
+                          />
+                        )}
+                      <Button
+                        className="pointer-events-none bg-emerald-50 text-emerald-600 disabled:opacity-100"
+                        disabled={true}
+                        variant="ghost"
+                      >
+                        <div className="flex items-center">
+                          <div className="rounded-full bg-emerald-600 p-[5px]">
+                            <Check className="h-2.5 w-2.5 text-white" />
+                          </div>
                         </div>
-                      </div>
-                      Approved
-                    </Button>
-                  </>
-                )}
+                        Approved
+                      </Button>
+                    </>
+                  )}
                 {isRejected && (
                   <>
                     <Button
@@ -325,9 +327,9 @@ export const ApplicationDetails = ({
                     onClick={handleCopyPublicKey}
                     role="button"
                     tabIndex={0}
-                    aria-label={`Copy public key: ${truncatePublicKey(selectedApplication.walletAddress, 3)}`}
+                    aria-label={`Copy public key: ${truncatePublicKey(selectedApplication.walletAddress || '', 3)}`}
                   >
-                    <MdOutlineAccountBalanceWallet />s
+                    <MdOutlineAccountBalanceWallet />
                     <p>
                       {truncatePublicKey(selectedApplication.walletAddress, 3)}
                     </p>

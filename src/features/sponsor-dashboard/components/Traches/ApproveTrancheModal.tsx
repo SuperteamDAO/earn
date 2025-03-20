@@ -98,46 +98,52 @@ const CustomNumberInput = ({
 interface ApproveModalProps {
   approveIsOpen: boolean;
   approveOnClose: () => void;
-  applicationId: string | undefined;
+  trancheId: string | undefined;
   ask: number | undefined;
   granteeName: string | null | undefined;
   token: string;
-  onApproveGrant: (applicationId: string, approvedAmount: number) => void;
-  max: number | undefined;
+  onApproveTranche: (trancheId: string, approvedAmount: number) => void;
+  grantApprovedAmount: number;
+  grantTotalPaid: number;
 }
 
-export const ApproveModal = ({
-  applicationId,
+export const ApproveTrancheModal = ({
+  trancheId,
   approveIsOpen,
   approveOnClose,
   ask,
   granteeName,
   token,
-  onApproveGrant,
-  max,
+  onApproveTranche,
+  grantApprovedAmount,
+  grantTotalPaid,
 }: ApproveModalProps) => {
   const [approvedAmount, setApprovedAmount] = useState<number | undefined>(ask);
   const [loading, setLoading] = useState<boolean>(false);
   const [warningMessage, setWarningMessage] = useState<string | null>(null);
 
+  const remainingAmount = grantApprovedAmount - grantTotalPaid;
+
   const handleAmountChange = (value: number) => {
-    if (value > (ask as number)) {
+    if (value > remainingAmount) {
       setWarningMessage(
-        'Approved amount is greater than the requested amount.',
+        `Amount exceeds remaining grant budget (${remainingAmount} ${token})`,
       );
+    } else if (value > (ask as number)) {
+      setWarningMessage('Approved amount is greater than the requested amount');
     } else {
       setWarningMessage(null);
     }
     setApprovedAmount(value);
   };
 
-  const approveGrant = async () => {
-    if (approvedAmount === undefined || approvedAmount === 0 || !applicationId)
+  const approveTranche = async () => {
+    if (approvedAmount === undefined || approvedAmount === 0 || !trancheId)
       return;
 
     setLoading(true);
     try {
-      await onApproveGrant(applicationId, approvedAmount);
+      await onApproveTranche(trancheId, approvedAmount);
       approveOnClose();
     } catch (e) {
       console.error(e);
@@ -150,14 +156,14 @@ export const ApproveModal = ({
     setApprovedAmount(ask);
     setWarningMessage(null);
     setLoading(false);
-  }, [applicationId, ask]);
+  }, [trancheId, ask]);
 
   return (
     <Dialog open={approveIsOpen} onOpenChange={approveOnClose}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle className="text-md font-semibold text-slate-500">
-            Approve Grant Payment
+            Approve Tranche Payment
           </DialogTitle>
         </DialogHeader>
 
@@ -165,14 +171,14 @@ export const ApproveModal = ({
 
         <div className="text-[0.95rem] font-medium">
           <p className="mt-3 text-slate-500">
-            You are about to approve {granteeName}’s grant request. They will be
-            notified via email.
+            You are about to approve {granteeName}’s tranche payment. They will
+            be notified via email.
           </p>
 
           <br />
 
           <div className="mb-6 flex items-center justify-between">
-            <p className="text-slate-500">Grant Request</p>
+            <p className="text-slate-500">Tranche Payment</p>
             <div className="flex items-center">
               <img
                 className="h-5 w-5 rounded-full"
@@ -194,7 +200,7 @@ export const ApproveModal = ({
                 value={approvedAmount || 0}
                 onChange={handleAmountChange}
                 min={1}
-                max={max}
+                max={remainingAmount}
               />
               <div className="flex items-center rounded-r-md border border-l-0 bg-white px-3 text-[0.95rem] text-slate-400">
                 <img
@@ -217,8 +223,12 @@ export const ApproveModal = ({
 
           <Button
             className="mb-3 mt-2 w-full bg-[#079669] text-white hover:bg-[#079669]/90"
-            disabled={loading || approvedAmount === 0}
-            onClick={approveGrant}
+            disabled={
+              loading ||
+              approvedAmount === 0 ||
+              (warningMessage?.includes('exceeds') ?? false)
+            }
+            onClick={approveTranche}
           >
             {loading ? (
               <>
@@ -230,7 +240,7 @@ export const ApproveModal = ({
                 <div className="mr-2 rounded-full bg-white p-[5px]">
                   <Check className="h-2.5 w-2.5 text-[#079669]" />
                 </div>
-                <span>Approve Grant</span>
+                <span>Approve Tranche</span>
               </>
             )}
           </Button>

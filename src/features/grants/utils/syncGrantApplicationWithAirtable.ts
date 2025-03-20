@@ -25,7 +25,7 @@ interface GrantApplicationWithUserAndGrant extends GrantApplication {
   };
 }
 
-export async function handleAirtableSync(
+export async function syncGrantApplicationWithAirtable(
   application: GrantApplicationWithUserAndGrant,
 ) {
   const grantsAirtableConfig = airtableConfig(
