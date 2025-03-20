@@ -120,7 +120,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     if (status === 'Rejected') {
       sendEmailNotification({
         type: 'trancheRejected',
-        id: currentTranche.applicationId,
+        id: currentTranche.id,
         triggeredBy: userId,
       });
     }
