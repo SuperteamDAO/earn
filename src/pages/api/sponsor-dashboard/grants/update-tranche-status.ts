@@ -1,4 +1,3 @@
-import { GrantTrancheStatus } from '@prisma/client';
 import type { NextApiResponse } from 'next';
 import { z } from 'zod';
 
@@ -144,7 +143,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       },
     });
 
-    if (result.status === GrantTrancheStatus.Approved) {
+    if (result.status === 'Approved') {
       try {
         await addPaymentInfoToAirtable(result.GrantApplication, result);
       } catch (airtableError: any) {
@@ -178,7 +177,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       }
     }
 
-    if (result.status === GrantTrancheStatus.Rejected) {
+    if (result.status === 'Rejected') {
       try {
         sendEmailNotification({
           type: 'trancheRejected',
