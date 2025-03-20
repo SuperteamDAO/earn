@@ -159,6 +159,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         sendEmailNotification({
           type: 'trancheApproved',
           id: result.id,
+          userId: result.GrantApplication.userId,
           triggeredBy: userId,
         });
       } catch (emailError: any) {
@@ -182,6 +183,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         sendEmailNotification({
           type: 'trancheRejected',
           id: result.id,
+          userId: result.GrantApplication.userId,
           triggeredBy: userId,
         });
       } catch (emailError: any) {
