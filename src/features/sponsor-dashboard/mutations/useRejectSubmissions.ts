@@ -60,6 +60,11 @@ export const useRejectSubmissions = (slug: string) => {
     onSuccess: (submissionIds) => {
       toast.success('Submissions rejected successfully');
 
+      setSelectedSubmission((prev) =>
+        prev && submissionIds.includes(prev.id)
+          ? { ...prev, status: 'Rejected' }
+          : prev,
+      );
       const submissions = queryClient.getQueryData<SubmissionWithUser[]>([
         'sponsor-submissions',
         slug,
