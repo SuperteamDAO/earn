@@ -1,3 +1,4 @@
+import { GrantTrancheStatus } from '@prisma/client';
 import type { NextApiResponse } from 'next';
 import { z } from 'zod';
 
@@ -112,20 +113,6 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         },
         data: { totalTranches },
       });
-
-      sendEmailNotification({
-        type: 'trancheApproved',
-        id,
-        triggeredBy: userId,
-      });
-    }
-
-    if (status === 'Rejected') {
-      sendEmailNotification({
-        type: 'trancheRejected',
-        id: currentTranche.id,
-        triggeredBy: userId,
-      });
     }
 
     const result = await prisma.grantTranche.update({
@@ -157,7 +144,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       },
     });
 
-    if (result.status === 'Approved') {
+    if (result.status === GrantTrancheStatus.Approved) {
       try {
         await addPaymentInfoToAirtable(result.GrantApplication, result);
       } catch (airtableError: any) {
@@ -168,6 +155,19 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           `Airtable error details: ${safeStringify(airtableError.response?.data || airtableError)}`,
         );
       }
+      sendEmailNotification({
+        type: 'trancheApproved',
+        id: result.id,
+        triggeredBy: userId,
+      });
+    }
+
+    if (result.status === GrantTrancheStatus.Rejected) {
+      sendEmailNotification({
+        type: 'trancheRejected',
+        id: result.id,
+        triggeredBy: userId,
+      });
     }
 
     return res.status(200).json(result);
