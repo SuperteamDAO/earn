@@ -34,6 +34,7 @@ import type { SubmissionWithUser } from '@/interface/submission';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';
+import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import { getURL } from '@/utils/validUrl';
 
 import { ListingTh } from '@/features/sponsor-dashboard/components/ListingTable';
@@ -287,15 +288,15 @@ export const SubmissionTable = ({
 
                     return (
                       <TableRow key={submission.id}>
-                        <TableCell className="pr-0">
+                        <TableCell className="min-w-[225px] pr-0">
                           <div className="flex items-center">
                             <EarnAvatar
                               id={submission?.user?.id}
                               avatar={submission?.user?.photo || undefined}
                             />
-                            <div className="ml-2">
+                            <div className="ml-2 min-w-0">
                               <div className="flex items-center gap-2">
-                                <p className="overflow-hidden text-ellipsis whitespace-nowrap text-sm font-medium text-slate-700">
+                                <p className="truncate whitespace-nowrap text-sm font-medium text-slate-700">
                                   {`${submission?.user?.firstName} ${submission?.user?.lastName}`}
                                 </p>
                                 {submission?.user?.publicKey && (
@@ -306,7 +307,7 @@ export const SubmissionTable = ({
                                   />
                                 )}
                               </div>
-                              <p className="overflow-hidden text-ellipsis whitespace-nowrap text-xs font-medium text-slate-500">
+                              <p className="truncate text-xs font-medium text-slate-500">
                                 {dayjs(submission.createdAt).format(
                                   "D MMM' YY h:MM A",
                                 )}
@@ -314,16 +315,16 @@ export const SubmissionTable = ({
                             </div>
                           </div>
                         </TableCell>
-                        <TableCell className="max-w-80 whitespace-normal break-words font-medium text-slate-700">
+                        <TableCell className="min-w-[225px] font-medium text-slate-700">
                           <div className="flex w-full items-center overflow-visible">
                             <img
                               src={tokenObject?.icon}
                               alt={tokenObject?.tokenSymbol}
                               className="h-4 w-4 rounded-full"
                             />
-                            <span className="ml-1 text-sm">
+                            <span className="ml-1 truncate text-sm">
                               {isUsdBased && '$'}
-                              {ask ? ask.toLocaleString('en-us') : '0'}
+                              {ask ? formatNumberWithSuffix(ask, 1) : '0'}
                               <span className="text-slate-400">
                                 {isUsdBased && ' to be paid in'}
                               </span>
