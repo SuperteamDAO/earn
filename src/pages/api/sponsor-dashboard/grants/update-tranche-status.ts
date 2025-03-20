@@ -156,27 +156,11 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         );
       }
       try {
-        logger.info(
-          `Attempting to send tranche approved email notification for tranche ID: ${result.id}`,
-          {
-            trancheId: result.id,
-            userId,
-            recipientEmail: result.GrantApplication.user.email,
-            notificationType: 'trancheApproved',
-            environment: process.env.NODE_ENV,
-            timestamp: new Date().toISOString(),
-          },
-        );
-
-        await sendEmailNotification({
+        sendEmailNotification({
           type: 'trancheApproved',
           id: result.id,
           triggeredBy: userId,
         });
-
-        logger.info(
-          `Successfully sent tranche approved email notification for tranche ID: ${result.id}`,
-        );
       } catch (emailError: any) {
         logger.error(
           `Failed to send tranche approved email notification for tranche ID: ${result.id}`,
@@ -195,27 +179,11 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
     if (result.status === GrantTrancheStatus.Rejected) {
       try {
-        logger.info(
-          `Attempting to send tranche rejected email notification for tranche ID: ${result.id}`,
-          {
-            trancheId: result.id,
-            userId,
-            recipientEmail: result.GrantApplication.user.email,
-            notificationType: 'trancheRejected',
-            environment: process.env.NODE_ENV,
-            timestamp: new Date().toISOString(),
-          },
-        );
-
-        await sendEmailNotification({
+        sendEmailNotification({
           type: 'trancheRejected',
           id: result.id,
           triggeredBy: userId,
         });
-
-        logger.info(
-          `Successfully sent tranche rejected email notification for tranche ID: ${result.id}`,
-        );
       } catch (emailError: any) {
         logger.error(
           `Failed to send tranche rejected email notification for tranche ID: ${result.id}`,

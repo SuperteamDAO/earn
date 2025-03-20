@@ -1,5 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useQueryClient } from '@tanstack/react-query';
+import axios from 'axios';
 import { X } from 'lucide-react';
 import { useRouter } from 'next/router';
 import { usePostHog } from 'posthog-js/react';
@@ -194,8 +195,26 @@ export const SubmissionDrawer = ({
           : 'Submission created successfully',
       );
       handleClose();
-    } catch (e) {
-      toast.error('Failed to submit. Please try again or contact support.');
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        if (error.status === 401) {
+          toast.error(
+            'Error occurred during submission. Please re-log in and try again.',
+          );
+        } else if (
+          String(error?.response?.data.error)
+            .toLowerCase()
+            .includes('submissions closed')
+        ) {
+          toast.error(
+            `Unfortunately, you ${type === 'project' ? 'application' : 'submission'} couldn't be added because the deadline of the listing has passed.`,
+          );
+        } else {
+          toast.error('Failed to submit. Please try again or contact support.');
+        }
+      } else {
+        toast.error('Failed to submit. Please try again or contact support.');
+      }
     } finally {
       setIsLoading(false);
     }

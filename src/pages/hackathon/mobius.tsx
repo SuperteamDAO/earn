@@ -200,8 +200,14 @@ function Hero({
               }
             }}
           >
-            <PulseIcon isPulsing w={4} h={4} bg={'#35bf34'} text="#29E226" />
-            <span>Submit Now</span>
+            <PulseIcon
+              isPulsing={false}
+              w={4}
+              h={4}
+              bg={'#808080'}
+              text="#808080"
+            />
+            <span>Submissions Closed</span>
           </Button>
           <Button
             variant="ghost"
@@ -259,7 +265,7 @@ function HeroMini({
         className="absolute left-0 top-0 h-full w-full overflow-hidden object-cover md:block"
       />
       <div
-        className={`${orbitron.className} relative flex w-full items-center justify-center gap-8 rounded-md px-6 py-6 md:flex-row md:gap-12 md:rounded-xl md:px-16`}
+        className={`${orbitron.className} relative flex w-full items-center justify-center gap-8 rounded-md px-6 py-6 md:flex-row md:gap-12 md:rounded-xl md:px-40`}
       >
         <MiniStat
           title={'Total Prizes'}
@@ -268,11 +274,12 @@ function HeroMini({
           $1,000,000
         </MiniStat>
 
-        <MiniStat className="hidden md:flex" title={'Tracks'}>
+        <MiniStat className="" title={'Tracks'}>
           4
         </MiniStat>
 
         <MiniStat
+          className="hidden"
           title={
             isMd ? `Submissions ${status}` : mobileTitleForCountdown(status)
           }

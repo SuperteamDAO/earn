@@ -64,10 +64,44 @@ export const ApplicationHeader = ({
       );
       return response.data;
     },
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
       const url = data?.url || '';
-      window.open(url, '_blank');
-      toast.success('CSV exported successfully');
+      if (url) {
+        try {
+          const response = await fetch(url, {
+            headers: {
+              Accept: 'text/csv,application/octet-stream',
+            },
+          });
+
+          if (!response.ok) {
+            throw new Error(`Failed to download: ${response.status}`);
+          }
+
+          const blob = await response.blob();
+
+          const blobUrl = window.URL.createObjectURL(
+            new Blob([blob], { type: 'text/csv' }),
+          );
+
+          const link = document.createElement('a');
+          link.href = blobUrl;
+          link.setAttribute('download', `${grant?.slug || 'applications'}.csv`);
+
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+
+          window.URL.revokeObjectURL(blobUrl);
+
+          toast.success('CSV exported successfully');
+        } catch (error) {
+          console.error('Download error:', error);
+          toast.error('Failed to download CSV. Please try again.');
+        }
+      } else {
+        toast.error('Export URL is empty');
+      }
     },
     onError: (error) => {
       console.error(error);
