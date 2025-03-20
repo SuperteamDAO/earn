@@ -90,3 +90,5 @@ export const selectedGrantTrancheAtom = atom(
 );
 
 export const applicationsAtom = atom<GrantApplicationWithUser[]>([]);
+
+export const tranchesAtom = atom<GrantTrancheWithApplication[]>([]);

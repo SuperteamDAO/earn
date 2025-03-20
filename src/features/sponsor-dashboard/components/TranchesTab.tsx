@@ -16,9 +16,13 @@ import { useDisclosure } from '@/hooks/use-disclosure';
 import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 
-import { selectedGrantTrancheAtom } from '../atoms';
+import { selectedGrantTrancheAtom, tranchesAtom } from '../atoms';
 import { sponsorGrantQuery } from '../queries/grant';
-import { tranchesQuery, type TranchesReturn } from '../queries/tranches';
+import {
+  type GrantTrancheWithApplication,
+  tranchesQuery,
+  type TranchesReturn,
+} from '../queries/tranches';
 import { ApproveTrancheModal } from './Traches/ApproveTrancheModal';
 import { RejectTrancheModal } from './Traches/RejectTrancheModal';
 import { TrancheDetails } from './Traches/TrancheDetails';
@@ -35,7 +39,9 @@ export const TranchesTab = ({ slug }: Props) => {
     GrantTrancheStatus | undefined
   >(undefined);
 
-  const params = { searchText, length: 10, skip: 0, filterLabel };
+  const params = { searchText, length: 10, skip, filterLabel };
+
+  const [tranches, setTranches] = useAtom(tranchesAtom);
 
   const { data: trancheReturn, isLoading: isTrancheLoading } = useQuery({
     ...tranchesQuery(slug, params),
@@ -43,7 +49,11 @@ export const TranchesTab = ({ slug }: Props) => {
     placeholderData: keepPreviousData,
   });
 
-  const tranches = useMemo(() => trancheReturn?.data, [trancheReturn]);
+  useEffect(() => {
+    if (trancheReturn?.data) {
+      setTranches(trancheReturn.data);
+    }
+  }, [trancheReturn?.data, setTranches]);
 
   const totalCount = useMemo(() => trancheReturn?.count || 0, [trancheReturn]);
 
@@ -252,16 +262,17 @@ export const TranchesTab = ({ slug }: Props) => {
         ['sponsor-tranches', grant?.slug, params],
         (oldData) => {
           if (!oldData) return oldData;
-          const updatedTranches = oldData.data.map((tranche) =>
-            tranche.id === trancheId
-              ? {
-                  ...tranche,
-                  status: GrantTrancheStatus.Rejected,
-                }
-              : tranche,
+          const updatedTranches = oldData.data.map(
+            (tranche: GrantTrancheWithApplication) =>
+              tranche.id === trancheId
+                ? {
+                    ...tranche,
+                    status: GrantTrancheStatus.Rejected,
+                  }
+                : tranche,
           );
           const updatedTranche = updatedTranches.find(
-            (tranche) => tranche.id === trancheId,
+            (tranche: GrantTrancheWithApplication) => tranche.id === trancheId,
           );
           setSelectedTranche(updatedTranche);
           moveToNextPendingTranche();
@@ -312,17 +323,18 @@ export const TranchesTab = ({ slug }: Props) => {
         ['sponsor-tranches', grant?.slug, params],
         (oldData) => {
           if (!oldData) return oldData;
-          const updatedTranches = oldData.data.map((tranche) =>
-            tranche.id === trancheId
-              ? {
-                  ...tranche,
-                  status: GrantTrancheStatus.Approved,
-                  approvedAmount,
-                }
-              : tranche,
+          const updatedTranches = oldData.data.map(
+            (tranche: GrantTrancheWithApplication) =>
+              tranche.id === trancheId
+                ? {
+                    ...tranche,
+                    status: GrantTrancheStatus.Approved,
+                    approvedAmount,
+                  }
+                : tranche,
           );
           const updatedTranche = updatedTranches.find(
-            (tranche) => tranche.id === trancheId,
+            (tranche: GrantTrancheWithApplication) => tranche.id === trancheId,
           );
           setSelectedTranche(updatedTranche);
           moveToNextPendingTranche();
