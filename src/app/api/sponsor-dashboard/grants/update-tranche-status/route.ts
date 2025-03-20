@@ -50,6 +50,9 @@ export async function POST(request: NextRequest) {
   try {
     const currentTranche = await prisma.grantTranche.findUniqueOrThrow({
       where: { id },
+      include: {
+        GrantApplication: true,
+      },
     });
 
     const { error } = await checkGrantSponsorAuth(
@@ -131,6 +134,22 @@ export async function POST(request: NextRequest) {
       });
     }
 
+    if (status === 'Approved') {
+      sendEmailNotification({
+        type: 'trancheApproved',
+        id: currentTranche.id,
+        userId: currentTranche.GrantApplication.userId,
+        triggeredBy: userId,
+      });
+    } else if (status === 'Rejected') {
+      sendEmailNotification({
+        type: 'trancheRejected',
+        id: currentTranche.id,
+        userId: currentTranche.GrantApplication.userId,
+        triggeredBy: userId,
+      });
+    }
+
     const result = await prisma.grantTranche.update({
       where: { id },
       data: updateData,
@@ -171,51 +190,6 @@ export async function POST(request: NextRequest) {
             );
             console.error(
               `Airtable error details: ${safeStringify(airtableError.response?.data || airtableError)}`,
-            );
-          }
-          try {
-            sendEmailNotification({
-              type: 'trancheApproved',
-              id: result.id,
-              userId: result.GrantApplication.userId,
-              triggeredBy: userId,
-            });
-          } catch (emailError: any) {
-            logger.error(
-              `Failed to send tranche approved email notification for tranche ID: ${result.id}`,
-              {
-                error: emailError.message,
-                stack: emailError.stack,
-                trancheId: result.id,
-                userId,
-                recipientEmail: result.GrantApplication.user.email,
-                environment: process.env.NODE_ENV,
-                timestamp: new Date().toISOString(),
-              },
-            );
-          }
-        }
-
-        if (result.status === 'Rejected') {
-          try {
-            sendEmailNotification({
-              type: 'trancheRejected',
-              id: result.id,
-              userId: result.GrantApplication.userId,
-              triggeredBy: userId,
-            });
-          } catch (emailError: any) {
-            logger.error(
-              `Failed to send tranche rejected email notification for tranche ID: ${result.id}`,
-              {
-                error: emailError.message,
-                stack: emailError.stack,
-                trancheId: result.id,
-                userId,
-                recipientEmail: result.GrantApplication.user.email,
-                environment: process.env.NODE_ENV,
-                timestamp: new Date().toISOString(),
-              },
             );
           }
         }
