@@ -24,7 +24,7 @@ import { useBreakpoint } from '@/hooks/use-breakpoint';
 import { useTimeout } from '@/hooks/use-timeout';
 import { cn } from '@/utils/cn';
 
-import { popupsShowedAtom, popupTimeoutAtom } from '../atoms';
+import { popupOpenAtom, popupsShowedAtom, popupTimeoutAtom } from '../atoms';
 import { GetStarted } from './GetStarted';
 
 interface GrantInfo {
@@ -51,7 +51,7 @@ export const GrantsPop = () => {
     });
   }, 5_000);
 
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useAtom(popupOpenAtom);
   const { authenticated, ready } = usePrivy();
 
   const isMD = useBreakpoint('md');
