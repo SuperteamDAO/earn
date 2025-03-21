@@ -23,7 +23,7 @@ export function TalentButton({
       )}
       <Link href="#" className="block">
         <Button
-          className="h-12 w-full rounded bg-brand-purple text-white hover:bg-brand-purple-dark"
+          className="bg-brand-purple hover:bg-brand-purple-dark h-12 w-full rounded text-white"
           onClick={() => checkTalent()}
           disabled={isLoading}
         >

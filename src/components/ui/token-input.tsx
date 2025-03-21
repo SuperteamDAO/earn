@@ -5,14 +5,16 @@ import { tokenList } from '@/constants/tokenList';
 import { Input } from './input';
 import { LocalImage } from './local-image';
 
-export const TokenInput = React.forwardRef<
-  HTMLInputElement,
-  {
-    token: string | undefined;
-    onChange?: (e: any) => void;
-    value?: number | null;
-  }
->(({ token, onChange, value, ...props }, ref) => {
+function TokenInput({
+  token,
+  onChange,
+  value,
+  ...props
+}: React.ComponentProps<typeof Input> & {
+  token: string | undefined;
+  onChange?: (value: number | null) => void;
+  value?: number | null;
+}) {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value;
 
@@ -28,9 +30,13 @@ export const TokenInput = React.forwardRef<
   };
 
   return (
-    <div className="flex">
-      <div className="flex items-center gap-1 rounded-l-md border border-r-0 border-input bg-muted pl-3 pr-5">
+    <div data-slot="token-input" className="flex">
+      <div
+        data-slot="token-input-token"
+        className="border-input bg-muted flex items-center gap-1 rounded-l-md border border-r-0 pr-5 pl-3"
+      >
         <LocalImage
+          data-slot="token-input-icon"
           className="h-4 w-4 rounded-full"
           alt="token"
           src={
@@ -38,13 +44,16 @@ export const TokenInput = React.forwardRef<
             '/assets/dollar.svg'
           }
         />
-        <p className="text-sm font-medium text-slate-500 sm:text-base">
+        <p
+          data-slot="token-input-symbol"
+          className="text-sm font-medium text-slate-500 sm:text-base"
+        >
           {token}
         </p>
       </div>
       <Input
+        data-slot="token-input-field"
         className="rounded-l-none"
-        ref={ref}
         onChange={handleInputChange}
         type="number"
         inputMode="numeric"
@@ -62,6 +71,6 @@ export const TokenInput = React.forwardRef<
       />
     </div>
   );
-});
+}
 
-TokenInput.displayName = 'TokenInput';
+export { TokenInput };

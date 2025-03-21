@@ -31,7 +31,7 @@ import { roundToNearestThousand } from '@/utils/number';
 
 import { categoryEarningsQuery } from '@/features/listings/queries/category-earnings';
 
-import { popupsShowedAtom, popupTimeoutAtom } from '../atoms';
+import { popupOpenAtom, popupsShowedAtom, popupTimeoutAtom } from '../atoms';
 import { GetStarted } from './GetStarted';
 
 type CategoryVariant = {
@@ -134,7 +134,7 @@ export const CategoryPop = ({ category }: { category: CategoryKeys }) => {
   }, 5_000);
 
   const [variant, setVariant] = useState<CategoryVariantInfo>();
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useAtom(popupOpenAtom);
   const { authenticated, ready } = usePrivy();
 
   const activateQuery = useMemo(
@@ -199,9 +199,9 @@ const Mobile = ({
     <Drawer open={open} onOpenChange={setOpen}>
       <DrawerContent
         classNames={{
-          overlay: isLoginOpen ? 'z-[200]' : '',
+          overlay: isLoginOpen ? 'z-200' : '',
         }}
-        className="!border-0 !ring-0"
+        className="border-0! ring-0!"
       >
         <DrawerHeader className="text-left">
           <Image

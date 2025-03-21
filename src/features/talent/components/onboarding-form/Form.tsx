@@ -146,7 +146,7 @@ export const TalentForm = () => {
     <div className="">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} style={{ width: '100%' }}>
-          <div className="mb-3 mt-4 flex flex-col text-left sm:mb-4 2xl:mt-8">
+          <div className="mt-4 mb-3 flex flex-col text-left sm:mb-4 2xl:mt-8">
             <h1 className="font-sans text-lg font-medium md:text-2xl">
               {TitleArray?.title}
             </h1>
@@ -212,7 +212,7 @@ export const TalentForm = () => {
           <SocialsField />
           <Button
             type="submit"
-            className="mb-12 mt-5 w-full sm:mt-8"
+            className="mt-5 mb-12 w-full sm:mt-8"
             disabled={isSubmitDisabled}
           >
             Create Profile

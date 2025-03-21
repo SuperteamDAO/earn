@@ -105,11 +105,11 @@ export const TrancheDetails = ({
                 />
                 <div>
                   <div className="flex items-center gap-2">
-                    <p className="w-full whitespace-nowrap text-base font-medium text-slate-900">
+                    <p className="w-full text-base font-medium whitespace-nowrap text-slate-900">
                       {`${selectedTranche?.GrantApplication?.user?.firstName}`}
                       ’s Application
                     </p>
-                    <p className="flex items-center gap-1 whitespace-nowrap text-xs font-semibold text-green-600">
+                    <p className="flex items-center gap-1 text-xs font-semibold whitespace-nowrap text-green-600">
                       <VerifiedBadge className="text-green-600" />
                       KYC
                     </p>
@@ -117,7 +117,7 @@ export const TrancheDetails = ({
 
                   <Link
                     href={`/t/${selectedTranche?.GrantApplication?.user?.username}`}
-                    className="flex w-full items-center gap-1 whitespace-nowrap text-xs font-medium text-brand-purple"
+                    className="text-brand-purple flex w-full items-center gap-1 text-xs font-medium whitespace-nowrap"
                     rel="noopener noreferrer"
                     target="_blank"
                   >
@@ -197,7 +197,7 @@ export const TrancheDetails = ({
 
             <div className="flex items-center gap-4 px-4 py-2">
               <div className="flex items-center">
-                <p className="mr-3 whitespace-nowrap text-sm font-semibold text-slate-400">
+                <p className="mr-3 text-sm font-semibold whitespace-nowrap text-slate-400">
                   TOTAL GRANT
                 </p>
                 <img
@@ -205,7 +205,7 @@ export const TrancheDetails = ({
                   src={tokenIcon}
                   alt="token"
                 />
-                <p className="whitespace-nowrap text-sm font-semibold text-slate-600">
+                <p className="text-sm font-semibold whitespace-nowrap text-slate-600">
                   {`${selectedTranche?.GrantApplication?.approvedAmount?.toLocaleString('en-us')}`}
                   <span className="ml-0.5 text-slate-400">{grant?.token}</span>
                 </p>
@@ -215,7 +215,7 @@ export const TrancheDetails = ({
                     className="h-5 w-5 rounded-full bg-gray-200"
                     value={paidPercentage}
                   />
-                  <p className="ml-1 whitespace-nowrap text-sm font-medium text-slate-600">
+                  <p className="ml-1 text-sm font-medium whitespace-nowrap text-slate-600">
                     {paidPercentage.toFixed(0)}%{' '}
                     <span className="text-slate-400">Paid</span>
                   </p>
@@ -249,7 +249,7 @@ export const TrancheDetails = ({
                   triggerClassName="flex items-center hover:underline underline-offset-1"
                 >
                   <div
-                    className="flex cursor-pointer items-center justify-start gap-1 whitespace-nowrap text-sm text-slate-400 hover:text-slate-500"
+                    className="flex cursor-pointer items-center justify-start gap-1 text-sm whitespace-nowrap text-slate-400 hover:text-slate-500"
                     onClick={handleCopyPublicKey}
                     role="button"
                     tabIndex={0}
@@ -283,7 +283,7 @@ export const TrancheDetails = ({
                   link={selectedTranche?.GrantApplication?.user?.website || ''}
                 />
               </div>
-              <p className="whitespace-nowrap text-sm text-slate-400">
+              <p className="text-sm whitespace-nowrap text-slate-400">
                 ${formatNumberWithSuffix(selectedTranche?.totalEarnings || 0)}{' '}
                 Earned
               </p>
@@ -291,7 +291,7 @@ export const TrancheDetails = ({
           </div>
 
           <div className="flex h-[32.6rem] w-full">
-            <div className="scrollbar-thumb-rounded-full flex w-full flex-1 flex-col overflow-y-auto border-r border-slate-200 p-4 scrollbar-thin scrollbar-track-slate-100 scrollbar-thumb-slate-300">
+            <div className="scrollbar-thumb-rounded-full scrollbar-thin scrollbar-track-slate-100 scrollbar-thumb-slate-300 flex w-full flex-1 flex-col overflow-y-auto border-r border-slate-200 p-4">
               {selectedTranche?.trancheNumber === 1 && (
                 <div className="mb-4">
                   <p className="mb-1 text-xs text-slate-500">
@@ -305,7 +305,7 @@ export const TrancheDetails = ({
               {(selectedTranche?.status === 'Approved' ||
                 selectedTranche?.status === 'Paid') && (
                 <div className="mb-4">
-                  <p className="mb-1 text-xs font-semibold uppercase text-slate-400">
+                  <p className="mb-1 text-xs font-semibold text-slate-400 uppercase">
                     APPROVED TRANCHE AMOUNT
                   </p>
                   <div className="flex items-center gap-0.5">
@@ -314,7 +314,7 @@ export const TrancheDetails = ({
                       src={tokenIcon}
                       alt="token"
                     />
-                    <p className="whitespace-nowrap text-sm font-semibold text-slate-600">
+                    <p className="text-sm font-semibold whitespace-nowrap text-slate-600">
                       {`${selectedTranche?.approvedAmount?.toLocaleString('en-us')}`}
                       <span className="ml-0.5 text-slate-400">
                         {grant?.token}
@@ -325,7 +325,7 @@ export const TrancheDetails = ({
               )}
               {selectedTranche?.trancheNumber !== 1 && (
                 <div className="mb-4">
-                  <p className="mb-1 text-xs font-semibold uppercase text-slate-400">
+                  <p className="mb-1 text-xs font-semibold text-slate-400 uppercase">
                     TRANCHE ASK
                   </p>
                   <div className="flex items-center gap-0.5">
@@ -334,7 +334,7 @@ export const TrancheDetails = ({
                       src={tokenIcon}
                       alt="token"
                     />
-                    <p className="whitespace-nowrap text-sm font-semibold text-slate-600">
+                    <p className="text-sm font-semibold whitespace-nowrap text-slate-600">
                       {`${selectedTranche?.ask?.toLocaleString('en-us')}`}
                       <span className="ml-0.5 text-slate-400">
                         {grant?.token}

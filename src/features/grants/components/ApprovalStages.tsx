@@ -113,7 +113,7 @@ export const ApprovalStages = ({ application, grant }: Props) => {
     isStartComplete: boolean;
     isEndComplete: boolean;
   }) => (
-    <div className="absolute left-4 top-[36px] h-[72px] w-[4px]">
+    <div className="absolute top-[36px] left-4 h-[72px] w-[4px]">
       {isStartComplete && isEndComplete ? (
         <div className="h-full bg-green-600" />
       ) : isStartComplete ? (

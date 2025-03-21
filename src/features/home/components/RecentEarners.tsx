@@ -42,10 +42,10 @@ const Earner = ({
           <EarnAvatar id={id} avatar={avatar} />
         </div>
         <div className="w-[13.8rem]">
-          <p className="overflow-hidden text-ellipsis whitespace-nowrap text-sm font-medium text-black">
+          <p className="overflow-hidden text-sm font-medium text-ellipsis whitespace-nowrap text-black">
             {name}
           </p>
-          <p className="overflow-hidden text-ellipsis whitespace-nowrap text-xs font-medium text-gray-400">
+          <p className="overflow-hidden text-xs font-medium text-ellipsis whitespace-nowrap text-gray-400">
             {bounty}
           </p>
         </div>
@@ -102,7 +102,7 @@ export const RecentEarners = ({ earners }: { earners?: User[] }) => {
         </span>
         <Link
           href="/leaderboard"
-          className="ph-no-capture flex items-center text-xs font-semibold text-brand-purple"
+          className="ph-no-capture text-brand-purple flex items-center text-xs font-semibold"
           onClick={() => {
             posthog.capture('view leaderboard_homepage');
           }}

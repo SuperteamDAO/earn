@@ -134,7 +134,7 @@ export default function NewProfilePage({
                       alt={'user icon'}
                       src={'/onboarding/talent-banner.webp'}
                     />
-                    <div className="absolute left-0 top-0 h-full w-full bg-violet-400 mix-blend-overlay" />
+                    <div className="absolute top-0 left-0 h-full w-full bg-violet-400 mix-blend-overlay" />
                   </div>
                   <div className="flex flex-col gap-5 px-4">
                     <BulletPoint type="TALENT">
@@ -198,7 +198,7 @@ export default function NewProfilePage({
                     alt={'user icon'}
                     src={'/onboarding/sponsor-banner.webp'}
                   />
-                  <div className="absolute left-0 top-0 h-full w-full bg-emerald-50 mix-blend-overlay" />
+                  <div className="absolute top-0 left-0 h-full w-full bg-emerald-50 mix-blend-overlay" />
                 </div>
                 <div className="flex flex-col gap-5 px-4">
                   <BulletPoint type="SPONSOR">

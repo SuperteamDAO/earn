@@ -89,7 +89,7 @@ export const EmailSettingsModal = ({
           </p>
           {showSponsorAlerts && (
             <div className="mt-6">
-              <p className="mb-1 mt-6 text-sm tracking-[0.8px] text-slate-400">
+              <p className="mt-6 mb-1 text-sm tracking-[0.8px] text-slate-400">
                 SPONSOR ALERTS
               </p>
               <AlertOption
@@ -114,7 +114,7 @@ export const EmailSettingsModal = ({
           )}
           {showTalentAlerts && (
             <div className="mt-6">
-              <p className="mb-1 mt-6 text-sm tracking-[0.8px] text-slate-400">
+              <p className="mt-6 mb-1 text-sm tracking-[0.8px] text-slate-400">
                 TALENT ALERTS
               </p>
               <AlertOption
@@ -145,7 +145,7 @@ export const EmailSettingsModal = ({
           )}
           {(showTalentAlerts || showSponsorAlerts) && (
             <div className="mt-6">
-              <p className="mb-1 mt-6 text-sm tracking-[0.8px] text-slate-400">
+              <p className="mt-6 mb-1 text-sm tracking-[0.8px] text-slate-400">
                 GENERAL ALERTS
               </p>
               <AlertOption

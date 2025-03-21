@@ -29,11 +29,11 @@ export function Hero() {
   return (
     <div className="relative flex w-full flex-col items-center justify-start overflow-hidden pb-[4rem] md:pb-[1rem]">
       <div className="relative flex w-full flex-col items-center gap-8 bg-slate-50 px-8 pt-36 text-center">
-        <h1 className="max-w-[45rem] text-[2rem] font-semibold leading-[1.1] text-gray-700 md:text-[3.5rem]">
+        <h1 className="max-w-[45rem] text-[2rem] leading-[1.1] font-semibold text-gray-700 md:text-[3.5rem]">
           Where Solana teams come to get sh*t done
         </h1>
 
-        <p className="w-full max-w-[39rem] text-[1.25rem] font-medium text-gray-500 [text-wrap:pretty]">
+        <p className="w-full max-w-[39rem] text-[1.25rem] font-medium [text-wrap:pretty] text-gray-500">
           The world’s best Solana talent is on Superteam Earn. Get work done
           from the right people, at the right time.
         </p>
@@ -118,7 +118,7 @@ export function Hero() {
       </div>
       <div
         className={cn(
-          'mx-auto mb-[3.125rem] mt-8 flex h-28 w-full flex-wrap items-center justify-around gap-5',
+          'mx-auto mt-8 mb-[3.125rem] flex h-28 w-full flex-wrap items-center justify-around gap-5',
           'px-[1.875rem] lg:px-[7rem] xl:px-[11rem]',
           maxW,
         )}

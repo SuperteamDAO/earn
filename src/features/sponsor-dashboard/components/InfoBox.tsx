@@ -21,7 +21,7 @@ export const InfoBox = ({
   isHtml?: boolean;
 }) => (
   <div className="mb-4">
-    <p className="mt-1 text-xs font-semibold uppercase text-slate-400">
+    <p className="mt-1 text-xs font-semibold text-slate-400 uppercase">
       {label}
     </p>
     {isHtml ? (

@@ -255,7 +255,7 @@ export const FeedCardContainerSkeleton = () => {
             <Skeleton className="h-5 w-36" />
             <Skeleton className="h-5 w-24" />
           </div>
-          <Skeleton className="mt-4 h-[200px] rounded-md border border-slate-200 shadow-sm md:h-[300px]" />
+          <Skeleton className="mt-4 h-[200px] rounded-md border border-slate-200 shadow-xs md:h-[300px]" />
         </div>
       </div>
     </div>

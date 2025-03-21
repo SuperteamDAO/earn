@@ -62,7 +62,7 @@ export function Features({ showVideo }: Props) {
       className="relative mx-auto my-32 w-full px-[1.875rem] lg:px-[7rem] xl:px-[11rem]"
       id="features"
     >
-      <div className="absolute left-0 top-0 h-[17.8rem] w-full bg-brand-purple md:h-[36.96rem]" />
+      <div className="bg-brand-purple absolute top-0 left-0 h-[17.8rem] w-full md:h-[36.96rem]" />
 
       <div
         className={cn(
@@ -73,7 +73,7 @@ export function Features({ showVideo }: Props) {
         <p className="mx-auto max-w-[48rem] text-center text-base font-semibold text-white/75 md:text-[1.6rem]">
           YOUR DASHBOARD
         </p>
-        <p className="mx-auto max-w-[48rem] text-center text-[2rem] font-semibold leading-[1.1] text-white md:text-[3.5rem]">
+        <p className="mx-auto max-w-[48rem] text-center text-[2rem] leading-[1.1] font-semibold text-white md:text-[3.5rem]">
           A seamless way to manage all your listings in one place
         </p>
       </div>
@@ -88,7 +88,7 @@ export function Features({ showVideo }: Props) {
           showVideo();
         }}
       >
-        <div className="absolute inset-0 m-auto flex h-fit w-fit cursor-pointer items-center justify-center rounded-full bg-brand-purple p-3">
+        <div className="bg-brand-purple absolute inset-0 m-auto flex h-fit w-fit cursor-pointer items-center justify-center rounded-full p-3">
           <svg
             width="34"
             height="34"

@@ -122,7 +122,7 @@ export const Suggestions = ({ defaultSuggestions, input, onSelect }: Props) => {
               <p className="text-sm font-medium text-slate-900">
                 {suggestion.firstName} {suggestion.lastName}
               </p>
-              <p className="max-w-[10rem] overflow-hidden text-ellipsis text-xs font-medium text-slate-500">
+              <p className="max-w-[10rem] overflow-hidden text-xs font-medium text-ellipsis text-slate-500">
                 @{suggestion.username}
               </p>
             </div>

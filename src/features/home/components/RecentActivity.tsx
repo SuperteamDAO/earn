@@ -77,10 +77,10 @@ const ActivityCard = ({
       />
       <div className="ml-3">
         <div className="flex items-center">
-          <span className="mr-1.5 max-w-32 overflow-hidden text-ellipsis whitespace-nowrap text-[0.9rem] font-semibold text-slate-800">
+          <span className="mr-1.5 max-w-32 overflow-hidden text-[0.9rem] font-semibold text-ellipsis whitespace-nowrap text-slate-800">
             {firstName} {lastName}
           </span>
-          <span className="max-w-[5.7rem] overflow-hidden text-ellipsis whitespace-nowrap text-sm font-medium text-slate-400">
+          <span className="max-w-[5.7rem] overflow-hidden text-sm font-medium text-ellipsis whitespace-nowrap text-slate-400">
             @{username}
           </span>
           <span className="mx-1 text-xs text-slate-400">•</span>
@@ -108,7 +108,7 @@ export const RecentActivity = () => {
         </span>
         <Link
           href="/feed"
-          className="ph-no-capture flex items-center text-xs font-semibold text-brand-purple"
+          className="ph-no-capture text-brand-purple flex items-center text-xs font-semibold"
           onClick={() => {
             posthog.capture('recent winners_view all_homepage');
           }}

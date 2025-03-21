@@ -21,7 +21,7 @@ export function GeoLock() {
       render={({ field }) => {
         return (
           <FormItem className="flex flex-row items-center justify-between gap-4">
-            <div className="flex-grow">
+            <div className="grow">
               <FormLabel className="">Geo-locking</FormLabel>
               <FormDescription className="flex gap-1">
                 {field.value === Regions.GLOBAL ? (

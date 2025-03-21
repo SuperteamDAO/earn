@@ -85,7 +85,7 @@ export function TokenSelect() {
                       link at
                       <Badge
                         variant="secondary"
-                        className="mx-1 my-0.5 inline-flex cursor-pointer items-center gap-1 border-border px-1 text-slate-500 sm:text-[11px]"
+                        className="border-border mx-1 my-0.5 inline-flex cursor-pointer items-center gap-1 px-1 text-slate-500 sm:text-[11px]"
                         onClick={() => {
                           clipboard.onCopy();
                           toast.success('Email Address copied to clipboard!');

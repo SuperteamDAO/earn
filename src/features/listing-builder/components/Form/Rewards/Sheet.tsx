@@ -80,7 +80,7 @@ export function RewardsSheet() {
                   </Button>
                 </div>
                 {hasRewardsErrors ? (
-                  <p className={'text-[0.8rem] font-medium text-destructive'}>
+                  <p className={'text-destructive text-[0.8rem] font-medium'}>
                     Please resolve all errors in rewards
                   </p>
                 ) : (
@@ -275,7 +275,7 @@ RewardsLabel.displayName = 'CompensationTypeLabel';
 
 function TypeLabelText({ children }: { children: React.ReactNode }) {
   return (
-    <p className="ml-1 overflow-hidden text-ellipsis whitespace-nowrap text-xs capitalize text-slate-400">
+    <p className="ml-1 overflow-hidden text-xs text-ellipsis whitespace-nowrap text-slate-400 capitalize">
       {children}
     </p>
   );

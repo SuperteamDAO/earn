@@ -105,7 +105,7 @@ export const ShareProfile = ({ isOpen, onClose, username, id }: Props) => {
               readOnly
               value={profileUrl}
             />
-            <div className="absolute right-4 top-1/2 -translate-y-1/2">
+            <div className="absolute top-1/2 right-4 -translate-y-1/2">
               {hasCopied ? (
                 <FaCheck className="h-5 w-5 text-slate-500" />
               ) : (
@@ -117,7 +117,7 @@ export const ShareProfile = ({ isOpen, onClose, username, id }: Props) => {
             </div>
           </div>
           <p className="mt-6 text-sm font-medium text-slate-400">SHARE TO</p>
-          <div className="mb-4 mt-3 flex gap-4">
+          <div className="mt-3 mb-4 flex gap-4">
             {socialPlatforms.map(({ name, icon: Icon, share }) => (
               <Icon
                 key={name}

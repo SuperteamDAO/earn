@@ -23,7 +23,7 @@ export const FeedCardHeader = ({
   const router = useRouter();
   if (type === 'profile') {
     return (
-      <div className="-mb-1 -mt-0.5">
+      <div className="-mt-0.5 -mb-1">
         <div className="flex items-center justify-between">
           <div className="flex items-center">
             <p className="text-sm font-medium text-slate-400 md:text-base">
@@ -35,7 +35,7 @@ export const FeedCardHeader = ({
             {timeAgoShort(createdAt)}
           </p>
         </div>
-        <p className="break-all text-sm text-slate-500 md:text-base">
+        <p className="text-sm break-all text-slate-500 md:text-base">
           {description}
         </p>
       </div>

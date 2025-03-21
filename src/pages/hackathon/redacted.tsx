@@ -84,7 +84,7 @@ export default function Redacted({ hackathon }: { hackathon: Hackathon }) {
     >
       <div>
         <div
-          className="flex flex-col items-center border-b border-slate-200 bg-cover bg-center bg-no-repeat pb-12 pt-20"
+          className="flex flex-col items-center border-b border-slate-200 bg-cover bg-center bg-no-repeat pt-20 pb-12"
           style={{
             backgroundImage: `url('${ASSET_URL}/hackathon/redacted/banner')`,
           }}
@@ -238,7 +238,7 @@ function FAQs() {
               value={f.question}
               className="my-4 rounded-lg border shadow-md"
             >
-              <AccordionTrigger className="rounded px-4 py-3 text-left font-normal text-slate-500 data-[state=open]:bg-black/5 hover:bg-black/5 hover:no-underline focus:no-underline">
+              <AccordionTrigger className="rounded px-4 py-3 text-left font-normal text-slate-500 hover:bg-black/5 hover:no-underline focus:no-underline data-[state=open]:bg-black/5">
                 <span className="flex-1 text-left text-sm sm:text-base">
                   {f.question}
                 </span>

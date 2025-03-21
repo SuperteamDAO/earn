@@ -101,7 +101,7 @@ export const SubmissionTerms = ({
               </Link>
               .
             </p>
-            <Button onClick={onClose} className="ml-auto mt-5 px-10 text-lg">
+            <Button onClick={onClose} className="mt-5 ml-auto px-10 text-lg">
               Done
             </Button>
           </div>

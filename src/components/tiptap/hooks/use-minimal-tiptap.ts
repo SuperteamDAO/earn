@@ -230,7 +230,7 @@ export const useMinimalTiptapEditor = ({
         autocomplete: 'off',
         autocorrect: 'off',
         autocapitalize: 'off',
-        class: cn('focus:outline-none', editorClassName),
+        class: cn('focus:outline-hidden', editorClassName),
       },
     },
     onUpdate: ({ editor }) => handleUpdate(editor),

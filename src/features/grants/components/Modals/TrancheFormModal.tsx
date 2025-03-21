@@ -115,7 +115,7 @@ export const TrancheFormModal = ({ grant, applicationId, onClose }: Props) => {
             </Button>
           </form>
         </Form>
-        <p className="mt-3 w-full pb-6 text-center text-xxs text-slate-400 sm:pb-0 sm:text-xs">
+        <p className="text-xxs mt-3 w-full pb-6 text-center text-slate-400 sm:pb-0 sm:text-xs">
           By applying to this tranche request, you agree to our{' '}
           <button
             onClick={() => setIsTOSModalOpen(true)}

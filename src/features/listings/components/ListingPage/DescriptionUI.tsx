@@ -71,8 +71,8 @@ export function DescriptionUI({ description }: Props) {
             !showMore && 'h-[50vh] overflow-hidden',
           )}
         >
-          <div className="minimal-tiptap-editor tiptap ProseMirror h-full w-full overflow-visible !px-0 pb-7">
-            <div className="tiptap ProseMirror listing-description !mt-0 !px-0">
+          <div className="minimal-tiptap-editor tiptap ProseMirror h-full w-full overflow-visible px-0! pb-7">
+            <div className="tiptap ProseMirror listing-description mt-0! px-0!">
               {parse(
                 description?.startsWith('"')
                   ? JSON.parse(description || '')
@@ -83,7 +83,7 @@ export function DescriptionUI({ description }: Props) {
           </div>
           {!showMore && (
             <div
-              className="pointer-events-none absolute bottom-0 left-0 right-0 h-[40%]"
+              className="pointer-events-none absolute right-0 bottom-0 left-0 h-[40%]"
               style={{
                 background:
                   'linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.9))',

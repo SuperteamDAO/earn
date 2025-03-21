@@ -33,7 +33,7 @@ function PillTab({ href, children, altActive, phEvent }: PillTabProps) {
         'ph-no-capture flex items-center gap-2 px-3 py-0 sm:py-0.5',
         'rounded-full border border-slate-200 text-sm',
         'hover:bg-violet-50 hover:no-underline',
-        isActive ? 'bg-violet-50 text-black' : 'bg-white text-slate-500',
+        isActive ? 'bg-violet-50 text-black' : 'text-slate-500',
       )}
       onClick={() => posthog.capture(phEvent)}
     >

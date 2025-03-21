@@ -53,14 +53,14 @@ export const ListingCardMini = ({ bounty }: { bounty: Listing }) => {
               {title}
             </p>
             <div className="flex w-min items-center gap-1">
-              <p className="w-full whitespace-nowrap text-xs text-slate-500">
+              <p className="w-full text-xs whitespace-nowrap text-slate-500">
                 {sponsor?.name}
               </p>
               <div>{!!sponsor?.isVerified && <VerifiedBadge />}</div>
             </div>
             <div className="mt-px flex flex-wrap items-center gap-1">
               <div className="flex items-center justify-start">
-                {showToken && (
+                {!!showToken && (
                   <img
                     className="mr-0.5 h-4 w-4 rounded-full"
                     alt={token}
@@ -78,9 +78,9 @@ export const ListingCardMini = ({ bounty }: { bounty: Listing }) => {
                     minRewardAsk={minRewardAsk}
                     rewardAmount={rewardAmount}
                     isWinnersAnnounced={isWinnersAnnounced}
-                    className="whitespace-nowrap text-xs font-semibold text-slate-600"
+                    className="text-xs font-semibold whitespace-nowrap text-slate-600"
                   />
-                  {showToken && (
+                  {!!showToken && (
                     <p className="text-xs font-medium text-gray-400">{token}</p>
                   )}
                 </div>
@@ -94,7 +94,7 @@ export const ListingCardMini = ({ bounty }: { bounty: Listing }) => {
               <p className="flex text-xs text-slate-300 md:text-sm">|</p>
 
               <div className="flex items-center gap-1">
-                <p className="whitespace-nowrap text-xs text-gray-500">
+                <p className="text-xs whitespace-nowrap text-gray-500">
                   {dayjs().isBefore(dayjs(deadline))
                     ? `Due ${dayjs(deadline).fromNow()}`
                     : `Closed ${dayjs(deadline).fromNow()}`}

@@ -130,7 +130,7 @@ export const SelectWinner = ({
             >
               <SelectTrigger
                 className={cn(
-                  'h-10 w-40 border-slate-300 font-medium capitalize text-slate-700',
+                  'h-10 w-40 border-slate-300 font-medium text-slate-700 capitalize',
                   'focus:border-brand-purple focus:ring-brand-purple',
                 )}
               >
@@ -169,7 +169,7 @@ export const SelectWinner = ({
             </Select>
             {isValueSelected && (
               <div
-                className="absolute right-8 top-1/2 z-10 -translate-y-1/2 cursor-pointer"
+                className="absolute top-1/2 right-8 z-10 -translate-y-1/2 cursor-pointer"
                 onClick={(e) => {
                   e.stopPropagation();
                   selectWinner(0, selectedSubmission?.id);

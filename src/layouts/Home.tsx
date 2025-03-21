@@ -7,7 +7,7 @@ import { type Superteam } from '@/constants/Superteam';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 
-import { HomeBanner } from '@/features/home/components/Banner';
+import { BannerCarousel } from '@/features/home/components/Banner';
 import { NavTabs } from '@/features/home/components/NavTabs';
 import { UserStatsBanner } from '@/features/home/components/UserStatsBanner';
 
@@ -79,13 +79,13 @@ export function Home({ children, type, st, isAuth }: HomeProps) {
                 {type === 'landing' && (
                   <>
                     <NavTabs />
-                    {isAuth ? <UserStatsBanner /> : <HomeBanner />}
+                    {isAuth ? <UserStatsBanner /> : <BannerCarousel />}
                   </>
                 )}
                 {type === 'listing' && (
                   <>
                     <NavTabs />
-                    {!authenticated ? <HomeBanner /> : <UserStatsBanner />}
+                    {!authenticated ? <BannerCarousel /> : <UserStatsBanner />}
                   </>
                 )}
                 {type === 'category' && <NavTabs />}

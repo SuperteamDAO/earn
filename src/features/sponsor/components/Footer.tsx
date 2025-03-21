@@ -23,7 +23,7 @@ export function Footer() {
     <div
       className={cn(
         'flex flex-col items-center gap-8 rounded-lg bg-indigo-600 leading-tight',
-        'mb-24 mt-12',
+        'mt-12 mb-24',
         'mx-[1.875rem] px-[1.875rem] lg:mx-[7rem] lg:px-[7rem] xl:mx-[11rem] xl:px-[11rem]',
         'py-5 lg:py-8 xl:py-12',
         maxW2,

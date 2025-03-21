@@ -24,8 +24,8 @@ const ManualInstructions = () => (
   <div className="mb-8 rounded-md bg-slate-100 py-2">
     <p className="text-center">
       Tap these icons (
-      <MdIosShare className="mr-1 inline-block font-semibold text-brand-purple" />
-      or <BsThreeDotsVertical className="inline-block text-brand-purple" />) and
+      <MdIosShare className="text-brand-purple mr-1 inline-block font-semibold" />
+      or <BsThreeDotsVertical className="text-brand-purple inline-block" />) and
       select the &quot;Add to home screen&quot; option.
     </p>
   </div>
@@ -112,7 +112,7 @@ export const InstallPWAModal = () => {
               <MdOutlineInstallMobile className="text-slate-500" />
               <span className="text-base text-slate-700">Install Earn</span>
             </DrawerTitle>
-            <DrawerClose className="absolute right-2 top-7">
+            <DrawerClose className="absolute top-7 right-2">
               <Button variant="ghost" size="icon">
                 <X className="h-4 w-4" />
               </Button>

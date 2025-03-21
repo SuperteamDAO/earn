@@ -72,7 +72,7 @@ export function ListingCard({
             src={pfp}
             className="h-12 w-12"
           />
-          <div className="flex w-full flex-grow flex-col items-start gap-0 text-sm">
+          <div className="flex w-full grow flex-col items-start gap-0 text-sm">
             <p className="font-semibold text-slate-700">{title}</p>
             <p className="bg-slate-50 font-semibold text-slate-400">
               By {name}
@@ -104,7 +104,7 @@ export function ListingCard({
 
       <hr />
 
-      <div className="flex w-full justify-between px-4 pb-4 pt-2">
+      <div className="flex w-full justify-between px-4 pt-2 pb-4">
         <div className="flex gap-2">
           <HighQualityImage
             className="h-5 w-5"

@@ -191,7 +191,7 @@ export default function UpdateSponsor() {
         />
       }
     >
-      <div className="mx-auto flex flex-col gap-2 pb-24 pt-12">
+      <div className="mx-auto flex flex-col gap-2 pt-12 pb-24">
         <div className="flex flex-col gap-2">
           <p className="mb-8 text-3xl font-semibold tracking-tight text-gray-900">
             Edit Sponsor Profile
@@ -264,7 +264,7 @@ export default function UpdateSponsor() {
                         content="Please mention the official entity name of your project. If you are a DAO, simply mention the name of the DAO. If you neither have an entity nor are a DAO, mention your full name."
                         contentProps={{ className: 'text-xs' }}
                       >
-                        <Info className="ml-1 mt-1 hidden h-3 w-3 text-slate-500 md:block" />
+                        <Info className="mt-1 ml-1 hidden h-3 w-3 text-slate-500 md:block" />
                       </Tooltip>
                     </>
                   }
@@ -274,7 +274,7 @@ export default function UpdateSponsor() {
                 </FormFieldWrapper>
               </div>
 
-              <div className="mb-3 mt-6 w-full">
+              <div className="mt-6 mb-3 w-full">
                 <FormLabel isRequired>Company Logo</FormLabel>
                 <ImagePicker
                   defaultValue={logoPreview ? { url: logoPreview } : undefined}

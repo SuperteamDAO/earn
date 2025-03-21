@@ -68,14 +68,14 @@ function GrantApplications({ slug }: Props) {
 
             <TabsContent
               value="tranches"
-              className="px-0 focus:outline-none focus-visible:ring-0 focus-visible:ring-transparent"
+              className="px-0 focus:outline-hidden focus-visible:ring-0 focus-visible:ring-transparent"
             >
               <TranchesTab slug={slug} />
             </TabsContent>
 
             <TabsContent
               value="payments"
-              className="px-0 focus:outline-none focus-visible:ring-0 focus-visible:ring-transparent"
+              className="px-0 focus:outline-hidden focus-visible:ring-0 focus-visible:ring-transparent"
             >
               <PaymentsHistoryTab grant={grant} grantId={grant?.id} />
             </TabsContent>

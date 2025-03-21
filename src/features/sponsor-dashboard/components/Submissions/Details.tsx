@@ -20,7 +20,7 @@ export const Details = ({ bounty, isHackathonPage }: Props) => {
 
   return (
     <div className="flex h-[32.6rem] w-full">
-      <div className="scrollbar-thumb-rounded-full flex w-full flex-1 flex-col overflow-y-auto p-4 scrollbar-thin scrollbar-track-slate-100 scrollbar-thumb-slate-300">
+      <div className="scrollbar-thumb-rounded-full scrollbar-thin scrollbar-track-slate-100 scrollbar-thumb-slate-300 flex w-full flex-1 flex-col overflow-y-auto p-4">
         {!isProject && (
           <>
             <InfoBox

@@ -76,7 +76,7 @@ export const TalentImageCard = () => {
         src="onboarding/talent-cover"
         className="h-full w-full object-cover"
       />
-      <div className="absolute left-2/4 top-2/4 w-[25rem] -translate-x-2/4 -translate-y-2/4">
+      <div className="absolute top-2/4 left-2/4 w-[25rem] -translate-x-2/4 -translate-y-2/4">
         <Card className="rounded-xl">
           <CardContent className="grid grid-cols-3 items-center gap-x-4 gap-y-4 py-8">
             <div>

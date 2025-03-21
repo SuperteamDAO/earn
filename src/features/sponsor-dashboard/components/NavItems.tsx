@@ -35,7 +35,7 @@ export const NavItem = ({
       href={resolvedLink || '#'}
       target={isExternalLink ? '_blank' : undefined}
       rel={isExternalLink ? 'noopener noreferrer' : undefined}
-      className="no-underline focus:outline-none"
+      className="no-underline focus:outline-hidden"
     >
       <div
         className={cn(

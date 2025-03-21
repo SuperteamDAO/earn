@@ -57,7 +57,7 @@ export function StepTwo() {
           />
           <p className="font-semibold text-slate-800">$1,000</p>
         </div>
-        <p className="rounded-lg bg-indigo-50 px-4 py-2 text-sm font-medium text-brand-purple">
+        <p className="text-brand-purple rounded-lg bg-indigo-50 px-4 py-2 text-sm font-medium">
           Post Bounty
         </p>
       </div>
