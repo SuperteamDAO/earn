@@ -66,11 +66,11 @@ const ListingTabTrigger = ({
   <button
     onClick={onClick}
     className={cn(
-      'group relative inline-flex items-center justify-center whitespace-nowrap rounded-md px-1 py-1 text-sm font-medium ring-offset-background transition-all sm:px-3',
+      'group ring-offset-background relative inline-flex items-center justify-center rounded-md px-1 py-1 text-sm font-medium whitespace-nowrap transition-all sm:px-3',
       'hover:text-brand-purple',
       isActive && [
         'text-brand-purple',
-        'after:absolute after:bottom-[-12px] after:left-0 after:h-[2px] after:w-full after:bg-brand-purple/80',
+        'after:bg-brand-purple/80 after:absolute after:bottom-[-12px] after:left-0 after:h-[2px] after:w-full',
       ],
       !isActive && 'text-slate-500',
     )}
@@ -263,7 +263,7 @@ export const ListingTabs = ({
   }, []);
 
   return (
-    <div className="mb-10 mt-5">
+    <div className="mt-5 mb-10">
       <div className="mb-5 flex items-center justify-between sm:mb-4">
         <div className="flex w-full items-center justify-between sm:justify-start">
           <div className="flex items-center">
@@ -274,7 +274,7 @@ export const ListingTabs = ({
                 src={emoji}
               />
             )}
-            <p className="whitespace-nowrap pr-2 text-[14px] font-semibold text-slate-700 sm:text-[15px] md:text-[16px]">
+            <p className="pr-2 text-[14px] font-semibold whitespace-nowrap text-slate-700 sm:text-[15px] md:text-[16px]">
               {title}
             </p>
           </div>

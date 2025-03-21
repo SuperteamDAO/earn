@@ -80,7 +80,7 @@ export function Deadline() {
             <FormLabel isRequired className="">
               Deadline (in {Intl.DateTimeFormat().resolvedOptions().timeZone})
             </FormLabel>
-            <div className="flex rounded-md border ring-primary has-[:focus]:ring-1 has-[data-[state=open]]:ring-1">
+            <div className="ring-primary flex rounded-md border has-focus:ring-1 has-[data-[state=open]]:ring-1">
               <DateTimePicker
                 value={field.value ? new Date(field.value) : undefined}
                 onChange={(date) => {

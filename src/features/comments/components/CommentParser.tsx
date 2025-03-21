@@ -106,7 +106,7 @@ export const CommentParser = ({
         </div>
         <Button
           variant="link"
-          className="h-auto p-0 text-muted-foreground hover:text-primary"
+          className="text-muted-foreground hover:text-primary h-auto p-0"
           onClick={() => setIsExpanded(true)}
         >
           Read more

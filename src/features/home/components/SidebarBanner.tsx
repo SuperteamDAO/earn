@@ -32,7 +32,7 @@ export function SidebarBanner({ className }: SidebarPosterProps) {
         <ExternalImage
           src={baseAsset('banner-mobile-v2')}
           alt="Sonic Mobius Hackathon"
-          className="absolute left-0 top-0 h-full w-full object-cover"
+          className="absolute top-0 left-0 h-full w-full object-cover"
         />
 
         <div className="relative z-10 flex h-full w-full flex-col px-4 py-6 text-white">
@@ -44,22 +44,22 @@ export function SidebarBanner({ className }: SidebarPosterProps) {
           />
 
           <h2
-            className={`${orbitron.className} text-center text-[4rem] font-bold !leading-none`}
+            className={`${orbitron.className} text-center text-[4rem] leading-none! font-bold`}
             style={{ textShadow: '0px 4px 4px rgba(0, 0, 0, 0.8)' }}
           >
             MOBIUS
           </h2>
 
           <div
-            className={`${orbitron.className} w-full pr-6 pt-1 text-right text-base font-medium leading-[15.67px] tracking-normal`}
+            className={`${orbitron.className} w-full pt-1 pr-6 text-right text-base leading-[15.67px] font-medium tracking-normal`}
           >
-            <span className="bg-gradient-to-b from-white to-[#999999] bg-clip-text text-transparent">
+            <span className="bg-linear-to-b from-white to-[#999999] bg-clip-text text-transparent">
               Global Hackathon
             </span>
           </div>
 
           <p
-            className={`${orbitron.className} mb-2 mt-auto text-center text-lg font-medium text-[#FF510C]`}
+            className={`${orbitron.className} mt-auto mb-2 text-center text-lg font-medium text-[#FF510C]`}
           >
             {dayjs(START_DATE).format('MMM.DD')} -{' '}
             {dayjs(CLOSE_DATE).format('MMM.DD')}

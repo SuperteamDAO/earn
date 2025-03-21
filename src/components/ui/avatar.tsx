@@ -35,7 +35,7 @@ const AvatarFallback = React.forwardRef<
   <AvatarPrimitive.Fallback
     ref={ref}
     className={cn(
-      'flex h-full w-full items-center justify-center overflow-hidden rounded-full bg-muted',
+      'bg-muted flex h-full w-full items-center justify-center overflow-hidden rounded-full',
       className,
     )}
     {...props}
@@ -44,7 +44,7 @@ const AvatarFallback = React.forwardRef<
 AvatarFallback.displayName = AvatarPrimitive.Fallback.displayName;
 
 const avatarBadgeVariants = cva(
-  'absolute w-4 h-4 rounded-full bg-background flex items-stretch justify-stretch [&>*]:grow [&>*]:rounded-full',
+  'absolute w-4 h-4 rounded-full bg-background flex items-stretch justify-stretch *:grow *:rounded-full',
   {
     variants: {
       position: {
@@ -152,7 +152,7 @@ const AvatarOverflowIndicator = React.forwardRef<
     <span
       ref={ref}
       className={cn(
-        'relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-muted',
+        'bg-muted relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full',
         className,
       )}
       {...props}

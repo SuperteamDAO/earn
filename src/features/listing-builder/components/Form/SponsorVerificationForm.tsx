@@ -191,7 +191,7 @@ export const SponsorVerificationForm = () => {
                     </FormItem>
                   )}
                 />
-                <div className="flex w-full flex-col pb-4 pt-8">
+                <div className="flex w-full flex-col pt-8 pb-4">
                   <Button
                     type="submit"
                     className="w-full"

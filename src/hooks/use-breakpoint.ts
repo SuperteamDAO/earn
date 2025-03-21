@@ -1,31 +1,32 @@
 import { useEffect, useState } from 'react';
-import resolveConfig from 'tailwindcss/resolveConfig';
 
-import tailwindConfig from '../../tailwind.config';
+export type Breakpoint = 'sm' | 'md' | 'lg' | 'xl' | '2xl';
 
-const fullConfig = resolveConfig(tailwindConfig);
-
-type Breakpoint = keyof typeof fullConfig.theme.screens;
-
-const getBreakpointValue = (breakpoint: Breakpoint): number => {
-  const value = fullConfig.theme.screens[breakpoint];
-  return parseInt(value.slice(0, value.indexOf('px')));
+const breakpointValues: Record<Breakpoint, number> = {
+  sm: 640,
+  md: 768,
+  lg: 1024,
+  xl: 1280,
+  '2xl': 1536,
 };
 
 export const useBreakpoint = (breakpoint: Breakpoint): boolean => {
-  const [isBreakpoint, setIsBreakpoint] = useState<boolean>(false);
+  const [matches, setMatches] = useState<boolean>(() => {
+    if (typeof window !== 'undefined') {
+      return window.innerWidth >= breakpointValues[breakpoint];
+    }
+    return false;
+  });
 
   useEffect(() => {
-    const checkBreakpoint = () => {
-      const breakpointValue = getBreakpointValue(breakpoint);
-      setIsBreakpoint(window.innerWidth >= breakpointValue);
+    if (typeof window === 'undefined') return;
+    const check = () => {
+      setMatches(window.innerWidth >= breakpointValues[breakpoint]);
     };
-
-    checkBreakpoint();
-
-    window.addEventListener('resize', checkBreakpoint);
-    return () => window.removeEventListener('resize', checkBreakpoint);
+    check();
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
   }, [breakpoint]);
 
-  return isBreakpoint;
+  return matches;
 };

@@ -45,7 +45,7 @@ export function HomeSponsorBanner() {
       href="/sponsor"
       className="relative mx-auto flex h-full w-full flex-col overflow-hidden rounded-[0.5rem] p-5 md:p-10"
     >
-      <div className="absolute inset-0 overflow-hidden bg-gradient-to-r from-[#00CCFE] to-[#A6EDFF]">
+      <div className="absolute inset-0 overflow-hidden bg-linear-to-r from-[#00CCFE] to-[#A6EDFF]">
         <picture
           className={cn(
             'relative ml-auto h-full w-fit',
@@ -57,7 +57,7 @@ export function HomeSponsorBanner() {
         </picture>
         <picture
           className={cn(
-            'absolute right-0 top-0 z-10 h-[45%] w-fit sm:h-[70%]',
+            'absolute top-0 right-0 z-10 h-[45%] w-fit sm:h-[70%]',
             'flex md:hidden lg:flex xl:hidden',
           )}
         >
@@ -85,7 +85,7 @@ export function HomeSponsorBanner() {
           fill="black"
         />
       </svg>
-      <p className="relative z-10 text-2xl font-bold leading-[120%] text-black md:text-[28px]">
+      <p className="relative z-10 text-2xl leading-[120%] font-bold text-black md:text-[28px]">
         Become a Sponsor
       </p>
       <p className="relative z-10 mt-1 max-w-[18rem] text-sm leading-[130%] text-black sm:max-w-md md:mt-1 md:max-w-[20rem] md:text-lg lg:max-w-sm xl:max-w-[25rem]">

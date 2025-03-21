@@ -152,14 +152,14 @@ function Hero({
   const isMd = useBreakpoint('md');
   return (
     <div
-      className="relative flex w-full flex-col items-center border-b border-slate-200 bg-cover bg-center bg-no-repeat pb-6 pt-8 text-center text-white md:pb-20"
+      className="relative flex w-full flex-col items-center border-b border-slate-200 bg-cover bg-center bg-no-repeat pt-8 pb-6 text-center text-white md:pb-20"
       style={{
         backgroundImage: `url('${ASSET_URL + baseAsset(isMd ? 'banner' : 'banner-mobile-v2')}')`,
       }}
     >
       <ExternalImage alt="Sonic" src={baseAsset('sonic')} className="w-28" />
       <p
-        className={`${orbitron.className} px-6 text-[2.5rem] font-medium leading-[2.84rem] md:mt-2 md:font-normal`}
+        className={`${orbitron.className} px-6 text-[2.5rem] leading-[2.84rem] font-medium md:mt-2 md:font-normal`}
       >
         Sonic Mobius Hackathon
       </p>
@@ -168,7 +168,7 @@ function Hero({
       >
         The first SVM hackathon on Solana
       </p>
-      <div className="mb-1 mt-8 flex w-full max-w-[18.5rem] flex-col items-center gap-4 md:mt-8 md:w-auto md:max-w-none">
+      <div className="mt-8 mb-1 flex w-full max-w-[18.5rem] flex-col items-center gap-4 md:mt-8 md:w-auto md:max-w-none">
         <div className={`${orbitron.className}`}>
           <p className="font-medium">
             {dayjs(START_DATE).format('MMM.DD, YYYY')} -{' '}
@@ -211,7 +211,7 @@ function Hero({
           </Button>
           <Button
             variant="ghost"
-            className="w-full rounded-xl text-base text-gray-300 underline hover:bg-secondary"
+            className="hover:bg-secondary w-full rounded-xl text-base text-gray-300 underline"
             asChild
           >
             <Link href="https://t.me/+S_eelN_07xswYTdl" target="_blank">
@@ -262,7 +262,7 @@ function HeroMini({
       <ExternalImage
         src={baseAsset(isMd ? 'mini-banner' : 'mini-banner-mobile')}
         alt="mini banner"
-        className="absolute left-0 top-0 h-full w-full overflow-hidden object-cover md:block"
+        className="absolute top-0 left-0 h-full w-full overflow-hidden object-cover md:block"
       />
       <div
         className={`${orbitron.className} relative flex w-full items-center justify-center gap-8 rounded-md px-6 py-6 md:flex-row md:gap-12 md:rounded-xl md:px-40`}
@@ -356,7 +356,7 @@ function GrandPrize() {
           <span className="text-sm font-semibold text-slate-900 md:text-base">
             Grand Prize
           </span>
-          <span className="pr-0 text-xs font-medium leading-[0.85rem] text-slate-500 md:text-sm md:leading-[1.0625rem]">
+          <span className="pr-0 text-xs leading-[0.85rem] font-medium text-slate-500 md:text-sm md:leading-[1.0625rem]">
             Up to four of the best overall projects across all tracks will be
             chosen by Mobius’ panel of top judges from the Solana ecosystem as
             the Grand Prize winners.
@@ -418,7 +418,7 @@ const TrackBox = ({
           <span className="text-sm font-semibold text-slate-900 md:text-base">
             {title}
           </span>
-          <span className="pr-0 text-xs font-medium leading-[0.95rem] text-slate-500 md:text-sm md:leading-[1.0625rem]">
+          <span className="pr-0 text-xs leading-[0.95rem] font-medium text-slate-500 md:text-sm md:leading-[1.0625rem]">
             {subtext}
           </span>
         </div>
@@ -496,7 +496,7 @@ function FAQs() {
               value={f.question}
               className="my-4 rounded-lg border shadow-md"
             >
-              <AccordionTrigger className="rounded px-4 py-3 text-left font-normal text-slate-500 data-[state=open]:bg-black/5 hover:bg-black/5 hover:no-underline focus:no-underline">
+              <AccordionTrigger className="rounded px-4 py-3 text-left font-normal text-slate-500 hover:bg-black/5 hover:no-underline focus:no-underline data-[state=open]:bg-black/5">
                 <span className="flex-1 text-left text-sm sm:text-base">
                   {f.question}
                 </span>

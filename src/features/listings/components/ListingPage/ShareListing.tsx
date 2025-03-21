@@ -233,7 +233,7 @@ function MainContent({
             key={platform.name}
             variant="ghost"
             size="icon"
-            className="ph-no-capture h-fit w-fit rounded-full !p-0"
+            className="ph-no-capture h-fit w-fit rounded-full p-0!"
             onClick={() => handleShare(platform.url, platform.posthog)}
           >
             <platform.icon

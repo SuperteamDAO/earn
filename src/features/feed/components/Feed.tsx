@@ -89,7 +89,7 @@ export const Feed = ({ isWinner = false, id, type }: Props) => {
   return (
     <FeedPageLayout isHomePage>
       <HomepagePop />
-      <div className="border-b py-5 pl-6 pr-2 md:pl-5">
+      <div className="border-b py-5 pr-2 pl-6 md:pl-5">
         <p className="text-lg font-medium text-slate-900 lg:text-xl">
           Activity Feed
         </p>
@@ -107,7 +107,7 @@ export const Feed = ({ isWinner = false, id, type }: Props) => {
 
           {activeMenu === 'popular' && (
             <select
-              className="mr-1 w-28 text-right text-sm text-slate-500 outline-none"
+              className="mr-1 w-28 text-right text-sm text-slate-500 outline-hidden"
               onChange={(e) => {
                 setTimePeriod(e.target.value);
               }}

@@ -66,7 +66,7 @@ export const ATAConfirmation = ({
       </div>
 
       <div className="flex items-start gap-4 rounded-lg border border-slate-100 bg-slate-50 p-4">
-        <AlertTriangle className="mt-1 h-5 w-5 flex-shrink-0 text-slate-500" />
+        <AlertTriangle className="mt-1 h-5 w-5 shrink-0 text-slate-500" />
         <div>
           <h3 className="text-base font-semibold text-slate-800">
             Additional Setup Required
