@@ -573,3 +573,8 @@ h3.tiptap-heading + h2.tiptap-heading {
 	margin: 1.5rem 0;
 	padding-left: 1rem;
 }
+
+// hide metamask
+.wallet-adapter-button:has(img[alt="MetaMask icon"]) {
+  display: none !important;
+}
