@@ -92,7 +92,7 @@ async function comment(req: NextApiRequestWithUser, res: NextApiResponse) {
       if (taggedUsers.length > 0) {
         logger.debug('Sending email notifications to tagged users');
         for (const taggedUser of taggedUsers) {
-          sendEmailNotification({
+          await sendEmailNotification({
             type: 'commentTag',
             id: refId,
             userId: taggedUser.id,
@@ -109,7 +109,7 @@ async function comment(req: NextApiRequestWithUser, res: NextApiResponse) {
         logger.debug(
           `Sending email notification to user ID: ${replyToUserId} for comment reply`,
         );
-        sendEmailNotification({
+        await sendEmailNotification({
           type: 'commentReply',
           id: refId,
           userId: replyToUserId as string,
@@ -127,7 +127,7 @@ async function comment(req: NextApiRequestWithUser, res: NextApiResponse) {
       ) {
         if (refType === 'BOUNTY' && type === 'NORMAL') {
           logger.info(`Sending email notification to POC ID: ${pocId}`);
-          sendEmailNotification({
+          await sendEmailNotification({
             type: 'commentSponsor',
             id: refId,
             userId: pocId as string,
@@ -137,7 +137,7 @@ async function comment(req: NextApiRequestWithUser, res: NextApiResponse) {
 
         if (refType !== 'BOUNTY' && type === 'NORMAL') {
           logger.info(`Sending email notification for activity comment`);
-          sendEmailNotification({
+          await sendEmailNotification({
             type: 'commentActivity',
             id: refId,
             otherInfo: {

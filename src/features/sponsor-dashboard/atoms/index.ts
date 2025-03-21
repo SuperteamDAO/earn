@@ -2,6 +2,7 @@ import { atom } from 'jotai';
 
 import { type SubmissionWithUser } from '@/interface/submission';
 
+import { type GrantTrancheWithApplication } from '../queries/tranches';
 import { type GrantApplicationWithUser } from '../types';
 
 type Updater<T> = (prev: T) => T;
@@ -12,6 +13,10 @@ const baseSelectedSubmissionAtom = atom<SubmissionWithUser | undefined>(
 );
 const baseSelectedGrantApplicationAtom = atom<
   GrantApplicationWithUser | undefined
+>(undefined);
+
+const baseSelectedGrantTrancheAtom = atom<
+  GrantTrancheWithApplication | undefined
 >(undefined);
 
 export const isStateUpdatingAtom = atom<boolean>(false);
@@ -59,3 +64,31 @@ export const selectedGrantApplicationAtom = atom(
     }
   },
 );
+
+export const selectedGrantTrancheAtom = atom(
+  (get) => get(baseSelectedGrantTrancheAtom),
+  (
+    get,
+    set,
+    update:
+      | GrantTrancheWithApplication
+      | undefined
+      | Updater<GrantTrancheWithApplication | undefined>,
+  ) => {
+    const isUpdating = get(isStateUpdatingAtom);
+    if (!isUpdating) {
+      const prevValue = get(baseSelectedGrantTrancheAtom);
+      const newValue =
+        typeof update === 'function'
+          ? (update as Updater<GrantTrancheWithApplication | undefined>)(
+              prevValue,
+            )
+          : update;
+      set(baseSelectedGrantTrancheAtom, newValue);
+    }
+  },
+);
+
+export const applicationsAtom = atom<GrantApplicationWithUser[]>([]);
+
+export const tranchesAtom = atom<GrantTrancheWithApplication[]>([]);

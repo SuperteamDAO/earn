@@ -24,4 +24,5 @@ export const colorMap = {
     bg: 'bg-blue-100',
     color: 'text-blue-800',
   },
+  Paid: { bg: 'bg-blue-100', color: 'text-blue-800' },
 };

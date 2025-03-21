@@ -20,6 +20,12 @@ function airtableConfig(apiToken: string) {
   };
 }
 
+function airtableInsert(data: any[]) {
+  return {
+    records: data,
+  };
+}
+
 function airtableUpsert(mergeOn: string, data: any[]) {
   return {
     performUpsert: {
@@ -101,6 +107,7 @@ async function updateAirtableRecord(
 
 export {
   airtableConfig,
+  airtableInsert,
   airtableUpsert,
   airtableUrl,
   fetchAirtableRecordId,

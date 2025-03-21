@@ -217,7 +217,7 @@ export const ApproveModal = ({
 
           <Button
             className="mb-3 mt-2 w-full bg-[#079669] text-white hover:bg-[#079669]/90"
-            disabled={loading || approvedAmount === 0 || !!warningMessage}
+            disabled={loading || approvedAmount === 0}
             onClick={approveGrant}
           >
             {loading ? (

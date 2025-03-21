@@ -228,7 +228,7 @@ export async function POST(
         }
 
         logger.debug('Sending winner announcement email notifications');
-        sendEmailNotification({
+        await sendEmailNotification({
           type: 'announceWinners',
           id,
           triggeredBy: userId,
@@ -239,13 +239,13 @@ export async function POST(
           listing.type !== 'project' &&
           listing.isFndnPaying
         ) {
-          sendEmailNotification({
+          await sendEmailNotification({
             type: 'STWinners',
             id,
             triggeredBy: userId,
           });
         } else {
-          sendEmailNotification({
+          await sendEmailNotification({
             type: 'nonSTWinners',
             id,
             triggeredBy: userId,

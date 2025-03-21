@@ -25,6 +25,7 @@ import React, {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/utils/cn';
+import { getURLSanitized } from '@/utils/getURLSanitized';
 
 interface RichEditorProps {
   id: string;
@@ -351,10 +352,11 @@ const FloatingToolbar: React.FC<FloatingToolbarProps> = ({
             type="button"
             className="h-7 rounded-none border-l px-2"
             onClick={() => {
-              const { href } = editor.getAttributes('link');
-              if (href) {
-                window.open(href, '_blank');
-              }
+              window.open(
+                getURLSanitized(linkUrl),
+                '_blank',
+                'noopener,noreferrer',
+              );
             }}
           >
             <ExternalLink className="h-4 w-4" />
