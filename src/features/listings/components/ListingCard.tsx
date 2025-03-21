@@ -87,9 +87,10 @@ export const ListingCard = ({ bounty }: { bounty: Listing }) => {
   return (
     <Link
       href={`/listing/${slug}`}
-      className={`block w-full rounded-md px-2 py-4 no-underline hover:bg-gray-100 sm:px-4 ${
-        isFeatured && isBeforeDeadline ? 'bg-purple-50' : 'bg-white'
-      }`}
+      className={cn(
+        'block w-full rounded-md px-2 py-4 no-underline hover:bg-gray-100 sm:px-4',
+        isFeatured && isBeforeDeadline ? 'bg-purple-50' : '',
+      )}
     >
       <div className="flex w-full items-center justify-between">
         <div className="flex w-full">

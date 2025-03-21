@@ -30,7 +30,7 @@ export const GrantsCard = ({ grant }: { grant: GrantWithApplicationCount }) => {
 
   return (
     <Link
-      className="block w-full rounded-md bg-white px-2 py-4 hover:bg-gray-100 hover:no-underline sm:px-4"
+      className="block w-full rounded-md px-2 py-4 hover:bg-gray-100 hover:no-underline sm:px-4"
       href={`/grants/${slug}`}
     >
       <div className="flex w-full items-center justify-between">

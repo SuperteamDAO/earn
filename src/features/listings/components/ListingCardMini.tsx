@@ -60,7 +60,7 @@ export const ListingCardMini = ({ bounty }: { bounty: Listing }) => {
             </div>
             <div className="mt-px flex flex-wrap items-center gap-1">
               <div className="flex items-center justify-start">
-                {showToken && (
+                {!!showToken && (
                   <img
                     className="mr-0.5 h-4 w-4 rounded-full"
                     alt={token}
@@ -80,7 +80,7 @@ export const ListingCardMini = ({ bounty }: { bounty: Listing }) => {
                     isWinnersAnnounced={isWinnersAnnounced}
                     className="text-xs font-semibold whitespace-nowrap text-slate-600"
                   />
-                  {showToken && (
+                  {!!showToken && (
                     <p className="text-xs font-medium text-gray-400">{token}</p>
                   )}
                 </div>
