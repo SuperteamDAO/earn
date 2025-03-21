@@ -331,9 +331,6 @@ importers:
       resend:
         specifier: ^4.1.2
         version: 4.1.2(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
-      sass:
-        specifier: ^1.83.4
-        version: 1.83.4
       sharp:
         specifier: ^0.33.5
         version: 0.33.5
@@ -14148,6 +14145,7 @@ snapshots:
   chokidar@4.0.1:
     dependencies:
       readdirp: 4.0.2
+    optional: true
 
   chokidar@4.0.3:
     dependencies:
@@ -15670,7 +15668,8 @@ snapshots:
 
   immer@10.1.1: {}
 
-  immutable@5.0.3: {}
+  immutable@5.0.3:
+    optional: true
 
   import-fresh@2.0.0:
     dependencies:
@@ -17678,7 +17677,8 @@ snapshots:
     dependencies:
       picomatch: 2.3.1
 
-  readdirp@4.0.2: {}
+  readdirp@4.0.2:
+    optional: true
 
   readdirp@4.1.2: {}
 
@@ -17909,6 +17909,7 @@ snapshots:
       source-map-js: 1.2.1
     optionalDependencies:
       '@parcel/watcher': 2.5.0
+    optional: true
 
   saxes@6.0.0:
     dependencies:
