@@ -39,7 +39,7 @@ import { roundToNearestThousand } from '@/utils/number';
 import { userCountQuery } from '@/features/home/queries/user-count';
 import { liveOpportunitiesQuery } from '@/features/listings/queries/live-opportunities';
 
-import { popupsShowedAtom, popupTimeoutAtom } from '../atoms';
+import { popupOpenAtom, popupsShowedAtom, popupTimeoutAtom } from '../atoms';
 import { GetStarted } from './GetStarted';
 
 const avatars = [
@@ -74,7 +74,7 @@ export const HomepagePop = () => {
   }, 5000);
 
   const [variant, setVariant] = useState<number>(1);
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useAtom(popupOpenAtom);
   const { authenticated, ready } = usePrivy();
 
   const activateQuery = useMemo(
