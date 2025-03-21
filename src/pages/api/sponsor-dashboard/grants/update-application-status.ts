@@ -253,7 +253,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
     if (result[0]?.grant.isNative === true) {
       result.forEach(async (r) => {
-        sendEmailNotification({
+        await sendEmailNotification({
           type: isApproved ? 'grantApproved' : 'grantRejected',
           id: r.id,
           userId: r.userId,

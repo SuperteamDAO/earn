@@ -37,7 +37,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     }
 
     try {
-      sendEmailNotification({
+      await sendEmailNotification({
         type: 'grantCompleted',
         id: result.id,
         userId: result.user.id,

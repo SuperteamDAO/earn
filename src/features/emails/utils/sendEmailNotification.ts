@@ -41,36 +41,51 @@ interface EmailNotificationParams {
 const redis = new Redis(process.env.REDIS_URL!, { maxRetriesPerRequest: null });
 const logicQueue = new Queue('logicQueue', { connection: redis });
 
-export function sendEmailNotification({
+export async function sendEmailNotification({
   type,
   id,
   userId, // pass userId of the person you are sending the email to
   otherInfo,
-  triggeredBy: _triggeredBy,
-}: EmailNotificationParams) {
+  triggeredBy,
+}: EmailNotificationParams): Promise<void> {
+  logger.info(
+    `Queueing email notification: type=${type}, userId=${userId}, id=${id}, triggeredBy=${triggeredBy}`,
+  );
+
   try {
-    logicQueue
-      .add(
-        'processLogic',
-        {
-          type,
-          id,
-          userId,
-          otherInfo,
-        },
-        {
-          attempts: 3,
-          backoff: { type: 'exponential', delay: 1000 },
-        },
-      )
-      .catch((error: unknown) => {
-        logger.error(
-          `Failed to queue email job for ${type} to ${userId} with ID ${id}: ${error}`,
-        );
-      });
-  } catch (error: unknown) {
-    logger.error(
-      `Failed to initialize email queue for ${type} to ${userId} with ID ${id}: ${error}`,
+    const job = await logicQueue.add(
+      'processLogic',
+      {
+        type,
+        id,
+        userId,
+        otherInfo,
+      },
+      {
+        attempts: 3,
+        backoff: { type: 'exponential', delay: 1000 },
+        priority: 1,
+        removeOnComplete: true,
+        removeOnFail: 500,
+      },
     );
+
+    logger.info(
+      `Email notification queued successfully: jobId=${job.id}, type=${type}, userId=${userId}`,
+    );
+
+    return;
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    const errorStack = error instanceof Error ? error.stack : undefined;
+
+    logger.error({
+      message: `Failed to queue email notification: type=${type}, userId=${userId}, id=${id}`,
+      error: errorMessage,
+      stack: errorStack,
+      metadata: { type, id, userId },
+    });
+
+    throw new Error(`Failed to queue email notification: ${errorMessage}`);
   }
 }

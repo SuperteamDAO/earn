@@ -144,7 +144,7 @@ export async function POST(request: NextRequest) {
       (async () => {
         if (grant.isNative === true) {
           try {
-            sendEmailNotification({
+            await sendEmailNotification({
               type: 'application',
               id: result.id,
               userId: userId,

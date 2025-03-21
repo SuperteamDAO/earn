@@ -173,7 +173,7 @@ export async function POST(request: NextRequest) {
               `Airtable error details: ${safeStringify(airtableError.response?.data || airtableError)}`,
             );
           }
-          sendEmailNotification({
+          await sendEmailNotification({
             type: 'trancheApproved',
             id: result.id,
             userId: result.GrantApplication.userId,
@@ -182,7 +182,7 @@ export async function POST(request: NextRequest) {
         }
 
         if (result.status === 'Rejected') {
-          sendEmailNotification({
+          await sendEmailNotification({
             type: 'trancheRejected',
             id: result.id,
             userId: result.GrantApplication.userId,
