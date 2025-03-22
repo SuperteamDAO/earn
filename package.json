@@ -83,6 +83,8 @@
     "datauri": "^4.1.0",
     "date-fns": "^4.1.0",
     "dayjs": "^1.11.12",
+    "embla-carousel-autoplay": "^8.5.2",
+    "embla-carousel-react": "^8.5.2",
     "eslint-plugin-prettier": "^5.2.3",
     "flag-icons": "^7.3.2",
     "franc": "^6.2.0",

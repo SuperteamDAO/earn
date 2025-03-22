@@ -9,7 +9,7 @@ import MobileBanner from '@/public/assets/banner-mobile.webp';
 
 import { AuthWrapper } from '@/features/auth/components/AuthWrapper';
 
-import { userCountQuery } from '../queries/user-count';
+import { userCountQuery } from '../../queries/user-count';
 
 const avatars = [
   { name: 'Abhishek', src: ASSET_URL + '/pfps/t1.webp' },
@@ -17,7 +17,7 @@ const avatars = [
   { name: 'Yash', src: ASSET_URL + '/pfps/fff1.webp' },
 ];
 
-export function HomeBanner() {
+export function HomeTalentBanner() {
   const posthog = usePostHog();
   const common = {
     alt: 'Illustration — Two people working on laptops outdoors at night, surrounded by a mystical mountainous landscape illuminated by the moonlight',
@@ -45,8 +45,8 @@ export function HomeBanner() {
   const { data } = useQuery(userCountQuery);
 
   return (
-    <div className="relative mx-auto my-3 w-full rounded-md p-5 md:p-10">
-      <div className="absolute inset-0 overflow-hidden">
+    <div className="relative mx-auto flex h-full w-full flex-col overflow-hidden rounded-[0.5rem] p-5 md:p-10">
+      <div className="absolute inset-0 h-full overflow-hidden">
         <picture>
           <source media="(min-width: 40em)" srcSet={desktop} />
           <source media="(max-width: 40em)" srcSet={mobile} />
@@ -69,7 +69,7 @@ export function HomeBanner() {
         Participate in bounties or apply to freelance gigs of world-class crypto
         companies, all with a single profile.
       </p>
-      <div className="relative z-10 mt-4 flex flex-col items-center gap-3 md:flex-row md:gap-4">
+      <div className="relative z-10 mt-auto flex flex-col items-center gap-3 pt-4 md:flex-row md:gap-4">
         <AuthWrapper className="group w-full md:w-auto">
           <button
             className="ph-no-capture w-full rounded-md bg-white px-9 py-3 text-sm font-medium text-[#3223A0] hover:bg-brand-purple hover:text-white md:w-auto"

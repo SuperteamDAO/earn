@@ -28,7 +28,7 @@ import { type Listing } from '@/features/listings/types';
 import { isDeadlineOver } from '@/features/listings/utils/deadline';
 import { bountySnackbarAtom } from '@/features/navbar/components/BountySnackbar';
 
-import { popupsShowedAtom, popupTimeoutAtom } from '../atoms';
+import { popupOpenAtom, popupsShowedAtom, popupTimeoutAtom } from '../atoms';
 import { GetStarted } from './GetStarted';
 
 interface VariantInfo {
@@ -77,7 +77,7 @@ export const ListingPop = ({ listing }: { listing: Listing | null }) => {
   }, 5_000);
 
   const [variant, setVariant] = useState<VariantInfo>();
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useAtom(popupOpenAtom);
   const { authenticated, ready } = usePrivy();
 
   const isMD = useBreakpoint('md');
