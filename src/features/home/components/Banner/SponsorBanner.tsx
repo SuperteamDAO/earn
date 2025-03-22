@@ -43,7 +43,7 @@ export function HomeSponsorBanner() {
   return (
     <Link
       href="/sponsor"
-      className="relative mx-auto flex h-full w-full flex-col overflow-hidden rounded-[0.5rem] p-5 md:p-10"
+      className="relative mx-auto flex h-full w-full flex-col items-start overflow-hidden rounded-[0.5rem] p-5 md:p-10"
     >
       <div className="absolute inset-0 overflow-hidden bg-gradient-to-r from-[#00CCFE] to-[#A6EDFF]">
         <picture
@@ -53,7 +53,7 @@ export function HomeSponsorBanner() {
           )}
         >
           <source media="(max-width: 60em)" srcSet={desktop} />
-          <img {...rest} className="h-full w-full" alt={rest.alt} />
+          <img {...rest} className="h-full !w-auto" alt={rest.alt} />
         </picture>
         <picture
           className={cn(
@@ -62,11 +62,15 @@ export function HomeSponsorBanner() {
           )}
         >
           <source media="(min-width: 20em)" srcSet={mobile} />
-          <img {...restMobile} className="h-full w-full" alt={restMobile.alt} />
+          <img
+            {...restMobile}
+            className="h-full !w-auto"
+            alt={restMobile.alt}
+          />
         </picture>
       </div>
       <svg
-        className="relative z-10 mb-2.5 h-[1.75rem] w-fit text-black"
+        className="relative z-10 mb-2.5 h-[1.75rem] w-auto text-black"
         width="21"
         height="18"
         viewBox="0 0 21 18"
