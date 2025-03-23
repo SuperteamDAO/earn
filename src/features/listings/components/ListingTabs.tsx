@@ -2,7 +2,7 @@ import { ArrowRight, Info } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { usePostHog } from 'posthog-js/react';
-import { type JSX, useEffect, useState } from 'react';
+import { type JSX, type ReactNode, useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { LocalImage } from '@/components/ui/local-image';
@@ -43,7 +43,7 @@ interface ContentProps {
   filterFunction: (bounty: Listing) => boolean;
   sortCompareFunction?: ((a: Listing, b: Listing) => number) | undefined;
   emptyTitle: string;
-  emptyMessage: string;
+  emptyMessage: ReactNode;
   user: User | null;
   showNotifSub?: boolean;
 }
@@ -209,8 +209,18 @@ export const ListingTabs = ({
           dayjs().isAfter(bounty.deadline) &&
           bounty.status === 'OPEN',
         emptyTitle: 'No listings in review!',
-        emptyMessage:
-          'Subscribe to notifications to get notified about updates.',
+        emptyMessage: (
+          <>
+            Check out other listings on the{' '}
+            <Link
+              href="https://earn.superteam.fun/"
+              className="text-slate-300 underline"
+            >
+              Homepage
+            </Link>
+            .
+          </>
+        ),
         showNotifSub,
       }),
     },
@@ -251,8 +261,18 @@ export const ListingTabs = ({
           return dateB.getTime() - dateA.getTime();
         },
         emptyTitle: 'No completed listings!',
-        emptyMessage:
-          'Subscribe to notifications to get notified about announcements.',
+        emptyMessage: (
+          <>
+            Check out other listings on the{' '}
+            <Link
+              href="https://earn.superteam.fun/"
+              className="text-slate-300 underline"
+            >
+              Homepage
+            </Link>
+            .
+          </>
+        ),
         showNotifSub,
       }),
     },
