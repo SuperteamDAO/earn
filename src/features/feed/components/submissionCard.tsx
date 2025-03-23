@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import React from 'react';
+import React, { useState } from 'react';
 
 import { OgImageViewer } from '@/components/shared/ogImageViewer';
 import { Avatar, AvatarImage } from '@/components/ui/avatar';
@@ -18,6 +18,8 @@ interface SubCardProps {
 }
 
 export function SubmissionCard({ sub, type, commentCount }: SubCardProps) {
+  const [isViewSubmissionHovered, setIsViewSubmissionHovered] = useState(false);
+
   const firstName = sub?.firstName;
   const lastName = sub?.lastName;
   const photo = sub?.photo;
@@ -30,12 +32,6 @@ export function SubmissionCard({ sub, type, commentCount }: SubCardProps) {
   const submissionLink = sub?.link
     ? sub.link
     : `${getURL()}feed/submission/${sub?.id}`;
-
-  const link = sub?.isWinnersAnnounced
-    ? isProject
-      ? listingLink
-      : submissionLink
-    : listingLink;
 
   let winningText: string = '';
   let submissionText: string = '';
@@ -64,11 +60,11 @@ export function SubmissionCard({ sub, type, commentCount }: SubCardProps) {
   const actionLinks = (
     <>
       <div className="flex items-center gap-3">
-        <Avatar className="h-3 w-3">
+        <Avatar className="h-5 w-5">
           <AvatarImage src={sub?.sponsorLogo} alt="Sponsor Logo" />
         </Avatar>
         <Link
-          className="text-sm font-semibold text-gray-500 md:text-base"
+          className={`text-sm font-semibold text-gray-500 md:text-base ${isViewSubmissionHovered ? '' : 'group-hover:underline'} group-hover:decoration-current`}
           href={listingLink}
           rel="noopener noreferrer"
           target="_blank"
@@ -76,17 +72,34 @@ export function SubmissionCard({ sub, type, commentCount }: SubCardProps) {
           {sub?.listingTitle}
         </Link>
       </div>
-      {!sub?.id && !isProject ? (
-        <Tooltip content="This submission will be accessible once winners for the listing have been announced.">
-          <FeedCardLink href={link} style="opacity-50 pointer-events-none">
-            {isProject ? 'View Listing' : 'View Submission'}
-          </FeedCardLink>
-        </Tooltip>
-      ) : (
-        <FeedCardLink href={link} style="opacity-100 pointer-events-auto">
-          {isProject ? 'View Listing' : 'View Submission'}
-        </FeedCardLink>
-      )}
+      {!isProject &&
+        (!sub?.id ? (
+          <Tooltip content="This submission will be accessible once winners for the listing have been announced.">
+            <div
+              onMouseEnter={() => setIsViewSubmissionHovered(true)}
+              onMouseLeave={() => setIsViewSubmissionHovered(false)}
+            >
+              <FeedCardLink
+                href={listingLink}
+                style="opacity-50 pointer-events-none"
+              >
+                View Submission
+              </FeedCardLink>
+            </div>
+          </Tooltip>
+        ) : (
+          <div
+            onMouseEnter={() => setIsViewSubmissionHovered(true)}
+            onMouseLeave={() => setIsViewSubmissionHovered(false)}
+          >
+            <FeedCardLink
+              href={submissionLink}
+              style="opacity-100 pointer-events-auto"
+            >
+              View Submission
+            </FeedCardLink>
+          </div>
+        ))}
     </>
   );
 
@@ -101,9 +114,9 @@ export function SubmissionCard({ sub, type, commentCount }: SubCardProps) {
       username={username}
       id={sub?.id}
       like={sub?.like}
-      commentLink={link}
+      commentLink={listingLink}
       cardType="submission"
-      link={link}
+      link={listingLink}
       userId={sub?.userId}
       commentCount={commentCount || sub.commentCount}
       recentCommenters={sub?.recentCommenters}
