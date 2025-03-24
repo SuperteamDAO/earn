@@ -1,4 +1,4 @@
-import { GoogleTagManager } from '@next/third-parties/google';
+import { GoogleAnalytics } from '@next/third-parties/google';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import type { AppProps } from 'next/app';
 import dynamic from 'next/dynamic';
@@ -153,6 +153,7 @@ function MyApp({ Component, pageProps }: any) {
       {isLoaded && (isDashboardRoute || walletListingRoute) ? (
         <SolanaWalletProvider>
           <Component {...pageProps} key={router.asPath} />
+          <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_TRACKING_ID!} />
         </SolanaWalletProvider>
       ) : (
         <Component {...pageProps} key={router.asPath} />
@@ -178,7 +179,6 @@ function App({ Component, pageProps }: AppProps) {
         `}</style>
         <Providers>
           <MyApp Component={Component} pageProps={pageProps} />
-          <GoogleTagManager gtmId={process.env.NEXT_PUBLIC_GA_TRACKING_ID!} />
         </Providers>
         <ReactQueryDevtools initialIsOpen={false} />
       </QueryClientProvider>

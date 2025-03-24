@@ -9,16 +9,6 @@ import { type NextApiRequestWithSponsor } from '@/features/auth/types';
 import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
 
 async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
-  const normalizedSuperteamMap = new Map(
-    Superteams.map((team) => [
-      team.name,
-      {
-        fullName: team.name.trim().toLowerCase().normalize('NFKC'),
-        original: team,
-      },
-    ]),
-  );
-
   const { page = '1', limit = '10', ...params } = req.query;
   const sponsorId = req.userSponsorId;
   const userId = req.userId;
@@ -46,24 +36,16 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       where: { id: sponsorId },
       select: { name: true },
     });
+
     logger.debug(`Sponsor Name of user ${userId} is ${sponsor?.name}`, {
       sponsorId,
       ...sponsor,
     });
 
-    const sponsorNameNormalized = sponsor?.name
-      .trim()
-      .toLowerCase()
-      .normalize('NFKC');
-    logger.debug('Normalized sponsor name:', {
-      original: sponsor?.name,
-      normalized: sponsorNameNormalized,
-    });
+    const superteam = Superteams.find(
+      (team) => team.name.toLowerCase() === sponsor?.name.toLowerCase(),
+    );
 
-    logger.info('normalizedSuperteamMap', normalizedSuperteamMap);
-    const superteam = sponsor?.name
-      ? normalizedSuperteamMap.get(sponsor?.name)?.original || undefined
-      : undefined;
     if (!superteam) {
       logger.warn(
         `Invalid sponsor used for local profiles by userId ${userId} and sponsorId ${sponsorId}`,

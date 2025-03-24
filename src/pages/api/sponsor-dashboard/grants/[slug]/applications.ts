@@ -73,9 +73,6 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         ...(filterLabel === 'Pending'
           ? {
               applicationStatus: 'Pending',
-              label: {
-                in: ['Pending', 'Unreviewed'],
-              },
             }
           : {}),
         ...(filterLabel === 'Completed'
