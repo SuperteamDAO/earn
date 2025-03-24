@@ -197,7 +197,7 @@ export default function TalentOlympics({ countryLeaders, rankings }: Props) {
           <p className="absolute top-32 z-0 hidden rotate-[-90deg] text-7xl font-bold text-slate-300 md:block">
             Tracks
           </p>
-          <div className="relative z-[1] mx-auto flex max-w-7xl flex-col justify-center gap-8 overflow-x-hidden md:flex-row">
+          <div className="relative z-1 mx-auto flex max-w-7xl flex-col justify-center gap-8 overflow-x-hidden md:flex-row">
             <Track
               title="Front End Track"
               tracks={frontendTrack}
@@ -255,7 +255,7 @@ function Hero({
 
   return (
     <div
-      className="flex flex-col items-center border-b border-slate-200 bg-cover bg-center bg-no-repeat pb-4 pt-12"
+      className="flex flex-col items-center border-b border-slate-200 bg-cover bg-center bg-no-repeat pt-12 pb-4"
       style={{ backgroundImage: `url('${base}bg.png')` }}
     >
       <TalentOlympicsHeader
@@ -264,10 +264,10 @@ function Hero({
       <p className="mt-4 max-w-sm px-6 text-center font-medium text-white">
         Complete Challenges. Earn Prizes. <br /> Get a Full-Time Job.
       </p>
-      <div className="mb-1 mt-6 flex flex-col items-center gap-3 sm:gap-6 md:flex-row">
+      <div className="mt-6 mb-1 flex flex-col items-center gap-3 sm:gap-6 md:flex-row">
         <div className="flex w-full gap-5 md:w-auto">
           <Button
-            className="w-full rounded-full bg-brand-purple px-6 text-sm text-white hover:bg-brand-purple/90 active:bg-[#6366D1] md:w-auto"
+            className="bg-brand-purple hover:bg-brand-purple/90 w-full rounded-full px-6 text-sm text-white active:bg-[#6366D1] md:w-auto"
             asChild
           >
             <Link
@@ -308,7 +308,7 @@ function Hero({
         </button>
         {isMD && <SubscribeHackathon />}
       </div>
-      <p className="mt-4 text-xxs text-white">POWERED BY</p>
+      <p className="text-xxs mt-4 text-white">POWERED BY</p>
       <div className="my-4 flex items-center gap-8">
         <ExternalImage
           style={{ height: PoweredByHeight }}
@@ -869,7 +869,7 @@ function FAQs() {
               value={f.question}
               className="my-4 rounded-lg border shadow-md"
             >
-              <AccordionTrigger className="rounded px-4 py-3 text-left data-[state=open]:bg-black/5 hover:bg-black/5">
+              <AccordionTrigger className="rounded px-4 py-3 text-left hover:bg-black/5 data-[state=open]:bg-black/5">
                 <span className="flex-1 text-left text-sm sm:text-base">
                   {f.question}
                 </span>
@@ -1085,7 +1085,7 @@ const TextStyler: React.FC<TextStylerProps> = ({ text }) => {
           return (
             <span
               key={index}
-              className="mx-1 inline-block select-none rounded-md bg-gray-200 px-2 text-transparent blur-sm"
+              className="mx-1 inline-block rounded-md bg-gray-200 px-2 text-transparent blur-xs select-none"
               style={{ textShadow: '0 0 32px white' }}
               title="Redacted content"
             >

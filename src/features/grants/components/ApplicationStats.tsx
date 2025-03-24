@@ -29,7 +29,7 @@ export const ApplicationStats = ({ application, grant }: ApplicationStats) => {
       <p className="text-sm font-semibold text-slate-600">
         Total Approved Grant
       </p>
-      <div className={cn('flex w-full justify-between pb-4 pt-2', 'md:mb-2')}>
+      <div className={cn('flex w-full justify-between pt-2 pb-4', 'md:mb-2')}>
         <div className="flex w-fit flex-col gap-6">
           <div className="flex w-fit items-center gap-1">
             <img

@@ -46,7 +46,7 @@ export const CreateListingModal = ({
                 alt="Bounty Illustration"
                 src={'/dashboard/bounty_illustration.svg'}
               />
-              <div className="absolute right-4 top-4 flex items-center rounded-full bg-white px-3 py-1 text-violet-500">
+              <div className="absolute top-4 right-4 flex items-center rounded-full bg-white px-3 py-1 text-violet-500">
                 <BountyIcon
                   styles={{
                     width: '1rem',
@@ -85,7 +85,7 @@ export const CreateListingModal = ({
                 alt="Project Illustration"
                 src={'/dashboard/project_illustration.svg'}
               />
-              <div className="absolute right-4 top-4 flex items-center rounded-full bg-white px-3 py-1 text-blue-500">
+              <div className="absolute top-4 right-4 flex items-center rounded-full bg-white px-3 py-1 text-blue-500">
                 <ProjectIcon
                   styles={{
                     width: '1rem',

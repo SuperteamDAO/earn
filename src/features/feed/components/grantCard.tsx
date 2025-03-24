@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import React from 'react';
+import React, { useState } from 'react';
 
 import { Avatar, AvatarImage } from '@/components/ui/avatar';
 import { getURL } from '@/utils/validUrl';
@@ -16,6 +16,8 @@ interface GrantCardProps {
 }
 
 export function GrantCard({ grant, type, commentCount }: GrantCardProps) {
+  const [isViewGrantHovered, setIsViewGrantHovered] = useState(false);
+
   const firstName = grant?.firstName;
   const lastName = grant?.lastName;
   const photo = grant?.photo;
@@ -35,7 +37,7 @@ export function GrantCard({ grant, type, commentCount }: GrantCardProps) {
           <AvatarImage src={grant?.sponsorLogo} alt="Sponsor Logo" />
         </Avatar>
         <Link
-          className="text-sm font-semibold text-gray-500 md:text-base"
+          className={`text-sm font-semibold text-gray-500 md:text-base ${isViewGrantHovered ? '' : 'group-hover:underline'} group-hover:decoration-current`}
           href={listingLink}
           rel="noopener noreferrer"
           target="_blank"
@@ -43,7 +45,12 @@ export function GrantCard({ grant, type, commentCount }: GrantCardProps) {
           {grant?.listingTitle}
         </Link>
       </div>
-      <FeedCardLink href={listingLink}>View Grant</FeedCardLink>
+      <div
+        onMouseEnter={() => setIsViewGrantHovered(true)}
+        onMouseLeave={() => setIsViewGrantHovered(false)}
+      >
+        <FeedCardLink href={listingLink}>View Grant</FeedCardLink>
+      </div>
     </>
   );
 

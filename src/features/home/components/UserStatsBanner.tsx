@@ -35,7 +35,7 @@ export const UserStatsBanner = () => {
   }
 
   return (
-    <div className="flex flex-col gap-4 rounded-md bg-gradient-to-r from-[#4C52E2] to-[#4338CA] px-6 py-6 text-white md:flex-row md:items-center md:justify-between md:px-8">
+    <div className="flex flex-col gap-4 rounded-md bg-linear-to-r from-[#4C52E2] to-[#4338CA] px-6 py-6 text-white md:flex-row md:items-center md:justify-between md:px-8">
       <div className="flex items-center gap-4">
         <EarnAvatar id={user.id} avatar={user.photo} className="h-12 w-12" />
         <div className="flex flex-col gap-0">

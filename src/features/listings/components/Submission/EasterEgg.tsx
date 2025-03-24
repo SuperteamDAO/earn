@@ -61,7 +61,7 @@ export const EasterEgg = ({ isOpen, onClose, isProject }: Props) => {
           className="absolute -z-10 h-full w-full"
         />
         <div className="container mx-auto mt-auto px-4 md:mt-6">
-          <div className="mx-auto mb-6 mt-6 w-14 md:mb-11 md:w-28">
+          <div className="mx-auto mt-6 mb-6 w-14 md:mb-11 md:w-28">
             <ExternalImage
               src={'/icons/celebration.png'}
               alt="celebration icon"

@@ -26,7 +26,7 @@ export const ShortcutKey = React.forwardRef<HTMLSpanElement, ShortcutKeyProps>(
           <kbd
             key={shortcut.symbol}
             className={cn(
-              'inline-block min-w-2.5 text-center align-baseline font-sans text-xs font-medium capitalize text-[rgb(156,157,160)]',
+              'inline-block min-w-2.5 text-center align-baseline font-sans text-xs font-medium text-[rgb(156,157,160)] capitalize',
 
               className,
             )}

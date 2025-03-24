@@ -56,7 +56,7 @@ export const HomeSideBar = ({ type }: SideBarProps) => {
               </span>
               <Link
                 href="/"
-                className="flex items-center text-xs font-semibold text-brand-purple"
+                className="text-brand-purple flex items-center text-xs font-semibold"
               >
                 View All
                 <MdArrowForward className="ml-1" />

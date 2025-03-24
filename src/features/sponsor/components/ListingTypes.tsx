@@ -24,7 +24,7 @@ export function ListingTypes() {
         'px-[1.875rem] lg:px-[7rem] xl:px-[11rem]',
       )}
     >
-      <p className="max-w-[48rem] text-center text-[2rem] font-semibold leading-none text-slate-900 md:text-[3.5rem]">
+      <p className="max-w-[48rem] text-center text-[2rem] leading-none font-semibold text-slate-900 md:text-[3.5rem]">
         Start by posting your first Bounty or Project
       </p>
 
@@ -49,7 +49,7 @@ export function ListingTypes() {
 
           <div className="flex flex-col items-start gap-1">
             <h3 className="text-[1.625rem] font-semibold">Bounty</h3>
-            <p className="text-[1.2rem] font-medium leading-[1.1]">
+            <p className="text-[1.2rem] leading-[1.1] font-medium">
               Bounties are listings where everyone completes a given scope of
               work, and competes for the prize pool
             </p>
@@ -87,7 +87,7 @@ export function ListingTypes() {
 
           <div className="flex flex-col items-start gap-1">
             <h3 className="text-[1.625rem] font-semibold">Project</h3>
-            <p className="text-[1.2rem] font-medium leading-[1.1]">
+            <p className="text-[1.2rem] leading-[1.1] font-medium">
               Projects are freelance gigs — people apply with their proposals
               but don’t begin working until you pick them
             </p>
