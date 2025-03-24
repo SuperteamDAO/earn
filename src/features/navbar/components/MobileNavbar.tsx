@@ -7,6 +7,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { IoWalletOutline } from 'react-icons/io5';
 
 import { Button } from '@/components/ui/button';
+import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { Separator } from '@/components/ui/separator';
 import { Sheet, SheetClose, SheetContent } from '@/components/ui/sheet';
 import { useDisclosure } from '@/hooks/use-disclosure';
@@ -156,16 +157,16 @@ export const MobileNavbar = ({
               isActive={false}
               onClick={onDrawerClose}
             />
-            {/* <Link */}
-            {/*   href={'/hackathon/redacted'} */}
-            {/*   className={cn('flex items-center py-2 font-medium', 'h-10')} */}
-            {/* > */}
-            {/*   <ExternalImage */}
-            {/*     alt="Redacted Logo" */}
-            {/*     src="/hackathon/redacted/logo-black" */}
-            {/*     className="h-full object-contain" */}
-            {/*   /> */}
-            {/* </Link> */}
+            <Link
+              href={'/hackathon/redacted'}
+              className={cn('flex items-center py-2 font-medium', 'h-10')}
+            >
+              <ExternalImage
+                alt="Redacted Logo"
+                src="/hackathon/redacted/logo-black"
+                className="h-full object-contain"
+              />
+            </Link>
           </div>
         </SheetContent>
       </Sheet>
