@@ -9,6 +9,7 @@ import { useEffect, useState } from 'react';
 
 import { ErrorSection } from '@/components/shared/ErrorSection';
 import { PROJECT_NAME } from '@/constants/project';
+import { useMediaQuery } from '@/hooks/use-media-query';
 import { type User } from '@/interface/user';
 import { Default } from '@/layouts/Default';
 import { cn } from '@/utils/cn';
@@ -36,7 +37,6 @@ export function ListingPageLayout({
   children,
   maxW = '7xl',
   isTemplate = false,
-  headerOnly = false,
 }: ListingPageProps) {
   const [, setBountySnackbar] = useAtom(bountySnackbarAtom);
   const posthog = usePostHog();
@@ -103,6 +103,9 @@ export function ListingPageLayout({
     initialBounty?.sponsor?.isVerified?.toString() || 'false',
   );
   const isSubmissionsPage = router.asPath.split('/')[3]?.includes('submission');
+  const isMobile = useMediaQuery('(max-width: 768px)');
+
+  const showHeaderOnly = isSubmissionsPage && isMobile;
 
   return (
     <Default
@@ -153,7 +156,7 @@ export function ListingPageLayout({
         {initialBounty !== null && !initialBounty?.id && (
           <ErrorSection message="Sorry! The bounty you are looking for is not available." />
         )}
-        {initialBounty !== null && !!initialBounty?.id && !headerOnly && (
+        {initialBounty !== null && !!initialBounty?.id && !showHeaderOnly && (
           <div className="mx-auto w-full px-2 lg:px-6">
             <div className="mx-auto w-full max-w-7xl">
               <ListingHeader
@@ -239,7 +242,7 @@ export function ListingPageLayout({
             </div>
           </div>
         )}
-        {headerOnly && initialBounty !== null && !!initialBounty?.id && (
+        {showHeaderOnly && initialBounty !== null && !!initialBounty?.id && (
           <div className="mx-auto w-full px-2 lg:px-6">
             <div className="mx-auto w-full max-w-7xl">
               <ListingHeader
@@ -248,7 +251,7 @@ export function ListingPageLayout({
                 listing={initialBounty}
               />
 
-              <div className="flex h-full w-full flex-grow flex-col gap-8 border-slate-100 pb-10 md:border-l md:pl-5">
+              <div className="flex h-full w-full flex-grow flex-col gap-8 border-slate-100 pb-10">
                 <div className="w-full">{children}</div>
               </div>
             </div>

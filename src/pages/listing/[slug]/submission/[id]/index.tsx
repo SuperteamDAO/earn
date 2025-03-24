@@ -128,7 +128,7 @@ function Content({
   return (
     <>
       <div className="flex h-full w-full flex-col justify-between">
-        <Breadcrumb className="mt-2 text-slate-400 md:mt-5">
+        <Breadcrumb className="mt-4 text-slate-400 md:mt-5">
           <BreadcrumbList>
             <BreadcrumbItem>
               <BreadcrumbLink asChild>
@@ -144,7 +144,7 @@ function Content({
           </BreadcrumbList>
         </Breadcrumb>
 
-        <div className="mt-2 h-full rounded-lg md:mt-4 md:px-2">
+        <div className="mt-4 h-full rounded-lg md:mt-4 md:px-2">
           <div className="rounded-t-xl border-b border-slate-200 bg-white">
             <div className="flex w-full items-center justify-between">
               <div className="flex w-full items-center gap-2">
@@ -340,13 +340,8 @@ function SubmissionPage({
 }) {
   return (
     <>
-      <div className="hidden md:block">
+      <div>
         <ListingPageLayout bounty={bounty}>
-          <Content bounty={bounty} submission={submission} />
-        </ListingPageLayout>
-      </div>
-      <div className="md:hidden">
-        <ListingPageLayout bounty={bounty} headerOnly={true}>
           <Content bounty={bounty} submission={submission} />
         </ListingPageLayout>
       </div>
