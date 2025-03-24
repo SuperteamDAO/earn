@@ -146,6 +146,8 @@ export const SubmissionDrawer = ({
   }, [id, editMode, form.reset]);
 
   const onSubmit = async (data: FormData) => {
+    if (isLoading) return;
+
     posthog.capture('confirmed_submission');
     setIsLoading(true);
     try {
@@ -195,7 +197,10 @@ export const SubmissionDrawer = ({
           : 'Submission created successfully',
       );
       handleClose();
+
+      setIsLoading(false);
     } catch (error) {
+      setIsLoading(false);
       if (axios.isAxiosError(error)) {
         if (error.status === 401) {
           toast.error(
@@ -215,8 +220,6 @@ export const SubmissionDrawer = ({
       } else {
         toast.error('Failed to submit. Please try again or contact support.');
       }
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -487,7 +490,9 @@ export const SubmissionDrawer = ({
                     isSubmitDisabled ||
                     isTemplate ||
                     !!query['preview'] ||
-                    (isHackathon && !editMode && !termsAccepted)
+                    (isHackathon && !editMode && !termsAccepted) ||
+                    isLoading ||
+                    form.formState.isSubmitting
                   }
                   type="submit"
                 >

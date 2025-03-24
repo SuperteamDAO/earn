@@ -165,8 +165,8 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       );
     }
     let reason = '';
+    publishedAt = new Date();
     if (isPublished && !listing.publishedAt && !isVerifiedHackathonListing) {
-      publishedAt = new Date();
       logger.debug(
         `Checking verification status for sponsor ${userSponsorId} and user ${userId}`,
         {
