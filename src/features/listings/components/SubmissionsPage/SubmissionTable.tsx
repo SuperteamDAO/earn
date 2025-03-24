@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { atom } from 'jotai';
 import { Copy, Eye, Heart, MessageCircle, MoreVertical } from 'lucide-react';
 import Link from 'next/link';
 import React, {
@@ -41,10 +42,16 @@ import { colorMap } from '@/features/sponsor-dashboard/utils/statusColorMap';
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
 import { type Listing } from '../../types';
-import {
-  sponsorshipSubmissionStatus,
-  SubmissionDetails,
-} from './SubmissionDetails';
+
+export const selectedSubmissionAtom = atom<SubmissionWithUser | undefined>(
+  undefined,
+);
+
+export const sponsorshipSubmissionStatus = (submission: SubmissionWithUser) => {
+  if (submission.isPaid) return 'Paid';
+  if (submission.status !== 'Pending') return submission.status;
+  return submission.label;
+};
 
 const thClassName =
   'text-sm font-medium capitalize tracking-tight text-slate-400';
@@ -58,12 +65,16 @@ interface Props {
 
 export const LikeAndComment = ({
   id,
+  slug,
   likes,
   setUpdate,
+  ref,
 }: {
   id: string;
+  slug: string;
   likes: { id: string; date: number }[];
   setUpdate: Dispatch<SetStateAction<boolean>>;
+  ref?: React.RefObject<HTMLDivElement | null>;
 }) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { user } = useUser();
@@ -75,6 +86,12 @@ export const LikeAndComment = ({
       .then((res) => setCommentCount(res.data.count))
       .catch((err) => console.log(err));
   }, [id]);
+
+  const scrollToRef = () => {
+    if (ref?.current) {
+      ref.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
 
   const handleLike = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
@@ -125,17 +142,29 @@ export const LikeAndComment = ({
         />
         {likes?.length || 0}
       </Button>
-      <Link
-        className={cn(
-          'z-10 flex h-auto items-center gap-2 p-0 text-sm font-medium',
-          'text-slate-500 hover:bg-transparent',
-        )}
-        href={`/feed/submission/${id}`}
-        onClick={(e) => e.stopPropagation()}
-      >
-        <MessageCircle className="h-4 w-4 cursor-pointer fill-white stroke-2" />
-        {commentCount}
-      </Link>
+      {!ref ? (
+        <Link
+          className={cn(
+            'z-10 flex h-auto items-center gap-2 p-0 text-sm font-medium',
+            'text-slate-500 hover:bg-transparent',
+          )}
+          href={`/listing/${slug}/submission/${id}#comments`}
+        >
+          <MessageCircle className="h-4 w-4 cursor-pointer fill-white stroke-2" />
+          {commentCount}
+        </Link>
+      ) : (
+        <button
+          className={cn(
+            'z-10 flex h-auto items-center gap-2 p-0 text-sm font-medium',
+            'text-slate-500 hover:bg-transparent',
+          )}
+          onClick={scrollToRef}
+        >
+          <MessageCircle className="h-4 w-4 cursor-pointer fill-white stroke-2" />
+          {commentCount}
+        </button>
+      )}
     </div>
   );
 };
@@ -146,9 +175,6 @@ export const SubmissionTable = ({
   endTime,
   setUpdate,
 }: Props) => {
-  const [isDetailsOpen, setIsDetailsOpen] = useState<boolean>(false);
-  const [selectedSubmission, setSelectedSubmission] =
-    useState<SubmissionWithUser | null>(null);
   const isSponsorship = bounty.type === 'sponsorship';
   const [currentSort, setCurrentSort] = useState<{
     column: string;
@@ -223,14 +249,6 @@ export const SubmissionTable = ({
 
   return (
     <>
-      {isDetailsOpen && selectedSubmission && (
-        <SubmissionDetails
-          open={isDetailsOpen}
-          onClose={() => setIsDetailsOpen(false)}
-          submission={selectedSubmission}
-          bounty={bounty}
-        />
-      )}
       <div className="mt-10 flex min-h-screen w-full flex-col items-center md:items-start">
         {isSponsorship || dayjs(endTime).valueOf() < Date.now() ? (
           <div className="w-full overflow-x-auto rounded-md border border-slate-200">
@@ -270,7 +288,7 @@ export const SubmissionTable = ({
                   {filteredSubmissions.map((submission) => {
                     const submissionStatus =
                       sponsorshipSubmissionStatus(submission);
-                    const submissionLink = `${getURL()}feed/submission/${submission.id}?openModal=true`;
+                    const submissionLink = `${getURL()}/listing/${bounty.slug}/submission/${submission.id}`;
                     const token = isUsdBased ? submission.token : bounty.token;
                     const tokenObject = tokenList.filter(
                       (e) => e?.tokenSymbol === token,
@@ -355,6 +373,7 @@ export const SubmissionTable = ({
                         <TableCell className="items-center py-2">
                           <LikeAndComment
                             id={submission.id}
+                            slug={bounty.slug || ''}
                             likes={submission.like}
                             setUpdate={setUpdate}
                           />
@@ -365,13 +384,14 @@ export const SubmissionTable = ({
                               variant="ghost"
                               size="sm"
                               className="ph-no-capture text-[13px] font-medium text-brand-purple hover:bg-brand-purple hover:text-white"
-                              onClick={() => {
-                                setSelectedSubmission(submission);
-                                setIsDetailsOpen(true);
-                              }}
                             >
-                              <Eye className="h-4 w-4" />
-                              Submission
+                              <Link
+                                href={submissionLink}
+                                className="flex items-center gap-2"
+                              >
+                                <Eye className="h-4 w-4" />
+                                Submission
+                              </Link>
                             </Button>
                             <DropdownMenu>
                               <DropdownMenuTrigger asChild>

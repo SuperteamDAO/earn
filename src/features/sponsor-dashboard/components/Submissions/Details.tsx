@@ -20,13 +20,13 @@ import { Notes } from './Notes';
 
 interface Props {
   bounty: Listing | undefined;
-  modalView?: boolean;
+  externalView?: boolean;
   atom?: Atom<SubmissionWithUser | undefined>;
 }
 
 type ActionTab = 'notes' | 'comments';
 
-export const Details = ({ bounty, modalView, atom }: Props) => {
+export const Details = ({ bounty, externalView, atom }: Props) => {
   const selectedSubmission = useAtomValue(atom ?? selectedSubmissionAtom);
   const isProject = bounty?.type === 'project';
   const isSponsorship = bounty?.type === 'sponsorship';
@@ -37,7 +37,7 @@ export const Details = ({ bounty, modalView, atom }: Props) => {
   const [activeTab, setActiveTab] = useState<ActionTab>('notes');
 
   useEffect(() => {
-    if (modalView) return;
+    if (externalView) return;
     const fetchCommentCount = async () => {
       if (selectedSubmission?.id) {
         try {
@@ -64,13 +64,13 @@ export const Details = ({ bounty, modalView, atom }: Props) => {
     <div
       className={cn(
         'flex h-[34rem] w-full',
-        modalView ? 'mx-auto h-full max-w-3xl' : 'border-r border-slate-200',
+        externalView ? 'h-full max-w-3xl' : 'border-r border-slate-200',
       )}
     >
       <div
         className={cn(
           'scrollbar-thumb-rounded-full flex w-full flex-1 flex-col scrollbar-thin scrollbar-track-slate-100 scrollbar-thumb-slate-300',
-          modalView ? 'mt-3' : 'overflow-y-auto p-4',
+          externalView ? 'mt-3' : 'overflow-y-auto p-4',
         )}
       >
         {bounty?.compensationType !== 'fixed' && (
@@ -182,7 +182,7 @@ export const Details = ({ bounty, modalView, atom }: Props) => {
           isHtml
         />
       </div>
-      {!modalView && selectedSubmission && (
+      {!externalView && selectedSubmission && (
         <div className="w-1/3 border-l">
           <Tabs
             defaultValue="notes"

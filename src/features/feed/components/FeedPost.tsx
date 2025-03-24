@@ -1,12 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
-import { useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
 
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { FeedPageLayout } from '@/layouts/Feed';
-
-import { SubmissionDetails } from '@/features/listings/components/SubmissionsPage/SubmissionDetails';
-import { submissionDetailsQuery } from '@/features/listings/queries/submission';
 
 import { fetchFeedPostQuery } from '../queries/feed-post';
 import { type FeedPostType } from '../types';
@@ -21,20 +16,7 @@ interface Props {
 }
 
 export const FeedPost = ({ type, id }: Props) => {
-  const [idToLoad, setIdToLoad] = useState<string>(id);
   const { data, isLoading } = useQuery(fetchFeedPostQuery({ type, id }));
-  const searchParams = useSearchParams();
-  const { data: submission } = useQuery({
-    ...submissionDetailsQuery({ submissionId: idToLoad }),
-    enabled: type === 'submission',
-  });
-  const [isDetailsOpen, setIsDetailsOpen] = useState(false);
-
-  useEffect(() => {
-    if (searchParams?.get('modalOpen') && type === 'submission') {
-      setIsDetailsOpen(true);
-    }
-  }, [searchParams, type]);
 
   if (!data && !isLoading) {
     return (
@@ -58,14 +40,6 @@ export const FeedPost = ({ type, id }: Props) => {
   }
   return (
     <FeedPageLayout>
-      {isDetailsOpen && submission && (
-        <SubmissionDetails
-          open={isDetailsOpen}
-          onClose={() => setIsDetailsOpen(false)}
-          submission={submission.submission}
-          bounty={submission.listing}
-        />
-      )}
       {isLoading || !data ? (
         <FeedCardContainerSkeleton />
       ) : (
@@ -78,10 +52,6 @@ export const FeedPost = ({ type, id }: Props) => {
                     key={index}
                     sub={item as any}
                     type="activity"
-                    openDetails={() => {
-                      setIdToLoad(item.id);
-                      setIsDetailsOpen(true);
-                    }}
                   />
                 );
               case 'pow':

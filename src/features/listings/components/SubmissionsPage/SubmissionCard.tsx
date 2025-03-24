@@ -30,7 +30,6 @@ interface Props {
   status?: keyof typeof colorMap;
   setUpdate: Dispatch<SetStateAction<boolean>>;
   link: string;
-  onClick: () => void;
 }
 
 export const SubmissionCard = ({
@@ -40,7 +39,6 @@ export const SubmissionCard = ({
   talent,
   likes,
   setUpdate,
-  onClick,
   link,
   status,
 }: Props) => {
@@ -74,10 +72,7 @@ export const SubmissionCard = ({
 
   return (
     <>
-      <div
-        className="relative w-full cursor-pointer overflow-hidden rounded-md bg-white md:w-60"
-        onClick={onClick}
-      >
+      <div className="relative w-full cursor-pointer overflow-hidden rounded-md bg-white md:w-60">
         <div className="mb-2 flex w-full justify-between gap-2">
           <Link
             href={`/t/${talent?.username}`}

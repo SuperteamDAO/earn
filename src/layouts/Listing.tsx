@@ -28,6 +28,7 @@ interface ListingPageProps {
   children: React.ReactNode;
   maxW?: '7xl' | '6xl' | '5xl' | '4xl' | '3xl' | '2xl' | 'xl' | 'lg' | 'md';
   isTemplate?: boolean;
+  headerOnly?: boolean;
 }
 
 export function ListingPageLayout({
@@ -35,6 +36,7 @@ export function ListingPageLayout({
   children,
   maxW = '7xl',
   isTemplate = false,
+  headerOnly = false,
 }: ListingPageProps) {
   const [, setBountySnackbar] = useAtom(bountySnackbarAtom);
   const posthog = usePostHog();
@@ -151,7 +153,7 @@ export function ListingPageLayout({
         {initialBounty !== null && !initialBounty?.id && (
           <ErrorSection message="Sorry! The bounty you are looking for is not available." />
         )}
-        {initialBounty !== null && !!initialBounty?.id && (
+        {initialBounty !== null && !!initialBounty?.id && !headerOnly && (
           <div className="mx-auto w-full px-2 lg:px-6">
             <div className="mx-auto w-full max-w-7xl">
               <ListingHeader
@@ -233,6 +235,21 @@ export function ListingPageLayout({
                     />
                   )}
                 </div>
+              </div>
+            </div>
+          </div>
+        )}
+        {headerOnly && initialBounty !== null && !!initialBounty?.id && (
+          <div className="mx-auto w-full px-2 lg:px-6">
+            <div className="mx-auto w-full max-w-7xl">
+              <ListingHeader
+                isTemplate={isTemplate}
+                commentCount={commentCount}
+                listing={initialBounty}
+              />
+
+              <div className="flex h-full w-full flex-grow flex-col gap-8 border-slate-100 pb-10 md:border-l md:pl-5">
+                <div className="w-full">{children}</div>
               </div>
             </div>
           </div>

@@ -80,7 +80,7 @@ export const SubmissionPanel = ({
   );
 
   const { onCopy: onCopySubmissionLink } = useClipboard(
-    `${window.location.origin}/feed/submission/${selectedSubmission?.id}?modalOpen=true`,
+    `${window.location.origin}/listing/${bounty?.slug}/submission/${selectedSubmission?.id}`,
   );
 
   const handleCopySubmissionLink = () => {

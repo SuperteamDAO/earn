@@ -15,15 +15,9 @@ interface SubCardProps {
   sub: FeedDataProps;
   type: 'profile' | 'activity';
   commentCount?: number;
-  openDetails: (subId: string | null) => void;
 }
 
-export function SubmissionCard({
-  sub,
-  type,
-  commentCount,
-  openDetails,
-}: SubCardProps) {
+export function SubmissionCard({ sub, type, commentCount }: SubCardProps) {
   const firstName = sub?.firstName;
   const lastName = sub?.lastName;
   const photo = sub?.photo;
@@ -35,7 +29,7 @@ export function SubmissionCard({
 
   const submissionLink = sub?.link
     ? sub.link
-    : `${getURL()}feed/submission/${sub?.id}`;
+    : `${getURL()}listing/${sub?.listingSlug}/submission/${sub?.id}`;
 
   const link = sub?.isWinnersAnnounced
     ? isProject
@@ -102,14 +96,12 @@ export function SubmissionCard({
           </FeedCardButton>
         </Tooltip>
       ) : !isProject ? (
-        <FeedCardButton
-          onClick={() => {
-            openDetails(sub.id);
-          }}
+        <FeedCardLink
           style="pointer-events-auto opacity-100"
+          href={`/listing/${sub?.listingSlug}/submission/${sub?.id}`}
         >
           {'View Submission'}
-        </FeedCardButton>
+        </FeedCardLink>
       ) : (
         <FeedCardLink
           href={listingLink}

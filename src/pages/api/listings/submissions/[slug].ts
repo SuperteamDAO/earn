@@ -69,7 +69,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
             id: true,
             firstName: true,
             lastName: true,
-            email: true,
+            publicKey: true,
             photo: true,
             username: true,
           },
