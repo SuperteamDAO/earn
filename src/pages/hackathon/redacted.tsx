@@ -71,13 +71,13 @@ export default function Redacted({ hackathon }: { hackathon: Hackathon }) {
         <>
           <meta
             name="twitter:image"
-            content={`https://res.cloudinary.com/dgvnuwspr/image/upload/v1741616337/assets/hackathon/redacted/redacted-og.png`}
+            content={`https://res.cloudinary.com/dgvnuwspr/image/upload/v1741616337/assets/hackathon/redacted/redacted-og`}
           />
           <Meta
-            title="Helius [Redacted] Hackathon | Superteam Earn"
+            title="Helius [REDACTED] Hackathon | Superteam Earn"
             description="Join the Helius Hackathon—a data-driven challenge empowering analysts, data scientists, and on-chain sleuths to expose fraud, build insightful dashboards, and advance Solana’s social layer."
             canonical="https://earn.superteam.fun/hackathon/redacted"
-            og="https://res.cloudinary.com/dgvnuwspr/image/upload/v1741616337/assets/hackathon/redacted/redacted-og.png"
+            og="https://res.cloudinary.com/dgvnuwspr/image/upload/v1741616337/assets/hackathon/redacted/redacted-og"
           />
         </>
       }
