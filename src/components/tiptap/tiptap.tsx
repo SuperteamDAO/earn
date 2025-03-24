@@ -38,10 +38,10 @@ const Toolbar = ({
       className,
     )}
   >
-    <div className="flex w-max items-center gap-px">
+    <div className="flex w-full flex-wrap items-center gap-px md:w-max md:flex-nowrap">
       <SectionOne editor={editor} activeLevels={[1, 2, 3, 4, 5, 6]} />
 
-      <Separator orientation="vertical" className="mx-2 h-7" />
+      <Separator orientation="vertical" className="mx-2 hidden h-7 md:block" />
 
       <SectionTwo
         editor={editor}
@@ -56,11 +56,11 @@ const Toolbar = ({
         mainActionCount={5}
       />
 
-      <Separator orientation="vertical" className="mx-2 h-7" />
+      <Separator orientation="vertical" className="mx-2 hidden h-7 md:block" />
 
       <SectionThree editor={editor} />
 
-      <Separator orientation="vertical" className="mx-2 h-7" />
+      <Separator orientation="vertical" className="mx-2 hidden h-7 md:block" />
 
       <SectionFour
         editor={editor}
@@ -68,7 +68,7 @@ const Toolbar = ({
         mainActionCount={2}
       />
 
-      <Separator orientation="vertical" className="mx-2 h-7" />
+      <Separator orientation="vertical" className="mx-2 hidden h-7 md:block" />
 
       <SectionFive
         editor={editor}
