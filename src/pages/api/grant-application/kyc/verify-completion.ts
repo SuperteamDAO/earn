@@ -51,7 +51,15 @@ const getApplicantData = async (
   userId: string,
   secretKey: string,
   appToken: string,
-): Promise<{ id: string; fullName: string }> => {
+): Promise<{
+  id: string;
+  fullName: string;
+  country: string;
+  address: string;
+  dob: string;
+  idNumber: string;
+  idType: string;
+}> => {
   const url = `/resources/applicants/-;externalUserId=${userId}/one`;
   const method = 'GET';
   const body = '';
@@ -62,17 +70,32 @@ const getApplicantData = async (
     const response = await axios.get(`${SUMSUB_BASE_URL}${url}`, { headers });
 
     const id = response.data.id;
-
     const info = response.data.info;
+
     const firstName = info.firstNameEn || '';
     const middleName = info.middleNameEn || '';
     const lastName = info.lastNameEn || '';
-
     const fullName = `${firstName} ${middleName} ${lastName}`
       .trim()
       .replace(/\s+/g, ' ');
 
-    return { id, fullName };
+    const country = info.country || '';
+    const dob = info.dob || '';
+
+    const idDoc = info.idDocs?.[0] || {};
+    const address = idDoc.address.formattedAddress || '';
+    const idNumber = idDoc.number || '';
+    const idType = idDoc.idDocType || '';
+
+    return {
+      id,
+      fullName,
+      country,
+      address,
+      dob,
+      idNumber,
+      idType,
+    };
   } catch (error) {
     handleSumSubError(error);
     throw error;
@@ -115,10 +138,20 @@ const handler = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
         return res.status(200).json({ message: 'KYC already verified' });
       }
 
-      const { fullName } = await getApplicantData(userId, secretKey, appToken);
+      const { fullName, country, address, dob, idNumber, idType } =
+        await getApplicantData(userId, secretKey, appToken);
+
       await prisma.user.update({
         where: { id: userId },
-        data: { isKYCVerified: true, kycName: fullName },
+        data: {
+          isKYCVerified: true,
+          kycName: fullName,
+          kycCountry: country,
+          kycAddress: address,
+          kycDOB: dob,
+          kycIDNumber: idNumber,
+          kycIDType: idType,
+        },
       });
 
       await createTranche({

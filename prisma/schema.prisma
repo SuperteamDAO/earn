@@ -449,6 +449,11 @@ model User {
   privyDid           String               @unique
   isKYCVerified      Boolean              @default(false)
   kycName            String?
+  kycCountry         String?
+  kycAddress         String?
+  kycDOB             String?
+  kycIDNumber        String?
+  kycIDType          String?
 
   @@index([currentSponsorId])
   @@index([hackathonId])
