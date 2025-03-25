@@ -19,6 +19,9 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         listing: true,
         user: true,
       },
+      orderBy: {
+        createdAt: 'desc',
+      },
     });
 
     logger.info(

@@ -56,7 +56,7 @@ export default function SponsorListings() {
   const [currentSort, setCurrentSort] = useState<{
     column: string;
     direction: 'asc' | 'desc' | null;
-  }>({ column: '', direction: null });
+  }>({ column: 'createdAt', direction: 'desc' });
   const listingsPerPage = 15;
 
   const { data: sponsorStats, isLoading: isStatsLoading } = useQuery(
@@ -139,7 +139,7 @@ export default function SponsorListings() {
 
     if (currentSort.direction && currentSort.column) {
       return [...filtered].sort((a, b) => {
-        const factor = currentSort.direction === 'asc' ? 1 : -1;
+        const factor = currentSort.direction === 'desc' ? 1 : -1;
 
         switch (currentSort.column) {
           case 'title':
@@ -151,6 +151,11 @@ export default function SponsorListings() {
             const authorA = a.user.username || '';
             const authorB = b.user.username || '';
             return authorA.localeCompare(authorB) * factor;
+
+          case 'status':
+            const statusA = sponsorshipSubmissionStatus(a) || '';
+            const statusB = sponsorshipSubmissionStatus(b) || '';
+            return statusA.localeCompare(statusB) * factor;
 
           case 'createdAt':
             const createdAtA = a.createdAt

@@ -1,5 +1,6 @@
 import dayjs from 'dayjs';
-import { Copy, ExternalLink, Eye, MoreVertical } from 'lucide-react';
+import { Copy, ExternalLink, Eye, MoreVertical, User2 } from 'lucide-react';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { usePostHog } from 'posthog-js/react';
 import React from 'react';
@@ -112,7 +113,14 @@ export const SubmissionTable = ({
                 Listing
               </SortableTH>
               <SubmissionTh>Ask</SubmissionTh>
-              <SubmissionTh>Status</SubmissionTh>
+              <SortableTH
+                column="status"
+                currentSort={currentSort}
+                setSort={onSort}
+                className={cn(thClassName)}
+              >
+                Status
+              </SortableTH>
               <SortableTH
                 column="createdAt"
                 currentSort={currentSort}
@@ -174,7 +182,10 @@ export const SubmissionTable = ({
                     </Tooltip>
                   </TableCell>
                   <TableCell className="max-w-80 whitespace-normal break-words font-medium text-slate-700">
-                    <div className="flex items-center">
+                    <Link
+                      href={listingSubmissionLink}
+                      className="flex items-center"
+                    >
                       <EarnAvatar
                         id={submission?.user?.id}
                         avatar={submission?.user?.photo || undefined}
@@ -193,10 +204,10 @@ export const SubmissionTable = ({
                           )}
                         </div>
                         <p className="truncate text-xs font-medium text-slate-500">
-                          {submissionDate}
+                          {submission.user.publicKey}
                         </p>
                       </div>
-                    </div>
+                    </Link>
                   </TableCell>
                   <TableCell className="py-2">
                     <p className="max-w-80 whitespace-normal break-words font-medium text-slate-700">
@@ -272,21 +283,40 @@ export const SubmissionTable = ({
                         <DropdownMenuItem
                           className="cursor-pointer text-sm font-medium text-slate-500"
                           onClick={() => {
-                            posthog.capture('sponsor_submission_view');
-                            router.push(listingSubmissionLink);
+                            posthog.capture('sponsor_view_profile');
+                            router.push(`/t/${submission?.user.username}`);
                           }}
                         >
-                          <ExternalLink className="mr-2 h-4 w-4" />
-                          View Submission
+                          <User2 className="mr-2 h-4 w-4" />
+                          View Profile
                         </DropdownMenuItem>
 
-                        <DropdownMenuItem
-                          className="cursor-pointer text-sm font-medium text-slate-500"
-                          onClick={() => copyToClipboard(submissionLink)}
-                        >
-                          <Copy className="mr-2 h-4 w-4" />
-                          Copy Link
-                        </DropdownMenuItem>
+                        {(submission?.listing?.type === 'sponsorship' ||
+                          (submission?.listing?.type === 'bounty' &&
+                            submission?.listing?.isWinnersAnnounced)) && (
+                          <>
+                            <DropdownMenuItem
+                              className="cursor-pointer text-sm font-medium text-slate-500"
+                              onClick={() => {
+                                posthog.capture(
+                                  'sponsor_public_submission_view',
+                                );
+                                router.push(submissionLink);
+                              }}
+                            >
+                              <ExternalLink className="mr-2 h-4 w-4" />
+                              View Public Submission
+                            </DropdownMenuItem>
+
+                            <DropdownMenuItem
+                              className="cursor-pointer text-sm font-medium text-slate-500"
+                              onClick={() => copyToClipboard(submissionLink)}
+                            >
+                              <Copy className="mr-2 h-4 w-4" />
+                              Copy Link
+                            </DropdownMenuItem>
+                          </>
+                        )}
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>

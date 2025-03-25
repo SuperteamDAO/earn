@@ -363,13 +363,22 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     bountyData = null;
   }
 
+  const submission =
+    bountyData?.submission.find(
+      (submission: SubmissionWithUser) => submission.id === id,
+    ) ?? null;
+
+  if (!submission) {
+    return {
+      notFound: true,
+    };
+  }
+
   return {
     props: {
       slug,
       bounty: bountyData.bounty,
-      submission: bountyData.submission.find(
-        (submission: SubmissionWithUser) => submission.id === id,
-      ),
+      submission,
     },
   };
 };
