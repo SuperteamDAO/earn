@@ -418,6 +418,18 @@ export default function BountySubmissions({ slug }: Props) {
     submissionsPerPage,
   ]);
 
+  useEffect(() => {
+    if (searchParams?.has('submissionId') && submissions) {
+      const submissionId = searchParams.get('submissionId');
+      const submission = submissions?.find(
+        (submission) => submission.id === submissionId,
+      );
+      if (submission) {
+        setSelectedSubmission(submission);
+      }
+    }
+  }, [submissions, searchParams]);
+
   return (
     <SponsorLayout isCollapsible>
       {isBountyLoading || isSubmissionsLoading ? (

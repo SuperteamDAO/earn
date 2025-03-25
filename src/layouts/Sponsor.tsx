@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { Lock, MessageSquare, Plus, Users } from 'lucide-react';
+import { FileInput, Lock, MessageSquare, Plus, Users } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
@@ -153,6 +153,7 @@ export function SponsorLayout({
       ]
     : [
         { name: 'My Listings', link: '/listings', icon: BiListUl },
+        { name: 'Submissions', link: '/submissions', icon: FileInput },
         {
           name: 'Team Settings',
           link: '/team-settings',

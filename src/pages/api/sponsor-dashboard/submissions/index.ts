@@ -1,0 +1,38 @@
+import type { NextApiResponse } from 'next';
+
+import logger from '@/lib/logger';
+import { prisma } from '@/prisma';
+
+import { type NextApiRequestWithSponsor } from '@/features/auth/types';
+import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
+
+async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
+  const userSponsorId = req.userSponsorId;
+  try {
+    const data = await prisma.submission.findMany({
+      where: {
+        listing: {
+          sponsorId: userSponsorId,
+        },
+      },
+      include: {
+        listing: true,
+        user: true,
+      },
+    });
+
+    logger.info(
+      `Successfully fetched sponsorship submissions for sponsor ${userSponsorId}`,
+    );
+    res.status(200).json(data);
+  } catch (err: any) {
+    logger.error(
+      `Error fetching sponsorship submissions for sponsor ${userSponsorId}: ${err.message}`,
+    );
+    res
+      .status(400)
+      .json({ err: 'Error occurred while fetching sponsorship submissions.' });
+  }
+}
+
+export default withSponsorAuth(handler);
