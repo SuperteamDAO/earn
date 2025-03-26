@@ -9,22 +9,26 @@ export default async function handler(
   res: NextApiResponse,
 ) {
   const params = req.query;
-  const slug = params.slug as string;
+  const sponsor = params.sponsor as string;
+  const listingId = params.listingId as string;
 
   logger.debug(`Request query: ${safeStringify(params)}`);
 
-  if (!slug) {
-    logger.warn('Missing required query parameters: slug');
+  if (!sponsor || !listingId) {
+    logger.warn('Missing required query parameters: sponsor, listingId');
     return res.status(400).json({
-      error: 'Missing required query parameters: slug',
+      error: 'Missing required query parameters: sponsor, listingId',
     });
   }
 
   try {
     const result = await prisma.bounties.findFirst({
       where: {
-        slug,
-        isActive: true,
+        sponsor: {
+          slug: sponsor,
+        },
+        sequentialId: parseInt(listingId),
+        isPublished: true,
       },
       include: {
         sponsor: {
@@ -32,9 +36,9 @@ export default async function handler(
             name: true,
             logo: true,
             entityName: true,
+            slug: true,
             isVerified: true,
             isCaution: true,
-            slug: true,
           },
         },
         poc: {
@@ -60,22 +64,26 @@ export default async function handler(
     });
 
     if (!result) {
-      logger.warn(`Bounty with slug=${slug} not found`);
+      logger.warn(
+        `Bounty with sponsor=${sponsor} and listingId=${listingId} not found`,
+      );
       return res.status(404).json({
-        message: `Bounty with slug=${slug} not found.`,
+        message: `Bounty with sponsor=${sponsor} and listingId=${listingId} not found.`,
       });
     }
 
-    logger.info(`Successfully fetched bounty details for slug=${slug}`);
+    logger.info(
+      `Successfully fetched bounty details for sponsor=${sponsor} and listingId=${listingId}`,
+    );
     return res.status(200).json(result);
   } catch (error: any) {
     logger.error(
-      `Error fetching bounty with slug=${slug}:`,
+      `Error fetching bounty with sponsor=${sponsor} and listingId=${listingId}:`,
       safeStringify(error),
     );
     return res.status(500).json({
       error: error.message,
-      message: `Error occurred while fetching bounty with slug=${slug}.`,
+      message: `Error occurred while fetching bounty with sponsor=${sponsor} and listingId=${listingId}.`,
     });
   }
 }

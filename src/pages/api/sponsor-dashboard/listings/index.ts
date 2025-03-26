@@ -13,6 +13,7 @@ type BountyGrant = {
   title: string;
   slug: string;
   token: string | null;
+  sequentialId: number;
   status: string;
   deadline: Date | null;
   isPublished: boolean;
@@ -38,6 +39,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           b.type as type,
           b.id,
           b.title,
+          b.sequentialId,
           b.slug,
           b.token,
           b.status,
@@ -67,6 +69,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           'grant' as type,
           g.id,
           g.title,
+          0 as sequentialId,
           g.slug,
           g.token,
           g.status,
@@ -113,6 +116,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     const serializedData = data.map((item) => ({
       ...item,
       submissionCount: Number(item.submissionCount),
+      sequentialId: Number(item.sequentialId),
     }));
 
     logger.info(

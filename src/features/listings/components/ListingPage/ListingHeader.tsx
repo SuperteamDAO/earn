@@ -45,6 +45,7 @@ export function ListingHeader({
     isWinnersAnnounced,
     publishedAt,
     isPublished,
+    sequentialId,
     Hackathon,
     isPrivate,
   } = listing;
@@ -251,14 +252,14 @@ export function ListingHeader({
           <div className="mx-auto my-auto flex h-full w-full max-w-7xl items-center justify-start gap-10 border-b border-slate-200">
             <ListingTabLink
               className="pointer-events-none hidden md:flex md:w-[22rem]"
-              href={`/listing/${slug}/`}
+              href={`/${sponsor?.slug}/${sequentialId}/`}
               text={type === 'project' ? 'Inviting Proposals' : 'Prizes'}
               isActive={false}
             />
             <ListingTabLink
               href={
                 !isTemplate
-                  ? `/listing/${slug}/`
+                  ? `/${sponsor?.slug}/${sequentialId}/`
                   : `/templates/listings/${slug}/`
               }
               text="Details"
@@ -268,7 +269,7 @@ export function ListingHeader({
             {showSubmissions && (
               <ListingTabLink
                 onClick={() => posthog.capture('submissions tab_listing')}
-                href={`/listing/${slug}/submission`}
+                href={`/${sponsor?.slug}/${sequentialId}/submission`}
                 text="Submissions"
                 isActive={!!router.asPath.split('/')[3]?.includes('submission')}
                 subText={

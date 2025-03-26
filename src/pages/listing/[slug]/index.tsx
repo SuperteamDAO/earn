@@ -1,54 +1,11 @@
-import type { GetServerSideProps } from 'next';
+import { type GetServerSideProps } from 'next';
 
-import { CHAIN_NAME } from '@/constants/project';
-import { ListingPageLayout } from '@/layouts/Listing';
 import { api } from '@/lib/api';
+import BountyDetails from '@/pages/[sponsor]/[listingId]';
 import { getURL } from '@/utils/validUrl';
-
-import { ListingPop } from '@/features/conversion-popups/components/ListingPop';
-import { DescriptionUI } from '@/features/listings/components/ListingPage/DescriptionUI';
-import { ListingWinners } from '@/features/listings/components/ListingPage/ListingWinners';
-import { type Listing } from '@/features/listings/types';
-
-interface BountyDetailsProps {
-  bounty: Listing | null;
-}
-
-function BountyDetails({ bounty: bounty }: BountyDetailsProps) {
-  return (
-    <ListingPageLayout bounty={bounty}>
-      <ListingPop listing={bounty} />
-      {bounty?.isWinnersAnnounced && (
-        <div className="mt-6 hidden w-full md:block">
-          <ListingWinners bounty={bounty} />
-        </div>
-      )}
-      <DescriptionUI description={bounty?.description} />
-    </ListingPageLayout>
-  );
-}
-
-const redirectSlugs: { original: string; redirectTo: string }[] = [
-  {
-    original: 'passion-piece',
-    redirectTo: `write-a-passion-piece-about-your-favorite-${CHAIN_NAME}-project-or-community`,
-  },
-];
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { slug } = context.query;
-
-  const redirectConfig = redirectSlugs.find(
-    (redirect) => redirect.original === slug,
-  );
-  if (redirectConfig) {
-    return {
-      redirect: {
-        destination: `/listing/${redirectConfig.redirectTo}`,
-        permanent: true,
-      },
-    };
-  }
 
   let bountyData;
   try {
@@ -62,8 +19,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 
   return {
-    props: {
-      bounty: bountyData,
+    redirect: {
+      destination: `/${bountyData?.sponsor?.slug}/${bountyData?.sequentialId}`,
+      permanent: true,
     },
   };
 };

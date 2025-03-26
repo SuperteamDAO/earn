@@ -6,6 +6,7 @@ import { type User } from './user';
 
 interface SubmissionWithUser {
   id: string;
+  sequentialId: number;
   status: SubmissionStatus;
   link?: string;
   tweet?: string;

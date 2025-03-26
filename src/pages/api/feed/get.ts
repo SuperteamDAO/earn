@@ -8,6 +8,7 @@ import { dayjs } from '@/utils/dayjs';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { type FeedPostType } from '@/features/feed/types';
+import { type Listing } from '@/features/listings/types';
 
 export default async function handler(
   req: NextApiRequest,
@@ -100,12 +101,14 @@ export default async function handler(
           rewards: true,
           type: true,
           slug: true,
+          sequentialId: true,
           isWinnersAnnounced: true,
           token: true,
           sponsor: {
             select: {
               name: true,
               logo: true,
+              slug: true,
             },
           },
           winnersAnnouncedAt: true,
@@ -318,6 +321,9 @@ export default async function handler(
           sub.listing.isWinnersAnnounced || sub.listing.type === 'sponsorship';
         return {
           id: isDataPublic ? sub.id : null,
+          sponsorSlug: (sub?.listing as unknown as Listing)?.sponsor?.slug,
+          bountySequentialId: sub.listing.sequentialId,
+          sequentialId: sub.sequentialId,
           createdAt:
             sub.isWinner &&
             sub.listing.isWinnersAnnounced &&

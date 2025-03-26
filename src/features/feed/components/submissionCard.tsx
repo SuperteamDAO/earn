@@ -25,11 +25,11 @@ export function SubmissionCard({ sub, type, commentCount }: SubCardProps) {
 
   const isProject = sub?.listingType === 'project';
   const isSponsorship = sub?.listingType === 'sponsorship';
-  const listingLink = `${getURL()}listing/${sub?.listingSlug}`;
+  const listingLink = `${getURL()}${sub?.sponsorSlug}/${sub?.bountySequentialId}`;
 
   const submissionLink = sub?.link
     ? sub.link
-    : `${getURL()}listing/${sub?.listingSlug}/submission/${sub?.id}`;
+    : `${listingLink}/${sub?.sequentialId}`;
 
   const link = sub?.isWinnersAnnounced
     ? isProject
@@ -98,7 +98,7 @@ export function SubmissionCard({ sub, type, commentCount }: SubCardProps) {
       ) : !isProject ? (
         <FeedCardLink
           style="pointer-events-auto opacity-100"
-          href={`/listing/${sub?.listingSlug}/submission/${sub?.id}`}
+          href={`/${sub?.sponsorSlug}/${sub?.bountySequentialId}/${sub?.sequentialId}`}
         >
           {'View Submission'}
         </FeedCardLink>

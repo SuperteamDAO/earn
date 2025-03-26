@@ -11,6 +11,7 @@ datasource db {
 
 model Bounties {
   id                   String             @id @default(uuid())
+  sequentialId         Int?
   title                String
   slug                 String             @unique
   description          String?            @db.LongText
@@ -86,6 +87,7 @@ model Bounties {
   @@index([compensationType, maxRewardAsk])
   @@index([isWinnersAnnounced, isPublished, status])
   @@index([region, isPublished, status])
+  @@unique([sponsorId, sequentialId])
 }
 
 model BountiesTemplates {
@@ -261,6 +263,7 @@ model GrantApplication {
 
 model Submission {
   id                 String           @id @default(uuid())
+  sequentialId       Int?
   link               String?          @db.VarChar(500)
   tweet              String?          @db.VarChar(500)
   status             SubmissionStatus @default(Pending)
@@ -301,6 +304,7 @@ model Submission {
   @@index([userId, listingId, createdAt])
   @@index([createdAt(sort: Desc)])
   @@index([likeCount(sort: Desc), createdAt(sort: Desc)])
+  @@unique([listingId, sequentialId])
 }
 
 model Sponsors {
@@ -327,6 +331,7 @@ model Sponsors {
   Grants       Grants[]
   User         User[]
   UserInvites  UserInvites[]
+  listingCounter Int               @default(0)
 
   @@index([id, slug])
   @@index([isVerified, st])

@@ -6,6 +6,7 @@ import type { SponsorType } from '@/interface/sponsor';
 
 export interface Listing {
   id?: string;
+  sequentialId?: number;
   title?: string;
   slug?: string;
   description?: string;

@@ -36,6 +36,7 @@ import {
 import { Tooltip } from '@/components/ui/tooltip';
 import { tokenList } from '@/constants/tokenList';
 import { useDisclosure } from '@/hooks/use-disclosure';
+import { type SponsorType } from '@/interface/sponsor';
 import { cn } from '@/utils/cn';
 import { getURL } from '@/utils/validUrl';
 
@@ -57,6 +58,7 @@ import { UnpublishModal } from './Modals/UnpublishModal';
 import { VerifyPaymentModal } from './Modals/VerifyPayment';
 import { SponsorPrize } from './SponsorPrize';
 interface ListingTableProps {
+  sponsor: SponsorType | undefined;
   listings: ListingWithSubmissions[];
   currentSort: {
     column: string;
@@ -81,6 +83,7 @@ export const ListingTh = ({
 };
 
 export const ListingTable = ({
+  sponsor,
   listings,
   currentSort,
   onSort,
@@ -215,12 +218,12 @@ export const ListingTable = ({
               const listingLink =
                 listing?.type === 'grant'
                   ? `${getURL()}grants/${listing.slug}`
-                  : `${getURL()}listing/${listing.slug}`;
+                  : `${getURL()}${sponsor?.slug}/${listing.sequentialId}`;
 
               const listingSubmissionLink =
                 listing.type === 'grant'
-                  ? `/dashboard/grants/${listing.slug}/applications/`
-                  : `/dashboard/listings/${listing.slug}/submissions/`;
+                  ? `${listingLink}/applications/`
+                  : `${listingLink}/submissions/`;
 
               const textColor = getColorStyles(listingStatus).color;
               const bgColor = getColorStyles(listingStatus).bgColor;

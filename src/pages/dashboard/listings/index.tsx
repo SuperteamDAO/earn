@@ -294,6 +294,7 @@ export default function SponsorListings() {
             <div className="h-0.5 w-full bg-slate-200" />
             <TabsContent value="all" className="px-0">
               <MemoizedListingTable
+                sponsor={user?.currentSponsor}
                 listings={paginatedListings}
                 currentSort={currentSort}
                 onSort={(column, direction) =>
@@ -303,6 +304,7 @@ export default function SponsorListings() {
             </TabsContent>
             <TabsContent value="bounties" className="px-0">
               <MemoizedListingTable
+                sponsor={user?.currentSponsor}
                 listings={paginatedListings}
                 currentSort={currentSort}
                 onSort={(column, direction) =>
@@ -312,6 +314,7 @@ export default function SponsorListings() {
             </TabsContent>
             <TabsContent value="projects" className="px-0">
               <MemoizedListingTable
+                sponsor={user?.currentSponsor}
                 listings={paginatedListings}
                 currentSort={currentSort}
                 onSort={(column, direction) =>
@@ -321,6 +324,7 @@ export default function SponsorListings() {
             </TabsContent>
             <TabsContent value="sponsorships" className="px-0">
               <MemoizedListingTable
+                sponsor={user?.currentSponsor}
                 listings={paginatedListings}
                 currentSort={currentSort}
                 onSort={(column, direction) =>
@@ -331,6 +335,7 @@ export default function SponsorListings() {
             {hasGrants && (
               <TabsContent value="grants" className="px-0">
                 <MemoizedListingTable
+                  sponsor={user?.currentSponsor}
                   listings={paginatedListings}
                   currentSort={currentSort}
                   onSort={(column, direction) =>
@@ -342,6 +347,7 @@ export default function SponsorListings() {
             {hasHackathons && (
               <TabsContent value="hackathons" className="px-0">
                 <MemoizedListingTable
+                  sponsor={user?.currentSponsor}
                   listings={paginatedListings}
                   currentSort={currentSort}
                   onSort={(column, direction) =>

@@ -65,13 +65,17 @@ interface Props {
 
 export const LikeAndComment = ({
   id,
-  slug,
+  sponsorSlug,
+  bountySequentialId,
+  submissionSequentialId,
   likes,
   setUpdate,
   ref,
 }: {
   id: string;
-  slug: string;
+  sponsorSlug: string;
+  bountySequentialId: number;
+  submissionSequentialId: number;
   likes: { id: string; date: number }[];
   setUpdate: Dispatch<SetStateAction<boolean>>;
   ref?: React.RefObject<HTMLDivElement | null>;
@@ -148,7 +152,7 @@ export const LikeAndComment = ({
             'z-10 flex h-auto items-center gap-2 p-0 text-sm font-medium',
             'text-slate-500 hover:bg-transparent',
           )}
-          href={`/listing/${slug}/submission/${id}#comments`}
+          href={`/${sponsorSlug}/${bountySequentialId}/${submissionSequentialId}#comments`}
         >
           <MessageCircle className="h-4 w-4 cursor-pointer fill-white stroke-2" />
           {commentCount}
@@ -288,7 +292,7 @@ export const SubmissionTable = ({
                   {filteredSubmissions.map((submission) => {
                     const submissionStatus =
                       sponsorshipSubmissionStatus(submission);
-                    const submissionLink = `${getURL()}/listing/${bounty.slug}/submission/${submission.id}`;
+                    const submissionLink = `${getURL()}${bounty.sponsor?.slug}/${bounty.sequentialId}/${submission.sequentialId}`;
                     const token = isUsdBased ? submission.token : bounty.token;
                     const tokenObject = tokenList.filter(
                       (e) => e?.tokenSymbol === token,
@@ -373,7 +377,11 @@ export const SubmissionTable = ({
                         <TableCell className="items-center py-2">
                           <LikeAndComment
                             id={submission.id}
-                            slug={bounty.slug || ''}
+                            sponsorSlug={bounty.sponsor?.slug || ''}
+                            bountySequentialId={bounty.sequentialId || 0}
+                            submissionSequentialId={
+                              submission.sequentialId || 0
+                            }
                             likes={submission.like}
                             setUpdate={setUpdate}
                           />

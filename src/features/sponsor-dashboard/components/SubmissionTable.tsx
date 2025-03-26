@@ -140,7 +140,7 @@ export const SubmissionTable = ({
               );
               const listingStatus = sponsorshipSubmissionStatus(submission);
               const isUsdBased = submission?.listing?.token === 'Any';
-              const submissionLink = `${getURL()}listing/${submission?.listing?.slug}/submission/${submission.id}`;
+              const submissionLink = `${getURL()}${submission?.listing?.sponsor?.slug}/${submission?.listing?.sequentialId}/${submission.sequentialId}`;
               const token = isUsdBased
                 ? submission.token
                 : submission?.listing?.token;

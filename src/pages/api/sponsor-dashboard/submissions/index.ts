@@ -16,7 +16,11 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         },
       },
       include: {
-        listing: true,
+        listing: {
+          include: {
+            sponsor: true,
+          },
+        },
         user: true,
       },
       orderBy: {
