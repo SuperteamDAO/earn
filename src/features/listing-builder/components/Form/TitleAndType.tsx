@@ -63,10 +63,13 @@ export function TitleAndType() {
     });
   }, [debouncedTitle]);
 
-  const queryEnabled = useMemo(
-    () => !!(!!slugifiedTitle && !isEditing),
-    [slugifiedTitle, isEditing],
-  );
+  const { dirtyFields } = form.formState;
+  const isTitleDirty = dirtyFields.title;
+
+  const queryEnabled = useMemo(() => {
+    return !!(!!slugifiedTitle && !isEditing && isTitleDirty);
+  }, [slugifiedTitle, isEditing, isTitleDirty]);
+
   const slugCheckQueryResult = useMemo(() => {
     return slugCheckQuery({
       slug: slugifiedTitle,
@@ -83,14 +86,14 @@ export function TitleAndType() {
   });
 
   useEffect(() => {
-    if (generatedSlugValidated?.data.slug) {
+    if (generatedSlugValidated?.data.slug && isTitleDirty) {
       form.setValue('slug', generatedSlugValidated.data.slug, {
         shouldValidate: true,
         shouldDirty: true,
       });
       form.saveDraft();
     }
-  }, [generatedSlugValidated]);
+  }, [generatedSlugValidated, isTitleDirty]);
 
   return (
     <FormField
