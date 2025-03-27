@@ -593,12 +593,6 @@ export default function BountySubmissions({ slug }: Props) {
               className="fixed bottom-4 left-1/2 w-fit -translate-x-1/2 overflow-hidden px-1 py-1"
             >
               <div className="mx-auto w-fit rounded-lg">
-                {selectedSubmissionIds.size > 100 && (
-                  <p className="pb-2 text-center text-red-500">
-                    Cannot select more than 100 applications
-                  </p>
-                )}
-
                 <div className="flex items-center gap-4 text-lg">
                   <div className="flex items-center gap-2 px-2 pl-4 font-medium">
                     <p>{selectedSubmissionIds.size}</p>
@@ -619,10 +613,7 @@ export default function BountySubmissions({ slug }: Props) {
 
                   <Button
                     className="gap-2 bg-red-100 px-2 font-medium text-rose-600 hover:bg-red-50/90"
-                    disabled={
-                      selectedSubmissionIds.size === 0 ||
-                      selectedSubmissionIds.size > 100
-                    }
+                    disabled={selectedSubmissionIds.size === 0}
                     onClick={rejectedOnOpen}
                   >
                     <svg
