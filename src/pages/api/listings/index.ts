@@ -149,7 +149,7 @@ export default async function listings(
         ? type === 'all'
           ? { in: ['bounty', 'project', 'sponsorship'] }
           : type
-        : { in: ['bounty', 'project', 'sponsorship'] },
+        : { in: ['bounty', 'project'] },
       ...skillsFilter,
       NOT: { id },
       region: {

@@ -128,7 +128,7 @@ export default function HomePage({
           isListingsLoading={sponsorshipsLoading}
           showEmoji
           title="Sponsorships"
-          viewAllLink="/sponsorships/all"
+          viewAllLink="/sponsorships"
           take={20}
           showViewAll
         />
