@@ -6,7 +6,6 @@ import { FaXTwitter } from 'react-icons/fa6';
 import { MdOutlineInsertLink } from 'react-icons/md';
 
 import { LinkTextParser } from '@/components/shared/LinkTextParser';
-import { Loading } from '@/components/shared/Loading';
 import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
 import { LocalImage } from '@/components/ui/local-image';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -17,8 +16,6 @@ import { prisma } from '@/prisma';
 import { getTwitterUrl, getURLSanitized } from '@/utils/getURLSanitized';
 import { getURL } from '@/utils/validUrl';
 
-import { ListingCard } from '@/features/listings/components/ListingCard';
-import { ListingSection } from '@/features/listings/components/ListingSection';
 import { ListingTabs } from '@/features/listings/components/ListingTabs';
 import { sponsorListingsQuery } from '@/features/sponsor-dashboard/queries/sponsor-listings';
 
@@ -145,32 +142,14 @@ Check out all of ${title}’s latest earning opportunities on a single page.
             bounties={listings?.bounties}
             isListingsLoading={isListingsLoading}
             title="Earning Opportunities"
-            take={20}
             showNotifSub={false}
           />
-          {!!sponsorships && !!sponsorships.bounties.length && (
-            <ListingSection
-              type="bounties"
-              title="Sponsorships"
-              sub="Sponsor projects and get exposure"
-              showEmoji
-              showViewAll
-              viewAllLink={`/sponsorships/`}
-            >
-              {isSponsorshipsLoading && (
-                <div className="flex min-h-52 flex-col items-center justify-center">
-                  <Loading />
-                </div>
-              )}
-              {!isSponsorshipsLoading &&
-                sponsorships &&
-                sponsorships.bounties.map((sponsorship) => {
-                  return (
-                    <ListingCard key={sponsorship.id} bounty={sponsorship} />
-                  );
-                })}
-            </ListingSection>
-          )}
+          <ListingTabs
+            bounties={sponsorships?.bounties}
+            isListingsLoading={isSponsorshipsLoading}
+            title="Sponsorships"
+            showEmoji
+          />
         </div>
       </div>
     </Default>

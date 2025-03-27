@@ -12,8 +12,6 @@ import { prisma } from '@/prisma';
 import { HomepagePop } from '@/features/conversion-popups/components/HomepagePop';
 import { homepageForYouListingsQuery } from '@/features/home/queries/for-you';
 import { homepageListingsQuery } from '@/features/home/queries/listings';
-import { ListingCard } from '@/features/listings/components/ListingCard';
-import { ListingSection } from '@/features/listings/components/ListingSection';
 import { ListingTabs } from '@/features/listings/components/ListingTabs';
 import { listingsQuery } from '@/features/listings/queries/listings';
 import { type Listing } from '@/features/listings/types';
@@ -39,12 +37,6 @@ const InstallPWAModal = dynamic(
     import('@/components/modals/InstallPWAModal').then(
       (mod) => mod.InstallPWAModal,
     ),
-  { ssr: false },
-);
-
-const EmptySection = dynamic(
-  () =>
-    import('@/components/shared/EmptySection').then((mod) => mod.EmptySection),
   { ssr: false },
 );
 
@@ -92,7 +84,7 @@ export default function HomePage({
     }),
   );
 
-  const { data: sponsorships } = useQuery(
+  const { data: sponsorships, isLoading: sponsorshipsLoading } = useQuery(
     listingsQuery({
       type: 'sponsorship',
       take: 100,
@@ -130,31 +122,16 @@ export default function HomePage({
           take={20}
           showViewAll
         />
-        <ListingSection
-          type="bounties"
-          title="Sponsorships"
-          sub="Sponsor projects and get exposure"
+
+        <ListingTabs
+          bounties={sponsorships}
+          isListingsLoading={sponsorshipsLoading}
           showEmoji
+          title="Sponsorships"
+          viewAllLink="/sponsorships/all"
+          take={20}
           showViewAll
-          viewAllLink="/sponsorships/"
-        >
-          {!sponsorships?.length && (
-            <div className="mt-8 flex items-center justify-center">
-              <EmptySection
-                title="No sponsorships available!"
-                message="Subscribe to notifications to get notified about new sponsorships."
-              />
-            </div>
-          )}
-          {sponsorships &&
-            sponsorships
-              ?.filter((sponsorship) => sponsorship.status === 'OPEN')
-              .map((sponsorship) => {
-                return (
-                  <ListingCard key={sponsorship.id} bounty={sponsorship} />
-                );
-              })}
-        </ListingSection>
+        />
       </div>
     </Home>
   );

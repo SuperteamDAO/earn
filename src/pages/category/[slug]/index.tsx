@@ -2,8 +2,6 @@ import { useQuery } from '@tanstack/react-query';
 import type { NextPageContext } from 'next';
 import { useMemo } from 'react';
 
-import { EmptySection } from '@/components/shared/EmptySection';
-import { Loading } from '@/components/shared/Loading';
 import { ASSET_URL } from '@/constants/ASSET_URL';
 import { PROJECT_NAME } from '@/constants/project';
 import { Home } from '@/layouts/Home';
@@ -12,8 +10,6 @@ import { dayjs } from '@/utils/dayjs';
 import { getURL } from '@/utils/validUrl';
 
 import { CategoryPop } from '@/features/conversion-popups/components/CategoryPop';
-import { ListingCard } from '@/features/listings/components/ListingCard';
-import { ListingSection } from '@/features/listings/components/ListingSection';
 import { ListingTabs } from '@/features/listings/components/ListingTabs';
 import { listingsQuery } from '@/features/listings/queries/listings';
 
@@ -77,36 +73,15 @@ function ListingCategoryPage({ slug }: { slug: SlugKeys }) {
           take={10}
         />
 
-        <ListingSection
-          type="bounties"
-          title="Sponsorships"
-          sub="Sponsor projects and get exposure"
+        <ListingTabs
+          bounties={sponsorships ?? []}
+          isListingsLoading={isSponsorshipsLoading}
           showEmoji
+          title={`${formattedSlug} Sponsorships`}
+          viewAllLink={`/category/${slug}/all`}
+          take={10}
           showViewAll
-          viewAllLink={`/sponsorships/`}
-        >
-          {isSponsorshipsLoading && (
-            <div className="flex min-h-52 flex-col items-center justify-center">
-              <Loading />
-            </div>
-          )}
-          {!isSponsorshipsLoading && !sponsorships?.length && (
-            <div className="mt-8 flex items-center justify-center">
-              <EmptySection
-                title="No sponsorships available!"
-                message="Subscribe to notifications to get notified about new sponsorships."
-              />
-            </div>
-          )}
-          {!isSponsorshipsLoading &&
-            sponsorships
-              ?.filter((sponsorship) => sponsorship.status === 'OPEN')
-              .map((sponsorship) => {
-                return (
-                  <ListingCard key={sponsorship.id} bounty={sponsorship} />
-                );
-              })}
-        </ListingSection>
+        />
       </div>
     </Home>
   );

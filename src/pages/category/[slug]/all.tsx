@@ -15,6 +15,7 @@ type SlugKeys = 'design' | 'content' | 'development' | 'other';
 function AllCategoryListingsPage({ slug }: { slug: string }) {
   const { data: listings, isLoading } = useQuery(
     listingsQuery({
+      type: 'all',
       filter: slug,
       take: 100,
     }),

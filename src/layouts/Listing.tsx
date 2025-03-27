@@ -102,7 +102,7 @@ export function ListingPageLayout({
     'isSponsorVerified',
     initialBounty?.sponsor?.isVerified?.toString() || 'false',
   );
-  const isSubmissionsPage = router.asPath.split('/')[3]?.includes('submission');
+  const isSubmissionsPage = router.asPath.split('/').length === 5;
   const isMobile = useMediaQuery('(max-width: 768px)');
 
   const showHeaderOnly = isSubmissionsPage && isMobile;

@@ -155,6 +155,8 @@ export function ListingHeader({
     );
   };
 
+  const isSubmissionActive = router.asPath.split('/').length === 5;
+
   const HeaderSub = () => {
     return (
       <div className="flex flex-wrap items-center gap-1 md:gap-3">
@@ -265,7 +267,7 @@ export function ListingHeader({
                   : `/templates/listings/${slug}/`
               }
               text="Details"
-              isActive={!router.asPath.split('/')[3]?.includes('submission')}
+              isActive={!isSubmissionActive}
             />
 
             {showSubmissions && (
@@ -273,7 +275,7 @@ export function ListingHeader({
                 onClick={() => posthog.capture('submissions tab_listing')}
                 href={`/${sponsor?.slug}/${sequentialId}/submission`}
                 text="Submissions"
-                isActive={!!router.asPath.split('/')[3]?.includes('submission')}
+                isActive={isSubmissionActive}
                 subText={
                   isSubmissionNumberLoading ? '...' : submissionNumber + ''
                 }

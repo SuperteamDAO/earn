@@ -75,6 +75,7 @@ export default async function listings(
   const type = params.type as
     | Prisma.EnumBountyTypeFilter
     | BountyType
+    | 'all'
     | undefined;
   const take = params.take ? parseInt(params.take as string, 10) : 10;
   const deadline = params.deadline as string;
@@ -144,7 +145,11 @@ export default async function listings(
       deadline: {
         gte: deadline,
       },
-      type: type || { in: ['bounty', 'project'] },
+      type: type
+        ? type === 'all'
+          ? { in: ['bounty', 'project', 'sponsorship'] }
+          : type
+        : { in: ['bounty', 'project', 'sponsorship'] },
       ...skillsFilter,
       NOT: { id },
       region: {
