@@ -13,6 +13,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       where: {
         listing: {
           sponsorId: userSponsorId,
+          isActive: true,
         },
       },
       include: {
