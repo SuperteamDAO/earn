@@ -164,6 +164,7 @@ export default async function listings(
       deadline: true,
       type: true,
       title: true,
+      sequentialId: true,
       token: true,
       winnersAnnouncedAt: true,
       slug: true,

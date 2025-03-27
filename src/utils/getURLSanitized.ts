@@ -8,11 +8,7 @@ export const getURLSanitized = (url: string) => {
     return `mailto:${url}`;
   }
 
-  if (
-    !url.includes('https://') &&
-    !url.includes('http://') &&
-    !url.includes('www')
-  ) {
+  if (!url.includes('https://') && !url.includes('http://')) {
     return `https://${url}`;
   }
 

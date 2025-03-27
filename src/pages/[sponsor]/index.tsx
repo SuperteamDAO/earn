@@ -188,11 +188,22 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     };
   }
 
-  const sponsorInfo = await prisma.sponsors.findUnique({
-    where: {
-      slug: sponsorSlug,
-    },
-  });
+  let sponsorInfo;
+  try {
+    sponsorInfo = await prisma.sponsors.findUnique({
+      where: {
+        slug: sponsorSlug,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+  }
+
+  if (!sponsorInfo) {
+    return {
+      notFound: true,
+    };
+  }
 
   return {
     props: {

@@ -46,7 +46,7 @@ export const ListingCard = ({ bounty }: { bounty: Listing }) => {
     sponsor,
     title,
     token,
-    slug,
+    sequentialId,
     isWinnersAnnounced,
     isFeatured,
     compensationType,
@@ -83,7 +83,7 @@ export const ListingCard = ({ bounty }: { bounty: Listing }) => {
 
   return (
     <Link
-      href={`/listing/${slug}`}
+      href={`/${sponsor?.slug}/${sequentialId}`}
       className={`block w-full rounded-md px-2 py-4 no-underline hover:bg-gray-100 sm:px-4 ${
         isFeatured && isBeforeDeadline ? 'bg-purple-50' : 'bg-white'
       }`}

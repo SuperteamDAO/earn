@@ -42,6 +42,7 @@ export default async function handler(
         slug: true,
         isWinnersAnnounced: true,
         isFeatured: true,
+        sequentialId: true,
         compensationType: true,
         minRewardAsk: true,
         maxRewardAsk: true,
