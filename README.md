@@ -8,7 +8,7 @@
   
   ![Project Status: Active](https://www.repostatus.org/badges/latest/active.svg)
   [![GitHub issues](https://img.shields.io/github/issues-raw/NEAR-DevHub/nearn)](https://github.com/NEAR-DevHub/nearn/issues)
-  ![GitHub pull requests](https://img.shields.io/github/issues-pr/NEAR-DevHub/nearn)
+  [![GitHub pull requests](https://img.shields.io/github/issues-pr/NEAR-DevHub/nearn)](https://github.com/NEAR-DevHub/nearn/pulls?q=is%3Aopen+is%3Apr)
 </div>
 
 ## Development Setup
