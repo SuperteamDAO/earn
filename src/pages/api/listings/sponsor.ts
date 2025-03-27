@@ -1,6 +1,5 @@
 import { type NextApiRequest, type NextApiResponse } from 'next';
 
-import { exclusiveSponsorData } from '@/constants/exclusiveSponsors';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
@@ -9,7 +8,7 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
-  const { sponsor } = req.body;
+  const { sponsor, type } = req.body;
 
   logger.debug(`Request body: ${safeStringify(req.body)}`);
 
@@ -20,25 +19,18 @@ export default async function handler(
 
   const sponsorKey = sponsor.toLowerCase();
 
-  if (!exclusiveSponsorData[sponsorKey]) {
-    logger.warn(`Sponsor not found: ${sponsorKey}`);
-    return res.status(404).json({ message: 'Sponsor not found' });
-  }
-
-  const sponsorInfo = exclusiveSponsorData[sponsorKey];
-
   try {
-    logger.debug(`Fetching bounties for sponsor: ${sponsorInfo?.title}`);
+    logger.debug(`Fetching bounties for sponsor: ${sponsorKey}`);
     const bounties = await prisma.bounties.findMany({
       where: {
         isPublished: true,
         isActive: true,
         isArchived: false,
         status: 'OPEN',
-        ...(!!sponsorInfo?.showPrivates === true ? {} : { isPrivate: false }),
         sponsor: {
-          name: sponsorInfo!.title,
+          slug: sponsor,
         },
+        type: type || { in: ['bounty', 'project'] },
       },
       select: {
         rewardAmount: true,
@@ -88,9 +80,7 @@ export default async function handler(
       bounties,
     };
 
-    logger.info(
-      `Successfully fetched listings for sponsor: ${sponsorInfo?.title}`,
-    );
+    logger.info(`Successfully fetched listings for sponsor: ${sponsorKey}`);
     res.status(200).json(result);
   } catch (error: any) {
     logger.error(

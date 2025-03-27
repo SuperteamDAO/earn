@@ -99,12 +99,14 @@ export const ListingCard = ({ bounty }: { bounty: Listing }) => {
             <p className="line-clamp-1 text-sm font-semibold text-slate-700 hover:underline sm:text-base">
               {title}
             </p>
-            <div className="flex w-min items-center gap-1">
-              <p className="w-full whitespace-nowrap text-xs text-slate-500 md:text-sm">
-                {sponsor?.name}
-              </p>
-              <div>{!!sponsor?.isVerified && <VerifiedBadge />}</div>
-            </div>
+            <Link href={`/${sponsor?.slug}`} className="hover:underline">
+              <div className="flex w-min items-center gap-1">
+                <p className="w-full whitespace-nowrap text-xs text-slate-500 md:text-sm">
+                  {sponsor?.name}
+                </p>
+                <div>{!!sponsor?.isVerified && <VerifiedBadge />}</div>
+              </div>
+            </Link>
             <div className="mt-[1px] flex items-center gap-1 sm:gap-3">
               <div className="flex items-center justify-start sm:hidden">
                 {compensationType !== 'variable' && (

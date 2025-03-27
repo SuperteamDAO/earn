@@ -10,7 +10,6 @@ import { Loading } from '@/components/shared/Loading';
 import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
 import { LocalImage } from '@/components/ui/local-image';
 import { Skeleton } from '@/components/ui/skeleton';
-import { exclusiveSponsorData } from '@/constants/exclusiveSponsors';
 import { PROJECT_NAME } from '@/constants/project';
 import { type SponsorType } from '@/interface/sponsor';
 import { Default } from '@/layouts/Default';
@@ -21,7 +20,6 @@ import { getURL } from '@/utils/validUrl';
 import { ListingCard } from '@/features/listings/components/ListingCard';
 import { ListingSection } from '@/features/listings/components/ListingSection';
 import { ListingTabs } from '@/features/listings/components/ListingTabs';
-import { listingsQuery } from '@/features/listings/queries/listings';
 import { sponsorListingsQuery } from '@/features/sponsor-dashboard/queries/sponsor-listings';
 
 interface Props {
@@ -32,11 +30,11 @@ interface Props {
 }
 const SponsorListingsPage = ({ slug, sponsor, title, description }: Props) => {
   const { data: listings, isLoading: isListingsLoading } = useQuery(
-    sponsorListingsQuery(slug),
+    sponsorListingsQuery({ sponsor: slug }),
   );
 
   const { data: sponsorships, isLoading: isSponsorshipsLoading } = useQuery(
-    listingsQuery({ type: 'sponsorship', take: 10 }),
+    sponsorListingsQuery({ sponsor: slug, type: 'sponsorship' }),
   );
 
   const logo = sponsor.logo;
@@ -150,7 +148,7 @@ Check out all of ${title}’s latest earning opportunities on a single page.
             take={20}
             showNotifSub={false}
           />
-          {!!sponsorships && !!sponsorships.length && (
+          {!!sponsorships && !!sponsorships.bounties.length && (
             <ListingSection
               type="bounties"
               title="Sponsorships"
@@ -166,13 +164,11 @@ Check out all of ${title}’s latest earning opportunities on a single page.
               )}
               {!isSponsorshipsLoading &&
                 sponsorships &&
-                sponsorships
-                  ?.filter((sponsorship) => sponsorship.status === 'OPEN')
-                  .map((sponsorship) => {
-                    return (
-                      <ListingCard key={sponsorship.id} bounty={sponsorship} />
-                    );
-                  })}
+                sponsorships.bounties.map((sponsorship) => {
+                  return (
+                    <ListingCard key={sponsorship.id} bounty={sponsorship} />
+                  );
+                })}
             </ListingSection>
           )}
         </div>
@@ -191,16 +187,10 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       notFound: true,
     };
   }
-  const sponsorExlusiveInfo = exclusiveSponsorData[sponsorSlug as string];
-  if (!sponsorExlusiveInfo) {
-    return {
-      notFound: true,
-    };
-  }
 
   const sponsorInfo = await prisma.sponsors.findUnique({
     where: {
-      name: sponsorExlusiveInfo.title,
+      slug: sponsorSlug,
     },
   });
 
@@ -208,8 +198,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     props: {
       slug: (sponsorSlug as string).toLowerCase(),
       sponsor: JSON.parse(JSON.stringify(sponsorInfo)),
-      title: sponsorExlusiveInfo.title,
-      description: sponsorExlusiveInfo.description,
+      title: sponsorInfo?.name,
+      description: '',
     },
   };
 };
