@@ -182,9 +182,22 @@ export default async function handler(
         },
       },
     };
-    type PoWWithUserAndCommentsCount = Prisma.PoWGetPayload<{
-      include: typeof poWInclude;
-    }>;
+    type UserWithoutKYC = {
+      id: string;
+      firstName: string | null;
+      lastName: string | null;
+      photo: string | null;
+      username: string | null;
+      isKYCVerified: boolean;
+    };
+    type PoWWithUserAndCommentsCount = Omit<
+      Prisma.PoWGetPayload<{
+        include: typeof poWInclude;
+      }>,
+      'user'
+    > & {
+      user: UserWithoutKYC;
+    };
     let pow: PoWWithUserAndCommentsCount[] = [];
     if (isWinner !== 'true') {
       pow =

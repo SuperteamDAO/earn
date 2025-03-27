@@ -242,14 +242,10 @@ export const TranchesTab = ({ slug }: Props) => {
 
   const rejectGrantMutation = useMutation({
     mutationFn: async (trancheId: string) => {
-      const response = await api.post(
-        '/api/sponsor-dashboard/grants/update-tranche-status',
-        {
-          id: trancheId,
-          status: 'Rejected',
-        },
-      );
-      return response.data;
+      await api.post('/api/sponsor-dashboard/grants/update-tranche-status', {
+        id: trancheId,
+        status: 'Rejected',
+      });
     },
     onMutate: async (trancheId) => {
       const previousTranches = queryClient.getQueryData<TranchesReturn>([
@@ -302,15 +298,11 @@ export const TranchesTab = ({ slug }: Props) => {
       trancheId: string;
       approvedAmount: number;
     }) => {
-      const response = await api.post(
-        '/api/sponsor-dashboard/grants/update-tranche-status',
-        {
-          id: trancheId,
-          status: 'Approved',
-          approvedAmount,
-        },
-      );
-      return response.data;
+      await api.post('/api/sponsor-dashboard/grants/update-tranche-status', {
+        id: trancheId,
+        status: 'Approved',
+        approvedAmount,
+      });
     },
     onMutate: async ({ trancheId, approvedAmount }) => {
       const previousTranches = queryClient.getQueryData<TranchesReturn>([

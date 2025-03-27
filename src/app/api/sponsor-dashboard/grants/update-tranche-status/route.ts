@@ -197,7 +197,7 @@ export async function POST(request: NextRequest) {
         }
       })(),
     );
-    return NextResponse.json(result, { status: 200 });
+    return NextResponse.json({ status: 200 });
   } catch (error: any) {
     logger.error(
       `Error occurred while updating grant tranche ID: ${id}:  ${error.message}`,

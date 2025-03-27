@@ -164,7 +164,12 @@ const handler = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
           where: { id: grantApplicationId },
           include: {
             grant: true,
-            user: true,
+            user: {
+              select: {
+                email: true,
+                kycName: true,
+              },
+            },
           },
         });
 

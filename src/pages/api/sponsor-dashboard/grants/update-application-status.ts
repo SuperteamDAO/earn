@@ -52,7 +52,12 @@ const checkAndUpdateKYCStatus = async (
         where: { id: grantApplicationId },
         include: {
           grant: true,
-          user: true,
+          user: {
+            select: {
+              email: true,
+              kycName: true,
+            },
+          },
         },
       });
 

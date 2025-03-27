@@ -10,7 +10,6 @@ import { safeStringify } from '@/utils/safeStringify';
 import { type NextApiRequestWithSponsor } from '@/features/auth/types';
 import { checkGrantSponsorAuth } from '@/features/auth/utils/checkGrantSponsorAuth';
 import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
-import { type GrantApplicationWithUser } from '@/features/sponsor-dashboard/types';
 
 function getSocialMediaLink(user: any): string {
   if (user.telegram) return user.telegram;
@@ -49,41 +48,39 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     const questionSet = new Set(grantQuestions.map((q) => q.question));
 
     logger.debug('Transforming applications to JSON format for CSV export');
-    const finalJson = applications.map(
-      (application: GrantApplicationWithUser, i: number) => {
-        const user = application.user;
-        const applicationDate = dayjs(application?.createdAt).format(
-          'DD MMM YYYY',
+    const finalJson = applications.map((application, i: number) => {
+      const user = application.user;
+      const applicationDate = dayjs(application.createdAt).format(
+        'DD MMM YYYY',
+      );
+      const customGrantAnswers: { [key: string]: string } = {};
+      questionSet.forEach((question) => {
+        const answer = (application as any).answers?.find(
+          (a: any) => a.question === question,
         );
-        const customGrantAnswers: { [key: string]: string } = {};
-        questionSet.forEach((question) => {
-          const answer = (application as any).answers?.find(
-            (a: any) => a.question === question,
-          );
-          customGrantAnswers[question] = answer ? answer.answer : '';
-        });
-        return {
-          'Sr no': i + 1,
-          Name: `${user.firstName} ${user.lastName}`,
-          'Email ID': user.email,
-          'Profile Link': `https://earn.superteam.fun/t/${user.username}`,
-          'User Wallet': user.walletAddress,
-          'User Social Link': getSocialMediaLink(user),
-          'Application Date': applicationDate,
-          'Project Title': application?.projectTitle,
-          'One Liner Description': application?.projectOneLiner,
-          'Project Details': application?.projectDetails,
-          Deadline: application?.projectTimeline,
-          'Proof of work': application?.proofOfWork,
-          'Goals and Milestones': application?.proofOfWork,
-          'Primary KPI': application?.kpi,
-          ...customGrantAnswers,
-          Ask: application.ask || '',
-          'Approved Amount': application.approvedAmount,
-          'Grant Decision': application.applicationStatus,
-        };
-      },
-    );
+        customGrantAnswers[question] = answer ? answer.answer : '';
+      });
+      return {
+        'Sr no': i + 1,
+        Name: `${user.firstName} ${user.lastName}`,
+        'Email ID': user.email,
+        'Profile Link': `https://earn.superteam.fun/t/${user.username}`,
+        'User Wallet': user.walletAddress,
+        'User Social Link': getSocialMediaLink(user),
+        'Application Date': applicationDate,
+        'Project Title': application?.projectTitle,
+        'One Liner Description': application?.projectOneLiner,
+        'Project Details': application?.projectDetails,
+        Deadline: application?.projectTimeline,
+        'Proof of work': application?.proofOfWork,
+        'Goals and Milestones': application?.proofOfWork,
+        'Primary KPI': application?.kpi,
+        ...customGrantAnswers,
+        Ask: application.ask || '',
+        'Approved Amount': application.approvedAmount,
+        'Grant Decision': application.applicationStatus,
+      };
+    });
 
     logger.debug('Converting JSON to CSV');
     const csv = Papa.unparse(finalJson);
