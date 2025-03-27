@@ -146,6 +146,7 @@ export const useListingForm = (
   }, [processSaveQueue]);
 
   const onChange = useCallback(() => {
+    console.trace('Draft save triggered from:');
     setHideAutoSave(true);
     if (!isEditing) debouncedSaveRef.current?.();
   }, [isEditing]);
