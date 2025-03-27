@@ -30,6 +30,7 @@ import type { User } from '@/interface/user';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { api } from '@/lib/api';
+import { domPurify } from '@/lib/domPurify';
 import { prisma } from '@/prisma';
 import { useUser } from '@/store/user';
 import { TalentOlympicsHeader } from '@/svg/talent-olympics-header';
@@ -875,7 +876,11 @@ function FAQs() {
                 </span>
               </AccordionTrigger>
               <AccordionContent className="px-4 text-sm sm:text-base">
-                <div dangerouslySetInnerHTML={{ __html: f.answer }} />
+                <div
+                  dangerouslySetInnerHTML={{
+                    __html: domPurify(f.answer),
+                  }}
+                />
               </AccordionContent>
             </AccordionItem>
           ))}

@@ -75,6 +75,9 @@ export const Notes = ({ submissionId, initialNotes = '', slug }: Props) => {
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+      e.stopPropagation();
+    }
     if (e.key === 'Enter') {
       e.preventDefault();
       const cursorPosition = e.currentTarget.selectionStart;

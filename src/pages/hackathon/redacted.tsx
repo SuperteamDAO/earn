@@ -1,6 +1,5 @@
 import { type Prisma } from '@prisma/client';
 import { useQuery } from '@tanstack/react-query';
-import DOMPurify from 'isomorphic-dompurify';
 import { type GetServerSideProps } from 'next';
 import { Outfit } from 'next/font/google';
 import React, { useEffect, useState } from 'react';
@@ -17,6 +16,7 @@ import {
 import { ASSET_URL } from '@/constants/ASSET_URL';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
+import { domPurify } from '@/lib/domPurify';
 import { prisma } from '@/prisma';
 import { statsDataQuery, trackDataQuery } from '@/queries/hackathon';
 import { RedactedLogo } from '@/svg/redacted';
@@ -246,10 +246,7 @@ function FAQs() {
               <AccordionContent className="px-4 pt-3 text-sm text-slate-700 sm:text-base [&_a]:text-blue-700">
                 <div
                   dangerouslySetInnerHTML={{
-                    __html: DOMPurify.sanitize(f.answer, {
-                      ALLOWED_TAGS: ['a', 'p', 'br', 'strong', 'em'],
-                      ALLOWED_ATTR: ['href', 'target', 'rel'],
-                    }),
+                    __html: domPurify(f.answer),
                   }}
                 />
               </AccordionContent>
