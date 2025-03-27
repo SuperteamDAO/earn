@@ -133,6 +133,7 @@ async function findRelatedListings(
       b.isFeatured,
       b.compensationType,
       b.minRewardAsk,
+      b.sequentialId,
       b.maxRewardAsk,
       b.status,
       (

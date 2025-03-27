@@ -48,7 +48,6 @@ const SponsorListingsPage = ({ slug, sponsor, title, description }: Props) => {
   return (
     <Default
       className="bg-white"
-      hideFooter
       meta={
         <Head>
           <title>{`${title} Opportunities | ${PROJECT_NAME}`}</title>
@@ -85,7 +84,7 @@ Check out all of ${title}’s latest earning opportunities on a single page.
           ) : (
             <div className="justify-center rounded-full">
               <LocalImage
-                className="h-28 w-28 rounded-full"
+                className="h-28 w-28 rounded-full object-cover"
                 alt="Category icon"
                 src={logo!}
               />
