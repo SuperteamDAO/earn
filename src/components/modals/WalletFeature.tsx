@@ -3,6 +3,8 @@ import React from 'react';
 import { GrTransaction } from 'react-icons/gr';
 import { MdOutlineLock } from 'react-icons/md';
 
+import { domPurify } from '@/lib/domPurify';
+
 import { Button } from '../ui/button';
 import { ExternalImage } from '../ui/cloudinary-image';
 
@@ -24,7 +26,7 @@ const Point = ({
         </p>
         <p
           className="text-sm text-slate-500"
-          dangerouslySetInnerHTML={{ __html: description }}
+          dangerouslySetInnerHTML={{ __html: domPurify(description) }}
         />
       </div>
     </div>
