@@ -45,7 +45,7 @@ interface PaymentAirtableSchema {
   earnTrancheId: string;
 }
 
-export function grantApplicationToAirtable(
+function grantApplicationToAirtable(
   grantApplication: GrantApplicationWithUserAndGrant,
   grantRegionId: string,
   grantTranche: GrantTranche,
