@@ -7,7 +7,7 @@
   </p>
   
   ![Project Status: Active](https://www.repostatus.org/badges/latest/active.svg)
-  ![GitHub issues](https://img.shields.io/github/issues-raw/NEAR-DevHub/nearn)
+  [![GitHub issues](https://img.shields.io/github/issues-raw/NEAR-DevHub/nearn)](https://github.com/NEAR-DevHub/nearn/issues)
   ![GitHub pull requests](https://img.shields.io/github/issues-pr/NEAR-DevHub/nearn)
 </div>
 
