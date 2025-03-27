@@ -222,8 +222,8 @@ export const ListingTable = ({
 
               const listingSubmissionLink =
                 listing.type === 'grant'
-                  ? `${listingLink}/applications/`
-                  : `${listingLink}/submissions/`;
+                  ? `/dashboard/grants/${listing.slug}/applications/`
+                  : `/dashboard/listings/${listing.slug}/submissions/`;
 
               const textColor = getColorStyles(listingStatus).color;
               const bgColor = getColorStyles(listingStatus).bgColor;
