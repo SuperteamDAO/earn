@@ -25,7 +25,11 @@ function Grants({ grant: initialGrant }: GrantsDetailsProps) {
             </p>
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
               {grant?.references?.map((reference, i) => (
-                <ReferenceCard link={reference.link} key={i} />
+                <ReferenceCard
+                  link={reference.link}
+                  key={i}
+                  title={reference.title}
+                />
               ))}
             </div>
           </div>

@@ -95,7 +95,7 @@ export function DescriptionAndTemplate() {
                 />
               </FormControl>
             </div>
-            <FormMessage />
+            <FormMessage className="ml-auto w-fit" />
           </FormItem>
         );
       }}

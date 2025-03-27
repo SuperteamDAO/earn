@@ -1,6 +1,5 @@
 import { type Prisma } from '@prisma/client';
 import { useQuery } from '@tanstack/react-query';
-import DOMPurify from 'isomorphic-dompurify';
 import { type GetServerSideProps } from 'next';
 import { Outfit } from 'next/font/google';
 import React, { useEffect, useState } from 'react';
@@ -17,6 +16,7 @@ import {
 import { ASSET_URL } from '@/constants/ASSET_URL';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
+import { domPurify } from '@/lib/domPurify';
 import { prisma } from '@/prisma';
 import { statsDataQuery, trackDataQuery } from '@/queries/hackathon';
 import { RedactedLogo } from '@/svg/redacted';
@@ -71,13 +71,13 @@ export default function Redacted({ hackathon }: { hackathon: Hackathon }) {
         <>
           <meta
             name="twitter:image"
-            content={`https://res.cloudinary.com/dgvnuwspr/image/upload/v1741616337/assets/hackathon/redacted/redacted-og.png`}
+            content={`https://res.cloudinary.com/dgvnuwspr/image/upload/v1741616337/assets/hackathon/redacted/redacted-og`}
           />
           <Meta
-            title="Helius [Redacted] Hackathon | Superteam Earn"
+            title="Helius [REDACTED] Hackathon | Superteam Earn"
             description="Join the Helius Hackathon—a data-driven challenge empowering analysts, data scientists, and on-chain sleuths to expose fraud, build insightful dashboards, and advance Solana’s social layer."
             canonical="https://earn.superteam.fun/hackathon/redacted"
-            og="https://res.cloudinary.com/dgvnuwspr/image/upload/v1741616337/assets/hackathon/redacted/redacted-og.png"
+            og="https://res.cloudinary.com/dgvnuwspr/image/upload/v1741616337/assets/hackathon/redacted/redacted-og"
           />
         </>
       }
@@ -246,10 +246,7 @@ function FAQs() {
               <AccordionContent className="px-4 pt-3 text-sm text-slate-700 sm:text-base [&_a]:text-blue-700">
                 <div
                   dangerouslySetInnerHTML={{
-                    __html: DOMPurify.sanitize(f.answer, {
-                      ALLOWED_TAGS: ['a', 'p', 'br', 'strong', 'em'],
-                      ALLOWED_ATTR: ['href', 'target', 'rel'],
-                    }),
+                    __html: domPurify(f.answer),
                   }}
                 />
               </AccordionContent>

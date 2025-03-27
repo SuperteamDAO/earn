@@ -5,6 +5,7 @@ import { usePostHog } from 'posthog-js/react';
 import { useEffect, useMemo } from 'react';
 
 import { UserFlag } from '@/components/shared/UserFlag';
+import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { Superteams } from '@/constants/Superteam';
 import { useBreakpoint } from '@/hooks/use-breakpoint';
 import { useUser } from '@/store/user';
@@ -99,21 +100,21 @@ export function NavTabs({ className, ...props }: NavTabsProps) {
           </PillTab>
         );
       })}
-      {/* <Link */}
-      {/*   href={'/hackathon/redacted'} */}
-      {/*   className={cn( */}
-      {/*     'flex items-center py-1 font-medium lg:hidden', */}
-      {/*     'h-6', */}
-      {/*     'rounded-full border border-slate-200 px-2 text-sm', */}
-      {/*   )} */}
-      {/*   aria-label="Go to Redacted Hackathon page" */}
-      {/* > */}
-      {/*   <ExternalImage */}
-      {/*     alt="Redacted Logo" */}
-      {/*     src="/hackathon/redacted/logo-black" */}
-      {/*     className="h-full object-contain" */}
-      {/*   /> */}
-      {/* </Link> */}
+      <Link
+        href={'/hackathon/redacted'}
+        className={cn(
+          'flex items-center py-1 font-medium lg:hidden',
+          'h-6',
+          'rounded-full border border-slate-200 px-2 text-sm',
+        )}
+        aria-label="Go to Redacted Hackathon page"
+      >
+        <ExternalImage
+          alt="Redacted Logo"
+          src="/hackathon/redacted/logo-black"
+          className="h-full object-contain"
+        />
+      </Link>
     </div>
   );
 }

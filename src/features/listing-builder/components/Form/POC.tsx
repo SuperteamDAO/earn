@@ -1,3 +1,6 @@
+import { useEffect, useState } from 'react';
+import { useWatch } from 'react-hook-form';
+
 import {
   FormControl,
   FormField,
@@ -6,11 +9,31 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { useUser } from '@/store/user';
 
 import { useListingForm } from '../../hooks';
 
 export function POC() {
   const form = useListingForm();
+  const { user } = useUser();
+  const pocSocial = useWatch({
+    control: form.control,
+    name: 'pocSocials',
+  });
+
+  const [wasTouched, setWasTouched] = useState(false);
+
+  useEffect(() => {
+    if (user && !pocSocial && !wasTouched) {
+      if (user.telegram) {
+        form.setValue('pocSocials', user.telegram);
+      } else if (user.twitter) {
+        form.setValue('pocSocials', user.twitter);
+      } else if (user.email) {
+        form.setValue('pocSocials', user.email);
+      }
+    }
+  }, [user, pocSocial, wasTouched]);
   return (
     <FormField
       name="pocSocials"
@@ -24,6 +47,7 @@ export function POC() {
                 placeholder="yb@superteamearn.com"
                 {...field}
                 onChange={(e) => {
+                  setWasTouched(true);
                   field.onChange(e);
                   form.saveDraft();
                 }}

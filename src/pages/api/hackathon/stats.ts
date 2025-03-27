@@ -44,6 +44,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
         isActive: true,
         isArchived: false,
         status: 'OPEN',
+        isPublished: true,
       },
     });
 
@@ -67,6 +68,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
         isActive: true,
         isArchived: false,
         status: 'OPEN',
+        isPublished: true,
       },
     });
 

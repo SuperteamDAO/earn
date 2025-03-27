@@ -7,6 +7,7 @@ import { useMemo } from 'react';
 import { IoSearchOutline, IoWalletOutline } from 'react-icons/io5';
 
 import { Button } from '@/components/ui/button';
+import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
@@ -115,16 +116,16 @@ export const DesktopNavbar = ({
                     />
                   );
                 })}
-                {/* <Link */}
-                {/*   href={'/hackathon/redacted'} */}
-                {/*   className={cn('flex items-center py-2 font-medium', 'h-8')} */}
-                {/* > */}
-                {/*   <ExternalImage */}
-                {/*     alt="Redacted Logo" */}
-                {/*     src="/hackathon/redacted/logo-black" */}
-                {/*     className="h-full object-contain" */}
-                {/*   /> */}
-                {/* </Link> */}
+                <Link
+                  href={'/hackathon/redacted'}
+                  className={cn('flex items-center py-2 font-medium', 'h-8')}
+                >
+                  <ExternalImage
+                    alt="Redacted Logo"
+                    src="/hackathon/redacted/logo-black"
+                    className="h-full object-contain"
+                  />
+                </Link>
               </div>
             </div>
           </div>
