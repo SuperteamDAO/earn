@@ -434,4 +434,12 @@ export const tokenList: Token[] = [
     decimals: 6,
     coingeckoSymbol: 'blockasset',
   },
+  {
+    tokenName: 'Magic Eden',
+    tokenSymbol: 'ME',
+    mintAddress: 'MEFNBXixkEbait3xn9bkm8WsJzXtVsaJEn4c8Sam21u',
+    icon: 'https://assets.coingecko.com/coins/images/39850/standard/_ME_Profile_Dark_2x.png?1734013082',
+    decimals: 6,
+    coingeckoSymbol: 'magic-eden',
+  },
 ];
