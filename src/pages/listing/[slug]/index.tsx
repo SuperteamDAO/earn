@@ -1,5 +1,6 @@
 import type { GetServerSideProps } from 'next';
 
+import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { ListingPageLayout } from '@/layouts/Listing';
 import { api } from '@/lib/api';
 import { getURL } from '@/utils/validUrl';
@@ -21,6 +22,13 @@ function BountyDetails({ bounty: initialBounty }: BountyDetailsProps) {
         <div className="mt-6 hidden w-full md:block">
           <ListingWinners bounty={initialBounty} />
         </div>
+      )}
+      {initialBounty?.Hackathon?.slug === 'redacted' && (
+        <ExternalImage
+          src="/hackathon/redacted/redacted-listing-banner"
+          alt="Redacted Listing Banner"
+          className="mt-4"
+        />
       )}
       <DescriptionUI description={initialBounty?.description} />
     </ListingPageLayout>
