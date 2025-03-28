@@ -1,5 +1,6 @@
 import { type GrantApplication, type GrantTranche } from '@prisma/client';
 import axios from 'axios';
+import lookup from 'country-code-lookup';
 
 import { Superteams } from '@/constants/Superteam';
 import {
@@ -38,6 +39,7 @@ interface PaymentAirtableSchema {
   'Wallet Address': string;
   Category: string[];
   'Purpose of Payment': string;
+  Email: string;
   Status: string;
   Region?: string[];
   Approver: string[];
@@ -50,17 +52,19 @@ function grantApplicationToAirtable(
   grantRegionId: string,
   grantTranche: GrantTranche,
 ): PaymentAirtableSchema {
+  const country = lookup.byIso(grantApplication.user.kycCountry || '')?.country;
   return {
     Name: grantApplication.user.kycName || '',
     Address: grantApplication.user.kycAddress || '',
     'Date of Birth': grantApplication.user.kycDOB || '',
     'ID Number': grantApplication.user.kycIDNumber || '',
     'ID Type': grantApplication.user.kycIDType || '',
-    'Country of Residence': grantApplication.user.kycCountry || '',
+    'Country of Residence': country || '',
     Amount: grantTranche.approvedAmount || 0,
     'Wallet Address': grantApplication.walletAddress || '',
     Category: ['recd0Kn3N4Ffhtwhd'], // Solana Grant
     'Purpose of Payment': grantApplication.projectTitle || '',
+    Email: grantApplication.user.email || '',
     Status: 'Verified',
     ...(grantRegionId
       ? {
