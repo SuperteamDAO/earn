@@ -84,7 +84,7 @@ export const KYCModal = ({
           config={config}
           onMessage={onMessage}
           onError={errorHandler}
-          testEnv={true}
+          testEnv={process.env.NODE_ENV === 'development'}
         />
       )}
     </div>

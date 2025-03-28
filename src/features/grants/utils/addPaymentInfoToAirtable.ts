@@ -47,6 +47,11 @@ interface PaymentAirtableSchema {
   earnTrancheId: string;
 }
 
+const grantCategory =
+  process.env.NODE_ENV === 'production'
+    ? 'recd0Kn3N4Ffhtwhd'
+    : 'rec5KcbpJVSeLQX76';
+
 function grantApplicationToAirtable(
   grantApplication: GrantApplicationWithUserAndGrant,
   grantRegionId: string,
@@ -62,8 +67,8 @@ function grantApplicationToAirtable(
     'Country of Residence': country || '',
     Amount: grantTranche.approvedAmount || 0,
     'Wallet Address': grantApplication.walletAddress || '',
-    Category: ['recd0Kn3N4Ffhtwhd'], // Solana Grant
-    'Purpose of Payment': grantApplication.projectTitle || '',
+    Category: [grantCategory],
+    'Purpose of Payment': grantApplication.projectOneLiner || '',
     Email: grantApplication.user.email || '',
     Status: 'Verified',
     ...(grantRegionId
