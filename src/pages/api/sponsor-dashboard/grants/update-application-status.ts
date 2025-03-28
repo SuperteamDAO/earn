@@ -152,7 +152,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       decidedBy: string | undefined;
       approvedAmount?: number;
       approvedAmountInUSD?: number;
-      totalTranches?: number;
+      // totalTranches?: number;
       label?: SubmissionLabels;
     }[] = [];
 
@@ -161,7 +161,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         let approvedData = {
           approvedAmount: 0,
           approvedAmountInUSD: 0,
-          totalTranches: 2,
+          // totalTranches: 2,
         };
         if (isApproved) {
           const parsedAmount = data[k]?.approvedAmount
@@ -183,11 +183,11 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           );
           const tokenUSDValue = await fetchTokenUSDValue(token?.mintAddress!);
           const usdValue = tokenUSDValue * parsedAmount;
-          const totalTranches = parsedAmount > 5000 ? 3 : 2;
+          // const totalTranches = parsedAmount > 5000 ? 3 : 2;
           approvedData = {
             approvedAmount: parsedAmount,
             approvedAmountInUSD: usdValue,
-            totalTranches,
+            // totalTranches,
           };
         }
         const label =
