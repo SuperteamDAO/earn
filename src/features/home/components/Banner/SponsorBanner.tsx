@@ -7,6 +7,7 @@ import React from 'react';
 import SponsorLogosBanner from '@/public/assets/banner-sponsor-logos.webp';
 import SponsorLogosBannerMobile from '@/public/assets/banner-sponsor-logos-mobile.webp';
 import { cn } from '@/utils/cn';
+import { roundToNearestTenth, roundToNearestTenThousand } from '@/utils/number';
 
 import { sponsorCountQuery } from '../../queries/sponsor-count';
 import { userCountQuery } from '../../queries/user-count';
@@ -93,9 +94,12 @@ export function HomeSponsorBanner() {
         Become a Sponsor
       </p>
       <p className="relative z-10 mt-1 max-w-[18rem] text-sm leading-[130%] text-black sm:max-w-md md:mt-1 md:max-w-[20rem] md:text-lg lg:max-w-sm xl:max-w-[25rem]">
-        Reach {userCount?.totalUsers?.toLocaleString('en-us') || '0'}+ top-tier
-        talent in under 5 clicks. Get high-quality work done across content,
-        development, and design.
+        Reach{' '}
+        {roundToNearestTenThousand(userCount?.totalUsers || 0)?.toLocaleString(
+          'en-us',
+        ) || '0'}
+        + top-tier talent in under 5 clicks. Get high-quality work done across
+        content, development, and design.
       </p>
       <div className="relative z-10 mt-auto flex w-full flex-col items-start gap-3 pt-4 md:flex-row md:items-center md:gap-4">
         <button
@@ -109,7 +113,11 @@ export function HomeSponsorBanner() {
         <div className="flex items-center">
           {data?.totalSponsors !== null && (
             <p className="relative ml-[0.6875rem] text-[0.8rem] text-black md:text-[0.875rem]">
-              Join {data?.totalSponsors?.toLocaleString('en-us')}+ others
+              Join{' '}
+              {roundToNearestTenth(data?.totalSponsors || 0)?.toLocaleString(
+                'en-us',
+              )}
+              + others
             </p>
           )}
         </div>
