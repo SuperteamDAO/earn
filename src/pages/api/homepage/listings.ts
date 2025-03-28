@@ -70,6 +70,7 @@ export async function getListings({
       token: true,
       winnersAnnouncedAt: true,
       slug: true,
+      sequentialId: true,
       isWinnersAnnounced: true,
       isFeatured: true,
       compensationType: true,

@@ -112,6 +112,7 @@ export async function getForYouListings({ statusFilter, userId }: ForYouProps) {
       rewardAmount: true,
       deadline: true,
       type: true,
+      sequentialId: true,
       title: true,
       token: true,
       winnersAnnouncedAt: true,
