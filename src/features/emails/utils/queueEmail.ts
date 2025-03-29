@@ -41,7 +41,7 @@ interface EmailNotificationParams {
 const redis = new Redis(process.env.REDIS_URL!, { maxRetriesPerRequest: null });
 const logicQueue = new Queue('logicQueue', { connection: redis });
 
-export async function sendEmailNotification({
+export async function queueEmail({
   type,
   id,
   userId, // pass userId of the person you are sending the email to

@@ -4,7 +4,7 @@ import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 
 import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
-import { sendEmailNotification } from '@/features/emails/utils/sendEmailNotification';
+import { queueEmail } from '@/features/emails/utils/queueEmail';
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'PUT') {
@@ -37,7 +37,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     }
 
     try {
-      await sendEmailNotification({
+      await queueEmail({
         type: 'grantCompleted',
         id: result.id,
         userId: result.user.id,
