@@ -18,7 +18,7 @@ export function ListingBuilderFormLayout({
   return (
     <div
       className={cn(
-        'flex min-h-screen flex-col justify-between bg-background',
+        'bg-background flex min-h-screen flex-col justify-between',
         className,
       )}
       {...props}

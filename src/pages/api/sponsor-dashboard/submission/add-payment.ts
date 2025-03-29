@@ -110,7 +110,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     const updatedBounty: any = {};
 
     logger.info(`Sending payment notification email for submission ID: ${id}`);
-    sendEmailNotification({
+    await sendEmailNotification({
       type: 'addPayment',
       id,
       triggeredBy: userId,

@@ -107,7 +107,7 @@ export const PreviewListingModal = () => {
           >
             {isLoading && (
               <div className="absolute inset-0 z-10 flex items-center justify-center bg-white/80">
-                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                <Loader2 className="text-primary h-8 w-8 animate-spin" />
               </div>
             )}
             <iframe

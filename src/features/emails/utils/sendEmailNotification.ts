@@ -1,5 +1,5 @@
-import axios from 'axios';
-import jwt from 'jsonwebtoken';
+import { Queue } from 'bullmq';
+import Redis from 'ioredis';
 
 import logger from '@/lib/logger';
 
@@ -21,6 +21,8 @@ type EmailType =
   | 'grantApproved'
   | 'grantCompleted'
   | 'grantRejected'
+  | 'trancheApproved'
+  | 'trancheRejected'
   | 'grantPaymentReceived'
   | 'STWinners'
   | 'nonSTWinners'
@@ -36,20 +38,23 @@ interface EmailNotificationParams {
   triggeredBy: any;
 }
 
-export function sendEmailNotification({
+const redis = new Redis(process.env.REDIS_URL!, { maxRetriesPerRequest: null });
+const logicQueue = new Queue('logicQueue', { connection: redis });
+
+export async function sendEmailNotification({
   type,
   id,
   userId, // pass userId of the person you are sending the email to
   otherInfo,
   triggeredBy,
-}: EmailNotificationParams) {
-  const token = jwt.sign({ triggeredBy }, process.env.EMAIL_SECRET as string, {
-    expiresIn: '60s',
-  });
+}: EmailNotificationParams): Promise<void> {
+  logger.info(
+    `Queueing email notification: type=${type}, userId=${userId}, id=${id}, triggeredBy=${triggeredBy}`,
+  );
 
-  axios
-    .post(
-      process.env.EMAIL_BACKEND!,
+  try {
+    const job = await logicQueue.add(
+      'processLogic',
       {
         type,
         id,
@@ -57,15 +62,30 @@ export function sendEmailNotification({
         otherInfo,
       },
       {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        timeout: 5000,
+        attempts: 3,
+        backoff: { type: 'exponential', delay: 1000 },
+        priority: 1,
+        removeOnComplete: true,
+        removeOnFail: 500,
       },
-    )
-    .catch((error) => {
-      logger.error(
-        `failed to send email for ${type} to ${userId} with ID ${id}: ${error}`,
-      );
+    );
+
+    logger.info(
+      `Email notification queued successfully: jobId=${job.id}, type=${type}, userId=${userId}`,
+    );
+
+    return;
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    const errorStack = error instanceof Error ? error.stack : undefined;
+
+    logger.error({
+      message: `Failed to queue email notification: type=${type}, userId=${userId}, id=${id}`,
+      error: errorMessage,
+      stack: errorStack,
+      metadata: { type, id, userId },
     });
+
+    throw new Error(`Failed to queue email notification: ${errorMessage}`);
+  }
 }

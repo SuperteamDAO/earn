@@ -17,7 +17,7 @@ export const ResizeHandle = React.forwardRef<HTMLDivElement, ResizeProps>(
             'opacity-80': isResizing,
             'group-hover/node-image:opacity-80': !isResizing,
           },
-          'before:absolute before:inset-y-0 before:-left-1 before:-right-1',
+          'before:absolute before:inset-y-0 before:-right-1 before:-left-1',
           className,
         )}
         ref={ref}

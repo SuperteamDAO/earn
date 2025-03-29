@@ -1,4 +1,4 @@
-import type { EmailSettings } from '@prisma/client';
+import type { EmailSettings, Prisma } from '@prisma/client';
 
 import type { SponsorType } from '@/interface/sponsor';
 import type { UserSponsor } from '@/interface/userSponsor';
@@ -65,4 +65,17 @@ interface User {
   stLead?: string;
   isBlocked?: boolean;
 }
-export type { User };
+
+type PrismaUserWithoutKYC = Prisma.UserGetPayload<{
+  select: Omit<
+    Record<keyof Prisma.UserSelect, true>,
+    | 'kycCountry'
+    | 'kycAddress'
+    | 'kycDOB'
+    | 'kycIDNumber'
+    | 'kycIDType'
+    | 'kycName'
+  >;
+}>;
+
+export type { PrismaUserWithoutKYC, User };

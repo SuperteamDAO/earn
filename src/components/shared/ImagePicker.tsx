@@ -102,8 +102,8 @@ export const ImagePicker = ({
     return (
       <div
         className={cn(
-          'relative h-14 w-14 rounded-full border bg-slate-100 text-primary',
-          !preview && 'border-[1.5px] border-dashed border-primary',
+          'text-primary relative h-14 w-14 rounded-full border bg-slate-100',
+          !preview && 'border-primary border-[1.5px] border-dashed',
           isDragging && 'bg-primary-200',
           className,
         )}
@@ -130,7 +130,7 @@ export const ImagePicker = ({
           )}
           {preview && (
             <X
-              className="absolute bottom-0 right-0 z-10 h-5 w-5 cursor-pointer rounded-full border bg-white stroke-[3] p-1 text-slate-400"
+              className="absolute right-0 bottom-0 z-10 h-5 w-5 cursor-pointer rounded-full border bg-white stroke-3 p-1 text-slate-400"
               onClick={handleReset}
             />
           )}
@@ -147,7 +147,7 @@ export const ImagePicker = ({
           type="file"
         />
         <div
-          className="absolute bottom-0 left-0 right-0 top-0 cursor-pointer"
+          className="absolute top-0 right-0 bottom-0 left-0 cursor-pointer"
           onClick={(e) => {
             e.stopPropagation();
             fileInputRef.current?.click();
@@ -182,7 +182,7 @@ export const ImagePicker = ({
           )}
           {preview && (
             <X
-              className="absolute right-3 top-3 z-10 h-5 w-5 cursor-pointer bg-transparent text-slate-400"
+              className="absolute top-3 right-3 z-10 h-5 w-5 cursor-pointer bg-transparent text-slate-400"
               onClick={handleReset}
             />
           )}
@@ -206,7 +206,7 @@ export const ImagePicker = ({
           type="file"
         />
         <div
-          className="absolute bottom-0 left-0 right-0 top-0 cursor-pointer"
+          className="absolute top-0 right-0 bottom-0 left-0 cursor-pointer"
           onClick={(e) => {
             e.stopPropagation();
             fileInputRef.current?.click();

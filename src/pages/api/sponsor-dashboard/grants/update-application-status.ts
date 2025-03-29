@@ -13,7 +13,9 @@ import { type NextApiRequestWithSponsor } from '@/features/auth/types';
 import { checkGrantSponsorAuth } from '@/features/auth/utils/checkGrantSponsorAuth';
 import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
 import { sendEmailNotification } from '@/features/emails/utils/sendEmailNotification';
+import { addOnboardingInfoToAirtable } from '@/features/grants/utils/addOnboardingInfoToAirtable';
 import { convertGrantApplicationToAirtable } from '@/features/grants/utils/convertGrantApplicationToAirtable';
+import { createTranche } from '@/features/grants/utils/createTranche';
 import { fetchTokenUSDValue } from '@/features/wallet/utils/fetchTokenUSDValue';
 
 const MAX_RECORDS = 10;
@@ -31,8 +33,51 @@ const UpdateGrantApplicationSchema = z.object({
   applicationStatus: z.string(),
 });
 
+const checkAndUpdateKYCStatus = async (
+  userId: string,
+  grantApplicationId: string,
+) => {
+  const user = await prisma.user.findUniqueOrThrow({
+    where: { id: userId },
+  });
+
+  if (user.isKYCVerified) {
+    await createTranche({
+      applicationId: grantApplicationId,
+      isFirstTranche: true,
+    });
+
+    const updatedGrantApplication =
+      await prisma.grantApplication.findUniqueOrThrow({
+        where: { id: grantApplicationId },
+        include: {
+          grant: true,
+          user: {
+            select: {
+              email: true,
+              kycName: true,
+            },
+          },
+        },
+      });
+
+    try {
+      await addOnboardingInfoToAirtable(updatedGrantApplication);
+    } catch (airtableError: any) {
+      console.error(
+        `Error adding onboarding info to Airtable: ${airtableError.message}`,
+      );
+    }
+  }
+};
+
 async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   const userId = req.userId;
+  if (!userId) {
+    return res.status(401).json({
+      error: 'Unauthorized',
+    });
+  }
 
   logger.debug(`Request body: ${safeStringify(req.body)}`);
 
@@ -107,6 +152,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       decidedBy: string | undefined;
       approvedAmount?: number;
       approvedAmountInUSD?: number;
+      // totalTranches?: number;
       label?: SubmissionLabels;
     }[] = [];
 
@@ -115,6 +161,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         let approvedData = {
           approvedAmount: 0,
           approvedAmountInUSD: 0,
+          // totalTranches: 2,
         };
         if (isApproved) {
           const parsedAmount = data[k]?.approvedAmount
@@ -136,9 +183,11 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           );
           const tokenUSDValue = await fetchTokenUSDValue(token?.mintAddress!);
           const usdValue = tokenUSDValue * parsedAmount;
+          // const totalTranches = parsedAmount > 5000 ? 3 : 2;
           approvedData = {
             approvedAmount: parsedAmount,
             approvedAmountInUSD: usdValue,
+            // totalTranches,
           };
         }
         const label =
@@ -199,11 +248,17 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           },
         },
       });
+
+      await Promise.all(
+        result.map((application) =>
+          checkAndUpdateKYCStatus(application.userId, application.id),
+        ),
+      );
     }
 
-    if (result[0]?.grant.isNative === true && !result[0]?.grant.airtableId) {
+    if (result[0]?.grant.isNative === true) {
       result.forEach(async (r) => {
-        sendEmailNotification({
+        await sendEmailNotification({
           type: isApproved ? 'grantApproved' : 'grantRejected',
           id: r.id,
           userId: r.userId,

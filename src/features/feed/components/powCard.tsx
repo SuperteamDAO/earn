@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import { OgImageViewer } from '@/components/shared/ogImageViewer';
 
@@ -29,6 +29,8 @@ interface PowCardProps {
 }
 
 export function PowCard({ pow, type, commentCount }: PowCardProps) {
+  const [isViewProjectHovered, setIsViewProjectHovered] = useState(false);
+
   const content = {
     actionText: 'added a personal project',
     createdAt: pow?.createdAt || '',
@@ -43,11 +45,18 @@ export function PowCard({ pow, type, commentCount }: PowCardProps) {
   const actionLinks = (
     <>
       <div className="flex">
-        <p className="break-all text-sm font-semibold text-gray-500 md:text-base">
+        <p
+          className={`text-sm font-semibold break-all text-gray-500 md:text-base ${isViewProjectHovered ? '' : 'group-hover:underline'} group-hover:decoration-current`}
+        >
           {pow?.title}
         </p>
       </div>
-      <FeedCardLink href={pow?.link}>View Project</FeedCardLink>
+      <div
+        onMouseEnter={() => setIsViewProjectHovered(true)}
+        onMouseLeave={() => setIsViewProjectHovered(false)}
+      >
+        <FeedCardLink href={pow?.link}>View Project</FeedCardLink>
+      </div>
     </>
   );
 

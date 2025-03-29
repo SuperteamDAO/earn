@@ -18,9 +18,9 @@ function Grants({ grant: initialGrant }: GrantsDetailsProps) {
   return (
     <GrantPageLayout grant={grant}>
       <div>
-        <div className="mb-10 mt-2 flex max-w-7xl flex-col gap-4 rounded-lg bg-white md:flex-row md:items-start md:justify-between">
+        <div className="mt-2 mb-10 flex max-w-7xl flex-col gap-4 rounded-lg bg-white md:flex-row md:items-start md:justify-between">
           <div className="w-full">
-            <p className="mb-6 mt-2 text-xl font-semibold text-gray-500">
+            <p className="mt-2 mb-6 text-xl font-semibold text-gray-500">
               References
             </p>
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">

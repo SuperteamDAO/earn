@@ -173,7 +173,22 @@ export default async function handler(
           },
         };
         type PoWWithUserAndCommentsCount = Prisma.PoWGetPayload<{
-          include: typeof poWInclude;
+          include: {
+            user: {
+              select: {
+                firstName: true;
+                lastName: true;
+                photo: true;
+                username: true;
+              };
+            };
+            Comments: true;
+            _count: {
+              select: {
+                Comments: true;
+              };
+            };
+          };
         }>;
         const pow: PoWWithUserAndCommentsCount | null =
           await prisma.poW.findUnique({

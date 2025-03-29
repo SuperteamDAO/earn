@@ -33,7 +33,7 @@ export const GrantEntry = ({
           src={tokenIcon}
         />
         <div className="flex items-baseline gap-1">
-          <p className="whitespace-nowrap text-sm font-semibold text-slate-600">
+          <p className="text-sm font-semibold whitespace-nowrap text-slate-600">
             {grantAmount({
               maxReward: maxReward!,
               minReward: minReward!,
@@ -57,9 +57,9 @@ export const GrantEntry = ({
           src={logo || '/api/placeholder/400/240'}
         />
       </div>
-      <div className="relative flex flex-col gap-2 px-4 pb-4 pt-1.5">
+      <div className="relative flex flex-col gap-2 px-4 pt-1.5 pb-4">
         <p
-          className="max-w-full overflow-hidden text-ellipsis whitespace-nowrap text-lg font-semibold text-slate-700"
+          className="max-w-full overflow-hidden text-lg font-semibold text-ellipsis whitespace-nowrap text-slate-700"
           title={title}
         >
           {title}
@@ -68,7 +68,7 @@ export const GrantEntry = ({
         <Link href={`/grants/${slug}`} className="block">
           <Button
             variant="outline"
-            className="w-full border-slate-300 bg-gray-100 text-sm font-medium text-slate-400 hover:bg-brand-purple hover:text-white"
+            className="hover:bg-brand-purple w-full border-slate-300 bg-gray-100 text-sm font-medium text-slate-400 hover:text-white"
           >
             Apply Now
           </Button>

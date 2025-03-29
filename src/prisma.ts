@@ -8,6 +8,16 @@ const prismaClient = () => {
         adapter: new PrismaPlanetScale(
           new Client({ url: process.env.DATABASE_URL }),
         ),
+        omit: {
+          user: {
+            kycCountry: true,
+            kycAddress: true,
+            kycDOB: true,
+            kycIDNumber: true,
+            kycIDType: true,
+            kycName: true,
+          },
+        },
       })
     : new PrismaClient({
         datasourceUrl: process.env.LOCAL_DATABASE_URL,

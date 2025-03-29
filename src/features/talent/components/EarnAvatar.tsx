@@ -22,11 +22,11 @@ export const EarnAvatar = ({
     setHasError(true);
   };
 
-  const commonClassName = 'flex-grow rounded-full object-cover h-8 w-8';
+  const commonClassName = 'grow rounded-full object-cover h-8 w-8';
 
   return (
     <div
-      className={cn('flex-shrink-0')}
+      className={cn('shrink-0')}
       onClick={onClick}
       role={onClick ? 'button' : undefined}
       tabIndex={onClick ? 0 : undefined}
@@ -42,7 +42,7 @@ export const EarnAvatar = ({
       ) : (
         <div className={cn(commonClassName, className)}>
           <Avatar
-            className="!h-full !w-full"
+            className="h-full! w-full!"
             size="100%"
             name={id}
             variant="marble"

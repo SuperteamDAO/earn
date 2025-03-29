@@ -9,9 +9,11 @@ export function Introduction() {
           alt="Medal"
           src={'/leaderboard/medal.webp'}
         />
-        <p className="my-2 font-semibold">Introducing Leaderboards</p>
+        <p className="my-2 font-semibold">
+          Introducing the Talent Leaderboard!
+        </p>
         <p className="text-slate-600">
-          Get Inspired: Check out Earn profiles of the leading contributors of
+          Get inspired: Check out the Earn profiles of leading contributors in
           the Solana ecosystem!
         </p>
       </div>

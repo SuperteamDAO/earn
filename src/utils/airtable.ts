@@ -20,6 +20,13 @@ function airtableConfig(apiToken: string) {
   };
 }
 
+function airtableInsert(data: any[], typecast?: boolean) {
+  return {
+    records: data,
+    ...(typecast ? { typecast: true } : {}),
+  };
+}
+
 function airtableUpsert(mergeOn: string, data: any[]) {
   return {
     performUpsert: {
@@ -101,6 +108,7 @@ async function updateAirtableRecord(
 
 export {
   airtableConfig,
+  airtableInsert,
   airtableUpsert,
   airtableUrl,
   fetchAirtableRecordId,

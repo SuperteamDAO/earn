@@ -133,7 +133,7 @@ const Index = () => {
               )?.role === 'ADMIN'
             )) && (
             <Button
-              className="ph-no-captur h-9 bg-indigo-100 text-brand-purple hover:bg-indigo-100/90"
+              className="ph-no-captur text-brand-purple h-9 bg-indigo-100 hover:bg-indigo-100/90"
               onClick={() => {
                 posthog.capture('invite member_sponsor');
                 onOpen();
@@ -144,9 +144,9 @@ const Index = () => {
             </Button>
           )}
           <div className="relative w-64">
-            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+            <Search className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-slate-400" />
             <Input
-              className="placeholder:text-md h-9 border-slate-200 bg-white pl-9 placeholder:font-medium placeholder:text-slate-400 focus-visible:ring-brand-purple"
+              className="placeholder:text-md focus-visible:ring-brand-purple h-9 border-slate-200 bg-white pl-9 placeholder:font-medium placeholder:text-slate-400"
               onChange={(e) => debouncedSetSearchText(e.target.value)}
               placeholder="Search members..."
               type="text"
@@ -166,13 +166,13 @@ const Index = () => {
           <Table>
             <TableHeader>
               <TableRow className="text-slate-100">
-                <TableHead className="text-sm font-medium uppercase tracking-tight text-slate-400">
+                <TableHead className="text-sm font-medium tracking-tight text-slate-400 uppercase">
                   Member
                 </TableHead>
-                <TableHead className="text-sm font-medium uppercase tracking-tight text-slate-400">
+                <TableHead className="text-sm font-medium tracking-tight text-slate-400 uppercase">
                   Role
                 </TableHead>
-                <TableHead className="text-sm font-medium uppercase tracking-tight text-slate-400">
+                <TableHead className="text-sm font-medium tracking-tight text-slate-400 uppercase">
                   Email
                 </TableHead>
                 <TableHead className="text-sm" />
@@ -206,7 +206,7 @@ const Index = () => {
                             'inline-flex rounded px-2 py-1 text-xs font-semibold',
                             member?.role === 'ADMIN'
                               ? 'bg-emerald-100 text-teal-600'
-                              : 'bg-purple-100 text-brand-purple',
+                              : 'text-brand-purple bg-purple-100',
                           )}
                         >
                           {member?.role}
@@ -312,7 +312,7 @@ const RemoveMemberModal = ({
         <Button
           onClick={() => setIsOpen(true)}
           size="sm"
-          className="bg-indigo-100 text-brand-purple hover:bg-indigo-100/90"
+          className="text-brand-purple bg-indigo-100 hover:bg-indigo-100/90"
         >
           Remove
         </Button>

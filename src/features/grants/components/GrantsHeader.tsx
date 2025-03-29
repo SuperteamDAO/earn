@@ -27,6 +27,7 @@ interface Props {
   slug: string;
   references: any;
   isPublished: boolean;
+  isApproved: boolean;
 }
 export const GrantsHeader = ({
   grant,
@@ -37,6 +38,7 @@ export const GrantsHeader = ({
   slug,
   references,
   isPublished,
+  isApproved,
 }: Props) => {
   let statusTextColor = '';
   let statusText = '';
@@ -76,7 +78,7 @@ export const GrantsHeader = ({
 
             <div className="flex flex-wrap items-center gap-1 md:gap-3">
               <div className="flex items-center gap-1">
-                <p className="whitespace-nowrap text-sm font-medium text-slate-400">
+                <p className="text-sm font-medium whitespace-nowrap text-slate-400">
                   by {sponsor?.name}
                 </p>
                 {!!sponsor?.isVerified && <VerifiedBadge />}
@@ -112,7 +114,7 @@ export const GrantsHeader = ({
           <ListingTabLink
             className="pointer-events-none hidden md:flex md:w-[22rem]"
             href={`/grants/${slug}/`}
-            text="Prizes"
+            text={isApproved ? 'Your Ongoing Grant' : 'Prizes'}
             isActive={false}
           />
           <ListingTabLink

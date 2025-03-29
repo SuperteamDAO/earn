@@ -201,6 +201,8 @@ model Grants {
   isPrivate              Boolean            @default(false)
   references             Json?
   ai                     Json?
+  GrantTranche           GrantTranche[]
+  approverRecordId       String?
 
   @@index([id, slug])
   @@index([pocId])
@@ -248,6 +250,7 @@ model GrantApplication {
   decidedBy           String?
   notes               String?                @db.VarChar(1000)
   ai                  Json?
+  GrantTranche        GrantTranche[]
 
   @@index([userId])
   @@index([grantId])
@@ -259,6 +262,26 @@ model GrantApplication {
   @@index([decidedAt(sort: Desc)])
   @@index([createdAt(sort: Desc)])
   @@index([approvedAmountInUSD(sort: Desc)])
+}
+
+model GrantTranche {
+  id               String             @id @default(uuid())
+  applicationId    String
+  grantId          String
+  ask              Float
+  update           String?            @db.Text
+  helpWanted       String?            @db.Text
+  status           GrantTrancheStatus @default(Pending)
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  GrantApplication GrantApplication   @relation(fields: [applicationId], references: [id])
+  Grant            Grants             @relation(fields: [grantId], references: [id])
+  approvedAmount   Float?
+  decidedAt        DateTime?
+  trancheNumber    Int
+
+  @@index([applicationId])
+  @@index([grantId])
 }
 
 model Submission {
@@ -425,6 +448,13 @@ model User {
   SubscribeHackathon SubscribeHackathon[]
   isBlocked          Boolean              @default(false)
   privyDid           String               @unique
+  isKYCVerified      Boolean              @default(false)
+  kycName            String?
+  kycCountry         String?
+  kycAddress         String?
+  kycDOB             String?
+  kycIDNumber        String?
+  kycIDType          String?
 
   @@index([currentSponsorId])
   @@index([hackathonId])
@@ -781,4 +811,11 @@ enum SubmissionStatus {
   Pending
   Approved
   Rejected
+}
+
+enum GrantTrancheStatus {
+  Pending
+  Approved
+  Rejected
+  Paid
 }

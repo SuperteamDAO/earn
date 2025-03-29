@@ -56,9 +56,9 @@ export function DescriptionAndTemplate() {
                     target="_blank"
                     className="ph-no-capture"
                   >
-                    <div className="group relative inline-flex h-full overflow-hidden rounded-[calc(1.5px+0.375rem-2px)] bg-background p-[1.5px] pb-[1.8px] focus:outline-none">
+                    <div className="group bg-background relative inline-flex h-full overflow-hidden rounded-[calc(1.5px+0.375rem-2px)] p-[1.5px] pb-[1.8px] focus:outline-hidden">
                       <span className="absolute inset-[-1000%] animate-[spin_2s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#FF79C1_0%,#76C5FF_50%,#FF79C1_100%)]" />
-                      <span className="ph-no-capture inline-flex h-full w-full cursor-pointer items-center justify-center gap-2 rounded-md bg-background px-4 py-1 text-xs font-medium text-slate-500 backdrop-blur-3xl group-hover:bg-slate-50">
+                      <span className="ph-no-capture bg-background inline-flex h-full w-full cursor-pointer items-center justify-center gap-2 rounded-md px-4 py-1 text-xs font-medium text-slate-500 backdrop-blur-3xl group-hover:bg-slate-50">
                         <img
                           src="/assets/ai-wand.svg"
                           alt="Auto Generate GPT"
@@ -70,7 +70,7 @@ export function DescriptionAndTemplate() {
                 </Button>
               </div>
             </div>
-            <div className="flex rounded-md border ring-primary has-[:focus]:ring-1">
+            <div className="ring-primary flex rounded-md border has-focus:ring-1">
               <FormControl>
                 <MinimalTiptapEditor
                   key={editorKey}
@@ -86,7 +86,7 @@ export function DescriptionAndTemplate() {
                   output="html"
                   placeholder="Type your description here..."
                   editable={true}
-                  editorClassName="focus:outline-none"
+                  editorClassName="focus:outline-hidden"
                   imageSetting={{
                     folderName: 'listing-description',
                     type: 'description',
