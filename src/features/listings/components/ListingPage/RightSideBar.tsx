@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from 'react';
 import Countdown from 'react-countdown';
 
 import { CountDownRenderer } from '@/components/shared/countdownRenderer';
+import { SecureCountdown } from '@/components/shared/SecureCountdown';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { exclusiveSponsorData } from '@/constants/exclusiveSponsors';
 import { tokenList } from '@/constants/tokenList';
@@ -238,8 +239,8 @@ export function RightSideBar({
                     />
                     <div className="flex flex-col items-start">
                       <p className="text-lg font-medium text-black md:text-xl">
-                        <Countdown
-                          date={deadline}
+                        <SecureCountdown
+                          date={deadline || new Date()}
                           renderer={CountDownRenderer}
                           zeroPadDays={1}
                         />
