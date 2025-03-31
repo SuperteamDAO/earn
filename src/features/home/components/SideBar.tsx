@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { MdArrowForward } from 'react-icons/md';
 
 import { useBreakpoint } from '@/hooks/use-breakpoint';
+import { useUser } from '@/store/user';
 
 import { recentEarnersQuery } from '@/features/listings/queries/recent-earners';
 
@@ -11,6 +12,7 @@ import { totalsQuery } from '../queries/totals';
 import { HowItWorks } from './HowItWorks';
 import { RecentActivity } from './RecentActivity';
 import { RecentEarners } from './RecentEarners';
+import { SidebarBanner } from './SidebarBanner';
 import { TotalStats } from './TotalStats';
 
 interface SideBarProps {
@@ -39,11 +41,14 @@ export const HomeSideBar = ({ type }: SideBarProps) => {
     enabled: isLg,
   });
 
+  const { user } = useUser();
+
   return (
     <div className="flex w-96 flex-col gap-10 py-4 pl-6">
       {type === 'feed' && (
         <>
           <VibeCard />
+          {user?.location?.toLowerCase().includes('korea') && <SidebarBanner />}
           <LiveListings>
             <div className="flex items-center justify-between">
               <span className="text-sm font-medium text-gray-400">
@@ -67,6 +72,7 @@ export const HomeSideBar = ({ type }: SideBarProps) => {
             bountyCount={totals?.count}
             TVE={totals?.totalInUSD}
           />
+          {user?.location?.toLowerCase().includes('korea') && <SidebarBanner />}
           <HowItWorks />
           <RecentEarners earners={recentEarners} />
           <RecentActivity />
