@@ -192,6 +192,8 @@ export const SubmissionTable = ({
         const factor = currentSort.direction === 'asc' ? 1 : -1;
 
         switch (currentSort.column) {
+          case 'id':
+            return (b.sequentialId - a.sequentialId) * factor;
           case 'user':
             const nameA = `${a.user?.firstName} ${a.user?.lastName}` || '';
             const nameB = `${b.user?.firstName} ${b.user?.lastName}` || '';
@@ -260,6 +262,14 @@ export const SubmissionTable = ({
               <TableHeader>
                 <TableRow className="bg-slate-100">
                   <SortableTH
+                    column="id"
+                    currentSort={currentSort}
+                    setSort={onSort}
+                    className={cn(thClassName)}
+                  >
+                    #
+                  </SortableTH>
+                  <SortableTH
                     column="user"
                     currentSort={currentSort}
                     setSort={onSort}
@@ -308,6 +318,11 @@ export const SubmissionTable = ({
 
                     return (
                       <TableRow key={submission.id}>
+                        <TableCell>
+                          <p className="whitespace-nowrap text-sm font-medium text-slate-500">
+                            {submission.sequentialId}
+                          </p>
+                        </TableCell>
                         <TableCell className="min-w-[225px] pr-0">
                           <div className="flex items-center">
                             <EarnAvatar
@@ -398,7 +413,7 @@ export const SubmissionTable = ({
                                 className="flex items-center gap-2"
                               >
                                 <Eye className="h-4 w-4" />
-                                Submission
+                                View Submission
                               </Link>
                             </Button>
                             <DropdownMenu>

@@ -331,9 +331,10 @@ export const ListingTable = ({
                         }}
                       >
                         <Eye className="h-4 w-4" />
+                        View{' '}
                         {listing?.type === 'grant'
-                          ? 'Applications'
-                          : 'Submissions'}
+                          ? ' Applications'
+                          : ' Submissions'}
                       </Button>
                     ) : (session?.user?.role === 'GOD' &&
                         listing.type !== 'grant' &&
