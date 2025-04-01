@@ -22,7 +22,9 @@ function BountyDetails({ bounty: bounty }: BountyDetailsProps) {
           <ListingWinners bounty={bounty} />
         </div>
       )}
-      <DescriptionUI description={bounty?.description} />
+      <div className="max-w-4xl">
+        <DescriptionUI description={bounty?.description} />
+      </div>
     </ListingPageLayout>
   );
 }
