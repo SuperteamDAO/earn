@@ -252,10 +252,10 @@ function Content({
                       onClick={handleCopyPublicKey}
                       role="button"
                       tabIndex={0}
-                      aria-label={`Copy public key: ${truncatePublicKey(submission.user.publicKey, 3)}`}
+                      aria-label={`Copy public key: ${truncatePublicKey(submission.user.publicKey, 20)}`}
                     >
                       <MdOutlineAccountBalanceWallet />
-                      <p>{truncatePublicKey(submission.user.publicKey, 3)}</p>
+                      <p>{truncatePublicKey(submission.user.publicKey, 20)}</p>
                     </div>
                   </Tooltip>
                   <KycComponent address={submission.user.publicKey} xs />

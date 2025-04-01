@@ -142,6 +142,13 @@ export default function SponsorListings() {
         const factor = currentSort.direction === 'desc' ? 1 : -1;
 
         switch (currentSort.column) {
+          case 'id':
+            const idA = a.listing.sequentialId || 0;
+            const idB = b.listing.sequentialId || 0;
+            return idA === idB
+              ? (b.sequentialId - a.sequentialId) * factor
+              : (idB - idA) * factor;
+
           case 'title':
             const titleA = a.listing.title || '';
             const titleB = b.listing.title || '';

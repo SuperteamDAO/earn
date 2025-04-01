@@ -165,6 +165,14 @@ export const ListingTable = ({
         <Table>
           <TableHeader>
             <TableRow className="bg-slate-100">
+              <SortableTH
+                column="id"
+                currentSort={currentSort}
+                setSort={onSort}
+                className={cn(thClassName)}
+              >
+                #
+              </SortableTH>
               <ListingTh />
               <SortableTH
                 column="title"
@@ -226,9 +234,14 @@ export const ListingTable = ({
               return (
                 <TableRow key={listing?.id}>
                   <TableCell className="pr-0">
+                    <p className="whitespace-nowrap text-sm font-medium text-slate-500">
+                      {listing.sequentialId}
+                    </p>
+                  </TableCell>
+                  <TableCell className="pr-0">
                     <Tooltip content={<p>{listingType}</p>}>
                       <img
-                        className="mt-1.5 h-5 w-5 flex-shrink-0 rounded-full"
+                        className="mt-1.5 h-5 min-h-5 w-5 min-w-5 flex-shrink-0 rounded-full"
                         alt={`New ${listingType}`}
                         src={getListingIcon(listing.type!)}
                         title={listingType}

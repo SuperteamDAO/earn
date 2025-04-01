@@ -27,6 +27,7 @@ import { Tooltip } from '@/components/ui/tooltip';
 import { tokenList } from '@/constants/tokenList';
 import { cn } from '@/utils/cn';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
+import { truncatePublicKey } from '@/utils/truncatePublicKey';
 import { getURL } from '@/utils/validUrl';
 
 import { sponsorshipSubmissionStatus } from '@/features/listings/components/SubmissionsPage/SubmissionTable';
@@ -95,7 +96,14 @@ export const SubmissionTable = ({
         <Table>
           <TableHeader>
             <TableRow className="bg-slate-100">
-              <SubmissionTh />
+              <SortableTH
+                column="id"
+                currentSort={currentSort}
+                setSort={onSort}
+                className={cn(thClassName)}
+              >
+                #
+              </SortableTH>
               <SortableTH
                 column="submittedBy"
                 currentSort={currentSort}
@@ -104,13 +112,14 @@ export const SubmissionTable = ({
               >
                 Contributor
               </SortableTH>
+              <SubmissionTh />
               <SortableTH
                 column="title"
                 currentSort={currentSort}
                 setSort={onSort}
                 className={cn(thClassName)}
               >
-                Listing
+                Listing Name
               </SortableTH>
               <SubmissionTh>Ask</SubmissionTh>
               <SortableTH
@@ -171,15 +180,10 @@ export const SubmissionTable = ({
 
               return (
                 <TableRow key={submission?.id}>
-                  <TableCell className="pr-0">
-                    <Tooltip content={<p>{listingType}</p>}>
-                      <img
-                        className="mt-1.5 h-5 w-5 flex-shrink-0 rounded-full"
-                        alt={`New ${listingType}`}
-                        src={getListingIcon(submission?.listing?.type!)}
-                        title={listingType}
-                      />
-                    </Tooltip>
+                  <TableCell>
+                    <p className="whitespace-nowrap text-sm font-medium text-slate-500">
+                      {`${submission?.listing?.sequentialId}.${submission.sequentialId}`}
+                    </p>
                   </TableCell>
                   <TableCell className="max-w-80 whitespace-normal break-words font-medium text-slate-700">
                     <Link
@@ -204,15 +208,27 @@ export const SubmissionTable = ({
                           )}
                         </div>
                         <p className="truncate text-xs font-medium text-slate-500">
-                          {submission.user.publicKey}
+                          {truncatePublicKey(submission.user.publicKey, 20)}
                         </p>
                       </div>
                     </Link>
                   </TableCell>
+                  <TableCell className="pr-0">
+                    <Tooltip content={<p>{listingType}</p>}>
+                      <img
+                        className="mt-1.5 h-5 min-h-5 w-5 min-w-5 flex-shrink-0 rounded-full"
+                        alt={`New ${listingType}`}
+                        src={getListingIcon(submission?.listing?.type!)}
+                        title={listingType}
+                      />
+                    </Tooltip>
+                  </TableCell>
                   <TableCell className="py-2">
-                    <p className="max-w-80 whitespace-normal break-words font-medium text-slate-700">
-                      {submission?.listing?.title}
-                    </p>
+                    <Link href={listingSubmissionLink}>
+                      <p className="max-w-80 whitespace-normal break-words font-medium text-slate-700">
+                        {submission?.listing?.title}
+                      </p>
+                    </Link>
                   </TableCell>
                   <TableCell className="min-w-[225px] font-medium text-slate-700">
                     <div className="flex w-full items-center overflow-visible">

@@ -1,7 +1,8 @@
-import { Info, Pencil } from 'lucide-react';
+import { ExternalLink, Info, Pencil } from 'lucide-react';
 import Link from 'next/link';
 
 import { VerifiedBadgeLarge } from '@/components/shared/VerifiedBadge';
+import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tooltip } from '@/components/ui/tooltip';
 import { PROJECT_NAME } from '@/constants/project';
@@ -135,6 +136,13 @@ export function Banner({
             value={stats?.totalSubmissionsAndApplications}
             isLoading={isLoading}
           />
+
+          <Link href={`/${sponsor?.slug}`} target="_blank" className="ml-auto">
+            <Button variant="outline" className="text-slate-500">
+              <ExternalLink className="h-4 w-4" />
+              View Profile
+            </Button>
+          </Link>
         </div>
       </div>
     </div>

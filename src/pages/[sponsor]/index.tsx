@@ -188,7 +188,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       slug: (sponsorSlug as string).toLowerCase(),
       sponsor: JSON.parse(JSON.stringify(sponsorInfo)),
       title: sponsorInfo?.name,
-      description: '',
+      description: sponsorInfo?.bio || '',
     },
   };
 };

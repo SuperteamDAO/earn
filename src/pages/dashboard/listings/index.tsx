@@ -120,6 +120,10 @@ export default function SponsorListings() {
         const factor = currentSort.direction === 'asc' ? 1 : -1;
 
         switch (currentSort.column) {
+          case 'id':
+            const idA = a.sequentialId || 0;
+            const idB = b.sequentialId || 0;
+            return (idB - idA) * factor;
           case 'title':
             const titleA = a.title || '';
             const titleB = b.title || '';

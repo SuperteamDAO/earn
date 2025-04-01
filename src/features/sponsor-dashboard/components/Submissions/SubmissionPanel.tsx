@@ -288,13 +288,13 @@ export const SubmissionPanel = ({
                         onClick={handleCopyPublicKey}
                         role="button"
                         tabIndex={0}
-                        aria-label={`Copy public key: ${truncatePublicKey(selectedSubmission.user.publicKey, 3)}`}
+                        aria-label={`Copy public key: ${truncatePublicKey(selectedSubmission.user.publicKey, 20)}`}
                       >
                         <MdOutlineAccountBalanceWallet />
                         <p>
                           {truncatePublicKey(
                             selectedSubmission.user.publicKey,
-                            3,
+                            20,
                           )}
                         </p>
                       </div>
