@@ -26,6 +26,7 @@ export default async function handler(
         isPublished: true,
         isActive: true,
         isArchived: false,
+        isPrivate: false,
         status: 'OPEN',
         sponsor: {
           slug: sponsor,
