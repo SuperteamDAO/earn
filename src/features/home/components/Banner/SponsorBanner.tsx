@@ -95,9 +95,10 @@ export function HomeSponsorBanner() {
       </p>
       <p className="relative z-10 mt-1 max-w-[18rem] text-sm leading-[130%] text-black sm:max-w-md md:mt-1 md:max-w-[20rem] md:text-lg lg:max-w-sm xl:max-w-[25rem]">
         Reach{' '}
-        {roundToNearestTenThousand(userCount?.totalUsers || 0)?.toLocaleString(
-          'en-us',
-        ) || '0'}
+        {roundToNearestTenThousand(
+          userCount?.totalUsers || 0,
+          true,
+        )?.toLocaleString('en-us') || '0'}
         + top-tier talent in under 5 clicks. Get high-quality work done across
         content, development, and design.
       </p>
