@@ -31,7 +31,7 @@ export const CATEGORY_NAV_ITEMS: Array<NavItem & { pillPH: string }> = [
     href: '/category/content/',
     posthog: 'content_navbar',
     pillPH: 'content_navpill',
-    altActive: ['/category/design/all/'],
+    altActive: ['/category/content/all/'],
   },
   {
     label: 'Design',

@@ -10,7 +10,7 @@ import { safeStringify } from '@/utils/safeStringify';
 
 import { checkListingSponsorAuth } from '@/features/auth/utils/checkListingSponsorAuth';
 import { getSponsorSession } from '@/features/auth/utils/getSponsorSession';
-import { sendEmailNotification } from '@/features/emails/utils/sendEmailNotification';
+import { queueEmail } from '@/features/emails/utils/queueEmail';
 import { BONUS_REWARD_POSITION } from '@/features/listing-builder/constants';
 import { calculateTotalPrizes } from '@/features/listing-builder/utils/rewards';
 import { type Rewards } from '@/features/listings/types';
@@ -228,7 +228,7 @@ export async function POST(
         }
 
         logger.debug('Sending winner announcement email notifications');
-        await sendEmailNotification({
+        await queueEmail({
           type: 'announceWinners',
           id,
           triggeredBy: userId,
@@ -239,13 +239,13 @@ export async function POST(
           listing.type !== 'project' &&
           listing.isFndnPaying
         ) {
-          await sendEmailNotification({
+          await queueEmail({
             type: 'STWinners',
             id,
             triggeredBy: userId,
           });
         } else {
-          await sendEmailNotification({
+          await queueEmail({
             type: 'nonSTWinners',
             id,
             triggeredBy: userId,

@@ -11,6 +11,7 @@ import {
   Keypair,
   LAMPORTS_PER_SOL,
   PublicKey,
+  SendTransactionError,
   SystemProgram,
   TransactionMessage,
   VersionedTransaction,
@@ -69,11 +70,123 @@ async function calculateAtaCreationCost(
   return Math.ceil(tokenAmountToCharge * 10 ** decimals);
 }
 
+async function createFeePayerATA(
+  connection: Connection,
+  tokenMint: PublicKey,
+  feePayerWallet: Keypair,
+  programId: PublicKey,
+): Promise<boolean> {
+  try {
+    const feePayer = feePayerWallet.publicKey;
+    const feePayerATA = getAssociatedTokenAddressSync(
+      tokenMint,
+      feePayer,
+      false,
+      programId,
+    );
+
+    const { blockhash } = await connection.getLatestBlockhash('finalized');
+
+    const createATAInstruction = createAssociatedTokenAccountInstruction(
+      feePayer,
+      feePayerATA,
+      feePayer,
+      tokenMint,
+      programId,
+    );
+
+    const computeBudgetInstructions = [
+      ComputeBudgetProgram.setComputeUnitLimit({ units: 40000 }),
+      ComputeBudgetProgram.setComputeUnitPrice({ microLamports: 100000 }),
+    ];
+
+    const message = new TransactionMessage({
+      payerKey: feePayer,
+      recentBlockhash: blockhash,
+      instructions: [...computeBudgetInstructions, createATAInstruction],
+    }).compileToV0Message();
+
+    const transaction = new VersionedTransaction(message);
+    transaction.sign([feePayerWallet]);
+
+    const signature = await connection.sendTransaction(transaction);
+    const confirmation = await connection.confirmTransaction(
+      signature,
+      'confirmed',
+    );
+
+    if (confirmation.value.err) {
+      logger.error(`${safeStringify(confirmation.value.err)}`);
+      return false;
+    }
+
+    logger.info(`Created fee payer ATA: ${feePayerATA.toString()}`);
+    return true;
+  } catch (error) {
+    if (error instanceof SendTransactionError) {
+      logger.error(`${error.message}`);
+      const logs = error.logs ? error.logs.join('\n') : 'No logs available';
+      logger.error(`Transaction logs:\n${logs}`);
+    } else {
+      logger.error(`Error creating fee payer ATA: ${safeStringify(error)}`);
+    }
+    return false;
+  }
+}
+
 async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
   const { userId, body } = req;
   try {
+    logger.info(`Starting withdrawal process for user ${userId}`);
     const validatedBody = withdrawFormSchema.parse(body);
     const { recipientAddress, amount, tokenAddress } = validatedBody;
+    logger.info(
+      `req body: ${safeStringify({ recipientAddress, amount, tokenAddress })}`,
+    );
+
+    if (tokenAddress !== 'So11111111111111111111111111111111111111112') {
+      if (!process.env.FEEPAYER_PRIVATE_KEY) {
+        logger.error('Fee payer private key not configured');
+        throw new Error('Fee payer private key not configured');
+      }
+
+      const feePayerWallet = Keypair.fromSecretKey(
+        bs58.decode(process.env.FEEPAYER_PRIVATE_KEY as string),
+      );
+      const feePayer = feePayerWallet.publicKey;
+
+      const connection = getConnection('confirmed');
+      const tokenMint = new PublicKey(tokenAddress);
+
+      const isToken2022 = await isToken2022Token(connection, tokenAddress);
+      const programId = isToken2022 ? TOKEN_2022_PROGRAM_ID : TOKEN_PROGRAM_ID;
+
+      const feePayerATA = getAssociatedTokenAddressSync(
+        tokenMint,
+        feePayer,
+        false,
+        programId,
+      );
+
+      const feePayerATAExists =
+        !!(await connection.getAccountInfo(feePayerATA));
+
+      if (!feePayerATAExists) {
+        const success = await createFeePayerATA(
+          connection,
+          tokenMint,
+          feePayerWallet,
+          programId,
+        );
+
+        if (!success) {
+          logger.error('Failed to create fee payer ATA');
+          throw new Error('Failed to create fee payer ATA');
+        }
+
+        logger.info('Fee payer ATA created successfully');
+      }
+    }
 
     const user = await prisma.user.findUniqueOrThrow({
       where: { id: userId },
@@ -87,13 +200,14 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
     const sender = new PublicKey(user.walletAddress);
     const recipient = new PublicKey(recipientAddress);
     const tokenMint = new PublicKey(tokenAddress);
+
+    if (!process.env.FEEPAYER_PRIVATE_KEY)
+      throw new Error('Fee payer private key not configured');
+
     const feePayerWallet = Keypair.fromSecretKey(
       bs58.decode(process.env.FEEPAYER_PRIVATE_KEY as string),
     );
     const feePayer = feePayerWallet.publicKey;
-
-    if (!process.env.FEEPAYER_PRIVATE_KEY)
-      throw new Error('Fee payer private key not configured');
 
     if (tokenAddress === 'So11111111111111111111111111111111111111112') {
       const instructions = [
@@ -143,6 +257,13 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
     const receiverATAExists = !!(await connection.getAccountInfo(receiverATA));
     const receiverATAWasMissing = !receiverATAExists;
 
+    const feePayerATA = getAssociatedTokenAddressSync(
+      tokenMint,
+      feePayer,
+      false,
+      programId,
+    );
+
     const allInstructions = [
       ComputeBudgetProgram.setComputeUnitLimit({ units: 40000 }),
       ComputeBudgetProgram.setComputeUnitPrice({ microLamports: 100000 }),
@@ -166,27 +287,6 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
           programId,
         ),
       );
-
-      const feePayerATA = getAssociatedTokenAddressSync(
-        tokenMint,
-        feePayer,
-        false,
-        programId,
-      );
-      const feePayerATAExists =
-        !!(await connection.getAccountInfo(feePayerATA));
-
-      if (!feePayerATAExists && ataCreationCost > 0) {
-        allInstructions.push(
-          createAssociatedTokenAccountInstruction(
-            feePayer,
-            feePayerATA,
-            feePayer,
-            tokenMint,
-            programId,
-          ),
-        );
-      }
 
       if (ataCreationCost > 0) {
         allInstructions.push(

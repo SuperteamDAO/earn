@@ -7,6 +7,7 @@ import React from 'react';
 import SponsorLogosBanner from '@/public/assets/banner-sponsor-logos.webp';
 import SponsorLogosBannerMobile from '@/public/assets/banner-sponsor-logos-mobile.webp';
 import { cn } from '@/utils/cn';
+import { roundToNearestTenth, roundToNearestTenThousand } from '@/utils/number';
 
 import { sponsorCountQuery } from '../../queries/sponsor-count';
 import { userCountQuery } from '../../queries/user-count';
@@ -78,8 +79,8 @@ export function HomeSponsorBanner() {
         xmlns="http://www.w3.org/2000/svg"
       >
         <path
-          fill-rule="evenodd"
-          clip-rule="evenodd"
+          fillRule="evenodd"
+          clipRule="evenodd"
           d="M2.65078 4.5C1.61342 4.5 0.772476 5.34094 0.772476 6.3783V16.1217C0.772476 17.1591 1.61342 18 2.65078 18H18.7537C19.7911 18 20.632 17.1591 20.632 16.1217V6.3783C20.632 5.34094 19.7911 4.5 18.7537 4.5H2.65078ZM8.92175 6.75C8.66242 6.75 8.45218 6.96024 8.45218 7.21958V8.53043C8.45218 8.78976 8.66242 9 8.92175 9H12.4826C12.7419 9 12.9522 8.78976 12.9522 8.53043V7.21958C12.9522 6.96024 12.7419 6.75 12.4826 6.75H8.92175Z"
           fill="black"
         />
@@ -93,9 +94,13 @@ export function HomeSponsorBanner() {
         Become a Sponsor
       </p>
       <p className="relative z-10 mt-1 max-w-[18rem] text-sm leading-[130%] text-black sm:max-w-md md:mt-1 md:max-w-[20rem] md:text-lg lg:max-w-sm xl:max-w-[25rem]">
-        Reach {userCount?.totalUsers?.toLocaleString('en-us') || '0'}+ top-tier
-        talent in under 5 clicks. Get high-quality work done across content,
-        development, and design.
+        Reach{' '}
+        {roundToNearestTenThousand(
+          userCount?.totalUsers || 0,
+          true,
+        )?.toLocaleString('en-us') || '0'}
+        + top-tier talent in under 5 clicks. Get high-quality work done across
+        content, development, and design.
       </p>
       <div className="relative z-10 mt-auto flex w-full flex-col items-start gap-3 pt-4 md:flex-row md:items-center md:gap-4">
         <button
@@ -109,7 +114,11 @@ export function HomeSponsorBanner() {
         <div className="flex items-center">
           {data?.totalSponsors !== null && (
             <p className="relative ml-[0.6875rem] text-[0.8rem] text-black md:text-[0.875rem]">
-              Join {data?.totalSponsors?.toLocaleString('en-us')}+ others
+              Join{' '}
+              {roundToNearestTenth(data?.totalSponsors || 0)?.toLocaleString(
+                'en-us',
+              )}
+              + others
             </p>
           )}
         </div>

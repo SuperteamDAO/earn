@@ -9,7 +9,7 @@ import { safeStringify } from '@/utils/safeStringify';
 
 import { checkGrantSponsorAuth } from '@/features/auth/utils/checkGrantSponsorAuth';
 import { getSponsorSession } from '@/features/auth/utils/getSponsorSession';
-import { sendEmailNotification } from '@/features/emails/utils/sendEmailNotification';
+import { queueEmail } from '@/features/emails/utils/queueEmail';
 import { addPaymentInfoToAirtable } from '@/features/grants/utils/addPaymentInfoToAirtable';
 
 const UpdateGrantTrancheSchema = z.object({
@@ -179,7 +179,7 @@ export async function POST(request: NextRequest) {
               `Airtable error details: ${safeStringify(airtableError.response?.data || airtableError)}`,
             );
           }
-          await sendEmailNotification({
+          await queueEmail({
             type: 'trancheApproved',
             id: result.id,
             userId: result.GrantApplication.userId,
@@ -188,7 +188,7 @@ export async function POST(request: NextRequest) {
         }
 
         if (result.status === 'Rejected') {
-          await sendEmailNotification({
+          await queueEmail({
             type: 'trancheRejected',
             id: result.id,
             userId: result.GrantApplication.userId,

@@ -3,7 +3,6 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import type { AppProps } from 'next/app';
 import dynamic from 'next/dynamic';
 import { Router, useRouter } from 'next/router';
-import { PagesTopLoader } from 'nextjs-toploader';
 import posthog from 'posthog-js';
 import { PostHogProvider } from 'posthog-js/react';
 import React, {
@@ -15,6 +14,7 @@ import React, {
 } from 'react';
 import { toast } from 'sonner';
 
+import { TopLoader } from '@/components/ui/toploader';
 import { useUser } from '@/store/user';
 import { fontMono, fontSans } from '@/theme/fonts';
 import { getURL } from '@/utils/validUrl';
@@ -149,7 +149,7 @@ function MyApp({ Component, pageProps }: any) {
 
   return (
     <>
-      <PagesTopLoader color="#6366F1" showSpinner={false} />
+      <TopLoader />
       {isLoaded && (isDashboardRoute || walletListingRoute) ? (
         <SolanaWalletProvider>
           <Component {...pageProps} key={router.asPath} />

@@ -12,7 +12,7 @@ import { safeStringify } from '@/utils/safeStringify';
 import { type NextApiRequestWithSponsor } from '@/features/auth/types';
 import { checkGrantSponsorAuth } from '@/features/auth/utils/checkGrantSponsorAuth';
 import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
-import { sendEmailNotification } from '@/features/emails/utils/sendEmailNotification';
+import { queueEmail } from '@/features/emails/utils/queueEmail';
 import { addOnboardingInfoToAirtable } from '@/features/grants/utils/addOnboardingInfoToAirtable';
 import { convertGrantApplicationToAirtable } from '@/features/grants/utils/convertGrantApplicationToAirtable';
 import { createTranche } from '@/features/grants/utils/createTranche';
@@ -258,7 +258,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
     if (result[0]?.grant.isNative === true) {
       result.forEach(async (r) => {
-        await sendEmailNotification({
+        await queueEmail({
           type: isApproved ? 'grantApproved' : 'grantRejected',
           id: r.id,
           userId: r.userId,

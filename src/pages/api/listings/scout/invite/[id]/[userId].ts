@@ -7,7 +7,7 @@ import { safeStringify } from '@/utils/safeStringify';
 import { type NextApiRequestWithSponsor } from '@/features/auth/types';
 import { checkListingSponsorAuth } from '@/features/auth/utils/checkListingSponsorAuth';
 import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
-import { sendEmailNotification } from '@/features/emails/utils/sendEmailNotification';
+import { queueEmail } from '@/features/emails/utils/queueEmail';
 
 async function scoutInvite(
   req: NextApiRequestWithSponsor,
@@ -66,7 +66,7 @@ async function scoutInvite(
     logger.debug(
       `Sending scout invite email for listing ID: ${id} and user ID: ${userId}`,
     );
-    await sendEmailNotification({
+    await queueEmail({
       type: 'scoutInvite',
       id: id,
       userId,

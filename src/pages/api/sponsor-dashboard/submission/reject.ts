@@ -6,7 +6,7 @@ import { prisma } from '@/prisma';
 import { type NextApiRequestWithSponsor } from '@/features/auth/types';
 import { checkListingSponsorAuth } from '@/features/auth/utils/checkListingSponsorAuth';
 import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
-import { sendEmailNotification } from '@/features/emails/utils/sendEmailNotification';
+import { queueEmail } from '@/features/emails/utils/queueEmail';
 
 const MAX_RECORDS = 10;
 
@@ -91,7 +91,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
     for (const submission of currentSubmissions) {
       try {
-        await sendEmailNotification({
+        await queueEmail({
           type: 'submissionRejected',
           id: submission.id,
           userId: submission.userId,
