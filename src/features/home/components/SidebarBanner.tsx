@@ -52,7 +52,7 @@ export function SidebarBanner({ className }: SidebarPosterProps) {
           className="absolute top-0 left-0 h-full w-full object-cover"
         />
 
-        <div className="relative z-10 flex h-full w-full flex-col px-4 py-6 text-white">
+        <div className="relative z-10 flex h-full w-full flex-col px-4 pt-6 pb-4 text-white">
           <div className="flex items-center justify-between">
             <ExternalImage
               alt="Seoulana"
@@ -65,8 +65,8 @@ export function SidebarBanner({ className }: SidebarPosterProps) {
             >
               <p>2025</p>
               <p className={``}>
-                {dayjs(START_DATE).format('M.D')} -{' '}
-                {dayjs(CLOSE_DATE).format('M.D')}
+                {dayjs(START_DATE).format('MMMM D')} -{' '}
+                {dayjs(CLOSE_DATE).format('D')}
               </p>
             </span>
           </div>
@@ -79,8 +79,10 @@ export function SidebarBanner({ className }: SidebarPosterProps) {
             >
               $97,000
             </p>
-            <p className={`${sportyPro.className} text-[#AFAFAF]`}>
-              TOTAL PRIZES
+            <p
+              className={`${sportyPro.className} max-w-[12rem] pt-2 text-center text-sm font-normal text-slate-200`}
+            >
+              a mix of cash and paid-in-kind prizes
             </p>
           </div>
 
