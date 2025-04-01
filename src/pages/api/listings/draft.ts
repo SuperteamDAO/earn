@@ -128,7 +128,14 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       sponsorId: userSponsorId,
       pocId: userId,
       isFndnPaying,
-      sequentialId: 0,
+      sequentialId: id
+        ? listing!.sequentialId
+        : (
+            await prisma.sponsors.update({
+              where: { id: userSponsorId },
+              data: { listingCounter: { increment: 1 } },
+            })
+          ).listingCounter,
     };
 
     let result;
@@ -138,16 +145,8 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         data,
       });
     } else {
-      const updatedSponsor = await prisma.sponsors.update({
-        where: { id: userSponsorId },
-        data: { listingCounter: { increment: 1 } },
-      });
-
       result = await prisma.bounties.create({
-        data: {
-          ...data,
-          sequentialId: updatedSponsor.listingCounter,
-        },
+        data,
       });
     }
 

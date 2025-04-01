@@ -42,10 +42,7 @@ import { getURL } from '@/utils/validUrl';
 
 import { grantAmount } from '@/features/grants/utils/grantAmount';
 import { type ListingWithSubmissions } from '@/features/listings/types';
-import {
-  formatDeadline,
-  isDeadlineOver,
-} from '@/features/listings/utils/deadline';
+import { formatDeadline } from '@/features/listings/utils/deadline';
 import { getColorStyles } from '@/features/listings/utils/getColorStyles';
 import { getListingIcon } from '@/features/listings/utils/getListingIcon';
 import {
@@ -207,8 +204,6 @@ export const ListingTable = ({
 
               const deadline = formatDeadline(listing?.deadline, listing?.type);
 
-              const pastDeadline = isDeadlineOver(listing?.deadline);
-
               const listingStatus = getListingStatus(listing);
               const listingLabel =
                 listingStatus === 'Draft'
@@ -330,8 +325,7 @@ export const ListingTable = ({
                     ) : (session?.user?.role === 'GOD' &&
                         listing.type !== 'grant' &&
                         !listing.isPublished) ||
-                      (!pastDeadline &&
-                        listing.type !== 'grant' &&
+                      (listing.type !== 'grant' &&
                         listing.status === 'OPEN') ? (
                       <Link href={`/dashboard/listings/${listing.slug}/edit/`}>
                         <Button
@@ -380,8 +374,7 @@ export const ListingTable = ({
                         {!!(
                           (session?.user?.role === 'GOD' &&
                             listing.type !== 'grant') ||
-                          (!pastDeadline &&
-                            listing.type !== 'grant' &&
+                          (listing.type !== 'grant' &&
                             listing.status === 'OPEN')
                         ) && (
                           <Link

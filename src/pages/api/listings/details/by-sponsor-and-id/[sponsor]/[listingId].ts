@@ -28,7 +28,6 @@ export default async function handler(
           slug: sponsor,
         },
         sequentialId: parseInt(listingId),
-        isPublished: true,
       },
       include: {
         sponsor: {
