@@ -1,10 +1,8 @@
-import { useQuery } from '@tanstack/react-query';
 import localFont from 'next/font/local';
 import Link from 'next/link';
 
 import { Button } from '@/components/ui/button';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
-import { hackathonQuery } from '@/queries/hackathon';
 import { dayjs } from '@/utils/dayjs';
 
 const sportyPro = localFont({
@@ -41,11 +39,10 @@ interface SidebarPosterProps {
 }
 
 export function SidebarBanner({ className }: SidebarPosterProps) {
-  const { data: hackathon } = useQuery(hackathonQuery('seoulana'));
-  const START_DATE = hackathon?.startDate;
-  const CLOSE_DATE = hackathon?.deadline;
+  const START_DATE = new Date('April 4, 2025');
+  const CLOSE_DATE = new Date('April 6, 2025');
   return (
-    <Link href="#">
+    <Link href="https://earn.superteam.fun/listing/must-apply-seoulana-hackathon-2025-grand-prize/">
       <div
         className={`relative flex h-[21.125rem] w-full flex-col items-center overflow-hidden rounded-xl border border-white/20 ${className}`}
       >
@@ -56,7 +53,6 @@ export function SidebarBanner({ className }: SidebarPosterProps) {
         />
 
         <div className="relative z-10 flex h-full w-full flex-col px-4 py-6 text-white">
-          {/* Logo */}
           <div className="flex items-center justify-between">
             <ExternalImage
               alt="Seoulana"
@@ -69,8 +65,8 @@ export function SidebarBanner({ className }: SidebarPosterProps) {
             >
               <p>2025</p>
               <p className={``}>
-                {dayjs(START_DATE).format('M.DD')} -{' '}
-                {dayjs(CLOSE_DATE).format('M.DD')}
+                {dayjs(START_DATE).format('M.D')} -{' '}
+                {dayjs(CLOSE_DATE).format('M.D')}
               </p>
             </span>
           </div>
