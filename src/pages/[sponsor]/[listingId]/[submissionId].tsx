@@ -20,6 +20,7 @@ import { useClipboard } from '@/hooks/use-clipboard';
 import type { SubmissionWithUser } from '@/interface/submission';
 import { ListingPageLayout } from '@/layouts/Listing';
 import { api } from '@/lib/api';
+import { getBountyUrl, getSubmissionUrl } from '@/utils/bounty-urls';
 import { cn } from '@/utils/cn';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
@@ -90,7 +91,7 @@ function Content({
   const [commentCount, setCommentCount] = useState(0);
 
   const { onCopy: onCopySubmissionLink } = useClipboard(
-    `${getURL()}${bounty.sponsor?.slug}/${bounty.sequentialId}/${submission?.sequentialId}`,
+    getSubmissionUrl(submission, bounty),
   );
   const [, setSelectedSubmission] = useAtom(selectedSubmissionAtom);
 
@@ -133,7 +134,7 @@ function Content({
             <BreadcrumbItem>
               <BreadcrumbLink asChild>
                 <Link
-                  href={`/${bounty.sponsor?.slug}/${bounty.sequentialId}/submission`}
+                  href={`${getBountyUrl(bounty)}/submission`}
                   className="flex items-center"
                 >
                   <ChevronLeft className="mr-1 h-6 w-6" />
@@ -181,10 +182,8 @@ function Content({
                 <div className="hidden gap-4 md:flex">
                   <LikeAndComment
                     id={submission?.id}
-                    sponsorSlug={bounty.sponsor?.slug || ''}
-                    bountySequentialId={bounty.sequentialId || 0}
-                    submissionSequentialId={submission.sequentialId || 0}
-                    likes={submission.like}
+                    bounty={bounty}
+                    submission={submission}
                     setUpdate={resetSubmission}
                     ref={commentsRef}
                   />
@@ -313,10 +312,8 @@ function Content({
           <div>
             <LikeAndComment
               id={submission?.id}
-              sponsorSlug={bounty.sponsor?.slug || ''}
-              bountySequentialId={bounty.sequentialId || 0}
-              submissionSequentialId={submission.sequentialId || 0}
-              likes={submission.like}
+              bounty={bounty}
+              submission={submission}
               setUpdate={resetSubmission}
               ref={commentsRef}
             />

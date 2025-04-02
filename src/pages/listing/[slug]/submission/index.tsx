@@ -2,6 +2,7 @@ import { type GetServerSideProps } from 'next';
 
 import { api } from '@/lib/api';
 import SubmissionPage from '@/pages/[sponsor]/[listingId]/submission';
+import { getBountyUrl } from '@/utils/bounty-urls';
 import { getURL } from '@/utils/validUrl';
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
@@ -20,7 +21,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   return {
     redirect: {
-      destination: `/${bountyData?.bounty.sponsor.slug}/${bountyData?.bounty.sequentialId}/submission`,
+      destination: `${getBountyUrl(bountyData?.bounty)}/submissions`,
       permanent: true,
     },
   };

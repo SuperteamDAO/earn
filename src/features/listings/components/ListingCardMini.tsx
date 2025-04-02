@@ -5,6 +5,7 @@ import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
 import { LocalImage } from '@/components/ui/local-image';
 import { ASSET_URL } from '@/constants/ASSET_URL';
 import { tokenList } from '@/constants/tokenList';
+import { getBountyUrl } from '@/utils/bounty-urls';
 
 import { type Listing } from '../types';
 import { getListingIcon } from '../utils/getListingIcon';
@@ -18,7 +19,6 @@ export const ListingCardMini = ({ bounty }: { bounty: Listing }) => {
     sponsor,
     title,
     token,
-    sequentialId,
     compensationType,
     minRewardAsk,
     maxRewardAsk,
@@ -29,7 +29,7 @@ export const ListingCardMini = ({ bounty }: { bounty: Listing }) => {
   return (
     <Link
       className="ph-no-capture w-full rounded-md px-2 py-4 hover:bg-gray-100 hover:no-underline"
-      href={`/${sponsor?.slug}/${sequentialId}`}
+      href={getBountyUrl(bounty)}
     >
       <div className="ph-no-capture flex w-full items-center justify-between">
         <div className="flex w-full">

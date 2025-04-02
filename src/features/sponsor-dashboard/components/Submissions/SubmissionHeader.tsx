@@ -29,6 +29,7 @@ import { tokenList } from '@/constants/tokenList';
 import { useClipboard } from '@/hooks/use-clipboard';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { api } from '@/lib/api';
+import { getBountyUrl } from '@/utils/bounty-urls';
 import { cn } from '@/utils/cn';
 import { tweetEmbedLink } from '@/utils/socialEmbeds';
 import { getURL } from '@/utils/validUrl';
@@ -67,15 +68,15 @@ export const SubmissionHeader = ({
 
   const deadline = formatDeadline(bounty?.deadline, bounty?.type);
 
-  const listingPath = `${bounty?.sponsor?.slug}/${bounty?.sequentialId}`;
-  const { hasCopied, onCopy } = useClipboard(`${getURL()}${listingPath}`);
+  const listingPath = getBountyUrl(bounty);
+  const { hasCopied, onCopy } = useClipboard(`${listingPath}`);
 
   const bountyStatus = getListingStatus(bounty);
 
   const listingLink =
     bounty?.type === 'grant'
       ? `${getURL()}grants/${bounty.slug}/`
-      : `${getURL()}${bounty?.sponsor?.slug}/${bounty?.sequentialId}/`;
+      : getBountyUrl(bounty);
 
   const socialListingLink = (medium?: 'twitter' | 'telegram') =>
     `${listingLink}${medium ? `?utm_source=${PROJECT_NAME}&utm_medium=${medium}&utm_campaign=sharelisting/` : ``}`;
@@ -272,7 +273,7 @@ ${socialListingLink('twitter')}
               <Input
                 className="w-80 overflow-hidden text-ellipsis whitespace-nowrap border-slate-100 pl-10 pr-10 text-slate-500 focus-visible:ring-[#CFD2D7] focus-visible:ring-offset-0"
                 readOnly
-                value={`${getURL()}${listingPath}`}
+                value={`${listingPath}`}
               />
 
               <div className="absolute right-3 top-1/2 -translate-y-1/2">

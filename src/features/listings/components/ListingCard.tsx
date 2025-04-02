@@ -6,6 +6,7 @@ import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ASSET_URL } from '@/constants/ASSET_URL';
 import { tokenList } from '@/constants/tokenList';
+import { getBountyUrl } from '@/utils/bounty-urls';
 import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';
 import { timeAgoShort } from '@/utils/timeAgo';
@@ -46,7 +47,6 @@ export const ListingCard = ({ bounty }: { bounty: Listing }) => {
     sponsor,
     title,
     token,
-    sequentialId,
     isWinnersAnnounced,
     isFeatured,
     compensationType,
@@ -83,7 +83,7 @@ export const ListingCard = ({ bounty }: { bounty: Listing }) => {
 
   return (
     <Link
-      href={`/${sponsor?.slug}/${sequentialId}`}
+      href={getBountyUrl(bounty)}
       className={`block w-full rounded-md px-2 py-4 no-underline hover:bg-gray-100 sm:px-4 ${
         isFeatured && isBeforeDeadline ? 'bg-purple-50' : 'bg-white'
       }`}

@@ -25,10 +25,10 @@ import {
 } from '@/components/ui/table';
 import { Tooltip } from '@/components/ui/tooltip';
 import { tokenList } from '@/constants/tokenList';
+import { getSubmissionUrl } from '@/utils/bounty-urls';
 import { cn } from '@/utils/cn';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
-import { getURL } from '@/utils/validUrl';
 
 import { sponsorshipSubmissionStatus } from '@/features/listings/components/SubmissionsPage/SubmissionTable';
 import { getListingIcon } from '@/features/listings/utils/getListingIcon';
@@ -149,7 +149,10 @@ export const SubmissionTable = ({
               );
               const listingStatus = sponsorshipSubmissionStatus(submission);
               const isUsdBased = submission?.listing?.token === 'Any';
-              const submissionLink = `${getURL()}${submission?.listing?.sponsor?.slug}/${submission?.listing?.sequentialId}/${submission.sequentialId}`;
+              const submissionLink = getSubmissionUrl(
+                submission,
+                submission?.listing,
+              );
               const token = isUsdBased
                 ? submission.token
                 : submission?.listing?.token;

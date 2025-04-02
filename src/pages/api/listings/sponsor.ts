@@ -36,6 +36,8 @@ export default async function handler(
       select: {
         rewardAmount: true,
         deadline: true,
+        isPublished: true,
+        isPrivate: true,
         type: true,
         title: true,
         token: true,

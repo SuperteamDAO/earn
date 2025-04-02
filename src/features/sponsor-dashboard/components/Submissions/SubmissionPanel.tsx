@@ -18,6 +18,7 @@ import { Tooltip } from '@/components/ui/tooltip';
 import { EXPLORER_TX_URL } from '@/constants/project';
 import { useClipboard } from '@/hooks/use-clipboard';
 import type { SubmissionWithUser } from '@/interface/submission';
+import { getSubmissionUrl } from '@/utils/bounty-urls';
 import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
@@ -80,7 +81,7 @@ export const SubmissionPanel = ({
   );
 
   const { onCopy: onCopySubmissionLink } = useClipboard(
-    `${window.location.origin}/${bounty?.sponsor?.slug}/${bounty?.sequentialId}/${selectedSubmission?.sequentialId}`,
+    getSubmissionUrl(selectedSubmission, bounty),
   );
 
   const handleCopySubmissionLink = () => {

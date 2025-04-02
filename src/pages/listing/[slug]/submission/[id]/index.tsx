@@ -3,6 +3,7 @@ import { type GetServerSideProps } from 'next';
 import { type SubmissionWithUser } from '@/interface/submission';
 import { api } from '@/lib/api';
 import SubmissionPage from '@/pages/[sponsor]/[listingId]/[submissionId]';
+import { getSubmissionUrl } from '@/utils/bounty-urls';
 import { getURL } from '@/utils/validUrl';
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
@@ -32,7 +33,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   return {
     redirect: {
-      destination: `/${bountyData.bounty.sponsor.slug}/${bountyData.bounty.sequentialId}/${submission.sequentialId}`,
+      destination: getSubmissionUrl(submission, bountyData?.bounty),
       permanent: true,
     },
   };

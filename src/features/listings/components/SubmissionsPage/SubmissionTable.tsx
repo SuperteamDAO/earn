@@ -32,10 +32,10 @@ import { tokenList } from '@/constants/tokenList';
 import { useDynamicClipboard } from '@/hooks/use-clipboard';
 import type { SubmissionWithUser } from '@/interface/submission';
 import { useUser } from '@/store/user';
+import { getSubmissionUrl } from '@/utils/bounty-urls';
 import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
-import { getURL } from '@/utils/validUrl';
 
 import { ListingTh } from '@/features/sponsor-dashboard/components/ListingTable';
 import { colorMap } from '@/features/sponsor-dashboard/utils/statusColorMap';
@@ -65,18 +65,14 @@ interface Props {
 
 export const LikeAndComment = ({
   id,
-  sponsorSlug,
-  bountySequentialId,
-  submissionSequentialId,
-  likes,
+  bounty,
+  submission,
   setUpdate,
   ref,
 }: {
   id: string;
-  sponsorSlug: string;
-  bountySequentialId: number;
-  submissionSequentialId: number;
-  likes: { id: string; date: number }[];
+  bounty: Listing;
+  submission: SubmissionWithUser;
   setUpdate: Dispatch<SetStateAction<boolean>>;
   ref?: React.RefObject<HTMLDivElement | null>;
 }) => {
@@ -112,7 +108,9 @@ export const LikeAndComment = ({
     toast.promise(likePromise, {
       loading: 'Liking the submission...',
       success: () => {
-        const likeAdded = likes?.some((e) => e.id === user?.id)
+        const likeAdded = submission.like?.some(
+          (e: { id: string; date: number }) => e.id === user?.id,
+        )
           ? 'Like removed'
           : 'Liked submission';
         return `${likeAdded}`;
@@ -139,12 +137,14 @@ export const LikeAndComment = ({
         <Heart
           className={cn(
             'h-4 w-4 stroke-2',
-            !likes?.find((e) => e.id === user?.id)
+            !submission.like?.find(
+              (e: { id: string; date: number }) => e.id === user?.id,
+            )
               ? 'fill-white text-slate-500'
               : 'fill-rose-600 text-rose-600',
           )}
         />
-        {likes?.length || 0}
+        {submission.like?.length || 0}
       </Button>
       {!ref ? (
         <Link
@@ -152,7 +152,7 @@ export const LikeAndComment = ({
             'z-10 flex h-auto items-center gap-2 p-0 text-sm font-medium',
             'text-slate-500 hover:bg-transparent',
           )}
-          href={`/${sponsorSlug}/${bountySequentialId}/${submissionSequentialId}#comments`}
+          href={`${getSubmissionUrl(submission, bounty)}#comments`}
         >
           <MessageCircle className="h-4 w-4 cursor-pointer fill-white stroke-2" />
           {commentCount}
@@ -302,7 +302,7 @@ export const SubmissionTable = ({
                   {filteredSubmissions.map((submission) => {
                     const submissionStatus =
                       sponsorshipSubmissionStatus(submission);
-                    const submissionLink = `${getURL()}${bounty.sponsor?.slug}/${bounty.sequentialId}/${submission.sequentialId}`;
+                    const submissionLink = getSubmissionUrl(submission, bounty);
                     const token = isUsdBased ? submission.token : bounty.token;
                     const tokenObject = tokenList.filter(
                       (e) => e?.tokenSymbol === token,
@@ -392,12 +392,8 @@ export const SubmissionTable = ({
                         <TableCell className="items-center py-2">
                           <LikeAndComment
                             id={submission.id}
-                            sponsorSlug={bounty.sponsor?.slug || ''}
-                            bountySequentialId={bounty.sequentialId || 0}
-                            submissionSequentialId={
-                              submission.sequentialId || 0
-                            }
-                            likes={submission.like}
+                            bounty={bounty}
+                            submission={submission}
                             setUpdate={setUpdate}
                           />
                         </TableCell>

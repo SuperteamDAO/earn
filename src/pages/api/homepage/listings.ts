@@ -73,6 +73,8 @@ export async function getListings({
       sequentialId: true,
       isWinnersAnnounced: true,
       isFeatured: true,
+      isPrivate: true,
+      isPublished: true,
       compensationType: true,
       minRewardAsk: true,
       maxRewardAsk: true,

@@ -127,6 +127,8 @@ async function findRelatedListings(
       b.type,
       b.title,
       b.token,
+      b.isPrivate,
+      b.isPublished,
       b.winnersAnnouncedAt,
       b.slug,
       b.isWinnersAnnounced,

@@ -1,3 +1,4 @@
+import { type Prisma } from '@prisma/client';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
@@ -12,6 +13,23 @@ export default async function handler(
   const sponsor = params.sponsor as string;
   const listingId = params.listingId as string;
 
+  const isUUID = listingId.includes('-');
+  const where: Prisma.BountiesWhereInput = isUUID
+    ? {
+        id: listingId,
+        sponsor: {
+          slug: sponsor,
+        },
+      }
+    : {
+        sequentialId: parseInt(listingId),
+        sponsor: {
+          slug: sponsor,
+        },
+        isPublished: true,
+        isPrivate: false,
+      };
+
   logger.debug(`Request query: ${safeStringify(params)}`);
 
   if (!sponsor || !listingId) {
@@ -23,12 +41,7 @@ export default async function handler(
 
   try {
     const result = await prisma.bounties.findFirst({
-      where: {
-        sponsor: {
-          slug: sponsor,
-        },
-        sequentialId: parseInt(listingId),
-      },
+      where,
       include: {
         sponsor: {
           select: {

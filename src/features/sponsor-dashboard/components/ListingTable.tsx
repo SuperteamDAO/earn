@@ -37,6 +37,7 @@ import { Tooltip } from '@/components/ui/tooltip';
 import { tokenList } from '@/constants/tokenList';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { type SponsorType } from '@/interface/sponsor';
+import { getBountyUrl } from '@/utils/bounty-urls';
 import { cn } from '@/utils/cn';
 import { getURL } from '@/utils/validUrl';
 
@@ -221,7 +222,7 @@ export const ListingTable = ({
               const listingLink =
                 listing?.type === 'grant'
                   ? `${getURL()}grants/${listing.slug}`
-                  : `${getURL()}${sponsor?.slug}/${listing.sequentialId}`;
+                  : getBountyUrl({ ...listing, sponsor: sponsor });
 
               const listingSubmissionLink =
                 listing.type === 'grant'

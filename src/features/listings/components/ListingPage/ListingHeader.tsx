@@ -13,6 +13,7 @@ import { Tooltip } from '@/components/ui/tooltip';
 import { ASSET_URL } from '@/constants/ASSET_URL';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { PulseIcon } from '@/svg/pulse-icon';
+import { getBountyUrl } from '@/utils/bounty-urls';
 import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';
 
@@ -45,7 +46,6 @@ export function ListingHeader({
     isWinnersAnnounced,
     publishedAt,
     isPublished,
-    sequentialId,
     Hackathon,
     isPrivate,
   } = listing;
@@ -256,14 +256,14 @@ export function ListingHeader({
           <div className="mx-auto my-auto flex h-full w-full max-w-7xl items-center justify-start gap-10 border-b border-slate-200">
             <ListingTabLink
               className="pointer-events-none hidden md:flex md:w-[22rem]"
-              href={`/${sponsor?.slug}/${sequentialId}/`}
+              href={getBountyUrl(listing)}
               text={type === 'project' ? 'Inviting Proposals' : 'Prizes'}
               isActive={false}
             />
             <ListingTabLink
               href={
                 !isTemplate
-                  ? `/${sponsor?.slug}/${sequentialId}/`
+                  ? getBountyUrl(listing)
                   : `/templates/listings/${slug}/`
               }
               text="Details"
@@ -273,7 +273,7 @@ export function ListingHeader({
             {showSubmissions && (
               <ListingTabLink
                 onClick={() => posthog.capture('submissions tab_listing')}
-                href={`/${sponsor?.slug}/${sequentialId}/submission`}
+                href={`${getBountyUrl(listing)}/submission`}
                 text="Submissions"
                 isActive={isSubmissionActive}
                 subText={
