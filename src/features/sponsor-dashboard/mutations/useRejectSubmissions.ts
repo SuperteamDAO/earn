@@ -15,7 +15,7 @@ export const useRejectSubmissions = (slug: string) => {
 
   return useMutation({
     mutationFn: async (submissionIds: string[]) => {
-      const batchSize = 10;
+      const batchSize = 50;
       for (let i = 0; i < submissionIds.length; i += batchSize) {
         const batch = submissionIds.slice(i, i + batchSize);
         await api.post(`/api/sponsor-dashboard/submission/reject`, {

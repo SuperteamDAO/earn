@@ -8,7 +8,7 @@ import { checkListingSponsorAuth } from '@/features/auth/utils/checkListingSpons
 import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
 import { queueEmail } from '@/features/emails/utils/queueEmail';
 
-const MAX_RECORDS = 10;
+const MAX_RECORDS = 50;
 
 async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   logger.debug(`Request body: ${JSON.stringify(req.body)}`);
@@ -28,10 +28,10 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     return res.status(400).json({ error: 'Data asked to update is empty' });
   }
   if (data.length > MAX_RECORDS) {
-    logger.warn('Only max 10 records allowed in data');
+    logger.warn('Only max 50 records allowed in data');
     return res
       .status(400)
-      .json({ error: 'Only max 10 records allowed in data' });
+      .json({ error: 'Only max 50 records allowed in data' });
   }
 
   try {
@@ -62,10 +62,10 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         (application) => application.listingId === listingId,
       )
     ) {
-      logger.warn('All records should have same and valid grant ID');
+      logger.warn('All records should have same and valid listing ID');
       return res
         .status(404)
-        .json({ error: 'All records should have same and valid grant ID' });
+        .json({ error: 'All records should have same and valid listing ID' });
     }
 
     currentSubmissions.forEach(async (currentApplicant) => {

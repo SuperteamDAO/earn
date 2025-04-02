@@ -1,7 +1,7 @@
 import { type SubmissionLabels } from '@prisma/client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useAtom } from 'jotai';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { Check, ChevronLeft, ChevronRight } from 'lucide-react';
 import type { GetServerSideProps } from 'next';
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/router';
@@ -28,11 +28,13 @@ import {
 } from '@/features/sponsor-dashboard/atoms';
 import { PublishResults } from '@/features/sponsor-dashboard/components/PublishResults';
 import { ScoutTable } from '@/features/sponsor-dashboard/components/Scouts/ScoutTable';
+import { MultiBonusModal } from '@/features/sponsor-dashboard/components/Submissions/Modals/MultiBonusModal';
 import { RejectAllSubmissionModal } from '@/features/sponsor-dashboard/components/Submissions/Modals/RejectAllModal';
 import { SubmissionHeader } from '@/features/sponsor-dashboard/components/Submissions/SubmissionHeader';
 import { SubmissionList } from '@/features/sponsor-dashboard/components/Submissions/SubmissionList';
 import { SubmissionPanel } from '@/features/sponsor-dashboard/components/Submissions/SubmissionPanel';
 import { useRejectSubmissions } from '@/features/sponsor-dashboard/mutations/useRejectSubmissions';
+import { useToggleWinner } from '@/features/sponsor-dashboard/mutations/useToggleWinner';
 import { sponsorDashboardListingQuery } from '@/features/sponsor-dashboard/queries/listing';
 import { scoutsQuery } from '@/features/sponsor-dashboard/queries/scouts';
 import { submissionsQuery } from '@/features/sponsor-dashboard/queries/submissions';
@@ -79,9 +81,9 @@ export default function BountySubmissions({ slug }: Props) {
     onClose: onTogglerClose,
   } = useDisclosure();
   const {
-    isOpen: rejectedIsOpen,
-    onOpen: rejectedOnOpen,
-    onClose: rejectedOnClose,
+    isOpen: multiActionConfrimIsOpen,
+    onOpen: multiActionConfirmOnOpen,
+    onClose: multiActionConfirmOnClose,
   } = useDisclosure();
 
   const { data: submissions, isLoading: isSubmissionsLoading } = useQuery(
@@ -91,6 +93,8 @@ export default function BountySubmissions({ slug }: Props) {
   const { data: bounty, isLoading: isBountyLoading } = useQuery(
     sponsorDashboardListingQuery(slug),
   );
+
+  const isProject = useMemo(() => bounty?.type === 'project', [bounty]);
 
   useEffect(() => {
     selectedSubmissionIds.size > 0 ? onTogglerOpen() : onTogglerClose();
@@ -102,7 +106,11 @@ export default function BountySubmissions({ slug }: Props) {
       const submissionWithId = submissions?.find(
         (submission) => submission.id === a,
       );
-      if (submissionWithId && submissionWithId.status !== 'Pending') {
+      if (
+        submissionWithId &&
+        (submissionWithId.status !== 'Pending' ||
+          submissionWithId.winnerPosition)
+      ) {
         newSet.delete(a);
       }
     });
@@ -111,7 +119,10 @@ export default function BountySubmissions({ slug }: Props) {
 
   const isAllCurrentToggled = () =>
     paginatedSubmissions
-      ?.filter((submission) => submission.status === 'Pending')
+      ?.filter(
+        (submission) =>
+          submission.status === 'Pending' && !submission.winnerPosition,
+      )
       .every((submission) => selectedSubmissionIds.has(submission.id)) || false;
 
   const toggleSubmission = (id: string) => {
@@ -135,10 +146,53 @@ export default function BountySubmissions({ slug }: Props) {
 
   const rejectSubmissions = useRejectSubmissions(slug);
 
+  const { mutateAsync: toggleWinner } = useToggleWinner(bounty);
+
   const handleRejectSubmission = (submissionIds: string[]) => {
     rejectSubmissions.mutate(submissionIds);
-    rejectedOnClose();
+    multiActionConfirmOnClose();
   };
+
+  const handleAssignBonus = useCallback(
+    async (submissionIds: string[]) => {
+      try {
+        const bonusSubmissions = submissionIds.map((s) => ({
+          id: s,
+          isWinner: true,
+          winnerPosition: BONUS_REWARD_POSITION,
+        }));
+
+        await toggleWinner(bonusSubmissions);
+        multiActionConfirmOnClose();
+        setSelectedSubmissionIds(new Set());
+      } catch (error) {
+        console.error('Error assigning bonus:', error);
+      }
+    },
+    [toggleWinner, multiActionConfirmOnClose, setSelectedSubmissionIds],
+  );
+
+  const isMultiSelectDisabled = useMemo(() => {
+    if (bounty?.isWinnersAnnounced) return true;
+    if (bounty?.type === 'project') return false;
+    else {
+      if (!bounty?.rewards?.[BONUS_REWARD_POSITION] || !bounty?.maxBonusSpots)
+        return true;
+    }
+    return false;
+  }, [bounty, selectedSubmissionIds]);
+
+  const multiBonusPodiumsOverSelected = useMemo(
+    () =>
+      Boolean(
+        bounty?.type !== 'project' &&
+          bounty?.rewards?.[BONUS_REWARD_POSITION] &&
+          bounty?.maxBonusSpots &&
+          remainings &&
+          selectedSubmissionIds.size > remainings.bonus,
+      ),
+    [bounty, selectedSubmissionIds, remainings],
+  );
 
   const { data: scouts } = useQuery({
     ...scoutsQuery({
@@ -251,7 +305,10 @@ export default function BountySubmissions({ slug }: Props) {
       setSelectedSubmissionIds((prev) => {
         const newSet = new Set(prev);
         paginatedSubmissions
-          ?.filter((submission) => submission.status === 'Pending')
+          ?.filter(
+            (submission) =>
+              submission.status === 'Pending' && !submission.winnerPosition,
+          )
           .map((submission) => newSet.add(submission.id));
         return newSet;
       });
@@ -414,9 +471,6 @@ export default function BountySubmissions({ slug }: Props) {
               totalWinners={totalWinners || 0}
               totalPaymentsMade={totalPaymentsMade || 0}
               bounty={bounty}
-              usedPositions={usedPositions || []}
-              setRemainings={setRemainings}
-              submissions={submissions || []}
             />
           )}
           <SubmissionHeader
@@ -466,6 +520,7 @@ export default function BountySubmissions({ slug }: Props) {
                       toggleSubmission={toggleSubmission}
                       isAllToggled={isToggledAll}
                       toggleAllSubmissions={toggleAllSubmissions}
+                      isMultiSelectDisabled={isMultiSelectDisabled}
                     />
                   </div>
 
@@ -492,7 +547,6 @@ export default function BountySubmissions({ slug }: Props) {
                       <SubmissionPanel
                         isMultiSelectOn={selectedSubmissionIds.size > 0}
                         remainings={remainings}
-                        setRemainings={setRemainings}
                         bounty={bounty}
                         submissions={paginatedSubmissions}
                         usedPositions={usedPositions || []}
@@ -590,9 +644,14 @@ export default function BountySubmissions({ slug }: Props) {
               }}
               unsetDefaultPosition
               hideCloseIcon
-              className="fixed bottom-4 left-1/2 w-fit -translate-x-1/2 overflow-hidden px-1 py-1"
+              className="fixed bottom-4 left-1/2 w-fit max-w-none -translate-x-1/2 overflow-hidden px-1 py-1"
             >
               <div className="mx-auto w-fit rounded-lg">
+                {multiBonusPodiumsOverSelected && (
+                  <p className="pb-2 text-center text-sm text-red-500">
+                    You have {remainings?.bonus || 0} bonus spots available
+                  </p>
+                )}
                 <div className="flex items-center gap-4 text-lg">
                   <div className="flex items-center gap-2 px-2 pl-4 font-medium">
                     <p>{selectedSubmissionIds.size}</p>
@@ -612,36 +671,69 @@ export default function BountySubmissions({ slug }: Props) {
                   </Button>
 
                   <Button
-                    className="gap-2 bg-red-100 px-2 font-medium text-rose-600 hover:bg-red-50/90"
-                    disabled={selectedSubmissionIds.size === 0}
-                    onClick={rejectedOnOpen}
+                    className={cn(
+                      'gap-2 px-2 font-medium',
+                      isProject &&
+                        'bg-red-100 text-rose-600 hover:bg-red-50/90',
+                      !isProject &&
+                        'bg-green-100 text-emerald-600 hover:bg-green-50/90',
+                    )}
+                    disabled={
+                      selectedSubmissionIds.size === 0 ||
+                      multiBonusPodiumsOverSelected
+                    }
+                    onClick={multiActionConfirmOnOpen}
                   >
-                    <svg
-                      width="13"
-                      height="13"
-                      viewBox="0 0 13 13"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M6.11111 0.777832C9.49056 0.777832 12.2222 3.5095 12.2222 6.88894C12.2222 10.2684 9.49056 13.0001 6.11111 13.0001C2.73167 13.0001 0 10.2684 0 6.88894C0 3.5095 2.73167 0.777832 6.11111 0.777832ZM8.305 3.83339L6.11111 6.02728L3.91722 3.83339L3.05556 4.69505L5.24944 6.88894L3.05556 9.08283L3.91722 9.9445L6.11111 7.75061L8.305 9.9445L9.16667 9.08283L6.97278 6.88894L9.16667 4.69505L8.305 3.83339Z"
-                        fill="#E11D48"
-                      />
-                    </svg>
-                    Reject {selectedSubmissionIds.size} Application
-                    {selectedSubmissionIds.size > 1 ? 's' : ''}
+                    {isProject && (
+                      <svg
+                        width="13"
+                        height="13"
+                        viewBox="0 0 13 13"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M6.11111 0.777832C9.49056 0.777832 12.2222 3.5095 12.2222 6.88894C12.2222 10.2684 9.49056 13.0001 6.11111 13.0001C2.73167 13.0001 0 10.2684 0 6.88894C0 3.5095 2.73167 0.777832 6.11111 0.777832ZM8.305 3.83339L6.11111 6.02728L3.91722 3.83339L3.05556 4.69505L5.24944 6.88894L3.05556 9.08283L3.91722 9.9445L6.11111 7.75061L8.305 9.9445L9.16667 9.08283L6.97278 6.88894L9.16667 4.69505L8.305 3.83339Z"
+                          fill="#E11D48"
+                        />
+                      </svg>
+                    )}
+                    {!isProject && (
+                      <span className="flex items-center justify-between rounded-full bg-green-600 p-[3px]">
+                        <Check className="!size-2.5 stroke-3 text-white" />
+                      </span>
+                    )}
+                    {isProject ? `Reject` : 'Assign'}{' '}
+                    {selectedSubmissionIds.size}{' '}
+                    {isProject ? 'Application' : 'Bonus'}
+                    {selectedSubmissionIds.size > 1
+                      ? isProject
+                        ? 's'
+                        : 'es'
+                      : ''}
                   </Button>
                 </div>
               </div>
             </DialogContent>
           </Dialog>
-          <RejectAllSubmissionModal
-            allSubmissionsLength={submissions?.length || 0}
-            submissionIds={Array.from(selectedSubmissionIds)}
-            rejectIsOpen={rejectedIsOpen}
-            rejectOnClose={rejectedOnClose}
-            onRejectSubmission={handleRejectSubmission}
-          />
+          {isProject && (
+            <RejectAllSubmissionModal
+              allSubmissionsLength={submissions?.length || 0}
+              submissionIds={Array.from(selectedSubmissionIds)}
+              rejectIsOpen={multiActionConfrimIsOpen}
+              rejectOnClose={multiActionConfirmOnClose}
+              onRejectSubmission={handleRejectSubmission}
+            />
+          )}
+          {!isProject && (
+            <MultiBonusModal
+              allSubmissionsLength={submissions?.length || 0}
+              submissionIds={Array.from(selectedSubmissionIds)}
+              bonusIsOpen={multiActionConfrimIsOpen}
+              bonusOnClose={multiActionConfirmOnClose}
+              onBonusSubmission={handleAssignBonus}
+            />
+          )}
         </>
       )}
     </SponsorLayout>

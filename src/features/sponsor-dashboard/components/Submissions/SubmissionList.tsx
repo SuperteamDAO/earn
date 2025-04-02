@@ -42,6 +42,7 @@ interface Props {
   isToggled?: (id: string) => boolean;
   toggleAllSubmissions?: () => void;
   isAllToggled?: boolean;
+  isMultiSelectDisabled: boolean;
 }
 
 export const SubmissionList = ({
@@ -55,6 +56,7 @@ export const SubmissionList = ({
   isToggled,
   toggleAllSubmissions,
   isAllToggled,
+  isMultiSelectDisabled,
 }: Props) => {
   const [selectedSubmission, setSelectedSubmission] = useAtom(
     selectedSubmissionAtom,
@@ -109,11 +111,11 @@ export const SubmissionList = ({
     <div className="h-full w-full rounded-l-xl border border-slate-200 bg-white">
       <div className="flex cursor-pointer flex-col items-center justify-between gap-4 border-b border-slate-200 px-4 py-3">
         <div className="flex w-full items-center justify-between gap-4 py-[3px]">
-          {listing?.type === 'project' && (
+          {!isMultiSelectDisabled && (
             <Checkbox
               className="data-[state=checked]:border-brand-purple data-[state=checked]:bg-brand-purple"
               checked={isAllToggled}
-              disabled={listing?.isWinnersAnnounced}
+              disabled={isMultiSelectDisabled}
               onCheckedChange={() =>
                 toggleAllSubmissions && toggleAllSubmissions()
               }
@@ -233,13 +235,14 @@ export const SubmissionList = ({
             }}
           >
             <div className="flex items-center">
-              {listing?.type === 'project' && (
+              {!isMultiSelectDisabled && (
                 <Checkbox
                   className="data-[state=checked]:border-brand-purple data-[state=checked]:bg-brand-purple mr-2 disabled:invisible"
                   checked={isToggled && isToggled(submission.id)}
                   disabled={
-                    listing?.isWinnersAnnounced ||
-                    submission?.status !== 'Pending'
+                    submission?.status !== 'Pending' ||
+                    !!submission?.winnerPosition ||
+                    isMultiSelectDisabled
                   }
                   onCheckedChange={() =>
                     toggleSubmission && toggleSubmission(submission.id)
