@@ -22,6 +22,7 @@ export type BountyTemplateWithSponsor = Prisma.BountiesTemplatesGetPayload<{
     token: true;
     color: true;
     language: true;
+    eligibility: true;
     region: true;
     slug: true;
     Bounties: {
@@ -70,6 +71,7 @@ export default async function bounties(
         token: true,
         color: true,
         language: true,
+        eligibility: true,
         region: true,
         slug: true,
         Bounties: {

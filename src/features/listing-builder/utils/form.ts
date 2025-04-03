@@ -125,7 +125,6 @@ export const cleanTemplate = (
   reTemplate.isPrivate = prevValues.isPrivate;
   reTemplate.isFndnPaying = prevValues.isFndnPaying;
   reTemplate.hackathonId = prevValues.hackathonId || undefined;
-  reTemplate.eligibility = (prevValues.eligibility as any) || undefined;
 
   delete reTemplate.isFeatured;
   delete reTemplate.isActive;
