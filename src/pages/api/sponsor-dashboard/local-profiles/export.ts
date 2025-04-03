@@ -1,7 +1,7 @@
 import type { NextApiResponse } from 'next';
 import Papa from 'papaparse';
 
-import { Superteams } from '@/constants/Superteam';
+import { Superteams, unofficialSuperteams } from '@/constants/Superteam';
 import { type Skills } from '@/interface/skills';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
@@ -28,7 +28,9 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       select: { name: true },
     });
 
-    const superteam = Superteams.find((st) => st.name === sponsor?.name);
+    const superteam =
+      Superteams.find((st) => st.name === sponsor?.name) ||
+      unofficialSuperteams.find((st) => st.name === sponsor?.name);
     if (!superteam) {
       return res.status(403).json({ error: 'Invalid sponsor' });
     }
