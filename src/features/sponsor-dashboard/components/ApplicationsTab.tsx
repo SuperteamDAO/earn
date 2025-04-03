@@ -174,6 +174,7 @@ export const ApplicationsTab = ({ slug }: Props) => {
       const newApplications = queryClient.getQueryData<GrantApplicationsReturn>(
         ['sponsor-applications', slug, { ...params, skip: newSkip }],
       );
+      setApplications(newApplications?.data || []);
 
       if (newApplications && newApplications.count > 0) {
         if (selectIndex === -1) {

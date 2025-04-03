@@ -1,6 +1,6 @@
 import type { NextApiResponse } from 'next';
 
-import { Superteams } from '@/constants/Superteam';
+import { Superteams, unofficialSuperteams } from '@/constants/Superteam';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
@@ -42,9 +42,13 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       ...sponsor,
     });
 
-    const superteam = Superteams.find(
-      (team) => team.name.toLowerCase() === sponsor?.name.toLowerCase(),
-    );
+    const superteam =
+      Superteams.find(
+        (team) => team.name.toLowerCase() === sponsor?.name.toLowerCase(),
+      ) ||
+      unofficialSuperteams.find(
+        (team) => team.name.toLowerCase() === sponsor?.name.toLowerCase(),
+      );
 
     if (!superteam) {
       logger.warn(
