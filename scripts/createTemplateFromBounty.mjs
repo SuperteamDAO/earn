@@ -56,6 +56,7 @@ async function createTemplate(bounty) {
     pocId: bounty.pocId,
     pocSocials: bounty.pocSocials,
     source: bounty.source,
+    eligibility: bounty.eligibility,
     // Add mock values for optional fields
     color: '#FF5733', // Example hex color
     emoji: '🚀',
