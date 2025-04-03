@@ -82,19 +82,23 @@ export function Banner({
       <div className="mb-6 w-full rounded-md border border-slate-200 bg-white px-6 py-5 text-white">
         <div className="flex items-center gap-6">
           <div className="flex flex-shrink-0 items-center gap-3">
-            <EarnAvatar
-              className="h-12 w-12 rounded-md"
-              id={sponsor?.name}
-              avatar={sponsor?.logo}
-            />
+            <Link href={`/${sponsor?.slug}`} target="_blank">
+              <EarnAvatar
+                className="h-12 w-12 rounded-md"
+                id={sponsor?.name}
+                avatar={sponsor?.logo}
+              />
+            </Link>
             <div>
               <div className="flex items-center">
-                <div className="flex w-min items-center gap-1">
-                  <p className="whitespace-nowrap text-lg font-semibold text-slate-900">
-                    {sponsor?.name}
-                  </p>
-                  <div>{!!sponsor?.isVerified && <VerifiedBadgeLarge />}</div>
-                </div>
+                <Link href={`/${sponsor?.slug}`} target="_blank">
+                  <div className="flex w-min items-center gap-1">
+                    <p className="whitespace-nowrap text-lg font-semibold text-slate-900">
+                      {sponsor?.name}
+                    </p>
+                    <div>{!!sponsor?.isVerified && <VerifiedBadgeLarge />}</div>
+                  </div>
+                </Link>
 
                 <Link
                   className="ml-2 text-slate-500 hover:text-slate-800"
@@ -103,6 +107,7 @@ export function Banner({
                   <Pencil className="h-4 w-4 text-slate-400" />
                 </Link>
               </div>
+
               {isLoading ? (
                 <Skeleton className="mt-2 h-5 w-[170px]" />
               ) : (

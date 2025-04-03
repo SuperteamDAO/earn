@@ -229,6 +229,8 @@ export const ListingTable = ({
                   ? `/dashboard/grants/${listing.slug}/applications/`
                   : `/dashboard/listings/${listing.slug}/submissions/`;
 
+              const editLink = `/dashboard/listings/${listing.slug}/edit/`;
+
               const textColor = getColorStyles(listingStatus).color;
               const bgColor = getColorStyles(listingStatus).bgColor;
 
@@ -251,11 +253,10 @@ export const ListingTable = ({
                   </TableCell>
                   <TableCell className="max-w-80 whitespace-normal break-words font-medium text-slate-700">
                     <Link
-                      className={cn(
-                        'ph-no-capture',
-                        !listing.isPublished && 'pointer-events-none',
-                      )}
-                      href={listingSubmissionLink}
+                      className={cn('ph-no-capture')}
+                      href={
+                        listing.isPublished ? listingSubmissionLink : editLink
+                      }
                       onClick={() => {
                         posthog.capture('submissions_sponsor');
                       }}
@@ -342,7 +343,7 @@ export const ListingTable = ({
                         !listing.isPublished) ||
                       (listing.type !== 'grant' &&
                         listing.status === 'OPEN') ? (
-                      <Link href={`/dashboard/listings/${listing.slug}/edit/`}>
+                      <Link href={editLink}>
                         <Button
                           variant="ghost"
                           size="sm"
@@ -392,10 +393,7 @@ export const ListingTable = ({
                           (listing.type !== 'grant' &&
                             listing.status === 'OPEN')
                         ) && (
-                          <Link
-                            className="block"
-                            href={`/dashboard/listings/${listing.slug}/edit`}
-                          >
+                          <Link className="block" href={editLink}>
                             <DropdownMenuItem className="cursor-pointer text-sm font-medium text-slate-500">
                               <PencilLine className="mr-2 h-4 w-4" />
                               Edit {listingLabel}
