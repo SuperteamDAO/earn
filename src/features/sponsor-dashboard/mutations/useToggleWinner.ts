@@ -39,11 +39,6 @@ export const useToggleWinner = (bounty: Listing | undefined) => {
       await Promise.all(batchPromises);
       return { success: true };
     },
-    onSuccess: (_) => {
-      queryClient.invalidateQueries({
-        queryKey: ['sponsor-submissions', bounty?.slug],
-      });
-    },
     onError: (error: any) => {
       queryClient.invalidateQueries({
         queryKey: ['sponsor-submissions', bounty?.slug],
