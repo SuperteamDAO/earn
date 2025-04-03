@@ -2,6 +2,7 @@ import { useMutation } from '@tanstack/react-query';
 import {
   Check,
   ChevronLeft,
+  CircleHelp,
   Copy,
   Download,
   ExternalLink,
@@ -43,6 +44,7 @@ import { getListingIcon } from '@/features/listings/utils/getListingIcon';
 import { getListingStatus } from '@/features/listings/utils/status';
 
 import { useCompleteSponsorship } from '../../mutations/useCompleteSponsorship';
+import { ListingStatusModal } from '../ListingStatusModal';
 import { SponsorPrize } from '../SponsorPrize';
 import { CompleteSponsorshipModal } from './Modals/CompleteSponsorshipModal';
 
@@ -63,6 +65,12 @@ export const SubmissionHeader = ({
 }: Props) => {
   const { data: session } = useSession();
   const completeSponsorship = useCompleteSponsorship(bounty?.id ?? '');
+
+  const {
+    isOpen: statusModalOpen,
+    onOpen: statusModalOnOpen,
+    onClose: statusModalOnClose,
+  } = useDisclosure();
 
   const deadline = formatDeadline(bounty?.deadline, bounty?.type);
 
@@ -122,6 +130,10 @@ ${socialListingLink('twitter')}
 
   return (
     <>
+      <ListingStatusModal
+        isOpen={statusModalOpen}
+        onClose={statusModalOnClose}
+      />
       {isOpen && (
         <CompleteSponsorshipModal
           isOpen={isOpen}
@@ -226,7 +238,16 @@ ${socialListingLink('twitter')}
           </p>
         </div>
         <div>
-          <p className="text-slate-500">Status</p>
+          <div className="flex items-center gap-1">
+            <p className="text-slate-500">Status</p>
+            <Button
+              variant="ghost"
+              className="h-4 w-4 p-0 hover:bg-transparent"
+              onClick={statusModalOnOpen}
+            >
+              <CircleHelp className="text-slate-400 hover:text-slate-600" />
+            </Button>
+          </div>
           <p
             className={cn(
               'mt-3 inline-flex items-center whitespace-nowrap rounded-full px-3 py-1 text-sm font-medium',

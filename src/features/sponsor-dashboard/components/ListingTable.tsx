@@ -1,4 +1,5 @@
 import {
+  CircleHelp,
   Copy,
   DollarSign,
   ExternalLink,
@@ -51,10 +52,12 @@ import {
   getListingTypeLabel,
 } from '@/features/listings/utils/status';
 
+import { ListingStatusModal } from './ListingStatusModal';
 import { DeleteDraftModal } from './Modals/DeleteDraftModal';
 import { UnpublishModal } from './Modals/UnpublishModal';
 import { VerifyPaymentModal } from './Modals/VerifyPayment';
 import { SponsorPrize } from './SponsorPrize';
+
 interface ListingTableProps {
   sponsor: SponsorType | undefined;
   listings: ListingWithSubmissions[];
@@ -93,6 +96,11 @@ export const ListingTable = ({
   const posthog = usePostHog();
   const { data: session } = useSession();
 
+  const {
+    isOpen: statusModalOpen,
+    onOpen: statusModalOnOpen,
+    onClose: statusModalOnClose,
+  } = useDisclosure();
   const {
     isOpen: unpublishIsOpen,
     onOpen: unpublishOnOpen,
@@ -141,6 +149,10 @@ export const ListingTable = ({
 
   return (
     <>
+      <ListingStatusModal
+        isOpen={statusModalOpen}
+        onClose={statusModalOnClose}
+      />
       <UnpublishModal
         listingId={selectedListing.id}
         unpublishIsOpen={unpublishIsOpen}
@@ -200,7 +212,30 @@ export const ListingTable = ({
                 Deadline
               </SortableTH>
               <ListingTh>Prize</ListingTh>
-              <ListingTh>Status</ListingTh>
+              <SortableTH
+                column="status"
+                currentSort={currentSort}
+                setSort={onSort}
+                className={cn(thClassName)}
+              >
+                <div className="flex items-center gap-1">
+                  Status
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-3 w-3 p-0"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      statusModalOnOpen();
+                    }}
+                  >
+                    <CircleHelp
+                      className="text-slate-400 hover:text-slate-600"
+                      style={{ width: '12px', height: '12px' }}
+                    />
+                  </Button>
+                </div>
+              </SortableTH>
               <ListingTh className="pl-6">Actions</ListingTh>
               <TableHead className="pl-0" />
             </TableRow>

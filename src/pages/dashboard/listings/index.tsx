@@ -115,6 +115,15 @@ export default function SponsorListings() {
       );
     }
 
+    const statusOrder = [
+      'Draft',
+      'Ongoing',
+      'In Progress',
+      'In Review',
+      'Payment Pending',
+      'Completed',
+    ];
+
     if (currentSort.direction && currentSort.column) {
       return [...filtered].sort((a, b) => {
         const factor = currentSort.direction === 'asc' ? 1 : -1;
@@ -124,6 +133,13 @@ export default function SponsorListings() {
             const idA = a.sequentialId || 0;
             const idB = b.sequentialId || 0;
             return (idB - idA) * factor;
+          case 'status':
+            const statusA = getListingStatus(a);
+            const statusB = getListingStatus(b);
+            const indexA = statusOrder.indexOf(statusA);
+            const indexB = statusOrder.indexOf(statusB);
+
+            return (indexB - indexA) * factor;
           case 'title':
             const titleA = a.title || '';
             const titleB = b.title || '';
