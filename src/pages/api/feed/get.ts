@@ -132,6 +132,7 @@ export default async function handler(
               ...winnerFilter,
               listing: {
                 isPrivate: false,
+                isPublished: true,
               },
               ...(userId ? { userId: userId as string } : {}),
             },

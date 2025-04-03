@@ -23,6 +23,7 @@ import type { SubmissionWithUser } from '@/interface/submission';
 import { cn } from '@/utils/cn';
 import { getRankLabels } from '@/utils/rank';
 
+import { sponsorshipSubmissionStatus } from '@/features/listings/components/SubmissionsPage/SubmissionTable';
 import { type Listing } from '@/features/listings/types';
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
@@ -95,6 +96,12 @@ export const SubmissionList = ({
   };
 
   const getSubmissionColors = (submission: SubmissionWithUser) => {
+    if (submission.listing?.type === 'sponsorship') {
+      return colorMap[
+        sponsorshipSubmissionStatus(submission) as keyof typeof colorMap
+      ];
+    }
+
     if (submission?.isWinner) {
       return colorMap.winner;
     } else if (submission.status === 'Rejected') {
