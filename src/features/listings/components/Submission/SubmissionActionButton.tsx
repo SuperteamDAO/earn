@@ -10,6 +10,7 @@ import { SurveyModal } from '@/components/shared/Survey';
 import { Button } from '@/components/ui/button';
 import { Tooltip } from '@/components/ui/tooltip';
 import { useDisclosure } from '@/hooks/use-disclosure';
+import { useCreditBalance } from '@/store/credit';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 
@@ -83,6 +84,7 @@ export const SubmissionActionButton = ({
   const [isEasterEggOpen, setEasterEggOpen] = useState(false);
 
   const { user } = useUser();
+  const { creditBalance } = useCreditBalance();
 
   const { authenticated, ready } = usePrivy();
 
@@ -131,6 +133,7 @@ export const SubmissionActionButton = ({
     : true;
 
   const isProject = type === 'project';
+  const isBounty = type === 'bounty';
 
   let buttonText;
   let buttonBG;
@@ -175,13 +178,17 @@ export const SubmissionActionButton = ({
         listing.compensationType === 'range'
       )
         buttonText = 'Send Quote';
-      buttonBG = 'bg-brand-purple';
+      buttonBG =
+        creditBalance === 0 && (isProject || isBounty)
+          ? 'bg-slate-800'
+          : 'bg-brand-purple';
       isBtnDisabled = Boolean(
         pastDeadline ||
           (user?.id &&
             user?.isTalentFilled &&
             (!hasHackathonStarted || !isUserEligibleByRegion)) ||
-          !hasHackathonStarted,
+          !hasHackathonStarted ||
+          (creditBalance === 0 && (isProject || isBounty)),
       );
       isSubmitDisabled = Boolean(
         pastDeadline ||
@@ -256,13 +263,12 @@ export const SubmissionActionButton = ({
             completeProfileModalBodyText={
               'Please complete your profile before submitting to a listing.'
             }
-            className="w-full"
+            className={cn('w-full', isBtnDisabled && 'cursor-default')}
           >
             <div className="w-full">
               <Button
                 className={cn(
                   'h-12 w-full gap-4 text-lg',
-                  'mb-12 md:mb-5',
                   'disabled:opacity-70',
                   buttonBG,
                   'hover:opacity-90',
@@ -289,6 +295,14 @@ export const SubmissionActionButton = ({
           </AuthWrapper>
         </InfoWrapper>
       </div>
+      {(isProject || isBounty) && user && (
+        <p className="mt-2 text-sm text-slate-500">
+          {creditBalance > 0
+            ? `* Costs 1 credit to ${isProject ? 'apply' : 'submit'}`
+            : `* You don't have enough credits to ${isProject ? 'apply' : 'submit'}`}
+        </p>
+      )}
+      <div className="mb-12 md:mb-5" />
     </>
   );
 };

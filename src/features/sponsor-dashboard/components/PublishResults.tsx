@@ -188,7 +188,7 @@ export function PublishResults({
           {!isWinnersAnnounced && alertTitle && alertDescription && (
             <Alert
               variant={alertType === 'error' ? 'destructive' : 'default'}
-              className="flex border-amber-600"
+              className="border-brand-purple flex"
             >
               <div className="flex gap-2">
                 <AlertTriangle className="-mt-0.5 h-8 w-8" />
@@ -215,6 +215,29 @@ export function PublishResults({
                       If you publish the results before the deadline, the
                       listing will close since the winner(s) will have been
                       announced.
+                    </AlertDescription>
+                  </div>
+                </div>
+              </Alert>
+            )}
+
+          {!isWinnersAnnounced &&
+            submissions.some((submission) => submission.label === 'Spam') && (
+              <Alert className="border-brand-purple mt-4">
+                <div className="flex gap-2">
+                  <AlertTriangle className="-mt-0.5 h-8 w-8" />
+                  <div>
+                    <AlertTitle className="text-base">
+                      {
+                        submissions.filter(
+                          (submission) => submission.label === 'Spam',
+                        ).length
+                      }{' '}
+                      Submission(s) Marked as Spam
+                    </AlertTitle>
+                    <AlertDescription>
+                      Marking a submission as “Spam” would penalise the
+                      applicant(s) with a deduction in submission credits.
                     </AlertDescription>
                   </div>
                 </div>

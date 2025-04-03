@@ -29,6 +29,7 @@ import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 
+import { CreditIcon } from '@/features/credits/icon/credit';
 import { SocialInput } from '@/features/social/components/SocialInput';
 
 import { walletFieldListings } from '../../constants';
@@ -75,6 +76,7 @@ export const SubmissionDrawer = ({
 
   const queryClient = useQueryClient();
   const isProject = type === 'project';
+  const isBounty = type === 'bounty';
   const isHackathon = type === 'hackathon';
   const [isLoading, setIsLoading] = useState(false);
   const [isTOSModalOpen, setIsTOSModalOpen] = useState(false);
@@ -189,6 +191,9 @@ export const SubmissionDrawer = ({
         await queryClient.invalidateQueries({
           queryKey: submissionCountQuery(id!).queryKey,
         });
+        await queryClient.invalidateQueries({
+          queryKey: ['creditBalance', user!.id],
+        });
       }
 
       toast.success(
@@ -212,7 +217,7 @@ export const SubmissionDrawer = ({
             .includes('submissions closed')
         ) {
           toast.error(
-            `Unfortunately, you ${type === 'project' ? 'application' : 'submission'} couldn't be added because the deadline of the listing has passed.`,
+            `Unfortunately, you ${isProject ? 'application' : 'submission'} couldn't be added because the deadline of the listing has passed.`,
           );
         } else {
           toast.error('Failed to submit. Please try again or contact support.');
@@ -502,7 +507,15 @@ export const SubmissionDrawer = ({
                       <span>Submitting...</span>
                     </>
                   ) : isProject ? (
-                    <span>Apply</span>
+                    <span className="flex items-center gap-2">
+                      Apply using 1 credit
+                      <CreditIcon />
+                    </span>
+                  ) : isBounty ? (
+                    <span className="flex items-center gap-2">
+                      Submit using 1 credit
+                      <CreditIcon />
+                    </span>
                   ) : (
                     <span>Submit</span>
                   )}
