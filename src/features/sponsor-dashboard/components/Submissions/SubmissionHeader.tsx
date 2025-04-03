@@ -9,7 +9,6 @@ import {
   Pencil,
 } from 'lucide-react';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import React from 'react';
 import { FaXTwitter } from 'react-icons/fa6';
@@ -63,7 +62,6 @@ export const SubmissionHeader = ({
   onVerifyPayments,
 }: Props) => {
   const { data: session } = useSession();
-  const router = useRouter();
   const completeSponsorship = useCompleteSponsorship(bounty?.id ?? '');
 
   const deadline = formatDeadline(bounty?.deadline, bounty?.type);
@@ -181,9 +179,7 @@ ${socialListingLink('twitter')}
 
           <Button
             className="text-slate-400 hover:bg-indigo-100 hover:text-brand-purple"
-            onClick={() =>
-              window.open(`${router.basePath}/${listingPath}`, '_blank')
-            }
+            onClick={() => window.open(`${listingPath}`, '_blank')}
             variant="ghost"
           >
             <ExternalLink className="h-4 w-4" />
