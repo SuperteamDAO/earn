@@ -196,6 +196,7 @@ export function EligibilityQuestions() {
                                     {...field}
                                     placeholder="Enter your question"
                                     className="border-none focus-visible:ring-0"
+                                    value={field.value || ''}
                                     onChange={(e) => {
                                       field.onChange(e);
                                       form.saveDraft();
