@@ -20,7 +20,7 @@ import { EntityNameModal } from '@/components/modals/EntityNameModal';
 import { LoadingSection } from '@/components/shared/LoadingSection';
 import { Button } from '@/components/ui/button';
 import { Tooltip } from '@/components/ui/tooltip';
-import { Superteams } from '@/constants/Superteam';
+import { Superteams, unofficialSuperteams } from '@/constants/Superteam';
 import { PDTG } from '@/constants/Telegram';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { Default } from '@/layouts/Default';
@@ -139,11 +139,17 @@ export function SponsorLayout({
   }
 
   const isHackathonRoute = router.asPath.startsWith('/dashboard/hackathon');
-  const isLocalProfileVisible = Superteams.some(
-    (team) =>
-      team.name === user?.currentSponsor?.name &&
-      (user?.stLead === team.region || user?.stLead === 'MAHADEV'),
-  );
+  const isLocalProfileVisible =
+    Superteams.some(
+      (team) =>
+        team.name === user?.currentSponsor?.name &&
+        (user?.stLead === team.region || user?.stLead === 'MAHADEV'),
+    ) ||
+    unofficialSuperteams.some(
+      (team) =>
+        team.name === user?.currentSponsor?.name &&
+        (user?.stLead === team.region || user?.stLead === 'MAHADEV'),
+    );
 
   const LinkItems: Array<LinkItemProps> = isHackathonRoute
     ? [

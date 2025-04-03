@@ -6,7 +6,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { LoadingSection } from '@/components/shared/LoadingSection';
 import { UserFlag } from '@/components/shared/UserFlag';
 import { Button } from '@/components/ui/button';
-import { Superteams } from '@/constants/Superteam';
+import { Superteams, unofficialSuperteams } from '@/constants/Superteam';
 import { SponsorLayout } from '@/layouts/Sponsor';
 import { useUser } from '@/store/user';
 
@@ -31,7 +31,10 @@ export default function LocalProfiles() {
   const { user } = useUser();
 
   const superteam = useMemo(() => {
-    return Superteams.find((st) => st.name === user?.currentSponsor?.name);
+    return (
+      Superteams.find((st) => st.name === user?.currentSponsor?.name) ||
+      unofficialSuperteams.find((st) => st.name === user?.currentSponsor?.name)
+    );
   }, [user]);
 
   const { data, isLoading } = useQuery({
