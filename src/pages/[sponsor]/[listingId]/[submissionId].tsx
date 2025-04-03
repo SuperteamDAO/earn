@@ -210,10 +210,10 @@ function Content({
                         );
                       }}
                       size="default"
-                      variant="ghost"
+                      variant="outline"
                     >
-                      View Payment Tx
-                      <ExternalLink className="ml-2 h-4 w-4" />
+                      <ExternalLink className="mr-1 h-4 w-4" />
+                      View Payment
                     </Button>
                   </div>
                 )}

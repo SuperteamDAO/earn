@@ -1,9 +1,10 @@
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import debounce from 'lodash.debounce';
 import {
   ChevronDown,
   ChevronLeft,
   ChevronRight,
+  Download,
   Plus,
   Search,
 } from 'lucide-react';
@@ -14,6 +15,7 @@ import React, {
   useRef,
   useState,
 } from 'react';
+import { toast } from 'sonner';
 
 import { LoadingSection } from '@/components/shared/LoadingSection';
 import { Button } from '@/components/ui/button';
@@ -29,6 +31,7 @@ import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { SponsorLayout } from '@/layouts/Sponsor';
+import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 
@@ -182,6 +185,33 @@ export default function SponsorListings() {
     return filtered;
   }, [allSubmissions, selectedTab, selectedStatus, searchText, currentSort]);
 
+  const exportMutation = useMutation({
+    mutationFn: async () => {
+      const response = await api.post(
+        `/api/sponsor-dashboard/submissions/export`,
+        {
+          submissionIds: filteredSubmissions?.map(
+            (submission) => submission.id,
+          ),
+        },
+      );
+      return response.data;
+    },
+    onSuccess: (data) => {
+      const url = data?.url || '';
+      window.open(url, '_blank');
+      toast.success('CSV exported successfully');
+    },
+    onError: (error: any) => {
+      if (error.response.data.error === 'No submissions selected') {
+        toast.error('No submissions selected');
+      } else {
+        console.error(error);
+        toast.error('Failed to export CSV. Please try again.');
+      }
+    },
+  });
+
   const paginatedListings = useMemo(() => {
     return filteredSubmissions?.slice(
       currentPage * listingsPerPage,
@@ -234,6 +264,10 @@ export default function SponsorListings() {
     setCurrentPage(0);
   }, []);
 
+  const handleExportCSV = () => {
+    exportMutation.mutate();
+  };
+
   return (
     <SponsorLayout>
       <Banner stats={sponsorStats} isLoading={isStatsLoading} />
@@ -245,7 +279,7 @@ export default function SponsorListings() {
             The one place to manage your submissions
           </p>
         </div>
-        <div className="flex w-full items-center justify-end gap-2">
+        <div className="flex w-full items-center justify-end gap-3">
           <div>
             <span className="mr-2 text-sm text-slate-500">
               Filter by status
@@ -305,7 +339,25 @@ export default function SponsorListings() {
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
-          <div className="relative ml-4 w-64">
+          <Button
+            variant="outline"
+            size="sm"
+            className="h-9 border border-slate-300 bg-transparent font-medium capitalize text-slate-500 hover:border-brand-purple hover:bg-transparent"
+            onClick={handleExportCSV}
+          >
+            {exportMutation.isPending ? (
+              <>
+                <span className="loading loading-spinner" />
+                Exporting...
+              </>
+            ) : (
+              <>
+                <Download className="mr-1 h-3 w-3" />
+                Export CSV
+              </>
+            )}
+          </Button>
+          <div className="relative w-64">
             <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
             <Input
               className="placeholder:text-md border-slate-300 bg-white pl-9 placeholder:font-medium placeholder:text-slate-400 focus-visible:ring-brand-purple"
