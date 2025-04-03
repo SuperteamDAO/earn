@@ -1,4 +1,3 @@
-import { type Regions } from '@prisma/client';
 import { queryOptions } from '@tanstack/react-query';
 
 import { api } from '@/lib/api';
@@ -38,7 +37,7 @@ export interface PaginatedResponse {
 interface FetchLocalProfilesParams {
   page?: number;
   limit?: number;
-  region: Regions;
+  region: string;
 }
 
 const fetchLocalProfiles = async ({
