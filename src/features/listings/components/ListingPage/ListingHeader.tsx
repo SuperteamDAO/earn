@@ -58,7 +58,8 @@ export function ListingHeader({
   const isHackathon = type === 'hackathon';
 
   const showSubmissions =
-    type === 'sponsorship' || (!isProject && isWinnersAnnounced);
+    !isTemplate &&
+    (type === 'sponsorship' || (!isProject && isWinnersAnnounced));
 
   const typeToTooltip = {
     project:
@@ -155,7 +156,8 @@ export function ListingHeader({
     );
   };
 
-  const isSubmissionActive = router.asPath.split('/').length === 5;
+  const isSubmissionActive =
+    !isTemplate && router.asPath.split('/').length === 5;
 
   const HeaderSub = () => {
     return (
@@ -273,7 +275,7 @@ export function ListingHeader({
             {showSubmissions && (
               <ListingTabLink
                 onClick={() => posthog.capture('submissions tab_listing')}
-                href={`${getBountyUrl(listing)}/submission`}
+                href={`${router.asPath}/submission`}
                 text="Submissions"
                 isActive={isSubmissionActive}
                 subText={

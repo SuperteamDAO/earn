@@ -13,7 +13,8 @@
     "postinstall": "prisma generate",
     "knip": "knip",
     "find-deadcode": "ts-prune",
-    "ui:add": "pnpx shadcn@latest add"
+    "ui:add": "pnpx shadcn@latest add",
+    "create-template": "node scripts/createTemplateFromBounty.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",

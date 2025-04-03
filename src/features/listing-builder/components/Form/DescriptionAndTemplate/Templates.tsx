@@ -70,11 +70,17 @@ export function Templates() {
     !isEditing;
 
   const [open, setOpen] = useState(
-    router.pathname === '/dashboard/new' && type !== 'hackathon',
+    router.pathname === '/dashboard/new' &&
+      type !== 'hackathon' &&
+      templates.length > 0,
   );
   useEffect(() => {
-    setOpen(router.pathname === '/dashboard/new' && type !== 'hackathon');
-  }, [router.pathname]);
+    setOpen(
+      router.pathname === '/dashboard/new' &&
+        type !== 'hackathon' &&
+        templates.length > 0,
+    );
+  }, [router.pathname, templates.length]);
 
   return (
     <Dialog
@@ -83,7 +89,7 @@ export function Templates() {
         if (!isDisabled) setOpen(e);
       }}
     >
-      {type !== 'hackathon' && !isEditing && (
+      {type !== 'hackathon' && !isEditing && templates.length > 0 && (
         <DialogTrigger asChild>
           <Button
             variant="ghost"
