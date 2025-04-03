@@ -74,6 +74,18 @@ export default function BountySubmissions({ slug }: Props) {
     selectedSubmissionIdsAtom,
   );
 
+  useEffect(() => {
+    const handleRouteChange = () => {
+      setSelectedSubmissionIds(new Set());
+    };
+
+    router.events.on('routeChangeStart', handleRouteChange);
+
+    return () => {
+      router.events.off('routeChangeStart', handleRouteChange);
+    };
+  }, [router.events, setSelectedSubmissionIds]);
+
   const [isToggledAll, setIsToggledAll] = useState(false);
   const {
     isOpen: isTogglerOpen,
