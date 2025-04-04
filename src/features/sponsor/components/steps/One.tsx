@@ -10,7 +10,7 @@ export function StepOne() {
           src="/landingsponsor/sponsors/piedPiper.webp"
         />
         <div className="flex w-full flex-grow flex-col items-start">
-          <p className="text-sm font-medium text-slate-400">Company name</p>
+          <p className="text-sm font-medium text-slate-400">Entity name</p>
           <p className="w-full border border-slate-200 bg-slate-50 px-2 py-1 text-sm font-medium text-slate-700">
             Pied Piper
           </p>

@@ -23,6 +23,7 @@ import { getListingIcon } from '../../utils/getListingIcon';
 import { ListingTabLink } from './ListingTabLink';
 import { RegionLabel } from './RegionLabel';
 import { ListingHeaderSeparator } from './Separator';
+import { ShareListing } from './ShareListing';
 import { StatusBadge } from './StatusBadge';
 import { SubscribeListing } from './SubscribeListing';
 
@@ -246,7 +247,12 @@ export function ListingHeader({
           </div>
         </div>
         {listing.id && (
-          <SubscribeListing isTemplate={isTemplate} id={listing.id} />
+          <div className="flex items-center gap-2">
+            <SubscribeListing isTemplate={isTemplate} id={listing.id} />
+            <div className="hidden md:block">
+              <ShareListing source="listing" listing={listing} />
+            </div>
+          </div>
         )}
       </div>
       <div className="mb-5 flex w-full flex-col gap-1 md:hidden">

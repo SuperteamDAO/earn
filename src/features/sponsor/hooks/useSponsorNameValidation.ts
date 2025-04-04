@@ -17,7 +17,7 @@ export const useSponsorNameValidation = (initialValue = '') => {
       const response = await api.get(`/api/sponsors/check-name?name=${name}`);
       const available = response.data.available;
       setIsInvalid(!available);
-      setValidationErrorMessage(available ? '' : 'Company name already exists');
+      setValidationErrorMessage(available ? '' : 'Entity name already exists');
     } catch (error) {
       logger.error(error);
       setIsInvalid(true);

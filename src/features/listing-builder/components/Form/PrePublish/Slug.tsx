@@ -3,9 +3,11 @@ import { useAtomValue } from 'jotai';
 import { CheckIcon, Loader2 } from 'lucide-react';
 import { useEffect, useMemo } from 'react';
 import { useWatch } from 'react-hook-form';
+import { toast } from 'sonner';
 
 import {
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -14,6 +16,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { useDebounce } from '@/components/ui/multi-select';
 import { CHAIN_NAME } from '@/constants/project';
+import { getURL } from '@/utils/validUrl';
 
 import { slugCheckQuery } from '@/features/listing-builder/queries/slug-check';
 
@@ -90,7 +93,29 @@ export function Slug() {
         return (
           <FormItem className="gap-2">
             <div>
-              <FormLabel className="">Customise Listing Slug</FormLabel>
+              <FormLabel className="">Customise URL (Slug)</FormLabel>
+              <FormDescription className="cursor-pointer">
+                <button
+                  className="max-w-[28rem] cursor-pointer truncate text-slate-400"
+                  onClick={() => {
+                    toast.promise(
+                      async () => {
+                        await navigator.clipboard.writeText(
+                          `${getURL()}/listing/${slug}`,
+                        );
+                      },
+                      {
+                        loading: 'Copying Listing URL...',
+                        success: 'Listing URL copied!',
+                        error: 'Failed to copy Listing URL!',
+                      },
+                    );
+                  }}
+                >
+                  {getURL()}listing/
+                  <span className="underline underline-offset-2">{slug}</span>
+                </button>
+              </FormDescription>
             </div>
             <FormControl>
               <div className="relative">

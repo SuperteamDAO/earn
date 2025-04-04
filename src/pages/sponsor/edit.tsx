@@ -213,7 +213,7 @@ export default function UpdateSponsor() {
                 <FormFieldWrapper
                   control={form.control}
                   name="name"
-                  label="Company Name"
+                  label="Entity Name"
                   isRequired
                   onChange={(e) => {
                     setSponsorName(e.target.value);
@@ -225,7 +225,7 @@ export default function UpdateSponsor() {
                 <FormFieldWrapper
                   control={form.control}
                   name="slug"
-                  label="Company Username"
+                  label="Entity Username"
                   isRequired
                   onChange={(e) => {
                     const value = e.target.value
@@ -242,7 +242,7 @@ export default function UpdateSponsor() {
                 <FormFieldWrapper
                   control={form.control}
                   name="url"
-                  label="Company URL"
+                  label="Entity URL"
                   isRequired
                 >
                   <Input placeholder="https://starkindustries.com" />
@@ -251,7 +251,7 @@ export default function UpdateSponsor() {
                 <SocialInput
                   name="twitter"
                   socialName={'twitter'}
-                  formLabel="Company Twitter"
+                  formLabel="Entity Twitter"
                   placeholder="@StarkIndustries"
                   required
                   control={form.control}
@@ -281,7 +281,7 @@ export default function UpdateSponsor() {
               </div>
 
               <div className="mb-3 mt-6 w-full">
-                <FormLabel isRequired>Company Logo</FormLabel>
+                <FormLabel isRequired>Entity Logo</FormLabel>
                 <ImagePicker
                   defaultValue={logoPreview ? { url: logoPreview } : undefined}
                   onChange={(file, previewUrl) => {
@@ -334,12 +334,12 @@ export default function UpdateSponsor() {
                 <FormFieldWrapper
                   control={form.control}
                   name="bio"
-                  label="Company Short Bio"
+                  label="Entity Short Bio"
                   isRequired
                 >
                   <Input
                     maxLength={180}
-                    placeholder="What does your company do?"
+                    placeholder="What does your Entity do?"
                   />
                 </FormFieldWrapper>
                 <div className="text-right text-xs text-slate-400">
