@@ -191,8 +191,9 @@ export default function BountySubmissions({ slug }: Props) {
       if (!bounty?.rewards?.[BONUS_REWARD_POSITION] || !bounty?.maxBonusSpots)
         return true;
     }
+    if (remainings?.bonus === 0) return true;
     return false;
-  }, [bounty, selectedSubmissionIds]);
+  }, [bounty, selectedSubmissionIds, remainings]);
 
   const multiBonusPodiumsOverSelected = useMemo(
     () =>
