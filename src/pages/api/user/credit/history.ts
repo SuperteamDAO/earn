@@ -1,3 +1,5 @@
+// TODO: show from april only
+
 import { type NextApiResponse } from 'next';
 
 import { prisma } from '@/prisma';
@@ -9,20 +11,26 @@ import { withAuth } from '@/features/auth/utils/withAuth';
 async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
   const userId = req.userId;
 
-  if (!userId) {
-    return res.status(400).json({ error: 'User ID is required' });
-  }
+  const user = await prisma.user.findUniqueOrThrow({
+    where: { id: userId },
+    select: { createdAt: true },
+  });
 
+  const userCreatedAt = dayjs(user.createdAt).utc();
   const now = dayjs().utc();
   const startOfCurrentMonth = now.startOf('month');
 
-  const effectiveMonths = [
-    startOfCurrentMonth.add(1, 'month').toDate(),
-    startOfCurrentMonth.toDate(),
-    startOfCurrentMonth.subtract(1, 'month').toDate(),
-    startOfCurrentMonth.subtract(2, 'month').toDate(),
-    startOfCurrentMonth.subtract(3, 'month').toDate(),
-  ];
+  const effectiveMonths: Date[] = [];
+
+  for (let i = 1; i >= -3; i--) {
+    const month = startOfCurrentMonth.add(i, 'month');
+    if (
+      month.isAfter(userCreatedAt, 'month') ||
+      month.isSame(userCreatedAt, 'month')
+    ) {
+      effectiveMonths.push(month.toDate());
+    }
+  }
 
   const creditHistory = await prisma.creditLedger.findMany({
     where: {
@@ -99,9 +107,13 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       }
     }
 
+    // determine the credit date - use user's creation date for their first month
+    const isFirstMonth = dayjs(monthStart).isSame(userCreatedAt, 'month');
+    const creditDate = isFirstMonth ? user.createdAt : new Date(monthKey);
+
     syntheticEntries.push({
       id: `${monthKey}-credit`,
-      createdAt: new Date(monthKey),
+      createdAt: creditDate,
       type: 'MONTHLY_CREDIT',
       effectiveMonth: new Date(monthKey),
       change: +3,

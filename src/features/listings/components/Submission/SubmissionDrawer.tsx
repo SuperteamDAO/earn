@@ -194,6 +194,9 @@ export const SubmissionDrawer = ({
         await queryClient.invalidateQueries({
           queryKey: ['creditBalance', user!.id],
         });
+        await queryClient.invalidateQueries({
+          queryKey: ['creditHistory', user!.id],
+        });
       }
 
       toast.success(
