@@ -377,7 +377,7 @@ export function EligibilityQuestions() {
                             </FormLabel>
                             <div className="relative flex rounded-md border ring-primary has-[:focus]:ring-1">
                               <div className="flex items-center justify-center border-r bg-slate-50">
-                                <GripVertical className="h-4 w-4 text-muted-foreground" />
+                                <GripVertical className="h-4 w-4 text-slate-400" />
                               </div>
                               <div className="flex w-full items-center">
                                 <FormField
