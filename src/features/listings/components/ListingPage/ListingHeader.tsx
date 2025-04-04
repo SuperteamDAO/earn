@@ -281,7 +281,7 @@ export function ListingHeader({
             {showSubmissions && (
               <ListingTabLink
                 onClick={() => posthog.capture('submissions tab_listing')}
-                href={`${router.asPath}/submission`}
+                href={`${getBountyUrl(listing)}/submission`}
                 text="Submissions"
                 isActive={isSubmissionActive}
                 subText={
