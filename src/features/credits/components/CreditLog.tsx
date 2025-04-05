@@ -44,7 +44,10 @@ export function CreditHistoryCard({ title, entries }: CreditHistoryCardProps) {
       <div className="flex items-center gap-1 px-4 pt-5 pb-3 text-slate-500">
         <h2 className="text-sm font-medium">{title}</h2>
         {isUpcoming && (
-          <Tooltip content="This shows your win or spam activity for the current month, and how it will affect your Submission Credit balance in the next month.">
+          <Tooltip
+            contentProps={{ className: 'z-[200]' }}
+            content="This shows your win or spam activity for the current month, and how it will affect your Submission Credit balance in the next month."
+          >
             <Info className="size-3.5 text-slate-500" />
           </Tooltip>
         )}

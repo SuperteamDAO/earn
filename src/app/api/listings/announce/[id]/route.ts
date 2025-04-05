@@ -266,6 +266,12 @@ export async function POST(
           });
         }
 
+        await queueEmail({
+          type: 'spamCredit',
+          id,
+          triggeredBy: userId,
+        });
+
         try {
           await earncognitoClient.post(`/airtable/sync-announced-listings`, {
             listingId: result.id,

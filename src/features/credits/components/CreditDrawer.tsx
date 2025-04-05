@@ -101,7 +101,10 @@ export function CreditDrawer({
             <div className="flex items-baseline gap-2">
               <h2 className="flex items-center gap-1 text-lg font-semibold tracking-tight">
                 Credit History
-                <Tooltip content="See what led to changes in your Submission Credit balances. Bounty or Project submissions, spam reports and wins lead to changes in your Submission Credits.">
+                <Tooltip
+                  contentProps={{ className: 'z-[200]' }}
+                  content="See what led to changes in your Submission Credit balances. Bounty or Project submissions, spam reports and wins lead to changes in your Submission Credits."
+                >
                   <Info className="size-4 text-slate-500" />
                 </Tooltip>
               </h2>

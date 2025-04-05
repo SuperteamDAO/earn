@@ -40,6 +40,9 @@ const InfoWrapper = ({
   regionTooltipLabel,
   hackathonStartDate,
   pastDeadline,
+  creditBalance,
+  isProject,
+  isBounty,
 }: {
   children: React.ReactNode;
   isUserEligibleByRegion: boolean;
@@ -47,16 +50,26 @@ const InfoWrapper = ({
   regionTooltipLabel: string;
   hackathonStartDate: dayjs.Dayjs | null;
   pastDeadline: boolean;
+  creditBalance: number;
+  isProject: boolean;
+  isBounty: boolean;
 }) => {
   return (
     <Tooltip
-      disabled={hasHackathonStarted && (isUserEligibleByRegion || pastDeadline)}
+      disabled={
+        hasHackathonStarted &&
+        (isUserEligibleByRegion || pastDeadline) &&
+        !(creditBalance === 0 && (isProject || isBounty))
+      }
       content={
         !isUserEligibleByRegion
           ? regionTooltipLabel
           : !hasHackathonStarted
             ? `This track will open for submissions on ${hackathonStartDate?.format('DD MMMM, YYYY')}`
-            : null
+            : creditBalance === 0 && (isProject || isBounty)
+              ? "You don't have enough credits to" +
+                (isProject ? ' apply' : ' submit')
+              : null
       }
       contentProps={{ className: 'rounded-md' }}
       triggerClassName="w-full"
@@ -178,10 +191,7 @@ export const SubmissionActionButton = ({
         listing.compensationType === 'range'
       )
         buttonText = 'Send Quote';
-      buttonBG =
-        creditBalance === 0 && (isProject || isBounty)
-          ? 'bg-slate-800'
-          : 'bg-brand-purple';
+      buttonBG = 'bg-brand-purple';
       isBtnDisabled = Boolean(
         pastDeadline ||
           (user?.id &&
@@ -247,7 +257,7 @@ export const SubmissionActionButton = ({
         />
       )}
 
-      <div className="ph-no-capture fixed bottom-0 left-1/2 z-50 flex w-full -translate-x-1/2 items-start gap-2 bg-white px-3 py-4 pt-2 md:static md:translate-x-0 md:px-0 md:py-0">
+      <div className="ph-no-capture fixed bottom-0 left-1/2 z-50 flex w-full -translate-x-1/2 items-start gap-2 border-t-1 border-slate-100 bg-white px-3 py-4 pt-2 md:static md:translate-x-0 md:border-t-0 md:border-transparent md:px-0 md:py-0">
         <div className="md:hidden">
           <ShareListing source="listing" className="h-12" listing={listing} />
         </div>
@@ -257,19 +267,25 @@ export const SubmissionActionButton = ({
           regionTooltipLabel={regionTooltipLabel}
           hackathonStartDate={hackathonStartDate}
           pastDeadline={pastDeadline!}
+          creditBalance={creditBalance}
+          isProject={isProject}
+          isBounty={isBounty}
         >
           <AuthWrapper
             showCompleteProfileModal
             completeProfileModalBodyText={
               'Please complete your profile before submitting to a listing.'
             }
-            className={cn('w-full', isBtnDisabled && 'cursor-default')}
+            className="w-full"
           >
             <div className="w-full">
               <Button
                 className={cn(
-                  'h-12 w-full gap-4 text-lg',
+                  'h-12 w-full gap-4',
+                  'mb-12 md:mb-5',
                   'disabled:opacity-70',
+                  'text-sm sm:text-base md:text-lg',
+                  'font-semibold sm:font-medium',
                   buttonBG,
                   'hover:opacity-90',
                   buttonState === 'edit' &&
@@ -295,14 +311,6 @@ export const SubmissionActionButton = ({
           </AuthWrapper>
         </InfoWrapper>
       </div>
-      {(isProject || isBounty) && user && (
-        <p className="mt-2 text-sm text-slate-500">
-          {creditBalance > 0
-            ? `* Costs 1 credit to ${isProject ? 'apply' : 'submit'}`
-            : `* You don't have enough credits to ${isProject ? 'apply' : 'submit'}`}
-        </p>
-      )}
-      <div className="mb-12 md:mb-5" />
     </>
   );
 };
