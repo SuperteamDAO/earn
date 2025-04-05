@@ -257,59 +257,79 @@ export const SubmissionActionButton = ({
         />
       )}
 
-      <div className="ph-no-capture fixed bottom-0 left-1/2 z-50 flex w-full -translate-x-1/2 items-start gap-2 border-t-1 border-slate-100 bg-white px-3 py-4 pt-2 md:static md:translate-x-0 md:border-t-0 md:border-transparent md:px-0 md:py-0">
-        <div className="md:hidden">
-          <ShareListing source="listing" className="h-12" listing={listing} />
-        </div>
-        <InfoWrapper
-          isUserEligibleByRegion={isUserEligibleByRegion}
-          hasHackathonStarted={hasHackathonStarted}
-          regionTooltipLabel={regionTooltipLabel}
-          hackathonStartDate={hackathonStartDate}
-          pastDeadline={pastDeadline!}
-          creditBalance={creditBalance}
-          isProject={isProject}
-          isBounty={isBounty}
-        >
-          <AuthWrapper
-            showCompleteProfileModal
-            completeProfileModalBodyText={
-              'Please complete your profile before submitting to a listing.'
-            }
-            className="w-full"
+      <div className="ph-no-capture fixed bottom-0 left-1/2 z-50 mb-1 w-full -translate-x-1/2 border-t-1 border-slate-100 bg-white px-3 py-4 pt-2 pb-14 md:static md:translate-x-0 md:border-t-0 md:border-transparent md:px-0 md:py-0 md:pb-5">
+        <div className="flex items-center gap-2">
+          <div className="md:hidden">
+            <ShareListing source="listing" className="h-12" listing={listing} />
+          </div>
+          <InfoWrapper
+            isUserEligibleByRegion={isUserEligibleByRegion}
+            hasHackathonStarted={hasHackathonStarted}
+            regionTooltipLabel={regionTooltipLabel}
+            hackathonStartDate={hackathonStartDate}
+            pastDeadline={pastDeadline!}
+            creditBalance={creditBalance}
+            isProject={isProject}
+            isBounty={isBounty}
           >
-            <div className="w-full">
-              <Button
-                className={cn(
-                  'h-12 w-full gap-4',
-                  'mb-12 md:mb-5',
-                  'disabled:opacity-70',
-                  'text-sm sm:text-base md:text-lg',
-                  'font-semibold sm:font-medium',
-                  buttonBG,
-                  'hover:opacity-90',
-                  buttonState === 'edit' &&
-                    'border-brand-purple text-brand-purple hover:text-brand-purple-dark',
-                )}
-                disabled={isBtnDisabled}
-                onClick={handleSubmit}
-                variant={buttonState === 'edit' ? 'outline' : 'default'}
-              >
-                {isUserSubmissionLoading ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    <span>{btnLoadingText}</span>
-                  </>
-                ) : (
-                  <>
-                    {buttonState === 'edit' && <Pencil />}
-                    <span>{buttonText}</span>
-                  </>
-                )}
-              </Button>
-            </div>
-          </AuthWrapper>
-        </InfoWrapper>
+            <AuthWrapper
+              showCompleteProfileModal
+              completeProfileModalBodyText={
+                'Please complete your profile before submitting to a listing.'
+              }
+              className="w-full"
+            >
+              <div className="w-full">
+                <Button
+                  className={cn(
+                    'h-12 w-full gap-4',
+                    // 'mb-12 md:mb-5',
+                    'disabled:opacity-70',
+                    'text-sm sm:text-base md:text-lg',
+                    'font-semibold sm:font-medium',
+                    buttonBG,
+                    'hover:opacity-90',
+                    buttonState === 'edit' &&
+                      'border-brand-purple text-brand-purple hover:text-brand-purple-dark',
+                  )}
+                  disabled={isBtnDisabled}
+                  onClick={handleSubmit}
+                  variant={buttonState === 'edit' ? 'outline' : 'default'}
+                >
+                  {isUserSubmissionLoading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      <span>{btnLoadingText}</span>
+                    </>
+                  ) : (
+                    <>
+                      {buttonState === 'edit' && <Pencil />}
+                      <span>{buttonText}</span>
+                    </>
+                  )}
+                </Button>
+              </div>
+            </AuthWrapper>
+          </InfoWrapper>
+        </div>
+        {(isProject || isBounty) && user && !(buttonState === 'edit') && (
+          <>
+            {creditBalance > 0 && (
+              <div className="my-1 hidden text-center text-xs text-slate-500 md:my-2 md:flex md:text-sm">
+                <p className="mx-auto w-full rounded-md bg-slate-100 py-0 md:py-0.5">
+                  {`* Costs 1 credit to ${isProject ? 'apply' : 'submit'}`}
+                </p>
+              </div>
+            )}
+            {creditBalance <= 0 && (
+              <div className="mt-1 text-center text-xs text-red-400 md:my-2 md:text-sm">
+                <p className="mx-auto w-full rounded-md bg-red-100 py-0 md:py-0.5">
+                  {`* You don't have enough credits to ${isProject ? 'apply' : 'submit'}`}
+                </p>
+              </div>
+            )}
+          </>
+        )}
       </div>
     </>
   );
