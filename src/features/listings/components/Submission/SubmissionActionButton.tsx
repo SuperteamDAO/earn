@@ -312,24 +312,27 @@ export const SubmissionActionButton = ({
             </AuthWrapper>
           </InfoWrapper>
         </div>
-        {(isProject || isBounty) && user && !(buttonState === 'edit') && (
-          <>
-            {creditBalance > 0 && (
-              <div className="my-1 hidden text-center text-xs text-slate-500 md:my-2 md:flex md:text-sm">
-                <p className="mx-auto w-full rounded-md bg-slate-100 py-0 md:py-0.5">
-                  {`* Costs 1 credit to ${isProject ? 'apply' : 'submit'}`}
-                </p>
-              </div>
-            )}
-            {creditBalance <= 0 && (
-              <div className="mt-1 text-center text-xs text-red-400 md:my-2 md:text-sm">
-                <p className="mx-auto w-full rounded-md bg-red-100 py-0 md:py-0.5">
-                  {`* You don't have enough credits to ${isProject ? 'apply' : 'submit'}`}
-                </p>
-              </div>
-            )}
-          </>
-        )}
+        {(isProject || isBounty) &&
+          user &&
+          !(buttonState === 'edit') &&
+          !isUserSubmissionLoading && (
+            <>
+              {creditBalance > 0 && (
+                <div className="my-1 hidden text-center text-xs text-slate-500 md:my-2 md:flex md:text-sm">
+                  <p className="mx-auto w-full rounded-md bg-slate-100 py-0 md:py-0.5">
+                    {`* Costs 1 credit to ${isProject ? 'apply' : 'submit'}`}
+                  </p>
+                </div>
+              )}
+              {creditBalance <= 0 && (
+                <div className="mt-1 text-center text-xs text-red-400 md:my-2 md:text-sm">
+                  <p className="mx-auto w-full rounded-md bg-red-100 py-0 md:py-0.5">
+                    {`* You don't have enough credits to ${isProject ? 'apply' : 'submit'}`}
+                  </p>
+                </div>
+              )}
+            </>
+          )}
       </div>
     </>
   );
