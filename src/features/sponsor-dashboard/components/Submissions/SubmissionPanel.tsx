@@ -145,9 +145,11 @@ export const SubmissionPanel = ({
                       </Button>
                     </Tooltip>
                   ))}
-                {!isHackathonPage && (
-                  <SelectLabel listingSlug={bounty?.slug!} />
-                )}
+                {!isHackathonPage &&
+                  selectedSubmission?.status === 'Pending' &&
+                  !bounty?.isWinnersAnnounced && (
+                    <SelectLabel listingSlug={bounty?.slug!} />
+                  )}
                 {selectedSubmission?.isWinner &&
                   selectedSubmission?.winnerPosition &&
                   selectedSubmission?.isPaid && (
