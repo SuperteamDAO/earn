@@ -349,11 +349,10 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       rawIsFndnPaying,
     });
 
-    const data: Prisma.BountiesUncheckedCreateInput = {
+    const data: Prisma.BountiesUncheckedUpdateInput = {
       sponsorId: userSponsorId,
       title,
       usdValue,
-      pocId: userId,
       skills: correctedSkills,
       slug,
       deadline: new Date(deadline),

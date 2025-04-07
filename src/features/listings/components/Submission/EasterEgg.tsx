@@ -65,7 +65,7 @@ export const EasterEgg = ({ isOpen, onClose, isProject }: Props) => {
             <ExternalImage
               src={'/icons/celebration.png'}
               alt="celebration icon"
-              className="h-100 w-100"
+              className="object-contain"
             />
           </div>
           <p className="text-center text-3xl font-medium text-white md:text-4xl">

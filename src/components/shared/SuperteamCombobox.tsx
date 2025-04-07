@@ -133,7 +133,7 @@ export function SuperteamCombobox({
       >
         <Command>
           <CommandInput placeholder="Search..." />
-          <CommandList className="max-h-[200px] md:max-h-[300px]">
+          <CommandList className="scrollbar-visible max-h-[200px] overflow-auto md:max-h-[300px]">
             <CommandEmpty>No superteam found.</CommandEmpty>
             {!!value && unset && (
               <CommandGroup>

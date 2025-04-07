@@ -235,7 +235,7 @@ export function RegionCombobox({
       >
         <Command>
           <CommandInput placeholder="Search..." />
-          <CommandList className="max-h-[200px] md:max-h-[300px]">
+          <CommandList className="scrollbar-visible max-h-[200px] overflow-auto md:max-h-[300px]">
             <CommandEmpty>No region found.</CommandEmpty>
             <CommandGroup>
               {!!value && unset && (
