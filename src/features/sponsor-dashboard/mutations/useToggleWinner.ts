@@ -1,136 +1,97 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useAtom, useSetAtom } from 'jotai';
+import { useAtom } from 'jotai';
 import { toast } from 'sonner';
 
 import { type SubmissionWithUser } from '@/interface/submission';
 import { api } from '@/lib/api';
 
-import { BONUS_REWARD_POSITION } from '@/features/listing-builder/constants';
 import { type Listing, type Rewards } from '@/features/listings/types';
 
-import { isStateUpdatingAtom, selectedSubmissionAtom } from '../atoms';
+import { selectedSubmissionAtom } from '../atoms';
 
-export const useToggleWinner = (
-  bounty: Listing | undefined,
-  submissions: SubmissionWithUser[],
-  setRemainings: React.Dispatch<
-    React.SetStateAction<{ podiums: number; bonus: number } | null>
-  >,
-  usedPositions: number[],
-) => {
+interface SubmissionUpdatePayload {
+  id: string;
+  isWinner: boolean;
+  winnerPosition: number | null;
+}
+
+const BATCH_UPDATE_LIMIT = 50;
+
+export const useToggleWinner = (bounty: Listing | undefined) => {
   const queryClient = useQueryClient();
-  const [, setSelectedSubmission] = useAtom(selectedSubmissionAtom);
-
-  const setPositionUpdating = useSetAtom(isStateUpdatingAtom);
+  const [selectedSubmission, setSelectedSubmission] = useAtom(
+    selectedSubmissionAtom,
+  );
 
   return useMutation({
-    mutationFn: async ({
-      id,
-      isWinner,
-      winnerPosition,
-    }: {
-      id: string;
-      isWinner: boolean;
-      winnerPosition: number | null;
-    }) => {
-      const response = await api.post(
-        `/api/sponsor-dashboard/submission/toggle-winner/`,
-        {
-          id,
-          isWinner,
-          winnerPosition,
-        },
+    mutationFn: async (allUpdates: SubmissionUpdatePayload[]) => {
+      const updateBatches: SubmissionUpdatePayload[][] = [];
+      for (let i = 0; i < allUpdates.length; i += BATCH_UPDATE_LIMIT) {
+        updateBatches.push(allUpdates.slice(i, i + BATCH_UPDATE_LIMIT));
+      }
+
+      const batchPromises = updateBatches.map((batch) =>
+        api.post(`/api/sponsor-dashboard/submission/toggle-winner/`, {
+          submissions: batch,
+        }),
       );
-      if (!response.data) throw new Error('Failed to toggle winner');
-      return response.data;
+
+      await Promise.all(batchPromises);
+      return { success: true };
     },
-    onSuccess: (_, variables) => {
-      setPositionUpdating(false);
+    onError: (error: any) => {
+      queryClient.invalidateQueries({
+        queryKey: ['sponsor-submissions', bounty?.slug],
+      });
+      toast.error(
+        'An error occurred while assigning bonus spots. Please try again.',
+      );
+      console.error('Failed to toggle winners:', error);
+    },
+    onMutate: async (variables) => {
+      await queryClient.cancelQueries({
+        queryKey: ['sponsor-submissions', bounty?.slug],
+      });
+
+      const previousSubmissions = queryClient.getQueryData<
+        SubmissionWithUser[]
+      >(['sponsor-submissions', bounty?.slug]);
+
       queryClient.setQueryData<SubmissionWithUser[]>(
         ['sponsor-submissions', bounty?.slug],
-        (old) =>
-          old?.map((submission) =>
-            submission.id === variables.id
-              ? {
-                  ...submission,
-                  isWinner: variables.isWinner,
-                  winnerPosition: variables.winnerPosition ?? undefined,
-                }
-              : submission,
-          ),
-      );
-
-      const submissionIndex = submissions.findIndex(
-        (s) => s.id === variables.id,
-      );
-      if (submissionIndex >= 0) {
-        const oldPosition: number =
-          Number(submissions[submissionIndex]?.winnerPosition) || 0;
-        const newPosition = variables.winnerPosition || 0;
-
-        let newUsedPositions = [...usedPositions];
-        if (oldPosition && oldPosition !== newPosition) {
-          newUsedPositions = newUsedPositions.filter(
-            (pos) => pos !== oldPosition,
+        (oldData) => {
+          if (!oldData) return oldData;
+          const updatesMap = new Map(
+            variables.map((update) => [update.id, update]),
           );
-        }
-
-        if (newPosition) {
-          if (
-            newPosition === BONUS_REWARD_POSITION &&
-            newUsedPositions.filter((n) => n === BONUS_REWARD_POSITION).length <
-              (bounty?.maxBonusSpots ?? 0)
-          ) {
-            newUsedPositions.push(newPosition);
-          } else if (!newUsedPositions.includes(newPosition)) {
-            newUsedPositions.push(newPosition);
-          }
-        }
-
-        const updatedSubmission: SubmissionWithUser = {
-          ...submissions[submissionIndex],
-          isWinner: variables.isWinner,
-          winnerPosition: variables.winnerPosition as keyof Rewards | undefined,
-        } as SubmissionWithUser;
-
-        setSelectedSubmission(updatedSubmission);
-
-        setRemainings((prevRemainings) => {
-          if (!prevRemainings) return prevRemainings;
-
-          const newRemainings = { ...prevRemainings };
-          const isNewPositionValid = !isNaN(newPosition) && newPosition !== 0;
-          const isOldPositionValid = !isNaN(oldPosition) && oldPosition !== 0;
-
-          if (isNewPositionValid) {
-            if (newPosition === BONUS_REWARD_POSITION) {
-              newRemainings.bonus--;
-            } else {
-              newRemainings.podiums--;
+          return oldData.map((submission) => {
+            const update = updatesMap.get(submission.id);
+            if (update) {
+              if (selectedSubmission && update.id === selectedSubmission.id) {
+                setSelectedSubmission({
+                  ...submission,
+                  isWinner: update.isWinner ?? submission.isWinner,
+                  winnerPosition:
+                    (update.winnerPosition as
+                      | keyof Rewards
+                      | undefined
+                      | null) ?? undefined,
+                });
+              }
+              return {
+                ...submission,
+                isWinner: update.isWinner ?? submission.isWinner,
+                winnerPosition:
+                  (update.winnerPosition as keyof Rewards | undefined | null) ??
+                  undefined,
+              };
             }
-          }
+            return submission;
+          });
+        },
+      );
 
-          if (isOldPositionValid) {
-            if (oldPosition === BONUS_REWARD_POSITION) {
-              newRemainings.bonus++;
-            } else {
-              newRemainings.podiums++;
-            }
-          }
-
-          return newRemainings;
-        });
-      }
-    },
-    onError: (error) => {
-      console.error('Failed to toggle winner:', error);
-      toast.error('Failed to toggle winner, please try again later');
-    },
-    onMutate: () => {
-      setPositionUpdating(true);
-    },
-    onSettled: () => {
-      setPositionUpdating(false);
+      return { previousSubmissions };
     },
   });
 };

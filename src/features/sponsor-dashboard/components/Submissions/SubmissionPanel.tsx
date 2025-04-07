@@ -2,7 +2,7 @@ import { TooltipArrow } from '@radix-ui/react-tooltip';
 import { useAtom } from 'jotai';
 import { AlertTriangle, ArrowRight, ExternalLink } from 'lucide-react';
 import Link from 'next/link';
-import React, { type Dispatch, type SetStateAction } from 'react';
+import React from 'react';
 import { MdOutlineAccountBalanceWallet, MdOutlineMail } from 'react-icons/md';
 import { toast } from 'sonner';
 
@@ -37,9 +37,6 @@ interface Props {
   isHackathonPage?: boolean;
   onWinnersAnnounceOpen: () => void;
   remainings: { podiums: number; bonus: number } | null;
-  setRemainings: Dispatch<
-    SetStateAction<{ podiums: number; bonus: number } | null>
-  >;
   isMultiSelectOn?: boolean;
 }
 
@@ -50,7 +47,6 @@ export const SubmissionPanel = ({
   isHackathonPage,
   onWinnersAnnounceOpen,
   remainings,
-  setRemainings,
   isMultiSelectOn,
 }: Props) => {
   const afterAnnounceDate =
@@ -175,8 +171,6 @@ export const SubmissionPanel = ({
                       isMultiSelectOn={!!isMultiSelectOn}
                       bounty={bounty}
                       usedPositions={usedPositions}
-                      setRemainings={setRemainings}
-                      submissions={submissions}
                       isHackathonPage={isHackathonPage}
                     />
                     {!isProject && (
