@@ -63,7 +63,7 @@ export default function BountySubmissions({ slug }: Props) {
     bonus: number;
   } | null>(null);
   const [filterLabel, setFilterLabel] = useState<
-    SubmissionLabels | 'Winner' | 'Rejected' | undefined
+    SubmissionLabels | 'Paid' | 'Approved' | 'Rejected' | undefined
   >(undefined);
 
   const searchParams = useSearchParams();
@@ -199,8 +199,10 @@ export default function BountySubmissions({ slug }: Props) {
 
       if (!filterLabel) {
         matchesLabel = true;
-      } else if (filterLabel === 'Winner') {
-        matchesLabel = submission.isWinner;
+      } else if (filterLabel === 'Paid') {
+        matchesLabel = submission.isPaid;
+      } else if (filterLabel === 'Approved') {
+        matchesLabel = submission.status === 'Approved';
       } else if (filterLabel === 'Rejected') {
         matchesLabel = submission.status === 'Rejected';
       } else {

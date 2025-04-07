@@ -536,8 +536,9 @@ export const SubmissionDrawer = ({
                               <FormDescription>
                                 {!!user?.publicKey ? (
                                   <>
-                                    This is where you will receive your rewards
-                                    if you win. If you want to edit it,{' '}
+                                    This is where you will receive your payment
+                                    if your submission is approved. If you want
+                                    to edit it,{' '}
                                     <a
                                       href={`/t/${user?.username}/edit`}
                                       className="text-blue-600 underline hover:text-blue-700"

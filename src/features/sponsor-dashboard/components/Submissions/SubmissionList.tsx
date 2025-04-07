@@ -36,9 +36,11 @@ interface Props {
   submissions: SubmissionWithUser[];
   setSearchText: Dispatch<SetStateAction<string>>;
   type?: string;
-  filterLabel: SubmissionLabels | 'Winner' | 'Rejected' | undefined;
+  filterLabel: SubmissionLabels | 'Paid' | 'Approved' | 'Rejected' | undefined;
   setFilterLabel: Dispatch<
-    SetStateAction<SubmissionLabels | 'Winner' | 'Rejected' | undefined>
+    SetStateAction<
+      SubmissionLabels | 'Paid' | 'Approved' | 'Rejected' | undefined
+    >
   >;
   toggleSubmission?: (id: string) => void;
   isToggled?: (id: string) => boolean;
@@ -78,9 +80,7 @@ export const SubmissionList = ({
 
   const getSubmissionLabel = (submission: SubmissionWithUser) => {
     if (submission?.isWinner && submission?.winnerPosition) {
-      if (type === 'project') {
-        return 'Winner';
-      } else if (type === 'sponsorship') {
+      if (type === 'project' || type === 'sponsorship') {
         if (submission.isPaid) return 'Paid';
         return 'Approved';
       } else {
@@ -174,16 +174,31 @@ export const SubmissionList = ({
 
               <DropdownMenuItem
                 className="focus:bg-slate-100"
-                onClick={() => setFilterLabel('Winner')}
+                onClick={() => setFilterLabel('Approved')}
               >
                 <span
                   className={cn(
                     'inline-flex whitespace-nowrap rounded-full px-3 text-center text-[10px] capitalize',
-                    colorMap['Winner'].bg,
-                    colorMap['Winner'].color,
+                    colorMap['Approved'].bg,
+                    colorMap['Approved'].color,
                   )}
                 >
-                  Winner
+                  Approved
+                </span>
+              </DropdownMenuItem>
+
+              <DropdownMenuItem
+                className="focus:bg-slate-100"
+                onClick={() => setFilterLabel('Paid')}
+              >
+                <span
+                  className={cn(
+                    'inline-flex whitespace-nowrap rounded-full px-3 text-center text-[10px] capitalize',
+                    colorMap['Paid'].bg,
+                    colorMap['Paid'].color,
+                  )}
+                >
+                  Paid
                 </span>
               </DropdownMenuItem>
 
