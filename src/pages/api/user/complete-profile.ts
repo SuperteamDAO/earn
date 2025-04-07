@@ -127,7 +127,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
 
     const walletAddress = createWalletResponse.wallet?.address;
 
-    await prisma.user.updateMany({
+    await prisma.user.update({
       where: {
         id: userId as string,
       },

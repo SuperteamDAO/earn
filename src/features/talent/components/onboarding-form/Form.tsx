@@ -57,6 +57,7 @@ export const TalentForm = () => {
     user?.photo?.includes('googleusercontent.com') || false,
   );
   const [skillsRefreshKey, setSkillsRefreshKey] = useState<number>(0);
+  const [isUsernameValidating, setUsernameValidating] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -93,8 +94,8 @@ export const TalentForm = () => {
   };
 
   const isSubmitDisabled = useMemo(() => {
-    return uploading || isLoading;
-  }, [uploading || isLoading]);
+    return uploading || isLoading || isUsernameValidating;
+  }, [uploading, isLoading, isUsernameValidating]);
 
   const onSubmit = async (data: NewTalentFormData) => {
     if (isSubmitDisabled) return false;
@@ -204,7 +205,7 @@ export const TalentForm = () => {
           </div>
 
           <div className="flex flex-col md:flex-row md:gap-2">
-            <UsernameField />
+            <UsernameField setUsernameValidating={setUsernameValidating} />
             <LocationField />
           </div>
 
