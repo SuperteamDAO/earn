@@ -165,17 +165,8 @@ export const SubmissionDrawer = ({
         telegram: data.telegram || user?.telegram || '',
       });
 
-      const hideEasterEggFromSponsorIds = [
-        '53cbd2eb-14e5-4b8a-b6fe-e18e0c885145', // network schoool
-      ];
-
       const latestSubmissionNumber = (user?.Submission?.length ?? 0) + 1;
-      if (
-        !editMode &&
-        latestSubmissionNumber === 1 &&
-        !hideEasterEggFromSponsorIds.includes(listing.sponsorId || '')
-      )
-        showEasterEgg();
+      if (!editMode) showEasterEgg();
       if (!editMode && latestSubmissionNumber % 3 !== 0) onSurveyOpen();
 
       form.reset();
