@@ -1,9 +1,11 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@radix-ui/react-tabs';
 import dayjs from 'dayjs';
 import { type Atom, useAtomValue } from 'jotai';
+import { Info } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 
 import { Checkbox } from '@/components/ui/checkbox';
+import { Tooltip } from '@/components/ui/tooltip';
 import { tokenList } from '@/constants/tokenList';
 import { type SubmissionWithUser } from '@/interface/submission';
 import { api } from '@/lib/api';
@@ -210,7 +212,7 @@ export const Details = ({ bounty, externalView, atom }: Props) => {
             </TabsList>
 
             <TabsContent value="notes" className="p-0">
-              <div className="max-h-[32rem] overflow-y-auto px-4 py-2 scrollbar-thin scrollbar-track-slate-100 scrollbar-thumb-slate-300">
+              <div className="max-h-[32rem] overflow-y-auto px-4 py-4 scrollbar-thin scrollbar-track-slate-100 scrollbar-thumb-slate-300">
                 <Notes
                   key={selectedSubmission?.id}
                   submissionId={selectedSubmission?.id}
@@ -220,8 +222,16 @@ export const Details = ({ bounty, externalView, atom }: Props) => {
               </div>
             </TabsContent>
             <TabsContent value="comments" className="p-0">
-              <div className="max-h-[30rem] overflow-y-auto px-4 scrollbar-thin scrollbar-track-slate-100 scrollbar-thumb-slate-300">
+              <div className="max-h-[30rem] overflow-y-auto px-4 py-4 scrollbar-thin scrollbar-track-slate-100 scrollbar-thumb-slate-300">
+                <div className="flex items-center gap-2 text-slate-500">
+                  <span className="font-semibold">Public Comments</span>
+                  <Tooltip content="Comments visible to the contributor and other users. Great for leaving public feedback, asking questions, or acknowledging work.">
+                    <Info className="size-4 text-slate-300 hover:text-slate-400" />
+                  </Tooltip>
+                </div>
+                <div className="mb-6 mt-4 border-b border-slate-200" />
                 <Comments
+                  hideCount
                   isAnnounced={false}
                   listingSlug={''}
                   listingType={''}

@@ -22,6 +22,7 @@ interface Props {
   refType: CommentRefType;
   sponsorId: string | undefined;
   poc: User | undefined;
+  hideCount?: boolean;
   listingType: string;
   listingSlug: string;
   isAnnounced: boolean;
@@ -38,6 +39,7 @@ export const Comments = ({
   refType,
   sponsorId,
   poc,
+  hideCount = false,
   listingType,
   listingSlug,
   isAnnounced,
@@ -125,19 +127,21 @@ export const Comments = ({
       className="flex w-full flex-col items-start gap-4 rounded-xl bg-white"
       id="comments"
     >
-      <div className="flex w-full gap-2 pt-4">
-        <ExternalImage
-          className="h-5 w-5"
-          alt="Comments Icon"
-          src={'/icons/comments.svg'}
-        />
-        <div className="flex gap-2">
-          <p className="text-base font-medium text-slate-900">{count}</p>
-          <p className="text-base text-slate-900">
-            {comments?.length === 1 ? 'Comment' : 'Comments'}
-          </p>
+      {!hideCount && (
+        <div className="flex w-full gap-2 pt-4">
+          <ExternalImage
+            className="h-5 w-5"
+            alt="Comments Icon"
+            src={'/icons/comments.svg'}
+          />
+          <div className="flex gap-2">
+            <p className="text-base font-medium text-slate-900">{count}</p>
+            <p className="text-base text-slate-900">
+              {comments?.length === 1 ? 'Comment' : 'Comments'}
+            </p>
+          </div>
         </div>
-      </div>
+      )}
       <CommentForm
         defaultSuggestions={defaultSuggestions}
         refType={refType}
