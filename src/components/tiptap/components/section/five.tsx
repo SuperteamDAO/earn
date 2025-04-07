@@ -8,6 +8,7 @@ import {
 import type { Editor } from '@tiptap/react';
 import type { VariantProps } from 'class-variance-authority';
 import * as React from 'react';
+import { GoTasklist } from 'react-icons/go';
 
 import type { toggleVariants } from '@/components/ui/toggle';
 
@@ -16,7 +17,11 @@ import { ImageEditDialog } from '../image/image-edit-dialog';
 import { LinkEditPopover } from '../link/link-edit-popover';
 import { ToolbarSection } from '../toolbar-section';
 
-type InsertElementAction = 'codeBlock' | 'blockquote' | 'horizontalRule';
+type InsertElementAction =
+  | 'codeBlock'
+  | 'blockquote'
+  | 'horizontalRule'
+  | 'taskList';
 interface InsertElement extends FormatAction {
   value: InsertElementAction;
 }
@@ -51,6 +56,15 @@ const formatActions: InsertElement[] = [
     canExecute: (editor) =>
       editor.can().chain().focus().setHorizontalRule().run(),
     shortcuts: ['mod', 'alt', '-'],
+  },
+  {
+    value: 'taskList',
+    label: 'Task list',
+    icon: <GoTasklist className="size-5" />,
+    action: (editor) => editor.chain().focus().toggleTaskList().run(),
+    isActive: (editor) => editor.isActive('taskList'),
+    canExecute: (editor) => editor.can().chain().focus().toggleTaskList().run(),
+    shortcuts: ['mod', 'shift', 'T'],
   },
 ];
 

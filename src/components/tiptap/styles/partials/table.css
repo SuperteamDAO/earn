@@ -1,0 +1,33 @@
+.minimal-tiptap-editor .ProseMirror .table-node {
+  @apply w-full border-collapse my-2.5 border border-[var(--mt-hr)] rounded-sm;
+  @apply max-w-full;
+  @apply table-fixed;
+}
+
+.minimal-tiptap-editor .ProseMirror .table-row-node {
+  @apply border-b border-slate-200 last:border-b-0;
+}
+
+.minimal-tiptap-editor .ProseMirror .table-header-node {
+  @apply bg-slate-100 font-medium p-2 text-left border-b border-[var(--mt-hr)];
+}
+
+.minimal-tiptap-editor .ProseMirror .table-cell-node {
+  @apply p-2;
+  @apply break-words;
+}
+
+.minimal-tiptap-editor .ProseMirror .table-node th:first-child,
+.minimal-tiptap-editor .ProseMirror .table-node td:first-child {
+  @apply pl-2;
+}
+
+.minimal-tiptap-editor .ProseMirror .table-node th:last-child,
+.minimal-tiptap-editor .ProseMirror .table-node td:last-child {
+  @apply pr-2;
+}
+
+.minimal-tiptap-editor .ProseMirror .table-node th,
+.minimal-tiptap-editor .ProseMirror .table-node td {
+  @apply border-r border-[var(--mt-hr)] last:border-r-0;
+}

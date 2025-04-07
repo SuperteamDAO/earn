@@ -24,8 +24,16 @@ interface Props {
   title: string;
   description: string;
   sponsor: SponsorType;
+  industry: string[];
 }
-const SponsorListingsPage = ({ slug, sponsor, title, description }: Props) => {
+const SponsorListingsPage = ({
+  slug,
+  sponsor,
+  title,
+  description,
+  industry,
+}: Props) => {
+  console.log(industry);
   const { data: listings, isLoading: isListingsLoading } = useQuery(
     sponsorListingsQuery({ sponsor: slug }),
   );
@@ -84,7 +92,7 @@ Check out all of ${title}’s latest earning opportunities on a single page.
           ) : (
             <div className="justify-center rounded-full">
               <LocalImage
-                className="h-28 w-28 rounded-full object-cover"
+                className="h-28 w-28 rounded-lg object-cover"
                 alt="Category icon"
                 src={logo!}
               />
@@ -116,6 +124,19 @@ Check out all of ${title}’s latest earning opportunities on a single page.
                 text={description}
               />
             )}
+            <div className="mt-2 flex w-full flex-wrap gap-2">
+              {industry.map((industryItem: any, index: number) => {
+                return industryItem ? (
+                  <div
+                    key={index}
+                    className="rounded bg-[#EFF1F5] px-3 py-1 text-sm font-medium text-[#64739C]"
+                  >
+                    {industryItem}
+                  </div>
+                ) : null;
+              })}
+            </div>
+
             <div className="mt-3 flex gap-3 text-slate-500">
               {url && (
                 <Link className="flex items-center" href={getURLSanitized(url)}>
@@ -189,6 +210,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       sponsor: JSON.parse(JSON.stringify(sponsorInfo)),
       title: sponsorInfo?.name,
       description: sponsorInfo?.bio || '',
+      industry: sponsorInfo.industry.split(',') || [],
     },
   };
 };
