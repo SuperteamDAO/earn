@@ -1,5 +1,5 @@
 @import 'tailwindcss';
-@import "tw-animate-css";
+@import 'tw-animate-css';
 
 @plugin 'tailwind-scrollbar';
 
@@ -7,7 +7,7 @@
 
 @layer base {
   button:not(:disabled),
-  [role="button"]:not(:disabled) {
+  [role='button']:not(:disabled) {
     cursor: pointer;
   }
 }
@@ -362,7 +362,7 @@ body {
 
 #reset-des a,
 #reset-des a * {
-  color: #6366F1 !important;
+  color: #6366f1 !important;
 }
 
 /* Flattened nested selectors for #richtext */
@@ -492,7 +492,7 @@ body {
 
 #richtext a,
 #richtext a * {
-  color: #6366F1 !important;
+  color: #6366f1 !important;
 }
 
 .listing-description > *:first-child {
@@ -615,7 +615,13 @@ pre hr {
 .banner-wrapper {
   width: 100%;
   overflow: hidden;
-  mask-image: linear-gradient(to right, transparent 0, black 40px, black calc(100% - 40px), transparent 100%);
+  mask-image: linear-gradient(
+    to right,
+    transparent 0,
+    black 40px,
+    black calc(100% - 40px),
+    transparent 100%
+  );
 }
 
 .banner-wrapper .wrapper {
@@ -658,15 +664,15 @@ pre hr {
 }
 
 h1.tiptap-heading {
-  @apply mb-6 mt-8 text-4xl font-bold;
+  @apply mt-8 mb-6 text-4xl font-bold;
 }
 
 h2.tiptap-heading {
-  @apply mb-4 mt-6 text-3xl font-bold;
+  @apply mt-6 mb-4 text-3xl font-bold;
 }
 
 h3.tiptap-heading {
-  @apply mb-3 mt-4 text-xl font-bold;
+  @apply mt-4 mb-3 text-xl font-bold;
 }
 
 h1.tiptap-heading:first-child,
@@ -685,7 +691,7 @@ h3.tiptap-heading + h2.tiptap-heading {
 }
 
 .tiptap p.is-editor-empty:first-child::before {
-  @apply pointer-events-none float-left h-0 text-accent-foreground;
+  @apply text-accent-foreground pointer-events-none float-left h-0;
   content: attr(data-placeholder);
 }
 
@@ -701,6 +707,19 @@ h3.tiptap-heading + h2.tiptap-heading {
 }
 
 /* hide metamask */
-.wallet-adapter-button:has(img[alt="MetaMask icon"]) {
+.wallet-adapter-button:has(img[alt='MetaMask icon']) {
   display: none !important;
 }
+
+.scrollbar-visible::-webkit-scrollbar {
+  width: 8px;
+  display: block;
+}
+.scrollbar-visible::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+}
+.scrollbar-visible::-webkit-scrollbar-track {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
