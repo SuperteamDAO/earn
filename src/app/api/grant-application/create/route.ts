@@ -142,7 +142,7 @@ export async function POST(request: NextRequest) {
 
     waitUntil(
       (async () => {
-        if (grant.isNative === true) {
+        if (grant.isNative === true || !!grant.airtableId) {
           try {
             await queueEmail({
               type: 'application',
