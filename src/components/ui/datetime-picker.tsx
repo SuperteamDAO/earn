@@ -375,7 +375,7 @@ export function DateTimePicker({
                           ? minDateTooltipContent
                           : maxDateTooltipContent
                       }
-                      contentProps={{ className: 'max-w-56 text-center' }}
+                      contentProps={{ className: 'max-w-56 text-center z-100' }}
                     >
                       <div {...props} />
                     </Tooltip>
