@@ -154,13 +154,14 @@ function Hero({
             className="w-full rounded-full bg-black px-5 text-base text-white hover:bg-slate-700"
             asChild
           >
-            <Link href="#" target="_blank">
+            <Link href="https://build.superteam.fun" target="_blank">
               Find Ideas to Build
             </Link>
           </Button>
           <Button
             variant="ghost"
-            className="w-full gap-3 rounded-full px-5 text-base font-medium hover:bg-slate-200"
+            className="w-full gap-3 rounded-full px-5 text-base font-medium hover:bg-slate-200 disabled:opacity-100"
+            disabled
           >
             {status === 'Close In' && (
               <PulseIcon
