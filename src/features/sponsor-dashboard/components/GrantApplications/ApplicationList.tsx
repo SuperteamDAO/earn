@@ -24,6 +24,8 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
+import { Tooltip } from '@/components/ui/tooltip';
+import { Superteams } from '@/constants/Superteam';
 import { cn } from '@/utils/cn';
 
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
@@ -207,6 +209,11 @@ export const ApplicationList = ({
         const { bg: statusBg, color: statusColor } =
           colorMap[applicationStatus as GrantApplicationStatus];
         const { bg: labelBg, color: labelColor } = colorMap[applicationLabel];
+        const isSuperteamMember =
+          application?.user.superteamLevel?.includes('Superteam') || false;
+        const superteam = isSuperteamMember
+          ? Superteams.find((s) => s.name === application?.user.superteamLevel)
+          : undefined;
         return (
           <div
             key={application?.id}
@@ -238,9 +245,22 @@ export const ApplicationList = ({
                 <p className="overflow-hidden text-sm font-medium text-ellipsis whitespace-nowrap text-slate-700">
                   {application?.projectTitle}
                 </p>
-                <p className="overflow-hidden text-xs font-medium text-ellipsis whitespace-nowrap text-slate-500">
-                  {`${application?.user?.firstName} ${application?.user?.lastName}`}
-                </p>
+                <span className="flex items-center gap-2">
+                  <p className="overflow-hidden text-xs font-medium text-ellipsis whitespace-nowrap text-slate-500">
+                    {`${application?.user?.firstName} ${application?.user?.lastName}`}
+                  </p>
+                  {superteam && (
+                    <Tooltip
+                      content={application?.user?.superteamLevel + ' Member'}
+                    >
+                      <img
+                        src={superteam.icons}
+                        alt="Superteam Member"
+                        className="size-3 rounded-full"
+                      />
+                    </Tooltip>
+                  )}
+                </span>
               </div>
             </div>
 
