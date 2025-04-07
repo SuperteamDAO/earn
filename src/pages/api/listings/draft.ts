@@ -134,10 +134,16 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       skills: cleanedSkills as Prisma.InputJsonValue,
       language,
       sponsorId: userSponsorId,
-      pocId: userId,
       isFndnPaying,
       hackathonId,
       referredBy,
+      ...(!listing
+        ? {
+            pocId: userId,
+          }
+        : {
+            pocId: listing.pocId,
+          }),
     };
 
     const result = id
