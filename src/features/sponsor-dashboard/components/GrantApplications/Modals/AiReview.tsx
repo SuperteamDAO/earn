@@ -64,7 +64,7 @@ export default function AiReviewModal({ applications, grant }: Props) {
 
   useEffect(() => {
     refetchUnreviewedApplications();
-  }, [applications]);
+  }, [applications, refetchUnreviewedApplications]);
 
   const { mutateAsync: reviewApplication } = useReviewApplication(
     grant?.slug || '',
