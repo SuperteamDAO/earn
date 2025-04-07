@@ -1,5 +1,5 @@
 .minimal-tiptap-editor .ProseMirror .table-node {
-  @apply w-full border-collapse my-2.5 border border-[var(--mt-hr)] rounded-sm;
+  @apply w-full border-collapse my-2.5 border border-slate-200 rounded-sm;
   @apply max-w-full;
   @apply table-fixed;
 }
@@ -9,7 +9,7 @@
 }
 
 .minimal-tiptap-editor .ProseMirror .table-header-node {
-  @apply bg-slate-100 font-medium p-2 text-left border-b border-[var(--mt-hr)];
+  @apply bg-slate-100 font-medium p-2 text-left border-b border-slate-200;
 }
 
 .minimal-tiptap-editor .ProseMirror .table-cell-node {
@@ -29,5 +29,5 @@
 
 .minimal-tiptap-editor .ProseMirror .table-node th,
 .minimal-tiptap-editor .ProseMirror .table-node td {
-  @apply border-r border-[var(--mt-hr)] last:border-r-0;
+  @apply border-r border-slate-200 last:border-r-0;
 }

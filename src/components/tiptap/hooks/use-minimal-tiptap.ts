@@ -70,7 +70,7 @@ const createExtensions = (placeholder: string, imageSetting: ImageSetting) => {
     }),
     Markdown.configure({
       transformPastedText: true,
-      html: false,
+      html: true,
     }),
     Table.configure({
       resizable: false,
