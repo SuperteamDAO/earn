@@ -1,10 +1,10 @@
-import { format } from 'date-fns';
 import { Check, Cross, Info, Minus, Plus } from 'lucide-react';
 import Link from 'next/link';
 
 import { Separator } from '@/components/ui/separator';
 import { Tooltip } from '@/components/ui/tooltip';
 import { cn } from '@/utils/cn';
+import { dayjs } from '@/utils/dayjs';
 
 import { CreditIcon } from '../icon/credit';
 
@@ -101,7 +101,7 @@ export function CreditHistoryCard({ title, entries }: CreditHistoryCardProps) {
                   <CreditIcon className="text-brand-purple size-4" />
                 </div>
                 <p className="text-xs text-slate-500">
-                  {format(new Date(entry.createdAt), 'dd MMM, yyyy')}
+                  {formatDate(entry.createdAt, isNonLinkableEntry)}
                 </p>
               </div>
             </>
@@ -126,6 +126,13 @@ export function CreditHistoryCard({ title, entries }: CreditHistoryCardProps) {
       </div>
     </div>
   );
+}
+
+function formatDate(date: Date, useLocalTime: boolean): string {
+  if (useLocalTime) {
+    return dayjs(date).format('DD MMM, YYYY');
+  }
+  return dayjs(date).utc().format('DD MMM, YYYY');
 }
 
 function getStatusIcon(type: CreditEventType) {
@@ -187,6 +194,6 @@ function getEntryTitle(entry: CreditEntry): string {
     case 'MONTHLY_CREDIT':
       return 'Credits Renewed';
     case 'CREDIT_EXPIRY':
-      return `Credits Expired For ${format(new Date(entry.effectiveMonth), 'MMM')}`;
+      return `Credits Expired For ${dayjs(entry.effectiveMonth).format('MMM')}`;
   }
 }
