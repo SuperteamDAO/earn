@@ -19,7 +19,11 @@ import { usernameRandomQuery } from '@/features/talent/queries/random-username';
 import { type NewTalentFormData } from '@/features/talent/schema';
 import { useUsernameValidation } from '@/features/talent/utils/useUsernameValidation';
 
-export function UsernameField() {
+export function UsernameField({
+  setUsernameValidating,
+}: {
+  setUsernameValidating: (val: boolean) => void;
+}) {
   const form = useFormContext<NewTalentFormData>();
   const {
     control,
@@ -30,13 +34,26 @@ export function UsernameField() {
   } = form;
 
   const { user } = useUser();
-  const { setUsername, isInvalid, validationErrorMessage, username } =
-    useUsernameValidation();
+  const {
+    setUsername,
+    isInvalid,
+    validationErrorMessage,
+    username,
+    validating,
+  } = useUsernameValidation();
   const [isUsernameTyping, setIsUsernameTyping] = useState(false);
   const debouncedSetIsUsernameTyping = useRef(
     debounce(setIsUsernameTyping, 500),
   ).current;
   const debouncedSetUsername = useRef(debounce(setUsername, 500)).current;
+
+  useEffect(() => {
+    if (isUsernameTyping || validating) {
+      setUsernameValidating(true);
+    } else {
+      setUsernameValidating(false);
+    }
+  }, [isUsernameTyping, validating]);
 
   useEffect(() => {
     async function validateUsername() {

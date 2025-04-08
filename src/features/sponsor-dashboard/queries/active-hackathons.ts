@@ -3,15 +3,15 @@ import { queryOptions } from '@tanstack/react-query';
 
 import { api } from '@/lib/api';
 
-const fetchActiveHackathon = async (): Promise<Hackathon> => {
-  const { data } = await api.get(`/api/sponsor-dashboard/active-hackathon/`);
+const fetchActiveHackathons = async (): Promise<Hackathon[]> => {
+  const { data } = await api.get(`/api/sponsor-dashboard/active-hackathons/`);
   return data;
 };
 
-export const activeHackathonQuery = () =>
+export const activeHackathonsQuery = () =>
   queryOptions({
-    queryKey: ['active-hackathon'],
-    queryFn: () => fetchActiveHackathon(),
+    queryKey: ['active-hackathons'],
+    queryFn: () => fetchActiveHackathons(),
     retry: false,
     refetchOnMount: false,
     refetchOnWindowFocus: false,
