@@ -1,10 +1,10 @@
+import { format } from 'date-fns';
 import { Check, Cross, Info, Minus, Plus } from 'lucide-react';
 import Link from 'next/link';
 
 import { Separator } from '@/components/ui/separator';
 import { Tooltip } from '@/components/ui/tooltip';
 import { cn } from '@/utils/cn';
-import { dayjs } from '@/utils/dayjs';
 
 import { CreditIcon } from '../icon/credit';
 
@@ -100,9 +100,7 @@ export function CreditHistoryCard({ title, entries }: CreditHistoryCardProps) {
                   </p>
                   <CreditIcon className="text-brand-purple size-4" />
                 </div>
-                <p className="text-xs text-slate-500">
-                  {formatDate(entry.createdAt, isNonLinkableEntry)}
-                </p>
+                <p className="text-xs text-slate-500">{formatDate(entry)}</p>
               </div>
             </>
           );
@@ -128,11 +126,26 @@ export function CreditHistoryCard({ title, entries }: CreditHistoryCardProps) {
   );
 }
 
-function formatDate(date: Date, useLocalTime: boolean): string {
-  if (useLocalTime) {
-    return dayjs(date).format('DD MMM, YYYY');
+function formatDate(entry: CreditEntry): string {
+  const isSpecialEntry =
+    entry.type === 'CREDIT_EXPIRY' || entry.type === 'MONTHLY_CREDIT';
+
+  if (isSpecialEntry) {
+    const date = new Date(entry.createdAt);
+    const year = date.getUTCFullYear();
+    const month = date.getUTCMonth();
+    const day = date.getUTCDate();
+    const hours = date.getUTCHours();
+    const minutes = date.getUTCMinutes();
+    const seconds = date.getUTCSeconds();
+
+    const localDate = new Date();
+    localDate.setFullYear(year, month, day);
+    localDate.setHours(hours, minutes, seconds, 0);
+
+    return format(localDate, 'dd MMM, yyyy');
   }
-  return dayjs(date).utc().format('DD MMM, YYYY');
+  return format(new Date(entry.createdAt), 'dd MMM, yyyy');
 }
 
 function getStatusIcon(type: CreditEventType) {
@@ -194,6 +207,6 @@ function getEntryTitle(entry: CreditEntry): string {
     case 'MONTHLY_CREDIT':
       return 'Credits Renewed';
     case 'CREDIT_EXPIRY':
-      return `Credits Expired For ${dayjs(entry.effectiveMonth).format('MMM')}`;
+      return `Credits Expired For ${format(new Date(entry.effectiveMonth), 'MMM')}`;
   }
 }
