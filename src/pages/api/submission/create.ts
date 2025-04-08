@@ -66,8 +66,10 @@ async function createSubmission(
   )
     throw new Error('User already has an active sponsorship request');
 
-  const submissionCount = await prisma.submission.count({
-    where: { listingId },
+  const sequentialId = await prisma.sponsors.update({
+    where: { id: listing.sponsorId },
+    data: { submissionCounter: { increment: 1 } },
+    select: { submissionCounter: true },
   });
 
   return prisma.submission.create({
@@ -80,7 +82,7 @@ async function createSubmission(
       eligibilityAnswers: validatedData.eligibilityAnswers || [],
       ask: validatedData.ask || null,
       token: validatedData.token || null,
-      sequentialId: submissionCount + 1,
+      sequentialId: sequentialId.submissionCounter,
     },
     include: {
       listing: {

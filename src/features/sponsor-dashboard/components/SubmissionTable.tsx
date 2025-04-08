@@ -185,7 +185,7 @@ export const SubmissionTable = ({
                 <TableRow key={submission?.id}>
                   <TableCell>
                     <p className="whitespace-nowrap text-sm font-medium text-slate-500">
-                      {`${submission?.listing?.sequentialId}.${submission.sequentialId}`}
+                      {submission.sequentialId}
                     </p>
                   </TableCell>
                   <TableCell className="max-w-80 whitespace-normal break-words font-medium text-slate-700">
