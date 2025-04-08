@@ -1,5 +1,6 @@
 import { format } from 'date-fns';
 import { Check, Cross, Info, Minus, Plus } from 'lucide-react';
+import Link from 'next/link';
 
 import { Separator } from '@/components/ui/separator';
 import { Tooltip } from '@/components/ui/tooltip';
@@ -24,6 +25,7 @@ interface CreditEntry {
     listing: {
       title: string;
       type: string;
+      slug: string;
       sponsor?: {
         logo: string;
       };
@@ -54,52 +56,73 @@ export function CreditHistoryCard({ title, entries }: CreditHistoryCardProps) {
       </div>
       <Separator className="flex-1" />
       <div className={cn(isUpcoming && 'opacity-60')}>
-        {entries.map((entry) => (
-          <div key={entry.id} className="flex items-center gap-4 px-4 py-4">
-            <div className="relative">
-              <div
-                className={`flex size-10 items-center justify-center overflow-hidden rounded-full`}
-              >
-                <img
-                  src={
-                    entry.submission.listing.sponsor?.logo ||
-                    '/android-chrome-512x512.png'
-                  }
-                  alt="Sponsor logo"
-                  className="size-10 rounded-full object-contain"
-                />
+        {entries.map((entry) => {
+          const isNonLinkableEntry =
+            entry.type === 'CREDIT_EXPIRY' || entry.type === 'MONTHLY_CREDIT';
+
+          const EntryContent = () => (
+            <>
+              <div className="relative">
+                <div
+                  className={`flex size-10 items-center justify-center overflow-hidden rounded-full`}
+                >
+                  <img
+                    src={
+                      entry.submission.listing.sponsor?.logo ||
+                      '/android-chrome-512x512.png'
+                    }
+                    alt="Sponsor logo"
+                    className="size-10 rounded-full object-contain"
+                  />
+                </div>
+                {isUpcoming ? (
+                  <div className="absolute -right-1 -bottom-1 flex size-5 items-center justify-center rounded-full border-3 border-white bg-white text-gray-700">
+                    <span className="text-xxs">⏳</span>
+                  </div>
+                ) : (
+                  getStatusIcon(entry.type)
+                )}
               </div>
-              {isUpcoming ? (
-                <div className="absolute -right-1 -bottom-1 flex size-5 items-center justify-center rounded-full border-3 border-white bg-white text-gray-700">
-                  <span className="text-xxs">⏳</span>
+              <div className="flex-1">
+                <h3 className="text-sm font-semibold text-gray-900">
+                  {getEntryTitle(entry)}
+                </h3>
+                <p className="text-sm font-medium text-slate-600">
+                  {entry.submission.listing.title}
+                </p>
+              </div>
+              <div className="flex flex-col items-end">
+                <div className="flex items-center gap-1">
+                  <p className={`text-sm font-semibold text-slate-900`}>
+                    {entry.change > 0
+                      ? `+ ${entry.change} Credit`
+                      : `- ${Math.abs(entry.change)} Credit`}
+                  </p>
+                  <CreditIcon className="text-brand-purple size-4" />
+                </div>
+                <p className="text-xs text-slate-500">
+                  {format(new Date(entry.createdAt), 'dd MMM, yyyy')}
+                </p>
+              </div>
+            </>
+          );
+
+          return (
+            <div key={entry.id}>
+              {isNonLinkableEntry ? (
+                <div className="flex items-center gap-4 px-4 py-4 hover:bg-slate-100">
+                  <EntryContent />
                 </div>
               ) : (
-                getStatusIcon(entry.type)
+                <Link href={`/listing/${entry.submission.listing.slug}`}>
+                  <div className="flex cursor-pointer items-center gap-4 px-4 py-4 hover:bg-slate-100">
+                    <EntryContent />
+                  </div>
+                </Link>
               )}
             </div>
-            <div className="flex-1">
-              <h3 className="text-sm font-semibold text-gray-900">
-                {getEntryTitle(entry)}
-              </h3>
-              <p className="text-sm font-medium text-slate-600">
-                {entry.submission.listing.title}
-              </p>
-            </div>
-            <div className="flex flex-col items-end">
-              <div className="flex items-center gap-1">
-                <p className={`text-sm font-semibold text-slate-900`}>
-                  {entry.change > 0
-                    ? `+ ${entry.change} Credit`
-                    : `- ${Math.abs(entry.change)} Credit`}
-                </p>
-                <CreditIcon className="text-brand-purple size-4" />
-              </div>
-              <p className="text-xs text-slate-500">
-                {format(new Date(entry.createdAt), 'dd MMM, yyyy')}
-              </p>
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

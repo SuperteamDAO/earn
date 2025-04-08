@@ -52,6 +52,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
             select: {
               title: true,
               type: true,
+              slug: true,
               sponsor: {
                 select: {
                   name: true,
