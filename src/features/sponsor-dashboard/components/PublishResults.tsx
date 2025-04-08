@@ -75,7 +75,12 @@ export function PublishResults({
     | undefined = 'warning';
   let alertTitle = '';
   let alertDescription = '';
-  if (!isWinnersAllSelected) {
+  if (isSponsorship) {
+    alertType = 'info';
+    alertTitle = 'Sponsorship Approval!';
+    alertDescription =
+      'Once you approve this sponsorship submission, the action is irreversible. Please double-check all details before proceeding.';
+  } else if (!isWinnersAllSelected) {
     const remainingWinners = (rewards || 0) - totalWinners;
     alertType = 'error';
     alertTitle = 'Select All Winners!';
@@ -166,7 +171,8 @@ export function PublishResults({
           )}
 
           {!isWinnersAnnounced &&
-            rewards &&
+            !isSponsorship &&
+            rewards > 0 &&
             totalWinners === rewards &&
             alertType !== 'error' && (
               <p className="mb-4 mt-1">
@@ -194,7 +200,7 @@ export function PublishResults({
 
           {!isWinnersAnnounced &&
             !isSponsorship &&
-            rewards &&
+            rewards > 0 &&
             totalWinners === rewards &&
             !isDeadlinePassed && (
               <Alert className="mt-4" variant="destructive">

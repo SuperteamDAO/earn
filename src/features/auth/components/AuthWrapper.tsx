@@ -18,6 +18,7 @@ interface AuthWrapperProps {
   hideLoginOverlay?: boolean;
   onLoginOpenCallback?: () => void;
   onLoginCloseCallback?: () => void;
+  sponsorId?: string;
 }
 
 export function AuthWrapper({
@@ -30,6 +31,7 @@ export function AuthWrapper({
   hideLoginOverlay,
   onLoginCloseCallback,
   onLoginOpenCallback,
+  sponsorId,
 }: AuthWrapperProps) {
   const { status } = useSession();
   const isAuthenticated = status === 'authenticated';
@@ -84,6 +86,9 @@ export function AuthWrapper({
   const shouldAllowInteraction =
     isAuthenticated && (!showCompleteProfileModal || isTalentFilled);
 
+  const isSponsorCorrect =
+    sponsorId && (user?.currentSponsorId === sponsorId || user?.role === 'GOD');
+
   return (
     <>
       {loginIsOpen && (
@@ -105,7 +110,11 @@ export function AuthWrapper({
       )}
       <div
         onClick={handleLoginTrigger}
-        className={cn('flex cursor-pointer', className)}
+        className={cn(
+          'flex cursor-pointer',
+          !isSponsorCorrect && 'hidden',
+          className,
+        )}
       >
         <div
           className="h-full w-full"
