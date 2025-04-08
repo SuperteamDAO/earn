@@ -90,7 +90,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       isGod: user?.role === 'GOD',
       isEditing: false,
       isST: !!sponsor?.st,
-      hackathon,
+      hackathons: hackathon ? [hackathon] : [],
     });
 
     const innerSchema = listingSchema._def.schema.omit({
@@ -103,7 +103,11 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       sponsorId: true,
     });
     const superValidator = innerSchema.superRefine(async (data, ctx) => {
-      await createListingRefinements(data as any, ctx, hackathon);
+      await createListingRefinements(
+        data as any,
+        ctx,
+        hackathon ? [hackathon] : [],
+      );
       await backendListingRefinements(data as any, ctx);
     });
     const validatedData = await superValidator.parseAsync(req.body);

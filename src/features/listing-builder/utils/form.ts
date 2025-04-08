@@ -18,7 +18,8 @@ interface ListingDefaults {
   isEditing: boolean;
   isST: boolean;
   type?: BountyType;
-  hackathon?: Hackathon;
+  hackathons?: Hackathon[];
+  hackathonId?: string;
 }
 
 export const getListingDefaults = ({
@@ -26,13 +27,14 @@ export const getListingDefaults = ({
   isEditing,
   isST,
   type = 'bounty',
-  hackathon,
+  hackathons,
+  hackathonId,
 }: ListingDefaults) => {
   const schema = createListingFormSchema({
     isGod,
     isEditing,
     isST,
-    hackathon: hackathon,
+    hackathons,
   });
 
   // Get the inner schema by unwrapping the ZodEffects
@@ -82,13 +84,15 @@ export const getListingDefaults = ({
 
   defaults['type'] = type;
   if (type === 'hackathon') {
-    if (!hackathon) defaults['type'] = 'bounty';
+    const currentHackathon = hackathons?.find((s) => s.id === hackathonId);
+    if (!currentHackathon) defaults['type'] = 'bounty';
     else {
       defaults['type'] = type;
-      if (hackathon.eligibility)
-        defaults['eligibility'] = hackathon.eligibility;
-      if (hackathon.deadline) defaults['deadline'] = hackathon.deadline;
-      defaults['hackathonId'] = hackathon.id;
+      if (currentHackathon.eligibility)
+        defaults['eligibility'] = currentHackathon.eligibility;
+      if (currentHackathon.deadline)
+        defaults['deadline'] = currentHackathon.deadline;
+      defaults['hackathonId'] = hackathonId;
     }
   }
   if (type === 'project') {
