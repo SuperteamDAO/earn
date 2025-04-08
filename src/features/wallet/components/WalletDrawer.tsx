@@ -103,8 +103,12 @@ export function WalletDrawer({
     posthog.capture('withdraw_start');
     if (privyUser?.mfaMethods.length === 0) {
       toast(
-        <div className="flex flex-col gap-1">
-          <div className="text-brand-purple text-xl font-bold">
+        <div className="relative flex flex-col gap-1">
+          <X
+            className="absolute top-0 right-0 size-4 cursor-pointer text-slate-400 hover:text-slate-700"
+            onClick={() => toast.dismiss()}
+          />
+          <div className="text-brand-purple mt-1 pr-6 text-xl font-bold">
             Two-Factor Auth is Mandatory
           </div>
           <div className="text-sm text-slate-600">
@@ -122,12 +126,13 @@ export function WalletDrawer({
           </Button>
         </div>,
         {
-          duration: 20000,
+          duration: 7000,
           style: {
             border: '1px solid #7471ff',
             padding: '1rem',
           },
           className: 'shadow-lg',
+          dismissible: true,
         },
       );
     } else {
