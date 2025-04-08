@@ -7,7 +7,7 @@ import { type NextApiRequestWithSponsor } from '@/features/auth/types';
 import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
 
 async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
-  if (!req.hackathonId) {
+  if (req.role !== 'GOD' && !req.hackathonId) {
     logger.warn(`User ${req.userId} has no Hackathon ID`);
     return res.status(400).json({
       message: 'User has no Hackathon ID',
