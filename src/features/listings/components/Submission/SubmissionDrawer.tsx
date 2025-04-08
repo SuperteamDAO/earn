@@ -507,20 +507,20 @@ export const SubmissionDrawer = ({
                   {isLoading ? (
                     <>
                       <span className="loading loading-spinner"></span>
-                      <span>Submitting...</span>
+                      <span>{editMode ? 'Updating...' : 'Submitting...'}</span>
                     </>
                   ) : isProject ? (
                     <span className="flex items-center gap-2">
-                      Apply using 1 credit
-                      <CreditIcon />
+                      {editMode ? 'Update' : 'Apply using 1 credit'}
+                      {!editMode && <CreditIcon />}
                     </span>
                   ) : isBounty ? (
                     <span className="flex items-center gap-2">
-                      Submit using 1 credit
-                      <CreditIcon />
+                      {editMode ? 'Update' : 'Submit using 1 credit'}
+                      {!editMode && <CreditIcon />}
                     </span>
                   ) : (
-                    <span>Submit</span>
+                    <span>{editMode ? 'Update' : 'Submit'}</span>
                   )}
                 </Button>
                 <p className="mt-2 text-center text-xs text-slate-400 sm:text-sm">
