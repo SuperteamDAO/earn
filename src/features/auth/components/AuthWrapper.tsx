@@ -86,8 +86,8 @@ export function AuthWrapper({
   const shouldAllowInteraction =
     isAuthenticated && (!showCompleteProfileModal || isTalentFilled);
 
-  const isSponsorCorrect =
-    sponsorId && (user?.currentSponsorId === sponsorId || user?.role === 'GOD');
+  const sponsorValidation =
+    !sponsorId || user?.currentSponsorId === sponsorId || user?.role === 'GOD';
 
   return (
     <>
@@ -112,7 +112,7 @@ export function AuthWrapper({
         onClick={handleLoginTrigger}
         className={cn(
           'flex cursor-pointer',
-          !isSponsorCorrect && 'hidden',
+          !sponsorValidation && 'hidden',
           className,
         )}
       >
