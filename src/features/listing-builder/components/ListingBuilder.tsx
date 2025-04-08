@@ -50,14 +50,13 @@ export function ListingBuilder({ route, slug }: ListingBuilderLayout) {
 
   useEffect(() => {
     const handleRouteComplete = () => {
-      if (slug)
-        queryClient.invalidateQueries({
-          queryKey: ['sponsor-dashboard-listing', slug],
-        });
+      queryClient.invalidateQueries({
+        queryKey: ['sponsor-dashboard-listing', slug],
+      });
     };
 
-    router.events.on('routeChangeComplete', handleRouteComplete);
-    return () => router.events.off('routeChangeComplete', handleRouteComplete);
+    router.events.on('routeChangeStart', handleRouteComplete);
+    return () => router.events.off('routeChangeStart', handleRouteComplete);
   }, [router.events, queryClient, slug]);
 
   if (ready && !authenticated) {
