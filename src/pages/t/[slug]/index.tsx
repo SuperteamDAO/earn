@@ -1,4 +1,10 @@
-import { ChevronDown, ChevronUp, SquarePen } from 'lucide-react';
+import {
+  ChevronDown,
+  ChevronUp,
+  Copy,
+  CopyCheck,
+  SquarePen,
+} from 'lucide-react';
 import type { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
@@ -14,6 +20,7 @@ import { Button } from '@/components/ui/button';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { Separator } from '@/components/ui/separator';
 import { ASSET_URL } from '@/constants/ASSET_URL';
+import { useClipboard } from '@/hooks/use-clipboard';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import type { User } from '@/interface/user';
@@ -55,6 +62,9 @@ function TalentProfile({ talent, stats }: TalentProps) {
   const [randomIndex, setRandomIndex] = useState<number>(0);
   const [showSubskills, setShowSubskills] = useState<Record<number, boolean>>(
     {},
+  );
+  const { onCopy: copyEmail, hasCopied: hasEmailCopied } = useClipboard(
+    talent.email || '',
   );
 
   const { ref, inView } = useInView();
@@ -294,6 +304,15 @@ function TalentProfile({ talent, stats }: TalentProps) {
                     <SquarePen />,
                     'Edit Profile',
                     handleEditProfileClick,
+                  )
+                ) : isMD ? (
+                  renderButton(
+                    hasEmailCopied ? <CopyCheck /> : <Copy />,
+                    hasEmailCopied ? 'Copied' : 'Copy Email',
+                    () => {
+                      posthog.capture('reach out_talent profile');
+                      copyEmail();
+                    },
                   )
                 ) : (
                   <Link
