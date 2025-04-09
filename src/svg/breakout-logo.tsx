@@ -1,4 +1,10 @@
-export const BreakoutLogo = ({ styles }: { styles?: any }) => {
+export const BreakoutLogo = ({
+  styles,
+  className,
+}: {
+  styles?: any;
+  className?: string;
+}) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -7,6 +13,7 @@ export const BreakoutLogo = ({ styles }: { styles?: any }) => {
       fill="none"
       viewBox="0 0 378 173"
       style={styles}
+      className={className}
     >
       <path
         fill="#E8FB2F"

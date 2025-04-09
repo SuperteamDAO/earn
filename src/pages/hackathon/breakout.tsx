@@ -141,10 +141,10 @@ function Hero({
         backgroundImage: `url('${ASSET_URL + baseAsset(isSM ? 'banner' : 'banner-mobile')}')`,
       }}
     >
-      <BreakoutLogo />
+      <BreakoutLogo className="max-w-[80%] sm:max-w-none" />
       <div className="mt-4 mb-1 flex w-full max-w-[18.5rem] flex-col items-center gap-4 text-black sm:w-auto sm:max-w-none">
         <div className={`${animeAce.className} italic`}>
-          <p className="font-medium">
+          <p className="text-sm font-medium sm:text-base">
             Submissions Due {dayjs(CLOSE_DATE).format('MMM DD, YYYY')}
           </p>
         </div>
@@ -288,12 +288,12 @@ function MiniStat({
         )}
       >
         <span className="flex items-center gap-2">
-          <p className="text-left text-xs text-gray-400 md:w-max md:text-sm">
+          <p className="text-left text-xs text-white/80 md:w-max md:text-sm">
             {title}
           </p>
           {infotipContent && <Info className="h-3 w-3 text-gray-400" />}
         </span>
-        <p className="text-lg font-bold md:text-xl">{children}</p>
+        <p className="text-lg font-bold md:text-2xl">{children}</p>
       </div>
     </Tooltip>
   );
