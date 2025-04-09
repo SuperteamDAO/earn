@@ -163,19 +163,43 @@ export function CreditDrawer({
               <>
                 {upcomingMonthEntries.length > 0 && (
                   <CreditHistoryCard
-                    title="Upcoming Month"
+                    title={
+                      <div className="flex gap-1">
+                        <h2 className="text-sm font-medium">Upcoming Month</h2>
+                        <p className="mt-0.5 flex items-center gap-0.5 text-xs text-slate-500">
+                          (Expected:{' '}
+                          <span className="flex items-center gap-1 font-medium">
+                            {upcomingMonthEntries.reduce(
+                              (sum, entry) => sum + (entry.change ?? 0),
+                              0,
+                            )}{' '}
+                            Credits
+                            <CreditIcon className="text-brand-purple size-3.5" />
+                          </span>
+                          )
+                        </p>
+                        <Tooltip
+                          contentProps={{ className: 'z-[200]' }}
+                          content="This shows your win or spam activity for the current month, and how it will affect your Submission Credit balance in the next month."
+                        >
+                          <Info className="mt-0.5 size-3.5 text-slate-500" />
+                        </Tooltip>
+                      </div>
+                    }
                     entries={upcomingMonthEntries}
                   />
                 )}
                 {currentMonthEntries.length > 0 && (
                   <CreditHistoryCard
-                    title="This Month"
+                    title={<h2 className="text-sm font-medium">This Month</h2>}
                     entries={currentMonthEntries}
                   />
                 )}
                 {pastMonthEntries.length > 0 && (
                   <CreditHistoryCard
-                    title="Past 3 Months"
+                    title={
+                      <h2 className="text-sm font-medium">Past 3 Months</h2>
+                    }
                     entries={pastMonthEntries}
                   />
                 )}

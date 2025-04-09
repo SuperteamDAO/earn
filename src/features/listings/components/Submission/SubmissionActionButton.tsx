@@ -315,17 +315,18 @@ export const SubmissionActionButton = ({
         {(isProject || isBounty) &&
           user &&
           !(buttonState === 'edit') &&
-          !isUserSubmissionLoading && (
+          !isUserSubmissionLoading &&
+          !pastDeadline && (
             <>
               {creditBalance > 0 && (
-                <div className="my-1 hidden text-center text-xs text-slate-500 md:my-2 md:flex md:text-sm">
-                  <p className="mx-auto w-full rounded-md bg-slate-100 py-0 md:py-0.5">
+                <div className="my-1 hidden text-center text-xs font-medium text-slate-500 md:my-1.5 md:flex md:text-xs">
+                  <p className="mx-auto w-full rounded-md bg-slate-200 py-0 md:py-0.5">
                     {`* Costs 1 credit to ${isProject ? 'apply' : 'submit'}`}
                   </p>
                 </div>
               )}
               {creditBalance <= 0 && (
-                <div className="mt-1 text-center text-xs text-red-400 md:my-2 md:text-sm">
+                <div className="mt-1 text-center text-xs font-medium text-red-400 md:my-1.5 md:text-xs">
                   <p className="mx-auto w-full rounded-md bg-red-100 py-0 md:py-0.5">
                     {`* You don't have enough credits to ${isProject ? 'apply' : 'submit'}`}
                   </p>

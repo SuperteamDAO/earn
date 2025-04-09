@@ -1,5 +1,3 @@
-// TODO: show from april only
-
 import { type NextApiResponse } from 'next';
 
 import { prisma } from '@/prisma';
@@ -24,9 +22,13 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
 
   for (let i = 1; i >= -3; i--) {
     const month = startOfCurrentMonth.add(i, 'month');
+    // only include months that are: apr25 and after or equal to the user's creation month
+    const monthYear = month.year();
+    const monthMonth = month.month();
+
     if (
-      month.isAfter(userCreatedAt, 'month') ||
-      month.isSame(userCreatedAt, 'month')
+      (monthYear > 2025 || (monthYear === 2025 && monthMonth >= 3)) &&
+      !month.isBefore(userCreatedAt, 'month')
     ) {
       effectiveMonths.push(month.toDate());
     }
@@ -78,17 +80,19 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
     groupedByMonth.get(key)!.push(entry);
   }
 
-  const monthsToSynthesize = effectiveMonths.slice(1);
   const syntheticEntries: any[] = [];
   const startOfCurrentMonthISO = startOfCurrentMonth.toISOString();
 
-  for (const monthStart of monthsToSynthesize) {
+  for (const monthStart of effectiveMonths) {
     const monthKey = dayjs(monthStart).utc().startOf('month').toISOString();
     const entries = groupedByMonth.get(monthKey) ?? [];
 
     const ledgerSum = entries.reduce((sum, e) => sum + (e.change ?? 0), 0);
 
-    if (monthKey !== startOfCurrentMonthISO) {
+    if (
+      monthKey !== startOfCurrentMonthISO &&
+      dayjs(monthStart).isBefore(startOfCurrentMonth, 'month')
+    ) {
       const effectiveBalance = 3 + ledgerSum;
       if (effectiveBalance > 0) {
         const monthEnd = dayjs(monthStart).endOf('month').toDate();
