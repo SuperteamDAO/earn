@@ -79,7 +79,11 @@ export function EligibilityQuestions() {
             (s) => s.id === hackathonId,
           );
           if (!!currentHackathon?.eligibility) {
-            form.setValue('eligibility', currentHackathon?.eligibility as any);
+            if (form?.getValues('eligibility')?.length === 0)
+              form.setValue(
+                'eligibility',
+                currentHackathon?.eligibility as any,
+              );
           }
         } else {
           if (fields.length > 0) {
