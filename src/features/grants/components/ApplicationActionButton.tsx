@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { AlertTriangle, Loader2, Pencil } from 'lucide-react';
+import { usePostHog } from 'posthog-js/react';
 import React from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -28,6 +29,7 @@ export const ApplicationActionButton = ({
   grant,
 }: GrantApplicationButtonProps) => {
   const { user } = useUser();
+  const posthog = usePostHog();
   const { region, id, link, isNative, isPublished } = grant;
 
   const { data: application, isLoading: isUserApplicationLoading } = useQuery({
@@ -58,6 +60,11 @@ export const ApplicationActionButton = ({
     if (link && !isNative) {
       window.open(link, '_blank', 'noopener,noreferrer');
     } else {
+      if (applicationState === 'ALLOW EDIT') {
+        posthog.capture('edit_grant application');
+      } else if (applicationState === 'ALLOW NEW') {
+        posthog.capture('start_grant application');
+      }
       onOpen();
     }
   };
