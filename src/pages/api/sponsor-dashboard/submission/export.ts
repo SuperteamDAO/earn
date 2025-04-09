@@ -87,7 +87,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         'Email ID': user.email,
         'User Twitter': user.twitter || '',
         'User Wallet': user.walletAddress,
-        'User Location': user.location,
+        'User Location': user.location || '',
         Label: submission.label,
         'Winner Position': submission.isWinner
           ? submission.winnerPosition === BONUS_REWARD_POSITION
