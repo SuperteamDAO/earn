@@ -44,8 +44,15 @@ export const useToggleWinner = (
       if (!response.data) throw new Error('Failed to toggle winner');
       return response.data;
     },
-    onSuccess: (_, variables) => {
+    onSuccess: (data, variables) => {
       setPositionUpdating(false);
+
+      if (data.autoFixed) {
+        toast.info(
+          "A submission can't be both a winner and marked as spam — we've adjusted its status.",
+        );
+      }
+
       queryClient.setQueryData<SubmissionWithUser[]>(
         ['sponsor-submissions', bounty?.slug],
         (old) =>
@@ -55,6 +62,7 @@ export const useToggleWinner = (
                   ...submission,
                   isWinner: variables.isWinner,
                   winnerPosition: variables.winnerPosition ?? undefined,
+                  ...(data.autoFixed && { label: 'Unreviewed' }),
                 }
               : submission,
           ),
@@ -91,6 +99,7 @@ export const useToggleWinner = (
           ...submissions[submissionIndex],
           isWinner: variables.isWinner,
           winnerPosition: variables.winnerPosition as keyof Rewards | undefined,
+          ...(data.autoFixed && { label: 'Unreviewed' }),
         } as SubmissionWithUser;
 
         setSelectedSubmission(updatedSubmission);

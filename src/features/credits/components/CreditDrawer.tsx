@@ -85,7 +85,7 @@ export function CreditDrawer({
 
   return (
     <SideDrawer isOpen={isOpen} onClose={handleClose}>
-      <SideDrawerContent className="w-screen overflow-y-auto sm:w-[30rem]">
+      <SideDrawerContent className="flex h-full w-screen flex-col sm:w-[30rem]">
         <X
           className="absolute top-5 right-4 z-10 h-5 w-5 cursor-pointer text-slate-600 sm:hidden"
           onClick={onClose}
@@ -150,7 +150,7 @@ export function CreditDrawer({
             </div>
           </div>
 
-          <div className="flex-1 bg-white">
+          <div className="flex-1 overflow-y-auto bg-white">
             {isLoading ? (
               <div className="flex justify-center py-8">
                 <p className="text-slate-500">Loading credit history...</p>
@@ -160,7 +160,7 @@ export function CreditDrawer({
                 <p className="text-slate-500">No credit history available</p>
               </div>
             ) : (
-              <>
+              <div className="mb-4 pb-2">
                 {upcomingMonthEntries.length > 0 && (
                   <CreditHistoryCard
                     title={
@@ -203,8 +203,22 @@ export function CreditDrawer({
                     entries={pastMonthEntries}
                   />
                 )}
-              </>
+              </div>
             )}
+          </div>
+
+          <div className="w-full border-t border-slate-50 bg-white py-1 shadow-[0_-2px_3px_rgba(0,0,0,0.05)]">
+            <p className="mx-auto flex items-center justify-center gap-1.5 text-sm font-medium text-slate-400 transition-colors">
+              Click to learn how submission credits work{' '}
+              <span className="cursor-pointer underline">
+                <a
+                  href="https://superteamdao.notion.site/Submission-Credits-User-Guide-17b794d3ba33804392f9e1c613eff9a0"
+                  target="_blank"
+                >
+                  here
+                </a>
+              </span>
+            </p>
           </div>
         </div>
       </SideDrawerContent>

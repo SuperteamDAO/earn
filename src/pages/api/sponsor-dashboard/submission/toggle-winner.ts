@@ -52,13 +52,24 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       });
     }
 
+    let autoFixed = false;
+    const updateData: any = {
+      isWinner,
+      winnerPosition: winnerPosition ? winnerPosition : null,
+    };
+
+    if (isWinner && currentSubmission.label === 'Spam') {
+      updateData.label = 'Unreviewed';
+      autoFixed = true;
+      logger.info(
+        `Automatically removing Spam label from submission ${id} as it's being set as a winner`,
+      );
+    }
+
     logger.debug(`Updating submission with ID: ${id}`);
     const result = await prisma.submission.update({
       where: { id },
-      data: {
-        isWinner,
-        winnerPosition: winnerPosition ? winnerPosition : null,
-      },
+      data: updateData,
       include: { listing: true },
     });
 
@@ -91,7 +102,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     }
 
     logger.info(`Successfully updated submission with ID: ${id}`);
-    return res.status(200).json({ message: 'Success' });
+    return res.status(200).json({ message: 'Success', autoFixed });
   } catch (error: any) {
     logger.error(`User ${userId} unable to toggle winners: ${error.message}`);
     return res.status(400).json({

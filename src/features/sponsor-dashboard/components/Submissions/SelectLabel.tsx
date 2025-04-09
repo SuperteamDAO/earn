@@ -3,6 +3,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAtom, useSetAtom } from 'jotai';
 import { ChevronDown } from 'lucide-react';
 import { useState } from 'react';
+import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -22,6 +23,15 @@ import { SpamConfirmationDialog } from './SpamConfirmationDialog';
 
 interface Props {
   listingSlug: string;
+}
+
+interface UpdateLabelResponse {
+  data: {
+    id: string;
+    label: SubmissionLabels;
+    autoFixed?: boolean;
+    [key: string]: any;
+  };
 }
 
 export const SelectLabel = ({ listingSlug }: Props) => {
@@ -91,23 +101,58 @@ export const SelectLabel = ({ listingSlug }: Props) => {
         id,
         label,
       }),
-    onSuccess: (_, variables) => {
+    onSuccess: (
+      response: UpdateLabelResponse,
+      variables: { id: string; label: SubmissionLabels },
+    ) => {
       setLabelsUpdating(false);
+
+      const { autoFixed } = response.data || {};
+      if (autoFixed) {
+        toast.info(
+          "A submission can't be both a winner and marked as spam — we've adjusted its status.",
+        );
+      }
+
       queryClient.setQueryData<SubmissionWithUser[]>(
         ['sponsor-submissions', listingSlug],
-        (old) =>
-          old?.map((submission) =>
-            submission.id === variables.id
-              ? { ...submission, label: variables.label }
-              : submission,
-          ),
+        (old) => {
+          if (!old) return old;
+          return old.map((submission) => {
+            if (submission.id === variables.id) {
+              if (
+                variables.label === 'Spam' &&
+                submission.isWinner &&
+                autoFixed
+              ) {
+                return {
+                  ...submission,
+                  label: variables.label,
+                  isWinner: false,
+                  winnerPosition: undefined,
+                };
+              }
+              return { ...submission, label: variables.label };
+            }
+            return submission;
+          });
+        },
       );
 
-      setSelectedSubmission((prev) =>
-        prev && prev.id === variables.id
-          ? { ...prev, label: variables.label }
-          : prev,
-      );
+      setSelectedSubmission((prev) => {
+        if (prev && prev.id === variables.id) {
+          if (variables.label === 'Spam' && prev.isWinner && autoFixed) {
+            return {
+              ...prev,
+              label: variables.label,
+              isWinner: false,
+              winnerPosition: undefined,
+            };
+          }
+          return { ...prev, label: variables.label };
+        }
+        return prev;
+      });
     },
     onError: (e) => {
       console.log(e);
