@@ -80,8 +80,6 @@ export function EligibilityQuestions() {
           );
           if (!!currentHackathon?.eligibility) {
             form.setValue('eligibility', currentHackathon?.eligibility as any);
-          } else {
-            form.setValue('eligibility', []);
           }
         } else {
           if (fields.length > 0) {
