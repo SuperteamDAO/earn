@@ -65,6 +65,11 @@ export const MobileNavbar = ({
     setHideListingTypes(listingPage);
   }, []);
 
+  const openCreditDrawer = () => {
+    posthog.capture('open_credits');
+    onCreditOpen();
+  };
+
   const MobileDrawer = () => {
     return (
       <Sheet open={isDrawerOpen} onOpenChange={onDrawerClose}>
@@ -216,7 +221,7 @@ export const MobileNavbar = ({
                 <div className="relative">
                   <div
                     className="flex cursor-pointer items-center gap-1 rounded-md px-2 py-1.5 text-slate-500 transition-all duration-100 hover:bg-slate-100 hover:text-slate-700 md:gap-2"
-                    onClick={onCreditOpen}
+                    onClick={openCreditDrawer}
                   >
                     <CreditIcon className="text-brand-purple h-5 w-5" />
                     <p className="text-sm font-semibold">{creditBalance}</p>

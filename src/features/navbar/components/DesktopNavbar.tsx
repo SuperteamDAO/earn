@@ -60,6 +60,11 @@ export const DesktopNavbar = ({
     [isDashboardRoute],
   );
 
+  const openCreditDrawer = () => {
+    posthog.capture('open_credits');
+    onCreditOpen();
+  };
+
   return (
     <div
       className={cn(
@@ -168,7 +173,7 @@ export const DesktopNavbar = ({
                 <div className="flex items-center gap-2">
                   <div
                     className="flex cursor-pointer items-center gap-1.5 rounded-md px-2 py-2 text-slate-500 transition-all duration-100 hover:bg-slate-100 hover:text-slate-700"
-                    onClick={onCreditOpen}
+                    onClick={openCreditDrawer}
                   >
                     <CreditIcon className="text-brand-purple h-5 w-5" />
                     <p className="text-sm font-semibold">{creditBalance}</p>

@@ -1,6 +1,7 @@
 import { format } from 'date-fns';
 import { Check, Minus, Plus } from 'lucide-react';
 import Link from 'next/link';
+import { usePostHog } from 'posthog-js/react';
 import { type ReactNode } from 'react';
 
 import { Separator } from '@/components/ui/separator';
@@ -39,6 +40,8 @@ interface CreditHistoryCardProps {
 }
 
 export function CreditHistoryCard({ title, entries }: CreditHistoryCardProps) {
+  const posthog = usePostHog();
+
   const isUpcoming = entries.some((entry) => {
     if (!entry.effectiveMonth) return false;
 
@@ -124,7 +127,12 @@ export function CreditHistoryCard({ title, entries }: CreditHistoryCardProps) {
                   <EntryContent />
                 </div>
               ) : (
-                <Link href={`/listing/${entry.submission.listing.slug}`}>
+                <Link
+                  href={`/listing/${entry.submission.listing.slug}`}
+                  onClick={() => {
+                    posthog.capture('clicked activity_credits');
+                  }}
+                >
                   <div className="flex cursor-pointer items-center gap-4 px-4 py-4 hover:bg-slate-100">
                     <EntryContent />
                   </div>
