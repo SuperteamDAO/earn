@@ -11,9 +11,12 @@ import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { Separator } from '@/components/ui/separator';
 import { Sheet, SheetClose, SheetContent } from '@/components/ui/sheet';
 import { useDisclosure } from '@/hooks/use-disclosure';
+import { useCreditBalance } from '@/store/credit';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
+
+import { CreditIcon } from '@/features/credits/icon/credit';
 
 import {
   CATEGORY_NAV_ITEMS,
@@ -26,6 +29,7 @@ import { UserMenu } from './UserMenu';
 interface Props {
   onLoginOpen: () => void;
   onWalletOpen: () => void;
+  onCreditOpen: () => void;
   walletBalance: number;
 }
 
@@ -36,6 +40,7 @@ interface Props {
 export const MobileNavbar = ({
   onLoginOpen,
   onWalletOpen,
+  onCreditOpen,
   walletBalance,
 }: Props) => {
   const {
@@ -51,6 +56,7 @@ export const MobileNavbar = ({
   const router = useRouter();
 
   const { user } = useUser();
+  const { creditBalance } = useCreditBalance();
 
   const [hideListingTypes, setHideListingTypes] = useState(false);
   useEffect(() => {
@@ -58,6 +64,11 @@ export const MobileNavbar = ({
     // can add more when needed, create more, add those variables below with OR (a || b) format
     setHideListingTypes(listingPage);
   }, []);
+
+  const openCreditDrawer = () => {
+    posthog.capture('open_credits');
+    onCreditOpen();
+  };
 
   const MobileDrawer = () => {
     return (
@@ -206,7 +217,16 @@ export const MobileNavbar = ({
           <MobileDrawer />
           <div className="flex items-center gap-1">
             {ready && authenticated && user?.isTalentFilled && (
-              <>
+              <div className="flex items-center gap-0 sm:gap-1">
+                <div className="relative">
+                  <div
+                    className="flex cursor-pointer items-center gap-1 rounded-md px-2 py-1.5 text-slate-500 transition-all duration-100 hover:bg-slate-100 hover:text-slate-700 md:gap-2"
+                    onClick={openCreditDrawer}
+                  >
+                    <CreditIcon className="text-brand-purple h-5 w-5" />
+                    <p className="text-sm font-semibold">{creditBalance}</p>
+                  </div>
+                </div>
                 <div className="relative">
                   <div
                     className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-slate-500 transition-all duration-100 hover:bg-slate-100 hover:text-slate-700"
@@ -221,7 +241,7 @@ export const MobileNavbar = ({
                     </p>
                   </div>
                 </div>
-              </>
+              </div>
             )}
             {ready && authenticated && <UserMenu />}
           </div>

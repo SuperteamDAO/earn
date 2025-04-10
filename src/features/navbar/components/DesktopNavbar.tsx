@@ -9,9 +9,12 @@ import { IoSearchOutline, IoWalletOutline } from 'react-icons/io5';
 import { Button } from '@/components/ui/button';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useCreditBalance } from '@/store/credit';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
+
+import { CreditIcon } from '@/features/credits/icon/credit';
 
 import { LISTING_NAV_ITEMS } from '../constants';
 import { NavLink } from './NavLink';
@@ -22,6 +25,7 @@ interface Props {
   onSearchOpen: () => void;
   onWalletOpen: () => void;
   walletBalance: number;
+  onCreditOpen: () => void;
 }
 
 const LogoContextMenu = dynamic(() =>
@@ -32,12 +36,14 @@ export const DesktopNavbar = ({
   onLoginOpen,
   onSearchOpen,
   onWalletOpen,
+  onCreditOpen,
   walletBalance,
 }: Props) => {
   const { authenticated, ready } = usePrivy();
   const router = useRouter();
   const posthog = usePostHog();
   const { user } = useUser();
+  const { creditBalance } = useCreditBalance();
 
   const isDashboardRoute = useMemo(
     () => router.pathname.startsWith('/dashboard'),
@@ -53,6 +59,11 @@ export const DesktopNavbar = ({
     () => (isDashboardRoute ? 'pr-8 pl-6' : 'px-2 lg:px-6'),
     [isDashboardRoute],
   );
+
+  const openCreditDrawer = () => {
+    posthog.capture('open_credits');
+    onCreditOpen();
+  };
 
   return (
     <div
@@ -159,7 +170,14 @@ export const DesktopNavbar = ({
               )}
 
               {user?.isTalentFilled && (
-                <>
+                <div className="flex items-center gap-2">
+                  <div
+                    className="flex cursor-pointer items-center gap-1.5 rounded-md px-2 py-2 text-slate-500 transition-all duration-100 hover:bg-slate-100 hover:text-slate-700"
+                    onClick={openCreditDrawer}
+                  >
+                    <CreditIcon className="text-brand-purple h-5 w-5" />
+                    <p className="text-sm font-semibold">{creditBalance}</p>
+                  </div>
                   <div
                     className="flex cursor-pointer items-center gap-1.5 rounded-md px-2 py-1.5 text-slate-500 transition-all duration-100 hover:bg-slate-100 hover:text-slate-700"
                     onClick={onWalletOpen}
@@ -169,7 +187,7 @@ export const DesktopNavbar = ({
                       ${formatNumberWithSuffix(walletBalance || 0, 1, true)}
                     </p>
                   </div>
-                </>
+                </div>
               )}
               <UserMenu />
             </div>
