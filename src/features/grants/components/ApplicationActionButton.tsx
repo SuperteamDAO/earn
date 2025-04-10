@@ -9,7 +9,6 @@ import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 
 import { AuthWrapper } from '@/features/auth/components/AuthWrapper';
-import { ShareListing } from '@/features/listings/components/ListingPage/ShareListing';
 import {
   getRegionTooltipLabel,
   userRegionEligibilty,
@@ -69,6 +68,9 @@ export const ApplicationActionButton = ({
     }
   };
 
+  const grantCreditConditions =
+    user && applicationState === 'ALLOW NEW' && !isUserApplicationLoading;
+
   return (
     <>
       {isOpen && (
@@ -83,63 +85,70 @@ export const ApplicationActionButton = ({
           tranches={tranches}
         />
       )}
-      <InfoWrapper
-        isUserEligibleByRegion={isUserEligibleByRegion}
-        regionTooltipLabel={regionTooltipLabel}
-        user={user}
-      >
-        <div className="ph-no-capture fixed bottom-0 left-1/2 z-50 flex w-full -translate-x-1/2 items-start gap-2 bg-white px-3 py-4 pt-2 md:static md:translate-x-0 md:px-0 md:py-0">
-          <div className="md:hidden">
-            <ShareListing source="grant" className="h-12" grant={grant} />
-          </div>
-          <AuthWrapper
-            showCompleteProfileModal
-            completeProfileModalBodyText={
-              'Please complete your profile before applying for a grant.'
-            }
-            className="w-full flex-col"
+      <div className="ph-no-capture fixed bottom-0 left-1/2 z-50 mb-1 w-full -translate-x-1/2 border-t-1 border-slate-100 bg-white px-3 py-4 pt-2 pb-14 md:static md:translate-x-0 md:border-t-0 md:border-transparent md:px-0 md:py-0 md:pb-5">
+        <div className="flex items-center gap-2">
+          <InfoWrapper
+            isUserEligibleByRegion={isUserEligibleByRegion}
+            regionTooltipLabel={regionTooltipLabel}
+            user={user}
           >
-            <Button
-              className={cn(
-                'h-12 w-full gap-4 text-lg',
-                grant?.link && !grant?.isNative ? 'mt-4' : '',
-                'mb-12 lg:mb-5',
-                'disabled:opacity-70',
-                buttonConfig.bg,
-                'size-lg',
-                applicationState === 'ALLOW EDIT' &&
-                  'border-brand-purple text-brand-purple hover:text-brand-purple-dark',
-              )}
-              disabled={isBtnDisabled}
-              onClick={handleSubmit}
-              variant={
-                applicationState === 'ALLOW EDIT' ? 'outline' : 'default'
+            <AuthWrapper
+              showCompleteProfileModal
+              completeProfileModalBodyText={
+                'Please complete your profile before applying for a grant.'
               }
+              className="w-full flex-col"
             >
-              {isUserApplicationLoading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  <span>{buttonConfig.loadingText}</span>
-                </>
-              ) : (
-                <>
-                  {applicationState === 'ALLOW EDIT' && <Pencil />}
-                  <span>{buttonConfig.text}</span>
-                </>
-              )}
-            </Button>
-          </AuthWrapper>
+              <Button
+                className={cn(
+                  'h-12 w-full gap-4',
+                  'disabled:opacity-70',
+                  'text-base md:text-lg',
+                  'font-semibold sm:font-medium',
+                  grant?.link && !grant?.isNative ? 'mt-4' : '',
+                  buttonConfig.bg,
+                  'size-lg',
+                  applicationState === 'ALLOW EDIT' &&
+                    'border-brand-purple text-brand-purple hover:text-brand-purple-dark',
+                )}
+                disabled={isBtnDisabled}
+                onClick={handleSubmit}
+                variant={
+                  applicationState === 'ALLOW EDIT' ? 'outline' : 'default'
+                }
+              >
+                {isUserApplicationLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    <span>{buttonConfig.loadingText}</span>
+                  </>
+                ) : (
+                  <>
+                    {applicationState === 'ALLOW EDIT' && <Pencil />}
+                    <span>{buttonConfig.text}</span>
+                  </>
+                )}
+              </Button>
+            </AuthWrapper>
+          </InfoWrapper>
         </div>
-      </InfoWrapper>
-      {hasApplied && (
-        <div className="mb-4 flex w-full gap-2 bg-[#62F6FF10] p-3">
-          <AlertTriangle className="text-[#1A7F86]" />
-          <p className="text-xs font-medium text-[#1A7F86]">
-            You will be notified via email if your grant has been approved or
-            rejected.
-          </p>
-        </div>
-      )}
+        {hasApplied && (
+          <div className="flex w-full gap-2 bg-[#62F6FF10] p-2 md:mb-4 md:p-3">
+            <AlertTriangle className="text-[#1A7F86]" />
+            <p className="text-left text-xs font-medium text-[#1A7F86]">
+              You will be notified via email if your grant has been approved or
+              rejected.
+            </p>
+          </div>
+        )}
+        {grantCreditConditions && (
+          <div className="mt-1 md:my-1.5 md:flex">
+            <p className="mx-auto w-full rounded-md bg-[#62F6FF10] py-0.5 text-center text-xs font-medium text-[#1A7F86] md:text-xs">
+              Grant applications do not require credits
+            </p>
+          </div>
+        )}
+      </div>
     </>
   );
 };

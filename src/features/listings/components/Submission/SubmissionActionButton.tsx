@@ -15,6 +15,7 @@ import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 
 import { AuthWrapper } from '@/features/auth/components/AuthWrapper';
+import { CreditIcon } from '@/features/credits/icon/credit';
 
 import { userSubmissionQuery } from '../../queries/user-submission-status';
 import { type Listing } from '../../types';
@@ -24,7 +25,6 @@ import {
   userRegionEligibilty,
 } from '../../utils/region';
 import { getListingDraftStatus } from '../../utils/status';
-import { ShareListing } from '../ListingPage/ShareListing';
 import { EasterEgg } from './EasterEgg';
 import { SubmissionDrawer } from './SubmissionDrawer';
 
@@ -147,6 +147,7 @@ export const SubmissionActionButton = ({
 
   const isProject = type === 'project';
   const isBounty = type === 'bounty';
+  const isHackathon = type === 'hackathon';
 
   let buttonText;
   let buttonBG;
@@ -226,6 +227,20 @@ export const SubmissionActionButton = ({
 
   const surveyId = '018c6743-c893-0000-a90e-f35d31c16692';
 
+  const requiresCredits =
+    (isProject || isBounty) &&
+    user &&
+    !(buttonState === 'edit') &&
+    !isUserSubmissionLoading &&
+    !pastDeadline;
+
+  const hackathonCreditConditions =
+    isHackathon &&
+    user &&
+    !(buttonState === 'edit') &&
+    !isUserSubmissionLoading &&
+    !pastDeadline;
+
   return (
     <>
       {isOpen && (
@@ -257,11 +272,8 @@ export const SubmissionActionButton = ({
         />
       )}
 
-      <div className="ph-no-capture fixed bottom-0 left-1/2 z-50 mb-1 w-full -translate-x-1/2 border-t-1 border-slate-100 bg-white px-3 py-4 pt-2 pb-14 md:static md:translate-x-0 md:border-t-0 md:border-transparent md:px-0 md:py-0 md:pb-5">
+      <div className="ph-no-capture fixed bottom-0 left-1/2 z-50 mb-1 w-full -translate-x-1/2 border-t-1 border-slate-100 bg-white px-3 py-4 pt-2 pb-14 md:static md:translate-x-0 md:border-t-0 md:border-transparent md:px-0 md:py-0 md:pb-3">
         <div className="flex items-center gap-2">
-          <div className="md:hidden">
-            <ShareListing source="listing" className="h-12" listing={listing} />
-          </div>
           <InfoWrapper
             isUserEligibleByRegion={isUserEligibleByRegion}
             hasHackathonStarted={hasHackathonStarted}
@@ -283,9 +295,8 @@ export const SubmissionActionButton = ({
                 <Button
                   className={cn(
                     'h-12 w-full gap-4',
-                    // 'mb-12 md:mb-5',
                     'disabled:opacity-70',
-                    'text-sm sm:text-base md:text-lg',
+                    'text-base md:text-lg',
                     'font-semibold sm:font-medium',
                     buttonBG,
                     'hover:opacity-90',
@@ -305,6 +316,9 @@ export const SubmissionActionButton = ({
                     <>
                       {buttonState === 'edit' && <Pencil />}
                       <span>{buttonText}</span>
+                      {requiresCredits && (
+                        <CreditIcon className="-ml-2.5 size-6" />
+                      )}
                     </>
                   )}
                 </Button>
@@ -312,28 +326,27 @@ export const SubmissionActionButton = ({
             </AuthWrapper>
           </InfoWrapper>
         </div>
-        {(isProject || isBounty) &&
-          user &&
-          !(buttonState === 'edit') &&
-          !isUserSubmissionLoading &&
-          !pastDeadline && (
-            <>
-              {creditBalance > 0 && (
-                <div className="my-1 hidden text-center text-xs font-medium text-slate-500 md:my-1.5 md:flex md:text-xs">
-                  <p className="mx-auto w-full rounded-md bg-slate-200 py-0 md:py-0.5">
-                    {`* Costs 1 credit to ${isProject ? 'apply' : 'submit'}`}
-                  </p>
-                </div>
-              )}
-              {creditBalance <= 0 && (
-                <div className="mt-1 text-center text-xs font-medium text-red-400 md:my-1.5 md:text-xs">
-                  <p className="mx-auto w-full rounded-md bg-red-100 py-0 md:py-0.5">
-                    {`* You don't have enough credits to ${isProject ? 'apply' : 'submit'}`}
-                  </p>
-                </div>
-              )}
-            </>
-          )}
+        {requiresCredits && (
+          <div className="mt-1 md:my-1.5 md:flex">
+            {creditBalance > 0 && (
+              <p className="bg-brand-purple/20 mx-auto w-full rounded-md py-0.5 text-center text-xs font-medium text-slate-500 md:text-xs">
+                {`* Costs 1 credit to ${isProject ? 'apply' : 'submit'}`}
+              </p>
+            )}
+            {creditBalance <= 0 && (
+              <p className="mx-auto w-full rounded-md bg-red-100 py-0.5 text-center text-xs font-medium text-red-400 md:text-xs">
+                {`* You don't have enough credits to ${isProject ? 'apply' : 'submit'}`}
+              </p>
+            )}
+          </div>
+        )}
+        {hackathonCreditConditions && (
+          <div className="mt-1 md:my-1.5 md:flex">
+            <p className="mx-auto w-full rounded-md bg-[#62F6FF10] py-0.5 text-center text-xs font-medium text-[#1A7F86] md:text-xs">
+              Hackathon tracks do not require credits
+            </p>
+          </div>
+        )}
       </div>
     </>
   );
