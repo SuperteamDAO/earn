@@ -2,6 +2,7 @@ import { useAtom } from 'jotai';
 import { ArrowRight, ChevronLeft, Copy, ExternalLink } from 'lucide-react';
 import type { GetServerSideProps } from 'next';
 import Link from 'next/link';
+import { getServerSession } from 'next-auth';
 import React, { useEffect, useRef, useState } from 'react';
 import { MdOutlineAccountBalanceWallet, MdOutlineMail } from 'react-icons/md';
 import { toast } from 'sonner';
@@ -20,6 +21,7 @@ import { useClipboard } from '@/hooks/use-clipboard';
 import type { SubmissionWithUser } from '@/interface/submission';
 import { ListingPageLayout } from '@/layouts/Listing';
 import { api } from '@/lib/api';
+import { authOptions } from '@/pages/api/auth/[...nextauth]';
 import { getBountyUrl, getSubmissionUrl } from '@/utils/bounty-urls';
 import { cn } from '@/utils/cn';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
@@ -354,15 +356,30 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const { sponsor, listingId, submissionId } = context.query;
   const sequentialId = parseInt(submissionId as string);
 
+  const session = await getServerSession(context.req, context.res, authOptions);
+  console.log(session);
+
   let bountyData;
   let slug;
   try {
     const bountyDetails = await api.get(
       `${getURL()}api/listings/details/by-sponsor-and-id/${sponsor}/${listingId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${session?.token}`,
+          cookie: context.req.headers.cookie,
+        },
+      },
     );
     slug = bountyDetails.data.slug;
     const submissions = await api.get(
       `${getURL()}api/listings/submissions/${slug}`,
+      {
+        headers: {
+          Authorization: `Bearer ${session?.token}`,
+          cookie: context.req.headers.cookie,
+        },
+      },
     );
     bountyData = submissions.data;
   } catch (e) {

@@ -33,7 +33,7 @@ export function AuthWrapper({
   onLoginOpenCallback,
   sponsorId,
 }: AuthWrapperProps) {
-  const { status } = useSession();
+  const { data: session, status } = useSession();
   const isAuthenticated = status === 'authenticated';
   const isLoading = status === 'loading';
 
@@ -87,7 +87,9 @@ export function AuthWrapper({
     isAuthenticated && (!showCompleteProfileModal || isTalentFilled);
 
   const sponsorValidation =
-    !sponsorId || user?.currentSponsorId === sponsorId || user?.role === 'GOD';
+    !sponsorId ||
+    user?.currentSponsorId === sponsorId ||
+    session?.user.role === 'GOD';
 
   return (
     <>

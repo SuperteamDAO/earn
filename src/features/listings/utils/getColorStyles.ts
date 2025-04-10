@@ -3,6 +3,8 @@ export const getColorStyles = (status: string) => {
     case 'Published':
     case 'Completed':
       return { bgColor: 'bg-emerald-100', color: 'text-teal-600' };
+    case 'Deleted':
+      return { bgColor: 'bg-red-500', color: 'text-white' };
     case 'Under Verification':
     case 'Fndn to Pay':
       return { bgColor: 'bg-pink-100', color: 'text-pink-500' };

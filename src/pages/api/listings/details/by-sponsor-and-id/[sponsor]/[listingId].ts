@@ -1,12 +1,15 @@
 import { type Prisma } from '@prisma/client';
-import type { NextApiRequest, NextApiResponse } from 'next';
+import type { NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
 
-export default async function handler(
-  req: NextApiRequest,
+import { type NextApiRequestWithPotentialSponsor } from '@/features/auth/types';
+import { withPotentialSponsorAuth } from '@/features/auth/utils/withPotentialSponsorAuth';
+
+async function handler(
+  req: NextApiRequestWithPotentialSponsor,
   res: NextApiResponse,
 ) {
   const params = req.query;
@@ -14,6 +17,10 @@ export default async function handler(
   const listingId = params.listingId as string;
 
   const isUUID = listingId.includes('-');
+
+  const isGod = req.authorized && req.role === 'GOD';
+  const validation = isGod ? {} : { isPublished: true, isPrivate: false };
+
   const where: Prisma.BountiesWhereInput = isUUID
     ? {
         id: listingId,
@@ -26,8 +33,7 @@ export default async function handler(
         sponsor: {
           slug: sponsor,
         },
-        isPublished: true,
-        isPrivate: false,
+        ...validation,
       };
 
   logger.debug(`Request query: ${safeStringify(params)}`);
@@ -99,3 +105,5 @@ export default async function handler(
     });
   }
 }
+
+export default withPotentialSponsorAuth(handler);

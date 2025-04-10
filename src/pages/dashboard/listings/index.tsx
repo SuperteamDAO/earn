@@ -7,6 +7,7 @@ import {
   Plus,
   Search,
 } from 'lucide-react';
+import { useSession } from 'next-auth/react';
 import React, {
   useCallback,
   useEffect,
@@ -45,6 +46,7 @@ const MemoizedListingTable = React.memo(ListingTable);
 
 export default function SponsorListings() {
   const { user } = useUser();
+  const { data: session } = useSession();
   const [searchText, setSearchText] = useState('');
   const [currentPage, setCurrentPage] = useState(0);
   const [selectedTab, setSelectedTab] = useState('all');
@@ -190,8 +192,11 @@ export default function SponsorListings() {
     if (hasGrants) {
       filters.unshift('Ongoing');
     }
+    if (session?.user?.role === 'GOD') {
+      filters.unshift('Deleted');
+    }
     return filters;
-  }, [hasGrants]);
+  }, [hasGrants, session?.user?.role]);
 
   const handleStatusFilterChange = useCallback((status: string | null) => {
     setSelectedStatus(status);

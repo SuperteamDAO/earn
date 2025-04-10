@@ -13,7 +13,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   const params = req.query;
   const slug = params.slug as string;
   const type = params.type as 'bounty' | 'project' | 'hackathon';
-
+  const isGod = req.role === 'GOD';
   logger.debug(`Request query: ${safeStringify(params)}`);
 
   try {
@@ -32,7 +32,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       where: {
         slug,
         type,
-        isActive: true,
+        ...(isGod ? {} : { isActive: true }),
       },
       include: {
         sponsor: {

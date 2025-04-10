@@ -8,6 +8,7 @@ import {
   Plus,
   Search,
 } from 'lucide-react';
+import { useSession } from 'next-auth/react';
 import React, {
   useCallback,
   useEffect,
@@ -51,6 +52,7 @@ import { sponsorStatsQuery } from '@/features/sponsor-dashboard/queries/sponsor-
 const MemoizedListingTable = React.memo(SubmissionTable);
 
 export default function SponsorListings() {
+  const { data: session } = useSession();
   const { user } = useUser();
   const [searchText, setSearchText] = useState('');
   const [currentPage, setCurrentPage] = useState(0);
@@ -231,6 +233,8 @@ export default function SponsorListings() {
     );
   }, [allSubmissions]);
 
+  console.log(user);
+
   const ALL_FILTERS = useMemo(() => {
     const filters = [
       'Spam',
@@ -241,8 +245,11 @@ export default function SponsorListings() {
       'Approved',
       'Paid',
     ];
+    if (session?.user.role === 'GOD') {
+      filters.unshift('Deleted');
+    }
     return filters;
-  }, []);
+  }, [user?.role]);
 
   const handleStatusFilterChange = useCallback((status: string | null) => {
     setSelectedStatus(status);

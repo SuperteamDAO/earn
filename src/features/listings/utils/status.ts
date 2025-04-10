@@ -58,6 +58,7 @@ export const getListingStatus = (
   isGrant?: boolean,
 ) => {
   if (!listing) return 'Draft';
+  if (!listing.isActive) return 'Deleted';
 
   const listingStatus = getListingDraftStatus(
     listing?.status,

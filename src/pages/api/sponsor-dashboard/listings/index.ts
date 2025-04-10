@@ -27,10 +27,14 @@ type BountyGrant = {
   compensationType: string | null;
   createdAt: Date;
   submissionCount: number;
+  isActive: boolean;
 };
 
 async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   const userSponsorId = req.userSponsorId;
+  const isGod = req.role === 'GOD';
+  const isActiveFilter = isGod ? '' : 'AND b.isActive = true';
+  const isGrantActiveFilter = isGod ? '' : 'AND g.isActive = true';
   try {
     const data: BountyGrant[] = await prisma.$queryRawUnsafe(
       `
@@ -48,6 +52,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           b.isPublished,
           b.rewards,
           b.rewardAmount,
+          b.isActive,
           b.totalWinnersSelected,
           b.totalPaymentsMade,
           b.isWinnersAnnounced,
@@ -59,11 +64,11 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           NULL as airtableId,
           CAST((SELECT COUNT(*) FROM Submission s WHERE s.listingId = b.id) AS SIGNED) as submissionCount
         FROM Bounties b
-        WHERE b.isActive = true
-        AND b.isArchived = false
+        WHERE
+        b.isArchived = false
         AND b.sponsorId = ?
         AND b.status <> ?
-        
+        ${isActiveFilter}
         UNION ALL
         
         SELECT 
@@ -79,6 +84,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           g.isPublished,
           NULL as rewards,
           NULL as rewardAmount,
+          g.isActive,
           NULL as totalWinnersSelected,
           g.totalPaid as totalPaymentsMade,
           NULL as isWinnersAnnounced,
@@ -90,10 +96,10 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           g.airtableId,
           CAST((SELECT COUNT(*) FROM GrantApplication ga WHERE ga.grantId = g.id) AS SIGNED) as submissionCount
         FROM Grants g
-        WHERE g.isActive = true
-        AND g.isArchived = false
+        WHERE g.isArchived = false
         AND g.sponsorId = ?
         AND g.status = ?
+        ${isGrantActiveFilter}
         AND (g.airtableId IS NOT NULL OR g.isNative = true)
       )
       SELECT *

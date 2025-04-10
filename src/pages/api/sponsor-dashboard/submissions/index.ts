@@ -8,12 +8,15 @@ import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
 
 async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   const userSponsorId = req.userSponsorId;
+  const isGod = req.role === 'GOD';
+  const isActive = isGod ? {} : { isActive: true };
+
   try {
     const data = await prisma.submission.findMany({
       where: {
         listing: {
           sponsorId: userSponsorId,
-          isActive: true,
+          ...isActive,
         },
       },
       include: {
@@ -32,7 +35,13 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     logger.info(
       `Successfully fetched sponsorship submissions for sponsor ${userSponsorId}`,
     );
-    res.status(200).json(data);
+
+    res.status(200).json(
+      data.map((submission) => ({
+        ...submission,
+        status: !submission.listing.isActive ? 'Deleted' : submission.status,
+      })),
+    );
   } catch (err: any) {
     logger.error(
       `Error fetching sponsorship submissions for sponsor ${userSponsorId}: ${err.message}`,

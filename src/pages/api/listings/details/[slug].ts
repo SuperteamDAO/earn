@@ -1,11 +1,14 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
+import type { NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
 
-export default async function handler(
-  req: NextApiRequest,
+import { type NextApiRequestWithPotentialSponsor } from '@/features/auth/types';
+import { withPotentialSponsorAuth } from '@/features/auth/utils/withPotentialSponsorAuth';
+
+async function handler(
+  req: NextApiRequestWithPotentialSponsor,
   res: NextApiResponse,
 ) {
   const params = req.query;
@@ -20,11 +23,14 @@ export default async function handler(
     });
   }
 
+  const isGod = req.authorized && req.role === 'GOD';
+  const validation = isGod ? {} : { isActive: true };
+
   try {
     const result = await prisma.bounties.findFirst({
       where: {
         slug,
-        isActive: true,
+        ...validation,
       },
       include: {
         sponsor: {
@@ -79,3 +85,5 @@ export default async function handler(
     });
   }
 }
+
+export default withPotentialSponsorAuth(handler);

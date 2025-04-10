@@ -64,6 +64,9 @@ export const SubmissionTh = ({
 };
 
 export const getColorStyles = (status: string | null) => {
+  if (status === 'Deleted') {
+    return { bg: 'bg-red-500', color: 'text-white' };
+  }
   if (status && status !== 'Everything') {
     return colorMap[status as keyof typeof colorMap];
   }
