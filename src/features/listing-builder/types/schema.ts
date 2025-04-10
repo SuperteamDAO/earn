@@ -366,6 +366,15 @@ export const createListingRefinements = async (
     });
   }
 
+  if (data.token === 'Other') {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message:
+        '`Other` token is not allowed as a base token. `Other` is a sub token for `Any` token',
+      path: ['token'],
+    });
+  }
+
   if (data.eligibility && data.eligibility.length > 0) {
     for (const [index, question] of data.eligibility.entries()) {
       if (

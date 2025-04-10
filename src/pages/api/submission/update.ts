@@ -74,6 +74,7 @@ async function updateSubmission(
     eligibilityAnswers: validatedData.eligibilityAnswers || [],
     ask: validatedData.ask || 0,
     token: validatedData.token || null,
+    otherTokenDetails: validatedData.otherTokenDetails || null,
   };
 
   return prisma.submission.update({

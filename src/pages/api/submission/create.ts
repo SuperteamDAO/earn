@@ -82,6 +82,7 @@ async function createSubmission(
       eligibilityAnswers: validatedData.eligibilityAnswers || [],
       ask: validatedData.ask || null,
       token: validatedData.token || null,
+      otherTokenDetails: validatedData.otherTokenDetails || null,
       sequentialId: sequentialId.submissionCounter,
     },
     include: {

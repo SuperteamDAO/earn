@@ -70,26 +70,28 @@ export function TokenSelect() {
                 <CommandList>
                   <CommandEmpty>No Token found.</CommandEmpty>
                   <CommandGroup>
-                    {tokenList.map((token) => (
-                      <CommandItem
-                        value={token.tokenName}
-                        key={token.tokenSymbol}
-                        onSelect={() => {
-                          field.onChange(token.tokenSymbol);
-                          form.saveDraft();
-                        }}
-                      >
-                        <TokenLabel token={token} showIcon showName />
-                        <Check
-                          className={cn(
-                            'ml-auto',
-                            token.tokenSymbol === field.value
-                              ? 'opacity-100'
-                              : 'opacity-0',
-                          )}
-                        />
-                      </CommandItem>
-                    ))}
+                    {tokenList
+                      .filter((token) => token.tokenSymbol !== 'Other')
+                      .map((token) => (
+                        <CommandItem
+                          value={token.tokenName}
+                          key={token.tokenSymbol}
+                          onSelect={() => {
+                            field.onChange(token.tokenSymbol);
+                            form.saveDraft();
+                          }}
+                        >
+                          <TokenLabel token={token} showIcon showName />
+                          <Check
+                            className={cn(
+                              'ml-auto',
+                              token.tokenSymbol === field.value
+                                ? 'opacity-100'
+                                : 'opacity-0',
+                            )}
+                          />
+                        </CommandItem>
+                      ))}
                   </CommandGroup>
                 </CommandList>
               </Command>

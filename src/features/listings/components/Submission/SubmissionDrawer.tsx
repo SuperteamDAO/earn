@@ -118,6 +118,11 @@ export const SubmissionDrawer = ({
     },
   });
 
+  const tokenSelected = useWatch({
+    control: form.control,
+    name: 'token',
+  });
+
   const posthog = usePostHog();
   const router = useRouter();
   const { query } = router;
@@ -149,14 +154,22 @@ export const SubmissionDrawer = ({
             params: { id },
           });
 
-          const { link, tweet, otherInfo, eligibilityAnswers, ask, token } =
-            response.data;
+          const {
+            link,
+            tweet,
+            otherInfo,
+            eligibilityAnswers,
+            ask,
+            token,
+            otherTokenDetails,
+          } = response.data;
 
           form.reset({
             link,
             tweet,
             otherInfo,
             ask,
+            otherTokenDetails,
             eligibilityAnswers: eligibilityAnswers.map((answer: any) => ({
               question: answer.question,
               answer: answer.answer ?? '',
@@ -187,6 +200,7 @@ export const SubmissionDrawer = ({
         link: data.link || '',
         tweet: data.tweet || '',
         otherInfo: data.otherInfo || '',
+        otherTokenDetails: data.otherTokenDetails || '',
         ask: data.ask || null,
         eligibilityAnswers: data.eligibilityAnswers || [],
         publicKey: data.publicKey,
@@ -519,6 +533,17 @@ export const SubmissionDrawer = ({
                     )}
 
                     {token === 'Any' && <TokenSelect control={form.control} />}
+                    {token === 'Any' && tokenSelected === 'Other' && (
+                      <FormFieldWrapper
+                        control={form.control}
+                        name="otherTokenDetails"
+                        isRequired={tokenSelected === 'Other'}
+                        label="Payment details"
+                        isRichEditor
+                        description="What's your preferred way to receive a payment ?"
+                        richEditorPlaceholder="I want to receive a payment in..."
+                      />
+                    )}
 
                     <FormFieldWrapper
                       control={form.control}

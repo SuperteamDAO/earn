@@ -11,6 +11,7 @@ interface SubmissionWithUser {
   link?: string;
   tweet?: string;
   otherInfo?: string;
+  otherTokenDetails?: string;
   eligibilityAnswers?: any;
   userId: string;
   listingId: string;

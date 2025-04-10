@@ -105,6 +105,14 @@ export const Details = ({ bounty, externalView, atom }: Props) => {
           </div>
         )}
 
+        {selectedSubmission?.otherTokenDetails && (
+          <InfoBox
+            label="Payment Details"
+            isHtml
+            content={selectedSubmission?.otherTokenDetails}
+          />
+        )}
+
         <InfoBox
           label="Application Date"
           content={`${dayjs(selectedSubmission?.createdAt).format('DD MMM YYYY')}`}

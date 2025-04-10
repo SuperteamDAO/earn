@@ -284,6 +284,7 @@ model Submission {
   otherInfo          String?          @db.Text
   ask                Int?
   token              String?
+  otherTokenDetails  String?
   label              SubmissionLabels @default(Unreviewed)
   rewardInUSD        Float            @default(0)
   listing            Bounties         @relation(fields: [listingId], references: [id])

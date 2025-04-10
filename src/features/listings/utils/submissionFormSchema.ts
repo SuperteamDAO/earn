@@ -27,6 +27,7 @@ const submissionSchema = (
         ])
         .optional(),
       otherInfo: z.string().optional(),
+      otherTokenDetails: z.string().optional(),
       ask: z.union([z.number().int().min(1), z.null()]).optional(),
       eligibilityAnswers: z
         .array(z.object({ question: z.string(), answer: z.string() }))
@@ -114,6 +115,22 @@ const submissionSchema = (
             message: 'Token is required for listing with "Any" token',
           });
         }
+        if (data.token === 'Other' && !data.otherTokenDetails) {
+          ctx.addIssue({
+            code: 'custom',
+            path: ['otherTokenDetails'],
+            message: 'Token details are required',
+          });
+        }
+      }
+
+      if (listing.token !== 'Any' && data.token === 'Other') {
+        ctx.addIssue({
+          code: 'custom',
+          path: ['token'],
+          message:
+            'Other token is only available for listings with "Any" token',
+        });
       }
 
       const hasEligibilityQuestions =
