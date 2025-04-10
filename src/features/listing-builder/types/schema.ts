@@ -33,14 +33,14 @@ interface ListingFormSchemaOptions {
   isEditing: boolean;
   isST: boolean;
   pastListing?: Listing;
-  hackathon?: Hackathon;
+  hackathons?: Hackathon[];
 }
 export const createListingFormSchema = ({
   isGod,
   isEditing,
   isST,
   pastListing,
-  hackathon,
+  hackathons,
 }: ListingFormSchemaOptions) => {
   const eligibilityQuestionSchema = z.object({
     order: z.number(),
@@ -163,7 +163,7 @@ export const createListingFormSchema = ({
         .default('bounty')
         .refine((data) => {
           if (data === 'hackathon') {
-            return !!hackathon;
+            return !!hackathons && hackathons.length > 0;
           }
           return true;
         }, 'Hackathon is not allowed for now'),
@@ -258,14 +258,14 @@ export const createListingFormSchema = ({
       sponsorId: z.string().optional().nullable(),
     })
     .superRefine((data, ctx) => {
-      createListingRefinements(data, ctx, hackathon);
+      createListingRefinements(data, ctx, hackathons);
     });
 };
 
 export const createListingRefinements = async (
   data: ListingFormData,
   ctx: z.RefinementCtx,
-  hackathon?: Hackathon,
+  hackathons?: Hackathon[],
 ) => {
   if (data.compensationType === 'fixed') {
     if (!data.rewardAmount) {
@@ -351,10 +351,11 @@ export const createListingRefinements = async (
     }
   }
 
-  if (data.type === 'hackathon' && data.deadline) {
+  if (data.type === 'hackathon' && data.deadline && data.hackathonId) {
+    const currentHackathon = hackathons?.find((s) => s.id === data.hackathonId);
     if (
-      !hackathon?.deadline ||
-      data.deadline !== new Date(hackathon?.deadline).toISOString()
+      !currentHackathon?.deadline ||
+      data.deadline !== new Date(currentHackathon?.deadline).toISOString()
     ) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,

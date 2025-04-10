@@ -23,7 +23,7 @@ import {
 import { Tooltip } from '@/components/ui/tooltip';
 import { cn } from '@/utils/cn';
 
-import { hackathonAtom, isEditingAtom } from '../../atoms';
+import { hackathonsAtom, isEditingAtom } from '../../atoms';
 import { useListingForm } from '../../hooks';
 
 const questionTypes = [
@@ -37,7 +37,11 @@ export function EligibilityQuestions() {
     control: form.control,
     name: 'type',
   });
-  const hackathon = useAtomValue(hackathonAtom);
+  const hackathonId = useWatch({
+    name: 'hackathonId',
+    control: form.control,
+  });
+  const hackathons = useAtomValue(hackathonsAtom);
   const isEditing = useAtomValue(isEditingAtom);
 
   const { fields, append, remove } = useFieldArray({
@@ -71,8 +75,15 @@ export function EligibilityQuestions() {
         }
       } else {
         if (type === 'hackathon') {
-          if (!!hackathon?.eligibility) {
-            form.setValue('eligibility', hackathon?.eligibility as any);
+          const currentHackathon = hackathons?.find(
+            (s) => s.id === hackathonId,
+          );
+          if (!!currentHackathon?.eligibility) {
+            if (form?.getValues('eligibility')?.length === 0)
+              form.setValue(
+                'eligibility',
+                currentHackathon?.eligibility as any,
+              );
           }
         } else {
           if (fields.length > 0) {
@@ -83,7 +94,7 @@ export function EligibilityQuestions() {
         }
       }
     }
-  }, [type, hackathon, isEditing]);
+  }, [type, hackathons, isEditing, hackathonId]);
 
   return (
     <FormField

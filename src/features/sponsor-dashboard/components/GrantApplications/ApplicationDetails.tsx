@@ -3,13 +3,14 @@ import dayjs from 'dayjs';
 import { useAtom } from 'jotai';
 import { ArrowRight, Check, Copy, X } from 'lucide-react';
 import Link from 'next/link';
-import React from 'react';
+import React, { useMemo } from 'react';
 import { MdOutlineAccountBalanceWallet, MdOutlineMail } from 'react-icons/md';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
 import { CircularProgress } from '@/components/ui/progress';
 import { Tooltip } from '@/components/ui/tooltip';
+import { Superteams } from '@/constants/Superteam';
 import { tokenList } from '@/constants/tokenList';
 import { useClipboard } from '@/hooks/use-clipboard';
 import { cn } from '@/utils/cn';
@@ -122,6 +123,15 @@ export const ApplicationDetails = ({
     }
   };
 
+  const superteam = useMemo(() => {
+    const isSuperteamMember =
+      selectedApplication?.user.superteamLevel?.includes('Superteam') || false;
+    return isSuperteamMember
+      ? Superteams.find(
+          (s) => s.name === selectedApplication?.user.superteamLevel,
+        )
+      : undefined;
+  }, [selectedApplication]);
   return (
     <div className="w-full rounded-r-xl bg-white">
       {applications?.length ? (
@@ -135,9 +145,24 @@ export const ApplicationDetails = ({
                   avatar={selectedApplication?.user?.photo || undefined}
                 />
                 <div>
-                  <p className="w-full text-base font-medium whitespace-nowrap text-slate-900">
-                    {`${selectedApplication?.user?.firstName}`}
-                  </p>
+                  <span className="flex gap-2">
+                    <p className="w-fit text-base font-medium whitespace-nowrap text-slate-900">
+                      {`${selectedApplication?.user?.firstName}`}
+                    </p>
+                    {superteam && (
+                      <Tooltip
+                        content={
+                          selectedApplication?.user?.superteamLevel + ' Member'
+                        }
+                      >
+                        <img
+                          src={superteam.icons}
+                          alt="Superteam Member"
+                          className="size-4 rounded-full"
+                        />
+                      </Tooltip>
+                    )}
+                  </span>
                   <Link
                     href={`/t/${selectedApplication?.user?.username}`}
                     className="text-brand-purple flex w-full items-center gap-1 text-xs font-medium whitespace-nowrap"

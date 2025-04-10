@@ -11,7 +11,7 @@ import { useUser } from '@/store/user';
 
 import { Login } from '@/features/auth/components/Login';
 import { Header } from '@/features/navbar/components/Header';
-import { activeHackathonQuery } from '@/features/sponsor-dashboard/queries/active-hackathon';
+import { activeHackathonsQuery } from '@/features/sponsor-dashboard/queries/active-hackathons';
 import { sponsorDashboardListingQuery } from '@/features/sponsor-dashboard/queries/listing';
 
 import { ListingBuilderProvider } from './ListingBuilderProvider';
@@ -27,8 +27,8 @@ export function ListingBuilder({ route, slug }: ListingBuilderLayout) {
   const router = useRouter();
   const queryClient = useQueryClient();
 
-  const { data: hackathon, isLoading: isHackathonLoading } = useQuery({
-    ...activeHackathonQuery(),
+  const { data: hackathons, isLoading: isHackathonLoading } = useQuery({
+    ...activeHackathonsQuery(),
     enabled: !!user,
   });
 
@@ -50,14 +50,13 @@ export function ListingBuilder({ route, slug }: ListingBuilderLayout) {
 
   useEffect(() => {
     const handleRouteComplete = () => {
-      if (slug)
-        queryClient.invalidateQueries({
-          queryKey: ['sponsor-dashboard-listing', slug],
-        });
+      queryClient.invalidateQueries({
+        queryKey: ['sponsor-dashboard-listing', slug],
+      });
     };
 
-    router.events.on('routeChangeComplete', handleRouteComplete);
-    return () => router.events.off('routeChangeComplete', handleRouteComplete);
+    router.events.on('routeChangeStart', handleRouteComplete);
+    return () => router.events.off('routeChangeStart', handleRouteComplete);
   }, [router.events, queryClient, slug]);
 
   if (ready && !authenticated) {
@@ -112,8 +111,15 @@ export function ListingBuilder({ route, slug }: ListingBuilderLayout) {
           : listing
       }
       isEditing={!!listing?.publishedAt}
-      hackathon={
-        listing?.type === 'hackathon' ? (listing?.Hackathon as any) : hackathon
+      hackathons={
+        listing?.type === 'hackathon'
+          ? ([
+              listing?.Hackathon,
+              ...(hackathons
+                ? hackathons.filter((s) => s.slug !== listing?.Hackathon?.slug)
+                : []),
+            ] as any)
+          : hackathons
       }
     />
   );

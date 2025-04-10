@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { Check, InfoIcon, Wand2, XCircle } from 'lucide-react';
 import { usePostHog } from 'posthog-js/react';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
@@ -61,6 +61,10 @@ export default function AiReviewModal({ applications, grant }: Props) {
     refetchOnReconnect: false,
     refetchOnWindowFocus: false,
   });
+
+  useEffect(() => {
+    refetchUnreviewedApplications();
+  }, [applications, refetchUnreviewedApplications]);
 
   const { mutateAsync: reviewApplication } = useReviewApplication(
     grant?.slug || '',

@@ -1,6 +1,6 @@
 import { ImageResponse } from 'next/og';
 
-import { ASSET_URL } from '@/constants/ASSET_URL';
+import { Superteams } from '@/constants/Superteam';
 import { loadGoogleFont } from '@/utils/ogHelpers';
 
 import 'flag-icons/css/flag-icons.min.css';
@@ -22,6 +22,8 @@ export async function GET(request: Request) {
     const [interBold] = await Promise.all([
       loadGoogleFont('Inter:wght@700', allText),
     ]);
+
+    const superteam = Superteams.find((s) => s.displayValue === region);
 
     return new ImageResponse(
       (
@@ -142,7 +144,7 @@ export async function GET(request: Request) {
                 objectFit: 'cover',
               }}
               alt="logo"
-              src={ASSET_URL + `/superteams/banners/${region}.png`}
+              src={superteam?.banner || ''}
             />
           </div>
         </div>
