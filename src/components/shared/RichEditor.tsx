@@ -25,6 +25,7 @@ import React, {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/utils/cn';
+import { getURLSanitized } from '@/utils/getURLSanitized';
 
 interface RichEditorProps {
   id: string;
@@ -59,7 +60,7 @@ export const RichEditor: React.FC<RichEditorProps> = ({
     content: value || undefined,
     editorProps: {
       attributes: {
-        class: 'mx-auto focus:outline-none',
+        class: 'mx-auto focus:outline-hidden',
       },
     },
     onUpdate: ({ editor }) => {
@@ -84,17 +85,18 @@ export const RichEditor: React.FC<RichEditorProps> = ({
       <FloatingToolbar editor={editor} editorClassname={`editor-${id}`} />
       <div
         className={cn(
-          'w-full overflow-y-auto rounded-md border py-2 shadow-sm [&_*]:!text-xs sm:[&_*]:!text-sm',
+          'w-full overflow-y-auto rounded-md border py-2 shadow-xs **:text-xs! sm:**:text-sm!',
           '[&_.ProseMirror_p.is-editor-empty:first-child::before]:text-xs',
-          '[&_.ProseMirror_p.is-editor-empty:first-child::before]:sm:text-sm',
-          '[&_.ProseMirror_p.is-editor-empty:first-child::before]:text-slate-400',
+          'sm:[&_.ProseMirror_p.is-editor-empty:first-child::before]:text-sm',
+          '[&_.ProseMirror_p.is-editor-empty:first-child::before]:!text-muted-foreground',
           '[&_.ProseMirror_p.is-editor-empty:first-child::before]:content-[attr(data-placeholder)]',
           '[&_.ProseMirror_p.is-editor-empty:first-child::before]:float-left',
           '[&_.ProseMirror_p.is-editor-empty:first-child::before]:h-0',
           '[&_.ProseMirror_p.is-editor-empty:first-child::before]:pointer-events-none',
+          '[&_.ProseMirror_p.is-editor-empty:first-child::before]:opacity-70',
           height,
-          error ? 'border border-destructive' : 'border-input',
-          'focus-within:border focus-within:border-brand-purple',
+          error ? 'border-destructive border' : 'border-input',
+          'focus-within:border-brand-purple focus-within:border',
           `editor-${id}`,
         )}
         id="reset-des"
@@ -351,10 +353,11 @@ const FloatingToolbar: React.FC<FloatingToolbarProps> = ({
             type="button"
             className="h-7 rounded-none border-l px-2"
             onClick={() => {
-              const { href } = editor.getAttributes('link');
-              if (href) {
-                window.open(href, '_blank');
-              }
+              window.open(
+                getURLSanitized(linkUrl),
+                '_blank',
+                'noopener,noreferrer',
+              );
             }}
           >
             <ExternalLink className="h-4 w-4" />
@@ -403,7 +406,7 @@ const FloatingToolbar: React.FC<FloatingToolbarProps> = ({
     >
       <div
         className={cn(
-          'flex h-8 overflow-hidden rounded-md border bg-background shadow-md',
+          'bg-background flex h-8 overflow-hidden rounded-md border shadow-md',
           'text-muted-foreground',
         )}
       >

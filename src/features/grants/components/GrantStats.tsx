@@ -48,7 +48,7 @@ export const GrantStats = ({ grant }: GrantStatsProps) => {
                 {grant?.avgResponseTime}
               </p>
             </div>
-            <p className="w-max pl-2 text-sm font-medium uppercase text-slate-500">
+            <p className="w-max pl-2 text-sm font-medium text-slate-500 uppercase">
               Avg. Response Time
             </p>
           </div>
@@ -69,7 +69,7 @@ export const GrantStats = ({ grant }: GrantStatsProps) => {
                   : '—'}
               </p>
             </div>
-            <p className="w-max pl-2 text-sm font-medium uppercase text-slate-500">
+            <p className="w-max pl-2 text-sm font-medium text-slate-500 uppercase">
               Avg. Grant Size
             </p>
           </div>
@@ -87,7 +87,7 @@ export const GrantStats = ({ grant }: GrantStatsProps) => {
                 )}
               </p>
             </div>
-            <p className="w-max pl-2 text-sm font-medium uppercase text-slate-500">
+            <p className="w-max pl-2 text-sm font-medium text-slate-500 uppercase">
               Approved So Far
             </p>
           </div>
@@ -98,7 +98,7 @@ export const GrantStats = ({ grant }: GrantStatsProps) => {
                 {grant?.totalApplications}
               </p>
             </div>
-            <p className="w-max pl-2 text-sm font-medium uppercase text-slate-500">
+            <p className="w-max pl-2 text-sm font-medium text-slate-500 uppercase">
               Recipients
             </p>
           </div>

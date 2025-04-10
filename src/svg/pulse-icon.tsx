@@ -28,7 +28,7 @@ export const PulseIcon = ({
         }}
       />
       <div
-        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full p-1"
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full p-1"
         style={{ backgroundColor: text }}
       />
       <style jsx>{`

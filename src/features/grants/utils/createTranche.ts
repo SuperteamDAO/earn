@@ -110,7 +110,18 @@ export async function createTranche({
     include: {
       GrantApplication: {
         include: {
-          user: true,
+          user: {
+            select: {
+              kycName: true,
+              kycAddress: true,
+              kycDOB: true,
+              kycIDNumber: true,
+              kycIDType: true,
+              kycCountry: true,
+              email: true,
+              location: true,
+            },
+          },
           grant: true,
         },
       },

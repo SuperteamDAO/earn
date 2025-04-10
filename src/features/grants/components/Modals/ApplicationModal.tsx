@@ -270,7 +270,7 @@ export const ApplicationModal = ({
         </div>
       </DialogTitle>
       <div
-        className="flex max-h-[30rem] flex-col items-start gap-3 pb-4 pt-3 sm:px-1 md:max-h-[50rem]"
+        className="flex max-h-[30rem] flex-col items-start gap-3 pt-3 pb-4 sm:px-1 md:max-h-[50rem]"
         ref={modalRef}
       >
         <Form {...form}>

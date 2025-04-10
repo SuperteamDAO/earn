@@ -105,14 +105,6 @@ export const useApplicationState = (
           loadingText: null,
         };
 
-      case 'KYC APPROVED':
-        return {
-          text: 'Apply for First Tranche',
-          bg: 'bg-brand-purple',
-          isDisabled: false,
-          loadingText: null,
-        };
-
       case 'TRANCHE1 PENDING':
       case 'TRANCHE2 PENDING':
       case 'TRANCHE3 PENDING':

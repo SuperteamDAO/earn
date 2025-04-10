@@ -13,7 +13,7 @@ import { safeStringify } from '@/utils/safeStringify';
 import { type NextApiRequestWithSponsor } from '@/features/auth/types';
 import { checkListingSponsorAuth } from '@/features/auth/utils/checkListingSponsorAuth';
 import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
-import { sendEmailNotification } from '@/features/emails/utils/sendEmailNotification';
+import { queueEmail } from '@/features/emails/utils/queueEmail';
 import { BONUS_REWARD_POSITION } from '@/features/listing-builder/constants';
 import {
   backendListingRefinements,
@@ -117,7 +117,7 @@ async function listing(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       isGod: user?.role === 'GOD',
       isEditing: true,
       isST: !!sponsor?.st,
-      hackathon,
+      hackathons: hackathon ? [hackathon] : [],
       pastListing: listing as any,
     });
     const innerSchema = listingSchema._def.schema.omit({
@@ -130,7 +130,11 @@ async function listing(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       sponsorId: true,
     });
     const superValidator = innerSchema.superRefine(async (data, ctx) => {
-      await createListingRefinements(data as any, ctx, hackathon);
+      await createListingRefinements(
+        data as any,
+        ctx,
+        hackathon ? [hackathon] : [],
+      );
       await backendListingRefinements(data as any, ctx);
     });
 
@@ -413,7 +417,7 @@ async function listing(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       logger.debug(`Sending email notification for deadline extension`, {
         id,
       });
-      sendEmailNotification({
+      await queueEmail({
         type: 'deadlineExtended',
         id: id as string,
         triggeredBy: req.userId,

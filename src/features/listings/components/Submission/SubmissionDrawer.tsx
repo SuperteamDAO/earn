@@ -146,6 +146,8 @@ export const SubmissionDrawer = ({
   }, [id, editMode, form.reset]);
 
   const onSubmit = async (data: FormData) => {
+    if (isLoading) return;
+
     posthog.capture('confirmed_submission');
     setIsLoading(true);
     try {
@@ -163,17 +165,8 @@ export const SubmissionDrawer = ({
         telegram: data.telegram || user?.telegram || '',
       });
 
-      const hideEasterEggFromSponsorIds = [
-        '53cbd2eb-14e5-4b8a-b6fe-e18e0c885145', // network schoool
-      ];
-
       const latestSubmissionNumber = (user?.Submission?.length ?? 0) + 1;
-      if (
-        !editMode &&
-        latestSubmissionNumber === 1 &&
-        !hideEasterEggFromSponsorIds.includes(listing.sponsorId || '')
-      )
-        showEasterEgg();
+      if (!editMode) showEasterEgg();
       if (!editMode && latestSubmissionNumber % 3 !== 0) onSurveyOpen();
 
       form.reset();
@@ -195,7 +188,10 @@ export const SubmissionDrawer = ({
           : 'Submission created successfully',
       );
       handleClose();
+
+      setIsLoading(false);
     } catch (error) {
+      setIsLoading(false);
       if (axios.isAxiosError(error)) {
         if (error.status === 401) {
           toast.error(
@@ -215,8 +211,6 @@ export const SubmissionDrawer = ({
       } else {
         toast.error('Failed to submit. Please try again or contact support.');
       }
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -267,7 +261,7 @@ export const SubmissionDrawer = ({
     <SideDrawer isOpen={isOpen} onClose={handleClose}>
       <SideDrawerContent className="px-2 sm:p-4">
         <X
-          className="absolute right-4 top-10 z-10 h-4 w-4 text-slate-400 sm:right-8 sm:top-8"
+          className="absolute top-10 right-4 z-10 h-4 w-4 text-slate-400 sm:top-8 sm:right-8"
           onClick={handleClose}
         />
         <Form {...form}>
@@ -276,7 +270,7 @@ export const SubmissionDrawer = ({
             style={{ width: '100%', height: '100%' }}
           >
             <div className="flex h-full flex-col justify-between gap-6">
-              <div className="h-full overflow-y-auto rounded-lg border border-slate-200 px-2 shadow-[0px_1px_3px_rgba(0,0,0,0.08),_0px_1px_2px_rgba(0,0,0,0.06)] md:px-4 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-slate-300 [&::-webkit-scrollbar-track]:w-1.5 [&::-webkit-scrollbar]:w-1">
+              <div className="h-full overflow-y-auto rounded-lg border border-slate-200 px-2 shadow-[0px_1px_3px_rgba(0,0,0,0.08),_0px_1px_2px_rgba(0,0,0,0.06)] md:px-4 [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-slate-300 [&::-webkit-scrollbar-track]:w-1.5">
                 <div className="mb-4 border-b border-slate-100 bg-white py-3">
                   <p className="text-lg font-medium text-slate-700">
                     {headerText}
@@ -303,7 +297,7 @@ export const SubmissionDrawer = ({
                               <div>
                                 <FormControl>
                                   <div className="flex">
-                                    <div className="flex items-center gap-1 rounded-l-md border border-r-0 border-input bg-muted px-2 shadow-sm">
+                                    <div className="border-input bg-muted flex items-center gap-1 rounded-l-md border border-r-0 px-2 shadow-xs">
                                       <p className="text-sm font-medium text-slate-500">
                                         https://
                                       </p>
@@ -340,7 +334,7 @@ export const SubmissionDrawer = ({
                               <div>
                                 <FormControl>
                                   <div className="flex">
-                                    <div className="flex items-center gap-1 rounded-l-md border border-r-0 border-input bg-muted px-2 shadow-sm">
+                                    <div className="border-input bg-muted flex items-center gap-1 rounded-l-md border border-r-0 px-2 shadow-xs">
                                       <p className="text-sm font-medium text-slate-500">
                                         https://
                                       </p>
@@ -394,7 +388,7 @@ export const SubmissionDrawer = ({
                                 <FormControl>
                                   {e.isLink || e.type === 'link' ? (
                                     <div className="flex">
-                                      <div className="flex items-center gap-1 rounded-l-md border border-r-0 border-input bg-muted px-2 shadow-sm">
+                                      <div className="border-input bg-muted flex items-center gap-1 rounded-l-md border border-r-0 px-2 shadow-xs">
                                         <p className="text-sm font-medium text-slate-500">
                                           https://
                                         </p>
@@ -462,7 +456,7 @@ export const SubmissionDrawer = ({
                   <div className="mb-4 flex items-start space-x-3">
                     <Checkbox
                       id="terms"
-                      className="mt-1 data-[state=checked]:border-brand-purple data-[state=checked]:bg-brand-purple"
+                      className="data-[state=checked]:border-brand-purple data-[state=checked]:bg-brand-purple mt-1"
                       checked={termsAccepted}
                       onCheckedChange={(checked) =>
                         setTermsAccepted(checked as boolean)
@@ -487,7 +481,9 @@ export const SubmissionDrawer = ({
                     isSubmitDisabled ||
                     isTemplate ||
                     !!query['preview'] ||
-                    (isHackathon && !editMode && !termsAccepted)
+                    (isHackathon && !editMode && !termsAccepted) ||
+                    isLoading ||
+                    form.formState.isSubmitting
                   }
                   type="submit"
                 >

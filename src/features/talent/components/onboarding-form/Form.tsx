@@ -57,6 +57,7 @@ export const TalentForm = () => {
     user?.photo?.includes('googleusercontent.com') || false,
   );
   const [skillsRefreshKey, setSkillsRefreshKey] = useState<number>(0);
+  const [isUsernameValidating, setUsernameValidating] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -93,8 +94,8 @@ export const TalentForm = () => {
   };
 
   const isSubmitDisabled = useMemo(() => {
-    return uploading || isLoading;
-  }, [uploading || isLoading]);
+    return uploading || isLoading || isUsernameValidating;
+  }, [uploading, isLoading, isUsernameValidating]);
 
   const onSubmit = async (data: NewTalentFormData) => {
     if (isSubmitDisabled) return false;
@@ -146,7 +147,7 @@ export const TalentForm = () => {
     <div className="">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} style={{ width: '100%' }}>
-          <div className="mb-3 mt-4 flex flex-col text-left sm:mb-4 2xl:mt-8">
+          <div className="mt-4 mb-3 flex flex-col text-left sm:mb-4 2xl:mt-8">
             <h1 className="font-sans text-lg font-medium md:text-2xl">
               {TitleArray?.title}
             </h1>
@@ -204,7 +205,7 @@ export const TalentForm = () => {
           </div>
 
           <div className="flex flex-col md:flex-row md:gap-2">
-            <UsernameField />
+            <UsernameField setUsernameValidating={setUsernameValidating} />
             <LocationField />
           </div>
 
@@ -212,7 +213,7 @@ export const TalentForm = () => {
           <SocialsField />
           <Button
             type="submit"
-            className="mb-12 mt-5 w-full sm:mt-8"
+            className="mt-5 mb-12 w-full sm:mt-8"
             disabled={isSubmitDisabled}
           >
             Create Profile

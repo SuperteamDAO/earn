@@ -12,7 +12,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 
-import { hackathonAtom, isEditingAtom } from '../../atoms';
+import { hackathonsAtom, isEditingAtom } from '../../atoms';
 import { useListingForm } from '../../hooks';
 
 const deadlineOptions = [
@@ -33,7 +33,11 @@ export function Deadline() {
     name: 'type',
     control: form.control,
   });
-  const hackathon = useAtomValue(hackathonAtom);
+  const hackathonId = useWatch({
+    name: 'hackathonId',
+    control: form.control,
+  });
+  const hackathons = useAtomValue(hackathonsAtom);
 
   const [maxDeadline, setMaxDeadline] = useState<Date | undefined>(undefined);
   const [minDeadline] = useState<Date | undefined>(new Date());
@@ -63,12 +67,20 @@ export function Deadline() {
           form.setValue('deadline', handleDeadlineSelection(7));
         }
       } else {
-        if (hackathon) {
-          form.setValue('deadline', hackathon.deadline as any as string);
+        if (hackathons) {
+          const currentHackathon = hackathons?.find(
+            (s) => s.id === hackathonId,
+          );
+          if (currentHackathon) {
+            form.setValue(
+              'deadline',
+              currentHackathon.deadline as any as string,
+            );
+          }
         }
       }
     }
-  }, [form, deadline, type, hackathon]);
+  }, [form, deadline, type, hackathons]);
 
   return (
     <FormField
@@ -80,7 +92,7 @@ export function Deadline() {
             <FormLabel isRequired className="">
               Deadline (in {Intl.DateTimeFormat().resolvedOptions().timeZone})
             </FormLabel>
-            <div className="flex rounded-md border ring-primary has-[:focus]:ring-1 has-[data-[state=open]]:ring-1">
+            <div className="ring-primary flex rounded-md border has-focus:ring-1 has-[data-[state=open]]:ring-1">
               <DateTimePicker
                 value={field.value ? new Date(field.value) : undefined}
                 onChange={(date) => {

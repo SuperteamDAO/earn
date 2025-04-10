@@ -1,15 +1,15 @@
-import { GrantTrancheStatus } from '@prisma/client';
-import type { NextApiResponse } from 'next';
+import { waitUntil } from '@vercel/functions';
+import { headers } from 'next/headers';
+import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
 
-import { type NextApiRequestWithSponsor } from '@/features/auth/types';
 import { checkGrantSponsorAuth } from '@/features/auth/utils/checkGrantSponsorAuth';
-import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
-import { sendEmailNotification } from '@/features/emails/utils/sendEmailNotification';
+import { getSponsorSession } from '@/features/auth/utils/getSponsorSession';
+import { queueEmail } from '@/features/emails/utils/queueEmail';
 import { addPaymentInfoToAirtable } from '@/features/grants/utils/addPaymentInfoToAirtable';
 
 const UpdateGrantTrancheSchema = z.object({
@@ -18,36 +18,49 @@ const UpdateGrantTrancheSchema = z.object({
   status: z.enum(['Approved', 'Rejected']),
 });
 
-async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
-  logger.debug(`Request body: ${safeStringify(req.body)}`);
+export async function POST(request: NextRequest) {
+  const body = await request.json();
 
-  const validationResult = UpdateGrantTrancheSchema.safeParse(req.body);
+  const validationResult = UpdateGrantTrancheSchema.safeParse(body);
 
   if (!validationResult.success) {
     const errorMessage = validationResult.error.errors
       .map((err) => `${err.path.join('.')}: ${err.message}`)
       .join(', ');
     logger.warn('Invalid request body:', errorMessage);
-    return res.status(400).json({
-      error: 'Invalid request body',
-      details: errorMessage,
-    });
+    return NextResponse.json(
+      {
+        error: 'Invalid request body',
+        details: errorMessage,
+      },
+      { status: 400 },
+    );
   }
 
-  const { id, status, approvedAmount } = validationResult.data;
-  const userId = req.userId;
+  const session = await getSponsorSession(await headers());
 
+  if (session.error || !session.data) {
+    return NextResponse.json(
+      { error: session.error },
+      { status: session.status },
+    );
+  }
+  const { id, status, approvedAmount } = validationResult.data;
+  const userId = session.data.userId;
   try {
     const currentTranche = await prisma.grantTranche.findUniqueOrThrow({
       where: { id },
     });
 
     const { error } = await checkGrantSponsorAuth(
-      req.userSponsorId,
+      session.data.userSponsorId,
       currentTranche.grantId,
     );
     if (error) {
-      return res.status(error.status).json({ error: error.message });
+      return NextResponse.json(
+        { error: error.message },
+        { status: error.status },
+      );
     }
 
     const updateData: any = {
@@ -85,10 +98,13 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       );
 
       if (totalApprovedSoFar + approvedAmount! > application.approvedAmount) {
-        return res.status(400).json({
-          error: 'Invalid approved amount',
-          message: `Total approved tranches (${totalApprovedSoFar + approvedAmount!}) would exceed grant's approved amount (${application.approvedAmount})`,
-        });
+        return NextResponse.json(
+          {
+            error: 'Invalid approved amount',
+            message: `Total approved tranches (${totalApprovedSoFar + approvedAmount!}) would exceed grant's approved amount (${application.approvedAmount})`,
+          },
+          { status: 400 },
+        );
       }
 
       const existingTranches = await prisma.grantTranche.count({
@@ -130,6 +146,11 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
                 discord: true,
                 kycName: true,
                 location: true,
+                kycAddress: true,
+                kycDOB: true,
+                kycIDNumber: true,
+                kycIDType: true,
+                kycCountry: true,
               },
             },
             grant: {
@@ -137,6 +158,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
                 airtableId: true,
                 isNative: true,
                 title: true,
+                approverRecordId: true,
               },
             },
           },
@@ -144,72 +166,48 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       },
     });
 
-    if (result.status === GrantTrancheStatus.Approved) {
-      try {
-        await addPaymentInfoToAirtable(result.GrantApplication, result);
-      } catch (airtableError: any) {
-        console.error(
-          `Error adding payment info to Airtable: ${airtableError.message}`,
-        );
-        console.error(
-          `Airtable error details: ${safeStringify(airtableError.response?.data || airtableError)}`,
-        );
-      }
-      try {
-        sendEmailNotification({
-          type: 'trancheApproved',
-          id: result.id,
-          triggeredBy: userId,
-        });
-      } catch (emailError: any) {
-        logger.error(
-          `Failed to send tranche approved email notification for tranche ID: ${result.id}`,
-          {
-            error: emailError.message,
-            stack: emailError.stack,
-            trancheId: result.id,
-            userId,
-            recipientEmail: result.GrantApplication.user.email,
-            environment: process.env.NODE_ENV,
-            timestamp: new Date().toISOString(),
-          },
-        );
-      }
-    }
+    waitUntil(
+      (async () => {
+        if (result.status === 'Approved') {
+          try {
+            await addPaymentInfoToAirtable(result.GrantApplication, result);
+          } catch (airtableError: any) {
+            console.error(
+              `Error adding payment info to Airtable: ${airtableError.message}`,
+            );
+            console.error(
+              `Airtable error details: ${safeStringify(airtableError.response?.data || airtableError)}`,
+            );
+          }
+          await queueEmail({
+            type: 'trancheApproved',
+            id: result.id,
+            userId: result.GrantApplication.userId,
+            triggeredBy: userId,
+          });
+        }
 
-    if (result.status === GrantTrancheStatus.Rejected) {
-      try {
-        sendEmailNotification({
-          type: 'trancheRejected',
-          id: result.id,
-          triggeredBy: userId,
-        });
-      } catch (emailError: any) {
-        logger.error(
-          `Failed to send tranche rejected email notification for tranche ID: ${result.id}`,
-          {
-            error: emailError.message,
-            stack: emailError.stack,
-            trancheId: result.id,
-            userId,
-            recipientEmail: result.GrantApplication.user.email,
-            environment: process.env.NODE_ENV,
-            timestamp: new Date().toISOString(),
-          },
-        );
-      }
-    }
-
-    return res.status(200).json(result);
+        if (result.status === 'Rejected') {
+          await queueEmail({
+            type: 'trancheRejected',
+            id: result.id,
+            userId: result.GrantApplication.userId,
+            triggeredBy: userId,
+          });
+        }
+      })(),
+    );
+    return NextResponse.json({ status: 200 });
   } catch (error: any) {
     logger.error(
       `Error occurred while updating grant tranche ID: ${id}:  ${error.message}`,
     );
-    return res.status(500).json({
-      error: error.message,
-      message: 'Error occurred while updating the grant tranche.',
-    });
+    return NextResponse.json(
+      {
+        error: error.message,
+        message: 'Error occurred while updating the grant tranche.',
+      },
+      { status: 500 },
+    );
   }
 }
-
-export default withSponsorAuth(handler);

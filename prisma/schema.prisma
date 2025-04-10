@@ -202,6 +202,7 @@ model Grants {
   references             Json?
   ai                     Json?
   GrantTranche           GrantTranche[]
+  approverRecordId       String?
 
   @@index([id, slug])
   @@index([pocId])
@@ -449,6 +450,11 @@ model User {
   privyDid           String               @unique
   isKYCVerified      Boolean              @default(false)
   kycName            String?
+  kycCountry         String?
+  kycAddress         String?
+  kycDOB             String?
+  kycIDNumber        String?
+  kycIDType          String?
 
   @@index([currentSponsorId])
   @@index([hackathonId])

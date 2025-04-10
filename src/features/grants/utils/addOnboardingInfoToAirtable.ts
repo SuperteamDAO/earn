@@ -27,7 +27,7 @@ interface RecipientAirtableSchema {
   Deadline: string;
 }
 
-export function grantApplicationToAirtable(
+function grantApplicationToAirtable(
   grantApplication: GrantApplicationWithUserAndGrant,
   applicantRecordId: string,
 ): RecipientAirtableSchema {

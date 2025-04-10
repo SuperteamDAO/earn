@@ -67,9 +67,9 @@ export const TrancheList = ({
       <div className="flex cursor-pointer flex-col items-center justify-between gap-4 border-b border-slate-200 px-4 py-3">
         <div className="flex w-full items-center gap-2">
           <div className="relative w-full">
-            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+            <Search className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-slate-400" />
             <Input
-              className="placeholder:text-md h-10 border-slate-200 bg-white pl-9 placeholder:font-medium placeholder:text-slate-400 focus-visible:ring-brand-purple"
+              className="placeholder:text-md focus-visible:ring-brand-purple h-10 border-slate-200 bg-white pl-9 placeholder:font-medium placeholder:text-slate-400"
               onChange={(e) => debouncedSetSearchText(e.target.value)}
               placeholder="Search Tranche Requests"
               type="text"
@@ -82,12 +82,12 @@ export const TrancheList = ({
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
-                className="h-9 w-32 border border-slate-300 bg-transparent px-2 py-1 font-medium capitalize text-slate-500 hover:border-brand-purple hover:bg-transparent"
+                className="hover:border-brand-purple h-9 w-32 border border-slate-300 bg-transparent px-2 py-1 font-medium text-slate-500 capitalize hover:bg-transparent"
                 variant="outline"
               >
                 <span
                   className={cn(
-                    'inline-flex whitespace-nowrap rounded-full px-3 py-0.5 text-center text-[10px] capitalize',
+                    'inline-flex rounded-full px-3 py-0.5 text-center text-[10px] whitespace-nowrap capitalize',
                     bg,
                     color,
                   )}
@@ -103,7 +103,7 @@ export const TrancheList = ({
                 className="focus:bg-slate-100"
                 onClick={() => setFilterLabel(undefined)}
               >
-                <span className="inline-flex whitespace-nowrap rounded-full bg-slate-50 px-3 text-center text-[10px] capitalize text-slate-500">
+                <span className="inline-flex rounded-full bg-slate-50 px-3 text-center text-[10px] whitespace-nowrap text-slate-500 capitalize">
                   Select Option
                 </span>
               </DropdownMenuItem>
@@ -116,7 +116,7 @@ export const TrancheList = ({
                 >
                   <span
                     className={cn(
-                      'inline-flex whitespace-nowrap rounded-full px-3 text-center text-[10px] capitalize',
+                      'inline-flex rounded-full px-3 text-center text-[10px] whitespace-nowrap capitalize',
                       colorMap[status].bg,
                       colorMap[status].color,
                     )}
@@ -156,10 +156,10 @@ export const TrancheList = ({
               />
 
               <div className="ml-2 w-40">
-                <p className="overflow-hidden text-ellipsis whitespace-nowrap text-sm font-medium text-slate-700">
+                <p className="overflow-hidden text-sm font-medium text-ellipsis whitespace-nowrap text-slate-700">
                   {tranche?.GrantApplication?.projectTitle}
                 </p>
-                <p className="overflow-hidden text-ellipsis whitespace-nowrap text-xs font-medium text-slate-500">
+                <p className="overflow-hidden text-xs font-medium text-ellipsis whitespace-nowrap text-slate-500">
                   {nthLabelGenerator(tranche?.trancheNumber)} Tranche Request
                 </p>
               </div>
@@ -168,7 +168,7 @@ export const TrancheList = ({
             <div className="ml-auto flex w-min flex-col justify-end gap-1 align-bottom">
               <span
                 className={cn(
-                  'ml-auto inline-flex w-fit whitespace-nowrap rounded-full px-2 py-0.5 text-center text-[9px] capitalize',
+                  'ml-auto inline-flex w-fit rounded-full px-2 py-0.5 text-center text-[9px] whitespace-nowrap capitalize',
                   statusBg,
                   statusColor,
                 )}

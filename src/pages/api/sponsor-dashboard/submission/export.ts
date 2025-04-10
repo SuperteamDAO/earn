@@ -55,7 +55,6 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       orderBy: {
         createdAt: 'asc',
       },
-      take: 1000,
     });
 
     const eligibilityQuestions = new Set<string>();
@@ -88,6 +87,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         'Email ID': user.email,
         'User Twitter': user.twitter || '',
         'User Wallet': user.walletAddress,
+        'User Location': user.location || '',
         Label: submission.label,
         'Winner Position': submission.isWinner
           ? submission.winnerPosition === BONUS_REWARD_POSITION

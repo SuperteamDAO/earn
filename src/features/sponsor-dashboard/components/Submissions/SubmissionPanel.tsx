@@ -2,7 +2,7 @@ import { TooltipArrow } from '@radix-ui/react-tooltip';
 import { useAtom } from 'jotai';
 import { AlertTriangle, ArrowRight, ExternalLink } from 'lucide-react';
 import Link from 'next/link';
-import React, { type Dispatch, type SetStateAction } from 'react';
+import React from 'react';
 import { MdOutlineAccountBalanceWallet, MdOutlineMail } from 'react-icons/md';
 import { toast } from 'sonner';
 
@@ -37,9 +37,6 @@ interface Props {
   isHackathonPage?: boolean;
   onWinnersAnnounceOpen: () => void;
   remainings: { podiums: number; bonus: number } | null;
-  setRemainings: Dispatch<
-    SetStateAction<{ podiums: number; bonus: number } | null>
-  >;
   isMultiSelectOn?: boolean;
 }
 
@@ -50,7 +47,6 @@ export const SubmissionPanel = ({
   isHackathonPage,
   onWinnersAnnounceOpen,
   remainings,
-  setRemainings,
   isMultiSelectOn,
 }: Props) => {
   const afterAnnounceDate =
@@ -101,11 +97,11 @@ export const SubmissionPanel = ({
                   avatar={selectedSubmission?.user?.photo || undefined}
                 />
                 <div>
-                  <p className="w-full whitespace-nowrap font-medium text-slate-900">
+                  <p className="w-full font-medium whitespace-nowrap text-slate-900">
                     {`${selectedSubmission?.user?.firstName}'s Submission`}
                   </p>
                   <Link
-                    className="flex w-full items-center whitespace-nowrap text-xs font-medium text-brand-purple"
+                    className="text-brand-purple flex w-full items-center text-xs font-medium whitespace-nowrap"
                     href={`/t/${selectedSubmission?.user?.username}`}
                   >
                     View Profile <ArrowRight className="inline-block h-3 w-3" />
@@ -145,9 +141,11 @@ export const SubmissionPanel = ({
                       </Button>
                     </Tooltip>
                   ))}
-                {!isHackathonPage && (
-                  <SelectLabel listingSlug={bounty?.slug!} />
-                )}
+                {!isHackathonPage &&
+                  selectedSubmission?.status === 'Pending' &&
+                  !bounty?.isWinnersAnnounced && (
+                    <SelectLabel listingSlug={bounty?.slug!} />
+                  )}
                 {selectedSubmission?.isWinner &&
                   selectedSubmission?.winnerPosition &&
                   selectedSubmission?.isPaid && (
@@ -173,8 +171,6 @@ export const SubmissionPanel = ({
                       isMultiSelectOn={!!isMultiSelectOn}
                       bounty={bounty}
                       usedPositions={usedPositions}
-                      setRemainings={setRemainings}
-                      submissions={submissions}
                       isHackathonPage={isHackathonPage}
                     />
                     {!isProject && (
@@ -268,7 +264,7 @@ export const SubmissionPanel = ({
                   triggerClassName="flex items-center hover:underline underline-offset-1"
                 >
                   <div
-                    className="flex cursor-pointer items-center justify-start gap-1 whitespace-nowrap text-sm text-slate-400 hover:text-slate-500"
+                    className="flex cursor-pointer items-center justify-start gap-1 text-sm whitespace-nowrap text-slate-400 hover:text-slate-500"
                     onClick={handleCopyPublicKey}
                     role="button"
                     tabIndex={0}
@@ -299,7 +295,7 @@ export const SubmissionPanel = ({
                 />
               </div>
               {isProject && (
-                <p className="whitespace-nowrap text-sm text-slate-400">
+                <p className="text-sm whitespace-nowrap text-slate-400">
                   $
                   {formatNumberWithSuffix(
                     selectedSubmission?.totalEarnings || 0,

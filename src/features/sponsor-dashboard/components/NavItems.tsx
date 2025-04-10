@@ -35,7 +35,7 @@ export const NavItem = ({
       href={resolvedLink || '#'}
       target={isExternalLink ? '_blank' : undefined}
       rel={isExternalLink ? 'noopener noreferrer' : undefined}
-      className="no-underline focus:outline-none"
+      className="no-underline focus:outline-hidden"
     >
       <div
         className={cn(
@@ -52,8 +52,8 @@ export const NavItem = ({
         {Icon && (
           <Icon
             className={cn(
-              'transition-all duration-300 ease-in-out hover:text-indigo-700',
-              isExpanded ? 'mr-4 text-base' : 'mr-0 text-xl',
+              'size-4 transition-all duration-300 ease-in-out hover:text-indigo-700',
+              isExpanded ? 'mr-4' : 'mr-0',
             )}
           />
         )}

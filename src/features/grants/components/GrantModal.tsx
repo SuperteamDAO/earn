@@ -47,7 +47,7 @@ export const GrantModal = ({
         ref={modalRef}
       >
         <X
-          className="absolute right-4 top-7 z-10 h-4 w-4 cursor-pointer text-slate-400 sm:top-6"
+          className="absolute top-7 right-4 z-10 h-4 w-4 cursor-pointer text-slate-400 sm:top-6"
           onClick={onClose}
         />
         {detailStates.includes(applicationState) && (

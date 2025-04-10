@@ -60,91 +60,88 @@ export const OgImageViewer = ({
   });
 
   useEffect(() => {
-    const handleError = async () => {
-      if (type && id && !isUpdating) {
+    if (error && !isUpdating) {
+      const handleError = async () => {
         setIsUpdating(true);
         try {
-          await api.post('/api/og/update', {
-            type,
-            url: 'error',
-            id,
-          });
-        } finally {
-          setIsUpdating(false);
-          setCurrentImageUrl(fallbackImage);
-        }
-      }
-    };
-
-    if (error) {
-      handleError();
-    }
-  }, [error, type, id, isUpdating, fallbackImage]);
-
-  useEffect(() => {
-    const updateOgImage = async () => {
-      if (isUpdating) return;
-
-      if (ogData === 'error') {
-        if (type && id) {
-          setIsUpdating(true);
-          try {
+          if (type && id) {
             await api.post('/api/og/update', {
               type,
               url: 'error',
               id,
             });
-          } finally {
-            setIsUpdating(false);
           }
+          setCurrentImageUrl(fallbackImage);
+        } finally {
+          setIsUpdating(false);
         }
-        setCurrentImageUrl(fallbackImage);
-        return;
-      }
+      };
+      handleError();
+    }
+  }, [error, type, id, fallbackImage]);
 
-      if (ogData?.images?.[0]?.url && type && id) {
-        setIsUpdating(true);
-        try {
-          await api.post('/api/og/update', {
-            type,
-            url: ogData.images[0].url,
-            id,
-          });
-          setCurrentImageUrl(ogData.images[0].url);
-        } catch (error) {
+  useEffect(() => {
+    if (isUpdating || currentImageUrl || imageUrl === 'error') return;
+
+    const updateOgImage = async () => {
+      setIsUpdating(true);
+      try {
+        if (ogData === 'error') {
+          if (type && id) {
+            await api.post('/api/og/update', {
+              type,
+              url: 'error',
+              id,
+            });
+          }
+          setCurrentImageUrl(fallbackImage);
+          return;
+        }
+
+        const ogImageUrl = ogData?.images?.[0]?.url;
+        if (ogImageUrl) {
+          if (type && id) {
+            await api.post('/api/og/update', {
+              type,
+              url: ogImageUrl,
+              id,
+            });
+          }
+          setCurrentImageUrl(ogImageUrl);
+        } else {
+          setCurrentImageUrl(fallbackImage);
+        }
+      } catch (error) {
+        setCurrentImageUrl(fallbackImage);
+      } finally {
+        setIsUpdating(false);
+      }
+    };
+
+    if (ogData) {
+      updateOgImage();
+    }
+  }, [ogData, type, id, fallbackImage, isUpdating, currentImageUrl, imageUrl]);
+
+  const handleImageError = useCallback(() => {
+    if (isUpdating) return;
+
+    const updateImage = async () => {
+      setIsUpdating(true);
+      try {
+        if (type && id) {
           await api.post('/api/og/update', {
             type,
             url: 'error',
             id,
           });
-          setCurrentImageUrl(fallbackImage);
-        } finally {
-          setIsUpdating(false);
         }
+        setCurrentImageUrl(fallbackImage);
+      } finally {
+        setIsUpdating(false);
       }
     };
-
-    if (!currentImageUrl && imageUrl !== 'error') {
-      updateOgImage();
-    }
-  }, [ogData, type, id, fallbackImage, isUpdating, imageUrl]);
-
-  const handleImageError = useCallback(() => {
-    if (type && id && !isUpdating) {
-      setIsUpdating(true);
-      api
-        .post('/api/og/update', {
-          type,
-          url: 'error',
-          id,
-        })
-        .finally(() => {
-          setIsUpdating(false);
-          setCurrentImageUrl(fallbackImage);
-        });
-    } else {
-      setCurrentImageUrl(fallbackImage);
-    }
+    updateImage();
   }, [fallbackImage, type, id, isUpdating]);
 
   if (isLoading) {

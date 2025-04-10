@@ -1,7 +1,7 @@
 import { useAtomValue } from 'jotai';
 import { AlertTriangle, CheckCircle2 } from 'lucide-react';
 import { usePostHog } from 'posthog-js/react';
-import { type Dispatch, type SetStateAction, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
@@ -12,7 +12,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { type SubmissionWithUser } from '@/interface/submission';
 import { api } from '@/lib/api';
 import { dayjs } from '@/utils/dayjs';
 import { cleanRewards } from '@/utils/rank';
@@ -30,11 +29,6 @@ interface Props {
   totalPaymentsMade: number;
   bounty: Listing | undefined;
   remainings: { podiums: number; bonus: number } | null;
-  submissions: SubmissionWithUser[];
-  usedPositions: number[];
-  setRemainings: Dispatch<
-    SetStateAction<{ podiums: number; bonus: number } | null>
-  >;
 }
 
 export function PublishResults({
@@ -44,9 +38,6 @@ export function PublishResults({
   totalPaymentsMade,
   bounty,
   remainings,
-  submissions,
-  usedPositions,
-  setRemainings,
 }: Props) {
   const [isPublishingResults, setIsPublishingResults] = useState(false);
   const [isWinnersAnnounced, setIsWinnersAnnounced] = useState(
@@ -93,12 +84,7 @@ export function PublishResults({
   }
 
   const selectedSubmission = useAtomValue(selectedSubmissionAtom);
-  const { mutateAsync: toggleWinner } = useToggleWinner(
-    bounty,
-    submissions,
-    setRemainings,
-    usedPositions,
-  );
+  const { mutateAsync: toggleWinner } = useToggleWinner(bounty);
 
   const publishResults = async () => {
     if (!bounty?.id) return;
@@ -106,11 +92,13 @@ export function PublishResults({
     try {
       if (isProject) {
         if (selectedSubmission?.id) {
-          await toggleWinner({
-            winnerPosition: 1,
-            id: selectedSubmission?.id,
-            isWinner: true,
-          });
+          await toggleWinner([
+            {
+              winnerPosition: 1,
+              id: selectedSubmission?.id,
+              isWinner: true,
+            },
+          ]);
         }
       }
       await api.post(`/api/listings/announce/${bounty?.id}/`);
@@ -119,11 +107,13 @@ export function PublishResults({
     } catch (e) {
       if (isProject) {
         if (selectedSubmission?.id) {
-          await toggleWinner({
-            winnerPosition: null,
-            id: selectedSubmission?.id,
-            isWinner: false,
-          });
+          await toggleWinner([
+            {
+              winnerPosition: null,
+              id: selectedSubmission?.id,
+              isWinner: false,
+            },
+          ]);
         }
       }
       setIsPublishingResults(false);
@@ -177,7 +167,7 @@ export function PublishResults({
             rewards &&
             totalWinners === rewards &&
             alertType !== 'error' && (
-              <p className="mb-4 mt-1">
+              <p className="mt-1 mb-4">
                 Publishing the results of this listing will make the results
                 public for everyone to see!
                 <br />

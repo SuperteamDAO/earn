@@ -84,10 +84,7 @@ function ListingCategoryPage({ slug }: { slug: SlugKeys }) {
           )}
           {!isGrantsLoading && !grants?.length && (
             <div className="mt-8 flex items-center justify-center">
-              <EmptySection
-                title="No grants available!"
-                message="Subscribe to notifications to get notified about new grants."
-              />
+              <EmptySection title="No grants available!" />
             </div>
           )}
           {!isGrantsLoading &&

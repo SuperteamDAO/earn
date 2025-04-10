@@ -1,3 +1,4 @@
+import { type ReactNode } from 'react';
 import { AiOutlineInfoCircle } from 'react-icons/ai';
 
 export function EmptySection({
@@ -6,7 +7,7 @@ export function EmptySection({
   showNotifSub = true,
 }: {
   title?: string;
-  message?: string;
+  message?: ReactNode;
   showNotifSub?: boolean;
 }) {
   return (

@@ -105,7 +105,7 @@ export function SocialsField() {
               </Tooltip>
             </div>
           </span>
-          <p className="mt-0 hidden text-xs text-muted-foreground text-slate-500 sm:text-[0.8rem] lg:block">
+          <p className="text-muted-foreground mt-0 hidden text-xs text-slate-500 sm:text-[0.8rem] lg:block">
             Fill at least one, but more the merrier
           </p>
         </div>
@@ -115,9 +115,9 @@ export function SocialsField() {
               <Button
                 variant="ghost"
                 size="sm"
-                className="h-5 items-center gap-1 px-1 text-[0.7rem] text-primary"
+                className="text-primary h-5 items-center gap-1 px-1 text-[0.7rem]"
               >
-                <Plus className="!h-3 !w-3" />
+                <Plus className="h-3! w-3!" />
                 ADD MORE
               </Button>
             </DropdownMenuTrigger>
@@ -172,7 +172,7 @@ export function SocialsField() {
                 variant="ghost"
                 size="icon"
                 onClick={() => handleToggleSocial(social, false)}
-                className="absolute right-0 top-0 flex text-muted-foreground hover:text-destructive"
+                className="text-muted-foreground hover:text-destructive absolute top-0 right-0 flex"
               >
                 <Trash2 className="h-4 w-4" />
               </Button>

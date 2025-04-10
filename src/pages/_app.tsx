@@ -1,9 +1,8 @@
-import { GoogleTagManager } from '@next/third-parties/google';
+import { GoogleAnalytics } from '@next/third-parties/google';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import type { AppProps } from 'next/app';
 import dynamic from 'next/dynamic';
 import { Router, useRouter } from 'next/router';
-import { PagesTopLoader } from 'nextjs-toploader';
 import posthog from 'posthog-js';
 import { PostHogProvider } from 'posthog-js/react';
 import React, {
@@ -15,13 +14,14 @@ import React, {
 } from 'react';
 import { toast } from 'sonner';
 
+import { TopLoader } from '@/components/ui/toploader';
 import { useUser } from '@/store/user';
 import { fontMono, fontSans } from '@/theme/fonts';
 import { getURL } from '@/utils/validUrl';
 
 import Providers from '@/features/privy/providers';
 
-import '../styles/globals.scss';
+import '../styles/globals.css';
 import '@/components/tiptap/styles/index.css';
 
 const SolanaWalletProvider = dynamic(
@@ -54,6 +54,8 @@ function MyApp({ Component, pageProps }: any) {
     if (!posthog.__loaded) {
       posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY!, {
         api_host: `${getURL()}ingest`,
+        autocapture: false,
+        disable_session_recording: true,
         ui_host:
           process.env.NEXT_PUBLIC_POSTHOG_HOST || 'https://app.posthog.com',
         loaded: (posthog) => {
@@ -149,10 +151,11 @@ function MyApp({ Component, pageProps }: any) {
 
   return (
     <>
-      <PagesTopLoader color="#6366F1" showSpinner={false} />
+      <TopLoader />
       {isLoaded && (isDashboardRoute || walletListingRoute) ? (
         <SolanaWalletProvider>
           <Component {...pageProps} key={router.asPath} />
+          <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_TRACKING_ID!} />
         </SolanaWalletProvider>
       ) : (
         <Component {...pageProps} key={router.asPath} />
@@ -178,7 +181,6 @@ function App({ Component, pageProps }: AppProps) {
         `}</style>
         <Providers>
           <MyApp Component={Component} pageProps={pageProps} />
-          <GoogleTagManager gtmId={process.env.NEXT_PUBLIC_GA_TRACKING_ID!} />
         </Providers>
         <ReactQueryDevtools initialIsOpen={false} />
       </QueryClientProvider>

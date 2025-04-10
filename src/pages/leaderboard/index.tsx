@@ -1,13 +1,13 @@
 import {
   type TalentRankingSkills,
   type TalentRankingTimeframe,
-  type User,
 } from '@prisma/client';
 import { useQuery } from '@tanstack/react-query';
 import { type GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import { useEffect, useState, useTransition } from 'react';
 
+import { type PrismaUserWithoutKYC } from '@/interface/user';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { prisma } from '@/prisma';
@@ -167,12 +167,12 @@ export const getServerSideProps: GetServerSideProps = async ({
   if (page < 1) page = 1;
 
   const privyDid = await getPrivyToken(req);
-  let user: User | null = null;
+  let user: PrismaUserWithoutKYC | null = null;
 
   if (privyDid) {
-    user = await prisma.user.findUnique({
+    user = (await prisma.user.findUnique({
       where: { privyDid },
-    });
+    })) as PrismaUserWithoutKYC | null;
   }
 
   const PAGE_SIZE = 10;

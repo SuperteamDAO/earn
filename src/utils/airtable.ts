@@ -20,9 +20,10 @@ function airtableConfig(apiToken: string) {
   };
 }
 
-function airtableInsert(data: any[]) {
+function airtableInsert(data: any[], typecast?: boolean) {
   return {
     records: data,
+    ...(typecast ? { typecast: true } : {}),
   };
 }
 

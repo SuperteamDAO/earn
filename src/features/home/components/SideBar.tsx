@@ -46,11 +46,11 @@ export const HomeSideBar = ({ type }: SideBarProps) => {
   });
 
   return (
-    <div className="flex w-96 flex-col gap-10 py-4 pl-6">
+    <div className="flex w-96 flex-col gap-8 py-4 pl-6">
       {type === 'feed' && (
         <>
           <VibeCard />
-          <SidebarBanner />
+          {user?.location?.toLowerCase().includes('korea') && <SidebarBanner />}
           <LiveListings>
             <div className="flex items-center justify-between">
               <span className="text-sm font-medium text-gray-400">
@@ -58,7 +58,7 @@ export const HomeSideBar = ({ type }: SideBarProps) => {
               </span>
               <Link
                 href="/"
-                className="flex items-center text-xs font-semibold text-brand-purple"
+                className="text-brand-purple flex items-center text-xs font-semibold"
               >
                 View All
                 <MdArrowForward className="ml-1" />
@@ -78,8 +78,8 @@ export const HomeSideBar = ({ type }: SideBarProps) => {
             bountyCount={totals?.count}
             TVE={totals?.totalInUSD}
           />
+          {user?.location?.toLowerCase().includes('korea') && <SidebarBanner />}
           <HowItWorks />
-          <SidebarBanner />
           <RecentEarners earners={recentEarners} />
           <RecentActivity />
         </>

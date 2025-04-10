@@ -14,7 +14,7 @@ import { Header } from '@/features/navbar/components/Header';
 import {
   confirmModalAtom,
   draftQueueAtom,
-  hackathonAtom,
+  hackathonsAtom,
   isEditingAtom,
   isGodAtom,
   isSTAtom,
@@ -44,22 +44,22 @@ import { SponsorVerification } from './SponsorVerification';
 function ListingEditor({
   defaultListing,
   isDuplicating,
-  hackathon,
+  hackathons,
   isST,
   isGod,
 }: {
   defaultListing: ListingFormData;
   isDuplicating?: boolean;
-  hackathon?: Hackathon;
+  hackathons?: Hackathon[];
   isST: boolean;
   isGod: boolean;
 }) {
-  const form = useListingForm(defaultListing, hackathon);
+  const form = useListingForm(defaultListing, hackathons);
   useInitAtom(
     listingStatusAtom,
     defaultListing ? listingToStatus(defaultListing) : undefined,
   );
-  useInitAtom(hackathonAtom, hackathon);
+  useInitAtom(hackathonsAtom, hackathons);
   useInitAtom(isSTAtom, isST);
   useInitAtom(isGodAtom, isGod);
   useInitAtom(isEditingAtom, !!defaultListing.isPublished);
@@ -143,7 +143,7 @@ interface Props {
   isEditing?: boolean;
   isDuplicating?: boolean;
   listing?: Listing;
-  hackathon?: Hackathon;
+  hackathons?: Hackathon[];
 }
 
 // atom values wont be available here, will only exist in child of HydrateAtoms immeditealy
@@ -151,7 +151,7 @@ function ListingBuilderProvider({
   isEditing = false,
   isDuplicating,
   listing,
-  hackathon,
+  hackathons,
 }: Props) {
   const { user } = useUser();
   const isGod = user?.role === 'GOD';
@@ -165,7 +165,7 @@ function ListingBuilderProvider({
         isEditing: !!isEditing,
         isST: isST,
         type: (params?.get('type') as BountyType) || 'bounty',
-        hackathon: hackathon,
+        hackathons,
       });
 
   return (
@@ -175,7 +175,7 @@ function ListingBuilderProvider({
           [isEditingAtom, isEditing],
           [isGodAtom, isGod],
           [isSTAtom, isST],
-          [hackathonAtom, hackathon],
+          [hackathonsAtom, hackathons],
           [listingStatusAtom, listingToStatus(defaultListing)],
           [
             draftQueueAtom,
@@ -189,7 +189,7 @@ function ListingBuilderProvider({
         <ListingEditor
           defaultListing={defaultListing}
           isDuplicating={isDuplicating}
-          hackathon={hackathon}
+          hackathons={hackathons}
           isST={isST}
           isGod={isGod}
         />

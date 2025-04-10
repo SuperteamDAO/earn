@@ -15,7 +15,7 @@ export const useRejectSubmissions = (slug: string) => {
 
   return useMutation({
     mutationFn: async (submissionIds: string[]) => {
-      const batchSize = 10;
+      const batchSize = 50;
       for (let i = 0; i < submissionIds.length; i += batchSize) {
         const batch = submissionIds.slice(i, i + batchSize);
         await api.post(`/api/sponsor-dashboard/submission/reject`, {
@@ -60,6 +60,11 @@ export const useRejectSubmissions = (slug: string) => {
     onSuccess: (submissionIds) => {
       toast.success('Submissions rejected successfully');
 
+      setSelectedSubmission((prev) =>
+        prev && submissionIds.includes(prev.id)
+          ? { ...prev, status: 'Rejected' }
+          : prev,
+      );
       const submissions = queryClient.getQueryData<SubmissionWithUser[]>([
         'sponsor-submissions',
         slug,

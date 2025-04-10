@@ -86,6 +86,12 @@ export default async function bounties(
               },
             },
           },
+          where: {
+            isPublished: true,
+            status: 'OPEN',
+            isPrivate: false,
+            isActive: true,
+          },
         },
       },
     });

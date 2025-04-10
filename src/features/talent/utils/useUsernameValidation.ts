@@ -11,6 +11,7 @@ export const useUsernameValidation = (initialValue = '') => {
   const [username, setUsername] = useState(initialValue);
   const [isInvalid, setIsInvalid] = useState(false);
   const [validationErrorMessage, setValidationErrorMessage] = useState('');
+  const [validating, setValidating] = useState(false);
 
   const { user } = useUser();
 
@@ -29,18 +30,21 @@ export const useUsernameValidation = (initialValue = '') => {
     }
 
     try {
+      setValidating(true);
       const response = await api.get(`/api/user/username?username=${username}`);
       const available = response.data.available;
       setIsInvalid(!available);
       setValidationErrorMessage(
         available ? '' : 'Username is unavailable! Please try another one.',
       );
+      setValidating(false);
     } catch (error) {
       logger.error(error);
       setIsInvalid(true);
       setValidationErrorMessage(
         'An error occurred while checking username availability.',
       );
+      setValidating(false);
     }
   };
 
@@ -57,5 +61,11 @@ export const useUsernameValidation = (initialValue = '') => {
     }
   }, [username, user?.username]);
 
-  return { setUsername, isInvalid, validationErrorMessage, username };
+  return {
+    setUsername,
+    isInvalid,
+    validationErrorMessage,
+    username,
+    validating,
+  };
 };

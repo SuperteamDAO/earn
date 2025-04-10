@@ -1,3 +1,5 @@
+import { domPurify } from '@/lib/domPurify';
+
 import { HighQualityImage } from './HighQualityImage';
 import { Stars } from './Stars';
 
@@ -27,7 +29,7 @@ export function TestimonialCard({
         <Stars count={5} filled={stars} />
         <div
           className="text-[1.3rem] leading-[1.1] text-slate-600"
-          dangerouslySetInnerHTML={{ __html: message }}
+          dangerouslySetInnerHTML={{ __html: domPurify(message) }}
         />
         <div className="mt-auto flex items-center gap-2 pt-4">
           <div className="h-[2.1rem] w-[2.1rem] gap-6">

@@ -100,27 +100,26 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       if (submission.isWinner) {
         sortKey = Number(submission.winnerPosition);
       } else {
-        switch (submission.label) {
-          case 'Unreviewed':
-            sortKey = 400;
-            break;
-          case 'Shortlisted':
-            sortKey = 200;
-            break;
-          case 'Reviewed':
-            sortKey = submission.listing?.isWinnersAnnounced ? 300 : 600;
-            break;
-          case 'Spam':
-            sortKey = 1000;
-            break;
+        if (submission.status === 'Approved') {
+          sortKey = 100;
+        } else if (submission.status === 'Rejected') {
+          sortKey = 500;
+        } else if (submission.label === 'Shortlisted') {
+          sortKey = 200;
+        } else if (submission.label === 'Unreviewed') {
+          sortKey = 300;
+        } else if (submission.label === 'Reviewed') {
+          sortKey = 400;
+        } else if (submission.label === 'Spam') {
+          sortKey = 1000;
+        } else {
+          sortKey = 600;
         }
       }
-
       return { submission, sortKey };
     });
 
     submissionsWithSortKey.sort((a, b) => a.sortKey - b.sortKey);
-
     const sortedSubmissions = submissionsWithSortKey.map(
       (item) => item.submission,
     );

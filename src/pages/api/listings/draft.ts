@@ -2,6 +2,7 @@ import { type Prisma } from '@prisma/client';
 import { franc } from 'franc';
 import { type NextApiResponse } from 'next';
 
+import earncognitoClient from '@/lib/earncognitoClient';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { cleanSkills } from '@/utils/cleanSkills';
@@ -133,10 +134,16 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       skills: cleanedSkills as Prisma.InputJsonValue,
       language,
       sponsorId: userSponsorId,
-      pocId: userId,
       isFndnPaying,
       hackathonId,
       referredBy,
+      ...(!listing
+        ? {
+            pocId: userId,
+          }
+        : {
+            pocId: listing.pocId,
+          }),
     };
 
     const result = id
@@ -149,6 +156,22 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         });
 
     logger.debug(`Draft saved successfully: ${result.id}`);
+
+    if (result.status === 'VERIFYING') {
+      try {
+        logger.info('Updating Discord Verification message', {
+          id,
+        });
+        await earncognitoClient.post(`/discord/verify-listing/initiate`, {
+          listingId: result.id,
+        });
+        logger.info('Updated Discord Verification message', {
+          id,
+        });
+      } catch (err) {
+        logger.error('Failed to update Verification Message to discord', err);
+      }
+    }
 
     return res.status(200).json(result);
   } catch (error) {

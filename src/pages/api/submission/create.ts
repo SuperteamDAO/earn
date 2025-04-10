@@ -6,7 +6,7 @@ import { safeStringify } from '@/utils/safeStringify';
 
 import { type NextApiRequestWithUser } from '@/features/auth/types';
 import { withAuth } from '@/features/auth/utils/withAuth';
-import { sendEmailNotification } from '@/features/emails/utils/sendEmailNotification';
+import { queueEmail } from '@/features/emails/utils/queueEmail';
 import { submissionSchema } from '@/features/listings/utils/submissionFormSchema';
 import { validateSubmissionRequest } from '@/features/listings/utils/validateSubmissionRequest';
 import { extractSocialUsername } from '@/features/social/utils/extractUsername';
@@ -97,7 +97,7 @@ async function submission(req: NextApiRequestWithUser, res: NextApiResponse) {
       listing,
     );
 
-    sendEmailNotification({
+    await queueEmail({
       type: 'submissionTalent',
       id: listingId,
       userId: userId as string,

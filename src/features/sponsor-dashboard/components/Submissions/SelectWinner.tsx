@@ -1,6 +1,6 @@
 import { useAtom } from 'jotai';
 import { X } from 'lucide-react';
-import { type Dispatch, type SetStateAction, useMemo } from 'react';
+import { useMemo } from 'react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -11,7 +11,6 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { useDisclosure } from '@/hooks/use-disclosure';
-import type { SubmissionWithUser } from '@/interface/submission';
 import { cn } from '@/utils/cn';
 import { cleanRewards, getRankLabels, sortRank } from '@/utils/rank';
 
@@ -25,21 +24,15 @@ import { RejectSubmissionModal } from './Modals/RejectModal';
 
 interface Props {
   bounty: Listing | undefined;
-  submissions: SubmissionWithUser[];
   usedPositions: number[];
   isHackathonPage?: boolean;
-  setRemainings: Dispatch<
-    SetStateAction<{ podiums: number; bonus: number } | null>
-  >;
   onWinnersAnnounceOpen: () => void;
   isMultiSelectOn: boolean;
 }
 
 export const SelectWinner = ({
   bounty,
-  submissions,
   usedPositions,
-  setRemainings,
   isHackathonPage,
   onWinnersAnnounceOpen,
   isMultiSelectOn,
@@ -58,12 +51,7 @@ export const SelectWinner = ({
     onClose: rejectedOnClose,
   } = useDisclosure();
 
-  const { mutateAsync: toggleWinner } = useToggleWinner(
-    bounty,
-    submissions,
-    setRemainings,
-    usedPositions,
-  );
+  const { mutateAsync: toggleWinner } = useToggleWinner(bounty);
 
   const rejectSubmissions = useRejectSubmissions(bounty?.slug || '');
 
@@ -74,11 +62,13 @@ export const SelectWinner = ({
 
   const selectWinner = async (position: number, id: string | undefined) => {
     if (!id) return;
-    toggleWinner({
-      id,
-      isWinner: !!position,
-      winnerPosition: position || null,
-    });
+    toggleWinner([
+      {
+        id,
+        isWinner: !!position,
+        winnerPosition: position || null,
+      },
+    ]);
   };
 
   const isValueSelected = useMemo(
@@ -118,7 +108,11 @@ export const SelectWinner = ({
         ) : (
           <div className="relative">
             <Select
-              disabled={!!bounty?.isWinnersAnnounced || isHackathonPage}
+              disabled={
+                !!bounty?.isWinnersAnnounced ||
+                isHackathonPage ||
+                isMultiSelectOn
+              }
               onValueChange={(value) =>
                 selectWinner(Number(value), selectedSubmission?.id)
               }
@@ -130,7 +124,7 @@ export const SelectWinner = ({
             >
               <SelectTrigger
                 className={cn(
-                  'h-10 w-40 border-slate-300 font-medium capitalize text-slate-700',
+                  'h-10 w-40 border-slate-300 font-medium text-slate-700 capitalize',
                   'focus:border-brand-purple focus:ring-brand-purple',
                 )}
               >
@@ -168,17 +162,19 @@ export const SelectWinner = ({
               </SelectContent>
             </Select>
             {isValueSelected && (
-              <div
-                className="absolute right-8 top-1/2 z-10 -translate-y-1/2 cursor-pointer"
+              <button
+                className="absolute top-1/2 right-8 z-10 -translate-y-1/2 cursor-pointer disabled:cursor-not-allowed"
                 onClick={(e) => {
                   e.stopPropagation();
+                  if (isMultiSelectOn) return;
                   selectWinner(0, selectedSubmission?.id);
                 }}
+                disabled={isMultiSelectOn}
               >
                 <div className="flex h-4 w-4 items-center justify-center rounded-full bg-red-100 text-red-400 hover:bg-red-200">
                   <X className="h-2.5 w-2.5" />
                 </div>
-              </div>
+              </button>
             )}
           </div>
         )}

@@ -11,7 +11,7 @@ import { dayjs } from '@/utils/dayjs';
 
 import {
   draftQueueAtom,
-  hackathonAtom,
+  hackathonsAtom,
   hideAutoSaveAtom,
   isDraftSavingAtom,
   isEditingAtom,
@@ -37,7 +37,7 @@ interface UseListingFormReturn extends UseFormReturn<ListingFormData> {
 
 export const useListingForm = (
   defaultValues?: ListingFormData,
-  hackathon?: Hackathon,
+  hackathons?: Hackathon[],
 ): UseListingFormReturn => {
   let formMethods: UseFormReturn<ListingFormData> | null = null;
   let isNewFormInitialized = false;
@@ -53,14 +53,14 @@ export const useListingForm = (
   const isEditing = useAtomValue(isEditingAtom);
   const isST = useAtomValue(isSTAtom);
 
-  const hackathonAtomed = useAtomValue(hackathonAtom);
-  hackathon = hackathon || hackathonAtomed;
+  const hackathonsAtomed = useAtomValue(hackathonsAtom);
+  hackathons = hackathons || hackathonsAtomed;
   const formSchema = createListingFormSchema({
     isGod,
     isEditing,
     isST,
     pastListing: defaultValues as any,
-    hackathon: hackathon,
+    hackathons: hackathons,
   });
   if (!formMethods || !Object.keys(formMethods).length) {
     //eslint-disable-next-line
@@ -146,6 +146,7 @@ export const useListingForm = (
   }, [processSaveQueue]);
 
   const onChange = useCallback(() => {
+    console.trace('Draft save triggered from:');
     setHideAutoSave(true);
     if (!isEditing) debouncedSaveRef.current?.();
   }, [isEditing]);
@@ -164,8 +165,9 @@ export const useListingForm = (
       isGod,
       isEditing,
       isST,
-      hackathon,
+      hackathons,
       type: getValues().type,
+      hackathonId: getValues().hackathonId || undefined,
     });
     reset({
       ...getValues(),
@@ -198,7 +200,7 @@ export const useListingForm = (
       const partialSchema = innerSchema
         .pick(fields)
         .superRefine((data, ctx) => {
-          createListingRefinements(data as any, ctx, hackathon);
+          createListingRefinements(data as any, ctx, hackathons);
         });
 
       try {

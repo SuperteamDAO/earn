@@ -19,7 +19,11 @@ import { usernameRandomQuery } from '@/features/talent/queries/random-username';
 import { type NewTalentFormData } from '@/features/talent/schema';
 import { useUsernameValidation } from '@/features/talent/utils/useUsernameValidation';
 
-export function UsernameField() {
+export function UsernameField({
+  setUsernameValidating,
+}: {
+  setUsernameValidating: (val: boolean) => void;
+}) {
   const form = useFormContext<NewTalentFormData>();
   const {
     control,
@@ -30,13 +34,26 @@ export function UsernameField() {
   } = form;
 
   const { user } = useUser();
-  const { setUsername, isInvalid, validationErrorMessage, username } =
-    useUsernameValidation();
+  const {
+    setUsername,
+    isInvalid,
+    validationErrorMessage,
+    username,
+    validating,
+  } = useUsernameValidation();
   const [isUsernameTyping, setIsUsernameTyping] = useState(false);
   const debouncedSetIsUsernameTyping = useRef(
     debounce(setIsUsernameTyping, 500),
   ).current;
   const debouncedSetUsername = useRef(debounce(setUsername, 500)).current;
+
+  useEffect(() => {
+    if (isUsernameTyping || validating) {
+      setUsernameValidating(true);
+    } else {
+      setUsernameValidating(false);
+    }
+  }, [isUsernameTyping, validating]);
 
   useEffect(() => {
     async function validateUsername() {
@@ -81,7 +98,7 @@ export function UsernameField() {
           <FormLabel isRequired>Username</FormLabel>
           <FormControl>
             <div className="relative flex">
-              <span className="flex items-center rounded-l-md border border-input bg-slate-50 px-2.5 pb-1 text-slate-400 shadow-sm">
+              <span className="border-input flex items-center rounded-l-md border bg-slate-50 px-2.5 pb-1 text-slate-400 shadow-xs">
                 @
               </span>
               <Input
@@ -102,7 +119,7 @@ export function UsernameField() {
                 field.value !== '' && (
                   <span
                     className={cn(
-                      'absolute right-2 top-2 flex h-5 w-5 scale-75 items-center rounded-full bg-emerald-500 p-1 text-background',
+                      'text-background absolute top-2 right-2 flex h-5 w-5 scale-75 items-center rounded-full bg-emerald-500 p-1',
                     )}
                   >
                     <CheckIcon className="h-full w-full stroke-[3px]" />

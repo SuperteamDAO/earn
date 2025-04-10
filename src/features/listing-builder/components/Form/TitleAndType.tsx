@@ -27,7 +27,7 @@ import {
 
 import { getListingIcon } from '@/features/listings/utils/getListingIcon';
 
-import { hackathonAtom, isEditingAtom } from '../../atoms';
+import { hackathonsAtom, isEditingAtom } from '../../atoms';
 import { useListingForm } from '../../hooks';
 import { slugCheckQuery } from '../../queries/slug-check';
 import { calculateTotalRewardsForPodium } from '../../utils/rewards';
@@ -63,10 +63,13 @@ export function TitleAndType() {
     });
   }, [debouncedTitle]);
 
-  const queryEnabled = useMemo(
-    () => !!(!!slugifiedTitle && !isEditing),
-    [slugifiedTitle, isEditing],
-  );
+  const { dirtyFields } = form.formState;
+  const isTitleDirty = dirtyFields.title;
+
+  const queryEnabled = useMemo(() => {
+    return !!(!!slugifiedTitle && !isEditing && isTitleDirty);
+  }, [slugifiedTitle, isEditing, isTitleDirty]);
+
   const slugCheckQueryResult = useMemo(() => {
     return slugCheckQuery({
       slug: slugifiedTitle,
@@ -83,14 +86,14 @@ export function TitleAndType() {
   });
 
   useEffect(() => {
-    if (generatedSlugValidated?.data.slug) {
+    if (generatedSlugValidated?.data.slug && isTitleDirty) {
       form.setValue('slug', generatedSlugValidated.data.slug, {
         shouldValidate: true,
         shouldDirty: true,
       });
       form.saveDraft();
     }
-  }, [generatedSlugValidated]);
+  }, [generatedSlugValidated, isTitleDirty]);
 
   return (
     <FormField
@@ -100,7 +103,7 @@ export function TitleAndType() {
         return (
           <FormItem className="gap-2">
             <FormLabel isRequired>Listing Title</FormLabel>
-            <div className="flex w-full rounded-md border ring-primary has-[:focus]:ring-1">
+            <div className="ring-primary flex w-full rounded-md border has-focus:ring-1">
               <Type />
               <FormControl>
                 <Input
@@ -122,7 +125,7 @@ export function TitleAndType() {
                 ) : (
                   !isEditing &&
                   suggestions.length > 0 && (
-                    <div className="flex flex-shrink gap-1 text-[0.7rem] font-medium italic text-emerald-600">
+                    <div className="flex shrink gap-1 text-[0.7rem] font-medium text-emerald-600 italic">
                       <p className="w-max">Reference Listings:</p>
                       <div className="flex flex-wrap items-center gap-x-1.5">
                         {suggestions.map((suggestion, index) => (
@@ -152,7 +155,7 @@ export function TitleAndType() {
                   )
                 )}
               </div>
-              <div className="shrink-0 whitespace-nowrap text-right text-xs text-slate-400">
+              <div className="shrink-0 text-right text-xs whitespace-nowrap text-slate-400">
                 {100 - (title?.length || 0)} characters left
               </div>
             </div>
@@ -166,8 +169,15 @@ export function TitleAndType() {
 function Type() {
   const form = useListingForm();
   const isEditing = useAtomValue(isEditingAtom);
-  const hackathon = useAtomValue(hackathonAtom);
+  const hackathons = useAtomValue(hackathonsAtom);
   const [prevCompType, setPrevCompType] = useState<CompensationType>('fixed');
+  const hackathonId = useWatch({
+    name: 'hackathonId',
+    control: form.control,
+  });
+  const currentHackathon = useMemo(() => {
+    return hackathons?.find((h) => h.id === hackathonId);
+  }, [hackathonId, hackathons]);
   return (
     <FormField
       name="type"
@@ -180,12 +190,14 @@ function Type() {
                 value={field.value}
                 disabled={isEditing}
                 onValueChange={(e) => {
-                  field.onChange(e);
-                  if (e === 'hackathon') {
-                    if (hackathon) {
+                  if (e !== 'bounty' && e !== 'project') {
+                    field.onChange('hackathon');
+                    const hackathon = hackathons?.find((s) => s.slug === e);
+                    if (!!hackathon) {
                       form.setValue('hackathonId', hackathon.id);
                     }
                   } else {
+                    field.onChange(e);
                     form.setValue('hackathonId', undefined);
                   }
                   const values = form.getValues();
@@ -213,7 +225,22 @@ function Type() {
               >
                 <SelectTrigger className="h-full w-32 rounded-none border-0 border-r focus:ring-0">
                   <div className="flex items-center gap-2">
-                    <SelectValue />
+                    {field.value !== 'hackathon' ? (
+                      <SelectValue />
+                    ) : (
+                      <SelectValue>
+                        <div className="flex items-center gap-2 text-xs">
+                          <LocalImage
+                            src={getListingIcon('hackathon')}
+                            alt={'hackahton'}
+                            className="h-4 w-4"
+                          />
+                          <span className="max-w-20 truncate">
+                            {currentHackathon?.name}
+                          </span>
+                        </div>
+                      </SelectValue>
+                    )}
                   </div>
                 </SelectTrigger>
                 <SelectContent>
@@ -229,8 +256,8 @@ function Type() {
                       </div>
                     </SelectItem>
                   ))}
-                  {hackathon && (
-                    <SelectItem key={'hackathon'} value={'hackathon'}>
+                  {hackathons?.map((hackathon) => (
+                    <SelectItem key={hackathon.id} value={hackathon.slug}>
                       <div className="flex items-center gap-2 text-xs">
                         <LocalImage
                           src={getListingIcon('hackathon')}
@@ -242,7 +269,7 @@ function Type() {
                         </span>
                       </div>
                     </SelectItem>
-                  )}
+                  ))}
                 </SelectContent>
               </Select>
             </FormControl>

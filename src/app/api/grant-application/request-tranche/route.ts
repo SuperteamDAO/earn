@@ -32,7 +32,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const tranche = await createTranche({
+    await createTranche({
       applicationId,
       helpWanted,
       update: projectUpdate,
@@ -40,7 +40,6 @@ export async function POST(request: Request) {
 
     return NextResponse.json({
       message: 'Tranche requested successfully',
-      tranche,
     });
   } catch (error: any) {
     return NextResponse.json(

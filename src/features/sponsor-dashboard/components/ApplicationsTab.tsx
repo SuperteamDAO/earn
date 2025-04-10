@@ -41,7 +41,7 @@ export const ApplicationsTab = ({ slug }: Props) => {
     SubmissionLabels | GrantApplicationStatus | undefined
   >(undefined);
 
-  const params = { searchText, length: 20, skip: 0, filterLabel };
+  const params = { searchText, length: 20, skip, filterLabel };
 
   const [applications, setApplications] = useAtom(applicationsAtom);
 
@@ -174,6 +174,7 @@ export const ApplicationsTab = ({ slug }: Props) => {
       const newApplications = queryClient.getQueryData<GrantApplicationsReturn>(
         ['sponsor-applications', slug, { ...params, skip: newSkip }],
       );
+      setApplications(newApplications?.data || []);
 
       if (newApplications && newApplications.count > 0) {
         if (selectIndex === -1) {
@@ -358,6 +359,10 @@ export const ApplicationsTab = ({ slug }: Props) => {
       );
     },
     onSuccess: (_, applicationIds) => {
+      queryClient.invalidateQueries({
+        queryKey: ['sponsor-applications', slug],
+      });
+
       queryClient.setQueryData<GrantApplicationsReturn>(
         ['sponsor-applications', slug, params],
         (old) => {
@@ -480,6 +485,11 @@ export const ApplicationsTab = ({ slug }: Props) => {
       );
       toast.error('Failed to reject grant. Please try again.');
     },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['sponsor-applications', slug],
+      });
+    },
   });
 
   const approveGrantMutation = useMutation({
@@ -539,6 +549,11 @@ export const ApplicationsTab = ({ slug }: Props) => {
 
       return { previousApplications };
     },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['sponsor-applications', slug],
+      });
+    },
     onError: (_, __, context) => {
       queryClient.setQueryData<GrantApplicationsReturn>(
         ['sponsor-applications', grant?.slug, params],
@@ -580,7 +595,7 @@ export const ApplicationsTab = ({ slug }: Props) => {
             />
           </div>
 
-          <div className="h-full w-full rounded-r-xl border-b border-r border-t border-slate-200 bg-white">
+          <div className="h-full w-full rounded-r-xl border-t border-r border-b border-slate-200 bg-white">
             {!applications?.length && !searchText && !isApplicationsLoading ? (
               <>
                 <ExternalImage

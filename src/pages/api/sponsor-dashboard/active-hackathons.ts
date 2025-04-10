@@ -2,13 +2,12 @@ import { type NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
-import { dayjs } from '@/utils/dayjs';
 
 import { type NextApiRequestWithSponsor } from '@/features/auth/types';
 import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
 
 async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
-  if (!req.hackathonId) {
+  if (req.role !== 'GOD' && !req.hackathonId) {
     logger.warn(`User ${req.userId} has no Hackathon ID`);
     return res.status(400).json({
       message: 'User has no Hackathon ID',
@@ -17,9 +16,18 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   }
 
   try {
-    const hackathon = await prisma.hackathon.findUnique({
+    const now = new Date();
+    const hackathons = await prisma.hackathon.findMany({
       where: {
-        id: req.hackathonId,
+        ...(req.role !== 'GOD'
+          ? {
+              id: req.hackathonId,
+            }
+          : {}),
+        deadline: {
+          not: null,
+          gt: now,
+        },
       },
       select: {
         id: true,
@@ -31,31 +39,15 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         eligibility: true,
       },
     });
-    if (!hackathon) {
+    if (!hackathons) {
       logger.warn(`Hackathon with ID ${req.hackathonId} does not exist`);
       return res.status(400).json({
         message: `Hackathon with ID ${req.hackathonId} does not exist`,
         error: `Hackathon with ID ${req.hackathonId} does not exist`,
       });
     }
-    if (!hackathon.deadline) {
-      logger.warn(
-        `Hackathon with ID ${req.hackathonId} does not has a deadline`,
-      );
-      return res.status(400).json({
-        message: `Hackathon with ID ${req.hackathonId} does not has a deadline`,
-        error: `Hackathon with ID ${req.hackathonId} does not has a deadline`,
-      });
-    }
-    if (dayjs(hackathon.deadline).isBefore(dayjs())) {
-      logger.warn(`Hackathon with ID ${req.hackathonId} is past deadline`);
-      return res.status(400).json({
-        message: `Hackathon with ID ${req.hackathonId} is past deadline`,
-        error: `Hackathon with ID ${req.hackathonId} is past deadline`,
-      });
-    }
 
-    return res.status(200).json(hackathon);
+    return res.status(200).json(hackathons);
   } catch (error: any) {
     logger.error('Error looking for active hackathon', error);
     return res.status(500).json({

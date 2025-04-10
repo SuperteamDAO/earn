@@ -265,7 +265,7 @@ export function DateTimePicker({
         ) : (
           <div
             className={cn(
-              'flex h-9 w-full cursor-pointer items-center rounded-md border border-input pe-1 ps-3 text-sm font-normal shadow-sm',
+              'border-input flex h-9 w-full cursor-pointer items-center rounded-md border ps-3 pe-1 text-sm font-normal shadow-xs',
               !displayValue && 'text-muted-foreground',
               (!clearable || !value) && 'pe-3',
               disabled && 'pointer-events-none cursor-not-allowed opacity-50',
@@ -273,7 +273,7 @@ export function DateTimePicker({
             )}
             tabIndex={0}
           >
-            <div className="flex flex-grow items-center">
+            <div className="flex grow items-center">
               <CalendarIcon className="mr-2 size-4" />
               {dislayFormat}
             </div>
@@ -375,7 +375,7 @@ export function DateTimePicker({
                           ? minDateTooltipContent
                           : maxDateTooltipContent
                       }
-                      contentProps={{ className: 'max-w-56 text-center' }}
+                      contentProps={{ className: 'max-w-56 text-center z-100' }}
                     >
                       <div {...props} />
                     </Tooltip>
@@ -417,7 +417,7 @@ export function DateTimePicker({
           />
           <div
             className={cn(
-              'absolute bottom-0 left-0 right-0 top-0',
+              'absolute top-0 right-0 bottom-0 left-0',
               monthYearPicker ? 'bg-popover' : 'hidden',
             )}
           ></div>
@@ -428,7 +428,7 @@ export function DateTimePicker({
             minDate={minDate}
             maxDate={maxDate}
             className={cn(
-              'absolute bottom-0 left-0 right-0 top-0',
+              'absolute top-0 right-0 bottom-0 left-0',
               monthYearPicker ? '' : 'hidden',
             )}
           />
@@ -866,8 +866,8 @@ function TimePicker({
         <div className="flex-col gap-2 p-2">
           <div className="flex h-56 grow">
             {(!timePicker || timePicker.hour) && (
-              <ScrollArea className="h-full flex-grow">
-                <div className="flex grow flex-col items-stretch overflow-y-auto pb-48 pe-2">
+              <ScrollArea className="h-full grow">
+                <div className="flex grow flex-col items-stretch overflow-y-auto pe-2 pb-48">
                   {hours.map((v) => (
                     <div
                       key={v.value}
@@ -886,8 +886,8 @@ function TimePicker({
               </ScrollArea>
             )}
             {(!timePicker || timePicker.minute) && (
-              <ScrollArea className="h-full flex-grow">
-                <div className="flex grow flex-col items-stretch overflow-y-auto pb-48 pe-2">
+              <ScrollArea className="h-full grow">
+                <div className="flex grow flex-col items-stretch overflow-y-auto pe-2 pb-48">
                   {minutes.map((v) => (
                     <div
                       key={v.value}
@@ -906,8 +906,8 @@ function TimePicker({
               </ScrollArea>
             )}
             {(!timePicker || timePicker.second) && !hideSeconds && (
-              <ScrollArea className="h-full flex-grow">
-                <div className="flex grow flex-col items-stretch overflow-y-auto pb-48 pe-2">
+              <ScrollArea className="h-full grow">
+                <div className="flex grow flex-col items-stretch overflow-y-auto pe-2 pb-48">
                   {seconds.map((v) => (
                     <div
                       key={v.value}
@@ -926,7 +926,7 @@ function TimePicker({
               </ScrollArea>
             )}
             {use12HourFormat && (
-              <ScrollArea className="h-full flex-grow">
+              <ScrollArea className="h-full grow">
                 <div className="flex grow flex-col items-stretch overflow-y-auto pe-2">
                   {ampmOptions.map((v) => (
                     <TimeItem
@@ -964,7 +964,7 @@ const TimeItem = ({
   return (
     <Button
       variant="ghost"
-      className={cn('flex justify-center px-1 pe-2 ps-1', className)}
+      className={cn('flex justify-center px-1 ps-1 pe-2', className)}
       onClick={() => onSelect(option)}
       disabled={disabled}
     >

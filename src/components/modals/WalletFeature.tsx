@@ -3,6 +3,8 @@ import React from 'react';
 import { GrTransaction } from 'react-icons/gr';
 import { MdOutlineLock } from 'react-icons/md';
 
+import { domPurify } from '@/lib/domPurify';
+
 import { Button } from '../ui/button';
 import { ExternalImage } from '../ui/cloudinary-image';
 
@@ -17,14 +19,14 @@ const Point = ({
 }) => {
   return (
     <div className="flex gap-8">
-      <div className="mt-1 text-brand-purple">{icon}</div>
+      <div className="text-brand-purple mt-1">{icon}</div>
       <div>
         <p className="text-base font-medium tracking-tight text-slate-700">
           {title}
         </p>
         <p
           className="text-sm text-slate-500"
-          dangerouslySetInnerHTML={{ __html: description }}
+          dangerouslySetInnerHTML={{ __html: domPurify(description) }}
         />
       </div>
     </div>

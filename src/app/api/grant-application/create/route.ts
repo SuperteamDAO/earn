@@ -9,7 +9,7 @@ import { dayjs } from '@/utils/dayjs';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { getUserSession } from '@/features/auth/utils/getUserSession';
-import { sendEmailNotification } from '@/features/emails/utils/sendEmailNotification';
+import { queueEmail } from '@/features/emails/utils/queueEmail';
 import { grantApplicationSchema } from '@/features/grants/utils/grantApplicationSchema';
 import { syncGrantApplicationWithAirtable } from '@/features/grants/utils/syncGrantApplicationWithAirtable';
 import { validateGrantRequest } from '@/features/grants/utils/validateGrantRequest';
@@ -142,9 +142,9 @@ export async function POST(request: NextRequest) {
 
     waitUntil(
       (async () => {
-        if (grant.isNative === true) {
+        if (grant.isNative === true || !!grant.airtableId) {
           try {
-            sendEmailNotification({
+            await queueEmail({
               type: 'application',
               id: result.id,
               userId: userId,

@@ -173,9 +173,6 @@ export default function BountySubmissions({ listing }: Props) {
               totalWinners={totalWinners || 0}
               totalPaymentsMade={totalPaymentsMade || 0}
               bounty={bounty}
-              usedPositions={usedPositions || []}
-              setRemainings={setRemainings}
-              submissions={submissions || []}
             />
           )}
           <SubmissionHeader
@@ -230,10 +227,11 @@ export default function BountySubmissions({ listing }: Props) {
                       submissions={paginatedSubmissions}
                       setSearchText={setSearchText}
                       type={bounty?.type}
+                      isMultiSelectDisabled
                     />
                   </div>
 
-                  <div className="h-full w-full rounded-r-xl border-b border-r border-t border-slate-200 bg-white">
+                  <div className="h-full w-full rounded-r-xl border-t border-r border-b border-slate-200 bg-white">
                     {!paginatedSubmissions?.length &&
                     !searchText &&
                     !isSubmissionsLoading ? (
@@ -255,7 +253,6 @@ export default function BountySubmissions({ listing }: Props) {
                     ) : (
                       <SubmissionPanel
                         remainings={remainings}
-                        setRemainings={setRemainings}
                         bounty={bounty}
                         submissions={paginatedSubmissions}
                         usedPositions={usedPositions || []}
