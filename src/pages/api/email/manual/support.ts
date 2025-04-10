@@ -40,8 +40,8 @@ export default async function handler(
 
     logger.info('Sending Support Request Email');
     const { data, error } = await resend.emails.send({
-      from: 'Support Form <no-reply@superteamearn.com>',
-      to: ['jayeshpotlabattini@gmail.com'],
+      from: `Earn Support Form <support-form@superteamearn.com>`,
+      to: ['support@superteamearn.com'],
       replyTo: email,
       subject: `Support Request: ${subject}`,
       react: supportEmailTemplate({ from: email, subject, description }),
