@@ -1,5 +1,4 @@
 import { Check, ChevronDown, CopyIcon } from 'lucide-react';
-import { toast } from 'sonner';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -11,6 +10,7 @@ import {
   CommandItem,
   CommandList,
 } from '@/components/ui/command';
+import { CopyButton } from '@/components/ui/copy-tooltip';
 import {
   FormControl,
   FormField,
@@ -24,7 +24,6 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { tokenList } from '@/constants/tokenList';
-import { useClipboard } from '@/hooks/use-clipboard';
 import { cn } from '@/utils/cn';
 
 import { useListingForm } from '../../../../hooks';
@@ -32,7 +31,6 @@ import { TokenLabel } from './TokenLabel';
 
 export function TokenSelect() {
   const form = useListingForm();
-  const clipboard = useClipboard('support@superteamearn.com');
   return (
     <FormField
       name="token"
@@ -73,7 +71,7 @@ export function TokenSelect() {
                 <CommandList>
                   <CommandEmpty className="flex flex-col gap-2 py-8 text-center">
                     <p>{`Don't see your token?`}</p>
-                    <p className="mx-auto w-1/2 sm:text-[11px]">
+                    <p className="mx-auto w-1/2 sm:text-[0.6875rem]">
                       {`Send us your token's`}{' '}
                       <a
                         target="_blank"
@@ -83,17 +81,22 @@ export function TokenSelect() {
                         CoinMarketCap
                       </a>{' '}
                       link at
-                      <Badge
-                        variant="secondary"
-                        className="border-border mx-1 my-0.5 inline-flex cursor-pointer items-center gap-1 px-1 text-slate-500 sm:text-[11px]"
-                        onClick={() => {
-                          clipboard.onCopy();
-                          toast.success('Email Address copied to clipboard!');
+                      <CopyButton
+                        text="support@superteamearn.com"
+                        contentProps={{
+                          side: 'left',
+                          className: 'text-[0.6875rem] px-2 py-0.5',
                         }}
+                        content="Click to copy"
                       >
-                        support@superteamearn.com
-                        <CopyIcon className="h-3 w-3" />
-                      </Badge>
+                        <Badge
+                          variant="secondary"
+                          className="border-border mx-1 my-0.5 inline-flex cursor-pointer items-center gap-1 px-1 text-slate-500 sm:text-[11px]"
+                        >
+                          support@superteamearn.com
+                          <CopyIcon className="h-3 w-3" />
+                        </Badge>
+                      </CopyButton>
                       to get it added.
                     </p>
                   </CommandEmpty>
