@@ -17,7 +17,7 @@ import { DescriptionUI } from '@/features/listings/components/ListingPage/Descri
 import { type Listing } from '@/features/listings/types';
 
 import { selectedSubmissionAtom } from '../../atoms';
-import { InfoBox } from '../InfoBox';
+import { InfoBox, parseHtml } from '../InfoBox';
 import { Notes } from './Notes';
 
 interface Props {
@@ -133,19 +133,8 @@ export const Details = ({ bounty, externalView, atom }: Props) => {
         {selectedSubmission?.eligibilityAnswers &&
           selectedSubmission.eligibilityAnswers.map(
             (answer: any, i: number) => {
-              if (
-                selectedSubmission.listing?.eligibility?.[i]?.type ===
-                'paragraph'
-              ) {
-                return (
-                  <div className="mb-4" key={answer.question}>
-                    <p className="mt-1 text-xs font-semibold uppercase text-slate-400">
-                      {answer.question}
-                    </p>
-                    <DescriptionUI description={answer.answer} />
-                  </div>
-                );
-              }
+              const description =
+                selectedSubmission.listing?.eligibility?.[i]?.description;
               if (
                 selectedSubmission.listing?.eligibility?.[i]?.type ===
                 'checkbox'
@@ -169,12 +158,32 @@ export const Details = ({ bounty, externalView, atom }: Props) => {
               }
 
               return (
-                <InfoBox
-                  key={answer.question}
-                  label={answer.question}
-                  content={answer.answer}
-                  isHtml
-                />
+                <div key={answer.question} className="mb-4">
+                  <p className="mt-1 flex items-center gap-1 text-xs font-semibold uppercase text-slate-400">
+                    {answer.question}
+                    {description && (
+                      <Tooltip
+                        content={description}
+                        contentProps={{
+                          className: 'whitespace-pre-wrap text-wrap',
+                        }}
+                      >
+                        <Info className="size-3 text-slate-300 hover:text-slate-400" />
+                      </Tooltip>
+                    )}
+                  </p>
+                  {selectedSubmission.listing?.eligibility?.[i]?.type ===
+                  'paragraph' ? (
+                    <DescriptionUI description={answer.answer} />
+                  ) : (
+                    <div
+                      id="reset-des"
+                      className={cn('h-full w-full overflow-visible')}
+                    >
+                      {parseHtml(answer.answer)}
+                    </div>
+                  )}
+                </div>
               );
             },
           )}

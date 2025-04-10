@@ -12,6 +12,10 @@ const options: HTMLReactParserOptions = {
   },
 };
 
+export function parseHtml(content: string) {
+  return parse(content || '', options);
+}
+
 export const InfoBox = ({
   label,
   content,

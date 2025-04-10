@@ -77,6 +77,7 @@ interface Eligibility {
   type?: 'text' | 'link' | 'paragraph' | 'checkbox';
   optional?: boolean;
   isLink?: boolean;
+  description?: string;
 }
 
 export interface References {

@@ -47,6 +47,7 @@ export const createListingFormSchema = ({
     order: z.number(),
     question: z.string().trim().min(1, 'Please add your question').max(256),
     type: z.enum(['text', 'link', 'paragraph', 'checkbox']),
+    description: z.string().optional().nullable(),
   });
 
   const rewardsSchema = z
@@ -363,6 +364,22 @@ export const createListingRefinements = async (
       message: 'Any token is only allowed for variable compensation',
       path: ['token'],
     });
+  }
+
+  if (data.eligibility && data.eligibility.length > 0) {
+    for (const [index, question] of data.eligibility.entries()) {
+      if (
+        question.type === 'checkbox' &&
+        question.description &&
+        question.description !== ''
+      ) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Description is forbidden for checkbox questions',
+          path: [`eligibility.${index}.question`],
+        });
+      }
+    }
   }
 
   if (data.type === 'hackathon' && data.deadline) {

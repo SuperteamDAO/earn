@@ -441,6 +441,11 @@ export const SubmissionDrawer = ({
                             <FormItem className={cn('flex flex-col gap-2')}>
                               <div>
                                 <FormLabel isRequired>{e.question}</FormLabel>
+                                {e.description && (
+                                  <FormDescription className="whitespace-pre-wrap text-wrap">
+                                    {e.description}
+                                  </FormDescription>
+                                )}
                               </div>
                               <div>
                                 <FormControl>
