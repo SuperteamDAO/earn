@@ -6,6 +6,8 @@ import { safeStringify } from '@/utils/safeStringify';
 
 import { type NextApiRequestWithUser } from '@/features/auth/types';
 import { withAuth } from '@/features/auth/utils/withAuth';
+import { consumeCredit } from '@/features/credits/utils/allocateCredits';
+import { canUserSubmit } from '@/features/credits/utils/canUserSubmit';
 import { queueEmail } from '@/features/emails/utils/queueEmail';
 import { submissionSchema } from '@/features/listings/utils/submissionFormSchema';
 import { validateSubmissionRequest } from '@/features/listings/utils/validateSubmissionRequest';
@@ -67,6 +69,14 @@ async function createSubmission(
 
 async function submission(req: NextApiRequestWithUser, res: NextApiResponse) {
   const { userId } = req;
+
+  if (!userId) {
+    return res.status(401).json({
+      error: 'Unauthorized',
+      message: 'You must be logged in to submit a listing.',
+    });
+  }
+
   const {
     listingId,
     link,
@@ -90,12 +100,30 @@ async function submission(req: NextApiRequestWithUser, res: NextApiResponse) {
       listingId,
     );
 
+    const isHackathon = listing.type === 'hackathon';
+
+    if (!isHackathon) {
+      const hasCredits = await canUserSubmit(userId as string);
+      if (!hasCredits) {
+        logger.warn(`User ${userId} has insufficient credits for submission`);
+        return res.status(403).json({
+          error: 'Insufficient credits',
+          message: 'You need at least 1 credit to make a submission.',
+        });
+      }
+    }
+
     const result = await createSubmission(
       userId as string,
       listingId,
       { link, tweet, otherInfo, eligibilityAnswers, ask, telegram },
       listing,
     );
+
+    if (!isHackathon) {
+      await consumeCredit(userId, result.id);
+      logger.info(`Consumed 1 credit from user ${userId} for submission`);
+    }
 
     await queueEmail({
       type: 'submissionTalent',

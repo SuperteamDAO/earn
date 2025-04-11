@@ -484,6 +484,7 @@ export default function BountySubmissions({ slug }: Props) {
               totalWinners={totalWinners || 0}
               totalPaymentsMade={totalPaymentsMade || 0}
               bounty={bounty}
+              submissions={submissions || []}
             />
           )}
           <SubmissionHeader

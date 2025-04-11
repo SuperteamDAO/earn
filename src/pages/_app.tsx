@@ -34,13 +34,13 @@ const Toaster = dynamic(() => import('sonner').then((mod) => mod.Toaster), {
   ssr: false,
 });
 
-const ReactQueryDevtools = dynamic(
-  () =>
-    import('@tanstack/react-query-devtools').then(
-      (mod) => mod.ReactQueryDevtools,
-    ),
-  { ssr: false },
-);
+// const ReactQueryDevtools = dynamic(
+//   () =>
+//     import('@tanstack/react-query-devtools').then(
+//       (mod) => mod.ReactQueryDevtools,
+//     ),
+//   { ssr: false },
+// );
 
 const queryClient = new QueryClient();
 
@@ -182,7 +182,7 @@ function App({ Component, pageProps }: AppProps) {
         <Providers>
           <MyApp Component={Component} pageProps={pageProps} />
         </Providers>
-        <ReactQueryDevtools initialIsOpen={false} />
+        {/* <ReactQueryDevtools initialIsOpen={false} /> */}
       </QueryClientProvider>
     </PostHogProvider>
   );

@@ -28,7 +28,8 @@ type EmailType =
   | 'nonSTWinners'
   | 'commentReply'
   | 'commentTag'
-  | 'scoutInvite';
+  | 'scoutInvite'
+  | 'spamCredit';
 
 interface EmailNotificationParams {
   type: EmailType;
