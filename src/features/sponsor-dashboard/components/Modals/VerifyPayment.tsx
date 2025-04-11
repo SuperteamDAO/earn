@@ -331,8 +331,8 @@ export const VerifyPaymentModal = ({
                 Oh-Uh Verification Failed
               </p>
               <p className="text-center text-sm text-slate-500">
-                We couldn’t verify your payment status. <br />
-                Please check your links again and make sure it’s the exact
+                We couldn&apos;t verify your payment status. <br />
+                Please check your links again and make sure it&apos;s the exact
                 amount
               </p>
             </div>
@@ -397,6 +397,7 @@ export const VerifyPaymentModal = ({
                     const tokenName = isUsdBased
                       ? submission.token
                       : listing?.token;
+                    const isOtherToken = tokenName === 'Other';
                     const token = tokenList.find(
                       (s) => s.tokenSymbol === tokenName,
                     );
@@ -463,23 +464,36 @@ export const VerifyPaymentModal = ({
                               <div className="flex w-full flex-col items-start gap-1">
                                 {paymentLink?.isVerified ? (
                                   <div className="flex w-full items-center gap-2">
-                                    <a
-                                      className="w-full"
-                                      href={`${EXPLORER_TX_URL}${paymentLink?.txId}`}
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                    >
+                                    {paymentLink.txId !== 'External Payment' ? (
+                                      <a
+                                        className="w-full"
+                                        href={`${EXPLORER_TX_URL}${paymentLink?.txId}`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                      >
+                                        <Button
+                                          type="button"
+                                          className="w-full justify-start border-green-500 text-sm font-medium text-slate-500 hover:bg-green-100"
+                                          variant="outline"
+                                        >
+                                          <p className="mr-2">
+                                            Payment Verified. View Tx
+                                          </p>
+                                          <ExternalLink className="ml-auto h-4 w-4" />
+                                        </Button>
+                                      </a>
+                                    ) : (
                                       <Button
                                         type="button"
                                         className="w-full justify-start border-green-500 text-sm font-medium text-slate-500 hover:bg-green-100"
                                         variant="outline"
+                                        disabled
                                       >
                                         <p className="mr-2">
-                                          Payment Verified. View Tx
+                                          External payment marked as paid
                                         </p>
-                                        <ExternalLink className="ml-auto h-4 w-4" />
                                       </Button>
-                                    </a>
+                                    )}
 
                                     <div className="h-6 w-6 rounded-full bg-green-500 p-1">
                                       <Check className="h-full w-full stroke-[3] text-white" />
@@ -487,11 +501,34 @@ export const VerifyPaymentModal = ({
                                   </div>
                                 ) : (
                                   <FormControl>
-                                    <Input
-                                      {...field}
-                                      className="text-sm placeholder:text-slate-400"
-                                      placeholder="Paste your link here"
-                                    />
+                                    {!isOtherToken ? (
+                                      <Input
+                                        {...field}
+                                        className="text-sm placeholder:text-slate-400"
+                                        placeholder="Paste your link here"
+                                      />
+                                    ) : (
+                                      <div className="flex items-center gap-2">
+                                        <input
+                                          type="checkbox"
+                                          id={`attest-${submission.id}`}
+                                          className="h-4 w-4 rounded border-slate-300 text-brand-purple focus:ring-brand-purple"
+                                          checked={field.value === 'Yes'}
+                                          {...field}
+                                          onChange={(e) =>
+                                            field.onChange(
+                                              e.target.checked ? 'Yes' : '',
+                                            )
+                                          }
+                                        />
+                                        <label
+                                          htmlFor={`attest-${submission.id}`}
+                                          className="text-sm text-slate-600"
+                                        >
+                                          I attest that I have paid the receiver
+                                        </label>
+                                      </div>
+                                    )}
                                   </FormControl>
                                 )}
                                 <FormMessage />

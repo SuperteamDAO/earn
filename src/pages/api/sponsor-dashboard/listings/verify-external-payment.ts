@@ -83,14 +83,18 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           continue;
         }
 
-        if (!paymentLink.txId) {
-          throw new Error('Invalid URL');
-        }
-
         const submission = submissions.find(
           (s) => s.id === paymentLink.submissionId,
         );
         if (!submission) throw new Error('Submission not found');
+
+        const isUSDbased = listing.token === 'Any';
+        const tokenSymbol = isUSDbased ? submission.token : listing.token;
+        const isOtherToken = tokenSymbol === 'Other';
+
+        if (!paymentLink.txId && !isOtherToken) {
+          throw new Error('Invalid URL');
+        }
 
         const {
           user: { publicKey },
@@ -110,28 +114,31 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           throw new Error('Winner Position has no reward');
         }
 
-        const isUSDbased = listing.token === 'Any';
-        const tokenSymbol = isUSDbased ? submission.token : listing.token;
         const dbToken = tokenList.find((t) => t.tokenSymbol === tokenSymbol);
         if (!dbToken) {
           return res
             .status(400)
             .json({ error: "Token doesn't exist for this listing" });
         }
-        const validationResult = await validatePayment({
-          txId: paymentLink.txId,
-          recipientPublicKey: publicKey!,
-          expectedAmount: winnerReward,
-          tokenMint: dbToken,
-          isUSDbased,
-        });
+
+        const validationResult = !isOtherToken
+          ? await validatePayment({
+              txId: paymentLink.txId,
+              recipientPublicKey: publicKey!,
+              expectedAmount: winnerReward,
+              tokenMint: dbToken,
+              isUSDbased,
+            })
+          : {
+              isValid: paymentLink.link === 'Yes',
+            };
 
         if (!validationResult.isValid) {
           throw new Error(`Failed (${validationResult.error})`);
         }
         validationResults.push({
           submissionId: paymentLink.submissionId,
-          txId: paymentLink.txId,
+          txId: isOtherToken ? 'External Payment' : paymentLink.txId,
           status: 'SUCCESS',
         });
 

@@ -44,6 +44,7 @@ export const verifyPaymentsSchema = z.object({
             if (data.isVerified) return true;
             return (
               !data.link ||
+              data.link === 'Yes' ||
               ALLOWED_URL_PREFIXES.some((prefix) =>
                 data.link?.startsWith(prefix),
               )

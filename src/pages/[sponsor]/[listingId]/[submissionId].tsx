@@ -198,27 +198,44 @@ function Content({
                     Copy Link
                   </Button>
                 </div>
+                {submission?.isWinner &&
+                  submission?.winnerPosition &&
+                  submission?.isPaid &&
+                  submission?.paymentDetails?.txId !== 'External Payment' && (
+                    <div className="ph-no-capture hidden items-center justify-end gap-2 md:flex">
+                      <Button
+                        className="text-slate-600"
+                        onClick={() => {
+                          window.open(
+                            `${EXPLORER_TX_URL}${submission?.paymentDetails?.txId}`,
+                            '_blank',
+                          );
+                        }}
+                        size="default"
+                        variant="outline"
+                      >
+                        <ExternalLink className="mr-1 h-4 w-4" />
+                        View Payment
+                      </Button>
+                    </div>
+                  )}
+
+                {submission?.isWinner &&
+                  submission?.winnerPosition &&
+                  submission?.isPaid &&
+                  submission?.paymentDetails?.txId === 'External Payment' && (
+                    <div className="ph-no-capture hidden items-center justify-end gap-2 md:flex">
+                      <Button
+                        className="text-slate-600"
+                        disabled
+                        size="default"
+                        variant="outline"
+                      >
+                        Marked as paid
+                      </Button>
+                    </div>
+                  )}
               </div>
-              {submission?.isWinner &&
-                submission?.winnerPosition &&
-                submission?.isPaid && (
-                  <div className="ph-no-capture hidden items-center justify-end gap-2 md:flex">
-                    <Button
-                      className="mr-4 text-slate-600"
-                      onClick={() => {
-                        window.open(
-                          `${EXPLORER_TX_URL}${submission?.paymentDetails?.txId}`,
-                          '_blank',
-                        );
-                      }}
-                      size="default"
-                      variant="outline"
-                    >
-                      <ExternalLink className="mr-1 h-4 w-4" />
-                      View Payment
-                    </Button>
-                  </div>
-                )}
             </div>
 
             <div className="flex flex-col gap-3 py-[1rem] md:flex-row md:items-center md:gap-5">

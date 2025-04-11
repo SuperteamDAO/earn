@@ -169,7 +169,9 @@ export const SubmissionPanel = ({
                     )}
                   {selectedSubmission?.isWinner &&
                     selectedSubmission?.winnerPosition &&
-                    selectedSubmission?.isPaid && (
+                    selectedSubmission?.isPaid &&
+                    selectedSubmission?.paymentDetails?.txId !==
+                      'External Payment' && (
                       <Button
                         className="text-slate-500"
                         onClick={() => {
@@ -183,6 +185,21 @@ export const SubmissionPanel = ({
                       >
                         <ExternalLink className="mr-1 h-4 w-4" />
                         View Payment
+                      </Button>
+                    )}
+
+                  {selectedSubmission?.isWinner &&
+                    selectedSubmission?.winnerPosition &&
+                    selectedSubmission?.isPaid &&
+                    selectedSubmission?.paymentDetails?.txId ===
+                      'External Payment' && (
+                      <Button
+                        className="text-slate-500"
+                        disabled
+                        size="default"
+                        variant="outline"
+                      >
+                        <p className="mr-2">Marked as paid</p>
                       </Button>
                     )}
                   {!bounty?.isWinnersAnnounced &&
