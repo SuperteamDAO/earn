@@ -9,6 +9,12 @@ import Countdown from 'react-countdown';
 
 import { TrackBox } from '@/components/hackathon/TrackBox';
 import { CountDownRenderer } from '@/components/shared/countdownRenderer';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion';
 import { Button } from '@/components/ui/button';
 import { Tooltip } from '@/components/ui/tooltip';
 import { ASSET_URL } from '@/constants/ASSET_URL';
@@ -16,6 +22,7 @@ import { useBreakpoint } from '@/hooks/use-breakpoint';
 import { type TrackProps } from '@/interface/hackathon';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
+import { domPurify } from '@/lib/domPurify';
 import { prisma } from '@/prisma';
 import {
   type Stats,
@@ -102,7 +109,7 @@ export default function Breakout({ hackathon }: { hackathon: Hackathon }) {
       <Hero stats={stats} START_DATE={START_DATE} CLOSE_DATE={CLOSE_DATE} />
       <div className="mx-auto mt-20 mb-20 w-full max-w-7xl px-4 md:mt-24 xl:mt-28">
         <Tracks tracks={trackData} />
-        {/* <FAQs /> */}
+        <FAQs />
       </div>
     </Default>
   );
@@ -323,35 +330,77 @@ function Tracks({ tracks }: { tracks: TrackProps[] | undefined }) {
   );
 }
 
-// const faqs: { question: string; answer: string }[] = [];
+const faqs: { question: string; answer: string }[] = [
+  {
+    question:
+      'How are Sidetracks different from the main Colosseum Breakout tracks?',
+    answer:
+      'Sidetracks are extra challenges hosted by Superteam Earn, separate from Colosseum’s primary Breakout tracks. They offer additional opportunities to build unique projects and win special prizes.',
+  },
+  {
+    question: 'Do I need to submit separately to Sidetracks on Superteam Earn?',
+    answer:
+      'Yes! Sidetracks have their own submission process on Superteam Earn. Make sure you submit your project directly to each Sidetrack you wish to enter.',
+  },
+  {
+    question: 'When will Sidetrack winners be announced?',
+    answer:
+      'Sidetrack winners will be announced shortly after the main Colosseum Breakout winners. If you submitted a project to a Sidetrack, we’ll email you directly when winners are announced.',
+  },
+  {
+    question: 'Can I submit my project to multiple Sidetracks?',
+    answer:
+      'Yes, you’re welcome to submit your project to as many Sidetracks as you like, as long as your submission fits each Sidetrack’s requirements.',
+  },
+  {
+    question:
+      'Do I have to submit my project to Colosseum’s Breakout before entering Sidetracks?',
+    answer:
+      'Yes. You must submit your project to <a href="https://www.colosseum.org/breakout" target="_blank">Colosseum’s Breakout Hackathon</a> for it to be considered valid for any Sidetracks on Superteam Earn.',
+  },
+  {
+    question: 'Where can I find developer resources for my project?',
+    answer:
+      'Check out <a href="https://www.colosseum.org/radar/resources" target="_blank">Colosseum’s Developer Resources page</a>. You’ll find documentation, tools, tutorials, and everything you need to build on Solana.',
+  },
+  {
+    question: 'What is the evaluation criteria for Sidetracks?',
+    answer:
+      'Each Sidetrack sponsor defines their own evaluation criteria. Be sure to carefully review the description and judging guidelines for each Sidetrack you’re submitting to.',
+  },
+];
 
-// function FAQs() {
-//   return (
-//     <div className="mt-4 flex flex-col items-center px-1 py-8 md:mt-8">
-//       <h2 className="pb-2 text-4xl font-bold md:text-5xl">FAQ</h2>
-//       <div className="w-full max-w-[35rem]">
-//         <Accordion type="single" collapsible>
-//           {faqs.map((f) => (
-//             <AccordionItem
-//               key={f.question}
-//               value={f.question}
-//               className="my-4 rounded-lg border shadow-md"
-//             >
-//               <AccordionTrigger className="rounded px-4 py-3 text-left font-normal text-slate-500 hover:bg-black/5 hover:no-underline focus:no-underline data-[state=open]:bg-black/5">
-//                 <span className="flex-1 text-left text-sm sm:text-base">
-//                   {f.question}
-//                 </span>
-//               </AccordionTrigger>
-//               <AccordionContent className="px-4 pt-3 text-sm text-slate-700 sm:text-base [&_a]:text-blue-700">
-//                 <div dangerouslySetInnerHTML={{ __html: f.answer }} />
-//               </AccordionContent>
-//             </AccordionItem>
-//           ))}
-//         </Accordion>
-//       </div>
-//     </div>
-//   );
-// }
+function FAQs() {
+  return (
+    <div className="mt-4 flex flex-col items-center px-1 py-8 md:mt-8">
+      <h2 className="pb-2 text-4xl font-bold md:text-5xl">FAQ</h2>
+      <div className="w-full max-w-[35rem]">
+        <Accordion type="single" collapsible>
+          {faqs.map((f) => (
+            <AccordionItem
+              key={f.question}
+              value={f.question}
+              className="my-4 rounded-lg border shadow-md"
+            >
+              <AccordionTrigger className="rounded px-4 py-3 text-left font-normal text-slate-500 hover:bg-black/5 hover:no-underline focus:no-underline data-[state=open]:bg-black/5">
+                <span className="flex-1 text-left text-sm sm:text-base">
+                  {f.question}
+                </span>
+              </AccordionTrigger>
+              <AccordionContent className="px-4 pt-3 text-sm text-slate-700 sm:text-base [&_a]:text-blue-700">
+                <div
+                  dangerouslySetInnerHTML={{
+                    __html: domPurify(f.answer),
+                  }}
+                />
+              </AccordionContent>
+            </AccordionItem>
+          ))}
+        </Accordion>
+      </div>
+    </div>
+  );
+}
 
 export const getServerSideProps: GetServerSideProps = async ({}) => {
   const hackathon = await prisma.hackathon.findUnique({
