@@ -194,6 +194,8 @@ export function SponsorLayout({
     ? user?.hackathonId || user?.role === 'GOD'
     : user?.currentSponsor?.id;
 
+  const isAnyModalOpen = isOpen || isSponsorInfoModalOpen || isEntityModalOpen;
+
   return (
     <Default
       className="bg-white"
@@ -210,7 +212,7 @@ export function SponsorLayout({
         isOpen={isSponsorInfoModalOpen}
       />
 
-      <FeatureModal />
+      <FeatureModal isAnyModalOpen={isAnyModalOpen} />
 
       <EntityNameModal isOpen={isEntityModalOpen} onClose={handleEntityClose} />
       <div className="flex min-h-[80vh] px-3 md:hidden">

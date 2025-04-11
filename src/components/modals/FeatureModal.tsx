@@ -1,3 +1,4 @@
+import { usePrivy } from '@privy-io/react-auth';
 import { useAtom, useAtomValue } from 'jotai';
 import { useRouter } from 'next/router';
 import { useEffect, useRef, useState } from 'react';
@@ -12,8 +13,14 @@ import {
 
 import { CreditFeature } from './CreditFeature';
 
-export const FeatureModal = () => {
+export const FeatureModal = ({
+  isAnyModalOpen = false,
+}: {
+  isAnyModalOpen?: boolean;
+}) => {
   const { user } = useUser();
+  const { authenticated, ready } = usePrivy();
+
   const updateUser = useUpdateUser();
   const [isPopupOpen, setPopupOpen] = useAtom(popupOpenAtom);
   const popupTimeout = useAtomValue(popupTimeoutAtom);
@@ -46,7 +53,9 @@ export const FeatureModal = () => {
       user.isTalentFilled &&
       !isPopupOpen &&
       !isDashboardRoute &&
-      !talentModalShownRef.current
+      !talentModalShownRef.current &&
+      ready &&
+      authenticated
     ) {
       setIsSponsor(false);
       setPopupOpen(true);
@@ -62,7 +71,9 @@ export const FeatureModal = () => {
       isDashboardRoute &&
       user &&
       !!user.currentSponsorId &&
-      !isPopupOpen
+      !isPopupOpen &&
+      ready &&
+      authenticated
     ) {
       setIsSponsor(true);
       setPopupOpen(true);
@@ -72,7 +83,7 @@ export const FeatureModal = () => {
     }
   }, [user, isPopupOpen, popupTimeout, router.pathname]);
 
-  if (!user) return null;
+  if (isAnyModalOpen) return null;
 
   return (
     <Dialog open={isPopupOpen} onOpenChange={handleClose}>
