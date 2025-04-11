@@ -124,7 +124,7 @@ function Hero({
   stats: Stats | undefined;
 }) {
   const isSM = useBreakpoint('sm');
-  const [status, setStatus] = useState<'Start In' | 'Close In' | 'Closed'>(
+  const [status, setStatus] = useState<'Start In' | 'Due In' | 'Closed'>(
     'Start In',
   );
 
@@ -133,7 +133,7 @@ function Hero({
       if (dayjs().isAfter(dayjs(CLOSE_DATE))) {
         setStatus('Closed');
       } else if (dayjs().isAfter(dayjs(START_DATE))) {
-        setStatus('Close In');
+        setStatus('Due In');
       }
     }
 
@@ -170,7 +170,7 @@ function Hero({
             className="w-full gap-3 rounded-full px-5 text-base font-medium hover:bg-slate-200 disabled:opacity-100"
             disabled
           >
-            {status === 'Close In' && (
+            {status === 'Due In' && (
               <PulseIcon
                 isPulsing={true}
                 w={4}
@@ -180,7 +180,7 @@ function Hero({
               />
             )}
             {status === 'Start In' && 'Submissions Open Soon'}
-            {status === 'Close In' && 'Submissions Open'}
+            {status === 'Due In' && 'Submissions Open'}
             {status === 'Closed' && 'Submissions Closed'}
           </Button>
         </div>
@@ -209,7 +209,7 @@ function HeroMini({
   const [countdownDate, setCountdownDate] = useState<Date>(
     dayjs.utc(START_DATE).toDate(),
   );
-  const [status, setStatus] = useState<'Start In' | 'Close In' | 'Closed'>(
+  const [status, setStatus] = useState<'Start In' | 'Due In' | 'Closed'>(
     'Start In',
   );
 
@@ -221,7 +221,7 @@ function HeroMini({
         setStatus('Closed');
       } else if (dayjs().isAfter(dayjs(START_DATE))) {
         setCountdownDate(dayjs.utc(CLOSE_DATE).toDate());
-        setStatus('Close In');
+        setStatus('Due In');
       }
     }
 
@@ -263,9 +263,9 @@ function HeroMini({
   );
 }
 
-function mobileTitleForCountdown(status: 'Start In' | 'Close In' | 'Closed') {
+function mobileTitleForCountdown(status: 'Start In' | 'Due In' | 'Closed') {
   if (status === 'Start In') return 'Starts In';
-  if (status === 'Close In') return 'Closes In';
+  if (status === 'Due In') return 'Closes In';
   return status;
 }
 
@@ -335,7 +335,7 @@ const faqs: { question: string; answer: string }[] = [
     question:
       'How are Sidetracks different from the main Colosseum Breakout tracks?',
     answer:
-      'Sidetracks are extra challenges hosted by Superteam Earn, separate from Colosseum’s primary Breakout tracks. They offer additional opportunities to build unique projects and win special prizes.',
+      'Sidetracks are extra challenges hosted by Superteam Earn, separate from Colosseum’s Breakout tracks. They offer additional opportunities to build unique projects and win special prizes.',
   },
   {
     question: 'Do I need to submit separately to Sidetracks on Superteam Earn?',
