@@ -343,11 +343,6 @@ const faqs: { question: string; answer: string }[] = [
       'Yes! Sidetracks have their own submission process on Superteam Earn. Make sure you submit your project directly to each Sidetrack you wish to enter.',
   },
   {
-    question: 'Do I need to submit separately to Sidetracks on Superteam Earn?',
-    answer:
-      'Yes! Sidetracks have their own submission process on Superteam Earn. Make sure you submit your project directly to each Sidetrack you wish to enter.',
-  },
-  {
     question: 'When will Sidetrack winners be announced?',
     answer:
       'Sidetrack winners will be announced shortly after the main Colosseum Breakout winners. If you submitted a project to a Sidetrack, we’ll email you directly when winners are announced.',
