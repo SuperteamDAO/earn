@@ -17,9 +17,10 @@ const content: Record<'user' | 'sponsor', ContentType> = {
     description:
       'We want you to prioritise quality over quantity and get a fairer chance at winning by reducing the number of spam submissions.',
     points: [
-      'Each submission costs one credit',
+      'Each bounty / project submission costs one credit',
       'Balances renew and get updated every month',
       'Get bonus +1 credit for winning and -1 when you spam',
+      'Grant & hackathon submissions do not require credits',
     ],
   },
   sponsor: {
@@ -28,15 +29,16 @@ const content: Record<'user' | 'sponsor', ContentType> = {
       "We're committed to improving submission quality by discouraging spam and incentivising users to only submit high quality work",
     points: [
       'Users get 3 credits per month',
-      'Each submission costs 1 credit',
+      'Submission to bounties and projects cost 1 credit',
       'Spam and winning submissions reduce and increase one credit respectively',
+      'Grant & hackathon submissions do not utilise credits',
     ],
   },
 };
 
 const Point = ({ title }: { title: string }) => {
   return (
-    <div className="flex gap-4">
+    <div className="flex gap-2 sm:gap-4">
       <div className="h-fit rounded-full bg-violet-50 p-1">
         <Check className="text-brand-purple size-4" />
       </div>
@@ -63,22 +65,34 @@ export const CreditFeature = ({
         alt="Scouts Announcement Illustration"
         className="mx-auto w-full"
       />
-      <div className="flex flex-col items-start gap-2 px-6">
-        <p className="text-lg font-semibold tracking-tight text-slate-900">
+      <div className="flex flex-col items-start gap-2 px-2 sm:px-6">
+        <p className="font-semibold tracking-tight text-slate-900 sm:text-lg">
           {displayContent.title}
         </p>
-        <p className="text-slate-500">{displayContent.description}</p>
-        <div className="mt-4 flex flex-col gap-4">
+        <p className="text-sm text-slate-500 sm:text-base">
+          {displayContent.description}
+        </p>
+        <div className="mt-4 flex flex-col gap-2 text-sm sm:gap-4 sm:text-base">
           {displayContent.points.map((point, index) => (
             <Point key={index} title={point} />
           ))}
         </div>
       </div>
       <Separator className="text-slate-100" />
-      <div className="px-6">
-        <Button onClick={onClick} className="mb-6 w-full">
+      <div className="px-2 sm:px-6">
+        <Button onClick={onClick} className="w-full">
           Understood
         </Button>
+      </div>
+      <div className="-mt-2 mb-4 px-2 text-center text-xs text-slate-400 sm:px-6">
+        <a
+          href="https://superteamdao.notion.site/submission-credits"
+          target="_blank"
+          className="underline"
+        >
+          Click here
+        </a>{' '}
+        to learn more about credits
       </div>
     </>
   );

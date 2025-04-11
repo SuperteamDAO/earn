@@ -208,16 +208,16 @@ export function CreditDrawer({
           </div>
 
           <div className="w-full border-t border-slate-50 bg-white py-1 shadow-[0_-2px_3px_rgba(0,0,0,0.05)]">
-            <p className="mx-auto flex items-center justify-center gap-1.5 text-sm font-medium text-slate-400 transition-colors">
-              Click to learn how submission credits work{' '}
+            <p className="mx-auto flex items-center justify-center text-xs text-slate-400 transition-colors sm:text-sm">
               <span className="cursor-pointer underline">
                 <a
-                  href="https://superteamdao.notion.site/Submission-Credits-User-Guide-17b794d3ba33804392f9e1c613eff9a0"
+                  href="https://superteamdao.notion.site/submission-credits"
                   target="_blank"
                 >
-                  here
+                  Click here
                 </a>
-              </span>
+              </span>{' '}
+              to learn more
             </p>
           </div>
         </div>

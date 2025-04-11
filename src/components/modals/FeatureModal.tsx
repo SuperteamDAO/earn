@@ -55,8 +55,6 @@ export const FeatureModal = () => {
       }
       return;
     }
-
-    // Check for sponsor conditions
     const sponsorModalShown = localStorage.getItem(SPONSOR_LOCAL_STORAGE_KEY);
 
     if (
@@ -73,6 +71,8 @@ export const FeatureModal = () => {
       }
     }
   }, [user, isPopupOpen, popupTimeout, router.pathname]);
+
+  if (!user) return null;
 
   return (
     <Dialog open={isPopupOpen} onOpenChange={handleClose}>
