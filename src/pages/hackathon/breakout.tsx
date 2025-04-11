@@ -343,6 +343,11 @@ const faqs: { question: string; answer: string }[] = [
       'Yes! Sidetracks have their own submission process on Superteam Earn. Make sure you submit your project directly to each Sidetrack you wish to enter.',
   },
   {
+    question: 'Do I need to submit separately to Sidetracks on Superteam Earn?',
+    answer:
+      'Yes! Sidetracks have their own submission process on Superteam Earn. Make sure you submit your project directly to each Sidetrack you wish to enter.',
+  },
+  {
     question: 'When will Sidetrack winners be announced?',
     answer:
       'Sidetrack winners will be announced shortly after the main Colosseum Breakout winners. If you submitted a project to a Sidetrack, we’ll email you directly when winners are announced.',
@@ -351,12 +356,6 @@ const faqs: { question: string; answer: string }[] = [
     question: 'Can I submit my project to multiple Sidetracks?',
     answer:
       'Yes, you’re welcome to submit your project to as many Sidetracks as you like, as long as your submission fits each Sidetrack’s requirements.',
-  },
-  {
-    question:
-      'Do I have to submit my project to Colosseum’s Breakout before entering Sidetracks?',
-    answer:
-      'Yes. You must submit your project to <a href="https://www.colosseum.org/breakout" target="_blank">Colosseum’s Breakout Hackathon</a> for it to be considered valid for any Sidetracks on Superteam Earn.',
   },
   {
     question: 'Where can I find developer resources for my project?',
