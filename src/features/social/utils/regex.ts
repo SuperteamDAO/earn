@@ -6,7 +6,9 @@ const twitterRegex = new RegExp(
 );
 
 const telegramRegex = new RegExp(
-  `^(?:https?:\\/\\/)?(?:www\\.)?(?:t\\.me|telegram\\.me)\\/${telegramUsernameRegex.source}\\/?$`,
+  `^(?:https?:\\/\\/)?(?:www\\.)?(?:t\\.me|telegram\\.me)\\/(?:${
+    telegramUsernameRegex.source
+  }|\\+[a-zA-Z0-9_-]+)\/?$`,
 );
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
