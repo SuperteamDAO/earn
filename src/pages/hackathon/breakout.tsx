@@ -308,8 +308,8 @@ function MiniStat({
 
 function Tracks({ tracks }: { tracks: TrackProps[] | undefined }) {
   return (
-    <div className="mx-6">
-      <div className="mx-auto max-w-7xl py-6">
+    <div className="sm:mx-6">
+      <div className="max-w-7xl py-6 sm:mx-auto">
         <p className="mb-4 text-lg font-semibold text-slate-900 md:text-xl">
           Submission Tracks
         </p>
