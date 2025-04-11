@@ -3,12 +3,13 @@ import * as React from 'react';
 
 import { cn } from '@/utils/cn';
 
-interface TooltipProps extends TooltipPrimitive.TooltipProps {
+export interface TooltipProps extends TooltipPrimitive.TooltipProps {
   content: React.ReactNode;
   children: React.ReactNode;
   contentProps?: React.ComponentProps<typeof TooltipContent>;
   disabled?: boolean;
   triggerClassName?: string;
+  disableOnClickClose?: boolean;
 }
 
 function TooltipContent({
@@ -22,7 +23,7 @@ function TooltipContent({
         data-slot="tooltip-content"
         sideOffset={sideOffset}
         className={cn(
-          'animate-in fade-in-0 zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 z-50 max-w-sm overflow-hidden rounded-md border bg-gray-50 px-3 py-1.5 text-xs text-slate-700',
+          'animate-in fade-in-0 zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 z-200 max-w-sm overflow-hidden rounded-md border bg-gray-50 px-3 py-1.5 text-xs text-slate-700',
           className,
         )}
         {...props}
@@ -37,6 +38,7 @@ function Tooltip({
   contentProps,
   triggerClassName,
   disabled,
+  disableOnClickClose,
   ...props
 }: TooltipProps) {
   const [open, setOpen] = React.useState(false);
@@ -53,7 +55,7 @@ function Tooltip({
             type="button"
             data-slot="tooltip-trigger"
             className={cn('cursor-pointer', triggerClassName)}
-            onClick={() => setOpen(!open)}
+            onClick={() => !disableOnClickClose && setOpen(!open)}
             onMouseEnter={() => setOpen(true)}
             onMouseLeave={() => setOpen(false)}
             onTouchStart={() => setOpen(open)}

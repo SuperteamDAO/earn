@@ -6,7 +6,9 @@ import React, { type Dispatch, type SetStateAction, useState } from 'react';
 import { MdOutlineEmail } from 'react-icons/md';
 
 import { Button } from '@/components/ui/button';
+import { CopyButton } from '@/components/ui/copy-tooltip';
 import { TERMS_OF_USE } from '@/constants/TERMS_OF_USE';
+import { useBreakpoint } from '@/hooks/use-breakpoint';
 import { GoogleIcon } from '@/svg/google';
 
 import { handleUserCreation } from '../utils/handleUserCreation';
@@ -26,6 +28,7 @@ export const SignIn = ({
   const router = useRouter();
   const posthog = usePostHog();
   const [isLoading, setIsLoading] = useState(false);
+  const isMD = useBreakpoint('md');
 
   const { initOAuth } = useLoginWithOAuth({
     onComplete: async ({ user, wasAlreadyAuthenticated }) => {
@@ -139,13 +142,26 @@ export const SignIn = ({
       <div className="rounded-b-md bg-slate-100 py-[7px]">
         <p className="text-center text-xs text-slate-400">
           Need help? Reach out to us at{' '}
-          <Link
-            href="mailto:support@superteamearn.com"
-            className="underline hover:text-slate-500"
-            target="_blank"
-          >
-            support@superteamearn.com
-          </Link>
+          {isMD ? (
+            <CopyButton
+              text="support@superteamearn.com"
+              contentProps={{
+                className: 'px-1.5 py-0.5 text-[0.6875rem]',
+              }}
+            >
+              <p className="underline hover:text-slate-500">
+                support@superteamearn.com
+              </p>
+            </CopyButton>
+          ) : (
+            <a
+              href="mailto:support@superteamearn.com"
+              className="underline hover:text-slate-500"
+              target="_blank"
+            >
+              support@superteamearn.com
+            </a>
+          )}
         </p>
       </div>
     </div>

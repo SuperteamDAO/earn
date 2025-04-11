@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 
+import { SupportFormDialog } from '@/components/shared/SupportFormDialog';
 import { UserFlag } from '@/components/shared/UserFlag';
 import { LocalImage } from '@/components/ui/local-image';
 import {
@@ -35,22 +36,33 @@ const FooterColumn = ({
   links,
 }: {
   title: string;
-  links: { href: string; text: string }[];
+  links: { href?: string; text: string; supportForm?: boolean }[];
 }) => (
   <div className="flex flex-col items-start">
     <p className="mb-2 text-xs font-medium text-slate-400 uppercase">{title}</p>
     <div className="flex flex-col space-y-2">
-      {links.map((link) => (
-        <Link
-          key={link.text}
-          href={link.href}
-          className="text-sm text-slate-500 hover:text-slate-600"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          {link.text}
-        </Link>
-      ))}
+      {links
+        .filter((s) => !!s.href)
+        .map((link) => (
+          <Link
+            key={link.text}
+            href={link.href || ''}
+            className="text-sm text-slate-500 hover:text-slate-600"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {link.text}
+          </Link>
+        ))}
+      {links
+        .filter((s) => !!s.supportForm)
+        .map((link) => (
+          <SupportFormDialog key={link.text}>
+            <button className="w-fit text-sm text-slate-500 hover:text-slate-600">
+              {link.text}
+            </button>
+          </SupportFormDialog>
+        ))}
     </div>
   </div>
 );
@@ -159,7 +171,7 @@ export const Footer = () => {
       text: 'Changelog',
       href: 'https://superteamdao.notion.site/Superteam-Earn-Changelog-faf0c85972a742699ecc07a52b569827',
     },
-    { text: 'Contact Us', href: 'mailto:support@superteamearn.com' },
+    { text: 'Contact Us', supportForm: true },
   ];
 
   return (

@@ -3,12 +3,11 @@ import { useAtom } from 'jotai';
 import { AlertTriangle, ArrowRight, ExternalLink } from 'lucide-react';
 import Link from 'next/link';
 import React from 'react';
-import { MdOutlineAccountBalanceWallet, MdOutlineMail } from 'react-icons/md';
-import { toast } from 'sonner';
+import { MdOutlineAccountBalanceWallet } from 'react-icons/md';
 
 import { Button } from '@/components/ui/button';
+import { CopyButton } from '@/components/ui/copy-tooltip';
 import { Tooltip } from '@/components/ui/tooltip';
-import { useClipboard } from '@/hooks/use-clipboard';
 import type { SubmissionWithUser } from '@/interface/submission';
 import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';
@@ -57,32 +56,6 @@ export const SubmissionPanel = ({
   const isProject = bounty?.type === 'project';
 
   const [selectedSubmission] = useAtom(selectedSubmissionAtom);
-
-  const { onCopy: onCopyEmail } = useClipboard(
-    selectedSubmission?.user?.email || '',
-  );
-
-  const { onCopy: onCopyPublicKey } = useClipboard(
-    selectedSubmission?.user?.walletAddress || '',
-  );
-
-  const handleCopyEmail = () => {
-    if (selectedSubmission?.user?.email) {
-      onCopyEmail();
-      toast.success('Email copied to clipboard', {
-        duration: 1500,
-      });
-    }
-  };
-
-  const handleCopyPublicKey = () => {
-    if (selectedSubmission?.user?.walletAddress) {
-      onCopyPublicKey();
-      toast.success('Wallet address copied to clipboard', {
-        duration: 1500,
-      });
-    }
-  };
 
   return (
     <div className="sticky top-[3rem] w-full">
@@ -239,46 +212,29 @@ export const SubmissionPanel = ({
 
             <div className="flex items-center gap-5 px-5 py-2">
               {selectedSubmission?.user?.email && (
-                <Tooltip
-                  content={'Click to copy'}
+                <CopyButton
+                  text={selectedSubmission.user.email}
+                  className="gap-1 text-sm text-slate-400 underline-offset-1 hover:text-slate-500 hover:underline"
                   contentProps={{ side: 'right' }}
-                  triggerClassName="flex items-center hover:underline underline-offset-1"
                 >
-                  <div
-                    className="flex cursor-pointer items-center justify-start gap-1 text-sm text-slate-400 hover:text-slate-500"
-                    onClick={handleCopyEmail}
-                    role="button"
-                    tabIndex={0}
-                    aria-label={`Copy email: ${selectedSubmission.user.email}`}
-                  >
-                    <MdOutlineMail />
-                    {truncateString(selectedSubmission.user.email, 36)}
-                  </div>
-                </Tooltip>
+                  {truncateString(selectedSubmission.user.email, 36)}
+                </CopyButton>
               )}
 
               {selectedSubmission?.user?.walletAddress && (
-                <Tooltip
-                  content={'Click to copy'}
+                <CopyButton
+                  className="gap-1 text-sm text-slate-400 underline-offset-1 hover:text-slate-500 hover:underline"
                   contentProps={{ side: 'right' }}
-                  triggerClassName="flex items-center hover:underline underline-offset-1"
+                  text={selectedSubmission.user.walletAddress}
                 >
-                  <div
-                    className="flex cursor-pointer items-center justify-start gap-1 text-sm whitespace-nowrap text-slate-400 hover:text-slate-500"
-                    onClick={handleCopyPublicKey}
-                    role="button"
-                    tabIndex={0}
-                    aria-label={`Copy public key: ${truncatePublicKey(selectedSubmission.user.walletAddress, 3)}`}
-                  >
-                    <MdOutlineAccountBalanceWallet />
-                    <p>
-                      {truncatePublicKey(
-                        selectedSubmission.user.walletAddress || '',
-                        3,
-                      )}
-                    </p>
-                  </div>
-                </Tooltip>
+                  <MdOutlineAccountBalanceWallet />
+                  <p>
+                    {truncatePublicKey(
+                      selectedSubmission.user.walletAddress || '',
+                      3,
+                    )}
+                  </p>
+                </CopyButton>
               )}
               <div className="flex gap-2">
                 <Telegram

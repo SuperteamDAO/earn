@@ -4,14 +4,12 @@ import { ArrowRight, Check, X } from 'lucide-react';
 import Link from 'next/link';
 import React from 'react';
 import { MdOutlineAccountBalanceWallet, MdOutlineMail } from 'react-icons/md';
-import { toast } from 'sonner';
 
 import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
 import { Button } from '@/components/ui/button';
+import { CopyButton } from '@/components/ui/copy-tooltip';
 import { CircularProgress } from '@/components/ui/progress';
-import { Tooltip } from '@/components/ui/tooltip';
 import { tokenList } from '@/constants/tokenList';
-import { useClipboard } from '@/hooks/use-clipboard';
 import { cn } from '@/utils/cn';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
@@ -57,32 +55,6 @@ export const TrancheDetails = ({
   const formattedDecidedAt = dayjs(
     selectedTranche?.GrantApplication?.decidedAt,
   ).format('DD MMM YYYY');
-
-  const { onCopy: onCopyEmail } = useClipboard(
-    selectedTranche?.GrantApplication?.user?.email || '',
-  );
-
-  const { onCopy: onCopyPublicKey } = useClipboard(
-    selectedTranche?.GrantApplication?.walletAddress || '',
-  );
-
-  const handleCopyEmail = () => {
-    if (selectedTranche?.GrantApplication?.user?.email) {
-      onCopyEmail();
-      toast.success('Email copied to clipboard', {
-        duration: 1500,
-      });
-    }
-  };
-
-  const handleCopyPublicKey = () => {
-    if (selectedTranche?.GrantApplication?.walletAddress) {
-      onCopyPublicKey();
-      toast.success('Wallet address copied to clipboard', {
-        duration: 1500,
-      });
-    }
-  };
 
   const totalPaid = selectedTranche?.GrantApplication?.totalPaid || 0;
   const approvedAmount = selectedTranche?.GrantApplication?.approvedAmount || 0;
@@ -222,51 +194,32 @@ export const TrancheDetails = ({
                 </div>
               </div>
               {selectedTranche?.GrantApplication?.user?.email && (
-                <Tooltip
-                  content={'Click to copy'}
+                <CopyButton
+                  text={selectedTranche?.GrantApplication?.user?.email || ''}
+                  className="gap-1 text-sm text-slate-400 underline-offset-1 hover:text-slate-500 hover:underline"
                   contentProps={{ side: 'right' }}
-                  triggerClassName="flex items-center hover:underline underline-offset-1"
                 >
-                  <div
-                    className="flex cursor-pointer items-center justify-start gap-1 text-sm text-slate-400 hover:text-slate-500"
-                    onClick={handleCopyEmail}
-                    role="button"
-                    tabIndex={0}
-                    aria-label={`Copy email: ${selectedTranche?.GrantApplication?.user?.email}`}
-                  >
-                    <MdOutlineMail />
-                    {truncateString(
-                      selectedTranche?.GrantApplication?.user?.email,
-                      36,
-                    )}
-                  </div>
-                </Tooltip>
+                  <MdOutlineMail />
+                  {truncateString(
+                    selectedTranche?.GrantApplication?.user?.email,
+                    36,
+                  )}
+                </CopyButton>
               )}
               {selectedTranche?.GrantApplication?.walletAddress && (
-                <Tooltip
-                  content={'Click to copy'}
+                <CopyButton
+                  text={selectedTranche?.GrantApplication?.walletAddress || ''}
+                  className="gap-1 text-sm text-slate-400 underline-offset-1 hover:text-slate-500 hover:underline"
                   contentProps={{ side: 'right' }}
-                  triggerClassName="flex items-center hover:underline underline-offset-1"
                 >
-                  <div
-                    className="flex cursor-pointer items-center justify-start gap-1 text-sm whitespace-nowrap text-slate-400 hover:text-slate-500"
-                    onClick={handleCopyPublicKey}
-                    role="button"
-                    tabIndex={0}
-                    aria-label={`Copy public key: ${truncatePublicKey(
+                  <MdOutlineAccountBalanceWallet />
+                  <p>
+                    {truncatePublicKey(
                       selectedTranche?.GrantApplication?.walletAddress || '',
                       3,
-                    )}`}
-                  >
-                    <MdOutlineAccountBalanceWallet />
-                    <p>
-                      {truncatePublicKey(
-                        selectedTranche?.GrantApplication?.walletAddress || '',
-                        3,
-                      )}
-                    </p>
-                  </div>
-                </Tooltip>
+                    )}
+                  </p>
+                </CopyButton>
               )}
 
               <div className="flex gap-2">
