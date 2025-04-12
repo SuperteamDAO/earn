@@ -69,7 +69,7 @@ export function SidebarBannerBreakout({ className }: SidebarPosterProps) {
 
         <div className="relative z-10 flex h-full w-full flex-col px-4 pt-6 pb-4 text-black">
           <div className="flex items-center justify-between px-4">
-            <BreakoutLogo />
+            <BreakoutLogo className="h-[10.8125rem]" />
           </div>
           <div
             className={`${animeAce.className} flex flex-col items-center justify-center`}
