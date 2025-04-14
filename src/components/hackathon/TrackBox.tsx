@@ -13,7 +13,7 @@ export const TrackBox = ({
   return (
     <Link
       href={`/listing/${slug}`}
-      className="block rounded-lg border border-slate-200 p-3 md:p-4"
+      className="flex flex-col justify-between rounded-lg border border-slate-200 p-3 md:p-4"
     >
       <div className="flex items-center gap-3">
         <img
@@ -22,7 +22,7 @@ export const TrackBox = ({
           src={sponsor.logo}
         />
         <div className="flex flex-col">
-          <span className="text-sm font-medium text-slate-900 md:text-base">
+          <span className="line-clamp-2 text-sm font-medium text-slate-900 md:text-base">
             {title}
           </span>
           <span className="text-sm font-normal text-slate-500 md:text-base">

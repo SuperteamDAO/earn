@@ -442,4 +442,12 @@ export const tokenList: Token[] = [
     decimals: 6,
     coingeckoSymbol: 'magic-eden',
   },
+  {
+    tokenName: 'Zeus Network zBTC',
+    tokenSymbol: 'zBTC',
+    mintAddress: 'zBTCug3er3tLyffELcvDNrKkCymbPWysGcWihESYfLg',
+    icon: 'https://assets.coingecko.com/coins/images/55011/standard/zBTC.png?1743161954',
+    decimals: 8,
+    coingeckoSymbol: 'zeus-netwok-zbtc',
+  },
 ];

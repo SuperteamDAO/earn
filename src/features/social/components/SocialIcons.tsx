@@ -11,6 +11,7 @@ import {
 } from 'react-icons/fa6';
 
 import { cn } from '@/utils/cn';
+import { getURLSanitized } from '@/utils/getURLSanitized';
 
 interface SocialIconProps extends React.ComponentPropsWithoutRef<'svg'> {
   link?: string;
@@ -51,7 +52,7 @@ const SocialIcon = ({
 
   return (
     <Link
-      href={link}
+      href={getURLSanitized(link)}
       rel="noopener noreferrer"
       target="_blank"
       className="flex"

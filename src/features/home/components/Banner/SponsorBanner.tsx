@@ -102,7 +102,7 @@ export function HomeSponsorBanner() {
         + top-tier talent in under 5 clicks. Get high-quality work done across
         content, development, and design.
       </p>
-      <div className="relative z-10 mt-auto flex w-full flex-col items-start gap-3 pt-4 md:flex-row md:items-center md:gap-4">
+      <div className="relative z-10 mt-auto flex w-full flex-col items-center gap-3 pt-4 md:flex-row md:gap-4">
         <button
           className="ph-no-capture w-full rounded-md bg-black px-9 py-3 text-sm font-semibold text-white hover:bg-black/80 hover:text-white md:w-auto"
           onClick={() => {
@@ -111,7 +111,7 @@ export function HomeSponsorBanner() {
         >
           Get Started
         </button>
-        <div className="flex items-center">
+        <div className="flex w-fit items-center">
           {data?.totalSponsors !== null && (
             <p className="relative ml-[0.6875rem] text-[0.8rem] text-black md:text-[0.875rem]">
               Join{' '}

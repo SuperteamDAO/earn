@@ -18,6 +18,7 @@ interface TokenNumberInputProps
   name?: string;
   placeholder?: string;
   hideToken?: boolean;
+  maxDecimals?: number;
 }
 
 function TokenNumberInput({
@@ -32,15 +33,21 @@ function TokenNumberInput({
   name,
   placeholder,
   hideToken = false,
+  maxDecimals = 2,
   ...props
 }: TokenNumberInputProps) {
   const [isFocused, setIsFocused] = useState(false);
   const [inputValue, setInputValue] = useState<string>('');
 
-  const formatNumber = useCallback((num: number | null) => {
-    if (num === null || num === undefined || isNaN(num)) return '';
-    return num.toLocaleString('en-US', { maximumFractionDigits: 2 });
-  }, []);
+  const formatNumber = useCallback(
+    (num: number | null) => {
+      if (num === null || num === undefined || isNaN(num)) return '';
+      return num.toLocaleString('en-US', {
+        maximumFractionDigits: maxDecimals,
+      });
+    },
+    [maxDecimals],
+  );
 
   useEffect(() => {
     if (!isFocused) {
@@ -51,44 +58,68 @@ function TokenNumberInput({
   const parseNumber = useCallback((str: string) => {
     if (!str) return null;
     const cleanStr = str.replace(/[^\d.-]/g, '');
-    const parsed = parseFloat(cleanStr);
+    const parsed = Number.parseFloat(cleanStr);
     return isNaN(parsed) ? null : parsed;
   }, []);
 
+  const limitDecimals = useCallback(
+    (value: string): string => {
+      if (!value.includes('.')) return value;
+      if (value.endsWith('.')) return value;
+      const [integer, fraction] = value.split('.');
+      if (fraction && fraction.length > maxDecimals) {
+        return `${integer}.${fraction.substring(0, maxDecimals)}`;
+      }
+      return value;
+    },
+    [maxDecimals],
+  );
+
   const handleInputChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      const inputValue = e.target.value;
-      const numericValue = inputValue.replace(/\D/g, '');
-      setInputValue(numericValue);
+      const rawInput = e.target.value;
+      if (/^(\d*\.?\d*)$/.test(rawInput) || rawInput === '') {
+        const limitedInput = limitDecimals(rawInput);
+        setInputValue(limitedInput);
 
-      const parsedValue = parseNumber(inputValue);
-      if (parsedValue !== null) {
-        const clampedValue = Math.min(Math.max(parsedValue, min), max);
-        onChange?.(clampedValue);
-      } else {
-        onChange?.(null);
+        const parsedValue = parseNumber(limitedInput);
+        if (parsedValue !== null) {
+          const clampedValue = Math.min(Math.max(parsedValue, min), max);
+          onChange?.(clampedValue);
+        } else {
+          onChange?.(null);
+        }
       }
     },
-    [parseNumber, onChange, min, max],
+    [parseNumber, onChange, min, max, limitDecimals],
   );
 
   const handleFocus = useCallback(() => {
     setIsFocused(true);
-    setInputValue(
-      value !== null && value !== undefined && !isNaN(value)
-        ? value.toString()
-        : '',
-    );
-  }, [value]);
+    if (value !== null && value !== undefined && !isNaN(value)) {
+      const valueStr = value.toString();
+      setInputValue(limitDecimals(valueStr));
+    } else {
+      setInputValue('');
+    }
+  }, [value, limitDecimals]);
 
   const handleBlur = useCallback(
     (e: React.FocusEvent<HTMLInputElement>) => {
       setIsFocused(false);
-      setInputValue(formatNumber(value));
-      // Call the external onBlur prop if provided
+
+      if (value !== null && value !== undefined && !isNaN(value)) {
+        const roundedValue = Number(value.toFixed(maxDecimals));
+        setInputValue(formatNumber(roundedValue));
+        if (value !== roundedValue) {
+          onChange?.(roundedValue);
+        }
+      } else {
+        setInputValue('');
+      }
       onBlur?.(e);
     },
-    [value, formatNumber, onBlur],
+    [value, formatNumber, onBlur, maxDecimals, onChange],
   );
 
   return (

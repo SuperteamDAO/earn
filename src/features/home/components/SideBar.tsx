@@ -13,7 +13,7 @@ import { totalsQuery } from '../queries/totals';
 import { HowItWorks } from './HowItWorks';
 import { RecentActivity } from './RecentActivity';
 import { RecentEarners } from './RecentEarners';
-import { SidebarBanner } from './SidebarBanner';
+import { SidebarBannerBreakout } from './SidebarBanner';
 import { SponsorBanner } from './SponsorBanner';
 import { TotalStats } from './TotalStats';
 
@@ -50,7 +50,7 @@ export const HomeSideBar = ({ type }: SideBarProps) => {
       {type === 'feed' && (
         <>
           <VibeCard />
-          {user?.location?.toLowerCase().includes('korea') && <SidebarBanner />}
+          <SidebarBannerBreakout />
           <LiveListings>
             <div className="flex items-center justify-between">
               <span className="text-sm font-medium text-gray-400">
@@ -78,7 +78,7 @@ export const HomeSideBar = ({ type }: SideBarProps) => {
             bountyCount={totals?.count}
             TVE={totals?.totalInUSD}
           />
-          {user?.location?.toLowerCase().includes('korea') && <SidebarBanner />}
+          <SidebarBannerBreakout />
           <HowItWorks />
           <RecentEarners earners={recentEarners} />
           <RecentActivity />

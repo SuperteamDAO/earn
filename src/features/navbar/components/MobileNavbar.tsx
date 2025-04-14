@@ -158,6 +158,16 @@ export const MobileNavbar = ({
               onClick={onDrawerClose}
             />
             <Link
+              href={'/hackathon/breakout'}
+              className={cn('flex items-center py-2 font-medium', 'h-10')}
+            >
+              <ExternalImage
+                alt="Redacted Logo"
+                src="/hackathon/breakout/logo"
+                className="h-full object-contain"
+              />
+            </Link>
+            <Link
               href={'/hackathon/redacted'}
               className={cn('flex items-center py-2 font-medium', 'h-10')}
             >

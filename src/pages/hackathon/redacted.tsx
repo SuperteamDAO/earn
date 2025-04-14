@@ -141,9 +141,9 @@ export default function Redacted({ hackathon }: { hackathon: Hackathon }) {
               Submission Tracks
             </p>
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {trackData?.map((track, index) => (
+              {trackData?.map((track) => (
                 <TrackBox
-                  key={index}
+                  key={track.slug}
                   title={track.title}
                   sponsor={track.sponsor}
                   token={track.token}

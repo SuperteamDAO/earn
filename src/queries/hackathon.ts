@@ -4,7 +4,7 @@ import { queryOptions } from '@tanstack/react-query';
 import { type TrackProps } from '@/interface/hackathon';
 import { api } from '@/lib/api';
 
-interface Stats {
+export interface Stats {
   totalRewardAmount: number;
   totalListings: number;
 }
