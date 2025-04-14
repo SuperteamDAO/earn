@@ -15,19 +15,19 @@ type Stats = {
 
 const initialStats = [
   {
-    title: '21K',
-    label: 'Global Discord',
+    title: '40K',
+    label: 'Global Community',
   },
   {
-    title: '75K',
+    title: '210K',
     label: 'Twitter Followers',
   },
   {
-    title: '$4M',
+    title: '$12M',
     label: 'Community GDP',
   },
   {
-    title: '100K',
+    title: '200K',
     label: 'Monthly Views',
     showEarn: true,
   },
@@ -37,8 +37,8 @@ const initialStats = [
     showEarn: true,
   },
   {
-    title: '20',
-    label: 'Countries',
+    title: '15',
+    label: 'Superteam Countries',
   },
 ];
 
