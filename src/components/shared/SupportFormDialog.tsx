@@ -1,5 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import IsoDomPurify from 'isomorphic-dompurify';
+import { usePostHog } from 'posthog-js/react';
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -58,6 +59,7 @@ export function SupportFormDialog({ children, onSubmit }: ModalFormProps) {
   const { user } = useUser();
   const [open, setOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const posthog = usePostHog();
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -77,7 +79,7 @@ export function SupportFormDialog({ children, onSubmit }: ModalFormProps) {
   const handleSubmit = async (data: FormData) => {
     try {
       setIsSubmitting(true);
-
+      posthog.capture('submit_support form');
       const response = await fetch('/api/email/manual/support', {
         method: 'POST',
         headers: {
@@ -121,7 +123,12 @@ export function SupportFormDialog({ children, onSubmit }: ModalFormProps) {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>{children}</DialogTrigger>
+      <DialogTrigger
+        asChild
+        onClick={() => posthog.capture('open_support form')}
+      >
+        {children}
+      </DialogTrigger>
       <DialogContent className="gap-2 px-0 sm:max-w-xl">
         <DialogHeader className="border-b px-6 pb-4">
           <DialogTitle className="text-lg font-semibold">
