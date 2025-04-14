@@ -177,7 +177,10 @@ export function UserMenu() {
           <SupportFormDialog>
             <DropdownMenuItem
               className="text-xs tracking-tight text-slate-500 sm:text-sm"
-              onSelect={(e) => e.preventDefault()}
+              onSelect={(e) => {
+                e.preventDefault();
+                posthog.capture('get help_user menu');
+              }}
             >
               Get Help
             </DropdownMenuItem>
