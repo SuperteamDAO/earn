@@ -7,6 +7,7 @@ import { toast } from 'sonner';
 import { ErrorSection } from '@/components/shared/ErrorSection';
 import { LoadingSection } from '@/components/shared/LoadingSection';
 import { Button } from '@/components/ui/button';
+import { CopyButton } from '@/components/ui/copy-tooltip';
 import {
   Dialog,
   DialogContent,
@@ -23,7 +24,6 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Tooltip } from '@/components/ui/tooltip';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import type { UserSponsor } from '@/interface/userSponsor';
 import { SponsorLayout } from '@/layouts/Sponsor';
@@ -214,22 +214,15 @@ const Index = () => {
                       </div>
                     </TableCell>
                     <TableCell className="font-medium text-slate-600">
-                      <div className="flex items-center gap-1">
-                        {member?.user?.email}
-                        <Tooltip
-                          content="Copy Email Address"
-                          contentProps={{ side: 'right' }}
-                        >
-                          <Copy
-                            className="h-4 w-4 cursor-pointer"
-                            onClick={() =>
-                              navigator.clipboard.writeText(
-                                member?.user?.email as string,
-                              )
-                            }
-                          />
-                        </Tooltip>
-                      </div>
+                      <CopyButton
+                        text={member?.user?.email || ''}
+                        contentProps={{ side: 'right' }}
+                      >
+                        <div className="flex items-center gap-1">
+                          {member?.user?.email}
+                          <Copy className="h-4 w-4 cursor-pointer" />
+                        </div>
+                      </CopyButton>
                     </TableCell>
                     <TableCell>
                       <RemoveMemberModal
