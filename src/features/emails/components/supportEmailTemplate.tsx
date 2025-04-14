@@ -1,3 +1,4 @@
+import parse from 'html-react-parser';
 import React from 'react';
 
 import { domPurify } from '@/lib/domPurify';
@@ -23,11 +24,14 @@ export const supportEmailTemplate = ({
         Subject: {subject} <br />
         Message:
       </p>
-      <p
-        dangerouslySetInnerHTML={{
-          __html: domPurify(description.replace(/\n/g, '<br>')),
-        }}
-      ></p>
+      <p>
+        {parse(
+          domPurify(description.replace(/\n/g, '<br />'), {
+            ALLOWED_TAGS: ['p', 'br'],
+            ALLOWED_ATTR: [],
+          }),
+        )}
+      </p>
     </div>
   );
 };

@@ -54,7 +54,7 @@ export default async function handler(
 
     return res.status(200).json({ success: true, messageId: data?.id });
   } catch (error) {
-    logger.error('Error in support email API:', error);
+    logger.error('Error in support email API:', safeStringify(error));
 
     if (error instanceof z.ZodError) {
       return res.status(400).json({ error: error.errors });

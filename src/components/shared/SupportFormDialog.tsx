@@ -1,4 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import IsoDomPurify from 'isomorphic-dompurify';
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -25,12 +26,25 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useUser } from '@/store/user';
 
+const hardDomPurify = (dirty: string | Node, cfg?: IsoDomPurify.Config) =>
+  IsoDomPurify.sanitize(dirty, {
+    ALLOWED_TAGS: [],
+    ALLOWED_ATTR: [],
+    ...cfg,
+  });
+
 const formSchema = z.object({
   email: z.string().email({ message: 'Please enter a valid email address' }),
-  subject: z.string().min(1, { message: 'Subject is required' }),
-  description: z
-    .string()
-    .min(10, { message: 'Description must be at least 10 characters' }),
+  subject: z.preprocess(
+    (val) => hardDomPurify(val as unknown as string),
+    z.string().min(1, { message: 'Subject is required' }),
+  ),
+  description: z.preprocess(
+    (val) => hardDomPurify(val as unknown as string),
+    z
+      .string()
+      .min(10, { message: 'Description must be at least 10 valid characters' }),
+  ),
 });
 
 type FormData = z.infer<typeof formSchema>;
@@ -71,8 +85,8 @@ export function SupportFormDialog({ children, onSubmit }: ModalFormProps) {
         },
         body: JSON.stringify({
           email: user?.email || data.email,
-          subject: data.subject,
-          description: data.description,
+          subject: hardDomPurify(data.subject),
+          description: hardDomPurify(data.description),
         }),
       });
 

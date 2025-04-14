@@ -71,6 +71,13 @@ export function CopyButton({
         role="button"
         className={cn('relative inline-flex items-center', className)}
         onClick={onCopy}
+        tabIndex={0}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            onCopy();
+          }
+        }}
       >
         {children}
       </div>
