@@ -354,6 +354,17 @@ export const Superteams = [
     hello: 'Annyeonghaseyo',
     nationality: 'Koreans',
   },
+  {
+    name: 'Superteam Ireland',
+    icons: basePath + 'logos/ireland.jpg',
+    banner: basePath + 'banners/Ireland.png',
+    region: Regions.IRELAND,
+    displayValue: 'Ireland',
+    country: ['Ireland'],
+    code: 'IE',
+    hello: 'Dia duit',
+    nationality: 'Irish',
+  },
 ];
 
 const NonSTRegions = [
