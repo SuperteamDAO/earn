@@ -4,6 +4,7 @@ import { useRouter } from 'next/router';
 import { usePostHog } from 'posthog-js/react';
 import { useEffect } from 'react';
 
+import { SupportFormDialog } from '@/components/shared/SupportFormDialog';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -173,15 +174,17 @@ export function UserMenu() {
             </DropdownMenuItem>
           )}
 
-          <DropdownMenuItem
-            onClick={() => {
-              window.open('mailto:support@superteamearn.com', '_blank');
-              posthog.capture('get help_user menu');
-            }}
-            className="text-xs tracking-tight text-slate-500 sm:text-sm"
-          >
-            Get Help
-          </DropdownMenuItem>
+          <SupportFormDialog>
+            <DropdownMenuItem
+              className="text-xs tracking-tight text-slate-500 sm:text-sm"
+              onSelect={(e) => {
+                e.preventDefault();
+                posthog.capture('get help_user menu');
+              }}
+            >
+              Get Help
+            </DropdownMenuItem>
+          </SupportFormDialog>
 
           <DropdownMenuItem
             onClick={() => {
