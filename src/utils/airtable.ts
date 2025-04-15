@@ -47,15 +47,28 @@ interface AirtableResponse {
 
 async function fetchAirtableRecordId(
   url: string,
-  fieldName: string,
-  fieldValue: string,
+  fieldName: string | null,
+  fieldValue: string | null,
   config: ReturnType<typeof airtableConfig>,
+  filterFormula?: string,
 ): Promise<string | null | undefined> {
   try {
+    const formula =
+      filterFormula ||
+      (fieldName && fieldValue
+        ? `{${fieldName}} = '${fieldValue}'`
+        : undefined);
+
+    if (!formula) {
+      throw new Error(
+        'fetchAirtableRecordId requires either a filterFormula or both fieldName and fieldValue.',
+      );
+    }
+
     const response = await axios.get<AirtableResponse>(url, {
       ...config,
       params: {
-        filterByFormula: `{${fieldName}} = '${fieldValue}'`,
+        filterByFormula: formula,
         maxRecords: 1,
       },
     });
