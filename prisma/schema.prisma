@@ -314,6 +314,7 @@ model Submission {
   ogImage            String?          @db.Text
   notes              String?          @db.VarChar(1000)
   Comments           Comment[]
+  CreditLedger       CreditLedger[]
 
   @@index([id, listingId])
   @@index([userId])
@@ -458,6 +459,7 @@ model User {
   kycDOB             String?
   kycIDNumber        String?
   kycIDType          String?
+  CreditLedger       CreditLedger[]
 
   @@index([currentSponsorId])
   @@index([hackathonId])
@@ -672,6 +674,29 @@ model BlockedEmail {
   createdAt DateTime @default(now())
 }
 
+model CreditLedger {
+  id             String          @id @default(uuid())
+  userId         String
+  submissionId   String
+  type           CreditEventType
+  change         Int
+  effectiveMonth DateTime
+  createdAt      DateTime        @default(now())
+  user           User            @relation(fields: [userId], references: [id])
+  submission     Submission      @relation(fields: [submissionId], references: [id])
+
+  @@index([userId])
+  @@index([submissionId])
+  @@index([effectiveMonth])
+}
+
+enum CreditEventType {
+  SUBMISSION
+  SPAM_PENALTY
+  WIN_BONUS
+  MONTHLY_CREDIT
+}
+
 enum TalentRankingSkills {
   DEVELOPMENT
   DESIGN
@@ -695,6 +720,7 @@ enum EmailType {
   ROLLING_UNPUBLISH
   UNFILLED_PROFILE
   WALLET_ANNOUNCEMENT
+  CREDITS_ANNOUNCEMENT
 }
 
 enum Role {
@@ -779,7 +805,6 @@ enum Regions {
   SINGAPORE
   POLAND
   KOREA
-  IRELAND
 
   UKRAINE
   ARGENTINA
