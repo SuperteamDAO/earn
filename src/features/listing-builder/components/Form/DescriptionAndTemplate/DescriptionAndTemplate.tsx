@@ -1,8 +1,6 @@
-import Link from 'next/link';
 import { usePostHog } from 'posthog-js/react';
 import { useMemo } from 'react';
 import { useWatch } from 'react-hook-form';
-import { toast } from 'sonner';
 
 import { MinimalTiptapEditor } from '@/components/tiptap';
 import { Button } from '@/components/ui/button';
@@ -15,6 +13,7 @@ import {
 } from '@/components/ui/form';
 
 import { useListingForm } from '../../../hooks';
+import { AiGenerateDialog } from '../../AiGenerate/Dialog';
 import { Templates } from './Templates';
 
 export function DescriptionAndTemplate() {
@@ -41,20 +40,12 @@ export function DescriptionAndTemplate() {
               <FormLabel isRequired>Description</FormLabel>
               <div className="flex items-center gap-2">
                 <Templates />
-                <Button
-                  asChild
-                  className="ph-no-capture h-8 bg-transparent p-0 shadow-none"
-                  onClick={() => {
-                    posthog.capture('AI bot_sponsor');
-                    toast.info(
-                      `Heads up! If you have the ChatGPT desktop app, the link might have opened there. Otherwise, it'll open in your browser.`,
-                    );
-                  }}
-                >
-                  <Link
-                    href="https://chat.openai.com/g/g-HS6eWTMku-st-earn-listings-bot"
-                    target="_blank"
-                    className="ph-no-capture"
+                <AiGenerateDialog>
+                  <Button
+                    className="ph-no-capture h-8 bg-transparent p-0 shadow-none"
+                    onClick={() => {
+                      posthog.capture('AI bot_sponsor');
+                    }}
                   >
                     <div className="group bg-background relative inline-flex h-full overflow-hidden rounded-[calc(1.5px+0.375rem-2px)] p-[1.5px] pb-[1.8px] focus:outline-hidden">
                       <span className="absolute inset-[-1000%] animate-[spin_2s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#FF79C1_0%,#76C5FF_50%,#FF79C1_100%)]" />
@@ -66,8 +57,8 @@ export function DescriptionAndTemplate() {
                         Auto Generate
                       </span>
                     </div>
-                  </Link>
-                </Button>
+                  </Button>
+                </AiGenerateDialog>
               </div>
             </div>
             <div className="ring-primary flex rounded-md border has-focus:ring-1">
