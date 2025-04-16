@@ -1,7 +1,10 @@
+import { useCompletion } from '@ai-sdk/react';
 import { type ReactNode, useState } from 'react';
 
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
+import { api } from '@/lib/api';
 
+import { type TEligibilityQuestion } from '../../types/schema';
 import { AiGenerateForm } from './Form';
 import { AiGenerateResult } from './Result';
 import { type AiGenerateFormValues } from './schema';
@@ -18,24 +21,44 @@ export function AiGenerateDialog({ children }: AIDescriptionDialogProps) {
     rewards: '',
     requirements: '',
   });
-  const [generatedResult, setGeneratedResult] = useState('');
+
+  const [eligibilityQuestions, setEligibilityQuestions] = useState<
+    TEligibilityQuestion[]
+  >([]);
+  const { complete: completeDescription, completion: description } =
+    useCompletion({
+      api: '/api/sponsor-dashboard/ai-generate-description',
+      onResponse: () => {
+        // Move to result stage as soon as we start getting a response
+        setStage('result');
+      },
+      onError: (err) => {
+        console.error('Error in completion:', err);
+      },
+    });
 
   const handleFormSubmit = async (data: AiGenerateFormValues) => {
     setFormData(data);
 
-    // Simulate API call to generate description
-    // In a real app, you would call your AI service here
-    setTimeout(() => {
-      setGeneratedResult(`Superteam Earn, a marketplace for freelance gigs and bounties, is excited to announce a design-focused bounty exclusively for students and alumni of 10kdesigners. Earn is looking for designers to help inspire our next (potential) product feature: the Talent Leaderboard.
-      
-Scope of Work
-Participants are tasked with strategizing and designing a Talent Leaderboard for Superteam Earn.
+    const completedDescription = await completeDescription('', {
+      body: {
+        companyDescription: data.companyDescription,
+        scopeOfWork: data.scopeOfWork,
+        rewards: data.rewards,
+        requirements: data.requirements,
+      },
+    });
 
-Deliverables:
- 1. Figma file: A final, production-ready design of the Talent Leaderboard`);
-
-      setStage('result');
-    }, 1500);
+    const eligibilityQuestionsResponse = await api.post<TEligibilityQuestion[]>(
+      '/api/sponsor-dashboard/ai-generate-questions',
+      {
+        description: completedDescription,
+      },
+    );
+    console.log(eligibilityQuestionsResponse);
+    if (eligibilityQuestionsResponse.data) {
+      setEligibilityQuestions(eligibilityQuestionsResponse.data);
+    }
   };
 
   const resetForm = () => {
@@ -46,7 +69,6 @@ Deliverables:
       rewards: '',
       requirements: '',
     });
-    setGeneratedResult('');
   };
 
   return (
@@ -57,11 +79,13 @@ Deliverables:
           <AiGenerateForm onSubmit={handleFormSubmit} initialData={formData} />
         ) : (
           <AiGenerateResult
-            result={generatedResult}
+            description={description}
+            eligibilityQuestions={eligibilityQuestions}
             onInsert={() => {
               // Handle insert action
-              console.log('Inserting result:', generatedResult);
+              console.log('Inserting result:', description);
             }}
+            onBack={() => setStage('form')}
           />
         )}
       </DialogContent>

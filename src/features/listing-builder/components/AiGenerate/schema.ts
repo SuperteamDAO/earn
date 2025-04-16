@@ -1,5 +1,7 @@
 import { z } from 'zod';
 
+import { eligibilityQuestionSchema } from '../../types/schema';
+
 export const aiGenerateFormSchema = z.object({
   companyDescription: z
     .string()
@@ -35,3 +37,9 @@ export const aiGenerateFormSchema = z.object({
 });
 
 export type AiGenerateFormValues = z.infer<typeof aiGenerateFormSchema>;
+
+export const aiGenerateResponseSchema = z.object({
+  description: z.string(),
+  eligibilityQuestion: eligibilityQuestionSchema,
+});
+export type AiGenerateResponseValue = z.infer<typeof aiGenerateResponseSchema>;

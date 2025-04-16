@@ -1,3 +1,4 @@
+'use client';
 import dayjs from 'dayjs';
 import { useAtomValue } from 'jotai';
 import { useEffect, useState } from 'react';

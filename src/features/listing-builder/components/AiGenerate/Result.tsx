@@ -1,12 +1,22 @@
+import { MarkdownRenderer } from '@/components/shared/MarkdownRenderer';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
+import { type TEligibilityQuestion } from '../../types/schema';
+
 interface AiGenerateResultProps {
-  result: string;
+  description: string;
+  eligibilityQuestions: TEligibilityQuestion[];
   onInsert: () => void;
+  onBack: () => void;
 }
 
-export function AiGenerateResult({ result, onInsert }: AiGenerateResultProps) {
+export function AiGenerateResult({
+  description,
+  eligibilityQuestions,
+  onInsert,
+  onBack,
+}: AiGenerateResultProps) {
   return (
     <div className="space-y-4">
       <div>
@@ -25,33 +35,36 @@ export function AiGenerateResult({ result, onInsert }: AiGenerateResultProps) {
             Generated Result
           </h3>
           <div className="mt-2 rounded-md border bg-white p-2 text-sm text-slate-700">
-            <div className="whitespace-pre-line">{result}</div>
+            <MarkdownRenderer>{description}</MarkdownRenderer>
           </div>
         </div>
 
         <div className="mt-4 space-y-3 text-sm text-slate-700">
           <h3 className="text-sm font-medium text-slate-600">Questions</h3>
-
-          <div className="rounded-md border bg-white p-2">
-            <p className="">1. Why are you the right fit for this job?</p>
-          </div>
-
-          <div className="rounded-md border bg-white p-2">
-            <p className="">2. Who are you and why should we trust you?</p>
-          </div>
-
-          <div className="rounded-md border bg-white p-2">
-            <p className="">3. Give 3 Examples of why you will not rug us</p>
-          </div>
+          {eligibilityQuestions.map((question) => (
+            <div
+              className="rounded-md border bg-white p-2"
+              key={question.order}
+            >
+              <p className="">
+                {question.order}. {question.question}
+              </p>
+            </div>
+          ))}
         </div>
       </ScrollArea>
 
-      <Button
-        onClick={onInsert}
-        className="w-full bg-indigo-500 hover:bg-indigo-600"
-      >
-        Insert
-      </Button>
+      <div className="flex flex-col items-center">
+        <Button
+          onClick={onInsert}
+          className="w-full bg-indigo-500 hover:bg-indigo-600"
+        >
+          Insert
+        </Button>
+        <Button variant="link" className="" onClick={onBack}>
+          Go Back
+        </Button>
+      </div>
     </div>
   );
 }
