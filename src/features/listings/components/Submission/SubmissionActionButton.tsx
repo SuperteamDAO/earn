@@ -43,6 +43,7 @@ const InfoWrapper = ({
   creditBalance,
   isProject,
   isBounty,
+  isEditMode,
 }: {
   children: React.ReactNode;
   isUserEligibleByRegion: boolean;
@@ -53,13 +54,19 @@ const InfoWrapper = ({
   creditBalance: number;
   isProject: boolean;
   isBounty: boolean;
+  isEditMode: boolean;
 }) => {
   return (
     <Tooltip
       disabled={
         hasHackathonStarted &&
         (isUserEligibleByRegion || pastDeadline) &&
-        !(creditBalance === 0 && (isProject || isBounty))
+        !(
+          creditBalance === 0 &&
+          (isProject || isBounty) &&
+          !isEditMode &&
+          !pastDeadline
+        )
       }
       content={
         !isUserEligibleByRegion
@@ -128,11 +135,13 @@ export const SubmissionActionButton = ({
   const pastDeadline = isDeadlineOver(deadline) || isWinnersAnnounced;
   const buttonState = getButtonState();
 
+  const isEditMode = buttonState === 'edit';
+
   const handleSubmit = () => {
     onOpen();
     if (buttonState === 'submit') {
       posthog.capture('start_submission');
-    } else if (buttonState === 'edit') {
+    } else if (isEditMode) {
       posthog.capture('edit_submission');
     }
   };
@@ -230,14 +239,14 @@ export const SubmissionActionButton = ({
   const requiresCredits =
     (isProject || isBounty) &&
     user &&
-    !(buttonState === 'edit') &&
+    !isEditMode &&
     !isUserSubmissionLoading &&
     !pastDeadline;
 
   const hackathonCreditConditions =
     isHackathon &&
     user &&
-    !(buttonState === 'edit') &&
+    !isEditMode &&
     !isUserSubmissionLoading &&
     !pastDeadline;
 
@@ -249,7 +258,7 @@ export const SubmissionActionButton = ({
           id={id}
           onClose={onClose}
           isOpen={isOpen}
-          editMode={buttonState === 'edit'}
+          editMode={isEditMode}
           listing={listing}
           isTemplate={isTemplate}
           showEasterEgg={() => setEasterEggOpen(true)}
@@ -283,6 +292,7 @@ export const SubmissionActionButton = ({
             creditBalance={creditBalance}
             isProject={isProject}
             isBounty={isBounty}
+            isEditMode={isEditMode}
           >
             <AuthWrapper
               showCompleteProfileModal
@@ -300,12 +310,12 @@ export const SubmissionActionButton = ({
                     'font-semibold sm:font-medium',
                     buttonBG,
                     'hover:opacity-90',
-                    buttonState === 'edit' &&
+                    isEditMode &&
                       'border-brand-purple text-brand-purple hover:text-brand-purple-dark',
                   )}
                   disabled={isBtnDisabled}
                   onClick={handleSubmit}
-                  variant={buttonState === 'edit' ? 'outline' : 'default'}
+                  variant={isEditMode ? 'outline' : 'default'}
                 >
                   {isUserSubmissionLoading ? (
                     <>
@@ -314,7 +324,7 @@ export const SubmissionActionButton = ({
                     </>
                   ) : (
                     <>
-                      {buttonState === 'edit' && <Pencil />}
+                      {isEditMode && <Pencil />}
                       <span>{buttonText}</span>
                       {requiresCredits && (
                         <CreditIcon className="-ml-2.5 size-6" />

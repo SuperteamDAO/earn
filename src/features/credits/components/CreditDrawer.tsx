@@ -209,14 +209,14 @@ export function CreditDrawer({
 
           <div className="w-full border-t border-slate-50 bg-white py-1 shadow-[0_-2px_3px_rgba(0,0,0,0.05)]">
             <p className="mx-auto flex items-center justify-center text-xs text-slate-400 transition-colors sm:text-sm">
-              <span className="cursor-pointer underline">
+              <span className="mr-1 cursor-pointer underline">
                 <a
                   href="https://superteamdao.notion.site/submission-credits"
                   target="_blank"
                 >
                   Click here
                 </a>
-              </span>{' '}
+              </span>
               to learn more
             </p>
           </div>
