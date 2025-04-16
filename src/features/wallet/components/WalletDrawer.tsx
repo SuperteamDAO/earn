@@ -1,5 +1,5 @@
 import { useMfaEnrollment, usePrivy } from '@privy-io/react-auth';
-import { ArrowLeft, ArrowUpRight, CheckIcon, CopyIcon, X } from 'lucide-react';
+import { ArrowLeft, ArrowUpRight, CopyIcon, X } from 'lucide-react';
 import { useRouter } from 'next/router';
 import { usePostHog } from 'posthog-js/react';
 import { useEffect, useState } from 'react';
@@ -7,8 +7,9 @@ import { toast } from 'sonner';
 
 import { WalletFeature } from '@/components/modals/WalletFeature';
 import { Button } from '@/components/ui/button';
+import { CopyButton } from '@/components/ui/copy-tooltip';
 import { SideDrawer, SideDrawerContent } from '@/components/ui/side-drawer';
-import { useClipboard } from '@/hooks/use-clipboard';
+import { useBreakpoint } from '@/hooks/use-breakpoint';
 import { useUpdateUser, useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
@@ -58,6 +59,8 @@ export function WalletDrawer({
   const { user: privyUser } = usePrivy();
   const { showMfaEnrollmentModal } = useMfaEnrollment();
 
+  const isMD = useBreakpoint('md');
+
   const handleBack = () => {
     setView('main');
   };
@@ -87,8 +90,6 @@ export function WalletDrawer({
 
   const padding = 'px-6 sm:px-8';
 
-  const { onCopy, hasCopied } = useClipboard(user?.walletAddress || '');
-
   const handleClose = () => {
     const currentPath = window.location.hash;
 
@@ -103,8 +104,12 @@ export function WalletDrawer({
     posthog.capture('withdraw_start');
     if (privyUser?.mfaMethods.length === 0) {
       toast(
-        <div className="flex flex-col gap-1">
-          <div className="text-brand-purple text-xl font-bold">
+        <div className="relative flex flex-col gap-1">
+          <X
+            className="absolute top-0 right-0 size-4 cursor-pointer text-slate-400 hover:text-slate-700"
+            onClick={() => toast.dismiss()}
+          />
+          <div className="text-brand-purple mt-1 pr-6 text-xl font-bold">
             Two-Factor Auth is Mandatory
           </div>
           <div className="text-sm text-slate-600">
@@ -122,12 +127,13 @@ export function WalletDrawer({
           </Button>
         </div>,
         {
-          duration: 20000,
+          duration: 7000,
           style: {
             border: '1px solid #7471ff',
             padding: '1rem',
           },
           className: 'shadow-lg',
+          dismissible: true,
         },
       );
     } else {
@@ -159,19 +165,17 @@ export function WalletDrawer({
                 <h2 className="text-lg font-semibold tracking-tight">
                   {user?.firstName + "'s Wallet"}
                 </h2>
-                <div
-                  onClick={onCopy}
+                <CopyButton
+                  text={user?.walletAddress || ''}
                   className="flex cursor-pointer items-center gap-1 text-slate-500 hover:text-slate-700"
+                  contentProps={{ side: 'right' }}
+                  content={'Click to copy'}
                 >
                   <p className="text-xs font-medium">
                     {truncatePublicKey(user?.walletAddress)}
                   </p>
-                  {hasCopied ? (
-                    <CheckIcon className="size-2.5 text-green-500" />
-                  ) : (
-                    <CopyIcon className="size-2.5" />
-                  )}
-                </div>
+                  <CopyIcon className="size-2.5" />
+                </CopyButton>
               </div>
               <p className="text-sm font-medium text-slate-500">
                 You will receive payments in this wallet each time you win.{' '}
@@ -273,13 +277,21 @@ export function WalletDrawer({
             )}
             <p className="sticky bottom-0 mt-auto bg-white px-2 py-2 text-center text-xs text-slate-400 sm:text-sm">
               Have questions? Reach out to us at{' '}
-              <a
-                href="mailto:support@superteamearn.com"
-                className="underline hover:text-slate-500"
-                target="_blank"
-              >
-                support@superteamearn.com
-              </a>
+              {isMD ? (
+                <CopyButton text="support@superteamearn.com">
+                  <p className="underline hover:text-slate-500">
+                    support@superteamearn.com
+                  </p>
+                </CopyButton>
+              ) : (
+                <a
+                  href="mailto:support@superteamearn.com"
+                  className="underline hover:text-slate-500"
+                  target="_blank"
+                >
+                  support@superteamearn.com
+                </a>
+              )}
             </p>
           </div>
         )}

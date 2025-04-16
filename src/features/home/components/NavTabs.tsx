@@ -115,6 +115,21 @@ export function NavTabs({ className, ...props }: NavTabsProps) {
           className="h-full object-contain"
         />
       </Link>
+      <Link
+        href={'/hackathon/breakout'}
+        className={cn(
+          'flex items-center py-1 font-medium lg:hidden',
+          'h-6',
+          'rounded-full border border-slate-200 px-2 text-sm',
+        )}
+        aria-label="Go to Breakout Hackathon page"
+      >
+        <ExternalImage
+          alt="Redacted Logo"
+          src="/hackathon/breakout/logo"
+          className="h-full object-contain"
+        />
+      </Link>
     </div>
   );
 }

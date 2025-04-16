@@ -243,7 +243,7 @@ export const SubmissionDrawer = ({
       subheadingText = "We can't wait to see what you've created!";
       break;
     case 'hackathon':
-      headerText = `${Hackathon?.Sponsor?.name || ''} ${Hackathon?.name || ''} Track Submission`;
+      headerText = `${Hackathon?.name || ''} Track Submission`;
       subheadingText = (
         <>
           Note:

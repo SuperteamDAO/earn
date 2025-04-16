@@ -5,14 +5,13 @@ import { ArrowRight, Check, Copy, X } from 'lucide-react';
 import Link from 'next/link';
 import React, { useMemo } from 'react';
 import { MdOutlineAccountBalanceWallet, MdOutlineMail } from 'react-icons/md';
-import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
+import { CopyButton } from '@/components/ui/copy-tooltip';
 import { CircularProgress } from '@/components/ui/progress';
 import { Tooltip } from '@/components/ui/tooltip';
 import { Superteams } from '@/constants/Superteam';
 import { tokenList } from '@/constants/tokenList';
-import { useClipboard } from '@/hooks/use-clipboard';
 import { cn } from '@/utils/cn';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
@@ -95,32 +94,6 @@ export const ApplicationDetails = ({
         };
       },
     );
-  };
-
-  const { onCopy: onCopyEmail } = useClipboard(
-    selectedApplication?.user?.email || '',
-  );
-
-  const { onCopy: onCopyPublicKey } = useClipboard(
-    selectedApplication?.walletAddress || '',
-  );
-
-  const handleCopyEmail = () => {
-    if (selectedApplication?.user?.email) {
-      onCopyEmail();
-      toast.success('Email copied to clipboard', {
-        duration: 1500,
-      });
-    }
-  };
-
-  const handleCopyPublicKey = () => {
-    if (selectedApplication?.walletAddress) {
-      onCopyPublicKey();
-      toast.success('Wallet address copied to clipboard', {
-        duration: 1500,
-      });
-    }
   };
 
   const superteam = useMemo(() => {
@@ -327,42 +300,26 @@ export const ApplicationDetails = ({
                 </div>
               )}
               {selectedApplication?.user?.email && (
-                <Tooltip
-                  content={'Click to copy'}
+                <CopyButton
+                  text={selectedApplication.user.email}
+                  className="flex cursor-pointer items-center justify-start gap-1 text-sm text-slate-400 underline-offset-1 hover:text-slate-500 hover:underline"
                   contentProps={{ side: 'right' }}
-                  triggerClassName="flex items-center hover:underline underline-offset-1"
                 >
-                  <div
-                    className="flex cursor-pointer items-center justify-start gap-1 text-sm text-slate-400 hover:text-slate-500"
-                    onClick={handleCopyEmail}
-                    role="button"
-                    tabIndex={0}
-                    aria-label={`Copy email: ${selectedApplication.user.email}`}
-                  >
-                    <MdOutlineMail />
-                    {truncateString(selectedApplication.user.email, 36)}
-                  </div>
-                </Tooltip>
+                  <MdOutlineMail />
+                  {truncateString(selectedApplication.user.email, 36)}
+                </CopyButton>
               )}
               {selectedApplication?.walletAddress && (
-                <Tooltip
-                  content={'Click to copy'}
+                <CopyButton
+                  text={selectedApplication.walletAddress}
+                  className="flex cursor-pointer items-center justify-start gap-1 text-sm text-slate-400 underline-offset-1 hover:text-slate-500 hover:underline"
                   contentProps={{ side: 'right' }}
-                  triggerClassName="flex items-center hover:underline underline-offset-1"
                 >
-                  <div
-                    className="flex cursor-pointer items-center justify-start gap-1 text-sm whitespace-nowrap text-slate-400 hover:text-slate-500"
-                    onClick={handleCopyPublicKey}
-                    role="button"
-                    tabIndex={0}
-                    aria-label={`Copy public key: ${truncatePublicKey(selectedApplication.walletAddress || '', 3)}`}
-                  >
-                    <MdOutlineAccountBalanceWallet />
-                    <p>
-                      {truncatePublicKey(selectedApplication.walletAddress, 3)}
-                    </p>
-                  </div>
-                </Tooltip>
+                  <MdOutlineAccountBalanceWallet />
+                  <p>
+                    {truncatePublicKey(selectedApplication.walletAddress, 3)}
+                  </p>
+                </CopyButton>
               )}
 
               <div className="flex gap-2">
@@ -438,16 +395,15 @@ export const ApplicationDetails = ({
                 <p className="mt-1 text-xs font-semibold text-slate-400 uppercase">
                   Wallet Address
                 </p>
-                <div
+                <CopyButton
+                  text={selectedApplication?.walletAddress || ''}
                   className="flex cursor-pointer items-center gap-1 text-sm font-medium whitespace-nowrap text-slate-600"
-                  onClick={handleCopyPublicKey}
+                  contentProps={{ side: 'right' }}
+                  content="Click to copy"
                 >
                   {selectedApplication?.walletAddress}
-                  <Copy
-                    className="h-4 w-4 text-slate-400"
-                    onClick={handleCopyPublicKey}
-                  />
-                </div>
+                  <Copy className="h-4 w-4 text-slate-400" />
+                </CopyButton>
               </div>
 
               <InfoBox

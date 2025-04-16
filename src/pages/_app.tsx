@@ -55,7 +55,6 @@ function MyApp({ Component, pageProps }: any) {
       posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY!, {
         api_host: `${getURL()}ingest`,
         autocapture: false,
-        disable_session_recording: true,
         ui_host:
           process.env.NEXT_PUBLIC_POSTHOG_HOST || 'https://app.posthog.com',
         loaded: (posthog) => {

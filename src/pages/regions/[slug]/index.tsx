@@ -81,14 +81,12 @@ const RegionsPage = ({
 export async function getServerSideProps(context: NextPageContext) {
   const { slug } = context.query;
 
-  const st = Superteams.find((team) => team.region.toLowerCase() === slug);
+  const st = Superteams.find(
+    (team) => team.region?.toLowerCase() === (slug as string).toLowerCase(),
+  );
   const displayName = st?.displayValue;
 
-  const validRegion = Superteams.some(
-    (team) => team.region.toLowerCase() === (slug as string).toLowerCase(),
-  );
-
-  if (!validRegion) {
+  if (!st) {
     return {
       notFound: true,
     };
