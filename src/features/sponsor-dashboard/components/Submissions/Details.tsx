@@ -19,6 +19,7 @@ import { type Listing } from '@/features/listings/types';
 import { selectedSubmissionAtom } from '../../atoms';
 import { InfoBox, parseHtml } from '../InfoBox';
 import { Notes } from './Notes';
+import SubmissionStatusExplanation from './SubmissionStatusExplainer';
 
 interface Props {
   bounty: Listing | undefined;
@@ -75,6 +76,9 @@ export const Details = ({ bounty, externalView, atom }: Props) => {
           externalView ? 'mt-3' : 'overflow-y-auto p-4',
         )}
       >
+        <div className="mb-4">
+          <SubmissionStatusExplanation submission={selectedSubmission} />
+        </div>
         {bounty?.compensationType !== 'fixed' && (
           <div className="mb-4">
             <p className="mt-1 text-xs font-semibold uppercase text-slate-400">
