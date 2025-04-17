@@ -203,6 +203,10 @@ model Grants {
   ai                     Json?
   GrantTranche           GrantTranche[]
   approverRecordId       String?
+  emailSender            String?
+  replyToEmail           String?
+  emailSalutation        String?
+  communityLink          String?
 
   @@index([id, slug])
   @@index([pocId])
