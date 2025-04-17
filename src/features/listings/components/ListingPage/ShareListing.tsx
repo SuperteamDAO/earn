@@ -99,7 +99,7 @@ export function ShareListing({
       <DrawerTrigger asChild>
         <Button
           variant="ghost"
-          className={cn('font-medium text-slate-500', className)}
+          className={cn('p-2 text-xs font-medium text-slate-500', className)}
         >
           <IoMdShareAlt className="text-slate-500" />
           SHARE

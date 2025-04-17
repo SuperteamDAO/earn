@@ -7,9 +7,9 @@ import { useEffect } from 'react';
 import { useDisclosure } from '@/hooks/use-disclosure';
 
 import { Login } from '@/features/auth/components/Login';
+import { CreditDrawer } from '@/features/credits/components/CreditDrawer';
 import { WalletDrawer } from '@/features/wallet/components/WalletDrawer';
 import { tokenAssetsQuery } from '@/features/wallet/queries/fetch-assets';
-
 const SearchModal = dynamic(() =>
   import('@/features/search/components/SearchModal').then(
     (mod) => mod.SearchModal,
@@ -50,6 +50,12 @@ export const Header = () => {
     isOpen: isWalletOpen,
     onOpen: onWalletOpen,
     onClose: onWalletClose,
+  } = useDisclosure();
+
+  const {
+    isOpen: isCreditOpen,
+    onOpen: onCreditOpen,
+    onClose: onCreditClose,
   } = useDisclosure();
 
   const posthog = usePostHog();
@@ -118,13 +124,14 @@ export const Header = () => {
           onSearchOpen={searchOpenWithEvent}
           onWalletOpen={openWalletWithEvent}
           walletBalance={walletBalance || 0}
+          onCreditOpen={onCreditOpen}
         />
       </div>
-
       <MobileNavbar
         onLoginOpen={onLoginOpen}
         onWalletOpen={openWalletWithEvent}
         walletBalance={walletBalance || 0}
+        onCreditOpen={onCreditOpen}
       />
       <SearchModal isOpen={isSearchOpen} onClose={onSearchClose} />
       <div className="fixed bottom-0 z-60 w-full">
@@ -137,6 +144,7 @@ export const Header = () => {
         isOpen={isWalletOpen}
         onClose={onWalletClose}
       />
+      <CreditDrawer isOpen={isCreditOpen} onClose={onCreditClose} />
     </>
   );
 };
