@@ -27,7 +27,7 @@ const AirtableInputSchema = z.object({
       email: z.string().email(),
       location: z.string().nullable(),
       kycName: z.string().min(1, 'KYC Name is required'),
-      kycAddress: z.string().min(1, 'KYC Address is required'),
+      kycAddress: z.string().nullable(),
       kycDOB: z.string().min(1, 'KYC Date of Birth is required'),
       kycIDNumber: z.string().min(1, 'KYC ID Number is required'),
       kycIDType: z.string().min(1, 'KYC ID Type is required'),
@@ -107,7 +107,7 @@ function grantApplicationToAirtable(
   const country = lookup.byIso(validatedApplication.user.kycCountry)?.country;
   return {
     Name: validatedApplication.user.kycName,
-    Address: validatedApplication.user.kycAddress,
+    Address: validatedApplication.user.kycAddress ?? '',
     'Date of Birth': validatedApplication.user.kycDOB,
     'ID Number': validatedApplication.user.kycIDNumber,
     'ID Type': validatedApplication.user.kycIDType,
