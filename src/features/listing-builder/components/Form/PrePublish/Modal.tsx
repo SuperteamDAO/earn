@@ -89,7 +89,6 @@ export function PrePublish() {
         form.setValue('isFndnPaying', false);
       }
     }
-    form.saveDraft();
   }, [isST, router.pathname]);
 
   useEffect(() => {
