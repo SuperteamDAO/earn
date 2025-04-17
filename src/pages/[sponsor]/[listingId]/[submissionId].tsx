@@ -79,7 +79,6 @@ function Content({
           (submission: SubmissionWithUser) => submission.id === submissionB.id,
         ),
       );
-      console.log(submission);
     } catch (e) {
       console.log(e);
     }

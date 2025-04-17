@@ -233,8 +233,6 @@ export default function SponsorListings() {
     );
   }, [allSubmissions]);
 
-  console.log(user);
-
   const ALL_FILTERS = useMemo(() => {
     const filters = [
       'Spam',

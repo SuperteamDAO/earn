@@ -301,15 +301,6 @@ export default function BountySubmissions({ slug }: Props) {
   );
 
   useEffect(() => {
-    if (selectedSubmission) {
-      setPageSelections((prev) => ({
-        ...prev,
-        [currentPage]: selectedSubmission.id,
-      }));
-    }
-  }, [selectedSubmission, currentPage]);
-
-  useEffect(() => {
     if (paginatedSubmissions.length > 0) {
       const savedSelectionId = pageSelections[currentPage];
       const submissionToSelect = paginatedSubmissions.find(
@@ -321,6 +312,10 @@ export default function BountySubmissions({ slug }: Props) {
         submissionToSelect.id !== selectedSubmission?.id
       ) {
         setSelectedSubmission(submissionToSelect);
+        setPageSelections((prev) => ({
+          ...prev,
+          [currentPage]: submissionToSelect.id,
+        }));
       } else if (
         !submissionToSelect &&
         (!selectedSubmission ||
@@ -421,16 +416,13 @@ export default function BountySubmissions({ slug }: Props) {
   ]);
 
   useEffect(() => {
-    if (searchParams?.has('submissionId') && submissions) {
-      const submissionId = searchParams.get('submissionId');
-      const submission = submissions?.find(
-        (submission) => submission.id === submissionId,
-      );
-      if (submission) {
-        setSelectedSubmission(submission);
-      }
+    if (searchParams?.has('submissionId')) {
+      setPageSelections((prev) => ({
+        ...prev,
+        [currentPage]: searchParams.get('submissionId') || '',
+      }));
     }
-  }, [submissions, searchParams]);
+  }, [searchParams]);
 
   return (
     <SponsorLayout isCollapsible>
@@ -505,6 +497,8 @@ export default function BountySubmissions({ slug }: Props) {
                   <div className="h-full w-full">
                     <SubmissionList
                       listing={bounty}
+                      selectedSubmission={selectedSubmission}
+                      setSelectedSubmission={setSelectedSubmission}
                       filterLabel={filterLabel}
                       setFilterLabel={(e) => {
                         setFilterLabel(e);

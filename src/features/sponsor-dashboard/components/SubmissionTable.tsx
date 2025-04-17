@@ -173,10 +173,12 @@ export const SubmissionTable = ({
                   0;
               }
 
-              const listingSubmissionLink =
+              const listingLink =
                 submission?.listing?.type === 'grant'
-                  ? `/dashboard/grants/${submission?.listing?.slug}/applications?submissionId=${submission.id}`
-                  : `/dashboard/listings/${submission?.listing?.slug}/submissions?submissionId=${submission.id}`;
+                  ? `/dashboard/grants/${submission?.listing?.slug}/applications`
+                  : `/dashboard/listings/${submission?.listing?.slug}/submissions`;
+
+              const listingSubmissionLink = `${listingLink}?submissionId=${submission.id}`;
 
               const textColor = getColorStyles(listingStatus).color;
               const bgColor = getColorStyles(listingStatus).bg;
@@ -230,7 +232,7 @@ export const SubmissionTable = ({
                     </Tooltip>
                   </TableCell>
                   <TableCell className="py-2">
-                    <Link href={listingSubmissionLink}>
+                    <Link href={listingLink}>
                       <p className="max-w-80 whitespace-normal break-words font-medium text-slate-700">
                         {submission?.listing?.title}
                       </p>

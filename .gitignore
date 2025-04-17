@@ -70,3 +70,5 @@ local
 
 download_assets.sh
 download_assets.js
+
+staging_dump.sql

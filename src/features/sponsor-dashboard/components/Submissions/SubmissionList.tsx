@@ -1,5 +1,4 @@
 import { type SubmissionLabels } from '@prisma/client';
-import { useAtom } from 'jotai';
 import debounce from 'lodash.debounce';
 import { ChevronDown, Search } from 'lucide-react';
 import React, {
@@ -27,7 +26,6 @@ import { sponsorshipSubmissionStatus } from '@/features/listings/components/Subm
 import { type Listing } from '@/features/listings/types';
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
-import { selectedSubmissionAtom } from '../../atoms';
 import { labelMenuOptions } from '../../constants';
 import { colorMap } from '../../utils/statusColorMap';
 
@@ -45,6 +43,10 @@ interface Props {
   toggleSubmission?: (id: string) => void;
   isToggled?: (id: string) => boolean;
   toggleAllSubmissions?: () => void;
+  selectedSubmission: SubmissionWithUser | undefined;
+  setSelectedSubmission: Dispatch<
+    SetStateAction<SubmissionWithUser | undefined>
+  >;
   isAllToggled?: boolean;
 }
 
@@ -58,12 +60,10 @@ export const SubmissionList = ({
   toggleSubmission,
   isToggled,
   toggleAllSubmissions,
+  selectedSubmission,
+  setSelectedSubmission,
   isAllToggled,
 }: Props) => {
-  const [selectedSubmission, setSelectedSubmission] = useAtom(
-    selectedSubmissionAtom,
-  );
-
   const debouncedSetSearchText = useRef(debounce(setSearchText, 300)).current;
 
   useEffect(() => {
