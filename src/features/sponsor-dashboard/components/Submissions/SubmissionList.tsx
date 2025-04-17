@@ -44,9 +44,7 @@ interface Props {
   isToggled?: (id: string) => boolean;
   toggleAllSubmissions?: () => void;
   selectedSubmission: SubmissionWithUser | undefined;
-  setSelectedSubmission: Dispatch<
-    SetStateAction<SubmissionWithUser | undefined>
-  >;
+  setSelectedSubmission: (submission: SubmissionWithUser) => void;
   isAllToggled?: boolean;
 }
 

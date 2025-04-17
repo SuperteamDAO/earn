@@ -498,7 +498,14 @@ export default function BountySubmissions({ slug }: Props) {
                     <SubmissionList
                       listing={bounty}
                       selectedSubmission={selectedSubmission}
-                      setSelectedSubmission={setSelectedSubmission}
+                      setSelectedSubmission={(submission) => {
+                        if (submission?.id) {
+                          setPageSelections((prev) => ({
+                            ...prev,
+                            [currentPage]: submission.id,
+                          }));
+                        }
+                      }}
                       filterLabel={filterLabel}
                       setFilterLabel={(e) => {
                         setFilterLabel(e);
