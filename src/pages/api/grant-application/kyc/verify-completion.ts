@@ -83,7 +83,9 @@ const getApplicantData = async (
     const dob = info.dob || '';
 
     const idDoc = info.idDocs?.[0] || {};
-    const address = idDoc.address.formattedAddress || '';
+
+    const formattedAddress = idDoc?.address?.formattedAddress;
+    const address = formattedAddress ? formattedAddress : null;
     const idNumber = idDoc.number || '';
     const idType = idDoc.idDocType || '';
 
