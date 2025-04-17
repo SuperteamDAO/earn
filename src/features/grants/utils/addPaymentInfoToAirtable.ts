@@ -96,8 +96,8 @@ interface PaymentAirtableSchema {
 
 const grantCategory =
   process.env.NODE_ENV === 'production'
-    ? 'recd0Kn3N4Ffhtwhd'
-    : 'rec5KcbpJVSeLQX76';
+    ? 'rec5KcbpJVSeLQX76'
+    : 'recd0Kn3N4Ffhtwhd';
 
 function grantApplicationToAirtable(
   validatedApplication: ValidatedApplication,
