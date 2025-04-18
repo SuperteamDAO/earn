@@ -316,11 +316,14 @@ export const ApplicationDetails = ({
                     onClick={handleCopyPublicKey}
                     role="button"
                     tabIndex={0}
-                    aria-label={`Copy public key: ${truncatePublicKey(selectedApplication.user.publicKey, 3)}`}
+                    aria-label={`Copy public key: ${truncatePublicKey(selectedApplication.user.publicKey, 20)}`}
                   >
                     <MdOutlineAccountBalanceWallet />
                     <p>
-                      {truncatePublicKey(selectedApplication.user.publicKey, 3)}
+                      {truncatePublicKey(
+                        selectedApplication.user.publicKey,
+                        20,
+                      )}
                     </p>
                   </div>
                 </Tooltip>

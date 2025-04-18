@@ -16,6 +16,15 @@ export const ANY_TOKEN: Token = {
   coingeckoSymbol: 'usd-coin',
 };
 
+export const OTHER: Token = {
+  tokenName: 'Other',
+  tokenSymbol: 'Other',
+  mintAddress: 'other',
+  icon: 'https://nearn.io/assets/anyTokens.svg',
+  decimals: 6,
+  coingeckoSymbol: 'other',
+};
+
 export const tokenList: Token[] = [
   {
     tokenName: 'USDC',
@@ -51,4 +60,5 @@ export const tokenList: Token[] = [
     coingeckoSymbol: 'aurora',
   },
   ANY_TOKEN,
+  OTHER,
 ];

@@ -5,10 +5,10 @@ import { URL_REGEX } from '@/constants/URL_REGEX';
 import { twitterUsernameSchema } from '@/features/social/utils/schema';
 
 export const sponsorBaseSchema = z.object({
-  name: z.string().min(1, 'Company name is required'),
+  name: z.string().min(1, 'Entity name is required'),
   slug: z
     .string()
-    .min(1, 'Company username is required')
+    .min(1, 'Entity username is required')
     .regex(
       /^[a-zA-Z0-9-]+$/,
       `Slug can only contain lowercase letters, numbers, '_', and '-'`,
@@ -16,13 +16,13 @@ export const sponsorBaseSchema = z.object({
     .toLowerCase(),
   bio: z
     .string()
-    .min(1, 'Company bio is required')
+    .min(1, 'Entity bio is required')
     .max(180, 'Bio must be less than 180 characters'),
-  logo: z.string().min(1, 'Company logo is required'),
+  logo: z.string().min(1, 'Entity logo is required'),
   industry: z.string().min(1, 'At least one industry must be selected'),
   url: z
     .string()
-    .min(1, 'Company URL is required')
+    .min(1, 'Entity URL is required')
     .regex(URL_REGEX, 'Invalid URL'),
   twitter: twitterUsernameSchema,
   entityName: z.string().min(1, 'Entity name is required'),

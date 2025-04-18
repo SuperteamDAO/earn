@@ -1,6 +1,7 @@
 import parse, { type HTMLReactParserOptions } from 'html-react-parser';
 
 import { LinkTextParser } from '@/components/shared/LinkTextParser';
+import { cn } from '@/utils/cn';
 
 const options: HTMLReactParserOptions = {
   replace: ({ name, children, attribs }: any) => {
@@ -11,21 +12,34 @@ const options: HTMLReactParserOptions = {
   },
 };
 
+export function parseHtml(content: string) {
+  return parse(content || '', options);
+}
+
 export const InfoBox = ({
   label,
   content,
   isHtml = false,
+  className,
+  contentClassName,
 }: {
-  label: string;
+  label?: string | null;
   content?: string | null;
   isHtml?: boolean;
+  className?: string;
+  contentClassName?: string;
 }) => (
-  <div className="mb-4">
-    <p className="mt-1 text-xs font-semibold uppercase text-slate-400">
-      {label}
-    </p>
+  <div className={cn('mb-4', className)}>
+    {label && (
+      <p className="mt-1 text-xs font-semibold uppercase text-slate-400">
+        {label}
+      </p>
+    )}
     {isHtml ? (
-      <div className="h-full w-full overflow-visible" id="reset-des">
+      <div
+        id="reset-des"
+        className={cn('h-full w-full overflow-visible', contentClassName)}
+      >
         {parse(content || '', options)}
       </div>
     ) : (

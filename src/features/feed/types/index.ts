@@ -4,6 +4,9 @@ import { type Rewards } from '@/features/listings/types';
 
 export interface FeedDataProps {
   id: string;
+  sponsorSlug: string;
+  bountySequentialId: number;
+  sequentialId: number;
   createdAt: string;
   like: {
     id: string | undefined;

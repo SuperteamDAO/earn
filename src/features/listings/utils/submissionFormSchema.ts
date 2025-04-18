@@ -27,6 +27,7 @@ const submissionSchema = (
         ])
         .optional(),
       otherInfo: z.string().optional(),
+      otherTokenDetails: z.string().optional(),
       ask: z.union([z.number().int().min(1), z.null()]).optional(),
       eligibilityAnswers: z
         .array(z.object({ question: z.string(), answer: z.string() }))
@@ -34,13 +35,9 @@ const submissionSchema = (
       publicKey: z.string().optional(),
       token: z
         .string()
-        .refine(
-          (token) =>
-            token === 'Any' || tokenList.find((t) => t.tokenSymbol === token),
-          {
-            message: 'Invalid token provided',
-          },
-        )
+        .refine((token) => tokenList.find((t) => t.tokenSymbol === token), {
+          message: 'Invalid token provided',
+        })
         .optional()
         .nullable(),
     })
@@ -118,6 +115,22 @@ const submissionSchema = (
             message: 'Token is required for listing with "Any" token',
           });
         }
+        if (data.token === 'Other' && !data.otherTokenDetails) {
+          ctx.addIssue({
+            code: 'custom',
+            path: ['otherTokenDetails'],
+            message: 'Token details are required',
+          });
+        }
+      }
+
+      if (listing.token !== 'Any' && data.token === 'Other') {
+        ctx.addIssue({
+          code: 'custom',
+          path: ['token'],
+          message:
+            'Other token is only available for listings with "Any" token',
+        });
       }
 
       const hasEligibilityQuestions =
@@ -133,6 +146,15 @@ const submissionSchema = (
         } else {
           listing?.eligibility?.forEach((question, index) => {
             const answer = data.eligibilityAnswers?.[index]?.answer;
+            if (question.type === 'checkbox') {
+              if (answer !== 'true') {
+                ctx.addIssue({
+                  code: z.ZodIssueCode.custom,
+                  message: 'You must accept this requirement',
+                  path: ['eligibilityAnswers', index, 'answer'],
+                });
+              }
+            }
             if (!answer || answer.trim() === '') {
               ctx.addIssue({
                 code: 'custom',

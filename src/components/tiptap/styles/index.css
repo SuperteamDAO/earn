@@ -4,6 +4,8 @@
 @import './partials/typography.css';
 @import './partials/zoom.css';
 @import './partials/colors.css';
+@import './partials/table.css';
+@import './partials/taskList.css';
 
 :root {
   --mt-overlay: rgba(251, 251, 251, 0.75);

@@ -28,7 +28,7 @@ export const useSlugValidation = (initialValue = '') => {
       const available = response.data.available;
       setIsInvalid(!available);
       setValidationErrorMessage(
-        available ? '' : 'Company username already exists',
+        available ? '' : 'Entity username already exists',
       );
     } catch (error) {
       logger.error(error);

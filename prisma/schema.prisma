@@ -11,6 +11,7 @@ datasource db {
 
 model Bounties {
   id                   String             @id @default(uuid())
+  sequentialId         Int              
   title                String
   slug                 String             @unique
   description          String?            @db.LongText
@@ -86,6 +87,7 @@ model Bounties {
   @@index([compensationType, maxRewardAsk])
   @@index([isWinnersAnnounced, isPublished, status])
   @@index([region, isPublished, status])
+  @@unique([sponsorId, sequentialId])
 }
 
 model BountiesTemplates {
@@ -96,6 +98,7 @@ model BountiesTemplates {
   description      String?          @db.Text
   color            String?
   emoji            String?
+  eligibility      Json?            
   isFeatured       Boolean          @default(false)
   isActive         Boolean          @default(true)
   isArchived       Boolean          @default(false)
@@ -233,7 +236,7 @@ model GrantApplication {
   updatedAt           DateTime               @updatedAt
   user                User                   @relation(fields: [userId], references: [id])
   grant               Grants                 @relation(fields: [grantId], references: [id])
-  label               SubmissionLabels       @default(Unreviewed)
+  label               SubmissionLabels       @default(New)
   ask                 Float                  @default(0)
   approvedAmount      Float                  @default(0)
   approvedAmountInUSD Float                  @default(0)
@@ -261,6 +264,7 @@ model GrantApplication {
 
 model Submission {
   id                 String           @id @default(uuid())
+  sequentialId       Int             
   link               String?          @db.VarChar(500)
   tweet              String?          @db.VarChar(500)
   status             SubmissionStatus @default(Pending)
@@ -280,12 +284,14 @@ model Submission {
   otherInfo          String?          @db.Text
   ask                Int?
   token              String?
-  label              SubmissionLabels @default(Unreviewed)
+  otherTokenDetails  String?
+  label              SubmissionLabels @default(New)
   rewardInUSD        Float            @default(0)
   listing            Bounties         @relation(fields: [listingId], references: [id])
   user               User             @relation(fields: [userId], references: [id])
   ogImage            String?          @db.Text
   notes              String?          @db.VarChar(500)
+  paymentDate        DateTime?
   Comments           Comment[]
 
   @@index([id, listingId])
@@ -304,29 +310,31 @@ model Submission {
 }
 
 model Sponsors {
-  id           String              @id @default(uuid())
-  name         String              @unique
-  slug         String              @unique
-  logo         String?
-  url          String?
-  industry     String
-  twitter      String?
-  bio          String?
-  createdAt    DateTime            @default(now())
-  updatedAt    DateTime            @updatedAt
-  isArchived   Boolean             @default(false)
-  isActive     Boolean             @default(true)
-  entityName   String?
-  isVerified   Boolean             @default(false)
-  isCaution    Boolean             @default(false)
-  st           Boolean             @default(false)
-  Hackathon    Hackathon?
-  UserSponsors UserSponsors[]
-  Bounties     Bounties[]
-  Templates    BountiesTemplates[]
-  Grants       Grants[]
-  User         User[]
-  UserInvites  UserInvites[]
+  id                String              @id @default(uuid())
+  name              String              @unique
+  slug              String              @unique
+  logo              String?
+  url               String?
+  industry          String
+  twitter           String?
+  bio               String?
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  isArchived        Boolean             @default(false)
+  isActive          Boolean             @default(true)
+  entityName        String?
+  isVerified        Boolean             @default(false)
+  isCaution         Boolean             @default(false)
+  st                Boolean             @default(false)
+  Hackathon         Hackathon?
+  UserSponsors      UserSponsors[]
+  Bounties          Bounties[]
+  Templates         BountiesTemplates[]
+  Grants            Grants[]
+  User              User[]
+  UserInvites       UserInvites[]
+  listingCounter    Int                 @default(0)
+  submissionCounter Int                 @default(0)
 
   @@index([id, slug])
   @@index([isVerified, st])
@@ -756,7 +764,7 @@ enum CompensationType {
 }
 
 enum SubmissionLabels {
-  Unreviewed
+  New
   Reviewed
   Shortlisted
   Spam

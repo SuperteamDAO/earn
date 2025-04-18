@@ -63,7 +63,7 @@ export default function BountySubmissions({ slug }: Props) {
     bonus: number;
   } | null>(null);
   const [filterLabel, setFilterLabel] = useState<
-    SubmissionLabels | 'Winner' | 'Rejected' | undefined
+    SubmissionLabels | 'Paid' | 'Approved' | 'Rejected' | undefined
   >(undefined);
 
   const searchParams = useSearchParams();
@@ -199,8 +199,10 @@ export default function BountySubmissions({ slug }: Props) {
 
       if (!filterLabel) {
         matchesLabel = true;
-      } else if (filterLabel === 'Winner') {
-        matchesLabel = submission.isWinner;
+      } else if (filterLabel === 'Paid') {
+        matchesLabel = submission.isPaid;
+      } else if (filterLabel === 'Approved') {
+        matchesLabel = submission.status === 'Approved';
       } else if (filterLabel === 'Rejected') {
         matchesLabel = submission.status === 'Rejected';
       } else {
@@ -299,15 +301,6 @@ export default function BountySubmissions({ slug }: Props) {
   );
 
   useEffect(() => {
-    if (selectedSubmission) {
-      setPageSelections((prev) => ({
-        ...prev,
-        [currentPage]: selectedSubmission.id,
-      }));
-    }
-  }, [selectedSubmission, currentPage]);
-
-  useEffect(() => {
     if (paginatedSubmissions.length > 0) {
       const savedSelectionId = pageSelections[currentPage];
       const submissionToSelect = paginatedSubmissions.find(
@@ -319,6 +312,10 @@ export default function BountySubmissions({ slug }: Props) {
         submissionToSelect.id !== selectedSubmission?.id
       ) {
         setSelectedSubmission(submissionToSelect);
+        setPageSelections((prev) => ({
+          ...prev,
+          [currentPage]: submissionToSelect.id,
+        }));
       } else if (
         !submissionToSelect &&
         (!selectedSubmission ||
@@ -418,6 +415,15 @@ export default function BountySubmissions({ slug }: Props) {
     submissionsPerPage,
   ]);
 
+  useEffect(() => {
+    if (searchParams?.has('submissionId')) {
+      setPageSelections((prev) => ({
+        ...prev,
+        [currentPage]: searchParams.get('submissionId') || '',
+      }));
+    }
+  }, [searchParams]);
+
   return (
     <SponsorLayout isCollapsible>
       {isBountyLoading || isSubmissionsLoading ? (
@@ -491,6 +497,15 @@ export default function BountySubmissions({ slug }: Props) {
                   <div className="h-full w-full">
                     <SubmissionList
                       listing={bounty}
+                      selectedSubmission={selectedSubmission}
+                      setSelectedSubmission={(submission) => {
+                        if (submission?.id) {
+                          setPageSelections((prev) => ({
+                            ...prev,
+                            [currentPage]: submission.id,
+                          }));
+                        }
+                      }}
                       filterLabel={filterLabel}
                       setFilterLabel={(e) => {
                         setFilterLabel(e);

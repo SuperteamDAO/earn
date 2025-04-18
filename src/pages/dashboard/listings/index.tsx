@@ -7,6 +7,7 @@ import {
   Plus,
   Search,
 } from 'lucide-react';
+import { useSession } from 'next-auth/react';
 import React, {
   useCallback,
   useEffect,
@@ -45,6 +46,7 @@ const MemoizedListingTable = React.memo(ListingTable);
 
 export default function SponsorListings() {
   const { user } = useUser();
+  const { data: session } = useSession();
   const [searchText, setSearchText] = useState('');
   const [currentPage, setCurrentPage] = useState(0);
   const [selectedTab, setSelectedTab] = useState('all');
@@ -115,11 +117,31 @@ export default function SponsorListings() {
       );
     }
 
+    const statusOrder = [
+      'Draft',
+      'Ongoing',
+      'In Progress',
+      'In Review',
+      'Payment Pending',
+      'Completed',
+    ];
+
     if (currentSort.direction && currentSort.column) {
       return [...filtered].sort((a, b) => {
         const factor = currentSort.direction === 'asc' ? 1 : -1;
 
         switch (currentSort.column) {
+          case 'id':
+            const idA = a.sequentialId || 0;
+            const idB = b.sequentialId || 0;
+            return (idB - idA) * factor;
+          case 'status':
+            const statusA = getListingStatus(a);
+            const statusB = getListingStatus(b);
+            const indexA = statusOrder.indexOf(statusA);
+            const indexB = statusOrder.indexOf(statusB);
+
+            return (indexB - indexA) * factor;
           case 'title':
             const titleA = a.title || '';
             const titleB = b.title || '';
@@ -164,15 +186,17 @@ export default function SponsorListings() {
       'Draft',
       'In Progress',
       'In Review',
-      'Fndn to Pay',
       'Payment Pending',
       'Completed',
     ];
     if (hasGrants) {
       filters.unshift('Ongoing');
     }
+    if (session?.user?.role === 'GOD') {
+      filters.unshift('Deleted');
+    }
     return filters;
-  }, [hasGrants]);
+  }, [hasGrants, session?.user?.role]);
 
   const handleStatusFilterChange = useCallback((status: string | null) => {
     setSelectedStatus(status);
@@ -294,6 +318,7 @@ export default function SponsorListings() {
             <div className="h-0.5 w-full bg-slate-200" />
             <TabsContent value="all" className="px-0">
               <MemoizedListingTable
+                sponsor={user?.currentSponsor}
                 listings={paginatedListings}
                 currentSort={currentSort}
                 onSort={(column, direction) =>
@@ -303,6 +328,7 @@ export default function SponsorListings() {
             </TabsContent>
             <TabsContent value="bounties" className="px-0">
               <MemoizedListingTable
+                sponsor={user?.currentSponsor}
                 listings={paginatedListings}
                 currentSort={currentSort}
                 onSort={(column, direction) =>
@@ -312,6 +338,7 @@ export default function SponsorListings() {
             </TabsContent>
             <TabsContent value="projects" className="px-0">
               <MemoizedListingTable
+                sponsor={user?.currentSponsor}
                 listings={paginatedListings}
                 currentSort={currentSort}
                 onSort={(column, direction) =>
@@ -321,6 +348,7 @@ export default function SponsorListings() {
             </TabsContent>
             <TabsContent value="sponsorships" className="px-0">
               <MemoizedListingTable
+                sponsor={user?.currentSponsor}
                 listings={paginatedListings}
                 currentSort={currentSort}
                 onSort={(column, direction) =>
@@ -331,6 +359,7 @@ export default function SponsorListings() {
             {hasGrants && (
               <TabsContent value="grants" className="px-0">
                 <MemoizedListingTable
+                  sponsor={user?.currentSponsor}
                   listings={paginatedListings}
                   currentSort={currentSort}
                   onSort={(column, direction) =>
@@ -342,6 +371,7 @@ export default function SponsorListings() {
             {hasHackathons && (
               <TabsContent value="hackathons" className="px-0">
                 <MemoizedListingTable
+                  sponsor={user?.currentSponsor}
                   listings={paginatedListings}
                   currentSort={currentSort}
                   onSort={(column, direction) =>

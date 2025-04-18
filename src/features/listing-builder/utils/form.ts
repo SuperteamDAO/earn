@@ -125,7 +125,6 @@ export const cleanTemplate = (
   reTemplate.isPrivate = prevValues.isPrivate;
   reTemplate.isFndnPaying = prevValues.isFndnPaying;
   reTemplate.hackathonId = prevValues.hackathonId || undefined;
-  reTemplate.eligibility = (prevValues.eligibility as any) || undefined;
 
   delete reTemplate.isFeatured;
   delete reTemplate.isActive;
@@ -207,5 +206,13 @@ export const refineReadyListing = (listing: ListingFormData) => {
     if (!listing.deadline.endsWith('Z'))
       listing.deadline += dayjs().format('Z');
   }
+
+  // Trim from the end and beginning of eligibility questions <p>
+  listing.eligibility = listing.eligibility?.map((question) => ({
+    ...question,
+    question: question.question
+      .replace(/(^(<p><\/p>)*)|((<p><\/p>)*$)/g, '')
+      .trim(),
+  }));
   return listing;
 };

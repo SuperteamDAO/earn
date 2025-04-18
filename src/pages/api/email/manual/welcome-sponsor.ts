@@ -6,7 +6,7 @@ import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { WelcomeSponsorTemplate } from '@/features/emails/components/welcomeSponsorTemplate';
-import { ceoEmail, replyToEmail } from '@/features/emails/utils/fromEmails';
+import { fromEmail, replyToEmail } from '@/features/emails/utils/fromEmails';
 import { resend } from '@/features/emails/utils/resend';
 
 export default async function handler(
@@ -38,7 +38,7 @@ export default async function handler(
   try {
     logger.debug(`Sending welcome email to: ${userEmail}`);
     await resend.emails.send({
-      from: ceoEmail,
+      from: fromEmail,
       to: [userEmail],
       subject: 'Welcome!',
       react: WelcomeSponsorTemplate(),

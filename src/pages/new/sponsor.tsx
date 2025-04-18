@@ -106,7 +106,7 @@ const CreateSponsor = () => {
   useEffect(() => {
     if (form.formState.touchedFields.sponsor?.name && sponsorName === '') {
       form.setError('sponsor.name', {
-        message: 'Company Name is required',
+        message: 'Entity Name is required',
       });
       return;
     }
@@ -132,7 +132,7 @@ const CreateSponsor = () => {
   useEffect(() => {
     if (form.formState.touchedFields.sponsor?.slug && slug === '') {
       form.setError('sponsor.slug', {
-        message: 'Company Username is required',
+        message: 'Entity Username is required',
       });
       return;
     }
@@ -384,13 +384,13 @@ const CreateSponsor = () => {
                 <Separator className="my-12 text-slate-400" />
 
                 <h2 className="mb-5 text-xl font-semibold tracking-tight text-gray-900">
-                  About Your Company
+                  About Your Entity
                 </h2>
                 <div className="flex w-full justify-between gap-4">
                   <FormFieldWrapper
                     control={form.control}
                     name="sponsor.name"
-                    label="Company Name"
+                    label="Entity Name"
                     isRequired
                     onChange={(e) => {
                       setSponsorName(e.target.value);
@@ -401,7 +401,7 @@ const CreateSponsor = () => {
                   <FormFieldWrapper
                     control={form.control}
                     name="sponsor.slug"
-                    label="Company Username"
+                    label="Entity Username"
                     isRequired
                     onChange={(e) => {
                       const value = e.target.value
@@ -418,7 +418,7 @@ const CreateSponsor = () => {
                   <FormFieldWrapper
                     control={form.control}
                     name="sponsor.url"
-                    label="Company URL"
+                    label="Entity URL"
                     isRequired
                   >
                     <Input placeholder="https://starkindustries.com" />
@@ -428,7 +428,7 @@ const CreateSponsor = () => {
                     <SocialInput
                       name="sponsor.twitter"
                       socialName={'twitter'}
-                      formLabel="Company Twitter"
+                      formLabel="Entity Twitter"
                       placeholder="@StarkIndustries"
                       required
                       control={form.control}
@@ -440,7 +440,7 @@ const CreateSponsor = () => {
                   <SocialInput
                     name="sponsor.twitter"
                     socialName={'twitter'}
-                    formLabel="Company Twitter"
+                    formLabel="Entity Twitter"
                     placeholder="@StarkIndustries"
                     required
                     control={form.control}
@@ -468,7 +468,7 @@ const CreateSponsor = () => {
                   </FormFieldWrapper>
                 </div>
                 <div className="mb-3 mt-6 w-full">
-                  <FormLabel isRequired>Company Logo</FormLabel>
+                  <FormLabel isRequired>Entity Logo</FormLabel>
                   <ImagePicker
                     onChange={(file, previewUrl) => {
                       setSelectedLogo(file);
@@ -513,12 +513,12 @@ const CreateSponsor = () => {
                   <FormFieldWrapper
                     control={form.control}
                     name="sponsor.bio"
-                    label="Company Short Bio"
+                    label="Entity Short Bio"
                     isRequired
                   >
                     <Input
                       maxLength={180}
-                      placeholder="What does your company do?"
+                      placeholder="What does your Entity do?"
                     />
                   </FormFieldWrapper>
                   <div className="text-right text-xs text-slate-400">
@@ -532,7 +532,7 @@ const CreateSponsor = () => {
                       {errorMessage}
                       {(validationSlugErrorMessage ||
                         sponsorNameValidationErrorMessage) &&
-                        'Company name/username already exists.'}
+                        'Entity name/username already exists.'}
                     </p>
                   )}
                   {sponsorNameValidationErrorMessage && (

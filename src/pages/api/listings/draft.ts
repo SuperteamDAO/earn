@@ -98,6 +98,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         reSlug = listing?.slug;
       }
     }
+
     const uniqueSlug = id
       ? reSlug
       : reSlug
@@ -127,16 +128,27 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       sponsorId: userSponsorId,
       pocId: userId,
       isFndnPaying,
+      sequentialId: id
+        ? listing!.sequentialId
+        : (
+            await prisma.sponsors.update({
+              where: { id: userSponsorId },
+              data: { listingCounter: { increment: 1 } },
+            })
+          ).listingCounter,
     };
 
-    const result = id
-      ? await prisma.bounties.update({
-          where: { id },
-          data,
-        })
-      : await prisma.bounties.create({
-          data,
-        });
+    let result;
+    if (id) {
+      result = await prisma.bounties.update({
+        where: { id },
+        data,
+      });
+    } else {
+      result = await prisma.bounties.create({
+        data,
+      });
+    }
 
     logger.debug(`Draft saved successfully: ${result.id}`);
 

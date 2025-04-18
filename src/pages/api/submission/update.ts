@@ -62,7 +62,7 @@ async function updateSubmission(
   if (
     listing.type === 'sponsorship' &&
     (existingSubmission.status !== 'Pending' ||
-      existingSubmission.label !== 'Unreviewed')
+      existingSubmission.label !== 'New')
   ) {
     throw new Error('Submission status is not available to edit');
   }
@@ -74,6 +74,7 @@ async function updateSubmission(
     eligibilityAnswers: validatedData.eligibilityAnswers || [],
     ask: validatedData.ask || 0,
     token: validatedData.token || null,
+    otherTokenDetails: validatedData.otherTokenDetails || null,
   };
 
   return prisma.submission.update({

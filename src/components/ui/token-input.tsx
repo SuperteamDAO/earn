@@ -39,7 +39,7 @@ export const TokenInput = React.forwardRef<
           }
         />
         <p className="text-sm font-medium text-slate-500 sm:text-base">
-          {token}
+          {token === 'Any' ? 'USD' : token}
         </p>
       </div>
       <Input

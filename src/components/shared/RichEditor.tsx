@@ -33,6 +33,7 @@ interface RichEditorProps {
   height?: string;
   placeholder?: string;
   error?: boolean;
+  className?: string;
 }
 
 export const RichEditor: React.FC<RichEditorProps> = ({
@@ -42,6 +43,7 @@ export const RichEditor: React.FC<RichEditorProps> = ({
   height = '10rem',
   placeholder = 'Write something...',
   error = false,
+  className,
 }) => {
   const editorRef = useRef<HTMLDivElement>(null);
   const editor = useEditor({
@@ -96,6 +98,7 @@ export const RichEditor: React.FC<RichEditorProps> = ({
           error ? 'border border-destructive' : 'border-input',
           'focus-within:border focus-within:border-brand-purple',
           `editor-${id}`,
+          className,
         )}
         id="reset-des"
         ref={editorRef}

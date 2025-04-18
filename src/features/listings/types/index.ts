@@ -6,6 +6,7 @@ import type { SponsorType } from '@/interface/sponsor';
 
 export interface Listing {
   id?: string;
+  sequentialId?: number;
   title?: string;
   slug?: string;
   description?: string;
@@ -73,9 +74,10 @@ export interface ListingWithSubmissions extends Listing {
 interface Eligibility {
   order: number;
   question: string;
-  type?: 'text' | 'link' | 'paragraph';
+  type?: 'text' | 'link' | 'paragraph' | 'checkbox';
   optional?: boolean;
   isLink?: boolean;
+  description?: string;
 }
 
 export interface References {

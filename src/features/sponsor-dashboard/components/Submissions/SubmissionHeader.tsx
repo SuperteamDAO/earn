@@ -2,6 +2,7 @@ import { useMutation } from '@tanstack/react-query';
 import {
   Check,
   ChevronLeft,
+  CircleHelp,
   Copy,
   Download,
   ExternalLink,
@@ -9,7 +10,6 @@ import {
   Pencil,
 } from 'lucide-react';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import React from 'react';
 import { FaXTwitter } from 'react-icons/fa6';
@@ -29,6 +29,7 @@ import { tokenList } from '@/constants/tokenList';
 import { useClipboard } from '@/hooks/use-clipboard';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { api } from '@/lib/api';
+import { getBountyUrl } from '@/utils/bounty-urls';
 import { cn } from '@/utils/cn';
 import { tweetEmbedLink } from '@/utils/socialEmbeds';
 import { getURL } from '@/utils/validUrl';
@@ -43,6 +44,7 @@ import { getListingIcon } from '@/features/listings/utils/getListingIcon';
 import { getListingStatus } from '@/features/listings/utils/status';
 
 import { useCompleteSponsorship } from '../../mutations/useCompleteSponsorship';
+import { ListingStatusModal } from '../ListingStatusModal';
 import { SponsorPrize } from '../SponsorPrize';
 import { CompleteSponsorshipModal } from './Modals/CompleteSponsorshipModal';
 
@@ -62,20 +64,25 @@ export const SubmissionHeader = ({
   onVerifyPayments,
 }: Props) => {
   const { data: session } = useSession();
-  const router = useRouter();
   const completeSponsorship = useCompleteSponsorship(bounty?.id ?? '');
+
+  const {
+    isOpen: statusModalOpen,
+    onOpen: statusModalOnOpen,
+    onClose: statusModalOnClose,
+  } = useDisclosure();
 
   const deadline = formatDeadline(bounty?.deadline, bounty?.type);
 
-  const listingPath = `listing/${bounty?.slug}`;
-  const { hasCopied, onCopy } = useClipboard(`${getURL()}${listingPath}`);
+  const listingPath = getBountyUrl(bounty);
+  const { hasCopied, onCopy } = useClipboard(`${listingPath}`);
 
   const bountyStatus = getListingStatus(bounty);
 
   const listingLink =
     bounty?.type === 'grant'
       ? `${getURL()}grants/${bounty.slug}/`
-      : `${getURL()}listing/${bounty?.slug}/`;
+      : getBountyUrl(bounty);
 
   const socialListingLink = (medium?: 'twitter' | 'telegram') =>
     `${listingLink}${medium ? `?utm_source=${PROJECT_NAME}&utm_medium=${medium}&utm_campaign=sharelisting/` : ``}`;
@@ -123,6 +130,10 @@ ${socialListingLink('twitter')}
 
   return (
     <>
+      <ListingStatusModal
+        isOpen={statusModalOpen}
+        onClose={statusModalOnClose}
+      />
       {isOpen && (
         <CompleteSponsorshipModal
           isOpen={isOpen}
@@ -180,9 +191,7 @@ ${socialListingLink('twitter')}
 
           <Button
             className="text-slate-400 hover:bg-indigo-100 hover:text-brand-purple"
-            onClick={() =>
-              window.open(`${router.basePath}/${listingPath}`, '_blank')
-            }
+            onClick={() => window.open(`${listingPath}`, '_blank')}
             variant="ghost"
           >
             <ExternalLink className="h-4 w-4" />
@@ -229,7 +238,16 @@ ${socialListingLink('twitter')}
           </p>
         </div>
         <div>
-          <p className="text-slate-500">Status</p>
+          <div className="flex items-center gap-1">
+            <p className="text-slate-500">Status</p>
+            <Button
+              variant="ghost"
+              className="h-4 w-4 p-0 hover:bg-transparent"
+              onClick={statusModalOnOpen}
+            >
+              <CircleHelp className="text-slate-400 hover:text-slate-600" />
+            </Button>
+          </div>
           <p
             className={cn(
               'mt-3 inline-flex items-center whitespace-nowrap rounded-full px-3 py-1 text-sm font-medium',
@@ -272,7 +290,7 @@ ${socialListingLink('twitter')}
               <Input
                 className="w-80 overflow-hidden text-ellipsis whitespace-nowrap border-slate-100 pl-10 pr-10 text-slate-500 focus-visible:ring-[#CFD2D7] focus-visible:ring-offset-0"
                 readOnly
-                value={`${getURL()}${listingPath}`}
+                value={`${listingPath}`}
               />
 
               <div className="absolute right-3 top-1/2 -translate-y-1/2">

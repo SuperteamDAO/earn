@@ -212,7 +212,7 @@ export const Footer = () => {
         <div className="mx-auto max-w-7xl px-4">
           <div className="flex flex-col items-start justify-between md:flex-row md:items-center">
             <p className="mb-4 text-sm text-slate-500 md:mb-0">
-              © {currentYear} {PROJECT_NAME}. All rights reserved.
+              {currentYear} {PROJECT_NAME}
             </p>
             <div className="flex items-center">
               <p className="mr-2 text-sm font-medium text-slate-500">REGION</p>

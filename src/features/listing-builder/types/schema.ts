@@ -46,7 +46,8 @@ export const createListingFormSchema = ({
   const eligibilityQuestionSchema = z.object({
     order: z.number(),
     question: z.string().trim().min(1, 'Please add your question').max(256),
-    type: z.enum(['text', 'link', 'paragraph']),
+    type: z.enum(['text', 'link', 'paragraph', 'checkbox']),
+    description: z.string().optional().nullable(),
   });
 
   const rewardsSchema = z
@@ -363,6 +364,31 @@ export const createListingRefinements = async (
       message: 'Any token is only allowed for variable compensation',
       path: ['token'],
     });
+  }
+
+  if (data.token === 'Other') {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message:
+        '`Other` token is not allowed as a base token. `Other` is a sub token for `Any` token',
+      path: ['token'],
+    });
+  }
+
+  if (data.eligibility && data.eligibility.length > 0) {
+    for (const [index, question] of data.eligibility.entries()) {
+      if (
+        question.type === 'checkbox' &&
+        question.description &&
+        question.description !== ''
+      ) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Description is forbidden for checkbox questions',
+          path: [`eligibility.${index}.question`],
+        });
+      }
+    }
   }
 
   if (data.type === 'hackathon' && data.deadline) {

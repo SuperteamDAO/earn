@@ -6,7 +6,6 @@ import earncognitoClient from '@/lib/earncognitoClient';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { dayjs } from '@/utils/dayjs';
-import { fetchTokenUSDValue } from '@/utils/fetchTokenUSDValue';
 import { cleanRewards } from '@/utils/rank';
 import { safeStringify } from '@/utils/safeStringify';
 
@@ -75,7 +74,11 @@ export async function POST(
       ...Array(listing?.maxBonusSpots ?? 0).map(() => BONUS_REWARD_POSITION),
     ].length;
 
-    if (!!totalRewards && listing?.totalWinnersSelected !== totalRewards) {
+    if (
+      !!totalRewards &&
+      !isSponsorship &&
+      listing?.totalWinnersSelected !== totalRewards
+    ) {
       logger.warn(
         'All winners have not been selected before publishing the results',
       );
@@ -129,10 +132,7 @@ export async function POST(
 
       const rewardInUSD =
         listing.token === 'Any'
-          ? (await fetchTokenUSDValue(
-              winners[currentIndex]?.token!,
-              listing.publishedAt!,
-            )) * amount
+          ? amount
           : (listing.usdValue! / listing.rewardAmount!) * amount;
 
       promises.push(
@@ -144,7 +144,7 @@ export async function POST(
             rewardInUSD,
             status: 'Approved',
             label:
-              winners[currentIndex]?.label === 'Unreviewed'
+              winners[currentIndex]?.label === 'New'
                 ? 'Reviewed'
                 : winners[currentIndex]?.label,
           },

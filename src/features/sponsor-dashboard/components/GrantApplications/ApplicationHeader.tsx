@@ -180,7 +180,7 @@ export const ApplicationHeader = ({ grant }: Props) => {
             <Input
               className="w-80 overflow-hidden text-ellipsis whitespace-nowrap border-slate-100 pl-10 pr-10 text-slate-500 focus-visible:ring-[#CFD2D7] focus-visible:ring-offset-0"
               readOnly
-              value={`${getURL()}${listingPath}`}
+              value={`${listingPath}`}
             />
 
             <div className="absolute right-3 top-1/2 -translate-y-1/2">

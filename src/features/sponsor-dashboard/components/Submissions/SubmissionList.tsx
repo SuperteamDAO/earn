@@ -1,5 +1,4 @@
 import { type SubmissionLabels } from '@prisma/client';
-import { useAtom } from 'jotai';
 import debounce from 'lodash.debounce';
 import { ChevronDown, Search } from 'lucide-react';
 import React, {
@@ -23,10 +22,10 @@ import type { SubmissionWithUser } from '@/interface/submission';
 import { cn } from '@/utils/cn';
 import { getRankLabels } from '@/utils/rank';
 
+import { sponsorshipSubmissionStatus } from '@/features/listings/components/SubmissionsPage/SubmissionTable';
 import { type Listing } from '@/features/listings/types';
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
-import { selectedSubmissionAtom } from '../../atoms';
 import { labelMenuOptions } from '../../constants';
 import { colorMap } from '../../utils/statusColorMap';
 
@@ -35,13 +34,17 @@ interface Props {
   submissions: SubmissionWithUser[];
   setSearchText: Dispatch<SetStateAction<string>>;
   type?: string;
-  filterLabel: SubmissionLabels | 'Winner' | 'Rejected' | undefined;
+  filterLabel: SubmissionLabels | 'Paid' | 'Approved' | 'Rejected' | undefined;
   setFilterLabel: Dispatch<
-    SetStateAction<SubmissionLabels | 'Winner' | 'Rejected' | undefined>
+    SetStateAction<
+      SubmissionLabels | 'Paid' | 'Approved' | 'Rejected' | undefined
+    >
   >;
   toggleSubmission?: (id: string) => void;
   isToggled?: (id: string) => boolean;
   toggleAllSubmissions?: () => void;
+  selectedSubmission: SubmissionWithUser | undefined;
+  setSelectedSubmission: (submission: SubmissionWithUser) => void;
   isAllToggled?: boolean;
 }
 
@@ -55,12 +58,10 @@ export const SubmissionList = ({
   toggleSubmission,
   isToggled,
   toggleAllSubmissions,
+  selectedSubmission,
+  setSelectedSubmission,
   isAllToggled,
 }: Props) => {
-  const [selectedSubmission, setSelectedSubmission] = useAtom(
-    selectedSubmissionAtom,
-  );
-
   const debouncedSetSearchText = useRef(debounce(setSearchText, 300)).current;
 
   useEffect(() => {
@@ -77,9 +78,7 @@ export const SubmissionList = ({
 
   const getSubmissionLabel = (submission: SubmissionWithUser) => {
     if (submission?.isWinner && submission?.winnerPosition) {
-      if (type === 'project') {
-        return 'Winner';
-      } else if (type === 'sponsorship') {
+      if (type === 'project' || type === 'sponsorship') {
         if (submission.isPaid) return 'Paid';
         return 'Approved';
       } else {
@@ -95,6 +94,12 @@ export const SubmissionList = ({
   };
 
   const getSubmissionColors = (submission: SubmissionWithUser) => {
+    if (submission.listing?.type === 'sponsorship') {
+      return colorMap[
+        sponsorshipSubmissionStatus(submission) as keyof typeof colorMap
+      ];
+    }
+
     if (submission?.isWinner) {
       return colorMap.winner;
     } else if (submission.status === 'Rejected') {
@@ -167,16 +172,31 @@ export const SubmissionList = ({
 
               <DropdownMenuItem
                 className="focus:bg-slate-100"
-                onClick={() => setFilterLabel('Winner')}
+                onClick={() => setFilterLabel('Approved')}
               >
                 <span
                   className={cn(
                     'inline-flex whitespace-nowrap rounded-full px-3 text-center text-[10px] capitalize',
-                    colorMap['Winner'].bg,
-                    colorMap['Winner'].color,
+                    colorMap['Approved'].bg,
+                    colorMap['Approved'].color,
                   )}
                 >
-                  Winner
+                  Approved
+                </span>
+              </DropdownMenuItem>
+
+              <DropdownMenuItem
+                className="focus:bg-slate-100"
+                onClick={() => setFilterLabel('Paid')}
+              >
+                <span
+                  className={cn(
+                    'inline-flex whitespace-nowrap rounded-full px-3 text-center text-[10px] capitalize',
+                    colorMap['Paid'].bg,
+                    colorMap['Paid'].color,
+                  )}
+                >
+                  Paid
                 </span>
               </DropdownMenuItem>
 

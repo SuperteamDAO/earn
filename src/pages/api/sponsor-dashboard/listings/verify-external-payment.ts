@@ -77,20 +77,25 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           validationResults.push({
             submissionId: paymentLink.submissionId,
             txId: paymentLink.txId,
+            link: paymentLink.link || '',
             status: 'ALREADY_VERIFIED',
             message: 'Already Verified',
           });
           continue;
         }
 
-        if (!paymentLink.txId) {
-          throw new Error('Invalid URL');
-        }
-
         const submission = submissions.find(
           (s) => s.id === paymentLink.submissionId,
         );
         if (!submission) throw new Error('Submission not found');
+
+        const isUSDbased = listing.token === 'Any';
+        const tokenSymbol = isUSDbased ? submission.token : listing.token;
+        const isOtherToken = tokenSymbol === 'Other';
+
+        if (!paymentLink.txId && !isOtherToken) {
+          throw new Error('Invalid URL');
+        }
 
         const {
           user: { publicKey },
@@ -110,20 +115,24 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           throw new Error('Winner Position has no reward');
         }
 
-        const tokenSymbol =
-          listing.token === 'Any' ? submission.token : listing.token;
         const dbToken = tokenList.find((t) => t.tokenSymbol === tokenSymbol);
         if (!dbToken) {
           return res
             .status(400)
             .json({ error: "Token doesn't exist for this listing" });
         }
-        const validationResult = await validatePayment({
-          txId: paymentLink.txId,
-          recipientPublicKey: publicKey!,
-          expectedAmount: winnerReward,
-          tokenMint: dbToken,
-        });
+
+        const validationResult = !isOtherToken
+          ? await validatePayment({
+              txId: paymentLink.txId,
+              recipientPublicKey: publicKey!,
+              expectedAmount: winnerReward,
+              tokenMint: dbToken,
+              isUSDbased,
+            })
+          : {
+              isValid: true,
+            };
 
         if (!validationResult.isValid) {
           throw new Error(`Failed (${validationResult.error})`);
@@ -131,6 +140,8 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         validationResults.push({
           submissionId: paymentLink.submissionId,
           txId: paymentLink.txId,
+          link: paymentLink.link || '',
+          transactionDate: validationResult.transactionDate,
           status: 'SUCCESS',
         });
 
@@ -142,6 +153,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         validationResults.push({
           submissionId: paymentLink.submissionId,
           txId: paymentLink.txId || '',
+          link: paymentLink.link || '',
           status: 'FAIL',
           message: error.message,
         });
@@ -164,7 +176,11 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         },
         data: {
           isPaid: true,
-          paymentDetails: { txId: validationResult.txId },
+          paymentDetails: {
+            txId: validationResult.txId,
+            link: validationResult.link,
+          },
+          paymentDate: validationResult.transactionDate,
         },
       });
     }
@@ -190,7 +206,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       `Error verifying external payments: ${userSponsorId}: ${err.message}`,
     );
     res.status(400).json({
-      err: 'Error verifying external payments: ',
+      err: `Error verifying external payments`,
     });
   }
 }

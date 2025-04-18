@@ -266,7 +266,7 @@ async function scoutTalent(req: NextApiRequestWithUser, res: NextApiResponse) {
 
     const sumSubSkillsContainProjectQuery = (subskillWhere: string[]) =>
       ` 
-      SUM  (
+      SUM(
         ${
           subskills.length > 0
             ? `
@@ -279,7 +279,7 @@ async function scoutTalent(req: NextApiRequestWithUser, res: NextApiResponse) {
 
     const sumSkillsContainProjectQuery = (skillWhere: string[]) =>
       ` 
-      SUM  (
+      SUM(
         ${
           devSkills.length > 0
             ? `

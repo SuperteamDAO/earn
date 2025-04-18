@@ -112,7 +112,7 @@ export function Slug() {
                     );
                   }}
                 >
-                  {getURL()}/listing/
+                  {getURL()}listing/
                   <span className="underline underline-offset-2">{slug}</span>
                 </button>
               </FormDescription>

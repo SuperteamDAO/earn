@@ -6,11 +6,9 @@ import { FaXTwitter } from 'react-icons/fa6';
 import { MdOutlineInsertLink } from 'react-icons/md';
 
 import { LinkTextParser } from '@/components/shared/LinkTextParser';
-import { Loading } from '@/components/shared/Loading';
 import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
 import { LocalImage } from '@/components/ui/local-image';
 import { Skeleton } from '@/components/ui/skeleton';
-import { exclusiveSponsorData } from '@/constants/exclusiveSponsors';
 import { PROJECT_NAME } from '@/constants/project';
 import { type SponsorType } from '@/interface/sponsor';
 import { Default } from '@/layouts/Default';
@@ -18,10 +16,7 @@ import { prisma } from '@/prisma';
 import { getTwitterUrl, getURLSanitized } from '@/utils/getURLSanitized';
 import { getURL } from '@/utils/validUrl';
 
-import { ListingCard } from '@/features/listings/components/ListingCard';
-import { ListingSection } from '@/features/listings/components/ListingSection';
 import { ListingTabs } from '@/features/listings/components/ListingTabs';
-import { listingsQuery } from '@/features/listings/queries/listings';
 import { sponsorListingsQuery } from '@/features/sponsor-dashboard/queries/sponsor-listings';
 
 interface Props {
@@ -29,14 +24,22 @@ interface Props {
   title: string;
   description: string;
   sponsor: SponsorType;
+  industry: string[];
 }
-const SponsorListingsPage = ({ slug, sponsor, title, description }: Props) => {
+const SponsorListingsPage = ({
+  slug,
+  sponsor,
+  title,
+  description,
+  industry,
+}: Props) => {
+  console.log(industry);
   const { data: listings, isLoading: isListingsLoading } = useQuery(
-    sponsorListingsQuery(slug),
+    sponsorListingsQuery({ sponsor: slug }),
   );
 
   const { data: sponsorships, isLoading: isSponsorshipsLoading } = useQuery(
-    listingsQuery({ type: 'sponsorship', take: 10 }),
+    sponsorListingsQuery({ sponsor: slug, type: 'sponsorship' }),
   );
 
   const logo = sponsor.logo;
@@ -53,7 +56,6 @@ const SponsorListingsPage = ({ slug, sponsor, title, description }: Props) => {
   return (
     <Default
       className="bg-white"
-      hideFooter
       meta={
         <Head>
           <title>{`${title} Opportunities | ${PROJECT_NAME}`}</title>
@@ -90,7 +92,7 @@ Check out all of ${title}’s latest earning opportunities on a single page.
           ) : (
             <div className="justify-center rounded-full">
               <LocalImage
-                className="h-28 w-28 rounded-full"
+                className="h-28 w-28 rounded-lg object-cover"
                 alt="Category icon"
                 src={logo!}
               />
@@ -122,6 +124,19 @@ Check out all of ${title}’s latest earning opportunities on a single page.
                 text={description}
               />
             )}
+            <div className="mt-2 flex w-full flex-wrap gap-2">
+              {industry.map((industryItem: any, index: number) => {
+                return industryItem ? (
+                  <div
+                    key={index}
+                    className="rounded bg-[#EFF1F5] px-3 py-1 text-sm font-medium text-[#64739C]"
+                  >
+                    {industryItem}
+                  </div>
+                ) : null;
+              })}
+            </div>
+
             <div className="mt-3 flex gap-3 text-slate-500">
               {url && (
                 <Link className="flex items-center" href={getURLSanitized(url)}>
@@ -147,34 +162,14 @@ Check out all of ${title}’s latest earning opportunities on a single page.
             bounties={listings?.bounties}
             isListingsLoading={isListingsLoading}
             title="Earning Opportunities"
-            take={20}
             showNotifSub={false}
           />
-          {!!sponsorships && !!sponsorships.length && (
-            <ListingSection
-              type="bounties"
-              title="Sponsorships"
-              sub="Sponsor projects and get exposure"
-              showEmoji
-              showViewAll
-              viewAllLink={`/sponsorships/`}
-            >
-              {isSponsorshipsLoading && (
-                <div className="flex min-h-52 flex-col items-center justify-center">
-                  <Loading />
-                </div>
-              )}
-              {!isSponsorshipsLoading &&
-                sponsorships &&
-                sponsorships
-                  ?.filter((sponsorship) => sponsorship.status === 'OPEN')
-                  .map((sponsorship) => {
-                    return (
-                      <ListingCard key={sponsorship.id} bounty={sponsorship} />
-                    );
-                  })}
-            </ListingSection>
-          )}
+          <ListingTabs
+            bounties={sponsorships?.bounties}
+            isListingsLoading={isSponsorshipsLoading}
+            title="Sponsorships"
+            showEmoji
+          />
         </div>
       </div>
     </Default>
@@ -191,25 +186,31 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       notFound: true,
     };
   }
-  const sponsorExlusiveInfo = exclusiveSponsorData[sponsorSlug as string];
-  if (!sponsorExlusiveInfo) {
+
+  let sponsorInfo;
+  try {
+    sponsorInfo = await prisma.sponsors.findUnique({
+      where: {
+        slug: sponsorSlug,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+  }
+
+  if (!sponsorInfo) {
     return {
       notFound: true,
     };
   }
 
-  const sponsorInfo = await prisma.sponsors.findUnique({
-    where: {
-      name: sponsorExlusiveInfo.title,
-    },
-  });
-
   return {
     props: {
       slug: (sponsorSlug as string).toLowerCase(),
       sponsor: JSON.parse(JSON.stringify(sponsorInfo)),
-      title: sponsorExlusiveInfo.title,
-      description: sponsorExlusiveInfo.description,
+      title: sponsorInfo?.name,
+      description: sponsorInfo?.bio || '',
+      industry: sponsorInfo.industry.split(',') || [],
     },
   };
 };

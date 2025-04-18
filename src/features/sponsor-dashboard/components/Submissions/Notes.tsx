@@ -1,10 +1,11 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAtom } from 'jotai';
 import debounce from 'lodash.debounce';
-import { Loader2 } from 'lucide-react';
+import { Info, Loader2 } from 'lucide-react';
 import React, { useCallback, useEffect, useState } from 'react';
 
 import { Textarea } from '@/components/ui/textarea';
+import { Tooltip } from '@/components/ui/tooltip';
 import { type SubmissionWithUser } from '@/interface/submission';
 import { api } from '@/lib/api';
 
@@ -93,8 +94,13 @@ export const Notes = ({ submissionId, initialNotes = '', slug }: Props) => {
 
   return (
     <div className="flex w-full flex-col items-start">
-      <div className="mb-2 flex w-full items-center justify-between text-slate-400">
-        <span className="font-extrabold">Review Notes</span>
+      <div className="mb-4 flex w-full items-center justify-between text-slate-500">
+        <div className="flex items-center gap-2">
+          <span className="font-semibold">Internal Notes</span>
+          <Tooltip content="Only visible to your sponsor team. Use this space to leave internal feedback, evaluation notes, or reminders.">
+            <Info className="size-4 text-slate-300 hover:text-slate-400" />
+          </Tooltip>
+        </div>
         {isSaving ? (
           <Loader2 className="h-3 w-3 animate-spin" />
         ) : (
@@ -102,7 +108,7 @@ export const Notes = ({ submissionId, initialNotes = '', slug }: Props) => {
         )}
       </div>
       <Textarea
-        className="whitespace-pre-wrap border-none text-sm text-slate-600 placeholder:text-slate-400"
+        className="whitespace-pre-wrap border border-slate-200 text-sm text-slate-600 placeholder:text-slate-400"
         key={submissionId}
         onChange={handleChange}
         onKeyDown={handleKeyDown}

@@ -1,49 +1,10 @@
-import type { GetServerSideProps } from 'next';
-import React, { useState } from 'react';
+import { type GetServerSideProps } from 'next';
 
-import type { SubmissionWithUser } from '@/interface/submission';
-import { ListingPageLayout } from '@/layouts/Listing';
 import { api } from '@/lib/api';
+import SubmissionPage from '@/pages/[sponsor]/[listingId]/submission';
+import { getBountyUrl } from '@/utils/bounty-urls';
 import { getURL } from '@/utils/validUrl';
 
-import { SubmissionList } from '@/features/listings/components/SubmissionsPage/SubmissionList';
-import { type Listing } from '@/features/listings/types';
-
-const SubmissionPage = ({
-  slug,
-  bounty: bountyB,
-  submission: submissionB,
-}: {
-  slug: string;
-  bounty: Listing;
-  submission: SubmissionWithUser[];
-}) => {
-  const [bounty] = useState<Listing>(bountyB);
-  const [submission, setSubmission] =
-    useState<SubmissionWithUser[]>(submissionB);
-
-  const resetSubmissions = async () => {
-    try {
-      const bountyDetails = await api.get(`/api/listings/submissions/${slug}`);
-      setSubmission(bountyDetails.data.submission);
-    } catch (e) {
-      console.log(e);
-    }
-  };
-
-  return (
-    <ListingPageLayout bounty={bounty}>
-      {bounty && submission && (
-        <SubmissionList
-          bounty={bounty}
-          setUpdate={resetSubmissions}
-          submissions={submission}
-          endTime={bounty.deadline as string}
-        />
-      )}
-    </ListingPageLayout>
-  );
-};
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { slug } = context.query;
 
@@ -59,11 +20,11 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 
   return {
-    props: {
-      slug,
-      bounty: bountyData.bounty,
-      submission: bountyData.submission,
+    redirect: {
+      destination: `${getBountyUrl(bountyData?.bounty)}/submissions`,
+      permanent: true,
     },
   };
 };
+
 export default SubmissionPage;

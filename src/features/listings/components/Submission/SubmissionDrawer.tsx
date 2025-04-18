@@ -51,6 +51,8 @@ import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 
+import { InfoBox } from '@/features/sponsor-dashboard/components/InfoBox';
+
 import { walletFieldListings } from '../../constants';
 import { submissionCountQuery } from '../../queries/submission-count';
 import { userSubmissionQuery } from '../../queries/user-submission-status';
@@ -116,7 +118,7 @@ export const SubmissionDrawer = ({
     },
   });
 
-  const formToken = useWatch({
+  const tokenSelected = useWatch({
     control: form.control,
     name: 'token',
   });
@@ -152,14 +154,22 @@ export const SubmissionDrawer = ({
             params: { id },
           });
 
-          const { link, tweet, otherInfo, eligibilityAnswers, ask, token } =
-            response.data;
+          const {
+            link,
+            tweet,
+            otherInfo,
+            eligibilityAnswers,
+            ask,
+            token,
+            otherTokenDetails,
+          } = response.data;
 
           form.reset({
             link,
             tweet,
             otherInfo,
             ask,
+            otherTokenDetails,
             eligibilityAnswers: eligibilityAnswers.map((answer: any) => ({
               question: answer.question,
               answer: answer.answer ?? '',
@@ -190,6 +200,7 @@ export const SubmissionDrawer = ({
         link: data.link || '',
         tweet: data.tweet || '',
         otherInfo: data.otherInfo || '',
+        otherTokenDetails: data.otherTokenDetails || '',
         ask: data.ask || null,
         eligibilityAnswers: data.eligibilityAnswers || [],
         publicKey: data.publicKey,
@@ -402,6 +413,39 @@ export const SubmissionDrawer = ({
                           />
                         );
                       }
+                      if (e.type === 'checkbox') {
+                        return (
+                          <FormField
+                            key={e.order}
+                            control={form.control}
+                            name={`eligibilityAnswers.${index}.answer`}
+                            render={({ field }) => (
+                              <FormItem className={cn('flex flex-col gap-1')}>
+                                <div className="flex items-center gap-2">
+                                  <FormControl>
+                                    <Checkbox
+                                      checked={field.value === 'true'}
+                                      onCheckedChange={(checked) => {
+                                        field.onChange(
+                                          checked ? 'true' : 'false',
+                                        );
+                                      }}
+                                    />
+                                  </FormControl>
+                                  <InfoBox
+                                    content={e.question}
+                                    className="mb-0"
+                                    contentClassName=" [&_p]:!text-[0.9rem] [&_a]:!text-[0.9rem]"
+                                    isHtml={true}
+                                  />
+                                </div>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        );
+                      }
+
                       return (
                         <FormField
                           key={e.order}
@@ -411,6 +455,11 @@ export const SubmissionDrawer = ({
                             <FormItem className={cn('flex flex-col gap-2')}>
                               <div>
                                 <FormLabel isRequired>{e.question}</FormLabel>
+                                {e.description && (
+                                  <FormDescription className="whitespace-pre-wrap text-wrap">
+                                    {e.description}
+                                  </FormDescription>
+                                )}
                               </div>
                               <div>
                                 <FormControl>
@@ -466,22 +515,36 @@ export const SubmissionDrawer = ({
                         />
                       );
                     })}
-                    {token === 'Any' && <TokenSelect control={form.control} />}
 
                     {compensationType !== 'fixed' && (
                       <FormFieldWrapper
                         control={form.control}
                         name="ask"
-                        label="What's the compensation you require to complete this fully?"
+                        label="Total Amount"
+                        description={
+                          token !== 'Any'
+                            ? "What's the compensation you require to complete this fully?"
+                            : 'Enter the exact amount you are seeking in US dollars.'
+                        }
                         isRequired
                         isTokenInput
-                        token={
-                          token === 'Any'
-                            ? (formToken ?? tokenList[0]?.tokenSymbol)
-                            : token
-                        }
+                        token={token}
                       />
                     )}
+
+                    {token === 'Any' && <TokenSelect control={form.control} />}
+                    {token === 'Any' && tokenSelected === 'Other' && (
+                      <FormFieldWrapper
+                        control={form.control}
+                        name="otherTokenDetails"
+                        isRequired={tokenSelected === 'Other'}
+                        label="Payment details"
+                        isRichEditor
+                        description="What's your preferred way to receive a payment ?"
+                        richEditorPlaceholder="I want to receive a payment in..."
+                      />
+                    )}
+
                     <FormFieldWrapper
                       control={form.control}
                       name="otherInfo"
@@ -503,8 +566,9 @@ export const SubmissionDrawer = ({
                               <FormDescription>
                                 {!!user?.publicKey ? (
                                   <>
-                                    This is where you will receive your rewards
-                                    if you win. If you want to edit it,{' '}
+                                    This is where you will receive your payment
+                                    if your submission is approved. If you want
+                                    to edit it,{' '}
                                     <a
                                       href={`/t/${user?.username}/edit`}
                                       className="text-blue-600 underline hover:text-blue-700"
@@ -632,7 +696,13 @@ export function TokenSelect({ control }: TokenSelectProps) {
       control={control}
       render={({ field }) => (
         <FormItem className="gap-2">
-          <FormLabel>Payment</FormLabel>
+          <div>
+            <FormLabel>Currency</FormLabel>
+            <FormDescription>
+              Select your preferred currency for receiving funds. The exchange
+              rate will be the closing rate at the day of the invoice.
+            </FormDescription>
+          </div>
           <Popover>
             <PopoverTrigger asChild>
               <FormControl>

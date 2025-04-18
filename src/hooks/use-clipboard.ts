@@ -10,6 +10,32 @@ interface UseClipboardReturn {
   hasCopied: boolean;
 }
 
+interface UseDynamicClipboardReturn {
+  onCopy: (text: string) => void;
+  hasCopied: boolean;
+}
+
+export const useDynamicClipboard = (
+  options: UseClipboardOptions = {},
+): UseDynamicClipboardReturn => {
+  const [hasCopied, setHasCopied] = useState(false);
+  const { timeout = 1500 } = options;
+
+  const onCopy = useCallback(
+    (text: string) => {
+      navigator.clipboard.writeText(text).then(() => {
+        setHasCopied(true);
+        setTimeout(() => {
+          setHasCopied(false);
+        }, timeout);
+      });
+    },
+    [timeout],
+  );
+
+  return { onCopy, hasCopied };
+};
+
 export const useClipboard = (
   text: string,
   options: UseClipboardOptions = {},

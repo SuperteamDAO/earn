@@ -1,6 +1,6 @@
 import { type SubmissionLabels } from '@prisma/client';
 import { useQuery } from '@tanstack/react-query';
-import { useSetAtom } from 'jotai';
+import { useAtom } from 'jotai';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import type { GetServerSideProps } from 'next';
 import { useSearchParams } from 'next/navigation';
@@ -42,7 +42,9 @@ export default function BountySubmissions({ listing }: Props) {
   const { user } = useUser();
   const [currentPage, setCurrentPage] = useState(1);
 
-  const setSelectedSubmission = useSetAtom(selectedSubmissionAtom);
+  const [selectedSubmission, setSelectedSubmission] = useAtom(
+    selectedSubmissionAtom,
+  );
 
   const [searchText, setSearchText] = useState('');
 
@@ -51,7 +53,7 @@ export default function BountySubmissions({ listing }: Props) {
     bonus: number;
   } | null>(null);
   const [filterLabel, setFilterLabel] = useState<
-    SubmissionLabels | 'Winner' | 'Rejected' | undefined
+    SubmissionLabels | 'Paid' | 'Approved' | 'Rejected' | undefined
   >(undefined);
 
   const searchParams = useSearchParams();
@@ -92,9 +94,11 @@ export default function BountySubmissions({ listing }: Props) {
 
       const matchesLabel =
         !filterLabel ||
-        (filterLabel === 'Winner'
-          ? submission.isWinner
-          : submission.label === filterLabel);
+        (filterLabel === 'Paid'
+          ? submission.isPaid
+          : filterLabel === 'Approved'
+            ? submission.status === 'Approved'
+            : submission.label === filterLabel);
 
       return matchesSearch && matchesLabel;
     });
@@ -234,6 +238,8 @@ export default function BountySubmissions({ listing }: Props) {
                       setFilterLabel={setFilterLabel}
                       submissions={paginatedSubmissions}
                       setSearchText={setSearchText}
+                      selectedSubmission={selectedSubmission}
+                      setSelectedSubmission={setSelectedSubmission}
                       type={bounty?.type}
                     />
                   </div>

@@ -8,16 +8,21 @@ interface Listings {
   bounties: Listing[];
 }
 
-const fetchListings = async (slug: string): Promise<Listings> => {
+interface Props {
+  sponsor: string;
+  type?: 'bounty' | 'sponsorship' | 'project' | 'hackathon';
+}
+
+const fetchListings = async (props: Props): Promise<Listings> => {
   const { data } = await api.post(`/api/listings/sponsor`, {
-    sponsor: slug,
+    ...props,
   });
   return data;
 };
 
-export const sponsorListingsQuery = (slug: string) =>
+export const sponsorListingsQuery = (props: Props) =>
   queryOptions({
-    queryKey: ['sponsorListings', slug],
-    queryFn: () => fetchListings(slug),
-    enabled: !!slug,
+    queryKey: ['sponsorListings', props],
+    queryFn: () => fetchListings(props),
+    enabled: !!props.sponsor,
   });

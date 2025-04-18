@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { Check, Clock, File, MessageSquare, Pause } from 'lucide-react';
+import { Check, Clock, File, MessageSquare, Pause, Pencil } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { usePostHog } from 'posthog-js/react';
@@ -7,14 +7,18 @@ import React from 'react';
 import { MdLock } from 'react-icons/md';
 
 import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
+import { Button } from '@/components/ui/button';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { LocalImage } from '@/components/ui/local-image';
 import { Tooltip } from '@/components/ui/tooltip';
 import { ASSET_URL } from '@/constants/ASSET_URL';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { PulseIcon } from '@/svg/pulse-icon';
+import { getBountyUrl } from '@/utils/bounty-urls';
 import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';
+
+import { AuthWrapper } from '@/features/auth/components/AuthWrapper';
 
 import { submissionCountQuery } from '../../queries/submission-count';
 import { type Listing } from '../../types';
@@ -22,6 +26,7 @@ import { getListingIcon } from '../../utils/getListingIcon';
 import { ListingTabLink } from './ListingTabLink';
 import { RegionLabel } from './RegionLabel';
 import { ListingHeaderSeparator } from './Separator';
+import { ShareListing } from './ShareListing';
 import { StatusBadge } from './StatusBadge';
 import { SubscribeListing } from './SubscribeListing';
 
@@ -57,7 +62,8 @@ export function ListingHeader({
   const isHackathon = type === 'hackathon';
 
   const showSubmissions =
-    type === 'sponsorship' || (!isProject && isWinnersAnnounced);
+    !isTemplate &&
+    (type === 'sponsorship' || (!isProject && isWinnersAnnounced));
 
   const typeToTooltip = {
     project:
@@ -154,15 +160,20 @@ export function ListingHeader({
     );
   };
 
+  const isSubmissionActive =
+    !isTemplate && router.asPath.split('/').length === 5;
+
   const HeaderSub = () => {
     return (
       <div className="flex flex-wrap items-center gap-1 md:gap-3">
-        <div className="flex items-center gap-1">
-          <p className="whitespace-nowrap text-sm font-medium text-slate-400">
-            by {sponsor?.name}
-          </p>
-          {!!sponsor?.isVerified && <VerifiedBadge />}
-        </div>
+        <Link href={`/${sponsor?.slug}`}>
+          <div className="flex items-center gap-1">
+            <p className="whitespace-nowrap text-sm font-medium text-slate-400">
+              by {sponsor?.name}
+            </p>
+            {!!sponsor?.isVerified && <VerifiedBadge />}
+          </div>
+        </Link>
         <ListingHeaderSeparator />
         {isHackathon ? (
           <div className="flex items-center">
@@ -239,7 +250,47 @@ export function ListingHeader({
           </div>
         </div>
         {listing.id && (
-          <SubscribeListing isTemplate={isTemplate} id={listing.id} />
+          <div className="flex items-center gap-2">
+            <SubscribeListing isTemplate={isTemplate} id={listing.id} />
+            <AuthWrapper sponsorId={listing.sponsorId}>
+              <Link
+                className="hover:no-underline"
+                href={
+                  listing
+                    ? `/dashboard/${isHackathon ? 'hackathon' : 'listings'}/${listing.slug}/submissions`
+                    : ''
+                }
+              >
+                <Button
+                  variant="outline"
+                  className="ph-no-capture gap-2 border-slate-300 font-medium text-slate-500 hover:bg-brand-purple hover:text-white"
+                >
+                  Manage Listing
+                </Button>
+              </Link>
+            </AuthWrapper>
+            <AuthWrapper sponsorId={listing.sponsorId}>
+              <Link
+                className="hover:no-underline"
+                href={
+                  listing
+                    ? `/dashboard/${isHackathon ? 'hackathon' : 'listings'}/${listing.slug}/edit`
+                    : ''
+                }
+              >
+                <Button
+                  variant="outline"
+                  className="ph-no-capture gap-2 border-slate-300 font-medium text-slate-500 hover:bg-brand-purple hover:text-white"
+                >
+                  <Pencil className="h-4 w-4" />
+                  Edit
+                </Button>
+              </Link>
+            </AuthWrapper>
+            <div className="hidden md:block">
+              <ShareListing source="listing" listing={listing} />
+            </div>
+          </div>
         )}
       </div>
       <div className="mb-5 flex w-full flex-col gap-1 md:hidden">
@@ -251,26 +302,26 @@ export function ListingHeader({
           <div className="mx-auto my-auto flex h-full w-full max-w-7xl items-center justify-start gap-10 border-b border-slate-200">
             <ListingTabLink
               className="pointer-events-none hidden md:flex md:w-[22rem]"
-              href={`/listing/${slug}/`}
+              href={getBountyUrl(listing)}
               text={type === 'project' ? 'Inviting Proposals' : 'Prizes'}
               isActive={false}
             />
             <ListingTabLink
               href={
                 !isTemplate
-                  ? `/listing/${slug}/`
+                  ? getBountyUrl(listing)
                   : `/templates/listings/${slug}/`
               }
               text="Details"
-              isActive={!router.asPath.split('/')[3]?.includes('submission')}
+              isActive={!isSubmissionActive}
             />
 
             {showSubmissions && (
               <ListingTabLink
                 onClick={() => posthog.capture('submissions tab_listing')}
-                href={`/listing/${slug}/submission`}
+                href={`${getBountyUrl(listing)}/submission`}
                 text="Submissions"
-                isActive={!!router.asPath.split('/')[3]?.includes('submission')}
+                isActive={isSubmissionActive}
                 subText={
                   isSubmissionNumberLoading ? '...' : submissionNumber + ''
                 }

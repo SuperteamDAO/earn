@@ -69,7 +69,9 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       });
     }
 
-    const dbToken = tokenList.find((t) => t.tokenSymbol === listing.token);
+    const isUSDbased = listing.token === 'Any';
+    const tokenName = isUSDbased ? currentSubmission.token : listing.token;
+    const dbToken = tokenList.find((t) => t.tokenSymbol === tokenName);
     if (!dbToken) {
       return res.status(400).json({
         error: "Token doesn't exist for this listing",
@@ -83,6 +85,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       recipientPublicKey: user.publicKey!,
       expectedAmount: winnerReward,
       tokenMint: dbToken,
+      isUSDbased,
     });
 
     if (!validationResult.isValid) {

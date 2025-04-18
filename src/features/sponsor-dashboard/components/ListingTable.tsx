@@ -1,4 +1,5 @@
 import {
+  CircleHelp,
   Copy,
   DollarSign,
   ExternalLink,
@@ -36,15 +37,14 @@ import {
 import { Tooltip } from '@/components/ui/tooltip';
 import { tokenList } from '@/constants/tokenList';
 import { useDisclosure } from '@/hooks/use-disclosure';
+import { type SponsorType } from '@/interface/sponsor';
+import { getBountyUrl } from '@/utils/bounty-urls';
 import { cn } from '@/utils/cn';
 import { getURL } from '@/utils/validUrl';
 
 import { grantAmount } from '@/features/grants/utils/grantAmount';
 import { type ListingWithSubmissions } from '@/features/listings/types';
-import {
-  formatDeadline,
-  isDeadlineOver,
-} from '@/features/listings/utils/deadline';
+import { formatDeadline } from '@/features/listings/utils/deadline';
 import { getColorStyles } from '@/features/listings/utils/getColorStyles';
 import { getListingIcon } from '@/features/listings/utils/getListingIcon';
 import {
@@ -52,11 +52,14 @@ import {
   getListingTypeLabel,
 } from '@/features/listings/utils/status';
 
+import { ListingStatusModal } from './ListingStatusModal';
 import { DeleteDraftModal } from './Modals/DeleteDraftModal';
 import { UnpublishModal } from './Modals/UnpublishModal';
 import { VerifyPaymentModal } from './Modals/VerifyPayment';
 import { SponsorPrize } from './SponsorPrize';
+
 interface ListingTableProps {
+  sponsor: SponsorType | undefined;
   listings: ListingWithSubmissions[];
   currentSort: {
     column: string;
@@ -68,7 +71,7 @@ interface ListingTableProps {
 const thClassName =
   'text-sm font-medium capitalize tracking-tight text-slate-400';
 
-const ListingTh = ({
+export const ListingTh = ({
   children,
   className,
 }: {
@@ -81,6 +84,7 @@ const ListingTh = ({
 };
 
 export const ListingTable = ({
+  sponsor,
   listings,
   currentSort,
   onSort,
@@ -92,6 +96,11 @@ export const ListingTable = ({
   const posthog = usePostHog();
   const { data: session } = useSession();
 
+  const {
+    isOpen: statusModalOpen,
+    onOpen: statusModalOnOpen,
+    onClose: statusModalOnClose,
+  } = useDisclosure();
   const {
     isOpen: unpublishIsOpen,
     onOpen: unpublishOnOpen,
@@ -140,6 +149,10 @@ export const ListingTable = ({
 
   return (
     <>
+      <ListingStatusModal
+        isOpen={statusModalOpen}
+        onClose={statusModalOnClose}
+      />
       <UnpublishModal
         listingId={selectedListing.id}
         unpublishIsOpen={unpublishIsOpen}
@@ -165,6 +178,14 @@ export const ListingTable = ({
         <Table>
           <TableHeader>
             <TableRow className="bg-slate-100">
+              <SortableTH
+                column="id"
+                currentSort={currentSort}
+                setSort={onSort}
+                className={cn(thClassName)}
+              >
+                #
+              </SortableTH>
               <ListingTh />
               <SortableTH
                 column="title"
@@ -191,7 +212,30 @@ export const ListingTable = ({
                 Deadline
               </SortableTH>
               <ListingTh>Prize</ListingTh>
-              <ListingTh>Status</ListingTh>
+              <SortableTH
+                column="status"
+                currentSort={currentSort}
+                setSort={onSort}
+                className={cn(thClassName)}
+              >
+                <div className="flex items-center gap-1">
+                  Status
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-3 w-3 p-0"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      statusModalOnOpen();
+                    }}
+                  >
+                    <CircleHelp
+                      className="text-slate-400 hover:text-slate-600"
+                      style={{ width: '12px', height: '12px' }}
+                    />
+                  </Button>
+                </div>
+              </SortableTH>
               <ListingTh className="pl-6">Actions</ListingTh>
               <TableHead className="pl-0" />
             </TableRow>
@@ -204,8 +248,6 @@ export const ListingTable = ({
 
               const deadline = formatDeadline(listing?.deadline, listing?.type);
 
-              const pastDeadline = isDeadlineOver(listing?.deadline);
-
               const listingStatus = getListingStatus(listing);
               const listingLabel =
                 listingStatus === 'Draft'
@@ -215,12 +257,14 @@ export const ListingTable = ({
               const listingLink =
                 listing?.type === 'grant'
                   ? `${getURL()}grants/${listing.slug}`
-                  : `${getURL()}listing/${listing.slug}`;
+                  : getBountyUrl({ ...listing, sponsor: sponsor });
 
               const listingSubmissionLink =
                 listing.type === 'grant'
                   ? `/dashboard/grants/${listing.slug}/applications/`
                   : `/dashboard/listings/${listing.slug}/submissions/`;
+
+              const editLink = `/dashboard/listings/${listing.slug}/edit/`;
 
               const textColor = getColorStyles(listingStatus).color;
               const bgColor = getColorStyles(listingStatus).bgColor;
@@ -228,9 +272,14 @@ export const ListingTable = ({
               return (
                 <TableRow key={listing?.id}>
                   <TableCell className="pr-0">
+                    <p className="whitespace-nowrap text-sm font-medium text-slate-500">
+                      {listing.sequentialId}
+                    </p>
+                  </TableCell>
+                  <TableCell className="pr-0">
                     <Tooltip content={<p>{listingType}</p>}>
                       <img
-                        className="mt-1.5 h-5 w-5 flex-shrink-0 rounded-full"
+                        className="mt-1.5 h-5 min-h-5 w-5 min-w-5 flex-shrink-0 rounded-full"
                         alt={`New ${listingType}`}
                         src={getListingIcon(listing.type!)}
                         title={listingType}
@@ -239,11 +288,10 @@ export const ListingTable = ({
                   </TableCell>
                   <TableCell className="max-w-80 whitespace-normal break-words font-medium text-slate-700">
                     <Link
-                      className={cn(
-                        'ph-no-capture',
-                        !listing.isPublished && 'pointer-events-none',
-                      )}
-                      href={listingSubmissionLink}
+                      className={cn('ph-no-capture')}
+                      href={
+                        listing.isPublished ? listingSubmissionLink : editLink
+                      }
                       onClick={() => {
                         posthog.capture('submissions_sponsor');
                       }}
@@ -320,17 +368,17 @@ export const ListingTable = ({
                         }}
                       >
                         <Eye className="h-4 w-4" />
+                        View{' '}
                         {listing?.type === 'grant'
-                          ? 'Applications'
-                          : 'Submissions'}
+                          ? ' Applications'
+                          : ' Submissions'}
                       </Button>
                     ) : (session?.user?.role === 'GOD' &&
                         listing.type !== 'grant' &&
                         !listing.isPublished) ||
-                      (!pastDeadline &&
-                        listing.type !== 'grant' &&
+                      (listing.type !== 'grant' &&
                         listing.status === 'OPEN') ? (
-                      <Link href={`/dashboard/listings/${listing.slug}/edit/`}>
+                      <Link href={editLink}>
                         <Button
                           variant="ghost"
                           size="sm"
@@ -377,14 +425,10 @@ export const ListingTable = ({
                         {!!(
                           (session?.user?.role === 'GOD' &&
                             listing.type !== 'grant') ||
-                          (!pastDeadline &&
-                            listing.type !== 'grant' &&
+                          (listing.type !== 'grant' &&
                             listing.status === 'OPEN')
                         ) && (
-                          <Link
-                            className="block"
-                            href={`/dashboard/listings/${listing.slug}/edit`}
-                          >
+                          <Link className="block" href={editLink}>
                             <DropdownMenuItem className="cursor-pointer text-sm font-medium text-slate-500">
                               <PencilLine className="mr-2 h-4 w-4" />
                               Edit {listingLabel}

@@ -9,6 +9,7 @@ import { MeasuredContainer } from './components/measured-container';
 import { SectionFive } from './components/section/five';
 import { SectionFour } from './components/section/four';
 import { SectionOne } from './components/section/one';
+import { SectionSix } from './components/section/six';
 import { SectionThree } from './components/section/three';
 import { SectionTwo } from './components/section/two';
 import {
@@ -38,10 +39,10 @@ const Toolbar = ({
       className,
     )}
   >
-    <div className="flex w-max items-center gap-px">
+    <div className="flex w-full flex-wrap items-center gap-px md:w-max md:flex-nowrap">
       <SectionOne editor={editor} activeLevels={[1, 2, 3, 4, 5, 6]} />
 
-      <Separator orientation="vertical" className="mx-2 h-7" />
+      <Separator orientation="vertical" className="mx-2 hidden h-7 md:block" />
 
       <SectionTwo
         editor={editor}
@@ -56,23 +57,41 @@ const Toolbar = ({
         mainActionCount={5}
       />
 
-      <Separator orientation="vertical" className="mx-2 h-7" />
+      <Separator orientation="vertical" className="mx-2 hidden h-7 md:block" />
 
       <SectionThree editor={editor} />
 
-      <Separator orientation="vertical" className="mx-2 h-7" />
+      <Separator orientation="vertical" className="mx-2 hidden h-7 md:block" />
 
       <SectionFour
         editor={editor}
         activeActions={['orderedList', 'bulletList']}
-        mainActionCount={2}
+        mainActionCount={0}
       />
 
-      <Separator orientation="vertical" className="mx-2 h-7" />
+      <Separator orientation="vertical" className="mx-2 hidden h-7 md:block" />
+      <SectionSix
+        editor={editor}
+        tableActions={[
+          'insertTable',
+          'deleteTable',
+          'addRowAfter',
+          'addRowBefore',
+          'addColumnAfter',
+          'addColumnBefore',
+          'deleteColumn',
+          'deleteRow',
+        ]}
+      />
 
       <SectionFive
         editor={editor}
-        activeActions={['codeBlock', 'blockquote', 'horizontalRule']}
+        activeActions={[
+          'codeBlock',
+          'blockquote',
+          'horizontalRule',
+          'taskList',
+        ]}
         mainActionCount={0}
       />
     </div>

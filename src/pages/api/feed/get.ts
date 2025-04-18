@@ -8,6 +8,7 @@ import { dayjs } from '@/utils/dayjs';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { type FeedPostType } from '@/features/feed/types';
+import { type Listing } from '@/features/listings/types';
 
 export default async function handler(
   req: NextApiRequest,
@@ -100,12 +101,14 @@ export default async function handler(
           rewards: true,
           type: true,
           slug: true,
+          sequentialId: true,
           isWinnersAnnounced: true,
           token: true,
           sponsor: {
             select: {
               name: true,
               logo: true,
+              slug: true,
             },
           },
           winnersAnnouncedAt: true,
@@ -129,6 +132,7 @@ export default async function handler(
               ...winnerFilter,
               listing: {
                 isPrivate: false,
+                isPublished: true,
               },
               ...(userId ? { userId: userId as string } : {}),
             },
@@ -318,6 +322,9 @@ export default async function handler(
           sub.listing.isWinnersAnnounced || sub.listing.type === 'sponsorship';
         return {
           id: isDataPublic ? sub.id : null,
+          sponsorSlug: (sub?.listing as unknown as Listing)?.sponsor?.slug,
+          bountySequentialId: sub.listing.sequentialId,
+          sequentialId: sub.sequentialId,
           createdAt:
             sub.isWinner &&
             sub.listing.isWinnersAnnounced &&
@@ -339,7 +346,7 @@ export default async function handler(
           listingType: sub.listing.type,
           listingSlug: sub.listing.slug,
           isWinnersAnnounced: sub.listing.isWinnersAnnounced,
-          token: sub.listing.token === 'Any' ? sub.token : sub.listing.token,
+          token: sub.listing.token,
           //@ts-expect-error prisma ts error, this exists based on above include
           sponsorName: sub.listing.sponsor.name,
           //@ts-expect-error prisma ts error, this exists based on above include

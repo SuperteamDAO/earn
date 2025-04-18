@@ -3,20 +3,22 @@ import { useAtom } from 'jotai';
 import {
   AlertTriangle,
   ArrowRight,
+  Copy,
   DollarSign,
   ExternalLink,
+  Pencil,
 } from 'lucide-react';
 import Link from 'next/link';
-import React, { type Dispatch, type SetStateAction } from 'react';
+import React, { type Dispatch, type SetStateAction, useState } from 'react';
 import { MdOutlineAccountBalanceWallet, MdOutlineMail } from 'react-icons/md';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
 import { KycComponent } from '@/components/ui/KycComponent';
 import { Tooltip } from '@/components/ui/tooltip';
-import { EXPLORER_TX_URL } from '@/constants/project';
 import { useClipboard } from '@/hooks/use-clipboard';
 import type { SubmissionWithUser } from '@/interface/submission';
+import { getSubmissionUrl } from '@/utils/bounty-urls';
 import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
@@ -33,6 +35,7 @@ import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
 import { selectedSubmissionAtom } from '../../atoms';
 import { Details } from './Details';
+import { UpdatePaymentDateModal } from './Modals/UpdatePaymentDateModal';
 import { SelectLabel } from './SelectLabel';
 import { SelectWinner } from './SelectWinner';
 
@@ -68,7 +71,9 @@ export const SubmissionPanel = ({
 
   const isProject = bounty?.type === 'project';
   const isSponsorship = bounty?.type === 'sponsorship';
-  const [selectedSubmission] = useAtom(selectedSubmissionAtom);
+  const [selectedSubmission, setSelectedSubmission] = useAtom(
+    selectedSubmissionAtom,
+  );
 
   const { onCopy: onCopyEmail } = useClipboard(
     selectedSubmission?.user?.email || '',
@@ -78,10 +83,22 @@ export const SubmissionPanel = ({
     selectedSubmission?.user?.publicKey || '',
   );
 
+  const { onCopy: onCopySubmissionLink } = useClipboard(
+    getSubmissionUrl(selectedSubmission, bounty),
+  );
+
+  const handleCopySubmissionLink = () => {
+    if (selectedSubmission?.id) {
+      onCopySubmissionLink();
+      toast.success('Submission link copied', {
+        duration: 1500,
+      });
+    }
+  };
   const handleCopyEmail = () => {
     if (selectedSubmission?.user?.email) {
       onCopyEmail();
-      toast.success('Email copied to clipboard', {
+      toast.success('Email copied', {
         duration: 1500,
       });
     }
@@ -90,10 +107,17 @@ export const SubmissionPanel = ({
   const handleCopyPublicKey = () => {
     if (selectedSubmission?.user?.publicKey) {
       onCopyPublicKey();
-      toast.success('Wallet address copied to clipboard', {
+      toast.success('Wallet address copied', {
         duration: 1500,
       });
     }
+  };
+
+  const [isUpdatePaymentDateModalOpen, setIsUpdatePaymentDateModalOpen] =
+    useState(false);
+
+  const handleUpdatePaymentDate = () => {
+    setIsUpdatePaymentDateModalOpen(true);
   };
 
   return (
@@ -123,87 +147,113 @@ export const SubmissionPanel = ({
                   </div>
                 </div>
                 <div
-                  className={cn(
-                    'ph-no-capture flex w-full items-center justify-end gap-2',
-                    selectedSubmission?.isPaid && 'hidden',
-                  )}
+                  className={
+                    'ph-no-capture flex w-full items-center justify-end gap-2'
+                  }
                 >
+                  {isSponsorship && (
+                    <Button
+                      variant="ghost"
+                      className="ph-no-capture text-slate-500 disabled:cursor-not-allowed"
+                      onClick={handleCopySubmissionLink}
+                    >
+                      <Copy className="mr-1 h-4 w-4" />
+                      Copy Link
+                    </Button>
+                  )}
                   {selectedSubmission?.isWinner &&
                     selectedSubmission?.winnerPosition &&
                     !selectedSubmission?.isPaid &&
                     (bounty?.isWinnersAnnounced || isSponsorship) && (
                       <Button
-                        className="ph-no-capture mr-4 min-w-[120px] disabled:cursor-not-allowed"
+                        className="ph-no-capture min-w-[120px] disabled:cursor-not-allowed"
                         onClick={() => onVerifyPayment()}
                       >
                         <DollarSign className="mr-2 h-4 w-4" />
                         Verify Transaction
                       </Button>
                     )}
-                  {selectedSubmission?.status === 'Pending' && (
-                    <SelectLabel listingSlug={bounty?.slug!} />
-                  )}
+                  {selectedSubmission?.status === 'Pending' &&
+                    !selectedSubmission?.isPaid && (
+                      <SelectLabel listingSlug={bounty?.slug!} />
+                    )}
                   {selectedSubmission?.isWinner &&
                     selectedSubmission?.winnerPosition &&
-                    selectedSubmission?.isPaid && (
+                    selectedSubmission?.isPaid &&
+                    selectedSubmission?.paymentDetails?.link && (
                       <Button
-                        className="mr-4 text-slate-600"
+                        className="text-slate-500"
                         onClick={() => {
                           window.open(
-                            `${EXPLORER_TX_URL}${selectedSubmission?.paymentDetails?.txId}`,
+                            selectedSubmission?.paymentDetails?.link,
                             '_blank',
                           );
                         }}
                         size="default"
-                        variant="ghost"
+                        variant="outline"
                       >
-                        View Payment Tx
-                        <ExternalLink className="ml-2 h-4 w-4" />
+                        <ExternalLink className="mr-1 h-4 w-4" />
+                        View Payment
                       </Button>
                     )}
-                  {!bounty?.isWinnersAnnounced && (
-                    <>
-                      <SelectWinner
-                        onWinnersAnnounceOpen={onWinnersAnnounceOpen}
-                        isMultiSelectOn={!!isMultiSelectOn}
-                        bounty={bounty}
-                        usedPositions={usedPositions}
-                        setRemainings={setRemainings}
-                        submissions={submissions}
-                        isHackathonPage={isHackathonPage}
-                      />
-                      {!isProject && !isSponsorship && (
-                        <Tooltip
-                          content={
-                            <>
-                              You cannot change the winners once the results are
-                              published!
-                              <TooltipArrow />
-                            </>
-                          }
-                          disabled={!bounty?.isWinnersAnnounced}
-                          contentProps={{ sideOffset: 5 }}
-                        >
-                          <Button
-                            className={cn(
-                              'ml-4',
-                              'disabled:cursor-not-allowed disabled:bg-[#A1A1A1] disabled:hover:bg-[#A1A1A1]',
-                            )}
-                            disabled={
-                              !afterAnnounceDate ||
-                              isHackathonPage ||
-                              remainings?.podiums !== 0 ||
-                              remainings?.bonus !== 0
+
+                  {selectedSubmission?.isWinner &&
+                    selectedSubmission?.winnerPosition &&
+                    selectedSubmission?.isPaid &&
+                    !selectedSubmission?.paymentDetails?.link && (
+                      <Button
+                        className="text-slate-500"
+                        disabled
+                        size="default"
+                        variant="outline"
+                      >
+                        <p className="mr-2">Marked as paid</p>
+                      </Button>
+                    )}
+                  {!bounty?.isWinnersAnnounced &&
+                    selectedSubmission?.status === 'Pending' && (
+                      <>
+                        <SelectWinner
+                          onWinnersAnnounceOpen={onWinnersAnnounceOpen}
+                          isMultiSelectOn={!!isMultiSelectOn}
+                          bounty={bounty}
+                          usedPositions={usedPositions}
+                          setRemainings={setRemainings}
+                          submissions={submissions}
+                          isHackathonPage={isHackathonPage}
+                        />
+                        {!isProject && !isSponsorship && (
+                          <Tooltip
+                            content={
+                              <>
+                                You cannot change the winners once the results
+                                are published!
+                                <TooltipArrow />
+                              </>
                             }
-                            onClick={onWinnersAnnounceOpen}
-                            variant="default"
+                            disabled={!bounty?.isWinnersAnnounced}
+                            contentProps={{ sideOffset: 5 }}
                           >
-                            Announce Winners
-                          </Button>
-                        </Tooltip>
-                      )}
-                    </>
-                  )}
+                            <Button
+                              className={cn(
+                                'ml-4',
+                                'disabled:cursor-not-allowed disabled:bg-[#A1A1A1] disabled:hover:bg-[#A1A1A1]',
+                              )}
+                              disabled={
+                                !afterAnnounceDate ||
+                                isHackathonPage ||
+                                remainings?.podiums !== 0 ||
+                                remainings?.bonus !== 0
+                              }
+                              onClick={onWinnersAnnounceOpen}
+                              variant="default"
+                            >
+                              Announce Winners
+                            </Button>
+                          </Tooltip>
+                        )}
+                      </>
+                    )}
                 </div>
               </div>
               {!!remainings && !isProject && !isSponsorship && (
@@ -265,13 +315,13 @@ export const SubmissionPanel = ({
                         onClick={handleCopyPublicKey}
                         role="button"
                         tabIndex={0}
-                        aria-label={`Copy public key: ${truncatePublicKey(selectedSubmission.user.publicKey, 3)}`}
+                        aria-label={`Copy public key: ${truncatePublicKey(selectedSubmission.user.publicKey, 20)}`}
                       >
                         <MdOutlineAccountBalanceWallet />
                         <p>
                           {truncatePublicKey(
                             selectedSubmission.user.publicKey,
-                            3,
+                            20,
                           )}
                         </p>
                       </div>
@@ -305,6 +355,25 @@ export const SubmissionPanel = ({
                     Earned
                   </p>
                 )}
+                {selectedSubmission?.isPaid &&
+                  selectedSubmission?.paymentDate && (
+                    <div className="flex items-center">
+                      <p className="text-sm text-slate-400">
+                        Paid on:{' '}
+                        {dayjs(selectedSubmission.paymentDate).format(
+                          'MMM D, YYYY',
+                        )}
+                      </p>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="p-0 text-xs text-slate-500"
+                        onClick={handleUpdatePaymentDate}
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  )}
               </div>
             </div>
             <Details bounty={bounty} />
@@ -320,6 +389,20 @@ export const SubmissionPanel = ({
           </div>
         )}
       </div>
+      <UpdatePaymentDateModal
+        isOpen={isUpdatePaymentDateModalOpen}
+        onClose={() => setIsUpdatePaymentDateModalOpen(false)}
+        submissionId={selectedSubmission?.id || ''}
+        listingId={bounty?.id || ''}
+        currentPaymentDate={selectedSubmission?.paymentDate}
+        onSuccess={(date) => {
+          setSelectedSubmission((prev) =>
+            prev && prev.id === selectedSubmission?.id
+              ? { ...prev, paymentDate: date }
+              : prev,
+          );
+        }}
+      />
     </>
   );
 };

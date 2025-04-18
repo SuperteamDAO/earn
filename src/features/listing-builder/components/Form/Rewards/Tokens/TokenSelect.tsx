@@ -11,6 +11,7 @@ import {
 } from '@/components/ui/command';
 import {
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -69,31 +70,40 @@ export function TokenSelect() {
                 <CommandList>
                   <CommandEmpty>No Token found.</CommandEmpty>
                   <CommandGroup>
-                    {tokenList.map((token) => (
-                      <CommandItem
-                        value={token.tokenName}
-                        key={token.tokenSymbol}
-                        onSelect={() => {
-                          field.onChange(token.tokenSymbol);
-                          form.saveDraft();
-                        }}
-                      >
-                        <TokenLabel token={token} showIcon showName />
-                        <Check
-                          className={cn(
-                            'ml-auto',
-                            token.tokenSymbol === field.value
-                              ? 'opacity-100'
-                              : 'opacity-0',
-                          )}
-                        />
-                      </CommandItem>
-                    ))}
+                    {tokenList
+                      .filter((token) => token.tokenSymbol !== 'Other')
+                      .map((token) => (
+                        <CommandItem
+                          value={token.tokenName}
+                          key={token.tokenSymbol}
+                          onSelect={() => {
+                            field.onChange(token.tokenSymbol);
+                            form.saveDraft();
+                          }}
+                        >
+                          <TokenLabel token={token} showIcon showName />
+                          <Check
+                            className={cn(
+                              'ml-auto',
+                              token.tokenSymbol === field.value
+                                ? 'opacity-100'
+                                : 'opacity-0',
+                            )}
+                          />
+                        </CommandItem>
+                      ))}
                   </CommandGroup>
                 </CommandList>
               </Command>
             </PopoverContent>
           </Popover>
+          {field.value === 'Any' && (
+            <FormDescription>
+              Contributors will request an amount in USD, along with their
+              preferred token. You are responsible for paying the equivalent
+              value in the chosen token.
+            </FormDescription>
+          )}
           <FormMessage />
         </FormItem>
       )}

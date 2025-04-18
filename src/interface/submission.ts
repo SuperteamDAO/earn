@@ -6,18 +6,22 @@ import { type User } from './user';
 
 interface SubmissionWithUser {
   id: string;
+  sequentialId: number;
   status: SubmissionStatus;
   link?: string;
   tweet?: string;
   otherInfo?: string;
+  otherTokenDetails?: string;
   eligibilityAnswers?: any;
   userId: string;
   listingId: string;
   isWinner: boolean;
   winnerPosition?: keyof Rewards;
   isPaid: boolean;
+  paymentDate?: string;
   paymentDetails?: {
     txId?: string;
+    link?: string;
   };
   rewardInUSD: number;
   isActive: boolean;

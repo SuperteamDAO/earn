@@ -12,6 +12,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
   const slug = params.slug as string;
   const isHackathon = params.isHackathon === 'true';
+  const isGod = req.role === 'GOD';
 
   try {
     const user = await prisma.user.findUnique({
@@ -25,11 +26,13 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       return res.status(403).json({ error: 'Unauthorized' });
     }
 
+    const filter = isGod ? {} : { isActive: true };
+
     const query = await prisma.submission.findMany({
       where: {
         listing: {
           slug,
-          isActive: true,
+          ...filter,
           ...(isHackathon
             ? { hackathonId: user.hackathonId }
             : { sponsor: { id: req.userSponsorId } }),
@@ -98,7 +101,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         sortKey = Number(submission.winnerPosition);
       } else {
         switch (submission.label) {
-          case 'Unreviewed':
+          case 'New':
             sortKey = 400;
             break;
           case 'Shortlisted':

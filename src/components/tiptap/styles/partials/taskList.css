@@ -1,0 +1,27 @@
+.minimal-tiptap-editor .ProseMirror .task-list-node {
+  @apply pl-0;
+}
+
+.minimal-tiptap-editor .ProseMirror .task-item-node {
+  @apply flex items-center gap-2;
+  @apply mb-1;
+}
+
+.minimal-tiptap-editor .ProseMirror .task-item-node input[type="checkbox"] {
+  @apply h-3 w-3 rounded border-[var(--mt-hr)] text-primary;
+  @apply focus:ring-2 focus:ring-primary/20;
+  @apply translate-y-[1px];
+}
+
+.minimal-tiptap-editor .ProseMirror .task-item-node > div {
+  @apply flex-1 flex items-center;
+}
+
+.minimal-tiptap-editor .ProseMirror .task-item-node p {
+  @apply mb-0 leading-none;
+}
+
+.minimal-tiptap-editor .ProseMirror .task-item-node[data-checked="true"] {
+  @apply text-muted-foreground;
+  @apply line-through;
+}

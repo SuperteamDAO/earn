@@ -4,7 +4,7 @@ import React from 'react';
 import { OgImageViewer } from '@/components/shared/ogImageViewer';
 import { Avatar, AvatarImage } from '@/components/ui/avatar';
 import { Tooltip } from '@/components/ui/tooltip';
-import { getURL } from '@/utils/validUrl';
+import { getBountyUrlBySponsorAndId } from '@/utils/bounty-urls';
 
 import { type FeedDataProps } from '../types';
 import { FeedCardContainer } from './FeedCardContainer';
@@ -15,15 +15,9 @@ interface SubCardProps {
   sub: FeedDataProps;
   type: 'profile' | 'activity';
   commentCount?: number;
-  openDetails: (subId: string | null) => void;
 }
 
-export function SubmissionCard({
-  sub,
-  type,
-  commentCount,
-  openDetails,
-}: SubCardProps) {
+export function SubmissionCard({ sub, type, commentCount }: SubCardProps) {
   const firstName = sub?.firstName;
   const lastName = sub?.lastName;
   const photo = sub?.photo;
@@ -31,11 +25,14 @@ export function SubmissionCard({
 
   const isProject = sub?.listingType === 'project';
   const isSponsorship = sub?.listingType === 'sponsorship';
-  const listingLink = `${getURL()}listing/${sub?.listingSlug}`;
+  const listingLink = getBountyUrlBySponsorAndId(
+    sub?.sponsorSlug,
+    sub?.bountySequentialId.toString(),
+  );
 
   const submissionLink = sub?.link
     ? sub.link
-    : `${getURL()}feed/submission/${sub?.id}`;
+    : `${listingLink}/${sub?.sequentialId}`;
 
   const link = sub?.isWinnersAnnounced
     ? isProject
@@ -102,14 +99,12 @@ export function SubmissionCard({
           </FeedCardButton>
         </Tooltip>
       ) : !isProject ? (
-        <FeedCardButton
-          onClick={() => {
-            openDetails(sub.id);
-          }}
+        <FeedCardLink
           style="pointer-events-auto opacity-100"
+          href={`${submissionLink}`}
         >
           {'View Submission'}
-        </FeedCardButton>
+        </FeedCardLink>
       ) : (
         <FeedCardLink
           href={listingLink}

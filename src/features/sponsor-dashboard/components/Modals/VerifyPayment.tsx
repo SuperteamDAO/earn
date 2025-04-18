@@ -139,6 +139,16 @@ export const VerifyPaymentModal = ({
     );
   };
 
+  const forceVerifyPaymentMutation = async (body: VerifyPaymentsFormData) => {
+    return await api.post<{ validationResults: ValidatePaymentResult[] }>(
+      '/api/sponsor-dashboard/listings/force-verify-payment',
+      {
+        paymentLinks: body.paymentLinks,
+        listingId,
+      },
+    );
+  };
+
   const { mutate: verifyPayment, isPending: verifyPaymentPending } =
     useMutation({
       mutationFn: (body: VerifyPaymentsFormData) => verifyPaymentMutation(body),
@@ -225,11 +235,67 @@ export const VerifyPaymentModal = ({
       },
     });
 
+  const { mutate: forceVerifyPayment, isPending: forceVerifyPaymentPending } =
+    useMutation({
+      mutationFn: (body: VerifyPaymentsFormData) =>
+        forceVerifyPaymentMutation(body),
+      onSuccess: async (data, variables) => {
+        queryClient.invalidateQueries({
+          queryKey: listingSubmissionsQuery({
+            slug: listing?.slug ?? '',
+            isWinner: true,
+          }).queryKey,
+        });
+
+        const { validationResults } = data.data;
+        const nonFailResults = validationResults.filter(
+          (v) => v.status !== 'FAIL',
+        );
+
+        nonFailResults.forEach((result) => {
+          const fieldIndex = variables.paymentLinks.findIndex(
+            (link) => link.submissionId === result.submissionId,
+          );
+          if (fieldIndex !== -1) {
+            setValue(`paymentLinks.${fieldIndex}.isVerified`, true);
+            setValue(`paymentLinks.${fieldIndex}.txId`, result.txId);
+          }
+        });
+
+        const successfulResults = validationResults.filter(
+          (v) => v.status === 'SUCCESS',
+        );
+
+        if (listing) {
+          const existingPayments = listing.totalPaymentsMade || 0;
+          const newPayments = successfulResults.length;
+          const newListing = {
+            ...listing,
+            totalPaymentsMade: existingPayments + newPayments,
+          };
+          queryClient.setQueryData<ListingWithSubmissions[]>(
+            ['dashboard', user?.currentSponsorId],
+            (oldData) =>
+              oldData
+                ? oldData.map((l) => (l.id === newListing.id ? newListing : l))
+                : [],
+          );
+          setListing(newListing);
+        }
+
+        setStatus('success');
+      },
+      onError: () => {
+        setStatus('error');
+        toast.error('Error occurred while force verifying payment');
+      },
+    });
+
   useEffect(() => {
-    if (verifyPaymentPending) {
+    if (verifyPaymentPending || forceVerifyPaymentPending) {
       setStatus('loading');
     }
-  }, [verifyPaymentPending]);
+  }, [verifyPaymentPending, forceVerifyPaymentPending]);
 
   const onSubmit = async (data: VerifyPaymentsFormData) => {
     verifyPayment({ paymentLinks: data.paymentLinks });
@@ -237,6 +303,10 @@ export const VerifyPaymentModal = ({
 
   const tryAgain = () => {
     setStatus('idle');
+  };
+
+  const proceedAnyway = async (data: VerifyPaymentsFormData) => {
+    forceVerifyPayment({ paymentLinks: data.paymentLinks });
   };
 
   const renderContent = () => {
@@ -315,6 +385,61 @@ export const VerifyPaymentModal = ({
             )}
           </div>
         );
+      case 'retry':
+        return (
+          <div className="flex h-full flex-col gap-10 py-10">
+            <div className="flex items-center justify-center">
+              <div className="flex items-center justify-center rounded-full bg-yellow-50 p-6">
+                <div className="rounded-full bg-yellow-600 p-2.5">
+                  <X className="h-7 w-7 text-white" strokeWidth={3} />
+                </div>
+              </div>
+            </div>
+
+            <div className="mx-auto flex max-w-[20rem] flex-col items-center gap-2">
+              <p className="font-medium text-slate-900">Verification Failed</p>
+              <p className="text-center text-sm text-slate-500">
+                We couldn&apos;t verify your payment status. <br />
+                Please check your links again and make sure it&apos;s the exact
+                amount
+              </p>
+            </div>
+
+            <div className="mx-auto flex flex-col items-center gap-2">
+              <Button
+                className="w-full"
+                onClick={() => {
+                  const currentPaymentLinks = watch('paymentLinks');
+                  proceedAnyway({ paymentLinks: currentPaymentLinks });
+                }}
+              >
+                Proceed Anyway
+              </Button>
+
+              <a
+                href={`mailto:${SUPPORT_EMAIL}?subject=Payment Verification Issue`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-center"
+              >
+                <Button
+                  className="bg-none text-sm font-normal underline"
+                  variant="link"
+                >
+                  Think We Made A Mistake? Text Us
+                </Button>
+              </a>
+
+              <Button
+                className="bg-none text-sm font-normal"
+                onClick={tryAgain}
+                variant="link"
+              >
+                Try Again?
+              </Button>
+            </div>
+          </div>
+        );
       case 'error':
         return (
           <div className="flex h-full flex-col gap-10 py-10">
@@ -331,8 +456,8 @@ export const VerifyPaymentModal = ({
                 Oh-Uh Verification Failed
               </p>
               <p className="text-center text-sm text-slate-500">
-                We couldn’t verify your payment status. <br />
-                Please check your links again and make sure it’s the exact
+                We couldn&apos;t verify your payment status. <br />
+                Please check your links again and make sure it&apos;s the exact
                 amount
               </p>
             </div>
@@ -393,10 +518,11 @@ export const VerifyPaymentModal = ({
                     (a, b) => (a.winnerPosition || 0) - (b.winnerPosition || 0),
                   )
                   .map((submission, index) => {
-                    const tokenName =
-                      listing?.token === 'Any'
-                        ? submission.token
-                        : listing?.token;
+                    const isUsdBased = listing?.token === 'Any';
+                    const tokenName = isUsdBased
+                      ? submission.token
+                      : listing?.token;
+                    const isOtherToken = tokenName === 'Other';
                     const token = tokenList.find(
                       (s) => s.tokenSymbol === tokenName,
                     );
@@ -447,6 +573,7 @@ export const VerifyPaymentModal = ({
                                     src={token?.icon}
                                   />
                                   <p className="font-semibold text-slate-800">
+                                    {isUsdBased ? '$' : ''}
                                     {formatNumberWithSuffix(
                                       listing?.rewards?.[
                                         submission.winnerPosition || 0
@@ -454,7 +581,7 @@ export const VerifyPaymentModal = ({
                                     )}
                                   </p>
                                   <p className="font-semibold text-slate-400">
-                                    {token?.tokenSymbol}
+                                    {isUsdBased && 'in '} {token?.tokenSymbol}
                                   </p>
                                 </div>
                               </div>
@@ -462,23 +589,36 @@ export const VerifyPaymentModal = ({
                               <div className="flex w-full flex-col items-start gap-1">
                                 {paymentLink?.isVerified ? (
                                   <div className="flex w-full items-center gap-2">
-                                    <a
-                                      className="w-full"
-                                      href={`${EXPLORER_TX_URL}${paymentLink?.txId}`}
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                    >
+                                    {paymentLink.txId !== 'External Payment' ? (
+                                      <a
+                                        className="w-full"
+                                        href={`${EXPLORER_TX_URL}${paymentLink?.txId}`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                      >
+                                        <Button
+                                          type="button"
+                                          className="w-full justify-start border-green-500 text-sm font-medium text-slate-500 hover:bg-green-100"
+                                          variant="outline"
+                                        >
+                                          <p className="mr-2">
+                                            Payment Verified. View Tx
+                                          </p>
+                                          <ExternalLink className="ml-auto h-4 w-4" />
+                                        </Button>
+                                      </a>
+                                    ) : (
                                       <Button
                                         type="button"
                                         className="w-full justify-start border-green-500 text-sm font-medium text-slate-500 hover:bg-green-100"
                                         variant="outline"
+                                        disabled
                                       >
                                         <p className="mr-2">
-                                          Payment Verified. View Tx
+                                          External payment marked as paid
                                         </p>
-                                        <ExternalLink className="ml-auto h-4 w-4" />
                                       </Button>
-                                    </a>
+                                    )}
 
                                     <div className="h-6 w-6 rounded-full bg-green-500 p-1">
                                       <Check className="h-full w-full stroke-[3] text-white" />
@@ -486,11 +626,34 @@ export const VerifyPaymentModal = ({
                                   </div>
                                 ) : (
                                   <FormControl>
-                                    <Input
-                                      {...field}
-                                      className="text-sm placeholder:text-slate-400"
-                                      placeholder="Paste your link here"
-                                    />
+                                    {!isOtherToken ? (
+                                      <Input
+                                        {...field}
+                                        className="text-sm placeholder:text-slate-400"
+                                        placeholder="Paste your link here"
+                                      />
+                                    ) : (
+                                      <div className="flex items-center gap-2">
+                                        <input
+                                          type="checkbox"
+                                          id={`attest-${submission.id}`}
+                                          className="h-4 w-4 rounded border-slate-300 text-brand-purple focus:ring-brand-purple"
+                                          checked={field.value === 'Yes'}
+                                          {...field}
+                                          onChange={(e) =>
+                                            field.onChange(
+                                              e.target.checked ? 'Yes' : '',
+                                            )
+                                          }
+                                        />
+                                        <label
+                                          htmlFor={`attest-${submission.id}`}
+                                          className="text-sm text-slate-600"
+                                        >
+                                          I attest that I have paid the receiver
+                                        </label>
+                                      </div>
+                                    )}
                                   </FormControl>
                                 )}
                                 <FormMessage />
@@ -534,22 +697,20 @@ export const VerifyPaymentModal = ({
                   Add External Payment
                 </Button>
 
-                {status === 'retry' && (
-                  <a
-                    href={`mailto:${SUPPORT_EMAIL}?subject=Payment Verification Issue`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-center"
+                <a
+                  href={`mailto:${SUPPORT_EMAIL}?subject=Payment Verification Issue`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-center"
+                >
+                  <Button
+                    type="button"
+                    className="bg-transparent text-sm font-normal underline"
+                    variant="link"
                   >
-                    <Button
-                      type="button"
-                      className="bg-transparent text-sm font-normal underline"
-                      variant="link"
-                    >
-                      Think We Made A Mistake? Text Us
-                    </Button>
-                  </a>
-                )}
+                    Think We Made A Mistake? Text Us
+                  </Button>
+                </a>
               </div>
             </form>
           </Form>
