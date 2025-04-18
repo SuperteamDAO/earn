@@ -7,7 +7,7 @@ import { MdOutlineEmail } from 'react-icons/md';
 
 import { Button } from '@/components/ui/button';
 import { SUPPORT_EMAIL } from '@/constants/project';
-import { TERMS_OF_USE } from '@/constants/TERMS_OF_USE';
+import { PRIVACY_POLICY, TERMS_OF_USE } from '@/constants/TERMS_OF_USE';
 import { GoogleIcon } from '@/svg/google';
 
 import { EmailSignIn } from './EmailSignIn';
@@ -103,7 +103,7 @@ export const SignIn = ({
           </Link>{' '}
           and our{' '}
           <Link
-            href={`${router.basePath}/privacy-policy.pdf`}
+            href={PRIVACY_POLICY}
             className="font-semibold hover:underline"
             target="_blank"
           >

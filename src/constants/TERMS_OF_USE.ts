@@ -1,3 +1,5 @@
 import { getURL } from '@/utils/validUrl';
 
-export const TERMS_OF_USE = `${getURL()}/terms-of-use.pdf`;
+// TODO: point to the new terms of use
+export const TERMS_OF_USE = `${getURL()}/`;
+export const PRIVACY_POLICY = `${getURL()}/`;
