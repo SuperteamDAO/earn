@@ -62,7 +62,7 @@ async function updateSubmission(
   if (
     listing.type === 'sponsorship' &&
     (existingSubmission.status !== 'Pending' ||
-      existingSubmission.label !== 'Unreviewed')
+      existingSubmission.label !== 'New')
   ) {
     throw new Error('Submission status is not available to edit');
   }

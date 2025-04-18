@@ -237,7 +237,7 @@ export default function SponsorListings() {
     const filters = [
       'Spam',
       'Rejected',
-      'Unreviewed',
+      'New',
       'Shortlisted',
       'Reviewed',
       'Approved',

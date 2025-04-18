@@ -163,7 +163,7 @@ export const SubmissionActionButton = ({
         return 'submit';
       if (
         isSponsorship &&
-        (submission?.label !== 'Unreviewed' || submissionStatus !== 'Pending')
+        (submission?.label !== 'New' || submissionStatus !== 'Pending')
       )
         return 'freeze';
       return 'edit';

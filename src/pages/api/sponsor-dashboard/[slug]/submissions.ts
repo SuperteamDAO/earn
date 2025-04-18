@@ -101,7 +101,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         sortKey = Number(submission.winnerPosition);
       } else {
         switch (submission.label) {
-          case 'Unreviewed':
+          case 'New':
             sortKey = 400;
             break;
           case 'Shortlisted':

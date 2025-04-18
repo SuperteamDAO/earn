@@ -144,7 +144,7 @@ export async function POST(
             rewardInUSD,
             status: 'Approved',
             label:
-              winners[currentIndex]?.label === 'Unreviewed'
+              winners[currentIndex]?.label === 'New'
                 ? 'Reviewed'
                 : winners[currentIndex]?.label,
           },

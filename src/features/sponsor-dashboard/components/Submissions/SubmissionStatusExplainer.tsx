@@ -13,6 +13,8 @@ const statusExplanation = (
       };
     case 'Approved':
       return {
+        approved: true,
+        locked: true,
         waitingForPayment: true,
       };
     case 'Rejected':
@@ -33,7 +35,7 @@ const statusExplanation = (
         waitingForSponsor: true,
         locked: true,
       };
-    case 'Unreviewed':
+    case 'New':
       return {
         waitingForSponsor: true,
         editable: true,
@@ -76,9 +78,12 @@ export default function SubmissionStatusExplanation({
             {explanation.final && (
               <>
                 <li>The submission has reached its final state</li>
-                <li>The submitter can create a new submission</li>
               </>
             )}
+            {explanation.approved ||
+              (explanation.final && (
+                <li>The submitter can create a new submission</li>
+              ))}
             {explanation.blocked && (
               <>
                 <li>The submission has been marked as spam</li>
