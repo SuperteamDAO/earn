@@ -16,6 +16,7 @@ interface ValidatePaymentParams {
 interface ValidationResult {
   isValid: boolean;
   error?: string;
+  transactionDate?: Date;
 }
 
 /// isUSDbased is true if the user specified the token as Any and provided requested amount in US Dollars.
@@ -37,24 +38,31 @@ export async function validatePayment({
     );
 
     if (!tx) {
-      return { isValid: false, error: 'Invalid transaction' };
+      return { isValid: false, error: 'Transaction not found' };
     }
 
     if (tx.final_execution_status !== 'FINAL') {
-      return { isValid: false, error: 'Transaction not finalized' };
+      return { isValid: false, error: 'Transaction not finalized yet' };
     }
 
     if (!tx.receipts) {
-      return { isValid: false, error: 'No receipts found' };
+      return {
+        isValid: false,
+        error: 'No receipts found inside the transaction',
+      };
     }
 
     if (tx.transaction_outcome.outcome.status instanceof Object) {
       if (tx.transaction_outcome.outcome.status.Failure !== undefined) {
-        return { isValid: false, error: 'Transaction failed' };
+        return {
+          isValid: false,
+          error: 'Transaction failed during the execution',
+        };
       }
     }
 
     const isNativeTransfer = tokenMint.tokenSymbol === 'NEAR';
+    const transactionDate = new Date(tx.transaction.block_timestamp);
 
     if (isNativeTransfer || isUSDbased) {
       const result = processNativeReceipt(
@@ -64,17 +72,18 @@ export async function validatePayment({
         isUSDbased,
       );
       if (result.isValid || !isUSDbased) {
-        return result;
+        return { ...result, transactionDate };
       }
     }
 
-    return processTokenReceipt(
+    const result = processTokenReceipt(
       tx,
       tokenMint,
       recipientPublicKey,
       expectedAmount.toString(),
       isUSDbased,
     );
+    return { ...result, transactionDate };
   } catch (error: any) {
     return { isValid: false, error: error.message };
   }
@@ -87,14 +96,20 @@ function processNativeReceipt(
   isUSDbased: boolean,
 ) {
   if (!outcome.receipts) {
-    return { isValid: false, error: 'No receipts found' };
+    return {
+      isValid: false,
+      error: 'No receipts found inside the transaction',
+    };
   }
 
   const expectedAmountInYocto = nearApi.utils.format.parseNearAmount(
     expectedAmount.toString(),
   );
   if (!expectedAmountInYocto) {
-    return { isValid: false, error: 'Invalid expected amount' };
+    return {
+      isValid: false,
+      error: `Transfer amount doesn't match the expected amount`,
+    };
   }
   for (const receipt of outcome.receipts) {
     if (receipt.receiver_id !== accountId) {
@@ -115,7 +130,10 @@ function processNativeReceipt(
     }
   }
 
-  return { isValid: false, error: 'No transfer found' };
+  return {
+    isValid: false,
+    error: `No transfer found for ${accountId}`,
+  };
 }
 
 function processTokenReceipt(
@@ -153,11 +171,15 @@ function processTokenReceipt(
             return { isValid: true };
           }
           // For non-USD payments, check exact amount and recipient
-          if (
-            action.new_owner_id === accountId &&
-            action.amount === expectedAmountWithDecimals
-          ) {
-            return { isValid: true };
+          if (action.new_owner_id === accountId) {
+            if (action.amount === expectedAmountWithDecimals) {
+              return { isValid: true };
+            } else {
+              return {
+                isValid: false,
+                error: `Transfer amount doesn't match the expected amount`,
+              };
+            }
           }
         }
       } catch (error) {
@@ -167,5 +189,8 @@ function processTokenReceipt(
     }
   }
 
-  return { isValid: false, error: 'No transfer found' };
+  return {
+    isValid: false,
+    error: `No transfer found for ${accountId}`,
+  };
 }

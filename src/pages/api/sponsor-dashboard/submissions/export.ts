@@ -1,7 +1,6 @@
 import type { NextApiResponse } from 'next';
 import Papa from 'papaparse';
 
-import { EXPLORER_TX_URL } from '@/constants/project';
 import { type SubmissionWithUser } from '@/interface/submission';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
@@ -105,8 +104,8 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           break;
       }
 
-      const txLink = submission.paymentDetails?.txId
-        ? `${EXPLORER_TX_URL}${submission.paymentDetails?.txId}`
+      const txLink = submission.paymentDetails?.link
+        ? submission.paymentDetails?.link
         : '';
 
       return {

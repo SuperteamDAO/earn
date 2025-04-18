@@ -18,8 +18,10 @@ interface SubmissionWithUser {
   isWinner: boolean;
   winnerPosition?: keyof Rewards;
   isPaid: boolean;
+  paymentDate?: string;
   paymentDetails?: {
     txId?: string;
+    link?: string;
   };
   rewardInUSD: number;
   isActive: boolean;

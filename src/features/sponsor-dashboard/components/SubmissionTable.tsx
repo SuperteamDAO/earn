@@ -141,6 +141,14 @@ export const SubmissionTable = ({
               >
                 Submission Date
               </SortableTH>
+              <SortableTH
+                column="paymentDate"
+                currentSort={currentSort}
+                setSort={onSort}
+                className={cn(thClassName)}
+              >
+                Payment Date
+              </SortableTH>
               <ListingTh className="pl-6">Actions</ListingTh>
               <TableHead className="pl-0" />
             </TableRow>
@@ -150,6 +158,9 @@ export const SubmissionTable = ({
               const submissionDate = dayjs(submission?.createdAt).format(
                 "DD MMM'YY h:mm A",
               );
+              const paymentDate = submission?.paymentDate
+                ? dayjs(submission?.paymentDate).format("DD MMM'YY")
+                : '';
               const listingStatus = sponsorshipSubmissionStatus(submission);
               const isUsdBased = submission?.listing?.token === 'Any';
               const submissionLink = getSubmissionUrl(
@@ -279,6 +290,11 @@ export const SubmissionTable = ({
                     </p>
                   </TableCell>
                   <TableCell>
+                    <p className="whitespace-nowrap text-sm font-medium text-slate-500">
+                      {paymentDate}
+                    </p>
+                  </TableCell>
+                  <TableCell>
                     <Button
                       variant="ghost"
                       size="sm"
@@ -341,6 +357,20 @@ export const SubmissionTable = ({
                             </DropdownMenuItem>
                           </>
                         )}
+                        {submission?.isPaid &&
+                          submission.paymentDetails?.link && (
+                            <DropdownMenuItem
+                              className="cursor-pointer text-sm font-medium text-slate-500"
+                              onClick={() =>
+                                copyToClipboard(
+                                  submission.paymentDetails?.link || '',
+                                )
+                              }
+                            >
+                              <Copy className="mr-2 h-4 w-4" />
+                              Copy Payment Link
+                            </DropdownMenuItem>
+                          )}
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>

@@ -77,6 +77,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           validationResults.push({
             submissionId: paymentLink.submissionId,
             txId: paymentLink.txId,
+            link: paymentLink.link || '',
             status: 'ALREADY_VERIFIED',
             message: 'Already Verified',
           });
@@ -130,7 +131,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
               isUSDbased,
             })
           : {
-              isValid: paymentLink.link === 'Yes',
+              isValid: true,
             };
 
         if (!validationResult.isValid) {
@@ -138,7 +139,9 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         }
         validationResults.push({
           submissionId: paymentLink.submissionId,
-          txId: isOtherToken ? 'External Payment' : paymentLink.txId,
+          txId: paymentLink.txId,
+          link: paymentLink.link || '',
+          transactionDate: validationResult.transactionDate,
           status: 'SUCCESS',
         });
 
@@ -150,6 +153,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         validationResults.push({
           submissionId: paymentLink.submissionId,
           txId: paymentLink.txId || '',
+          link: paymentLink.link || '',
           status: 'FAIL',
           message: error.message,
         });
@@ -172,7 +176,11 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         },
         data: {
           isPaid: true,
-          paymentDetails: { txId: validationResult.txId },
+          paymentDetails: {
+            txId: validationResult.txId,
+            link: validationResult.link,
+          },
+          paymentDate: validationResult.transactionDate,
         },
       });
     }
@@ -198,7 +206,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       `Error verifying external payments: ${userSponsorId}: ${err.message}`,
     );
     res.status(400).json({
-      err: 'Error verifying external payments: ',
+      err: `Error verifying external payments`,
     });
   }
 }

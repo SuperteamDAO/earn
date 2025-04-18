@@ -74,7 +74,11 @@ export async function POST(
       ...Array(listing?.maxBonusSpots ?? 0).map(() => BONUS_REWARD_POSITION),
     ].length;
 
-    if (!!totalRewards && listing?.totalWinnersSelected !== totalRewards) {
+    if (
+      !!totalRewards &&
+      !isSponsorship &&
+      listing?.totalWinnersSelected !== totalRewards
+    ) {
       logger.warn(
         'All winners have not been selected before publishing the results',
       );

@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import { useAtom } from 'jotai';
 import { ArrowRight, ChevronLeft, Copy, ExternalLink } from 'lucide-react';
 import type { GetServerSideProps } from 'next';
@@ -16,7 +17,6 @@ import {
 import { Button } from '@/components/ui/button';
 import { KycComponent } from '@/components/ui/KycComponent';
 import { Tooltip } from '@/components/ui/tooltip';
-import { EXPLORER_TX_URL } from '@/constants/project';
 import { useClipboard } from '@/hooks/use-clipboard';
 import type { SubmissionWithUser } from '@/interface/submission';
 import { ListingPageLayout } from '@/layouts/Listing';
@@ -200,13 +200,13 @@ function Content({
                 {submission?.isWinner &&
                   submission?.winnerPosition &&
                   submission?.isPaid &&
-                  submission?.paymentDetails?.txId !== 'External Payment' && (
+                  submission?.paymentDetails?.link && (
                     <div className="ph-no-capture hidden items-center justify-end gap-2 md:flex">
                       <Button
                         className="text-slate-600"
                         onClick={() => {
                           window.open(
-                            `${EXPLORER_TX_URL}${submission?.paymentDetails?.txId}`,
+                            submission?.paymentDetails?.link,
                             '_blank',
                           );
                         }}
@@ -222,7 +222,7 @@ function Content({
                 {submission?.isWinner &&
                   submission?.winnerPosition &&
                   submission?.isPaid &&
-                  submission?.paymentDetails?.txId === 'External Payment' && (
+                  !submission?.paymentDetails?.link && (
                     <div className="ph-no-capture hidden items-center justify-end gap-2 md:flex">
                       <Button
                         className="text-slate-600"
@@ -298,6 +298,14 @@ function Content({
                   ${formatNumberWithSuffix(submission?.totalEarnings || 0)}{' '}
                   Earned
                 </p>
+              )}
+              {submission?.isPaid && submission?.paymentDate && (
+                <div className="flex items-center">
+                  <p className="text-sm text-slate-400">
+                    Paid on:{' '}
+                    {dayjs(submission.paymentDate).format('MMM D, YYYY')}
+                  </p>
+                </div>
               )}
             </div>
           </div>

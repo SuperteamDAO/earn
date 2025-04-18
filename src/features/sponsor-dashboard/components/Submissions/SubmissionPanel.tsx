@@ -6,16 +6,16 @@ import {
   Copy,
   DollarSign,
   ExternalLink,
+  Pencil,
 } from 'lucide-react';
 import Link from 'next/link';
-import React, { type Dispatch, type SetStateAction } from 'react';
+import React, { type Dispatch, type SetStateAction, useState } from 'react';
 import { MdOutlineAccountBalanceWallet, MdOutlineMail } from 'react-icons/md';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
 import { KycComponent } from '@/components/ui/KycComponent';
 import { Tooltip } from '@/components/ui/tooltip';
-import { EXPLORER_TX_URL } from '@/constants/project';
 import { useClipboard } from '@/hooks/use-clipboard';
 import type { SubmissionWithUser } from '@/interface/submission';
 import { getSubmissionUrl } from '@/utils/bounty-urls';
@@ -35,6 +35,7 @@ import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
 import { selectedSubmissionAtom } from '../../atoms';
 import { Details } from './Details';
+import { UpdatePaymentDateModal } from './Modals/UpdatePaymentDateModal';
 import { SelectLabel } from './SelectLabel';
 import { SelectWinner } from './SelectWinner';
 
@@ -70,7 +71,9 @@ export const SubmissionPanel = ({
 
   const isProject = bounty?.type === 'project';
   const isSponsorship = bounty?.type === 'sponsorship';
-  const [selectedSubmission] = useAtom(selectedSubmissionAtom);
+  const [selectedSubmission, setSelectedSubmission] = useAtom(
+    selectedSubmissionAtom,
+  );
 
   const { onCopy: onCopyEmail } = useClipboard(
     selectedSubmission?.user?.email || '',
@@ -108,6 +111,13 @@ export const SubmissionPanel = ({
         duration: 1500,
       });
     }
+  };
+
+  const [isUpdatePaymentDateModalOpen, setIsUpdatePaymentDateModalOpen] =
+    useState(false);
+
+  const handleUpdatePaymentDate = () => {
+    setIsUpdatePaymentDateModalOpen(true);
   };
 
   return (
@@ -170,13 +180,12 @@ export const SubmissionPanel = ({
                   {selectedSubmission?.isWinner &&
                     selectedSubmission?.winnerPosition &&
                     selectedSubmission?.isPaid &&
-                    selectedSubmission?.paymentDetails?.txId !==
-                      'External Payment' && (
+                    selectedSubmission?.paymentDetails?.link && (
                       <Button
                         className="text-slate-500"
                         onClick={() => {
                           window.open(
-                            `${EXPLORER_TX_URL}${selectedSubmission?.paymentDetails?.txId}`,
+                            selectedSubmission?.paymentDetails?.link,
                             '_blank',
                           );
                         }}
@@ -191,8 +200,7 @@ export const SubmissionPanel = ({
                   {selectedSubmission?.isWinner &&
                     selectedSubmission?.winnerPosition &&
                     selectedSubmission?.isPaid &&
-                    selectedSubmission?.paymentDetails?.txId ===
-                      'External Payment' && (
+                    !selectedSubmission?.paymentDetails?.link && (
                       <Button
                         className="text-slate-500"
                         disabled
@@ -347,6 +355,25 @@ export const SubmissionPanel = ({
                     Earned
                   </p>
                 )}
+                {selectedSubmission?.isPaid &&
+                  selectedSubmission?.paymentDate && (
+                    <div className="flex items-center">
+                      <p className="text-sm text-slate-400">
+                        Paid on:{' '}
+                        {dayjs(selectedSubmission.paymentDate).format(
+                          'MMM D, YYYY',
+                        )}
+                      </p>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="p-0 text-xs text-slate-500"
+                        onClick={handleUpdatePaymentDate}
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  )}
               </div>
             </div>
             <Details bounty={bounty} />
@@ -362,6 +389,20 @@ export const SubmissionPanel = ({
           </div>
         )}
       </div>
+      <UpdatePaymentDateModal
+        isOpen={isUpdatePaymentDateModalOpen}
+        onClose={() => setIsUpdatePaymentDateModalOpen(false)}
+        submissionId={selectedSubmission?.id || ''}
+        listingId={bounty?.id || ''}
+        currentPaymentDate={selectedSubmission?.paymentDate}
+        onSuccess={(date) => {
+          setSelectedSubmission((prev) =>
+            prev && prev.id === selectedSubmission?.id
+              ? { ...prev, paymentDate: date }
+              : prev,
+          );
+        }}
+      />
     </>
   );
 };

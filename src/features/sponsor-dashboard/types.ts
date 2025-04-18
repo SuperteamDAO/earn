@@ -28,7 +28,7 @@ export interface SponsorStats {
   totalSubmissionsAndApplications?: number;
 }
 
-const ALLOWED_URL_PREFIXES = ['https://nearblocks.io/txns/'];
+const ALLOWED_URL_PREFIXES = ['https://nearblocks.io/txns/', 'https://'];
 
 export const verifyPaymentsSchema = z.object({
   paymentLinks: z
@@ -71,6 +71,8 @@ export type VerifyPaymentsFormData = z.infer<typeof verifyPaymentsSchema>;
 export type ValidatePaymentResult = {
   submissionId: string;
   txId: string;
+  link: string;
   status: 'SUCCESS' | 'FAIL' | 'ALREADY_VERIFIED';
   message?: string;
+  transactionDate?: Date;
 };
