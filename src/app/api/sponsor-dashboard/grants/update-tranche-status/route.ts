@@ -151,6 +151,7 @@ export async function POST(request: NextRequest) {
                 kycIDNumber: true,
                 kycIDType: true,
                 kycCountry: true,
+                username: true,
               },
             },
             grant: {
