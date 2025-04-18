@@ -9,7 +9,7 @@ import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 
 import { OTPTemplate } from '@/features/emails/components/otpTemplate';
-import { ceoEmail, replyToEmail } from '@/features/emails/utils/fromEmails';
+import { fromEmail, replyToEmail } from '@/features/emails/utils/fromEmails';
 import { resend } from '@/features/emails/utils/resend';
 
 export const authOptions: NextAuthOptions = {
@@ -48,7 +48,7 @@ export const authOptions: NextAuthOptions = {
           pass: process.env.RESEND_API_KEY,
         },
       },
-      from: ceoEmail,
+      from: fromEmail,
       sendVerificationRequest: async ({ identifier, token }) => {
         const isBlocked = await prisma.blockedEmail.findUnique({
           where: { email: identifier },
@@ -59,7 +59,7 @@ export const authOptions: NextAuthOptions = {
         }
 
         await resend.emails.send({
-          from: ceoEmail,
+          from: fromEmail,
           to: [identifier],
           subject: `Log in to ${PROJECT_NAME}`,
           react: OTPTemplate({ token }),
