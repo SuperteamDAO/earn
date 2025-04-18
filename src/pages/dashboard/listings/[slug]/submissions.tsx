@@ -527,6 +527,7 @@ export default function BountySubmissions({ slug }: Props) {
                   {verifyPaymentIsOpen && (
                     <VerifyPaymentModal
                       listing={bounty}
+                      setSelectedSubmission={setSelectedSubmission}
                       setListing={() => {}}
                       isOpen={verifyPaymentIsOpen}
                       onClose={() => {

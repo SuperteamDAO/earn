@@ -3,7 +3,11 @@ import * as nearApi from 'near-api-js';
 
 import { type Token } from '@/constants/tokenList';
 import logger from '@/lib/logger';
-import { formatTokenAmount, getTransactionStatus } from '@/utils/near';
+import {
+  formatTokenAmount,
+  getTransactionDate,
+  getTransactionStatus,
+} from '@/utils/near';
 
 interface ValidatePaymentParams {
   txId: string;
@@ -62,8 +66,10 @@ export async function validatePayment({
     }
 
     const isNativeTransfer = tokenMint.tokenSymbol === 'NEAR';
-    const transactionDate = new Date(tx.transaction.block_timestamp);
-
+    const transactionDate = await getTransactionDate(
+      // @ts-expect-error This is a valid response that is missing in the types
+      tx.transaction_outcome.block_hash,
+    );
     if (isNativeTransfer || isUSDbased) {
       const result = processNativeReceipt(
         tx,
