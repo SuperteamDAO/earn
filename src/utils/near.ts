@@ -34,6 +34,14 @@ export async function getTransactionStatus(
   return result;
 }
 
+export async function getTransactionDate(blockHash: string): Promise<Date> {
+  const api = await nearApi.connect(connectionConfig);
+
+  const result = await api.connection.provider.block({ blockId: blockHash });
+  // timestamp is in nanoseconds, so we need to convert it to milliseconds
+  return new Date(Number(result.header.timestamp) / 1_000_000);
+}
+
 export function formatTokenAmount(amount: string, decimals: number): string {
   const [wholePart, decimalPart = ''] = amount.split('.');
   const paddedDecimal = decimalPart.padEnd(decimals, '0');

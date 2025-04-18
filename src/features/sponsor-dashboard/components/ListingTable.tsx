@@ -173,6 +173,7 @@ export const ListingTable = ({
         listingId={selectedListing.id}
         listingType={selectedListing.type}
         selectedSubmission={undefined}
+        setSelectedSubmission={() => {}}
       />
       <div className="w-full overflow-x-auto rounded-md border border-slate-200">
         <Table>

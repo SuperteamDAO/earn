@@ -2,7 +2,12 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Check, ExternalLink, X } from 'lucide-react';
 import Link from 'next/link';
-import React, { useEffect, useState } from 'react';
+import React, {
+  type Dispatch,
+  type SetStateAction,
+  useEffect,
+  useState,
+} from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
@@ -47,6 +52,9 @@ interface VerifyPaymentModalProps {
   setListing: (listing: ListingWithSubmissions) => void;
   listingType: string | undefined;
   selectedSubmission: SubmissionWithUser | undefined;
+  setSelectedSubmission: Dispatch<
+    SetStateAction<SubmissionWithUser | undefined>
+  >;
 }
 
 export const VerifyPaymentModal = ({
@@ -56,6 +64,7 @@ export const VerifyPaymentModal = ({
   isOpen,
   onClose,
   selectedSubmission,
+  setSelectedSubmission,
 }: VerifyPaymentModalProps) => {
   const { user } = useUser();
   const [status, setStatus] = useState<
@@ -99,7 +108,6 @@ export const VerifyPaymentModal = ({
 
   useEffect(() => {
     if (submissions) {
-      console.log('submissions', submissions);
       reset(
         {
           paymentLinks: submissions
@@ -129,7 +137,6 @@ export const VerifyPaymentModal = ({
   }, [listing?.slug]);
 
   const verifyPaymentMutation = async (body: VerifyPaymentsFormData) => {
-    console.log('body', body.paymentLinks);
     return await api.post<{ validationResults: ValidatePaymentResult[] }>(
       '/api/sponsor-dashboard/listings/verify-external-payment',
       {
@@ -228,6 +235,18 @@ export const VerifyPaymentModal = ({
             });
           }
         });
+
+        if (selectedSubmission && successfulResults.length > 0) {
+          setSelectedSubmission((prev: SubmissionWithUser | undefined) => {
+            return prev?.id === selectedSubmission.id
+              ? {
+                  ...prev,
+                  isPaid: true,
+                  paymentDetails: { link: successfulResults[0]?.link ?? '' },
+                }
+              : prev;
+          });
+        }
       },
       onError: () => {
         setStatus('error');
@@ -246,6 +265,7 @@ export const VerifyPaymentModal = ({
             isWinner: true,
           }).queryKey,
         });
+        clearErrors();
 
         const { validationResults } = data.data;
         const nonFailResults = validationResults.filter(
@@ -281,6 +301,18 @@ export const VerifyPaymentModal = ({
                 : [],
           );
           setListing(newListing);
+        }
+
+        if (selectedSubmission) {
+          setSelectedSubmission((prev: SubmissionWithUser | undefined) => {
+            return prev?.id === selectedSubmission.id
+              ? {
+                  ...selectedSubmission,
+                  isPaid: true,
+                  paymentDetails: { link: successfulResults[0]?.link ?? '' },
+                }
+              : prev;
+          });
         }
 
         setStatus('success');
@@ -522,7 +554,6 @@ export const VerifyPaymentModal = ({
                     const tokenName = isUsdBased
                       ? submission.token
                       : listing?.token;
-                    const isOtherToken = tokenName === 'Other';
                     const token = tokenList.find(
                       (s) => s.tokenSymbol === tokenName,
                     );
@@ -592,7 +623,10 @@ export const VerifyPaymentModal = ({
                                     {paymentLink.txId !== 'External Payment' ? (
                                       <a
                                         className="w-full"
-                                        href={`${EXPLORER_TX_URL}${paymentLink?.txId}`}
+                                        href={
+                                          paymentLink.link ??
+                                          `${EXPLORER_TX_URL}${paymentLink?.txId}`
+                                        }
                                         target="_blank"
                                         rel="noopener noreferrer"
                                       >
@@ -626,34 +660,11 @@ export const VerifyPaymentModal = ({
                                   </div>
                                 ) : (
                                   <FormControl>
-                                    {!isOtherToken ? (
-                                      <Input
-                                        {...field}
-                                        className="text-sm placeholder:text-slate-400"
-                                        placeholder="Paste your link here"
-                                      />
-                                    ) : (
-                                      <div className="flex items-center gap-2">
-                                        <input
-                                          type="checkbox"
-                                          id={`attest-${submission.id}`}
-                                          className="h-4 w-4 rounded border-slate-300 text-brand-purple focus:ring-brand-purple"
-                                          checked={field.value === 'Yes'}
-                                          {...field}
-                                          onChange={(e) =>
-                                            field.onChange(
-                                              e.target.checked ? 'Yes' : '',
-                                            )
-                                          }
-                                        />
-                                        <label
-                                          htmlFor={`attest-${submission.id}`}
-                                          className="text-sm text-slate-600"
-                                        >
-                                          I attest that I have paid the receiver
-                                        </label>
-                                      </div>
-                                    )}
+                                    <Input
+                                      {...field}
+                                      className="text-sm placeholder:text-slate-400"
+                                      placeholder="Paste your link here"
+                                    />
                                   </FormControl>
                                 )}
                                 <FormMessage />
