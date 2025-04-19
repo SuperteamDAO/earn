@@ -31,6 +31,28 @@ interface WebhookEvent {
   type: EmailType;
 }
 
+async function deleteEmailSettings(recipientEmail: string) {
+  console.log(
+    `Deleting all EmailSettings for this user with email: ${recipientEmail}`,
+  );
+
+  const users = await prisma.user.findMany({
+    where: { email: recipientEmail },
+    select: { id: true },
+  });
+
+  if (users.length > 0) {
+    for (const user of users) {
+      await prisma.emailSettings.deleteMany({
+        where: { userId: user.id },
+      });
+      console.log(`Deleted EmailSettings for user ID: ${user.id}`);
+    }
+  } else {
+    console.log(`No users found with email ${recipientEmail}`);
+  }
+}
+
 async function handleEmailBounce(recipientEmail: string, isValid: boolean) {
   if (!isValid) {
     await prisma.blockedEmail.create({
@@ -67,11 +89,11 @@ async function handleEmailBounce(recipientEmail: string, isValid: boolean) {
   const highBounceRatio = bouncedCount / last6Emails.length > 0.5;
 
   if (lastThreeAreBounced || highFailureTrend || allDelays || highBounceRatio) {
-    await prisma.blockedEmail.create({
-      data: {
-        email: recipientEmail,
-      },
-    });
+    await deleteEmailSettings(recipientEmail);
+  } else {
+    console.log(
+      `History for ${recipientEmail} does not meet unsubscribe criteria. No action taken.`,
+    );
   }
 }
 
@@ -98,8 +120,10 @@ const webhooks = async (req: NextApiRequest, res: NextApiResponse) => {
             `https://earn.superteam.fun/api/email/validate`,
             { email: recipientEmail },
           );
-          const isValid = data?.isValid || false;
+          const isValid = data?.isValid ?? false;
           await handleEmailBounce(recipientEmail, isValid);
+        } else if (event.type === 'email.complained') {
+          await deleteEmailSettings(recipientEmail);
         }
 
         await prisma.resendLogs.create({
