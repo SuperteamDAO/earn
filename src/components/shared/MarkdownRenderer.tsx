@@ -1,16 +1,31 @@
-import React, { memo } from 'react';
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
+import parse, { type HTMLReactParserOptions } from 'html-react-parser';
+import { marked } from 'marked';
+import React, { memo, useEffect, useState } from 'react';
 
-const remarkPlugins = [remarkGfm];
-
+const options: HTMLReactParserOptions = {
+  replace: ({ name, children, attribs }: any) => {
+    if (name === 'p' && (!children || children.length === 0)) {
+      return <br />;
+    }
+    return { name, children, attribs };
+  },
+};
 const NonMemoizedMarkdown = ({ children }: { children: string }) => {
+  const [rawHtml, setRawHtml] = useState('');
+  useEffect(() => {
+    const awaitedParse = async () => {
+      setRawHtml(await marked.parse(children || '', { gfm: true }));
+    };
+    awaitedParse();
+  }, [children]);
+
   return (
-    <div className="minimal-tiptap-editor tiptap ProseMirror h-full w-full overflow-visible px-0! pb-7">
-      <div className="tiptap ProseMirror listing-description mt-0! px-0!">
-        <ReactMarkdown remarkPlugins={remarkPlugins}>{children}</ReactMarkdown>
-      </div>
-    </div>
+    <>
+      {parse(
+        rawHtml?.startsWith('"') ? JSON.parse(rawHtml || '') : (rawHtml ?? ''),
+        options,
+      )}
+    </>
   );
 };
 

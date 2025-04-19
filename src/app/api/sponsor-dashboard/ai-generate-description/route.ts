@@ -1,37 +1,18 @@
 import { openrouter } from '@openrouter/ai-sdk-provider';
 import { createDataStreamResponse, smoothStream, streamText } from 'ai';
 import type { NextRequest } from 'next/server';
+import { ZodError } from 'zod';
 
-export const runtime = 'nodejs';
+import { aiGenerateFormSchema } from '@/features/listing-builder/components/AiGenerate/schema';
+
+import { getDescriptionPrompt } from './prompts';
+
 export async function POST(req: NextRequest) {
   try {
-    const { companyDescription, scopeOfWork, rewards, requirements } =
-      await req.json();
+    const rawData = await req.json();
+    const validatedData = aiGenerateFormSchema.parse(rawData);
 
-    // Create a prompt from the form data
-    const prompt = `
-Generate a detailed description for a bounty or project based on the following information:
-
-COMPANY/PROJECT DESCRIPTION:
-${companyDescription}
-
-SCOPE OF WORK:
-${scopeOfWork}
-
-REWARDS AND PODIUM SPLIT:
-${rewards}
-
-ELIGIBILITY/SUBMISSION REQUIREMENTS:
-${requirements}
-
-Please format the response with clear sections for:
-1. An introduction paragraph about the company/project
-2. Scope of Work section
-3. Deliverables section with numbered list
-4. Any other relevant information from the input
-
-Keep the tone professional and engaging.
-`;
+    const prompt = getDescriptionPrompt(validatedData);
 
     return createDataStreamResponse({
       execute: (dataStream) => {
@@ -56,9 +37,28 @@ Keep the tone professional and engaging.
       },
     });
   } catch (error) {
+    if (error instanceof ZodError) {
+      console.error('Validation error:', error.errors);
+      return new Response(
+        JSON.stringify({
+          error: 'Invalid input data',
+          details: error.flatten(),
+        }),
+        {
+          status: 400,
+          headers: { 'Content-Type': 'application/json' },
+        },
+      );
+    }
+
     console.error('Error generating description:', error);
+    const errorMessage =
+      error instanceof Error ? error.message : 'An unknown error occurred';
     return new Response(
-      JSON.stringify({ error: 'Failed to generate description' }),
+      JSON.stringify({
+        error: 'Failed to generate description',
+        details: errorMessage,
+      }),
       {
         status: 500,
         headers: { 'Content-Type': 'application/json' },

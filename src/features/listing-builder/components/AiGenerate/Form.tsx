@@ -1,6 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useAtomValue } from 'jotai';
 import { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import TextareaAutosize from 'react-textarea-autosize';
 
 import { Button } from '@/components/ui/button';
@@ -14,18 +15,34 @@ import {
 } from '@/components/ui/form';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
+import { hackathonsAtom } from '../../atoms';
+import { useListingForm } from '../../hooks';
 import { aiGenerateFormSchema, type AiGenerateFormValues } from './schema';
 
 interface DescriptionFormProps {
-  onSubmit: (data: AiGenerateFormValues) => void;
+  onSubmit: (data: AiGenerateFormValues) => Promise<void>;
   initialData: Partial<AiGenerateFormValues>;
+  resetForm: () => void;
 }
 
 export function AiGenerateForm({
   onSubmit,
   initialData,
+  resetForm,
 }: DescriptionFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const listingForm = useListingForm();
+  const type = useWatch({
+    control: listingForm.control,
+    name: 'type',
+  });
+  const hackathonId = useWatch({
+    control: listingForm.control,
+    name: 'hackathonId',
+  });
+
+  const hackathons = useAtomValue(hackathonsAtom);
 
   const form = useForm<AiGenerateFormValues>({
     resolver: zodResolver(aiGenerateFormSchema),
@@ -34,13 +51,22 @@ export function AiGenerateForm({
       scopeOfWork: initialData.scopeOfWork || '',
       rewards: initialData.rewards || '',
       requirements: initialData.requirements || '',
+      type,
+      hackathonName: '',
     },
   });
 
   const handleSubmit = async (data: AiGenerateFormValues) => {
     setIsSubmitting(true);
     try {
-      await onSubmit(data);
+      const hackathonName = hackathonId
+        ? hackathons?.find((s) => s.id === hackathonId)?.name
+        : null;
+      await onSubmit({
+        ...data,
+        type,
+        hackathonName: hackathonName || undefined,
+      });
     } finally {
       setIsSubmitting(false);
     }
@@ -112,7 +138,9 @@ export function AiGenerateForm({
               render={({ field }) => (
                 <FormItem className="gap-1.5">
                   <FormLabel className="text-sm" isRequired>
-                    Rewards and Podium Split
+                    {type === 'project'
+                      ? 'Compensation Structure'
+                      : 'Rewards and Podium Split'}
                   </FormLabel>
                   <FormControl>
                     <TextareaAutosize
@@ -133,7 +161,9 @@ export function AiGenerateForm({
               render={({ field }) => (
                 <FormItem className="gap-1.5">
                   <FormLabel className="text-sm" isRequired>
-                    Eligibility/Submission Requirements
+                    {type === 'project'
+                      ? `Evaluation Criteria / Qualifications`
+                      : `Submission Requirements and Judging Criteria`}
                   </FormLabel>
                   <FormControl>
                     <TextareaAutosize
@@ -147,14 +177,31 @@ export function AiGenerateForm({
                 </FormItem>
               )}
             />
-
-            <Button
-              type="submit"
-              className="w-full bg-indigo-500 hover:bg-indigo-600"
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? 'Generating...' : 'Generate'}
-            </Button>
+            <div className="flex flex-col items-center">
+              <Button
+                type="submit"
+                className="w-full bg-indigo-500 hover:bg-indigo-600"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? 'Generating...' : 'Generate'}
+              </Button>
+              <Button
+                type="button"
+                variant="link"
+                className=""
+                onClick={() => {
+                  form.reset({
+                    companyDescription: initialData.companyDescription || '',
+                    scopeOfWork: initialData.scopeOfWork || '',
+                    rewards: initialData.rewards || '',
+                    requirements: initialData.requirements || '',
+                  });
+                  resetForm();
+                }}
+              >
+                Reset
+              </Button>
+            </div>
           </form>
         </Form>
       </ScrollArea>
