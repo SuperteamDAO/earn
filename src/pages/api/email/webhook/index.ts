@@ -95,7 +95,7 @@ const webhooks = async (req: NextApiRequest, res: NextApiResponse) => {
 
         if (event.type === 'email.bounced') {
           const { data } = await axios.post(
-            `${process.env.NEXT_PUBLIC_BASE_URL}/api/email/validate`,
+            `https://earn.superteam.fun/api/email/validate`,
             { email: recipientEmail },
           );
           const isValid = data?.isValid || false;
