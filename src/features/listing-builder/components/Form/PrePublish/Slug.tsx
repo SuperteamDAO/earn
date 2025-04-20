@@ -3,8 +3,8 @@ import { useAtomValue } from 'jotai';
 import { CheckIcon, Loader2 } from 'lucide-react';
 import { useEffect, useMemo } from 'react';
 import { useWatch } from 'react-hook-form';
-import { toast } from 'sonner';
 
+import { CopyButton } from '@/components/ui/copy-tooltip';
 import {
   FormControl,
   FormDescription,
@@ -93,26 +93,18 @@ export function Slug() {
             <div>
               <FormLabel className="">Customise URL (Slug)</FormLabel>
               <FormDescription className="cursor-pointer">
-                <button
-                  className="max-w-[28rem] cursor-pointer truncate text-slate-400"
-                  onClick={() => {
-                    toast.promise(
-                      async () => {
-                        await navigator.clipboard.writeText(
-                          `https://earn.superteam.fun/listing/${slug}`,
-                        );
-                      },
-                      {
-                        loading: 'Copying Listing URL...',
-                        success: 'Listing URL copied!',
-                        error: 'Failed to copy Listing URL!',
-                      },
-                    );
+                <CopyButton
+                  text={`https://earn.superteam.fun/listing/${slug}`}
+                  contentProps={{
+                    side: 'right',
+                    className: 'px-1.5 py-0.5 text-[0.6875rem]',
                   }}
                 >
-                  <span>https://earn.superteam.fun/listing/</span>
-                  <span className="underline underline-offset-2">{slug}</span>
-                </button>
+                  <button className="max-w-[28rem] cursor-pointer truncate text-slate-400">
+                    <span>https://earn.superteam.fun/listing/</span>
+                    <span className="underline underline-offset-2">{slug}</span>
+                  </button>
+                </CopyButton>
               </FormDescription>
             </div>
             <FormControl>

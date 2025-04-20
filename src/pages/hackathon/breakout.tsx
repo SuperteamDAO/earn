@@ -236,7 +236,11 @@ function HeroMini({
         className={`${animeAce.className} relative flex w-full items-center justify-center gap-8 rounded-md bg-black px-6 py-6 md:flex-row md:gap-12 md:rounded-xl md:px-16`}
       >
         <MiniStat title={'Total Prizes'}>
-          ${stats?.totalRewardAmount.toLocaleString('en-us') ?? '-'}
+          $
+          {stats?.totalRewardAmount.toLocaleString('en-US', {
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0,
+          }) ?? '-'}
         </MiniStat>
 
         <MiniStat className="hidden sm:flex" title={'Tracks'}>
