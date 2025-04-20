@@ -173,6 +173,8 @@ export const useListingForm = (
     reset({
       ...getValues(),
       ...defaultValues,
+      id: getValues().id,
+      slug: getValues().slug,
     });
   }, [reset]);
 
