@@ -1,9 +1,11 @@
 import { openrouter } from '@openrouter/ai-sdk-provider';
 import { BountyType } from '@prisma/client';
 import { generateObject } from 'ai';
+import { headers } from 'next/headers';
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 
+import { getSponsorSession } from '@/features/auth/utils/getSponsorSession';
 import { eligibilityQuestionSchema } from '@/features/listing-builder/types/schema';
 
 import { generateListingQuestionsPrompt } from './prompts';
@@ -36,6 +38,15 @@ export async function POST(request: Request) {
         );
       }
       throw e;
+    }
+
+    const session = await getSponsorSession(await headers());
+
+    if (session.error || !session.data) {
+      return NextResponse.json(
+        { error: session.error },
+        { status: session.status },
+      );
     }
 
     const prompt = generateListingQuestionsPrompt(description, type);

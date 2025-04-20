@@ -384,7 +384,7 @@ function SkillsResult({ skills }: { skills: Skills }) {
   return (
     <div className="flex flex-wrap gap-3 rounded-md border border-slate-200 bg-white p-3">
       {skills.map((skillGroup) => (
-        <div key={skillGroup.skills}>
+        <div key={skillGroup.skills} className="flex flex-wrap">
           <span className="mt-1 mr-1.5 inline-block rounded bg-indigo-100 px-2 py-0.5 text-xs font-medium text-indigo-700 transition-colors">
             {skillGroup.skills}
           </span>

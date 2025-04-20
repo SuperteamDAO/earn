@@ -110,11 +110,12 @@ Create a project listing draft using the information above. Structure the draft 
 *   **If specific criteria cannot be inferred**, state something clear and generic like: "Submissions will be judged based on quality, adherence to the scope of work, and fulfillment of all submission requirements."
 *   **Omit this section only if** it feels entirely irrelevant based on the inputs.
 
-## Compensation Structure
+##  Payment Logistics
 *   Use the content from <compensation>. Clearly state the compensation and how they are distributed.
 *   If the compensation is given in natural language, it should be calculated accordingly and displayed properly.
 *   Structure the compensation properly
 *   RULES FOR COMPENSATION 
+*   Absolutely avoid showing any podium or rank of some kind, there is only one winner here.
 *   project compensation is of three types, fixed, range and variable
 *   fixed compensation means fixed amount, and the applicant cannot change this
 *   range means a minimum and maximum amount is given and the applicant has to choose an amount between this range

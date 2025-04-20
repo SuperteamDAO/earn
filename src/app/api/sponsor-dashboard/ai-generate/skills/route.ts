@@ -1,9 +1,12 @@
 import { openrouter } from '@openrouter/ai-sdk-provider';
 import { generateObject } from 'ai';
+import { headers } from 'next/headers';
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 
 import { skillsArraySchema } from '@/interface/skills';
+
+import { getSponsorSession } from '@/features/auth/utils/getSponsorSession';
 
 import { generateListingSkillsPrompt } from './prompts';
 
@@ -38,6 +41,15 @@ export async function POST(request: Request) {
         );
       }
       throw e;
+    }
+
+    const session = await getSponsorSession(await headers());
+
+    if (session.error || !session.data) {
+      return NextResponse.json(
+        { error: session.error },
+        { status: session.status },
+      );
     }
 
     const prompt = generateListingSkillsPrompt(description);

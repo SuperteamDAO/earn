@@ -1,11 +1,13 @@
 import { openrouter } from '@openrouter/ai-sdk-provider';
 import { BountyType, CompensationType } from '@prisma/client';
 import { generateObject } from 'ai';
+import { headers } from 'next/headers';
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 
 import { tokenList } from '@/constants/tokenList';
 
+import { getSponsorSession } from '@/features/auth/utils/getSponsorSession';
 import {
   MAX_BONUS_SPOTS,
   MAX_REWARD,
@@ -85,6 +87,15 @@ export async function POST(request: Request) {
         );
       }
       throw e;
+    }
+
+    const session = await getSponsorSession(await headers());
+
+    if (session.error || !session.data) {
+      return NextResponse.json(
+        { error: session.error },
+        { status: session.status },
+      );
     }
 
     const prompt = generateListingRewardsPrompt(description, inputReward, type);

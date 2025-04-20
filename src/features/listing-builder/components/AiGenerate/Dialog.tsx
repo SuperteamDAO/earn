@@ -141,12 +141,7 @@ export function AiGenerateDialog({ children }: AIDescriptionDialogProps) {
     setFormData(data);
 
     const completedDescription = await completeDescription('', {
-      body: {
-        companyDescription: data.companyDescription,
-        scopeOfWork: data.scopeOfWork,
-        rewards: data.rewards,
-        requirements: data.requirements,
-      },
+      body: data,
     });
 
     if (completedDescription) {

@@ -1,8 +1,10 @@
 import { openrouter } from '@openrouter/ai-sdk-provider';
 import { createDataStreamResponse, smoothStream, streamText } from 'ai';
-import type { NextRequest } from 'next/server';
+import { headers } from 'next/headers';
+import { type NextRequest, NextResponse } from 'next/server';
 import { ZodError } from 'zod';
 
+import { getSponsorSession } from '@/features/auth/utils/getSponsorSession';
 import { aiGenerateFormSchema } from '@/features/listing-builder/components/AiGenerate/schema';
 
 import { getDescriptionPrompt } from './prompts';
@@ -12,6 +14,14 @@ export async function POST(req: NextRequest) {
     const rawData = await req.json();
     const validatedData = aiGenerateFormSchema.parse(rawData);
 
+    const session = await getSponsorSession(await headers());
+
+    if (session.error || !session.data) {
+      return NextResponse.json(
+        { error: session.error },
+        { status: session.status },
+      );
+    }
     const prompt = getDescriptionPrompt(validatedData);
 
     return createDataStreamResponse({
