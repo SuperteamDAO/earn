@@ -243,7 +243,7 @@ export function EligibilityQuestionsForm() {
           >
             {fields.map((field, index) => (
               <EligibilityQuestionItem
-                key={field.id}
+                key={index}
                 field={field}
                 index={index}
                 form={form}

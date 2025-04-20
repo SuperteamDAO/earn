@@ -48,7 +48,7 @@ export const createListingFormSchema = ({
       .string()
       .trim()
       .min(1, 'Please add your question')
-      .max(200, 'Question cannot be more than 200 characters'),
+      .max(200, 'Please limit your question to 200 characters max.'),
     type: z.enum(['text', 'link']),
     optional: z.boolean().optional(),
   });

@@ -241,6 +241,15 @@ function Type() {
       }
     }
 
+    form.clearErrors([
+      'rewards',
+      'eligibility',
+      'rewardAmount',
+      'minRewardAsk',
+      'maxRewardAsk',
+      'token',
+      'maxBonusSpots',
+    ]);
     if (!!form.getValues().id) form.saveDraft();
   };
 
@@ -321,9 +330,13 @@ function Type() {
             >
               <AlertDialogContent className="p-4 py-3">
                 <AlertDialogHeader>
-                  <AlertDialogTitle>Change Listing Type</AlertDialogTitle>
+                  <AlertDialogTitle>
+                    Change Listing Type from{' '}
+                    <span className="capitalize">{field.value}</span> to{' '}
+                    <span className="capitalize">{pendingTypeChange}</span>
+                  </AlertDialogTitle>
                   <AlertDialogDescription>
-                    Changing the listing type will affect your listing data.
+                    Changing the listing type will affect your listing details.
                     <ul className="list-inside list-disc py-2">
                       {pendingTypeChange === 'project' &&
                         field.value !== 'project' && (

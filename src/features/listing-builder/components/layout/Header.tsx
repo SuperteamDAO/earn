@@ -75,7 +75,7 @@ export function Header() {
                   {isDraftSaving ? (
                     <Loader2 className="mx-auto h-4 w-4 animate-spin" />
                   ) : (
-                    <>{hideAutoSave ? '' : 'auto saved'}</>
+                    <>{!hideAutoSave && !!id ? 'auto saved' : ''}</>
                   )}
                 </p>
               )}
