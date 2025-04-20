@@ -328,7 +328,7 @@ function Type() {
               open={confirmDialogOpen}
               onOpenChange={() => setConfirmDialogOpen(false)}
             >
-              <AlertDialogContent className="p-4 py-3">
+              <AlertDialogContent className="">
                 <AlertDialogHeader>
                   <AlertDialogTitle>
                     Change Listing Type from{' '}

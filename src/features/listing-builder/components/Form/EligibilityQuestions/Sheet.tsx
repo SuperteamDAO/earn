@@ -87,10 +87,10 @@ export function EligibilityQuestionsSheet() {
               </div>
               <div className="flex w-full items-center gap-2 rounded-md border border-slate-200 bg-slate-50 py-0.5 pl-4">
                 <span className="flex items-center">
-                  <p className="text-base font-medium">
+                  <p className="text-sm font-medium">
                     {field.value?.length || 0}
                   </p>
-                  <p className="pl-2 text-sm font-medium text-slate-500">
+                  <p className="pl-2 text-sm">
                     Question{(field.value?.length || 0) > 1 ? 's' : ''}
                   </p>
                 </span>
