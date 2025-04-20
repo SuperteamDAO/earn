@@ -98,7 +98,7 @@ interface PaymentAirtableSchema {
   Approver: string[];
   earnApplicationId: string;
   earnTrancheId: string;
-  Discord: string;
+  'Discord / Earn Username': string;
 }
 
 const grantCategory =
@@ -140,7 +140,7 @@ function grantApplicationToAirtable(
     Approver: [validatedApplication.grant.approverRecordId],
     earnApplicationId: validatedApplication.id,
     earnTrancheId: validatedGrantTranche.id,
-    Discord: validatedApplication.user.username,
+    'Discord / Earn Username': validatedApplication.user.username,
   };
 }
 
