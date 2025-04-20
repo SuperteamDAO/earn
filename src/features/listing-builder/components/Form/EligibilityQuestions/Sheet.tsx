@@ -1,4 +1,4 @@
-import { Info } from 'lucide-react';
+import { BookType, Info } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { useWatch } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -85,7 +85,8 @@ export function EligibilityQuestionsSheet() {
                   <Info className="h-3 w-3 text-slate-400" />
                 </Tooltip>
               </div>
-              <div className="flex w-full items-center gap-2 rounded-md border border-slate-200 bg-slate-50 py-0.5 pl-4">
+              <div className="flex w-full items-center gap-2 rounded-md border border-slate-200 bg-slate-50 py-0.5 pl-2">
+                <BookType className="size-4 text-slate-600" />
                 <span className="flex items-center">
                   <p className="text-sm font-medium">
                     {field.value?.length || 0}
