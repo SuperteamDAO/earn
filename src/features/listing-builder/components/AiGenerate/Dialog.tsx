@@ -8,9 +8,10 @@ import { useWatch } from 'react-hook-form';
 
 import { type TRewardsGenerateResponse } from '@/app/api/sponsor-dashboard/ai-generate/rewards/route';
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
+import { type Skills } from '@/interface/skills';
 import { api } from '@/lib/api';
 
-import { descriptionKeyAtom } from '../../atoms';
+import { descriptionKeyAtom, skillsKeyAtom } from '../../atoms';
 import { useListingForm } from '../../hooks';
 import { type TEligibilityQuestion } from '../../types/schema';
 import { calculateTotalRewardsForPodium } from '../../utils/rewards';
@@ -31,6 +32,7 @@ export function AiGenerateDialog({ children }: AIDescriptionDialogProps) {
   const [stage, setStage] = useState<'form' | 'result'>('form');
   const [open, setOpen] = useState(false);
   const setDescriptionKey = useSetAtom(descriptionKeyAtom);
+  const setSkillsKey = useSetAtom(skillsKeyAtom);
   const [parsedDescription, setParsedDescription] = useState('');
   const [formData, setFormData] = useState<Partial<AiGenerateFormValues>>({
     companyDescription: '',
@@ -48,7 +50,6 @@ export function AiGenerateDialog({ children }: AIDescriptionDialogProps) {
   } = useCompletion({
     api: '/api/sponsor-dashboard/ai-generate/description',
     onResponse: () => {
-      // Move to result stage as soon as we start getting a response
       setStage('result');
     },
     onError: (err) => {
@@ -120,6 +121,22 @@ export function AiGenerateDialog({ children }: AIDescriptionDialogProps) {
       ).data,
   });
 
+  const {
+    data: skills,
+    mutateAsync: callSkills,
+    reset: resetSkills,
+    isIdle: isSkillsIdle,
+    isError: isSkillsError,
+    isPending: isSkillsPending,
+  } = useMutation({
+    mutationFn: async ({ description }: { description: string }) =>
+      (
+        await api.post<Skills>('/api/sponsor-dashboard/ai-generate/skills', {
+          description,
+        })
+      ).data,
+  });
+
   const handleFormSubmit = async (data: AiGenerateFormValues) => {
     setFormData(data);
 
@@ -144,6 +161,8 @@ export function AiGenerateDialog({ children }: AIDescriptionDialogProps) {
         inputReward: data.rewards,
         type,
       });
+
+      callSkills({ description: completedDescription });
     }
   };
 
@@ -156,6 +175,7 @@ export function AiGenerateDialog({ children }: AIDescriptionDialogProps) {
     });
     resetEligibilityQuestions();
     resetRewards();
+    resetSkills();
     setDescription('');
   };
 
@@ -178,6 +198,10 @@ export function AiGenerateDialog({ children }: AIDescriptionDialogProps) {
             isEligibilityQuestionsIdle={isEligibilityQuestionsIdle}
             isEligibilityQuestionsError={isEligibilityQuestionsError}
             isEligibilityQuestionsPending={isEligibilityQuestionsPending}
+            skills={skills || []}
+            isSkillsIdle={isSkillsIdle}
+            isSkillsError={isSkillsError}
+            isSkillsPending={isSkillsPending}
             rewards={rewards}
             isRewardsIdle={isRewardsIdle}
             isRewardsError={isRewardsError}
@@ -185,6 +209,9 @@ export function AiGenerateDialog({ children }: AIDescriptionDialogProps) {
             onInsert={() => {
               listingForm.setValue('description', parsedDescription);
               listingForm.setValue('eligibility', eligibilityQuestions);
+              if (skills) {
+                listingForm.setValue('skills', skills);
+              }
               if (rewards) {
                 listingForm.setValue(
                   'compensationType',
@@ -219,12 +246,17 @@ export function AiGenerateDialog({ children }: AIDescriptionDialogProps) {
                 if (typeof s === 'number') return s + 1;
                 else return 1;
               });
+              setSkillsKey((s) => {
+                if (typeof s === 'number') return s + 1;
+                else return 1;
+              });
               setOpen(false);
             }}
             onBack={() => {
               setStage('form');
               resetEligibilityQuestions();
               resetRewards();
+              resetSkills();
               setDescription('');
             }}
           />

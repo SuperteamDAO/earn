@@ -15,8 +15,10 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Wand } from '@/svg/wand';
 
 import { hackathonsAtom } from '../../atoms';
+import { MAX_BONUS_SPOTS, MAX_PODIUMS } from '../../constants';
 import { useListingForm } from '../../hooks';
 import { aiGenerateFormSchema, type AiGenerateFormValues } from './schema';
 
@@ -77,9 +79,12 @@ export function AiGenerateForm({
     <div className="space-y-4">
       <div>
         <span className="flex items-start gap-2">
-          <h2 className="text-xl font-semibold">
-            Use AI to generate your description
-          </h2>
+          <span className="flex items-center gap-2">
+            <Wand />
+            <h2 className="text-xl font-semibold">
+              Use AI to generate your description
+            </h2>
+          </span>
           <Badge
             variant="secondary"
             className="ml-auto h-fit px-1.5 py-0.5 text-[0.625rem] font-semibold uppercase"
@@ -109,7 +114,7 @@ export function AiGenerateForm({
                   </FormLabel>
                   <FormControl>
                     <TextareaAutosize
-                      placeholder="A brief description of the sponsor company or a link to their website."
+                      placeholder={`A brief description of your company/project, link to your official website, you're companies values, etc`}
                       minRows={3}
                       className="focus:border-primary rounded-md border p-2 text-sm placeholder:text-sm focus:outline-none"
                       {...field}
@@ -130,7 +135,7 @@ export function AiGenerateForm({
                   </FormLabel>
                   <FormControl>
                     <TextareaAutosize
-                      placeholder="What exactly would you like participants to do? You can describe the tasks or objectives."
+                      placeholder="What exactly would you like applicant to do? You can describe the tasks or objectives here."
                       className="focus:border-primary rounded-md border p-2 text-sm placeholder:text-sm focus:outline-none"
                       minRows={3}
                       {...field}
@@ -153,7 +158,11 @@ export function AiGenerateForm({
                   </FormLabel>
                   <FormControl>
                     <TextareaAutosize
-                      placeholder="What are the total rewards for the Bounty? How would you like to split it among the winners (up to 5 podium ranks)?"
+                      placeholder={
+                        type !== 'project'
+                          ? `What are the total rewards for the Bounty? How would you like to split it among the winners? (we allow ${MAX_PODIUMS} podiums and ${MAX_BONUS_SPOTS} bonuses)`
+                          : `What is the total compensation you will be providing to your selected applicant? (we allow fixed, range and variable payment)`
+                      }
                       className="focus:border-primary rounded-md border p-2 text-sm placeholder:text-sm focus:outline-none"
                       minRows={3}
                       {...field}
@@ -176,7 +185,11 @@ export function AiGenerateForm({
                   </FormLabel>
                   <FormControl>
                     <TextareaAutosize
-                      placeholder="Do you have any specific requirements participants need to meet?"
+                      placeholder={
+                        type !== 'project'
+                          ? `What are the requirements that the applicant needs to meet? Also mention your judging criterias for quality applications`
+                          : `What are your evaluation criterias or qualitfications that the applicant needs to meet?`
+                      }
                       className="focus:border-primary rounded-md border p-2 text-sm placeholder:text-sm focus:outline-none"
                       minRows={3}
                       {...field}

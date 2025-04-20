@@ -10,6 +10,8 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { tokenList } from '@/constants/tokenList';
+import { type Skills } from '@/interface/skills';
+import { Wand } from '@/svg/wand';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 
 import { useListingForm } from '../../hooks';
@@ -46,6 +48,10 @@ interface AiGenerateResultProps {
   isEligibilityQuestionsIdle: boolean;
   isEligibilityQuestionsError: boolean;
   isEligibilityQuestionsPending: boolean;
+  skills: Skills;
+  isSkillsIdle: boolean;
+  isSkillsError: boolean;
+  isSkillsPending: boolean;
   rewards: TRewardsGenerateResponse | undefined;
   isRewardsIdle: boolean;
   isRewardsError: boolean;
@@ -62,6 +68,10 @@ export function AiGenerateResult({
   isEligibilityQuestionsIdle,
   isEligibilityQuestionsError,
   isEligibilityQuestionsPending,
+  skills,
+  isSkillsIdle,
+  isSkillsError,
+  isSkillsPending,
   rewards,
   isRewardsIdle,
   isRewardsError,
@@ -96,9 +106,12 @@ export function AiGenerateResult({
     <div className="space-y-4">
       <div>
         <span className="flex items-start gap-2">
-          <h2 className="text-xl font-semibold">
-            Use AI to generate your description
-          </h2>
+          <span className="flex items-center gap-2">
+            <Wand />
+            <h2 className="text-xl font-semibold">
+              Use AI to generate your description
+            </h2>
+          </span>
           <Badge
             variant="secondary"
             className="ml-auto h-fit px-1.5 py-0.5 text-[0.625rem] font-semibold uppercase"
@@ -165,6 +178,29 @@ export function AiGenerateResult({
                 ) : (
                   <div className="flex w-full items-center rounded-md border border-slate-200 bg-slate-50 py-3 pl-3">
                     <RewardResults rewards={rewards} type={type} />
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+        )}
+        {!isSkillsIdle && (
+          <div className="mt-4 space-y-3 text-sm text-slate-700">
+            <h3 className="text-sm font-medium text-slate-600">Skills</h3>
+            {isSkillsPending ? (
+              <span className="flex animate-pulse items-center justify-center gap-2 rounded-md bg-slate-100 py-4 text-sm text-slate-500">
+                <Loader2 className="size-4 animate-spin" />
+                <p>Generating Skills</p>
+              </span>
+            ) : (
+              <>
+                {skills.length === 0 || isSkillsError ? (
+                  <p className="w-full rounded-md bg-slate-100 py-4 text-center text-sm text-slate-600">
+                    {`Couldn't find any skills from your given inputs`}
+                  </p>
+                ) : (
+                  <div>
+                    <SkillsResult skills={skills} />
                   </div>
                 )}
               </>
@@ -341,5 +377,31 @@ function RewardResults({
         | Variable Prize
       </p>
     </>
+  );
+}
+
+function SkillsResult({ skills }: { skills: Skills }) {
+  return (
+    <div className="flex flex-wrap gap-3 rounded-md border border-slate-200 bg-white p-3">
+      {skills.map((skillGroup) => (
+        <div key={skillGroup.skills}>
+          <span className="mt-1 mr-1.5 inline-block rounded bg-indigo-100 px-2 py-0.5 text-xs font-medium text-indigo-700 transition-colors">
+            {skillGroup.skills}
+          </span>
+          {skillGroup.subskills.length > 0 ? (
+            skillGroup.subskills.map((subskill) => (
+              <span
+                key={subskill}
+                className="mt-1 mr-1.5 inline-block rounded bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-700 transition-colors"
+              >
+                {subskill}
+              </span>
+            ))
+          ) : (
+            <></>
+          )}
+        </div>
+      ))}
+    </div>
   );
 }

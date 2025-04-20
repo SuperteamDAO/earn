@@ -23,8 +23,8 @@ export const aiGenerateFormSchema = z.object({
   rewards: z
     .string()
     .min(
-      25,
-      'Please provide more details about rewards and podium split (minimum 25 characters)',
+      10,
+      'Please provide more details about rewards and podium split (minimum 10 characters)',
     )
     .max(2500, 'Rewards description is too long (maximum 2500 characters)'),
   requirements: z

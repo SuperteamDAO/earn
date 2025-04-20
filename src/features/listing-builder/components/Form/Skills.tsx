@@ -1,4 +1,5 @@
-import { useMemo } from 'react';
+import { useAtom } from 'jotai';
+import { useEffect } from 'react';
 import { useWatch } from 'react-hook-form';
 
 import { SkillsSelect } from '@/components/shared/SkillsSelectNew';
@@ -9,6 +10,7 @@ import {
   FormLabel,
 } from '@/components/ui/form';
 
+import { skillsKeyAtom } from '../../atoms';
 import { useListingForm } from '../../hooks';
 
 export function Skills() {
@@ -19,7 +21,10 @@ export function Skills() {
     name: 'templateId',
   });
 
-  const skillsKey = useMemo(() => `editor-${templateId}`, [templateId]);
+  const [skillsKey, setSkillsKey] = useAtom(skillsKeyAtom);
+  useEffect(() => {
+    setSkillsKey(`editor-${templateId || 'default'}`);
+  }, [templateId]);
 
   return (
     <FormField
