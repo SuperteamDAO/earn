@@ -4,12 +4,11 @@ export function generateListingQuestionsPrompt(
   description: string,
   type: BountyType,
 ): string {
-  let prompt = `Analyze the following listing description for a '${type}' on a platform like Superteam Earn. Your goal is to generate relevant custom questions for the application/submission form, following the specific rules for the listing type.
+  let prompt = `Analyze the following listing description for a '${type}' on platform Superteam Earn. Your goal is to generate relevant custom questions for the application/submission form, following the specific rules for the listing type.
 
-Listing Description:
----
+<listing-description>
 ${description}
----
+</listing-description>
 
 General Rules for Generated Questions:
 - Questions should help fairly evaluate the applicant/submission based *only* on the description provided.
@@ -18,6 +17,7 @@ General Rules for Generated Questions:
 - AVOID questions whose answers are purely subjective opinions or cannot be verified without direct interaction (e.g., "Are you passionate about X?").
 - Focus on question QUALITY, not quantity. Fewer high-quality questions are better than many low-quality ones.
 - Keep the questions consise and short, avoid over complicating them.
+- Keep the questions **under 175 characters**
 `;
 
   if (type === 'bounty' || type === 'hackathon') {

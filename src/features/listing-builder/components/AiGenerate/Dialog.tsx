@@ -4,7 +4,9 @@ import { useMutation } from '@tanstack/react-query';
 import { useSetAtom } from 'jotai';
 import { marked } from 'marked';
 import { type ReactNode, useEffect, useState } from 'react';
+import { useWatch } from 'react-hook-form';
 
+import { type TRewardsGenerateResponse } from '@/app/api/sponsor-dashboard/ai-generate/rewards/route';
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 import { api } from '@/lib/api';
 
@@ -21,6 +23,10 @@ interface AIDescriptionDialogProps {
 
 export function AiGenerateDialog({ children }: AIDescriptionDialogProps) {
   const listingForm = useListingForm();
+  const type = useWatch({
+    control: listingForm.control,
+    name: 'type',
+  });
   const [stage, setStage] = useState<'form' | 'result'>('form');
   const [open, setOpen] = useState(false);
   const setDescriptionKey = useSetAtom(descriptionKeyAtom);
@@ -37,8 +43,9 @@ export function AiGenerateDialog({ children }: AIDescriptionDialogProps) {
     completion: description,
     setCompletion: setDescription,
     isLoading: isDescriptionLoading,
+    error: isDescriptionError,
   } = useCompletion({
-    api: '/api/sponsor-dashboard/ai-generate-description',
+    api: '/api/sponsor-dashboard/ai-generate/description',
     onResponse: () => {
       // Move to result stage as soon as we start getting a response
       setStage('result');
@@ -74,7 +81,33 @@ export function AiGenerateDialog({ children }: AIDescriptionDialogProps) {
     }) =>
       (
         await api.post<TEligibilityQuestion[]>(
-          '/api/sponsor-dashboard/ai-generate-questions',
+          '/api/sponsor-dashboard/ai-generate/questions',
+          {
+            description,
+            type,
+          },
+        )
+      ).data,
+  });
+
+  const {
+    data: rewards,
+    mutateAsync: callRewards,
+    reset: resetRewards,
+    isIdle: isRewardsIdle,
+    isError: isRewardsError,
+    isPending: isRewardsPending,
+  } = useMutation({
+    mutationFn: async ({
+      description,
+      type,
+    }: {
+      description: string;
+      type: BountyType;
+    }) =>
+      (
+        await api.post<TRewardsGenerateResponse>(
+          '/api/sponsor-dashboard/ai-generate/rewards',
           {
             description,
             type,
@@ -95,10 +128,18 @@ export function AiGenerateDialog({ children }: AIDescriptionDialogProps) {
       },
     });
 
-    callEligibilityQuestions({
-      description: completedDescription || '',
-      type: listingForm.getValues('type'),
-    });
+    if (completedDescription) {
+      if (type !== 'hackathon') {
+        callEligibilityQuestions({
+          description: completedDescription,
+          type,
+        });
+      }
+      callRewards({
+        description: completedDescription,
+        type,
+      });
+    }
   };
 
   const resetForm = () => {
@@ -109,13 +150,14 @@ export function AiGenerateDialog({ children }: AIDescriptionDialogProps) {
       requirements: '',
     });
     resetEligibilityQuestions();
+    resetRewards();
     setDescription('');
   };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent className="sm:max-w-160">
+      <DialogContent className="sm:max-w-160" hideCloseIcon>
         {stage === 'form' ? (
           <AiGenerateForm
             onSubmit={handleFormSubmit}
@@ -126,10 +168,15 @@ export function AiGenerateDialog({ children }: AIDescriptionDialogProps) {
           <AiGenerateResult
             isDescriptionLoading={isDescriptionLoading}
             description={parsedDescription}
+            isDescriptionError={Boolean(isDescriptionError)}
             eligibilityQuestions={eligibilityQuestions || []}
             isEligibilityQuestionsIdle={isEligibilityQuestionsIdle}
             isEligibilityQuestionsError={isEligibilityQuestionsError}
             isEligibilityQuestionsPending={isEligibilityQuestionsPending}
+            rewards={rewards}
+            isRewardsIdle={isRewardsIdle}
+            isRewardsError={isRewardsError}
+            isRewardsPending={isRewardsPending}
             onInsert={() => {
               listingForm.setValue('description', parsedDescription);
               listingForm.setValue('eligibility', eligibilityQuestions);
@@ -142,6 +189,7 @@ export function AiGenerateDialog({ children }: AIDescriptionDialogProps) {
             onBack={() => {
               setStage('form');
               resetEligibilityQuestions();
+              resetRewards();
               setDescription('');
             }}
           />

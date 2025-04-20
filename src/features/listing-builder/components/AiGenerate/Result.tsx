@@ -1,20 +1,55 @@
+import { type BountyType } from '@prisma/client';
 import { Loader2 } from 'lucide-react';
-import { useEffect, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
+import { useWatch } from 'react-hook-form';
 
+import { type TRewardsGenerateResponse } from '@/app/api/sponsor-dashboard/ai-generate/rewards/route';
 import { MarkdownRenderer } from '@/components/shared/MarkdownRenderer';
 import { MinimalTiptapEditor } from '@/components/tiptap';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { tokenList } from '@/constants/tokenList';
+import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 
+import { useListingForm } from '../../hooks';
 import { type TEligibilityQuestion } from '../../types/schema';
+import {
+  calculateTotalPrizes,
+  calculateTotalRewardsForPodium,
+} from '../../utils/rewards';
+import { TokenLabel } from '../Form/Rewards/Tokens/TokenLabel';
+
+function hasProperRewards(
+  rewards: TRewardsGenerateResponse | undefined,
+): boolean {
+  if (
+    rewards?.compensationType === 'fixed' &&
+    Object.keys(rewards?.rewards || {}).length > 0
+  )
+    return true;
+  if (
+    rewards?.compensationType === 'range' &&
+    rewards?.minRewardAsk &&
+    rewards?.maxRewardAsk
+  )
+    return true;
+  if (rewards?.compensationType === 'variable') return true;
+  return false;
+}
 
 interface AiGenerateResultProps {
   description: string;
   isDescriptionLoading: boolean;
+  isDescriptionError: boolean;
   eligibilityQuestions: TEligibilityQuestion[];
   isEligibilityQuestionsIdle: boolean;
   isEligibilityQuestionsError: boolean;
   isEligibilityQuestionsPending: boolean;
+  rewards: TRewardsGenerateResponse | undefined;
+  isRewardsIdle: boolean;
+  isRewardsError: boolean;
+  isRewardsPending: boolean;
   onInsert: () => void;
   onBack: () => void;
 }
@@ -22,14 +57,30 @@ interface AiGenerateResultProps {
 export function AiGenerateResult({
   description,
   isDescriptionLoading,
+  isDescriptionError,
   eligibilityQuestions,
   isEligibilityQuestionsIdle,
   isEligibilityQuestionsError,
   isEligibilityQuestionsPending,
+  rewards,
+  isRewardsIdle,
+  isRewardsError,
+  isRewardsPending,
   onInsert,
   onBack,
 }: AiGenerateResultProps) {
   const bottomRef = useRef<HTMLDivElement>(null);
+  const listingForm = useListingForm();
+  const type = useWatch({
+    control: listingForm.control,
+    name: 'type',
+  });
+
+  const isActionsDisabled = useMemo(
+    () =>
+      isDescriptionLoading || isEligibilityQuestionsPending || isRewardsPending,
+    [isDescriptionLoading, isEligibilityQuestionsPending, isRewardsPending],
+  );
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'auto' });
@@ -44,9 +95,17 @@ export function AiGenerateResult({
   return (
     <div className="space-y-4">
       <div>
-        <h2 className="text-xl font-semibold">
-          Use AI to generate your description
-        </h2>
+        <span className="flex items-start gap-2">
+          <h2 className="text-xl font-semibold">
+            Use AI to generate your description
+          </h2>
+          <Badge
+            variant="secondary"
+            className="ml-auto h-fit px-1.5 py-0.5 text-[0.625rem] font-semibold uppercase"
+          >
+            {type}
+          </Badge>
+        </span>
         <p className="font-medium text-gray-500">
           Answer a few short questions and we will generate your description for
           you
@@ -82,8 +141,33 @@ export function AiGenerateResult({
                 toolbarClassName="hidden"
               />
             )}
+            {isDescriptionError && (
+              <p className="w-full rounded-md bg-slate-100 py-4 text-center text-sm text-slate-600">
+                {`Failed to generate description, please try again later`}
+              </p>
+            )}
           </div>
         </div>
+        {!isRewardsIdle && (
+          <div className="mt-4 space-y-3 text-sm text-slate-700">
+            <h3 className="text-sm font-medium text-slate-600">Rewards</h3>
+            {isRewardsPending && (
+              <span className="flex animate-pulse items-center justify-center gap-2 rounded-md bg-slate-100 py-2 text-sm text-slate-500">
+                <Loader2 className="size-4 animate-spin" />
+                <p>Generating Rewards</p>
+              </span>
+            )}
+            {!hasProperRewards(rewards) || isRewardsError ? (
+              <p className="w-full rounded-md bg-slate-100 py-4 text-center text-sm text-slate-600">
+                {`Couldn't find any rewards from your given inputs`}
+              </p>
+            ) : (
+              <div className="flex w-full items-center rounded-md border border-slate-200 bg-slate-50 py-0.5 pl-3">
+                <RewardResults rewards={rewards} type={type} />
+              </div>
+            )}
+          </div>
+        )}
 
         {!isEligibilityQuestionsIdle && (
           <div className="mt-4 space-y-3 text-sm text-slate-700">
@@ -123,14 +207,120 @@ export function AiGenerateResult({
         <Button
           onClick={onInsert}
           className="w-full bg-indigo-500 hover:bg-indigo-600"
-          disabled={isDescriptionLoading}
+          disabled={isActionsDisabled}
         >
           Insert
         </Button>
-        <Button variant="link" onClick={onBack} disabled={isDescriptionLoading}>
+        <Button variant="link" onClick={onBack} disabled={isActionsDisabled}>
           Go Back
         </Button>
       </div>
     </div>
+  );
+}
+
+function RewardResults({
+  rewards,
+  type,
+}: {
+  rewards: TRewardsGenerateResponse | undefined;
+  type: BountyType;
+}) {
+  const token = tokenList.find((s) => s.tokenSymbol === rewards?.token);
+  const totalPrizes = useMemo(
+    () => calculateTotalPrizes(rewards, rewards?.maxBonusSpots || 0),
+    [rewards?.rewards, rewards?.maxBonusSpots],
+  );
+  const totalReward = useMemo(
+    () =>
+      calculateTotalRewardsForPodium(
+        rewards?.rewards || {},
+        rewards?.maxBonusSpots || 0,
+      ),
+    [rewards?.rewards, rewards?.maxBonusSpots],
+  );
+  if (type !== 'project') {
+    return (
+      <>
+        <TokenLabel
+          token={token}
+          showIcon
+          showSymbol
+          amount={totalReward || 0}
+          classNames={{
+            amount: 'font-medium text-sm',
+          }}
+          formatter={(n) => formatNumberWithSuffix(n) + '' || '0'}
+        />
+        <p className="ml-1 overflow-hidden text-xs text-ellipsis whitespace-nowrap text-slate-400 capitalize">
+          | {totalPrizes} {totalPrizes === 1 ? 'Prize' : 'Prizes'}
+        </p>
+      </>
+    );
+  } else {
+    if (rewards?.compensationType === 'fixed') {
+      return (
+        <>
+          <TokenLabel
+            token={token}
+            showIcon
+            showSymbol
+            amount={totalReward || 0}
+            classNames={{
+              amount: 'font-medium text-sm',
+            }}
+            formatter={(n) => formatNumberWithSuffix(n) + '' || '0'}
+          />
+          <p className="ml-1 overflow-hidden text-xs text-ellipsis whitespace-nowrap text-slate-400 capitalize">
+            | Fixed Prize
+          </p>
+        </>
+      );
+    } else if (rewards?.compensationType === 'range') {
+      return (
+        <>
+          <TokenLabel
+            token={token}
+            showIcon
+            amount={rewards?.minRewardAsk || 0}
+            classNames={{
+              amount: 'font-medium text-sm mr-0',
+            }}
+            formatter={(n) => formatNumberWithSuffix(n) + '' || '0'}
+            className="mr-1"
+          />
+          <p>-</p>
+          <TokenLabel
+            token={token}
+            showIcon={false}
+            showSymbol
+            className="ml-1"
+            amount={rewards?.maxRewardAsk || 0}
+            classNames={{
+              amount: 'font-medium text-sm ml-0',
+            }}
+            formatter={(n) => formatNumberWithSuffix(n) + '' || '0'}
+          />
+          <p className="ml-1 overflow-hidden text-xs text-ellipsis whitespace-nowrap text-slate-400 capitalize">
+            | Range Prize
+          </p>
+        </>
+      );
+    } else if (rewards?.compensationType === 'variable') {
+      <>
+        <TokenLabel token={token} showIcon showSymbol />
+        <p className="ml-1 overflow-hidden text-xs text-ellipsis whitespace-nowrap text-slate-400 capitalize">
+          | Variable Prize
+        </p>
+      </>;
+    }
+  }
+  return (
+    <>
+      <TokenLabel token={token} showIcon showSymbol />
+      <p className="ml-1 overflow-hidden text-xs text-ellipsis whitespace-nowrap text-slate-400 capitalize">
+        | Variable Prize
+      </p>
+    </>
   );
 }

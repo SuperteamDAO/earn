@@ -1,4 +1,4 @@
-import { type AiGenerateFormValues } from '../../../../features/listing-builder/components/AiGenerate/schema';
+import { type AiGenerateFormValues } from '@/features/listing-builder/components/AiGenerate/schema';
 
 const descriptionPromptBounty = (values: AiGenerateFormValues) => `
 You need to make drafts for bounties that get listed on Superteam Earn (https://earn.superteam.fun/). Superteam Earn is a freelancer marketplace where sponsors (crypto companies) list competitive tasks (bounties) with defined scopes of work. Talent submits their work directly on the platform to win rewards.

@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
 import TextareaAutosize from 'react-textarea-autosize';
 
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -75,9 +76,17 @@ export function AiGenerateForm({
   return (
     <div className="space-y-4">
       <div>
-        <h2 className="text-xl font-semibold">
-          Use AI to generate your description
-        </h2>
+        <span className="flex items-start gap-2">
+          <h2 className="text-xl font-semibold">
+            Use AI to generate your description
+          </h2>
+          <Badge
+            variant="secondary"
+            className="ml-auto h-fit px-1.5 py-0.5 text-[0.625rem] font-semibold uppercase"
+          >
+            {type}
+          </Badge>
+        </span>
         <p className="font-medium text-gray-500">
           Answer a few short questions and we will generate your description for
           you
