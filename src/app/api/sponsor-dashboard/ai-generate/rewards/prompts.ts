@@ -11,6 +11,7 @@ import {
 
 export function generateListingRewardsPrompt(
   description: string,
+  inputReward: string,
   type: BountyType,
 ): string {
   const allowedSymbols = tokenList.map((token) => token.tokenSymbol);
@@ -21,6 +22,9 @@ export function generateListingRewardsPrompt(
 <input-description>
 ${description}
 </input-description>
+<input-reward>
+${inputReward}
+</input-reward>
 
 **Extraction Rules:**
 
@@ -61,8 +65,8 @@ ${description}
     prompt += `
     *   For 'project' type listings, determine if compensation is 'fixed', 'range', or 'variable'.
     *   'fixed': Single, non-negotiable amount.
-    *   'range': Minimum and maximum amount mentioned.
-    *   'variable': Negotiation implied or applicant quotes price.
+    *   'range': A range of amount is mentioned (from is min, to is max). e.g, From $100 to $400. here min is $100 and max is $400
+    *   'variable': Negotiation implied or applicant quotes price or asked to 'send quote'. Basically no limit set on the ask of compensation, given the option to the user.
     *   Default to 'fixed' if unclear.
 
 3.  **Rewards Array (\`rewards: Array<{ rank: string, amount: number }>\`):**
@@ -73,7 +77,7 @@ ${description}
     *   This field is NOT applicable to 'project' listings. Do not extract or return it.
 
 5.  **Range Fields (\`minRewardAsk: number | null\`, \`maxRewardAsk: number | null\`):**
-    *   **If Compensation Type is 'range':** Extract the minimum and maximum values of the reward range (min >= 0, max <= ${MAX_REWARD}). If only one bound is found, extract it and leave the other null (as per schema default). If no range values found, leave both null.
+    *   **If Compensation Type is 'range':** Extract the minimum and maximum values of the reward range (min >= 0, max <= more than min). If one bound is found, set a reasonable other bound. If no range values found, leave both null.
     *   **If Compensation Type is 'fixed' or 'variable':** Do not extract range values (leave as null/default).`;
   }
 
@@ -89,7 +93,11 @@ ${description}
     *   If type is 'project', ensure \`minRewardAsk\` and \`maxRewardAsk\` are null/default.
 
 **Output Format:**
-Return ONLY the JSON object matching the schema based on these rules. Do not include explanations or surrounding text.`;
+Return ONLY the JSON object matching the schema based on these rules. Do not include explanations or surrounding text.
+
+**IMPORTANT**
+*   **IF rewards given by the sponsor is in a calculatable/inferable format, i.e natural language that hints to calculate/infer the specific field, you are supposed to do the calculation and show a proper output
+`;
 
   return prompt;
 }

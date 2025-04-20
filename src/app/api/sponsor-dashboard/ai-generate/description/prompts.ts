@@ -1,4 +1,8 @@
 import { type AiGenerateFormValues } from '@/features/listing-builder/components/AiGenerate/schema';
+import {
+  MAX_BONUS_SPOTS,
+  MAX_PODIUMS,
+} from '@/features/listing-builder/constants';
 
 const descriptionPromptBounty = (values: AiGenerateFormValues) => `
 You need to make drafts for bounties that get listed on Superteam Earn (https://earn.superteam.fun/). Superteam Earn is a freelancer marketplace where sponsors (crypto companies) list competitive tasks (bounties) with defined scopes of work. Talent submits their work directly on the platform to win rewards.
@@ -48,6 +52,13 @@ Create a bounty listing draft using the information above. Structure the draft u
 
 ## Reward Structure
 *   Use the content from <rewards>. Clearly state the reward amounts and how they are distributed.
+*   If the rewards is given in natural language, it should be calculated accordingly and displayed properly.
+*   Structure the compensation properly
+*   RULES FOR REWARD:
+*   max ${MAX_PODIUMS} podium spots are allowed
+*   max ${MAX_BONUS_SPOTS} bonus spots are allowed
+*   all bonus spots will the same reward, it is forbidden for bonus spots to have different rewards
+*   podiums spots are strictly sequential starting from 1st and ending on ${MAX_PODIUMS}th
 
 **Important Considerations:**
 
@@ -55,6 +66,7 @@ Create a bounty listing draft using the information above. Structure the draft u
 *   **Adapt Structure Flexibly:** While the section order above is preferred, slightly adapt the structure *only if necessary* to best present the *provided information*. Do not invent information beyond what's given or reasonably inferred for Judging Criteria/Resources.
 *   **Maintain Tone and Length:** Keep the language professional, direct, and within the 200-400 word target.
 *   **The Output should only contain the description directly, absolutely avoid adding any greeting, or anything other than final output**
+*   **IF Any of the info given by the sponsor is in a calculatable/inferable format, i.e natural language that hints to calculate/infer the specific field, you are supposed to do the calculation and show a proper output
 `;
 
 const descriptionPromptProject = (values: AiGenerateFormValues) => `
@@ -100,6 +112,13 @@ Create a project listing draft using the information above. Structure the draft 
 
 ## Compensation Structure
 *   Use the content from <compensation>. Clearly state the compensation and how they are distributed.
+*   If the compensation is given in natural language, it should be calculated accordingly and displayed properly.
+*   Structure the compensation properly
+*   RULES FOR COMPENSATION 
+*   project compensation is of three types, fixed, range and variable
+*   fixed compensation means fixed amount, and the applicant cannot change this
+*   range means a minimum and maximum amount is given and the applicant has to choose an amount between this range
+*   variable means the amount is fully quotable by the applicant, the applicant has to give a quote while filling the application
 
 **Important Considerations:**
 
@@ -107,6 +126,7 @@ Create a project listing draft using the information above. Structure the draft 
 *   **Adapt Structure Flexibly:** While the section order above is preferred, slightly adapt the structure *only if necessary* to best present the *provided information*. Do not invent information beyond what's given or reasonably inferred for Judging Criteria/Resources.
 *   **Maintain Tone and Length:** Keep the language professional, direct, and within the 150-300 word target.
 *   **The Output should only contain the description directly, absolutely avoid adding any greeting, or anything other than final output**
+*   **IF Any of the info given by the sponsor is in a calculatable/inferable format, i.e natural language that hints to calculate/infer the specific field, you are supposed to do the calculation and show a proper output
 `;
 
 const descriptionPromptHackathon = (values: AiGenerateFormValues) => `
@@ -168,6 +188,14 @@ Create a hackathon track listing draft using the information above. Structure th
 
 ## Reward Structure
 *   Use the content from <rewards>. Clearly state the reward amounts for this track and how they are distributed (e.g., 1st place, 2nd place, pool prize).
+*   If the rewards is given in natural language, it should be calculated accordingly and displayed properly.
+*   Structure the compensation properly
+*   Structure the compensation properly
+*   RULES FOR REWARD:
+*   max ${MAX_PODIUMS} podium spots are allowed
+*   max ${MAX_BONUS_SPOTS} bonus spots are allowed
+*   all bonus spots will the same reward, it is forbidden for bonus spots to have different rewards
+*   podiums spots are strictly sequential starting from 1st and ending on ${MAX_PODIUMS}th
 
 **Important Considerations:**
 
@@ -178,6 +206,7 @@ Create a hackathon track listing draft using the information above. Structure th
 *   **Adapt Structure Flexibly:** While the section order above is preferred, slightly adapt the structure *only if necessary* to best present the *provided information*. Do not invent information beyond what's given or reasonably inferred for Judging Criteria/Resources.
 *   **Maintain Tone and Length:** Keep the language professional, direct, encouraging for hackathon participants, and within the 200-400 word target.
 *   **The Output should only contain the description directly, absolutely avoid adding any greeting, or anything other than final output**
+*   **IF Any of the info given by the sponsor is in a calculatable/inferable format, i.e natural language that hints to calculate/infer the specific field, you are supposed to do the calculation and show a proper output
 `;
 
 export const getDescriptionPrompt = (values: AiGenerateFormValues) => {

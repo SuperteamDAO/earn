@@ -151,20 +151,23 @@ export function AiGenerateResult({
         {!isRewardsIdle && (
           <div className="mt-4 space-y-3 text-sm text-slate-700">
             <h3 className="text-sm font-medium text-slate-600">Rewards</h3>
-            {isRewardsPending && (
-              <span className="flex animate-pulse items-center justify-center gap-2 rounded-md bg-slate-100 py-2 text-sm text-slate-500">
+            {isRewardsPending ? (
+              <span className="flex animate-pulse items-center justify-center gap-2 rounded-md bg-slate-100 py-4 text-sm text-slate-500">
                 <Loader2 className="size-4 animate-spin" />
                 <p>Generating Rewards</p>
               </span>
-            )}
-            {!hasProperRewards(rewards) || isRewardsError ? (
-              <p className="w-full rounded-md bg-slate-100 py-4 text-center text-sm text-slate-600">
-                {`Couldn't find any rewards from your given inputs`}
-              </p>
             ) : (
-              <div className="flex w-full items-center rounded-md border border-slate-200 bg-slate-50 py-0.5 pl-3">
-                <RewardResults rewards={rewards} type={type} />
-              </div>
+              <>
+                {!hasProperRewards(rewards) || isRewardsError ? (
+                  <p className="w-full rounded-md bg-slate-100 py-4 text-center text-sm text-slate-600">
+                    {`Couldn't find any rewards from your given inputs`}
+                  </p>
+                ) : (
+                  <div className="flex w-full items-center rounded-md border border-slate-200 bg-slate-50 py-3 pl-3">
+                    <RewardResults rewards={rewards} type={type} />
+                  </div>
+                )}
+              </>
             )}
           </div>
         )}
@@ -228,7 +231,7 @@ function RewardResults({
 }) {
   const token = tokenList.find((s) => s.tokenSymbol === rewards?.token);
   const totalPrizes = useMemo(
-    () => calculateTotalPrizes(rewards, rewards?.maxBonusSpots || 0),
+    () => calculateTotalPrizes(rewards?.rewards, rewards?.maxBonusSpots || 0),
     [rewards?.rewards, rewards?.maxBonusSpots],
   );
   const totalReward = useMemo(
@@ -248,11 +251,11 @@ function RewardResults({
           showSymbol
           amount={totalReward || 0}
           classNames={{
-            amount: 'font-medium text-sm',
+            amount: 'font-medium text-base',
           }}
           formatter={(n) => formatNumberWithSuffix(n) + '' || '0'}
         />
-        <p className="ml-1 overflow-hidden text-xs text-ellipsis whitespace-nowrap text-slate-400 capitalize">
+        <p className="ml-1 overflow-hidden text-sm text-ellipsis whitespace-nowrap text-slate-400 capitalize">
           | {totalPrizes} {totalPrizes === 1 ? 'Prize' : 'Prizes'}
         </p>
       </>
@@ -267,11 +270,11 @@ function RewardResults({
             showSymbol
             amount={totalReward || 0}
             classNames={{
-              amount: 'font-medium text-sm',
+              amount: 'font-medium text-base',
             }}
             formatter={(n) => formatNumberWithSuffix(n) + '' || '0'}
           />
-          <p className="ml-1 overflow-hidden text-xs text-ellipsis whitespace-nowrap text-slate-400 capitalize">
+          <p className="ml-1 overflow-hidden text-sm text-ellipsis whitespace-nowrap text-slate-400 capitalize">
             | Fixed Prize
           </p>
         </>
@@ -284,7 +287,7 @@ function RewardResults({
             showIcon
             amount={rewards?.minRewardAsk || 0}
             classNames={{
-              amount: 'font-medium text-sm mr-0',
+              amount: 'font-medium text-base mr-0',
             }}
             formatter={(n) => formatNumberWithSuffix(n) + '' || '0'}
             className="mr-1"
@@ -297,19 +300,27 @@ function RewardResults({
             className="ml-1"
             amount={rewards?.maxRewardAsk || 0}
             classNames={{
-              amount: 'font-medium text-sm ml-0',
+              amount: 'font-medium text-base ml-0',
             }}
             formatter={(n) => formatNumberWithSuffix(n) + '' || '0'}
           />
-          <p className="ml-1 overflow-hidden text-xs text-ellipsis whitespace-nowrap text-slate-400 capitalize">
+          <p className="ml-1 overflow-hidden text-sm text-ellipsis whitespace-nowrap text-slate-400 capitalize">
             | Range Prize
           </p>
         </>
       );
     } else if (rewards?.compensationType === 'variable') {
       <>
-        <TokenLabel token={token} showIcon showSymbol />
-        <p className="ml-1 overflow-hidden text-xs text-ellipsis whitespace-nowrap text-slate-400 capitalize">
+        <TokenLabel
+          token={token}
+          showIcon
+          showSymbol
+          classNames={{
+            amount: 'font-medium text-base ml-0',
+            symbol: 'font-medium text-base',
+          }}
+        />
+        <p className="ml-1 overflow-hidden text-sm text-ellipsis whitespace-nowrap text-slate-400 capitalize">
           | Variable Prize
         </p>
       </>;
@@ -317,8 +328,16 @@ function RewardResults({
   }
   return (
     <>
-      <TokenLabel token={token} showIcon showSymbol />
-      <p className="ml-1 overflow-hidden text-xs text-ellipsis whitespace-nowrap text-slate-400 capitalize">
+      <TokenLabel
+        token={token}
+        showIcon
+        showSymbol
+        classNames={{
+          amount: 'font-medium text-base ml-0',
+          symbol: 'font-medium text-base',
+        }}
+      />
+      <p className="ml-1 overflow-hidden text-sm text-ellipsis whitespace-nowrap text-slate-400 capitalize">
         | Variable Prize
       </p>
     </>

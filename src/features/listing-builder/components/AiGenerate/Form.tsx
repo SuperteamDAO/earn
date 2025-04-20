@@ -200,10 +200,10 @@ export function AiGenerateForm({
                 className=""
                 onClick={() => {
                   form.reset({
-                    companyDescription: initialData.companyDescription || '',
-                    scopeOfWork: initialData.scopeOfWork || '',
-                    rewards: initialData.rewards || '',
-                    requirements: initialData.requirements || '',
+                    companyDescription: '',
+                    scopeOfWork: '',
+                    rewards: '',
+                    requirements: '',
                   });
                   resetForm();
                 }}

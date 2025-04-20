@@ -13,6 +13,7 @@ import { api } from '@/lib/api';
 import { descriptionKeyAtom } from '../../atoms';
 import { useListingForm } from '../../hooks';
 import { type TEligibilityQuestion } from '../../types/schema';
+import { calculateTotalRewardsForPodium } from '../../utils/rewards';
 import { AiGenerateForm } from './Form';
 import { AiGenerateResult } from './Result';
 import { type AiGenerateFormValues } from './schema';
@@ -100,9 +101,11 @@ export function AiGenerateDialog({ children }: AIDescriptionDialogProps) {
   } = useMutation({
     mutationFn: async ({
       description,
+      inputReward,
       type,
     }: {
       description: string;
+      inputReward: string;
       type: BountyType;
     }) =>
       (
@@ -110,6 +113,7 @@ export function AiGenerateDialog({ children }: AIDescriptionDialogProps) {
           '/api/sponsor-dashboard/ai-generate/rewards',
           {
             description,
+            inputReward,
             type,
           },
         )
@@ -137,6 +141,7 @@ export function AiGenerateDialog({ children }: AIDescriptionDialogProps) {
       }
       callRewards({
         description: completedDescription,
+        inputReward: data.rewards,
         type,
       });
     }
@@ -180,6 +185,36 @@ export function AiGenerateDialog({ children }: AIDescriptionDialogProps) {
             onInsert={() => {
               listingForm.setValue('description', parsedDescription);
               listingForm.setValue('eligibility', eligibilityQuestions);
+              if (rewards) {
+                listingForm.setValue(
+                  'compensationType',
+                  rewards.compensationType,
+                );
+                listingForm.setValue('token', rewards.token);
+                if (rewards.maxBonusSpots)
+                  listingForm.setValue(
+                    'maxBonusSpots',
+                    rewards.maxBonusSpots || 0,
+                  );
+                if (rewards.compensationType === 'fixed') {
+                  listingForm.setValue('rewards', rewards.rewards || {});
+                  const totalReward = calculateTotalRewardsForPodium(
+                    rewards?.rewards || {},
+                    rewards?.maxBonusSpots || 0,
+                  );
+                  listingForm.setValue('rewardAmount', totalReward);
+                }
+                if (rewards.compensationType === 'range') {
+                  listingForm.setValue(
+                    'minRewardAsk',
+                    rewards.minRewardAsk || 0,
+                  );
+                  listingForm.setValue(
+                    'maxRewardAsk',
+                    rewards.maxRewardAsk || 0,
+                  );
+                }
+              }
               setDescriptionKey((s) => {
                 if (typeof s === 'number') return s + 1;
                 else return 1;
