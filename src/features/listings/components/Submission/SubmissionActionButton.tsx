@@ -241,14 +241,16 @@ export const SubmissionActionButton = ({
     user &&
     !isEditMode &&
     !isUserSubmissionLoading &&
-    !pastDeadline;
+    !pastDeadline &&
+    isAuthenticated;
 
   const hackathonCreditConditions =
     isHackathon &&
     user &&
     !isEditMode &&
     !isUserSubmissionLoading &&
-    !pastDeadline;
+    !pastDeadline &&
+    isAuthenticated;
 
   return (
     <>
