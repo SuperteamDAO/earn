@@ -207,7 +207,7 @@ export function PendingInvites({ invites, isLoading }: PendingInviteProps) {
                 <Tooltip
                   content={dayjs(invite.createdAt).format("DD MMM'YY h:mm A")}
                 >
-                  <div className="flex items-center gap-1">
+                  <div className="flex items-center gap-1 text-slate-500">
                     <Calendar className="h-4 w-4 text-slate-400" />
                     {formatDate(invite.createdAt)}
                   </div>
@@ -217,7 +217,7 @@ export function PendingInvites({ invites, isLoading }: PendingInviteProps) {
                 <Tooltip
                   content={dayjs(invite.expires).format("DD MMM'YY h:mm A")}
                 >
-                  <div className="flex items-center gap-1">
+                  <div className="flex items-center gap-1 text-slate-500">
                     <Clock className="h-4 w-4 text-slate-400" />
                     {formatExpiryTime(invite.expires)}
                   </div>
