@@ -83,7 +83,7 @@ export function InviteMembers({ isOpen, onClose }: Props) {
               </div>
               <AlertDescription>
                 Your team member will receive an email with a link to join
-                {PROJECT_NAME}.
+                {` ${PROJECT_NAME}.`}
               </AlertDescription>
             </Alert>
 
