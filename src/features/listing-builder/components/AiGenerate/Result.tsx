@@ -1,5 +1,5 @@
 import { type BountyType } from '@prisma/client';
-import { Loader2 } from 'lucide-react';
+import { Baseline, Link2, Loader2 } from 'lucide-react';
 import { useEffect, useMemo, useRef } from 'react';
 import { useWatch } from 'react-hook-form';
 
@@ -13,6 +13,8 @@ import { tokenList } from '@/constants/tokenList';
 import { type Skills } from '@/interface/skills';
 import { Wand } from '@/svg/wand';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
+
+import { Twitter } from '@/features/social/components/SocialIcons';
 
 import { useListingForm } from '../../hooks';
 import { type TEligibilityQuestion } from '../../types/schema';
@@ -211,6 +213,27 @@ export function AiGenerateResult({
         {!isEligibilityQuestionsIdle && (
           <div className="mt-4 space-y-3 text-sm text-slate-700">
             <h3 className="text-sm font-medium text-slate-600">Questions</h3>
+            {type !== 'project' && (
+              <>
+                <div className="flex items-center rounded-md border">
+                  <span className="flex items-center justify-center self-stretch border-r px-4 text-slate-400">
+                    <Link2 className="h-4 w-4" />
+                  </span>
+                  <p className="py-2 pl-4 text-sm text-slate-500">
+                    Bounty submission link{' '}
+                    <span className="text-red-500">*</span>
+                  </p>
+                </div>
+                <div className="flex items-center rounded-md border">
+                  <span className="flex items-center justify-center self-stretch border-r px-4 text-slate-400">
+                    <Twitter className="h-4 w-4 text-slate-400 opacity-100 grayscale-0" />
+                  </span>
+                  <p className="py-2 pl-4 text-sm text-slate-500">
+                    Twitter post link
+                  </p>
+                </div>
+              </>
+            )}
             {isEligibilityQuestionsPending && (
               <span className="flex animate-pulse items-center justify-center gap-2 rounded-md bg-slate-100 py-4 text-sm text-slate-500">
                 <Loader2 className="size-4 animate-spin" />
@@ -228,11 +251,19 @@ export function AiGenerateResult({
               )}
             {eligibilityQuestions.map((question) => (
               <div
-                className="rounded-md border bg-white p-2"
+                className="flex items-center rounded-md border"
                 key={question.order}
               >
-                <p>
-                  {question.order}. {question.question}
+                <span className="flex items-center justify-center self-stretch border-r px-4 text-slate-400">
+                  {question.type === 'link' ? (
+                    <Link2 className="h-4 w-4" />
+                  ) : (
+                    <Baseline className="h-4 w-4" />
+                  )}
+                </span>
+                <p className="py-2 pl-4 text-sm text-slate-500">
+                  {question.question}
+                  <span className="text-red-500">*</span>
                 </p>
               </div>
             ))}

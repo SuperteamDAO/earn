@@ -12,12 +12,13 @@ import { generateListingQuestionsPrompt } from './prompts';
 
 const requestBodySchema = z.object({
   description: z.string().min(1, 'Description cannot be empty'),
+  inputRequirements: z.string().min(1, 'Input Requrements cannot be empty'),
   type: z.nativeEnum(BountyType),
 });
 
 export async function POST(request: Request) {
   try {
-    let description: string, type: BountyType;
+    let description: string, type: BountyType, inputRequirements: string;
     try {
       const body = await request.json();
       const parsedBody = requestBodySchema.safeParse(body);
@@ -30,6 +31,7 @@ export async function POST(request: Request) {
       }
       description = parsedBody.data.description;
       type = parsedBody.data.type;
+      inputRequirements = parsedBody.data.inputRequirements;
     } catch (e) {
       if (e instanceof SyntaxError) {
         return NextResponse.json(
@@ -49,10 +51,18 @@ export async function POST(request: Request) {
       );
     }
 
-    const prompt = generateListingQuestionsPrompt(description, type);
+    const prompt = generateListingQuestionsPrompt(
+      description,
+      inputRequirements,
+      type,
+    );
 
     const { object } = await generateObject({
-      model: openrouter('google/gemini-2.0-flash-001'),
+      model: openrouter('google/gemini-2.5-pro-preview-03-25', {
+        reasoning: {
+          effort: 'low',
+        },
+      }),
       system:
         'Your role is to generate high-quality evaluation questions for listings, strictly adhering to the rules provided with each description and type.',
       prompt,

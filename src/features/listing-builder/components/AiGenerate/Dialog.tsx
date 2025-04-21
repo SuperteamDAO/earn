@@ -76,9 +76,11 @@ export function AiGenerateDialog({ children }: AIDescriptionDialogProps) {
   } = useMutation({
     mutationFn: async ({
       description,
+      inputRequirements,
       type,
     }: {
       description: string;
+      inputRequirements: string;
       type: BountyType;
     }) =>
       (
@@ -86,6 +88,7 @@ export function AiGenerateDialog({ children }: AIDescriptionDialogProps) {
           '/api/sponsor-dashboard/ai-generate/questions',
           {
             description,
+            inputRequirements,
             type,
           },
         )
@@ -149,6 +152,7 @@ export function AiGenerateDialog({ children }: AIDescriptionDialogProps) {
         callEligibilityQuestions({
           description: completedDescription,
           type,
+          inputRequirements: data.requirements,
         });
       }
       callRewards({
@@ -173,6 +177,14 @@ export function AiGenerateDialog({ children }: AIDescriptionDialogProps) {
     resetSkills();
     setDescription('');
   };
+
+  useEffect(() => {
+    setStage('form');
+    resetEligibilityQuestions();
+    resetRewards();
+    resetSkills();
+    setDescription('');
+  }, [type]);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -245,6 +257,7 @@ export function AiGenerateDialog({ children }: AIDescriptionDialogProps) {
                 if (typeof s === 'number') return s + 1;
                 else return 1;
               });
+              listingForm.saveDraft();
               setOpen(false);
             }}
             onBack={() => {

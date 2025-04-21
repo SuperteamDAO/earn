@@ -2,13 +2,17 @@ import { type BountyType } from '@prisma/client';
 
 export function generateListingQuestionsPrompt(
   description: string,
+  inputRequirements: string,
   type: BountyType,
 ): string {
-  let prompt = `Analyze the following listing description for a '${type}' on platform Superteam Earn. Your goal is to generate relevant custom questions for the application/submission form, following the specific rules for the listing type.
+  let prompt = `Analyze the following listing description and input requirements for a '${type}' on platform Superteam Earn. Your goal is to generate relevant custom questions for the application/submission form, following the specific rules for the listing type.
 
 <listing-description>
 ${description}
 </listing-description>
+<input-requirements>
+${inputRequirements}
+</input-requirements>
 
 General Rules for Generated Questions:
 - Questions should help fairly evaluate the applicant/submission based *only* on the description provided.
@@ -25,9 +29,10 @@ General Rules for Generated Questions:
 ${type}-Specific Rules:
 - Bounty submissions already have a required 'Submission Link' field and an optional 'Tweet Link' field.
 - Custom questions are OPTIONAL for bounties.
-- Critically evaluate if the provided description necessitates *any* custom questions beyond the default fields.
+- Note, submission link is purely meant for the link of the actual submission and tweet link is purely meant for the link of tweet for distribution, proof of work, share in public purposes.
+- Critically evaluate the Submission Requirements from the descriptiona and/or input requirements if the provided submission requirements necessitates *any* custom questions beyond the default fields.
+- If custom questions ARE needed based on the Submission Requirements, generate a maximum of 2 new questions. Make sure to only add extra question which is inferred in the submission requirements.  (e.g. portfolio link, explanation, methodology, etc)
 - If the Submission Link (and potentially Tweet Link) is sufficient to evaluate the work based on the description (e.g., simple tweet tasks, code submissions where the link shows everything), then output EMPTY ARRAY
-- If custom questions ARE needed, generate a maximum of 2. They should focus on clarifying aspects of the *submitted work* itself (e.g., asking about methodology, rationale, specific choices made) that might not be obvious from the submission link alone.
 
 Generate the custom questions (or return empty array):`;
   } else {
