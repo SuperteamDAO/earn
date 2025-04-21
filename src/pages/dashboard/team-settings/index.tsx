@@ -25,6 +25,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Tooltip } from '@/components/ui/tooltip';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import type { UserSponsor } from '@/interface/userSponsor';
@@ -35,6 +36,8 @@ import { cn } from '@/utils/cn';
 
 import { Banner } from '@/features/sponsor-dashboard/components/Banner';
 import { InviteMembers } from '@/features/sponsor-dashboard/components/Members/InviteMembers';
+import { PendingInvites } from '@/features/sponsor-dashboard/components/Members/PendingInvites';
+import { invitesQuery } from '@/features/sponsor-dashboard/queries/invites';
 import { membersQuery } from '@/features/sponsor-dashboard/queries/members';
 import { sponsorStatsQuery } from '@/features/sponsor-dashboard/queries/sponsor-stats';
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
@@ -46,6 +49,7 @@ const Index = () => {
   const { user } = useUser();
   const [searchText, setSearchText] = useState('');
   const [skip, setSkip] = useState(0);
+  const [tab, setTab] = useState('members');
   const length = 15;
 
   const { data: sponsorStats, isLoading: isStatsLoading } = useQuery(
@@ -72,8 +76,24 @@ const Index = () => {
     }),
   );
 
+  const {
+    data: invitesData,
+    isLoading: isInvitesLoading,
+    refetch: refetchInvites,
+  } = useQuery(
+    invitesQuery({
+      searchText,
+      skip,
+      length,
+      currentSponsorId: user?.currentSponsorId,
+    }),
+  );
+
   const totalMembers = membersData?.total || 0;
   const members = membersData?.data || [];
+
+  const totalInvites = invitesData?.total || 0;
+  const invites = invitesData?.data || [];
 
   const isAdminLoggedIn = useMemo(() => {
     if (session?.user?.role === 'GOD') return true;
@@ -115,26 +135,40 @@ const Index = () => {
       removeMemberMutation.mutate(userId);
     }
   };
+
+  const getActivePaginationTotal = () => {
+    if (tab === 'members') return totalMembers;
+    return totalInvites;
+  };
+
+  const resetPagination = () => {
+    setSkip(0);
+  };
+
+  // Close the invite dialog and refresh the invites data
+  const handleInviteDialogClose = () => {
+    onClose();
+    refetchInvites();
+  };
+
   return (
     <SponsorLayout>
-      {isOpen && <InviteMembers isOpen={isOpen} onClose={onClose} />}
+      {isOpen && (
+        <InviteMembers isOpen={isOpen} onClose={handleInviteDialogClose} />
+      )}
       <Banner stats={sponsorStats} isLoading={isStatsLoading} />
       <div className="mb-4 flex justify-between">
         <div className="flex items-center gap-3">
-          <p className="text-lg font-semibold text-slate-800">Team Members</p>
+          <p className="text-lg font-semibold text-slate-800">
+            Team Management
+          </p>
           <div className="h-[60%] border-r border-slate-200" />
           <p className="text-slate-500">
             Manage who gets access to your sponsor profile
           </p>
         </div>
         <div className="flex items-center gap-3">
-          {(session?.user?.role === 'GOD' ||
-            !!(
-              user?.UserSponsors?.length &&
-              user?.UserSponsors.find(
-                (s) => s.sponsorId === user.currentSponsorId,
-              )?.role === 'ADMIN'
-            )) && (
+          {isAdminLoggedIn && (
             <Button
               className="ph-no-captur h-9 bg-indigo-100 text-brand-purple hover:bg-indigo-100/90"
               onClick={() => {
@@ -151,111 +185,141 @@ const Index = () => {
             <Input
               className="placeholder:text-md h-9 border-slate-200 bg-white pl-9 placeholder:font-medium placeholder:text-slate-400 focus-visible:ring-brand-purple"
               onChange={(e) => debouncedSetSearchText(e.target.value)}
-              placeholder="Search members..."
+              placeholder="Search..."
               type="text"
             />
           </div>
         </div>
       </div>
-      {isMembersLoading && <LoadingSection />}
-      {!isMembersLoading && !members?.length && (
-        <ErrorSection
-          title="No members found!"
-          message="Invite members to join your organization!"
-        />
-      )}
-      {!isMembersLoading && !!members?.length && (
-        <div className="rounded-md border border-slate-200 bg-white">
-          <Table>
-            <TableHeader>
-              <TableRow className="text-slate-100">
-                <TableHead className="text-sm font-medium uppercase tracking-tight text-slate-400">
-                  Member
-                </TableHead>
-                <TableHead className="text-sm font-medium uppercase tracking-tight text-slate-400">
-                  Role
-                </TableHead>
-                <TableHead className="text-sm font-medium uppercase tracking-tight text-slate-400">
-                  Email
-                </TableHead>
-                <TableHead className="text-sm" />
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {members.map((member: UserSponsor) => {
-                return (
-                  <TableRow key={member?.userId}>
-                    <TableCell>
-                      <div className="flex items-center">
-                        <EarnAvatar
-                          className="h-9 w-9"
-                          id={member?.user?.id}
-                          avatar={member?.user?.photo}
-                        />
-                        <div className="ml-2 hidden md:block">
-                          <p className="text-sm font-medium text-slate-500">
-                            {`${member?.user?.firstName} ${member?.user?.lastName}`}
-                          </p>
-                          <p className="text-sm text-slate-400">
-                            @{member?.user?.username}
-                          </p>
-                        </div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center">
-                        <span
-                          className={cn(
-                            'inline-flex rounded px-2 py-1 text-xs font-semibold',
-                            member?.role === 'ADMIN'
-                              ? 'bg-emerald-100 text-teal-600'
-                              : 'bg-purple-100 text-brand-purple',
-                          )}
-                        >
-                          {member?.role}
-                        </span>
-                      </div>
-                    </TableCell>
-                    <TableCell className="font-medium text-slate-600">
-                      <div className="flex items-center gap-1">
-                        {member?.user?.email}
-                        <Tooltip
-                          content="Copy Email Address"
-                          contentProps={{ side: 'right' }}
-                        >
-                          <Copy
-                            className="h-4 w-4 cursor-pointer"
-                            onClick={() =>
-                              navigator.clipboard.writeText(
-                                member?.user?.email as string,
-                              )
-                            }
-                          />
-                        </Tooltip>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <RemoveMemberModal
-                        member={member}
-                        isAdminLoggedIn={isAdminLoggedIn}
-                        session={session}
-                        onRemoveMember={onRemoveMember}
-                      />
-                    </TableCell>
+
+      <Tabs
+        defaultValue="members"
+        value={tab}
+        onValueChange={(value) => {
+          setTab(value);
+          resetPagination();
+        }}
+      >
+        <TabsList className="mb-4">
+          <TabsTrigger value="members">Team Members</TabsTrigger>
+          <TabsTrigger value="invites" className="relative">
+            Pending Invites
+            {totalInvites > 0 && (
+              <span className="ml-2 rounded-full bg-indigo-100 px-2 py-0.5 text-xs text-brand-purple">
+                {totalInvites}
+              </span>
+            )}
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="members">
+          {isMembersLoading && <LoadingSection />}
+          {!isMembersLoading && !members?.length && (
+            <ErrorSection
+              title="No members found!"
+              message="Invite members to join your organization!"
+            />
+          )}
+          {!isMembersLoading && !!members?.length && (
+            <div className="rounded-md border border-slate-200 bg-white">
+              <Table>
+                <TableHeader>
+                  <TableRow className="text-slate-100">
+                    <TableHead className="text-sm font-medium uppercase tracking-tight text-slate-400">
+                      Member
+                    </TableHead>
+                    <TableHead className="text-sm font-medium uppercase tracking-tight text-slate-400">
+                      Role
+                    </TableHead>
+                    <TableHead className="text-sm font-medium uppercase tracking-tight text-slate-400">
+                      Email
+                    </TableHead>
+                    <TableHead className="text-sm" />
                   </TableRow>
-                );
-              })}
-            </TableBody>
-          </Table>
-        </div>
-      )}
+                </TableHeader>
+                <TableBody>
+                  {members.map((member: UserSponsor) => {
+                    return (
+                      <TableRow key={member?.userId}>
+                        <TableCell>
+                          <div className="flex items-center">
+                            <EarnAvatar
+                              className="h-9 w-9"
+                              id={member?.user?.id}
+                              avatar={member?.user?.photo}
+                            />
+                            <div className="ml-2 hidden md:block">
+                              <p className="text-sm font-medium text-slate-500">
+                                {`${member?.user?.firstName} ${member?.user?.lastName}`}
+                              </p>
+                              <p className="text-sm text-slate-400">
+                                @{member?.user?.username}
+                              </p>
+                            </div>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center">
+                            <span
+                              className={cn(
+                                'inline-flex rounded px-2 py-1 text-xs font-semibold',
+                                member?.role === 'ADMIN'
+                                  ? 'bg-emerald-100 text-teal-600'
+                                  : 'bg-purple-100 text-brand-purple',
+                              )}
+                            >
+                              {member?.role}
+                            </span>
+                          </div>
+                        </TableCell>
+                        <TableCell className="font-medium text-slate-600">
+                          <div className="flex items-center gap-1">
+                            {member?.user?.email}
+                            <Tooltip
+                              content="Copy Email Address"
+                              contentProps={{ side: 'right' }}
+                            >
+                              <Copy
+                                className="h-4 w-4 cursor-pointer"
+                                onClick={() =>
+                                  navigator.clipboard.writeText(
+                                    member?.user?.email as string,
+                                  )
+                                }
+                              />
+                            </Tooltip>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <RemoveMemberModal
+                            member={member}
+                            isAdminLoggedIn={isAdminLoggedIn}
+                            session={session}
+                            onRemoveMember={onRemoveMember}
+                          />
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+                </TableBody>
+              </Table>
+            </div>
+          )}
+        </TabsContent>
+
+        <TabsContent value="invites">
+          <PendingInvites invites={invites} isLoading={isInvitesLoading} />
+        </TabsContent>
+      </Tabs>
+
       <div className="mt-6 flex items-center justify-end">
         <p className="mr-4 text-sm text-slate-400">
           <span className="font-bold">{skip + 1}</span> -{' '}
           <span className="font-bold">
-            {Math.min(skip + length, totalMembers)}
+            {Math.min(skip + length, getActivePaginationTotal())}
           </span>{' '}
-          of <span className="font-bold">{totalMembers}</span> Members
+          of <span className="font-bold">{getActivePaginationTotal()}</span>{' '}
+          {tab === 'members' ? 'Members' : 'Invites'}
         </p>
         <div className="flex gap-4">
           <Button
@@ -274,7 +338,8 @@ const Index = () => {
             variant="outline"
             size="sm"
             disabled={
-              totalMembers <= skip + length || (skip > 0 && skip % length !== 0)
+              getActivePaginationTotal() <= skip + length ||
+              (skip > 0 && skip % length !== 0)
             }
             onClick={() => skip % length === 0 && setSkip(skip + length)}
             className="flex items-center"
