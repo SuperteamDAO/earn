@@ -52,8 +52,12 @@ export function PublishResults({
   // Overrdiding totalWinners if project coz position select is done here now for project only
 
   const rewards =
-    cleanRewards(bounty?.rewards, true).length +
-    (bounty?.rewards?.[BONUS_REWARD_POSITION] ? bounty?.maxBonusSpots || 0 : 0);
+    bounty?.type === 'project'
+      ? 1
+      : cleanRewards(bounty?.rewards, true).length +
+        (bounty?.rewards?.[BONUS_REWARD_POSITION]
+          ? bounty?.maxBonusSpots || 0
+          : 0);
   let isWinnersAllSelected = !(
     remainings && remainings.podiums + remainings.bonus !== 0
   );

@@ -77,7 +77,11 @@ const getApplicantData = async (
     const lastName = info.lastNameEn || '';
     const fullName = `${firstName} ${middleName} ${lastName}`
       .trim()
-      .replace(/\s+/g, ' ');
+      .replace(/\s+/g, ' ')
+      .toLowerCase()
+      .split(' ')
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
 
     const country = info.country || '';
     const dob = info.dob || '';

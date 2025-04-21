@@ -23,8 +23,10 @@ const AirtableInputSchema = z.object({
         'Invalid Solana wallet address format',
       ),
     projectOneLiner: z.string().optional(),
+    projectTitle: z.string().optional(),
     user: z.object({
       email: z.string().email(),
+      username: z.string(),
       location: z.string().nullable(),
       kycName: z.string().min(1, 'KYC Name is required'),
       kycAddress: z.string().nullable(),
@@ -41,6 +43,7 @@ const AirtableInputSchema = z.object({
     grant: z.object({
       airtableId: z.string().nullable(),
       approverRecordId: z.string().min(1, 'Approver Record ID is required'),
+      title: z.string().min(1, 'Grant Title is required'),
     }),
   }),
   grantTranche: z.object({
@@ -62,9 +65,11 @@ interface GrantApplicationWithUserAndGrant extends GrantApplication {
   grant: {
     airtableId: string | null;
     approverRecordId: string | null;
+    title: string | null;
   };
   user: {
     email: string;
+    username: string | null;
     location: string | null;
     kycName: string | null;
     kycAddress: string | null;
@@ -86,12 +91,14 @@ interface PaymentAirtableSchema {
   'Wallet Address': string;
   Category: string[];
   'Purpose of Payment': string;
+  'Project (Archive)': string;
   Email: string;
   Status: string;
   Region?: string[];
   Approver: string[];
   earnApplicationId: string;
   earnTrancheId: string;
+  'Discord / Earn Username': string;
 }
 
 const grantCategory =
@@ -105,6 +112,16 @@ function grantApplicationToAirtable(
   validatedGrantTranche: ValidatedGrantTranche,
 ): PaymentAirtableSchema {
   const country = lookup.byIso(validatedApplication.user.kycCountry)?.country;
+
+  const purposeOfPayment =
+    validatedApplication.grant.title +
+    ' - ' +
+    validatedApplication.user.username +
+    ' - ' +
+    validatedApplication.projectTitle +
+    ' - ' +
+    validatedApplication.projectOneLiner;
+
   return {
     Name: validatedApplication.user.kycName,
     Address: validatedApplication.user.kycAddress ?? '',
@@ -115,14 +132,15 @@ function grantApplicationToAirtable(
     Amount: validatedGrantTranche.approvedAmount,
     'Wallet Address': validatedApplication.walletAddress,
     Category: [grantCategory],
-    'Purpose of Payment':
-      validatedApplication.projectOneLiner || 'Grant Payment',
+    'Purpose of Payment': purposeOfPayment || 'Grant Payment',
+    'Project (Archive)': validatedApplication.projectTitle ?? '',
     Email: validatedApplication.user.email,
     Status: 'Verified',
     Region: [grantRegionId],
     Approver: [validatedApplication.grant.approverRecordId],
     earnApplicationId: validatedApplication.id,
     earnTrancheId: validatedGrantTranche.id,
+    'Discord / Earn Username': validatedApplication.user.username,
   };
 }
 
