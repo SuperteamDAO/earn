@@ -30,6 +30,7 @@ import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 import { getURL } from '@/utils/validUrl';
 
+import { AuthWrapper } from '@/features/auth/components/AuthWrapper';
 import { FeedLoop } from '@/features/feed/components/FeedLoop';
 import { useGetFeed } from '@/features/feed/queries/useGetFeed';
 import { type FeedDataProps } from '@/features/feed/types';
@@ -183,35 +184,39 @@ function TalentProfile({ talent, stats }: TalentProps) {
   ) => {
     if (isMD) {
       return (
-        <Button
-          className={cn(
-            'ph-no-capture w-full text-sm font-medium',
-            outline
-              ? 'border-slate-400 bg-white text-slate-500 hover:bg-gray-100'
-              : 'border-brand-purple/5 bg-brand-purple/10 text-brand-purple hover:bg-brand-purple/20',
-          )}
-          onClick={onClickHandler}
-          variant={outline ? 'outline' : 'default'}
-        >
-          {icon}
-          {text}
-        </Button>
+        <AuthWrapper showCompleteProfileModal allowSponsor>
+          <Button
+            className={cn(
+              'ph-no-capture w-full text-sm font-medium',
+              outline
+                ? 'border-slate-400 bg-white text-slate-500 hover:bg-gray-100'
+                : 'border-brand-purple/5 bg-brand-purple/10 text-brand-purple hover:bg-brand-purple/20',
+            )}
+            onClick={onClickHandler}
+            variant={outline ? 'outline' : 'default'}
+          >
+            {icon}
+            {text}
+          </Button>
+        </AuthWrapper>
       );
     }
 
     return (
-      <Button
-        aria-label={text}
-        onClick={onClickHandler}
-        className={cn(
-          'inline-flex h-9 w-9 items-center justify-center rounded border p-2 text-sm font-medium transition',
-          outline
-            ? 'border-slate-400 bg-white text-slate-500 hover:bg-gray-100'
-            : 'border-indigo-100 bg-indigo-100 text-indigo-600 hover:bg-indigo-200',
-        )}
-      >
-        {icon}
-      </Button>
+      <AuthWrapper showCompleteProfileModal allowSponsor>
+        <Button
+          aria-label={text}
+          onClick={onClickHandler}
+          className={cn(
+            'inline-flex h-9 w-9 items-center justify-center rounded border p-2 text-sm font-medium transition',
+            outline
+              ? 'border-slate-400 bg-white text-slate-500 hover:bg-gray-100'
+              : 'border-indigo-100 bg-indigo-100 text-indigo-600 hover:bg-indigo-200',
+          )}
+        >
+          {icon}
+        </Button>
+      </AuthWrapper>
     );
   };
 
@@ -238,11 +243,12 @@ function TalentProfile({ talent, stats }: TalentProps) {
   const feedItems = feed?.pages.flatMap((page) => page) ?? [];
 
   const reachOutLink = useMemo(() => {
+    if (!user?.isTalentFilled || !user?.currentSponsorId) return '';
     const email = encodeURIComponent(talent?.email || '');
     const subject = encodeURIComponent('Saw Your ST Earn Profile!');
     const bcc = encodeURIComponent('support@superteamearn.com');
     return `mailto:${email}?subject=${subject}&bcc=${bcc}`;
-  }, [talent]);
+  }, [talent, user]);
 
   return (
     <Default
@@ -315,16 +321,18 @@ function TalentProfile({ talent, stats }: TalentProps) {
                     },
                   )
                 ) : (
-                  <Link
-                    href={reachOutLink}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-full"
-                  >
-                    {renderButton(<MdEmail />, 'Reach Out', () => {
-                      posthog.capture('reach out_talent profile');
-                    })}
-                  </Link>
+                  <AuthWrapper allowSponsor>
+                    <Link
+                      href={reachOutLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-full"
+                    >
+                      {renderButton(<MdEmail />, 'Reach Out', () => {
+                        posthog.capture('reach out_talent profile');
+                      })}
+                    </Link>
+                  </AuthWrapper>
                 )}
                 {renderButton(<ShareIcon />, 'Share', onOpen, true)}
               </div>
