@@ -1,5 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import dayjs from 'dayjs';
 import { Calendar, Clock, Copy, Trash2 } from 'lucide-react';
+import Link from 'next/link';
 import { useSession } from 'next-auth/react';
 import React, { useMemo } from 'react';
 import { toast } from 'sonner';
@@ -98,7 +100,7 @@ export function PendingInvites({ invites, isLoading }: PendingInviteProps) {
       ? `${diffDays} days`
       : diffDays === 1
         ? '1 day'
-        : 'Today';
+        : `Expires at ${dayjs(date).format('HH:mm')}`;
   };
 
   return (
@@ -129,7 +131,10 @@ export function PendingInvites({ invites, isLoading }: PendingInviteProps) {
             <TableRow key={invite.id}>
               <TableCell className="font-medium text-slate-600">
                 {invite.invitedUser ? (
-                  <div className="flex items-center">
+                  <Link
+                    href={`/t/${invite.invitedUser.username}`}
+                    className="flex items-center"
+                  >
                     <EarnAvatar
                       className="h-9 w-9"
                       id={invite.invitedUser.id}
@@ -145,7 +150,7 @@ export function PendingInvites({ invites, isLoading }: PendingInviteProps) {
                           : invite.email}
                       </p>
                     </div>
-                  </div>
+                  </Link>
                 ) : (
                   <div className="flex items-center gap-1">
                     {invite.email}
@@ -177,7 +182,10 @@ export function PendingInvites({ invites, isLoading }: PendingInviteProps) {
                 </div>
               </TableCell>
               <TableCell>
-                <div className="flex items-center">
+                <Link
+                  href={`/t/${invite.sender.username}`}
+                  className="flex items-center"
+                >
                   <EarnAvatar
                     className="h-9 w-9"
                     id={invite.sender.id}
@@ -193,19 +201,27 @@ export function PendingInvites({ invites, isLoading }: PendingInviteProps) {
                         : ''}
                     </p>
                   </div>
-                </div>
+                </Link>
               </TableCell>
               <TableCell>
-                <div className="flex items-center gap-1">
-                  <Calendar className="h-4 w-4 text-slate-400" />
-                  {formatDate(invite.createdAt)}
-                </div>
+                <Tooltip
+                  content={dayjs(invite.createdAt).format("DD MMM'YY h:mm A")}
+                >
+                  <div className="flex items-center gap-1">
+                    <Calendar className="h-4 w-4 text-slate-400" />
+                    {formatDate(invite.createdAt)}
+                  </div>
+                </Tooltip>
               </TableCell>
               <TableCell>
-                <div className="flex items-center gap-1">
-                  <Clock className="h-4 w-4 text-slate-400" />
-                  {formatExpiryTime(invite.expires)}
-                </div>
+                <Tooltip
+                  content={dayjs(invite.expires).format("DD MMM'YY h:mm A")}
+                >
+                  <div className="flex items-center gap-1">
+                    <Clock className="h-4 w-4 text-slate-400" />
+                    {formatExpiryTime(invite.expires)}
+                  </div>
+                </Tooltip>
               </TableCell>
               <TableCell>
                 {isAdminLoggedIn && (
@@ -245,7 +261,7 @@ function CancelInviteDialog({
         onClick={() => setIsOpen(true)}
         size="icon"
         variant="ghost"
-        className="h-8 w-8 text-red-500 hover:bg-red-100 hover:text-red-600"
+        className="h-8 w-8 text-slate-500 hover:bg-red-100 hover:text-red-600"
       >
         <Trash2 className="h-4 w-4" />
       </Button>

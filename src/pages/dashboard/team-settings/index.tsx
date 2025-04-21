@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { ChevronLeft, ChevronRight, Copy, Plus, Search } from 'lucide-react';
+import Link from 'next/link';
 import { type Session } from 'next-auth';
 import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
@@ -242,7 +243,10 @@ const Index = () => {
                     return (
                       <TableRow key={member?.userId}>
                         <TableCell>
-                          <div className="flex items-center">
+                          <Link
+                            href={`/t/${member?.user?.username}`}
+                            className="flex items-center"
+                          >
                             <EarnAvatar
                               className="h-9 w-9"
                               id={member?.user?.id}
@@ -256,7 +260,7 @@ const Index = () => {
                                 @{member?.user?.username}
                               </p>
                             </div>
-                          </div>
+                          </Link>
                         </TableCell>
                         <TableCell>
                           <div className="flex items-center">
