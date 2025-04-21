@@ -243,12 +243,9 @@ export const MobileNavbar = ({
                     onClick={onWalletOpen}
                   >
                     <IoWalletOutline className="text-brand-purple h-7 w-7" />
-                    <span className="bg-brand-purple/95 absolute top-px -right-1.5 block rounded-md px-1 py-px text-[10px] font-semibold tracking-tight text-white sm:hidden">
+                    <span className="bg-brand-purple/95 absolute top-px -right-1.5 block rounded-md px-1 py-px text-[10px] font-semibold tracking-tight text-white">
                       ${formatNumberWithSuffix(walletBalance || 0, 1, true)}
                     </span>
-                    <p className="hidden text-sm font-semibold sm:block">
-                      ${formatNumberWithSuffix(walletBalance || 0, 1, true)}
-                    </p>
                   </div>
                 </div>
               </div>
