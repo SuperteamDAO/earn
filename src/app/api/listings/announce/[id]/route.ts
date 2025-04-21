@@ -14,6 +14,7 @@ import { queueEmail } from '@/features/emails/utils/queueEmail';
 import { BONUS_REWARD_POSITION } from '@/features/listing-builder/constants';
 import { calculateTotalPrizes } from '@/features/listing-builder/utils/rewards';
 import { type Rewards } from '@/features/listings/types';
+import { fetchHistoricalTokenUSDValue } from '@/features/wallet/utils/fetchHistoricalTokenUSDValue';
 
 export const maxDuration = 300;
 
@@ -87,13 +88,97 @@ export async function POST(
     );
 
     if (!!totalRewards && winners.length !== totalRewards) {
-      logger.warn(
-        'All winners have not been selected before publishing the results',
+      const remainingSubmissions = await prisma.submission.count({
+        where: {
+          listingId: id,
+          isWinner: false,
+          isActive: true,
+          isArchived: false,
+        },
+      });
+
+      const rewards = listing.rewards as Rewards;
+      const bonusReward = rewards[BONUS_REWARD_POSITION];
+      const maxBonusSpots = listing.maxBonusSpots || 0;
+
+      const bonusWinners = winners.filter(
+        (w) => w.winnerPosition === BONUS_REWARD_POSITION,
+      ).length;
+
+      const remainingBonusSpots = bonusReward
+        ? maxBonusSpots - bonusWinners
+        : 0;
+
+      const nonBonusWinners = winners.filter(
+        (w) => w.winnerPosition !== BONUS_REWARD_POSITION,
+      ).length;
+      const totalNonBonusPositions =
+        totalRewards - (bonusReward ? maxBonusSpots : 0);
+
+      const allNonBonusPositionsFilled =
+        nonBonusWinners === totalNonBonusPositions;
+      const notEnoughSubmissionsForBonus =
+        remainingBonusSpots > 0 && remainingSubmissions === 0;
+
+      if (!(allNonBonusPositionsFilled && notEnoughSubmissionsForBonus)) {
+        logger.warn(
+          'All winners have not been selected before publishing the results',
+        );
+        return NextResponse.json(
+          { error: 'Please select all winners before publishing the results.' },
+          { status: 400 },
+        );
+      }
+      logger.info(
+        `Allowing winner announcement with ${remainingBonusSpots} unfilled bonus positions due to only ${remainingSubmissions} submissions remaining`,
       );
-      return NextResponse.json(
-        { error: 'Please select all winners before publishing the results.' },
-        { status: 400 },
-      );
+    }
+
+    const updatedRewards = { ...(listing.rewards as Rewards) };
+    let updatedMaxBonusSpots = listing.maxBonusSpots || 0;
+    let updatedRewardAmount = listing.rewardAmount || 0;
+    let updatedUsdValue = listing.usdValue || 0;
+    let recalculateUsd = false;
+
+    if (updatedRewards[BONUS_REWARD_POSITION]) {
+      const selectedBonusWinners = winners.filter(
+        (w) => w.winnerPosition === BONUS_REWARD_POSITION,
+      ).length;
+      const originalMaxBonusSpots = updatedMaxBonusSpots;
+      const bonusRewardValue = updatedRewards[BONUS_REWARD_POSITION] as number;
+
+      if (selectedBonusWinners === 0) {
+        logger.info(
+          `No bonus winners selected, removing bonus reward from listing ${id}`,
+        );
+        delete updatedRewards[BONUS_REWARD_POSITION];
+        updatedMaxBonusSpots = 0;
+        updatedRewardAmount -= bonusRewardValue * originalMaxBonusSpots;
+        recalculateUsd = true;
+      } else if (selectedBonusWinners < originalMaxBonusSpots) {
+        logger.info(
+          `${selectedBonusWinners} out of ${originalMaxBonusSpots} bonus winners selected, adjusting maxBonusSpots for listing ${id}`,
+        );
+        updatedMaxBonusSpots = selectedBonusWinners;
+        updatedRewardAmount -=
+          bonusRewardValue * (originalMaxBonusSpots - selectedBonusWinners);
+        recalculateUsd = true;
+      }
+    }
+
+    if (recalculateUsd && listing.token) {
+      try {
+        const tokenUsdValue = await fetchHistoricalTokenUSDValue(
+          listing.token,
+          listing.publishedAt || new Date(),
+        );
+        updatedUsdValue = updatedRewardAmount * (tokenUsdValue || 1);
+        logger.info(
+          `Recalculated USD value for listing ${id}: ${updatedUsdValue} (token value: ${tokenUsdValue})`,
+        );
+      } catch (err) {
+        logger.error(`Failed to recalculate USD value for listing ${id}`, err);
+      }
     }
 
     const deadline = dayjs().isAfter(listing?.deadline)
@@ -107,13 +192,17 @@ export async function POST(
         isWinnersAnnounced: true,
         deadline,
         winnersAnnouncedAt: new Date().toISOString(),
+        rewards: updatedRewards,
+        maxBonusSpots: updatedMaxBonusSpots,
+        rewardAmount: updatedRewardAmount,
+        usdValue: updatedUsdValue,
       },
       include: {
         sponsor: true,
       },
     });
 
-    const rewards: Rewards = (listing?.rewards || {}) as Rewards;
+    const rewards: Rewards = updatedRewards;
 
     const promises = [];
     let currentIndex = 0;
@@ -125,7 +214,7 @@ export async function POST(
         amount = rewards[winnerPosition as keyof Rewards] ?? 0;
       }
 
-      const rewardInUSD = (listing.usdValue! / listing.rewardAmount!) * amount;
+      const rewardInUSD = (result.usdValue! / result.rewardAmount!) * amount;
 
       promises.push(
         prisma.submission.update({
