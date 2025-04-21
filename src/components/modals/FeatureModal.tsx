@@ -15,8 +15,10 @@ import { CreditFeature } from './CreditFeature';
 
 export const FeatureModal = ({
   isAnyModalOpen = false,
+  isAuth = true,
 }: {
   isAnyModalOpen?: boolean;
+  isAuth?: boolean;
 }) => {
   const { user } = useUser();
   const { authenticated, ready } = usePrivy();
@@ -82,6 +84,10 @@ export const FeatureModal = ({
       }
     }
   }, [user, isPopupOpen, popupTimeout, router.pathname]);
+
+  if (!isAuth) {
+    return null;
+  }
 
   if (isAnyModalOpen) return null;
 
