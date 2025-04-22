@@ -29,7 +29,8 @@ function hasProperRewards(
 ): boolean {
   if (
     rewards?.compensationType === 'fixed' &&
-    Object.keys(rewards?.rewards || {}).length > 0
+    Object.keys(rewards?.rewards || {}).length > 0 &&
+    !!rewards.rewards['1']
   )
     return true;
   if (
@@ -44,8 +45,13 @@ function hasProperRewards(
 
 interface AiGenerateResultProps {
   description: string;
+  token: string;
   isDescriptionLoading: boolean;
   isDescriptionError: boolean;
+  title: string;
+  isTitleIdle: boolean;
+  isTitleError: boolean;
+  isTitlePending: boolean;
   eligibilityQuestions: TEligibilityQuestion[];
   isEligibilityQuestionsIdle: boolean;
   isEligibilityQuestionsError: boolean;
@@ -64,8 +70,13 @@ interface AiGenerateResultProps {
 
 export function AiGenerateResult({
   description,
+  token,
   isDescriptionLoading,
   isDescriptionError,
+  title,
+  isTitleIdle,
+  isTitleError,
+  isTitlePending,
   eligibilityQuestions,
   isEligibilityQuestionsIdle,
   isEligibilityQuestionsError,
@@ -163,7 +174,24 @@ export function AiGenerateResult({
             )}
           </div>
         </div>
-        {!isRewardsIdle && (
+        {!isTitleIdle && !isTitleError && (
+          <div className="mt-4 space-y-3 text-sm text-slate-700">
+            <h3 className="text-sm font-medium text-slate-600">Title</h3>
+            {isTitlePending ? (
+              <span className="flex animate-pulse items-center justify-center gap-2 rounded-md bg-slate-100 py-4 text-sm text-slate-500">
+                <Loader2 className="size-4 animate-spin" />
+                <p>Generating Title</p>
+              </span>
+            ) : (
+              <>
+                <div className="flex w-full items-center rounded-md border border-slate-200 bg-slate-50 py-3 pl-3">
+                  <p className="font-medium">{title}</p>
+                </div>
+              </>
+            )}
+          </div>
+        )}
+        {!isRewardsIdle && !isRewardsError && (
           <div className="mt-4 space-y-3 text-sm text-slate-700">
             <h3 className="text-sm font-medium text-slate-600">Rewards</h3>
             {isRewardsPending ? (
@@ -179,14 +207,18 @@ export function AiGenerateResult({
                   </p>
                 ) : (
                   <div className="flex w-full items-center rounded-md border border-slate-200 bg-slate-50 py-3 pl-3">
-                    <RewardResults rewards={rewards} type={type} />
+                    <RewardResults
+                      token={token}
+                      rewards={rewards}
+                      type={type}
+                    />
                   </div>
                 )}
               </>
             )}
           </div>
         )}
-        {!isSkillsIdle && (
+        {!isSkillsIdle && !isSkillsError && (
           <div className="mt-4 space-y-3 text-sm text-slate-700">
             <h3 className="text-sm font-medium text-slate-600">Skills</h3>
             {isSkillsPending ? (
@@ -210,9 +242,11 @@ export function AiGenerateResult({
           </div>
         )}
 
-        {!isEligibilityQuestionsIdle && (
+        {!isEligibilityQuestionsIdle && !isEligibilityQuestionsError && (
           <div className="mt-4 space-y-3 text-sm text-slate-700">
-            <h3 className="text-sm font-medium text-slate-600">Questions</h3>
+            <h3 className="text-sm font-medium text-slate-600">
+              Default Questions
+            </h3>
             {type !== 'project' && (
               <>
                 <div className="flex items-center rounded-md border">
@@ -240,15 +274,11 @@ export function AiGenerateResult({
                 <p>Generating Custom Questions</p>
               </span>
             )}
-            {!isEligibilityQuestionsPending &&
-              (isEligibilityQuestionsError ||
-                eligibilityQuestions.length === 0) && (
-                <>
-                  <p className="w-full rounded-md bg-slate-100 py-4 text-center text-sm text-slate-600">
-                    No extra custom questions needed :)
-                  </p>
-                </>
-              )}
+            {eligibilityQuestions.length > 0 && (
+              <h3 className="text-sm font-medium text-slate-600">
+                Custom Questions
+              </h3>
+            )}
             {eligibilityQuestions.map((question) => (
               <div
                 className="flex items-center rounded-md border"
@@ -292,11 +322,15 @@ export function AiGenerateResult({
 function RewardResults({
   rewards,
   type,
+  token: tokenSymbol,
 }: {
   rewards: TRewardsGenerateResponse | undefined;
   type: BountyType;
+  token: string;
 }) {
-  const token = tokenList.find((s) => s.tokenSymbol === rewards?.token);
+  const token = tokenList.find(
+    (s) => s.tokenSymbol === (tokenSymbol || 'USDC'),
+  );
   const totalPrizes = useMemo(
     () => calculateTotalPrizes(rewards?.rewards, rewards?.maxBonusSpots || 0),
     [rewards?.rewards, rewards?.maxBonusSpots],
@@ -416,9 +450,6 @@ function SkillsResult({ skills }: { skills: Skills }) {
     <div className="flex flex-wrap gap-3 rounded-md border border-slate-200 bg-white p-3">
       {skills.map((skillGroup) => (
         <div key={skillGroup.skills} className="flex flex-wrap">
-          <span className="mt-1 mr-1.5 inline-block rounded bg-indigo-100 px-2 py-0.5 text-xs font-medium text-indigo-700 transition-colors">
-            {skillGroup.skills}
-          </span>
           {skillGroup.subskills.length > 0 ? (
             skillGroup.subskills.map((subskill) => (
               <span

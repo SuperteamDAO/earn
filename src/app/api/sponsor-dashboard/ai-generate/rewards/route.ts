@@ -5,8 +5,6 @@ import { headers } from 'next/headers';
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 
-import { tokenList } from '@/constants/tokenList';
-
 import { getSponsorSession } from '@/features/auth/utils/getSponsorSession';
 import {
   MAX_BONUS_SPOTS,
@@ -19,17 +17,12 @@ const requestBodySchema = z.object({
   description: z.string().min(1, 'Description cannot be empty'),
   inputReward: z.string().min(1, 'Input Reward cannot be empty'),
   type: z.nativeEnum(BountyType),
+  token: z.string(),
+  tokenUsdValue: z.number(),
 });
+export type RewardInputSchema = z.infer<typeof requestBodySchema>;
 
 const responseSchema = z.object({
-  token: z
-    .enum(
-      tokenList.map((token) => token.tokenSymbol) as [string, ...string[]],
-      {
-        errorMap: () => ({ message: 'Token Not Allowed' }),
-      },
-    )
-    .default('USDC'),
   compensationType: z.nativeEnum(CompensationType).default('fixed'),
   maxBonusSpots: z.coerce
     .number()
@@ -65,7 +58,7 @@ export type TRewardsGenerateResponse = Omit<
 };
 export async function POST(request: Request) {
   try {
-    let description: string, type: BountyType, inputReward: string;
+    let input: RewardInputSchema;
     try {
       const body = await request.json();
       const parsedBody = requestBodySchema.safeParse(body);
@@ -76,9 +69,7 @@ export async function POST(request: Request) {
           { status: 400 },
         );
       }
-      description = parsedBody.data.description;
-      type = parsedBody.data.type;
-      inputReward = parsedBody.data.inputReward;
+      input = parsedBody.data;
     } catch (e) {
       if (e instanceof SyntaxError) {
         return NextResponse.json(
@@ -98,7 +89,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const prompt = generateListingRewardsPrompt(description, inputReward, type);
+    const prompt = generateListingRewardsPrompt(input);
 
     const { object } = await generateObject({
       model: openrouter('google/gemini-2.5-pro-preview-03-25', {

@@ -6,6 +6,8 @@ import { eligibilityQuestionSchema } from '../../types/schema';
 export const aiGenerateFormSchema = z.object({
   type: z.nativeEnum(BountyType).default('bounty'),
   hackathonName: z.string().optional(),
+  token: z.string().optional(),
+  tokenUsdAmount: z.number().optional(),
   companyDescription: z
     .string()
     .min(

@@ -6,10 +6,18 @@ import { marked } from 'marked';
 import { type ReactNode, useEffect, useState } from 'react';
 import { useWatch } from 'react-hook-form';
 
-import { type TRewardsGenerateResponse } from '@/app/api/sponsor-dashboard/ai-generate/rewards/route';
+import {
+  type RewardInputSchema,
+  type TRewardsGenerateResponse,
+} from '@/app/api/sponsor-dashboard/ai-generate/rewards/route';
+import { type TTitleGenerateResponse } from '@/app/api/sponsor-dashboard/ai-generate/title/route';
+import { type TTokenGenerateResponse } from '@/app/api/sponsor-dashboard/ai-generate/token/route';
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
+import { tokenList } from '@/constants/tokenList';
 import { type Skills } from '@/interface/skills';
 import { api } from '@/lib/api';
+
+import { fetchTokenUSDValue } from '@/features/wallet/utils/fetchTokenUSDValue';
 
 import { descriptionKeyAtom, skillsKeyAtom } from '../../atoms';
 import { useListingForm } from '../../hooks';
@@ -67,6 +75,29 @@ export function AiGenerateDialog({ children }: AIDescriptionDialogProps) {
   }, [description]);
 
   const {
+    data: title,
+    mutateAsync: callTitle,
+    reset: resetTitle,
+    isIdle: isTitleIdle,
+    isError: isTitleError,
+    isPending: isTitlePending,
+  } = useMutation({
+    mutationFn: async ({
+      description,
+      type,
+    }: {
+      description: string;
+      type: BountyType;
+    }) =>
+      (
+        await api.post<TTitleGenerateResponse>(
+          '/api/sponsor-dashboard/ai-generate/title',
+          { description, type },
+        )
+      ).data,
+  });
+
+  const {
     data: eligibilityQuestions,
     mutateAsync: callEligibilityQuestions,
     reset: resetEligibilityQuestions,
@@ -103,23 +134,11 @@ export function AiGenerateDialog({ children }: AIDescriptionDialogProps) {
     isError: isRewardsError,
     isPending: isRewardsPending,
   } = useMutation({
-    mutationFn: async ({
-      description,
-      inputReward,
-      type,
-    }: {
-      description: string;
-      inputReward: string;
-      type: BountyType;
-    }) =>
+    mutationFn: async (input: RewardInputSchema) =>
       (
         await api.post<TRewardsGenerateResponse>(
           '/api/sponsor-dashboard/ai-generate/rewards',
-          {
-            description,
-            inputReward,
-            type,
-          },
+          input,
         )
       ).data,
   });
@@ -140,14 +159,49 @@ export function AiGenerateDialog({ children }: AIDescriptionDialogProps) {
       ).data,
   });
 
+  const {
+    data: token,
+    mutateAsync: callToken,
+    reset: resetToken,
+  } = useMutation({
+    mutationFn: async ({ description }: { description: string }) =>
+      (
+        await api.post<TTokenGenerateResponse>(
+          '/api/sponsor-dashboard/ai-generate/token',
+          {
+            description,
+          },
+        )
+      ).data,
+  });
+
   const handleFormSubmit = async (data: AiGenerateFormValues) => {
     setFormData(data);
 
+    const token =
+      (
+        await callToken({
+          description: data.rewards,
+        })
+      )?.token || 'USDC';
+    const tokenItem = tokenList.find((s) => s.tokenSymbol === token);
+    const tokenUsdAmount = tokenItem
+      ? await fetchTokenUSDValue(tokenItem.mintAddress)
+      : 1;
+
     const completedDescription = await completeDescription('', {
-      body: data,
+      body: {
+        ...data,
+        token,
+        tokenUsdAmount,
+      },
     });
 
     if (completedDescription) {
+      callTitle({
+        description: completedDescription,
+        type,
+      });
       if (type !== 'hackathon') {
         callEligibilityQuestions({
           description: completedDescription,
@@ -159,6 +213,8 @@ export function AiGenerateDialog({ children }: AIDescriptionDialogProps) {
         description: completedDescription,
         inputReward: data.rewards,
         type,
+        token,
+        tokenUsdValue: tokenUsdAmount,
       });
 
       callSkills({ description: completedDescription });
@@ -175,6 +231,8 @@ export function AiGenerateDialog({ children }: AIDescriptionDialogProps) {
     resetEligibilityQuestions();
     resetRewards();
     resetSkills();
+    resetToken();
+    resetTitle();
     setDescription('');
   };
 
@@ -183,6 +241,8 @@ export function AiGenerateDialog({ children }: AIDescriptionDialogProps) {
     resetEligibilityQuestions();
     resetRewards();
     resetSkills();
+    resetToken();
+    resetTitle();
     setDescription('');
   }, [type]);
 
@@ -198,9 +258,14 @@ export function AiGenerateDialog({ children }: AIDescriptionDialogProps) {
           />
         ) : (
           <AiGenerateResult
+            token={token?.token || 'USDC'}
             isDescriptionLoading={isDescriptionLoading}
             description={parsedDescription}
             isDescriptionError={Boolean(isDescriptionError)}
+            title={title?.title || ''}
+            isTitleIdle={isTitleIdle}
+            isTitleError={isTitleError}
+            isTitlePending={isTitlePending}
             eligibilityQuestions={eligibilityQuestions || []}
             isEligibilityQuestionsIdle={isEligibilityQuestionsIdle}
             isEligibilityQuestionsError={isEligibilityQuestionsError}
@@ -216,6 +281,7 @@ export function AiGenerateDialog({ children }: AIDescriptionDialogProps) {
             onInsert={() => {
               listingForm.setValue('description', parsedDescription);
               listingForm.setValue('eligibility', eligibilityQuestions);
+              if (title?.title) listingForm.setValue('title', title?.title);
               if (skills) {
                 listingForm.setValue('skills', skills);
               }
@@ -224,7 +290,7 @@ export function AiGenerateDialog({ children }: AIDescriptionDialogProps) {
                   'compensationType',
                   rewards.compensationType,
                 );
-                listingForm.setValue('token', rewards.token);
+                listingForm.setValue('token', token?.token || 'USDC');
                 if (rewards.maxBonusSpots)
                   listingForm.setValue(
                     'maxBonusSpots',
@@ -265,6 +331,8 @@ export function AiGenerateDialog({ children }: AIDescriptionDialogProps) {
               resetEligibilityQuestions();
               resetRewards();
               resetSkills();
+              resetToken();
+              resetTitle();
               setDescription('');
             }}
           />
