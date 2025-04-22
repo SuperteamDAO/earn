@@ -120,7 +120,14 @@ export function AiGenerateForm({
                       {...field}
                     />
                   </FormControl>
-                  <FormMessage />
+                  <span className="flex justify-between">
+                    <FormMessage />
+                    <div className="mr-4 ml-auto text-xs text-slate-400">
+                      {field.value?.length < 50
+                        ? `Add at least ${50 - (field.value?.length || 0)} more characters`
+                        : ``}
+                    </div>
+                  </span>
                 </FormItem>
               )}
             />
@@ -141,7 +148,14 @@ export function AiGenerateForm({
                       {...field}
                     />
                   </FormControl>
-                  <FormMessage />
+                  <span className="flex justify-between">
+                    <FormMessage />
+                    <div className="mr-4 ml-auto text-xs text-slate-400">
+                      {field.value?.length < 50
+                        ? `Add at least ${50 - (field.value?.length || 0)} more characters`
+                        : ``}
+                    </div>
+                  </span>
                 </FormItem>
               )}
             />
@@ -168,7 +182,14 @@ export function AiGenerateForm({
                       {...field}
                     />
                   </FormControl>
-                  <FormMessage />
+                  <span className="flex justify-between">
+                    <FormMessage />
+                    <div className="mr-4 ml-auto text-xs text-slate-400">
+                      {field.value?.length < 10
+                        ? `Add at least ${10 - (field.value?.length || 0)} more characters`
+                        : ``}
+                    </div>
+                  </span>
                 </FormItem>
               )}
             />
@@ -195,7 +216,14 @@ export function AiGenerateForm({
                       {...field}
                     />
                   </FormControl>
-                  <FormMessage />
+                  <span className="flex justify-between">
+                    <FormMessage />
+                    <div className="mr-4 ml-auto text-xs text-slate-400">
+                      {field.value?.length < 25
+                        ? `Add at least ${25 - (field.value?.length || 0)} more characters`
+                        : ``}
+                    </div>
+                  </span>
                 </FormItem>
               )}
             />

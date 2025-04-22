@@ -50,7 +50,8 @@ Generate a bounty listing draft using the information above. Structure the draft
 *   Use the content from <company-description> to introduce the company or protocol.
 *   Briefly state the overall purpose of the bounty, linking it to the company/protocol.
 *   Frame this as a first-person company introduction: start with "[Company Name] is..." then use "We/Our/Us" for subsequent sentences.
-*   Include the company link if provided within the description.
+*   Must include the links that are provided in the <company-description>.
+*   Absolutely avoid to add any other link other other than what was provided in <company-description>.
 *   You must absolute inlcude The info from web search of the company, ONLY inlcude basic info about what the company does in short, also add any other info of the company if that info is relevant to the scope of work
 
 ## Mission

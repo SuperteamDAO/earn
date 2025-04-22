@@ -174,15 +174,17 @@ export function AiGenerateResult({
             )}
           </div>
         </div>
-        {!isTitleIdle && !isTitleError && (
+        {((isTitleIdle && title.length > 0) ||
+          (!isTitleIdle && !isTitleError)) && (
           <div className="mt-4 space-y-3 text-sm text-slate-700">
             <h3 className="text-sm font-medium text-slate-600">Title</h3>
-            {isTitlePending ? (
+            {isTitlePending && (
               <span className="flex animate-pulse items-center justify-center gap-2 rounded-md bg-slate-100 py-4 text-sm text-slate-500">
                 <Loader2 className="size-4 animate-spin" />
                 <p>Generating Title</p>
               </span>
-            ) : (
+            )}
+            {title.length > 0 && (
               <>
                 <div className="flex w-full items-center rounded-md border border-slate-200 bg-slate-50 py-3 pl-3">
                   <p className="font-medium">{title}</p>
@@ -191,7 +193,8 @@ export function AiGenerateResult({
             )}
           </div>
         )}
-        {!isRewardsIdle && !isRewardsError && (
+        {((isRewardsIdle && hasProperRewards(rewards)) ||
+          (!isRewardsIdle && !isRewardsError)) && (
           <div className="mt-4 space-y-3 text-sm text-slate-700">
             <h3 className="text-sm font-medium text-slate-600">Rewards</h3>
             {isRewardsPending ? (
@@ -202,9 +205,7 @@ export function AiGenerateResult({
             ) : (
               <>
                 {!hasProperRewards(rewards) || isRewardsError ? (
-                  <p className="w-full rounded-md bg-slate-100 py-4 text-center text-sm text-slate-600">
-                    {`Couldn't find any rewards from your given inputs`}
-                  </p>
+                  <></>
                 ) : (
                   <div className="flex w-full items-center rounded-md border border-slate-200 bg-slate-50 py-3 pl-3">
                     <RewardResults
@@ -218,7 +219,8 @@ export function AiGenerateResult({
             )}
           </div>
         )}
-        {!isSkillsIdle && !isSkillsError && (
+        {((isSkillsIdle && skills.length > 0) ||
+          (!isSkillsIdle && !isSkillsError)) && (
           <div className="mt-4 space-y-3 text-sm text-slate-700">
             <h3 className="text-sm font-medium text-slate-600">Skills</h3>
             {isSkillsPending ? (
@@ -229,9 +231,7 @@ export function AiGenerateResult({
             ) : (
               <>
                 {skills.length === 0 || isSkillsError ? (
-                  <p className="w-full rounded-md bg-slate-100 py-4 text-center text-sm text-slate-600">
-                    {`Couldn't find any skills from your given inputs`}
-                  </p>
+                  <></>
                 ) : (
                   <div>
                     <SkillsResult skills={skills} />
@@ -242,7 +242,8 @@ export function AiGenerateResult({
           </div>
         )}
 
-        {!isEligibilityQuestionsIdle && !isEligibilityQuestionsError && (
+        {((isEligibilityQuestionsIdle && eligibilityQuestions.length > 0) ||
+          (!isEligibilityQuestionsIdle && !isEligibilityQuestionsError)) && (
           <div className="mt-4 space-y-3 text-sm text-slate-700">
             <h3 className="text-sm font-medium text-slate-600">
               Default Questions
