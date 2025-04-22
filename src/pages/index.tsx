@@ -123,7 +123,7 @@ export default function HomePage({
     <Home type="landing" isAuth={isAuth}>
       <InstallPWAModal />
       <HomepagePop />
-      <FeatureModal />
+      {isAuth && <FeatureModal />}
       <div className="w-full">
         <ListingTabs
           bounties={combinedListings}

@@ -22,7 +22,7 @@ export const EarnAvatar = ({
     setHasError(true);
   };
 
-  const commonClassName = 'grow rounded-full object-cover h-8 w-8';
+  const commonClassName = 'grow rounded-full object-cover size-7';
 
   return (
     <div

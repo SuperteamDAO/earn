@@ -17,6 +17,7 @@ export const FeatureModal = ({
   isAnyModalOpen = false,
 }: {
   isAnyModalOpen?: boolean;
+  isAuth?: boolean;
 }) => {
   const { user } = useUser();
   const { authenticated, ready } = usePrivy();
