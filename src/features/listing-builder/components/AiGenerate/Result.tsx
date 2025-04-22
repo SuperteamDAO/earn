@@ -245,9 +245,11 @@ export function AiGenerateResult({
         {((isEligibilityQuestionsIdle && eligibilityQuestions.length > 0) ||
           (!isEligibilityQuestionsIdle && !isEligibilityQuestionsError)) && (
           <div className="mt-4 space-y-3 text-sm text-slate-700">
-            <h3 className="text-sm font-medium text-slate-600">
-              Default Questions
-            </h3>
+            {type !== 'project' && (
+              <h3 className="text-sm font-medium text-slate-600">
+                Default Questions
+              </h3>
+            )}
             {type !== 'project' && (
               <>
                 <div className="flex items-center rounded-md border">
@@ -451,6 +453,9 @@ function SkillsResult({ skills }: { skills: Skills }) {
     <div className="flex flex-wrap gap-3 rounded-md border border-slate-200 bg-white p-3">
       {skills.map((skillGroup) => (
         <div key={skillGroup.skills} className="flex flex-wrap">
+          <span className="mt-1 mr-1.5 inline-block rounded bg-indigo-100 px-2 py-0.5 text-xs font-medium text-indigo-700 transition-colors">
+            {skillGroup.skills}
+          </span>
           {skillGroup.subskills.length > 0 ? (
             skillGroup.subskills.map((subskill) => (
               <span
