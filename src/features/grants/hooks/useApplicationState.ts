@@ -14,7 +14,10 @@ export const useApplicationState = (
   );
   const tranches = application?.totalTranches ?? 0;
 
-  const isST = grant.isNative && grant.airtableId;
+  const isST =
+    grant.isNative &&
+    grant.airtableId &&
+    !grant.title.toLowerCase().includes('coindcx');
 
   useEffect(() => {
     if (!application) return;

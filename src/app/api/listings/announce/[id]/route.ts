@@ -10,6 +10,10 @@ import { safeStringify } from '@/utils/safeStringify';
 
 import { checkListingSponsorAuth } from '@/features/auth/utils/checkListingSponsorAuth';
 import { getSponsorSession } from '@/features/auth/utils/getSponsorSession';
+import {
+  addSpamPenaltyCredit,
+  addWinBonusCredit,
+} from '@/features/credits/utils/allocateCredits';
 import { queueEmail } from '@/features/emails/utils/queueEmail';
 import { BONUS_REWARD_POSITION } from '@/features/listing-builder/constants';
 import { calculateTotalPrizes } from '@/features/listing-builder/utils/rewards';
@@ -232,10 +236,20 @@ export async function POST(
         }),
       );
 
+      promises.push(
+        addWinBonusCredit(
+          winners[currentIndex]?.userId || '',
+          winners[currentIndex]?.id || '',
+        ),
+      );
+
       currentIndex += 1;
     }
 
     await Promise.all(promises);
+
+    await addSpamPenaltyCredit(id);
+    logger.info(`Applied spam penalties for submissions in listing ID: ${id}`);
 
     waitUntil(
       (async () => {
@@ -340,6 +354,12 @@ export async function POST(
             triggeredBy: userId,
           });
         }
+
+        await queueEmail({
+          type: 'spamCredit',
+          id,
+          triggeredBy: userId,
+        });
 
         try {
           await earncognitoClient.post(`/airtable/sync-announced-listings`, {

@@ -31,7 +31,10 @@ function GrantApplications({ slug }: Props) {
 
   const applications = useAtomValue(applicationsAtom);
 
-  const isST = grant?.isNative && grant?.airtableId;
+  const isST =
+    grant?.isNative &&
+    grant?.airtableId &&
+    grant?.id !== 'c72940f7-81ae-4c03-9bfe-9979d4371267';
 
   useEffect(() => {
     if (grant && grant.sponsorId !== user?.currentSponsorId) {
