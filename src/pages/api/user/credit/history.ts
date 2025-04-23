@@ -116,6 +116,8 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
     const isFirstMonth = dayjs(monthStart).isSame(userCreatedAt, 'month');
     const creditDate = isFirstMonth ? user.createdAt : new Date(monthKey);
 
+    const isUpcomingMonth = dayjs(monthStart).isAfter(now, 'month');
+
     syntheticEntries.push({
       id: `${monthKey}-credit`,
       createdAt: creditDate,
@@ -124,7 +126,9 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       change: +3,
       submission: {
         listing: {
-          title: 'Added 3 credits to your balance',
+          title: isUpcomingMonth
+            ? '3 Credits will be issued'
+            : 'Added 3 credits to your balance',
           type: '',
         },
       },

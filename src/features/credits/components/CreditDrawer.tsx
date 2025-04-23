@@ -117,8 +117,8 @@ export function CreditDrawer({
                   CURRENT BALANCE
                 </p>
                 <div className="mt-1.5 flex items-center gap-1">
-                  <CreditIcon className="text-brand-purple size-6" />
-                  <p className="text-lg font-semibold text-slate-800">
+                  <CreditIcon className="text-brand-purple size-5 sm:size-6" />
+                  <p className="text-base font-semibold text-slate-800 sm:text-lg">
                     {creditBalance} Credits
                   </p>
                 </div>
@@ -128,7 +128,7 @@ export function CreditDrawer({
                 <p className="text-sm font-medium tracking-tight text-slate-500">
                   EXPIRES IN
                 </p>
-                <p className="mt-1.5 text-lg font-medium text-slate-800">
+                <p className="mt-1.5 text-base font-medium text-slate-800 sm:text-lg">
                   <Countdown
                     date={
                       new Date(
