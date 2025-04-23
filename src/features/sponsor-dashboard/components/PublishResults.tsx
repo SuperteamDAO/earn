@@ -29,6 +29,7 @@ interface Props {
   totalPaymentsMade: number;
   bounty: Listing | undefined;
   remainings: { podiums: number; bonus: number } | null;
+  submissionsLeft: number;
   submissions: Array<{ id: string; label?: string }>;
 }
 
@@ -39,6 +40,7 @@ export function PublishResults({
   totalPaymentsMade,
   bounty,
   remainings,
+  submissionsLeft,
   submissions = [],
 }: Props) {
   const [isPublishingResults, setIsPublishingResults] = useState(false);
@@ -58,11 +60,14 @@ export function PublishResults({
         (bounty?.rewards?.[BONUS_REWARD_POSITION]
           ? bounty?.maxBonusSpots || 0
           : 0);
-  let isWinnersAllSelected = !(
-    remainings && remainings.podiums + remainings.bonus !== 0
-  );
-  if (isProject) isWinnersAllSelected = true;
-  // Overrdiding isWinnersAllSelected if project coz position select is done here now for project only
+
+  const notEnoughSubmissionsForBonus =
+    remainings && remainings.bonus > 0 && submissionsLeft < remainings.bonus;
+  const isWinnersAllSelected =
+    isProject ||
+    !remainings ||
+    (remainings.podiums === 0 &&
+      (remainings.bonus === 0 || notEnoughSubmissionsForBonus));
 
   let alertType:
     | 'loading'
@@ -80,6 +85,10 @@ export function PublishResults({
     alertDescription = `You still have to select ${remainingWinners} more ${
       remainingWinners === 1 ? 'winner' : 'winners'
     } before you can publish the results publicly.`;
+  } else if (notEnoughSubmissionsForBonus) {
+    alertType = 'warning';
+    alertTitle = 'Not Enough Submissions for Bonus Spots';
+    alertDescription = `You have ${remainings?.bonus} bonus spots remaining but do not have enough submissions left. You can still publish results, but not all bonus spots will be filled.`;
   } else if (rewards && totalPaymentsMade !== rewards) {
     const remainingPayments = (rewards || 0) - totalPaymentsMade;
     alertType = 'warning';
