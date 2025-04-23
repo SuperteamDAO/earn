@@ -1,6 +1,7 @@
+import { useAtom } from 'jotai';
 import Link from 'next/link';
 import { usePostHog } from 'posthog-js/react';
-import { useMemo } from 'react';
+import { useEffect } from 'react';
 import { useWatch } from 'react-hook-form';
 import { toast } from 'sonner';
 
@@ -14,6 +15,8 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 
+import { descriptionKeyAtom } from '@/features/listing-builder/atoms';
+
 import { useListingForm } from '../../../hooks';
 import { Templates } from './Templates';
 
@@ -24,10 +27,12 @@ export function DescriptionAndTemplate() {
     name: 'templateId',
   });
 
-  const editorKey = useMemo(
-    () => `editor-${templateId || 'default'}`,
-    [templateId],
-  );
+  const [descriptionKey, setDescriptionKey] = useAtom(descriptionKeyAtom);
+
+  useEffect(() => {
+    setDescriptionKey(`editor-${templateId || 'default'}`);
+  }, [templateId]);
+
   const posthog = usePostHog();
 
   return (
@@ -73,7 +78,7 @@ export function DescriptionAndTemplate() {
             <div className="ring-primary flex rounded-md border has-focus:ring-1">
               <FormControl>
                 <MinimalTiptapEditor
-                  key={editorKey}
+                  key={descriptionKey}
                   value={field.value}
                   onChange={(e) => {
                     field.onChange(e);
