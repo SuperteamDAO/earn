@@ -147,12 +147,14 @@ export async function POST(
         }),
       );
 
-      promises.push(
-        addWinBonusCredit(
-          winners[currentIndex]?.userId || '',
-          winners[currentIndex]?.id || '',
-        ),
-      );
+      if (listing.type === 'bounty' || listing.type === 'project') {
+        promises.push(
+          addWinBonusCredit(
+            winners[currentIndex]?.userId || '',
+            winners[currentIndex]?.id || '',
+          ),
+        );
+      }
 
       currentIndex += 1;
     }
@@ -266,11 +268,13 @@ export async function POST(
           });
         }
 
-        await queueEmail({
-          type: 'spamCredit',
-          id,
-          triggeredBy: userId,
-        });
+        if (listing.type === 'bounty' || listing.type === 'project') {
+          await queueEmail({
+            type: 'spamCredit',
+            id,
+            triggeredBy: userId,
+          });
+        }
 
         try {
           await earncognitoClient.post(`/airtable/sync-announced-listings`, {
