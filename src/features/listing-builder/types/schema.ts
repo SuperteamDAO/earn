@@ -292,6 +292,14 @@ export const createListingRefinements = async (
           path: ['rewards'],
         });
       }
+    } else {
+      if (!data.eligibility || data.eligibility.length === 0) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Please fill in the questions',
+          path: ['eligibility'],
+        });
+      }
     }
 
     if (data.rewards) {

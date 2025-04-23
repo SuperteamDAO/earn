@@ -231,7 +231,7 @@ export function EligibilityQuestionsForm() {
         <FormItem className="flex h-full flex-col gap-2">
           <div className="flex items-center gap-2">
             <FormLabel className="font-medium text-slate-500 uppercase sm:text-xs">
-              Additional Custom Questions
+              {type === 'project' ? '' : 'Additional'} Custom Questions
             </FormLabel>
           </div>
           <div
@@ -254,8 +254,12 @@ export function EligibilityQuestionsForm() {
             ))}
           </div>
           {type !== 'bounty' || fields.length < 2 ? (
-            <div className="flex justify-between">
-              <FormMessage />
+            <div
+              className={cn(
+                'flex justify-between',
+                fields.length === 0 && 'flex-col gap-2',
+              )}
+            >
               <Button
                 type="button"
                 variant={fields.length === 0 ? 'outline' : 'link'}
@@ -268,6 +272,7 @@ export function EligibilityQuestionsForm() {
               >
                 <Plus /> <span>Add Question</span>
               </Button>
+              <FormMessage />
             </div>
           ) : (
             <FormDescription>

@@ -213,13 +213,7 @@ function Type() {
       form.setValue('eligibility', []);
     }
     if (newType === 'project') {
-      form.setValue('eligibility', [
-        {
-          type: 'text',
-          order: 1,
-          question: '',
-        },
-      ]);
+      form.setValue('eligibility', []);
     }
     const values = form.getValues();
     setPrevCompType(values.compensationType);

@@ -1,5 +1,5 @@
-import { BookType, Info } from 'lucide-react';
-import { useEffect, useMemo, useState } from 'react';
+import { FilePen, Info } from 'lucide-react';
+import { useMemo, useState } from 'react';
 import { useWatch } from 'react-hook-form';
 import { toast } from 'sonner';
 
@@ -39,25 +39,17 @@ export function EligibilityQuestionsSheet() {
 
   const hasEligibilityQsErrors = useMemo(() => {
     const errors = form.formState.errors;
-    console.log(
-      'errors eligiblity',
-      errors?.eligibility?.some?.((question) => question?.message),
-    );
     return (
       errors.eligibility &&
       errors?.eligibility?.some?.((question) => !!question)
     );
   }, [form]);
 
-  useEffect(() => {
-    console.log('hasEligibilityQsErrors', hasEligibilityQsErrors);
-  }, [hasEligibilityQsErrors]);
-
   const subtext = useMemo(
     () =>
       type === 'project'
         ? `Applicant's names, email IDs, and SOL wallet are collected by default. Please use this space to ask about anything else!`
-        : `The main bounty submission link, the submitter's names, email IDs, and SOL wallet are collected by default. Please use this space to ask about anything else!`,
+        : `The main ${type === 'bounty' ? 'bounty' : 'hackathon'} submission link, the submitter's names, email IDs, and SOL wallet are collected by default. Please use this space to ask about anything else!`,
     [type],
   );
 
@@ -86,26 +78,21 @@ export function EligibilityQuestionsSheet() {
                 </Tooltip>
               </div>
               <div className="flex w-full items-center gap-2 rounded-md border border-slate-200 bg-slate-50 py-0.5 pl-2">
-                <BookType className="size-4 text-slate-600" />
+                <FilePen className="size-4 stroke-[1.5] text-slate-900" />
                 <span className="flex items-center">
                   <p className="text-sm font-medium">
                     {field.value?.length || 0}
                   </p>
-                  <p className="pl-2 text-sm">
-                    Question{(field.value?.length || 0) > 1 ? 's' : ''}
+                  <p className="pl-1 text-sm">
+                    Question{(field.value?.length || 0) === 1 ? '' : 's'}
                   </p>
                 </span>
-                {type !== 'project' && (
-                  <span className="flex items-center text-xs text-slate-400">
-                    | +2 Default
-                  </span>
-                )}
                 <Button
                   variant="link"
                   size="sm"
                   className="ml-auto group-hover:underline"
                 >
-                  Edit
+                  {(field.value?.length || 0) > 0 ? 'Edit' : 'Add'}
                 </Button>
               </div>
               {hasEligibilityQsErrors ? (
