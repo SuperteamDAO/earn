@@ -59,9 +59,11 @@ export default function BountySubmissions({ listing }: Props) {
   const searchParams = useSearchParams();
   const posthog = usePostHog();
 
-  const { data: submissions, isLoading: isSubmissionsLoading } = useQuery(
-    submissionsQuery(listing, true),
-  );
+  const {
+    data: submissions,
+    isLoading: isSubmissionsLoading,
+    refetch: refetchSubmissions,
+  } = useQuery(submissionsQuery(listing, true));
 
   const { data: bounty, isLoading: isBountyLoading } = useQuery(
     sponsorDashboardListingQuery(listing),
@@ -241,6 +243,7 @@ export default function BountySubmissions({ listing }: Props) {
                       selectedSubmission={selectedSubmission}
                       setSelectedSubmission={setSelectedSubmission}
                       type={bounty?.type}
+                      refetchSubmissions={refetchSubmissions}
                     />
                   </div>
 

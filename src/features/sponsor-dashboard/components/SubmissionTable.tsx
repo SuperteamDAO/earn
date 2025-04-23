@@ -1,9 +1,19 @@
 import dayjs from 'dayjs';
-import { Copy, ExternalLink, Eye, MoreVertical, User2 } from 'lucide-react';
+import {
+  Copy,
+  ExternalLink,
+  Eye,
+  MoreVertical,
+  Pencil,
+  RefreshCw,
+  Trash,
+  User2,
+} from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
-import React from 'react';
+import React, { useState } from 'react';
 import { toast } from 'sonner';
 
 import { SortableTH } from '@/components/shared/sortable-th';
@@ -25,6 +35,7 @@ import {
 } from '@/components/ui/table';
 import { Tooltip } from '@/components/ui/tooltip';
 import { tokenList } from '@/constants/tokenList';
+import { useDisclosure } from '@/hooks/use-disclosure';
 import { getSubmissionUrl } from '@/utils/bounty-urls';
 import { cn } from '@/utils/cn';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
@@ -38,6 +49,8 @@ import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 import { type SubmissionWithListingUser } from '../queries/dashboard-submissions';
 import { colorMap } from '../utils/statusColorMap';
 import { ListingTh } from './ListingTable';
+import { DeleteRestoreSubmissionModal } from './Submissions/Modals/DeleteRestoreSubmissionModal';
+import { EditSubmissionStatusModal } from './Submissions/Modals/EditSubmissionStatusModal';
 
 interface SubmissionTableProps {
   submissions: SubmissionWithListingUser[];
@@ -46,6 +59,7 @@ interface SubmissionTableProps {
     direction: 'asc' | 'desc' | null;
   };
   onSort: (column: string, direction: 'asc' | 'desc' | null) => void;
+  refetchSubmissions: () => void;
 }
 
 const thClassName =
@@ -77,9 +91,26 @@ export const SubmissionTable = ({
   submissions,
   currentSort,
   onSort,
+  refetchSubmissions,
 }: SubmissionTableProps) => {
   const posthog = usePostHog();
   const router = useRouter();
+  const { data: session } = useSession();
+  const isGodUser = session?.user?.role === 'GOD';
+  const {
+    isOpen: isEditModalOpen,
+    onOpen: onEditModalOpen,
+    onClose: onEditModalClose,
+  } = useDisclosure();
+  const {
+    isOpen: isDeleteModalOpen,
+    onOpen: onDeleteModalOpen,
+    onClose: onDeleteModalClose,
+  } = useDisclosure();
+  const [interactedSubmission, setInteractedSubmission] = useState<
+    SubmissionWithListingUser | undefined
+  >(undefined);
+
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text).then(
       () => {
@@ -371,6 +402,46 @@ export const SubmissionTable = ({
                               Copy Payment Link
                             </DropdownMenuItem>
                           )}
+                        {isGodUser && (
+                          <>
+                            {submission.isArchived && (
+                              <DropdownMenuItem
+                                className="cursor-pointer text-sm font-medium text-slate-500"
+                                onClick={() => {
+                                  setInteractedSubmission(submission);
+                                  onEditModalOpen();
+                                }}
+                              >
+                                <Pencil className="mr-2 h-4 w-4" />
+                                Edit Status
+                              </DropdownMenuItem>
+                            )}
+                            <DropdownMenuItem
+                              className={cn(
+                                'cursor-pointer text-sm font-medium text-slate-500',
+                                submission.isArchived
+                                  ? 'hover:text-brand-purple'
+                                  : 'hover:text-destructive',
+                              )}
+                              onClick={() => {
+                                setInteractedSubmission(submission);
+                                onDeleteModalOpen();
+                              }}
+                            >
+                              {submission.isArchived ? (
+                                <>
+                                  <RefreshCw className="mr-2 h-4 w-4" />
+                                  Restore Submission
+                                </>
+                              ) : (
+                                <>
+                                  <Trash className="mr-2 h-4 w-4" />
+                                  Delete Submission
+                                </>
+                              )}
+                            </DropdownMenuItem>
+                          </>
+                        )}
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>
@@ -380,6 +451,19 @@ export const SubmissionTable = ({
           </TableBody>
         </Table>
       </div>
+
+      <EditSubmissionStatusModal
+        isOpen={isEditModalOpen}
+        onClose={onEditModalClose}
+        submission={interactedSubmission}
+        onSuccess={refetchSubmissions}
+      />
+      <DeleteRestoreSubmissionModal
+        isOpen={isDeleteModalOpen}
+        onClose={onDeleteModalClose}
+        submission={interactedSubmission}
+        onSuccess={refetchSubmissions}
+      />
     </>
   );
 };

@@ -381,7 +381,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const sequentialId = parseInt(submissionId as string);
 
   const session = await getServerSession(context.req, context.res, authOptions);
-  console.log(session);
 
   let bountyData;
   let slug;

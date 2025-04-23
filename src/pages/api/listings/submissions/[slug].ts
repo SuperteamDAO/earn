@@ -17,7 +17,7 @@ async function handler(
   const isWinner = params.isWinner === 'true';
 
   const isGod = req.authorized && req.role === 'GOD';
-  const validation = isGod ? {} : { isActive: true };
+  const validation = isGod ? {} : { isActive: true, isArchived: false };
 
   logger.debug(`Request query: ${safeStringify(req.query)}`);
 
@@ -72,6 +72,7 @@ async function handler(
       where: {
         listingId: result.id,
         ...(isWinner ? { isWinner } : {}),
+        ...validation,
       },
       include: {
         user: {

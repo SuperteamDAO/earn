@@ -24,7 +24,7 @@ async function handler(
   }
 
   const isGod = req.authorized && req.role === 'GOD';
-  const validation = isGod ? {} : { isActive: true };
+  const validation = isGod ? {} : { isActive: true, isArchived: false };
 
   try {
     const result = await prisma.bounties.findFirst({

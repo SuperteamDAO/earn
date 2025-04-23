@@ -26,7 +26,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       return res.status(403).json({ error: 'Unauthorized' });
     }
 
-    const filter = isGod ? {} : { isActive: true };
+    const filter = isGod ? {} : { isActive: true, isArchived: false };
 
     const query = await prisma.submission.findMany({
       where: {
@@ -37,8 +37,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
             ? { hackathonId: user.hackathonId }
             : { sponsor: { id: req.userSponsorId } }),
         },
-        isActive: true,
-        isArchived: false,
+        ...filter,
       },
       include: {
         user: {

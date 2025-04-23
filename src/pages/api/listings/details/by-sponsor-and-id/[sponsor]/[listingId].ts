@@ -19,7 +19,9 @@ async function handler(
   const isUUID = listingId.includes('-');
 
   const isGod = req.authorized && req.role === 'GOD';
-  const validation = isGod ? {} : { isPublished: true, isPrivate: false };
+  const validation = isGod
+    ? {}
+    : { isPublished: true, isPrivate: false, isArchived: false };
 
   const where: Prisma.BountiesWhereInput = isUUID
     ? {

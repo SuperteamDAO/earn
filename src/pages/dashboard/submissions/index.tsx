@@ -68,9 +68,11 @@ export default function SponsorListings() {
     sponsorStatsQuery(user?.currentSponsorId),
   );
 
-  const { data: allSubmissions, isLoading: isSubmissionsLoading } = useQuery(
-    sponsorshipSubmissionsQuery(user?.currentSponsorId),
-  );
+  const {
+    data: allSubmissions,
+    isLoading: isSubmissionsLoading,
+    refetch: refetchSubmissions,
+  } = useQuery(sponsorshipSubmissionsQuery(user?.currentSponsorId));
 
   const debouncedSetSearchText = useRef(debounce(setSearchText, 300)).current;
 
@@ -396,6 +398,7 @@ export default function SponsorListings() {
                 onSort={(column, direction) =>
                   setCurrentSort({ column, direction })
                 }
+                refetchSubmissions={refetchSubmissions}
               />
             </TabsContent>
             <TabsContent value="bounties" className="px-0">
@@ -405,6 +408,7 @@ export default function SponsorListings() {
                 onSort={(column, direction) =>
                   setCurrentSort({ column, direction })
                 }
+                refetchSubmissions={refetchSubmissions}
               />
             </TabsContent>
             <TabsContent value="projects" className="px-0">
@@ -414,6 +418,7 @@ export default function SponsorListings() {
                 onSort={(column, direction) =>
                   setCurrentSort({ column, direction })
                 }
+                refetchSubmissions={refetchSubmissions}
               />
             </TabsContent>
             <TabsContent value="sponsorships" className="px-0">
@@ -423,6 +428,7 @@ export default function SponsorListings() {
                 onSort={(column, direction) =>
                   setCurrentSort({ column, direction })
                 }
+                refetchSubmissions={refetchSubmissions}
               />
             </TabsContent>
             {hasGrants && (
@@ -433,6 +439,7 @@ export default function SponsorListings() {
                   onSort={(column, direction) =>
                     setCurrentSort({ column, direction })
                   }
+                  refetchSubmissions={refetchSubmissions}
                 />
               </TabsContent>
             )}
@@ -444,6 +451,7 @@ export default function SponsorListings() {
                   onSort={(column, direction) =>
                     setCurrentSort({ column, direction })
                   }
+                  refetchSubmissions={refetchSubmissions}
                 />
               </TabsContent>
             )}
