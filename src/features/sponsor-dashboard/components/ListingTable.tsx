@@ -8,6 +8,7 @@ import {
   MoreVertical,
   Pencil,
   PencilLine,
+  RefreshCw,
   Trash,
 } from 'lucide-react';
 import Link from 'next/link';
@@ -57,10 +58,11 @@ import { DeleteDraftModal } from './Modals/DeleteDraftModal';
 import { UnpublishModal } from './Modals/UnpublishModal';
 import { VerifyPaymentModal } from './Modals/VerifyPayment';
 import { SponsorPrize } from './SponsorPrize';
-
+import { DeleteRestoreListingModal } from './Submissions/Modals/DeleteRestoreListingModal';
 interface ListingTableProps {
   sponsor: SponsorType | undefined;
   listings: ListingWithSubmissions[];
+  refreshListings: () => void;
   currentSort: {
     column: string;
     direction: 'asc' | 'desc' | null;
@@ -88,6 +90,7 @@ export const ListingTable = ({
   listings,
   currentSort,
   onSort,
+  refreshListings,
 }: ListingTableProps) => {
   const [selectedListing, setSelectedListing] =
     useState<ListingWithSubmissions>({});
@@ -115,6 +118,11 @@ export const ListingTable = ({
     isOpen: verifyPaymentIsOpen,
     onOpen: verifyPaymentOnOpen,
     onClose: verifyPaymentOnClose,
+  } = useDisclosure();
+  const {
+    isOpen: deleteModalOpen,
+    onOpen: deleteModalOnOpen,
+    onClose: deleteModalOnClose,
   } = useDisclosure();
 
   const handleUnpublish = async (
@@ -156,12 +164,18 @@ export const ListingTable = ({
       <UnpublishModal
         listingId={selectedListing.id}
         unpublishIsOpen={unpublishIsOpen}
-        unpublishOnClose={unpublishOnClose}
+        unpublishOnClose={() => {
+          unpublishOnClose();
+          refreshListings();
+        }}
         listingType={selectedListing.type}
       />
       <DeleteDraftModal
         deleteDraftIsOpen={deleteDraftIsOpen}
-        deleteDraftOnClose={deleteDraftOnClose}
+        deleteDraftOnClose={() => {
+          deleteDraftOnClose();
+          refreshListings();
+        }}
         listingId={selectedListing.id}
         listingType={selectedListing.type}
       />
@@ -169,11 +183,20 @@ export const ListingTable = ({
         listing={selectedListing}
         setListing={setSelectedListing}
         isOpen={verifyPaymentIsOpen}
-        onClose={verifyPaymentOnClose}
+        onClose={() => {
+          verifyPaymentOnClose();
+          refreshListings();
+        }}
         listingId={selectedListing.id}
         listingType={selectedListing.type}
         selectedSubmission={undefined}
         setSelectedSubmission={() => {}}
+      />
+      <DeleteRestoreListingModal
+        isOpen={deleteModalOpen}
+        onClose={deleteModalOnClose}
+        listing={selectedListing}
+        onSuccess={refreshListings}
       />
       <div className="w-full overflow-x-auto rounded-md border border-slate-200">
         <Table>
@@ -463,6 +486,33 @@ export const ListingTable = ({
                             >
                               <Trash className="mr-2 h-4 w-4" />
                               Delete Draft
+                            </DropdownMenuItem>
+                          )}
+
+                        {session?.user?.role === 'GOD' &&
+                          listingStatus !== 'Draft' &&
+                          listing?.type !== 'grant' && (
+                            <DropdownMenuItem
+                              className={cn(
+                                'cursor-pointer text-sm font-medium text-slate-500',
+                                listing.isArchived && 'hover:text-brand-purple',
+                              )}
+                              onClick={() => {
+                                setSelectedListing(listing);
+                                deleteModalOnOpen();
+                              }}
+                            >
+                              {listing.isArchived || !listing.isActive ? (
+                                <>
+                                  <RefreshCw className="mr-2 h-4 w-4" />
+                                  Restore
+                                </>
+                              ) : (
+                                <>
+                                  <Trash className="mr-2 h-4 w-4" />
+                                  Delete
+                                </>
+                              )}
                             </DropdownMenuItem>
                           )}
 

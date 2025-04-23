@@ -428,7 +428,7 @@ export const SubmissionTable = ({
                                 onDeleteModalOpen();
                               }}
                             >
-                              {submission.isArchived ? (
+                              {submission.isArchived || !submission.isActive ? (
                                 <>
                                   <RefreshCw className="mr-2 h-4 w-4" />
                                   Restore Submission

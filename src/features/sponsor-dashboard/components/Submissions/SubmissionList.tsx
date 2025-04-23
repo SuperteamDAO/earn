@@ -356,7 +356,7 @@ export const SubmissionList = ({
                       onDeleteModalOpen();
                     }}
                   >
-                    {submission.isArchived ? (
+                    {submission.isArchived || !submission.isActive ? (
                       <RefreshCw className="h-3 w-3" />
                     ) : (
                       <Trash className="h-3 w-3" />

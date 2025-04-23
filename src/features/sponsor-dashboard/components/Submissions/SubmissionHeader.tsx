@@ -247,7 +247,7 @@ ${socialListingLink('twitter')}
                   )}
                   onClick={deleteModalOnOpen}
                 >
-                  {bounty?.isArchived ? (
+                  {bounty?.isArchived || !bounty?.isActive ? (
                     <>
                       <RefreshCw className="h-4 w-4" />
                       Restore

@@ -44,6 +44,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       where: { id },
       data: {
         isArchived: isArchived,
+        isActive: isArchived ? false : true,
         updatedAt: new Date(),
       },
     });

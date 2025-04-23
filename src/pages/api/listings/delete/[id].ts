@@ -35,7 +35,7 @@ async function bountyDelete(
     logger.debug(`Updating bounty status to inactive for bounty ID: ${id}`);
     await prisma.bounties.update({
       where: { id },
-      data: { isActive: false },
+      data: { isActive: false, isArchived: true },
     });
 
     logger.info(`Draft bounty with ID: ${id} deleted successfully`);

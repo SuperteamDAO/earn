@@ -27,7 +27,7 @@ export const DeleteRestoreSubmissionModal = ({
   onSuccess,
 }: DeleteRestoreSubmissionModalProps) => {
   const [isProcessing, setIsProcessing] = useState(false);
-  const isDeleted = submission?.isArchived;
+  const isDeleted = submission?.isArchived || !submission?.isActive;
 
   const handleDelete = async () => {
     if (!submission) return;

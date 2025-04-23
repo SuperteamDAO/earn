@@ -49,7 +49,7 @@ import {
 } from '@/features/sponsor-dashboard/queries/dashboard-submissions';
 import { sponsorStatsQuery } from '@/features/sponsor-dashboard/queries/sponsor-stats';
 
-const MemoizedListingTable = React.memo(SubmissionTable);
+const MemoizedSubmissionTable = React.memo(SubmissionTable);
 
 export default function SponsorListings() {
   const { data: session } = useSession();
@@ -392,7 +392,7 @@ export default function SponsorListings() {
             </TabsList>
             <div className="h-0.5 w-full bg-slate-200" />
             <TabsContent value="all" className="px-0">
-              <MemoizedListingTable
+              <MemoizedSubmissionTable
                 submissions={paginatedListings}
                 currentSort={currentSort}
                 onSort={(column, direction) =>
@@ -402,7 +402,7 @@ export default function SponsorListings() {
               />
             </TabsContent>
             <TabsContent value="bounties" className="px-0">
-              <MemoizedListingTable
+              <MemoizedSubmissionTable
                 submissions={paginatedListings}
                 currentSort={currentSort}
                 onSort={(column, direction) =>
@@ -412,7 +412,7 @@ export default function SponsorListings() {
               />
             </TabsContent>
             <TabsContent value="projects" className="px-0">
-              <MemoizedListingTable
+              <MemoizedSubmissionTable
                 submissions={paginatedListings}
                 currentSort={currentSort}
                 onSort={(column, direction) =>
@@ -422,7 +422,7 @@ export default function SponsorListings() {
               />
             </TabsContent>
             <TabsContent value="sponsorships" className="px-0">
-              <MemoizedListingTable
+              <MemoizedSubmissionTable
                 submissions={paginatedListings}
                 currentSort={currentSort}
                 onSort={(column, direction) =>
@@ -433,7 +433,7 @@ export default function SponsorListings() {
             </TabsContent>
             {hasGrants && (
               <TabsContent value="grants" className="px-0">
-                <MemoizedListingTable
+                <MemoizedSubmissionTable
                   submissions={paginatedListings}
                   currentSort={currentSort}
                   onSort={(column, direction) =>
@@ -445,7 +445,7 @@ export default function SponsorListings() {
             )}
             {hasHackathons && (
               <TabsContent value="hackathons" className="px-0">
-                <MemoizedListingTable
+                <MemoizedSubmissionTable
                   submissions={paginatedListings}
                   currentSort={currentSort}
                   onSort={(column, direction) =>
