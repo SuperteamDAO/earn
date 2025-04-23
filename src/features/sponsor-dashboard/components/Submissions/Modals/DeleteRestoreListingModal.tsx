@@ -11,38 +11,39 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import type { SubmissionWithUser } from '@/interface/submission';
 
-interface DeleteRestoreSubmissionModalProps {
+import type { Listing } from '@/features/listings/types';
+
+interface DeleteRestoreListingModalProps {
   isOpen: boolean;
   onClose: () => void;
-  submission: SubmissionWithUser | undefined;
+  listing: Listing | undefined;
   onSuccess: () => void;
 }
 
-export const DeleteRestoreSubmissionModal = ({
+export const DeleteRestoreListingModal = ({
   isOpen,
   onClose,
-  submission,
+  listing,
   onSuccess,
-}: DeleteRestoreSubmissionModalProps) => {
+}: DeleteRestoreListingModalProps) => {
   const [isProcessing, setIsProcessing] = useState(false);
-  const isDeleted = submission?.isArchived;
+  const isDeleted = listing?.isArchived;
 
   const handleDelete = async () => {
-    if (!submission) return;
+    if (!listing) return;
 
     try {
       setIsProcessing(true);
       const response = await fetch(
-        '/api/sponsor-dashboard/god/toggle-submission-archived',
+        '/api/sponsor-dashboard/god/toggle-listing-archived',
         {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            id: submission.id,
+            id: listing.id,
             isArchived: true,
           }),
         },
@@ -51,34 +52,34 @@ export const DeleteRestoreSubmissionModal = ({
       const data = await response.json();
 
       if (response.ok) {
-        toast.success('Submission deleted successfully');
+        toast.success('Listing deleted successfully');
         onSuccess();
         onClose();
       } else {
-        toast.error(data.error || 'Failed to delete submission');
+        toast.error(data.error || 'Failed to delete listing');
       }
     } catch (error) {
-      console.error('Submission deletion error:', error);
-      toast.error('An error occurred while deleting the submission');
+      console.error('Listing deletion error:', error);
+      toast.error('An error occurred while deleting the listing');
     } finally {
       setIsProcessing(false);
     }
   };
 
   const handleRestore = async () => {
-    if (!submission) return;
+    if (!listing) return;
 
     try {
       setIsProcessing(true);
       const response = await fetch(
-        '/api/sponsor-dashboard/god/toggle-submission-archived',
+        '/api/sponsor-dashboard/god/toggle-listing-archived',
         {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            id: submission.id,
+            id: listing.id,
             isArchived: false,
           }),
         },
@@ -87,15 +88,15 @@ export const DeleteRestoreSubmissionModal = ({
       const data = await response.json();
 
       if (response.ok) {
-        toast.success('Submission restored successfully');
+        toast.success('Listing restored successfully');
         onSuccess();
         onClose();
       } else {
-        toast.error(data.error || 'Failed to restore submission');
+        toast.error(data.error || 'Failed to restore listing');
       }
     } catch (error) {
-      console.error('Submission restoration error:', error);
-      toast.error('An error occurred while restoring the submission');
+      console.error('Listing restoration error:', error);
+      toast.error('An error occurred while restoring the listing');
     } finally {
       setIsProcessing(false);
     }
@@ -106,16 +107,13 @@ export const DeleteRestoreSubmissionModal = ({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>
-            [GOD MODE] {isDeleted ? 'Restore' : 'Delete'} Submission
+            [GOD MODE] {isDeleted ? 'Restore' : 'Delete'} Listing
           </DialogTitle>
           <DialogDescription className="text-slate-500">
             {isDeleted
-              ? `This will restore the submission from `
-              : `This will hide the submission from the public view`}
-            <span className="font-medium">
-              {submission?.user?.firstName} {submission?.user?.lastName}
-            </span>
-            .
+              ? `This will restore the listing `
+              : `This will hide the listing from the public view`}
+            <span className="font-medium">{listing?.title}</span>.
           </DialogDescription>
         </DialogHeader>
 
@@ -123,8 +121,8 @@ export const DeleteRestoreSubmissionModal = ({
           <AlertTriangle className="h-5 w-5" />
           <p className="text-sm">
             {isDeleted
-              ? 'Restoring this submission will make it visible again.'
-              : 'Deleting this submission will hide it from the submission list.'}
+              ? 'Restoring this listing will make it visible again.'
+              : 'Deleting this listing will hide it from the listings list.'}
           </p>
         </div>
 
@@ -146,7 +144,7 @@ export const DeleteRestoreSubmissionModal = ({
               ) : (
                 <>
                   <RefreshCw className="mr-1 h-4 w-4" />
-                  Restore Submission
+                  Restore Listing
                 </>
               )}
             </Button>
@@ -164,7 +162,7 @@ export const DeleteRestoreSubmissionModal = ({
               ) : (
                 <>
                   <Trash className="mr-1 h-4 w-4" />
-                  Delete Submission
+                  Delete Listing
                 </>
               )}
             </Button>

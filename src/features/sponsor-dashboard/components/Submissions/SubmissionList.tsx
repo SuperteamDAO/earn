@@ -122,7 +122,10 @@ export const SubmissionList = ({
       return { bg: 'bg-red-500', color: 'text-white' };
     }
     if (submission.listing?.type === 'sponsorship') {
-      const status = sponsorshipSubmissionStatus(submission);
+      const status = sponsorshipSubmissionStatus({
+        ...submission,
+        listing: undefined,
+      });
       return colorMap[status as keyof typeof colorMap];
     }
 

@@ -445,6 +445,7 @@ export default function BountySubmissions({ slug }: Props) {
           )}
           <SubmissionHeader
             bounty={bounty}
+            refetchBounty={refetchBounty}
             totalSubmissions={submissions?.length || 0}
             allTransactionsVerified={
               submissions?.every(

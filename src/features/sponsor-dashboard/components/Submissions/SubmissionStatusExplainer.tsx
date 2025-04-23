@@ -40,6 +40,8 @@ const statusExplanation = (
         waitingForSponsor: true,
         editable: true,
       };
+    case 'Deleted':
+      return {};
   }
 };
 export default function SubmissionStatusExplanation({
@@ -50,6 +52,7 @@ export default function SubmissionStatusExplanation({
   if (!submission) return null;
 
   const sponsorshipStatus = sponsorshipSubmissionStatus(submission);
+  if (sponsorshipStatus === 'Deleted') return null;
   const explanation = statusExplanation(sponsorshipStatus);
   const statusColors = colorMap[sponsorshipStatus as keyof typeof colorMap];
 

@@ -33,8 +33,12 @@ type BountyGrant = {
 async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   const userSponsorId = req.userSponsorId;
   const isGod = req.role === 'GOD';
-  const isActiveFilter = isGod ? '' : 'AND b.isActive = true';
-  const isGrantActiveFilter = isGod ? '' : 'AND g.isActive = true';
+  const isActiveFilter = isGod
+    ? ''
+    : 'AND b.isActive = true AND b.isArchived = false';
+  const isGrantActiveFilter = isGod
+    ? ''
+    : 'AND g.isActive = true AND g.isArchived = false';
   try {
     const data: BountyGrant[] = await prisma.$queryRawUnsafe(
       `
@@ -50,6 +54,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           b.status,
           b.deadline,
           b.isPublished,
+          b.isArchived,
           b.rewards,
           b.rewardAmount,
           b.isActive,
@@ -65,8 +70,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           CAST((SELECT COUNT(*) FROM Submission s WHERE s.listingId = b.id) AS SIGNED) as submissionCount
         FROM Bounties b
         WHERE
-        b.isArchived = false
-        AND b.sponsorId = ?
+        b.sponsorId = ?
         AND b.status <> ?
         ${isActiveFilter}
         UNION ALL
@@ -82,6 +86,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           g.status,
           NULL as deadline,
           g.isPublished,
+          g.isArchived,
           NULL as rewards,
           NULL as rewardAmount,
           g.isActive,
@@ -96,8 +101,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           g.airtableId,
           CAST((SELECT COUNT(*) FROM GrantApplication ga WHERE ga.grantId = g.id) AS SIGNED) as submissionCount
         FROM Grants g
-        WHERE g.isArchived = false
-        AND g.sponsorId = ?
+        WHERE g.sponsorId = ?
         AND g.status = ?
         ${isGrantActiveFilter}
         AND (g.airtableId IS NOT NULL OR g.isNative = true)

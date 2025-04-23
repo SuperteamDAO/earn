@@ -1,7 +1,9 @@
 import type { GetServerSideProps } from 'next';
+import { getServerSession } from 'next-auth';
 
 import { ListingPageLayout } from '@/layouts/Listing';
 import { api } from '@/lib/api';
+import { authOptions } from '@/pages/api/auth/[...nextauth]';
 import { getURL } from '@/utils/validUrl';
 
 import { ListingPop } from '@/features/conversion-popups/components/ListingPop';
@@ -31,11 +33,18 @@ function BountyDetails({ bounty: bounty }: BountyDetailsProps) {
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { sponsor, listingId } = context.query;
+  const session = await getServerSession(context.req, context.res, authOptions);
 
   let bountyData;
   try {
     const bountyDetails = await api.get(
       `${getURL()}api/listings/details/by-sponsor-and-id/${sponsor}/${listingId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${session?.token}`,
+          cookie: context.req.headers.cookie,
+        },
+      },
     );
     bountyData = bountyDetails.data;
   } catch (e) {

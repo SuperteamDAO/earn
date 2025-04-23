@@ -32,7 +32,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       where: {
         slug,
         type,
-        ...(isGod ? {} : { isActive: true }),
+        ...(isGod ? {} : { isActive: true, isArchived: false }),
       },
       include: {
         sponsor: {

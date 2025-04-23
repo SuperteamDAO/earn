@@ -65,9 +65,11 @@ export default function BountySubmissions({ listing }: Props) {
     refetch: refetchSubmissions,
   } = useQuery(submissionsQuery(listing, true));
 
-  const { data: bounty, isLoading: isBountyLoading } = useQuery(
-    sponsorDashboardListingQuery(listing),
-  );
+  const {
+    data: bounty,
+    isLoading: isBountyLoading,
+    refetch: refetchBounty,
+  } = useQuery(sponsorDashboardListingQuery(listing));
 
   const filteredSubmissions = useMemo(() => {
     if (!submissions) return [];
@@ -193,6 +195,7 @@ export default function BountySubmissions({ listing }: Props) {
             onVerifyPayments={() => {
               alert('TODO');
             }}
+            refetchBounty={refetchBounty}
           />
           <Tabs
             defaultValue={searchParams?.has('scout') ? 'scout' : 'submissions'}

@@ -40,7 +40,9 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       data.map((submission) => ({
         ...submission,
         status:
-          !submission.listing.isActive || submission.isArchived
+          !submission.listing.isActive ||
+          submission.isArchived ||
+          submission.listing.isArchived
             ? 'Deleted'
             : submission.status,
       })),

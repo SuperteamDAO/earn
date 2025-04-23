@@ -8,6 +8,8 @@ import {
   ExternalLink,
   Link2,
   Pencil,
+  RefreshCw,
+  Trash,
 } from 'lucide-react';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
@@ -47,6 +49,7 @@ import { useCompleteSponsorship } from '../../mutations/useCompleteSponsorship';
 import { ListingStatusModal } from '../ListingStatusModal';
 import { SponsorPrize } from '../SponsorPrize';
 import { CompleteSponsorshipModal } from './Modals/CompleteSponsorshipModal';
+import { DeleteRestoreListingModal } from './Modals/DeleteRestoreListingModal';
 
 interface Props {
   bounty: Listing | undefined;
@@ -54,6 +57,7 @@ interface Props {
   totalSubmissions: number;
   isHackathonPage?: boolean;
   onVerifyPayments: () => void;
+  refetchBounty: () => void;
 }
 
 export const SubmissionHeader = ({
@@ -62,6 +66,7 @@ export const SubmissionHeader = ({
   isHackathonPage = false,
   allTransactionsVerified = false,
   onVerifyPayments,
+  refetchBounty,
 }: Props) => {
   const { data: session } = useSession();
   const completeSponsorship = useCompleteSponsorship(bounty?.id ?? '');
@@ -70,6 +75,12 @@ export const SubmissionHeader = ({
     isOpen: statusModalOpen,
     onOpen: statusModalOnOpen,
     onClose: statusModalOnClose,
+  } = useDisclosure();
+
+  const {
+    isOpen: deleteModalOpen,
+    onOpen: deleteModalOnOpen,
+    onClose: deleteModalOnClose,
   } = useDisclosure();
 
   const deadline = formatDeadline(bounty?.deadline, bounty?.type);
@@ -137,12 +148,21 @@ ${socialListingLink('twitter')}
       {isOpen && (
         <CompleteSponsorshipModal
           isOpen={isOpen}
-          onClose={onClose}
+          onClose={() => {
+            onClose();
+            refetchBounty();
+          }}
           allTransactionsVerified={allTransactionsVerified}
           onCompleteListing={completeSponsorship.mutateAsync}
           onReviewTransactions={onVerifyPayments}
         />
       )}
+      <DeleteRestoreListingModal
+        isOpen={deleteModalOpen}
+        onClose={deleteModalOnClose}
+        listing={bounty}
+        onSuccess={() => refetchBounty()}
+      />
       <div className="mb-2">
         <Breadcrumb className="text-slate-400">
           <BreadcrumbList>
@@ -201,22 +221,46 @@ ${socialListingLink('twitter')}
             (session?.user?.role === 'GOD' && bounty?.type !== 'grant') ||
             (bounty?.isPublished && !pastDeadline && bounty.type !== 'grant')
           ) && (
-            <Link
-              className="hover:no-underline"
-              href={
-                bounty
-                  ? `/dashboard/${isHackathonPage ? 'hackathon' : 'listings'}/${bounty.slug}/edit/`
-                  : ''
-              }
-            >
-              <Button
-                variant="ghost"
-                className="text-slate-400 hover:bg-indigo-100 hover:text-brand-purple"
+            <>
+              <Link
+                className="hover:no-underline"
+                href={
+                  bounty
+                    ? `/dashboard/${isHackathonPage ? 'hackathon' : 'listings'}/${bounty.slug}/edit/`
+                    : ''
+                }
               >
-                <Pencil className="h-4 w-4" />
-                Edit
-              </Button>
-            </Link>
+                <Button
+                  variant="ghost"
+                  className="text-slate-400 hover:bg-indigo-100 hover:text-brand-purple"
+                >
+                  <Pencil className="h-4 w-4" />
+                  Edit
+                </Button>
+              </Link>
+              {session?.user?.role === 'GOD' && (
+                <Button
+                  variant="ghost"
+                  className={cn(
+                    'text-slate-400 hover:bg-indigo-100 hover:text-brand-purple',
+                    bounty?.isArchived && 'hover:text-brand-purple',
+                  )}
+                  onClick={deleteModalOnOpen}
+                >
+                  {bounty?.isArchived ? (
+                    <>
+                      <RefreshCw className="h-4 w-4" />
+                      Restore
+                    </>
+                  ) : (
+                    <>
+                      <Trash className="h-4 w-4" />
+                      Delete
+                    </>
+                  )}
+                </Button>
+              )}
+            </>
           )}
           {bounty?.type === 'sponsorship' && !bounty.isWinnersAnnounced && (
             <Button onClick={onOpen}>Complete Sponsorship</Button>
