@@ -200,10 +200,9 @@ export const ApplicationDetails = ({
                     Completed
                   </Button>
                 )}
-                {
-                  isApproved && (
-                    // (!grant?.airtableId ||
-                    // grant?.title.toLowerCase().includes('coindcx')) && (
+                {isApproved &&
+                  (!grant?.airtableId ||
+                    grant?.title.toLowerCase().includes('coindcx')) && (
                     <>
                       <MarkCompleted
                         isCompleted={isCompleted}
@@ -234,9 +233,7 @@ export const ApplicationDetails = ({
                         Approved
                       </Button>
                     </>
-                  )
-                  // )
-                }
+                  )}
                 {isRejected && (
                   <>
                     <Button

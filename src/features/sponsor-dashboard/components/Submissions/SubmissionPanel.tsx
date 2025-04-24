@@ -167,7 +167,8 @@ export const SubmissionPanel = ({
                             !afterAnnounceDate ||
                             isHackathonPage ||
                             remainings?.podiums !== 0 ||
-                            remainings?.bonus !== 0
+                            (remainings?.bonus > 0 &&
+                              submissions.filter((s) => !s.isWinner).length > 0)
                           }
                           onClick={onWinnersAnnounceOpen}
                           variant="default"

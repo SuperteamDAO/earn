@@ -63,7 +63,9 @@ export const KYCModal = ({
     ) {
       const result = await checkVerification();
       if (result.data === 'verified') {
-        toast.success('KYC verified successfully!');
+        toast.success(
+          'Your KYC is verified! You will receive your first tranche in around a week.',
+        );
         await queryClient.invalidateQueries({
           queryKey: userApplicationQuery(grantId).queryKey,
         });

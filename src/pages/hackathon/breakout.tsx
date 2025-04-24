@@ -152,7 +152,7 @@ function Hero({
       <div className="mt-4 mb-1 flex w-full max-w-[18.5rem] flex-col items-center gap-4 text-black sm:w-auto sm:max-w-none">
         <div className={`${animeAce.className} italic`}>
           <p className="text-sm font-medium sm:text-base">
-            Submissions Due {dayjs(CLOSE_DATE).format('MMM DD, YYYY')}
+            Submissions Due May 16 (11:59PM PST)
           </p>
         </div>
         <div className={`flex w-full flex-col gap-1 sm:flex-row`}>
@@ -236,7 +236,11 @@ function HeroMini({
         className={`${animeAce.className} relative flex w-full items-center justify-center gap-8 rounded-md bg-black px-6 py-6 md:flex-row md:gap-12 md:rounded-xl md:px-16`}
       >
         <MiniStat title={'Total Prizes'}>
-          ${stats?.totalRewardAmount.toLocaleString('en-us') ?? '-'}
+          $
+          {stats?.totalRewardAmount.toLocaleString('en-US', {
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0,
+          }) ?? '-'}
         </MiniStat>
 
         <MiniStat className="hidden sm:flex" title={'Tracks'}>

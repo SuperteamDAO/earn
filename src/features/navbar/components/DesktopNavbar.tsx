@@ -9,9 +9,12 @@ import { IoSearchOutline, IoWalletOutline } from 'react-icons/io5';
 import { Button } from '@/components/ui/button';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useCreditBalance } from '@/store/credit';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
+
+import { CreditIcon } from '@/features/credits/icon/credit';
 
 import { LISTING_NAV_ITEMS } from '../constants';
 import { NavLink } from './NavLink';
@@ -22,6 +25,7 @@ interface Props {
   onSearchOpen: () => void;
   onWalletOpen: () => void;
   walletBalance: number;
+  onCreditOpen: () => void;
 }
 
 const LogoContextMenu = dynamic(() =>
@@ -32,12 +36,14 @@ export const DesktopNavbar = ({
   onLoginOpen,
   onSearchOpen,
   onWalletOpen,
+  onCreditOpen,
   walletBalance,
 }: Props) => {
   const { authenticated, ready } = usePrivy();
   const router = useRouter();
   const posthog = usePostHog();
   const { user } = useUser();
+  const { creditBalance } = useCreditBalance();
 
   const isDashboardRoute = useMemo(
     () => router.pathname.startsWith('/dashboard'),
@@ -54,6 +60,11 @@ export const DesktopNavbar = ({
     [isDashboardRoute],
   );
 
+  const openCreditDrawer = () => {
+    posthog.capture('open_credits');
+    onCreditOpen();
+  };
+
   return (
     <div
       className={cn(
@@ -62,7 +73,7 @@ export const DesktopNavbar = ({
       )}
     >
       <div className={cn('mx-auto flex w-full justify-between', maxWidth)}>
-        <div className="flex w-fit items-center gap-3 lg:gap-6">
+        <div className="flex w-fit items-center gap-3 lg:gap-4">
           <LogoContextMenu>
             <Link
               href="/"
@@ -100,7 +111,7 @@ export const DesktopNavbar = ({
         {!router.pathname.startsWith('/new/') && (
           <div className="w-fit xl:absolute xl:left-2/4 xl:-translate-x-2/4">
             <div className="mx-6 flex h-full items-center justify-center">
-              <div className="ph-no-capture flex h-full flex-row items-center gap-7">
+              <div className="ph-no-capture flex h-full flex-row items-center gap-4.5">
                 {LISTING_NAV_ITEMS?.map((navItem) => {
                   const isCurrent = `${navItem.href}` === router.asPath;
                   return (
@@ -118,7 +129,10 @@ export const DesktopNavbar = ({
                 })}
                 <Link
                   href={'/hackathon/breakout'}
-                  className={cn('flex items-center py-2 font-medium', 'h-8')}
+                  className={cn(
+                    'flex items-center py-2 font-medium',
+                    'h-[1.85rem]',
+                  )}
                 >
                   <ExternalImage
                     alt="Redacted Logo"
@@ -128,7 +142,10 @@ export const DesktopNavbar = ({
                 </Link>
                 <Link
                   href={'/hackathon/redacted'}
-                  className={cn('flex items-center py-2 font-medium', 'h-8')}
+                  className={cn(
+                    'flex items-center py-2 font-medium',
+                    'h-[1.95rem]',
+                  )}
                 >
                   <ExternalImage
                     alt="Redacted Logo"
@@ -144,8 +161,8 @@ export const DesktopNavbar = ({
         <div className="flex items-center gap-4 py-1.5">
           {!ready && (
             <div className="flex items-center gap-2">
-              <Skeleton className="h-10 w-10 rounded-full" />
-              <Skeleton className="h-4 w-20" />
+              <Skeleton className="size-7 rounded-full" />
+              <Skeleton className="mr-4 h-3 w-20" />
             </div>
           )}
 
@@ -162,24 +179,33 @@ export const DesktopNavbar = ({
                   asChild
                 >
                   <Link href="/dashboard/listings">
-                    <span>Sponsor Dashboard</span>
+                    <span>Dashboard</span>
                     <div className="block h-1.5 w-1.5 rounded-full bg-sky-400" />
                   </Link>
                 </Button>
               )}
 
               {user?.isTalentFilled && (
-                <>
+                <div className="flex items-center gap-1.5">
                   <div
-                    className="flex cursor-pointer items-center gap-1.5 rounded-md px-2 py-1.5 text-slate-500 transition-all duration-100 hover:bg-slate-100 hover:text-slate-700"
-                    onClick={onWalletOpen}
+                    className="flex cursor-pointer items-center gap-1.5 rounded-md px-2 py-2 text-slate-500 transition-all duration-100 hover:bg-slate-100 hover:text-slate-700"
+                    onClick={openCreditDrawer}
                   >
-                    <IoWalletOutline className="text-brand-purple h-6 w-6" />
-                    <p className="text-sm font-semibold">
-                      ${formatNumberWithSuffix(walletBalance || 0, 1, true)}
-                    </p>
+                    <CreditIcon className="text-brand-purple size-4" />
+                    <p className="text-sm font-semibold">{creditBalance}</p>
                   </div>
-                </>
+                  <div className="relative">
+                    <div
+                      className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-slate-500 transition-all duration-100 hover:bg-slate-100 hover:text-slate-700"
+                      onClick={onWalletOpen}
+                    >
+                      <IoWalletOutline className="text-brand-purple size-6" />
+                      <span className="bg-brand-purple/95 absolute top-px -right-1.5 block rounded-md px-1 py-px text-[10px] font-semibold tracking-tight text-white">
+                        ${formatNumberWithSuffix(walletBalance || 0, 1, true)}
+                      </span>
+                    </div>
+                  </div>
+                </div>
               )}
               <UserMenu />
             </div>

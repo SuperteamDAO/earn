@@ -15,6 +15,12 @@ interface SubmissionUpdatePayload {
   winnerPosition: number | null;
 }
 
+interface ToggleWinnerResponse {
+  success: boolean;
+  autoFixed?: boolean;
+  autoFixedSubmissions?: string[];
+}
+
 const BATCH_UPDATE_LIMIT = 50;
 
 export const useToggleWinner = (bounty: Listing | undefined) => {
@@ -24,7 +30,9 @@ export const useToggleWinner = (bounty: Listing | undefined) => {
   );
 
   return useMutation({
-    mutationFn: async (allUpdates: SubmissionUpdatePayload[]) => {
+    mutationFn: async (
+      allUpdates: SubmissionUpdatePayload[],
+    ): Promise<ToggleWinnerResponse> => {
       const updateBatches: SubmissionUpdatePayload[][] = [];
       for (let i = 0; i < allUpdates.length; i += BATCH_UPDATE_LIMIT) {
         updateBatches.push(allUpdates.slice(i, i + BATCH_UPDATE_LIMIT));
@@ -36,8 +44,21 @@ export const useToggleWinner = (bounty: Listing | undefined) => {
         }),
       );
 
-      await Promise.all(batchPromises);
-      return { success: true };
+      const results = await Promise.all(batchPromises);
+
+      // Check if any batch had autoFixed submissions
+      const autoFixed = results.some((result) => result.data?.autoFixed);
+
+      if (autoFixed) {
+        toast.info(
+          "A submission can't be both a winner and marked as spam — we've adjusted its status.",
+        );
+      }
+
+      return {
+        success: true,
+        autoFixed,
+      };
     },
     onError: (error: any) => {
       queryClient.invalidateQueries({
@@ -67,6 +88,13 @@ export const useToggleWinner = (bounty: Listing | undefined) => {
           return oldData.map((submission) => {
             const update = updatesMap.get(submission.id);
             if (update) {
+              // Handle the mutual exclusivity optimistically in the UI:
+              // If marking as winner and has Spam label, change label to Unreviewed
+              const updatedLabel =
+                update.isWinner && submission.label === 'Spam'
+                  ? 'Unreviewed'
+                  : submission.label;
+
               if (selectedSubmission && update.id === selectedSubmission.id) {
                 setSelectedSubmission({
                   ...submission,
@@ -76,6 +104,7 @@ export const useToggleWinner = (bounty: Listing | undefined) => {
                       | keyof Rewards
                       | undefined
                       | null) ?? undefined,
+                  label: updatedLabel,
                 });
               }
               return {
@@ -84,6 +113,7 @@ export const useToggleWinner = (bounty: Listing | undefined) => {
                 winnerPosition:
                   (update.winnerPosition as keyof Rewards | undefined | null) ??
                   undefined,
+                label: updatedLabel,
               };
             }
             return submission;

@@ -80,8 +80,8 @@ export function FilterRow({ timeframe, setTimeframe, setSkill, skill }: Props) {
                 }}
                 content={
                   <p>
-                    All data here is based on wins from public bounties and
-                    project listings. Grants are not included.
+                    All data here is based on wins from public bounties,
+                    projects, and hackathon tracks. Grants are not included
                   </p>
                 }
               >
