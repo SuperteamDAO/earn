@@ -13,7 +13,12 @@ import {
 } from '@/app/api/sponsor-dashboard/ai-generate/rewards/route';
 import { type TTitleGenerateResponse } from '@/app/api/sponsor-dashboard/ai-generate/title/route';
 import { type TTokenGenerateResponse } from '@/app/api/sponsor-dashboard/ai-generate/token/route';
-import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
 import { tokenList } from '@/constants/tokenList';
 import { type Skills } from '@/interface/skills';
 import { api } from '@/lib/api';
@@ -264,7 +269,12 @@ export function AiGenerateDialog({ children }: AIDescriptionDialogProps) {
       >
         {children}
       </DialogTrigger>
-      <DialogContent className="sm:max-w-160" hideCloseIcon>
+      <DialogContent
+        className="sm:max-w-160"
+        hideCloseIcon
+        aria-describedby="Auto Generate Listing"
+      >
+        <DialogTitle className="sr-only">Auto Generate Listing</DialogTitle>
         {stage === 'form' ? (
           <AiGenerateForm
             onSubmit={handleFormSubmit}
