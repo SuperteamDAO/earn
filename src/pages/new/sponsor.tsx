@@ -71,7 +71,7 @@ const CreateSponsor = () => {
         logo: '',
         industry: '',
         url: '',
-        twitter: '',
+        twitter: undefined,
         entityName: '',
       },
       user: {
@@ -190,7 +190,10 @@ const CreateSponsor = () => {
       const { sponsorData, userData } = transformFormToApiData(data);
 
       try {
-        await api.post('/api/sponsors/create', sponsorData);
+        await api.post('/api/sponsors/create', {
+          ...sponsorData,
+          twitter: sponsorData.twitter === '' ? undefined : sponsorData.twitter,
+        });
 
         if (userData && shouldUpdateUser(userData, user)) {
           await api.post('/api/sponsors/usersponsor-details/', userData);
@@ -428,9 +431,8 @@ const CreateSponsor = () => {
                     <SocialInput
                       name="sponsor.twitter"
                       socialName={'twitter'}
-                      formLabel="Entity Twitter"
+                      formLabel="Twitter"
                       placeholder="@StarkIndustries"
-                      required
                       control={form.control}
                       height="h-9"
                     />
@@ -440,9 +442,8 @@ const CreateSponsor = () => {
                   <SocialInput
                     name="sponsor.twitter"
                     socialName={'twitter'}
-                    formLabel="Entity Twitter"
+                    formLabel="Twitter"
                     placeholder="@StarkIndustries"
-                    required
                     control={form.control}
                     height="h-9"
                   />
@@ -453,7 +454,7 @@ const CreateSponsor = () => {
                     name="sponsor.entityName"
                     label={
                       <>
-                        Entity Name
+                        Legal Entity Name
                         <Tooltip
                           content="Please mention the official entity name of your project. If you are a DAO, simply mention the name of the DAO. If you neither have an entity nor are a DAO, mention your full name."
                           contentProps={{ className: 'max-w-xs text-xs' }}

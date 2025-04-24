@@ -146,11 +146,7 @@ function MainContent({
     if (source === 'grant') {
       copy = `Just came across this massive grant opportunity by ${grant?.sponsor?.name} on ${PROJECT_NAME}`;
     } else {
-      if (listing?.type !== 'project') {
-        copy = `Just came across this banger bounty by ${listing?.sponsor?.name} on ${PROJECT_NAME}`;
-      } else {
-        copy = `Just came across this gig by ${listing?.sponsor?.name} on ${PROJECT_NAME}`;
-      }
+      copy = `Just came across this ${listing?.type} by ${listing?.sponsor?.name} on ${PROJECT_NAME}`;
     }
     if (
       socialSource === 'telegram' ||
