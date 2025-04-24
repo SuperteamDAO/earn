@@ -111,15 +111,13 @@ export function EligibilityQuestionsSheet() {
         side="right"
         className="flex h-[100vh] flex-col p-0 sm:max-w-xl"
       >
-        <SheetHeader
-          className={cn(
-            'shrink-0 space-y-2 border-b p-6',
-            type === 'project' && 'pb-0',
-          )}
-        >
+        <SheetHeader className={cn('shrink-0 space-y-2 border-b p-6')}>
           <SheetTitle>Submission Form</SheetTitle>
-          <SheetDescription className={cn('pb-6 text-sm text-slate-500')}>
+          <SheetDescription className={cn('pb-4 text-sm text-slate-500')}>
             {subtext}
+            <br />
+            Note: All custom questions you add here will be required fields for
+            the user.
           </SheetDescription>
           <DefaultEligibilityQuestions />
         </SheetHeader>

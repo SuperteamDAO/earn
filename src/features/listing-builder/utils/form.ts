@@ -95,10 +95,6 @@ export const getListingDefaults = ({
       defaults['hackathonId'] = hackathonId;
     }
   }
-  if (type === 'project') {
-    defaults['eligibility'] = [{ type: 'text', question: '', order: 1 }];
-  }
-
   defaults['isFndnPaying'] = false;
   return defaults as ListingFormData;
 };
