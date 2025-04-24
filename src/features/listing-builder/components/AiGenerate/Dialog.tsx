@@ -3,6 +3,7 @@ import { type BountyType } from '@prisma/client';
 import { useMutation } from '@tanstack/react-query';
 import { useSetAtom } from 'jotai';
 import { marked } from 'marked';
+import { usePostHog } from 'posthog-js/react';
 import { type ReactNode, useEffect, useState } from 'react';
 import { useWatch } from 'react-hook-form';
 
@@ -33,6 +34,7 @@ interface AIDescriptionDialogProps {
 
 export function AiGenerateDialog({ children }: AIDescriptionDialogProps) {
   const listingForm = useListingForm();
+  const posthog = usePostHog();
   const type = useWatch({
     control: listingForm.control,
     name: 'type',
@@ -176,6 +178,7 @@ export function AiGenerateDialog({ children }: AIDescriptionDialogProps) {
   });
 
   const handleFormSubmit = async (data: AiGenerateFormValues) => {
+    posthog.capture('generate_ai listing builder');
     setFormData(data);
 
     const token =
@@ -222,6 +225,7 @@ export function AiGenerateDialog({ children }: AIDescriptionDialogProps) {
   };
 
   const resetForm = () => {
+    posthog.capture('reset_ai listing builder');
     setFormData({
       companyDescription: '',
       scopeOfWork: '',
@@ -247,8 +251,19 @@ export function AiGenerateDialog({ children }: AIDescriptionDialogProps) {
   }, [type]);
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>{children}</DialogTrigger>
+    <Dialog
+      open={open}
+      onOpenChange={(open) => {
+        if (!open) posthog.capture('close_ai listing builder');
+        setOpen(open);
+      }}
+    >
+      <DialogTrigger
+        asChild
+        onClick={() => posthog.capture('open_ai listing builder')}
+      >
+        {children}
+      </DialogTrigger>
       <DialogContent className="sm:max-w-160" hideCloseIcon>
         {stage === 'form' ? (
           <AiGenerateForm
@@ -279,6 +294,7 @@ export function AiGenerateDialog({ children }: AIDescriptionDialogProps) {
             isRewardsError={isRewardsError}
             isRewardsPending={isRewardsPending}
             onInsert={() => {
+              posthog.capture('insert_ai listing builder');
               listingForm.setValue('description', parsedDescription);
               listingForm.setValue('eligibility', eligibilityQuestions);
               if (title?.title) listingForm.setValue('title', title?.title);
@@ -327,6 +343,7 @@ export function AiGenerateDialog({ children }: AIDescriptionDialogProps) {
               setOpen(false);
             }}
             onBack={() => {
+              posthog.capture('back_ai listing builder');
               setStage('form');
               resetEligibilityQuestions();
               resetRewards();
