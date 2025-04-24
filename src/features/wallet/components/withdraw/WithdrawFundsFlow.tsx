@@ -157,6 +157,9 @@ export function WithdrawFundsFlow({
   async function handleWithdraw(values: WithdrawFormData) {
     setIsProcessing(true);
     setError('');
+
+    let signature: string | undefined;
+
     try {
       const connection = getConnection('confirmed');
 
@@ -177,7 +180,7 @@ export function WithdrawFundsFlow({
           showWalletUIs: false,
         },
       });
-      const signature = await connection.sendRawTransaction(
+      signature = await connection.sendRawTransaction(
         userSignedTransaction.serialize(),
       );
 
@@ -249,7 +252,7 @@ export function WithdrawFundsFlow({
         console.error('Withdrawal failed:', e);
 
         log.error(
-          `Withdrawal failed: ${e}, userId: ${user?.id}, amount: ${values.amount}, destinationAddress: ${values.recipientAddress}, token: ${values.tokenAddress}`,
+          `Withdrawal failed: ${e}, userId: ${user?.id}, amount: ${values.amount}, destinationAddress: ${values.recipientAddress}, token: ${values.tokenAddress}, signature: ${signature}`,
         );
       }
 
