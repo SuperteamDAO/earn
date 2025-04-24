@@ -1,5 +1,6 @@
 import { prisma } from '@/prisma';
 
+import { addOnboardingInfoToAirtable } from './addOnboardingInfoToAirtable';
 import { addPaymentInfoToAirtable } from './addPaymentInfoToAirtable';
 
 type CreateTrancheProps = {
@@ -143,7 +144,28 @@ export async function createTranche({
   });
 
   if (isFirstTranche) {
-    await addPaymentInfoToAirtable(tranche.GrantApplication, tranche);
+    const updatedGrantApplication =
+      await prisma.grantApplication.findUniqueOrThrow({
+        where: { id: applicationId },
+        include: {
+          grant: true,
+          user: {
+            select: {
+              email: true,
+              kycName: true,
+            },
+          },
+        },
+      });
+
+    try {
+      await addOnboardingInfoToAirtable(updatedGrantApplication);
+      await addPaymentInfoToAirtable(tranche.GrantApplication, tranche);
+    } catch (airtableError: any) {
+      console.error(
+        `Error adding onboarding info to Airtable: ${airtableError.message}`,
+      );
+    }
   }
 
   return tranche;
