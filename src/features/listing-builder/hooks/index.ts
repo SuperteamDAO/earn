@@ -29,12 +29,13 @@ import {
 } from '../types/schema';
 import { getListingDefaults, refineReadyListing } from '../utils/form';
 
-interface UseListingFormReturn extends UseFormReturn<ListingFormData> {
+export interface UseListingFormReturn extends UseFormReturn<ListingFormData> {
   saveDraft: () => void;
   submitListing: () => Promise<ListingFormData & { reason?: string }>;
   resetForm: () => void;
   validateRewards: () => Promise<boolean>;
   validateBasics: () => Promise<boolean>;
+  validateEligibilityQuestions: () => Promise<boolean>;
 }
 
 export const useListingForm = (
@@ -241,6 +242,12 @@ export const useListingForm = (
     [formMethods, formSchema, isGod, isEditing, isST],
   );
 
+  const validateEligibilityQuestions = () =>
+    validateFields({
+      type: true,
+      eligibility: true,
+    });
+
   const validateRewards = () =>
     validateFields({
       type: true,
@@ -286,5 +293,6 @@ export const useListingForm = (
     resetForm,
     validateRewards,
     validateBasics,
+    validateEligibilityQuestions,
   };
 };
