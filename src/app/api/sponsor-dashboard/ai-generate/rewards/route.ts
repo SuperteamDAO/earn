@@ -30,8 +30,8 @@ const responseSchema = z.object({
     .max(MAX_BONUS_SPOTS)
     .optional()
     .nullable(),
-  minRewardAsk: z.coerce.number().min(0).max(MAX_REWARD).optional().nullable(),
-  maxRewardAsk: z.coerce.number().min(0).max(MAX_REWARD).optional().nullable(),
+  minRewardAsk: z.coerce.number().min(0).max(MAX_REWARD),
+  maxRewardAsk: z.coerce.number().min(0).max(MAX_REWARD),
   rewards: z
     .array(
       z.object({

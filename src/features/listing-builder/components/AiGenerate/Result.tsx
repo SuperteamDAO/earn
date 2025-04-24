@@ -15,6 +15,7 @@ import { Wand } from '@/svg/wand';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 
 import { Twitter } from '@/features/social/components/SocialIcons';
+import { devSkills } from '@/features/talent/utils/skills';
 
 import { useListingForm } from '../../hooks';
 import { type TEligibilityQuestion } from '../../types/schema';
@@ -245,27 +246,23 @@ export function AiGenerateResult({
         {((isEligibilityQuestionsIdle && eligibilityQuestions.length > 0) ||
           (!isEligibilityQuestionsIdle && !isEligibilityQuestionsError)) && (
           <div className="mt-4 space-y-3 text-sm text-slate-700">
-            {type !== 'project' && (
-              <h3 className="text-sm font-medium text-slate-600">
-                Default Questions
-              </h3>
-            )}
+            <h3 className="text-sm font-medium text-slate-600">Questions</h3>
             {type !== 'project' && (
               <>
                 <div className="flex items-center rounded-md border">
                   <span className="flex items-center justify-center self-stretch border-r px-4 text-slate-400">
                     <Link2 className="h-4 w-4" />
                   </span>
-                  <p className="py-2 pl-4 text-sm text-slate-500">
+                  <p className="px-4 py-2 text-sm text-slate-500">
                     Bounty submission link{' '}
-                    <span className="text-red-500">*</span>
+                    <span className="pl-1 text-red-500">*</span>
                   </p>
                 </div>
                 <div className="flex items-center rounded-md border">
                   <span className="flex items-center justify-center self-stretch border-r px-4 text-slate-400">
                     <Twitter className="h-4 w-4 text-slate-400 opacity-100 grayscale-0" />
                   </span>
-                  <p className="py-2 pl-4 text-sm text-slate-500">
+                  <p className="px-4 py-2 text-sm text-slate-500">
                     Twitter post link
                   </p>
                 </div>
@@ -276,11 +273,6 @@ export function AiGenerateResult({
                 <Loader2 className="size-4 animate-spin" />
                 <p>Generating Custom Questions</p>
               </span>
-            )}
-            {eligibilityQuestions.length > 0 && (
-              <h3 className="text-sm font-medium text-slate-600">
-                Custom Questions
-              </h3>
             )}
             {eligibilityQuestions.map((question) => (
               <div
@@ -294,12 +286,45 @@ export function AiGenerateResult({
                     <Baseline className="h-4 w-4" />
                   )}
                 </span>
-                <p className="py-2 pl-4 text-sm text-slate-500">
+                <p className="px-4 py-2 text-sm text-slate-500">
                   {question.question}
-                  <span className="text-red-500">*</span>
+                  <span className="pl-1 text-red-500">*</span>
                 </p>
               </div>
             ))}
+            {type === 'project' && (
+              <>
+                {type === 'project' &&
+                  rewards &&
+                  rewards?.compensationType !== 'fixed' && (
+                    <div className="flex items-center rounded-md border">
+                      <span className="flex items-center justify-center self-stretch border-r px-4 text-slate-400">
+                        <TokenLabel
+                          symbol={token}
+                          showIcon
+                          classNames={{
+                            amount: 'font-medium text-base ml-0',
+                            symbol: 'font-medium text-base mr-0',
+                            icon: 'mr-0',
+                          }}
+                        />
+                      </span>
+                      <p className="px-4 py-2 text-sm text-slate-500">
+                        Compensation Quote
+                        <span className="pl-1 text-red-500">*</span>
+                      </p>
+                    </div>
+                  )}
+                <div className="flex items-center rounded-md border">
+                  <span className="flex items-center justify-center self-stretch border-r px-4 text-slate-400">
+                    <Baseline className="h-4 w-4" />
+                  </span>
+                  <p className="px-4 py-2 text-sm text-slate-500">
+                    Anything Else
+                  </p>
+                </div>
+              </>
+            )}
           </div>
         )}
 
@@ -453,9 +478,11 @@ function SkillsResult({ skills }: { skills: Skills }) {
     <div className="flex flex-wrap gap-3 rounded-md border border-slate-200 bg-white p-3">
       {skills.map((skillGroup) => (
         <div key={skillGroup.skills} className="flex flex-wrap">
-          <span className="mt-1 mr-1.5 inline-block rounded bg-indigo-100 px-2 py-0.5 text-xs font-medium text-indigo-700 transition-colors">
-            {skillGroup.skills}
-          </span>
+          {devSkills.includes(skillGroup.skills) && (
+            <span className="mt-1 mr-1.5 inline-block rounded bg-indigo-100 px-2 py-0.5 text-xs font-medium text-indigo-700 transition-colors">
+              {skillGroup.skills}
+            </span>
+          )}
           {skillGroup.subskills.length > 0 ? (
             skillGroup.subskills.map((subskill) => (
               <span

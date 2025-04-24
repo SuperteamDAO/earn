@@ -21,7 +21,9 @@ General Rules for Generated Questions:
 - AVOID questions whose answers are purely subjective opinions or cannot be verified without direct interaction (e.g., "Are you passionate about X?").
 - Focus on question QUALITY, not quantity. Fewer high-quality questions are better than many low-quality ones.
 - Keep the questions consise and short, avoid over complicating them.
-- Keep the questions **under 175 characters**
+- Max question length is **175 characters**
+- But try to keep the questions **under 120 characters**
+- Keeping the core of the question, keep the question to minimum characters 
 `;
 
   if (type === 'bounty' || type === 'hackathon') {

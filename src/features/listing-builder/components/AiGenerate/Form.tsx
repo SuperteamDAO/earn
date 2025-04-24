@@ -142,7 +142,11 @@ export function AiGenerateForm({
                   </FormLabel>
                   <FormControl>
                     <TextareaAutosize
-                      placeholder="What exactly would you like applicant to do? You can describe the tasks or objectives here."
+                      placeholder={
+                        type !== 'project'
+                          ? 'What exactly would you like participant to do? You can describe the tasks or objectives here.'
+                          : 'What exactly would you like applicant to do? You can describe the roles and responsibilies here.'
+                      }
                       className="focus:border-primary rounded-md border p-2 text-sm placeholder:text-sm focus:outline-none"
                       minRows={3}
                       {...field}
@@ -208,7 +212,7 @@ export function AiGenerateForm({
                     <TextareaAutosize
                       placeholder={
                         type !== 'project'
-                          ? `What are the requirements that the applicant needs to meet? Also mention your judging criterias for quality applications`
+                          ? `What are the requirements that the participant needs to meet? Also mention your judging criterias for quality submission`
                           : `What are your evaluation criterias or qualitfications that the applicant needs to meet?`
                       }
                       className="focus:border-primary rounded-md border p-2 text-sm placeholder:text-sm focus:outline-none"
