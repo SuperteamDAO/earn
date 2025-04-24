@@ -29,6 +29,8 @@ interface Props {
   totalPaymentsMade: number;
   bounty: Listing | undefined;
   remainings: { podiums: number; bonus: number } | null;
+  submissionsLeft: number;
+  submissions: Array<{ id: string; label?: string }>;
 }
 
 export function PublishResults({
@@ -38,6 +40,8 @@ export function PublishResults({
   totalPaymentsMade,
   bounty,
   remainings,
+  submissionsLeft,
+  submissions = [],
 }: Props) {
   const [isPublishingResults, setIsPublishingResults] = useState(false);
   const [isWinnersAnnounced, setIsWinnersAnnounced] = useState(
@@ -50,13 +54,20 @@ export function PublishResults({
   // Overrdiding totalWinners if project coz position select is done here now for project only
 
   const rewards =
-    cleanRewards(bounty?.rewards, true).length +
-    (bounty?.rewards?.[BONUS_REWARD_POSITION] ? bounty?.maxBonusSpots || 0 : 0);
-  let isWinnersAllSelected = !(
-    remainings && remainings.podiums + remainings.bonus !== 0
-  );
-  if (isProject) isWinnersAllSelected = true;
-  // Overrdiding isWinnersAllSelected if project coz position select is done here now for project only
+    bounty?.type === 'project'
+      ? 1
+      : cleanRewards(bounty?.rewards, true).length +
+        (bounty?.rewards?.[BONUS_REWARD_POSITION]
+          ? bounty?.maxBonusSpots || 0
+          : 0);
+
+  const notEnoughSubmissionsForBonus =
+    remainings && remainings.bonus > 0 && submissionsLeft < remainings.bonus;
+  const isWinnersAllSelected =
+    isProject ||
+    !remainings ||
+    (remainings.podiums === 0 &&
+      (remainings.bonus === 0 || notEnoughSubmissionsForBonus));
 
   let alertType:
     | 'loading'
@@ -74,6 +85,10 @@ export function PublishResults({
     alertDescription = `You still have to select ${remainingWinners} more ${
       remainingWinners === 1 ? 'winner' : 'winners'
     } before you can publish the results publicly.`;
+  } else if (notEnoughSubmissionsForBonus) {
+    alertType = 'warning';
+    alertTitle = 'Not Enough Submissions for Bonus Spots';
+    alertDescription = `You have ${remainings?.bonus} bonus spots remaining but do not have enough submissions left. You can still publish results, but not all bonus spots will be filled.`;
   } else if (rewards && totalPaymentsMade !== rewards) {
     const remainingPayments = (rewards || 0) - totalPaymentsMade;
     alertType = 'warning';
@@ -178,7 +193,7 @@ export function PublishResults({
           {!isWinnersAnnounced && alertTitle && alertDescription && (
             <Alert
               variant={alertType === 'error' ? 'destructive' : 'default'}
-              className="flex border-amber-600"
+              className="border-brand-purple flex"
             >
               <div className="flex gap-2">
                 <AlertTriangle className="-mt-0.5 h-8 w-8" />
@@ -205,6 +220,29 @@ export function PublishResults({
                       If you publish the results before the deadline, the
                       listing will close since the winner(s) will have been
                       announced.
+                    </AlertDescription>
+                  </div>
+                </div>
+              </Alert>
+            )}
+
+          {!isWinnersAnnounced &&
+            submissions.some((submission) => submission.label === 'Spam') && (
+              <Alert className="border-brand-purple mt-4">
+                <div className="flex gap-2">
+                  <AlertTriangle className="-mt-0.5 h-8 w-8" />
+                  <div>
+                    <AlertTitle className="text-base">
+                      {
+                        submissions.filter(
+                          (submission) => submission.label === 'Spam',
+                        ).length
+                      }{' '}
+                      Submission(s) Marked as Spam
+                    </AlertTitle>
+                    <AlertDescription>
+                      Marking a submission as &quot;Spam&quot; would penalise
+                      the applicant(s) with a deduction in submission credits.
                     </AlertDescription>
                   </div>
                 </div>

@@ -34,7 +34,18 @@ function RewardsFooter({ closeSheet }: { closeSheet: () => void }) {
     control: form.control,
     name: 'token',
   });
-
+  const compensationType = useWatch({
+    control: form.control,
+    name: 'compensationType',
+  });
+  const minRewardAsk = useWatch({
+    control: form.control,
+    name: 'minRewardAsk',
+  });
+  const maxRewardAsk = useWatch({
+    control: form.control,
+    name: 'maxRewardAsk',
+  });
   const [tokenUsdValue, setTokenUsdValue] = useState<number | null>(null);
 
   const totalPrize = useMemo(
@@ -42,10 +53,27 @@ function RewardsFooter({ closeSheet }: { closeSheet: () => void }) {
     [type, maxBonusSpots, rewards],
   );
 
-  const totalUsdPrize = useMemo(
-    () => (tokenUsdValue || 1) * (rewardAmount || 0),
-    [tokenUsdValue, rewardAmount],
-  );
+  const totalUsdPrize = useMemo(() => {
+    if (type !== 'project') return (tokenUsdValue || 1) * (rewardAmount || 0);
+    else {
+      if (compensationType === 'fixed')
+        return (tokenUsdValue || 1) * (rewardAmount || 0);
+      else if (compensationType === 'range')
+        return (
+          (tokenUsdValue || 1) *
+          (((minRewardAsk || 0) + (maxRewardAsk || 0)) / 2)
+        );
+      else if (compensationType === 'variable') return 1000;
+    }
+    return 0;
+  }, [
+    tokenUsdValue,
+    rewardAmount,
+    type,
+    compensationType,
+    minRewardAsk,
+    maxRewardAsk,
+  ]);
 
   const debouncedFetchTokenValue = useMemo(
     () =>

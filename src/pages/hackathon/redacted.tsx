@@ -97,8 +97,8 @@ export default function Redacted({ hackathon }: { hackathon: Hackathon }) {
             className={`max-w-xl px-6 text-center font-medium text-white drop-shadow-xl md:text-lg ${outfit.className}`}
           >
             <p className="">
-              {dayjs(START_DATE).format('MMM.DD, YYYY')} -{' '}
-              {dayjs(CLOSE_DATE).format('MMM.DD, YYYY')}
+              {dayjs.utc(START_DATE).format('MMM.DD')} to{' '}
+              {dayjs.utc(CLOSE_DATE).format('MMM.DD, YYYY')} (UTC)
             </p>
             <p className="mt-4 md:text-xl">
               Strengthen Solana’s social layer by{' '}

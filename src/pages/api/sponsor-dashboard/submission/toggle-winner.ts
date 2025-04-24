@@ -256,22 +256,45 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       currentSubmissions.map((sub) => [sub.id, sub]),
     );
 
+    const autoFixedSubmissions: string[] = [];
+
     const updatePromises = requestSubmissions.map(async (submissionUpdate) => {
       const { id, isWinner, winnerPosition } = submissionUpdate;
       const currentSubmission = currentSubmissionMap.get(id)!;
 
       const finalWinnerPosition = isWinner ? winnerPosition : null;
 
+      const updateData: any = {
+        isWinner,
+        winnerPosition: finalWinnerPosition,
+      };
+
+      // if marked as winner and currently has 'Spam' label, change label to 'Unreviewed'
+      if (isWinner && currentSubmission.label === 'Spam') {
+        updateData.label = 'Unreviewed';
+        autoFixedSubmissions.push(id);
+        logger.info(
+          `Automatically removing Spam label from submission ${id} as it's being marked as a winner`,
+        );
+      }
+
       logger.debug(`Updating submission with ID: ${id}`);
       const result = await prisma.submission.update({
         where: { id },
-        data: {
-          isWinner,
-          winnerPosition: finalWinnerPosition,
+        data: updateData,
+        include: {
+          listing: true,
         },
       });
 
-      const ask = result.ask || 0;
+      const ask =
+        result.ask ||
+        (result.listing.type === 'project' &&
+        result.listing.compensationType === 'range'
+          ? ((result.listing.minRewardAsk || 0) +
+              (result.listing.maxRewardAsk || 0)) /
+            2
+          : 1);
 
       if (currentSubmission.isWinner !== isWinner) {
         logger.debug(
@@ -280,7 +303,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
         if (firstListing.compensationType !== 'fixed') {
           logger.debug(
-            `Fetching token USD value for variable compensation for submission ${id}`,
+            `Fetching token USD value for variable or range compensation for submission ${id}`,
           );
           const tokenUSDValue = await fetchHistoricalTokenUSDValue(
             firstListing.token!,
@@ -306,7 +329,11 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     logger.info(
       `Successfully updated ${requestSubmissions.length} submissions for listing ${listingId} by user ${userId}`,
     );
-    return res.status(200).json({ message: 'Success' });
+    return res.status(200).json({
+      message: 'Success',
+      autoFixed: autoFixedSubmissions.length > 0,
+      autoFixedSubmissions,
+    });
   } catch (error: any) {
     logger.error(
       `User ${userId} unable to toggle winners for batch: ${error.message}`,

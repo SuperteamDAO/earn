@@ -84,13 +84,9 @@ export function UserMenu() {
           }}
         >
           <div className="flex items-center gap-0.5 md:gap-1.5">
-            <EarnAvatar
-              className="h-7 w-7 md:h-8 md:w-8"
-              id={user?.id}
-              avatar={user?.photo}
-            />
+            <EarnAvatar className="size-7" id={user?.id} avatar={user?.photo} />
             <div className="hidden items-center md:flex">
-              <p className="text-xs font-medium text-slate-600 sm:text-sm">
+              <p className="text-xs font-medium tracking-tight text-slate-600 sm:text-sm">
                 {user?.firstName ?? user?.email ?? 'New User'}
               </p>
             </div>
@@ -138,7 +134,7 @@ export function UserMenu() {
                 }}
                 className="hidden text-xs tracking-tight text-slate-500 sm:block sm:text-sm"
               >
-                Sponsor Dashboard
+                Dashboard
               </Link>
             </DropdownMenuItem>
           )}

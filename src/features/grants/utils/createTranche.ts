@@ -112,6 +112,7 @@ export async function createTranche({
         include: {
           user: {
             select: {
+              username: true,
               kycName: true,
               kycAddress: true,
               kycDOB: true,

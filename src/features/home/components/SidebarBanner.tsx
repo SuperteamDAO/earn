@@ -1,12 +1,9 @@
-import { useQuery } from '@tanstack/react-query';
 import localFont from 'next/font/local';
 import Link from 'next/link';
 
 import { Button } from '@/components/ui/button';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
-import { hackathonQuery } from '@/queries/hackathon';
 import { BreakoutLogo } from '@/svg/breakout-logo';
-import { dayjs } from '@/utils/dayjs';
 
 const animeAce = localFont({
   src: [
@@ -52,10 +49,7 @@ interface SidebarPosterProps {
 }
 
 export function SidebarBannerBreakout({ className }: SidebarPosterProps) {
-  const slug = 'breakout';
   // const { data: stats } = useQuery(statsDataQuery(slug));
-  const { data: hackathon } = useQuery(hackathonQuery(slug));
-  const CLOSE_DATE = new Date(hackathon?.deadline || '');
   return (
     <Link href="/hackathon/breakout">
       <div
@@ -75,10 +69,10 @@ export function SidebarBannerBreakout({ className }: SidebarPosterProps) {
             className={`${animeAce.className} flex flex-col items-center justify-center`}
           >
             <p className="text-xs italic">
-              Submissions Due {dayjs(CLOSE_DATE).format('MMM DD, YYYY')}
+              Submissions Due May 16 (11:59PM PST)
             </p>
             <p className="pt-1 text-lg font-bold">
-              $150K+ in side tracks
+              $250K+ in side tracks
               {/* ${stats?.totalRewardAmount.toLocaleString('en-us') ?? '-'} in side */}
             </p>
           </div>

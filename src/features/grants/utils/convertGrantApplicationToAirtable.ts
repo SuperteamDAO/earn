@@ -31,6 +31,7 @@ interface GrantApplicationAirtableSchema {
   Description: string;
   'Discord Handle': string | undefined;
   Deadline: string;
+  Type: string;
   'Grant Listing Title (Earn)': string;
   'Region (Dashboard)'?: string[];
 }
@@ -75,6 +76,7 @@ export function convertGrantApplicationToAirtable(
     Description: turndownService.turndown(grantApplication.projectDetails),
     'Discord Handle': grantApplication.user.discord ?? undefined,
     Deadline: grantApplication.projectTimeline,
+    Type: 'Earn',
     'Grant Listing Title (Earn)': grantApplication.grant.title,
     ...(applicantSuperteamRegionRecordId
       ? {

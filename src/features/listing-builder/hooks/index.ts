@@ -1,7 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { type Hackathon } from '@prisma/client';
 import { useQueryClient } from '@tanstack/react-query';
-import { useAtom, useAtomValue } from 'jotai';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import debounce from 'lodash.debounce';
 import { useCallback, useEffect, useRef } from 'react';
 import { useForm, useFormContext, type UseFormReturn } from 'react-hook-form';
@@ -10,6 +10,7 @@ import { z } from 'zod';
 import { dayjs } from '@/utils/dayjs';
 
 import {
+  descriptionKeyAtom,
   draftQueueAtom,
   hackathonsAtom,
   hideAutoSaveAtom,
@@ -18,6 +19,7 @@ import {
   isGodAtom,
   isSTAtom,
   saveDraftMutationAtom,
+  skillsKeyAtom,
   submitListingMutationAtom,
 } from '../atoms';
 import { type ListingFormData } from '../types';
@@ -53,6 +55,9 @@ export const useListingForm = (
   const isGod = useAtomValue(isGodAtom);
   const isEditing = useAtomValue(isEditingAtom);
   const isST = useAtomValue(isSTAtom);
+
+  const setDescriptionKey = useSetAtom(descriptionKeyAtom);
+  const setSkillsKey = useSetAtom(skillsKeyAtom);
 
   const hackathonsAtomed = useAtomValue(hackathonsAtom);
   hackathons = hackathons || hackathonsAtomed;
@@ -147,7 +152,6 @@ export const useListingForm = (
   }, [processSaveQueue]);
 
   const onChange = useCallback(() => {
-    console.trace('Draft save triggered from:');
     setHideAutoSave(true);
     if (!isEditing) debouncedSaveRef.current?.();
   }, [isEditing]);
@@ -168,13 +172,23 @@ export const useListingForm = (
       isST,
       hackathons,
       type: getValues().type,
-      hackathonId: getValues().hackathonId || undefined,
+      hackathonId: undefined,
     });
     reset({
       ...getValues(),
       ...defaultValues,
       id: getValues().id,
       slug: getValues().slug,
+      eligibility: [],
+      skills: [],
+    });
+    setDescriptionKey((s) => {
+      if (typeof s === 'number') return s + 1;
+      else return 1;
+    });
+    setSkillsKey((s) => {
+      if (typeof s === 'number') return s + 1;
+      else return 1;
     });
   }, [reset]);
 

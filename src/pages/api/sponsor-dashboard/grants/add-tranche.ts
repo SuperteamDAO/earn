@@ -80,17 +80,6 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         },
       });
 
-      await tx.grants.update({
-        where: {
-          id: currentApplication.grantId,
-        },
-        data: {
-          totalPaid: {
-            increment: parsedTrancheAmount,
-          },
-        },
-      });
-
       return updatedGrantApplication;
     });
 

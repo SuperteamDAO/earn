@@ -77,13 +77,19 @@ const getApplicantData = async (
     const lastName = info.lastNameEn || '';
     const fullName = `${firstName} ${middleName} ${lastName}`
       .trim()
-      .replace(/\s+/g, ' ');
+      .replace(/\s+/g, ' ')
+      .toLowerCase()
+      .split(' ')
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
 
     const country = info.country || '';
     const dob = info.dob || '';
 
     const idDoc = info.idDocs?.[0] || {};
-    const address = idDoc.address.formattedAddress || '';
+
+    const formattedAddress = idDoc?.address?.formattedAddress;
+    const address = formattedAddress ? formattedAddress : null;
     const idNumber = idDoc.number || '';
     const idType = idDoc.idDocType || '';
 
@@ -110,6 +116,21 @@ const handler = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
   }
 
   try {
+    const grantApplication = await prisma.grantApplication.findUniqueOrThrow({
+      where: { id: grantApplicationId },
+      include: { user: true, grant: true },
+    });
+
+    const isAllowed =
+      grantApplication.grant.id !== 'c72940f7-81ae-4c03-9bfe-9979d4371267' &&
+      !!grantApplication.grant.airtableId &&
+      grantApplication.grant.isNative &&
+      grantApplication.applicationStatus === 'Approved';
+
+    if (!isAllowed) {
+      return res.status(200).json({ message: 'Not allowed' });
+    }
+
     const secretKey = process.env.SUMSUB_SECRET_KEY;
     const appToken = process.env.SUMSUB_API_KEY;
 
@@ -129,11 +150,6 @@ const handler = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
     );
 
     if (result === 'verified') {
-      const grantApplication = await prisma.grantApplication.findUniqueOrThrow({
-        where: { id: grantApplicationId },
-        include: { user: true },
-      });
-
       if (grantApplication.user.isKYCVerified) {
         return res.status(200).json({ message: 'KYC already verified' });
       }

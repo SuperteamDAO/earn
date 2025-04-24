@@ -152,7 +152,7 @@ function Hero({
       <div className="mt-4 mb-1 flex w-full max-w-[18.5rem] flex-col items-center gap-4 text-black sm:w-auto sm:max-w-none">
         <div className={`${animeAce.className} italic`}>
           <p className="text-sm font-medium sm:text-base">
-            Submissions Due {dayjs(CLOSE_DATE).format('MMM DD, YYYY')}
+            Submissions Due May 16 (11:59PM PST)
           </p>
         </div>
         <div className={`flex w-full flex-col gap-1 sm:flex-row`}>
