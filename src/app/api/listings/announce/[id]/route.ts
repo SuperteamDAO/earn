@@ -357,13 +357,11 @@ export async function POST(
           });
         }
 
-        if (listing.type === 'bounty' || listing.type === 'project') {
-          await queueEmail({
-            type: 'spamCredit',
-            id,
-            triggeredBy: userId,
-          });
-        }
+        await queueEmail({
+          type: 'spamCredit',
+          id,
+          triggeredBy: userId,
+        });
 
         try {
           await earncognitoClient.post(`/airtable/sync-announced-listings`, {
