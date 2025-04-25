@@ -60,7 +60,7 @@ function EligibilityQuestionItem({
         <div key={field.id} className="group">
           <FormItem className="gap-2">
             <FormLabel
-              isRequired={type === 'project' && index === 0}
+              isRequired
               className="font-medium text-slate-500 sm:text-sm"
             >
               Question {index + 1}
