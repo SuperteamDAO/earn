@@ -1,7 +1,7 @@
 import { useCompletion } from '@ai-sdk/react';
 import { type BountyType } from '@prisma/client';
 import { useMutation } from '@tanstack/react-query';
-import { useSetAtom } from 'jotai';
+import { useAtom, useSetAtom } from 'jotai';
 import { marked } from 'marked';
 import { usePostHog } from 'posthog-js/react';
 import { type ReactNode, useEffect, useState } from 'react';
@@ -25,7 +25,11 @@ import { api } from '@/lib/api';
 
 import { fetchTokenUSDValue } from '@/features/wallet/utils/fetchTokenUSDValue';
 
-import { descriptionKeyAtom, skillsKeyAtom } from '../../atoms';
+import {
+  descriptionKeyAtom,
+  isAutoGenerateOpenAtom,
+  skillsKeyAtom,
+} from '../../atoms';
 import { useListingForm } from '../../hooks';
 import { type TEligibilityQuestion } from '../../types/schema';
 import { calculateTotalRewardsForPodium } from '../../utils/rewards';
@@ -45,7 +49,7 @@ export function AiGenerateDialog({ children }: AIDescriptionDialogProps) {
     name: 'type',
   });
   const [stage, setStage] = useState<'form' | 'result'>('form');
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useAtom(isAutoGenerateOpenAtom);
   const setDescriptionKey = useSetAtom(descriptionKeyAtom);
   const setSkillsKey = useSetAtom(skillsKeyAtom);
   const [parsedDescription, setParsedDescription] = useState('');
@@ -183,7 +187,7 @@ export function AiGenerateDialog({ children }: AIDescriptionDialogProps) {
   });
 
   const handleFormSubmit = async (data: AiGenerateFormValues) => {
-    posthog.capture('generate_ai listing builder');
+    posthog.capture('generate_auto-generate');
     setFormData(data);
 
     const token =
@@ -230,7 +234,7 @@ export function AiGenerateDialog({ children }: AIDescriptionDialogProps) {
   };
 
   const resetForm = () => {
-    posthog.capture('reset_ai listing builder');
+    posthog.capture('reset_auto-generate');
     setFormData({
       companyDescription: '',
       scopeOfWork: '',
@@ -259,13 +263,13 @@ export function AiGenerateDialog({ children }: AIDescriptionDialogProps) {
     <Dialog
       open={open}
       onOpenChange={(open) => {
-        if (!open) posthog.capture('close_ai listing builder');
+        if (!open) posthog.capture('close_auto-generate');
         setOpen(open);
       }}
     >
       <DialogTrigger
         asChild
-        onClick={() => posthog.capture('open_ai listing builder')}
+        onClick={() => posthog.capture('open_auto-generate')}
       >
         {children}
       </DialogTrigger>
@@ -304,7 +308,7 @@ export function AiGenerateDialog({ children }: AIDescriptionDialogProps) {
             isRewardsError={isRewardsError}
             isRewardsPending={isRewardsPending}
             onInsert={() => {
-              posthog.capture('insert_ai listing builder');
+              posthog.capture('insert_auto-generate');
               listingForm.setValue('description', parsedDescription);
               listingForm.setValue('eligibility', eligibilityQuestions);
               if (title?.title) listingForm.setValue('title', title?.title);
@@ -353,7 +357,7 @@ export function AiGenerateDialog({ children }: AIDescriptionDialogProps) {
               setOpen(false);
             }}
             onBack={() => {
-              posthog.capture('back_ai listing builder');
+              posthog.capture('back_auto-generate');
               setStage('form');
               resetEligibilityQuestions();
               resetRewards();
