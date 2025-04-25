@@ -1,7 +1,9 @@
 import axios from 'axios';
 import type { NextApiResponse } from 'next';
 
+import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { safeStringify } from '@/utils/safeStringify';
 
 import { type NextApiRequestWithUser } from '@/features/auth/types';
 import { withAuth } from '@/features/auth/utils/withAuth';
@@ -27,6 +29,14 @@ const checkVerificationStatus = async (
     const response = await axios.get(`${SUMSUB_BASE_URL}${url}`, { headers });
     const reviewStatus = response.data.reviewResult.reviewAnswer;
     console.log(response.data);
+
+    if (!reviewStatus) {
+      logger.warn(
+        `Sumsub returned no review status for applicantId ${applicantId}: ${safeStringify(response.data)}`,
+      );
+      throw new Error('Sumsub: Invalid response format');
+    }
+
     if (reviewStatus === 'GREEN') {
       return 'verified';
     }
@@ -41,8 +51,18 @@ const checkVerificationStatus = async (
     }
     return null;
   } catch (error) {
+    logger.error(
+      `Sumsub verification status check failed for applicantId ${applicantId}: ${safeStringify(error)}`,
+    );
+
+    if (axios.isAxiosError(error)) {
+      throw new Error(
+        `Sumsub: ${error.message || 'Verification status check failed'}`,
+      );
+    }
+
     handleSumSubError(error);
-    return null;
+    throw new Error('Sumsub: Failed to check verification status');
   }
 };
 
@@ -69,6 +89,10 @@ const getApplicantData = async (
     const response = await axios.get(`${SUMSUB_BASE_URL}${url}`, { headers });
 
     const id = response.data.id;
+    if (!id) {
+      throw new Error('Sumsub: Applicant ID not found in response');
+    }
+
     const info = response.data.info;
 
     const firstName = info.firstNameEn || '';
@@ -102,8 +126,18 @@ const getApplicantData = async (
       idType,
     };
   } catch (error) {
+    logger.error(
+      `Failed to get applicant data from Sumsub for userId ${userId}: ${safeStringify(error)}`,
+    );
+
+    if (axios.isAxiosError(error)) {
+      throw new Error(
+        `Sumsub: ${error.message || 'Failed to retrieve applicant data'}`,
+      );
+    }
+
     handleSumSubError(error);
-    throw error;
+    throw new Error('Sumsub: Failed to retrieve applicant data');
   }
 };
 
@@ -111,6 +145,7 @@ const handler = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
   const userId = req.userId;
   const grantApplicationId = req.query.grantApplicationId as string;
   if (!userId) {
+    logger.warn(`Missing user ID for grant application verification`);
     return res.status(400).json({ message: 'Missing user ID' });
   }
 
@@ -179,6 +214,15 @@ const handler = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
   } catch (error) {
     const message =
       error instanceof Error ? error.message : 'Internal server error';
+
+    logger.error(
+      `Grant application KYC verification failed: ${safeStringify(error)}, grantApplicationId: ${grantApplicationId}`,
+    );
+
+    if (typeof message === 'string' && message.includes('Sumsub')) {
+      return res.status(422).json({ message });
+    }
+
     return res.status(400).json({ message });
   }
 };
