@@ -173,10 +173,10 @@ export async function POST(request: NextRequest) {
           try {
             await addPaymentInfoToAirtable(result.GrantApplication, result);
           } catch (airtableError: any) {
-            console.error(
+            logger.error(
               `Error adding payment info to Airtable: ${airtableError.message}`,
             );
-            console.error(
+            logger.error(
               `Airtable error details: ${safeStringify(airtableError.response?.data || airtableError)}`,
             );
           }
