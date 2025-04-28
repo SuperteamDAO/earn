@@ -4,6 +4,7 @@ import lookup from 'country-code-lookup';
 import { z } from 'zod';
 
 import { Superteams } from '@/constants/Superteam';
+import logger from '@/lib/logger';
 import {
   airtableConfig,
   airtableInsert,
@@ -112,6 +113,9 @@ function grantApplicationToAirtable(
   validatedGrantTranche: ValidatedGrantTranche,
 ): PaymentAirtableSchema {
   const country = lookup.byIso(validatedApplication.user.kycCountry)?.country;
+  logger.debug(
+    `Looked up country for ISO '${validatedApplication.user.kycCountry}': ${country ?? 'Not found'}`,
+  );
 
   const purposeOfPayment =
     validatedApplication.grant.title +
@@ -122,7 +126,7 @@ function grantApplicationToAirtable(
     ' - ' +
     validatedApplication.projectOneLiner;
 
-  return {
+  const paymentData: PaymentAirtableSchema = {
     Name: validatedApplication.user.kycName,
     Address: validatedApplication.user.kycAddress ?? '',
     'Date of Birth': validatedApplication.user.kycDOB,
@@ -142,6 +146,11 @@ function grantApplicationToAirtable(
     earnTrancheId: validatedGrantTranche.id,
     'Discord / Earn Username': validatedApplication.user.username,
   };
+
+  logger.debug(
+    `Mapped data for Airtable payment record (Tranche ID: ${validatedGrantTranche.id}): ${safeStringify(paymentData)}`,
+  );
+  return paymentData;
 }
 
 export async function addPaymentInfoToAirtable(
@@ -149,7 +158,12 @@ export async function addPaymentInfoToAirtable(
   inputGrantTranche: GrantTranche,
 ) {
   const trancheIdForLogging = inputGrantTranche?.id ?? 'unknown';
+  const applicationIdForLogging = inputApplication?.id ?? 'unknown_input_app';
+  logger.info(
+    `Starting addPaymentInfoToAirtable for Application ID: ${applicationIdForLogging}, Tranche ID: ${trancheIdForLogging}`,
+  );
 
+  logger.debug(`Validating input data for Tranche ID: ${trancheIdForLogging}`);
   const validationResult = AirtableInputSchema.safeParse({
     application: inputApplication,
     grantTranche: inputGrantTranche,
@@ -159,8 +173,10 @@ export async function addPaymentInfoToAirtable(
     const errorMessages = validationResult.error.errors
       .map((e) => `${e.path.join('.')}: ${e.message}`)
       .join('; ');
-    const errorMessage = `Input validation failed for addPaymentInfoToAirtable (Tranche ID: ${trancheIdForLogging}): ${errorMessages}`;
-    console.error(errorMessage);
+    logger.error(
+      `Input validation failed for addPaymentInfoToAirtable (Tranche ID: ${trancheIdForLogging}). Errors: ${errorMessages}`,
+      { validationErrors: validationResult.error.format() },
+    );
     throw new Error(
       `Invalid input data for Airtable payment info: ${errorMessages}`,
     );
@@ -168,8 +184,12 @@ export async function addPaymentInfoToAirtable(
 
   const { application, grantTranche } = validationResult.data;
   const { id: validatedTrancheId } = grantTranche;
+  logger.info(
+    `Input validation successful for Tranche ID: ${validatedTrancheId}`,
+  );
 
   try {
+    logger.debug(`Checking Airtable environment variables.`);
     const airtableApiKey = process.env.AIRTABLE_GRANTS_API_TOKEN;
     const paymentsBaseId = process.env.AIRTABLE_PAYMENTS_BASE_ID;
     const paymentsTable = process.env.AIRTABLE_PAYMENTS_TABLE_NAME;
@@ -184,18 +204,21 @@ export async function addPaymentInfoToAirtable(
       ]
         .filter(Boolean)
         .join(', ');
-      console.error(
-        `Airtable environment variables are missing: ${missingVars}`,
+      logger.error(
+        `Airtable environment variables are missing: ${missingVars}. Cannot proceed with Airtable operation for Tranche ID: ${validatedTrancheId}.`,
       );
-      throw new Error('Airtable configuration is incomplete.');
+      throw new Error(
+        `Airtable configuration is incomplete. Missing: ${missingVars}`,
+      );
     }
+    logger.debug('Airtable environment variables check passed.');
 
     const grantsAirtableConfig = airtableConfig(airtableApiKey);
     const paymentsAirtableURL = airtableUrl(paymentsBaseId, paymentsTable);
     const paymentsRegionAirtableURL = airtableUrl(paymentsBaseId, regionsTable);
 
-    console.log(
-      `Checking for existing Airtable payment record for Tranche ID: ${validatedTrancheId}`,
+    logger.info(
+      `Checking for existing Airtable payment record for Tranche ID: ${validatedTrancheId} using formula.`,
     );
     const filterFormula = `AND({earnApplicationId}='${application.id}', {earnTrancheId}='${validatedTrancheId}')`;
     const existingRecordId = await fetchAirtableRecordId(
@@ -207,7 +230,7 @@ export async function addPaymentInfoToAirtable(
     );
 
     if (existingRecordId) {
-      console.warn(
+      logger.warn(
         `Airtable payment record already exists for Tranche ID: ${validatedTrancheId} (Record ID: ${existingRecordId}). Skipping creation.`,
       );
       return {
@@ -215,12 +238,12 @@ export async function addPaymentInfoToAirtable(
         records: [{ id: existingRecordId }],
       };
     }
-    console.log(
+    logger.info(
       `No existing Airtable payment record found for Tranche ID: ${validatedTrancheId}. Proceeding with creation.`,
     );
 
-    console.log(
-      `Fetching Airtable Region ID for Tranche ID: ${validatedTrancheId}`,
+    logger.info(
+      `Determining region and fetching Airtable Region ID for Tranche ID: ${validatedTrancheId}`,
     );
     const superteam = Superteams.find(
       (s) =>
@@ -233,8 +256,8 @@ export async function addPaymentInfoToAirtable(
       ? superteam.airtableKey || superteam.displayValue
       : 'Global';
 
-    console.log(
-      `Determined region name: '${regionName}' for location: ${application.user.location ?? 'N/A'}`,
+    logger.info(
+      `Determined region name: '${regionName}' based on user location: '${application.user.location ?? 'N/A'}' for Tranche ID: ${validatedTrancheId}`,
     );
 
     const regionRecordId = await fetchAirtableRecordId(
@@ -245,29 +268,38 @@ export async function addPaymentInfoToAirtable(
     );
 
     if (!regionRecordId) {
-      const regionErrorMessage = `Failed to find Airtable Region Record ID for region name: '${regionName}' (Tranche ID: ${validatedTrancheId})`;
-      console.error(regionErrorMessage);
+      const regionErrorMessage = `Failed to find Airtable Region Record ID for region name: '${regionName}' (Tranche ID: ${validatedTrancheId}). Check if '${regionName}' exists in the '${regionsTable}' table's 'Country' field.`;
+      logger.error(regionErrorMessage);
       throw new Error(
-        `Could not find required Airtable region record for '${regionName}'.`,
+        `Could not find required Airtable region record for '${regionName}'. Payment cannot be processed without region link.`,
       );
     }
-    console.log(
-      `Found Airtable Region ID: ${regionRecordId} for region name: '${regionName}'`,
+    logger.info(
+      `Found Airtable Region ID: ${regionRecordId} for region name: '${regionName}' (Tranche ID: ${validatedTrancheId})`,
     );
 
+    logger.debug(
+      `Mapping application and tranche data to Airtable schema for Tranche ID: ${validatedTrancheId}`,
+    );
     const airtableData = grantApplicationToAirtable(
       application,
       regionRecordId,
       grantTranche,
     );
 
-    console.log(
+    logger.info(
       `Attempting to add payment info to Airtable for Tranche ID: ${validatedTrancheId}`,
       safeStringify(airtableData),
     );
 
     const airtablePayload = airtableInsert([{ fields: airtableData }], true);
+    logger.debug(
+      `Prepared Airtable payload for Tranche ID: ${validatedTrancheId}: ${safeStringify(airtablePayload)}`,
+    );
 
+    logger.info(
+      `Attempting to POST payment info to Airtable for Tranche ID: ${validatedTrancheId}`,
+    );
     const response = await axios.post(
       paymentsAirtableURL,
       JSON.stringify(airtablePayload),
@@ -276,42 +308,41 @@ export async function addPaymentInfoToAirtable(
 
     const createdRecordId = response.data?.records?.[0]?.id;
     if (createdRecordId) {
-      console.log(
+      logger.info(
         `Successfully added payment info to Airtable for Tranche ID: ${validatedTrancheId}. New Record ID: ${createdRecordId}`,
       );
     } else {
-      console.warn(
-        `Airtable API call succeeded for Tranche ID: ${validatedTrancheId}, but could not extract new Record ID from response:`,
-        safeStringify(response.data),
+      logger.warn(
+        `Airtable API call succeeded for Tranche ID: ${validatedTrancheId}, but could not extract new Record ID from response. Status: ${response.status}. Response data: ${safeStringify(response.data)}`,
       );
     }
 
     return response.data;
   } catch (error: any) {
-    const baseMessage = `Error in addPaymentInfoToAirtable for Tranche ID ${validatedTrancheId}: ${error.message || 'Unknown error'}`;
+    const baseMessage = `Error in addPaymentInfoToAirtable for Tranche ID ${validatedTrancheId || trancheIdForLogging}: ${error.message || 'Unknown error'}`; // Use validated ID if available
 
-    console.error(baseMessage);
+    logger.error(baseMessage);
 
     if (error.response) {
-      console.error(
+      logger.error(
         `Airtable API Error Response: ${safeStringify(error.response.data)}`,
       );
-      console.error(`Airtable API Error Status: ${error.response.status}`);
-      console.error(
+      logger.error(`Airtable API Error Status: ${error.response.status}`);
+      logger.error(
         `Airtable API Error Headers: ${safeStringify(error.response.headers)}`,
       );
     } else if (error.request) {
-      console.error(
+      logger.error(
         `Airtable API No Response Received (Network Error?): ${safeStringify(error.request)}`,
       );
     } else if (error instanceof z.ZodError) {
-      console.error(
+      logger.error(
         `Input Validation Error Details: ${safeStringify(error.errors)}`,
       );
     } else {
-      console.error(`Non-API Error Details: ${safeStringify(error)}`);
+      logger.error(`Non-API Error Details: ${safeStringify(error)}`);
       if (error.stack) {
-        console.error(`Stack trace: ${error.stack}`);
+        logger.error(`Stack trace: ${error.stack}`);
       }
     }
 
