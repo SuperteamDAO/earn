@@ -44,7 +44,11 @@ export const createListingFormSchema = ({
 }: ListingFormSchemaOptions) => {
   const eligibilityQuestionSchema = z.object({
     order: z.number(),
-    question: z.string().trim().min(1, 'Please add your question').max(256),
+    question: z
+      .string()
+      .trim()
+      .min(1, 'Please add your question')
+      .max(200, 'Please limit your question to 200 characters max.'),
     type: z.enum(['text', 'link']),
     optional: z.boolean().optional(),
   });
@@ -286,6 +290,14 @@ export const createListingRefinements = async (
           code: z.ZodIssueCode.custom,
           message: 'Please fill in the rewards',
           path: ['rewards'],
+        });
+      }
+    } else {
+      if (!data.eligibility || data.eligibility.length === 0) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Please fill in the questions',
+          path: ['eligibility'],
         });
       }
     }
