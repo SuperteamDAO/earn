@@ -31,7 +31,7 @@ import {
 import { listingToStatus } from '../utils/listingToStatus.ts';
 import { Deadline } from './Form/Deadline';
 import { DescriptionAndTemplate } from './Form/DescriptionAndTemplate/DescriptionAndTemplate';
-import { EligibilityQuestions } from './Form/EligibilityQuestions';
+import { EligibilityQuestionsSheet } from './Form/EligibilityQuestions/Sheet';
 import { POC } from './Form/POC';
 import { RewardsSheet } from './Form/Rewards/Sheet';
 import { Skills } from './Form/Skills';
@@ -125,7 +125,8 @@ function ListingEditor({
                   <Deadline />
                   <Skills />
                   <POC />
-                  <EligibilityQuestions />
+                  {/* <EligibilityQuestions /> */}
+                  <EligibilityQuestionsSheet />
                 </div>
               </div>
             </div>
