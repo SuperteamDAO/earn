@@ -225,8 +225,17 @@ function getEntryTitle(entry: CreditEntry): string {
         ? 'Applied for Project'
         : 'Submitted to a Bounty';
     case 'MONTHLY_CREDIT':
-      return 'Credits Renewed';
+      const now = new Date();
+      const effectiveDate = new Date(entry.effectiveMonth);
+      const isUpcoming =
+        effectiveDate.getUTCFullYear() > now.getUTCFullYear() ||
+        (effectiveDate.getUTCFullYear() === now.getUTCFullYear() &&
+          effectiveDate.getUTCMonth() > now.getUTCMonth());
+
+      return isUpcoming
+        ? `Credit Renewal for ${format(effectiveDate, 'MMMM')}`
+        : `Credits Renewed for ${format(effectiveDate, 'MMMM')}`;
     case 'CREDIT_EXPIRY':
-      return `Credits Expired For ${format(new Date(entry.effectiveMonth), 'MMM')}`;
+      return `Credits Expired For ${format(new Date(entry.effectiveMonth), 'MMMM')}`;
   }
 }

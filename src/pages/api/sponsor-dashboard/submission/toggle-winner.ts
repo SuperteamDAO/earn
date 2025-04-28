@@ -282,9 +282,19 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       const result = await prisma.submission.update({
         where: { id },
         data: updateData,
+        include: {
+          listing: true,
+        },
       });
 
-      const ask = result.ask || 0;
+      const ask =
+        result.ask ||
+        (result.listing.type === 'project' &&
+        result.listing.compensationType === 'range'
+          ? ((result.listing.minRewardAsk || 0) +
+              (result.listing.maxRewardAsk || 0)) /
+            2
+          : 1);
 
       if (currentSubmission.isWinner !== isWinner) {
         logger.debug(
@@ -293,7 +303,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
         if (firstListing.compensationType !== 'fixed') {
           logger.debug(
-            `Fetching token USD value for variable compensation for submission ${id}`,
+            `Fetching token USD value for variable or range compensation for submission ${id}`,
           );
           const tokenUSDValue = await fetchHistoricalTokenUSDValue(
             firstListing.token!,

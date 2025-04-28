@@ -173,6 +173,9 @@ export default function BountySubmissions({ listing }: Props) {
               totalWinners={totalWinners || 0}
               totalPaymentsMade={totalPaymentsMade || 0}
               bounty={bounty}
+              submissionsLeft={
+                submissions?.filter((s) => !s.isWinner).length || 0
+              }
               submissions={submissions || []}
             />
           )}

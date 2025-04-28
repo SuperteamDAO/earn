@@ -44,9 +44,9 @@ export const createSumSubHeaders = (
 
 export const handleSumSubError = (error: unknown): never => {
   if (axios.isAxiosError(error) && error.response?.status === 401) {
-    throw new Error('Invalid credentials');
+    throw new Error('Sumsub: Invalid credentials');
   }
   throw new Error(
-    error instanceof Error ? error.message : 'Failed to process SumSub request',
+    `Sumsub: ${error instanceof Error ? error.message : 'Failed to process request'}`,
   );
 };

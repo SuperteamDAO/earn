@@ -13,7 +13,6 @@ import { type NextApiRequestWithSponsor } from '@/features/auth/types';
 import { checkGrantSponsorAuth } from '@/features/auth/utils/checkGrantSponsorAuth';
 import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
 import { queueEmail } from '@/features/emails/utils/queueEmail';
-import { addOnboardingInfoToAirtable } from '@/features/grants/utils/addOnboardingInfoToAirtable';
 import { convertGrantApplicationToAirtable } from '@/features/grants/utils/convertGrantApplicationToAirtable';
 import { createTranche } from '@/features/grants/utils/createTranche';
 import { fetchTokenUSDValue } from '@/features/wallet/utils/fetchTokenUSDValue';
@@ -46,28 +45,6 @@ const checkAndUpdateKYCStatus = async (
       applicationId: grantApplicationId,
       isFirstTranche: true,
     });
-
-    const updatedGrantApplication =
-      await prisma.grantApplication.findUniqueOrThrow({
-        where: { id: grantApplicationId },
-        include: {
-          grant: true,
-          user: {
-            select: {
-              email: true,
-              kycName: true,
-            },
-          },
-        },
-      });
-
-    try {
-      await addOnboardingInfoToAirtable(updatedGrantApplication);
-    } catch (airtableError: any) {
-      console.error(
-        `Error adding onboarding info to Airtable: ${airtableError.message}`,
-      );
-    }
   }
 };
 

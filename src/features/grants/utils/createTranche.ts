@@ -1,5 +1,6 @@
 import { prisma } from '@/prisma';
 
+import { addOnboardingInfoToAirtable } from './addOnboardingInfoToAirtable';
 import { addPaymentInfoToAirtable } from './addPaymentInfoToAirtable';
 
 type CreateTrancheProps = {
@@ -26,6 +27,10 @@ export async function createTranche({
     },
   });
 
+  if (application.user.isKYCVerified !== true) {
+    throw new Error('User is not verified');
+  }
+
   const existingTranches = application.GrantTranche.filter(
     (tranche) => tranche.status !== 'Rejected',
   ).length;
@@ -36,6 +41,15 @@ export async function createTranche({
   }
 
   if (isFirstTranche && existingTranches > 0) {
+    const cutoff = new Date('2025-04-17');
+    const allExistingCreatedAt = application.GrantTranche.every(
+      (tranche) => new Date(tranche.createdAt) < cutoff,
+    );
+
+    if (allExistingCreatedAt) {
+      return null;
+    }
+
     throw new Error('Cannot create first tranche when tranches already exist');
   }
 
@@ -130,7 +144,28 @@ export async function createTranche({
   });
 
   if (isFirstTranche) {
-    await addPaymentInfoToAirtable(tranche.GrantApplication, tranche);
+    const updatedGrantApplication =
+      await prisma.grantApplication.findUniqueOrThrow({
+        where: { id: applicationId },
+        include: {
+          grant: true,
+          user: {
+            select: {
+              email: true,
+              kycName: true,
+            },
+          },
+        },
+      });
+
+    try {
+      await addOnboardingInfoToAirtable(updatedGrantApplication);
+      await addPaymentInfoToAirtable(tranche.GrantApplication, tranche);
+    } catch (airtableError: any) {
+      console.error(
+        `Error adding onboarding info to Airtable: ${airtableError.message}`,
+      );
+    }
   }
 
   return tranche;
