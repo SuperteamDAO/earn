@@ -112,7 +112,9 @@ export function EligibilityQuestionsSheet() {
         className="flex h-[100vh] flex-col p-0 sm:max-w-xl"
       >
         <SheetHeader className={cn('shrink-0 space-y-2 border-b p-6')}>
-          <SheetTitle>Submission Form</SheetTitle>
+          <SheetTitle>
+            {type === 'project' ? 'Application' : 'Submission'} Form
+          </SheetTitle>
           <SheetDescription className={cn('pb-4 text-sm text-slate-500')}>
             {subtext}
             <br />
