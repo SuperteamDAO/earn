@@ -236,12 +236,14 @@ export async function POST(
         }),
       );
 
-      promises.push(
-        addWinBonusCredit(
-          winners[currentIndex]?.userId || '',
-          winners[currentIndex]?.id || '',
-        ),
-      );
+      if (listing.type === 'bounty' || listing.type === 'project') {
+        promises.push(
+          addWinBonusCredit(
+            winners[currentIndex]?.userId || '',
+            winners[currentIndex]?.id || '',
+          ),
+        );
+      }
 
       currentIndex += 1;
     }

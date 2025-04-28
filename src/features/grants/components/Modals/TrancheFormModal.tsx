@@ -51,6 +51,7 @@ export const TrancheFormModal = ({ grant, applicationId, onClose }: Props) => {
         ...values,
         applicationId,
       });
+      form.reset();
       await queryClient.invalidateQueries({
         queryKey: userApplicationQuery(grant.id).queryKey,
       });
