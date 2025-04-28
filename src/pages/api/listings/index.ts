@@ -142,6 +142,9 @@ export default async function listings(
       isPrivate: false,
       isArchived: false,
       status: 'OPEN',
+      sponsor: {
+        isArchived: false,
+      },
       deadline: {
         gte: deadline,
       },

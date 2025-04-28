@@ -41,6 +41,7 @@ export const userSelectOptions: Prisma.UserSelect = {
       isVerified: true,
       entityName: true,
       slug: true,
+      isArchived: true,
       st: true,
     },
   },

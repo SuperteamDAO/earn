@@ -33,6 +33,9 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
         isArchived: false,
         isPrivate: false,
         status: 'OPEN',
+        sponsor: {
+          isArchived: false,
+        },
         OR: [
           {
             region: {

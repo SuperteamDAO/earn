@@ -52,6 +52,7 @@ async function sponsors(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           slug: true,
           logo: true,
           isVerified: true,
+          isArchived: true,
         },
         orderBy: {
           slug: 'asc',
@@ -96,6 +97,7 @@ async function sponsors(req: NextApiRequestWithSponsor, res: NextApiResponse) {
               slug: true,
               logo: true,
               isVerified: true,
+              isArchived: true,
             },
           },
         },

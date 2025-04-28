@@ -23,18 +23,23 @@ async function handler(
     ? {}
     : { isPublished: true, isPrivate: false, isArchived: false };
 
+  const sponsorWhere: Prisma.SponsorsWhereInput = isGod
+    ? {
+        slug: sponsor,
+      }
+    : {
+        slug: sponsor,
+        isArchived: false,
+      };
+
   const where: Prisma.BountiesWhereInput = isUUID
     ? {
         id: listingId,
-        sponsor: {
-          slug: sponsor,
-        },
+        sponsor: sponsorWhere,
       }
     : {
         sequentialId: parseInt(listingId),
-        sponsor: {
-          slug: sponsor,
-        },
+        sponsor: sponsorWhere,
         ...validation,
       };
 

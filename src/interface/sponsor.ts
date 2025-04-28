@@ -11,5 +11,7 @@ interface SponsorType {
   isVerified?: boolean;
   isCaution?: boolean;
   st?: boolean;
+  isActive?: boolean;
+  isArchived?: boolean;
 }
 export type { SponsorType };

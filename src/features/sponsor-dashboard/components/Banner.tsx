@@ -1,14 +1,18 @@
-import { ExternalLink, Info, Pencil } from 'lucide-react';
+import { ExternalLink, Info, Pencil, RefreshCw, Trash } from 'lucide-react';
 import Link from 'next/link';
+import { useSession } from 'next-auth/react';
 
 import { VerifiedBadgeLarge } from '@/components/shared/VerifiedBadge';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tooltip } from '@/components/ui/tooltip';
 import { PROJECT_NAME } from '@/constants/project';
+import { useDisclosure } from '@/hooks/use-disclosure';
 import { useUser } from '@/store/user';
 
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
+
+import { DeleteRestoreSponsorModal } from './Modals/DeleteRestoreSponsorModal';
 
 interface StatsTooltipProps {
   label: string;
@@ -68,7 +72,13 @@ export function Banner({
   isLoading: boolean;
 }) {
   const { user } = useUser();
+  const { data: session } = useSession();
   const sponsorId = isHackathon ? user?.hackathonId : user?.currentSponsorId;
+  const {
+    isOpen: deleteModalOpen,
+    onOpen: deleteModalOnOpen,
+    onClose: deleteModalOnClose,
+  } = useDisclosure();
 
   const tooltipTextReward = `Total compensation (in USD) of listings where the winners have been announced`;
   const tooltipTextListings = `Total number of listings added to ${PROJECT_NAME}`;
@@ -76,10 +86,18 @@ export function Banner({
 
   const sponsor = isHackathon ? stats : user?.currentSponsor;
 
+  const message = sponsor?.isArchived
+    ? 'Sponsor blocked'
+    : `Sponsor since ${stats?.yearOnPlatform}`;
+
   if (!sponsorId) return null;
   return (
     <div className="flex w-full gap-4">
-      <div className="mb-6 w-full rounded-md border border-slate-200 bg-white px-6 py-5 text-white">
+      <div
+        className={`mb-6 w-full rounded-md border border-slate-200 bg-white px-6 py-5 text-white ${
+          sponsor?.isArchived ? 'grayscale' : ''
+        }`}
+      >
         <div className="flex items-center gap-6">
           <div className="flex flex-shrink-0 items-center gap-3">
             <Link href={`/${sponsor?.slug}`} target="_blank">
@@ -112,9 +130,7 @@ export function Banner({
                 <Skeleton className="mt-2 h-5 w-[170px]" />
               ) : (
                 <p className="-mt-0.5 whitespace-nowrap text-[1.05rem] font-normal text-slate-500">
-                  {!isHackathon
-                    ? `Sponsor since ${stats?.yearOnPlatform}`
-                    : 'Hackathon'}
+                  {!isHackathon ? message : 'Hackathon'}
                 </p>
               )}
             </div>
@@ -148,8 +164,36 @@ export function Banner({
               View Profile
             </Button>
           </Link>
+
+          {session?.user.role === 'GOD' && (
+            <Button
+              variant="outline"
+              className="text-slate-500"
+              onClick={deleteModalOnOpen}
+            >
+              {sponsor?.isArchived ? (
+                <>
+                  <RefreshCw className="mr-1 h-4 w-4" />
+                  Restore Sponsor
+                </>
+              ) : (
+                <>
+                  <Trash className="mr-1 h-4 w-4" />
+                  Delete Sponsor
+                </>
+              )}
+            </Button>
+          )}
         </div>
       </div>
+      <DeleteRestoreSponsorModal
+        isOpen={deleteModalOpen}
+        onClose={deleteModalOnClose}
+        sponsor={sponsor}
+        onSuccess={() => {
+          window.location.reload(); // Simple refresh for now
+        }}
+      />
     </div>
   );
 }
