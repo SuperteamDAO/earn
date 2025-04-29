@@ -169,7 +169,10 @@ export const SubmissionDrawer = ({
             tweet,
             otherInfo,
             ask,
-            otherTokenDetails,
+            otherTokenDetails:
+              otherTokenDetails && token === 'Other'
+                ? otherTokenDetails
+                : undefined,
             eligibilityAnswers: eligibilityAnswers.map((answer: any) => ({
               question: answer.question,
               answer: answer.answer ?? '',
@@ -200,7 +203,7 @@ export const SubmissionDrawer = ({
         link: data.link || '',
         tweet: data.tweet || '',
         otherInfo: data.otherInfo || '',
-        otherTokenDetails: data.otherTokenDetails || '',
+        otherTokenDetails: data.otherTokenDetails || undefined,
         ask: data.ask || null,
         eligibilityAnswers: data.eligibilityAnswers || [],
         publicKey: data.publicKey,
