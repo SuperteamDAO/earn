@@ -50,9 +50,11 @@ Generate a bounty listing draft using the information above. Structure the draft
 *   Use the content from <company-description> to introduce the company or protocol.
 *   Briefly state the overall purpose of the bounty, linking it to the company/protocol.
 *   Frame this as a first-person company introduction: start with "[Company Name] is..." then use "We/Our/Us" for subsequent sentences.
-*   Must include the links that are provided in the <company-description>.
-*   Absolutely avoid to add any other link other other than what was provided in <company-description>.
+*   Strictly Only include the links provided within <company-description>.
+*   Absolutely avoid including the links, unless given inside <company-description>.
+*   Absolutely avoid includingl links from the web search
 *   You must absolute inlcude The info from web search of the company, ONLY inlcude basic info about what the company does in short, also add any other info of the company if that info is relevant to the scope of work
+*   Strictly avoid adding citations from the web search
 
 ## Mission
 *   **Extract** the primary, high-level goal or task from the <scope-of-work>. State it clearly and concisely (e.g., "Write a deep dive on X...", "Develop a tool that does Y...").
@@ -89,6 +91,7 @@ Generate a bounty listing draft using the information above. Structure the draft
 *   **Apply these calculation and formatting rules:**
     *   Calculate the specific reward amount for each podium spot and bonus spot based on the distribution described in <rewards>.
     *   **VERY IMPORTANT: WHILE CALCULATING REWARD AMOUNTS, DECIDE TO INCLUDE BONUS REWARDS ONLY IF BONUS WORD IS USED EXPLICITLY IN REWARDS**
+    *   ALSO NOTE: ONLY BONUS IS NOT ALLOWED, YOU HAVE TO ADD ATLEAST ONE PODIUM BEFORE ADDING BONUS (if no podium mentioned, add one podium of same bonus prize and adjust the bonus spots)
     *   Adhere to the maximums: ${MAX_PODIUMS} podium spots (sequentially numbered: 1st, 2nd, ...) and ${MAX_BONUS_SPOTS} bonus spots.
     *   Include bonus awards *only if* explicitly mentioned in <rewards>. If you are to add bonus spots, remember that all bonus spots **must** receive the same reward amount.
     *   While bonus spots are optional, podium spots are COMPULSORY, you absolutely must prioritize and add podium spots
@@ -148,7 +151,7 @@ Generate a bounty listing draft using the information above. Structure the draft
 
 *   **Tone:** Professional, direct, clear, and informative. Avoid excessive marketing jargon.
 *   **Formatting:** Use H2 for main sections and bullet points for lists.
-*   **Output:** Generate **only** the bounty description text. Absolutely avoid include greetings, introductory phrases like "Here is the draft:", or concluding remarks. Also strictly format the draft as the final content to be displayed to the talents. Avoid framing sentences such that content are results of some search
+*   **Output:** Generate **only** the bounty description text. Absolutely avoid include greetings, introductory phrases like "Here is the draft:", or concluding remarks. Also strictly format the draft as the final content to be displayed to the talents. Avoid framing sentences such that content are results of some search. Make sure zero citations or links from web search apart from <company-description> are included in the final output.
 `;
 
 const descriptionPromptProject = (values: AiGenerateFormValues) => `
@@ -193,16 +196,19 @@ Generate a project listing draft using the information above. Structure the draf
 ## About [Company Name]
 *   Use the content from <company-description> to introduce the company or protocol.
 *   Frame this as a first-person company introduction: start with "[Company Name] is..." then use "We/Our/Us" for subsequent sentences.
-*   Include the company link if provided within the description.
+*   Strictly Only include the links provided within <company-description>.
+*   Absolutely avoid including the links, unless given inside <company-description>.
+*   Absolutely avoid including links from the web search
 *   Briefly state the overall purpose or goal of this specific project, linking it to the company/protocol's needs.
 *   The info from web search of the company should be shown here, inlcude basic info + whatever is relevant
+*   Strictly avoid adding citations from the web search
 
 ## Project Overview & Responsibilities
 *   **Extract** the primary goal and specific tasks/deliverables from <scope-of-work>.
 *   Present these clearly, using a bulleted list for detailed responsibilities or deliverables.
 *   **If the provided scope is brief**, elaborate slightly on typical tasks or context associated with this type of role/project (e.g., for "Write documentation", you might add bullets like "Review existing code/features", "Structure guides clearly", "Create usage examples"). Stay true to the core request.
 
-## Required Qualifications / Skills
+## Required Qualifications
 *   **Extract** desired skills, experience level, or specific knowledge areas from <evaluation-criteria-or-qualifications>.
 *   Focus on *who* is a good fit for this role.
 *   Present as a bulleted list (e.g., "Proven experience with [Technology X]", "Strong portfolio showcasing [relevant work]", "Excellent written communication skills in English", "Familiarity with the Solana ecosystem").
@@ -281,6 +287,7 @@ Generate a project listing draft using the information above. Structure the draf
 *   **Maintain Tone and Length:** Keep the language professional, direct, and within the 150-300 word target.
 *   **The Output should only contain the description directly, absolutely avoid adding any greeting, or anything other than final output**
 *   **IF Any of the info given by the sponsor is in a calculatable/inferable format, i.e natural language that hints to calculate/infer the specific field, you are supposed to do the calculation and show a proper output
+*  Make sure **zero citations** or links from web search apart from <company-description> are included in the final output.
 `;
 
 const descriptionPromptHackathon = (values: AiGenerateFormValues) => `
@@ -334,9 +341,11 @@ Generate a bounty listing draft using the information above. Structure the draft
 *   Use the content from <company-description> to introduce the company or protocol.
 *   Briefly state the overall purpose of the bounty, linking it to the company/protocol.
 *   Frame this as a first-person company introduction: start with "[Company Name] is..." then use "We/Our/Us" for subsequent sentences.
-*   Must include the links that are provided in the <company-description>.
-*   Absolutely avoid to add any other link other other than what was provided in <company-description>.
+*   Strictly Only include the links provided within <company-description>.
+*   Absolutely avoid including the links, unless given inside <company-description>.
+*   Absolutely avoid includingl links from the web search
 *   You must absolute inlcude The info from web search of the company, ONLY inlcude basic info about what the company does in short, also add any other info of the company if that info is relevant to the scope of work
+*   Strictly avoid adding citations from the web search
 *   Also include mentioning that hackathon name here.
 
 *   Use the content from <scope-of-work>. Clearly define the challenge, goals, and expected outcomes for this track within the <hackathon-name>.
@@ -376,6 +385,7 @@ Generate a bounty listing draft using the information above. Structure the draft
 *   **Apply these calculation and formatting rules:**
     *   Calculate the specific reward amount for each podium spot and bonus spot based on the distribution described in <rewards>.
     *   **VERY IMPORTANT: WHILE CALCULATING REWARD AMOUNTS, DECIDE TO INCLUDE BONUS REWARDS ONLY IF BONUS WORD IS USED EXPLICITLY IN REWARDS**
+    *   ALSO NOTE: ONLY BONUS IS NOT ALLOWED, YOU HAVE TO ADD ATLEAST ONE PODIUM BEFORE ADDING BONUS (if no podium mentioned, add one podium of same bonus prize and adjust the bonus spots)
     *   Adhere to the maximums: ${MAX_PODIUMS} podium spots (sequentially numbered: 1st, 2nd, ...) and ${MAX_BONUS_SPOTS} bonus spots.
     *   Include bonus awards *only if* explicitly mentioned in <rewards>. If you are to add bonus spots, remember that all bonus spots **must** receive the same reward amount.
     *   While bonus spots are optional, podium spots are COMPULSORY, you absolutely must prioritize and add podium spots
@@ -435,7 +445,7 @@ Generate a bounty listing draft using the information above. Structure the draft
 
 *   **Tone:** Professional, direct, clear, and informative. Avoid excessive marketing jargon.
 *   **Formatting:** Use H2 for main sections and bullet points for lists.
-*   **Output:** Generate **only** the bounty description text. Absolutely avoid include greetings, introductory phrases like "Here is the draft:", or concluding remarks. Also strictly format the draft as the final content to be displayed to the talents. Avoid framing sentences such that content are results of some search
+*   **Output:** Generate **only** the bounty description text. Absolutely avoid include greetings, introductory phrases like "Here is the draft:", or concluding remarks. Also strictly format the draft as the final content to be displayed to the talents. Avoid framing sentences such that content are results of some search. Make sure zero citations or links from web search apart from <company-description> are included in the final output.
 `;
 
 export const getDescriptionPrompt = (values: AiGenerateFormValues) => {

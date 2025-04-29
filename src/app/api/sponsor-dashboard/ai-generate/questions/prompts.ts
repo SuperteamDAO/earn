@@ -40,8 +40,9 @@ Generate the custom questions (or return empty array):`;
   } else {
     prompt += `
 Project-Specific Rules:
-- Project applications are used to *select* a candidate *before* work begins. There are no default questions.
-- Custom questions are MANDATORY for projects. You MUST generate at least one question.
+- Project applications are used to *select* a candidate *before* work begins. 
+- There are only one default question called compensation quote, used to take compensation quote from the applicant.
+- Custom questions are MANDATORY for projects. You MUST generate at least one question (apart from default questions).
 - Generate relevant questions based *only* on the description to help the sponsor choose the best applicant for the job/freelance role.
 - Since there are no default questions, we need to ask portfolio/proof of work in the question if the question fits the description
 - Questions should probe the applicant's suitability, relevant experience, understanding of the requirements, proposed approach, or portfolio, as applicable based on the description.

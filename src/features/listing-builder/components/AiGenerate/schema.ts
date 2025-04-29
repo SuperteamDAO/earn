@@ -10,35 +10,20 @@ export const aiGenerateFormSchema = z.object({
   tokenUsdAmount: z.number().optional(),
   companyDescription: z
     .string()
-    .min(
-      50,
-      'Please provide a more detailed company description (minimum 50 characters)',
-    )
-    .max(2500, 'Company description is too long (maximum 2500 characters)'),
+    .min(50, 'minimum 50 characters required')
+    .max(2500, 'maximum 2500 characters allowed'),
   scopeOfWork: z
     .string()
-    .min(
-      50,
-      'Please provide a more detailed scope of work (minimum 50 characters)',
-    )
-    .max(2500, 'Scope of work is too long (maximum 2500 characters)'),
+    .min(50, 'minimum 50 characters required')
+    .max(2500, 'maximum 2500 characters allowed'),
   rewards: z
     .string()
-    .min(
-      10,
-      'Please provide more details about rewards and podium split (minimum 10 characters)',
-    )
-    .max(2500, 'Rewards description is too long (maximum 2500 characters)'),
+    .min(10, 'minimum 10 characters required')
+    .max(2500, 'maximum 2500 characters allowed'),
   requirements: z
     .string()
-    .min(
-      25,
-      'Please provide more detailed requirements (minimum 25 characters)',
-    )
-    .max(
-      2500,
-      'Requirements description is too long (maximum 2500 characters)',
-    ),
+    .min(25, 'minimum 25 characters required')
+    .max(2500, 'maximum 2500 characters allowed'),
 });
 
 export type AiGenerateFormValues = z.infer<typeof aiGenerateFormSchema>;

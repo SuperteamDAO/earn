@@ -27,7 +27,7 @@ Produce a valid JSON array of objects as your final output. Each object in the a
 5.  **Content Task Identification and Filtering:**
     *   **Initial Assessment:** First, determine if the listing description's primary focus is a **content creation task**. Examples include writing articles, creating tweet threads, producing videos, photography, graphic design *for content purposes* (like infographics, social media visuals), social media posting, or research *specifically to generate content*.
     *   **If YES (Content-Based Task):**
-        *   **Tweet Creation Specifics:** For tasks solely focused on writing/creating tweets or threads, restrict your skill selection *exclusively* to the "Content" category (likely 'Writing' and/or 'Social Media').
+        *   **Tweet Creation Specifics:** For tasks solely focused on writing/creating tweets or threads, restrict your skill selection *exclusively* to the "Content" category (likely 'Writing' and 'Social Media').
         *   **General Content Tasks:** For other content tasks, prioritize skills from the "Content" category. Carefully evaluate if any skills from other categories are *essential* and required for the content creation itself.
     *   **If NO (Not Primarily Content-Based):** Proceed to identify relevant skills and sub-skills from the *entire* \`skillSubSkillMap\`, applying the relevance rules below.
 6.  **Empty Sub-skills Rule (CRITICAL):**

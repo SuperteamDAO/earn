@@ -9,11 +9,11 @@ export const generateListingTitlePrompt = (
   if (type !== 'project') {
     typeSpecificGuidance = `
 *   **Guidance for Bounty/Task (Type: ${type})**
-    *   **Action-Oriented:** The title MUST start with a clear action verb describing the core task (e.g., Create a/an/the, Design a/an/the, Write a/an/the, Integrate, Develop, Build, Research, Analyze,..).
-    *   **Grammar:** Keep the grammaer intact and accurate
-    *   **Focus:** Concentrate on the specific deliverable or action required. Be very direct.
+    *   **Action-Oriented & Specific Verb:** The title MUST start with the *most specific and active* verb describing the core task (e.g., Write, Develop, Design, Integrate, Build, Research, Analyze, Draft, Compose, Test, Optimize, Translate). Avoid general verbs like 'Create' or 'Make' if a more precise action is described.
+    *   **Deliverable & Subject Focus:** Clearly state the *primary deliverable* (e.g., 'Twitter thread', 'Landing Page Mockup', 'Blog Post', 'Telegram Bot') and its *core subject* or purpose (e.g., 'Solflare Wallet features', 'Web3 Wallets', 'API Integration', 'Payouts'). Be very specific based *only* on the description. If a specific format (like 'thread', 'post', 'script', 'mockup') is mentioned or implied, include it.
+    *   **Grammar:** Keep the grammar intact and accurate.
     *   *Example Bounty Titles:*
-        *   Create a Landing Page Mockup
+        *   Write a Twitter Thread Explaining Solflare Wallet Features
         *   Develop a Telegram Bot for Payouts
         *   Write a Blog Post about Web3 Wallets
         *   Integrate Stripe API for Subscriptions
