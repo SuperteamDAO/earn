@@ -104,6 +104,7 @@ async function submission(req: NextApiRequestWithUser, res: NextApiResponse) {
     ask,
     publicKey,
     token,
+    otherTokenDetails,
   } = req.body;
 
   logger.debug(`Request body: ${safeStringify(req.body)}`);
@@ -118,7 +119,16 @@ async function submission(req: NextApiRequestWithUser, res: NextApiResponse) {
     const result = await createSubmission(
       userId as string,
       listingId,
-      { link, tweet, otherInfo, eligibilityAnswers, ask, publicKey, token },
+      {
+        link,
+        tweet,
+        otherInfo,
+        eligibilityAnswers,
+        ask,
+        publicKey,
+        token,
+        otherTokenDetails,
+      },
       listing,
     );
 
