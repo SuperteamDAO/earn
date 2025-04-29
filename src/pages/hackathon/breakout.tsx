@@ -95,13 +95,13 @@ export default function Breakout({ hackathon }: { hackathon: Hackathon }) {
         <>
           <meta
             name="twitter:image"
-            content={`https://res.cloudinary.com/dgvnuwspr/image/upload/v1740832046/assets/hackathon/breakout/og-image`}
+            content={`https://res.cloudinary.com/dgvnuwspr/image/upload/assets/hackathon/breakout/og-image.png`}
           />
           <Meta
             title="Breakout | Superteam Earn"
             description={`Solana Breakout Online Hackathon`}
             canonical="https://earn.superteam.fun/hackathon/breakout"
-            og="https://res.cloudinary.com/dgvnuwspr/image/upload/v1740832046/assets/hackathon/breakout/og-image"
+            og="https://res.cloudinary.com/dgvnuwspr/image/upload/assets/hackathon/breakout/og-image.png"
           />
         </>
       }
