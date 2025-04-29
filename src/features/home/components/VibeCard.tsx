@@ -119,7 +119,7 @@ export const VibeCard = () => {
       <AuthWrapper>
         <Button
           variant="outline"
-          className="max-w-40 border-slate-200 bg-white px-10 text-sm font-medium text-slate-500 hover:bg-brand-purple hover:text-white"
+          className="max-w-40 border-slate-200 bg-white px-10 text-sm font-medium text-slate-500 hover:bg-brand-green hover:text-white"
           onClick={handleVibeClick}
         >
           click to vibeeeee

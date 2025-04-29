@@ -36,7 +36,7 @@ export default function Scribes() {
             backgroundImage: `url('${ASSET_URL}/hackathon/scribes/scribes-bg.png')`,
           }}
         >
-          <p className="mb-4 font-mono">Lamport DAO presents</p>
+          <p className="mb-4 font-fkgrotesk">Lamport DAO presents</p>
           <ScribesLogo styles={{ height: '80px', width: 'auto' }} />
           <p className="mt-4 px-6 text-center text-slate-600">
             Participate in {CHAIN_NAME}&apos;s first ever content hackathon

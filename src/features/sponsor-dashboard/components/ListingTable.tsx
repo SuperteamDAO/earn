@@ -385,7 +385,7 @@ export const ListingTable = ({
                       <Button
                         variant="ghost"
                         size="sm"
-                        className="ph-no-capture text-[13px] font-medium text-brand-purple hover:bg-brand-purple hover:text-white"
+                        className="ph-no-capture text-[13px] font-medium text-black"
                         onClick={() => {
                           posthog.capture('submissions_sponsor');
                           router.push(listingSubmissionLink);
@@ -495,7 +495,7 @@ export const ListingTable = ({
                             <DropdownMenuItem
                               className={cn(
                                 'cursor-pointer text-sm font-medium text-slate-500',
-                                listing.isArchived && 'hover:text-brand-purple',
+                                listing.isArchived && 'hover:text-brand-green',
                               )}
                               onClick={() => {
                                 setSelectedListing(listing);

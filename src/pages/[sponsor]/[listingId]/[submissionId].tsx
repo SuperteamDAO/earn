@@ -174,7 +174,7 @@ function Content({
                   </div>
 
                   <Link
-                    className="flex w-full items-center whitespace-nowrap text-xs font-medium text-brand-purple"
+                    className="flex w-full items-center whitespace-nowrap text-xs font-medium text-black"
                     href={`/t/${submission?.user?.username}`}
                   >
                     View Profile <ArrowRight className="inline-block h-3 w-3" />

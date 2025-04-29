@@ -67,10 +67,10 @@ const ListingTabTrigger = ({
     onClick={onClick}
     className={cn(
       'group relative inline-flex items-center justify-center whitespace-nowrap rounded-md px-1 py-1 text-sm font-medium ring-offset-background transition-all sm:px-3',
-      'hover:text-brand-purple',
+      'hover:text-black',
       isActive && [
-        'text-brand-purple',
-        'after:absolute after:bottom-[-12px] after:left-0 after:h-[2px] after:w-full after:bg-brand-purple/80',
+        'text-semibold',
+        'after:absolute after:bottom-[-12px] after:left-0 after:h-[2px] after:w-full after:bg-brand-green/80',
       ],
       !isActive && 'text-slate-500',
     )}

@@ -149,7 +149,7 @@ export const SubmissionList = ({
         <div className="flex w-full items-center justify-between gap-4 py-[3px]">
           {listing?.type === 'project' && (
             <Checkbox
-              className="data-[state=checked]:border-brand-purple data-[state=checked]:bg-brand-purple"
+              className="data-[state=checked]:border-brand-green data-[state=checked]:bg-brand-green"
               checked={isAllToggled}
               disabled={listing?.isWinnersAnnounced}
               onCheckedChange={() =>
@@ -161,7 +161,7 @@ export const SubmissionList = ({
           <div className="relative w-full">
             <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
             <Input
-              className="placeholder:text-md h-12 border-slate-200 bg-white pl-9 placeholder:font-medium placeholder:text-slate-400 focus-visible:ring-brand-purple"
+              className="placeholder:text-md h-12 border-slate-200 bg-white pl-9 placeholder:font-medium placeholder:text-slate-400 focus-visible:ring-brand-green"
               onChange={(e) => debouncedSetSearchText(e.target.value)}
               placeholder="Search Submissions"
               type="text"
@@ -173,7 +173,7 @@ export const SubmissionList = ({
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
-                className="h-auto w-32 border border-slate-300 bg-transparent px-2 py-1 font-medium capitalize text-slate-500 hover:border-brand-purple hover:bg-transparent"
+                className="h-auto w-32 border border-slate-300 bg-transparent px-2 py-1 font-medium capitalize text-slate-500 hover:border-brand-green hover:bg-transparent"
                 variant="outline"
               >
                 <span
@@ -288,7 +288,7 @@ export const SubmissionList = ({
             <div className="flex items-center">
               {listing?.type === 'project' && (
                 <Checkbox
-                  className="mr-2 data-[state=checked]:border-brand-purple data-[state=checked]:bg-brand-purple"
+                  className="mr-2 data-[state=checked]:border-brand-green data-[state=checked]:bg-brand-green"
                   checked={isToggled && isToggled(submission.id)}
                   disabled={
                     listing?.isWinnersAnnounced ||
@@ -349,7 +349,7 @@ export const SubmissionList = ({
                     size="icon"
                     className={cn(
                       'ml-1 h-6 w-6 p-1 text-slate-500 hover:text-destructive',
-                      submission.isArchived && 'hover:text-brand-purple',
+                      submission.isArchived && 'hover:text-brand-green',
                     )}
                     onClick={() => {
                       setInteractedSubmission(submission);

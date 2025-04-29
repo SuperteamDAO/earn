@@ -655,7 +655,7 @@ export default function EditProfilePage({ slug }: { slug: string }) {
                               field.onChange(checked);
                             }
                           }}
-                          className="mr-1 text-brand-purple data-[state=checked]:border-brand-purple data-[state=checked]:bg-brand-purple"
+                          className="mr-1 text-brand-green data-[state=checked]:border-brand-green data-[state=checked]:bg-brand-green"
                         ></Checkbox>
                       </FormControl>
                       <FormLabel className="font-medium text-slate-500">

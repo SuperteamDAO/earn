@@ -32,6 +32,7 @@ export function ListingTypes() {
         maxW,
         'px-[1.875rem] lg:px-[7rem] xl:px-[11rem]',
       )}
+      id="listings"
     >
       <p className="max-w-[48rem] text-center text-[2rem] font-semibold leading-none text-slate-900 md:text-[3.5rem]">
         Start by posting your first Bounty or Project

@@ -99,7 +99,7 @@ export const GrantApplicationButton = ({
 
     default:
       buttonText = 'Apply Now';
-      buttonBG = 'bg-brand-purple';
+      buttonBG = 'bg-brand-green';
       isBtnDisabled = Boolean(
         !grant.isPublished ||
           (user?.id && user?.isTalentFilled && !isUserEligibleByRegion),
@@ -154,7 +154,7 @@ export const GrantApplicationButton = ({
                 buttonBG,
                 'size-lg',
                 applicationState === 'ALLOW EDIT' &&
-                  'border-brand-purple text-brand-purple hover:text-brand-purple-dark',
+                  'border-brand-green text-brand-green hover:text-brand-green-dark',
               )}
               disabled={isBtnDisabled}
               onClick={handleSubmit}

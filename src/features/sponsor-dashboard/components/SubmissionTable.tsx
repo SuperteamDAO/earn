@@ -329,7 +329,7 @@ export const SubmissionTable = ({
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="ph-no-capture text-[13px] font-medium text-brand-purple hover:bg-brand-purple hover:text-white"
+                      className="ph-no-capture text-[13px] font-medium text-black"
                       onClick={() => {
                         posthog.capture('sponsor_submission_view');
                         router.push(listingSubmissionLink);
@@ -420,7 +420,7 @@ export const SubmissionTable = ({
                               className={cn(
                                 'cursor-pointer text-sm font-medium text-slate-500',
                                 submission.isArchived
-                                  ? 'hover:text-brand-purple'
+                                  ? 'hover:text-brand-green'
                                   : 'hover:text-destructive',
                               )}
                               onClick={() => {

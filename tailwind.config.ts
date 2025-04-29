@@ -5,8 +5,8 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['var(--font-sans)'],
-        mono: ['var(--font-mono)'],
+        sans: ['var(--font-sans)', 'Mona Sans', 'sans-serif'],
+        fkgrotesk: ['var(--font-fk-grotesk)', 'FK Grotesk', 'sans-serif'],
       },
       fontSize: {
         xxs: ['0.625rem', { lineHeight: '0.875rem' }],
@@ -63,13 +63,14 @@ export default {
           5: 'hsl(var(--chart-5))',
         },
         brand: {
-          purple: {
-            50: '#EEF2FF',
-            300: '#A5B4FC',
-            400: '#818CF8',
-            DEFAULT: '#6366F1',
-            light: '#7471ff',
-            dark: '#4F46E5',
+          // TODO: Update to match design system
+          green: {
+            50: '#00ec97',
+            300: '#00ec97',
+            400: '#00ec97',
+            DEFAULT: '#00ec97',
+            light: '#00ec97',
+            dark: '#00ec97',
           },
           slate: {
             50: '#f8fafc',

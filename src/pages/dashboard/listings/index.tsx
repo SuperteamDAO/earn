@@ -239,7 +239,7 @@ export default function SponsorListings() {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
-                  className="h-9 border border-slate-300 bg-transparent font-medium capitalize text-slate-500 hover:border-brand-purple hover:bg-transparent"
+                  className="h-9 border border-slate-300 bg-transparent font-medium capitalize text-slate-500 hover:border-brand-green hover:bg-transparent"
                   variant="outline"
                 >
                   <span
@@ -294,7 +294,7 @@ export default function SponsorListings() {
           <div className="relative ml-4 w-64">
             <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
             <Input
-              className="placeholder:text-md border-slate-300 bg-white pl-9 placeholder:font-medium placeholder:text-slate-400 focus-visible:ring-brand-purple"
+              className="placeholder:text-md border-slate-300 bg-white pl-9 placeholder:font-medium placeholder:text-slate-400 focus-visible:ring-brand-green"
               onChange={(e) => debouncedSetSearchText(e.target.value)}
               placeholder="Search listing..."
               type="text"

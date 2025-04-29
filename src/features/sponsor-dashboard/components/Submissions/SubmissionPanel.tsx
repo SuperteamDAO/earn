@@ -138,7 +138,7 @@ export const SubmissionPanel = ({
                       {`${selectedSubmission?.user?.firstName}'s Submission`}
                     </p>
                     <Link
-                      className="flex w-full items-center whitespace-nowrap text-xs font-medium text-brand-purple"
+                      className="flex w-full items-center whitespace-nowrap text-xs font-medium text-black"
                       href={`/t/${selectedSubmission?.user?.username}`}
                     >
                       View Profile{' '}

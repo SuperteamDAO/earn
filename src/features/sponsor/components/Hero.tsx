@@ -47,7 +47,7 @@ export function Hero() {
             }}
           >
             <Button
-              className="mx-auto h-[3.125rem] w-[12.5rem] rounded-[0.625rem] bg-[#6562FF] text-lg text-white"
+              className="mx-auto h-[3.125rem] w-[12.5rem] rounded-[0.625rem] text-lg font-bold text-white"
               variant="default"
             >
               Get Started

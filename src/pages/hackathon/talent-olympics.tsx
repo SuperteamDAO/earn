@@ -268,7 +268,7 @@ function Hero({
       <div className="mb-1 mt-6 flex flex-col items-center gap-3 sm:gap-6 md:flex-row">
         <div className="flex w-full gap-5 md:w-auto">
           <Button
-            className="w-full rounded-full bg-brand-purple px-6 text-sm text-white hover:bg-brand-purple/90 active:bg-[#6366D1] md:w-auto"
+            className="w-full rounded-full bg-brand-green px-6 text-sm text-white hover:bg-brand-green/90 active:bg-[#6366D1] md:w-auto"
             asChild
           >
             <Link
@@ -929,7 +929,7 @@ const SubscribeHackathon = () => {
             className={cn(
               'ph-no-capture',
               isSubscribed
-                ? 'bg-brand-purple text-white hover:bg-purple-700'
+                ? 'bg-brand-green text-white hover:bg-purple-700'
                 : 'bg-slate-100 text-slate-500 hover:bg-slate-200',
             )}
             aria-label="Notify"

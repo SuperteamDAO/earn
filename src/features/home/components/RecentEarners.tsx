@@ -108,7 +108,7 @@ export const RecentEarners = ({ earners }: { earners?: User[] }) => {
         <Link
           href="/leaderboard"
           className={cn(
-            'ph-no-capture flex items-center text-xs font-semibold text-brand-purple',
+            'ph-no-capture flex items-center text-xs font-semibold text-brand-green',
             HIDE_LEADERBOARD && 'hidden',
           )}
           onClick={() => {

@@ -25,7 +25,7 @@ export function Footer() {
   return (
     <div
       className={cn(
-        'flex flex-col items-center gap-8 rounded-lg bg-indigo-600 leading-tight',
+        'flex flex-col items-center gap-8 rounded-lg bg-black leading-tight',
         'mb-24 mt-12',
         'mx-[1.875rem] px-[1.875rem] lg:mx-[7rem] lg:px-[7rem] xl:mx-[11rem] xl:px-[11rem]',
         'py-5 lg:py-8 xl:py-12',
@@ -50,7 +50,7 @@ export function Footer() {
           className={cn(
             'mx-auto h-[3.125rem] w-[12.5rem] px-10',
             'rounded-[0.625rem] text-lg',
-            'bg-white text-indigo-600 hover:bg-white/90',
+            'bg-brand-green font-bold text-black hover:bg-white/90',
           )}
           variant="ghost"
         >

@@ -621,7 +621,7 @@ export const SubmissionDrawer = ({
                   <div className="mb-4 flex items-start space-x-3">
                     <Checkbox
                       id="terms"
-                      className="mt-1 data-[state=checked]:border-brand-purple data-[state=checked]:bg-brand-purple"
+                      className="mt-1 data-[state=checked]:border-brand-green data-[state=checked]:bg-brand-green"
                       checked={termsAccepted}
                       onCheckedChange={(checked) =>
                         setTermsAccepted(checked as boolean)

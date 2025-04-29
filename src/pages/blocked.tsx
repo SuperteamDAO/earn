@@ -32,7 +32,7 @@ export default function Blocked() {
         <p className="text-center text-3xl font-medium text-slate-600">
           Your access to {PROJECT_NAME} has been restricted. Please get in touch
           with{' '}
-          <Link className="text-brand-purple" href={`mailto:${SUPPORT_EMAIL}`}>
+          <Link className="text-brand-green" href={`mailto:${SUPPORT_EMAIL}`}>
             {SUPPORT_EMAIL}
           </Link>{' '}
           if you have any questions for more information.

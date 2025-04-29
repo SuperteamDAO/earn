@@ -68,7 +68,7 @@ export const GrantEntry = ({
         <Link href={`/grants/${slug}`} className="block">
           <Button
             variant="outline"
-            className="w-full border-slate-300 bg-gray-100 text-sm font-medium text-slate-400 hover:bg-brand-purple hover:text-white"
+            className="w-full border-slate-300 bg-gray-100 text-sm font-medium text-slate-400 hover:bg-brand-green hover:text-white"
           >
             Apply Now
           </Button>

@@ -11,7 +11,7 @@ import React, { useCallback, useEffect, useRef } from 'react';
 import { toast } from 'sonner';
 
 import { useUser } from '@/store/user';
-import { fontMono, fontSans } from '@/theme/fonts';
+import { fontFKGrotesk, fontSans } from '@/theme/fonts';
 
 import '../styles/globals.scss';
 import '@/components/tiptap/styles/index.css';
@@ -136,7 +136,7 @@ function App({ Component, pageProps: { session, ...pageProps } }: AppProps) {
         <style jsx global>{`
           :root {
             --font-sans: ${fontSans.style.fontFamily};
-            --font-mono: ${fontMono.style.fontFamily};
+            --font-fk-grotesk: ${fontFKGrotesk.style.fontFamily};
           }
           body {
             -webkit-font-smoothing: antialiased;

@@ -212,7 +212,7 @@ export const SubmissionActionButton = ({
         listing.compensationType === 'range'
       )
         buttonText = 'Send Quote';
-      buttonBG = 'bg-brand-purple';
+      buttonBG = 'bg-black';
       isBtnDisabled = Boolean(
         pastDeadline ||
           (user?.id &&
@@ -296,7 +296,7 @@ export const SubmissionActionButton = ({
                   buttonBG,
                   'hover:opacity-90',
                   buttonState === 'edit' &&
-                    'border-brand-purple text-brand-purple hover:text-brand-purple-dark',
+                    'border-brand-green text-gray-600 hover:text-gray-900',
                 )}
                 disabled={isBtnDisabled}
                 onClick={handleSubmit}

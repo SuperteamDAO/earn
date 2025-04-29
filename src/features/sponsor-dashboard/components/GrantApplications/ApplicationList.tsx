@@ -87,12 +87,12 @@ export const ApplicationList = ({
             checked={!isToggleDisabled ? isAllToggled : false}
             disabled={isToggleDisabled}
             onCheckedChange={() => toggleAllApplications()}
-            className="data-[state=checked]:border-brand-purple data-[state=checked]:bg-brand-purple"
+            className="data-[state=checked]:border-brand-green data-[state=checked]:bg-brand-green"
           />
           <div className="relative w-full">
             <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
             <Input
-              className="placeholder:text-md h-10 border-slate-200 bg-white pl-9 placeholder:font-medium placeholder:text-slate-400 focus-visible:ring-brand-purple"
+              className="placeholder:text-md h-10 border-slate-200 bg-white pl-9 placeholder:font-medium placeholder:text-slate-400 focus-visible:ring-brand-green"
               onChange={(e) => debouncedSetSearchText(e.target.value)}
               placeholder="Search Applications"
               type="text"
@@ -105,7 +105,7 @@ export const ApplicationList = ({
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
-                className="h-9 w-32 border border-slate-300 bg-transparent px-2 py-1 font-medium capitalize text-slate-500 hover:border-brand-purple hover:bg-transparent"
+                className="h-9 w-32 border border-slate-300 bg-transparent px-2 py-1 font-medium capitalize text-slate-500 hover:border-brand-green hover:bg-transparent"
                 variant="outline"
               >
                 <span
@@ -172,7 +172,7 @@ export const ApplicationList = ({
           >
             <div className="flex items-center">
               <Checkbox
-                className="mr-2 data-[state=checked]:border-brand-purple data-[state=checked]:bg-brand-purple"
+                className="mr-2 data-[state=checked]:border-brand-green data-[state=checked]:bg-brand-green"
                 checked={isToggled(application.id)}
                 disabled={application?.applicationStatus !== 'Pending'}
                 onCheckedChange={() => toggleApplication(application.id)}

@@ -76,7 +76,7 @@ export const MobileNavbar = ({ onLoginOpen }: Props) => {
                 />
                 <Button
                   variant="ghost"
-                  className="text-semibold text-brand-purple"
+                  className="text-semibold text-black"
                   onClick={() => {
                     posthog.capture('signup_navbar');
                     onDrawerClose();
@@ -91,7 +91,7 @@ export const MobileNavbar = ({ onLoginOpen }: Props) => {
             {user && !user.currentSponsorId && !user.isTalentFilled && (
               <Button
                 variant="ghost"
-                className="text-base text-brand-purple"
+                className="text-base text-brand-green"
                 onClick={() => {
                   router.push('/new');
                 }}
@@ -194,7 +194,7 @@ export const MobileNavbar = ({ onLoginOpen }: Props) => {
           {status === 'unauthenticated' && !session && (
             <Button
               variant="ghost"
-              className="ph-no-capture mr-2 text-base text-brand-purple"
+              className="ph-no-capture mr-2 text-base text-black"
               onClick={() => {
                 posthog.capture('login_navbar');
                 onLoginOpen();

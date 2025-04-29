@@ -345,7 +345,7 @@ export const VerifyPaymentModal = ({
     if (isLoading) {
       return (
         <div className="flex justify-center">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-slate-200 border-t-brand-purple" />
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-slate-200 border-t-brand-green" />
         </div>
       );
     }
@@ -535,7 +535,7 @@ export const VerifyPaymentModal = ({
                     href="https://nearblocks.io"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-brand-purple"
+                    className="text-brand-green"
                   >
                     nearblocks.io
                   </Link>{' '}

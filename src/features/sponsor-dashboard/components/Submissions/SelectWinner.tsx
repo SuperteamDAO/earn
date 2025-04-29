@@ -123,7 +123,7 @@ export const SelectWinner = ({
             <SelectTrigger
               className={cn(
                 'h-10 w-40 border-slate-300 font-medium capitalize text-slate-700',
-                'focus:border-brand-purple focus:ring-brand-purple',
+                'focus:border-brand-green focus:ring-brand-green',
               )}
             >
               <SelectValue

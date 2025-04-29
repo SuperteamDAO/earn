@@ -1,12 +1,9 @@
 export const NAV_LINKS = [
   {
-    label: 'Features',
-    link: '#features',
+    label: 'Listings',
+    link: '#listings',
   },
-  {
-    label: 'Customers',
-    link: '#customers',
-  },
+
   {
     label: 'FAQs',
     link: '#faqs',
