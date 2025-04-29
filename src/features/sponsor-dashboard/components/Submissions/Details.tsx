@@ -252,6 +252,7 @@ export const Details = ({ bounty, externalView, atom }: Props) => {
                 </div>
                 <div className="mb-6 mt-4 border-b border-slate-200" />
                 <Comments
+                  key={selectedSubmission.id}
                   hideCount
                   isAnnounced={false}
                   listingSlug={''}
