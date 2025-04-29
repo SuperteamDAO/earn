@@ -10,4 +10,5 @@ export const colorMap = {
   Winner: { bg: 'bg-green-100', color: 'text-green-800' },
   Paid: { bg: 'bg-emerald-100', color: 'text-emerald-800' },
   Completed: { bg: 'bg-blue-100', color: 'text-blue-600' },
+  Deleted: { bg: 'bg-red-500', color: 'text-white' },
 };

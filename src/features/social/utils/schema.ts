@@ -78,6 +78,7 @@ export const twitterUsernameSchema = z
   .string()
   .min(4, { message: usernameShortMessage(4) })
   .max(15, { message: usernameLongMessage(15) })
+  .or(z.literal(''))
   .superRefine((val, ctx) => {
     if (val.startsWith('https://') || val.startsWith('http://')) {
       ctx.addIssue({
@@ -94,7 +95,7 @@ export const twitterUsernameSchema = z
       }
     }
   })
-  .transform((val) => transformedUrl('twitter', val));
+  .transform((val) => (val === '' ? null : transformedUrl('twitter', val)));
 
 // LINKEDIN
 // - Length: 3-100

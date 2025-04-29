@@ -85,7 +85,11 @@ export const CommentParser = ({
             </a>
           );
         } else {
-          return <span key={index}>{part.value}</span>;
+          return (
+            <span key={index} className="whitespace-pre-wrap">
+              {part.value}
+            </span>
+          );
         }
       })}
     </>

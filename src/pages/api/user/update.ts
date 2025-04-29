@@ -26,10 +26,15 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    const allowedFields = ['featureModalShown', 'publicKey', 'acceptedTOS'];
+    const allowedFields = [
+      'currentSponsorId',
+      'featureModalShown',
+      'publicKey',
+      'acceptedTOS',
+    ];
 
     if (user.role === 'GOD') {
-      allowedFields.push('currentSponsorId', 'hackathonId');
+      allowedFields.push('hackathonId');
     }
 
     const updatedData = filterAllowedFields(req.body, allowedFields);
@@ -52,6 +57,22 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
             walletValidation.error ||
             `Invalid ${CHAIN_NAME} wallet address provided.`,
         });
+      }
+    }
+
+    if (updatedData.currentSponsorId && user.role !== 'GOD') {
+      const sponsor = await prisma.userSponsors.findUnique({
+        where: {
+          userId_sponsorId: {
+            userId: userId as string,
+            sponsorId: updatedData.currentSponsorId as string,
+          },
+        },
+      });
+
+      if (!sponsor) {
+        logger.warn(`Sponsor not found for user ID: ${userId}`);
+        return res.status(404).json({ error: 'Sponsor not found' });
       }
     }
 

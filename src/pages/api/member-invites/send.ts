@@ -57,7 +57,11 @@ async function sendInvites(
       return res.status(403).json({ error: 'Unauthorized' });
     }
 
-    if (req.role !== 'GOD' && user.UserSponsors[0]?.role !== 'ADMIN') {
+    const sponsor = user.UserSponsors.find(
+      (sponsor) => sponsor.sponsorId === user.currentSponsor?.id,
+    );
+
+    if (req.role !== 'GOD' && sponsor?.role !== 'ADMIN') {
       return res.status(403).json({ error: 'Unauthorized' });
     }
 

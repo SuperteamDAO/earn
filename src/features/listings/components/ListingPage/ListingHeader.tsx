@@ -88,7 +88,11 @@ export function ListingHeader({
   let statusTextColor = '';
   let statusIcon: React.JSX.Element = <></>;
 
-  if (!isPublished && !publishedAt) {
+  if (listing.isArchived) {
+    statusIcon = <Pause className={cn(statusIconStyles, 'text-slate-400')} />;
+    statusText = 'Removed';
+    statusTextColor = 'text-slate-500';
+  } else if (!isPublished && !publishedAt) {
     statusIcon = <File className={cn(statusIconStyles, 'text-slate-400')} />;
     statusText = 'Draft';
     statusTextColor = 'text-slate-500';

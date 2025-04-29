@@ -195,12 +195,12 @@ export function SponsorLayout({
         />
       }
     >
+      {/* Modals and Mobile view - Render these regardless of archived status */}
       <FeatureModal isSponsorsRoute />
       <SponsorInfoModal
         onClose={onSponsorInfoModalClose}
         isOpen={isSponsorInfoModalOpen}
       />
-
       <EntityNameModal isOpen={isEntityModalOpen} onClose={handleEntityClose} />
       <div className="flex min-h-[80vh] px-3 md:hidden">
         <p className="pt-20 text-center text-xl font-medium text-slate-500">
@@ -208,21 +208,40 @@ export function SponsorLayout({
           yet. Please use a desktop to check out the Sponsor Dashboard
         </p>
       </div>
-      <div className="hidden min-h-screen justify-start md:flex">
-        <div
-          className={cn(
-            'sponsor-dashboard-sidebar overflow-x-hidden whitespace-nowrap border-r border-slate-200 bg-white pt-5',
-            'transition-all duration-300 ease-in-out',
-            isCollapsible ? 'fixed' : 'static',
-            isExpanded
-              ? ['w-64 min-w-64 max-w-64', 'expanded']
-              : ['w-20 min-w-20 max-w-20'],
-            'bottom-0 left-0 top-12 z-10',
-          )}
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}
-        >
-          {session?.user?.role === 'GOD' && (
+
+      {/* Conditional Layout for Desktop */}
+      {user?.currentSponsor?.isArchived &&
+      !isHackathonRoute &&
+      session?.user.role !== 'GOD' ? (
+        // Archived Sponsor Layout (Centered) - Desktop Only
+        <div className="hidden min-h-[80vh] flex-col items-center justify-center gap-6 md:flex">
+          <div className="w-64">
+            {/* Render SelectSponsor directly, assuming expanded state */}
+            <SelectSponsor isExpanded={true} />
+          </div>
+          <div className="text-center text-lg font-medium text-slate-600">
+            This sponsor account has been archived. <br /> Please contact
+            support at {SUPPORT_EMAIL} for assistance.
+          </div>
+        </div>
+      ) : (
+        // Default Layout (Sidebar + Content) - Desktop Only
+        <div className="hidden min-h-screen justify-start md:flex">
+          {/* Sidebar */}
+          <div
+            className={cn(
+              'sponsor-dashboard-sidebar overflow-x-hidden whitespace-nowrap border-r border-slate-200 bg-white pt-5',
+              'transition-all duration-300 ease-in-out',
+              isCollapsible ? 'fixed' : 'static',
+              isExpanded
+                ? ['w-64 min-w-64 max-w-64', 'expanded']
+                : ['w-20 min-w-20 max-w-20'],
+              'bottom-0 left-0 top-12 z-10',
+            )}
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
+          >
+            {/* Sponsor/Hackathon Selection */}
             <div className={cn('pb-6', isExpanded ? 'pl-6 pr-4' : 'px-4')}>
               {isHackathonRoute ? (
                 <SelectHackathon isExpanded={isExpanded} />
@@ -230,110 +249,116 @@ export function SponsorLayout({
                 <SelectSponsor isExpanded={isExpanded} />
               )}
             </div>
-          )}
-          <CreateListingModal isOpen={isOpen} onClose={onClose} />
-          <div
-            className={cn(
-              'flex items-center justify-between px-4 pb-6',
-              isExpanded ? 'pl-6 pr-4' : 'px-4',
-            )}
-          >
-            {!isHackathonRoute ? (
-              <Tooltip
-                content={
-                  "Creating a new listing has been temporarily locked for you since you have 5 listings which are 'In Review'. Please announce the winners for such listings to create new listings."
-                }
-                disabled={
-                  !(
-                    isCreateListingAllowed !== undefined &&
-                    isCreateListingAllowed === false &&
-                    session?.user.role !== 'GOD'
-                  )
-                }
+
+            {/* Sidebar Content */}
+            <>
+              <CreateListingModal isOpen={isOpen} onClose={onClose} />
+              <div
+                className={cn(
+                  'flex items-center justify-between px-4 pb-6',
+                  isExpanded ? 'pl-6 pr-4' : 'px-4',
+                )}
               >
-                <Button
-                  className={cn(
-                    'ph-no-capture py-5.5 w-full gap-2 text-base',
-                    'disabled:cursor-not-allowed disabled:opacity-50',
-                  )}
-                  disabled={
-                    isCreateListingAllowed !== undefined &&
-                    isCreateListingAllowed === false &&
-                    session?.user.role !== 'GOD'
-                  }
+                {!isHackathonRoute ? (
+                  <Tooltip
+                    content={
+                      "Creating a new listing has been temporarily locked for you since you have 5 listings which are 'In Review'. Please announce the winners for such listings to create new listings."
+                    }
+                    disabled={
+                      !(
+                        isCreateListingAllowed !== undefined &&
+                        isCreateListingAllowed === false &&
+                        session?.user.role !== 'GOD'
+                      )
+                    }
+                  >
+                    <Button
+                      className={cn(
+                        'ph-no-capture py-5.5 w-full gap-2 text-base',
+                        'disabled:cursor-not-allowed disabled:opacity-50',
+                      )}
+                      disabled={
+                        isCreateListingAllowed !== undefined &&
+                        isCreateListingAllowed === false &&
+                        session?.user.role !== 'GOD'
+                      }
+                      onClick={() => {
+                        posthog.capture('create new listing_sponsor');
+                        onOpen();
+                      }}
+                      variant="default"
+                    >
+                      <Plus className="h-3 w-3" />
+                      <p
+                        className={cn(
+                          'nav-item-text transition-all duration-200 ease-in-out',
+                          isExpanded
+                            ? ['static ml-0 opacity-100']
+                            : ['absolute -ml-[9999px] opacity-0'],
+                        )}
+                      >
+                        Create New Listing
+                      </p>
+                      {isCreateListingAllowed !== undefined &&
+                        isCreateListingAllowed === false &&
+                        session?.user.role !== 'GOD' && (
+                          <Lock className="h-4 w-4" />
+                        )}
+                    </Button>
+                  </Tooltip>
+                ) : (
+                  <Button
+                    asChild
+                    className={cn('py-5.5 w-full gap-2 text-base')}
+                    variant="default"
+                  >
+                    <Link href="/dashboard/new/?type=hackathon">
+                      <Plus className="h-3 w-3" />
+                      <p
+                        className={cn(
+                          'nav-item-text transition-opacity duration-200 ease-in-out',
+                          isExpanded
+                            ? ['static ml-0 opacity-100']
+                            : ['absolute -ml-[9999px] opacity-0'],
+                        )}
+                      >
+                        Create New Track
+                      </p>
+                    </Link>
+                  </Button>
+                )}
+              </div>
+              {LinkItems.map((link) => (
+                <NavItem
                   onClick={() => {
-                    posthog.capture('create new listing_sponsor');
-                    onOpen();
+                    if (link.posthog) posthog.capture(link.posthog);
                   }}
-                  variant="default"
+                  className="ph-no-capture"
+                  key={link.name}
+                  link={link.link}
+                  icon={link.icon}
+                  isExpanded={isExpanded}
                 >
-                  <Plus className="h-3 w-3" />
-                  <p
-                    className={cn(
-                      'nav-item-text transition-all duration-200 ease-in-out',
-                      isExpanded
-                        ? ['static ml-0 opacity-100']
-                        : ['absolute -ml-[9999px] opacity-0'],
-                    )}
-                  >
-                    Create New Listing
-                  </p>
-                  {isCreateListingAllowed !== undefined &&
-                    isCreateListingAllowed === false &&
-                    session?.user.role !== 'GOD' && (
-                      <Lock className="h-4 w-4" />
-                    )}
-                </Button>
-              </Tooltip>
-            ) : (
-              <Button
-                asChild
-                className={cn('py-5.5 w-full gap-2 text-base')}
-                variant="default"
-              >
-                <Link href="/dashboard/new/?type=hackathon">
-                  <Plus className="h-3 w-3" />
-                  <p
-                    className={cn(
-                      'nav-item-text transition-opacity duration-200 ease-in-out',
-                      isExpanded
-                        ? ['static ml-0 opacity-100']
-                        : ['absolute -ml-[9999px] opacity-0'],
-                    )}
-                  >
-                    Create New Track
-                  </p>
-                </Link>
-              </Button>
-            )}
+                  {link.name}
+                </NavItem>
+              ))}
+            </>
           </div>
-          {LinkItems.map((link) => (
-            <NavItem
-              onClick={() => {
-                if (link.posthog) posthog.capture(link.posthog);
-              }}
-              className="ph-no-capture"
-              key={link.name}
-              link={link.link}
-              icon={link.icon}
-              isExpanded={isExpanded}
-            >
-              {link.name}
-            </NavItem>
-          ))}
-        </div>
-        {showLoading && <LoadingSection />}
-        {showContent && (
+
+          {/* Content Area */}
           <div
             className={cn(
               'w-full flex-1 bg-white py-5 pl-4 pr-8 transition-[margin-left] duration-300 ease-in-out',
               isCollapsible ? 'ml-20' : 'ml-0',
             )}
           >
-            {children}
+            <>
+              {showLoading && <LoadingSection />}
+              {showContent && children}
+            </>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </Default>
   );
 }

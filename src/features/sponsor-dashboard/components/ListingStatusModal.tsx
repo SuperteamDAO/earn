@@ -1,3 +1,4 @@
+import { useSession } from 'next-auth/react';
 import React from 'react';
 
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
@@ -14,6 +15,8 @@ export const ListingStatusModal = ({
   isOpen,
   onClose,
 }: ListingStatusModalProps) => {
+  const { data: session } = useSession();
+  const isGod = session?.user?.role === 'GOD';
   const statusGuide = [
     {
       status: 'Draft',
@@ -40,6 +43,12 @@ export const ListingStatusModal = ({
         'The sponsor processed and verified payment to the recipient(s).',
     },
   ];
+  if (isGod) {
+    statusGuide.push({
+      status: 'Deleted',
+      description: 'The listing has been hidden from the platform.',
+    });
+  }
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>

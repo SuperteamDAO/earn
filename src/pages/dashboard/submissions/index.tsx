@@ -49,7 +49,7 @@ import {
 } from '@/features/sponsor-dashboard/queries/dashboard-submissions';
 import { sponsorStatsQuery } from '@/features/sponsor-dashboard/queries/sponsor-stats';
 
-const MemoizedListingTable = React.memo(SubmissionTable);
+const MemoizedSubmissionTable = React.memo(SubmissionTable);
 
 export default function SponsorListings() {
   const { data: session } = useSession();
@@ -68,9 +68,11 @@ export default function SponsorListings() {
     sponsorStatsQuery(user?.currentSponsorId),
   );
 
-  const { data: allSubmissions, isLoading: isSubmissionsLoading } = useQuery(
-    sponsorshipSubmissionsQuery(user?.currentSponsorId),
-  );
+  const {
+    data: allSubmissions,
+    isLoading: isSubmissionsLoading,
+    refetch: refetchSubmissions,
+  } = useQuery(sponsorshipSubmissionsQuery(user?.currentSponsorId));
 
   const debouncedSetSearchText = useRef(debounce(setSearchText, 300)).current;
 
@@ -390,60 +392,66 @@ export default function SponsorListings() {
             </TabsList>
             <div className="h-0.5 w-full bg-slate-200" />
             <TabsContent value="all" className="px-0">
-              <MemoizedListingTable
+              <MemoizedSubmissionTable
                 submissions={paginatedListings}
                 currentSort={currentSort}
                 onSort={(column, direction) =>
                   setCurrentSort({ column, direction })
                 }
+                refetchSubmissions={refetchSubmissions}
               />
             </TabsContent>
             <TabsContent value="bounties" className="px-0">
-              <MemoizedListingTable
+              <MemoizedSubmissionTable
                 submissions={paginatedListings}
                 currentSort={currentSort}
                 onSort={(column, direction) =>
                   setCurrentSort({ column, direction })
                 }
+                refetchSubmissions={refetchSubmissions}
               />
             </TabsContent>
             <TabsContent value="projects" className="px-0">
-              <MemoizedListingTable
+              <MemoizedSubmissionTable
                 submissions={paginatedListings}
                 currentSort={currentSort}
                 onSort={(column, direction) =>
                   setCurrentSort({ column, direction })
                 }
+                refetchSubmissions={refetchSubmissions}
               />
             </TabsContent>
             <TabsContent value="sponsorships" className="px-0">
-              <MemoizedListingTable
+              <MemoizedSubmissionTable
                 submissions={paginatedListings}
                 currentSort={currentSort}
                 onSort={(column, direction) =>
                   setCurrentSort({ column, direction })
                 }
+                refetchSubmissions={refetchSubmissions}
               />
             </TabsContent>
             {hasGrants && (
               <TabsContent value="grants" className="px-0">
-                <MemoizedListingTable
+                <MemoizedSubmissionTable
                   submissions={paginatedListings}
                   currentSort={currentSort}
                   onSort={(column, direction) =>
                     setCurrentSort({ column, direction })
                   }
+                  refetchSubmissions={refetchSubmissions}
                 />
               </TabsContent>
             )}
             {hasHackathons && (
               <TabsContent value="hackathons" className="px-0">
-                <MemoizedListingTable
+                <MemoizedSubmissionTable
                   submissions={paginatedListings}
                   currentSort={currentSort}
                   onSort={(column, direction) =>
                     setCurrentSort({ column, direction })
                   }
+                  refetchSubmissions={refetchSubmissions}
                 />
               </TabsContent>
             )}

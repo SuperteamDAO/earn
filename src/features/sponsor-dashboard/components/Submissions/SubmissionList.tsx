@@ -1,11 +1,13 @@
 import { type SubmissionLabels } from '@prisma/client';
 import debounce from 'lodash.debounce';
-import { ChevronDown, Search } from 'lucide-react';
+import { ChevronDown, Pencil, RefreshCw, Search, Trash } from 'lucide-react';
+import { useSession } from 'next-auth/react';
 import React, {
   type Dispatch,
   type SetStateAction,
   useEffect,
   useRef,
+  useState,
 } from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -18,6 +20,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import { KycComponent } from '@/components/ui/KycComponent';
+import { useDisclosure } from '@/hooks/use-disclosure';
 import type { SubmissionWithUser } from '@/interface/submission';
 import { cn } from '@/utils/cn';
 import { getRankLabels } from '@/utils/rank';
@@ -28,6 +31,8 @@ import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
 import { labelMenuOptions } from '../../constants';
 import { colorMap } from '../../utils/statusColorMap';
+import { DeleteRestoreSubmissionModal } from './Modals/DeleteRestoreSubmissionModal';
+import { EditSubmissionStatusModal } from './Modals/EditSubmissionStatusModal';
 
 interface Props {
   listing?: Listing;
@@ -46,6 +51,7 @@ interface Props {
   selectedSubmission: SubmissionWithUser | undefined;
   setSelectedSubmission: (submission: SubmissionWithUser) => void;
   isAllToggled?: boolean;
+  refetchSubmissions: () => void;
 }
 
 export const SubmissionList = ({
@@ -61,8 +67,24 @@ export const SubmissionList = ({
   selectedSubmission,
   setSelectedSubmission,
   isAllToggled,
+  refetchSubmissions,
 }: Props) => {
   const debouncedSetSearchText = useRef(debounce(setSearchText, 300)).current;
+  const { data: session } = useSession();
+  const isGodUser = session?.user?.role === 'GOD';
+  const {
+    isOpen: isEditModalOpen,
+    onOpen: onEditModalOpen,
+    onClose: onEditModalClose,
+  } = useDisclosure();
+  const {
+    isOpen: isDeleteModalOpen,
+    onOpen: onDeleteModalOpen,
+    onClose: onDeleteModalClose,
+  } = useDisclosure();
+  const [interactedSubmission, setInteractedSubmission] = useState<
+    SubmissionWithUser | undefined
+  >(undefined);
 
   useEffect(() => {
     return () => {
@@ -75,8 +97,10 @@ export const SubmissionList = ({
   if (filterLabel) {
     ({ bg, color } = colorMap[filterLabel]);
   }
-
   const getSubmissionLabel = (submission: SubmissionWithUser) => {
+    if (submission.isArchived) {
+      return 'Deleted';
+    }
     if (submission?.isWinner && submission?.winnerPosition) {
       if (type === 'project' || type === 'sponsorship') {
         if (submission.isPaid) return 'Paid';
@@ -94,10 +118,15 @@ export const SubmissionList = ({
   };
 
   const getSubmissionColors = (submission: SubmissionWithUser) => {
+    if (submission.isArchived) {
+      return { bg: 'bg-red-500', color: 'text-white' };
+    }
     if (submission.listing?.type === 'sponsorship') {
-      return colorMap[
-        sponsorshipSubmissionStatus(submission) as keyof typeof colorMap
-      ];
+      const status = sponsorshipSubmissionStatus({
+        ...submission,
+        listing: undefined,
+      });
+      return colorMap[status as keyof typeof colorMap];
     }
 
     if (submission?.isWinner) {
@@ -291,18 +320,67 @@ export const SubmissionList = ({
               </div>
             </div>
 
-            <span
-              className={cn(
-                'inline-flex whitespace-nowrap rounded-full px-3 py-1 text-center text-[10px] capitalize',
-                bg,
-                color,
+            <div className="flex items-center">
+              <span
+                className={cn(
+                  'inline-flex whitespace-nowrap rounded-full px-3 py-1 text-center text-[10px] capitalize',
+                  bg,
+                  color,
+                )}
+              >
+                {getSubmissionLabel(submission)}
+              </span>
+              {isGodUser && (
+                <>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className={'ml-1 h-6 w-6 p-1 text-slate-500'}
+                    disabled={submission.isArchived}
+                    onClick={() => {
+                      setInteractedSubmission(submission);
+                      onEditModalOpen();
+                    }}
+                  >
+                    <Pencil className="h-3 w-3" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className={cn(
+                      'ml-1 h-6 w-6 p-1 text-slate-500 hover:text-destructive',
+                      submission.isArchived && 'hover:text-brand-purple',
+                    )}
+                    onClick={() => {
+                      setInteractedSubmission(submission);
+                      onDeleteModalOpen();
+                    }}
+                  >
+                    {submission.isArchived || !submission.isActive ? (
+                      <RefreshCw className="h-3 w-3" />
+                    ) : (
+                      <Trash className="h-3 w-3" />
+                    )}
+                  </Button>
+                </>
               )}
-            >
-              {getSubmissionLabel(submission)}
-            </span>
+            </div>
           </div>
         );
       })}
+
+      <EditSubmissionStatusModal
+        isOpen={isEditModalOpen}
+        onClose={onEditModalClose}
+        submission={interactedSubmission}
+        onSuccess={() => refetchSubmissions()}
+      />
+      <DeleteRestoreSubmissionModal
+        isOpen={isDeleteModalOpen}
+        onClose={onDeleteModalClose}
+        submission={interactedSubmission}
+        onSuccess={() => refetchSubmissions()}
+      />
     </div>
   );
 };

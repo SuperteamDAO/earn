@@ -28,7 +28,7 @@ async function user(req: NextApiRequestWithUser, res: NextApiResponse) {
     const validationResult = sponsorBaseSchema.safeParse({
       ...req.body,
       twitter:
-        req.body.twitter !== undefined
+        req.body.twitter !== undefined && req.body.twitter !== ''
           ? extractSocialUsername('twitter', req.body.twitter) || ''
           : undefined,
     });
@@ -56,7 +56,7 @@ async function user(req: NextApiRequestWithUser, res: NextApiResponse) {
           logo,
           url,
           industry,
-          twitter,
+          twitter: twitter && twitter !== '' ? twitter : null,
           bio,
           entityName,
         },

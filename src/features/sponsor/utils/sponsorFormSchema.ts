@@ -24,7 +24,7 @@ export const sponsorBaseSchema = z.object({
     .string()
     .min(1, 'Entity URL is required')
     .regex(URL_REGEX, 'Invalid URL'),
-  twitter: twitterUsernameSchema,
+  twitter: z.optional(twitterUsernameSchema),
   entityName: z.string().min(1, 'Entity name is required'),
 });
 

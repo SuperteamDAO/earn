@@ -7,6 +7,7 @@ import AsyncSelect from 'react-select/async';
 import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
 import type { SponsorType } from '@/interface/sponsor';
 import { useUpdateUser, useUser } from '@/store/user';
+import { cn } from '@/utils/cn';
 
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
@@ -94,7 +95,10 @@ export function SelectSponsor({
           <EarnAvatar
             id={data?.sponsor?.name}
             avatar={data?.sponsor?.logo}
-            className="h-6 w-6 rounded-sm"
+            className={cn(
+              'h-6 w-6 rounded-sm',
+              data?.sponsor?.isArchived && 'grayscale',
+            )}
           />
           <div className="ml-2 hidden md:block">
             <div className="flex">
@@ -115,7 +119,10 @@ export function SelectSponsor({
           <EarnAvatar
             id={data?.sponsor?.name}
             avatar={data?.sponsor?.logo}
-            className="rounded-sm"
+            className={cn(
+              'rounded-sm',
+              data?.sponsor?.isArchived && 'grayscale',
+            )}
           />
           <div className="ml-2 hidden md:block">
             <div className="flex flex-wrap items-center">
@@ -123,6 +130,9 @@ export function SelectSponsor({
             </div>
             <div className="flex items-center gap-1">
               <p className="text-xs text-slate-400">{data?.sponsor?.role}</p>
+              {data?.sponsor?.isArchived && (
+                <span className="text-xs text-red-500">(Archived)</span>
+              )}
               {data?.sponsor?.isVerified && <VerifiedBadge />}
             </div>
           </div>

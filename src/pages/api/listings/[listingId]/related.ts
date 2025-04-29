@@ -168,6 +168,7 @@ async function findRelatedListings(
       AND b.status = 'OPEN'
       AND b.isWinnersAnnounced = false
       AND b.deadline > NOW()
+      AND s.isArchived = false
       AND b.type = ${type}
       ${regionFilter}
       AND ${skillQuery}

@@ -11,7 +11,7 @@ import { api } from '@/lib/api';
 
 import { selectedSubmissionAtom } from '../../atoms';
 
-const MAX_CHARACTERS = 500;
+const MAX_CHARACTERS = 2000;
 
 type Props = {
   submissionId: string;

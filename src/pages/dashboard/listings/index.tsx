@@ -61,9 +61,11 @@ export default function SponsorListings() {
     sponsorStatsQuery(user?.currentSponsorId),
   );
 
-  const { data: allListings, isLoading: isListingsLoading } = useQuery(
-    dashboardQuery(user?.currentSponsorId),
-  );
+  const {
+    data: allListings,
+    isLoading: isListingsLoading,
+    refetch: refetchListings,
+  } = useQuery(dashboardQuery(user?.currentSponsorId));
 
   const debouncedSetSearchText = useRef(debounce(setSearchText, 300)).current;
 
@@ -320,6 +322,7 @@ export default function SponsorListings() {
               <MemoizedListingTable
                 sponsor={user?.currentSponsor}
                 listings={paginatedListings}
+                refreshListings={refetchListings}
                 currentSort={currentSort}
                 onSort={(column, direction) =>
                   setCurrentSort({ column, direction })
@@ -330,6 +333,7 @@ export default function SponsorListings() {
               <MemoizedListingTable
                 sponsor={user?.currentSponsor}
                 listings={paginatedListings}
+                refreshListings={refetchListings}
                 currentSort={currentSort}
                 onSort={(column, direction) =>
                   setCurrentSort({ column, direction })
@@ -340,6 +344,7 @@ export default function SponsorListings() {
               <MemoizedListingTable
                 sponsor={user?.currentSponsor}
                 listings={paginatedListings}
+                refreshListings={refetchListings}
                 currentSort={currentSort}
                 onSort={(column, direction) =>
                   setCurrentSort({ column, direction })
@@ -350,6 +355,7 @@ export default function SponsorListings() {
               <MemoizedListingTable
                 sponsor={user?.currentSponsor}
                 listings={paginatedListings}
+                refreshListings={refetchListings}
                 currentSort={currentSort}
                 onSort={(column, direction) =>
                   setCurrentSort({ column, direction })
@@ -361,6 +367,7 @@ export default function SponsorListings() {
                 <MemoizedListingTable
                   sponsor={user?.currentSponsor}
                   listings={paginatedListings}
+                  refreshListings={refetchListings}
                   currentSort={currentSort}
                   onSort={(column, direction) =>
                     setCurrentSort({ column, direction })
@@ -373,6 +380,7 @@ export default function SponsorListings() {
                 <MemoizedListingTable
                   sponsor={user?.currentSponsor}
                   listings={paginatedListings}
+                  refreshListings={refetchListings}
                   currentSort={currentSort}
                   onSort={(column, direction) =>
                     setCurrentSort({ column, direction })

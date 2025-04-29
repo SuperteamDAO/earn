@@ -22,7 +22,7 @@ import {
   userSuggestionOverrider,
 } from './Suggestions';
 
-const MAX_LENGTH = 280;
+const MAX_LENGTH = 2000;
 
 interface Props extends TextareaAutosizeProps {
   value: string;

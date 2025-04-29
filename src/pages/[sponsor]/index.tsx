@@ -192,6 +192,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     sponsorInfo = await prisma.sponsors.findUnique({
       where: {
         slug: sponsorSlug,
+        isArchived: false,
       },
     });
   } catch (error) {
