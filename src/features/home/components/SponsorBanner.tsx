@@ -11,6 +11,19 @@ export const SponsorBanner = () => {
   const posthog = usePostHog();
   const { data } = useQuery(userCountQuery);
 
+  let number;
+  if (data?.totalUsers) {
+    if (data?.totalUsers > 10000) {
+      number = Math.floor((data?.totalUsers || 0) / 10000) * 10000;
+    } else if (data?.totalUsers > 1000) {
+      number = Math.floor((data?.totalUsers || 0) / 1000) * 1000;
+    } else {
+      number = data?.totalUsers;
+    }
+  } else {
+    number = 0;
+  }
+
   return (
     <Link
       href="/sponsor"
@@ -23,11 +36,8 @@ export const SponsorBanner = () => {
           <MdArrowForward className="ml-1 w-6 text-[#777777]" />
         </p>
         <p className="mt-1 text-sm font-medium leading-[1.1rem] text-slate-500">
-          Reach{' '}
-          {(Math.floor((data?.totalUsers || 0) / 10000) * 10000).toLocaleString(
-            'en-us',
-          )}
-          + tech talent from one single dashboard
+          Reach {number?.toLocaleString('en-us')}+ tech talent from one single
+          dashboard
         </p>
       </div>
       <ExternalImage

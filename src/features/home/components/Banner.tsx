@@ -59,7 +59,7 @@ export function HomeBanner() {
       </p>
       <p className="relative z-10 mt-2.5 max-w-full text-sm leading-[130%] text-white md:mt-4 md:max-w-[30rem] md:text-lg">
         Participate in bounties or apply to freelance opportunities from leading
-        companies, all with a single profile.
+        companies.
       </p>
       <div className="relative z-10 mt-4 flex flex-col items-center gap-3 md:flex-row md:gap-4">
         <AuthWrapper className="group w-full md:w-auto">
