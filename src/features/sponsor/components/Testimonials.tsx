@@ -18,7 +18,7 @@ const testimonials: TestimonialProps[] = [
   //   {
   //     stars: 5,
   //     message: `I have a 💙 affair with
-  // @SuperteamEarn. Our team uses it to scout crypto-native talent.
+  // @SuperteamEarn. Our team uses it to scout top talent.
   // <br />
   // <br />
   // Perfect hiring workflow:

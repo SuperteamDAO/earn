@@ -22,8 +22,8 @@ export default function Blocked() {
     <Default
       meta={
         <Meta
-          title={`Blocked | ${PROJECT_NAME}`}
-          description={`Explore the latest bounties on ${PROJECT_NAME}, offering opportunities in the crypto space across Design, Development, and Content.`}
+          title={`${PROJECT_NAME} | Access Restricted`}
+          description={`Explore the latest opportunities on ${PROJECT_NAME}, featuring professional projects in Design, Development, and Content Creation.`}
           canonical={getURL()}
         />
       }

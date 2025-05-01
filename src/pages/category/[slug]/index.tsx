@@ -50,7 +50,7 @@ function ListingCategoryPage({ slug }: { slug: SlugKeys }) {
   const formattedSlug =
     slug.charAt(0).toUpperCase() + slug.slice(1).toLowerCase();
 
-  const metaDescription = `Find the latest ${slug.toLowerCase()} bounties and sponsorships for freelancers and builders in the crypto space on ${PROJECT_NAME}.`;
+  const metaDescription = `Find the latest ${slug.toLowerCase()} projects and sponsorships for professionals on ${PROJECT_NAME}.`;
   const canonicalURL = `${getURL()}/category/${slug}/`;
 
   return (

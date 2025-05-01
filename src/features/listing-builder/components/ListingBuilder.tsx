@@ -84,8 +84,8 @@ export function ListingBuilder({ route, slug }: ListingBuilderLayout) {
       <Default
         meta={
           <Meta
-            title={`${PROJECT_NAME} | Work to Earn in Crypto`}
-            description={`Explore the latest bounties on ${PROJECT_NAME}, offering opportunities in the crypto space across Design, Development, and Content.`}
+            title={`${PROJECT_NAME} | Discover Opportunities`}
+            description={`Explore the latest bounties on ${PROJECT_NAME}, offering opportunities across Design, Development, and Content.`}
             canonical={getURL()}
           />
         }

@@ -31,7 +31,7 @@ export default function AllRegionListingsPage({
     <Home type="region" st={st}>
       <Meta
         title={`Welcome to ${PROJECT_NAME} ${displayName} | Discover Bounties and Sponsorships`}
-        description={`Welcome to ${PROJECT_NAME} ${displayName}'s page — Discover bounties and sponsorships and become a part of the global crypto community`}
+        description={`Find the latest bounties and sponsorships in ${displayName} and become a part of the global community`}
         canonical={`${getURL()}/regions/${slug}/`}
         og={ogImage.toString()}
       />

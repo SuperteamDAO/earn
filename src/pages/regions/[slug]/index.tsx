@@ -41,8 +41,8 @@ const RegionsPage = ({
   return (
     <Home type="region" st={st}>
       <Meta
-        title={`Welcome to ${PROJECT_NAME} ${displayName} | Discover Bounties and Sponsorships  `}
-        description={`Welcome to ${PROJECT_NAME} ${displayName}'s page — Discover bounties and sponsorships and become a part of the global crypto community`}
+        title={`Welcome to ${PROJECT_NAME} ${displayName} | Discover Projects and Sponsorships`}
+        description={`Welcome to ${PROJECT_NAME} ${displayName}'s page — Discover projects and sponsorships and become a part of our global professional community`}
         canonical={`${getURL()}/regions/${slug}/`}
         og={ogImage.toString()}
       />

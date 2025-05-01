@@ -29,7 +29,7 @@ function AllCategoryListingsPage({ slug }: { slug: string }) {
   };
   const titleKey = slug as SlugKeys;
   const title = titlesForSlugs[titleKey] || `${PROJECT_NAME}`;
-  const metaDescription = `Find the latest ${slug.toLowerCase()} bounties and sponsorships for freelancers and builders in the crypto space on ${PROJECT_NAME}.`;
+  const metaDescription = `Find the latest ${slug.toLowerCase()} bounties and sponsorships for freelancers and builders on ${PROJECT_NAME}.`;
   const canonicalURL = `${getURL()}/category/${slug}/all`;
 
   return (

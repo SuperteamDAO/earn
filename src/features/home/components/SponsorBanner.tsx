@@ -27,7 +27,7 @@ export const SponsorBanner = () => {
           {(Math.floor((data?.totalUsers || 0) / 10000) * 10000).toLocaleString(
             'en-us',
           )}
-          + crypto talent from one single dashboard
+          + tech talent from one single dashboard
         </p>
       </div>
       <ExternalImage

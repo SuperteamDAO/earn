@@ -54,11 +54,11 @@ export function HomeBanner() {
         </picture>
       </div>
       <p className="relative z-10 text-2xl font-bold leading-[120%] text-white md:text-[28px]">
-        Find Your Next High
-        <br /> Paying Crypto Gig
+        Find Your Next High-Impact
+        <br /> Professional Role
       </p>
       <p className="relative z-10 mt-2.5 max-w-full text-sm leading-[130%] text-white md:mt-4 md:max-w-[30rem] md:text-lg">
-        Participate in bounties or apply to freelance gigs of world-class crypto
+        Participate in bounties or apply to freelance opportunities from leading
         companies, all with a single profile.
       </p>
       <div className="relative z-10 mt-4 flex flex-col items-center gap-3 md:flex-row md:gap-4">

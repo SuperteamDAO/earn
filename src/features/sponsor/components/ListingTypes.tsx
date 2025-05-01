@@ -54,7 +54,7 @@ export function ListingTypes() {
             <h3 className="text-[1.625rem] font-semibold">Bounty</h3>
             <p className="text-[1.2rem] font-medium leading-[1.1]">
               Bounties are listings where everyone completes a given scope of
-              work, and competes for the prize pool
+              work, and competes for the reward pool
             </p>
           </div>
 

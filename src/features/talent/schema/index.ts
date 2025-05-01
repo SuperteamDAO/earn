@@ -71,7 +71,7 @@ export const profileSchema = z
       .nullable()
       .or(z.literal('')),
     cryptoExperience: z
-      .enum(web3Exp, { message: 'Invalid Crypto Experience' })
+      .enum(web3Exp, { message: 'Invalid Web3 Experience' })
       .optional()
       .nullable()
       .or(z.literal('')),

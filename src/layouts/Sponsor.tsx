@@ -189,8 +189,8 @@ export function SponsorLayout({
       className="bg-white"
       meta={
         <Meta
-          title={`${PROJECT_NAME} | Work to Earn in Crypto`}
-          description={`Explore the latest bounties on ${PROJECT_NAME}, offering opportunities in the crypto space across Design, Development, and Content.`}
+          title={`${PROJECT_NAME} | Professional Talent Platform`}
+          description={`Explore the latest opportunities on ${PROJECT_NAME}, offering projects across Design, Development, and Content creation.`}
           canonical={getURL()}
         />
       }

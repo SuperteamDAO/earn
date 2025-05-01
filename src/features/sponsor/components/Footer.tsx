@@ -3,7 +3,6 @@ import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
 
 import { Button } from '@/components/ui/button';
-import { CHAIN_NAME } from '@/constants/project';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 
@@ -38,7 +37,7 @@ export function Footer() {
           'text-[2rem] md:text-[3.5rem]',
         )}
       >
-        Where {CHAIN_NAME} teams come to get sh*t done
+        Where organizations come to achieve their goals
       </p>
 
       <Link

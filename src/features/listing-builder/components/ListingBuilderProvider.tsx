@@ -97,8 +97,8 @@ function ListingEditor({
   return (
     <>
       <Meta
-        title={`${PROJECT_NAME} | Work to Earn in Crypto`}
-        description={`Explore the latest bounties on ${PROJECT_NAME}, offering opportunities in the crypto space across Design, Development, and Content.`}
+        title={`${PROJECT_NAME} | Work Opportunities`}
+        description={`Explore the latest bounties on ${PROJECT_NAME}, offering opportunities across Design, Development, and Content.`}
         canonical={getURL()}
       />
       <div className="flex min-h-[10vh] flex-col px-3 md:hidden">

@@ -181,7 +181,7 @@ export default function TalentOlympics({ countryLeaders, rankings }: Props) {
       meta={
         <Meta
           title={`Talent Olympics | ${PROJECT_NAME}`}
-          description={`Explore the latest bounties on ${PROJECT_NAME}, offering opportunities in the crypto space across Design, Development, and Content.`}
+          description={`Explore the latest opportunities on ${PROJECT_NAME}, offering projects across Design, Development, and Content creation.`}
           canonical={`${getURL()}/hackathon/${SLUG}`}
         />
       }
@@ -816,7 +816,7 @@ const faqs: { question: string; answer: string }[] = [
       'By submitting to any of the ten challenges under the Frontend and Rust tracks.',
   },
   {
-    question: 'Does winning a Talent Olympics bounty guarantee a job?',
+    question: 'Does winning a Talent Olympics project guarantee a job?',
     answer:
       'Winning one or multiple tracks does not guarantee a job, but greatly increases your chances of catching the eye of the hiring partners.',
   },

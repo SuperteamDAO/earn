@@ -12,7 +12,7 @@ export const IndustryList = [
 ] as const;
 
 export const web3Exp = [
-  'New to crypto',
+  'New to the web3 space',
   'Occasionally contributing',
   'Contributing regularly',
 ] as const;

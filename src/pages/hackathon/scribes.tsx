@@ -24,7 +24,7 @@ export default function Scribes() {
       meta={
         <Meta
           title={`${CHAIN_NAME} Scribes | ${PROJECT_NAME}`}
-          description={`Explore the latest bounties on ${PROJECT_NAME}, offering opportunities in the crypto space across Design, Development, and Content.`}
+          description={`Explore the latest opportunities on ${PROJECT_NAME}, featuring professional projects in Design, Development, and Content Creation.`}
           canonical={`${getURL()}/hackathon/${slug}`}
         />
       }

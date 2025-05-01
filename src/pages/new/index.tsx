@@ -106,8 +106,8 @@ export default function NewProfilePage({
     <Default
       meta={
         <Meta
-          title="Make Your Profile | Earn on ${PROJECT_NAME} | Connect with Crypto Talent"
-          description="Join ${PROJECT_NAME} to engage with top talent and discover bounties and sponsorships for your crypto projects."
+          title="Make Your Profile | Join ${PROJECT_NAME} | Connect with Professional Talent"
+          description="Join ${PROJECT_NAME} to engage with top talent and discover projects and sponsorships."
           canonical={`${getURL()}/new/`}
         />
       }
@@ -144,9 +144,11 @@ export default function NewProfilePage({
                       Contribute to top {CHAIN_NAME} projects
                     </BulletPoint>
                     <BulletPoint type="TALENT">
-                      Build your web3 resume
+                      Build your professional portfolio
                     </BulletPoint>
-                    <BulletPoint type="TALENT">Get paid in crypto</BulletPoint>
+                    <BulletPoint type="TALENT">
+                      Get paid for your work
+                    </BulletPoint>
                   </div>
                   <Separator className="text-slate-300" />
                   <div className="px-4 pb-1">
@@ -186,8 +188,8 @@ export default function NewProfilePage({
                 Continue as a Sponsor
               </p>
               <p className="text-lg leading-5 tracking-[-0.2px] text-slate-500">
-                List a bounty or freelance gig for your project and find your
-                next contributor
+                List a project or freelance opportunity and find your next
+                contributor
               </p>
             </div>
             <AuthWrapper className="w-full" onClick={checkSponsor}>

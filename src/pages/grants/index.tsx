@@ -44,8 +44,8 @@ function Grants() {
             Need funds to build out your idea?
           </p>
           <p className="mx-auto max-w-2xl text-lg text-gray-600 md:text-xl">
-            Discover the complete list of crypto grants available to support
-            your project. Fast, equity-free funding without the hassle.
+            Discover the complete list of grants available to support your
+            project. Fast, equity-free funding without the hassle.
           </p>
           <p className="mt-3 text-sm text-slate-400 md:text-base">
             Equity-Free • No Bullshit • Fast AF
