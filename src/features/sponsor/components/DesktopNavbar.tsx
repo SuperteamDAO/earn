@@ -81,7 +81,7 @@ export const DesktopNavbar = () => {
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="bg-white font-semibold text-indigo-600"
+                    className="bg-white font-semibold text-slate-500"
                   >
                     Create a Listing
                   </Button>
