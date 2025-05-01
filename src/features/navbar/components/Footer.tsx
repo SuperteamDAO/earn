@@ -182,8 +182,8 @@ export const Footer = () => {
               />
             </div>
             <p className="mb-6 text-sm text-slate-500">
-              Discover projects and grants from the best {CHAIN_NAME} companies
-              in one place and apply to them using a single profile.
+              Discover projects and sponsorships from the best {CHAIN_NAME}{' '}
+              companies in one place and apply to them using a single profile.
             </p>
             <div className="flex gap-4">
               {GITHUB_URL && (
