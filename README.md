@@ -1,7 +1,7 @@
 <div align="center">
   <br/>
   <img src="https://pbs.twimg.com/profile_images/1655546485365407744/dOeIC0R-_400x400.jpg" style="border-radius:10px" width="120px" height="auto"/>
-  <h2>Nearn</h2>
+  <h2>NEARN</h2>
   <p>
     <strong>An open source platform connecting founders with elite talent to create bounties and accelerate project completion</strong>
   </p>
