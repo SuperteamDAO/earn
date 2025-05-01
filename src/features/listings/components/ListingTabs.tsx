@@ -1,357 +1,178 @@
-import { ArrowRight, Info } from 'lucide-react';
-import dynamic from 'next/dynamic';
+import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import { usePostHog } from 'posthog-js/react';
-import { type JSX, type ReactNode, useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
+import { EmptySection } from '@/components/shared/EmptySection';
 import { Button } from '@/components/ui/button';
-import { LocalImage } from '@/components/ui/local-image';
-import { Tooltip } from '@/components/ui/tooltip';
-import { type User } from '@/interface/user';
-import { useUser } from '@/store/user';
-import { cn } from '@/utils/cn';
-import { dayjs } from '@/utils/dayjs';
+import { useBreakpoint } from '@/hooks/use-breakpoint';
 
-import { type Listing } from '../types';
+import { CATEGORY_NAV_ITEMS } from '@/features/navbar/constants';
+
+import { useListings } from '../hooks/useListings';
+import { useListingState } from '../hooks/useListingState';
+import type { ListingTabsProps } from '../types';
+import { CategoryPill } from './CategoryPill';
 import { ListingCard, ListingCardSkeleton } from './ListingCard';
+import { ListingFilters } from './ListingFilters';
+import { ListingTabTrigger } from './ListingTabTrigger';
 
-interface TabProps {
-  id: string;
-  title: string;
-  content: JSX.Element;
-  posthog: string;
-}
-
-interface ListingTabsProps {
-  isListingsLoading: boolean;
-  bounties: Listing[] | undefined;
-  forYou?: Listing[] | undefined;
-  take?: number;
-  showEmoji?: boolean;
-  title: string;
-  viewAllLink?: string;
-  showViewAll?: boolean;
-  showNotifSub?: boolean;
-}
-
-interface ContentProps {
-  title: string;
-  bounties?: Listing[];
-  forYou?: Listing[];
-  take?: number;
-  isListingsLoading: boolean;
-  filterFunction: (bounty: Listing) => boolean;
-  sortCompareFunction?: ((a: Listing, b: Listing) => number) | undefined;
-  emptyTitle: string;
-  emptyMessage: ReactNode;
-  user: User | null;
-  showNotifSub?: boolean;
-}
-
-const EmptySection = dynamic(
-  () =>
-    import('@/components/shared/EmptySection').then((mod) => mod.EmptySection),
-  { ssr: false },
-);
-
-const ListingTabTrigger = ({
-  isActive,
-  onClick,
-  children,
-}: {
-  isActive: boolean;
-  onClick: () => void;
-  children: React.ReactNode;
-}) => (
-  <button
-    onClick={onClick}
-    className={cn(
-      'group ring-offset-background relative inline-flex items-center justify-center rounded-md px-1 py-1 text-sm font-medium whitespace-nowrap transition-all sm:px-3',
-      'hover:text-brand-purple',
-      isActive && [
-        'text-brand-purple',
-        'after:bg-brand-purple/80 after:absolute after:bottom-[-12px] after:left-0 after:h-[2px] after:w-full',
-      ],
-      !isActive && 'text-slate-500',
-    )}
-  >
-    {children}
-  </button>
-);
-
-const generateTabContent = ({
-  title,
-  bounties,
-  forYou,
-  take,
-  isListingsLoading,
-  filterFunction,
-  sortCompareFunction,
-  emptyTitle,
-  emptyMessage,
-  user,
-  showNotifSub,
-}: ContentProps) => {
-  if (isListingsLoading) {
-    return (
-      <div className="ph-no-capture flex flex-col gap-1">
-        {Array.from({ length: 8 }, (_, index) => (
-          <ListingCardSkeleton key={`skeleton-${index}`} />
-        ))}
-      </div>
-    );
-  }
-
-  const filteredForYou = forYou?.filter(filterFunction) ?? [];
-  const filteredBounties = bounties?.filter(filterFunction) ?? [];
-  const showForYouSection = user && forYou && filteredForYou.length > 0;
-
-  return (
-    <div>
-      {showForYouSection && (
-        <div className="mb-4 border-b border-slate-200 pb-4">
-          <div className="mb-2 flex w-fit items-center gap-3 font-semibold text-gray-900">
-            <p className="flex-1">For You</p>
-            <div className="text-gray-500">
-              <Tooltip
-                content="List of top opportunities curated for you, based on your skills, listing subscriptions and location."
-                contentProps={{ className: 'max-w-80' }}
-              >
-                <Info className="h-3 w-3" />
-              </Tooltip>
-            </div>
-          </div>
-          <div className="ph-no-capture flex flex-col gap-1">
-            {filteredForYou
-              .sort(sortCompareFunction ? sortCompareFunction : () => 0)
-              .slice(0, take ? take + 1 : undefined)
-              .map((bounty) => (
-                <ListingCard key={bounty.id} bounty={bounty} />
-              ))}
-          </div>
-        </div>
-      )}
-
-      <div>
-        <p className="mb-2 font-semibold text-gray-900">All {title}</p>
-        <div className="ph-no-capture flex flex-col gap-1">
-          {filteredBounties.length > 0 ? (
-            filteredBounties
-              .sort(sortCompareFunction ? sortCompareFunction : () => 0)
-              .slice(0, take ? take + 1 : undefined)
-              .map((bounty) => <ListingCard key={bounty.id} bounty={bounty} />)
-          ) : (
-            <div className="mt-8 flex items-center justify-center">
-              <EmptySection
-                showNotifSub={showNotifSub}
-                title={emptyTitle}
-                message={emptyMessage}
-              />
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-};
+const TABS = [
+  {
+    id: 'all_open',
+    title: 'All Open',
+    posthog: 'all_open_listings',
+  },
+  {
+    id: 'bounties',
+    title: 'Bounties',
+    posthog: 'bounties_listings',
+  },
+  {
+    id: 'projects',
+    title: 'Projects',
+    posthog: 'projects_listings',
+  },
+] as const;
 
 export const ListingTabs = ({
-  isListingsLoading,
-  bounties,
-  forYou,
-  take,
-  showEmoji = false,
-  title,
-  viewAllLink,
-  showViewAll = false,
-  showNotifSub = true,
+  type,
+  defaultTab = 'all_open',
+  defaultPill = 'All',
 }: ListingTabsProps) => {
-  const { user } = useUser();
   const posthog = usePostHog();
-  const emoji = '/assets/listing-tab.webp';
-  const [activeTab, setActiveTab] = useState('open');
+  const isMd = useBreakpoint('md');
 
-  const tabs: TabProps[] = [
-    {
-      id: 'open',
-      title: 'Open',
-      posthog: 'open_listings',
-      content: generateTabContent({
-        user,
-        title: 'Open',
-        bounties,
-        forYou,
-        take,
-        isListingsLoading,
-        filterFunction: (bounty) =>
-          bounty.status === 'OPEN' &&
-          !dayjs().isAfter(bounty.deadline) &&
-          !bounty.isWinnersAnnounced,
-        emptyTitle: 'No listings available!',
-        emptyMessage:
-          'Update your email preferences (from the user menu) to be notified about new work opportunities.',
-        showNotifSub,
-      }),
-    },
-    {
-      id: 'in-review',
-      title: 'In Review',
-      posthog: 'in review_listing',
-      content: generateTabContent({
-        user,
-        title: 'In Review',
-        bounties,
-        forYou,
-        take,
-        isListingsLoading,
-        filterFunction: (bounty) =>
-          !bounty.isWinnersAnnounced &&
-          dayjs().isAfter(bounty.deadline) &&
-          bounty.status === 'OPEN',
-        emptyTitle: 'No listings in review!',
-        emptyMessage: (
-          <>
-            Check out other listings on the{' '}
-            <Link
-              href="https://earn.superteam.fun/"
-              className="text-slate-300 underline"
-            >
-              Homepage
-            </Link>
-            .
-          </>
-        ),
-        showNotifSub,
-      }),
-    },
-    {
-      id: 'completed',
-      title: 'Completed',
-      posthog: 'completed_listing',
-      content: generateTabContent({
-        user,
-        title: 'Completed',
-        bounties,
-        forYou,
-        take,
-        isListingsLoading,
-        filterFunction: (bounty) => bounty.isWinnersAnnounced || false,
-        sortCompareFunction: (a, b) => {
-          const dateA = a.winnersAnnouncedAt
-            ? new Date(a.winnersAnnouncedAt)
-            : a.deadline
-              ? new Date(a.deadline)
-              : null;
-          const dateB = b.winnersAnnouncedAt
-            ? new Date(b.winnersAnnouncedAt)
-            : b.deadline
-              ? new Date(b.deadline)
-              : null;
+  const {
+    activeTab,
+    activePill,
+    activeStatus,
+    activeSortBy,
+    activeOrder,
+    handleTabChange,
+    handlePillChange,
+    handleStatusChange,
+    handleSortChange,
+  } = useListingState({
+    defaultTab,
+    defaultPill,
+  });
 
-          if (dateA === null && dateB === null) {
-            return 0;
-          }
-          if (dateB === null) {
-            return 1;
-          }
-          if (dateA === null) {
-            return -1;
-          }
-
-          return dateB.getTime() - dateA.getTime();
-        },
-        emptyTitle: 'No completed listings!',
-        emptyMessage: (
-          <>
-            Check out other listings on the{' '}
-            <Link
-              href="https://earn.superteam.fun/"
-              className="text-slate-300 underline"
-            >
-              Homepage
-            </Link>
-            .
-          </>
-        ),
-        showNotifSub,
-      }),
-    },
-  ];
+  const {
+    data: listings,
+    isLoading,
+    error,
+  } = useListings({
+    context: type,
+    tab: activeTab,
+    pill: activePill,
+    status: activeStatus,
+    sortBy: activeSortBy,
+    order: activeOrder,
+  });
 
   useEffect(() => {
-    posthog.capture('open_listings');
-  }, []);
+    const initialTab = TABS.find((t) => t.id === activeTab);
+    if (initialTab) {
+      posthog.capture(initialTab.posthog);
+    }
+  }, [activeTab, posthog]);
+
+  const renderContent = () => {
+    if (isLoading) {
+      return Array.from({ length: 5 }).map((_, index) => (
+        <ListingCardSkeleton key={index} />
+      ));
+    }
+
+    if (error) {
+      return <EmptySection title="Error loading listings" />;
+    }
+
+    if (!listings?.length) {
+      return <EmptySection title="No listings found" />;
+    }
+
+    return (
+      <>
+        {listings.map((listing) => (
+          <ListingCard key={listing.id} bounty={listing} />
+        ))}
+        {type === 'home' && (
+          <Link className="ph-no-capture" href="/all">
+            <Button
+              className="my-8 w-full border-slate-300 py-5 text-slate-400"
+              onClick={() => posthog.capture('viewall bottom_listings')}
+              size="sm"
+              variant="outline"
+            >
+              View All
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+          </Link>
+        )}
+      </>
+    );
+  };
 
   return (
     <div className="mt-5 mb-10">
-      <div className="mb-5 flex items-center justify-between sm:mb-4">
-        <div className="flex w-full items-center justify-between sm:justify-start">
-          <div className="flex items-center">
-            {showEmoji && (
-              <LocalImage
-                className="xs:flex xs:hidden mr-2 h-5 w-5"
-                alt="emoji"
-                src={emoji}
-              />
-            )}
-            <p className="pr-2 text-[14px] font-semibold whitespace-nowrap text-slate-700 sm:text-[15px] md:text-[16px]">
-              {title}
-            </p>
-          </div>
-
-          <div className="flex items-center">
-            <div className="mx-2 h-6 w-px bg-slate-200" />
-            <div className="flex">
-              {tabs.map((tab) => (
-                <ListingTabTrigger
-                  key={tab.id}
-                  isActive={activeTab === tab.id}
-                  onClick={() => {
-                    setActiveTab(tab.id);
-                    posthog.capture(tab.posthog);
-                  }}
-                >
-                  <span className="text-[13px] font-medium md:text-[14px]">
-                    {tab.title}
-                  </span>
-                </ListingTabTrigger>
-              ))}
-            </div>
-          </div>
+      <div className="mb-4 flex w-full items-center justify-between">
+        <div className="flex">
+          {TABS.map((tab) => (
+            <ListingTabTrigger
+              key={tab.id}
+              isActive={activeTab === tab.id}
+              onClick={() => handleTabChange(tab.id, tab.posthog)}
+            >
+              <span className="text-[13px] font-medium md:text-[14px]">
+                {tab.title}
+              </span>
+            </ListingTabTrigger>
+          ))}
         </div>
-        {showViewAll && (
-          <div className="ph-no-capture hidden sm:flex">
-            <Link href={viewAllLink!}>
-              <Button
-                className="px-2 py-1 text-xs text-slate-400 md:text-sm"
-                onClick={() => posthog.capture('viewall top_listings')}
-                size="sm"
-                variant="ghost"
-              >
-                View All
-              </Button>
-            </Link>
-          </div>
-        )}
+
+        <ListingFilters
+          activeStatus={activeStatus}
+          activeSortBy={activeSortBy}
+          activeOrder={activeOrder}
+          onStatusChange={handleStatusChange}
+          onSortChange={handleSortChange}
+        />
       </div>
 
-      <div className="-mt-2.5 mb-4 h-0.5 w-full bg-slate-200 sm:-mt-2" />
+      <div className="-mt-1.5 mb-4 h-0.5 w-full bg-slate-200" />
 
-      {tabs.find((tab) => tab.id === activeTab)?.content}
-
-      {showViewAll && (
-        <Link className="ph-no-capture" href={viewAllLink!}>
-          <Button
-            className="my-8 w-full border-slate-300 py-5 text-slate-400"
-            onClick={() => posthog.capture('viewall bottom_listings')}
-            size="sm"
-            variant="outline"
+      <div className="mb-2 flex gap-1 overflow-x-auto pb-1">
+        <CategoryPill
+          key="all"
+          phEvent="all_navpill"
+          isActive={activePill === 'All'}
+          onClick={() => handlePillChange('All', 'all_navpill')}
+        >
+          All
+        </CategoryPill>
+        <CategoryPill
+          key="foryou"
+          phEvent="foryou_navpill"
+          isActive={activePill === 'For You'}
+          onClick={() => handlePillChange('For You', 'foryou_navpill')}
+        >
+          For You
+        </CategoryPill>
+        {CATEGORY_NAV_ITEMS?.map((navItem) => (
+          <CategoryPill
+            key={navItem.label}
+            phEvent={navItem.pillPH}
+            isActive={activePill === navItem.label}
+            onClick={() => handlePillChange(navItem.label, navItem.pillPH)}
           >
-            View All
-            <ArrowRight className="ml-2 h-4 w-4" />
-          </Button>
-        </Link>
-      )}
+            {isMd ? navItem.label : navItem.mobileLabel || navItem.label}
+          </CategoryPill>
+        ))}
+      </div>
+
+      {renderContent()}
     </div>
   );
 };

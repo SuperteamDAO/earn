@@ -1,0 +1,67 @@
+import { type Prisma } from '@prisma/client';
+import { z } from 'zod';
+
+export const ListingTabSchema = z
+  .enum(['All Open', 'Bounties', 'Projects'])
+  .default('All Open');
+export const OrderDirectionSchema = z.enum(['asc', 'desc']).default('asc');
+export const ListingCategorySchema = z
+  .enum(['For You', 'All', 'Content', 'Design', 'Development', 'Other'])
+  .default('All');
+export const ListingStatusSchema = z
+  .enum(['open', 'review', 'completed'])
+  .default('open');
+export const ListingSortOptionSchema = z
+  .enum(['Due Date', 'Prize', 'Submissions'])
+  .default('Due Date');
+export const ListingContextSchema = z.enum(['home', 'all']).default('all');
+
+export const QueryParamsSchema = z.object({
+  tab: ListingTabSchema,
+  order: OrderDirectionSchema,
+  pill: ListingCategorySchema,
+  status: ListingStatusSchema,
+  sortBy: ListingSortOptionSchema,
+  context: ListingContextSchema,
+});
+
+export const listingSelect = {
+  id: true,
+  rewardAmount: true,
+  deadline: true,
+  type: true,
+  title: true,
+  token: true,
+  winnersAnnouncedAt: true,
+  slug: true,
+  isWinnersAnnounced: true,
+  isFeatured: true,
+  compensationType: true,
+  minRewardAsk: true,
+  maxRewardAsk: true,
+  status: true,
+  _count: {
+    select: {
+      Comments: {
+        where: {
+          isActive: true,
+          isArchived: false,
+          replyToId: null,
+          type: {
+            not: 'SUBMISSION',
+          },
+        },
+      },
+      Submission: true,
+    },
+  },
+  sponsor: {
+    select: {
+      name: true,
+      slug: true,
+      logo: true,
+      isVerified: true,
+      st: true,
+    },
+  },
+} satisfies Prisma.BountiesSelect;

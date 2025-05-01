@@ -8,7 +8,6 @@ import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 
 import { BannerCarousel } from '@/features/home/components/Banner';
-import { NavTabs } from '@/features/home/components/NavTabs';
 import { UserStatsBanner } from '@/features/home/components/UserStatsBanner';
 
 interface HomeProps {
@@ -77,19 +76,13 @@ export function Home({ children, type, st, isAuth }: HomeProps) {
             <div className="w-full py-3 lg:border-r lg:border-slate-100">
               <div className="w-full pt-1 lg:pr-6">
                 {type === 'landing' && (
-                  <>
-                    <NavTabs />
-                    {isAuth ? <UserStatsBanner /> : <BannerCarousel />}
-                  </>
+                  <>{isAuth ? <UserStatsBanner /> : <BannerCarousel />}</>
                 )}
                 {type === 'listing' && (
                   <>
-                    <NavTabs />
                     {!authenticated ? <BannerCarousel /> : <UserStatsBanner />}
                   </>
                 )}
-                {type === 'category' && <NavTabs />}
-                {type === 'region' && <NavTabs className="mt-1" />}
                 {children}
               </div>
             </div>

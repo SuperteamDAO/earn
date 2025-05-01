@@ -4,7 +4,6 @@ import { AiOutlineInfoCircle } from 'react-icons/ai';
 export function EmptySection({
   title,
   message,
-  showNotifSub = true,
 }: {
   title?: string;
   message?: ReactNode;
@@ -17,11 +16,9 @@ export function EmptySection({
         <span className="mt-2 text-lg font-bold text-slate-400">
           {title || 'Sorry! Nothing found'}
         </span>
-        {showNotifSub && (
-          <span className="mt-2 text-center text-slate-300">
-            {message || 'Something went wrong! Please try again!'}
-          </span>
-        )}
+        <span className="mt-2 text-center text-slate-300">
+          {message || 'Something went wrong! Please try again!'}
+        </span>
       </div>
     </div>
   );
