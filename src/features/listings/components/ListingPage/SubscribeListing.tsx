@@ -1,12 +1,12 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Loader2 } from 'lucide-react';
 import { usePostHog } from 'posthog-js/react';
+import { useMemo } from 'react';
 import { TbBell, TbBellRinging } from 'react-icons/tb';
 import { toast } from 'sonner';
 
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Avatar, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { ASSET_URL } from '@/constants/ASSET_URL';
 import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
@@ -49,29 +49,33 @@ export const SubscribeListing = ({ id, isTemplate = false }: Props) => {
       },
     });
 
-  const avatars = [
-    { name: 'Abhishek', src: ASSET_URL + '/pfps/t1.webp' },
-    { name: 'Pratik', src: ASSET_URL + '/pfps/md2.webp' },
-    { name: 'Yash', src: ASSET_URL + '/pfps/fff1.webp' },
-  ];
-
   const handleToggleSubscribe = () => {
     toggleSubscribe();
   };
 
   const isSubscribed = sub.find((e) => e.userId === user?.id);
 
+  const displaySubs = useMemo(() => {
+    if (isSubscribed && user) {
+      const otherSubs = sub.filter((e) => e.userId !== user.id);
+      return [...otherSubs.slice(0, 2), isSubscribed];
+    }
+    return sub.slice(0, 3);
+  }, [isSubscribed, user, sub]);
+
   return (
     <div className="flex items-center gap-2">
-      <p className="text-slate-500">{sub.length + 1}</p>
+      {sub.length > 0 && <p className="text-slate-500">{sub.length}</p>}
       <div className="flex -space-x-3">
-        {avatars.slice(0, sub.length + 1).map((avatar, index) => (
+        {displaySubs.map((avatar, index) => (
           <Avatar
             key={index}
             className="h-6 w-6 border-2 border-white md:h-8 md:w-8"
           >
-            <AvatarImage src={avatar.src} alt={avatar.name || ''} />
-            <AvatarFallback>{avatar.name}</AvatarFallback>
+            <AvatarImage
+              src={avatar.User?.photo || ''}
+              alt={avatar.User?.username || ''}
+            />
           </Avatar>
         ))}
       </div>
