@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { useEffect } from 'react';
 
-import { PROJECT_NAME, SUPPORT_EMAIL } from '@/constants/project';
+import { HELP_URL, PROJECT_NAME } from '@/constants/project';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { useUser } from '@/store/user';
@@ -32,8 +32,8 @@ export default function Blocked() {
         <p className="text-center text-3xl font-medium text-slate-600">
           Your access to {PROJECT_NAME} has been restricted. Please get in touch
           with{' '}
-          <Link className="text-brand-green" href={`mailto:${SUPPORT_EMAIL}`}>
-            {SUPPORT_EMAIL}
+          <Link className="text-brand-green" href={HELP_URL}>
+            us
           </Link>{' '}
           if you have any questions for more information.
         </p>

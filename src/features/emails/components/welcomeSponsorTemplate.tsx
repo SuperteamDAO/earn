@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { PROJECT_NAME, SUPPORT_EMAIL } from '@/constants/project';
+import { HELP_URL, PROJECT_NAME } from '@/constants/project';
 
 import { styles } from '../utils/styles';
 
@@ -15,9 +15,9 @@ export const WelcomeSponsorTemplate = () => {
       </p>
       <p style={styles.textWithMargin}>
         If you need any help related to setting up your listing on{' '}
-        {PROJECT_NAME}, don&apos;t hesitate to contact me on&nbsp;
-        <a href={`mailto:${SUPPORT_EMAIL}`} style={styles.link}>
-          {SUPPORT_EMAIL}
+        {PROJECT_NAME}, don&apos;t hesitate to
+        <a href={HELP_URL} style={styles.link}>
+          contact us
         </a>
         .
       </p>

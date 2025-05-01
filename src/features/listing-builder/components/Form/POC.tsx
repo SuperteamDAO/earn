@@ -6,7 +6,6 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { SUPPORT_EMAIL } from '@/constants/project';
 
 import { useListingForm } from '../../hooks';
 
@@ -22,7 +21,7 @@ export function POC() {
             <FormLabel isRequired>Point of Contact (TG / X / Email)</FormLabel>
             <FormControl>
               <Input
-                placeholder={SUPPORT_EMAIL}
+                placeholder={'some@email.com'}
                 {...field}
                 onChange={(e) => {
                   field.onChange(e);

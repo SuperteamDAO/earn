@@ -13,7 +13,7 @@ import { Button } from '@/components/ui/button';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { Separator } from '@/components/ui/separator';
 import { ASSET_URL } from '@/constants/ASSET_URL';
-import { PROJECT_NAME, SUPPORT_EMAIL } from '@/constants/project';
+import { HELP_URL, PROJECT_NAME } from '@/constants/project';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import type { User } from '@/interface/user';
@@ -290,12 +290,7 @@ function TalentProfile({ talent, stats }: TalentProps) {
                     )
                   : renderButton(<MdEmail />, 'Reach Out', () => {
                       posthog.capture('reach out_talent profile');
-                      const email = encodeURIComponent(talent?.email || '');
-                      const subject = encodeURIComponent(
-                        `Saw Your ${PROJECT_NAME} Profile!`,
-                      );
-                      const bcc = encodeURIComponent(SUPPORT_EMAIL);
-                      window.location.href = `mailto:${email}?subject=${subject}&bcc=${bcc}`;
+                      window.location.href = HELP_URL;
                     })}
                 {renderButton(<ShareIcon />, 'Share', onOpen, true)}
               </div>

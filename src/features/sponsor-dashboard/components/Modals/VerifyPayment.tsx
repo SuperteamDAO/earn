@@ -21,11 +21,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import {
-  EXPLORER_TX_URL,
-  PROJECT_NAME,
-  SUPPORT_EMAIL,
-} from '@/constants/project';
+import { EXPLORER_TX_URL, HELP_URL, PROJECT_NAME } from '@/constants/project';
 import { tokenList } from '@/constants/tokenList';
 import { type SubmissionWithUser } from '@/interface/submission';
 import { api } from '@/lib/api';
@@ -449,7 +445,7 @@ export const VerifyPaymentModal = ({
               </Button>
 
               <a
-                href={`mailto:${SUPPORT_EMAIL}?subject=Payment Verification Issue`}
+                href={HELP_URL}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-center"
@@ -496,7 +492,7 @@ export const VerifyPaymentModal = ({
 
             <div className="mx-auto flex flex-col items-center gap-2">
               <a
-                href={`mailto:${SUPPORT_EMAIL}?subject=Payment Verification Issue`}
+                href={HELP_URL}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-center"
@@ -709,7 +705,7 @@ export const VerifyPaymentModal = ({
                 </Button>
 
                 <a
-                  href={`mailto:${SUPPORT_EMAIL}?subject=Payment Verification Issue`}
+                  href={HELP_URL}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-center"

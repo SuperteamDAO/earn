@@ -1,6 +1,6 @@
 export const PROJECT_NAME = 'Nearn';
 export const PROJECT_TEAM = 'Nearn Team';
-export const SUPPORT_EMAIL = 'support@nearn.io';
+export const HELP_URL = 'https://docs.nearn.io/support';
 export const CEO_NAME = 'Ori';
 export const FAQ_URL = 'https://github.com/NEAR-DevHub/nearn/releases';
 export const GITHUB_URL = 'https://github.com/NEAR-DevHub/nearn';

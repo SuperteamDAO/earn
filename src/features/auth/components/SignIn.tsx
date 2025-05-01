@@ -6,7 +6,7 @@ import React, { type Dispatch, type SetStateAction } from 'react';
 import { MdOutlineEmail } from 'react-icons/md';
 
 import { Button } from '@/components/ui/button';
-import { SUPPORT_EMAIL } from '@/constants/project';
+import { HELP_URL } from '@/constants/project';
 import { PRIVACY_POLICY, TERMS_OF_USE } from '@/constants/TERMS_OF_USE';
 import { GoogleIcon } from '@/svg/google';
 
@@ -115,13 +115,13 @@ export const SignIn = ({
 
       <div className="rounded-b-md bg-slate-100 py-[7px]">
         <p className="text-center text-xs text-slate-400">
-          Need help? Reach out to us at{' '}
+          Need help?
           <Link
-            href={`mailto:${SUPPORT_EMAIL}`}
+            href={HELP_URL}
             className="underline hover:text-slate-500"
             target="_blank"
           >
-            {SUPPORT_EMAIL}
+            Reach out to us
           </Link>
         </p>
       </div>

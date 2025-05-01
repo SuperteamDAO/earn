@@ -15,8 +15,8 @@ import {
   CHANGELOG_URL,
   DISCORD_URL,
   GITHUB_URL,
+  HELP_URL,
   PROJECT_NAME,
-  SUPPORT_EMAIL,
   TWITTER_URL,
 } from '@/constants/project';
 import { TeamRegions } from '@/constants/Team';
@@ -166,7 +166,7 @@ export const Footer = () => {
       text: 'Changelog',
       href: CHANGELOG_URL,
     },
-    { text: 'Contact Us', href: `mailto:${SUPPORT_EMAIL}` },
+    { text: 'Contact Us', href: HELP_URL },
   ];
 
   return (

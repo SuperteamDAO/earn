@@ -616,7 +616,7 @@ export default function EditProfilePage({ slug }: { slug: string }) {
                     <FormItem className="mb-5 gap-2">
                       <div>
                         <span className="flex items-center gap-2">
-                          <FormLabel isRequired>Skills Needed</FormLabel>
+                          <FormLabel isRequired>Skills</FormLabel>
                           <Tooltip content="Select all that apply">
                             <Info className="h-3 w-3 text-slate-500" />
                           </Tooltip>

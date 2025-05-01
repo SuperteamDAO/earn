@@ -1,5 +1,6 @@
 import { GoogleTagManager } from '@next/third-parties/google';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import Gleap from 'gleap';
 import type { AppProps } from 'next/app';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
@@ -100,6 +101,10 @@ function MyApp({ Component, pageProps }: any) {
       forcedProfileRedirect(); // instantly when just signed in
     }
   }, [router.query.loginState, user, posthog]);
+
+  useEffect(() => {
+    Gleap.initialize('a8VC1kgMViouW0HhfK6aWTrjYEQaXqra');
+  }, []);
 
   // forced profile redirection
   useEffect(() => {

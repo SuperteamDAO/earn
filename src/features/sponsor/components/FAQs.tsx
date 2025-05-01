@@ -4,7 +4,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
-import { CHAIN_NAME, PROJECT_NAME, SUPPORT_EMAIL } from '@/constants/project';
+import { CHAIN_NAME, HELP_URL, PROJECT_NAME } from '@/constants/project';
 import { cn } from '@/utils/cn';
 
 import { maxW } from '../utils/styles';
@@ -35,7 +35,7 @@ ${PROJECT_NAME} can be used to get any small to medium scale task done, includin
   },
   {
     question: `I need help with my listing. How can I get in touch?`,
-    answer: `You can get in touch with us at <a style="color: blue" href="mailto:${SUPPORT_EMAIL}" target="_blank">${SUPPORT_EMAIL}</a> and we will get back to you ASAP.`,
+    answer: `You can get in touch with <a style="color: blue" href="${HELP_URL}" target="_blank">us</a> and we will get back to you ASAP.`,
   },
 ];
 
