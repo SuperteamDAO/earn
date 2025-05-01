@@ -109,6 +109,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       SELECT *
       FROM combined_data
       ORDER BY 
+        createdAt DESC,
         CASE 
           WHEN deadline IS NULL THEN 1 
           ELSE 0 
@@ -116,8 +117,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         CASE 
           WHEN deadline IS NOT NULL THEN ABS(DATEDIFF(deadline, CURDATE()))
           ELSE NULL 
-        END ASC,
-        createdAt DESC
+        END ASC
     `,
       userSponsorId,
       status.CLOSED,

@@ -297,7 +297,7 @@ export const ListingTable = ({
                 <TableRow key={listing?.id}>
                   <TableCell className="pr-0">
                     <p className="whitespace-nowrap text-sm font-medium text-slate-500">
-                      {listing.sequentialId}
+                      {listing.sequentialId !== 0 ? listing.sequentialId : '—'}
                     </p>
                   </TableCell>
                   <TableCell className="pr-0">
