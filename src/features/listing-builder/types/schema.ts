@@ -28,6 +28,18 @@ import {
 import { fetchSlugCheck } from '../queries/slug-check';
 import { type ListingFormData } from '.';
 
+export const eligibilityQuestionSchema = z.object({
+  order: z.number(),
+  question: z
+    .string()
+    .trim()
+    .min(1, 'Please add your question')
+    .max(200, 'Please limit your question to 200 characters max.'),
+  type: z.enum(['text', 'link']),
+  optional: z.boolean().optional(),
+});
+export type TEligibilityQuestion = z.infer<typeof eligibilityQuestionSchema>;
+
 interface ListingFormSchemaOptions {
   isGod: boolean;
   isEditing: boolean;
@@ -42,17 +54,6 @@ export const createListingFormSchema = ({
   pastListing,
   hackathons,
 }: ListingFormSchemaOptions) => {
-  const eligibilityQuestionSchema = z.object({
-    order: z.number(),
-    question: z
-      .string()
-      .trim()
-      .min(1, 'Please add your question')
-      .max(200, 'Please limit your question to 200 characters max.'),
-    type: z.enum(['text', 'link']),
-    optional: z.boolean().optional(),
-  });
-
   const rewardsSchema = z
     .record(
       z.coerce.number(),
