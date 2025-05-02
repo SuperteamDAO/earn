@@ -267,7 +267,7 @@ export function ListingHeader({
               >
                 <Button
                   variant="outline"
-                  className="ph-no-capture gap-2 border-slate-300 font-medium text-slate-500 hover:bg-brand-green hover:text-white"
+                  className="ph-no-capture gap-2 border-slate-300 font-medium text-slate-500"
                 >
                   Manage Listing
                 </Button>
@@ -284,7 +284,7 @@ export function ListingHeader({
               >
                 <Button
                   variant="outline"
-                  className="ph-no-capture gap-2 border-slate-300 font-medium text-slate-500 hover:bg-brand-green hover:text-white"
+                  className="ph-no-capture gap-2 border-slate-300 font-medium text-slate-500"
                 >
                   <Pencil className="h-4 w-4" />
                   Edit

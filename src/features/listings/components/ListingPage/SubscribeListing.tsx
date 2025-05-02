@@ -7,6 +7,7 @@ import { toast } from 'sonner';
 
 import { Avatar, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
+import { Tooltip } from '@/components/ui/tooltip';
 import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
@@ -86,36 +87,44 @@ export const SubscribeListing = ({ id, isTemplate = false }: Props) => {
             'Please complete your profile before subscribing to a listing.'
           }
         >
-          <Button
-            className={cn(
-              'ph-no-capture gap-2 border-slate-300 font-medium text-slate-500 hover:bg-brand-green hover:text-white',
-              'w-auto p-0 px-3',
-            )}
-            variant="outline"
-            disabled={isTemplate}
-            onClick={() => {
-              posthog.capture(
-                isSubscribed ? 'unnotify me_listing' : 'notify me_listing',
-              );
-              handleToggleSubscribe();
-            }}
-            aria-label="Notify"
+          <Tooltip
+            content={
+              isSubscribed
+                ? 'Unsubscribe.'
+                : 'Subscribe. By subscribing, this listing will appear on your home dashboard for quick access.'
+            }
           >
-            {isSubscribeLoading ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : isSubscribed ? (
-              <TbBellRinging />
-            ) : (
-              <TbBell />
-            )}
-            <span className="hidden">
-              {isSubscribeLoading
-                ? 'Subscribing'
-                : isSubscribed
-                  ? 'Subscribed'
-                  : 'Subscribe'}
-            </span>
-          </Button>
+            <Button
+              className={cn(
+                'ph-no-capture gap-2 border-slate-300 font-medium text-slate-500',
+                'w-auto p-0 px-3',
+              )}
+              variant="outline"
+              disabled={isTemplate}
+              onClick={() => {
+                posthog.capture(
+                  isSubscribed ? 'unnotify me_listing' : 'notify me_listing',
+                );
+                handleToggleSubscribe();
+              }}
+              aria-label="Notify"
+            >
+              {isSubscribeLoading ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : isSubscribed ? (
+                <TbBellRinging />
+              ) : (
+                <TbBell />
+              )}
+              <span className="hidden">
+                {isSubscribeLoading
+                  ? 'Subscribing'
+                  : isSubscribed
+                    ? 'Subscribed'
+                    : 'Subscribe'}
+              </span>
+            </Button>
+          </Tooltip>
         </AuthWrapper>
       </div>
     </div>
