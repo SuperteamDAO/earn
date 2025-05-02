@@ -46,6 +46,7 @@ import { cleanTemplate } from '@/features/listing-builder/utils/form';
 
 import { isAutoGenerateOpenAtom, isEditingAtom } from '../../../atoms';
 import { useListingForm } from '../../../hooks';
+import { AiGenerateFeatureModal } from '../../Modals/AiGenerateFeature';
 
 export function Templates() {
   const posthog = usePostHog();
@@ -82,12 +83,10 @@ export function Templates() {
     user?.role !== 'GOD' &&
     !isEditing;
 
-  const [open, setOpen] = useState(
-    router.pathname === '/dashboard/new' && type !== 'hackathon',
-  );
-  useEffect(() => {
-    setOpen(router.pathname === '/dashboard/new' && type !== 'hackathon');
-  }, [router.pathname]);
+  const [open, setOpen] = useState(false);
+  // useEffect(() => {
+  //   setOpen(router.pathname === '/dashboard/new' && type !== 'hackathon');
+  // }, [router.pathname]);
 
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
   const [selectedTemplate, setSelectedTemplate] =
@@ -140,6 +139,11 @@ export function Templates() {
 
   return (
     <>
+      <AiGenerateFeatureModal
+        onClose={() =>
+          setOpen(router.pathname === '/dashboard/new' && type !== 'hackathon')
+        }
+      />
       <Dialog
         open={open}
         onOpenChange={(e) => {
@@ -215,7 +219,7 @@ export function Templates() {
               </DialogClose>
               <DialogClose asChild>
                 <Button
-                  className="ph-no-capture flex h-full w-60 flex-col items-center justify-center gap-4 bg-white text-slate-500 hover:text-slate-700 focus-visible:ring-0"
+                  className="ph-no-capture relative flex h-full w-60 flex-col items-center justify-center gap-4 bg-white text-slate-500 hover:text-slate-700 focus-visible:ring-0"
                   variant="outline"
                   disabled={isDisabled}
                   onClick={handleAutoGenerate}
