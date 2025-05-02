@@ -1,4 +1,3 @@
-// Keep if needed elsewhere, remove if not
 import { useSetAtom } from 'jotai';
 import { useRouter } from 'next/router';
 import { usePostHog } from 'posthog-js/react';
