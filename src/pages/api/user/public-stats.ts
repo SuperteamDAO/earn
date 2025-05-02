@@ -23,6 +23,7 @@ export default async function handler(
             listing: {
               select: {
                 isWinnersAnnounced: true,
+                type: true,
               },
             },
           },
@@ -43,11 +44,15 @@ export default async function handler(
 
     const participations = result.Submission.length;
     const wins = result.Submission.filter(
-      (s) => s.isWinner && s.listing.isWinnersAnnounced,
+      (s) =>
+        s.isWinner &&
+        (s.listing.isWinnersAnnounced || s.listing.type === 'sponsorship'),
     ).length;
 
     const listingWinnings = result.Submission.filter(
-      (s) => s.isWinner && s.listing.isWinnersAnnounced,
+      (s) =>
+        s.isWinner &&
+        (s.listing.isWinnersAnnounced || s.listing.type === 'sponsorship'),
     ).reduce((sum, submission) => sum + (submission.rewardInUSD || 0), 0);
 
     const grantWinnings = result.GrantApplication.filter(
