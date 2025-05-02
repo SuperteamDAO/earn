@@ -20,10 +20,6 @@ interface SideBarProps {
   type: 'landing' | 'listing' | 'category' | 'region' | 'feed';
 }
 
-const VibeCard = dynamic(() =>
-  import('@/features/home/components/VibeCard').then((mod) => mod.VibeCard),
-);
-
 const LiveListings = dynamic(() =>
   import('@/features/home/components/LiveListings').then(
     (mod) => mod.LiveListings,
@@ -48,7 +44,6 @@ export const HomeSideBar = ({ type }: SideBarProps) => {
     <div className="flex w-96 flex-col gap-10 py-4 pl-6">
       {type === 'feed' && (
         <>
-          <VibeCard />
           <LiveListings>
             <div className="flex items-center justify-between">
               <span className="text-sm font-medium text-gray-400">

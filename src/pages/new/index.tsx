@@ -29,9 +29,9 @@ export default function NewProfilePage({
   showTalentProfile: boolean;
 }) {
   const avatars = [
-    { name: 'Abhishek', src: ASSET_URL + '/pfps/t1.webp' },
-    { name: 'Pratik', src: ASSET_URL + '/pfps/md2.webp' },
-    { name: 'Yash', src: ASSET_URL + '/pfps/fff1.webp' },
+    { name: 'Artur', src: ASSET_URL + '/pfps/artur.webp' },
+    { name: 'Keith', src: ASSET_URL + '/pfps/keith.webp' },
+    { name: 'Mike', src: ASSET_URL + '/pfps/mike.webp' },
   ];
 
   const { data: totals } = useQuery(userCountQuery);
@@ -161,9 +161,9 @@ export default function NewProfilePage({
                 </div>
               </AuthWrapper>
               <div className="mx-auto -mt-3 flex items-center gap-3">
-                <div className="flex -space-x-2">
+                <div className="flex -space-x-4">
                   {avatars.slice(0, 3).map((avatar, index) => (
-                    <Avatar className="relative h-6 w-6 border-0" key={index}>
+                    <Avatar className="relative h-8 w-8 border-0" key={index}>
                       <AvatarImage src={avatar.src} alt={avatar.name} />
                       <AvatarFallback>{avatar.name?.charAt(0)}</AvatarFallback>
                     </Avatar>

@@ -95,9 +95,7 @@ const Step = ({
       className={cn(
         'relative z-10 flex items-center justify-center',
         'h-[2.375rem] w-[2.375rem] overflow-visible rounded-full',
-        isComplete
-          ? 'bg-brand-green text-white'
-          : 'bg-[#F4F4FE] text-slate-400',
+        isComplete ? 'bg-black text-white' : 'bg-[#F4F4FE] text-slate-400',
       )}
     >
       {isComplete ? (
@@ -109,7 +107,7 @@ const Step = ({
         <div
           className={cn(
             'absolute top-[110%] h-[90%] w-[0.12rem]',
-            isComplete ? 'bg-brand-green' : 'bg-slate-400',
+            isComplete ? 'bg-slate-500' : 'bg-slate-400',
             'opacity-60',
           )}
         />

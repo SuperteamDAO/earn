@@ -14,9 +14,9 @@ import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 import { pfpsQuery } from '../queries/vibe-pfps';
 
 const dummyUsers = [
-  { id: '1', photo: ASSET_URL + '/pfps/t1.webp' },
-  { id: '2', photo: ASSET_URL + '/pfps/md2.webp' },
-  { id: '3', photo: ASSET_URL + '/pfps/fff1.webp' },
+  { id: '1', photo: ASSET_URL + '/pfps/artur.webp' },
+  { id: '2', photo: ASSET_URL + '/pfps/keith.webp' },
+  { id: '3', photo: ASSET_URL + '/pfps/mike.webp' },
   { id: '55', photo: '' },
   { id: '5', photo: ASSET_URL + '/pfps/md1.webp' },
   { id: '6', photo: ASSET_URL + '/pfps/t2.webp' },

@@ -44,16 +44,16 @@ import { GetStarted } from './GetStarted';
 
 const avatars = [
   {
-    name: 'Abhishkek',
-    src: ASSET_URL + '/pfps/t1.webp',
+    name: 'Artur',
+    src: ASSET_URL + '/pfps/artur.webp',
   },
   {
-    name: 'Pratik',
-    src: ASSET_URL + '/pfps/md2.webp',
+    name: 'Keith',
+    src: ASSET_URL + '/pfps/keith.webp',
   },
   {
-    name: 'Yash',
-    src: ASSET_URL + '/pfps/fff1.webp',
+    name: 'Mike',
+    src: ASSET_URL + '/pfps/mike.webp',
   },
 ];
 

@@ -2,17 +2,17 @@ import { HighQualityImage } from '../HighQualityImage';
 
 const submissions = [
   {
-    avatar: '/landingsponsor/users/artur.webp',
+    avatar: '/pfps/artur.webp',
     title: 'Artur’s Submission',
     subtitle: 'artur.substack.com/why-race-of-sloths...',
   },
   {
-    avatar: '/landingsponsor/users/keith.webp',
+    avatar: '/pfps/keith.webp',
     title: 'Keith’s Submission',
     subtitle: 'keith.substack.com/when-race-of-sloths...',
   },
   {
-    avatar: '/landingsponsor/users/mike.webp',
+    avatar: '/pfps/mike.webp',
     title: 'Mike’s Submission',
     subtitle: 'mike.substack.com/how-race-of-sloths...',
   },

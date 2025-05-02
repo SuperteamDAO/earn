@@ -193,9 +193,9 @@ const Desktop = ({
 };
 
 const dummyUsers = [
-  { name: 'Kash', pfp: ASSET_URL + '/pfps/t1.webp' },
-  { name: 'Neil', pfp: ASSET_URL + '/pfps/md2.webp' },
-  { name: 'Pratik', pfp: ASSET_URL + '/pfps/fff1.webp' },
+  { name: 'Artur', pfp: ASSET_URL + '/pfps/artur.webp' },
+  { name: 'Keith', pfp: ASSET_URL + '/pfps/keith.webp' },
+  { name: 'Mike', pfp: ASSET_URL + '/pfps/mike.webp' },
 ];
 
 const People = ({

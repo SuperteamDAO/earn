@@ -12,9 +12,9 @@ import { AuthWrapper } from '@/features/auth/components/AuthWrapper';
 import { userCountQuery } from '../queries/user-count';
 
 const avatars = [
-  { name: 'Abhishek', src: ASSET_URL + '/pfps/t1.webp' },
-  { name: 'Pratik', src: ASSET_URL + '/pfps/md2.webp' },
-  { name: 'Yash', src: ASSET_URL + '/pfps/fff1.webp' },
+  { name: 'Artur', src: ASSET_URL + '/pfps/artur.webp' },
+  { name: 'Keith', src: ASSET_URL + '/pfps/keith.webp' },
+  { name: 'Mike', src: ASSET_URL + '/pfps/mike.webp' },
 ];
 
 export function HomeBanner() {
@@ -73,11 +73,11 @@ export function HomeBanner() {
           </button>
         </AuthWrapper>
         <div className="flex items-center">
-          <div className="flex -space-x-2">
+          <div className="flex -space-x-4">
             {avatars.map((avatar, index) => (
               <img
                 key={index}
-                className="relative h-6 w-6 rounded-full border border-[#49139c] md:h-8 md:w-8"
+                className="relative h-8 w-8 rounded-full md:h-10 md:w-10"
                 src={avatar.src}
                 alt={avatar.name}
               />
