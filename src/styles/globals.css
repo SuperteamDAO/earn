@@ -2,6 +2,7 @@
 @import 'tw-animate-css';
 
 @plugin 'tailwind-scrollbar';
+@plugin "@tailwindcss/typography";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -722,4 +723,3 @@ h3.tiptap-heading + h2.tiptap-heading {
 .scrollbar-visible::-webkit-scrollbar-track {
   background-color: rgba(0, 0, 0, 0.05);
 }
-

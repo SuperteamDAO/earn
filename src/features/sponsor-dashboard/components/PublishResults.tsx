@@ -60,7 +60,6 @@ export function PublishResults({
         (bounty?.rewards?.[BONUS_REWARD_POSITION]
           ? bounty?.maxBonusSpots || 0
           : 0);
-
   const notEnoughSubmissionsForBonus =
     remainings && remainings.bonus > 0 && submissionsLeft < remainings.bonus;
   const isWinnersAllSelected =
