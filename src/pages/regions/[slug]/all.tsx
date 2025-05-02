@@ -39,8 +39,7 @@ export default function AllRegionListingsPage({
         <ListingTabs
           bounties={listings?.bounties}
           isListingsLoading={isListingsLoading}
-          showEmoji
-          title="Freelance Gigs"
+          title="Freelance Opportunities"
           viewAllLink="/all"
         />
       </div>

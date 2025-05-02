@@ -66,8 +66,7 @@ function ListingCategoryPage({ slug }: { slug: SlugKeys }) {
         <ListingTabs
           bounties={listingsData ?? []}
           isListingsLoading={isListingsLoading}
-          showEmoji
-          title={`${formattedSlug} Gigs`}
+          title={`${formattedSlug} Opportunities`}
           viewAllLink={`/category/${slug}/all`}
           showViewAll
           take={10}
@@ -76,7 +75,6 @@ function ListingCategoryPage({ slug }: { slug: SlugKeys }) {
         <ListingTabs
           bounties={sponsorships ?? []}
           isListingsLoading={isSponsorshipsLoading}
-          showEmoji
           title={`${formattedSlug} Sponsorships`}
           viewAllLink={`/category/${slug}/all`}
           take={10}

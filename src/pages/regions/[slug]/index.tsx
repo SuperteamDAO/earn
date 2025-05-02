@@ -51,8 +51,7 @@ const RegionsPage = ({
         <ListingTabs
           bounties={listings?.bounties}
           isListingsLoading={isListingsLoading}
-          showEmoji
-          title="Freelance Gigs"
+          title="Freelance Opportunities"
           showViewAll
           viewAllLink={`/regions/${slug}/all`}
           take={10}
@@ -62,7 +61,6 @@ const RegionsPage = ({
           type="bounties"
           title="Sponsorships"
           sub="Sponsor projects and get exposure"
-          showEmoji
           showViewAll
         >
           {isLoading && (
