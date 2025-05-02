@@ -1,17 +1,9 @@
-import {
-  ChevronDown,
-  ChevronUp,
-  Copy,
-  CopyCheck,
-  SquarePen,
-} from 'lucide-react';
+import { ChevronDown, ChevronUp, SquarePen } from 'lucide-react';
 import type { GetServerSideProps } from 'next';
 import Head from 'next/head';
-import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { usePostHog } from 'posthog-js/react';
-import React, { type JSX, useEffect, useMemo, useState } from 'react';
-import { MdEmail } from 'react-icons/md';
+import React, { type JSX, useEffect, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 
 import { EmptySection } from '@/components/shared/EmptySection';
@@ -20,7 +12,6 @@ import { Button } from '@/components/ui/button';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { Separator } from '@/components/ui/separator';
 import { ASSET_URL } from '@/constants/ASSET_URL';
-import { useClipboard } from '@/hooks/use-clipboard';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import type { User } from '@/interface/user';
@@ -64,10 +55,6 @@ function TalentProfile({ talent, stats }: TalentProps) {
   const [showSubskills, setShowSubskills] = useState<Record<number, boolean>>(
     {},
   );
-  const { onCopy: copyEmail, hasCopied: hasEmailCopied } = useClipboard(
-    talent.email || '',
-  );
-
   const { ref, inView } = useInView();
   const {
     data: feed,
@@ -242,14 +229,6 @@ function TalentProfile({ talent, stats }: TalentProps) {
 
   const feedItems = feed?.pages.flatMap((page) => page) ?? [];
 
-  const reachOutLink = useMemo(() => {
-    if (!user?.isTalentFilled || !user?.currentSponsorId) return '';
-    const email = encodeURIComponent(talent?.email || '');
-    const subject = encodeURIComponent('Saw Your ST Earn Profile!');
-    const bcc = encodeURIComponent('support@superteamearn.com');
-    return `mailto:${email}?subject=${subject}&bcc=${bcc}`;
-  }, [talent, user]);
-
   return (
     <Default
       meta={
@@ -305,35 +284,12 @@ function TalentProfile({ talent, stats }: TalentProps) {
                 </p>
               </div>
               <div className="flex w-auto gap-3 md:w-[160px] md:flex-col">
-                {user?.id === talent?.id ? (
+                {user?.id === talent?.id &&
                   renderButton(
                     <SquarePen />,
                     'Edit Profile',
                     handleEditProfileClick,
-                  )
-                ) : isMD ? (
-                  renderButton(
-                    hasEmailCopied ? <CopyCheck /> : <Copy />,
-                    hasEmailCopied ? 'Copied' : 'Copy Email',
-                    () => {
-                      posthog.capture('reach out_talent profile');
-                      copyEmail();
-                    },
-                  )
-                ) : (
-                  <AuthWrapper allowSponsor>
-                    <Link
-                      href={reachOutLink}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-full"
-                    >
-                      {renderButton(<MdEmail />, 'Reach Out', () => {
-                        posthog.capture('reach out_talent profile');
-                      })}
-                    </Link>
-                  </AuthWrapper>
-                )}
+                  )}
                 {renderButton(<ShareIcon />, 'Share', onOpen, true)}
               </div>
             </div>

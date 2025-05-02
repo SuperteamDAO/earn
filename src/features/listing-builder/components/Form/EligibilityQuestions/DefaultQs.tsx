@@ -22,6 +22,8 @@ export function DefaultEligibilityQuestions() {
     control: form.control,
     name: 'token',
   });
+
+  const TOOLTIP_CONTENT = `This is a default field for your ${type === 'project' ? 'Application' : 'Submission'} form. This question cannot be edited or removed.`;
   return (
     <div>
       <p className="pb-3 text-xs font-medium text-slate-500 uppercase">
@@ -31,6 +33,7 @@ export function DefaultEligibilityQuestions() {
         {type !== 'project' && (
           <>
             <DefaultQuestionField
+              TOOLTIP_CONTENT={TOOLTIP_CONTENT}
               icon={<Link2 className="h-4 w-4" />}
               label={
                 type === 'bounty'
@@ -41,6 +44,7 @@ export function DefaultEligibilityQuestions() {
             />
 
             <DefaultQuestionField
+              TOOLTIP_CONTENT={TOOLTIP_CONTENT}
               icon={
                 <Twitter className="h-4 w-4 text-slate-400 opacity-100 grayscale-0" />
               }
@@ -50,6 +54,7 @@ export function DefaultEligibilityQuestions() {
         )}
         {type === 'project' && compensationType !== 'fixed' && (
           <DefaultQuestionField
+            TOOLTIP_CONTENT={TOOLTIP_CONTENT}
             icon={
               <TokenLabel
                 symbol={token}
@@ -66,6 +71,7 @@ export function DefaultEligibilityQuestions() {
           />
         )}
         <DefaultQuestionField
+          TOOLTIP_CONTENT={TOOLTIP_CONTENT}
           icon={<Baseline className="h-4 w-4 text-slate-400" />}
           label="Anything Else"
         />
@@ -78,14 +84,14 @@ interface DefaultQuestionFieldProps {
   icon: React.ReactNode;
   label: string;
   required?: boolean;
+  TOOLTIP_CONTENT: string;
 }
-
-const TOOLTIP_CONTENT = `This is a default field for your submission form. This question cannot be edited or removed.`;
 
 export function DefaultQuestionField({
   icon,
   label,
   required = false,
+  TOOLTIP_CONTENT,
 }: DefaultQuestionFieldProps) {
   return (
     <Tooltip content={TOOLTIP_CONTENT}>

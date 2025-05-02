@@ -4,11 +4,19 @@ import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
 
+import { getPrivyToken } from '@/features/auth/utils/getPrivyToken';
+
 export default async function checkUserExists(
   req: NextApiRequest,
   res: NextApiResponse,
 ): Promise<void> {
   logger.info(`Request query: ${safeStringify(req.query)}`);
+
+  const privyDid = await getPrivyToken(req);
+  if (!privyDid) {
+    logger.error('Unauthorized, Privy Did not found in user exists API');
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
 
   const { email } = req.query;
   if (typeof email !== 'string') {

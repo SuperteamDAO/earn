@@ -1,5 +1,7 @@
+import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 
+import { addOnboardingInfoToAirtable } from './addOnboardingInfoToAirtable';
 import { addPaymentInfoToAirtable } from './addPaymentInfoToAirtable';
 
 type CreateTrancheProps = {
@@ -26,21 +28,45 @@ export async function createTranche({
     },
   });
 
+  if (application.user.isKYCVerified !== true) {
+    const errorMessage = `User is not verified for application ${applicationId}`;
+    logger.error(errorMessage);
+    throw new Error(errorMessage);
+  }
+
   const existingTranches = application.GrantTranche.filter(
     (tranche) => tranche.status !== 'Rejected',
   ).length;
   const maxTranches = 4;
 
   if (existingTranches >= maxTranches) {
-    throw new Error('All tranches have already been created');
+    const errorMessage = `All tranches have already been created for application ${applicationId}`;
+    logger.error(errorMessage);
+    throw new Error(errorMessage);
   }
 
   if (isFirstTranche && existingTranches > 0) {
-    throw new Error('Cannot create first tranche when tranches already exist');
+    const cutoff = new Date('2025-04-17');
+    const allExistingCreatedAt = application.GrantTranche.every(
+      (tranche) => new Date(tranche.createdAt) < cutoff,
+    );
+
+    if (allExistingCreatedAt) {
+      logger.info(
+        `Skipping first tranche creation for application ${applicationId} as existing tranches were created before the cutoff date.`,
+      );
+      return null;
+    }
+
+    const errorMessage = `Cannot create first tranche when tranches already exist for application ${applicationId} (created after cutoff)`;
+    logger.error(errorMessage);
+    throw new Error(errorMessage);
   }
 
   if (!isFirstTranche && existingTranches === 0) {
-    throw new Error('Cannot create tranche when no tranches exist');
+    const errorMessage = `Cannot create non-first tranche when no tranches exist for application ${applicationId}`;
+    logger.error(errorMessage);
+    throw new Error(errorMessage);
   }
 
   if (existingTranches > 0) {
@@ -50,9 +76,9 @@ export async function createTranche({
       previousTranche.status !== 'Paid' &&
       previousTranche.status !== 'Rejected'
     ) {
-      throw new Error(
-        'Previous tranche must be paid before requesting a new tranche',
-      );
+      const errorMessage = `Previous tranche (ID: ${previousTranche.id}) must be paid before requesting a new tranche for application ${applicationId}`;
+      logger.error(errorMessage);
+      throw new Error(errorMessage);
     }
   }
 
@@ -61,6 +87,9 @@ export async function createTranche({
   const approvedAmount = application.approvedAmount ?? 0;
   const remainingAmount = approvedAmount - application.totalPaid;
 
+  logger.info(
+    `Calculating tranche amount for application ${applicationId}. Total Tranches: ${totalTranches}, Existing Tranches: ${existingTranches}, Approved Amount: ${approvedAmount}, Remaining Amount: ${remainingAmount}, Is First: ${isFirstTranche}`,
+  );
   if (totalTranches === 2) {
     if (isFirstTranche) {
       trancheAmount = Math.round(remainingAmount * 0.5);
@@ -92,8 +121,14 @@ export async function createTranche({
   }
 
   if (trancheAmount > remainingAmount) {
-    throw new Error('Tranche amount exceeds remaining amount');
+    const errorMessage = `Calculated tranche amount (${trancheAmount}) exceeds remaining amount (${remainingAmount}) for application ${applicationId}`;
+    logger.error(errorMessage);
+    throw new Error(errorMessage);
   }
+
+  logger.info(
+    `Creating tranche ${existingTranches + 1} for application ${applicationId} with amount ${trancheAmount}`,
+  );
 
   const tranche = await prisma.grantTranche.create({
     data: {
@@ -129,8 +164,40 @@ export async function createTranche({
     },
   });
 
+  logger.info(
+    `Successfully created tranche ${tranche.id} for application ${applicationId}`,
+  );
+
   if (isFirstTranche) {
-    await addPaymentInfoToAirtable(tranche.GrantApplication, tranche);
+    const updatedGrantApplication =
+      await prisma.grantApplication.findUniqueOrThrow({
+        where: { id: applicationId },
+        include: {
+          grant: true,
+          user: {
+            select: {
+              email: true,
+              kycName: true,
+            },
+          },
+        },
+      });
+
+    try {
+      logger.info(
+        `Adding onboarding info to Airtable for application ${applicationId}`,
+      );
+      await addOnboardingInfoToAirtable(updatedGrantApplication);
+      logger.info(
+        `Adding payment info to Airtable for tranche ${tranche.id} (application ${applicationId})`,
+      );
+      await addPaymentInfoToAirtable(tranche.GrantApplication, tranche);
+    } catch (airtableError: any) {
+      logger.error(
+        `Error adding info to Airtable for application ${applicationId} / tranche ${tranche.id}: ${airtableError.message}`,
+        { error: airtableError },
+      );
+    }
   }
 
   return tranche;

@@ -72,7 +72,7 @@ export function SidebarBannerBreakout({ className }: SidebarPosterProps) {
               Submissions Due May 16 (11:59PM PST)
             </p>
             <p className="pt-1 text-lg font-bold">
-              $250K+ in side tracks
+              $300K+ in side tracks
               {/* ${stats?.totalRewardAmount.toLocaleString('en-us') ?? '-'} in side */}
             </p>
           </div>
