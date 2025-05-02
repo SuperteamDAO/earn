@@ -65,12 +65,12 @@ export default {
         brand: {
           // TODO: Update to match design system
           green: {
-            50: '#00ec97',
-            300: '#00ec97',
-            400: '#00ec97',
-            DEFAULT: '#00ec97',
-            light: '#00ec97',
-            dark: '#00ec97',
+            50: '#00897B',
+            300: '#00897B',
+            400: '#00897B',
+            DEFAULT: '#00897B',
+            light: '#00897B',
+            dark: '#00897B',
           },
           slate: {
             50: '#f8fafc',

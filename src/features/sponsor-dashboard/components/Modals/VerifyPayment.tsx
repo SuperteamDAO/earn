@@ -361,7 +361,7 @@ export const VerifyPaymentModal = ({
             <div className="flex flex-col py-14">
               <div className="mb-4 flex justify-center">
                 <div
-                  className="h-8 w-8 animate-spin rounded-full border-slate-200 border-t-indigo-600"
+                  className="h-8 w-8 animate-spin rounded-full border-slate-200 border-t-brand-green"
                   style={{ borderWidth: '3px' }}
                 />
               </div>

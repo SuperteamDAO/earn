@@ -42,7 +42,7 @@ ${PROJECT_NAME} can be used to get any small to medium scale task done, includin
 export function FAQs() {
   return (
     <div
-      className="flex w-full flex-col items-center bg-indigo-50 pb-16 pt-8"
+      className="flex w-full flex-col items-center bg-slate-50 pb-16 pt-8"
       id="faqs"
     >
       <h2

@@ -386,7 +386,7 @@ const RemoveMemberModal = ({
         <Button
           onClick={() => setIsOpen(true)}
           size="sm"
-          className="bg-indigo-100 text-brand-green hover:bg-indigo-100/90"
+          className="bg-slate-100 text-brand-green hover:bg-slate-100/90"
         >
           Remove
         </Button>

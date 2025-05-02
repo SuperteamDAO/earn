@@ -191,7 +191,7 @@ ${socialListingLink('twitter')}
         </div>
         <div className="flex items-center gap-2">
           <Button
-            className="text-slate-400 hover:bg-indigo-100 hover:text-brand-green"
+            className="text-slate-400 hover:text-brand-green"
             disabled={exportMutation.isPending}
             onClick={() => exportSubmissionsCsv()}
             variant="ghost"
@@ -210,7 +210,7 @@ ${socialListingLink('twitter')}
           </Button>
 
           <Button
-            className="text-slate-400 hover:bg-indigo-100 hover:text-brand-green"
+            className="text-slate-400 hover:text-brand-green"
             onClick={() => window.open(`${listingPath}`, '_blank')}
             variant="ghost"
           >
@@ -232,7 +232,7 @@ ${socialListingLink('twitter')}
               >
                 <Button
                   variant="ghost"
-                  className="text-slate-400 hover:bg-indigo-100 hover:text-brand-green"
+                  className="text-slate-400 hover:text-brand-green"
                 >
                   <Pencil className="h-4 w-4" />
                   Edit
@@ -242,7 +242,7 @@ ${socialListingLink('twitter')}
                 <Button
                   variant="ghost"
                   className={cn(
-                    'text-slate-400 hover:bg-indigo-100 hover:text-brand-green',
+                    'text-slate-400 hover:text-brand-green',
                     bounty?.isArchived && 'hover:text-brand-green',
                   )}
                   onClick={deleteModalOnOpen}

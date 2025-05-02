@@ -49,7 +49,7 @@ export function Footer() {
           className={cn(
             'mx-auto h-[3.125rem] w-[12.5rem] px-10',
             'rounded-[0.625rem] text-lg',
-            'bg-brand-green font-bold text-black hover:bg-white/90',
+            'bg-white font-bold text-black hover:bg-white/90',
           )}
           variant="ghost"
         >

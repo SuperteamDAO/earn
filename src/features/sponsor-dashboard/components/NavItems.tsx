@@ -55,7 +55,7 @@ export const NavItem = ({
         {Icon && (
           <Icon
             className={cn(
-              'h-5 w-5 transition-all duration-300 ease-in-out hover:text-indigo-700',
+              'h-5 w-5 transition-all duration-300 ease-in-out hover:text-brand-green',
               isExpanded ? 'mr-4 text-base' : 'mr-0 text-xl',
             )}
           />

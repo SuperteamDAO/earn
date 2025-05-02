@@ -269,13 +269,13 @@ const TickIcon = ({ type }: { type: 'TALENT' | 'SPONSOR' }) => {
     <div
       className={cn(
         'flex items-center justify-center rounded-full p-[3px]',
-        type === 'TALENT' ? 'bg-indigo-50' : 'bg-emerald-50',
+        type === 'TALENT' ? 'bg-slate-50' : 'bg-emerald-50',
       )}
     >
       <MdCheck
         className={cn(
           'h-[0.8rem] w-[0.8rem]',
-          type === 'TALENT' ? 'text-indigo-600' : 'text-emerald-600',
+          type === 'TALENT' ? 'text-yellow-600' : 'text-emerald-600',
         )}
       />
     </div>

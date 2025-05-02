@@ -197,7 +197,7 @@ function TalentProfile({ talent, stats }: TalentProps) {
           'inline-flex h-9 w-9 items-center justify-center rounded border p-2 text-sm font-medium transition',
           outline
             ? 'border-slate-400 bg-white text-slate-500 hover:bg-gray-100'
-            : 'border-indigo-100 bg-indigo-100 text-indigo-600 hover:bg-indigo-200',
+            : 'border-slate-50 bg-slate-50 text-brand-green hover:bg-slate-100',
         )}
       >
         {icon}
