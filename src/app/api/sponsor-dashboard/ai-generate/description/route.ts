@@ -4,6 +4,9 @@ import { headers } from 'next/headers';
 import { type NextRequest, NextResponse } from 'next/server';
 import { ZodError } from 'zod';
 
+import logger from '@/lib/logger';
+import { safeStringify } from '@/utils/safeStringify';
+
 import { getSponsorSession } from '@/features/auth/utils/getSponsorSession';
 import { aiGenerateFormSchema } from '@/features/listing-builder/components/AiGenerate/schema';
 
@@ -12,6 +15,7 @@ import { getDescriptionPrompt } from './prompts';
 export async function POST(req: NextRequest) {
   try {
     const rawData = await req.json();
+    logger.debug(`Request body: ${safeStringify(rawData)}`);
     const validatedData = aiGenerateFormSchema.parse(rawData);
 
     const session = await getSponsorSession(await headers());
@@ -55,12 +59,13 @@ export async function POST(req: NextRequest) {
         result.mergeIntoDataStream(dataStream);
       },
       onError: () => {
+        logger.error('Error in streamed response while generating description');
         return 'Oops, an error occurred!';
       },
     });
   } catch (error) {
     if (error instanceof ZodError) {
-      console.error('Validation error:', error.errors);
+      logger.error('Validation error:', safeStringify(error.errors));
       return new Response(
         JSON.stringify({
           error: 'Invalid input data',
@@ -73,7 +78,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    console.error('Error generating description:', error);
+    logger.error('Error generating description:', safeStringify(error));
     const errorMessage =
       error instanceof Error ? error.message : 'An unknown error occurred';
     return new Response(

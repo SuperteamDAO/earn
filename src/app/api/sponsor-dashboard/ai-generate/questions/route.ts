@@ -5,6 +5,9 @@ import { headers } from 'next/headers';
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 
+import logger from '@/lib/logger';
+import { safeStringify } from '@/utils/safeStringify';
+
 import { getSponsorSession } from '@/features/auth/utils/getSponsorSession';
 import { eligibilityQuestionSchema } from '@/features/listing-builder/types/schema';
 
@@ -21,9 +24,14 @@ export async function POST(request: Request) {
     let description: string, type: BountyType, inputRequirements: string;
     try {
       const body = await request.json();
+      logger.debug(`Request body: ${safeStringify(body)}`);
       const parsedBody = requestBodySchema.safeParse(body);
 
       if (!parsedBody.success) {
+        logger.error(
+          'Invalid request body',
+          safeStringify(parsedBody.error.errors),
+        );
         return NextResponse.json(
           { error: 'Invalid request body', details: parsedBody.error.errors },
           { status: 400 },
@@ -34,6 +42,7 @@ export async function POST(request: Request) {
       inputRequirements = parsedBody.data.inputRequirements;
     } catch (e) {
       if (e instanceof SyntaxError) {
+        logger.error('Invalid JSON in request body');
         return NextResponse.json(
           { error: 'Invalid JSON in request body' },
           { status: 400 },
@@ -73,11 +82,17 @@ export async function POST(request: Request) {
       }),
     });
 
-    console.log('Generated eligibility questions object: ', object);
+    logger.info(
+      'Generated eligibility questions object: ',
+      safeStringify(object),
+    );
 
     return NextResponse.json(object.eligibilityQuestions, { status: 200 });
   } catch (error) {
-    console.error('Error generating description:', error);
+    logger.error(
+      'Error generating eligibility questions:',
+      safeStringify(error),
+    );
     return NextResponse.json(
       { error: 'Failed to generate eligibility questions' },
       { status: 500 },
