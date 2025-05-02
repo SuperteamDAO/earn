@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useAtomValue } from 'jotai';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
 import TextareaAutosize from 'react-textarea-autosize';
 
@@ -21,6 +21,8 @@ import { hackathonsAtom } from '../../atoms';
 import { MAX_BONUS_SPOTS, MAX_PODIUMS } from '../../constants';
 import { useListingForm } from '../../hooks';
 import { aiGenerateFormSchema, type AiGenerateFormValues } from './schema';
+
+const storageKey = `ai-generate-form-listing-builder`;
 
 interface DescriptionFormProps {
   onSubmit: (data: AiGenerateFormValues) => Promise<void>;
@@ -59,6 +61,40 @@ export function AiGenerateForm({
     },
   });
 
+  useEffect(() => {
+    const savedData = localStorage.getItem(storageKey);
+    if (savedData) {
+      try {
+        const parsedData = JSON.parse(savedData);
+        if (parsedData && Object.keys(parsedData).length > 0) {
+          form.reset({
+            ...form.getValues(),
+            ...parsedData,
+          });
+        }
+      } catch (error) {
+        console.error('Error parsing saved form data:', error);
+        localStorage.removeItem(storageKey);
+      }
+    }
+  }, [form]);
+
+  useEffect(() => {
+    const subscription = form.watch((formValues) => {
+      if (formValues) {
+        const dataToSave = {
+          companyDescription: formValues.companyDescription,
+          scopeOfWork: formValues.scopeOfWork,
+          rewards: formValues.rewards,
+          requirements: formValues.requirements,
+        };
+        localStorage.setItem(storageKey, JSON.stringify(dataToSave));
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [form]);
+
   const handleSubmit = async (data: AiGenerateFormValues) => {
     setIsSubmitting(true);
     try {
@@ -70,6 +106,7 @@ export function AiGenerateForm({
         type,
         hackathonName: hackathonName || undefined,
       });
+      localStorage.removeItem(storageKey);
     } finally {
       setIsSubmitting(false);
     }
@@ -123,8 +160,8 @@ export function AiGenerateForm({
                   <span className="flex justify-between">
                     <FormMessage />
                     <div className="mr-4 ml-auto text-xs text-slate-400">
-                      {field.value?.length < 50
-                        ? `Add at least ${50 - (field.value?.length || 0)} more characters`
+                      {field.value?.trim().length < 25
+                        ? `Add at least ${25 - (field.value?.trim().length || 0)} more characters`
                         : ``}
                     </div>
                   </span>
@@ -155,8 +192,8 @@ export function AiGenerateForm({
                   <span className="flex justify-between">
                     <FormMessage />
                     <div className="mr-4 ml-auto text-xs text-slate-400">
-                      {field.value?.length < 50
-                        ? `Add at least ${50 - (field.value?.length || 0)} more characters`
+                      {field.value?.trim().length < 25
+                        ? `Add at least ${25 - (field.value?.trim().length || 0)} more characters`
                         : ``}
                     </div>
                   </span>
@@ -189,8 +226,8 @@ export function AiGenerateForm({
                   <span className="flex justify-between">
                     <FormMessage />
                     <div className="mr-4 ml-auto text-xs text-slate-400">
-                      {field.value?.length < 10
-                        ? `Add at least ${10 - (field.value?.length || 0)} more characters`
+                      {field.value?.trim().length < 10
+                        ? `Add at least ${10 - (field.value?.trim().length || 0)} more characters`
                         : ``}
                     </div>
                   </span>
@@ -203,7 +240,7 @@ export function AiGenerateForm({
               name="requirements"
               render={({ field }) => (
                 <FormItem className="gap-1.5">
-                  <FormLabel className="text-sm" isRequired>
+                  <FormLabel className="text-sm">
                     {type === 'project'
                       ? `Evaluation Criteria / Qualifications`
                       : `Submission Requirements and Judging Criteria`}
@@ -220,14 +257,7 @@ export function AiGenerateForm({
                       {...field}
                     />
                   </FormControl>
-                  <span className="flex justify-between">
-                    <FormMessage />
-                    <div className="mr-4 ml-auto text-xs text-slate-400">
-                      {field.value?.length < 25
-                        ? `Add at least ${25 - (field.value?.length || 0)} more characters`
-                        : ``}
-                    </div>
-                  </span>
+                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -250,6 +280,7 @@ export function AiGenerateForm({
                     rewards: '',
                     requirements: '',
                   });
+                  localStorage.removeItem(storageKey);
                   resetForm();
                 }}
               >

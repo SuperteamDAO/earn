@@ -10,20 +10,20 @@ export const aiGenerateFormSchema = z.object({
   tokenUsdAmount: z.number().optional(),
   companyDescription: z
     .string()
-    .min(50, 'minimum 50 characters required')
+    .trim()
+    .min(25, 'minimum 25 characters required')
     .max(2500, 'maximum 2500 characters allowed'),
   scopeOfWork: z
     .string()
-    .min(50, 'minimum 50 characters required')
+    .trim()
+    .min(25, 'minimum 25 characters required')
     .max(2500, 'maximum 2500 characters allowed'),
   rewards: z
     .string()
+    .trim()
     .min(10, 'minimum 10 characters required')
     .max(2500, 'maximum 2500 characters allowed'),
-  requirements: z
-    .string()
-    .min(25, 'minimum 25 characters required')
-    .max(2500, 'maximum 2500 characters allowed'),
+  requirements: z.string().trim().max(2500, 'maximum 2500 characters allowed'),
 });
 
 export type AiGenerateFormValues = z.infer<typeof aiGenerateFormSchema>;

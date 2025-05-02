@@ -12,7 +12,7 @@ import { generateListingQuestionsPrompt } from './prompts';
 
 const requestBodySchema = z.object({
   description: z.string().min(1, 'Description cannot be empty'),
-  inputRequirements: z.string().min(1, 'Input Requrements cannot be empty'),
+  inputRequirements: z.string(),
   type: z.nativeEnum(BountyType),
 });
 

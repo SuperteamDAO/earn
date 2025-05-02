@@ -106,6 +106,7 @@ Generate a bounty listing draft using the information above. Structure the draft
                 *   If the calculated amount is < 100: Round to the **nearest integer** (no decimals). (e.g., 57.3 JUP becomes 57 JUP, 9.8 JUP becomes 10 JUP).
         *   If <rewards> specifies amounts directly in a token (e.g., "500 SOL"), use those token amounts directly without conversion or the special rounding rules above.
         *   If <rewards> specifies amounts in USD and the <token-symbol> is 'USDC' (or similar stablecoin), use the USD amounts directly with the <token-symbol> (e.g., 500 USDC). No conversion or special rounding needed. Here, if possible try to split the amount in readable / rounded amounts (e.g., 1000$ -> 1st 500$, 2nd 300$, 3rd 200$).
+    *   While Auto calculating podium spots, try to keep the rewards descending in amounts (e.g. 1st 500 USDC, 2nd 300 USDC, 3rd 100 USDC, etc), avoid giving all podium ranks the same reward amount unless explicitly mentioned in <rewards>.
     *   **Formatting:**
         *   List each podium place clearly: '1st Place: [Amount] <token-symbol>'
         *   List bonus awards like: 'Bonus Awards: [Number] winners receive [Amount] <token-symbol> each'.
@@ -400,6 +401,7 @@ Generate a bounty listing draft using the information above. Structure the draft
                 *   If the calculated amount is < 100: Round to the **nearest integer** (no decimals). (e.g., 57.3 JUP becomes 57 JUP, 9.8 JUP becomes 10 JUP).
         *   If <rewards> specifies amounts directly in a token (e.g., "500 SOL"), use those token amounts directly without conversion or the special rounding rules above.
         *   If <rewards> specifies amounts in USD and the <token-symbol> is 'USDC' (or similar stablecoin), use the USD amounts directly with the <token-symbol> (e.g., 500 USDC). No conversion or special rounding needed. Here, if possible try to split the amount in readable / rounded amounts (e.g., 1000$ -> 1st 500$, 2nd 300$, 3rd 200$).
+    *   While Auto calculating podium spots, try to keep the rewards descending in amounts (e.g. 1st 500 USDC, 2nd 300 USDC, 3rd 100 USDC, etc), avoid giving all podium ranks the same reward amount unless explicitly mentioned in <rewards>.
     *   **Formatting:**
         *   List each podium place clearly: '1st Place: [Amount] <token-symbol>'
         *   List bonus awards like: 'Bonus Awards: [Number] winners receive [Amount] <token-symbol> each'.

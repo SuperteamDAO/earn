@@ -78,10 +78,16 @@ export function AiGenerateDialog({ children }: AIDescriptionDialogProps) {
 
   useEffect(() => {
     const awaitedParse = async () => {
-      setParsedDescription(
-        await marked.parse(description || '', { gfm: true }),
+      const html = await marked.parse(description || '', { gfm: true });
+
+      const processedHtml = html.replace(
+        /<a\s+(?:[^>]*?\s+)?href=(["'])(.*?)\1/g,
+        '<a href=$1$2$1 target="_blank" rel="noopener noreferrer"',
       );
+
+      setParsedDescription(processedHtml);
     };
+
     awaitedParse();
   }, [description]);
 
@@ -204,6 +210,9 @@ export function AiGenerateDialog({ children }: AIDescriptionDialogProps) {
     const completedDescription = await completeDescription('', {
       body: {
         ...data,
+        requirements:
+          data.requirements ||
+          'General Requirements and criterias based on scope of work please',
         token,
         tokenUsdAmount,
       },
