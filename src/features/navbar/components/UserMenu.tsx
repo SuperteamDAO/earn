@@ -69,7 +69,7 @@ export function UserMenu() {
             }}
             className="ph-no-capture hidden text-xs md:flex"
           >
-            Complete your Profile
+            Complete Your Profile
           </Button>
         )}
       <DropdownMenu>

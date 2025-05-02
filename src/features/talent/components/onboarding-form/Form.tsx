@@ -89,7 +89,7 @@ export const TalentForm = () => {
   }, [router, user]);
 
   const TitleArray = {
-    title: isForcedRedirect ? 'Finish Your Profile' : 'Complete your Profile',
+    title: isForcedRedirect ? 'Finish Your Profile' : 'Complete Your Profile',
     subTitle: isForcedRedirect
       ? 'It takes less than a minute to start earning in global standards. '
       : `We’ll tailor your ${PROJECT_NAME} experience based on your profile`,
