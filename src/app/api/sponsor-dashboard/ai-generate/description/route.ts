@@ -29,7 +29,12 @@ export async function POST(req: NextRequest) {
         const result = streamText({
           model: openrouter('google/gemini-2.5-flash-preview:thinking:online', {
             extraBody: {
-              plugins: [{ id: 'web' }],
+              plugins: [
+                {
+                  id: 'web',
+                  max_results: 3,
+                },
+              ],
             },
             reasoning: {
               effort: 'medium',
