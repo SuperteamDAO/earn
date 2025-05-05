@@ -321,16 +321,15 @@ export const ListingTabs = ({
         </div>
         {showViewAll && (
           <div className="ph-no-capture hidden sm:flex">
-            <Link href={viewAllLink!}>
-              <Button
-                className="px-2 py-1 text-xs text-slate-400 md:text-sm"
-                onClick={() => posthog.capture('viewall top_listings')}
-                size="sm"
-                variant="ghost"
-              >
-                View All
-              </Button>
-            </Link>
+            <Button
+              className="px-2 py-1 text-xs text-slate-400 md:text-sm"
+              onClick={() => posthog.capture('viewall top_listings')}
+              size="sm"
+              variant="ghost"
+              asChild
+            >
+              <Link href={viewAllLink!}>View All</Link>
+            </Button>
           </div>
         )}
       </div>
@@ -340,17 +339,18 @@ export const ListingTabs = ({
       {tabs.find((tab) => tab.id === activeTab)?.content}
 
       {showViewAll && (
-        <Link className="ph-no-capture" href={viewAllLink!}>
-          <Button
-            className="my-8 w-full border-slate-300 py-5 text-slate-400"
-            onClick={() => posthog.capture('viewall bottom_listings')}
-            size="sm"
-            variant="outline"
-          >
+        <Button
+          className="my-8 w-full border-slate-300 py-5 text-slate-400"
+          onClick={() => posthog.capture('viewall bottom_listings')}
+          size="sm"
+          variant="outline"
+          asChild
+        >
+          <Link href={viewAllLink!}>
             View All
             <ArrowRight className="ml-2 h-4 w-4" />
-          </Button>
-        </Link>
+          </Link>
+        </Button>
       )}
     </div>
   );
