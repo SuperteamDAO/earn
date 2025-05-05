@@ -440,6 +440,9 @@ importers:
       '@typescript-eslint/parser':
         specifier: ^7.11.0
         version: 7.18.0(eslint@8.57.1)(typescript@5.7.2)
+      babel-plugin-validate-jsx-nesting:
+        specifier: ^1.0.2
+        version: 1.0.2
       cross-env:
         specifier: ^7.0.3
         version: 7.0.3
@@ -464,6 +467,9 @@ importers:
       eslint-plugin-unused-imports:
         specifier: ^3.1.0
         version: 3.2.0(@typescript-eslint/eslint-plugin@7.18.0(@typescript-eslint/parser@7.18.0(eslint@8.57.1)(typescript@5.7.2))(eslint@8.57.1)(typescript@5.7.2))(eslint@8.57.1)
+      eslint-plugin-validate-jsx-nesting:
+        specifier: ^0.1.1
+        version: 0.1.1(eslint@8.57.1)
       knip:
         specifier: ^5.46.4
         version: 5.46.4(@types/node@22.13.0)(typescript@5.7.2)
@@ -4357,6 +4363,11 @@ packages:
   babel-plugin-transform-flow-enums@0.0.2:
     resolution: {integrity: sha512-g4aaCrDDOsWjbm0PUUeVnkcVd6AKJsVc/MbnPhEotEpkeJQP6b8nzewohQi7+QS8UyPehOhGWn0nOwjvWpmMvQ==}
 
+  babel-plugin-validate-jsx-nesting@1.0.2:
+    resolution: {integrity: sha512-1Kzck2KkRpCRVhb/yf6q9+ohUvyLSQ7Ny02mnsQBV7UijY0Jde1lHEfoLtibW5Tj/B7x0RojOTTxeAl1s+rkiw==}
+    peerDependencies:
+      '@babel/plugin-syntax-jsx': latest
+
   babel-preset-current-node-syntax@1.1.0:
     resolution: {integrity: sha512-ldYss8SbBlWva1bs28q78Ju5Zq1F+8BrqBZZ0VFhLBvhh6lCpC2o3gDJi/5DRLs9FgYZCnmPYIVFU4lRXCkyUw==}
     peerDependencies:
@@ -5275,6 +5286,11 @@ packages:
     peerDependenciesMeta:
       '@typescript-eslint/eslint-plugin':
         optional: true
+
+  eslint-plugin-validate-jsx-nesting@0.1.1:
+    resolution: {integrity: sha512-5MKFBX1Ans4bSunh4YETiIUajtPHGZK2kVrVf2UE3L9geh1TSIQVOmjx7bgm2rFpeua7P/MZSfUva6Du8NXpgA==}
+    peerDependencies:
+      eslint: '>=4.0.0'
 
   eslint-rule-composer@0.3.0:
     resolution: {integrity: sha512-bt+Sh8CtDmn2OajxvNO+BX7Wn4CIWMpTRm3MaiKPCQcnnlm0CS2mhui6QaoeQugs+3Kj2ESKEEGJUdVafwhiCg==}
@@ -8675,6 +8691,9 @@ packages:
   uuid@9.0.1:
     resolution: {integrity: sha512-b+1eJOlsR9K8HJpow9Ok3fiWOWSIcIzXodvv0rQjVoOVNpWMpxf1wZNpt4y9h10odCNrqnYp1OBzRktckBe3sA==}
     hasBin: true
+
+  validate-html-nesting@1.2.2:
+    resolution: {integrity: sha512-hGdgQozCsQJMyfK5urgFcWEqsSSrK63Awe0t/IMR0bZ0QMtnuaiHzThW81guu3qx9abLi99NEuiaN6P9gVYsNg==}
 
   valtio@1.11.2:
     resolution: {integrity: sha512-1XfIxnUXzyswPAPXo1P3Pdx2mq/pIqZICkWN60Hby0d9Iqb+MEIpqgYVlbflvHdrp2YR/q3jyKWRPJJ100yxaw==}
@@ -14104,6 +14123,13 @@ snapshots:
     transitivePeerDependencies:
       - '@babel/core'
 
+  babel-plugin-validate-jsx-nesting@1.0.2:
+    dependencies:
+      '@babel/core': 7.26.9
+      validate-html-nesting: 1.2.2
+    transitivePeerDependencies:
+      - supports-color
+
   babel-preset-current-node-syntax@1.1.0(@babel/core@7.26.0):
     dependencies:
       '@babel/core': 7.26.0
@@ -15202,6 +15228,11 @@ snapshots:
       eslint-rule-composer: 0.3.0
     optionalDependencies:
       '@typescript-eslint/eslint-plugin': 7.18.0(@typescript-eslint/parser@7.18.0(eslint@8.57.1)(typescript@5.7.2))(eslint@8.57.1)(typescript@5.7.2)
+
+  eslint-plugin-validate-jsx-nesting@0.1.1(eslint@8.57.1):
+    dependencies:
+      eslint: 8.57.1
+      validate-html-nesting: 1.2.2
 
   eslint-rule-composer@0.3.0: {}
 
@@ -18943,6 +18974,8 @@ snapshots:
   uuid@8.3.2: {}
 
   uuid@9.0.1: {}
+
+  validate-html-nesting@1.2.2: {}
 
   valtio@1.11.2(@types/react@19.0.8)(react@19.0.0):
     dependencies:

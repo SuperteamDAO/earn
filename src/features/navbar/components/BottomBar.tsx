@@ -37,17 +37,18 @@ export function BottomBar({ onSearchOpen }: Props) {
         'lg:hidden',
       )}
     >
-      <Link href="/" style={linkStyle}>
-        <Button
-          variant="ghost"
-          className={cn(
-            setColor('/', router.asPath),
-            'hover:bg-transparent active:bg-transparent',
-          )}
-        >
+      <Button
+        variant="ghost"
+        className={cn(
+          setColor('/', router.asPath),
+          'hover:bg-transparent active:bg-transparent',
+        )}
+        asChild
+      >
+        <Link href="/" style={linkStyle}>
           <Home style={iconStyle} />
-        </Button>
-      </Link>
+        </Link>
+      </Button>
 
       <Button
         variant="ghost"
@@ -61,37 +62,39 @@ export function BottomBar({ onSearchOpen }: Props) {
         <Search style={iconStyle} />
       </Button>
 
-      <Link href="/feed/" style={linkStyle}>
+      <Button
+        variant="ghost"
+        className={cn(
+          setColor('/feed/', router.asPath),
+          'relative hover:bg-transparent active:bg-transparent',
+        )}
+        asChild
+      >
+        <Link href="/feed/" style={linkStyle}>
+          <Newspaper style={iconStyle} />
+          <div className="absolute top-1 right-3 h-2.5 w-2.5 rounded-full bg-red-500" />
+        </Link>
+      </Button>
+
+      <AuthWrapper>
         <Button
           variant="ghost"
           className={cn(
-            setColor('/feed/', router.asPath),
-            'relative hover:bg-transparent active:bg-transparent',
+            setColor(`/t/${user?.username}/`, router.asPath),
+            'hover:bg-transparent active:bg-transparent',
           )}
+          asChild
         >
-          <Newspaper style={iconStyle} />
-          <div className="absolute top-1 right-3 h-2.5 w-2.5 rounded-full bg-red-500" />
-        </Button>
-      </Link>
-
-      <AuthWrapper>
-        <Link
-          href={`/t/${user?.username}`}
-          style={{
-            ...linkStyle,
-            pointerEvents: user ? 'auto' : 'none',
-          }}
-        >
-          <Button
-            variant="ghost"
-            className={cn(
-              setColor(`/t/${user?.username}/`, router.asPath),
-              'hover:bg-transparent active:bg-transparent',
-            )}
+          <Link
+            href={`/t/${user?.username}`}
+            style={{
+              ...linkStyle,
+              pointerEvents: user ? 'auto' : 'none',
+            }}
           >
             <User style={iconStyle} />
-          </Button>
-        </Link>
+          </Link>
+        </Button>
       </AuthWrapper>
     </div>
   );
