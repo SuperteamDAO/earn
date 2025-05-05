@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { CheckCircle, XCircle } from 'lucide-react';
+import { CheckCircle, Edit, XCircle } from 'lucide-react';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -33,7 +33,7 @@ import type { SubmissionWithUser } from '@/interface/submission';
 
 const formSchema = z
   .object({
-    status: z.enum(['Pending', 'Approved', 'Rejected']),
+    status: z.enum(['Pending', 'Approved', 'Rejected', 'Deleted']),
     label: z.enum(['New', 'Reviewed', 'Shortlisted', 'Spam'] as const),
     isPaid: z.boolean().default(false),
     paymentLink: z.string().optional(),
@@ -71,6 +71,7 @@ interface EditSubmissionStatusModalProps {
   onClose: () => void;
   submission: SubmissionWithUser | undefined;
   onSuccess: (updatedSubmission: any) => void;
+  onEditFullSubmission?: (submission: SubmissionWithUser) => void;
 }
 
 export const EditSubmissionStatusModal = ({
@@ -78,6 +79,7 @@ export const EditSubmissionStatusModal = ({
   onClose,
   submission,
   onSuccess,
+  onEditFullSubmission,
 }: EditSubmissionStatusModalProps) => {
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -251,15 +253,36 @@ export const EditSubmissionStatusModal = ({
               />
             )}
 
-            <div className="flex justify-end gap-2">
-              <Button variant="outline" onClick={onClose}>
-                <XCircle className="mr-2 h-4 w-4" />
-                Cancel
-              </Button>
-              <Button type="submit">
-                <CheckCircle className="mr-2 h-4 w-4" />
-                {form.formState.isSubmitting ? 'Saving...' : 'Save Changes'}
-              </Button>
+            <div className="flex flex-col gap-2">
+              {onEditFullSubmission && submission && (
+                <Button
+                  variant="outline"
+                  type="button"
+                  onClick={() => onEditFullSubmission(submission)}
+                >
+                  <Edit className="mr-2 h-4 w-4" />
+                  Edit Submission
+                </Button>
+              )}
+              <div className="flex w-full gap-2">
+                <Button
+                  variant="outline"
+                  onClick={onClose}
+                  type="button"
+                  className="w-full"
+                >
+                  <XCircle className="mr-2 h-4 w-4" />
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  className="w-full"
+                  disabled={form.formState.isSubmitting}
+                >
+                  <CheckCircle className="mr-2 h-4 w-4" />
+                  {form.formState.isSubmitting ? 'Saving...' : 'Save Changes'}
+                </Button>
+              </div>
             </div>
           </form>
         </Form>

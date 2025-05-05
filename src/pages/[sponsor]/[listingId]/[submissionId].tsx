@@ -1,3 +1,4 @@
+import { useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import { useAtom } from 'jotai';
 import { ArrowRight, ChevronLeft, Copy, ExternalLink } from 'lucide-react';
@@ -35,6 +36,7 @@ import {
   selectedSubmissionAtom,
   sponsorshipSubmissionStatus,
 } from '@/features/listings/components/SubmissionsPage/SubmissionTable';
+import { listingSubmissionsQuery } from '@/features/listings/queries/submissions';
 import { type Listing } from '@/features/listings/types';
 import {
   Telegram,
@@ -46,13 +48,12 @@ import { colorMap } from '@/features/sponsor-dashboard/utils/statusColorMap';
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
 function Content({
-  bounty,
+  bounty: bountyB,
   submission: submissionB,
 }: {
   bounty: Listing;
   submission: SubmissionWithUser;
 }) {
-  const [submission, setSubmission] = useState<SubmissionWithUser>(submissionB);
   const commentsRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     // Check if there's a hash in the URL
@@ -69,16 +70,26 @@ function Content({
     }
   }, []);
 
+  const { data, refetch } = useQuery(
+    listingSubmissionsQuery(
+      { slug: bountyB.slug! },
+      {
+        bounty: bountyB,
+        submission: [submissionB],
+      },
+    ),
+  );
+
+  const { bounty, submission: submissions } = data ?? {
+    bounty: bountyB,
+    submission: [submissionB],
+  };
+
+  const submission = submissions.find((s) => s.id === submissionB.id);
+
   const resetSubmission = async () => {
     try {
-      const bountyDetails = await api.get(
-        `${getURL()}api/listings/submissions/${bounty.slug}`,
-      );
-      setSubmission(
-        bountyDetails.data.submission.find(
-          (submission: SubmissionWithUser) => submission.id === submissionB.id,
-        ),
-      );
+      await refetch();
     } catch (e) {
       console.log(e);
     }
@@ -124,6 +135,10 @@ function Content({
       });
     }
   };
+
+  if (!submission) {
+    return <div>Submission not found</div>;
+  }
 
   const status = sponsorshipSubmissionStatus(submission);
 

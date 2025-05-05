@@ -25,6 +25,7 @@ import type { SubmissionWithUser } from '@/interface/submission';
 import { cn } from '@/utils/cn';
 import { getRankLabels } from '@/utils/rank';
 
+import { SubmissionDrawer } from '@/features/listings/components/Submission/SubmissionDrawer';
 import { sponsorshipSubmissionStatus } from '@/features/listings/components/SubmissionsPage/SubmissionTable';
 import { type Listing } from '@/features/listings/types';
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
@@ -82,9 +83,25 @@ export const SubmissionList = ({
     onOpen: onDeleteModalOpen,
     onClose: onDeleteModalClose,
   } = useDisclosure();
+  const {
+    isOpen: isSubmissionDrawerOpen,
+    onOpen: onSubmissionDrawerOpen,
+    onClose: onSubmissionDrawerClose,
+  } = useDisclosure();
   const [interactedSubmission, setInteractedSubmission] = useState<
     SubmissionWithUser | undefined
   >(undefined);
+  const [submissionDrawerId, setSubmissionDrawerId] = useState<
+    string | undefined
+  >(undefined);
+
+  const handleOpenSubmissionDrawer = (submission: SubmissionWithUser) => {
+    if (!listing) return;
+    setInteractedSubmission(submission);
+    setSubmissionDrawerId(submission.id);
+    onEditModalClose();
+    onSubmissionDrawerOpen();
+  };
 
   useEffect(() => {
     return () => {
@@ -374,6 +391,7 @@ export const SubmissionList = ({
         onClose={onEditModalClose}
         submission={interactedSubmission}
         onSuccess={() => refetchSubmissions()}
+        onEditFullSubmission={handleOpenSubmissionDrawer}
       />
       <DeleteRestoreSubmissionModal
         isOpen={isDeleteModalOpen}
@@ -381,6 +399,22 @@ export const SubmissionList = ({
         submission={interactedSubmission}
         onSuccess={() => refetchSubmissions()}
       />
+      {listing && submissionDrawerId && isGodUser && (
+        <SubmissionDrawer
+          submission={interactedSubmission}
+          isOpen={isSubmissionDrawerOpen}
+          onClose={() => {
+            setSubmissionDrawerId(undefined);
+            onSubmissionDrawerClose();
+            refetchSubmissions();
+          }}
+          editMode={true}
+          listing={listing}
+          isGodMode={isGodUser}
+          showEasterEgg={() => {}}
+          onSurveyOpen={() => {}}
+        />
+      )}
     </div>
   );
 };

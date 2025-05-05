@@ -522,7 +522,10 @@ export default function BountySubmissions({ slug }: Props) {
                       toggleSubmission={toggleSubmission}
                       isAllToggled={isToggledAll}
                       toggleAllSubmissions={toggleAllSubmissions}
-                      refetchSubmissions={refetchSubmissions}
+                      refetchSubmissions={() => {
+                        refetchSubmissions();
+                        setSelectedSubmission(undefined);
+                      }}
                     />
                   </div>
 

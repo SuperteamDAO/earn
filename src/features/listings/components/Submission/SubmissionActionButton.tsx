@@ -243,11 +243,11 @@ export const SubmissionActionButton = ({
     <>
       {isOpen && (
         <SubmissionDrawer
-          id={id}
           onClose={onClose}
           isOpen={isOpen}
           editMode={buttonState === 'edit'}
           listing={listing}
+          submission={submission}
           isTemplate={isTemplate}
           showEasterEgg={() => setEasterEggOpen(true)}
           onSurveyOpen={onSurveyOpen}

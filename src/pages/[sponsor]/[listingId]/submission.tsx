@@ -1,6 +1,7 @@
+import { useQuery } from '@tanstack/react-query';
 import type { GetServerSideProps } from 'next';
 import { getServerSession } from 'next-auth';
-import React, { useState } from 'react';
+import React from 'react';
 
 import type { SubmissionWithUser } from '@/interface/submission';
 import { ListingPageLayout } from '@/layouts/Listing';
@@ -9,6 +10,7 @@ import { authOptions } from '@/pages/api/auth/[...nextauth]';
 import { getURL } from '@/utils/validUrl';
 
 import { SubmissionTable } from '@/features/listings/components/SubmissionsPage/SubmissionTable';
+import { listingSubmissionsQuery } from '@/features/listings/queries/submissions';
 import { type Listing } from '@/features/listings/types';
 
 const SubmissionPage = ({
@@ -20,14 +22,23 @@ const SubmissionPage = ({
   bounty: Listing;
   submission: SubmissionWithUser[];
 }) => {
-  const [bounty] = useState<Listing>(bountyB);
-  const [submission, setSubmission] =
-    useState<SubmissionWithUser[]>(submissionB);
+  const { data, refetch } = useQuery(
+    listingSubmissionsQuery(
+      { slug },
+      {
+        bounty: bountyB,
+        submission: submissionB,
+      },
+    ),
+  );
+  const { bounty, submission } = data ?? {
+    bounty: bountyB,
+    submission: submissionB,
+  };
 
   const resetSubmissions = async () => {
     try {
-      const bountyDetails = await api.get(`/api/listings/submissions/${slug}`);
-      setSubmission(bountyDetails.data.submission);
+      await refetch();
     } catch (e) {
       console.log(e);
     }

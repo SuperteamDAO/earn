@@ -36,11 +36,13 @@ import {
 import { Tooltip } from '@/components/ui/tooltip';
 import { tokenList } from '@/constants/tokenList';
 import { useDisclosure } from '@/hooks/use-disclosure';
+import { type SubmissionWithUser } from '@/interface/submission';
 import { getSubmissionUrl } from '@/utils/bounty-urls';
 import { cn } from '@/utils/cn';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
 
+import { SubmissionDrawer } from '@/features/listings/components/Submission/SubmissionDrawer';
 import { sponsorshipSubmissionStatus } from '@/features/listings/components/SubmissionsPage/SubmissionTable';
 import { getListingIcon } from '@/features/listings/utils/getListingIcon';
 import { getListingTypeLabel } from '@/features/listings/utils/status';
@@ -107,9 +109,23 @@ export const SubmissionTable = ({
     onOpen: onDeleteModalOpen,
     onClose: onDeleteModalClose,
   } = useDisclosure();
+  const {
+    isOpen: isSubmissionDrawerOpen,
+    onOpen: onSubmissionDrawerOpen,
+    onClose: onSubmissionDrawerClose,
+  } = useDisclosure();
   const [interactedSubmission, setInteractedSubmission] = useState<
     SubmissionWithListingUser | undefined
   >(undefined);
+
+  const handleOpenSubmissionDrawer = (
+    submission: SubmissionWithListingUser,
+  ) => {
+    if (!submission.listing) return;
+    setInteractedSubmission(submission);
+    onEditModalClose();
+    onSubmissionDrawerOpen();
+  };
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text).then(
@@ -402,9 +418,9 @@ export const SubmissionTable = ({
                               Copy Payment Link
                             </DropdownMenuItem>
                           )}
-                        {isGodUser && (
+                        {isGodUser && submission.listing.isActive && (
                           <>
-                            {submission.isArchived && (
+                            {!submission.isArchived && (
                               <DropdownMenuItem
                                 className="cursor-pointer text-sm font-medium text-slate-500"
                                 onClick={() => {
@@ -457,6 +473,9 @@ export const SubmissionTable = ({
         onClose={onEditModalClose}
         submission={interactedSubmission}
         onSuccess={refetchSubmissions}
+        onEditFullSubmission={
+          handleOpenSubmissionDrawer as (submission: SubmissionWithUser) => void
+        }
       />
       <DeleteRestoreSubmissionModal
         isOpen={isDeleteModalOpen}
@@ -464,6 +483,21 @@ export const SubmissionTable = ({
         submission={interactedSubmission}
         onSuccess={refetchSubmissions}
       />
+      {interactedSubmission?.listing && isGodUser && isSubmissionDrawerOpen && (
+        <SubmissionDrawer
+          submission={interactedSubmission}
+          isOpen={isSubmissionDrawerOpen}
+          onClose={() => {
+            onSubmissionDrawerClose();
+            refetchSubmissions();
+          }}
+          editMode={true}
+          listing={interactedSubmission.listing}
+          isGodMode={isGodUser}
+          showEasterEgg={() => {}}
+          onSurveyOpen={() => {}}
+        />
+      )}
     </>
   );
 };
