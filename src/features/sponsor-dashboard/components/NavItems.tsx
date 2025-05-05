@@ -45,9 +45,9 @@ export const NavItem = ({
           'flex cursor-pointer items-center px-6 py-3 transition-colors',
           isExpanded ? 'mr-0' : 'mr-4',
           isActiveLink
-            ? 'bg-brand-green/20 text-black'
+            ? 'bg-slate-100 text-black'
             : 'bg-transparent text-slate-500',
-          'hover:bg-brand-green/20 hover:text-black',
+          'hover:bg-slate-100 hover:text-black',
           className,
         )}
         onClick={onClick}

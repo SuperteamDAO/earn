@@ -70,7 +70,7 @@ const ListingTabTrigger = ({
       'hover:text-black',
       isActive && [
         'text-semibold',
-        'after:absolute after:bottom-[-12px] after:left-0 after:h-[2px] after:w-full after:bg-brand-green/80',
+        'after:absolute after:bottom-[-12px] after:left-0 after:h-[2px] after:w-full after:bg-black/80',
       ],
       !isActive && 'text-slate-500',
     )}

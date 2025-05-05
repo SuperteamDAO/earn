@@ -102,11 +102,11 @@ export const UserSuggestionTextarea = ({
               ? [
                   'border-x-0 border-b-2 border-t-0 border-slate-200',
                   'rounded-none px-0 py-0',
-                  'focus:border-brand-green',
+                  'focus:border-black',
                 ]
               : [
                   'rounded-md border border-slate-200',
-                  'focus:border-brand-green focus:ring-brand-green',
+                  'focus:border-black focus:ring-black',
                 ],
             className,
           )}

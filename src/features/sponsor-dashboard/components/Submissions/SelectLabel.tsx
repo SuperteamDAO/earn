@@ -74,7 +74,7 @@ export const SelectLabel = ({ listingSlug }: Props) => {
       <DropdownMenuTrigger asChild>
         <Button
           variant="outline"
-          className="border border-slate-300 bg-transparent font-medium capitalize text-slate-500 hover:border-brand-green hover:bg-transparent"
+          className="border border-slate-300 bg-transparent font-medium capitalize text-slate-500 hover:border-black hover:bg-transparent"
         >
           <span
             className={cn(

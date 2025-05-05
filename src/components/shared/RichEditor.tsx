@@ -96,7 +96,7 @@ export const RichEditor: React.FC<RichEditorProps> = ({
           '[&_.ProseMirror_p.is-editor-empty:first-child::before]:pointer-events-none',
           height,
           error ? 'border border-destructive' : 'border-input',
-          'focus-within:border focus-within:border-brand-green',
+          'focus-within:border focus-within:border-black',
           `editor-${id}`,
           className,
         )}

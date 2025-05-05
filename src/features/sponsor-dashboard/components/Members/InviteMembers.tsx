@@ -97,7 +97,7 @@ export function InviteMembers({ isOpen, onClose }: Props) {
               <div>
                 <FormLabel>Add Email Address</FormLabel>
                 <Input
-                  className="border-slate-300 text-slate-500 focus-visible:ring-brand-green"
+                  className="border-slate-300 text-slate-500 focus-visible:ring-black"
                   onChange={(e) => handleInput(e.target.value)}
                   type="email"
                   placeholder="Enter email address"
