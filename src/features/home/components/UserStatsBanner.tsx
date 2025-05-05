@@ -17,7 +17,7 @@ const Stat = ({ value, label }: StatProps) => {
   return (
     <div>
       <p className="font-semibold">{value}</p>
-      <p className="text-xs font-medium text-[#c4c2ef] md:text-sm">{label}</p>
+      <p className="text-xs font-medium text-gray-500 md:text-sm">{label}</p>
     </div>
   );
 };
@@ -36,7 +36,7 @@ export const UserStatsBanner = () => {
   }
 
   return (
-    <div className="flex flex-col gap-4 rounded-md bg-gradient-to-r from-[#4C52E2] to-[#4338CA] px-6 py-6 text-white md:flex-row md:items-center md:justify-between md:px-8">
+    <div className="flex flex-col gap-4 rounded-md bg-gradient-to-r from-slate-100 to-slate-50 px-6 py-6 text-black md:flex-row md:items-center md:justify-between md:px-8">
       <div className="flex items-center gap-4">
         <EarnAvatar id={user.id} avatar={user.photo} className="h-12 w-12" />
         <div className="flex flex-col gap-0">
@@ -45,7 +45,7 @@ export const UserStatsBanner = () => {
               ? `Welcome back, ${user.firstName}`
               : 'Welcome!'}
           </p>
-          <p className="text-sm text-[#c4c2ef]">
+          <p className="text-sm text-gray-500">
             We&apos;re so glad to have you on {PROJECT_NAME}
           </p>
         </div>

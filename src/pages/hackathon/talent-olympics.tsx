@@ -181,7 +181,7 @@ export default function TalentOlympics({ countryLeaders, rankings }: Props) {
       meta={
         <Meta
           title={`Talent Olympics | ${PROJECT_NAME}`}
-          description={`Explore the latest bounties on ${PROJECT_NAME}, offering opportunities in the crypto space across Design, Development, and Content.`}
+          description={`Explore the latest opportunities on ${PROJECT_NAME}, offering projects across Design, Development, and Content creation.`}
           canonical={`${getURL()}/hackathon/${SLUG}`}
         />
       }
@@ -268,7 +268,7 @@ function Hero({
       <div className="mb-1 mt-6 flex flex-col items-center gap-3 sm:gap-6 md:flex-row">
         <div className="flex w-full gap-5 md:w-auto">
           <Button
-            className="w-full rounded-full bg-brand-purple px-6 text-sm text-white hover:bg-brand-purple/90 active:bg-[#6366D1] md:w-auto"
+            className="w-full rounded-full bg-brand-green px-6 text-sm text-white hover:bg-brand-green/90 active:bg-[#6366D1] md:w-auto"
             asChild
           >
             <Link
@@ -816,7 +816,7 @@ const faqs: { question: string; answer: string }[] = [
       'By submitting to any of the ten challenges under the Frontend and Rust tracks.',
   },
   {
-    question: 'Does winning a Talent Olympics bounty guarantee a job?',
+    question: 'Does winning a Talent Olympics project guarantee a job?',
     answer:
       'Winning one or multiple tracks does not guarantee a job, but greatly increases your chances of catching the eye of the hiring partners.',
   },
@@ -929,7 +929,7 @@ const SubscribeHackathon = () => {
             className={cn(
               'ph-no-capture',
               isSubscribed
-                ? 'bg-brand-purple text-white hover:bg-purple-700'
+                ? 'bg-brand-green text-white hover:bg-purple-700'
                 : 'bg-slate-100 text-slate-500 hover:bg-slate-200',
             )}
             aria-label="Notify"

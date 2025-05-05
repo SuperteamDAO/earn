@@ -19,7 +19,6 @@ export default function AllProjectsPage() {
         <ListingTabs
           bounties={listings}
           isListingsLoading={isLoading}
-          showEmoji
           title="All Projects"
           viewAllLink="/projects"
         />

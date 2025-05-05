@@ -20,6 +20,13 @@ export default async function handler(
     logger.debug(`Fetching subscription status for listing ID: ${listingId}`);
     const result = await prisma.subscribeBounty.findMany({
       where: { bountyId: listingId, isArchived: false },
+      include: {
+        User: {
+          select: {
+            photo: true,
+          },
+        },
+      },
     });
 
     logger.info(`Fetched subscription status for listing ID: ${listingId}`);

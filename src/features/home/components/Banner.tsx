@@ -12,9 +12,9 @@ import { AuthWrapper } from '@/features/auth/components/AuthWrapper';
 import { userCountQuery } from '../queries/user-count';
 
 const avatars = [
-  { name: 'Abhishek', src: ASSET_URL + '/pfps/t1.webp' },
-  { name: 'Pratik', src: ASSET_URL + '/pfps/md2.webp' },
-  { name: 'Yash', src: ASSET_URL + '/pfps/fff1.webp' },
+  { name: 'Artur', src: ASSET_URL + '/pfps/artur.webp' },
+  { name: 'Keith', src: ASSET_URL + '/pfps/keith.webp' },
+  { name: 'Mike', src: ASSET_URL + '/pfps/mike.webp' },
 ];
 
 export function HomeBanner() {
@@ -54,17 +54,16 @@ export function HomeBanner() {
         </picture>
       </div>
       <p className="relative z-10 text-2xl font-bold leading-[120%] text-white md:text-[28px]">
-        Find Your Next High
-        <br /> Paying Crypto Gig
+        Find Your Next High-Impact
+        <br /> Opportunity On NEAR
       </p>
       <p className="relative z-10 mt-2.5 max-w-full text-sm leading-[130%] text-white md:mt-4 md:max-w-[30rem] md:text-lg">
-        Participate in bounties or apply to freelance gigs of world-class crypto
-        companies, all with a single profile.
+        Explore bounties, projects, and sponsorship opportunities.
       </p>
       <div className="relative z-10 mt-4 flex flex-col items-center gap-3 md:flex-row md:gap-4">
         <AuthWrapper className="group w-full md:w-auto">
           <button
-            className="ph-no-capture w-full rounded-md bg-white px-9 py-3 text-sm font-medium text-[#3223A0] hover:bg-brand-purple hover:text-white md:w-auto"
+            className="ph-no-capture w-full rounded-md bg-white px-9 py-3 text-sm font-medium text-black hover:bg-brand-green hover:text-white md:w-auto"
             onClick={() => {
               posthog.capture('signup_banner');
             }}
@@ -73,11 +72,11 @@ export function HomeBanner() {
           </button>
         </AuthWrapper>
         <div className="flex items-center">
-          <div className="flex -space-x-2">
+          <div className="flex -space-x-4">
             {avatars.map((avatar, index) => (
               <img
                 key={index}
-                className="relative h-6 w-6 rounded-full border border-[#49139c] md:h-8 md:w-8"
+                className="relative h-8 w-8 rounded-full md:h-10 md:w-10"
                 src={avatar.src}
                 alt={avatar.name}
               />

@@ -82,8 +82,8 @@ export function Stats() {
             The distribution of the {PROJECT_NAME} network
           </h2>
           <p className="mt-4 text-[1.25rem] font-medium text-slate-500 lg:text-[1.4rem]">
-            Get instant access to {PROJECT_NAME}’s network of the best crypto
-            talent in the world
+            Get instant access to {PROJECT_NAME}’s network of the best top
+            talent in the space
           </p>
         </div>
 

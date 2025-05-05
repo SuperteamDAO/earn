@@ -143,7 +143,7 @@ export const SurveyModal = ({
                       <RadioGroupItem
                         value={choice}
                         id={`choice-${idx}`}
-                        className="text-brand-purple"
+                        className="text-brand-green"
                       />
                       <Label htmlFor={`choice-${idx}`} className="font-normal">
                         {choice}

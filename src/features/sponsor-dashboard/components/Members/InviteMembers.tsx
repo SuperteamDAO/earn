@@ -97,7 +97,7 @@ export function InviteMembers({ isOpen, onClose }: Props) {
               <div>
                 <FormLabel>Add Email Address</FormLabel>
                 <Input
-                  className="border-slate-300 text-slate-500 focus-visible:ring-brand-purple"
+                  className="border-slate-300 text-slate-500 focus-visible:ring-black"
                   onChange={(e) => handleInput(e.target.value)}
                   type="email"
                   placeholder="Enter email address"
@@ -122,7 +122,7 @@ export function InviteMembers({ isOpen, onClose }: Props) {
                     <RadioGroupItem
                       value="MEMBER"
                       id="member"
-                      className="text-brand-purple"
+                      className="text-brand-green"
                     />
                     <div className="ml-2">
                       <p className="text-sm font-bold">Member</p>
@@ -140,7 +140,7 @@ export function InviteMembers({ isOpen, onClose }: Props) {
                     <RadioGroupItem
                       value="ADMIN"
                       id="admin"
-                      className="text-brand-purple"
+                      className="text-brand-green"
                     />
                     <div className="ml-2">
                       <p className="text-sm font-bold">Member Admin</p>

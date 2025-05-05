@@ -114,6 +114,7 @@ async function submission(req: NextApiRequestWithUser, res: NextApiResponse) {
     const { listing } = await validateSubmissionRequest(
       userId as string,
       listingId,
+      false,
     );
 
     const result = await createSubmission(

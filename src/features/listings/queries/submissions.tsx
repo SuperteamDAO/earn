@@ -24,8 +24,15 @@ const fetchListingSubmissions = async (
   return data;
 };
 
-export const listingSubmissionsQuery = (params: ListingSubmissionParams) =>
+export const listingSubmissionsQuery = (
+  params: ListingSubmissionParams,
+  initialData?: {
+    bounty: Listing;
+    submission: SubmissionWithUser[];
+  },
+) =>
   queryOptions({
     queryKey: ['listing-submissions', params],
     queryFn: () => fetchListingSubmissions(params),
+    initialData: initialData ? initialData : undefined,
   });

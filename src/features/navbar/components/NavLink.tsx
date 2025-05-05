@@ -27,7 +27,7 @@ export const NavLink = ({
         isActive ? 'text-slate-600' : 'text-slate-500',
         'hover:text-slate-600 hover:no-underline',
         'relative lg:border-b',
-        isActive ? 'lg:border-brand-purple' : 'lg:border-transparent',
+        isActive ? 'lg:border-brand-green' : 'lg:border-transparent',
         className,
       )}
       {...props}

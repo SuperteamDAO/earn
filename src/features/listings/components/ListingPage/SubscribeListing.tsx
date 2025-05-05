@@ -1,12 +1,13 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Loader2 } from 'lucide-react';
 import { usePostHog } from 'posthog-js/react';
+import { useMemo } from 'react';
 import { TbBell, TbBellRinging } from 'react-icons/tb';
 import { toast } from 'sonner';
 
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Avatar, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { ASSET_URL } from '@/constants/ASSET_URL';
+import { Tooltip } from '@/components/ui/tooltip';
 import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
@@ -49,29 +50,33 @@ export const SubscribeListing = ({ id, isTemplate = false }: Props) => {
       },
     });
 
-  const avatars = [
-    { name: 'Abhishek', src: ASSET_URL + '/pfps/t1.webp' },
-    { name: 'Pratik', src: ASSET_URL + '/pfps/md2.webp' },
-    { name: 'Yash', src: ASSET_URL + '/pfps/fff1.webp' },
-  ];
-
   const handleToggleSubscribe = () => {
     toggleSubscribe();
   };
 
   const isSubscribed = sub.find((e) => e.userId === user?.id);
 
+  const displaySubs = useMemo(() => {
+    if (isSubscribed && user) {
+      const otherSubs = sub.filter((e) => e.userId !== user.id);
+      return [...otherSubs.slice(0, 2), isSubscribed];
+    }
+    return sub.slice(0, 3);
+  }, [isSubscribed, user, sub]);
+
   return (
     <div className="flex items-center gap-2">
-      <p className="text-slate-500">{sub.length + 1}</p>
+      {sub.length > 0 && <p className="text-slate-500">{sub.length}</p>}
       <div className="flex -space-x-3">
-        {avatars.slice(0, sub.length + 1).map((avatar, index) => (
+        {displaySubs.map((avatar, index) => (
           <Avatar
             key={index}
             className="h-6 w-6 border-2 border-white md:h-8 md:w-8"
           >
-            <AvatarImage src={avatar.src} alt={avatar.name || ''} />
-            <AvatarFallback>{avatar.name}</AvatarFallback>
+            <AvatarImage
+              src={avatar.User?.photo || ''}
+              alt={avatar.User?.username || ''}
+            />
           </Avatar>
         ))}
       </div>
@@ -82,36 +87,44 @@ export const SubscribeListing = ({ id, isTemplate = false }: Props) => {
             'Please complete your profile before subscribing to a listing.'
           }
         >
-          <Button
-            className={cn(
-              'ph-no-capture gap-2 border-slate-300 font-medium text-slate-500 hover:bg-brand-purple hover:text-white',
-              'w-auto p-0 px-3',
-            )}
-            variant="outline"
-            disabled={isTemplate}
-            onClick={() => {
-              posthog.capture(
-                isSubscribed ? 'unnotify me_listing' : 'notify me_listing',
-              );
-              handleToggleSubscribe();
-            }}
-            aria-label="Notify"
+          <Tooltip
+            content={
+              isSubscribed
+                ? 'Unsubscribe.'
+                : 'Subscribe. By subscribing, this listing will appear on your home dashboard for quick access.'
+            }
           >
-            {isSubscribeLoading ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : isSubscribed ? (
-              <TbBellRinging />
-            ) : (
-              <TbBell />
-            )}
-            <span className="hidden">
-              {isSubscribeLoading
-                ? 'Subscribing'
-                : isSubscribed
-                  ? 'Subscribed'
-                  : 'Subscribe'}
-            </span>
-          </Button>
+            <Button
+              className={cn(
+                'ph-no-capture gap-2 border-slate-300 font-medium text-slate-500',
+                'w-auto p-0 px-3',
+              )}
+              variant="outline"
+              disabled={isTemplate}
+              onClick={() => {
+                posthog.capture(
+                  isSubscribed ? 'unnotify me_listing' : 'notify me_listing',
+                );
+                handleToggleSubscribe();
+              }}
+              aria-label="Notify"
+            >
+              {isSubscribeLoading ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : isSubscribed ? (
+                <TbBellRinging />
+              ) : (
+                <TbBell />
+              )}
+              <span className="hidden">
+                {isSubscribeLoading
+                  ? 'Subscribing'
+                  : isSubscribed
+                    ? 'Subscribed'
+                    : 'Subscribe'}
+              </span>
+            </Button>
+          </Tooltip>
         </AuthWrapper>
       </div>
     </div>

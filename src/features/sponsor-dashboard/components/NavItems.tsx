@@ -45,9 +45,9 @@ export const NavItem = ({
           'flex cursor-pointer items-center px-6 py-3 transition-colors',
           isExpanded ? 'mr-0' : 'mr-4',
           isActiveLink
-            ? 'bg-indigo-50 text-indigo-800'
+            ? 'bg-slate-100 text-black'
             : 'bg-transparent text-slate-500',
-          'hover:bg-blue-50 hover:text-indigo-700',
+          'hover:bg-slate-100 hover:text-black',
           className,
         )}
         onClick={onClick}
@@ -55,7 +55,7 @@ export const NavItem = ({
         {Icon && (
           <Icon
             className={cn(
-              'h-5 w-5 transition-all duration-300 ease-in-out hover:text-indigo-700',
+              'h-5 w-5 transition-all duration-300 ease-in-out hover:text-brand-green',
               isExpanded ? 'mr-4 text-base' : 'mr-0 text-xl',
             )}
           />

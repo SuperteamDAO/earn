@@ -53,48 +53,48 @@ const getCategoryInfo = (
       {
         title: 'Join Designers like you',
         description:
-          'Never miss out on high-paying design opportunities from the best companies in crypto.',
+          'Never miss out on rewarding design opportunities from leading companies in the industry.',
       },
       {
         title: `Designers have earned $${formatEarnings} from ${PROJECT_NAME}`,
         description: `Sign up on ${PROJECT_NAME} to get access to design opportunities worth thousands of dollars.`,
       },
       {
-        title: 'Your road to a Web3 Design job',
+        title: 'Your path to a Design career',
         description:
-          'Build proof of work by attempting bounties to land your dream web3 design job!',
+          'Build your portfolio by taking on projects to advance your design career!',
       },
     ],
     content: [
       {
         title: 'Join Creators like you',
         description:
-          'Never miss out on high-paying content opportunities from the best companies in crypto.',
+          'Never miss out on rewarding content opportunities from leading companies in the industry.',
       },
       {
         title: `Creators have earned $${formatEarnings} from ${PROJECT_NAME}`,
         description: `Sign up on ${PROJECT_NAME} to get access to content opportunities worth thousands of dollars.`,
       },
       {
-        title: 'Your road to a Web3 Creator job',
+        title: 'Your path to a Content Creator career',
         description:
-          'Build proof of work by attempting bounties to land your dream web3 content job!',
+          'Build your portfolio by taking on projects to advance your content creation career!',
       },
     ],
     development: [
       {
         title: 'Join Developers like you',
         description:
-          'Never miss out on high-paying development opportunities from the best companies in crypto.',
+          'Never miss out on rewarding development opportunities from leading companies in the industry.',
       },
       {
         title: `Developers have earned ${formatEarnings} from ${PROJECT_NAME}`,
         description: `Sign up on ${PROJECT_NAME} to get access to development opportunities worth thousands of dollars.`,
       },
       {
-        title: 'Your road to a Web3 Development job',
+        title: 'Your path to a Development career',
         description:
-          'Build proof of work by attempting bounties to land your dream web3 development job!',
+          'Build your portfolio by taking on projects to advance your development career!',
       },
     ],
   };

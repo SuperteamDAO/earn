@@ -168,7 +168,6 @@ Check out all of ${title}’s latest earning opportunities on a single page.
             bounties={sponsorships?.bounties}
             isListingsLoading={isSponsorshipsLoading}
             title="Sponsorships"
-            showEmoji
           />
         </div>
       </div>

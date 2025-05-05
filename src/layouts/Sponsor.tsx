@@ -21,7 +21,7 @@ import { FeatureModal } from '@/components/modals/FeatureModal';
 import { LoadingSection } from '@/components/shared/LoadingSection';
 import { Button } from '@/components/ui/button';
 import { Tooltip } from '@/components/ui/tooltip';
-import { PROJECT_NAME, SUPPORT_EMAIL } from '@/constants/project';
+import { HELP_URL, PROJECT_NAME } from '@/constants/project';
 import { TeamRegions } from '@/constants/Team';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { Default } from '@/layouts/Default';
@@ -146,7 +146,7 @@ export function SponsorLayout({
         { name: 'All Tracks', link: `/hackathon`, icon: MdList },
         {
           name: 'Get Help',
-          link: `mailto:${SUPPORT_EMAIL}`,
+          link: HELP_URL,
           icon: MdOutlineChatBubbleOutline,
           posthog: 'get help_sponsor',
         },
@@ -170,7 +170,7 @@ export function SponsorLayout({
           : []),
         {
           name: 'Get Help',
-          link: `mailto:${SUPPORT_EMAIL}`,
+          link: HELP_URL,
           icon: MessageSquare,
           posthog: 'get help_sponsor',
         },
@@ -189,8 +189,8 @@ export function SponsorLayout({
       className="bg-white"
       meta={
         <Meta
-          title={`${PROJECT_NAME} | Work to Earn in Crypto`}
-          description={`Explore the latest bounties on ${PROJECT_NAME}, offering opportunities in the crypto space across Design, Development, and Content.`}
+          title={`${PROJECT_NAME} | Professional Talent Platform`}
+          description={`Explore the latest opportunities on ${PROJECT_NAME}, offering projects across Design, Development, and Content creation.`}
           canonical={getURL()}
         />
       }
@@ -220,8 +220,11 @@ export function SponsorLayout({
             <SelectSponsor isExpanded={true} />
           </div>
           <div className="text-center text-lg font-medium text-slate-600">
-            This sponsor account has been archived. <br /> Please contact
-            support at {SUPPORT_EMAIL} for assistance.
+            This sponsor account has been archived. <br /> Please
+            <a href={HELP_URL} target="_blank">
+              contact us
+            </a>
+            for assistance.
           </div>
         </div>
       ) : (

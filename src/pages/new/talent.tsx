@@ -39,8 +39,8 @@ export default function Talent() {
     <Default
       meta={
         <Meta
-          title={`Create Your Profile to Access Bounties & Sponsorships | ${PROJECT_NAME}`}
-          description={`Become part of ${PROJECT_NAME}'s talent network, where you can present your skills and collaborate on various crypto bounties, sponsorships, and projects.`}
+          title={`Create Your Profile to Access Projects & Sponsorships | ${PROJECT_NAME}`}
+          description={`Become part of ${PROJECT_NAME}'s talent network, where you can present your skills and collaborate on various projects and sponsorships.`}
           canonical={`${getURL()}/new/talent/`}
         />
       }

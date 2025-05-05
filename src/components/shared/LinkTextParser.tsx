@@ -17,7 +17,7 @@ export function LinkTextParser({ text, className, ...props }: Props) {
           return (
             <a
               key={index}
-              className="text-brand-purple hover:underline"
+              className="text-brand-green hover:underline"
               href={part}
               target="_blank"
               rel="noopener noreferrer"

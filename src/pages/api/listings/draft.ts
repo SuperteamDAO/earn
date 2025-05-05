@@ -128,14 +128,6 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       sponsorId: userSponsorId,
       pocId: userId,
       isFndnPaying,
-      sequentialId: id
-        ? listing!.sequentialId
-        : (
-            await prisma.sponsors.update({
-              where: { id: userSponsorId },
-              data: { listingCounter: { increment: 1 } },
-            })
-          ).listingCounter,
     };
 
     let result;

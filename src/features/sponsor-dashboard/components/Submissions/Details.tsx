@@ -217,7 +217,7 @@ export const Details = ({ bounty, externalView, atom }: Props) => {
               <TabsTrigger
                 value="notes"
                 className={cn(
-                  'h-auto rounded-none border-b-2 px-4 py-2 text-muted-foreground data-[state=active]:border-brand-purple',
+                  'h-auto rounded-none border-b-2 px-4 py-2 text-muted-foreground data-[state=active]:border-brand-green',
                 )}
               >
                 Notes
@@ -225,7 +225,7 @@ export const Details = ({ bounty, externalView, atom }: Props) => {
               <TabsTrigger
                 value="comments"
                 className={cn(
-                  'h-auto rounded-none border-b-2 px-4 py-2 text-muted-foreground data-[state=active]:border-brand-purple',
+                  'h-auto rounded-none border-b-2 px-4 py-2 text-muted-foreground data-[state=active]:border-brand-green',
                 )}
               >
                 Comments: {commentCount}

@@ -247,7 +247,7 @@ export const GrantApplicationModal = ({
                       : i - 1 < activeStep
                         ? 'border-slate-500'
                         : 'border-slate-300',
-                    i < activeStep ? 'bg-brand-purple' : 'bg-transparent',
+                    i < activeStep ? 'bg-brand-green' : 'bg-transparent',
                     i - 1 < activeStep ? 'text-slate-500' : 'text-slate-400',
                     i - 1 < activeStep ? 'font-medium' : 'font-normal',
                   )}

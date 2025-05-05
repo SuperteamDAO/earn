@@ -25,7 +25,7 @@ export default function Renaissance() {
       meta={
         <Meta
           title={`Renaissance | ${PROJECT_NAME}`}
-          description={`Explore the latest bounties on ${PROJECT_NAME}, offering opportunities in the crypto space across Design, Development, and Content.`}
+          description={`Explore the latest opportunities on ${PROJECT_NAME}, featuring professional projects in Design, Development, and Content Creation.`}
           canonical={`${getURL()}/hackathon/${slug}`}
         />
       }

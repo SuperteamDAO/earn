@@ -171,7 +171,7 @@ const Index = () => {
         <div className="flex items-center gap-3">
           {isAdminLoggedIn && (
             <Button
-              className="ph-no-captur h-9 bg-indigo-100 text-brand-purple hover:bg-indigo-100/90"
+              className="ph-no-captur h-9"
               onClick={() => {
                 posthog.capture('invite member_sponsor');
                 onOpen();
@@ -184,7 +184,7 @@ const Index = () => {
           <div className="relative w-64">
             <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
             <Input
-              className="placeholder:text-md h-9 border-slate-200 bg-white pl-9 placeholder:font-medium placeholder:text-slate-400 focus-visible:ring-brand-purple"
+              className="placeholder:text-md h-9 border-slate-200 bg-white pl-9 placeholder:font-medium placeholder:text-slate-400 focus-visible:ring-black"
               onChange={(e) => debouncedSetSearchText(e.target.value)}
               placeholder="Search..."
               type="text"
@@ -206,7 +206,7 @@ const Index = () => {
           <TabsTrigger value="invites" className="relative">
             Pending Invites
             {totalInvites > 0 && (
-              <span className="ml-2 rounded-full bg-indigo-100 px-2 py-0.5 text-xs text-brand-purple">
+              <span className="ml-2 rounded-full bg-brand-green/10 px-2 py-0.5 text-xs text-black">
                 {totalInvites}
               </span>
             )}
@@ -269,7 +269,7 @@ const Index = () => {
                                 'inline-flex rounded px-2 py-1 text-xs font-semibold',
                                 member?.role === 'ADMIN'
                                   ? 'bg-emerald-100 text-teal-600'
-                                  : 'bg-purple-100 text-brand-purple',
+                                  : 'bg-yellow-200 text-yellow-600',
                               )}
                             >
                               {member?.role}
@@ -386,7 +386,7 @@ const RemoveMemberModal = ({
         <Button
           onClick={() => setIsOpen(true)}
           size="sm"
-          className="bg-indigo-100 text-brand-purple hover:bg-indigo-100/90"
+          className="bg-slate-100 text-brand-green hover:bg-slate-100/90"
         >
           Remove
         </Button>

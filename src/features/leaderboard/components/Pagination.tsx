@@ -32,7 +32,7 @@ export function Pagination({ page, setPage, count }: Props) {
               `w-[${SIZE}] h-[${SIZE}] min-w-0 rounded-md px-4 py-2 text-xs`,
               'border',
               page === i
-                ? 'border-brand-purple text-brand-purple'
+                ? 'border-brand-green text-brand-green'
                 : 'border-slate-200 text-slate-500',
               i === page && 'active',
             )}

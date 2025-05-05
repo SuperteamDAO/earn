@@ -12,15 +12,27 @@ async function submission(req: NextApiRequestWithUser, res: NextApiResponse) {
 
   if (!id) {
     return res.status(400).json({
-      message: 'Listing ID is required in the query parameters.',
+      message: 'Submission ID is required in the query parameters.',
     });
   }
+
+  const isGodUser = await prisma.user.findUnique({
+    where: {
+      id: userId,
+    },
+    select: {
+      role: true,
+    },
+  });
+
+  const isGod = isGodUser?.role === 'GOD';
+  const userIdWhere = isGod ? {} : { userId };
 
   try {
     const result = await prisma.submission.findFirst({
       where: {
-        userId,
-        listingId: id,
+        ...userIdWhere,
+        id: id,
       },
       orderBy: {
         createdAt: 'desc',
@@ -29,14 +41,14 @@ async function submission(req: NextApiRequestWithUser, res: NextApiResponse) {
 
     if (!result) {
       return res.status(404).json({
-        message: `Submission for user=${userId} and listingId=${id} not found.`,
+        message: `Submission for user=${userId} and id=${id} not found.`,
       });
     }
 
     return res.status(200).json(result);
   } catch (error: any) {
     logger.error(
-      `Error fetching submission for user=${userId} and listingId=${id}: ${error.message}`,
+      `Error fetching submission for user=${userId} and id=${id}: ${error.message}`,
     );
     return res.status(500).json({
       error: error.message,

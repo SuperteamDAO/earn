@@ -20,8 +20,7 @@ function AllListingsPage() {
         <ListingTabs
           bounties={listings}
           isListingsLoading={isLoading}
-          showEmoji
-          title="Freelance Gigs"
+          title="Freelance Opportunities"
           viewAllLink="/all"
         />
       </div>

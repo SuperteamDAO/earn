@@ -14,7 +14,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { SUPPORT_EMAIL } from '@/constants/project';
+import { HELP_URL } from '@/constants/project';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { useLogout, useUser } from '@/store/user';
 
@@ -69,7 +69,7 @@ export function UserMenu() {
             }}
             className="ph-no-capture hidden text-xs md:flex"
           >
-            Complete your Profile
+            Complete Your Profile
           </Button>
         )}
       <DropdownMenu>
@@ -166,7 +166,7 @@ export function UserMenu() {
 
           <DropdownMenuItem
             onClick={() => {
-              window.open(`mailto:${SUPPORT_EMAIL}`, '_blank');
+              window.open(HELP_URL, '_blank');
               posthog.capture('get help_user menu');
             }}
             className="text-sm text-slate-500"

@@ -15,7 +15,7 @@ export async function GET(request: Request) {
     const region = getParam('region');
     const code = getParam('code');
     const hasCode = code && code !== 'undefined';
-    const prefix = 'Find High Paying Crypto Gigs in ';
+    const prefix = 'Find Freelance Opportunities in ';
 
     const allText = `${prefix || ''}${region || ''}${code || ''}`;
 

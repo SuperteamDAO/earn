@@ -57,7 +57,7 @@ export default function VerifyRequest() {
         <p className="text-center text-lg text-slate-600 md:text-xl">
           On your email {email}
         </p>
-        <div className="mx-auto my-16 flex h-32 w-32 items-center justify-center rounded-full bg-indigo-50">
+        <div className="mx-auto my-16 flex h-32 w-32 items-center justify-center rounded-full bg-slate-50">
           <Mail size={32} className="text-slate-500" />
         </div>
 

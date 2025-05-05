@@ -23,9 +23,9 @@ import { userCountQuery } from '@/features/home/queries/user-count';
 import { liveOpportunitiesQuery } from '@/features/listings/queries/live-opportunities';
 
 const dummyUsers = [
-  { name: 'Kash Dhanda', pfp: ASSET_URL + '/pfps/t1.webp' },
-  { name: 'Neil Shroff', pfp: ASSET_URL + '/pfps/md2.webp' },
-  { name: 'Pratik Dholani', pfp: ASSET_URL + '/pfps/fff1.webp' },
+  { name: 'Artur', pfp: ASSET_URL + '/pfps/artur.webp' },
+  { name: 'Keith', pfp: ASSET_URL + '/pfps/keith.webp' },
+  { name: 'Mike', pfp: ASSET_URL + '/pfps/mike.webp' },
 ];
 
 export const TalentImageCard = () => {
@@ -81,7 +81,7 @@ export const TalentImageCard = () => {
         <Card className="rounded-xl">
           <CardContent className="grid grid-cols-3 items-center gap-x-4 gap-y-4 py-8">
             <div>
-              <AvatarGroup className="-space-x-2">
+              <AvatarGroup className="-space-x-4">
                 <AvatarGroupList>
                   {people.map((p) => (
                     <Avatar key={p.name} className="h-9 w-9">

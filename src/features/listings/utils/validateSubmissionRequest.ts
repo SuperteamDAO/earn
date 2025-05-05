@@ -6,6 +6,7 @@ import { userRegionEligibilty } from './region';
 export async function validateSubmissionRequest(
   userId: string,
   listingId: string,
+  isGodMode: boolean,
 ) {
   const [user, listing] = await Promise.all([
     prisma.user.findUnique({ where: { id: userId } }),
@@ -21,10 +22,11 @@ export async function validateSubmissionRequest(
     !userRegionEligibilty({
       region: listing.region,
       userLocation: user.location || '',
-    })
+    }) &&
+    !isGodMode
   )
     throw new Error('Region not eligible');
-  if (isDeadlineOver(listing.deadline || ''))
+  if (isDeadlineOver(listing.deadline || '') && !isGodMode)
     throw new Error('Submissions closed');
 
   return { user, listing };

@@ -11,7 +11,7 @@ datasource db {
 
 model Bounties {
   id                   String             @id @default(uuid())
-  sequentialId         Int              
+  sequentialId         Int?              
   title                String
   slug                 String             @unique
   description          String?            @db.LongText

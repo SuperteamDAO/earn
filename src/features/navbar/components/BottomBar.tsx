@@ -17,7 +17,7 @@ export function BottomBar({ onSearchOpen }: Props) {
   const router = useRouter();
 
   function setColor(href: string, routerPath: string) {
-    return routerPath === href ? 'text-brand-purple' : 'text-slate-400';
+    return routerPath === href ? 'text-brand-green' : 'text-slate-400';
   }
 
   const iconStyle = { width: '1.5rem', height: '1.5rem' };

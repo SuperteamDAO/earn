@@ -125,6 +125,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
                 listing: {
                   select: {
                     isWinnersAnnounced: true,
+                    type: true,
                   },
                 },
               },
@@ -146,7 +147,9 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
     const applications = query.map((application) => {
       const listingWinnings = application.user.Submission.filter(
-        (s) => s.isWinner && s.listing.isWinnersAnnounced,
+        (s) =>
+          s.isWinner &&
+          (s.listing.isWinnersAnnounced || s.listing.type === 'sponsorship'),
       ).reduce((sum, submission) => sum + (submission.rewardInUSD || 0), 0);
 
       const grantWinnings = application.user.GrantApplication.filter(

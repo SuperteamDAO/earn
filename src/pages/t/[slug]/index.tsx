@@ -13,7 +13,7 @@ import { Button } from '@/components/ui/button';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { Separator } from '@/components/ui/separator';
 import { ASSET_URL } from '@/constants/ASSET_URL';
-import { PROJECT_NAME, SUPPORT_EMAIL } from '@/constants/project';
+import { HELP_URL, PROJECT_NAME } from '@/constants/project';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import type { User } from '@/interface/user';
@@ -178,7 +178,7 @@ function TalentProfile({ talent, stats }: TalentProps) {
             'ph-no-capture text-sm font-medium',
             outline
               ? 'border-slate-400 bg-white text-slate-500 hover:bg-gray-100'
-              : 'border-brand-purple/5 bg-brand-purple/10 text-brand-purple hover:bg-brand-purple/20',
+              : 'border-slate-50 bg-slate-50 text-black hover:bg-slate-100',
           )}
           onClick={onClickHandler}
           variant={outline ? 'outline' : 'default'}
@@ -197,7 +197,7 @@ function TalentProfile({ talent, stats }: TalentProps) {
           'inline-flex h-9 w-9 items-center justify-center rounded border p-2 text-sm font-medium transition',
           outline
             ? 'border-slate-400 bg-white text-slate-500 hover:bg-gray-100'
-            : 'border-indigo-100 bg-indigo-100 text-indigo-600 hover:bg-indigo-200',
+            : 'border-slate-50 bg-slate-50 text-brand-green hover:bg-slate-100',
         )}
       >
         {icon}
@@ -290,12 +290,7 @@ function TalentProfile({ talent, stats }: TalentProps) {
                     )
                   : renderButton(<MdEmail />, 'Reach Out', () => {
                       posthog.capture('reach out_talent profile');
-                      const email = encodeURIComponent(talent?.email || '');
-                      const subject = encodeURIComponent(
-                        `Saw Your ${PROJECT_NAME} Profile!`,
-                      );
-                      const bcc = encodeURIComponent(SUPPORT_EMAIL);
-                      window.location.href = `mailto:${email}?subject=${subject}&bcc=${bcc}`;
+                      window.location.href = HELP_URL;
                     })}
                 {renderButton(<ShareIcon />, 'Share', onOpen, true)}
               </div>

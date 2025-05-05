@@ -8,7 +8,6 @@ import { FeedPageLayout } from '@/layouts/Feed';
 import { cn } from '@/utils/cn';
 
 import { HomepagePop } from '@/features/conversion-popups/components/HomepagePop';
-import { VibeCard } from '@/features/home/components/VibeCard';
 
 import { useGetFeed } from '../queries/useGetFeed';
 import { type FeedPostType } from '../types';
@@ -97,9 +96,7 @@ export const Feed = ({ isWinner = false, id, type }: Props) => {
         <p className="text-base text-slate-500">
           Discover the best work on {PROJECT_NAME}
         </p>
-        <div className="flex w-full pt-4 lg:hidden">
-          <VibeCard />
-        </div>
+
         <div className="mt-4 flex w-full items-center justify-between">
           <div className="mr-3 flex gap-3">
             <MenuOption option="new" />

@@ -7,7 +7,7 @@ import { type User } from './user';
 interface SubmissionWithUser {
   id: string;
   sequentialId: number;
-  status: SubmissionStatus;
+  status: SubmissionStatus | 'Deleted';
   link?: string;
   tweet?: string;
   otherInfo?: string;

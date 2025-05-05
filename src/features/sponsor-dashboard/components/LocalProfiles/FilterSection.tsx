@@ -87,7 +87,7 @@ export const FilterSection = ({
             >
               <div className="flex items-center">
                 <Checkbox
-                  className="mr-3 data-[state=checked]:border-brand-purple data-[state=checked]:bg-brand-purple"
+                  className="mr-3 data-[state=checked]:border-brand-green data-[state=checked]:bg-brand-green"
                   checked={checkedItems[skill] || false}
                   onCheckedChange={() => handleCheckboxChange(skill)}
                 />

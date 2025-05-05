@@ -116,8 +116,7 @@ export default function HomePage({
           bounties={combinedListings}
           forYou={combinedForYouListings}
           isListingsLoading={false}
-          showEmoji
-          title="Freelance Gigs"
+          title="Freelance Opportunities"
           viewAllLink="/all"
           take={20}
           showViewAll
@@ -126,7 +125,6 @@ export default function HomePage({
         <ListingTabs
           bounties={sponsorships}
           isListingsLoading={sponsorshipsLoading}
-          showEmoji
           title="Sponsorships"
           viewAllLink="/sponsorships"
           take={20}

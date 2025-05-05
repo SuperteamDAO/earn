@@ -22,9 +22,9 @@ export const ListingTabLink = ({
   return (
     <Link
       className={cn(
-        'ph-no-capture flex h-full items-center gap-2 border-b-2 text-sm font-medium text-slate-500 no-underline transition-colors hover:border-brand-purple',
+        'ph-no-capture flex h-full items-center gap-2 border-b-2 text-sm font-medium text-slate-500 no-underline transition-colors hover:border-brand-green',
         'text-xs md:text-sm',
-        isActive ? 'border-brand-purple' : 'border-transparent',
+        isActive ? 'border-brand-green' : 'border-transparent',
         className,
       )}
       href={href}

@@ -403,7 +403,7 @@ export const SubmissionTable = ({
                             <Button
                               variant="ghost"
                               size="sm"
-                              className="ph-no-capture text-[13px] font-medium text-brand-purple hover:bg-brand-purple hover:text-white"
+                              className="ph-no-capture text-[13px] font-medium text-black"
                             >
                               <Link
                                 href={submissionLink}

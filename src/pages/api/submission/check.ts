@@ -44,6 +44,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
     );
     res.status(200).json({
       isSubmitted: !!submission,
+      id: submission ? submission?.id : null,
       status: submission ? submission?.status : null,
       label: submission ? submission?.label : null,
       isPaid: submission ? submission?.isPaid : null,

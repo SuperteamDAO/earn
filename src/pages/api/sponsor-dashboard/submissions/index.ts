@@ -28,7 +28,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         user: true,
       },
       orderBy: {
-        createdAt: 'desc',
+        sequentialId: 'desc',
       },
     });
 

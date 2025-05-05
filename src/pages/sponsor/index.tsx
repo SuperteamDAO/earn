@@ -41,8 +41,8 @@ const Sponsor = () => {
   return (
     <>
       <Meta
-        title={`Find Top Talent for Your Crypto Projects on ${PROJECT_NAME}`}
-        description={`Seeking top talent for your crypto project? ${PROJECT_NAME} connects you with experts for Bounties, Projects, and Sponsorships in the crypto space.`}
+        title={`Find Top Talent for Your Projects on ${PROJECT_NAME}`}
+        description={`Seeking top talent for your project? ${PROJECT_NAME} connects you with experts for Projects and Sponsorships.`}
         og={ASSET_URL + `/og/sponsor.png`}
       />
 

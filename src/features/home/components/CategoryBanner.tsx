@@ -26,27 +26,27 @@ const banners: CategoryBanner[] = [
     img: bannerPrefix + 'Content.webp',
     heading: 'Find your next Content gig',
     description:
-      'If you can write insightful essays, make stunning videos, or create killer memes, the opportunities below are calling your name.',
+      'If you possess strong writing skills, video production expertise, or creative content creation abilities, explore the available roles below.',
   },
   {
     type: 'development',
     img: bannerPrefix + 'Dev.webp',
     heading: 'Find your next Development gig',
-    description: `If building robust applications and scalable solutions is your forte, don't miss out on the earning opportunities listed below.`,
+    description: `If your expertise lies in building robust applications and scalable solutions, explore the development roles listed below.`,
   },
   {
     type: 'design',
     img: bannerPrefix + 'Design.webp',
     heading: 'Find your next Design gig',
     description:
-      'If delighting users with eye-catching designs is your jam, you should check out the earning opportunities below.',
+      'If you excel at creating engaging and visually appealing designs, discover the design opportunities available below.',
   },
   {
     type: 'other',
     img: bannerPrefix + 'Other.webp',
     heading: `Find your next gig on ${PROJECT_NAME}`,
     description:
-      "If you have a unique skill set that doesn't fit into the other categories, you might find your next gig here.",
+      'If your unique skill set spans beyond these categories, find diverse professional opportunities here.',
   },
 ];
 

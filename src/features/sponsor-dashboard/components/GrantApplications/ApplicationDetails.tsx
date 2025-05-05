@@ -132,7 +132,7 @@ export const ApplicationDetails = ({
                   </p>
                   <Link
                     href={`/t/${selectedApplication?.user?.username}`}
-                    className="flex w-full items-center gap-1 whitespace-nowrap text-xs font-medium text-brand-purple"
+                    className="flex w-full items-center gap-1 whitespace-nowrap text-xs font-medium text-brand-green"
                     rel="noopener noreferrer"
                     target="_blank"
                   >

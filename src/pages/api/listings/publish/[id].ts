@@ -339,6 +339,15 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       publishedAt,
       isPublished,
       hackathonId,
+      sequentialId:
+        listing && listing.sequentialId
+          ? listing.sequentialId
+          : (
+              await prisma.sponsors.update({
+                where: { id: userSponsorId },
+                data: { listingCounter: { increment: 1 } },
+              })
+            ).listingCounter,
     };
 
     logger.debug(`Publishing listing with data: ${safeStringify(data)}`, {

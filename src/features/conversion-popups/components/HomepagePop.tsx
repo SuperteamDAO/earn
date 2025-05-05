@@ -44,16 +44,16 @@ import { GetStarted } from './GetStarted';
 
 const avatars = [
   {
-    name: 'Abhishkek',
-    src: ASSET_URL + '/pfps/t1.webp',
+    name: 'Artur',
+    src: ASSET_URL + '/pfps/artur.webp',
   },
   {
-    name: 'Pratik',
-    src: ASSET_URL + '/pfps/md2.webp',
+    name: 'Keith',
+    src: ASSET_URL + '/pfps/keith.webp',
   },
   {
-    name: 'Yash',
-    src: ASSET_URL + '/pfps/fff1.webp',
+    name: 'Mike',
+    src: ASSET_URL + '/pfps/mike.webp',
   },
 ];
 
@@ -301,7 +301,7 @@ const DesktopVariantTwo = ({
           !
         </DialogTitle>
         <DialogDescription className="text-sm text-slate-500">
-          {`Apply to hundreds of bounties & gigs with a single profile.`}
+          {`Apply to hundreds of bounties, projects and sponsorships with a single profile.`}
         </DialogDescription>
       </DialogHeader>
     </>

@@ -229,6 +229,9 @@ importers:
       franc:
         specifier: ^6.2.0
         version: 6.2.0
+      gleap:
+        specifier: ^14.6.0
+        version: 14.6.0
       html-react-parser:
         specifier: ^5.2.2
         version: 5.2.2(@types/react@19.0.8)(react@19.0.0)
@@ -4630,6 +4633,9 @@ packages:
   get-tsconfig@4.8.1:
     resolution: {integrity: sha512-k9PN+cFBmaLWtVz29SkUoqU5O0slLuHJXt/2P+tMVFT+phsSGXGkp9t3rQIqdz0e+06EHNGs3oM6ZX1s2zHxRg==}
 
+  gleap@14.6.0:
+    resolution: {integrity: sha512-ieZMQhhYj8/tIY5HZNpVFqkVVp9/uWRivlOqd70frBeRmNcmoiK/ATSFyF5dI2d+RpczhqDAXoNZVCxUbVUphQ==}
+
   glob-parent@5.1.2:
     resolution: {integrity: sha512-AOIgSQCepiJYwP3ARnGx+5VnTu2HBYdzbGP45eLw1vr3zB3vZLeyed1sC9hnbcOc9/SrMyM5RPQrkGz4aS9Zow==}
     engines: {node: '>= 6'}
@@ -7232,6 +7238,9 @@ packages:
   unique-names-generator@4.7.1:
     resolution: {integrity: sha512-lMx9dX+KRmG8sq6gulYYpKWZc9RlGsgBR6aoO8Qsm3qvkSJ+3rAymr+TnV8EDMrIrwuFJ4kruzMWM/OpYzPoow==}
     engines: {node: '>=8'}
+
+  unique-selector@0.5.0:
+    resolution: {integrity: sha512-2KCiRgM19ol67lO493tF7mnQPDuYzwRM7JXrVx336+BPXqT2ccCbUOQQpErFbSc8VIdifLf5x34x4lIeebk+YA==}
 
   unique-string@2.0.0:
     resolution: {integrity: sha512-uNaeirEPvpZWSgzwsPGtU2zVSTrn/8L5q/IexZmH0eH6SA73CmAA5U4GwORTxQAZs95TAXLNqeLoPPNO5gZfWg==}
@@ -12752,6 +12761,11 @@ snapshots:
     dependencies:
       resolve-pkg-maps: 1.0.0
 
+  gleap@14.6.0:
+    dependencies:
+      '@floating-ui/dom': 1.6.13
+      unique-selector: 0.5.0
+
   glob-parent@5.1.2:
     dependencies:
       is-glob: 4.0.3
@@ -15684,6 +15698,8 @@ snapshots:
   unicode-property-aliases-ecmascript@2.1.0: {}
 
   unique-names-generator@4.7.1: {}
+
+  unique-selector@0.5.0: {}
 
   unique-string@2.0.0:
     dependencies:

@@ -9,7 +9,7 @@ export const AnnouncementBar = () => {
   return (
     <Link
       href={href}
-      className="block w-full bg-brand-purple text-white md:hidden"
+      className="block w-full bg-brand-green text-white md:hidden"
     >
       <p className="p-3 text-center text-[11px] font-medium md:text-sm">
         <Link href={href} className="underline">

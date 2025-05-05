@@ -196,7 +196,7 @@ export const ListingCard = ({ bounty }: { bounty: Listing }) => {
         >
           {compensationType !== 'variable' && (
             <img
-              className="mr-1 mt-1 h-4 w-4 rounded-full sm:mt-0.5"
+              className="mr-1 h-4 w-4 rounded-full"
               alt={token}
               src={tokenIcon}
             />

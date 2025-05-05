@@ -174,7 +174,7 @@ export function PendingInvites({ invites, isLoading }: PendingInviteProps) {
                     className={
                       invite.memberType === 'ADMIN'
                         ? 'inline-flex rounded bg-emerald-100 px-2 py-1 text-xs font-semibold text-teal-600'
-                        : 'inline-flex rounded bg-purple-100 px-2 py-1 text-xs font-semibold text-brand-purple'
+                        : 'inline-flex rounded bg-yellow-200 px-2 py-1 text-xs font-semibold text-yellow-600'
                     }
                   >
                     {invite.memberType}

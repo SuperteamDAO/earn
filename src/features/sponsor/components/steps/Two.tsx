@@ -8,17 +8,17 @@ export function StepTwo() {
       <div className="flex flex-col items-start gap-4 p-4 pb-3">
         <div className="flex w-full gap-4">
           <HighQualityImage
-            alt="Pied Piper Logo"
+            alt="Race of Sloths Logo"
             className="h-12 w-12"
-            src="/landingsponsor/sponsors/piedPiper.webp"
+            src="/landingsponsor/sponsors/raceOfSloths.svg"
           />
           <div className="flex w-full flex-col items-start gap-0 text-sm">
             <p className="font-semibold text-slate-700">
-              Write a Deep Dive on PiperCoin
+              Write a Deep Dive on Race of Sloths
             </p>
             <div className="flex gap-2">
               <p className="bg-slate-50 font-semibold text-slate-400">
-                By Pied Piper
+                By Race of Sloths
               </p>
               <div className="h-6 w-px bg-slate-200" />
               <p className="bg-slate-50 font-medium text-slate-400">
@@ -28,9 +28,9 @@ export function StepTwo() {
           </div>
         </div>
         <p className="text-sm font-medium text-slate-500">
-          Pied Piper is a pioneering middle-out compression company. The company
-          is looking for bounty hunters to deep dive into the $PIPER coin, and
-          explain the coin’s background and utility to noobs.
+          Race of Sloths is a GitHub bot that helps you to make open source
+          contributions more fun and engaging. Compete with other talents, and
+          contribute to the projects you care about.
         </p>
         <div className="flex w-full justify-between text-xs">
           <p className="font-medium text-slate-400">Skills</p>
@@ -57,7 +57,7 @@ export function StepTwo() {
           />
           <p className="font-semibold text-slate-800">$1,000</p>
         </div>
-        <p className="rounded-lg bg-indigo-50 px-4 py-2 text-sm font-medium text-brand-purple">
+        <p className="rounded-lg bg-slate-50 px-4 py-2 text-sm font-medium text-slate-700">
           Post Bounty
         </p>
       </div>

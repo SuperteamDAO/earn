@@ -29,9 +29,9 @@ export default function NewProfilePage({
   showTalentProfile: boolean;
 }) {
   const avatars = [
-    { name: 'Abhishek', src: ASSET_URL + '/pfps/t1.webp' },
-    { name: 'Pratik', src: ASSET_URL + '/pfps/md2.webp' },
-    { name: 'Yash', src: ASSET_URL + '/pfps/fff1.webp' },
+    { name: 'Artur', src: ASSET_URL + '/pfps/artur.webp' },
+    { name: 'Keith', src: ASSET_URL + '/pfps/keith.webp' },
+    { name: 'Mike', src: ASSET_URL + '/pfps/mike.webp' },
   ];
 
   const { data: totals } = useQuery(userCountQuery);
@@ -106,8 +106,8 @@ export default function NewProfilePage({
     <Default
       meta={
         <Meta
-          title="Make Your Profile | Earn on ${PROJECT_NAME} | Connect with Crypto Talent"
-          description="Join ${PROJECT_NAME} to engage with top talent and discover bounties and sponsorships for your crypto projects."
+          title="Make Your Profile | Join ${PROJECT_NAME} | Connect with Professional Talent"
+          description="Join ${PROJECT_NAME} to engage with top talent and discover projects and sponsorships."
           canonical={`${getURL()}/new/`}
         />
       }
@@ -144,9 +144,9 @@ export default function NewProfilePage({
                       Contribute to top {CHAIN_NAME} projects
                     </BulletPoint>
                     <BulletPoint type="TALENT">
-                      Build your web3 resume
+                      Showcase your completed work
                     </BulletPoint>
-                    <BulletPoint type="TALENT">Get paid in crypto</BulletPoint>
+                    <BulletPoint type="TALENT">Receive payments</BulletPoint>
                   </div>
                   <Separator className="text-slate-300" />
                   <div className="px-4 pb-1">
@@ -159,9 +159,9 @@ export default function NewProfilePage({
                 </div>
               </AuthWrapper>
               <div className="mx-auto -mt-3 flex items-center gap-3">
-                <div className="flex -space-x-2">
+                <div className="flex -space-x-4">
                   {avatars.slice(0, 3).map((avatar, index) => (
-                    <Avatar className="relative h-6 w-6 border-0" key={index}>
+                    <Avatar className="relative h-8 w-8 border-0" key={index}>
                       <AvatarImage src={avatar.src} alt={avatar.name} />
                       <AvatarFallback>{avatar.name?.charAt(0)}</AvatarFallback>
                     </Avatar>
@@ -186,8 +186,8 @@ export default function NewProfilePage({
                 Continue as a Sponsor
               </p>
               <p className="text-lg leading-5 tracking-[-0.2px] text-slate-500">
-                List a bounty or freelance gig for your project and find your
-                next contributor
+                Create a listing for your project, find a talent, and get work
+                done
               </p>
             </div>
             <AuthWrapper className="w-full" onClick={checkSponsor}>
@@ -205,10 +205,10 @@ export default function NewProfilePage({
                 </div>
                 <div className="flex flex-col gap-5 px-4">
                   <BulletPoint type="SPONSOR">
-                    Get in front of 10,000 weekly visitors
+                    Get in front of community contributors
                   </BulletPoint>
                   <BulletPoint type="SPONSOR">
-                    20+ templates to choose from
+                    Discover and engage talent
                   </BulletPoint>
                   <BulletPoint type="SPONSOR">100% free</BulletPoint>
                 </div>
@@ -267,13 +267,13 @@ const TickIcon = ({ type }: { type: 'TALENT' | 'SPONSOR' }) => {
     <div
       className={cn(
         'flex items-center justify-center rounded-full p-[3px]',
-        type === 'TALENT' ? 'bg-indigo-50' : 'bg-emerald-50',
+        type === 'TALENT' ? 'bg-slate-50' : 'bg-emerald-50',
       )}
     >
       <MdCheck
         className={cn(
           'h-[0.8rem] w-[0.8rem]',
-          type === 'TALENT' ? 'text-indigo-600' : 'text-emerald-600',
+          type === 'TALENT' ? 'text-yellow-600' : 'text-emerald-600',
         )}
       />
     </div>

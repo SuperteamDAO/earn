@@ -1,5 +1,6 @@
 import { GoogleTagManager } from '@next/third-parties/google';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import Gleap from 'gleap';
 import type { AppProps } from 'next/app';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
@@ -11,7 +12,7 @@ import React, { useCallback, useEffect, useRef } from 'react';
 import { toast } from 'sonner';
 
 import { useUser } from '@/store/user';
-import { fontMono, fontSans } from '@/theme/fonts';
+import { fontFKGrotesk, fontSans } from '@/theme/fonts';
 
 import '../styles/globals.scss';
 import '@/components/tiptap/styles/index.css';
@@ -101,6 +102,10 @@ function MyApp({ Component, pageProps }: any) {
     }
   }, [router.query.loginState, user, posthog]);
 
+  useEffect(() => {
+    Gleap.initialize('a8VC1kgMViouW0HhfK6aWTrjYEQaXqra');
+  }, []);
+
   // forced profile redirection
   useEffect(() => {
     const loadRedirect = () => {
@@ -136,7 +141,7 @@ function App({ Component, pageProps: { session, ...pageProps } }: AppProps) {
         <style jsx global>{`
           :root {
             --font-sans: ${fontSans.style.fontFamily};
-            --font-mono: ${fontMono.style.fontFamily};
+            --font-fk-grotesk: ${fontFKGrotesk.style.fontFamily};
           }
           body {
             -webkit-font-smoothing: antialiased;

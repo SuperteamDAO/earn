@@ -24,7 +24,7 @@ export default function Scribes() {
       meta={
         <Meta
           title={`${CHAIN_NAME} Scribes | ${PROJECT_NAME}`}
-          description={`Explore the latest bounties on ${PROJECT_NAME}, offering opportunities in the crypto space across Design, Development, and Content.`}
+          description={`Explore the latest opportunities on ${PROJECT_NAME}, featuring professional projects in Design, Development, and Content Creation.`}
           canonical={`${getURL()}/hackathon/${slug}`}
         />
       }
@@ -36,7 +36,7 @@ export default function Scribes() {
             backgroundImage: `url('${ASSET_URL}/hackathon/scribes/scribes-bg.png')`,
           }}
         >
-          <p className="mb-4 font-mono">Lamport DAO presents</p>
+          <p className="mb-4 font-fkgrotesk">Lamport DAO presents</p>
           <ScribesLogo styles={{ height: '80px', width: 'auto' }} />
           <p className="mt-4 px-6 text-center text-slate-600">
             Participate in {CHAIN_NAME}&apos;s first ever content hackathon

@@ -25,7 +25,7 @@ import { Input } from '@/components/ui/input';
 import { MultiSelect } from '@/components/ui/multi-select';
 import { Separator } from '@/components/ui/separator';
 import { Tooltip } from '@/components/ui/tooltip';
-import { CHAIN_NAME, PROJECT_NAME, SUPPORT_EMAIL } from '@/constants/project';
+import { CHAIN_NAME, HELP_URL, PROJECT_NAME } from '@/constants/project';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { api } from '@/lib/api';
@@ -538,10 +538,9 @@ const CreateSponsor = () => {
                   )}
                   {sponsorNameValidationErrorMessage && (
                     <p className="text-center text-yellow-500">
-                      If you want access to the existing account, contact us on
-                      via{' '}
-                      <Link href={`mailto:${SUPPORT_EMAIL}`} target="_blank">
-                        {SUPPORT_EMAIL}
+                      If you want access to the existing account,
+                      <Link href={HELP_URL} target="_blank">
+                        contact us
                       </Link>
                     </p>
                   )}

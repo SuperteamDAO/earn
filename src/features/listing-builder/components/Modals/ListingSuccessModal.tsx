@@ -83,7 +83,7 @@ export const ListingSuccessModal = () => {
               onClick={onCopy}
             >
               <span className="truncate font-normal text-slate-500">
-                {getURL()}/listing/{slug}
+                {getURL()}listing/{slug}
               </span>
               {hasCopied ? (
                 <Check className="h-5 w-5 text-slate-400" />

@@ -1,6 +1,6 @@
 import { AiOutlineWarning } from 'react-icons/ai';
 
-import { SUPPORT_EMAIL } from '@/constants/project';
+import { HELP_URL } from '@/constants/project';
 
 export function ErrorSection({
   title,
@@ -18,7 +18,7 @@ export function ErrorSection({
         </span>
         <span className="mt-2 text-slate-500">
           {message ||
-            `There seems to be an error. Contact ${SUPPORT_EMAIL} to get help`}
+            `There seems to be an error. <a href="${HELP_URL}" target="_blank">Contact us</a> to get help`}
         </span>
       </div>
     </div>
