@@ -45,7 +45,7 @@ export const CommentParser = ({
         {value} -{' '}
         <Link
           href={`/feed/submission/${submissionId}`}
-          className="text-brand-green hover:underline"
+          className="text-black hover:underline"
         >
           check it out!
         </Link>
@@ -63,7 +63,7 @@ export const CommentParser = ({
             <Link
               key={index}
               href={`/t/${part.value.substring(1)}`}
-              className="text-brand-green hover:underline"
+              className="text-black hover:underline"
             >
               {truncateString(part.value, 12)}
             </Link>

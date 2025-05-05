@@ -58,6 +58,13 @@ export const authOptions: NextAuthOptions = {
           logger.debug('OTP Not Sent, Blocked Email');
         }
 
+        if (process.env.NODE_ENV === 'development') {
+          console.log('OTP Not Sent, Development');
+          console.log('identifier', identifier);
+          console.log('token', token);
+          return;
+        }
+
         await resend.emails.send({
           from: fromEmail,
           to: [identifier],

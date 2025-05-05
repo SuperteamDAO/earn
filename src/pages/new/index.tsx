@@ -144,11 +144,9 @@ export default function NewProfilePage({
                       Contribute to top {CHAIN_NAME} projects
                     </BulletPoint>
                     <BulletPoint type="TALENT">
-                      Build your professional portfolio
+                      Showcase your completed work
                     </BulletPoint>
-                    <BulletPoint type="TALENT">
-                      Get paid for your work
-                    </BulletPoint>
+                    <BulletPoint type="TALENT">Receive payments</BulletPoint>
                   </div>
                   <Separator className="text-slate-300" />
                   <div className="px-4 pb-1">
@@ -188,8 +186,8 @@ export default function NewProfilePage({
                 Continue as a Sponsor
               </p>
               <p className="text-lg leading-5 tracking-[-0.2px] text-slate-500">
-                List a project or freelance opportunity and find your next
-                contributor
+                Create a listing for your project, find a talent, and get work
+                done
               </p>
             </div>
             <AuthWrapper className="w-full" onClick={checkSponsor}>
@@ -207,10 +205,10 @@ export default function NewProfilePage({
                 </div>
                 <div className="flex flex-col gap-5 px-4">
                   <BulletPoint type="SPONSOR">
-                    Get in front of 10,000 weekly visitors
+                    Get in front of community contributors
                   </BulletPoint>
                   <BulletPoint type="SPONSOR">
-                    20+ templates to choose from
+                    Discover and engage talent
                   </BulletPoint>
                   <BulletPoint type="SPONSOR">100% free</BulletPoint>
                 </div>
