@@ -1,4 +1,3 @@
-import { useQuery } from '@tanstack/react-query';
 import { type GetServerSideProps } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
@@ -6,7 +5,6 @@ import { FaXTwitter } from 'react-icons/fa6';
 import { MdOutlineInsertLink } from 'react-icons/md';
 
 import { LinkTextParser } from '@/components/shared/LinkTextParser';
-import { Loading } from '@/components/shared/Loading';
 import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
 import { LocalImage } from '@/components/ui/local-image';
 import { exclusiveSponsorData } from '@/constants/exclusiveSponsors';
@@ -16,10 +14,8 @@ import { prisma } from '@/prisma';
 import { getTwitterUrl, getURLSanitized } from '@/utils/getURLSanitized';
 import { getURL } from '@/utils/validUrl';
 
-import { GrantsCard } from '@/features/grants/components/GrantsCard';
-import { ListingSection } from '@/features/listings/components/ListingSection';
+import { GrantsSection } from '@/features/grants/components/GrantsSection';
 import { ListingTabs } from '@/features/listings/components/ListingTabs';
-import { sponsorGrantsQuery } from '@/features/sponsor-dashboard/queries/sponsor-grants';
 
 interface Props {
   slug: string;
@@ -28,10 +24,6 @@ interface Props {
   sponsor: SponsorType;
 }
 const SponsorListingsPage = ({ slug, sponsor, title, description }: Props) => {
-  const { data: grants, isLoading: isGrantsLoading } = useQuery(
-    sponsorGrantsQuery(slug),
-  );
-
   const logo = sponsor.logo;
   const url = sponsor.url;
   const twitter = sponsor.twitter;
@@ -127,23 +119,7 @@ Check out all of ${title}’s latest earning opportunities on a single page.
       <div className="w-full bg-white">
         <div className="mx-auto max-w-5xl px-4 pb-20">
           <ListingTabs type="sponsor" sponsor={slug} />
-          {!!grants && !!grants.length && (
-            <ListingSection
-              type="grants"
-              title={`Grants`}
-              sub="Equity-free funding opportunities for builders"
-            >
-              {isGrantsLoading && (
-                <div className="flex min-h-52 flex-col items-center justify-center">
-                  <Loading />
-                </div>
-              )}
-              {!isGrantsLoading &&
-                grants?.map((grant) => (
-                  <GrantsCard grant={grant} key={grant.id} />
-                ))}
-            </ListingSection>
-          )}
+          <GrantsSection type="sponsor" sponsor={slug} />
         </div>
       </div>
     </Default>

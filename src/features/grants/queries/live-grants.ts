@@ -5,21 +5,19 @@ import { api } from '@/lib/api';
 import { type GrantWithApplicationCount } from '@/features/grants/types';
 
 interface GetGrantsParams {
-  order?: 'asc' | 'desc';
-  filter?: string;
   take?: number;
   excludeIds?: string[];
 }
 
-const fetchGrants = async (
+const fetchLiveGrants = async (
   params: GetGrantsParams = {},
 ): Promise<GrantWithApplicationCount[]> => {
-  const { data } = await api.get('/api/grants/', { params });
+  const { data } = await api.get('/api/grants/live', { params });
   return data;
 };
 
-export const grantsQuery = (params: GetGrantsParams) =>
+export const liveGrantsQuery = (params: GetGrantsParams) =>
   queryOptions({
-    queryKey: ['grants', params],
-    queryFn: () => fetchGrants(params),
+    queryKey: ['live-grants', params],
+    queryFn: () => fetchLiveGrants(params),
   });

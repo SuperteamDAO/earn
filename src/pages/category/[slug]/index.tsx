@@ -13,7 +13,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   return {
     redirect: {
-      destination: `/?category=${titleCaseSlug}`,
+      destination: `/?category=${titleCaseSlug}&grantCategory=${titleCaseSlug}`,
       permanent: false,
     },
   };

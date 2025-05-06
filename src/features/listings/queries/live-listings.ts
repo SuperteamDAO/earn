@@ -13,13 +13,15 @@ interface ListingsParams {
   exclusiveSponsorId?: string;
 }
 
-const fetchListings = async (params: ListingsParams): Promise<Listing[]> => {
+const fetchLiveListings = async (
+  params: ListingsParams,
+): Promise<Listing[]> => {
   const { data } = await api.get('/api/listings/live', { params });
   return data;
 };
 
-export const listingsQuery = (params: ListingsParams) =>
+export const liveListingsQuery = (params: ListingsParams) =>
   queryOptions({
-    queryKey: ['listings', params],
-    queryFn: () => fetchListings(params),
+    queryKey: ['live-listings', params],
+    queryFn: () => fetchLiveListings(params),
   });
