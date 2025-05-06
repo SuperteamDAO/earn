@@ -18,7 +18,7 @@ export function BottomBar({ onSearchOpen }: Props) {
   const router = useRouter();
 
   function setColor(href: string, routerPath: string) {
-    return routerPath === href ? 'text-brand-green' : 'text-slate-400';
+    return routerPath === href ? 'text-black' : 'text-slate-400';
   }
 
   const iconStyle = { width: '1.5rem', height: '1.5rem' };
@@ -98,7 +98,7 @@ export function BottomBar({ onSearchOpen }: Props) {
       <Button
         variant="ghost"
         onClick={() => Gleap.open()}
-        className="hover:bg-transparent active:bg-transparent"
+        className="text-slate-400 hover:bg-transparent active:bg-transparent"
       >
         <MessageCircle style={iconStyle} />
       </Button>
