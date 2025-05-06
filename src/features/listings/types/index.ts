@@ -4,12 +4,7 @@ import type { Skills } from '@/interface/skills';
 import type { SponsorType } from '@/interface/sponsor';
 import { type User } from '@/interface/user';
 
-import {
-  type ListingContext,
-  type ListingSortOption,
-  type ListingStatus,
-  type OrderDirection,
-} from '../hooks/useListings';
+import { type ListingContext } from '../hooks/useListings';
 
 export interface Listing {
   id?: string;
@@ -98,14 +93,6 @@ export interface Rewards {
   [rank: number]: number;
 }
 
-export type StatusFilter = 'open' | 'review' | 'completed';
-
-export interface Tab {
-  id: string;
-  title: string;
-  posthog: string;
-}
-
 export interface ListingTabsProps {
   type: ListingContext;
   potentialSession?: boolean;
@@ -113,23 +100,8 @@ export interface ListingTabsProps {
   sponsor?: string;
 }
 
-export interface ListingState {
-  activeTab: string;
-  activePill: string;
-  activeStatus: ListingStatus;
-  activeSortBy: ListingSortOption;
-  activeOrder: OrderDirection;
-}
-
 export interface ListingTabTriggerProps {
   isActive: boolean;
   onClick: () => void;
-  children: React.ReactNode;
-}
-
-export interface CategoryPillProps {
-  isActive: boolean;
-  onClick: () => void;
-  phEvent: string;
   children: React.ReactNode;
 }

@@ -17,9 +17,9 @@ import {
   getParentRegions,
 } from './utils/region';
 
-export type BuildListingQueryArgs = z.infer<typeof QueryParamsSchema>;
+type BuildListingQueryArgs = z.infer<typeof QueryParamsSchema>;
 
-export interface ListingQueryResult {
+interface ListingQueryResult {
   readonly where: Prisma.BountiesWhereInput;
   readonly orderBy:
     | Prisma.BountiesOrderByWithRelationInput

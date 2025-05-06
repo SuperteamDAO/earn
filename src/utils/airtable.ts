@@ -91,39 +91,10 @@ async function fetchAirtableRecordId(
   }
 }
 
-async function updateAirtableRecord(
-  url: string,
-  data: Record<string, any>,
-  config: ReturnType<typeof airtableConfig>,
-): Promise<AirtableRecord> {
-  try {
-    const response = await axios.patch<AirtableRecord>(
-      url,
-      {
-        fields: data,
-      },
-      config,
-    );
-
-    return response.data;
-  } catch (error) {
-    if (error instanceof AxiosError) {
-      console.error(
-        'Error updating Airtable record:',
-        error.response?.data || error.message,
-      );
-    } else {
-      console.error('Error updating Airtable record:', error);
-    }
-    throw error;
-  }
-}
-
 export {
   airtableConfig,
   airtableInsert,
   airtableUpsert,
   airtableUrl,
   fetchAirtableRecordId,
-  updateAirtableRecord,
 };

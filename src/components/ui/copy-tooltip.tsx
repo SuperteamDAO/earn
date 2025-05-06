@@ -5,7 +5,7 @@ import { cn } from '@/utils/cn';
 
 import { Tooltip, type TooltipProps } from './tooltip';
 
-export interface CopyButtonProps extends Omit<TooltipProps, 'content'> {
+interface CopyButtonProps extends Omit<TooltipProps, 'content'> {
   text: string;
   timeout?: number;
   className?: string;

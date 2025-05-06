@@ -15,13 +15,13 @@ import {
 import { type Listing } from '../types';
 
 export type ListingTab = z.infer<typeof ListingTabSchema>;
-export type ListingPill = z.infer<typeof ListingCategorySchema>;
+export type ListingCategory = z.infer<typeof ListingCategorySchema>;
 export type ListingStatus = z.infer<typeof ListingStatusSchema>;
 export type ListingSortOption = z.infer<typeof ListingSortOptionSchema>;
 export type OrderDirection = z.infer<typeof OrderDirectionSchema>;
 export type ListingContext = z.infer<typeof ListingContextSchema>;
 
-export interface ListingsParams {
+interface ListingsParams {
   context: ListingContext;
   tab: ListingTab;
   category: string;
