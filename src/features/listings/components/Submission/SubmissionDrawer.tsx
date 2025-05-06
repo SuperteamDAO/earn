@@ -452,7 +452,11 @@ export const SubmissionDrawer = ({
                                   <InfoBox
                                     content={e.question}
                                     className="mb-0"
-                                    contentClassName=" [&_p]:!text-[0.9rem] [&_a]:!text-[0.9rem]"
+                                    contentClassName={cn(
+                                      '[&_p]:!text-[0.9rem] [&_a]:!text-[0.9rem] flex items-center',
+                                      e.optional !== true &&
+                                        "after:content-['*'] after:text-red-500 after:ml-1",
+                                    )}
                                     isHtml={true}
                                   />
                                 </div>
@@ -471,7 +475,9 @@ export const SubmissionDrawer = ({
                           render={({ field }) => (
                             <FormItem className={cn('flex flex-col gap-2')}>
                               <div>
-                                <FormLabel isRequired>{e.question}</FormLabel>
+                                <FormLabel isRequired={e.optional !== true}>
+                                  {e.question}
+                                </FormLabel>
                                 {e.description && (
                                   <FormDescription className="whitespace-pre-wrap text-wrap">
                                     {e.description}

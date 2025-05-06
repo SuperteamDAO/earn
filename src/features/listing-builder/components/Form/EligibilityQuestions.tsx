@@ -23,6 +23,7 @@ import {
   LetterText,
   Link2,
   Plus,
+  Settings,
   Trash2,
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
@@ -34,6 +35,7 @@ import {
 
 import { RichEditor } from '@/components/shared/RichEditor';
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import {
   FormControl,
   FormDescription,
@@ -42,6 +44,11 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
 import {
   Select,
   SelectContent,
@@ -55,6 +62,69 @@ import { cn } from '@/utils/cn';
 
 import { hackathonAtom } from '../../atoms';
 import { useListingForm } from '../../hooks';
+
+// Define the interface for eligibility question based on the schema
+interface EligibilityQuestion {
+  order: number;
+  question: string;
+  description?: string | null;
+  type: 'text' | 'paragraph' | 'link' | 'checkbox';
+  optional?: boolean;
+}
+
+interface QuestionSettingsDialogProps {
+  index: number;
+}
+
+function QuestionSettingsPopover({ index }: QuestionSettingsDialogProps) {
+  const form = useListingForm();
+
+  const changeBoolean = (field: any) => {
+    field.onChange(!field.value);
+    form.saveDraft();
+  };
+  return (
+    <FormField
+      control={form.control}
+      name={`eligibility.${index}.optional`}
+      render={({ field }) => (
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className="h-auto p-1 text-muted-foreground text-slate-700 hover:bg-transparent hover:text-black"
+            >
+              <Settings className="h-4 w-4" />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent side="left" className="w-72 p-4" align="end">
+            <div className="space-y-2">
+              <h4 className="font-medium">Question Options</h4>
+              <div className="flex flex-row items-start space-x-3 space-y-0">
+                <Checkbox
+                  checked={field.value === true}
+                  onClick={() => changeBoolean(field)}
+                />
+                <div
+                  className="cursor-pointer space-y-1 leading-none"
+                  onClick={() => changeBoolean(field)}
+                >
+                  <FormLabel className="cursor-pointer">Optional</FormLabel>
+                  <FormDescription className="text-xs">
+                    Makes the question optional for applicants
+                  </FormDescription>
+                  <FormMessage />
+                </div>
+              </div>
+            </div>
+          </PopoverContent>
+        </Popover>
+      )}
+    />
+  );
+}
 
 const questionTypes = [
   { value: 'text', label: 'Text', icon: Baseline },
@@ -152,6 +222,10 @@ function EligibilityQuestion({
     height: 'auto',
   };
 
+  const questionData = form.getValues().eligibility?.[index] as
+    | EligibilityQuestion
+    | undefined;
+
   // Add useEffect to adjust textarea height on mount and value change
   useEffect(() => {
     const adjustTextareaHeight = (textarea: HTMLTextAreaElement) => {
@@ -183,11 +257,11 @@ function EligibilityQuestion({
           const { type: questionType, question } =
             form.getValues()?.eligibility?.[index] ?? {};
           return (
-            <>
-              <FormItem className="group rounded-lg border">
+            <div className="group relative">
+              <FormItem className="rounded-lg border">
                 <div
                   className={cn(
-                    'relative flex cursor-grab items-center justify-between border-b active:cursor-grabbing',
+                    'flex cursor-grab items-center justify-between border-b active:cursor-grabbing',
                     isDragging && 'opacity-50',
                   )}
                   {...attributes}
@@ -204,23 +278,15 @@ function EligibilityQuestion({
                         (type === 'project' || type === 'sponsorship') &&
                         index === 0
                       }
+                      className="after:content-none"
                     >
                       <span className="text-muted-foreground">
                         Question {index + 1}
+                        <span className="text-red-500">
+                          {questionData?.optional === false && ' *'}
+                        </span>
                       </span>
                     </FormLabel>
-                    {(fields.length !== 1 ||
-                      (type !== 'project' && type !== 'sponsorship')) && (
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="icon"
-                        className="absolute bottom-0 right-0 top-0 hidden h-full translate-x-full text-muted-foreground group-hover:flex hover:bg-transparent hover:text-destructive"
-                        onClick={() => handleRemoveQuestion(index)}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    )}
                   </div>
                   <QuestionTypeSelect index={index} />
                 </div>
@@ -304,7 +370,25 @@ function EligibilityQuestion({
                 </div>
               </FormItem>
               <FormMessage />
-            </>
+
+              <div className="absolute right-0 top-0 flex translate-x-full transform opacity-0 transition-opacity group-hover:opacity-100">
+                <div className="flex flex-col">
+                  {(fields.length !== 1 ||
+                    (type !== 'project' && type !== 'sponsorship')) && (
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      className="hover:bg-transparent hover:text-destructive"
+                      onClick={() => handleRemoveQuestion(index)}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  )}
+                  <QuestionSettingsPopover index={index} />
+                </div>
+              </div>
+            </div>
           );
         }}
       />
@@ -363,6 +447,7 @@ export function EligibilityQuestions() {
         order: fields.length + 1,
         question: '',
         type: 'text',
+        optional: false,
       },
       {
         shouldFocus: focus,
@@ -404,7 +489,7 @@ export function EligibilityQuestions() {
               content={
                 <p className="max-w-sm">
                   {type === 'project' || type === 'sponsorship'
-                    ? `Applicant's names, email IDs, Discord / Twitter IDs, and NEAR wallet are collected by default. Please use this space to ask about anything else!`
+                    ? `Applicant's names, email IDs, Discord / Twitter IDs, and NEAR wallet are collected by default. Please use this space to ask about anything else! At least one question is required.`
                     : `The main bounty submission link, the submitter's names, email IDs, Discord / Twitter IDs, and NEAR wallet are collected by default. Please use this space to ask about anything else!`}
                 </p>
               }

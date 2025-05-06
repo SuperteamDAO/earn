@@ -146,7 +146,7 @@ const submissionSchema = (
         } else {
           listing?.eligibility?.forEach((question, index) => {
             const answer = data.eligibilityAnswers?.[index]?.answer;
-            if (question.type === 'checkbox') {
+            if (question.type === 'checkbox' && question.optional !== true) {
               if (answer !== 'true') {
                 ctx.addIssue({
                   code: z.ZodIssueCode.custom,
@@ -155,7 +155,10 @@ const submissionSchema = (
                 });
               }
             }
-            if (!answer || answer.trim() === '') {
+            if (
+              (!answer || answer.trim() === '') &&
+              question.optional !== true
+            ) {
               ctx.addIssue({
                 code: 'custom',
                 path: ['eligibilityAnswers', index, 'answer'],
