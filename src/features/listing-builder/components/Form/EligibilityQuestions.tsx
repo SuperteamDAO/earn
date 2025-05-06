@@ -283,7 +283,7 @@ function EligibilityQuestion({
                       <span className="text-muted-foreground">
                         Question {index + 1}
                         <span className="text-red-500">
-                          {questionData?.optional === false && ' *'}
+                          {questionData?.optional !== true && ' *'}
                         </span>
                       </span>
                     </FormLabel>
