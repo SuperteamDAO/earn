@@ -1,4 +1,5 @@
-import { Home, Newspaper, Search, User } from 'lucide-react';
+import Gleap from 'gleap';
+import { Home, MessageCircle, Newspaper, Search, User } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 
@@ -93,6 +94,14 @@ export function BottomBar({ onSearchOpen }: Props) {
           </Button>
         </Link>
       </AuthWrapper>
+
+      <Button
+        variant="ghost"
+        onClick={() => Gleap.open()}
+        className="hover:bg-transparent active:bg-transparent"
+      >
+        <MessageCircle style={iconStyle} />
+      </Button>
     </div>
   );
 }

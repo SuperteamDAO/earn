@@ -104,6 +104,17 @@ function MyApp({ Component, pageProps }: any) {
 
   useEffect(() => {
     Gleap.initialize('a8VC1kgMViouW0HhfK6aWTrjYEQaXqra');
+    const handleResize = () => {
+      const isMobile = window.innerWidth <= 1024;
+      if (isMobile) {
+        Gleap.showFeedbackButton(false);
+      } else {
+        Gleap.showFeedbackButton(true);
+      }
+    };
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   // forced profile redirection
