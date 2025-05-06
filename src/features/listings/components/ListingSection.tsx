@@ -76,20 +76,19 @@ export const ListingSection = ({
             showViewAllButton ? 'block' : 'hidden',
           )}
         >
-          <Link href={viewAllHref}>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="text-xs text-slate-400 sm:text-sm"
-              onClick={() => {
-                if (type === 'grants') {
-                  posthog.capture('grants_viewall_top');
-                }
-              }}
-            >
-              View All
-            </Button>
-          </Link>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="text-xs text-slate-400 sm:text-sm"
+            onClick={() => {
+              if (type === 'grants') {
+                posthog.capture('grants_viewall_top');
+              }
+            }}
+            asChild
+          >
+            <Link href={viewAllHref}>View All</Link>
+          </Button>
         </div>
       </div>
 
@@ -98,21 +97,22 @@ export const ListingSection = ({
       <div
         className={cn('ph-no-capture', showViewAllButton ? 'block' : 'hidden')}
       >
-        <Link href={viewAllHref}>
-          <Button
-            variant="outline"
-            size="sm"
-            className="my-8 w-full border-slate-300 py-5 text-slate-400"
-            onClick={() => {
-              if (type === 'grants') {
-                posthog.capture('grants_viewall_bottom');
-              }
-            }}
-          >
+        <Button
+          variant="outline"
+          size="sm"
+          className="my-8 w-full border-slate-300 py-5 text-slate-400"
+          onClick={() => {
+            if (type === 'grants') {
+              posthog.capture('grants_viewall_bottom');
+            }
+          }}
+          asChild
+        >
+          <Link href={viewAllHref}>
             View All
             <ArrowRight className="ml-2 h-4 w-4" />
-          </Button>
-        </Link>
+          </Link>
+        </Button>
       </div>
     </div>
   );

@@ -64,7 +64,7 @@ export async function GET(request: Request) {
                   }}
                 >
                   {prefix}
-                  <p
+                  <span
                     style={{
                       color: '#6366F1',
                       position: 'absolute',
@@ -73,7 +73,7 @@ export async function GET(request: Request) {
                     }}
                   >
                     {region}
-                  </p>
+                  </span>
                 </p>
               )}
             </div>

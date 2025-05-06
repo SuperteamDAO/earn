@@ -116,17 +116,18 @@ export const ListingTabs = ({
           <ListingCard key={listing.id} bounty={listing} />
         ))}
         {(type === 'home' || type === 'region') && (
-          <Link className="ph-no-capture" href={viewAllLink()}>
-            <Button
-              className="my-8 w-full border-slate-300 py-5 text-slate-400"
-              onClick={() => posthog.capture('viewall bottom_listings')}
-              size="sm"
-              variant="outline"
-            >
+          <Button
+            className="my-8 w-full border-slate-300 py-5 text-slate-400"
+            onClick={() => posthog.capture('viewall bottom_listings')}
+            size="sm"
+            variant="outline"
+            asChild
+          >
+            <Link className="ph-no-capture" href={viewAllLink()}>
               View All
               <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
-          </Link>
+            </Link>
+          </Button>
         )}
       </>
     );

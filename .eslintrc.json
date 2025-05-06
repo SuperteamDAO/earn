@@ -9,7 +9,7 @@
     "plugin:prettier/recommended"
   ],
   "parser": "@typescript-eslint/parser",
-  "plugins": ["@tanstack/query"],
+  "plugins": ["@tanstack/query", "validate-jsx-nesting"],
   "rules": {
     "@typescript-eslint/consistent-type-imports": [
       "error",
@@ -20,7 +20,8 @@
     ],
     "@tanstack/query/exhaustive-deps": "error",
     "@tanstack/query/no-rest-destructuring": "error",
-    "@tanstack/query/stable-query-client": "error"
+    "@tanstack/query/stable-query-client": "error",
+    "validate-jsx-nesting/no-invalid-jsx-nesting": "error"
   },
   "overrides": [
     // Configuration for TypeScript files

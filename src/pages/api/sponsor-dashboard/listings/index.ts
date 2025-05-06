@@ -93,7 +93,6 @@ NULL as maxBonusSpots,
         AND g.isArchived = false
         AND g.sponsorId = ?
         AND g.status = ?
-        AND (g.airtableId IS NOT NULL OR g.isNative = true)
       )
       SELECT *
       FROM combined_data

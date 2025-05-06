@@ -12,8 +12,9 @@ interface IDefaultProps {
   hideFooter?: boolean;
 }
 
-const Footer = dynamic(() =>
-  import('@/features/navbar/components/Footer').then((mod) => mod.Footer),
+const Footer = dynamic(
+  () => import('@/features/navbar/components/Footer').then((mod) => mod.Footer),
+  { ssr: false },
 );
 
 export const Default = ({

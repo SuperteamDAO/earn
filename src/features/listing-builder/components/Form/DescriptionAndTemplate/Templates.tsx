@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { useAtomValue } from 'jotai';
+import { useAtomValue, useSetAtom } from 'jotai';
 import { ChevronRight, Eye, LayoutGrid, Plus } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -36,6 +36,7 @@ import {
 import { LocalImage } from '@/components/ui/local-image';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useUser } from '@/store/user';
+import { Wand } from '@/svg/wand';
 import { cn } from '@/utils/cn';
 import { getURL } from '@/utils/validUrl';
 
@@ -43,8 +44,9 @@ import { isCreateListingAllowedQuery } from '@/features/listing-builder/queries/
 import { listingTemplatesQuery } from '@/features/listing-builder/queries/listing-templates';
 import { cleanTemplate } from '@/features/listing-builder/utils/form';
 
-import { isEditingAtom } from '../../../atoms';
+import { isAutoGenerateOpenAtom, isEditingAtom } from '../../../atoms';
 import { useListingForm } from '../../../hooks';
+import { AiGenerateFeatureModal } from '../../Modals/AiGenerateFeature';
 
 export function Templates() {
   const posthog = usePostHog();
@@ -81,18 +83,17 @@ export function Templates() {
     user?.role !== 'GOD' &&
     !isEditing;
 
-  const [open, setOpen] = useState(
-    router.pathname === '/dashboard/new' && type !== 'hackathon',
-  );
-  useEffect(() => {
-    setOpen(router.pathname === '/dashboard/new' && type !== 'hackathon');
-  }, [router.pathname]);
+  const [open, setOpen] = useState(false);
+  // useEffect(() => {
+  //   setOpen(router.pathname === '/dashboard/new' && type !== 'hackathon');
+  // }, [router.pathname]);
 
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
   const [selectedTemplate, setSelectedTemplate] =
     useState<ListingTemplate | null>(null);
   const [isStartFromScratchDialogOpen, setIsStartFromScratchDialogOpen] =
     useState(false);
+  const setAutoGenerateOpen = useSetAtom(isAutoGenerateOpenAtom);
 
   const applyTemplate = async (templateToApply: ListingTemplate) => {
     if (!templateToApply) return;
@@ -130,9 +131,19 @@ export function Templates() {
       setOpen(false);
     }
   };
+  const handleAutoGenerate = () => {
+    setAutoGenerateOpen(true);
+    posthog.capture('template_auto-generate');
+    setOpen(false);
+  };
 
   return (
     <>
+      <AiGenerateFeatureModal
+        onClose={() =>
+          setOpen(router.pathname === '/dashboard/new' && type !== 'hackathon')
+        }
+      />
       <Dialog
         open={open}
         onOpenChange={(e) => {
@@ -200,10 +211,21 @@ export function Templates() {
                   disabled={isDisabled}
                   onClick={handleStartFromScratch}
                 >
-                  <Plus className="h-6 w-6" />
+                  <Plus className="!size-7" />
                   <span className="text-base font-medium">
                     Start from Scratch
                   </span>
+                </Button>
+              </DialogClose>
+              <DialogClose asChild>
+                <Button
+                  className="ph-no-capture relative flex h-full w-60 flex-col items-center justify-center gap-4 bg-white text-slate-500 hover:text-slate-700 focus-visible:ring-0"
+                  variant="outline"
+                  disabled={isDisabled}
+                  onClick={handleAutoGenerate}
+                >
+                  <Wand className="!size-6" />
+                  <span className="text-base font-medium">Auto Generate</span>
                 </Button>
               </DialogClose>
               {templatesLoading &&
