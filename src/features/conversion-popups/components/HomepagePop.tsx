@@ -180,8 +180,8 @@ const Mobile = ({
             )}
           </DrawerTitle>
           <DrawerDescription className="text-sm text-slate-500">
-            Sign up to never miss out on amazing opportunities that pay in
-            global standards.
+            Sign up to never miss out on valuable opportunities with competitive
+            compensation.
           </DrawerDescription>
         </DrawerHeader>
         <DrawerFooter className="pt-0">
@@ -253,14 +253,14 @@ const DesktopVariantOne = ({
             </>
           ) : (
             <>
-              {totalUsers?.toLocaleString('en-us')} people have joined. You
-              should too!
+              {totalUsers?.toLocaleString('en-us')} professionals have joined.
+              Join our community today!
             </>
           )}
         </DialogTitle>
         <DialogDescription className="text-sm text-slate-500">
-          Sign up to never miss out on amazing opportunities that pay in global
-          standards.
+          Sign up to never miss out on valuable opportunities with competitive
+          compensation.
         </DialogDescription>
       </DialogHeader>
     </>
@@ -301,7 +301,7 @@ const DesktopVariantTwo = ({
           !
         </DialogTitle>
         <DialogDescription className="text-sm text-slate-500">
-          {`Apply to hundreds of bounties, projects and sponsorships with a single profile.`}
+          {`Apply to hundreds of bounties, projects and professional collaborations with a single profile.`}
         </DialogDescription>
       </DialogHeader>
     </>

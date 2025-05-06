@@ -71,7 +71,7 @@ export const Login = ({
           <p className="text-center text-sm text-slate-600">
             {isSponsor
               ? `from joining ${PROJECT_NAME}`
-              : 'from earning in global standards'}
+              : 'from accessing professional opportunities'}
           </p>
         </div>
         <SignIn

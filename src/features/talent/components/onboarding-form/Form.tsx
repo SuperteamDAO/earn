@@ -91,8 +91,8 @@ export const TalentForm = () => {
   const TitleArray = {
     title: isForcedRedirect ? 'Finish Your Profile' : 'Complete Your Profile',
     subTitle: isForcedRedirect
-      ? 'It takes less than a minute to start earning in global standards. '
-      : `We’ll tailor your ${PROJECT_NAME} experience based on your profile`,
+      ? 'Take a moment to set up your profile and start receiving professional opportunities. '
+      : `We'll personalize your ${PROJECT_NAME} experience based on your profile information`,
   };
 
   const isSubmitDisabled = useMemo(() => {
