@@ -9,7 +9,6 @@ import { LinkTextParser } from '@/components/shared/LinkTextParser';
 import { Loading } from '@/components/shared/Loading';
 import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
 import { LocalImage } from '@/components/ui/local-image';
-import { Skeleton } from '@/components/ui/skeleton';
 import { exclusiveSponsorData } from '@/constants/exclusiveSponsors';
 import { type SponsorType } from '@/interface/sponsor';
 import { Default } from '@/layouts/Default';
@@ -21,7 +20,6 @@ import { GrantsCard } from '@/features/grants/components/GrantsCard';
 import { ListingSection } from '@/features/listings/components/ListingSection';
 import { ListingTabs } from '@/features/listings/components/ListingTabs';
 import { sponsorGrantsQuery } from '@/features/sponsor-dashboard/queries/sponsor-grants';
-import { sponsorListingsQuery } from '@/features/sponsor-dashboard/queries/sponsor-listings';
 
 interface Props {
   slug: string;
@@ -30,10 +28,6 @@ interface Props {
   sponsor: SponsorType;
 }
 const SponsorListingsPage = ({ slug, sponsor, title, description }: Props) => {
-  const { data: listings, isLoading: isListingsLoading } = useQuery(
-    sponsorListingsQuery(slug),
-  );
-
   const { data: grants, isLoading: isGrantsLoading } = useQuery(
     sponsorGrantsQuery(slug),
   );
@@ -84,50 +78,33 @@ Check out all of ${title}’s latest earning opportunities on a single page.
     >
       <div className="flex bg-slate-50 px-4">
         <div className="mx-auto flex w-full max-w-5xl flex-col gap-8 rounded-[10] py-14 md:flex-row">
-          {isListingsLoading ? (
-            <Skeleton className="h-28 w-28 rounded-full" />
-          ) : (
-            <div className="justify-center rounded-full">
-              <LocalImage
-                className="h-28 w-28 rounded-full"
-                alt="Category icon"
-                src={logo!}
-              />
-            </div>
-          )}
+          <div className="justify-center rounded-full">
+            <LocalImage
+              className="h-28 w-28 rounded-full"
+              alt="Category icon"
+              src={logo!}
+            />
+          </div>
 
           <div className="w-full md:w-[80%]">
-            {isListingsLoading ? (
-              <Skeleton className="mt-4 h-4 w-48 md:mt-0" />
-            ) : (
-              <div className="flex items-center gap-2">
-                <p className="text-xl font-semibold">{title}</p>
-                {!!isVerified && (
-                  <VerifiedBadge
-                    style={{
-                      width: '1rem',
-                      height: '1rem',
-                    }}
-                  />
-                )}
-              </div>
-            )}
-            {isListingsLoading ? (
-              <Skeleton className="mt-3 h-3 w-24" />
-            ) : (
-              <p className="max-w-[600px] text-slate-500">@{sSlug}</p>
-            )}
-            {isListingsLoading ? (
-              <div className="mt-2 space-y-2">
-                <Skeleton className="h-3 w-[600px]" />
-                <Skeleton className="h-3 w-[500px]" />
-              </div>
-            ) : (
-              <LinkTextParser
-                className="mt-2 text-slate-600"
-                text={description}
-              />
-            )}
+            <div className="flex items-center gap-2">
+              <p className="text-xl font-semibold">{title}</p>
+              {!!isVerified && (
+                <VerifiedBadge
+                  style={{
+                    width: '1rem',
+                    height: '1rem',
+                  }}
+                />
+              )}
+            </div>
+
+            <p className="max-w-[600px] text-slate-500">@{sSlug}</p>
+
+            <LinkTextParser
+              className="mt-2 text-slate-600"
+              text={description}
+            />
             <div className="mt-3 flex gap-3 text-slate-500">
               {url && (
                 <Link className="flex items-center" href={getURLSanitized(url)}>
@@ -149,13 +126,7 @@ Check out all of ${title}’s latest earning opportunities on a single page.
 
       <div className="w-full bg-white">
         <div className="mx-auto max-w-5xl px-4 pb-20">
-          <ListingTabs
-            bounties={listings?.bounties}
-            isListingsLoading={isListingsLoading}
-            title="Earning Opportunities"
-            take={20}
-            showNotifSub={false}
-          />
+          <ListingTabs type="sponsor" sponsor={slug} />
           {!!grants && !!grants.length && (
             <ListingSection
               type="grants"

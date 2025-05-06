@@ -42,15 +42,7 @@ const RegionsPage = ({
       />
       <div className="w-full">
         <RegionPop st={st} />
-        <ListingTabs
-          bounties={listings?.bounties}
-          isListingsLoading={isListingsLoading}
-          showEmoji
-          title="Freelance Gigs"
-          showViewAll
-          viewAllLink={`/regions/${slug}/all`}
-          take={10}
-        />
+        <ListingTabs type="region" region={slug} />
 
         <ListingSection
           type="grants"

@@ -3,20 +3,24 @@ interface NavItem {
   mobileLabel?: string;
   posthog: string;
   children?: Array<NavItem>;
+  href?: string;
 }
 
 export const LISTING_NAV_ITEMS: Array<NavItem> = [
   {
     label: 'Bounties',
     posthog: 'bounties_navbar',
+    href: '/?tab=bounties',
   },
   {
     label: 'Projects',
     posthog: 'projects_navbar',
+    href: '/?tab=projects',
   },
   {
     label: 'Grants',
     posthog: 'grants_navbar',
+    href: '/grants',
   },
 ];
 

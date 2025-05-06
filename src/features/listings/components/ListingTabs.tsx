@@ -1,3 +1,4 @@
+import { usePrivy } from '@privy-io/react-auth';
 import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import { usePostHog } from 'posthog-js/react';
@@ -37,25 +38,30 @@ const TABS = [
 
 export const ListingTabs = ({
   type,
-  defaultTab = 'all_open',
-  defaultPill = 'All',
+  potentialSession,
+  region,
+  sponsor,
 }: ListingTabsProps) => {
   const posthog = usePostHog();
   const isMd = useBreakpoint('md');
 
+  const { authenticated } = usePrivy();
+
   const {
     activeTab,
-    activePill,
+    activeCategory,
     activeStatus,
     activeSortBy,
     activeOrder,
     handleTabChange,
-    handlePillChange,
+    handleCategoryChange,
     handleStatusChange,
     handleSortChange,
   } = useListingState({
-    defaultTab,
-    defaultPill,
+    defaultCategory:
+      (potentialSession || authenticated) && type === 'home'
+        ? 'For You'
+        : 'All',
   });
 
   const {
@@ -65,10 +71,12 @@ export const ListingTabs = ({
   } = useListings({
     context: type,
     tab: activeTab,
-    pill: activePill,
+    category: activeCategory,
     status: activeStatus,
     sortBy: activeSortBy,
     order: activeOrder,
+    region,
+    sponsor,
   });
 
   useEffect(() => {
@@ -77,6 +85,15 @@ export const ListingTabs = ({
       posthog.capture(initialTab.posthog);
     }
   }, [activeTab, posthog]);
+
+  const viewAllLink = () => {
+    if (type === 'home') {
+      return '/all';
+    }
+    if (type === 'region') {
+      return `/regions/${region}/all`;
+    } else return '/all';
+  };
 
   const renderContent = () => {
     if (isLoading) {
@@ -98,8 +115,8 @@ export const ListingTabs = ({
         {listings.map((listing) => (
           <ListingCard key={listing.id} bounty={listing} />
         ))}
-        {type === 'home' && (
-          <Link className="ph-no-capture" href="/all">
+        {(type === 'home' || type === 'region') && (
+          <Link className="ph-no-capture" href={viewAllLink()}>
             <Button
               className="my-8 w-full border-slate-300 py-5 text-slate-400"
               onClick={() => posthog.capture('viewall bottom_listings')}
@@ -144,28 +161,30 @@ export const ListingTabs = ({
       <div className="-mt-1.5 mb-4 h-0.5 w-full bg-slate-200" />
 
       <div className="mb-2 flex gap-1 overflow-x-auto pb-1">
+        {potentialSession && (
+          <CategoryPill
+            key="foryou"
+            phEvent="foryou_navpill"
+            isActive={activeCategory === 'For You'}
+            onClick={() => handleCategoryChange('For You', 'foryou_navpill')}
+          >
+            For You
+          </CategoryPill>
+        )}
         <CategoryPill
           key="all"
           phEvent="all_navpill"
-          isActive={activePill === 'All'}
-          onClick={() => handlePillChange('All', 'all_navpill')}
+          isActive={activeCategory === 'All'}
+          onClick={() => handleCategoryChange('All', 'all_navpill')}
         >
           All
-        </CategoryPill>
-        <CategoryPill
-          key="foryou"
-          phEvent="foryou_navpill"
-          isActive={activePill === 'For You'}
-          onClick={() => handlePillChange('For You', 'foryou_navpill')}
-        >
-          For You
         </CategoryPill>
         {CATEGORY_NAV_ITEMS?.map((navItem) => (
           <CategoryPill
             key={navItem.label}
             phEvent={navItem.pillPH}
-            isActive={activePill === navItem.label}
-            onClick={() => handlePillChange(navItem.label, navItem.pillPH)}
+            isActive={activeCategory === navItem.label}
+            onClick={() => handleCategoryChange(navItem.label, navItem.pillPH)}
           >
             {isMd ? navItem.label : navItem.mobileLabel || navItem.label}
           </CategoryPill>

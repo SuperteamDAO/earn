@@ -108,8 +108,9 @@ export interface Tab {
 
 export interface ListingTabsProps {
   type: ListingContext;
-  defaultTab?: string;
-  defaultPill?: string;
+  potentialSession?: boolean;
+  region?: string;
+  sponsor?: string;
 }
 
 export interface ListingState {

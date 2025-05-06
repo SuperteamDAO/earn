@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { type z } from 'zod';
 
 import { api } from '@/lib/api';
+
 import {
   type ListingCategorySchema,
   type ListingContextSchema,
@@ -9,7 +10,7 @@ import {
   type ListingStatusSchema,
   type ListingTabSchema,
   type OrderDirectionSchema,
-} from '@/pages/api/v2';
+} from '@/features/listings/constants/schema';
 
 import { type Listing } from '../types';
 
@@ -22,37 +23,37 @@ export type ListingContext = z.infer<typeof ListingContextSchema>;
 
 export interface ListingsParams {
   context: ListingContext;
-  tab: string;
-  pill: string;
+  tab: ListingTab;
+  category: string;
   status?: ListingStatus;
   sortBy?: ListingSortOption;
   order?: OrderDirection;
+  region?: string;
+  sponsor?: string;
 }
-
-const tabMap: Record<string, ListingTab> = {
-  all_open: 'All Open',
-  bounties: 'Bounties',
-  projects: 'Projects',
-};
 
 const fetchListings = async ({
   context,
   tab,
-  pill,
+  category,
   status = 'open',
   sortBy = 'Due Date',
   order = 'asc',
+  region = '',
+  sponsor = '',
 }: ListingsParams): Promise<Listing[]> => {
   const queryParams = new URLSearchParams({
     context,
-    tab: tabMap[tab] || 'All Open',
-    pill,
+    tab: tab,
+    category,
     status,
     sortBy,
     order,
+    region,
+    sponsor,
   });
 
-  const { data } = await api.get(`/api/v2?${queryParams.toString()}`);
+  const { data } = await api.get(`/api/listings?${queryParams.toString()}`);
 
   return data;
 };
@@ -60,13 +61,35 @@ const fetchListings = async ({
 export function useListings({
   context,
   tab,
-  pill,
+  category,
   status,
   sortBy,
   order,
+  region,
+  sponsor,
 }: ListingsParams) {
   return useQuery({
-    queryKey: ['listings', context, tab, pill, status, sortBy, order],
-    queryFn: () => fetchListings({ context, tab, pill, status, sortBy, order }),
+    queryKey: [
+      'listings',
+      context,
+      tab,
+      category,
+      status,
+      sortBy,
+      order,
+      region,
+      sponsor,
+    ],
+    queryFn: () =>
+      fetchListings({
+        context,
+        tab,
+        category,
+        status,
+        sortBy,
+        order,
+        region,
+        sponsor,
+      }),
   });
 }

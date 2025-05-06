@@ -1,6 +1,11 @@
+import { Regions } from '@prisma/client';
 import { type NextApiRequest, type NextApiResponse } from 'next';
 
+import { CombinedRegions } from '@/constants/Superteam';
 import { prisma } from '@/prisma';
+
+import { getPrivyToken } from '@/features/auth/utils/getPrivyToken';
+import { getParentRegions } from '@/features/listings/utils/region';
 
 const TAKE = 20;
 
@@ -62,10 +67,31 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
-  const params = req.query;
-  let userRegion = params['userRegion[]'] as string[];
-  if (typeof userRegion === 'string') {
-    userRegion = [userRegion];
+  const privyDid = await getPrivyToken(req);
+
+  let userRegion: string[] | null = null;
+
+  if (privyDid) {
+    const user = await prisma.user.findUnique({
+      where: { privyDid },
+    });
+
+    if (user) {
+      const matchedGrantsRegion = CombinedRegions.find((region) =>
+        region.country.includes(user.location!),
+      );
+
+      if (matchedGrantsRegion?.region) {
+        userRegion = [
+          matchedGrantsRegion.region,
+          Regions.GLOBAL,
+          ...(matchedGrantsRegion.country || []),
+          ...(getParentRegions(matchedGrantsRegion) || []),
+        ];
+      } else {
+        userRegion = [Regions.GLOBAL];
+      }
+    }
   }
 
   const grants = await getGrants({ userRegion });

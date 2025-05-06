@@ -4,7 +4,7 @@ import { type ReactNode, useMemo } from 'react';
 import { dayjs } from '@/utils/dayjs';
 
 import { ListingCardMini } from '@/features/listings/components/ListingCardMini';
-import { listingsQuery } from '@/features/listings/queries/listings';
+import { listingsQuery } from '@/features/listings/queries/live-listings';
 
 interface LiveListingProps {
   children: ReactNode;
@@ -24,7 +24,6 @@ export const LiveListings = ({
   const { data: listings } = useQuery(
     listingsQuery({
       take: 5,
-      isHomePage: true,
       deadline,
       order: 'asc',
       type: isHackathon ? 'hackathon' : undefined,

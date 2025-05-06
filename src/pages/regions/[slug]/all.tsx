@@ -1,4 +1,3 @@
-import { useQuery } from '@tanstack/react-query';
 import type { NextPageContext } from 'next';
 
 import { type Superteam, Superteams } from '@/constants/Superteam';
@@ -7,7 +6,6 @@ import { Meta } from '@/layouts/Meta';
 import { getURL } from '@/utils/validUrl';
 
 import { ListingTabs } from '@/features/listings/components/ListingTabs';
-import { regionalListingsQuery } from '@/features/listings/queries/region-listings';
 
 export default function AllRegionListingsPage({
   slug,
@@ -18,10 +16,6 @@ export default function AllRegionListingsPage({
   displayName: string;
   st: Superteam;
 }) {
-  const { data: listings, isLoading: isListingsLoading } = useQuery(
-    regionalListingsQuery({ region: slug }),
-  );
-
   const ogImage = new URL(`${getURL()}api/dynamic-og/region/`);
   ogImage.searchParams.set('region', st.region);
   ogImage.searchParams.set('code', st.code!);
@@ -35,13 +29,7 @@ export default function AllRegionListingsPage({
         og={ogImage.toString()}
       />
       <div className="w-full">
-        <ListingTabs
-          bounties={listings?.bounties}
-          isListingsLoading={isListingsLoading}
-          showEmoji
-          title="Freelance Gigs"
-          viewAllLink="/all"
-        />
+        <ListingTabs type="region-all" region={slug} />
       </div>
     </Home>
   );

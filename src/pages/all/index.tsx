@@ -1,32 +1,39 @@
-import { useQuery } from '@tanstack/react-query';
+import { type GetServerSideProps } from 'next';
 
 import { Home } from '@/layouts/Home';
+import { USER_ID_COOKIE_NAME } from '@/store/user';
 
 import { HomepagePop } from '@/features/conversion-popups/components/HomepagePop';
 import { ListingTabs } from '@/features/listings/components/ListingTabs';
-import { listingsQuery } from '@/features/listings/queries/listings';
 
-function AllListingsPage() {
-  const { data: listings, isLoading } = useQuery(
-    listingsQuery({
-      take: 500,
-    }),
-  );
+interface HomePageProps {
+  potentialSession: boolean;
+}
 
+export default function AllListingsPage() {
   return (
     <Home type="listing">
       <HomepagePop />
       <div className="w-full">
-        <ListingTabs
-          bounties={listings}
-          isListingsLoading={isLoading}
-          showEmoji
-          title="Freelance Gigs"
-          viewAllLink="/all"
-        />
+        <ListingTabs type="all" potentialSession={true} />
       </div>
     </Home>
   );
 }
 
-export default AllListingsPage;
+export const getServerSideProps: GetServerSideProps<HomePageProps> = async ({
+  req,
+}) => {
+  const cookies = req.headers.cookie || '';
+
+  const cookieExists = cookies
+    .split(';')
+    .map((cookie) => cookie.trim())
+    .some((cookie) => cookie.startsWith(`${USER_ID_COOKIE_NAME}=`));
+
+  return {
+    props: {
+      potentialSession: cookieExists,
+    },
+  };
+};

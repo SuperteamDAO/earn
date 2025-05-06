@@ -2,8 +2,8 @@ import { type Prisma } from '@prisma/client';
 import { z } from 'zod';
 
 export const ListingTabSchema = z
-  .enum(['All Open', 'Bounties', 'Projects'])
-  .default('All Open');
+  .enum(['all_open', 'bounties', 'projects'])
+  .default('all_open');
 export const OrderDirectionSchema = z.enum(['asc', 'desc']).default('asc');
 export const ListingCategorySchema = z
   .enum(['For You', 'All', 'Content', 'Design', 'Development', 'Other'])
@@ -14,15 +14,19 @@ export const ListingStatusSchema = z
 export const ListingSortOptionSchema = z
   .enum(['Due Date', 'Prize', 'Submissions'])
   .default('Due Date');
-export const ListingContextSchema = z.enum(['home', 'all']).default('all');
+export const ListingContextSchema = z
+  .enum(['home', 'all', 'region', 'region-all', 'sponsor'])
+  .default('all');
 
 export const QueryParamsSchema = z.object({
   tab: ListingTabSchema,
   order: OrderDirectionSchema,
-  pill: ListingCategorySchema,
+  category: ListingCategorySchema,
   status: ListingStatusSchema,
   sortBy: ListingSortOptionSchema,
   context: ListingContextSchema,
+  region: z.string().optional(),
+  sponsor: z.string().optional(),
 });
 
 export const listingSelect = {
