@@ -46,7 +46,7 @@ export function UserMenu() {
     };
 
     checkHashAndOpenModal();
-  }, [isOpen, onOpen]);
+  }, []);
 
   const handleClose = () => {
     onClose();

@@ -59,7 +59,7 @@ export const Header = () => {
     };
 
     checkHashAndOpenModal();
-  }, [isLoginOpen, onLoginOpen, status]);
+  }, []);
 
   return (
     <>
