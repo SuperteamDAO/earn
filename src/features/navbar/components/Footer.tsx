@@ -14,6 +14,7 @@ import {
   CHAIN_NAME,
   CHANGELOG_URL,
   DISCORD_URL,
+  DOCS_URL,
   GITHUB_URL,
   HELP_URL,
   PROJECT_NAME,
@@ -161,6 +162,10 @@ export const Footer = () => {
     {
       text: 'Sponsor FAQ',
       href: '/sponsor',
+    },
+    {
+      text: 'Documentation',
+      href: DOCS_URL,
     },
     {
       text: 'Changelog',
