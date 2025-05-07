@@ -263,7 +263,7 @@ export function RightSideBar({
                   color="#1A7F86"
                 >
                   Don&apos;t start working just yet! Apply first, and then begin
-                  working only once you&apos;ve been hired for the project.
+                  working only once you&apos;ve been chosen for the project.
                 </p>
               </div>
             )}
