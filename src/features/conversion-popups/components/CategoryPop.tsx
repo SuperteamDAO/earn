@@ -57,7 +57,7 @@ const getCategoryInfo = (
       },
       {
         title: `Designers have earned $${formatEarnings} from ${PROJECT_NAME}`,
-        description: `Sign up on ${PROJECT_NAME} to get access to design opportunities worth thousands of dollars.`,
+        description: `Sign up on ${PROJECT_NAME} to get access to design opportunities with fantastic rewards!`,
       },
       {
         title: 'Your path to a Design career',
@@ -73,7 +73,7 @@ const getCategoryInfo = (
       },
       {
         title: `Creators have earned $${formatEarnings} from ${PROJECT_NAME}`,
-        description: `Sign up on ${PROJECT_NAME} to get access to content opportunities worth thousands of dollars.`,
+        description: `Sign up on ${PROJECT_NAME} to get access to content opportunities with fantastic rewards!`,
       },
       {
         title: 'Your path to a Content Creator career',
@@ -89,7 +89,7 @@ const getCategoryInfo = (
       },
       {
         title: `Developers have earned ${formatEarnings} from ${PROJECT_NAME}`,
-        description: `Sign up on ${PROJECT_NAME} to get access to development opportunities worth thousands of dollars.`,
+        description: `Sign up on ${PROJECT_NAME} to get access to development opportunities with fantastic rewards!`,
       },
       {
         title: 'Your path to a Development career',

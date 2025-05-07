@@ -301,7 +301,7 @@ const DesktopVariantTwo = ({
           !
         </DialogTitle>
         <DialogDescription className="text-sm text-slate-500">
-          {`Apply to hundreds of bounties, projects and professional collaborations with a single profile.`}
+          {`Apply many fantastic bounties, projects and professional collaborations with a single profile.`}
         </DialogDescription>
       </DialogHeader>
     </>
