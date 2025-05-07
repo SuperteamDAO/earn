@@ -270,7 +270,7 @@ export const SubmissionDrawer = ({
       subheadingText = (
         <>
           Don&apos;t start working just yet! Apply first, and then begin working
-          only once you&apos;ve been hired for the project by the sponsor.
+          only once you&apos;ve been chosen for the project by the sponsor.
           <p>
             Please note that the sponsor might contact you to assess fit before
             picking the winner.

@@ -106,7 +106,7 @@ export const CreateListingModal = ({
             </div>
 
             <div className="p-8">
-              <h3 className="mb-4 text-lg font-semibold">Hire a Freelancer</h3>
+              <h3 className="mb-4 text-lg font-semibold">Find a Freelancer</h3>
               <p className="mb-4 text-slate-500">
                 Get applications based on a questionnaire set by you, and select
                 one applicant to work with. Give a fixed budget, or ask for
