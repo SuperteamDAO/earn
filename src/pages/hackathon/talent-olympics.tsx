@@ -554,7 +554,7 @@ function About() {
       <div>
         <div className="flex flex-col items-start gap-4">
           <h2 className="text-xl font-bold">
-            Get Hired Based on Your Proof of Work
+            Find a Job Based on Your Proof of Work
           </h2>
           <p className="text-slate-500">
             The Talent Olympics is designed to help talented developers from
