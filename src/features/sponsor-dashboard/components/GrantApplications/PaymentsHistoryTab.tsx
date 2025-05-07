@@ -237,7 +237,7 @@ export const PaymentsHistoryTab = ({
                             onPaymentRecorded={handlePaymentRecorded}
                           />
                         )}
-                        {grantee.paymentDetails && (
+                        {isNativeAndNonST && grantee.paymentDetails && (
                           <span
                             className={cn(
                               'cursor-pointer text-slate-500 transition-transform duration-300',
