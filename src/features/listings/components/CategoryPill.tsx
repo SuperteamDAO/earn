@@ -20,7 +20,7 @@ export function CategoryPill({
   return (
     <div
       className={cn(
-        'ph-no-capture flex cursor-pointer items-center gap-2 px-3 py-0 select-none sm:py-0.5',
+        'ph-no-capture flex cursor-pointer items-center gap-2 px-3 py-0 whitespace-nowrap select-none sm:py-0.5',
         'rounded-full border border-slate-200 text-sm',
         'hover:bg-indigo-100 hover:text-slate-600 hover:no-underline',
         isActive

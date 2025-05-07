@@ -41,7 +41,9 @@ export const ListingFilters = ({
         </div>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuLabel>Filter By</DropdownMenuLabel>
+        <DropdownMenuLabel className="font-medium text-slate-600">
+          Filter By
+        </DropdownMenuLabel>
         {LISTING_FILTER_OPTIONS.map((option) => (
           <DropdownMenuItem
             key={option.label}
@@ -66,7 +68,9 @@ export const ListingFilters = ({
           </DropdownMenuItem>
         ))}
         <DropdownMenuSeparator />
-        <DropdownMenuLabel>Sort By</DropdownMenuLabel>
+        <DropdownMenuLabel className="font-medium text-slate-600">
+          Sort By
+        </DropdownMenuLabel>
         {LISTING_SORT_OPTIONS.map((option) => (
           <DropdownMenuItem
             key={option.label}

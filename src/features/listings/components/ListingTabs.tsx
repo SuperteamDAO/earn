@@ -6,6 +6,7 @@ import { useEffect } from 'react';
 
 import { EmptySection } from '@/components/shared/EmptySection';
 import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
 import { useBreakpoint } from '@/hooks/use-breakpoint';
 
 import { CATEGORY_NAV_ITEMS } from '@/features/navbar/constants';
@@ -135,19 +136,26 @@ export const ListingTabs = ({
 
   return (
     <div className="mt-5 mb-10">
-      <div className="mb-4 flex w-full items-center justify-between">
-        <div className="flex">
-          {TABS.map((tab) => (
-            <ListingTabTrigger
-              key={tab.id}
-              isActive={activeTab === tab.id}
-              onClick={() => handleTabChange(tab.id, tab.posthog)}
-            >
-              <span className="text-[13px] font-medium md:text-[14px]">
-                {tab.title}
-              </span>
-            </ListingTabTrigger>
-          ))}
+      <div className="flex w-full items-center justify-between md:mb-1.5">
+        <div className="flex items-center">
+          <p className="text-lg font-semibold text-slate-800">
+            Browse Opportunities
+          </p>
+
+          <div className="hidden items-center md:flex">
+            <Separator orientation="vertical" className="mx-3 h-6" />
+            {TABS.map((tab) => (
+              <ListingTabTrigger
+                key={tab.id}
+                isActive={activeTab === tab.id}
+                onClick={() => handleTabChange(tab.id, tab.posthog)}
+              >
+                <span className="text-[13px] font-medium md:text-[14px]">
+                  {tab.title}
+                </span>
+              </ListingTabTrigger>
+            ))}
+          </div>
         </div>
 
         <ListingFilters
@@ -158,10 +166,23 @@ export const ListingTabs = ({
           onSortChange={handleSortChange}
         />
       </div>
+      <div className="mt-2 mb-1 md:hidden">
+        {TABS.map((tab) => (
+          <ListingTabTrigger
+            key={tab.id}
+            isActive={activeTab === tab.id}
+            onClick={() => handleTabChange(tab.id, tab.posthog)}
+          >
+            <span className="text-sm font-medium md:text-base">
+              {tab.title}
+            </span>
+          </ListingTabTrigger>
+        ))}
+      </div>
 
-      <div className="-mt-1.5 mb-4 h-0.5 w-full bg-slate-200" />
+      <div className="mb-2 h-px w-full bg-slate-200" />
 
-      <div className="mb-2 flex gap-1 overflow-x-auto pb-1">
+      <div className="flex gap-1 overflow-x-auto py-1">
         {potentialSession && (
           <CategoryPill
             key="foryou"

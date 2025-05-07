@@ -32,7 +32,7 @@ const fetchGrants = async ({
     sponsor,
   });
 
-  const { data } = await api.get(`/api/grants/v2?${queryParams.toString()}`);
+  const { data } = await api.get(`/api/grants?${queryParams.toString()}`);
 
   return data;
 };

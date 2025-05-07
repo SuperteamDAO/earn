@@ -14,7 +14,7 @@ export const ListingTabTrigger = ({
       'hover:text-brand-purple',
       isActive && [
         'text-brand-purple',
-        'after:bg-brand-purple/80 after:absolute after:bottom-[-12px] after:left-0 after:h-[2px] after:w-full',
+        'after:bg-brand-purple/80 after:absolute after:bottom-[-5px] after:left-0 after:h-[1px] after:w-full md:after:bottom-[-9px]',
       ],
       !isActive && 'text-slate-500',
     )}
