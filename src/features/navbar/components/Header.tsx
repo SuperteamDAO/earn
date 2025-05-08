@@ -1,4 +1,5 @@
 import dynamic from 'next/dynamic';
+import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
 import { useEffect } from 'react';
@@ -31,6 +32,7 @@ const MobileNavbar = dynamic(() =>
 
 export const Header = () => {
   const { data: session, status } = useSession();
+  const router = useRouter();
 
   const {
     isOpen: isLoginOpen,
@@ -50,6 +52,12 @@ export const Header = () => {
     onSearchOpen();
   }
 
+  const handleLoginClose = () => {
+    onLoginClose();
+    const urlWithoutHash = window.location.pathname + window.location.search;
+    router.push(urlWithoutHash, undefined, { shallow: true });
+  };
+
   useEffect(() => {
     const checkHashAndOpenModal = () => {
       const hashHasEmail = window.location.hash === '#emailPreferences';
@@ -59,12 +67,12 @@ export const Header = () => {
     };
 
     checkHashAndOpenModal();
-  }, []);
+  }, [isLoginOpen, onLoginOpen, status]);
 
   return (
     <>
       {!!isLoginOpen && (
-        <Login hideCloseIcon isOpen={isLoginOpen} onClose={onLoginClose} />
+        <Login hideCloseIcon isOpen={isLoginOpen} onClose={handleLoginClose} />
       )}
       <BountySnackbar />
       <GrantSnackbar />

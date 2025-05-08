@@ -46,11 +46,12 @@ export function UserMenu() {
     };
 
     checkHashAndOpenModal();
-  }, []);
+  }, [isOpen, onOpen]);
 
   const handleClose = () => {
     onClose();
-    router.push(router.asPath, undefined, { shallow: true });
+    const urlWithoutHash = window.location.pathname + window.location.search;
+    router.push(urlWithoutHash, undefined, { shallow: true });
   };
 
   return (
