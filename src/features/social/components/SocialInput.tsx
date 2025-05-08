@@ -31,24 +31,32 @@ const getDisplayValue = (name: SocialType, value: string) => {
 type SocialInputAllProps = {
   control: Control<any>;
   required?: SocialType[];
+  exclude?: SocialType[];
 };
 
-export const SocialInputAll = ({ control, required }: SocialInputAllProps) => {
+export const SocialInputAll = ({
+  control,
+  required,
+  exclude,
+}: SocialInputAllProps) => {
   return (
     <>
-      {socials.map(({ name, placeholder }) => {
-        return (
-          <div className="mb-5" key={name}>
-            <SocialInput
-              name={name}
-              socialName={name}
-              placeholder={placeholder}
-              required={required?.includes(name)}
-              control={control}
-            />
-          </div>
-        );
-      })}
+      {socials
+        .sort((a) => (required?.includes(a.name) ? -1 : 1))
+        .filter((s) => !exclude?.includes(s.name))
+        .map(({ name, placeholder }) => {
+          return (
+            <div className="mb-5" key={name}>
+              <SocialInput
+                name={name}
+                socialName={name}
+                placeholder={placeholder}
+                required={required?.includes(name)}
+                control={control}
+              />
+            </div>
+          );
+        })}
     </>
   );
 };

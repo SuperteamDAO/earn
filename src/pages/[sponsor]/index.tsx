@@ -1,9 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { type GetServerSideProps } from 'next';
 import Head from 'next/head';
-import Link from 'next/link';
-import { FaXTwitter } from 'react-icons/fa6';
-import { MdOutlineInsertLink } from 'react-icons/md';
 
 import { LinkTextParser } from '@/components/shared/LinkTextParser';
 import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
@@ -13,10 +10,17 @@ import { PROJECT_NAME } from '@/constants/project';
 import { type SponsorType } from '@/interface/sponsor';
 import { Default } from '@/layouts/Default';
 import { prisma } from '@/prisma';
-import { getTwitterUrl, getURLSanitized } from '@/utils/getURLSanitized';
 import { getURL } from '@/utils/validUrl';
 
 import { ListingTabs } from '@/features/listings/components/ListingTabs';
+import {
+  Discord,
+  GitHub,
+  Linkedin,
+  Telegram,
+  Twitter,
+  Website,
+} from '@/features/social/components/SocialIcons';
 import { sponsorListingsQuery } from '@/features/sponsor-dashboard/queries/sponsor-listings';
 
 interface Props {
@@ -44,9 +48,17 @@ const SponsorListingsPage = ({
 
   const logo = sponsor.logo;
   const url = sponsor.url;
-  const twitter = sponsor.twitter;
   const isVerified = sponsor.isVerified;
   const sSlug = sponsor.slug;
+
+  const socialLinks = [
+    { Icon: Website, link: url },
+    { Icon: Twitter, link: sponsor.twitter },
+    { Icon: Linkedin, link: sponsor.linkedin },
+    { Icon: GitHub, link: sponsor.github },
+    { Icon: Discord, link: sponsor.discord },
+    { Icon: Telegram, link: sponsor.telegram },
+  ];
 
   const ogImage = new URL(`${getURL()}api/dynamic-og/sponsor/`);
   ogImage.searchParams.set('logo', logo || '');
@@ -138,19 +150,11 @@ Check out all of ${title}’s latest earning opportunities on a single page.
             </div>
 
             <div className="mt-3 flex gap-3 text-slate-500">
-              {url && (
-                <Link className="flex items-center" href={getURLSanitized(url)}>
-                  <MdOutlineInsertLink className="h-5 w-5" />
-                </Link>
-              )}
-              {twitter && (
-                <Link
-                  className="flex items-center"
-                  href={getTwitterUrl(twitter)}
-                >
-                  <FaXTwitter className="h-4 w-4" />
-                </Link>
-              )}
+              {socialLinks
+                .filter(({ link }) => link)
+                .map(({ Icon, link }, i) => {
+                  return <Icon link={link} className="h-4 w-4" key={i} />;
+                })}
             </div>
           </div>
         </div>

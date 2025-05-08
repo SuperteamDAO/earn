@@ -4,6 +4,8 @@ const urlPatterns = {
   twitter: /^(?:https?:\/\/)?(?:www\.)?(?:twitter\.com|x\.com)\/([^/]+)\/?$/,
   linkedin: /^(?:https?:\/\/)?(?:www\.)?linkedin\.com\/(?:in|pub)\/([^/]+)\/?$/,
   github: /^(?:https?:\/\/)?(?:www\.)?github\.com\/([^/]+)\/?$/,
+  linkedinCompany:
+    /^(?:https?:\/\/)?(?:www\.)?linkedin\.com\/company\/([^/]+)\/?$/,
   telegram: /^(?:https?:\/\/)?(?:www\.)?(?:t\.me|telegram\.me)\/([^/]+)\/?$/,
 };
 
@@ -15,6 +17,7 @@ export const linkedUsernames = z.enum([
   'linkedin',
   'twitter',
   'github',
+  'linkedinCompany',
   'telegram',
 ]);
 type LinkedUsernames = z.infer<typeof linkedUsernames>;

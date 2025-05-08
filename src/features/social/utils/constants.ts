@@ -12,6 +12,7 @@ export type SocialType =
   | 'discord'
   | 'twitter'
   | 'github'
+  | 'linkedinCompany'
   | 'linkedin'
   | 'telegram'
   | 'website';
@@ -50,6 +51,13 @@ export const socials: Social[] = [
     placeholder: 'johncena',
     icon: FaLinkedin,
     prefix: 'https://linkedin.com/in/',
+  },
+  {
+    name: 'linkedinCompany',
+    label: 'linkedin.com/company/',
+    placeholder: 'near-foundation',
+    icon: FaLinkedin,
+    prefix: 'https://linkedin.com/company/',
   },
   {
     name: 'telegram',

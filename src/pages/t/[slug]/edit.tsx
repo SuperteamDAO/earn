@@ -451,6 +451,7 @@ export default function EditProfilePage({ slug }: { slug: string }) {
               <SocialInputAll
                 control={control}
                 required={hasDevSkills(skills) ? ['github'] : ['twitter']}
+                exclude={['linkedinCompany']}
               />
 
               <p className="mb-5 mt-12 text-lg font-semibold text-slate-600">

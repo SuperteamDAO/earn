@@ -28,7 +28,7 @@ import { Meta } from '@/layouts/Meta';
 import { useUser } from '@/store/user';
 import { uploadAndReplaceImage } from '@/utils/image';
 
-import { SocialInput } from '@/features/social/components/SocialInput';
+import { SocialInputAll } from '@/features/social/components/SocialInput';
 import { extractSocialUsername } from '@/features/social/utils/extractUsername';
 import { useSlugValidation } from '@/features/sponsor/hooks/useSlugValidation';
 import { useSponsorNameValidation } from '@/features/sponsor/hooks/useSponsorNameValidation';
@@ -58,8 +58,12 @@ export default function UpdateSponsor() {
       bio: '',
       logo: '',
       industry: '',
-      url: '',
+      website: '',
       twitter: '',
+      linkedinCompany: '',
+      github: '',
+      telegram: '',
+      discord: '',
       entityName: '',
     },
   });
@@ -117,8 +121,20 @@ export default function UpdateSponsor() {
 
   useEffect(() => {
     if (sponsorData) {
-      const { bio, industry, name, slug, logo, twitter, url, entityName } =
-        sponsorData;
+      const {
+        bio,
+        industry,
+        name,
+        slug,
+        logo,
+        twitter,
+        url,
+        entityName,
+        linkedin,
+        github,
+        telegram,
+        discord,
+      } = sponsorData;
       setSponsorName(name);
       setSlug(slug);
       setLogoPreview(logo || '');
@@ -128,7 +144,15 @@ export default function UpdateSponsor() {
         bio,
         logo,
         industry,
-        url,
+        website: url,
+        linkedinCompany: linkedin
+          ? extractSocialUsername('linkedinCompany', linkedin) || ''
+          : '',
+        github: github ? extractSocialUsername('github', github) || '' : '',
+        telegram: telegram
+          ? extractSocialUsername('telegram', telegram) || ''
+          : '',
+        discord: discord || '',
         twitter: twitter
           ? extractSocialUsername('twitter', twitter) || undefined
           : undefined,
@@ -238,26 +262,16 @@ export default function UpdateSponsor() {
                   <Input placeholder="starkindustries" value={slug} />
                 </FormFieldWrapper>
               </div>
-              <div className="my-6 flex w-full justify-between gap-4">
-                <FormFieldWrapper
-                  control={form.control}
-                  name="url"
-                  label="Entity URL"
-                  isRequired
-                >
-                  <Input placeholder="https://starkindustries.com" />
-                </FormFieldWrapper>
 
-                <SocialInput
-                  name="twitter"
-                  socialName={'twitter'}
-                  formLabel="Entity Twitter"
-                  placeholder="@StarkIndustries"
-                  required
-                  control={form.control}
-                  height="h-9"
-                />
-              </div>
+              <p className="mb-5 mt-5 text-lg font-semibold text-slate-600">
+                SOCIALS
+              </p>
+
+              <SocialInputAll
+                control={form.control}
+                required={['website']}
+                exclude={['linkedin']}
+              />
 
               <div className="flex w-full">
                 <FormFieldWrapper
