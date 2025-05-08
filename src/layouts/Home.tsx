@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import React, { type ReactNode, useEffect, useState } from 'react';
 
-import { PROJECT_NAME } from '@/constants/project';
+import { CHAIN_NAME, PROJECT_NAME } from '@/constants/project';
 import { type Team } from '@/constants/Team';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
@@ -63,8 +63,8 @@ export function Home({ children, type, st, isAuth }: HomeProps) {
       className="bg-white"
       meta={
         <Meta
-          title={`${PROJECT_NAME} | Professional Opportunities Platform`}
-          description={`Explore the latest opportunities on ${PROJECT_NAME}, offering projects across Design, Development, and Content creation.`}
+          title={`${PROJECT_NAME} | Gigs Marketplace Platform for the ${CHAIN_NAME} Ecosystem`}
+          description={`Explore bounties, projects, and sponsorship opportunities.`}
           canonical={getURL()}
         />
       }
