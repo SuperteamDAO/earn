@@ -27,13 +27,7 @@ export function TalentButton({
           onClick={() => checkTalent()}
           disabled={isLoading}
         >
-          {isLoading ? (
-            'Redirecting...'
-          ) : (
-            <>
-              Continue as Talent <span className="ml-1">-&gt;</span>
-            </>
-          )}
+          {isLoading ? 'Redirecting...' : <>Continue as Talent</>}
         </Button>
       </Link>
     </>

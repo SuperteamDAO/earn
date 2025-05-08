@@ -121,8 +121,7 @@ export default function NewProfilePage({
                   Continue as Talent
                 </p>
                 <p className="text-lg leading-5 tracking-[-0.2px] text-slate-500">
-                  Create a profile to start submitting, and get notified on new
-                  work opportunities
+                  Create a profile, get notified of opportunities, and apply
                 </p>
               </div>
 
@@ -186,7 +185,7 @@ export default function NewProfilePage({
                 Continue as a Sponsor
               </p>
               <p className="text-lg leading-5 tracking-[-0.2px] text-slate-500">
-                Create a listing for your project, find a talent, and get work
+                Create a listing for your project, find talent, and get work
                 done
               </p>
             </div>
