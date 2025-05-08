@@ -9,9 +9,7 @@ export interface Stats {
 }
 
 const fetchTracks = async (slug: string): Promise<TrackProps[]> => {
-  const response = await api.get('/api/hackathon/', {
-    params: { slug },
-  });
+  const response = await api.get(`/api/hackathon/${slug}`);
   return response.data;
 };
 

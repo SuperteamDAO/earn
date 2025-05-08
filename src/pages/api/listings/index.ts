@@ -8,7 +8,7 @@ import {
   listingSelect,
   QueryParamsSchema,
 } from '@/features/listings/constants/schema';
-import { buildListingQuery } from '@/features/listings/query-builder';
+import { buildListingQuery } from '@/features/listings/utils/query-builder';
 
 export default async function handler(
   req: NextApiRequest,
@@ -43,8 +43,6 @@ export default async function handler(
     }
 
     const { where, orderBy, take } = await buildListingQuery(queryData, user);
-
-    console.log('where', where);
 
     const listings = await prisma.bounties.findMany({
       where,

@@ -15,7 +15,7 @@ import {
   filterRegionCountry,
   getCombinedRegion,
   getParentRegions,
-} from './utils/region';
+} from './region';
 
 type BuildListingQueryArgs = z.infer<typeof QueryParamsSchema>;
 

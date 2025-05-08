@@ -78,13 +78,9 @@ export const GrantsSection = ({ type, region, sponsor }: GrantSectionProps) => {
 
   return (
     <div className={cn('mx-auto my-10 w-[98%] md:w-full')}>
-      <div className="mb-1 flex items-center justify-between pb-3">
-        <div className="flex items-center">
-          <p className="text-base font-semibold text-slate-700 md:text-lg">
-            Grants
-          </p>
-        </div>
-      </div>
+      <p className="mb-1.5 text-lg font-semibold text-slate-800">Grants</p>
+
+      <div className="mb-3 h-px w-full bg-slate-200" />
 
       <div className="mb-2 flex gap-1 overflow-x-auto pb-1">
         <CategoryPill

@@ -10,12 +10,12 @@ interface HomePageProps {
   potentialSession: boolean;
 }
 
-export default function AllListingsPage() {
+export default function AllListingsPage({ potentialSession }: HomePageProps) {
   return (
     <Home type="listing">
       <HomepagePop />
       <div className="w-full">
-        <ListingTabs type="all" potentialSession={true} />
+        <ListingTabs type="all" potentialSession={potentialSession} />
       </div>
     </Home>
   );

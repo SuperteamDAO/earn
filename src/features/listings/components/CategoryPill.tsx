@@ -4,7 +4,7 @@ import { cn } from '@/utils/cn';
 
 interface CategoryPillProps {
   children: React.ReactNode;
-  phEvent: string;
+  phEvent?: string;
   isActive?: boolean;
   onClick?: () => void;
 }
@@ -28,7 +28,9 @@ export function CategoryPill({
           : 'text-slate-500',
       )}
       onClick={() => {
-        posthog.capture(phEvent);
+        if (phEvent) {
+          posthog.capture(phEvent);
+        }
         onClick?.();
       }}
     >
