@@ -318,6 +318,10 @@ model Sponsors {
   industry          String
   twitter           String?
   bio               String?
+  linkedin          String?
+  discord           String?
+  telegram          String?
+  github            String?
   createdAt         DateTime            @default(now())
   updatedAt         DateTime            @updatedAt
   isArchived        Boolean             @default(false)

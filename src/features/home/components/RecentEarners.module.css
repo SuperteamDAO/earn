@@ -1,0 +1,30 @@
+.marqueeContainer {
+  height: 300px;
+  overflow: hidden;
+}
+
+.marquee {
+  display: flex;
+  flex-direction: column;
+  animation: vertical-marquee var(--speed) linear infinite;
+}
+
+.marquee {
+  --speed: 35s;
+}
+
+
+@keyframes vertical-marquee {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    /* Translate up by 1/3 of the total height */
+    /* This assumes the list is duplicated 3 times */
+    transform: translateY(-33.33%);
+  }
+}
+
+.marqueeContainer:hover .marquee {
+  animation-play-state: paused;
+} 

@@ -190,7 +190,7 @@ export const HowItWorks = () => {
                 {`Participate in Bounties & Projects`}
               </button>
               <p className="text-base font-medium text-gray-500">
-                to build proof of work
+                to build your professional portfolio
               </p>
             </div>
             <div className="ml-[0.8125rem]">
@@ -204,7 +204,7 @@ export const HowItWorks = () => {
                 onClick={() => {
                   if (!isLoading && hasWins) return;
                   if (user?.id) {
-                    posthog.capture('win_getting started');
+                    posthog.capture('success_getting started');
                     router.push('/feed');
                   }
                 }}
@@ -212,7 +212,7 @@ export const HowItWorks = () => {
                 Get Paid for Your Work
               </button>
               <p className="text-base font-medium text-gray-500">
-                in global standards
+                with competitive compensation
               </p>
             </div>
           </div>

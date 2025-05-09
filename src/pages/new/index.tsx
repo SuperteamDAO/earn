@@ -121,8 +121,7 @@ export default function NewProfilePage({
                   Continue as Talent
                 </p>
                 <p className="text-lg leading-5 tracking-[-0.2px] text-slate-500">
-                  Create a profile to start submitting, and get notified on new
-                  work opportunities
+                  Create a profile, get notified of opportunities, and apply
                 </p>
               </div>
 
@@ -137,7 +136,7 @@ export default function NewProfilePage({
                       alt={'user icon'}
                       src={'/onboarding/talent-banner.webp'}
                     />
-                    <div className="absolute left-0 top-0 h-full w-full bg-violet-400 mix-blend-overlay" />
+                    <div className="absolute left-0 top-0 h-full w-full bg-[#84C3AC] mix-blend-overlay" />
                   </div>
                   <div className="flex flex-col gap-5 px-4">
                     <BulletPoint type="TALENT">
@@ -186,7 +185,7 @@ export default function NewProfilePage({
                 Continue as a Sponsor
               </p>
               <p className="text-lg leading-5 tracking-[-0.2px] text-slate-500">
-                Create a listing for your project, find a talent, and get work
+                Create a listing for your project, find talent, and get work
                 done
               </p>
             </div>
@@ -201,7 +200,7 @@ export default function NewProfilePage({
                     alt={'user icon'}
                     src={'/onboarding/sponsor-banner.webp'}
                   />
-                  <div className="absolute left-0 top-0 h-full w-full bg-emerald-50 mix-blend-overlay" />
+                  <div className="absolute left-0 top-0 h-full w-full bg-[#9CE2E1] mix-blend-overlay" />
                 </div>
                 <div className="flex flex-col gap-5 px-4">
                   <BulletPoint type="SPONSOR">

@@ -62,7 +62,7 @@ export const CompensationAmount = ({
       </div>
       {compensationType === 'variable' && !token && (
         <div className="flex items-center gap-0.5 sm:gap-1">
-          <span className={className}>Send Quote</span>
+          <span className={className}>Submit Now</span>
           <ArrowRight className="h-3 w-3 sm:h-4 sm:w-4" />
         </div>
       )}

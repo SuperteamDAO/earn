@@ -20,7 +20,14 @@ export default async function handler(
         usdValue: true,
       },
       where: {
-        isWinnersAnnounced: true,
+        OR: [
+          {
+            isWinnersAnnounced: true,
+          },
+          {
+            type: 'sponsorship',
+          },
+        ],
         isPublished: true,
         status: 'OPEN',
       },

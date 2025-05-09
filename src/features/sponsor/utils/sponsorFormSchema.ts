@@ -1,32 +1,49 @@
 import { z } from 'zod';
 
-import { URL_REGEX } from '@/constants/URL_REGEX';
+import {
+  discordInviteSchema,
+  githubUsernameSchema,
+  linkedinCompanyUsernameSchema,
+  telegramUsernameSchema,
+  twitterUsernameSchema,
+  websiteUrlSchema,
+} from '@/features/social/utils/schema';
 
-import { twitterUsernameSchema } from '@/features/social/utils/schema';
+export const sponsorBaseSchema = z
+  .object({
+    name: z.string().min(1, 'Entity name is required'),
+    slug: z
+      .string()
+      .min(1, 'Entity username is required')
+      .regex(
+        /^[a-zA-Z0-9-]+$/,
+        `Slug can only contain lowercase letters, numbers, '_', and '-'`,
+      )
+      .toLowerCase(),
+    bio: z
+      .string()
+      .min(1, 'Entity bio is required')
+      .max(180, 'Bio must be less than 180 characters'),
+    logo: z.string().min(1, 'Entity logo is required'),
+    industry: z.string().min(1, 'At least one industry must be selected'),
 
-export const sponsorBaseSchema = z.object({
-  name: z.string().min(1, 'Entity name is required'),
-  slug: z
-    .string()
-    .min(1, 'Entity username is required')
-    .regex(
-      /^[a-zA-Z0-9-]+$/,
-      `Slug can only contain lowercase letters, numbers, '_', and '-'`,
-    )
-    .toLowerCase(),
-  bio: z
-    .string()
-    .min(1, 'Entity bio is required')
-    .max(180, 'Bio must be less than 180 characters'),
-  logo: z.string().min(1, 'Entity logo is required'),
-  industry: z.string().min(1, 'At least one industry must be selected'),
-  url: z
-    .string()
-    .min(1, 'Entity URL is required')
-    .regex(URL_REGEX, 'Invalid URL'),
-  twitter: z.optional(twitterUsernameSchema),
-  entityName: z.string().min(1, 'Entity name is required'),
-});
+    entityName: z.string().min(1, 'Entity name is required'),
+    discord: discordInviteSchema.optional().or(z.literal('')),
+    twitter: twitterUsernameSchema.optional().or(z.literal('')),
+    github: githubUsernameSchema.optional().or(z.literal('')),
+    linkedinCompany: linkedinCompanyUsernameSchema.optional().or(z.literal('')),
+    telegram: telegramUsernameSchema.optional().or(z.literal('')),
+    website: websiteUrlSchema.optional().or(z.literal('')),
+  })
+  .superRefine((data, ctx) => {
+    if (!data.website) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Entity URL is required',
+        path: ['website'],
+      });
+    }
+  });
 
 export const userSponsorDetailsSchema = z.object({
   firstName: z
@@ -64,8 +81,12 @@ export const transformFormToApiData = (data: SponsorFormValues) => {
     bio: data.sponsor.bio,
     logo: data.sponsor.logo,
     industry: data.sponsor.industry,
-    url: data.sponsor.url,
-    twitter: data.sponsor.twitter,
+    twitter: data.sponsor.twitter || undefined,
+    github: data.sponsor.github || undefined,
+    discord: data.sponsor.discord || undefined,
+    linkedinCompany: data.sponsor.linkedinCompany || undefined,
+    telegram: data.sponsor.telegram || undefined,
+    website: data.sponsor.website,
     entityName: data.sponsor.entityName,
   };
 

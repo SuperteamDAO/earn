@@ -34,8 +34,7 @@ interface GrantInfo {
 }
 const grantInfo: GrantInfo = {
   title: 'Ready to build out your next idea?',
-  description:
-    'Apply to grants worth thousands of dollars with a single profile.',
+  description: 'Apply to many fantastic grants with a single profile.',
   icon: ASSET_URL + '/icons/bank-2.png',
 };
 

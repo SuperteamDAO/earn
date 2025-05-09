@@ -54,7 +54,7 @@ const VariantInfo = (
     },
     1: {
       title: `High chances of winning this ${type}`,
-      description: `This ${type} ${submissionCount > 0 ? 'only' : ''} has ${submissionCount} ${verb}. Sign up to get access to this well-paying ${type}!`,
+      description: `This ${type} ${submissionCount > 0 ? 'only' : ''} has ${submissionCount} ${verb}. Sign up to get access to this fantastic ${type}!`,
       sponsorName: listing?.sponsor?.name,
       sponsorLogo: listing?.sponsor?.logo,
     },

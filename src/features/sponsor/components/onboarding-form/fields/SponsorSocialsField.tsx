@@ -1,5 +1,5 @@
 import { Info, Plus, Trash2 } from 'lucide-react';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 
 import { Button } from '@/components/ui/button';
@@ -15,71 +15,39 @@ import { Label } from '@/components/ui/label';
 import { Tooltip } from '@/components/ui/tooltip';
 
 import { SocialInput } from '@/features/social/components/SocialInput';
-import { type NewTalentFormData } from '@/features/talent/schema';
-import { hasDevSkills } from '@/features/talent/utils/skills';
+import { type SponsorFormValues } from '@/features/sponsor/utils/sponsorFormSchema';
 
-type SocialTypeWithoutLinkedinCompany =
+type SocialTypeWithoutLinkedin =
   | 'twitter'
   | 'github'
   | 'discord'
-  | 'linkedin'
+  | 'linkedinCompany'
   | 'telegram'
   | 'website';
 
-const ALL_SOCIALS: SocialTypeWithoutLinkedinCompany[] = [
+const ALL_SPONSOR_SOCIALS: SocialTypeWithoutLinkedin[] = [
   'twitter',
   'github',
   'discord',
-  'linkedin',
+  'linkedinCompany',
   'telegram',
   'website',
 ];
 
-export function SocialsField() {
-  const form = useFormContext<NewTalentFormData>();
-  const { control, watch, clearErrors, getValues, setValue } = form;
+export function SponsorSocialsField() {
+  const form = useFormContext<SponsorFormValues>();
+  const { control, setValue } = form;
 
   const [selectedSocials, setSelectedSocials] = useState<
-    SocialTypeWithoutLinkedinCompany[]
-  >(['twitter']);
-
-  const skills = watch('skills');
-  const requiredSocial = useMemo(() => {
-    if (hasDevSkills(skills)) {
-      clearErrors('twitter');
-      return 'github';
-    } else {
-      clearErrors('github');
-      return 'twitter';
-    }
-  }, [skills]);
-
-  useEffect(() => {
-    const twitter = getValues('twitter');
-    const github = getValues('github');
-    setSelectedSocials((prev) => {
-      const newSocials: SocialTypeWithoutLinkedinCompany[] = [requiredSocial];
-      if (requiredSocial === 'twitter' && !!github) {
-        newSocials.push('github');
-      }
-      if (requiredSocial === 'github' && !!twitter) {
-        newSocials.push('twitter');
-      }
-      newSocials.push(
-        ...prev.filter(
-          (s) => s !== requiredSocial && s !== 'github' && s !== 'twitter',
-        ),
-      );
-      return newSocials;
-    });
-  }, [requiredSocial]);
+    SocialTypeWithoutLinkedin[]
+  >(['website']);
 
   const handleToggleSocial = (
-    social: SocialTypeWithoutLinkedinCompany,
+    social: SocialTypeWithoutLinkedin,
     checked: boolean,
   ) => {
-    if (social === requiredSocial && !checked) {
-      return;
+    if (social === 'website' && !checked) {
+      return; // Prevent removing the mandatory website field
     }
     setSelectedSocials((prev) => {
       if (checked) {
@@ -88,18 +56,17 @@ export function SocialsField() {
         }
         return prev;
       } else {
-        setValue(social, '');
+        setValue(`sponsor.${social}`, '');
         return prev.filter((s) => s !== social);
       }
     });
   };
 
   const orderedSelectedSocials = useMemo(() => {
-    return [
-      requiredSocial,
-      ...selectedSocials.filter((s) => s !== requiredSocial),
-    ] as SocialTypeWithoutLinkedinCompany[];
-  }, [selectedSocials, requiredSocial]);
+    // Ensure website is always first and required
+    const socials = selectedSocials.filter((s) => s !== 'website');
+    return ['website', ...socials] as SocialTypeWithoutLinkedin[];
+  }, [selectedSocials]);
 
   return (
     <div>
@@ -110,13 +77,13 @@ export function SocialsField() {
               Socials{' '}
             </Label>
             <div className="lg:hidden">
-              <Tooltip content={'Fill at least one, but more the merrier'}>
+              <Tooltip content={'Provide at least the Website URL.'}>
                 <Info className="h-3 w-3 text-slate-500" />
               </Tooltip>
             </div>
           </span>
           <p className="mt-0 hidden text-xs text-muted-foreground text-slate-500 sm:text-[0.8rem] lg:block">
-            Fill at least one, but more the merrier
+            Provide at least the Website URL.
           </p>
         </div>
         <div>
@@ -136,12 +103,12 @@ export function SocialsField() {
                 Choose Socials
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
-              {ALL_SOCIALS.map((social) => {
+              {ALL_SPONSOR_SOCIALS.map((social) => {
                 const isChecked = selectedSocials.includes(social);
-                const isDisabled = social === requiredSocial && isChecked;
+                const isDisabled = social === 'website'; // Disable removing website
                 return (
                   <DropdownMenuCheckboxItem
-                    key={social}
+                    key={social as string}
                     checked={isChecked}
                     disabled={isDisabled}
                     onCheckedChange={(checked) =>
@@ -163,20 +130,20 @@ export function SocialsField() {
           <div className="group relative" key={social}>
             <SocialInput
               control={control}
-              name={social}
+              name={`sponsor.${social}`}
               socialName={social}
-              required={social === requiredSocial}
+              required={social === 'website'}
               placeholder={
-                social !== 'website'
-                  ? `Enter your ${social?.charAt(0).toUpperCase() + social?.slice(1).toLowerCase()} username`
-                  : 'Enter your Website URL'
+                social !== 'website' && social !== 'discord'
+                  ? `Enter Entity ${social?.charAt(0).toUpperCase() + social?.slice(1).toLowerCase()} username`
+                  : `Enter Entity ${social?.charAt(0).toUpperCase() + social?.slice(1).toLowerCase()} URL`
               }
               height="h-[2.3rem]"
               classNames={{
-                input: 'pr-8',
+                input: social === 'website' ? '' : 'pr-8', // No padding for website
               }}
             />
-            {social !== requiredSocial && (
+            {social !== 'website' && (
               <Button
                 type="button"
                 variant="ghost"

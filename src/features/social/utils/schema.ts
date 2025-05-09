@@ -131,6 +131,40 @@ export const linkedinUsernameSchema = z
   })
   .transform((val) => transformedUrl('linkedin', val));
 
+// LINKEDIN COMPANY
+// - Length: 3-100
+// - Allowed: letters, numbers and dashes
+// - Not Allowed: Cannot end with dash
+// - Transform: https://www.linkedin.com/company/<username>
+export const linkedinCompanyUsernameSchema = z
+  .string()
+  .min(3, { message: usernameShortMessage(3) })
+  .max(100, { message: usernameLongMessage(100) })
+  .superRefine((val, ctx) => {
+    if (val.startsWith('https://') || val.startsWith('http://')) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: platformNameMessage('linkedin'),
+      });
+    }
+    for (const char of val) {
+      if (!/[a-zA-Z0-9-]/.test(char)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: invalidCharacterMessage(char, `letters, numbers and '-'`),
+        });
+      }
+    }
+    // Ensure it doesn't start or end with dash
+    if (val.endsWith('-')) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Username cannot end with a dash',
+      });
+    }
+  })
+  .transform((val) => transformedUrl('linkedinCompany', val));
+
 // TELEGRAM
 // - Length: 5-32
 // - Allowed: letters (a-z, A-Z), numbers (0-9), underscore (_)
@@ -221,3 +255,18 @@ export const websiteUrlSchema = z.union([
   z.literal(''),
   z.string().regex(URL_REGEX, 'Invalid URL'),
 ]);
+
+export const discordInviteSchema = z
+  .string()
+  .regex(URL_REGEX, 'Invalid URL')
+  .superRefine((val, ctx) => {
+    if (
+      !val.startsWith('https://discord.gg/') &&
+      !val.startsWith('https://discord.com/invite/')
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Invalid Discord invite URL',
+      });
+    }
+  });

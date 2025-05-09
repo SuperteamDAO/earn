@@ -25,13 +25,7 @@ export function SponsorButton({
         onClick={() => checkSponsor()}
         disabled={isLoading}
       >
-        {isLoading ? (
-          'Redirecting...'
-        ) : (
-          <>
-            Continue as a Sponsor <span className="ml-1">-&gt;</span>
-          </>
-        )}
+        {isLoading ? 'Redirecting...' : <>Continue as a Sponsor</>}
       </Button>
     </>
   );

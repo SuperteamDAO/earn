@@ -6,6 +6,10 @@ interface SponsorType {
   url?: string;
   industry?: string;
   twitter?: string;
+  linkedin?: string;
+  github?: string;
+  telegram?: string;
+  discord?: string;
   bio?: string;
   entityName?: string;
   isVerified?: boolean;

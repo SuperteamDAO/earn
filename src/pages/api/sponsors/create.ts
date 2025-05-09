@@ -28,8 +28,31 @@ async function user(req: NextApiRequestWithUser, res: NextApiResponse) {
     const validationResult = sponsorBaseSchema.safeParse({
       ...req.body,
       twitter:
-        req.body.twitter !== undefined && req.body.twitter !== ''
+        req.body.twitter !== undefined &&
+        req.body.twitter !== '' &&
+        req.body.twitter !== null
           ? extractSocialUsername('twitter', req.body.twitter) || ''
+          : undefined,
+      github:
+        req.body.github !== undefined &&
+        req.body.github !== '' &&
+        req.body.github !== null
+          ? extractSocialUsername('github', req.body.github) || ''
+          : undefined,
+      linkedinCompany:
+        req.body.linkedinCompany !== undefined &&
+        req.body.linkedinCompany !== '' &&
+        req.body.linkedinCompany !== null
+          ? extractSocialUsername(
+              'linkedinCompany',
+              req.body.linkedinCompany,
+            ) || ''
+          : undefined,
+      telegram:
+        req.body.telegram !== undefined &&
+        req.body.telegram !== '' &&
+        req.body.telegram !== null
+          ? extractSocialUsername('telegram', req.body.telegram) || ''
           : undefined,
     });
 
@@ -43,8 +66,20 @@ async function user(req: NextApiRequestWithUser, res: NextApiResponse) {
       });
     }
 
-    const { name, slug, logo, url, industry, twitter, bio, entityName } =
-      validationResult.data;
+    const {
+      name,
+      slug,
+      logo,
+      website,
+      industry,
+      twitter,
+      bio,
+      entityName,
+      telegram,
+      github,
+      linkedinCompany,
+      discord,
+    } = validationResult.data;
 
     if (!user.currentSponsorId || user.role === 'GOD') {
       logger.info(`Creating new sponsor for user: ${userId}`);
@@ -54,11 +89,16 @@ async function user(req: NextApiRequestWithUser, res: NextApiResponse) {
           name,
           slug,
           logo,
-          url,
+          url: website,
           industry,
           twitter: twitter && twitter !== '' ? twitter : null,
           bio,
           entityName,
+          telegram: telegram && telegram !== '' ? telegram : null,
+          github: github && github !== '' ? github : null,
+          linkedin:
+            linkedinCompany && linkedinCompany !== '' ? linkedinCompany : null,
+          discord: discord && discord !== '' ? discord : null,
         },
       });
 

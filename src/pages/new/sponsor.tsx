@@ -35,7 +35,7 @@ import { uploadAndReplaceImage } from '@/utils/image';
 import { getURL } from '@/utils/validUrl';
 
 import { SignIn } from '@/features/auth/components/SignIn';
-import { SocialInput } from '@/features/social/components/SocialInput';
+import { SponsorSocialsField } from '@/features/sponsor/components/onboarding-form/fields/SponsorSocialsField';
 import { useSlugValidation } from '@/features/sponsor/hooks/useSlugValidation';
 import { useSponsorNameValidation } from '@/features/sponsor/hooks/useSponsorNameValidation';
 import {
@@ -70,8 +70,12 @@ const CreateSponsor = () => {
         bio: '',
         logo: '',
         industry: '',
-        url: '',
-        twitter: undefined,
+        twitter: '',
+        github: '',
+        discord: '',
+        linkedinCompany: '',
+        telegram: '',
+        website: '',
         entityName: '',
       },
       user: {
@@ -417,36 +421,8 @@ const CreateSponsor = () => {
                     <Input placeholder="starkindustries" value={slug} />
                   </FormFieldWrapper>
                 </div>
-                <div className="my-6 flex w-full justify-between gap-4">
-                  <FormFieldWrapper
-                    control={form.control}
-                    name="sponsor.url"
-                    label="Entity URL"
-                    isRequired
-                  >
-                    <Input placeholder="https://starkindustries.com" />
-                  </FormFieldWrapper>
-
-                  <div className="hidden w-full md:flex">
-                    <SocialInput
-                      name="sponsor.twitter"
-                      socialName={'twitter'}
-                      formLabel="Twitter"
-                      placeholder="@StarkIndustries"
-                      control={form.control}
-                      height="h-9"
-                    />
-                  </div>
-                </div>
-                <div className="my-6 flex w-full md:hidden">
-                  <SocialInput
-                    name="sponsor.twitter"
-                    socialName={'twitter'}
-                    formLabel="Twitter"
-                    placeholder="@StarkIndustries"
-                    control={form.control}
-                    height="h-9"
-                  />
+                <div className="my-4">
+                  <SponsorSocialsField />
                 </div>
                 <div className="flex w-full">
                   <FormFieldWrapper
