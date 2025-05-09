@@ -11,6 +11,7 @@ import {
   ListingCard,
   ListingCardSkeleton,
 } from '../../listings/components/ListingCard';
+import { HACKATHONS } from '../constants/hackathons';
 import { type HackathonContext, useHackathons } from '../hooks/useHackathons';
 import { useHackathonState } from '../hooks/useHackathonState';
 import { HackathonFilters } from './HackathonFilters';
@@ -18,19 +19,6 @@ import { HackathonFilters } from './HackathonFilters';
 export interface HackathonSectionProps {
   type: HackathonContext;
 }
-
-const HACKATHONS = [
-  {
-    label: 'Breakout',
-    slug: 'breakout',
-    logo: '/hackathon/breakout/logo',
-  },
-  {
-    label: 'Redacted',
-    slug: 'redacted',
-    logo: '/hackathon/redacted/logo-black',
-  },
-];
 
 export const HackathonSection = ({ type }: HackathonSectionProps) => {
   const posthog = usePostHog();

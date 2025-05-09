@@ -1,28 +1,58 @@
 import { usePrivy } from '@privy-io/react-auth';
-import Link from 'next/link';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 import { useRouter } from 'next/router';
 import { usePostHog } from 'posthog-js/react';
-import React from 'react';
+import React, { useState } from 'react';
 
+import { SupportFormDialog } from '@/components/shared/SupportFormDialog';
 import { Button } from '@/components/ui/button';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/ui/collapsible';
 import { Separator } from '@/components/ui/separator';
-import { Sheet, SheetClose, SheetContent } from '@/components/ui/sheet';
+import { Sheet, SheetContent } from '@/components/ui/sheet';
+import { useDisclosure } from '@/hooks/use-disclosure';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
+
+import { HACKATHONS } from '@/features/hackathon/constants/hackathons';
+import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
+import { EmailSettingsModal } from '@/features/talent/components/EmailSettingsModal';
 
 import {
   CATEGORY_NAV_ITEMS,
   LISTING_NAV_ITEMS,
   renderLabel,
 } from '../constants';
-import { NavLink } from './NavLink';
 
 interface MobileDrawerProps {
   isDrawerOpen: boolean;
   onDrawerClose: () => void;
   onLoginOpen: () => void;
 }
+
+interface NavItemProps {
+  onClick: (e: React.MouseEvent<HTMLDivElement>) => void;
+  label: React.ReactNode;
+  className?: string;
+}
+
+const NavItem = ({ onClick, label, className }: NavItemProps) => {
+  return (
+    <div
+      onClick={onClick}
+      className={cn(
+        'ph-no-capture flex cursor-pointer items-center rounded-lg p-2 text-slate-600 select-none hover:bg-slate-100',
+        className,
+      )}
+    >
+      {label}
+    </div>
+  );
+};
 
 export const MobileDrawer = ({
   isDrawerOpen,
@@ -31,20 +61,47 @@ export const MobileDrawer = ({
 }: MobileDrawerProps) => {
   const router = useRouter();
   const { authenticated, ready } = usePrivy();
+  const [categoriesOpen, setCategoriesOpen] = useState(false);
+  const [skillsOpen, setSkillsOpen] = useState(false);
+
+  const { isOpen, onClose, onOpen } = useDisclosure();
 
   const { user } = useUser();
 
   const posthog = usePostHog();
+
+  const isLoggedIn = !!user && authenticated && ready;
+
   return (
     <Sheet open={isDrawerOpen} onOpenChange={onDrawerClose}>
-      <SheetContent side="left" className="w-[300px] p-0 sm:w-[380px]">
-        <SheetClose />
-        <div className="px-4 pb-8">
+      <SheetContent
+        side="left"
+        className="w-[300px] p-0 text-sm sm:w-[380px] sm:text-base"
+        showCloseIcon={false}
+      >
+        <EmailSettingsModal isOpen={isOpen} onClose={onClose} />
+
+        {isLoggedIn && (
+          <div>
+            <div className="flex items-center gap-1.5 px-4 py-3 select-none sm:gap-2 sm:py-4">
+              <EarnAvatar
+                className="size-8 sm:size-9"
+                id={user?.id}
+                avatar={user?.photo}
+              />
+              <p className="line-clamp-1 text-lg text-slate-600">
+                {user?.firstName} {user?.lastName}
+              </p>
+            </div>
+            <Separator />
+          </div>
+        )}
+
+        <div className="px-4 py-3">
           {ready && !authenticated && (
-            <div className="ph-no-capture flex items-center gap-3">
-              <Button
-                variant="link"
-                className="text-semibold mr-3 p-0 text-slate-500"
+            <div className="ph-no-capture mb-3 ml-2 flex items-center gap-3">
+              <div
+                className="text-semibold cursor-pointer p-0 text-slate-600 hover:text-slate-900"
                 onClick={() => {
                   posthog.capture('login_navbar');
                   onDrawerClose();
@@ -52,11 +109,10 @@ export const MobileDrawer = ({
                 }}
               >
                 Login
-              </Button>
+              </div>
               <Separator orientation="vertical" className="h-5 bg-slate-300" />
-              <Button
-                variant="ghost"
-                className="text-semibold text-brand-purple"
+              <div
+                className="text-semibold text-brand-purple hover:text-brand-purple-dark cursor-pointer"
                 onClick={() => {
                   posthog.capture('signup_navbar');
                   onDrawerClose();
@@ -64,14 +120,14 @@ export const MobileDrawer = ({
                 }}
               >
                 Sign Up
-              </Button>
+              </div>
             </div>
           )}
 
           {user && !user.currentSponsorId && !user.isTalentFilled && (
             <Button
               variant="ghost"
-              className="text-brand-purple text-base"
+              className="text-semibold text-brand-purple hover:text-brand-purple-dark cursor-pointer"
               onClick={() => {
                 router.push('/new');
               }}
@@ -80,75 +136,141 @@ export const MobileDrawer = ({
             </Button>
           )}
           <div className="ph-no-capture flex flex-col">
-            {LISTING_NAV_ITEMS?.map((navItem) => {
-              const isCurrent = `${navItem.href}` === router.asPath;
-              return (
-                <NavLink
-                  onClick={() => {
-                    posthog.capture(navItem.posthog);
-                    onDrawerClose();
-                  }}
-                  key={navItem.label}
-                  className="ph-no-capture"
-                  href={navItem.href ?? '#'}
-                  label={renderLabel(navItem)}
-                  isActive={isCurrent}
+            {isLoggedIn && (
+              <>
+                <NavItem
+                  label="Profile"
+                  onClick={() => router.push(`/t/${user?.username}`)}
                 />
-              );
-            })}
-          </div>
-          <Separator className="my-2 bg-slate-300" />
-          <div className="ph-no-capture flex flex-col">
-            {CATEGORY_NAV_ITEMS?.map((navItem) => {
-              const isCurrent = `${navItem.href}` === router.asPath;
-              return (
-                <NavLink
-                  className="ph-no-capture"
-                  onClick={() => {
-                    posthog.capture(navItem.posthog);
-                    onDrawerClose();
-                  }}
-                  key={navItem.label}
-                  href={navItem.href ?? '#'}
-                  label={renderLabel(navItem)}
-                  isActive={isCurrent}
+                <NavItem
+                  label="Edit Profile"
+                  onClick={() => router.push(`/t/${user?.username}/edit`)}
                 />
-              );
-            })}
+                <NavItem label="Email Preferences" onClick={onOpen} />
+              </>
+            )}
+            <Collapsible
+              className="space-y-1"
+              open={categoriesOpen}
+              onOpenChange={setCategoriesOpen}
+            >
+              <CollapsibleTrigger
+                className={cn(
+                  'flex w-full items-center justify-between rounded-lg p-2 text-slate-600 transition-colors',
+                  'hover:bg-slate-100',
+                  categoriesOpen && 'bg-slate-100',
+                )}
+              >
+                <span>Browse Categories</span>
+                {categoriesOpen ? (
+                  <ChevronUp className="h-4 w-4" />
+                ) : (
+                  <ChevronDown className="h-4 w-4" />
+                )}
+              </CollapsibleTrigger>
+              <CollapsibleContent>
+                <div className="pl-4">
+                  {LISTING_NAV_ITEMS?.map((navItem) => {
+                    return (
+                      <NavItem
+                        onClick={() => {
+                          posthog.capture(navItem.posthog);
+                          onDrawerClose();
+                        }}
+                        key={navItem.label}
+                        label={renderLabel(navItem)}
+                      />
+                    );
+                  })}
+                </div>
+              </CollapsibleContent>
+            </Collapsible>
+            <Collapsible
+              className="space-y-1"
+              open={skillsOpen}
+              onOpenChange={setSkillsOpen}
+            >
+              <CollapsibleTrigger
+                className={cn(
+                  'flex w-full items-center justify-between rounded-lg p-2 text-slate-600 transition-colors',
+                  'hover:bg-slate-100',
+                  skillsOpen && 'bg-slate-100',
+                )}
+              >
+                <span>Browse Skills</span>
+                {skillsOpen ? (
+                  <ChevronUp className="h-4 w-4" />
+                ) : (
+                  <ChevronDown className="h-4 w-4" />
+                )}
+              </CollapsibleTrigger>
+              <CollapsibleContent>
+                <div className="pl-4">
+                  {CATEGORY_NAV_ITEMS?.map((navItem) => {
+                    return (
+                      <NavItem
+                        onClick={() => {
+                          posthog.capture(navItem.posthog);
+                          onDrawerClose();
+                        }}
+                        key={navItem.label}
+                        label={renderLabel(navItem)}
+                      />
+                    );
+                  })}
+                </div>
+              </CollapsibleContent>
+            </Collapsible>
+            <div>
+              <NavItem label="Live Hackathons" onClick={() => {}} />
+              <div className="ml-4">
+                {HACKATHONS?.map((hackathon) => (
+                  <NavItem
+                    key={hackathon.slug}
+                    label={
+                      <div className="flex items-center gap-2">
+                        <ExternalImage
+                          src={hackathon.logo}
+                          alt={hackathon.label}
+                          className="h-4"
+                        />
+                      </div>
+                    }
+                    onClick={() => {
+                      router.push(`/hackathon/${hackathon.slug}`);
+                    }}
+                  />
+                ))}
+              </div>
+            </div>
+            <NavItem
+              label="Activity Feed"
+              onClick={() => router.push(`/feed`)}
+            />
+            <NavItem
+              label="Leaderboard"
+              onClick={() => router.push(`/leaderboard`)}
+            />
+            {isLoggedIn && (
+              <>
+                <SupportFormDialog>
+                  <NavItem
+                    label="Get Help"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      posthog.capture('get help_navbar');
+                    }}
+                  />
+                </SupportFormDialog>
+
+                <NavItem
+                  label="Logout"
+                  onClick={() => router.push(`/t/${user?.username}/edit`)}
+                  className="text-red-500"
+                />
+              </>
+            )}
           </div>
-          <Separator className="my-2 bg-slate-300" />
-          <NavLink
-            href={'/feed'}
-            label={'Activity Feed'}
-            isActive={false}
-            onClick={onDrawerClose}
-          />
-          <NavLink
-            href={'/leaderboard'}
-            label={'Leaderboard'}
-            isActive={false}
-            onClick={onDrawerClose}
-          />
-          <Link
-            href={'/hackathon/breakout'}
-            className={cn('flex items-center py-2 font-medium', 'h-10')}
-          >
-            <ExternalImage
-              alt="Redacted Logo"
-              src="/hackathon/breakout/logo"
-              className="h-full object-contain"
-            />
-          </Link>
-          <Link
-            href={'/hackathon/redacted'}
-            className={cn('flex items-center py-2 font-medium', 'h-10')}
-          >
-            <ExternalImage
-              alt="Redacted Logo"
-              src="/hackathon/redacted/logo-black"
-              className="h-full object-contain"
-            />
-          </Link>
         </div>
       </SheetContent>
     </Sheet>
