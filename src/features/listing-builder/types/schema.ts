@@ -48,7 +48,12 @@ export const createListingFormSchema = ({
     question: z.string().trim().min(1, 'Please add your question').max(256),
     type: z.enum(['text', 'link', 'paragraph', 'checkbox']),
     description: z.string().optional().nullable(),
-    optional: z.boolean().optional().default(false),
+    optional: z
+      .boolean()
+      .optional()
+      .nullable()
+      .default(false)
+      .transform((val) => val ?? false),
   });
 
   const rewardsSchema = z
