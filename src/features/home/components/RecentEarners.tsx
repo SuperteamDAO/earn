@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { usePostHog } from 'posthog-js/react';
-import React, { useEffect, useRef, useState } from 'react';
+import React from 'react';
 import { MdArrowForward } from 'react-icons/md';
 
 import { ASSET_URL } from '@/constants/ASSET_URL';
@@ -12,6 +12,8 @@ import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import { getURL } from '@/utils/validUrl';
 
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
+
+import styles from './RecentEarners.module.css';
 
 interface EarnerProps {
   name: string;
@@ -40,7 +42,7 @@ const Earner = ({
 
   return (
     <Link href={`${getURL()}t/${username}`} className="block">
-      <div className="my-4 flex w-full items-center">
+      <div className="my-2 flex w-full items-center">
         <div className="mr-3 flex items-center justify-center">
           <EarnAvatar id={id} avatar={avatar} />
         </div>
@@ -71,39 +73,15 @@ const Earner = ({
 };
 
 export const RecentEarners = ({ earners }: { earners?: User[] }) => {
-  const marqueeRef = useRef<HTMLDivElement>(null);
-  const animationFrameRef = useRef<number | null>(null);
-  const [isPaused, setIsPaused] = useState(false);
   const posthog = usePostHog();
 
   const multipliedEarners = earners ? [...earners, ...earners, ...earners] : [];
-
-  const animate = () => {
-    const marquee = marqueeRef.current;
-    if (marquee && !isPaused) {
-      if (marquee.scrollHeight - marquee.scrollTop <= marquee.clientHeight) {
-        marquee.scrollTop -= marquee.scrollHeight / 3;
-      } else {
-        marquee.scrollTop += 1;
-      }
-    }
-    animationFrameRef.current = requestAnimationFrame(animate);
-  };
-
-  useEffect(() => {
-    animationFrameRef.current = requestAnimationFrame(animate);
-    return () => {
-      if (animationFrameRef.current) {
-        cancelAnimationFrame(animationFrameRef.current);
-      }
-    };
-  }, [isPaused]);
 
   return (
     <div>
       <div className="mb-4 flex items-center justify-between">
         <span className="text-sm font-medium text-gray-400">
-          RECENT EARNERS
+          RECENT CONTRIBUTORS
         </span>
         <Link
           href="/leaderboard"
@@ -119,13 +97,8 @@ export const RecentEarners = ({ earners }: { earners?: User[] }) => {
           <MdArrowForward className="ml-1" />
         </Link>
       </div>
-      <div className="flex flex-col">
-        <div
-          ref={marqueeRef}
-          className="h-[300px] overflow-hidden"
-          onMouseEnter={() => setIsPaused(true)}
-          onMouseLeave={() => setIsPaused(false)}
-        >
+      <div className={styles.marqueeContainer}>
+        <div className={styles.marquee}>
           {multipliedEarners.map((t: any, index: number) => (
             <Earner
               key={`${t.id}-${index}`}
