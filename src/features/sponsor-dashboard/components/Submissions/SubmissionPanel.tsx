@@ -158,7 +158,7 @@ export const SubmissionPanel = ({
                       onClick={handleCopySubmissionLink}
                     >
                       <Copy className="mr-1 h-4 w-4" />
-                      Copy Link
+                      Copy Submission Link
                     </Button>
                   )}
                   {selectedSubmission?.isWinner &&
