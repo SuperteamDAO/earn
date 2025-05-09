@@ -91,7 +91,9 @@ export const getListingDefaults = ({
       defaults['hackathonId'] = hackathon.id;
     }
   } else if (type === 'project') {
-    defaults['eligibility'] = [{ type: 'text', question: '', order: 1 }];
+    defaults['eligibility'] = [
+      { type: 'text', question: '', order: 1, optional: false },
+    ];
   } else if (type === 'sponsorship') {
     defaults['compensationType'] = 'variable';
     defaults['token'] = 'Any';
