@@ -8,7 +8,7 @@ import { USER_ID_COOKIE_NAME } from '@/store/user';
 import { HomepagePop } from '@/features/conversion-popups/components/HomepagePop';
 import { GrantsSection } from '@/features/grants/components/GrantsSection';
 import { HackathonSection } from '@/features/hackathon/components/HackathonSection';
-import { ListingTabs } from '@/features/listings/components/ListingTabs';
+import { Listings } from '@/features/listings/components/Listings';
 
 const InstallPWAModal = dynamic(
   () =>
@@ -29,7 +29,7 @@ export default function HomePage({ potentialSession }: HomePageProps) {
       <HomepagePop />
       <FeatureModal />
       <div className="w-full">
-        <ListingTabs type="home" potentialSession={potentialSession} />
+        <Listings type="home" potentialSession={potentialSession} />
         <HackathonSection type="home" />
         <GrantsSection type="home" />
       </div>

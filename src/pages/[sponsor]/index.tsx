@@ -15,7 +15,7 @@ import { getTwitterUrl, getURLSanitized } from '@/utils/getURLSanitized';
 import { getURL } from '@/utils/validUrl';
 
 import { GrantsSection } from '@/features/grants/components/GrantsSection';
-import { ListingTabs } from '@/features/listings/components/ListingTabs';
+import { Listings } from '@/features/listings/components/Listings';
 
 interface Props {
   slug: string;
@@ -118,7 +118,7 @@ Check out all of ${title}’s latest earning opportunities on a single page.
 
       <div className="w-full bg-white">
         <div className="mx-auto max-w-5xl px-4 pb-20">
-          <ListingTabs type="sponsor" sponsor={slug} />
+          <Listings type="sponsor" sponsor={slug} />
           <GrantsSection type="sponsor" sponsor={slug} />
         </div>
       </div>

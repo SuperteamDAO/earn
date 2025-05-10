@@ -15,7 +15,7 @@ import { type GrantContext, useGrants } from '../hooks/useGrants';
 import { useGrantState } from '../hooks/useGrantState';
 import { GrantsCard } from './GrantsCard';
 
-export interface GrantSectionProps {
+interface GrantSectionProps {
   type: GrantContext;
   region?: string;
   sponsor?: string;

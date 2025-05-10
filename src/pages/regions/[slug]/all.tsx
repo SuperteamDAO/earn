@@ -5,7 +5,7 @@ import { Home } from '@/layouts/Home';
 import { Meta } from '@/layouts/Meta';
 import { getURL } from '@/utils/validUrl';
 
-import { ListingTabs } from '@/features/listings/components/ListingTabs';
+import { Listings } from '@/features/listings/components/Listings';
 
 export default function AllRegionListingsPage({
   slug,
@@ -29,7 +29,7 @@ export default function AllRegionListingsPage({
         og={ogImage.toString()}
       />
       <div className="w-full">
-        <ListingTabs type="region-all" region={slug} />
+        <Listings type="region-all" region={slug} />
       </div>
     </Home>
   );

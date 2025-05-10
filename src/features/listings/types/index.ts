@@ -99,9 +99,3 @@ export interface ListingTabsProps {
   region?: string;
   sponsor?: string;
 }
-
-export interface ListingTabTriggerProps {
-  isActive: boolean;
-  onClick: () => void;
-  children: React.ReactNode;
-}

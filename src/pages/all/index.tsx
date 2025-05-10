@@ -4,7 +4,7 @@ import { Home } from '@/layouts/Home';
 import { USER_ID_COOKIE_NAME } from '@/store/user';
 
 import { HomepagePop } from '@/features/conversion-popups/components/HomepagePop';
-import { ListingTabs } from '@/features/listings/components/ListingTabs';
+import { Listings } from '@/features/listings/components/Listings';
 
 interface HomePageProps {
   potentialSession: boolean;
@@ -15,7 +15,7 @@ export default function AllListingsPage({ potentialSession }: HomePageProps) {
     <Home type="listing">
       <HomepagePop />
       <div className="w-full">
-        <ListingTabs type="all" potentialSession={potentialSession} />
+        <Listings type="all" potentialSession={potentialSession} />
       </div>
     </Home>
   );

@@ -8,7 +8,7 @@ import { getURL } from '@/utils/validUrl';
 
 import { RegionPop } from '@/features/conversion-popups/components/RegionPop';
 import { GrantsSection } from '@/features/grants/components/GrantsSection';
-import { ListingTabs } from '@/features/listings/components/ListingTabs';
+import { Listings } from '@/features/listings/components/Listings';
 
 const RegionsPage = ({
   slug,
@@ -33,7 +33,7 @@ const RegionsPage = ({
       />
       <div className="w-full">
         <RegionPop st={st} />
-        <ListingTabs type="region" region={slug} />
+        <Listings type="region" region={slug} />
 
         <GrantsSection type="region" region={slug} />
       </div>
