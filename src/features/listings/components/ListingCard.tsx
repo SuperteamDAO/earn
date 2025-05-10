@@ -107,7 +107,7 @@ export const ListingCard = ({ bounty }: { bounty: Listing }) => {
               </p>
               <div>{!!sponsor?.isVerified && <VerifiedBadge />}</div>
             </div>
-            <div className="mt-[1px] flex items-center gap-1 sm:gap-3">
+            <div className="mt-[1px] flex items-center gap-1 sm:gap-2">
               <div className="flex items-center justify-start sm:hidden">
                 {!!showToken && (
                   <img

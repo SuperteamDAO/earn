@@ -2,7 +2,6 @@ import { usePrivy } from '@privy-io/react-auth';
 import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import { usePostHog } from 'posthog-js/react';
-import { useEffect } from 'react';
 
 import { EmptySection } from '@/components/shared/EmptySection';
 import { Button } from '@/components/ui/button';
@@ -11,7 +10,7 @@ import { useBreakpoint } from '@/hooks/use-breakpoint';
 
 import { CATEGORY_NAV_ITEMS } from '@/features/navbar/constants';
 
-import { useListings } from '../hooks/useListings';
+import { type ListingCategory, useListings } from '../hooks/useListings';
 import { useListingState } from '../hooks/useListingState';
 import type { ListingTabsProps } from '../types';
 import { CategoryPill } from './CategoryPill';
@@ -79,13 +78,6 @@ export const ListingTabs = ({
     region,
     sponsor,
   });
-
-  useEffect(() => {
-    const initialTab = TABS.find((t) => t.id === activeTab);
-    if (initialTab) {
-      posthog.capture(initialTab.posthog);
-    }
-  }, [activeTab, posthog]);
 
   const viewAllLink = () => {
     if (type === 'home') {
@@ -188,7 +180,12 @@ export const ListingTabs = ({
             key="foryou"
             phEvent="foryou_navpill"
             isActive={activeCategory === 'For You'}
-            onClick={() => handleCategoryChange('For You', 'foryou_navpill')}
+            onClick={() =>
+              handleCategoryChange(
+                'For You' as ListingCategory,
+                'foryou_navpill',
+              )
+            }
           >
             For You
           </CategoryPill>
@@ -197,7 +194,9 @@ export const ListingTabs = ({
           key="all"
           phEvent="all_navpill"
           isActive={activeCategory === 'All'}
-          onClick={() => handleCategoryChange('All', 'all_navpill')}
+          onClick={() =>
+            handleCategoryChange('All' as ListingCategory, 'all_navpill')
+          }
         >
           All
         </CategoryPill>
@@ -206,7 +205,12 @@ export const ListingTabs = ({
             key={navItem.label}
             phEvent={navItem.pillPH}
             isActive={activeCategory === navItem.label}
-            onClick={() => handleCategoryChange(navItem.label, navItem.pillPH)}
+            onClick={() =>
+              handleCategoryChange(
+                navItem.label as ListingCategory,
+                navItem.pillPH,
+              )
+            }
           >
             {isMd ? navItem.label : navItem.mobileLabel || navItem.label}
           </CategoryPill>
