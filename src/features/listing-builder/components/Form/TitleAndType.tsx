@@ -25,7 +25,6 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { LocalImage } from '@/components/ui/local-image';
 import { useDebounce } from '@/components/ui/multi-select';
 import {
   Select,
@@ -166,7 +165,7 @@ export function TitleAndType() {
                 )}
               </div>
               <div className="shrink-0 text-right text-xs whitespace-nowrap text-slate-400">
-                {100 - (title?.length || 0)} characters left
+                {80 - (title?.length || 0)} characters left
               </div>
             </div>
           </FormItem>
@@ -274,11 +273,7 @@ function Type() {
                     ) : (
                       <SelectValue>
                         <div className="flex items-center gap-2 text-xs">
-                          <LocalImage
-                            src={getListingIcon('hackathon')}
-                            alt={'hackahton'}
-                            className="h-4 w-4"
-                          />
+                          {getListingIcon('hackathon')}
                           <span className="max-w-20 truncate">
                             {currentHackathon?.name}
                           </span>
@@ -291,11 +286,7 @@ function Type() {
                   {typeOptions.map(({ value, label }) => (
                     <SelectItem key={value} value={value}>
                       <div className="flex items-center gap-2 text-xs">
-                        <LocalImage
-                          src={getListingIcon(value)}
-                          alt={value}
-                          className="h-4 w-4"
-                        />
+                        {getListingIcon(value)}
                         <span>{label}</span>
                       </div>
                     </SelectItem>
@@ -303,11 +294,7 @@ function Type() {
                   {hackathons?.map((hackathon) => (
                     <SelectItem key={hackathon.id} value={hackathon.slug}>
                       <div className="flex items-center gap-2 text-xs">
-                        <LocalImage
-                          src={getListingIcon('hackathon')}
-                          alt={'hackahton'}
-                          className="h-4 w-4"
-                        />
+                        {getListingIcon('hackathon')}
                         <span className="max-w-20 truncate">
                           {hackathon.name}
                         </span>

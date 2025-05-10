@@ -199,7 +199,7 @@ export function RightSideBar({
           <div className="w-full border-b border-slate-100" />
           <div
             className={cn(
-              'flex w-full justify-between',
+              'flex w-full gap-8 sm:justify-between',
               rewards ? 'py-0' : 'py-3',
             )}
           >
@@ -208,7 +208,7 @@ export function RightSideBar({
                 <div className="flex flex-col items-start justify-center">
                   <div className="flex items-center justify-center gap-2">
                     <ExternalImage
-                      className="-mt-1 w-[1.4rem]"
+                      className="w-[1.2rem]"
                       alt={'suit case'}
                       src={'/icons/purple-suitcase.svg'}
                     />
@@ -220,12 +220,12 @@ export function RightSideBar({
                           : submissionRange}
                     </p>
                   </div>
-                  <p className="text-slate-400">
+                  <p className="text-xs text-slate-500 sm:text-sm">
                     {isProject
                       ? 'Applications'
                       : submissionNumber === 1
-                        ? 'Submission'
-                        : 'Submissions'}
+                        ? 'SUBMISSION'
+                        : 'SUBMISSIONS'}
                   </p>
                 </div>
 
@@ -244,9 +244,9 @@ export function RightSideBar({
                           zeroPadDays={1}
                         />
                       </p>
-                      <p className="text-slate-400">Remaining</p>
                     </div>
                   </div>
+                  <p className="text-xs text-slate-500 sm:text-sm">REMAINING</p>
                 </div>
               </>
             ) : (

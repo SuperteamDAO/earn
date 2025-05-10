@@ -20,7 +20,7 @@ export const SubmissionList = ({
   setUpdate,
 }: Props) => {
   return (
-    <div className="mt-10 flex min-h-screen w-full flex-col items-center md:items-start">
+    <div className="mt-4 flex min-h-screen w-full flex-col items-center md:items-start">
       {dayjs(endTime).valueOf() < Date.now() ? (
         <div className="mx-auto flex w-full max-w-7xl flex-col items-start gap-2">
           <div className="grid w-full grid-cols-1 gap-5 px-3 md:grid-cols-2 md:gap-20 md:px-6 xl:grid-cols-3">

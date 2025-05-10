@@ -17,20 +17,22 @@ export const RegionLabel = ({
   const displayValue = regionObject?.displayValue || regionObject?.name;
   const code = regionObject?.code;
 
+  console.log(regionObject);
+
   const regionTooltipLabel = getRegionTooltipLabel(region, isGrant);
 
   return (
     <Tooltip content={regionTooltipLabel}>
-      <div className="flex items-center gap-1">
+      <div className="flex items-center gap-0.5">
         {region === 'GLOBAL' ? (
-          <Globe className="h-4 w-4" strokeWidth={1} />
+          <Globe className="h-4 w-4 text-slate-400" strokeWidth={1} />
         ) : (
           <UserFlag location={code || ''} isCode />
         )}
-        <span className="rounded-full text-xs font-medium whitespace-nowrap text-slate-500 sm:text-sm">
-          {region === 'GLOBAL' ? 'Global' : `${displayValue} Only`}
+        <span className="rounded-full text-sm font-medium whitespace-nowrap text-slate-400">
+          {region === 'GLOBAL' ? 'Global' : `${displayValue}`}
         </span>
-        <Info className="h-3 w-3 text-slate-600 sm:hidden" />
+        <Info className="size-3.5 text-slate-400 sm:hidden" />
       </div>
     </Tooltip>
   );
