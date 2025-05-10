@@ -1,3 +1,4 @@
+import lookup from 'country-code-lookup';
 import { Globe, Info } from 'lucide-react';
 import React from 'react';
 
@@ -14,12 +15,21 @@ export const RegionLabel = ({
   isGrant?: boolean;
 }) => {
   const regionObject = region ? getCombinedRegion(region) : null;
-  const displayValue = regionObject?.displayValue || regionObject?.name;
   const code = regionObject?.code;
 
-  console.log(regionObject);
-
   const regionTooltipLabel = getRegionTooltipLabel(region, isGrant);
+
+  let displayValue = 'Global';
+
+  const titlecase = (str: string) => {
+    return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+  };
+
+  if (region !== 'GLOBAL' && region) {
+    const country = titlecase(region);
+    const details = lookup.byCountry(country);
+    displayValue = details?.iso3 || country;
+  }
 
   return (
     <Tooltip content={regionTooltipLabel}>
@@ -30,7 +40,7 @@ export const RegionLabel = ({
           <UserFlag location={code || ''} isCode />
         )}
         <span className="rounded-full text-sm font-medium whitespace-nowrap text-slate-400">
-          {region === 'GLOBAL' ? 'Global' : `${displayValue}`}
+          {displayValue}
         </span>
         <Info className="size-3.5 text-slate-400 sm:hidden" />
       </div>

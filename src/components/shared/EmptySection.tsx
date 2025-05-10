@@ -11,12 +11,12 @@ export function EmptySection({
 }) {
   return (
     <div className="flex w-full items-center justify-center">
-      <div className="flex flex-col items-center justify-center">
-        <AiOutlineInfoCircle size={52} className="text-slate-400" />
-        <span className="mt-2 text-lg font-bold text-slate-400">
+      <div className="mt-4 flex flex-col items-center justify-center gap-1 sm:gap-2">
+        <AiOutlineInfoCircle className="size-8 text-slate-400 md:size-12" />
+        <span className="text-lg font-bold text-slate-400">
           {title || 'Sorry! Nothing found'}
         </span>
-        <span className="mt-2 text-center text-slate-300">
+        <span className="text-center text-slate-300">
           {message || 'Something went wrong! Please try again!'}
         </span>
       </div>
