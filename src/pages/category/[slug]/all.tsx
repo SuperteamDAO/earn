@@ -1,79 +1,18 @@
-import { useQuery } from '@tanstack/react-query';
-import type { NextPageContext } from 'next';
+import type { GetServerSideProps, NextPage } from 'next';
 
-import { ASSET_URL } from '@/constants/ASSET_URL';
-import { Home } from '@/layouts/Home';
-import { Meta } from '@/layouts/Meta';
+const CategoryPage: NextPage = () => {
+  return null;
+};
 
-import { ListingTabs } from '@/features/listings/components/ListingTabs';
-import { listingsQuery } from '@/features/listings/queries/listings';
-
-type SlugKeys = 'design' | 'content' | 'development' | 'other';
-
-function AllCategoryListingsPage({ slug }: { slug: string }) {
-  const { data: listings, isLoading } = useQuery(
-    listingsQuery({
-      filter: slug,
-      take: 100,
-    }),
-  );
-
-  const titlesForSlugs: { [key in SlugKeys]: string } = {
-    design: 'Design Bounties and Grants | Superteam Earn',
-    content: 'Content Bounties and Grants | Superteam Earn',
-    development: 'Development Bounties and Grants | Superteam Earn',
-    other: 'Other Bounties and Grants | Superteam Earn',
-  };
-  const titleKey = slug as SlugKeys;
-  const title = titlesForSlugs[titleKey] || 'Superteam Earn';
-  const metaDescription = `Find the latest ${slug.toLowerCase()} bounties and grants for freelancers and builders in the crypto space on Superteam Earn.`;
-  const canonicalURL = `https://earn.superteam.fun/category/${slug}/all`;
-
-  return (
-    <Home type="category">
-      <Meta
-        title={title}
-        description={metaDescription}
-        canonical={canonicalURL}
-        og={ASSET_URL + `/og/categories/${slug}.png`}
-      />
-      <div className="w-full">
-        <ListingTabs
-          bounties={listings}
-          isListingsLoading={isLoading}
-          showEmoji
-          title="Freelance Gigs"
-          viewAllLink="/all"
-        />
-      </div>
-    </Home>
-  );
-}
-
-export async function getServerSideProps(context: NextPageContext) {
-  const { slug } = context.query;
-
-  if (slug && typeof slug === 'string' && slug !== slug.toLowerCase()) {
-    return {
-      redirect: {
-        destination: `/category/${slug.toLowerCase()}/all`,
-        permanent: false,
-      },
-    };
-  }
-
-  const normalizedSlug = typeof slug === 'string' ? slug.toLowerCase() : '';
-  const validCategories = ['design', 'content', 'development', 'other'];
-
-  if (!validCategories.includes(normalizedSlug)) {
-    return {
-      notFound: true,
-    };
-  }
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const { slug } = context.params as { slug: string };
 
   return {
-    props: { slug },
+    redirect: {
+      destination: `/all/?category=${slug}`,
+      permanent: false,
+    },
   };
-}
+};
 
-export default AllCategoryListingsPage;
+export default CategoryPage;

@@ -22,12 +22,12 @@ export const NavLink = ({
       href={href}
       className={cn(
         'flex items-center py-2 font-medium',
-        'h-8 lg:h-14',
-        'text-lg lg:text-sm',
+        'h-14',
+        'text-sm',
         isActive ? 'text-slate-600' : 'text-slate-500',
         'hover:text-slate-600 hover:no-underline',
-        'relative lg:border-b',
-        isActive ? 'lg:border-brand-purple' : 'lg:border-transparent',
+        'relative border-b',
+        isActive ? 'border-brand-purple' : 'border-transparent',
         className,
       )}
       {...props}

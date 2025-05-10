@@ -21,7 +21,7 @@ export type EARN_IMAGE_FOLDER =
   | 'earn-sponsor'
   | 'listing-description';
 
-export async function uploadToCld(
+async function uploadToCld(
   file: File,
   folder: EARN_IMAGE_FOLDER,
   type = 'pfp',

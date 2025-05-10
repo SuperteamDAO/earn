@@ -1,4 +1,3 @@
-import { useQuery } from '@tanstack/react-query';
 import React from 'react';
 
 import { ErrorInfo } from '@/components/shared/ErrorInfo';
@@ -10,14 +9,17 @@ import { Meta } from '@/layouts/Meta';
 
 import { GrantsPop } from '@/features/conversion-popups/components/GrantsPop';
 import { GrantEntry } from '@/features/grants/components/GrantEntry';
-import { grantsQuery } from '@/features/grants/queries/grants';
+import { useGrants } from '@/features/grants/hooks/useGrants';
 
 function Grants() {
   const {
     data: grants,
     isLoading,
     isError,
-  } = useQuery(grantsQuery({ order: 'desc' }));
+  } = useGrants({
+    context: 'all',
+    category: 'All',
+  });
 
   return (
     <Default

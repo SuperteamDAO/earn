@@ -132,7 +132,7 @@ export const createListingFormSchema = ({
   return z
     .object({
       id: z.string().optional().nullish(),
-      title: z.string().trim().min(1, 'Required').max(100),
+      title: z.string().trim().min(1, 'Required').max(80),
       slug: z
         .string()
         .trim()

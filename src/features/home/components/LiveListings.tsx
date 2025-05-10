@@ -4,7 +4,7 @@ import { type ReactNode, useMemo } from 'react';
 import { dayjs } from '@/utils/dayjs';
 
 import { ListingCardMini } from '@/features/listings/components/ListingCardMini';
-import { listingsQuery } from '@/features/listings/queries/listings';
+import { liveListingsQuery } from '@/features/listings/queries/live-listings';
 
 interface LiveListingProps {
   children: ReactNode;
@@ -22,9 +22,8 @@ export const LiveListings = ({
   const deadline = useMemo(() => dayjs().add(1, 'day').toISOString(), []);
 
   const { data: listings } = useQuery(
-    listingsQuery({
+    liveListingsQuery({
       take: 5,
-      isHomePage: true,
       deadline,
       order: 'asc',
       type: isHackathon ? 'hackathon' : undefined,

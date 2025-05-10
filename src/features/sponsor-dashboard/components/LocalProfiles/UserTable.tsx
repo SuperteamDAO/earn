@@ -37,7 +37,7 @@ interface MembersTableProps {
   setSort: (column: string, direction: 'asc' | 'desc' | null) => void;
 }
 
-export interface THProps extends React.HTMLAttributes<HTMLTableCellElement> {
+interface THProps extends React.HTMLAttributes<HTMLTableCellElement> {
   children: ReactNode;
 }
 

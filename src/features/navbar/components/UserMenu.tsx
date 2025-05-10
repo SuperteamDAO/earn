@@ -70,7 +70,7 @@ export function UserMenu() {
               posthog.capture('complete profile_nav bar');
               router.push('/new');
             }}
-            className="ph-no-capture hidden text-xs md:flex"
+            className="ph-no-capture flex text-xs"
           >
             Complete your Profile
           </Button>
@@ -78,19 +78,19 @@ export function UserMenu() {
       <DropdownMenu>
         <DropdownMenuTrigger
           id="user menu"
-          className="ph-no-capture rounded-lg border border-white px-2 py-1 transition-all duration-100 hover:bg-slate-100 focus:outline-hidden active:border-slate-300 active:bg-slate-200 data-[state=open]:bg-slate-100 md:px-2"
+          className="ph-no-capture rounded-lg border border-white px-2 py-1 transition-all duration-100 hover:bg-slate-100 focus:outline-hidden active:border-slate-300 active:bg-slate-200 data-[state=open]:bg-slate-100"
           onClick={() => {
             posthog.capture('clicked_user menu');
           }}
         >
-          <div className="flex items-center gap-0.5 md:gap-1.5">
+          <div className="flex items-center gap-1.5">
             <EarnAvatar className="size-7" id={user?.id} avatar={user?.photo} />
-            <div className="hidden items-center md:flex">
-              <p className="text-xs font-medium tracking-tight text-slate-600 sm:text-sm">
+            <div className="flex items-center">
+              <p className="text-sm font-medium tracking-tight text-slate-600">
                 {user?.firstName ?? user?.email ?? 'New User'}
               </p>
             </div>
-            <ChevronDown className="hidden h-3 w-3 text-slate-400 md:block md:h-4 md:w-4" />
+            <ChevronDown className="block size-4 text-slate-400" />
           </div>
         </DropdownMenuTrigger>
 
@@ -106,7 +106,7 @@ export function UserMenu() {
                   onClick={() => {
                     posthog.capture('profile_user menu');
                   }}
-                  className="text-xs tracking-tight text-slate-500 sm:text-sm"
+                  className="text-sm tracking-tight text-slate-500"
                 >
                   Profile
                 </Link>
@@ -117,7 +117,7 @@ export function UserMenu() {
                   onClick={() => {
                     posthog.capture('edit profile_user menu');
                   }}
-                  className="text-xs tracking-tight text-slate-500 sm:text-sm"
+                  className="text-sm tracking-tight text-slate-500"
                 >
                   Edit Profile
                 </Link>
@@ -132,7 +132,7 @@ export function UserMenu() {
                 onClick={() => {
                   posthog.capture('sponsor dashboard_user menu');
                 }}
-                className="hidden text-xs tracking-tight text-slate-500 sm:block sm:text-sm"
+                className="text-sm tracking-tight text-slate-500"
               >
                 Dashboard
               </Link>
@@ -142,14 +142,14 @@ export function UserMenu() {
           <DropdownMenuSeparator />
 
           {user?.role === 'GOD' && (
-            <div className="hidden sm:block">
+            <div>
               <DropdownMenuLabel className="-mb-2 text-xs font-medium text-slate-400">
                 God Mode
               </DropdownMenuLabel>
               <DropdownMenuItem asChild>
                 <Link
                   href="/new/sponsor"
-                  className="text-xs tracking-tight text-slate-500 sm:text-sm"
+                  className="text-sm tracking-tight text-slate-500"
                 >
                   Create New Sponsor
                 </Link>
@@ -164,7 +164,7 @@ export function UserMenu() {
                 onOpen();
                 posthog.capture('email preferences_user menu');
               }}
-              className="text-xs tracking-tight text-slate-500 sm:text-sm"
+              className="text-sm tracking-tight text-slate-500"
             >
               Email Preferences
             </DropdownMenuItem>
@@ -172,7 +172,7 @@ export function UserMenu() {
 
           <SupportFormDialog>
             <DropdownMenuItem
-              className="text-xs tracking-tight text-slate-500 sm:text-sm"
+              className="text-sm tracking-tight text-slate-500"
               onSelect={(e) => {
                 e.preventDefault();
                 posthog.capture('get help_user menu');
@@ -187,7 +187,7 @@ export function UserMenu() {
               posthog.capture('logout_user menu');
               logout();
             }}
-            className="text-xs tracking-tight text-red-500 sm:text-sm"
+            className="text-sm tracking-tight text-red-500"
           >
             Logout
           </DropdownMenuItem>

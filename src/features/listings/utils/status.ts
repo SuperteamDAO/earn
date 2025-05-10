@@ -1,38 +1,7 @@
 import { calculateTotalPrizes } from '@/features/listing-builder/utils/rewards';
 
-import {
-  type Listing,
-  type ListingWithSubmissions,
-  type StatusFilter,
-} from '../types';
+import { type Listing, type ListingWithSubmissions } from '../types';
 import { isDeadlineOver } from './deadline';
-
-export function getStatusFilterQuery(statusFilter: StatusFilter | undefined) {
-  let statusFilterQuery = {};
-
-  if (statusFilter) {
-    if (statusFilter === 'open') {
-      statusFilterQuery = {
-        deadline: {
-          gte: new Date(),
-        },
-      };
-    } else if (statusFilter === 'review') {
-      statusFilterQuery = {
-        deadline: {
-          lte: new Date(),
-        },
-        isWinnersAnnounced: false,
-      };
-    } else if (statusFilter === 'completed') {
-      statusFilterQuery = {
-        isWinnersAnnounced: true,
-      };
-    }
-  }
-
-  return statusFilterQuery;
-}
 
 export const getListingDraftStatus = (
   status: string | undefined,

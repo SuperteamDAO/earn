@@ -164,7 +164,7 @@ ${socialListingLink('twitter')}
       </div>
       <div className="mb-4 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <img className="h-6" alt="" src={getListingIcon(bounty?.type!)} />
+          {getListingIcon(bounty?.type!)}
           <p className="text-xl font-bold text-slate-800">{bounty?.title}</p>
         </div>
         <div className="flex items-center gap-2">

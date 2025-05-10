@@ -25,7 +25,6 @@ export const ListingCardMini = ({ bounty }: { bounty: Listing }) => {
     isWinnersAnnounced,
   } = bounty;
 
-  const isBounty = type === 'bounty';
   const isVariable = compensationType === 'variable';
   const showToken = !isVariable || (isVariable && isWinnersAnnounced);
 
@@ -86,11 +85,7 @@ export const ListingCardMini = ({ bounty }: { bounty: Listing }) => {
                 </div>
                 <p className="ml-1 text-xs text-slate-300 md:text-sm">|</p>
               </div>
-              <img
-                className={`flex h-3 ${isBounty ? '-ml-0.5' : 'ml-0'}`}
-                alt={type}
-                src={getListingIcon(type!)}
-              />
+              {getListingIcon(type!)}
               <p className="flex text-xs text-slate-300 md:text-sm">|</p>
 
               <div className="flex items-center gap-1">

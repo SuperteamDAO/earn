@@ -3,7 +3,7 @@ import dayjs from 'dayjs';
 import { type ReactNode, useMemo } from 'react';
 
 import { ListingCardMini } from '@/features/listings/components/ListingCardMini';
-import { listingsQuery } from '@/features/listings/queries/listings';
+import { liveListingsQuery } from '@/features/listings/queries/live-listings';
 import { relatedlistingsQuery } from '@/features/listings/queries/related-listing';
 
 interface LiveListingProps {
@@ -33,9 +33,8 @@ export const RelatedListings = ({
   const deadline = useMemo(() => dayjs().add(1, 'day').toISOString(), []);
 
   const { data: liveListings } = useQuery({
-    ...listingsQuery({
+    ...liveListingsQuery({
       take: SHOW_LIMIT - (relatedListings?.length ?? SHOW_LIMIT),
-      isHomePage: true,
       deadline,
       order: 'asc',
       type: isHackathon ? 'hackathon' : undefined,

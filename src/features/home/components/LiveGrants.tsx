@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { type ReactNode } from 'react';
 
 import { GrantsCardMini } from '@/features/grants/components/GrantsCardMini';
-import { grantsQuery } from '@/features/grants/queries/grants';
+import { liveGrantsQuery } from '@/features/grants/queries/live-grants';
 
 export const LiveGrants = ({
   children,
@@ -12,9 +12,8 @@ export const LiveGrants = ({
   excludeIds?: string[];
 }) => {
   const { data: grants } = useQuery(
-    grantsQuery({
+    liveGrantsQuery({
       take: 5,
-      order: 'asc',
       excludeIds: ids ? ids : undefined,
     }),
   );

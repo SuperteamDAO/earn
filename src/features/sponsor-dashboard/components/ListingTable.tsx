@@ -229,12 +229,10 @@ export const ListingTable = ({
                 <TableRow key={listing?.id}>
                   <TableCell className="pr-0">
                     <Tooltip content={<p>{listingType}</p>}>
-                      <img
-                        className="mt-1.5 h-5 w-5 shrink-0 rounded-full"
-                        alt={`New ${listingType}`}
-                        src={getListingIcon(listing.type!)}
-                        title={listingType}
-                      />
+                      {getListingIcon(
+                        listing.type!,
+                        'fill-slate-400 size-3.5 mt-1',
+                      )}
                     </Tooltip>
                   </TableCell>
                   <TableCell className="max-w-80 font-medium break-words whitespace-normal text-slate-700">

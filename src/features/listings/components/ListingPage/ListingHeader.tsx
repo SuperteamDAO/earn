@@ -4,10 +4,8 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { usePostHog } from 'posthog-js/react';
 import React from 'react';
-import { MdLock } from 'react-icons/md';
 
 import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
-import { LocalImage } from '@/components/ui/local-image';
 import { Tooltip } from '@/components/ui/tooltip';
 import { ASSET_URL } from '@/constants/ASSET_URL';
 import { useMediaQuery } from '@/hooks/use-media-query';
@@ -94,7 +92,7 @@ export function ListingHeader({
 
   const ListingTitle = () => {
     return (
-      <h1 className="text-xl font-bold tracking-[-0.5px] text-slate-700">
+      <h1 className="text-lg font-semibold tracking-tight text-slate-700 sm:text-xl">
         {title}
       </h1>
     );
@@ -114,7 +112,7 @@ export function ListingHeader({
     return (
       !!commentCount && (
         <Link className="hidden md:block" href="#comments">
-          <div className="ml-4 flex items-center gap-2">
+          <div className="flex items-center gap-2">
             <MessageSquare className="h-4 w-4 fill-slate-600 text-slate-500" />
             <p className="text-sm text-slate-400">{commentCount}</p>
           </div>
@@ -123,24 +121,11 @@ export function ListingHeader({
     );
   };
 
-  const PrivateLabel = () => {
-    if (!isPrivate) return null;
-    return (
-      <>
-        <ListingHeaderSeparator />
-        <div className="flex items-center gap-1">
-          <MdLock className="h-4 w-4 text-slate-500" />
-          <p className="text-sm text-slate-400">Private</p>
-        </div>
-      </>
-    );
-  };
-
   const HeaderSub = () => {
     return (
-      <div className="flex flex-wrap items-center gap-1 md:gap-3">
+      <div className="flex flex-wrap items-center gap-1 md:gap-2">
         <div className="flex items-center gap-1">
-          <p className="text-sm font-medium whitespace-nowrap text-slate-400">
+          <p className="max-w-[200px] overflow-hidden text-sm font-medium text-ellipsis whitespace-nowrap text-slate-500">
             by {sponsor?.name}
           </p>
           {!!sponsor?.isVerified && <VerifiedBadge />}
@@ -167,25 +152,22 @@ export function ListingHeader({
               contentProps={{ className: 'max-w-80' }}
             >
               <div className="flex items-center gap-1">
-                <LocalImage
-                  alt={type!}
-                  className="-ml-0.5"
-                  src={getListingIcon(type!)}
-                />
-                <p className="text-xs font-medium text-gray-400 md:text-sm">
-                  {isProject ? 'Project' : 'Bounty'}
+                {getListingIcon(type!, 'fill-slate-400')}
+                <p className="text-sm font-medium text-gray-400">
+                  {isPrivate ? 'Private' : isProject ? 'Project' : 'Bounty'}
                 </p>
               </div>
             </Tooltip>
           </div>
         )}
-        <ListingHeaderSeparator />
-        <div className="flex">
+        <ListingHeaderSeparator className="hidden sm:flex" />
+        <div className="hidden sm:flex">
           <ListingStatus />
         </div>
-        <PrivateLabel />
         <ListingHeaderSeparator />
+
         <RegionLabel region={region} />
+        <ListingHeaderSeparator className="hidden sm:flex" />
         <CommentCount />
       </div>
     );
@@ -200,6 +182,8 @@ export function ListingHeader({
       />
     );
   };
+
+  const isSubmissionPage = router.pathname.endsWith('/submission');
 
   return (
     <div className="flex flex-col gap-1 bg-white">
@@ -225,9 +209,7 @@ export function ListingHeader({
         {listing.id && (
           <div className="flex items-center gap-2">
             <SubscribeListing isTemplate={isTemplate} id={listing.id} />
-            <div className="hidden md:block">
-              <ShareListing source="listing" listing={listing} />
-            </div>
+            <ShareListing source="listing" listing={listing} />
           </div>
         )}
       </div>
@@ -235,9 +217,9 @@ export function ListingHeader({
         <ListingTitle />
         <HeaderSub />
       </div>
-      {
-        <div className="flex h-10 w-full max-w-7xl items-center">
-          <div className="mx-auto my-auto flex h-full w-full max-w-7xl items-center justify-start gap-10 border-b border-slate-200">
+      <div className="flex h-10 w-full max-w-7xl items-center">
+        <div className="mx-auto my-auto flex h-full w-full max-w-7xl items-center justify-start border-b border-slate-200">
+          {!isSubmissionPage && (
             <ListingTabLink
               className="pointer-events-none hidden md:flex md:w-[22rem]"
               href={`/listing/${slug}/`}
@@ -250,30 +232,30 @@ export function ListingHeader({
               }
               isActive={false}
             />
-            <ListingTabLink
-              href={
-                !isTemplate
-                  ? `/listing/${slug}/`
-                  : `/templates/listings/${slug}/`
-              }
-              text="Details"
-              isActive={!router.asPath.split('/')[3]?.includes('submission')}
-            />
+          )}
 
-            {!isProject && isWinnersAnnounced && (
-              <ListingTabLink
-                onClick={() => posthog.capture('submissions tab_listing')}
-                href={`/listing/${slug}/submission`}
-                text="Submissions"
-                isActive={!!router.asPath.split('/')[3]?.includes('submission')}
-                subText={
-                  isSubmissionNumberLoading ? '...' : submissionNumber + ''
-                }
-              />
-            )}
-          </div>
+          <ListingTabLink
+            href={
+              !isTemplate ? `/listing/${slug}/` : `/templates/listings/${slug}/`
+            }
+            text="Details"
+            isActive={!router.asPath.split('/')[3]?.includes('submission')}
+            className="mr-6"
+          />
+
+          {!isProject && isWinnersAnnounced && (
+            <ListingTabLink
+              onClick={() => posthog.capture('submissions tab_listing')}
+              href={`/listing/${slug}/submission`}
+              text="Submissions"
+              isActive={!!router.asPath.split('/')[3]?.includes('submission')}
+              subText={
+                isSubmissionNumberLoading ? '...' : submissionNumber + ''
+              }
+            />
+          )}
         </div>
-      }
+      </div>
     </div>
   );
 }

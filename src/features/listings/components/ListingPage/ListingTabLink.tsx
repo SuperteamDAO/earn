@@ -22,9 +22,8 @@ export const ListingTabLink = ({
   return (
     <Link
       className={cn(
-        'ph-no-capture hover:border-brand-purple flex h-full items-center gap-2 border-b-2 text-sm font-medium text-slate-500 no-underline transition-colors',
-        'text-xs md:text-sm',
-        isActive ? 'border-brand-purple' : 'border-transparent',
+        'ph-no-capture hover:border-brand-purple/80 flex h-full items-center gap-2 border-b-2 text-sm font-medium text-slate-500 no-underline transition-colors',
+        isActive ? 'border-brand-purple/80' : 'border-transparent',
         className,
       )}
       href={href}
@@ -32,7 +31,9 @@ export const ListingTabLink = ({
     >
       {text}
       {subText && (
-        <span className="text-[10px] text-slate-400 md:text-xs">{subText}</span>
+        <span className="bg-brand-purple/20 rounded-full px-1.5 py-px text-[10px] text-slate-500">
+          {subText}
+        </span>
       )}
     </Link>
   );

@@ -8,14 +8,13 @@ import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 
 import { BannerCarousel } from '@/features/home/components/Banner';
-import { NavTabs } from '@/features/home/components/NavTabs';
 import { UserStatsBanner } from '@/features/home/components/UserStatsBanner';
 
 interface HomeProps {
   children: ReactNode;
   type: 'landing' | 'listing' | 'category' | 'region' | 'feed';
   st?: Superteam;
-  isAuth?: boolean;
+  potentialSession?: boolean;
 }
 
 type CategoryTypes = 'content' | 'development' | 'design' | 'other';
@@ -36,7 +35,12 @@ const HomeSideBar = dynamic(() =>
   import('@/features/home/components/SideBar').then((mod) => mod.HomeSideBar),
 );
 
-export function Home({ children, type, st, isAuth }: HomeProps) {
+export function Home({
+  children,
+  type,
+  st,
+  potentialSession = false,
+}: HomeProps) {
   const router = useRouter();
   const [currentCategory, setCurrentCategory] = useState<CategoryTypes | null>(
     null,
@@ -78,18 +82,18 @@ export function Home({ children, type, st, isAuth }: HomeProps) {
               <div className="w-full pt-1 lg:pr-6">
                 {type === 'landing' && (
                   <>
-                    <NavTabs />
-                    {isAuth ? <UserStatsBanner /> : <BannerCarousel />}
+                    {potentialSession || authenticated ? (
+                      <UserStatsBanner />
+                    ) : (
+                      <BannerCarousel />
+                    )}
                   </>
                 )}
                 {type === 'listing' && (
                   <>
-                    <NavTabs />
-                    {!authenticated ? <BannerCarousel /> : <UserStatsBanner />}
+                    {authenticated ? <UserStatsBanner /> : <BannerCarousel />}
                   </>
                 )}
-                {type === 'category' && <NavTabs />}
-                {type === 'region' && <NavTabs className="mt-1" />}
                 {children}
               </div>
             </div>
