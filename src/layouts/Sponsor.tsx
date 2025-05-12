@@ -22,7 +22,7 @@ import { LoadingSection } from '@/components/shared/LoadingSection';
 import { Button } from '@/components/ui/button';
 import { Tooltip } from '@/components/ui/tooltip';
 import { Superteams, unofficialSuperteams } from '@/constants/Superteam';
-import { ABTG } from '@/constants/Telegram';
+import { PDTG } from '@/constants/Telegram';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
@@ -157,7 +157,7 @@ export function SponsorLayout({
         { name: 'All Tracks', link: `/hackathon`, icon: MdList },
         {
           name: 'Get Help',
-          link: ABTG,
+          link: PDTG,
           icon: MdOutlineChatBubbleOutline,
           posthog: 'get help_sponsor',
         },
@@ -180,7 +180,7 @@ export function SponsorLayout({
           : []),
         {
           name: 'Get Help',
-          link: ABTG,
+          link: PDTG,
           icon: MessageSquare,
           posthog: 'get help_sponsor',
         },
