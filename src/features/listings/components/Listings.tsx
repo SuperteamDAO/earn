@@ -7,6 +7,8 @@ import { EmptySection } from '@/components/shared/EmptySection';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { useBreakpoint } from '@/hooks/use-breakpoint';
+import { useScrollShadow } from '@/hooks/use-scroll-shadow';
+import { cn } from '@/utils/cn';
 
 import { CATEGORY_NAV_ITEMS } from '@/features/navbar/constants';
 
@@ -28,6 +30,11 @@ export const Listings = ({
   const isMd = useBreakpoint('md');
 
   const { authenticated } = usePrivy();
+  const {
+    ref: scrollContainerRef,
+    showLeftShadow,
+    showRightShadow,
+  } = useScrollShadow<HTMLDivElement>();
 
   const {
     activeTab,
@@ -62,12 +69,24 @@ export const Listings = ({
   });
 
   const viewAllLink = () => {
+    let basePath: string;
     if (type === 'home') {
-      return '/all';
+      basePath = '/all';
+    } else if (type === 'region') {
+      basePath = `/regions/${region}/all`;
+    } else {
+      basePath = '/all';
     }
-    if (type === 'region') {
-      return `/regions/${region}/all`;
-    } else return '/all';
+
+    const params = new URLSearchParams();
+    params.set('category', activeCategory);
+    if (activeStatus) params.set('status', activeStatus);
+    if (activeSortBy) params.set('sortBy', activeSortBy);
+    if (activeOrder) params.set('order', activeOrder);
+    if (activeTab) params.set('tab', activeTab);
+    if (activeCategory) params.set('category', activeCategory);
+
+    return `${basePath}?${params.toString()}`;
   };
 
   const renderContent = () => {
@@ -138,48 +157,69 @@ export const Listings = ({
       </div>
 
       <div className="mb-2 h-px w-full bg-slate-200" />
+      <div className="relative -mx-2">
+        <div
+          className={cn(
+            'pointer-events-none absolute top-0 bottom-0 left-0 z-10 w-8',
+            'bg-gradient-to-r from-white/80 via-white/30 to-transparent',
+            'transition-opacity duration-300 ease-in-out',
+            showLeftShadow ? 'opacity-100' : 'opacity-0',
+          )}
+        />
 
-      <div className="flex gap-1 overflow-x-auto py-1">
-        {potentialSession && (
-          <CategoryPill
-            key="foryou"
-            phEvent="foryou_navpill"
-            isActive={activeCategory === 'For You'}
-            onClick={() =>
-              handleCategoryChange(
-                'For You' as ListingCategory,
-                'foryou_navpill',
-              )
-            }
-          >
-            For You
-          </CategoryPill>
-        )}
-        <CategoryPill
-          key="all"
-          phEvent="all_navpill"
-          isActive={activeCategory === 'All'}
-          onClick={() =>
-            handleCategoryChange('All' as ListingCategory, 'all_navpill')
-          }
+        <div
+          ref={scrollContainerRef}
+          className="hide-scrollbar flex gap-1.5 overflow-x-auto px-2 py-1"
         >
-          All
-        </CategoryPill>
-        {CATEGORY_NAV_ITEMS?.map((navItem) => (
+          {potentialSession && (
+            <CategoryPill
+              key="foryou"
+              phEvent="foryou_navpill"
+              isActive={activeCategory === 'For You'}
+              onClick={() =>
+                handleCategoryChange(
+                  'For You' as ListingCategory,
+                  'foryou_navpill',
+                )
+              }
+            >
+              For You
+            </CategoryPill>
+          )}
           <CategoryPill
-            key={navItem.label}
-            phEvent={navItem.pillPH}
-            isActive={activeCategory === navItem.label}
+            key="all"
+            phEvent="all_navpill"
+            isActive={activeCategory === 'All'}
             onClick={() =>
-              handleCategoryChange(
-                navItem.label as ListingCategory,
-                navItem.pillPH,
-              )
+              handleCategoryChange('All' as ListingCategory, 'all_navpill')
             }
           >
-            {isMd ? navItem.label : navItem.mobileLabel || navItem.label}
+            All
           </CategoryPill>
-        ))}
+          {CATEGORY_NAV_ITEMS?.map((navItem) => (
+            <CategoryPill
+              key={navItem.label}
+              phEvent={navItem.pillPH}
+              isActive={activeCategory === navItem.label}
+              onClick={() =>
+                handleCategoryChange(
+                  navItem.label as ListingCategory,
+                  navItem.pillPH,
+                )
+              }
+            >
+              {isMd ? navItem.label : navItem.mobileLabel || navItem.label}
+            </CategoryPill>
+          ))}
+        </div>
+        <div
+          className={cn(
+            'pointer-events-none absolute top-0 right-0 bottom-0 z-10 w-8',
+            'bg-gradient-to-l from-white/80 via-white/30 to-transparent',
+            'transition-opacity duration-300 ease-in-out',
+            showRightShadow ? 'opacity-100' : 'opacity-0',
+          )}
+        />
       </div>
 
       {renderContent()}

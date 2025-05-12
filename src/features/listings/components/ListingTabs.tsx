@@ -52,9 +52,7 @@ export const ListingTabs = ({
           isActive={activeTab === tab.id}
           onClick={() => handleTabChange(tab.id, tab.posthog)}
         >
-          <span className="text-[13px] font-medium md:text-[14px]">
-            {tab.title}
-          </span>
+          <span className="text-sm font-medium">{tab.title}</span>
         </ListingTabTrigger>
       ))}
     </>

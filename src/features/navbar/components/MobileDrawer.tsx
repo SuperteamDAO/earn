@@ -175,6 +175,7 @@ export const MobileDrawer = ({
                       <NavItem
                         onClick={() => {
                           posthog.capture(navItem.posthog);
+                          router.push(navItem.href);
                           onDrawerClose();
                         }}
                         key={navItem.label}
@@ -211,6 +212,7 @@ export const MobileDrawer = ({
                       <NavItem
                         onClick={() => {
                           posthog.capture(navItem.posthog);
+                          router.push(navItem.href);
                           onDrawerClose();
                         }}
                         key={navItem.label}

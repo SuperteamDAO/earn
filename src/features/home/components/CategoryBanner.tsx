@@ -10,7 +10,7 @@ import { AuthWrapper } from '@/features/auth/components/AuthWrapper';
 
 const bannerPrefix = ASSET_URL + '/category_assets/banners/';
 
-type CategoryTypes = 'content' | 'development' | 'design' | 'other';
+type CategoryTypes = 'content' | 'development' | 'design' | 'other' | 'all';
 
 type CategoryBanner = {
   type: CategoryTypes;
@@ -30,7 +30,7 @@ const banners: CategoryBanner[] = [
   {
     type: 'development',
     img: bannerPrefix + 'Dev.webp',
-    heading: 'Find your next Development gig',
+    heading: 'Find your next Dev gig',
     description: `If building robust applications and scalable solutions is your forte, don't miss out on the earning opportunities listed below.`,
   },
   {
@@ -47,6 +47,13 @@ const banners: CategoryBanner[] = [
     description:
       "If you have a unique skill set that doesn't fit into the other categories, you might find your next gig here.",
   },
+  {
+    type: 'all',
+    img: '/assets/banner.webp',
+    heading: 'Find your next Gig',
+    description:
+      'All the opportunities below are available to you. Participate in bounties or apply to freelance gigs of world-class crypto companies.',
+  },
 ];
 
 export function CategoryBanner({ category }: { category: CategoryTypes }) {
@@ -61,16 +68,16 @@ export function CategoryBanner({ category }: { category: CategoryTypes }) {
   if (!banner) return null;
 
   return (
-    <div className="relative flex h-72 w-full flex-col items-center">
+    <div className="relative flex h-52 w-full flex-col items-center rounded-xl md:h-72">
       <Image
         src={banner.img}
         alt={banner.type}
         width={1440}
         height={290}
-        className="h-full w-full object-cover object-center"
+        className="h-full w-full rounded-xl object-cover object-center"
       />
-      <div className="absolute inset-0 bg-black/50" />
-      <div className="absolute top-1/2 flex w-full max-w-7xl -translate-y-1/2 flex-col items-start px-3 md:px-4">
+      <div className="absolute inset-0 rounded-xl bg-black/40" />
+      <div className="absolute top-3/7 flex w-full max-w-7xl -translate-y-1/2 flex-col items-start px-3 md:top-2/5 md:px-8">
         {banner.heading && (
           <h2 className="text-2xl font-bold text-white md:text-4xl">
             {banner.heading}

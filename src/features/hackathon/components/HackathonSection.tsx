@@ -73,7 +73,7 @@ export const HackathonSection = ({ type }: HackathonSectionProps) => {
             variant="outline"
             asChild
           >
-            <Link className="ph-no-capture" href={'/hackathon/all'}>
+            <Link className="ph-no-capture" href={viewAllHackathonLink()}>
               View All
               <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
@@ -81,6 +81,16 @@ export const HackathonSection = ({ type }: HackathonSectionProps) => {
         )}
       </>
     );
+  };
+
+  const viewAllHackathonLink = () => {
+    const basePath = '/hackathon/all';
+    const params = new URLSearchParams();
+    params.set('name', activeName);
+    if (activeStatus) params.set('status', activeStatus);
+    if (activeSortBy) params.set('sortBy', activeSortBy);
+    if (activeOrder) params.set('order', activeOrder);
+    return `${basePath}?${params.toString()}`;
   };
 
   return (
@@ -101,9 +111,9 @@ export const HackathonSection = ({ type }: HackathonSectionProps) => {
         />
       </div>
 
-      <div className="mb-2 h-px w-full bg-slate-200" />
+      <div className="w-full bg-slate-200" />
 
-      <div className="flex gap-1 overflow-x-auto py-1">
+      <div className="flex gap-1.5 overflow-x-auto py-2">
         <CategoryPill
           key="all"
           phEvent="all_navpill"
