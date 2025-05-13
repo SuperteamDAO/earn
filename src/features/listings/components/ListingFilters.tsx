@@ -40,7 +40,7 @@ export const ListingFilters = ({
           <LucideListFilter className="size-4 stroke-3 text-slate-600" />
         </div>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
+      <DropdownMenuContent align="end" className="z-[60]">
         <DropdownMenuLabel className="font-medium text-slate-600">
           Filter By
         </DropdownMenuLabel>

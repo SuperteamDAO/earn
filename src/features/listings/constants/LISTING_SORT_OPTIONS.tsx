@@ -27,12 +27,12 @@ interface HackathonSortOptions {
 
 export const LISTING_SORT_OPTIONS: readonly SortOption[] = [
   {
-    label: 'Due Date: Earliest to Latest',
+    label: 'Due Date: Earliest First',
     params: { sortBy: 'Due Date', order: 'asc' },
     icon: <FaRegClock className="size-4" />,
   },
   {
-    label: 'Due Date: Latest to Earliest',
+    label: 'Due Date: Latest First',
     params: { sortBy: 'Due Date', order: 'desc' },
     icon: <FaRegClock className="size-4" />,
   },

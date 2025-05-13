@@ -258,8 +258,7 @@ export const MobileDrawer = ({
                 <SupportFormDialog>
                   <NavItem
                     label="Get Help"
-                    onClick={(e) => {
-                      e.preventDefault();
+                    onClick={() => {
                       posthog.capture('get help_navbar');
                     }}
                   />
