@@ -2,8 +2,8 @@ import { type Prisma } from '@prisma/client';
 import { z } from 'zod';
 
 export const ListingTabSchema = z
-  .enum(['all_open', 'bounties', 'projects'])
-  .default('all_open');
+  .enum(['all', 'bounties', 'projects'])
+  .default('all');
 export const OrderDirectionSchema = z.enum(['asc', 'desc']).default('asc');
 export const ListingCategorySchema = z
   .enum(['For You', 'All', 'Content', 'Design', 'Development', 'Other'])

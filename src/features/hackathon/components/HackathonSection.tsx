@@ -57,7 +57,12 @@ export const HackathonSection = ({ type }: HackathonSectionProps) => {
     }
 
     if (!listings?.length) {
-      return <EmptySection title="No listings found" />;
+      return (
+        <EmptySection
+          title="No opportunities found"
+          message="We don't have any relevant opportunities for the current filters."
+        />
+      );
     }
 
     return (

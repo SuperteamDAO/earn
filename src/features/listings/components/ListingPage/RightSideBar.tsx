@@ -199,7 +199,7 @@ export function RightSideBar({
           <div className="w-full border-b border-slate-100" />
           <div
             className={cn(
-              'flex w-full gap-8 sm:justify-between',
+              'flex w-full justify-between',
               rewards ? 'py-0' : 'py-3',
             )}
           >

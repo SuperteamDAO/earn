@@ -52,7 +52,7 @@ const banners: CategoryBanner[] = [
     img: '/assets/banner.webp',
     heading: 'Find your next Gig',
     description:
-      'All the opportunities below are available to you. Participate in bounties or apply to freelance gigs of world-class crypto companies.',
+      'This is your gateway to start contributing to world-class crypto companies. Choose an opportunity that fits your profile and build your proof of work.',
   },
 ];
 

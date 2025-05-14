@@ -83,7 +83,13 @@ export const MobileDrawer = ({
 
         {isLoggedIn && (
           <div>
-            <div className="flex items-center gap-1.5 px-4 py-3 select-none sm:gap-2 sm:py-4">
+            <div
+              className="flex items-center gap-1.5 px-4 py-3 select-none sm:gap-2 sm:py-4"
+              onClick={() => {
+                router.push(`/t/${user?.username}`);
+                onDrawerClose();
+              }}
+            >
               <EarnAvatar
                 className="size-8 sm:size-9"
                 id={user?.id}

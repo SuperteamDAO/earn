@@ -22,7 +22,7 @@ export const ListingTabLink = ({
   return (
     <Link
       className={cn(
-        'ph-no-capture hover:border-brand-purple/80 flex h-full items-center gap-2 border-b-2 text-sm font-medium text-slate-500 no-underline transition-colors',
+        'ph-no-capture hover:border-brand-purple/80 flex h-full items-center gap-2 border-b-2 px-3 text-sm font-medium text-slate-500 no-underline transition-colors',
         isActive ? 'border-brand-purple/80' : 'border-transparent',
         className,
       )}

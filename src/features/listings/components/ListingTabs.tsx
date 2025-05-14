@@ -3,7 +3,7 @@ import { cn } from '@/utils/cn';
 import { type ListingTab } from '../hooks/useListings';
 
 const TABS = [
-  { id: 'all_open', title: 'All Open', posthog: 'all_open_listings' },
+  { id: 'all', title: 'All', posthog: 'all_listings' },
   { id: 'bounties', title: 'Bounties', posthog: 'bounties_listings' },
   { id: 'projects', title: 'Projects', posthog: 'projects_listings' },
 ] as const;
@@ -22,7 +22,7 @@ const ListingTabTrigger = ({
   <button
     onClick={onClick}
     className={cn(
-      'group ring-offset-background relative inline-flex items-center justify-center rounded-md px-1 py-1 text-sm font-medium whitespace-nowrap transition-all sm:px-3',
+      'group ring-offset-background relative inline-flex items-center justify-center rounded-md px-2 py-1 text-sm font-medium whitespace-nowrap transition-all',
       'hover:text-brand-purple',
       isActive && [
         'text-brand-purple',
@@ -45,16 +45,16 @@ export const ListingTabs = ({
   handleTabChange,
 }: ListingTabsProps) => {
   return (
-    <>
+    <div className="flex items-center gap-3">
       {TABS.map((tab) => (
         <ListingTabTrigger
           key={tab.id}
           isActive={activeTab === tab.id}
           onClick={() => handleTabChange(tab.id, tab.posthog)}
         >
-          <span className="text-sm font-medium">{tab.title}</span>
+          <span>{tab.title}</span>
         </ListingTabTrigger>
       ))}
-    </>
+    </div>
   );
 };

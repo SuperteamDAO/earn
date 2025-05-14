@@ -235,7 +235,7 @@ export async function buildListingQuery(
     case 'projects':
       where.type = 'project';
       break;
-    case 'all_open':
+    case 'all':
       where.type = { not: 'hackathon' };
       break;
   }
