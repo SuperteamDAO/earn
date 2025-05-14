@@ -253,23 +253,20 @@ export const MobileDrawer = ({
               label="Leaderboard"
               onClick={() => router.push(`/leaderboard`)}
             />
+            <SupportFormDialog>
+              <NavItem
+                label="Get Help"
+                onClick={() => {
+                  posthog.capture('get help_navbar');
+                }}
+              />
+            </SupportFormDialog>
             {isLoggedIn && (
-              <>
-                <SupportFormDialog>
-                  <NavItem
-                    label="Get Help"
-                    onClick={() => {
-                      posthog.capture('get help_navbar');
-                    }}
-                  />
-                </SupportFormDialog>
-
-                <NavItem
-                  label="Logout"
-                  onClick={() => router.push(`/t/${user?.username}/edit`)}
-                  className="text-red-500"
-                />
-              </>
+              <NavItem
+                label="Logout"
+                onClick={() => router.push(`/t/${user?.username}/edit`)}
+                className="text-red-500"
+              />
             )}
           </div>
         </div>
