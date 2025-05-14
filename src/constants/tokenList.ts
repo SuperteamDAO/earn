@@ -451,7 +451,7 @@ export const tokenList: Token[] = [
     coingeckoSymbol: 'zeus-netwok-zbtc',
   },
   {
-    tokenName: 'Global Dollar',
+    tokenName: 'Global Dollar (USDG)',
     tokenSymbol: 'USDG',
     mintAddress: '2u1tszSeqZ3qBWF3uNGPFc8TzMk2tdiwknnRMWGWjGWH',
     icon: 'https://assets.coingecko.com/coins/images/51281/standard/GDN_USDG_Token_200x200.png?1730484111',
