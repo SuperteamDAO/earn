@@ -3,8 +3,6 @@ import { exit } from 'process';
 
 const prisma = new PrismaClient();
 
-
-
 async function findBounty(identifier) {
   let bounty;
   if (identifier.uuid) {
@@ -27,7 +25,7 @@ async function findBounty(identifier) {
       },
     });
   }
-  
+
   return JSON.parse(JSON.stringify(bounty));
 }
 
@@ -64,12 +62,12 @@ async function createTemplate(bounty) {
     isActive: true,
     isArchived: false,
     slug: `template-${bounty.slug}`,
-    isPublished: false
+    isPublished: false,
   };
 
   // Create the template
   const template = await prisma.bountiesTemplates.create({
-    data: templateData
+    data: templateData,
   });
 
   return template;
@@ -77,9 +75,11 @@ async function createTemplate(bounty) {
 
 async function main() {
   const args = process.argv.slice(2);
-  
+
   if (args.length < 1) {
-    console.error('Please provide either a UUID, slug, or sponsor-slug/sequenceId');
+    console.error(
+      'Please provide either a UUID, slug, or sponsor-slug/sequenceId',
+    );
     console.error('Usage:');
     console.error('  npm run create-template <uuid>');
     console.error('  npm run create-template <slug>');
@@ -102,7 +102,11 @@ async function main() {
       sponsorSlug,
       sequenceId: parseInt(sequenceId, 10),
     };
-  } else if (identifier.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i)) {
+  } else if (
+    identifier.match(
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i,
+    )
+  ) {
     bountyIdentifier = { uuid: identifier };
   } else {
     bountyIdentifier = { slug: identifier };
@@ -110,7 +114,7 @@ async function main() {
 
   try {
     const bounty = await findBounty(bountyIdentifier);
-    
+
     if (!bounty) {
       console.error('Bounty not found');
       exit(1);
@@ -126,10 +130,6 @@ async function main() {
   }
 }
 
-export {
-  findBounty,
-  createTemplate,
-  main
-};
+export { findBounty, createTemplate, main };
 
 main();

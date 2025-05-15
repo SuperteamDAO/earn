@@ -43,8 +43,8 @@ export function Deadline() {
   useEffect(() => {
     if (isEditing && deadline) {
       const originalDeadline = dayjs(deadline);
-      const twoWeeksLater = originalDeadline.add(2, 'weeks');
-      setMaxDeadline(twoWeeksLater.toDate());
+      const threeMonthsLater = originalDeadline.add(3, 'months');
+      setMaxDeadline(threeMonthsLater.toDate());
     }
     return () => {
       setMaxDeadline(undefined);
@@ -102,7 +102,7 @@ export function Deadline() {
                 }}
                 disabled={type === 'hackathon'}
                 minDateTooltipContent="Deadline cannot be in the past"
-                maxDateTooltipContent="Cannot extend deadline more than 2 weeks from original deadline"
+                maxDateTooltipContent="Cannot extend deadline more than 3 months from original deadline"
               />
             </div>
             {type !== 'hackathon' && (

@@ -33,7 +33,14 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       prisma.bounties.aggregate({
         _sum: { usdValue: true },
         where: {
-          isWinnersAnnounced: true,
+          OR: [
+            {
+              isWinnersAnnounced: true,
+            },
+            {
+              type: 'sponsorship',
+            },
+          ],
           isPublished: true,
           status: status.OPEN,
           sponsorId: userSponsorId,

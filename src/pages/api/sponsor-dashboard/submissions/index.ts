@@ -18,6 +18,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           sponsorId: userSponsorId,
           ...isActive,
         },
+        ...isActive,
       },
       include: {
         listing: {
