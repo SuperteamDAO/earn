@@ -15,6 +15,11 @@ async function handler(
   const params = req.query;
   const sponsorSlug = params.sponsor as string;
   const status = params.status as string;
+  const customQuestion = params.customQuestion;
+  const customAnswer = params.customAnswer;
+  const firstName = params.firstName;
+  const lastName = params.lastName;
+  const sequentialId = params.sequentialId;
 
   const isGod = req.authorized && req.role === 'GOD';
   const validation = isGod ? {} : { isActive: true, isArchived: false };
@@ -40,6 +45,30 @@ async function handler(
   }
 
   try {
+    let questionSearchIds: string[] | undefined;
+
+    if (customQuestion && customAnswer) {
+      const result = await prisma.$queryRaw<
+        { id: string; question: string; answer: string }[]
+      >`
+        SELECT DISTINCT s.id
+        FROM Submission s
+        JOIN Bounties b ON s.listingId = b.id
+        JOIN Sponsors sp ON b.sponsorId = sp.id
+        CROSS JOIN JSON_TABLE(
+          s.eligibilityAnswers,
+          '$[*]' COLUMNS (
+            question VARCHAR(255) PATH '$.question',
+            answer VARCHAR(255) PATH '$.answer'
+          )
+        ) as jt
+        WHERE sp.slug = ${sponsorSlug}
+        AND jt.question LIKE CONCAT('%', ${customQuestion}, '%')
+        AND jt.answer LIKE CONCAT('%', ${customAnswer}, '%')
+      `;
+      questionSearchIds = result.map((r) => r.id);
+    }
+
     logger.debug(
       `Fetching submissions with sponsor slug: ${sponsorSlug}, isGod: ${isGod}`,
     );
@@ -52,8 +81,16 @@ async function handler(
           isPrivate: isGod ? undefined : false,
           ...validation,
         },
+        user: {
+          ...(lastName && { lastName: { contains: lastName as string } }),
+          ...(firstName && { firstName: { contains: firstName as string } }),
+        },
+        ...(sequentialId && {
+          sequentialId: { equals: parseInt(sequentialId as string) },
+        }),
         ...validation,
         ...statusFilter,
+        ...(questionSearchIds ? { id: { in: questionSearchIds } } : {}),
       },
       include: {
         user: {
