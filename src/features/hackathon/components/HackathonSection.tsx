@@ -1,10 +1,7 @@
-import { ArrowRight } from 'lucide-react';
-import Link from 'next/link';
-import { usePostHog } from 'posthog-js/react';
-
 import { EmptySection } from '@/components/shared/EmptySection';
-import { Button } from '@/components/ui/button';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
+
+import { ViewAllButton } from '@/features/listings/components/ViewAllButton';
 
 import { CategoryPill } from '../../listings/components/CategoryPill';
 import {
@@ -21,8 +18,6 @@ export interface HackathonSectionProps {
 }
 
 export const HackathonSection = ({ type }: HackathonSectionProps) => {
-  const posthog = usePostHog();
-
   const {
     activeName,
     activeStatus,
@@ -71,18 +66,10 @@ export const HackathonSection = ({ type }: HackathonSectionProps) => {
           <ListingCard key={listing.id} bounty={listing} />
         ))}
         {type === 'home' && (
-          <Button
-            className="my-8 w-full border-slate-300 py-5 text-slate-400"
-            onClick={() => posthog.capture('viewall bottom_listings')}
-            size="sm"
-            variant="outline"
-            asChild
-          >
-            <Link className="ph-no-capture" href={viewAllHackathonLink()}>
-              View All
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Link>
-          </Button>
+          <ViewAllButton
+            posthogEvent="viewall bottom_hackathons"
+            href={viewAllHackathonLink()}
+          />
         )}
       </>
     );

@@ -1,10 +1,6 @@
 import { usePrivy } from '@privy-io/react-auth';
-import { ArrowRight } from 'lucide-react';
-import Link from 'next/link';
-import { usePostHog } from 'posthog-js/react';
 
 import { EmptySection } from '@/components/shared/EmptySection';
-import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { useBreakpoint } from '@/hooks/use-breakpoint';
 import { useScrollShadow } from '@/hooks/use-scroll-shadow';
@@ -19,6 +15,7 @@ import { CategoryPill } from './CategoryPill';
 import { ListingCard, ListingCardSkeleton } from './ListingCard';
 import { ListingFilters } from './ListingFilters';
 import { ListingTabs } from './ListingTabs';
+import { ViewAllButton } from './ViewAllButton';
 
 export const Listings = ({
   type,
@@ -26,7 +23,6 @@ export const Listings = ({
   region,
   sponsor,
 }: ListingTabsProps) => {
-  const posthog = usePostHog();
   const isMd = useBreakpoint('md');
 
   const { authenticated } = usePrivy();
@@ -115,18 +111,10 @@ export const Listings = ({
           <ListingCard key={listing.id} bounty={listing} />
         ))}
         {(type === 'home' || type === 'region') && (
-          <Button
-            className="my-8 w-full border-slate-300 py-5 text-slate-400"
-            onClick={() => posthog.capture('viewall bottom_listings')}
-            size="sm"
-            variant="outline"
-            asChild
-          >
-            <Link className="ph-no-capture" href={viewAllLink()}>
-              View All
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Link>
-          </Button>
+          <ViewAllButton
+            posthogEvent="viewall bottom_listings"
+            href={viewAllLink()}
+          />
         )}
       </>
     );

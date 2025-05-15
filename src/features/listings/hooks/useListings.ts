@@ -37,7 +37,7 @@ const fetchListings = async ({
   tab,
   category,
   status = 'open',
-  sortBy = 'Due Date',
+  sortBy = 'Date',
   order = 'asc',
   region = '',
   sponsor = '',

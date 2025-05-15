@@ -52,7 +52,7 @@ export function BannerCarousel() {
   return (
     <Carousel
       plugins={[plugin.current]}
-      className="w-full p-1"
+      className="w-full"
       opts={{ loop: true }}
       setApi={setCarouselApi}
     >

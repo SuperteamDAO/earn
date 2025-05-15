@@ -12,8 +12,8 @@ export const ListingStatusSchema = z
   .enum(['open', 'review', 'completed'])
   .default('open');
 export const ListingSortOptionSchema = z
-  .enum(['Due Date', 'Prize', 'Submissions'])
-  .default('Due Date');
+  .enum(['Date', 'Prize', 'Submissions'])
+  .default('Date');
 export const ListingContextSchema = z
   .enum(['home', 'all', 'region', 'region-all', 'sponsor'])
   .default('all');

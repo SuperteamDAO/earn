@@ -165,10 +165,13 @@ export function ListingHeader({
           <ListingStatus />
         </div>
         <ListingHeaderSeparator />
-
         <RegionLabel region={region} />
-        <ListingHeaderSeparator className="hidden sm:flex" />
-        <CommentCount />
+        {!!commentCount && (
+          <>
+            <ListingHeaderSeparator className="hidden sm:flex" />
+            <CommentCount />
+          </>
+        )}
       </div>
     );
   };

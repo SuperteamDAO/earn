@@ -16,7 +16,7 @@ export function EmptySection({
         <span className="text-lg font-bold text-slate-400">
           {title || 'Sorry! Nothing found'}
         </span>
-        <span className="text-center text-slate-300">
+        <span className="px-8 text-center text-sm text-slate-300 md:px-0 md:text-base">
           {message || 'Something went wrong! Please try again!'}
         </span>
       </div>

@@ -91,26 +91,22 @@ export function Home({
       }
     >
       {type === 'region' && st && <RegionBanner st={st} />}
+      {!!currentCategory && <CategoryBanner category={currentCategory} />}
       <div className={cn('mx-auto w-full px-2 lg:px-6')}>
         <div className="mx-auto w-full max-w-7xl p-0">
           <div className="flex items-start justify-between">
-            <div className="w-full py-3 lg:border-r lg:border-slate-100">
-              <div className="w-full pt-1 lg:pr-6">
-                {currentCategory ? (
-                  <CategoryBanner category={currentCategory} />
-                ) : (
-                  <>
-                    {(type === 'landing' || type === 'listing') && (
-                      <>
-                        {potentialSession || authenticated ? (
-                          <UserStatsBanner />
-                        ) : (
-                          <BannerCarousel />
-                        )}
-                      </>
-                    )}
-                  </>
-                )}
+            <div className="w-full lg:border-r lg:border-slate-100">
+              <div className="w-full lg:pr-6">
+                {!currentCategory &&
+                  (type === 'landing' || type === 'listing') && (
+                    <div className="pt-3">
+                      {potentialSession || authenticated ? (
+                        <UserStatsBanner />
+                      ) : (
+                        <BannerCarousel />
+                      )}
+                    </div>
+                  )}
                 {children}
               </div>
             </div>

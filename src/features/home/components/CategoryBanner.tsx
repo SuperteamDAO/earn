@@ -68,30 +68,30 @@ export function CategoryBanner({ category }: { category: CategoryTypes }) {
   if (!banner) return null;
 
   return (
-    <div className="relative flex h-52 w-full flex-col items-center rounded-xl md:h-72">
+    <div className="relative flex h-52 w-full flex-col items-center md:h-72">
       <Image
         src={banner.img}
         alt={banner.type}
         width={1440}
         height={290}
-        className="h-full w-full rounded-xl object-cover object-center"
+        className="h-full w-full object-cover object-center"
       />
-      <div className="absolute inset-0 rounded-xl bg-black/40" />
-      <div className="absolute top-3/7 flex w-full max-w-7xl -translate-y-1/2 flex-col items-start px-3 md:top-2/5 md:px-8">
+      <div className="absolute inset-0 bg-black/50" />
+      <div className="absolute top-1/2 flex w-full max-w-7xl -translate-y-1/2 flex-col items-start px-2 md:px-6">
         {banner.heading && (
-          <h2 className="text-2xl font-bold text-white md:text-4xl">
+          <h2 className="text-2xl font-semibold text-white md:text-4xl">
             {banner.heading}
           </h2>
         )}
         {banner.description && (
-          <p className="mt-3 max-w-[37rem] text-sm font-medium text-white md:text-lg">
+          <p className="mt-3 max-w-[42rem] text-sm text-white md:text-lg">
             {banner.description}
           </p>
         )}
         {!user && (
           <AuthWrapper className="w-full sm:w-auto">
             <Button
-              className="ph-no-capture my-2 w-full bg-white px-9 py-3 text-sm text-[#3223A0] sm:w-auto"
+              className="ph-no-capture mt-5 h-9 w-full bg-white px-9 py-1 text-sm text-[#3223A0] sm:w-auto md:h-10 md:py-3"
               onClick={() => {
                 posthog.capture('signup_category banner');
               }}

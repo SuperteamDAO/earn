@@ -92,18 +92,28 @@ function getStatusSpecificWhereClauses(
 
 function getOrderBy(
   args: BuildListingQueryArgs,
+  status: z.infer<typeof ListingStatusSchema>,
 ):
   | Prisma.BountiesOrderByWithRelationInput
   | Prisma.BountiesOrderByWithRelationInput[] {
   const { sortBy, order } = args;
+  const oppositeOrder = order === 'asc' ? 'desc' : 'asc';
 
   switch (sortBy) {
-    case 'Due Date':
+    case 'Date':
+      if (status === 'review') {
+        return { deadline: { sort: oppositeOrder, nulls: 'last' } };
+      } else if (status === 'completed') {
+        return { winnersAnnouncedAt: { sort: oppositeOrder, nulls: 'last' } };
+      }
       return { deadline: { sort: order, nulls: 'last' } };
+
     case 'Prize':
       return { usdValue: { sort: order, nulls: 'last' } };
+
     case 'Submissions':
       return { Submission: { _count: order } };
+
     default:
       return { deadline: { sort: order, nulls: 'last' } };
   }
@@ -254,7 +264,7 @@ export async function buildListingQuery(
     where.AND = andConditions;
   }
 
-  const orderBy = getOrderBy(args);
+  const orderBy = getOrderBy(args, status);
   const takeValue = context === 'home' || context === 'region' ? 10 : undefined;
 
   return {

@@ -11,7 +11,7 @@ import {
 import { cn } from '@/utils/cn';
 
 import { LISTING_FILTER_OPTIONS } from '../../listings/constants/LISTING_FILTER_OPTIONS';
-import { HACKATHON_SORT_OPTIONS } from '../../listings/constants/LISTING_SORT_OPTIONS';
+import { HACKATHON_SORT_OPTIONS } from '../../listings/constants/SORT_OPTIONS';
 import {
   type HackathonOrderDirection,
   type HackathonSortOption,

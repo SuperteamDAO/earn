@@ -1,14 +1,10 @@
-import { ArrowRight } from 'lucide-react';
-import Link from 'next/link';
-import { usePostHog } from 'posthog-js/react';
-
 import { EmptySection } from '@/components/shared/EmptySection';
-import { Button } from '@/components/ui/button';
 import { useBreakpoint } from '@/hooks/use-breakpoint';
 import { cn } from '@/utils/cn';
 
 import { CategoryPill } from '@/features/listings/components/CategoryPill';
 import { ListingCardSkeleton } from '@/features/listings/components/ListingCard';
+import { ViewAllButton } from '@/features/listings/components/ViewAllButton';
 import { CATEGORY_NAV_ITEMS } from '@/features/navbar/constants';
 
 import { type GrantContext, useGrants } from '../hooks/useGrants';
@@ -36,8 +32,6 @@ export const GrantsSection = ({ type, region, sponsor }: GrantSectionProps) => {
     sponsor,
   });
 
-  const posthog = usePostHog();
-
   const renderContent = () => {
     if (isLoading) {
       return Array.from({ length: 5 }).map((_, index) => (
@@ -59,18 +53,7 @@ export const GrantsSection = ({ type, region, sponsor }: GrantSectionProps) => {
           <GrantsCard key={grant.id} grant={grant} />
         ))}
         {type === 'home' && (
-          <Button
-            className="my-8 w-full border-slate-300 py-5 text-slate-400"
-            onClick={() => posthog.capture('viewall bottom_listings')}
-            size="sm"
-            variant="outline"
-            asChild
-          >
-            <Link className="ph-no-capture" href={`/grants`}>
-              View All
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Link>
-          </Button>
+          <ViewAllButton posthogEvent="viewall bottom_grants" href="/grants" />
         )}
       </>
     );

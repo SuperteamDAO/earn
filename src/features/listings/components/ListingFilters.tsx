@@ -11,7 +11,7 @@ import {
 import { cn } from '@/utils/cn';
 
 import { LISTING_FILTER_OPTIONS } from '../constants/LISTING_FILTER_OPTIONS';
-import { LISTING_SORT_OPTIONS } from '../constants/LISTING_SORT_OPTIONS';
+import { getListingSortOptions } from '../constants/SORT_OPTIONS';
 import type {
   ListingSortOption,
   ListingStatus,
@@ -33,11 +33,22 @@ export const ListingFilters = ({
   onStatusChange,
   onSortChange,
 }: ListingFiltersProps) => {
+  const sortOptions = getListingSortOptions(activeStatus);
+
+  const isDefaultFilterApplied =
+    activeStatus === 'open' && activeSortBy === 'Date' && activeOrder === 'asc';
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
-        <div className="cursor-pointer rounded-md p-2 hover:bg-slate-100">
+        <div className="relative cursor-pointer rounded-md p-2 hover:bg-slate-100">
           <LucideListFilter className="size-4 stroke-3 text-slate-600" />
+          {!isDefaultFilterApplied && (
+            <span
+              className="absolute right-2 bottom-2 block size-1 rounded-full bg-green-500 ring-1 ring-white"
+              aria-hidden="true"
+            />
+          )}
         </div>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="z-[60]">
@@ -71,7 +82,7 @@ export const ListingFilters = ({
         <DropdownMenuLabel className="font-medium text-slate-600">
           Sort By
         </DropdownMenuLabel>
-        {LISTING_SORT_OPTIONS.map((option) => (
+        {sortOptions.map((option) => (
           <DropdownMenuItem
             key={option.label}
             onSelect={() =>
