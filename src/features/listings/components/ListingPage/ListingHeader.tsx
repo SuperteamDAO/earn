@@ -224,7 +224,7 @@ export function ListingHeader({
         <div className="mx-auto my-auto flex h-full w-full max-w-7xl items-center justify-start border-b border-slate-200">
           {!isSubmissionPage && (
             <ListingTabLink
-              className="pointer-events-none hidden px-0 md:flex md:w-[22rem]"
+              className="pointer-events-none hidden px-0 md:flex md:w-[23rem]"
               href={`/listing/${slug}/`}
               text={
                 type === 'project'

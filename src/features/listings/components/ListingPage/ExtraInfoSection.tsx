@@ -25,7 +25,7 @@ export function ExtraInfoSection({
 }: ExtraInfoSectionProps) {
   const posthog = usePostHog();
   return (
-    <div className="flex w-full flex-col gap-8 pt-2 md:w-[22rem]">
+    <div className="flex w-full flex-col gap-8 pt-2 md:w-[23rem]">
       {region && region !== 'GLOBAL' && (
         <div className="flex w-full flex-col items-start gap-2 text-sm">
           <p className="font-semibold text-slate-600">

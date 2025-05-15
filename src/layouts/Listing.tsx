@@ -164,7 +164,7 @@ export function ListingPageLayout({
                 )}
               >
                 {!isSubmissionPage && (
-                  <div className="static top-14 h-full w-full grow border-slate-100 md:sticky md:w-[22rem] md:border-r md:pr-5">
+                  <div className="static top-14 h-full w-full grow border-slate-100 md:sticky md:w-[23rem] md:border-r md:pr-2 lg:pr-5">
                     <RightSideBar
                       isTemplate={isTemplate}
                       listing={initialBounty}
