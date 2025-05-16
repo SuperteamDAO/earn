@@ -15,7 +15,7 @@ import {
 import { Separator } from '@/components/ui/separator';
 import { Sheet, SheetContent } from '@/components/ui/sheet';
 import { useDisclosure } from '@/hooks/use-disclosure';
-import { useUser } from '@/store/user';
+import { useLogout, useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 
 import { HACKATHONS } from '@/features/hackathon/constants/hackathons';
@@ -63,6 +63,7 @@ export const MobileDrawer = ({
   const { authenticated, ready } = usePrivy();
   const [categoriesOpen, setCategoriesOpen] = useState(false);
   const [skillsOpen, setSkillsOpen] = useState(false);
+  const logout = useLogout();
 
   const { isOpen, onClose, onOpen } = useDisclosure();
 
@@ -270,7 +271,10 @@ export const MobileDrawer = ({
             {isLoggedIn && (
               <NavItem
                 label="Logout"
-                onClick={() => router.push(`/t/${user?.username}/edit`)}
+                onClick={() => {
+                  posthog.capture('logout_user menu');
+                  logout();
+                }}
                 className="text-red-500"
               />
             )}
