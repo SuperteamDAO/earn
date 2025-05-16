@@ -450,4 +450,12 @@ export const tokenList: Token[] = [
     decimals: 8,
     coingeckoSymbol: 'zeus-netwok-zbtc',
   },
+  {
+    tokenName: 'Global Dollar (USDG)',
+    tokenSymbol: 'USDG',
+    mintAddress: '2u1tszSeqZ3qBWF3uNGPFc8TzMk2tdiwknnRMWGWjGWH',
+    icon: 'https://assets.coingecko.com/coins/images/51281/standard/GDN_USDG_Token_200x200.png?1730484111',
+    decimals: 6,
+    coingeckoSymbol: 'global-dollar',
+  },
 ];
