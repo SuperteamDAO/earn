@@ -119,7 +119,7 @@ export const MobileNavbar = ({
                   >
                     <IoWalletOutline className="text-brand-purple size-6" />
                     <span className="bg-brand-purple/95 absolute top-px -right-1.5 block rounded-md px-1 py-px text-[10px] font-semibold tracking-tight text-white">
-                      ${formatNumberWithSuffix(walletBalance || 0, 1, true)}
+                      ${formatNumberWithSuffix(walletBalance || 0, 1, false)}
                     </span>
                   </div>
                 </div>

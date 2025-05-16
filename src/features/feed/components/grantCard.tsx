@@ -32,12 +32,12 @@ export function GrantCard({ grant, type, commentCount }: GrantCardProps) {
 
   const actionLinks = (
     <>
-      <div className="flex items-center gap-3">
-        <Avatar className="h-6 w-6">
+      <div className="flex items-center gap-1.5 sm:gap-3">
+        <Avatar className="size-5 sm:size-7">
           <AvatarImage src={grant?.sponsorLogo} alt="Sponsor Logo" />
         </Avatar>
         <Link
-          className={`text-sm font-semibold text-gray-500 md:text-base ${isViewGrantHovered ? '' : 'group-hover:underline'} group-hover:decoration-current`}
+          className={`text-xs font-semibold text-gray-500 sm:text-sm md:text-base ${isViewGrantHovered ? '' : 'group-hover:underline'} line-clamp-1 group-hover:decoration-current`}
           href={listingLink}
           rel="noopener noreferrer"
           target="_blank"

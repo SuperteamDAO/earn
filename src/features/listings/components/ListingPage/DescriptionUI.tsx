@@ -12,11 +12,19 @@ interface Props {
 
 export function DescriptionUI({ description }: Props) {
   const options: HTMLReactParserOptions = {
-    replace: ({ name, children, attribs }: any) => {
+    replace: (domNode: any) => {
+      const { name, children, attribs } = domNode;
       if (name === 'p' && (!children || children.length === 0)) {
         return <br />;
       }
-      return { name, children, attribs };
+      if (name === 'a' && attribs) {
+        return (
+          <a {...attribs} target="_blank" rel="noopener noreferrer">
+            {parse(children, options)}
+          </a>
+        );
+      }
+      return domNode;
     },
   };
 

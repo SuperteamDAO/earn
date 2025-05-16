@@ -122,11 +122,11 @@ export const FeedCardContainer = ({
         type === 'activity' && 'border-b border-slate-200 px-5',
       )}
     >
-      <div className="flex gap-3">
+      <div className="flex gap-1.5 sm:gap-3">
         <EarnAvatar
           id={userId}
           avatar={photo}
-          className="h-9 w-9"
+          className="size-7 sm:size-9"
           onClick={(e) => {
             e.stopPropagation();
             e.nativeEvent.stopImmediatePropagation();
@@ -150,14 +150,14 @@ export const FeedCardContainer = ({
             target="_blank"
           >
             {children}
-            <div className="flex flex-col items-start justify-between gap-3 px-3 py-4 md:flex-row md:items-center md:px-6 md:py-6">
+            <div className="flex items-center justify-between gap-3 px-3 py-4 md:px-6 md:py-6">
               {actionLinks}
             </div>
           </Link>
           {id && (
             <div
               className={cn(
-                'mt-2 flex w-fit items-center gap-8 py-2 pr-8',
+                'mt-2 flex w-fit items-center gap-8 pr-8 sm:py-2',
                 id ? 'pointer-events-auto' : 'pointer-events-none',
               )}
               id="feed-actions"
@@ -179,7 +179,7 @@ export const FeedCardContainer = ({
                 {isLiked && (
                   <IoMdHeart className="h-5 w-5 cursor-pointer text-rose-600 md:h-[22px] md:w-[22px]" />
                 )}
-                <p className="cursor-pointer text-base font-medium text-slate-500">
+                <p className="cursor-pointer text-sm font-medium text-slate-500 sm:text-base">
                   {totalLikes}
                 </p>
               </div>
@@ -193,7 +193,7 @@ export const FeedCardContainer = ({
               >
                 <GoComment className="h-[19px] w-[19px] cursor-pointer text-slate-500 md:h-[21px] md:w-[21px]" />
                 {!!commentCount && (
-                  <p className="cursor-pointer text-base font-medium text-slate-500">
+                  <p className="cursor-pointer text-sm font-medium text-slate-500 sm:text-base">
                     {commentCount}
                   </p>
                 )}
