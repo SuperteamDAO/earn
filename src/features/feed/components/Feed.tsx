@@ -3,6 +3,13 @@ import React, { useEffect, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 
 import { ExternalImage } from '@/components/ui/cloudinary-image';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { FeedPageLayout } from '@/layouts/Feed';
 import { cn } from '@/utils/cn';
 
@@ -106,17 +113,22 @@ export const Feed = ({ isWinner = false, id, type }: Props) => {
           </div>
 
           {activeMenu === 'popular' && (
-            <select
-              className="mr-1 w-28 text-right text-sm text-slate-500 outline-hidden"
-              onChange={(e) => {
-                setTimePeriod(e.target.value);
-              }}
-              value={timePeriod}
-            >
-              <option>This Week</option>
-              <option>This Month</option>
-              <option>This Year</option>
-            </select>
+            <Select value={timePeriod} onValueChange={setTimePeriod}>
+              <SelectTrigger className="mr-1 h-6 w-28 text-right text-xs text-slate-500 sm:h-8">
+                <SelectValue placeholder="Select period" />
+              </SelectTrigger>
+              <SelectContent className="text-slate-500">
+                <SelectItem className="text-xs" value="This Week">
+                  This Week
+                </SelectItem>
+                <SelectItem className="text-xs" value="This Month">
+                  This Month
+                </SelectItem>
+                <SelectItem className="text-xs" value="This Year">
+                  This Year
+                </SelectItem>
+              </SelectContent>
+            </Select>
           )}
         </div>
       </div>
