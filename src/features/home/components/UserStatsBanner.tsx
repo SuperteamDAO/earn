@@ -26,8 +26,6 @@ export const UserStatsBanner = () => {
   const { ready } = usePrivy();
   const { data: stats, isLoading } = useQuery(userStatsQuery);
 
-  if (!user) return <></>;
-
   if (!ready || isLoading) {
     return (
       <Skeleton className="mx-auto mb-8 h-[170px] max-h-[300px] rounded-xl p-6 md:h-[100px] md:p-10" />
@@ -37,10 +35,10 @@ export const UserStatsBanner = () => {
   return (
     <div className="flex flex-col gap-4 rounded-xl bg-linear-to-r from-[#4C52E2] to-[#4338CA] px-6 py-6 text-white md:flex-row md:items-center md:justify-between md:px-8">
       <div className="flex items-center gap-4">
-        <EarnAvatar id={user.id} avatar={user.photo} className="h-12 w-12" />
+        <EarnAvatar id={user?.id} avatar={user?.photo} className="h-12 w-12" />
         <div className="flex flex-col gap-0">
           <p className="max-w-[25rem] truncate text-lg font-semibold md:text-xl">
-            {user.isTalentFilled
+            {user?.isTalentFilled
               ? `Welcome back, ${user.firstName}`
               : 'Welcome!'}
           </p>
