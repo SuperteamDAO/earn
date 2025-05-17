@@ -32,7 +32,7 @@ import { cn } from '@/utils/cn';
 import { CreditIcon } from '@/features/credits/icon/credit';
 import { SocialInput } from '@/features/social/components/SocialInput';
 
-import { walletFieldListings } from '../../constants';
+import { walletFieldListings } from '../../constants/walletFieldListings';
 import { submissionCountQuery } from '../../queries/submission-count';
 import { userSubmissionQuery } from '../../queries/user-submission-status';
 import { type Listing } from '../../types';

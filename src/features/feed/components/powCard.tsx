@@ -46,7 +46,7 @@ export function PowCard({ pow, type, commentCount }: PowCardProps) {
     <>
       <div className="flex">
         <p
-          className={`text-sm font-semibold break-all text-gray-500 md:text-base ${isViewProjectHovered ? '' : 'group-hover:underline'} group-hover:decoration-current`}
+          className={`text-xs font-semibold break-all text-gray-500 sm:text-sm md:text-base ${isViewProjectHovered ? '' : 'group-hover:underline'} line-clamp-1 group-hover:decoration-current`}
         >
           {pow?.title}
         </p>

@@ -17,7 +17,6 @@ export const FeatureModal = ({
   isAnyModalOpen = false,
 }: {
   isAnyModalOpen?: boolean;
-  isAuth?: boolean;
 }) => {
   const { user } = useUser();
   const { authenticated, ready } = usePrivy();
@@ -31,7 +30,6 @@ export const FeatureModal = ({
   const router = useRouter();
 
   const SPONSOR_LOCAL_STORAGE_KEY = 'sponsor-credit-feature-shown';
-  const isDashboardRoute = router.pathname.startsWith('/dashboard');
 
   const handleClose = () => {
     setPopupOpen(false);
@@ -48,15 +46,19 @@ export const FeatureModal = ({
   };
 
   useEffect(() => {
+    const isDashboardRoute = router.pathname.startsWith('/dashboard');
+
+    if (!ready || !authenticated) {
+      return;
+    }
+
     if (
       user &&
       user.featureModalShown === false &&
       user.isTalentFilled &&
       !isPopupOpen &&
       !isDashboardRoute &&
-      !talentModalShownRef.current &&
-      ready &&
-      authenticated
+      !talentModalShownRef.current
     ) {
       setIsSponsor(false);
       setPopupOpen(true);
@@ -65,16 +67,14 @@ export const FeatureModal = ({
       }
       return;
     }
-    const sponsorModalShown = localStorage.getItem(SPONSOR_LOCAL_STORAGE_KEY);
 
+    const sponsorModalShown = localStorage.getItem(SPONSOR_LOCAL_STORAGE_KEY);
     if (
       !sponsorModalShown &&
       isDashboardRoute &&
       user &&
       !!user.currentSponsorId &&
-      !isPopupOpen &&
-      ready &&
-      authenticated
+      !isPopupOpen
     ) {
       setIsSponsor(true);
       setPopupOpen(true);
@@ -82,9 +82,10 @@ export const FeatureModal = ({
         popupTimeout.pause();
       }
     }
-  }, [user, isPopupOpen, popupTimeout, router.pathname]);
+  }, [user, isPopupOpen, popupTimeout, router.pathname, ready, authenticated]);
 
   if (isAnyModalOpen) return null;
+  if (!ready || !authenticated) return null;
 
   return (
     <Dialog open={isPopupOpen} onOpenChange={handleClose}>

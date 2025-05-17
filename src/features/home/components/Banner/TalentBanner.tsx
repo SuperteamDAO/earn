@@ -54,11 +54,7 @@ export function HomeTalentBanner() {
         </picture>
       </div>
       <div
-        className="absolute inset-0 bg-black/20 md:hidden"
-        aria-hidden="true"
-      />
-      <div
-        className="absolute inset-0 hidden bg-black/10 md:block"
+        className="absolute inset-0 bg-black/30 md:bg-black/20"
         aria-hidden="true"
       />
       <p className="relative z-10 text-2xl leading-[120%] font-bold text-white md:text-[28px]">

@@ -24,7 +24,7 @@ export interface LocalProfile {
   createdAt: string;
 }
 
-export interface PaginatedResponse {
+interface PaginatedResponse {
   users: LocalProfile[];
   pagination: {
     total: number;

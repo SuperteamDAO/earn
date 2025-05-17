@@ -4,6 +4,8 @@ import type { Skills } from '@/interface/skills';
 import type { SponsorType } from '@/interface/sponsor';
 import { type User } from '@/interface/user';
 
+import { type ListingContext } from '../hooks/useListings';
+
 export interface Listing {
   id?: string;
   title?: string;
@@ -91,4 +93,9 @@ export interface Rewards {
   [rank: number]: number;
 }
 
-export type StatusFilter = 'open' | 'review' | 'completed';
+export interface ListingTabsProps {
+  type: ListingContext;
+  potentialSession?: boolean;
+  region?: string;
+  sponsor?: string;
+}

@@ -17,7 +17,7 @@ export const FeedCardLink = ({
   return (
     <div
       className={cn(
-        'group-hover:underline-none hidden items-center gap-2 whitespace-nowrap md:flex',
+        'group-hover:underline-none flex items-center gap-2 whitespace-nowrap',
         style,
       )}
     >
@@ -27,10 +27,10 @@ export const FeedCardLink = ({
         target="_blank"
         className="hover:decoration-brand-purple flex items-center gap-3 hover:underline hover:underline-offset-2"
       >
-        <span className="text-brand-purple text-sm font-medium md:text-base">
+        <span className="text-brand-purple text-xs font-medium md:text-base">
           {children}
         </span>
-        <ArrowRight className="text-brand-purple h-4 w-4" />
+        <ArrowRight className="text-brand-purple hidden h-4 w-4 sm:block" />
       </Link>
     </div>
   );

@@ -84,8 +84,8 @@ export const SubscribeListing = ({ id, isTemplate = false }: Props) => {
         >
           <Button
             className={cn(
-              'ph-no-capture hover:bg-brand-purple gap-2 border-slate-300 font-medium text-slate-500 hover:text-white',
-              'w-auto p-0 px-3',
+              'ph-no-capture hover:bg-brand-purple gap-2 border-slate-300 font-medium text-slate-400 hover:text-white',
+              'h-8 w-auto p-0 px-2 sm:h-10 sm:px-3',
             )}
             variant="outline"
             disabled={isTemplate}
@@ -98,7 +98,7 @@ export const SubscribeListing = ({ id, isTemplate = false }: Props) => {
             aria-label="Notify"
           >
             {isSubscribeLoading ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
+              <Loader2 className="size-4 animate-spin" />
             ) : isSubscribed ? (
               <TbBellRinging />
             ) : (

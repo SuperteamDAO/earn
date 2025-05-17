@@ -1,7 +1,7 @@
 import { Plugin, PluginKey } from '@tiptap/pm/state';
 import { Extension } from '@tiptap/react';
 
-export interface ImageCleanupOptions {
+interface ImageCleanupOptions {
   onCleanup?: (src: string) => void;
 }
 

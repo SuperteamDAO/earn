@@ -10,7 +10,7 @@ export interface SumSubBaseResponse {
 
 export const SUMSUB_BASE_URL = 'https://api.sumsub.com';
 
-export const generateSignature = (
+const generateSignature = (
   timestamp: number,
   method: string,
   url: string,

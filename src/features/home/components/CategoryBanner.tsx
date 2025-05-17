@@ -10,7 +10,7 @@ import { AuthWrapper } from '@/features/auth/components/AuthWrapper';
 
 const bannerPrefix = ASSET_URL + '/category_assets/banners/';
 
-type CategoryTypes = 'content' | 'development' | 'design' | 'other';
+type CategoryTypes = 'content' | 'development' | 'design' | 'other' | 'all';
 
 type CategoryBanner = {
   type: CategoryTypes;
@@ -30,7 +30,7 @@ const banners: CategoryBanner[] = [
   {
     type: 'development',
     img: bannerPrefix + 'Dev.webp',
-    heading: 'Find your next Development gig',
+    heading: 'Find your next Dev gig',
     description: `If building robust applications and scalable solutions is your forte, don't miss out on the earning opportunities listed below.`,
   },
   {
@@ -47,6 +47,13 @@ const banners: CategoryBanner[] = [
     description:
       "If you have a unique skill set that doesn't fit into the other categories, you might find your next gig here.",
   },
+  {
+    type: 'all',
+    img: '/assets/banner.webp',
+    heading: 'Find your next Gig',
+    description:
+      'This is your gateway to start contributing to world-class crypto companies. Choose an opportunity that fits your profile and build your proof of work.',
+  },
 ];
 
 export function CategoryBanner({ category }: { category: CategoryTypes }) {
@@ -61,7 +68,7 @@ export function CategoryBanner({ category }: { category: CategoryTypes }) {
   if (!banner) return null;
 
   return (
-    <div className="relative flex h-72 w-full flex-col items-center">
+    <div className="relative flex h-52 w-full flex-col items-center md:h-72">
       <Image
         src={banner.img}
         alt={banner.type}
@@ -70,21 +77,21 @@ export function CategoryBanner({ category }: { category: CategoryTypes }) {
         className="h-full w-full object-cover object-center"
       />
       <div className="absolute inset-0 bg-black/50" />
-      <div className="absolute top-1/2 flex w-full max-w-7xl -translate-y-1/2 flex-col items-start px-3 md:px-4">
+      <div className="absolute top-1/2 flex w-full max-w-7xl -translate-y-1/2 flex-col items-start px-2 md:px-6">
         {banner.heading && (
-          <h2 className="text-2xl font-bold text-white md:text-4xl">
+          <h2 className="text-2xl font-semibold text-white md:text-4xl">
             {banner.heading}
           </h2>
         )}
         {banner.description && (
-          <p className="mt-3 max-w-[37rem] text-sm font-medium text-white md:text-lg">
+          <p className="mt-3 max-w-[42rem] text-sm text-white md:text-lg">
             {banner.description}
           </p>
         )}
         {!user && (
           <AuthWrapper className="w-full sm:w-auto">
             <Button
-              className="ph-no-capture my-2 w-full bg-white px-9 py-3 text-sm text-[#3223A0] sm:w-auto"
+              className="ph-no-capture mt-5 h-9 w-full bg-white px-9 py-1 text-sm text-[#3223A0] sm:w-auto md:h-10 md:py-3"
               onClick={() => {
                 posthog.capture('signup_category banner');
               }}

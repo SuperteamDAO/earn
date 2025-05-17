@@ -1,4 +1,7 @@
-import parse, { type HTMLReactParserOptions } from 'html-react-parser';
+import parse, {
+  domToReact,
+  type HTMLReactParserOptions,
+} from 'html-react-parser';
 import { ChevronDown } from 'lucide-react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
@@ -12,11 +15,19 @@ interface Props {
 
 export function DescriptionUI({ description }: Props) {
   const options: HTMLReactParserOptions = {
-    replace: ({ name, children, attribs }: any) => {
+    replace: (domNode: any) => {
+      const { name, children, attribs } = domNode;
       if (name === 'p' && (!children || children.length === 0)) {
         return <br />;
       }
-      return { name, children, attribs };
+      if (name === 'a' && attribs) {
+        return (
+          <a {...attribs} target="_blank" rel="noopener noreferrer">
+            {domToReact(children, options)}
+          </a>
+        );
+      }
+      return domNode;
     },
   };
 

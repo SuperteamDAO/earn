@@ -5,7 +5,7 @@ import { type User } from '@/interface/user';
 
 import { telegramUsernameSchema } from '@/features/social/utils/schema';
 
-import { walletFieldListings } from '../constants';
+import { walletFieldListings } from '../constants/walletFieldListings';
 import { type Listing } from '../types';
 
 const submissionSchema = (

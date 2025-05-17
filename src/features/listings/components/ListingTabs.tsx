@@ -1,76 +1,32 @@
-import { ArrowRight, Info } from 'lucide-react';
-import dynamic from 'next/dynamic';
-import Link from 'next/link';
-import { usePostHog } from 'posthog-js/react';
-import { type JSX, type ReactNode, useEffect, useState } from 'react';
-
-import { Button } from '@/components/ui/button';
-import { LocalImage } from '@/components/ui/local-image';
-import { Tooltip } from '@/components/ui/tooltip';
-import { type User } from '@/interface/user';
-import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
-import { dayjs } from '@/utils/dayjs';
 
-import { type Listing } from '../types';
-import { ListingCard, ListingCardSkeleton } from './ListingCard';
+import { type ListingTab } from '../hooks/useListings';
 
-interface TabProps {
-  id: string;
-  title: string;
-  content: JSX.Element;
-  posthog: string;
+const TABS = [
+  { id: 'all', title: 'All', posthog: 'all_listings' },
+  { id: 'bounties', title: 'Bounties', posthog: 'bounties_listings' },
+  { id: 'projects', title: 'Projects', posthog: 'projects_listings' },
+] as const;
+
+interface ListingTabTriggerProps {
+  isActive: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
 }
-
-interface ListingTabsProps {
-  isListingsLoading: boolean;
-  bounties: Listing[] | undefined;
-  forYou?: Listing[] | undefined;
-  take?: number;
-  showEmoji?: boolean;
-  title: string;
-  viewAllLink?: string;
-  showViewAll?: boolean;
-  showNotifSub?: boolean;
-}
-
-interface ContentProps {
-  title: string;
-  bounties?: Listing[];
-  forYou?: Listing[];
-  take?: number;
-  isListingsLoading: boolean;
-  filterFunction: (bounty: Listing) => boolean;
-  sortCompareFunction?: ((a: Listing, b: Listing) => number) | undefined;
-  emptyTitle: string;
-  emptyMessage: ReactNode;
-  user: User | null;
-  showNotifSub?: boolean;
-}
-
-const EmptySection = dynamic(
-  () =>
-    import('@/components/shared/EmptySection').then((mod) => mod.EmptySection),
-  { ssr: false },
-);
 
 const ListingTabTrigger = ({
   isActive,
   onClick,
   children,
-}: {
-  isActive: boolean;
-  onClick: () => void;
-  children: React.ReactNode;
-}) => (
+}: ListingTabTriggerProps) => (
   <button
     onClick={onClick}
     className={cn(
-      'group ring-offset-background relative inline-flex items-center justify-center rounded-md px-1 py-1 text-sm font-medium whitespace-nowrap transition-all sm:px-3',
+      'group ring-offset-background relative inline-flex items-center justify-center rounded-md px-2 py-1 text-sm font-medium whitespace-nowrap transition-all',
       'hover:text-brand-purple',
       isActive && [
         'text-brand-purple',
-        'after:bg-brand-purple/80 after:absolute after:bottom-[-12px] after:left-0 after:h-[2px] after:w-full',
+        'after:bg-brand-purple/80 after:absolute after:bottom-[-5px] after:left-0 after:h-[1px] after:w-full md:after:bottom-[-9px]',
       ],
       !isActive && 'text-slate-500',
     )}
@@ -79,279 +35,26 @@ const ListingTabTrigger = ({
   </button>
 );
 
-const generateTabContent = ({
-  title,
-  bounties,
-  forYou,
-  take,
-  isListingsLoading,
-  filterFunction,
-  sortCompareFunction,
-  emptyTitle,
-  emptyMessage,
-  user,
-  showNotifSub,
-}: ContentProps) => {
-  if (isListingsLoading) {
-    return (
-      <div className="ph-no-capture flex flex-col gap-1">
-        {Array.from({ length: 8 }, (_, index) => (
-          <ListingCardSkeleton key={`skeleton-${index}`} />
-        ))}
-      </div>
-    );
-  }
-
-  const filteredForYou = forYou?.filter(filterFunction) ?? [];
-  const filteredBounties = bounties?.filter(filterFunction) ?? [];
-  const showForYouSection = user && forYou && filteredForYou.length > 0;
-
-  return (
-    <div>
-      {showForYouSection && (
-        <div className="mb-4 border-b border-slate-200 pb-4">
-          <div className="mb-2 flex w-fit items-center gap-3 font-semibold text-gray-900">
-            <p className="flex-1">For You</p>
-            <div className="text-gray-500">
-              <Tooltip
-                content="List of top opportunities curated for you, based on your skills, listing subscriptions and location."
-                contentProps={{ className: 'max-w-80' }}
-              >
-                <Info className="h-3 w-3" />
-              </Tooltip>
-            </div>
-          </div>
-          <div className="ph-no-capture flex flex-col gap-1">
-            {filteredForYou
-              .sort(sortCompareFunction ? sortCompareFunction : () => 0)
-              .slice(0, take ? take + 1 : undefined)
-              .map((bounty) => (
-                <ListingCard key={bounty.id} bounty={bounty} />
-              ))}
-          </div>
-        </div>
-      )}
-
-      <div>
-        <p className="mb-2 font-semibold text-gray-900">All {title}</p>
-        <div className="ph-no-capture flex flex-col gap-1">
-          {filteredBounties.length > 0 ? (
-            filteredBounties
-              .sort(sortCompareFunction ? sortCompareFunction : () => 0)
-              .slice(0, take ? take + 1 : undefined)
-              .map((bounty) => <ListingCard key={bounty.id} bounty={bounty} />)
-          ) : (
-            <div className="mt-8 flex items-center justify-center">
-              <EmptySection
-                showNotifSub={showNotifSub}
-                title={emptyTitle}
-                message={emptyMessage}
-              />
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-};
+interface ListingTabsProps {
+  activeTab: ListingTab;
+  handleTabChange: (tabId: ListingTab, posthog: string) => void;
+}
 
 export const ListingTabs = ({
-  isListingsLoading,
-  bounties,
-  forYou,
-  take,
-  showEmoji = false,
-  title,
-  viewAllLink,
-  showViewAll = false,
-  showNotifSub = true,
+  activeTab,
+  handleTabChange,
 }: ListingTabsProps) => {
-  const { user } = useUser();
-  const posthog = usePostHog();
-  const emoji = '/assets/listing-tab.webp';
-  const [activeTab, setActiveTab] = useState('open');
-
-  const tabs: TabProps[] = [
-    {
-      id: 'open',
-      title: 'Open',
-      posthog: 'open_listings',
-      content: generateTabContent({
-        user,
-        title: 'Open',
-        bounties,
-        forYou,
-        take,
-        isListingsLoading,
-        filterFunction: (bounty) =>
-          bounty.status === 'OPEN' &&
-          !dayjs().isAfter(bounty.deadline) &&
-          !bounty.isWinnersAnnounced,
-        emptyTitle: 'No listings available!',
-        emptyMessage:
-          'Update your email preferences (from the user menu) to be notified about new work opportunities.',
-        showNotifSub,
-      }),
-    },
-    {
-      id: 'in-review',
-      title: 'In Review',
-      posthog: 'in review_listing',
-      content: generateTabContent({
-        user,
-        title: 'In Review',
-        bounties,
-        forYou,
-        take,
-        isListingsLoading,
-        filterFunction: (bounty) =>
-          !bounty.isWinnersAnnounced &&
-          dayjs().isAfter(bounty.deadline) &&
-          bounty.status === 'OPEN',
-        emptyTitle: 'No listings in review!',
-        emptyMessage: (
-          <>
-            Check out other listings on the{' '}
-            <Link
-              href="https://earn.superteam.fun/"
-              className="text-slate-300 underline"
-            >
-              Homepage
-            </Link>
-            .
-          </>
-        ),
-        showNotifSub,
-      }),
-    },
-    {
-      id: 'completed',
-      title: 'Completed',
-      posthog: 'completed_listing',
-      content: generateTabContent({
-        user,
-        title: 'Completed',
-        bounties,
-        forYou,
-        take,
-        isListingsLoading,
-        filterFunction: (bounty) => bounty.isWinnersAnnounced || false,
-        sortCompareFunction: (a, b) => {
-          const dateA = a.winnersAnnouncedAt
-            ? new Date(a.winnersAnnouncedAt)
-            : a.deadline
-              ? new Date(a.deadline)
-              : null;
-          const dateB = b.winnersAnnouncedAt
-            ? new Date(b.winnersAnnouncedAt)
-            : b.deadline
-              ? new Date(b.deadline)
-              : null;
-
-          if (dateA === null && dateB === null) {
-            return 0;
-          }
-          if (dateB === null) {
-            return 1;
-          }
-          if (dateA === null) {
-            return -1;
-          }
-
-          return dateB.getTime() - dateA.getTime();
-        },
-        emptyTitle: 'No completed listings!',
-        emptyMessage: (
-          <>
-            Check out other listings on the{' '}
-            <Link
-              href="https://earn.superteam.fun/"
-              className="text-slate-300 underline"
-            >
-              Homepage
-            </Link>
-            .
-          </>
-        ),
-        showNotifSub,
-      }),
-    },
-  ];
-
-  useEffect(() => {
-    posthog.capture('open_listings');
-  }, []);
-
   return (
-    <div className="mt-5 mb-10">
-      <div className="mb-5 flex items-center justify-between sm:mb-4">
-        <div className="flex w-full items-center justify-between sm:justify-start">
-          <div className="flex items-center">
-            {showEmoji && (
-              <LocalImage
-                className="xs:flex xs:hidden mr-2 h-5 w-5"
-                alt="emoji"
-                src={emoji}
-              />
-            )}
-            <p className="pr-2 text-[14px] font-semibold whitespace-nowrap text-slate-700 sm:text-[15px] md:text-[16px]">
-              {title}
-            </p>
-          </div>
-
-          <div className="flex items-center">
-            <div className="mx-2 h-6 w-px bg-slate-200" />
-            <div className="flex">
-              {tabs.map((tab) => (
-                <ListingTabTrigger
-                  key={tab.id}
-                  isActive={activeTab === tab.id}
-                  onClick={() => {
-                    setActiveTab(tab.id);
-                    posthog.capture(tab.posthog);
-                  }}
-                >
-                  <span className="text-[13px] font-medium md:text-[14px]">
-                    {tab.title}
-                  </span>
-                </ListingTabTrigger>
-              ))}
-            </div>
-          </div>
-        </div>
-        {showViewAll && (
-          <div className="ph-no-capture hidden sm:flex">
-            <Button
-              className="px-2 py-1 text-xs text-slate-400 md:text-sm"
-              onClick={() => posthog.capture('viewall top_listings')}
-              size="sm"
-              variant="ghost"
-              asChild
-            >
-              <Link href={viewAllLink!}>View All</Link>
-            </Button>
-          </div>
-        )}
-      </div>
-
-      <div className="-mt-2.5 mb-4 h-0.5 w-full bg-slate-200 sm:-mt-2" />
-
-      {tabs.find((tab) => tab.id === activeTab)?.content}
-
-      {showViewAll && (
-        <Button
-          className="my-8 w-full border-slate-300 py-5 text-slate-400"
-          onClick={() => posthog.capture('viewall bottom_listings')}
-          size="sm"
-          variant="outline"
-          asChild
+    <div className="flex items-center gap-2">
+      {TABS.map((tab) => (
+        <ListingTabTrigger
+          key={tab.id}
+          isActive={activeTab === tab.id}
+          onClick={() => handleTabChange(tab.id, tab.posthog)}
         >
-          <Link href={viewAllLink!}>
-            View All
-            <ArrowRight className="ml-2 h-4 w-4" />
-          </Link>
-        </Button>
-      )}
+          <span>{tab.title}</span>
+        </ListingTabTrigger>
+      ))}
     </div>
   );
 };

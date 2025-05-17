@@ -56,8 +56,6 @@ export const ListingCard = ({ bounty }: { bounty: Listing }) => {
     _count,
   } = bounty;
 
-  const isBounty = type === 'bounty';
-
   const isBeforeDeadline = dayjs().isBefore(dayjs(deadline));
 
   const targetDate =
@@ -100,7 +98,7 @@ export const ListingCard = ({ bounty }: { bounty: Listing }) => {
             src={sponsorLogo}
           />
           <div className="flex w-full flex-col justify-between">
-            <p className="line-clamp-1 text-sm font-semibold text-slate-700 hover:underline sm:text-base">
+            <p className="line-clamp-1 text-sm font-semibold text-slate-700 sm:text-base">
               {title}
             </p>
             <div className="flex w-min items-center gap-1">
@@ -109,7 +107,7 @@ export const ListingCard = ({ bounty }: { bounty: Listing }) => {
               </p>
               <div>{!!sponsor?.isVerified && <VerifiedBadge />}</div>
             </div>
-            <div className="mt-[1px] flex items-center gap-1 sm:gap-3">
+            <div className="mt-[1px] flex items-center gap-1 sm:gap-2">
               <div className="flex items-center justify-start sm:hidden">
                 {!!showToken && (
                   <img
@@ -133,19 +131,16 @@ export const ListingCard = ({ bounty }: { bounty: Listing }) => {
                 </div>
                 <p className="ml-1 text-[10px] text-slate-300">|</p>
               </div>
-              <img
-                className={`flex h-3 sm:h-4 ${isBounty ? '-ml-0.5' : ''}`}
-                alt={type}
-                src={getListingIcon(type!)}
-              />
-              <p
-                className={cn(
-                  '-ml-1 hidden text-xs font-medium text-gray-500 sm:flex',
-                  isBounty ? 'sm:-ml-3' : 'sm:-ml-2.5',
-                )}
-              >
-                {type && type.charAt(0).toUpperCase() + type.slice(1)}
-              </p>
+              <div className="flex items-center gap-1">
+                {getListingIcon(type!)}
+                <p
+                  className={cn(
+                    'hidden text-xs font-medium text-gray-500 sm:flex',
+                  )}
+                >
+                  {type && type.charAt(0).toUpperCase() + type.slice(1)}
+                </p>
+              </div>
 
               <p className="flex text-[10px] text-slate-300 sm:text-xs md:text-sm">
                 |

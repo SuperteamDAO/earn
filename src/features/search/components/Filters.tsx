@@ -84,7 +84,7 @@ export function Filters({
     >
       <div className="flex w-full flex-col items-start">
         <p className="mb-3 text-sm font-medium text-slate-500">STATUS</p>
-        <div className="flex flex-wrap gap-6 md:flex-col md:gap-2">
+        <div className="flex flex-wrap gap-3 md:flex-col md:gap-2">
           {statusFilters?.map((f) => (
             <div key={f.value} className="flex items-center space-x-2">
               <Checkbox
@@ -97,7 +97,7 @@ export function Filters({
               />
               <label
                 htmlFor={`status-${f.value}`}
-                className="text-sm font-medium text-slate-500"
+                className="text-xs font-medium text-slate-500 sm:text-sm"
               >
                 {f.label}
               </label>
@@ -108,7 +108,7 @@ export function Filters({
 
       <div className="flex w-full flex-col items-start">
         <p className="mb-3 text-sm font-medium text-slate-500">SKILLS</p>
-        <div className="flex flex-wrap gap-6 md:flex-col md:gap-2">
+        <div className="flex flex-wrap gap-3 md:flex-col md:gap-2">
           {skillsFilters?.map((f) => (
             <div key={f.value} className="flex items-center space-x-2">
               <Checkbox
@@ -121,7 +121,7 @@ export function Filters({
               />
               <label
                 htmlFor={`skill-${f.value}`}
-                className="text-sm font-medium text-slate-500"
+                className="text-xs font-medium text-slate-500 sm:text-sm"
               >
                 {f.label}
               </label>

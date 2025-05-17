@@ -98,11 +98,14 @@ export function ShareListing({
     <Drawer open={open} onOpenChange={setShareOpen}>
       <DrawerTrigger asChild>
         <Button
-          variant="ghost"
-          className={cn('p-2 text-xs font-medium text-slate-500', className)}
+          className={cn(
+            'ph-no-capture hover:bg-brand-purple gap-2 border-slate-300 font-medium text-slate-500 hover:text-white active:bg-slate-100',
+            'h-8 w-auto p-0 px-2 sm:h-10 sm:px-3',
+          )}
+          variant="outline"
+          aria-label="Share"
         >
           <IoMdShareAlt className="text-slate-500" />
-          SHARE
         </Button>
       </DrawerTrigger>
       <DrawerContent>
