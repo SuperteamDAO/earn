@@ -47,6 +47,11 @@ async function grantApplication(
             username: true,
           },
         },
+        GrantTranche: {
+          where: {
+            status: 'Paid',
+          },
+        },
       },
     });
 
