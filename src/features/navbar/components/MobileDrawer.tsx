@@ -77,7 +77,7 @@ export const MobileDrawer = ({
     <Sheet open={isDrawerOpen} onOpenChange={onDrawerClose}>
       <SheetContent
         side="left"
-        className="w-[300px] p-0 text-sm sm:w-[380px] sm:text-base"
+        className="w-[300px] overflow-y-auto p-0 text-sm sm:w-[380px] sm:text-base"
         showCloseIcon={false}
       >
         <EmailSettingsModal isOpen={isOpen} onClose={onClose} />
