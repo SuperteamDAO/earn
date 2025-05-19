@@ -7,7 +7,7 @@ import { dayjs } from '@/utils/dayjs';
 
 import { useUser } from './user';
 
-export const creditBalanceAtom = atom<number | null>(null);
+const creditBalanceAtom = atom<number | null>(null);
 
 const lastRefreshTimestampAtom = atom<string | null>(null);
 

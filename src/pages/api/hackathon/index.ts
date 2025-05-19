@@ -1,49 +1,64 @@
+import { type Prisma } from '@prisma/client';
 import type { NextApiRequest, NextApiResponse } from 'next';
+import { z } from 'zod';
 
 import { prisma } from '@/prisma';
+import { USER_ID_COOKIE_NAME } from '@/store/user';
 
-export default async function getHackathon(
+import { HackathonQueryParamsSchema } from '@/features/hackathon/constants/schema';
+import { buildHackathonQuery } from '@/features/hackathon/utils/query-builder';
+import { listingSelect } from '@/features/listings/constants/schema';
+
+export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
-  const params = req.query;
-  const hackathonSlug = params.slug as string;
-
   try {
-    const hackathon = await prisma.hackathon.findUnique({
-      where: { slug: hackathonSlug },
-    });
+    const userIdFromCookie: string | null =
+      req.cookies[USER_ID_COOKIE_NAME] ?? null;
 
-    if (!hackathon) {
-      return res.status(404).json({ error: 'Hackathon not found.' });
+    const validationResult = HackathonQueryParamsSchema.safeParse(req.query);
+    if (!validationResult.success) {
+      return res.status(400).json({ errors: validationResult.error.flatten() });
+    }
+    const queryData = validationResult.data;
+
+    let user: {
+      id: string;
+      isTalentFilled: boolean;
+      location: string | null;
+      skills: Prisma.JsonValue;
+    } | null = null;
+
+    if (userIdFromCookie) {
+      user = await prisma.user.findUnique({
+        where: { id: userIdFromCookie },
+        select: {
+          id: true,
+          isTalentFilled: true,
+          location: true,
+          skills: true,
+        },
+      });
     }
 
-    const result = await prisma.bounties.findMany({
-      where: {
-        hackathonId: hackathon.id,
-        isPublished: true,
-      },
-      select: {
-        title: true,
-        token: true,
-        rewardAmount: true,
-        slug: true,
-        sponsor: {
-          select: {
-            name: true,
-            slug: true,
-            logo: true,
-            isVerified: true,
-            st: true,
-          },
-        },
-      },
-      orderBy: {
-        usdValue: 'desc',
-      },
+    const { where, orderBy, take } = await buildHackathonQuery(queryData, user);
+
+    const listings = await prisma.bounties.findMany({
+      where,
+      orderBy,
+      take,
+      select: listingSelect,
     });
-    res.status(200).json(result);
-  } catch (err) {
-    res.status(400).json({ err: err });
+
+    res.status(200).json(listings);
+  } catch (error) {
+    console.error('Error in API handler:', error);
+    if (error instanceof z.ZodError) {
+      return res
+        .status(400)
+        .json({ message: 'Invalid query parameters', errors: error.flatten() });
+    }
+    return res.status(500).json({ message: 'Internal Server Error' });
   }
 }

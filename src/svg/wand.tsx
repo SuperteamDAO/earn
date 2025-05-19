@@ -3,11 +3,17 @@ import React from 'react';
 interface WandProps {
   styles?: React.CSSProperties;
   color?: string;
+  className?: string;
 }
 
-export const Wand = ({ styles, color = 'currentColor' }: WandProps) => {
+export const Wand = ({
+  styles,
+  className,
+  color = 'currentColor',
+}: WandProps) => {
   return (
     <svg
+      className={className}
       style={styles}
       width="16"
       height="14"

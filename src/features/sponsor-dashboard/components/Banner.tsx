@@ -4,7 +4,7 @@ import { usePostHog } from 'posthog-js/react';
 import { MdOutlineChatBubbleOutline } from 'react-icons/md';
 
 import { VerifiedBadgeLarge } from '@/components/shared/VerifiedBadge';
-import { ExternalImage } from '@/components/ui/cloudinary-image';
+import { LocalImage } from '@/components/ui/local-image';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tooltip } from '@/components/ui/tooltip';
 import { PDTG } from '@/constants/Telegram';
@@ -174,10 +174,10 @@ export function Banner({
         >
           <div className="flex items-center justify-between">
             <div className="flex items-center">
-              <ExternalImage
-                className="mr-3 h-14 w-[3.2rem]"
+              <LocalImage
+                className="mr-3 h-[3.3rem] w-[3.2rem]"
                 alt="message pratik"
-                src={'/sponsor/pratik.webp'}
+                src={'/assets/sponsor/pratik.webp'}
               />
               <div>
                 <p className="font-semibold whitespace-nowrap text-slate-900">

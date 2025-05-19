@@ -6,19 +6,19 @@ import React, { type ReactNode, useEffect, useState } from 'react';
 import { type Superteam } from '@/constants/Superteam';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
+import { cn } from '@/utils/cn';
 
 import { BannerCarousel } from '@/features/home/components/Banner';
-import { NavTabs } from '@/features/home/components/NavTabs';
 import { UserStatsBanner } from '@/features/home/components/UserStatsBanner';
 
 interface HomeProps {
   children: ReactNode;
-  type: 'landing' | 'listing' | 'category' | 'region' | 'feed';
+  type: 'landing' | 'listing' | 'region' | 'feed';
   st?: Superteam;
-  isAuth?: boolean;
+  potentialSession?: boolean;
 }
 
-type CategoryTypes = 'content' | 'development' | 'design' | 'other';
+type CategoryTypes = 'content' | 'development' | 'design' | 'other' | 'all';
 
 const RegionBanner = dynamic(() =>
   import('@/features/home/components/RegionBanner').then(
@@ -36,25 +36,48 @@ const HomeSideBar = dynamic(() =>
   import('@/features/home/components/SideBar').then((mod) => mod.HomeSideBar),
 );
 
-export function Home({ children, type, st, isAuth }: HomeProps) {
+export function Home({
+  children,
+  type,
+  st,
+  potentialSession = false,
+}: HomeProps) {
   const router = useRouter();
   const [currentCategory, setCurrentCategory] = useState<CategoryTypes | null>(
     null,
   );
 
   useEffect(() => {
-    if (router.asPath.includes('/category/development/')) {
-      setCurrentCategory('development');
-    } else if (router.asPath.includes('/category/design/')) {
-      setCurrentCategory('design');
-    } else if (router.asPath.includes('/category/content/')) {
-      setCurrentCategory('content');
-    } else if (router.asPath.includes('/category/other/')) {
-      setCurrentCategory('other');
+    const categoryParam = router.query.category?.toString().toLowerCase();
+    const isAllPage = router.asPath.includes('/all');
+
+    if (isAllPage) {
+      if (
+        !categoryParam ||
+        categoryParam === 'all' ||
+        categoryParam === 'for you'
+      ) {
+        setCurrentCategory('all');
+      } else if (
+        categoryParam === 'development' ||
+        categoryParam === 'design' ||
+        categoryParam === 'content' ||
+        categoryParam === 'other'
+      ) {
+        setCurrentCategory(categoryParam as CategoryTypes);
+      } else {
+        setCurrentCategory(null);
+      }
+    } else {
+      setCurrentCategory(null);
     }
-  }, [router.asPath]);
+  }, [router.query.category, router.asPath]);
 
   const { authenticated } = usePrivy();
+
+  useEffect(() => {
+    console.log('currentCategory', currentCategory);
+  }, [currentCategory]);
 
   return (
     <Default
@@ -68,28 +91,22 @@ export function Home({ children, type, st, isAuth }: HomeProps) {
       }
     >
       {type === 'region' && st && <RegionBanner st={st} />}
-      {type === 'category' && currentCategory && (
-        <CategoryBanner category={currentCategory} />
-      )}
-      <div className="mx-auto w-full px-2 lg:px-6">
+      {!!currentCategory && <CategoryBanner category={currentCategory} />}
+      <div className={cn('mx-auto w-full px-2 lg:px-6')}>
         <div className="mx-auto w-full max-w-7xl p-0">
           <div className="flex items-start justify-between">
-            <div className="w-full py-3 lg:border-r lg:border-slate-100">
-              <div className="w-full pt-1 lg:pr-6">
-                {type === 'landing' && (
-                  <>
-                    <NavTabs />
-                    {isAuth ? <UserStatsBanner /> : <BannerCarousel />}
-                  </>
-                )}
-                {type === 'listing' && (
-                  <>
-                    <NavTabs />
-                    {!authenticated ? <BannerCarousel /> : <UserStatsBanner />}
-                  </>
-                )}
-                {type === 'category' && <NavTabs />}
-                {type === 'region' && <NavTabs className="mt-1" />}
+            <div className="w-full lg:border-r lg:border-slate-100">
+              <div className="w-full lg:pr-6">
+                {!currentCategory &&
+                  (type === 'landing' || type === 'listing') && (
+                    <div className="pt-3">
+                      {potentialSession || authenticated ? (
+                        <UserStatsBanner />
+                      ) : (
+                        <BannerCarousel />
+                      )}
+                    </div>
+                  )}
                 {children}
               </div>
             </div>

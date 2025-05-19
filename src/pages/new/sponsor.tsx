@@ -550,7 +550,7 @@ const CreateSponsor = () => {
                       If you want access to the existing account, contact us on
                       Telegram at{' '}
                       <Link href={PDTG} target="_blank">
-                        @pratikdholani
+                        @abhwshek
                       </Link>
                     </p>
                   )}

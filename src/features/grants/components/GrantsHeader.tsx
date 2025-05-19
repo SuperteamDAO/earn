@@ -110,7 +110,7 @@ export const GrantsHeader = ({
         </div>
       </div>
       <div className="flex h-10 w-full items-center">
-        <div className="mx-auto my-auto flex h-full w-full max-w-7xl items-center justify-start gap-10 border-b border-slate-200">
+        <div className="mx-auto my-auto flex h-full w-full max-w-7xl items-center justify-start gap-4 border-b border-slate-200">
           <ListingTabLink
             className="pointer-events-none hidden md:flex md:w-[22rem]"
             href={`/grants/${slug}/`}

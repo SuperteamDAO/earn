@@ -1,146 +1,70 @@
-import { Regions } from '@prisma/client';
+import { type Prisma } from '@prisma/client';
 import type { NextApiRequest, NextApiResponse } from 'next';
+import { z } from 'zod';
 
-import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
-import { safeStringify } from '@/utils/safeStringify';
+import { USER_ID_COOKIE_NAME } from '@/store/user';
 
-import { getPrivyToken } from '@/features/auth/utils/getPrivyToken';
 import {
-  filterRegionCountry,
-  getCombinedRegion,
-  getParentRegions,
-} from '@/features/listings/utils/region';
+  GrantQueryParamsSchema,
+  grantsSelect,
+} from '@/features/grants/constants/schema';
+import { buildGrantsQuery } from '@/features/grants/utils/query-builder';
 
-export default async function grants(
+export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
   try {
-    logger.debug('Fetching grants from database');
+    const userIdFromCookie: string | null =
+      req.cookies[USER_ID_COOKIE_NAME] ?? null;
 
-    const params = req.query;
-    const order = (params.order as 'asc' | 'desc') ?? 'desc';
-    const filter = params.filter as string;
-    const take = params.take ? parseInt(params.take as string, 10) : 100;
-    let excludeIds = params['excludeIds[]'];
-    if (typeof excludeIds === 'string') {
-      excludeIds = [excludeIds];
+    const validationResult = GrantQueryParamsSchema.safeParse(req.query);
+    if (!validationResult.success) {
+      return res.status(400).json({ errors: validationResult.error.flatten() });
     }
+    const queryData = validationResult.data;
 
-    const filterToSkillsMap: Record<string, string[]> = {
-      development: ['Frontend', 'Backend', 'Blockchain', 'Mobile'],
-      design: ['Design'],
-      content: ['Content'],
-      other: ['Other', 'Growth', 'Community'],
-    };
+    let user: {
+      id: string;
+      isTalentFilled: boolean;
+      location: string | null;
+      skills: Prisma.JsonValue;
+    } | null = null;
 
-    const skillsToFilter = filterToSkillsMap[filter] || [];
-    let skillsFilter = {};
-    if (skillsToFilter.length > 0) {
-      if (filter === 'development' || filter === 'other') {
-        skillsFilter = {
-          OR: skillsToFilter.map((skill) => ({
-            skills: {
-              path: '$[*].skills',
-              array_contains: [skill],
-            },
-          })),
-        };
-      } else {
-        skillsFilter = {
-          skills: {
-            path: '$[*].skills',
-            array_contains: skillsToFilter,
-          },
-        };
-      }
-    }
-
-    const privyDid = await getPrivyToken(req);
-    let userRegion: string[] | null | undefined = null;
-    if (privyDid) {
-      const user = await prisma.user.findFirst({
-        where: { privyDid },
-        select: { location: true },
+    if (userIdFromCookie) {
+      user = await prisma.user.findUnique({
+        where: { id: userIdFromCookie },
+        select: {
+          id: true,
+          isTalentFilled: true,
+          location: true,
+          skills: true,
+        },
       });
-
-      const matchedRegion = user?.location
-        ? getCombinedRegion(user?.location, true)
-        : undefined;
-
-      if (matchedRegion?.name) {
-        userRegion = [
-          matchedRegion.name,
-          Regions.GLOBAL,
-          ...(filterRegionCountry(matchedRegion, user?.location || '')
-            .country || []),
-          ...(getParentRegions(matchedRegion) || []),
-        ];
-      } else {
-        userRegion = [Regions.GLOBAL];
-      }
     }
+
+    const { where, take } = await buildGrantsQuery(queryData, user);
 
     const grants = await prisma.grants.findMany({
-      where: {
-        id: {
-          notIn: excludeIds,
-        },
-        isPublished: true,
-        isActive: true,
-        isArchived: false,
-        ...skillsFilter,
-        ...(userRegion ? { region: { in: userRegion } } : {}),
-        isPrivate: false,
-      },
+      where,
       take,
-      orderBy: {
-        createdAt: order,
-      },
-      include: {
-        sponsor: {
-          select: {
-            id: true,
-            name: true,
-            slug: true,
-            logo: true,
-            isVerified: true,
-          },
-        },
-        _count: {
-          select: {
-            GrantApplication: {
-              where: {
-                OR: [
-                  {
-                    applicationStatus: 'Approved',
-                  },
-                  {
-                    applicationStatus: 'Completed',
-                  },
-                ],
-              },
-            },
-          },
-        },
-      },
+      select: grantsSelect,
     });
-
     const grantsWithTotalApplications = grants.map((grant) => ({
       ...grant,
       totalApplications:
         grant._count.GrantApplication + grant.historicalApplications,
     }));
 
-    logger.info(`Fetched ${grants.length} grants successfully`);
-    return res.status(200).json(grantsWithTotalApplications);
-  } catch (error: any) {
-    logger.error(
-      `Error occurred while fetching grants: ${safeStringify(error)}`,
-    );
-    return res
-      .status(400)
-      .json({ err: 'Error occurred while fetching grants.' });
+    res.status(200).json(grantsWithTotalApplications);
+  } catch (error) {
+    console.error('Error in API handler:', error);
+    if (error instanceof z.ZodError) {
+      return res
+        .status(400)
+        .json({ message: 'Invalid query parameters', errors: error.flatten() });
+    }
+    return res.status(500).json({ message: 'Internal Server Error' });
   }
 }

@@ -1,4 +1,4 @@
-import { type CompensationType } from '@prisma/client';
+import type { CompensationType } from '@prisma/client';
 import { useQuery } from '@tanstack/react-query';
 import { useAtomValue } from 'jotai';
 import { Link } from 'lucide-react';
@@ -8,6 +8,16 @@ import { useWatch } from 'react-hook-form';
 import slugify from 'slugify';
 
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import {
   FormControl,
   FormField,
   FormItem,
@@ -15,7 +25,6 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { LocalImage } from '@/components/ui/local-image';
 import { useDebounce } from '@/components/ui/multi-select';
 import {
   Select,
@@ -156,7 +165,7 @@ export function TitleAndType() {
                 )}
               </div>
               <div className="shrink-0 text-right text-xs whitespace-nowrap text-slate-400">
-                {100 - (title?.length || 0)} characters left
+                {80 - (title?.length || 0)} characters left
               </div>
             </div>
           </FormItem>
@@ -171,13 +180,72 @@ function Type() {
   const isEditing = useAtomValue(isEditingAtom);
   const hackathons = useAtomValue(hackathonsAtom);
   const [prevCompType, setPrevCompType] = useState<CompensationType>('fixed');
+  const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
+  const [pendingTypeChange, setPendingTypeChange] = useState<string | null>(
+    null,
+  );
   const hackathonId = useWatch({
     name: 'hackathonId',
+    control: form.control,
+  });
+  const compensationType = useWatch({
+    name: 'compensationType',
     control: form.control,
   });
   const currentHackathon = useMemo(() => {
     return hackathons?.find((h) => h.id === hackathonId);
   }, [hackathonId, hackathons]);
+
+  const handleTypeChange = (newType: string) => {
+    if (newType !== 'bounty' && newType !== 'project') {
+      form.setValue('type', 'hackathon');
+      const hackathon = hackathons?.find((s) => s.slug === newType);
+      if (!!hackathon) {
+        form.setValue('hackathonId', hackathon.id);
+        form.setValue('eligibility', hackathon?.eligibility as any);
+      }
+    } else {
+      form.setValue('type', newType);
+      form.setValue('hackathonId', undefined);
+    }
+    if (newType === 'bounty') {
+      form.setValue('eligibility', []);
+    }
+    if (newType === 'project') {
+      form.setValue('eligibility', []);
+    }
+    const values = form.getValues();
+    setPrevCompType(values.compensationType);
+    if (newType !== 'project') {
+      form.setValue('compensationType', 'fixed');
+      form.setValue(
+        'rewardAmount',
+        calculateTotalRewardsForPodium(
+          values.rewards || {},
+          values.maxBonusSpots || 0,
+        ),
+      );
+    } else {
+      form.setValue('compensationType', prevCompType);
+      if (prevCompType === 'fixed') {
+        form.setValue('rewardAmount', values.rewards?.[1]);
+      } else {
+        form.setValue('rewardAmount', undefined);
+      }
+    }
+
+    form.clearErrors([
+      'rewards',
+      'eligibility',
+      'rewardAmount',
+      'minRewardAsk',
+      'maxRewardAsk',
+      'token',
+      'maxBonusSpots',
+    ]);
+    if (!!form.getValues().id) form.saveDraft();
+  };
+
   return (
     <FormField
       name="type"
@@ -189,38 +257,13 @@ function Type() {
               <Select
                 value={field.value}
                 disabled={isEditing}
-                onValueChange={(e) => {
-                  if (e !== 'bounty' && e !== 'project') {
-                    field.onChange('hackathon');
-                    const hackathon = hackathons?.find((s) => s.slug === e);
-                    if (!!hackathon) {
-                      form.setValue('hackathonId', hackathon.id);
-                    }
-                  } else {
-                    field.onChange(e);
-                    form.setValue('hackathonId', undefined);
-                  }
-                  const values = form.getValues();
-                  setPrevCompType(values.compensationType);
-                  if (e !== 'project') {
-                    form.setValue('compensationType', 'fixed');
-                    form.setValue(
-                      'rewardAmount',
-                      calculateTotalRewardsForPodium(
-                        values.rewards || {},
-                        values.maxBonusSpots || 0,
-                      ),
-                    );
-                  } else {
-                    form.setValue('compensationType', prevCompType);
-                    if (prevCompType === 'fixed') {
-                      form.setValue('rewardAmount', values.rewards?.[1]);
-                    } else {
-                      form.setValue('rewardAmount', undefined);
-                    }
-                  }
-
-                  if (!!form.getValues().id) form.saveDraft();
+                onValueChange={(newValue) => {
+                  if (newValue === field.value) return;
+                  if (newValue === currentHackathon?.slug) return;
+                  if (newValue === 'hackathon') return;
+                  if (newValue === '') return;
+                  setPendingTypeChange(newValue);
+                  setConfirmDialogOpen(true);
                 }}
               >
                 <SelectTrigger className="h-full w-32 rounded-none border-0 border-r focus:ring-0">
@@ -230,11 +273,7 @@ function Type() {
                     ) : (
                       <SelectValue>
                         <div className="flex items-center gap-2 text-xs">
-                          <LocalImage
-                            src={getListingIcon('hackathon')}
-                            alt={'hackahton'}
-                            className="h-4 w-4"
-                          />
+                          {getListingIcon('hackathon')}
                           <span className="max-w-20 truncate">
                             {currentHackathon?.name}
                           </span>
@@ -247,11 +286,7 @@ function Type() {
                   {typeOptions.map(({ value, label }) => (
                     <SelectItem key={value} value={value}>
                       <div className="flex items-center gap-2 text-xs">
-                        <LocalImage
-                          src={getListingIcon(value)}
-                          alt={value}
-                          className="h-4 w-4"
-                        />
+                        {getListingIcon(value)}
                         <span>{label}</span>
                       </div>
                     </SelectItem>
@@ -259,11 +294,7 @@ function Type() {
                   {hackathons?.map((hackathon) => (
                     <SelectItem key={hackathon.id} value={hackathon.slug}>
                       <div className="flex items-center gap-2 text-xs">
-                        <LocalImage
-                          src={getListingIcon('hackathon')}
-                          alt={'hackahton'}
-                          className="h-4 w-4"
-                        />
+                        {getListingIcon('hackathon')}
                         <span className="max-w-20 truncate">
                           {hackathon.name}
                         </span>
@@ -273,6 +304,103 @@ function Type() {
                 </SelectContent>
               </Select>
             </FormControl>
+
+            <AlertDialog
+              open={confirmDialogOpen}
+              onOpenChange={() => setConfirmDialogOpen(false)}
+            >
+              <AlertDialogContent className="">
+                <AlertDialogHeader>
+                  <AlertDialogTitle>
+                    Change Listing Type from{' '}
+                    <span className="capitalize">{field.value}</span> to{' '}
+                    <span className="capitalize">{pendingTypeChange}</span>
+                  </AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Changing the listing type will affect your listing details.
+                    <ul className="list-inside list-disc py-2">
+                      {pendingTypeChange === 'project' &&
+                        field.value !== 'project' && (
+                          <>
+                            <li>
+                              Your rewards structure will change from Podiums to{' '}
+                              <span className="capitalize">{prevCompType}</span>{' '}
+                              type
+                            </li>
+                            <li>
+                              Your existing custom questions will be cleared
+                            </li>
+                          </>
+                        )}
+                      {pendingTypeChange !== 'project' &&
+                        field.value === 'project' && (
+                          <>
+                            <li>
+                              Your rewards structure will change from{' '}
+                              <span className="capitalize">
+                                {compensationType}
+                              </span>{' '}
+                              type to Podiums
+                            </li>
+                            <li>
+                              Your existing custom questions will be cleared
+                              {pendingTypeChange !== 'bounty' && (
+                                <span>
+                                  {' '}
+                                  and replaced by hackathon custom questions
+                                </span>
+                              )}
+                            </li>
+                          </>
+                        )}
+                      {pendingTypeChange === 'bounty' &&
+                        field.value !== 'project' && (
+                          <>
+                            <li>
+                              Your existing custom questions will be cleared
+                            </li>
+                          </>
+                        )}
+                      {pendingTypeChange !== 'bounty' &&
+                        pendingTypeChange !== 'project' &&
+                        field.value === 'bounty' && (
+                          <>
+                            <li>
+                              Your existing custom questions will be cleared and
+                              replaced by hackathon custom questions
+                            </li>
+                          </>
+                        )}
+                      {pendingTypeChange !== 'bounty' &&
+                        pendingTypeChange !== 'project' &&
+                        field.value === 'hackathon' && (
+                          <>
+                            <li>
+                              Your existing custom questions will be cleared and
+                              replaced by hackathon custom questions
+                            </li>
+                          </>
+                        )}
+                    </ul>
+                    Are you sure you want to continue?
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={() => {
+                      if (pendingTypeChange) {
+                        handleTypeChange(pendingTypeChange);
+                        setPendingTypeChange(null);
+                      }
+                      setConfirmDialogOpen(false);
+                    }}
+                  >
+                    Yes, Change Type
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </FormItem>
         );
       }}

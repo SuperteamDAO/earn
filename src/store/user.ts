@@ -3,29 +3,29 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
+import { removeCookie, setCookie } from 'typescript-cookie';
 import { create } from 'zustand';
-import { createJSONStorage, persist } from 'zustand/middleware';
 
 import { type User } from '@/interface/user';
 import { api } from '@/lib/api';
 
 interface UserState {
-  user: User | null;
-  setUser: (user: User | null) => void;
+  readonly user: User | null;
+  readonly setUser: (user: User | null) => void;
 }
 
-const useUserStore = create<UserState>()(
-  persist(
-    (set) => ({
-      user: null,
-      setUser: (user) => set({ user }),
-    }),
-    {
-      name: 'user-storage',
-      storage: createJSONStorage(() => localStorage),
-    },
-  ),
-);
+const useUserStore = create<UserState>((set) => ({
+  user: null,
+  setUser: (user) => set({ user }),
+}));
+
+export const USER_ID_COOKIE_NAME = 'user-id-hint';
+const COOKIE_OPTIONS = {
+  path: '/',
+  secure: process.env.NODE_ENV === 'production',
+  expires: 30,
+  sameSite: 'lax' as const,
+};
 
 export const useUser = () => {
   const { user, setUser } = useUserStore();
@@ -36,18 +36,21 @@ export const useUser = () => {
     queryKey: ['user'],
     queryFn: async () => {
       try {
-        const { data } = await api.get<User>('/api/user/');
-        if (data?.isBlocked && !router.pathname.includes('/blocked')) {
+        const { data: fetchedUser } = await api.get<User>('/api/user/');
+        if (fetchedUser) {
+          setCookie(USER_ID_COOKIE_NAME, fetchedUser.id, COOKIE_OPTIONS);
+        }
+        if (fetchedUser?.isBlocked && !router.pathname.includes('/blocked')) {
           router.push('/blocked');
         }
-        return data;
+        return fetchedUser;
       } catch (error) {
         if (ready && authenticated) {
           if (axios.isAxiosError(error)) {
-            if (error.status === 401) {
-              localStorage.removeItem('user-storage');
+            if (error.response?.status === 401) {
+              console.warn('User request returned 401, logging out.');
+              removeCookie(USER_ID_COOKIE_NAME, { path: '/' });
               await logout();
-              window.location.reload();
             }
           }
         }
@@ -55,13 +58,15 @@ export const useUser = () => {
       }
     },
     enabled: authenticated && ready,
+    staleTime: 5 * 60 * 1000,
+    refetchOnWindowFocus: true,
   });
 
   useEffect(() => {
     if (data) {
       setUser(data);
     }
-  }, [data, setUser]);
+  }, [data]);
 
   const refetchUser = async () => {
     await refetch();
@@ -77,9 +82,13 @@ export const useUpdateUser = () => {
   return useMutation({
     mutationFn: (userData: Partial<User>) =>
       api.post<User>('/api/user/update/', userData),
-    onSuccess: (data) => {
-      queryClient.setQueryData(['user'], data.data);
-      setUser(data.data);
+    onSuccess: (response) => {
+      const updatedUser = response.data;
+      if (updatedUser) {
+        queryClient.setQueryData(['user'], updatedUser);
+        setUser(updatedUser);
+        setCookie(USER_ID_COOKIE_NAME, updatedUser.id, COOKIE_OPTIONS);
+      }
     },
   });
 };
@@ -87,11 +96,13 @@ export const useUpdateUser = () => {
 export const useLogout = () => {
   const { logout } = usePrivy();
   const queryClient = useQueryClient();
+  const setUser = useUserStore((state) => state.setUser);
 
   return async () => {
-    queryClient.setQueryData(['user'], null);
-    localStorage.removeItem('user-storage');
     await logout();
-    window.location.reload();
+    queryClient.setQueryData(['user'], null);
+    queryClient.removeQueries({ queryKey: ['user'] });
+    setUser(null);
+    removeCookie(USER_ID_COOKIE_NAME, { path: '/' });
   };
 };

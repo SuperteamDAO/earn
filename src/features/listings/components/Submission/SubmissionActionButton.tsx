@@ -78,7 +78,7 @@ const InfoWrapper = ({
                 (isProject ? ' apply' : ' submit')
               : null
       }
-      contentProps={{ className: 'rounded-md' }}
+      contentProps={{ className: 'rounded-md z-50' }}
       triggerClassName="w-full"
     >
       {children}
