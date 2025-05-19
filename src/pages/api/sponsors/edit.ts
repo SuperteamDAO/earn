@@ -1,6 +1,7 @@
 import axios from 'axios';
 import type { NextApiResponse } from 'next';
 
+import { SPONSORS_FIELD_IDS } from '@/config/airtableFieldIds.config';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import {
@@ -86,7 +87,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
         const sponsorRecordId = await fetchAirtableRecordId(
           sponsorAirtableURL,
-          'Name',
+          SPONSORS_FIELD_IDS.NAME,
           preSponsor.name,
           gdpAirtableConfig,
         );
@@ -99,7 +100,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
                 {
                   id: sponsorRecordId,
                   fields: {
-                    Name: name,
+                    [SPONSORS_FIELD_IDS.NAME]: name,
                   },
                 },
               ],

@@ -19,4 +19,8 @@ export const labelMenuOptionsGrants = [
     label: 'High Quality',
     value: 'High_Quality',
   },
+  {
+    label: 'Spam',
+    value: 'Spam',
+  },
 ];

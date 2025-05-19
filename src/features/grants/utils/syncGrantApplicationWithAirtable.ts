@@ -1,6 +1,7 @@
 import { type GrantApplication } from '@prisma/client';
 import axios from 'axios';
 
+import { REGIONS_FIELD_IDS } from '@/config/airtableFieldIds.config';
 import { Superteams } from '@/constants/Superteam';
 import logger from '@/lib/logger';
 import {
@@ -73,7 +74,7 @@ export async function syncGrantApplicationWithAirtable(
   );
   const region = await fetchAirtableRecordId(
     grantsRegionAirtableURL,
-    'Name',
+    REGIONS_FIELD_IDS.NAME,
     superteam ? superteam.airtableKey || superteam.displayValue : 'Global',
     grantsAirtableConfig,
   );

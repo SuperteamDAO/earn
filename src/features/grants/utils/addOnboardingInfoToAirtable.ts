@@ -1,6 +1,7 @@
 import { type GrantApplication } from '@prisma/client';
 import axios from 'axios';
 
+import { RECIPIENT_FIELD_IDS } from '@/config/airtableFieldIds.config';
 import logger from '@/lib/logger';
 import {
   airtableConfig,
@@ -19,26 +20,17 @@ interface GrantApplicationWithUserAndGrant extends GrantApplication {
   };
 }
 
-interface RecipientAirtableSchema {
-  Name: string;
-  Applicants: string[];
-  Grant: string[];
-  'Email ID': string;
-  Amount: number;
-  Deadline: string;
-}
-
 function grantApplicationToAirtable(
   grantApplication: GrantApplicationWithUserAndGrant,
   applicantRecordId: string,
-): RecipientAirtableSchema {
+): Record<string, string | string[] | number> {
   return {
-    Name: `${grantApplication.user.kycName}`,
-    Applicants: [applicantRecordId],
-    Grant: [grantApplication.grant.airtableId!],
-    'Email ID': grantApplication.user.email,
-    Amount: grantApplication.approvedAmount,
-    Deadline: grantApplication.projectTimeline,
+    [RECIPIENT_FIELD_IDS.NAME]: `${grantApplication.user.kycName}`,
+    [RECIPIENT_FIELD_IDS.APPLICANTS_LINK]: [applicantRecordId],
+    [RECIPIENT_FIELD_IDS.GRANT_LINK]: [grantApplication.grant.airtableId!],
+    [RECIPIENT_FIELD_IDS.EMAIL_ID]: grantApplication.user.email,
+    [RECIPIENT_FIELD_IDS.AMOUNT]: grantApplication.approvedAmount,
+    [RECIPIENT_FIELD_IDS.DEADLINE]: grantApplication.projectTimeline,
   };
 }
 

@@ -3,6 +3,7 @@ import axios from 'axios';
 import lookup from 'country-code-lookup';
 import { z } from 'zod';
 
+import { PAYMENT_FIELD_IDS } from '@/config/airtableFieldIds.config';
 import { Superteams } from '@/constants/Superteam';
 import logger from '@/lib/logger';
 import {
@@ -12,6 +13,8 @@ import {
   fetchAirtableRecordId,
 } from '@/utils/airtable';
 import { safeStringify } from '@/utils/safeStringify';
+
+const REGION_COUNTRY_FIELD = 'Country';
 
 const AirtableInputSchema = z.object({
   application: z.object({
@@ -81,26 +84,7 @@ interface GrantApplicationWithUserAndGrant extends GrantApplication {
   };
 }
 
-interface PaymentAirtableSchema {
-  Name: string;
-  Address: string;
-  'Date of Birth': string;
-  'ID Number': string;
-  'ID Type': string;
-  'Country of Residence': string;
-  Amount: number;
-  'Wallet Address': string;
-  Category: string[];
-  'Purpose of Payment': string;
-  'Project (Archive)': string;
-  Email: string;
-  Status: string;
-  Region?: string[];
-  Approver: string[];
-  earnApplicationId: string;
-  earnTrancheId: string;
-  'Discord / Earn Username': string;
-}
+type PaymentAirtableFieldValues = Record<string, string | string[] | number>;
 
 const grantCategory =
   process.env.NODE_ENV === 'production'
@@ -111,7 +95,7 @@ function grantApplicationToAirtable(
   validatedApplication: ValidatedApplication,
   grantRegionId: string,
   validatedGrantTranche: ValidatedGrantTranche,
-): PaymentAirtableSchema {
+): PaymentAirtableFieldValues {
   const country = lookup.byIso(validatedApplication.user.kycCountry)?.country;
   logger.debug(
     `Looked up country for ISO '${validatedApplication.user.kycCountry}': ${country ?? 'Not found'}`,
@@ -126,25 +110,28 @@ function grantApplicationToAirtable(
     ' - ' +
     validatedApplication.projectOneLiner;
 
-  const paymentData: PaymentAirtableSchema = {
-    Name: validatedApplication.user.kycName,
-    Address: validatedApplication.user.kycAddress ?? '',
-    'Date of Birth': validatedApplication.user.kycDOB,
-    'ID Number': validatedApplication.user.kycIDNumber,
-    'ID Type': validatedApplication.user.kycIDType,
-    'Country of Residence': country || validatedApplication.user.kycCountry,
-    Amount: validatedGrantTranche.approvedAmount,
-    'Wallet Address': validatedApplication.walletAddress,
-    Category: [grantCategory],
-    'Purpose of Payment': purposeOfPayment || 'Grant Payment',
-    'Project (Archive)': validatedApplication.projectTitle ?? '',
-    Email: validatedApplication.user.email,
-    Status: 'Verified',
-    Region: [grantRegionId],
-    Approver: [validatedApplication.grant.approverRecordId],
-    earnApplicationId: validatedApplication.id,
-    earnTrancheId: validatedGrantTranche.id,
-    'Discord / Earn Username': validatedApplication.user.username,
+  const paymentData: PaymentAirtableFieldValues = {
+    [PAYMENT_FIELD_IDS.NAME]: validatedApplication.user.kycName,
+    [PAYMENT_FIELD_IDS.ADDRESS]: validatedApplication.user.kycAddress ?? '',
+    [PAYMENT_FIELD_IDS.DATE_OF_BIRTH]: validatedApplication.user.kycDOB,
+    [PAYMENT_FIELD_IDS.ID_NUMBER]: validatedApplication.user.kycIDNumber,
+    [PAYMENT_FIELD_IDS.ID_TYPE]: validatedApplication.user.kycIDType,
+    [PAYMENT_FIELD_IDS.COUNTRY_OF_RESIDENCE]:
+      country || validatedApplication.user.kycCountry,
+    [PAYMENT_FIELD_IDS.AMOUNT]: validatedGrantTranche.approvedAmount,
+    [PAYMENT_FIELD_IDS.WALLET_ADDRESS]: validatedApplication.walletAddress,
+    [PAYMENT_FIELD_IDS.CATEGORY]: [grantCategory],
+    [PAYMENT_FIELD_IDS.PURPOSE_OF_PAYMENT]: purposeOfPayment || 'Grant Payment',
+    [PAYMENT_FIELD_IDS.PROJECT_ARCHIVE]:
+      validatedApplication.projectTitle ?? '',
+    [PAYMENT_FIELD_IDS.EMAIL]: validatedApplication.user.email,
+    [PAYMENT_FIELD_IDS.STATUS]: 'Verified',
+    [PAYMENT_FIELD_IDS.REGION]: [grantRegionId],
+    [PAYMENT_FIELD_IDS.APPROVER]: [validatedApplication.grant.approverRecordId],
+    [PAYMENT_FIELD_IDS.EARN_APPLICATION_ID]: validatedApplication.id,
+    [PAYMENT_FIELD_IDS.EARN_TRANCHE_ID]: validatedGrantTranche.id,
+    [PAYMENT_FIELD_IDS.DISCORD_EARN_USERNAME]:
+      validatedApplication.user.username,
   };
 
   logger.debug(
@@ -220,7 +207,7 @@ export async function addPaymentInfoToAirtable(
     logger.info(
       `Checking for existing Airtable payment record for Tranche ID: ${validatedTrancheId} using formula.`,
     );
-    const filterFormula = `AND({earnApplicationId}='${application.id}', {earnTrancheId}='${validatedTrancheId}')`;
+    const filterFormula = `AND({${PAYMENT_FIELD_IDS.EARN_APPLICATION_ID}}='${application.id}', {${PAYMENT_FIELD_IDS.EARN_TRANCHE_ID}}='${validatedTrancheId}')`;
     const existingRecordId = await fetchAirtableRecordId(
       paymentsAirtableURL,
       null,
@@ -262,13 +249,13 @@ export async function addPaymentInfoToAirtable(
 
     const regionRecordId = await fetchAirtableRecordId(
       paymentsRegionAirtableURL,
-      'Country',
+      REGION_COUNTRY_FIELD,
       regionName,
       grantsAirtableConfig,
     );
 
     if (!regionRecordId) {
-      const regionErrorMessage = `Failed to find Airtable Region Record ID for region name: '${regionName}' (Tranche ID: ${validatedTrancheId}). Check if '${regionName}' exists in the '${regionsTable}' table's 'Country' field.`;
+      const regionErrorMessage = `Failed to find Airtable Region Record ID for region name: '${regionName}' (Tranche ID: ${validatedTrancheId}). Check if '${regionName}' exists in the '${regionsTable}' table's '${REGION_COUNTRY_FIELD}' field.`;
       logger.error(regionErrorMessage);
       throw new Error(
         `Could not find required Airtable region record for '${regionName}'. Payment cannot be processed without region link.`,
