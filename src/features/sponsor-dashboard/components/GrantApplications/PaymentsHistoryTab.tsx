@@ -1,8 +1,9 @@
 import { type GrantTranche } from '@prisma/client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { ChevronUp, ExternalLink } from 'lucide-react';
+import { ChevronUp, ExternalLink, Search } from 'lucide-react';
 import React, { useState } from 'react';
 
+import { Input } from '@/components/ui/input';
 import { Progress } from '@/components/ui/progress';
 import {
   Table,
@@ -143,13 +144,14 @@ export const PaymentsHistoryTab = ({
 }) => {
   const { user } = useUser();
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
+  const [searchTerm, setSearchTerm] = useState('');
   const queryClient = useQueryClient();
 
   const isNativeAndNonST = !grant?.airtableId && grant?.isNative;
   const isST = !!grant?.airtableId && grant?.isNative;
 
   const { data: grantees } = useQuery(
-    approvedGranteesQuery(grantId, user?.currentSponsorId),
+    approvedGranteesQuery(grantId, user?.currentSponsorId, searchTerm),
   );
 
   const toggleExpandRow = (id: string) => {
@@ -176,7 +178,7 @@ export const PaymentsHistoryTab = ({
     updatedApplication: GrantApplicationWithUser,
   ) => {
     queryClient.setQueryData<GrantApplicationWithUser[]>(
-      ['grantees', grantId],
+      ['approved-grantees', grantId, searchTerm],
       (oldData) =>
         oldData?.map((grantee) =>
           grantee.id === updatedApplication.id ? updatedApplication : grantee,
@@ -186,6 +188,17 @@ export const PaymentsHistoryTab = ({
 
   return (
     <div>
+      <div className="mt-3 mb-1.5">
+        <div className="relative">
+          <Input
+            placeholder="Search by project title or grantee name..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="pl-10"
+          />
+          <Search className="absolute top-2.5 left-3 size-4 text-slate-400" />
+        </div>
+      </div>
       <div className="overflow-x-auto rounded-md border border-slate-200 bg-white">
         <Table>
           <TableHeader>
@@ -220,6 +233,9 @@ export const PaymentsHistoryTab = ({
                           <div className="flex flex-col">
                             <p className="text-sm font-medium text-slate-700">
                               {grantee?.projectTitle}
+                            </p>
+                            <p className="text-xs text-slate-500">
+                              {grantee.user.firstName} {grantee.user.lastName}
                             </p>
                           </div>
                         </div>
@@ -336,6 +352,9 @@ export const PaymentsHistoryTab = ({
                             <p className="text-sm font-medium text-slate-700">
                               {grantee?.projectTitle}
                             </p>
+                            <p className="text-xs text-slate-500">
+                              {grantee.user.firstName} {grantee.user.lastName}
+                            </p>
                           </div>
                         </div>
                       </TableCell>
@@ -421,6 +440,17 @@ export const PaymentsHistoryTab = ({
                   </React.Fragment>
                 );
               })}
+            {grantees?.length === 0 && (
+              <TableRow>
+                <TableCell colSpan={5} className="h-24 text-center">
+                  <p className="text-sm text-slate-500">
+                    {searchTerm
+                      ? 'No matching grantees found. Try a different search term.'
+                      : 'No approved grantees found.'}
+                  </p>
+                </TableCell>
+              </TableRow>
+            )}
           </TableBody>
         </Table>
       </div>
