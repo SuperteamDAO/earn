@@ -36,10 +36,12 @@ export const profileSchema = z
     photo: z.string().optional().nullable(),
     firstName: z
       .string({ message: 'First name is required' })
-      .min(1, 'First name is required'),
+      .min(1, 'First name is required')
+      .regex(/^[A-Za-z\s]+$/, 'First name can only contain letters and spaces'),
     lastName: z
       .string({ message: 'Last name is required' })
-      .min(1, 'Last name is required'),
+      .min(1, 'Last name is required')
+      .regex(/^[A-Za-z\s]+$/, 'Last name can only contain letters and spaces'),
     bio: z.string().max(180, 'Bio cannot exceed 180 characters').optional(),
     discord: discordUsernameSchema.optional().or(z.literal('')),
     twitter: twitterUsernameSchema.optional().or(z.literal('')),
