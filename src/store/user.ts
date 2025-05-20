@@ -22,9 +22,9 @@ const useUserStore = create<UserState>((set) => ({
 export const USER_ID_COOKIE_NAME = 'user-id-hint';
 const COOKIE_OPTIONS = {
   path: '/',
-  sameSite: 'lax' as const,
   secure: process.env.NODE_ENV === 'production',
   expires: 30,
+  sameSite: 'lax' as const,
 };
 
 export const useUser = () => {
@@ -51,7 +51,6 @@ export const useUser = () => {
               console.warn('User request returned 401, logging out.');
               removeCookie(USER_ID_COOKIE_NAME, { path: '/' });
               await logout();
-              window.location.reload();
             }
           }
         }
@@ -100,11 +99,10 @@ export const useLogout = () => {
   const setUser = useUserStore((state) => state.setUser);
 
   return async () => {
+    await logout();
     queryClient.setQueryData(['user'], null);
     queryClient.removeQueries({ queryKey: ['user'] });
     setUser(null);
     removeCookie(USER_ID_COOKIE_NAME, { path: '/' });
-    await logout();
-    window.location.reload();
   };
 };

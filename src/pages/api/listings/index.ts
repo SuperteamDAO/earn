@@ -3,6 +3,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { z } from 'zod';
 
 import { prisma } from '@/prisma';
+import { USER_ID_COOKIE_NAME } from '@/store/user';
 
 import {
   listingSelect,
@@ -15,7 +16,8 @@ export default async function handler(
   res: NextApiResponse,
 ) {
   try {
-    const userIdFromCookie: string | null = req.cookies['user-id-hint'] ?? null;
+    const userIdFromCookie: string | null =
+      req.cookies[USER_ID_COOKIE_NAME] ?? null;
 
     const validationResult = QueryParamsSchema.safeParse(req.query);
     if (!validationResult.success) {

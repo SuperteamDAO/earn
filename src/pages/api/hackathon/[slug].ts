@@ -6,13 +6,16 @@ export default async function getHackathon(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
-  const params = req.query;
-  const slug = params.id as string;
+  const { slug } = req.query;
+
+  if (!slug) {
+    return res.status(400).json({ error: 'Slug is required' });
+  }
 
   try {
     const result = await prisma.bounties.findMany({
       where: {
-        Hackathon: { slug },
+        Hackathon: { slug: slug as string },
         isPublished: true,
       },
       select: {
