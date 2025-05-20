@@ -430,11 +430,7 @@ export const PaymentsHistoryTab = ({
                         <TableRow>
                           <TableCell />
                           <GrantTrancheRow
-                            paymentDetails={
-                              [...grantee.GrantTranche!].sort(
-                                (a, b) => a.trancheNumber - b.trancheNumber,
-                              ) as unknown as GrantTranche[]
-                            }
+                            paymentDetails={grantee.GrantTranche}
                             token={grant?.token || 'USDC'}
                           />
                         </TableRow>

@@ -62,9 +62,8 @@ async function grantApplication(
           },
         },
         GrantTranche: {
-          where: {
-            status: 'Paid',
-          },
+          where: { status: 'Paid' },
+          orderBy: { trancheNumber: 'asc' },
         },
       },
     });
