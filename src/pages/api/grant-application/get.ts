@@ -22,7 +22,7 @@ async function application(req: NextApiRequestWithUser, res: NextApiResponse) {
         userId,
         grantId: id,
         applicationStatus: {
-          not: 'Completed',
+          not: { in: ['Completed', 'Rejected'] },
         },
       },
       orderBy: {

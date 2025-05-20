@@ -15,9 +15,7 @@ export interface GrantApplicationWithTranchesAndUser extends GrantApplication {
 const fetchUserApplication = async (grantId: string) => {
   const response = await api.get<GrantApplicationWithTranchesAndUser>(
     '/api/grant-application/get',
-    {
-      params: { id: grantId },
-    },
+    { params: { id: grantId } },
   );
   return response.data;
 };
