@@ -194,9 +194,9 @@ export const PaymentsHistoryTab = ({
             placeholder="Search by project title or grantee name..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10"
+            className="h-10 pl-10"
           />
-          <Search className="absolute top-2.5 left-3 size-4 text-slate-400" />
+          <Search className="absolute top-3 left-3 size-4 text-slate-400" />
         </div>
       </div>
       <div className="overflow-x-auto rounded-md border border-slate-200 bg-white">
@@ -431,7 +431,9 @@ export const PaymentsHistoryTab = ({
                           <TableCell />
                           <GrantTrancheRow
                             paymentDetails={
-                              grantee.GrantTranche as unknown as GrantTranche[]
+                              [...grantee.GrantTranche!].sort(
+                                (a, b) => a.trancheNumber - b.trancheNumber,
+                              ) as unknown as GrantTranche[]
                             }
                             token={grant?.token || 'USDC'}
                           />
