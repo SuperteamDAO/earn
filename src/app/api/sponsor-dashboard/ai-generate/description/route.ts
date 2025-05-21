@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
     return createDataStreamResponse({
       execute: (dataStream) => {
         const result = streamText({
-          model: openrouter('openai/o4-mini-high:online', {
+          model: openrouter('google/gemini-2.5-flash-preview', {
             extraBody: {
               plugins: [
                 {
@@ -39,9 +39,6 @@ export async function POST(req: NextRequest) {
                   max_results: 3,
                 },
               ],
-            },
-            reasoning: {
-              effort: 'medium',
             },
           }),
           system:

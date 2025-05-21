@@ -67,11 +67,7 @@ export async function POST(request: Request) {
     );
 
     const { object } = await generateObject({
-      model: openrouter('google/gemini-2.5-pro-preview-03-25', {
-        reasoning: {
-          effort: 'low',
-        },
-      }),
+      model: openrouter('google/gemini-2.5-flash-preview'),
       system:
         'Your role is to generate high-quality evaluation questions for listings, strictly adhering to the rules provided with each description and type.',
       prompt,
