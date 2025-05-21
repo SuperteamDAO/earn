@@ -68,15 +68,15 @@ export function AiGenerateDialog({ children }: AIDescriptionDialogProps) {
     error: isDescriptionError,
   } = useCompletion({
     api: '/api/sponsor-dashboard/ai-generate/description',
-    onResponse: () => {
-      setStage('result');
-    },
     onError: (err) => {
       console.error('Error in completion:', err);
     },
   });
 
   useEffect(() => {
+    if (stage !== 'result' && description.length > 0) {
+      setStage('result');
+    }
     const awaitedParse = async () => {
       const html = await marked.parse(description || '', { gfm: true });
 
