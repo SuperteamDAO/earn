@@ -13,9 +13,6 @@ Analyze the provided listing description. Your primary goal is to identify the e
 ### Core Objective
 Extract only the skills and sub-skills that are central to the task, based *exclusively* on the provided \`skillSubSkillMap\`.
 
-### Output Requirements
-Produce a valid JSON array of objects as your final output. Each object in the array must strictly follow this structure: \`{ skills: string, subskills: string[] }\`.
-
 ---
 
 ### Detailed Rules and Constraints
@@ -57,7 +54,7 @@ ${description}
 ---
 
 ### Final Instruction
-Generate the JSON array representing the required skills based *only* on the provided description and the allowed \`skillSubSkillMap\`. Adhere strictly to ALL rules outlined above. Ensure the final output is valid JSON, conforms precisely to the specified format, respects all constraints (especially regarding empty subskill arrays and core task relevance), and accurately reflects the essential requirements of the listing.
+Generate the  required skills based *only* on the provided description and the allowed \`skillSubSkillMap\`. Adhere strictly to ALL rules outlined above. Respects all constraints (especially regarding empty subskill arrays and core task relevance), and accurately reflects the essential requirements of the listing.
 `;
 
   return prompt;
