@@ -1,3 +1,5 @@
+import React from 'react';
+
 import { Tooltip } from '@/components/ui/tooltip';
 
 export const InfoWrapper = ({
@@ -16,6 +18,7 @@ export const InfoWrapper = ({
       content={!isUserEligibleByRegion ? regionTooltipLabel : null}
       contentProps={{ className: 'rounded-md' }}
       disabled={!user?.id || !user?.isTalentFilled || isUserEligibleByRegion}
+      triggerClassName="w-full"
     >
       {children}
     </Tooltip>
