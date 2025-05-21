@@ -8,6 +8,7 @@ import { toast } from 'sonner';
 import { type z } from 'zod';
 
 import { Button } from '@/components/ui/button';
+import { DateTimePicker } from '@/components/ui/datetime-picker';
 import { DialogTitle } from '@/components/ui/dialog';
 import {
   Form,
@@ -385,28 +386,47 @@ export const ApplicationModal = ({
                   richEditorPlaceholder="Describe the problem & solution"
                 />
 
-                <FormFieldWrapper
+                <FormField
                   control={form.control}
                   name="projectTimeline"
-                  label={`Deadline (in ${Intl.DateTimeFormat().resolvedOptions().timeZone})`}
-                  description="What is the expected completion date for the project?"
-                  isRequired
-                >
-                  <Input
-                    className={cn(
-                      'relative w-full',
-                      '[&::-webkit-calendar-picker-indicator]:opacity-0',
-                      '[&::-webkit-calendar-picker-indicator]:absolute',
-                      '[&::-webkit-calendar-picker-indicator]:inset-0',
-                      '[&::-webkit-calendar-picker-indicator]:w-full',
-                      '[&::-webkit-calendar-picker-indicator]:h-full',
-                      '[&::-webkit-calendar-picker-indicator]:cursor-pointer',
-                    )}
-                    min={date}
-                    placeholder="deadline"
-                    type="date"
-                  />
-                </FormFieldWrapper>
+                  render={({ field }) => (
+                    <FormItem className="flex flex-col gap-2">
+                      <div>
+                        <FormLabel isRequired>
+                          {`Deadline (in ${Intl.DateTimeFormat().resolvedOptions().timeZone})`}
+                        </FormLabel>
+                        <FormDescription>
+                          What is the expected completion date for the project?
+                        </FormDescription>
+                      </div>
+                      <div>
+                        <FormControl>
+                          <DateTimePicker
+                            value={
+                              field.value
+                                ? dayjs(field.value, 'YYYY-MM-DD').toDate()
+                                : undefined
+                            }
+                            onChange={(selectedDate) => {
+                              if (selectedDate) {
+                                field.onChange(
+                                  dayjs(selectedDate).format('YYYY-MM-DD'),
+                                );
+                              } else {
+                                field.onChange(undefined);
+                              }
+                            }}
+                            min={dayjs(date, 'YYYY-MM-DD').toDate()}
+                            hideTime={true}
+                            minDateTooltipContent="Deadline cannot be in the past"
+                            defaultDisplayValue="Pick a date"
+                          />
+                        </FormControl>
+                        <FormMessage className="pt-1" />
+                      </div>
+                    </FormItem>
+                  )}
+                />
 
                 <FormFieldWrapper
                   control={form.control}
