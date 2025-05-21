@@ -1,4 +1,4 @@
-import { type GrantApplication } from '@prisma/client';
+import { type GrantApplication, type GrantTranche } from '@prisma/client';
 import { z } from 'zod';
 
 import { type PrismaUserWithoutKYC } from '@/interface/user';
@@ -19,6 +19,7 @@ export type ScoutRowType = {
 export interface GrantApplicationWithUser extends GrantApplication {
   user: PrismaUserWithoutKYC;
   totalEarnings?: number;
+  GrantTranche?: GrantTranche[];
 }
 
 export interface SponsorStats {

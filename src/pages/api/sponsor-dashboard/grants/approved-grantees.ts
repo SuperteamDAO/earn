@@ -15,9 +15,12 @@ async function grantApplication(
   const userId = req.userId;
   const params = req.query;
   const grantId = params.grantId as string;
+  const searchTerm = params.search as string;
 
   logger.info(
-    `User ${userId} requested grant applications for grantId: ${grantId}`,
+    `User ${userId} requested grant applications for grantId: ${grantId}${
+      searchTerm ? ` with search term: ${searchTerm}` : ''
+    }`,
   );
 
   if (!grantId) {
@@ -31,12 +34,23 @@ async function grantApplication(
       return res.status(error.status).json({ error: error.message });
     }
 
+    const searchFilter = searchTerm
+      ? {
+          OR: [
+            { projectTitle: { contains: searchTerm.toLowerCase() } },
+            { user: { firstName: { contains: searchTerm.toLowerCase() } } },
+            { user: { lastName: { contains: searchTerm.toLowerCase() } } },
+          ],
+        }
+      : {};
+
     const result = await prisma.grantApplication.findMany({
       where: {
         grantId,
         applicationStatus: {
           in: ['Approved', 'Completed'],
         },
+        ...searchFilter,
       },
       include: {
         user: {
@@ -47,11 +61,17 @@ async function grantApplication(
             username: true,
           },
         },
+        GrantTranche: {
+          where: { status: 'Paid' },
+          orderBy: { trancheNumber: 'asc' },
+        },
       },
     });
 
     logger.info(
-      `Found ${result.length} approved applications for grantId: ${grantId}`,
+      `Found ${result.length} approved applications for grantId: ${grantId}${
+        searchTerm ? ` matching search term: ${searchTerm}` : ''
+      }`,
     );
     return res.status(200).json(result);
   } catch (error: any) {
