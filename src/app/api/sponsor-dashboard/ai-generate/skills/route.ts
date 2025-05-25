@@ -77,7 +77,7 @@ export async function POST(request: Request) {
     const prompt = generateListingSkillsPrompt(description);
 
     const { object } = await generateObject({
-      model: openrouter('google/gemini-2.5-pro-preview-03-25', {
+      model: openrouter('google/gemini-2.5-pro-preview', {
         reasoning: {
           effort: 'medium',
         },
