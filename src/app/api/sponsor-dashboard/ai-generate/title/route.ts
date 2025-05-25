@@ -6,6 +6,8 @@ import { NextResponse } from 'next/server';
 import { z } from 'zod';
 
 import logger from '@/lib/logger';
+import { aiGenerateRateLimiter } from '@/lib/ratelimit';
+import { checkAndApplyRateLimitApp } from '@/lib/rateLimiterService';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { getSponsorSession } from '@/features/auth/utils/getSponsorSession';
@@ -24,6 +26,27 @@ export type TTitleGenerateResponse = z.infer<typeof responseSchema>;
 
 export async function POST(request: Request) {
   try {
+    const session = await getSponsorSession(await headers());
+
+    if (session.error || !session.data) {
+      return NextResponse.json(
+        { error: session.error },
+        { status: session.status },
+      );
+    }
+
+    const userId = session.data.userId;
+
+    const rateLimitResponse = await checkAndApplyRateLimitApp({
+      limiter: aiGenerateRateLimiter,
+      identifier: userId,
+      routeName: 'aiGenerateTitle',
+    });
+
+    if (rateLimitResponse) {
+      return rateLimitResponse;
+    }
+
     let description: string, type: BountyType;
     try {
       const body = await request.json();
@@ -51,15 +74,6 @@ export async function POST(request: Request) {
         );
       }
       throw e;
-    }
-
-    const session = await getSponsorSession(await headers());
-
-    if (session.error || !session.data) {
-      return NextResponse.json(
-        { error: session.error },
-        { status: session.status },
-      );
     }
 
     const prompt = generateListingTitlePrompt(description, type);

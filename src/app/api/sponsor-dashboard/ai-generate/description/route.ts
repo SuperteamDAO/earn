@@ -5,6 +5,8 @@ import { type NextRequest, NextResponse } from 'next/server';
 import { ZodError } from 'zod';
 
 import logger from '@/lib/logger';
+import { aiGenerateRateLimiter } from '@/lib/ratelimit';
+import { checkAndApplyRateLimitApp } from '@/lib/rateLimiterService';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { getSponsorSession } from '@/features/auth/utils/getSponsorSession';
@@ -14,10 +16,6 @@ import { getDescriptionPrompt } from './prompts';
 
 export async function POST(req: NextRequest) {
   try {
-    const rawData = await req.json();
-    logger.debug(`Request body: ${safeStringify(rawData)}`);
-    const validatedData = aiGenerateFormSchema.parse(rawData);
-
     const session = await getSponsorSession(await headers());
 
     if (session.error || !session.data) {
@@ -26,6 +24,23 @@ export async function POST(req: NextRequest) {
         { status: session.status },
       );
     }
+
+    const userId = session.data.userId;
+
+    const rateLimitResponse = await checkAndApplyRateLimitApp({
+      limiter: aiGenerateRateLimiter,
+      identifier: userId,
+      routeName: 'aiGenerateDescription',
+    });
+
+    if (rateLimitResponse) {
+      return rateLimitResponse;
+    }
+
+    const rawData = await req.json();
+    logger.debug(`Request body: ${safeStringify(rawData)}`);
+    const validatedData = aiGenerateFormSchema.parse(rawData);
+
     const prompt = getDescriptionPrompt(validatedData);
 
     return createDataStreamResponse({
