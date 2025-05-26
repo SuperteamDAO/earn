@@ -697,6 +697,7 @@ enum CreditEventType {
   SPAM_PENALTY
   WIN_BONUS
   MONTHLY_CREDIT
+  CREDIT_REFUND
 }
 
 enum TalentRankingSkills {

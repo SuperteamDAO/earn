@@ -35,14 +35,8 @@ export async function addSpamPenaltyCredit(listingId: string) {
   const effectiveMonth = dayjs.utc().add(1, 'month').startOf('month').toDate();
 
   const submissions = await prisma.submission.findMany({
-    where: {
-      listingId,
-      label: SubmissionLabels.Spam,
-    },
-    select: {
-      id: true,
-      userId: true,
-    },
+    where: { listingId, label: SubmissionLabels.Spam },
+    select: { id: true, userId: true },
   });
 
   await Promise.all(
@@ -54,6 +48,29 @@ export async function addSpamPenaltyCredit(listingId: string) {
           type: CreditEventType.SPAM_PENALTY,
           effectiveMonth,
           change: -1,
+        },
+      }),
+    ),
+  );
+}
+
+export async function refundCredit(listingId: string) {
+  const effectiveMonth = dayjs.utc().add(1, 'month').startOf('month').toDate();
+
+  const submissions = await prisma.submission.findMany({
+    where: { listingId },
+    select: { id: true, userId: true },
+  });
+
+  await Promise.all(
+    submissions.map((submission) =>
+      prisma.creditLedger.create({
+        data: {
+          userId: submission.userId,
+          submissionId: submission.id,
+          type: CreditEventType.CREDIT_REFUND,
+          effectiveMonth,
+          change: +1,
         },
       }),
     ),

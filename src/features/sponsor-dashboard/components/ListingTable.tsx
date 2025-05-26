@@ -41,12 +41,10 @@ import { getURL } from '@/utils/validUrl';
 
 import { grantAmount } from '@/features/grants/utils/grantAmount';
 import { type ListingWithSubmissions } from '@/features/listings/types';
-import {
-  formatDeadline,
-  isDeadlineOver,
-} from '@/features/listings/utils/deadline';
+import { formatDeadline } from '@/features/listings/utils/deadline';
 import { getColorStyles } from '@/features/listings/utils/getColorStyles';
 import { getListingIcon } from '@/features/listings/utils/getListingIcon';
+import { isListingEditable } from '@/features/listings/utils/isListingEditable';
 import {
   getListingStatus,
   getListingTypeLabel,
@@ -56,6 +54,7 @@ import { DeleteDraftModal } from './Modals/DeleteDraftModal';
 import { UnpublishModal } from './Modals/UnpublishModal';
 import { VerifyPaymentModal } from './Modals/VerifyPayment';
 import { SponsorPrize } from './SponsorPrize';
+
 interface ListingTableProps {
   listings: ListingWithSubmissions[];
   currentSort: {
@@ -204,8 +203,6 @@ export const ListingTable = ({
 
               const deadline = formatDeadline(listing?.deadline, listing?.type);
 
-              const pastDeadline = isDeadlineOver(listing?.deadline);
-
               const listingStatus = getListingStatus(listing);
               const listingLabel =
                 listingStatus === 'Draft'
@@ -330,12 +327,7 @@ export const ListingTable = ({
                           <span>Submissions</span>
                         )}
                       </Button>
-                    ) : (user?.role === 'GOD' &&
-                        listing.type !== 'grant' &&
-                        !listing.isPublished) ||
-                      (!pastDeadline &&
-                        listing.type !== 'grant' &&
-                        listing.status === 'OPEN') ? (
+                    ) : isListingEditable({ listing, user }) ? (
                       <Link href={`/dashboard/listings/${listing.slug}/edit/`}>
                         <Button
                           variant="ghost"
@@ -347,7 +339,7 @@ export const ListingTable = ({
                         </Button>
                       </Link>
                     ) : (
-                      <p className="px-3 text-slate-400">—</p>
+                      <></>
                     )}
                   </TableCell>
                   <TableCell className="px-0 py-2">
@@ -380,13 +372,7 @@ export const ListingTable = ({
                           </DropdownMenuItem>
                         )}
 
-                        {!!(
-                          (user?.role === 'GOD' && listing.type !== 'grant') ||
-                          (!pastDeadline &&
-                            listing.type !== 'grant' &&
-                            (listing.status === 'OPEN' ||
-                              listing.status === 'VERIFYING'))
-                        ) && (
+                        {isListingEditable({ listing, user }) && (
                           <Link
                             className="block"
                             href={`/dashboard/listings/${listing.slug}/edit`}

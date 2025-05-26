@@ -1,5 +1,5 @@
 import { format } from 'date-fns';
-import { Check, Minus, Plus } from 'lucide-react';
+import { Check, Minus, Plus, Undo } from 'lucide-react';
 import Link from 'next/link';
 import { usePostHog } from 'posthog-js/react';
 import { type ReactNode } from 'react';
@@ -14,7 +14,8 @@ type CreditEventType =
   | 'SPAM_PENALTY'
   | 'WIN_BONUS'
   | 'MONTHLY_CREDIT'
-  | 'CREDIT_EXPIRY';
+  | 'CREDIT_EXPIRY'
+  | 'CREDIT_REFUND';
 
 interface CreditEntry {
   id: string;
@@ -209,11 +210,21 @@ function getStatusIcon(type: CreditEventType) {
     );
   }
 
+  if (type === 'CREDIT_REFUND') {
+    return (
+      <div className="absolute -right-1 -bottom-1 flex size-5 items-center justify-center rounded-full border-3 border-white bg-emerald-600 text-white">
+        <Undo className="size-3" />
+      </div>
+    );
+  }
+
   return null;
 }
 
 function getEntryTitle(entry: CreditEntry): string {
   switch (entry.type) {
+    case 'CREDIT_REFUND':
+      return 'Credit Refunded';
     case 'SPAM_PENALTY':
       return 'Submission Flagged as Spam';
     case 'WIN_BONUS':
