@@ -5,6 +5,7 @@ import Papa from 'papaparse';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { csvUpload, str2ab } from '@/utils/cloudinary';
+import { plainTextFromHtmlTurndown } from '@/utils/plainTextFromHtml';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { type NextApiRequestWithSponsor } from '@/features/auth/types';
@@ -58,7 +59,9 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         const answer = (application as any).answers?.find(
           (a: any) => a.question === question,
         );
-        customGrantAnswers[question] = answer ? answer.answer : '';
+        customGrantAnswers[question] = answer
+          ? plainTextFromHtmlTurndown.turndown(answer.answer)
+          : '';
       });
       return {
         'Sr no': i + 1,
@@ -70,11 +73,19 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         'Application Date': applicationDate,
         'Project Title': application?.projectTitle,
         'One Liner Description': application?.projectOneLiner,
-        'Project Details': application?.projectDetails,
+        'Project Details': plainTextFromHtmlTurndown.turndown(
+          application?.projectDetails,
+        ),
         Deadline: application?.projectTimeline,
-        'Proof of work': application?.proofOfWork,
-        'Goals and Milestones': application?.proofOfWork,
-        'Primary KPI': application?.kpi,
+        'Proof of work': plainTextFromHtmlTurndown.turndown(
+          application?.proofOfWork || '',
+        ),
+        'Goals and Milestones': plainTextFromHtmlTurndown.turndown(
+          application?.milestones || '',
+        ),
+        'Primary KPI': plainTextFromHtmlTurndown.turndown(
+          application?.kpi || '',
+        ),
         ...customGrantAnswers,
         Ask: application.ask || '',
         'Approved Amount': application.approvedAmount,
