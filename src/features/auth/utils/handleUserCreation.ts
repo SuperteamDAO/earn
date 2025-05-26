@@ -2,23 +2,20 @@ import { api } from '@/lib/api';
 
 const allowedNewUserRedirections = ['/signup', '/new/sponsor'];
 
+interface CreateUserResponse {
+  message: string;
+  created: boolean;
+}
+
 export async function handleUserCreation(email: string): Promise<boolean> {
   try {
-    let userExists = false;
+    const response = await api.post<CreateUserResponse>('/api/user/create', {
+      email,
+    });
 
-    try {
-      await api.get(`/api/user/exists?email=${encodeURIComponent(email)}`);
-      userExists = true;
-    } catch (error: any) {
-      if (error.response?.status !== 404) {
-        console.error('Error checking if user exists:', error);
-        return false;
-      }
-    }
+    const { created } = response.data;
 
-    if (!userExists) {
-      await api.post('/api/user/create', { email });
-
+    if (created) {
       if (
         allowedNewUserRedirections?.some((s) =>
           window.location.pathname.startsWith(s),
@@ -30,10 +27,18 @@ export async function handleUserCreation(email: string): Promise<boolean> {
       } else {
         window.location.href = '/new?onboarding=true&loginState=signedIn';
       }
-      return true;
     }
-    return userExists;
-  } catch (error) {
+
+    return true;
+  } catch (error: any) {
+    if (error.response?.status === 409) {
+      console.error(
+        'User exists with different authentication method:',
+        error.response.data.error,
+      );
+      return false;
+    }
+
     console.error('Error handling user creation:', error);
     return false;
   }

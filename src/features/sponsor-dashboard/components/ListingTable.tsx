@@ -393,7 +393,7 @@ export const ListingTable = ({
                           >
                             <DropdownMenuItem className="cursor-pointer text-sm font-medium text-slate-500">
                               <PencilLine className="mr-2 h-4 w-4" />
-                              Edit <span>{listingLabel}</span>
+                              Edit {listingLabel}
                             </DropdownMenuItem>
                           </Link>
                         )}

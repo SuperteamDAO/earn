@@ -126,7 +126,7 @@ export function CreditDrawer({
 
               <div>
                 <p className="text-sm font-medium tracking-tight text-slate-500">
-                  EXPIRES IN
+                  {creditBalance <= 0 ? 'RENEWS IN' : 'EXPIRES IN'}
                 </p>
                 <p className="mt-1.5 text-base font-medium text-slate-800 sm:text-lg">
                   <Countdown

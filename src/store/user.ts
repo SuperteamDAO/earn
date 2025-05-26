@@ -104,5 +104,6 @@ export const useLogout = () => {
     queryClient.removeQueries({ queryKey: ['user'] });
     setUser(null);
     removeCookie(USER_ID_COOKIE_NAME, { path: '/' });
+    window.location.reload();
   };
 };

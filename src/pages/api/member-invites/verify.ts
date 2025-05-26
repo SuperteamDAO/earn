@@ -1,4 +1,3 @@
-// pages/api/member-invites/verify.ts
 import { type NextApiRequest, type NextApiResponse } from 'next';
 
 import { prisma } from '@/prisma';
@@ -35,6 +34,7 @@ export default async function handler(
       senderName: `${invite.sender.firstName} ${invite.sender.lastName}`,
       memberType: invite.memberType,
       sponsorLogo: invite.sponsor.logo,
+      invitedEmail: invite.email,
     });
   } catch (error) {
     console.error('Error verifying invite:', error);

@@ -141,7 +141,7 @@ export function ScoutTable({ bountyId, scouts, setInvited }: Props) {
                 />
               </svg>
             </div>
-            <div className="flex flex-col items-center gap-0 text-base">
+            <div className="flex flex-col items-center gap-0 py-4 text-base">
               <p className="font-semibold">No Profiles Found</p>
               <p className="font-normal text-slate-500">
                 We couldn’t find any suitable matches for your listing.

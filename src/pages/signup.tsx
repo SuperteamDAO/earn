@@ -19,7 +19,7 @@ export default function SignupPage() {
   const router = useRouter();
   const { authenticated } = usePrivy();
   const [isNavigating, setIsNavigating] = useState(false);
-  const { refetchUser } = useUser();
+  const { user, refetchUser } = useUser();
 
   const { invite } = router.query;
   const cleanToken =
@@ -28,8 +28,6 @@ export default function SignupPage() {
   const { data: inviteDetails, error } = useQuery(
     verifyInviteQuery(cleanToken),
   );
-
-  console.log('inviteDetails', invite);
 
   const acceptInviteMutation = useMutation({
     mutationFn: acceptInvite,
@@ -58,23 +56,11 @@ export default function SignupPage() {
     }
   }, [error]);
 
-  useEffect(() => {
-    const handleRouteChange = (
-      url: string,
-      { shallow }: { shallow: boolean },
-    ) => {
-      console.log('Route changing to:', url);
-      console.log('Shallow routing:', shallow);
-      console.log('Current query params:', router.query);
-    };
-
-    router.events.on('routeChangeStart', handleRouteChange);
-
-    // Cleanup listener
-    return () => {
-      router.events.off('routeChangeStart', handleRouteChange);
-    };
-  }, [router]);
+  const isEmailMismatch =
+    authenticated &&
+    user?.email &&
+    inviteDetails?.invitedEmail &&
+    user.email !== inviteDetails.invitedEmail;
 
   if (error) {
     return (
@@ -114,6 +100,13 @@ export default function SignupPage() {
             {inviteDetails?.sponsorName}
           </p>
 
+          {inviteDetails?.invitedEmail && (
+            <p className="mt-2 text-center text-sm text-slate-400">
+              Invitation sent to:{' '}
+              <span className="font-medium">{inviteDetails.invitedEmail}</span>
+            </p>
+          )}
+
           <div>
             {!authenticated ? (
               <div className="mt-6 w-full">
@@ -121,6 +114,27 @@ export default function SignupPage() {
                   Please sign in to accept the invitation:
                 </p>
                 <SignIn loginStep={loginStep} setLoginStep={setLoginStep} />
+              </div>
+            ) : isEmailMismatch ? (
+              <div className="mt-6 w-full max-w-md">
+                <div className="rounded-lg border border-orange-200 bg-orange-50 p-4">
+                  <p className="text-center text-sm font-medium text-orange-800">
+                    Email Mismatch
+                  </p>
+                  <p className="mt-2 text-center text-sm text-orange-700">
+                    You&apos;re signed in as{' '}
+                    <span className="font-medium">{user?.email}</span>, but this
+                    invitation was sent to{' '}
+                    <span className="font-medium">
+                      {inviteDetails?.invitedEmail}
+                    </span>
+                    .
+                  </p>
+                  <p className="mt-2 text-center text-sm text-orange-700">
+                    Please sign in with the correct email to accept this
+                    invitation.
+                  </p>
+                </div>
               </div>
             ) : (
               <Button
