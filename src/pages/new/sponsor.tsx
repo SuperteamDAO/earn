@@ -183,7 +183,7 @@ const CreateSponsor = () => {
   }, [user?.currentSponsorId, router]);
 
   const {
-    mutate: createSponsor,
+    mutateAsync: createSponsor,
     isPending,
     isError,
   } = useMutation({
@@ -278,6 +278,7 @@ const CreateSponsor = () => {
 
       posthog.capture('complete profile_sponsor');
       await createSponsor(data);
+      if (user) posthog.identify(user.email);
     } catch (error) {
       console.error('Error uploading images:', error);
       toast.error('Failed to upload images. Please try again.');

@@ -124,6 +124,7 @@ export const TalentForm = () => {
             ...data,
             photo: isGooglePhoto ? user?.photo : photoUrl,
           });
+          if (user) posthog.identify(user.email);
 
           await refetchUser();
           return true;
