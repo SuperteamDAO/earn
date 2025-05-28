@@ -2,12 +2,12 @@ import { waitUntil } from '@vercel/functions';
 import { headers } from 'next/headers';
 import { type NextRequest, NextResponse } from 'next/server';
 
-import earncognitoClient from '@/lib/earncognitoClient';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { dayjs } from '@/utils/dayjs';
 import { safeStringify } from '@/utils/safeStringify';
 
+import { queueAgent } from '@/features/agents/utils/queueAgent';
 import { getUserSession } from '@/features/auth/utils/getUserSession';
 import { queueEmail } from '@/features/emails/utils/queueEmail';
 import { grantApplicationSchema } from '@/features/grants/utils/grantApplicationSchema';
@@ -171,9 +171,13 @@ export async function POST(request: NextRequest) {
           }
         }
         try {
-          await earncognitoClient.post('/ai/grants/review-application', {
+          await queueAgent({
+            type: 'autoReviewGrantApplication',
             id: result.id,
           });
+          // await earncognitoClient.post('/ai/grants/review-application', {
+          //   id: result.id,
+          // });
         } catch (error) {
           logger.error('Failed to create AI review for grant application: ', {
             error,

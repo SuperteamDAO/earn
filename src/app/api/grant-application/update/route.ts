@@ -3,11 +3,11 @@ import dayjs from 'dayjs';
 import { headers } from 'next/headers';
 import { type NextRequest, NextResponse } from 'next/server';
 
-import earncognitoClient from '@/lib/earncognitoClient';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
 
+import { queueAgent } from '@/features/agents/utils/queueAgent';
 import { getUserSession } from '@/features/auth/utils/getUserSession';
 import { grantApplicationSchema } from '@/features/grants/utils/grantApplicationSchema';
 import { syncGrantApplicationWithAirtable } from '@/features/grants/utils/syncGrantApplicationWithAirtable';
@@ -156,7 +156,8 @@ export async function POST(request: NextRequest) {
           }
         }
         try {
-          await earncognitoClient.post('/ai/grants/review-application', {
+          await queueAgent({
+            type: 'autoReviewGrantApplication',
             id: result.id,
           });
         } catch (error) {
