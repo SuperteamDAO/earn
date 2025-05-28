@@ -224,7 +224,7 @@ function getStatusIcon(type: CreditEventType) {
 function getEntryTitle(entry: CreditEntry): string {
   switch (entry.type) {
     case 'CREDIT_REFUND':
-      return 'Credit Refunded';
+      return 'Credit Refunded (Listing Unpublished)';
     case 'SPAM_PENALTY':
       return 'Submission Flagged as Spam';
     case 'WIN_BONUS':
