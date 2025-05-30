@@ -1,6 +1,6 @@
 <div align="center">
   <br/>
-  <img src="https://pbs.twimg.com/profile_images/1655546485365407744/dOeIC0R-_400x400.jpg" style="border-radius:10px" width="120px" height="auto"/>
+  ![Readme Earn Logo](/public/readme-logo.webp)
   <h2>Superteam Earn</h2>
   <p>
     <strong>An open source platform connecting crypto founders with elite talent to create bounties, and accelerate project completion</strong>
@@ -16,9 +16,9 @@
 
 ### Prerequisites
 
-- NodeJS
-- MySQL
-- pnpm
+- <img src="https://avatars.githubusercontent.com/u/9950313" title="Node JS" alt="nodejs" width="20" height="20" /> NodeJS
+- <img src="https://avatars.githubusercontent.com/u/2452804" title="MySQL" alt="mysql" width="20" height="20" /> MySQL
+- <img src="https://avatars.githubusercontent.com/u/21320719" title="pnpm" alt="pnpm" width="20" height="20" /> pnpm
 
 ### Getting Started
 
