@@ -5,6 +5,7 @@ import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { csvUpload, str2ab } from '@/utils/cloudinary';
 import { dayjs } from '@/utils/dayjs';
+import { plainTextFromHtmlTurndown } from '@/utils/plainTextFromHtml';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { type NextApiRequestWithSponsor } from '@/features/auth/types';
@@ -65,6 +66,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     });
 
     logger.debug('Transforming submissions to JSON format for CSV export');
+
     const finalJson = submissions.map((submission, i: number) => {
       const user = submission.user;
       const accountAge = Math.abs(dayjs(user.createdAt).diff(dayjs(), 'day'));
@@ -73,7 +75,9 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         const answer = (submission.eligibilityAnswers as Array<any>)?.find(
           (e: any) => e.question === question,
         );
-        eligibility[question] = answer ? answer.answer : '';
+        eligibility[question] = answer
+          ? plainTextFromHtmlTurndown.turndown(answer.answer)
+          : '';
       });
       return {
         'Sr no': i + 1,
@@ -81,7 +85,9 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         Name: `${user.firstName} ${user.lastName}`,
         'Submission Link': submission.link || '',
         ...eligibility,
-        'Anything Else': submission.otherInfo || '',
+        'Anything Else': plainTextFromHtmlTurndown.turndown(
+          submission.otherInfo || '',
+        ),
         Ask: submission.ask || '',
         'Tweet Link': submission.tweet || '',
         'Email ID': user.email,
