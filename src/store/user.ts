@@ -109,5 +109,6 @@ export const useLogout = () => {
     setUser(null);
     removeCookie(USER_ID_COOKIE_NAME, { path: '/' });
     if (posthog._isIdentified()) posthog.reset();
+    window.location.reload();
   };
 };
