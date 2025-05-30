@@ -36,6 +36,10 @@ async function createGrantApplication(
       data.twitter !== undefined
         ? extractSocialUsername('twitter', data.twitter) || ''
         : undefined,
+    github:
+      data.github !== undefined
+        ? extractSocialUsername('github', data.github) || ''
+        : undefined,
   });
 
   if (!validationResult.success) {
@@ -64,6 +68,7 @@ async function createGrantApplication(
     walletAddress: validatedData.walletAddress,
     ask: validatedData.ask,
     twitter: validatedData.twitter,
+    github: validatedData.github,
     answers: validatedData.answers || [],
   };
 

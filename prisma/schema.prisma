@@ -233,6 +233,7 @@ model GrantApplication {
   proofOfWork         String                 @db.Text
   walletAddress       String
   twitter             String?
+  github              String?
   milestones          String?                @db.Text
   kpi                 String?                @db.Text
   answers             Json?                  @default("[]")
