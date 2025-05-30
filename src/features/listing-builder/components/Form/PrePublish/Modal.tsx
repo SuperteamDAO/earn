@@ -166,13 +166,13 @@ export function PrePublish() {
         </Button>
       </Tooltip>
       <DialogContent className="overflow-y-visible py-4 sm:max-w-[500px]">
-        <DialogHeader className="flex flex-row gap-4">
-          <DialogTitle className="text-base">
+        <DialogHeader className="flex flex-row items-center gap-4">
+          <DialogTitle className="h-4 text-base">
             {isUpdate ? <span>Update</span> : <span>Publish</span>}{' '}
             <span>Listing</span>
           </DialogTitle>
           {isDisabledSoft && (
-            <Loader2 className="h-4 w-4 animate-spin text-slate-500" />
+            <Loader2 className="mt-0.5 h-4 w-4 animate-spin text-slate-500" />
           )}
         </DialogHeader>
         <Separator className="relativerl w-[100%]" />
