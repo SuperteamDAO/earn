@@ -208,7 +208,12 @@ function TalentProfile({ talent, stats }: TalentProps) {
   };
 
   const ogImage = new URL(`${getURL()}api/dynamic-og/talent/`);
-  ogImage.searchParams.set('name', `${talent?.firstName} ${talent?.lastName}`);
+  ogImage.searchParams.set(
+    'name',
+    talent.private
+      ? talent.username!
+      : `${talent?.firstName} ${talent?.lastName}`,
+  );
   ogImage.searchParams.set('username', talent?.username!);
   ogImage.searchParams.set('skills', JSON.stringify(talent?.skills));
   ogImage.searchParams.set(
@@ -225,7 +230,7 @@ function TalentProfile({ talent, stats }: TalentProps) {
   const title =
     talent?.firstName && talent?.lastName
       ? `${talent?.firstName} ${talent?.lastName} | ${PROJECT_NAME} Talent`
-      : `${PROJECT_NAME}`;
+      : `${talent?.username} | ${PROJECT_NAME} Talent`;
 
   const feedItems = feed?.pages.flatMap((page) => page) ?? [];
 
@@ -272,9 +277,16 @@ function TalentProfile({ talent, stats }: TalentProps) {
                 />
 
                 <p className="mt-6 text-lg font-semibold text-slate-900 md:text-xl">
-                  {talent?.firstName} {talent?.lastName}
+                  {talent.private
+                    ? `@${talent.username}`
+                    : `${talent?.firstName} ${talent?.lastName}`}
                 </p>
-                <p className="text-base font-semibold text-slate-500">
+                <p
+                  className={cn(
+                    'text-base font-semibold text-slate-500',
+                    talent.private && 'hidden',
+                  )}
+                >
                   @
                   {isMD
                     ? talent?.username
