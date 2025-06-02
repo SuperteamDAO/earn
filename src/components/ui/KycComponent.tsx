@@ -28,7 +28,7 @@ function styleKycStatus(kycData?: KycResponse) {
     case 'APPROVED':
       return {
         className: 'text-green-600',
-        text: 'KYC / KYB Verified by Fractal',
+        text: 'KYC / KYB Verified',
         image: <VerifiedBadge className={cn('fill-green-600')} />,
       };
     case 'PENDING':
