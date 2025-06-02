@@ -657,10 +657,13 @@ export default function EditProfilePage({ slug }: { slug: string }) {
                             }
                           }}
                           className="mr-1 text-brand-green data-[state=checked]:border-brand-green data-[state=checked]:bg-brand-green"
-                        ></Checkbox>
+                        />
                       </FormControl>
-                      <FormLabel className="font-medium text-slate-500">
+                      <FormLabel className="flex items-center gap-2 font-medium text-slate-500">
                         Keep my info private
+                        <Tooltip content="This hides detailed information and work history from your main public profile page, making it harder for potential sponsors to discover you. Your username and image will still appear in public interactions like comments or submissions. Sponsors you apply to will see your full profile.">
+                          <Info className="h-3 w-3 text-slate-500" />
+                        </Tooltip>
                       </FormLabel>
                     </div>
                     <FormMessage />

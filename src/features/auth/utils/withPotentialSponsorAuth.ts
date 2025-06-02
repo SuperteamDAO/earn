@@ -30,6 +30,7 @@ export const withPotentialSponsorAuth = (handler: Handler): NextApiHandler => {
       return handler(req, res);
     }
 
+    req.authorized = true;
     req.userId = userId;
 
     try {

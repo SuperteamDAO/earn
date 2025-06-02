@@ -71,6 +71,7 @@ export default async function handler(
               lastName: true,
               photo: true,
               username: true,
+              private: true,
             },
           },
           listing: {
@@ -133,8 +134,8 @@ export default async function handler(
             winnerPosition: sub.listing.isWinnersAnnounced
               ? sub.winnerPosition
               : null,
-            firstName: sub.user.firstName,
-            lastName: sub.user.lastName,
+            firstName: sub.user.private ? undefined : sub.user.firstName,
+            lastName: sub.user.private ? undefined : sub.user.lastName,
             photo: sub.user.photo,
             username: sub.user.username,
             listingId: sub.listing.id,

@@ -83,6 +83,7 @@ async function handler(
             publicKey: true,
             photo: true,
             username: true,
+            private: true,
           },
         },
         listing: {
@@ -118,7 +119,24 @@ async function handler(
     );
     return res.status(200).json({
       bounty: result,
-      submission,
+      submission: submission.map((submission) => ({
+        ...submission,
+        user: {
+          ...submission.user,
+          firstName: submission.user?.private
+            ? undefined
+            : submission.user?.firstName,
+          lastName: submission.user?.private
+            ? undefined
+            : submission.user?.lastName,
+          publicKey: submission.user?.private
+            ? undefined
+            : submission.user?.publicKey,
+        },
+        paymentDetails: submission.user?.private
+          ? undefined
+          : submission.paymentDetails,
+      })),
     });
   } catch (error: any) {
     logger.error(

@@ -196,8 +196,14 @@ export const SubmissionTable = ({
           case 'id':
             return (b.sequentialId - a.sequentialId) * factor;
           case 'user':
-            const nameA = `${a.user?.firstName} ${a.user?.lastName}` || '';
-            const nameB = `${b.user?.firstName} ${b.user?.lastName}` || '';
+            const nameA =
+              (a.user?.private
+                ? a.user.username
+                : `${a.user?.firstName} ${a.user?.lastName}`) || '';
+            const nameB =
+              (b.user?.private
+                ? b.user.username
+                : `${b.user?.firstName} ${b.user?.lastName}`) || '';
             const name = nameA.localeCompare(nameB) * factor;
 
             if (name !== 0) {
@@ -333,7 +339,9 @@ export const SubmissionTable = ({
                             <div className="ml-2 min-w-0">
                               <div className="flex items-center gap-2">
                                 <p className="truncate whitespace-nowrap text-sm font-medium text-slate-700">
-                                  {`${submission?.user?.firstName} ${submission?.user?.lastName}`}
+                                  {submission?.user?.private
+                                    ? submission?.user?.username
+                                    : `${submission?.user?.firstName} ${submission?.user?.lastName}`}
                                 </p>
                                 {submission?.user?.publicKey && (
                                   <KycComponent

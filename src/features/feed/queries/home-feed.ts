@@ -10,8 +10,8 @@ interface HomeFeed {
     isWinnersAnnounced: boolean;
   };
   user: {
-    firstName: string;
-    lastName: string;
+    firstName?: string;
+    lastName?: string;
     username: string;
   };
 }

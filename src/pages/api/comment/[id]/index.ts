@@ -43,6 +43,7 @@ export default async function comment(
             photo: true,
             username: true,
             currentSponsorId: true,
+            private: true,
           },
         },
         replies: {
@@ -94,7 +95,18 @@ export default async function comment(
 
     res.status(200).json({
       count: commentsCount,
-      result,
+      result: result.map((comment) => ({
+        ...comment,
+        author: {
+          ...comment.author,
+          firstName: comment.author?.private
+            ? undefined
+            : comment.author?.firstName,
+          lastName: comment.author?.private
+            ? undefined
+            : comment.author?.lastName,
+        },
+      })),
       validUsernames: validUsernames
         .map((user) => user.username)
         .filter(Boolean),

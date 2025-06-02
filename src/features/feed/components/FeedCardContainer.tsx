@@ -131,7 +131,11 @@ export const FeedCardContainer = ({
         />
         <div className="flex w-full flex-col">
           <FeedCardHeader
-            name={`${firstName} ${lastName}`}
+            name={
+              firstName && lastName
+                ? `${firstName} ${lastName}`
+                : username || ''
+            }
             photo={photo}
             username={username}
             action={content.actionText}

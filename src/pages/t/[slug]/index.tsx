@@ -2,6 +2,7 @@ import { ChevronDown, ChevronUp, SquarePen } from 'lucide-react';
 import type { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
+import { getServerSession } from 'next-auth';
 import { usePostHog } from 'posthog-js/react';
 import React, { type JSX, useEffect, useState } from 'react';
 import { MdEmail } from 'react-icons/md';
@@ -19,6 +20,7 @@ import { useMediaQuery } from '@/hooks/use-media-query';
 import type { User } from '@/interface/user';
 import { Default } from '@/layouts/Default';
 import { api } from '@/lib/api';
+import { authOptions } from '@/pages/api/auth/[...nextauth]';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 import { getURL } from '@/utils/validUrl';
@@ -288,226 +290,277 @@ function TalentProfile({ talent, stats }: TalentProps) {
                       'Edit Profile',
                       handleEditProfileClick,
                     )
-                  : renderButton(<MdEmail />, 'Reach Out', () => {
+                  : !talent.private &&
+                    renderButton(<MdEmail />, 'Reach Out', () => {
                       posthog.capture('reach out_talent profile');
                       window.location.href = HELP_URL;
                     })}
-                {renderButton(<ShareIcon />, 'Share', onOpen, true)}
+                {!talent.private &&
+                  renderButton(<ShareIcon />, 'Share', onOpen, true)}
               </div>
             </div>
-            <ShareProfile
-              username={talent?.username as string}
-              isOpen={isOpen}
-              onClose={onClose}
-              id={talent?.id}
-            />
-            <Separator className="my-8" />
-            <div className="flex w-full flex-col gap-12 md:flex-row md:gap-[6.25rem]">
-              <div className="w-full md:w-1/2">
-                <p className="mb-4 font-medium text-slate-900">Details</p>
-                {workPreferenceText && (
-                  <p className="mt-3 text-slate-400">
-                    Looking for{' '}
-                    <span className="text-slate-500">{workPreferenceText}</span>
-                  </p>
-                )}
-                {talent?.currentEmployer && (
-                  <p className="mt-3 text-slate-400">
-                    Works at{' '}
-                    <span className="text-slate-500">
-                      {talent?.currentEmployer}
-                    </span>
-                  </p>
-                )}
-                {talent?.location && (
-                  <p className="mt-3 text-slate-400">
-                    Based in{' '}
-                    <span className="text-slate-500">{talent?.location}</span>
-                  </p>
-                )}
-              </div>
-              <div className="w-full md:w-1/2">
-                <p className="font-medium text-slate-900">Skills</p>
-                {Array.isArray(talent.skills) ? (
-                  talent.skills.map((skillItem: any, index: number) => {
-                    return skillItem ? (
-                      <div className="mt-4" key={index}>
-                        <p className="text-xs font-medium text-slate-400">
-                          {skillItem.skills.toUpperCase()}
-                        </p>
-                        <div className="flex items-center">
-                          <div className="mt-2 flex flex-wrap gap-2">
-                            {skillItem.subskills
-                              .slice(0, 3)
-                              .map((subskill: string, subIndex: number) => (
-                                <div
-                                  key={subIndex}
-                                  className="rounded bg-[#EFF1F5] px-3 py-1 text-sm font-medium text-[#64739C]"
-                                >
-                                  {subskill}
-                                </div>
-                              ))}
-                          </div>
-                          {skillItem.subskills.length > 3 && (
-                            <button
-                              aria-label="Toggle subskills"
-                              className={cn(
-                                'ml-1 mt-2 p-1 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2',
-                                'rounded transition hover:bg-gray-100',
-                              )}
-                              onClick={() => handleToggleSubskills(index)}
-                            >
-                              {showSubskills[index] ? (
-                                <ChevronUp className="h-4 w-4" />
-                              ) : (
-                                <ChevronDown className="h-4 w-4" />
-                              )}
-                            </button>
-                          )}
-                        </div>
 
-                        {showSubskills[index] && (
-                          <div
-                            className={cn(
-                              'mt-2 flex flex-wrap gap-2',
-                              'transition-all duration-300 ease-in-out',
-                            )}
-                          >
-                            {skillItem.subskills
-                              .slice(3)
-                              .map((subskill: string, subIndex: number) => (
-                                <div
-                                  key={subIndex}
-                                  className="rounded bg-[#EFF1F5] px-3 py-1 text-sm font-medium text-[#64739C]"
-                                >
-                                  {subskill}
-                                </div>
-                              ))}
-                          </div>
-                        )}
-                      </div>
-                    ) : null;
-                  })
-                ) : (
-                  <p>No skills available</p>
-                )}
-              </div>
-            </div>
-            <Separator className="my-8" />
-            <div className="flex flex-col justify-between gap-12 md:flex-row md:gap-[6.25rem]">
-              <div className="flex w-full gap-6 md:w-1/2">
-                {socialLinks.map(({ Icon, link }, i) => {
-                  return <Icon link={link} className="h-5 w-5" key={i} />;
-                })}
-              </div>
-              <div className="flex w-full gap-6 md:w-1/2 md:gap-8">
-                <div className="flex flex-col">
-                  <p className="font-semibold">
-                    $
-                    {new Intl.NumberFormat('en-US', {
-                      maximumFractionDigits: 0,
-                    }).format(Math.round(stats?.totalWinnings || 0))}
-                  </p>
-                  <p className="font-medium text-slate-500">Earned</p>
-                </div>
-                <div className="flex flex-col">
-                  <p className="font-semibold">{stats?.participations}</p>
-                  <p className="font-medium text-slate-500">
-                    {stats.participations === 1 ? 'Submission' : 'Submissions'}
-                  </p>
-                </div>
-                <div className="flex flex-col">
-                  <p className="font-semibold">{stats?.wins}</p>
-                  <p className="font-medium text-slate-500">Won</p>
-                </div>
-              </div>
-            </div>
-            <div className="mt-12 md:mt-16">
-              <div className="md:items:center flex flex-col items-end justify-between md:flex-row">
-                <div className="flex items-center gap-3">
-                  <p className="whitespace-nowrap font-medium text-slate-900">
-                    Proof of Work
-                  </p>
-                  {user?.id === talent?.id && (
-                    <Button
-                      className={cn(
-                        'px-2 py-1 text-sm font-semibold text-slate-400',
-                        'hover:bg-gray-100',
-                      )}
-                      onClick={onOpenPow}
-                      size="sm"
-                      variant="ghost"
+            {!talent.private && (
+              <ShareProfile
+                username={talent?.username as string}
+                isOpen={isOpen}
+                onClose={onClose}
+                id={talent?.id}
+              />
+            )}
+
+            {talent.private ? (
+              <div className="mt-8 text-center">
+                <Separator className="my-8" />
+                <div className="flex flex-col items-center justify-center py-12">
+                  <div className="mb-4 rounded-full bg-slate-100 p-6">
+                    <svg
+                      className="h-8 w-8 text-slate-400"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
                     >
-                      +ADD
-                    </Button>
-                  )}
-                </div>
-                <div className="mt-12 flex w-full justify-between gap-6 md:mt-0 md:justify-end">
-                  <p
-                    className={cn(
-                      'cursor-pointer font-medium',
-                      activeTab === 'activity'
-                        ? 'text-slate-900'
-                        : 'text-slate-400',
-                    )}
-                    onClick={() => setActiveTab('activity')}
-                  >
-                    Activity Feed
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M12 15v2m0-8V7m0 10h.01M12 3C6.477 3 2 7.477 2 12s4.477 9 9 9 9-4.477 9-9-4.477-9-9-9z"
+                      />
+                    </svg>
+                  </div>
+                  <h3 className="mb-2 text-lg font-semibold text-slate-900">
+                    This user&apos;s profile is private
+                  </h3>
+                  <p className="max-w-md text-slate-500">
+                    This talent has chosen to keep their profile information
+                    private. Only basic information is visible to the public.
                   </p>
-
-                  <p
-                    className={cn(
-                      'cursor-pointer font-medium',
-                      activeTab === 'projects'
-                        ? 'text-slate-900'
-                        : 'text-slate-400',
-                    )}
-                    onClick={() => setActiveTab('projects')}
+                  <Button
+                    onClick={() => router.push('/')}
+                    className="mx-auto mt-6 w-[200px] border border-slate-400 bg-white font-medium text-slate-500 hover:bg-gray-100"
+                    variant="outline"
                   >
-                    Personal Projects
-                  </p>
+                    Back to Home
+                  </Button>
                 </div>
               </div>
-            </div>
-            <Separator className="my-4" />
-            <div>
-              <FeedLoop
-                feed={feedItems}
-                ref={ref}
-                isFetchingNextPage={isFetchingNextPage}
-                isLoading={isLoading}
-                type="profile"
-              >
-                <ExternalImage
-                  className="mx-auto mt-32 w-32"
-                  alt={'talent empty'}
-                  src={'/bg/talent-empty.svg'}
-                />
-                <p className="mx-auto mt-5 w-52 text-center font-medium text-slate-400">
-                  {user?.id === talent?.id
-                    ? 'Add some proof of work to build your profile'
-                    : 'Nothing to see here yet ...'}
-                </p>
-                {user?.id === talent?.id ? (
-                  <Button
-                    onClick={onOpenPow}
-                    className={cn('mt-5 w-[200px]', 'mx-auto block')}
-                  >
-                    Add
-                  </Button>
-                ) : (
-                  <div className="mt-5" />
-                )}
+            ) : (
+              <>
+                <Separator className="my-8" />
+                <div className="flex w-full flex-col gap-12 md:flex-row md:gap-[6.25rem]">
+                  <div className="w-full md:w-1/2">
+                    <p className="mb-4 font-medium text-slate-900">Details</p>
+                    {workPreferenceText && (
+                      <p className="mt-3 text-slate-400">
+                        Looking for{' '}
+                        <span className="text-slate-500">
+                          {workPreferenceText}
+                        </span>
+                      </p>
+                    )}
+                    {talent?.currentEmployer && (
+                      <p className="mt-3 text-slate-400">
+                        Works at{' '}
+                        <span className="text-slate-500">
+                          {talent?.currentEmployer}
+                        </span>
+                      </p>
+                    )}
+                    {talent?.location && (
+                      <p className="mt-3 text-slate-400">
+                        Based in{' '}
+                        <span className="text-slate-500">
+                          {talent?.location}
+                        </span>
+                      </p>
+                    )}
+                  </div>
+                  <div className="w-full md:w-1/2">
+                    <p className="font-medium text-slate-900">Skills</p>
+                    {Array.isArray(talent.skills) ? (
+                      talent.skills.map((skillItem: any, index: number) => {
+                        return skillItem ? (
+                          <div className="mt-4" key={index}>
+                            <p className="text-xs font-medium text-slate-400">
+                              {skillItem.skills.toUpperCase()}
+                            </p>
+                            <div className="flex items-center">
+                              <div className="mt-2 flex flex-wrap gap-2">
+                                {skillItem.subskills
+                                  .slice(0, 3)
+                                  .map((subskill: string, subIndex: number) => (
+                                    <div
+                                      key={subIndex}
+                                      className="rounded bg-[#EFF1F5] px-3 py-1 text-sm font-medium text-[#64739C]"
+                                    >
+                                      {subskill}
+                                    </div>
+                                  ))}
+                              </div>
+                              {skillItem.subskills.length > 3 && (
+                                <button
+                                  aria-label="Toggle subskills"
+                                  className={cn(
+                                    'ml-1 mt-2 p-1 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2',
+                                    'rounded transition hover:bg-gray-100',
+                                  )}
+                                  onClick={() => handleToggleSubskills(index)}
+                                >
+                                  {showSubskills[index] ? (
+                                    <ChevronUp className="h-4 w-4" />
+                                  ) : (
+                                    <ChevronDown className="h-4 w-4" />
+                                  )}
+                                </button>
+                              )}
+                            </div>
 
-                <Button
-                  onClick={() => router.push('/')}
-                  className="mx-auto mt-2 block w-[200px] border border-slate-400 bg-white font-medium text-slate-500 hover:bg-gray-100"
-                  variant="outline"
-                >
-                  Browse Bounties
-                </Button>
-              </FeedLoop>
-            </div>
+                            {showSubskills[index] && (
+                              <div
+                                className={cn(
+                                  'mt-2 flex flex-wrap gap-2',
+                                  'transition-all duration-300 ease-in-out',
+                                )}
+                              >
+                                {skillItem.subskills
+                                  .slice(3)
+                                  .map((subskill: string, subIndex: number) => (
+                                    <div
+                                      key={subIndex}
+                                      className="rounded bg-[#EFF1F5] px-3 py-1 text-sm font-medium text-[#64739C]"
+                                    >
+                                      {subskill}
+                                    </div>
+                                  ))}
+                              </div>
+                            )}
+                          </div>
+                        ) : null;
+                      })
+                    ) : (
+                      <p>No skills available</p>
+                    )}
+                  </div>
+                </div>
+                <Separator className="my-8" />
+                <div className="flex flex-col justify-between gap-12 md:flex-row md:gap-[6.25rem]">
+                  <div className="flex w-full gap-6 md:w-1/2">
+                    {socialLinks.map(({ Icon, link }, i) => {
+                      return <Icon link={link} className="h-5 w-5" key={i} />;
+                    })}
+                  </div>
+                  <div className="flex w-full gap-6 md:w-1/2 md:gap-8">
+                    <div className="flex flex-col">
+                      <p className="font-semibold">
+                        $
+                        {new Intl.NumberFormat('en-US', {
+                          maximumFractionDigits: 0,
+                        }).format(Math.round(stats?.totalWinnings || 0))}
+                      </p>
+                      <p className="font-medium text-slate-500">Earned</p>
+                    </div>
+                    <div className="flex flex-col">
+                      <p className="font-semibold">{stats?.participations}</p>
+                      <p className="font-medium text-slate-500">
+                        {stats.participations === 1
+                          ? 'Submission'
+                          : 'Submissions'}
+                      </p>
+                    </div>
+                    <div className="flex flex-col">
+                      <p className="font-semibold">{stats?.wins}</p>
+                      <p className="font-medium text-slate-500">Won</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="mt-12 md:mt-16">
+                  <div className="md:items:center flex flex-col items-end justify-between md:flex-row">
+                    <div className="flex items-center gap-3">
+                      <p className="whitespace-nowrap font-medium text-slate-900">
+                        Proof of Work
+                      </p>
+                      {user?.id === talent?.id && (
+                        <Button
+                          className={cn(
+                            'px-2 py-1 text-sm font-semibold text-slate-400',
+                            'hover:bg-gray-100',
+                          )}
+                          onClick={onOpenPow}
+                          size="sm"
+                          variant="ghost"
+                        >
+                          +ADD
+                        </Button>
+                      )}
+                    </div>
+                    <div className="mt-12 flex w-full justify-between gap-6 md:mt-0 md:justify-end">
+                      <p
+                        className={cn(
+                          'cursor-pointer font-medium',
+                          activeTab === 'activity'
+                            ? 'text-slate-900'
+                            : 'text-slate-400',
+                        )}
+                        onClick={() => setActiveTab('activity')}
+                      >
+                        Activity Feed
+                      </p>
+
+                      <p
+                        className={cn(
+                          'cursor-pointer font-medium',
+                          activeTab === 'projects'
+                            ? 'text-slate-900'
+                            : 'text-slate-400',
+                        )}
+                        onClick={() => setActiveTab('projects')}
+                      >
+                        Personal Projects
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <Separator className="my-4" />
+                <div>
+                  <FeedLoop
+                    feed={feedItems}
+                    ref={ref}
+                    isFetchingNextPage={isFetchingNextPage}
+                    isLoading={isLoading}
+                    type="profile"
+                  >
+                    <ExternalImage
+                      className="mx-auto mt-32 w-32"
+                      alt={'talent empty'}
+                      src={'/bg/talent-empty.svg'}
+                    />
+                    <p className="mx-auto mt-5 w-52 text-center font-medium text-slate-400">
+                      {user?.id === talent?.id
+                        ? 'Add some proof of work to build your profile'
+                        : 'Nothing to see here yet ...'}
+                    </p>
+                    {user?.id === talent?.id ? (
+                      <Button
+                        onClick={onOpenPow}
+                        className={cn('mt-5 w-[200px]', 'mx-auto block')}
+                      >
+                        Add
+                      </Button>
+                    ) : (
+                      <div className="mt-5" />
+                    )}
+
+                    <Button
+                      onClick={() => router.push('/')}
+                      className="mx-auto mt-2 block w-[200px] border border-slate-400 bg-white font-medium text-slate-500 hover:bg-gray-100"
+                      variant="outline"
+                    >
+                      Browse Bounties
+                    </Button>
+                  </FeedLoop>
+                </div>
+              </>
+            )}
           </div>
         </div>
       )}
@@ -523,13 +576,34 @@ function TalentProfile({ talent, stats }: TalentProps) {
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { slug } = context.query;
+  const session = await getServerSession(context.req, context.res, authOptions);
+
   try {
-    const talentReq = await api.post(`${getURL()}/api/user/info`, {
-      username: slug,
-    });
-    const statsReq = await api.post(`${getURL()}/api/user/public-stats`, {
-      username: slug,
-    });
+    const talentReq = await api.post(
+      `${getURL()}/api/user/info`,
+      {
+        username: slug,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${session?.token}`,
+          cookie: context.req.headers.cookie,
+        },
+      },
+    );
+
+    const statsReq = await api.post(
+      `${getURL()}/api/user/public-stats`,
+      {
+        username: slug,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${session?.token}`,
+          cookie: context.req.headers.cookie,
+        },
+      },
+    );
     const talent = talentReq.data;
     const stats = statsReq.data;
 

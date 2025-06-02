@@ -26,6 +26,7 @@ export default async function user(_req: NextApiRequest, res: NextApiResponse) {
             photo: true,
             firstName: true,
             lastName: true,
+            private: true,
           },
         },
         listing: {
@@ -51,8 +52,12 @@ export default async function user(_req: NextApiRequest, res: NextApiResponse) {
       return {
         id: submission.user.id,
         username: submission.user.username,
-        firstName: submission.user.firstName,
-        lastName: submission.user.lastName,
+        firstName: submission.user.private
+          ? undefined
+          : submission.user.firstName,
+        lastName: submission.user.private
+          ? undefined
+          : submission.user.lastName,
         slug: submission.listing.slug,
         title: submission.listing.title,
         reward: rewards[Number(submission.winnerPosition) as keyof Rewards],
