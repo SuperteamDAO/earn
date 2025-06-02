@@ -206,6 +206,7 @@ export function SponsorLayout({
           canonical="https://earn.superteam.fun"
         />
       }
+      hideFooter
     >
       <SponsorInfoModal
         onClose={onSponsorInfoModalClose}

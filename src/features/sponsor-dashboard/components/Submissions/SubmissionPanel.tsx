@@ -3,7 +3,6 @@ import { useAtom } from 'jotai';
 import { AlertTriangle, ArrowRight, ExternalLink } from 'lucide-react';
 import Link from 'next/link';
 import React from 'react';
-import { MdOutlineAccountBalanceWallet } from 'react-icons/md';
 
 import { Button } from '@/components/ui/button';
 import { CopyButton } from '@/components/ui/copy-tooltip';
@@ -12,7 +11,6 @@ import type { SubmissionWithUser } from '@/interface/submission';
 import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
-import { truncatePublicKey } from '@/utils/truncatePublicKey';
 import { truncateString } from '@/utils/truncateString';
 
 import type { Listing, Rewards } from '@/features/listings/types';
@@ -28,6 +26,7 @@ import { Details } from './Details';
 import { PayoutButton } from './PayoutButton';
 import { SelectLabel } from './SelectLabel';
 import { SelectWinner } from './SelectWinner';
+import { SpamButton } from './SpamButton';
 
 interface Props {
   bounty: Listing | undefined;
@@ -80,6 +79,13 @@ export const SubmissionPanel = ({
                     View Profile <ArrowRight className="inline-block h-3 w-3" />
                   </Link>
                 </div>
+                <div className="self-start">
+                  {!isHackathonPage &&
+                    selectedSubmission?.status === 'Pending' &&
+                    !bounty?.isWinnersAnnounced && (
+                      <SelectLabel listingSlug={bounty?.slug!} />
+                    )}
+                </div>
               </div>
               <div className="ph-no-capture flex w-full items-center justify-end gap-2">
                 {selectedSubmission?.isWinner &&
@@ -114,11 +120,6 @@ export const SubmissionPanel = ({
                       </Button>
                     </Tooltip>
                   ))}
-                {!isHackathonPage &&
-                  selectedSubmission?.status === 'Pending' &&
-                  !bounty?.isWinnersAnnounced && (
-                    <SelectLabel listingSlug={bounty?.slug!} />
-                  )}
                 {selectedSubmission?.isWinner &&
                   selectedSubmission?.winnerPosition &&
                   selectedSubmission?.isPaid && (
@@ -137,6 +138,7 @@ export const SubmissionPanel = ({
                       <ExternalLink className="ml-2 h-4 w-4" />
                     </Button>
                   )}
+                <SpamButton listingSlug={bounty?.slug!} />
                 {!bounty?.isWinnersAnnounced && !isHackathonPage && (
                   <>
                     <SelectWinner
@@ -222,21 +224,6 @@ export const SubmissionPanel = ({
                 </CopyButton>
               )}
 
-              {selectedSubmission?.user?.walletAddress && (
-                <CopyButton
-                  className="gap-1 text-sm text-slate-400 underline-offset-1 hover:text-slate-500 hover:underline"
-                  contentProps={{ side: 'right' }}
-                  text={selectedSubmission.user.walletAddress}
-                >
-                  <MdOutlineAccountBalanceWallet />
-                  <p>
-                    {truncatePublicKey(
-                      selectedSubmission.user.walletAddress || '',
-                      3,
-                    )}
-                  </p>
-                </CopyButton>
-              )}
               <div className="flex gap-2">
                 <Telegram
                   className="h-[0.9rem] w-[0.9rem] text-slate-600"

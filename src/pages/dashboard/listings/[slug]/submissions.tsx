@@ -1,7 +1,7 @@
 import { type SubmissionLabels } from '@prisma/client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useAtom } from 'jotai';
-import { Check, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Check } from 'lucide-react';
 import type { GetServerSideProps } from 'next';
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/router';
@@ -44,13 +44,10 @@ interface Props {
   slug: string;
 }
 
-const submissionsPerPage = 10;
-
 export default function BountySubmissions({ slug }: Props) {
   const router = useRouter();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { user } = useUser();
-  const [currentPage, setCurrentPage] = useState(1);
 
   const [selectedSubmission, setSelectedSubmission] = useAtom(
     selectedSubmissionAtom,
@@ -130,7 +127,7 @@ export default function BountySubmissions({ slug }: Props) {
   }, [submissions]);
 
   const isAllCurrentToggled = () =>
-    paginatedSubmissions
+    filteredSubmissions
       ?.filter(
         (submission) =>
           submission.status === 'Pending' && !submission.winnerPosition,
@@ -301,23 +298,15 @@ export default function BountySubmissions({ slug }: Props) {
     if (searchParams?.has('scout')) posthog.capture('scout tab_scout');
   }, []);
 
-  const paginatedSubmissions = useMemo(() => {
-    const startIndex = (currentPage - 1) * submissionsPerPage;
-    return filteredSubmissions.slice(
-      startIndex,
-      startIndex + submissionsPerPage,
-    );
-  }, [filteredSubmissions, currentPage]);
-
   useEffect(() => {
     setIsToggledAll(isAllCurrentToggled());
-  }, [selectedSubmissionIds, paginatedSubmissions]);
+  }, [selectedSubmissionIds, filteredSubmissions]);
 
   const toggleAllSubmissions = () => {
     if (!isAllCurrentToggled()) {
       setSelectedSubmissionIds((prev) => {
         const newSet = new Set(prev);
-        paginatedSubmissions
+        filteredSubmissions
           ?.filter(
             (submission) =>
               submission.status === 'Pending' && !submission.winnerPosition,
@@ -328,13 +317,11 @@ export default function BountySubmissions({ slug }: Props) {
     } else {
       setSelectedSubmissionIds((prev) => {
         const newSet = new Set(prev);
-        paginatedSubmissions?.map((submission) => newSet.delete(submission.id));
+        filteredSubmissions?.map((submission) => newSet.delete(submission.id));
         return newSet;
       });
     }
   };
-
-  const totalPages = Math.ceil(filteredSubmissions.length / submissionsPerPage);
 
   const usedPositions = submissions
     ?.filter((s: any) => s.isWinner)
@@ -346,71 +333,11 @@ export default function BountySubmissions({ slug }: Props) {
 
   const isExpired = dayjs(bounty?.deadline).isBefore(dayjs());
 
-  const [pageSelections, setPageSelections] = useState<Record<number, string>>(
-    {},
-  );
-
   useEffect(() => {
-    if (selectedSubmission) {
-      setPageSelections((prev) => ({
-        ...prev,
-        [currentPage]: selectedSubmission.id,
-      }));
-    }
-  }, [selectedSubmission, currentPage]);
-
-  useEffect(() => {
-    if (paginatedSubmissions.length > 0) {
-      const savedSelectionId = pageSelections[currentPage];
-      const submissionToSelect = paginatedSubmissions.find(
-        (sub) => sub.id === savedSelectionId,
-      );
-
-      if (
-        submissionToSelect &&
-        submissionToSelect.id !== selectedSubmission?.id
-      ) {
-        setSelectedSubmission(submissionToSelect);
-      } else if (
-        !submissionToSelect &&
-        (!selectedSubmission ||
-          !paginatedSubmissions.some((sub) => sub.id === selectedSubmission.id))
-      ) {
-        setSelectedSubmission(paginatedSubmissions[0]);
-      }
-    }
-  }, [currentPage, paginatedSubmissions, pageSelections]);
-
-  const changePage = useCallback(
-    async (newPage: number, selectIndex: number) => {
-      if (newPage < 1 || newPage > totalPages) return;
-
-      setCurrentPage(newPage);
-      await new Promise((resolve) => setTimeout(resolve, 0));
-
-      const newPaginatedSubmissions = filteredSubmissions.slice(
-        (newPage - 1) * submissionsPerPage,
-        newPage * submissionsPerPage,
-      );
-
-      const submissionToSelect = newPaginatedSubmissions[selectIndex];
-      if (submissionToSelect) {
-        setSelectedSubmission(submissionToSelect);
-      }
-    },
-    [
-      filteredSubmissions,
-      submissionsPerPage,
-      totalPages,
-      setSelectedSubmission,
-    ],
-  );
-
-  useEffect(() => {
-    const handleKeyDown = async (e: KeyboardEvent) => {
+    const handleKeyDown = (e: KeyboardEvent) => {
       if (!filteredSubmissions.length) return;
 
-      const currentIndex = paginatedSubmissions.findIndex(
+      const currentIndex = filteredSubmissions.findIndex(
         (sub) => sub.id === selectedSubmission?.id,
       );
 
@@ -418,39 +345,13 @@ export default function BountySubmissions({ slug }: Props) {
         case 'ArrowUp':
           e.preventDefault();
           if (currentIndex > 0) {
-            setSelectedSubmission(paginatedSubmissions[currentIndex - 1]);
-          } else if (currentPage > 1) {
-            await changePage(currentPage - 1, submissionsPerPage - 1);
+            setSelectedSubmission(filteredSubmissions[currentIndex - 1]);
           }
           break;
         case 'ArrowDown':
           e.preventDefault();
-          if (currentIndex < paginatedSubmissions.length - 1) {
-            setSelectedSubmission(paginatedSubmissions[currentIndex + 1]);
-          } else if (currentPage < totalPages) {
-            await changePage(currentPage + 1, 0);
-          }
-          break;
-        case 'ArrowLeft':
-          e.preventDefault();
-          if (currentPage > 1) {
-            const savedSelectionIndex = pageSelections[currentPage - 1]
-              ? paginatedSubmissions.findIndex(
-                  (sub) => sub.id === pageSelections[currentPage - 1],
-                )
-              : 0;
-            await changePage(currentPage - 1, savedSelectionIndex);
-          }
-          break;
-        case 'ArrowRight':
-          e.preventDefault();
-          if (currentPage < totalPages) {
-            const savedSelectionIndex = pageSelections[currentPage + 1]
-              ? paginatedSubmissions.findIndex(
-                  (sub) => sub.id === pageSelections[currentPage + 1],
-                )
-              : 0;
-            await changePage(currentPage + 1, savedSelectionIndex);
+          if (currentIndex < filteredSubmissions.length - 1) {
+            setSelectedSubmission(filteredSubmissions[currentIndex + 1]);
           }
           break;
       }
@@ -458,17 +359,7 @@ export default function BountySubmissions({ slug }: Props) {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [
-    filteredSubmissions,
-    paginatedSubmissions,
-    selectedSubmission,
-    currentPage,
-    totalPages,
-    pageSelections,
-    setSelectedSubmission,
-    changePage,
-    submissionsPerPage,
-  ]);
+  }, [filteredSubmissions, selectedSubmission, setSelectedSubmission]);
 
   return (
     <SponsorLayout isCollapsible>
@@ -490,19 +381,20 @@ export default function BountySubmissions({ slug }: Props) {
               submissions={submissions || []}
             />
           )}
-          <SubmissionHeader
-            bounty={bounty}
-            totalSubmissions={submissions?.length || 0}
-          />
+          <SubmissionHeader bounty={bounty} />
           <Tabs
             defaultValue={searchParams?.has('scout') ? 'scout' : 'submissions'}
           >
-            {bounty?.isPublished &&
-              !bounty?.isWinnersAnnounced &&
-              !isExpired && (
-                <>
-                  <TabsList className="gap-4 font-medium text-slate-400">
-                    <TabsTrigger value="submissions">Submissions</TabsTrigger>
+            {bounty?.isPublished && (
+              <>
+                <TabsList className="mt-3 gap-4 font-medium text-slate-400">
+                  <TabsTrigger value="submissions">
+                    Submissions
+                    <div className="text-xxs ml-2 rounded-full bg-slate-200 px-2 py-0.5 text-slate-500">
+                      {submissions?.length}
+                    </div>
+                  </TabsTrigger>
+                  {!bounty?.isWinnersAnnounced && !isExpired && (
                     <TabsTrigger
                       value="scout"
                       className={cn('ph-no-capture')}
@@ -511,114 +403,73 @@ export default function BountySubmissions({ slug }: Props) {
                       Scout Talent
                       <div className="ml-1.5 h-1.5 w-1.5 rounded-full bg-red-500" />
                     </TabsTrigger>
-                  </TabsList>
-                  <div className="h-[1.5px] w-full bg-slate-200/70" />
-                </>
-              )}
+                  )}
+                  {bounty?.isWinnersAnnounced && (
+                    <TabsTrigger value="submissions">Payments</TabsTrigger>
+                  )}
+                </TabsList>
+                <div className="h-[1.5px] w-full bg-slate-200/70" />
+              </>
+            )}
 
             <TabsContent value="submissions" className="w-full px-0">
-              <div className="flex w-full items-start bg-white">
-                <div className="grid min-h-[600px] w-full grid-cols-[23rem_1fr] bg-white">
-                  <div className="h-full w-full">
-                    <SubmissionList
-                      listing={bounty}
-                      filterLabel={filterLabel}
-                      setFilterLabel={(e) => {
-                        setFilterLabel(e);
-                        setCurrentPage(1);
-                      }}
-                      submissions={paginatedSubmissions}
-                      setSearchText={(e) => {
-                        setSearchText(e);
-                        setCurrentPage(1);
-                      }}
-                      type={bounty?.type}
-                      isToggled={isToggled}
-                      toggleSubmission={toggleSubmission}
-                      isAllToggled={isToggledAll}
-                      toggleAllSubmissions={toggleAllSubmissions}
-                      isMultiSelectDisabled={isMultiSelectDisabled}
-                    />
-                  </div>
+              <div className="grid h-[40rem] w-full grid-cols-[23rem_1fr] bg-white">
+                <SubmissionList
+                  listing={bounty}
+                  setFilterLabel={setFilterLabel}
+                  submissions={filteredSubmissions}
+                  setSearchText={setSearchText}
+                  type={bounty?.type}
+                  isToggled={isToggled}
+                  toggleSubmission={toggleSubmission}
+                  isAllToggled={isToggledAll}
+                  toggleAllSubmissions={toggleAllSubmissions}
+                  isMultiSelectDisabled={isMultiSelectDisabled}
+                />
 
-                  <div className="h-full w-full rounded-r-xl border-t border-r border-b border-slate-200 bg-white">
-                    {!paginatedSubmissions?.length &&
-                    !searchText &&
-                    !isSubmissionsLoading ? (
-                      <>
-                        <ExternalImage
-                          className="mx-auto mt-32 w-32"
-                          alt={'talent empty'}
-                          src={'/bg/talent-empty.svg'}
-                        />
-                        <p className="mx-auto mt-5 text-center text-lg font-semibold text-slate-600">
-                          {filterLabel ? 'Zero Results' : 'People are working!'}
-                        </p>
-                        <p className="mx-auto mb-[200px] text-center font-medium text-slate-400">
-                          {filterLabel
-                            ? 'For the filters you have selected'
-                            : 'Submissions will start appearing here'}
-                        </p>
-                      </>
-                    ) : (
-                      <SubmissionPanel
-                        isMultiSelectOn={selectedSubmissionIds.size > 0}
-                        remainings={remainings}
-                        bounty={bounty}
-                        submissions={paginatedSubmissions}
-                        usedPositions={usedPositions || []}
-                        onWinnersAnnounceOpen={onOpen}
+                <div className="h-full w-full rounded-r-xl border-t border-r border-b border-slate-200 bg-white">
+                  {!filteredSubmissions?.length &&
+                  !searchText &&
+                  !isSubmissionsLoading ? (
+                    <>
+                      <ExternalImage
+                        className="mx-auto mt-32 w-32"
+                        alt={'talent empty'}
+                        src={'/bg/talent-empty.svg'}
                       />
-                    )}
-                  </div>
+                      <p className="mx-auto mt-5 text-center text-lg font-semibold text-slate-600">
+                        {filterLabel ? 'Zero Results' : 'People are working!'}
+                      </p>
+                      <p className="mx-auto mb-[200px] text-center font-medium text-slate-400">
+                        {filterLabel
+                          ? 'For the filters you have selected'
+                          : 'Submissions will start appearing here'}
+                      </p>
+                    </>
+                  ) : (
+                    <SubmissionPanel
+                      isMultiSelectOn={selectedSubmissionIds.size > 0}
+                      remainings={remainings}
+                      bounty={bounty}
+                      submissions={filteredSubmissions}
+                      usedPositions={usedPositions || []}
+                      onWinnersAnnounceOpen={onOpen}
+                    />
+                  )}
                 </div>
               </div>
 
-              <div className="mt-4 flex items-center justify-start gap-4">
-                <>
-                  <Button
-                    disabled={currentPage <= 1}
-                    onClick={() =>
-                      setCurrentPage((prev) => Math.max(prev - 1, 1))
-                    }
-                    size="sm"
-                    variant="outline"
-                  >
-                    <ChevronLeft className="mr-2 h-5 w-5" />
-                    Previous
-                  </Button>
-
+              {(!!searchText || !!filterLabel) && (
+                <div className="mt-4 flex items-center justify-start gap-4">
                   <p className="text-sm text-slate-400">
-                    <span className="font-bold">
-                      {(currentPage - 1) * submissionsPerPage + 1}
-                    </span>{' '}
-                    -{' '}
-                    <span className="font-bold">
-                      {Math.min(
-                        currentPage * submissionsPerPage,
-                        filteredSubmissions.length,
-                      )}
-                    </span>{' '}
-                    of{' '}
+                    Found{' '}
                     <span className="font-bold">
                       {filteredSubmissions.length}
                     </span>{' '}
-                    Submissions
+                    {filteredSubmissions.length === 1 ? 'result' : 'results'}
                   </p>
-
-                  <Button
-                    disabled={currentPage >= totalPages}
-                    onClick={() =>
-                      setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-                    }
-                    size="sm"
-                    variant="outline"
-                  >
-                    Next
-                    <ChevronRight className="ml-2 h-5 w-5" />
-                  </Button>
-                </>
-              </div>
+                </div>
+              )}
             </TabsContent>
 
             {bounty &&

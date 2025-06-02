@@ -1,5 +1,5 @@
 import { useAtom } from 'jotai';
-import { X } from 'lucide-react';
+import { Check, X } from 'lucide-react';
 import { useMemo } from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -87,19 +87,23 @@ export const SelectWinner = ({
               <>
                 <Button
                   variant="destructive"
-                  className="bg-red-50 text-red-600 hover:bg-red-100 disabled:opacity-50"
+                  className="rounded-lg border border-red-500 bg-red-50 text-red-600 hover:bg-red-100 disabled:opacity-50"
                   disabled={isMultiSelectOn}
                   onClick={rejectedOnOpen}
                 >
-                  <div className="mr-2 rounded-full bg-red-600 p-[5px]">
-                    <X className="h-2 w-2 text-white" />
+                  <div className="rounded-full bg-red-600 p-0.5">
+                    <X className="size-1 text-white" />
                   </div>
                   Reject
                 </Button>
                 <Button
                   disabled={isMultiSelectOn}
                   onClick={onWinnersAnnounceOpen}
+                  className="rounded-lg border border-emerald-500 bg-emerald-50 text-emerald-600 hover:bg-emerald-100 disabled:opacity-50"
                 >
+                  <div className="rounded-full bg-emerald-600 p-0.5">
+                    <Check className="size-1 text-white" />
+                  </div>
                   Announce As Winner
                 </Button>
               </>

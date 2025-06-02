@@ -1,0 +1,173 @@
+import { SubmissionLabels } from '@prisma/client';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useAtom, useSetAtom } from 'jotai';
+import { LucideFlag } from 'lucide-react';
+import { useState } from 'react';
+import { toast } from 'sonner';
+
+import { Button } from '@/components/ui/button';
+import type { SubmissionWithUser } from '@/interface/submission';
+import { api } from '@/lib/api';
+
+import { isStateUpdatingAtom, selectedSubmissionAtom } from '../../atoms';
+import { SpamConfirmationDialog } from './SpamConfirmationDialog';
+
+interface Props {
+  listingSlug: string;
+}
+
+interface UpdateLabelResponse {
+  data: {
+    id: string;
+    label: SubmissionLabels;
+    autoFixed?: boolean;
+    [key: string]: any;
+  };
+}
+
+export const SpamButton = ({ listingSlug }: Props) => {
+  const queryClient = useQueryClient();
+  const [selectedSubmission, setSelectedSubmission] = useAtom(
+    selectedSubmissionAtom,
+  );
+  const setLabelsUpdating = useSetAtom(isStateUpdatingAtom);
+  const [isSpamDialogOpen, setIsSpamDialogOpen] = useState(false);
+  const [isCheckingSpam, setIsCheckingSpam] = useState(false);
+  const [pendingSpamLabel, setPendingSpamLabel] = useState<{
+    id: string;
+    label: SubmissionLabels;
+  } | null>(null);
+
+  const handleSpamClick = async () => {
+    if (!selectedSubmission?.id) return;
+
+    setPendingSpamLabel({
+      id: selectedSubmission.id,
+      label: SubmissionLabels.Spam,
+    });
+    checkIfFirstSpamSubmission(selectedSubmission.id);
+  };
+
+  const checkIfFirstSpamSubmission = async (id: string) => {
+    setIsCheckingSpam(true);
+    try {
+      const response = await api.get(
+        `/api/sponsor-dashboard/${listingSlug}/submissions`,
+      );
+      const submissions = response.data || [];
+      const spamSubmissions = submissions.filter(
+        (sub: any) => sub.label === 'Spam',
+      );
+
+      if (spamSubmissions.length === 0) {
+        setIsSpamDialogOpen(true);
+      } else {
+        updateLabel({ id, label: SubmissionLabels.Spam });
+      }
+    } catch (error) {
+      console.error('Error checking submissions:', error);
+      setIsSpamDialogOpen(true);
+    } finally {
+      setIsCheckingSpam(false);
+    }
+  };
+
+  const handleSpamConfirm = (id: string, label: SubmissionLabels) => {
+    updateLabel({ id, label });
+  };
+
+  const { mutate: updateLabel } = useMutation({
+    mutationFn: ({ id, label }: { id: string; label: SubmissionLabels }) =>
+      api.post(`/api/sponsor-dashboard/submission/update-label/`, {
+        id,
+        label,
+      }),
+    onSuccess: (
+      response: UpdateLabelResponse,
+      variables: { id: string; label: SubmissionLabels },
+    ) => {
+      setLabelsUpdating(false);
+
+      const { autoFixed } = response.data || {};
+      if (autoFixed) {
+        toast.info(
+          "A submission can't be both a winner and marked as spam — we've adjusted its status.",
+        );
+      }
+
+      queryClient.setQueryData<SubmissionWithUser[]>(
+        ['sponsor-submissions', listingSlug],
+        (old) => {
+          if (!old) return old;
+          return old.map((submission) => {
+            if (submission.id === variables.id) {
+              if (
+                variables.label === 'Spam' &&
+                submission.isWinner &&
+                autoFixed
+              ) {
+                return {
+                  ...submission,
+                  label: variables.label,
+                  isWinner: false,
+                  winnerPosition: undefined,
+                };
+              }
+              return { ...submission, label: variables.label };
+            }
+            return submission;
+          });
+        },
+      );
+
+      setSelectedSubmission((prev) => {
+        if (prev && prev.id === variables.id) {
+          if (variables.label === 'Spam' && prev.isWinner && autoFixed) {
+            return {
+              ...prev,
+              label: variables.label,
+              isWinner: false,
+              winnerPosition: undefined,
+            };
+          }
+          return { ...prev, label: variables.label };
+        }
+        return prev;
+      });
+    },
+    onError: (e) => {
+      console.log(e);
+    },
+    onMutate: () => {
+      setLabelsUpdating(true);
+    },
+    onSettled: () => {
+      setLabelsUpdating(false);
+    },
+  });
+
+  return (
+    <>
+      <Button
+        variant="destructive"
+        className="rounded-lg border border-orange-200 bg-orange-50 text-orange-500 hover:bg-orange-100 disabled:opacity-50"
+        onClick={handleSpamClick}
+        disabled={isCheckingSpam}
+      >
+        <LucideFlag className="size-1 text-orange-500" />
+        Spam
+      </Button>
+
+      <SpamConfirmationDialog
+        isOpen={isSpamDialogOpen}
+        onClose={() => {
+          setIsSpamDialogOpen(false);
+          setPendingSpamLabel(null);
+        }}
+        submissionId={pendingSpamLabel?.id}
+        listingSlug={listingSlug}
+        onConfirm={handleSpamConfirm}
+      />
+    </>
+  );
+};

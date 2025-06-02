@@ -1,7 +1,6 @@
 import { type SubmissionLabels } from '@prisma/client';
 import { useQuery } from '@tanstack/react-query';
 import { useSetAtom } from 'jotai';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
 import type { GetServerSideProps } from 'next';
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/router';
@@ -9,7 +8,6 @@ import { usePostHog } from 'posthog-js/react';
 import { useEffect, useMemo, useState } from 'react';
 
 import { LoadingSection } from '@/components/shared/LoadingSection';
-import { Button } from '@/components/ui/button';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Tooltip } from '@/components/ui/tooltip';
@@ -34,13 +32,10 @@ interface Props {
   listing: string;
 }
 
-const submissionsPerPage = 10;
-
 export default function BountySubmissions({ listing }: Props) {
   const router = useRouter();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { user } = useUser();
-  const [currentPage, setCurrentPage] = useState(1);
 
   const setSelectedSubmission = useSetAtom(selectedSubmissionAtom);
 
@@ -108,10 +103,6 @@ export default function BountySubmissions({ listing }: Props) {
 
   useEffect(() => {
     if (bounty && user?.currentSponsorId) {
-      // if (bounty?.hackathonId !== user.hackathonId) {
-      //   router.push('/dashboard/hackathon');
-      // }
-
       const podiumWinnersSelected = submissions?.filter(
         (submission) =>
           submission.isWinner &&
@@ -136,16 +127,6 @@ export default function BountySubmissions({ listing }: Props) {
   useEffect(() => {
     if (searchParams?.has('scout')) posthog.capture('scout tab_scout');
   }, []);
-
-  const paginatedSubmissions = useMemo(() => {
-    const startIndex = (currentPage - 1) * submissionsPerPage;
-    return filteredSubmissions.slice(
-      startIndex,
-      startIndex + submissionsPerPage,
-    );
-  }, [filteredSubmissions, currentPage]);
-
-  const totalPages = Math.ceil(filteredSubmissions.length / submissionsPerPage);
 
   const usedPositions = submissions
     ?.filter((s: any) => s.isWinner)
@@ -179,15 +160,11 @@ export default function BountySubmissions({ listing }: Props) {
               submissions={submissions || []}
             />
           )}
-          <SubmissionHeader
-            bounty={bounty}
-            totalSubmissions={submissions?.length || 0}
-            isHackathonPage
-          />
+          <SubmissionHeader bounty={bounty} isHackathonPage />
           <Tabs
             defaultValue={searchParams?.has('scout') ? 'scout' : 'submissions'}
           >
-            <TabsList className="gap-4 border-b font-medium text-slate-400">
+            <TabsList className="mt-4 gap-4 border-b font-medium text-slate-400">
               <TabsTrigger value="submissions">Submissions</TabsTrigger>
 
               {bounty?.isPublished &&
@@ -217,6 +194,10 @@ export default function BountySubmissions({ listing }: Props) {
                     </TabsTrigger>
                   </Tooltip>
                 )}
+
+              {bounty?.isPublished && bounty?.isWinnersAnnounced && (
+                <TabsTrigger value="submissions">Payments</TabsTrigger>
+              )}
             </TabsList>
             <div className="h-0.5 w-full bg-slate-200" />
 
@@ -226,9 +207,8 @@ export default function BountySubmissions({ listing }: Props) {
                   <div className="h-full w-full">
                     <SubmissionList
                       listing={bounty}
-                      filterLabel={filterLabel}
                       setFilterLabel={setFilterLabel}
-                      submissions={paginatedSubmissions}
+                      submissions={filteredSubmissions}
                       setSearchText={setSearchText}
                       type={bounty?.type}
                       isMultiSelectDisabled
@@ -236,7 +216,7 @@ export default function BountySubmissions({ listing }: Props) {
                   </div>
 
                   <div className="h-full w-full rounded-r-xl border-t border-r border-b border-slate-200 bg-white">
-                    {!paginatedSubmissions?.length &&
+                    {!filteredSubmissions?.length &&
                     !searchText &&
                     !isSubmissionsLoading ? (
                       <>
@@ -258,7 +238,7 @@ export default function BountySubmissions({ listing }: Props) {
                       <SubmissionPanel
                         remainings={remainings}
                         bounty={bounty}
-                        submissions={paginatedSubmissions}
+                        submissions={filteredSubmissions}
                         usedPositions={usedPositions || []}
                         onWinnersAnnounceOpen={onOpen}
                         isHackathonPage
@@ -268,8 +248,8 @@ export default function BountySubmissions({ listing }: Props) {
                 </div>
               </div>
 
-              <div className="mt-4 flex items-center justify-start gap-4">
-                {!!searchText || !!filterLabel ? (
+              {(!!searchText || !!filterLabel) && (
+                <div className="mt-4 flex items-center justify-start gap-4">
                   <p className="text-sm text-slate-400">
                     Found{' '}
                     <span className="font-bold">
@@ -277,52 +257,8 @@ export default function BountySubmissions({ listing }: Props) {
                     </span>{' '}
                     {filteredSubmissions.length === 1 ? 'result' : 'results'}
                   </p>
-                ) : (
-                  <>
-                    <Button
-                      disabled={currentPage <= 1}
-                      onClick={() =>
-                        setCurrentPage((prev) => Math.max(prev - 1, 1))
-                      }
-                      size="sm"
-                      variant="outline"
-                    >
-                      <ChevronLeft className="mr-2 h-5 w-5" />
-                      Previous
-                    </Button>
-
-                    <p className="text-sm text-slate-400">
-                      <span className="font-bold">
-                        {(currentPage - 1) * submissionsPerPage + 1}
-                      </span>{' '}
-                      -{' '}
-                      <span className="font-bold">
-                        {Math.min(
-                          currentPage * submissionsPerPage,
-                          filteredSubmissions.length,
-                        )}
-                      </span>{' '}
-                      of{' '}
-                      <span className="font-bold">
-                        {filteredSubmissions.length}
-                      </span>{' '}
-                      Submissions
-                    </p>
-
-                    <Button
-                      disabled={currentPage >= totalPages}
-                      onClick={() =>
-                        setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-                      }
-                      size="sm"
-                      variant="outline"
-                    >
-                      Next
-                      <ChevronRight className="ml-2 h-5 w-5" />
-                    </Button>
-                  </>
-                )}
-              </div>
+                </div>
+              )}
             </TabsContent>
           </Tabs>
         </>

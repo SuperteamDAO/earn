@@ -3,6 +3,7 @@ import { useAtom, useSetAtom } from 'jotai';
 import debounce from 'lodash.debounce';
 import { Loader2 } from 'lucide-react';
 import React, { useCallback, useState } from 'react';
+import { FaWandMagicSparkles } from 'react-icons/fa6';
 
 import { Textarea } from '@/components/ui/textarea';
 import { type SubmissionWithUser } from '@/interface/submission';
@@ -94,9 +95,12 @@ export const Notes = ({ submissionId, initialNotes = '', slug }: Props) => {
   };
 
   return (
-    <div className="flex w-full flex-col items-start">
+    <div className="flex w-full flex-col items-start rounded-xl border border-slate-200 px-4 py-5">
       <div className="mb-2 flex w-full items-center justify-between text-slate-400">
-        <span className="font-extrabold">Review Notes</span>
+        <span className="flex items-center gap-1 font-bold">
+          <FaWandMagicSparkles />
+          Notes
+        </span>
         {isSaving ? (
           <Loader2 className="h-3 w-3 animate-spin" />
         ) : (
@@ -104,7 +108,7 @@ export const Notes = ({ submissionId, initialNotes = '', slug }: Props) => {
         )}
       </div>
       <Textarea
-        className="border-none text-sm whitespace-pre-wrap text-slate-600 placeholder:text-slate-400"
+        className="resize-none !border-0 px-1.5 py-0 text-sm whitespace-pre-wrap text-slate-500 !shadow-none !ring-0 placeholder:text-slate-400 focus:!border-0 focus:!shadow-none focus:!ring-0 focus:!outline-none focus-visible:!ring-0 focus-visible:!ring-offset-0 focus-visible:!outline-hidden"
         key={submissionId}
         onChange={handleChange}
         onKeyDown={handleKeyDown}
@@ -112,8 +116,8 @@ export const Notes = ({ submissionId, initialNotes = '', slug }: Props) => {
         rows={20}
         value={notes}
       />
-      <p className="mt-1 text-xs text-slate-400">
-        {MAX_CHARACTERS - notes.length} characters remaining
+      <p className="mt-1 w-full text-right text-xs text-slate-400">
+        {notes.length}/{MAX_CHARACTERS}
       </p>
     </div>
   );
