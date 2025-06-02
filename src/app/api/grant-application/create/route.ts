@@ -164,6 +164,19 @@ export async function POST(request: NextRequest) {
           }
         }
 
+        try {
+          await queueAgent({
+            type: 'autoReviewGrantApplication',
+            id: result.id,
+          });
+        } catch (error) {
+          logger.error('Failed to create AI review for grant application: ', {
+            error,
+            grantId,
+            userId,
+          });
+        }
+
         if (grant.airtableId) {
           try {
             await syncGrantApplicationWithAirtable(result);
@@ -174,21 +187,6 @@ export async function POST(request: NextRequest) {
               grantId,
             });
           }
-        }
-        try {
-          await queueAgent({
-            type: 'autoReviewGrantApplication',
-            id: result.id,
-          });
-          // await earncognitoClient.post('/ai/grants/review-application', {
-          //   id: result.id,
-          // });
-        } catch (error) {
-          logger.error('Failed to create AI review for grant application: ', {
-            error,
-            grantId,
-            userId,
-          });
         }
       })(),
     );

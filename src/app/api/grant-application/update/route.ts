@@ -148,17 +148,6 @@ export async function POST(request: NextRequest) {
 
     waitUntil(
       (async () => {
-        if (grant.airtableId) {
-          try {
-            await syncGrantApplicationWithAirtable(result);
-          } catch (error) {
-            logger.error('Error syncing with Airtable:', {
-              error,
-              userId,
-              grantId,
-            });
-          }
-        }
         try {
           await queueAgent({
             type: 'autoReviewGrantApplication',
@@ -170,6 +159,17 @@ export async function POST(request: NextRequest) {
             grantId,
             userId,
           });
+        }
+        if (grant.airtableId) {
+          try {
+            await syncGrantApplicationWithAirtable(result);
+          } catch (error) {
+            logger.error('Error syncing with Airtable:', {
+              error,
+              userId,
+              grantId,
+            });
+          }
         }
       })(),
     );
