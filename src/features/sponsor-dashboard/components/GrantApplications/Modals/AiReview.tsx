@@ -329,8 +329,8 @@ export default function AiReviewModal({ applications, grant }: Props) {
                 </Button>
 
                 <p className="text-muted-foreground mt-2 text-center text-sm">
-                  AI can make mistakes, and cannot access external links in
-                  applications. Check important info.
+                  AI can make mistakes. Check important info before approving or
+                  rejecting a grant application.
                 </p>
               </CardFooter>
             </>
