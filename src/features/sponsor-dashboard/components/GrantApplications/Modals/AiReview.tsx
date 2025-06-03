@@ -175,11 +175,11 @@ export default function AiReviewModal({ applications, grant }: Props) {
           <span className="text-base font-medium">AI Review Completed</span>
         </div>
         <div className="text-sm text-slate-500">
-          <p>
-            {`We've added review notes and labelled the submissions as `}
+          <p>{`We've added review notes and labelled the submissions as `}</p>
+          <span className="mt-1">
             <span
               className={cn(
-                'ml-2 inline-flex w-fit rounded-full px-2 text-center text-[10px] whitespace-nowrap capitalize',
+                'inline-flex w-fit rounded-full px-2 text-center text-[10px] whitespace-nowrap capitalize',
                 colorMap['Low_Quality'].bg,
                 colorMap['Low_Quality'].color,
               )}
@@ -204,8 +204,8 @@ export default function AiReviewModal({ applications, grant }: Props) {
             >
               Mid Quality
             </span>
-          </p>
-          <p>
+          </span>
+          <p className="mt-1">
             Please review before announcing winners, as AI can make mistakes.
           </p>
         </div>
