@@ -161,17 +161,42 @@ Check out all of ${title}’s latest earning opportunities on a single page.
 
       <div className="w-full bg-white">
         <div className="mx-auto max-w-5xl px-4 pb-20">
-          <ListingTabs
-            bounties={listings?.bounties}
-            isListingsLoading={isListingsLoading}
-            title="Earning Opportunities"
-            showNotifSub={false}
-          />
-          <ListingTabs
-            bounties={sponsorships?.bounties}
-            isListingsLoading={isSponsorshipsLoading}
-            title="Sponsorships"
-          />
+          {/* Only show tabs if there are bounties, otherwise show empty state */}
+          {!isListingsLoading &&
+          !isSponsorshipsLoading &&
+          !listings?.bounties?.length &&
+          !sponsorships?.bounties?.length ? (
+            <div className="flex min-h-[200px] items-center justify-center">
+              <div className="text-center">
+                <p className="text-lg font-medium text-slate-600">
+                  No listings yet
+                </p>
+                <p className="mt-2 text-slate-500">
+                  {title} hasn&apos;t posted any earning opportunities or
+                  sponsorships yet.
+                </p>
+              </div>
+            </div>
+          ) : (
+            <>
+              {(listings?.bounties?.length || isListingsLoading) && (
+                <ListingTabs
+                  bounties={listings?.bounties}
+                  isListingsLoading={isListingsLoading}
+                  title="Earning Opportunities"
+                  showNotifSub={false}
+                />
+              )}
+
+              {(sponsorships?.bounties?.length || isSponsorshipsLoading) && (
+                <ListingTabs
+                  bounties={sponsorships?.bounties}
+                  isListingsLoading={isSponsorshipsLoading}
+                  title="Sponsorships"
+                />
+              )}
+            </>
+          )}
         </div>
       </div>
     </Default>
