@@ -26,7 +26,7 @@ import {
   MAX_REWARD,
 } from '../constants';
 import { fetchSlugCheck } from '../queries/slug-check';
-import { type ListingFormData } from '.';
+import { type ListingFormData, type ValidationFields } from '.';
 
 export const eligibilityQuestionSchema = z.object({
   order: z.number(),
@@ -271,35 +271,44 @@ export const createListingRefinements = async (
   data: ListingFormData,
   ctx: z.RefinementCtx,
   hackathons?: Hackathon[],
+  pick?: ValidationFields,
 ) => {
   if (data.compensationType === 'fixed') {
     if (!data.rewardAmount) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: 'Please fill in the rewards',
-        path: ['rewards'],
-      });
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: 'Required',
-        path: ['rewardAmount'],
-      });
-    }
-    if (data.type !== 'project') {
-      if (!data.rewards || Object.keys(data.rewards).length === 0) {
+      if ((!!pick && pick.rewards) || !pick) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: 'Please fill in the rewards',
           path: ['rewards'],
         });
       }
-    } else {
-      if (!data.eligibility || data.eligibility.length === 0) {
+      if ((!!pick && pick.rewardAmount) || !pick) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          message: 'Please fill in the questions',
-          path: ['eligibility'],
+          message: 'Required',
+          path: ['rewardAmount'],
         });
+      }
+    }
+    if (data.type !== 'project') {
+      if (!data.rewards || Object.keys(data.rewards).length === 0) {
+        if ((!!pick && pick.rewards) || !pick) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: 'Please fill in the rewards',
+            path: ['rewards'],
+          });
+        }
+      }
+    } else {
+      if (!data.eligibility || data.eligibility.length === 0) {
+        if ((!!pick && pick.eligibility) || !pick) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: 'Please add some questions',
+            path: ['eligibility'],
+          });
+        }
       }
     }
 
@@ -316,51 +325,61 @@ export const createListingRefinements = async (
         0,
       );
       if (data.type !== 'project' && totalRewards !== data.rewardAmount) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: 'Total of rewards must equal the reward amount',
-          path: ['rewards'],
-        });
+        if ((!!pick && pick.rewards) || !pick) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: 'Total of rewards must equal the reward amount',
+            path: ['rewards'],
+          });
+        }
       }
 
       if (!!data.rewards?.[BONUS_REWARD_POSITION] && !data.maxBonusSpots) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.too_small,
-          path: ['maxBonusSpots'],
-          message: 'Required',
-          minimum: 1,
-          inclusive: true,
-          type: 'number',
-        });
+        if ((!!pick && pick.maxBonusSpots) || !pick) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.too_small,
+            path: ['maxBonusSpots'],
+            message: 'Required',
+            minimum: 1,
+            inclusive: true,
+            type: 'number',
+          });
+        }
       }
     }
   }
 
   if (data.compensationType === 'range') {
     if (!data.minRewardAsk) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: 'Required',
-        path: ['minRewardAsk'],
-      });
+      if ((!!pick && pick.minRewardAsk) || !pick) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Required',
+          path: ['minRewardAsk'],
+        });
+      }
     }
     if (!data.maxRewardAsk) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: 'Required',
-        path: ['maxRewardAsk'],
-      });
+      if ((!!pick && pick.maxRewardAsk) || !pick) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Required',
+          path: ['maxRewardAsk'],
+        });
+      }
     }
     if (
       data.minRewardAsk &&
       data.maxRewardAsk &&
       data.maxRewardAsk < data.minRewardAsk
     ) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: 'Maximum reward must be greater than minimum reward',
-        path: ['maxRewardAsk'],
-      });
+      if ((!!pick && pick.maxRewardAsk) || !pick) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Maximum reward must be greater than minimum reward',
+          path: ['maxRewardAsk'],
+        });
+      }
     }
   }
 
@@ -370,11 +389,13 @@ export const createListingRefinements = async (
       !currentHackathon?.deadline ||
       data.deadline !== new Date(currentHackathon?.deadline).toISOString()
     ) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: 'Hackathon deadline cannot be changed',
-        path: ['deadline'],
-      });
+      if ((!!pick && pick.deadline) || !pick) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Hackathon deadline cannot be changed',
+          path: ['deadline'],
+        });
+      }
     }
   }
 };

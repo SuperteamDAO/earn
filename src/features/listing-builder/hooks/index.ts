@@ -22,7 +22,7 @@ import {
   skillsKeyAtom,
   submitListingMutationAtom,
 } from '../atoms';
-import { type ListingFormData } from '../types';
+import { type ListingFormData, type ValidationFields } from '../types';
 import {
   createListingFormSchema,
   createListingRefinements,
@@ -192,8 +192,6 @@ export const useListingForm = (
     });
   }, [reset]);
 
-  type ValidationFields = Partial<Record<keyof ListingFormData, true>>;
-
   const validateFields = useCallback(
     async (fields: ValidationFields) => {
       const values = formMethods.getValues();
@@ -217,7 +215,7 @@ export const useListingForm = (
       const partialSchema = innerSchema
         .pick(fields)
         .superRefine((data, ctx) => {
-          createListingRefinements(data as any, ctx, hackathons);
+          createListingRefinements(data as any, ctx, hackathons, fields);
         });
 
       try {
@@ -245,6 +243,7 @@ export const useListingForm = (
   const validateEligibilityQuestions = () =>
     validateFields({
       type: true,
+      compensationType: true,
       eligibility: true,
     });
 
