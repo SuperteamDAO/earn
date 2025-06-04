@@ -5,7 +5,6 @@ import { useRouter } from 'next/router';
 import { getServerSession } from 'next-auth';
 import { usePostHog } from 'posthog-js/react';
 import React, { type JSX, useEffect, useState } from 'react';
-import { MdEmail } from 'react-icons/md';
 import { useInView } from 'react-intersection-observer';
 
 import { EmptySection } from '@/components/shared/EmptySection';
@@ -14,7 +13,7 @@ import { Button } from '@/components/ui/button';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { Separator } from '@/components/ui/separator';
 import { ASSET_URL } from '@/constants/ASSET_URL';
-import { HELP_URL, PROJECT_NAME } from '@/constants/project';
+import { PROJECT_NAME } from '@/constants/project';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import type { User } from '@/interface/user';
@@ -296,17 +295,12 @@ function TalentProfile({ talent, stats }: TalentProps) {
                 </p>
               </div>
               <div className="flex w-auto gap-3 md:w-[160px] md:flex-col">
-                {user?.id === talent?.id
-                  ? renderButton(
-                      <SquarePen />,
-                      'Edit Profile',
-                      handleEditProfileClick,
-                    )
-                  : !talent.private &&
-                    renderButton(<MdEmail />, 'Reach Out', () => {
-                      posthog.capture('reach out_talent profile');
-                      window.location.href = HELP_URL;
-                    })}
+                {user?.id === talent?.id &&
+                  renderButton(
+                    <SquarePen />,
+                    'Edit Profile',
+                    handleEditProfileClick,
+                  )}
                 {!talent.private &&
                   renderButton(<ShareIcon />, 'Share', onOpen, true)}
               </div>

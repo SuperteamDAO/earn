@@ -110,7 +110,6 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
           : undefined,
       },
       select: {
-        email: true,
         publicKey: true,
       },
     });

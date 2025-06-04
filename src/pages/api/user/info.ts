@@ -69,7 +69,6 @@ export async function getAllUsers(
         lastName: true,
         skills: true,
         photo: true,
-        email: true,
         currentEmployer: true,
         location: true,
         private: true,

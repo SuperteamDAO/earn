@@ -22,7 +22,6 @@ import {
   workExp,
   workType,
 } from '../constants';
-import { hasDevSkills } from '../utils/skills';
 
 export const profileSchema = z
   .object({
@@ -102,22 +101,38 @@ export const socialSuperRefine = async (
   data: Partial<ProfileFormData>,
   ctx: z.RefinementCtx,
 ) => {
-  if (data.skills && hasDevSkills(data.skills)) {
-    if (!data.github) {
+  const socialFields = [
+    data.discord,
+    data.twitter,
+    data.github,
+    data.linkedin,
+    data.telegram,
+    data.website,
+  ];
+
+  const hasAtLeastOneSocial = socialFields.some(
+    (field) => field && field.trim() !== '',
+  );
+
+  if (!hasAtLeastOneSocial) {
+    const socialPaths = [
+      'discord',
+      'twitter',
+      'github',
+      'linkedin',
+      'telegram',
+      'website',
+    ];
+    socialPaths.forEach((path) => {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: 'Github is requierd',
-        path: ['github'],
+        message: 'Please fill at least one social media field',
+        path: [path],
       });
-    }
-  } else if (!data.twitter) {
-    ctx.addIssue({
-      code: z.ZodIssueCode.custom,
-      message: 'Twitter is requierd',
-      path: ['twitter'],
     });
   }
 };
+
 export const usernameSuperRefine = async (
   data: Partial<ProfileFormData>,
   ctx: z.RefinementCtx,
