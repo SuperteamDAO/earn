@@ -1,6 +1,6 @@
 <div align="center">
   <br/>
-  <img src="https://pbs.twimg.com/profile_images/1655546485365407744/dOeIC0R-_400x400.jpg" style="border-radius:10px" width="120px" height="auto"/>
+  <img src="https://res.cloudinary.com/dgvnuwspr/image/upload/v1732824998/assets/logo/st-earn-white.svg" style="border-radius:10px" width="120px" height="auto"/>
   <h2>Superteam Earn</h2>
   <p>
     <strong>An open source platform connecting crypto founders with elite talent to create bounties, and accelerate project completion</strong>
