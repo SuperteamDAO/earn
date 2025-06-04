@@ -294,7 +294,11 @@ function Content({
                           </p>
                         </div>
                       </Tooltip>
-                      <KycComponent address={submission.user.publicKey} xs />
+                      <KycComponent
+                        address={submission.user.publicKey}
+                        xs
+                        listingSponsorId={bounty.sponsorId}
+                      />
                     </div>
                   )}
                   <div className="flex gap-2">

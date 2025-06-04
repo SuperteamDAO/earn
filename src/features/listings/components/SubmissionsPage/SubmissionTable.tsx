@@ -348,6 +348,7 @@ export const SubmissionTable = ({
                                     address={submission.user.publicKey}
                                     imageOnly
                                     xs
+                                    listingSponsorId={bounty?.sponsorId}
                                   />
                                 )}
                               </div>

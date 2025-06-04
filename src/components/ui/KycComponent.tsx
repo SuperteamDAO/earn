@@ -1,7 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
 import { Loader } from 'lucide-react';
 import Image from 'next/image';
+import Link from 'next/link';
 
+import { KYB_LINK, KYC_LINK, KYC_SPONSOR_WHITELIST } from '@/constants/kyc';
 import { cn } from '@/utils/cn';
 
 import {
@@ -15,6 +17,31 @@ interface KycComponentProps {
   address: string | undefined;
   imageOnly?: boolean;
   xs?: boolean;
+  listingSponsorId?: string;
+}
+
+function KycKybLink() {
+  return (
+    <>
+      <Link
+        href={KYC_LINK}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="italic hover:underline"
+      >
+        KYC
+      </Link>{' '}
+      /{' '}
+      <Link
+        href={KYB_LINK}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="italic hover:underline"
+      >
+        KYB
+      </Link>
+    </>
+  );
 }
 
 function styleKycStatus(kycData?: KycResponse) {
@@ -48,7 +75,11 @@ function styleKycStatus(kycData?: KycResponse) {
     case 'NOT_SUBMITTED':
       return {
         className: 'text-red-500',
-        text: 'KYC / KYB Not Verified',
+        text: (
+          <>
+            <KycKybLink /> Not Verified
+          </>
+        ),
         image: (
           <Image
             src="/assets/kyc-failed.svg"
@@ -62,7 +93,11 @@ function styleKycStatus(kycData?: KycResponse) {
     case 'REJECTED':
       return {
         className: 'text-red-500',
-        text: 'KYC / KYB Verification Rejected',
+        text: (
+          <>
+            <KycKybLink /> Verification Rejected
+          </>
+        ),
         image: (
           <Image
             src="/assets/kyc-failed.svg"
@@ -76,7 +111,11 @@ function styleKycStatus(kycData?: KycResponse) {
     case 'EXPIRED':
       return {
         className: 'text-gray-500',
-        text: 'KYC / KYB Verification Expired',
+        text: (
+          <>
+            <KycKybLink /> Verification Expired
+          </>
+        ),
         image: (
           <Image
             src="/assets/kyc-failed.svg"
@@ -90,7 +129,11 @@ function styleKycStatus(kycData?: KycResponse) {
     default:
       return {
         className: 'text-gray-500',
-        text: 'Unknown KYC / KYB status',
+        text: (
+          <>
+            Unknown <KycKybLink /> status
+          </>
+        ),
         image: (
           <Image
             src="/assets/kyc-failed.svg"
@@ -108,19 +151,32 @@ export function KycComponent({
   address,
   imageOnly = false,
   xs = false,
+  listingSponsorId,
 }: KycComponentProps) {
+  const isKycEnabled =
+    !!listingSponsorId && KYC_SPONSOR_WHITELIST.includes(listingSponsorId);
+
   const { data: kycData } = useQuery({
-    enabled: !!address,
+    enabled: !!address && isKycEnabled,
     ...checkKycQuery(address!),
   });
 
+  if (!isKycEnabled) {
+    return null;
+  }
+
   const { className, text, image } = styleKycStatus(kycData);
-  return (
-    <div className={cn('flex items-center gap-2', className)}>
+
+  const content = imageOnly ? (
+    image
+  ) : (
+    <>
       {image}
-      {!imageOnly && (
-        <p className={cn('text-sm font-medium', xs && 'text-xs')}>{text}</p>
-      )}
-    </div>
+      <p className={cn('text-sm font-medium', xs && 'text-xs')}>{text}</p>
+    </>
+  );
+
+  return (
+    <div className={cn('flex items-center gap-2', className)}>{content}</div>
   );
 }

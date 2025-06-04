@@ -270,6 +270,7 @@ export const SubmissionTable = ({
                               address={submission.user.publicKey}
                               imageOnly
                               xs
+                              listingSponsorId={submission?.listing?.sponsorId}
                             />
                           )}
                         </div>

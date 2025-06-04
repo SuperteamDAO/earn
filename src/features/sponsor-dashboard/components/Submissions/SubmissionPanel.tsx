@@ -329,6 +329,7 @@ export const SubmissionPanel = ({
                     <KycComponent
                       address={selectedSubmission?.user?.publicKey}
                       xs
+                      listingSponsorId={bounty?.sponsorId}
                     />
                   </>
                 )}

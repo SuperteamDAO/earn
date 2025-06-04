@@ -625,6 +625,7 @@ export const SubmissionDrawer = ({
                                 />
                                 <KycComponent
                                   address={user?.publicKey || field.value}
+                                  listingSponsorId={listing.sponsorId}
                                 />
                               </div>
                             </FormControl>
