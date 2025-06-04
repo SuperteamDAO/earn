@@ -37,7 +37,6 @@ const SponsorListingsPage = ({
   description,
   industry,
 }: Props) => {
-  console.log(industry);
   const { data: listings, isLoading: isListingsLoading } = useQuery(
     sponsorListingsQuery({ sponsor: slug }),
   );
