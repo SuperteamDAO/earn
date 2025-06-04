@@ -296,6 +296,8 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       );
     }
 
+    isVerifying = process.env.IS_EARN_BASE === 'true' ? isVerifying : false;
+
     if (isVerifying) {
       logger.info(`Setting listing to verification mode`, {
         id,

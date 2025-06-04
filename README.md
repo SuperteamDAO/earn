@@ -19,6 +19,9 @@
 - NodeJS
 - MySQL
 - pnpm
+- Privy
+- Cloudinary
+- Resend
 
 ### Getting Started
 
@@ -39,7 +42,7 @@
 
 4. Set up your `.env` file.
   - Start by copying the `.env.example` file to a new file named `.env`. This file will store your local environment settings.
-  - Use `openssl rand -base64 32` to generate a key and add it under `NEXTAUTH_SECRET` in the .env file.
+    
   - Database setup
     - Create a local `MySQL` instance and replace `<user>`, `<pass>`, `<db-host>`, and `<db-port>` with their applicable values.
       ```
@@ -53,11 +56,21 @@
       ```bash
       npx prisma migrate dev --name init && npx prisma generate
       ```
+    
+  - [Privy](https://www.privy.io/) setup
+    - Create a new privy app, Client Side Web App
+    - Add env variables `NEXT_PUBLIC_PRIVY_APP_ID` and `PRIVY_APP_SECRET`
+    - Update the setting to include server side environment
+    - Add env variable `PRIVY_VERIFICATION_KEY` (hidden under 'Verify with key instead' in Privy App settings)
+    - Enable Solana External Wallets and Google social sign in
+    - 
+  - [Resend](https://resend.com) Setup:
+    - To obtain your `RESEND_API_KEY`, visit the Resend dashboard.
+    
+  - [Cloudinary](https://cloudinary.com/) Setup
+    - To obtain your `CLOUDINARY_*` API keys, visit the Cloudinary dashboard. 
 
-  - You have to set up resend to run the app:
-    - [Resend](https://resend.com): To obtain your `RESEND_API_KEY`, visit the Resend dashboard. This credential is essential for setting up Email Auth.
-
-  NOTE: If you are facing any issues with setup, feel free to contact [Abhishek](https://twitter.com/abhwshek)
+  NOTE: If you are facing any issues with setup, feel free to contact [Abhishek](https://twitter.com/abhwshek) or [Jayesh](httpsL//twitter.com/jayeshvp24)
 
 5. Run the development server
     ```bash
@@ -67,7 +80,7 @@
 ## Contributing
 We welcome contributions from everyone! Whether it's submitting an issue, a pull request, or suggesting new ideas, your input is highly valued. Check out our [contributing guide](CONTRIBUTING.md) for guidelines on how to proceed.
 
-Facing an issue? Please feel free to reach out to [Abhishek](https://twitter.com/abhwshek) or [Pratik](https://twitter.com/pratikdholani)
+Facing an issue? Please feel free to reach out to [Abhishek](https://twitter.com/abhwshek), [Jayesh](httpsL//twitter.com/jayeshvp24) or [Pratik](https://twitter.com/jayeshvp24)
 
 ### Why should you contribute to Earn?
 - Consistent, good-quality contributions will earn you [contributor](https://docs.superteam.fun/the-superteam-handbook/getting-started/community-structure) status in the Superteam of your preference! Contributors get special access to channels on Discord, preferential entry to events, and is a great stepping stone to becoming a Superteam member.
