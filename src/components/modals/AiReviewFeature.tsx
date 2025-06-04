@@ -30,7 +30,7 @@ export const AiReviewFeatureModal = ({
   const { user } = useUser();
   const [isOpen, setIsOpen] = useState(false);
 
-  const LOCAL_STORAGE_KEY = 'ai-review-featureModalShown';
+  const LOCAL_STORAGE_KEY = 'ai-review-v3-featureModalShown';
   const { data: unreviewedApplications } = useQuery<GrantApplicationWithUser[]>(
     {
       queryKey: ['unreviewed-applications', grant?.slug, { id: grant?.id }],
@@ -73,7 +73,7 @@ export const AiReviewFeatureModal = ({
         <DialogHeader className="relative h-[16.875rem] w-[25rem]">
           <AspectRatio ratio={1.48} className="bg-blue-900">
             <ExternalImage
-              className="scale-[1.1] overflow-hidden"
+              className="scale-[1.0] overflow-hidden"
               alt="Ai Review Feature"
               src="ai-review-feature-new"
             />
@@ -92,22 +92,19 @@ export const AiReviewFeatureModal = ({
             </div>
           </button>
         </DialogHeader>
-        <div className="p-6">
+        <div className="p-6 pt-2">
           <DialogTitle className="text-xl font-semibold">
-            Grant Auto-Review is Here
+            Auto Review has improved!
           </DialogTitle>
-          <DialogDescription className="mt-2 text-lg font-normal text-slate-500">
-            Save hundreds of human hours by using Auto-Review for grants
+          <DialogDescription className="mt-2 text-base font-normal text-slate-500">
+            {`Auto review now considers external links (such as Google Docs,
+            Github, Twitter, etc.) and the applicant's profile and proof of work
+            on Earn to give more accurate reviews.`}
           </DialogDescription>
-          <div className="mt-6 flex flex-wrap justify-between gap-3 pr-4">
-            <Point text={'Detect Spam'} />
-            <Point text={'Save Time'} />
-            <Point text={'Identify Top Applications'} />
-          </div>
           <DialogFooter className="mt-8">
             <DialogClose asChild>
               <Button className="w-full font-semibold focus-visible:ring-0">
-                Try Now
+                Try it out
               </Button>
             </DialogClose>
           </DialogFooter>
@@ -116,24 +113,3 @@ export const AiReviewFeatureModal = ({
     </Dialog>
   );
 };
-
-function Point({ text }: { text: string }) {
-  return (
-    <span className="flex items-center gap-3">
-      <svg
-        width="25"
-        height="25"
-        viewBox="0 0 25 25"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <circle cx="12.5" cy="12.5" r="12.5" fill="#E0E7FF" />
-        <path
-          d="M10.9991 17.0113L7.42676 13.4389L8.31985 12.5458L10.9991 15.2251L16.7494 9.47482L17.6425 10.3679L10.9991 17.0113Z"
-          fill="#615FFF"
-        />
-      </svg>
-      <p className="text-lg font-medium text-slate-500">{text}</p>
-    </span>
-  );
-}

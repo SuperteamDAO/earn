@@ -19,7 +19,7 @@ import {
 } from '@/components/ui/dialog';
 import { Progress } from '@/components/ui/progress';
 import { Tooltip } from '@/components/ui/tooltip';
-import { chunkArray } from '@/utils/chunkArray';
+// import { chunkArray } from '@/utils/chunkArray';
 import { cn } from '@/utils/cn';
 
 import {
@@ -28,7 +28,7 @@ import {
   type GrantWithApplicationCount,
 } from '@/features/grants/types';
 import { useCommitReviews } from '@/features/sponsor-dashboard/mutations/useCommitReviews';
-import { useReviewApplication } from '@/features/sponsor-dashboard/mutations/useReviewApplication';
+// import { useReviewApplication } from '@/features/sponsor-dashboard/mutations/useReviewApplication';
 import { unreviewedGrantApplicationsQuery } from '@/features/sponsor-dashboard/queries/unreviewed-grant-applications';
 import { type GrantApplicationWithUser } from '@/features/sponsor-dashboard/types';
 import { colorMap } from '@/features/sponsor-dashboard/utils/statusColorMap';
@@ -66,9 +66,9 @@ export default function AiReviewModal({ applications, grant }: Props) {
     refetchUnreviewedApplications();
   }, [applications, refetchUnreviewedApplications]);
 
-  const { mutateAsync: reviewApplication } = useReviewApplication(
-    grant?.slug || '',
-  );
+  // const { mutateAsync: reviewApplication } = useReviewApplication(
+  //   grant?.slug || '',
+  // );
   const { mutateAsync: commitReviews } = useCommitReviews(
     grant?.slug || '',
     grant?.id || '',
@@ -89,7 +89,7 @@ export default function AiReviewModal({ applications, grant }: Props) {
     return estimateTime(nonAnalysedApplications?.length || 1);
   }, [nonAnalysedApplications?.length]);
 
-  const [estimatedTimeSingular, setEstimatedTimeSingular] = useState('~0mins');
+  const [estimatedTimeSingular] = useState('~0mins');
   useMemo(() => {
     return estimateTime(nonAnalysedApplications?.length || 1, true);
   }, [nonAnalysedApplications?.length]);
@@ -98,42 +98,42 @@ export default function AiReviewModal({ applications, grant }: Props) {
     posthog.capture('start_ai review grants');
     setState('PROCESSING');
 
-    const batchSize = 5;
-    const initalSize = nonAnalysedApplications?.length || 0;
+    // const batchSize = 5;
+    // const initalSize = nonAnalysedApplications?.length || 0;
 
-    console.log('nonAnalysedApplications - ', nonAnalysedApplications);
-    if (nonAnalysedApplications && nonAnalysedApplications.length > 0) {
-      setEstimatedTimeSingular(estimateTime(initalSize || 1, true));
-      const totalApplications = nonAnalysedApplications.length;
-      let processedApplications = 0;
-      const batchedApplications = chunkArray(
-        nonAnalysedApplications,
-        batchSize,
-      );
-
-      for (const application of batchedApplications) {
-        await Promise.all(
-          application.map(async (appl) => {
-            try {
-              console.log('start review for application - ', appl.id);
-              await reviewApplication(appl);
-              processedApplications++;
-              setProgress(() =>
-                Math.round((processedApplications / totalApplications) * 100),
-              );
-              setEstimatedTimeSingular(
-                estimateTime((initalSize || 1) - processedApplications, true),
-              );
-            } catch (error: any) {
-              console.log(
-                'Error occured while reviewing application with id ',
-                appl.id,
-              );
-            }
-          }),
-        );
-      }
-    }
+    // console.log('nonAnalysedApplications - ', nonAnalysedApplications.length);
+    // if (nonAnalysedApplications && nonAnalysedApplications.length > 0) {
+    //   setEstimatedTimeSingular(estimateTime(initalSize || 1, true));
+    //   const totalApplications = nonAnalysedApplications.length;
+    //   let processedApplications = 0;
+    //   const batchedApplications = chunkArray(
+    //     nonAnalysedApplications,
+    //     batchSize,
+    //   );
+    //
+    //   for (const application of batchedApplications) {
+    //     await Promise.all(
+    //       application.map(async (appl) => {
+    //         try {
+    //           console.log('start review for application - ', appl.id);
+    //           await reviewApplication(appl);
+    //           processedApplications++;
+    //           setProgress(() =>
+    //             Math.round((processedApplications / totalApplications) * 100),
+    //           );
+    //           setEstimatedTimeSingular(
+    //             estimateTime((initalSize || 1) - processedApplications, true),
+    //           );
+    //         } catch (error: any) {
+    //           console.log(
+    //             'Error occured while reviewing application with id ',
+    //             appl.id,
+    //           );
+    //         }
+    //       }),
+    //     );
+    //   }
+    // }
     setTimeout(async () => {
       setProgress(100);
       try {
@@ -175,11 +175,11 @@ export default function AiReviewModal({ applications, grant }: Props) {
           <span className="text-base font-medium">AI Review Completed</span>
         </div>
         <div className="text-sm text-slate-500">
-          <p>
-            {`We've added review notes and labelled the submissions as `}
+          <p>{`We've added review notes and labelled the submissions as `}</p>
+          <span className="mt-1">
             <span
               className={cn(
-                'ml-2 inline-flex w-fit rounded-full px-2 text-center text-[10px] whitespace-nowrap capitalize',
+                'inline-flex w-fit rounded-full px-2 text-center text-[10px] whitespace-nowrap capitalize',
                 colorMap['Low_Quality'].bg,
                 colorMap['Low_Quality'].color,
               )}
@@ -204,8 +204,8 @@ export default function AiReviewModal({ applications, grant }: Props) {
             >
               Mid Quality
             </span>
-          </p>
-          <p>
+          </span>
+          <p className="mt-1">
             Please review before announcing winners, as AI can make mistakes.
           </p>
         </div>
@@ -329,8 +329,8 @@ export default function AiReviewModal({ applications, grant }: Props) {
                 </Button>
 
                 <p className="text-muted-foreground mt-2 text-center text-sm">
-                  AI can make mistakes, and cannot access external links in
-                  applications. Check important info.
+                  AI can make mistakes. Check important info before approving or
+                  rejecting a grant application.
                 </p>
               </CardFooter>
             </>

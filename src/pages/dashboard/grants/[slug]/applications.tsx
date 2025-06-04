@@ -4,6 +4,7 @@ import type { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
+import { AiReviewFeatureModal } from '@/components/modals/AiReviewFeature';
 import { LoadingSection } from '@/components/shared/LoadingSection';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { SponsorLayout } from '@/layouts/Sponsor';
@@ -48,6 +49,7 @@ function GrantApplications({ slug }: Props) {
         <LoadingSection />
       ) : (
         <>
+          <AiReviewFeatureModal grant={grant} />
           <ApplicationHeader
             grant={grant}
             applications={applications}
