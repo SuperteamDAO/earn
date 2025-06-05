@@ -314,6 +314,7 @@ model Sponsors {
   name              String              @unique
   slug              String              @unique
   logo              String?
+  banner            String?
   url               String?
   industry          String
   twitter           String?

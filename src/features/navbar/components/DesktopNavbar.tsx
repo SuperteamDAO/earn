@@ -6,6 +6,7 @@ import { usePostHog } from 'posthog-js/react';
 import { IoSearchOutline } from 'react-icons/io5';
 
 import { Button } from '@/components/ui/button';
+import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { Skeleton } from '@/components/ui/skeleton';
 import { PROJECT_NAME } from '@/constants/project';
 import { useUser } from '@/store/user';
@@ -81,7 +82,7 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
         {!router.pathname.startsWith('/new/') && (
           <div className="absolute left-1/2 -translate-x-1/2">
             <div className="ml-10 flex h-full items-center justify-center">
-              <div className="ph-no-capture flex h-full flex-row gap-7">
+              <div className="ph-no-capture flex h-full flex-row items-center gap-7">
                 {LISTING_NAV_ITEMS?.map((navItem) => {
                   const isCurrent = `${navItem.href}` === router.asPath;
                   return (
@@ -97,6 +98,16 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
                     />
                   );
                 })}
+                <Link
+                  href={'/firehose'}
+                  className={cn('-mx-2 flex h-8 items-center')}
+                >
+                  <ExternalImage
+                    alt="Redacted Logo"
+                    src="/hackathon/fff/logo.png"
+                    className="h-full object-contain"
+                  />
+                </Link>
               </div>
             </div>
           </div>

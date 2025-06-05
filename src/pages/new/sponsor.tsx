@@ -277,7 +277,7 @@ const CreateSponsor = () => {
       if (selectedLogo) {
         logoUrl = await uploadAndReplaceImage({
           newFile: selectedLogo,
-          folder: 'earn-sponsor',
+          folder: 'nearn-sponsor',
         });
         data.sponsor.logo = logoUrl;
       }
