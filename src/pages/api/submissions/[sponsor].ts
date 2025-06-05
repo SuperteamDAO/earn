@@ -101,11 +101,13 @@ async function handler(
             publicKey: true,
             photo: true,
             username: true,
+            private: true,
           },
         },
         listing: {
           select: {
             eligibility: true,
+            sequentialId: true,
           },
         },
       },
@@ -121,7 +123,20 @@ async function handler(
       });
     }
 
-    return res.status(200).json(result);
+    return res.status(200).json(
+      result.map((r) => ({
+        ...r,
+        notes: undefined,
+        user: {
+          ...r.user,
+          firstName: r.user.private ? undefined : r.user.firstName,
+          lastName: r.user.private ? undefined : r.user.lastName,
+        },
+        listing: {
+          ...r.listing,
+        },
+      })),
+    );
   } catch (error: any) {
     logger.error(
       `Error occurred while fetching submissions with sponsor slug=${sponsorSlug}: ${safeStringify(error)}`,
