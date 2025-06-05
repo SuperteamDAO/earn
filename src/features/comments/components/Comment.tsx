@@ -1,5 +1,5 @@
 import { type CommentRefType } from '@prisma/client';
-import { AlertCircle, ChevronDown, Loader2 } from 'lucide-react';
+import { AlertCircle, ChevronDown, Loader2, Pin, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 import { usePostHog } from 'posthog-js/react';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -47,6 +47,7 @@ interface Props {
   sponsorId: string | undefined;
   defaultSuggestions: Map<string, User>;
   deleteComment: (commentId: string) => Promise<void>;
+  pinComment?: (commentId: string, isPinned: boolean) => Promise<void>;
   listingSlug: string;
   listingType: string;
   isAnnounced: boolean;
@@ -64,6 +65,7 @@ export const Comment = ({
   refType,
   poc,
   deleteComment,
+  pinComment,
   defaultSuggestions,
   addNewReply,
   listingType,
@@ -82,6 +84,11 @@ export const Comment = ({
     onOpen: deleteOnOpen,
     onClose: deleteOnClose,
   } = useDisclosure();
+  const {
+    isOpen: pinIsOpen,
+    onOpen: pinOnOpen,
+    onClose: pinOnClose,
+  } = useDisclosure();
   const [showReplyInput, setShowReplyInput] = useState(false);
   const [showReplies, setShowReplies] = useState(false);
   const [replies, setReplies] = useState(comment?.replies ?? []);
@@ -90,6 +97,8 @@ export const Comment = ({
   const [newReplyError, setNewReplyError] = useState(false);
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [deleteError, setDeleteError] = useState(false);
+  const [pinLoading, setPinLoading] = useState(false);
+  const [pinError, setPinError] = useState(false);
   const [showOptions, setShowOptions] = useState(false);
   const cancelRef = useRef<any>(null);
 
@@ -132,6 +141,20 @@ export const Comment = ({
     }
   };
 
+  const handlePin = async () => {
+    setPinLoading(true);
+    setPinError(false);
+    try {
+      pinComment?.(comment.id, !comment.isPinned);
+      setPinLoading(false);
+      pinOnClose();
+    } catch (e) {
+      console.log('error - ', e);
+      setPinError(true);
+      setPinLoading(false);
+    }
+  };
+
   const addNewReplyLvl1 = async (msg: string) => {
     posthog.capture('publish_comment');
     setNewReplyError(false);
@@ -147,7 +170,7 @@ export const Comment = ({
     setShowReplies(true);
   };
 
-  const date = formatFromNow(dayjs(comment?.updatedAt).fromNow());
+  const date = formatFromNow(dayjs(comment?.createdAt).fromNow());
 
   const handleSubmit = async () => {
     try {
@@ -184,12 +207,14 @@ export const Comment = ({
   }, [newReply]);
 
   const isMobile = useMediaQuery('(max-width: 768px)');
+  const isPoc = poc?.id === user?.id;
+  const showDropdown = showOptions || isMobile;
 
   return (
     <>
       <div
         key={comment.id}
-        className="flex w-full items-start gap-3 overflow-visible"
+        className={cn('flex w-full items-start gap-3 overflow-visible')}
         onMouseEnter={() => {
           if (!isMobile) setShowOptions(true);
         }}
@@ -226,6 +251,12 @@ export const Comment = ({
               <p className="flex items-center gap-0.5 pb-0.5 text-xs font-medium text-blue-500 md:text-sm">
                 {isVerified && <VerifiedBadge />}
                 Sponsor
+              </p>
+            )}
+            {comment.isPinned && (
+              <p className="flex items-center gap-0.5 pb-0.5 text-xs font-medium text-slate-500 md:text-sm">
+                <Pin className="h-3 w-3" />
+                Pinned
               </p>
             )}
             <p className="pb-0.5 text-xs font-medium text-slate-400 md:text-sm">
@@ -355,9 +386,9 @@ export const Comment = ({
         <div
           className={cn(
             'transition-opacity duration-200',
-            (showOptions || isMobile) && comment.authorId === user?.id
+            showDropdown && (comment.authorId === user?.id || isPoc)
               ? 'opacity-100'
-              : 'opacity-0',
+              : 'pointer-events-none opacity-0',
           )}
         >
           <DropdownMenu>
@@ -379,13 +410,26 @@ export const Comment = ({
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="min-w-[10rem] p-1" align="end">
-              <DropdownMenuItem
-                className="ph-no-capture rounded-sm text-sm font-medium text-slate-600 md:text-base"
-                onClick={deleteOnOpen}
-                tabIndex={-1}
-              >
-                Delete
-              </DropdownMenuItem>
+              {isPoc && !isReply && (
+                <DropdownMenuItem
+                  className="ph-no-capture rounded-sm text-sm font-medium text-slate-600 md:text-base"
+                  onClick={pinOnOpen}
+                  tabIndex={-1}
+                >
+                  <Pin className="h-3 w-3" />
+                  {comment.isPinned ? 'Unpin' : 'Pin'} Comment
+                </DropdownMenuItem>
+              )}
+              {comment.authorId === user?.id && (
+                <DropdownMenuItem
+                  className="ph-no-capture rounded-sm text-sm font-medium text-slate-600 md:text-base"
+                  onClick={deleteOnOpen}
+                  tabIndex={-1}
+                >
+                  <Trash2 className="h-3 w-3" />
+                  Delete
+                </DropdownMenuItem>
+              )}
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
@@ -431,6 +475,46 @@ export const Comment = ({
                 </>
               ) : (
                 <span>Delete</span>
+              )}
+            </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+      <AlertDialog open={pinIsOpen} onOpenChange={pinOnClose}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              {comment.isPinned ? 'Unpin' : 'Pin'} Comment
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {comment.isPinned
+                ? 'Are you sure you want to unpin this comment?'
+                : 'Are you sure you want to pin this comment?'}
+              {pinError && (
+                <Alert variant="destructive" className="mt-3 rounded-md">
+                  <AlertCircle className="h-4 w-4" />
+                  <div className="flex flex-col gap-2">
+                    <AlertTitle>Failed to pin comment</AlertTitle>
+                    <AlertDescription className="self-start">
+                      Please try again later.
+                    </AlertDescription>
+                  </div>
+                </Alert>
+              )}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <Button variant="default" onClick={handlePin} disabled={pinLoading}>
+              {pinLoading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  {comment.isPinned ? 'Unpinning...' : 'Pinning...'}
+                </>
+              ) : comment.isPinned ? (
+                'Unpin'
+              ) : (
+                'Pin'
               )}
             </Button>
           </AlertDialogFooter>

@@ -76,6 +76,39 @@ export const Comments = ({
     }
   };
 
+  const pinComment = async (commentId: string, isPinned: boolean) => {
+    posthog.capture('pin_comment');
+    const commentIndex = comments.findIndex(
+      (comment) => comment.id === commentId,
+    );
+    if (commentIndex > -1) {
+      await api.post(`/api/comment/${commentId}/pin`, {
+        isPinned,
+      });
+      setComments((prevComments) => {
+        const newComments = [...prevComments];
+        if (newComments[commentIndex]) {
+          newComments[commentIndex] = {
+            ...newComments[commentIndex],
+            isPinned,
+          };
+        }
+        const timeSorted = newComments.sort(
+          (a, b) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+        );
+        const sortedComments = timeSorted.sort((a, b) => {
+          if (a.isPinned && !b.isPinned) return -1;
+          if (!a.isPinned && b.isPinned) return 1;
+          return 0;
+        });
+        return sortedComments;
+      });
+    } else {
+      throw new Error('Comment not found');
+    }
+  };
+
   const getComments = async (skip = 0, take = 10) => {
     setIsLoading(true);
     try {
@@ -87,8 +120,18 @@ export const Comments = ({
       });
       const allComments = commentsData.data.result as Comment[];
 
+      const timeSorted = [...allComments].sort(
+        (a, b) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+      );
+      const sortedComments = timeSorted.sort((a, b) => {
+        if (a.isPinned && !b.isPinned) return -1;
+        if (!a.isPinned && b.isPinned) return 1;
+        return 0;
+      });
+
       setCount(commentsData.data.count);
-      setComments([...comments, ...allComments]);
+      setComments([...comments, ...sortedComments]);
       setDefaultSuggestions((prevSuggestions) => {
         const newSuggestions = new Map(prevSuggestions);
         if (poc && poc.id) {
@@ -170,6 +213,7 @@ export const Comments = ({
               refType={refType}
               refId={refId}
               deleteComment={deleteComment}
+              pinComment={pinComment}
               isVerified={isVerified}
               isTemplate={isTemplate}
               isDisabled={isDisabled}
