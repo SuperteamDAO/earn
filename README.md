@@ -1,6 +1,7 @@
 <div align="center">
 
   ![Superteam Earn Icon](/public/assets/square-logo-color.svg)
+
   <h2>Superteam Earn</h2>
   <p>
     <strong>An open source platform connecting crypto founders with elite talent to create bounties, and accelerate project completion</strong>
@@ -14,10 +15,9 @@
 
 ## 🔗Official Links
 
-- <img src="https://superteam.fun/favicon.png" title="Superteam Icon" alt="superteam-icon" width="24" height="24" /> Superteam website - [https://superteam.fun](https://superteam.fun)
 - <img src="https://earn.superteam.fun/favicon.ico" title="Superteam Earn Icon" alt="superteam-earn-icon" width="24" height="24" /> Superteam Earn website - [https://earn.superteam.fun](https://earn.superteam.fun)
+- <img src="https://superteam.fun/favicon.png" title="Superteam Icon" alt="superteam-icon" width="24" height="24" /> Superteam website - [https://superteam.fun](https://superteam.fun)
 - <img src="https://x.com/favicon.ico" title="Superteam Earn X Icon" alt="superteam-earn-x-icon" width="24" height="24" /> Superteam Earn X/Twitter - [https://x.com/superteamearn](https://x.com/superteamearn)
-- <img src="https://avatars.githubusercontent.com/u/1965106" title="Superteam Earn Discord Icon" alt="superteam-earn-discord-icon" width="24" height="24" /> Superteam Earn Discord (India) - [https://discord.com/invite/Mq3ReaekgG](https://discord.com/invite/Mq3ReaekgG)
 
 ## 🛠️Development Setup
 
