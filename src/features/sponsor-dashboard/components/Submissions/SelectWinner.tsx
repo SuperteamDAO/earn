@@ -1,17 +1,15 @@
 import { useAtom } from 'jotai';
-import { Check, X } from 'lucide-react';
+import { Check, ChevronDown, X } from 'lucide-react';
 import { useMemo } from 'react';
 
 import { Button } from '@/components/ui/button';
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { useDisclosure } from '@/hooks/use-disclosure';
-import { cn } from '@/utils/cn';
 import { cleanRewards, getRankLabels, sortRank } from '@/utils/rank';
 
 import { BONUS_REWARD_POSITION } from '@/features/listing-builder/constants';
@@ -82,7 +80,7 @@ export const SelectWinner = ({
     <>
       <div>
         {isProject ? (
-          <div className="ph-no-capture flex w-fit items-center justify-end gap-2">
+          <div className="ph-no-capture flex items-center justify-end gap-2">
             {isPending && (
               <>
                 <Button
@@ -111,33 +109,32 @@ export const SelectWinner = ({
           </div>
         ) : (
           <div className="relative">
-            <Select
-              disabled={
-                !!bounty?.isWinnersAnnounced ||
-                isHackathonPage ||
-                isMultiSelectOn
-              }
-              onValueChange={(value) =>
-                selectWinner(Number(value), selectedSubmission?.id)
-              }
-              value={
-                selectedSubmission?.isWinner
-                  ? selectedSubmission.winnerPosition?.toString() || ''
-                  : ''
-              }
-            >
-              <SelectTrigger
-                className={cn(
-                  'h-10 w-40 border-slate-300 font-medium text-slate-700 capitalize',
-                  'focus:border-brand-purple focus:ring-brand-purple',
-                )}
-              >
-                <SelectValue
-                  className="placeholder:text-slate-800"
-                  placeholder="Select Winner"
-                />
-              </SelectTrigger>
-              <SelectContent>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="outline"
+                  disabled={
+                    !!bounty?.isWinnersAnnounced ||
+                    isHackathonPage ||
+                    isMultiSelectOn
+                  }
+                  className="w-full justify-between rounded-lg border border-emerald-500 bg-emerald-50 py-4 text-emerald-600 hover:bg-emerald-100 hover:text-emerald-600 disabled:opacity-50"
+                >
+                  <div className="flex items-center">
+                    <div className="mr-2 rounded-full bg-emerald-600 p-0.5">
+                      <Check className="size-3 text-white" />
+                    </div>
+                    <span>
+                      {selectedSubmission?.isWinner &&
+                      selectedSubmission.winnerPosition
+                        ? getRankLabels(selectedSubmission.winnerPosition)
+                        : 'Select Winner'}
+                    </span>
+                  </div>
+                  <ChevronDown className="size-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-full min-w-[200px]">
                 {rewards.map((reward) => {
                   let isRewardUsed = usedPositions.includes(reward);
                   if (reward === BONUS_REWARD_POSITION) {
@@ -153,18 +150,20 @@ export const SelectWinner = ({
 
                   return (
                     (!isRewardUsed || isCurrentSubmissionReward) && (
-                      <SelectItem
-                        className="capitalize"
+                      <DropdownMenuItem
                         key={reward}
-                        value={reward.toString()}
+                        className="cursor-pointer capitalize"
+                        onClick={() =>
+                          selectWinner(reward, selectedSubmission?.id)
+                        }
                       >
-                        {isProject ? 'Winner' : getRankLabels(reward)}
-                      </SelectItem>
+                        {getRankLabels(reward)}
+                      </DropdownMenuItem>
                     )
                   );
                 })}
-              </SelectContent>
-            </Select>
+              </DropdownMenuContent>
+            </DropdownMenu>
             {isValueSelected && (
               <button
                 className="absolute top-1/2 right-8 z-10 -translate-y-1/2 cursor-pointer disabled:cursor-not-allowed"
@@ -175,8 +174,8 @@ export const SelectWinner = ({
                 }}
                 disabled={isMultiSelectOn}
               >
-                <div className="flex h-4 w-4 items-center justify-center rounded-full bg-red-100 text-red-400 hover:bg-red-200">
-                  <X className="h-2.5 w-2.5" />
+                <div className="flex size-4 items-center justify-center rounded-full bg-red-100 text-red-400 hover:bg-red-200">
+                  <X className="size-2.5" />
                 </div>
               </button>
             )}

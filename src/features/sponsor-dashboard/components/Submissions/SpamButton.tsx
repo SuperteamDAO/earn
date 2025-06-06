@@ -146,16 +146,22 @@ export const SpamButton = ({ listingSlug }: Props) => {
     },
   });
 
+  const isMarkedAsSpam = selectedSubmission?.label === SubmissionLabels.Spam;
+
   return (
     <>
       <Button
         variant="destructive"
-        className="rounded-lg border border-orange-200 bg-orange-50 text-orange-500 hover:bg-orange-100 disabled:opacity-50"
+        className={`rounded-lg border disabled:opacity-100 ${
+          isMarkedAsSpam
+            ? 'border-orange-300 bg-orange-100 text-orange-600 hover:bg-orange-200'
+            : 'border-orange-200 bg-orange-50 text-orange-500 hover:bg-orange-100'
+        }`}
         onClick={handleSpamClick}
-        disabled={isCheckingSpam}
+        disabled={isCheckingSpam || isMarkedAsSpam}
       >
         <LucideFlag className="size-1 text-orange-500" />
-        Spam
+        {isMarkedAsSpam ? 'Marked as Spam' : 'Spam'}
       </Button>
 
       <SpamConfirmationDialog

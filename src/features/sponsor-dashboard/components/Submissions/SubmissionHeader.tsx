@@ -1,5 +1,8 @@
+import { TooltipArrow } from '@radix-ui/react-tooltip';
 import { useMutation } from '@tanstack/react-query';
+import dayjs from 'dayjs';
 import {
+  Check,
   ChevronLeft,
   Download,
   ExternalLink,
@@ -17,12 +20,16 @@ import {
   BreadcrumbLink,
   BreadcrumbList,
 } from '@/components/ui/breadcrumb';
+import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { Tooltip } from '@/components/ui/tooltip';
+import { useDisclosure } from '@/hooks/use-disclosure';
+import { type SubmissionWithUser } from '@/interface/submission';
 import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
@@ -32,22 +39,55 @@ import { isDeadlineOver } from '@/features/listings/utils/deadline';
 import { getColorStyles } from '@/features/listings/utils/getColorStyles';
 import { getListingIcon } from '@/features/listings/utils/getListingIcon';
 import { getListingStatus } from '@/features/listings/utils/status';
+import { VerifyPaymentModal } from '@/features/sponsor-dashboard/components/Modals/VerifyPayment';
+
+import { UnpublishModal } from '../Modals/UnpublishModal';
 
 interface Props {
   bounty: Listing | undefined;
   isHackathonPage?: boolean;
+  remainings: { podiums: number; bonus: number } | null;
+  submissions: SubmissionWithUser[];
+  onWinnersAnnounceOpen: () => void;
+  activeTab: string;
 }
 
 export const SubmissionHeader = ({
   bounty,
   isHackathonPage = false,
+  remainings,
+  submissions,
+  onWinnersAnnounceOpen,
+  activeTab,
 }: Props) => {
   const router = useRouter();
   const { user } = useUser();
 
+  const {
+    isOpen: verifyPaymentIsOpen,
+    onOpen: verifyPaymentOnOpen,
+    onClose: verifyPaymentOnClose,
+  } = useDisclosure();
+
+  const {
+    isOpen: unpublishIsOpen,
+    onOpen: unpublishOnOpen,
+    onClose: unpublishOnClose,
+  } = useDisclosure();
+
+  const handleVerifyPayment = () => {
+    verifyPaymentOnOpen();
+  };
+
   const listingPath = `listing/${bounty?.slug}`;
 
   const bountyStatus = getListingStatus(bounty);
+  const isProject = bounty?.type === 'project';
+
+  const afterAnnounceDate =
+    bounty?.type === 'hackathon'
+      ? dayjs().isAfter(bounty?.Hackathon?.announceDate)
+      : true;
 
   const exportMutation = useMutation({
     mutationFn: async () => {
@@ -113,8 +153,8 @@ export const SubmissionHeader = ({
   const pastDeadline = isDeadlineOver(bounty?.deadline);
 
   return (
-    <>
-      <div className="mb-4">
+    <div className="mb-2 flex items-center justify-between">
+      <div>
         <Breadcrumb className="text-slate-400">
           <BreadcrumbList>
             <BreadcrumbItem>
@@ -134,79 +174,156 @@ export const SubmissionHeader = ({
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
-      </div>
-      <div className="mb-2 flex items-center gap-2">
-        <div className="ml-1 flex items-center gap-2">
-          {getListingIcon(bounty?.type!, 'size-5')}
-          <p className="text-xl font-bold text-slate-800">{bounty?.title}</p>
-        </div>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <div className="cursor-pointer rounded-md p-2 text-slate-400 transition-all hover:bg-slate-100 hover:text-slate-500">
-              <MoreVertical className="h-4 w-4" />
-            </div>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-48">
-            {!isHackathonPage && (
-              <DropdownMenuItem
-                disabled={exportMutation.isPending}
-                onClick={() => exportSubmissionsCsv()}
-                className="cursor-pointer"
-              >
-                {exportMutation.isPending ? (
-                  <>
-                    <span className="loading loading-spinner mr-2" />
-                    Exporting...
-                  </>
-                ) : (
-                  <>
-                    <Download className="mr-2 h-4 w-4" />
-                    Export CSV
-                  </>
-                )}
-              </DropdownMenuItem>
-            )}
-
-            <DropdownMenuItem
-              onClick={() =>
-                window.open(`${router.basePath}/${listingPath}`, '_blank')
-              }
-              className="cursor-pointer"
-            >
-              <ExternalLink className="mr-2 h-4 w-4" />
-              View Listing
-            </DropdownMenuItem>
-
-            {!!(
-              (user?.role === 'GOD' && bounty?.type !== 'grant') ||
-              (bounty?.isPublished && !pastDeadline && bounty.type !== 'grant')
-            ) &&
-              !isHackathonPage && (
-                <DropdownMenuItem className="cursor-pointer" asChild>
-                  <Link
-                    href={
-                      bounty
-                        ? `/dashboard/${isHackathonPage ? 'hackathon' : 'listings'}/${bounty.slug}/edit/`
-                        : ''
-                    }
-                  >
-                    <Pencil className="mr-2 h-4 w-4" />
-                    Edit
-                  </Link>
+        <div className="mb-2 flex items-center gap-2">
+          <div className="ml-1 flex items-center gap-2">
+            {getListingIcon(bounty?.type!, 'size-5')}
+            <p className="text-xl font-bold text-slate-800">{bounty?.title}</p>
+          </div>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <div className="cursor-pointer rounded-md p-2 text-slate-400 transition-all hover:bg-slate-100 hover:text-slate-500">
+                <MoreVertical className="h-4 w-4" />
+              </div>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-48">
+              {!isHackathonPage && (
+                <DropdownMenuItem
+                  disabled={exportMutation.isPending}
+                  onClick={() => exportSubmissionsCsv()}
+                  className="cursor-pointer"
+                >
+                  {exportMutation.isPending ? (
+                    <>
+                      <span className="loading loading-spinner mr-2" />
+                      Exporting...
+                    </>
+                  ) : (
+                    <>
+                      <Download className="mr-2 h-4 w-4" />
+                      Export CSV
+                    </>
+                  )}
                 </DropdownMenuItem>
               )}
-          </DropdownMenuContent>
-        </DropdownMenu>
-        <p
-          className={cn(
-            'ml-2 inline-flex items-center rounded-full px-2 py-1 text-xs font-medium whitespace-nowrap',
-            getColorStyles(bountyStatus).color,
-            getColorStyles(bountyStatus).bgColor,
-          )}
-        >
-          {bountyStatus}
-        </p>
+
+              <DropdownMenuItem
+                onClick={() =>
+                  window.open(`${router.basePath}/${listingPath}`, '_blank')
+                }
+                className="cursor-pointer"
+              >
+                <ExternalLink className="mr-2 h-4 w-4" />
+                View Listing
+              </DropdownMenuItem>
+
+              {!!(
+                (user?.role === 'GOD' && bounty?.type !== 'grant') ||
+                (bounty?.isPublished &&
+                  !pastDeadline &&
+                  bounty.type !== 'grant')
+              ) &&
+                !isHackathonPage && (
+                  <DropdownMenuItem className="cursor-pointer" asChild>
+                    <Link
+                      href={
+                        bounty
+                          ? `/dashboard/${isHackathonPage ? 'hackathon' : 'listings'}/${bounty.slug}/edit/`
+                          : ''
+                      }
+                    >
+                      <Pencil className="mr-2 h-4 w-4" />
+                      Edit
+                    </Link>
+                  </DropdownMenuItem>
+                )}
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <p
+            className={cn(
+              'ml-2 inline-flex items-center rounded-full px-2 py-1 text-xs font-medium whitespace-nowrap',
+              getColorStyles(bountyStatus).color,
+              getColorStyles(bountyStatus).bgColor,
+            )}
+          >
+            {bountyStatus}
+          </p>
+        </div>
       </div>
-    </>
+      {!isProject ? (
+        <div>
+          {activeTab === 'submissions' && (
+            <Tooltip
+              content={
+                <>
+                  You cannot change the winners once the results are published!
+                  <TooltipArrow />
+                </>
+              }
+              disabled={!bounty?.isWinnersAnnounced}
+              contentProps={{ sideOffset: 5 }}
+            >
+              <Button
+                className={cn(
+                  'text-base font-semibold disabled:cursor-not-allowed disabled:bg-[#A1A1A1] disabled:hover:bg-[#A1A1A1]',
+                )}
+                disabled={
+                  !afterAnnounceDate ||
+                  isHackathonPage ||
+                  remainings?.podiums !== 0 ||
+                  (remainings?.bonus > 0 &&
+                    submissions.filter((s) => !s.isWinner).length > 0)
+                }
+                onClick={onWinnersAnnounceOpen}
+                variant="default"
+              >
+                <Check className="size-4" />
+                Announce Winners
+              </Button>
+            </Tooltip>
+          )}
+        </div>
+      ) : (
+        <div>
+          <p className="text-slate-800">
+            Didn&apos;t find a suitable candidate?{' '}
+            <span
+              className="cursor-pointer text-blue-500 underline"
+              onClick={unpublishOnOpen}
+            >
+              Click here
+            </span>
+          </p>
+        </div>
+      )}
+
+      {activeTab === 'payments' && (
+        <Button
+          className={cn(
+            'border-brand-purple text-brand-purple hover:bg-brand-purple text-base font-semibold hover:text-white',
+          )}
+          onClick={handleVerifyPayment}
+          variant="outline"
+        >
+          Paid Externally? Click here
+        </Button>
+      )}
+
+      <VerifyPaymentModal
+        listing={bounty}
+        setListing={() => {}}
+        isOpen={verifyPaymentIsOpen}
+        onClose={verifyPaymentOnClose}
+        listingId={bounty?.id}
+        listingType={bounty?.type}
+      />
+
+      <UnpublishModal
+        listingId={bounty?.id}
+        listingSlug={bounty?.slug}
+        unpublishIsOpen={unpublishIsOpen}
+        unpublishOnClose={unpublishOnClose}
+        listingType={bounty?.type}
+      />
+    </div>
   );
 };

@@ -212,7 +212,7 @@ body {
 .wallet-adapter-button.wallet-adapter-button-trigger {
   width: 100% !important;
   background-color: #6366f1;
-  font-size: 1rem !important;
+  /* font-size: 10px !important; */
   color: white !important;
   /* border: 1px solid !important; */
   border-color: #f1f5f9 !important;
