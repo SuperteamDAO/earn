@@ -135,24 +135,28 @@ Check out all of ${title}'s latest earning opportunities on a single page.
                 {isListingsLoading ? (
                   <Skeleton className="h-20 w-20 rounded-full border-4 border-white bg-white md:h-28 md:w-28" />
                 ) : (
-                  <div className="relative rounded-lg border-2 border-white bg-white shadow-lg">
-                    <LocalImage
-                      className="h-20 w-20 rounded-lg object-cover md:h-28 md:w-28"
-                      alt="Category icon"
-                      src={logo!}
-                    />
-                  </div>
+                  <LocalImage
+                    className="h-20 w-20 rounded-lg border-2 border-white bg-white object-cover shadow-lg md:h-28 md:w-28"
+                    alt="Category icon"
+                    src={logo!}
+                  />
                 )}
 
-                <div className="flex flex-col justify-start gap-1 pt-7 md:gap-2 md:pt-12">
+                <div className="flex flex-col justify-start gap-1 pt-3 md:gap-2 md:pt-7">
                   {isListingsLoading ? (
                     <Skeleton className="h-4 max-w-48" />
                   ) : (
-                    <div className="flex items-center gap-2">
-                      <p className="max-w-56 truncate text-2xl font-semibold md:max-w-full md:text-3xl">
-                        {title}
+                    <div className="flex h-full items-center gap-2">
+                      <p className="mt-auto line-clamp-2 text-2xl font-semibold leading-none md:text-3xl">
+                        <span className="inline">
+                          {title}
+                          {!!isVerified && (
+                            <span className="ml-2 inline-block align-text-top">
+                              <VerifiedBadge className="inline h-4 w-4 md:h-5 md:w-5" />
+                            </span>
+                          )}
+                        </span>
                       </p>
-                      {!!isVerified && <VerifiedBadge className="h-4 w-4" />}
                     </div>
                   )}
                   {isListingsLoading ? (

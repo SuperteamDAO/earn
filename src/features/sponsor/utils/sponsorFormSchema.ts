@@ -25,7 +25,12 @@ export const sponsorBaseSchema = z
       .min(1, 'Entity bio is required')
       .max(180, 'Bio must be less than 180 characters'),
     logo: z.string().min(1, 'Entity logo is required'),
-    banner: z.string().optional().or(z.literal('')),
+    banner: z
+      .string()
+      .optional()
+      .or(z.literal(''))
+      .or(z.null())
+      .or(z.undefined()),
     industry: z.string().min(1, 'At least one industry must be selected'),
 
     entityName: z.string().min(1, 'Entity name is required'),
