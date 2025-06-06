@@ -1,7 +1,7 @@
 import { type SubmissionLabels } from '@prisma/client';
 import { useAtom } from 'jotai';
 import debounce from 'lodash.debounce';
-import { LucideListFilter, Search } from 'lucide-react';
+import { Search } from 'lucide-react';
 import React, {
   type Dispatch,
   type SetStateAction,
@@ -10,12 +10,6 @@ import React, {
 } from 'react';
 
 import { Checkbox } from '@/components/ui/checkbox';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import type { SubmissionWithUser } from '@/interface/submission';
 import { cn } from '@/utils/cn';
@@ -26,17 +20,18 @@ import { type Listing } from '@/features/listings/types';
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
 import { selectedSubmissionAtom } from '../../atoms';
-import { labelMenuOptions } from '../../constants';
 import { colorMap } from '../../utils/statusColorMap';
+import { MultiSelectFilter } from './MultiSelectFilter';
 
 interface Props {
   listing?: Listing;
   submissions: SubmissionWithUser[];
   setSearchText: Dispatch<SetStateAction<string>>;
   type?: string;
-  setFilterLabel: Dispatch<
-    SetStateAction<SubmissionLabels | 'Winner' | 'Rejected' | undefined>
-  >;
+  selectedFilters: Set<SubmissionLabels | 'Winner' | 'Rejected'>;
+  onFilterChange: (
+    filters: Set<SubmissionLabels | 'Winner' | 'Rejected'>,
+  ) => void;
   toggleSubmission?: (id: string) => void;
   isToggled?: (id: string) => boolean;
   toggleAllSubmissions?: () => void;
@@ -49,7 +44,8 @@ export const SubmissionList = ({
   submissions,
   setSearchText,
   type,
-  setFilterLabel,
+  selectedFilters,
+  onFilterChange,
   toggleSubmission,
   isToggled,
   toggleAllSubmissions,
@@ -122,78 +118,11 @@ export const SubmissionList = ({
             type="text"
           />
         </div>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <div className="relative cursor-pointer rounded-md p-1.5 hover:bg-slate-100">
-              <LucideListFilter className="size-4 stroke-3 text-slate-600" />
-              <span
-                className="absolute right-1.5 bottom-1.5 block size-1 rounded-full bg-green-500 ring-1 ring-white"
-                aria-hidden="true"
-              />
-            </div>
-          </DropdownMenuTrigger>
-
-          <DropdownMenuContent className="min-w-32 border-slate-300">
-            <DropdownMenuItem
-              className="focus:bg-slate-100"
-              onClick={() => setFilterLabel(undefined)}
-            >
-              <span className="inline-flex rounded-full bg-slate-100 px-3 text-center text-[10px] whitespace-nowrap capitalize">
-                Select Option
-              </span>
-            </DropdownMenuItem>
-
-            <DropdownMenuItem
-              className="focus:bg-slate-100"
-              onClick={() => setFilterLabel('Winner')}
-            >
-              <span
-                className={cn(
-                  'inline-flex rounded-full px-3 text-center text-[10px] whitespace-nowrap capitalize',
-                  colorMap['Winner'].bg,
-                  colorMap['Winner'].color,
-                )}
-              >
-                Winner
-              </span>
-            </DropdownMenuItem>
-
-            {listing?.type === 'project' && (
-              <DropdownMenuItem
-                className="focus:bg-slate-100"
-                onClick={() => setFilterLabel('Rejected')}
-              >
-                <span
-                  className={cn(
-                    'inline-flex rounded-full px-3 text-center text-[10px] whitespace-nowrap capitalize',
-                    colorMap['Rejected'].bg,
-                    colorMap['Rejected'].color,
-                  )}
-                >
-                  Rejected
-                </span>
-              </DropdownMenuItem>
-            )}
-
-            {labelMenuOptions.map((option) => (
-              <DropdownMenuItem
-                key={option.value}
-                className="focus:bg-slate-100"
-                onClick={() => setFilterLabel(option.value as SubmissionLabels)}
-              >
-                <span
-                  className={cn(
-                    'inline-flex rounded-full px-3 text-center text-[10px] whitespace-nowrap capitalize',
-                    colorMap[option.value as keyof typeof colorMap].bg,
-                    colorMap[option.value as keyof typeof colorMap].color,
-                  )}
-                >
-                  {option.label}
-                </span>
-              </DropdownMenuItem>
-            ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <MultiSelectFilter
+          selectedFilters={selectedFilters}
+          onFilterChange={onFilterChange}
+          listingType={listing?.type}
+        />
       </div>
       <div className="scrollbar-thin scrollbar-w-1 scrollbar-track-white scrollbar-thumb-slate-200 hover:scrollbar-thumb-slate-300 h-[42rem] w-full overflow-y-auto rounded-bl-lg border-t bg-white">
         {submissions.map((submission) => {

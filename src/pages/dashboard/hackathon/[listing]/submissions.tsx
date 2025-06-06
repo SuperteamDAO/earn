@@ -45,9 +45,9 @@ export default function BountySubmissions({ listing }: Props) {
     podiums: number;
     bonus: number;
   } | null>(null);
-  const [filterLabel, setFilterLabel] = useState<
-    SubmissionLabels | 'Winner' | 'Rejected' | undefined
-  >(undefined);
+  const [selectedFilters, setSelectedFilters] = useState<
+    Set<SubmissionLabels | 'Winner' | 'Rejected'>
+  >(new Set());
 
   const searchParams = useSearchParams();
   const posthog = usePostHog();
@@ -85,15 +85,25 @@ export default function BountySubmissions({ listing }: Props) {
         discord.includes(searchLower) ||
         link.includes(searchLower);
 
-      const matchesLabel =
-        !filterLabel ||
-        (filterLabel === 'Winner'
-          ? submission.isWinner
-          : submission.label === filterLabel);
+      let matchesLabel = false;
+
+      if (selectedFilters.size === 0) {
+        matchesLabel = true;
+      } else {
+        matchesLabel = Array.from(selectedFilters).some((filter) => {
+          if (filter === 'Winner') {
+            return submission.isWinner;
+          } else if (filter === 'Rejected') {
+            return submission.status === 'Rejected';
+          } else {
+            return submission.label === filter;
+          }
+        });
+      }
 
       return matchesSearch && matchesLabel;
     });
-  }, [submissions, searchText, filterLabel]);
+  }, [submissions, searchText, selectedFilters]);
 
   useEffect(() => {
     if (filteredSubmissions && filteredSubmissions.length > 0) {
@@ -214,7 +224,8 @@ export default function BountySubmissions({ listing }: Props) {
                   <div className="h-full w-full">
                     <SubmissionList
                       listing={bounty}
-                      setFilterLabel={setFilterLabel}
+                      selectedFilters={selectedFilters}
+                      onFilterChange={setSelectedFilters}
                       submissions={filteredSubmissions}
                       setSearchText={setSearchText}
                       type={bounty?.type}
@@ -233,10 +244,12 @@ export default function BountySubmissions({ listing }: Props) {
                           src={'/bg/talent-empty.svg'}
                         />
                         <p className="mx-auto mt-5 text-center text-lg font-semibold text-slate-600">
-                          {filterLabel ? 'Zero Results' : 'People are working!'}
+                          {selectedFilters.size > 0
+                            ? 'Zero Results'
+                            : 'People are working!'}
                         </p>
                         <p className="mx-auto mb-[200px] text-center font-medium text-slate-400">
-                          {filterLabel
+                          {selectedFilters.size > 0
                             ? 'For the filters you have selected'
                             : 'Submissions will start appearing here'}
                         </p>
@@ -254,7 +267,7 @@ export default function BountySubmissions({ listing }: Props) {
                 </div>
               </div>
 
-              {(!!searchText || !!filterLabel) && (
+              {(!!searchText || selectedFilters.size > 0) && (
                 <div className="mt-4 flex items-center justify-start gap-4">
                   <p className="text-sm text-slate-400">
                     Found{' '}

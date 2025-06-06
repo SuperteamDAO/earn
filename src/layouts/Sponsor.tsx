@@ -1,6 +1,6 @@
 import { usePrivy } from '@privy-io/react-auth';
 import { useQuery } from '@tanstack/react-query';
-import { Lock, MessageSquare, Plus, Users } from 'lucide-react';
+import { Lock, Plus, Users } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { usePostHog } from 'posthog-js/react';
@@ -22,7 +22,6 @@ import { LoadingSection } from '@/components/shared/LoadingSection';
 import { Button } from '@/components/ui/button';
 import { Tooltip } from '@/components/ui/tooltip';
 import { Superteams, unofficialSuperteams } from '@/constants/Superteam';
-import { PDTG } from '@/constants/Telegram';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
@@ -42,7 +41,6 @@ interface LinkItemProps {
   link?: string;
   icon: IconType;
   isExternal?: boolean;
-  posthog?: string;
 }
 
 export function SponsorLayout({
@@ -156,10 +154,9 @@ export function SponsorLayout({
     ? [
         { name: 'All Tracks', link: `/hackathon`, icon: MdList },
         {
-          name: 'Get Help',
-          link: PDTG,
+          name: 'FAQ',
+          link: '/faq',
           icon: MdOutlineChatBubbleOutline,
-          posthog: 'get help_sponsor',
         },
       ]
     : [
@@ -179,10 +176,9 @@ export function SponsorLayout({
             ]
           : []),
         {
-          name: 'Get Help',
-          link: PDTG,
-          icon: MessageSquare,
-          posthog: 'get help_sponsor',
+          name: 'FAQ',
+          link: '/faq',
+          icon: MdOutlineChatBubbleOutline,
         },
       ];
 
@@ -321,9 +317,6 @@ export function SponsorLayout({
           </div>
           {LinkItems.map((link) => (
             <NavItem
-              onClick={() => {
-                if (link.posthog) posthog.capture(link.posthog);
-              }}
               className="ph-no-capture"
               key={link.name}
               link={link.link}

@@ -249,7 +249,7 @@ export const SubmissionHeader = ({
           </p>
         </div>
       </div>
-      {!isProject ? (
+      {!isProject && !bounty?.isWinnersAnnounced && (
         <div>
           {activeTab === 'submissions' && (
             <Tooltip
@@ -282,7 +282,9 @@ export const SubmissionHeader = ({
             </Tooltip>
           )}
         </div>
-      ) : (
+      )}
+
+      {isProject && !bounty?.isWinnersAnnounced && (
         <div>
           <p className="text-slate-800">
             Didn&apos;t find a suitable candidate?{' '}
@@ -294,6 +296,23 @@ export const SubmissionHeader = ({
             </span>
           </p>
         </div>
+      )}
+
+      {bounty?.isWinnersAnnounced && activeTab === 'submissions' && (
+        <Button
+          className={cn(
+            'text-base font-semibold disabled:cursor-not-allowed disabled:bg-[#A1A1A1] disabled:hover:bg-[#A1A1A1]',
+          )}
+          onClick={() => {
+            router.push(
+              `/dashboard/listings/${bounty?.slug}/submissions?tab=payments`,
+            );
+          }}
+          variant="default"
+        >
+          <Check className="size-4" />
+          Pay Winners
+        </Button>
       )}
 
       {activeTab === 'payments' && (
