@@ -59,7 +59,7 @@ export const UserDrawer = ({
               />
               <div className="ml-4">
                 <div className="flex gap-3">
-                  <p className="font-medium">{`${user?.firstName} ${user?.lastName}`}</p>
+                  <p className="font-medium">{`${user?.name}`}</p>
                 </div>
                 <p className="-mt-0.5 text-sm text-slate-500">{user?.email}</p>
               </div>

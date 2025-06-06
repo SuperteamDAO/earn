@@ -128,7 +128,7 @@ export const ApplicationDetails = ({
                 />
                 <div>
                   <p className="w-full whitespace-nowrap text-base font-medium text-slate-900">
-                    {`${selectedApplication?.user?.firstName}'s Application`}
+                    {`${selectedApplication?.user?.username}'s Application`}
                   </p>
                   <Link
                     href={`/t/${selectedApplication?.user?.username}`}

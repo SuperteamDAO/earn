@@ -112,10 +112,7 @@ export const DeleteRestoreSubmissionModal = ({
             {isDeleted
               ? `This will restore the submission from `
               : `This will hide the submission from the public view`}
-            <span className="font-medium">
-              {submission?.user?.firstName} {submission?.user?.lastName}
-            </span>
-            .
+            <span className="font-medium">{submission?.user?.name}</span>.
           </DialogDescription>
         </DialogHeader>
 

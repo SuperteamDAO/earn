@@ -22,7 +22,7 @@ export const scoutsQuery = ({ bountyId }: { bountyId: string }) =>
         recommended: scout.user.stRecommended ?? false,
         invited: scout.invited,
         pfp: scout.user.photo ?? null,
-        name: (scout.user.firstName ?? '') + ' ' + (scout.user.lastName ?? ''),
+        name: scout.user.name ?? '',
         username: scout.user.username ?? null,
       })),
   });

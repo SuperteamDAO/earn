@@ -10,8 +10,7 @@ interface PowCardProps {
   pow: {
     createdAt: string;
     description: string;
-    firstName: string;
-    lastName: string;
+    name: string;
     link: string;
     photo: string;
     title: string;
@@ -35,8 +34,7 @@ export function PowCard({ pow, type, commentCount }: PowCardProps) {
     description: pow?.description,
   };
 
-  const firstName = pow?.firstName;
-  const lastName = pow?.lastName;
+  const name = pow?.name;
   const photo = pow?.photo;
   const username = pow?.username;
 
@@ -56,8 +54,7 @@ export function PowCard({ pow, type, commentCount }: PowCardProps) {
       type={type}
       content={content}
       actionLinks={actionLinks}
-      firstName={firstName}
-      lastName={lastName}
+      name={name}
       photo={photo}
       username={username}
       id={pow?.id}

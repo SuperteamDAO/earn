@@ -119,11 +119,7 @@ export const RecentActivity = () => {
         {data?.map((act, i) => (
           <ActivityCard
             key={i}
-            name={
-              act.user.firstName && act.user.lastName
-                ? `${act.user.firstName} ${act.user.lastName}`
-                : act.user.username
-            }
+            name={act.user.name || act.user.username}
             username={act.user.username}
             createdAt={act.createdAt}
             listingType={act.listing.type as 'bounty' | 'hackathon' | 'project'}

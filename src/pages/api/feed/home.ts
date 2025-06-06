@@ -26,8 +26,7 @@ export default async function handler(
         },
         user: {
           select: {
-            firstName: true,
-            lastName: true,
+            name: true,
             username: true,
             private: true,
           },
@@ -43,12 +42,7 @@ export default async function handler(
         ...submission,
         user: {
           ...submission.user,
-          firstName: submission.user?.private
-            ? undefined
-            : submission.user?.firstName,
-          lastName: submission.user?.private
-            ? undefined
-            : submission.user?.lastName,
+          name: submission.user?.private ? undefined : submission.user?.name,
         },
       })),
     );

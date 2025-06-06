@@ -22,11 +22,11 @@ export default async function checkUsername(
     return res.status(405).end('Method Not Allowed');
   }
 
-  const { firstName } = req.query;
+  const { name } = req.query;
 
-  if (firstName && typeof firstName !== 'string') {
-    logger.warn('Invalid firstName parameter');
-    return res.status(400).json({ error: 'firstName is must be a string.' });
+  if (name && typeof name !== 'string') {
+    logger.warn('Invalid name parameter');
+    return res.status(400).json({ error: 'name is must be a string.' });
   }
 
   const numberDictionary = NumberDictionary.generate({ min: 1, max: 99 });
@@ -38,20 +38,20 @@ export default async function checkUsername(
   try {
     while (attempt < 10) {
       let shuffledDictionaries = dictionaries.sort(() => Math.random() - 0.5);
-      shuffledDictionaries = firstName
+      shuffledDictionaries = name
         ? shuffledDictionaries.slice(0, 1)
         : shuffledDictionaries.slice(0, 2);
 
       const randUserConfig: Config = {
         dictionaries: [...shuffledDictionaries, numberDictionary],
         separator: '-',
-        length: firstName ? 2 : 3,
+        length: name ? 2 : 3,
         style: 'lowerCase',
       };
 
       let generatedUsername = uniqueNamesGenerator(randUserConfig);
-      if (firstName)
-        generatedUsername = firstName.toLowerCase() + '-' + generatedUsername;
+      if (name)
+        generatedUsername = name.toLowerCase() + '-' + generatedUsername;
 
       logger.debug(
         `Attempt ${attempt + 1}: Checking username ${generatedUsername}`,

@@ -175,7 +175,7 @@ export const PaymentsHistoryTab = ({
                         />
                         <div className="flex flex-col">
                           <p className="text-sm font-medium text-slate-700">
-                            {grantee.user.firstName} {grantee.user.lastName}
+                            {grantee.user.name}
                           </p>
                           <p className="text-sm font-medium text-slate-500">
                             @{grantee.user.username}

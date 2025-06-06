@@ -115,8 +115,7 @@ export const AddProject = ({
       link: data.link,
       skills: data.skills,
       subSkills: data.subSkills,
-      firstName: user?.firstName,
-      lastName: user?.lastName,
+      name: user?.name,
       photo: user?.photo,
       createdAt: new Date().toISOString(),
     };

@@ -72,8 +72,7 @@ async function createGrantApplication(
     include: {
       user: {
         select: {
-          firstName: true,
-          lastName: true,
+          name: true,
           email: true,
           discord: true,
           location: true,

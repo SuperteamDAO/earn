@@ -57,9 +57,7 @@ export default function LocalProfiles() {
     const searchMatch =
       user.username.toLowerCase().includes(searchLower) ||
       user.email.toLowerCase().includes(searchLower) ||
-      user.firstName.toLowerCase().includes(searchLower) ||
-      user.lastName.toLowerCase().includes(searchLower) ||
-      `${user.firstName} ${user.lastName}`.toLowerCase().includes(searchLower);
+      user.name.toLowerCase().includes(searchLower);
 
     const selectedSkills = Object.keys(checkedItems).filter(
       (skill) => checkedItems[skill],
@@ -81,11 +79,7 @@ export default function LocalProfiles() {
 
     switch (currentSort.column) {
       case 'user':
-        return (
-          `${a.firstName} ${a.lastName}`.localeCompare(
-            `${b.firstName} ${b.lastName}`,
-          ) * factor
-        );
+        return `${a.name}`.localeCompare(`${b.name}`) * factor;
       case 'earned':
         return (a.totalEarnings - b.totalEarnings) * factor;
       case 'rank':

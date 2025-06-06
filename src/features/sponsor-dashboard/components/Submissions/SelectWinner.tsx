@@ -166,7 +166,7 @@ export const SelectWinner = ({
         onRejectSubmission={handleRejectSubmission}
         rejectIsOpen={rejectedIsOpen}
         submissionId={selectedSubmission?.id}
-        applicantName={selectedSubmission?.user.firstName}
+        applicantName={selectedSubmission?.user.name}
         rejectOnClose={rejectedOnClose}
       />
     </>

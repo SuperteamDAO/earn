@@ -17,8 +17,7 @@ async function handler(
   const status = params.status as string;
   const customQuestion = params.customQuestion;
   const customAnswer = params.customAnswer;
-  const firstName = params.firstName;
-  const lastName = params.lastName;
+  const name = params.name;
   const sequentialId = params.sequentialId;
 
   const isGod = req.authorized && req.role === 'GOD';
@@ -82,8 +81,7 @@ async function handler(
           ...validation,
         },
         user: {
-          ...(lastName && { lastName: { contains: lastName as string } }),
-          ...(firstName && { firstName: { contains: firstName as string } }),
+          ...(name && { name: { contains: name as string } }),
         },
         ...(sequentialId && {
           sequentialId: { equals: parseInt(sequentialId as string) },
@@ -96,8 +94,7 @@ async function handler(
         user: {
           select: {
             id: true,
-            firstName: true,
-            lastName: true,
+            name: true,
             publicKey: true,
             photo: true,
             username: true,
@@ -129,8 +126,7 @@ async function handler(
         notes: undefined,
         user: {
           ...r.user,
-          firstName: r.user.private ? undefined : r.user.firstName,
-          lastName: r.user.private ? undefined : r.user.lastName,
+          name: r.user.private ? undefined : r.user.name,
         },
         listing: {
           ...r.listing,

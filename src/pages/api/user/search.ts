@@ -49,12 +49,7 @@ export default async function searchUser(
                 },
               },
               {
-                firstName: {
-                  contains: query as string,
-                },
-              },
-              {
-                lastName: {
+                name: {
                   contains: query as string,
                 },
               },
@@ -67,8 +62,7 @@ export default async function searchUser(
         id: true,
         username: true,
         photo: true,
-        firstName: true,
-        lastName: true,
+        name: true,
       },
     });
 

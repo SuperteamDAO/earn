@@ -254,7 +254,7 @@ const Index = () => {
                             />
                             <div className="ml-2 hidden md:block">
                               <p className="text-sm font-medium text-slate-500">
-                                {`${member?.user?.firstName} ${member?.user?.lastName}`}
+                                {member?.user?.name}
                               </p>
                               <p className="text-sm text-slate-400">
                                 @{member?.user?.username}

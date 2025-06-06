@@ -80,7 +80,7 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
         </div>
 
         {!router.pathname.startsWith('/new/') && (
-          <div className="absolute left-1/2 -translate-x-1/2">
+          <div className="absolute left-1/2 -translate-x-3/4">
             <div className="ml-10 flex h-full items-center justify-center">
               <div className="ph-no-capture flex h-full flex-row items-center gap-7">
                 {LISTING_NAV_ITEMS?.map((navItem) => {

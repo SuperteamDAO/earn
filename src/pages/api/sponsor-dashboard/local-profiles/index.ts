@@ -98,8 +98,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       where: { location: { in: countries } },
       select: {
         id: true,
-        firstName: true,
-        lastName: true,
+        name: true,
         email: true,
         skills: true,
         telegram: true,

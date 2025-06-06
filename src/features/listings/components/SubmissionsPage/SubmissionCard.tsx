@@ -85,7 +85,7 @@ export const SubmissionCard = ({
                 avatar={talent?.photo || undefined}
               />
               <p className="max-w-[8rem] overflow-hidden text-ellipsis whitespace-nowrap text-base font-medium text-gray-900">
-                {talent?.firstName} {talent?.lastName}
+                {talent?.name}
               </p>
             </div>
           </Link>

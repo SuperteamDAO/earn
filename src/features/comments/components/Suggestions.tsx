@@ -44,8 +44,7 @@ export const Suggestions = ({ defaultSuggestions, input, onSelect }: Props) => {
       searchSuggestions.forEach((value, key) => {
         if (
           value.username?.toLowerCase().includes(text.toLowerCase()) ||
-          value.firstName?.toLowerCase().includes(text.toLowerCase()) ||
-          value.lastName?.toLowerCase().includes(text.toLowerCase())
+          value.name?.toLowerCase().includes(text.toLowerCase())
         ) {
           filteredSuggestions.set(key, value);
         }
@@ -120,7 +119,7 @@ export const Suggestions = ({ defaultSuggestions, input, onSelect }: Props) => {
             />
             <div className="flex flex-col items-start">
               <p className="text-sm font-medium text-slate-900">
-                {suggestion.firstName} {suggestion.lastName}
+                {suggestion.name}
               </p>
               <p className="max-w-[10rem] overflow-hidden text-ellipsis text-xs font-medium text-slate-500">
                 @{suggestion.username}

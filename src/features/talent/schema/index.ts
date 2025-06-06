@@ -35,12 +35,7 @@ export const profileSchema = z
       )
       .transform((val) => val.replace(/^[-\s]+|[-\s]+$/g, '')),
     photo: z.string().optional().nullable(),
-    firstName: z
-      .string({ message: 'First name is required' })
-      .min(1, 'First name is required'),
-    lastName: z
-      .string({ message: 'Last name is required' })
-      .min(1, 'Last name is required'),
+    name: z.string({ message: 'Name is required' }).min(1, 'Name is required'),
     bio: z.string().max(180, 'Bio cannot exceed 180 characters').optional(),
     discord: discordUsernameSchema.optional().or(z.literal('')),
     twitter: twitterUsernameSchema.optional().or(z.literal('')),
@@ -166,8 +161,7 @@ export const usernameSuperRefine = async (
 
 export const newTalentSchema = profileSchema._def.schema.pick({
   username: true,
-  firstName: true,
-  lastName: true,
+  name: true,
   location: true,
   photo: true,
   publicKey: true,
@@ -183,8 +177,7 @@ export type NewTalentFormData = z.infer<typeof newTalentSchema>;
 
 export const aboutYouSchema = profileSchema._def.schema.pick({
   username: true,
-  firstName: true,
-  lastName: true,
+  name: true,
   location: true,
   photo: true,
   publicKey: true,

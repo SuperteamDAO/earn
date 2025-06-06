@@ -531,8 +531,7 @@ END)
         user: {
           select: {
             stRecommended: true,
-            firstName: true,
-            lastName: true,
+            name: true,
             username: true,
             photo: true,
           },

@@ -52,7 +52,7 @@ export default async function handler(
         author: {
           select: {
             photo: true,
-            firstName: true,
+            name: true,
           },
         },
       },
@@ -67,8 +67,7 @@ export default async function handler(
         const submissionInclude: Prisma.SubmissionInclude = {
           user: {
             select: {
-              firstName: true,
-              lastName: true,
+              name: true,
               photo: true,
               username: true,
               private: true,
@@ -134,8 +133,7 @@ export default async function handler(
             winnerPosition: sub.listing.isWinnersAnnounced
               ? sub.winnerPosition
               : null,
-            firstName: sub.user.private ? undefined : sub.user.firstName,
-            lastName: sub.user.private ? undefined : sub.user.lastName,
+            name: sub.user.private ? undefined : sub.user.name,
             photo: sub.user.photo,
             username: sub.user.username,
             listingId: sub.listing.id,
@@ -163,8 +161,7 @@ export default async function handler(
         const poWInclude: Prisma.PoWInclude = {
           user: {
             select: {
-              firstName: true,
-              lastName: true,
+              name: true,
               photo: true,
               username: true,
             },
@@ -192,8 +189,7 @@ export default async function handler(
             createdAt: pow.createdAt,
             description: pow.description,
             title: pow.title,
-            firstName: pow.user.firstName,
-            lastName: pow.user.lastName,
+            name: pow.user.name,
             photo: pow.user.photo,
             username: pow.user.username,
             type: 'pow',
@@ -211,8 +207,7 @@ export default async function handler(
         const grantApplicationInclude: Prisma.GrantApplicationInclude = {
           user: {
             select: {
-              firstName: true,
-              lastName: true,
+              name: true,
               photo: true,
               username: true,
             },
@@ -248,8 +243,7 @@ export default async function handler(
           feedPost = [grantApplication].map((ga) => ({
             id: ga.id,
             createdAt: ga.decidedAt || ga.createdAt,
-            firstName: ga.user.firstName,
-            lastName: ga.user.lastName,
+            name: ga.user.name,
             photo: ga.user.photo,
             username: ga.user.username,
             listingId: ga.grant.id,

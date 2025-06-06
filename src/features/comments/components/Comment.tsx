@@ -218,9 +218,9 @@ export const Comment = ({
               tabIndex={-1}
               target="_blank"
             >
-              {comment.author?.firstName && comment.author?.lastName ? (
+              {comment.author?.name ? (
                 <p className="text-sm font-medium text-slate-800 md:text-base">
-                  {`${comment?.author?.firstName} ${comment?.author?.lastName}`}
+                  {`${comment?.author?.name}`}
                 </p>
               ) : (
                 <p className="text-sm font-medium text-slate-800 md:text-base">

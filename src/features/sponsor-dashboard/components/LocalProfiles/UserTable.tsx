@@ -143,7 +143,7 @@ const MemberRow = ({ user }: { user: LocalProfile }) => {
           <EarnAvatar className="h-9 w-9" id={user?.id} avatar={user?.photo} />
           <div className="ml-2 hidden md:block">
             <p className="line-clamp-1 w-40 text-sm font-medium text-slate-700 group-hover:underline">
-              {`${user?.firstName} ${user?.lastName}`}
+              {user?.name}
             </p>
             <p className="max-w-40 overflow-x-hidden text-ellipsis text-sm font-medium text-slate-500">
               @{user?.username}

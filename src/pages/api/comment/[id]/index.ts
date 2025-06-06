@@ -38,8 +38,7 @@ export default async function comment(
       include: {
         author: {
           select: {
-            firstName: true,
-            lastName: true,
+            name: true,
             photo: true,
             username: true,
             currentSponsorId: true,
@@ -50,8 +49,7 @@ export default async function comment(
           include: {
             author: {
               select: {
-                firstName: true,
-                lastName: true,
+                name: true,
                 photo: true,
                 username: true,
                 currentSponsorId: true,
@@ -99,12 +97,7 @@ export default async function comment(
         ...comment,
         author: {
           ...comment.author,
-          firstName: comment.author?.private
-            ? undefined
-            : comment.author?.firstName,
-          lastName: comment.author?.private
-            ? undefined
-            : comment.author?.lastName,
+          name: comment.author?.private ? undefined : comment.author?.name,
         },
       })),
       validUsernames: validUsernames

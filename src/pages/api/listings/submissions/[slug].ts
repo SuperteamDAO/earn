@@ -40,8 +40,7 @@ async function handler(
         poc: {
           select: {
             id: true,
-            firstName: true,
-            lastName: true,
+            name: true,
           },
         },
         Hackathon: {
@@ -78,8 +77,7 @@ async function handler(
         user: {
           select: {
             id: true,
-            firstName: true,
-            lastName: true,
+            name: true,
             publicKey: true,
             photo: true,
             username: true,
@@ -123,12 +121,7 @@ async function handler(
         ...submission,
         user: {
           ...submission.user,
-          firstName: submission.user?.private
-            ? undefined
-            : submission.user?.firstName,
-          lastName: submission.user?.private
-            ? undefined
-            : submission.user?.lastName,
+          name: submission.user?.private ? undefined : submission.user?.name,
           publicKey: submission.user?.private
             ? undefined
             : submission.user?.publicKey,

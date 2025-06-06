@@ -65,7 +65,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         });
         return {
           'Sr no': i + 1,
-          Name: `${user.firstName} ${user.lastName}`,
+          Name: user.name ?? user.username ?? '',
           'Email ID': user.email,
           'Profile Link': `${getURL()}/t/${user.username}`,
           'User Wallet': user.publicKey,

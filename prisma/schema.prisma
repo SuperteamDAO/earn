@@ -382,8 +382,7 @@ model User {
   email              String               @unique
   username           String?              @unique
   photo              String?              @db.Text
-  firstName          String?              @db.VarChar(255)
-  lastName           String?              @db.VarChar(255)
+  name               String?              @db.VarChar(255)
   createdAt          DateTime             @default(now())
   updatedAt          DateTime             @updatedAt
   isVerified         Boolean              @default(false)
@@ -439,8 +438,7 @@ model User {
   @@index([hackathonId])
   @@index([email])
   @@index([username])
-  @@index([firstName])
-  @@index([lastName])
+  @@index([name])
   @@index([location])
 }
 

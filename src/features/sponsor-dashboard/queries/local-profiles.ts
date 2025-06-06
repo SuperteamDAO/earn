@@ -6,8 +6,7 @@ import { api } from '@/lib/api';
 export interface LocalProfile {
   id: string;
   photo: string;
-  firstName: string;
-  lastName: string;
+  name: string;
   username: string;
   email: string;
   bio: string;

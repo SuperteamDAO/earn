@@ -22,8 +22,7 @@ export const authOptions: NextAuthOptions = {
       profile(profile) {
         return {
           id: Number(profile.sub),
-          firstName: profile.given_name,
-          lastName: profile.family_name,
+          name: `${profile.given_name}${profile.family_name ? ` ${profile.family_name}` : ''}`,
           email: profile.email,
           emailVerified: profile.emailVerified,
           photo: profile.picture,
@@ -105,8 +104,7 @@ export const authOptions: NextAuthOptions = {
     async session({ session, token }) {
       session.user.id = token.id;
       session.user.photo = token.photo;
-      session.user.firstName = token.firstName;
-      session.user.lastName = token.lastName;
+      session.user.name = token.name;
       session.token = token.access_token;
       session.user.role = token.role;
       session.user.location = token.location;

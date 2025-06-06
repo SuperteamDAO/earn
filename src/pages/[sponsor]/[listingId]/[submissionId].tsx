@@ -174,7 +174,7 @@ function Content({
                   <div className="flex w-full justify-between gap-2">
                     <div className="flex items-center gap-2">
                       <p className="w-full whitespace-nowrap font-medium text-slate-900">
-                        {`${submission?.user?.username}'s Submission`}
+                        {`${(submission?.user?.name ?? submission?.user?.username)?.split(' ')[0]}'s Submission`}
                       </p>
                       <span
                         className={cn(

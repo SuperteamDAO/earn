@@ -209,9 +209,7 @@ function TalentProfile({ talent, stats }: TalentProps) {
   const ogImage = new URL(`${getURL()}api/dynamic-og/talent/`);
   ogImage.searchParams.set(
     'name',
-    talent.private
-      ? talent.username!
-      : `${talent?.firstName} ${talent?.lastName}`,
+    talent.private ? talent.username! : (talent.name ?? ''),
   );
   ogImage.searchParams.set('username', talent?.username!);
   ogImage.searchParams.set('skills', JSON.stringify(talent?.skills));
@@ -226,10 +224,9 @@ function TalentProfile({ talent, stats }: TalentProps) {
   ogImage.searchParams.set('winnerCount', stats?.wins?.toString());
   ogImage.searchParams.set('photo', talent?.photo!);
 
-  const title =
-    talent?.firstName && talent?.lastName
-      ? `${talent?.firstName} ${talent?.lastName} | ${PROJECT_NAME} Talent`
-      : `${talent?.username} | ${PROJECT_NAME} Talent`;
+  const title = talent?.name
+    ? `${talent?.name} | ${PROJECT_NAME} Talent`
+    : `${talent?.username} | ${PROJECT_NAME} Talent`;
 
   const feedItems = feed?.pages.flatMap((page) => page) ?? [];
 
@@ -278,7 +275,7 @@ function TalentProfile({ talent, stats }: TalentProps) {
                 <p className="mt-6 text-lg font-semibold text-slate-900 md:text-xl">
                   {talent.private
                     ? `@${talent.username}`
-                    : `${talent?.firstName} ${talent?.lastName}`}
+                    : (talent?.name ?? '')}
                 </p>
                 <p
                   className={cn(

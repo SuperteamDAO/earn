@@ -188,7 +188,7 @@ export const ApplicationList = ({
                   {application?.projectTitle}
                 </p>
                 <p className="overflow-hidden text-ellipsis whitespace-nowrap text-xs font-medium text-slate-500">
-                  {`${application?.user?.firstName} ${application?.user?.lastName}`}
+                  {application?.user?.name}
                 </p>
               </div>
             </div>

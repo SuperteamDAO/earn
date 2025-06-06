@@ -173,9 +173,7 @@ export default function BountySubmissions({ slug }: Props) {
   const filteredSubmissions = useMemo(() => {
     if (!submissions) return [];
     return submissions.filter((submission: SubmissionWithUser) => {
-      const firstName = submission.user.firstName?.toLowerCase() || '';
-      const lastName = submission.user.lastName?.toLowerCase() || '';
-      const fullName = `${firstName} ${lastName}`.trim();
+      const name = submission.user.name?.toLowerCase() || '';
       const email = submission.user.email?.toLowerCase() || '';
       const username = submission.user.username?.toLowerCase() || '';
       const twitter = submission.user.twitter?.toLowerCase() || '';
@@ -186,9 +184,7 @@ export default function BountySubmissions({ slug }: Props) {
 
       const matchesSearch =
         searchText === '' ||
-        firstName.includes(searchLower) ||
-        lastName.includes(searchLower) ||
-        fullName.includes(searchLower) ||
+        name.includes(searchLower) ||
         email.includes(searchLower) ||
         username.includes(searchLower) ||
         twitter.includes(searchLower) ||

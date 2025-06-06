@@ -323,7 +323,7 @@ export const SubmissionList = ({
               <div className="ml-2 w-40">
                 <div className="flex items-center gap-2">
                   <p className="overflow-hidden text-ellipsis whitespace-nowrap text-sm font-medium text-slate-700">
-                    {`${submission?.user?.firstName} ${submission?.user?.lastName}`}
+                    {submission?.user?.name}
                   </p>
                   <KycComponent
                     address={submission?.user?.publicKey}

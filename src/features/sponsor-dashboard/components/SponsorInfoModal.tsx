@@ -32,8 +32,7 @@ export const SponsorInfoModal = ({
   const form = useForm<UserSponsorDetails>({
     resolver: zodResolver(userSponsorDetailsSchema),
     defaultValues: {
-      firstName: user?.firstName || '',
-      lastName: user?.lastName || '',
+      name: user?.name || '',
       username: user?.username || '',
       photo: user?.photo || '',
     },
@@ -126,20 +125,8 @@ export const SponsorInfoModal = ({
               <Input placeholder="Username" value={username} />
             </FormFieldWrapper>
             <div className="my-5 flex w-full justify-between gap-8">
-              <FormFieldWrapper
-                control={form.control}
-                name="firstName"
-                label="First Name"
-              >
-                <Input placeholder="First Name" />
-              </FormFieldWrapper>
-
-              <FormFieldWrapper
-                control={form.control}
-                name="lastName"
-                label="Last Name"
-              >
-                <Input placeholder="Last Name" />
+              <FormFieldWrapper control={form.control} name="name" label="Name">
+                <Input placeholder="Name" maxLength={255} />
               </FormFieldWrapper>
             </div>
 

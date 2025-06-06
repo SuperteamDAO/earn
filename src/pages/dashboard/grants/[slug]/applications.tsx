@@ -695,7 +695,7 @@ function GrantApplications({ slug }: Props) {
             rejectIsOpen={rejectedIsOpen}
             rejectOnClose={rejectedOnClose}
             ask={selectedApplication?.ask}
-            granteeName={selectedApplication?.user?.firstName}
+            granteeName={selectedApplication?.user?.name}
             token={grant?.token || 'USDC'}
             onRejectGrant={handleRejectGrant}
           />
@@ -705,7 +705,7 @@ function GrantApplications({ slug }: Props) {
             approveIsOpen={approveIsOpen}
             approveOnClose={approveOnClose}
             ask={selectedApplication?.ask}
-            granteeName={selectedApplication?.user?.firstName}
+            granteeName={selectedApplication?.user?.name}
             token={grant?.token || 'USDC'}
             onApproveGrant={handleApproveGrant}
             max={grant?.maxReward}

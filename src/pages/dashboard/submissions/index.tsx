@@ -129,10 +129,7 @@ export default function SponsorListings() {
           submission.listing.title
             ?.toLowerCase()
             .includes(searchText.toLowerCase()) ||
-          submission.user.firstName
-            ?.toLowerCase()
-            .includes(searchText.toLowerCase()) ||
-          submission.user.lastName
+          submission.user.name
             ?.toLowerCase()
             .includes(searchText.toLowerCase());
 

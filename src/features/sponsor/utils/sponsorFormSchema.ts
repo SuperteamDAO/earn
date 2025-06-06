@@ -47,14 +47,10 @@ export const sponsorBaseSchema = z
   });
 
 export const userSponsorDetailsSchema = z.object({
-  firstName: z
+  name: z
     .string()
-    .min(1, 'First name is required')
-    .max(100, 'First name must be less than 100 characters'),
-  lastName: z
-    .string()
-    .min(1, 'Last name is required')
-    .max(100, 'Last name must be less than 100 characters'),
+    .min(1, 'Name is required')
+    .max(255, 'Name must be less than 255 characters'),
   username: z
     .string()
     .min(1, 'Username is required')
@@ -94,8 +90,7 @@ export const transformFormToApiData = (data: SponsorFormValues) => {
 
   const userData = data.user
     ? {
-        firstName: data.user.firstName,
-        lastName: data.user.lastName,
+        name: data.user.name,
         username: data.user.username,
         photo: data.user.photo,
       }
@@ -112,8 +107,7 @@ export const shouldUpdateUser = (
   currentUser: any,
 ) => {
   return (
-    formData.firstName !== currentUser?.firstName ||
-    formData.lastName !== currentUser?.lastName ||
+    formData.name !== currentUser?.name ||
     formData.username !== currentUser?.username ||
     formData.photo !== currentUser?.photo
   );

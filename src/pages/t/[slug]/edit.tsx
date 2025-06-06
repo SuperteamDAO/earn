@@ -124,8 +124,7 @@ export default function EditProfilePage({ slug }: { slug: string }) {
           profileSchema._def.schema.shape.skills.safeParse(user.skills).data ||
           undefined,
         private: user.private || undefined,
-        firstName: user.firstName || undefined,
-        lastName: user.lastName || undefined,
+        name: user.name || undefined,
         publicKey: user.publicKey || undefined,
         discord: user.discord || undefined,
         github: user.github
@@ -380,23 +379,13 @@ export default function EditProfilePage({ slug }: { slug: string }) {
               </FormFieldWrapper>
 
               <FormFieldWrapper
-                label="First Name"
-                name="firstName"
+                label="Name"
+                name="name"
                 control={control}
                 isRequired
                 className="mb-5"
               >
-                <Input placeholder="First Name" />
-              </FormFieldWrapper>
-
-              <FormFieldWrapper
-                className="mb-5"
-                label="Last Name"
-                name="lastName"
-                control={control}
-                isRequired
-              >
-                <Input placeholder="Last Name" />
+                <Input placeholder="Name" maxLength={255} />
               </FormFieldWrapper>
 
               <FormField

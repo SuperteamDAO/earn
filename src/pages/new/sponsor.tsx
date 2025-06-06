@@ -79,8 +79,7 @@ const CreateSponsor = () => {
         entityName: '',
       },
       user: {
-        firstName: user?.firstName || '',
-        lastName: user?.lastName || '',
+        name: user?.name || '',
         username: user?.username || '',
         photo: user?.photo || '',
       },
@@ -92,8 +91,7 @@ const CreateSponsor = () => {
       user.username && setUsername(user.username);
       form.reset({
         user: {
-          firstName: user?.firstName || '',
-          lastName: user?.lastName || '',
+          name: user?.name || '',
           username: user?.username || '',
           photo: user?.photo || '',
         },
@@ -341,19 +339,11 @@ const CreateSponsor = () => {
                 <div className="mb-4 flex w-full justify-between gap-2">
                   <FormFieldWrapper
                     control={form.control}
-                    name="user.firstName"
-                    label="First Name"
+                    name="user.name"
+                    label="Name"
                     isRequired
                   >
-                    <Input placeholder="First Name" />
-                  </FormFieldWrapper>
-                  <FormFieldWrapper
-                    control={form.control}
-                    name="user.lastName"
-                    label="Last Name"
-                    isRequired
-                  >
-                    <Input placeholder="Last Name" />
+                    <Input placeholder="Name" maxLength={255} />
                   </FormFieldWrapper>
                 </div>
                 <div className="mb-4 flex">

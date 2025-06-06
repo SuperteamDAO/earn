@@ -14,8 +14,7 @@ import { profileSchema, usernameSuperRefine } from '@/features/talent/schema';
 const allowedFields = [
   'username',
   'photo',
-  'firstName',
-  'lastName',
+  'name',
   'interests',
   'bio',
   'twitter',

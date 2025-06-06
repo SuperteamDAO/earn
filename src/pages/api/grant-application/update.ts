@@ -91,8 +91,7 @@ async function updateGrantApplication(
     include: {
       user: {
         select: {
-          firstName: true,
-          lastName: true,
+          name: true,
           email: true,
           discord: true,
           location: true,

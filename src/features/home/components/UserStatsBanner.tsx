@@ -42,7 +42,7 @@ export const UserStatsBanner = () => {
         <div className="flex flex-col gap-0">
           <p className="max-w-[25rem] truncate text-lg font-semibold md:text-xl">
             {user.isTalentFilled
-              ? `Welcome back, ${user.firstName}`
+              ? `Welcome back, ${user.name?.split(' ')[0]}`
               : 'Welcome!'}
           </p>
           <p className="text-sm text-gray-500">

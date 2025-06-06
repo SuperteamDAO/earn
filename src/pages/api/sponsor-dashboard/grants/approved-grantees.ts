@@ -42,8 +42,7 @@ async function grantApplication(
         user: {
           select: {
             photo: true,
-            firstName: true,
-            lastName: true,
+            name: true,
             username: true,
           },
         },

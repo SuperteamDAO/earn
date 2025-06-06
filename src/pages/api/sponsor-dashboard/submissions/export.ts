@@ -112,7 +112,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         'Listing ID': submission.listing?.sequentialId,
         'Submission ID': submission.sequentialId,
         'Profile Link': `${getURL()}/t/${user.username}`,
-        Name: `${user.firstName} ${user.lastName}`,
+        Name: user.name ?? user.username ?? '',
         'Submission Link': getSubmissionUrl(submission, submission.listing),
         'USD-based': isUsdBased ? 'True' : 'False',
         Ask: ask,

@@ -152,8 +152,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           include: {
             user: {
               select: {
-                firstName: true,
-                lastName: true,
+                name: true,
                 email: true,
                 twitter: true,
                 discord: true,

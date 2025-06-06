@@ -18,8 +18,7 @@ interface SubCardProps {
 }
 
 export function SubmissionCard({ sub, type, commentCount }: SubCardProps) {
-  const firstName = sub?.firstName;
-  const lastName = sub?.lastName;
+  const name = sub?.name;
   const photo = sub?.photo;
   const username = sub?.username;
 
@@ -121,8 +120,7 @@ export function SubmissionCard({ sub, type, commentCount }: SubCardProps) {
       content={content}
       actionLinks={actionLinks}
       type={type}
-      firstName={firstName}
-      lastName={lastName}
+      name={name}
       photo={photo}
       username={username}
       id={sub?.id}

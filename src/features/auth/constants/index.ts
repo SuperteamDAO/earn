@@ -1,8 +1,7 @@
 import { type Prisma } from '@prisma/client';
 
 export const userSelectOptions: Prisma.UserSelect = {
-  firstName: true,
-  lastName: true,
+  name: true,
   photo: true,
   isTalentFilled: true,
   username: true,

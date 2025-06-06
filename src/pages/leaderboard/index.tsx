@@ -197,8 +197,7 @@ export const getServerSideProps: GetServerSideProps = async ({
       user: {
         select: {
           photo: true,
-          firstName: true,
-          lastName: true,
+          name: true,
           username: true,
           skills: true,
           location: true,
@@ -220,8 +219,7 @@ export const getServerSideProps: GetServerSideProps = async ({
         user: {
           select: {
             photo: true,
-            firstName: true,
-            lastName: true,
+            name: true,
             username: true,
             skills: true,
             location: true,
@@ -237,7 +235,7 @@ export const getServerSideProps: GetServerSideProps = async ({
           skillCategories[skill],
         ),
         username: userRank.user.username,
-        name: userRank.user.firstName + ' ' + userRank.user.lastName,
+        name: userRank.user.name ?? '',
         pfp: userRank.user.photo,
         dollarsEarned: userRank.totalEarnedInUSD,
         winRate: userRank.winRate,
@@ -254,7 +252,7 @@ export const getServerSideProps: GetServerSideProps = async ({
       username: r.user.username,
       pfp: r.user.photo,
       dollarsEarned: r.totalEarnedInUSD,
-      name: r.user.firstName + ' ' + r.user.lastName,
+      name: r.user.name ?? '',
       submissions: r.submissions,
       wins: r.wins,
       winRate: r.winRate,

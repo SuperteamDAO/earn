@@ -16,8 +16,7 @@ interface GrantCardProps {
 }
 
 export function GrantCard({ grant, type, commentCount }: GrantCardProps) {
-  const firstName = grant?.firstName;
-  const lastName = grant?.lastName;
+  const name = grant?.name;
   const photo = grant?.photo;
   const username = grant?.username;
 
@@ -52,8 +51,7 @@ export function GrantCard({ grant, type, commentCount }: GrantCardProps) {
       content={content}
       actionLinks={actionLinks}
       type={type}
-      firstName={firstName}
-      lastName={lastName}
+      name={name}
       photo={photo}
       username={username}
       id={grant?.id}

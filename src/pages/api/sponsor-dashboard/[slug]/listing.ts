@@ -47,8 +47,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         poc: {
           select: {
             id: true,
-            firstName: true,
-            lastName: true,
+            name: true,
             email: true,
           },
         },
