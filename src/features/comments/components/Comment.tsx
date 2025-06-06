@@ -236,32 +236,37 @@ export const Comment = ({
         </Link>
 
         <div className="flex w-full flex-col items-start">
-          <div className="flex items-end gap-2">
-            <Link
-              href={`${getURL()}t/${comment?.author?.username}`}
-              className="hover:underline"
-              tabIndex={-1}
-              target="_blank"
-            >
-              <p className="text-sm font-medium text-slate-800 md:text-base">
-                {`${comment?.author?.firstName} ${comment?.author?.lastName}`}
+          <div className="flex flex-wrap items-center gap-x-2">
+            <div className="flex items-end gap-2">
+              <Link
+                href={`${getURL()}t/${comment?.author?.username}`}
+                className="hover:underline"
+                tabIndex={-1}
+                target="_blank"
+              >
+                <p className="text-sm font-medium text-slate-800 md:text-base">
+                  {`${comment?.author?.firstName} ${comment?.author?.lastName}`}
+                </p>
+              </Link>
+            </div>
+
+            <span className="flex gap-2">
+              {comment?.author?.currentSponsorId === sponsorId && (
+                <p className="flex items-center gap-0.5 pb-0.5 text-xs font-medium text-blue-500 md:text-sm">
+                  {isVerified && <VerifiedBadge />}
+                  Sponsor
+                </p>
+              )}
+              {comment.isPinned && (
+                <p className="flex items-center gap-0.5 pb-0.5 text-xs font-medium text-slate-500 md:text-sm">
+                  <Pin className="h-3 w-3" />
+                  <span className="hidden md:inline">Pinned</span>
+                </p>
+              )}
+              <p className="pb-0.5 text-xs font-medium text-slate-400 md:text-sm">
+                {date}
               </p>
-            </Link>
-            {comment?.author?.currentSponsorId === sponsorId && (
-              <p className="flex items-center gap-0.5 pb-0.5 text-xs font-medium text-blue-500 md:text-sm">
-                {isVerified && <VerifiedBadge />}
-                Sponsor
-              </p>
-            )}
-            {comment.isPinned && (
-              <p className="flex items-center gap-0.5 pb-0.5 text-xs font-medium text-slate-500 md:text-sm">
-                <Pin className="h-3 w-3" />
-                Pinned
-              </p>
-            )}
-            <p className="pb-0.5 text-xs font-medium text-slate-400 md:text-sm">
-              {date}
-            </p>
+            </span>
           </div>
           <p className="mt-0 max-w-[15rem] overflow-clip pb-2 text-sm text-slate-500 sm:max-w-[20rem] md:max-w-[17rem] md:text-base lg:max-w-[29rem] xl:max-w-[46rem]">
             <CommentParser
