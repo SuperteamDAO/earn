@@ -1,14 +1,17 @@
 import { useQueryClient } from '@tanstack/react-query';
+import { useAtom } from 'jotai';
 import { AlertTriangle, Flag, X } from 'lucide-react';
 import React, { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { Separator } from '@/components/ui/separator';
+import type { SubmissionWithUser } from '@/interface/submission';
 import { api } from '@/lib/api';
 
 import { BONUS_REWARD_POSITION } from '@/features/listing-builder/constants';
 import { type Listing } from '@/features/listings/types';
+import { selectedSubmissionAtom } from '@/features/sponsor-dashboard/atoms';
 import { useRejectSubmissions } from '@/features/sponsor-dashboard/mutations/useRejectSubmissions';
 import { useToggleWinner } from '@/features/sponsor-dashboard/mutations/useToggleWinner';
 
@@ -45,6 +48,7 @@ export const MultiActionModal = ({
 }: MultiActionModalProps) => {
   const [loading, setLoading] = useState<boolean>(false);
   const queryClient = useQueryClient();
+  const [, setSelectedSubmission] = useAtom(selectedSubmissionAtom);
 
   const rejectSubmissions = useRejectSubmissions(listing?.slug || '');
   const { mutateAsync: toggleWinner } = useToggleWinner(listing);
@@ -134,9 +138,28 @@ export const MultiActionModal = ({
             ids: submissionIds,
             label: 'Spam',
           });
-          queryClient.invalidateQueries({
-            queryKey: ['sponsor-submissions', listing?.slug],
+          rejectSubmissions.mutate(submissionIds);
+
+          queryClient.setQueryData<SubmissionWithUser[]>(
+            ['sponsor-submissions', listing?.slug],
+            (old) => {
+              if (!old) return old;
+              return old.map((submission) => {
+                if (submissionIds.includes(submission.id)) {
+                  return { ...submission, label: 'Spam' as any };
+                }
+                return submission;
+              });
+            },
+          );
+
+          setSelectedSubmission((prev) => {
+            if (prev && submissionIds.includes(prev.id)) {
+              return { ...prev, label: 'Spam' as any };
+            }
+            return prev;
           });
+
           setSelectedSubmissionIds(new Set());
           break;
         case 'shortlist':
@@ -144,9 +167,27 @@ export const MultiActionModal = ({
             ids: submissionIds,
             label: 'Shortlisted',
           });
-          queryClient.invalidateQueries({
-            queryKey: ['sponsor-submissions', listing?.slug],
+
+          queryClient.setQueryData<SubmissionWithUser[]>(
+            ['sponsor-submissions', listing?.slug],
+            (old) => {
+              if (!old) return old;
+              return old.map((submission) => {
+                if (submissionIds.includes(submission.id)) {
+                  return { ...submission, label: 'Shortlisted' as any };
+                }
+                return submission;
+              });
+            },
+          );
+
+          setSelectedSubmission((prev) => {
+            if (prev && submissionIds.includes(prev.id)) {
+              return { ...prev, label: 'Shortlisted' as any };
+            }
+            return prev;
           });
+
           setSelectedSubmissionIds(new Set());
           break;
       }

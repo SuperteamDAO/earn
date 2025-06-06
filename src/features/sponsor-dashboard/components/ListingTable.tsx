@@ -140,11 +140,9 @@ export const ListingTable = ({
   return (
     <>
       <UnpublishModal
-        listingId={selectedListing.id}
-        listingSlug={selectedListing.slug}
+        listing={selectedListing}
         unpublishIsOpen={unpublishIsOpen}
         unpublishOnClose={unpublishOnClose}
-        listingType={selectedListing.type}
       />
       <DeleteDraftModal
         deleteDraftIsOpen={deleteDraftIsOpen}
@@ -157,8 +155,6 @@ export const ListingTable = ({
         setListing={setSelectedListing}
         isOpen={verifyPaymentIsOpen}
         onClose={verifyPaymentOnClose}
-        listingId={selectedListing.id}
-        listingType={selectedListing.type}
       />
       <div className="w-full overflow-x-auto rounded-md border border-slate-200">
         <Table>

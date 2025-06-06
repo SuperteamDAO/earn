@@ -1,6 +1,7 @@
 import { useAtomValue } from 'jotai';
 import React from 'react';
 
+import { cn } from '@/utils/cn';
 import { getURLSanitized } from '@/utils/getURLSanitized';
 
 import { type Listing } from '@/features/listings/types';
@@ -19,8 +20,13 @@ export const Details = ({ bounty, isHackathonPage }: Props) => {
   const isProject = bounty?.type === 'project';
 
   return (
-    <div className="flex w-full">
-      <div className="scrollbar-thumb-rounded-full scrollbar-thin scrollbar-track-slate-100 scrollbar-thumb-slate-300 flex w-full flex-1 flex-col overflow-y-auto p-4">
+    <div className="flex max-h-[39.7rem] w-full">
+      <div
+        className={cn(
+          'scrollbar-thumb-rounded-full scrollbar-thin scrollbar-track-slate-100 scrollbar-thumb-slate-300 flex flex-1 flex-col overflow-y-auto p-4',
+          !isHackathonPage ? 'w-2/3' : 'w-full',
+        )}
+      >
         {!isProject && (
           <>
             <InfoBox

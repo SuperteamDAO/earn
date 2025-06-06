@@ -10,10 +10,12 @@ import type { SubmissionWithUser } from '@/interface/submission';
 import { api } from '@/lib/api';
 
 import { isStateUpdatingAtom, selectedSubmissionAtom } from '../../atoms';
+import { useRejectSubmissions } from '../../mutations/useRejectSubmissions';
 import { SpamConfirmationDialog } from './SpamConfirmationDialog';
 
 interface Props {
   listingSlug: string;
+  isMultiSelectOn: boolean;
 }
 
 interface UpdateLabelResponse {
@@ -25,7 +27,7 @@ interface UpdateLabelResponse {
   };
 }
 
-export const SpamButton = ({ listingSlug }: Props) => {
+export const SpamButton = ({ listingSlug, isMultiSelectOn }: Props) => {
   const queryClient = useQueryClient();
   const [selectedSubmission, setSelectedSubmission] = useAtom(
     selectedSubmissionAtom,
@@ -37,6 +39,8 @@ export const SpamButton = ({ listingSlug }: Props) => {
     id: string;
     label: SubmissionLabels;
   } | null>(null);
+
+  const rejectSubmissions = useRejectSubmissions(listingSlug);
 
   const handleSpamClick = async () => {
     if (!selectedSubmission?.id) return;
@@ -93,6 +97,10 @@ export const SpamButton = ({ listingSlug }: Props) => {
         toast.info(
           "A submission can't be both a winner and marked as spam — we've adjusted its status.",
         );
+      }
+
+      if (variables.label === SubmissionLabels.Spam) {
+        rejectSubmissions.mutate([variables.id]);
       }
 
       queryClient.setQueryData<SubmissionWithUser[]>(
@@ -155,10 +163,10 @@ export const SpamButton = ({ listingSlug }: Props) => {
         className={`rounded-lg border disabled:opacity-100 ${
           isMarkedAsSpam
             ? 'border-orange-300 bg-orange-100 text-orange-600 hover:bg-orange-200'
-            : 'border-orange-200 bg-orange-50 text-orange-500 hover:bg-orange-100'
+            : 'border-orange-200 bg-orange-50 text-orange-500 hover:bg-orange-100 disabled:opacity-70'
         }`}
         onClick={handleSpamClick}
-        disabled={isCheckingSpam || isMarkedAsSpam}
+        disabled={isCheckingSpam || isMarkedAsSpam || isMultiSelectOn}
       >
         <LucideFlag className="size-1 text-orange-500" />
         {isMarkedAsSpam ? 'Marked as Spam' : 'Spam'}

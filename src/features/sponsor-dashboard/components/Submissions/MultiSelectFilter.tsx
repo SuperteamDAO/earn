@@ -81,9 +81,10 @@ export const MultiSelectFilter = ({
       </DropdownMenuTrigger>
 
       <DropdownMenuContent className="border-slate-300" align="end">
-        <div className="px-3 py-2">
+        <div className="px-3 py-1">
           <DropdownMenuGroup>
-            <div className="space-y-3">
+            <div className="mb-1 text-xs text-slate-400">Select Options</div>
+            <div className="space-y-1">
               {availableFilters.map((filter) => {
                 const isSelected = selectedFilters.has(filter.value);
                 const colors = getFilterColor(filter.value);
@@ -91,9 +92,9 @@ export const MultiSelectFilter = ({
                 return (
                   <div
                     key={filter.value}
-                    className="flex items-center justify-between py-1"
+                    className="flex items-center justify-between py-0.5"
                   >
-                    <div className="flex items-center space-x-3">
+                    <div className="flex items-center space-x-2">
                       <Switch
                         checked={isSelected}
                         onCheckedChange={() => toggleFilter(filter.value)}

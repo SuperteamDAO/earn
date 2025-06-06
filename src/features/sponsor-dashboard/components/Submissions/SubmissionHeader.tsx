@@ -14,6 +14,7 @@ import { useRouter } from 'next/router';
 import React from 'react';
 import { toast } from 'sonner';
 
+import { ShinyButton } from '@/components/shared/ShinyButton';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -240,7 +241,7 @@ export const SubmissionHeader = ({
           </DropdownMenu>
           <p
             className={cn(
-              'ml-2 inline-flex items-center rounded-full px-2 py-1 text-xs font-medium whitespace-nowrap',
+              'ml-2 inline-flex items-center rounded-full px-4 py-1 text-xs font-medium whitespace-nowrap',
               getColorStyles(bountyStatus).color,
               getColorStyles(bountyStatus).bgColor,
             )}
@@ -262,10 +263,7 @@ export const SubmissionHeader = ({
               disabled={!bounty?.isWinnersAnnounced}
               contentProps={{ sideOffset: 5 }}
             >
-              <Button
-                className={cn(
-                  'text-base font-semibold disabled:cursor-not-allowed disabled:bg-[#A1A1A1] disabled:hover:bg-[#A1A1A1]',
-                )}
+              <ShinyButton
                 disabled={
                   !afterAnnounceDate ||
                   isHackathonPage ||
@@ -274,20 +272,23 @@ export const SubmissionHeader = ({
                     submissions.filter((s) => !s.isWinner).length > 0)
                 }
                 onClick={onWinnersAnnounceOpen}
-                variant="default"
+                animate={true}
+                classNames={{
+                  span: 'bg-brand-purple text-white font-semibold',
+                }}
               >
                 <Check className="size-4" />
                 Announce Winners
-              </Button>
+              </ShinyButton>
             </Tooltip>
           )}
         </div>
       )}
 
-      {isProject && !bounty?.isWinnersAnnounced && (
+      {isProject && !bounty?.isWinnersAnnounced && bounty?.isPublished && (
         <div>
           <p className="text-slate-800">
-            Didn&apos;t find a suitable candidate?{' '}
+            Didnt find a suitable candidate?{' '}
             <span
               className="cursor-pointer text-blue-500 underline"
               onClick={unpublishOnOpen}
@@ -299,26 +300,26 @@ export const SubmissionHeader = ({
       )}
 
       {bounty?.isWinnersAnnounced && activeTab === 'submissions' && (
-        <Button
-          className={cn(
-            'text-base font-semibold disabled:cursor-not-allowed disabled:bg-[#A1A1A1] disabled:hover:bg-[#A1A1A1]',
-          )}
+        <ShinyButton
+          animate={true}
+          classNames={{
+            span: 'bg-brand-purple text-white font-semibold',
+          }}
           onClick={() => {
             router.push(
               `/dashboard/listings/${bounty?.slug}/submissions?tab=payments`,
             );
           }}
-          variant="default"
         >
           <Check className="size-4" />
           Pay Winners
-        </Button>
+        </ShinyButton>
       )}
 
       {activeTab === 'payments' && (
         <Button
           className={cn(
-            'border-brand-purple text-brand-purple hover:bg-brand-purple text-base font-semibold hover:text-white',
+            'border-brand-purple text-brand-purple hover:bg-brand-purple shadow-md hover:text-white',
           )}
           onClick={handleVerifyPayment}
           variant="outline"
@@ -332,16 +333,12 @@ export const SubmissionHeader = ({
         setListing={() => {}}
         isOpen={verifyPaymentIsOpen}
         onClose={verifyPaymentOnClose}
-        listingId={bounty?.id}
-        listingType={bounty?.type}
       />
 
       <UnpublishModal
-        listingId={bounty?.id}
-        listingSlug={bounty?.slug}
         unpublishIsOpen={unpublishIsOpen}
         unpublishOnClose={unpublishOnClose}
-        listingType={bounty?.type}
+        listing={bounty}
       />
     </div>
   );

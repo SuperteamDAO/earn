@@ -10,7 +10,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { useUser } from '@/store/user'; // Keeping useUser
+import { useUser } from '@/store/user';
 
 import {
   type GrantsAi,
@@ -18,6 +18,7 @@ import {
 } from '@/features/grants/types';
 import { type GrantApplicationWithUser } from '@/features/sponsor-dashboard/types';
 
+import { ShinyButton } from '../shared/ShinyButton';
 import { AspectRatio } from '../ui/aspect-ratio';
 import { Button } from '../ui/button';
 import { ExternalImage } from '../ui/cloudinary-image';
@@ -78,19 +79,10 @@ export const AiReviewFeatureModal = ({
               src="ai-review-feature-new"
             />
           </AspectRatio>
-          <button
-            tabIndex={-1}
-            className="ph-no-capture pointer-events-none absolute top-2/4 left-2/4 -translate-x-2/4 -translate-y-2/4 scale-125 cursor-default focus:ring-0 focus:outline-hidden"
-            onClick={() => {}}
-          >
-            <div className="group bg-background relative inline-flex h-10 overflow-hidden rounded-[calc(1.5px+0.375rem-2px)] p-[1.5px] pb-[1.8px] shadow-[0px_2px_2.3px_0px_#0000002B] focus:outline-hidden">
-              <span className="absolute inset-[-1000%] animate-[spin_2s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#FF79C1_0%,#76C5FF_50%,#FF79C1_100%)]" />
-              <span className="ph-no-capture bg-background inline-flex h-full w-full cursor-pointer items-center justify-center gap-2 rounded-md px-4 py-1 text-sm font-medium text-slate-500 backdrop-blur-3xl group-hover:bg-slate-50">
-                <img src="/assets/ai-wand.svg" alt="Auto Review AI" />
-                Auto Review
-              </span>
-            </div>
-          </button>
+          <ShinyButton onClick={() => {}}>
+            <img src="/assets/ai-wand.svg" alt="Auto Review AI" />
+            Auto Review
+          </ShinyButton>
         </DialogHeader>
         <div className="p-6 pt-2">
           <DialogTitle className="text-xl font-semibold">

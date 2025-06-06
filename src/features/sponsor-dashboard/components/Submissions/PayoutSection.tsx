@@ -57,17 +57,16 @@ export const PayoutSection = ({
             <TableRow key={submission.id}>
               <TableCell className="font-medium">
                 <div className="flex items-center gap-2">
-                  {submission.user.photo && (
-                    <EarnAvatar
-                      id={submission.user.id}
-                      avatar={submission.user.photo}
-                    />
-                  )}
+                  <EarnAvatar
+                    id={submission.user.id}
+                    avatar={submission.user.photo}
+                    className="size-8"
+                  />
                   <div>
                     <div>
                       {submission.user.firstName} {submission.user.lastName}
                     </div>
-                    <div className="text-sm text-slate-500">
+                    <div className="text-xs text-slate-500">
                       @{submission.user.email}
                     </div>
                   </div>

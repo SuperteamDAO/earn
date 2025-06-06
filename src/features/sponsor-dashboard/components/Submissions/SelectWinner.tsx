@@ -10,6 +10,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { useDisclosure } from '@/hooks/use-disclosure';
+import { cn } from '@/utils/cn';
 import { cleanRewards, getRankLabels, sortRank } from '@/utils/rank';
 
 import { BONUS_REWARD_POSITION } from '@/features/listing-builder/constants';
@@ -110,30 +111,51 @@ export const SelectWinner = ({
         ) : (
           <div className="relative">
             <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="outline"
-                  disabled={
-                    !!bounty?.isWinnersAnnounced ||
-                    isHackathonPage ||
-                    isMultiSelectOn
-                  }
-                  className="w-full justify-between rounded-lg border border-emerald-500 bg-emerald-50 py-4 text-emerald-600 hover:bg-emerald-100 hover:text-emerald-600 disabled:opacity-50"
-                >
-                  <div className="flex items-center">
-                    <div className="mr-2 rounded-full bg-emerald-600 p-0.5">
-                      <Check className="size-3 text-white" />
+              <div className="relative flex">
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="outline"
+                    disabled={
+                      !!bounty?.isWinnersAnnounced ||
+                      isHackathonPage ||
+                      isMultiSelectOn
+                    }
+                    className={cn(
+                      'w-full justify-between rounded-lg border border-emerald-500 bg-emerald-50 py-4 text-emerald-600 hover:bg-emerald-100 hover:text-emerald-600 disabled:opacity-50',
+                      isValueSelected && 'pr-10',
+                    )}
+                  >
+                    <div className="flex items-center">
+                      <div className="mr-2 rounded-full bg-emerald-600 p-0.5">
+                        <Check className="size-3 text-white" />
+                      </div>
+                      <span className="capitalize">
+                        {selectedSubmission?.isWinner &&
+                        selectedSubmission.winnerPosition
+                          ? getRankLabels(selectedSubmission.winnerPosition) +
+                            ' Prize'
+                          : 'Select Winner'}
+                      </span>
                     </div>
-                    <span>
-                      {selectedSubmission?.isWinner &&
-                      selectedSubmission.winnerPosition
-                        ? getRankLabels(selectedSubmission.winnerPosition)
-                        : 'Select Winner'}
-                    </span>
-                  </div>
-                  <ChevronDown className="size-4" />
-                </Button>
-              </DropdownMenuTrigger>
+                    {!isValueSelected && <ChevronDown className="size-4" />}
+                  </Button>
+                </DropdownMenuTrigger>
+                {isValueSelected && (
+                  <button
+                    className="absolute top-1/2 right-4 z-10 flex size-4 -translate-y-1/2 items-center justify-center rounded-full border border-slate-500 text-slate-500 hover:text-black disabled:cursor-not-allowed disabled:opacity-50"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      if (isMultiSelectOn) return;
+                      selectWinner(0, selectedSubmission?.id);
+                    }}
+                    disabled={isMultiSelectOn}
+                    type="button"
+                  >
+                    <X className="size-3" />
+                  </button>
+                )}
+              </div>
               <DropdownMenuContent className="w-full min-w-[200px]">
                 {rewards.map((reward) => {
                   let isRewardUsed = usedPositions.includes(reward);
@@ -164,21 +186,6 @@ export const SelectWinner = ({
                 })}
               </DropdownMenuContent>
             </DropdownMenu>
-            {isValueSelected && (
-              <button
-                className="absolute top-1/2 right-8 z-10 -translate-y-1/2 cursor-pointer disabled:cursor-not-allowed"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  if (isMultiSelectOn) return;
-                  selectWinner(0, selectedSubmission?.id);
-                }}
-                disabled={isMultiSelectOn}
-              >
-                <div className="flex size-4 items-center justify-center rounded-full bg-red-100 text-red-400 hover:bg-red-200">
-                  <X className="size-2.5" />
-                </div>
-              </button>
-            )}
           </div>
         )}
       </div>

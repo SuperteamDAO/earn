@@ -1,5 +1,7 @@
+import { useQueryClient } from '@tanstack/react-query';
 import { useAtomValue } from 'jotai';
 import { AlertTriangle, CheckCircle2 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { usePostHog } from 'posthog-js/react';
 import { useEffect, useState } from 'react';
 
@@ -12,13 +14,14 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { Separator } from '@/components/ui/separator';
 import { api } from '@/lib/api';
 import { dayjs } from '@/utils/dayjs';
 import { cleanRewards } from '@/utils/rank';
 
 import { BONUS_REWARD_POSITION } from '@/features/listing-builder/constants';
 
-import { type Listing } from '../../listings/types';
+import type { Listing } from '../../listings/types';
 import { selectedSubmissionAtom } from '../atoms';
 import { useToggleWinner } from '../mutations/useToggleWinner';
 
@@ -48,10 +51,11 @@ export function PublishResults({
     bounty?.isWinnersAnnounced,
   );
   const posthog = usePostHog();
+  const router = useRouter();
+  const queryClient = useQueryClient();
   const isDeadlinePassed = dayjs().isAfter(bounty?.deadline);
   const isProject = bounty?.type === 'project';
   if (isProject) totalWinners = 1;
-  // Overrdiding totalWinners if project coz position select is done here now for project only
 
   const rewards =
     bounty?.type === 'project'
@@ -137,10 +141,27 @@ export function PublishResults({
   useEffect(() => {
     if (!isWinnersAnnounced || bounty?.isWinnersAnnounced) return;
     const timer = setTimeout(() => {
-      window.location.reload();
+      queryClient.invalidateQueries({
+        queryKey: ['sponsor-submissions', bounty?.slug],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ['sponsor-dashboard-listing', bounty?.slug],
+      });
+      router.push(
+        `/dashboard/listings/${bounty?.slug}/submissions?tab=payments`,
+      );
+
+      onClose();
     }, 1500);
     return () => clearTimeout(timer);
-  }, [isWinnersAnnounced]);
+  }, [
+    isWinnersAnnounced,
+    bounty?.slug,
+    bounty?.id,
+    router,
+    queryClient,
+    onClose,
+  ]);
 
   return (
     <Dialog
@@ -151,28 +172,51 @@ export function PublishResults({
         onClose();
       }}
     >
-      <DialogContent>
+      <DialogContent className="max-w-lg">
         <DialogHeader>
           <DialogTitle>Publish Results</DialogTitle>
         </DialogHeader>
-
+        <div className="-mx-6">
+          <Separator />
+        </div>
         <div className="space-y-4">
           {isWinnersAnnounced && (
-            <Alert className="flex-col items-center justify-center py-4 text-center">
-              <div className="flex items-center justify-center gap-2">
-                <CheckCircle2 className="mb-1 h-6 w-6" />
-                <AlertTitle className="mb-1 text-lg">
-                  Results Announced Successfully!
-                </AlertTitle>
+            <div className="py-6 text-center">
+              <CheckCircle2 className="mx-auto mb-3 h-12 w-12 text-green-600" />
+              <h3 className="mb-2 text-lg font-semibold">
+                Results Announced Successfully!
+              </h3>
+              <p className="text-muted-foreground text-sm">
+                The results are now public and visible on the listing page.
+              </p>
+              {!bounty?.isWinnersAnnounced && (
+                <p className="text-muted-foreground mt-2 text-xs">
+                  Navigating to payments tab...
+                </p>
+              )}
+            </div>
+          )}
+
+          {!isWinnersAnnounced &&
+            rewards &&
+            totalWinners === rewards &&
+            alertType !== 'error' && (
+              <div className="space-y-3">
+                <p className="text-sm text-slate-800">
+                  Publishing will make the results public for everyone to see.
+                </p>
+                <p className="rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-medium text-amber-700">
+                  Note: You cannot undo this action once published.
+                </p>
               </div>
-              <AlertDescription className="mx-auto mt-2 max-w-sm">
-                The results have been announced publicly. Everyone can view the
-                results on the Bounty&apos;s page.
-                <br />
-                <br />
-                {!bounty?.isWinnersAnnounced && (
-                  <span className="text-sm text-slate-500">Refreshing...</span>
-                )}
+            )}
+
+          {!isWinnersAnnounced && alertTitle && alertDescription && (
+            <Alert variant={alertType === 'error' ? 'destructive' : 'default'}>
+              <AlertTriangle className="-mt-1 size-4" />
+              <AlertTitle className="text-slate-800">{alertTitle}</AlertTitle>
+              <AlertDescription className="mt-2 text-[13px] text-slate-700">
+                {alertDescription}
               </AlertDescription>
             </Alert>
           )}
@@ -180,97 +224,54 @@ export function PublishResults({
           {!isWinnersAnnounced &&
             rewards &&
             totalWinners === rewards &&
-            alertType !== 'error' && (
-              <p className="mt-1 mb-4">
-                Publishing the results of this listing will make the results
-                public for everyone to see!
-                <br />
-                YOU CAN&apos;T GO BACK ONCE YOU PUBLISH THE RESULTS!
-              </p>
-            )}
-
-          {!isWinnersAnnounced && alertTitle && alertDescription && (
-            <Alert
-              variant={alertType === 'error' ? 'destructive' : 'default'}
-              className="border-brand-purple flex"
-            >
-              <div className="flex gap-2">
-                <AlertTriangle className="-mt-0.5 h-8 w-8" />
-                <div>
-                  <AlertTitle className="text-base">{alertTitle}</AlertTitle>
-                  <AlertDescription>{alertDescription}</AlertDescription>
-                </div>
-              </div>
-            </Alert>
-          )}
-
-          {!isWinnersAnnounced &&
-            rewards &&
-            totalWinners === rewards &&
             !isDeadlinePassed && (
-              <Alert className="mt-4" variant="destructive">
-                <div className="flex gap-2">
-                  <AlertTriangle className="-mt-0.5 h-8 w-8" />
-                  <div>
-                    <AlertTitle className="text-base">
-                      Listing still in progress!
-                    </AlertTitle>
-                    <AlertDescription>
-                      If you publish the results before the deadline, the
-                      listing will close since the winner(s) will have been
-                      announced.
-                    </AlertDescription>
-                  </div>
-                </div>
+              <Alert variant="destructive">
+                <AlertTriangle className="-mt-1 size-4" />
+                <AlertTitle className="text-slate-800">
+                  Listing Still Active
+                </AlertTitle>
+                <AlertDescription className="mt-2 text-[13px] text-slate-700">
+                  Publishing before the deadline will close the listing
+                  immediately.
+                </AlertDescription>
               </Alert>
             )}
 
           {!isWinnersAnnounced &&
             submissions.some((submission) => submission.label === 'Spam') && (
-              <Alert className="border-brand-purple mt-4">
-                <div className="flex gap-2">
-                  <AlertTriangle className="-mt-0.5 h-8 w-8" />
-                  <div>
-                    <AlertTitle className="text-base">
-                      {
-                        submissions.filter(
-                          (submission) => submission.label === 'Spam',
-                        ).length
-                      }{' '}
-                      Submission(s) Marked as Spam
-                    </AlertTitle>
-                    <AlertDescription>
-                      Marking a submission as &quot;Spam&quot; would penalise
-                      the applicant(s) with a deduction in submission credits.
-                    </AlertDescription>
-                  </div>
-                </div>
+              <Alert>
+                <AlertTriangle className="-mt-1 size-4" />
+                <AlertTitle className="text-slate-800">
+                  {
+                    submissions.filter(
+                      (submission) => submission.label === 'Spam',
+                    ).length
+                  }{' '}
+                  Spam Submission(s)
+                </AlertTitle>
+                <AlertDescription className="mt-2 text-[13px] text-slate-700">
+                  Marked submissions will result in credit penalties for
+                  applicants.
+                </AlertDescription>
               </Alert>
             )}
         </div>
 
         <DialogFooter>
           {!isWinnersAnnounced && (
-            <div className="flex gap-4">
-              <Button onClick={onClose} variant="ghost">
-                Close
-              </Button>
+            <div className="flex gap-3">
               <Button
-                className="ph-no-capture"
-                disabled={!isWinnersAllSelected || alertType === 'error'}
+                disabled={
+                  !isWinnersAllSelected ||
+                  alertType === 'error' ||
+                  isPublishingResults
+                }
                 onClick={() => {
                   posthog.capture('announce winners_sponsor');
                   publishResults();
                 }}
               >
-                {isPublishingResults ? (
-                  <span className="flex items-center justify-center gap-1">
-                    <span className="loading loading-spinner" />
-                    <span>Publishing...</span>
-                  </span>
-                ) : (
-                  <span>Publish</span>
-                )}
+                {isPublishingResults ? 'Publishing...' : 'Publish'}
               </Button>
             </div>
           )}

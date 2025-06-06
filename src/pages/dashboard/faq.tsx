@@ -10,36 +10,187 @@ import { SponsorLayout } from '@/layouts/Sponsor';
 
 import { HelpBanner } from '@/features/sponsor-dashboard/components/HelpBanner';
 
-const faqs = [
+interface FAQSection {
+  readonly title: string;
+  readonly subsections: readonly {
+    readonly question: string;
+    readonly answer: string;
+  }[];
+}
+
+const faqSections: readonly FAQSection[] = [
   {
-    question: 'Who qualifies to be a sponsor?',
-    answer: `Any team or project that is building in the Solana ecosystem can sponsor a listing on Superteam Earn. Size of the team or operations don't matter — you can be a tokenised project or a small grantee; as long as you are building on the Solana blockchain, you can add a listing on Earn.`,
-  },
-  {
-    question: 'How much money do I need to put up?',
-    answer: `There is no upper or lower limit of the amount of money you need to put up per listing. However, the compensation offered per listing will affect the distribution (via emails, discord, platform discovery, etc.) that the listing will get.`,
-  },
-  {
-    question: 'Who judges the bounties & projects?',
-    answer: `The sponsors are supposed to review, announce, and pay out the winners on Superteam Earn. It's super simple to manage your submissions, all within Earn.`,
-  },
-  {
-    question: 'Are there any hidden costs and charges?',
-    answer: `None at all!`,
-  },
-  {
-    question: 'What can I use Superteam Earn for?',
-    answer: `Superteam Earn is a platform to get work done from crypto-native talent. This can be in the form of boutnies (get the same work done by many people) or hiring freelancers in the form of Project listings.
+    title: 'Getting Started',
+    subsections: [
+      {
+        question: 'What can I use Superteam Earn for?',
+        answer: `Superteam Earn is a platform to get work done from crypto-native talent. This can be in the form of bounties (get the same work done by many people) or hiring freelancers in the form of Project listings. Earn can be used to get any small to medium-scale task done, including but not limited to development, writing, design, research, and product feedback.
 <br />
-Earn can be used to get any small to medium scale task done, including but not limited to development, writing, design, research, and product feedback.
+<a style="color: blue" href="https://in.superteam.fun/bounty-menu" target="_blank">Click here</a> to access the Listings Menu, which contains ideas, listing examples, suggested prize ranges, etc.`,
+      },
+      {
+        question: 'Are there any hidden charges to publish a listing?',
+        answer: `No! Superteam Earn is completely free to use. There are no listing or platform fees.`,
+      },
+      {
+        question: 'How much money do I need to put up?',
+        answer: `There's no minimum or maximum limit. However, the reward amount influences visibility — higher-value listings may receive better distribution (via email, Discord, platform discovery, etc.).`,
+      },
+      {
+        question: 'What kind of distribution do sponsors get from Earn?',
+        answer: `When you publish a listing on Superteam Earn, it can be distributed across multiple high-visibility channels, including:
 <br />
-<a style="color: blue" href="https://in.superteam.fun/bounty-menu" target="_blank" >Click here</a> to access the Listings Menu, which contains ideas, listing examples, suggested prize ranges, etc.`,
+<strong>1. Homepage:</strong> Your listing will be featured on the Earn homepage, which receives <strong>50,000 monthly active users</strong> actively browsing for work opportunities.
+<br />
+<strong>2. Discord Bot:</strong> Listings are shared in real-time in relevant Superteam Discord channels across Superteam discords.
+<br />
+<strong>3. Twitter:</strong> Listings with <strong>rewards over $1,000</strong> are amplified to reach a global audience via Superteam Earn's <a style="color: blue" href="http://x.com/superteamearn" target="_blank">Twitter</a> profile.
+<br />
+<strong>4. Email Blasts:</strong> Listings may be included in curated newsletters depending on factors like reward size, sponsor reputation, and past engagement reaching, Earn's users' inbox directly.`,
+      },
+      {
+        question: 'How can I get extra distribution for my listing?',
+        answer: `Distribution is influenced primarily by the <strong>reward value</strong> and <strong>listing quality.</strong> For example:
+<br />
+• Listings with <strong>rewards under $100</strong> are not featured on the homepage.
+<br />
+• Listings with <strong>rewards above $1,000</strong> are amplified via our <a style="color: blue" href="http://x.com/superteamearn" target="_blank">Twitter</a> and are more likely to be included in <strong>email blasts</strong> and other community channels.
+<br />
+<strong>Tip:</strong> Well-written scopes, clear evaluation criteria, and generous prizes tend to get more attention from both the community and the Earn distribution channels.`,
+      },
+    ],
   },
   {
-    question: 'I need help with my listing. How can I get in touch?',
-    answer: `You can get in touch with us at <a style="color: blue" href="mailto:support@superteamearn.com" target="_blank">support@superteamearn.com</a> and we will get back to you ASAP.`,
+    title: 'Creating & Managing Listings',
+    subsections: [
+      {
+        question: 'How do I create a new listing?',
+        answer: `On your dashboard, click the "Create New Listing" button. You'll be guided to the listing builder page where you can select the type (Bounty or Project), add scope of work, timeline, evaluation criteria, rewards, and more.`,
+      },
+      {
+        question:
+          'Do I need to verify my listing before publishing? How can I verify my listing?',
+        answer: `Yes, if you're a <strong>new sponsor</strong>, you'll need to verify your listing before it can be published.
+<br />
+If you're an <strong>existing sponsor</strong> but your profile has been flagged due to past activity — for example, having listings that already past their deadline and are "In Review" — you'll also be required to complete verification for new listings.
+<br />
+<strong>How to verify your listing:</strong>
+<br />
+After publishing your listing, you'll be prompted to fill out a short verification form. This helps us maintain trust on the platform and keep bad actors out. Once verified, your listing will automatically go live.
+<br />
+<strong>Pro tip:</strong> For faster verification, get referred by a <strong>Superteam Lead</strong> and mention their name in the <strong>"Reference"</strong> field of the form.
+<br />
+<em>Note: We aim to complete all verifications within 24 hours.</em>`,
+      },
+      {
+        question: 'Can I edit a listing after it is published?',
+        answer: `Yes, listings can be edited after publishing and until the deadline, but we discourage sponsors from making major changes, such as altering the scope of work, eligibility criteria, or judging guidelines, for the sake of fairness and transparency.`,
+      },
+      {
+        question: 'How do I check the status of my listings?',
+        answer: `All your listings are shown on your dashboard, each labeled with statuses like Draft, In Progress, In Review, Payment Pending, Fndn to Pay, or Completed. Use filters to sort and manage listings easily.`,
+      },
+      {
+        question: 'Can I duplicate an existing listing?',
+        answer: `Yes! Go to the three-dot menu on your dashboard on any previous listing and click <strong>"Duplicate"</strong> to reuse its structure. You can also choose from predefined templates using the <strong>Browse Templates</strong> option while creating a new listing.`,
+      },
+      {
+        question: 'What is the difference between Podium and Bonus spots?',
+        answer: `<strong>1. Podium:</strong>
+<br />
+• Ranked winners (1st, 2nd, 3rd, etc.). Each position can have a different reward / prize.
+<br />
+• You can add up to <strong>10 podium spots</strong>.
+<br />
+<strong>2. Bonus Spots:</strong>
+<br />
+• Multiple winners can receive the same reward amount under a single category.
+<br />
+• You can add up to <strong>300 bonus spots</strong>.`,
+      },
+      {
+        question: 'Where can I see all submissions?',
+        answer: `Click on the listing you want to view in your dashboard to see all submissions, or the "Submissions" button along side the title. You'll be able to view submission details like the user's wallet address, email, or application, etc.`,
+      },
+      {
+        question: 'Can I label or categorize submissions?',
+        answer: `Yes! Use custom labels such as Unreviewed, Reviewed, Winner, Shortlisted, and Spam to manage and organize submissions before announcing winners.`,
+      },
+      {
+        question: 'What happens if I mark a submission as "Spam"?',
+        answer: `Marking a submission as spam deducts one submission credit from the applicant's total credits and flags it in our system.
+<br />
+Read more about Submission Credits <a style="color: blue" href="https://www.notion.so/FAQ-Sponsor-Dashboard-206d3387b100804ea9efc87a7745e565" target="_blank">here</a>.`,
+      },
+    ],
   },
-];
+  {
+    title: 'Winners and Distributing Rewards',
+    subsections: [
+      {
+        question: 'How do I select winners for a listing?',
+        answer: `In the <strong>Submission review</strong> tab, assign your preferred submissions to the appropriate Podium or Bonus spots. Once finalized, click "<strong>Announce Winners</strong>" and proceed to the Payments tab.`,
+      },
+      {
+        question: 'How do I pay the winners?',
+        answer: `<strong>Option 1: Pay via Earn</strong>
+<br />
+1. Go to the <strong>Payments</strong> tab in the listing and click on <strong>"Pay"</strong>.
+<br />
+2. Connect your wallet when prompted and initiate the transaction using your preferred wallet.
+<br />
+<strong>OR</strong>
+<br />
+<strong>Option 2: Pay outside of Earn</strong>
+<br />
+1. Copy the winner's wallet address from the dashboard and transfer the reward using your preferred method.
+<br />
+2. To mark the listing as completed on Earn, you'll need to upload the payment link:
+<br />
+   - Go to the <strong>Payments</strong> tab
+<br />
+   - Click on <strong>"Paid externally? Click here"</strong>
+<br />
+   - Add the transaction link for verification
+<br />
+<em>Note: To verify the transaction, <strong>the wallet address must match the winners', and the transferred token and token amount must match the specified reward.</strong></em>`,
+      },
+      {
+        question: 'What if I sent a payment outside the platform?',
+        answer: `1. Go to the <strong>Payments</strong> tab
+<br />
+2. Click on <strong>"Paid externally? Click here"</strong>
+<br />
+3. Add the transaction link for verification
+<br />
+To verify the transaction, the wallet address must match the winner's, and the transferred amount must match the specified reward. Once verified, the listing status will update to Completed.`,
+      },
+    ],
+  },
+  {
+    title: 'Team & Access Management',
+    subsections: [
+      {
+        question:
+          'How can I add or remove team members from my sponsor profile?',
+        answer: `Go to <strong>Team Settings</strong> in your dashboard. Use the "<strong>Invite Members</strong>" button to send an invitation email to your teammate to add them as a collaborator. You can also remove members at any time.`,
+      },
+    ],
+  },
+  {
+    title: 'Troubleshooting & Support',
+    subsections: [
+      {
+        question: "I can't connect my wallet. What should I do?",
+        answer: `Ensure your wallet is supported and unlocked. Try refreshing the page or reconnecting. If the issue persists, contact <a style="color: blue" href="mailto:support@superteamearn.com" target="_blank">support@superteamearn.com</a>`,
+      },
+      {
+        question: 'I need help with my listing. How can I get in touch?',
+        answer: `Email us at <a style="color: blue" href="mailto:support@superteamearn.com" target="_blank">support@superteamearn.com</a> and we'll get back to you ASAP.`,
+      },
+    ],
+  },
+] as const;
 
 export default function FAQ() {
   return (
@@ -51,24 +202,38 @@ export default function FAQ() {
             <HelpBanner />
           </div>
         </div>
-        <Accordion type="multiple">
-          {faqs.map((faq) => (
-            <AccordionItem
-              className="my-5 rounded-lg border border-slate-200 bg-white"
-              key={faq.question}
-              value={faq.question}
-            >
-              <AccordionTrigger className="rounded px-5 py-5 text-base font-normal hover:bg-slate-200/5 hover:no-underline">
-                <span className="flex-1 text-left text-lg font-medium">
-                  {faq.question}
-                </span>
-              </AccordionTrigger>
-              <AccordionContent className="px-5 pb-6 text-base text-slate-700">
-                <div dangerouslySetInnerHTML={{ __html: faq.answer }} />
-              </AccordionContent>
-            </AccordionItem>
+        <div className="mt-8 space-y-8">
+          {faqSections.map((section, index) => (
+            <div key={section.title}>
+              <div className="space-y-4">
+                <h2 className="text-xl font-semibold text-slate-500">
+                  {section.title}
+                </h2>
+                <Accordion type="multiple">
+                  {section.subsections.map((faq) => (
+                    <AccordionItem
+                      className="my-5 rounded-lg border border-slate-200 bg-white"
+                      key={faq.question}
+                      value={faq.question}
+                    >
+                      <AccordionTrigger className="rounded px-5 py-5 text-base font-normal hover:bg-slate-200/5 hover:no-underline">
+                        <span className="flex-1 text-left text-lg font-medium">
+                          {faq.question}
+                        </span>
+                      </AccordionTrigger>
+                      <AccordionContent className="px-5 pb-6 text-base text-slate-700">
+                        <div dangerouslySetInnerHTML={{ __html: faq.answer }} />
+                      </AccordionContent>
+                    </AccordionItem>
+                  ))}
+                </Accordion>
+              </div>
+              {index < faqSections.length - 1 && (
+                <div className="mt-8 mb-12 border-t border-slate-300" />
+              )}
+            </div>
           ))}
-        </Accordion>
+        </div>
       </div>
     </SponsorLayout>
   );

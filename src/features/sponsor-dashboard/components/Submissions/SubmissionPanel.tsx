@@ -2,10 +2,12 @@ import { useAtom } from 'jotai';
 import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import React from 'react';
+import { MdOutlineAccountBalanceWallet } from 'react-icons/md';
 
 import { CopyButton } from '@/components/ui/copy-tooltip';
 import type { SubmissionWithUser } from '@/interface/submission';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
+import { truncatePublicKey } from '@/utils/truncatePublicKey';
 import { truncateString } from '@/utils/truncateString';
 
 import type { Listing } from '@/features/listings/types';
@@ -75,7 +77,10 @@ export const SubmissionPanel = ({
                 </div>
               </div>
               <div className="ph-no-capture flex w-full items-center justify-end gap-2">
-                <SpamButton listingSlug={bounty?.slug!} />
+                <SpamButton
+                  listingSlug={bounty?.slug!}
+                  isMultiSelectOn={!!isMultiSelectOn}
+                />
                 {!bounty?.isWinnersAnnounced && !isHackathonPage && (
                   <SelectWinner
                     onWinnersAnnounceOpen={onWinnersAnnounceOpen}
@@ -95,6 +100,22 @@ export const SubmissionPanel = ({
                   contentProps={{ side: 'right' }}
                 >
                   {truncateString(selectedSubmission.user.email, 36)}
+                </CopyButton>
+              )}
+
+              {selectedSubmission?.user?.walletAddress && (
+                <CopyButton
+                  className="gap-1 text-sm text-slate-400 underline-offset-1 hover:text-slate-500 hover:underline"
+                  contentProps={{ side: 'right' }}
+                  text={selectedSubmission.user.walletAddress}
+                >
+                  <MdOutlineAccountBalanceWallet />
+                  <p>
+                    {truncatePublicKey(
+                      selectedSubmission.user.walletAddress || '',
+                      3,
+                    )}
+                  </p>
                 </CopyButton>
               )}
 

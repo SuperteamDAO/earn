@@ -37,14 +37,11 @@ import {
 interface VerifyPaymentModalProps {
   isOpen: boolean;
   onClose: () => void;
-  listingId: string | undefined;
   listing: ListingWithSubmissions | undefined;
   setListing: (listing: ListingWithSubmissions) => void;
-  listingType: string | undefined;
 }
 
 export const VerifyPaymentModal = ({
-  listingId,
   listing,
   setListing,
   isOpen,
@@ -127,7 +124,7 @@ export const VerifyPaymentModal = ({
       '/api/sponsor-dashboard/listings/verify-external-payment',
       {
         paymentLinks: body.paymentLinks,
-        listingId,
+        listingId: listing?.id,
       },
     );
   };
