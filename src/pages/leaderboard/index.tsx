@@ -1,4 +1,5 @@
 import {
+  type Prisma,
   type TalentRankingSkills,
   type TalentRankingTimeframe,
 } from '@prisma/client';
@@ -35,6 +36,7 @@ interface Props {
   page: number;
   count: number;
   userRank: RowType | null;
+  search?: string;
 }
 
 function TalentLeaderboard({
@@ -44,13 +46,16 @@ function TalentLeaderboard({
   page: curPage,
   count,
   userRank,
+  search: curSearch,
 }: Props) {
   const { data: totals, isLoading: isTotalsLoading } = useQuery(totalsQuery);
 
   const [timeframe, setTimeframe] = useState<TIMEFRAME>(curTimeframe);
   const [skill, setSkill] = useState<SKILL>(curSkill);
   const [page, setPage] = useState(curPage);
+  const [search, setSearch] = useState(curSearch || '');
   const [loading, setLoading] = useState(false);
+  const [isSearchLoading, setIsSearchLoading] = useState(false);
 
   const [, startTransition] = useTransition();
   const router = useRouter();
@@ -58,18 +63,21 @@ function TalentLeaderboard({
   const handleStart = (url: string) => {
     if (url !== router.asPath) {
       setLoading(true);
+      setIsSearchLoading(true);
     }
   };
 
   const handleComplete = (url: string) => {
     if (url === router.asPath) {
       setLoading(false);
+      setIsSearchLoading(false);
     }
   };
 
   useEffect(() => {
     return () => {
       setLoading(false);
+      setIsSearchLoading(false);
     };
   }, []);
 
@@ -97,12 +105,15 @@ function TalentLeaderboard({
     if (Number(url.searchParams.get('page')) !== page)
       url.searchParams.set('page', String(page));
 
+    if (url.searchParams.get('search') !== search)
+      url.searchParams.set('search', search);
+
     startTransition(() => {
       router.replace(`?${url.searchParams.toString()}`, undefined, {
         scroll: false,
       });
     });
-  }, [skill, timeframe, page]);
+  }, [skill, timeframe, page, search]);
 
   return (
     <Default
@@ -127,12 +138,16 @@ function TalentLeaderboard({
                 setSkill={(value: SKILL) => setSkill(value)}
                 timeframe={timeframe}
                 setTimeframe={(value: TIMEFRAME) => setTimeframe(value)}
+                onSearch={setSearch}
+                isSearchLoading={isSearchLoading}
+                search={curSearch || ''}
               />
               <RanksTable
                 loading={loading}
                 userRank={userRank}
                 skill={skill}
                 rankings={results}
+                search={search}
               />
               <Pagination
                 count={count}
@@ -163,6 +178,7 @@ export const getServerSideProps: GetServerSideProps = async ({
 }) => {
   const skill = (query.skill || 'ALL') as TalentRankingSkills;
   const timeframe = (query.timeframe || 'ALL_TIME') as TalentRankingTimeframe;
+  const search = (query.search as string) || '';
   let page = Number(query.page) || 1;
   if (page < 1) page = 1;
 
@@ -177,21 +193,29 @@ export const getServerSideProps: GetServerSideProps = async ({
 
   const PAGE_SIZE = 10;
 
+  const whereClause: Prisma.TalentRankingsWhereInput = {
+    skill,
+    timeframe,
+    ...(search
+      ? {
+          OR: [
+            { user: { username: { contains: search } } },
+            { user: { firstName: { contains: search } } },
+            { user: { lastName: { contains: search } } },
+          ],
+        }
+      : {}),
+  };
+
   const count = await prisma.talentRankings.count({
-    where: {
-      skill,
-      timeframe,
-    },
+    where: whereClause,
   });
   const totalPages = Math.ceil(count / PAGE_SIZE);
   if (page < 1 || page > totalPages) {
     page = 1;
   }
   const results = await prisma.talentRankings.findMany({
-    where: {
-      skill,
-      timeframe,
-    },
+    where: whereClause,
     skip: (page - 1) * PAGE_SIZE,
     take: PAGE_SIZE,
     orderBy: {
@@ -251,29 +275,25 @@ export const getServerSideProps: GetServerSideProps = async ({
     }
   }
 
-  const formatted: RowType[] = results.map((r) => {
-    return {
-      rank: r.rank,
-      skills: getSubskills(r.user.skills as any, skillCategories[skill]),
-      username: r.user.username,
-      pfp: r.user.photo,
-      dollarsEarned: r.totalEarnedInUSD,
-      name: r.user.firstName + ' ' + r.user.lastName,
-      submissions: r.submissions,
-      wins: r.wins,
-      winRate: r.winRate,
-      location: r.user.location ?? null,
-    };
-  });
-
   return {
     props: {
-      results: formatted,
+      results: results.map((result) => ({
+        rank: result.rank,
+        skills: getSubskills(result.user.skills as any, skillCategories[skill]),
+        username: result.user.username,
+        name: result.user.firstName + ' ' + result.user.lastName,
+        pfp: result.user.photo,
+        dollarsEarned: result.totalEarnedInUSD,
+        winRate: result.winRate,
+        submissions: result.submissions,
+        wins: result.wins,
+      })),
       skill,
       timeframe,
       page,
       count,
       userRank: formatterUserRank,
+      search,
     },
   };
 };
