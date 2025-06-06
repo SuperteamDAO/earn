@@ -90,6 +90,9 @@ export const ApplicationModal = ({
       twitter: grantApplication?.twitter
         ? extractSocialUsername('twitter', grantApplication?.twitter) || ''
         : extractSocialUsername('twitter', user?.twitter || '') || '',
+      github: grantApplication?.github
+        ? extractSocialUsername('github', grantApplication?.github) || ''
+        : extractSocialUsername('github', user?.github || '') || '',
       telegram: extractSocialUsername('telegram', user?.telegram || '') || '',
       answers:
         Array.isArray(questions) && questions.length > 0
@@ -123,6 +126,7 @@ export const ApplicationModal = ({
         milestones,
         kpi,
         twitter,
+        github,
         answers,
         telegram,
       } = data;
@@ -141,6 +145,7 @@ export const ApplicationModal = ({
         walletAddress,
         ask: ask || null,
         twitter,
+        github,
         answers: answers || [],
         telegram: telegram || user?.telegram || '',
       });
@@ -186,6 +191,7 @@ export const ApplicationModal = ({
         'projectTimeline',
         'proofOfWork',
         'twitter',
+        'github',
         ...(questions?.map(
           (_: any, index: number) => `answers.${index}.answer` as const,
         ) || []),
@@ -445,6 +451,15 @@ export const ApplicationModal = ({
                   required
                   formLabel="Personal Twitter Profile"
                   formDescription="Include links to your best work that will make the community trust you to execute on this project."
+                  control={form.control}
+                  height="h-9"
+                />
+                <SocialInput
+                  name="github"
+                  socialName={'github'}
+                  placeholder="TonyStark"
+                  formLabel="Personal Github Profile"
+                  formDescription="If this is a dev-based grant, please add your best github profile here."
                   control={form.control}
                   height="h-9"
                 />

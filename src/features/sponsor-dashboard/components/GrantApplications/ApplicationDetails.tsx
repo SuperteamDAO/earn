@@ -19,6 +19,7 @@ import { truncateString } from '@/utils/truncateString';
 
 import { type Grant } from '@/features/grants/types';
 import {
+  GitHub,
   Telegram,
   Twitter,
   Website,
@@ -328,6 +329,10 @@ export const ApplicationDetails = ({
                   className="h-[0.9rem] w-[0.9rem] text-slate-600"
                   link={selectedApplication?.user?.twitter || ''}
                 />
+                <GitHub
+                  className="h-[0.9rem] w-[0.9rem] text-slate-600"
+                  link={selectedApplication?.user?.github || ''}
+                />
                 <Website
                   className="h-[0.9rem] w-[0.9rem] text-slate-600"
                   link={selectedApplication?.user?.website || ''}
@@ -417,6 +422,7 @@ export const ApplicationDetails = ({
                 isHtml
               />
               <InfoBox label="Twitter" content={selectedApplication?.twitter} />
+              <InfoBox label="Github" content={selectedApplication?.github} />
               <InfoBox
                 label="Deadline"
                 content={selectedApplication?.projectTimeline}

@@ -56,7 +56,10 @@ export async function GET(request: NextRequest) {
         applicationStatus: true,
       },
     });
-    const notReviewedByAI = unreviewedApplications.filter(
+    const hasAiReview = unreviewedApplications.filter(
+      (u) => !!(u.ai as unknown as GrantApplicationAi)?.review?.predictedLabel,
+    );
+    const notReviewedByAI = hasAiReview.filter(
       (u) => !(u.ai as unknown as GrantApplicationAi)?.commited,
     );
     return NextResponse.json(notReviewedByAI, { status: 200 });

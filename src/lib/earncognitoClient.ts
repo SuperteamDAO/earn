@@ -8,15 +8,11 @@ const earncognitoClient: AxiosInstance = axios.create({
   baseURL: earncognitoUrl,
 });
 
-if (!earncognitoUrl || !earncognitoSecret) {
-  throw new Error('EARNCOGNITO_URL or EARNCOGNITO_SECRET is not set');
-}
-
 earncognitoClient.interceptors.request.use(
   (config) => {
     const token = jwt.sign(
       { serviceName: 'main-earn-service' },
-      earncognitoSecret,
+      earncognitoSecret || '',
       { expiresIn: '60s' },
     );
 
