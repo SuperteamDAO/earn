@@ -103,6 +103,10 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
                   className={cn(
                     'flex items-center py-2 font-medium',
                     '-mx-3 h-8 lg:h-14',
+                    'lg:border-b',
+                    router.asPath === '/firehose/'
+                      ? 'lg:border-brand-green'
+                      : 'lg:border-transparent',
                   )}
                 >
                   <ExternalImage
