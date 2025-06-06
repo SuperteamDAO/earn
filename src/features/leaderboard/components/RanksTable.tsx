@@ -81,12 +81,12 @@ export function RanksTable({
           <div className="flex flex-col gap-1 text-xs font-medium">
             <p>
               {search.length > 0
-                ? `The Leaderboard is empty for your search query '${search}'`
+                ? `We couldn't find anything for '${search}'`
                 : 'The Leaderboard is empty for your filter'}
             </p>
             <p className="text-slate-500">
               {search.length > 0
-                ? 'Please change your search query and try again'
+                ? 'Try a different search query or checking your spelling'
                 : 'Please change your filter or try again later'}
             </p>
           </div>
