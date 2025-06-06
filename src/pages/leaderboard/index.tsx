@@ -147,6 +147,7 @@ function TalentLeaderboard({
                 userRank={userRank}
                 skill={skill}
                 rankings={results}
+                search={search}
               />
               <Pagination
                 count={count}
