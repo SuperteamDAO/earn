@@ -100,12 +100,15 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
                 })}
                 <Link
                   href={'/firehose'}
-                  className={cn('-mx-3 flex h-8 items-center')}
+                  className={cn(
+                    'flex items-center py-2 font-medium',
+                    '-mx-3 h-8 lg:h-14',
+                  )}
                 >
                   <ExternalImage
                     alt="Redacted Logo"
-                    src="/hackathon/fff/logo.png"
-                    className="h-full object-contain"
+                    src="hackathon/fff/logo.png"
+                    className="h-8 object-contain"
                   />
                 </Link>
               </div>
