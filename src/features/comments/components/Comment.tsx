@@ -386,7 +386,8 @@ export const Comment = ({
         <div
           className={cn(
             'transition-opacity duration-200',
-            showDropdown && (comment.authorId === user?.id || isPoc)
+            showDropdown &&
+              (comment.authorId === user?.id || (isPoc && !isReply))
               ? 'opacity-100'
               : 'pointer-events-none opacity-0',
           )}
@@ -464,7 +465,7 @@ export const Comment = ({
               </Button>
             </AlertDialogCancel>
             <Button
-              className={cn('ph-no-capture', 'ml-3')}
+              className={cn('ph-no-capture', 'ml-0 md:ml-3')}
               disabled={deleteLoading}
               onClick={handleDelete}
             >

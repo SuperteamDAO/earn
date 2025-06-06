@@ -187,7 +187,20 @@ export const Comments = ({
         poc={poc}
         onSuccess={(newComment) => {
           setCount((count) => count + 1);
-          setComments((prevComments) => [newComment, ...prevComments]);
+          setComments((prevComments) => {
+            const newComments = [newComment, ...prevComments];
+            const timeSorted = newComments.sort(
+              (a, b) =>
+                new Date(b.createdAt).getTime() -
+                new Date(a.createdAt).getTime(),
+            );
+            const sortedComments = timeSorted.sort((a, b) => {
+              if (a.isPinned && !b.isPinned) return -1;
+              if (!a.isPinned && b.isPinned) return 1;
+              return 0;
+            });
+            return sortedComments;
+          });
           onSuccess?.(newComment);
         }}
         isTemplate={isTemplate}
