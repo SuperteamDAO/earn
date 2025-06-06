@@ -102,10 +102,11 @@ export function NavTabs({ className, ...props }: NavTabsProps) {
 
       <Link
         href={'/firehose'}
+        type="icon"
         className={cn(
-          'flex items-center py-1 font-medium lg:hidden',
+          'flex items-center font-medium lg:hidden',
           'h-6',
-          'rounded-full border border-slate-200 px-2 text-sm',
+          'rounded-full border border-slate-200 text-sm',
         )}
         aria-label="Go to Firehose Hackaton Page"
       >

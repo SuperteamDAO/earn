@@ -2,7 +2,6 @@ import { useQuery } from '@tanstack/react-query';
 import { type GetServerSideProps } from 'next';
 import Head from 'next/head';
 import Image from 'next/image';
-import { useState } from 'react';
 
 import { LinkTextParser } from '@/components/shared/LinkTextParser';
 import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
@@ -43,11 +42,6 @@ const MarketingBanner = ({
   banner?: string;
   isLoading: boolean;
 }) => {
-  const bgImages = ['1.webp', '2.webp', '3.webp', '4.webp', '5.webp'];
-  const [randomIndex] = useState<number>(
-    Math.floor(Math.random() * bgImages.length),
-  );
-
   if (isLoading) {
     return <Skeleton className="h-32 w-full md:h-64 md:rounded-md" />;
   }
@@ -58,7 +52,7 @@ const MarketingBanner = ({
       height={220}
       className="h-full min-h-[100px] w-full md:rounded-t-2xl"
       alt="Sponsor banner"
-      src={banner ?? `${ASSET_URL}/bg/profile-cover/${bgImages[randomIndex]}`}
+      src={banner ?? `${ASSET_URL}/bg/sponsor-cover/Banner.svg`}
     />
   );
 };
@@ -97,6 +91,7 @@ const SponsorListingsPage = ({
   ogImage.searchParams.set('logo', logo || '');
   ogImage.searchParams.set('title', title || '');
   ogImage.searchParams.set('slug', sSlug || '');
+  ogImage.searchParams.set('banner', banner || '');
 
   return (
     <Default
@@ -140,7 +135,7 @@ Check out all of ${title}'s latest earning opportunities on a single page.
                 {isListingsLoading ? (
                   <Skeleton className="h-20 w-20 rounded-full border-4 border-white bg-white md:h-28 md:w-28" />
                 ) : (
-                  <div className="relative rounded-lg border-2 border-white shadow-lg">
+                  <div className="relative rounded-lg border-2 border-white bg-white shadow-lg">
                     <LocalImage
                       className="h-20 w-20 rounded-lg object-cover md:h-28 md:w-28"
                       alt="Category icon"

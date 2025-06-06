@@ -80,7 +80,7 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
         </div>
 
         {!router.pathname.startsWith('/new/') && (
-          <div className="absolute left-1/2 -translate-x-3/4">
+          <div className="flex items-center">
             <div className="ml-10 flex h-full items-center justify-center">
               <div className="ph-no-capture flex h-full flex-row items-center gap-7">
                 {LISTING_NAV_ITEMS?.map((navItem) => {
@@ -100,7 +100,7 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
                 })}
                 <Link
                   href={'/firehose'}
-                  className={cn('-mx-2 flex h-8 items-center')}
+                  className={cn('-mx-3 flex h-8 items-center')}
                 >
                   <ExternalImage
                     alt="Redacted Logo"
@@ -113,7 +113,7 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
           </div>
         )}
 
-        <div className="flex flex-1 items-center justify-end gap-4 py-1.5">
+        <div className="flex items-center justify-end gap-4 py-1.5">
           {status === 'loading' && !session && (
             <div className="flex items-center gap-2">
               <Skeleton className="h-10 w-10 rounded-full" />
