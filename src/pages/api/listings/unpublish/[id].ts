@@ -8,6 +8,7 @@ import { safeStringify } from '@/utils/safeStringify';
 import { type NextApiRequestWithSponsor } from '@/features/auth/types';
 import { checkListingSponsorAuth } from '@/features/auth/utils/checkListingSponsorAuth';
 import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
+import { refundCredit } from '@/features/credits/utils/allocateCredits';
 
 async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   const id = req.query.id as string;
@@ -82,6 +83,9 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         winnerPosition: null,
       },
     });
+
+    await refundCredit(id);
+
     try {
       await earncognitoClient.post(`/discord/listing-update`, {
         listingId: id,

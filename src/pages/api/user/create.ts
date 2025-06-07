@@ -6,9 +6,14 @@ import { safeStringify } from '@/utils/safeStringify';
 
 import { getPrivyToken } from '@/features/auth/utils/getPrivyToken';
 
-export default async function newUser(
+interface CreateUserResponse {
+  message: string;
+  created: boolean;
+}
+
+export default async function createUser(
   req: NextApiRequest,
-  res: NextApiResponse,
+  res: NextApiResponse<CreateUserResponse | { error: string }>,
 ) {
   logger.debug(`Request body: ${safeStringify(req.body)}`);
 
@@ -23,46 +28,47 @@ export default async function newUser(
 
     const existingUser = await prisma.user.findUnique({
       where: { privyDid },
+      select: { id: true, email: true },
     });
 
     if (existingUser) {
       logger.warn(`User already exists with privyDid: ${privyDid}`);
-      return res.status(409).json({ error: 'User already exists' });
+      return res.status(200).json({
+        message: `User already exists`,
+        created: false,
+      });
+    }
+
+    const existingUserByEmail = await prisma.user.findUnique({
+      where: { email },
+      select: { id: true, privyDid: true },
+    });
+
+    if (existingUserByEmail) {
+      logger.warn(
+        `User exists with email ${email} but different privyDid. Existing: ${existingUserByEmail.privyDid}, New: ${privyDid}`,
+      );
+      return res.status(409).json({
+        error:
+          'User with this email already exists with different authentication method',
+      });
     }
 
     const user = await prisma.user.create({
       data: { privyDid, email },
     });
 
-    logger.debug(`Created new user with ID: ${user.id}`);
-    return res.status(200).json({
+    logger.info(`Created new user with ID: ${user.id}`);
+    return res.status(201).json({
       message: `Created new user with ID: ${user.id}`,
+      created: true,
     });
-
-    // const invite = await prisma.userInvites.findFirst({
-    //   where: { email: user.email },
-    //   orderBy: { createdAt: 'desc' },
-    // });
-    //
-    // const hasInvite = user && invite;
-    //
-    // if (!hasInvite) {
-    //   logger.info('User does not have an invite, redirecting to onboarding');
-    //   return res.status(200).json({
-    //     message: 'User does not have an invite, redirecting to onboarding',
-    //   });
-    // } else {
-    //   const result = await handleInviteAcceptance(user.id);
-    //   logger.info('User has an invite, redirecting to dashboard');
-    //   return res.status(307).redirect(result.redirectUrl!);
-    // }
   } catch (error: any) {
     logger.error(
-      `Error occurred while creating new user: ${safeStringify(error)}`,
+      `Error occurred while creating/checking user: ${safeStringify(error)}`,
     );
-    return res.status(400).json({
-      error,
-      message: 'Error occurred while creating new user.',
+    return res.status(500).json({
+      error: 'Error occurred while processing user creation.',
     });
   }
 }

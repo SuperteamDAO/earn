@@ -47,6 +47,17 @@ export async function handleInviteAcceptance(
       };
     }
 
+    if (user.email !== invite.email) {
+      logger.warn(
+        `Email mismatch for invite acceptance. User email: ${user.email}, Invited email: ${invite.email}, User ID: ${userId}`,
+      );
+      return {
+        success: false,
+        message:
+          'This invitation was sent to a different email address. Please sign in with the correct email to accept this invitation.',
+      };
+    }
+
     const existingUserSponsor = await prisma.userSponsors.findUnique({
       where: {
         userId_sponsorId: {

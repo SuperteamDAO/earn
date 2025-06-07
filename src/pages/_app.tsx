@@ -113,13 +113,25 @@ function MyApp({ Component, pageProps }: any) {
 
   useEffect(() => {
     if (router.query.loginState === 'signedIn' && user && !isUserLoading) {
-      posthog.identify(user.email);
+      if (user.isTalentFilled || !!user.currentSponsorId) {
+        if (!posthog._isIdentified()) {
+          posthog.identify(user.email);
+        }
+      }
       const url = new URL(window.location.href);
       url.searchParams.delete('loginState');
       window.history.replaceState(null, '', url.href);
       forcedProfileRedirect(); // instantly when just signed in
     }
   }, [router, user, posthog, isUserLoading]);
+
+  useEffect(() => {
+    if (user?.id && !(user?.isTalentFilled || !!user?.currentSponsorId)) {
+      if (posthog._isIdentified()) {
+        posthog.reset();
+      }
+    }
+  }, [user?.id]);
 
   // forced profile redirection
   useEffect(() => {

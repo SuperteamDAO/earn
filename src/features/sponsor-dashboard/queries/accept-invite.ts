@@ -8,6 +8,7 @@ interface InviteDetails {
   senderName: string;
   memberType: string;
   sponsorLogo: string;
+  invitedEmail: string;
 }
 
 const verifyInvite = async (token: string): Promise<InviteDetails> => {

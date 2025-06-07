@@ -6,6 +6,8 @@ import { z } from 'zod';
 
 import { skillsArraySchema } from '@/interface/skills';
 import logger from '@/lib/logger';
+import { aiGenerateRateLimiter } from '@/lib/ratelimit';
+import { checkAndApplyRateLimitApp } from '@/lib/rateLimiterService';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { getSponsorSession } from '@/features/auth/utils/getSponsorSession';
@@ -23,6 +25,27 @@ export type TSkillsGenerateResponse = z.infer<typeof responseSchema>;
 
 export async function POST(request: Request) {
   try {
+    const session = await getSponsorSession(await headers());
+
+    if (session.error || !session.data) {
+      return NextResponse.json(
+        { error: session.error },
+        { status: session.status },
+      );
+    }
+
+    const userId = session.data.userId;
+
+    const rateLimitResponse = await checkAndApplyRateLimitApp({
+      limiter: aiGenerateRateLimiter,
+      identifier: userId,
+      routeName: 'aiGenerateSkills',
+    });
+
+    if (rateLimitResponse) {
+      return rateLimitResponse;
+    }
+
     let description: string;
     try {
       const body = await request.json();
@@ -49,15 +72,6 @@ export async function POST(request: Request) {
         );
       }
       throw e;
-    }
-
-    const session = await getSponsorSession(await headers());
-
-    if (session.error || !session.data) {
-      return NextResponse.json(
-        { error: session.error },
-        { status: session.status },
-      );
     }
 
     const prompt = generateListingSkillsPrompt(description);

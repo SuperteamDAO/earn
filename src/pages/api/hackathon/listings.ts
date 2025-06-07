@@ -62,16 +62,6 @@ async function getHackathonListings(
       take: take ?? 15,
       orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
       select: {
-        _count: {
-          select: {
-            Submission: {
-              where: {
-                isActive: true,
-                isArchived: false,
-              },
-            },
-          },
-        },
         id: true,
         title: true,
         type: true,
@@ -96,9 +86,46 @@ async function getHackathonListings(
             slug: true,
           },
         },
+        Submission: {
+          where: {
+            OR: [
+              {
+                isActive: true,
+                isArchived: false,
+              },
+              {
+                isPaid: true,
+              },
+            ],
+          },
+          select: {
+            isActive: true,
+            isArchived: true,
+            isPaid: true,
+          },
+        },
       },
     });
-    res.status(200).json({ total, startDate, listings: result });
+    const listings = result.map((bounty) => {
+      const activeSubmissionsCount = bounty.Submission.filter(
+        (sub) => sub.isActive && !sub.isArchived,
+      ).length;
+
+      const totalPaymentsMadeCount = bounty.Submission.filter(
+        (sub) => sub.isPaid,
+      ).length;
+
+      const { Submission: _, ...bountyWithoutSubmissions } = bounty;
+
+      return {
+        ...bountyWithoutSubmissions,
+        _count: {
+          Submission: activeSubmissionsCount,
+        },
+        totalPaymentsMade: totalPaymentsMadeCount,
+      };
+    });
+    res.status(200).json({ total, startDate, listings });
   } catch (err) {
     res.status(400).json({ err: 'Error occurred while fetching bounties.' });
   }

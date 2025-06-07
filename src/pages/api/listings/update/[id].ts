@@ -22,6 +22,7 @@ import {
 } from '@/features/listing-builder/types/schema';
 import { calculateTotalPrizes } from '@/features/listing-builder/utils/rewards';
 import { isDeadlineOver } from '@/features/listings/utils/deadline';
+import { isListingEditable } from '@/features/listings/utils/isListingEditable';
 import { fetchHistoricalTokenUSDValue } from '@/features/wallet/utils/fetchHistoricalTokenUSDValue';
 
 const allowedFields = [
@@ -102,6 +103,15 @@ async function listing(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       logger.info(`Listings connected hacakthon is fetched`, {
         listingId: id,
         hackathon: hackathon,
+      });
+    }
+
+    const isEditable = isListingEditable({ listing, user });
+
+    if (!isEditable) {
+      logger.warn(`Listing is not editable`, { id });
+      return res.status(400).json({
+        message: `Listing is not editable`,
       });
     }
 

@@ -35,6 +35,7 @@ import { uploadAndReplaceImage } from '@/utils/image';
 
 import { SignIn } from '@/features/auth/components/SignIn';
 import { SocialInput } from '@/features/social/components/SocialInput';
+import { extractSocialUsername } from '@/features/social/utils/extractUsername';
 import { useSlugValidation } from '@/features/sponsor/hooks/useSlugValidation';
 import { useSponsorNameValidation } from '@/features/sponsor/hooks/useSponsorNameValidation';
 import {
@@ -78,7 +79,9 @@ const CreateSponsor = () => {
         lastName: user?.lastName || '',
         username: user?.username || '',
         photo: user?.photo || '',
-        telegram: user?.telegram || '',
+        telegram: user?.telegram
+          ? extractSocialUsername('telegram', user.telegram) || user.telegram
+          : '',
       },
     },
   });
@@ -92,7 +95,9 @@ const CreateSponsor = () => {
           lastName: user?.lastName || '',
           username: user?.username || '',
           photo: user?.photo || '',
-          telegram: user?.telegram || '',
+          telegram: user?.telegram
+            ? extractSocialUsername('telegram', user.telegram) || user.telegram
+            : '',
         },
       });
     }
@@ -183,7 +188,7 @@ const CreateSponsor = () => {
   }, [user?.currentSponsorId, router]);
 
   const {
-    mutate: createSponsor,
+    mutateAsync: createSponsor,
     isPending,
     isError,
   } = useMutation({
@@ -278,6 +283,7 @@ const CreateSponsor = () => {
 
       posthog.capture('complete profile_sponsor');
       await createSponsor(data);
+      if (user) posthog.identify(user.email);
     } catch (error) {
       console.error('Error uploading images:', error);
       toast.error('Failed to upload images. Please try again.');

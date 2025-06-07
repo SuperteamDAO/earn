@@ -83,7 +83,10 @@
         "@typescript-eslint/no-var-requires": "off",
         "unused-imports/no-unused-vars": [
           "error",
-          { "argsIgnorePattern": "^_" }
+          {
+            "argsIgnorePattern": "^_",
+            "varsIgnorePattern": "^_"
+          }
         ],
         "@tanstack/query/exhaustive-deps": "error",
         "@tanstack/query/no-rest-destructuring": "error",
