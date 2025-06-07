@@ -46,7 +46,7 @@ export async function POST(req: NextRequest) {
     return createDataStreamResponse({
       execute: (dataStream) => {
         const result = streamText({
-          model: openrouter('google/gemini-2.5-pro-preview:online', {
+          model: openrouter('google/gemini-2.5-flash-preview:online', {
             extraBody: {
               plugins: [
                 {
@@ -54,9 +54,6 @@ export async function POST(req: NextRequest) {
                   max_results: 3,
                 },
               ],
-            },
-            reasoning: {
-              effort: 'medium',
             },
           }),
           system:

@@ -145,10 +145,8 @@ ${inputReward || 'N/A'}
     *   Set \`maxBonusSpots\` to 0.
     *   Set \`minRewardAsk\` and \`maxRewardAsk\` to \`0\`.
 
-## Output Format:
+## Important Notes:
 
-*   Return **ONLY** the final JSON object based on the rules and input.
-*   Absolute avoid include explanations, comments, or any surrounding text outside the JSON structure.
 *   Ensure all calculations for amount conversions are accurate using the provided USD value (\`${targetTokenUsdValue}\`).
 *   **Double-check:** If \`compensationType\` is 'range', ensure *both* \`minRewardAsk\` and \`maxRewardAsk\` have valid numeric values.
 `;
