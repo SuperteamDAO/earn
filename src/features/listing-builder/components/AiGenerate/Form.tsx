@@ -303,7 +303,7 @@ export function AiGenerateForm({
               <Button
                 type="button"
                 variant="outline"
-                className="w-full text-red-500"
+                className="w-full"
                 onClick={onClose}
               >
                 Close

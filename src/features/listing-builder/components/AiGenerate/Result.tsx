@@ -386,6 +386,9 @@ export function AiGenerateResult({
           )}
         </Button>
         <div className="mt-2 flex w-full justify-center gap-2">
+          <Button variant="outline" className="w-full" onClick={onClose}>
+            Close
+          </Button>
           <Button
             variant="outline"
             className="w-full"
@@ -393,13 +396,6 @@ export function AiGenerateResult({
             disabled={isActionsDisabled}
           >
             Go Back
-          </Button>
-          <Button
-            variant="outline"
-            className="w-full text-red-500"
-            onClick={onClose}
-          >
-            Close
           </Button>
         </div>
         {isActionsDisabled && (
