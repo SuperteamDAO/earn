@@ -1,5 +1,5 @@
 import { type BountyType } from '@prisma/client';
-import { Baseline, Link2, Loader2 } from 'lucide-react';
+import { Baseline, Link2, Loader2, LoaderCircle } from 'lucide-react';
 import { useEffect, useMemo, useRef } from 'react';
 import { useWatch } from 'react-hook-form';
 
@@ -46,6 +46,7 @@ function hasProperRewards(
 interface AiGenerateResultProps {
   description: string;
   token: string;
+  tokenUsdValue: number;
   isDescriptionLoading: boolean;
   isDescriptionError: boolean;
   title: string;
@@ -71,6 +72,7 @@ interface AiGenerateResultProps {
 export function AiGenerateResult({
   description,
   token,
+  tokenUsdValue,
   isDescriptionLoading,
   isDescriptionError,
   title,
@@ -101,8 +103,18 @@ export function AiGenerateResult({
 
   const isActionsDisabled = useMemo(
     () =>
-      isDescriptionLoading || isEligibilityQuestionsPending || isRewardsPending,
-    [isDescriptionLoading, isEligibilityQuestionsPending, isRewardsPending],
+      isDescriptionLoading ||
+      isTitlePending ||
+      isEligibilityQuestionsPending ||
+      isSkillsPending ||
+      isRewardsPending,
+    [
+      isDescriptionLoading,
+      isTitlePending,
+      isEligibilityQuestionsPending,
+      isSkillsPending,
+      isRewardsPending,
+    ],
   );
 
   useEffect(() => {
@@ -114,6 +126,13 @@ export function AiGenerateResult({
       bottomRef.current?.scrollIntoView({ behavior: 'auto' });
     }, 1);
   }, [isDescriptionLoading]);
+
+  let loadingText = '';
+  if (isDescriptionLoading) {
+    loadingText = 'Generating Description';
+  } else {
+    loadingText = 'Generating fields';
+  }
 
   return (
     <div className="space-y-4">
@@ -138,10 +157,37 @@ export function AiGenerateResult({
         </p>
       </div>
 
+      <div className="mt-4 space-y-3 text-sm text-slate-700">
+        <h3 className="text-sm font-medium text-slate-600">Token</h3>
+        <div className="flex w-full items-center gap-4 rounded-md border border-slate-200 bg-slate-50 py-3 pl-3">
+          <TokenLabel
+            symbol={token}
+            showIcon
+            classNames={{
+              amount: 'font-medium text-base ml-0',
+              symbol: 'font-medium text-base mr-0',
+              icon: 'mr-0',
+            }}
+          />
+          <span className="text-slate-500">
+            1 {token} ≈ $
+            {tokenUsdValue.toLocaleString(undefined, {
+              maximumFractionDigits: 4,
+            })}{' '}
+            USD
+          </span>
+        </div>
+      </div>
+
       <div>
         <h3 className="text-sm font-medium text-slate-600">Generated Result</h3>
         <div className="mt-2 rounded-md border bg-white px-4 py-2">
-          {isDescriptionLoading ? (
+          {!description || description.length === 0 ? (
+            <div className="flex animate-pulse items-center gap-4 py-2 text-sm">
+              <LoaderCircle className="h-4 w-4 animate-spin" />
+              <span className="text-gray-500">Thinking…</span>
+            </div>
+          ) : isDescriptionLoading ? (
             <div className="minimal-tiptap-editor tiptap ProseMirror h-min w-full overflow-visible px-0! pb-7">
               <div className="tiptap ProseMirror listing-description mt-0! px-0!">
                 <MarkdownRenderer>{description}</MarkdownRenderer>
@@ -328,7 +374,14 @@ export function AiGenerateResult({
           className="w-full bg-indigo-500 hover:bg-indigo-600"
           disabled={isActionsDisabled}
         >
-          Insert
+          {isActionsDisabled ? (
+            <span className="flex items-center gap-2">
+              <Loader2 className="size-4 animate-spin" />
+              {loadingText}
+            </span>
+          ) : (
+            'Insert'
+          )}
         </Button>
         <Button variant="link" onClick={onBack} disabled={isActionsDisabled}>
           Go Back

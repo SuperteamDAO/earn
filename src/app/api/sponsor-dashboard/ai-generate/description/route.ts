@@ -46,16 +46,19 @@ export async function POST(req: NextRequest) {
     return createDataStreamResponse({
       execute: (dataStream) => {
         const result = streamText({
-          model: openrouter('google/gemini-2.5-flash-preview:online', {
-            extraBody: {
-              plugins: [
-                {
-                  id: 'web',
-                  max_results: 3,
-                },
-              ],
+          model: openrouter(
+            'google/gemini-2.5-flash-preview-05-20:online:thinking',
+            {
+              extraBody: {
+                plugins: [
+                  {
+                    id: 'web',
+                    max_results: 3,
+                  },
+                ],
+              },
             },
-          }),
+          ),
           system:
             'You are a professional content writer specializing in creating clear, concise, and compelling project descriptions for bounties and freelance opportunities.',
           prompt,

@@ -60,6 +60,7 @@ export function AiGenerateDialog({ children }: AIDescriptionDialogProps) {
     rewards: '',
     requirements: '',
   });
+  const [tokenUsdValue, setTokenUsdValue] = useState<number>(1);
 
   const {
     complete: completeDescription,
@@ -207,6 +208,8 @@ export function AiGenerateDialog({ children }: AIDescriptionDialogProps) {
     const tokenUsdAmount = tokenItem
       ? await fetchTokenUSDValue(tokenItem.mintAddress)
       : 1;
+    setTokenUsdValue(tokenUsdAmount);
+    setStage('result');
 
     const completedDescription = await completeDescription('', {
       body: {
@@ -300,6 +303,7 @@ export function AiGenerateDialog({ children }: AIDescriptionDialogProps) {
             ) : (
               <AiGenerateResult
                 token={token?.token || 'USDC'}
+                tokenUsdValue={tokenUsdValue}
                 isDescriptionLoading={isDescriptionLoading}
                 description={parsedDescription}
                 isDescriptionError={Boolean(isDescriptionError)}
