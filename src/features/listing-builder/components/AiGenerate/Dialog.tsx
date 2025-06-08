@@ -19,6 +19,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { tokenList } from '@/constants/tokenList';
 import { type Skills } from '@/interface/skills';
 import { api } from '@/lib/api';
@@ -283,100 +284,104 @@ export function AiGenerateDialog({ children }: AIDescriptionDialogProps) {
         {children}
       </DialogTrigger>
       <DialogContent
-        className="sm:max-w-160"
+        className="p-0 sm:max-w-160"
         hideCloseIcon
         aria-describedby="Auto Generate Listing"
       >
-        <DialogTitle className="sr-only">Auto Generate Listing</DialogTitle>
-        {stage === 'form' ? (
-          <AiGenerateForm
-            onSubmit={handleFormSubmit}
-            initialData={formData}
-            resetForm={resetForm}
-          />
-        ) : (
-          <AiGenerateResult
-            token={token?.token || 'USDC'}
-            isDescriptionLoading={isDescriptionLoading}
-            description={parsedDescription}
-            isDescriptionError={Boolean(isDescriptionError)}
-            title={title?.title || ''}
-            isTitleIdle={isTitleIdle}
-            isTitleError={isTitleError}
-            isTitlePending={isTitlePending}
-            eligibilityQuestions={eligibilityQuestions || []}
-            isEligibilityQuestionsIdle={isEligibilityQuestionsIdle}
-            isEligibilityQuestionsError={isEligibilityQuestionsError}
-            isEligibilityQuestionsPending={isEligibilityQuestionsPending}
-            skills={skills || []}
-            isSkillsIdle={isSkillsIdle}
-            isSkillsError={isSkillsError}
-            isSkillsPending={isSkillsPending}
-            rewards={rewards}
-            isRewardsIdle={isRewardsIdle}
-            isRewardsError={isRewardsError}
-            isRewardsPending={isRewardsPending}
-            onInsert={() => {
-              posthog.capture('insert_auto-generate');
-              listingForm.setValue('description', parsedDescription);
-              listingForm.setValue('eligibility', eligibilityQuestions);
-              if (title?.title) listingForm.setValue('title', title?.title);
-              if (skills) {
-                listingForm.setValue('skills', skills);
-              }
-              if (rewards) {
-                listingForm.setValue(
-                  'compensationType',
-                  rewards.compensationType,
-                );
-                listingForm.setValue('token', token?.token || 'USDC');
-                if (rewards.maxBonusSpots)
-                  listingForm.setValue(
-                    'maxBonusSpots',
-                    rewards.maxBonusSpots || 0,
-                  );
-                if (rewards.compensationType === 'fixed') {
-                  listingForm.setValue('rewards', rewards.rewards || {});
-                  const totalReward = calculateTotalRewardsForPodium(
-                    rewards?.rewards || {},
-                    rewards?.maxBonusSpots || 0,
-                  );
-                  listingForm.setValue('rewardAmount', totalReward);
-                }
-                if (rewards.compensationType === 'range') {
-                  listingForm.setValue(
-                    'minRewardAsk',
-                    rewards.minRewardAsk || 0,
-                  );
-                  listingForm.setValue(
-                    'maxRewardAsk',
-                    rewards.maxRewardAsk || 0,
-                  );
-                }
-              }
-              setDescriptionKey((s) => {
-                if (typeof s === 'number') return s + 1;
-                else return 1;
-              });
-              setSkillsKey((s) => {
-                if (typeof s === 'number') return s + 1;
-                else return 1;
-              });
-              listingForm.saveDraft();
-              setOpen(false);
-            }}
-            onBack={() => {
-              posthog.capture('back_auto-generate');
-              setStage('form');
-              resetEligibilityQuestions();
-              resetRewards();
-              resetSkills();
-              resetToken();
-              resetTitle();
-              setDescription('');
-            }}
-          />
-        )}
+        <ScrollArea className="max-h-190 px-6 py-0">
+          <div className="py-2 pt-6">
+            <DialogTitle className="sr-only">Auto Generate Listing</DialogTitle>
+            {stage === 'form' ? (
+              <AiGenerateForm
+                onSubmit={handleFormSubmit}
+                initialData={formData}
+                resetForm={resetForm}
+              />
+            ) : (
+              <AiGenerateResult
+                token={token?.token || 'USDC'}
+                isDescriptionLoading={isDescriptionLoading}
+                description={parsedDescription}
+                isDescriptionError={Boolean(isDescriptionError)}
+                title={title?.title || ''}
+                isTitleIdle={isTitleIdle}
+                isTitleError={isTitleError}
+                isTitlePending={isTitlePending}
+                eligibilityQuestions={eligibilityQuestions || []}
+                isEligibilityQuestionsIdle={isEligibilityQuestionsIdle}
+                isEligibilityQuestionsError={isEligibilityQuestionsError}
+                isEligibilityQuestionsPending={isEligibilityQuestionsPending}
+                skills={skills || []}
+                isSkillsIdle={isSkillsIdle}
+                isSkillsError={isSkillsError}
+                isSkillsPending={isSkillsPending}
+                rewards={rewards}
+                isRewardsIdle={isRewardsIdle}
+                isRewardsError={isRewardsError}
+                isRewardsPending={isRewardsPending}
+                onInsert={() => {
+                  posthog.capture('insert_auto-generate');
+                  listingForm.setValue('description', parsedDescription);
+                  listingForm.setValue('eligibility', eligibilityQuestions);
+                  if (title?.title) listingForm.setValue('title', title?.title);
+                  if (skills) {
+                    listingForm.setValue('skills', skills);
+                  }
+                  if (rewards) {
+                    listingForm.setValue(
+                      'compensationType',
+                      rewards.compensationType,
+                    );
+                    listingForm.setValue('token', token?.token || 'USDC');
+                    if (rewards.maxBonusSpots)
+                      listingForm.setValue(
+                        'maxBonusSpots',
+                        rewards.maxBonusSpots || 0,
+                      );
+                    if (rewards.compensationType === 'fixed') {
+                      listingForm.setValue('rewards', rewards.rewards || {});
+                      const totalReward = calculateTotalRewardsForPodium(
+                        rewards?.rewards || {},
+                        rewards?.maxBonusSpots || 0,
+                      );
+                      listingForm.setValue('rewardAmount', totalReward);
+                    }
+                    if (rewards.compensationType === 'range') {
+                      listingForm.setValue(
+                        'minRewardAsk',
+                        rewards.minRewardAsk || 0,
+                      );
+                      listingForm.setValue(
+                        'maxRewardAsk',
+                        rewards.maxRewardAsk || 0,
+                      );
+                    }
+                  }
+                  setDescriptionKey((s) => {
+                    if (typeof s === 'number') return s + 1;
+                    else return 1;
+                  });
+                  setSkillsKey((s) => {
+                    if (typeof s === 'number') return s + 1;
+                    else return 1;
+                  });
+                  listingForm.saveDraft();
+                  setOpen(false);
+                }}
+                onBack={() => {
+                  posthog.capture('back_auto-generate');
+                  setStage('form');
+                  resetEligibilityQuestions();
+                  resetRewards();
+                  resetSkills();
+                  resetToken();
+                  resetTitle();
+                  setDescription('');
+                }}
+              />
+            )}
+          </div>
+        </ScrollArea>
       </DialogContent>
     </Dialog>
   );
