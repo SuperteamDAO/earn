@@ -252,8 +252,8 @@ export function AiGenerateForm({
                   <TextareaAutosize
                     placeholder={
                       type !== 'project'
-                        ? `What are the requirements that the participant needs to meet? Also mention your judging criterias for quality submission`
-                        : `What are your evaluation criterias or qualitfications that the applicant needs to meet?`
+                        ? `List down conditions that a submission needs to meet to be considered eligible. Also, list down the judging criteria for picking the winning submissions`
+                        : `List down conditions that an applicant needs to meet to be considered eligible. Also, list down the judging criteria for picking the winning application`
                     }
                     className="focus:border-primary rounded-md border p-2 text-sm placeholder:text-sm focus:outline-none"
                     minRows={3}
