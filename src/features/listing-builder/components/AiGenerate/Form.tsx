@@ -30,12 +30,14 @@ interface DescriptionFormProps {
   onSubmit: (data: AiGenerateFormValues) => Promise<void>;
   initialData: Partial<AiGenerateFormValues>;
   resetForm: () => void;
+  onClose: () => void;
 }
 
 export function AiGenerateForm({
   onSubmit,
   initialData,
   resetForm,
+  onClose,
 }: DescriptionFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -262,7 +264,12 @@ export function AiGenerateForm({
               </FormItem>
             )}
           />
-          <div className="mt-auto flex flex-col items-center">
+          <div className="mt-auto mb-4 flex flex-col items-center gap-2">
+            {isSubmitting && (
+              <span className="mt-2 w-full rounded-md bg-slate-100 py-1 text-center text-sm text-slate-500">
+                Estimated time ~1m
+              </span>
+            )}
             <Button
               type="submit"
               className="w-full bg-indigo-500 hover:bg-indigo-600"
@@ -275,23 +282,33 @@ export function AiGenerateForm({
               )}
               {isSubmitting ? 'Generating' : 'Generate'}
             </Button>
-            <Button
-              type="button"
-              variant="link"
-              className=""
-              onClick={() => {
-                form.reset({
-                  companyDescription: '',
-                  scopeOfWork: '',
-                  rewards: '',
-                  requirements: '',
-                });
-                localStorage.removeItem(AUTO_GENERATE_STORAGE_KEY);
-                resetForm();
-              }}
-            >
-              Reset
-            </Button>
+            <div className="flex w-full justify-center gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full"
+                onClick={() => {
+                  form.reset({
+                    companyDescription: '',
+                    scopeOfWork: '',
+                    rewards: '',
+                    requirements: '',
+                  });
+                  localStorage.removeItem(AUTO_GENERATE_STORAGE_KEY);
+                  resetForm();
+                }}
+              >
+                Reset
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full text-red-500"
+                onClick={onClose}
+              >
+                Close
+              </Button>
+            </div>
           </div>
         </form>
       </Form>

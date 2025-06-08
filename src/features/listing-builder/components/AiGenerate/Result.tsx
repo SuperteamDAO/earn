@@ -67,6 +67,7 @@ interface AiGenerateResultProps {
   isRewardsPending: boolean;
   onInsert: () => void;
   onBack: () => void;
+  onClose: () => void;
 }
 
 export function AiGenerateResult({
@@ -93,6 +94,7 @@ export function AiGenerateResult({
   isRewardsPending,
   onInsert,
   onBack,
+  onClose,
 }: AiGenerateResultProps) {
   const bottomRef = useRef<HTMLDivElement>(null);
   const listingForm = useListingForm();
@@ -180,10 +182,10 @@ export function AiGenerateResult({
       </div>
 
       <div>
-        <h3 className="text-sm font-medium text-slate-600">Generated Result</h3>
+        <h3 className="text-sm font-medium text-slate-600">Description</h3>
         <div className="mt-2 rounded-md border bg-white px-4 py-2">
           {!description || description.length === 0 ? (
-            <div className="flex animate-pulse items-center gap-4 py-2 text-sm">
+            <div className="flex animate-pulse items-center gap-2 py-2 text-sm">
               <LoaderCircle className="h-4 w-4 animate-spin" />
               <span className="text-gray-500">Thinking…</span>
             </div>
@@ -368,7 +370,7 @@ export function AiGenerateResult({
 
       <div ref={bottomRef} />
 
-      <div className="mt-auto flex flex-col items-center">
+      <div className="mt-4 mb-4 flex flex-col items-center">
         <Button
           onClick={onInsert}
           className="w-full bg-indigo-500 hover:bg-indigo-600"
@@ -383,9 +385,28 @@ export function AiGenerateResult({
             'Insert'
           )}
         </Button>
-        <Button variant="link" onClick={onBack} disabled={isActionsDisabled}>
-          Go Back
-        </Button>
+        <div className="mt-2 flex w-full justify-center gap-2">
+          <Button
+            variant="outline"
+            className="w-full"
+            onClick={onBack}
+            disabled={isActionsDisabled}
+          >
+            Go Back
+          </Button>
+          <Button
+            variant="outline"
+            className="w-full text-red-500"
+            onClick={onClose}
+          >
+            Close
+          </Button>
+        </div>
+        {isActionsDisabled && (
+          <span className="mt-2 w-full rounded-md bg-slate-100 py-1 text-center text-sm text-slate-500">
+            Estimated time ~1m
+          </span>
+        )}
       </div>
     </div>
   );

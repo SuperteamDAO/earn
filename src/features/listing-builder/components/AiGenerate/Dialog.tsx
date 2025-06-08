@@ -100,6 +100,7 @@ export function AiGenerateDialog({ children }: AIDescriptionDialogProps) {
     isIdle: isTitleIdle,
     isError: isTitleError,
     isPending: isTitlePending,
+    isSuccess: isTitleSuccess,
   } = useMutation({
     mutationFn: async ({
       description,
@@ -123,6 +124,7 @@ export function AiGenerateDialog({ children }: AIDescriptionDialogProps) {
     isIdle: isEligibilityQuestionsIdle,
     isError: isEligibilityQuestionsError,
     isPending: isEligibilityQuestionsPending,
+    isSuccess: isEligibilityQuestionsSuccess,
   } = useMutation({
     mutationFn: async ({
       description,
@@ -152,6 +154,7 @@ export function AiGenerateDialog({ children }: AIDescriptionDialogProps) {
     isIdle: isRewardsIdle,
     isError: isRewardsError,
     isPending: isRewardsPending,
+    isSuccess: isRewardsSuccess,
   } = useMutation({
     mutationFn: async (input: RewardInputSchema) =>
       (
@@ -169,6 +172,7 @@ export function AiGenerateDialog({ children }: AIDescriptionDialogProps) {
     isIdle: isSkillsIdle,
     isError: isSkillsError,
     isPending: isSkillsPending,
+    isSuccess: isSkillsSuccess,
   } = useMutation({
     mutationFn: async ({ description }: { description: string }) =>
       (
@@ -193,6 +197,23 @@ export function AiGenerateDialog({ children }: AIDescriptionDialogProps) {
         )
       ).data,
   });
+
+  useEffect(() => {
+    if (
+      isSkillsSuccess &&
+      isTitleSuccess &&
+      isRewardsSuccess &&
+      isEligibilityQuestionsSuccess
+    ) {
+      const audio = new Audio('/assets/auto-generate-complete.wav');
+      audio.play();
+    }
+  }, [
+    isSkillsSuccess,
+    isTitleSuccess,
+    isRewardsSuccess,
+    isEligibilityQuestionsSuccess,
+  ]);
 
   const handleFormSubmit = async (data: AiGenerateFormValues) => {
     posthog.capture('generate_auto-generate');
@@ -289,6 +310,9 @@ export function AiGenerateDialog({ children }: AIDescriptionDialogProps) {
       <DialogContent
         className="p-0 sm:max-w-160"
         hideCloseIcon
+        onEscapeKeyDown={(e) => e.preventDefault()}
+        onPointerDownOutside={(e) => e.preventDefault()}
+        onInteractOutside={(e) => e.preventDefault()}
         aria-describedby="Auto Generate Listing"
       >
         <ScrollArea className="max-h-190 px-6 py-0">
@@ -299,6 +323,7 @@ export function AiGenerateDialog({ children }: AIDescriptionDialogProps) {
                 onSubmit={handleFormSubmit}
                 initialData={formData}
                 resetForm={resetForm}
+                onClose={() => setOpen(false)}
               />
             ) : (
               <AiGenerateResult
@@ -382,6 +407,7 @@ export function AiGenerateDialog({ children }: AIDescriptionDialogProps) {
                   resetTitle();
                   setDescription('');
                 }}
+                onClose={() => setOpen(false)}
               />
             )}
           </div>
