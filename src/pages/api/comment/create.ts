@@ -47,11 +47,37 @@ async function commentHandler(
   );
 
   try {
-    const { pocId, message, refId, replyToId, submissionId, replyToUserId } =
-      req.body;
+    const {
+      pocId,
+      message,
+      refId,
+      replyToId,
+      submissionId,
+      replyToUserId,
+      isPinned,
+    } = req.body;
     const refType = req.body.refType as CommentRefType;
     let { type } = req.body as { type: CommentType | undefined };
     if (!type) type = 'NORMAL';
+
+    if (isPinned) {
+      if (refType === 'BOUNTY') {
+        const listing = await prisma.bounties.findUnique({
+          where: { id: refId },
+          select: { pocId: true },
+        });
+        if (!listing || listing.pocId !== userId) {
+          logger.warn(`Unauthorized pin attempt by user ID: ${userId}`);
+          return res
+            .status(403)
+            .json({ error: 'Only the listing POC can pin comments' });
+        }
+      } else {
+        return res
+          .status(403)
+          .json({ error: 'Pinning is only allowed for bounty comments' });
+      }
+    }
 
     logger.debug(`[CommentCreateAPI] Creating comment for user: ${userId}`);
     const result = await prisma.comment.create({
@@ -63,6 +89,7 @@ async function commentHandler(
         refType: refType as CommentRefType,
         type,
         submissionId: submissionId as string | undefined,
+        isPinned: isPinned || false,
       },
       include: {
         author: {
