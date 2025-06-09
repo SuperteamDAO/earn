@@ -82,28 +82,33 @@ export const Comments = ({
       (comment) => comment.id === commentId,
     );
     if (commentIndex > -1) {
-      await api.post(`/api/comment/${commentId}/pin`, {
-        isPinned,
-      });
-      setComments((prevComments) => {
-        const newComments = [...prevComments];
-        if (newComments[commentIndex]) {
-          newComments[commentIndex] = {
-            ...newComments[commentIndex],
-            isPinned,
-          };
-        }
-        const timeSorted = newComments.sort(
-          (a, b) =>
-            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
-        );
-        const sortedComments = timeSorted.sort((a, b) => {
-          if (a.isPinned && !b.isPinned) return -1;
-          if (!a.isPinned && b.isPinned) return 1;
-          return 0;
+      try {
+        await api.post(`/api/comment/${commentId}/pin`, {
+          isPinned,
         });
-        return sortedComments;
-      });
+        setComments((prevComments) => {
+          const newComments = [...prevComments];
+          if (newComments[commentIndex]) {
+            newComments[commentIndex] = {
+              ...newComments[commentIndex],
+              isPinned,
+            };
+          }
+          const timeSorted = newComments.sort(
+            (a, b) =>
+              new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+          );
+          const sortedComments = timeSorted.sort((a, b) => {
+            if (a.isPinned && !b.isPinned) return -1;
+            if (!a.isPinned && b.isPinned) return 1;
+            return 0;
+          });
+          return sortedComments;
+        });
+      } catch (error) {
+        console.error('Failed to pin/unpin comment:', error);
+        throw error;
+      }
     } else {
       throw new Error('Comment not found');
     }
