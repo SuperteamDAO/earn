@@ -510,7 +510,11 @@ export const Comment = ({
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel asChild>
+              <Button onClick={pinOnClose} variant="ghost">
+                Cancel
+              </Button>
+            </AlertDialogCancel>
             <Button variant="default" onClick={handlePin} disabled={pinLoading}>
               {pinLoading ? (
                 <>
