@@ -266,6 +266,7 @@ export const useListingForm = (
       description: true,
       rewards: true,
       deadline: true,
+      commitmentDate: true,
       skills: true,
       pocSocials: true,
       eligibility: true,
