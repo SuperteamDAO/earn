@@ -213,7 +213,7 @@ function TalentProfile({ talent, stats }: TalentProps) {
   ogImage.searchParams.set('skills', JSON.stringify(talent?.skills));
   ogImage.searchParams.set(
     'totalEarned',
-    stats?.totalWinnings?.toString() || '0',
+    stats?.totalWinnings?.toFixed(0) || '0',
   );
   ogImage.searchParams.set(
     'submissionCount',
