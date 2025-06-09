@@ -14,6 +14,7 @@ import { api } from '@/lib/api';
 import { cn } from '@/utils/cn';
 
 import { validUsernamesAtom } from '../atoms';
+import { sortComments } from '../utils';
 import { Comment as CommentUI } from './Comment';
 import { CommentForm } from './CommentForm';
 
@@ -94,16 +95,7 @@ export const Comments = ({
               isPinned,
             };
           }
-          const timeSorted = newComments.sort(
-            (a, b) =>
-              new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
-          );
-          const sortedComments = timeSorted.sort((a, b) => {
-            if (a.isPinned && !b.isPinned) return -1;
-            if (!a.isPinned && b.isPinned) return 1;
-            return 0;
-          });
-          return sortedComments;
+          return sortComments(newComments);
         });
       } catch (error) {
         console.error('Failed to pin/unpin comment:', error);
@@ -125,15 +117,7 @@ export const Comments = ({
       });
       const allComments = commentsData.data.result as Comment[];
 
-      const timeSorted = [...allComments].sort(
-        (a, b) =>
-          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
-      );
-      const sortedComments = timeSorted.sort((a, b) => {
-        if (a.isPinned && !b.isPinned) return -1;
-        if (!a.isPinned && b.isPinned) return 1;
-        return 0;
-      });
+      const sortedComments = sortComments(allComments);
 
       setCount(commentsData.data.count);
       setComments([...comments, ...sortedComments]);
@@ -194,17 +178,7 @@ export const Comments = ({
           setCount((count) => count + 1);
           setComments((prevComments) => {
             const newComments = [newComment, ...prevComments];
-            const timeSorted = newComments.sort(
-              (a, b) =>
-                new Date(b.createdAt).getTime() -
-                new Date(a.createdAt).getTime(),
-            );
-            const sortedComments = timeSorted.sort((a, b) => {
-              if (a.isPinned && !b.isPinned) return -1;
-              if (!a.isPinned && b.isPinned) return 1;
-              return 0;
-            });
-            return sortedComments;
+            return sortComments(newComments);
           });
           onSuccess?.(newComment);
         }}

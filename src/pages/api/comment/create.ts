@@ -61,15 +61,21 @@ async function commentHandler(
     if (!type) type = 'NORMAL';
 
     if (isPinned) {
-      const listing = await prisma.bounties.findUnique({
-        where: { id: refId },
-        select: { pocId: true },
-      });
-      if (!listing || listing.pocId !== userId) {
-        logger.warn(`Unauthorized pin attempt by user ID: ${userId}`);
+      if (refType === 'BOUNTY') {
+        const listing = await prisma.bounties.findUnique({
+          where: { id: refId },
+          select: { pocId: true },
+        });
+        if (!listing || listing.pocId !== userId) {
+          logger.warn(`Unauthorized pin attempt by user ID: ${userId}`);
+          return res
+            .status(403)
+            .json({ error: 'Only the listing POC can pin comments' });
+        }
+      } else {
         return res
           .status(403)
-          .json({ error: 'Only the listing POC can pin comments' });
+          .json({ error: 'Pinning is only allowed for bounty comments' });
       }
     }
 

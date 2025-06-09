@@ -12,7 +12,10 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
   const commentId = params.id as string;
   const userId = req.userId;
   const { isPinned } = req.body;
-
+  if (typeof isPinned !== 'boolean') {
+    logger.warn(`Invalid isPinned value: ${isPinned}`);
+    return res.status(400).json({ error: 'isPinned must be a boolean value' });
+  }
   logger.info(`Request Params: ${safeStringify(req.query)}`);
 
   if (req.method !== 'POST') {

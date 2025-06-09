@@ -145,7 +145,7 @@ export const Comment = ({
     setPinLoading(true);
     setPinError(false);
     try {
-      pinComment?.(comment.id, !comment.isPinned);
+      await pinComment?.(comment.id, !comment.isPinned);
       setPinLoading(false);
       pinOnClose();
     } catch (e) {
