@@ -179,7 +179,6 @@ export const SpamButton = ({ listingSlug, isMultiSelectOn }: Props) => {
           setPendingSpamLabel(null);
         }}
         submissionId={pendingSpamLabel?.id}
-        listingSlug={listingSlug}
         onConfirm={handleSpamConfirm}
       />
     </>

@@ -4,7 +4,6 @@ import { useAtom, useSetAtom } from 'jotai';
 import { ChevronDown } from 'lucide-react';
 import { useMemo } from 'react';
 
-import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -117,21 +116,18 @@ export const SelectLabel = ({ grantSlug }: Props) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button
-          variant="outline"
-          className="hover:border-brand-purple border border-slate-300 bg-transparent font-normal text-slate-500 capitalize hover:bg-transparent"
-        >
+        <button className="hover:border-brand-purple flex items-center rounded-md border border-slate-200 bg-transparent px-2 py-1 font-medium text-slate-500 capitalize hover:bg-transparent">
           <span
             className={cn(
-              'inline-flex w-full rounded-full px-3 py-0.5 text-center text-xs whitespace-nowrap capitalize',
+              'inline-flex rounded-full px-3 py-0.5 text-center text-[10px] whitespace-nowrap capitalize',
               bg,
               color,
             )}
           >
             {filterTriggerLabel || 'Select Option'}
           </span>
-          <ChevronDown className="ml-2 h-4 w-4" />
-        </Button>
+          <ChevronDown className="ml-2 size-3" />
+        </button>
       </DropdownMenuTrigger>
 
       <DropdownMenuContent className="border-slate-300">
@@ -148,7 +144,7 @@ export const SelectLabel = ({ grantSlug }: Props) => {
           >
             <span
               className={cn(
-                'inline-flex w-fit rounded-full px-2 text-center text-[10px] whitespace-nowrap capitalize',
+                'w-full rounded-full px-2 py-0.5 text-center text-[10px] whitespace-nowrap capitalize',
                 colorMap[option.value as keyof typeof colorMap].bg,
                 colorMap[option.value as keyof typeof colorMap].color,
               )}
