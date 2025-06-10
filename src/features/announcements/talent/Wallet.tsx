@@ -42,7 +42,7 @@ export const WalletFeature = () => {
         decoding="sync"
       />
 
-      <div className="flex flex-col items-start gap-3 p-6">
+      <div className="flex flex-col items-start gap-3 p-6 pb-0">
         <p className="text-lg font-semibold">Introducing the Earn Wallet</p>
         <Point
           title="Linked to your Earn account"

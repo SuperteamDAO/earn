@@ -3,4 +3,5 @@ export interface Announcement {
   title: string;
   Content: React.FC;
   shouldShow: boolean;
+  imagesToPreload: string[]; // makes sure while changing the tab , the animation does not suck
 }

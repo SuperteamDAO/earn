@@ -30,12 +30,14 @@ export function SponsorAnnouncements({
       title: 'Feature 1',
       Content: Feature1,
       shouldShow: true,
+      imagesToPreload: [],
     },
     {
       id: 'feature-2',
       title: 'Feature 2',
       Content: Feature2,
-      shouldShow: true, // Always show
+      shouldShow: true,
+      imagesToPreload: [],
     },
     // Add more announcements as needed
   ];

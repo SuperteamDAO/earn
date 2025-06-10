@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 
+import { ASSET_URL } from '@/constants/ASSET_URL';
+
 import { CreditFeature } from '../talent/Credits';
 import { WalletFeature } from '../talent/Wallet';
 import type { Announcement } from '../types/announcement';
@@ -25,12 +27,14 @@ export function TalentAnnouncements() {
       title: 'Credit System',
       Content: CreditFeature,
       shouldShow: true,
+      imagesToPreload: [],
     },
     {
       id: 'embedded-wallet',
       title: 'Embedded Wallet',
       Content: WalletFeature,
-      shouldShow: true, // Always show
+      shouldShow: true,
+      imagesToPreload: [`${ASSET_URL}/wallet/wallet-announcement-modal`],
     },
     // Add more announcements as needed
   ];
