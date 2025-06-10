@@ -43,7 +43,6 @@ export function TalentAnnouncements() {
         label: 'Understood',
       },
     },
-    // Add more announcements as needed
   ];
 
   const visibleAnnouncements = announcements.filter((a) => a.shouldShow);

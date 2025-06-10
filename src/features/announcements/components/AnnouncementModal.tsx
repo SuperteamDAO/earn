@@ -74,7 +74,7 @@ export function AnnouncementModal({
       <Dialog open={open} onOpenChange={handleSetOpen}>
         <DialogContent
           hideCloseIcon
-          className="w-full max-w-4xl overflow-hidden border-none bg-transparent p-0 sm:rounded-xl"
+          className="w-full max-w-4xl overflow-hidden border-0 border-none bg-transparent p-0 sm:rounded-xl"
           autoFocus={false}
         >
           <div className="mx-auto flex w-full max-w-4xl overflow-hidden rounded-lg bg-white shadow-lg">
@@ -108,7 +108,7 @@ export function AnnouncementModal({
               </div>
             </div>
 
-            <div className="flex w-full flex-col justify-between md:w-[55%]">
+            <div className="flex w-full flex-col justify-between md:w-[55.1%]">
               <AnimateChangeInHeight>
                 <AnimatePresence mode="popLayout" initial={false}>
                   <motion.div

@@ -4,14 +4,14 @@ import React from 'react';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 
 const content = {
-  title: "You'll get 3 submission credits each month",
+  title: 'Less Spam, More Focus',
   description:
-    'We want you to prioritise quality over quantity and get a fairer chance at winning by reducing the number of spam submissions.',
+    "We're committed to improving submission quality by discouraging spam and incentivising users to only submit high quality work",
   points: [
-    'Each bounty / project submission costs one credit',
-    'Balances renew and get updated every month',
-    'Get bonus +1 credit for winning and -1 when you spam',
-    'Grant & hackathon submissions do not require credits',
+    'Users get 3 credits per month',
+    'Submission to bounties and projects cost 1 credit',
+    'Spam and winning submissions reduce and increase one credit respectively',
+    'Grant & hackathon submissions do not utilise credits',
   ],
 };
 

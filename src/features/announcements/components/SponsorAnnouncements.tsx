@@ -1,7 +1,10 @@
 import { useEffect, useState } from 'react';
 
-import { Feature1 } from '../sponsor/Feature1';
-import { Feature2 } from '../sponsor/Feature2';
+import { ASSET_URL } from '@/constants/ASSET_URL';
+
+import { AutoGenerateFeature } from '../sponsor/AutoGenerate';
+import { AutoReviewFeature } from '../sponsor/AutoReview';
+import { CreditFeature } from '../sponsor/Credits';
 import type { Announcement } from '../types/announcement';
 import { AnnouncementModal } from './AnnouncementModal';
 
@@ -26,26 +29,42 @@ export function SponsorAnnouncements({
 
   const announcements: Announcement[] = [
     {
-      id: 'feature-1',
-      title: 'Feature 1',
-      Content: Feature1,
+      id: 'credit-system',
+      title: 'Credit System',
+      Content: CreditFeature,
       shouldShow: true,
       imagesToPreload: [],
+      cta: {
+        label: 'Learn More',
+        link: 'https://superteamdao.notion.site/submission-credits',
+      },
+    },
+    {
+      id: 'auto-generate',
+      title: 'Auto Generate',
+      Content: AutoGenerateFeature,
+      shouldShow: true,
+      imagesToPreload: [
+        `${ASSET_URL}/ai-review-feature-new`,
+        `${ASSET_URL}/assets/ai-wand.svg`,
+      ],
       cta: {
         label: 'Understood',
       },
     },
     {
-      id: 'feature-2',
-      title: 'Feature 2',
-      Content: Feature2,
+      id: 'auto-review',
+      title: 'Auto Review',
+      Content: AutoReviewFeature,
       shouldShow: true,
-      imagesToPreload: [],
+      imagesToPreload: [
+        `${ASSET_URL}/ai-review-feature-new`,
+        `${ASSET_URL}/assets/ai-wand.svg`,
+      ],
       cta: {
         label: 'Understood',
       },
     },
-    // Add more announcements as needed
   ];
 
   const visibleAnnouncements = announcements.filter((a) => a.shouldShow);
