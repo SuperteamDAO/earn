@@ -84,6 +84,10 @@ Generate a bounty listing draft using the information above. Structure the draft
 *   Present as a bulleted list.
 *   If no resources are provided, **omit this section**.
 
+**--- CRITICAL REASONING REQUIRED FOR REWARD STRUCTURE ---**
+**Explicitly reason through the calculations and formatting for the "Reward Structure" section. This involves careful consideration of currency conversion, specific rounding rules based on token value, and proper allocation for podium and bonus spots according to the detailed rules provided below.**
+**Do not reason in the output, only do this in reasoning tokens**
+
 ## Reward Structure
 *   Use the content from <rewards> to understand the total reward pool and how it should be distributed (e.g., "split $1000 between top 2", "1st gets 500 SOL, 2nd gets 250 SOL", "total $1500 USDC, 60% 1st, 40% 2nd").
 *   Present the rewards clearly as a bulleted list specifying amounts for different placements (1st, 2nd, etc.) and any bonus awards.
@@ -227,6 +231,10 @@ Generate a project listing draft using the information above. Structure the draf
 *   Present as a bulleted list. Focus on *how the applications will be judged*.
 *   Examples: "Strength and relevance of portfolio/past work", "Demonstrated understanding of the project requirements", "Clarity and professionalism of application materials", "Proposed rate/quote (if applicable and within budget expectations)".
 *   **If no specific criteria can be inferred**, use relevant defaults like the examples above. This section should generally be included.
+
+--- CRITICAL REASONING REQUIRED FOR COMPENSATION ---
+Explicitly reason through the compensation calculations and formatting. This involves careful consideration of the payment type (Fixed, Range, Variable), currency conversion, and specific rounding rules based on token value, ensuring all aspects are accurately reflected.
+**Do not reason in the output, only do this in reasoning tokens**
 
 ## Compensation
 *   Use the content from <compensation> to understand the payment structure (Fixed, Range, or Variable) and the amount(s).
@@ -378,6 +386,10 @@ Generate a bounty listing draft using the information above. Structure the draft
 *   Include any specific links, documentation, or helpful resources mentioned in the inputs (<scope-of-work> or <submission-requirements-and-judging-criterias>).
 *   Present as a bulleted list.
 *   If no resources are provided, **omit this section**.
+
+**--- CRITICAL REASONING REQUIRED FOR REWARD STRUCTURE ---**
+**Explicitly reason through the calculations and formatting for the "Reward Structure" section. This involves careful consideration of currency conversion, specific rounding rules based on token value, and proper allocation for podium and bonus spots according to the detailed rules provided below.**
+**Do not reason in the output, only do this in reasoning tokens**
 
 ## Reward Structure
 *   Use the content from <rewards> to understand the total reward pool and how it should be distributed (e.g., "split $1000 between top 2", "1st gets 500 SOL, 2nd gets 250 SOL", "total $1500 USDC, 60% 1st, 40% 2nd").
