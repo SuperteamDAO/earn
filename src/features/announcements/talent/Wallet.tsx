@@ -34,15 +34,13 @@ const Point = ({
 export const WalletFeature = () => {
   return (
     <>
-      <div className="p-0">
-        <ExternalImage
-          src="/wallet/wallet-announcement-modal"
-          alt="Wallet Announcement Illustration"
-          className="w-full"
-          loading="eager"
-          decoding="sync"
-        />
-      </div>
+      <ExternalImage
+        src="/wallet/wallet-announcement-modal"
+        alt="Wallet Announcement Illustration"
+        className="w-full"
+        loading="eager"
+        decoding="sync"
+      />
 
       <div className="flex flex-col items-start gap-3 p-6">
         <p className="text-lg font-semibold">Introducing the Earn Wallet</p>

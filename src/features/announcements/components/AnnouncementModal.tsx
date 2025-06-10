@@ -1,5 +1,7 @@
+import { AnimatePresence, motion } from 'motion/react';
 import { useEffect, useRef, useState } from 'react';
 
+import { AnimateChangeInHeight } from '@/components/shared/AnimateChangeInHeight';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogClose, DialogContent } from '@/components/ui/dialog';
 
@@ -16,13 +18,33 @@ export function AnnouncementModal({
 }: AnnouncementModalProps) {
   const [open, setOpen] = useState(false);
   const [current, setCurrent] = useState(0);
+  const [isTransitioning, setIsTransitioning] = useState(false);
 
-  const goNext = () =>
-    setCurrent((prev) => Math.min(prev + 1, announcements.length - 1));
-  const goBack = () => setCurrent((prev) => Math.max(prev - 1, 0));
-  const goTo = (idx: number) => setCurrent(idx);
+  const contentRef = useRef<HTMLDivElement>(null);
+
+  const goNext = () => {
+    if (current < announcements.length - 1) {
+      setIsTransitioning(true);
+      setCurrent((prev) => prev + 1);
+    }
+  };
+
+  const goBack = () => {
+    if (current > 0) {
+      setIsTransitioning(true);
+      setCurrent((prev) => prev - 1);
+    }
+  };
+
+  const goTo = (idx: number) => {
+    if (idx !== current) {
+      setIsTransitioning(true);
+      setCurrent(idx);
+    }
+  };
 
   const closedOnce = useRef<boolean>(false);
+
   useEffect(() => {
     if (announcements.length && !closedOnce.current) {
       setOpen(true);
@@ -39,11 +61,14 @@ export function AnnouncementModal({
     setOpen(open);
   }
 
+  const currentAnnouncement = announcements[current];
+
   return (
     <Dialog open={open} onOpenChange={handleSetOpen}>
       <DialogContent
         hideCloseIcon
         className="w-full max-w-4xl overflow-hidden border-none bg-transparent p-0 sm:rounded-xl"
+        autoFocus={false}
       >
         <div className="mx-auto flex w-full max-w-4xl overflow-hidden rounded-lg bg-white shadow-lg">
           <div className="relative hidden w-[45%] flex-col border-r bg-white p-5 md:flex">
@@ -56,7 +81,11 @@ export function AnnouncementModal({
                   autoFocus={false}
                   key={a.id}
                   variant="ghost"
-                  className={`h-11 justify-start rounded-lg px-4 py-2 text-base font-medium text-slate-800 transition-all ${i === current ? 'bg-[linear-gradient(90deg,rgba(95,197,255,0.25)_0.23%,rgba(124,134,255,0.45)_99.65%)] text-slate-700' : 'bg-white'}`}
+                  className={`h-11 justify-start rounded-lg px-4 py-2 text-base font-medium text-slate-800 transition-all ${
+                    i === current
+                      ? 'bg-[linear-gradient(90deg,rgba(95,197,255,0.25)_0.23%,rgba(124,134,255,0.45)_99.65%)] text-slate-700'
+                      : 'bg-white'
+                  }`}
                   onClick={() => goTo(i)}
                 >
                   {a.title}
@@ -71,17 +100,35 @@ export function AnnouncementModal({
               />
             </div>
           </div>
+
           <div className="flex w-full flex-col justify-between md:w-[55%]">
-            <div className="flex flex-1 flex-col items-center justify-center">
-              {announcements.map((a, i) => (
-                <div
-                  key={a.id}
-                  style={{ display: i === current ? 'block' : 'none' }}
+            <AnimateChangeInHeight>
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.div
+                  ref={contentRef}
+                  key={currentAnnouncement?.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{
+                    opacity: 1,
+                    y: 0,
+                    transition: {
+                      delay: isTransitioning ? 0.15 : 0,
+                      duration: 0.2,
+                    },
+                  }}
+                  exit={{
+                    opacity: 0,
+                    y: -20,
+                    transition: { duration: 0.15 },
+                  }}
+                  className="flex w-full flex-col items-center justify-center"
                 >
-                  <a.Content />
-                </div>
-              ))}
-            </div>
+                  {currentAnnouncement && <currentAnnouncement.Content />}
+                </motion.div>
+              </AnimatePresence>
+            </AnimateChangeInHeight>
+
+            {/* Navigation buttons */}
             <div className="mt-8 flex justify-between gap-3 p-3">
               {current > 0 ? (
                 <Button
