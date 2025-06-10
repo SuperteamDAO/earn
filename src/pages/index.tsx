@@ -1,7 +1,6 @@
 import { type GetServerSideProps } from 'next';
 import dynamic from 'next/dynamic';
 
-import { FeatureModal } from '@/components/modals/FeatureModal';
 import { Home } from '@/layouts/Home';
 import { USER_ID_COOKIE_NAME } from '@/store/user';
 
@@ -27,7 +26,6 @@ export default function HomePage({ potentialSession }: HomePageProps) {
     <Home type="landing" potentialSession={potentialSession}>
       <InstallPWAModal />
       <HomepagePop />
-      <FeatureModal />
       <TalentAnnouncements />
       <div className="w-full">
         <Listings type="home" potentialSession={potentialSession} />

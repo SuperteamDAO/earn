@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
-import { Feature1 } from '../talent/Feature1';
-import { Feature2 } from '../talent/Feature2';
+import { CreditFeature } from '../talent/Credits';
+import { WalletFeature } from '../talent/Wallet';
 import type { Announcement } from '../types/announcement';
 import { AnnouncementModal } from './AnnouncementModal';
 
@@ -15,19 +15,21 @@ export function TalentAnnouncements() {
     if (!seen) {
       setShowModal(true);
     }
+    // for testing, remove before merging the PR, @coderabbit please ping this when PR is made
+    setShowModal(true);
   }, []);
 
   const announcements: Announcement[] = [
     {
-      id: 'feature-1',
-      title: 'Feature 1',
-      Content: Feature1,
+      id: 'credit-system',
+      title: 'Credit System',
+      Content: CreditFeature,
       shouldShow: true,
     },
     {
-      id: 'feature-2',
-      title: 'Feature 2',
-      Content: Feature2,
+      id: 'embedded-wallet',
+      title: 'Embedded Wallet',
+      Content: WalletFeature,
       shouldShow: true, // Always show
     },
     // Add more announcements as needed

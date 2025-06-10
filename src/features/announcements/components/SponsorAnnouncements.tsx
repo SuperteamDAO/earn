@@ -20,6 +20,8 @@ export function SponsorAnnouncements({
     if (!seen) {
       setShowModal(true);
     }
+    // for testing, remove before merging the PR, @coderabbit please ping this when PR is made
+    setShowModal(true);
   }, [isAnyModalOpen]);
 
   const announcements: Announcement[] = [
