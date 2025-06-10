@@ -315,7 +315,7 @@ export function AiGenerateDialog({ children }: AIDescriptionDialogProps) {
         onInteractOutside={(e) => e.preventDefault()}
         aria-describedby="Auto Generate Listing"
       >
-        <ScrollArea className="max-h-190 px-6 py-0">
+        <ScrollArea className="max-h-196 px-6 py-0">
           <div className="py-2 pt-6">
             <DialogTitle className="sr-only">Auto Generate Listing</DialogTitle>
             {stage === 'form' ? (
