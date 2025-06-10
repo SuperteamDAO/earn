@@ -1,10 +1,11 @@
 import { AnimatePresence, motion } from 'motion/react';
 import Head from 'next/head';
+import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 
 import { AnimateChangeInHeight } from '@/components/shared/AnimateChangeInHeight';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogClose, DialogContent } from '@/components/ui/dialog';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
 
 import type { Announcement } from '../types/announcement';
 
@@ -27,13 +28,6 @@ export function AnnouncementModal({
     if (current < announcements.length - 1) {
       setIsTransitioning(true);
       setCurrent((prev) => prev + 1);
-    }
-  };
-
-  const goBack = () => {
-    if (current > 0) {
-      setIsTransitioning(true);
-      setCurrent((prev) => prev - 1);
     }
   };
 
@@ -143,42 +137,56 @@ export function AnnouncementModal({
                 </AnimatePresence>
               </AnimateChangeInHeight>
 
-              {/* Navigation buttons */}
-              <div className="mt-8 flex justify-between gap-3 p-3">
-                {current > 0 ? (
-                  <Button
-                    className="w-full rounded-lg font-semibold text-slate-700"
-                    onClick={goBack}
-                    variant="outline"
-                  >
-                    Back
-                  </Button>
-                ) : (
-                  <DialogClose asChild>
-                    <Button
-                      className="w-full rounded-lg font-semibold text-slate-700"
-                      onClick={goBack}
-                      variant="outline"
-                    >
-                      Cancel
-                    </Button>
-                  </DialogClose>
-                )}
-                {current === announcements.length - 1 ? (
-                  <DialogClose asChild>
-                    <Button className="w-full rounded-lg font-semibold">
-                      Finish
-                    </Button>
-                  </DialogClose>
-                ) : (
-                  <Button
-                    className="w-full rounded-lg font-semibold"
-                    onClick={goNext}
-                    disabled={current === announcements.length - 1}
-                  >
-                    Next
-                  </Button>
-                )}
+              {/* CTA Button */}
+              <div className="mt-8 flex justify-end gap-3 p-3">
+                {currentAnnouncement &&
+                  (() => {
+                    const { cta } = currentAnnouncement;
+                    const isLast = current === announcements.length - 1;
+                    const handleClick = () => {
+                      if (cta.onClick) cta.onClick();
+                      if (!cta.link && !cta.onClick) {
+                        if (isLast) {
+                          handleSetOpen(false);
+                        } else {
+                          goNext();
+                        }
+                      }
+                    };
+                    const button = (
+                      <Button
+                        className="w-full rounded-lg font-semibold"
+                        variant="default"
+                        onClick={handleClick}
+                      >
+                        {cta.label}
+                      </Button>
+                    );
+                    if (cta.link) {
+                      return (
+                        <Link href={cta.link} passHref legacyBehavior>
+                          <a
+                            style={{ width: '100%' }}
+                            target="_blank"
+                            onClick={
+                              cta.onClick
+                                ? (e) => {
+                                    cta.onClick?.();
+                                    if (!cta.link && !cta.onClick) {
+                                      e.preventDefault();
+                                      handleClick();
+                                    }
+                                  }
+                                : undefined
+                            }
+                          >
+                            {button}
+                          </a>
+                        </Link>
+                      );
+                    }
+                    return button;
+                  })()}
               </div>
             </div>
           </div>

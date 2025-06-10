@@ -31,6 +31,9 @@ export function SponsorAnnouncements({
       Content: Feature1,
       shouldShow: true,
       imagesToPreload: [],
+      cta: {
+        label: 'Understood',
+      },
     },
     {
       id: 'feature-2',
@@ -38,6 +41,9 @@ export function SponsorAnnouncements({
       Content: Feature2,
       shouldShow: true,
       imagesToPreload: [],
+      cta: {
+        label: 'Understood',
+      },
     },
     // Add more announcements as needed
   ];
