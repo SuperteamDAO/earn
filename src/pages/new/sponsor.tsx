@@ -420,7 +420,7 @@ const CreateSponsor = () => {
                     name="sponsor.entityName"
                     label={
                       <>
-                        Legal Entity Name
+                        Legal Name
                         <Tooltip
                           content="Please mention the official entity name of your project. If you are a DAO, simply mention the name of the DAO. If you neither have an entity nor are a DAO, mention your full name."
                           contentProps={{ className: 'max-w-xs text-xs' }}
@@ -431,7 +431,7 @@ const CreateSponsor = () => {
                     }
                     isRequired
                   >
-                    <Input placeholder="Full Entity Name" />
+                    <Input placeholder="Legal Name" />
                   </FormFieldWrapper>
                 </div>
                 <div className="mb-3 mt-6 w-full">

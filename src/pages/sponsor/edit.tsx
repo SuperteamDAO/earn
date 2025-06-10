@@ -13,6 +13,7 @@ import { Button } from '@/components/ui/button';
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -298,7 +299,7 @@ export default function UpdateSponsor() {
                   name="entityName"
                   label={
                     <>
-                      Entity Name
+                      Legal Name
                       <Tooltip
                         content="Please mention the official entity name of your project. If you are a DAO, simply mention the name of the DAO. If you neither have an entity nor are a DAO, mention your full name."
                         contentProps={{ className: 'text-xs' }}
@@ -309,12 +310,16 @@ export default function UpdateSponsor() {
                   }
                   isRequired
                 >
-                  <Input placeholder="Full Entity Name" />
+                  <Input placeholder="Legal Name" />
                 </FormFieldWrapper>
               </div>
 
               <div className="mb-3 mt-6 w-full">
                 <FormLabel isRequired>Entity Logo</FormLabel>
+                <FormDescription>
+                  Please upload a logo for your entity.
+                </FormDescription>
+                <FormMessage />
                 <ImagePicker
                   defaultValue={logoPreview ? { url: logoPreview } : undefined}
                   onChange={(file, previewUrl) => {
@@ -332,6 +337,10 @@ export default function UpdateSponsor() {
 
               <div className="mb-3 mt-6 w-full">
                 <FormLabel>Entity Cover</FormLabel>
+                <FormDescription>
+                  You can upload a cover image for your sponsor profile to
+                  improve the visibility of your profile.
+                </FormDescription>
                 <ImagePicker
                   variant="banner"
                   defaultValue={
