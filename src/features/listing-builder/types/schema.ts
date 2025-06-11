@@ -45,7 +45,7 @@ export const createListingFormSchema = ({
 }: ListingFormSchemaOptions) => {
   const eligibilityQuestionSchema = z.object({
     order: z.number(),
-    question: z.string().trim().min(1, 'Please add your question').max(256),
+    question: z.string().trim().min(1, 'Please add your question').max(512),
     type: z.enum(['text', 'link', 'paragraph', 'checkbox']),
     description: z.string().optional().nullable(),
     optional: z
