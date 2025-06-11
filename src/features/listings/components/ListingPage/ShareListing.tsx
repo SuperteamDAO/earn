@@ -1,7 +1,6 @@
 import { Check, Copy } from 'lucide-react';
 import { usePostHog } from 'posthog-js/react';
 import * as React from 'react';
-import { IoMdShareAlt } from 'react-icons/io';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -10,7 +9,6 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from '@/components/ui/dialog';
 import {
   Drawer,
@@ -19,7 +17,6 @@ import {
   DrawerFooter,
   DrawerHeader,
   DrawerTitle,
-  DrawerTrigger,
 } from '@/components/ui/drawer';
 import { useClipboard } from '@/hooks/use-clipboard';
 import { useMediaQuery } from '@/hooks/use-media-query';
@@ -47,34 +44,26 @@ type SourceType =
       listing?: undefined;
     };
 export function ShareListing({
-  className,
   source,
   listing,
   grant,
+  open,
+  onOpenChange,
 }: {
-  className?: string;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 } & SourceType) {
-  const [open, setOpen] = React.useState(false);
   const posthog = usePostHog();
   function setShareOpen(o: boolean) {
     if (o) posthog.capture('open_share listing');
     else posthog.capture('close_share listing');
-    setOpen(o);
+    if (onOpenChange) onOpenChange(o);
   }
   const isDesktop = useMediaQuery('(min-width: 768px)');
 
   if (isDesktop) {
     return (
       <Dialog open={open} onOpenChange={setShareOpen}>
-        <DialogTrigger asChild>
-          <Button
-            variant="ghost"
-            className={cn('font-medium text-slate-500', className)}
-          >
-            <IoMdShareAlt className="text-slate-500" />
-            SHARE
-          </Button>
-        </DialogTrigger>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
             <DialogTitle className="font-medium">
@@ -96,18 +85,6 @@ export function ShareListing({
 
   return (
     <Drawer open={open} onOpenChange={setShareOpen}>
-      <DrawerTrigger asChild>
-        <Button
-          className={cn(
-            'ph-no-capture hover:bg-brand-purple gap-2 border-slate-300 font-medium text-slate-500 hover:text-white active:bg-slate-100',
-            'h-8 w-auto p-0 px-2 sm:h-10 sm:px-3',
-          )}
-          variant="outline"
-          aria-label="Share"
-        >
-          <IoMdShareAlt className="text-slate-500" />
-        </Button>
-      </DrawerTrigger>
       <DrawerContent>
         <DrawerHeader className="mb-2 text-left">
           <DrawerTitle className="font-medium">
@@ -117,25 +94,20 @@ export function ShareListing({
             {`Share this opportunity`}
           </DrawerDescription>
         </DrawerHeader>
-        {source === 'grant' ? (
-          <MainContent source={'grant'} grant={grant} className="px-4" />
-        ) : (
-          <MainContent source={'listing'} listing={listing} className="px-4" />
-        )}
+        <div className="p-4">
+          {source === 'grant' ? (
+            <MainContent source={'grant'} grant={grant} />
+          ) : (
+            <MainContent source={'listing'} listing={listing} />
+          )}
+        </div>
         <DrawerFooter className="pt-2"></DrawerFooter>
       </DrawerContent>
     </Drawer>
   );
 }
 
-function MainContent({
-  className,
-  listing,
-  grant,
-  source,
-}: {
-  className?: string;
-} & SourceType) {
+function MainContent({ listing, grant, source }: SourceType) {
   const listingLink = React.useCallback(() => {
     if (source === 'listing') return `${getURL()}listing/${listing?.slug}/`;
     else return `${getURL()}grants/${grant?.slug}/`;
@@ -213,7 +185,7 @@ function MainContent({
   }, []);
 
   return (
-    <div className={cn('space-y-4 overflow-hidden', className)}>
+    <div className={cn('space-y-4 overflow-hidden')}>
       <Button
         variant="secondary"
         className="ph-no-capture group w-full justify-between"
