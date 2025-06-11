@@ -156,7 +156,6 @@ export const ApplicationDetails = ({
                       className="rounded-lg border border-emerald-500 bg-emerald-50 text-emerald-600 hover:bg-emerald-100 hover:text-emerald-600 disabled:cursor-not-allowed disabled:opacity-50"
                       disabled={isMultiSelectOn}
                       onClick={approveOnOpen}
-                      variant="ghost"
                     >
                       <div className="rounded-full bg-emerald-600 p-0.5">
                         <Check className="size-1 text-white" />

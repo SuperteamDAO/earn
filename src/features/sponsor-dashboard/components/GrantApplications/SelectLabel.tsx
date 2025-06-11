@@ -10,8 +10,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { StatusPill } from '@/components/ui/status-pill';
 import { api } from '@/lib/api';
-import { cn } from '@/utils/cn';
 
 import { isStateUpdatingAtom, selectedGrantApplicationAtom } from '../../atoms';
 import { labelMenuOptionsGrants } from '../../constants';
@@ -37,9 +37,10 @@ export const SelectLabel = ({ grantSlug }: Props) => {
     updateLabel({ id, label });
   };
 
-  let bg, color;
+  let bg, color, border;
   if (selectedApplication) {
-    ({ bg, color } = colorMap[selectedApplication?.label as SubmissionLabels]);
+    ({ bg, color, border } =
+      colorMap[selectedApplication?.label as SubmissionLabels]);
   }
 
   const { mutate: updateLabel } = useMutation({
@@ -117,15 +118,14 @@ export const SelectLabel = ({ grantSlug }: Props) => {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <button className="hover:border-brand-purple flex items-center rounded-md border border-slate-200 bg-transparent px-2 py-1 font-medium text-slate-500 capitalize hover:bg-transparent">
-          <span
-            className={cn(
-              'inline-flex rounded-full px-3 py-0.5 text-center text-[10px] whitespace-nowrap capitalize',
-              bg,
-              color,
-            )}
+          <StatusPill
+            className="text-[0.625rem]"
+            color={color || 'text-slate-500'}
+            backgroundColor={bg || 'bg-slate-100'}
+            borderColor={border || 'border-slate-200'}
           >
             {filterTriggerLabel || 'Select Option'}
-          </span>
+          </StatusPill>
           <ChevronDown className="ml-2 size-3" />
         </button>
       </DropdownMenuTrigger>
@@ -142,15 +142,18 @@ export const SelectLabel = ({ grantSlug }: Props) => {
               )
             }
           >
-            <span
-              className={cn(
-                'w-full rounded-full px-2 py-0.5 text-center text-[10px] whitespace-nowrap capitalize',
-                colorMap[option.value as keyof typeof colorMap].bg,
-                colorMap[option.value as keyof typeof colorMap].color,
-              )}
+            <StatusPill
+              className="text-[0.625rem]"
+              color={colorMap[option.value as keyof typeof colorMap].color}
+              backgroundColor={
+                colorMap[option.value as keyof typeof colorMap].bg
+              }
+              borderColor={
+                colorMap[option.value as keyof typeof colorMap].border
+              }
             >
               {option.label}
-            </span>
+            </StatusPill>
           </DropdownMenuItem>
         ))}
       </DropdownMenuContent>

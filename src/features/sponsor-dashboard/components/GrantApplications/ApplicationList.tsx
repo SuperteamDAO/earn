@@ -9,6 +9,7 @@ import React, { useEffect, useRef } from 'react';
 
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
+import { StatusPill } from '@/components/ui/status-pill';
 import { Tooltip } from '@/components/ui/tooltip';
 import { Superteams } from '@/constants/Superteam';
 import { cn } from '@/utils/cn';
@@ -88,9 +89,16 @@ export const ApplicationList = ({
           const applicationLabelUi = labelMenuOptionsGrants.find(
             (s) => s.value === application?.label,
           )?.label;
-          const { bg: statusBg, color: statusColor } =
-            colorMap[applicationStatus as GrantApplicationStatus];
-          const { bg: labelBg, color: labelColor } = colorMap[applicationLabel];
+          const {
+            bg: statusBg,
+            color: statusColor,
+            border: statusBorder,
+          } = colorMap[applicationStatus as GrantApplicationStatus];
+          const {
+            bg: labelBg,
+            color: labelColor,
+            border: labelBorder,
+          } = colorMap[applicationLabel];
           const isSuperteamMember =
             application?.user.superteamLevel?.includes('Superteam') || false;
           const superteam = isSuperteamMember
@@ -151,25 +159,23 @@ export const ApplicationList = ({
               <div className="ml-auto flex w-min flex-col justify-end gap-1 align-bottom">
                 {applicationStatus !== 'Pending' ||
                 applicationLabel === 'Unreviewed' ? (
-                  <span
-                    className={cn(
-                      'ml-auto inline-flex w-fit rounded-full px-2 py-0.5 text-center text-[0.625rem] whitespace-nowrap capitalize',
-                      statusBg,
-                      statusColor,
-                    )}
+                  <StatusPill
+                    className="ml-auto w-fit text-[0.625rem]"
+                    color={statusColor}
+                    backgroundColor={statusBg}
+                    borderColor={statusBorder}
                   >
                     {applicationStatus}
-                  </span>
+                  </StatusPill>
                 ) : (
-                  <span
-                    className={cn(
-                      'ml-auto inline-flex w-fit rounded-full px-2 py-0.5 text-center text-[0.625rem] whitespace-nowrap capitalize',
-                      labelBg,
-                      labelColor,
-                    )}
+                  <StatusPill
+                    className="ml-auto w-fit text-[0.625rem]"
+                    color={labelColor}
+                    backgroundColor={labelBg}
+                    borderColor={labelBorder}
                   >
                     {applicationLabelUi || applicationLabel}
-                  </span>
+                  </StatusPill>
                 )}
               </div>
             </div>

@@ -11,6 +11,7 @@ import React, {
 
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
+import { StatusPill } from '@/components/ui/status-pill';
 import type { SubmissionWithUser } from '@/interface/submission';
 import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';
@@ -82,7 +83,7 @@ export const SubmissionList = ({
 
   const getSubmissionColors = (submission: SubmissionWithUser) => {
     if (submission?.isWinner) {
-      return colorMap.winner;
+      return colorMap.Winner;
     } else if (submission.status === 'Rejected') {
       return colorMap.Rejected;
     } else if (submission?.label && colorMap[submission.label]) {
@@ -91,6 +92,7 @@ export const SubmissionList = ({
       return {
         bg: 'bg-slate-100',
         color: 'text-slate-600',
+        border: 'border-slate-200',
       };
     }
   };
@@ -126,7 +128,7 @@ export const SubmissionList = ({
       </div>
       <div className="scrollbar-thin scrollbar-w-1 scrollbar-track-white scrollbar-thumb-slate-200 hover:scrollbar-thumb-slate-300 h-[42rem] w-full overflow-y-auto rounded-bl-lg border-t bg-white">
         {submissions.map((submission) => {
-          const { bg, color } = getSubmissionColors(submission);
+          const { bg, color, border } = getSubmissionColors(submission);
           return (
             <div
               key={submission?.id}
@@ -171,15 +173,14 @@ export const SubmissionList = ({
                 </div>
               </div>
 
-              <span
-                className={cn(
-                  'inline-flex rounded-full px-3 py-1 text-center text-[10px] whitespace-nowrap capitalize',
-                  bg,
-                  color,
-                )}
+              <StatusPill
+                className="w-fit px-2 py-0.5 text-[10px]"
+                color={color}
+                backgroundColor={bg}
+                borderColor={border}
               >
                 {getSubmissionLabel(submission)}
-              </span>
+              </StatusPill>
             </div>
           );
         })}

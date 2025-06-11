@@ -28,6 +28,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { StatusPill } from '@/components/ui/status-pill';
 import { Tooltip } from '@/components/ui/tooltip';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { type SubmissionWithUser } from '@/interface/submission';
@@ -239,15 +240,14 @@ export const SubmissionHeader = ({
                 )}
             </DropdownMenuContent>
           </DropdownMenu>
-          <p
-            className={cn(
-              'ml-2 inline-flex items-center rounded-full px-4 py-1 text-xs font-medium whitespace-nowrap',
-              getColorStyles(bountyStatus).color,
-              getColorStyles(bountyStatus).bgColor,
-            )}
+          <StatusPill
+            className="ml-2 w-fit text-[0.8rem]"
+            color={getColorStyles(bountyStatus).color}
+            backgroundColor={getColorStyles(bountyStatus).bgColor}
+            borderColor={getColorStyles(bountyStatus).borderColor}
           >
             {bountyStatus}
-          </p>
+          </StatusPill>
         </div>
       </div>
       {!isProject && !bounty?.isWinnersAnnounced && (

@@ -18,10 +18,10 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Progress } from '@/components/ui/progress';
+import { StatusPill } from '@/components/ui/status-pill';
 import { Tooltip } from '@/components/ui/tooltip';
-// import { chunkArray } from '@/utils/chunkArray';
-import { cn } from '@/utils/cn';
 
+// import { chunkArray } from '@/utils/chunkArray';
 import {
   type GrantApplicationAi,
   type GrantsAi,
@@ -177,33 +177,30 @@ export default function AiReviewModal({ applications, grant }: Props) {
         <div className="text-sm text-slate-500">
           <p>{`We've added review notes and labelled the submissions as `}</p>
           <span className="mt-1">
-            <span
-              className={cn(
-                'inline-flex w-fit rounded-full px-2 text-center text-[10px] whitespace-nowrap capitalize',
-                colorMap['Low_Quality'].bg,
-                colorMap['Low_Quality'].color,
-              )}
+            <StatusPill
+              className="w-fit text-[10px]"
+              color={colorMap['Low_Quality'].color}
+              backgroundColor={colorMap['Low_Quality'].bg}
+              borderColor={colorMap['Low_Quality'].border}
             >
               Low Quality
-            </span>
-            <span
-              className={cn(
-                'ml-2 inline-flex w-fit rounded-full px-2 text-center text-[10px] whitespace-nowrap capitalize',
-                colorMap['High_Quality'].bg,
-                colorMap['High_Quality'].color,
-              )}
+            </StatusPill>
+            <StatusPill
+              className="ml-2 w-fit text-[10px]"
+              color={colorMap['High_Quality'].color}
+              backgroundColor={colorMap['High_Quality'].bg}
+              borderColor={colorMap['High_Quality'].border}
             >
               High Quality
-            </span>
-            <span
-              className={cn(
-                'mx-2 inline-flex w-fit rounded-full px-2 text-center text-[10px] whitespace-nowrap capitalize',
-                colorMap['Mid_Quality'].bg,
-                colorMap['Mid_Quality'].color,
-              )}
+            </StatusPill>
+            <StatusPill
+              className="mx-2 w-fit text-[10px]"
+              color={colorMap['Mid_Quality'].color}
+              backgroundColor={colorMap['Mid_Quality'].bg}
+              borderColor={colorMap['Mid_Quality'].border}
             >
               Mid Quality
-            </span>
+            </StatusPill>
           </span>
           <p className="mt-1">
             Please review before announcing winners, as AI can make mistakes.

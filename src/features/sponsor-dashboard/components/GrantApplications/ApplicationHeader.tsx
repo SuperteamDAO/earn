@@ -22,8 +22,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { StatusPill } from '@/components/ui/status-pill';
 import { api } from '@/lib/api';
-import { cn } from '@/utils/cn';
 
 import { type Grant } from '@/features/grants/types';
 import { getColorStyles } from '@/features/listings/utils/getColorStyles';
@@ -167,15 +167,14 @@ export const ApplicationHeader = ({
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-          <p
-            className={cn(
-              'ml-2 inline-flex items-center rounded-full px-4 py-1 text-xs font-medium whitespace-nowrap',
-              getColorStyles(grantStatus).color,
-              getColorStyles(grantStatus).bgColor,
-            )}
+          <StatusPill
+            className="ml-2 w-fit text-[0.8rem]"
+            color={getColorStyles(grantStatus).color}
+            backgroundColor={getColorStyles(grantStatus).bgColor}
+            borderColor={getColorStyles(grantStatus).borderColor}
           >
             {grantStatus}
-          </p>
+          </StatusPill>
         </div>
       </div>
       {showAiReview && (

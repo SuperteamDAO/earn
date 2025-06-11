@@ -21,19 +21,14 @@ export const colorMap = {
     border: 'border-blue-300',
   },
   Unreviewed: {
-    bg: 'bg-orange-100',
-    color: 'text-orange-800',
-    border: 'border-orange-300',
+    bg: 'bg-orange-50',
+    color: 'text-amber-600',
+    border: 'border-amber-200',
   },
   Shortlisted: {
     bg: 'bg-purple-100',
     color: 'text-purple-600',
     border: 'border-purple-300',
-  },
-  winner: {
-    bg: 'bg-green-100',
-    color: 'text-green-800',
-    border: 'border-green-300',
   },
   Approved: {
     bg: 'bg-green-100',
@@ -47,13 +42,13 @@ export const colorMap = {
   },
   Pending: {
     bg: 'bg-orange-100',
-    color: 'text-orange-900',
-    border: 'border-orange-300',
+    color: 'text-orange-700',
+    border: 'border-orange-200',
   },
   Winner: {
-    bg: 'bg-green-100',
-    color: 'text-green-800',
-    border: 'border-green-300',
+    bg: 'bg-emerald-100',
+    color: 'text-emerald-600',
+    border: 'border-emerald-300',
   },
   Completed: {
     bg: 'bg-blue-100',

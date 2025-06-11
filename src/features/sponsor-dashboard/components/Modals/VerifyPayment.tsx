@@ -6,7 +6,7 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import {
   Form,
   FormControl,
@@ -15,6 +15,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { Separator } from '@/components/ui/separator';
 import { PDTG } from '@/constants/Telegram';
 import { tokenList } from '@/constants/tokenList';
 import { api } from '@/lib/api';
@@ -265,13 +266,20 @@ export const VerifyPaymentModal = ({
                 </p>
               </div>
             </div>
-            <Button
-              className="mt-auto w-full cursor-wait bg-slate-300 font-medium text-slate-800"
-              disabled
-              type="submit"
-            >
-              Verifying Payment....
-            </Button>
+            <div className="flex gap-3">
+              <div className="w-1/2" />
+              <Button variant="ghost" disabled>
+                Close
+              </Button>
+              <Button
+                className="flex-1 cursor-wait bg-slate-300 font-medium text-slate-800"
+                disabled
+                type="submit"
+              >
+                <span className="loading loading-spinner mr-2" />
+                Verifying Payment...
+              </Button>
+            </div>
           </div>
         );
       case 'success':
@@ -294,15 +302,20 @@ export const VerifyPaymentModal = ({
               </p>
             </div>
 
-            {listing?.totalPaymentsMade !== totalWinnerRanks && (
-              <Button
-                className="bg-none text-sm font-normal underline"
-                onClick={tryAgain}
-                variant="link"
-              >
-                Verify More
+            <div className="flex gap-3">
+              <div className="w-1/2" />
+              <Button variant="ghost" onClick={onClose}>
+                Close
               </Button>
-            )}
+              {listing?.totalPaymentsMade !== totalWinnerRanks && (
+                <Button
+                  className="flex-1 rounded-lg border border-emerald-500 bg-emerald-50 text-emerald-600 hover:bg-emerald-100 hover:text-emerald-600"
+                  onClick={tryAgain}
+                >
+                  Verify More
+                </Button>
+              )}
+            </div>
           </div>
         );
       case 'error':
@@ -321,8 +334,8 @@ export const VerifyPaymentModal = ({
                 Oh-Uh Verification Failed
               </p>
               <p className="text-center text-sm text-slate-500">
-                We couldn’t verify your payment status. <br />
-                Please check your links again and make sure it’s the exact
+                We couldn&apos;t verify your payment status. <br />
+                Please check your links again and make sure it&apos;s the exact
                 amount
               </p>
             </div>
@@ -342,13 +355,18 @@ export const VerifyPaymentModal = ({
                 </Button>
               </a>
 
-              <Button
-                className="bg-none text-sm font-normal"
-                onClick={tryAgain}
-                variant="link"
-              >
-                Try Again?
-              </Button>
+              <div className="flex gap-3">
+                <div className="w-1/2" />
+                <Button variant="ghost" onClick={onClose}>
+                  Close
+                </Button>
+                <Button
+                  className="flex-1 rounded-lg border border-emerald-500 bg-emerald-50 text-emerald-600 hover:bg-emerald-100 hover:text-emerald-600"
+                  onClick={tryAgain}
+                >
+                  Try Again
+                </Button>
+              </div>
             </div>
           </div>
         );
@@ -493,16 +511,25 @@ export const VerifyPaymentModal = ({
                 }}
               />
 
-              <div className="flex flex-col gap-2">
+              <div className="flex gap-3">
+                <div className="w-1/2" />
+                <Button variant="ghost" onClick={onClose}>
+                  Close
+                </Button>
                 <Button
-                  className="w-full"
+                  className="flex-1 rounded-lg border border-emerald-500 bg-emerald-50 text-emerald-600 hover:bg-emerald-100 hover:text-emerald-600"
                   disabled={data?.submission.every((sub) => sub.isPaid)}
                   type="submit"
                 >
+                  <div className="rounded-full bg-emerald-600 p-0.5">
+                    <Check className="size-2 text-white" />
+                  </div>
                   Add External Payment
                 </Button>
+              </div>
 
-                {status === 'retry' && (
+              {status === 'retry' && (
+                <div className="mt-4 text-center">
                   <a
                     href={PDTG}
                     target="_blank"
@@ -517,8 +544,8 @@ export const VerifyPaymentModal = ({
                       Think We Made A Mistake? Text Us
                     </Button>
                   </a>
-                )}
-              </div>
+                </div>
+              )}
             </form>
           </Form>
         );
@@ -527,7 +554,13 @@ export const VerifyPaymentModal = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose} modal>
-      <DialogContent className="max-w-2xl p-6">{renderContent()}</DialogContent>
+      <DialogContent className="m-0 max-w-2xl p-0" hideCloseIcon>
+        <DialogTitle className="text-md -mb-1 px-6 pt-4 font-semibold text-slate-900">
+          Verify Payment
+        </DialogTitle>
+        <Separator />
+        <div className="px-6 pb-6 text-[0.95rem]">{renderContent()}</div>
+      </DialogContent>
     </Dialog>
   );
 };

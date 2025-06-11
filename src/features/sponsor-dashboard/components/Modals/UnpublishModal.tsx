@@ -3,14 +3,8 @@ import { X } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
+import { Separator } from '@/components/ui/separator';
 import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 
@@ -95,37 +89,44 @@ export const UnpublishModal = ({
 
   return (
     <Dialog open={unpublishIsOpen} onOpenChange={unpublishOnClose}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle className="text-xl">{dialogContent.header}</DialogTitle>
-          <DialogDescription className="pt-2 text-base text-slate-500">
-            {dialogContent.subtext}
-          </DialogDescription>
-        </DialogHeader>
+      <DialogContent className="m-0 p-0" hideCloseIcon>
+        <DialogTitle className="text-md -mb-1 px-6 pt-4 font-semibold text-slate-900">
+          {dialogContent.header}
+        </DialogTitle>
+        <Separator />
+        <div className="px-6 pb-6 text-[0.95rem]">
+          <div className="mb-4 text-slate-500">{dialogContent.subtext}</div>
 
-        <DialogFooter>
-          <Button variant="ghost" onClick={unpublishOnClose} className="mr-4">
-            Close
-          </Button>
-          <Button
-            variant="default"
-            className="rounded-lg border border-red-300 bg-red-50 text-red-600 hover:bg-red-100"
-            disabled={updateMutation.isPending}
-            onClick={() => changeBountyStatus(false)}
-          >
-            {updateMutation.isPending ? (
-              <>
-                <span className="loading loading-spinner" />
-                <span>Unpublishing...</span>
-              </>
-            ) : (
-              <>
-                <X className="size-4" />
-                <span>Unpublish</span>
-              </>
-            )}
-          </Button>
-        </DialogFooter>
+          <div className="flex gap-3">
+            <div className="w-1/2" />
+            <Button
+              variant="ghost"
+              onClick={unpublishOnClose}
+              disabled={updateMutation.isPending}
+            >
+              Close
+            </Button>
+            <Button
+              className="flex-1 rounded-lg border border-red-500 bg-red-50 text-red-600 hover:bg-red-100"
+              disabled={updateMutation.isPending}
+              onClick={() => changeBountyStatus(false)}
+            >
+              {updateMutation.isPending ? (
+                <>
+                  <span className="loading loading-spinner mr-2" />
+                  <span>Unpublishing...</span>
+                </>
+              ) : (
+                <>
+                  <div className="rounded-full bg-red-600 p-0.5">
+                    <X className="size-2 text-white" />
+                  </div>
+                  <span>Unpublish</span>
+                </>
+              )}
+            </Button>
+          </div>
+        </div>
       </DialogContent>
     </Dialog>
   );

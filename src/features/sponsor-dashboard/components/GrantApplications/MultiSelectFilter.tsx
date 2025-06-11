@@ -8,8 +8,8 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { StatusPill } from '@/components/ui/status-pill';
 import { Switch } from '@/components/ui/switch';
-import { cn } from '@/utils/cn';
 
 import { labelMenuOptionsGrants } from '../../constants';
 import { colorMap } from '../../utils/statusColorMap';
@@ -101,16 +101,14 @@ export const MultiSelectFilter = ({
                         className="data-[state=checked]:bg-brand-purple h-3 w-5.5"
                         thumbClassName="size-2 data-[state=checked]:translate-x-2.5"
                       />
-                      <span
-                        className={cn(
-                          'w-20 rounded-full border py-0.5 text-center text-[10px] whitespace-nowrap capitalize',
-                          colors.bg,
-                          colors.color,
-                          colors.border,
-                        )}
+                      <StatusPill
+                        className="text-[0.625rem]"
+                        color={colors.color}
+                        backgroundColor={colors.bg}
+                        borderColor={colors.border}
                       >
                         {filter.label}
-                      </span>
+                      </StatusPill>
                     </div>
                   </div>
                 );
@@ -139,16 +137,14 @@ export const MultiSelectFilter = ({
                         className="data-[state=checked]:bg-brand-purple h-3 w-5.5"
                         thumbClassName="size-2 data-[state=checked]:translate-x-2.5"
                       />
-                      <span
-                        className={cn(
-                          'w-20 rounded-full border py-0.5 text-center text-[10px] whitespace-nowrap capitalize',
-                          colors.bg,
-                          colors.color,
-                          colors.border,
-                        )}
+                      <StatusPill
+                        className="text-[0.625rem]"
+                        color={colors.color}
+                        backgroundColor={colors.bg}
+                        borderColor={colors.border}
                       >
                         {filter.label}
-                      </span>
+                      </StatusPill>
                     </div>
                   </div>
                 );

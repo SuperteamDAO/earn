@@ -24,6 +24,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { StatusPill } from '@/components/ui/status-pill';
 import {
   Table,
   TableBody,
@@ -217,6 +218,7 @@ export const ListingTable = ({
 
               const textColor = getColorStyles(listingStatus).color;
               const bgColor = getColorStyles(listingStatus).bgColor;
+              const borderColor = getColorStyles(listingStatus).borderColor;
 
               return (
                 <TableRow key={listing?.id}>
@@ -289,21 +291,21 @@ export const ListingTable = ({
                     </div>
                   </TableCell>
                   <TableCell className="items-center py-2">
-                    <button
+                    <StatusPill
                       className={cn(
-                        'inline-flex cursor-default items-center rounded-full px-3 py-1 text-xs font-medium whitespace-nowrap',
-                        textColor,
-                        bgColor,
+                        'cursor-default py-1 text-[0.65rem]',
                         listingStatus === 'Payment Pending' && 'cursor-pointer',
                       )}
-                      disabled={listingStatus !== 'Payment Pending'}
+                      color={textColor}
+                      backgroundColor={bgColor}
+                      borderColor={borderColor}
                       onClick={() => {
                         if (listingStatus !== 'Payment Pending') return;
                         handleVerifyPayment(listing);
                       }}
                     >
                       {listingStatus}
-                    </button>
+                    </StatusPill>
                   </TableCell>
                   <TableCell className="px-3 py-2">
                     {listing.status === 'OPEN' && !!listing.isPublished ? (

@@ -8,6 +8,7 @@ import { Search } from 'lucide-react';
 import React, { useEffect, useRef } from 'react';
 
 import { Input } from '@/components/ui/input';
+import { StatusPill } from '@/components/ui/status-pill';
 import { cn } from '@/utils/cn';
 import { nthLabelGenerator } from '@/utils/rank';
 
@@ -63,8 +64,11 @@ export const TrancheList = ({
         {tranches?.map((tranche) => {
           const trancheStatus = tranche?.status;
 
-          const { bg: statusBg, color: statusColor } =
-            colorMap[trancheStatus as GrantApplicationStatus];
+          const {
+            bg: statusBg,
+            color: statusColor,
+            border: statusBorder,
+          } = colorMap[trancheStatus as GrantApplicationStatus];
 
           return (
             <div
@@ -97,15 +101,14 @@ export const TrancheList = ({
               </div>
 
               <div className="ml-auto flex w-min flex-col justify-end gap-1 align-bottom">
-                <span
-                  className={cn(
-                    'ml-auto inline-flex w-fit rounded-full px-2 py-0.5 text-center text-[0.625rem] whitespace-nowrap capitalize',
-                    statusBg,
-                    statusColor,
-                  )}
+                <StatusPill
+                  className="ml-auto text-[0.625rem]"
+                  color={statusColor}
+                  backgroundColor={statusBg}
+                  borderColor={statusBorder}
                 >
                   {trancheStatus}
-                </span>
+                </StatusPill>
               </div>
             </div>
           );
