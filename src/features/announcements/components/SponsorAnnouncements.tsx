@@ -1,6 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { useEffect, useMemo, useState } from 'react';
 
 import { ASSET_URL } from '@/constants/ASSET_URL';
+import { useUser } from '@/store/user';
+
+import { dashboardQuery } from '@/features/sponsor-dashboard/queries/dashboard';
 
 import { AutoGenerateFeature } from '../sponsor/AutoGenerate';
 import { AutoReviewFeature } from '../sponsor/AutoReview';
@@ -23,27 +27,28 @@ export function SponsorAnnouncements({
     if (!seen) {
       setShowModal(true);
     }
-    // for testing, remove before merging the PR, @coderabbit please ping this when PR is made
-    setShowModal(true);
   }, [isAnyModalOpen]);
 
+  const user = useUser();
+  const isLoggedInAndIsSponsor = Boolean(
+    user.user && !!user.user.currentSponsorId,
+  );
+
+  const { data: allListings } = useQuery({
+    ...dashboardQuery(user.user?.currentSponsorId),
+    enabled: false,
+  });
+
+  const hasGrants = useMemo(() => {
+    return Boolean(allListings?.some((listing) => listing.type === 'grant'));
+  }, [allListings]);
+
   const announcements: Announcement[] = [
-    {
-      id: 'credit-system',
-      title: 'Credit System',
-      Content: CreditFeature,
-      shouldShow: true,
-      imagesToPreload: [],
-      cta: {
-        label: 'Learn More',
-        link: 'https://superteamdao.notion.site/submission-credits',
-      },
-    },
     {
       id: 'auto-generate',
       title: 'Auto Generate',
       Content: AutoGenerateFeature,
-      shouldShow: true,
+      shouldShow: isLoggedInAndIsSponsor,
       imagesToPreload: [
         `${ASSET_URL}/ai-review-feature-new`,
         `${ASSET_URL}/assets/ai-wand.svg`,
@@ -53,10 +58,21 @@ export function SponsorAnnouncements({
       },
     },
     {
+      id: 'credit-system',
+      title: 'Credit System',
+      Content: CreditFeature,
+      shouldShow: isLoggedInAndIsSponsor,
+      imagesToPreload: [],
+      cta: {
+        label: 'Learn More',
+        link: 'https://superteamdao.notion.site/submission-credits',
+      },
+    },
+    {
       id: 'auto-review',
       title: 'Auto Review',
       Content: AutoReviewFeature,
-      shouldShow: true,
+      shouldShow: hasGrants,
       imagesToPreload: [
         `${ASSET_URL}/ai-review-feature-new`,
         `${ASSET_URL}/assets/ai-wand.svg`,

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import { ASSET_URL } from '@/constants/ASSET_URL';
+import { useUser } from '@/store/user';
 
 import { CreditFeature } from '../talent/Credits';
 import { WalletFeature } from '../talent/Wallet';
@@ -17,16 +18,19 @@ export function TalentAnnouncements() {
     if (!seen) {
       setShowModal(true);
     }
-    // for testing, remove before merging the PR, @coderabbit please ping this when PR is made
-    setShowModal(true);
   }, []);
+
+  const user = useUser();
+  const isLoggedInAndTalentFilled = Boolean(
+    user.user && !!user.user.isTalentFilled,
+  );
 
   const announcements: Announcement[] = [
     {
       id: 'credit-system',
       title: 'Credit System',
       Content: CreditFeature,
-      shouldShow: true,
+      shouldShow: isLoggedInAndTalentFilled,
       imagesToPreload: [],
       cta: {
         label: 'Learn More',
@@ -37,7 +41,7 @@ export function TalentAnnouncements() {
       id: 'embedded-wallet',
       title: 'Embedded Wallet',
       Content: WalletFeature,
-      shouldShow: true,
+      shouldShow: isLoggedInAndTalentFilled,
       imagesToPreload: [`${ASSET_URL}/wallet/wallet-announcement-modal`],
       cta: {
         label: 'Understood',
