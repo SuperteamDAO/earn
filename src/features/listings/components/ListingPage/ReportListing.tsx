@@ -1,3 +1,4 @@
+import { useMutation } from '@tanstack/react-query';
 import { AnimatePresence, motion } from 'motion/react';
 import * as React from 'react';
 import { BiCheck } from 'react-icons/bi';
@@ -10,11 +11,16 @@ import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Drawer, DrawerContent } from '@/components/ui/drawer';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { useMediaQuery } from '@/hooks/use-media-query';
+import { api } from '@/lib/api';
+import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
+
+import type { Listing } from '../../types';
 
 export interface ReportListingProps {
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
+  listing: Listing;
 }
 
 interface RadioOptionLabelProps {
@@ -65,7 +71,7 @@ function RadioOptionRow({
   children,
 }: RadioOptionRowProps) {
   return (
-    <label className="group flex cursor-pointer items-center gap-3 rounded bg-slate-100 p-3 text-slate-600 transition-all duration-75 has-checked:bg-indigo-100 has-checked:text-indigo-600">
+    <label className="group flex cursor-pointer items-center gap-3 rounded bg-slate-100 p-3 text-slate-600 has-checked:bg-indigo-100 has-checked:text-indigo-600">
       <CustomRadioGroupItem value={value} aria-label={ariaLabel} />
       <div className="w-full">
         <AnimateChangeInHeight>
@@ -77,13 +83,53 @@ function RadioOptionRow({
   );
 }
 
-export function ReportListing({ open, onOpenChange }: ReportListingProps) {
+const radioOptions: { value: string; label: string; description: string }[] = [
+  {
+    value: 'suspicious-sponsor',
+    label: 'Suspicious Sponsor',
+    description:
+      'Sponsor appears to be scamming, sending phishing links, or behaving maliciously.',
+  },
+  {
+    value: 'fake-winners',
+    label: 'Fake / Ineligible Winners',
+    description:
+      'The listing is vague, contradictory, or missing essential information.',
+  },
+  {
+    value: 'unclear-scope',
+    label: 'Unclear Scope',
+    description:
+      'The listing is vague, contradictory, or missing essential information.',
+  },
+  {
+    value: 'other',
+    label: 'Something wrong with the listing',
+    description: '',
+  },
+];
+
+export function ReportListing({
+  open,
+  onOpenChange,
+  listing,
+}: ReportListingProps) {
   const isDesktop = useMediaQuery('(min-width: 768px)');
   const [submitted, setSubmitted] = React.useState(false);
   const [selectedReason, setSelectedReason] = React.useState<string | null>(
     null,
   );
   const [customReason, setCustomReason] = React.useState('');
+  const { user } = useUser();
+
+  const mutation = useMutation({
+    mutationFn: async (payload: any) => {
+      return api.post('/api/report-listing', payload);
+    },
+    onError: (error) => {
+      console.log(error);
+    },
+  });
 
   React.useEffect(() => {
     if (!open) {
@@ -97,6 +143,27 @@ export function ReportListing({ open, onOpenChange }: ReportListingProps) {
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (!user?.email || !listing.title || !listing.slug || !selectedReason)
+      return;
+    let reasonTitle = '';
+    let reasonSubtext = '';
+    if (selectedReason === 'other') {
+      reasonTitle = 'Something wrong with the listing';
+      reasonSubtext = customReason;
+    } else {
+      const selectedOption = radioOptions.find(
+        (opt) => opt.value === selectedReason,
+      );
+      reasonTitle = selectedOption?.label || '';
+      reasonSubtext = selectedOption?.description || '';
+    }
+    mutation.mutate({
+      listingTitle: listing.title,
+      listingUrl: `${process.env.NEXT_PUBLIC_SITE_URL}/listing/${listing.slug}/`,
+      reasonTitle,
+      userEmail: user.email,
+      reasonSubtext,
+    });
     setSubmitted(true);
   }
 
@@ -209,56 +276,65 @@ function MainContent({
                 <span className="text-lg font-medium">Report this listing</span>
               </div>
               <form className="space-y-4" onSubmit={onSubmit}>
-                <RadioGroup
-                  value={selectedReason || ''}
-                  onValueChange={setSelectedReason}
-                  className="space-y-3"
-                >
-                  <RadioOptionRow
-                    value="suspicious-sponsor"
-                    ariaLabel="Suspicious Sponsor"
-                    label="Suspicious Sponsor"
-                    description="Sponsor appears to be scamming, sending phishing links, or behaving maliciously."
-                  />
-                  <RadioOptionRow
-                    value="fake-winners"
-                    ariaLabel="Fake / Ineligible Winners"
-                    label="Fake / Ineligible Winners"
-                    description="The listing is vague, contradictory, or missing essential information."
-                  />
-                  <RadioOptionRow
-                    value="unclear-scope"
-                    ariaLabel="Unclear Scope"
-                    label="Unclear Scope"
-                    description="The listing is vague, contradictory, or missing essential information."
-                  />
-                  <AnimateChangeInHeight>
-                    <RadioOptionRow
-                      value="other"
-                      ariaLabel="Something else wrong with the listing?"
-                      label="Something else wrong with the listing?"
-                      description={
-                        selectedReason === 'other'
-                          ? ''
-                          : "Describe what's wrong with this listing..."
-                      }
-                    />
-                    <span className="block h-0 w-full" />
-                    {selectedReason === 'other' && (
-                      <TextareaAutosize
-                        className={cn(
-                          'mt-4 w-full resize-none rounded-none border-b-2 p-2 text-sm',
-                          'focus:border-indigo-400 focus:ring-0 focus:outline-hidden',
-                          'max-h-32 min-h-8 placeholder:text-slate-400',
-                        )}
-                        rows={3}
-                        placeholder="Describe what's wrong with this listing..."
-                        value={customReason}
-                        onChange={(e) => setCustomReason(e.target.value)}
-                      />
+                <AnimateChangeInHeight>
+                  <RadioGroup
+                    value={selectedReason || ''}
+                    onValueChange={setSelectedReason}
+                    className="space-y-3"
+                  >
+                    {radioOptions.map(
+                      (option: {
+                        value: string;
+                        label: string;
+                        description: string;
+                      }) => (
+                        <AnimateChangeInHeight key={option.value}>
+                          <RadioOptionRow
+                            value={option.value}
+                            ariaLabel={option.label}
+                            label={option.label}
+                            description={
+                              option.value === 'other'
+                                ? selectedReason === 'other'
+                                  ? ''
+                                  : "Describe what's wrong with this listing..."
+                                : option.description
+                            }
+                          />
+                        </AnimateChangeInHeight>
+                      ),
                     )}
-                  </AnimateChangeInHeight>
-                </RadioGroup>
+                    {selectedReason === 'other' && (
+                      <div className="">
+                        <TextareaAutosize
+                          className={cn(
+                            'mt-0 mb-1 w-full resize-none rounded-none border-b-2 p-2 text-sm',
+                            'focus:border-indigo-400 focus:ring-0 focus:outline-hidden',
+                            'max-h-32 min-h-8 placeholder:text-slate-400',
+                          )}
+                          rows={3}
+                          maxLength={500}
+                          placeholder="Describe what's wrong with this listing..."
+                          value={customReason}
+                          onChange={(e) => {
+                            if (e.target.value.length <= 500) {
+                              setCustomReason(e.target.value);
+                            } else {
+                              setCustomReason(e.target.value.slice(0, 500));
+                            }
+                          }}
+                        />
+                        <div
+                          className="ml-auto w-fit text-xs text-slate-400 select-none"
+                          style={{ pointerEvents: 'none' }}
+                        >
+                          {500 - customReason.length} characters left
+                        </div>
+                      </div>
+                    )}
+                  </RadioGroup>
+                </AnimateChangeInHeight>
+
                 <Button
                   type="submit"
                   className="w-full"

@@ -52,7 +52,13 @@ export function SecondaryOptions({
         open={shareOpen}
         onOpenChange={setShareOpen}
       />
-      <ReportListing open={reportOpen} onOpenChange={setReportOpen} />
+      {listing && (
+        <ReportListing
+          open={reportOpen}
+          onOpenChange={setReportOpen}
+          listing={listing}
+        />
+      )}
     </>
   );
 }
