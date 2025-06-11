@@ -12,6 +12,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 
 import { type Listing } from '../../types';
+import { ReportListing } from './ReportListing';
 import { ShareListing } from './ShareListing';
 
 export function SecondaryOptions({
@@ -20,6 +21,7 @@ export function SecondaryOptions({
   listing: Listing | undefined;
 }) {
   const [shareOpen, setShareOpen] = React.useState(false);
+  const [reportOpen, setReportOpen] = React.useState(false);
   return (
     <>
       <DropdownMenu>
@@ -35,7 +37,10 @@ export function SecondaryOptions({
             Share
           </DropdownMenuItem>
           <DropdownMenuSeparator className="m-0" />
-          <DropdownMenuItem className="flex cursor-pointer justify-center font-medium text-slate-500 focus:text-red-500">
+          <DropdownMenuItem
+            onSelect={() => setReportOpen(true)}
+            className="flex cursor-pointer justify-center font-medium text-slate-500 focus:text-red-500"
+          >
             <RiFlagFill />
             Report
           </DropdownMenuItem>
@@ -47,6 +52,7 @@ export function SecondaryOptions({
         open={shareOpen}
         onOpenChange={setShareOpen}
       />
+      <ReportListing open={reportOpen} onOpenChange={setReportOpen} />
     </>
   );
 }
