@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from 'react';
 import { AnimateChangeInHeight } from '@/components/shared/AnimateChangeInHeight';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { cn } from '@/utils/cn';
 
 import type { Announcement } from '../types/announcement';
 
@@ -23,6 +24,7 @@ export function AnnouncementModal({
   const [isTransitioning, setIsTransitioning] = useState(false);
 
   const contentRef = useRef<HTMLDivElement>(null);
+  const buttonRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
   const goNext = () => {
     if (current < announcements.length - 1) {
@@ -45,6 +47,33 @@ export function AnnouncementModal({
       setOpen(true);
     }
   }, [closedOnce, announcements.length]);
+
+  useEffect(() => {
+    if (!open) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        if (current < announcements.length - 1) {
+          goTo(current + 1);
+        }
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        if (current > 0) {
+          goTo(current - 1);
+        }
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [open, current, announcements.length]);
+
+  useEffect(() => {
+    if (open && buttonRefs.current[current]) {
+      buttonRefs.current[current]?.focus();
+    }
+  }, [open, current]);
 
   if (!announcements.length) return null;
 
@@ -88,12 +117,18 @@ export function AnnouncementModal({
                     autoFocus={false}
                     key={a.id}
                     variant="ghost"
-                    className={`h-11 justify-start rounded-lg px-4 py-2 text-base font-medium text-slate-800 transition-all ${
+                    className={cn(
+                      'h-11 justify-start rounded-lg px-4 py-2 text-base font-medium text-slate-800 transition-all focus-visible:ring-0',
                       i === current
                         ? 'bg-[linear-gradient(90deg,rgba(95,197,255,0.25)_0.23%,rgba(124,134,255,0.45)_99.65%)] text-slate-700'
-                        : 'bg-white'
-                    }`}
+                        : 'bg-white',
+                    )}
                     onClick={() => goTo(i)}
+                    ref={(el) => {
+                      buttonRefs.current[i] = el;
+                    }}
+                    tabIndex={i === current ? 0 : -1}
+                    aria-current={i === current ? 'true' : undefined}
                   >
                     {a.title}
                   </Button>
