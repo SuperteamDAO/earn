@@ -12,15 +12,14 @@ import {
 import { ASSET_URL } from '@/constants/ASSET_URL';
 import {
   CHAIN_NAME,
-  CHANGELOG_URL,
   DISCORD_URL,
   DOCS_URL,
   GITHUB_URL,
-  HELP_URL,
   PROJECT_NAME,
   TWITTER_URL,
 } from '@/constants/project';
 import { TeamRegions } from '@/constants/Team';
+import { PRIVACY_POLICY, TERMS_OF_USE } from '@/constants/TERMS_OF_USE';
 
 import {
   Discord,
@@ -168,10 +167,13 @@ export const Footer = () => {
       href: DOCS_URL,
     },
     {
-      text: 'Changelog',
-      href: CHANGELOG_URL,
+      text: 'Terms of Use',
+      href: TERMS_OF_USE,
     },
-    { text: 'Contact Us', href: HELP_URL },
+    {
+      text: 'Privacy Policy',
+      href: PRIVACY_POLICY,
+    },
   ];
 
   return (
