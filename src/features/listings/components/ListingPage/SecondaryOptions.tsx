@@ -11,6 +11,8 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 
+import { AuthWrapper } from '@/features/auth/components/AuthWrapper';
+
 import { type Listing } from '../../types';
 import { ReportListing } from './ReportListing';
 import { ShareListing } from './ShareListing';
@@ -37,13 +39,15 @@ export function SecondaryOptions({
             Share
           </DropdownMenuItem>
           <DropdownMenuSeparator className="m-0" />
-          <DropdownMenuItem
-            onSelect={() => setReportOpen(true)}
-            className="flex cursor-pointer justify-center font-medium text-slate-500 focus:text-red-500"
-          >
-            <RiFlagFill />
-            Report
-          </DropdownMenuItem>
+          <AuthWrapper>
+            <DropdownMenuItem
+              onSelect={() => setReportOpen(true)}
+              className="flex cursor-pointer justify-center font-medium text-slate-500 focus:text-red-500"
+            >
+              <RiFlagFill />
+              Report
+            </DropdownMenuItem>
+          </AuthWrapper>
         </DropdownMenuContent>
       </DropdownMenu>
       <ShareListing
