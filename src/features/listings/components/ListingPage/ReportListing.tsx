@@ -31,8 +31,8 @@ interface RadioOptionLabelProps {
 function RadioOptionLabel({ label, description }: RadioOptionLabelProps) {
   return (
     <div>
-      <div className="font-medium">{label}</div>
-      <div className="text-sm text-slate-500 group-has-checked:text-slate-600">
+      <div className="text-sm font-medium md:text-base">{label}</div>
+      <div className="text-xs text-slate-500 group-has-checked:text-slate-600 md:text-sm">
         {description}
       </div>
     </div>
@@ -227,8 +227,9 @@ function MainContent({
             animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
             exit={{ opacity: 0, y: 20, filter: 'blur(8px)' }}
             transition={{ duration: 0.3 }}
+            className="my-auto"
           >
-            <div className="flex flex-col items-center justify-center gap-6 py-6">
+            <div className="my-auto flex flex-col items-center justify-center gap-6 py-6">
               <div className="flex items-center justify-center rounded-full bg-indigo-100 p-1">
                 <BiCheck className="size-18 text-indigo-600" />
               </div>
@@ -273,7 +274,9 @@ function MainContent({
             <div className="space-y-6 p-6">
               <div className="mb-4 flex items-center gap-2">
                 <RiFlagFill />
-                <span className="text-lg font-medium">Report this listing</span>
+                <span className="text-base font-medium md:text-lg">
+                  Report this listing
+                </span>
               </div>
               <form className="space-y-4" onSubmit={onSubmit}>
                 <AnimateChangeInHeight>
