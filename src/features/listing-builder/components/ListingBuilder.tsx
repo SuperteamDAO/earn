@@ -33,7 +33,11 @@ export function ListingBuilder({ route, slug }: ListingBuilderLayout) {
     enabled: !!user,
   });
 
-  const { data: listing, isLoading: isListingLoading } = useQuery({
+  const {
+    data: listing,
+    isLoading: isListingLoading,
+    refetch: refetchListing,
+  } = useQuery({
     ...sponsorDashboardListingQuery(slug || ''),
     refetchOnMount: false,
     refetchOnWindowFocus: false,
@@ -50,15 +54,12 @@ export function ListingBuilder({ route, slug }: ListingBuilderLayout) {
   }, [listing, user?.currentSponsorId, router]);
 
   useEffect(() => {
-    const handleRouteComplete = () => {
-      if (slug)
-        queryClient.invalidateQueries({
-          queryKey: ['sponsor-dashboard-listing', slug],
-        });
+    const handleRouteStart = () => {
+      if (slug) refetchListing();
     };
 
-    router.events.on('routeChangeComplete', handleRouteComplete);
-    return () => router.events.off('routeChangeComplete', handleRouteComplete);
+    router.events.on('routeChangeStart', handleRouteStart);
+    return () => router.events.off('routeChangeStart', handleRouteStart);
   }, [router.events, queryClient, slug]);
 
   if (!session && status === 'unauthenticated') {
