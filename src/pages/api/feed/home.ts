@@ -26,9 +26,9 @@ export default async function handler(
         },
         user: {
           select: {
-            firstName: true,
-            lastName: true,
+            name: true,
             username: true,
+            private: true,
           },
         },
       },
@@ -37,7 +37,15 @@ export default async function handler(
       },
     });
 
-    return res.status(200).json(submissions);
+    return res.status(200).json(
+      submissions.map((submission) => ({
+        ...submission,
+        user: {
+          ...submission.user,
+          name: submission.user?.private ? undefined : submission.user?.name,
+        },
+      })),
+    );
   } catch (error: any) {
     logger.warn(`Error`, safeStringify(error));
     return res

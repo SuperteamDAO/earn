@@ -169,9 +169,8 @@ export const ListingTabs = ({
   const { user } = useUser();
   const posthog = usePostHog();
   const emoji = '/assets/listing-tab.webp';
-  const [activeTab, setActiveTab] = useState('open');
 
-  const tabs: TabProps[] = [
+  const allTabs: TabProps[] = [
     {
       id: 'open',
       title: 'Open',
@@ -258,9 +257,75 @@ export const ListingTabs = ({
     },
   ];
 
+  const hasTabContent = (tabId: string): boolean => {
+    if (isListingsLoading) return true;
+
+    const filterFunctions = {
+      open: (bounty: Listing) =>
+        bounty.status === 'OPEN' &&
+        !dayjs().isAfter(bounty.deadline) &&
+        !bounty.isWinnersAnnounced,
+      'in-review': (bounty: Listing) =>
+        !bounty.isWinnersAnnounced &&
+        dayjs().isAfter(bounty.deadline) &&
+        bounty.status === 'OPEN',
+      completed: (bounty: Listing) => bounty.isWinnersAnnounced || false,
+    };
+
+    const filterFunction =
+      filterFunctions[tabId as keyof typeof filterFunctions];
+    if (!filterFunction) return false;
+
+    const filteredForYou = forYou?.filter(filterFunction) ?? [];
+    const filteredBounties = bounties?.filter(filterFunction) ?? [];
+    const showForYouSection = user && forYou && filteredForYou.length > 0;
+
+    return showForYouSection || filteredBounties.length > 0;
+  };
+
+  const tabs = allTabs.filter((tab) => hasTabContent(tab.id));
+
+  const [activeTab, setActiveTab] = useState(() => {
+    return tabs.length > 0 ? tabs[0]!.id : 'open';
+  });
+
+  useEffect(() => {
+    if (!tabs.find((tab) => tab.id === activeTab) && tabs.length > 0) {
+      setActiveTab(tabs[0]!.id);
+    }
+  }, [tabs, activeTab]);
+
   useEffect(() => {
     posthog.capture('open_listings');
   }, []);
+
+  if (!isListingsLoading && tabs.length === 0) {
+    return (
+      <div className="mb-10 mt-5">
+        <div className="mb-5 flex items-center justify-between sm:mb-4">
+          <div className="flex items-center">
+            {showEmoji && (
+              <LocalImage
+                className="xs:flex xs:hidden mr-2 h-5 w-5"
+                alt="emoji"
+                src={emoji}
+              />
+            )}
+            <p className="whitespace-nowrap pr-2 text-[14px] font-semibold text-slate-700 sm:text-[15px] md:text-[16px]">
+              {title}
+            </p>
+          </div>
+        </div>
+        <div className="mt-8 flex items-center justify-center">
+          <EmptySection
+            showNotifSub={showNotifSub}
+            title="No listings available!"
+            message="Update your email preferences (from the user menu) to be notified about new work opportunities."
+          />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="mb-10 mt-5">
@@ -279,25 +344,27 @@ export const ListingTabs = ({
             </p>
           </div>
 
-          <div className="flex items-center">
-            <div className="mx-2 h-6 w-px bg-slate-200" />
-            <div className="flex">
-              {tabs.map((tab) => (
-                <ListingTabTrigger
-                  key={tab.id}
-                  isActive={activeTab === tab.id}
-                  onClick={() => {
-                    setActiveTab(tab.id);
-                    posthog.capture(tab.posthog);
-                  }}
-                >
-                  <span className="text-[13px] font-medium md:text-[14px]">
-                    {tab.title}
-                  </span>
-                </ListingTabTrigger>
-              ))}
+          {tabs.length > 0 && (
+            <div className="flex items-center">
+              <div className="mx-2 h-6 w-px bg-slate-200" />
+              <div className="flex">
+                {tabs.map((tab) => (
+                  <ListingTabTrigger
+                    key={tab.id}
+                    isActive={activeTab === tab.id}
+                    onClick={() => {
+                      setActiveTab(tab.id);
+                      posthog.capture(tab.posthog);
+                    }}
+                  >
+                    <span className="text-[13px] font-medium md:text-[14px]">
+                      {tab.title}
+                    </span>
+                  </ListingTabTrigger>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
         </div>
         {showViewAll && (
           <div className="ph-no-capture hidden sm:flex">
@@ -315,7 +382,9 @@ export const ListingTabs = ({
         )}
       </div>
 
-      <div className="-mt-2.5 mb-4 h-0.5 w-full bg-slate-200 sm:-mt-2" />
+      {tabs.length > 0 && (
+        <div className="-mt-2.5 mb-4 h-0.5 w-full bg-slate-200 sm:-mt-2" />
+      )}
 
       {tabs.find((tab) => tab.id === activeTab)?.content}
 

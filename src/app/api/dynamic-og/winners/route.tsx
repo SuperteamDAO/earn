@@ -42,7 +42,7 @@ export async function GET(request: Request) {
     const allText = `${submissions
       .map(
         (winner) =>
-          `${winner?.user?.firstName || ''} ${winner?.user?.lastName || ''} ${nthLabelGenerator(winner?.winnerPosition || 0)}`,
+          `${winner?.user?.name || ''} ${nthLabelGenerator(winner?.winnerPosition || 0)}`,
       )
       .join(
         '',
@@ -105,7 +105,7 @@ export async function GET(request: Request) {
                       borderRadius: '999999px',
                       display: 'flex',
                     }}
-                    alt={`${winner?.user?.firstName} ${winner?.user?.lastName}`}
+                    alt={`${winner?.user?.name}`}
                     src={winner?.user?.photo}
                   />
                 ) : (
@@ -117,7 +117,7 @@ export async function GET(request: Request) {
                       borderRadius: '999999px',
                       display: 'flex',
                     }}
-                    alt={`${winner?.user?.firstName} ${winner?.user?.lastName}`}
+                    alt={`${winner?.user?.name}`}
                     src={'/fallback/avatar.png'}
                   />
                 )}
@@ -160,20 +160,7 @@ export async function GET(request: Request) {
                     alignItems: 'center',
                   }}
                 >
-                  {formatString(winner?.user?.firstName ?? '', 30)}
-                </div>
-                <div
-                  style={{
-                    maxWidth: '220px',
-                    marginTop: '-0.2rem',
-                    fontSize: '27.17px',
-                    fontWeight: '600',
-                    textAlign: 'center',
-                    display: 'flex',
-                    alignItems: 'center',
-                  }}
-                >
-                  {formatString(winner?.user?.lastName ?? '', 30)}
+                  {formatString(winner?.user?.name ?? '', 30)}
                 </div>
                 <div
                   style={{

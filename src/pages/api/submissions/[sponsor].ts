@@ -17,8 +17,7 @@ async function handler(
   const status = params.status as string;
   const customQuestion = params.customQuestion;
   const customAnswer = params.customAnswer;
-  const firstName = params.firstName;
-  const lastName = params.lastName;
+  const name = params.name;
   const sequentialId = params.sequentialId;
 
   const isGod = req.authorized && req.role === 'GOD';
@@ -82,8 +81,7 @@ async function handler(
           ...validation,
         },
         user: {
-          ...(lastName && { lastName: { contains: lastName as string } }),
-          ...(firstName && { firstName: { contains: firstName as string } }),
+          ...(name && { name: { contains: name as string } }),
         },
         ...(sequentialId && {
           sequentialId: { equals: parseInt(sequentialId as string) },
@@ -96,16 +94,17 @@ async function handler(
         user: {
           select: {
             id: true,
-            firstName: true,
-            lastName: true,
+            name: true,
             publicKey: true,
             photo: true,
             username: true,
+            private: true,
           },
         },
         listing: {
           select: {
             eligibility: true,
+            sequentialId: true,
           },
         },
       },
@@ -121,7 +120,19 @@ async function handler(
       });
     }
 
-    return res.status(200).json(result);
+    return res.status(200).json(
+      result.map((r) => ({
+        ...r,
+        notes: undefined,
+        user: {
+          ...r.user,
+          name: r.user.private ? undefined : r.user.name,
+        },
+        listing: {
+          ...r.listing,
+        },
+      })),
+    );
   } catch (error: any) {
     logger.error(
       `Error occurred while fetching submissions with sponsor slug=${sponsorSlug}: ${safeStringify(error)}`,

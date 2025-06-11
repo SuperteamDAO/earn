@@ -5,6 +5,7 @@ import { usePostHog } from 'posthog-js/react';
 import { useEffect, useMemo } from 'react';
 
 import { UserFlag } from '@/components/shared/UserFlag';
+import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { TeamRegions } from '@/constants/Team';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
@@ -98,6 +99,23 @@ export function NavTabs({ className, ...props }: NavTabsProps) {
           </PillTab>
         );
       })}
+
+      <Link
+        href={'/firehose'}
+        type="icon"
+        className={cn(
+          'flex items-center font-medium lg:hidden',
+          'h-6',
+          'rounded-full border border-slate-200 text-sm',
+        )}
+        aria-label="Go to Firehose Hackaton Page"
+      >
+        <ExternalImage
+          alt="Redacted Logo"
+          src="/hackathon/fff/logo.png"
+          className="h-full object-contain"
+        />
+      </Link>
     </div>
   );
 }

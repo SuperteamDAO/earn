@@ -782,12 +782,12 @@ function Rankings({
                 <img
                   className="h-8 w-8 rounded-full"
                   src={r.user.photo ?? undefined}
-                  alt={`${r.user.firstName}'s avatar`}
+                  alt={`${r.user.name}'s avatar`}
                 />
                 <div className="flex flex-col items-start gap-1 leading-normal md:justify-start md:leading-[1.15]">
                   <div className="flex items-center gap-2">
                     <p className="max-w-[7rem] truncate text-black">
-                      {r.user.firstName} {r.user.lastName}
+                      {r.user.name}
                     </p>
                   </div>
                   <p className="max-w-[7rem] truncate">@{r.user.username}</p>
@@ -1167,8 +1167,7 @@ LIMIT 10;
     select: {
       id: true,
       username: true,
-      firstName: true,
-      lastName: true,
+      name: true,
       photo: true,
       email: true,
     },

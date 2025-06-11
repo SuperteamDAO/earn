@@ -49,7 +49,6 @@ import {
   workType,
 } from '@/features/talent/constants';
 import { type ProfileFormData, profileSchema } from '@/features/talent/schema';
-import { hasDevSkills } from '@/features/talent/utils/skills';
 import { useUsernameValidation } from '@/features/talent/utils/useUsernameValidation';
 
 export default function EditProfilePage({ slug }: { slug: string }) {
@@ -60,8 +59,6 @@ export default function EditProfilePage({ slug }: { slug: string }) {
     mode: 'onBlur',
   });
   const { control, handleSubmit, watch, setError, clearErrors, trigger } = form;
-
-  const skills = watch('skills');
 
   const [selectedPhoto, setSelectedPhoto] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
@@ -127,8 +124,7 @@ export default function EditProfilePage({ slug }: { slug: string }) {
           profileSchema._def.schema.shape.skills.safeParse(user.skills).data ||
           undefined,
         private: user.private || undefined,
-        firstName: user.firstName || undefined,
-        lastName: user.lastName || undefined,
+        name: user.name || undefined,
         publicKey: user.publicKey || undefined,
         discord: user.discord || undefined,
         github: user.github
@@ -383,23 +379,13 @@ export default function EditProfilePage({ slug }: { slug: string }) {
               </FormFieldWrapper>
 
               <FormFieldWrapper
-                label="First Name"
-                name="firstName"
+                label="Name"
+                name="name"
                 control={control}
                 isRequired
                 className="mb-5"
               >
-                <Input placeholder="First Name" />
-              </FormFieldWrapper>
-
-              <FormFieldWrapper
-                className="mb-5"
-                label="Last Name"
-                name="lastName"
-                control={control}
-                isRequired
-              >
-                <Input placeholder="Last Name" />
+                <Input placeholder="Name" maxLength={255} />
               </FormFieldWrapper>
 
               <FormField
@@ -444,15 +430,17 @@ export default function EditProfilePage({ slug }: { slug: string }) {
                 <Input placeholder="Wallet Address" />
               </FormFieldWrapper>
 
-              <p className="mb-5 mt-12 text-lg font-semibold text-slate-600">
+              <p className="relative mt-12 text-lg font-semibold text-slate-600">
                 SOCIALS
+                <span className="ml-1 align-super text-sm text-red-500">*</span>
               </p>
 
-              <SocialInputAll
-                control={control}
-                required={hasDevSkills(skills) ? ['github'] : ['twitter']}
-                exclude={['linkedinCompany']}
-              />
+              <p className="mb-5 text-sm text-slate-500">
+                {' '}
+                At least one is required
+              </p>
+
+              <SocialInputAll control={control} exclude={['linkedinCompany']} />
 
               <p className="mb-5 mt-12 text-lg font-semibold text-slate-600">
                 WORK
@@ -521,7 +509,9 @@ export default function EditProfilePage({ slug }: { slug: string }) {
                 control={control}
                 render={({ field }) => (
                   <FormItem className="mb-4 w-full gap-2">
-                    <FormLabel className="">Location</FormLabel>
+                    <FormLabel isRequired className="">
+                      Location
+                    </FormLabel>
                     <FormControl>
                       <RegionCombobox
                         className="w-full"
@@ -657,10 +647,13 @@ export default function EditProfilePage({ slug }: { slug: string }) {
                             }
                           }}
                           className="mr-1 text-brand-green data-[state=checked]:border-brand-green data-[state=checked]:bg-brand-green"
-                        ></Checkbox>
+                        />
                       </FormControl>
-                      <FormLabel className="font-medium text-slate-500">
+                      <FormLabel className="flex items-center gap-2 font-medium text-slate-500">
                         Keep my info private
+                        <Tooltip content="This hides detailed information and work history from your main public profile page, making it harder for potential sponsors to discover you. Your username and image will still appear in public interactions like comments or submissions. Sponsors you apply to will see your full profile.">
+                          <Info className="h-3 w-3 text-slate-500" />
+                        </Tooltip>
                       </FormLabel>
                     </div>
                     <FormMessage />

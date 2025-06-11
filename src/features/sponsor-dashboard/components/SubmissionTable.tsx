@@ -263,13 +263,14 @@ export const SubmissionTable = ({
                       <div className="ml-2 min-w-0">
                         <div className="flex items-center gap-2">
                           <p className="truncate whitespace-nowrap text-sm font-medium text-slate-700">
-                            {`${submission?.user?.firstName} ${submission?.user?.lastName}`}
+                            {submission?.user?.name}
                           </p>
                           {submission?.user?.publicKey && (
                             <KycComponent
                               address={submission.user.publicKey}
                               imageOnly
                               xs
+                              listingSponsorId={submission?.listing?.sponsorId}
                             />
                           )}
                         </div>

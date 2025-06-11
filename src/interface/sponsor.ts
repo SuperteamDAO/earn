@@ -3,6 +3,7 @@ interface SponsorType {
   slug: string;
   name: string;
   logo?: string;
+  banner?: string;
   url?: string;
   industry?: string;
   twitter?: string;

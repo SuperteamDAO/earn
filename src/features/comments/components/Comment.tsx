@@ -218,9 +218,15 @@ export const Comment = ({
               tabIndex={-1}
               target="_blank"
             >
-              <p className="text-sm font-medium text-slate-800 md:text-base">
-                {`${comment?.author?.firstName} ${comment?.author?.lastName}`}
-              </p>
+              {comment.author?.name ? (
+                <p className="text-sm font-medium text-slate-800 md:text-base">
+                  {`${comment?.author?.name}`}
+                </p>
+              ) : (
+                <p className="text-sm font-medium text-slate-800 md:text-base">
+                  {comment?.author?.username}
+                </p>
+              )}
             </Link>
             {comment?.author?.currentSponsorId === sponsorId && (
               <p className="flex items-center gap-0.5 pb-0.5 text-xs font-medium text-blue-500 md:text-sm">

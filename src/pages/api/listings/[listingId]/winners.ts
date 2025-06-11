@@ -28,8 +28,7 @@ export default async function submission(
           select: {
             id: true,
             username: true,
-            firstName: true,
-            lastName: true,
+            name: true,
             photo: true,
           },
         },

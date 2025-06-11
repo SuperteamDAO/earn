@@ -28,8 +28,7 @@ interface FeedCardContainerProps {
   actionLinks: ReactNode;
   children: ReactNode;
   type: 'activity' | 'profile';
-  firstName: string;
-  lastName: string;
+  name: string;
   photo: string | undefined;
   username?: string;
   id: string;
@@ -47,8 +46,7 @@ export const FeedCardContainer = ({
   actionLinks,
   children,
   type,
-  firstName,
-  lastName,
+  name,
   photo,
   username,
   id,
@@ -78,7 +76,7 @@ export const FeedCardContainer = ({
   const handleCommentSuccess = () => {
     setRecentCommenters((prevCommenters) => [
       ...(prevCommenters ? prevCommenters.slice(0, 3) : []),
-      { author: { photo: user?.photo || null, name: user?.firstName || null } },
+      { author: { photo: user?.photo || null, name: user?.name || null } },
     ]);
     onCloseComment();
   };
@@ -131,7 +129,7 @@ export const FeedCardContainer = ({
         />
         <div className="flex w-full flex-col">
           <FeedCardHeader
-            name={`${firstName} ${lastName}`}
+            name={name || username || ''}
             photo={photo}
             username={username}
             action={content.actionText}

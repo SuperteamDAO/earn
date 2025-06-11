@@ -44,8 +44,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           select: {
             id: true,
             photo: true,
-            firstName: true,
-            lastName: true,
+            name: true,
             username: true,
             email: true,
             publicKey: true,

@@ -6,8 +6,7 @@ interface GrantApplicationWithUserAndGrant extends GrantApplication {
     title: string;
   };
   user: {
-    firstName: string | null;
-    lastName: string | null;
+    name: string | null;
     email: string;
     discord: string | null;
   };
@@ -60,7 +59,7 @@ export function convertGrantApplicationToAirtable(
     Funding: grantApplication.approvedAmount || grantApplication.ask,
     KPI: grantApplication.kpi ?? undefined,
     'Proof of Work': grantApplication.proofOfWork,
-    Name: `${grantApplication.user.firstName} ${grantApplication.user.lastName}`,
+    Name: grantApplication.user.name ?? '',
     'Contact Email': grantApplication.user.email,
     'Twitter URL': grantApplication.twitter ?? undefined,
     'SOL Wallet': grantApplication.walletAddress,

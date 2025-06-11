@@ -58,7 +58,7 @@ export function UsernameField() {
   }, [validationErrorMessage, isInvalid, username, errors.username?.message]);
 
   const { data: randomUsername } = useQuery({
-    ...usernameRandomQuery(user?.firstName),
+    ...usernameRandomQuery(user?.name),
     enabled: !!user && !user.username,
     refetchOnWindowFocus: false,
   });

@@ -17,8 +17,7 @@ interface GrantApplicationWithUserAndGrant extends GrantApplication {
     title: string;
   };
   user: {
-    firstName: string | null;
-    lastName: string | null;
+    name: string | null;
     email: string;
     discord: string | null;
     location: string | null;

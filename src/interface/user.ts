@@ -9,8 +9,7 @@ import type { SubmissionWithUser } from './submission';
 interface User {
   id?: string;
   publicKey?: string;
-  firstName?: string;
-  lastName?: string;
+  name?: string;
   email?: string;
   username?: string;
   isVerified?: boolean;

@@ -32,7 +32,7 @@ export default async function handler(
 
     res.status(200).json({
       sponsorName: invite.sponsor.name,
-      senderName: `${invite.sender.firstName} ${invite.sender.lastName}`,
+      senderName: invite.sender.name ?? invite.sender.username ?? '',
       memberType: invite.memberType,
       sponsorLogo: invite.sponsor.logo,
     });

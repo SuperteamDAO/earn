@@ -104,7 +104,7 @@ export const RecentEarners = ({ earners }: { earners?: User[] }) => {
               key={`${t.id}-${index}`}
               amount={t.reward ?? 0}
               token={t.rewardToken}
-              name={`${t.firstName} ${t.lastName}`}
+              name={t.name || t.username}
               username={t.username}
               avatar={t.photo}
               bounty={t.title ?? ''}

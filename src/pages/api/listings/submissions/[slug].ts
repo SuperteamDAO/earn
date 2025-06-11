@@ -40,8 +40,7 @@ async function handler(
         poc: {
           select: {
             id: true,
-            firstName: true,
-            lastName: true,
+            name: true,
           },
         },
         Hackathon: {
@@ -78,11 +77,11 @@ async function handler(
         user: {
           select: {
             id: true,
-            firstName: true,
-            lastName: true,
+            name: true,
             publicKey: true,
             photo: true,
             username: true,
+            private: true,
           },
         },
         listing: {
@@ -118,7 +117,19 @@ async function handler(
     );
     return res.status(200).json({
       bounty: result,
-      submission,
+      submission: submission.map((submission) => ({
+        ...submission,
+        user: {
+          ...submission.user,
+          name: submission.user?.private ? undefined : submission.user?.name,
+          publicKey: submission.user?.private
+            ? undefined
+            : submission.user?.publicKey,
+        },
+        paymentDetails: submission.user?.private
+          ? undefined
+          : submission.paymentDetails,
+      })),
     });
   } catch (error: any) {
     logger.error(

@@ -1,12 +1,53 @@
 // user profile
-import type { NextApiRequest, NextApiResponse } from 'next';
+import type { NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
 
-export default async function getAllUsers(
-  req: NextApiRequest,
+import { type NextApiRequestWithPotentialSponsor } from '@/features/auth/types';
+import { withPotentialSponsorAuth } from '@/features/auth/utils/withPotentialSponsorAuth';
+
+export async function shouldDisplayUserProfile(
+  user: { id: string; private: boolean },
+  req: NextApiRequestWithPotentialSponsor,
+): Promise<boolean> {
+  let shouldDisplayProfile = false;
+
+  if (!user.private) {
+    shouldDisplayProfile = true;
+  }
+
+  if (req.authorized && (req.role === 'GOD' || req.userId === user.id)) {
+    shouldDisplayProfile = true;
+  }
+
+  if (req.authorized && !shouldDisplayProfile && req.userSponsorId) {
+    const entry = await prisma.submission.findFirst({
+      where: {
+        userId: user.id,
+        listing: {
+          sponsor: {
+            UserSponsors: {
+              some: {
+                userId: req.userId,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (entry) {
+      shouldDisplayProfile = true;
+    }
+  }
+
+  return shouldDisplayProfile;
+}
+
+export async function getAllUsers(
+  req: NextApiRequestWithPotentialSponsor,
   res: NextApiResponse,
 ): Promise<void> {
   logger.info(`Request body: ${safeStringify(req.body)}`);
@@ -24,13 +65,12 @@ export default async function getAllUsers(
         website: true,
         username: true,
         workPrefernce: true,
-        firstName: true,
-        lastName: true,
+        name: true,
         skills: true,
         photo: true,
-        email: true,
         currentEmployer: true,
         location: true,
+        private: true,
       },
     });
 
@@ -41,9 +81,20 @@ export default async function getAllUsers(
       return res.status(404).json({ error: 'User not found' });
     }
 
-    const userId = user.id;
-    logger.info(`User found: ${userId}`);
-    return res.status(200).json({ ...user });
+    logger.info(`User found: ${user.id}`);
+
+    const shouldDisplay = await shouldDisplayUserProfile(user, req);
+
+    if (!shouldDisplay) {
+      return res.status(200).json({
+        id: user.id,
+        username: user.username,
+        photo: user.photo,
+        private: true,
+      });
+    }
+
+    return res.status(200).json({ ...user, private: false });
   } catch (error: any) {
     logger.error(`Error fetching user details: ${safeStringify(error)}`);
     return res
@@ -51,3 +102,5 @@ export default async function getAllUsers(
       .json({ error: `Unable to fetch user details: ${error.message}` });
   }
 }
+
+export default withPotentialSponsorAuth(getAllUsers);

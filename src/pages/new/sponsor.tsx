@@ -79,8 +79,7 @@ const CreateSponsor = () => {
         entityName: '',
       },
       user: {
-        firstName: user?.firstName || '',
-        lastName: user?.lastName || '',
+        name: user?.name || '',
         username: user?.username || '',
         photo: user?.photo || '',
       },
@@ -92,8 +91,7 @@ const CreateSponsor = () => {
       user.username && setUsername(user.username);
       form.reset({
         user: {
-          firstName: user?.firstName || '',
-          lastName: user?.lastName || '',
+          name: user?.name || '',
           username: user?.username || '',
           photo: user?.photo || '',
         },
@@ -277,7 +275,7 @@ const CreateSponsor = () => {
       if (selectedLogo) {
         logoUrl = await uploadAndReplaceImage({
           newFile: selectedLogo,
-          folder: 'earn-sponsor',
+          folder: 'nearn-sponsor',
         });
         data.sponsor.logo = logoUrl;
       }
@@ -341,19 +339,11 @@ const CreateSponsor = () => {
                 <div className="mb-4 flex w-full justify-between gap-2">
                   <FormFieldWrapper
                     control={form.control}
-                    name="user.firstName"
-                    label="First Name"
+                    name="user.name"
+                    label="Name"
                     isRequired
                   >
-                    <Input placeholder="First Name" />
-                  </FormFieldWrapper>
-                  <FormFieldWrapper
-                    control={form.control}
-                    name="user.lastName"
-                    label="Last Name"
-                    isRequired
-                  >
-                    <Input placeholder="Last Name" />
+                    <Input placeholder="Name" maxLength={255} />
                   </FormFieldWrapper>
                 </div>
                 <div className="mb-4 flex">
@@ -430,7 +420,7 @@ const CreateSponsor = () => {
                     name="sponsor.entityName"
                     label={
                       <>
-                        Legal Entity Name
+                        Legal Name
                         <Tooltip
                           content="Please mention the official entity name of your project. If you are a DAO, simply mention the name of the DAO. If you neither have an entity nor are a DAO, mention your full name."
                           contentProps={{ className: 'max-w-xs text-xs' }}
@@ -441,7 +431,7 @@ const CreateSponsor = () => {
                     }
                     isRequired
                   >
-                    <Input placeholder="Full Entity Name" />
+                    <Input placeholder="Legal Name" />
                   </FormFieldWrapper>
                 </div>
                 <div className="mb-3 mt-6 w-full">

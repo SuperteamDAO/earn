@@ -40,8 +40,8 @@ async function sendInvites(
       select: {
         id: true,
         email: true,
-        firstName: true,
-        lastName: true,
+        name: true,
+        username: true,
         currentSponsor: {
           select: {
             name: true,
@@ -92,10 +92,10 @@ async function sendInvites(
     await resend.emails.send({
       from: fromEmail,
       to: [email],
-      subject: `${user.firstName} has invited you to join ${user.currentSponsor.name}'s profile on ${PROJECT_NAME}`,
+      subject: `${user.name} has invited you to join ${user.currentSponsor.name}'s profile on ${PROJECT_NAME}`,
       react: InviteMemberTemplate({
         sponsorName: user.currentSponsor.name,
-        senderName: `${user.firstName} ${user.lastName}`,
+        senderName: user.name ?? user.username ?? '',
         link: `${getURL()}signup?invite=${token}`,
       }),
       replyTo: replyToEmail,

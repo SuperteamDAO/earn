@@ -234,16 +234,14 @@ export function RanksTable({ rankings, skill, userRank, loading }: Props) {
                     }}
                     target="_blank"
                   >
-                    <EarnAvatar avatar={user.photo} id={user.firstName} />
+                    <EarnAvatar avatar={user.photo} id={user.name} />
                     <div className="flex flex-col items-start justify-center gap-1 md:justify-start">
                       <p className="block max-w-[7rem] overflow-x-hidden text-ellipsis whitespace-nowrap text-black group-hover:underline md:hidden">
-                        {user.firstName +
-                          ' ' +
-                          user.lastName?.slice(0, 1).toUpperCase()}
+                        {user.name}
                       </p>
                       <div className="flex items-center gap-2">
                         <p className="line-clamp-1 hidden max-w-[7rem] overflow-x-hidden text-ellipsis whitespace-nowrap text-black md:block">
-                          {user.firstName + ' ' + user.lastName}
+                          {user.name}
                         </p>
                         {user.location && (
                           <UserFlag size="12px" location={user.location} />

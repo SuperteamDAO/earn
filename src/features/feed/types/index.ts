@@ -19,8 +19,7 @@ export interface FeedDataProps {
   isWinner: boolean;
   winnerPosition: keyof Rewards | undefined;
   description: string;
-  firstName: string;
-  lastName: string;
+  name: string;
   photo: string;
   username: string;
   listingId: number;

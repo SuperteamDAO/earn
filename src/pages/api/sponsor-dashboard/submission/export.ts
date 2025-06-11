@@ -80,7 +80,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       return {
         'Sr no': i + 1,
         'Profile Link': `${getURL()}/t/${user.username}`,
-        Name: `${user.firstName} ${user.lastName}`,
+        Name: user.name ?? user.username ?? '',
         'Submission Link': submission.link || '',
         ...eligibility,
         Ask: submission.ask || '',

@@ -1,5 +1,5 @@
 import { Info, Plus, Trash2 } from 'lucide-react';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 
 import { Button } from '@/components/ui/button';
@@ -16,7 +16,6 @@ import { Tooltip } from '@/components/ui/tooltip';
 
 import { SocialInput } from '@/features/social/components/SocialInput';
 import { type NewTalentFormData } from '@/features/talent/schema';
-import { hasDevSkills } from '@/features/talent/utils/skills';
 
 type SocialTypeWithoutLinkedinCompany =
   | 'twitter'
@@ -37,50 +36,36 @@ const ALL_SOCIALS: SocialTypeWithoutLinkedinCompany[] = [
 
 export function SocialsField() {
   const form = useFormContext<NewTalentFormData>();
-  const { control, watch, clearErrors, getValues, setValue } = form;
+  const { control, getValues, setValue } = form;
 
   const [selectedSocials, setSelectedSocials] = useState<
     SocialTypeWithoutLinkedinCompany[]
   >(['twitter']);
 
-  const skills = watch('skills');
-  const requiredSocial = useMemo(() => {
-    if (hasDevSkills(skills)) {
-      clearErrors('twitter');
-      return 'github';
-    } else {
-      clearErrors('github');
-      return 'twitter';
-    }
-  }, [skills]);
-
+  // Initialize selected socials based on existing values
   useEffect(() => {
-    const twitter = getValues('twitter');
-    const github = getValues('github');
-    setSelectedSocials((prev) => {
-      const newSocials: SocialTypeWithoutLinkedinCompany[] = [requiredSocial];
-      if (requiredSocial === 'twitter' && !!github) {
-        newSocials.push('github');
+    const existingSocials: SocialTypeWithoutLinkedinCompany[] = [];
+    ALL_SOCIALS.forEach((social) => {
+      const value = getValues(social);
+      if (value) {
+        existingSocials.push(social);
       }
-      if (requiredSocial === 'github' && !!twitter) {
-        newSocials.push('twitter');
-      }
-      newSocials.push(
-        ...prev.filter(
-          (s) => s !== requiredSocial && s !== 'github' && s !== 'twitter',
-        ),
-      );
-      return newSocials;
     });
-  }, [requiredSocial]);
+
+    if (existingSocials.length > 0) {
+      setSelectedSocials(existingSocials);
+    }
+  }, [getValues]);
 
   const handleToggleSocial = (
     social: SocialTypeWithoutLinkedinCompany,
     checked: boolean,
   ) => {
-    if (social === requiredSocial && !checked) {
+    // Prevent removing the last social - at least one must remain
+    if (!checked && selectedSocials.length === 1) {
       return;
     }
+
     setSelectedSocials((prev) => {
       if (checked) {
         if (!prev.includes(social)) {
@@ -93,13 +78,6 @@ export function SocialsField() {
       }
     });
   };
-
-  const orderedSelectedSocials = useMemo(() => {
-    return [
-      requiredSocial,
-      ...selectedSocials.filter((s) => s !== requiredSocial),
-    ] as SocialTypeWithoutLinkedinCompany[];
-  }, [selectedSocials, requiredSocial]);
 
   return (
     <div>
@@ -138,7 +116,7 @@ export function SocialsField() {
               <DropdownMenuSeparator />
               {ALL_SOCIALS.map((social) => {
                 const isChecked = selectedSocials.includes(social);
-                const isDisabled = social === requiredSocial && isChecked;
+                const isDisabled = isChecked && selectedSocials.length === 1;
                 return (
                   <DropdownMenuCheckboxItem
                     key={social}
@@ -151,6 +129,11 @@ export function SocialsField() {
                     onSelect={(e) => e.preventDefault()}
                   >
                     {social}
+                    {isDisabled && (
+                      <span className="ml-2 text-xs text-muted-foreground">
+                        (at least one)
+                      </span>
+                    )}
                   </DropdownMenuCheckboxItem>
                 );
               })}
@@ -159,13 +142,13 @@ export function SocialsField() {
         </div>
       </div>
       <div className="mt-1 flex flex-col gap-3 md:mt-4">
-        {orderedSelectedSocials.map((social) => (
+        {selectedSocials.map((social) => (
           <div className="group relative" key={social}>
             <SocialInput
               control={control}
               name={social}
               socialName={social}
-              required={social === requiredSocial}
+              required={false}
               placeholder={
                 social !== 'website'
                   ? `Enter your ${social?.charAt(0).toUpperCase() + social?.slice(1).toLowerCase()} username`
@@ -176,7 +159,7 @@ export function SocialsField() {
                 input: 'pr-8',
               }}
             />
-            {social !== requiredSocial && (
+            {selectedSocials.length > 1 && (
               <Button
                 type="button"
                 variant="ghost"

@@ -28,24 +28,12 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   const textSearch = searchText
     ? {
         OR: [
-          { user: { firstName: { contains: searchText } } },
+          { user: { name: { contains: searchText } } },
           { user: { email: { contains: searchText } } },
           { user: { username: { contains: searchText } } },
           { user: { twitter: { contains: searchText } } },
           { user: { discord: { contains: searchText } } },
           { projectTitle: { contains: searchText } },
-          {
-            AND: [
-              {
-                user: { firstName: { contains: searchText.split(' ')[0] } },
-              },
-              {
-                user: {
-                  lastName: { contains: searchText.split(' ')[1] || '' },
-                },
-              },
-            ],
-          },
         ],
       }
     : {};
@@ -109,8 +97,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         user: {
           select: {
             id: true,
-            firstName: true,
-            lastName: true,
+            name: true,
             email: true,
             photo: true,
             publicKey: true,

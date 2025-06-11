@@ -40,8 +40,7 @@ async function comment(req: NextApiRequestWithUser, res: NextApiResponse) {
       include: {
         author: {
           select: {
-            firstName: true,
-            lastName: true,
+            name: true,
             photo: true,
             username: true,
             currentSponsorId: true,
@@ -51,8 +50,7 @@ async function comment(req: NextApiRequestWithUser, res: NextApiResponse) {
           include: {
             author: {
               select: {
-                firstName: true,
-                lastName: true,
+                name: true,
                 photo: true,
                 username: true,
                 currentSponsorId: true,
@@ -97,7 +95,7 @@ async function comment(req: NextApiRequestWithUser, res: NextApiResponse) {
             id: refId,
             userId: taggedUser.id,
             otherInfo: {
-              personName: result.author.firstName,
+              personName: result.author.name,
               type: refType,
             },
             triggeredBy: userId,
@@ -141,7 +139,7 @@ async function comment(req: NextApiRequestWithUser, res: NextApiResponse) {
             type: 'commentActivity',
             id: refId,
             otherInfo: {
-              personName: result?.author?.firstName,
+              personName: result?.author?.name,
               type: refType,
             },
             triggeredBy: userId,

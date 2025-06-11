@@ -19,7 +19,7 @@ function fileToBase64(file: File): Promise<string> {
 
 export type EARN_IMAGE_FOLDER =
   | 'earn-pfp'
-  | 'earn-sponsor'
+  | 'nearn-sponsor'
   | 'listing-description'
   | 'listing-eligibility-answer';
 

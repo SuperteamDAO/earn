@@ -50,8 +50,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         user: {
           select: {
             id: true,
-            firstName: true,
-            lastName: true,
+            name: true,
             email: true,
             photo: true,
             publicKey: true,

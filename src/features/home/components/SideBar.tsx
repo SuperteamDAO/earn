@@ -13,6 +13,7 @@ import { totalsQuery } from '../queries/totals';
 import { HowItWorks } from './HowItWorks';
 import { RecentActivity } from './RecentActivity';
 import { RecentEarners } from './RecentEarners';
+import { SidebarBanner } from './SidebarBanner';
 import { SponsorBanner } from './SponsorBanner';
 import { TotalStats } from './TotalStats';
 
@@ -44,6 +45,7 @@ export const HomeSideBar = ({ type }: SideBarProps) => {
     <div className="flex w-96 flex-col gap-10 py-4 pl-6">
       {type === 'feed' && (
         <>
+          <SidebarBanner />
           <LiveListings>
             <div className="flex items-center justify-between">
               <span className="text-sm font-medium text-gray-400">
@@ -71,6 +73,7 @@ export const HomeSideBar = ({ type }: SideBarProps) => {
             bountyCount={totals?.count}
             TVE={totals?.totalInUSD}
           />
+          <SidebarBanner />
           <HowItWorks />
           <RecentEarners earners={recentEarners} />
           <RecentActivity />

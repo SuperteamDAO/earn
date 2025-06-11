@@ -174,7 +174,7 @@ function Content({
                   <div className="flex w-full justify-between gap-2">
                     <div className="flex items-center gap-2">
                       <p className="w-full whitespace-nowrap font-medium text-slate-900">
-                        {`${submission?.user?.firstName}'s Submission`}
+                        {`${(submission?.user?.name ?? submission?.user?.username)?.split(' ')[0]}'s Submission`}
                       </p>
                       <span
                         className={cn(
@@ -253,74 +253,84 @@ function Content({
             </div>
 
             <div className="flex flex-col gap-3 py-[1rem] md:flex-row md:items-center md:gap-5">
-              {submission?.user?.email && (
-                <Tooltip
-                  content={'Click to copy'}
-                  contentProps={{ side: 'right' }}
-                  triggerClassName="flex items-center hover:underline underline-offset-1"
-                >
-                  <div
-                    className="flex cursor-pointer items-center justify-start gap-1 text-sm text-slate-400 hover:text-slate-500"
-                    onClick={handleCopyEmail}
-                    role="button"
-                    tabIndex={0}
-                    aria-label={`Copy email: ${submission.user.email}`}
-                  >
-                    <MdOutlineMail />
-                    {truncateString(submission.user.email, 36)}
-                  </div>
-                </Tooltip>
-              )}
-
-              {submission?.user?.publicKey && (
-                <div className="flex items-center gap-2">
-                  <Tooltip
-                    content={'Click to copy'}
-                    contentProps={{ side: 'right' }}
-                    triggerClassName="flex items-center hover:underline underline-offset-1"
-                  >
-                    <div
-                      className="flex cursor-pointer items-center justify-start gap-1 whitespace-nowrap text-sm text-slate-400 hover:text-slate-500"
-                      onClick={handleCopyPublicKey}
-                      role="button"
-                      tabIndex={0}
-                      aria-label={`Copy public key: ${truncatePublicKey(submission.user.publicKey, 20)}`}
+              {!submission?.user?.private && (
+                <>
+                  {submission?.user?.email && (
+                    <Tooltip
+                      content={'Click to copy'}
+                      contentProps={{ side: 'right' }}
+                      triggerClassName="flex items-center hover:underline underline-offset-1"
                     >
-                      <MdOutlineAccountBalanceWallet />
-                      <p>{truncatePublicKey(submission.user.publicKey, 20)}</p>
+                      <div
+                        className="flex cursor-pointer items-center justify-start gap-1 text-sm text-slate-400 hover:text-slate-500"
+                        onClick={handleCopyEmail}
+                        role="button"
+                        tabIndex={0}
+                        aria-label={`Copy email: ${submission.user.email}`}
+                      >
+                        <MdOutlineMail />
+                        {truncateString(submission.user.email, 36)}
+                      </div>
+                    </Tooltip>
+                  )}
+
+                  {submission?.user?.publicKey && (
+                    <div className="flex items-center gap-2">
+                      <Tooltip
+                        content={'Click to copy'}
+                        contentProps={{ side: 'right' }}
+                        triggerClassName="flex items-center hover:underline underline-offset-1"
+                      >
+                        <div
+                          className="flex cursor-pointer items-center justify-start gap-1 whitespace-nowrap text-sm text-slate-400 hover:text-slate-500"
+                          onClick={handleCopyPublicKey}
+                          role="button"
+                          tabIndex={0}
+                          aria-label={`Copy public key: ${truncatePublicKey(submission.user.publicKey, 20)}`}
+                        >
+                          <MdOutlineAccountBalanceWallet />
+                          <p>
+                            {truncatePublicKey(submission.user.publicKey, 20)}
+                          </p>
+                        </div>
+                      </Tooltip>
+                      <KycComponent
+                        address={submission.user.publicKey}
+                        xs
+                        listingSponsorId={bounty.sponsorId}
+                      />
                     </div>
-                  </Tooltip>
-                  <KycComponent address={submission.user.publicKey} xs />
-                </div>
-              )}
-              <div className="flex gap-2">
-                <Telegram
-                  className="h-[0.9rem] w-[0.9rem] text-slate-600"
-                  link={submission?.user?.telegram || ''}
-                />
-                <Twitter
-                  className="h-[0.9rem] w-[0.9rem] text-slate-600"
-                  link={submission?.user?.twitter || ''}
-                />
-                <Website
-                  className="h-[0.9rem] w-[0.9rem] text-slate-600"
-                  link={submission?.user?.website || ''}
-                />
-              </div>
-              {(bounty?.type === 'project' ||
-                bounty?.type === 'sponsorship') && (
-                <p className="whitespace-nowrap text-sm text-slate-400">
-                  ${formatNumberWithSuffix(submission?.totalEarnings || 0)}{' '}
-                  Earned
-                </p>
-              )}
-              {submission?.isPaid && submission?.paymentDate && (
-                <div className="flex items-center">
-                  <p className="text-sm text-slate-400">
-                    Paid on:{' '}
-                    {dayjs(submission.paymentDate).format('MMM D, YYYY')}
-                  </p>
-                </div>
+                  )}
+                  <div className="flex gap-2">
+                    <Telegram
+                      className="h-[0.9rem] w-[0.9rem] text-slate-600"
+                      link={submission?.user?.telegram || ''}
+                    />
+                    <Twitter
+                      className="h-[0.9rem] w-[0.9rem] text-slate-600"
+                      link={submission?.user?.twitter || ''}
+                    />
+                    <Website
+                      className="h-[0.9rem] w-[0.9rem] text-slate-600"
+                      link={submission?.user?.website || ''}
+                    />
+                  </div>
+                  {(bounty?.type === 'project' ||
+                    bounty?.type === 'sponsorship') && (
+                    <p className="whitespace-nowrap text-sm text-slate-400">
+                      ${formatNumberWithSuffix(submission?.totalEarnings || 0)}{' '}
+                      Earned
+                    </p>
+                  )}
+                  {submission?.isPaid && submission?.paymentDate && (
+                    <div className="flex items-center">
+                      <p className="text-sm text-slate-400">
+                        Paid on:{' '}
+                        {dayjs(submission.paymentDate).format('MMM D, YYYY')}
+                      </p>
+                    </div>
+                  )}
+                </>
               )}
             </div>
           </div>

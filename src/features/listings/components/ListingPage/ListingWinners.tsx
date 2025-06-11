@@ -155,8 +155,7 @@ export function ListingWinners({ bounty }: Props) {
                       avatar={submission?.user?.photo as string}
                     />
                   </div>
-                  <p className="w-16 truncate pt-4 text-center text-xs font-semibold text-slate-700 md:text-sm lg:w-min">{`${submission?.user?.firstName}`}</p>
-                  <p className="w-16 truncate text-center text-xs font-semibold text-slate-700 md:text-sm lg:w-min">{`${submission?.user?.lastName}`}</p>
+                  <p className="w-16 truncate pt-4 text-center text-xs font-semibold text-slate-700 md:text-sm lg:w-min">{`${submission?.user?.name}`}</p>
                   <p className="text-center text-xs font-normal text-slate-500 opacity-60">
                     {isUSDbased ? '$' : ''}
                     {bounty?.rewards &&
@@ -183,7 +182,7 @@ export function ListingWinners({ bounty }: Props) {
                 height: isMD ? '44px' : '36px',
               }}
             >
-              <Tooltip content={<p>{submission?.user?.firstName}</p>}>
+              <Tooltip content={<p>{submission?.user?.name}</p>}>
                 <Link
                   key={submission.id}
                   href={

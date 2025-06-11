@@ -27,12 +27,11 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       });
     }
 
-    const { firstName, lastName, username, photo } = validationResult.data;
+    const { name, username, photo } = validationResult.data;
 
     logger.info(
       `Completing user sponsor profile with validated data: ${safeStringify({
-        firstName,
-        lastName,
+        name,
         username,
         photo,
       })}`,
@@ -43,8 +42,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
         id: userId,
       },
       data: {
-        firstName,
-        lastName,
+        name,
         username,
         photo,
       },

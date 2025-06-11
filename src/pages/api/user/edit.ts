@@ -14,8 +14,7 @@ import { profileSchema, usernameSuperRefine } from '@/features/talent/schema';
 const allowedFields = [
   'username',
   'photo',
-  'firstName',
-  'lastName',
+  'name',
   'interests',
   'bio',
   'twitter',
@@ -110,7 +109,6 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
           : undefined,
       },
       select: {
-        email: true,
         publicKey: true,
       },
     });

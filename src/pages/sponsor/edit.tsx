@@ -13,6 +13,7 @@ import { Button } from '@/components/ui/button';
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -46,6 +47,8 @@ export default function UpdateSponsor() {
 
   const [selectedLogo, setSelectedLogo] = useState<File | null>(null);
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
+  const [selectedBanner, setSelectedBanner] = useState<File | null>(null);
+  const [bannerPreview, setBannerPreview] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -57,6 +60,7 @@ export default function UpdateSponsor() {
       slug: '',
       bio: '',
       logo: '',
+      banner: '',
       industry: '',
       website: '',
       twitter: '',
@@ -127,6 +131,7 @@ export default function UpdateSponsor() {
         name,
         slug,
         logo,
+        banner,
         twitter,
         url,
         entityName,
@@ -138,11 +143,13 @@ export default function UpdateSponsor() {
       setSponsorName(name);
       setSlug(slug);
       setLogoPreview(logo || '');
+      setBannerPreview(banner || '');
       form.reset({
         name,
         slug,
         bio,
         logo,
+        banner,
         industry,
         website: url,
         linkedinCompany: linkedin
@@ -182,10 +189,23 @@ export default function UpdateSponsor() {
         const oldLogoUrl = sponsorData?.logo;
         const uploadedUrl = await uploadAndReplaceImage({
           newFile: selectedLogo,
-          folder: 'earn-sponsor',
+          folder: 'nearn-sponsor',
           oldImageUrl: oldLogoUrl,
         });
         data.logo = uploadedUrl;
+        setIsUploading(false);
+      }
+
+      if (selectedBanner) {
+        setIsUploading(true);
+        const oldBannerUrl = sponsorData?.banner;
+        const uploadedUrl = await uploadAndReplaceImage({
+          newFile: selectedBanner,
+          folder: 'nearn-sponsor',
+          oldImageUrl: oldBannerUrl,
+          type: 'sponsor',
+        });
+        data.banner = uploadedUrl;
         setIsUploading(false);
       }
 
@@ -279,7 +299,7 @@ export default function UpdateSponsor() {
                   name="entityName"
                   label={
                     <>
-                      Entity Name
+                      Legal Name
                       <Tooltip
                         content="Please mention the official entity name of your project. If you are a DAO, simply mention the name of the DAO. If you neither have an entity nor are a DAO, mention your full name."
                         contentProps={{ className: 'text-xs' }}
@@ -290,12 +310,16 @@ export default function UpdateSponsor() {
                   }
                   isRequired
                 >
-                  <Input placeholder="Full Entity Name" />
+                  <Input placeholder="Legal Name" />
                 </FormFieldWrapper>
               </div>
 
               <div className="mb-3 mt-6 w-full">
                 <FormLabel isRequired>Entity Logo</FormLabel>
+                <FormDescription>
+                  Please upload a logo for your entity.
+                </FormDescription>
+                <FormMessage />
                 <ImagePicker
                   defaultValue={logoPreview ? { url: logoPreview } : undefined}
                   onChange={(file, previewUrl) => {
@@ -307,6 +331,30 @@ export default function UpdateSponsor() {
                     setSelectedLogo(null);
                     setLogoPreview(null);
                     form.setValue('logo', '');
+                  }}
+                />
+              </div>
+
+              <div className="mb-3 mt-6 w-full">
+                <FormLabel>Entity Cover</FormLabel>
+                <FormDescription>
+                  You can upload a cover image for your sponsor profile to
+                  improve the visibility of your profile.
+                </FormDescription>
+                <ImagePicker
+                  variant="banner"
+                  defaultValue={
+                    bannerPreview ? { url: bannerPreview } : undefined
+                  }
+                  onChange={(file, previewUrl) => {
+                    setSelectedBanner(file);
+                    setBannerPreview(previewUrl);
+                    form.setValue('banner', previewUrl);
+                  }}
+                  onReset={() => {
+                    setSelectedBanner(null);
+                    setBannerPreview(null);
+                    form.setValue('banner', '');
                   }}
                 />
               </div>

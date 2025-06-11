@@ -16,13 +16,10 @@
   - Start by copying the `.env.example` file to a new file named `.env`. This file will store your local environment settings.
   - Use `openssl rand -base64 32` to generate a key and add it under `NEXTAUTH_SECRET` in the .env file.
   - Database setup
-    - Create a local `MySQL` instance and replace `<user>`, `<pass>`, `<db-host>`, and `<db-port>` with their applicable values.
+    - Set the `DATABASE_URL` environment variable with your MySQL connection string. Services like railway.app or Render can help you host a database if you don't run one locally.
       ```
-      LOCAL_DATABASE_URL='mysql://<user>:<pass>@<db-host>:<db-port>'
-      ``` 
-    - If you don't want to create a local DB, then you can also consider using services like railway.app or render.
-      - [Setup MySQL DB with railway.app](https://docs.railway.app/guides/mysql)
-      - [Setup MYSQL DB with render](https://docs.render.com/deploy-mysql)
+      DATABASE_URL='mysql://<user>:<pass>@<db-host>:<db-port>/<database>?sslaccept=strict'
+      ```
 
     - Generate prisma migrations & client.
       ```bash

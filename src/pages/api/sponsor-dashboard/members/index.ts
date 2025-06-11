@@ -16,7 +16,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
   logger.debug(`Query params: ${safeStringify(params)}`);
 
-  const searchTextFields = ['email', 'username', 'firstName', 'lastName'];
+  const searchTextFields = ['email', 'username', 'name'];
   const whereSearch = searchText
     ? {
         OR: searchTextFields.map((field) => ({
@@ -52,8 +52,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
             id: true,
             email: true,
             username: true,
-            firstName: true,
-            lastName: true,
+            name: true,
             photo: true,
           },
         },

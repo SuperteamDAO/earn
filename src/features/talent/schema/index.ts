@@ -22,7 +22,6 @@ import {
   workExp,
   workType,
 } from '../constants';
-import { hasDevSkills } from '../utils/skills';
 
 export const profileSchema = z
   .object({
@@ -36,12 +35,7 @@ export const profileSchema = z
       )
       .transform((val) => val.replace(/^[-\s]+|[-\s]+$/g, '')),
     photo: z.string().optional().nullable(),
-    firstName: z
-      .string({ message: 'First name is required' })
-      .min(1, 'First name is required'),
-    lastName: z
-      .string({ message: 'Last name is required' })
-      .min(1, 'Last name is required'),
+    name: z.string({ message: 'Name is required' }).min(1, 'Name is required'),
     bio: z.string().max(180, 'Bio cannot exceed 180 characters').optional(),
     discord: discordUsernameSchema.optional().or(z.literal('')),
     twitter: twitterUsernameSchema.optional().or(z.literal('')),
@@ -102,22 +96,38 @@ export const socialSuperRefine = async (
   data: Partial<ProfileFormData>,
   ctx: z.RefinementCtx,
 ) => {
-  if (data.skills && hasDevSkills(data.skills)) {
-    if (!data.github) {
+  const socialFields = [
+    data.discord,
+    data.twitter,
+    data.github,
+    data.linkedin,
+    data.telegram,
+    data.website,
+  ];
+
+  const hasAtLeastOneSocial = socialFields.some(
+    (field) => field && field.trim() !== '',
+  );
+
+  if (!hasAtLeastOneSocial) {
+    const socialPaths = [
+      'discord',
+      'twitter',
+      'github',
+      'linkedin',
+      'telegram',
+      'website',
+    ];
+    socialPaths.forEach((path) => {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: 'Github is requierd',
-        path: ['github'],
+        message: 'Please fill at least one social media field',
+        path: [path],
       });
-    }
-  } else if (!data.twitter) {
-    ctx.addIssue({
-      code: z.ZodIssueCode.custom,
-      message: 'Twitter is requierd',
-      path: ['twitter'],
     });
   }
 };
+
 export const usernameSuperRefine = async (
   data: Partial<ProfileFormData>,
   ctx: z.RefinementCtx,
@@ -151,8 +161,7 @@ export const usernameSuperRefine = async (
 
 export const newTalentSchema = profileSchema._def.schema.pick({
   username: true,
-  firstName: true,
-  lastName: true,
+  name: true,
   location: true,
   photo: true,
   publicKey: true,
@@ -168,8 +177,7 @@ export type NewTalentFormData = z.infer<typeof newTalentSchema>;
 
 export const aboutYouSchema = profileSchema._def.schema.pick({
   username: true,
-  firstName: true,
-  lastName: true,
+  name: true,
   location: true,
   photo: true,
   publicKey: true,

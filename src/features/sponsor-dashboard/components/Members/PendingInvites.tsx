@@ -142,7 +142,7 @@ export function PendingInvites({ invites, isLoading }: PendingInviteProps) {
                     />
                     <div className="ml-2 hidden md:block">
                       <p className="text-sm font-medium text-slate-500">
-                        {`${invite.invitedUser.firstName || ''} ${invite.invitedUser.lastName || ''}`}
+                        {invite.invitedUser.name}
                       </p>
                       <p className="text-sm text-slate-400">
                         {invite.invitedUser.username
@@ -193,7 +193,7 @@ export function PendingInvites({ invites, isLoading }: PendingInviteProps) {
                   />
                   <div className="ml-2 hidden md:block">
                     <p className="text-sm font-medium text-slate-500">
-                      {`${invite.sender.firstName || ''} ${invite.sender.lastName || ''}`}
+                      {invite.sender.name}
                     </p>
                     <p className="text-sm text-slate-400">
                       {invite.sender.username
@@ -278,9 +278,7 @@ function CancelInviteDialog({
             <p>
               Are you sure you want to cancel the invitation sent to{' '}
               <span className="font-semibold">
-                {invite.invitedUser
-                  ? `${invite.invitedUser.firstName || ''} ${invite.invitedUser.lastName || ''}`
-                  : invite.email}
+                {invite.invitedUser ? invite.invitedUser.name : invite.email}
               </span>
               ?
             </p>

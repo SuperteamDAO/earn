@@ -103,10 +103,7 @@ export function SponsorLayout({
 
   useEffect(() => {
     const modalsToShow = async () => {
-      if (
-        user?.currentSponsorId &&
-        (!user?.firstName || !user?.lastName || !user?.username)
-      ) {
+      if (user?.currentSponsorId && (!user?.name || !user?.username)) {
         onSponsorInfoModalOpen();
       } else if (
         !user?.currentSponsor?.entityName &&

@@ -19,8 +19,7 @@ import {
 const allowedFields = [
   'username',
   'photo',
-  'firstName',
-  'lastName',
+  'name',
   'interests',
   'bio',
   'twitter',

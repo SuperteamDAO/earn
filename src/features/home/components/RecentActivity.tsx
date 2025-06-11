@@ -10,8 +10,7 @@ import { homeFeedQuery } from '@/features/feed/queries/home-feed';
 import { type FeedPostType } from '@/features/feed/types';
 
 interface ActivityCardProps {
-  firstName: string;
-  lastName: string;
+  name: string;
   username: string;
   createdAt: string;
   listingType: 'bounty' | 'hackathon' | 'project';
@@ -32,8 +31,7 @@ const getRandomFallbackImage = (): string => {
 };
 
 const ActivityCard = ({
-  firstName,
-  lastName,
+  name,
   username,
   createdAt,
   listingType,
@@ -78,7 +76,7 @@ const ActivityCard = ({
       <div className="ml-3">
         <div className="flex items-center">
           <span className="mr-1.5 max-w-32 overflow-hidden text-ellipsis whitespace-nowrap text-[0.9rem] font-semibold text-slate-800">
-            {firstName} {lastName}
+            {name}
           </span>
           <span className="max-w-[5.7rem] overflow-hidden text-ellipsis whitespace-nowrap text-sm font-medium text-slate-400">
             @{username}
@@ -121,8 +119,7 @@ export const RecentActivity = () => {
         {data?.map((act, i) => (
           <ActivityCard
             key={i}
-            firstName={act.user.firstName}
-            lastName={act.user.lastName}
+            name={act.user.name || act.user.username}
             username={act.user.username}
             createdAt={act.createdAt}
             listingType={act.listing.type as 'bounty' | 'hackathon' | 'project'}

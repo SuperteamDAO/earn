@@ -31,8 +31,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         where: {
           OR: [
             { username: { contains: searchText } },
-            { firstName: { contains: searchText } },
-            { lastName: { contains: searchText } },
+            { name: { contains: searchText } },
             { email: { contains: searchText } },
           ],
         },
@@ -83,8 +82,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
             id: true,
             email: true,
             username: true,
-            firstName: true,
-            lastName: true,
+            name: true,
             photo: true,
           },
         },
@@ -106,8 +104,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
             id: true,
             email: true,
             username: true,
-            firstName: true,
-            lastName: true,
+            name: true,
             photo: true,
           },
         });

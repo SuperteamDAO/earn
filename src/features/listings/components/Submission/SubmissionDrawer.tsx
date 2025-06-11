@@ -16,6 +16,7 @@ import { type z } from 'zod';
 
 import { RichEditor } from '@/components/shared/RichEditor';
 import { MinimalTiptapEditor } from '@/components/tiptap';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
@@ -624,6 +625,7 @@ export const SubmissionDrawer = ({
                                 />
                                 <KycComponent
                                   address={user?.publicKey || field.value}
+                                  listingSponsorId={listing.sponsorId}
                                 />
                               </div>
                             </FormControl>
@@ -637,6 +639,18 @@ export const SubmissionDrawer = ({
               </div>
 
               <div className="flex w-full flex-col">
+                {user?.private && !editMode && (
+                  <div className="mb-4">
+                    <Alert className="border-yellow-200 bg-yellow-50">
+                      <AlertDescription className="text-yellow-800">
+                        <strong>Privacy Notice:</strong> Your full profile,
+                        including all details that are normally hidden from
+                        public view, will be shared with the sponsor of this
+                        listing when you submit your application.
+                      </AlertDescription>
+                    </Alert>
+                  </div>
+                )}
                 {isHackathon && !editMode && (
                   <div className="mb-4 flex items-start space-x-3">
                     <Checkbox

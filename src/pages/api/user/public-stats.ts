@@ -4,10 +4,11 @@ import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse,
-) {
+import { withPotentialSponsorAuth } from '@/features/auth/utils/withPotentialSponsorAuth';
+
+import { shouldDisplayUserProfile } from './info';
+
+export async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
     logger.info(`Request body: ${safeStringify(req.body)}`);
 
@@ -34,12 +35,23 @@ export default async function handler(
             applicationStatus: true,
           },
         },
+        private: true,
+        id: true,
       },
     });
 
     if (!result) {
       logger.warn(`User not found for username: ${username}`);
       return res.status(404).json({ error: 'User not found' });
+    }
+    const shouldDisplay = await shouldDisplayUserProfile(result, req);
+    if (!shouldDisplay) {
+      logger.info(`Private profile stats requested for username: ${username}`);
+      return res.status(200).json({
+        participations: 0,
+        wins: 0,
+        totalWinnings: 0,
+      });
     }
 
     const participations = result.Submission.length;
@@ -69,7 +81,7 @@ export default async function handler(
     logger.info('wins - ', wins);
 
     logger.info(
-      `User data retrieved successfully: participations=${participations}, wins=${wins}, totalWinnings=${wins}`,
+      `User data retrieved successfully: participations=${participations}, wins=${wins}, totalWinnings=${totalWinnings}`,
     );
 
     return res.status(200).json({
@@ -86,3 +98,5 @@ export default async function handler(
       .json({ error: 'Error occurred while processing the request.' });
   }
 }
+
+export default withPotentialSponsorAuth(handler);

@@ -64,8 +64,7 @@ export const TalentForm = () => {
     if (user) {
       reset({
         username: user?.username,
-        firstName: user?.firstName,
-        lastName: user?.lastName,
+        name: user?.name,
         skills: newTalentSchema.shape.skills.safeParse(user?.skills).data,
         publicKey: user?.publicKey,
         photo: user?.photo,
@@ -187,22 +186,13 @@ export const TalentForm = () => {
               )}
             />
             <FormFieldWrapper
-              label="First Name"
-              name="firstName"
+              label="Name"
+              name="name"
               control={control}
               isRequired
-              className="gap-1 sm:gap-2"
+              className="flex-1 gap-1 sm:gap-2"
             >
-              <Input maxLength={100} placeholder="First Name" />
-            </FormFieldWrapper>
-            <FormFieldWrapper
-              label="Last Name"
-              name="lastName"
-              control={control}
-              isRequired
-              className="gap-1 sm:gap-2"
-            >
-              <Input maxLength={100} placeholder="Last Name" />
+              <Input maxLength={255} placeholder="Full Name" />
             </FormFieldWrapper>
           </div>
 

@@ -69,8 +69,7 @@ async function handler(
         poc: {
           select: {
             id: true,
-            firstName: true,
-            lastName: true,
+            name: true,
             username: true,
             photo: true,
           },

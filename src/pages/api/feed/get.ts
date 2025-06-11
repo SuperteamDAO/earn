@@ -74,7 +74,7 @@ export default async function handler(
         author: {
           select: {
             photo: true,
-            firstName: true,
+            name: true,
           },
         },
       },
@@ -88,10 +88,10 @@ export default async function handler(
     const submissionInclude: Prisma.SubmissionInclude = {
       user: {
         select: {
-          firstName: true,
-          lastName: true,
+          name: true,
           photo: true,
           username: true,
+          private: true,
         },
       },
       listing: {
@@ -172,10 +172,10 @@ export default async function handler(
     const poWInclude: Prisma.PoWInclude = {
       user: {
         select: {
-          firstName: true,
-          lastName: true,
+          name: true,
           photo: true,
           username: true,
+          private: true,
         },
       },
       Comments: commentsInclude,
@@ -230,10 +230,10 @@ export default async function handler(
     const grantApplicationInclude: Prisma.GrantApplicationInclude = {
       user: {
         select: {
-          firstName: true,
-          lastName: true,
+          name: true,
           photo: true,
           username: true,
+          private: true,
         },
       },
       grant: {
@@ -336,8 +336,7 @@ export default async function handler(
           otherInfo: isDataPublic ? sub.otherInfo : null,
           isWinner: isDataPublic ? sub.isWinner : null,
           winnerPosition: isDataPublic ? sub.winnerPosition : null,
-          firstName: sub.user.firstName,
-          lastName: sub.user.lastName,
+          name: sub.user.private ? undefined : sub.user.name,
           photo: sub.user.photo,
           username: sub.user.username,
           listingId: sub.listing.id,
@@ -364,8 +363,7 @@ export default async function handler(
         createdAt: pow.createdAt,
         description: pow.description,
         title: pow.title,
-        firstName: pow.user.firstName,
-        lastName: pow.user.lastName,
+        name: pow.user.private ? undefined : pow.user.name,
         photo: pow.user.photo,
         username: pow.user.username,
         type: 'pow',
@@ -379,8 +377,7 @@ export default async function handler(
       ...grantApplications.map((ga) => ({
         id: ga.id,
         createdAt: ga.decidedAt || ga.createdAt,
-        firstName: ga.user.firstName,
-        lastName: ga.user.lastName,
+        name: ga.user.private ? undefined : ga.user.name,
         photo: ga.user.photo,
         username: ga.user.username,
         listingId: ga.grant.id,

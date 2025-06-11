@@ -6,6 +6,7 @@ import { usePostHog } from 'posthog-js/react';
 import { IoSearchOutline } from 'react-icons/io5';
 
 import { Button } from '@/components/ui/button';
+import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { Skeleton } from '@/components/ui/skeleton';
 import { PROJECT_NAME } from '@/constants/project';
 import { useUser } from '@/store/user';
@@ -79,9 +80,9 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
         </div>
 
         {!router.pathname.startsWith('/new/') && (
-          <div className="absolute left-1/2 -translate-x-1/2">
+          <div className="flex items-center">
             <div className="ml-10 flex h-full items-center justify-center">
-              <div className="ph-no-capture flex h-full flex-row gap-7">
+              <div className="ph-no-capture flex h-full flex-row items-center gap-7">
                 {LISTING_NAV_ITEMS?.map((navItem) => {
                   const isCurrent = `${navItem.href}` === router.asPath;
                   return (
@@ -97,12 +98,29 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
                     />
                   );
                 })}
+                <Link
+                  href={'/firehose'}
+                  className={cn(
+                    'flex items-center py-2 font-medium',
+                    '-mx-3 h-8 lg:h-14',
+                    'lg:border-b',
+                    router.asPath === '/firehose/'
+                      ? 'lg:border-brand-green'
+                      : 'lg:border-transparent',
+                  )}
+                >
+                  <ExternalImage
+                    alt="Redacted Logo"
+                    src="hackathon/fff/logo.png"
+                    className="h-8 object-contain"
+                  />
+                </Link>
               </div>
             </div>
           </div>
         )}
 
-        <div className="flex flex-1 items-center justify-end gap-4 py-1.5">
+        <div className="flex items-center justify-end gap-4 py-1.5">
           {status === 'loading' && !session && (
             <div className="flex items-center gap-2">
               <Skeleton className="h-10 w-10 rounded-full" />

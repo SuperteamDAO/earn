@@ -38,19 +38,18 @@ export default async function comment(
       include: {
         author: {
           select: {
-            firstName: true,
-            lastName: true,
+            name: true,
             photo: true,
             username: true,
             currentSponsorId: true,
+            private: true,
           },
         },
         replies: {
           include: {
             author: {
               select: {
-                firstName: true,
-                lastName: true,
+                name: true,
                 photo: true,
                 username: true,
                 currentSponsorId: true,
@@ -94,7 +93,13 @@ export default async function comment(
 
     res.status(200).json({
       count: commentsCount,
-      result,
+      result: result.map((comment) => ({
+        ...comment,
+        author: {
+          ...comment.author,
+          name: comment.author?.private ? undefined : comment.author?.name,
+        },
+      })),
       validUsernames: validUsernames
         .map((user) => user.username)
         .filter(Boolean),
