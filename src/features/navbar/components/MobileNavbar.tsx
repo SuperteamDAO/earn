@@ -52,7 +52,7 @@ export const MobileNavbar = ({
 
   const openDrawer = () => {
     onDrawerOpen();
-    posthog.capture('clicked_hamburger menu');
+    posthog.capture('open_mobile nav');
   };
 
   return (
