@@ -27,6 +27,7 @@ function MainContent({
   buttonRefs,
   handleSetOpen,
   cn,
+  isDesktop,
 }: {
   announcements: Announcement[];
   current: number;
@@ -37,8 +38,32 @@ function MainContent({
   buttonRefs: React.MutableRefObject<(HTMLButtonElement | null)[]>;
   handleSetOpen: (open: boolean) => void;
   cn: (...args: any[]) => string;
+  isDesktop: boolean;
 }) {
   const currentAnnouncement = announcements[current];
+
+  const touchStartX = useRef<number | null>(null);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (isDesktop) return;
+    touchStartX.current = e.touches?.[0]?.clientX ?? null;
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (isDesktop || touchStartX.current === null) return;
+    const touchEndX = e.changedTouches?.[0]?.clientX;
+    if (typeof touchEndX === 'number') {
+      const diffX = touchEndX - touchStartX.current;
+      const SWIPE_THRESHOLD = 50;
+      if (diffX < -SWIPE_THRESHOLD && current < announcements.length - 1) {
+        goNext();
+      } else if (diffX > SWIPE_THRESHOLD && current > 0) {
+        goTo(current - 1);
+      }
+    }
+    touchStartX.current = null;
+  };
+
   return (
     <div className="mx-auto flex w-full max-w-4xl overflow-hidden rounded-lg bg-white shadow-lg">
       <div className="relative hidden w-[45%] flex-col border-r bg-white p-5 md:flex">
@@ -83,23 +108,52 @@ function MainContent({
             <motion.div
               ref={contentRef}
               key={currentAnnouncement?.id}
-              initial={{ opacity: 0, y: 20, filter: 'blur(8px)' }}
-              animate={{
-                opacity: 1,
-                y: 0,
-                filter: 'blur(0px)',
-                transition: {
-                  delay: isTransitioning ? 0.25 : 0,
-                  duration: 0.3,
-                },
-              }}
-              exit={{
-                opacity: 0.3,
-                y: -20,
-                filter: 'blur(8px)',
-                transition: { duration: 0.15 },
-              }}
+              initial={
+                isDesktop
+                  ? { opacity: 0, y: 20, filter: 'blur(8px)' }
+                  : { opacity: 0, scale: 0.9, filter: 'blur(8px)' }
+              }
+              animate={
+                isDesktop
+                  ? {
+                      opacity: 1,
+                      y: 0,
+                      filter: 'blur(0px)',
+                      transition: {
+                        delay: isTransitioning ? 0.25 : 0,
+                        duration: 0.3,
+                      },
+                    }
+                  : {
+                      opacity: 1,
+                      scale: 1,
+                      filter: 'blur(0px)',
+                      transition: {
+                        delay: isTransitioning ? 0.25 : 0,
+                        duration: 0.3,
+                      },
+                    }
+              }
+              exit={
+                isDesktop
+                  ? {
+                      opacity: 0.3,
+                      y: -20,
+                      filter: 'blur(8px)',
+                      transition: { duration: 0.15 },
+                    }
+                  : {
+                      opacity: 0.3,
+                      scale: 0.9,
+                      filter: 'blur(8px)',
+                      transition: { duration: 0.15 },
+                    }
+              }
               className="flex w-full flex-col items-center justify-center"
+              {...(!isDesktop && {
+                onTouchStart: handleTouchStart,
+                onTouchEnd: handleTouchEnd,
+              })}
             >
               {currentAnnouncement && <currentAnnouncement.Content />}
             </motion.div>
@@ -272,6 +326,7 @@ export function AnnouncementModal({
               buttonRefs={buttonRefs}
               handleSetOpen={handleSetOpen}
               cn={cn}
+              isDesktop={isDesktop}
             />
           </DialogContent>
         </Dialog>
@@ -292,6 +347,7 @@ export function AnnouncementModal({
               buttonRefs={buttonRefs}
               handleSetOpen={handleSetOpen}
               cn={cn}
+              isDesktop={isDesktop}
             />
           </DrawerContent>
         </Drawer>
