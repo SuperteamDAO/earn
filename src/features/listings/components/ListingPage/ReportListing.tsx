@@ -94,7 +94,7 @@ const radioOptions: { value: string; label: string; description: string }[] = [
     value: 'fake-winners',
     label: 'Fake / Ineligible Winners',
     description:
-      'The listing is vague, contradictory, or missing essential information.',
+      'Winner(s) selected appear to be fake, low-quality, or unrelated to the listing’s criteria.',
   },
   {
     value: 'unclear-scope',
