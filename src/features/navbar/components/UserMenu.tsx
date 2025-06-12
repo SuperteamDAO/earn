@@ -57,8 +57,10 @@ export function UserMenu() {
   };
 
   // Generate Telegram bot link with user context
-  const telegramBotLink = user?.id 
-    ? `https://t.me/super_fun_earn_bot?start=earn_userid_${user.id}`
+  const telegramBotLink = user?.id
+    ? `https://t.me/super_fun_earn_bot?start=earn_userid_${encodeURIComponent(
+        user.id,
+      )}`
     : 'https://t.me/super_fun_earn_bot?start=earn';
 
   return (
@@ -181,6 +183,7 @@ export function UserMenu() {
               href={telegramBotLink}
               target="_blank"
               rel="noopener noreferrer"
+              aria-label="Connect Telegram notifications bot"
               onClick={() => {
                 posthog.capture('telegram notifications_user menu');
               }}
