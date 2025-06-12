@@ -41,12 +41,14 @@ export const ListingFilters = ({
     activeStatus === 'open' && activeSortBy === 'Date' && activeOrder === 'asc';
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger
-        onClick={() => {
+    <DropdownMenu
+      onOpenChange={(open) => {
+        if (open) {
           posthog.capture('open_listing filters');
-        }}
-      >
+        }
+      }}
+    >
+      <DropdownMenuTrigger>
         <div className="relative cursor-pointer rounded-md p-2 hover:bg-slate-100">
           <LucideListFilter className="size-4 stroke-3 text-slate-600" />
           {!isDefaultFilterApplied && (
