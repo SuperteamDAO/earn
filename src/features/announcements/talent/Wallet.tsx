@@ -17,13 +17,13 @@ const Point = ({
 }) => {
   return (
     <div className="flex gap-8">
-      <div className="text-brand-purple mt-1">{icon}</div>
+      <div className="text-brand-purple mt-1 size-2 md:size-4">{icon}</div>
       <div>
-        <p className="text-base font-medium tracking-tight text-slate-700">
+        <p className="text-sm font-medium tracking-tight text-slate-700 md:text-base">
           {title}
         </p>
         <p
-          className="text-sm text-slate-500"
+          className="text-xs text-slate-500 md:text-sm"
           dangerouslySetInnerHTML={{ __html: domPurify(description) }}
         />
       </div>
@@ -42,8 +42,8 @@ export const WalletFeature = () => {
         decoding="sync"
       />
 
-      <div className="flex flex-col items-start gap-3 p-6 pb-0">
-        <p className="text-lg font-semibold">Introducing the Earn Wallet</p>
+      <div className="flex flex-col items-start gap-3 p-6 px-4 pt-4 pb-0">
+        <p className="font-semibold md:text-lg">Introducing the Earn Wallet</p>
         <Point
           title="Linked to your Earn account"
           description="Receive rewards directly — no extensions, apps, or setup required. Just start contributing!"

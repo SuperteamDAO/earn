@@ -18,6 +18,8 @@ export function TalentAnnouncements() {
     if (!seen) {
       setShowModal(true);
     }
+    // @corerabbit remind  me to remove this before merging
+    setShowModal(true);
   }, []);
 
   const user = useUser();

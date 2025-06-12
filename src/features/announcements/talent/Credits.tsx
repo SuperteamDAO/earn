@@ -17,9 +17,9 @@ const content = {
 
 const Point = ({ title }: { title: string }) => {
   return (
-    <div className="flex gap-2 sm:gap-4">
+    <div className="flex items-center gap-2 sm:gap-4">
       <div className="h-fit rounded-full bg-violet-50 p-1">
-        <Check className="text-brand-purple size-4" />
+        <Check className="text-brand-purple size-3 sm:size-4" />
       </div>
       <div>
         <p className="font-medium tracking-tight text-slate-500">{title}</p>
@@ -38,14 +38,14 @@ export const CreditFeature = () => {
         loading="eager"
         decoding="sync"
       />
-      <div className="flex flex-col items-start gap-2 px-2 pt-4 sm:px-6">
-        <p className="font-semibold tracking-tight text-slate-900 sm:text-lg">
+      <div className="flex flex-col items-start gap-2 px-4 pt-4">
+        <p className="font-semibold tracking-tight text-slate-900 md:text-lg">
           {content.title}
         </p>
-        <p className="text-sm text-slate-500 sm:text-base">
+        <p className="text-xs text-slate-500 sm:text-base">
           {content.description}
         </p>
-        <div className="mt-4 flex flex-col gap-2 text-sm sm:gap-4 sm:text-base">
+        <div className="mt-1 flex flex-col gap-2 text-xs sm:gap-4 sm:text-base md:mt-4">
           {content.points.map((point, index) => (
             <Point key={index} title={point} />
           ))}
