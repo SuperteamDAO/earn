@@ -70,6 +70,7 @@ function DialogContent({
           'max-h-screen overflow-y-auto',
           'bg-background fixed z-60 grid w-full max-w-lg gap-4 border p-6 shadow-lg sm:rounded-lg',
           'data-[state=open]:animate-in data-[state=closed]:animate-out duration-200',
+          'focus-visible:outline-0',
           !unsetDefaultPosition &&
             'top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]',
           !unsetDefaultTransition && [

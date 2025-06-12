@@ -17,7 +17,6 @@ import { MdList, MdOutlineChatBubbleOutline } from 'react-icons/md';
 import { RiUserSettingsLine } from 'react-icons/ri';
 
 import { EntityNameModal } from '@/components/modals/EntityNameModal';
-import { FeatureModal } from '@/components/modals/FeatureModal';
 import { LoadingSection } from '@/components/shared/LoadingSection';
 import { Button } from '@/components/ui/button';
 import { Tooltip } from '@/components/ui/tooltip';
@@ -29,6 +28,7 @@ import { Meta } from '@/layouts/Meta';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 
+import { SponsorAnnouncements } from '@/features/announcements/components/SponsorAnnouncements';
 import { Login } from '@/features/auth/components/Login';
 import { isCreateListingAllowedQuery } from '@/features/listing-builder/queries/is-create-allowed';
 import { CreateListingModal } from '@/features/sponsor-dashboard/components/CreateListingModal';
@@ -212,7 +212,7 @@ export function SponsorLayout({
         isOpen={isSponsorInfoModalOpen}
       />
 
-      <FeatureModal isAnyModalOpen={isAnyModalOpen} />
+      <SponsorAnnouncements isAnyModalOpen={isAnyModalOpen} />
 
       <EntityNameModal isOpen={isEntityModalOpen} onClose={handleEntityClose} />
       <div className="flex min-h-[80vh] px-3 md:hidden">
