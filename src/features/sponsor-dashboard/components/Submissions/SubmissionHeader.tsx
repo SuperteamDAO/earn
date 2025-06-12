@@ -26,7 +26,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
-import { PROJECT_NAME } from '@/constants/project';
+import { PROJECT_NAME, TWITTER_HANDLE } from '@/constants/project';
 import { tokenList } from '@/constants/tokenList';
 import { useClipboard } from '@/hooks/use-clipboard';
 import { useDisclosure } from '@/hooks/use-disclosure';
@@ -98,7 +98,7 @@ export const SubmissionHeader = ({
   const socialListingLink = (medium?: 'twitter' | 'telegram') =>
     `${listingLink}${medium ? `?utm_source=${PROJECT_NAME}&utm_medium=${medium}&utm_campaign=sharelisting/` : ``}`;
 
-  const tweetShareContent = `Check out my newly added @${PROJECT_NAME} opportunity!
+  const tweetShareContent = `Check out my newly added @${TWITTER_HANDLE} opportunity!
 
 ${socialListingLink('twitter')}
 `;
