@@ -15,6 +15,7 @@ model Bounties {
   slug               String             @unique
   description        String?            @db.LongText
   deadline           DateTime?
+  commitmentDate     DateTime?
   eligibility        Json?
   status             status             @default(OPEN)
   token              String?
