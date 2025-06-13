@@ -36,7 +36,7 @@ export function WinnerAnnouncementDate() {
     ? dayjs(deadline).add(30, 'day').startOf('day').toDate()
     : undefined;
 
-  const handleQuickSelect = (days: number) => {
+  const handleQuickSelect = (days: number, autoSave: boolean = true) => {
     if (!deadline) return;
     const newDate = dayjs(deadline).add(days, 'day').toDate();
     form.setValue(
@@ -44,16 +44,16 @@ export function WinnerAnnouncementDate() {
       dayjs(newDate).format(DEADLINE_FORMAT).replace('Z', ''),
     );
     form.clearErrors('commitmentDate');
-    form.saveDraft();
+    if (autoSave) form.saveDraft();
   };
 
   useEffect(() => {
     if (form) {
-      if (typeof commitmentDate !== 'string') {
-        handleQuickSelect(14);
+      if (!commitmentDate) {
+        handleQuickSelect(14, false);
       }
     }
-  }, [form, deadline]);
+  }, [form, commitmentDate, deadline]);
 
   return (
     <FormField
