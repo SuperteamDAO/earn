@@ -59,7 +59,9 @@ export function LocationField() {
       control={control}
       render={({ field }) => (
         <FormItem className="mb-3 w-full gap-1 sm:mb-4 sm:gap-2">
-          <FormLabel className="">Location</FormLabel>
+          <FormLabel isRequired className="">
+            Location
+          </FormLabel>
           <FormControl>
             <RegionCombobox
               className="h-9 w-full"
