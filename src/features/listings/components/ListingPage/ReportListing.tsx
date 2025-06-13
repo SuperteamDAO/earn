@@ -155,7 +155,6 @@ export function ReportListing({
         (opt) => opt.value === selectedReason,
       );
       reasonTitle = selectedOption?.label || '';
-      reasonSubtext = selectedOption?.description || '';
     }
     mutation.mutate({
       listingTitle: listing.title,
