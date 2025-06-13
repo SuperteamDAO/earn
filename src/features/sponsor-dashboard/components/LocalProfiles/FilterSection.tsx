@@ -42,7 +42,7 @@ export const FilterSection = ({
   const exportMutation = useMutation({
     mutationFn: async () => {
       const response = await api.get(
-        `/api/sponsor-dashboard/local-profiles/export/`,
+        `/api/sponsor-dashboard/local-talent/export/`,
       );
       return response.data;
     },
