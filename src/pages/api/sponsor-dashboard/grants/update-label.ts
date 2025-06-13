@@ -7,6 +7,7 @@ import { safeStringify } from '@/utils/safeStringify';
 import { type NextApiRequestWithSponsor } from '@/features/auth/types';
 import { checkGrantSponsorAuth } from '@/features/auth/utils/checkGrantSponsorAuth';
 import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
+import { addSpamPenaltyGrant } from '@/features/credits/utils/allocateCredits';
 
 async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   const userId = req.userId;
@@ -89,6 +90,10 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         where: { id: application.id },
         data: { label },
       });
+
+      if (label === 'Spam') {
+        await addSpamPenaltyGrant(application.userId, application.id);
+      }
 
       results.push(result);
     }
