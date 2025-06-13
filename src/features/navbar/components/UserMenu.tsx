@@ -56,6 +56,13 @@ export function UserMenu() {
     onClose();
   };
 
+  // Generate Telegram bot link with user context
+  const telegramBotLink = user?.id
+    ? `https://t.me/super_fun_earn_bot?start=earn_userid_${encodeURIComponent(
+        user.id,
+      )}`
+    : 'https://t.me/super_fun_earn_bot?start=earn';
+
   return (
     <>
       <EmailSettingsModal isOpen={isOpen} onClose={handleClose} />
@@ -169,6 +176,23 @@ export function UserMenu() {
               Email Preferences
             </DropdownMenuItem>
           )}
+
+          {/* NEW: Telegram Bot Integration */}
+          <DropdownMenuItem asChild>
+            <Link
+              href={telegramBotLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Connect Telegram notifications bot"
+              onClick={() => {
+                posthog.capture('telegram notifications_user menu');
+              }}
+              className="text-sm tracking-tight text-slate-500"
+            >
+              🔔 Telegram Notifications
+            </Link>
+          </DropdownMenuItem>
+          {/* END NEW */}
 
           <SupportFormDialog>
             <DropdownMenuItem
