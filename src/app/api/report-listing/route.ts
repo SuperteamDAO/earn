@@ -20,10 +20,11 @@ export async function POST(request: NextRequest) {
     const botResponse = await earncognitoClient.post(
       '/telegram/report-listing',
       payload,
+      { validateStatus: () => true },
     );
     if (botResponse.status >= 400) {
       return NextResponse.json(
-        { error: botResponse.data.error },
+        { error: botResponse.data?.error ?? 'Upstream error' },
         { status: botResponse.status },
       );
     }
