@@ -50,16 +50,18 @@ export const MobileNavbar = ({
     onCreditOpen();
   };
 
+  const openDrawer = () => {
+    onDrawerOpen();
+    posthog.capture('open_mobile nav');
+  };
+
   return (
     <>
       {/* {router.pathname === '/' && <AnnouncementBar />} */}
       <div className="sticky top-0 z-50">
         <div className="flex items-center justify-between border-b border-black/20 bg-white px-1 py-1 lg:hidden">
           <div className="flex items-center gap-0">
-            <div
-              onClick={onDrawerOpen}
-              className="relative ml-1 cursor-pointer"
-            >
+            <div onClick={openDrawer} className="relative ml-1 cursor-pointer">
               {ready && authenticated ? (
                 <>
                   <EarnAvatar

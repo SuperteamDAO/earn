@@ -1,4 +1,5 @@
 import { LucideListFilter } from 'lucide-react';
+import { usePostHog } from 'posthog-js/react';
 
 import {
   DropdownMenu,
@@ -33,13 +34,20 @@ export const ListingFilters = ({
   onStatusChange,
   onSortChange,
 }: ListingFiltersProps) => {
+  const posthog = usePostHog();
   const sortOptions = getListingSortOptions(activeStatus);
 
   const isDefaultFilterApplied =
     activeStatus === 'open' && activeSortBy === 'Date' && activeOrder === 'asc';
 
   return (
-    <DropdownMenu>
+    <DropdownMenu
+      onOpenChange={(open) => {
+        if (open) {
+          posthog.capture('open_listing filters');
+        }
+      }}
+    >
       <DropdownMenuTrigger>
         <div className="relative cursor-pointer rounded-md p-2 hover:bg-slate-100">
           <LucideListFilter className="size-4 stroke-3 text-slate-600" />

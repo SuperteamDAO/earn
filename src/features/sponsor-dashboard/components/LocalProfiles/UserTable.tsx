@@ -162,11 +162,13 @@ const MemberRow = ({ user }: { user: LocalProfile }) => {
       </TableCell>
       <TableCell className="p-0">
         <p className="text-center text-[0.9rem] text-slate-700">
-          {user?.totalSubmissions}
+          {user?.totalSubmissions || 0}
         </p>
       </TableCell>
       <TableCell className="p-1">
-        <p className="text-center text-[0.9rem] text-slate-700">{user?.wins}</p>
+        <p className="text-center text-[0.9rem] text-slate-700">
+          {user?.wins || 0}
+        </p>
       </TableCell>
       <TableCell>
         <div className="flex items-center gap-2 text-center">

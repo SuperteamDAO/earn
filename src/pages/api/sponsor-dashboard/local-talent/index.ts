@@ -10,78 +10,91 @@ import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
 
 async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   const { page = '1', limit = '10', ...params } = req.query;
-  const sponsorId = req.userSponsorId;
-  const userId = req.userId;
+  const currentSponsorId = req.userSponsorId;
+  const currentUserId = req.userId;
 
   const pageNumber = parseInt(page as string, 10);
-  const limitNumber = parseInt(limit as string, 10);
-  const skip = (pageNumber - 1) * limitNumber;
+  const pageSize = parseInt(limit as string, 10);
+  const skip = (pageNumber - 1) * pageSize;
 
   logger.debug(`Query params: ${safeStringify({ page, limit, ...params })}`);
 
   try {
-    logger.debug(`Fetching stLead value of user with ${userId}`);
-    const user = await prisma.user.findUnique({
-      where: { id: userId as string },
+    logger.debug(`Fetching stLead value of user with ${currentUserId}`);
+    const currentUser = await prisma.user.findUnique({
+      where: { id: currentUserId as string },
       select: { stLead: true },
     });
 
-    logger.debug(`ST Lead value of user ${userId} is ${user?.stLead}`, {
-      userId,
-      ...user,
-    });
+    logger.debug(
+      `ST Lead value of user ${currentUserId} is ${currentUser?.stLead}`,
+      {
+        currentUserId,
+        ...currentUser,
+      },
+    );
 
-    logger.debug(`Fetching sponsor name of user ${userId}`);
-    const sponsor = await prisma.sponsors.findUnique({
-      where: { id: sponsorId },
+    logger.debug(`Fetching sponsor name of user ${currentUserId}`);
+    const sponsorDetails = await prisma.sponsors.findUnique({
+      where: { id: currentSponsorId },
       select: { name: true },
     });
 
-    logger.debug(`Sponsor Name of user ${userId} is ${sponsor?.name}`, {
-      sponsorId,
-      ...sponsor,
-    });
+    logger.debug(
+      `Sponsor Name of user ${currentUserId} is ${sponsorDetails?.name}`,
+      {
+        currentSponsorId,
+        ...sponsorDetails,
+      },
+    );
 
-    const superteam =
+    const matchedSuperteam =
       Superteams.find(
-        (team) => team.name.toLowerCase() === sponsor?.name.toLowerCase(),
+        (team) =>
+          team.name.toLowerCase() === sponsorDetails?.name.toLowerCase(),
       ) ||
       unofficialSuperteams.find(
-        (team) => team.name.toLowerCase() === sponsor?.name.toLowerCase(),
+        (team) =>
+          team.name.toLowerCase() === sponsorDetails?.name.toLowerCase(),
       );
 
-    if (!superteam) {
+    logger.debug(`Matched superteam: ${matchedSuperteam?.name}`);
+
+    if (!matchedSuperteam) {
       logger.warn(
-        `Invalid sponsor used for local profiles by userId ${userId} and sponsorId ${sponsorId}`,
+        `Invalid sponsor used for local profiles by userId ${currentUserId} and sponsorId ${currentSponsorId}`,
       );
       return res.status(403).json({ error: 'Invalid sponsor' });
     }
 
     logger.debug(
-      `Superteam of sponsor ${sponsor?.name} of user ${userId} is found`,
+      `Superteam of sponsor ${sponsorDetails?.name} of user ${currentUserId} is found`,
       {
-        superteam,
+        matchedSuperteam,
       },
     );
 
-    const region = superteam.region;
-    const countries = superteam.country;
+    const superteamRegion = matchedSuperteam.region;
+    const superteamCountries = matchedSuperteam.country;
 
-    const isLocalProfileVisible =
-      user?.stLead === region || user?.stLead === 'MAHADEV';
+    const hasLocalProfileAccess =
+      currentUser?.stLead === superteamRegion ||
+      currentUser?.stLead === 'MAHADEV';
 
-    if (!isLocalProfileVisible) {
+    logger.debug(`Has local profile access: ${hasLocalProfileAccess}`);
+
+    if (!hasLocalProfileAccess) {
       return res.status(403).json({ error: 'Unauthorized' });
     }
 
     logger.debug('Fetching user details');
 
     const totalCount = await prisma.user.count({
-      where: { location: { in: countries } },
+      where: { location: { in: superteamCountries } },
     });
 
-    const users = await prisma.user.findMany({
-      where: { location: { in: countries } },
+    const localProfiles = await prisma.user.findMany({
+      where: { location: { in: superteamCountries } },
       select: {
         id: true,
         firstName: true,
@@ -117,23 +130,23 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         },
       },
       skip,
-      take: limitNumber,
+      take: pageSize,
       orderBy: {
         createdAt: 'desc',
       },
     });
 
-    const processedUsers = users.map((user) => {
-      const totalSubmissions = user.Submission.length;
-      const wins = user.Submission.filter(
+    const enrichedProfiles = localProfiles.map((profile) => {
+      const submissionCount = profile.Submission.length;
+      const winCount = profile.Submission.filter(
         (s) => s.isWinner && s.listing.isWinnersAnnounced,
       ).length;
 
-      const listingWinnings = user.Submission.filter(
+      const listingEarnings = profile.Submission.filter(
         (s) => s.isWinner && s.listing.isWinnersAnnounced,
       ).reduce((sum, submission) => sum + (submission.rewardInUSD || 0), 0);
 
-      const grantWinnings = user.GrantApplication.filter(
+      const grantEarnings = profile.GrantApplication.filter(
         (g) =>
           g.applicationStatus === 'Approved' ||
           g.applicationStatus === 'Completed',
@@ -142,26 +155,26 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         0,
       );
 
-      const totalEarnings = listingWinnings + grantWinnings;
+      const totalEarnings = listingEarnings + grantEarnings;
 
-      return { ...user, totalSubmissions, wins, totalEarnings };
+      return { ...profile, submissionCount, winCount, totalEarnings };
     });
 
-    const rankedUsers = processedUsers
+    const rankedProfiles = enrichedProfiles
       .sort((a, b) => b.totalEarnings - a.totalEarnings)
-      .map((user, index) => ({
-        ...user,
+      .map((profile, index) => ({
+        ...profile,
         rank: skip + index + 1,
       }));
 
     logger.info('Successfully fetched and processed user details');
     res.status(200).json({
-      users: rankedUsers,
+      users: rankedProfiles,
       pagination: {
         total: totalCount,
         page: pageNumber,
-        limit: limitNumber,
-        totalPages: Math.ceil(totalCount / limitNumber),
+        limit: pageSize,
+        totalPages: Math.ceil(totalCount / pageSize),
       },
     });
   } catch (err: any) {
