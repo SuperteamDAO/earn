@@ -1,5 +1,6 @@
+import type { Role } from '@prisma/client';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { ChevronLeft, ChevronRight, Copy, Plus, Search } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Copy, Plus, Search, X } from 'lucide-react';
 import { usePostHog } from 'posthog-js/react';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
@@ -8,14 +9,10 @@ import { ErrorSection } from '@/components/shared/ErrorSection';
 import { LoadingSection } from '@/components/shared/LoadingSection';
 import { Button } from '@/components/ui/button';
 import { CopyButton } from '@/components/ui/copy-tooltip';
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
+import { Separator } from '@/components/ui/separator';
+import { StatusPill } from '@/components/ui/status-pill';
 import {
   Table,
   TableBody,
@@ -29,7 +26,6 @@ import type { UserSponsor } from '@/interface/userSponsor';
 import { SponsorLayout } from '@/layouts/Sponsor';
 import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
-import { cn } from '@/utils/cn';
 
 import { Banner } from '@/features/sponsor-dashboard/components/Banner';
 import { InviteMembers } from '@/features/sponsor-dashboard/components/Members/InviteMembers';
@@ -38,6 +34,26 @@ import { sponsorStatsQuery } from '@/features/sponsor-dashboard/queries/sponsor-
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
 const debounce = require('lodash.debounce');
+
+const roleStyles: Record<
+  Role,
+  {
+    readonly color: string;
+    readonly backgroundColor: string;
+    readonly borderColor: string;
+  }
+> = {
+  ADMIN: {
+    color: 'text-emerald-600',
+    backgroundColor: 'bg-emerald-100',
+    borderColor: 'border-emerald-300',
+  },
+  MEMBER: {
+    color: 'text-blue-600',
+    backgroundColor: 'bg-blue-100',
+    borderColor: 'border-blue-300',
+  },
+} as const;
 
 const Index = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -133,7 +149,7 @@ const Index = () => {
               )?.role === 'ADMIN'
             )) && (
             <Button
-              className="ph-no-captur text-brand-purple h-9 bg-indigo-100 hover:bg-indigo-100/90"
+              className="ph-no-capture text-brand-purple h-9 rounded-lg border border-indigo-500 bg-indigo-50 hover:bg-indigo-100"
               onClick={() => {
                 posthog.capture('invite member_sponsor');
                 onOpen();
@@ -201,16 +217,12 @@ const Index = () => {
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center">
-                        <span
-                          className={cn(
-                            'inline-flex rounded px-2 py-1 text-xs font-semibold',
-                            member?.role === 'ADMIN'
-                              ? 'bg-emerald-100 text-teal-600'
-                              : 'text-brand-purple bg-purple-100',
-                          )}
+                        <StatusPill
+                          {...roleStyles[member?.role ?? 'MEMBER']}
+                          className="w-18"
                         >
-                          {member?.role}
-                        </span>
+                          {member?.role === 'ADMIN' ? 'Admin' : 'Member'}
+                        </StatusPill>
                       </div>
                     </TableCell>
                     <TableCell className="font-medium text-slate-600">
@@ -305,7 +317,7 @@ const RemoveMemberModal = ({
         <Button
           onClick={() => setIsOpen(true)}
           size="sm"
-          className="text-brand-purple bg-indigo-100 hover:bg-indigo-100/90"
+          className="ph-no-capture text-brand-purple bg-brand-purple-50 border-brand-purple/50 rounded-lg border px-2 py-0.5 text-[0.65rem] hover:bg-indigo-100"
         >
           Remove
         </Button>
@@ -315,32 +327,37 @@ const RemoveMemberModal = ({
         open={isOpen}
         onOpenChange={(open) => setIsOpen(open)}
       >
-        <DialogContent className="py-5">
-          <DialogHeader>
-            <DialogTitle className="text-xl text-slate-900">
-              Remove Member?
-            </DialogTitle>
-          </DialogHeader>
-
-          <div className="py-4">
-            <p>
+        <DialogContent className="m-0 p-0" hideCloseIcon>
+          <DialogTitle className="text-md -mb-1 px-6 pt-4 font-semibold text-slate-900">
+            Remove Member?
+          </DialogTitle>
+          <Separator />
+          <div className="px-6 pb-6 text-[0.95rem]">
+            <p className="mb-4 text-slate-500">
               Are you sure you want to remove{' '}
               <span className="font-semibold">{member.user?.email}</span> from
               accessing your sponsor dashboard? You can invite them back again
               later if needed.
             </p>
-          </div>
 
-          <DialogFooter className="mt-2">
-            <Button
-              className="w-full"
-              onClick={() => {
-                removeMember(member.userId);
-              }}
-            >
-              Remove Member
-            </Button>
-          </DialogFooter>
+            <div className="flex gap-3">
+              <div className="w-1/2" />
+              <Button variant="ghost" onClick={() => setIsOpen(false)}>
+                Close
+              </Button>
+              <Button
+                className="flex-1 rounded-lg border border-red-500 bg-red-50 text-red-600 hover:bg-red-100"
+                onClick={() => {
+                  removeMember(member.userId);
+                }}
+              >
+                <div className="rounded-full bg-red-600 p-0.5">
+                  <X className="size-2 text-white" />
+                </div>
+                Remove Member
+              </Button>
+            </div>
+          </div>
         </DialogContent>
       </Dialog>
     </div>

@@ -14,8 +14,8 @@ interface SpamConfirmationDialogProps {
   isOpen: boolean;
   onClose: () => void;
   submissionId: string | undefined;
-  listingSlug: string;
   onConfirm: (id: string, label: SubmissionLabels) => void;
+  isListing?: boolean;
 }
 
 export const SpamConfirmationDialog = ({
@@ -23,6 +23,7 @@ export const SpamConfirmationDialog = ({
   onClose,
   submissionId,
   onConfirm,
+  isListing = true,
 }: SpamConfirmationDialogProps) => {
   const handleConfirm = () => {
     if (!submissionId) return;
@@ -36,9 +37,19 @@ export const SpamConfirmationDialog = ({
         <AlertDialogHeader>
           <AlertDialogTitle>Mark this as spam?</AlertDialogTitle>
           <AlertDialogDescription>
-            Marking a submission as &quot;Spam&quot; would deduct a submission
-            credit from the applicant and flag it in our system. This change
-            will only be reflected once you announce the winner(s).
+            {isListing ? (
+              <>
+                Marking a submission as &quot;Spam&quot; would deduct a
+                submission credit from the applicant and flag it in our system.
+                This change will only be reflected once you announce the
+                winner(s).
+              </>
+            ) : (
+              <>
+                Marking a grant application as &quot;Spam&quot; would deduct a
+                submission credit from the applicant and flag it in our system.
+              </>
+            )}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

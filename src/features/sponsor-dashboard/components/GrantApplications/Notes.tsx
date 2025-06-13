@@ -124,16 +124,16 @@ export const Notes = ({ slug }: Props) => {
   );
 
   return (
-    <div className="flex w-full flex-col items-start">
+    <div className="flex w-full flex-col items-start rounded-xl border border-slate-200 px-4 py-5">
       <div
         className={cn(
           'mb-2 flex w-full items-center justify-between text-slate-400',
           isAiCommited && 'text-slate-600',
         )}
       >
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1">
           {isAiCommited && <Wand />}
-          <span className="font-extrabold">Review Notes</span>
+          <span className="font-extrabold">Notes</span>
         </div>
         {isSaving ? (
           <Loader2 className="h-3 w-3 animate-spin" />
@@ -142,7 +142,7 @@ export const Notes = ({ slug }: Props) => {
         )}
       </div>
       <Textarea
-        className="border border-slate-100 text-sm whitespace-pre-wrap text-slate-600 placeholder:text-slate-400"
+        className="resize-none !border-0 px-1.5 py-0 text-sm whitespace-pre-wrap text-slate-500 !shadow-none !ring-0 placeholder:text-slate-400 focus:!border-0 focus:!shadow-none focus:!ring-0 focus:!outline-none focus-visible:!ring-0 focus-visible:!ring-offset-0 focus-visible:!outline-hidden"
         key={applicationId}
         onChange={handleChange}
         onKeyDown={handleKeyDown}
@@ -150,8 +150,8 @@ export const Notes = ({ slug }: Props) => {
         rows={20}
         value={notes || ''}
       />
-      <p className="mt-1 text-xs text-slate-400">
-        {MAX_CHARACTERS - (notes?.length || 0)} characters remaining
+      <p className="mt-1 w-full text-right text-xs text-slate-400">
+        {notes?.length || 0}/{MAX_CHARACTERS}
       </p>
     </div>
   );

@@ -2,7 +2,6 @@ import {
   type GrantApplication,
   type GrantApplicationStatus,
   type GrantTranche,
-  type GrantTrancheStatus,
 } from '@prisma/client';
 import { queryOptions } from '@tanstack/react-query';
 
@@ -43,28 +42,20 @@ export interface GrantTrancheWithApplication extends GrantTranche {
   count: number;
 }
 
-interface TrancheParams {
-  searchText: string;
-  length: number;
-  skip: number;
-  filterLabel: GrantTrancheStatus | undefined;
-}
-
 export interface TranchesReturn {
   data: GrantTrancheWithApplication[];
   count: number;
 }
 
-const fetchTranches = async (params: TrancheParams, slug: string) => {
+const fetchTranches = async (slug: string) => {
   const { data } = await api.get<TranchesReturn>(
     `/api/sponsor-dashboard/grants/${slug}/tranches/`,
-    { params },
   );
   return data;
 };
 
-export const tranchesQuery = (slug: string, params: TrancheParams) =>
+export const tranchesQuery = (slug: string) =>
   queryOptions({
-    queryKey: ['sponsor-tranches', slug, params],
-    queryFn: () => fetchTranches(params, slug),
+    queryKey: ['sponsor-tranches', slug],
+    queryFn: () => fetchTranches(slug),
   });

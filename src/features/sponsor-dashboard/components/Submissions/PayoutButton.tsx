@@ -233,11 +233,12 @@ export const PayoutButton = ({ bounty }: Props) => {
         <DynamicWalletMultiButton
           style={{
             height: '40px',
-            fontWeight: 600,
+            fontWeight: 500,
             fontFamily: 'Inter',
-            paddingRight: '16px',
-            paddingLeft: '16px',
-            fontSize: '12px',
+            paddingRight: '20px',
+            paddingLeft: '20px',
+            fontSize: '14px',
+            margin: '0px',
           }}
         >
           {connected
@@ -255,10 +256,7 @@ export const PayoutButton = ({ bounty }: Props) => {
       </div>
       {connected && (
         <Button
-          className={cn(
-            'ph-no-capture mr-4 min-w-[120px]',
-            'disabled:cursor-not-allowed',
-          )}
+          className={cn('ph-no-capture disabled:cursor-not-allowed')}
           disabled={!bounty?.isWinnersAnnounced}
           onClick={async () => {
             if (!selectedSubmission?.user.walletAddress) {
