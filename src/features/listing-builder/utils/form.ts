@@ -113,6 +113,7 @@ export const cleanTemplate = (
   reTemplate.compensationType = prevValues.compensationType;
   reTemplate.rewards = prevValues.rewards || undefined;
   reTemplate.deadline = prevValues.deadline;
+  reTemplate.commitmentDate = prevValues.commitmentDate;
   reTemplate.maxBonusSpots = prevValues.maxBonusSpots || undefined;
   reTemplate.minRewardAsk = prevValues.minRewardAsk || undefined;
   reTemplate.maxRewardAsk = prevValues.maxRewardAsk || undefined;

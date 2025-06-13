@@ -118,6 +118,10 @@ export const useListingForm = (
         if (!dataToSave.deadline.endsWith('Z'))
           dataToSave.deadline += dayjs().format('Z');
       }
+      if (dataToSave.commitmentDate) {
+        if (!dataToSave.commitmentDate.endsWith('Z'))
+          dataToSave.commitmentDate += dayjs().format('Z');
+      }
       const data = await saveDraftMutation.mutateAsync(dataToSave);
       setHideAutoSave(false);
       formMethods.setValue('id', data.id);

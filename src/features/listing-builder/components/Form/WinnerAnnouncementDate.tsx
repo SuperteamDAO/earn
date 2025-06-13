@@ -29,9 +29,11 @@ export function WinnerAnnouncementDate() {
     control: form.control,
   });
 
-  const minDate = deadline ? dayjs(deadline).add(1, 'day').toDate() : undefined;
+  const minDate = deadline
+    ? dayjs(deadline).add(1, 'day').startOf('day').toDate()
+    : undefined;
   const maxDate = deadline
-    ? dayjs(deadline).add(30, 'day').toDate()
+    ? dayjs(deadline).add(30, 'day').startOf('day').toDate()
     : undefined;
 
   const handleQuickSelect = (days: number) => {
@@ -60,7 +62,10 @@ export function WinnerAnnouncementDate() {
       render={({ field }) => (
         <FormItem className="gap-2">
           <div className="flex items-center gap-2">
-            <FormLabel isRequired>Winner Announcement Date</FormLabel>
+            <FormLabel isRequired>
+              Winner Announcement (
+              {Intl.DateTimeFormat().resolvedOptions().timeZone})
+            </FormLabel>
             <Tooltip
               content={
                 'You can only select a date up to 30 days after the deadline. This is the date you commit to announcing winners.'
