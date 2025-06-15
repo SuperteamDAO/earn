@@ -16,6 +16,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { useLogout, useUser } from '@/store/user';
+import { getTelegramBotURL } from '@/utils/getTelegramBotURL';
 
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 import { EmailSettingsModal } from '@/features/talent/components/EmailSettingsModal';
@@ -54,14 +55,6 @@ export function UserMenu() {
       { shallow: true },
     );
     onClose();
-  };
-
-  const getTelegramBotURL = () => {
-    if (!user || !user.location) {
-      return `https://t.me/superteam_earn_notifications_bot?start=${btoa('location=global')}`;
-    }
-    const data = btoa(`location=${user.location}`);
-    return `https://t.me/superteam_earn_notifications_bot?start=${data}`;
   };
 
   return (
@@ -182,7 +175,7 @@ export function UserMenu() {
             <DropdownMenuItem
               className="text-sm tracking-tight text-slate-500"
               onSelect={() => {
-                const win = window.open(getTelegramBotURL(), '_blank');
+                const win = window.open(getTelegramBotURL(user), '_blank');
                 if (win != null) {
                   win.focus();
                 }
