@@ -16,6 +16,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { useLogout, useUser } from '@/store/user';
+import { getTelegramBotURL } from '@/utils/getTelegramBotURL';
 
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 import { EmailSettingsModal } from '@/features/talent/components/EmailSettingsModal';
@@ -169,6 +170,21 @@ export function UserMenu() {
               Email Preferences
             </DropdownMenuItem>
           )}
+
+          <SupportFormDialog>
+            <DropdownMenuItem
+              className="text-sm tracking-tight text-slate-500"
+              onSelect={() => {
+                const win = window.open(getTelegramBotURL(user), '_blank');
+                if (win != null) {
+                  win.focus();
+                }
+                posthog.capture('telegram notification_user menu');
+              }}
+            >
+              Telegram Notifications
+            </DropdownMenuItem>
+          </SupportFormDialog>
 
           <SupportFormDialog>
             <DropdownMenuItem
