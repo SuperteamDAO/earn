@@ -65,11 +65,45 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
           },
         },
       },
+      application: {
+        select: {
+          grant: {
+            select: {
+              title: true,
+              slug: true,
+              sponsor: {
+                select: {
+                  name: true,
+                  logo: true,
+                },
+              },
+            },
+          },
+        },
+      },
     },
   });
 
+  const processedHistory = creditHistory.map((entry) => {
+    if (entry.application) {
+      return {
+        ...entry,
+        submission: {
+          listing: {
+            title: entry.application.grant.title,
+            slug: entry.application.grant.slug,
+            type: 'project' as const,
+            sponsor: entry.application.grant.sponsor,
+          },
+        },
+        application: null,
+      };
+    }
+    return entry;
+  });
+
   const groupedByMonth = new Map<string, typeof creditHistory>();
-  for (const entry of creditHistory) {
+  for (const entry of processedHistory) {
     const key = dayjs(entry.effectiveMonth)
       .utc()
       .startOf('month')
@@ -135,7 +169,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
     });
   }
 
-  const combinedEntries = [...creditHistory, ...syntheticEntries];
+  const combinedEntries = [...processedHistory, ...syntheticEntries];
 
   combinedEntries.sort((a, b) => {
     return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();

@@ -1,8 +1,4 @@
-import {
-  type GrantApplicationStatus,
-  Prisma,
-  type SubmissionLabels,
-} from '@prisma/client';
+import { Prisma } from '@prisma/client';
 import type { NextApiResponse } from 'next';
 
 import { type PrismaUserWithoutKYC } from '@/interface/user';
@@ -27,56 +23,9 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
   const params = req.query;
   const slug = params.slug as string;
-  const skip = params.skip ? parseInt(params.skip as string, 10) : 0;
-  const take = params.take ? parseInt(params.take as string, 10) : 20;
-  const searchText = params.searchText as string | undefined;
-  const filterLabel = params.filterLabel as
-    | SubmissionLabels
-    | GrantApplicationStatus
-    | undefined;
-
-  const textSearchConditions: Prisma.Sql[] = [];
-  if (searchText) {
-    const lowerSearchText = searchText.toLowerCase();
-    const nameParts = searchText.split(' ').filter(Boolean);
-    const lowerFirstNameSearch = nameParts[0]
-      ? `${nameParts[0].toLowerCase()}%`
-      : '%';
-    const lowerLastNameSearch = nameParts[1]
-      ? `${nameParts[1].toLowerCase()}%`
-      : '%';
-    const likePattern = `%${lowerSearchText}%`;
-
-    textSearchConditions.push(Prisma.sql`(
-      LOWER(User.firstName) LIKE ${likePattern} OR
-      LOWER(User.email) LIKE ${likePattern} OR
-      LOWER(User.username) LIKE ${likePattern} OR
-      LOWER(User.twitter) LIKE ${likePattern} OR
-      LOWER(User.discord) LIKE ${likePattern} OR
-      LOWER(GrantApplication.projectTitle) LIKE ${likePattern} OR
-      (LOWER(User.firstName) LIKE ${lowerFirstNameSearch} AND LOWER(User.lastName) LIKE ${lowerLastNameSearch})
-    )`);
-  }
-
-  const filterSearchConditions: Prisma.Sql[] = [];
-  if (filterLabel) {
-    if (
-      ['Approved', 'Rejected', 'Pending', 'Completed'].includes(filterLabel)
-    ) {
-      filterSearchConditions.push(
-        Prisma.sql`GrantApplication.applicationStatus = ${filterLabel}`,
-      );
-    } else {
-      filterSearchConditions.push(
-        Prisma.sql`(GrantApplication.label = ${filterLabel} AND GrantApplication.applicationStatus = 'Pending')`,
-      );
-    }
-  }
 
   try {
-    logger.info(
-      `Fetching grant applications for slug: ${slug}, skip: ${skip}, take: ${take}, searchText: ${searchText}, filter: ${filterLabel}`,
-    );
+    logger.info(`Fetching grant applications for slug: ${slug}`);
 
     const grant = await prisma.grants.findUnique({
       where: { slug },
@@ -97,80 +46,12 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       return res.status(error.status).json({ error: error.message });
     }
 
-    const baseWhereConditions: Prisma.Sql[] = [
-      Prisma.sql`GrantApplication.grantId = ${grant.id}`,
-      Prisma.sql`Grants.sponsorId = ${req.userSponsorId}`,
-    ];
-
-    if (textSearchConditions.length > 0) {
-      baseWhereConditions.push(
-        Prisma.sql`(${Prisma.join(textSearchConditions, ' OR ')})`,
-      );
-    }
-    if (filterSearchConditions.length > 0) {
-      baseWhereConditions.push(
-        Prisma.sql`(${Prisma.join(filterSearchConditions, ' AND ')})`,
-      );
-    }
-    const baseWhere = Prisma.join(baseWhereConditions, ' AND ');
+    const baseWhere = Prisma.sql`GrantApplication.grantId = ${grant.id} AND Grants.sponsorId = ${req.userSponsorId}`;
 
     const countResult = await prisma.grantApplication.aggregate({
       _count: { id: true },
       where: {
         grant: { slug, isActive: true, sponsorId: req.userSponsorId! },
-        ...(searchText
-          ? {
-              OR: [
-                { user: { firstName: { contains: searchText } } },
-                { user: { email: { contains: searchText } } },
-                { user: { username: { contains: searchText } } },
-                { user: { twitter: { contains: searchText } } },
-                { user: { discord: { contains: searchText } } },
-                { projectTitle: { contains: searchText } },
-                {
-                  AND: [
-                    {
-                      user: {
-                        firstName: { contains: searchText.split(' ')[0] },
-                      },
-                    },
-                    {
-                      user: {
-                        lastName: { contains: searchText.split(' ')[1] || '' },
-                      },
-                    },
-                  ],
-                },
-              ],
-            }
-          : {}),
-        ...(filterLabel
-          ? {
-              ...(filterLabel === 'Approved'
-                ? { applicationStatus: 'Approved' }
-                : {}),
-              ...(filterLabel === 'Rejected'
-                ? { applicationStatus: 'Rejected' }
-                : {}),
-              ...(filterLabel === 'Pending'
-                ? {
-                    applicationStatus: 'Pending',
-                  }
-                : {}),
-              ...(filterLabel === 'Completed'
-                ? { applicationStatus: 'Completed' }
-                : {}),
-              ...(filterLabel !== 'Rejected' &&
-              filterLabel !== 'Approved' &&
-              filterLabel !== 'Pending' &&
-              filterLabel !== 'Completed'
-                ? {
-                    label: filterLabel as SubmissionLabels,
-                    applicationStatus: 'Pending',
-                  }
-                : {}),
-            }
-          : {}),
       },
     });
     const totalCount = countResult._count.id;
@@ -219,8 +100,6 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       LEFT JOIN User ON GrantApplication.userId = User.id
       WHERE ${baseWhere}
       ${orderByClause}
-      LIMIT ${take}
-      OFFSET ${skip}
     `;
 
     const orderedIds = orderedIdsAndEarningsResult.map((r) => r.id);

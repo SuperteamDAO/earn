@@ -27,11 +27,11 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
+import { StatusPill } from '@/components/ui/status-pill';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { SponsorLayout } from '@/layouts/Sponsor';
 import { useUser } from '@/store/user';
-import { cn } from '@/utils/cn';
 
 import { type ListingWithSubmissions } from '@/features/listings/types';
 import { getColorStyles } from '@/features/listings/utils/getColorStyles';
@@ -216,15 +216,13 @@ export default function SponsorListings({ tab: queryTab }: { tab: string }) {
                   className="hover:border-brand-purple h-9 border border-slate-300 bg-transparent font-medium text-slate-500 capitalize hover:bg-transparent"
                   variant="outline"
                 >
-                  <span
-                    className={cn(
-                      'inline-flex items-center rounded-full px-3 text-center text-[11px] whitespace-nowrap capitalize',
-                      getColorStyles(selectedStatus!).color,
-                      getColorStyles(selectedStatus!).bgColor,
-                    )}
+                  <StatusPill
+                    color={getColorStyles(selectedStatus!).color}
+                    backgroundColor={getColorStyles(selectedStatus!).bgColor}
+                    borderColor={getColorStyles(selectedStatus!).borderColor}
                   >
-                    <span>{selectedStatus || 'Everything'}</span>
-                  </span>
+                    {selectedStatus || 'Everything'}
+                  </StatusPill>
                   <ChevronDown className="ml-2 h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
@@ -234,15 +232,13 @@ export default function SponsorListings({ tab: queryTab }: { tab: string }) {
                   className="focus:bg-slate-100"
                   onClick={() => handleStatusFilterChange(null)}
                 >
-                  <span
-                    className={cn(
-                      'inline-flex items-center rounded-full px-3 text-center text-[11px] whitespace-nowrap capitalize',
-                      getColorStyles('Everything').color,
-                      getColorStyles('Everything').bgColor,
-                    )}
+                  <StatusPill
+                    color={getColorStyles('Everything').color}
+                    backgroundColor={getColorStyles('Everything').bgColor}
+                    borderColor={getColorStyles('Everything').borderColor}
                   >
                     Everything
-                  </span>
+                  </StatusPill>
                 </DropdownMenuItem>
 
                 {ALL_FILTERS.map((status) => (
@@ -251,15 +247,13 @@ export default function SponsorListings({ tab: queryTab }: { tab: string }) {
                     className="focus:bg-slate-100"
                     onClick={() => handleStatusFilterChange(status)}
                   >
-                    <span
-                      className={cn(
-                        'inline-flex items-center rounded-full px-3 text-center text-[11px] font-medium whitespace-nowrap capitalize',
-                        getColorStyles(status).color,
-                        getColorStyles(status).bgColor,
-                      )}
+                    <StatusPill
+                      color={getColorStyles(status).color}
+                      backgroundColor={getColorStyles(status).bgColor}
+                      borderColor={getColorStyles(status).borderColor}
                     >
                       {status}
-                    </span>
+                    </StatusPill>
                   </DropdownMenuItem>
                 ))}
               </DropdownMenuContent>

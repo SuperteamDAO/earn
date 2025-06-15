@@ -7,6 +7,7 @@ import { safeStringify } from '@/utils/safeStringify';
 import { type NextApiRequestWithSponsor } from '@/features/auth/types';
 import { checkGrantSponsorAuth } from '@/features/auth/utils/checkGrantSponsorAuth';
 import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
+import { addSpamPenaltyGrant } from '@/features/credits/utils/allocateCredits';
 
 async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   const userId = req.userId;
@@ -17,51 +18,105 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   }
 
   logger.debug(`Request body: ${safeStringify(req.body)}`);
-  const { id, label } = req.body;
+  const { id, ids, label } = req.body;
 
-  if (!id || !label) {
-    logger.warn('Missing parameters: id and label are required');
-    return res.status(400).json({ error: 'id and label are required' });
+  const applicationIds = ids ? ids : id ? [id] : [];
+
+  if (!applicationIds.length || !label) {
+    logger.warn('Missing parameters: id/ids and label are required');
+    return res.status(400).json({ error: 'id/ids and label are required' });
+  }
+
+  if (applicationIds.length > 1 && !['Spam', 'Shortlisted'].includes(label)) {
+    logger.warn(`Multiple applications not allowed for label: ${label}`);
+    return res.status(400).json({
+      error:
+        'Multiple applications only allowed for Spam and Shortlisted labels',
+    });
   }
 
   try {
-    const currentApplication = await prisma.grantApplication.findUnique({
-      where: { id },
+    const currentApplications = await prisma.grantApplication.findMany({
+      where: { id: { in: applicationIds } },
     });
 
-    if (!currentApplication) {
-      logger.warn(`Application with ID ${id} not found`);
+    if (currentApplications.length !== applicationIds.length) {
+      const foundIds = currentApplications.map((a) => a.id);
+      const missingIds = applicationIds.filter(
+        (id: string) => !foundIds.includes(id),
+      );
+      logger.warn(`Applications not found: ${missingIds.join(', ')}`);
       return res.status(404).json({
-        message: `Application with ID ${id} not found.`,
+        message: `Applications not found: ${missingIds.join(', ')}`,
+      });
+    }
+
+    if (currentApplications.length === 0) {
+      logger.warn('No applications found');
+      return res.status(404).json({
+        message: 'No applications found',
       });
     }
 
     const userSponsorId = req.userSponsorId;
+    const firstApplication = currentApplications[0]!;
 
     const { error } = await checkGrantSponsorAuth(
       userSponsorId,
-      currentApplication.grantId,
+      firstApplication.grantId,
     );
     if (error) {
       return res.status(error.status).json({ error: error.message });
     }
 
-    logger.debug(`Updating application with ID: ${id} and label: ${label}`);
+    const differentGrants = currentApplications.filter(
+      (a) => a.grantId !== firstApplication.grantId,
+    );
+    if (differentGrants.length > 0) {
+      logger.warn('Applications belong to different grants');
+      return res.status(400).json({
+        error: 'All applications must belong to the same grant',
+      });
+    }
 
-    const result = await prisma.grantApplication.update({
-      where: { id },
-      data: { label },
-    });
+    const results = [];
 
-    logger.info(`Successfully updated application with ID: ${id}`);
-    return res.status(200).json(result);
+    for (const application of currentApplications) {
+      logger.debug(
+        `Updating application with ID: ${application.id} and label: ${label}`,
+      );
+
+      const result = await prisma.grantApplication.update({
+        where: { id: application.id },
+        data: { label },
+      });
+
+      if (label === 'Spam') {
+        await addSpamPenaltyGrant(application.userId, application.id);
+      }
+
+      results.push(result);
+    }
+
+    logger.info(`Successfully updated ${results.length} application(s)`);
+
+    if (applicationIds.length === 1) {
+      return res.status(200).json(results[0]);
+    } else {
+      return res.status(200).json({
+        results,
+        summary: {
+          updated: results.length,
+        },
+      });
+    }
   } catch (error: any) {
     logger.error(
-      `Error occurred while updating application with ID ${id}: ${error.message}`,
+      `Error occurred while updating applications: ${error.message}`,
     );
     return res.status(500).json({
       error: error.message,
-      message: 'Error occurred while updating the application.',
+      message: 'Error occurred while updating the applications.',
     });
   }
 }
