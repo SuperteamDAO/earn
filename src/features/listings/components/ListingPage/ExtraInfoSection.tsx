@@ -2,6 +2,7 @@ import { ExternalLink } from 'lucide-react';
 import { usePostHog } from 'posthog-js/react';
 
 import { type ParentSkills } from '@/interface/skills';
+import { dayjs } from '@/utils/dayjs';
 import { getURLSanitized } from '@/utils/getURLSanitized';
 
 import type { ListingHackathon } from '../../types';
@@ -11,6 +12,7 @@ interface ExtraInfoSectionProps {
   requirements?: string | undefined;
   pocSocials?: string | undefined;
   region?: string | undefined;
+  commitmentDate?: string | undefined;
   Hackathon?: ListingHackathon;
   isGrant?: boolean;
 }
@@ -21,6 +23,7 @@ export function ExtraInfoSection({
   requirements,
   pocSocials,
   region,
+  commitmentDate,
   isGrant = false,
 }: ExtraInfoSectionProps) {
   const posthog = usePostHog();
@@ -97,6 +100,19 @@ export function ExtraInfoSection({
             </a>
             <span className="inline text-slate-500">
               if you have any questions about this listing
+            </span>
+          </div>
+        </div>
+      )}
+      {!!commitmentDate && (
+        <div className="hidden w-full flex-col items-start gap-2 text-sm md:flex">
+          <p className="h-full text-center font-semibold text-slate-600">
+            WINNER ANNOUNCEMENT BY
+          </p>
+          <div>
+            <span className="inline text-slate-500">
+              {dayjs(commitmentDate).format('MMMM DD, YYYY')} - as scheduled by
+              the sponsor.
             </span>
           </div>
         </div>

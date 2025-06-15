@@ -197,6 +197,15 @@ export const createListingFormSchema = ({
             newDeadline.isBefore(maxDeadline) || newDeadline.isSame(maxDeadline)
           );
         }, 'Cannot extend deadline more than 2 weeks from original deadline'),
+      commitmentDate: z
+        .string()
+        .trim()
+        .datetime({
+          message: 'Required',
+          local: true,
+          offset: true,
+        })
+        .min(1, 'Required'),
       templateId: z.string().optional().nullable(),
       eligibility: z.array(eligibilityQuestionSchema).optional().nullable(),
       skills: skillsArraySchema,
@@ -396,6 +405,29 @@ export const createListingRefinements = async (
           path: ['deadline'],
         });
       }
+    }
+  }
+
+  if (data.commitmentDate && data.deadline) {
+    const deadline = dayjs(data.deadline);
+    const min = deadline.add(1, 'day');
+    const max = deadline.add(30, 'day');
+    const selected = dayjs(data.commitmentDate);
+    if (selected.isBefore(min)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message:
+          'Winner announcement date must be at least 1 day after the deadline',
+        path: ['commitmentDate'],
+      });
+    }
+    if (selected.isAfter(max)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message:
+          'Winner announcement date must be no more than 30 days after the deadline',
+        path: ['commitmentDate'],
+      });
     }
   }
 };

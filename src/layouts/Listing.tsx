@@ -11,6 +11,7 @@ import { ErrorSection } from '@/components/shared/ErrorSection';
 import { type User } from '@/interface/user';
 import { Default } from '@/layouts/Default';
 import { cn } from '@/utils/cn';
+import { dayjs } from '@/utils/dayjs';
 import { getURLSanitized } from '@/utils/getURLSanitized';
 import { getURL } from '@/utils/validUrl';
 
@@ -207,6 +208,21 @@ export function ListingPageLayout({
                           if you have any questions about this initialBounty
                         </span>
                       </p>
+                    </div>
+                  )}
+                  {!!initialBounty.commitmentDate && (
+                    <div className="flex w-full flex-col items-start md:hidden">
+                      <p className="h-full text-center text-xs font-semibold text-slate-600">
+                        WINNER ANNOUNCEMENT BY
+                      </p>
+                      <div>
+                        <span className="text-xs text-slate-500">
+                          {dayjs(initialBounty.commitmentDate).format(
+                            'MMMM DD, YYYY',
+                          )}{' '}
+                          - as scheduled by the sponsor.
+                        </span>
+                      </div>
                     </div>
                   )}
 
