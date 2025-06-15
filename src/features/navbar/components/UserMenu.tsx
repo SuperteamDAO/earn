@@ -2,7 +2,7 @@ import { ChevronDown } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { usePostHog } from 'posthog-js/react';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 
 import { SupportFormDialog } from '@/components/shared/SupportFormDialog';
 import { Button } from '@/components/ui/button';
@@ -57,11 +57,14 @@ export function UserMenu() {
   };
 
   // Generate Telegram bot link with user context
-  const telegramBotLink = user?.id
-    ? `https://t.me/super_fun_earn_bot?start=earn_userid_${encodeURIComponent(
-        user.id,
-      )}`
-    : 'https://t.me/super_fun_earn_bot?start=earn';
+  const telegramBotLink = useMemo(() => {
+    if (!user?.id) {
+      return 'https://t.me/super_fun_earn_bot?start=earn';
+    }
+    return `https://t.me/super_fun_earn_bot?start=earn_userid_${encodeURIComponent(
+      user.id,
+    )}`;
+  }, [user?.id]);
 
   return (
     <>
@@ -108,7 +111,7 @@ export function UserMenu() {
           {user?.isTalentFilled && (
             <>
               <DropdownMenuItem asChild>
-                <Link
+                <a
                   href={`/t/${user?.username}`}
                   onClick={() => {
                     posthog.capture('profile_user menu');
@@ -116,10 +119,10 @@ export function UserMenu() {
                   className="text-sm tracking-tight text-slate-500"
                 >
                   Profile
-                </Link>
+                </a>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
-                <Link
+                <a
                   href={`/t/${user?.username}/edit`}
                   onClick={() => {
                     posthog.capture('edit profile_user menu');
@@ -127,14 +130,14 @@ export function UserMenu() {
                   className="text-sm tracking-tight text-slate-500"
                 >
                   Edit Profile
-                </Link>
+                </a>
               </DropdownMenuItem>
             </>
           )}
 
           {!!user?.currentSponsorId && (
             <DropdownMenuItem asChild>
-              <Link
+              <a
                 href="/dashboard/listings"
                 onClick={() => {
                   posthog.capture('sponsor dashboard_user menu');
@@ -142,7 +145,7 @@ export function UserMenu() {
                 className="text-sm tracking-tight text-slate-500"
               >
                 Dashboard
-              </Link>
+              </a>
             </DropdownMenuItem>
           )}
 
@@ -154,12 +157,12 @@ export function UserMenu() {
                 God Mode
               </DropdownMenuLabel>
               <DropdownMenuItem asChild>
-                <Link
+                <a
                   href="/new/sponsor"
                   className="text-sm tracking-tight text-slate-500"
                 >
                   Create New Sponsor
-                </Link>
+                </a>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
             </div>
@@ -179,7 +182,7 @@ export function UserMenu() {
 
           {/* NEW: Telegram Bot Integration */}
           <DropdownMenuItem asChild>
-            <Link
+            <a
               href={telegramBotLink}
               target="_blank"
               rel="noopener noreferrer"
@@ -190,7 +193,7 @@ export function UserMenu() {
               className="text-sm tracking-tight text-slate-500"
             >
               🔔 Telegram Notifications
-            </Link>
+            </a>
           </DropdownMenuItem>
           {/* END NEW */}
 
