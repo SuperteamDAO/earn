@@ -104,7 +104,7 @@ export const SubscribeListing = ({ id, isTemplate = false }: Props) => {
             ) : (
               <TbBell />
             )}
-            <span className="hidden">
+            <span className="hidden md:block">
               {isSubscribeLoading ? (
                 <span>Subscribing</span>
               ) : isSubscribed ? (

@@ -14,6 +14,7 @@ import { api } from '@/lib/api';
 import { cn } from '@/utils/cn';
 
 import { validUsernamesAtom } from '../atoms';
+import { sortComments } from '../utils';
 import { Comment as CommentUI } from './Comment';
 import { CommentForm } from './CommentForm';
 
@@ -76,6 +77,35 @@ export const Comments = ({
     }
   };
 
+  const pinComment = async (commentId: string, isPinned: boolean) => {
+    posthog.capture('pin_comment');
+    const commentIndex = comments.findIndex(
+      (comment) => comment.id === commentId,
+    );
+    if (commentIndex > -1) {
+      try {
+        await api.post(`/api/comment/${commentId}/pin`, {
+          isPinned,
+        });
+        setComments((prevComments) => {
+          const newComments = [...prevComments];
+          if (newComments[commentIndex]) {
+            newComments[commentIndex] = {
+              ...newComments[commentIndex],
+              isPinned,
+            };
+          }
+          return sortComments(newComments);
+        });
+      } catch (error) {
+        console.error('Failed to pin/unpin comment:', error);
+        throw error;
+      }
+    } else {
+      throw new Error('Comment not found');
+    }
+  };
+
   const getComments = async (skip = 0, take = 10) => {
     setIsLoading(true);
     try {
@@ -87,8 +117,10 @@ export const Comments = ({
       });
       const allComments = commentsData.data.result as Comment[];
 
+      const sortedComments = sortComments(allComments);
+
       setCount(commentsData.data.count);
-      setComments([...comments, ...allComments]);
+      setComments([...comments, ...sortedComments]);
       setDefaultSuggestions((prevSuggestions) => {
         const newSuggestions = new Map(prevSuggestions);
         if (poc && poc.id) {
@@ -144,7 +176,10 @@ export const Comments = ({
         poc={poc}
         onSuccess={(newComment) => {
           setCount((count) => count + 1);
-          setComments((prevComments) => [newComment, ...prevComments]);
+          setComments((prevComments) => {
+            const newComments = [newComment, ...prevComments];
+            return sortComments(newComments);
+          });
           onSuccess?.(newComment);
         }}
         isTemplate={isTemplate}
@@ -170,6 +205,7 @@ export const Comments = ({
               refType={refType}
               refId={refId}
               deleteComment={deleteComment}
+              pinComment={pinComment}
               isVerified={isVerified}
               isTemplate={isTemplate}
               isDisabled={isDisabled}

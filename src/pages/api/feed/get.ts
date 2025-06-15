@@ -143,8 +143,15 @@ export default async function handler(
                     { createdAt: 'desc' },
                   ]
                 : filter === 'popular'
-                  ? [{ likeCount: 'desc' }, { createdAt: 'desc' }]
-                  : { createdAt: 'desc' },
+                  ? [
+                      { likeCount: 'desc' },
+                      { listing: { winnersAnnouncedAt: 'desc' } },
+                      { createdAt: 'desc' },
+                    ]
+                  : [
+                      { listing: { winnersAnnouncedAt: 'desc' } },
+                      { createdAt: 'desc' },
+                    ],
             include: submissionInclude,
           })
         : [];

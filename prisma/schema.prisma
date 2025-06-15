@@ -142,6 +142,7 @@ model Comment {
   refId            String
   isActive         Boolean           @default(true)
   isArchived       Boolean           @default(false)
+  isPinned         Boolean           @default(false)
   createdAt        DateTime          @default(now())
   updatedAt        DateTime          @updatedAt
   replyToId        String?
@@ -163,6 +164,7 @@ model Comment {
   @@index([refId, isActive, isArchived, replyToId])
   @@index([refType, type])
   @@index([updatedAt(sort: Desc)])
+  @@index([refId, isPinned])
 }
 
 model Grants {

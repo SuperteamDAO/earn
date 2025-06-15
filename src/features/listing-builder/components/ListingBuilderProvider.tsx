@@ -120,7 +120,7 @@ function ListingEditor({
                   <TitleAndType />
                   <DescriptionAndTemplate />
                 </div>
-                <div className="col-span-3 space-y-6">
+                <div className="sticky top-20 col-span-3 h-fit space-y-6">
                   <RewardsSheet />
                   <Deadline />
                   <Skills />

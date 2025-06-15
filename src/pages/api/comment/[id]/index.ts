@@ -30,9 +30,7 @@ export default async function comment(
           not: 'SUBMISSION',
         },
       },
-      orderBy: {
-        updatedAt: 'desc',
-      },
+      orderBy: [{ isPinned: 'desc' }, { createdAt: 'desc' }],
       skip: skip ?? 0,
       take,
       include: {
@@ -58,7 +56,7 @@ export default async function comment(
             },
           },
           orderBy: {
-            updatedAt: 'asc',
+            createdAt: 'asc',
           },
         },
       },

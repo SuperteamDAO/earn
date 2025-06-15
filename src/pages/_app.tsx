@@ -53,7 +53,7 @@ function MyApp({ Component, pageProps }: any) {
   useEffect(() => {
     if (!posthog.__loaded) {
       posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY!, {
-        api_host: `${getURL()}ingest`,
+        api_host: `${getURL()}docs-keep`,
         autocapture: false,
         ui_host:
           process.env.NEXT_PUBLIC_POSTHOG_HOST || 'https://app.posthog.com',
