@@ -6,6 +6,7 @@ import { useEffect } from 'react';
 
 import { SupportFormDialog } from '@/components/shared/SupportFormDialog';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -169,6 +170,18 @@ export function UserMenu() {
               Email Preferences
             </DropdownMenuItem>
           )}
+
+          <DropdownMenuItem asChild>
+            <Link
+              href={`https://t.me/${process.env.NEXT_PUBLIC_TELEGRAM_BOT_SLUG}?start=start`}
+              onClick={() => {
+                posthog.capture('clicked_telegram bot_user menu');
+              }}
+              className="text-sm tracking-tight text-slate-500"
+            >
+              <span>Telegram Bot<Badge className='ml-1'>New</Badge></span>
+            </Link>
+          </DropdownMenuItem>
 
           <SupportFormDialog>
             <DropdownMenuItem
