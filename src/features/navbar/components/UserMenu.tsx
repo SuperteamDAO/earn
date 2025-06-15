@@ -111,7 +111,7 @@ export function UserMenu() {
           {user?.isTalentFilled && (
             <>
               <DropdownMenuItem asChild>
-                <a
+                <Link
                   href={`/t/${user?.username}`}
                   onClick={() => {
                     posthog.capture('profile_user menu');
@@ -122,7 +122,7 @@ export function UserMenu() {
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
-                <a
+                <Link
                   href={`/t/${user?.username}/edit`}
                   onClick={() => {
                     posthog.capture('edit profile_user menu');
