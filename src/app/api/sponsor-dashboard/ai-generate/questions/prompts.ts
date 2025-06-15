@@ -34,7 +34,7 @@ ${type}-Specific Rules:
 - Note, submission link is purely meant for the link of the actual submission and tweet link is purely meant for the link of tweet for distribution, proof of work, share in public purposes.
 - Critically evaluate the Submission Requirements from the descriptiona and/or input requirements if the provided submission requirements necessitates *any* custom questions beyond the default fields.
 - If custom questions ARE needed based on the Submission Requirements, generate a maximum of 2 new questions. Make sure to only add extra question which is inferred in the submission requirements.  (e.g. portfolio link, explanation, methodology, etc)
-- If the Submission Link (and potentially Tweet Link) is sufficient to evaluate the work based on the description (e.g., simple tweet tasks, code submissions where the link shows everything), then output EMPTY ARRAY
+- VERY IMPORTANT: If the Submission Link (and potentially Tweet Link) is sufficient to evaluate the work based on the description (e.g., tweet tasks, tweet thread tasks, code submissions where the link shows everything), then output EMPTY ARRAY
 
 Generate the custom questions (or return empty array):`;
   } else {

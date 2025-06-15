@@ -14,6 +14,7 @@ import { Header } from '@/features/navbar/components/Header';
 import { activeHackathonsQuery } from '@/features/sponsor-dashboard/queries/active-hackathons';
 import { sponsorDashboardListingQuery } from '@/features/sponsor-dashboard/queries/listing';
 
+import { AUTO_GENERATE_STORAGE_KEY } from '../constants';
 import { ListingBuilderProvider } from './ListingBuilderProvider';
 
 interface ListingBuilderLayout {
@@ -58,6 +59,10 @@ export function ListingBuilder({ route, slug }: ListingBuilderLayout) {
     router.events.on('routeChangeStart', handleRouteComplete);
     return () => router.events.off('routeChangeStart', handleRouteComplete);
   }, [router.events, queryClient, slug]);
+
+  useEffect(() => {
+    localStorage.removeItem(AUTO_GENERATE_STORAGE_KEY);
+  }, []);
 
   if (ready && !authenticated) {
     return <Login isOpen={true} onClose={() => {}} />;
