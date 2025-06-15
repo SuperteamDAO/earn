@@ -56,6 +56,14 @@ export function UserMenu() {
     onClose();
   };
 
+  const getTelegramBotURL = () => {
+    if (!user || !user.location) {
+      return `https://t.me/superteam_earn_notifications_bot?start=${btoa('location=global')}`;
+    }
+    const data = btoa(`location=${user.location}`);
+    return `https://t.me/superteam_earn_notifications_bot?start=${data}`;
+  };
+
   return (
     <>
       <EmailSettingsModal isOpen={isOpen} onClose={handleClose} />
@@ -169,6 +177,21 @@ export function UserMenu() {
               Email Preferences
             </DropdownMenuItem>
           )}
+
+          <SupportFormDialog>
+            <DropdownMenuItem
+              className="text-sm tracking-tight text-slate-500"
+              onSelect={() => {
+                const win = window.open(getTelegramBotURL(), '_blank');
+                if (win != null) {
+                  win.focus();
+                }
+                posthog.capture('telegram notification_user menu');
+              }}
+            >
+              Telegram Notifications
+            </DropdownMenuItem>
+          </SupportFormDialog>
 
           <SupportFormDialog>
             <DropdownMenuItem
