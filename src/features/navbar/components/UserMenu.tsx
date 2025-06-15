@@ -111,7 +111,7 @@ export function UserMenu() {
           {user?.isTalentFilled && (
             <>
               <DropdownMenuItem asChild>
-                <Link
+                <a
                   href={`/t/${user?.username}`}
                   onClick={() => {
                     posthog.capture('profile_user menu');
@@ -122,7 +122,7 @@ export function UserMenu() {
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
-                <Link
+                <a
                   href={`/t/${user?.username}/edit`}
                   onClick={() => {
                     posthog.capture('edit profile_user menu');
@@ -162,7 +162,7 @@ export function UserMenu() {
                   className="text-sm tracking-tight text-slate-500"
                 >
                   Create New Sponsor
-                </a>
+                </Link>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
             </div>
@@ -182,7 +182,7 @@ export function UserMenu() {
 
           {/* NEW: Telegram Bot Integration */}
           <DropdownMenuItem asChild>
-            <Link
+            <a
               href={telegramBotLink}
               target="_blank"
               rel="noopener noreferrer"
