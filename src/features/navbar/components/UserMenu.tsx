@@ -111,7 +111,7 @@ export function UserMenu() {
           {user?.isTalentFilled && (
             <>
               <DropdownMenuItem asChild>
-                <a
+                <Link
                   href={`/t/${user?.username}`}
                   onClick={() => {
                     posthog.capture('profile_user menu');
@@ -119,10 +119,10 @@ export function UserMenu() {
                   className="text-sm tracking-tight text-slate-500"
                 >
                   Profile
-                </a>
+                </Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
-                <a
+                <Link
                   href={`/t/${user?.username}/edit`}
                   onClick={() => {
                     posthog.capture('edit profile_user menu');
@@ -130,14 +130,14 @@ export function UserMenu() {
                   className="text-sm tracking-tight text-slate-500"
                 >
                   Edit Profile
-                </a>
+                </Link>
               </DropdownMenuItem>
             </>
           )}
 
           {!!user?.currentSponsorId && (
             <DropdownMenuItem asChild>
-              <a
+              <Link
                 href="/dashboard/listings"
                 onClick={() => {
                   posthog.capture('sponsor dashboard_user menu');
@@ -145,7 +145,7 @@ export function UserMenu() {
                 className="text-sm tracking-tight text-slate-500"
               >
                 Dashboard
-              </a>
+              </Link>
             </DropdownMenuItem>
           )}
 
@@ -157,7 +157,7 @@ export function UserMenu() {
                 God Mode
               </DropdownMenuLabel>
               <DropdownMenuItem asChild>
-                <a
+                <Link
                   href="/new/sponsor"
                   className="text-sm tracking-tight text-slate-500"
                 >
@@ -182,7 +182,7 @@ export function UserMenu() {
 
           {/* NEW: Telegram Bot Integration */}
           <DropdownMenuItem asChild>
-            <a
+            <Link
               href={telegramBotLink}
               target="_blank"
               rel="noopener noreferrer"
