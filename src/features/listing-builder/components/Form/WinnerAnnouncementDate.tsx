@@ -1,4 +1,3 @@
-import dayjs from 'dayjs';
 import { InfoIcon } from 'lucide-react';
 import { useEffect } from 'react';
 import { useWatch } from 'react-hook-form';
@@ -12,6 +11,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Tooltip } from '@/components/ui/tooltip';
+import { dayjs } from '@/utils/dayjs';
 
 import { useListingForm } from '../../hooks';
 import { DEADLINE_FORMAT } from './Deadline';
