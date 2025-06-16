@@ -32,6 +32,7 @@ const allowedFields = [
   'skills',
   'slug',
   'deadline',
+  'commitmentDate',
   'templateId',
   'pocSocials',
   'applicationType',
