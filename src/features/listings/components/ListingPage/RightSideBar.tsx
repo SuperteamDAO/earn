@@ -293,6 +293,7 @@ export function RightSideBar({
               region={listing.region}
               requirements={listing.requirements}
               pocSocials={listing.pocSocials}
+              commitmentDate={listing.commitmentDate}
               Hackathon={listing.Hackathon}
             />
           </div>

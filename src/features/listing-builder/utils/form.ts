@@ -113,6 +113,7 @@ export const cleanTemplate = (
   reTemplate.compensationType = prevValues.compensationType;
   reTemplate.rewards = prevValues.rewards || undefined;
   reTemplate.deadline = prevValues.deadline;
+  reTemplate.commitmentDate = prevValues.commitmentDate;
   reTemplate.maxBonusSpots = prevValues.maxBonusSpots || undefined;
   reTemplate.minRewardAsk = prevValues.minRewardAsk || undefined;
   reTemplate.maxRewardAsk = prevValues.maxRewardAsk || undefined;
@@ -149,6 +150,15 @@ export function transformListingToFormListing(
     deadline:
       listing.deadline ||
       dayjs().add(7, 'day').format(DEADLINE_FORMAT).replace('Z', ''),
+    commitmentDate:
+      listing.commitmentDate ||
+      dayjs(
+        listing.deadline ||
+          dayjs().add(7, 'day').format(DEADLINE_FORMAT).replace('Z', ''),
+      )
+        .add(14, 'day')
+        .format(DEADLINE_FORMAT)
+        .replace('Z', ''),
     slug: listing.slug || '',
     type: (listing.type as BountyType) || 'bounty',
     title: listing.title || '',
@@ -200,6 +210,11 @@ export const refineReadyListing = (listing: ListingFormData) => {
   if (listing.deadline) {
     if (!listing.deadline.endsWith('Z'))
       listing.deadline += dayjs().format('Z');
+  }
+
+  if (listing.commitmentDate) {
+    if (!listing.commitmentDate.endsWith('Z'))
+      listing.commitmentDate += dayjs().format('Z');
   }
   return listing;
 };

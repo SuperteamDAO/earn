@@ -15,6 +15,7 @@ export interface Listing {
   applicationLink?: string;
   skills?: Skills;
   deadline?: string;
+  commitmentDate?: string;
   eligibility?: Eligibility[];
   status?: status;
   isActive?: boolean;
