@@ -388,7 +388,6 @@ export default function BountySubmissions({ slug }: Props) {
               submissionsLeft={
                 submissions?.filter((s) => !s.isWinner).length || 0
               }
-              submissions={submissions || []}
             />
           )}
           <SubmissionHeader

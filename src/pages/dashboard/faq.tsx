@@ -120,7 +120,7 @@ After publishing your listing, you'll be prompted to fill out a short verificati
         question: 'What happens if I mark a submission as "Spam"?',
         answer: `Marking a submission as spam deducts one submission credit from the applicant's total credits and flags it in our system.
 <br />
-Read more about Submission Credits <a style="color: blue" href="https://www.notion.so/FAQ-Sponsor-Dashboard-206d3387b100804ea9efc87a7745e565" target="_blank">here</a>.`,
+Read more about Submission Credits <a style="color: blue" href="https://superteamdao.notion.site/submission-credits" target="_blank">here</a>.`,
       },
     ],
   },
@@ -173,7 +173,7 @@ To verify the transaction, the wallet address must match the winner's, and the t
       {
         question:
           'How can I add or remove team members from my sponsor profile?',
-        answer: `Go to <strong>Team Settings</strong> in your dashboard. Use the "<strong>Invite Members</strong>" button to send an invitation email to your teammate to add them as a collaborator. You can also remove members at any time.`,
+        answer: `Go to <a href="/dashboard/team-settings" style="text-decoration: underline;"><strong>Team Settings</strong></a> in your dashboard. Use the "<strong>Invite Members</strong>" button to send an invitation email to your teammate to add them as a collaborator. You can also remove members at any time.`,
       },
     ],
   },
@@ -209,7 +209,7 @@ export default function FAQ() {
                 <h2 className="text-xl font-semibold text-slate-500">
                   {section.title}
                 </h2>
-                <Accordion type="multiple">
+                <Accordion type="single">
                   {section.subsections.map((faq) => (
                     <AccordionItem
                       className="my-5 rounded-lg border border-slate-200 bg-white"

@@ -1,3 +1,4 @@
+import { SubmissionLabels } from '@prisma/client';
 import { useAtom } from 'jotai';
 import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
@@ -77,10 +78,13 @@ export const SubmissionPanel = ({
                 </div>
               </div>
               <div className="ph-no-capture flex w-full items-center justify-end gap-2">
-                <SpamButton
-                  listingSlug={bounty?.slug!}
-                  isMultiSelectOn={!!isMultiSelectOn}
-                />
+                {(selectedSubmission?.status === 'Pending' ||
+                  selectedSubmission?.label === SubmissionLabels.Spam) && (
+                  <SpamButton
+                    listingSlug={bounty?.slug!}
+                    isMultiSelectOn={!!isMultiSelectOn}
+                  />
+                )}
                 {!bounty?.isWinnersAnnounced && !isHackathonPage && (
                   <SelectWinner
                     onWinnersAnnounceOpen={onWinnersAnnounceOpen}

@@ -27,7 +27,6 @@ interface Props {
   bounty: Listing | undefined;
   remainings: { podiums: number; bonus: number } | null;
   submissionsLeft: number;
-  submissions: Array<{ id: string; label?: string }>;
 }
 
 export function PublishResults({
@@ -38,7 +37,6 @@ export function PublishResults({
   bounty,
   remainings,
   submissionsLeft,
-  submissions = [],
 }: Props) {
   const [isPublishingResults, setIsPublishingResults] = useState(false);
   const [isWinnersAnnounced, setIsWinnersAnnounced] = useState(
@@ -225,26 +223,6 @@ export function PublishResults({
                   <AlertDescription className="mt-2 text-[13px] text-slate-700">
                     Publishing before the deadline will close the listing
                     immediately.
-                  </AlertDescription>
-                </Alert>
-              )}
-
-              {submissions.some(
-                (submission) => submission.label === 'Spam',
-              ) && (
-                <Alert>
-                  <AlertTriangle className="-mt-1 size-4" />
-                  <AlertTitle className="text-slate-800">
-                    {
-                      submissions.filter(
-                        (submission) => submission.label === 'Spam',
-                      ).length
-                    }{' '}
-                    Spam Submission(s)
-                  </AlertTitle>
-                  <AlertDescription className="mt-2 text-[13px] text-slate-700">
-                    Marked submissions will result in credit penalties for
-                    applicants.
                   </AlertDescription>
                 </Alert>
               )}

@@ -299,22 +299,24 @@ export const SubmissionHeader = ({
         </div>
       )}
 
-      {bounty?.isWinnersAnnounced && activeTab === 'submissions' && (
-        <ShinyButton
-          animate={true}
-          classNames={{
-            span: 'bg-brand-purple text-white font-semibold',
-          }}
-          onClick={() => {
-            router.push(
-              `/dashboard/listings/${bounty?.slug}/submissions?tab=payments`,
-            );
-          }}
-        >
-          <Check className="size-4" />
-          Pay Winners
-        </ShinyButton>
-      )}
+      {bounty?.isWinnersAnnounced &&
+        activeTab === 'submissions' &&
+        !bounty?.isFndnPaying && (
+          <ShinyButton
+            animate={true}
+            classNames={{
+              span: 'bg-brand-purple text-white font-semibold',
+            }}
+            onClick={() => {
+              router.push(
+                `/dashboard/listings/${bounty?.slug}/submissions?tab=payments`,
+              );
+            }}
+          >
+            <Check className="size-4" />
+            Pay Winners
+          </ShinyButton>
+        )}
 
       {activeTab === 'payments' && (
         <Button
