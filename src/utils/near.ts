@@ -134,6 +134,8 @@ export async function createSputnikProposal(
   ) {
     const depositInYocto = BigInt(125) * BigInt(10) ** BigInt(21);
 
+    // We need to run this prior to a proposal, so if we would hit nonce issue, on retry, it should work as we
+    // have done that already...
     await account.functionCall({
       contractId: token.mintAddress,
       methodName: 'storage_deposit',
