@@ -7,7 +7,7 @@ import { VerifiedBadgeLarge } from '@/components/shared/VerifiedBadge';
 import { LocalImage } from '@/components/ui/local-image';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tooltip } from '@/components/ui/tooltip';
-import { PDTG } from '@/constants/Telegram';
+import { ABTG } from '@/constants/Telegram';
 import { useUser } from '@/store/user';
 
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
@@ -167,7 +167,7 @@ export function Banner({
       <div className="mb-6 w-[60%] max-w-[400px] rounded-md border border-slate-200 bg-indigo-50 px-8 py-5 text-white">
         <a
           className="ph-no-capture no-underline"
-          href={PDTG}
+          href={ABTG}
           target="_blank"
           rel="noopener noreferrer"
           onClick={() => posthog.capture('message pratik_sponsor')}
@@ -177,7 +177,7 @@ export function Banner({
               <LocalImage
                 className="mr-3 h-[3.3rem] w-[3.2rem]"
                 alt="message pratik"
-                src={'/assets/sponsor/pratik.webp'}
+                src={'/assets/sponsor/abhishek.webp'}
               />
               <div>
                 <p className="font-semibold whitespace-nowrap text-slate-900">
