@@ -1,6 +1,6 @@
 import debounce from 'lodash.debounce';
 import { Search } from 'lucide-react';
-import { useCallback, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { Input } from '@/components/ui/input';
 
@@ -13,17 +13,25 @@ interface Props {
 export function SearchInput({ onSearch, isLoading, currSearch }: Props) {
   const [value, setValue] = useState(currSearch || '');
 
-  const debouncedSearch = useCallback(
-    debounce((searchValue: string) => {
+  // Store the debounced function in a ref
+  const debouncedSearchRef = useRef<
+    (((searchValue: string) => void) & { cancel?: () => void }) | undefined
+  >(undefined);
+
+  useEffect(() => {
+    debouncedSearchRef.current = debounce((searchValue: string) => {
       onSearch(searchValue);
-    }, 500),
-    [onSearch],
-  );
+    }, 500);
+
+    return () => {
+      debouncedSearchRef.current?.cancel?.();
+    };
+  }, [onSearch]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
     setValue(newValue);
-    debouncedSearch(newValue);
+    debouncedSearchRef.current?.(newValue);
   };
 
   return (

@@ -8,6 +8,18 @@ const withPWA = require('next-pwa')({
   disable: process.env.NODE_ENV === 'development',
   register: true,
   skipWaiting: true,
+  runtimeCaching: [
+    {
+      urlPattern: /^\/docs-keep\//,
+      handler: 'NetworkOnly',
+      method: 'POST',
+    },
+    {
+      urlPattern: /^\/docs-keep\//,
+      handler: 'NetworkOnly',
+      method: 'GET',
+    },
+  ],
 });
 
 const baseCsp = `
@@ -96,11 +108,11 @@ const nextConfig: NextConfig = {
   async rewrites() {
     return [
       {
-        source: '/ingest/static/:path*',
+        source: '/docs-keep/static/:path*',
         destination: 'https://us-assets.i.posthog.com/static/:path*',
       },
       {
-        source: '/ingest/:path*',
+        source: '/docs-keep/:path*',
         destination: 'https://us.i.posthog.com/:path*',
       },
     ];

@@ -18,8 +18,8 @@ import { type Listing } from '../../types';
 import { getListingIcon } from '../../utils/getListingIcon';
 import { ListingTabLink } from './ListingTabLink';
 import { RegionLabel } from './RegionLabel';
+import { SecondaryOptions } from './SecondaryOptions';
 import { ListingHeaderSeparator } from './Separator';
-import { ShareListing } from './ShareListing';
 import { StatusBadge } from './StatusBadge';
 import { SubscribeListing } from './SubscribeListing';
 
@@ -212,7 +212,7 @@ export function ListingHeader({
         {listing.id && (
           <div className="flex items-center gap-2">
             <SubscribeListing isTemplate={isTemplate} id={listing.id} />
-            <ShareListing source="listing" listing={listing} />
+            <SecondaryOptions listing={listing} />
           </div>
         )}
       </div>

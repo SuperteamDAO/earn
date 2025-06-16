@@ -84,9 +84,9 @@ export function Templates() {
     !isEditing;
 
   const [open, setOpen] = useState(false);
-  // useEffect(() => {
-  //   setOpen(router.pathname === '/dashboard/new' && type !== 'hackathon');
-  // }, [router.pathname]);
+  useEffect(() => {
+    setOpen(router.pathname === '/dashboard/new' && type !== 'hackathon');
+  }, [router.pathname]);
 
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
   const [selectedTemplate, setSelectedTemplate] =

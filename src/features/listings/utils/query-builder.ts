@@ -99,24 +99,38 @@ function getOrderBy(
   const { sortBy, order } = args;
   const oppositeOrder = order === 'asc' ? 'desc' : 'asc';
 
+  let primarySort: Prisma.BountiesOrderByWithRelationInput;
+
   switch (sortBy) {
     case 'Date':
       if (status === 'review') {
-        return { deadline: { sort: oppositeOrder, nulls: 'last' } };
+        primarySort = { deadline: { sort: oppositeOrder, nulls: 'last' } };
       } else if (status === 'completed') {
-        return { winnersAnnouncedAt: { sort: oppositeOrder, nulls: 'last' } };
+        primarySort = {
+          winnersAnnouncedAt: { sort: oppositeOrder, nulls: 'last' },
+        };
+      } else {
+        primarySort = { deadline: { sort: order, nulls: 'last' } };
       }
-      return { deadline: { sort: order, nulls: 'last' } };
+      break;
 
     case 'Prize':
-      return { usdValue: { sort: order, nulls: 'last' } };
+      primarySort = { usdValue: { sort: order, nulls: 'last' } };
+      break;
 
     case 'Submissions':
-      return { Submission: { _count: order } };
+      primarySort = { Submission: { _count: order } };
+      break;
 
     default:
-      return { deadline: { sort: order, nulls: 'last' } };
+      primarySort = { deadline: { sort: order, nulls: 'last' } };
+      break;
   }
+
+  // add isFeatured prioritization only for default sorting (date + asc)
+  const isDefaultSort = sortBy === 'Date' && order === 'asc';
+
+  return isDefaultSort ? [{ isFeatured: 'desc' }, primarySort] : primarySort;
 }
 
 export async function buildListingQuery(

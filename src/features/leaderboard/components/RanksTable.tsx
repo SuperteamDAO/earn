@@ -41,7 +41,6 @@ export function RanksTable({
   loading,
   search,
 }: Props) {
-  console.log('ranking - ', rankings);
   const { user } = useUser();
   const posthog = usePostHog();
 

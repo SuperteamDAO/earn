@@ -36,6 +36,7 @@ import { POC } from './Form/POC';
 import { RewardsSheet } from './Form/Rewards/Sheet';
 import { Skills } from './Form/Skills';
 import { TitleAndType } from './Form/TitleAndType';
+import { WinnerAnnouncementDate } from './Form/WinnerAnnouncementDate';
 import { ListingBuilderFormLayout } from './layout/ListingBuilderFormLayout';
 import { ListingSuccessModal } from './Modals/ListingSuccessModal';
 import { PreviewListingModal } from './Modals/PreviewListingModal';
@@ -120,9 +121,10 @@ function ListingEditor({
                   <TitleAndType />
                   <DescriptionAndTemplate />
                 </div>
-                <div className="col-span-3 space-y-6">
+                <div className="sticky top-20 col-span-3 h-fit space-y-6">
                   <RewardsSheet />
                   <Deadline />
+                  <WinnerAnnouncementDate />
                   <Skills />
                   <POC />
                   {/* <EligibilityQuestions /> */}
