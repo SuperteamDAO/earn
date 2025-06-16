@@ -18,5 +18,9 @@ interface SponsorType {
   st?: boolean;
   isActive?: boolean;
   isArchived?: boolean;
+  nearTreasury?: {
+    dao: string;
+    frontend: string;
+  };
 }
 export type { SponsorType };

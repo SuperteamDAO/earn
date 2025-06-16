@@ -73,6 +73,7 @@ interface SocialInputProps {
   classNames?: {
     input?: string;
   };
+  withIcon?: boolean;
 }
 export const SocialInput = ({
   control,
@@ -84,12 +85,12 @@ export const SocialInput = ({
   formDescription,
   height,
   classNames,
+  withIcon = true,
 }: SocialInputProps) => {
   const social = useMemo(
     () => socials.find((s) => s.name === socialName),
     [socials, socialName],
   );
-  const Icon = social?.icon;
   return (
     <FormField
       control={control}
@@ -117,8 +118,8 @@ export const SocialInput = ({
               >
                 <FormLabel className="relative">
                   <span className="sr-only">{name}</span>
-                  {Icon && (
-                    <Icon
+                  {withIcon && social?.icon && (
+                    <social.icon
                       className={cn(
                         'mr-3 h-5 w-5 text-slate-600',
                         // socialName === 'twitter' && 'h-[1.125rem] w-[1.125rem]'
@@ -172,8 +173,8 @@ export const SocialInput = ({
                   />
                 </FormControl>
               </div>
+              <FormMessage className="pt-1" />
             </div>
-            <FormMessage className="pt-1" />
           </FormItem>
         );
       }}

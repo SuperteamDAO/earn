@@ -25,7 +25,7 @@ import { api } from '@/lib/api';
 import { authOptions } from '@/pages/api/auth/[...nextauth]';
 import { getBountyUrl, getSubmissionUrl } from '@/utils/bounty-urls';
 import { cn } from '@/utils/cn';
-import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
+import { getURLSanitized } from '@/utils/getURLSanitized';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
 import { truncateString } from '@/utils/truncateString';
 import { getURL } from '@/utils/validUrl';
@@ -46,6 +46,7 @@ import {
 import { Details } from '@/features/sponsor-dashboard/components/Submissions/Details';
 import { colorMap } from '@/features/sponsor-dashboard/utils/statusColorMap';
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
+import TreasuryStatus from '@/features/treasury/components/TreasuryStatus';
 
 function Content({
   bounty: bountyB,
@@ -214,14 +215,18 @@ function Content({
                 </div>
                 {submission?.isWinner &&
                   submission?.winnerPosition &&
-                  submission?.isPaid &&
-                  submission?.paymentDetails?.link && (
+                  ((submission?.isPaid && submission?.paymentDetails?.link) ||
+                    submission.paymentDetails?.treasury?.link) && (
                     <div className="ph-no-capture hidden items-center justify-end gap-2 md:flex">
                       <Button
                         className="text-slate-600"
                         onClick={() => {
                           window.open(
-                            submission?.paymentDetails?.link,
+                            getURLSanitized(
+                              submission?.paymentDetails?.link ??
+                                submission.paymentDetails?.treasury?.link ??
+                                '',
+                            ),
                             '_blank',
                           );
                         }}
@@ -251,6 +256,19 @@ function Content({
                   )}
               </div>
             </div>
+
+            {submission.paymentDetails?.treasury && (
+              <div className="ml-auto flex w-fit px-4 py-1 text-xs">
+                <TreasuryStatus
+                  treasury={submission.paymentDetails?.treasury}
+                  submissionId={submission.id}
+                  submissionIsPaid={submission.isPaid}
+                  updateSubmission={() => {
+                    refetch();
+                  }}
+                />
+              </div>
+            )}
 
             <div className="flex flex-col gap-3 py-[1rem] md:flex-row md:items-center md:gap-5">
               {!submission?.user?.private && (
@@ -315,13 +333,6 @@ function Content({
                       link={submission?.user?.website || ''}
                     />
                   </div>
-                  {(bounty?.type === 'project' ||
-                    bounty?.type === 'sponsorship') && (
-                    <p className="whitespace-nowrap text-sm text-slate-400">
-                      ${formatNumberWithSuffix(submission?.totalEarnings || 0)}{' '}
-                      Earned
-                    </p>
-                  )}
                   {submission?.isPaid && submission?.paymentDate && (
                     <div className="flex items-center">
                       <p className="text-sm text-slate-400">

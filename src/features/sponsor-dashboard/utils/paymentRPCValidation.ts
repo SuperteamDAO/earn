@@ -1,5 +1,5 @@
-import { type FinalExecutionOutcome } from '@near-js/types';
 import * as nearApi from 'near-api-js';
+import { type FinalExecutionOutcome } from 'near-api-js/lib/providers';
 
 import { type Token } from '@/constants/tokenList';
 import logger from '@/lib/logger';

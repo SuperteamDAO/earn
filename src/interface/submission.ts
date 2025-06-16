@@ -22,6 +22,11 @@ interface SubmissionWithUser {
   paymentDetails?: {
     txId?: string;
     link?: string;
+    treasury?: {
+      link: string;
+      proposalId: number;
+      dao: string;
+    };
   };
   rewardInUSD: number;
   isActive: boolean;

@@ -1,4 +1,5 @@
 import { TooltipArrow } from '@radix-ui/react-tooltip';
+import { useQuery } from '@tanstack/react-query';
 import { useAtom } from 'jotai';
 import {
   AlertTriangle,
@@ -6,8 +7,10 @@ import {
   Copy,
   DollarSign,
   ExternalLink,
+  Link2,
   Pencil,
 } from 'lucide-react';
+import Image from 'next/image';
 import Link from 'next/link';
 import React, { type Dispatch, type SetStateAction, useState } from 'react';
 import { MdOutlineAccountBalanceWallet, MdOutlineMail } from 'react-icons/md';
@@ -15,6 +18,11 @@ import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
 import { KycComponent } from '@/components/ui/KycComponent';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
 import { Tooltip } from '@/components/ui/tooltip';
 import { useClipboard } from '@/hooks/use-clipboard';
 import type { SubmissionWithUser } from '@/interface/submission';
@@ -22,6 +30,7 @@ import { getSubmissionUrl } from '@/utils/bounty-urls';
 import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
+import { getURLSanitized } from '@/utils/getURLSanitized';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
 import { truncateString } from '@/utils/truncateString';
 
@@ -32,9 +41,12 @@ import {
   Website,
 } from '@/features/social/components/SocialIcons';
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
+import TreasuryStatus from '@/features/treasury/components/TreasuryStatus';
 
+import { treasuryProposalStatusQuery } from '../../../treasury/queries/treasuryProposalStatus';
 import { selectedSubmissionAtom } from '../../atoms';
 import { Details } from './Details';
+import NearTreasuryPaymentModal from './Modals/NearTreasuryPaymentModal';
 import { UpdatePaymentDateModal } from './Modals/UpdatePaymentDateModal';
 import { SelectLabel } from './SelectLabel';
 import { SelectWinner } from './SelectWinner';
@@ -52,6 +64,99 @@ interface Props {
   isMultiSelectOn?: boolean;
   onVerifyPayment: () => void;
 }
+
+interface PaymentButtonProps {
+  treasury?: {
+    link: string;
+    proposalId: number;
+    dao: string;
+  };
+  proposalStatus?: string;
+  isLoadingProposalStatus: boolean;
+  onVerifyPayment: () => void;
+  setIsNearTreasuryPaymentModalOpen: Dispatch<SetStateAction<boolean>>;
+}
+
+export const PaymentButton = ({
+  treasury,
+  proposalStatus,
+  isLoadingProposalStatus,
+  onVerifyPayment,
+  setIsNearTreasuryPaymentModalOpen,
+}: PaymentButtonProps) => {
+  if (isLoadingProposalStatus) {
+    return <></>;
+  }
+
+  if (proposalStatus === 'InProgress' || proposalStatus === 'Approved') {
+    return (
+      <Link
+        href={getURLSanitized(treasury?.link || '')}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <Button
+          variant="outline"
+          className="ph-no-capture min-w-[120px] text-slate-500"
+        >
+          View Pending Request
+          <ExternalLink className="ml-2 h-4 w-4" />
+        </Button>
+      </Link>
+    );
+  }
+
+  return (
+    <Popover>
+      <PopoverTrigger>
+        <Button className="ph-no-capture min-w-[120px] disabled:cursor-not-allowed">
+          <DollarSign className="mr-2 h-4 w-4" />
+          Complete Reward Payment
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent
+        side="bottom"
+        align="end"
+        className="flex w-full max-w-md flex-col gap-2 p-2"
+      >
+        <Button
+          onClick={() => onVerifyPayment()}
+          variant="ghost"
+          className="flex h-full w-full items-start rounded-sm px-4 py-3"
+        >
+          <Link2 className="mr-3 h-4 w-4" />
+          <div className="flex flex-col text-left">
+            <p>Add Payment Link</p>
+            <p className="text-wrap text-xs text-muted-foreground">
+              Pay the contributor using your preferred method, then paste the
+              transaction link here.
+            </p>
+          </div>
+        </Button>
+        <Button
+          onClick={() => setIsNearTreasuryPaymentModalOpen(true)}
+          variant="ghost"
+          className="flex h-full w-full items-start justify-start rounded-sm pb-3 pl-2 pr-4 pt-[10px]"
+        >
+          <Image
+            src="/assets/NEARTreasuryLogo.svg"
+            alt="Near Treasury Logo"
+            width={24}
+            height={24}
+            className="mr-3"
+          />
+          <div className="flex flex-col text-left">
+            <p>Pay with NEAR Treasury</p>
+            <p className="text-wrap text-xs text-muted-foreground">
+              Create a payment request through NEAR Treasury and approve it
+              on-chain.
+            </p>
+          </div>
+        </Button>
+      </PopoverContent>
+    </Popover>
+  );
+};
 
 export const SubmissionPanel = ({
   bounty,
@@ -87,6 +192,9 @@ export const SubmissionPanel = ({
     getSubmissionUrl(selectedSubmission, bounty),
   );
 
+  const [isNearTreasuryPaymentModalOpen, setIsNearTreasuryPaymentModalOpen] =
+    useState(false);
+
   const handleCopySubmissionLink = () => {
     if (selectedSubmission?.id) {
       onCopySubmissionLink();
@@ -112,13 +220,18 @@ export const SubmissionPanel = ({
       });
     }
   };
-
   const [isUpdatePaymentDateModalOpen, setIsUpdatePaymentDateModalOpen] =
     useState(false);
 
   const handleUpdatePaymentDate = () => {
     setIsUpdatePaymentDateModalOpen(true);
   };
+
+  const treasury = selectedSubmission?.paymentDetails?.treasury;
+
+  const { data: proposalStatus, isLoading: isLoadingProposalStatus } = useQuery(
+    treasuryProposalStatusQuery(treasury?.dao, treasury?.proposalId ?? 0),
+  );
 
   return (
     <>
@@ -165,13 +278,15 @@ export const SubmissionPanel = ({
                     selectedSubmission?.winnerPosition &&
                     !selectedSubmission?.isPaid &&
                     (bounty?.isWinnersAnnounced || isSponsorship) && (
-                      <Button
-                        className="ph-no-capture min-w-[120px] disabled:cursor-not-allowed"
-                        onClick={() => onVerifyPayment()}
-                      >
-                        <DollarSign className="mr-2 h-4 w-4" />
-                        Verify Transaction
-                      </Button>
+                      <PaymentButton
+                        treasury={treasury}
+                        proposalStatus={proposalStatus}
+                        isLoadingProposalStatus={isLoadingProposalStatus}
+                        onVerifyPayment={onVerifyPayment}
+                        setIsNearTreasuryPaymentModalOpen={
+                          setIsNearTreasuryPaymentModalOpen
+                        }
+                      />
                     )}
                   {selectedSubmission?.status === 'Pending' &&
                     !selectedSubmission?.isPaid && (
@@ -185,7 +300,9 @@ export const SubmissionPanel = ({
                         className="text-slate-500"
                         onClick={() => {
                           window.open(
-                            selectedSubmission?.paymentDetails?.link,
+                            getURLSanitized(
+                              selectedSubmission?.paymentDetails?.link ?? '',
+                            ),
                             '_blank',
                           );
                         }}
@@ -256,32 +373,52 @@ export const SubmissionPanel = ({
                     )}
                 </div>
               </div>
-              {!!remainings && !isProject && !isSponsorship && (
-                <div className="ml-auto flex w-fit px-4 py-1 text-xs">
-                  {!!(remainings.bonus > 0 || remainings.podiums > 0) ? (
-                    <p className="flex items-center rounded-md bg-red-100 px-5 py-1 text-[#f55151]">
-                      <AlertTriangle className="mr-1 inline-block h-3 w-3" />
-                      {remainings.podiums > 0 && (
-                        <>
-                          {remainings.podiums}{' '}
-                          {remainings.podiums === 1 ? 'Winner' : 'Winners'}{' '}
-                        </>
-                      )}
-                      {remainings.bonus > 0 && (
-                        <>
-                          {remainings.bonus}{' '}
-                          {remainings.bonus === 1 ? 'Bonus' : 'Bonus'}{' '}
-                        </>
-                      )}
-                      Remaining
-                    </p>
-                  ) : (
-                    <p className="rounded-md bg-green-100 px-3 py-1 text-[#48CB6D]">
-                      All winners selected
-                    </p>
-                  )}
-                </div>
-              )}
+              <div className="ml-auto flex w-fit px-4 py-1 text-xs">
+                {!!remainings && !isProject && !isSponsorship && (
+                  <>
+                    {!!(remainings.bonus > 0 || remainings.podiums > 0) ? (
+                      <p className="flex items-center rounded-md bg-red-100 px-5 py-1 text-[#f55151]">
+                        <AlertTriangle className="mr-1 inline-block h-3 w-3" />
+                        {remainings.podiums > 0 && (
+                          <>
+                            {remainings.podiums}{' '}
+                            {remainings.podiums === 1 ? 'Winner' : 'Winners'}{' '}
+                          </>
+                        )}
+                        {remainings.bonus > 0 && (
+                          <>
+                            {remainings.bonus}{' '}
+                            {remainings.bonus === 1 ? 'Bonus' : 'Bonus'}{' '}
+                          </>
+                        )}
+                        Remaining
+                      </p>
+                    ) : (
+                      <p className="rounded-md bg-green-100 px-3 py-1 text-[#48CB6D]">
+                        All winners selected
+                      </p>
+                    )}
+                  </>
+                )}
+                <TreasuryStatus
+                  treasury={treasury}
+                  submissionId={selectedSubmission?.id ?? ''}
+                  submissionIsPaid={selectedSubmission?.isPaid ?? false}
+                  updateSubmission={() => {
+                    setSelectedSubmission((prev) =>
+                      prev && prev.id === selectedSubmission?.id
+                        ? {
+                            ...prev,
+                            isPaid: true,
+                            paymentDetails: {
+                              link: prev.paymentDetails?.link,
+                            },
+                          }
+                        : prev,
+                    );
+                  }}
+                />
+              </div>
 
               <div className="flex items-center gap-5 px-5 py-2">
                 {selectedSubmission?.user?.email && (
@@ -404,6 +541,29 @@ export const SubmissionPanel = ({
           );
         }}
       />
+      {selectedSubmission && (
+        <NearTreasuryPaymentModal
+          isOpen={isNearTreasuryPaymentModalOpen}
+          onClose={() => setIsNearTreasuryPaymentModalOpen(false)}
+          submissionId={selectedSubmission?.id || ''}
+          onSuccess={(
+            treasuryLink: string,
+            proposalId: number,
+            dao: string,
+          ) => {
+            setSelectedSubmission((prev) =>
+              prev && prev.id === selectedSubmission?.id
+                ? {
+                    ...prev,
+                    paymentDetails: {
+                      treasury: { link: treasuryLink, proposalId, dao },
+                    },
+                  }
+                : prev,
+            );
+          }}
+        />
+      )}
     </>
   );
 };
