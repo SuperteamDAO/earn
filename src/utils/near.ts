@@ -23,12 +23,12 @@ if (NEAR_ACCOUNT_PRIVATE_KEY !== '') {
 
 const jsonProviders = [
   new nearApi.providers.JsonRpcProvider(
-    { url: 'https://free.rpc.fastnear.com' }, // RPC URL
+    { url: 'https://free.rpc.fastnear.com' },
     {
-      retries: 3, // Number of retries before giving up on a request
-      backoff: 2, // Backoff factor for the retry delay
-      wait: 200, // Wait time between retries in milliseconds
-    }, // Retry options
+      retries: 3,
+      backoff: 2,
+      wait: 200,
+    },
   ),
 ];
 const provider = new nearApi.providers.FailoverRpcProvider(jsonProviders);
@@ -120,15 +120,13 @@ export async function createSputnikProposal(
       methodName: 'get_policy',
     });
 
-  const calls: unknown[] = [
-    {
-      contractId: dao,
-      methodName: 'add_proposal',
-      args,
-      gas: BigInt(300000000000000),
-      attachedDeposit: BigInt(daoPolicy.proposal_bond || 0),
-    },
-  ];
+  const call = {
+    contractId: dao,
+    methodName: 'add_proposal',
+    args,
+    gas: BigInt(300000000000000),
+    attachedDeposit: BigInt(daoPolicy.proposal_bond || 0),
+  };
 
   if (
     token.tokenSymbol !== 'NEAR' &&
@@ -136,7 +134,7 @@ export async function createSputnikProposal(
   ) {
     const depositInYocto = BigInt(125) * BigInt(10) ** BigInt(21);
 
-    calls.push({
+    await account.functionCall({
       contractId: token.mintAddress,
       methodName: 'storage_deposit',
       args: {
@@ -148,11 +146,12 @@ export async function createSputnikProposal(
     });
   }
 
-  const result = await Promise.all(
-    calls.map((call) => account.functionCall(call as any)),
-  );
+  // Let's sleep for 1 second to avoid nonce race condition
+  await new Promise((resolve) => setTimeout(resolve, 2000));
 
-  return getProposalId(result[0]!);
+  const result = await account.functionCall(call);
+
+  return getProposalId(result);
 }
 
 export async function getProposalId(result: FinalExecutionOutcome) {
