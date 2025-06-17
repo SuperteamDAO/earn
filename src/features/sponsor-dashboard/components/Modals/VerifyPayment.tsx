@@ -15,7 +15,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { PDTG } from '@/constants/Telegram';
+import { ABTG } from '@/constants/Telegram';
 import { tokenList } from '@/constants/tokenList';
 import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
@@ -332,7 +332,7 @@ export const VerifyPaymentModal = ({
 
             <div className="mx-auto flex flex-col items-center gap-2">
               <a
-                href={PDTG}
+                href={ABTG}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-center"
@@ -507,7 +507,7 @@ export const VerifyPaymentModal = ({
 
                 {status === 'retry' && (
                   <a
-                    href={PDTG}
+                    href={ABTG}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-center"
