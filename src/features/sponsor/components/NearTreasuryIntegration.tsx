@@ -21,7 +21,10 @@ import { Form } from '@/components/ui/form';
 import { type SponsorType } from '@/interface/sponsor';
 
 import { SocialInput } from '@/features/social/components/SocialInput';
-import { isNearnIoRequestorQuery } from '@/features/sponsor-dashboard/queries/isNearnIoRequestor';
+import {
+  isNearnIoRequestorQuery,
+  isValidDaoPolicyQuery,
+} from '@/features/sponsor-dashboard/queries/isNearnIoRequestor';
 
 import {
   nearTreasuryFormSchema,
@@ -132,6 +135,10 @@ export default function NearTreasuryIntegration({
     isNearnIoRequestorQuery(sponsorData?.nearTreasury?.dao),
   );
 
+  const { data: isValidDaoPolicy, isLoading: isLoadingDaoPolicy } = useQuery(
+    isValidDaoPolicyQuery(sponsorData?.nearTreasury?.dao),
+  );
+
   useEffect(() => {
     if (sponsorData) {
       form.reset({
@@ -206,6 +213,16 @@ export default function NearTreasuryIntegration({
             NEARN no longer has permission to submit proposals to your NEAR
             Treasury. Please check your DAO settings to ensure nearn-io.near has
             create proposal permission
+          </p>
+        </div>
+      )}
+      {!isLoadingDaoPolicy && !isValidDaoPolicy && (
+        <div className="mt-4 flex items-center gap-3 bg-red-50 p-3 text-red-500">
+          <TriangleAlert className="h-full w-5" />
+          <p className="h-full w-full text-sm">
+            The configured DAO policy is not compatible with NEARN. The proposal
+            bond is larger than 1 NEAR and cannot be used. Please update the DAO
+            policy to a lower value to keep using NEAR Treasury integration.
           </p>
         </div>
       )}

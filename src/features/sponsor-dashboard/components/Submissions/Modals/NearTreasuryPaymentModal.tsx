@@ -26,7 +26,10 @@ import { useUser } from '@/store/user';
 import { getURLSanitized } from '@/utils/getURLSanitized';
 
 import { useCreateTreasuryProposal } from '@/features/sponsor-dashboard/mutations/useCreateTreasuryProposal';
-import { isNearnIoRequestorQuery } from '@/features/sponsor-dashboard/queries/isNearnIoRequestor';
+import {
+  isNearnIoRequestorQuery,
+  isValidDaoPolicyQuery,
+} from '@/features/sponsor-dashboard/queries/isNearnIoRequestor';
 import { sponsorQuery } from '@/features/sponsor-dashboard/queries/sponsor';
 
 interface NearTreasuryPaymentModalProps {
@@ -48,6 +51,9 @@ export default function NearTreasuryPaymentModal({
   const { data: sponsorData } = useQuery(sponsorQuery(user?.currentSponsorId));
   const { data: isRequestor } = useQuery(
     isNearnIoRequestorQuery(sponsorData?.nearTreasury?.dao),
+  );
+  const { data: isValidDaoPolicy } = useQuery(
+    isValidDaoPolicyQuery(sponsorData?.nearTreasury?.dao),
   );
   const [modalState, setModalState] = useState<ModalState>('not_requestor');
   const [treasuryLink, setTreasuryLink] = useState<string>('');
@@ -78,12 +84,12 @@ export default function NearTreasuryPaymentModal({
 
   useEffect(() => {
     if (!isOpen) return;
-    if (!isRequestor) {
+    if (!isRequestor || !isValidDaoPolicy) {
       setModalState('not_requestor');
     } else {
       handleCreateProposal();
     }
-  }, [sponsorData, isRequestor, isOpen]);
+  }, [sponsorData, isRequestor, isValidDaoPolicy, isOpen]);
 
   const renderContent = () => {
     switch (modalState) {

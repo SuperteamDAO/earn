@@ -4,6 +4,7 @@ import { z } from 'zod';
 import {
   extractDaoFromTreasury,
   isNearnIoRequestor,
+  isValidDaoPolicy,
   NEAR_ACCOUNT,
 } from '@/utils/near';
 import { getURL } from '@/utils/validUrl';
@@ -76,6 +77,16 @@ export const nearTreasuryFormSchema = z
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: `${NEAR_ACCOUNT} doesn't have rights to add proposals in the provided NEAR Treasury`,
+          path: ['nearTreasuryFrontend'],
+        });
+      }
+    }
+
+    if (!!data.nearTreasuryFrontend && data.nearTreasuryDao) {
+      if (!(await isValidDaoPolicy(data.nearTreasuryDao))) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: `The proposal bond is larger than 1 NEAR. The NEAR Treasury integration is not compatible with NEARN.`,
           path: ['nearTreasuryFrontend'],
         });
       }

@@ -3,6 +3,7 @@ import { Account, Near } from 'near-api-js';
 import { type FinalExecutionOutcome } from 'near-api-js/lib/providers';
 import { type ExecutionStatus } from 'near-api-js/lib/providers/provider';
 import { type KeyPairString } from 'near-api-js/lib/utils';
+import { parseNearAmount } from 'near-api-js/lib/utils/format';
 
 import { type Token } from '@/constants/tokenList';
 
@@ -11,6 +12,8 @@ export const NEAR_ACCOUNT =
 export const NEAR_ACCOUNT_PRIVATE_KEY =
   process.env.NEAR_ACCOUNT_PRIVATE_KEY || '';
 export const NEAR_SOCIAL_ACCOUNT = 'social.near';
+
+export const MAX_NEAR_DEPOSIT = parseNearAmount('1');
 
 const keyStore = new nearApi.keyStores.InMemoryKeyStore();
 if (NEAR_ACCOUNT_PRIVATE_KEY !== '') {
@@ -155,6 +158,24 @@ async function prepareProposal(
   };
 }
 
+export async function getDAOPolicy(
+  dao: string,
+): Promise<{ proposal_bond: string | undefined }> {
+  const account = await near.account(NEAR_ACCOUNT);
+  return account.viewFunction({
+    contractId: dao,
+    methodName: 'get_policy',
+  });
+}
+
+export async function isValidDaoPolicy(dao: string): Promise<boolean> {
+  const dao_policy = await getDAOPolicy(dao);
+  return (
+    !!dao_policy.proposal_bond &&
+    BigInt(dao_policy.proposal_bond) <= BigInt(MAX_NEAR_DEPOSIT ?? 0)
+  );
+}
+
 export async function createSputnikProposal(
   dao: string,
   description: string,
@@ -164,12 +185,7 @@ export async function createSputnikProposal(
 ) {
   const proposal = await prepareProposal(description, token, receiver, amount);
   const account = await near.account(NEAR_ACCOUNT);
-
-  const daoPolicy: { proposal_bond: string | undefined } =
-    await account.viewFunction({
-      contractId: dao,
-      methodName: 'get_policy',
-    });
+  const daoPolicy = await getDAOPolicy(dao);
 
   const call = {
     contractId: dao,
@@ -178,6 +194,10 @@ export async function createSputnikProposal(
     gas: BigInt(300000000000000),
     attachedDeposit: BigInt(daoPolicy.proposal_bond || 0),
   };
+
+  if (BigInt(daoPolicy.proposal_bond ?? 0) > BigInt(MAX_NEAR_DEPOSIT ?? 0)) {
+    throw new Error('Deposit is larger than 1 NEAR and cannot be used');
+  }
 
   const result = await account.functionCall(call);
   return getProposalId(result);
