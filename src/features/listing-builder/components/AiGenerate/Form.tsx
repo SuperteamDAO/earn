@@ -1,6 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useAtomValue } from 'jotai';
 import { Loader2 } from 'lucide-react';
+import { motion } from 'motion/react';
 import { useEffect, useState } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
 import TextareaAutosize from 'react-textarea-autosize';
@@ -14,6 +15,7 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
+import { easeOutQuad } from '@/utils/easings';
 
 import { hackathonsAtom } from '../../atoms';
 import {
@@ -117,11 +119,11 @@ export function AiGenerateForm({
   };
 
   return (
-    <div className="space-y-4">
+    <div className="mt-2 h-full space-y-4 px-6">
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(handleSubmit)}
-          className="relative space-y-3"
+          className="flex h-full flex-col justify-between gap-3"
         >
           <FormField
             control={form.control}
@@ -243,7 +245,16 @@ export function AiGenerateForm({
               </FormItem>
             )}
           />
-          <div className="sticky bottom-0 mt-auto flex items-center justify-end gap-4 bg-white py-6 pt-2">
+          <motion.div
+            className="sticky bottom-0 mt-auto flex items-center justify-end gap-4 bg-white py-6 pt-2"
+            key="form-footer"
+            initial={{
+              y: 75,
+            }}
+            animate={{ y: 0 }}
+            exit={{ y: 75 }}
+            transition={{ duration: 0.2, ease: easeOutQuad, delay: 0.2 }}
+          >
             <Button
               type="button"
               variant="outline"
@@ -269,7 +280,7 @@ export function AiGenerateForm({
               )}
               {isSubmitting ? 'Generating ' : 'Generate Preview'}
             </Button>
-          </div>
+          </motion.div>
         </form>
       </Form>
     </div>

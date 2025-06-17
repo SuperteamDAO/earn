@@ -1,16 +1,16 @@
 import { type BountyType } from '@prisma/client';
 import { Baseline, Link2, Loader2, LoaderCircle } from 'lucide-react';
-import { useEffect, useMemo, useRef } from 'react';
+import { motion } from 'motion/react';
+import { useMemo } from 'react';
 import { useWatch } from 'react-hook-form';
 
 import { type TRewardsGenerateResponse } from '@/app/api/sponsor-dashboard/ai-generate/rewards/route';
 import { MarkdownRenderer } from '@/components/shared/MarkdownRenderer';
 import { MinimalTiptapEditor } from '@/components/tiptap';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { tokenList } from '@/constants/tokenList';
 import { type Skills } from '@/interface/skills';
-import { Wand } from '@/svg/wand';
+import { easeOutQuad } from '@/utils/easings';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 
 import { Twitter } from '@/features/social/components/SocialIcons';
@@ -73,7 +73,6 @@ interface AiGenerateResultProps {
 export function AiGenerateResult({
   description,
   token,
-  tokenUsdValue,
   isDescriptionLoading,
   isDescriptionError,
   title,
@@ -94,9 +93,7 @@ export function AiGenerateResult({
   isRewardsPending,
   onInsert,
   onBack,
-  onClose,
 }: AiGenerateResultProps) {
-  const bottomRef = useRef<HTMLDivElement>(null);
   const listingForm = useListingForm();
   const type = useWatch({
     control: listingForm.control,
@@ -119,16 +116,6 @@ export function AiGenerateResult({
     ],
   );
 
-  useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'auto' });
-  }, [description, eligibilityQuestions, isDescriptionLoading]);
-
-  useEffect(() => {
-    setTimeout(() => {
-      bottomRef.current?.scrollIntoView({ behavior: 'auto' });
-    }, 1);
-  }, [isDescriptionLoading]);
-
   let loadingText = '';
   if (isDescriptionLoading) {
     loadingText = 'Generating Description';
@@ -137,50 +124,7 @@ export function AiGenerateResult({
   }
 
   return (
-    <div className="space-y-4">
-      <div>
-        <span className="flex items-start gap-2">
-          <span className="flex items-center gap-2">
-            <Wand />
-            <h2 className="text-xl font-semibold">
-              Use AI to generate your description
-            </h2>
-          </span>
-          <Badge
-            variant="secondary"
-            className="ml-auto h-fit px-1.5 py-0.5 text-[0.625rem] font-semibold uppercase"
-          >
-            {type}
-          </Badge>
-        </span>
-        <p className="font-medium text-gray-500">
-          Answer a few short questions and we will generate your description for
-          you
-        </p>
-      </div>
-
-      <div className="mt-4 space-y-3 text-sm text-slate-700">
-        <h3 className="text-sm font-medium text-slate-600">Token</h3>
-        <div className="flex w-full items-center gap-4 rounded-md border border-slate-200 bg-slate-50 py-3 pl-3">
-          <TokenLabel
-            symbol={token}
-            showIcon
-            classNames={{
-              amount: 'font-medium text-base ml-0',
-              symbol: 'font-medium text-base mr-0',
-              icon: 'mr-0',
-            }}
-          />
-          <span className="text-slate-500">
-            1 {token} ≈ $
-            {tokenUsdValue.toLocaleString(undefined, {
-              maximumFractionDigits: 4,
-            })}{' '}
-            USD
-          </span>
-        </div>
-      </div>
-
+    <div className="mt-2 h-160 space-y-4 px-6">
       <div>
         <h3 className="text-sm font-medium text-slate-600">Description</h3>
         <div className="mt-2 rounded-md border bg-white px-4 py-2">
@@ -368,12 +312,27 @@ export function AiGenerateResult({
         </div>
       )}
 
-      <div ref={bottomRef} />
-
-      <div className="mt-4 mb-4 flex flex-col items-center">
+      <motion.div
+        className="sticky bottom-0 mt-auto flex items-center justify-end gap-4 bg-white py-6 pt-2"
+        key="result-footer"
+        initial={{
+          y: 75,
+        }}
+        animate={{ y: 0 }}
+        exit={{ y: 75 }}
+        transition={{ duration: 0.2, ease: easeOutQuad, delay: 0.3 }}
+      >
+        <Button
+          variant="outline"
+          className="w-58"
+          onClick={onBack}
+          disabled={isActionsDisabled}
+        >
+          Edit Prompt
+        </Button>
         <Button
           onClick={onInsert}
-          className="w-full bg-indigo-500 hover:bg-indigo-600"
+          className="w-58"
           disabled={isActionsDisabled}
         >
           {isActionsDisabled ? (
@@ -382,28 +341,10 @@ export function AiGenerateResult({
               {loadingText}
             </span>
           ) : (
-            'Insert'
+            'Insert into listing'
           )}
         </Button>
-        <div className="mt-2 flex w-full justify-center gap-2">
-          <Button variant="outline" className="w-full" onClick={onClose}>
-            Close
-          </Button>
-          <Button
-            variant="outline"
-            className="w-full"
-            onClick={onBack}
-            disabled={isActionsDisabled}
-          >
-            Go Back
-          </Button>
-        </div>
-        {isActionsDisabled && (
-          <span className="mt-2 w-full rounded-md bg-slate-100 py-1 text-center text-sm text-slate-500">
-            Estimated time ~1m
-          </span>
-        )}
-      </div>
+      </motion.div>
     </div>
   );
 }
