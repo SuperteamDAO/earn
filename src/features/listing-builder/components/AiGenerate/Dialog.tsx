@@ -1,11 +1,14 @@
 import { useCompletion } from '@ai-sdk/react';
 import { type BountyType } from '@prisma/client';
+import { Cross2Icon } from '@radix-ui/react-icons';
 import { useMutation } from '@tanstack/react-query';
 import { useAtom, useSetAtom } from 'jotai';
 import { marked } from 'marked';
+import { AnimatePresence, motion } from 'motion/react';
 import { usePostHog } from 'posthog-js/react';
-import { type ReactNode, useEffect, useState } from 'react';
+import { type ReactNode, useCallback, useEffect, useState } from 'react';
 import { useWatch } from 'react-hook-form';
+import { toast } from 'sonner';
 
 import {
   type RewardInputSchema,
@@ -15,13 +18,17 @@ import { type TTitleGenerateResponse } from '@/app/api/sponsor-dashboard/ai-gene
 import { type TTokenGenerateResponse } from '@/app/api/sponsor-dashboard/ai-generate/token/route';
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { tokenList } from '@/constants/tokenList';
 import { type Skills } from '@/interface/skills';
 import { api } from '@/lib/api';
+import { cn } from '@/utils/cn';
+import { easeOutQuad } from '@/utils/easings';
 
 import { fetchTokenUSDValue } from '@/features/wallet/utils/fetchTokenUSDValue';
 
@@ -33,7 +40,10 @@ import {
 import { useListingForm } from '../../hooks';
 import { type TEligibilityQuestion } from '../../types/schema';
 import { calculateTotalRewardsForPodium } from '../../utils/rewards';
+import { ProgressiveBlurOut } from './extras/ProgressiveBlurOut';
+import { ProgressiveOpacityOut } from './extras/ProgressiveOpacityOut';
 import { AiGenerateForm } from './Form';
+import { AiGenerateLoading } from './Loading';
 import { AiGenerateResult } from './Result';
 import { type AiGenerateFormValues } from './schema';
 
@@ -48,7 +58,7 @@ export function AiGenerateDialog({ children }: AIDescriptionDialogProps) {
     control: listingForm.control,
     name: 'type',
   });
-  const [stage, setStage] = useState<'form' | 'result'>('form');
+  const [stage, setStage] = useState<'form' | 'loading' | 'result'>('form');
   const [open, setOpen] = useAtom(isAutoGenerateOpenAtom);
   const setDescriptionKey = useSetAtom(descriptionKeyAtom);
   const setSkillsKey = useSetAtom(skillsKeyAtom);
@@ -59,6 +69,15 @@ export function AiGenerateDialog({ children }: AIDescriptionDialogProps) {
     rewards: '',
     requirements: '',
   });
+  const [tokenUsdValue, setTokenUsdValue] = useState<number>(1);
+
+  const [scrollEl, setScrollEl] = useState<HTMLDivElement | null>(null);
+
+  const scrollCallbackRef = useCallback((node: HTMLDivElement | null) => {
+    if (node !== null) {
+      setScrollEl(node);
+    }
+  }, []);
 
   const {
     complete: completeDescription,
@@ -74,9 +93,6 @@ export function AiGenerateDialog({ children }: AIDescriptionDialogProps) {
   });
 
   useEffect(() => {
-    if (stage !== 'result' && description.length > 0) {
-      setStage('result');
-    }
     const awaitedParse = async () => {
       const html = await marked.parse(description || '', { gfm: true });
 
@@ -98,6 +114,7 @@ export function AiGenerateDialog({ children }: AIDescriptionDialogProps) {
     isIdle: isTitleIdle,
     isError: isTitleError,
     isPending: isTitlePending,
+    isSuccess: isTitleSuccess,
   } = useMutation({
     mutationFn: async ({
       description,
@@ -121,6 +138,7 @@ export function AiGenerateDialog({ children }: AIDescriptionDialogProps) {
     isIdle: isEligibilityQuestionsIdle,
     isError: isEligibilityQuestionsError,
     isPending: isEligibilityQuestionsPending,
+    isSuccess: isEligibilityQuestionsSuccess,
   } = useMutation({
     mutationFn: async ({
       description,
@@ -150,6 +168,7 @@ export function AiGenerateDialog({ children }: AIDescriptionDialogProps) {
     isIdle: isRewardsIdle,
     isError: isRewardsError,
     isPending: isRewardsPending,
+    isSuccess: isRewardsSuccess,
   } = useMutation({
     mutationFn: async (input: RewardInputSchema) =>
       (
@@ -167,6 +186,7 @@ export function AiGenerateDialog({ children }: AIDescriptionDialogProps) {
     isIdle: isSkillsIdle,
     isError: isSkillsError,
     isPending: isSkillsPending,
+    isSuccess: isSkillsSuccess,
   } = useMutation({
     mutationFn: async ({ description }: { description: string }) =>
       (
@@ -192,7 +212,23 @@ export function AiGenerateDialog({ children }: AIDescriptionDialogProps) {
       ).data,
   });
 
+  const isAllSuccess =
+    type === 'hackathon'
+      ? isSkillsSuccess && isTitleSuccess && isRewardsSuccess
+      : isSkillsSuccess &&
+        isTitleSuccess &&
+        isRewardsSuccess &&
+        isEligibilityQuestionsSuccess;
+
+  useEffect(() => {
+    if (isAllSuccess) {
+      const audio = new Audio('/assets/auto-generate-complete.wav');
+      audio.play();
+    }
+  }, [isAllSuccess]);
+
   const handleFormSubmit = async (data: AiGenerateFormValues) => {
+    setStage('loading');
     posthog.capture('generate_auto-generate');
     setFormData(data);
 
@@ -206,6 +242,7 @@ export function AiGenerateDialog({ children }: AIDescriptionDialogProps) {
     const tokenUsdAmount = tokenItem
       ? await fetchTokenUSDValue(tokenItem.mintAddress)
       : 1;
+    setTokenUsdValue(tokenUsdAmount);
 
     const completedDescription = await completeDescription('', {
       body: {
@@ -219,26 +256,38 @@ export function AiGenerateDialog({ children }: AIDescriptionDialogProps) {
     });
 
     if (completedDescription) {
-      callTitle({
-        description: completedDescription,
-        type,
-      });
-      if (type !== 'hackathon') {
-        callEligibilityQuestions({
+      const promises = [
+        callTitle({
           description: completedDescription,
           type,
-          inputRequirements: data.requirements,
-        });
-      }
-      callRewards({
-        description: completedDescription,
-        inputReward: data.rewards,
-        type,
-        token,
-        tokenUsdValue: tokenUsdAmount,
-      });
+        }),
+        ...(type !== 'hackathon'
+          ? [
+              callEligibilityQuestions({
+                description: completedDescription,
+                type,
+                inputRequirements: data.requirements,
+              }),
+            ]
+          : []),
+        callRewards({
+          description: completedDescription,
+          inputReward: data.rewards,
+          type,
+          token,
+          tokenUsdValue: tokenUsdAmount,
+        }),
+        callSkills({ description: completedDescription }),
+      ];
 
-      callSkills({ description: completedDescription });
+      try {
+        await Promise.all(promises);
+        setStage('result');
+      } catch (error) {
+        console.error('Error generating content:', error);
+        setStage('form');
+        toast.error('Generation failed, please try again.');
+      }
     }
   };
 
@@ -283,100 +332,170 @@ export function AiGenerateDialog({ children }: AIDescriptionDialogProps) {
         {children}
       </DialogTrigger>
       <DialogContent
-        className="sm:max-w-160"
-        hideCloseIcon
+        className={cn('gap-0 border-0 p-0 focus-visible:ring-0 sm:max-w-160')}
+        style={{
+          borderImageWidth: '0px !important',
+        }}
+        onEscapeKeyDown={(e) => e.preventDefault()}
+        onPointerDownOutside={(e) => e.preventDefault()}
+        onInteractOutside={(e) => e.preventDefault()}
         aria-describedby="Auto Generate Listing"
+        hideCloseIcon
       >
-        <DialogTitle className="sr-only">Auto Generate Listing</DialogTitle>
-        {stage === 'form' ? (
-          <AiGenerateForm
-            onSubmit={handleFormSubmit}
-            initialData={formData}
-            resetForm={resetForm}
-          />
-        ) : (
-          <AiGenerateResult
-            token={token?.token || 'USDC'}
-            isDescriptionLoading={isDescriptionLoading}
-            description={parsedDescription}
-            isDescriptionError={Boolean(isDescriptionError)}
-            title={title?.title || ''}
-            isTitleIdle={isTitleIdle}
-            isTitleError={isTitleError}
-            isTitlePending={isTitlePending}
-            eligibilityQuestions={eligibilityQuestions || []}
-            isEligibilityQuestionsIdle={isEligibilityQuestionsIdle}
-            isEligibilityQuestionsError={isEligibilityQuestionsError}
-            isEligibilityQuestionsPending={isEligibilityQuestionsPending}
-            skills={skills || []}
-            isSkillsIdle={isSkillsIdle}
-            isSkillsError={isSkillsError}
-            isSkillsPending={isSkillsPending}
-            rewards={rewards}
-            isRewardsIdle={isRewardsIdle}
-            isRewardsError={isRewardsError}
-            isRewardsPending={isRewardsPending}
-            onInsert={() => {
-              posthog.capture('insert_auto-generate');
-              listingForm.setValue('description', parsedDescription);
-              listingForm.setValue('eligibility', eligibilityQuestions);
-              if (title?.title) listingForm.setValue('title', title?.title);
-              if (skills) {
-                listingForm.setValue('skills', skills);
-              }
-              if (rewards) {
-                listingForm.setValue(
-                  'compensationType',
-                  rewards.compensationType,
-                );
-                listingForm.setValue('token', token?.token || 'USDC');
-                if (rewards.maxBonusSpots)
-                  listingForm.setValue(
-                    'maxBonusSpots',
-                    rewards.maxBonusSpots || 0,
-                  );
-                if (rewards.compensationType === 'fixed') {
-                  listingForm.setValue('rewards', rewards.rewards || {});
-                  const totalReward = calculateTotalRewardsForPodium(
-                    rewards?.rewards || {},
-                    rewards?.maxBonusSpots || 0,
-                  );
-                  listingForm.setValue('rewardAmount', totalReward);
-                }
-                if (rewards.compensationType === 'range') {
-                  listingForm.setValue(
-                    'minRewardAsk',
-                    rewards.minRewardAsk || 0,
-                  );
-                  listingForm.setValue(
-                    'maxRewardAsk',
-                    rewards.maxRewardAsk || 0,
-                  );
-                }
-              }
-              setDescriptionKey((s) => {
-                if (typeof s === 'number') return s + 1;
-                else return 1;
-              });
-              setSkillsKey((s) => {
-                if (typeof s === 'number') return s + 1;
-                else return 1;
-              });
-              listingForm.saveDraft();
-              setOpen(false);
-            }}
-            onBack={() => {
-              posthog.capture('back_auto-generate');
-              setStage('form');
-              resetEligibilityQuestions();
-              resetRewards();
-              resetSkills();
-              resetToken();
-              resetTitle();
-              setDescription('');
-            }}
-          />
-        )}
+        <div className="flex justify-between border-b px-6 py-4">
+          <h2 className="text-base font-semibold text-slate-600">
+            Use AI to generate your description
+          </h2>
+          <DialogClose className="-mr-2 rounded-md px-2 focus-visible:ring-1 focus-visible:ring-slate-400 focus-visible:outline-0">
+            <Cross2Icon className="h-4 w-4 text-slate-400" />
+            <span className="sr-only">Close</span>
+          </DialogClose>
+        </div>
+        <ScrollArea
+          type="scroll"
+          className="relative max-h-160 py-0"
+          viewportProps={{
+            ref: scrollCallbackRef,
+            className: 'h-full *:h-full',
+          }}
+        >
+          <div className={cn('h-full pt-2', stage === 'loading' && 'pt-0')}>
+            <DialogTitle className="sr-only">Auto Generate Listing</DialogTitle>
+
+            <AnimatePresence mode="popLayout">
+              {stage === 'form' && (
+                <motion.div
+                  key="form"
+                  initial={{
+                    opacity: 0,
+                    y: -20,
+                    filter: 'blur(8px)',
+                    scale: 0.95,
+                  }}
+                  animate={{ opacity: 1, y: 0, filter: 'blur(0px)', scale: 1 }}
+                  exit={{ opacity: 0, y: 20, filter: 'blur(8px)', scale: 0.9 }}
+                  transition={{ duration: 0.3, ease: easeOutQuad }}
+                  className="h-full"
+                >
+                  <AiGenerateForm
+                    onSubmit={handleFormSubmit}
+                    initialData={formData}
+                    resetForm={resetForm}
+                    onClose={() => setOpen(false)}
+                  />
+                </motion.div>
+              )}
+              {stage === 'loading' && <AiGenerateLoading />}
+              {stage === 'result' && (
+                <motion.div
+                  key="result"
+                  initial={{
+                    opacity: 0,
+                    y: -20,
+                    filter: 'blur(8px)',
+                    scale: 0.95,
+                  }}
+                  animate={{ opacity: 1, y: 0, filter: 'blur(0px)', scale: 1 }}
+                  exit={{ opacity: 0, y: 20, filter: 'blur(8px)', scale: 0.9 }}
+                  transition={{ duration: 0.3, ease: easeOutQuad }}
+                >
+                  <AiGenerateResult
+                    token={token?.token || 'USDC'}
+                    tokenUsdValue={tokenUsdValue}
+                    isDescriptionLoading={isDescriptionLoading}
+                    description={parsedDescription}
+                    isDescriptionError={Boolean(isDescriptionError)}
+                    title={title?.title || ''}
+                    isTitleIdle={isTitleIdle}
+                    isTitleError={isTitleError}
+                    isTitlePending={isTitlePending}
+                    eligibilityQuestions={eligibilityQuestions || []}
+                    isEligibilityQuestionsIdle={isEligibilityQuestionsIdle}
+                    isEligibilityQuestionsError={isEligibilityQuestionsError}
+                    isEligibilityQuestionsPending={
+                      isEligibilityQuestionsPending
+                    }
+                    skills={skills || []}
+                    isSkillsIdle={isSkillsIdle}
+                    isSkillsError={isSkillsError}
+                    isSkillsPending={isSkillsPending}
+                    rewards={rewards}
+                    isRewardsIdle={isRewardsIdle}
+                    isRewardsError={isRewardsError}
+                    isRewardsPending={isRewardsPending}
+                    onInsert={() => {
+                      posthog.capture('insert_auto-generate');
+                      listingForm.setValue('description', parsedDescription);
+                      listingForm.setValue('eligibility', eligibilityQuestions);
+                      if (title?.title)
+                        listingForm.setValue('title', title?.title);
+                      if (skills) {
+                        listingForm.setValue('skills', skills);
+                      }
+                      if (rewards) {
+                        listingForm.setValue(
+                          'compensationType',
+                          rewards.compensationType,
+                        );
+                        listingForm.setValue('token', token?.token || 'USDC');
+                        if (rewards.maxBonusSpots)
+                          listingForm.setValue(
+                            'maxBonusSpots',
+                            rewards.maxBonusSpots || 0,
+                          );
+                        if (rewards.compensationType === 'fixed') {
+                          listingForm.setValue(
+                            'rewards',
+                            rewards.rewards || {},
+                          );
+                          const totalReward = calculateTotalRewardsForPodium(
+                            rewards?.rewards || {},
+                            rewards?.maxBonusSpots || 0,
+                          );
+                          listingForm.setValue('rewardAmount', totalReward);
+                        }
+                        if (rewards.compensationType === 'range') {
+                          listingForm.setValue(
+                            'minRewardAsk',
+                            rewards.minRewardAsk || 0,
+                          );
+                          listingForm.setValue(
+                            'maxRewardAsk',
+                            rewards.maxRewardAsk || 0,
+                          );
+                        }
+                      }
+                      setDescriptionKey((s) => {
+                        if (typeof s === 'number') return s + 1;
+                        else return 1;
+                      });
+                      setSkillsKey((s) => {
+                        if (typeof s === 'number') return s + 1;
+                        else return 1;
+                      });
+                      listingForm.saveDraft();
+                      setOpen(false);
+                    }}
+                    onBack={() => {
+                      posthog.capture('back_auto-generate');
+                      setStage('form');
+                      resetEligibilityQuestions();
+                      resetRewards();
+                      resetSkills();
+                      resetToken();
+                      resetTitle();
+                      setDescription('');
+                    }}
+                    onClose={() => setOpen(false)}
+                  />
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+
+          {stage === 'form' && <ProgressiveOpacityOut scrollEl={scrollEl} />}
+          {stage === 'result' && <ProgressiveBlurOut scrollEl={scrollEl} />}
+        </ScrollArea>
       </DialogContent>
     </Dialog>
   );
