@@ -1,10 +1,11 @@
 import { useCompletion } from '@ai-sdk/react';
 import { type BountyType } from '@prisma/client';
+import { Cross2Icon } from '@radix-ui/react-icons';
 import { useMutation } from '@tanstack/react-query';
 import { useAtom, useSetAtom } from 'jotai';
 import { marked } from 'marked';
 import { usePostHog } from 'posthog-js/react';
-import { type ReactNode, useEffect, useState } from 'react';
+import { type ReactNode, useCallback, useEffect, useState } from 'react';
 import { useWatch } from 'react-hook-form';
 
 import {
@@ -15,6 +16,7 @@ import { type TTitleGenerateResponse } from '@/app/api/sponsor-dashboard/ai-gene
 import { type TTokenGenerateResponse } from '@/app/api/sponsor-dashboard/ai-generate/token/route';
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogTitle,
   DialogTrigger,
@@ -61,6 +63,46 @@ export function AiGenerateDialog({ children }: AIDescriptionDialogProps) {
     requirements: '',
   });
   const [tokenUsdValue, setTokenUsdValue] = useState<number>(1);
+
+  const [scrollEl, setScrollEl] = useState<HTMLDivElement | null>(null);
+  const [fadeOpacity, setFadeOpacity] = useState(1);
+  const FADE_DISTANCE = 64;
+
+  const scrollCallbackRef = useCallback((node: HTMLDivElement | null) => {
+    if (node !== null) {
+      setScrollEl(node);
+    }
+  }, []);
+
+  const updateFade = () => {
+    if (!scrollEl) return;
+    const isScrollable = scrollEl.scrollHeight > scrollEl.clientHeight;
+    if (!isScrollable) {
+      setFadeOpacity(0);
+      return;
+    }
+    const distanceFromBottom =
+      scrollEl.scrollHeight - scrollEl.scrollTop - scrollEl.clientHeight;
+    const clamped = Math.max(0, Math.min(distanceFromBottom, FADE_DISTANCE));
+    const opacity = clamped / FADE_DISTANCE;
+    setFadeOpacity(opacity);
+  };
+
+  useEffect(() => {
+    if (!scrollEl) return;
+    const handleScroll = () => updateFade();
+    scrollEl.addEventListener('scroll', handleScroll);
+
+    const resizeObserver = new ResizeObserver(() => updateFade());
+    resizeObserver.observe(scrollEl);
+
+    updateFade();
+
+    return () => {
+      scrollEl.removeEventListener('scroll', handleScroll);
+      resizeObserver.disconnect();
+    };
+  }, [scrollEl]);
 
   const {
     complete: completeDescription,
@@ -308,15 +350,29 @@ export function AiGenerateDialog({ children }: AIDescriptionDialogProps) {
         {children}
       </DialogTrigger>
       <DialogContent
-        className="p-0 sm:max-w-160"
-        hideCloseIcon
+        className="border-0 p-0 sm:max-w-180"
         onEscapeKeyDown={(e) => e.preventDefault()}
         onPointerDownOutside={(e) => e.preventDefault()}
         onInteractOutside={(e) => e.preventDefault()}
         aria-describedby="Auto Generate Listing"
+        hideCloseIcon
       >
-        <ScrollArea className="max-h-196 px-6 py-0">
-          <div className="py-2 pt-6">
+        <div className="flex justify-between border-b px-6 py-4">
+          <h2 className="text-xl font-semibold text-slate-600">
+            Use AI to generate your description
+          </h2>
+          <DialogClose className="">
+            <Cross2Icon className="h-4 w-4 text-slate-400" />
+            <span className="sr-only">Close</span>
+          </DialogClose>
+        </div>
+        <ScrollArea
+          className="relative max-h-196 px-6 py-0"
+          viewportProps={{
+            ref: scrollCallbackRef,
+          }}
+        >
+          <div className="pt-2">
             <DialogTitle className="sr-only">Auto Generate Listing</DialogTitle>
             {stage === 'form' ? (
               <AiGenerateForm
@@ -411,6 +467,11 @@ export function AiGenerateDialog({ children }: AIDescriptionDialogProps) {
               />
             )}
           </div>
+
+          <div
+            className="pointer-events-none absolute bottom-16 left-0 h-24 w-full bg-gradient-to-t from-white to-transparent"
+            style={{ opacity: fadeOpacity, transition: 'opacity 0.2s' }}
+          />
         </ScrollArea>
       </DialogContent>
     </Dialog>

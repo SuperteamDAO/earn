@@ -5,7 +5,6 @@ import { useEffect, useState } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
 import TextareaAutosize from 'react-textarea-autosize';
 
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -15,7 +14,6 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import { Wand } from '@/svg/wand';
 
 import { hackathonsAtom } from '../../atoms';
 import {
@@ -37,7 +35,6 @@ export function AiGenerateForm({
   onSubmit,
   initialData,
   resetForm,
-  onClose,
 }: DescriptionFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -121,29 +118,11 @@ export function AiGenerateForm({
 
   return (
     <div className="space-y-4">
-      <div>
-        <span className="flex items-start gap-2">
-          <span className="flex items-center gap-2">
-            <Wand />
-            <h2 className="text-xl font-semibold">
-              Use AI to generate your description
-            </h2>
-          </span>
-          <Badge
-            variant="secondary"
-            className="ml-auto h-fit px-1.5 py-0.5 text-[0.625rem] font-semibold uppercase"
-          >
-            {type}
-          </Badge>
-        </span>
-        <p className="font-medium text-gray-500">
-          Answer a few short questions and we will generate your description for
-          you
-        </p>
-      </div>
-
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
+        <form
+          onSubmit={form.handleSubmit(handleSubmit)}
+          className="relative space-y-3"
+        >
           <FormField
             control={form.control}
             name="companyDescription"
@@ -264,51 +243,32 @@ export function AiGenerateForm({
               </FormItem>
             )}
           />
-          <div className="mt-auto mb-4 flex flex-col items-center gap-2">
-            {isSubmitting && (
-              <span className="mt-2 w-full rounded-md bg-slate-100 py-1 text-center text-sm text-slate-500">
-                Estimated time ~1m
-              </span>
-            )}
+          <div className="sticky bottom-0 mt-auto flex items-center justify-end gap-4 bg-white py-6 pt-2">
             <Button
-              type="submit"
-              className="w-full bg-indigo-500 hover:bg-indigo-600"
-              disabled={isSubmitting}
+              type="button"
+              variant="outline"
+              className="w-58"
+              onClick={() => {
+                form.reset({
+                  companyDescription: '',
+                  scopeOfWork: '',
+                  rewards: '',
+                  requirements: '',
+                });
+                localStorage.removeItem(AUTO_GENERATE_STORAGE_KEY);
+                resetForm();
+              }}
             >
+              Reset asnwers
+            </Button>
+            <Button type="submit" className="w-58" disabled={isSubmitting}>
               {isSubmitting && (
                 <>
                   <Loader2 className="animate-spin" />
                 </>
               )}
-              {isSubmitting ? 'Generating' : 'Generate'}
+              {isSubmitting ? 'Generating ' : 'Generate Preview'}
             </Button>
-            <div className="flex w-full justify-center gap-2">
-              <Button
-                type="button"
-                variant="outline"
-                className="w-full"
-                onClick={() => {
-                  form.reset({
-                    companyDescription: '',
-                    scopeOfWork: '',
-                    rewards: '',
-                    requirements: '',
-                  });
-                  localStorage.removeItem(AUTO_GENERATE_STORAGE_KEY);
-                  resetForm();
-                }}
-              >
-                Reset
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                className="w-full"
-                onClick={onClose}
-              >
-                Close
-              </Button>
-            </div>
           </div>
         </form>
       </Form>
