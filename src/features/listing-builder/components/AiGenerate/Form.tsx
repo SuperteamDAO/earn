@@ -270,7 +270,7 @@ export function AiGenerateForm({
                 resetForm();
               }}
             >
-              Reset asnwers
+              Reset answers
             </Button>
             <Button type="submit" className="w-58" disabled={isSubmitting}>
               {isSubmitting && (

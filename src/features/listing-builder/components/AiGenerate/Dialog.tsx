@@ -346,14 +346,14 @@ export function AiGenerateDialog({ children }: AIDescriptionDialogProps) {
           <h2 className="text-base font-semibold text-slate-600">
             Use AI to generate your description
           </h2>
-          <DialogClose className="rounded-md px-2 focus-visible:ring-1 focus-visible:ring-slate-400 focus-visible:outline-0">
+          <DialogClose className="-mr-2 rounded-md px-2 focus-visible:ring-1 focus-visible:ring-slate-400 focus-visible:outline-0">
             <Cross2Icon className="h-4 w-4 text-slate-400" />
             <span className="sr-only">Close</span>
           </DialogClose>
         </div>
         <ScrollArea
           type="scroll"
-          className="relative h-160 py-0"
+          className="relative max-h-160 py-0"
           viewportProps={{
             ref: scrollCallbackRef,
             className: 'h-full *:h-full',
