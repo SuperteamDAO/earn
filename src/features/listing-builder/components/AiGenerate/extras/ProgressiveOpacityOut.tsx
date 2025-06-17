@@ -26,7 +26,7 @@ export function ProgressiveOpacityOut({ scrollEl, FADE_DISTANCE = 64 }: Props) {
   useEffect(() => {
     if (!scrollEl) return;
     const handleScroll = () => updateFade();
-    scrollEl.addEventListener('scroll', handleScroll);
+    scrollEl.addEventListener('scroll', handleScroll, { passive: true });
 
     const resizeObserver = new ResizeObserver(() => updateFade());
     resizeObserver.observe(scrollEl);

@@ -1,10 +1,14 @@
 import { motion } from 'motion/react';
+import { useId } from 'react';
 
 import { easeOutQuad } from '@/utils/easings';
 
 export function SparkleLoading() {
   const pathData =
     'M23.153 4.78954C23.0472 3.95701 22.3389 3.33301 21.4997 3.33301C20.6604 3.33301 19.9521 3.95701 19.8463 4.78954C19.3095 9.01314 18.1698 12.0573 16.3158 14.1934C14.4868 16.3008 11.7934 17.7173 7.74132 18.3532C6.93051 18.4804 6.33301 19.1789 6.33301 19.9997C6.33301 20.8204 6.93051 21.519 7.74132 21.6462C11.7934 22.282 14.4868 23.6986 16.3158 25.8059C18.1698 27.942 19.3095 30.9862 19.8463 35.2098C19.9521 36.0423 20.6604 36.6663 21.4997 36.6663C22.3389 36.6663 23.0472 36.0423 23.153 35.2098C23.6898 30.9862 24.8295 27.942 26.6835 25.8059C28.5126 23.6986 31.206 22.282 35.258 21.6462C36.0688 21.519 36.6663 20.8204 36.6663 19.9997C36.6663 19.1789 36.0688 18.4804 35.258 18.3532C30.9858 17.6828 28.2893 16.1767 26.5116 14.044C24.7012 11.8721 23.6683 8.84347 23.153 4.78954Z';
+  const id = useId();
+  const radialId = `sparkle-radial-${id}`;
+  const linearId = `sparkle-linear-${id}`;
   return (
     <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
       <g opacity="0.28">
@@ -19,7 +23,7 @@ export function SparkleLoading() {
       </g>
       <motion.path
         d={pathData}
-        fill="url(#paint0_radial_1374_5425)"
+        fill={`url(#${radialId})`}
         animate={{ opacity: [0, 1, 0] }}
         transition={{
           duration: 2,
@@ -29,7 +33,7 @@ export function SparkleLoading() {
       />
       <motion.path
         d={pathData}
-        fill="url(#paint0_linear_1374_5428)"
+        fill={`url(#${linearId})`}
         animate={{ opacity: [0.8, 0, 0.8] }}
         transition={{
           duration: 2,
@@ -39,7 +43,7 @@ export function SparkleLoading() {
       />
       <defs>
         <radialGradient
-          id="paint0_radial_1374_5425"
+          id={radialId}
           cx="0"
           cy="0"
           r="1"
@@ -50,7 +54,7 @@ export function SparkleLoading() {
           <stop offset="1" stop-color="#818CF8" stop-opacity="0" />
         </radialGradient>
         <linearGradient
-          id="paint0_linear_1374_5428"
+          id={linearId}
           x1="21.4997"
           y1="3.33301"
           x2="21.4997"

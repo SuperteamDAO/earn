@@ -42,7 +42,7 @@ export function DescriptionAndTemplate() {
               <div className="flex items-center gap-2">
                 <Templates />
                 <AiGenerateDialog>
-                  <Button className="ph-no-capture h-8 bg-transparent p-0 shadow-none">
+                  <Button className="ph-no-capture h-8 rounded-lg bg-transparent p-0 shadow-none hover:bg-transparent">
                     <div className="group bg-background relative inline-flex h-full overflow-hidden rounded-lg p-[0.125rem] focus:outline-hidden">
                       <span className="absolute inset-[-1000%] animate-[spin_2s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#FF79C1_0%,#76C5FF_50%,#FF79C1_100%)]" />
                       <span className="ph-no-capture bg-background inline-flex h-full w-full cursor-pointer items-center justify-center gap-2 rounded-md px-4 py-1 text-xs font-medium text-slate-500 backdrop-blur-3xl group-hover:bg-slate-50">
