@@ -5,8 +5,7 @@ export const truncatePublicKey = (
   if (publicKey.length <= length) {
     return publicKey;
   }
-  return `${publicKey?.substring(0, length)}....${publicKey?.substring(
-    publicKey.length - length,
-    publicKey?.length,
+  return `${publicKey?.substring(0, length / 2)}....${publicKey?.substring(
+    publicKey.length - length / 2,
   )}`;
 };
