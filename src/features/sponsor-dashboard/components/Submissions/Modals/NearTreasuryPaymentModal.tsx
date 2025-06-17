@@ -89,7 +89,7 @@ export default function NearTreasuryPaymentModal({
     switch (modalState) {
       case 'not_requestor':
         return (
-          <DialogContent>
+          <DialogContent hideCloseIcon>
             <DialogHeader>
               <DialogTitle>Connect your NEAR Treasury account</DialogTitle>
             </DialogHeader>
@@ -98,11 +98,18 @@ export default function NearTreasuryPaymentModal({
               yet. Please visit your Sponsor Profile settings to set it up first
             </DialogDescription>
             <DialogFooter>
-              <Button variant="link" onClick={onClose}>
+              <Button
+                variant="link"
+                onClick={onClose}
+                className="text-slate-500"
+              >
                 Cancel
               </Button>
               <Link href={`/sponsor/edit`}>
-                <Button variant="default">Go to Sponsor Profile</Button>
+                <Button variant="default">
+                  Sponsor Profile{' '}
+                  <ChevronRight className="h-4 w-4" strokeWidth={3} />
+                </Button>
               </Link>
             </DialogFooter>
           </DialogContent>
@@ -110,7 +117,7 @@ export default function NearTreasuryPaymentModal({
 
       case 'loading':
         return (
-          <DialogContent>
+          <DialogContent hideCloseIcon>
             <div className="flex h-full flex-col">
               <div className="flex flex-col py-14">
                 <div className="mb-4 flex justify-center">
@@ -132,7 +139,7 @@ export default function NearTreasuryPaymentModal({
 
       case 'success':
         return (
-          <DialogContent className="p-0">
+          <DialogContent className="p-0" hideCloseIcon>
             <div className="flex h-40 items-center justify-center bg-emerald-50">
               <div className="rounded-full bg-emerald-600 p-3">
                 <Check className="h-6 w-6 text-white" strokeWidth={2} />
@@ -172,8 +179,8 @@ export default function NearTreasuryPaymentModal({
                   rel="noopener noreferrer"
                 >
                   <Button className="w-full">
-                    View Request in NEAR Treasury
-                    <ExternalLink className="ml-2 h-4 w-4" />
+                    View on NEAR Treasury
+                    <ExternalLink className="ml-2 h-4 w-4" strokeWidth={3} />
                   </Button>
                 </Link>
                 <Button
@@ -190,8 +197,8 @@ export default function NearTreasuryPaymentModal({
 
       case 'error':
         return (
-          <DialogContent className="pt-0">
-            <div className="flex items-center justify-center py-16">
+          <DialogContent className="pt-0" hideCloseIcon>
+            <div className="flex items-center justify-center py-10">
               <div className="flex items-center justify-center rounded-full bg-yellow-100 p-3">
                 <div className="rounded-full bg-yellow-600 p-3">
                   <X className="h-6 w-6 text-white" strokeWidth={2} />
@@ -201,18 +208,22 @@ export default function NearTreasuryPaymentModal({
             <div className="mx-auto mt-6 flex max-w-[20rem] flex-col items-center gap-2">
               <DialogTitle>Something went wrong ...</DialogTitle>
               <p className="text-center text-sm text-slate-500">
-                The request was not created. Please try again or contact us.
+                Please try again or{' '}
+                <Link
+                  href={HELP_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline"
+                >
+                  get support
+                </Link>
               </p>
             </div>
-            <div className="mx-auto mt-8 flex flex-col items-center gap-6">
+            <div className="mx-auto mt-8 flex flex-col items-center gap-6 font-bold">
               <Button onClick={() => handleCreateProposal()}>
-                <RefreshCcw className="mr-1 h-4 w-4" /> Try Again
+                <RefreshCcw className="mr-1 h-4 w-4" strokeWidth={3} /> Try
+                Again
               </Button>
-              <Link href={HELP_URL} target="_blank" rel="noopener noreferrer">
-                <Button variant="link" className="text-slate-500">
-                  Think We Made A Mistake? Text Us
-                </Button>
-              </Link>
             </div>
           </DialogContent>
         );
