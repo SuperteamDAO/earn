@@ -115,11 +115,7 @@ export async function POST(request: Request) {
     const prompt = generateListingRewardsPrompt(input);
 
     const { object } = await generateObject({
-      model: openrouter('google/gemini-2.5-pro-preview', {
-        reasoning: {
-          effort: 'medium',
-        },
-      }),
+      model: openrouter('google/gemini-2.5-flash-preview-05-20'),
       system:
         'Your role is to generate proper rewards for listings, strictly adhering to the rules provided with each description and type.',
       prompt,

@@ -1,17 +1,16 @@
 import { type BountyType } from '@prisma/client';
-import { Baseline, Link2, Loader2 } from 'lucide-react';
-import { useEffect, useMemo, useRef } from 'react';
+import { Baseline, Link2, Loader2, LoaderCircle } from 'lucide-react';
+import { motion } from 'motion/react';
+import { useMemo } from 'react';
 import { useWatch } from 'react-hook-form';
 
 import { type TRewardsGenerateResponse } from '@/app/api/sponsor-dashboard/ai-generate/rewards/route';
 import { MarkdownRenderer } from '@/components/shared/MarkdownRenderer';
 import { MinimalTiptapEditor } from '@/components/tiptap';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { tokenList } from '@/constants/tokenList';
 import { type Skills } from '@/interface/skills';
-import { Wand } from '@/svg/wand';
+import { easeOutQuad } from '@/utils/easings';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 
 import { Twitter } from '@/features/social/components/SocialIcons';
@@ -47,6 +46,7 @@ function hasProperRewards(
 interface AiGenerateResultProps {
   description: string;
   token: string;
+  tokenUsdValue: number;
   isDescriptionLoading: boolean;
   isDescriptionError: boolean;
   title: string;
@@ -67,6 +67,7 @@ interface AiGenerateResultProps {
   isRewardsPending: boolean;
   onInsert: () => void;
   onBack: () => void;
+  onClose: () => void;
 }
 
 export function AiGenerateResult({
@@ -93,7 +94,6 @@ export function AiGenerateResult({
   onInsert,
   onBack,
 }: AiGenerateResultProps) {
-  const bottomRef = useRef<HTMLDivElement>(null);
   const listingForm = useListingForm();
   const type = useWatch({
     control: listingForm.control,
@@ -102,247 +102,249 @@ export function AiGenerateResult({
 
   const isActionsDisabled = useMemo(
     () =>
-      isDescriptionLoading || isEligibilityQuestionsPending || isRewardsPending,
-    [isDescriptionLoading, isEligibilityQuestionsPending, isRewardsPending],
+      isDescriptionLoading ||
+      isTitlePending ||
+      isEligibilityQuestionsPending ||
+      isSkillsPending ||
+      isRewardsPending,
+    [
+      isDescriptionLoading,
+      isTitlePending,
+      isEligibilityQuestionsPending,
+      isSkillsPending,
+      isRewardsPending,
+    ],
   );
 
-  useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'auto' });
-  }, [description, eligibilityQuestions, isDescriptionLoading]);
-
-  useEffect(() => {
-    setTimeout(() => {
-      bottomRef.current?.scrollIntoView({ behavior: 'auto' });
-    }, 1);
-  }, [isDescriptionLoading]);
+  let loadingText = '';
+  if (isDescriptionLoading) {
+    loadingText = 'Generating Description';
+  } else {
+    loadingText = 'Generating fields';
+  }
 
   return (
-    <div className="space-y-4">
+    <div className="mt-2 h-160 space-y-4 px-6">
       <div>
-        <span className="flex items-start gap-2">
-          <span className="flex items-center gap-2">
-            <Wand />
-            <h2 className="text-xl font-semibold">
-              Use AI to generate your description
-            </h2>
-          </span>
-          <Badge
-            variant="secondary"
-            className="ml-auto h-fit px-1.5 py-0.5 text-[0.625rem] font-semibold uppercase"
-          >
-            {type}
-          </Badge>
-        </span>
-        <p className="font-medium text-gray-500">
-          Answer a few short questions and we will generate your description for
-          you
-        </p>
-      </div>
-
-      <ScrollArea className="flex max-h-150 min-h-1 flex-col gap-y-4 overflow-y-auto">
-        <div>
-          <h3 className="text-sm font-medium text-slate-600">
-            Generated Result
-          </h3>
-          <div className="mt-2 rounded-md border bg-white px-4 py-2">
-            {isDescriptionLoading ? (
-              <div className="minimal-tiptap-editor tiptap ProseMirror h-min w-full overflow-visible px-0! pb-7">
-                <div className="tiptap ProseMirror listing-description mt-0! px-0!">
-                  <MarkdownRenderer>{description}</MarkdownRenderer>
-                </div>
+        <h3 className="text-sm font-medium text-slate-600">Description</h3>
+        <div className="mt-2 rounded-md border bg-white px-4 py-2">
+          {!description || description.length === 0 ? (
+            <div className="flex animate-pulse items-center gap-2 py-2 text-sm">
+              <LoaderCircle className="h-4 w-4 animate-spin" />
+              <span className="text-gray-500">Thinking…</span>
+            </div>
+          ) : isDescriptionLoading ? (
+            <div className="minimal-tiptap-editor tiptap ProseMirror h-min w-full overflow-visible px-0! pb-7">
+              <div className="tiptap ProseMirror listing-description mt-0! px-0!">
+                <MarkdownRenderer>{description}</MarkdownRenderer>
               </div>
-            ) : (
-              <MinimalTiptapEditor
-                key={isDescriptionLoading ? 1 : 0}
-                value={description}
-                immediatelyRender
-                throttleDelay={0}
-                output="html"
-                editable={false}
-                imageSetting={{
-                  folderName: 'listing-description',
-                  type: 'description',
-                }}
-                className="min-h-0 border-0 shadow-none"
-                editorClassName="!px-0"
-                toolbarClassName="hidden"
-              />
-            )}
-            {isDescriptionError && (
-              <p className="w-full rounded-md bg-slate-100 py-4 text-center text-sm text-slate-600">
-                {`Failed to generate description, please try again later`}
-              </p>
-            )}
-          </div>
+            </div>
+          ) : (
+            <MinimalTiptapEditor
+              key={isDescriptionLoading ? 1 : 0}
+              value={description}
+              immediatelyRender
+              throttleDelay={0}
+              output="html"
+              editable={false}
+              imageSetting={{
+                folderName: 'listing-description',
+                type: 'description',
+              }}
+              className="min-h-0 border-0 shadow-none"
+              editorClassName="!px-0"
+              toolbarClassName="hidden"
+            />
+          )}
+          {isDescriptionError && (
+            <p className="w-full rounded-md bg-slate-100 py-4 text-center text-sm text-slate-600">
+              {`Failed to generate description, please try again later`}
+            </p>
+          )}
         </div>
-        {((isTitleIdle && title.length > 0) ||
-          (!isTitleIdle && !isTitleError)) && (
-          <div className="mt-4 space-y-3 text-sm text-slate-700">
-            <h3 className="text-sm font-medium text-slate-600">Title</h3>
-            {isTitlePending && (
-              <span className="flex animate-pulse items-center justify-center gap-2 rounded-md bg-slate-100 py-4 text-sm text-slate-500">
-                <Loader2 className="size-4 animate-spin" />
-                <p>Generating Title</p>
-              </span>
-            )}
-            {title.length > 0 && (
-              <>
+      </div>
+      {((isTitleIdle && title.length > 0) ||
+        (!isTitleIdle && !isTitleError)) && (
+        <div className="mt-4 space-y-3 text-sm text-slate-700">
+          <h3 className="text-sm font-medium text-slate-600">Title</h3>
+          {isTitlePending && (
+            <span className="flex animate-pulse items-center justify-center gap-2 rounded-md bg-slate-100 py-4 text-sm text-slate-500">
+              <Loader2 className="size-4 animate-spin" />
+              <p>Generating Title</p>
+            </span>
+          )}
+          {title.length > 0 && (
+            <>
+              <div className="flex w-full items-center rounded-md border border-slate-200 bg-slate-50 py-3 pl-3">
+                <p className="font-medium">{title}</p>
+              </div>
+            </>
+          )}
+        </div>
+      )}
+      {((isRewardsIdle && hasProperRewards(rewards)) ||
+        (!isRewardsIdle && !isRewardsError)) && (
+        <div className="mt-4 space-y-3 text-sm text-slate-700">
+          <h3 className="text-sm font-medium text-slate-600">Rewards</h3>
+          {isRewardsPending ? (
+            <span className="flex animate-pulse items-center justify-center gap-2 rounded-md bg-slate-100 py-4 text-sm text-slate-500">
+              <Loader2 className="size-4 animate-spin" />
+              <p>Generating Rewards</p>
+            </span>
+          ) : (
+            <>
+              {!hasProperRewards(rewards) || isRewardsError ? (
+                <></>
+              ) : (
                 <div className="flex w-full items-center rounded-md border border-slate-200 bg-slate-50 py-3 pl-3">
-                  <p className="font-medium">{title}</p>
+                  <RewardResults token={token} rewards={rewards} type={type} />
                 </div>
-              </>
-            )}
-          </div>
-        )}
-        {((isRewardsIdle && hasProperRewards(rewards)) ||
-          (!isRewardsIdle && !isRewardsError)) && (
-          <div className="mt-4 space-y-3 text-sm text-slate-700">
-            <h3 className="text-sm font-medium text-slate-600">Rewards</h3>
-            {isRewardsPending ? (
-              <span className="flex animate-pulse items-center justify-center gap-2 rounded-md bg-slate-100 py-4 text-sm text-slate-500">
-                <Loader2 className="size-4 animate-spin" />
-                <p>Generating Rewards</p>
-              </span>
-            ) : (
-              <>
-                {!hasProperRewards(rewards) || isRewardsError ? (
-                  <></>
-                ) : (
-                  <div className="flex w-full items-center rounded-md border border-slate-200 bg-slate-50 py-3 pl-3">
-                    <RewardResults
-                      token={token}
-                      rewards={rewards}
-                      type={type}
-                    />
-                  </div>
-                )}
-              </>
-            )}
-          </div>
-        )}
-        {((isSkillsIdle && skills.length > 0) ||
-          (!isSkillsIdle && !isSkillsError)) && (
-          <div className="mt-4 space-y-3 text-sm text-slate-700">
-            <h3 className="text-sm font-medium text-slate-600">Skills</h3>
-            {isSkillsPending ? (
-              <span className="flex animate-pulse items-center justify-center gap-2 rounded-md bg-slate-100 py-4 text-sm text-slate-500">
-                <Loader2 className="size-4 animate-spin" />
-                <p>Generating Skills</p>
-              </span>
-            ) : (
-              <>
-                {skills.length === 0 || isSkillsError ? (
-                  <></>
-                ) : (
-                  <div>
-                    <SkillsResult skills={skills} />
-                  </div>
-                )}
-              </>
-            )}
-          </div>
-        )}
+              )}
+            </>
+          )}
+        </div>
+      )}
+      {((isSkillsIdle && skills.length > 0) ||
+        (!isSkillsIdle && !isSkillsError)) && (
+        <div className="mt-4 space-y-3 text-sm text-slate-700">
+          <h3 className="text-sm font-medium text-slate-600">Skills</h3>
+          {isSkillsPending ? (
+            <span className="flex animate-pulse items-center justify-center gap-2 rounded-md bg-slate-100 py-4 text-sm text-slate-500">
+              <Loader2 className="size-4 animate-spin" />
+              <p>Generating Skills</p>
+            </span>
+          ) : (
+            <>
+              {skills.length === 0 || isSkillsError ? (
+                <></>
+              ) : (
+                <div>
+                  <SkillsResult skills={skills} />
+                </div>
+              )}
+            </>
+          )}
+        </div>
+      )}
 
-        {((isEligibilityQuestionsIdle && eligibilityQuestions.length > 0) ||
-          (!isEligibilityQuestionsIdle && !isEligibilityQuestionsError)) && (
-          <div className="mt-4 space-y-3 text-sm text-slate-700">
-            <h3 className="text-sm font-medium text-slate-600">Questions</h3>
-            {type !== 'project' && (
-              <>
-                <div className="flex items-center rounded-md border">
-                  <span className="flex items-center justify-center self-stretch border-r px-4 text-slate-400">
-                    <Link2 className="h-4 w-4" />
-                  </span>
-                  <p className="px-4 py-2 text-sm text-slate-500">
-                    Bounty submission link{' '}
-                    <span className="pl-1 text-red-500">*</span>
-                  </p>
-                </div>
-                <div className="flex items-center rounded-md border">
-                  <span className="flex items-center justify-center self-stretch border-r px-4 text-slate-400">
-                    <Twitter className="h-4 w-4 text-slate-400 opacity-100 grayscale-0" />
-                  </span>
-                  <p className="px-4 py-2 text-sm text-slate-500">
-                    Twitter post link
-                  </p>
-                </div>
-              </>
-            )}
-            {isEligibilityQuestionsPending && (
-              <span className="flex animate-pulse items-center justify-center gap-2 rounded-md bg-slate-100 py-4 text-sm text-slate-500">
-                <Loader2 className="size-4 animate-spin" />
-                <p>Generating Custom Questions</p>
-              </span>
-            )}
-            {eligibilityQuestions.map((question) => (
-              <div
-                className="flex items-center rounded-md border"
-                key={question.order}
-              >
+      {((isEligibilityQuestionsIdle && eligibilityQuestions.length > 0) ||
+        (!isEligibilityQuestionsIdle && !isEligibilityQuestionsError)) && (
+        <div className="mt-4 space-y-3 text-sm text-slate-700">
+          <h3 className="text-sm font-medium text-slate-600">Questions</h3>
+          {type !== 'project' && (
+            <>
+              <div className="flex items-center rounded-md border">
                 <span className="flex items-center justify-center self-stretch border-r px-4 text-slate-400">
-                  {question.type === 'link' ? (
-                    <Link2 className="h-4 w-4" />
-                  ) : (
-                    <Baseline className="h-4 w-4" />
-                  )}
+                  <Link2 className="h-4 w-4" />
                 </span>
                 <p className="px-4 py-2 text-sm text-slate-500">
-                  {question.question}
+                  Bounty submission link{' '}
                   <span className="pl-1 text-red-500">*</span>
                 </p>
               </div>
-            ))}
-            {type === 'project' && (
-              <>
-                {type === 'project' &&
-                  rewards &&
-                  rewards?.compensationType !== 'fixed' && (
-                    <div className="flex items-center rounded-md border">
-                      <span className="flex items-center justify-center self-stretch border-r px-4 text-slate-400">
-                        <TokenLabel
-                          symbol={token}
-                          showIcon
-                          classNames={{
-                            amount: 'font-medium text-base ml-0',
-                            symbol: 'font-medium text-base mr-0',
-                            icon: 'mr-0',
-                          }}
-                        />
-                      </span>
-                      <p className="px-4 py-2 text-sm text-slate-500">
-                        Compensation Quote
-                        <span className="pl-1 text-red-500">*</span>
-                      </p>
-                    </div>
-                  )}
-                <div className="flex items-center rounded-md border">
-                  <span className="flex items-center justify-center self-stretch border-r px-4 text-slate-400">
-                    <Baseline className="h-4 w-4" />
-                  </span>
-                  <p className="px-4 py-2 text-sm text-slate-500">
-                    Anything Else
-                  </p>
-                </div>
-              </>
-            )}
-          </div>
-        )}
+              <div className="flex items-center rounded-md border">
+                <span className="flex items-center justify-center self-stretch border-r px-4 text-slate-400">
+                  <Twitter className="h-4 w-4 text-slate-400 opacity-100 grayscale-0" />
+                </span>
+                <p className="px-4 py-2 text-sm text-slate-500">
+                  Twitter post link
+                </p>
+              </div>
+            </>
+          )}
+          {isEligibilityQuestionsPending && (
+            <span className="flex animate-pulse items-center justify-center gap-2 rounded-md bg-slate-100 py-4 text-sm text-slate-500">
+              <Loader2 className="size-4 animate-spin" />
+              <p>Generating Custom Questions</p>
+            </span>
+          )}
+          {eligibilityQuestions.map((question) => (
+            <div
+              className="flex items-center rounded-md border"
+              key={question.order}
+            >
+              <span className="flex items-center justify-center self-stretch border-r px-4 text-slate-400">
+                {question.type === 'link' ? (
+                  <Link2 className="h-4 w-4" />
+                ) : (
+                  <Baseline className="h-4 w-4" />
+                )}
+              </span>
+              <p className="px-4 py-2 text-sm text-slate-500">
+                {question.question}
+                <span className="pl-1 text-red-500">*</span>
+              </p>
+            </div>
+          ))}
+          {type === 'project' && (
+            <>
+              {type === 'project' &&
+                rewards &&
+                rewards?.compensationType !== 'fixed' && (
+                  <div className="flex items-center rounded-md border">
+                    <span className="flex items-center justify-center self-stretch border-r px-4 text-slate-400">
+                      <TokenLabel
+                        symbol={token}
+                        showIcon
+                        classNames={{
+                          amount: 'font-medium text-base ml-0',
+                          symbol: 'font-medium text-base mr-0',
+                          icon: 'mr-0',
+                        }}
+                      />
+                    </span>
+                    <p className="px-4 py-2 text-sm text-slate-500">
+                      Compensation Quote
+                      <span className="pl-1 text-red-500">*</span>
+                    </p>
+                  </div>
+                )}
+              <div className="flex items-center rounded-md border">
+                <span className="flex items-center justify-center self-stretch border-r px-4 text-slate-400">
+                  <Baseline className="h-4 w-4" />
+                </span>
+                <p className="px-4 py-2 text-sm text-slate-500">
+                  Anything Else
+                </p>
+              </div>
+            </>
+          )}
+        </div>
+      )}
 
-        <div ref={bottomRef} />
-      </ScrollArea>
-
-      <div className="flex flex-col items-center">
+      <motion.div
+        className="sticky bottom-0 mt-auto flex items-center justify-end gap-4 bg-white py-6 pt-2"
+        key="result-footer"
+        initial={{
+          y: 75,
+        }}
+        animate={{ y: 0 }}
+        exit={{ y: 75 }}
+        transition={{ duration: 0.2, ease: easeOutQuad, delay: 0.3 }}
+      >
         <Button
-          onClick={onInsert}
-          className="w-full bg-indigo-500 hover:bg-indigo-600"
+          variant="outline"
+          className="w-58"
+          onClick={onBack}
           disabled={isActionsDisabled}
         >
-          Insert
+          Edit Prompt
         </Button>
-        <Button variant="link" onClick={onBack} disabled={isActionsDisabled}>
-          Go Back
+        <Button
+          onClick={onInsert}
+          className="w-58"
+          disabled={isActionsDisabled}
+        >
+          {isActionsDisabled ? (
+            <span className="flex items-center gap-2">
+              <Loader2 className="size-4 animate-spin" />
+              {loadingText}
+            </span>
+          ) : (
+            'Insert into listing'
+          )}
         </Button>
-      </div>
+      </motion.div>
     </div>
   );
 }
