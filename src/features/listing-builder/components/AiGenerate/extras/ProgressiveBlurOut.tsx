@@ -23,7 +23,16 @@ export function ProgressiveBlurOut({ scrollEl, FADE_DISTANCE = 64 }: Props) {
 
   useEffect(() => {
     if (!scrollEl) return;
-    const handleScroll = () => updateFade();
+    let rafId: number | null = null;
+
+    const handleScroll = () => {
+      if (rafId !== null) return;
+      rafId = requestAnimationFrame(() => {
+        updateFade();
+        rafId = null;
+      });
+    };
+
     scrollEl.addEventListener('scroll', handleScroll, { passive: true });
 
     const resizeObserver = new ResizeObserver(() => updateFade());
@@ -34,6 +43,9 @@ export function ProgressiveBlurOut({ scrollEl, FADE_DISTANCE = 64 }: Props) {
     return () => {
       scrollEl.removeEventListener('scroll', handleScroll);
       resizeObserver.disconnect();
+      if (rafId !== null) {
+        cancelAnimationFrame(rafId);
+      }
     };
   }, [scrollEl]);
 

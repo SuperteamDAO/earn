@@ -37,7 +37,7 @@ export function AiGenerateLoading() {
       >
         <p>
           {`Don't close this tab. `} This could take{' '}
-          <span className="itlaic font-semibold">~30 seconds</span> to generate
+          <span className="font-semibold italic">~30 seconds</span> to generate
         </p>
       </motion.div>
     </div>

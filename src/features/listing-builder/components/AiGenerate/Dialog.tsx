@@ -8,6 +8,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import { usePostHog } from 'posthog-js/react';
 import { type ReactNode, useCallback, useEffect, useState } from 'react';
 import { useWatch } from 'react-hook-form';
+import { toast } from 'sonner';
 
 import {
   type RewardInputSchema,
@@ -211,22 +212,20 @@ export function AiGenerateDialog({ children }: AIDescriptionDialogProps) {
       ).data,
   });
 
+  const isAllSuccess =
+    type === 'hackathon'
+      ? isSkillsSuccess && isTitleSuccess && isRewardsSuccess
+      : isSkillsSuccess &&
+        isTitleSuccess &&
+        isRewardsSuccess &&
+        isEligibilityQuestionsSuccess;
+
   useEffect(() => {
-    if (
-      isSkillsSuccess &&
-      isTitleSuccess &&
-      isRewardsSuccess &&
-      isEligibilityQuestionsSuccess
-    ) {
+    if (isAllSuccess) {
       const audio = new Audio('/assets/auto-generate-complete.wav');
       audio.play();
     }
-  }, [
-    isSkillsSuccess,
-    isTitleSuccess,
-    isRewardsSuccess,
-    isEligibilityQuestionsSuccess,
-  ]);
+  }, [isAllSuccess]);
 
   const handleFormSubmit = async (data: AiGenerateFormValues) => {
     setStage('loading');
@@ -286,7 +285,8 @@ export function AiGenerateDialog({ children }: AIDescriptionDialogProps) {
         setStage('result');
       } catch (error) {
         console.error('Error generating content:', error);
-        // You may want to handle errors appropriately here
+        setStage('form');
+        toast.error('Generation failed, please try again.');
       }
     }
   };

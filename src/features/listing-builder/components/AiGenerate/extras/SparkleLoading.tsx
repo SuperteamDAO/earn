@@ -50,8 +50,8 @@ export function SparkleLoading() {
           gradientUnits="userSpaceOnUse"
           gradientTransform="translate(21.5 20.9995) rotate(91.5482) scale(18.5068 16.8411)"
         >
-          <stop stop-color="#818CF8" />
-          <stop offset="1" stop-color="#818CF8" stop-opacity="0" />
+          <stop stopColor="#818CF8" />
+          <stop offset="1" stopColor="#818CF8" stopOpacity="0" />
         </radialGradient>
         <linearGradient
           id={linearId}
@@ -61,8 +61,8 @@ export function SparkleLoading() {
           y2="36.6663"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#818CF8" />
-          <stop offset="1" stop-color="#818CF8" />
+          <stop stopColor="#818CF8" />
+          <stop offset="1" stopColor="#818CF8" />
         </linearGradient>
       </defs>
     </svg>
