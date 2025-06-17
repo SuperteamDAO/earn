@@ -111,7 +111,7 @@ export const PaymentButton = ({
       <PopoverTrigger>
         <Button className="ph-no-capture min-w-[120px] disabled:cursor-not-allowed">
           <DollarSign className="mr-2 h-4 w-4" />
-          Complete Reward Payment
+          Complete Payment
         </Button>
       </PopoverTrigger>
       <PopoverContent

@@ -117,13 +117,12 @@ export default function NearTreasuryPaymentModal({
                   <div className="h-8 w-8 animate-spin rounded-full border-4 border-slate-200 border-t-brand-green" />
                 </div>
                 <div className="mx-auto mt-8 flex w-full flex-col items-center gap-2">
-                  <DialogTitle>Creating request</DialogTitle>
+                  <DialogTitle>
+                    Submitting your proposal to NEAR Treasury...
+                  </DialogTitle>
                   <DialogDescription className="text-center text-sm text-slate-500">
-                    We&apos;re currently submitting your proposal to the NEAR
-                    Treasury.
-                    <br />
-                    This may take a few moments. Please don&apos;t close the
-                    window.
+                    This may take a few minutes. Please don&apos;t close the
+                    window
                   </DialogDescription>
                 </div>
               </div>
@@ -144,7 +143,7 @@ export default function NearTreasuryPaymentModal({
                 Payment Request Created
               </DialogTitle>
               <DialogDescription className="mt-2">
-                Your request has been successfully submitted to NEAR Treasury
+                Your proposal has been successfully submitted to NEAR Treasury
                 for approval
               </DialogDescription>
               <div className="mt-4 flex w-full flex-col items-center gap-4">
@@ -200,11 +199,9 @@ export default function NearTreasuryPaymentModal({
               </div>
             </div>
             <div className="mx-auto mt-6 flex max-w-[20rem] flex-col items-center gap-2">
-              <DialogTitle>Something went wrong</DialogTitle>
+              <DialogTitle>Something went wrong ...</DialogTitle>
               <p className="text-center text-sm text-slate-500">
-                We couldn&apos;t create the payment request.
-                <br />
-                Please try again or contact us.
+                The request was not created. Please try again or contact us.
               </p>
             </div>
             <div className="mx-auto mt-8 flex flex-col items-center gap-6">

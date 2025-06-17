@@ -453,19 +453,25 @@ export default function EditPage() {
         <Tabs defaultValue="edit" className="w-full">
           <TabsList
             className={cn(
-              'relative mb-8 w-full justify-start',
+              'relative mb-8 w-full justify-start gap-4',
               'before:absolute before:bottom-[-2px] before:left-0 before:right-0 before:h-[2px] before:w-full before:bg-slate-200',
             )}
           >
             <TabsTrigger
               value="edit"
-              className="data-[state=active]:bg-transparent data-[state=active]:text-slate-500 after:data-[state=active]:bg-brand-green-50"
+              className={cn(
+                'data-[state=active]:bg-transparent data-[state=hover]:bg-brand-green-50 data-[state=active]:text-slate-500 after:data-[state=active]:bg-brand-green-50 hover:text-slate-500',
+                'hover:after:absolute hover:after:bottom-[-6px] hover:after:left-0 hover:after:h-[2px] hover:after:w-full hover:after:bg-brand-green-50',
+              )}
             >
               Sponsor Information
             </TabsTrigger>
             <TabsTrigger
               value="integrations"
-              className="data-[state=active]:bg-transparent data-[state=active]:text-slate-500 after:data-[state=active]:bg-brand-green-50"
+              className={cn(
+                'data-[state=active]:bg-transparent data-[state=hover]:bg-brand-green-50 data-[state=active]:text-slate-500 after:data-[state=active]:bg-brand-green-50 hover:text-slate-500',
+                'hover:after:absolute hover:after:bottom-[-6px] hover:after:left-0 hover:after:h-[2px] hover:after:w-full hover:after:bg-brand-green-50',
+              )}
             >
               Integrations
             </TabsTrigger>

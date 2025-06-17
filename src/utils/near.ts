@@ -91,6 +91,70 @@ export async function getStorageBalance(
   return result;
 }
 
+async function prepareProposal(
+  description: string,
+  token: Token,
+  receiver: string,
+  amount: number,
+) {
+  const amountFormatted = formatTokenAmount(amount.toString(), token.decimals);
+  const functionCallArgs = async () => {
+    if (token.tokenSymbol === 'NEAR') {
+      return {
+        kind: {
+          Transfer: {
+            token_id: '',
+            receiver_id: receiver,
+            amount: amountFormatted,
+          },
+        },
+      };
+    } else {
+      const calls = [];
+      if (!(await getStorageBalance(token.mintAddress, receiver))) {
+        calls.push({
+          args: Buffer.from(
+            JSON.stringify({
+              account_id: receiver,
+              registration_only: true,
+            }),
+          ).toString('base64'),
+          deposit: (BigInt(125) * BigInt(10) ** BigInt(21)).toString(),
+          gas: BigInt(100000000000000).toString(),
+          method_name: 'storage_deposit',
+        });
+      }
+      calls.push({
+        method_name: 'ft_transfer',
+        deposit: '1',
+        gas: BigInt(100000000000000).toString(),
+        args: Buffer.from(
+          JSON.stringify({
+            receiver_id: receiver,
+            amount: amountFormatted,
+          }),
+        ).toString('base64'),
+      });
+      return {
+        kind: {
+          FunctionCall: {
+            actions: calls,
+            receiver_id: token.mintAddress,
+          },
+        },
+      };
+    }
+  };
+
+  return {
+    proposal: {
+      description,
+
+      ...(await functionCallArgs()),
+    },
+  };
+}
+
 export async function createSputnikProposal(
   dao: string,
   description: string,
@@ -98,20 +162,7 @@ export async function createSputnikProposal(
   receiver: string,
   amount: number,
 ) {
-  const amountFormatted = formatTokenAmount(amount.toString(), token.decimals);
-  const args = {
-    proposal: {
-      description,
-      kind: {
-        Transfer: {
-          token_id: token.tokenSymbol === 'NEAR' ? '' : token.mintAddress,
-          receiver_id: receiver,
-          amount: amountFormatted,
-        },
-      },
-    },
-  };
-
+  const proposal = await prepareProposal(description, token, receiver, amount);
   const account = await near.account(NEAR_ACCOUNT);
 
   const daoPolicy: { proposal_bond: string | undefined } =
@@ -123,36 +174,12 @@ export async function createSputnikProposal(
   const call = {
     contractId: dao,
     methodName: 'add_proposal',
-    args,
+    args: proposal,
     gas: BigInt(300000000000000),
     attachedDeposit: BigInt(daoPolicy.proposal_bond || 0),
   };
 
-  if (
-    token.tokenSymbol !== 'NEAR' &&
-    !(await getStorageBalance(token.mintAddress, receiver))
-  ) {
-    const depositInYocto = BigInt(125) * BigInt(10) ** BigInt(21);
-
-    // We need to run this prior to a proposal, so if we would hit nonce issue, on retry, it should work as we
-    // have done that already...
-    await account.functionCall({
-      contractId: token.mintAddress,
-      methodName: 'storage_deposit',
-      args: {
-        account_id: receiver,
-        registration_only: true,
-      },
-      gas: BigInt(300000000000000),
-      attachedDeposit: depositInYocto,
-    });
-  }
-
-  // Let's sleep for 1 second to avoid nonce race condition
-  await new Promise((resolve) => setTimeout(resolve, 2000));
-
   const result = await account.functionCall(call);
-
   return getProposalId(result);
 }
 

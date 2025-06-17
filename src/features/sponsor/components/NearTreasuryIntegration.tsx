@@ -1,7 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
-import { Loader2, Trash } from 'lucide-react';
+import { Loader2, TriangleAlert } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
@@ -47,7 +47,7 @@ function NearTreasuryForm({
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <div className="space-y-5">
-          <div className="flex items-start gap-2">
+          <div className="flex items-center gap-2">
             <Image
               src="/assets/NEARTreasuryLogo.svg"
               alt="NEAR Treasury"
@@ -55,29 +55,29 @@ function NearTreasuryForm({
               height={40}
             />
             <div className="flex flex-col">
-              <h3 className="text-lg text-gray-700">NEAR Treasury</h3>
+              <h3 className="text-lg text-gray-700">
+                Connect to NEAR Treasury
+              </h3>
               <p className="text-sm text-gray-600">
-                Connect your NEAR Treasury account to enable automatic request
-                creation from proposals.
-                <span className="mt-1 block">
-                  You need to have a member added in NEAR Treasury
-                  (near-io.nearn) with permission to create requests. Once
-                  that’s set up, you can add your Sputnik DAO wallet below to
-                  connect.{' '}
-                  <a
-                    href="https://docs.near.org/docs/treasury/overview"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="underline"
-                  >
-                    Learn more
-                  </a>
-                </span>
+                Link your NEAR Treasury to NEARN to create on-chain payment
+                proposals directly from approved submissions and automatically
+                track their status.
               </p>
             </div>
           </div>
 
+          <div className="flex items-center gap-3 bg-yellow-50 p-3 text-yellow-800">
+            <TriangleAlert className="h-full w-5" />
+            <p className="h-full w-full text-sm">
+              Before proceeding, please ensure you&apos;ve
+              added nearn-io.near to your member list on NEAR Treasury with
+              Create Proposal permission only. This must be approved before you
+              can link it here. Learn more
+            </p>
+          </div>
+
           <SocialInput
+            required
             name="nearTreasuryFrontend"
             socialName="website"
             placeholder="your-treasury.near.page"
@@ -167,7 +167,7 @@ export default function NearTreasuryIntegration({
   ) : (
     <>
       <div className="flex items-center justify-between">
-        <div className="flex items-start gap-3">
+        <div className="flex items-center gap-3">
           <Image
             src="/assets/NEARTreasuryLogo.svg"
             alt="NEAR Treasury"
@@ -191,20 +191,23 @@ export default function NearTreasuryIntegration({
         </div>
         <Button
           variant="outline"
-          className="text-gray-600"
+          className="text-slate-500"
           onClick={() => {
             setDisconnectModalOpen(true);
           }}
         >
-          <Trash className="mr-1 h-4 w-4" />
-          Remove Connection
+          Disconnect
         </Button>
       </div>
       {!isRequestor && !isRequestorLoading && (
-        <p className="ml-[52px] mt-1 max-w-[60%] text-sm text-red-500">
-          The member nearn-io.near has been removed from the DAO, and access to
-          treasury actions is no longer available
-        </p>
+        <div className="mt-4 flex items-center gap-3 bg-red-50 p-3 text-red-500">
+          <TriangleAlert className="h-full w-5" />
+          <p className="h-full w-full text-sm">
+            NEARN no longer has permission to submit proposals to your NEAR
+            Treasury. Please check your DAO settings to ensure nearn-io.near has
+            create proposal permission
+          </p>
+        </div>
       )}
       <Dialog
         open={disconnectModalOpen}
@@ -216,7 +219,9 @@ export default function NearTreasuryIntegration({
       >
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Disconnect NEAR Treasury</DialogTitle>
+            <DialogTitle className="text-lg font-bold">
+              Disconnect NEAR Treasury?
+            </DialogTitle>
             <DialogDescription>
               After disconnecting, you won’t be able to quickly create payment
               requests without taking additional steps.

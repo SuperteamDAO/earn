@@ -38,7 +38,9 @@ export const nearTreasuryFormSchema = z
       accountId = data.nearTreasuryFrontend?.split('.page')[0];
     }
     return {
-      nearTreasuryFrontend: accountId + '.page',
+      nearTreasuryFrontend: data.nearTreasuryFrontend
+        ? accountId + '.page'
+        : null,
       nearTreasuryDao: data.nearTreasuryFrontend
         ? await extractDaoFromTreasury(accountId!)
         : null,
