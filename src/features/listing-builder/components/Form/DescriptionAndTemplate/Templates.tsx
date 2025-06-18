@@ -46,7 +46,6 @@ import { cleanTemplate } from '@/features/listing-builder/utils/form';
 
 import { isAutoGenerateOpenAtom, isEditingAtom } from '../../../atoms';
 import { useListingForm } from '../../../hooks';
-import { AiGenerateFeatureModal } from '../../Modals/AiGenerateFeature';
 
 export function Templates() {
   const posthog = usePostHog();
@@ -139,11 +138,6 @@ export function Templates() {
 
   return (
     <>
-      <AiGenerateFeatureModal
-        onClose={() =>
-          setOpen(router.pathname === '/dashboard/new' && type !== 'hackathon')
-        }
-      />
       <Dialog
         open={open}
         onOpenChange={(e) => {

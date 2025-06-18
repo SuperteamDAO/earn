@@ -19,25 +19,26 @@ export function SponsorAnnouncements({
 }: {
   isAnyModalOpen?: boolean;
 }) {
+  const user = useUser();
   const [showModal, setShowModal] = useState(false);
+
+  const { data: allListings, isFetched: listingsFetched } = useQuery({
+    ...dashboardQuery(user.user?.currentSponsorId),
+    enabled: false,
+  });
 
   useEffect(() => {
     if (isAnyModalOpen) return;
+    if (!listingsFetched) return;
     const seen = localStorage.getItem(LOCAL_STORAGE_KEY);
     if (!seen) {
       setShowModal(true);
     }
-  }, [isAnyModalOpen]);
+  }, [isAnyModalOpen, listingsFetched]);
 
-  const user = useUser();
   const isLoggedInAndIsSponsor = Boolean(
     user.user && !!user.user.currentSponsorId,
   );
-
-  const { data: allListings } = useQuery({
-    ...dashboardQuery(user.user?.currentSponsorId),
-    enabled: false,
-  });
 
   const hasGrants = useMemo(() => {
     return Boolean(allListings?.some((listing) => listing.type === 'grant'));
@@ -49,10 +50,17 @@ export function SponsorAnnouncements({
       title: 'Auto Generate',
       Content: AutoGenerateFeature,
       shouldShow: isLoggedInAndIsSponsor,
-      imagesToPreload: [
-        `${ASSET_URL}/ai-review-feature-new`,
-        `${ASSET_URL}/assets/ai-wand.svg`,
-      ],
+      imagesToPreload: [`${ASSET_URL}/announcements/auto-generate`],
+      cta: {
+        label: 'Understood',
+      },
+    },
+    {
+      id: 'auto-review',
+      title: 'Auto Review',
+      Content: AutoReviewFeature,
+      shouldShow: isLoggedInAndIsSponsor && hasGrants,
+      imagesToPreload: [`${ASSET_URL}/announcements/auto-review`],
       cta: {
         label: 'Understood',
       },
@@ -62,23 +70,10 @@ export function SponsorAnnouncements({
       title: 'Credit System',
       Content: CreditFeature,
       shouldShow: isLoggedInAndIsSponsor,
-      imagesToPreload: [],
+      imagesToPreload: [`${ASSET_URL}/credits/credit-feature.webp`],
       cta: {
         label: 'Learn More',
         link: 'https://superteamdao.notion.site/submission-credits',
-      },
-    },
-    {
-      id: 'auto-review',
-      title: 'Auto Review',
-      Content: AutoReviewFeature,
-      shouldShow: hasGrants,
-      imagesToPreload: [
-        `${ASSET_URL}/ai-review-feature-new`,
-        `${ASSET_URL}/assets/ai-wand.svg`,
-      ],
-      cta: {
-        label: 'Understood',
       },
     },
   ];

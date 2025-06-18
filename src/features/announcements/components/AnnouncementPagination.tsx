@@ -20,7 +20,7 @@ export function AnnouncementPagination({
   const startTimeRef = useRef<number>(0);
   const remainingTimeRef = useRef<number>(0);
 
-  const AUTO_ADVANCE_DURATION = 5000;
+  const AUTO_ADVANCE_DURATION = 8000;
   const PROGRESS_UPDATE_INTERVAL = 16;
 
   const startProgress = useCallback(

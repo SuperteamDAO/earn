@@ -1,28 +1,28 @@
 import { useEffect, useState } from 'react';
 
 import { ASSET_URL } from '@/constants/ASSET_URL';
-import { useUser } from '@/store/user';
+import { useUpdateUser, useUser } from '@/store/user';
 
 import { CreditFeature } from '../talent/Credits';
 import { WalletFeature } from '../talent/Wallet';
 import type { Announcement } from '../types/announcement';
 import { AnnouncementModal } from './AnnouncementModal';
 
-const LOCAL_STORAGE_KEY = 'talentAnnouncementsSeen';
+//const LOCAL_STORAGE_KEY = 'talentAnnouncementsSeen';
 
 export function TalentAnnouncements() {
+  const user = useUser();
+  const updateUser = useUpdateUser();
   const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
-    const seen = localStorage.getItem(LOCAL_STORAGE_KEY);
+    if (!user.user) return;
+    const seen = !!user.user?.featureModalShown;
     if (!seen) {
       setShowModal(true);
     }
-    // @corerabbit remind  me to remove this before merging
-    setShowModal(true);
-  }, []);
+  }, [user.user]);
 
-  const user = useUser();
   const isLoggedInAndTalentFilled = Boolean(
     user.user && !!user.user.isTalentFilled,
   );
@@ -33,7 +33,7 @@ export function TalentAnnouncements() {
       title: 'Credit System',
       Content: CreditFeature,
       shouldShow: isLoggedInAndTalentFilled,
-      imagesToPreload: [],
+      imagesToPreload: [`${ASSET_URL}/credits/credit-feature.webp`],
       cta: {
         label: 'Learn More',
         link: 'https://superteamdao.notion.site/submission-credits',
@@ -56,7 +56,7 @@ export function TalentAnnouncements() {
   if (!showModal) return null;
 
   function handleModalClose() {
-    localStorage.setItem(LOCAL_STORAGE_KEY, 'true');
+    updateUser.mutateAsync({ featureModalShown: true });
     setShowModal(false);
   }
 

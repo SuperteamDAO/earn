@@ -212,7 +212,9 @@ export function SponsorLayout({
         isOpen={isSponsorInfoModalOpen}
       />
 
-      <SponsorAnnouncements isAnyModalOpen={isAnyModalOpen} />
+      {router.pathname === '/dashboard/listings' && (
+        <SponsorAnnouncements isAnyModalOpen={isAnyModalOpen} />
+      )}
 
       <EntityNameModal isOpen={isEntityModalOpen} onClose={handleEntityClose} />
       <div className="flex min-h-[80vh] px-3 md:hidden">

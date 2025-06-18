@@ -13,7 +13,9 @@ export const AutoGenerateFeature = () => {
       <div className="p-6 pb-0">
         <p className="text-lg font-semibold">Auto Generate your Listings</p>
         <p className="mt-2 text-base font-normal text-slate-500">
-          Quickly generate drafts using AI
+          Creating a listing is now effortless! Provide a few details and let
+          our AI generate a complete listing for you, saving you time and
+          effort.
         </p>
         <div className="mt-6 flex flex-wrap justify-between gap-4 pr-4 text-sm">
           <Point text={'Generate drafts in <1 min'} />
