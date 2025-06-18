@@ -300,12 +300,7 @@ export const Comment = ({
                   !newReply && 'hidden',
                 )}
               >
-                <AuthWrapper
-                  showCompleteProfileModal
-                  completeProfileModalBodyText={
-                    'Please complete your profile before commenting on the listing.'
-                  }
-                >
+                <AuthWrapper>
                   <Button
                     className="h-auto bg-slate-200 px-5 py-2 text-xs text-slate-800 hover:bg-slate-300 active:bg-slate-400 disabled:opacity-50"
                     disabled={

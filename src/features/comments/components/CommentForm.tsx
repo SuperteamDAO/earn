@@ -126,12 +126,7 @@ export const CommentForm = ({
           >
             Cancel
           </Button>
-          <AuthWrapper
-            showCompleteProfileModal
-            completeProfileModalBodyText={
-              'Please complete your profile before commenting on the listing.'
-            }
-          >
+          <AuthWrapper>
             <Button
               variant="default"
               className="h-auto px-5 py-1.5 text-[10px] font-medium md:text-sm"
