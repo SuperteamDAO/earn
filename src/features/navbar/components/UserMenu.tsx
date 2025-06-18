@@ -2,7 +2,7 @@ import { ChevronDown } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { usePostHog } from 'posthog-js/react';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 
 import { SupportFormDialog } from '@/components/shared/SupportFormDialog';
 import { Button } from '@/components/ui/button';
@@ -55,6 +55,16 @@ export function UserMenu() {
     );
     onClose();
   };
+
+  // Generate Telegram bot link with user context
+  const telegramBotLink = useMemo(() => {
+    if (!user?.id) {
+      return 'https://t.me/super_fun_earn_bot?start=earn';
+    }
+    return `https://t.me/super_fun_earn_bot?start=earn_userid_${encodeURIComponent(
+      user.id,
+    )}`;
+  }, [user?.id]);
 
   return (
     <>
@@ -169,6 +179,23 @@ export function UserMenu() {
               Email Preferences
             </DropdownMenuItem>
           )}
+
+          {/* NEW: Telegram Bot Integration */}
+          <DropdownMenuItem asChild>
+            <a
+              href={telegramBotLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Connect Telegram notifications bot"
+              onClick={() => {
+                posthog.capture('telegram notifications_user menu');
+              }}
+              className="text-sm tracking-tight text-slate-500"
+            >
+              🔔 Telegram Notifications
+            </a>
+          </DropdownMenuItem>
+          {/* END NEW */}
 
           <SupportFormDialog>
             <DropdownMenuItem
