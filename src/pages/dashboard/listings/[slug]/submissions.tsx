@@ -13,7 +13,6 @@ import { Button } from '@/components/ui/button';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Tooltip } from '@/components/ui/tooltip';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import type { SubmissionWithUser } from '@/interface/submission';
 import { SponsorLayout } from '@/layouts/Sponsor';
@@ -460,13 +459,7 @@ export default function BountySubmissions({ slug }: Props) {
                 <>
                   <TabsList className="gap-4 font-medium text-slate-400">
                     <TabsTrigger value="submissions">Submissions</TabsTrigger>
-                    <Tooltip
-                      content="Scout is an invite-only feature right now"
-                      contentProps={{
-                        className: 'rounded-lg px-4 py-2 font-sans',
-                      }}
-                      disabled={isSponsorVerified === true}
-                    >
+                    {isSponsorVerified && (
                       <TabsTrigger
                         value="scout"
                         className={cn(
@@ -474,15 +467,11 @@ export default function BountySubmissions({ slug }: Props) {
                           !isSponsorVerified &&
                             'cursor-not-allowed text-slate-400',
                         )}
-                        disabled={!isSponsorVerified}
                         onClick={() => posthog.capture('scout tab_scout')}
                       >
                         Scout Talent
-                        {!!isSponsorVerified && (
-                          <div className="ml-1.5 h-1.5 w-1.5 rounded-full bg-red-500" />
-                        )}
                       </TabsTrigger>
-                    </Tooltip>
+                    )}
                   </TabsList>
                   <div className="h-[1.5px] w-full bg-slate-200/70" />
                 </>
