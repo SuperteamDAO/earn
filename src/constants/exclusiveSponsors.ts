@@ -16,10 +16,10 @@ export const exclusiveSponsorData: Record<
     description:
       'Explore the latest Research and Developer bounties for the Pyth Network ecosystem on Superteam Earn. Get started now!',
   },
-  dreader: {
-    title: 'dReader',
+  fundl: {
+    title: 'Fundl',
     description:
-      'Explore latest artist and developer bounties for dReader on Superteam Earn. Get started now!',
+      'Bring books, games, comics and startups to life. Explore Fundl’s latest listings below.',
   },
   ns: {
     title: 'Network School',
