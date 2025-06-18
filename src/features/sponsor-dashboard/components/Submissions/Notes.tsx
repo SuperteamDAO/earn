@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAtom, useSetAtom } from 'jotai';
 import debounce from 'lodash.debounce';
 import { Loader2 } from 'lucide-react';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { FaWandMagicSparkles } from 'react-icons/fa6';
 
 import { Textarea } from '@/components/ui/textarea';
@@ -26,6 +26,7 @@ export const Notes = ({ submissionId, initialNotes = '', slug }: Props) => {
   const setNotesUpdating = useSetAtom(isStateUpdatingAtom);
   const [notes, setNotes] = useState(initialNotes || '');
   const queryClient = useQueryClient();
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const { mutate: updateNotes, isPending: isSaving } = useMutation({
     mutationFn: (content: string) =>
@@ -75,6 +76,10 @@ export const Notes = ({ submissionId, initialNotes = '', slug }: Props) => {
     }
   };
 
+  useEffect(() => {
+    setNotes(initialNotes);
+  }, [initialNotes]);
+
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
       e.stopPropagation();
@@ -84,7 +89,16 @@ export const Notes = ({ submissionId, initialNotes = '', slug }: Props) => {
       const cursorPosition = e.currentTarget.selectionStart;
       const textBeforeCursor = notes.slice(0, cursorPosition);
       const textAfterCursor = notes.slice(cursorPosition);
-      setNotes(`${textBeforeCursor}\n• ${textAfterCursor}`);
+      const newNotes = `${textBeforeCursor}\n• ${textAfterCursor}`;
+      setNotes(newNotes);
+
+      const newCursorPosition = cursorPosition + 3;
+      requestAnimationFrame(() => {
+        if (textareaRef.current) {
+          textareaRef.current.selectionStart = newCursorPosition;
+          textareaRef.current.selectionEnd = newCursorPosition;
+        }
+      });
     } else if (e.key === 'Backspace') {
       const lines = notes.split('\n');
       if (lines[lines.length - 1] === '• ' && lines.length > 1) {
@@ -108,6 +122,7 @@ export const Notes = ({ submissionId, initialNotes = '', slug }: Props) => {
         )}
       </div>
       <Textarea
+        ref={textareaRef}
         className="resize-none !border-0 px-1.5 py-0 text-sm whitespace-pre-wrap text-slate-500 !shadow-none !ring-0 placeholder:text-slate-400 focus:!border-0 focus:!shadow-none focus:!ring-0 focus:!outline-none focus-visible:!ring-0 focus-visible:!ring-offset-0 focus-visible:!outline-hidden"
         key={submissionId}
         onChange={handleChange}

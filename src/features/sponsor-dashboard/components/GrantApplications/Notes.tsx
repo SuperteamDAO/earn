@@ -2,7 +2,13 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAtom, useSetAtom } from 'jotai';
 import debounce from 'lodash.debounce';
 import { Loader2 } from 'lucide-react';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 
 import { Textarea } from '@/components/ui/textarea';
 import { api } from '@/lib/api';
@@ -26,6 +32,8 @@ export const Notes = ({ slug }: Props) => {
   );
   const setNotesUpdating = useSetAtom(isStateUpdatingAtom);
   const [notes, setNotes] = useState(selectedApplication?.notes);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
   useEffect(() => {
     setNotes(selectedApplication?.notes);
   }, [selectedApplication]);
@@ -108,7 +116,16 @@ export const Notes = ({ slug }: Props) => {
       const cursorPosition = e.currentTarget.selectionStart;
       const textBeforeCursor = notes?.slice(0, cursorPosition) || '';
       const textAfterCursor = notes?.slice(cursorPosition) || '';
-      setNotes(`${textBeforeCursor}\n• ${textAfterCursor}`);
+      const newNotes = `${textBeforeCursor}\n• ${textAfterCursor}`;
+      setNotes(newNotes);
+
+      const newCursorPosition = cursorPosition + 3;
+      requestAnimationFrame(() => {
+        if (textareaRef.current) {
+          textareaRef.current.selectionStart = newCursorPosition;
+          textareaRef.current.selectionEnd = newCursorPosition;
+        }
+      });
     } else if (e.key === 'Backspace') {
       const lines = notes?.split('\n') || [];
       if (lines[lines.length - 1] === '• ' && lines.length > 1) {
@@ -142,6 +159,7 @@ export const Notes = ({ slug }: Props) => {
         )}
       </div>
       <Textarea
+        ref={textareaRef}
         className="resize-none !border-0 px-1.5 py-0 text-sm whitespace-pre-wrap text-slate-500 !shadow-none !ring-0 placeholder:text-slate-400 focus:!border-0 focus:!shadow-none focus:!ring-0 focus:!outline-none focus-visible:!ring-0 focus-visible:!ring-offset-0 focus-visible:!outline-hidden"
         key={applicationId}
         onChange={handleChange}
