@@ -151,6 +151,8 @@ model Comment {
   replyToId        String?
   submissionId     String?
   type             CommentType       @default(NORMAL)
+  like             Json?
+  likeCount        Int               @default(0)
   author           User              @relation(fields: [authorId], references: [id])
   repliedTo        Comment?          @relation("CommentReplies", fields: [replyToId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   replies          Comment[]         @relation("CommentReplies")
@@ -167,6 +169,7 @@ model Comment {
   @@index([refId, isActive, isArchived, replyToId])
   @@index([refType, type])
   @@index([updatedAt(sort: Desc)])
+  @@index([likeCount])
 }
 
 model Grants {

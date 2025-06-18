@@ -18,4 +18,7 @@ export interface Comment {
   refId: string;
   refType: 'BOUNTY' | 'SUBMISSION';
   updatedAt: Date;
+  like?: Array<{ id: string; date: number }>;
+  likeCount: number;
+  isLiked?: boolean;
 }

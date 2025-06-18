@@ -1,5 +1,5 @@
-import { type CommentRefType } from '@prisma/client';
-import { AlertCircle, ChevronDown, Loader2 } from 'lucide-react';
+import type { CommentRefType } from '@prisma/client';
+import { AlertCircle, ChevronDown, Heart, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { usePostHog } from 'posthog-js/react';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -24,8 +24,8 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { useMediaQuery } from '@/hooks/use-media-query';
-import { type Comment as IComment } from '@/interface/comments';
-import { type User } from '@/interface/user';
+import type { Comment as IComment } from '@/interface/comments';
+import type { User } from '@/interface/user';
 import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
@@ -35,6 +35,7 @@ import { getURL } from '@/utils/validUrl';
 import { AuthWrapper } from '@/features/auth/components/AuthWrapper';
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
+import { useCommentLike } from '../mutations/useCommentLike';
 import { formatFromNow } from '../utils';
 import { CommentParser } from './CommentParser';
 import { UserSuggestionTextarea } from './UserSuggestionTextarea';
@@ -76,6 +77,7 @@ export const Comment = ({
 }: Props) => {
   const { user } = useUser();
   const posthog = usePostHog();
+  const commentLikeMutation = useCommentLike();
 
   const {
     isOpen: deleteIsOpen,
@@ -91,7 +93,10 @@ export const Comment = ({
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [deleteError, setDeleteError] = useState(false);
   const [showOptions, setShowOptions] = useState(false);
-  const cancelRef = useRef<any>(null);
+  const cancelRef = useRef<HTMLButtonElement>(null);
+
+  const [totalLikes, setTotalLikes] = useState<number>(comment.likeCount || 0);
+  const isLiked = comment.like?.some((like) => like.id === user?.id);
 
   useEffect(() => {
     const reply = localStorage.getItem(`comment-${refId}-${comment.id}`);
@@ -101,7 +106,7 @@ export const Comment = ({
       setShowReplyInput(true);
       localStorage.removeItem(`comment-${refId}-${comment.id}`);
     }
-  }, []);
+  }, [refId, comment.id]);
 
   const deleteReplyLvl1 = async (replyId: string) => {
     posthog.capture('delete_comment');
@@ -135,7 +140,7 @@ export const Comment = ({
   const addNewReplyLvl1 = async (msg: string) => {
     posthog.capture('publish_comment');
     setNewReplyError(false);
-    const newReplyData = await api.post(`/api/comment/create`, {
+    const newReplyData = await api.post('/api/comment/create', {
       message: msg,
       refType: refType,
       refId: refId,
@@ -148,6 +153,27 @@ export const Comment = ({
   };
 
   const date = formatFromNow(dayjs(comment?.updatedAt).fromNow());
+
+  const handleLike = async () => {
+    if (!user || commentLikeMutation.isPending) return;
+
+    const prevTotalLikes = totalLikes;
+    const newIsLiked = !isLiked;
+    const newTotalLikes = newIsLiked
+      ? totalLikes + 1
+      : Math.max(totalLikes - 1, 0);
+
+    setTotalLikes(newTotalLikes);
+
+    try {
+      const result = await commentLikeMutation.mutateAsync({
+        commentId: comment.id,
+      });
+      setTotalLikes(result.likeCount);
+    } catch (error) {
+      setTotalLikes(prevTotalLikes);
+    }
+  };
 
   const handleSubmit = async () => {
     try {
@@ -176,12 +202,12 @@ export const Comment = ({
         handleSubmit();
       }
     },
-    [newReply],
+    [newReply, handleSubmit],
   );
 
   useEffect(() => {
     localStorage.setItem(`comment-${refId}-${comment.id}`, newReply);
-  }, [newReply]);
+  }, [newReply, refId, comment.id]);
 
   const isMobile = useMediaQuery('(max-width: 768px)');
 
@@ -246,9 +272,10 @@ export const Comment = ({
               value={comment?.message}
             />
           </p>
-          <div className="flex gap-2 overflow-visible">
+          <div className="flex items-center gap-2 overflow-visible">
             {replies?.length > 0 && (
               <button
+                type="button"
                 onClick={() => setShowReplies((prev) => !prev)}
                 className="relative -left-3 flex items-center text-xs font-medium text-black md:text-sm"
               >
@@ -265,6 +292,23 @@ export const Comment = ({
             >
               Reply
             </Button>
+            <AuthWrapper>
+              <Button
+                variant={'link'}
+                size="sm"
+                onClick={handleLike}
+                className={cn(
+                  '-left-3 flex h-auto items-center gap-1 p-0 text-xs font-medium hover:no-underline md:text-sm',
+                  isLiked
+                    ? 'text-rose-600'
+                    : 'text-slate-500 hover:text-slate-600',
+                )}
+                disabled={isDisabled || commentLikeMutation.isPending}
+              >
+                <Heart className={cn('h-4 w-4', isLiked && 'fill-rose-600')} />
+                {totalLikes > 0 && totalLikes}
+              </Button>
+            </AuthWrapper>
           </div>
           <div
             className={cn(
@@ -358,7 +402,12 @@ export const Comment = ({
         >
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="px-2">
+              <button
+                type="button"
+                className="px-2"
+                aria-label="Comment options"
+                title="Comment options"
+              >
                 <svg
                   width="3"
                   height="12"
@@ -367,6 +416,7 @@ export const Comment = ({
                   xmlns="http://www.w3.org/2000/svg"
                   className="text-slate-400"
                 >
+                  <title>More options</title>
                   <path
                     d="M1.5 3C2.325 3 3 2.325 3 1.5C3 0.675 2.325 0 1.5 0C0.675 0 0 0.675 0 1.5C0 2.325 0.675 3 1.5 3ZM1.5 4.5C0.675 4.5 0 5.175 0 6C0 6.825 0.675 7.5 1.5 7.5C2.325 7.5 3 6.825 3 6C3 5.175 2.325 4.5 1.5 4.5ZM1.5 9C0.675 9 0 9.675 0 10.5C0 11.325 0.675 12 1.5 12C2.325 12 3 11.325 3 10.5C3 9.675 2.325 9 1.5 9Z"
                     fill="currentColor"

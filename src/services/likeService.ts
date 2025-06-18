@@ -1,16 +1,34 @@
+import { type InputJsonValue } from '@prisma/client/runtime/library';
+
 import { prisma } from '@/prisma';
 
+interface LikeEntry {
+  id: string;
+  date: number;
+}
+
+interface LikeableItem {
+  id: string;
+  like: unknown;
+  likeCount: number;
+}
+
 export async function updateLike(
-  model: 'submission' | 'poW' | 'grantApplication',
+  model: 'submission' | 'poW' | 'grantApplication' | 'comment',
   itemId: string,
   userId: string,
 ) {
-  let result;
+  let result: LikeableItem | null = null;
 
   if (model === 'submission') {
     result = await prisma.submission.findFirst({
       where: {
         id: itemId,
+      },
+      select: {
+        id: true,
+        like: true,
+        likeCount: true,
       },
     });
   } else if (model === 'poW') {
@@ -18,26 +36,48 @@ export async function updateLike(
       where: {
         id: itemId,
       },
+      select: {
+        id: true,
+        like: true,
+        likeCount: true,
+      },
     });
   } else if (model === 'grantApplication') {
     result = await prisma.grantApplication.findFirst({
       where: {
         id: itemId,
       },
+      select: {
+        id: true,
+        like: true,
+        likeCount: true,
+      },
+    });
+  } else if (model === 'comment') {
+    result = await prisma.comment.findFirst({
+      where: {
+        id: itemId,
+      },
+      select: {
+        id: true,
+        like: true,
+        likeCount: true,
+      },
     });
   } else {
     throw new Error('Invalid model provided');
   }
 
-  let newLikes = [];
-  const resLikes = result?.like as {
-    id: string;
-    date: number;
-  }[];
+  if (!result) {
+    throw new Error(`${model} not found`);
+  }
 
-  if (resLikes?.length > 0) {
-    const like = resLikes.find((e) => e?.id === userId);
-    if (like) {
+  let newLikes: LikeEntry[] = [];
+  const resLikes = result.like as LikeEntry[] | null;
+
+  if (resLikes && resLikes.length > 0) {
+    const existingLike = resLikes.find((e) => e.id === userId);
+    if (existingLike) {
       newLikes = resLikes.filter((e) => e.id !== userId);
     } else {
       newLikes = [
@@ -59,7 +99,7 @@ export async function updateLike(
 
   const likeCount = newLikes.length;
 
-  let updateLike;
+  let updateLike: unknown;
 
   if (model === 'submission') {
     updateLike = await prisma.submission.update({
@@ -67,7 +107,7 @@ export async function updateLike(
         id: itemId,
       },
       data: {
-        like: newLikes,
+        like: newLikes as unknown as InputJsonValue,
         likeCount,
       },
     });
@@ -77,7 +117,7 @@ export async function updateLike(
         id: itemId,
       },
       data: {
-        like: newLikes,
+        like: newLikes as unknown as InputJsonValue,
         likeCount,
       },
     });
@@ -87,7 +127,17 @@ export async function updateLike(
         id: itemId,
       },
       data: {
-        like: newLikes,
+        like: newLikes as unknown as InputJsonValue,
+        likeCount,
+      },
+    });
+  } else if (model === 'comment') {
+    updateLike = await prisma.comment.update({
+      where: {
+        id: itemId,
+      },
+      data: {
+        like: newLikes as unknown as InputJsonValue,
         likeCount,
       },
     });
