@@ -343,7 +343,7 @@ export const SubmissionTable = ({
                                   <KycComponent
                                     address={submission.user.publicKey}
                                     imageOnly
-                                    xs
+                                    variant="xs"
                                     listingSponsorId={bounty?.sponsorId}
                                   />
                                 )}

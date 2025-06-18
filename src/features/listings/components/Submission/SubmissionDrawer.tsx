@@ -123,6 +123,10 @@ export const SubmissionDrawer = ({
       token: token === 'Any' ? tokenList[0]?.tokenSymbol : undefined,
     },
   });
+  const formPublicKey = useWatch({
+    control: form.control,
+    name: 'publicKey',
+  });
 
   const tokenSelected = useWatch({
     control: form.control,
@@ -623,17 +627,17 @@ export const SubmissionDrawer = ({
                                   {...(!!user?.publicKey ? {} : field)}
                                   value={user?.publicKey || field.value}
                                 />
-                                <KycComponent
-                                  address={user?.publicKey || field.value}
-                                  listingSponsorId={listing.sponsorId}
-                                />
                               </div>
                             </FormControl>
-                            <FormMessage />
                           </FormItem>
                         )}
                       />
                     )}
+                    <KycComponent
+                      address={formPublicKey ?? user?.publicKey ?? ''}
+                      listingSponsorId={listing.sponsorId}
+                      variant="extended"
+                    />
                   </div>
                 </div>
               </div>

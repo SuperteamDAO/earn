@@ -328,7 +328,7 @@ export const SubmissionList = ({
                   <KycComponent
                     address={submission?.user?.publicKey}
                     imageOnly
-                    xs
+                    variant="xs"
                     listingSponsorId={submission?.listing?.sponsorId}
                   />
                 </div>

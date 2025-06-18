@@ -465,7 +465,7 @@ export const SubmissionPanel = ({
                     </Tooltip>
                     <KycComponent
                       address={selectedSubmission?.user?.publicKey}
-                      xs
+                      variant="xs"
                       listingSponsorId={bounty?.sponsorId}
                     />
                   </>

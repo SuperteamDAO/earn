@@ -314,7 +314,7 @@ function Content({
                       </Tooltip>
                       <KycComponent
                         address={submission.user.publicKey}
-                        xs
+                        variant="xs"
                         listingSponsorId={bounty.sponsorId}
                       />
                     </div>
