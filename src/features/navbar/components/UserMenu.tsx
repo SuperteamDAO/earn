@@ -56,6 +56,9 @@ export function UserMenu() {
     onClose();
   };
 
+  const telegramBotLink =
+    'https://t.me/SuperteamEarnNotificationsBot?start=earn';
+
   return (
     <>
       <EmailSettingsModal isOpen={isOpen} onClose={handleClose} />
@@ -169,6 +172,21 @@ export function UserMenu() {
               Email Preferences
             </DropdownMenuItem>
           )}
+
+          <DropdownMenuItem asChild>
+            <Link
+              href={telegramBotLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Connect Telegram notifications bot"
+              onClick={() => {
+                posthog.capture('telegram notifications menu');
+              }}
+              className="text-sm tracking-tight text-slate-500"
+            >
+              Earn Alerts
+            </Link>
+          </DropdownMenuItem>
 
           <SupportFormDialog>
             <DropdownMenuItem
