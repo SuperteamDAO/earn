@@ -45,7 +45,7 @@ const fetchLocalProfiles = async ({
   limit = 10,
   region,
 }: FetchLocalProfilesParams): Promise<PaginatedResponse> => {
-  const { data } = await api.get('/api/sponsor-dashboard/local-profiles/', {
+  const { data } = await api.get('/api/sponsor-dashboard/local-talent/', {
     params: {
       page,
       limit,
