@@ -7,7 +7,7 @@ import { FaXTwitter } from 'react-icons/fa6';
 
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
-import { PROJECT_NAME } from '@/constants/project';
+import { PROJECT_NAME, TWITTER_HANDLE } from '@/constants/project';
 import { useClipboard } from '@/hooks/use-clipboard';
 import { useUser } from '@/store/user';
 import { tweetEmbedLink } from '@/utils/socialEmbeds';
@@ -41,7 +41,7 @@ export const ListingSuccessModal = () => {
     [type, slug],
   );
 
-  const tweetShareContent = `Check out my newly added ${PROJECT_NAME} opportunity!\n\n${listingLink('twitter')}`;
+  const tweetShareContent = `Check out my newly added @${TWITTER_HANDLE} opportunity!\n\n${listingLink('twitter')}`;
   const twitterShareLink = tweetEmbedLink(tweetShareContent);
 
   const { hasCopied, onCopy } = useClipboard(listingLink());

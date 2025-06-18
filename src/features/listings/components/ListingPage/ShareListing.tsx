@@ -21,7 +21,7 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from '@/components/ui/drawer';
-import { PROJECT_NAME } from '@/constants/project';
+import { PROJECT_NAME, TWITTER_HANDLE } from '@/constants/project';
 import { useClipboard } from '@/hooks/use-clipboard';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { Facebook } from '@/svg/socials/facebook';
@@ -140,13 +140,13 @@ function MainContent({
   }, [source, listing?.slug, grant?.slug]);
 
   const shareMessage = (
-    socialSource?: 'telegram' | 'facebook' | 'linkedin',
+    socialSource?: 'telegram' | 'facebook' | 'linkedin' | 'X',
   ) => {
     let copy = '';
     if (source === 'grant') {
-      copy = `Just came across this massive grant opportunity by ${grant?.sponsor?.name} on ${PROJECT_NAME}`;
+      copy = `Just came across this massive grant opportunity by ${grant?.sponsor?.name} on ${socialSource === 'X' ? `@${TWITTER_HANDLE}` : PROJECT_NAME}`;
     } else {
-      copy = `Just came across this ${listing?.type} by ${listing?.sponsor?.name} on ${PROJECT_NAME}`;
+      copy = `Just came across this ${listing?.type} by ${listing?.sponsor?.name} on ${socialSource === 'X' ? `@${TWITTER_HANDLE}` : PROJECT_NAME}`;
     }
     if (
       socialSource === 'telegram' ||
@@ -170,7 +170,7 @@ function MainContent({
       {
         name: 'X (Twitter)',
         icon: X,
-        url: `https://twitter.com/intent/tweet?text=${shareMessage()}`,
+        url: `https://twitter.com/intent/tweet?text=${shareMessage('X')}`,
         posthog: 'x_share listing',
       },
       {
