@@ -4,7 +4,8 @@ interface AnnouncementPaginationProps {
   totalCount: number;
   current: number;
   onNavigate: (index: number) => void;
-  isActive: boolean; // Whether the modal is open and should auto-advance
+  isActive: boolean;
+  isPaused?: boolean;
 }
 
 export function AnnouncementPagination({
@@ -12,45 +13,55 @@ export function AnnouncementPagination({
   current,
   onNavigate,
   isActive,
+  isPaused = false,
 }: AnnouncementPaginationProps) {
   const [progress, setProgress] = useState(0);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const startTimeRef = useRef<number>(0);
+  const remainingTimeRef = useRef<number>(0);
 
-  const AUTO_ADVANCE_DURATION = 5000; // 5 seconds
-  const PROGRESS_UPDATE_INTERVAL = 16; // ~60fps for smooth animation
+  const AUTO_ADVANCE_DURATION = 5000;
+  const PROGRESS_UPDATE_INTERVAL = 16;
 
-  const startProgress = useCallback(() => {
-    if (!isActive) return;
+  const startProgress = useCallback(
+    (remainingTime?: number) => {
+      if (!isActive || isPaused) return;
 
-    startTimeRef.current = Date.now();
-    setProgress(0);
+      const duration = remainingTime || AUTO_ADVANCE_DURATION;
+      remainingTimeRef.current = duration;
+      startTimeRef.current = Date.now();
 
-    intervalRef.current = setInterval(() => {
-      const elapsed = Date.now() - startTimeRef.current;
-      const progressPercent = Math.min(
-        (elapsed / AUTO_ADVANCE_DURATION) * 100,
-        100,
-      );
+      const initialProgress = remainingTime
+        ? ((AUTO_ADVANCE_DURATION - remainingTime) / AUTO_ADVANCE_DURATION) *
+          100
+        : 0;
+      setProgress(initialProgress);
 
-      setProgress(progressPercent);
+      intervalRef.current = setInterval(() => {
+        const elapsed = Date.now() - startTimeRef.current;
+        const progressPercent = Math.min(
+          (elapsed / duration) * 100 + initialProgress,
+          100,
+        );
 
-      if (progressPercent >= 100) {
-        if (intervalRef.current) {
-          clearInterval(intervalRef.current);
-          intervalRef.current = null;
+        setProgress(progressPercent);
+
+        if (progressPercent >= 100) {
+          if (intervalRef.current) {
+            clearInterval(intervalRef.current);
+            intervalRef.current = null;
+          }
+
+          if (current < totalCount - 1) {
+            onNavigate(current + 1);
+          } else {
+            onNavigate(0);
+          }
         }
-
-        // Auto-advance to next slide
-        if (current < totalCount - 1) {
-          onNavigate(current + 1);
-        } else {
-          // Reset to first slide when reaching the end
-          onNavigate(0);
-        }
-      }
-    }, PROGRESS_UPDATE_INTERVAL);
-  }, [current, totalCount, onNavigate, isActive]);
+      }, PROGRESS_UPDATE_INTERVAL);
+    },
+    [current, totalCount, onNavigate, isActive, isPaused],
+  );
 
   const stopProgress = useCallback(() => {
     if (intervalRef.current) {
@@ -59,20 +70,44 @@ export function AnnouncementPagination({
     }
   }, []);
 
-  // Start progress when component mounts or current changes
+  const pauseProgress = useCallback(() => {
+    if (intervalRef.current && !isPaused) {
+      const elapsed = Date.now() - startTimeRef.current;
+      remainingTimeRef.current = Math.max(
+        remainingTimeRef.current - elapsed,
+        0,
+      );
+      stopProgress();
+    }
+  }, [stopProgress, isPaused]);
+
+  const resumeProgress = useCallback(() => {
+    if (isPaused || remainingTimeRef.current <= 0) return;
+    startProgress(remainingTimeRef.current);
+  }, [startProgress, isPaused]);
+
+  useEffect(() => {
+    if (isPaused) {
+      pauseProgress();
+    } else if (intervalRef.current === null && remainingTimeRef.current > 0) {
+      resumeProgress();
+    }
+  }, [isPaused, pauseProgress, resumeProgress]);
+
   useEffect(() => {
     stopProgress();
-    if (isActive) {
+    remainingTimeRef.current = AUTO_ADVANCE_DURATION;
+    if (isActive && !isPaused) {
       startProgress();
     }
 
     return stopProgress;
   }, [current, isActive, startProgress, stopProgress]);
 
-  // Handle manual navigation
   const handleIndicatorClick = (index: number) => {
     if (index !== current) {
       stopProgress();
+      remainingTimeRef.current = AUTO_ADVANCE_DURATION;
       onNavigate(index);
     }
   };

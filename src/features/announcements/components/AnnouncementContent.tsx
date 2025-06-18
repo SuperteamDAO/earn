@@ -1,6 +1,6 @@
 import { AnimatePresence, motion } from 'motion/react';
 import Link from 'next/link';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 
 import { AnimateChangeInHeight } from '@/components/shared/AnimateChangeInHeight';
 import { Button } from '@/components/ui/button';
@@ -18,6 +18,7 @@ interface AnnouncementContentProps {
   onNext: () => void;
   onSlideChange: (index: number) => void;
   isModalOpen: boolean;
+  onPauseChange?: (isPaused: boolean) => void;
 }
 
 export function AnnouncementContent({
@@ -29,19 +30,53 @@ export function AnnouncementContent({
   onNext,
   onSlideChange,
   isModalOpen,
+  onPauseChange,
 }: AnnouncementContentProps) {
   const contentRef = useRef<HTMLDivElement | null>(null);
   const currentAnnouncement = announcements[current];
   const touchStartX = useRef<number | null>(null);
+  const touchHoldTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const [isPaused, setIsPaused] = useState(false);
 
   if (!currentAnnouncement) return null;
 
+  const updatePauseState = (newPauseState: boolean) => {
+    setIsPaused(newPauseState);
+    onPauseChange?.(newPauseState);
+  };
+
+  const handleMouseEnter = () => {
+    if (isDesktop) {
+      updatePauseState(true);
+    }
+  };
+
+  const handleMouseLeave = () => {
+    if (isDesktop) {
+      updatePauseState(false);
+    }
+  };
+
   const handleTouchStart = (e: React.TouchEvent) => {
-    if (isDesktop) return;
     touchStartX.current = e.touches?.[0]?.clientX ?? null;
+
+    if (!isDesktop) {
+      touchHoldTimeoutRef.current = setTimeout(() => {
+        updatePauseState(true);
+      }, 500);
+    }
   };
 
   const handleTouchEnd = (e: React.TouchEvent) => {
+    if (touchHoldTimeoutRef.current) {
+      clearTimeout(touchHoldTimeoutRef.current);
+      touchHoldTimeoutRef.current = null;
+    }
+
+    if (!isDesktop && isPaused) {
+      updatePauseState(false);
+    }
+
     if (isDesktop || touchStartX.current === null) return;
     const touchEndX = e.changedTouches?.[0]?.clientX;
     if (typeof touchEndX === 'number') {
@@ -54,6 +89,13 @@ export function AnnouncementContent({
       }
     }
     touchStartX.current = null;
+  };
+
+  const handleTouchMove = () => {
+    if (touchHoldTimeoutRef.current) {
+      clearTimeout(touchHoldTimeoutRef.current);
+      touchHoldTimeoutRef.current = null;
+    }
   };
 
   return (
@@ -107,10 +149,11 @@ export function AnnouncementContent({
                   }
             }
             className="flex w-full flex-col items-center justify-center"
-            {...(!isDesktop && {
-              onTouchStart: handleTouchStart,
-              onTouchEnd: handleTouchEnd,
-            })}
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
+            onTouchMove={handleTouchMove}
           >
             <currentAnnouncement.Content />
           </motion.div>
@@ -176,6 +219,7 @@ export function AnnouncementContent({
           current={current}
           onNavigate={onSlideChange}
           isActive={isModalOpen}
+          isPaused={isPaused}
         />
       </div>
     </div>
