@@ -53,6 +53,7 @@ import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 
+import { AuthWrapper } from '@/features/auth/components/AuthWrapper';
 import { InfoBox } from '@/features/sponsor-dashboard/components/InfoBox';
 
 import { walletFieldListings } from '../../constants';
@@ -678,26 +679,33 @@ export const SubmissionDrawer = ({
                   </div>
                 )}
 
-                <Button
-                  className="ph-no-capture h-12 w-full"
-                  disabled={
-                    isTemplate ||
-                    (!listing.isPublished && !!query['preview']) ||
-                    (isHackathon && !editMode && !termsAccepted)
+                <AuthWrapper
+                  showCompleteProfileModal
+                  completeProfileModalBodyText={
+                    'Please complete your profile before submitting to a listing.'
                   }
-                  type="submit"
                 >
-                  {isLoading ? (
-                    <>
-                      <span className="loading loading-spinner"></span>
-                      Submitting...
-                    </>
-                  ) : isProject ? (
-                    'Apply'
-                  ) : (
-                    'Submit'
-                  )}
-                </Button>
+                  <Button
+                    className="ph-no-capture h-12 w-full"
+                    disabled={
+                      isTemplate ||
+                      (!listing.isPublished && !!query['preview']) ||
+                      (isHackathon && !editMode && !termsAccepted)
+                    }
+                    type="submit"
+                  >
+                    {isLoading ? (
+                      <>
+                        <span className="loading loading-spinner"></span>
+                        Submitting...
+                      </>
+                    ) : isProject ? (
+                      'Apply'
+                    ) : (
+                      'Submit'
+                    )}
+                  </Button>
+                </AuthWrapper>
                 <p className="mt-2 text-center text-xs text-slate-400 sm:text-sm">
                   By submitting/applying to this listing, you agree to our{' '}
                   <button

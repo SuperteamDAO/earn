@@ -275,13 +275,7 @@ export const SubmissionActionButton = ({
           hackathonStartDate={hackathonStartDate}
           pastDeadline={pastDeadline!}
         >
-          <AuthWrapper
-            showCompleteProfileModal
-            completeProfileModalBodyText={
-              'Please complete your profile before submitting to a listing.'
-            }
-            className="w-full"
-          >
+          <AuthWrapper className="w-full">
             <div className="w-full">
               <Button
                 className={cn(
