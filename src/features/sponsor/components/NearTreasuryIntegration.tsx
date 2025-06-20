@@ -19,6 +19,7 @@ import {
 } from '@/components/ui/dialog';
 import { Form } from '@/components/ui/form';
 import { type SponsorType } from '@/interface/sponsor';
+import { getURLSanitized } from '@/utils/getURLSanitized';
 
 import { SocialInput } from '@/features/social/components/SocialInput';
 import {
@@ -61,27 +62,28 @@ function NearTreasuryForm({
               <h3 className="text-lg text-gray-700">
                 Connect to NEAR Treasury
               </h3>
-              <p className="text-sm text-gray-600">
-                Link your NEAR Treasury to NEARN to create on-chain payment
-                proposals directly from approved submissions and automatically
-                track their status.
+              <p className="font-sans text-sm text-gray-600">
+                Link your{' '}
+                <Link
+                  href="https://neartreasury.com"
+                  className="text-gray-900 underline underline-offset-[3px]"
+                  target="_blank"
+                >
+                  NEAR Treasury
+                </Link>{' '}
+                to NEARN to create on-chain payment proposals directly from
+                approved submissions and automatically track their status.
               </p>
             </div>
-          </div>
-
-          <div className="flex items-center gap-3 bg-yellow-50 p-3 text-yellow-800">
-            <TriangleAlert className="h-full w-5" />
-            <p className="h-full w-full text-sm">
-              Before proceeding, please ensure you&apos;ve
-              added nearn-io.near to your member list on NEAR Treasury with
-              Create Proposal permission only. This must be approved before you
-              can link it here. Learn more
-            </p>
           </div>
 
           <SocialInput
             required
             name="nearTreasuryFrontend"
+            formDescription="Before proceeding, please ensure you've
+              added nearn-io.near to your member list on NEAR Treasury with
+              Create Proposal permission only. This must be approved before you
+              can link it here."
             socialName="website"
             placeholder="your-treasury.near.page"
             formLabel="NEAR Treasury URL"
@@ -188,7 +190,7 @@ export default function NearTreasuryIntegration({
               Connected with{' '}
               <Link
                 href={`https://${sponsorData.nearTreasury?.frontend}`}
-                className="underline"
+                className="underline underline-offset-[3px]"
                 target="_blank"
               >
                 {sponsorData.nearTreasury?.dao}
@@ -210,9 +212,17 @@ export default function NearTreasuryIntegration({
         <div className="mt-4 flex items-center gap-3 bg-red-50 p-3 text-red-500">
           <TriangleAlert className="h-full w-5" />
           <p className="h-full w-full text-sm">
-            NEARN no longer has permission to submit proposals to your NEAR
-            Treasury. Please check your DAO settings to ensure nearn-io.near has
-            create proposal permission
+            The member nearn-io.near was removed from your Treasury, so NEARN
+            can no longer submit payment proposals. To fix this, go to{' '}
+            <Link
+              href={`${getURLSanitized(sponsorData.nearTreasury?.frontend + '/?page=settings&tab=members') ?? 'https://neartreasury.com'}`}
+              className="underline underline-offset-[3px]"
+              target="_blank"
+            >
+              NEAR Treasury
+            </Link>{' '}
+            and add nearn-io.near back as a member with the
+            &quot;Requestor&quot; permission.
           </p>
         </div>
       )}
@@ -240,8 +250,8 @@ export default function NearTreasuryIntegration({
               Disconnect NEAR Treasury?
             </DialogTitle>
             <DialogDescription>
-              After disconnecting, you won’t be able to quickly create payment
-              requests without taking additional steps.
+              After disconnecting, you won&apos;t be able to quickly create
+              payment requests without taking additional steps.
               <br />
               However, you can reconnect NEAR Treasury at any time.
             </DialogDescription>

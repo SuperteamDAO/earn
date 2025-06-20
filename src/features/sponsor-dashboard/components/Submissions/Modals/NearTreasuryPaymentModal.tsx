@@ -111,7 +111,7 @@ export default function NearTreasuryPaymentModal({
               >
                 Cancel
               </Button>
-              <Link href={`/sponsor/edit`}>
+              <Link href={`/sponsor/edit/?tab=integrations`}>
                 <Button variant="default">
                   Sponsor Profile{' '}
                   <ChevronRight className="h-4 w-4" strokeWidth={3} />
@@ -214,22 +214,25 @@ export default function NearTreasuryPaymentModal({
             <div className="mx-auto mt-6 flex max-w-[20rem] flex-col items-center gap-2">
               <DialogTitle>Something went wrong ...</DialogTitle>
               <p className="text-center text-sm text-slate-500">
-                Please try again or{' '}
-                <Link
-                  href={HELP_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="underline"
-                >
-                  get support
-                </Link>
+                We couldn&apos;t create the payment request
               </p>
             </div>
-            <div className="mx-auto mt-8 flex flex-col items-center gap-6 font-bold">
-              <Button onClick={() => handleCreateProposal()}>
+            <div className="mx-auto mt-8 flex flex-col items-center gap-5 font-bold">
+              <Button
+                onClick={() => handleCreateProposal()}
+                className="p-2 text-base"
+              >
                 <RefreshCcw className="mr-1 h-4 w-4" strokeWidth={3} /> Try
                 Again
               </Button>
+              <Link href={HELP_URL} target="_blank" rel="noopener noreferrer">
+                <Button
+                  variant="link"
+                  className="text-base text-slate-500 underline underline-offset-4"
+                >
+                  Get support
+                </Button>
+              </Link>
             </div>
           </DialogContent>
         );

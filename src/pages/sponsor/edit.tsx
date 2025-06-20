@@ -435,6 +435,19 @@ function Integrations() {
 }
 
 export default function EditPage() {
+  const router = useRouter();
+  const { tab } = router.query;
+
+  const [activeTab, setActiveTab] = useState(
+    tab === 'integrations' ? 'integrations' : 'edit',
+  );
+
+  useEffect(() => {
+    if (tab) {
+      setActiveTab(tab as string);
+    }
+  }, [tab]);
+
   return (
     <Default
       meta={
@@ -450,7 +463,7 @@ export default function EditPage() {
             Edit Sponsor Profile
           </p>
         </div>
-        <Tabs defaultValue="edit" className="w-full">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList
             className={cn(
               'relative mb-8 w-full justify-start gap-4',
