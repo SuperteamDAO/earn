@@ -154,11 +154,11 @@ export const SelectLabel = ({ listingSlug }: Props) => {
         return prev;
       });
     },
-    onError: (e) => {
-      console.log(e);
-    },
     onMutate: () => {
       setLabelsUpdating(true);
+    },
+    onError: (e) => {
+      console.log(e);
     },
     onSettled: () => {
       setLabelsUpdating(false);

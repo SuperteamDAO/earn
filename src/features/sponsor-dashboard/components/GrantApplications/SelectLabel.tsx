@@ -81,11 +81,11 @@ export const SelectLabel = ({ grantSlug }: Props) => {
           : prev,
       );
     },
-    onError: (e) => {
-      console.log(e);
-    },
     onMutate: () => {
       setLabelsUpdating(true);
+    },
+    onError: (e) => {
+      console.log(e);
     },
     onSettled: (_, error, variables) => {
       setLabelsUpdating(false);
