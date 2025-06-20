@@ -55,17 +55,17 @@
 }
 
 .minimal-tiptap-editor .ProseMirror a {
-  @apply !cursor-pointer !text-primary;
+  @apply !cursor-pointer !text-blue-600 underline;
 }
 
 .minimal-tiptap-editor .ProseMirror a * {
-  @apply !cursor-pointer !text-primary;
+  @apply !cursor-pointer !text-blue-600 underline;
 }
 
 .minimal-tiptap-editor .ProseMirror a:hover {
-  @apply !underline;
+  @apply !text-blue-700;
 }
 
 .minimal-tiptap-editor .ProseMirror a:hover * {
-  @apply !underline;
+  @apply !text-blue-700;
 }
