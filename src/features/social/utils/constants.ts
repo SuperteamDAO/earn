@@ -16,7 +16,7 @@ export type SocialType =
   | 'linkedin'
   | 'telegram'
   | 'website';
-interface Social {
+export interface Social {
   name: SocialType;
   placeholder: string;
   icon: IconType;

@@ -12,7 +12,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { cn } from '@/utils/cn';
 
-import { socials, type SocialType } from '../utils/constants';
+import { type Social, socials, type SocialType } from '../utils/constants';
 import {
   extractSocialUsername,
   linkedUsernames,
@@ -39,10 +39,15 @@ export const SocialInputAll = ({
   required,
   exclude,
 }: SocialInputAllProps) => {
+  const sorting = (a: Social, b: Social) => {
+    if (required?.includes(a.name) && !required?.includes(b.name)) return -1;
+    if (!required?.includes(a.name) && required?.includes(b.name)) return 1;
+    return a.name.localeCompare(b.name);
+  };
   return (
     <>
       {socials
-        .sort((a) => (required?.includes(a.name) ? -1 : 1))
+        .sort(sorting)
         .filter((s) => !exclude?.includes(s.name))
         .map(({ name, placeholder }) => {
           return (
