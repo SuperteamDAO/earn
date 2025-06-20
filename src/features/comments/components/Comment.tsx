@@ -95,8 +95,15 @@ export const Comment = ({
   const [showOptions, setShowOptions] = useState(false);
   const cancelRef = useRef<HTMLButtonElement>(null);
 
+  const [isLiked, setIsLiked] = useState<boolean>(
+    !!comment.like?.find((e: any) => e.id === user?.id),
+  );
   const [totalLikes, setTotalLikes] = useState<number>(comment.likeCount || 0);
-  const isLiked = comment.like?.some((like) => like.id === user?.id);
+
+  useEffect(() => {
+    setIsLiked(!!comment.like?.find((e: any) => e.id === user?.id));
+    setTotalLikes(comment.likeCount);
+  }, [comment.like, comment.likeCount, user?.id]);
 
   useEffect(() => {
     const reply = localStorage.getItem(`comment-${refId}-${comment.id}`);
@@ -152,27 +159,19 @@ export const Comment = ({
     setShowReplies(true);
   };
 
-  const date = formatFromNow(dayjs(comment?.updatedAt).fromNow());
+  const date = formatFromNow(dayjs(comment?.createdAt).fromNow());
 
   const handleLike = async () => {
     if (!user || commentLikeMutation.isPending) return;
-
-    const prevTotalLikes = totalLikes;
-    const newIsLiked = !isLiked;
-    const newTotalLikes = newIsLiked
-      ? totalLikes + 1
-      : Math.max(totalLikes - 1, 0);
-
-    setTotalLikes(newTotalLikes);
 
     try {
       const result = await commentLikeMutation.mutateAsync({
         commentId: comment.id,
       });
+      setIsLiked(result.likeCount > totalLikes);
       setTotalLikes(result.likeCount);
-    } catch (error) {
-      setTotalLikes(prevTotalLikes);
-    }
+      window.dispatchEvent(new Event('update-comments'));
+    } catch (error) {}
   };
 
   const handleSubmit = async () => {

@@ -31,7 +31,7 @@ export default async function comment(
         },
       },
       orderBy: {
-        updatedAt: 'desc',
+        createdAt: 'desc',
       },
       skip: skip ?? 0,
       take,
