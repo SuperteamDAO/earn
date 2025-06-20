@@ -1,17 +1,33 @@
 import { type Prisma } from '@prisma/client';
-import type { NextApiResponse } from 'next';
+import cors from 'cors';
+import type { NextApiRequest, NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
 
-import { type NextApiRequestWithPotentialSponsor } from '@/features/auth/types';
-import { withPotentialSponsorAuth } from '@/features/auth/utils/withPotentialSponsorAuth';
+const corsMiddleware = cors({
+  origin: ['http://localhost:3000', '*.near.page'],
+  methods: ['GET'],
+});
 
-async function handler(
-  req: NextApiRequestWithPotentialSponsor,
+async function runMiddleware(req: NextApiRequest, res: NextApiResponse) {
+  return new Promise((resolve, reject) => {
+    corsMiddleware(req, res, (result: any) => {
+      if (result instanceof Error) {
+        return reject(result);
+      }
+      return resolve(result);
+    });
+  });
+}
+
+export default async function handler(
+  req: NextApiRequest,
   res: NextApiResponse,
 ) {
+  await runMiddleware(req, res);
+
   const params = req.query;
   const sponsorSlug = params.sponsor as string;
   const status = params.status as string;
@@ -19,9 +35,6 @@ async function handler(
   const customAnswer = params.customAnswer;
   const name = params.name;
   const sequentialId = params.sequentialId;
-
-  const isGod = req.authorized && req.role === 'GOD';
-  const validation = isGod ? {} : { isActive: true, isArchived: false };
 
   logger.debug(`Request query: ${safeStringify(req.query)}`);
   let statusFilter: Prisma.SubmissionWhereInput;
@@ -68,25 +81,25 @@ async function handler(
       questionSearchIds = result.map((r) => r.id);
     }
 
-    logger.debug(
-      `Fetching submissions with sponsor slug: ${sponsorSlug}, isGod: ${isGod}`,
-    );
+    logger.debug(`Fetching submissions with sponsor slug: ${sponsorSlug}`);
     const result = await prisma.submission.findMany({
       where: {
         listing: {
           sponsor: {
             slug: sponsorSlug,
           },
-          isPrivate: isGod ? undefined : false,
-          ...validation,
+          isPrivate: false,
+          isActive: true,
+          isArchived: false,
         },
+        isActive: true,
+        isArchived: false,
         user: {
           ...(name && { name: { contains: name as string } }),
         },
         ...(sequentialId && {
           sequentialId: { equals: parseInt(sequentialId as string) },
         }),
-        ...validation,
         ...statusFilter,
         ...(questionSearchIds ? { id: { in: questionSearchIds } } : {}),
       },
@@ -143,5 +156,3 @@ async function handler(
     });
   }
 }
-
-export default withPotentialSponsorAuth(handler);

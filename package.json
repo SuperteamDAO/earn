@@ -82,6 +82,7 @@
     "cloudinary": "^2.5.1",
     "clsx": "^2.1.1",
     "cmdk": "1.0.4",
+    "cors": "^2.8.5",
     "datauri": "^4.1.0",
     "date-fns": "^4.1.0",
     "dayjs": "^1.11.12",
@@ -146,6 +147,7 @@
   "devDependencies": {
     "@tanstack/eslint-plugin-query": "^5.66.0",
     "@tanstack/react-query-devtools": "^5.66.0",
+    "@types/cors": "^2.8.19",
     "@types/eslint-config-prettier": "~6.11.3",
     "@types/jsonwebtoken": "^9.0.8",
     "@types/lodash.debounce": "~4.0.9",
