@@ -132,7 +132,7 @@ export const Notes = ({ submissionId, initialNotes = '', slug }: Props) => {
         value={notes}
       />
       <p className="mt-1 w-full text-right text-xs text-slate-400">
-        {notes.length}/{MAX_CHARACTERS}
+        {notes?.length || 0}/{MAX_CHARACTERS}
       </p>
     </div>
   );
