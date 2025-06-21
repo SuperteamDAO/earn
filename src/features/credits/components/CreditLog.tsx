@@ -15,7 +15,9 @@ type CreditEventType =
   | 'WIN_BONUS'
   | 'MONTHLY_CREDIT'
   | 'CREDIT_EXPIRY'
-  | 'CREDIT_REFUND';
+  | 'CREDIT_REFUND'
+  | 'GRANT_SPAM_PENALTY'
+  | 'GRANT_WIN_BONUS';
 
 interface CreditEntry {
   id: string;
@@ -194,7 +196,7 @@ function getStatusIcon(type: CreditEventType) {
     );
   }
 
-  if (type === 'SPAM_PENALTY') {
+  if (type === 'SPAM_PENALTY' || type === 'GRANT_SPAM_PENALTY') {
     return (
       <div className="absolute -right-1 -bottom-1 flex size-5 items-center justify-center rounded-full border-3 border-white bg-white text-gray-700">
         <span className="text-xs">🚫</span>
@@ -202,7 +204,7 @@ function getStatusIcon(type: CreditEventType) {
     );
   }
 
-  if (type === 'WIN_BONUS') {
+  if (type === 'WIN_BONUS' || type === 'GRANT_WIN_BONUS') {
     return (
       <div className="absolute -right-1 -bottom-1 flex size-5 items-center justify-center rounded-full border-3 border-white bg-white text-gray-700">
         <span className="text-xs">🎉</span>
@@ -235,6 +237,10 @@ function getEntryTitle(entry: CreditEntry): string {
       return entry.submission.listing.type === 'project'
         ? 'Applied for Project'
         : 'Submitted to a Bounty';
+    case 'GRANT_SPAM_PENALTY':
+      return 'Grant Application Flagged as Spam';
+    case 'GRANT_WIN_BONUS':
+      return 'Won Grant';
     case 'MONTHLY_CREDIT':
       const now = new Date();
       const effectiveDate = new Date(entry.effectiveMonth);
