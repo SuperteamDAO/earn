@@ -109,11 +109,11 @@ export const SpamButton = ({ grantSlug, isMultiSelectOn }: Props) => {
         },
       );
     },
-    onError: (e) => {
-      console.log(e);
-    },
     onMutate: () => {
       setLabelsUpdating(true);
+    },
+    onError: (e) => {
+      console.log(e);
     },
     onSettled: () => {
       setLabelsUpdating(false);
