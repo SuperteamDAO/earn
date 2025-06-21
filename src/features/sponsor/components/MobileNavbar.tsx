@@ -10,7 +10,7 @@ import { Sheet, SheetClose, SheetContent } from '@/components/ui/sheet';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { useUser } from '@/store/user';
 
-import { UserMenu } from '@/features/navbar/components/UserMenu';
+import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
 import { NAV_LINKS } from '../utils/constants';
 
@@ -26,7 +26,7 @@ export const MobileNavbar = () => {
   const posthog = usePostHog();
   const btnRef = useRef<HTMLButtonElement>(null);
 
-  const MobileDrawer = () => {
+  const MobileSponsorDrawer = () => {
     return (
       <Sheet open={isDrawerOpen} onOpenChange={onDrawerClose}>
         <SheetContent
@@ -110,6 +110,11 @@ export const MobileNavbar = () => {
     );
   };
 
+  const openDrawer = () => {
+    onDrawerOpen();
+    posthog.capture('open_mobile nav');
+  };
+
   return (
     <div className="flex items-center justify-between border-b border-black/20 bg-white px-1 py-2 lg:hidden">
       <Button
@@ -122,7 +127,7 @@ export const MobileNavbar = () => {
         <Menu className="h-6 w-6 text-slate-500" />
       </Button>
 
-      <MobileDrawer />
+      <MobileSponsorDrawer />
 
       <div className="absolute left-1/2 -translate-x-1/2">
         <Link
@@ -144,7 +149,26 @@ export const MobileNavbar = () => {
         </Link>
       </div>
 
-      {ready && authenticated && <UserMenu />}
+      {ready && authenticated && (
+        <div onClick={openDrawer} className="relative ml-1 cursor-pointer">
+          {ready && authenticated ? (
+            <>
+              <EarnAvatar
+                className="size-8"
+                id={user?.id}
+                avatar={user?.photo}
+              />
+              <div className="absolute -right-2 -bottom-0.5 flex flex-col gap-[2px] rounded-full bg-white px-[5px] py-1.5">
+                <div className="w-2.5 border-[0.5px] border-slate-400" />
+                <div className="w-2.5 border-[0.5px] border-slate-400" />
+                <div className="w-2.5 border-[0.5px] border-slate-400" />
+              </div>
+            </>
+          ) : (
+            <Menu className="size-6 text-slate-500" />
+          )}
+        </div>
+      )}
       {ready && !authenticated && (
         <Link
           className="ph-no-capture"

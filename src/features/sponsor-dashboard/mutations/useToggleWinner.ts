@@ -60,15 +60,6 @@ export const useToggleWinner = (bounty: Listing | undefined) => {
         autoFixed,
       };
     },
-    onError: (error: any) => {
-      queryClient.invalidateQueries({
-        queryKey: ['sponsor-submissions', bounty?.slug],
-      });
-      toast.error(
-        'An error occurred while assigning bonus spots. Please try again.',
-      );
-      console.error('Failed to toggle winners:', error);
-    },
     onMutate: async (variables) => {
       await queryClient.cancelQueries({
         queryKey: ['sponsor-submissions', bounty?.slug],
@@ -122,6 +113,15 @@ export const useToggleWinner = (bounty: Listing | undefined) => {
       );
 
       return { previousSubmissions };
+    },
+    onError: (error: any) => {
+      queryClient.invalidateQueries({
+        queryKey: ['sponsor-submissions', bounty?.slug],
+      });
+      toast.error(
+        'An error occurred while assigning bonus spots. Please try again.',
+      );
+      console.error('Failed to toggle winners:', error);
     },
   });
 };
