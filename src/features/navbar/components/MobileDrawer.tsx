@@ -260,6 +260,10 @@ export const MobileDrawer = ({
               label="Leaderboard"
               onClick={() => router.push(`/leaderboard`)}
             />
+            <NavItem
+              label="Telegram Bot"
+              onClick={() => router.push(`https://t.me/${process.env.NEXT_PUBLIC_TELEGRAM_BOT_SLUG}?start=start`)}
+            />
             <SupportFormDialog>
               <NavItem
                 label="Get Help"
