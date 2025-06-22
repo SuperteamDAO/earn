@@ -40,6 +40,7 @@ const faqSections: readonly FAQSection[] = [
         question: 'What kind of distribution do sponsors get from Earn?',
         answer: `When you publish a listing on Superteam Earn, it can be distributed across multiple high-visibility channels, including:
 <br />
+<br />
 <strong>1. Homepage:</strong> Your listing will be featured on the Earn homepage, which receives <strong>50,000 monthly active users</strong> actively browsing for work opportunities.
 <br />
 <strong>2. Discord Bot:</strong> Listings are shared in real-time in relevant Superteam Discord channels across Superteam discords.
