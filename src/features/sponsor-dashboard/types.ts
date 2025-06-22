@@ -60,7 +60,8 @@ export const verifyPaymentsSchema = z.object({
             );
           },
           {
-            message: `Please add a valid transaction link (${ALLOWED_URL_PREFIXES.join(' or ')})`,
+            message: 'Please add a Solscan/Solana.fm link',
+            path: ['link'],
           },
         )
         .transform((data) => ({
