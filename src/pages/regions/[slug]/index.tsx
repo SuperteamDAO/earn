@@ -33,9 +33,9 @@ const RegionsPage = ({
       />
       <div className="w-full">
         <RegionPop st={st} />
-        <Listings type="region" region={slug} />
+        <Listings type="region" region={displayName} />
 
-        <GrantsSection type="region" region={slug} />
+        <GrantsSection type="region" region={displayName} />
       </div>
     </Home>
   );
@@ -44,8 +44,16 @@ const RegionsPage = ({
 export async function getServerSideProps(context: NextPageContext) {
   const { slug } = context.query;
 
+  const slugToRegionMap: Record<string, string> = {
+    uk: 'united_kingdom',
+    korea: 'south_korea',
+  };
+
+  const normalizedSlug = (slug as string).toLowerCase();
+  const regionToMatch = slugToRegionMap[normalizedSlug] || normalizedSlug;
+
   const st = Superteams.find(
-    (team) => team.region?.toLowerCase() === (slug as string).toLowerCase(),
+    (team) => team.region?.toLowerCase() === regionToMatch,
   );
   const displayName = st?.displayValue;
 
