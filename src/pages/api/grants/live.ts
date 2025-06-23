@@ -1,4 +1,3 @@
-import { Regions } from '@prisma/client';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
@@ -42,13 +41,13 @@ export default async function grants(
       if (matchedRegion?.name) {
         userRegion = [
           matchedRegion.name,
-          Regions.GLOBAL,
+          'Global',
           ...(filterRegionCountry(matchedRegion, user?.location || '')
             .country || []),
           ...(getParentRegions(matchedRegion) || []),
         ];
       } else {
-        userRegion = [Regions.GLOBAL];
+        userRegion = ['Global'];
       }
     }
 

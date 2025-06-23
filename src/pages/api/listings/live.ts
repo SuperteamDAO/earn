@@ -1,4 +1,4 @@
-import { type BountyType, type Prisma, Regions } from '@prisma/client';
+import { type BountyType, type Prisma } from '@prisma/client';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
@@ -59,13 +59,13 @@ export default async function listings(
       region: {
         in: userRegion?.name
           ? [
-              Regions.GLOBAL,
+              'Global',
               userRegion.name,
               ...(filterRegionCountry(userRegion, userLocation || '').country ||
                 []),
               ...(getParentRegions(userRegion) || []),
             ]
-          : [Regions.GLOBAL],
+          : ['Global'],
       },
       sponsorId: exclusiveSponsorId,
     },

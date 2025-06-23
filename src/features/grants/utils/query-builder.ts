@@ -1,4 +1,4 @@
-import { type Prisma, Regions } from '@prisma/client';
+import { type Prisma } from '@prisma/client';
 import type { z } from 'zod';
 
 import { exclusiveSponsorData } from '@/constants/exclusiveSponsors';
@@ -87,19 +87,19 @@ export async function buildGrantsQuery(
     where.region = {
       in: userRegion?.name
         ? [
-            Regions.GLOBAL,
+            'Global',
             userRegion.name,
             ...(filterRegionCountry(userRegion, user.location || '').country ||
               []),
             ...(getParentRegions(userRegion) || []),
           ]
-        : [Regions.GLOBAL],
+        : ['Global'],
     };
   }
 
   if (context === 'region' && region) {
     where.region = {
-      in: [region.toUpperCase() as Regions, Regions.GLOBAL],
+      in: [region.charAt(0).toUpperCase() + region.slice(1), 'Global'],
     };
   }
 

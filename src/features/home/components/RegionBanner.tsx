@@ -1,34 +1,33 @@
-import { type Regions } from '@prisma/client';
 import Image from 'next/image';
 
 import { UserFlag } from '@/components/shared/UserFlag';
-import { type Superteam } from '@/constants/Superteam';
+import { type Region, type Superteam } from '@/constants/Superteam';
 
 const customBannerPosition: Partial<
-  Record<Regions, Partial<React.CSSProperties>>
+  Record<Region, Partial<React.CSSProperties>>
 > = {
-  SOUTH_KOREA: {
+  'South Korea': {
     objectPosition: 'bottom',
   },
-  BRAZIL: {
+  Brazil: {
     objectPosition: 'top',
   },
-  MALAYSIA: {
+  Malaysia: {
     objectPosition: '50% 75%',
   },
-  PHILIPPINES: {
+  Philippines: {
     objectPosition: '50% 80%',
   },
-  JAPAN: {
+  Japan: {
     objectPosition: '50% 65%',
   },
-  FRANCE: {
+  France: {
     objectPosition: 'bottom',
   },
-  CANADA: {
+  Canada: {
     objectPosition: '50% 75%',
   },
-  SINGAPORE: {
+  Singapore: {
     objectPosition: '50% 30%',
   },
 };

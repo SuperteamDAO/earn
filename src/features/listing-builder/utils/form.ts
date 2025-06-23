@@ -2,7 +2,6 @@ import {
   type BountyType,
   type CompensationType,
   type Hackathon,
-  Regions,
 } from '@prisma/client';
 import { z } from 'zod';
 
@@ -164,7 +163,7 @@ export function transformListingToFormListing(
     title: listing.title || '',
     description: listing.description || '',
     eligibility: listing.eligibility as any,
-    region: listing.region || Regions.GLOBAL,
+    region: listing.region || 'Global',
     rewards: listing.rewards as any,
     compensationType: listing.compensationType as CompensationType,
     rewardAmount: listing.rewardAmount,
