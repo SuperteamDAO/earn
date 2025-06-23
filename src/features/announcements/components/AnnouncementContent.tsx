@@ -1,6 +1,6 @@
 import { AnimatePresence, motion } from 'motion/react';
 import Link from 'next/link';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { AnimateChangeInHeight } from '@/components/shared/AnimateChangeInHeight';
 import { Button } from '@/components/ui/button';
@@ -37,6 +37,13 @@ export function AnnouncementContent({
   const touchStartX = useRef<number | null>(null);
   const touchHoldTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const [isPaused, setIsPaused] = useState(false);
+
+  useEffect(() => {
+    return () => {
+      if (touchHoldTimeoutRef.current)
+        clearTimeout(touchHoldTimeoutRef.current);
+    };
+  }, []);
 
   if (!currentAnnouncement) return null;
 
@@ -189,25 +196,13 @@ export function AnnouncementContent({
 
           if (cta.link) {
             return (
-              <Link href={cta.link} passHref legacyBehavior>
-                <a
-                  style={{ width: '100%' }}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={
-                    cta.onClick
-                      ? (e) => {
-                          cta.onClick?.();
-                          if (!cta.link && !cta.onClick) {
-                            e.preventDefault();
-                            handleClick();
-                          }
-                        }
-                      : undefined
-                  }
-                >
-                  {button}
-                </a>
+              <Link
+                href={cta.link}
+                style={{ width: '100%' }}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {button}
               </Link>
             );
           }

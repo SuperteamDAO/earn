@@ -76,10 +76,12 @@ export function AnnouncementModal({
       setIsTransitioning(true);
       setCurrent(index);
 
-      setTimeout(() => {
+      const timeoutId = setTimeout(() => {
         setIsTransitioning(false);
       }, 400);
+      return () => clearTimeout(timeoutId);
     }
+    return;
   };
 
   const closedOnce = useRef<boolean>(false);
@@ -160,7 +162,7 @@ export function AnnouncementModal({
         <Drawer open={open} onOpenChange={handleSetOpen}>
           <DrawerContent
             classNames={{
-              bar: 'absolute top-0 z-90 left-2/4 -translate-2/4 bg-stone-300',
+              bar: 'absolute top-0 z-90 left-2/4 -translate-x-2/4 bg-stone-300',
             }}
           >
             <MainContent
