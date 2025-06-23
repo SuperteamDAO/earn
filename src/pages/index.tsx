@@ -4,9 +4,6 @@ import dynamic from 'next/dynamic';
 import { Home } from '@/layouts/Home';
 import { USER_ID_COOKIE_NAME } from '@/store/user';
 
-import { TalentAnnouncements } from '@/features/announcements/components/TalentAnnouncements';
-import { HomepagePop } from '@/features/conversion-popups/components/HomepagePop';
-import { GrantsSection } from '@/features/grants/components/GrantsSection';
 import { Listings } from '@/features/listings/components/Listings';
 
 const InstallPWAModal = dynamic(
@@ -17,8 +14,32 @@ const InstallPWAModal = dynamic(
   { ssr: false },
 );
 
+const HomepagePop = dynamic(
+  () =>
+    import('@/features/conversion-popups/components/HomepagePop').then(
+      (mod) => mod.HomepagePop,
+    ),
+  { ssr: false },
+);
+
+const TalentAnnouncements = dynamic(
+  () =>
+    import('@/features/announcements/components/TalentAnnouncements').then(
+      (mod) => mod.TalentAnnouncements,
+    ),
+  { ssr: false },
+);
+
+const GrantsSection = dynamic(
+  () =>
+    import('@/features/grants/components/GrantsSection').then(
+      (mod) => mod.GrantsSection,
+    ),
+  { ssr: false },
+);
+
 interface HomePageProps {
-  potentialSession: boolean;
+  readonly potentialSession: boolean;
 }
 
 export default function HomePage({ potentialSession }: HomePageProps) {

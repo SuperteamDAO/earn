@@ -6,10 +6,10 @@ import { cn } from '@/utils/cn';
 import { Header } from '@/features/navbar/components/Header';
 
 interface IDefaultProps {
-  meta: ReactNode;
-  children: ReactNode;
-  className?: string;
-  hideFooter?: boolean;
+  readonly meta: ReactNode;
+  readonly children: ReactNode;
+  readonly className?: string;
+  readonly hideFooter?: boolean;
 }
 
 const Footer = dynamic(
