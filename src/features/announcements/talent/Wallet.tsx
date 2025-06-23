@@ -3,10 +3,9 @@ import React from 'react';
 import { GrTransaction } from 'react-icons/gr';
 import { MdOutlineLock } from 'react-icons/md';
 
+import { AspectRatio } from '@/components/ui/aspect-ratio';
+import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { domPurify } from '@/lib/domPurify';
-
-import { Button } from '../ui/button';
-import { ExternalImage } from '../ui/cloudinary-image';
 
 const Point = ({
   title,
@@ -19,13 +18,13 @@ const Point = ({
 }) => {
   return (
     <div className="flex gap-8">
-      <div className="text-brand-purple mt-1">{icon}</div>
+      <div className="text-brand-purple mt-1 size-2 md:size-4">{icon}</div>
       <div>
-        <p className="text-base font-medium tracking-tight text-slate-700">
+        <p className="text-sm font-medium tracking-tight text-slate-700 md:text-base">
           {title}
         </p>
         <p
-          className="text-sm text-slate-500"
+          className="text-xs text-slate-500 md:text-sm"
           dangerouslySetInnerHTML={{ __html: domPurify(description) }}
         />
       </div>
@@ -33,19 +32,23 @@ const Point = ({
   );
 };
 
-export const WalletFeature = ({ onClick }: { onClick: () => void }) => {
+export const WalletFeature = () => {
   return (
     <>
-      <div className="p-8">
+      <AspectRatio ratio={960 / 632}>
         <ExternalImage
-          src="/wallet/modal-wallet.webp"
-          alt="Scouts Announcement Illustration"
-          className="mx-auto w-1/3"
+          src="/announcements/embedded-wallet"
+          alt="Wallet Announcement Illustration"
+          className="w-full"
+          loading="eager"
+          decoding="sync"
+          width={960}
+          height={632}
         />
-      </div>
+      </AspectRatio>
 
-      <div className="flex flex-col items-start gap-3 p-6">
-        <p className="text-lg font-semibold">Introducing the Earn Wallet</p>
+      <div className="flex flex-col items-start gap-3 p-6 px-4 pt-4 pb-0">
+        <p className="font-semibold md:text-lg">Introducing the Earn Wallet</p>
         <Point
           title="Linked to your Earn account"
           description="Receive rewards directly — no extensions, apps, or setup required. Just start contributing!"
@@ -61,11 +64,6 @@ export const WalletFeature = ({ onClick }: { onClick: () => void }) => {
           description="We partnered with <a href='https://privy.io' style='text-decoration: underline;' target='_blank' rel='noopener noreferrer'>Privy</a> for our wallet service. They are protected with industry-leading security and regular audits to keep your earnings safe."
           icon={<MdOutlineLock className="size-6" />}
         />
-      </div>
-      <div className="px-6">
-        <Button onClick={onClick} className="mb-6 w-full">
-          Understood
-        </Button>
       </div>
     </>
   );

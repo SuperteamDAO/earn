@@ -1,5 +1,3 @@
-import { Regions } from '@prisma/client';
-
 import { ASSET_URL } from './ASSET_URL';
 
 interface People {
@@ -8,18 +6,48 @@ interface People {
   role?: string;
 }
 
+export const REGIONS = [
+  'Global',
+  'India',
+  'Vietnam',
+  'Germany',
+  'Turkey',
+  'Mexico',
+  'United Kingdom',
+  'UAE',
+  'Nigeria',
+  'Israel',
+  'Brazil',
+  'Malaysia',
+  'Balkan',
+  'Philippines',
+  'Japan',
+  'France',
+  'Canada',
+  'Singapore',
+  'Poland',
+  'South Korea',
+  'Ireland',
+  'Ukraine',
+  'Argentina',
+  'USA',
+  'Spain',
+] as const;
+
+export type Region = (typeof REGIONS)[number];
+
 export interface Superteam {
   name: string;
   icons: string;
   banner: string;
-  region: Regions;
+  region: Region;
   displayValue: string;
   country: string[];
   code: string;
   hello: string;
   nationality: string;
   people?: People[];
-  airtableKey?: string;
+  slug: string;
 }
 
 const basePath = ASSET_URL + '/superteams/';
@@ -29,7 +57,7 @@ export const Superteams = [
     name: 'Superteam India',
     icons: basePath + 'logos/india.jpg',
     banner: basePath + 'banners/India.png',
-    region: Regions.INDIA,
+    region: 'India' as Region,
     displayValue: 'India',
     country: ['India'],
     code: 'IN',
@@ -45,12 +73,13 @@ export const Superteams = [
         pfp: 'https://pbs.twimg.com/profile_images/1803645845352378368/DifayeJH_400x400.jpg',
       },
     ],
+    slug: 'india',
   },
   {
     name: 'Superteam Germany',
     icons: basePath + 'logos/germany.jpg',
     banner: basePath + 'banners/Germany.png',
-    region: Regions.GERMANY,
+    region: 'Germany' as Region,
     displayValue: 'Germany',
     country: ['Germany'],
     code: 'DE',
@@ -66,12 +95,13 @@ export const Superteams = [
         pfp: 'https://pbs.twimg.com/profile_images/1801333126272008192/Yvn8CtqM_400x400.jpg',
       },
     ],
+    slug: 'germany',
   },
   {
     name: 'Superteam UK',
     icons: basePath + 'logos/uk.png',
     banner: basePath + 'banners/UK.png',
-    region: Regions.UK,
+    region: 'United Kingdom' as Region,
     displayValue: 'UK',
     country: ['United Kingdom'],
     code: 'GB',
@@ -83,12 +113,13 @@ export const Superteams = [
         pfp: 'https://pbs.twimg.com/profile_images/1809162104521261056/6dg1nUeM_400x400.jpg',
       },
     ],
+    slug: 'uk',
   },
   {
     name: 'Superteam Turkey',
     icons: basePath + 'logos/turkey.jpg',
     banner: basePath + 'banners/Turkey.png',
-    region: Regions.TURKEY,
+    region: 'Turkey' as Region,
     displayValue: 'Turkey',
     country: ['Turkey'],
     code: 'TR',
@@ -100,12 +131,13 @@ export const Superteams = [
         pfp: 'https://pbs.twimg.com/profile_images/1573011788769247234/zOaAXiv6_400x400.jpg',
       },
     ],
+    slug: 'turkey',
   },
   {
     name: 'Superteam Vietnam',
     icons: basePath + 'logos/vietnam.png',
     banner: basePath + 'banners/Vietnam.png',
-    region: Regions.VIETNAM,
+    region: 'Vietnam' as Region,
     displayValue: 'Vietnam',
     country: ['Vietnam'],
     code: 'VN',
@@ -125,12 +157,13 @@ export const Superteams = [
         pfp: 'https://pbs.twimg.com/profile_images/926374044030484480/it1e5gQr_400x400.jpg',
       },
     ],
+    slug: 'vietnam',
   },
   {
     name: 'Superteam UAE',
     icons: basePath + 'logos/uae.png',
     banner: basePath + 'banners/UAE.png',
-    region: Regions.UAE,
+    region: 'UAE' as Region,
     displayValue: 'UAE',
     country: ['United Arab Emirates'],
     code: 'AE',
@@ -142,12 +175,13 @@ export const Superteams = [
         pfp: 'https://pbs.twimg.com/profile_images/1638831283416473600/UrbqFJ4s_400x400.jpg',
       },
     ],
+    slug: 'uae',
   },
   {
     name: 'Superteam Nigeria',
     icons: basePath + 'logos/nigeria.png',
     banner: basePath + 'banners/Nigeria.png',
-    region: Regions.NIGERIA,
+    region: 'Nigeria' as Region,
     displayValue: 'Nigeria',
     country: ['Nigeria'],
     code: 'NG',
@@ -163,12 +197,13 @@ export const Superteams = [
         pfp: 'https://pbs.twimg.com/profile_images/1837323392959270913/PpGQRio3_400x400.jpg',
       },
     ],
+    slug: 'nigeria',
   },
   {
     name: 'Superteam Brazil',
     icons: basePath + 'logos/brazil.png',
     banner: basePath + 'banners/Brazil.png',
-    region: Regions.BRAZIL,
+    region: 'Brazil' as Region,
     displayValue: 'Brazil',
     country: ['Brazil'],
     code: 'BR',
@@ -180,12 +215,13 @@ export const Superteams = [
         pfp: 'https://res.cloudinary.com/dgvnuwspr/image/upload/diego-dias.jpg',
       },
     ],
+    slug: 'brazil',
   },
   {
     name: 'Superteam Malaysia',
     icons: basePath + 'logos/malaysia.jpg',
     banner: basePath + 'banners/Malaysia.png',
-    region: Regions.MALAYSIA,
+    region: 'Malaysia' as Region,
     displayValue: 'Malaysia',
     country: ['Malaysia'],
     code: 'MY',
@@ -197,12 +233,13 @@ export const Superteams = [
         pfp: 'https://pbs.twimg.com/profile_images/1475080610100047874/GB_awKP9_400x400.jpg',
       },
     ],
+    slug: 'malaysia',
   },
   {
     name: 'Superteam Balkan',
     icons: basePath + 'logos/balkan.png',
     banner: basePath + 'banners/Balkan.png',
-    region: Regions.BALKAN,
+    region: 'Balkan' as Region,
     displayValue: 'Balkan',
     country: [
       'Albania',
@@ -230,12 +267,13 @@ export const Superteams = [
         pfp: 'https://pbs.twimg.com/profile_images/1763670773091160064/y02448TX_400x400.jpg',
       },
     ],
+    slug: 'balkan',
   },
   {
     name: 'Superteam Philippines',
     icons: basePath + 'logos/philippines.png',
     banner: basePath + 'banners/Philippines.png',
-    region: Regions.PHILIPPINES,
+    region: 'Philippines' as Region,
     displayValue: 'Philippines',
     country: ['Philippines'],
     code: 'PH',
@@ -251,12 +289,13 @@ export const Superteams = [
         pfp: 'https://pbs.twimg.com/profile_images/1787894665624305667/FF6y0ucq_400x400.jpg',
       },
     ],
+    slug: 'philippines',
   },
   {
     name: 'Superteam Japan',
     icons: basePath + 'logos/japan.png',
     banner: basePath + 'banners/Japan.png',
-    region: Regions.JAPAN,
+    region: 'Japan' as Region,
     displayValue: 'Japan',
     country: ['Japan'],
     code: 'JP',
@@ -268,12 +307,13 @@ export const Superteams = [
         pfp: 'https://pbs.twimg.com/profile_images/1855760707347972096/a0qO66Yb_400x400.png',
       },
     ],
+    slug: 'japan',
   },
   {
     name: 'Superteam France',
     icons: basePath + 'logos/france.png',
     banner: basePath + 'banners/France.png',
-    region: Regions.FRANCE,
+    region: 'France' as Region,
     displayValue: 'France',
     country: ['France'],
     code: 'FR',
@@ -285,23 +325,25 @@ export const Superteams = [
         pfp: 'https://pbs.twimg.com/profile_images/1504225711522996232/PeaEIwzk_400x400.jpg',
       },
     ],
+    slug: 'france',
   },
   {
     name: 'Superteam Mexico',
     icons: basePath + 'logos/mexico.jpg',
     banner: basePath + 'banners/Mexico.png',
-    region: Regions.MEXICO,
+    region: 'Mexico' as Region,
     displayValue: 'Mexico',
     country: ['Mexico'],
     code: 'MX',
     hello: `Hola`,
     nationality: 'Mexicans',
+    slug: 'mexico',
   },
   {
     name: 'Superteam Canada',
     icons: basePath + 'logos/canada.png',
     banner: basePath + 'banners/Canada.png',
-    region: Regions.CANADA,
+    region: 'Canada' as Region,
     displayValue: 'Canada',
     country: ['Canada'],
     code: 'CA',
@@ -313,12 +355,13 @@ export const Superteams = [
         pfp: 'https://pbs.twimg.com/profile_images/1702658848497016833/dGloS-Hw_400x400.jpg',
       },
     ],
+    slug: 'canada',
   },
   {
     name: 'Superteam Singapore',
     icons: basePath + 'logos/singapore.png',
     banner: basePath + 'banners/Singapore.png',
-    region: Regions.SINGAPORE,
+    region: 'Singapore' as Region,
     displayValue: 'Singapore',
     country: ['Singapore'],
     code: 'SG',
@@ -330,64 +373,67 @@ export const Superteams = [
         pfp: 'https://pbs.twimg.com/profile_images/859254261418303489/1VGdiak1_400x400.jpg',
       },
     ],
+    slug: 'singapore',
   },
   {
     name: 'Superteam Poland',
     icons: basePath + 'logos/poland.png',
     banner: basePath + 'banners/poland.png',
-    region: Regions.POLAND,
+    region: 'Poland' as Region,
     displayValue: 'Poland',
     country: ['Poland'],
     code: 'PL',
     hello: 'Cześć',
     nationality: 'Poles',
+    slug: 'poland',
   },
   {
     name: 'Superteam Korea',
-    airtableKey: 'Korea',
     icons: basePath + 'logos/korea.png',
     banner: basePath + 'banners/korea.png',
-    region: Regions.KOREA,
+    region: 'South Korea' as Region,
     displayValue: 'South Korea',
     country: ['South Korea'],
     code: 'KR',
     hello: 'Annyeonghaseyo',
     nationality: 'Koreans',
+    slug: 'korea',
   },
   {
     name: 'Superteam Ireland',
     icons: basePath + 'logos/ireland.jpg',
     banner: basePath + 'banners/Ireland.png',
-    region: Regions.IRELAND,
+    region: 'Ireland' as Region,
     displayValue: 'Ireland',
     country: ['Ireland'],
     code: 'IE',
     hello: 'Dia duit',
     nationality: 'Irish',
+    slug: 'ireland',
   },
 ];
 
 const NonSTRegions = [
   {
-    region: Regions.UKRAINE,
+    region: 'Ukraine' as Region,
     displayValue: 'Ukraine',
     country: ['Ukraine'],
     code: 'UA',
   },
   {
-    region: Regions.ARGENTINA,
+    region: 'Argentina' as Region,
     displayValue: 'Argentina',
     country: ['Argentina'],
     code: 'AR',
   },
   {
-    region: Regions.USA,
+    region: 'USA' as Region,
     displayValue: 'USA',
     country: ['United States'],
     code: 'US',
   },
   {
-    region: Regions.SPAIN,
+    region: 'Spain' as Region,
     displayValue: 'Spain',
     country: ['Spain'],
     code: 'ES',

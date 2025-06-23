@@ -27,8 +27,8 @@ type Country = {
 
 const countries: Country[] = Superteams.map((superteam) => ({
   name: superteam.displayValue,
-  code: superteam.code ?? 'GLOBAL',
-  slug: superteam.region,
+  code: superteam.code ?? 'Global',
+  slug: superteam.slug,
 }));
 
 const FooterColumn = ({

@@ -1,4 +1,4 @@
-import { Regions, status as Status } from '@prisma/client';
+import { status as Status } from '@prisma/client';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
@@ -76,13 +76,13 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
       if (matchedRegion?.name) {
         userRegion = [
           matchedRegion.name,
-          Regions.GLOBAL,
+          'Global',
           ...(filterRegionCountry(matchedRegion, user.location || '').country ||
             []),
           ...(getParentRegions(matchedRegion) || []),
         ];
       } else {
-        userRegion = [Regions.GLOBAL];
+        userRegion = ['Global'];
       }
     }
   }
@@ -115,7 +115,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
   let regionFilter = '';
   if (userRegion?.length) {
     const placeholders = userRegion.map(() => '?').join(',');
-    regionFilter = `AND (b.region IN (${placeholders}) OR b.region = '${Regions.GLOBAL}')`;
+    regionFilter = `AND (b.region IN (${placeholders}) OR b.region = 'Global')`;
   }
 
   const words = query

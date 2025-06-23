@@ -1,4 +1,4 @@
-import { type Prisma, Regions } from '@prisma/client';
+import { type Prisma } from '@prisma/client';
 import type { z } from 'zod';
 
 import { exclusiveSponsorData } from '@/constants/exclusiveSponsors';
@@ -174,48 +174,46 @@ export async function buildListingQuery(
     where.region = {
       in: userRegion?.name
         ? [
-            Regions.GLOBAL,
+            'Global',
             userRegion.name,
             ...(filterRegionCountry(userRegion, user.location || '').country ||
               []),
             ...(getParentRegions(userRegion) || []),
           ]
-        : [Regions.GLOBAL],
+        : ['Global'],
     };
+  }
 
-    if (category === 'For You') {
-      const subscribedListings = await prisma.subscribeBounty.findMany({
-        where: { userId: user.id },
-        select: { bountyId: true },
-      });
-      const subscribedListingIds = subscribedListings.map(
-        (sub) => sub.bountyId,
-      );
+  if (category === 'For You') {
+    const subscribedListings = await prisma.subscribeBounty.findMany({
+      where: { userId: user?.id },
+      select: { bountyId: true },
+    });
+    const subscribedListingIds = subscribedListings.map((sub) => sub.bountyId);
 
-      const userSkills =
-        (user?.skills as { skills: string }[] | null)?.map(
-          (skill) => skill.skills,
-        ) || [];
+    const userSkills =
+      (user?.skills as { skills: string }[] | null)?.map(
+        (skill) => skill.skills,
+      ) || [];
 
-      const forYouConditions: Prisma.BountiesWhereInput[] = [];
+    const forYouConditions: Prisma.BountiesWhereInput[] = [];
 
-      if (subscribedListingIds && subscribedListingIds.length > 0) {
-        forYouConditions.push({ id: { in: subscribedListingIds } });
-      }
+    if (subscribedListingIds && subscribedListingIds.length > 0) {
+      forYouConditions.push({ id: { in: subscribedListingIds } });
+    }
 
-      if (userSkills.length > 0) {
-        const skillConditions = userSkills.map((skill) => ({
-          skills: {
-            path: '$[*].skills',
-            array_contains: [skill],
-          },
-        }));
-        forYouConditions.push(...skillConditions);
-      }
+    if (userSkills.length > 0) {
+      const skillConditions = userSkills.map((skill) => ({
+        skills: {
+          path: '$[*].skills',
+          array_contains: [skill],
+        },
+      }));
+      forYouConditions.push(...skillConditions);
+    }
 
-      if (forYouConditions.length > 0) {
-        andConditions.push({ OR: forYouConditions });
-      }
+    if (forYouConditions.length > 0) {
+      andConditions.push({ OR: forYouConditions });
     }
   }
 
@@ -226,7 +224,10 @@ export async function buildListingQuery(
     where.OR = [
       {
         region: {
-          in: [region.toUpperCase() as Regions, ...(st?.country || [])],
+          in: [
+            region.charAt(0).toUpperCase() + region.slice(1),
+            ...(st?.country || []),
+          ],
         },
       },
       {

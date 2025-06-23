@@ -1,4 +1,3 @@
-import { Regions } from '@prisma/client';
 import { Check, ChevronsUpDown, Earth } from 'lucide-react';
 import React, { type JSX, useMemo } from 'react';
 
@@ -114,7 +113,7 @@ export function RegionCombobox({
   const options: SelectOption[] = useMemo(() => {
     const regions: SelectOption[] = [];
     if (global)
-      regions.push({ value: Regions.GLOBAL, label: 'Global', code: 'GLOBAL' });
+      regions.push({ value: 'Global', label: 'Global', code: 'Global' });
     if (superteams) {
       const superteamCountries = Superteams.flatMap((region) =>
         region.code.toLowerCase(),
@@ -212,7 +211,7 @@ export function RegionCombobox({
         >
           {!!value && (
             <span className="min-h-4 min-w-4">
-              {value === Regions.GLOBAL ? (
+              {value === 'Global' ? (
                 <Earth className="text-slate-500" />
               ) : (
                 <UserFlag
@@ -273,7 +272,7 @@ export function RegionCombobox({
                           )}
                         />
                         <span className="min-h-4 min-w-4">
-                          {item.value === Regions.GLOBAL ? (
+                          {item.value === 'Global' ? (
                             <Earth className="text-slate-500" />
                           ) : (
                             <UserFlag location={item.code} isCode />
@@ -301,7 +300,7 @@ export function RegionCombobox({
                         value === option.value ? 'opacity-100' : 'opacity-0',
                       )}
                     />
-                    {option.value === Regions.GLOBAL ? (
+                    {option.value === 'Global' ? (
                       <>
                         <Earth className="text-slate-500" />
                         Global

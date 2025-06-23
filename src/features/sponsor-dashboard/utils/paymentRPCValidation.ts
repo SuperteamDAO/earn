@@ -33,6 +33,7 @@ export async function validatePayment({
   const connection = getConnection('confirmed');
   const maxRetries = 3;
   const delayMs = 5000;
+  const difference = 0.01;
 
   try {
     logger.debug(`Getting Transaction Information from RPC for txId: ${txId}`);
@@ -104,7 +105,7 @@ export async function validatePayment({
       const actualTransferAmount =
         ((postBalance || 0) - (preBalance || 0)) / LAMPORTS_PER_SOL;
 
-      if (Math.abs(actualTransferAmount - expectedAmount) > 0.000001) {
+      if (Math.abs(actualTransferAmount - expectedAmount) > difference) {
         return {
           isValid: false,
           error: "Transferred amount doesn't match the amount",
@@ -146,7 +147,7 @@ export async function validatePayment({
     }
 
     const actualTransferAmount = postAmount - preAmount;
-    if (Math.abs(actualTransferAmount - expectedAmount) > 0.000001) {
+    if (Math.abs(actualTransferAmount - expectedAmount) > difference) {
       return {
         isValid: false,
         error: "Transferred amount doesn't match the amount",

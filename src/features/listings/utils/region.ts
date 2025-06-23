@@ -98,7 +98,7 @@ export const getRegionTooltipLabel = (
   const country = getCombinedRegion(region || '')?.name;
 
   switch (region) {
-    case 'GLOBAL':
+    case 'Global':
       return 'This listing is open to everyone in the world!';
     case 'BALKAN':
       return `You need to be a resident of one of the Balkan countries to be able to participate in this ${isGrant ? 'grant' : 'listing'}`;
@@ -114,7 +114,7 @@ export function userRegionEligibilty({
   region: string | undefined;
   userLocation: string | undefined;
 }) {
-  if (region === 'GLOBAL') {
+  if (region === 'Global') {
     return true;
   }
 

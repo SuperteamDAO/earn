@@ -2,7 +2,6 @@ import {
   BountyType,
   CompensationType,
   type Hackathon,
-  Regions,
   status,
 } from '@prisma/client';
 import { z } from 'zod';
@@ -172,7 +171,7 @@ export const createListingFormSchema = ({
           }
           return true;
         }, 'Hackathon is not allowed for now'),
-      region: z.string().trim().min(1).max(256).default(Regions.GLOBAL),
+      region: z.string().trim().min(1).max(256).default('Global'),
       referredBy: z.string().trim().min(1).max(256).optional().nullable(),
       deadline: z
         .string()
