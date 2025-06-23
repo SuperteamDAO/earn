@@ -1,6 +1,7 @@
 import { Check } from 'lucide-react';
 import React from 'react';
 
+import { AspectRatio } from '@/components/ui/aspect-ratio';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 
 const content = {
@@ -31,13 +32,17 @@ const Point = ({ title }: { title: string }) => {
 export const CreditFeature = () => {
   return (
     <>
-      <ExternalImage
-        src="/credits/credit-feature.webp"
-        alt="Credit Announcement Illustration"
-        className="mx-auto w-full"
-        loading="eager"
-        decoding="sync"
-      />
+      <AspectRatio ratio={960 / 632}>
+        <ExternalImage
+          src="/announcements/credit-system"
+          alt="Credit Announcement Illustration"
+          className="mx-auto w-full"
+          loading="eager"
+          decoding="sync"
+          width={960}
+          height={632}
+        />
+      </AspectRatio>
       <div className="flex flex-col items-start gap-2 px-4 pt-4">
         <p className="font-semibold tracking-tight text-slate-900 md:text-lg">
           {content.title}

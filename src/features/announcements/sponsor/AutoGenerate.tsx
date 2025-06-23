@@ -1,15 +1,20 @@
+import { AspectRatio } from '@/components/ui/aspect-ratio';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 
 export const AutoGenerateFeature = () => {
   return (
     <div>
-      <ExternalImage
-        src="/announcements/auto-generate"
-        alt="Auto Generate Announcement Illustration"
-        className="mx-auto w-full"
-        loading="eager"
-        decoding="sync"
-      />
+      <AspectRatio ratio={960 / 638}>
+        <ExternalImage
+          src="/announcements/auto-generate"
+          alt="Auto Generate Announcement Illustration"
+          className="mx-auto w-full"
+          loading="eager"
+          decoding="sync"
+          width={960}
+          height={638}
+        />
+      </AspectRatio>
       <div className="p-6 pb-0">
         <p className="text-lg font-semibold">Auto Generate your Listings</p>
         <p className="mt-2 text-base font-normal text-slate-500">
@@ -18,7 +23,7 @@ export const AutoGenerateFeature = () => {
           effort.
         </p>
         <div className="mt-6 flex flex-wrap justify-between gap-4 pr-4 text-sm">
-          <Point text={'Generate drafts in <1 min'} />
+          <Point text={'Generate drafts in less than 1 min'} />
           <Point text={'Get properly structured descriptions'} />
           <Point text={'Regenerate descriptions if unsatisfied'} />
         </div>

@@ -70,7 +70,7 @@ export function SponsorAnnouncements({
       title: 'Credit System',
       Content: CreditFeature,
       shouldShow: isLoggedInAndIsSponsor,
-      imagesToPreload: [`${ASSET_URL}/credits/credit-feature.webp`],
+      imagesToPreload: [`${ASSET_URL}/announcements/credit-system`],
       cta: {
         label: 'Learn More',
         link: 'https://superteamdao.notion.site/submission-credits',

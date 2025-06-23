@@ -3,6 +3,7 @@ import React from 'react';
 import { GrTransaction } from 'react-icons/gr';
 import { MdOutlineLock } from 'react-icons/md';
 
+import { AspectRatio } from '@/components/ui/aspect-ratio';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { domPurify } from '@/lib/domPurify';
 
@@ -34,13 +35,17 @@ const Point = ({
 export const WalletFeature = () => {
   return (
     <>
-      <ExternalImage
-        src="/wallet/wallet-announcement-modal"
-        alt="Wallet Announcement Illustration"
-        className="w-full"
-        loading="eager"
-        decoding="sync"
-      />
+      <AspectRatio ratio={960 / 632}>
+        <ExternalImage
+          src="/announcements/embedded-wallet"
+          alt="Wallet Announcement Illustration"
+          className="w-full"
+          loading="eager"
+          decoding="sync"
+          width={960}
+          height={632}
+        />
+      </AspectRatio>
 
       <div className="flex flex-col items-start gap-3 p-6 px-4 pt-4 pb-0">
         <p className="font-semibold md:text-lg">Introducing the Earn Wallet</p>

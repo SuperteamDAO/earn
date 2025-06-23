@@ -33,7 +33,7 @@ export function TalentAnnouncements() {
       title: 'Credit System',
       Content: CreditFeature,
       shouldShow: isLoggedInAndTalentFilled,
-      imagesToPreload: [`${ASSET_URL}/credits/credit-feature.webp`],
+      imagesToPreload: [`${ASSET_URL}/announcements/credit-system`],
       cta: {
         label: 'Learn More',
         link: 'https://superteamdao.notion.site/submission-credits',
@@ -44,7 +44,7 @@ export function TalentAnnouncements() {
       title: 'Embedded Wallet',
       Content: WalletFeature,
       shouldShow: isLoggedInAndTalentFilled,
-      imagesToPreload: [`${ASSET_URL}/wallet/wallet-announcement-modal`],
+      imagesToPreload: [`${ASSET_URL}/announcements/embedded-wallet`],
       cta: {
         label: 'Understood',
       },

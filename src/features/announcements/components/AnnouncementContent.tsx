@@ -193,6 +193,7 @@ export function AnnouncementContent({
                 <a
                   style={{ width: '100%' }}
                   target="_blank"
+                  rel="noopener noreferrer"
                   onClick={
                     cta.onClick
                       ? (e) => {

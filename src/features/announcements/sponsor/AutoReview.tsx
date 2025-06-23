@@ -1,15 +1,20 @@
+import { AspectRatio } from '@/components/ui/aspect-ratio';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 
 export const AutoReviewFeature = () => {
   return (
     <div>
-      <ExternalImage
-        src="/announcements/auto-review"
-        alt="Auto Review Announcement Illustration"
-        className="mx-auto w-full"
-        loading="eager"
-        decoding="sync"
-      />
+      <AspectRatio ratio={960 / 632}>
+        <ExternalImage
+          src="/announcements/auto-review"
+          alt="Auto Review Announcement Illustration"
+          className="mx-auto w-full"
+          loading="eager"
+          decoding="sync"
+          width={960}
+          height={632}
+        />
+      </AspectRatio>
       <div className="p-6 pb-0">
         <p className="text-xl font-semibold">Auto Review has improved!</p>
         <p className="mt-2 text-base font-normal text-slate-500">
@@ -20,7 +25,7 @@ export const AutoReviewFeature = () => {
         <div className="mt-6 flex flex-col justify-between gap-4 pr-4 text-sm">
           <Point text={'Auto analyse application and links'} />
           <Point text={'Detect Spam & Identify Top Applications'} />
-          <Point text={'Helpful reivew notes'} />
+          <Point text={'Helpful review notes'} />
           <Point text={'Take decisions faster '} />
         </div>
       </div>
