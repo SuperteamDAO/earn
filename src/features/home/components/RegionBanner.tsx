@@ -7,7 +7,7 @@ import { type Superteam } from '@/constants/Superteam';
 const customBannerPosition: Partial<
   Record<Regions, Partial<React.CSSProperties>>
 > = {
-  KOREA: {
+  SOUTH_KOREA: {
     objectPosition: 'bottom',
   },
   BRAZIL: {
