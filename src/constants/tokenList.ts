@@ -458,4 +458,12 @@ export const tokenList: Token[] = [
     decimals: 6,
     coingeckoSymbol: 'global-dollar',
   },
+  {
+    tokenName: 'DMCP',
+    tokenSymbol: 'DMCP',
+    mintAddress: '81YHAzq9yfptVbNTHiYuMVKVQ6ZNs3XeQFFENnNUpump',
+    icon: '',
+    decimals: 6,
+    coingeckoSymbol: 'https://earn.superteam.fun/assets/dollar.svg',
+  },
 ];

@@ -148,10 +148,7 @@ export default async function handler(
                       { listing: { winnersAnnouncedAt: 'desc' } },
                       { createdAt: 'desc' },
                     ]
-                  : [
-                      { listing: { winnersAnnouncedAt: 'desc' } },
-                      { createdAt: 'desc' },
-                    ],
+                  : [{ createdAt: 'desc' }],
             include: submissionInclude,
           })
         : [];

@@ -260,6 +260,7 @@ model GrantApplication {
   notes               String?                @db.VarChar(1000)
   ai                  Json?
   GrantTranche        GrantTranche[]
+  CreditLedger        CreditLedger[]
 
   @@index([userId])
   @@index([grantId])
@@ -681,18 +682,21 @@ model BlockedEmail {
 }
 
 model CreditLedger {
-  id             String          @id @default(uuid())
+  id             String            @id @default(uuid())
   userId         String
-  submissionId   String
+  submissionId   String?
+  applicationId  String?
   type           CreditEventType
   change         Int
   effectiveMonth DateTime
-  createdAt      DateTime        @default(now())
-  user           User            @relation(fields: [userId], references: [id])
-  submission     Submission      @relation(fields: [submissionId], references: [id])
+  createdAt      DateTime          @default(now())
+  user           User              @relation(fields: [userId], references: [id])
+  submission     Submission?       @relation(fields: [submissionId], references: [id])
+  application    GrantApplication? @relation(fields: [applicationId], references: [id])
 
   @@index([userId])
   @@index([submissionId])
+  @@index([applicationId])
   @@index([effectiveMonth])
 }
 
@@ -702,6 +706,8 @@ enum CreditEventType {
   WIN_BONUS
   MONTHLY_CREDIT
   CREDIT_REFUND
+  GRANT_WIN_BONUS
+  GRANT_SPAM_PENALTY
 }
 
 enum TalentRankingSkills {

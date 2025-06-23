@@ -127,8 +127,9 @@ function getOrderBy(
       break;
   }
 
-  // add isFeatured prioritization only for default sorting (date + asc)
-  const isDefaultSort = sortBy === 'Date' && order === 'asc';
+  // add isFeatured prioritization only for default sorting (date + asc) and open status
+  const isDefaultSort =
+    sortBy === 'Date' && order === 'asc' && status === 'open';
 
   return isDefaultSort ? [{ isFeatured: 'desc' }, primarySort] : primarySort;
 }
