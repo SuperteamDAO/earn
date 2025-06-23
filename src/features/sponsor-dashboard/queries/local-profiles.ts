@@ -24,39 +24,14 @@ export interface LocalProfile {
   createdAt: string;
 }
 
-interface PaginatedResponse {
-  users: LocalProfile[];
-  pagination: {
-    total: number;
-    page: number;
-    limit: number;
-    totalPages: number;
-  };
-}
-
-interface FetchLocalProfilesParams {
-  page?: number;
-  limit?: number;
-  region: string;
-}
-
-const fetchLocalProfiles = async ({
-  page = 1,
-  limit = 10,
-  region,
-}: FetchLocalProfilesParams): Promise<PaginatedResponse> => {
+const fetchLocalProfiles = async (): Promise<LocalProfile[]> => {
   const { data } = await api.get('/api/sponsor-dashboard/local-talent/', {
-    params: {
-      page,
-      limit,
-      region,
-    },
+    params: {},
   });
   return data;
 };
 
-export const localProfilesQuery = (params: FetchLocalProfilesParams) =>
-  queryOptions({
-    queryKey: ['localProfiles', params],
-    queryFn: () => fetchLocalProfiles(params),
-  });
+export const localProfilesQuery = queryOptions({
+  queryKey: ['localProfiles'],
+  queryFn: () => fetchLocalProfiles(),
+});
