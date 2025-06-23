@@ -252,9 +252,7 @@ export async function addPaymentInfoToAirtable(
         ) || s.region === application.user.location,
     );
 
-    const regionName = superteam
-      ? superteam.airtableKey || superteam.displayValue
-      : 'Global';
+    const regionName = superteam ? superteam.displayValue : 'Global';
 
     logger.info(
       `Determined region name: '${regionName}' based on user location: '${application.user.location ?? 'N/A'}' for Tranche ID: ${validatedTrancheId}`,
