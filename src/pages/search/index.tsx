@@ -1,4 +1,3 @@
-import { Regions } from '@prisma/client';
 import debounce from 'lodash.debounce';
 import { type GetServerSideProps } from 'next';
 import { useSearchParams } from 'next/navigation';
@@ -186,13 +185,13 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       if (matchedRegion?.name) {
         userRegion = [
           matchedRegion.name,
-          Regions.GLOBAL,
+          'Global',
           ...(filterRegionCountry(matchedRegion, user.location || '').country ||
             []),
           ...(getParentRegions(matchedRegion) || []),
         ];
       } else {
-        userRegion = [Regions.GLOBAL];
+        userRegion = ['Global'];
       }
     }
   }

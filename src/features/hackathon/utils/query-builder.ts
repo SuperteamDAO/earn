@@ -1,4 +1,4 @@
-import { type Prisma, Regions } from '@prisma/client';
+import { type Prisma } from '@prisma/client';
 import type { z } from 'zod';
 
 import {
@@ -114,13 +114,13 @@ export async function buildHackathonQuery(
     where.region = {
       in: userRegion?.name
         ? [
-            Regions.GLOBAL,
+            'Global',
             userRegion.name,
             ...(filterRegionCountry(userRegion, user.location || '').country ||
               []),
             ...(getParentRegions(userRegion) || []),
           ]
-        : [Regions.GLOBAL],
+        : ['Global'],
     };
   }
 

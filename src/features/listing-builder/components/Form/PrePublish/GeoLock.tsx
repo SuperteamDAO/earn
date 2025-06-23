@@ -1,4 +1,3 @@
-import { Regions } from '@prisma/client';
 import React from 'react';
 
 import { RegionCombobox } from '@/components/shared/RegionCombobox';
@@ -24,7 +23,7 @@ export function GeoLock() {
             <div className="grow">
               <FormLabel className="">Geo-locking</FormLabel>
               <FormDescription className="flex gap-1">
-                {field.value === Regions.GLOBAL ? (
+                {field.value === 'Global' ? (
                   'Anyone in the world can participate'
                 ) : (
                   <>

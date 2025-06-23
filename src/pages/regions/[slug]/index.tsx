@@ -10,15 +10,9 @@ import { RegionPop } from '@/features/conversion-popups/components/RegionPop';
 import { GrantsSection } from '@/features/grants/components/GrantsSection';
 import { Listings } from '@/features/listings/components/Listings';
 
-const RegionsPage = ({
-  slug,
-  displayName,
-  st,
-}: {
-  slug: string;
-  displayName: string;
-  st: Superteam;
-}) => {
+const RegionsPage = ({ slug, st }: { slug: string; st: Superteam }) => {
+  const displayName = st?.displayValue;
+
   const ogImage = new URL(`${getURL()}api/dynamic-og/region/`);
   ogImage.searchParams.set('region', st.displayValue);
   ogImage.searchParams.set('code', st.code!);
@@ -33,9 +27,9 @@ const RegionsPage = ({
       />
       <div className="w-full">
         <RegionPop st={st} />
-        <Listings type="region" region={displayName} />
+        <Listings type="region" region={st.region} />
 
-        <GrantsSection type="region" region={displayName} />
+        <GrantsSection type="region" region={st.region} />
       </div>
     </Home>
   );
@@ -44,18 +38,9 @@ const RegionsPage = ({
 export async function getServerSideProps(context: NextPageContext) {
   const { slug } = context.query;
 
-  const slugToRegionMap: Record<string, string> = {
-    uk: 'united_kingdom',
-    korea: 'south_korea',
-  };
-
-  const normalizedSlug = (slug as string).toLowerCase();
-  const regionToMatch = slugToRegionMap[normalizedSlug] || normalizedSlug;
-
   const st = Superteams.find(
-    (team) => team.region?.toLowerCase() === regionToMatch,
+    (team) => team.slug?.toLowerCase() === (slug as string).toLowerCase(),
   );
-  const displayName = st?.displayValue;
 
   if (!st) {
     return {
@@ -64,7 +49,7 @@ export async function getServerSideProps(context: NextPageContext) {
   }
 
   return {
-    props: { slug, displayName, st },
+    props: { slug, st },
   };
 }
 

@@ -242,7 +242,7 @@ async function scoutTalent(req: NextApiRequestWithUser, res: NextApiResponse) {
           AND (
             ${matchingWhereClause(subskills, devSkills, 'bs').join('\n  OR  ')}
 	        )
-          ${region !== 'GLOBAL' ? `AND u.location LIKE '%${region}%'` : ''}
+          ${region !== 'Global' ? `AND u.location LIKE '%${region}%'` : ''}
         GROUP BY
           u.id
     `;
