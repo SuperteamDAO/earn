@@ -67,7 +67,6 @@ const nextConfig: NextConfig = {
       '@tanstack/react-query',
       '@tiptap/*',
       'ai',
-      'bullmq',
       'cmdk',
       'dayjs',
       'embla-carousel-autoplay',
