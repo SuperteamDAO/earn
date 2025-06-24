@@ -34,7 +34,8 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
-      "@/public/*": ["./public/*"]
+      "@/public/*": ["./public/*"],
+      "@/generated/*": ["./generated/*"]
     },
     "plugins": [
       {
