@@ -49,7 +49,7 @@ const banners: CategoryBanner[] = [
   },
   {
     type: 'all',
-    img: '/assets/banner.webp',
+    img: ASSET_URL + '/banner/banner',
     heading: 'Find your next Gig',
     description:
       'This is your gateway to start contributing to world-class crypto companies. Choose an opportunity that fits your profile and build your proof of work.',

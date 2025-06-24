@@ -4,8 +4,6 @@ import { usePostHog } from 'posthog-js/react';
 import React from 'react';
 
 import { ASSET_URL } from '@/constants/ASSET_URL';
-import DesktopBanner from '@/public/assets/banner.webp';
-import MobileBanner from '@/public/assets/banner-mobile.webp';
 
 import { AuthWrapper } from '@/features/auth/components/AuthWrapper';
 
@@ -36,11 +34,23 @@ export function HomeTalentBanner() {
 
   const {
     props: { srcSet: desktop },
-  } = getImageProps({ ...common, src: DesktopBanner, sizes: '70vw' });
+  } = getImageProps({
+    ...common,
+    src: `https://res.cloudinary.com/dgvnuwspr/image/upload/assets/banner/banner`,
+    width: 1200,
+    height: 600,
+    sizes: '70vw',
+  });
 
   const {
     props: { srcSet: mobile, ...rest },
-  } = getImageProps({ ...common, src: MobileBanner, sizes: '100vw' });
+  } = getImageProps({
+    ...common,
+    src: `https://res.cloudinary.com/dgvnuwspr/image/upload/assets/banner/banner-mobile`,
+    width: 800,
+    height: 600,
+    sizes: '100vw',
+  });
 
   const { data } = useQuery(userCountQuery);
 
