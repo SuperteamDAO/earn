@@ -6,10 +6,10 @@ import { ASSET_URL } from '@/constants/ASSET_URL';
 import { AppConfig } from '@/utils/AppConfig';
 
 type IMetaProps = {
-  title: string;
-  description: string;
-  canonical?: string;
-  og?: string;
+  readonly title: string;
+  readonly description: string;
+  readonly canonical?: string;
+  readonly og?: string;
 };
 
 const Meta = (props: IMetaProps) => {

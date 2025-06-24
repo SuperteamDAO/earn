@@ -71,7 +71,7 @@ export const HomepagePop = () => {
     posthog.capture('conversion pop up_initiated', {
       'Popup Source': 'Homepage Pop-up',
     });
-  }, 5000);
+  }, 10000);
 
   const [variant, setVariant] = useState<number>(1);
   const [open, setOpen] = useAtom(popupOpenAtom);

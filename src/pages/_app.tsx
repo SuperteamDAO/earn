@@ -5,13 +5,7 @@ import dynamic from 'next/dynamic';
 import { Router, useRouter } from 'next/router';
 import posthog from 'posthog-js';
 import { PostHogProvider } from 'posthog-js/react';
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import { toast } from 'sonner';
 
 import { TopLoader } from '@/components/ui/toploader';
@@ -33,14 +27,6 @@ const SolanaWalletProvider = dynamic(
 const Toaster = dynamic(() => import('sonner').then((mod) => mod.Toaster), {
   ssr: false,
 });
-
-// const ReactQueryDevtools = dynamic(
-//   () =>
-//     import('@tanstack/react-query-devtools').then(
-//       (mod) => mod.ReactQueryDevtools,
-//     ),
-//   { ssr: false },
-// );
 
 const queryClient = new QueryClient();
 
@@ -133,7 +119,6 @@ function MyApp({ Component, pageProps }: any) {
     }
   }, [user?.id]);
 
-  // forced profile redirection
   useEffect(() => {
     const loadRedirect = () => {
       if (!forcedRedirected.current) {
@@ -143,35 +128,23 @@ function MyApp({ Component, pageProps }: any) {
     loadRedirect();
   }, [user?.id]);
 
-  const [isLoaded, setIsLoaded] = useState(false);
-
-  useEffect(() => {
-    // SSR doesnt work with Solana Wallet Provider - hence need to wrap only when fully loaded
-    // if SSR doesnt work, OG images also wont work
-    setIsLoaded(true);
-  }, []);
-
   const isDashboardRoute = useMemo(
     () => router.pathname.startsWith('/dashboard'),
-    [router.pathname],
-  );
-  const walletListingRoute = useMemo(
-    () => router.pathname.startsWith('/listing'),
     [router.pathname],
   );
 
   return (
     <>
       <TopLoader />
-      {isLoaded && (isDashboardRoute || walletListingRoute) ? (
+      {isDashboardRoute ? (
         <SolanaWalletProvider>
           <Component {...pageProps} key={router.asPath} />
-          <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_TRACKING_ID!} />
         </SolanaWalletProvider>
       ) : (
         <Component {...pageProps} key={router.asPath} />
       )}
       <Toaster position="bottom-right" richColors />
+      <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_TRACKING_ID!} />
     </>
   );
 }
@@ -193,7 +166,6 @@ function App({ Component, pageProps }: AppProps) {
         <Providers>
           <MyApp Component={Component} pageProps={pageProps} />
         </Providers>
-        {/* <ReactQueryDevtools initialIsOpen={false} /> */}
       </QueryClientProvider>
     </PostHogProvider>
   );

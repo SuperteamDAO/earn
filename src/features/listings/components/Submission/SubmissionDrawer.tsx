@@ -24,7 +24,6 @@ import {
 import { FormFieldWrapper } from '@/components/ui/form-field-wrapper';
 import { Input } from '@/components/ui/input';
 import { SideDrawer, SideDrawerContent } from '@/components/ui/side-drawer';
-import { WalletConnectField } from '@/components/ui/wallet-connect-field';
 import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
@@ -32,7 +31,6 @@ import { cn } from '@/utils/cn';
 import { CreditIcon } from '@/features/credits/icon/credit';
 import { SocialInput } from '@/features/social/components/SocialInput';
 
-import { walletFieldListings } from '../../constants/walletFieldListings';
 import { submissionCountQuery } from '../../queries/submission-count';
 import { userSubmissionQuery } from '../../queries/user-submission-status';
 import { type Listing } from '../../types';
@@ -287,7 +285,7 @@ export const SubmissionDrawer = ({
                 </div>
                 <div>
                   <div className="mb-5 flex flex-col gap-4">
-                    {!isProject && !walletFieldListings.includes(id!) && (
+                    {!isProject && (
                       <>
                         <FormField
                           control={form.control}
@@ -364,22 +362,6 @@ export const SubmissionDrawer = ({
                       </>
                     )}
                     {eligibility?.map((e, index) => {
-                      if (
-                        walletFieldListings.includes(id!) &&
-                        e.question === 'Connect Your Solana Wallet'
-                      ) {
-                        return (
-                          <WalletConnectField
-                            key={e.order}
-                            control={form.control}
-                            name={`eligibilityAnswers.${index}.answer`}
-                            label={e.question}
-                            isRequired
-                            description="Connect your wallet to verify ownership. This is mandatory for this bounty."
-                          />
-                        );
-                      }
-
                       return (
                         <FormField
                           key={e.order}

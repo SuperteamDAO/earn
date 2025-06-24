@@ -5,7 +5,6 @@ import { type User } from '@/interface/user';
 
 import { telegramUsernameSchema } from '@/features/social/utils/schema';
 
-import { walletFieldListings } from '../constants/walletFieldListings';
 import { type Listing } from '../types';
 
 const submissionSchema = (
@@ -48,11 +47,7 @@ const submissionSchema = (
         });
       }
 
-      if (
-        listing.type !== 'project' &&
-        !data.link &&
-        !walletFieldListings.includes(listing.id!)
-      ) {
+      if (listing.type !== 'project' && !data.link) {
         ctx.addIssue({
           code: 'custom',
           path: ['link'],

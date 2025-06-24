@@ -1,6 +1,6 @@
 import Autoplay from 'embla-carousel-autoplay';
 import { useAtomValue } from 'jotai';
-import * as React from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import {
   Carousel,
@@ -18,8 +18,12 @@ import {
 import { HomeSponsorBanner } from './SponsorBanner';
 import { HomeTalentBanner } from './TalentBanner';
 
-export function BannerCarousel() {
-  const plugin = React.useRef(
+/**
+ * the full, interactive client-side carousel.
+ * this component is only rendered on the client after the initial page load.
+ */
+function FullInteractiveCarousel() {
+  const plugin = useRef(
     Autoplay({
       delay: 6000,
       stopOnInteraction: false,
@@ -28,23 +32,22 @@ export function BannerCarousel() {
   );
   const isPopupOpen = useAtomValue(popupOpenAtom);
   const popupsShowed = useAtomValue(popupsShowedAtom);
-  const [carouselApi, setCarouselApi] = React.useState<CarouselApi | undefined>(
+  const [carouselApi, setCarouselApi] = useState<CarouselApi | undefined>(
     undefined,
   );
-  React.useEffect(() => {
+  useEffect(() => {
     const autoplay = carouselApi?.plugins()?.autoplay;
 
     if (autoplay) {
       if (isPopupOpen) return autoplay.stop();
-      else {
-        if (popupsShowed > 0) {
-          const resumeTimer: ReturnType<typeof setTimeout> = setTimeout(() => {
-            carouselApi.scrollNext();
-            plugin.current.options.delay = 5000;
-            autoplay.play();
-          }, 2000);
-          return () => clearTimeout(resumeTimer);
-        }
+
+      if (popupsShowed > 0) {
+        const resumeTimer: ReturnType<typeof setTimeout> = setTimeout(() => {
+          carouselApi.scrollNext();
+          plugin.current.options.delay = 5000;
+          autoplay.play();
+        }, 2000);
+        return () => clearTimeout(resumeTimer);
       }
     }
   }, [isPopupOpen, carouselApi, popupsShowed, plugin]);
@@ -75,4 +78,46 @@ export function BannerCarousel() {
       />
     </Carousel>
   );
+}
+
+/**
+ * an optimized carousel that renders a static version first for performance,
+ * and then progressively enhances to the full interactive version on the client.
+ */
+export function BannerCarousel() {
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  if (!isClient) {
+    return (
+      <div className="relative w-full">
+        <div className="overflow-hidden">
+          <div className="h-full min-w-0 shrink-0 grow-0 basis-full pl-4">
+            <HomeTalentBanner />
+          </div>
+        </div>
+        <div
+          className="absolute bottom-3 left-2/4 flex -translate-x-2/4 justify-center gap-2 md:bottom-6"
+          data-slot="carousel-dots"
+        >
+          <button
+            type="button"
+            className="h-1.5 w-1.5 rounded-full bg-white transition-colors md:h-2 md:w-2"
+            aria-label="Go to slide 1"
+          />
+          <button
+            type="button"
+            className="hover:bg-muted-foreground/50 h-1.5 w-1.5 rounded-full bg-slate-400 transition-colors md:h-2 md:w-2"
+            aria-label="Go to slide 2"
+          />
+        </div>
+      </div>
+    );
+  }
+
+  // once mounted on the client, render the full, interactive carousel.
+  return <FullInteractiveCarousel />;
 }
