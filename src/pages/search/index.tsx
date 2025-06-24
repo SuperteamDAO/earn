@@ -2,7 +2,7 @@ import debounce from 'lodash.debounce';
 import { type GetServerSideProps } from 'next';
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/router';
-import { usePostHog } from 'posthog-js/react';
+import posthog from 'posthog-js';
 import { useCallback, useEffect, useState, useTransition } from 'react';
 
 import { Default } from '@/layouts/Default';
@@ -55,7 +55,6 @@ const Search = ({
   const searchParams = useSearchParams();
   const router = useRouter();
   const [, startTransition] = useTransition();
-  const posthog = usePostHog();
 
   const [results, setResults] = useState<SearchResult[]>(resultsP ?? []);
   const [query, setQuery] = useState(searchParams?.get('q') ?? '');

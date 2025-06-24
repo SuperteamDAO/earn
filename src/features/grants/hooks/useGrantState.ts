@@ -1,5 +1,5 @@
 import { useRouter, useSearchParams } from 'next/navigation';
-import { usePostHog } from 'posthog-js/react';
+import posthog from 'posthog-js';
 import { useCallback, useMemo } from 'react';
 
 import { GrantCategorySchema } from '../constants/schema';
@@ -9,7 +9,6 @@ const defaultCategory = GrantCategorySchema._def.defaultValue();
 type QueryParamUpdates = Partial<Record<'grantCategory', string | null>>;
 
 export const useGrantState = () => {
-  const posthog = usePostHog();
   const router = useRouter();
   const searchParamsFromHook = useSearchParams();
 

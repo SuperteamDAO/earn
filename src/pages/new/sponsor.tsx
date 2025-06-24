@@ -5,7 +5,7 @@ import axios from 'axios';
 import { Info, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { usePostHog } from 'posthog-js/react';
+import posthog from 'posthog-js';
 import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -51,7 +51,6 @@ const CreateSponsor = () => {
   const router = useRouter();
   const { ready, authenticated } = usePrivy();
   const { user, refetchUser } = useUser();
-  const posthog = usePostHog();
 
   const [selectedUserPhoto, setSelectedUserPhoto] = useState<File | null>(null);
   const [selectedLogo, setSelectedLogo] = useState<File | null>(null);

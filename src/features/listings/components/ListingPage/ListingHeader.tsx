@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Check, Clock, File, MessageSquare, Pause } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { usePostHog } from 'posthog-js/react';
+import posthog from 'posthog-js';
 import React from 'react';
 
 import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
@@ -47,7 +47,7 @@ export function ListingHeader({
     isPrivate,
   } = listing;
   const router = useRouter();
-  const posthog = usePostHog();
+
   const isMD = useMediaQuery('(min-width: 768px)');
   const hasDeadlineEnded = dayjs().isAfter(deadline);
   const hasHackathonStarted = dayjs().isAfter(Hackathon?.startDate);

@@ -2,7 +2,7 @@ import { usePrivy } from '@privy-io/react-auth';
 import { useQuery } from '@tanstack/react-query';
 import { useAtom, useSetAtom } from 'jotai';
 import Image from 'next/image';
-import { usePostHog } from 'posthog-js/react';
+import posthog from 'posthog-js';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 import {
@@ -148,8 +148,6 @@ export const CategoryPop = ({ category }: { category: CategoryKeys }) => {
   });
 
   const isMD = useBreakpoint('md');
-
-  const posthog = usePostHog();
 
   const initated = useRef(false); // only run use effect once
   useEffect(() => {

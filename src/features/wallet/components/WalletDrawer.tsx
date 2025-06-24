@@ -1,7 +1,7 @@
 import { useMfaEnrollment, usePrivy } from '@privy-io/react-auth';
 import { ArrowLeft, ArrowUpRight, CopyIcon, X } from 'lucide-react';
 import { useRouter } from 'next/router';
-import { usePostHog } from 'posthog-js/react';
+import posthog from 'posthog-js';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
@@ -52,7 +52,7 @@ export function WalletDrawer({
 
   const { user } = useUser();
   const router = useRouter();
-  const posthog = usePostHog();
+
   const { user: privyUser } = usePrivy();
   const { showMfaEnrollmentModal } = useMfaEnrollment();
 

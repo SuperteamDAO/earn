@@ -4,7 +4,7 @@ import { ExternalLink } from 'lucide-react';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { usePostHog } from 'posthog-js/react';
+import posthog from 'posthog-js';
 import { useEffect, useState } from 'react';
 
 import { ErrorSection } from '@/components/shared/ErrorSection';
@@ -37,7 +37,6 @@ export function ListingPageLayout({
   isTemplate = false,
 }: ListingPageProps) {
   const [, setBountySnackbar] = useAtom(bountySnackbarAtom);
-  const posthog = usePostHog();
 
   const { data: submissionNumber = 0 } = useQuery(
     submissionCountQuery(initialBounty?.id ?? ''),

@@ -1,5 +1,5 @@
 import { ExternalLink } from 'lucide-react';
-import { usePostHog } from 'posthog-js/react';
+import posthog from 'posthog-js';
 
 import { type ParentSkills } from '@/interface/skills';
 import { dayjs } from '@/utils/dayjs';
@@ -26,7 +26,6 @@ export function ExtraInfoSection({
   commitmentDate,
   isGrant = false,
 }: ExtraInfoSectionProps) {
-  const posthog = usePostHog();
   return (
     <div className="flex w-full flex-col gap-8 pt-2 md:w-[23rem]">
       {region && region !== 'Global' && (

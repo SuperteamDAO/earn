@@ -2,7 +2,7 @@ import { type SubscribeHackathon } from '@prisma/client';
 import { Loader2 } from 'lucide-react';
 import type { GetServerSideProps } from 'next';
 import Link from 'next/link';
-import { usePostHog } from 'posthog-js/react';
+import posthog from 'posthog-js';
 import { useEffect, useRef, useState } from 'react';
 import Countdown from 'react-countdown';
 import { FaPlay } from 'react-icons/fa';
@@ -911,7 +911,7 @@ const SubscribeHackathon = () => {
     (SubscribeHackathon & { User: User | null })[]
   >([]);
   const { user } = useUser();
-  const posthog = usePostHog();
+
   const [update, setUpdate] = useState<boolean>(false);
 
   const handleToggleSubscribe = async () => {

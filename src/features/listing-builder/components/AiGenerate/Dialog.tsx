@@ -5,7 +5,7 @@ import { useMutation } from '@tanstack/react-query';
 import { useAtom, useSetAtom } from 'jotai';
 import { marked } from 'marked';
 import { AnimatePresence, motion } from 'motion/react';
-import { usePostHog } from 'posthog-js/react';
+import posthog from 'posthog-js';
 import { type ReactNode, useCallback, useEffect, useState } from 'react';
 import { useWatch } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -53,7 +53,7 @@ interface AIDescriptionDialogProps {
 
 export function AiGenerateDialog({ children }: AIDescriptionDialogProps) {
   const listingForm = useListingForm();
-  const posthog = usePostHog();
+
   const type = useWatch({
     control: listingForm.control,
     name: 'type',

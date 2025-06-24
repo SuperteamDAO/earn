@@ -1,6 +1,6 @@
 import { usePrivy } from '@privy-io/react-auth';
 import { useAtom, useSetAtom } from 'jotai';
-import { usePostHog } from 'posthog-js/react';
+import posthog from 'posthog-js';
 import { useEffect, useRef, useState } from 'react';
 
 import {
@@ -55,7 +55,6 @@ export const GrantsPop = () => {
   const { authenticated, ready } = usePrivy();
 
   const isMD = useBreakpoint('md');
-  const posthog = usePostHog();
 
   const initated = useRef(false); // only run use effect once
   useEffect(() => {

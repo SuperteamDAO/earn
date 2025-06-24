@@ -1,5 +1,4 @@
-import { type Survey, type SurveyQuestion } from 'posthog-js';
-import { usePostHog } from 'posthog-js/react';
+import posthog, { type Survey, type SurveyQuestion } from 'posthog-js';
 import { useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -25,7 +24,6 @@ export const SurveyModal = ({
   surveyId: string;
 }) => {
   const { refetchUser } = useUser();
-  const posthog = usePostHog();
 
   const [question, setQuestion] = useState<SurveyQuestion | undefined | null>(
     null,

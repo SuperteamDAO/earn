@@ -1,7 +1,7 @@
 import { format } from 'date-fns';
 import { Check, Minus, Plus, Undo } from 'lucide-react';
 import Link from 'next/link';
-import { usePostHog } from 'posthog-js/react';
+import posthog from 'posthog-js';
 import { type ReactNode } from 'react';
 
 import { Separator } from '@/components/ui/separator';
@@ -41,8 +41,6 @@ interface CreditHistoryCardProps {
 }
 
 export function CreditHistoryCard({ title, entries }: CreditHistoryCardProps) {
-  const posthog = usePostHog();
-
   const isUpcoming = entries.some((entry) => {
     if (!entry.effectiveMonth) return false;
 

@@ -2,7 +2,7 @@ import { usePrivy } from '@privy-io/react-auth';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { useRouter } from 'next/router';
-import { usePostHog } from 'posthog-js/react';
+import posthog from 'posthog-js';
 import { useEffect } from 'react';
 import { removeCookie, setCookie } from 'typescript-cookie';
 import { create } from 'zustand';
@@ -32,7 +32,6 @@ export const useUser = () => {
   const { user, setUser } = useUserStore();
   const { authenticated, ready, logout } = usePrivy();
   const router = useRouter();
-  const posthog = usePostHog();
 
   const { data, error, refetch, isLoading } = useQuery({
     queryKey: ['user'],
@@ -100,7 +99,6 @@ export const useLogout = () => {
   const { logout } = usePrivy();
   const queryClient = useQueryClient();
   const setUser = useUserStore((state) => state.setUser);
-  const posthog = usePostHog();
 
   return async () => {
     await logout();

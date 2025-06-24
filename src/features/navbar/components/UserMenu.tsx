@@ -1,7 +1,7 @@
 import { ChevronDown } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { usePostHog } from 'posthog-js/react';
+import posthog from 'posthog-js';
 import { useEffect } from 'react';
 
 import { SupportFormDialog } from '@/components/shared/SupportFormDialog';
@@ -22,7 +22,7 @@ import { EmailSettingsModal } from '@/features/talent/components/EmailSettingsMo
 
 export function UserMenu() {
   const router = useRouter();
-  const posthog = usePostHog();
+
   const { user } = useUser();
   const logout = useLogout();
   const { isOpen, onClose, onOpen } = useDisclosure();

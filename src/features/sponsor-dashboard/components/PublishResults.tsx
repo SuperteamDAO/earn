@@ -1,6 +1,6 @@
 import { useAtomValue } from 'jotai';
 import { AlertTriangle, CheckCircle2 } from 'lucide-react';
-import { usePostHog } from 'posthog-js/react';
+import posthog from 'posthog-js';
 import { useEffect, useState } from 'react';
 
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -47,7 +47,7 @@ export function PublishResults({
   const [isWinnersAnnounced, setIsWinnersAnnounced] = useState(
     bounty?.isWinnersAnnounced,
   );
-  const posthog = usePostHog();
+
   const isDeadlinePassed = dayjs().isAfter(bounty?.deadline);
   const isProject = bounty?.type === 'project';
   if (isProject) totalWinners = 1;

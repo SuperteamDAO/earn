@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { Check } from 'lucide-react';
 import { useRouter } from 'next/router';
-import { usePostHog } from 'posthog-js/react';
+import posthog from 'posthog-js';
 
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
@@ -128,7 +128,6 @@ export const HowItWorks = () => {
 
   const hasSubmissions = (stats?.participations ?? 0) > 0;
   const hasWins = (stats?.wins ?? 0) > 0;
-  const posthog = usePostHog();
 
   if (hasWins) return null;
 

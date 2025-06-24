@@ -4,14 +4,12 @@ import type { AppProps } from 'next/app';
 import dynamic from 'next/dynamic';
 import { Router, useRouter } from 'next/router';
 import posthog from 'posthog-js';
-import { PostHogProvider } from 'posthog-js/react';
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import { toast } from 'sonner';
 
 import { TopLoader } from '@/components/ui/toploader';
 import { useUser } from '@/store/user';
 import { fontMono, fontSans } from '@/theme/fonts';
-import { getURL } from '@/utils/validUrl';
 
 import Providers from '@/features/privy/providers';
 
@@ -37,18 +35,6 @@ function MyApp({ Component, pageProps }: any) {
   const forcedRedirected = useRef(false);
 
   useEffect(() => {
-    if (!posthog.__loaded) {
-      posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY!, {
-        api_host: `${getURL()}docs-keep`,
-        autocapture: false,
-        ui_host:
-          process.env.NEXT_PUBLIC_POSTHOG_HOST || 'https://app.posthog.com',
-        loaded: (posthog) => {
-          if (process.env.NODE_ENV === 'development') posthog.debug();
-        },
-      });
-    }
-
     const handleRouteChange = () => posthog?.capture('$pageview');
 
     const handleRouteChangeStart = () =>
@@ -151,23 +137,21 @@ function MyApp({ Component, pageProps }: any) {
 
 function App({ Component, pageProps }: AppProps) {
   return (
-    <PostHogProvider client={posthog}>
-      <QueryClientProvider client={queryClient}>
-        <style jsx global>{`
-          :root {
-            --font-sans: ${fontSans.style.fontFamily};
-            --font-mono: ${fontMono.style.fontFamily};
-          }
-          body {
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-          }
-        `}</style>
-        <Providers>
-          <MyApp Component={Component} pageProps={pageProps} />
-        </Providers>
-      </QueryClientProvider>
-    </PostHogProvider>
+    <QueryClientProvider client={queryClient}>
+      <style jsx global>{`
+        :root {
+          --font-sans: ${fontSans.style.fontFamily};
+          --font-mono: ${fontMono.style.fontFamily};
+        }
+        body {
+          -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale;
+        }
+      `}</style>
+      <Providers>
+        <MyApp Component={Component} pageProps={pageProps} />
+      </Providers>
+    </QueryClientProvider>
   );
 }
 

@@ -5,7 +5,7 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import type { GetServerSideProps } from 'next';
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/router';
-import { usePostHog } from 'posthog-js/react';
+import posthog from 'posthog-js';
 import { useEffect, useMemo, useState } from 'react';
 
 import { LoadingSection } from '@/components/shared/LoadingSection';
@@ -55,7 +55,6 @@ export default function BountySubmissions({ listing }: Props) {
   >(undefined);
 
   const searchParams = useSearchParams();
-  const posthog = usePostHog();
 
   const { data: submissions, isLoading: isSubmissionsLoading } = useQuery(
     submissionsQuery(listing, true),

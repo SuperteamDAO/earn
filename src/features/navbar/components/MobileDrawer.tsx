@@ -1,7 +1,7 @@
 import { usePrivy } from '@privy-io/react-auth';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import { useRouter } from 'next/router';
-import { usePostHog } from 'posthog-js/react';
+import posthog from 'posthog-js';
 import React, { useState } from 'react';
 
 import { SupportFormDialog } from '@/components/shared/SupportFormDialog';
@@ -68,8 +68,6 @@ export const MobileDrawer = ({
   const { isOpen, onClose, onOpen } = useDisclosure();
 
   const { user } = useUser();
-
-  const posthog = usePostHog();
 
   const isLoggedIn = !!user && authenticated && ready;
 

@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { getImageProps } from 'next/image';
-import { usePostHog } from 'posthog-js/react';
+import posthog from 'posthog-js';
 import React from 'react';
 
 import { ASSET_URL } from '@/constants/ASSET_URL';
@@ -16,7 +16,6 @@ const avatars = [
 ];
 
 export function HomeTalentBanner() {
-  const posthog = usePostHog();
   const common = {
     alt: 'Illustration — Two people working on laptops outdoors at night, surrounded by a mystical mountainous landscape illuminated by the moonlight',
     quality: 85,

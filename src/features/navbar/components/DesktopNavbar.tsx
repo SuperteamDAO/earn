@@ -2,7 +2,7 @@ import { usePrivy } from '@privy-io/react-auth';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { usePostHog } from 'posthog-js/react';
+import posthog from 'posthog-js';
 import { useMemo } from 'react';
 import { IoSearchOutline, IoWalletOutline } from 'react-icons/io5';
 
@@ -41,7 +41,7 @@ export const DesktopNavbar = ({
 }: Props) => {
   const { authenticated, ready } = usePrivy();
   const router = useRouter();
-  const posthog = usePostHog();
+
   const { user } = useUser();
   const { creditBalance } = useCreditBalance();
 

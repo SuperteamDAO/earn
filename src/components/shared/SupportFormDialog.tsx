@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import IsoDomPurify from 'isomorphic-dompurify';
-import { usePostHog } from 'posthog-js/react';
+import posthog from 'posthog-js';
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -59,7 +59,6 @@ export function SupportFormDialog({ children, onSubmit }: ModalFormProps) {
   const { user } = useUser();
   const [open, setOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const posthog = usePostHog();
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),

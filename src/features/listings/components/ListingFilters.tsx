@@ -1,5 +1,5 @@
 import { LucideListFilter } from 'lucide-react';
-import { usePostHog } from 'posthog-js/react';
+import posthog from 'posthog-js';
 
 import {
   DropdownMenu,
@@ -34,7 +34,6 @@ export const ListingFilters = ({
   onStatusChange,
   onSortChange,
 }: ListingFiltersProps) => {
-  const posthog = usePostHog();
   const sortOptions = getListingSortOptions(activeStatus);
 
   const isDefaultFilterApplied =

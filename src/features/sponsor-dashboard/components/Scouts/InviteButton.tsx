@@ -1,6 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 import { Check, Plus } from 'lucide-react';
-import { usePostHog } from 'posthog-js/react';
+import posthog from 'posthog-js';
 import React from 'react';
 import { toast } from 'sonner';
 
@@ -25,8 +25,6 @@ export function InviteButton({
   maxInvitesReached,
   invitesLeft,
 }: Props) {
-  const posthog = usePostHog();
-
   const inviteMutation = useMutation({
     mutationFn: async () => {
       const response = await api.post(

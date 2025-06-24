@@ -1,7 +1,7 @@
 import { usePrivy } from '@privy-io/react-auth';
 import { useQuery } from '@tanstack/react-query';
 import dynamic from 'next/dynamic';
-import { usePostHog } from 'posthog-js/react';
+import posthog from 'posthog-js';
 import { useEffect } from 'react';
 
 import { useDisclosure } from '@/hooks/use-disclosure';
@@ -58,7 +58,6 @@ export const Header = () => {
     onClose: onCreditClose,
   } = useDisclosure();
 
-  const posthog = usePostHog();
   function searchOpenWithEvent() {
     posthog.capture('initiate_search');
     onSearchOpen();

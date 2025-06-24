@@ -1,6 +1,6 @@
 import { useLoginWithEmail } from '@privy-io/react-auth';
 import { useRouter } from 'next/router';
-import { usePostHog } from 'posthog-js/react';
+import posthog from 'posthog-js';
 import React, { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -27,7 +27,6 @@ export const EmailSignIn = ({ redirectTo }: LoginProps) => {
   const [emailError, setEmailError] = useState('');
 
   const router = useRouter();
-  const posthog = usePostHog();
 
   const { state, sendCode, loginWithCode } = useLoginWithEmail({
     onComplete: async ({ user, wasAlreadyAuthenticated }) => {
