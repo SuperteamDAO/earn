@@ -75,7 +75,6 @@ const nextConfig: NextConfig = {
       'flag-icons',
       'jotai',
       'lowlight',
-      'motion',
       'next-seo',
       'nprogress',
       'posthog-js',
