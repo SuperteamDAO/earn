@@ -12,7 +12,6 @@
     "prepare": "husky",
     "postinstall": "prisma generate",
     "knip": "knip",
-    "find-deadcode": "ts-prune",
     "ui:add": "pnpx shadcn@latest add"
   },
   "dependencies": {
