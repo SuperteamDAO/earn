@@ -1,6 +1,6 @@
 import Router from 'next/router';
-import * as NProgress from 'nprogress';
-import * as React from 'react';
+import { configure, done, start } from 'nprogress';
+import { useEffect } from 'react';
 
 export const TopLoader = () => {
   const color = '#6366F1';
@@ -17,8 +17,8 @@ export const TopLoader = () => {
     </style>
   );
 
-  React.useEffect((): ReturnType<React.EffectCallback> => {
-    NProgress.configure({
+  useEffect(() => {
+    configure({
       showSpinner: false,
       trickle: true,
       trickleSpeed: 200,
@@ -29,8 +29,8 @@ export const TopLoader = () => {
         '<div class="bar" role="bar"><div class="peg"></div></div><div class="spinner" role="spinner"><div class="spinner-icon"></div></div>',
     });
 
-    const progressStarted = () => NProgress.start();
-    const progressComplete = () => NProgress.done(true);
+    const progressStarted = () => start();
+    const progressComplete = () => done(true);
 
     Router.events.on('routeChangeStart', progressStarted);
     Router.events.on('routeChangeComplete', progressComplete);
