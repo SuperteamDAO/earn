@@ -4,8 +4,6 @@ import Link from 'next/link';
 import { usePostHog } from 'posthog-js/react';
 import React from 'react';
 
-import SponsorLogosBanner from '@/public/assets/banner-sponsor-logos.webp';
-import SponsorLogosBannerMobile from '@/public/assets/banner-sponsor-logos-mobile.webp';
 import { cn } from '@/utils/cn';
 import { roundToNearestTenth, roundToNearestTenThousand } from '@/utils/number';
 
@@ -16,9 +14,8 @@ export function HomeSponsorBanner() {
   const posthog = usePostHog();
   const common = {
     alt: 'Illustration — Gradient Light blue with Logos of Solana first Companies',
-    quality: 100,
-    priority: true,
-    loading: 'eager' as const,
+    quality: 85,
+    loading: 'lazy' as const,
     style: {
       width: '100%',
       maxWidth: '100%',
@@ -30,12 +27,20 @@ export function HomeSponsorBanner() {
 
   const {
     props: { srcSet: desktop, ...rest },
-  } = getImageProps({ ...common, src: SponsorLogosBanner, sizes: '40vw' });
-  const {
-    props: { srcSet: mobile, ...restMobile },
   } = getImageProps({
     ...common,
-    src: SponsorLogosBannerMobile,
+    src: `https://res.cloudinary.com/dgvnuwspr/image/upload/assets/banner/banner-sponsor-logos`,
+    width: 1200,
+    height: 600,
+    sizes: '40vw',
+  });
+  const {
+    props: { srcSet: mobile },
+  } = getImageProps({
+    ...common,
+    src: `https://res.cloudinary.com/dgvnuwspr/image/upload/assets/banner/banner-sponsor-logos-mobile`,
+    width: 800,
+    height: 600,
     sizes: '30vw',
   });
 
@@ -49,24 +54,27 @@ export function HomeSponsorBanner() {
       <div className="absolute inset-0 overflow-hidden bg-linear-to-r from-[#00CCFE] to-[#A6EDFF]">
         <picture
           className={cn(
-            'relative ml-auto h-full w-fit',
-            'hidden md:block lg:hidden xl:block',
+            'absolute top-0 right-0 z-10 flex h-[45%] w-fit sm:h-[70%]',
+            'md:relative md:ml-auto md:block md:h-full',
+            'lg:absolute lg:top-0 lg:right-0 lg:z-10 lg:flex lg:h-[45%] sm:lg:h-[70%]',
+            'xl:relative xl:ml-auto xl:block xl:h-full',
           )}
         >
-          <source media="(max-width: 60em)" srcSet={desktop} />
-          <img {...rest} className="h-full !w-auto" alt={rest.alt} />
-        </picture>
-        <picture
-          className={cn(
-            'absolute top-0 right-0 z-10 h-[45%] w-fit sm:h-[70%]',
-            'flex md:hidden lg:flex xl:hidden',
-          )}
-        >
-          <source media="(min-width: 20em)" srcSet={mobile} />
+          <source media="(min-width: 80em)" srcSet={desktop} />
+          <source
+            media="(min-width: 64em) and (max-width: 80em)"
+            srcSet={mobile}
+          />
+          <source
+            media="(min-width: 48em) and (max-width: 64em)"
+            srcSet={desktop}
+          />
+          <source media="(max-width: 48em)" srcSet={mobile} />
           <img
-            {...restMobile}
+            {...rest}
             className="h-full !w-auto"
-            alt={restMobile.alt}
+            alt={rest.alt}
+            decoding="async"
           />
         </picture>
       </div>

@@ -83,6 +83,7 @@ const nextConfig: NextConfig = {
       'react-select',
       'sonner',
       'tailwind-merge',
+      'typescript-cookie',
       'vaul',
       'zod',
       'zustand',
