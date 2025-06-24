@@ -187,9 +187,11 @@
     "typescript-eslint": "^7.11.0"
   },
   "browserslist": [
-    "Chrome >= 100.0.4896.127",
-    "Firefox >= 115",
-    "Safari >= 14.1.2"
+    "Chrome >= 113",
+    "Edge >= 113",
+    "Firefox >= 127",
+    "Safari >= 16.8",
+    "iOS >= 16"
   ],
   "pnpm": {
     "overrides": {
