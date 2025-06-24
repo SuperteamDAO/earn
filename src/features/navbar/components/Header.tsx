@@ -24,8 +24,9 @@ const BountySnackbar = dynamic(() =>
 const GrantSnackbar = dynamic(() =>
   import('./GrantSnackbar').then((mod) => mod.GrantSnackbar),
 );
-const DesktopNavbar = dynamic(() =>
-  import('./DesktopNavbar').then((mod) => mod.DesktopNavbar),
+const DesktopNavbar = dynamic(
+  () => import('./DesktopNavbar').then((mod) => mod.DesktopNavbar),
+  { ssr: false },
 );
 const MobileNavbar = dynamic(() =>
   import('./MobileNavbar').then((mod) => mod.MobileNavbar),
