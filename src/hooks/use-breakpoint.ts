@@ -11,22 +11,20 @@ const breakpointValues: Record<Breakpoint, number> = {
 };
 
 export const useBreakpoint = (breakpoint: Breakpoint): boolean => {
-  const [matches, setMatches] = useState<boolean>(() => {
-    if (typeof window !== 'undefined') {
-      return window.innerWidth >= breakpointValues[breakpoint];
-    }
-    return false;
-  });
+  const [matches, setMatches] = useState<boolean>(false);
+  const [isHydrated, setIsHydrated] = useState<boolean>(false);
 
   useEffect(() => {
-    if (typeof window === 'undefined') return;
+    setIsHydrated(true);
+
     const check = () => {
       setMatches(window.innerWidth >= breakpointValues[breakpoint]);
     };
+
     check();
     window.addEventListener('resize', check);
     return () => window.removeEventListener('resize', check);
   }, [breakpoint]);
 
-  return matches;
+  return isHydrated ? matches : false;
 };
