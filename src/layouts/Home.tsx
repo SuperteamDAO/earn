@@ -16,6 +16,7 @@ interface HomeProps {
   readonly type: 'landing' | 'listing' | 'region' | 'feed';
   readonly st?: Superteam;
   readonly potentialSession?: boolean;
+  readonly totalUsers?: number | null;
 }
 
 type CategoryTypes = 'content' | 'development' | 'design' | 'other' | 'all';
@@ -41,6 +42,7 @@ export function Home({
   type,
   st,
   potentialSession = false,
+  totalUsers,
 }: HomeProps) {
   const router = useRouter();
   const { authenticated } = usePrivy();
@@ -88,16 +90,24 @@ export function Home({
           <div className="flex items-start justify-between">
             <div className="w-full lg:border-r lg:border-slate-100">
               <div className="w-full lg:pr-6">
-                {!currentCategory &&
-                  (type === 'landing' || type === 'listing') && (
-                    <div className="pt-3">
-                      {potentialSession || authenticated ? (
-                        <UserStatsBanner />
-                      ) : (
-                        <BannerCarousel />
-                      )}
-                    </div>
-                  )}
+                {type === 'landing' && (
+                  <div className="pt-3">
+                    {potentialSession || authenticated ? (
+                      <UserStatsBanner />
+                    ) : (
+                      <BannerCarousel totalUsers={totalUsers} />
+                    )}
+                  </div>
+                )}
+                {!currentCategory && type === 'listing' && (
+                  <div className="pt-3">
+                    {potentialSession || authenticated ? (
+                      <UserStatsBanner />
+                    ) : (
+                      <BannerCarousel totalUsers={totalUsers} />
+                    )}
+                  </div>
+                )}
                 {children}
               </div>
             </div>

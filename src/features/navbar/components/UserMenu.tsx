@@ -32,13 +32,9 @@ export function UserMenu() {
       const url = window.location.href;
       const hashIndex = url.indexOf('#');
       const afterHash = hashIndex !== -1 ? url.substring(hashIndex + 1) : '';
-      const [hashValue, queryString] = afterHash.split('?');
+      const [hashValue] = afterHash.split('?');
       const hashHasEmail = hashValue === 'emailPreferences';
-      const queryParams = new URLSearchParams(queryString);
-      if (
-        (hashHasEmail && queryParams.get('loginState') === 'signedIn') ||
-        hashHasEmail
-      ) {
+      if (hashHasEmail) {
         onOpen();
       }
     };

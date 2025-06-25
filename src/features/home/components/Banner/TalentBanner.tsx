@@ -1,4 +1,3 @@
-import { useQuery } from '@tanstack/react-query';
 import { getImageProps } from 'next/image';
 import posthog from 'posthog-js';
 import React from 'react';
@@ -7,7 +6,9 @@ import { ASSET_URL } from '@/constants/ASSET_URL';
 
 import { AuthWrapper } from '@/features/auth/components/AuthWrapper';
 
-import { userCountQuery } from '../../queries/user-count';
+interface HomeTalentBannerProps {
+  readonly totalUsers?: number | null;
+}
 
 const avatars = [
   { name: 'Abhishek', src: ASSET_URL + '/pfps/t1.webp' },
@@ -15,7 +16,7 @@ const avatars = [
   { name: 'Yash', src: ASSET_URL + '/pfps/fff1.webp' },
 ];
 
-export function HomeTalentBanner() {
+export function HomeTalentBanner({ totalUsers }: HomeTalentBannerProps) {
   const common = {
     alt: 'Illustration — Two people working on laptops outdoors at night, surrounded by a mystical mountainous landscape illuminated by the moonlight',
     quality: 85,
@@ -27,7 +28,6 @@ export function HomeTalentBanner() {
       borderRadius: '0.375rem',
       pointerEvents: 'none' as const,
       objectFit: 'cover' as const,
-      layout: 'fill' as const,
     },
   };
 
@@ -50,8 +50,6 @@ export function HomeTalentBanner() {
     height: 600,
     sizes: '100vw',
   });
-
-  const { data } = useQuery(userCountQuery);
 
   return (
     <div className="relative mx-auto flex h-full w-full flex-col overflow-hidden rounded-[0.5rem] p-5 md:p-10">
@@ -96,9 +94,9 @@ export function HomeTalentBanner() {
               />
             ))}
           </div>
-          {data?.totalUsers !== null && (
+          {totalUsers !== null && totalUsers !== undefined && (
             <p className="relative ml-[0.6875rem] text-[0.8rem] text-slate-200 md:text-[0.875rem]">
-              Join {data?.totalUsers?.toLocaleString('en-us')}+ others
+              Join {totalUsers?.toLocaleString('en-us')}+ others
             </p>
           )}
         </div>

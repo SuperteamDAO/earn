@@ -85,13 +85,9 @@ export const Header = () => {
       const url = window.location.href;
       const hashIndex = url.indexOf('#');
       const afterHash = hashIndex !== -1 ? url.substring(hashIndex + 1) : '';
-      const [hashValue, queryString] = afterHash.split('?');
+      const [hashValue] = afterHash.split('?');
       const hashHasWallet = hashValue === 'wallet';
-      const queryParams = new URLSearchParams(queryString);
-      if (
-        (hashHasWallet && queryParams.get('loginState') === 'signedIn') ||
-        hashHasWallet
-      ) {
+      if (hashHasWallet) {
         openWalletWithEvent();
       }
     };

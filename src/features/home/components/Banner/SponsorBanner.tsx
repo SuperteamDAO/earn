@@ -8,9 +8,12 @@ import { cn } from '@/utils/cn';
 import { roundToNearestTenth, roundToNearestTenThousand } from '@/utils/number';
 
 import { sponsorCountQuery } from '../../queries/sponsor-count';
-import { userCountQuery } from '../../queries/user-count';
 
-export function HomeSponsorBanner() {
+interface HomeSponsorBannerProps {
+  readonly totalUsers?: number | null;
+}
+
+export function HomeSponsorBanner({ totalUsers }: HomeSponsorBannerProps) {
   const common = {
     alt: 'Illustration — Gradient Light blue with Logos of Solana first Companies',
     quality: 85,
@@ -44,7 +47,6 @@ export function HomeSponsorBanner() {
   });
 
   const { data } = useQuery(sponsorCountQuery);
-  const { data: userCount } = useQuery(userCountQuery);
   return (
     <Link
       href="/sponsor"
@@ -102,10 +104,9 @@ export function HomeSponsorBanner() {
       </p>
       <p className="relative z-10 mt-1 max-w-[18rem] text-sm leading-[130%] text-black sm:max-w-md md:mt-1 md:max-w-[20rem] md:text-lg lg:max-w-sm xl:max-w-[25rem]">
         Reach{' '}
-        {roundToNearestTenThousand(
-          userCount?.totalUsers || 0,
-          true,
-        )?.toLocaleString('en-us') || '0'}
+        {roundToNearestTenThousand(totalUsers || 0, true)?.toLocaleString(
+          'en-us',
+        ) || '0'}
         + top-tier talent in under 5 clicks. Get high-quality work done across
         content, development, and design.
       </p>
