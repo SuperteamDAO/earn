@@ -7,7 +7,7 @@ posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY!, {
   ui_host: process.env.NEXT_PUBLIC_POSTHOG_HOST || 'https://app.posthog.com',
   autocapture: false,
   loaded: (posthog) => {
-    if (process.env.NODE_ENV === 'development') posthog.debug();
+    if (process.env.NODE_ENV !== 'production') posthog.debug();
   },
   defaults: '2025-05-24',
   capture_pageview: 'history_change',
