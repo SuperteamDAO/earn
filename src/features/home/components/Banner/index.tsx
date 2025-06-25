@@ -1,5 +1,6 @@
 import Autoplay from 'embla-carousel-autoplay';
 import { useAtomValue } from 'jotai';
+import dynamic from 'next/dynamic';
 import { useEffect, useRef, useState } from 'react';
 
 import {
@@ -15,14 +16,28 @@ import {
   popupsShowedAtom,
 } from '@/features/conversion-popups/atoms';
 
-import { HomeSponsorBanner } from './SponsorBanner';
 import { HomeTalentBanner } from './TalentBanner';
 
+interface BannerCarouselProps {
+  readonly totalUsers?: number | null;
+}
+
+const HomeSponsorBanner = dynamic(
+  () =>
+    import('./SponsorBanner').then((mod) => ({
+      default: mod.HomeSponsorBanner,
+    })),
+  {
+    ssr: false,
+    loading: () => <div className="h-full" />,
+  },
+);
+
 /**
- * the full, interactive client-side carousel.
- * this component is only rendered on the client after the initial page load.
+ * an optimized carousel that renders a static version first for performance,
+ * and then progressively enhances to the full interactive version on the client.
  */
-function FullInteractiveCarousel() {
+export function BannerCarousel({ totalUsers }: BannerCarouselProps) {
   const plugin = useRef(
     Autoplay({
       delay: 6000,
@@ -61,14 +76,10 @@ function FullInteractiveCarousel() {
     >
       <CarouselContent>
         <CarouselItem>
-          <div className="h-full">
-            <HomeTalentBanner />
-          </div>
+          <HomeTalentBanner totalUsers={totalUsers} />
         </CarouselItem>
         <CarouselItem>
-          <div className="h-full">
-            <HomeSponsorBanner />
-          </div>
+          <HomeSponsorBanner totalUsers={totalUsers} />
         </CarouselItem>
       </CarouselContent>
       <CarouselDots
@@ -78,46 +89,4 @@ function FullInteractiveCarousel() {
       />
     </Carousel>
   );
-}
-
-/**
- * an optimized carousel that renders a static version first for performance,
- * and then progressively enhances to the full interactive version on the client.
- */
-export function BannerCarousel() {
-  const [isClient, setIsClient] = useState(false);
-
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
-
-  if (!isClient) {
-    return (
-      <div className="relative w-full">
-        <div className="overflow-hidden">
-          <div className="h-full min-w-0 shrink-0 grow-0 basis-full pl-4">
-            <HomeTalentBanner />
-          </div>
-        </div>
-        <div
-          className="absolute bottom-3 left-2/4 flex -translate-x-2/4 justify-center gap-2 md:bottom-6"
-          data-slot="carousel-dots"
-        >
-          <button
-            type="button"
-            className="h-1.5 w-1.5 rounded-full bg-white transition-colors md:h-2 md:w-2"
-            aria-label="Go to slide 1"
-          />
-          <button
-            type="button"
-            className="hover:bg-muted-foreground/50 h-1.5 w-1.5 rounded-full bg-slate-400 transition-colors md:h-2 md:w-2"
-            aria-label="Go to slide 2"
-          />
-        </div>
-      </div>
-    );
-  }
-
-  // once mounted on the client, render the full, interactive carousel.
-  return <FullInteractiveCarousel />;
 }

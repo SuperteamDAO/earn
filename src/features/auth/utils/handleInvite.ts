@@ -43,7 +43,7 @@ export async function handleInviteAcceptance(
       return {
         success: false,
         message: 'No valid invitation found',
-        redirectUrl: '/new?onboarding=true&loginState=signedIn',
+        redirectUrl: '/new?onboarding=true',
       };
     }
 
@@ -102,7 +102,7 @@ export async function handleInviteAcceptance(
     return {
       success: true,
       message: 'Invitation accepted successfully',
-      redirectUrl: '/dashboard/listings/?loginState=signedIn',
+      redirectUrl: '/dashboard/listings/',
     };
   } catch (error) {
     logger.error(`Error accepting invite: ${safeStringify(error)}`);

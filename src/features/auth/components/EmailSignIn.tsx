@@ -1,4 +1,5 @@
 import { useLoginWithEmail } from '@privy-io/react-auth';
+import { useSetAtom } from 'jotai';
 import { useRouter } from 'next/router';
 import posthog from 'posthog-js';
 import React, { useState } from 'react';
@@ -12,6 +13,7 @@ import {
 } from '@/components/ui/input-otp';
 import { cn } from '@/utils/cn';
 
+import { loginEventAtom } from '../atoms';
 import { checkEmailValidity, validateEmailRegex } from '../utils/email';
 import { handleUserCreation } from '../utils/handleUserCreation';
 
@@ -27,16 +29,17 @@ export const EmailSignIn = ({ redirectTo }: LoginProps) => {
   const [emailError, setEmailError] = useState('');
 
   const router = useRouter();
+  const setLoginEvent = useSetAtom(loginEventAtom);
 
   const { state, sendCode, loginWithCode } = useLoginWithEmail({
     onComplete: async ({ user, wasAlreadyAuthenticated }) => {
       await handleUserCreation(user.email?.address || '');
       const url = new URL(redirectTo || router.asPath, window.location.origin);
-      if (!wasAlreadyAuthenticated) {
-        url.searchParams.set('loginState', 'signedIn');
-      }
       if (redirectTo) url.searchParams.set('originUrl', router.asPath);
       router.push(url.toString());
+      if (!wasAlreadyAuthenticated) {
+        setLoginEvent('fresh_login');
+      }
     },
     onError: () => {
       setEmailError('Authentication failed. Please try again.');
