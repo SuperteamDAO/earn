@@ -24,6 +24,8 @@ export const useForcedProfileRedirect = ({
   const [loginEvent, setLoginEvent] = useAtom(loginEventAtom);
 
   useEffect(() => {
+    let redirectTimeout: NodeJS.Timeout | undefined;
+
     const isExcludedPath =
       pathname.startsWith('/new') ||
       pathname.startsWith('/sponsor') ||
@@ -62,7 +64,8 @@ export const useForcedProfileRedirect = ({
           duration: wait,
         });
       }
-      setTimeout(redirectAction, wait);
+
+      redirectTimeout = setTimeout(redirectAction, wait);
     };
 
     // a fresh login is a user action, so we can redirect immediately.
@@ -81,6 +84,9 @@ export const useForcedProfileRedirect = ({
     }
 
     return () => {
+      if (redirectTimeout) {
+        clearTimeout(redirectTimeout);
+      }
       window.removeEventListener('load', deferredCheck);
     };
   }, [
