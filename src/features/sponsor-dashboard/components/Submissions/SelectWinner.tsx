@@ -9,12 +9,14 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { tokenList } from '@/constants/tokenList';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { cn } from '@/utils/cn';
+import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import { cleanRewards, getRankLabels, sortRank } from '@/utils/rank';
 
 import { BONUS_REWARD_POSITION } from '@/features/listing-builder/constants';
-import type { Listing } from '@/features/listings/types';
+import type { Listing, Rewards } from '@/features/listings/types';
 
 import { selectedSubmissionAtom } from '../../atoms';
 import { useRejectSubmissions } from '../../mutations/useRejectSubmissions';
@@ -112,7 +114,7 @@ export const SelectWinner = ({
           <div className="relative">
             <DropdownMenu>
               <div className="relative flex">
-                <DropdownMenuTrigger asChild>
+                <DropdownMenuTrigger asChild className="min-w-[180px]">
                   <Button
                     variant="outline"
                     disabled={
@@ -121,13 +123,13 @@ export const SelectWinner = ({
                       isMultiSelectOn
                     }
                     className={cn(
-                      'w-full justify-between rounded-lg border border-emerald-500 bg-emerald-50 py-4 text-emerald-600 hover:bg-emerald-100 hover:text-emerald-600 disabled:opacity-50',
+                      'w-full justify-between rounded-lg border border-emerald-500 bg-emerald-50 py-4 text-emerald-600 hover:bg-emerald-100 hover:text-emerald-600 disabled:opacity-50 data-[state=open]:rounded-b-none data-[state=open]:border-slate-200',
                       isValueSelected && 'pr-10',
                     )}
                   >
                     <div className="flex items-center">
                       <div className="mr-2 rounded-full bg-emerald-600 p-0.5">
-                        <Check className="size-3 text-white" />
+                        <Check className="size-1 text-white" />
                       </div>
                       <span className="capitalize">
                         {selectedSubmission?.isWinner &&
@@ -156,7 +158,10 @@ export const SelectWinner = ({
                   </button>
                 )}
               </div>
-              <DropdownMenuContent className="w-full min-w-[200px]">
+              <DropdownMenuContent
+                sideOffset={-1}
+                className="w-full min-w-[180px] divide-y divide-slate-100 rounded-t-none p-0"
+              >
                 {rewards.map((reward) => {
                   let isRewardUsed = usedPositions.includes(reward);
                   if (reward === BONUS_REWARD_POSITION) {
@@ -174,12 +179,46 @@ export const SelectWinner = ({
                     (!isRewardUsed || isCurrentSubmissionReward) && (
                       <DropdownMenuItem
                         key={reward}
-                        className="cursor-pointer capitalize"
+                        className="cursor-pointer font-medium capitalize"
                         onClick={() =>
                           selectWinner(reward, selectedSubmission?.id)
                         }
                       >
-                        {getRankLabels(reward)}
+                        <div className="flex w-full justify-between px-0 py-0.5">
+                          <p className="text-slate-500">
+                            {getRankLabels(reward)}
+                          </p>
+                          <div className="flex items-center gap-1">
+                            {bounty?.token && (
+                              <div className="flex items-center gap-1">
+                                <img
+                                  src={
+                                    tokenList.find(
+                                      (t) => t.tokenSymbol === bounty?.token,
+                                    )?.icon
+                                  }
+                                  alt="token"
+                                  className="h-4 w-4"
+                                />
+                                <p className="font-semibold text-slate-700">
+                                  {bounty?.compensationType === 'fixed'
+                                    ? bounty?.rewards &&
+                                      formatNumberWithSuffix(
+                                        bounty?.rewards[
+                                          reward as keyof Rewards
+                                        ] ?? 0,
+                                        2,
+                                        true,
+                                      )
+                                    : selectedSubmission?.ask}
+                                </p>
+                                <span className="text-slate-400">
+                                  {bounty?.token}
+                                </span>
+                              </div>
+                            )}
+                          </div>
+                        </div>
                       </DropdownMenuItem>
                     )
                   );

@@ -78,13 +78,14 @@ export const SubmissionPanel = ({
                 </div>
               </div>
               <div className="ph-no-capture flex w-full items-center justify-end gap-2">
-                {(selectedSubmission?.status === 'Pending' ||
-                  selectedSubmission?.label === SubmissionLabels.Spam) && (
-                  <SpamButton
-                    listingSlug={bounty?.slug!}
-                    isMultiSelectOn={!!isMultiSelectOn}
-                  />
-                )}
+                {!bounty?.isWinnersAnnounced &&
+                  (selectedSubmission?.status === 'Pending' ||
+                    selectedSubmission?.label === SubmissionLabels.Spam) && (
+                    <SpamButton
+                      listingSlug={bounty?.slug!}
+                      isMultiSelectOn={!!isMultiSelectOn}
+                    />
+                  )}
                 {!bounty?.isWinnersAnnounced && !isHackathonPage && (
                   <SelectWinner
                     onWinnersAnnounceOpen={onWinnersAnnounceOpen}

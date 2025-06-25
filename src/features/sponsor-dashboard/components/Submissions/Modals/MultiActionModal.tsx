@@ -82,7 +82,7 @@ export const MultiActionModal = ({
       case 'bonus':
         return {
           title: `Select ${submissionIds.length} submission${isMultiple ? 's' : ''} for bonus spot${isMultiple ? 's' : ''}`,
-          description: `You are about to select ${submissionIds.length} submisisons for Bonus spot${isMultiple ? 's' : ''}. You can update this list till you announce winners.`,
+          description: `You are about to select ${submissionIds.length} submissions for Bonus spot${isMultiple ? 's' : ''}. You can update this list till you announce winners.`,
           buttonText: `Allocate Bonus spot(s)`,
           buttonClass:
             'rounded-lg border border-blue-300 bg-blue-50 text-blue-600 hover:bg-blue-100',
@@ -92,7 +92,7 @@ export const MultiActionModal = ({
       case 'spam':
         return {
           title: `Mark Submission${isMultiple ? 's' : ''} as Spam?`,
-          description: `Marking these submissions as spam would affect the users' ability to submit to other opporunities on Earn.`,
+          description: `Marking these submissions as spam would affect the users' ability to submit to other opportunities on Earn.`,
           buttonText: `Mark as Spam`,
           buttonClass:
             'rounded-lg border border-orange-400 bg-orange-50 text-orange-500 hover:bg-orange-100',
@@ -138,7 +138,9 @@ export const MultiActionModal = ({
             ids: submissionIds,
             label: 'Spam',
           });
-          rejectSubmissions.mutate(submissionIds);
+          if (listing?.type === 'project') {
+            rejectSubmissions.mutate(submissionIds);
+          }
 
           queryClient.setQueryData<SubmissionWithUser[]>(
             ['sponsor-submissions', listing?.slug],
