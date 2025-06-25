@@ -17,6 +17,14 @@ const Footer = dynamic(
   { ssr: false },
 );
 
+const OutdatedBrowserWarning = dynamic(
+  () =>
+    import('@/features/navbar/components/OutdatedBrowserWarning').then(
+      (mod) => mod.OutdatedBrowserWarning,
+    ),
+  { ssr: false },
+);
+
 export const Default = ({
   className,
   meta,
@@ -28,6 +36,7 @@ export const Default = ({
       className={cn('flex min-h-screen flex-col justify-between', className)}
     >
       {meta}
+      <OutdatedBrowserWarning />
       <Header />
       <div className="flex flex-1 flex-col">{children}</div>
       {!hideFooter && <Footer />}
