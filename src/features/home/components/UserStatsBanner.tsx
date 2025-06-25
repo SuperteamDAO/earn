@@ -22,11 +22,11 @@ const Stat = ({ value, label }: StatProps) => {
 };
 
 export const UserStatsBanner = () => {
-  const { user } = useUser();
+  const { user, isLoading: isUserLoading } = useUser();
   const { ready } = usePrivy();
   const { data: stats, isLoading } = useQuery(userStatsQuery);
 
-  if (!ready || isLoading) {
+  if (!ready || isLoading || isUserLoading) {
     return (
       <Skeleton className="mx-auto mb-8 h-[170px] max-h-[300px] rounded-xl p-6 md:h-[100px] md:p-10" />
     );

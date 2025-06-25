@@ -42,7 +42,7 @@ export const DesktopNavbar = ({
   const { authenticated, ready } = usePrivy();
   const router = useRouter();
 
-  const { user } = useUser();
+  const { user, isLoading } = useUser();
   const { creditBalance } = useCreditBalance();
 
   const isDashboardRoute = useMemo(
@@ -159,7 +159,7 @@ export const DesktopNavbar = ({
         )}
 
         <div className="flex items-center gap-4 py-1.5">
-          {!ready && (
+          {(!ready || isLoading) && (
             <div className="flex items-center gap-2">
               <Skeleton className="size-7 rounded-full" />
               <Skeleton className="mr-4 h-3 w-20" />

@@ -23,7 +23,7 @@ import { EmailSettingsModal } from '@/features/talent/components/EmailSettingsMo
 export function UserMenu() {
   const router = useRouter();
 
-  const { user } = useUser();
+  const { user, isLoading } = useUser();
   const logout = useLogout();
   const { isOpen, onClose, onOpen } = useDisclosure();
 
@@ -51,6 +51,10 @@ export function UserMenu() {
     );
     onClose();
   };
+
+  if (isLoading) {
+    return <></>;
+  }
 
   return (
     <>
@@ -83,7 +87,7 @@ export function UserMenu() {
             <EarnAvatar className="size-7" id={user?.id} avatar={user?.photo} />
             <div className="flex items-center">
               <p className="text-sm font-medium tracking-tight text-slate-600">
-                {user?.firstName ?? user?.email ?? 'New User'}
+                {user?.firstName ?? user?.email ?? ''}
               </p>
             </div>
             <ChevronDown className="block size-4 text-slate-400" />
