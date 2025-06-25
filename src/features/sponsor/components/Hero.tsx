@@ -1,6 +1,6 @@
 import { usePrivy } from '@privy-io/react-auth';
 import Link from 'next/link';
-import { usePostHog } from 'posthog-js/react';
+import posthog from 'posthog-js';
 
 import { Button } from '@/components/ui/button';
 import { useUser } from '@/store/user';
@@ -16,8 +16,6 @@ export function Hero() {
   const { authenticated } = usePrivy();
 
   const { user } = useUser();
-
-  const posthog = usePostHog();
 
   const base = '/landingsponsor/sponsors/';
 

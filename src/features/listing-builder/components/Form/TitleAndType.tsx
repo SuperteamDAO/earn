@@ -2,7 +2,7 @@ import type { CompensationType } from '@prisma/client';
 import { useQuery } from '@tanstack/react-query';
 import { useAtomValue } from 'jotai';
 import { Link } from 'lucide-react';
-import { usePostHog } from 'posthog-js/react';
+import posthog from 'posthog-js';
 import { useEffect, useMemo, useState } from 'react';
 import { useWatch } from 'react-hook-form';
 import slugify from 'slugify';
@@ -49,7 +49,7 @@ const typeOptions = [
 
 export function TitleAndType() {
   const form = useListingForm();
-  const posthog = usePostHog();
+
   const type = useWatch({ name: 'type', control: form.control });
   const title = useWatch({ control: form.control, name: 'title' });
   const listingId = useWatch({ control: form.control, name: 'id' });

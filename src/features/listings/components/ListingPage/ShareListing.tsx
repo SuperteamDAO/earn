@@ -1,5 +1,5 @@
 import { Check, Copy } from 'lucide-react';
-import { usePostHog } from 'posthog-js/react';
+import posthog from 'posthog-js';
 import * as React from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -53,7 +53,6 @@ export function ShareListing({
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
 } & SourceType) {
-  const posthog = usePostHog();
   function setShareOpen(o: boolean) {
     if (o) posthog.capture('open_share listing');
     else posthog.capture('close_share listing');
@@ -136,7 +135,6 @@ function MainContent({ listing, grant, source }: SourceType) {
     return encodeURIComponent(`${copy}! Check it out: \n${listingLink()}`);
   };
 
-  const posthog = usePostHog();
   const { hasCopied, onCopy } = useClipboard(listingLink());
   function onListingLinkCopy() {
     posthog.capture('copy_share listing');

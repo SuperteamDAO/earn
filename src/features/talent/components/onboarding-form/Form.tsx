@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/router';
-import { usePostHog } from 'posthog-js/react';
+import posthog from 'posthog-js';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -33,7 +33,6 @@ import { SkillsField } from './fields/Skills';
 import { SocialsField } from './fields/Socials';
 import { UsernameField } from './fields/Username';
 export const TalentForm = () => {
-  const posthog = usePostHog();
   const router = useRouter();
   const { user, refetchUser } = useUser();
 

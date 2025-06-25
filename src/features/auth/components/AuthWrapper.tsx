@@ -1,12 +1,20 @@
 import { usePrivy } from '@privy-io/react-auth';
+import dynamic from 'next/dynamic';
 import { type ReactNode, useEffect, useState } from 'react';
 
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 
-import { CompleteProfileModal } from './CompleteProfileModal';
-import { Login } from './Login';
+const CompleteProfileModal = dynamic(() =>
+  import('@/features/auth/components/CompleteProfileModal').then(
+    (mod) => mod.CompleteProfileModal,
+  ),
+);
+
+const Login = dynamic(() =>
+  import('@/features/auth/components/Login').then((mod) => mod.Login),
+);
 
 interface AuthWrapperProps {
   children: ReactNode;

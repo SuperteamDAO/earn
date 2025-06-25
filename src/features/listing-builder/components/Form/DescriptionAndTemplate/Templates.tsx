@@ -3,7 +3,7 @@ import { useAtomValue, useSetAtom } from 'jotai';
 import { ChevronRight, Eye, LayoutGrid, Plus } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { usePostHog } from 'posthog-js/react';
+import posthog from 'posthog-js';
 import { useEffect, useState } from 'react';
 import { useWatch } from 'react-hook-form';
 
@@ -48,7 +48,6 @@ import { isAutoGenerateOpenAtom, isEditingAtom } from '../../../atoms';
 import { useListingForm } from '../../../hooks';
 
 export function Templates() {
-  const posthog = usePostHog();
   const { user } = useUser();
   const router = useRouter();
 

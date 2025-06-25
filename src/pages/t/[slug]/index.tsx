@@ -2,7 +2,7 @@ import { ChevronDown, ChevronUp, SquarePen } from 'lucide-react';
 import type { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { usePostHog } from 'posthog-js/react';
+import posthog from 'posthog-js';
 import React, { type JSX, useEffect, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 
@@ -89,7 +89,6 @@ function TalentProfile({ talent, stats }: TalentProps) {
     });
   };
   const { user } = useUser();
-  const posthog = usePostHog();
 
   useEffect(() => {
     if (user?.id && talent?.id && user.id !== talent?.id)

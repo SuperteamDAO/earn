@@ -1,7 +1,7 @@
 import { type CommentRefType } from '@prisma/client';
 import { AlertCircle, ChevronDown, Loader2, Pin, Trash2 } from 'lucide-react';
 import Link from 'next/link';
-import { usePostHog } from 'posthog-js/react';
+import posthog from 'posthog-js';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
@@ -77,7 +77,6 @@ export const Comment = ({
   isDisabled = false,
 }: Props) => {
   const { user } = useUser();
-  const posthog = usePostHog();
 
   const {
     isOpen: deleteIsOpen,

@@ -1,7 +1,8 @@
 import { usePrivy } from '@privy-io/react-auth';
 import { Menu } from 'lucide-react';
+import dynamic from 'next/dynamic';
 import Link from 'next/link';
-import { usePostHog } from 'posthog-js/react';
+import posthog from 'posthog-js';
 import React from 'react';
 import { IoWalletOutline } from 'react-icons/io5';
 
@@ -14,8 +15,6 @@ import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import { CreditIcon } from '@/features/credits/icon/credit';
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
-import { MobileDrawer } from './MobileDrawer';
-
 interface Props {
   onLoginOpen: () => void;
   onWalletOpen: () => void;
@@ -26,6 +25,13 @@ interface Props {
 // const AnnouncementBar = dynamic(() =>
 //   import('@/features/navbar').then((mod) => mod.AnnouncementBar),
 // );
+
+const MobileDrawer = dynamic(
+  () => import('./MobileDrawer').then((mod) => mod.MobileDrawer),
+  {
+    ssr: false,
+  },
+);
 
 export const MobileNavbar = ({
   onLoginOpen,
@@ -40,9 +46,8 @@ export const MobileNavbar = ({
   } = useDisclosure();
 
   const { authenticated, ready } = usePrivy();
-  const posthog = usePostHog();
 
-  const { user } = useUser();
+  const { user, isLoading } = useUser();
   const { creditBalance } = useCreditBalance();
 
   const openCreditDrawer = () => {
@@ -62,7 +67,7 @@ export const MobileNavbar = ({
         <div className="flex min-h-12 items-center justify-between border-b border-black/20 bg-white px-1 py-1 lg:hidden">
           <div className="flex items-center gap-0">
             <div onClick={openDrawer} className="relative ml-1 cursor-pointer">
-              {ready && authenticated ? (
+              {ready && authenticated && !isLoading ? (
                 <>
                   <EarnAvatar
                     className="size-8"

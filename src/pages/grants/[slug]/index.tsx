@@ -1,5 +1,5 @@
 import type { GetServerSideProps } from 'next';
-import { usePostHog } from 'posthog-js/react';
+import posthog from 'posthog-js';
 import React, { useEffect, useState } from 'react';
 
 import { GrantPageLayout } from '@/layouts/Grants';
@@ -16,8 +16,6 @@ interface InitialGrant {
 
 function Grants({ grant: initialGrant }: InitialGrant) {
   const [grant] = useState<typeof initialGrant>(initialGrant);
-
-  const posthog = usePostHog();
 
   useEffect(() => {
     posthog.capture('open_grant');

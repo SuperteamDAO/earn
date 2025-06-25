@@ -1,7 +1,7 @@
 import { usePrivy } from '@privy-io/react-auth';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { usePostHog } from 'posthog-js/react';
+import posthog from 'posthog-js';
 import React from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -16,7 +16,7 @@ import { NAV_LINKS } from '../utils/constants';
 export const DesktopNavbar = () => {
   const { authenticated, ready } = usePrivy();
   const { user } = useUser();
-  const posthog = usePostHog();
+
   const router = useRouter();
 
   const isDashboardRoute = router.pathname.startsWith('/dashboard');

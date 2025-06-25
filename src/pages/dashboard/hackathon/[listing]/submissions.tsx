@@ -4,7 +4,7 @@ import { useSetAtom } from 'jotai';
 import type { GetServerSideProps } from 'next';
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/router';
-import { usePostHog } from 'posthog-js/react';
+import posthog from 'posthog-js';
 import { useEffect, useMemo, useState } from 'react';
 
 import { LoadingSection } from '@/components/shared/LoadingSection';
@@ -50,7 +50,6 @@ export default function BountySubmissions({ listing }: Props) {
   >(new Set());
 
   const searchParams = useSearchParams();
-  const posthog = usePostHog();
 
   const { data: submissions, isLoading: isSubmissionsLoading } = useQuery(
     submissionsQuery(listing, true),

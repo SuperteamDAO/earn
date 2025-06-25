@@ -69,6 +69,7 @@ export function Banner({
   isLoading: boolean;
 }) {
   const { user } = useUser();
+
   const sponsorId = isHackathon ? user?.hackathonId : user?.currentSponsorId;
 
   const tooltipTextReward = !isHackathon

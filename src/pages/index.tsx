@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { type GetServerSideProps } from 'next';
 import dynamic from 'next/dynamic';
 
@@ -40,11 +41,19 @@ const GrantsSection = dynamic(
 
 interface HomePageProps {
   readonly potentialSession: boolean;
+  readonly totalUsers: number | null;
 }
 
-export default function HomePage({ potentialSession }: HomePageProps) {
+export default function HomePage({
+  potentialSession,
+  totalUsers,
+}: HomePageProps) {
   return (
-    <Home type="landing" potentialSession={potentialSession}>
+    <Home
+      type="landing"
+      potentialSession={potentialSession}
+      totalUsers={totalUsers}
+    >
       <InstallPWAModal />
       <HomepagePop />
       <TalentAnnouncements />
@@ -56,7 +65,6 @@ export default function HomePage({ potentialSession }: HomePageProps) {
     </Home>
   );
 }
-
 export const getServerSideProps: GetServerSideProps<HomePageProps> = async ({
   req,
 }) => {
@@ -67,9 +75,24 @@ export const getServerSideProps: GetServerSideProps<HomePageProps> = async ({
     .map((cookie) => cookie.trim())
     .some((cookie) => cookie.startsWith(`${USER_ID_COOKIE_NAME}=`));
 
-  return {
-    props: {
-      potentialSession: cookieExists,
-    },
-  };
+  try {
+    const { data } = await axios.get(
+      'https://earn.superteam.fun/api/homepage/user-count',
+    );
+    const totalUsers = data.totalUsers;
+
+    return {
+      props: {
+        potentialSession: cookieExists,
+        totalUsers,
+      },
+    };
+  } catch (e) {
+    return {
+      props: {
+        potentialSession: cookieExists,
+        totalUsers: null,
+      },
+    };
+  }
 };

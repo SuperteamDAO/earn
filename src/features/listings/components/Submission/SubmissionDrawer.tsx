@@ -3,7 +3,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { X } from 'lucide-react';
 import { useRouter } from 'next/router';
-import { usePostHog } from 'posthog-js/react';
+import posthog from 'posthog-js';
 import { type JSX, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -96,7 +96,7 @@ export const SubmissionDrawer = ({
           : [],
     },
   });
-  const posthog = usePostHog();
+
   const router = useRouter();
   const { query } = router;
 

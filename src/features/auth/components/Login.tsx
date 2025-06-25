@@ -1,5 +1,5 @@
 import { useLoginWithOAuth } from '@privy-io/react-auth';
-import { useAtomValue } from 'jotai';
+import { useAtomValue, useSetAtom } from 'jotai';
 import { ArrowLeft } from 'lucide-react';
 import { useRouter } from 'next/router';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -8,6 +8,7 @@ import { Dialog, DialogContent } from '@/components/ui/dialog';
 
 import { popupTimeoutAtom } from '@/features/conversion-popups/atoms';
 
+import { loginEventAtom } from '../atoms';
 import { handleUserCreation } from '../utils/handleUserCreation';
 import { SignIn } from './SignIn';
 
@@ -30,6 +31,7 @@ export const Login = ({
   const router = useRouter();
   const [loginStep, setLoginStep] = useState(0);
   const popupTimeout = useAtomValue(popupTimeoutAtom);
+  const setLoginEvent = useSetAtom(loginEventAtom);
 
   useLoginWithOAuth({
     onComplete: async ({ user, wasAlreadyAuthenticated }) => {
@@ -47,11 +49,10 @@ export const Login = ({
         ];
         privyParams.forEach((param) => url.searchParams.delete(param));
 
-        if (!wasAlreadyAuthenticated) {
-          url.searchParams.set('loginState', 'signedIn');
-        }
-
         router.replace(url.toString());
+      }
+      if (!wasAlreadyAuthenticated) {
+        setLoginEvent('fresh_login');
       }
     },
   });

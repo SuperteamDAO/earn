@@ -1,4 +1,4 @@
-import { usePostHog } from 'posthog-js/react';
+import posthog from 'posthog-js';
 import React from 'react';
 import { MdOutlineChatBubbleOutline } from 'react-icons/md';
 
@@ -6,8 +6,6 @@ import { LocalImage } from '@/components/ui/local-image';
 import { PDTG } from '@/constants/Telegram';
 
 export const HelpBanner = () => {
-  const posthog = usePostHog();
-
   return (
     <div className="rounded-md border border-slate-200 bg-indigo-50 px-8 py-5 text-white">
       <a

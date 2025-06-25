@@ -1,13 +1,11 @@
 import { usePrivy } from '@privy-io/react-auth';
-import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { usePostHog } from 'posthog-js/react';
+import posthog from 'posthog-js';
 import { useMemo } from 'react';
 import { IoSearchOutline, IoWalletOutline } from 'react-icons/io5';
 
 import { Button } from '@/components/ui/button';
-import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useCreditBalance } from '@/store/credit';
 import { useUser } from '@/store/user';
@@ -17,6 +15,7 @@ import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import { CreditIcon } from '@/features/credits/icon/credit';
 
 import { LISTING_NAV_ITEMS } from '../constants';
+import { LogoContextMenu } from './LogoContextMenu';
 import { NavLink } from './NavLink';
 import { UserMenu } from './UserMenu';
 
@@ -28,10 +27,6 @@ interface Props {
   onCreditOpen: () => void;
 }
 
-const LogoContextMenu = dynamic(() =>
-  import('./LogoContextMenu').then((mod) => mod.LogoContextMenu),
-);
-
 export const DesktopNavbar = ({
   onLoginOpen,
   onSearchOpen,
@@ -41,8 +36,8 @@ export const DesktopNavbar = ({
 }: Props) => {
   const { authenticated, ready } = usePrivy();
   const router = useRouter();
-  const posthog = usePostHog();
-  const { user } = useUser();
+
+  const { user, isLoading } = useUser();
   const { creditBalance } = useCreditBalance();
 
   const isDashboardRoute = useMemo(
@@ -97,7 +92,7 @@ export const DesktopNavbar = ({
             </Link>
           </LogoContextMenu>
 
-          {router.pathname !== '/search' &&
+          {router.pathname.startsWith('/search') &&
             !router.pathname.startsWith('/new/') && (
               <div
                 className="flex cursor-pointer items-center gap-1.5 rounded-md px-3 py-2 text-slate-500 transition-all duration-100 hover:bg-slate-100 hover:text-slate-700"
@@ -127,39 +122,13 @@ export const DesktopNavbar = ({
                     />
                   );
                 })}
-                <Link
-                  href={'/hackathon/breakout'}
-                  className={cn(
-                    'flex items-center py-2 font-medium',
-                    'h-[1.85rem]',
-                  )}
-                >
-                  <ExternalImage
-                    alt="Redacted Logo"
-                    src="/hackathon/breakout/logo"
-                    className="h-full object-contain"
-                  />
-                </Link>
-                <Link
-                  href={'/hackathon/redacted'}
-                  className={cn(
-                    'flex items-center py-2 font-medium',
-                    'h-[1.95rem]',
-                  )}
-                >
-                  <ExternalImage
-                    alt="Redacted Logo"
-                    src="/hackathon/redacted/logo-black"
-                    className="h-full object-contain"
-                  />
-                </Link>
               </div>
             </div>
           </div>
         )}
 
         <div className="flex items-center gap-4 py-1.5">
-          {!ready && (
+          {(!ready || isLoading) && (
             <div className="flex items-center gap-2">
               <Skeleton className="size-7 rounded-full" />
               <Skeleton className="mr-4 h-3 w-20" />

@@ -3,7 +3,7 @@ import { useAtom } from 'jotai';
 import { ExternalLink } from 'lucide-react';
 import Head from 'next/head';
 import Link from 'next/link';
-import { usePostHog } from 'posthog-js/react';
+import posthog from 'posthog-js';
 import { useEffect, useState } from 'react';
 
 import { EmptySection } from '@/components/shared/EmptySection';
@@ -35,7 +35,7 @@ export function GrantPageLayout({
 }: GrantPageProps) {
   const [grant] = useState<typeof initialGrant>(initialGrant);
   const encodedTitle = encodeURIComponent(initialGrant?.title || '');
-  const posthog = usePostHog();
+
   const [, setGrantSnackbar] = useAtom(grantSnackbarAtom);
   const { user } = useUser();
 

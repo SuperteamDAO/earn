@@ -1,7 +1,7 @@
 import { usePrivy } from '@privy-io/react-auth';
 import { useQuery } from '@tanstack/react-query';
 import dynamic from 'next/dynamic';
-import { usePostHog } from 'posthog-js/react';
+import posthog from 'posthog-js';
 import { useEffect } from 'react';
 
 import { useDisclosure } from '@/hooks/use-disclosure';
@@ -58,7 +58,6 @@ export const Header = () => {
     onClose: onCreditClose,
   } = useDisclosure();
 
-  const posthog = usePostHog();
   function searchOpenWithEvent() {
     posthog.capture('initiate_search');
     onSearchOpen();
@@ -86,13 +85,9 @@ export const Header = () => {
       const url = window.location.href;
       const hashIndex = url.indexOf('#');
       const afterHash = hashIndex !== -1 ? url.substring(hashIndex + 1) : '';
-      const [hashValue, queryString] = afterHash.split('?');
+      const [hashValue] = afterHash.split('?');
       const hashHasWallet = hashValue === 'wallet';
-      const queryParams = new URLSearchParams(queryString);
-      if (
-        (hashHasWallet && queryParams.get('loginState') === 'signedIn') ||
-        hashHasWallet
-      ) {
+      if (hashHasWallet) {
         openWalletWithEvent();
       }
     };

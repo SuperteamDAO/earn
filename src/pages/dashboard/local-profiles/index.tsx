@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { usePostHog } from 'posthog-js/react';
+import posthog from 'posthog-js';
 import React, { useEffect, useRef, useState } from 'react';
 
 import { LoadingSection } from '@/components/shared/LoadingSection';
@@ -32,8 +32,6 @@ export default function LocalProfiles() {
   const { data: allUsers, isLoading } = useQuery(localProfilesQuery);
 
   const debouncedSetSearchText = useRef(debounce(setSearchText, 300)).current;
-
-  const posthog = usePostHog();
 
   useEffect(() => {
     posthog.capture('members tab_sponsor');

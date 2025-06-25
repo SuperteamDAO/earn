@@ -11,7 +11,7 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { usePostHog } from 'posthog-js/react';
+import posthog from 'posthog-js';
 import React, { useState } from 'react';
 import { IoDuplicateOutline } from 'react-icons/io5';
 import { toast } from 'sonner';
@@ -89,7 +89,7 @@ export const ListingTable = ({
     useState<ListingWithSubmissions>({});
 
   const router = useRouter();
-  const posthog = usePostHog();
+
   const { user } = useUser();
 
   const {

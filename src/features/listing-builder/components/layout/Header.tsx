@@ -3,7 +3,7 @@ import { useIsFetching } from '@tanstack/react-query';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { ChevronLeft, Eye, Loader2 } from 'lucide-react';
 import Link from 'next/link';
-import { usePostHog } from 'posthog-js/react';
+import posthog from 'posthog-js';
 import { useWatch } from 'react-hook-form';
 
 import { Button } from '@/components/ui/button';
@@ -25,7 +25,7 @@ import { StatusBadge } from './StatusBadge';
 
 export function Header() {
   const { authenticated, ready } = usePrivy();
-  const posthog = usePostHog();
+
   const isDraftSaving = useAtomValue(isDraftSavingAtom);
   const setShowPreview = useSetAtom(previewAtom);
   const form = useListingForm();

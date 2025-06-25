@@ -85,16 +85,14 @@ export default function NewProfilePage({
   };
 
   useEffect(() => {
-    if (router.query['loginState'] === 'signedIn') {
-      const onboardingStep = localStorage.getItem(ONBOARDING_KEY);
-      if (onboardingStep) {
-        if (onboardingStep === 'talent') {
-          setIsTalentLoading(true);
-          checkTalent();
-        } else if (onboardingStep === 'sponsor') {
-          setIsSponsorLoading(true);
-          checkSponsor();
-        }
+    const onboardingStep = localStorage.getItem(ONBOARDING_KEY);
+    if (onboardingStep) {
+      if (onboardingStep === 'talent') {
+        setIsTalentLoading(true);
+        checkTalent();
+      } else if (onboardingStep === 'sponsor') {
+        setIsSponsorLoading(true);
+        checkSponsor();
       }
     }
   }, [router, user]);

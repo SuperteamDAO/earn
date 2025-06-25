@@ -77,7 +77,6 @@ const nextConfig: NextConfig = {
       'next-seo',
       'nprogress',
       'posthog-js',
-      'posthog-js/react',
       'react-day-picker',
       'react-hook-form',
       'react-select',
@@ -86,7 +85,6 @@ const nextConfig: NextConfig = {
       'typescript-cookie',
       'vaul',
       'zod',
-      'zustand',
     ],
   },
   async headers() {

@@ -5,7 +5,7 @@ import { LucideFlag } from 'lucide-react';
 import type { GetServerSideProps } from 'next';
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/router';
-import { usePostHog } from 'posthog-js/react';
+import posthog from 'posthog-js';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { LoadingSection } from '@/components/shared/LoadingSection';
@@ -62,7 +62,7 @@ export default function BountySubmissions({ slug }: Props) {
   >(new Set());
 
   const searchParams = useSearchParams();
-  const posthog = usePostHog();
+
   const queryClient = useQueryClient();
 
   const [selectedSubmissionIds, setSelectedSubmissionIds] = useAtom(

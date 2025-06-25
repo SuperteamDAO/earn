@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import { Loader2, Pencil } from 'lucide-react';
 import { useRouter } from 'next/router';
-import { usePostHog } from 'posthog-js/react';
+import posthog from 'posthog-js';
 import React, { useState } from 'react';
 
 import { SurveyModal } from '@/components/shared/Survey';
@@ -122,7 +122,7 @@ export const SubmissionActionButton = ({
 
   const isSubmitted = submission?.isSubmitted ?? false;
   const submissionStatus = submission?.status;
-  const posthog = usePostHog();
+
   const router = useRouter();
   const { query } = router;
 

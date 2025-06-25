@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { usePostHog } from 'posthog-js/react';
+import posthog from 'posthog-js';
 import { type ReactNode, useEffect, useState } from 'react';
 import { GoComment } from 'react-icons/go';
 import { IoMdHeart, IoMdHeartEmpty } from 'react-icons/io';
@@ -113,7 +113,6 @@ export const FeedCardContainer = ({
   };
 
   const router = useRouter();
-  const posthog = usePostHog();
 
   return (
     <div

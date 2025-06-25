@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { usePostHog } from 'posthog-js/react';
+import posthog from 'posthog-js';
 import React, { useEffect, useRef, useState } from 'react';
 import { MdArrowForward } from 'react-icons/md';
 
@@ -36,7 +36,7 @@ const Earner = ({
     : ASSET_URL + '/landingsponsor/icons/usdc.svg';
 
   return (
-    <Link href={`${getURL()}t/${username}`} className="block">
+    <Link href={`${getURL()}t/${username}`} className="block" prefetch={false}>
       <div className="my-4 flex w-full items-center">
         <div className="mr-3 flex items-center justify-center">
           <EarnAvatar id={id} avatar={avatar} />
@@ -69,7 +69,6 @@ export const RecentEarners = ({ earners }: { earners?: User[] }) => {
   const marqueeRef = useRef<HTMLDivElement>(null);
   const animationFrameRef = useRef<number | null>(null);
   const [isPaused, setIsPaused] = useState(false);
-  const posthog = usePostHog();
 
   const multipliedEarners = earners ? [...earners, ...earners, ...earners] : [];
 

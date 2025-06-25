@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { Check, InfoIcon, Wand2, XCircle } from 'lucide-react';
-import { usePostHog } from 'posthog-js/react';
+import posthog from 'posthog-js';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 
@@ -38,7 +38,6 @@ interface Props {
   grant: GrantWithApplicationCount | undefined;
 }
 export default function AiReviewModal({ applications, grant }: Props) {
-  const posthog = usePostHog();
   const [open, setOpen] = useState(false);
   const [state, setState] = useState<'INIT' | 'PROCESSING' | 'DONE' | 'ERROR'>(
     'INIT',

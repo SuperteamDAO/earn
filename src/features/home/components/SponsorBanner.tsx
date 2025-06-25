@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import Link from 'next/link';
-import { usePostHog } from 'posthog-js/react';
+import posthog from 'posthog-js';
 import { MdArrowForward } from 'react-icons/md';
 
 import { ExternalImage } from '@/components/ui/cloudinary-image';
@@ -8,7 +8,6 @@ import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { userCountQuery } from '../queries/user-count';
 
 export const SponsorBanner = () => {
-  const posthog = usePostHog();
   const { data } = useQuery(userCountQuery);
 
   return (
