@@ -2,7 +2,7 @@ import { GoogleAnalytics } from '@next/third-parties/google';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import type { AppProps } from 'next/app';
 import dynamic from 'next/dynamic';
-import { useRouter } from 'next/router';
+import { Router, useRouter } from 'next/router';
 import posthog from 'posthog-js';
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import { toast } from 'sonner';
@@ -30,8 +30,26 @@ const queryClient = new QueryClient();
 
 function MyApp({ Component, pageProps }: any) {
   const router = useRouter();
+  const oldUrlRef = useRef('');
   const { user, isLoading: isUserLoading } = useUser();
   const forcedRedirected = useRef(false);
+
+  useEffect(() => {
+    const handleRouteChange = () => posthog?.capture('$pageview');
+
+    const handleRouteChangeStart = () =>
+      posthog?.capture('$pageleave', {
+        $current_url: oldUrlRef.current,
+      });
+
+    Router.events.on('routeChangeComplete', handleRouteChange);
+    Router.events.on('routeChangeStart', handleRouteChangeStart);
+
+    return () => {
+      Router.events.off('routeChangeComplete', handleRouteChange);
+      Router.events.off('routeChangeStart', handleRouteChangeStart);
+    };
+  }, []);
 
   const forcedProfileRedirect = useCallback(
     (wait?: number) => {
