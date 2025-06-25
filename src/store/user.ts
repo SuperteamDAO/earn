@@ -96,8 +96,6 @@ export const useLogout = () => {
   const queryClient = useQueryClient();
 
   return async () => {
-    // Clear state first, then handle async operations
-    queryClient.setQueryData(['user'], null);
     removeCookie(USER_ID_COOKIE_NAME, { path: '/' });
 
     await logout();
