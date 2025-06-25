@@ -1,6 +1,6 @@
 import { usePrivy } from '@privy-io/react-auth';
 import Link from 'next/link';
-import { usePostHog } from 'posthog-js/react';
+import posthog from 'posthog-js';
 
 import { Button } from '@/components/ui/button';
 import { useUser } from '@/store/user';
@@ -11,7 +11,6 @@ import { maxW2 } from '../utils/styles';
 export function Footer() {
   const { authenticated } = usePrivy();
   const { user } = useUser();
-  const posthog = usePostHog();
 
   function getStartedWhere(isAuthenticated: boolean, isSponsor: boolean) {
     if (!isAuthenticated) return '/new/sponsor';

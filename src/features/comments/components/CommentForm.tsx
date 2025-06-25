@@ -1,5 +1,5 @@
 import type { CommentRefType } from '@prisma/client';
-import { usePostHog } from 'posthog-js/react';
+import posthog from 'posthog-js';
 import React, { useCallback, useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -35,7 +35,6 @@ export const CommentForm = ({
   onSuccess,
 }: Props) => {
   const { user } = useUser();
-  const posthog = usePostHog();
 
   const [newComment, setNewComment] = useState('');
   const [newCommentLoading, setNewCommentLoading] = useState(false);

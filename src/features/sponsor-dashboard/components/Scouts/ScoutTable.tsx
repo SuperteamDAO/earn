@@ -1,6 +1,6 @@
 import { Info } from 'lucide-react';
 import Link from 'next/link';
-import { usePostHog } from 'posthog-js/react';
+import posthog from 'posthog-js';
 
 import { Button } from '@/components/ui/button';
 import { LocalImage } from '@/components/ui/local-image';
@@ -42,7 +42,6 @@ interface Props {
 }
 
 export function ScoutTable({ bountyId, scouts, setInvited }: Props) {
-  const posthog = usePostHog();
   const invitedCount = scouts.filter((scout) => scout.invited).length;
   const MAX_INVITES = scouts.length;
   const maxInvitesReached = invitedCount >= MAX_INVITES;

@@ -1,4 +1,4 @@
-import { usePostHog } from 'posthog-js/react';
+import posthog from 'posthog-js';
 
 import { cn } from '@/utils/cn';
 
@@ -15,8 +15,6 @@ export function CategoryPill({
   isActive,
   onClick,
 }: CategoryPillProps) {
-  const posthog = usePostHog();
-
   return (
     <div
       className={cn(

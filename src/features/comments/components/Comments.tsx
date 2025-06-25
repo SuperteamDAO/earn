@@ -1,7 +1,7 @@
 import { type CommentRefType } from '@prisma/client';
 import { useSetAtom } from 'jotai';
 import { ArrowRight, Loader2 } from 'lucide-react';
-import { usePostHog } from 'posthog-js/react';
+import posthog from 'posthog-js';
 import { type Dispatch, type SetStateAction, useEffect, useState } from 'react';
 
 import { ErrorInfo } from '@/components/shared/ErrorInfo';
@@ -50,8 +50,6 @@ export const Comments = ({
   setCount,
   onSuccess,
 }: Props) => {
-  const posthog = usePostHog();
-
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(false);
   const [comments, setComments] = useState<Comment[]>([]);

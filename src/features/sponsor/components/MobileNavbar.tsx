@@ -1,7 +1,7 @@
 import { usePrivy } from '@privy-io/react-auth';
 import { Menu } from 'lucide-react';
 import Link from 'next/link';
-import { usePostHog } from 'posthog-js/react';
+import posthog from 'posthog-js';
 import React, { useRef } from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -23,7 +23,7 @@ export const MobileNavbar = () => {
 
   const { authenticated, ready } = usePrivy();
   const { user } = useUser();
-  const posthog = usePostHog();
+
   const btnRef = useRef<HTMLButtonElement>(null);
 
   const MobileSponsorDrawer = () => {

@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import Link from 'next/link';
-import { usePostHog } from 'posthog-js/react';
+import posthog from 'posthog-js';
 import { MdArrowForward } from 'react-icons/md';
 
 import { LocalImage } from '@/components/ui/local-image';
@@ -95,7 +95,6 @@ const ActivityCard = ({
 };
 
 export const RecentActivity = () => {
-  const posthog = usePostHog();
   const { data, isLoading } = useQuery(homeFeedQuery);
 
   if (isLoading) return null;

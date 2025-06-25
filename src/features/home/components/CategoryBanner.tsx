@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import { usePostHog } from 'posthog-js/react';
+import posthog from 'posthog-js';
 import { useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -58,7 +58,7 @@ const banners: CategoryBanner[] = [
 
 export function CategoryBanner({ category }: { category: CategoryTypes }) {
   const [banner, setBanner] = useState<CategoryBanner | null>(null);
-  const posthog = usePostHog();
+
   const { user } = useUser();
 
   useEffect(() => {

@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { AlertTriangle, Loader2, Pencil } from 'lucide-react';
-import { usePostHog } from 'posthog-js/react';
+import posthog from 'posthog-js';
 import React from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -28,7 +28,7 @@ export const ApplicationActionButton = ({
   grant,
 }: GrantApplicationButtonProps) => {
   const { user } = useUser();
-  const posthog = usePostHog();
+
   const { region, id, link, isNative, isPublished } = grant;
 
   const { data: application, isLoading: isUserApplicationLoading } = useQuery({

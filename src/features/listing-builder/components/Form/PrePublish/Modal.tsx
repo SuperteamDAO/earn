@@ -2,7 +2,7 @@ import { useIsFetching, useQuery } from '@tanstack/react-query';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { ExternalLink, Loader2 } from 'lucide-react';
 import { useRouter } from 'next/router';
-import { usePostHog } from 'posthog-js/react';
+import posthog from 'posthog-js';
 import { useEffect, useMemo, useState } from 'react';
 import { useWatch } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -59,7 +59,7 @@ export function PrePublish() {
   const submitListingMutation = useAtomValue(submitListingMutationAtom);
 
   const router = useRouter();
-  const posthog = usePostHog();
+
   const { user } = useUser();
 
   const {

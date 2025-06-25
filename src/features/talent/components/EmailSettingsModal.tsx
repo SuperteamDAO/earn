@@ -1,4 +1,4 @@
-import { usePostHog } from 'posthog-js/react';
+import posthog from 'posthog-js';
 import React, { useState } from 'react';
 import { toast } from 'sonner';
 
@@ -39,7 +39,6 @@ export const EmailSettingsModal = ({
   onClose: () => void;
 }) => {
   const { user, refetchUser } = useUser();
-  const posthog = usePostHog();
 
   const emailSettings = user?.emailSettings || [];
   const [selectedCategories, setSelectedCategories] = useState<string[]>(

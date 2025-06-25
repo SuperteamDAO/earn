@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import { usePostHog } from 'posthog-js/react';
+import posthog from 'posthog-js';
 import React from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -16,7 +16,6 @@ export const CreateListingModal = ({
   isOpen: boolean;
   onClose: () => void;
 }) => {
-  const posthog = usePostHog();
   const router = useRouter();
 
   const handleCreateBounty = () => {

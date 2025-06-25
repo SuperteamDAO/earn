@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { usePostHog } from 'posthog-js/react';
+import posthog from 'posthog-js';
 import React, { useEffect, useRef, useState } from 'react';
 import { MdArrowForward } from 'react-icons/md';
 
@@ -69,7 +69,6 @@ export const RecentEarners = ({ earners }: { earners?: User[] }) => {
   const marqueeRef = useRef<HTMLDivElement>(null);
   const animationFrameRef = useRef<number | null>(null);
   const [isPaused, setIsPaused] = useState(false);
-  const posthog = usePostHog();
 
   const multipliedEarners = earners ? [...earners, ...earners, ...earners] : [];
 

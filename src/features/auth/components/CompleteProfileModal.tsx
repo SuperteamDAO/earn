@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { usePostHog } from 'posthog-js/react';
+import posthog from 'posthog-js';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -24,7 +24,6 @@ export function CompleteProfileModal({
   bodyText,
   isSponsor,
 }: Props) {
-  const posthog = usePostHog();
   const router = useRouter();
 
   const header = isSponsor

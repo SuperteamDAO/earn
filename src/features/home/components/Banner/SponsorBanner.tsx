@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { getImageProps } from 'next/image';
 import Link from 'next/link';
-import { usePostHog } from 'posthog-js/react';
+import posthog from 'posthog-js';
 import React from 'react';
 
 import { cn } from '@/utils/cn';
@@ -11,7 +11,6 @@ import { sponsorCountQuery } from '../../queries/sponsor-count';
 import { userCountQuery } from '../../queries/user-count';
 
 export function HomeSponsorBanner() {
-  const posthog = usePostHog();
   const common = {
     alt: 'Illustration — Gradient Light blue with Logos of Solana first Companies',
     quality: 85,

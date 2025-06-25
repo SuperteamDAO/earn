@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { ChevronLeft, ChevronRight, Copy, Plus, Search } from 'lucide-react';
-import { usePostHog } from 'posthog-js/react';
+import posthog from 'posthog-js';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
@@ -53,8 +53,6 @@ const Index = () => {
   const queryClient = useQueryClient();
 
   const debouncedSetSearchText = useRef(debounce(setSearchText, 300)).current;
-
-  const posthog = usePostHog();
 
   useEffect(() => {
     posthog.capture('members tab_sponsor');

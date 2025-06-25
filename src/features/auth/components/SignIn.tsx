@@ -1,7 +1,7 @@
 import { useLoginWithOAuth } from '@privy-io/react-auth';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { usePostHog } from 'posthog-js/react';
+import posthog from 'posthog-js';
 import React, { type Dispatch, type SetStateAction, useState } from 'react';
 import { MdOutlineEmail } from 'react-icons/md';
 
@@ -26,7 +26,6 @@ export const SignIn = ({
   redirectTo,
 }: SigninProps) => {
   const router = useRouter();
-  const posthog = usePostHog();
   const [isLoading, setIsLoading] = useState(false);
   const isMD = useBreakpoint('md');
 

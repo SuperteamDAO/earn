@@ -1,7 +1,7 @@
 import { usePrivy } from '@privy-io/react-auth';
 import { Menu } from 'lucide-react';
 import Link from 'next/link';
-import { usePostHog } from 'posthog-js/react';
+import posthog from 'posthog-js';
 import React from 'react';
 import { IoWalletOutline } from 'react-icons/io5';
 
@@ -40,7 +40,6 @@ export const MobileNavbar = ({
   } = useDisclosure();
 
   const { authenticated, ready } = usePrivy();
-  const posthog = usePostHog();
 
   const { user } = useUser();
   const { creditBalance } = useCreditBalance();

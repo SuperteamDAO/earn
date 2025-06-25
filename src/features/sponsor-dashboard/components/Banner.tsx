@@ -1,6 +1,6 @@
 import { Info, Pencil } from 'lucide-react';
 import Link from 'next/link';
-import { usePostHog } from 'posthog-js/react';
+import posthog from 'posthog-js';
 import { MdOutlineChatBubbleOutline } from 'react-icons/md';
 
 import { VerifiedBadgeLarge } from '@/components/shared/VerifiedBadge';
@@ -72,7 +72,7 @@ export function Banner({
   isLoading: boolean;
 }) {
   const { user } = useUser();
-  const posthog = usePostHog();
+
   const sponsorId = isHackathon ? user?.hackathonId : user?.currentSponsorId;
 
   const tooltipTextReward = !isHackathon

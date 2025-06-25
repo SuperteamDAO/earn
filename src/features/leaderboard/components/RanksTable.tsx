@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { usePostHog } from 'posthog-js/react';
+import posthog from 'posthog-js';
 
 import { UserFlag } from '@/components/shared/UserFlag';
 import {
@@ -42,7 +42,6 @@ export function RanksTable({
   search,
 }: Props) {
   const { user } = useUser();
-  const posthog = usePostHog();
 
   const userSkills = getSubskills(user?.skills as any, skillCategories[skill]);
 

@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Lock, MessageSquare, Plus, Users } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { usePostHog } from 'posthog-js/react';
+import posthog from 'posthog-js';
 import {
   type ReactNode,
   useCallback,
@@ -61,7 +61,7 @@ export function SponsorLayout({
     onOpen: onSponsorInfoModalOpen,
     onClose: onSponsorInfoModalClose,
   } = useDisclosure();
-  const posthog = usePostHog();
+
   const [isEntityModalOpen, setIsEntityModalOpen] = useState(false);
   const { query } = router;
   const [isExpanded, setIsExpanded] = useState(!isCollapsible ? true : false);

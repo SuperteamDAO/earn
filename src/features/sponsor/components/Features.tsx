@@ -1,4 +1,4 @@
-import { usePostHog } from 'posthog-js/react';
+import posthog from 'posthog-js';
 
 import { cn } from '@/utils/cn';
 
@@ -55,8 +55,6 @@ interface Props {
 }
 
 export function Features({ showVideo }: Props) {
-  const posthog = usePostHog();
-
   return (
     <div
       className="relative mx-auto my-32 w-full px-[1.875rem] lg:px-[7rem] xl:px-[11rem]"

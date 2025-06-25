@@ -16,7 +16,7 @@ import { useAtom } from 'jotai';
 import { Loader2 } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import { log } from 'next-axiom';
-import { usePostHog } from 'posthog-js/react';
+import posthog from 'posthog-js';
 import React, { useState } from 'react';
 import { toast } from 'sonner';
 
@@ -47,7 +47,7 @@ export const PayoutButton = ({ bounty }: Props) => {
   const { user } = useUser();
 
   const { connected, publicKey, sendTransaction } = useWallet();
-  const posthog = usePostHog();
+
   const { connection } = useConnection();
   const queryClient = useQueryClient();
 

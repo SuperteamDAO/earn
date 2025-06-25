@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Loader2 } from 'lucide-react';
-import { usePostHog } from 'posthog-js/react';
+import posthog from 'posthog-js';
 import { TbBell, TbBellRinging } from 'react-icons/tb';
 import { toast } from 'sonner';
 
@@ -26,7 +26,7 @@ const toggleSubscription = async (id: string) => {
 
 export const SubscribeListing = ({ id, isTemplate = false }: Props) => {
   const { user } = useUser();
-  const posthog = usePostHog();
+
   const queryClient = useQueryClient();
 
   const { data: sub = [] } = useQuery(listingSubscriptionsQuery(id));
