@@ -1,6 +1,6 @@
 import posthog from 'posthog-js';
 
-import { getURL } from './src/utils/validUrl';
+import { getURL } from './utils/validUrl';
 
 posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY!, {
   api_host: `${getURL()}docs-keep`,
