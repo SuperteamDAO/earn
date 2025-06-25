@@ -41,7 +41,7 @@ export const MobileNavbar = ({
 
   const { authenticated, ready } = usePrivy();
 
-  const { user } = useUser();
+  const { user, isLoading } = useUser();
   const { creditBalance } = useCreditBalance();
 
   const openCreditDrawer = () => {
@@ -61,7 +61,7 @@ export const MobileNavbar = ({
         <div className="flex min-h-12 items-center justify-between border-b border-black/20 bg-white px-1 py-1 lg:hidden">
           <div className="flex items-center gap-0">
             <div onClick={openDrawer} className="relative ml-1 cursor-pointer">
-              {ready && authenticated ? (
+              {ready && authenticated && !isLoading ? (
                 <>
                   <EarnAvatar
                     className="size-8"

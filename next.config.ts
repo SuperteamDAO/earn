@@ -85,7 +85,6 @@ const nextConfig: NextConfig = {
       'typescript-cookie',
       'vaul',
       'zod',
-      'zustand',
     ],
   },
   async headers() {
