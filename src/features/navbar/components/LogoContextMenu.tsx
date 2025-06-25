@@ -1,6 +1,6 @@
 import { Copy, Download } from 'lucide-react';
 import { useRouter } from 'next/router';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { toast } from 'sonner';
 
 import {

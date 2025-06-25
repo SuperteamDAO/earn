@@ -1,5 +1,6 @@
 import { usePrivy } from '@privy-io/react-auth';
 import { Menu } from 'lucide-react';
+import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import posthog from 'posthog-js';
 import React from 'react';
@@ -14,8 +15,6 @@ import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import { CreditIcon } from '@/features/credits/icon/credit';
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
-import { MobileDrawer } from './MobileDrawer';
-
 interface Props {
   onLoginOpen: () => void;
   onWalletOpen: () => void;
@@ -26,6 +25,13 @@ interface Props {
 // const AnnouncementBar = dynamic(() =>
 //   import('@/features/navbar').then((mod) => mod.AnnouncementBar),
 // );
+
+const MobileDrawer = dynamic(
+  () => import('./MobileDrawer').then((mod) => mod.MobileDrawer),
+  {
+    ssr: false,
+  },
+);
 
 export const MobileNavbar = ({
   onLoginOpen,

@@ -21,6 +21,7 @@ export function HomeTalentBanner({ totalUsers }: HomeTalentBannerProps) {
     alt: 'Illustration — Two people working on laptops outdoors at night, surrounded by a mystical mountainous landscape illuminated by the moonlight',
     quality: 85,
     priority: true,
+    fetchPriority: 'high' as const,
     loading: 'eager' as const,
     style: {
       width: '100%',
