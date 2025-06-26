@@ -25,6 +25,7 @@ import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import { tokenList } from '@/constants/tokenList';
 import { useClipboard } from '@/hooks/use-clipboard';
+import { type SubmissionWithUser } from '@/interface/submission';
 import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
@@ -41,16 +42,19 @@ import { getListingIcon } from '@/features/listings/utils/getListingIcon';
 import { getListingStatus } from '@/features/listings/utils/status';
 
 import { SponsorPrize } from '../SponsorPrize';
+import AiReviewProjectApplicationsModal from './Modals/AiReviewProjects';
 
 interface Props {
   bounty: Listing | undefined;
   totalSubmissions: number;
   isHackathonPage?: boolean;
+  submissions: SubmissionWithUser[];
 }
 
 export const SubmissionHeader = ({
   bounty,
   totalSubmissions,
+  submissions,
   isHackathonPage = false,
 }: Props) => {
   const router = useRouter();
@@ -270,6 +274,10 @@ ${socialListingLink('twitter')}
             <p className="font-semibold text-slate-400">{bounty?.token}</p>
           </div>
         </div>
+        <AiReviewProjectApplicationsModal
+          listing={bounty}
+          applications={submissions}
+        />
         <div className="ml-auto">
           <p className="text-slate-500">Share</p>
           <div className="mt-2 flex items-center gap-4">

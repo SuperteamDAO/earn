@@ -19,25 +19,25 @@ import {
 } from '@/components/ui/dialog';
 import { Progress } from '@/components/ui/progress';
 import { Tooltip } from '@/components/ui/tooltip';
+import { type SubmissionWithUser } from '@/interface/submission';
 // import { chunkArray } from '@/utils/chunkArray';
 import { cn } from '@/utils/cn';
 
-import {
-  type GrantApplicationAi,
-  type GrantsAi,
-  type GrantWithApplicationCount,
-} from '@/features/grants/types';
-import { useCommitReviewsGrantApplications } from '@/features/sponsor-dashboard/mutations/useCommitReviewsGrantApplications';
+import { type GrantApplicationAi } from '@/features/grants/types';
+import { type Listing } from '@/features/listings/types';
+import { useCommitReviewsSubmissions } from '@/features/sponsor-dashboard/mutations/useCommitReviewsSubmissions';
 // import { useReviewApplication } from '@/features/sponsor-dashboard/mutations/useReviewApplication';
-import { unreviewedGrantApplicationsQuery } from '@/features/sponsor-dashboard/queries/unreviewed-grant-applications';
-import { type GrantApplicationWithUser } from '@/features/sponsor-dashboard/types';
+import { unreviewedSubmissionsQuery } from '@/features/sponsor-dashboard/queries/unreviewed-submissions';
 import { colorMap } from '@/features/sponsor-dashboard/utils/statusColorMap';
 
 interface Props {
-  applications: GrantApplicationWithUser[] | undefined;
-  grant: GrantWithApplicationCount | undefined;
+  applications: SubmissionWithUser[] | undefined;
+  listing: Listing | undefined;
 }
-export default function AiReviewModal({ applications, grant }: Props) {
+export default function AiReviewProjectApplicationsModal({
+  applications,
+  listing,
+}: Props) {
   const [open, setOpen] = useState(false);
   const [state, setState] = useState<'INIT' | 'PROCESSING' | 'DONE' | 'ERROR'>(
     'INIT',
@@ -45,9 +45,7 @@ export default function AiReviewModal({ applications, grant }: Props) {
   const [progress, setProgress] = useState(0);
   const [completedStats, setCompletedStats] = useState({
     totalReviewed: 0,
-    lowQuality: 0,
-    highQuality: 0,
-    midQuality: 0,
+    shortlisted: 0,
     totalHoursSaved: 0,
   });
 
@@ -55,7 +53,7 @@ export default function AiReviewModal({ applications, grant }: Props) {
     data: unreviewedApplications,
     refetch: refetchUnreviewedApplications,
   } = useQuery({
-    ...unreviewedGrantApplicationsQuery({ id: grant?.id }, grant?.slug),
+    ...unreviewedSubmissionsQuery({ id: listing?.id }, listing?.slug),
     refetchOnMount: false,
     refetchOnReconnect: false,
     refetchOnWindowFocus: false,
@@ -68,9 +66,9 @@ export default function AiReviewModal({ applications, grant }: Props) {
   // const { mutateAsync: reviewApplication } = useReviewApplication(
   //   grant?.slug || '',
   // );
-  const { mutateAsync: commitReviews } = useCommitReviewsGrantApplications(
-    grant?.slug || '',
-    grant?.id || '',
+  const { mutateAsync: commitReviews } = useCommitReviewsSubmissions(
+    listing?.slug || '',
+    listing?.id || '',
   );
 
   const nonAnalysedApplications = useMemo(() => {
@@ -97,42 +95,6 @@ export default function AiReviewModal({ applications, grant }: Props) {
     posthog.capture('start_ai review grants');
     setState('PROCESSING');
 
-    // const batchSize = 5;
-    // const initalSize = nonAnalysedApplications?.length || 0;
-
-    // console.log('nonAnalysedApplications - ', nonAnalysedApplications.length);
-    // if (nonAnalysedApplications && nonAnalysedApplications.length > 0) {
-    //   setEstimatedTimeSingular(estimateTime(initalSize || 1, true));
-    //   const totalApplications = nonAnalysedApplications.length;
-    //   let processedApplications = 0;
-    //   const batchedApplications = chunkArray(
-    //     nonAnalysedApplications,
-    //     batchSize,
-    //   );
-    //
-    //   for (const application of batchedApplications) {
-    //     await Promise.all(
-    //       application.map(async (appl) => {
-    //         try {
-    //           console.log('start review for application - ', appl.id);
-    //           await reviewApplication(appl);
-    //           processedApplications++;
-    //           setProgress(() =>
-    //             Math.round((processedApplications / totalApplications) * 100),
-    //           );
-    //           setEstimatedTimeSingular(
-    //             estimateTime((initalSize || 1) - processedApplications, true),
-    //           );
-    //         } catch (error: any) {
-    //           console.log(
-    //             'Error occured while reviewing application with id ',
-    //             appl.id,
-    //           );
-    //         }
-    //       }),
-    //     );
-    //   }
-    // }
     setTimeout(async () => {
       setProgress(100);
       try {
@@ -141,18 +103,11 @@ export default function AiReviewModal({ applications, grant }: Props) {
         console.log('commit data - ', data.data);
         setCompletedStats({
           totalReviewed: data.data.length,
-          lowQuality: data.data.filter((s) => s.label === 'Low_Quality').length,
-          highQuality: data.data.filter((s) => s.label === 'High_Quality')
+          shortlisted: data.data.filter((s) => s.label === 'Shortlisted')
             .length,
-          midQuality: data.data.filter(
-            (s) =>
-              s.label === 'Mid_Quality' ||
-              s.label === 'Unreviewed' ||
-              s.label === 'Pending',
-          ).length,
           totalHoursSaved: data.data.length * 6_00_000,
         });
-        posthog.capture('complete_ai review grants');
+        posthog.capture('complete_ai review project');
         setState('DONE');
         await refetchUnreviewedApplications();
       } catch (error: any) {
@@ -178,30 +133,21 @@ export default function AiReviewModal({ applications, grant }: Props) {
           <span className="mt-1">
             <span
               className={cn(
-                'inline-flex w-fit rounded-full px-2 text-center text-[10px] whitespace-nowrap capitalize',
-                colorMap['Low_Quality'].bg,
-                colorMap['Low_Quality'].color,
-              )}
-            >
-              Low Quality
-            </span>
-            <span
-              className={cn(
                 'ml-2 inline-flex w-fit rounded-full px-2 text-center text-[10px] whitespace-nowrap capitalize',
-                colorMap['High_Quality'].bg,
-                colorMap['High_Quality'].color,
+                colorMap['Shortlisted'].bg,
+                colorMap['Shortlisted'].color,
               )}
             >
-              High Quality
+              Shortlisted
             </span>
             <span
               className={cn(
                 'mx-2 inline-flex w-fit rounded-full px-2 text-center text-[10px] whitespace-nowrap capitalize',
-                colorMap['Mid_Quality'].bg,
-                colorMap['Mid_Quality'].color,
+                colorMap['Reviewed'].bg,
+                colorMap['Reviewed'].color,
               )}
             >
-              Mid Quality
+              Reviewed
             </span>
           </span>
           <p className="mt-1">
@@ -227,9 +173,12 @@ export default function AiReviewModal({ applications, grant }: Props) {
         setOpen(s);
       }}
     >
-      {!!grant?.isActive &&
-        !grant?.isArchived &&
-        !!(grant?.ai as GrantsAi)?.context &&
+      {!!listing?.isActive &&
+        !listing?.isArchived &&
+        listing?.type === 'project' &&
+        !listing?.isWinnersAnnounced &&
+        listing?.isPublished &&
+        !!listing?.ai?.context &&
         !!unreviewedApplications?.length && (
           <DialogTrigger asChild>
             <button
@@ -257,24 +206,6 @@ export default function AiReviewModal({ applications, grant }: Props) {
             <DialogTitle className="text-xl font-semibold">
               Auto Review
             </DialogTitle>
-            {/* <div className="flex items-center text-muted-foreground"> */}
-            {/*   <span className="text-sm">Powered by</span> */}
-            {/*   <svg */}
-            {/*     className="ml-2 h-5 w-5" */}
-            {/*     viewBox="0 0 24 24" */}
-            {/*     fill="none" */}
-            {/*     xmlns="http://www.w3.org/2000/svg" */}
-            {/*   > */}
-            {/*     <path */}
-            {/*       d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" */}
-            {/*       stroke="currentColor" */}
-            {/*       strokeWidth="2" */}
-            {/*       strokeLinecap="round" */}
-            {/*       strokeLinejoin="round" */}
-            {/*     /> */}
-            {/*   </svg> */}
-            {/*   <span className="ml-1 text-sm">ChatGPT</span> */}
-            {/* </div> */}
           </CardHeader>
 
           {state === 'INIT' && (
@@ -382,19 +313,9 @@ export default function AiReviewModal({ applications, grant }: Props) {
                     dotColor="bg-blue-400"
                   />
                   <StatItem
-                    label="High Quality"
-                    value={completedStats.highQuality}
+                    label="Shortlisted"
+                    value={completedStats.shortlisted}
                     dotColor="bg-violet-400"
-                  />
-                  <StatItem
-                    label="Low Quality"
-                    value={completedStats.lowQuality}
-                    dotColor="bg-stone-400"
-                  />
-                  <StatItem
-                    label="Mid Quality"
-                    value={completedStats.midQuality}
-                    dotColor="bg-cyan-400"
                   />
                   <StatItem
                     label="Total time saved"

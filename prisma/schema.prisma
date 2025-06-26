@@ -64,6 +64,7 @@ model Bounties {
   Scouts             Scouts[]
   Comments           Comment[]
   discordMessageIds  Json?
+  ai                 Json?
 
   @@index([id, slug])
   @@index([sponsorId])
@@ -322,6 +323,7 @@ model Submission {
   notes              String?          @db.VarChar(1000)
   Comments           Comment[]
   CreditLedger       CreditLedger[]
+  ai                 Json?
 
   @@index([id, listingId])
   @@index([userId])

@@ -181,6 +181,7 @@ export default function BountySubmissions({ listing }: Props) {
           <SubmissionHeader
             bounty={bounty}
             totalSubmissions={submissions?.length || 0}
+            submissions={submissions || []}
             isHackathonPage
           />
           <Tabs

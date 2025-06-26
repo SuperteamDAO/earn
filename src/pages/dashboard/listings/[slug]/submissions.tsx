@@ -492,6 +492,7 @@ export default function BountySubmissions({ slug }: Props) {
           )}
           <SubmissionHeader
             bounty={bounty}
+            submissions={submissions || []}
             totalSubmissions={submissions?.length || 0}
           />
           <Tabs
