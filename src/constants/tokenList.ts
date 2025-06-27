@@ -472,6 +472,7 @@ export const tokenList: Token[] = [
     mintAddress: '3BWA5RBXyPXuMGZmVL8Snefu573FMJNGpsVi79baiBLV',
     icon: '',
     decimals: 9,
-    coingeckoSymbol: 'https://assets.coingecko.com/coins/images/66546/standard/polymtrade.png?1749711691',
+    coingeckoSymbol:
+      'https://assets.coingecko.com/coins/images/66546/standard/polymtrade.png?1749711691',
   },
 ];
