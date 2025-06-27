@@ -462,17 +462,16 @@ export const tokenList: Token[] = [
     tokenName: 'DMCP',
     tokenSymbol: 'DMCP',
     mintAddress: '81YHAzq9yfptVbNTHiYuMVKVQ6ZNs3XeQFFENnNUpump',
-    icon: '',
+    icon: 'https://earn.superteam.fun/assets/dollar.svg',
     decimals: 6,
-    coingeckoSymbol: 'https://earn.superteam.fun/assets/dollar.svg',
+    coingeckoSymbol: '',
   },
   {
     tokenName: 'Polymtrade',
     tokenSymbol: 'PM',
     mintAddress: '3BWA5RBXyPXuMGZmVL8Snefu573FMJNGpsVi79baiBLV',
-    icon: '',
+    icon: 'https://assets.coingecko.com/coins/images/66546/standard/polymtrade.png?1749711691',
     decimals: 9,
-    coingeckoSymbol:
-      'https://assets.coingecko.com/coins/images/66546/standard/polymtrade.png?1749711691',
+    coingeckoSymbol: 'polymtrade',
   },
 ];
