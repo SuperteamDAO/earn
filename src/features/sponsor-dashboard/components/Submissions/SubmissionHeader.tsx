@@ -301,7 +301,8 @@ export const SubmissionHeader = ({
 
       {bounty?.isWinnersAnnounced &&
         activeTab === 'submissions' &&
-        !bounty?.isFndnPaying && (
+        !bounty?.isFndnPaying &&
+        bountyStatus !== 'Completed' && (
           <ShinyButton
             animate={true}
             classNames={{
@@ -318,17 +319,19 @@ export const SubmissionHeader = ({
           </ShinyButton>
         )}
 
-      {activeTab === 'payments' && (
-        <Button
-          className={cn(
-            'border-brand-purple text-brand-purple hover:bg-brand-purple shadow-md hover:text-white',
-          )}
-          onClick={handleVerifyPayment}
-          variant="outline"
-        >
-          Paid Externally? Click here
-        </Button>
-      )}
+      {activeTab === 'payments' &&
+        !bounty?.isFndnPaying &&
+        bountyStatus !== 'Completed' && (
+          <Button
+            className={cn(
+              'border-brand-purple text-brand-purple hover:bg-brand-purple shadow-md hover:text-white',
+            )}
+            onClick={handleVerifyPayment}
+            variant="outline"
+          >
+            Paid Externally? Click here
+          </Button>
+        )}
 
       <VerifyPaymentModal
         listing={bounty}
