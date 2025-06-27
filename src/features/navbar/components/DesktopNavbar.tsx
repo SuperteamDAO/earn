@@ -92,7 +92,7 @@ export const DesktopNavbar = ({
             </Link>
           </LogoContextMenu>
 
-          {router.pathname.startsWith('/search') &&
+          {!router.pathname.startsWith('/search') &&
             !router.pathname.startsWith('/new/') && (
               <div
                 className="flex cursor-pointer items-center gap-1.5 rounded-md px-3 py-2 text-slate-500 transition-all duration-100 hover:bg-slate-100 hover:text-slate-700"
