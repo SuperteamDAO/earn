@@ -26,13 +26,15 @@ export const InfoBox = ({
     </p>
     {isHtml ? (
       <div
-        className="h-full w-full overflow-visible text-sm font-medium text-slate-600"
+        className="h-full w-full text-sm font-medium break-words whitespace-normal text-slate-600"
         id="richtext"
       >
         {parse(content || '-', options)}
       </div>
     ) : (
-      <LinkTextParser text={content || '-'} />
+      <div className="break-words whitespace-normal">
+        <LinkTextParser text={content || '-'} />
+      </div>
     )}
   </div>
 );

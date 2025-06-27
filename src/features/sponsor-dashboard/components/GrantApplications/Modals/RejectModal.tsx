@@ -2,12 +2,7 @@ import { X } from 'lucide-react';
 import React, { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { Separator } from '@/components/ui/separator';
 import { tokenList } from '@/constants/tokenList';
 
@@ -48,56 +43,56 @@ export const RejectGrantApplicationModal = ({
 
   return (
     <Dialog open={rejectIsOpen} onOpenChange={rejectOnClose}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle className="text-md font-semibold text-slate-500">
-            Reject Grant Payment
-          </DialogTitle>
-        </DialogHeader>
-
+      <DialogContent className="m-0 p-0" hideCloseIcon>
+        <DialogTitle className="text-md -mb-1 px-6 pt-4 font-semibold text-slate-900">
+          Reject Grant Payment
+        </DialogTitle>
         <Separator />
-
-        <div className="text-[0.95rem] font-medium">
-          <p className="mt-3 text-slate-500">
-            You are about to reject {granteeName}’s grant request. They will be
-            notified via email.
+        <div className="px-6 pb-6 text-[0.95rem]">
+          <p className="mb-4 text-slate-500">
+            You are about to reject {granteeName}&apos;s grant request. They
+            will be notified via email.
           </p>
 
-          <br />
-
-          <div className="mb-8 flex items-center justify-between">
+          <div className="mb-6 flex items-center justify-between">
             <p className="text-slate-500">Grant Request</p>
             <div className="flex items-center">
               <img
-                className="h-6 w-6 rounded-full"
+                className="h-5 w-5 rounded-full"
                 alt={`${token} icon`}
                 src={tokenList.find((t) => t.tokenSymbol === token)?.icon || ''}
               />
-              <p className="ml-1 font-semibold text-slate-500">
-                {ask} <span>{token}</span>
+              <p className="ml-1 font-semibold text-slate-600">
+                {ask} <span className="text-slate-400">{token}</span>
               </p>
             </div>
           </div>
 
-          <Button
-            className="mb-3 w-full bg-rose-600 text-white hover:bg-rose-600/90"
-            disabled={loading}
-            onClick={rejectGrant}
-          >
-            {loading ? (
-              <>
-                <span className="loading loading-spinner mr-2" />
-                <span>Rejecting</span>
-              </>
-            ) : (
-              <>
-                <div className="mr-2 rounded-full bg-white p-[5px]">
-                  <X className="h-2.5 w-2.5 text-rose-600" />
-                </div>
-                <span>Reject Grant</span>
-              </>
-            )}
-          </Button>
+          <div className="flex gap-3">
+            <div className="w-1/2" />
+            <Button variant="ghost" onClick={rejectOnClose} disabled={loading}>
+              Close
+            </Button>
+            <Button
+              className="flex-1 rounded-lg border border-red-500 bg-red-50 text-red-600 hover:bg-red-100"
+              disabled={loading}
+              onClick={rejectGrant}
+            >
+              {loading ? (
+                <>
+                  <span className="loading loading-spinner mr-2" />
+                  <span>Rejecting</span>
+                </>
+              ) : (
+                <>
+                  <div className="rounded-full bg-red-600 p-0.5">
+                    <X className="size-2 text-white" />
+                  </div>
+                  <span>Reject Grant</span>
+                </>
+              )}
+            </Button>
+          </div>
         </div>
       </DialogContent>
     </Dialog>

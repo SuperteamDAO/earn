@@ -103,7 +103,7 @@ export function CreditDrawer({
                 Credit History
                 <Tooltip
                   contentProps={{ className: 'z-[200]' }}
-                  content="See what led to changes in your Submission Credit balances. Bounty or Project submissions, spam reports and wins lead to changes in your Submission Credits."
+                  content="See what led to changes in your submission credit balance. Your credits are affected by bounty and project submissions, as well as wins and spam reports across grants, and listings."
                 >
                   <Info className="size-4 text-slate-500" />
                 </Tooltip>

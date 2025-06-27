@@ -1,18 +1,12 @@
 import { useMutation } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
+import { Check } from 'lucide-react';
 import React from 'react';
 import { toast } from 'sonner';
 
-import {
-  AlertDialog,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
+import { Separator } from '@/components/ui/separator';
 import { api } from '@/lib/api';
 
 import { type GrantApplicationWithUser } from '@/features/sponsor-dashboard/types';
@@ -69,47 +63,53 @@ export function MarkCompleteModal({
   };
 
   return (
-    <AlertDialog open={isOpen} onOpenChange={onClose}>
-      <AlertDialogContent>
-        <AlertDialogHeader>
-          <AlertDialogTitle className="text-lg font-bold">
-            Mark as Completed
-          </AlertDialogTitle>
-        </AlertDialogHeader>
-
-        <AlertDialogDescription className="space-y-4">
-          <p>
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="m-0 p-0" hideCloseIcon>
+        <DialogTitle className="text-md -mb-1 px-6 pt-4 font-semibold text-slate-900">
+          Mark as Completed
+        </DialogTitle>
+        <Separator />
+        <div className="space-y-4 px-6 pb-6 text-[0.95rem]">
+          <p className="text-slate-500">
             We will inform the user that their grant project has been marked as
             completed. This will allow them to apply for this grant again.
           </p>
-          <p>
+          <p className="text-slate-500">
             You cannot undo this action. Are you sure you want to mark this as
             completed?
           </p>
-        </AlertDialogDescription>
 
-        <AlertDialogFooter>
-          <AlertDialogCancel asChild>
-            <Button variant="ghost" onClick={onClose}>
+          <div className="flex gap-3 pt-4">
+            <div className="w-1/2" />
+            <Button
+              variant="ghost"
+              onClick={onClose}
+              disabled={markCompletePending}
+            >
               Cancel
             </Button>
-          </AlertDialogCancel>
-          <Button
-            className="ml-3 bg-red-500 hover:bg-red-400"
-            disabled={markCompletePending}
-            onClick={handleMarkAsCompleted}
-          >
-            {markCompletePending ? (
-              <>
-                <span className="loading loading-spinner" />
-                <span>Marking...</span>
-              </>
-            ) : (
-              <span>Mark as Completed</span>
-            )}
-          </Button>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
+            <Button
+              className="flex-1 rounded-lg border border-blue-500 bg-blue-50 text-blue-600 hover:bg-blue-100"
+              disabled={markCompletePending}
+              onClick={handleMarkAsCompleted}
+            >
+              {markCompletePending ? (
+                <>
+                  <span className="loading loading-spinner mr-2" />
+                  <span>Marking...</span>
+                </>
+              ) : (
+                <>
+                  <div className="rounded-full bg-blue-600 p-0.5">
+                    <Check className="size-2 text-white" />
+                  </div>
+                  <span>Mark as Completed</span>
+                </>
+              )}
+            </Button>
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 }

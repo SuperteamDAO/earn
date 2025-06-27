@@ -1,14 +1,12 @@
 import { NextResponse } from 'next/server';
 
-interface PriceResponse {
-  data: {
-    [key: string]: {
-      id: string;
-      type: string;
-      price: string;
-    };
+interface PriceV3Response {
+  [key: string]: {
+    usdPrice: number;
+    blockId: number;
+    decimals: number;
+    priceChange24h: number;
   };
-  timeTaken: number;
 }
 
 export async function GET(request: Request) {
@@ -23,7 +21,7 @@ export async function GET(request: Request) {
       );
     }
 
-    const baseUrl = 'https://api.jup.ag/price/v2';
+    const baseUrl = 'https://lite-api.jup.ag/price/v3';
     const response = await fetch(`${baseUrl}?ids=${mintAddress}`, {
       next: { revalidate: 60 },
     });
@@ -32,16 +30,16 @@ export async function GET(request: Request) {
       throw new Error(`API error: ${response.status} ${response.statusText}`);
     }
 
-    const data = (await response.json()) as PriceResponse;
+    const data = (await response.json()) as PriceV3Response;
 
-    if (!data.data || !data.data[mintAddress]) {
+    if (!data || !data[mintAddress]) {
       return NextResponse.json(
         { error: `No price data found for token: ${mintAddress}` },
         { status: 404 },
       );
     }
 
-    const price = parseFloat(data.data[mintAddress].price);
+    const price = data[mintAddress].usdPrice;
 
     return NextResponse.json({ price });
   } catch (error) {

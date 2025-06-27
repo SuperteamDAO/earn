@@ -12,7 +12,10 @@ import {
   type ValidatePaymentResult,
   type VerifyPaymentsFormData,
 } from '@/features/sponsor-dashboard/types';
-import { validatePayment } from '@/features/sponsor-dashboard/utils/paymentRPCValidation';
+import {
+  validatePayment,
+  type ValidationResult,
+} from '@/features/sponsor-dashboard/utils/paymentRPCValidation';
 
 async function wait(ms: number) {
   return await new Promise((resolve) => setTimeout(resolve, ms));
@@ -74,6 +77,31 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
     const validationResults: ValidatePaymentResult[] = [];
 
+    const txIds = paymentLinks.map((link) => link.txId).filter(Boolean);
+    const duplicateTxIds = txIds.filter(
+      (txId, index) => txIds.indexOf(txId) !== index,
+    );
+    if (duplicateTxIds.length > 0) {
+      return res.status(400).json({
+        error: `Duplicate transaction IDs found: ${duplicateTxIds.join(', ')}`,
+      });
+    }
+
+    const allExistingTxIds = submissions
+      .flatMap((sub) =>
+        ((sub.paymentDetails as any[]) || []).map((payment) => payment.txId),
+      )
+      .filter(Boolean);
+
+    const alreadyUsedTxIds = txIds.filter((txId) =>
+      allExistingTxIds.includes(txId),
+    );
+    if (alreadyUsedTxIds.length > 0) {
+      return res.status(400).json({
+        error: `Transaction IDs already used: ${alreadyUsedTxIds.join(', ')}`,
+      });
+    }
+
     for (const paymentLink of paymentLinks) {
       try {
         logger.debug(
@@ -117,20 +145,55 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           throw new Error('Winner Position has no reward');
         }
 
-        const validationResult = await validatePayment({
+        const isProject = listing.type === 'project';
+        const existingPayments = (submission.paymentDetails as any[]) || [];
+        const totalAlreadyPaid = existingPayments.reduce(
+          (sum, payment) => sum + payment.amount,
+          0,
+        );
+        const remainingAmount = winnerReward - totalAlreadyPaid;
+
+        if (remainingAmount <= 0) {
+          throw new Error('This submission is already fully paid');
+        }
+
+        let expectedAmount = winnerReward;
+        if (isProject) {
+          expectedAmount = 0;
+        }
+
+        const rpcValidationResult: ValidationResult = await validatePayment({
           txId: paymentLink.txId,
           recipientPublicKey: walletAddress!,
-          expectedAmount: winnerReward,
+          expectedAmount,
           tokenMint: dbToken,
         });
 
-        if (!validationResult.isValid) {
-          throw new Error(`Failed (${validationResult.error})`);
+        if (!rpcValidationResult.isValid) {
+          throw new Error(`Failed (${rpcValidationResult.error})`);
         }
+
+        const actualPaidAmount = isProject
+          ? rpcValidationResult.actualAmount || 0
+          : winnerReward;
+
+        if (isProject) {
+          if (actualPaidAmount <= 0) {
+            throw new Error('Invalid payment amount');
+          }
+
+          if (actualPaidAmount > remainingAmount) {
+            throw new Error(
+              `Payment amount (${actualPaidAmount}) exceeds remaining amount (${remainingAmount})`,
+            );
+          }
+        }
+
         validationResults.push({
           submissionId: paymentLink.submissionId,
           txId: paymentLink.txId,
           status: 'SUCCESS',
+          actualAmount: actualPaidAmount,
         });
 
         logger.info(
@@ -151,19 +214,86 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       }
     }
 
-    for (const validationResult of validationResults) {
-      if (validationResult.status !== 'SUCCESS') continue;
-
-      logger.debug(
-        `Updating submission with ID: ${validationResult.submissionId} with new external payment details`,
+    const successfulResultsBySubmission = validationResults
+      .filter((result) => result.status === 'SUCCESS')
+      .reduce(
+        (acc, result) => {
+          if (!acc[result.submissionId]) {
+            acc[result.submissionId] = [];
+          }
+          acc[result.submissionId]!.push(result);
+          return acc;
+        },
+        {} as Record<string, ValidatePaymentResult[]>,
       );
+
+    for (const [submissionId, results] of Object.entries(
+      successfulResultsBySubmission,
+    )) {
+      logger.debug(
+        `Updating submission with ID: ${submissionId} with ${results.length} new external payment(s)`,
+      );
+
+      const submission = submissions.find((s) => s.id === submissionId);
+      if (!submission) continue;
+
+      const winnerReward = (listing.rewards as Record<string, any>)?.[
+        submission.winnerPosition + ''
+      ] as number;
+
+      const isProject = listing.type === 'project';
+      const existingPayments = (submission.paymentDetails as any[]) || [];
+
+      let newPaymentDetails: Array<{
+        txId: string;
+        amount: number;
+        tranche: number;
+      }>;
+      if (isProject) {
+        let nextTranche = existingPayments.length + 1;
+        const newPayments = results
+          .filter(
+            (
+              result,
+            ): result is ValidatePaymentResult & { actualAmount: number } =>
+              typeof result.actualAmount === 'number' &&
+              result.actualAmount > 0,
+          )
+          .map((result) => ({
+            txId: result.txId,
+            amount: result.actualAmount,
+            tranche: nextTranche++,
+          }));
+        newPaymentDetails = [...existingPayments, ...newPayments];
+      } else {
+        newPaymentDetails = results
+          .filter(
+            (
+              result,
+            ): result is ValidatePaymentResult & { actualAmount: number } =>
+              typeof result.actualAmount === 'number' &&
+              result.actualAmount > 0,
+          )
+          .map((result) => ({
+            txId: result.txId,
+            amount: result.actualAmount,
+            tranche: 1,
+          }));
+      }
+
+      const totalNewPayments = newPaymentDetails.reduce(
+        (sum, payment) => sum + payment.amount,
+        0,
+      );
+      const isFullyPaid = totalNewPayments >= winnerReward;
+
       await prisma.submission.update({
         where: {
-          id: validationResult.submissionId,
+          id: submissionId,
         },
         data: {
-          isPaid: true,
-          paymentDetails: { txId: validationResult.txId },
+          isPaid: isFullyPaid,
+          paymentDetails: newPaymentDetails,
         },
       });
     }
