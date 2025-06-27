@@ -466,4 +466,12 @@ export const tokenList: Token[] = [
     decimals: 6,
     coingeckoSymbol: 'https://earn.superteam.fun/assets/dollar.svg',
   },
+  {
+    tokenName: 'Polymtrade',
+    tokenSymbol: 'PM',
+    mintAddress: '3BWA5RBXyPXuMGZmVL8Snefu573FMJNGpsVi79baiBLV',
+    icon: '',
+    decimals: 9,
+    coingeckoSymbol: 'https://assets.coingecko.com/coins/images/66546/standard/polymtrade.png?1749711691',
+  },
 ];
