@@ -7,6 +7,7 @@ import React from 'react';
 import { IoWalletOutline } from 'react-icons/io5';
 
 import { Button } from '@/components/ui/button';
+import { LocalImage } from '@/components/ui/local-image';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { useCreditBalance } from '@/store/credit';
 import { useUser } from '@/store/user';
@@ -94,10 +95,11 @@ export const MobileNavbar = ({
                 posthog.capture('homepage logo click_universal');
               }}
             >
-              <img
+              <LocalImage
                 className="h-[1.3rem] cursor-pointer object-contain"
                 alt="Superteam Earn"
                 src="/assets/logo.svg"
+                loading="eager"
               />
             </Link>
           </div>

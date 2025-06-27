@@ -51,6 +51,7 @@ export function HomeSponsorBanner({ totalUsers }: HomeSponsorBannerProps) {
     <Link
       href="/sponsor"
       className="relative mx-auto flex h-full w-full flex-col items-start overflow-hidden rounded-[0.5rem] p-5 md:p-10"
+      prefetch={false}
     >
       <div className="absolute inset-0 overflow-hidden bg-linear-to-r from-[#00CCFE] to-[#A6EDFF]">
         <picture

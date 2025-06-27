@@ -5,11 +5,6 @@ export default function Document() {
     <Html data-theme="light" lang="en">
       <Head>
         <link rel="preconnect" href="https://res.cloudinary.com" />
-        <link
-          rel="preconnect"
-          href="https://res.cloudinary.com"
-          crossOrigin="anonymous"
-        />
         <link rel="manifest" href="/site.webmanifest" />
       </Head>
       <body>

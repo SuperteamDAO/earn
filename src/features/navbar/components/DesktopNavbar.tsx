@@ -6,6 +6,7 @@ import { useMemo } from 'react';
 import { IoSearchOutline, IoWalletOutline } from 'react-icons/io5';
 
 import { Button } from '@/components/ui/button';
+import { LocalImage } from '@/components/ui/local-image';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useCreditBalance } from '@/store/credit';
 import { useUser } from '@/store/user';
@@ -77,7 +78,7 @@ export const DesktopNavbar = ({
                 posthog.capture('homepage logo click_universal');
               }}
             >
-              <img
+              <LocalImage
                 className="h-[1.4rem] cursor-pointer object-contain"
                 alt="Superteam Earn"
                 src="/assets/logo.svg"

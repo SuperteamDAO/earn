@@ -15,6 +15,7 @@ export const SponsorBanner = () => {
       href="/sponsor"
       className="ph-no-capture group flex w-full justify-between gap-4 rounded-lg bg-purple-50 p-4"
       onClick={() => posthog?.capture('become a sponsor_banner')}
+      prefetch={false}
     >
       <div>
         <p className="flex items-center font-semibold text-slate-600 group-hover:underline">

@@ -10,6 +10,7 @@ import { useUser } from '@/store/user';
 import { recentEarnersQuery } from '@/features/listings/queries/recent-earners';
 
 import { totalsQuery } from '../queries/totals';
+import { TotalStats } from './TotalStats';
 
 interface SideBarProps {
   type: 'landing' | 'listing' | 'category' | 'region' | 'feed';
@@ -25,14 +26,12 @@ const LiveListings = dynamic(() =>
   ),
 );
 
-const SponsorBanner = dynamic(() =>
-  import('@/features/home/components/SponsorBanner').then(
-    (mod) => mod.SponsorBanner,
-  ),
-);
-
-const TotalStats = dynamic(() =>
-  import('@/features/home/components/TotalStats').then((mod) => mod.TotalStats),
+const SponsorBanner = dynamic(
+  () =>
+    import('@/features/home/components/SponsorBanner').then(
+      (mod) => mod.SponsorBanner,
+    ),
+  { ssr: false },
 );
 
 const HowItWorks = dynamic(() =>
