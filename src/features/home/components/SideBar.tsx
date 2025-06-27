@@ -10,11 +10,6 @@ import { useUser } from '@/store/user';
 import { recentEarnersQuery } from '@/features/listings/queries/recent-earners';
 
 import { totalsQuery } from '../queries/totals';
-import { HowItWorks } from './HowItWorks';
-import { RecentActivity } from './RecentActivity';
-import { RecentEarners } from './RecentEarners';
-import { SponsorBanner } from './SponsorBanner';
-import { TotalStats } from './TotalStats';
 
 interface SideBarProps {
   type: 'landing' | 'listing' | 'category' | 'region' | 'feed';
@@ -27,6 +22,32 @@ const VibeCard = dynamic(() =>
 const LiveListings = dynamic(() =>
   import('@/features/home/components/LiveListings').then(
     (mod) => mod.LiveListings,
+  ),
+);
+
+const SponsorBanner = dynamic(() =>
+  import('@/features/home/components/SponsorBanner').then(
+    (mod) => mod.SponsorBanner,
+  ),
+);
+
+const TotalStats = dynamic(() =>
+  import('@/features/home/components/TotalStats').then((mod) => mod.TotalStats),
+);
+
+const HowItWorks = dynamic(() =>
+  import('@/features/home/components/HowItWorks').then((mod) => mod.HowItWorks),
+);
+
+const RecentEarners = dynamic(() =>
+  import('@/features/home/components/RecentEarners').then(
+    (mod) => mod.RecentEarners,
+  ),
+);
+
+const RecentActivity = dynamic(() =>
+  import('@/features/home/components/RecentActivity').then(
+    (mod) => mod.RecentActivity,
   ),
 );
 
