@@ -22,7 +22,7 @@ export const unreviewedSubmissionsQuery = (
   slug?: string,
 ) =>
   queryOptions({
-    queryKey: ['unreviewed-applications', slug, params],
+    queryKey: ['unreviewed-submissions', slug, params],
     queryFn: () => fetchUnreviewedSubmissions(params),
     enabled: !!slug && !!params.id,
   });

@@ -38,7 +38,7 @@ export const useCommitReviewsSubmissions = (
       queryClient.invalidateQueries({
         predicate: (query) => {
           return (
-            query.queryKey.includes('sponsor-applications') &&
+            query.queryKey.includes('sponsor-submissions') &&
             query.queryKey.includes(slug)
           );
         },
