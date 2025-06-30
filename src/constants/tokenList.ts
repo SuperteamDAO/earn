@@ -474,4 +474,12 @@ export const tokenList: Token[] = [
     decimals: 9,
     coingeckoSymbol: 'polymtrade',
   },
+  {
+    tokenName: 'SpineDAO',
+    tokenSymbol: 'SPINE',
+    mintAddress: 'spinezMPKxkBpf4Q9xET2587fehM3LuKe4xoAoXtSjR',
+    icon: 'https://assets.coingecko.com/coins/images/55920/standard/TOken_SPine_b.png',
+    decimals: 9,
+    coingeckoSymbol: 'spinedao-token',
+  },
 ];
