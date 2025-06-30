@@ -5,6 +5,7 @@ import posthog from 'posthog-js';
 import React, { useRef } from 'react';
 
 import { Button } from '@/components/ui/button';
+import { LocalImage } from '@/components/ui/local-image';
 import { Separator } from '@/components/ui/separator';
 import { Sheet, SheetClose, SheetContent } from '@/components/ui/sheet';
 import { useDisclosure } from '@/hooks/use-disclosure';
@@ -137,10 +138,11 @@ export const MobileNavbar = () => {
             posthog.capture('homepage logo click_universal');
           }}
         >
-          <img
+          <LocalImage
             className="h-[1.3rem] cursor-pointer object-contain"
             alt="Superteam Earn"
             src="/assets/logo.svg"
+            loading="eager"
           />
           <div className="h-6 w-px bg-slate-300" />
           <p className="text-sm font-semibold tracking-[1.5px] text-slate-500">

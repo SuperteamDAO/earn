@@ -24,10 +24,10 @@ const withPWA = require('next-pwa')({
 
 const baseCsp = `
   default-src 'self';
-  script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://us-assets.i.posthog.com;
+  script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://us-assets.i.posthog.com https://www.google-analytics.com;
   style-src 'self' 'unsafe-inline' https://unpkg.com https://fonts.googleapis.com;
-  img-src 'self' blob: data: https://res.cloudinary.com https://*.googleusercontent.com https://s2.coinmarketcap.com https://assets.coingecko.com https://avatars.githubusercontent.com;
-  connect-src 'self' blob:  https://auth.privy.io https://*.rpc.privy.systems https://api.mainnet-beta.solana.com https://api.devnet.solana.com https://api.testnet.solana.com https://us.i.posthog.com https://app.posthog.com https://*.helius-rpc.com wss://mainnet.helius-rpc.com https://ipapi.co wss://earn-vibe-production.up.railway.app https://verify.walletconnect.com https://verify.walletconnect.org https://res.cloudinary.com;
+  img-src 'self' blob: data: https://res.cloudinary.com https://*.googleusercontent.com https://s2.coinmarketcap.com https://googletagmanager.com https://assets.coingecko.com https://avatars.githubusercontent.com;
+  connect-src 'self' blob:  https://auth.privy.io https://*.rpc.privy.systems https://api.mainnet-beta.solana.com https://api.devnet.solana.com https://api.testnet.solana.com https://us.i.posthog.com https://app.posthog.com https://*.helius-rpc.com wss://mainnet.helius-rpc.com https://ipapi.co wss://earn-vibe-production.up.railway.app https://verify.walletconnect.com https://verify.walletconnect.org https://res.cloudinary.com https://www.google-analytics.com;
   font-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com;
   child-src 'self' https://auth.privy.io https://verify.walletconnect.com https://verify.walletconnect.org;
   frame-src 'self' https://auth.privy.io https://*.sumsub.com https://verify.walletconnect.com https://verify.walletconnect.org https://www.youtube.com;
@@ -45,6 +45,7 @@ const nextConfig: NextConfig = {
   trailingSlash: true,
   reactStrictMode: true,
   images: {
+    minimumCacheTTL: 86400,
     remotePatterns: [
       {
         protocol: 'https',

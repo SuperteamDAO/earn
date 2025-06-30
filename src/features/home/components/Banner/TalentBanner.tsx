@@ -2,7 +2,7 @@ import { getImageProps } from 'next/image';
 import posthog from 'posthog-js';
 import React from 'react';
 
-import { ASSET_URL } from '@/constants/ASSET_URL';
+import { ExternalImage } from '@/components/ui/cloudinary-image';
 
 import { AuthWrapper } from '@/features/auth/components/AuthWrapper';
 
@@ -11,9 +11,9 @@ interface HomeTalentBannerProps {
 }
 
 const avatars = [
-  { name: 'Abhishek', src: ASSET_URL + '/pfps/t1.webp' },
-  { name: 'Pratik', src: ASSET_URL + '/pfps/md2.webp' },
-  { name: 'Yash', src: ASSET_URL + '/pfps/fff1.webp' },
+  { name: 'Abhishek', src: '/pfps/t1.webp' },
+  { name: 'Pratik', src: '/pfps/md2.webp' },
+  { name: 'Yash', src: '/pfps/fff1.webp' },
 ];
 
 export function HomeTalentBanner({ totalUsers }: HomeTalentBannerProps) {
@@ -87,11 +87,12 @@ export function HomeTalentBanner({ totalUsers }: HomeTalentBannerProps) {
         <div className="flex items-center">
           <div className="flex -space-x-2">
             {avatars.map((avatar, index) => (
-              <img
+              <ExternalImage
                 key={index}
                 className="relative h-6 w-6 rounded-full border border-[#49139c] md:h-8 md:w-8"
                 src={avatar.src}
                 alt={avatar.name}
+                loading="eager"
               />
             ))}
           </div>

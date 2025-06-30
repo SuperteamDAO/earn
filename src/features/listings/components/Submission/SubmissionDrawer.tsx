@@ -4,7 +4,7 @@ import axios from 'axios';
 import { X } from 'lucide-react';
 import { useRouter } from 'next/router';
 import posthog from 'posthog-js';
-import { type JSX, useEffect, useState } from 'react';
+import { type JSX, useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { type z } from 'zod';
@@ -145,8 +145,32 @@ export const SubmissionDrawer = ({
     fetchData();
   }, [id, editMode, form.reset]);
 
+  const isDisabled = useMemo(
+    () =>
+      Boolean(
+        isSubmitDisabled ||
+          isTemplate ||
+          !!query['preview'] ||
+          (isHackathon && !editMode && !termsAccepted) ||
+          isLoading ||
+          form.formState.isSubmitting,
+      ),
+
+    [
+      isSubmitDisabled,
+      isTemplate,
+      query,
+      isHackathon,
+      editMode,
+      termsAccepted,
+      isLoading,
+      form.formState.isSubmitting,
+    ],
+  );
+
   const onSubmit = async (data: FormData) => {
     if (isLoading) return;
+    if (isDisabled) return;
 
     posthog.capture('confirmed_submission');
     setIsLoading(true);
@@ -467,14 +491,7 @@ export const SubmissionDrawer = ({
 
                 <Button
                   className="ph-no-capture h-12 w-full"
-                  disabled={
-                    isSubmitDisabled ||
-                    isTemplate ||
-                    !!query['preview'] ||
-                    (isHackathon && !editMode && !termsAccepted) ||
-                    isLoading ||
-                    form.formState.isSubmitting
-                  }
+                  disabled={isDisabled}
                   type="submit"
                 >
                   {isLoading ? (
@@ -502,6 +519,7 @@ export const SubmissionDrawer = ({
                     onClick={() => setIsTOSModalOpen(true)}
                     className="cursor-pointer underline underline-offset-2"
                     rel="noopener noreferrer"
+                    type="button"
                   >
                     Terms of Use
                   </button>

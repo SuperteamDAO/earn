@@ -3,8 +3,10 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { useRouter } from 'next/router';
 import posthog from 'posthog-js';
+import { useEffect } from 'react';
 import { getCookie, removeCookie, setCookie } from 'typescript-cookie';
 
+import { useForcedProfileRedirect } from '@/hooks/use-forced-profile-redirect';
 import { type User } from '@/interface/user';
 import { api } from '@/lib/api';
 
@@ -62,6 +64,31 @@ export const useUser = () => {
     refetchOnWindowFocus: true,
     refetchOnReconnect: true,
   });
+
+  useForcedProfileRedirect({
+    user: user || null,
+    isUserLoading: !ready || isLoading,
+  });
+
+  useEffect(() => {
+    if (isLoading || !ready) return;
+
+    if (!user) {
+      if (posthog._isIdentified()) posthog.reset();
+      return;
+    }
+
+    const profileComplete = user.isTalentFilled || !!user.currentSponsorId;
+
+    if (profileComplete) {
+      const alreadyIdentified = posthog._isIdentified();
+      const sameUser = posthog.get_distinct_id() === String(user.id);
+
+      if (!alreadyIdentified || !sameUser) {
+        posthog.identify(user.id, { email: user.email });
+      }
+    }
+  }, [user, isLoading, ready]);
 
   return {
     user: user || null,
