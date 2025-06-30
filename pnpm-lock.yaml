@@ -184,9 +184,6 @@ importers:
       '@tiptap/starter-kit':
         specifier: ^2.22.3
         version: 2.22.3
-      '@types/nprogress':
-        specifier: ^0.2.3
-        version: 0.2.3
       '@upstash/ratelimit':
         specifier: ^2.0.5
         version: 2.0.5(@upstash/redis@1.35.0)
@@ -241,9 +238,6 @@ importers:
       embla-carousel-react:
         specifier: ^8.6.0
         version: 8.6.0(react@19.1.0)
-      eslint-plugin-prettier:
-        specifier: ^5.5.0
-        version: 5.5.0(@types/eslint@9.6.1)(eslint-config-prettier@9.1.0(eslint@8.57.1))(eslint@8.57.1)(prettier@3.5.3)
       flag-icons:
         specifier: ^7.5.0
         version: 7.5.0
@@ -253,9 +247,6 @@ importers:
       html-react-parser:
         specifier: ^5.2.5
         version: 5.2.5(@types/react@19.0.8)(react@19.1.0)
-      husky:
-        specifier: ^9.1.7
-        version: 9.1.7
       input-otp:
         specifier: ^1.4.2
         version: 1.4.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -422,6 +413,9 @@ importers:
       '@types/node':
         specifier: 24.0.3
         version: 24.0.3
+      '@types/nprogress':
+        specifier: ^0.2.3
+        version: 0.2.3
       '@types/papaparse':
         specifier: ^5.3.16
         version: 5.3.16
@@ -458,6 +452,9 @@ importers:
       eslint-config-prettier:
         specifier: ^9.1.0
         version: 9.1.0(eslint@8.57.1)
+      eslint-plugin-prettier:
+        specifier: ^5.5.0
+        version: 5.5.0(@types/eslint@9.6.1)(eslint-config-prettier@9.1.0(eslint@8.57.1))(eslint@8.57.1)(prettier@3.5.3)
       eslint-plugin-react:
         specifier: ^7.37.5
         version: 7.37.5(eslint@8.57.1)
@@ -473,6 +470,9 @@ importers:
       eslint-plugin-validate-jsx-nesting:
         specifier: ^0.1.1
         version: 0.1.1(eslint@8.57.1)
+      husky:
+        specifier: ^9.1.7
+        version: 9.1.7
       knip:
         specifier: ^5.61.2
         version: 5.61.2(@types/node@24.0.3)(typescript@5.8.3)
