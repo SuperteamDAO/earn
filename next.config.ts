@@ -3,6 +3,11 @@ import { type NextConfig } from 'next';
 /* eslint-disable @typescript-eslint/no-var-requires */
 const { withAxiom } = require('next-axiom');
 
+const withBundleAnalyzer = require('@next/bundle-analyzer')({
+  enabled: process.env.ANALYZE === 'true',
+  // openAnalyzer: false,
+});
+
 const withPWA = require('next-pwa')({
   dest: 'public',
   disable: process.env.NODE_ENV === 'development',
@@ -40,6 +45,14 @@ const csp = baseCsp.replace(/\s{2,}/g, ' ').trim();
 const nextConfig: NextConfig = {
   eslint: {
     dirs: ['.'],
+  },
+  turbopack: {
+    rules: {
+      '*.svg': {
+        loaders: ['@svgr/webpack'],
+        as: '*.js',
+      },
+    },
   },
   poweredByHeader: false,
   trailingSlash: true,
@@ -136,4 +149,4 @@ const nextConfig: NextConfig = {
 
 const combinedConfig = withAxiom(withPWA(nextConfig));
 
-module.exports = combinedConfig;
+module.exports = withBundleAnalyzer(combinedConfig);
