@@ -1,9 +1,9 @@
 import { type GetServerSideProps } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
-import { FaXTwitter } from 'react-icons/fa6';
-import { MdOutlineInsertLink } from 'react-icons/md';
 
+import FaXTwitter from '@/components/icons/FaXTwitter';
+import MdOutlineInsertLink from '@/components/icons/MdOutlineInsertLink';
 import { LinkTextParser } from '@/components/shared/LinkTextParser';
 import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
 import { LocalImage } from '@/components/ui/local-image';
@@ -48,6 +48,7 @@ const SponsorListingsPage = ({ slug, sponsor, title, description }: Props) => {
 Check out all of ${title}’s latest earning opportunities on a single page.
 `}
           />
+
           <meta property="og:title" content={`${title} on Superteam Earn`} />
           <meta property="og:image" content={ogImage.toString()} />
           <meta name="twitter:title" content={`${title} on Superteam Earn`} />
@@ -59,6 +60,7 @@ Check out all of ${title}’s latest earning opportunities on a single page.
             property="og:image:alt"
             content={`${title} on Superteam Earn`}
           />
+
           <meta charSet="UTF-8" key="charset" />
           <meta
             name="viewport"
@@ -97,6 +99,7 @@ Check out all of ${title}’s latest earning opportunities on a single page.
               className="mt-2 text-slate-600"
               text={description}
             />
+
             <div className="mt-3 flex gap-3 text-slate-500">
               {url && (
                 <Link className="flex items-center" href={getURLSanitized(url)}>

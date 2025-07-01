@@ -3,8 +3,9 @@ import { useAtomValue } from 'jotai';
 import { ArrowRight, Check, X } from 'lucide-react';
 import Link from 'next/link';
 import React from 'react';
-import { MdOutlineAccountBalanceWallet, MdOutlineMail } from 'react-icons/md';
 
+import MdOutlineAccountBalanceWallet from '@/components/icons/MdOutlineAccountBalanceWallet';
+import MdOutlineMail from '@/components/icons/MdOutlineMail';
 import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
 import { Button } from '@/components/ui/button';
 import { CopyButton } from '@/components/ui/copy-tooltip';
@@ -75,6 +76,7 @@ export const TrancheDetails = ({
                     selectedTranche?.GrantApplication?.user?.photo || undefined
                   }
                 />
+
                 <div>
                   <div className="flex items-center gap-2">
                     <p className="w-full text-base font-medium whitespace-nowrap text-slate-900">
@@ -177,6 +179,7 @@ export const TrancheDetails = ({
                   src={tokenIcon}
                   alt="token"
                 />
+
                 <p className="text-sm font-semibold whitespace-nowrap text-slate-600">
                   {`${selectedTranche?.GrantApplication?.approvedAmount?.toLocaleString('en-us')}`}
                   <span className="ml-0.5 text-slate-400">{grant?.token}</span>
@@ -187,6 +190,7 @@ export const TrancheDetails = ({
                     className="h-5 w-5 rounded-full bg-gray-200"
                     value={paidPercentage}
                   />
+
                   <p className="ml-1 text-sm font-medium whitespace-nowrap text-slate-600">
                     {paidPercentage.toFixed(0)}%{' '}
                     <span className="text-slate-400">Paid</span>
@@ -227,10 +231,12 @@ export const TrancheDetails = ({
                   className="h-[0.9rem] w-[0.9rem] text-slate-600"
                   link={selectedTranche?.GrantApplication?.user?.telegram || ''}
                 />
+
                 <Twitter
                   className="h-[0.9rem] w-[0.9rem] text-slate-600"
                   link={selectedTranche?.GrantApplication?.user?.twitter || ''}
                 />
+
                 <Website
                   className="h-[0.9rem] w-[0.9rem] text-slate-600"
                   link={selectedTranche?.GrantApplication?.user?.website || ''}
@@ -267,6 +273,7 @@ export const TrancheDetails = ({
                       src={tokenIcon}
                       alt="token"
                     />
+
                     <p className="text-sm font-semibold whitespace-nowrap text-slate-600">
                       {`${selectedTranche?.approvedAmount?.toLocaleString('en-us')}`}
                       <span className="ml-0.5 text-slate-400">
@@ -287,6 +294,7 @@ export const TrancheDetails = ({
                       src={tokenIcon}
                       alt="token"
                     />
+
                     <p className="text-sm font-semibold whitespace-nowrap text-slate-600">
                       {`${selectedTranche?.ask?.toLocaleString('en-us')}`}
                       <span className="ml-0.5 text-slate-400">
@@ -301,25 +309,30 @@ export const TrancheDetails = ({
                 label="Tranche Request Date"
                 content={formattedCreatedAt}
               />
+
               <InfoBox
                 label="KPIS AND MILESTONES"
                 content={selectedTranche?.GrantApplication?.kpi}
                 isHtml
               />
+
               <InfoBox
                 label="Project Updates"
                 content={selectedTranche?.update}
                 isHtml
               />
+
               <InfoBox
                 label="Help Wanted"
                 content={selectedTranche?.helpWanted}
                 isHtml
               />
+
               <InfoBox
                 label="Grant Approval Date"
                 content={formattedDecidedAt}
               />
+
               <InfoBox
                 label="Twitter"
                 content={selectedTranche?.GrantApplication?.twitter}

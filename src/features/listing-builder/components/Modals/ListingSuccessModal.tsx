@@ -3,8 +3,8 @@ import { Check, ChevronRight, Copy, Plus } from 'lucide-react';
 import Link from 'next/link';
 import { useCallback, useMemo } from 'react';
 import { useWatch } from 'react-hook-form';
-import { FaXTwitter } from 'react-icons/fa6';
 
+import FaXTwitter from '@/components/icons/FaXTwitter';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { useClipboard } from '@/hooks/use-clipboard';

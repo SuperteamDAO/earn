@@ -16,16 +16,10 @@ import { truncatePublicKey } from '@/utils/truncatePublicKey';
 
 import { type TokenAsset } from '../types/TokenAsset';
 import { type TxData } from '../types/TxData';
+import { type DrawerView } from '../types/WalletTypes';
 import { WalletActivity } from './activity/WalletActivity';
 import { TokenList } from './tokens/TokenList';
 import { WithdrawFundsFlow } from './withdraw/WithdrawFundsFlow';
-
-export type DrawerView =
-  | 'main'
-  | 'withdraw'
-  | 'success'
-  | 'history'
-  | 'ata-confirm';
 
 export function WalletDrawer({
   isOpen,

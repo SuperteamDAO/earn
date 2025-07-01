@@ -3,8 +3,8 @@ import { useAtom } from 'jotai';
 import { AlertTriangle, ArrowRight, ExternalLink } from 'lucide-react';
 import Link from 'next/link';
 import React from 'react';
-import { MdOutlineAccountBalanceWallet } from 'react-icons/md';
 
+import MdOutlineAccountBalanceWallet from '@/components/icons/MdOutlineAccountBalanceWallet';
 import { Button } from '@/components/ui/button';
 import { CopyButton } from '@/components/ui/copy-tooltip';
 import { Tooltip } from '@/components/ui/tooltip';
@@ -69,6 +69,7 @@ export const SubmissionPanel = ({
                   id={selectedSubmission?.user?.id}
                   avatar={selectedSubmission?.user?.photo || undefined}
                 />
+
                 <div>
                   <p className="w-full font-medium whitespace-nowrap text-slate-900">
                     {`${selectedSubmission?.user?.firstName}'s Submission`}
@@ -146,6 +147,7 @@ export const SubmissionPanel = ({
                       usedPositions={usedPositions}
                       isHackathonPage={isHackathonPage}
                     />
+
                     {!isProject && (
                       <Tooltip
                         content={
@@ -242,10 +244,12 @@ export const SubmissionPanel = ({
                   className="h-[0.9rem] w-[0.9rem] text-slate-600"
                   link={selectedSubmission?.user?.telegram || ''}
                 />
+
                 <Twitter
                   className="h-[0.9rem] w-[0.9rem] text-slate-600"
                   link={selectedSubmission?.user?.twitter || ''}
                 />
+
                 <Website
                   className="h-[0.9rem] w-[0.9rem] text-slate-600"
                   link={selectedSubmission?.user?.website || ''}

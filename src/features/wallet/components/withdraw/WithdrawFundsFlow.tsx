@@ -19,13 +19,13 @@ import { useUser } from '@/store/user';
 
 import { type TokenAsset } from '../../types/TokenAsset';
 import { type TxData } from '../../types/TxData';
+import { type DrawerView } from '../../types/WalletTypes';
 import { fetchTokenUSDValue } from '../../utils/fetchTokenUSDValue';
 import { getConnection } from '../../utils/getConnection';
 import {
   type WithdrawFormData,
   withdrawFormSchema,
 } from '../../utils/withdrawFormSchema';
-import { type DrawerView } from '../WalletDrawer';
 import { ATAConfirmation } from './ATAConfirmation';
 import { TransactionDetails } from './TransactionDetails';
 import { WithdrawForm } from './WithdrawForm';

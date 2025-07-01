@@ -4,8 +4,8 @@ import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import posthog from 'posthog-js';
 import React from 'react';
-import { IoWalletOutline } from 'react-icons/io5';
 
+import IoWalletOutline from '@/components/icons/IoWalletOutline';
 import { Button } from '@/components/ui/button';
 import { LocalImage } from '@/components/ui/local-image';
 import { useDisclosure } from '@/hooks/use-disclosure';
@@ -75,6 +75,7 @@ export const MobileNavbar = ({
                     id={user?.id}
                     avatar={user?.photo}
                   />
+
                   <div className="absolute -right-2 -bottom-0.5 flex flex-col gap-[2px] rounded-full bg-white px-[5px] py-1.5">
                     <div className="w-2.5 border-[0.5px] border-slate-400" />
                     <div className="w-2.5 border-[0.5px] border-slate-400" />
@@ -109,6 +110,7 @@ export const MobileNavbar = ({
             onDrawerClose={onDrawerClose}
             onLoginOpen={onLoginOpen}
           />
+
           <div className="flex items-center gap-1">
             {ready && authenticated && user?.isTalentFilled && (
               <div className="flex items-center gap-0 sm:gap-1">

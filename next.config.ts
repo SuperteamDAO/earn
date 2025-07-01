@@ -38,8 +38,14 @@ const baseCsp = `
 const csp = baseCsp.replace(/\s{2,}/g, ' ').trim();
 
 const nextConfig: NextConfig = {
-  eslint: {
-    dirs: ['.'],
+  eslint: { dirs: ['.'] },
+  turbopack: {
+    rules: {
+      '*.svg': {
+        loaders: ['@svgr/webpack'],
+        as: '*.js',
+      },
+    },
   },
   poweredByHeader: false,
   trailingSlash: true,

@@ -1,10 +1,10 @@
 import { useMutation } from '@tanstack/react-query';
 import { AnimatePresence, motion } from 'motion/react';
 import * as React from 'react';
-import { BiCheck } from 'react-icons/bi';
-import { RiFlagFill } from 'react-icons/ri';
 import TextareaAutosize from 'react-textarea-autosize';
 
+import BiCheck from '@/components/icons/BiCheck';
+import RiFlagFill from '@/components/icons/RiFlagFill';
 import { AnimateChangeInHeight } from '@/components/shared/AnimateChangeInHeight';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
@@ -326,6 +326,7 @@ function MainContent({
                             }
                           }}
                         />
+
                         <div
                           className="ml-auto w-fit text-xs text-slate-400 select-none"
                           style={{ pointerEvents: 'none' }}

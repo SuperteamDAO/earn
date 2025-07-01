@@ -1,8 +1,8 @@
 import { Info, Pencil } from 'lucide-react';
 import Link from 'next/link';
 import posthog from 'posthog-js';
-import { MdOutlineChatBubbleOutline } from 'react-icons/md';
 
+import MdOutlineChatBubbleOutline from '@/components/icons/MdOutlineChatBubbleOutline';
 import { VerifiedBadgeLarge } from '@/components/shared/VerifiedBadge';
 import { LocalImage } from '@/components/ui/local-image';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -94,6 +94,7 @@ export function Banner({
               id={sponsor?.name}
               avatar={sponsor?.logo}
             />
+
             <div>
               <div className="flex items-center">
                 <div className="flex w-min items-center gap-1">
@@ -179,6 +180,7 @@ export function Banner({
                 alt="message pratik"
                 src={'/assets/sponsor/pratik.webp'}
               />
+
               <div>
                 <p className="font-semibold whitespace-nowrap text-slate-900">
                   Stuck somewhere?
