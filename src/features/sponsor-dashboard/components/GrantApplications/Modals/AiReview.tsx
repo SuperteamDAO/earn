@@ -125,7 +125,7 @@ export default function AiReviewModal({ applications, grant }: Props) {
     //           );
     //         } catch (error: any) {
     //           console.log(
-    //             'Error occured while reviewing application with id ',
+    //             'Error occurred while reviewing application with id ',
     //             appl.id,
     //           );
     //         }
@@ -157,7 +157,7 @@ export default function AiReviewModal({ applications, grant }: Props) {
         await refetchUnreviewedApplications();
       } catch (error: any) {
         console.log(
-          'error occured while commiting reviewed applications',
+          'error occurred while commiting reviewed applications',
           error,
         );
         setState('ERROR');
