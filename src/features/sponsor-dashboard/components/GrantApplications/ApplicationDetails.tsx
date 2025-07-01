@@ -4,8 +4,9 @@ import { useAtom } from 'jotai';
 import { ArrowRight, Check, Copy, X } from 'lucide-react';
 import Link from 'next/link';
 import React, { useMemo } from 'react';
-import { MdOutlineAccountBalanceWallet, MdOutlineMail } from 'react-icons/md';
 
+import MdOutlineAccountBalanceWallet from '@/components/icons/MdOutlineAccountBalanceWallet';
+import MdOutlineMail from '@/components/icons/MdOutlineMail';
 import { Button } from '@/components/ui/button';
 import { CopyButton } from '@/components/ui/copy-tooltip';
 import { CircularProgress } from '@/components/ui/progress';
@@ -112,6 +113,7 @@ export const ApplicationDetails = ({
                   id={selectedApplication?.user?.id}
                   avatar={selectedApplication?.user?.photo || undefined}
                 />
+
                 <div>
                   <span className="flex gap-2">
                     <p className="w-fit text-base font-medium whitespace-nowrap text-slate-900">
@@ -199,6 +201,7 @@ export const ApplicationDetails = ({
                         applicationId={selectedApplication.id}
                         onMarkCompleted={updateApplicationState}
                       />
+
                       {isNativeAndNonST &&
                         selectedApplication.totalPaid !==
                           selectedApplication.approvedAmount && (
@@ -250,6 +253,7 @@ export const ApplicationDetails = ({
                     src={tokenIcon}
                     alt="token"
                   />
+
                   <p className="text-sm font-semibold whitespace-nowrap text-slate-600">
                     {`${selectedApplication?.approvedAmount?.toLocaleString('en-us')}`}
                     <span className="ml-0.5 text-slate-400">
@@ -268,6 +272,7 @@ export const ApplicationDetails = ({
                           ).toFixed(2),
                         )}
                       />
+
                       <p className="ml-1 text-sm font-medium whitespace-nowrap text-slate-600">
                         {Number(
                           (
@@ -310,14 +315,17 @@ export const ApplicationDetails = ({
                   className="h-[0.9rem] w-[0.9rem] text-slate-600"
                   link={selectedApplication?.user?.telegram || ''}
                 />
+
                 <Twitter
                   className="h-[0.9rem] w-[0.9rem] text-slate-600"
                   link={selectedApplication?.user?.twitter || ''}
                 />
+
                 <GitHub
                   className="h-[0.9rem] w-[0.9rem] text-slate-600"
                   link={selectedApplication?.user?.github || ''}
                 />
+
                 <Website
                   className="h-[0.9rem] w-[0.9rem] text-slate-600"
                   link={selectedApplication?.user?.website || ''}
@@ -345,6 +353,7 @@ export const ApplicationDetails = ({
                     src={tokenIcon}
                     alt="token"
                   />
+
                   <p className="text-sm font-semibold whitespace-nowrap text-slate-600">
                     {`${selectedApplication?.ask?.toLocaleString('en-us')}`}
                     <span className="ml-0.5 text-slate-400">
@@ -397,36 +406,43 @@ export const ApplicationDetails = ({
                 label="Project Title"
                 content={selectedApplication?.projectTitle}
               />
+
               <InfoBox
                 label="One-Liner Description"
                 content={selectedApplication?.projectOneLiner}
               />
+
               <InfoBox
                 label="Project Details"
                 content={selectedApplication?.projectDetails}
                 isHtml
               />
+
               <InfoBox label="Twitter" content={selectedApplication?.twitter} />
               <InfoBox label="Github" content={selectedApplication?.github} />
               <InfoBox
                 label="Deadline"
                 content={selectedApplication?.projectTimeline}
               />
+
               <InfoBox
                 label="Proof of Work"
                 content={selectedApplication?.proofOfWork}
                 isHtml
               />
+
               <InfoBox
                 label="Goals and Milestones"
                 content={selectedApplication?.milestones}
                 isHtml
               />
+
               <InfoBox
                 label="Primary Key Performance Indicator"
                 content={selectedApplication?.kpi}
                 isHtml
               />
+
               {Array.isArray(selectedApplication?.answers) &&
                 selectedApplication.answers.map(
                   (answer: any, answerIndex: number) => (

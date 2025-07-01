@@ -1,15 +1,13 @@
 import Link from 'next/link';
 import React from 'react';
-import { type IconType } from 'react-icons';
-import {
-  FaDiscord,
-  FaGithub,
-  FaGlobe,
-  FaLinkedin,
-  FaTelegram,
-  FaXTwitter,
-} from 'react-icons/fa6';
 
+import FaDiscord from '@/components/icons/FaDiscord';
+import FaGithub from '@/components/icons/FaGithub';
+import FaGlobe from '@/components/icons/FaGlobe';
+import FaLinkedin from '@/components/icons/FaLinkedin';
+import FaTelegram from '@/components/icons/FaTelegram';
+import FaXTwitter from '@/components/icons/FaXTwitter';
+import { type IconType } from '@/components/icons/helpers/GenIcon';
 import { cn } from '@/utils/cn';
 import { getURLSanitized } from '@/utils/getURLSanitized';
 

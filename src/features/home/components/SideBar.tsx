@@ -2,8 +2,8 @@ import { useQuery } from '@tanstack/react-query';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { MdArrowForward } from 'react-icons/md';
 
+import MdArrowForward from '@/components/icons/MdArrowForward';
 import { useBreakpoint } from '@/hooks/use-breakpoint';
 import { useUser } from '@/store/user';
 
@@ -97,6 +97,7 @@ export const HomeSideBar = ({ type }: SideBarProps) => {
             bountyCount={totals?.count}
             TVE={totals?.totalInUSD}
           />
+
           {/* <SidebarBannerBreakout /> */}
           <HowItWorks />
           <RecentEarners earners={recentEarners} />

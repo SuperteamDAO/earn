@@ -1,8 +1,8 @@
 import { Link } from 'lucide-react';
 import React from 'react';
-import { GrTransaction } from 'react-icons/gr';
-import { MdOutlineLock } from 'react-icons/md';
 
+import GrTransaction from '@/components/icons/GrTransaction';
+import MdOutlineLock from '@/components/icons/MdOutlineLock';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { domPurify } from '@/lib/domPurify';
@@ -54,11 +54,13 @@ export const WalletFeature = () => {
           description="Receive rewards directly — no extensions, apps, or setup required. Just start contributing!"
           icon={<Link />}
         />
+
         <Point
           title="Transfer money out anytime"
           description="Easily transfer your funds to any wallet of your choice, whenever you need."
           icon={<GrTransaction className="h-[1.4rem] w-[1.4rem]" />}
         />
+
         <Point
           title="Secured by Privy"
           description="We partnered with <a href='https://privy.io' style='text-decoration: underline;' target='_blank' rel='noopener noreferrer'>Privy</a> for our wallet service. They are protected with industry-leading security and regular audits to keep your earnings safe."

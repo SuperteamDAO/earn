@@ -1,8 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
 import Link from 'next/link';
 import posthog from 'posthog-js';
-import { MdArrowForward } from 'react-icons/md';
 
+import MdArrowForward from '@/components/icons/MdArrowForward';
 import { LocalImage } from '@/components/ui/local-image';
 import { timeAgoShort } from '@/utils/timeAgo';
 
@@ -75,6 +75,7 @@ const ActivityCard = ({
         alt="OG Image"
         src={ogImage}
       />
+
       <div className="ml-3">
         <div className="flex items-center">
           <span className="mr-1.5 max-w-32 overflow-hidden text-[0.9rem] font-semibold text-ellipsis whitespace-nowrap text-slate-800">

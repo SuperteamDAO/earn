@@ -1,9 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Loader2 } from 'lucide-react';
 import posthog from 'posthog-js';
-import { TbBell, TbBellRinging } from 'react-icons/tb';
 import { toast } from 'sonner';
 
+import TbBell from '@/components/icons/TbBell';
+import TbBellRinging from '@/components/icons/TbBellRinging';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { ASSET_URL } from '@/constants/ASSET_URL';

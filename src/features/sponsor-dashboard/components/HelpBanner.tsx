@@ -1,7 +1,7 @@
 import posthog from 'posthog-js';
 import React from 'react';
-import { MdOutlineChatBubbleOutline } from 'react-icons/md';
 
+import MdOutlineChatBubbleOutline from '@/components/icons/MdOutlineChatBubbleOutline';
 import { LocalImage } from '@/components/ui/local-image';
 import { PDTG } from '@/constants/Telegram';
 

@@ -4,8 +4,8 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import posthog from 'posthog-js';
 import React, { type Dispatch, type SetStateAction, useState } from 'react';
-import { MdOutlineEmail } from 'react-icons/md';
 
+import MdOutlineEmail from '@/components/icons/MdOutlineEmail';
 import { Button } from '@/components/ui/button';
 import { CopyButton } from '@/components/ui/copy-tooltip';
 import { TERMS_OF_USE } from '@/constants/TERMS_OF_USE';
@@ -47,6 +47,7 @@ export const SignIn = ({
           'privy_oauth_provider',
           'privy_oauth_code',
         ];
+
         privyParams.forEach((param) => url.searchParams.delete(param));
         router.replace(url.toString());
       }

@@ -8,7 +8,7 @@ interface TotalType {
 }
 
 const fetchTotals = async (): Promise<TotalType> => {
-  const { data } = await api.get('/api/sidebar/stats');
+  const { data } = await api.get('/api/homepage/stats');
   return data;
 };
 

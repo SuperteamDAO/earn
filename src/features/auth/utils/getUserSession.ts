@@ -9,9 +9,7 @@ import { getPrivyToken } from './getPrivyToken';
 type SessionResponse = {
   status: number;
   error: string | null;
-  data: {
-    userId: string;
-  } | null;
+  data: { userId: string; privyDid: string } | null;
 };
 
 export async function getUserSession(
@@ -22,10 +20,7 @@ export async function getUserSession(
     const cookieHeader = headers.get('cookie');
 
     const req = {
-      headers: {
-        authorization: authHeader,
-        cookie: cookieHeader,
-      },
+      headers: { authorization: authHeader, cookie: cookieHeader },
       cookies: Object.fromEntries(
         (await cookies()).getAll().map((c) => [c.name, c.value]),
       ),
@@ -35,24 +30,17 @@ export async function getUserSession(
 
     if (!privyDid) {
       logger.error('Unauthorized, Privy Did not found');
-      return {
-        status: 401,
-        error: 'Unauthorized',
-        data: null,
-      };
+      return { status: 401, error: 'Unauthorized', data: null };
     }
 
     logger.debug(`Fetching user with privyDid: ${privyDid}`);
+
     const user = await prisma.user.findUnique({
       where: { privyDid },
-      select: {
-        id: true,
-      },
+      select: { id: true },
     });
-    logger.info(`User with privyDid: ${privyDid} found`, {
-      privyDid,
-      ...user,
-    });
+
+    logger.info(`User with privyDid: ${privyDid} found`, { privyDid, ...user });
 
     if (!user) {
       logger.warn('User has no record or is unauthorized');
@@ -66,16 +54,10 @@ export async function getUserSession(
     return {
       status: 200,
       error: null,
-      data: {
-        userId: user.id,
-      },
+      data: { userId: user.id, privyDid: privyDid },
     };
   } catch (error) {
     logger.error('Error verifying user sponsor:', error);
-    return {
-      status: 500,
-      error: 'Internal Server Error',
-      data: null,
-    };
+    return { status: 500, error: 'Internal Server Error', data: null };
   }
 }

@@ -3,8 +3,8 @@ import { useAtom, useSetAtom } from 'jotai';
 import debounce from 'lodash.debounce';
 import { Loader2 } from 'lucide-react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { FaWandMagicSparkles } from 'react-icons/fa6';
 
+import FaWandMagicSparkles from '@/components/icons/FaWandMagicSparkles';
 import { Textarea } from '@/components/ui/textarea';
 import { type SubmissionWithUser } from '@/interface/submission';
 import { api } from '@/lib/api';

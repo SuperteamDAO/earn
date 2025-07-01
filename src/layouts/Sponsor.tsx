@@ -11,11 +11,12 @@ import {
   useRef,
   useState,
 } from 'react';
-import type { IconType } from 'react-icons';
-import { BiListUl } from 'react-icons/bi';
-import { MdList, MdOutlineChatBubbleOutline } from 'react-icons/md';
-import { RiUserSettingsLine } from 'react-icons/ri';
 
+import BiListUl from '@/components/icons/BiListUl';
+import { type IconType } from '@/components/icons/helpers/GenIcon';
+import MdList from '@/components/icons/MdList';
+import MdOutlineChatBubbleOutline from '@/components/icons/MdOutlineChatBubbleOutline';
+import RiUserSettingsLine from '@/components/icons/RiUserSettingsLine';
 import { EntityNameModal } from '@/components/modals/EntityNameModal';
 import { LoadingSection } from '@/components/shared/LoadingSection';
 import { Button } from '@/components/ui/button';
@@ -222,6 +223,7 @@ export function SponsorLayout({
           isOpen={isEntityModalOpen}
           onClose={handleEntityClose}
         />
+
         <div className="flex min-h-[80vh] px-3 md:hidden">
           <p className="pt-20 text-center text-xl font-medium text-slate-500">
             The Sponsor Dashboard on Earn is not optimized for mobile yet.

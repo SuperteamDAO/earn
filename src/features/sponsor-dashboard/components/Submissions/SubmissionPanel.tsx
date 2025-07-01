@@ -3,8 +3,8 @@ import { useAtom } from 'jotai';
 import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import React from 'react';
-import { MdOutlineAccountBalanceWallet } from 'react-icons/md';
 
+import MdOutlineAccountBalanceWallet from '@/components/icons/MdOutlineAccountBalanceWallet';
 import { CopyButton } from '@/components/ui/copy-tooltip';
 import type { SubmissionWithUser } from '@/interface/submission';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
@@ -58,6 +58,7 @@ export const SubmissionPanel = ({
                   id={selectedSubmission?.user?.id}
                   avatar={selectedSubmission?.user?.photo || undefined}
                 />
+
                 <div>
                   <p className="w-full font-medium whitespace-nowrap text-slate-900">
                     {`${selectedSubmission?.user?.firstName}'s Submission`}
@@ -129,10 +130,12 @@ export const SubmissionPanel = ({
                   className="h-[0.9rem] w-[0.9rem] text-slate-600"
                   link={selectedSubmission?.user?.telegram || ''}
                 />
+
                 <Twitter
                   className="h-[0.9rem] w-[0.9rem] text-slate-600"
                   link={selectedSubmission?.user?.twitter || ''}
                 />
+
                 <Website
                   className="h-[0.9rem] w-[0.9rem] text-slate-600"
                   link={selectedSubmission?.user?.website || ''}

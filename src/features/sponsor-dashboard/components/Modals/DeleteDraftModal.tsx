@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { MdDelete } from 'react-icons/md';
+import { Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
@@ -90,7 +90,7 @@ export const DeleteDraftModal = ({
               ) : (
                 <>
                   <div className="rounded-full bg-red-600 p-0.5">
-                    <MdDelete className="size-1 text-red-50" />
+                    <Trash2 className="size-1 text-red-50" />
                   </div>
                   <span>Confirm</span>
                 </>

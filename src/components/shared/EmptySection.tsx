@@ -1,5 +1,6 @@
 import { type ReactNode } from 'react';
-import { AiOutlineInfoCircle } from 'react-icons/ai';
+
+import AiOutlineInfoCircle from '@/components/icons/AiOutlineInfoCircle';
 
 export function EmptySection({
   title,

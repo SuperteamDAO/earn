@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router';
 import React from 'react';
-import { BsFillCircleFill } from 'react-icons/bs';
 
+import BsFillCircleFill from '@/components/icons/BsFillCircleFill';
 import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
 import { LocalImage } from '@/components/ui/local-image';
 import { PulseIcon } from '@/svg/pulse-icon';
@@ -50,6 +50,7 @@ export const GrantsHeader = ({
     statusIcon = (
       <PulseIcon isPulsing w={5} h={5} bg={'#9AE6B4'} text="#16A34A" />
     );
+
     statusTextColor = 'text-green-600';
     statusText = 'Open';
   } else {
@@ -69,6 +70,7 @@ export const GrantsHeader = ({
             alt={sponsor?.name}
             src={sponsor?.logo}
           />
+
           <div className="flex flex-col items-start gap-1">
             <div className="flex flex-wrap items-center gap-1">
               <h1 className="mt-0.5 text-xl font-bold tracking-[-0.5px] text-slate-700">
@@ -90,6 +92,7 @@ export const GrantsHeader = ({
                   alt={'grant'}
                   src={'/assets/grant-icon.svg'}
                 />
+
                 <p className="text-xs font-medium text-gray-400 md:text-sm">
                   Grant
                 </p>
@@ -100,6 +103,7 @@ export const GrantsHeader = ({
                 textColor={statusTextColor}
                 text={statusText}
               />
+
               <ListingHeaderSeparator />
               <RegionLabel region={region} isGrant />
             </div>
@@ -117,6 +121,7 @@ export const GrantsHeader = ({
             text={isApproved ? 'Your Ongoing Grant' : 'Prizes'}
             isActive={false}
           />
+
           <ListingTabLink
             href={`/grants/${slug}/`}
             text="Details"

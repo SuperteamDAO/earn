@@ -3,7 +3,6 @@ import type { z } from 'zod';
 
 import { exclusiveSponsorData } from '@/constants/exclusiveSponsors';
 import { Superteams } from '@/constants/Superteam';
-import { prisma } from '@/prisma';
 
 import {
   type ListingCategorySchema,
@@ -134,6 +133,31 @@ function getOrderBy(
   return isDefaultSort ? [{ isFeatured: 'desc' }, primarySort] : primarySort;
 }
 
+// cache for user region data to avoid repeated calculations
+const userRegionCache = new Map<string, any>();
+
+function getUserRegionFilter(userLocation: string | null): string[] {
+  if (!userLocation) return ['Global'];
+
+  const cacheKey = userLocation;
+  if (userRegionCache.has(cacheKey)) {
+    return userRegionCache.get(cacheKey);
+  }
+
+  const userRegion = getCombinedRegion(userLocation, true);
+  const regions = userRegion?.name
+    ? [
+        'Global',
+        userRegion.name,
+        ...(filterRegionCountry(userRegion, userLocation).country || []),
+        ...(getParentRegions(userRegion) || []),
+      ]
+    : ['Global'];
+
+  userRegionCache.set(cacheKey, regions);
+  return regions;
+}
+
 export async function buildListingQuery(
   args: BuildListingQueryArgs,
   user: {
@@ -167,30 +191,12 @@ export async function buildListingQuery(
   }
 
   if (user?.isTalentFilled && (context === 'all' || context === 'home')) {
-    const userRegion = user?.location
-      ? getCombinedRegion(user?.location, true)
-      : undefined;
-
     where.region = {
-      in: userRegion?.name
-        ? [
-            'Global',
-            userRegion.name,
-            ...(filterRegionCountry(userRegion, user.location || '').country ||
-              []),
-            ...(getParentRegions(userRegion) || []),
-          ]
-        : ['Global'],
+      in: getUserRegionFilter(user.location),
     };
   }
 
   if (category === 'For You') {
-    const subscribedListings = await prisma.subscribeBounty.findMany({
-      where: { userId: user?.id },
-      select: { bountyId: true },
-    });
-    const subscribedListingIds = subscribedListings.map((sub) => sub.bountyId);
-
     const userSkills =
       (user?.skills as { skills: string }[] | null)?.map(
         (skill) => skill.skills,
@@ -198,8 +204,10 @@ export async function buildListingQuery(
 
     const forYouConditions: Prisma.BountiesWhereInput[] = [];
 
-    if (subscribedListingIds && subscribedListingIds.length > 0) {
-      forYouConditions.push({ id: { in: subscribedListingIds } });
+    if (user?.id) {
+      forYouConditions.push({
+        SubscribeBounty: { some: { userId: user.id } },
+      });
     }
 
     if (userSkills.length > 0) {
@@ -240,7 +248,6 @@ export async function buildListingQuery(
 
   if (context === 'sponsor' && sponsor) {
     const sponsorKey = sponsor.toLowerCase();
-
     const sponsorInfo = exclusiveSponsorData[sponsorKey];
 
     where.sponsor = {

@@ -3,8 +3,8 @@ import { type GetServerSideProps } from 'next';
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
-import { MdCheck } from 'react-icons/md';
 
+import MdCheck from '@/components/icons/MdCheck';
 import { SponsorButton } from '@/components/ProfileSetup/SponsorButton';
 import { TalentButton } from '@/components/ProfileSetup/TalentButton';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -132,6 +132,7 @@ export default function NewProfilePage({
                       alt={'user icon'}
                       src={'/onboarding/talent-banner.webp'}
                     />
+
                     <div className="absolute top-0 left-0 h-full w-full bg-violet-400 mix-blend-overlay" />
                   </div>
                   <div className="flex flex-col gap-5 px-4">
@@ -196,6 +197,7 @@ export default function NewProfilePage({
                     alt={'user icon'}
                     src={'/onboarding/sponsor-banner.webp'}
                   />
+
                   <div className="absolute top-0 left-0 h-full w-full bg-emerald-50 mix-blend-overlay" />
                 </div>
                 <div className="flex flex-col gap-5 px-4">
@@ -223,16 +225,19 @@ export default function NewProfilePage({
                 alt="Jupiter Icon"
                 src={'/landingsponsor/sponsors/jupiter.webp'}
               />
+
               <ExternalImage
                 className="h-8 object-contain"
                 alt="Solflare Icon"
                 src={'/landingsponsor/sponsors/solflare.webp'}
               />
+
               <ExternalImage
                 className="hidden h-4 object-contain md:block"
                 alt="Squads Icon"
                 src={'/company-logos/squads.webp'}
               />
+
               <ExternalImage
                 className="h-7 w-7 object-contain"
                 alt="Tensor Icon"

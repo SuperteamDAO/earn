@@ -3,8 +3,9 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import posthog from 'posthog-js';
 import { useMemo } from 'react';
-import { IoSearchOutline, IoWalletOutline } from 'react-icons/io5';
 
+import IoSearchOutline from '@/components/icons/IoSearchOutline';
+import IoWalletOutline from '@/components/icons/IoWalletOutline';
 import { Button } from '@/components/ui/button';
 import { LocalImage } from '@/components/ui/local-image';
 import { Skeleton } from '@/components/ui/skeleton';

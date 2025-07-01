@@ -6,7 +6,7 @@ import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 
 import { type TokenActivity } from '../../types/TokenActivity';
 import { type TxData } from '../../types/TxData';
-import { type DrawerView } from '../WalletDrawer';
+import { type DrawerView } from '../../types/WalletTypes';
 
 interface ActivityItemProps {
   activity: TokenActivity;

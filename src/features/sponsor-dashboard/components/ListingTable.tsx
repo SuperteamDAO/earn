@@ -13,9 +13,9 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import posthog from 'posthog-js';
 import React, { useState } from 'react';
-import { IoDuplicateOutline } from 'react-icons/io5';
 import { toast } from 'sonner';
 
+import IoDuplicateOutline from '@/components/icons/IoDuplicateOutline';
 import { SortableTH } from '@/components/shared/sortable-th';
 import { Button } from '@/components/ui/button';
 import {
@@ -145,18 +145,21 @@ export const ListingTable = ({
         unpublishIsOpen={unpublishIsOpen}
         unpublishOnClose={unpublishOnClose}
       />
+
       <DeleteDraftModal
         deleteDraftIsOpen={deleteDraftIsOpen}
         deleteDraftOnClose={deleteDraftOnClose}
         listingId={selectedListing.id}
         listingType={selectedListing.type}
       />
+
       <VerifyPaymentModal
         listing={selectedListing}
         setListing={setSelectedListing}
         isOpen={verifyPaymentIsOpen}
         onClose={verifyPaymentOnClose}
       />
+
       <div className="w-full overflow-x-auto rounded-md border border-slate-200">
         <Table>
           <TableHeader>
@@ -270,6 +273,7 @@ export const ListingTable = ({
                           )[0]?.icon ?? '/assets/dollar.svg'
                         }
                       />
+
                       {listing?.type === 'grant' && (
                         <p className="text-sm font-medium whitespace-nowrap text-slate-700">
                           {grantAmount({
@@ -285,6 +289,7 @@ export const ListingTable = ({
                         rewardAmount={listing?.rewardAmount}
                         className="text-sm font-medium text-slate-700"
                       />
+
                       <p className="text-sm font-medium text-slate-400">
                         {listing.token}
                       </p>

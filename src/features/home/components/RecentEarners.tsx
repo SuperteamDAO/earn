@@ -1,8 +1,8 @@
 import Link from 'next/link';
 import posthog from 'posthog-js';
 import React, { useEffect, useRef, useState } from 'react';
-import { MdArrowForward } from 'react-icons/md';
 
+import MdArrowForward from '@/components/icons/MdArrowForward';
 import { ASSET_URL } from '@/constants/ASSET_URL';
 import { tokenList } from '@/constants/tokenList';
 import { type User } from '@/interface/user';
@@ -55,6 +55,7 @@ const Earner = ({
             alt={`${token} icon`}
             src={tokenIcon}
           />
+
           <span className="text-sm font-medium text-gray-600">
             {formatNumberWithSuffix(amount)}
           </span>

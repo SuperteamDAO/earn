@@ -91,6 +91,7 @@ export function Banner({
               id={sponsor?.name}
               avatar={sponsor?.logo}
             />
+
             <div>
               <div className="flex items-center">
                 <div className="flex w-min items-center gap-1">

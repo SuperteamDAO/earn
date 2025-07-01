@@ -1,5 +1,4 @@
-import { BiSolidCoinStack } from 'react-icons/bi';
-
+import BiSolidCoinStack from '@/components/icons/BiSolidCoinStack';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 
 import { type TokenAsset } from '../../types/TokenAsset';
