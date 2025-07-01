@@ -16,6 +16,7 @@ import { Sheet, SheetContent } from '@/components/ui/sheet';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { useLogout, useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
+import { getTelegramBotURL } from '@/utils/getTelegramBotURL';
 
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 import { EmailSettingsModal } from '@/features/talent/components/EmailSettingsModal';
@@ -255,6 +256,10 @@ export const MobileDrawer = ({
             <NavItem
               label="Leaderboard"
               onClick={() => router.push(`/leaderboard`)}
+            />
+            <NavItem
+              label="Telegram Notifications"
+              onClick={() => router.push(getTelegramBotURL(user))}
             />
             <SupportFormDialog>
               <NavItem
