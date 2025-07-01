@@ -17,7 +17,7 @@ interface HomeFeed {
 }
 
 const fetchHomeFeed = async (): Promise<HomeFeed[]> => {
-  const { data } = await api.get('/api/feed/home');
+  const { data } = await api.get('/api/homepage/feed');
   return data;
 };
 

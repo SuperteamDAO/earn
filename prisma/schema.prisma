@@ -86,6 +86,19 @@ model Bounties {
   @@index([compensationType, maxRewardAsk])
   @@index([isWinnersAnnounced, isPublished, status])
   @@index([region, isPublished, status])
+  @@index([isPublished, isActive, isArchived, isPrivate, type])
+  @@index([deadline, isWinnersAnnounced])
+  @@index([usdValue, maxRewardAsk])
+  @@index([region, isPublished, isActive])
+  @@index([sponsorId, isPublished, isActive])
+  @@index([isFeatured, deadline])
+  @@index([createdAt, isPublished])
+  @@index([winnersAnnouncedAt, isWinnersAnnounced])
+  @@index([language, compensationType])
+  @@index([type, isPublished, isActive, isArchived])
+  @@index([isPublished, isActive, isArchived, isPrivate, hackathonprize, type])
+  @@index([region, type, isPublished, isActive])
+  @@index([deadline, isWinnersAnnounced, type])
 }
 
 model BountiesTemplates {
@@ -222,6 +235,15 @@ model Grants {
   @@index([sponsorId, isActive, isArchived, status])
   @@index([createdAt(sort: Desc)])
   @@index([totalApproved(sort: Desc)])
+  @@index([isPublished, isActive, isArchived, isPrivate, status])
+  @@index([region, isPublished, isActive, isArchived])
+  @@index([sponsorId, isPublished, isActive, isArchived])
+  @@index([isFeatured, createdAt])
+  @@index([status, isPublished, isActive])
+  @@index([region, status, isPublished])
+  @@index([minReward, maxReward])
+  @@index([totalPaid, totalApproved])
+  @@index([historicalApplications, totalApproved])
 }
 
 model GrantApplication {
