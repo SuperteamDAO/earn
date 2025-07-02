@@ -59,16 +59,8 @@ function getSkillFilter(
   }
 }
 
-// cache for user region data to avoid repeated calculations
-const grantsUserRegionCache = new Map<string, string[]>();
-
 function getUserRegionFilter(userLocation: string | null): string[] {
   if (!userLocation) return ['Global'];
-
-  const cacheKey = userLocation;
-  if (grantsUserRegionCache.has(cacheKey)) {
-    return grantsUserRegionCache.get(cacheKey)!;
-  }
 
   const userRegion = getCombinedRegion(userLocation, true);
   const regions = userRegion?.name
@@ -80,7 +72,6 @@ function getUserRegionFilter(userLocation: string | null): string[] {
       ]
     : ['Global'];
 
-  grantsUserRegionCache.set(cacheKey, regions);
   return regions;
 }
 
