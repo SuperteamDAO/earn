@@ -2,7 +2,6 @@ import { type GetServerSideProps } from 'next';
 import dynamic from 'next/dynamic';
 
 import { Home } from '@/layouts/Home';
-import { USER_ID_COOKIE_NAME } from '@/store/user';
 
 import { Listings } from '@/features/listings/components/Listings';
 
@@ -56,19 +55,13 @@ export default function HomePage({ potentialSession }: HomePageProps) {
     </Home>
   );
 }
+
 export const getServerSideProps: GetServerSideProps<HomePageProps> = async ({
   req,
 }) => {
   const cookies = req.headers.cookie || '';
 
-  const cookieExists = cookies
-    .split(';')
-    .map((cookie) => cookie.trim())
-    .some((cookie) => cookie.startsWith(`${USER_ID_COOKIE_NAME}=`));
+  const cookieExists = /(^|;)\s*user-id-hint=/.test(cookies);
 
-  try {
-    return { props: { potentialSession: cookieExists } };
-  } catch (e) {
-    return { props: { potentialSession: cookieExists } };
-  }
+  return { props: { potentialSession: cookieExists } };
 };
