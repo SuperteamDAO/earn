@@ -1,3 +1,4 @@
+import { SubmissionLabels, SubmissionStatus } from '@prisma/client';
 import { TooltipArrow } from '@radix-ui/react-tooltip';
 import { useMutation } from '@tanstack/react-query';
 import dayjs from 'dayjs';
@@ -30,6 +31,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { StatusPill } from '@/components/ui/status-pill';
 import { Tooltip } from '@/components/ui/tooltip';
+import { PDTG } from '@/constants/Telegram';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { type SubmissionWithUser } from '@/interface/submission';
 import { api } from '@/lib/api';
@@ -154,6 +156,20 @@ export const SubmissionHeader = ({
 
   const pastDeadline = isDeadlineOver(bounty?.deadline);
 
+  const totalPodiumSpots = remainings
+    ? remainings.podiums + remainings.bonus
+    : 0;
+  const rejectedOrSpamSubmissions = submissions.filter(
+    (s) =>
+      s.status === SubmissionStatus.Rejected ||
+      s.label === SubmissionLabels.Spam,
+  ).length;
+  const eligibleSubmissions = submissions.length - rejectedOrSpamSubmissions;
+  const showWarning =
+    !!remainings &&
+    !bounty?.isWinnersAnnounced &&
+    totalPodiumSpots > eligibleSubmissions;
+
   return (
     <div className="mb-2 flex items-center justify-between">
       <div>
@@ -251,36 +267,56 @@ export const SubmissionHeader = ({
         </div>
       </div>
       {!isProject && !bounty?.isWinnersAnnounced && (
-        <div>
+        <div className="flex flex-col items-end">
           {activeTab === 'submissions' && (
-            <Tooltip
-              content={
-                <>
-                  You cannot change the winners once the results are published!
-                  <TooltipArrow />
-                </>
-              }
-              disabled={!bounty?.isWinnersAnnounced}
-              contentProps={{ sideOffset: 5 }}
-            >
-              <ShinyButton
-                disabled={
-                  !afterAnnounceDate ||
-                  isHackathonPage ||
-                  remainings?.podiums !== 0 ||
-                  (remainings?.bonus > 0 &&
-                    submissions.filter((s) => !s.isWinner).length > 0)
+            <>
+              <Tooltip
+                content={
+                  <>
+                    You cannot change the winners once the results are
+                    published!
+                    <TooltipArrow />
+                  </>
                 }
-                onClick={onWinnersAnnounceOpen}
-                animate={true}
-                classNames={{
-                  span: 'bg-brand-purple text-white font-semibold',
-                }}
+                disabled={!bounty?.isWinnersAnnounced}
+                contentProps={{ sideOffset: 5 }}
               >
-                <Check className="size-4" />
-                Announce Winners
-              </ShinyButton>
-            </Tooltip>
+                <ShinyButton
+                  disabled={
+                    !afterAnnounceDate ||
+                    isHackathonPage ||
+                    remainings?.podiums !== 0 ||
+                    (remainings?.bonus > 0 &&
+                      submissions.filter((s) => !s.isWinner).length > 0)
+                  }
+                  onClick={onWinnersAnnounceOpen}
+                  animate={true}
+                  classNames={{
+                    span: 'bg-brand-purple text-white font-semibold',
+                    button: 'w-52',
+                  }}
+                >
+                  <Check className="size-4" />
+                  Announce Winners
+                </ShinyButton>
+              </Tooltip>
+              {showWarning && (
+                <div className="my-2 flex w-62">
+                  <p className="text-xs text-red-400">
+                    You don&apos;t have enough eligible (non-spam) submissions.{' '}
+                    <a
+                      href={PDTG}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-brand-purple underline"
+                    >
+                      Reach out
+                    </a>{' '}
+                    to us on TG
+                  </p>
+                </div>
+              )}
+            </>
           )}
         </div>
       )}
