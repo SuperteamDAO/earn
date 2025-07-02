@@ -28,6 +28,9 @@ importers:
       '@prisma/adapter-planetscale':
         specifier: ^6.11.0
         version: 6.11.0
+      '@prisma/client':
+        specifier: ^6.11.0
+        version: 6.11.0(prisma@6.11.0(typescript@5.8.3))(typescript@5.8.3)
       '@privy-io/react-auth':
         specifier: 2.6.4
         version: 2.6.4(@planetscale/database@1.19.0)(@react-native-async-storage/async-storage@1.24.0(react-native@0.78.0(@babel/core@7.26.0)(@babel/preset-env@7.26.9(@babel/core@7.26.0))(@types/react@19.0.8)(bufferutil@4.0.9)(react@19.1.0)(utf-8-validate@5.0.10)))(@solana/web3.js@1.98.2(bufferutil@4.0.9)(encoding@0.1.13)(typescript@5.8.3)(utf-8-validate@5.0.10))(@types/react@19.0.8)(@upstash/redis@1.35.0)(bs58@6.0.0)(bufferutil@4.0.9)(immer@10.1.1)(ioredis@5.6.1)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(typescript@5.8.3)(use-sync-external-store@1.5.0(react@19.1.0))(utf-8-validate@5.0.10)(zod@3.25.67)
@@ -2733,6 +2736,18 @@ packages:
 
   '@prisma/adapter-planetscale@6.11.0':
     resolution: {integrity: sha512-FfAQIMoL1fX2IS/8O5m4MDRsfBxQSE4If8XtUxh3yVE5b13WMIV0kySqCYYpNLvubQ+WdaEWoPo+TsBAK39d3g==}
+
+  '@prisma/client@6.11.0':
+    resolution: {integrity: sha512-K9TkKepOYvCOg3qCuKz7ZHf6rf58BFKi08plKjU4qVv9y7/UxO6tLz7PlWcgODUZKURLPmRHjHERffIx/8az4w==}
+    engines: {node: '>=18.18'}
+    peerDependencies:
+      prisma: '*'
+      typescript: '>=5.1.0'
+    peerDependenciesMeta:
+      prisma:
+        optional: true
+      typescript:
+        optional: true
 
   '@prisma/config@6.11.0':
     resolution: {integrity: sha512-icBfutMpdrwSf2ggo012zhQ4oianijXL/UPbv4PNVK3WUWbB3/F5Ltq8ZfElGrtwKC6XuFFPxU5qDC9x7vh8zQ==}
@@ -13109,6 +13124,11 @@ snapshots:
       '@planetscale/database': 1.19.0
       '@prisma/driver-adapter-utils': 6.11.0
       async-mutex: 0.5.0
+
+  '@prisma/client@6.11.0(prisma@6.11.0(typescript@5.8.3))(typescript@5.8.3)':
+    optionalDependencies:
+      prisma: 6.11.0(typescript@5.8.3)
+      typescript: 5.8.3
 
   '@prisma/config@6.11.0':
     dependencies:
