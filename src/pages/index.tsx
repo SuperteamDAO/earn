@@ -1,6 +1,8 @@
+import { type GetServerSideProps } from 'next';
 import dynamic from 'next/dynamic';
 
 import { Home } from '@/layouts/Home';
+import { USER_ID_COOKIE_NAME } from '@/store/user';
 
 import { Listings } from '@/features/listings/components/Listings';
 
@@ -36,16 +38,37 @@ const GrantsSection = dynamic(
   { ssr: false },
 );
 
-export default function HomePage() {
+interface HomePageProps {
+  readonly potentialSession: boolean;
+}
+
+export default function HomePage({ potentialSession }: HomePageProps) {
   return (
-    <Home type="landing">
+    <Home type="landing" potentialSession={potentialSession}>
       <InstallPWAModal />
       <HomepagePop />
       <TalentAnnouncements />
       <div className="w-full">
-        <Listings type="home" />
+        <Listings type="home" potentialSession={potentialSession} />
+        {/* <HackathonSection type="home" /> */}
         <GrantsSection type="home" />
       </div>
     </Home>
   );
 }
+export const getServerSideProps: GetServerSideProps<HomePageProps> = async ({
+  req,
+}) => {
+  const cookies = req.headers.cookie || '';
+
+  const cookieExists = cookies
+    .split(';')
+    .map((cookie) => cookie.trim())
+    .some((cookie) => cookie.startsWith(`${USER_ID_COOKIE_NAME}=`));
+
+  try {
+    return { props: { potentialSession: cookieExists } };
+  } catch (e) {
+    return { props: { potentialSession: cookieExists } };
+  }
+};

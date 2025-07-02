@@ -96,6 +96,7 @@ export interface Rewards {
 
 export interface ListingTabsProps {
   type: ListingContext;
+  potentialSession?: boolean;
   region?: string;
   sponsor?: string;
 }

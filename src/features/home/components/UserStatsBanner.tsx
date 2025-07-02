@@ -51,7 +51,7 @@ export const UserStatsBanner = () => {
       <div className="h-px bg-[#7671da] md:hidden" />
 
       {stats && (stats.wins ?? 0) > 0 && (
-        <div className="mx-0.5 -mt-1 flex justify-between gap-4 sm:gap-8 md:mt-0 md:justify-start">
+        <div className="mx-0.5 -mt-1.5 flex justify-between gap-4 sm:gap-8 md:mt-0 md:justify-start">
           <Stat
             value={new Intl.NumberFormat('en-US', {
               style: 'currency',

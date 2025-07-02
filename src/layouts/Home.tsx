@@ -4,8 +4,6 @@ import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import React, { type ReactNode, useMemo } from 'react';
 
-import { AnimateChangeInHeight } from '@/components/shared/AnimateChangeInHeight';
-import { Skeleton } from '@/components/ui/skeleton';
 import { type Superteam } from '@/constants/Superteam';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
@@ -19,6 +17,8 @@ interface HomeProps {
   readonly children: ReactNode;
   readonly type: 'landing' | 'listing' | 'region' | 'feed';
   readonly st?: Superteam;
+  readonly potentialSession?: boolean;
+  readonly totalUsers?: number | null;
 }
 
 type CategoryTypes = 'content' | 'development' | 'design' | 'other' | 'all';
@@ -39,9 +39,14 @@ const HomeSideBar = dynamic(() =>
   import('@/features/home/components/SideBar').then((mod) => mod.HomeSideBar),
 );
 
-export function Home({ children, type, st }: HomeProps) {
+export function Home({
+  children,
+  type,
+  st,
+  potentialSession = false,
+}: HomeProps) {
   const router = useRouter();
-  const { authenticated, ready } = usePrivy();
+  const { authenticated } = usePrivy();
 
   const { data: totalUsers } = useQuery(userCountQuery);
 
@@ -89,28 +94,22 @@ export function Home({ children, type, st }: HomeProps) {
             <div className="w-full lg:border-r lg:border-slate-100">
               <div className="w-full lg:pr-6">
                 {type === 'landing' && (
-                  <AnimateChangeInHeight>
-                    <div className="pt-3">
-                      {ready && authenticated && <UserStatsBanner />}
-                      {ready && !authenticated && (
-                        <BannerCarousel totalUsers={totalUsers?.totalUsers} />
-                      )}
-                      {!ready && (
-                        <Skeleton className="h-[16rem] w-full rounded-xl md:h-[17.875rem]" />
-                      )}
-                    </div>
-                  </AnimateChangeInHeight>
-                )}
-                {!currentCategory && type === 'listing' && (
-                  <AnimateChangeInHeight>
-                    {ready && authenticated && <UserStatsBanner />}
-                    {ready && !authenticated && (
+                  <div className="pt-3">
+                    {potentialSession || authenticated ? (
+                      <UserStatsBanner />
+                    ) : (
                       <BannerCarousel totalUsers={totalUsers?.totalUsers} />
                     )}
-                    {!ready && (
-                      <Skeleton className="h-full w-full rounded-xl" />
+                  </div>
+                )}
+                {!currentCategory && type === 'listing' && (
+                  <div className="pt-3">
+                    {potentialSession || authenticated ? (
+                      <UserStatsBanner />
+                    ) : (
+                      <BannerCarousel totalUsers={totalUsers?.totalUsers} />
                     )}
-                  </AnimateChangeInHeight>
+                  </div>
                 )}
                 {children}
               </div>

@@ -90,9 +90,7 @@ export const HomeSideBar = ({ type }: SideBarProps) => {
           <div className="flex flex-col gap-4">
             {router.asPath === '/' &&
               (!user || (!user.isTalentFilled && !user.currentSponsorId)) && (
-                <>
-                  <SponsorBanner />
-                </>
+                <SponsorBanner />
               )}
             <TotalStats
               isTotalLoading={isTotalsLoading}

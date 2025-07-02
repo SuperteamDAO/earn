@@ -1,5 +1,4 @@
-import { usePrivy } from '@privy-io/react-auth';
-
+import { AnimateChangeInHeight } from '@/components/shared/AnimateChangeInHeight';
 import { EmptySection } from '@/components/shared/EmptySection';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 
@@ -20,7 +19,6 @@ export interface HackathonSectionProps {
 }
 
 export const HackathonSection = ({ type }: HackathonSectionProps) => {
-  const { ready } = usePrivy();
   const {
     activeName,
     activeStatus,
@@ -44,7 +42,7 @@ export const HackathonSection = ({ type }: HackathonSectionProps) => {
   });
 
   const renderContent = () => {
-    if (isLoading || !ready) {
+    if (isLoading) {
       return Array.from({ length: 5 }).map((_, index) => (
         <ListingCardSkeleton key={index} />
       ));
@@ -135,7 +133,9 @@ export const HackathonSection = ({ type }: HackathonSectionProps) => {
         ))}
       </div>
 
-      {renderContent()}
+      <AnimateChangeInHeight duration={0.1}>
+        {renderContent()}
+      </AnimateChangeInHeight>
     </div>
   );
 };

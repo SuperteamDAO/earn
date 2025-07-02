@@ -6,10 +6,19 @@ import axios from 'axios';
 import { useRouter } from 'next/router';
 import posthog from 'posthog-js';
 import { useEffect } from 'react';
+import { getCookie, removeCookie, setCookie } from 'typescript-cookie';
 
 import { useForcedProfileRedirect } from '@/hooks/use-forced-profile-redirect';
 import { type User } from '@/interface/user';
 import { api } from '@/lib/api';
+
+export const USER_ID_COOKIE_NAME = 'user-id-hint';
+const COOKIE_OPTIONS = {
+  path: '/',
+  secure: process.env.NODE_ENV === 'production',
+  expires: 30,
+  sameSite: 'lax' as const,
+};
 
 export const useUser = () => {
   const { authenticated, ready, logout } = usePrivy();
@@ -26,6 +35,13 @@ export const useUser = () => {
       try {
         const { data: fetchedUser } = await api.get<User>('/api/user/');
 
+        if (fetchedUser?.id) {
+          const currentUserId = getCookie(USER_ID_COOKIE_NAME);
+          if (fetchedUser.id !== currentUserId) {
+            setCookie(USER_ID_COOKIE_NAME, fetchedUser.id, COOKIE_OPTIONS);
+          }
+        }
+
         if (fetchedUser?.isBlocked && !router.pathname.includes('/blocked')) {
           router.push('/blocked');
         }
@@ -35,6 +51,7 @@ export const useUser = () => {
           if (axios.isAxiosError(error)) {
             if (error.response?.status === 401) {
               console.warn('User request returned 401, logging out.');
+              removeCookie(USER_ID_COOKIE_NAME, { path: '/' });
               await logout();
               if (posthog._isIdentified()) posthog.reset();
             }
@@ -93,6 +110,11 @@ export const useUpdateUser = () => {
       const updatedUser = response.data;
       if (updatedUser) {
         queryClient.setQueryData(['user'], updatedUser);
+
+        const currentUserId = getCookie(USER_ID_COOKIE_NAME);
+        if (updatedUser.id !== currentUserId) {
+          setCookie(USER_ID_COOKIE_NAME, updatedUser.id, COOKIE_OPTIONS);
+        }
       }
     },
   });
@@ -103,6 +125,8 @@ export const useLogout = () => {
   const queryClient = useQueryClient();
 
   return async () => {
+    removeCookie(USER_ID_COOKIE_NAME, { path: '/' });
+
     await logout();
 
     queryClient.clear();
