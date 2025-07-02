@@ -1,6 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useQueryClient } from '@tanstack/react-query';
-import axios from 'axios';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -10,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { DialogTitle } from '@/components/ui/dialog';
 import { Form } from '@/components/ui/form';
 import { FormFieldWrapper } from '@/components/ui/form-field-wrapper';
+import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 
 import { SubmissionTerms } from '@/features/listings/components/Submission/SubmissionTerms';
@@ -47,7 +47,7 @@ export const TrancheFormModal = ({ grant, applicationId, onClose }: Props) => {
   const onSubmit = async (values: TrancheFormValues) => {
     try {
       setIsSubmitting(true);
-      await axios.post('/api/grant-application/request-tranche', {
+      await api.post('/api/grant-application/request-tranche', {
         ...values,
         applicationId,
       });

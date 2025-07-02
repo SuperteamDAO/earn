@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { type GetServerSideProps } from 'next';
 import dynamic from 'next/dynamic';
 
@@ -76,23 +75,15 @@ export const getServerSideProps: GetServerSideProps<HomePageProps> = async ({
     .some((cookie) => cookie.startsWith(`${USER_ID_COOKIE_NAME}=`));
 
   try {
-    const { data } = await axios.get(
+    const res = await fetch(
       'https://earn.superteam.fun/api/homepage/user-count',
     );
+
+    const data = await res.json();
     const totalUsers = data.totalUsers;
 
-    return {
-      props: {
-        potentialSession: cookieExists,
-        totalUsers,
-      },
-    };
+    return { props: { potentialSession: cookieExists, totalUsers } };
   } catch (e) {
-    return {
-      props: {
-        potentialSession: cookieExists,
-        totalUsers: null,
-      },
-    };
+    return { props: { potentialSession: cookieExists, totalUsers: null } };
   }
 };
