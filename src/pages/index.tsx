@@ -1,8 +1,6 @@
-import { type GetServerSideProps } from 'next';
 import dynamic from 'next/dynamic';
 
 import { Home } from '@/layouts/Home';
-import { USER_ID_COOKIE_NAME } from '@/store/user';
 
 import { Listings } from '@/features/listings/components/Listings';
 
@@ -38,52 +36,16 @@ const GrantsSection = dynamic(
   { ssr: false },
 );
 
-interface HomePageProps {
-  readonly potentialSession: boolean;
-  readonly totalUsers: number | null;
-}
-
-export default function HomePage({
-  potentialSession,
-  totalUsers,
-}: HomePageProps) {
+export default function HomePage() {
   return (
-    <Home
-      type="landing"
-      potentialSession={potentialSession}
-      totalUsers={totalUsers}
-    >
+    <Home type="landing">
       <InstallPWAModal />
       <HomepagePop />
       <TalentAnnouncements />
       <div className="w-full">
-        <Listings type="home" potentialSession={potentialSession} />
-        {/* <HackathonSection type="home" /> */}
+        <Listings type="home" />
         <GrantsSection type="home" />
       </div>
     </Home>
   );
 }
-export const getServerSideProps: GetServerSideProps<HomePageProps> = async ({
-  req,
-}) => {
-  const cookies = req.headers.cookie || '';
-
-  const cookieExists = cookies
-    .split(';')
-    .map((cookie) => cookie.trim())
-    .some((cookie) => cookie.startsWith(`${USER_ID_COOKIE_NAME}=`));
-
-  try {
-    const res = await fetch(
-      'https://earn.superteam.fun/api/homepage/user-count',
-    );
-
-    const data = await res.json();
-    const totalUsers = data.totalUsers;
-
-    return { props: { potentialSession: cookieExists, totalUsers } };
-  } catch (e) {
-    return { props: { potentialSession: cookieExists, totalUsers: null } };
-  }
-};

@@ -65,11 +65,10 @@ export const HomeSideBar = ({ type }: SideBarProps) => {
   });
 
   return (
-    <div className="flex w-96 flex-col gap-8 py-4 pl-6">
+    <div className="flex w-96 flex-col gap-8 py-3 pl-6">
       {type === 'feed' && (
         <>
           <VibeCard />
-          {/* <SidebarBannerBreakout /> */}
           <LiveListings>
             <div className="flex items-center justify-between">
               <span className="text-sm font-medium text-gray-400">
@@ -86,19 +85,22 @@ export const HomeSideBar = ({ type }: SideBarProps) => {
           </LiveListings>
         </>
       )}
-      {router.asPath === '/' &&
-        (!user || (!user.isTalentFilled && !user.currentSponsorId)) && (
-          <SponsorBanner />
-        )}
       {type !== 'feed' ? (
         <>
-          <TotalStats
-            isTotalLoading={isTotalsLoading}
-            bountyCount={totals?.count}
-            TVE={totals?.totalInUSD}
-          />
+          <div className="flex flex-col gap-4">
+            {router.asPath === '/' &&
+              (!user || (!user.isTalentFilled && !user.currentSponsorId)) && (
+                <>
+                  <SponsorBanner />
+                </>
+              )}
+            <TotalStats
+              isTotalLoading={isTotalsLoading}
+              bountyCount={totals?.count}
+              TVE={totals?.totalInUSD}
+            />
+          </div>
 
-          {/* <SidebarBannerBreakout /> */}
           <HowItWorks />
           <RecentEarners earners={recentEarners} />
           <RecentActivity />

@@ -1,8 +1,11 @@
 import { usePrivy } from '@privy-io/react-auth';
+import { useQuery } from '@tanstack/react-query';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import React, { type ReactNode, useMemo } from 'react';
 
+import { AnimateChangeInHeight } from '@/components/shared/AnimateChangeInHeight';
+import { Skeleton } from '@/components/ui/skeleton';
 import { type Superteam } from '@/constants/Superteam';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
@@ -10,13 +13,12 @@ import { cn } from '@/utils/cn';
 
 import { BannerCarousel } from '@/features/home/components/Banner';
 import { UserStatsBanner } from '@/features/home/components/UserStatsBanner';
+import { userCountQuery } from '@/features/home/queries/user-count';
 
 interface HomeProps {
   readonly children: ReactNode;
   readonly type: 'landing' | 'listing' | 'region' | 'feed';
   readonly st?: Superteam;
-  readonly potentialSession?: boolean;
-  readonly totalUsers?: number | null;
 }
 
 type CategoryTypes = 'content' | 'development' | 'design' | 'other' | 'all';
@@ -37,15 +39,11 @@ const HomeSideBar = dynamic(() =>
   import('@/features/home/components/SideBar').then((mod) => mod.HomeSideBar),
 );
 
-export function Home({
-  children,
-  type,
-  st,
-  potentialSession = false,
-  totalUsers,
-}: HomeProps) {
+export function Home({ children, type, st }: HomeProps) {
   const router = useRouter();
-  const { authenticated } = usePrivy();
+  const { authenticated, ready } = usePrivy();
+
+  const { data: totalUsers } = useQuery(userCountQuery);
 
   const currentCategory = useMemo(() => {
     const categoryParam = router.query.category?.toString().toLowerCase();
@@ -91,22 +89,28 @@ export function Home({
             <div className="w-full lg:border-r lg:border-slate-100">
               <div className="w-full lg:pr-6">
                 {type === 'landing' && (
-                  <div className="pt-3">
-                    {potentialSession || authenticated ? (
-                      <UserStatsBanner />
-                    ) : (
-                      <BannerCarousel totalUsers={totalUsers} />
-                    )}
-                  </div>
+                  <AnimateChangeInHeight>
+                    <div className="pt-3">
+                      {ready && authenticated && <UserStatsBanner />}
+                      {ready && !authenticated && (
+                        <BannerCarousel totalUsers={totalUsers?.totalUsers} />
+                      )}
+                      {!ready && (
+                        <Skeleton className="h-[16rem] w-full rounded-xl md:h-[17.875rem]" />
+                      )}
+                    </div>
+                  </AnimateChangeInHeight>
                 )}
                 {!currentCategory && type === 'listing' && (
-                  <div className="pt-3">
-                    {potentialSession || authenticated ? (
-                      <UserStatsBanner />
-                    ) : (
-                      <BannerCarousel totalUsers={totalUsers} />
+                  <AnimateChangeInHeight>
+                    {ready && authenticated && <UserStatsBanner />}
+                    {ready && !authenticated && (
+                      <BannerCarousel totalUsers={totalUsers?.totalUsers} />
                     )}
-                  </div>
+                    {!ready && (
+                      <Skeleton className="h-full w-full rounded-xl" />
+                    )}
+                  </AnimateChangeInHeight>
                 )}
                 {children}
               </div>

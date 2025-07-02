@@ -1,5 +1,6 @@
 import { usePrivy } from '@privy-io/react-auth';
 
+import { AnimateChangeInHeight } from '@/components/shared/AnimateChangeInHeight';
 import { EmptySection } from '@/components/shared/EmptySection';
 import { Separator } from '@/components/ui/separator';
 import { useBreakpoint } from '@/hooks/use-breakpoint';
@@ -17,15 +18,11 @@ import { ListingFilters } from './ListingFilters';
 import { ListingTabs } from './ListingTabs';
 import { ViewAllButton } from './ViewAllButton';
 
-export const Listings = ({
-  type,
-  potentialSession,
-  region,
-  sponsor,
-}: ListingTabsProps) => {
+export const Listings = ({ type, region, sponsor }: ListingTabsProps) => {
+  const { authenticated, ready } = usePrivy();
+
   const isMd = useBreakpoint('md');
 
-  const { authenticated } = usePrivy();
   const {
     ref: scrollContainerRef,
     showLeftShadow,
@@ -44,9 +41,7 @@ export const Listings = ({
     handleSortChange,
   } = useListingState({
     defaultCategory:
-      (potentialSession || authenticated) && type === 'home'
-        ? 'For You'
-        : 'All',
+      ready && authenticated && type === 'home' ? 'For You' : 'All',
   });
 
   const {
@@ -86,7 +81,7 @@ export const Listings = ({
   };
 
   const renderContent = () => {
-    if (isLoading) {
+    if (isLoading || !ready) {
       return Array.from({ length: 5 }).map((_, index) => (
         <ListingCardSkeleton key={index} />
       ));
@@ -164,7 +159,7 @@ export const Listings = ({
           ref={scrollContainerRef}
           className="hide-scrollbar flex gap-1.5 overflow-x-auto px-2 py-1"
         >
-          {potentialSession && (
+          {ready && authenticated && (
             <CategoryPill
               key="foryou"
               phEvent="foryou_navpill"
@@ -215,7 +210,9 @@ export const Listings = ({
         />
       </div>
 
-      {renderContent()}
+      <AnimateChangeInHeight duration={0.1}>
+        {renderContent()}
+      </AnimateChangeInHeight>
     </div>
   );
 };

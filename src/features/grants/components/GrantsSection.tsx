@@ -1,3 +1,6 @@
+import { usePrivy } from '@privy-io/react-auth';
+
+import { AnimateChangeInHeight } from '@/components/shared/AnimateChangeInHeight';
 import { EmptySection } from '@/components/shared/EmptySection';
 import { useBreakpoint } from '@/hooks/use-breakpoint';
 import { cn } from '@/utils/cn';
@@ -18,6 +21,7 @@ interface GrantSectionProps {
 }
 
 export const GrantsSection = ({ type, region, sponsor }: GrantSectionProps) => {
+  const { ready } = usePrivy();
   const { activeCategory, handleCategoryChange } = useGrantState();
   const isMd = useBreakpoint('md');
 
@@ -33,7 +37,7 @@ export const GrantsSection = ({ type, region, sponsor }: GrantSectionProps) => {
   });
 
   const renderContent = () => {
-    if (isLoading) {
+    if (isLoading || !ready) {
       return Array.from({ length: 5 }).map((_, index) => (
         <ListingCardSkeleton key={index} />
       ));
@@ -86,7 +90,9 @@ export const GrantsSection = ({ type, region, sponsor }: GrantSectionProps) => {
         ))}
       </div>
 
-      {renderContent()}
+      <AnimateChangeInHeight duration={0.3}>
+        {renderContent()}
+      </AnimateChangeInHeight>
     </div>
   );
 };

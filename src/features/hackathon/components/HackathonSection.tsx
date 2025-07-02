@@ -1,3 +1,5 @@
+import { usePrivy } from '@privy-io/react-auth';
+
 import { EmptySection } from '@/components/shared/EmptySection';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 
@@ -18,6 +20,7 @@ export interface HackathonSectionProps {
 }
 
 export const HackathonSection = ({ type }: HackathonSectionProps) => {
+  const { ready } = usePrivy();
   const {
     activeName,
     activeStatus,
@@ -41,7 +44,7 @@ export const HackathonSection = ({ type }: HackathonSectionProps) => {
   });
 
   const renderContent = () => {
-    if (isLoading) {
+    if (isLoading || !ready) {
       return Array.from({ length: 5 }).map((_, index) => (
         <ListingCardSkeleton key={index} />
       ));

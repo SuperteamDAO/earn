@@ -39,14 +39,7 @@ const csp = baseCsp.replace(/\s{2,}/g, ' ').trim();
 
 const nextConfig: NextConfig = {
   eslint: { dirs: ['.'] },
-  turbopack: {
-    rules: {
-      '*.svg': {
-        loaders: ['@svgr/webpack'],
-        as: '*.js',
-      },
-    },
-  },
+  turbopack: { rules: { '*.svg': { loaders: ['@svgr/webpack'], as: '*.js' } } },
   poweredByHeader: false,
   trailingSlash: true,
   reactStrictMode: true,
@@ -68,7 +61,8 @@ const nextConfig: NextConfig = {
   },
   experimental: {
     optimizePackageImports: [
-      '@privy-io/*',
+      '@privy-io/react-auth',
+      '@privy-io/server-auth',
       '@radix-ui/react-*',
       '@solana/*',
       '@tanstack/react-query',
@@ -89,7 +83,6 @@ const nextConfig: NextConfig = {
       'react-select',
       'sonner',
       'tailwind-merge',
-      'typescript-cookie',
       'vaul',
       'zod',
     ],
@@ -100,26 +93,15 @@ const nextConfig: NextConfig = {
     headers.push({
       source: '/(.*)',
       headers: [
-        {
-          key: 'X-Frame-Options',
-          value: 'SAMEORIGIN',
-        },
-        {
-          key: 'Content-Security-Policy',
-          value: csp,
-        },
+        { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
+        { key: 'Content-Security-Policy', value: csp },
       ],
     });
 
     if (process.env.NEXT_PUBLIC_VERCEL_ENV === 'preview') {
       headers.push({
         source: '/:path*',
-        headers: [
-          {
-            key: 'X-Robots-Tag',
-            value: 'noindex',
-          },
-        ],
+        headers: [{ key: 'X-Robots-Tag', value: 'noindex' }],
       });
     }
 

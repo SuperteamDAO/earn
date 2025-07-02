@@ -373,9 +373,6 @@ importers:
       turndown:
         specifier: ^7.2.0
         version: 7.2.0
-      typescript-cookie:
-        specifier: ^1.0.6
-        version: 1.0.6
       unfurl.js:
         specifier: ^6.4.0
         version: 6.4.0(encoding@0.1.13)
@@ -9182,10 +9179,6 @@ packages:
   typed-array-length@1.0.7:
     resolution: {integrity: sha512-3KS2b+kL7fsuk/eJZ7EQdnEmQoaho/r6KUef7hxvltNA5DR8NAUM+8wJMbJyZ4G9/7i3v5zPBIMN5aybAh2/Jg==}
     engines: {node: '>= 0.4'}
-
-  typescript-cookie@1.0.6:
-    resolution: {integrity: sha512-s+BZr7/9BUG6Kg7jGGcOY/4XJcP+iZRFdF3q4FPTfRSP83ivLWF94OcH8PrzGmnS8Ab9qP7ENu/ikLwNFsIafA==}
-    engines: {node: '>=14'}
 
   typescript-eslint@7.18.0:
     resolution: {integrity: sha512-PonBkP603E3tt05lDkbOMyaxJjvKqQrXsnow72sVeOFINDE/qNmnnd+f9b4N+U7W6MXnnYyrhtmF2t08QWwUbA==}
@@ -20818,8 +20811,6 @@ snapshots:
       is-typed-array: 1.1.13
       possible-typed-array-names: 1.0.0
       reflect.getprototypeof: 1.0.7
-
-  typescript-cookie@1.0.6: {}
 
   typescript-eslint@7.18.0(eslint@8.57.1)(typescript@5.8.3):
     dependencies:
