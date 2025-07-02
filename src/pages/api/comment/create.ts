@@ -1,6 +1,6 @@
-import { type CommentRefType } from '@prisma/client';
 import type { NextApiResponse } from 'next';
 
+import { type CommentRefType } from '@/interface/prisma/enums';
 import logger from '@/lib/logger';
 import { commentRateLimiter } from '@/lib/ratelimit';
 import { checkAndApplyRateLimit } from '@/lib/rateLimiterService';

@@ -1,5 +1,5 @@
-import type { EmailSettings, Prisma } from '@prisma/client';
-
+import type { EmailSettingsModel } from '@/interface/prisma/models';
+import type { Prisma } from '@/interface/prisma/namespace';
 import type { SponsorType } from '@/interface/sponsor';
 import type { UserSponsor } from '@/interface/userSponsor';
 
@@ -61,7 +61,7 @@ interface User {
   surveysShown?: Record<string, boolean>;
   stRecommended?: boolean;
   acceptedTOS?: boolean;
-  emailSettings?: EmailSettings[];
+  emailSettings?: EmailSettingsModel[];
   stLead?: string;
   isBlocked?: boolean;
 }

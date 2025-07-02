@@ -1,4 +1,3 @@
-import { type SubmissionLabels } from '@prisma/client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useAtom } from 'jotai';
 import { Check, ChevronLeft, ChevronRight } from 'lucide-react';
@@ -14,6 +13,7 @@ import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useDisclosure } from '@/hooks/use-disclosure';
+import { type SubmissionLabels } from '@/interface/prisma/enums';
 import type { SubmissionWithUser } from '@/interface/submission';
 import { SponsorLayout } from '@/layouts/Sponsor';
 import { useUser } from '@/store/user';

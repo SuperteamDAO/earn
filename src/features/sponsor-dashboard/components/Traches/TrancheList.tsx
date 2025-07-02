@@ -1,7 +1,3 @@
-import {
-  type GrantApplicationStatus,
-  type GrantTrancheStatus,
-} from '@prisma/client';
 import color from '@tiptap/extension-color';
 import { bg } from 'date-fns/locale';
 import { useAtom } from 'jotai';
@@ -22,6 +18,10 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
+import {
+  type GrantApplicationStatus,
+  type GrantTrancheStatus,
+} from '@/interface/prisma/enums';
 import { cn } from '@/utils/cn';
 import { nthLabelGenerator } from '@/utils/rank';
 

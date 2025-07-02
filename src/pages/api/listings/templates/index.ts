@@ -1,6 +1,7 @@
-import type { BountyType, Prisma } from '@prisma/client';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
+import { type BountyType } from '@/interface/prisma/enums';
+import { type Prisma } from '@/interface/prisma/namespace';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';

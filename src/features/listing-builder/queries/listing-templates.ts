@@ -1,6 +1,6 @@
-import { type BountyType } from '@prisma/client';
 import { queryOptions } from '@tanstack/react-query';
 
+import { type BountyType } from '@/interface/prisma/enums';
 import { api } from '@/lib/api';
 import { type BountyTemplateWithSponsor } from '@/pages/api/listings/templates';
 

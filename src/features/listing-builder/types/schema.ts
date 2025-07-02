@@ -1,12 +1,8 @@
-import {
-  BountyType,
-  CompensationType,
-  type Hackathon,
-  status,
-} from '@prisma/client';
 import { z } from 'zod';
 
 import { tokenList } from '@/constants/tokenList';
+import { BountyType, CompensationType, status } from '@/interface/prisma/enums';
+import { type HackathonModel } from '@/interface/prisma/models';
 import { skillsArraySchema } from '@/interface/skills';
 import { dayjs } from '@/utils/dayjs';
 
@@ -44,7 +40,7 @@ interface ListingFormSchemaOptions {
   isEditing: boolean;
   isST: boolean;
   pastListing?: Listing;
-  hackathons?: Hackathon[];
+  hackathons?: HackathonModel[];
 }
 export const createListingFormSchema = ({
   isGod,
@@ -278,7 +274,7 @@ export const createListingFormSchema = ({
 export const createListingRefinements = async (
   data: ListingFormData,
   ctx: z.RefinementCtx,
-  hackathons?: Hackathon[],
+  hackathons?: HackathonModel[],
   pick?: ValidationFields,
 ) => {
   if (data.compensationType === 'fixed') {

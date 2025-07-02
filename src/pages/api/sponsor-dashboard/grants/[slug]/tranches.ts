@@ -1,6 +1,7 @@
-import { type GrantTrancheStatus, type Prisma } from '@prisma/client';
 import type { NextApiResponse } from 'next';
 
+import { type GrantTrancheStatus } from '@/interface/prisma/enums';
+import { type Prisma } from '@/interface/prisma/namespace';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';

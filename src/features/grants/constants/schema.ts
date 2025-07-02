@@ -1,5 +1,6 @@
-import { type Prisma } from '@prisma/client';
 import { z } from 'zod';
+
+import { type Prisma } from '@/interface/prisma/namespace';
 
 export const GrantCategorySchema = z
   .enum(['All', 'Content', 'Design', 'Development', 'Other'])
