@@ -141,9 +141,7 @@ export const PayoutSection = ({
         <TableBody>
           {winners.map((submission) => {
             const hasMultipleTranches =
-              !submission?.isPaid &&
-              submission.paymentDetails &&
-              submission.paymentDetails.length > 0;
+              submission.paymentDetails && submission.paymentDetails.length > 0;
 
             const isExpanded = expandedRows.has(submission.id);
 
