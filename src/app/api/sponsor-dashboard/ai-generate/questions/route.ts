@@ -1,10 +1,10 @@
 import { openrouter } from '@openrouter/ai-sdk-provider';
-import { BountyType } from '@prisma/client';
 import { generateObject } from 'ai';
 import { headers } from 'next/headers';
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 
+import { BountyType } from '@/interface/prisma/enums';
 import logger from '@/lib/logger';
 import { aiGenerateRateLimiter } from '@/lib/ratelimit';
 import { checkAndApplyRateLimitApp } from '@/lib/rateLimiterService';

@@ -1,9 +1,9 @@
-import { type SubmissionLabels } from '@prisma/client';
 import axios from 'axios';
 import type { NextApiResponse } from 'next';
 import { z } from 'zod';
 
 import { tokenList } from '@/constants/tokenList';
+import { type SubmissionLabels } from '@/interface/prisma/enums';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { airtableConfig, airtableUpsert, airtableUrl } from '@/utils/airtable';

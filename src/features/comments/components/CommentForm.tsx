@@ -1,10 +1,10 @@
-import type { CommentRefType } from '@prisma/client';
 import posthog from 'posthog-js';
 import React, { useCallback, useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import type { Comment } from '@/interface/comments';
+import type { CommentRefType } from '@/interface/prisma/enums';
 import type { User } from '@/interface/user';
 import { api } from '@/lib/api';
 import { useUser } from '@/store/user';

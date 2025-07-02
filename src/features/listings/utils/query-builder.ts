@@ -1,8 +1,8 @@
-import { type Prisma } from '@prisma/client';
 import type { z } from 'zod';
 
 import { exclusiveSponsorData } from '@/constants/exclusiveSponsors';
 import { Superteams } from '@/constants/Superteam';
+import { type Prisma } from '@/interface/prisma/namespace';
 
 import {
   type ListingCategorySchema,

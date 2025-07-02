@@ -1,5 +1,3 @@
-import { SubmissionLabels } from '@prisma/client';
-
 import {
   AlertDialog,
   AlertDialogAction,
@@ -9,6 +7,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
+import { SubmissionLabels } from '@/interface/prisma/enums';
 
 interface SpamConfirmationDialogProps {
   isOpen: boolean;

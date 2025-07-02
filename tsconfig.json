@@ -34,8 +34,7 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
-      "@/public/*": ["./public/*"],
-      "@/generated/*": ["./generated/*"]
+      "@/public/*": ["./public/*"]
     },
     "plugins": [
       {
@@ -47,7 +46,7 @@
     "./out/**/*",
     "./node_modules/**/*",
     "./utils/functions.ts",
-    "./generated/**/*"
+    "./src/generated/**/*"
   ],
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"]
 }

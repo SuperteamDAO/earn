@@ -1,15 +1,16 @@
-import {
-  type GrantApplication,
-  type GrantTranche,
-  type User,
-} from '@prisma/client';
 import { queryOptions } from '@tanstack/react-query';
 
+import {
+  type GrantApplicationModel,
+  type GrantTrancheModel,
+  type UserModel,
+} from '@/interface/prisma/models';
 import { api } from '@/lib/api';
 
-export interface GrantApplicationWithTranchesAndUser extends GrantApplication {
-  GrantTranche: GrantTranche[];
-  user: User;
+export interface GrantApplicationWithTranchesAndUser
+  extends GrantApplicationModel {
+  GrantTranche: GrantTrancheModel[];
+  user: UserModel;
 }
 
 const fetchUserApplication = async (grantId: string) => {

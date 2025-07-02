@@ -1,11 +1,13 @@
 import { PrismaPlanetScale } from '@prisma/adapter-planetscale';
-import { PrismaClient } from '@prisma/client';
+
+import { PrismaClient } from './generated/prisma/client';
 
 const prismaClient = () => {
   return process.env.DATABASE_URL
     ? new PrismaClient({
         adapter: new PrismaPlanetScale({
           url: process.env.DATABASE_URL,
+          fetch,
         }),
         omit: {
           user: {

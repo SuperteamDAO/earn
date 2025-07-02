@@ -1,4 +1,3 @@
-import { type SubmissionLabels } from '@prisma/client';
 import { useAtom } from 'jotai';
 import debounce from 'lodash.debounce';
 import { ChevronDown, Search } from 'lucide-react';
@@ -18,6 +17,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
+import { type SubmissionLabels } from '@/interface/prisma/enums';
 import type { SubmissionWithUser } from '@/interface/submission';
 import { cn } from '@/utils/cn';
 import { getRankLabels } from '@/utils/rank';

@@ -1,10 +1,10 @@
-import {
-  type GrantApplicationStatus,
-  Prisma,
-  type SubmissionLabels,
-} from '@prisma/client';
 import type { NextApiResponse } from 'next';
 
+import {
+  type GrantApplicationStatus,
+  type SubmissionLabels,
+} from '@/interface/prisma/enums';
+import { Prisma } from '@/interface/prisma/namespace';
 import { type PrismaUserWithoutKYC } from '@/interface/user';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';

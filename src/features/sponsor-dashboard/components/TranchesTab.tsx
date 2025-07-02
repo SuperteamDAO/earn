@@ -1,4 +1,3 @@
-import { GrantTrancheStatus } from '@prisma/client';
 import {
   keepPreviousData,
   useMutation,
@@ -13,6 +12,7 @@ import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { useDisclosure } from '@/hooks/use-disclosure';
+import { GrantTrancheStatus } from '@/interface/prisma/enums';
 import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 
