@@ -1,10 +1,9 @@
+import { type BountyType, type Hackathon } from '@prisma/client';
 import { Provider, useSetAtom } from 'jotai';
 import { useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
 
 import { Form } from '@/components/ui/form';
-import { type BountyType } from '@/interface/prisma/enums';
-import { type HackathonModel } from '@/interface/prisma/models';
 import { Meta } from '@/layouts/Meta';
 import { useUser } from '@/store/user';
 import { HydrateAtoms, useInitAtom } from '@/utils/atoms';
@@ -52,7 +51,7 @@ function ListingEditor({
 }: {
   defaultListing: ListingFormData;
   isDuplicating?: boolean;
-  hackathons?: HackathonModel[];
+  hackathons?: Hackathon[];
   isST: boolean;
   isGod: boolean;
 }) {
@@ -147,7 +146,7 @@ interface Props {
   isEditing?: boolean;
   isDuplicating?: boolean;
   listing?: Listing;
-  hackathons?: HackathonModel[];
+  hackathons?: Hackathon[];
 }
 
 // atom values wont be available here, will only exist in child of HydrateAtoms immeditealy

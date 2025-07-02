@@ -50,7 +50,7 @@ interface GrantWithApplicationCount extends Grant {
   totalApplications: number;
 }
 
-import { type SubmissionLabels } from '@/interface/prisma/enums';
+import { type SubmissionLabels } from '@prisma/client';
 
 export interface GrantsAiContxt {
   totalInputTokens: number;

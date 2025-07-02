@@ -1,3 +1,4 @@
+import type { CompensationType } from '@prisma/client';
 import { useQuery } from '@tanstack/react-query';
 import { useAtomValue } from 'jotai';
 import { Link } from 'lucide-react';
@@ -32,7 +33,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import type { CompensationType } from '@/interface/prisma/enums';
 
 import { getListingIcon } from '@/features/listings/utils/getListingIcon';
 

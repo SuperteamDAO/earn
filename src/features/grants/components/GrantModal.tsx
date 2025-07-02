@@ -1,9 +1,9 @@
+import { type GrantApplication } from '@prisma/client';
 import { useAtom } from 'jotai';
 import { X } from 'lucide-react';
 import { useRef } from 'react';
 
 import { Dialog, DialogContent } from '@/components/ui/dialog';
-import { type GrantApplicationModel } from '@/interface/prisma/models';
 
 import { applicationStateAtom } from '../atoms/applicationStateAtom';
 import { type Grant } from '../types';
@@ -15,7 +15,7 @@ interface Props {
   isOpen: boolean;
   onClose: () => void;
   grant: Grant;
-  editableGrantApplication?: GrantApplicationModel;
+  editableGrantApplication?: GrantApplication;
   applicationId?: string;
   tranches?: number;
 }

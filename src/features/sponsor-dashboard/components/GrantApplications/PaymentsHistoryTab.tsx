@@ -1,3 +1,4 @@
+import { type GrantTranche } from '@prisma/client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { ChevronUp, ExternalLink, Search } from 'lucide-react';
 import React, { useState } from 'react';
@@ -13,7 +14,6 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { tokenList } from '@/constants/tokenList';
-import { type GrantTrancheModel } from '@/interface/prisma/models';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
@@ -100,7 +100,7 @@ const GrantTrancheRow = ({
   paymentDetails,
   token,
 }: {
-  paymentDetails: GrantTrancheModel[];
+  paymentDetails: GrantTranche[];
   token: string;
 }) => {
   return (

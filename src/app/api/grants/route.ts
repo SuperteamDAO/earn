@@ -1,8 +1,8 @@
+import { type Prisma, Prisma as PrismaNamespace } from '@prisma/client';
 import { cookies } from 'next/headers';
 import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
-import { Prisma } from '@/interface/prisma/namespace';
 import { prisma } from '@/prisma';
 import { USER_ID_COOKIE_NAME } from '@/store/user';
 
@@ -78,7 +78,7 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+    if (error instanceof PrismaNamespace.PrismaClientKnownRequestError) {
       console.error('Prisma error:', error.code, error.message);
       return NextResponse.json({ message: 'Database error' }, { status: 500 });
     }

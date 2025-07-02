@@ -1,8 +1,7 @@
+import { type BountyType, Prisma } from '@prisma/client';
 import { type NextApiRequest, type NextApiResponse } from 'next';
 
 import { CombinedRegions } from '@/constants/Superteam';
-import { type BountyType } from '@/interface/prisma/enums';
-import { Prisma } from '@/interface/prisma/namespace';
 import {
   type ParentSkills,
   type Skills,

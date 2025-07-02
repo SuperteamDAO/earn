@@ -1,4 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import { type Hackathon } from '@prisma/client';
 import { useQueryClient } from '@tanstack/react-query';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import debounce from 'lodash.debounce';
@@ -6,7 +7,6 @@ import { useCallback, useEffect, useRef } from 'react';
 import { useForm, useFormContext, type UseFormReturn } from 'react-hook-form';
 import { z } from 'zod';
 
-import { type HackathonModel } from '@/interface/prisma/models';
 import { dayjs } from '@/utils/dayjs';
 
 import {
@@ -40,7 +40,7 @@ export interface UseListingFormReturn extends UseFormReturn<ListingFormData> {
 
 export const useListingForm = (
   defaultValues?: ListingFormData,
-  hackathons?: HackathonModel[],
+  hackathons?: Hackathon[],
 ): UseListingFormReturn => {
   let formMethods: UseFormReturn<ListingFormData> | null = null;
   let isNewFormInitialized = false;

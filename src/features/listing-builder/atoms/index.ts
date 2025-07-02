@@ -1,7 +1,7 @@
+import { type Hackathon } from '@prisma/client';
 import { atom, createStore } from 'jotai';
 import { atomWithMutation } from 'jotai-tanstack-query';
 
-import { type HackathonModel } from '@/interface/prisma/models';
 import { api } from '@/lib/api';
 import { convertUndefinedToNull } from '@/utils/undefinedToNull';
 
@@ -14,7 +14,7 @@ const isSTAtom = atom<boolean>(false);
 const isEditingAtom = atom<boolean>(false);
 const listingStatusAtom = atom<ListingStatus | undefined>(undefined);
 const isDraftSavingAtom = atom(false);
-const hackathonsAtom = atom<HackathonModel[] | undefined>(undefined);
+const hackathonsAtom = atom<Hackathon[] | undefined>(undefined);
 const hideAutoSaveAtom = atom<boolean>(true);
 const descriptionKeyAtom = atom<string | number>(1);
 const skillsKeyAtom = atom<string | number>(1);

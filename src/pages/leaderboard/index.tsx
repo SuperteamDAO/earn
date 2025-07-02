@@ -1,13 +1,13 @@
+import {
+  type Prisma,
+  type TalentRankingSkills,
+  type TalentRankingTimeframe,
+} from '@prisma/client';
 import { useQuery } from '@tanstack/react-query';
 import { type GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import { useEffect, useState, useTransition } from 'react';
 
-import {
-  type TalentRankingSkills,
-  type TalentRankingTimeframe,
-} from '@/interface/prisma/enums';
-import { type Prisma } from '@/interface/prisma/namespace';
 import { type PrismaUserWithoutKYC } from '@/interface/user';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';

@@ -5,9 +5,6 @@
 /.pnp
 .pnp.js
 
-# generated prisma client
-src/generated
-
 # testing
 /coverage
 

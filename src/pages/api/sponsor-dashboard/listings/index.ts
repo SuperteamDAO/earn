@@ -1,6 +1,6 @@
+import { GrantStatus, status } from '@prisma/client';
 import type { NextApiResponse } from 'next';
 
-import { GrantStatus, status } from '@/interface/prisma/enums';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 

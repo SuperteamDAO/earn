@@ -1,19 +1,17 @@
+import {
+  type GrantApplication,
+  type GrantApplicationStatus,
+  type GrantTranche,
+  type GrantTrancheStatus,
+} from '@prisma/client';
 import { queryOptions } from '@tanstack/react-query';
 
-import {
-  type GrantApplicationStatus,
-  type GrantTrancheStatus,
-} from '@/interface/prisma/enums';
-import {
-  type GrantApplicationModel,
-  type GrantTrancheModel,
-} from '@/interface/prisma/models';
 import { api } from '@/lib/api';
 
 import { type Grant } from '@/features/grants/types';
 
-export interface GrantTrancheWithApplication extends GrantTrancheModel {
-  GrantApplication: GrantApplicationModel & {
+export interface GrantTrancheWithApplication extends GrantTranche {
+  GrantApplication: GrantApplication & {
     user: {
       id: string;
       firstName: string;

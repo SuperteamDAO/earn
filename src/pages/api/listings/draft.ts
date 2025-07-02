@@ -1,7 +1,7 @@
+import { type Prisma } from '@prisma/client';
 import { franc } from 'franc';
 import { type NextApiResponse } from 'next';
 
-import { type Prisma } from '@/interface/prisma/namespace';
 import earncognitoClient from '@/lib/earncognitoClient';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';

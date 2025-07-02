@@ -1,8 +1,7 @@
+import { type GrantApplication } from '@prisma/client';
 import TurndownService from 'turndown';
 
-import { type GrantApplicationModel } from '@/interface/prisma/models';
-
-interface GrantApplicationWithUserAndGrant extends GrantApplicationModel {
+interface GrantApplicationWithUserAndGrant extends GrantApplication {
   grant: {
     airtableId: string | null;
     title: string;

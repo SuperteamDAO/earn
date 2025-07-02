@@ -1,7 +1,7 @@
+import { type Prisma } from '@prisma/client';
 import { type NextApiRequest, type NextApiResponse } from 'next';
 import { z } from 'zod';
 
-import { type Prisma } from '@/interface/prisma/namespace';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { getCloudinaryFetchUrl } from '@/utils/cloudinary';

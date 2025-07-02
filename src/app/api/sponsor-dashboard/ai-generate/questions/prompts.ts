@@ -1,4 +1,4 @@
-import { type BountyType } from '@/interface/prisma/enums';
+import { type BountyType } from '@prisma/client';
 
 export function generateListingQuestionsPrompt(
   description: string,

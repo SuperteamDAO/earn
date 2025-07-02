@@ -1,4 +1,5 @@
-import { CreditEventType, SubmissionLabels } from '@/interface/prisma/enums';
+import { CreditEventType, SubmissionLabels } from '@prisma/client';
+
 import { prisma } from '@/prisma';
 import { dayjs } from '@/utils/dayjs';
 

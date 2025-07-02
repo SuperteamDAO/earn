@@ -1,4 +1,4 @@
-import { type Prisma } from '@/interface/prisma/namespace';
+import { type Prisma } from '@prisma/client';
 
 export const userSelectOptions: Prisma.UserSelect = {
   firstName: true,

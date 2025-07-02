@@ -1,6 +1,6 @@
+import { status } from '@prisma/client';
 import type { NextApiResponse } from 'next';
 
-import { status } from '@/interface/prisma/enums';
 import { prisma } from '@/prisma';
 
 import { type NextApiRequestWithUser } from '@/features/auth/types';

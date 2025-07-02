@@ -1,8 +1,8 @@
+import { type Prisma } from '@prisma/client';
 import { cookies } from 'next/headers';
 import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
-import { type Prisma } from '@/interface/prisma/namespace';
 import { prisma } from '@/prisma';
 import { USER_ID_COOKIE_NAME } from '@/store/user';
 

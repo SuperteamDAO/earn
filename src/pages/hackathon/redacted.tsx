@@ -1,3 +1,4 @@
+import { type Prisma } from '@prisma/client';
 import { useQuery } from '@tanstack/react-query';
 import { type GetServerSideProps } from 'next';
 import { Outfit } from 'next/font/google';
@@ -13,7 +14,6 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion';
 import { ASSET_URL } from '@/constants/ASSET_URL';
-import { type Prisma } from '@/interface/prisma/namespace';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { domPurify } from '@/lib/domPurify';

@@ -1,6 +1,6 @@
+import { type Submission } from '@prisma/client';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-import { type SubmissionModel } from '@/interface/prisma/models';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
@@ -76,7 +76,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
       },
     });
 
-    const sortSubmissions = (a: SubmissionModel, b: SubmissionModel) => {
+    const sortSubmissions = (a: Submission, b: Submission) => {
       if (a.winnerPosition && b.winnerPosition) {
         return (
           (Number(a.winnerPosition) || Number.MAX_VALUE) -

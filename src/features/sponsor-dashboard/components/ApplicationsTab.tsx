@@ -1,3 +1,4 @@
+import { GrantApplicationStatus, type SubmissionLabels } from '@prisma/client';
 import {
   keepPreviousData,
   useMutation,
@@ -13,10 +14,6 @@ import { Button } from '@/components/ui/button';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { useDisclosure } from '@/hooks/use-disclosure';
-import {
-  GrantApplicationStatus,
-  type SubmissionLabels,
-} from '@/interface/prisma/enums';
 import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 

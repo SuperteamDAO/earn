@@ -1,9 +1,9 @@
-import { queryOptions } from '@tanstack/react-query';
-
 import {
   type GrantApplicationStatus,
   type SubmissionLabels,
-} from '@/interface/prisma/enums';
+} from '@prisma/client';
+import { queryOptions } from '@tanstack/react-query';
+
 import { api } from '@/lib/api';
 
 import { type GrantApplicationWithUser } from '@/features/sponsor-dashboard/types';

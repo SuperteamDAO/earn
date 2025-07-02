@@ -1,10 +1,10 @@
-import { z } from 'zod';
-
 import {
   type BountyType,
   type CompensationType,
-} from '@/interface/prisma/enums';
-import { type HackathonModel } from '@/interface/prisma/models';
+  type Hackathon,
+} from '@prisma/client';
+import { z } from 'zod';
+
 import { dayjs } from '@/utils/dayjs';
 
 import { type Listing } from '@/features/listings/types';
@@ -17,7 +17,7 @@ interface ListingDefaults {
   isEditing: boolean;
   isST: boolean;
   type?: BountyType;
-  hackathons?: HackathonModel[];
+  hackathons?: Hackathon[];
   hackathonId?: string;
 }
 

@@ -1,3 +1,4 @@
+import type { Prisma } from '@prisma/client';
 import { useQuery } from '@tanstack/react-query';
 import { Info } from 'lucide-react';
 import type { GetServerSideProps } from 'next';
@@ -19,7 +20,6 @@ import { Tooltip } from '@/components/ui/tooltip';
 import { ASSET_URL } from '@/constants/ASSET_URL';
 import { useBreakpoint } from '@/hooks/use-breakpoint';
 import { type TrackProps } from '@/interface/hackathon';
-import { type Prisma } from '@/interface/prisma/namespace';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { domPurify } from '@/lib/domPurify';

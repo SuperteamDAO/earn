@@ -1,4 +1,5 @@
-import { type BountyType, type status } from '@/interface/prisma/enums';
+import type { BountyType, status } from '@prisma/client';
+
 import type { Skills } from '@/interface/skills';
 import type { SponsorType } from '@/interface/sponsor';
 import { type User } from '@/interface/user';

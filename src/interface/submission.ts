@@ -1,7 +1,4 @@
-import {
-  type SubmissionLabels,
-  type SubmissionStatus,
-} from '@/interface/prisma/enums';
+import { type SubmissionLabels, type SubmissionStatus } from '@prisma/client';
 
 import type { Listing, Rewards } from '@/features/listings/types';
 
