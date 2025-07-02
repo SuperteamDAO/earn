@@ -14,7 +14,20 @@ export default function Providers({ children }: { children: React.ReactNode }) {
           --font-mono: ${fontMono.style.fontFamily};
         }
       `}</style>
-      <PrivyProvider appId={process.env.NEXT_PUBLIC_PRIVY_APP_ID!}>
+      <PrivyProvider
+        config={{
+          externalWallets: { walletConnect: { enabled: false } },
+          appearance: { walletChainType: 'solana-only' },
+          loginMethods: ['email', 'google'],
+          solanaClusters: [
+            {
+              name: 'mainnet-beta',
+              rpcUrl: `https://${process.env.NEXT_PUBLIC_RPC_URL}`,
+            },
+          ],
+        }}
+        appId={process.env.NEXT_PUBLIC_PRIVY_APP_ID!}
+      >
         {children}
       </PrivyProvider>
     </QueryClientProvider>
