@@ -155,7 +155,6 @@ export const ListingTable = ({
 
       <VerifyPaymentModal
         listing={selectedListing}
-        setListing={setSelectedListing}
         isOpen={verifyPaymentIsOpen}
         onClose={verifyPaymentOnClose}
       />

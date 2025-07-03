@@ -371,7 +371,6 @@ export const SubmissionHeader = ({
 
       <VerifyPaymentModal
         listing={bounty}
-        setListing={() => {}}
         isOpen={verifyPaymentIsOpen}
         onClose={verifyPaymentOnClose}
       />

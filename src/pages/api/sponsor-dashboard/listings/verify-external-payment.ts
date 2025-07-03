@@ -244,48 +244,26 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       const isProject = listing.type === 'project';
       const existingPayments = (submission.paymentDetails as any[]) || [];
 
-      let newPaymentDetails: Array<{
-        txId: string;
-        amount: number;
-        tranche: number;
-      }>;
-      if (isProject) {
-        let nextTranche = existingPayments.length + 1;
-        const newPayments = results
-          .filter(
-            (
-              result,
-            ): result is ValidatePaymentResult & { actualAmount: number } =>
-              typeof result.actualAmount === 'number' &&
-              result.actualAmount > 0,
-          )
-          .map((result) => ({
-            txId: result.txId,
-            amount: result.actualAmount,
-            tranche: nextTranche++,
-          }));
-        newPaymentDetails = [...existingPayments, ...newPayments];
-      } else {
-        newPaymentDetails = results
-          .filter(
-            (
-              result,
-            ): result is ValidatePaymentResult & { actualAmount: number } =>
-              typeof result.actualAmount === 'number' &&
-              result.actualAmount > 0,
-          )
-          .map((result) => ({
-            txId: result.txId,
-            amount: result.actualAmount,
-            tranche: 1,
-          }));
-      }
+      const newPayments = results
+        .filter(
+          (
+            result,
+          ): result is ValidatePaymentResult & { actualAmount: number } =>
+            typeof result.actualAmount === 'number' && result.actualAmount > 0,
+        )
+        .map((result, i) => ({
+          txId: result.txId,
+          amount: result.actualAmount,
+          tranche: isProject ? existingPayments.length + 1 + i : 1,
+        }));
 
-      const totalNewPayments = newPaymentDetails.reduce(
+      const allPayments = [...existingPayments, ...newPayments];
+
+      const totalPaidAmount = allPayments.reduce(
         (sum, payment) => sum + payment.amount,
         0,
       );
-      const isFullyPaid = totalNewPayments >= winnerReward;
+      const isFullyPaid = totalPaidAmount >= winnerReward;
 
       await prisma.submission.update({
         where: {
@@ -293,7 +271,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         },
         data: {
           isPaid: isFullyPaid,
-          paymentDetails: newPaymentDetails,
+          paymentDetails: allPayments,
         },
       });
     }

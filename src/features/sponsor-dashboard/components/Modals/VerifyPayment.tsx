@@ -39,12 +39,10 @@ interface VerifyPaymentModalProps {
   isOpen: boolean;
   onClose: () => void;
   listing: ListingWithSubmissions | undefined;
-  setListing: (listing: ListingWithSubmissions) => void;
 }
 
 export const VerifyPaymentModal = ({
   listing,
-  setListing,
   isOpen,
   onClose,
 }: VerifyPaymentModalProps) => {
@@ -169,11 +167,12 @@ export const VerifyPaymentModal = ({
     useMutation({
       mutationFn: (body: VerifyPaymentsFormData) => verifyPaymentMutation(body),
       onSuccess: async (data, variables) => {
-        queryClient.invalidateQueries({
-          queryKey: listingSubmissionsQuery({
-            slug: listing?.slug ?? '',
-            isWinner: true,
-          }).queryKey,
+        await queryClient.invalidateQueries({
+          queryKey: ['sponsor-submissions', listing?.slug],
+        });
+
+        await queryClient.invalidateQueries({
+          queryKey: ['sponsor-dashboard-listing', listing?.slug],
         });
 
         const { validationResults } = data.data;
@@ -207,7 +206,10 @@ export const VerifyPaymentModal = ({
             (link) => link.submissionId === result.submissionId,
           );
           if (fieldIndex !== -1) {
-            setValue(`paymentLinks.${fieldIndex}.isVerified`, true);
+            setValue(`paymentLinks.${fieldIndex}.isVerified`, true, {
+              shouldValidate: true,
+              shouldDirty: true,
+            });
             setValue(`paymentLinks.${fieldIndex}.txId`, result.txId);
           }
         });
@@ -216,34 +218,11 @@ export const VerifyPaymentModal = ({
           (v) => v.status === 'SUCCESS',
         );
 
-        if (listing) {
-          const existingPayments = listing.totalPaymentsMade || 0;
-          const newPayments = successfulResults.length;
-          const newListing = {
-            ...listing,
-            totalPaymentsMade: existingPayments + newPayments,
-          };
-          queryClient.setQueryData<ListingWithSubmissions[]>(
-            ['dashboard', user?.currentSponsorId],
-            (oldData) =>
-              oldData
-                ? oldData.map((l) => (l.id === newListing.id ? newListing : l))
-                : [],
-          );
-          setListing(newListing);
+        if (successfulResults.length > 0) {
+          await queryClient.invalidateQueries({
+            queryKey: ['dashboard', user?.currentSponsorId],
+          });
         }
-
-        nonFailResults.forEach((result) => {
-          const fieldIndex = variables.paymentLinks.findIndex(
-            (link) => link.submissionId === result.submissionId,
-          );
-          if (fieldIndex !== -1) {
-            setValue(`paymentLinks.${fieldIndex}.isVerified`, true, {
-              shouldValidate: true,
-              shouldDirty: true,
-            });
-          }
-        });
       },
       onError: () => {
         setStatus('error');
