@@ -2,7 +2,7 @@ import { createElement } from 'react';
 
 import { DefaultContext, IconContext } from './IconContext';
 
-export interface IconTree {
+interface IconTree {
   tag: string;
   attr: { [key: string]: string };
   child?: IconTree[];
@@ -41,7 +41,8 @@ export interface IconBaseProps extends React.SVGAttributes<SVGElement> {
 }
 
 export type IconType = (props: IconBaseProps) => React.ReactNode;
-export function IconBase(
+
+function IconBase(
   props: IconBaseProps & { attr?: Record<string, string> },
 ): React.JSX.Element {
   const elem = (conf: IconContext) => {

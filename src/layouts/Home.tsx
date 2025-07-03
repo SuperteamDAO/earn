@@ -1,4 +1,5 @@
 import { usePrivy } from '@privy-io/react-auth';
+import { useQuery } from '@tanstack/react-query';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import React, { type ReactNode, useMemo } from 'react';
@@ -10,13 +11,13 @@ import { cn } from '@/utils/cn';
 
 import { BannerCarousel } from '@/features/home/components/Banner';
 import { UserStatsBanner } from '@/features/home/components/UserStatsBanner';
+import { userCountQuery } from '@/features/home/queries/user-count';
 
 interface HomeProps {
   readonly children: ReactNode;
-  readonly type: 'landing' | 'listing' | 'region' | 'feed';
+  readonly type: 'listing' | 'region' | 'feed';
   readonly st?: Superteam;
   readonly potentialSession?: boolean;
-  readonly totalUsers?: number | null;
 }
 
 type CategoryTypes = 'content' | 'development' | 'design' | 'other' | 'all';
@@ -42,10 +43,11 @@ export function Home({
   type,
   st,
   potentialSession = false,
-  totalUsers,
 }: HomeProps) {
   const router = useRouter();
   const { authenticated } = usePrivy();
+
+  const { data: totalUsers } = useQuery(userCountQuery);
 
   const currentCategory = useMemo(() => {
     const categoryParam = router.query.category?.toString().toLowerCase();
@@ -90,21 +92,12 @@ export function Home({
           <div className="flex items-start justify-between">
             <div className="w-full lg:border-r lg:border-slate-100">
               <div className="w-full lg:pr-6">
-                {type === 'landing' && (
-                  <div className="pt-3">
-                    {potentialSession || authenticated ? (
-                      <UserStatsBanner />
-                    ) : (
-                      <BannerCarousel totalUsers={totalUsers} />
-                    )}
-                  </div>
-                )}
                 {!currentCategory && type === 'listing' && (
                   <div className="pt-3">
                     {potentialSession || authenticated ? (
                       <UserStatsBanner />
                     ) : (
-                      <BannerCarousel totalUsers={totalUsers} />
+                      <BannerCarousel totalUsers={totalUsers?.totalUsers} />
                     )}
                   </div>
                 )}

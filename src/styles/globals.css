@@ -170,6 +170,7 @@
 }
 
 :root {
+  interpolate-size: allow-keywords;
   --background: hsl(0 0% 100%);
   --foreground: hsl(222.2 84% 4.9%);
   --card: hsl(0 0% 100%);
