@@ -13,7 +13,7 @@ export const SponsorBanner = () => {
   return (
     <Link
       href="/sponsor"
-      className="ph-no-capture group flex w-full justify-between gap-4 rounded-lg bg-purple-50 p-4"
+      className="ph-no-capture group flex w-full justify-between gap-4 rounded-lg bg-indigo-50 p-4"
       onClick={() => posthog?.capture('become a sponsor_banner')}
       prefetch={false}
     >

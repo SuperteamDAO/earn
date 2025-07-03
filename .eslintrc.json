@@ -1,9 +1,6 @@
 {
   "extends": [
-    "next/core-web-vitals", // Needed to avoid warning in next.js build: 'The Next.js plugin was not detected in your ESLint configuration'
-    "plugin:prettier/recommended",
-    "plugin:react/recommended",
-    "plugin:react-hooks/recommended",
+    "next/core-web-vitals",
     "plugin:@typescript-eslint/recommended",
     "plugin:@tanstack/eslint-plugin-query/recommended",
     "plugin:prettier/recommended"
@@ -11,13 +8,6 @@
   "parser": "@typescript-eslint/parser",
   "plugins": ["@tanstack/query", "validate-jsx-nesting"],
   "rules": {
-    "@typescript-eslint/consistent-type-imports": [
-      "error",
-      {
-        "prefer": "type-imports",
-        "fixStyle": "inline-type-imports"
-      }
-    ],
     "@tanstack/query/exhaustive-deps": "error",
     "@tanstack/query/no-rest-destructuring": "error",
     "@tanstack/query/stable-query-client": "error",
@@ -27,40 +17,21 @@
     // Configuration for TypeScript files
     {
       "files": ["**/*.ts", "**/*.tsx"],
-      "plugins": [
-        "@typescript-eslint/eslint-plugin",
-        "@typescript-eslint",
-        "unused-imports",
-        "simple-import-sort",
-        "react",
-        "react-hooks",
-        "@tanstack/query"
-      ],
-      "extends": [
-        "plugin:@typescript-eslint/recommended",
-        "next/core-web-vitals",
-        "plugin:prettier/recommended",
-        "plugin:@tanstack/eslint-plugin-query/recommended"
-      ],
+      "plugins": ["unused-imports", "simple-import-sort"],
       "parserOptions": {
         "project": "./tsconfig.json"
       },
       "rules": {
-        // "no-restricted-imports": [
-        //   "error",
-        //   {
-        //     "patterns": [
-        //       {
-        //         "group": ["@/features/*/*"],
-        //         "message": "Import from '@features' should not go beyond the first level of nesting."
-        //       }
-        //     ]
-        //   }
-        // ],
         "import/no-duplicates": ["error", { "prefer-inline": true }],
         "react-hooks/exhaustive-deps": "off", // Incorrectly report needed dependency with Next.js router
         "@next/next/no-img-element": "off", // We currently not using next/image because it isn't supported with SSG mode
-        "@typescript-eslint/consistent-type-imports": "error", // Ensure `import type` is used when it's necessary
+        "@typescript-eslint/consistent-type-imports": [
+          "error",
+          {
+            "prefer": "type-imports",
+            "fixStyle": "inline-type-imports"
+          }
+        ],
         "simple-import-sort/imports": [
           "error",
           {
@@ -87,10 +58,7 @@
             "argsIgnorePattern": "^_",
             "varsIgnorePattern": "^_"
           }
-        ],
-        "@tanstack/query/exhaustive-deps": "error",
-        "@tanstack/query/no-rest-destructuring": "error",
-        "@tanstack/query/stable-query-client": "error"
+        ]
       }
     }
   ]

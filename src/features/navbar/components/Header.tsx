@@ -10,6 +10,7 @@ import { Login } from '@/features/auth/components/Login';
 import { CreditDrawer } from '@/features/credits/components/CreditDrawer';
 import { WalletDrawer } from '@/features/wallet/components/WalletDrawer';
 import { tokenAssetsQuery } from '@/features/wallet/queries/fetch-assets';
+
 const SearchModal = dynamic(() =>
   import('@/features/search/components/SearchModal').then(
     (mod) => mod.SearchModal,

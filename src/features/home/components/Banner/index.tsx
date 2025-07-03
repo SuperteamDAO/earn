@@ -1,6 +1,5 @@
 import Autoplay from 'embla-carousel-autoplay';
 import { useAtomValue } from 'jotai';
-import dynamic from 'next/dynamic';
 import { useEffect, useRef, useState } from 'react';
 
 import {
@@ -16,22 +15,12 @@ import {
   popupsShowedAtom,
 } from '@/features/conversion-popups/atoms';
 
+import { HomeSponsorBanner } from './SponsorBanner';
 import { HomeTalentBanner } from './TalentBanner';
 
 interface BannerCarouselProps {
   readonly totalUsers?: number | null;
 }
-
-const HomeSponsorBanner = dynamic(
-  () =>
-    import('./SponsorBanner').then((mod) => ({
-      default: mod.HomeSponsorBanner,
-    })),
-  {
-    ssr: false,
-    loading: () => <div className="h-full" />,
-  },
-);
 
 /**
  * an optimized carousel that renders a static version first for performance,
@@ -40,7 +29,7 @@ const HomeSponsorBanner = dynamic(
 export function BannerCarousel({ totalUsers }: BannerCarouselProps) {
   const plugin = useRef(
     Autoplay({
-      delay: 6000,
+      delay: 7000,
       stopOnInteraction: false,
       stopOnFocusIn: false,
     }),

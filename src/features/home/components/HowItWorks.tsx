@@ -1,3 +1,4 @@
+import { usePrivy } from '@privy-io/react-auth';
 import { useQuery } from '@tanstack/react-query';
 import { Check } from 'lucide-react';
 import { useRouter } from 'next/router';
@@ -120,14 +121,17 @@ const Step = ({
 
 export const HowItWorks = () => {
   const router = useRouter();
-  const { user } = useUser();
-  const { data: stats, isLoading } = useQuery({
+  const { user, isLoading: isUserLoading } = useUser();
+  const { ready } = usePrivy();
+  const { data: stats, isLoading: isStatsLoading } = useQuery({
     ...userStatsQuery,
     enabled: !!user,
   });
 
   const hasSubmissions = (stats?.participations ?? 0) > 0;
   const hasWins = (stats?.wins ?? 0) > 0;
+
+  const isLoading = isStatsLoading || isUserLoading || !ready;
 
   if (hasWins) return null;
 
@@ -139,7 +143,7 @@ export const HowItWorks = () => {
       }}
     >
       <div className={cn('opacity-100', isLoading && 'opacity-20')}>
-        <p className="mb-6 font-medium text-gray-400">HOW IT WORKS</p>
+        <p className="mb-3 text-sm font-medium text-gray-400">HOW IT WORKS</p>
         <div className="flex h-[12.5rem]">
           <div className="relative flex h-full flex-col justify-between">
             <Step
@@ -168,7 +172,7 @@ export const HowItWorks = () => {
               >
                 Create your Profile
               </button>
-              <p className="text-base font-medium text-gray-500">
+              <p className="text-sm text-gray-500">
                 by telling us about yourself
               </p>
             </div>
@@ -190,9 +194,7 @@ export const HowItWorks = () => {
               >
                 {`Participate in Bounties & Projects`}
               </button>
-              <p className="text-base font-medium text-gray-500">
-                to build proof of work
-              </p>
+              <p className="text-sm text-gray-500">to build proof of work</p>
             </div>
             <div className="ml-[0.8125rem]">
               <button
@@ -212,9 +214,7 @@ export const HowItWorks = () => {
               >
                 Get Paid for Your Work
               </button>
-              <p className="text-base font-medium text-gray-500">
-                in global standards
-              </p>
+              <p className="text-sm text-gray-500">in global standards</p>
             </div>
           </div>
         </div>
