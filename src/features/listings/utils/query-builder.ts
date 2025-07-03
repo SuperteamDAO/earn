@@ -133,16 +133,8 @@ function getOrderBy(
   return isDefaultSort ? [{ isFeatured: 'desc' }, primarySort] : primarySort;
 }
 
-// cache for user region data to avoid repeated calculations
-const userRegionCache = new Map<string, any>();
-
 function getUserRegionFilter(userLocation: string | null): string[] {
   if (!userLocation) return ['Global'];
-
-  const cacheKey = userLocation;
-  if (userRegionCache.has(cacheKey)) {
-    return userRegionCache.get(cacheKey);
-  }
 
   const userRegion = getCombinedRegion(userLocation, true);
   const regions = userRegion?.name
@@ -153,8 +145,6 @@ function getUserRegionFilter(userLocation: string | null): string[] {
         ...(getParentRegions(userRegion) || []),
       ]
     : ['Global'];
-
-  userRegionCache.set(cacheKey, regions);
   return regions;
 }
 

@@ -1,5 +1,6 @@
 import { usePrivy } from '@privy-io/react-auth';
 
+import { AnimateChangeInHeight } from '@/components/shared/AnimateChangeInHeight';
 import { EmptySection } from '@/components/shared/EmptySection';
 import { Separator } from '@/components/ui/separator';
 import { useBreakpoint } from '@/hooks/use-breakpoint';
@@ -17,7 +18,7 @@ import { ListingFilters } from './ListingFilters';
 import { ListingTabs } from './ListingTabs';
 import { ViewAllButton } from './ViewAllButton';
 
-export const Listings = ({
+export const ListingsSection = ({
   type,
   potentialSession,
   region,
@@ -215,7 +216,9 @@ export const Listings = ({
         />
       </div>
 
-      {renderContent()}
+      <AnimateChangeInHeight duration={0.1}>
+        {renderContent()}
+      </AnimateChangeInHeight>
     </div>
   );
 };

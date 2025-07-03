@@ -1,10 +1,8 @@
-import { cookies } from 'next/headers';
 import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
 import { Prisma } from '@/interface/prisma/namespace';
 import { prisma } from '@/prisma';
-import { USER_ID_COOKIE_NAME } from '@/store/user';
 
 import {
   GrantQueryParamsSchema,
@@ -14,9 +12,7 @@ import { buildGrantsQuery } from '@/features/grants/utils/query-builder';
 
 export async function GET(request: NextRequest) {
   try {
-    const cookieStore = await cookies();
-    const userIdFromCookie: string | null =
-      cookieStore.get(USER_ID_COOKIE_NAME)?.value ?? null;
+    const userIdFromCookie = request.cookies.get('user-id-hint')?.value;
 
     const { searchParams } = new URL(request.url);
     const queryParams = Object.fromEntries(searchParams.entries());

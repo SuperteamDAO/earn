@@ -200,16 +200,14 @@ export const FeedCardContainer = ({
                   </p>
                 )}
                 <div className="ml-1 flex -space-x-2">
-                  {recentCommenters
-                    ?.slice(0, 4)
-                    .map((comment, index) => (
-                      <EarnAvatar
-                        avatar={comment.author.photo!}
-                        id={comment.author.name!}
-                        key={index}
-                        className="h-6 w-6 border border-white"
-                      />
-                    ))}
+                  {recentCommenters?.slice(0, 4).map((comment, index) => (
+                    <EarnAvatar
+                      avatar={comment.author.photo!}
+                      id={comment.author.name!}
+                      key={index}
+                      className="h-6 w-6 border border-white"
+                    />
+                  ))}
                 </div>
               </div>
             </div>

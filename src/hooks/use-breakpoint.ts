@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useSyncExternalStore } from 'react';
 
 type Breakpoint = 'sm' | 'md' | 'lg' | 'xl' | '2xl';
 
@@ -10,21 +10,21 @@ const breakpointValues: Record<Breakpoint, number> = {
   '2xl': 1536,
 };
 
+function subscribe(callback: () => void) {
+  window.addEventListener('resize', callback);
+  return () => {
+    window.removeEventListener('resize', callback);
+  };
+}
+
 export const useBreakpoint = (breakpoint: Breakpoint): boolean => {
-  const [matches, setMatches] = useState<boolean>(false);
-  const [isHydrated, setIsHydrated] = useState<boolean>(false);
-
-  useEffect(() => {
-    setIsHydrated(true);
-
-    const check = () => {
-      setMatches(window.innerWidth >= breakpointValues[breakpoint]);
-    };
-
-    check();
-    window.addEventListener('resize', check);
-    return () => window.removeEventListener('resize', check);
+  const getSnapshot = useCallback(() => {
+    return window.innerWidth >= breakpointValues[breakpoint];
   }, [breakpoint]);
 
-  return isHydrated ? matches : false;
+  const getServerSnapshot = () => {
+    return false;
+  };
+
+  return useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 };
