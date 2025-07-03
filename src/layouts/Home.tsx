@@ -15,10 +15,9 @@ import { userCountQuery } from '@/features/home/queries/user-count';
 
 interface HomeProps {
   readonly children: ReactNode;
-  readonly type: 'landing' | 'listing' | 'region' | 'feed';
+  readonly type: 'listing' | 'region' | 'feed';
   readonly st?: Superteam;
   readonly potentialSession?: boolean;
-  readonly totalUsers?: number | null;
 }
 
 type CategoryTypes = 'content' | 'development' | 'design' | 'other' | 'all';
@@ -93,15 +92,6 @@ export function Home({
           <div className="flex items-start justify-between">
             <div className="w-full lg:border-r lg:border-slate-100">
               <div className="w-full lg:pr-6">
-                {type === 'landing' && (
-                  <div className="pt-3">
-                    {potentialSession || authenticated ? (
-                      <UserStatsBanner />
-                    ) : (
-                      <BannerCarousel totalUsers={totalUsers?.totalUsers} />
-                    )}
-                  </div>
-                )}
                 {!currentCategory && type === 'listing' && (
                   <div className="pt-3">
                     {potentialSession || authenticated ? (

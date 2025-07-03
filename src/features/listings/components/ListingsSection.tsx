@@ -18,7 +18,7 @@ import { ListingFilters } from './ListingFilters';
 import { ListingTabs } from './ListingTabs';
 import { ViewAllButton } from './ViewAllButton';
 
-export const Listings = ({
+export const ListingsSection = ({
   type,
   potentialSession,
   region,

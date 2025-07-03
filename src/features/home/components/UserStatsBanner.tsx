@@ -16,7 +16,7 @@ const Stat = ({ value, label }: StatProps) => {
   return (
     <div>
       <p className="font-semibold">{value}</p>
-      <p className="text-xs font-medium text-[#c4c2ef] md:text-sm">{label}</p>
+      <p className="text-xs text-indigo-200 md:text-sm">{label}</p>
     </div>
   );
 };
@@ -28,12 +28,12 @@ export const UserStatsBanner = () => {
 
   if (!ready || isLoading || isUserLoading) {
     return (
-      <Skeleton className="mx-auto h-[170px] max-h-[300px] rounded-xl p-6 md:h-[100px] md:p-10" />
+      <Skeleton className="from-brand-purple mx-auto h-[170px] max-h-[300px] rounded-xl bg-linear-to-r to-indigo-600 p-6 md:h-[100px] md:p-10"></Skeleton>
     );
   }
 
   return (
-    <div className="flex flex-col gap-4 rounded-xl bg-linear-to-r from-[#4C52E2] to-[#4338CA] px-6 py-6 text-white md:flex-row md:items-center md:justify-between md:px-8">
+    <div className="from-brand-purple flex flex-col gap-4 rounded-xl bg-linear-to-r to-indigo-600 px-6 py-6 text-white md:flex-row md:items-center md:justify-between md:px-8">
       <div className="flex items-center gap-4">
         <EarnAvatar id={user?.id} avatar={user?.photo} className="h-12 w-12" />
         <div className="flex flex-col gap-0">
@@ -42,16 +42,16 @@ export const UserStatsBanner = () => {
               ? `Welcome back, ${user.firstName}`
               : 'Welcome!'}
           </p>
-          <p className="text-sm text-[#c4c2ef]">
+          <p className="text-sm text-indigo-200">
             We&apos;re so glad to have you on Earn
           </p>
         </div>
       </div>
 
-      <div className="h-px bg-[#7671da] md:hidden" />
+      <div className="-mx-6 h-px bg-indigo-400 md:hidden" />
 
       {stats && (stats.wins ?? 0) > 0 && (
-        <div className="mx-0.5 -mt-1.5 flex justify-between gap-4 sm:gap-8 md:mt-0 md:justify-start">
+        <div className="flex justify-between gap-4 sm:gap-8 md:justify-start">
           <Stat
             value={new Intl.NumberFormat('en-US', {
               style: 'currency',

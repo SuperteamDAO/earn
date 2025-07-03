@@ -7,29 +7,29 @@ const queryClient = new QueryClient();
 
 export default function Providers({ children }: { children: React.ReactNode }) {
   return (
-    <QueryClientProvider client={queryClient}>
-      <style jsx global>{`
-        :root {
-          --font-sans: ${fontSans.style.fontFamily};
-          --font-mono: ${fontMono.style.fontFamily};
-        }
-      `}</style>
-      <PrivyProvider
-        config={{
-          externalWallets: { walletConnect: { enabled: false } },
-          appearance: { walletChainType: 'solana-only' },
-          loginMethods: ['email', 'google'],
-          solanaClusters: [
-            {
-              name: 'mainnet-beta',
-              rpcUrl: `https://${process.env.NEXT_PUBLIC_RPC_URL}`,
-            },
-          ],
-        }}
-        appId={process.env.NEXT_PUBLIC_PRIVY_APP_ID!}
-      >
+    <PrivyProvider
+      config={{
+        externalWallets: { walletConnect: { enabled: false } },
+        appearance: { walletChainType: 'solana-only' },
+        loginMethods: ['email', 'google'],
+        solanaClusters: [
+          {
+            name: 'mainnet-beta',
+            rpcUrl: `https://${process.env.NEXT_PUBLIC_RPC_URL}`,
+          },
+        ],
+      }}
+      appId={process.env.NEXT_PUBLIC_PRIVY_APP_ID!}
+    >
+      <QueryClientProvider client={queryClient}>
+        <style jsx global>{`
+          :root {
+            --font-sans: ${fontSans.style.fontFamily};
+            --font-mono: ${fontMono.style.fontFamily};
+          }
+        `}</style>
         {children}
-      </PrivyProvider>
-    </QueryClientProvider>
+      </QueryClientProvider>
+    </PrivyProvider>
   );
 }
