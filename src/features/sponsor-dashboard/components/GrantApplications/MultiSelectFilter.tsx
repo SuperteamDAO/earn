@@ -1,4 +1,3 @@
-import type { GrantApplicationStatus, SubmissionLabels } from '@prisma/client';
 import { LucideListFilter } from 'lucide-react';
 
 import {
@@ -10,6 +9,10 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { StatusPill } from '@/components/ui/status-pill';
 import { Switch } from '@/components/ui/switch';
+import type {
+  GrantApplicationStatus,
+  SubmissionLabels,
+} from '@/interface/prisma/enums';
 
 import { labelMenuOptionsGrants } from '../../constants';
 import { colorMap } from '../../utils/statusColorMap';

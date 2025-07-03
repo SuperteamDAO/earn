@@ -10,7 +10,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { StatusPill } from '@/components/ui/status-pill';
-import { type SubmissionLabels } from '@/generated/prisma/enums';
+import { type SubmissionLabels } from '@/interface/prisma/enums';
 import { api } from '@/lib/api';
 
 import { isStateUpdatingAtom, selectedGrantApplicationAtom } from '../../atoms';

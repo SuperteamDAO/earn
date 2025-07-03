@@ -1,4 +1,3 @@
-import type { Role } from '@prisma/client';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { ChevronLeft, ChevronRight, Copy, Plus, Search, X } from 'lucide-react';
 import posthog from 'posthog-js';
@@ -22,6 +21,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { useDisclosure } from '@/hooks/use-disclosure';
+import type { Role } from '@/interface/prisma/enums';
 import type { UserSponsor } from '@/interface/userSponsor';
 import { SponsorLayout } from '@/layouts/Sponsor';
 import { api } from '@/lib/api';
