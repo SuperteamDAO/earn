@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import Link from 'next/link';
 import posthog from 'posthog-js';
+import { useMemo } from 'react';
 
 import MdArrowForward from '@/components/icons/MdArrowForward';
 import { LocalImage } from '@/components/ui/local-image';
@@ -66,7 +67,7 @@ const ActivityCard = ({
   };
 
   const actionText = getActionText();
-  const ogImage = getRandomFallbackImage();
+  const ogImage = useMemo(() => getRandomFallbackImage(), []);
 
   return (
     <Link href={'/feed/?filter=new'} className="flex">
