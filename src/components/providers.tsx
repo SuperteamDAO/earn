@@ -9,7 +9,10 @@ export default function Providers({ children }: { children: React.ReactNode }) {
   return (
     <PrivyProvider
       config={{
-        externalWallets: { walletConnect: { enabled: false } },
+        externalWallets: {
+          walletConnect: { enabled: false },
+          disableAllExternalWallets: true,
+        },
         appearance: { walletChainType: 'solana-only' },
         loginMethods: ['email', 'google'],
         solanaClusters: [
