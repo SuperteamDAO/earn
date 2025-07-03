@@ -3,16 +3,15 @@ import { useAtom, useSetAtom } from 'jotai';
 import { ChevronDown } from 'lucide-react';
 import { useMemo } from 'react';
 
-import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { type SubmissionLabels } from '@/interface/prisma/enums';
+import { StatusPill } from '@/components/ui/status-pill';
+import { type SubmissionLabels } from '@/generated/prisma/enums';
 import { api } from '@/lib/api';
-import { cn } from '@/utils/cn';
 
 import { isStateUpdatingAtom, selectedGrantApplicationAtom } from '../../atoms';
 import { labelMenuOptionsGrants } from '../../constants';
@@ -38,9 +37,10 @@ export const SelectLabel = ({ grantSlug }: Props) => {
     updateLabel({ id, label });
   };
 
-  let bg, color;
+  let bg, color, border;
   if (selectedApplication) {
-    ({ bg, color } = colorMap[selectedApplication?.label as SubmissionLabels]);
+    ({ bg, color, border } =
+      colorMap[selectedApplication?.label as SubmissionLabels]);
   }
 
   const { mutate: updateLabel } = useMutation({
@@ -117,21 +117,17 @@ export const SelectLabel = ({ grantSlug }: Props) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button
-          variant="outline"
-          className="hover:border-brand-purple border border-slate-300 bg-transparent font-normal text-slate-500 capitalize hover:bg-transparent"
-        >
-          <span
-            className={cn(
-              'inline-flex w-full rounded-full px-3 py-0.5 text-center text-xs whitespace-nowrap capitalize',
-              bg,
-              color,
-            )}
+        <button className="hover:border-brand-purple flex items-center rounded-md border border-slate-200 bg-transparent px-2 py-1 font-medium text-slate-500 capitalize hover:bg-transparent">
+          <StatusPill
+            className="text-[0.625rem]"
+            color={color || 'text-slate-500'}
+            backgroundColor={bg || 'bg-slate-100'}
+            borderColor={border || 'border-slate-200'}
           >
             {filterTriggerLabel || 'Select Option'}
-          </span>
-          <ChevronDown className="ml-2 h-4 w-4" />
-        </Button>
+          </StatusPill>
+          <ChevronDown className="ml-2 size-3" />
+        </button>
       </DropdownMenuTrigger>
 
       <DropdownMenuContent className="border-slate-300">
@@ -146,15 +142,18 @@ export const SelectLabel = ({ grantSlug }: Props) => {
               )
             }
           >
-            <span
-              className={cn(
-                'inline-flex w-fit rounded-full px-2 text-center text-[10px] whitespace-nowrap capitalize',
-                colorMap[option.value as keyof typeof colorMap].bg,
-                colorMap[option.value as keyof typeof colorMap].color,
-              )}
+            <StatusPill
+              className="text-[0.625rem]"
+              color={colorMap[option.value as keyof typeof colorMap].color}
+              backgroundColor={
+                colorMap[option.value as keyof typeof colorMap].bg
+              }
+              borderColor={
+                colorMap[option.value as keyof typeof colorMap].border
+              }
             >
               {option.label}
-            </span>
+            </StatusPill>
           </DropdownMenuItem>
         ))}
       </DropdownMenuContent>

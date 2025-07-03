@@ -95,6 +95,7 @@
   --animate-accordion-up: accordion-up 0.2s ease-out;
   --animate-slide-in-from-right: slide-in-from-right 1s ease-out;
   --animate-slide-out-to-right: slide-out-to-right 1s ease-in;
+  --animate-float: float 2s ease-in-out infinite;
 
   @keyframes caret-blink {
     0%,
@@ -137,6 +138,15 @@
     }
     100% {
       transform: translateX(100%);
+    }
+  }
+  
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(var(--float-y, -4px));
     }
   }
 }
@@ -236,7 +246,7 @@ body {
 .wallet-adapter-button.wallet-adapter-button-trigger {
   width: 100% !important;
   background-color: #6366f1;
-  font-size: 1rem !important;
+  /* font-size: 10px !important; */
   color: white !important;
   /* border: 1px solid !important; */
   border-color: #f1f5f9 !important;

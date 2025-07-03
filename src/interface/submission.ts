@@ -19,9 +19,11 @@ interface SubmissionWithUser {
   isWinner: boolean;
   winnerPosition?: keyof Rewards;
   isPaid: boolean;
-  paymentDetails?: {
-    txId?: string;
-  };
+  paymentDetails?: Array<{
+    txId: string;
+    amount: number;
+    tranche: number;
+  }>;
   rewardInUSD: number;
   isActive: boolean;
   isArchived: boolean;

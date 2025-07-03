@@ -86,4 +86,5 @@ export type ValidatePaymentResult = {
   txId: string;
   status: 'SUCCESS' | 'FAIL' | 'ALREADY_VERIFIED';
   message?: string;
+  actualAmount?: number;
 };

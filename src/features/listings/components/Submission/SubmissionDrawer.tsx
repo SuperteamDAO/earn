@@ -251,18 +251,28 @@ export const SubmissionDrawer = ({
       headerText = 'Submit Your Application';
       subheadingText = (
         <>
-          Don&apos;t start working just yet! Apply first, and then begin working
-          only once you&apos;ve been hired for the project by the sponsor.
           <p>
-            Please note that the sponsor might contact you to assess fit before
-            picking the winner.
+            {`Don't start working on the scope just yet! Apply first. Only the winning candidate will have to work on the scope mentioned in this listing. `}
+          </p>
+          <p>Note:</p>
+          <p>
+            1. The sponsor might contact you to assess fit before picking the
+            winner.
+          </p>
+          <p>
+            2. You can edit this application until the deadline of this listing.
           </p>
         </>
       );
       break;
     case 'bounty':
       headerText = 'Bounty Submission';
-      subheadingText = "We can't wait to see what you've created!";
+      subheadingText = (
+        <>
+          <p>{`We can't wait to see what you've created!`}</p>
+          <p>Note: You can edit this submission until the bounty deadline.</p>
+        </>
+      );
       break;
     case 'hackathon':
       headerText = `${Hackathon?.name || ''} Track Submission`;

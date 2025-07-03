@@ -12,6 +12,7 @@ import { safeStringify } from '@/utils/safeStringify';
 import { type NextApiRequestWithSponsor } from '@/features/auth/types';
 import { checkGrantSponsorAuth } from '@/features/auth/utils/checkGrantSponsorAuth';
 import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
+import { addGrantWinBonusCredit } from '@/features/credits/utils/allocateCredits';
 import { queueEmail } from '@/features/emails/utils/queueEmail';
 import { convertGrantApplicationToAirtable } from '@/features/grants/utils/convertGrantApplicationToAirtable';
 import { createTranche } from '@/features/grants/utils/createTranche';
@@ -225,6 +226,12 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           },
         },
       });
+
+      await Promise.all(
+        result.map((application) =>
+          addGrantWinBonusCredit(application.userId, application.id),
+        ),
+      );
 
       await Promise.all(
         result.map((application) =>

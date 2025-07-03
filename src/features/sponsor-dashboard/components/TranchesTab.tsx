@@ -5,11 +5,9 @@ import {
   useQueryClient,
 } from '@tanstack/react-query';
 import { useAtom } from 'jotai';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 
-import { Button } from '@/components/ui/button';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { GrantTrancheStatus } from '@/interface/prisma/enums';
@@ -34,33 +32,64 @@ interface Props {
 
 export const TranchesTab = ({ slug }: Props) => {
   const [searchText, setSearchText] = useState('');
-  const [skip, setSkip] = useState(0);
-  const [filterLabel, setFilterLabel] = useState<
-    GrantTrancheStatus | undefined
-  >(undefined);
+  const [selectedFilters, setSelectedFilters] = useState<
+    Set<GrantTrancheStatus>
+  >(new Set());
 
-  const params = { searchText, length: 10, skip, filterLabel };
-
-  const [tranches, setTranches] = useAtom(tranchesAtom);
+  const [allTranches, setAllTranches] = useAtom(tranchesAtom);
 
   const { data: trancheReturn, isLoading: isTrancheLoading } = useQuery({
-    ...tranchesQuery(slug, params),
+    ...tranchesQuery(slug),
     retry: false,
     placeholderData: keepPreviousData,
   });
 
   useEffect(() => {
     if (trancheReturn?.data) {
-      setTranches(trancheReturn.data);
+      setAllTranches(trancheReturn.data);
     }
-  }, [trancheReturn?.data, setTranches]);
+  }, [trancheReturn?.data, setAllTranches]);
 
-  const totalCount = useMemo(() => trancheReturn?.count || 0, [trancheReturn]);
+  const tranches = useMemo(() => {
+    if (!allTranches) return [];
 
-  let length = 10;
-  const [pageSelections, setPageSelections] = useState<Record<number, string>>(
-    {},
-  );
+    let filtered = allTranches;
+
+    if (searchText.trim()) {
+      const lowerSearchText = searchText.toLowerCase();
+      filtered = filtered.filter((tranche) => {
+        const user = tranche.GrantApplication.user;
+        if (!user) return false;
+
+        const nameParts = searchText.split(' ').filter(Boolean);
+        const firstName = user.firstName?.toLowerCase() || '';
+        const lastName = user.lastName?.toLowerCase() || '';
+
+        return (
+          firstName.includes(lowerSearchText) ||
+          lastName.includes(lowerSearchText) ||
+          user.email?.toLowerCase().includes(lowerSearchText) ||
+          user.username?.toLowerCase().includes(lowerSearchText) ||
+          user.twitter?.toLowerCase().includes(lowerSearchText) ||
+          user.discord?.toLowerCase().includes(lowerSearchText) ||
+          tranche.GrantApplication.projectTitle
+            ?.toLowerCase()
+            .includes(lowerSearchText) ||
+          (nameParts.length > 1 &&
+            firstName.includes(nameParts[0]?.toLowerCase() || '') &&
+            lastName.includes(nameParts[1]?.toLowerCase() || ''))
+        );
+      });
+    }
+
+    if (selectedFilters.size > 0) {
+      filtered = filtered.filter((tranche) => {
+        return selectedFilters.has(tranche.status);
+      });
+    }
+
+    return filtered;
+  }, [allTranches, searchText, selectedFilters]);
 
   const { user } = useUser();
 
@@ -73,17 +102,6 @@ export const TranchesTab = ({ slug }: Props) => {
   const [selectedTranche, setSelectedTranche] = useAtom(
     selectedGrantTrancheAtom,
   );
-
-  useEffect(() => {
-    if (searchText) {
-      length = 999;
-      if (skip !== 0) {
-        setSkip(0);
-      }
-    } else {
-      length = 10;
-    }
-  }, [searchText]);
 
   useEffect(() => {
     if (tranches && tranches.length > 0) {
@@ -107,122 +125,6 @@ export const TranchesTab = ({ slug }: Props) => {
     onOpen: rejectedOnOpen,
     onClose: rejectedOnClose,
   } = useDisclosure();
-
-  const isAnyModalOpen = rejectedIsOpen || approveIsOpen;
-
-  const changePage = useCallback(
-    async (newSkip: number, selectIndex: number) => {
-      if (newSkip < 0 || newSkip >= grant?.grantTrancheCount!) return;
-      setSkip(newSkip);
-      await new Promise((resolve) => setTimeout(resolve, 0));
-
-      await queryClient.prefetchQuery({
-        ...tranchesQuery(slug, { ...params, skip: newSkip }),
-        staleTime: Infinity,
-      });
-
-      const newTranches = queryClient.getQueryData<TranchesReturn>([
-        'sponsor-tranches',
-        slug,
-        { ...params, skip: newSkip },
-      ]);
-
-      if (newTranches && newTranches.count > 0) {
-        if (selectIndex === -1) {
-          const savedSelectionId = pageSelections[newSkip];
-          const savedTranche = savedSelectionId
-            ? newTranches.data.find(
-                (tranche) => tranche.id === savedSelectionId,
-              )
-            : null;
-
-          if (savedTranche) {
-            setSelectedTranche(savedTranche);
-          } else {
-            setSelectedTranche(newTranches.data[0]);
-          }
-        } else {
-          setSelectedTranche(
-            newTranches.data[
-              Math.min(selectIndex, newTranches.data.length - 1)
-            ],
-          );
-        }
-      }
-    },
-    [
-      queryClient,
-      slug,
-      params,
-      grant?.grantTrancheCount,
-      setSelectedTranche,
-      pageSelections,
-    ],
-  );
-
-  useEffect(() => {
-    const handleKeyDown = async (e: KeyboardEvent) => {
-      if (!tranches?.length) return;
-
-      if (!isAnyModalOpen) {
-        const currentIndex = tranches.findIndex(
-          (tranche) => tranche.id === selectedTranche?.id,
-        );
-
-        switch (e.key) {
-          case 'ArrowUp':
-            e.preventDefault();
-            if (currentIndex > 0) {
-              setSelectedTranche(tranches[currentIndex - 1]);
-            } else if (skip > 0) {
-              // When going to the previous page, select the last item
-              await changePage(Math.max(skip - length, 0), length - 1);
-            }
-            break;
-          case 'ArrowDown':
-            e.preventDefault();
-            if (currentIndex < tranches.length - 1) {
-              setSelectedTranche(tranches[currentIndex + 1]);
-            } else if (skip + length < totalCount!) {
-              await changePage(skip + length, 0);
-            }
-            break;
-          case 'ArrowLeft':
-            e.preventDefault();
-            if (skip > 0) {
-              await changePage(Math.max(skip - length, 0), -1);
-            }
-            break;
-          case 'ArrowRight':
-            e.preventDefault();
-            if (skip + length < totalCount!) {
-              await changePage(skip + length, -1);
-            }
-            break;
-        }
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [
-    tranches,
-    selectedTranche,
-    skip,
-    length,
-    grant?.grantTrancheCount,
-    changePage,
-    isAnyModalOpen,
-  ]);
-
-  useEffect(() => {
-    if (selectedTranche) {
-      setPageSelections((prev) => ({
-        ...prev,
-        [skip]: selectedTranche?.id,
-      }));
-    }
-  }, [selectedTranche, skip]);
 
   const moveToNextPendingTranche = () => {
     if (!selectedTranche) return;
@@ -251,11 +153,10 @@ export const TranchesTab = ({ slug }: Props) => {
       const previousTranches = queryClient.getQueryData<TranchesReturn>([
         'sponsor-tranches',
         grant?.slug,
-        params,
       ]);
 
       queryClient.setQueryData<TranchesReturn>(
-        ['sponsor-tranches', grant?.slug, params],
+        ['sponsor-tranches', grant?.slug],
         (oldData) => {
           if (!oldData) return oldData;
           const updatedTranches = oldData.data.map(
@@ -283,7 +184,7 @@ export const TranchesTab = ({ slug }: Props) => {
     },
     onError: (_, __, context) => {
       queryClient.setQueryData<TranchesReturn>(
-        ['sponsor-tranches', grant?.slug, params],
+        ['sponsor-tranches', grant?.slug],
         context?.previousTranches,
       );
       toast.error('Failed to reject grant. Please try again.');
@@ -308,11 +209,10 @@ export const TranchesTab = ({ slug }: Props) => {
       const previousTranches = queryClient.getQueryData<TranchesReturn>([
         'sponsor-tranches',
         grant?.slug,
-        params,
       ]);
 
       queryClient.setQueryData<TranchesReturn>(
-        ['sponsor-tranches', grant?.slug, params],
+        ['sponsor-tranches', grant?.slug],
         (oldData) => {
           if (!oldData) return oldData;
           const updatedTranches = oldData.data.map(
@@ -341,7 +241,7 @@ export const TranchesTab = ({ slug }: Props) => {
     },
     onError: (_, __, context) => {
       queryClient.setQueryData<TranchesReturn>(
-        ['sponsor-tranches', grant?.slug, params],
+        ['sponsor-tranches', grant?.slug],
         context?.previousTranches,
       );
       toast.error('Failed to approve grant. Please try again.');
@@ -358,17 +258,17 @@ export const TranchesTab = ({ slug }: Props) => {
   return (
     <>
       <div className="flex w-full items-start bg-white">
-        <div className="grid min-h-[600px] w-full grid-cols-[23rem_1fr] bg-white">
+        <div className="grid min-h-[42rem] w-full grid-cols-[23rem_1fr] bg-white">
           <div className="h-full w-full">
             <TrancheList
               tranches={tranches}
               setSearchText={setSearchText}
-              setFilterLabel={setFilterLabel}
-              filterTriggerLabel={filterLabel}
+              selectedFilters={selectedFilters}
+              onFilterChange={setSelectedFilters}
             />
           </div>
 
-          <div className="h-full w-full rounded-r-xl border-t border-r border-b border-slate-200 bg-white">
+          <div className="h-full w-full rounded-r-lg border-t border-r border-b border-slate-200 bg-white">
             {!tranches?.length && !searchText && !isTrancheLoading ? (
               <>
                 <ExternalImage
@@ -396,44 +296,11 @@ export const TranchesTab = ({ slug }: Props) => {
       </div>
 
       <div className="mt-4 flex items-center justify-start gap-4">
-        {!!searchText ? (
+        {!!searchText && (
           <p className="text-sm text-slate-400">
             Found <span className="font-bold">{tranches?.length || 0}</span>{' '}
             {tranches?.length === 1 ? 'result' : 'results'}
           </p>
-        ) : (
-          <>
-            <Button
-              disabled={skip <= 0}
-              onClick={() => changePage(Math.max(skip - length, 0), length - 1)}
-              size="sm"
-              variant="outline"
-            >
-              <ChevronLeft className="mr-2 h-5 w-5" />
-              Previous
-            </Button>
-
-            <p className="text-sm text-slate-400">
-              <span className="font-bold">{skip + 1}</span> -{' '}
-              <span className="font-bold">
-                {Math.min(skip + length, totalCount)}
-              </span>{' '}
-              of <span className="font-bold">{totalCount}</span> Tranches
-            </p>
-
-            <Button
-              disabled={
-                totalCount! <= skip + length ||
-                (skip > 0 && skip % length !== 0)
-              }
-              onClick={() => changePage(skip + length, 0)}
-              size="sm"
-              variant="outline"
-            >
-              Next
-              <ChevronRight className="ml-2 h-5 w-5" />
-            </Button>
-          </>
         )}
       </div>
 

@@ -3,14 +3,8 @@ import { Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
+import { Separator } from '@/components/ui/separator';
 import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 
@@ -60,44 +54,50 @@ export const DeleteDraftModal = ({
 
   return (
     <Dialog open={deleteDraftIsOpen} onOpenChange={deleteDraftOnClose}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Delete Draft?</DialogTitle>
-        </DialogHeader>
-
-        <div className="space-y-4">
-          <DialogDescription className="text-slate-500">
+      <DialogContent className="m-0 p-0" hideCloseIcon>
+        <DialogTitle className="text-md -mb-1 px-6 pt-4 font-semibold text-slate-900">
+          Delete Draft?
+        </DialogTitle>
+        <Separator />
+        <div className="px-6 pb-6 text-[0.95rem]">
+          <p className="mb-4 text-slate-500">
             Are you sure you want to delete this draft listing?
-          </DialogDescription>
-          <DialogDescription className="text-slate-500">
+          </p>
+          <p className="mb-4 text-slate-500">
             Note: If this was previously a published listing, all submissions or
             applications received for this listing will also be deleted.
-          </DialogDescription>
+          </p>
+
+          <div className="flex gap-3">
+            <div className="w-1/2" />
+            <Button
+              variant="ghost"
+              onClick={deleteDraftOnClose}
+              disabled={deleteMutation.isPending}
+            >
+              Close
+            </Button>
+            <Button
+              className="flex-1 rounded-lg border border-red-500 bg-red-50 text-red-600 hover:bg-red-100"
+              disabled={deleteMutation.isPending}
+              onClick={deleteSelectedDraft}
+            >
+              {deleteMutation.isPending ? (
+                <>
+                  <span className="loading loading-spinner mr-2" />
+                  <span>Deleting...</span>
+                </>
+              ) : (
+                <>
+                  <div className="rounded-full bg-red-600 p-0.5">
+                    <Trash2 className="size-1 text-red-50" />
+                  </div>
+                  <span>Confirm</span>
+                </>
+              )}
+            </Button>
+          </div>
         </div>
-
-        <DialogFooter>
-          <Button variant="ghost" onClick={deleteDraftOnClose} className="mr-4">
-            Close
-          </Button>
-
-          <Button
-            variant="default"
-            disabled={deleteMutation.isPending}
-            onClick={deleteSelectedDraft}
-          >
-            {deleteMutation.isPending ? (
-              <>
-                <span className="loading loading-spinner mr-2" />
-                <span>Deleting...</span>
-              </>
-            ) : (
-              <>
-                <Trash2 className="mr-2 h-4 w-4" />
-                <span>Confirm</span>
-              </>
-            )}
-          </Button>
-        </DialogFooter>
       </DialogContent>
     </Dialog>
   );
