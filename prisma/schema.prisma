@@ -853,6 +853,6 @@ enum SubmissionStatus {
 enum GrantTrancheStatus {
   Pending
   Approved
-  Rejected
   Paid
+  Rejected
 }
