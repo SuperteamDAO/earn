@@ -56,6 +56,13 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     }
 
     const listingId = currentSubmissions[0]?.listingId;
+    if (!listingId) {
+      logger.warn('No listing ID found for submissions');
+      return res
+        .status(404)
+        .json({ error: 'No listing ID found for submissions' });
+    }
+
     if (
       listingId &&
       !currentSubmissions.every(
@@ -68,15 +75,13 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         .json({ error: 'All records should have same and valid listing ID' });
     }
 
-    currentSubmissions.forEach(async (currentApplicant) => {
-      const { error } = await checkListingSponsorAuth(
-        req.userSponsorId,
-        currentApplicant.listingId,
-      );
-      if (error) {
-        return res.status(error.status).json({ error: error.message });
-      }
-    });
+    const { error } = await checkListingSponsorAuth(
+      req.userSponsorId,
+      listingId,
+    );
+    if (error) {
+      return res.status(error.status).json({ error: error.message });
+    }
 
     const result = await prisma.submission.updateMany({
       where: {

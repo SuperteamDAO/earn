@@ -15,9 +15,10 @@ interface ValidatePaymentParams {
   tokenMint: Token;
 }
 
-interface ValidationResult {
+export interface ValidationResult {
   isValid: boolean;
   error?: string;
+  actualAmount?: number;
 }
 
 async function wait(ms: number) {
@@ -56,7 +57,7 @@ export async function validatePayment({
     }
 
     if (!tx || !tx.meta) {
-      return { isValid: false, error: 'Invalid transaction' };
+      return { isValid: false, error: 'Transaction not found' };
     }
 
     const { meta } = tx;
@@ -95,7 +96,7 @@ export async function validatePayment({
       if (recipientIndex === -1) {
         return {
           isValid: false,
-          error: "Receiver's public key doesn't match our records",
+          error: "Recipient's public key doesn't match our records",
         };
       }
 
@@ -105,14 +106,17 @@ export async function validatePayment({
       const actualTransferAmount =
         ((postBalance || 0) - (preBalance || 0)) / LAMPORTS_PER_SOL;
 
-      if (Math.abs(actualTransferAmount - expectedAmount) > difference) {
+      if (
+        expectedAmount > 0 &&
+        Math.abs(actualTransferAmount - expectedAmount) > difference
+      ) {
         return {
           isValid: false,
           error: "Transferred amount doesn't match the amount",
         };
       }
 
-      return { isValid: true };
+      return { isValid: true, actualAmount: actualTransferAmount };
     }
 
     const preBalance = meta.preTokenBalances?.find(
@@ -147,18 +151,23 @@ export async function validatePayment({
     }
 
     const actualTransferAmount = postAmount - preAmount;
-    if (Math.abs(actualTransferAmount - expectedAmount) > difference) {
+
+    if (
+      expectedAmount > 0 &&
+      Math.abs(actualTransferAmount - expectedAmount) > difference
+    ) {
       return {
         isValid: false,
         error: "Transferred amount doesn't match the amount",
       };
     }
 
-    return { isValid: true };
+    return { isValid: true, actualAmount: actualTransferAmount };
   } catch (error: any) {
     return { isValid: false, error: error.message };
   }
 }
+
 function isNativeSolTransfer(tx: VersionedTransactionResponse) {
   if (!tx.meta) return false;
   const hasTokenTransfers =
