@@ -1,8 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
 import Link from 'next/link';
 import posthog from 'posthog-js';
-import { MdArrowForward } from 'react-icons/md';
 
+import MdArrowForward from '@/components/icons/MdArrowForward';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 
 import { userCountQuery } from '../queries/user-count';
@@ -13,8 +13,9 @@ export const SponsorBanner = () => {
   return (
     <Link
       href="/sponsor"
-      className="ph-no-capture group flex w-full justify-between gap-4 rounded-lg bg-purple-50 p-4"
+      className="ph-no-capture group flex w-full justify-between gap-4 rounded-lg bg-indigo-50 p-4"
       onClick={() => posthog?.capture('become a sponsor_banner')}
+      prefetch={false}
     >
       <div>
         <p className="flex items-center font-semibold text-slate-600 group-hover:underline">

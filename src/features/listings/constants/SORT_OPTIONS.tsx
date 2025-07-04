@@ -1,5 +1,5 @@
-import { FaRegClock } from 'react-icons/fa6';
-import { TbBriefcase2 } from 'react-icons/tb';
+import FaRegClock from '@/components/icons/FaRegClock';
+import TbBriefcase2 from '@/components/icons/TbBriefcase2';
 
 import { type HackathonSortOption } from '../../hackathon/hooks/useHackathons';
 import {

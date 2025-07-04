@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 
 import { Button } from '@/components/ui/button';
+import { LocalImage } from '@/components/ui/local-image';
 import { cn } from '@/utils/cn';
 
 import type { Announcement } from '../types/announcement';
@@ -55,7 +56,7 @@ export function AnnouncementNavigation({
       </div>
 
       <div className="absolute bottom-5 left-8">
-        <img
+        <LocalImage
           className="h-[1.4rem] cursor-pointer object-contain"
           alt="Superteam Earn"
           src="/assets/logo.svg"

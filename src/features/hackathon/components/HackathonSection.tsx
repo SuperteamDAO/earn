@@ -1,3 +1,4 @@
+import { AnimateChangeInHeight } from '@/components/shared/AnimateChangeInHeight';
 import { EmptySection } from '@/components/shared/EmptySection';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 
@@ -132,7 +133,9 @@ export const HackathonSection = ({ type }: HackathonSectionProps) => {
         ))}
       </div>
 
-      {renderContent()}
+      <AnimateChangeInHeight duration={0.1}>
+        {renderContent()}
+      </AnimateChangeInHeight>
     </div>
   );
 };

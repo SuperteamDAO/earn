@@ -1,8 +1,8 @@
 import { EllipsisVertical } from 'lucide-react';
 import * as React from 'react';
-import { IoMdShareAlt } from 'react-icons/io';
-import { RiFlagFill } from 'react-icons/ri';
 
+import IoMdShareAlt from '@/components/icons/IoMdShareAlt';
+import RiFlagFill from '@/components/icons/RiFlagFill';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -56,6 +56,7 @@ export function SecondaryOptions({
         open={shareOpen}
         onOpenChange={setShareOpen}
       />
+
       {listing && (
         <ReportListing
           open={reportOpen}

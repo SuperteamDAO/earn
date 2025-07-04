@@ -3,9 +3,11 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import posthog from 'posthog-js';
 import { useMemo } from 'react';
-import { IoSearchOutline, IoWalletOutline } from 'react-icons/io5';
 
+import IoSearchOutline from '@/components/icons/IoSearchOutline';
+import IoWalletOutline from '@/components/icons/IoWalletOutline';
 import { Button } from '@/components/ui/button';
+import { LocalImage } from '@/components/ui/local-image';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useCreditBalance } from '@/store/credit';
 import { useUser } from '@/store/user';
@@ -77,7 +79,7 @@ export const DesktopNavbar = ({
                 posthog.capture('homepage logo click_universal');
               }}
             >
-              <img
+              <LocalImage
                 className="h-[1.4rem] cursor-pointer object-contain"
                 alt="Superteam Earn"
                 src="/assets/logo.svg"
@@ -92,7 +94,7 @@ export const DesktopNavbar = ({
             </Link>
           </LogoContextMenu>
 
-          {router.pathname.startsWith('/search') &&
+          {!router.pathname.startsWith('/search') &&
             !router.pathname.startsWith('/new/') && (
               <div
                 className="flex cursor-pointer items-center gap-1.5 rounded-md px-3 py-2 text-slate-500 transition-all duration-100 hover:bg-slate-100 hover:text-slate-700"

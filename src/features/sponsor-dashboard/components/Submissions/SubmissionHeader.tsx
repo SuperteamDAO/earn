@@ -11,9 +11,9 @@ import {
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React from 'react';
-import { FaXTwitter } from 'react-icons/fa6';
 import { toast } from 'sonner';
 
+import FaXTwitter from '@/components/icons/FaXTwitter';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -264,6 +264,7 @@ ${socialListingLink('twitter')}
                   ?.icon ?? '/assets/dollar.svg'
               }
             />
+
             <SponsorPrize
               compensationType={bounty?.compensationType}
               maxRewardAsk={bounty?.maxRewardAsk}
@@ -271,6 +272,7 @@ ${socialListingLink('twitter')}
               rewardAmount={bounty?.rewardAmount}
               className="font-semibold text-slate-700"
             />
+
             <p className="font-semibold text-slate-400">{bounty?.token}</p>
           </div>
         </div>

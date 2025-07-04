@@ -1,4 +1,4 @@
-import { api } from '@/lib/api';
+import axios from 'axios';
 
 export async function fetchTokenUSDValue(mintAddress: string): Promise<number> {
   try {
@@ -6,7 +6,7 @@ export async function fetchTokenUSDValue(mintAddress: string): Promise<number> {
       throw new Error('Mint address is required');
     }
 
-    const { data } = await api.get(
+    const { data } = await axios.get(
       `${process.env.NEXT_PUBLIC_SITE_URL}api/wallet/price?mintAddress=${mintAddress}`,
     );
 

@@ -7,6 +7,7 @@ import posthog from 'posthog-js';
 import { useWatch } from 'react-hook-form';
 
 import { Button } from '@/components/ui/button';
+import { LocalImage } from '@/components/ui/local-image';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tooltip } from '@/components/ui/tooltip';
 import { cn } from '@/utils/cn';
@@ -46,10 +47,11 @@ export function Header() {
             onClick={() => posthog.capture('homepage logo click_universal')}
             className="flex items-center gap-3 hover:no-underline"
           >
-            <img
+            <LocalImage
               src="/assets/logo.svg"
               alt="Superteam Earn"
               className="h-[1.4rem] w-auto cursor-pointer object-contain"
+              loading="eager"
             />
             <div className="h-6 w-[1.5px] bg-slate-300" />
             <p className="text-sm tracking-[1.5px] text-slate-600">SPONSORS</p>

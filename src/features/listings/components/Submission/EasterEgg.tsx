@@ -1,11 +1,14 @@
 import Image from 'next/image';
+import React, { useEffect } from 'react';
 import Pride from 'react-canvas-confetti/dist/presets/pride';
 import { type TDecorateOptionsFn } from 'react-canvas-confetti/dist/types';
 
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { Drawer, DrawerContent } from '@/components/ui/drawer';
 import { ASSET_URL } from '@/constants/ASSET_URL';
 import { useBreakpoint } from '@/hooks/use-breakpoint';
+import { useMediaQuery } from '@/hooks/use-media-query';
 
 interface Props {
   isOpen: boolean;
@@ -44,62 +47,90 @@ const decorateOptions: TDecorateOptionsFn = (options) => {
   };
 };
 
-export const EasterEgg = ({ isOpen, onClose, isProject }: Props) => {
+function MainContent({ isProject }: { isProject: boolean }) {
   const isMD = useBreakpoint('md');
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent
-        className="h-screen w-screen max-w-none overflow-hidden rounded-none bg-[#5243FF]"
-        onInteractOutside={(e) => e.preventDefault()}
-        classNames={{
-          closeIcon: 'text-white',
-        }}
-      >
-        <Pride
-          autorun={{ speed: isMD ? 10 : 5 }}
-          decorateOptions={decorateOptions}
-          className="absolute -z-10 h-full w-full"
-        />
-        <div className="container mx-auto mt-auto px-4 md:mt-6">
-          <div className="mx-auto mt-6 mb-6 w-14 md:mb-11 md:w-28">
-            <ExternalImage
-              src={'/icons/celebration.png'}
-              alt="celebration icon"
-              className="object-contain"
-            />
-          </div>
-          <p className="text-center text-3xl font-medium text-white md:text-4xl">
-            {isProject ? 'Application' : 'Submission'} Received!
-          </p>
-          <p className="mt-5 text-center text-2xl text-white opacity-60 md:text-3xl">
-            Sending some vibes your way 💃 💃
-          </p>
-        </div>
-        <div className="mx-auto mt-auto flex h-auto flex-col items-end md:w-full lg:w-1/2">
-          <Image
-            src={ASSET_URL + '/memes/JohnCenaVibingToCupid.gif'}
-            alt="John Cena Vibing to Cupid"
-            style={{
-              width: '100%',
-              height: '100%',
-              marginTop: 'auto',
-              display: 'block',
-            }}
-            width="1000"
-            height="1200"
-            priority
-            loading="eager"
-            quality={80}
-            className="scale-150 md:scale-125"
+    <>
+      <Pride
+        autorun={{ speed: isMD ? 10 : 5 }}
+        decorateOptions={decorateOptions}
+        className="absolute -z-10 h-full w-full"
+      />
+      <div className="container mx-auto mt-auto px-4 md:mt-6">
+        <div className="mx-auto mt-6 mb-6 w-14 md:mb-11 md:w-28">
+          <ExternalImage
+            src={'/icons/celebration.png'}
+            alt="celebration icon"
+            className="object-contain"
           />
         </div>
-        <audio
-          src={'/assets/JohnCenaVibingToCupid.mp3'}
-          style={{ display: 'none' }}
-          autoPlay
-          loop
+        <p className="text-center text-3xl font-medium text-white md:text-4xl">
+          {isProject ? 'Application' : 'Submission'} Received!
+        </p>
+        <p className="mt-5 text-center text-2xl text-white opacity-60 md:text-3xl">
+          Sending some vibes your way 💃 💃
+        </p>
+      </div>
+      <div className="mx-auto mt-auto flex h-auto flex-col items-end md:w-full lg:w-1/2">
+        <Image
+          src={ASSET_URL + '/memes/JohnCenaVibingToCupid.gif'}
+          alt="John Cena Vibing to Cupid"
+          style={{
+            width: '100%',
+            height: '100%',
+            marginTop: 'auto',
+            display: 'block',
+          }}
+          width="1000"
+          height="1200"
+          priority
+          loading="eager"
+          quality={80}
+          className="scale-150 md:scale-125"
         />
-      </DialogContent>
-    </Dialog>
+      </div>
+      <audio
+        src={'/assets/JohnCenaVibingToCupid.mp3'}
+        style={{ display: 'none' }}
+        autoPlay
+        loop
+      />
+    </>
+  );
+}
+
+export const EasterEgg = ({ isOpen, onClose, isProject }: Props) => {
+  const isDesktop = useMediaQuery('(min-width: 768px)');
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const timeout = setTimeout(() => {
+      onClose();
+    }, 60000); // 60 seconds
+    return () => clearTimeout(timeout);
+  }, [isOpen, onClose]);
+
+  if (isDesktop) {
+    return (
+      <Dialog open={isOpen} onOpenChange={onClose}>
+        <DialogContent
+          className="h-screen w-screen max-w-none overflow-hidden rounded-none bg-[#5243FF]"
+          onInteractOutside={(e) => e.preventDefault()}
+          classNames={{
+            closeIcon: 'text-white',
+          }}
+        >
+          <MainContent isProject={isProject} />
+        </DialogContent>
+      </Dialog>
+    );
+  }
+
+  return (
+    <Drawer open={isOpen} onOpenChange={onClose}>
+      <DrawerContent className="h-screen w-screen max-w-none overflow-hidden rounded-none bg-[#5243FF]">
+        <MainContent isProject={isProject} />
+      </DrawerContent>
+    </Drawer>
   );
 };

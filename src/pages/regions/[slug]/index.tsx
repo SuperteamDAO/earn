@@ -8,7 +8,7 @@ import { getURL } from '@/utils/validUrl';
 
 import { RegionPop } from '@/features/conversion-popups/components/RegionPop';
 import { GrantsSection } from '@/features/grants/components/GrantsSection';
-import { Listings } from '@/features/listings/components/Listings';
+import { ListingsSection } from '@/features/listings/components/ListingsSection';
 
 const RegionsPage = ({ slug, st }: { slug: string; st: Superteam }) => {
   const displayName = st?.displayValue;
@@ -27,7 +27,7 @@ const RegionsPage = ({ slug, st }: { slug: string; st: Superteam }) => {
       />
       <div className="w-full">
         <RegionPop st={st} />
-        <Listings type="region" region={st.region} />
+        <ListingsSection type="region" region={st.region} />
 
         <GrantsSection type="region" region={st.region} />
       </div>
@@ -43,9 +43,7 @@ export async function getServerSideProps(context: NextPageContext) {
   );
 
   if (!st) {
-    return {
-      notFound: true,
-    };
+    return { notFound: true };
   }
 
   return {

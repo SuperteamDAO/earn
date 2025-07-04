@@ -4,7 +4,7 @@ import { type User } from '@/interface/user';
 import { api } from '@/lib/api';
 
 const fetchRecentEarners = async (): Promise<User[]> => {
-  const response = await api.get('/api/sidebar/recent-earners');
+  const response = await api.get('/api/homepage/recent-earners');
   return response.data;
 };
 

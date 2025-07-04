@@ -59,6 +59,22 @@ function getSkillFilter(
   }
 }
 
+function getUserRegionFilter(userLocation: string | null): string[] {
+  if (!userLocation) return ['Global'];
+
+  const userRegion = getCombinedRegion(userLocation, true);
+  const regions = userRegion?.name
+    ? [
+        'Global',
+        userRegion.name,
+        ...(filterRegionCountry(userRegion, userLocation).country || []),
+        ...(getParentRegions(userRegion) || []),
+      ]
+    : ['Global'];
+
+  return regions;
+}
+
 export async function buildGrantsQuery(
   args: BuildGrantsQueryArgs,
   user: {
@@ -80,20 +96,8 @@ export async function buildGrantsQuery(
   const andConditions: Prisma.GrantsWhereInput[] = [];
 
   if (user?.isTalentFilled && (context === 'all' || context === 'home')) {
-    const userRegion = user?.location
-      ? getCombinedRegion(user?.location, true)
-      : undefined;
-
     where.region = {
-      in: userRegion?.name
-        ? [
-            'Global',
-            userRegion.name,
-            ...(filterRegionCountry(userRegion, user.location || '').country ||
-              []),
-            ...(getParentRegions(userRegion) || []),
-          ]
-        : ['Global'],
+      in: getUserRegionFilter(user.location),
     };
   }
 
@@ -105,7 +109,6 @@ export async function buildGrantsQuery(
 
   if (context === 'sponsor' && sponsor) {
     const sponsorKey = sponsor.toLowerCase();
-
     const sponsorInfo = exclusiveSponsorData[sponsorKey];
 
     where.sponsor = {

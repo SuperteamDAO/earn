@@ -41,15 +41,23 @@ export function Deadline() {
   const hackathons = useAtomValue(hackathonsAtom);
 
   const [maxDeadline, setMaxDeadline] = useState<Date | undefined>(undefined);
-  const [minDeadline] = useState<Date | undefined>(new Date());
+  const [minDeadline] = useState<Date | undefined>(
+    dayjs().add(1, 'day').startOf('day').toDate(),
+  );
 
   const isEditing = useAtomValue(isEditingAtom);
 
   useEffect(() => {
-    if (isEditing && deadline) {
-      const originalDeadline = dayjs(deadline);
-      const twoWeeksLater = originalDeadline.add(2, 'weeks');
-      setMaxDeadline(twoWeeksLater.toDate());
+    if (isEditing) {
+      if (deadline) {
+        const originalDeadline = dayjs(deadline);
+        const twoWeeksLater = originalDeadline.add(2, 'weeks');
+        setMaxDeadline(twoWeeksLater.endOf('day').toDate());
+      }
+    }
+    if (!isEditing) {
+      const threeMonthsLater = dayjs().add(3, 'months');
+      setMaxDeadline(threeMonthsLater.endOf('day').toDate());
     }
     return () => {
       setMaxDeadline(undefined);
@@ -115,7 +123,11 @@ export function Deadline() {
                 }}
                 disabled={type === 'hackathon'}
                 minDateTooltipContent="Deadline cannot be in the past"
-                maxDateTooltipContent="Cannot extend deadline more than 2 weeks from original deadline"
+                maxDateTooltipContent={
+                  isEditing
+                    ? 'Cannot extend deadline more than 2 weeks from original deadline'
+                    : 'Deadline cannot be more than 3 months from today'
+                }
               />
             </div>
             {type !== 'hackathon' && (

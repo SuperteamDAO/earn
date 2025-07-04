@@ -15,8 +15,8 @@ export async function validateSubmissionRequest(
   if (!user) throw new Error('User not found');
   if (!user.isTalentFilled) throw new Error('Unauthorized: Profile incomplete');
   if (!listing) throw new Error('Listing not found');
-  if (!listing.isPublished && !listing.isActive)
-    throw new Error('Listing not available');
+  if (!listing.isActive) throw new Error('Listing not available');
+  if (!listing.isPublished) throw new Error('Listing is not published');
   if (
     !userRegionEligibilty({
       region: listing.region,

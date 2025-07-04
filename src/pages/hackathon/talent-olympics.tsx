@@ -5,11 +5,12 @@ import Link from 'next/link';
 import posthog from 'posthog-js';
 import { useEffect, useRef, useState } from 'react';
 import Countdown from 'react-countdown';
-import { FaPlay } from 'react-icons/fa';
-import { FaDiscord } from 'react-icons/fa6';
-import { TbBell, TbBellRinging } from 'react-icons/tb';
 import { toast } from 'sonner';
 
+import FaDiscord from '@/components/icons/FaDiscord';
+import FaPlay from '@/components/icons/FaPlay';
+import TbBell from '@/components/icons/TbBell';
+import TbBellRinging from '@/components/icons/TbBellRinging';
 import { UserFlag } from '@/components/shared/UserFlag';
 import {
   Accordion,
@@ -204,6 +205,7 @@ export default function TalentOlympics({ countryLeaders, rankings }: Props) {
               tracks={frontendTrack}
               hackathonIsOn={hackathonIsOn}
             />
+
             <Track
               title="Rust Track"
               tracks={rustTrack}
@@ -262,6 +264,7 @@ function Hero({
       <TalentOlympicsHeader
         styles={{ height: isSM ? '12rem' : '12rem', width: 'auto' }}
       />
+
       <p className="mt-4 max-w-sm px-6 text-center font-medium text-white">
         Complete Challenges. Earn Prizes. <br /> Get a Full-Time Job.
       </p>
@@ -296,6 +299,7 @@ function Hero({
               status === 'Close In' ? 'bg-[#39FFC1]' : 'bg-slate-200',
             )}
           />
+
           <p className="font-medium">
             Submissions {status}{' '}
             {status !== 'Closed' && (
@@ -317,12 +321,14 @@ function Hero({
           src={'/company-logos/turbine.svg'}
           className="w-[5rem] sm:w-[7rem]"
         />
+
         <ExternalImage
           className="w-[5rem] sm:w-[7rem]"
           alt="Superteam"
           src={'/company-logos/superteam.svg'}
           style={{ height: PoweredByHeight }}
         />
+
         <ExternalImage
           className="w-[5rem] sm:w-[7rem]"
           alt="Rise In"
@@ -594,6 +600,7 @@ function About() {
               src={base + 'kash.png'}
               className="h-6 w-6"
             />
+
             <span className="text-sm font-medium text-slate-500">
               Message from Kash
             </span>
@@ -722,6 +729,7 @@ function TrackBox({
                 alt={title}
                 src={icon}
               />
+
               <div className="flex flex-col">
                 <p className="text-sm font-semibold text-slate-900 md:text-base">
                   <TextStyler text={title} />
@@ -737,6 +745,7 @@ function TrackBox({
                 alt={token}
                 src={tokenList.find((t) => t.tokenSymbol === token)?.icon || ''}
               />
+
               <p className="text-sm font-semibold text-slate-700 md:text-base">
                 {amount?.toLocaleString('en-us')}
               </p>
@@ -805,6 +814,7 @@ function Rankings({
                   src={r.user.photo ?? undefined}
                   alt={`${r.user.firstName}'s avatar`}
                 />
+
                 <div className="flex flex-col items-start gap-1 leading-normal md:justify-start md:leading-[1.15]">
                   <div className="flex items-center gap-2">
                     <p className="max-w-[7rem] truncate text-black">

@@ -1,3 +1,4 @@
+import { atom, useAtom } from 'jotai';
 import debounce from 'lodash.debounce';
 import { Search } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
@@ -10,10 +11,12 @@ interface Props {
   currSearch?: string;
 }
 
+const autofocus = atom(false);
+
 export function SearchInput({ onSearch, isLoading, currSearch }: Props) {
   const [value, setValue] = useState(currSearch || '');
+  const [shouldFocus, setFocus] = useAtom(autofocus);
 
-  // Store the debounced function in a ref
   const debouncedSearchRef = useRef<
     (((searchValue: string) => void) & { cancel?: () => void }) | undefined
   >(undefined);
@@ -29,6 +32,7 @@ export function SearchInput({ onSearch, isLoading, currSearch }: Props) {
   }, [onSearch]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFocus(true);
     const newValue = e.target.value;
     setValue(newValue);
     debouncedSearchRef.current?.(newValue);
@@ -37,7 +41,7 @@ export function SearchInput({ onSearch, isLoading, currSearch }: Props) {
   return (
     <div className="relative flex items-center">
       <Input
-        autoFocus
+        autoFocus={shouldFocus}
         type="text"
         value={value}
         onChange={handleChange}

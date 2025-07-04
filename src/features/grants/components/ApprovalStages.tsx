@@ -1,6 +1,6 @@
 import { useAtom } from 'jotai';
-import { FaCheck } from 'react-icons/fa';
 
+import FaCheck from '@/components/icons/FaCheck';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 
 import {
@@ -138,6 +138,7 @@ export const ApprovalStages = ({ application, grant }: Props) => {
             isStartComplete={true}
             isEndComplete={isStateCompleted('KYC APPROVED')}
           />
+
           <div>
             <Heading>Grant Approved</Heading>
             <Subheading>
@@ -160,6 +161,7 @@ export const ApprovalStages = ({ application, grant }: Props) => {
             isStartComplete={isStateCompleted('KYC APPROVED')}
             isEndComplete={tranches[0]?.status === 'Paid'}
           />
+
           <div>
             <Heading>KYC Successful</Heading>
             <Subheading>Documents verified</Subheading>

@@ -313,7 +313,7 @@ export function AiGenerateResult({
       )}
 
       <motion.div
-        className="sticky bottom-0 mt-auto flex items-center justify-end gap-4 bg-white py-6 pt-2"
+        className="sticky bottom-0 mt-auto flex items-center justify-end gap-4 bg-white py-4"
         key="result-footer"
         initial={{
           y: 75,

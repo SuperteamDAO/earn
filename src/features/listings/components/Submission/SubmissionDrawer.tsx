@@ -4,7 +4,7 @@ import axios from 'axios';
 import { X } from 'lucide-react';
 import { useRouter } from 'next/router';
 import posthog from 'posthog-js';
-import { type JSX, useEffect, useState } from 'react';
+import { type JSX, useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { type z } from 'zod';
@@ -145,8 +145,32 @@ export const SubmissionDrawer = ({
     fetchData();
   }, [id, editMode, form.reset]);
 
+  const isDisabled = useMemo(
+    () =>
+      Boolean(
+        isSubmitDisabled ||
+          isTemplate ||
+          !!query['preview'] ||
+          (isHackathon && !editMode && !termsAccepted) ||
+          isLoading ||
+          form.formState.isSubmitting,
+      ),
+
+    [
+      isSubmitDisabled,
+      isTemplate,
+      query,
+      isHackathon,
+      editMode,
+      termsAccepted,
+      isLoading,
+      form.formState.isSubmitting,
+    ],
+  );
+
   const onSubmit = async (data: FormData) => {
     if (isLoading) return;
+    if (isDisabled) return;
 
     posthog.capture('confirmed_submission');
     setIsLoading(true);
@@ -227,18 +251,28 @@ export const SubmissionDrawer = ({
       headerText = 'Submit Your Application';
       subheadingText = (
         <>
-          Don&apos;t start working just yet! Apply first, and then begin working
-          only once you&apos;ve been hired for the project by the sponsor.
           <p>
-            Please note that the sponsor might contact you to assess fit before
-            picking the winner.
+            {`Don't start working on the scope just yet! Apply first. Only the winning candidate will have to work on the scope mentioned in this listing. `}
+          </p>
+          <p>Note:</p>
+          <p>
+            1. The sponsor might contact you to assess fit before picking the
+            winner.
+          </p>
+          <p>
+            2. You can edit this application until the deadline of this listing.
           </p>
         </>
       );
       break;
     case 'bounty':
       headerText = 'Bounty Submission';
-      subheadingText = "We can't wait to see what you've created!";
+      subheadingText = (
+        <>
+          <p>{`We can't wait to see what you've created!`}</p>
+          <p>Note: You can edit this submission until the bounty deadline.</p>
+        </>
+      );
       break;
     case 'hackathon':
       headerText = `${Hackathon?.name || ''} Track Submission`;
@@ -467,14 +501,7 @@ export const SubmissionDrawer = ({
 
                 <Button
                   className="ph-no-capture h-12 w-full"
-                  disabled={
-                    isSubmitDisabled ||
-                    isTemplate ||
-                    !!query['preview'] ||
-                    (isHackathon && !editMode && !termsAccepted) ||
-                    isLoading ||
-                    form.formState.isSubmitting
-                  }
+                  disabled={isDisabled}
                   type="submit"
                 >
                   {isLoading ? (
@@ -502,6 +529,7 @@ export const SubmissionDrawer = ({
                     onClick={() => setIsTOSModalOpen(true)}
                     className="cursor-pointer underline underline-offset-2"
                     rel="noopener noreferrer"
+                    type="button"
                   >
                     Terms of Use
                   </button>
