@@ -82,18 +82,20 @@ export const MultiSelectFilter = ({
       </DropdownMenuTrigger>
 
       <DropdownMenuContent className="border-slate-300" align="end">
-        <div className="px-3 py-1">
+        <div className="py-1">
           <DropdownMenuGroup>
-            <div className="mb-1 text-xs text-slate-400">Select Options</div>
+            <div className="px-3 py-1 text-xs text-slate-400">
+              Select Options
+            </div>
             <div className="space-y-1">
               {availableFilters.map((filter) => {
                 const isSelected = selectedFilters.has(filter.value);
                 const colors = getFilterColor(filter.value);
 
                 return (
-                  <div
+                  <label
                     key={filter.value}
-                    className="flex items-center justify-between py-0.5"
+                    className="flex cursor-pointer items-center justify-between rounded-md px-3 py-1 hover:bg-slate-100"
                   >
                     <div className="flex items-center space-x-2">
                       <Switch
@@ -103,7 +105,7 @@ export const MultiSelectFilter = ({
                         thumbClassName="size-2 data-[state=checked]:translate-x-2.5"
                       />
                       <StatusPill
-                        className="text-[0.625rem]"
+                        className="text-[0.6rem]"
                         color={colors.color}
                         backgroundColor={colors.bg}
                         borderColor={colors.border}
@@ -111,7 +113,7 @@ export const MultiSelectFilter = ({
                         {filter.label}
                       </StatusPill>
                     </div>
-                  </div>
+                  </label>
                 );
               })}
             </div>

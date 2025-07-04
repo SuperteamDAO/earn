@@ -1,6 +1,6 @@
 import { usePrivy } from '@privy-io/react-auth';
 import { useQuery } from '@tanstack/react-query';
-import { Lock, MessageSquare, Plus, Users } from 'lucide-react';
+import { Lock, Plus, Users } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import posthog from 'posthog-js';
@@ -181,10 +181,10 @@ export function SponsorLayout({
             ]
           : []),
         {
-          name: 'Get Help',
-          link: PDTG,
-          icon: MessageSquare,
-          posthog: 'get help_sponsor',
+          name: 'FAQ',
+          link: '/faq',
+          icon: MdOutlineChatBubbleOutline,
+          posthog: 'faq_sponsor',
         },
       ];
 

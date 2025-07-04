@@ -137,7 +137,7 @@ export const ApplicationHeader = ({
                 <MoreVertical className="h-4 w-4" />
               </div>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48">
+            <DropdownMenuContent align="start" className="w-48 text-slate-500">
               <DropdownMenuItem
                 disabled={exportMutation.isPending}
                 onClick={() => handleExport()}
@@ -145,12 +145,12 @@ export const ApplicationHeader = ({
               >
                 {exportMutation.isPending ? (
                   <>
-                    <span className="loading loading-spinner mr-2" />
+                    <span className="loading loading-spinner" />
                     Exporting...
                   </>
                 ) : (
                   <>
-                    <Download className="mr-2 h-4 w-4" />
+                    <Download className="size-4" />
                     Export CSV
                   </>
                 )}
@@ -162,7 +162,7 @@ export const ApplicationHeader = ({
                 }
                 className="cursor-pointer"
               >
-                <ExternalLink className="mr-2 h-4 w-4" />
+                <ExternalLink className="size-4" />
                 View Listing
               </DropdownMenuItem>
             </DropdownMenuContent>

@@ -168,7 +168,8 @@ export const SubmissionHeader = ({
   const showWarning =
     !!remainings &&
     !bounty?.isWinnersAnnounced &&
-    totalPodiumSpots > eligibleSubmissions;
+    totalPodiumSpots > eligibleSubmissions &&
+    bountyStatus === 'In Review';
 
   return (
     <div className="mb-2 flex items-center justify-between">
@@ -203,7 +204,7 @@ export const SubmissionHeader = ({
                 <MoreVertical className="h-4 w-4" />
               </div>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48">
+            <DropdownMenuContent align="start" className="w-48 text-slate-500">
               {!isHackathonPage && (
                 <DropdownMenuItem
                   disabled={exportMutation.isPending}
@@ -212,12 +213,12 @@ export const SubmissionHeader = ({
                 >
                   {exportMutation.isPending ? (
                     <>
-                      <span className="loading loading-spinner mr-2" />
+                      <span className="loading loading-spinner" />
                       Exporting...
                     </>
                   ) : (
                     <>
-                      <Download className="mr-2 h-4 w-4" />
+                      <Download className="size-4" />
                       Export CSV
                     </>
                   )}
@@ -230,7 +231,7 @@ export const SubmissionHeader = ({
                 }
                 className="cursor-pointer"
               >
-                <ExternalLink className="mr-2 h-4 w-4" />
+                <ExternalLink className="size-4" />
                 View Listing
               </DropdownMenuItem>
 
@@ -249,7 +250,7 @@ export const SubmissionHeader = ({
                           : ''
                       }
                     >
-                      <Pencil className="mr-2 h-4 w-4" />
+                      <Pencil className="size-4" />
                       Edit
                     </Link>
                   </DropdownMenuItem>
@@ -301,8 +302,8 @@ export const SubmissionHeader = ({
                 </ShinyButton>
               </Tooltip>
               {showWarning && (
-                <div className="my-2 flex w-62">
-                  <p className="text-xs text-red-400">
+                <div className="my-2 flex w-52">
+                  <p className="text-xxs text-red-400">
                     You don&apos;t have enough eligible (non-spam) submissions.{' '}
                     <a
                       href={PDTG}
