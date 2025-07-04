@@ -448,6 +448,13 @@ export const unofficialSuperteams = [
     country: ['Pakistan'],
     code: 'PK',
   },
+  {
+    name: 'Superteam Nepal',
+    displayValue: 'Nepal',
+    region: 'NEPAL',
+    country: ['Nepal'],
+    code: 'NP',
+  },
 ];
 
 export const CombinedRegions = [...Superteams, ...NonSTRegions];
