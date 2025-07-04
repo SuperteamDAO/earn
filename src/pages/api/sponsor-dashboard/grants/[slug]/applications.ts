@@ -1,6 +1,6 @@
-import { Prisma } from '@prisma/client';
 import type { NextApiResponse } from 'next';
 
+import { Prisma } from '@/interface/prisma/namespace';
 import { type PrismaUserWithoutKYC } from '@/interface/user';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';

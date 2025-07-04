@@ -1,4 +1,3 @@
-import { type CommentRefType } from '@prisma/client';
 import { useSetAtom } from 'jotai';
 import { ArrowRight, Loader2 } from 'lucide-react';
 import posthog from 'posthog-js';
@@ -9,6 +8,7 @@ import { Loading } from '@/components/shared/Loading';
 import { Button } from '@/components/ui/button';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 import type { Comment } from '@/interface/comments';
+import { type CommentRefType } from '@/interface/prisma/enums';
 import { type User } from '@/interface/user';
 import { api } from '@/lib/api';
 import { cn } from '@/utils/cn';

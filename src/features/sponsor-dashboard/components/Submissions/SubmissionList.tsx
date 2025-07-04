@@ -1,4 +1,3 @@
-import { type SubmissionLabels } from '@prisma/client';
 import { useAtom } from 'jotai';
 import debounce from 'lodash.debounce';
 import { Search } from 'lucide-react';
@@ -12,6 +11,7 @@ import React, {
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { StatusPill } from '@/components/ui/status-pill';
+import { type SubmissionLabels } from '@/interface/prisma/enums';
 import type { SubmissionWithUser } from '@/interface/submission';
 import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';

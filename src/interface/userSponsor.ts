@@ -1,5 +1,4 @@
-import type { Role } from '@prisma/client';
-
+import type { Role } from '@/interface/prisma/enums';
 import type { SponsorType } from '@/interface/sponsor';
 import type { User } from '@/interface/user';
 

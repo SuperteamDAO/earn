@@ -1,4 +1,3 @@
-import { type SubmissionLabels } from '@prisma/client';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAtom, useSetAtom } from 'jotai';
 import { ChevronDown } from 'lucide-react';
@@ -11,6 +10,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { StatusPill } from '@/components/ui/status-pill';
+import { type SubmissionLabels } from '@/interface/prisma/enums';
 import { api } from '@/lib/api';
 
 import { isStateUpdatingAtom, selectedGrantApplicationAtom } from '../../atoms';

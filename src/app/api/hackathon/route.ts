@@ -1,7 +1,7 @@
-import { type Prisma } from '@prisma/client';
 import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
+import { type Prisma } from '@/interface/prisma/namespace';
 import { prisma } from '@/prisma';
 
 import { HackathonQueryParamsSchema } from '@/features/hackathon/constants/schema';

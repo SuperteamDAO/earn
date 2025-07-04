@@ -1,4 +1,3 @@
-import type { Prisma } from '@prisma/client';
 import {
   BarChartIcon as ChartNoAxesCombined,
   Brain,
@@ -26,6 +25,7 @@ import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { Tooltip } from '@/components/ui/tooltip';
 import { ASSET_URL } from '@/constants/ASSET_URL';
 import { useBreakpoint } from '@/hooks/use-breakpoint';
+import { type Prisma } from '@/interface/prisma/namespace';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { prisma } from '@/prisma';

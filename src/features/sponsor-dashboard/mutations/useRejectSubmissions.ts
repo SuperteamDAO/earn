@@ -1,8 +1,8 @@
-import { SubmissionStatus } from '@prisma/client';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useSetAtom } from 'jotai';
 import { toast } from 'sonner';
 
+import { SubmissionStatus } from '@/interface/prisma/enums';
 import { type SubmissionWithUser } from '@/interface/submission';
 import { api } from '@/lib/api';
 

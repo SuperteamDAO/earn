@@ -1,4 +1,3 @@
-import { SubmissionLabels, SubmissionStatus } from '@prisma/client';
 import { TooltipArrow } from '@radix-ui/react-tooltip';
 import { useMutation } from '@tanstack/react-query';
 import dayjs from 'dayjs';
@@ -33,6 +32,7 @@ import { StatusPill } from '@/components/ui/status-pill';
 import { Tooltip } from '@/components/ui/tooltip';
 import { PDTG } from '@/constants/Telegram';
 import { useDisclosure } from '@/hooks/use-disclosure';
+import { SubmissionLabels, SubmissionStatus } from '@/interface/prisma/enums';
 import { type SubmissionWithUser } from '@/interface/submission';
 import { api } from '@/lib/api';
 import { useUser } from '@/store/user';

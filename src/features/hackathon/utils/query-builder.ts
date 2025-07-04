@@ -1,5 +1,6 @@
-import { type Prisma } from '@prisma/client';
 import type { z } from 'zod';
+
+import { type Prisma } from '@/interface/prisma/namespace';
 
 import {
   filterRegionCountry,

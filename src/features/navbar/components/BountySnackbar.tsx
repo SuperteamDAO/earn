@@ -1,8 +1,8 @@
-import { type status } from '@prisma/client';
 import { atom, useAtom } from 'jotai';
 import { Pencil } from 'lucide-react';
 import { useRouter } from 'next/router';
 
+import { type status } from '@/interface/prisma/enums';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';

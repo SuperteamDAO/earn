@@ -1,4 +1,3 @@
-import { type SubscribeHackathon } from '@prisma/client';
 import { Loader2 } from 'lucide-react';
 import type { GetServerSideProps } from 'next';
 import Link from 'next/link';
@@ -27,6 +26,7 @@ import { Superteams } from '@/constants/Superteam';
 import { tokenList } from '@/constants/tokenList';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { useMediaQuery } from '@/hooks/use-media-query';
+import { type SubscribeHackathonModel } from '@/interface/prisma/models';
 import type { User } from '@/interface/user';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
@@ -918,7 +918,7 @@ const CountDownRenderer = ({
 const SubscribeHackathon = () => {
   const [isSubscribeLoading, setIsSubscribeLoading] = useState(false);
   const [sub, setSub] = useState<
-    (SubscribeHackathon & { User: User | null })[]
+    (SubscribeHackathonModel & { User: User | null })[]
   >([]);
   const { user } = useUser();
 

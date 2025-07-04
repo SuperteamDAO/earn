@@ -1,7 +1,7 @@
-import { type Prisma } from '@prisma/client';
 import type { z } from 'zod';
 
 import { exclusiveSponsorData } from '@/constants/exclusiveSponsors';
+import { type Prisma } from '@/interface/prisma/namespace';
 
 import {
   type GrantCategorySchema,

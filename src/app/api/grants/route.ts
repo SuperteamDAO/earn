@@ -1,7 +1,7 @@
-import { type Prisma, Prisma as PrismaNamespace } from '@prisma/client';
 import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
+import { Prisma } from '@/interface/prisma/namespace';
 import { prisma } from '@/prisma';
 
 import {
@@ -74,7 +74,7 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    if (error instanceof PrismaNamespace.PrismaClientKnownRequestError) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
       console.error('Prisma error:', error.code, error.message);
       return NextResponse.json({ message: 'Database error' }, { status: 500 });
     }

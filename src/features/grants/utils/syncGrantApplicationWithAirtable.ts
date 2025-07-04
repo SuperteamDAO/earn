@@ -1,7 +1,7 @@
-import { type GrantApplication } from '@prisma/client';
 import axios from 'axios';
 
 import { Superteams } from '@/constants/Superteam';
+import { type GrantApplicationModel } from '@/interface/prisma/models';
 import logger from '@/lib/logger';
 import {
   airtableConfig,
@@ -12,7 +12,7 @@ import {
 
 import { convertGrantApplicationToAirtable } from './convertGrantApplicationToAirtable';
 
-interface GrantApplicationWithUserAndGrant extends GrantApplication {
+interface GrantApplicationWithUserAndGrant extends GrantApplicationModel {
   grant: {
     airtableId: string | null;
     title: string;
