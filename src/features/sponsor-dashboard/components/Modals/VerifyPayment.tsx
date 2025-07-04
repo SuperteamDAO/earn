@@ -310,7 +310,7 @@ export const VerifyPaymentModal = ({
             </div>
             <div className="flex gap-3">
               <div className="w-1/2" />
-              <Button variant="ghost" disabled>
+              <Button variant="ghost" onClick={onClose}>
                 Close
               </Button>
               <Button
