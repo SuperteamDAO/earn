@@ -75,7 +75,7 @@ export function FilterRow({
 
   return (
     <div className="flex w-full flex-col">
-      <div className="hide-scrollbar flex w-full justify-between overflow-x-auto overflow-y-hidden border-slate-200 pb-2">
+      <div className="hide-scrollbar flex w-full justify-between gap-4 overflow-x-auto overflow-y-hidden border-slate-200 pb-2">
         <Tabs
           defaultValue={String(skillIndexOf(skill))}
           onValueChange={(value) => debouncedSetSkill(Number(value))}
@@ -131,7 +131,7 @@ export function FilterRow({
             </div>
           </TabsList>
         </Tabs>
-        <div className="hidden w-fit items-center gap-4 md:flex">
+        <div className="hidden w-fit min-w-52 items-center gap-4 md:flex">
           <SearchInput
             onSearch={onSearch}
             isLoading={isSearchLoading}
