@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { URL_REGEX } from '@/constants/URL_REGEX';
 import { type User } from '@/interface/user';
 
+import { tweetLinkRegex } from '@/features/social/utils/regex';
 import { telegramUsernameSchema } from '@/features/social/utils/schema';
 
 import { type Listing } from '../types';
@@ -19,7 +20,10 @@ const submissionSchema = (
         .union([z.literal(''), z.string().regex(URL_REGEX, 'Invalid URL')])
         .optional(),
       tweet: z
-        .union([z.literal(''), z.string().regex(URL_REGEX, 'Invalid URL')])
+        .union([
+          z.literal(''),
+          z.string().regex(tweetLinkRegex, 'Invalid tweet link'),
+        ])
         .optional(),
       otherInfo: z.string().optional(),
       ask: z.union([z.number().int().min(0), z.null()]).optional(),
