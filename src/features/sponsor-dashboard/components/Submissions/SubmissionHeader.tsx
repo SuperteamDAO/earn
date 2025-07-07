@@ -293,8 +293,7 @@ export const SubmissionHeader = ({
                   onClick={onWinnersAnnounceOpen}
                   animate={true}
                   classNames={{
-                    span: 'bg-brand-purple text-white font-semibold',
-                    button: 'w-52',
+                    button: 'w-52 h-11',
                   }}
                 >
                   <Check className="size-4" />
@@ -343,7 +342,7 @@ export const SubmissionHeader = ({
           <ShinyButton
             animate={true}
             classNames={{
-              span: 'bg-brand-purple text-white font-semibold',
+              button: 'h-11 w-48',
             }}
             onClick={() => {
               router.push(

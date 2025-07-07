@@ -44,7 +44,7 @@ export function MarkCompleted({
         onMarkCompleted={onMarkCompleted}
       />
       <Button
-        className="flex-1 rounded-lg border border-blue-500 bg-blue-50 text-blue-600 hover:bg-blue-100"
+        className="rounded-lg border border-blue-500 bg-blue-50 px-4 text-blue-600 hover:bg-blue-100"
         onClick={markAsCompletedOnOpen}
       >
         <>

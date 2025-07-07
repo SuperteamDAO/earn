@@ -26,6 +26,7 @@ const faqSections: readonly FAQSection[] = [
         question: 'What can I use Superteam Earn for?',
         answer: `Superteam Earn is a platform to get work done from crypto-native talent. This can be in the form of bounties (get the same work done by many people) or hiring freelancers in the form of Project listings. Earn can be used to get any small to medium-scale task done, including but not limited to development, writing, design, research, and product feedback.
 <br />
+<br />
 <a style="color: blue" href="https://in.superteam.fun/bounty-menu" target="_blank">Click here</a> to access the Listings Menu, which contains ideas, listing examples, suggested prize ranges, etc.`,
       },
       {
@@ -90,7 +91,7 @@ After publishing your listing, you'll be prompted to fill out a short verificati
       },
       {
         question: 'How do I check the status of my listings?',
-        answer: `All your listings are shown on your dashboard, each labeled with statuses like Draft, In Progress, In Review, Payment Pending, Fndn to Pay, or Completed. Use filters to sort and manage listings easily.`,
+        answer: `All your listings are shown on your dashboard, each listing is labeled with statuses like Draft, In Progress, In Review, Payment Pending, or Completed. Use filters to sort and manage listings easily.`,
       },
       {
         question: 'Can I duplicate an existing listing?',
@@ -109,7 +110,7 @@ After publishing your listing, you'll be prompted to fill out a short verificati
 <li>
   <strong>Bonus Spots:</strong>
   <ul class="list-disc space-y-2 pl-5 mt-2">
-    <li>Multiple winners can receive the same reward amount under a single category.</li>
+    <li>Multiple winners will receive the same reward amount.</li>
     <li>You can add up to <strong>300 bonus spots</strong>.</li>
   </ul>
 </li>
@@ -216,7 +217,7 @@ export default function FAQ() {
                 <h2 className="text-xl font-semibold text-slate-500">
                   {section.title}
                 </h2>
-                <Accordion type="single">
+                <Accordion type="single" collapsible>
                   {section.subsections.map((faq) => (
                     <AccordionItem
                       className="my-5 rounded-lg border border-slate-200 bg-white"

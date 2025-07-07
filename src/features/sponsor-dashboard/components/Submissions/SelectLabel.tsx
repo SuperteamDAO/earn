@@ -9,9 +9,9 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { StatusPill } from '@/components/ui/status-pill';
 import type { SubmissionWithUser } from '@/interface/submission';
 import { api } from '@/lib/api';
+import { cn } from '@/utils/cn';
 
 import { isStateUpdatingAtom, selectedSubmissionAtom } from '../../atoms';
 import { labelMenuOptions } from '../../constants';
@@ -87,25 +87,33 @@ export const SelectLabel = ({ listingSlug }: Props) => {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <button className="hover:border-brand-purple flex items-center rounded-md border border-slate-200 bg-transparent px-2 py-1 font-medium text-slate-500 capitalize hover:bg-transparent">
-          <StatusPill
-            className="text-[10px]"
-            color={color || 'text-slate-500'}
-            backgroundColor={bg || 'bg-slate-100'}
-            borderColor={border || 'border-slate-200'}
-          >
-            {selectedSubmission?.label || 'Select Option'}
-          </StatusPill>
+      <DropdownMenuTrigger asChild className="min-w-[110px]">
+        <button
+          className={cn(
+            'flex w-full items-center justify-between rounded-lg border border-slate-200 bg-transparent px-2 py-1 text-xs font-medium text-slate-500 capitalize transition-all duration-300 ease-in-out hover:border-slate-200 data-[state=open]:rounded-b-none data-[state=open]:border-slate-200',
+            color,
+            bg,
+            border,
+          )}
+        >
+          {selectedSubmission?.label || 'Select Option'}
           <ChevronDown className="ml-2 size-3" />
         </button>
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent className="border-slate-300">
+      <DropdownMenuContent
+        sideOffset={-1}
+        className="w-full min-w-[110px] divide-y divide-slate-100 rounded-t-none border-slate-200 p-0"
+      >
         {labelMenuOptions.map((option) => (
           <DropdownMenuItem
             key={option.value}
-            className="focus:bg-slate-100"
+            className={cn(
+              'cursor-pointer px-2 py-1 text-center text-[0.7rem]',
+              colorMap[option.value as keyof typeof colorMap].color,
+              colorMap[option.value as keyof typeof colorMap].bg,
+              colorMap[option.value as keyof typeof colorMap].focus,
+            )}
             onClick={() =>
               selectLabel(
                 option.value as SubmissionLabels,
@@ -113,18 +121,7 @@ export const SelectLabel = ({ listingSlug }: Props) => {
               )
             }
           >
-            <StatusPill
-              className="text-[0.625rem]"
-              color={colorMap[option.value as keyof typeof colorMap].color}
-              backgroundColor={
-                colorMap[option.value as keyof typeof colorMap].bg
-              }
-              borderColor={
-                colorMap[option.value as keyof typeof colorMap].border
-              }
-            >
-              {option.label}
-            </StatusPill>
+            {option.label}
           </DropdownMenuItem>
         ))}
       </DropdownMenuContent>

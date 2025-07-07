@@ -1,11 +1,12 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Check, ExternalLink, Trash2, X } from 'lucide-react';
+import { Check, CopyIcon, ExternalLink, Trash2, X } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
+import { CopyButton } from '@/components/ui/copy-tooltip';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import {
   Form,
@@ -23,6 +24,7 @@ import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import { getRankLabels } from '@/utils/rank';
+import { truncatePublicKey } from '@/utils/truncatePublicKey';
 
 import { BONUS_REWARD_POSITION } from '@/features/listing-builder/constants';
 import { calculateTotalPrizes } from '@/features/listing-builder/utils/rewards';
@@ -99,22 +101,18 @@ export const VerifyPaymentModal = ({
                   data.submission.find((sub) => sub.winnerPosition === 1)?.id ||
                   '',
                 link: '',
-                isVerified:
-                  data.submission.find((sub) => sub.winnerPosition === 1)
-                    ?.isPaid || false,
-                txId:
-                  data.submission.find((sub) => sub.winnerPosition === 1)
-                    ?.paymentDetails?.[0]?.txId || '',
+                isVerified: false,
+                txId: '',
               },
             ],
           },
           {
-            keepErrors: true,
-            keepDirty: true,
-            keepIsSubmitted: true,
-            keepTouched: true,
+            keepErrors: false,
+            keepDirty: false,
+            keepIsSubmitted: false,
+            keepTouched: false,
             keepIsValid: false,
-            keepSubmitCount: true,
+            keepSubmitCount: false,
           },
         );
       } else {
@@ -244,6 +242,20 @@ export const VerifyPaymentModal = ({
     setStatus('idle');
   };
 
+  const handleModalOpenChange = (open: boolean) => {
+    if (open) {
+      setStatus('idle');
+      setShowMultiplePayments(false);
+      clearErrors();
+    } else {
+      reset({});
+      setStatus('idle');
+      setShowMultiplePayments(false);
+      clearErrors();
+      onClose();
+    }
+  };
+
   const addPaymentField = () => {
     const currentLinks = paymentLinks || [];
     const winnerSubmission = data?.submission.find(
@@ -326,22 +338,25 @@ export const VerifyPaymentModal = ({
         );
       case 'success':
         return (
-          <div className="flex h-full flex-col gap-10 py-10">
-            <div className="flex items-center justify-center">
-              <div className="flex items-center justify-center rounded-full bg-emerald-50 p-6">
-                <div className="rounded-full bg-emerald-600 p-3">
-                  <Check className="h-10 w-10 text-white" strokeWidth={3} />
+          <div className="flex h-full flex-col gap-10">
+            <div className="py-10">
+              <div className="flex items-center justify-center">
+                <div className="flex items-center justify-center rounded-full bg-emerald-50 p-6">
+                  <div className="rounded-full bg-emerald-600 p-3">
+                    <Check className="h-10 w-10 text-white" strokeWidth={3} />
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <div className="mx-auto flex max-w-[20rem] flex-col items-center gap-2">
-              <p className="font-medium text-slate-900">
-                External Payment(s) Added
-              </p>
-              <p className="text-center text-sm text-slate-500">
-                We have successfully added external payment(s) to your listing.
-              </p>
+              <div className="mx-auto flex max-w-[20rem] flex-col items-center gap-1">
+                <p className="mt-6 font-medium text-slate-900">
+                  External Payment(s) Added
+                </p>
+                <p className="text-center text-sm text-slate-400">
+                  We have successfully added external payment(s) to your
+                  listing.
+                </p>
+              </div>
             </div>
 
             {listing?.totalPaymentsMade !== totalWinnerRanks && (
@@ -560,26 +575,53 @@ export const VerifyPaymentModal = ({
 
                         return (
                           <>
-                            <div className="flex items-center gap-8">
-                              <p className="font-normal text-slate-500">
-                                Winner Amount
-                              </p>
-                              <div className="flex items-center gap-1">
-                                <img
-                                  className="h-[1.2rem] w-[1.2rem] rounded-full"
-                                  alt={selectedToken?.tokenName}
-                                  src={selectedToken?.icon}
-                                />
-                                <p className="font-medium text-slate-800">
-                                  {formatNumberWithSuffix(
-                                    totalPrizeAmount,
-                                    2,
-                                    true,
-                                  )}
+                            <div className="flex flex-col gap-3">
+                              <div className="flex items-center">
+                                <p className="w-32 font-normal text-slate-500">
+                                  Winner Amount
                                 </p>
-                                <p className="font-medium text-slate-400">
-                                  {selectedToken?.tokenSymbol}
+                                <div className="flex items-center gap-1">
+                                  <img
+                                    className="h-[1.2rem] w-[1.2rem] rounded-full"
+                                    alt={selectedToken?.tokenName}
+                                    src={selectedToken?.icon}
+                                  />
+                                  <p className="font-medium text-slate-800">
+                                    {formatNumberWithSuffix(
+                                      totalPrizeAmount,
+                                      2,
+                                      true,
+                                    )}
+                                  </p>
+                                  <p className="font-medium text-slate-400">
+                                    {selectedToken?.tokenSymbol}
+                                  </p>
+                                </div>
+                              </div>
+
+                              <div className="flex items-center">
+                                <p className="w-32 font-normal text-slate-500">
+                                  Wallet Address
                                 </p>
+                                <CopyButton
+                                  text={
+                                    winnerSubmission?.user?.walletAddress || ''
+                                  }
+                                  contentProps={{
+                                    side: 'right',
+                                    className: 'text-[0.6875rem] px-2 py-0.5',
+                                  }}
+                                >
+                                  <div className="flex items-center gap-1">
+                                    <p className="text-sm font-medium text-slate-800">
+                                      {truncatePublicKey(
+                                        winnerSubmission?.user?.walletAddress,
+                                        8,
+                                      )}
+                                    </p>
+                                    <CopyIcon className="h-3 w-3" />
+                                  </div>
+                                </CopyButton>
                               </div>
                             </div>
 
@@ -723,12 +765,11 @@ export const VerifyPaymentModal = ({
                         paymentLinks.length < 5 && (
                           <Button
                             type="button"
-                            variant="outline"
-                            size="sm"
-                            className="w-fit"
+                            variant="link"
+                            className="text-brand-purple hover:text-brand-purple-dark w-fit p-0 text-sm"
                             onClick={addPaymentField}
                           >
-                            Add Another Payment Link
+                            Click here to add another payment link
                           </Button>
                         )}
                     </div>
@@ -764,6 +805,13 @@ export const VerifyPaymentModal = ({
                 </Button>
               </div>
 
+              <div className="mt-4">
+                <p className="text-sm text-slate-400">
+                  *To verify, ensure the amount, token, and wallet address in
+                  the tx link match the details above
+                </p>
+              </div>
+
               {status === 'retry' && (
                 <div className="mt-4 text-center">
                   <a
@@ -789,7 +837,7 @@ export const VerifyPaymentModal = ({
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose} modal>
+    <Dialog open={isOpen} onOpenChange={handleModalOpenChange} modal>
       <DialogContent className="m-0 max-w-2xl p-0" hideCloseIcon>
         <DialogTitle className="text-md -mb-1 px-6 pt-4 font-semibold text-slate-900">
           Verify Payment

@@ -71,6 +71,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
             lastName: true,
             photo: true,
             username: true,
+            walletAddress: true,
           },
         },
       },

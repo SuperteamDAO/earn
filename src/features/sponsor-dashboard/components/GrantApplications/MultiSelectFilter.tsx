@@ -5,7 +5,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
-  DropdownMenuLabel,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { StatusPill } from '@/components/ui/status-pill';
@@ -79,20 +78,18 @@ export const MultiSelectFilter = ({
       </DropdownMenuTrigger>
 
       <DropdownMenuContent className="border-slate-300" align="end">
-        <div className="px-3 py-1">
+        <div className="py-1">
           <DropdownMenuGroup>
-            <DropdownMenuLabel className="mb-1 text-xs text-slate-400">
-              Decision
-            </DropdownMenuLabel>
+            <div className="px-3 py-1 text-xs text-slate-400">Decision</div>
             <div className="mb-3 space-y-1">
               {DECISION_FILTERS.map((filter) => {
                 const isSelected = selectedFilters.has(filter.value);
                 const colors = getFilterColor(filter.value);
 
                 return (
-                  <div
+                  <label
                     key={filter.value}
-                    className="flex items-center justify-between py-0.5"
+                    className="flex cursor-pointer items-center justify-between rounded-md px-3 py-1 hover:bg-slate-100"
                   >
                     <div className="flex items-center space-x-2">
                       <Switch
@@ -110,25 +107,23 @@ export const MultiSelectFilter = ({
                         {filter.label}
                       </StatusPill>
                     </div>
-                  </div>
+                  </label>
                 );
               })}
             </div>
           </DropdownMenuGroup>
 
           <DropdownMenuGroup>
-            <DropdownMenuLabel className="mb-1 text-xs text-slate-400">
-              Label
-            </DropdownMenuLabel>
+            <div className="px-3 py-1 text-xs text-slate-400">Label</div>
             <div className="space-y-1">
               {LABEL_FILTERS.map((filter) => {
                 const isSelected = selectedFilters.has(filter.value);
                 const colors = getFilterColor(filter.value);
 
                 return (
-                  <div
+                  <label
                     key={filter.value}
-                    className="flex items-center justify-between py-0.5"
+                    className="flex cursor-pointer items-center justify-between rounded-md px-3 py-1 hover:bg-slate-100"
                   >
                     <div className="flex items-center space-x-2">
                       <Switch
@@ -146,7 +141,7 @@ export const MultiSelectFilter = ({
                         {filter.label}
                       </StatusPill>
                     </div>
-                  </div>
+                  </label>
                 );
               })}
             </div>

@@ -123,13 +123,25 @@ export const SelectWinner = ({
                       isMultiSelectOn
                     }
                     className={cn(
-                      'w-full justify-between rounded-lg border border-emerald-500 bg-emerald-50 py-4 text-emerald-600 hover:bg-emerald-100 hover:text-emerald-600 disabled:opacity-50 data-[state=open]:rounded-b-none data-[state=open]:border-slate-200',
-                      isValueSelected && 'pr-10',
+                      'w-full justify-between rounded-lg py-4 transition-all duration-300 ease-in-out disabled:opacity-50 data-[state=open]:rounded-b-none data-[state=open]:border-slate-200',
+                      isValueSelected
+                        ? 'border border-emerald-600 bg-emerald-600 pr-10 text-white hover:bg-emerald-700 hover:text-white'
+                        : 'border border-emerald-500 bg-emerald-50 text-emerald-600 hover:bg-emerald-100 hover:text-emerald-600',
                     )}
                   >
                     <div className="flex items-center">
-                      <div className="mr-2 rounded-full bg-emerald-600 p-0.5">
-                        <Check className="size-1 text-white" />
+                      <div
+                        className={cn(
+                          'mr-2 rounded-full p-0.5 transition-all duration-300 ease-in-out',
+                          isValueSelected ? 'bg-white' : 'bg-emerald-600',
+                        )}
+                      >
+                        <Check
+                          className={cn(
+                            'size-1 transition-all duration-300 ease-in-out',
+                            isValueSelected ? 'text-emerald-600' : 'text-white',
+                          )}
+                        />
                       </div>
                       <span className="capitalize">
                         {selectedSubmission?.isWinner &&
@@ -144,7 +156,7 @@ export const SelectWinner = ({
                 </DropdownMenuTrigger>
                 {isValueSelected && (
                   <button
-                    className="absolute top-1/2 right-4 z-10 flex size-4 -translate-y-1/2 items-center justify-center rounded-full border border-slate-500 text-slate-500 hover:text-black disabled:cursor-not-allowed disabled:opacity-50"
+                    className="absolute top-1/2 right-4 z-10 flex size-4 -translate-y-1/2 items-center justify-center rounded-full border border-white text-white transition-all duration-300 ease-in-out hover:text-emerald-100 disabled:cursor-not-allowed disabled:opacity-50"
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();

@@ -70,16 +70,18 @@ export const SubmissionPanel = ({
                     View Profile <ArrowRight className="inline-block h-3 w-3" />
                   </Link>
                 </div>
-                <div className="self-start">
+                <div className="ml-3 self-start">
                   {!isHackathonPage &&
                     selectedSubmission?.status === 'Pending' &&
-                    !bounty?.isWinnersAnnounced && (
+                    !bounty?.isWinnersAnnounced &&
+                    !selectedSubmission.isWinner && (
                       <SelectLabel listingSlug={bounty?.slug!} />
                     )}
                 </div>
               </div>
               <div className="ph-no-capture flex w-full items-center justify-end gap-2">
                 {!bounty?.isWinnersAnnounced &&
+                  !selectedSubmission?.isWinner &&
                   (selectedSubmission?.status === 'Pending' ||
                     selectedSubmission?.label === SubmissionLabels.Spam) && (
                     <SpamButton
