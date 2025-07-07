@@ -80,11 +80,7 @@ export async function POST(request: NextRequest) {
         let correctedLabel: SubmissionLabels = appl?.label || 'Unreviewed';
         if (aiReview?.predictedLabel === 'High_Quality')
           correctedLabel = 'Shortlisted';
-        if (
-          aiReview?.predictedLabel === 'Mid_Quality' ||
-          aiReview?.predictedLabel === 'Low_Quality'
-        )
-          correctedLabel = 'Reviewed';
+        else correctedLabel = aiReview?.predictedLabel || 'Unreviewed';
         return await prisma.submission.update({
           where: {
             id: appl.id,
@@ -92,11 +88,8 @@ export async function POST(request: NextRequest) {
           data: {
             label: correctedLabel,
             notes: aiReview?.shortNote
-              ?.replace('* ', '')
-              .split(/(?<=[.!?])\s+/)
-              .filter((sentence) => sentence.trim().length > 0)
-              .map((sentence) => `• ${sentence.trim()}`)
-              .join('\n'),
+              ?.replaceAll('**', '')
+              ?.replaceAll('*', '•'),
             ai: commitedAi,
           },
         });

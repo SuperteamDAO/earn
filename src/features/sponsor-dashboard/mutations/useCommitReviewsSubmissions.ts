@@ -52,21 +52,14 @@ export const useCommitReviewsSubmissions = (
         let correctedLabel: SubmissionLabels = prevAppl?.label || 'Unreviewed';
         if (aiReview?.predictedLabel === 'High_Quality')
           correctedLabel = 'Shortlisted';
-        if (
-          aiReview?.predictedLabel === 'Mid_Quality' ||
-          aiReview?.predictedLabel === 'Low_Quality'
-        )
-          correctedLabel = 'Reviewed';
+        else correctedLabel = aiReview?.predictedLabel || 'Unreviewed';
         if (prevAppl) {
           return {
             ...prevAppl,
             label: correctedLabel,
             notes:
-              aiReview?.shortNote
-                ?.split(/(?<=[.!?])\s+/)
-                .filter((sentence) => sentence.trim().length > 0)
-                .map((sentence) => `• ${sentence.trim()}`)
-                .join('\n') || prevAppl.notes,
+              aiReview?.shortNote?.replaceAll('**', '')?.replaceAll('*', '•') ||
+              prevAppl.notes,
             ai: commitedAi,
           };
         }

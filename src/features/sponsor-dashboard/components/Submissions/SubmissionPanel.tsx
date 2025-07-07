@@ -17,6 +17,7 @@ import { truncateString } from '@/utils/truncateString';
 
 import type { Listing, Rewards } from '@/features/listings/types';
 import {
+  GitHub,
   Telegram,
   Twitter,
   Website,
@@ -248,6 +249,11 @@ export const SubmissionPanel = ({
                 <Twitter
                   className="h-[0.9rem] w-[0.9rem] text-slate-600"
                   link={selectedSubmission?.user?.twitter || ''}
+                />
+
+                <GitHub
+                  className="h-[0.9rem] w-[0.9rem] text-slate-600"
+                  link={selectedSubmission?.user?.github || ''}
                 />
 
                 <Website

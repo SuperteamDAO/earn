@@ -46,6 +46,8 @@ export default function AiReviewProjectApplicationsModal({
   const [completedStats, setCompletedStats] = useState({
     totalReviewed: 0,
     shortlisted: 0,
+    midQuality: 0,
+    lowQuality: 0,
     totalHoursSaved: 0,
   });
 
@@ -105,6 +107,8 @@ export default function AiReviewProjectApplicationsModal({
           totalReviewed: data.data.length,
           shortlisted: data.data.filter((s) => s.label === 'Shortlisted')
             .length,
+          midQuality: data.data.filter((s) => s.label === 'Mid_Quality').length,
+          lowQuality: data.data.filter((s) => s.label === 'Low_Quality').length,
           totalHoursSaved: data.data.length * 6_00_000,
         });
         posthog.capture('complete_ai review project');
@@ -143,11 +147,20 @@ export default function AiReviewProjectApplicationsModal({
             <span
               className={cn(
                 'mx-2 inline-flex w-fit rounded-full px-2 text-center text-[10px] whitespace-nowrap capitalize',
-                colorMap['Reviewed'].bg,
-                colorMap['Reviewed'].color,
+                colorMap['Mid_Quality'].bg,
+                colorMap['Mid_Quality'].color,
               )}
             >
-              Reviewed
+              Mid Quality
+            </span>
+            <span
+              className={cn(
+                'mx-2 inline-flex w-fit rounded-full px-2 text-center text-[10px] whitespace-nowrap capitalize',
+                colorMap['Low_Quality'].bg,
+                colorMap['Low_Quality'].color,
+              )}
+            >
+              Low Quality
             </span>
           </span>
           <p className="mt-1">
@@ -316,6 +329,16 @@ export default function AiReviewProjectApplicationsModal({
                     label="Shortlisted"
                     value={completedStats.shortlisted}
                     dotColor="bg-violet-400"
+                  />
+                  <StatItem
+                    label="Low Quality"
+                    value={completedStats.lowQuality}
+                    dotColor="bg-stone-400"
+                  />
+                  <StatItem
+                    label="Mid Quality"
+                    value={completedStats.midQuality}
+                    dotColor="bg-cyan-400"
                   />
                   <StatItem
                     label="Total time saved"

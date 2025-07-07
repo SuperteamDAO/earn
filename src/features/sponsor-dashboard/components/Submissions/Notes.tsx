@@ -2,11 +2,15 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAtom, useSetAtom } from 'jotai';
 import debounce from 'lodash.debounce';
 import { Loader2 } from 'lucide-react';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 
 import { Textarea } from '@/components/ui/textarea';
 import { type SubmissionWithUser } from '@/interface/submission';
 import { api } from '@/lib/api';
+import { Wand } from '@/svg/wand';
+import { cn } from '@/utils/cn';
+
+import { type ProjectApplicationAi } from '@/features/listings/types';
 
 import { isStateUpdatingAtom, selectedSubmissionAtom } from '../../atoms';
 
@@ -93,10 +97,23 @@ export const Notes = ({ submissionId, initialNotes = '', slug }: Props) => {
     }
   };
 
+  const isAiCommited = useMemo(
+    () => (selectedSubmission?.ai as ProjectApplicationAi)?.commited,
+    [selectedSubmission],
+  );
+
   return (
     <div className="flex w-full flex-col items-start">
-      <div className="mb-2 flex w-full items-center justify-between text-slate-400">
-        <span className="font-extrabold">Review Notes</span>
+      <div
+        className={cn(
+          'mb-2 flex w-full items-center justify-between text-slate-400',
+          isAiCommited && 'text-slate-600',
+        )}
+      >
+        <div className="flex items-center gap-2">
+          {isAiCommited && <Wand />}
+          <span className="font-extrabold">Review Notes</span>
+        </div>
         {isSaving ? (
           <Loader2 className="h-3 w-3 animate-spin" />
         ) : (
@@ -104,7 +121,7 @@ export const Notes = ({ submissionId, initialNotes = '', slug }: Props) => {
         )}
       </div>
       <Textarea
-        className="border-none text-sm whitespace-pre-wrap text-slate-600 placeholder:text-slate-400"
+        className="border border-slate-100 text-sm whitespace-pre-wrap text-slate-600 placeholder:text-slate-400"
         key={submissionId}
         onChange={handleChange}
         onKeyDown={handleKeyDown}
