@@ -4,7 +4,6 @@ import { useAtom, useSetAtom } from 'jotai';
 import { ChevronDown } from 'lucide-react';
 import { useMemo } from 'react';
 
-import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -38,9 +37,10 @@ export const SelectLabel = ({ grantSlug }: Props) => {
     updateLabel({ id, label });
   };
 
-  let bg, color;
+  let bg, color, border;
   if (selectedApplication) {
-    ({ bg, color } = colorMap[selectedApplication?.label as SubmissionLabels]);
+    ({ bg, color, border } =
+      colorMap[selectedApplication?.label as SubmissionLabels]);
   }
 
   const { mutate: updateLabel } = useMutation({
@@ -116,29 +116,33 @@ export const SelectLabel = ({ grantSlug }: Props) => {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button
-          variant="outline"
-          className="hover:border-brand-purple border border-slate-300 bg-transparent font-normal text-slate-500 capitalize hover:bg-transparent"
+      <DropdownMenuTrigger asChild className="min-w-[110px]">
+        <button
+          className={cn(
+            'flex w-full items-center justify-between rounded-lg border border-slate-200 bg-transparent px-2 py-1 text-xs font-medium text-slate-500 capitalize transition-all duration-300 ease-in-out hover:border-slate-200 data-[state=open]:rounded-b-none data-[state=open]:border-slate-200',
+            color,
+            bg,
+            border,
+          )}
         >
-          <span
-            className={cn(
-              'inline-flex w-full rounded-full px-3 py-0.5 text-center text-xs whitespace-nowrap capitalize',
-              bg,
-              color,
-            )}
-          >
-            {filterTriggerLabel || 'Select Option'}
-          </span>
-          <ChevronDown className="ml-2 h-4 w-4" />
-        </Button>
+          {filterTriggerLabel || 'Select Option'}
+          <ChevronDown className="ml-2 size-3" />
+        </button>
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent className="border-slate-300">
+      <DropdownMenuContent
+        sideOffset={-1}
+        className="w-full min-w-[110px] divide-y divide-slate-100 rounded-t-none border-slate-200 p-0"
+      >
         {labelMenuOptionsGrantsPerAppl.map((option) => (
           <DropdownMenuItem
             key={option.value}
-            className="focus:bg-slate-100"
+            className={cn(
+              'cursor-pointer px-2 py-1 text-center text-[0.7rem]',
+              colorMap[option.value as keyof typeof colorMap].color,
+              colorMap[option.value as keyof typeof colorMap].bg,
+              colorMap[option.value as keyof typeof colorMap].focus,
+            )}
             onClick={() =>
               selectLabel(
                 option.value as SubmissionLabels,
@@ -146,15 +150,7 @@ export const SelectLabel = ({ grantSlug }: Props) => {
               )
             }
           >
-            <span
-              className={cn(
-                'inline-flex w-fit rounded-full px-2 text-center text-[10px] whitespace-nowrap capitalize',
-                colorMap[option.value as keyof typeof colorMap].bg,
-                colorMap[option.value as keyof typeof colorMap].color,
-              )}
-            >
-              {option.label}
-            </span>
+            {option.label}
           </DropdownMenuItem>
         ))}
       </DropdownMenuContent>

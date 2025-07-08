@@ -6,12 +6,7 @@ import { toast } from 'sonner';
 import { z } from 'zod';
 
 import { Button } from '@/components/ui/button';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import {
   Form,
   FormControl,
@@ -107,16 +102,12 @@ export const RecordPaymentModal = ({
 
   return (
     <Dialog open={recordPaymentIsOpen} onOpenChange={recordPaymentOnClose}>
-      <DialogContent className="px-0">
-        <DialogHeader>
-          <DialogTitle className="text-md px-4 font-semibold text-slate-500">
-            Add Grant Payment
-          </DialogTitle>
-        </DialogHeader>
-
+      <DialogContent className="m-0 p-0" hideCloseIcon>
+        <DialogTitle className="text-md -mb-1 px-6 pt-4 font-semibold text-slate-900">
+          Add Grant Payment
+        </DialogTitle>
         <Separator />
-
-        <div className="px-4">
+        <div className="px-6 pb-6 text-[0.95rem]">
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(onSubmit)}
@@ -164,23 +155,35 @@ export const RecordPaymentModal = ({
                 )}
               />
 
-              <Button
-                className="my-6 w-full"
-                disabled={addPaymentMutation.isPending}
-                type="submit"
-              >
-                {addPaymentMutation.isPending ? (
-                  <>
-                    <span className="loading loading-spinner mr-2" />
-                    <span>Adding Payment</span>
-                  </>
-                ) : (
-                  <>
-                    <Plus className="mr-2 h-[18px] w-[18px]" />
-                    <span>Add Payment</span>
-                  </>
-                )}
-              </Button>
+              <div className="mt-6 flex gap-3">
+                <div className="w-1/2" />
+                <Button
+                  variant="ghost"
+                  onClick={recordPaymentOnClose}
+                  disabled={addPaymentMutation.isPending}
+                >
+                  Close
+                </Button>
+                <Button
+                  className="flex-1 rounded-lg border border-emerald-500 bg-emerald-50 text-emerald-600 hover:bg-emerald-100 hover:text-emerald-600"
+                  disabled={addPaymentMutation.isPending}
+                  type="submit"
+                >
+                  {addPaymentMutation.isPending ? (
+                    <>
+                      <span className="loading loading-spinner mr-2" />
+                      <span>Adding Payment</span>
+                    </>
+                  ) : (
+                    <>
+                      <div className="rounded-full bg-emerald-600 p-0.5">
+                        <Plus className="size-2 text-white" />
+                      </div>
+                      <span>Add Payment</span>
+                    </>
+                  )}
+                </Button>
+              </div>
             </form>
           </Form>
         </div>

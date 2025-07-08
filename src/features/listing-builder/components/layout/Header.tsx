@@ -3,6 +3,7 @@ import { useIsFetching } from '@tanstack/react-query';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { ChevronLeft, Eye, Loader2 } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import posthog from 'posthog-js';
 import { useWatch } from 'react-hook-form';
 
@@ -26,6 +27,7 @@ import { StatusBadge } from './StatusBadge';
 
 export function Header() {
   const { authenticated, ready } = usePrivy();
+  const router = useRouter();
 
   const isDraftSaving = useAtomValue(isDraftSavingAtom);
   const setShowPreview = useSetAtom(previewAtom);
@@ -56,11 +58,9 @@ export function Header() {
             <div className="h-6 w-[1.5px] bg-slate-300" />
             <p className="text-sm tracking-[1.5px] text-slate-600">SPONSORS</p>
           </Link>
-          <Link href="/dashboard/listings">
-            <Button variant="outline">
-              <ChevronLeft /> Go Back
-            </Button>
-          </Link>
+          <Button variant="outline" onClick={() => router.back()}>
+            <ChevronLeft /> Go Back
+          </Button>
         </div>
 
         <div className="flex flex-1 items-center justify-end gap-4 py-2">

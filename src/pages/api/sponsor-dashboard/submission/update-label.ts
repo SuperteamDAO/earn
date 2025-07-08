@@ -17,69 +17,123 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   }
 
   logger.debug(`Request body: ${safeStringify(req.body)}`);
-  const { id, label } = req.body;
+  const { id, ids, label } = req.body;
 
-  if (!id || !label) {
-    logger.warn('Missing parameters: id and label are required');
-    return res.status(400).json({ error: 'id and label are required' });
+  const submissionIds = ids ? ids : id ? [id] : [];
+
+  if (!submissionIds.length || !label) {
+    logger.warn('Missing parameters: id/ids and label are required');
+    return res.status(400).json({ error: 'id/ids and label are required' });
+  }
+
+  if (submissionIds.length > 1 && !['Spam', 'Shortlisted'].includes(label)) {
+    logger.warn(`Multiple submissions not allowed for label: ${label}`);
+    return res.status(400).json({
+      error:
+        'Multiple submissions only allowed for Spam and Shortlisted labels',
+    });
   }
 
   try {
-    const currentSubmission = await prisma.submission.findUnique({
-      where: { id },
+    const currentSubmissions = await prisma.submission.findMany({
+      where: { id: { in: submissionIds } },
     });
 
-    if (!currentSubmission) {
-      logger.warn(`Submission with ID ${id} not found`);
+    if (currentSubmissions.length !== submissionIds.length) {
+      const foundIds = currentSubmissions.map((s) => s.id);
+      const missingIds = submissionIds.filter(
+        (id: string) => !foundIds.includes(id),
+      );
+      logger.warn(`Submissions not found: ${missingIds.join(', ')}`);
       return res.status(404).json({
-        message: `Submission with ID ${id} not found.`,
+        message: `Submissions not found: ${missingIds.join(', ')}`,
+      });
+    }
+
+    if (currentSubmissions.length === 0) {
+      logger.warn('No submissions found');
+      return res.status(404).json({
+        message: 'No submissions found',
       });
     }
 
     const userSponsorId = req.userSponsorId;
+    const firstSubmission = currentSubmissions[0]!;
 
     const { error, listing } = await checkListingSponsorAuth(
       userSponsorId,
-      currentSubmission.listingId,
+      firstSubmission.listingId,
     );
     if (error) {
       return res.status(error.status).json({ error: error.message });
     }
 
-    if (listing?.isWinnersAnnounced && currentSubmission.isWinner) {
+    const differentListings = currentSubmissions.filter(
+      (s) => s.listingId !== firstSubmission.listingId,
+    );
+    if (differentListings.length > 0) {
+      logger.warn('Submissions belong to different listings');
       return res.status(400).json({
-        error: 'Cannot change label of an announced winner',
+        error: 'All submissions must belong to the same listing',
       });
     }
 
-    let autoFixed = false;
-    const updateData: any = { label };
-
-    if (label === 'Spam' && currentSubmission.isWinner) {
-      updateData.isWinner = false;
-      updateData.winnerPosition = null;
-      autoFixed = true;
-      logger.info(
-        `Automatically removing winner status from submission ${id} as it's being marked as Spam`,
-      );
+    if (listing?.isWinnersAnnounced) {
+      const winnerSubmissions = currentSubmissions.filter((s) => s.isWinner);
+      if (winnerSubmissions.length > 0) {
+        return res.status(400).json({
+          error: 'Cannot change label of announced winners',
+        });
+      }
     }
 
-    logger.debug(`Updating submission with ID: ${id} and label: ${label}`);
+    const results = [];
+    let autoFixedCount = 0;
 
-    const result = await prisma.submission.update({
-      where: { id },
-      data: updateData,
-    });
+    for (const submission of currentSubmissions) {
+      let autoFixed = false;
+      const updateData: any = { label };
 
-    logger.info(`Successfully updated submission with ID: ${id}`);
-    return res.status(200).json({ ...result, autoFixed });
+      if (label === 'Spam' && submission.isWinner) {
+        updateData.isWinner = false;
+        updateData.winnerPosition = null;
+        autoFixed = true;
+        autoFixedCount++;
+        logger.info(
+          `Automatically removing winner status from submission ${submission.id} as it's being marked as Spam`,
+        );
+      }
+
+      logger.debug(
+        `Updating submission with ID: ${submission.id} and label: ${label}`,
+      );
+
+      const result = await prisma.submission.update({
+        where: { id: submission.id },
+        data: updateData,
+      });
+
+      results.push({ ...result, autoFixed });
+    }
+
+    logger.info(`Successfully updated ${results.length} submission(s)`);
+
+    if (submissionIds.length === 1) {
+      return res.status(200).json(results[0]);
+    } else {
+      return res.status(200).json({
+        results,
+        summary: {
+          updated: results.length,
+          autoFixed: autoFixedCount,
+        },
+      });
+    }
   } catch (error: any) {
-    logger.error(
-      `Error occurred while updating submission with ID ${id}: ${error.message}`,
-    );
+    logger.error(`Error occurred while updating submissions: ${error.message}`);
     return res.status(500).json({
       error: error.message,
-      message: 'Error occurred while updating the submission.',
+      message: 'Error occurred while updating the submissions.',
     });
   }
 }
