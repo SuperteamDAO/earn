@@ -1,6 +1,6 @@
 import { type SubmissionLabels } from '@prisma/client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { useAtom } from 'jotai';
+import { atom, useAtom } from 'jotai';
 import { LucideFlag } from 'lucide-react';
 import type { GetServerSideProps } from 'next';
 import { useSearchParams } from 'next/navigation';
@@ -29,6 +29,7 @@ import {
 import { PublishResults } from '@/features/sponsor-dashboard/components/PublishResults';
 import { ScoutTable } from '@/features/sponsor-dashboard/components/Scouts/ScoutTable';
 import { MultiActionModal } from '@/features/sponsor-dashboard/components/Submissions/Modals/MultiActionModal';
+import { Survey } from '@/features/sponsor-dashboard/components/Submissions/Modals/Survey';
 import { PayoutSection } from '@/features/sponsor-dashboard/components/Submissions/PayoutSection';
 import { SubmissionHeader } from '@/features/sponsor-dashboard/components/Submissions/SubmissionHeader';
 import { SubmissionList } from '@/features/sponsor-dashboard/components/Submissions/SubmissionList';
@@ -41,6 +42,9 @@ import { type ScoutRowType } from '@/features/sponsor-dashboard/types';
 interface Props {
   slug: string;
 }
+
+// Atom for survey open state
+const surveyOpenAtom = atom(false);
 
 export default function BountySubmissions({ slug }: Props) {
   const router = useRouter();
@@ -60,6 +64,8 @@ export default function BountySubmissions({ slug }: Props) {
   const [selectedFilters, setSelectedFilters] = useState<
     Set<SubmissionLabels | 'Winner' | 'Rejected'>
   >(new Set());
+
+  const [surveyOpen, setSurveyOpen] = useAtom(surveyOpenAtom);
 
   const searchParams = useSearchParams();
 
@@ -393,6 +399,14 @@ export default function BountySubmissions({ slug }: Props) {
               submissionsLeft={
                 submissions?.filter((s) => !s.isWinner).length || 0
               }
+              showSurvey={() => setSurveyOpen(true)}
+            />
+          )}
+          {surveyOpen && bounty?.type !== 'grant' && (
+            <Survey
+              open={surveyOpen}
+              setOpen={setSurveyOpen}
+              type={bounty?.type || 'bounty'}
             />
           )}
           <SubmissionHeader
