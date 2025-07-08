@@ -9,6 +9,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { StatusPill } from '@/components/ui/status-pill';
 import type { SubmissionWithUser } from '@/interface/submission';
 import { api } from '@/lib/api';
 import { cn } from '@/utils/cn';
@@ -103,17 +104,12 @@ export const SelectLabel = ({ listingSlug }: Props) => {
 
       <DropdownMenuContent
         sideOffset={-1}
-        className="w-full min-w-[110px] divide-y divide-slate-100 rounded-t-none border-slate-200 p-0"
+        className="w-full min-w-[110px] rounded-t-none px-0 pt-1.5"
       >
         {labelMenuOptions.map((option) => (
           <DropdownMenuItem
             key={option.value}
-            className={cn(
-              'cursor-pointer px-2 py-1 text-center text-[0.7rem]',
-              colorMap[option.value as keyof typeof colorMap].color,
-              colorMap[option.value as keyof typeof colorMap].bg,
-              colorMap[option.value as keyof typeof colorMap].focus,
-            )}
+            className="cursor-pointer px-1.5 py-1 text-center text-[0.7rem]"
             onClick={() =>
               selectLabel(
                 option.value as SubmissionLabels,
@@ -121,7 +117,14 @@ export const SelectLabel = ({ listingSlug }: Props) => {
               )
             }
           >
-            {option.label}
+            <StatusPill
+              color={colorMap[option.value as SubmissionLabels].color}
+              backgroundColor={colorMap[option.value as SubmissionLabels].bg}
+              borderColor={colorMap[option.value as SubmissionLabels].border}
+              className="w-fit text-[10px]"
+            >
+              {option.label}
+            </StatusPill>
           </DropdownMenuItem>
         ))}
       </DropdownMenuContent>

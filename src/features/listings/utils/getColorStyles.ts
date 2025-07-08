@@ -62,7 +62,7 @@ export const getColorStyles = (status: string) => {
       return {
         bgColor: 'bg-gray-500',
         color: 'text-white',
-        borderColor: 'border-gray-400',
+        borderColor: 'border-gray-500',
         focus: 'focus:bg-gray-600 focus:text-gray-100',
       };
   }

@@ -4,6 +4,7 @@ import {
   ChevronDown,
   ChevronLeft,
   ChevronRight,
+  LucideListFilter,
   Plus,
   Search,
 } from 'lucide-react';
@@ -28,11 +29,11 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
+import { StatusPill } from '@/components/ui/status-pill';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { SponsorLayout } from '@/layouts/Sponsor';
 import { useUser } from '@/store/user';
-import { cn } from '@/utils/cn';
 
 import { type ListingWithSubmissions } from '@/features/listings/types';
 import { getColorStyles } from '@/features/listings/utils/getColorStyles';
@@ -270,7 +271,6 @@ export default function SponsorListings({ tab: queryTab }: { tab: string }) {
     [updateQueryParams],
   );
 
-  // Sync with SSR tab parameter on initial load
   useEffect(() => {
     if (queryTab && queryTab !== activeTab) {
       handleTabChange(queryTab);
@@ -290,60 +290,70 @@ export default function SponsorListings({ tab: queryTab }: { tab: string }) {
         </div>
         <div className="flex w-full items-center justify-end gap-2">
           <div className="flex items-center gap-2">
-            <span className="mr-2 text-sm whitespace-nowrap text-slate-500">
-              Filter by status
-            </span>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button
-                  className={cn(
-                    'flex min-w-40 items-center justify-between rounded-lg border border-slate-200 bg-transparent px-2 py-1 text-sm font-medium text-slate-500 capitalize transition-all duration-300 ease-in-out hover:border-slate-200 data-[state=open]:rounded-b-none data-[state=open]:border-slate-200',
-                    getColorStyles(activeStatus!).bgColor,
-                    getColorStyles(activeStatus!).color,
+                <button className="flex h-9 min-w-40 items-center justify-between rounded-lg border border-slate-300 bg-transparent px-2 text-sm font-medium text-slate-500 capitalize shadow-xs transition-all duration-300 ease-in-out hover:border-slate-200 data-[state=open]:rounded-b-none data-[state=open]:border-slate-200">
+                  {activeStatus && (
+                    <StatusPill
+                      color={getColorStyles(activeStatus!).color}
+                      backgroundColor={getColorStyles(activeStatus!).bgColor}
+                      borderColor={getColorStyles(activeStatus!).borderColor}
+                      className="w-fit"
+                    >
+                      {activeStatus}
+                    </StatusPill>
                   )}
-                >
-                  {activeStatus || 'Everything'}
+                  {!activeStatus && (
+                    <span className="flex items-center text-xs font-normal text-slate-500">
+                      <LucideListFilter className="mr-1.5 size-3.5" />
+                      Filter by status
+                    </span>
+                  )}
                   <ChevronDown className="ml-2 h-4 w-4" />
                 </button>
               </DropdownMenuTrigger>
 
               <DropdownMenuContent
                 sideOffset={-1}
-                className="min-w-40 divide-y divide-slate-100 rounded-t-none border-slate-200 p-0"
+                className="min-w-40 rounded-t-none px-0 py-2"
               >
                 <DropdownMenuItem
-                  className={cn(
-                    'cursor-pointer px-2 py-1 text-center text-sm',
-                    getColorStyles('Everything').bgColor,
-                    getColorStyles('Everything').color,
-                    getColorStyles('Everything').focus,
-                  )}
+                  className="cursor-pointer border-0 px-2 py-1.5 text-center text-sm"
                   onClick={() => handleStatusFilterChange(null)}
                 >
-                  Everything
+                  <StatusPill
+                    color={getColorStyles('All').color}
+                    backgroundColor={getColorStyles('All').bgColor}
+                    borderColor={getColorStyles('All').borderColor}
+                    className="w-fit"
+                  >
+                    All
+                  </StatusPill>
                 </DropdownMenuItem>
 
                 {ALL_FILTERS.map((status) => (
                   <DropdownMenuItem
                     key={status}
-                    className={cn(
-                      'cursor-pointer px-2 py-1 text-center text-sm',
-                      getColorStyles(status).bgColor,
-                      getColorStyles(status).color,
-                      getColorStyles(status).focus,
-                    )}
+                    className="cursor-pointer border-0 px-2 py-1.5 text-center text-sm"
                     onClick={() => handleStatusFilterChange(status)}
                   >
-                    {status}
+                    <StatusPill
+                      color={getColorStyles(status).color}
+                      backgroundColor={getColorStyles(status).bgColor}
+                      borderColor={getColorStyles(status).borderColor}
+                      className="w-fit"
+                    >
+                      {status}
+                    </StatusPill>
                   </DropdownMenuItem>
                 ))}
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
-          <div className="relative ml-4 w-64">
-            <Search className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-slate-400" />
+          <div className="relative ml-3 w-64">
+            <Search className="pointer-events-none absolute top-1/2 left-3 size-3.5 -translate-y-1/2 text-slate-400" />
             <Input
-              className="placeholder:text-md focus-visible:ring-brand-purple border-slate-300 bg-white pl-9 placeholder:font-medium placeholder:text-slate-400"
+              className="focus-visible:ring-brand-purple h-9 rounded-lg border-slate-300 bg-white pl-9 font-normal placeholder:text-xs placeholder:text-slate-500"
               onChange={(e) => debouncedSetSearchText(e.target.value)}
               placeholder="Search listing..."
               type="text"

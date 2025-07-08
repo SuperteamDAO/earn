@@ -20,7 +20,7 @@ export function StatusPill({
   return (
     <span
       className={cn(
-        'w-full items-center rounded-full border px-3 py-0.5 text-center text-xs whitespace-nowrap capitalize transition-all duration-200 ease-linear select-none',
+        'w-full items-center rounded-full border px-2 py-px text-center text-xs whitespace-nowrap capitalize transition-all duration-200 ease-linear select-none',
         color,
         backgroundColor,
         borderColor,
