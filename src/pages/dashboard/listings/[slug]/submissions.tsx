@@ -257,6 +257,11 @@ export default function BountySubmissions({ slug }: Props) {
           } else if (filter === 'Rejected') {
             return submission.status === 'Rejected';
           } else {
+            const isDecided =
+              submission.isWinner || submission.status === 'Rejected';
+            if (isDecided) {
+              return false;
+            }
             return submission.label === filter;
           }
         });
