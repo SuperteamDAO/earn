@@ -104,14 +104,15 @@ export default function LocalProfiles() {
     setCurrentPage(1);
   };
 
-  const superteam = Superteams.find(
-    (st) =>
-      st.name.toLowerCase() === user?.currentSponsor?.name.toLowerCase() ||
-      unofficialSuperteams.find(
-        (st) =>
-          st.name.toLowerCase() === user?.currentSponsor?.name.toLowerCase(),
-      ),
-  );
+  const superteam =
+    Superteams.find(
+      (st) =>
+        st.name.toLowerCase() === user?.currentSponsor?.name.toLowerCase(),
+    ) ||
+    unofficialSuperteams.find(
+      (st) =>
+        st.name.toLowerCase() === user?.currentSponsor?.name.toLowerCase(),
+    );
 
   return (
     <SponsorLayout>
