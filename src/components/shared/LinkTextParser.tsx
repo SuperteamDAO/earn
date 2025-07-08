@@ -1,8 +1,31 @@
 const URL_REGEX =
-  /(\bhttps?:\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gi;
+  /((?:(?:https?):\/\/)?(?:www\.)?(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}(?::\d{2,5})?(?:\/[a-zA-Z0-9\-._~:/?#[\]@!$&'()*+,;=%]*)?|(?:[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}))/gi;
 
 type Props = React.HTMLAttributes<HTMLParagraphElement> & {
   text: string;
+};
+
+const addProtocolIfNeeded = (url: string): string => {
+  // if it's an email, add mailto:
+  if (url.includes('@') && !url.startsWith('mailto:')) {
+    return `mailto:${url}`;
+  }
+
+  // if it doesn't have http/https protocol, add https://
+  if (!url.match(/^https?:\/\/|^mailto:/)) {
+    return `https://${url}`;
+  }
+
+  return url;
+};
+
+const getDisplayText = (url: string): string => {
+  // for email addresses, show as-is
+  if (url.includes('@')) {
+    return url.replace('mailto:', '');
+  }
+
+  return url.replace(/^https?:\/\//, '');
 };
 
 export function LinkTextParser({ text, className, ...props }: Props) {
@@ -12,15 +35,18 @@ export function LinkTextParser({ text, className, ...props }: Props) {
     <p className={className} {...props}>
       {parts.map((part, index) => {
         if (part.match(URL_REGEX)) {
+          const href = addProtocolIfNeeded(part);
+          const displayText = getDisplayText(part);
+
           return (
             <a
               key={index}
               className="text-brand-purple text-sm font-medium hover:underline"
-              href={part}
+              href={href}
               target="_blank"
               rel="noopener noreferrer"
             >
-              {part}
+              {displayText}
             </a>
           );
         }
