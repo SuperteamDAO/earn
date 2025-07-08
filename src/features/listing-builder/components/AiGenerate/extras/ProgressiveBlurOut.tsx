@@ -1,10 +1,18 @@
 import { useEffect, useState } from 'react';
+import { type ClassNameValue } from 'tailwind-merge';
+
+import { cn } from '@/utils/cn';
 
 interface Props {
   scrollEl: HTMLDivElement | null;
   FADE_DISTANCE?: number;
+  className?: ClassNameValue;
 }
-export function ProgressiveBlurOut({ scrollEl, FADE_DISTANCE = 64 }: Props) {
+export function ProgressiveBlurOut({
+  scrollEl,
+  className,
+  FADE_DISTANCE = 64,
+}: Props) {
   const [fadeOpacity, setFadeOpacity] = useState(1);
 
   const updateFade = () => {
@@ -51,7 +59,10 @@ export function ProgressiveBlurOut({ scrollEl, FADE_DISTANCE = 64 }: Props) {
 
   return (
     <div
-      className="pointer-events-none absolute bottom-16 left-0 h-24 w-full"
+      className={cn(
+        'pointer-events-none absolute bottom-16 left-0 h-24 w-full',
+        className,
+      )}
       style={{
         opacity: fadeOpacity > 0 ? 1 : 0,
         transition: 'opacity 0.2s',

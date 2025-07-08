@@ -1,4 +1,5 @@
 import { Check, ChevronDown, ChevronUp } from 'lucide-react';
+import posthog from 'posthog-js';
 import React, { useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -132,6 +133,7 @@ export const ApproveModal = ({
 
     setLoading(true);
     try {
+      posthog.capture('approve_grant application');
       await onApproveGrant(applicationId, approvedAmount);
       approveOnClose();
     } catch (e) {

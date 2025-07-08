@@ -1,4 +1,5 @@
 import { X } from 'lucide-react';
+import posthog from 'posthog-js';
 import React, { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -32,6 +33,7 @@ export const RejectGrantApplicationModal = ({
 
     setLoading(true);
     try {
+      posthog.capture('reject_grant application');
       await onRejectGrant(applicationId);
     } catch (e) {
       console.error(e);
