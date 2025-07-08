@@ -43,7 +43,6 @@ interface Props {
   slug: string;
 }
 
-// Atom for survey open state
 const surveyOpenAtom = atom(false);
 
 export default function BountySubmissions({ slug }: Props) {

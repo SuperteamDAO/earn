@@ -9,14 +9,12 @@ import BiCheck from '@/components/icons/BiCheck';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
 } from '@/components/ui/dialog';
 import { Textarea } from '@/components/ui/textarea';
-import { easeOutQuint } from '@/utils/easings';
 
 import { Rating } from '@/features/surveys/components/Rating';
 import { getMatchingSurvey } from '@/features/surveys/utils/get-matching-survey';
@@ -62,22 +60,22 @@ export function Survey({ open, setOpen, type }: Props) {
   useEffect(() => {
     posthog.getActiveMatchingSurveys((surveys) => {
       const survey = getMatchingSurvey(surveys, surveyId);
-      console.log('survey', survey);
       setSurvey(survey);
     }, true);
   }, [posthog]);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent
-        onInteractOutside={(e) => e.preventDefault()}
-        hideCloseIcon
-        className="max-w-[28rem] p-0"
-      >
+      <DialogContent className="max-w-[28rem] p-0">
         <motion.div
+          key={bounds.height + (survey?.id || 'shesh')}
           animate={{
             height: bounds.height,
-            transition: { ease: easeOutQuint, duration: 0.3 },
+            transition: {
+              type: 'spring',
+              duration: 0.3,
+              bounce: 0,
+            },
           }}
         >
           <div ref={elementRef}>
@@ -87,87 +85,80 @@ export function Survey({ open, setOpen, type }: Props) {
                   key="form"
                   exit={{ y: 20, opacity: 0, filter: 'blur(4px)' }}
                   transition={{ type: 'spring', bounce: 0, duration: 0.5 }}
-                  className="p-6"
+                  className="bg-slate-100 p-1"
                 >
-                  <DialogHeader>
-                    <DialogHeader className="font-medium">
-                      Submissions Experience
+                  <div className="bg-background rounded-lg border-[0.09375rem] border-dashed border-slate-300 p-5">
+                    <DialogHeader>
+                      <DialogHeader className="font-medium">
+                        Submissions Experience
+                      </DialogHeader>
+                      <DialogDescription className="text-slate-700">
+                        How satisfied are you with the{' '}
+                        {type !== 'project' ? 'submissions' : 'applications'}{' '}
+                        you received?
+                      </DialogDescription>
                     </DialogHeader>
-                    <DialogDescription className="text-slate-700">
-                      How satisfied are you with the{' '}
-                      {type !== 'project' ? 'submissions' : 'applications'} you
-                      received?
-                    </DialogDescription>
-                  </DialogHeader>
-                  <Rating
-                    value={score}
-                    onChange={setScore}
-                    scale={5}
-                    className="mt-4"
-                    lowerBoundLabel="Difficult"
-                    upperBoundLabel="Easy"
-                  />
-                  <AnimatePresence mode="popLayout">
-                    {score && (
-                      <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ duration: 0.2 }}
-                      >
-                        <div className="mt-4 space-y-2 text-sm text-slate-700">
-                          <p>
-                            Any strengths or issues across submissions{' '}
-                            <span className="text-xs text-slate-500">
-                              (optional)
-                            </span>
-                          </p>
-                          <Textarea
-                            className="resize-none text-sm text-slate-800 placeholder:text-sm placeholder:text-slate-400"
-                            placeholder="Tell us more"
-                            value={feedback}
-                            onChange={(e) => setFeedback(e.target.value)}
-                          />
-                        </div>
-                        <DialogFooter className="mt-4 flex">
-                          <DialogClose>
+                    <Rating
+                      value={score}
+                      onChange={setScore}
+                      scale={5}
+                      className="mt-4"
+                      lowerBoundLabel="Difficult"
+                      upperBoundLabel="Easy"
+                    />
+                    <AnimatePresence mode="popLayout">
+                      {score && (
+                        <motion.div
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                          transition={{ duration: 0.2 }}
+                        >
+                          <div className="mt-4 space-y-2 text-sm text-slate-700">
+                            <p>
+                              Any strengths or issues across submissions?{' '}
+                              <span className="text-xs text-slate-500">
+                                (optional)
+                              </span>
+                            </p>
+                            <Textarea
+                              className="resize-none text-sm text-slate-800 placeholder:text-sm placeholder:text-slate-400"
+                              placeholder="Tell us more"
+                              value={feedback}
+                              onChange={(e) => setFeedback(e.target.value)}
+                            />
+                          </div>
+                          <DialogFooter className="mt-4 flex">
                             <Button
                               size="sm"
-                              className="w-26 text-slate-500"
-                              variant="ghost"
+                              className="w-26"
+                              onClick={handleDone}
                             >
-                              Skip
+                              <AnimatePresence mode="popLayout" initial={false}>
+                                <motion.span
+                                  key={stage}
+                                  initial={{ y: -25, opacity: 0 }}
+                                  animate={{ y: 0, opacity: 1 }}
+                                  exit={{ y: 25, opacity: 0 }}
+                                  transition={{
+                                    type: 'spring',
+                                    bounce: 0,
+                                    duration: 0.3,
+                                  }}
+                                >
+                                  {stage === 'form_loading' ? (
+                                    <Loader className="animate-spin" />
+                                  ) : (
+                                    'Done'
+                                  )}
+                                </motion.span>
+                              </AnimatePresence>
                             </Button>
-                          </DialogClose>
-                          <Button
-                            size="sm"
-                            className="w-26"
-                            onClick={handleDone}
-                          >
-                            <AnimatePresence mode="popLayout" initial={false}>
-                              <motion.span
-                                key={stage}
-                                initial={{ y: -25, opacity: 0 }}
-                                animate={{ y: 0, opacity: 1 }}
-                                exit={{ y: 25, opacity: 0 }}
-                                transition={{
-                                  type: 'spring',
-                                  bounce: 0,
-                                  duration: 0.3,
-                                }}
-                              >
-                                {stage === 'form_loading' ? (
-                                  <Loader className="animate-spin" />
-                                ) : (
-                                  'Done'
-                                )}
-                              </motion.span>
-                            </AnimatePresence>
-                          </Button>
-                        </DialogFooter>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
+                          </DialogFooter>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
                 </motion.div>
               )}
               {stage === 'final' && (
