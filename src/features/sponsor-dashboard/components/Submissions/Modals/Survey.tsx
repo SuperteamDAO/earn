@@ -66,7 +66,7 @@ export function Survey({ open, setOpen, type }: Props) {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="max-w-[28rem] p-0">
+      <DialogContent className="max-w-[28rem] p-0" unsetDefaultTransition>
         <motion.div
           animate={{
             height: bounds.height,
