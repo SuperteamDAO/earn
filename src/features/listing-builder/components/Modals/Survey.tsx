@@ -76,7 +76,6 @@ export function Survey({ open, setOpen }: Props) {
         className="data-[state=closed]:slide-out-to-right-full data-[state=open]:slide-in-from-right-full right-4 bottom-4 max-w-[22.5rem] translate-x-0 translate-y-0 overflow-hidden p-0 duration-300"
       >
         <motion.div
-          key={bounds.height + (survey?.id || 'shesh')}
           animate={{
             height: bounds.height,
             transition: {

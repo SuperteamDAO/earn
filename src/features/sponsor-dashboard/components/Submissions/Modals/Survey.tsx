@@ -68,7 +68,6 @@ export function Survey({ open, setOpen, type }: Props) {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="max-w-[28rem] p-0">
         <motion.div
-          key={bounds.height + (survey?.id || 'shesh')}
           animate={{
             height: bounds.height,
             transition: {
