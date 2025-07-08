@@ -5,7 +5,6 @@ import {
   ExternalLink,
   MoreVertical,
 } from 'lucide-react';
-import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React from 'react';
 import { toast } from 'sonner';
@@ -117,11 +116,12 @@ export const ApplicationHeader = ({
         <Breadcrumb className="text-slate-400">
           <BreadcrumbList>
             <BreadcrumbItem>
-              <BreadcrumbLink asChild>
-                <Link href="/dashboard/listings" className="flex items-center">
-                  <ChevronLeft className="mr-1 h-6 w-6" />
-                  All Listings
-                </Link>
+              <BreadcrumbLink
+                onClick={() => router.back()}
+                className="flex cursor-pointer items-center gap-2"
+              >
+                <ChevronLeft className="size-6" />
+                All Listings
               </BreadcrumbLink>
             </BreadcrumbItem>
           </BreadcrumbList>

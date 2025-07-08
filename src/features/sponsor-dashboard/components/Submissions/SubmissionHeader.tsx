@@ -177,18 +177,12 @@ export const SubmissionHeader = ({
         <Breadcrumb className="text-slate-400">
           <BreadcrumbList>
             <BreadcrumbItem>
-              <BreadcrumbLink asChild>
-                <Link
-                  href={
-                    isHackathonPage
-                      ? `/dashboard/hackathon/`
-                      : '/dashboard/listings'
-                  }
-                  className="flex items-center"
-                >
-                  <ChevronLeft className="mr-1 h-6 w-6" />
-                  All Listings
-                </Link>
+              <BreadcrumbLink
+                className="flex cursor-pointer items-center gap-2"
+                onClick={() => router.back()}
+              >
+                <ChevronLeft className="size-6" />
+                All Listings
               </BreadcrumbLink>
             </BreadcrumbItem>
           </BreadcrumbList>
