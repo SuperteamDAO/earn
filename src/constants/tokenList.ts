@@ -482,4 +482,12 @@ export const tokenList: Token[] = [
     decimals: 9,
     coingeckoSymbol: 'spinedao-token',
   },
+  {
+    tokenName: 'aeroSOL',
+    tokenSymbol: 'aeroSOL',
+    mintAddress: 'aeroXvCT6tjGVNyTvZy86tFDwE4sYsKCh7FbNDcrcxF',
+    icon: 'https://assets.coingecko.com/coins/images/40123/standard/Logo_-_Bright_%284%29.png',
+    decimals: 9,
+    coingeckoSymbol: 'aerosol',
+  },
 ];
