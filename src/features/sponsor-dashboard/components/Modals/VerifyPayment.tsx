@@ -406,14 +406,13 @@ export const VerifyPaymentModal = ({
                 </div>
               </div>
 
-              <div className="mx-auto flex max-w-[20rem] flex-col items-center gap-2">
+              <div className="mx-auto flex max-w-[24rem] flex-col items-center gap-2">
                 <p className="mt-10 font-medium text-slate-900">
                   Oh-Uh Verification Failed
                 </p>
                 <p className="text-center text-sm text-slate-500">
-                  We couldn&apos;t verify your payment status. <br />
-                  Please check your links again and make sure it&apos;s the
-                  exact amount
+                  We couldn&apos;t verify your payment status. Please check your
+                  links again and make sure it&apos;s the exact amount.
                 </p>
               </div>
               <div className="mx-auto mt-2 flex flex-col items-center gap-2">
