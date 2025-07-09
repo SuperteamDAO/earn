@@ -41,7 +41,10 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
     const leadRegion = requestingUser?.stLead;
 
-    if (leadRegion !== superteamRegion && leadRegion !== 'MAHADEV') {
+    if (
+      leadRegion?.toLowerCase() !== superteamRegion.toLowerCase() &&
+      leadRegion !== 'MAHADEV'
+    ) {
       return res.status(403).json({ error: 'Unauthorized' });
     }
 
