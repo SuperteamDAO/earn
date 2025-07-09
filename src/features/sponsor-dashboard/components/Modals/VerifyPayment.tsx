@@ -72,6 +72,27 @@ export const VerifyPaymentModal = ({
     setShowMultiplePayments(false);
   }, [listing?.slug]);
 
+  const refetchQueries = async () => {
+    await queryClient.invalidateQueries({
+      queryKey: ['sponsor-submissions', listing?.slug],
+    });
+
+    await queryClient.invalidateQueries({
+      queryKey: ['sponsor-dashboard-listing', listing?.slug],
+    });
+
+    await queryClient.invalidateQueries({
+      queryKey: ['dashboard', user?.currentSponsorId],
+    });
+
+    await queryClient.invalidateQueries({
+      queryKey: [
+        'listing-submissions',
+        { slug: listing?.slug, isWinner: true },
+      ],
+    });
+  };
+
   const form = useForm<VerifyPaymentsFormData>({
     resolver: zodResolver(verifyPaymentsSchema),
   });
@@ -165,25 +186,7 @@ export const VerifyPaymentModal = ({
     useMutation({
       mutationFn: (body: VerifyPaymentsFormData) => verifyPaymentMutation(body),
       onSuccess: async (data, variables) => {
-        await queryClient.invalidateQueries({
-          queryKey: ['sponsor-submissions', listing?.slug],
-        });
-
-        await queryClient.invalidateQueries({
-          queryKey: ['sponsor-dashboard-listing', listing?.slug],
-        });
-
-        await queryClient.invalidateQueries({
-          queryKey: ['dashboard', user?.currentSponsorId],
-        });
-
-        await queryClient.invalidateQueries({
-          queryKey: [
-            'listing-submissions',
-            { slug: listing?.slug, isWinner: true },
-          ],
-        });
-
+        await refetchQueries();
         const { validationResults } = data.data;
         const failedResults = validationResults.filter(
           (v) => v.status === 'FAIL',
@@ -249,7 +252,9 @@ export const VerifyPaymentModal = ({
     verifyPayment({ paymentLinks: data.paymentLinks });
   };
 
-  const tryAgain = () => {
+  const tryAgain = async () => {
+    await refetchQueries();
+
     reset({});
     setStatus('idle');
     setShowMultiplePayments(false);
@@ -392,7 +397,7 @@ export const VerifyPaymentModal = ({
       case 'error':
         return (
           <div className="flex h-full flex-col">
-            <div className="py-10">
+            <div className="py-6">
               <div className="flex items-center justify-center">
                 <div className="flex items-center justify-center rounded-full bg-red-50 p-6">
                   <div className="rounded-full bg-red-600 p-2.5">
@@ -411,9 +416,27 @@ export const VerifyPaymentModal = ({
                   exact amount
                 </p>
               </div>
+              <div className="mx-auto mt-2 flex flex-col items-center gap-2">
+                <a
+                  href={PDTG}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-center"
+                >
+                  <Button
+                    className="bg-none text-sm font-normal text-slate-400"
+                    variant="link"
+                    type="button"
+                  >
+                    Think We Made A Mistake?{' '}
+                    <span className="text-slate-500 underline">Text Us</span>
+                  </Button>
+                </a>
+              </div>
             </div>
-            <div className="mt-12 flex gap-3">
-              <div className="w-1/2" />
+
+            <div className="mt-8 flex gap-3">
+              <div className="w-3/5" />
               <Button variant="ghost" type="button" onClick={onClose}>
                 Close
               </Button>
@@ -423,23 +446,6 @@ export const VerifyPaymentModal = ({
               >
                 Try Again
               </Button>
-            </div>
-            <div className="mx-auto mt-2 flex flex-col items-center gap-2">
-              <a
-                href={PDTG}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-center"
-              >
-                <Button
-                  className="bg-none text-sm font-normal text-slate-400"
-                  variant="link"
-                  type="button"
-                >
-                  Think We Made A Mistake?{' '}
-                  <span className="text-slate-500 underline">Text Us</span>
-                </Button>
-              </a>
             </div>
           </div>
         );
