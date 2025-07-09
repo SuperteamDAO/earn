@@ -394,7 +394,7 @@ export const VerifyPaymentModal = ({
             )}
           </div>
         );
-      case 'error':
+      case 'idle':
         return (
           <div className="flex h-full flex-col">
             <div className="py-6">
@@ -408,29 +408,12 @@ export const VerifyPaymentModal = ({
 
               <div className="mx-auto flex max-w-[24rem] flex-col items-center gap-2">
                 <p className="mt-10 font-medium text-slate-900">
-                  Oh-Uh Verification Failed
+                  Uh-Oh! Verification Failed
                 </p>
                 <p className="text-center text-sm text-slate-500">
                   We couldn&apos;t verify your payment status. Please check your
                   links again and make sure it&apos;s the exact amount.
                 </p>
-              </div>
-              <div className="mx-auto mt-2 flex flex-col items-center gap-2">
-                <a
-                  href={PDTG}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-center"
-                >
-                  <Button
-                    className="bg-none text-sm font-normal text-slate-400"
-                    variant="link"
-                    type="button"
-                  >
-                    Think We Made A Mistake?{' '}
-                    <span className="text-slate-500 underline">Text Us</span>
-                  </Button>
-                </a>
               </div>
             </div>
 
@@ -445,6 +428,23 @@ export const VerifyPaymentModal = ({
               >
                 Try Again
               </Button>
+            </div>
+            <div className="mx-auto mt-2 -mb-4 flex flex-col items-center gap-2">
+              <a
+                href={PDTG}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-center"
+              >
+                <Button
+                  className="bg-none text-sm font-normal text-slate-400"
+                  variant="link"
+                  type="button"
+                >
+                  Think We Made A Mistake?{' '}
+                  <span className="text-slate-500 underline">Text Us</span>
+                </Button>
+              </a>
             </div>
           </div>
         );

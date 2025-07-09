@@ -149,7 +149,7 @@ export const ApplicationDetails = ({
                 </div>
               </div>
               <div className="ph-no-capture flex w-full items-center justify-end gap-2">
-                {isPending && (
+                {(isPending || selectedApplication?.label === 'Spam') && (
                   <SpamButton
                     grantSlug={grant?.slug!}
                     isMultiSelectOn={isMultiSelectOn}

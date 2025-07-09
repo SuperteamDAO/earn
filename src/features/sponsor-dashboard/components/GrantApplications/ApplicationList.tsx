@@ -157,8 +157,17 @@ export const ApplicationList = ({
               </div>
 
               <div className="ml-auto flex w-min flex-col justify-end gap-1 align-bottom">
-                {applicationStatus !== 'Pending' ||
-                applicationLabel === 'Unreviewed' ? (
+                {applicationLabel === 'Spam' ? (
+                  <StatusPill
+                    className="ml-auto w-fit text-[0.625rem]"
+                    color={labelColor}
+                    backgroundColor={labelBg}
+                    borderColor={labelBorder}
+                  >
+                    {applicationLabelUi || applicationLabel}
+                  </StatusPill>
+                ) : applicationStatus !== 'Pending' ||
+                  applicationLabel === 'Unreviewed' ? (
                   <StatusPill
                     className="ml-auto w-fit text-[0.625rem]"
                     color={statusColor}

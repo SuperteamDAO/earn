@@ -65,29 +65,29 @@ export async function addGrantWinBonusCredit(
   });
 }
 
-export async function addSpamPenaltyCredit(listingId: string) {
+export async function addSpamPenaltyCredit(submissionId: string) {
   try {
-    const submissions = await prisma.submission.findMany({
-      where: { listingId, label: SubmissionLabels.Spam },
+    const submission = await prisma.submission.findFirst({
+      where: { id: submissionId, label: SubmissionLabels.Spam },
       select: { id: true, userId: true },
     });
 
-    await Promise.all(
-      submissions.map((submission) =>
-        prisma.creditLedger.create({
-          data: {
-            userId: submission.userId,
-            submissionId: submission.id,
-            type: CreditEventType.SPAM_PENALTY,
-            effectiveMonth: nextMonth,
-            change: -1,
-          },
-        }),
-      ),
-    );
+    if (!submission) {
+      throw new Error('Submission not found');
+    }
+
+    await prisma.creditLedger.create({
+      data: {
+        userId: submission.userId,
+        submissionId: submission.id,
+        type: CreditEventType.SPAM_PENALTY,
+        effectiveMonth: nextMonth,
+        change: -1,
+      },
+    });
   } catch (error) {
     console.error('[CreditAllocation] Failed to add spam penalty credit', {
-      listingId,
+      submissionId,
       error,
     });
     throw error;

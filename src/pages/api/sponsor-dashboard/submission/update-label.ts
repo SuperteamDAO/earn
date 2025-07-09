@@ -7,6 +7,8 @@ import { safeStringify } from '@/utils/safeStringify';
 import { type NextApiRequestWithSponsor } from '@/features/auth/types';
 import { checkListingSponsorAuth } from '@/features/auth/utils/checkListingSponsorAuth';
 import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
+import { addSpamPenaltyCredit } from '@/features/credits/utils/allocateCredits';
+import { queueEmail } from '@/features/emails/utils/queueEmail';
 
 async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   const userId = req.userId;
@@ -112,6 +114,26 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         where: { id: submission.id },
         data: updateData,
       });
+
+      if (label === 'Spam') {
+        await addSpamPenaltyCredit(submission.id);
+        try {
+          await queueEmail({
+            type: 'spamCredit',
+            id: submission.id,
+            userId: submission.userId,
+            triggeredBy: userId,
+          });
+          logger.info(
+            `Spam credit email queued for submission ${submission.id}`,
+          );
+        } catch (err) {
+          logger.warn(
+            `Failed to queue spam credit email for submission ${submission.id}:`,
+            err,
+          );
+        }
+      }
 
       results.push({ ...result, autoFixed });
     }
