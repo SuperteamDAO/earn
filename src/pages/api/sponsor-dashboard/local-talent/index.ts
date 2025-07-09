@@ -1,6 +1,5 @@
 import type { NextApiResponse } from 'next';
 
-import { Superteams, unofficialSuperteams } from '@/constants/Superteam';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
@@ -10,10 +9,29 @@ import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
 
 async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   const params = req.query;
-  const sponsorId = req.userSponsorId;
   const userId = req.userId;
 
   logger.debug(`Query params: ${safeStringify(params)}`);
+
+  const superteamRegion = params.superteamRegion as string;
+  const superteamCountriesParam = params.superteamCountries as
+    | string
+    | string[];
+
+  let superteamCountries: string[];
+  if (typeof superteamCountriesParam === 'string') {
+    superteamCountries = superteamCountriesParam.includes(',')
+      ? superteamCountriesParam.split(',').map((c) => c.trim())
+      : [superteamCountriesParam];
+  } else if (Array.isArray(superteamCountriesParam)) {
+    superteamCountries = superteamCountriesParam;
+  } else {
+    superteamCountries = [];
+  }
+
+  if (!superteamRegion || !superteamCountries.length) {
+    return res.status(400).json({ error: 'Missing required parameters' });
+  }
 
   try {
     const requestingUser = await prisma.user.findUnique({
@@ -21,32 +39,9 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       select: { stLead: true },
     });
 
-    const sponsoringTeam = await prisma.sponsors.findUnique({
-      where: { id: sponsorId },
-      select: { name: true },
-    });
+    const leadRegion = requestingUser?.stLead;
 
-    const matchedSuperteam =
-      Superteams.find(
-        (team) =>
-          team.name.toLowerCase() === sponsoringTeam?.name.toLowerCase(),
-      ) ||
-      unofficialSuperteams.find(
-        (team) =>
-          team.name.toLowerCase() === sponsoringTeam?.name.toLowerCase(),
-      );
-    if (!matchedSuperteam) {
-      return res.status(403).json({ error: 'Invalid sponsor' });
-    }
-
-    const superteamRegion = matchedSuperteam.region;
-    const superteamCountries = matchedSuperteam.country;
-
-    const canViewLocalProfiles =
-      requestingUser?.stLead === superteamRegion ||
-      requestingUser?.stLead === 'MAHADEV';
-
-    if (!canViewLocalProfiles) {
+    if (leadRegion !== superteamRegion && leadRegion !== 'MAHADEV') {
       return res.status(403).json({ error: 'Unauthorized' });
     }
 
@@ -124,7 +119,10 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     logger.error(
       `Error fetching and processing users: ${safeStringify(error)}`,
     );
-    res.status(400).json({ error: 'Error occurred while fetching users.' });
+    res.status(400).json({
+      error: 'Error occurred while fetching users.',
+      details: error.message,
+    });
   }
 }
 
