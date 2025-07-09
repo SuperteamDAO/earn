@@ -322,7 +322,7 @@ export const VerifyPaymentModal = ({
             </div>
             <div className="flex gap-3">
               <div className="w-1/2" />
-              <Button variant="ghost" onClick={onClose}>
+              <Button variant="ghost" type="button" onClick={onClose}>
                 Close
               </Button>
               <Button
@@ -362,7 +362,7 @@ export const VerifyPaymentModal = ({
             {listing?.totalPaymentsMade !== totalWinnerRanks && (
               <div className="flex gap-3">
                 <div className="w-1/2" />
-                <Button variant="ghost" onClick={onClose}>
+                <Button variant="ghost" type="button" onClick={onClose}>
                   Close
                 </Button>
                 <Button
@@ -414,7 +414,7 @@ export const VerifyPaymentModal = ({
 
               <div className="flex gap-3">
                 <div className="w-1/2" />
-                <Button variant="ghost" onClick={onClose}>
+                <Button variant="ghost" type="button" onClick={onClose}>
                   Close
                 </Button>
                 <Button
@@ -790,7 +790,7 @@ export const VerifyPaymentModal = ({
 
               <div className="flex gap-3">
                 <div className="w-1/2" />
-                <Button variant="ghost" onClick={onClose}>
+                <Button variant="ghost" type="button" onClick={onClose}>
                   Close
                 </Button>
                 <Button
