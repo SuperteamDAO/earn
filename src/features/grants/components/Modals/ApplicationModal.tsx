@@ -8,6 +8,7 @@ import { toast } from 'sonner';
 import { type z } from 'zod';
 
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import { DateTimePicker } from '@/components/ui/datetime-picker';
 import { DialogTitle } from '@/components/ui/dialog';
 import {
@@ -60,6 +61,7 @@ export const ApplicationModal = ({
 
   const [activeStep, setActiveStep] = useState(0);
   const [isTOSModalOpen, setIsTOSModalOpen] = useState(false);
+  const [acknowledgementAccepted, setAcknowledgementAccepted] = useState(false);
 
   const { id, token, minReward, maxReward, questions } = grant;
 
@@ -113,6 +115,11 @@ export const ApplicationModal = ({
   const queryClient = useQueryClient();
 
   const submitApplication = async (data: FormData) => {
+    if (!grantApplication && !acknowledgementAccepted) {
+      toast.error('Please acknowledge the requirements before submitting');
+      return;
+    }
+
     setIsLoading(true);
     try {
       const {
@@ -497,6 +504,28 @@ export const ApplicationModal = ({
                   isRichEditor
                   richEditorPlaceholder="What's the key metric for success"
                 />
+
+                {!grantApplication && (
+                  <div className="flex items-start space-x-2">
+                    <Checkbox
+                      id="acknowledgement"
+                      className="data-[state=checked]:border-brand-purple data-[state=checked]:bg-brand-purple mt-1"
+                      checked={acknowledgementAccepted}
+                      onCheckedChange={(checked) =>
+                        setAcknowledgementAccepted(checked as boolean)
+                      }
+                    />
+                    <label
+                      htmlFor="acknowledgement"
+                      className="text-xs text-slate-500"
+                    >
+                      To receive grant funding, you may need to provide
+                      verifiable proof of milestone completion and show that
+                      outcomes meet the expectations in your application and the
+                      listing<span className="text-red-500">*</span>
+                    </label>
+                  </div>
+                )}
               </div>
             )}
             <div className="mt-8 flex gap-2">
