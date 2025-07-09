@@ -1,6 +1,7 @@
 import { useAtomValue } from 'jotai';
 import React from 'react';
 
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/utils/cn';
 import { getURLSanitized } from '@/utils/getURLSanitized';
 
@@ -21,11 +22,12 @@ export const Details = ({ bounty, isHackathonPage }: Props) => {
 
   return (
     <div className="flex max-h-[39.7rem] w-full">
-      <div
+      <ScrollArea
         className={cn(
-          'scrollbar-thumb-rounded-full scrollbar-thin scrollbar-track-slate-100 scrollbar-thumb-slate-300 flex flex-1 flex-col overflow-y-auto p-4',
+          'flex flex-1 flex-col overflow-y-auto p-4',
           !isHackathonPage ? 'w-2/3' : 'w-full',
         )}
+        type="auto"
       >
         {!isProject && (
           <>
@@ -68,7 +70,7 @@ export const Details = ({ bounty, isHackathonPage }: Props) => {
           content={selectedSubmission?.otherInfo}
           isHtml
         />
-      </div>
+      </ScrollArea>
       {!isHackathonPage && (
         <div className="w-1/3 max-w-[20rem] p-4">
           {selectedSubmission && !isHackathonPage && (

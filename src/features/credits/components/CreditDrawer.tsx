@@ -4,6 +4,7 @@ import { useRouter } from 'next/router';
 import Countdown from 'react-countdown';
 
 import { CountDownRenderer } from '@/components/shared/countdownRenderer';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { SideDrawer, SideDrawerContent } from '@/components/ui/side-drawer';
 import { Tooltip } from '@/components/ui/tooltip';
 import { api } from '@/lib/api';
@@ -85,7 +86,7 @@ export function CreditDrawer({
 
   return (
     <SideDrawer isOpen={isOpen} onClose={handleClose}>
-      <SideDrawerContent className="flex h-full w-screen flex-col sm:w-[30rem]">
+      <SideDrawerContent className="flex h-full w-screen flex-col overflow-hidden sm:w-[30rem]">
         <X
           className="absolute top-5 right-4 z-10 h-5 w-5 cursor-pointer text-slate-600 sm:hidden"
           onClick={onClose}
@@ -150,7 +151,7 @@ export function CreditDrawer({
             </div>
           </div>
 
-          <div className="flex-1 overflow-y-auto bg-white">
+          <ScrollArea className="flex-1 overflow-y-auto bg-white">
             {isLoading ? (
               <div className="flex justify-center py-8">
                 <p className="text-slate-500">Loading credit history...</p>
@@ -205,7 +206,7 @@ export function CreditDrawer({
                 )}
               </div>
             )}
-          </div>
+          </ScrollArea>
 
           <div className="w-full border-t border-slate-50 bg-white py-1 shadow-[0_-2px_3px_rgba(0,0,0,0.05)]">
             <p className="mx-auto flex items-center justify-center text-xs text-slate-400 transition-colors sm:text-sm">

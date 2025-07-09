@@ -165,6 +165,24 @@ export function SelectHackathon({
             backgroundColor: '#f1f5f9',
           },
         }),
+        menuList: (base) => ({
+          ...base,
+          overflowX: 'hidden',
+
+          '::-webkit-scrollbar': {
+            width: 'calc(var(--spacing) * 1.5)',
+          },
+          '::-webkit-scrollbar-track': {
+            background: 'transparent',
+          },
+          '::-webkit-scrollbar-thumb': {
+            background: 'var(--color-slate-300)',
+            borderRadius: '0.35rem',
+          },
+          '::-webkit-scrollbar-thumb:hover': {
+            background: 'var(--color-slate-300)',
+          },
+        }),
       }}
     />
   );

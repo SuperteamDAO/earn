@@ -10,6 +10,7 @@ import MdOutlineMail from '@/components/icons/MdOutlineMail';
 import { Button } from '@/components/ui/button';
 import { CopyButton } from '@/components/ui/copy-tooltip';
 import { CircularProgress } from '@/components/ui/progress';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { Tooltip } from '@/components/ui/tooltip';
 import { Superteams } from '@/constants/Superteam';
 import { tokenList } from '@/constants/tokenList';
@@ -105,7 +106,7 @@ export const ApplicationDetails = ({
     <div className="w-full rounded-r-xl bg-white">
       {applications?.length ? (
         <>
-          <div className="sticky top-[3rem] rounded-t-xl border-b border-slate-200 bg-white py-1">
+          <div className="sticky top-[3rem] z-20 rounded-t-xl border-b border-slate-200 bg-white py-1">
             <div className="flex w-full items-center justify-between px-4 py-2">
               <div className="flex w-full items-center gap-2">
                 <EarnAvatar
@@ -341,8 +342,11 @@ export const ApplicationDetails = ({
             </div>
           </div>
 
-          <div className="flex max-h-[39.7rem] w-full">
-            <div className="scrollbar-thumb-rounded-full scrollbar-thin scrollbar-track-slate-100 scrollbar-thumb-slate-300 flex w-2/3 flex-1 flex-col overflow-y-auto p-4">
+          <div className="relative z-10 flex max-h-[39.7rem] w-full">
+            <ScrollArea
+              type="auto"
+              className="flex w-2/3 flex-1 flex-col overflow-y-auto p-4"
+            >
               <div className="mb-4">
                 <p className="mb-1 text-xs font-semibold text-slate-400 uppercase">
                   ASK
@@ -454,7 +458,7 @@ export const ApplicationDetails = ({
                     />
                   ),
                 )}
-            </div>
+            </ScrollArea>
             <div className="w-1/3 max-w-[20rem] p-4">
               <Notes slug={grant?.slug} />
             </div>

@@ -16,6 +16,7 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import {
   Select,
   SelectContent,
@@ -234,25 +235,24 @@ export function EligibilityQuestionsForm() {
               {type === 'project' ? '' : 'Additional'} Custom Questions
             </FormLabel>
           </div>
-          <div
+          <ScrollArea
             ref={questionsContainerRef}
-            className={cn(
-              'flex min-h-0 shrink flex-col space-y-4 overflow-y-auto rounded-md border p-4',
-              fields.length === 0 && 'hidden',
-            )}
+            className={cn('rounded-md border', fields.length === 0 && 'hidden')}
           >
-            {fields.map((field, index) => (
-              <EligibilityQuestionItem
-                key={index}
-                field={field}
-                index={index}
-                form={form}
-                type={type}
-                handleRemoveQuestion={handleRemoveQuestion}
-                fieldsLength={fields.length}
-              />
-            ))}
-          </div>
+            <div className="flex min-h-0 shrink flex-col space-y-4 overflow-y-auto p-4">
+              {fields.map((field, index) => (
+                <EligibilityQuestionItem
+                  key={index}
+                  field={field}
+                  index={index}
+                  form={form}
+                  type={type}
+                  handleRemoveQuestion={handleRemoveQuestion}
+                  fieldsLength={fields.length}
+                />
+              ))}
+            </div>
+          </ScrollArea>
           {type !== 'bounty' || fields.length < 2 ? (
             <div
               className={cn(

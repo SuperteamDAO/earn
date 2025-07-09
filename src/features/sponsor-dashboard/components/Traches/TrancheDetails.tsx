@@ -10,6 +10,7 @@ import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
 import { Button } from '@/components/ui/button';
 import { CopyButton } from '@/components/ui/copy-tooltip';
 import { CircularProgress } from '@/components/ui/progress';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { tokenList } from '@/constants/tokenList';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
@@ -62,7 +63,7 @@ export const TrancheDetails = ({
   const paidPercentage = (totalPaid / approvedAmount) * 100;
 
   return (
-    <div className="w-full rounded-r-xl bg-white">
+    <div className="h-full w-full rounded-r-xl bg-white">
       {tranches?.length ? (
         <>
           <div className="sticky top-[3rem] rounded-t-xl border-b border-slate-200 bg-white py-1">
@@ -232,8 +233,11 @@ export const TrancheDetails = ({
             </div>
           </div>
 
-          <div className="flex h-[32.6rem] w-full">
-            <div className="scrollbar-thumb-rounded-full scrollbar-thin scrollbar-track-slate-100 scrollbar-thumb-slate-300 flex w-full flex-1 flex-col overflow-y-auto border-r border-slate-200 p-4">
+          <div className="flex h-[39.3rem] w-full">
+            <ScrollArea
+              className="flex w-full flex-1 flex-col overflow-y-auto border-r border-slate-200 p-4"
+              type="auto"
+            >
               {selectedTranche?.trancheNumber === 1 && (
                 <div className="mb-4">
                   <p className="mb-1 text-xs text-slate-500">
@@ -332,7 +336,7 @@ export const TrancheDetails = ({
                     />
                   ),
                 )}
-            </div>
+            </ScrollArea>
           </div>
         </>
       ) : (
