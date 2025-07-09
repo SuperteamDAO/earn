@@ -62,6 +62,7 @@ export const ApplicationModal = ({
   const [activeStep, setActiveStep] = useState(0);
   const [isTOSModalOpen, setIsTOSModalOpen] = useState(false);
   const [acknowledgementAccepted, setAcknowledgementAccepted] = useState(false);
+  const [acknowledgementError, setAcknowledgementError] = useState('');
 
   const { id, token, minReward, maxReward, questions } = grant;
 
@@ -114,12 +115,16 @@ export const ApplicationModal = ({
 
   const queryClient = useQueryClient();
 
-  const submitApplication = async (data: FormData) => {
+  const validateAcknowledgement = () => {
     if (!grantApplication && !acknowledgementAccepted) {
-      toast.error('Please acknowledge the requirements before submitting');
-      return;
+      setAcknowledgementError('Acknowledgement required');
+      return false;
     }
+    setAcknowledgementError('');
+    return true;
+  };
 
+  const submitApplication = async (data: FormData) => {
     setIsLoading(true);
     try {
       const {
@@ -290,11 +295,23 @@ export const ApplicationModal = ({
         <Form {...form}>
           <form
             style={{ width: '100%' }}
-            onSubmit={form.handleSubmit((data) => {
-              if (activeStep === steps.length - 1) {
-                submitApplication(data);
-              }
-            })}
+            onSubmit={form.handleSubmit(
+              (data) => {
+                if (activeStep === steps.length - 1) {
+                  if (!validateAcknowledgement()) {
+                    return;
+                  }
+                  submitApplication(data);
+                }
+              },
+              () => {
+                if (
+                  activeStep === steps.length - 1 &&
+                  !validateAcknowledgement()
+                ) {
+                }
+              },
+            )}
           >
             {activeStep === 0 && (
               <div className="mb-5 flex flex-col gap-4">
@@ -506,24 +523,32 @@ export const ApplicationModal = ({
                 />
 
                 {!grantApplication && (
-                  <div className="flex items-start space-x-2">
-                    <Checkbox
-                      id="acknowledgement"
-                      className="data-[state=checked]:border-brand-purple data-[state=checked]:bg-brand-purple mt-1"
-                      checked={acknowledgementAccepted}
-                      onCheckedChange={(checked) =>
-                        setAcknowledgementAccepted(checked as boolean)
-                      }
-                    />
-                    <label
-                      htmlFor="acknowledgement"
-                      className="text-xs text-slate-500"
-                    >
-                      To receive grant funding, you may need to provide
-                      verifiable proof of milestone completion and show that
-                      outcomes meet the expectations in your application and the
-                      listing<span className="text-red-500">*</span>
-                    </label>
+                  <div className="flex flex-col gap-2">
+                    <div className="flex items-start space-x-2">
+                      <Checkbox
+                        id="acknowledgement"
+                        className="data-[state=checked]:border-brand-purple data-[state=checked]:bg-brand-purple mt-1"
+                        checked={acknowledgementAccepted}
+                        onCheckedChange={(checked) => {
+                          setAcknowledgementAccepted(checked as boolean);
+                          if (checked) {
+                            setAcknowledgementError('');
+                          }
+                        }}
+                      />
+                      <label
+                        htmlFor="acknowledgement"
+                        className="text-xs text-slate-500"
+                      >
+                        To receive grant funding, you may need to send proofs of
+                        milestone completion and of outcomes that reflect your
+                        application and this grant listing.
+                        <span className="text-red-500">*</span>
+                      </label>
+                    </div>
+                    {acknowledgementError && (
+                      <FormMessage>{acknowledgementError}</FormMessage>
+                    )}
                   </div>
                 )}
               </div>
