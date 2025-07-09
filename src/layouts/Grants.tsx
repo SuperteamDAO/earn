@@ -128,7 +128,9 @@ export function GrantPageLayout({
                       ) : (
                         <GrantStats grant={grant} />
                       )}
-                      <ApplicationActionButton grant={grant} />
+                      <div className="hidden w-full md:flex">
+                        <ApplicationActionButton grant={grant} />
+                      </div>
                       {isApproved && application && isST ? (
                         <ApprovalStages
                           application={application}
@@ -198,6 +200,9 @@ export function GrantPageLayout({
                   )}
                 </div>
               </div>
+            </div>
+            <div className="sticky bottom-14 z-40 mb-10 w-full border-t-1 border-slate-100 bg-white py-1 md:hidden">
+              <ApplicationActionButton grant={grant} />
             </div>
           </div>
         )}

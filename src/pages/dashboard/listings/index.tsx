@@ -298,7 +298,7 @@ export default function SponsorListings({ tab: queryTab }: { tab: string }) {
                       color={getColorStyles(activeStatus!).color}
                       backgroundColor={getColorStyles(activeStatus!).bgColor}
                       borderColor={getColorStyles(activeStatus!).borderColor}
-                      className="w-fit"
+                      className="w-fit font-normal"
                     >
                       {activeStatus}
                     </StatusPill>
