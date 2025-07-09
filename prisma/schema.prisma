@@ -489,6 +489,7 @@ model User {
   kycIDNumber        String?
   kycIDType          String?
   CreditLedger       CreditLedger[]
+  blockRationale     String?
 
   @@index([currentSponsorId])
   @@index([hackathonId])

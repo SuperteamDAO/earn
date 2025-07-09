@@ -283,7 +283,7 @@ export function Templates() {
                                     <LocalImage
                                       src={sponsor.logo || ''}
                                       alt={sponsor.name}
-                                      className="h-full w-full rounded-full object-cover"
+                                      className="h-full w-full rounded-full bg-slate-100 object-cover"
                                     />
                                   </div>
                                 ))}
