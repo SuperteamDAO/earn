@@ -89,7 +89,7 @@ export const VerifyPaymentModal = ({
   const paymentLinks = watch('paymentLinks');
 
   useEffect(() => {
-    if (data?.submission && data?.bounty) {
+    if (data?.submission && data?.bounty && isOpen) {
       const isProject = listing?.type === 'project';
 
       if (isProject) {
@@ -144,7 +144,7 @@ export const VerifyPaymentModal = ({
           tokenList.find((s) => s.tokenSymbol === data?.bounty?.token),
         );
     }
-  }, [data?.bounty.slug, reset, listing?.type]);
+  }, [data?.bounty.slug, reset, listing?.type, isOpen]);
 
   useEffect(() => {
     reset({});
@@ -171,6 +171,17 @@ export const VerifyPaymentModal = ({
 
         await queryClient.invalidateQueries({
           queryKey: ['sponsor-dashboard-listing', listing?.slug],
+        });
+
+        await queryClient.invalidateQueries({
+          queryKey: ['dashboard', user?.currentSponsorId],
+        });
+
+        await queryClient.invalidateQueries({
+          queryKey: [
+            'listing-submissions',
+            { slug: listing?.slug, isWinner: true },
+          ],
         });
 
         const { validationResults } = data.data;
@@ -239,7 +250,10 @@ export const VerifyPaymentModal = ({
   };
 
   const tryAgain = () => {
+    reset({});
     setStatus('idle');
+    setShowMultiplePayments(false);
+    clearErrors();
   };
 
   const handleModalOpenChange = (open: boolean) => {
@@ -377,27 +391,40 @@ export const VerifyPaymentModal = ({
         );
       case 'error':
         return (
-          <div className="flex h-full flex-col gap-10 py-10">
-            <div className="flex items-center justify-center">
-              <div className="flex items-center justify-center rounded-full bg-red-50 p-6">
-                <div className="rounded-full bg-red-600 p-2.5">
-                  <X className="h-7 w-7 text-white" strokeWidth={3} />
+          <div className="flex h-full flex-col">
+            <div className="py-10">
+              <div className="flex items-center justify-center">
+                <div className="flex items-center justify-center rounded-full bg-red-50 p-6">
+                  <div className="rounded-full bg-red-600 p-2.5">
+                    <X className="h-7 w-7 text-white" strokeWidth={3} />
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <div className="mx-auto flex max-w-[20rem] flex-col items-center gap-2">
-              <p className="font-medium text-slate-900">
-                Oh-Uh Verification Failed
-              </p>
-              <p className="text-center text-sm text-slate-500">
-                We couldn&apos;t verify your payment status. <br />
-                Please check your links again and make sure it&apos;s the exact
-                amount
-              </p>
+              <div className="mx-auto flex max-w-[20rem] flex-col items-center gap-2">
+                <p className="mt-10 font-medium text-slate-900">
+                  Oh-Uh Verification Failed
+                </p>
+                <p className="text-center text-sm text-slate-500">
+                  We couldn&apos;t verify your payment status. <br />
+                  Please check your links again and make sure it&apos;s the
+                  exact amount
+                </p>
+              </div>
             </div>
-
-            <div className="mx-auto flex flex-col items-center gap-2">
+            <div className="mt-12 flex gap-3">
+              <div className="w-1/2" />
+              <Button variant="ghost" type="button" onClick={onClose}>
+                Close
+              </Button>
+              <Button
+                className="flex-1 rounded-lg border border-emerald-500 bg-emerald-50 text-emerald-600 hover:bg-emerald-100 hover:text-emerald-600"
+                onClick={tryAgain}
+              >
+                Try Again
+              </Button>
+            </div>
+            <div className="mx-auto mt-2 flex flex-col items-center gap-2">
               <a
                 href={PDTG}
                 target="_blank"
@@ -405,25 +432,14 @@ export const VerifyPaymentModal = ({
                 className="text-center"
               >
                 <Button
-                  className="bg-none text-sm font-normal underline"
+                  className="bg-none text-sm font-normal text-slate-400"
                   variant="link"
+                  type="button"
                 >
-                  Think We Made A Mistake? Text Us
+                  Think We Made A Mistake?{' '}
+                  <span className="text-slate-500 underline">Text Us</span>
                 </Button>
               </a>
-
-              <div className="flex gap-3">
-                <div className="w-1/2" />
-                <Button variant="ghost" type="button" onClick={onClose}>
-                  Close
-                </Button>
-                <Button
-                  className="flex-1 rounded-lg border border-emerald-500 bg-emerald-50 text-emerald-600 hover:bg-emerald-100 hover:text-emerald-600"
-                  onClick={tryAgain}
-                >
-                  Try Again
-                </Button>
-              </div>
             </div>
           </div>
         );
@@ -805,13 +821,6 @@ export const VerifyPaymentModal = ({
                 </Button>
               </div>
 
-              <div className="mt-4">
-                <p className="text-sm text-slate-400">
-                  *To verify, ensure the amount, token, and wallet address in
-                  the tx link match the details above
-                </p>
-              </div>
-
               {status === 'retry' && (
                 <div className="mt-4 text-center">
                   <a
@@ -821,15 +830,22 @@ export const VerifyPaymentModal = ({
                     className="text-center"
                   >
                     <Button
-                      type="button"
-                      className="bg-transparent text-sm font-normal underline"
+                      className="bg-none text-sm font-normal text-slate-400"
                       variant="link"
+                      type="button"
                     >
-                      Think We Made A Mistake? Text Us
+                      Think We Made A Mistake?{' '}
+                      <span className="text-slate-500 underline">Text Us</span>
                     </Button>
                   </a>
                 </div>
               )}
+              <div className="mt-4">
+                <p className="text-sm text-slate-400">
+                  *To verify, ensure the amount, token, and wallet address in
+                  the tx link match the details above
+                </p>
+              </div>
             </form>
           </Form>
         );
