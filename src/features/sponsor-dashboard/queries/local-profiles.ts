@@ -52,4 +52,5 @@ export const localProfilesQuery = (sponsorName: string) =>
     queryKey: ['localProfiles', sponsorName],
     queryFn: () => fetchLocalProfiles({ sponsorName }),
     enabled: !!sponsorName,
+    retry: false,
   });

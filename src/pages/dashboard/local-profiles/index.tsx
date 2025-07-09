@@ -35,6 +35,8 @@ export default function LocalProfiles() {
 
   const debouncedSetSearchText = useRef(debounce(setSearchText, 300)).current;
 
+  console.log(allUsers?.[0]);
+
   useEffect(() => {
     posthog.capture('members tab_sponsor');
   }, []);
