@@ -34,7 +34,6 @@ export const SpamButton = ({ listingSlug, isMultiSelectOn }: Props) => {
   );
   const setLabelsUpdating = useSetAtom(isStateUpdatingAtom);
   const [isSpamDialogOpen, setIsSpamDialogOpen] = useState(false);
-  const [isCheckingSpam, setIsCheckingSpam] = useState(false);
   const [pendingSpamLabel, setPendingSpamLabel] = useState<{
     id: string;
     label: SubmissionLabels;
@@ -49,31 +48,7 @@ export const SpamButton = ({ listingSlug, isMultiSelectOn }: Props) => {
       id: selectedSubmission.id,
       label: SubmissionLabels.Spam,
     });
-    checkIfFirstSpamSubmission(selectedSubmission.id);
-  };
-
-  const checkIfFirstSpamSubmission = async (id: string) => {
-    setIsCheckingSpam(true);
-    try {
-      const response = await api.get(
-        `/api/sponsor-dashboard/${listingSlug}/submissions`,
-      );
-      const submissions = response.data || [];
-      const spamSubmissions = submissions.filter(
-        (sub: any) => sub.label === 'Spam',
-      );
-
-      if (spamSubmissions.length === 0) {
-        setIsSpamDialogOpen(true);
-      } else {
-        updateLabel({ id, label: SubmissionLabels.Spam });
-      }
-    } catch (error) {
-      console.error('Error checking submissions:', error);
-      setIsSpamDialogOpen(true);
-    } finally {
-      setIsCheckingSpam(false);
-    }
+    setIsSpamDialogOpen(true);
   };
 
   const handleSpamConfirm = (id: string, label: SubmissionLabels) => {
@@ -166,7 +141,7 @@ export const SpamButton = ({ listingSlug, isMultiSelectOn }: Props) => {
             : 'border-orange-200 bg-orange-50 text-orange-500 hover:bg-orange-100 disabled:opacity-70'
         }`}
         onClick={handleSpamClick}
-        disabled={isCheckingSpam || isMarkedAsSpam || isMultiSelectOn}
+        disabled={isMarkedAsSpam || isMultiSelectOn}
       >
         <LucideFlag className="size-1 text-orange-500" />
         {isMarkedAsSpam ? 'Marked as Spam' : 'Spam'}
