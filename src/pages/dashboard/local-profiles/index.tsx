@@ -29,9 +29,13 @@ export default function LocalProfiles() {
   const [checkedItems, setCheckedItems] = useState<Record<string, boolean>>({});
 
   const { user } = useUser();
-  const { data: allUsers, isLoading } = useQuery(localProfilesQuery);
+  const { data: allUsers, isLoading } = useQuery(
+    localProfilesQuery(user?.currentSponsor?.name || ''),
+  );
 
   const debouncedSetSearchText = useRef(debounce(setSearchText, 300)).current;
+
+  console.log(allUsers?.[0]);
 
   useEffect(() => {
     posthog.capture('members tab_sponsor');
