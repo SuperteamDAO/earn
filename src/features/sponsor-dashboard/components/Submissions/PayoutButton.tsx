@@ -12,7 +12,6 @@ import {
   Transaction,
 } from '@solana/web3.js';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useAtom } from 'jotai';
 import { Loader2 } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import { log } from 'next-axiom';
@@ -31,18 +30,13 @@ import { truncatePublicKey } from '@/utils/truncatePublicKey';
 
 import { type Listing, type Rewards } from '@/features/listings/types';
 
-import { selectedSubmissionAtom } from '../../atoms';
-
 interface Props {
   bounty: Listing | null;
+  submission: SubmissionWithUser;
 }
 
-export const PayoutButton = ({ bounty }: Props) => {
+export const PayoutButton = ({ bounty, submission }: Props) => {
   const [isPaying, setIsPaying] = useState(false);
-
-  const [selectedSubmission, setSelectedSubmission] = useAtom(
-    selectedSubmissionAtom,
-  );
 
   const { user } = useUser();
 
@@ -52,10 +46,10 @@ export const PayoutButton = ({ bounty }: Props) => {
   const queryClient = useQueryClient();
 
   const totalPrizeAmount =
-    bounty?.rewards?.[selectedSubmission?.winnerPosition as keyof Rewards] || 0;
+    bounty?.rewards?.[submission?.winnerPosition as keyof Rewards] || 0;
 
   const totalPaidAmount =
-    selectedSubmission?.paymentDetails?.reduce(
+    submission?.paymentDetails?.reduce(
       (sum, payment) => sum + payment.amount,
       0,
     ) || 0;
@@ -89,16 +83,6 @@ export const PayoutButton = ({ bounty }: Props) => {
                 }
               : submission,
           ),
-      );
-
-      setSelectedSubmission((prev) =>
-        prev && prev.id === variables.id
-          ? {
-              ...prev,
-              isPaid: updatedSubmission.isPaid,
-              paymentDetails: updatedSubmission.paymentDetails,
-            }
-          : prev,
       );
     },
     onError: (error) => {
@@ -206,7 +190,7 @@ export const PayoutButton = ({ bounty }: Props) => {
 
       await pollForSignature(signature);
 
-      const nextTranche = (selectedSubmission?.paymentDetails?.length || 0) + 1;
+      const nextTranche = (submission?.paymentDetails?.length || 0) + 1;
 
       const isProject = bounty?.type === 'project';
       const trancheNumber = isProject ? nextTranche : 1;
@@ -266,16 +250,16 @@ export const PayoutButton = ({ bounty }: Props) => {
           className={cn('ph-no-capture disabled:cursor-not-allowed')}
           disabled={!bounty?.isWinnersAnnounced || remainingAmount <= 0}
           onClick={async () => {
-            if (!selectedSubmission?.user.walletAddress) {
+            if (!submission?.user.walletAddress) {
               console.error('Public key is null, cannot proceed with payment');
               return;
             }
             posthog.capture('pay winner_sponsor');
             handlePayout({
-              id: selectedSubmission?.id as string,
+              id: submission?.id as string,
               token: bounty?.token as string,
               amount: remainingAmount,
-              receiver: new PublicKey(selectedSubmission.user.walletAddress),
+              receiver: new PublicKey(submission.user.walletAddress),
             });
           }}
           variant="default"

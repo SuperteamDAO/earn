@@ -254,7 +254,10 @@ export const PayoutSection = ({
                         )
                       ) : bounty.isWinnersAnnounced ? (
                         <div className="flex items-center gap-8">
-                          <PayoutButton bounty={bounty} />
+                          <PayoutButton
+                            bounty={bounty}
+                            submission={submission}
+                          />
                           {hasMultipleTranches && (
                             <span
                               onClick={() => toggleExpandRow(submission.id)}
