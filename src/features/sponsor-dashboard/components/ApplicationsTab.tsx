@@ -1,15 +1,11 @@
 import { GrantApplicationStatus, type SubmissionLabels } from '@prisma/client';
-import {
-  keepPreviousData,
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useAtom } from 'jotai';
 import { LucideFlag } from 'lucide-react';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 
+import { LoadingSection } from '@/components/shared/LoadingSection';
 import { Button } from '@/components/ui/button';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
@@ -46,7 +42,6 @@ export const ApplicationsTab = ({ slug }: Props) => {
     useQuery({
       ...applicationsQuery(slug),
       retry: false,
-      placeholderData: keepPreviousData,
     });
 
   useEffect(() => {
@@ -339,6 +334,10 @@ export const ApplicationsTab = ({ slug }: Props) => {
     setCurrentAction(actionType);
     rejectedMultipleOnOpen();
   };
+
+  if (isApplicationsLoading) {
+    return <LoadingSection />;
+  }
 
   return (
     <>

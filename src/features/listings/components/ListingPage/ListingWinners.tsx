@@ -50,11 +50,11 @@ export function ListingWinners({ bounty }: Props) {
   );
 
   const openWinnerLink = () => {
-    let path = window.location.href.split('?')[0];
-    if (!path) return;
-    path += 'winner/';
-
-    return tweetEmbedLink(tweetTemplate(path));
+    return tweetEmbedLink(
+      tweetTemplate(
+        'https://earn.superteam.fun/listing/' + bounty?.slug + '/winner',
+      ),
+    );
   };
 
   const sliceValue = useMemo(() => {
