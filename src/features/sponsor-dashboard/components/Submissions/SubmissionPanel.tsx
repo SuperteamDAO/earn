@@ -74,7 +74,8 @@ export const SubmissionPanel = ({
                   {!isHackathonPage &&
                     selectedSubmission?.status === 'Pending' &&
                     !bounty?.isWinnersAnnounced &&
-                    !selectedSubmission.isWinner && (
+                    !selectedSubmission.isWinner &&
+                    selectedSubmission?.label !== SubmissionLabels.Spam && (
                       <SelectLabel listingSlug={bounty?.slug!} />
                     )}
                 </div>

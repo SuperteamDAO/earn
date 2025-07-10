@@ -52,11 +52,27 @@ export const ApplicationList = ({
     selectedGrantApplicationAtom,
   );
 
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     return () => {
       debouncedSetSearchText.cancel();
     };
   }, [debouncedSetSearchText]);
+
+  useEffect(() => {
+    if (selectedApplication?.id && scrollContainerRef.current) {
+      const selectedElement = scrollContainerRef.current.querySelector(
+        `[data-application-id="${selectedApplication.id}"]`,
+      );
+
+      if (selectedElement) {
+        selectedElement.scrollIntoView({
+          block: 'nearest',
+        });
+      }
+    }
+  }, [selectedApplication?.id]);
 
   return (
     <div className="h-full w-full rounded-l-lg border border-slate-200 bg-white">
@@ -81,7 +97,10 @@ export const ApplicationList = ({
           onFilterChange={onFilterChange}
         />
       </div>
-      <div className="scrollbar-thin scrollbar-w-1 scrollbar-track-white scrollbar-thumb-slate-200 hover:scrollbar-thumb-slate-300 h-[42rem] w-full overflow-y-auto rounded-bl-lg border-t bg-white">
+      <div
+        ref={scrollContainerRef}
+        className="scrollbar-thin scrollbar-w-1 scrollbar-track-white scrollbar-thumb-slate-200 hover:scrollbar-thumb-slate-300 h-[42rem] w-full overflow-y-auto rounded-bl-lg border-t bg-white"
+      >
         {applications?.map((application) => {
           const applicationStatus = application?.applicationStatus;
 
@@ -109,6 +128,7 @@ export const ApplicationList = ({
           return (
             <div
               key={application?.id}
+              data-application-id={application?.id}
               className={cn(
                 'flex cursor-pointer items-center justify-between gap-4 border-b border-slate-200 px-3 py-2',
                 'hover:bg-slate-100',

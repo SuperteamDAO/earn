@@ -57,7 +57,7 @@ function GrantApplications({ slug }: Props) {
             defaultValue="applications"
             onValueChange={(value) => setActiveTab(value)}
           >
-            <TabsList className="gap-2 font-medium text-slate-400">
+            <TabsList className="gap-2 font-medium text-slate-400 focus-visible:ring-0">
               <TabsTrigger value="applications">
                 Applications
                 <div className="text-xxs ml-2 rounded-full bg-slate-200 px-2 py-0.5 text-slate-500">

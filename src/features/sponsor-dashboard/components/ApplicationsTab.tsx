@@ -123,6 +123,34 @@ export const ApplicationsTab = ({ slug }: Props) => {
     selectedGrantApplicationAtom,
   );
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!applications.length) return;
+
+      const currentIndex = applications.findIndex(
+        (sub) => sub.id === selectedApplication?.id,
+      );
+
+      switch (e.key) {
+        case 'ArrowUp':
+          e.preventDefault();
+          if (currentIndex > 0) {
+            setSelectedApplication(applications[currentIndex - 1]);
+          }
+          break;
+        case 'ArrowDown':
+          e.preventDefault();
+          if (currentIndex < applications.length - 1) {
+            setSelectedApplication(applications[currentIndex + 1]);
+          }
+          break;
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [applications, selectedApplication, setSelectedApplication]);
+
   const rejectGrantApplications = useRejectGrantApplications(slug);
 
   const queryClient = useQueryClient();

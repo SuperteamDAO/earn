@@ -345,9 +345,9 @@ export const ApplicationDetails = ({
           <div className="relative z-10 flex max-h-[39.7rem] w-full">
             <ScrollArea
               type="auto"
-              className="flex w-2/3 flex-1 flex-col overflow-y-auto p-4"
+              className="flex w-2/3 flex-1 flex-col overflow-y-auto px-4"
             >
-              <div className="mb-4">
+              <div className="mb-4 pt-2">
                 <p className="mb-1 text-xs font-semibold text-slate-400 uppercase">
                   ASK
                 </p>

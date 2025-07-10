@@ -58,12 +58,27 @@ export const SubmissionList = ({
   );
 
   const debouncedSetSearchText = useRef(debounce(setSearchText, 300)).current;
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     return () => {
       debouncedSetSearchText.cancel();
     };
   }, [debouncedSetSearchText]);
+
+  useEffect(() => {
+    if (selectedSubmission?.id && scrollContainerRef.current) {
+      const selectedElement = scrollContainerRef.current.querySelector(
+        `[data-submission-id="${selectedSubmission.id}"]`,
+      );
+
+      if (selectedElement) {
+        selectedElement.scrollIntoView({
+          block: 'nearest',
+        });
+      }
+    }
+  }, [selectedSubmission?.id]);
 
   const getSubmissionLabel = (submission: SubmissionWithUser) => {
     if (submission?.isWinner && submission?.winnerPosition) {
@@ -126,12 +141,16 @@ export const SubmissionList = ({
           listingType={listing?.type}
         />
       </div>
-      <div className="scrollbar-thin scrollbar-w-1 scrollbar-track-white scrollbar-thumb-slate-200 hover:scrollbar-thumb-slate-300 h-[42rem] w-full overflow-y-auto rounded-bl-lg border-t bg-white">
+      <div
+        ref={scrollContainerRef}
+        className="scrollbar-thin scrollbar-w-1 scrollbar-track-white scrollbar-thumb-slate-200 hover:scrollbar-thumb-slate-300 h-[42rem] w-full overflow-y-auto rounded-bl-lg border-t bg-white"
+      >
         {submissions.map((submission) => {
           const { bg, color, border } = getSubmissionColors(submission);
           return (
             <div
               key={submission?.id}
+              data-submission-id={submission?.id}
               className={cn(
                 'flex cursor-pointer items-center justify-between gap-4 border-b border-slate-200 px-3 py-2',
                 'hover:bg-slate-100',
