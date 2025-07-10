@@ -216,7 +216,7 @@ export const ListingsSection = ({
         />
       </div>
 
-      <AnimateChangeInHeight duration={0.1}>
+      <AnimateChangeInHeight disableOnHeightZero>
         {renderContent()}
       </AnimateChangeInHeight>
     </div>
