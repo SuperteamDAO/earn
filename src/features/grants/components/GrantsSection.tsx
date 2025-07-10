@@ -87,7 +87,7 @@ export const GrantsSection = ({ type, region, sponsor }: GrantSectionProps) => {
         ))}
       </div>
 
-      <AnimateChangeInHeight duration={0.3}>
+      <AnimateChangeInHeight disableOnHeightZero>
         {renderContent()}
       </AnimateChangeInHeight>
     </div>
