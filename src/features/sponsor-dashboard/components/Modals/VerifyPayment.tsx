@@ -186,7 +186,6 @@ export const VerifyPaymentModal = ({
     useMutation({
       mutationFn: (body: VerifyPaymentsFormData) => verifyPaymentMutation(body),
       onSuccess: async (data, variables) => {
-        await refetchQueries();
         const { validationResults } = data.data;
         const failedResults = validationResults.filter(
           (v) => v.status === 'FAIL',
@@ -231,9 +230,7 @@ export const VerifyPaymentModal = ({
         );
 
         if (successfulResults.length > 0) {
-          await queryClient.invalidateQueries({
-            queryKey: ['dashboard', user?.currentSponsorId],
-          });
+          await refetchQueries();
         }
       },
       onError: () => {
