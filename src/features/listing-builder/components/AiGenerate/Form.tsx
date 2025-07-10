@@ -118,11 +118,19 @@ export function AiGenerateForm({
     }
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLFormElement>) => {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+      e.preventDefault();
+      form.handleSubmit(handleSubmit)();
+    }
+  };
+
   return (
     <div className="mt-2 h-full space-y-4 px-6">
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(handleSubmit)}
+          onKeyDown={handleKeyDown}
           className="flex h-full flex-col justify-between gap-3"
         >
           <FormField
@@ -135,6 +143,7 @@ export function AiGenerateForm({
                 </FormLabel>
                 <FormControl>
                   <TextareaAutosize
+                    autoFocus={true}
                     placeholder={`A brief description of your company/project, link to your official website, you're companies values, etc`}
                     minRows={3}
                     className="focus:border-primary rounded-md border p-2 text-sm placeholder:text-sm focus:outline-none"

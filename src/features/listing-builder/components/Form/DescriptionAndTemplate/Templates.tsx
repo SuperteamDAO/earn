@@ -202,6 +202,7 @@ export function Templates() {
                 <DialogClose asChild>
                   <Button
                     className="ph-no-capture flex h-full w-60 flex-col items-center justify-center gap-4 bg-white text-slate-500 hover:text-slate-700"
+                    autoFocus={false}
                     variant="outline"
                     disabled={isDisabled}
                     onClick={handleStartFromScratch}
@@ -215,6 +216,7 @@ export function Templates() {
                 <DialogClose asChild>
                   <Button
                     className="ph-no-capture relative flex h-full w-60 flex-col items-center justify-center gap-4 bg-white text-slate-500 hover:text-slate-700 focus-visible:ring-0"
+                    autoFocus={true}
                     variant="outline"
                     disabled={isDisabled}
                     onClick={handleAutoGenerate}

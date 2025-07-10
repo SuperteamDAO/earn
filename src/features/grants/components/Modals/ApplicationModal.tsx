@@ -598,6 +598,7 @@ export const ApplicationModal = ({
             onClick={() => setIsTOSModalOpen(true)}
             className="cursor-pointer underline underline-offset-2"
             rel="noopener noreferrer"
+            type="button"
           >
             Terms of Use
           </button>
