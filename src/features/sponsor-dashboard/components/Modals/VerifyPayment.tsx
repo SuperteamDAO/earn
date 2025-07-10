@@ -394,7 +394,7 @@ export const VerifyPaymentModal = ({
             )}
           </div>
         );
-      case 'idle':
+      case 'error':
         return (
           <div className="flex h-full flex-col">
             <div className="py-6">
