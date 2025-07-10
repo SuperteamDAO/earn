@@ -12,6 +12,7 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
+import { useUser } from '@/store/user';
 
 import { hackathonsAtom, isEditingAtom } from '../../atoms';
 import { useListingForm } from '../../hooks';
@@ -26,6 +27,9 @@ export const DEADLINE_FORMAT = 'YYYY-MM-DDTHH:mm:ss.SSS[Z]';
 
 export function Deadline() {
   const form = useListingForm();
+  const { user } = useUser();
+  const isGodMode = user?.role === 'GOD';
+
   const deadline = useWatch({
     name: 'deadline',
     control: form.control,
@@ -53,6 +57,10 @@ export function Deadline() {
         const originalDeadline = dayjs(deadline);
         const twoWeeksLater = originalDeadline.add(2, 'weeks');
         setMaxDeadline(twoWeeksLater.endOf('day').toDate());
+        if (isGodMode) {
+          setMaxDeadline(undefined);
+          return;
+        }
       }
     }
     if (!isEditing) {
@@ -62,7 +70,7 @@ export function Deadline() {
     return () => {
       setMaxDeadline(undefined);
     };
-  }, [isEditing]);
+  }, [isEditing, isGodMode]);
 
   const handleDeadlineSelection = (days: number) => {
     return dayjs().add(days, 'day').format(DEADLINE_FORMAT).replace('Z', '');

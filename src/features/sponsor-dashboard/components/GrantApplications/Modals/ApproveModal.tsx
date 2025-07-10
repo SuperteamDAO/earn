@@ -3,12 +3,7 @@ import posthog from 'posthog-js';
 import React, { useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import { tokenList } from '@/constants/tokenList';
@@ -156,22 +151,16 @@ export const ApproveModal = ({
 
   return (
     <Dialog open={approveIsOpen} onOpenChange={approveOnClose}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle className="text-md font-semibold text-slate-500">
-            Approve Grant Payment
-          </DialogTitle>
-        </DialogHeader>
-
+      <DialogContent className="m-0 p-0" hideCloseIcon>
+        <DialogTitle className="text-md -mb-1 px-6 pt-4 font-semibold text-slate-900">
+          Approve Grant Payment
+        </DialogTitle>
         <Separator />
-
-        <div className="text-[0.95rem] font-medium">
-          <p className="mt-3 text-slate-500">
-            You are about to approve {granteeName}’s grant request. They will be
-            notified via email.
+        <div className="px-6 pb-6 text-[0.95rem]">
+          <p className="mb-4 text-slate-500">
+            You are about to approve {granteeName}&apos;s grant request. They
+            will be notified via email.
           </p>
-
-          <br />
 
           <div className="mb-6 flex items-center justify-between">
             <p className="text-slate-500">Grant Request</p>
@@ -212,30 +201,36 @@ export const ApproveModal = ({
           </div>
 
           {warningMessage && (
-            <p className="font-sm text-center text-yellow-500">
+            <p className="mb-4 text-center text-sm text-yellow-500">
               {warningMessage}
             </p>
           )}
 
-          <Button
-            className="mt-2 mb-3 w-full bg-[#079669] text-white hover:bg-[#079669]/90"
-            disabled={loading || approvedAmount === 0}
-            onClick={approveGrant}
-          >
-            {loading ? (
-              <>
-                <span className="loading loading-spinner mr-2" />
-                <span>Approving</span>
-              </>
-            ) : (
-              <>
-                <div className="mr-2 rounded-full bg-white p-[5px]">
-                  <Check className="h-2.5 w-2.5 text-[#079669]" />
-                </div>
-                <span>Approve Grant</span>
-              </>
-            )}
-          </Button>
+          <div className="flex gap-3">
+            <div className="w-1/2" />
+            <Button variant="ghost" onClick={approveOnClose} disabled={loading}>
+              Close
+            </Button>
+            <Button
+              className="flex-1 rounded-lg border border-emerald-500 bg-emerald-50 text-emerald-600 hover:bg-emerald-100 hover:text-emerald-600"
+              disabled={loading || approvedAmount === 0}
+              onClick={approveGrant}
+            >
+              {loading ? (
+                <>
+                  <span className="loading loading-spinner mr-2" />
+                  <span>Approving</span>
+                </>
+              ) : (
+                <>
+                  <div className="mr-2 rounded-full bg-emerald-600 p-0.5">
+                    <Check className="size-2.5 text-white" />
+                  </div>
+                  <span>Approve Grant</span>
+                </>
+              )}
+            </Button>
+          </div>
         </div>
       </DialogContent>
     </Dialog>

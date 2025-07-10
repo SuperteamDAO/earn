@@ -2,6 +2,7 @@ import Link from 'next/link';
 
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { TERMS_OF_USE } from '@/constants/TERMS_OF_USE';
 
@@ -19,7 +20,7 @@ export const SubmissionTerms = ({
   return (
     <Dialog open={isOpen} onOpenChange={onClose} modal>
       <DialogContent
-        className="flex max-w-xl flex-col overflow-hidden rounded-lg"
+        className="flex max-h-[95vh] max-w-xl flex-col overflow-hidden rounded-lg"
         onPointerDownOutside={(e) => e.preventDefault()}
         onEscapeKeyDown={(e) => e.preventDefault()}
       >
@@ -41,71 +42,72 @@ export const SubmissionTerms = ({
           <p className="items-start text-xl font-semibold">Terms of Use</p>
         </div>
         <Separator className="border-b-2 py-0" />
-        <div className="flex-1 overflow-y-auto">
-          <div className="flex flex-col items-start gap-3 py-4 text-left font-medium text-slate-500 sm:px-5">
-            <ul className="list-disc space-y-2 pl-5">
-              <li>
-                You acknowledge that you are submitting your work or application
-                to{' '}
-                {entityName ? `${entityName} ("${sponsorName}")` : sponsorName}.
-              </li>
-              <li>
-                Superteam Earn acts solely as a platform for the Partner to list
-                contests, bounties, projects or similar engagements{' '}
-                {`("Activities")`} on its platform {`("ST Earn Platform")`}.
-              </li>
-              <li>
-                Superteam Earn shall not be liable for any Activities listed by
-                the Partner on the ST Earn Platform. The Partner is solely
-                responsible for the content, rules, scope and execution of their
-                Activities.
-              </li>
-              <li>
-                Users participating in Activities listed by Partners do so at
-                their own risk and discretion. Superteam Earn disclaims all
-                liabilities related to user participation in such Activities.
-              </li>
-              <li>
-                Any disputes or issues arising between users and partners
-                regarding Activities shall be resolved directly between the
-                parties involved. Superteam Earn shall not be responsible for
-                mediating or resolving such disputes.
-              </li>
-              <li>
-                By using the platform and participating in any Activities, users
-                agree to release Superteam Earn from any claims, liabilities, or
-                damages arising from their participation in Activities listed by
-                Partners.
-              </li>
-              <li>
-                Superteam Earn does not guarantee the accuracy or legality of
-                Activities listed by Partners. Users are advised to exercise
-                caution and conduct their own due diligence before participating
-                in any Activities.
-              </li>
-              <li>
-                Partners listing Activities on the Platform agree to indemnify
-                and hold Superteam Earn harmless from any claims, damages, or
-                liabilities arising from their Activities.
-              </li>
-            </ul>
-            <p className="leading-5">
-              These terms are in addition to our{' '}
-              <Link
-                className="underline underline-offset-2"
-                href={TERMS_OF_USE}
-                rel="noopener noreferrer"
-                target="_blank"
-              >
-                Terms of Use
-              </Link>
+        <ScrollArea
+          type="auto"
+          className="flex h-full flex-col items-start gap-3 overflow-y-auto py-4 text-left font-medium text-slate-500 sm:px-5"
+        >
+          <ul className="list-disc space-y-2 pl-5">
+            <li>
+              You acknowledge that you are submitting your work or application
+              to {entityName ? `${entityName} ("${sponsorName}")` : sponsorName}
               .
-            </p>
-            <Button onClick={onClose} className="mt-5 ml-auto px-10 text-lg">
-              Done
-            </Button>
-          </div>
-        </div>
+            </li>
+            <li>
+              Superteam Earn acts solely as a platform for the Partner to list
+              contests, bounties, projects or similar engagements{' '}
+              {`("Activities")`} on its platform {`("ST Earn Platform")`}.
+            </li>
+            <li>
+              Superteam Earn shall not be liable for any Activities listed by
+              the Partner on the ST Earn Platform. The Partner is solely
+              responsible for the content, rules, scope and execution of their
+              Activities.
+            </li>
+            <li>
+              Users participating in Activities listed by Partners do so at
+              their own risk and discretion. Superteam Earn disclaims all
+              liabilities related to user participation in such Activities.
+            </li>
+            <li>
+              Any disputes or issues arising between users and partners
+              regarding Activities shall be resolved directly between the
+              parties involved. Superteam Earn shall not be responsible for
+              mediating or resolving such disputes.
+            </li>
+            <li>
+              By using the platform and participating in any Activities, users
+              agree to release Superteam Earn from any claims, liabilities, or
+              damages arising from their participation in Activities listed by
+              Partners.
+            </li>
+            <li>
+              Superteam Earn does not guarantee the accuracy or legality of
+              Activities listed by Partners. Users are advised to exercise
+              caution and conduct their own due diligence before participating
+              in any Activities.
+            </li>
+            <li>
+              Partners listing Activities on the Platform agree to indemnify and
+              hold Superteam Earn harmless from any claims, damages, or
+              liabilities arising from their Activities.
+            </li>
+          </ul>
+          <p className="pt-4 leading-5">
+            These terms are in addition to our{' '}
+            <Link
+              className="underline underline-offset-2"
+              href={TERMS_OF_USE}
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              Terms of Use
+            </Link>
+            .
+          </p>
+          <Button onClick={onClose} className="mt-5 ml-auto px-10 text-lg">
+            Done
+          </Button>
+        </ScrollArea>
       </DialogContent>
     </Dialog>
   );

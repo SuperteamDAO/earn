@@ -23,6 +23,7 @@ import {
 } from '@/components/ui/form';
 import { FormFieldWrapper } from '@/components/ui/form-field-wrapper';
 import { Input } from '@/components/ui/input';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { SideDrawer, SideDrawerContent } from '@/components/ui/side-drawer';
 import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
@@ -310,7 +311,7 @@ export const SubmissionDrawer = ({
             style={{ width: '100%', height: '100%' }}
           >
             <div className="flex h-full flex-col justify-between gap-6">
-              <div className="h-full overflow-y-auto rounded-lg border border-slate-200 px-2 shadow-[0px_1px_3px_rgba(0,0,0,0.08),_0px_1px_2px_rgba(0,0,0,0.06)] md:px-4 [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-slate-300 [&::-webkit-scrollbar-track]:w-1.5">
+              <ScrollArea className="h-full overflow-y-auto rounded-lg border border-slate-200 px-2 shadow-[0px_1px_3px_rgba(0,0,0,0.08),_0px_1px_2px_rgba(0,0,0,0.06)]">
                 <div className="mb-4 border-b border-slate-100 bg-white py-3">
                   <p className="text-lg font-medium text-slate-700">
                     {headerText}
@@ -473,7 +474,7 @@ export const SubmissionDrawer = ({
                     />
                   </div>
                 </div>
-              </div>
+              </ScrollArea>
 
               <div className="flex w-full flex-col">
                 {isHackathon && !editMode && (

@@ -336,7 +336,6 @@ export function AiGenerateDialog({ children }: AIDescriptionDialogProps) {
         style={{
           borderImageWidth: '0px !important',
         }}
-        onEscapeKeyDown={(e) => e.preventDefault()}
         onPointerDownOutside={(e) => e.preventDefault()}
         onInteractOutside={(e) => e.preventDefault()}
         aria-describedby="Auto Generate Listing"

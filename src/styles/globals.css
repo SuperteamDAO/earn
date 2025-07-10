@@ -95,6 +95,7 @@
   --animate-accordion-up: accordion-up 0.2s ease-out;
   --animate-slide-in-from-right: slide-in-from-right 1s ease-out;
   --animate-slide-out-to-right: slide-out-to-right 1s ease-in;
+  --animate-float: float 2s ease-in-out infinite;
 
   @keyframes caret-blink {
     0%,
@@ -137,6 +138,16 @@
     }
     100% {
       transform: translateX(100%);
+    }
+  }
+
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(var(--float-y, -4px));
     }
   }
 }
@@ -184,7 +195,7 @@
   --destructive-foreground: hsl(210 40% 98%);
   --border: hsl(214.3 31.8% 91.4%);
   --input: hsl(214.3 31.8% 91.4%);
-  --ring: hsl(222.2 84% 4.9%);
+  --ring: hsl(214.28 33% 91%);
   --chart-1: hsl(12 76% 61%);
   --chart-2: hsl(173 58% 39%);
   --chart-3: hsl(197 37% 24%);
@@ -236,7 +247,7 @@ body {
 .wallet-adapter-button.wallet-adapter-button-trigger {
   width: 100% !important;
   background-color: #6366f1;
-  font-size: 1rem !important;
+  /* font-size: 10px !important; */
   color: white !important;
   /* border: 1px solid !important; */
   border-color: #f1f5f9 !important;
