@@ -27,6 +27,7 @@ interface Props {
   bounty: Listing | undefined;
   remainings: { podiums: number; bonus: number } | null;
   submissionsLeft: number;
+  showSurvey?: () => void;
 }
 
 export function PublishResults({
@@ -37,6 +38,7 @@ export function PublishResults({
   bounty,
   remainings,
   submissionsLeft,
+  showSurvey,
 }: Props) {
   const [isPublishingResults, setIsPublishingResults] = useState(false);
   const [isWinnersAnnounced, setIsWinnersAnnounced] = useState(
@@ -142,6 +144,9 @@ export function PublishResults({
       router.push(
         `/dashboard/listings/${bounty?.slug}/submissions?tab=payments`,
       );
+      setTimeout(() => {
+        showSurvey?.();
+      }, 500);
 
       onClose();
     }, 1500);
