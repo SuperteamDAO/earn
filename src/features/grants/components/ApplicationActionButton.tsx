@@ -48,6 +48,14 @@ export const ApplicationActionButton = ({
 
   const regionTooltipLabel = getRegionTooltipLabel(region);
 
+  const getCooldownTooltipContent = () => {
+    if (applicationState !== 'COOLDOWN' || !application?.decidedAt) return null;
+
+    return `You must wait 30 days from the decision date of your last application before reapplying for this grant.`;
+  };
+
+  const cooldownTooltipContent = getCooldownTooltipContent() || undefined;
+
   const isBtnDisabled =
     buttonConfig.isDisabled ||
     Boolean(
@@ -91,6 +99,7 @@ export const ApplicationActionButton = ({
             isUserEligibleByRegion={isUserEligibleByRegion}
             regionTooltipLabel={regionTooltipLabel}
             user={user}
+            cooldownTooltipContent={cooldownTooltipContent}
           >
             <AuthWrapper
               showCompleteProfileModal
