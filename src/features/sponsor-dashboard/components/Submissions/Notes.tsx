@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAtom, useSetAtom } from 'jotai';
 import debounce from 'lodash.debounce';
 import { Loader2 } from 'lucide-react';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { Textarea } from '@/components/ui/textarea';
 import { type SubmissionWithUser } from '@/interface/submission';
@@ -17,18 +17,24 @@ import { isStateUpdatingAtom, selectedSubmissionAtom } from '../../atoms';
 const MAX_CHARACTERS = 1000;
 
 type Props = {
-  submissionId: string;
   initialNotes?: string;
   slug: string | undefined;
 };
 
-export const Notes = ({ submissionId, initialNotes = '', slug }: Props) => {
+export const Notes = ({ slug }: Props) => {
   const [selectedSubmission, setSelectedSubmission] = useAtom(
     selectedSubmissionAtom,
   );
   const setNotesUpdating = useSetAtom(isStateUpdatingAtom);
-  const [notes, setNotes] = useState(initialNotes || '');
+  const [notes, setNotes] = useState(selectedSubmission?.notes);
+  useEffect(() => {
+    setNotes(selectedSubmission?.notes);
+  }, [selectedSubmission]);
   const queryClient = useQueryClient();
+  const submissionId = useMemo(
+    () => selectedSubmission?.id,
+    [selectedSubmission],
+  );
 
   const { mutate: updateNotes, isPending: isSaving } = useMutation({
     mutationFn: (content: string) =>
@@ -37,15 +43,28 @@ export const Notes = ({ submissionId, initialNotes = '', slug }: Props) => {
         notes: content,
       }),
     onSuccess: (_, variables) => {
-      queryClient.setQueryData<SubmissionWithUser[]>(
-        ['sponsor-submissions', slug],
-        (old) =>
-          old?.map((submission) =>
+      queryClient.setQueriesData<SubmissionWithUser[]>(
+        {
+          predicate: (query) =>
+            query.queryKey[0] === 'sponsor-submissions' &&
+            query.queryKey.includes(slug),
+        },
+        (old) => {
+          if (!old) return old;
+          const data = old?.map((submission) =>
             submission.id === submissionId
               ? { ...submission, notes: variables }
               : submission,
-          ),
+          );
+          return data;
+        },
       );
+      if (selectedSubmission) {
+        setSelectedSubmission({
+          ...selectedSubmission,
+          notes: variables,
+        });
+      }
     },
     onError: (error) => {
       console.error('Error saving notes:', error);
@@ -85,14 +104,14 @@ export const Notes = ({ submissionId, initialNotes = '', slug }: Props) => {
     if (e.key === 'Enter') {
       e.preventDefault();
       const cursorPosition = e.currentTarget.selectionStart;
-      const textBeforeCursor = notes.slice(0, cursorPosition);
-      const textAfterCursor = notes.slice(cursorPosition);
+      const textBeforeCursor = notes?.slice(0, cursorPosition) || '';
+      const textAfterCursor = notes?.slice(cursorPosition) || '';
       setNotes(`${textBeforeCursor}\n• ${textAfterCursor}`);
     } else if (e.key === 'Backspace') {
-      const lines = notes.split('\n');
+      const lines = notes?.split('\n') || [];
       if (lines[lines.length - 1] === '• ' && lines.length > 1) {
         e.preventDefault();
-        setNotes(notes.slice(0, -3));
+        setNotes(notes?.slice(0, -3));
       }
     }
   };
@@ -127,10 +146,10 @@ export const Notes = ({ submissionId, initialNotes = '', slug }: Props) => {
         onKeyDown={handleKeyDown}
         placeholder="• Start typing notes here"
         rows={20}
-        value={notes}
+        value={notes || ''}
       />
       <p className="mt-1 text-xs text-slate-400">
-        {MAX_CHARACTERS - notes.length} characters remaining
+        {MAX_CHARACTERS - (notes?.length || 0)} characters remaining
       </p>
     </div>
   );

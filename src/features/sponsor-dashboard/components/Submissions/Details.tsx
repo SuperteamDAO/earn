@@ -66,12 +66,7 @@ export const Details = ({ bounty, isHackathonPage }: Props) => {
       {!isHackathonPage && (
         <div className="w-1/4 border-l border-slate-200 p-4">
           {selectedSubmission && !isHackathonPage && (
-            <Notes
-              key={selectedSubmission.id}
-              submissionId={selectedSubmission.id}
-              initialNotes={selectedSubmission.notes}
-              slug={bounty?.slug}
-            />
+            <Notes key={selectedSubmission.id} slug={bounty?.slug} />
           )}
         </div>
       )}
