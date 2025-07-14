@@ -129,7 +129,12 @@ export function CreditHistoryCard({ title, entries }: CreditHistoryCardProps) {
                 </div>
               ) : (
                 <Link
-                  href={`/listing/${entry.submission.listing.slug}`}
+                  href={
+                    entry.type === 'GRANT_SPAM_PENALTY' ||
+                    entry.type === 'GRANT_WIN_BONUS'
+                      ? `/grants/${entry.submission.listing.slug}`
+                      : `/listing/${entry.submission.listing.slug}`
+                  }
                   onClick={() => {
                     posthog.capture('clicked activity_credits');
                   }}
