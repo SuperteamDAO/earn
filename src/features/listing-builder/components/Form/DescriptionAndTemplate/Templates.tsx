@@ -37,7 +37,7 @@ import { LocalImage } from '@/components/ui/local-image';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useUser } from '@/store/user';
-import { Wand } from '@/svg/wand';
+import { WandAnimated } from '@/svg/wand-animated';
 import { cn } from '@/utils/cn';
 import { getURL } from '@/utils/validUrl';
 
@@ -207,7 +207,7 @@ export function Templates() {
                     disabled={isDisabled}
                     onClick={handleStartFromScratch}
                   >
-                    <Plus className="!size-7" />
+                    <Plus className="!size-10" />
                     <span className="text-base font-medium">
                       Start from Scratch
                     </span>
@@ -221,7 +221,11 @@ export function Templates() {
                     disabled={isDisabled}
                     onClick={handleAutoGenerate}
                   >
-                    <Wand className="!size-6" />
+                    <WandAnimated
+                      className="!size-10"
+                      stickColor="bg-slate-500"
+                      starColor="bg-slate-300"
+                    />
                     <span className="text-base font-medium">Auto Generate</span>
                   </Button>
                 </DialogClose>
