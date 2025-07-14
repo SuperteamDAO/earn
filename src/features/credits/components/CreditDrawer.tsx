@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { Info, X } from 'lucide-react';
 import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
 import Countdown from 'react-countdown';
 
 import { CountDownRenderer } from '@/components/shared/countdownRenderer';
@@ -26,14 +27,41 @@ export function CreditDrawer({
   const { user } = useUser();
   const { creditBalance } = useCreditBalance();
   const router = useRouter();
+  const [disputeSubmissionId, setDisputeSubmissionId] = useState<string | null>(
+    null,
+  );
+
+  useEffect(() => {
+    const checkForDisputeHash = () => {
+      const url = window.location.href;
+      const hashIndex = url.indexOf('#');
+      const afterHash = hashIndex !== -1 ? url.substring(hashIndex + 1) : '';
+      const [hashValue] = afterHash.split('?');
+
+      if (hashValue?.startsWith('dispute-submission-')) {
+        const submissionId = hashValue.replace('dispute-submission-', '');
+        setDisputeSubmissionId(submissionId);
+      } else {
+        setDisputeSubmissionId(null);
+      }
+    };
+
+    if (isOpen) {
+      checkForDisputeHash();
+    }
+  }, [isOpen]);
 
   const handleClose = () => {
     const currentPath = window.location.hash;
 
-    if (currentPath === '#wallet') {
+    if (
+      currentPath === '#wallet' ||
+      currentPath.startsWith('#dispute-submission-')
+    ) {
       router.push(window.location.pathname, undefined, { shallow: true });
     }
 
+    setDisputeSubmissionId(null);
     onClose();
   };
 
@@ -188,12 +216,14 @@ export function CreditDrawer({
                       </div>
                     }
                     entries={upcomingMonthEntries}
+                    disputeSubmissionId={disputeSubmissionId}
                   />
                 )}
                 {currentMonthEntries.length > 0 && (
                   <CreditHistoryCard
                     title={<h2 className="text-sm font-medium">This Month</h2>}
                     entries={currentMonthEntries}
+                    disputeSubmissionId={disputeSubmissionId}
                   />
                 )}
                 {pastMonthEntries.length > 0 && (
@@ -202,6 +232,7 @@ export function CreditDrawer({
                       <h2 className="text-sm font-medium">Past 3 Months</h2>
                     }
                     entries={pastMonthEntries}
+                    disputeSubmissionId={disputeSubmissionId}
                   />
                 )}
               </div>

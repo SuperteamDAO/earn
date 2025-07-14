@@ -59,6 +59,7 @@ export async function GET(_request: NextRequest) {
         change: true,
         submission: {
           select: {
+            id: true,
             listing: {
               select: {
                 title: true,
@@ -71,6 +72,7 @@ export async function GET(_request: NextRequest) {
         },
         application: {
           select: {
+            id: true,
             grant: {
               select: {
                 title: true,
@@ -88,6 +90,7 @@ export async function GET(_request: NextRequest) {
         return {
           ...entry,
           submission: {
+            id: entry.application.id,
             listing: {
               title: entry.application.grant.title,
               slug: entry.application.grant.slug,
