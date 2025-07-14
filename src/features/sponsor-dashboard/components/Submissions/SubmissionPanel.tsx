@@ -1,10 +1,11 @@
 import { SubmissionLabels } from '@prisma/client';
 import { useAtom } from 'jotai';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, ExternalLink } from 'lucide-react';
 import Link from 'next/link';
 import React from 'react';
 
 import MdOutlineAccountBalanceWallet from '@/components/icons/MdOutlineAccountBalanceWallet';
+import { Button } from '@/components/ui/button';
 import { CopyButton } from '@/components/ui/copy-tooltip';
 import type { SubmissionWithUser } from '@/interface/submission';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
@@ -99,6 +100,25 @@ export const SubmissionPanel = ({
                     isHackathonPage={isHackathonPage}
                   />
                 )}
+                {selectedSubmission?.isWinner &&
+                  selectedSubmission?.winnerPosition &&
+                  selectedSubmission?.isPaid &&
+                  !isProject && (
+                    <Button
+                      className="mr-4 border-slate-300 text-slate-600"
+                      onClick={() => {
+                        window.open(
+                          `https://solscan.io/tx/${selectedSubmission?.paymentDetails?.[0]?.txId}?cluster=${process.env.NEXT_PUBLIC_PAYMENT_CLUSTER}`,
+                          '_blank',
+                        );
+                      }}
+                      size="default"
+                      variant="outline"
+                    >
+                      View Payment Tx
+                      <ExternalLink className="ml-2 h-4 w-4" />
+                    </Button>
+                  )}
               </div>
             </div>
             <div className="flex items-center gap-5 px-5 py-2">

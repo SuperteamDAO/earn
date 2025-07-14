@@ -490,4 +490,12 @@ export const tokenList: Token[] = [
     decimals: 9,
     coingeckoSymbol: 'aerosol',
   },
+  {
+    tokenName: 'JuliaOS',
+    tokenSymbol: 'JOS',
+    mintAddress: 'JosjEXh69RckgSs2AWsN1xN8zmiSHxBuJjHLURJnHhg',
+    icon: 'https://assets.coingecko.com/coins/images/55336/standard/JuliaOS-logo.png?1745507802',
+    decimals: 6,
+    coingeckoSymbol: 'juliaos',
+  },
 ];

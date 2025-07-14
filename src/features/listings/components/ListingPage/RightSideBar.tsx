@@ -275,7 +275,7 @@ export function RightSideBar({
           <div className="hidden w-full md:flex">
             <SubmissionActionButton listing={listing} isTemplate={isTemplate} />
           </div>
-          {true && deadline && dayjs(deadline).isAfter(new Date()) && (
+          {isProject && deadline && dayjs(deadline).isAfter(new Date()) && (
             <div className="-mt-1 mb-4 flex w-full gap-2 bg-[#62F6FF10] p-3">
               <TriangleAlert color="#1A7F86" />
               <p className="text-xs font-medium text-[#1A7F86]" color="#1A7F86">
