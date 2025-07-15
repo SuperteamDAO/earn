@@ -2,15 +2,8 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAtom, useSetAtom } from 'jotai';
 import debounce from 'lodash.debounce';
 import { Loader2 } from 'lucide-react';
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { Textarea } from '@/components/ui/textarea';
 import { type SubmissionWithUser } from '@/interface/submission';
 import { api } from '@/lib/api';
 import { Wand } from '@/svg/wand';
@@ -19,6 +12,8 @@ import { cn } from '@/utils/cn';
 import { type ProjectApplicationAi } from '@/features/listings/types';
 
 import { isStateUpdatingAtom, selectedSubmissionAtom } from '../../atoms';
+import { getTextCharacterCount } from '../../utils/convertTextToNotesHTML';
+import { NotesRichEditor } from '../NotesRichEditor';
 
 const MAX_CHARACTERS = 1000;
 
@@ -41,7 +36,6 @@ export const Notes = ({ slug }: Props) => {
     () => selectedSubmission?.id,
     [selectedSubmission],
   );
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const { mutate: updateNotes, isPending: isSaving } = useMutation({
     mutationFn: (content: string) =>
@@ -86,12 +80,11 @@ export const Notes = ({ slug }: Props) => {
     [submissionId, updateNotes],
   );
 
-  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    let value = e.target.value;
-    if (value !== '' && notes === '') {
-      value = '• ' + value;
-    }
-    if (value.length <= MAX_CHARACTERS) {
+  const handleChange = (value: string) => {
+    // Extract plain text for character counting
+    const textLength = getTextCharacterCount(value);
+
+    if (textLength <= MAX_CHARACTERS) {
       if (selectedSubmission) {
         setSelectedSubmission({
           ...selectedSubmission,
@@ -107,34 +100,6 @@ export const Notes = ({ slug }: Props) => {
   useEffect(() => {
     setNotes(selectedSubmission?.notes);
   }, [selectedSubmission]);
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
-      e.stopPropagation();
-    }
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      const cursorPosition = e.currentTarget.selectionStart;
-      const textBeforeCursor = notes?.slice(0, cursorPosition);
-      const textAfterCursor = notes?.slice(cursorPosition);
-      const newNotes = `${textBeforeCursor}\n• ${textAfterCursor}`;
-      setNotes(newNotes);
-
-      const newCursorPosition = cursorPosition + 3;
-      requestAnimationFrame(() => {
-        if (textareaRef.current) {
-          textareaRef.current.selectionStart = newCursorPosition;
-          textareaRef.current.selectionEnd = newCursorPosition;
-        }
-      });
-    } else if (e.key === 'Backspace') {
-      const lines = notes?.split('\n') || [];
-      if (lines[lines.length - 1] === '• ' && lines.length > 1) {
-        e.preventDefault();
-        setNotes(notes?.slice(0, -3));
-      }
-    }
-  };
 
   const isAiCommited = useMemo(
     () => (selectedSubmission?.ai as ProjectApplicationAi)?.commited,
@@ -159,18 +124,23 @@ export const Notes = ({ slug }: Props) => {
           <span className="text-[10px]">Auto-saved</span>
         )}
       </div>
-      <Textarea
-        ref={textareaRef}
-        className="scrollbar-thin scrollbar-track-transparent scrollbar-thumb-slate-300 scrollbar-thumb-rounded-md resize-none !border-0 px-1.5 py-0 text-sm whitespace-pre-wrap text-slate-500 !shadow-none !ring-0 placeholder:text-slate-400 focus:!border-0 focus:!shadow-none focus:!ring-0 focus:!outline-none focus-visible:!ring-0 focus-visible:!ring-offset-0 focus-visible:!outline-hidden"
-        key={submissionId}
-        onChange={handleChange}
-        onKeyDown={handleKeyDown}
-        placeholder="• Start typing notes here"
-        rows={20}
-        value={notes || ''}
-      />
+      <div
+        key={submissionId + (selectedSubmission?.label || 'label')}
+        className="h-full w-full"
+      >
+        <NotesRichEditor
+          className="h-full max-h-[25rem] min-h-[25rem] w-full resize-none !border-0 py-0 text-sm whitespace-pre-wrap text-slate-500 !shadow-none !ring-0 placeholder:text-slate-400 focus:!border-0 focus:!shadow-none focus:!ring-0 focus:!outline-none focus-visible:!ring-0 focus-visible:!ring-offset-0 focus-visible:!outline-hidden"
+          key={submissionId + (selectedSubmission?.label || 'label')}
+          id={submissionId + (selectedSubmission?.label || 'label')}
+          onChange={handleChange}
+          placeholder="• Start typing notes here"
+          value={notes || ''}
+          maxLength={MAX_CHARACTERS}
+        />
+      </div>
+
       <p className="mt-1 w-full text-right text-xs text-slate-400">
-        {notes?.length || 0}/{MAX_CHARACTERS}
+        {notes ? getTextCharacterCount(notes) : 0}/{MAX_CHARACTERS}
       </p>
     </div>
   );

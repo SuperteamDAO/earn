@@ -137,7 +137,7 @@ export default function AiReviewProjectApplicationsModal({
           <span className="mt-1">
             <span
               className={cn(
-                'ml-2 inline-flex w-fit rounded-full px-2 text-center text-[10px] whitespace-nowrap capitalize',
+                'mr-2 inline-flex w-fit rounded-full px-2 text-center text-[10px] whitespace-nowrap capitalize',
                 colorMap['Shortlisted'].bg,
                 colorMap['Shortlisted'].color,
               )}
@@ -146,7 +146,7 @@ export default function AiReviewProjectApplicationsModal({
             </span>
             <span
               className={cn(
-                'mx-2 inline-flex w-fit rounded-full px-2 text-center text-[10px] whitespace-nowrap capitalize',
+                'mr-2 inline-flex w-fit rounded-full px-2 text-center text-[10px] whitespace-nowrap capitalize',
                 colorMap['Mid_Quality'].bg,
                 colorMap['Mid_Quality'].color,
               )}
@@ -155,7 +155,7 @@ export default function AiReviewProjectApplicationsModal({
             </span>
             <span
               className={cn(
-                'mx-2 inline-flex w-fit rounded-full px-2 text-center text-[10px] whitespace-nowrap capitalize',
+                'mr-2 inline-flex w-fit rounded-full px-2 text-center text-[10px] whitespace-nowrap capitalize',
                 colorMap['Low_Quality'].bg,
                 colorMap['Low_Quality'].color,
               )}

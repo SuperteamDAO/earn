@@ -8,6 +8,7 @@ import { api } from '@/lib/api';
 import { type ProjectApplicationAi } from '@/features/listings/types';
 
 import { selectedSubmissionAtom } from '../atoms';
+import { convertTextToNotesHTML } from '../utils/convertTextToNotesHTML';
 
 export const useCommitReviewsSubmissions = (
   slug: string,
@@ -53,12 +54,16 @@ export const useCommitReviewsSubmissions = (
         if (aiReview?.predictedLabel === 'High_Quality')
           correctedLabel = 'Shortlisted';
         else correctedLabel = aiReview?.predictedLabel || 'Unreviewed';
+        console.log(
+          'new notes',
+          convertTextToNotesHTML(aiReview?.shortNote || ''),
+        );
         if (prevAppl) {
           return {
             ...prevAppl,
             label: correctedLabel,
             notes:
-              aiReview?.shortNote?.replaceAll('**', '')?.replaceAll('*', '•') ||
+              convertTextToNotesHTML(aiReview?.shortNote || '') ||
               prevAppl.notes,
             ai: commitedAi,
           };

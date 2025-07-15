@@ -9,6 +9,7 @@ import { safeStringify } from '@/utils/safeStringify';
 import { checkListingSponsorAuth } from '@/features/auth/utils/checkListingSponsorAuth';
 import { getSponsorSession } from '@/features/auth/utils/getSponsorSession';
 import { type ProjectApplicationAi } from '@/features/listings/types';
+import { convertTextToNotesHTML } from '@/features/sponsor-dashboard/utils/convertTextToNotesHTML';
 
 export async function POST(request: NextRequest) {
   const body = await request.json();
@@ -87,9 +88,7 @@ export async function POST(request: NextRequest) {
           },
           data: {
             label: correctedLabel,
-            notes: aiReview?.shortNote
-              ?.replaceAll('**', '')
-              ?.replaceAll('*', '•'),
+            notes: convertTextToNotesHTML(aiReview?.shortNote || ''),
             ai: commitedAi,
           },
         });

@@ -342,7 +342,7 @@ model Submission {
   listing            Bounties         @relation(fields: [listingId], references: [id])
   user               User             @relation(fields: [userId], references: [id])
   ogImage            String?          @db.Text
-  notes              String?          @db.VarChar(1500)
+  notes              String?          @db.VarChar(10000)
   Comments           Comment[]
   CreditLedger       CreditLedger[]
   ai                 Json?
