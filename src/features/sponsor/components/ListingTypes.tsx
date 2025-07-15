@@ -1,7 +1,7 @@
 import { cn } from '@/utils/cn';
 
+import { PurpleTick } from '../icons/PurpleTick';
 import { maxW } from '../utils/styles';
-import { HighQualityImage } from './HighQualityImage';
 
 const bountyFeatures = [
   'Great for awareness campaigns where you want to reach the most people possible',
@@ -111,14 +111,8 @@ interface FeatureProps {
 function Feature({ description }: FeatureProps) {
   return (
     <div className="flex items-start gap-4">
-      <HighQualityImage
-        src={'/landingsponsor/icons/purple-tick.svg'}
-        alt="Purple Tick"
-        className="h-5 w-5"
-      />
-      <p className="relative top-[-8px] text-[1.2rem] text-slate-500">
-        {description}
-      </p>
+      <PurpleTick className="mt-1 h-5 w-5 flex-shrink-0" />
+      <p className="text-[1.2rem] text-slate-500">{description}</p>
     </div>
   );
 }

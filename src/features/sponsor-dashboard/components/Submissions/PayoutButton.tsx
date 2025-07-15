@@ -12,7 +12,6 @@ import {
   Transaction,
 } from '@solana/web3.js';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useAtom } from 'jotai';
 import { Loader2 } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import { log } from 'next-axiom';
@@ -31,18 +30,13 @@ import { truncatePublicKey } from '@/utils/truncatePublicKey';
 
 import { type Listing, type Rewards } from '@/features/listings/types';
 
-import { selectedSubmissionAtom } from '../../atoms';
-
 interface Props {
   bounty: Listing | null;
+  submission: SubmissionWithUser;
 }
 
-export const PayoutButton = ({ bounty }: Props) => {
+export const PayoutButton = ({ bounty, submission }: Props) => {
   const [isPaying, setIsPaying] = useState(false);
-
-  const [selectedSubmission, setSelectedSubmission] = useAtom(
-    selectedSubmissionAtom,
-  );
 
   const { user } = useUser();
 
@@ -51,6 +45,17 @@ export const PayoutButton = ({ bounty }: Props) => {
   const { connection } = useConnection();
   const queryClient = useQueryClient();
 
+  const totalPrizeAmount =
+    bounty?.rewards?.[submission?.winnerPosition as keyof Rewards] || 0;
+
+  const totalPaidAmount =
+    submission?.paymentDetails?.reduce(
+      (sum, payment) => sum + payment.amount,
+      0,
+    ) || 0;
+
+  const remainingAmount = totalPrizeAmount - totalPaidAmount;
+
   const DynamicWalletMultiButton = dynamic(
     async () =>
       (await import('@solana/wallet-adapter-react-ui')).WalletMultiButton,
@@ -58,21 +63,14 @@ export const PayoutButton = ({ bounty }: Props) => {
   );
 
   const { mutate: addPayment } = useMutation({
-    mutationFn: ({
-      id,
-      isPaid,
-      paymentDetails,
-    }: {
-      id: string;
-      isPaid: boolean;
-      paymentDetails: any;
-    }) =>
+    mutationFn: ({ id, paymentDetails }: { id: string; paymentDetails: any }) =>
       api.post(`/api/sponsor-dashboard/submission/add-payment/`, {
         id,
-        isPaid,
         paymentDetails,
       }),
-    onSuccess: (_, variables) => {
+    onSuccess: (response, variables) => {
+      const updatedSubmission = response.data;
+
       queryClient.setQueryData<SubmissionWithUser[]>(
         ['sponsor-submissions', bounty?.slug],
         (old) =>
@@ -80,21 +78,11 @@ export const PayoutButton = ({ bounty }: Props) => {
             submission.id === variables.id
               ? {
                   ...submission,
-                  isPaid: variables.isPaid,
-                  paymentDetails: variables.paymentDetails,
+                  isPaid: updatedSubmission.isPaid,
+                  paymentDetails: updatedSubmission.paymentDetails,
                 }
               : submission,
           ),
-      );
-
-      setSelectedSubmission((prev) =>
-        prev && prev.id === variables.id
-          ? {
-              ...prev,
-              isPaid: variables.isPaid,
-              paymentDetails: variables.paymentDetails,
-            }
-          : prev,
       );
     },
     onError: (error) => {
@@ -202,12 +190,21 @@ export const PayoutButton = ({ bounty }: Props) => {
 
       await pollForSignature(signature);
 
+      const nextTranche = (submission?.paymentDetails?.length || 0) + 1;
+
+      const isProject = bounty?.type === 'project';
+      const trancheNumber = isProject ? nextTranche : 1;
+      const paymentDetailsPayload = [
+        {
+          txId: signature,
+          amount,
+          tranche: trancheNumber,
+        },
+      ];
+
       await addPayment({
         id,
-        isPaid: true,
-        paymentDetails: {
-          txId: signature,
-        },
+        paymentDetails: paymentDetailsPayload,
       });
     } catch (error) {
       console.log(error);
@@ -233,46 +230,36 @@ export const PayoutButton = ({ bounty }: Props) => {
         <DynamicWalletMultiButton
           style={{
             height: '40px',
-            fontWeight: 600,
+            fontWeight: 500,
             fontFamily: 'Inter',
-            paddingRight: '16px',
-            paddingLeft: '16px',
-            fontSize: '12px',
+            paddingRight: '20px',
+            paddingLeft: '20px',
+            fontSize: '14px',
+            margin: '0px',
           }}
         >
           {connected
             ? truncatePublicKey(publicKey?.toBase58(), 3)
             : `Pay ${
-                formatNumberWithSuffix(
-                  bounty?.rewards?.[
-                    selectedSubmission?.winnerPosition as keyof Rewards
-                  ]!,
-                  2,
-                  true,
-                ) || '0'
+                formatNumberWithSuffix(remainingAmount, 2, true) || '0'
               } ${bounty?.token}`}
         </DynamicWalletMultiButton>
       </div>
       {connected && (
         <Button
-          className={cn(
-            'ph-no-capture mr-4 min-w-[120px]',
-            'disabled:cursor-not-allowed',
-          )}
-          disabled={!bounty?.isWinnersAnnounced}
+          className={cn('ph-no-capture disabled:cursor-not-allowed')}
+          disabled={!bounty?.isWinnersAnnounced || remainingAmount <= 0}
           onClick={async () => {
-            if (!selectedSubmission?.user.walletAddress) {
+            if (!submission?.user.walletAddress) {
               console.error('Public key is null, cannot proceed with payment');
               return;
             }
             posthog.capture('pay winner_sponsor');
             handlePayout({
-              id: selectedSubmission?.id as string,
+              id: submission?.id as string,
               token: bounty?.token as string,
-              amount: bounty?.rewards![
-                selectedSubmission?.winnerPosition as keyof Rewards
-              ] as number,
-              receiver: new PublicKey(selectedSubmission.user.walletAddress),
+              amount: remainingAmount,
+              receiver: new PublicKey(submission.user.walletAddress),
             });
           }}
           variant="default"
@@ -284,13 +271,7 @@ export const PayoutButton = ({ bounty }: Props) => {
             </>
           ) : (
             `Pay ${
-              formatNumberWithSuffix(
-                bounty?.rewards?.[
-                  selectedSubmission?.winnerPosition as keyof Rewards
-                ]!,
-                2,
-                true,
-              ) || '0'
+              formatNumberWithSuffix(remainingAmount, 2, true) || '0'
             } ${bounty?.token}`
           )}
         </Button>

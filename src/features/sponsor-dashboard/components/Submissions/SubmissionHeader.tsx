@@ -1,11 +1,13 @@
+import { SubmissionLabels, SubmissionStatus } from '@prisma/client';
+import { TooltipArrow } from '@radix-ui/react-tooltip';
 import { useMutation } from '@tanstack/react-query';
+import dayjs from 'dayjs';
 import {
   Check,
   ChevronLeft,
-  Copy,
   Download,
   ExternalLink,
-  Link2,
+  MoreVertical,
   Pencil,
 } from 'lucide-react';
 import Link from 'next/link';
@@ -13,7 +15,7 @@ import { useRouter } from 'next/router';
 import React from 'react';
 import { toast } from 'sonner';
 
-import FaXTwitter from '@/components/icons/FaXTwitter';
+import { ShinyButton } from '@/components/shared/ShinyButton';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -21,64 +23,76 @@ import {
   BreadcrumbList,
 } from '@/components/ui/breadcrumb';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Separator } from '@/components/ui/separator';
-import { tokenList } from '@/constants/tokenList';
-import { useClipboard } from '@/hooks/use-clipboard';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { StatusPill } from '@/components/ui/status-pill';
+import { Tooltip } from '@/components/ui/tooltip';
+import { PDTG } from '@/constants/Telegram';
+import { useDisclosure } from '@/hooks/use-disclosure';
 import { type SubmissionWithUser } from '@/interface/submission';
 import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
-import { tweetEmbedLink } from '@/utils/socialEmbeds';
-import { getURL } from '@/utils/validUrl';
 
 import { type Listing } from '@/features/listings/types';
-import {
-  formatDeadline,
-  isDeadlineOver,
-} from '@/features/listings/utils/deadline';
+import { isDeadlineOver } from '@/features/listings/utils/deadline';
 import { getColorStyles } from '@/features/listings/utils/getColorStyles';
 import { getListingIcon } from '@/features/listings/utils/getListingIcon';
 import { getListingStatus } from '@/features/listings/utils/status';
+import { VerifyPaymentModal } from '@/features/sponsor-dashboard/components/Modals/VerifyPayment';
 
-import { SponsorPrize } from '../SponsorPrize';
+import { UnpublishModal } from '../Modals/UnpublishModal';
 import AiReviewProjectApplicationsModal from './Modals/AiReviewProjects';
 
 interface Props {
   bounty: Listing | undefined;
-  totalSubmissions: number;
   isHackathonPage?: boolean;
+  remainings: { podiums: number; bonus: number } | null;
   submissions: SubmissionWithUser[];
+  onWinnersAnnounceOpen: () => void;
+  activeTab: string;
 }
 
 export const SubmissionHeader = ({
   bounty,
-  totalSubmissions,
-  submissions,
   isHackathonPage = false,
+  remainings,
+  submissions,
+  onWinnersAnnounceOpen,
+  activeTab,
 }: Props) => {
   const router = useRouter();
   const { user } = useUser();
-  const deadline = formatDeadline(bounty?.deadline, bounty?.type);
+
+  const {
+    isOpen: verifyPaymentIsOpen,
+    onOpen: verifyPaymentOnOpen,
+    onClose: verifyPaymentOnClose,
+  } = useDisclosure();
+
+  const {
+    isOpen: unpublishIsOpen,
+    onOpen: unpublishOnOpen,
+    onClose: unpublishOnClose,
+  } = useDisclosure();
+
+  const handleVerifyPayment = () => {
+    verifyPaymentOnOpen();
+  };
 
   const listingPath = `listing/${bounty?.slug}`;
-  const { hasCopied, onCopy } = useClipboard(`${getURL()}${listingPath}`);
 
   const bountyStatus = getListingStatus(bounty);
+  const isProject = bounty?.type === 'project';
 
-  const listingLink =
-    bounty?.type === 'grant'
-      ? `${getURL()}grants/${bounty.slug}/`
-      : `${getURL()}listing/${bounty?.slug}/`;
-
-  const socialListingLink = (medium?: 'twitter' | 'telegram') =>
-    `${listingLink}${medium ? `?utm_source=superteamearn&utm_medium=${medium}&utm_campaign=sharelisting/` : ``}`;
-
-  const tweetShareContent = `Check out my newly added @SuperteamEarn opportunity!
-
-${socialListingLink('twitter')}
-`;
-  const twitterShareLink = tweetEmbedLink(tweetShareContent);
+  const afterAnnounceDate =
+    bounty?.type === 'hackathon'
+      ? dayjs().isAfter(bounty?.Hackathon?.announceDate)
+      : true;
 
   const exportMutation = useMutation({
     mutationFn: async () => {
@@ -143,178 +157,230 @@ ${socialListingLink('twitter')}
 
   const pastDeadline = isDeadlineOver(bounty?.deadline);
 
+  const totalPodiumSpots = remainings
+    ? remainings.podiums + remainings.bonus
+    : 0;
+  const rejectedOrSpamSubmissions = submissions.filter(
+    (s) =>
+      s.status === SubmissionStatus.Rejected ||
+      s.label === SubmissionLabels.Spam,
+  ).length;
+  const eligibleSubmissions = submissions.length - rejectedOrSpamSubmissions;
+  const showWarning =
+    !!remainings &&
+    !bounty?.isWinnersAnnounced &&
+    totalPodiumSpots > eligibleSubmissions &&
+    bountyStatus === 'In Review';
+
   return (
-    <>
-      <div className="mb-2">
+    <div className="mb-2 flex items-center justify-between">
+      <div>
         <Breadcrumb className="text-slate-400">
           <BreadcrumbList>
             <BreadcrumbItem>
-              <BreadcrumbLink asChild>
-                <Link
-                  href={
-                    isHackathonPage
-                      ? `/dashboard/hackathon/`
-                      : '/dashboard/listings'
-                  }
-                  className="flex items-center"
-                >
-                  <ChevronLeft className="mr-1 h-6 w-6" />
-                  All Listings
-                </Link>
+              <BreadcrumbLink
+                className="flex cursor-pointer items-center gap-2"
+                onClick={() => router.back()}
+              >
+                <ChevronLeft className="size-6" />
+                All Listings
               </BreadcrumbLink>
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
-      </div>
-      <div className="mb-4 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          {getListingIcon(bounty?.type!)}
-          <p className="text-xl font-bold text-slate-800">{bounty?.title}</p>
-        </div>
-        <div className="flex items-center gap-2">
-          {!isHackathonPage && (
-            <Button
-              className="hover:text-brand-purple text-slate-400 hover:bg-indigo-100"
-              disabled={exportMutation.isPending}
-              onClick={() => exportSubmissionsCsv()}
-              variant="ghost"
-            >
-              {exportMutation.isPending ? (
-                <>
-                  <span className="loading loading-spinner mr-2" />
-                  Exporting...
-                </>
-              ) : (
-                <>
-                  <Download className="h-4 w-4" />
-                  Export CSV
-                </>
-              )}
-            </Button>
-          )}
-
-          <Button
-            className="hover:text-brand-purple text-slate-400 hover:bg-indigo-100"
-            onClick={() =>
-              window.open(`${router.basePath}/${listingPath}`, '_blank')
-            }
-            variant="ghost"
-          >
-            <ExternalLink className="h-4 w-4" />
-            View Listing
-          </Button>
-          {!!(
-            (user?.role === 'GOD' && bounty?.type !== 'grant') ||
-            (bounty?.isPublished && !pastDeadline && bounty.type !== 'grant')
-          ) &&
-            !isHackathonPage && (
-              <Link
-                className="hover:no-underline"
-                href={
-                  bounty
-                    ? `/dashboard/${isHackathonPage ? 'hackathon' : 'listings'}/${bounty.slug}/edit/`
-                    : ''
-                }
-              >
-                <Button
-                  variant="ghost"
-                  className="hover:text-brand-purple text-slate-400 hover:bg-indigo-100"
+        <div className="mb-2 flex items-center gap-2">
+          <div className="ml-1 flex items-center gap-2">
+            {getListingIcon(bounty?.type!, 'size-5')}
+            <p className="text-xl font-bold text-slate-800">{bounty?.title}</p>
+          </div>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <div className="cursor-pointer rounded-md p-2 text-slate-400 transition-all hover:bg-slate-100 hover:text-slate-500">
+                <MoreVertical className="h-4 w-4" />
+              </div>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-48 text-slate-500">
+              {!isHackathonPage && (
+                <DropdownMenuItem
+                  disabled={exportMutation.isPending}
+                  onClick={() => exportSubmissionsCsv()}
+                  className="cursor-pointer"
                 >
-                  <Pencil className="h-4 w-4" />
-                  Edit
-                </Button>
-              </Link>
-            )}
-        </div>
-      </div>
-      <Separator />
-      <div className="mt-4 mb-8 flex items-center gap-12">
-        <div>
-          <p className="text-slate-500">Submissions</p>
-          <p className="mt-3 font-semibold text-slate-600">
-            {totalSubmissions}
-          </p>
-        </div>
-        <div>
-          <p className="text-slate-500">Deadline</p>
-          <p className="mt-3 font-semibold whitespace-nowrap text-slate-600">
-            {deadline}
-          </p>
-        </div>
-        <div>
-          <p className="text-slate-500">Status</p>
-          <p
-            className={cn(
-              'mt-3 inline-flex items-center rounded-full px-3 py-1 text-sm font-medium whitespace-nowrap',
-              getColorStyles(bountyStatus).color,
-              getColorStyles(bountyStatus).bgColor,
-            )}
+                  {exportMutation.isPending ? (
+                    <>
+                      <span className="loading loading-spinner" />
+                      Exporting...
+                    </>
+                  ) : (
+                    <>
+                      <Download className="size-4" />
+                      Export CSV
+                    </>
+                  )}
+                </DropdownMenuItem>
+              )}
+
+              <DropdownMenuItem
+                onClick={() =>
+                  window.open(`${router.basePath}/${listingPath}`, '_blank')
+                }
+                className="cursor-pointer"
+              >
+                <ExternalLink className="size-4" />
+                View Listing
+              </DropdownMenuItem>
+
+              {!!(
+                (user?.role === 'GOD' && bounty?.type !== 'grant') ||
+                (bounty?.isPublished &&
+                  !pastDeadline &&
+                  bounty.type !== 'grant')
+              ) &&
+                !isHackathonPage && (
+                  <DropdownMenuItem className="cursor-pointer" asChild>
+                    <Link
+                      href={
+                        bounty
+                          ? `/dashboard/${isHackathonPage ? 'hackathon' : 'listings'}/${bounty.slug}/edit/`
+                          : ''
+                      }
+                    >
+                      <Pencil className="size-4" />
+                      Edit
+                    </Link>
+                  </DropdownMenuItem>
+                )}
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <StatusPill
+            className="ml-2 w-fit text-[0.8rem]"
+            color={getColorStyles(bountyStatus).color}
+            backgroundColor={getColorStyles(bountyStatus).bgColor}
+            borderColor={getColorStyles(bountyStatus).borderColor}
           >
             {bountyStatus}
-          </p>
-        </div>
-        <div>
-          <p className="text-slate-500">Prize</p>
-          <div className="mt-3 flex items-center justify-start gap-1">
-            <img
-              className="h-5 w-5 rounded-full"
-              alt={'green dollar'}
-              src={
-                tokenList.filter((e) => e?.tokenSymbol === bounty?.token)[0]
-                  ?.icon ?? '/assets/dollar.svg'
-              }
-            />
-
-            <SponsorPrize
-              compensationType={bounty?.compensationType}
-              maxRewardAsk={bounty?.maxRewardAsk}
-              minRewardAsk={bounty?.minRewardAsk}
-              rewardAmount={bounty?.rewardAmount}
-              className="font-semibold text-slate-700"
-            />
-
-            <p className="font-semibold text-slate-400">{bounty?.token}</p>
-          </div>
-        </div>
-        <AiReviewProjectApplicationsModal
-          listing={bounty}
-          applications={submissions}
-        />
-        <div className="ml-auto">
-          <p className="text-slate-500">Share</p>
-          <div className="mt-2 flex items-center gap-4">
-            <div className="relative border-slate-100 bg-slate-50">
-              <div className="absolute top-1/2 left-3 -translate-y-1/2">
-                <Link2 className="h-4 w-4 text-slate-400" />
-              </div>
-
-              <Input
-                className="w-80 overflow-hidden border-slate-100 pr-10 pl-10 text-ellipsis whitespace-nowrap text-slate-500 focus-visible:ring-[#CFD2D7] focus-visible:ring-offset-0"
-                readOnly
-                value={`${getURL()}${listingPath}`}
-              />
-
-              <div className="absolute top-1/2 right-3 -translate-y-1/2">
-                {hasCopied ? (
-                  <Check className="h-4 w-4 text-slate-400" />
-                ) : (
-                  <Copy
-                    className="h-5 w-5 cursor-pointer text-slate-400"
-                    onClick={onCopy}
-                  />
-                )}
-              </div>
-            </div>
-            <Link
-              className="flex h-fit w-fit items-center gap-1 rounded-full bg-slate-500 p-1.5 text-white hover:bg-slate-400"
-              href={twitterShareLink}
-              target="_blank"
-            >
-              <FaXTwitter style={{ width: '0.9rem', height: '0.8rem' }} />
-            </Link>
-          </div>
+          </StatusPill>
         </div>
       </div>
-    </>
+      {!isProject && !bounty?.isWinnersAnnounced && (
+        <div className="flex flex-col items-end">
+          {activeTab === 'submissions' && (
+            <>
+              <Tooltip
+                content={
+                  <>
+                    You cannot change the winners once the results are
+                    published!
+                    <TooltipArrow />
+                  </>
+                }
+                disabled={!bounty?.isWinnersAnnounced}
+                contentProps={{ sideOffset: 5 }}
+              >
+                <ShinyButton
+                  disabled={
+                    !afterAnnounceDate ||
+                    isHackathonPage ||
+                    remainings?.podiums !== 0 ||
+                    (remainings?.bonus > 0 &&
+                      submissions.filter((s) => !s.isWinner).length > 0)
+                  }
+                  onClick={onWinnersAnnounceOpen}
+                  animate={true}
+                  classNames={{
+                    button: 'w-52 h-11',
+                  }}
+                >
+                  <Check className="size-4" />
+                  Announce Winners
+                </ShinyButton>
+              </Tooltip>
+              {showWarning && (
+                <div className="my-2 flex w-52">
+                  <p className="text-xxs text-red-400">
+                    You don&apos;t have enough eligible (non-spam) submissions.{' '}
+                    <a
+                      href={PDTG}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-brand-purple underline"
+                    >
+                      Reach out
+                    </a>{' '}
+                    to us on TG
+                  </p>
+                </div>
+              )}
+            </>
+          )}
+        </div>
+      )}
+
+      {isProject && !bounty?.isWinnersAnnounced && bounty?.isPublished && (
+        <div className="flex flex-row-reverse items-center gap-8">
+          <p className="text-slate-800">
+            Didnt find a suitable candidate?{' '}
+            <span
+              className="cursor-pointer text-blue-500 underline"
+              onClick={unpublishOnOpen}
+            >
+              Click here
+            </span>
+          </p>
+          <div className="-translate-y-2">
+            <AiReviewProjectApplicationsModal
+              listing={bounty}
+              applications={submissions}
+            />
+          </div>
+        </div>
+      )}
+
+      {bounty?.isWinnersAnnounced &&
+        activeTab === 'submissions' &&
+        !bounty?.isFndnPaying &&
+        bountyStatus !== 'Completed' && (
+          <ShinyButton
+            animate={true}
+            classNames={{
+              button: 'h-11 w-48',
+            }}
+            onClick={() => {
+              router.push(
+                `/dashboard/listings/${bounty?.slug}/submissions?tab=payments`,
+              );
+            }}
+          >
+            <Check className="size-4" />
+            Pay Winners
+          </ShinyButton>
+        )}
+
+      {activeTab === 'payments' &&
+        !bounty?.isFndnPaying &&
+        bountyStatus !== 'Completed' && (
+          <Button
+            className={cn(
+              'border-brand-purple text-brand-purple hover:bg-brand-purple shadow-md hover:text-white',
+            )}
+            onClick={handleVerifyPayment}
+            variant="outline"
+          >
+            Paid Externally? Click here
+          </Button>
+        )}
+
+      <VerifyPaymentModal
+        listing={bounty}
+        isOpen={verifyPaymentIsOpen}
+        onClose={verifyPaymentOnClose}
+      />
+
+      <UnpublishModal
+        unpublishIsOpen={unpublishIsOpen}
+        unpublishOnClose={unpublishOnClose}
+        listing={bounty}
+      />
+    </div>
   );
 };

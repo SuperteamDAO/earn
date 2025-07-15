@@ -24,6 +24,7 @@ const AlertOption = ({
   <div className="flex items-center justify-between">
     <p className="mt-1 font-medium text-slate-500">{title}</p>
     <Switch
+      autoFocus={false}
       className="mt-0.5"
       checked={selectedCategories.includes(category)}
       onCheckedChange={() => onCategoryChange(category)}

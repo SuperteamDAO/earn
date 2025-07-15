@@ -1,5 +1,6 @@
 import { queryOptions } from '@tanstack/react-query';
 
+import { Superteams, unofficialSuperteams } from '@/constants/Superteam';
 import { api } from '@/lib/api';
 
 export interface LocalProfile {
@@ -24,14 +25,32 @@ export interface LocalProfile {
   createdAt: string;
 }
 
-const fetchLocalProfiles = async (): Promise<LocalProfile[]> => {
-  const { data } = await api.get('/api/sponsor-dashboard/local-talent/', {
-    params: {},
-  });
+const fetchLocalProfiles = async ({
+  sponsorName,
+}: {
+  sponsorName: string;
+}): Promise<LocalProfile[]> => {
+  const matchedSuperteam =
+    Superteams.find(
+      (team) => team.name.toLowerCase() === sponsorName.toLowerCase(),
+    ) ||
+    unofficialSuperteams.find(
+      (team) => team.name.toLowerCase() === sponsorName.toLowerCase(),
+    );
+
+  const matchedSuperteamRegion = matchedSuperteam?.region;
+  const matchedSuperteamCountries = matchedSuperteam?.country;
+
+  const { data } = await api.get(
+    `/api/sponsor-dashboard/local-talent/?superteamRegion=${matchedSuperteamRegion}&superteamCountries=${matchedSuperteamCountries}`,
+  );
   return data;
 };
 
-export const localProfilesQuery = queryOptions({
-  queryKey: ['localProfiles'],
-  queryFn: () => fetchLocalProfiles(),
-});
+export const localProfilesQuery = (sponsorName: string) =>
+  queryOptions({
+    queryKey: ['localProfiles', sponsorName],
+    queryFn: () => fetchLocalProfiles({ sponsorName }),
+    enabled: !!sponsorName,
+    retry: false,
+  });

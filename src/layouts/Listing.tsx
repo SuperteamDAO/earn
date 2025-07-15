@@ -18,6 +18,7 @@ import { getURL } from '@/utils/validUrl';
 import { Comments } from '@/features/comments/components/Comments';
 import { ListingHeader } from '@/features/listings/components/ListingPage/ListingHeader';
 import { RightSideBar } from '@/features/listings/components/ListingPage/RightSideBar';
+import { SubmissionActionButton } from '@/features/listings/components/Submission/SubmissionActionButton';
 import { submissionCountQuery } from '@/features/listings/queries/submission-count';
 import { type Listing } from '@/features/listings/types';
 import { getListingTypeLabel } from '@/features/listings/utils/status';
@@ -224,6 +225,13 @@ export function ListingPageLayout({
                       </div>
                     </div>
                   )}
+
+                  <div className="sticky bottom-14 z-40 w-full border-t-1 border-slate-100 bg-white py-1 md:hidden">
+                    <SubmissionActionButton
+                      listing={initialBounty}
+                      isTemplate={isTemplate}
+                    />
+                  </div>
 
                   <Comments
                     isTemplate={isTemplate}

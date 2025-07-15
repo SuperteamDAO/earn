@@ -1,3 +1,4 @@
+import { Lock } from 'lucide-react';
 import Link from 'next/link';
 import React, { useState } from 'react';
 
@@ -59,22 +60,35 @@ export function SubmissionCard({ sub, type, commentCount }: SubCardProps) {
 
   const actionLinks = (
     <>
-      <div className="flex items-center gap-1.5 sm:gap-3">
-        <Avatar className="size-5 sm:size-7">
-          <AvatarImage src={sub?.sponsorLogo} alt="Sponsor Logo" />
-        </Avatar>
-        <Link
-          className={`text-xs font-semibold text-gray-500 sm:text-sm md:text-base ${isViewSubmissionHovered ? '' : 'group-hover:underline'} line-clamp-1 group-hover:decoration-current`}
-          href={listingLink}
-          rel="noopener noreferrer"
-          target="_blank"
-        >
-          {sub?.listingTitle}
-        </Link>
-      </div>
+      {!sub?.isPrivate ? (
+        <div className="flex items-center gap-1.5 sm:gap-3">
+          <Avatar className="size-5 sm:size-7">
+            <AvatarImage src={sub?.sponsorLogo} alt="Sponsor Logo" />
+          </Avatar>
+          <Link
+            className={`text-xs font-semibold text-gray-500 sm:text-sm md:text-base ${isViewSubmissionHovered ? '' : 'group-hover:underline'} line-clamp-1 group-hover:decoration-current`}
+            href={listingLink}
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            {sub?.listingTitle}
+          </Link>
+        </div>
+      ) : (
+        <div className="flex items-center gap-2 text-slate-500">
+          <Lock className="size-4" />
+          <p>Private</p>
+        </div>
+      )}
       {!isProject &&
         (!sub?.id ? (
-          <Tooltip content="This submission will be accessible once winners for the listing have been announced.">
+          <Tooltip
+            content={
+              sub?.isPrivate
+                ? 'This is a private listing.'
+                : 'This submission will be accessible once winners for the listing have been announced.'
+            }
+          >
             <div
               onMouseEnter={() => setIsViewSubmissionHovered(true)}
               onMouseLeave={() => setIsViewSubmissionHovered(false)}
@@ -105,6 +119,7 @@ export function SubmissionCard({ sub, type, commentCount }: SubCardProps) {
 
   return (
     <FeedCardContainer
+      isPrivate={sub?.isPrivate || false}
       content={content}
       actionLinks={actionLinks}
       type={type}

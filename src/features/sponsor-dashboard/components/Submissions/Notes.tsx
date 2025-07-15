@@ -2,7 +2,13 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAtom, useSetAtom } from 'jotai';
 import debounce from 'lodash.debounce';
 import { Loader2 } from 'lucide-react';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 
 import { Textarea } from '@/components/ui/textarea';
 import { type SubmissionWithUser } from '@/interface/submission';
@@ -35,6 +41,7 @@ export const Notes = ({ slug }: Props) => {
     () => selectedSubmission?.id,
     [selectedSubmission],
   );
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const { mutate: updateNotes, isPending: isSaving } = useMutation({
     mutationFn: (content: string) =>
@@ -97,6 +104,10 @@ export const Notes = ({ slug }: Props) => {
     }
   };
 
+  useEffect(() => {
+    setNotes(selectedSubmission?.notes);
+  }, [selectedSubmission]);
+
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
       e.stopPropagation();
@@ -104,9 +115,18 @@ export const Notes = ({ slug }: Props) => {
     if (e.key === 'Enter') {
       e.preventDefault();
       const cursorPosition = e.currentTarget.selectionStart;
-      const textBeforeCursor = notes?.slice(0, cursorPosition) || '';
-      const textAfterCursor = notes?.slice(cursorPosition) || '';
-      setNotes(`${textBeforeCursor}\n• ${textAfterCursor}`);
+      const textBeforeCursor = notes?.slice(0, cursorPosition);
+      const textAfterCursor = notes?.slice(cursorPosition);
+      const newNotes = `${textBeforeCursor}\n• ${textAfterCursor}`;
+      setNotes(newNotes);
+
+      const newCursorPosition = cursorPosition + 3;
+      requestAnimationFrame(() => {
+        if (textareaRef.current) {
+          textareaRef.current.selectionStart = newCursorPosition;
+          textareaRef.current.selectionEnd = newCursorPosition;
+        }
+      });
     } else if (e.key === 'Backspace') {
       const lines = notes?.split('\n') || [];
       if (lines[lines.length - 1] === '• ' && lines.length > 1) {
@@ -122,16 +142,16 @@ export const Notes = ({ slug }: Props) => {
   );
 
   return (
-    <div className="flex w-full flex-col items-start">
+    <div className="flex w-full flex-col items-start rounded-xl border border-slate-200 px-4 py-5">
       <div
         className={cn(
           'mb-2 flex w-full items-center justify-between text-slate-400',
           isAiCommited && 'text-slate-600',
         )}
       >
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1">
           {isAiCommited && <Wand />}
-          <span className="font-extrabold">Review Notes</span>
+          <span className="font-extrabold">Notes</span>
         </div>
         {isSaving ? (
           <Loader2 className="h-3 w-3 animate-spin" />
@@ -140,7 +160,8 @@ export const Notes = ({ slug }: Props) => {
         )}
       </div>
       <Textarea
-        className="border border-slate-100 text-sm whitespace-pre-wrap text-slate-600 placeholder:text-slate-400"
+        ref={textareaRef}
+        className="scrollbar-thin scrollbar-track-transparent scrollbar-thumb-slate-300 scrollbar-thumb-rounded-md resize-none !border-0 px-1.5 py-0 text-sm whitespace-pre-wrap text-slate-500 !shadow-none !ring-0 placeholder:text-slate-400 focus:!border-0 focus:!shadow-none focus:!ring-0 focus:!outline-none focus-visible:!ring-0 focus-visible:!ring-offset-0 focus-visible:!outline-hidden"
         key={submissionId}
         onChange={handleChange}
         onKeyDown={handleKeyDown}
@@ -148,8 +169,8 @@ export const Notes = ({ slug }: Props) => {
         rows={20}
         value={notes || ''}
       />
-      <p className="mt-1 text-xs text-slate-400">
-        {MAX_CHARACTERS - (notes?.length || 0)} characters remaining
+      <p className="mt-1 w-full text-right text-xs text-slate-400">
+        {notes?.length || 0}/{MAX_CHARACTERS}
       </p>
     </div>
   );

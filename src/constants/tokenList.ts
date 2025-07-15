@@ -482,4 +482,20 @@ export const tokenList: Token[] = [
     decimals: 9,
     coingeckoSymbol: 'spinedao-token',
   },
+  {
+    tokenName: 'aeroSOL',
+    tokenSymbol: 'aeroSOL',
+    mintAddress: 'aeroXvCT6tjGVNyTvZy86tFDwE4sYsKCh7FbNDcrcxF',
+    icon: 'https://assets.coingecko.com/coins/images/40123/standard/Logo_-_Bright_%284%29.png',
+    decimals: 9,
+    coingeckoSymbol: 'aerosol',
+  },
+  {
+    tokenName: 'JuliaOS',
+    tokenSymbol: 'JOS',
+    mintAddress: 'JosjEXh69RckgSs2AWsN1xN8zmiSHxBuJjHLURJnHhg',
+    icon: 'https://assets.coingecko.com/coins/images/55336/standard/JuliaOS-logo.png?1745507802',
+    decimals: 6,
+    coingeckoSymbol: 'juliaos',
+  },
 ];

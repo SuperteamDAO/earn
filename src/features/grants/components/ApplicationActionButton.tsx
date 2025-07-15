@@ -48,6 +48,14 @@ export const ApplicationActionButton = ({
 
   const regionTooltipLabel = getRegionTooltipLabel(region);
 
+  const getCooldownTooltipContent = () => {
+    if (applicationState !== 'COOLDOWN' || !application?.decidedAt) return null;
+
+    return `You must wait 30 days from the decision date of your last application before reapplying for this grant.`;
+  };
+
+  const cooldownTooltipContent = getCooldownTooltipContent() || undefined;
+
   const isBtnDisabled =
     buttonConfig.isDisabled ||
     Boolean(
@@ -85,12 +93,13 @@ export const ApplicationActionButton = ({
           tranches={tranches}
         />
       )}
-      <div className="ph-no-capture fixed bottom-0 left-1/2 z-50 mb-1 w-full -translate-x-1/2 border-t-1 border-slate-100 bg-white px-3 py-4 pt-2 pb-14 md:static md:translate-x-0 md:border-t-0 md:border-transparent md:px-0 md:py-0 md:pb-5">
+      <div className="ph-no-capture w-full md:px-0 md:pb-3">
         <div className="flex items-center gap-2">
           <InfoWrapper
             isUserEligibleByRegion={isUserEligibleByRegion}
             regionTooltipLabel={regionTooltipLabel}
             user={user}
+            cooldownTooltipContent={cooldownTooltipContent}
           >
             <AuthWrapper
               showCompleteProfileModal
@@ -104,7 +113,7 @@ export const ApplicationActionButton = ({
                   'h-12 w-full gap-4',
                   'disabled:opacity-70',
                   'text-base md:text-lg',
-                  'font-semibold sm:font-medium',
+                  'font-medium',
                   grant?.link && !grant?.isNative ? 'mt-4' : '',
                   buttonConfig.bg,
                   'size-lg',

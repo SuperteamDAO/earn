@@ -10,8 +10,8 @@ import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
 import { Button } from '@/components/ui/button';
 import { CopyButton } from '@/components/ui/copy-tooltip';
 import { CircularProgress } from '@/components/ui/progress';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { tokenList } from '@/constants/tokenList';
-import { cn } from '@/utils/cn';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
 import { truncateString } from '@/utils/truncateString';
@@ -63,7 +63,7 @@ export const TrancheDetails = ({
   const paidPercentage = (totalPaid / approvedAmount) * 100;
 
   return (
-    <div className="w-full rounded-r-xl bg-white">
+    <div className="h-full w-full rounded-r-xl bg-white">
       {tranches?.length ? (
         <>
           <div className="sticky top-[3rem] rounded-t-xl border-b border-slate-200 bg-white py-1">
@@ -104,31 +104,21 @@ export const TrancheDetails = ({
                 {isPending && (
                   <>
                     <Button
-                      className={cn(
-                        'bg-emerald-50 text-emerald-600 hover:bg-emerald-100 hover:text-emerald-600',
-                      )}
+                      className="rounded-lg border border-emerald-500 bg-emerald-50 text-emerald-600 hover:bg-emerald-100 hover:text-emerald-600 disabled:cursor-not-allowed disabled:opacity-50"
                       onClick={approveOnOpen}
-                      variant="ghost"
                     >
-                      <div className="mr-2 flex items-center">
-                        <div className="rounded-full bg-emerald-600 p-[5px]">
-                          <Check className="h-2.5 w-2.5 text-white" />
-                        </div>
+                      <div className="rounded-full bg-emerald-600 p-0.5">
+                        <Check className="size-1 text-white" />
                       </div>
                       Approve
                     </Button>
 
                     <Button
-                      className={cn(
-                        'bg-rose-50 text-rose-600 hover:bg-rose-100 hover:text-rose-600',
-                      )}
+                      className="rounded-lg border border-red-500 bg-red-50 text-red-600 hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-50"
                       onClick={rejectedOnOpen}
-                      variant="ghost"
                     >
-                      <div className="mr-2 flex items-center">
-                        <div className="rounded-full bg-rose-600 p-[5px]">
-                          <X className="h-2 w-2 text-white" />
-                        </div>
+                      <div className="rounded-full bg-red-600 p-0.5">
+                        <X className="size-1 text-white" />
                       </div>
                       Reject
                     </Button>
@@ -137,14 +127,11 @@ export const TrancheDetails = ({
                 {isApproved && (
                   <>
                     <Button
-                      className="pointer-events-none bg-emerald-50 text-emerald-600 disabled:opacity-100"
+                      className="rounded-lg border border-emerald-500 bg-emerald-50 text-emerald-600 hover:bg-emerald-100 disabled:cursor-not-allowed disabled:opacity-100"
                       disabled={true}
-                      variant="ghost"
                     >
-                      <div className="flex items-center">
-                        <div className="rounded-full bg-emerald-600 p-[5px]">
-                          <Check className="h-2.5 w-2.5 text-white" />
-                        </div>
+                      <div className="rounded-full bg-emerald-600 p-0.5">
+                        <Check className="size-1 text-white" />
                       </div>
                       Approved
                     </Button>
@@ -153,14 +140,11 @@ export const TrancheDetails = ({
                 {isRejected && (
                   <>
                     <Button
-                      className="pointer-events-none bg-rose-50 text-rose-600 disabled:opacity-100"
+                      className="rounded-lg border border-red-500 bg-red-50 text-red-600 hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-100"
                       disabled={true}
-                      variant="ghost"
                     >
-                      <div className="flex items-center">
-                        <div className="rounded-full bg-rose-600 p-[5px]">
-                          <X className="h-2 w-2 text-white" />
-                        </div>
+                      <div className="rounded-full bg-red-600 p-0.5">
+                        <X className="size-1 text-white" />
                       </div>
                       Rejected
                     </Button>
@@ -249,8 +233,11 @@ export const TrancheDetails = ({
             </div>
           </div>
 
-          <div className="flex h-[32.6rem] w-full">
-            <div className="scrollbar-thumb-rounded-full scrollbar-thin scrollbar-track-slate-100 scrollbar-thumb-slate-300 flex w-full flex-1 flex-col overflow-y-auto border-r border-slate-200 p-4">
+          <div className="flex h-[39.3rem] w-full">
+            <ScrollArea
+              className="flex w-full flex-1 flex-col overflow-y-auto border-r border-slate-200 p-4"
+              type="auto"
+            >
               {selectedTranche?.trancheNumber === 1 && (
                 <div className="mb-4">
                   <p className="mb-1 text-xs text-slate-500">
@@ -349,7 +336,7 @@ export const TrancheDetails = ({
                     />
                   ),
                 )}
-            </div>
+            </ScrollArea>
           </div>
         </>
       ) : (

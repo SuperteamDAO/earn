@@ -272,21 +272,18 @@ export function RightSideBar({
             )}
           </div>
 
-          <div className="w-full">
+          <div className="hidden w-full md:flex">
             <SubmissionActionButton listing={listing} isTemplate={isTemplate} />
-            {isProject && deadline && dayjs(deadline).isAfter(new Date()) && (
-              <div className="-mt-1 mb-4 flex w-full gap-2 bg-[#62F6FF10] p-3">
-                <TriangleAlert color="#1A7F86" />
-                <p
-                  className="text-xs font-medium text-[#1A7F86]"
-                  color="#1A7F86"
-                >
-                  Don&apos;t start working just yet! Apply first, and then begin
-                  working only once you&apos;ve been hired for the project.
-                </p>
-              </div>
-            )}
           </div>
+          {isProject && deadline && dayjs(deadline).isAfter(new Date()) && (
+            <div className="-mt-1 mb-4 flex w-full gap-2 bg-[#62F6FF10] p-3">
+              <TriangleAlert color="#1A7F86" />
+              <p className="text-xs font-medium text-[#1A7F86]" color="#1A7F86">
+                Don&apos;t start working just yet! Apply first, and then begin
+                working only once you&apos;ve been hired for the project.
+              </p>
+            </div>
+          )}
           <div className="w-full">
             <ExtraInfoSection
               skills={skills}

@@ -4,10 +4,12 @@ import {
   ChevronDown,
   ChevronLeft,
   ChevronRight,
+  LucideListFilter,
   Plus,
   Search,
 } from 'lucide-react';
 import { type GetServerSideProps } from 'next';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import React, {
   useCallback,
   useEffect,
@@ -27,11 +29,11 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
+import { StatusPill } from '@/components/ui/status-pill';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { SponsorLayout } from '@/layouts/Sponsor';
 import { useUser } from '@/store/user';
-import { cn } from '@/utils/cn';
 
 import { type ListingWithSubmissions } from '@/features/listings/types';
 import { getColorStyles } from '@/features/listings/utils/getColorStyles';
@@ -44,17 +46,91 @@ import { sponsorStatsQuery } from '@/features/sponsor-dashboard/queries/sponsor-
 
 const MemoizedListingTable = React.memo(ListingTable);
 
+type DashboardTab = 'all' | 'bounty' | 'project' | 'grant' | 'hackathon';
+type DashboardStatus =
+  | 'Draft'
+  | 'In Progress'
+  | 'In Review'
+  | 'Fndn to Pay'
+  | 'Payment Pending'
+  | 'Completed';
+
+const DEFAULT_TAB: DashboardTab = 'all';
+
 export default function SponsorListings({ tab: queryTab }: { tab: string }) {
   const { user } = useUser();
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParamsFromHook = useSearchParams();
+
+  const searchParams = useMemo(
+    () => searchParamsFromHook ?? new URLSearchParams(),
+    [searchParamsFromHook],
+  );
+
   const [searchText, setSearchText] = useState('');
   const [currentPage, setCurrentPage] = useState(0);
-  const [selectedTab, setSelectedTab] = useState('all');
-  const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
   const [currentSort, setCurrentSort] = useState<{
     column: string;
     direction: 'asc' | 'desc' | null;
   }>({ column: '', direction: null });
   const listingsPerPage = 15;
+
+  const activeTab = useMemo((): DashboardTab => {
+    const tabParam = searchParams.get('tab');
+    if (
+      tabParam &&
+      ['all', 'bounty', 'project', 'grant', 'hackathon'].includes(tabParam)
+    ) {
+      return tabParam as DashboardTab;
+    }
+    return DEFAULT_TAB;
+  }, [searchParams]);
+
+  const activeStatus = useMemo((): DashboardStatus | null => {
+    const statusParam = searchParams.get('status');
+    if (
+      statusParam &&
+      [
+        'Draft',
+        'In Progress',
+        'In Review',
+        'Fndn to Pay',
+        'Payment Pending',
+        'Completed',
+      ].includes(statusParam)
+    ) {
+      return statusParam as DashboardStatus;
+    }
+    return null;
+  }, [searchParams]);
+
+  const updateQueryParams = useCallback(
+    (updates: { tab?: DashboardTab; status?: DashboardStatus | null }) => {
+      const newParams = new URLSearchParams(Array.from(searchParams.entries()));
+
+      if (updates.tab !== undefined) {
+        if (updates.tab === DEFAULT_TAB) {
+          newParams.delete('tab');
+        } else {
+          newParams.set('tab', updates.tab);
+        }
+      }
+
+      if (updates.status !== undefined) {
+        if (updates.status === null) {
+          newParams.delete('status');
+        } else {
+          newParams.set('status', updates.status);
+        }
+      }
+
+      const queryString = newParams.toString();
+      const newPath = `${pathname}${queryString ? `?${queryString}` : ''}`;
+      router.replace(newPath, { scroll: false });
+    },
+    [searchParams, router, pathname],
+  );
 
   const { data: sponsorStats, isLoading: isStatsLoading } = useQuery(
     sponsorStatsQuery(user?.currentSponsorId),
@@ -76,7 +152,6 @@ export default function SponsorListings({ tab: queryTab }: { tab: string }) {
     if (user?.currentSponsorId) {
       setSearchText('');
       setCurrentPage(0);
-      setSelectedStatus(null);
     }
   }, [user?.currentSponsorId]);
 
@@ -89,16 +164,16 @@ export default function SponsorListings({ tab: queryTab }: { tab: string }) {
   const filteredListings = useMemo(() => {
     const filterListingsByType = () => {
       if (!allListings) return [];
-      if (selectedTab === 'all') {
+      if (activeTab === 'all') {
         return allListings;
       }
-      return allListings.filter((listing) => listing.type === selectedTab);
+      return allListings.filter((listing) => listing.type === activeTab);
     };
 
     const filterListingsByStatus = (listings: ListingWithSubmissions[]) => {
-      if (selectedStatus) {
+      if (activeStatus) {
         return listings.filter(
-          (listing) => getListingStatus(listing) === selectedStatus,
+          (listing) => getListingStatus(listing) === activeStatus,
         );
       }
       return listings;
@@ -142,7 +217,7 @@ export default function SponsorListings({ tab: queryTab }: { tab: string }) {
     }
 
     return filtered;
-  }, [allListings, selectedTab, selectedStatus, searchText, currentSort]);
+  }, [allListings, activeTab, activeStatus, searchText, currentSort]);
 
   const paginatedListings = useMemo(() => {
     return filteredListings?.slice(
@@ -160,7 +235,7 @@ export default function SponsorListings({ tab: queryTab }: { tab: string }) {
   }, [allListings]);
 
   const ALL_FILTERS = useMemo(() => {
-    const filters = [
+    const filters: DashboardStatus[] = [
       'Draft',
       'In Progress',
       'In Review',
@@ -169,30 +244,38 @@ export default function SponsorListings({ tab: queryTab }: { tab: string }) {
       'Completed',
     ];
     return filters;
-  }, [hasGrants]);
-
-  const handleStatusFilterChange = useCallback((status: string | null) => {
-    setSelectedStatus(status);
-    setCurrentPage(0);
   }, []);
 
-  const handleTabChange = useCallback((value: string) => {
-    const valueToType = {
-      all: 'all',
-      bounties: 'bounty',
-      projects: 'project',
-      grants: 'grant',
-      hackathons: 'hackathon',
-    };
+  const handleStatusFilterChange = useCallback(
+    (status: DashboardStatus | null) => {
+      updateQueryParams({ status });
+      setCurrentPage(0);
+    },
+    [updateQueryParams],
+  );
 
-    const tabType = valueToType[value as keyof typeof valueToType] || 'all';
-    setSelectedTab(tabType);
-    setCurrentPage(0);
-  }, []);
+  const handleTabChange = useCallback(
+    (value: string) => {
+      const valueToType = {
+        all: 'all' as const,
+        bounties: 'bounty' as const,
+        projects: 'project' as const,
+        grants: 'grant' as const,
+        hackathons: 'hackathon' as const,
+      };
+
+      const tabType = valueToType[value as keyof typeof valueToType] || 'all';
+      updateQueryParams({ tab: tabType });
+      setCurrentPage(0);
+    },
+    [updateQueryParams],
+  );
 
   useEffect(() => {
-    handleTabChange(queryTab);
-  }, [queryTab]);
+    if (queryTab && queryTab !== activeTab) {
+      handleTabChange(queryTab);
+    }
+  }, [queryTab, activeTab, handleTabChange]);
 
   return (
     <SponsorLayout>
@@ -206,69 +289,71 @@ export default function SponsorListings({ tab: queryTab }: { tab: string }) {
           </p>
         </div>
         <div className="flex w-full items-center justify-end gap-2">
-          <div>
-            <span className="mr-2 text-sm text-slate-500">
-              Filter by status
-            </span>
+          <div className="flex items-center gap-2">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button
-                  className="hover:border-brand-purple h-9 border border-slate-300 bg-transparent font-medium text-slate-500 capitalize hover:bg-transparent"
-                  variant="outline"
-                >
-                  <span
-                    className={cn(
-                      'inline-flex items-center rounded-full px-3 text-center text-[11px] whitespace-nowrap capitalize',
-                      getColorStyles(selectedStatus!).color,
-                      getColorStyles(selectedStatus!).bgColor,
-                    )}
-                  >
-                    <span>{selectedStatus || 'Everything'}</span>
-                  </span>
+                <button className="flex h-9 min-w-40 items-center justify-between rounded-lg border border-slate-300 bg-transparent px-2 text-sm font-medium text-slate-500 capitalize shadow-xs transition-all duration-300 ease-in-out hover:border-slate-200 data-[state=open]:rounded-b-none data-[state=open]:border-slate-200">
+                  {activeStatus && (
+                    <StatusPill
+                      color={getColorStyles(activeStatus!).color}
+                      backgroundColor={getColorStyles(activeStatus!).bgColor}
+                      borderColor={getColorStyles(activeStatus!).borderColor}
+                      className="w-fit font-normal"
+                    >
+                      {activeStatus}
+                    </StatusPill>
+                  )}
+                  {!activeStatus && (
+                    <span className="flex items-center text-xs font-normal text-slate-500">
+                      <LucideListFilter className="mr-1.5 size-3.5" />
+                      Filter by status
+                    </span>
+                  )}
                   <ChevronDown className="ml-2 h-4 w-4" />
-                </Button>
+                </button>
               </DropdownMenuTrigger>
 
-              <DropdownMenuContent className="border-slate-300">
+              <DropdownMenuContent
+                sideOffset={-1}
+                className="min-w-40 rounded-t-none px-0 py-2"
+              >
                 <DropdownMenuItem
-                  className="focus:bg-slate-100"
+                  className="cursor-pointer border-0 px-2 py-1.5 text-center text-sm"
                   onClick={() => handleStatusFilterChange(null)}
                 >
-                  <span
-                    className={cn(
-                      'inline-flex items-center rounded-full px-3 text-center text-[11px] whitespace-nowrap capitalize',
-                      getColorStyles('Everything').color,
-                      getColorStyles('Everything').bgColor,
-                    )}
+                  <StatusPill
+                    color={getColorStyles('All').color}
+                    backgroundColor={getColorStyles('All').bgColor}
+                    borderColor={getColorStyles('All').borderColor}
+                    className="w-fit"
                   >
-                    Everything
-                  </span>
+                    All
+                  </StatusPill>
                 </DropdownMenuItem>
 
                 {ALL_FILTERS.map((status) => (
                   <DropdownMenuItem
                     key={status}
-                    className="focus:bg-slate-100"
+                    className="cursor-pointer border-0 px-2 py-1.5 text-center text-sm"
                     onClick={() => handleStatusFilterChange(status)}
                   >
-                    <span
-                      className={cn(
-                        'inline-flex items-center rounded-full px-3 text-center text-[11px] font-medium whitespace-nowrap capitalize',
-                        getColorStyles(status).color,
-                        getColorStyles(status).bgColor,
-                      )}
+                    <StatusPill
+                      color={getColorStyles(status).color}
+                      backgroundColor={getColorStyles(status).bgColor}
+                      borderColor={getColorStyles(status).borderColor}
+                      className="w-fit"
                     >
                       {status}
-                    </span>
+                    </StatusPill>
                   </DropdownMenuItem>
                 ))}
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
-          <div className="relative ml-4 w-64">
-            <Search className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-slate-400" />
+          <div className="relative ml-3 w-64">
+            <Search className="pointer-events-none absolute top-1/2 left-3 size-3.5 -translate-y-1/2 text-slate-400" />
             <Input
-              className="placeholder:text-md focus-visible:ring-brand-purple border-slate-300 bg-white pl-9 placeholder:font-medium placeholder:text-slate-400"
+              className="focus-visible:ring-brand-purple h-9 rounded-lg border-slate-300 bg-white pl-9 font-normal placeholder:text-xs placeholder:text-slate-500"
               onChange={(e) => debouncedSetSearchText(e.target.value)}
               placeholder="Search listing..."
               type="text"
@@ -280,7 +365,20 @@ export default function SponsorListings({ tab: queryTab }: { tab: string }) {
       {isListingsLoading && <LoadingSection />}
       {!isListingsLoading && (
         <>
-          <Tabs defaultValue={queryTab} onValueChange={handleTabChange}>
+          <Tabs
+            value={
+              activeTab === 'all'
+                ? 'all'
+                : activeTab === 'bounty'
+                  ? 'bounties'
+                  : activeTab === 'project'
+                    ? 'projects'
+                    : activeTab === 'grant'
+                      ? 'grants'
+                      : 'hackathons'
+            }
+            onValueChange={handleTabChange}
+          >
             <TabsList>
               <TabsTrigger value="all">All</TabsTrigger>
               <TabsTrigger value="bounties">Bounties</TabsTrigger>

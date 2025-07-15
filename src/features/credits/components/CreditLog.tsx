@@ -1,13 +1,23 @@
 import { format } from 'date-fns';
 import { Check, Minus, Plus, Undo } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import posthog from 'posthog-js';
-import { type ReactNode } from 'react';
+import { type ReactNode, useEffect, useState } from 'react';
 
+import BsThreeDotsVertical from '@/components/icons/BsThreeDotsVertical';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { Separator } from '@/components/ui/separator';
 import { cn } from '@/utils/cn';
+import { dayjs } from '@/utils/dayjs';
 
 import { CreditIcon } from '../icon/credit';
+import { DisputeModal } from './DisputeModal';
 
 type CreditEventType =
   | 'SUBMISSION'
@@ -15,7 +25,9 @@ type CreditEventType =
   | 'WIN_BONUS'
   | 'MONTHLY_CREDIT'
   | 'CREDIT_EXPIRY'
-  | 'CREDIT_REFUND';
+  | 'CREDIT_REFUND'
+  | 'GRANT_SPAM_PENALTY'
+  | 'GRANT_WIN_BONUS';
 
 interface CreditEntry {
   id: string;
@@ -24,6 +36,7 @@ interface CreditEntry {
   createdAt: Date;
   effectiveMonth: Date;
   submission: {
+    id: string;
     listing: {
       title: string;
       type: string;
@@ -38,9 +51,30 @@ interface CreditEntry {
 interface CreditHistoryCardProps {
   title: ReactNode;
   entries: CreditEntry[];
+  disputeSubmissionId?: string | null;
 }
 
-export function CreditHistoryCard({ title, entries }: CreditHistoryCardProps) {
+export function CreditHistoryCard({
+  title,
+  entries,
+  disputeSubmissionId,
+}: CreditHistoryCardProps) {
+  const [isDisputeModalOpen, setIsDisputeModalOpen] = useState(false);
+  const [selectedEntry, setSelectedEntry] = useState<CreditEntry | null>(null);
+  const router = useRouter();
+
+  useEffect(() => {
+    if (disputeSubmissionId && entries.length > 0) {
+      const entryToDispute = entries.find(
+        (entry) => entry.submission?.id === disputeSubmissionId,
+      );
+      if (entryToDispute && canDispute(entryToDispute)) {
+        setSelectedEntry(entryToDispute);
+        setIsDisputeModalOpen(true);
+      }
+    }
+  }, [disputeSubmissionId, entries]);
+
   const isUpcoming = entries.some((entry) => {
     if (!entry.effectiveMonth) return false;
 
@@ -59,13 +93,44 @@ export function CreditHistoryCard({ title, entries }: CreditHistoryCardProps) {
     return false;
   });
 
+  const isSpamEntry = (entry: CreditEntry) => {
+    return entry.type === 'SPAM_PENALTY' || entry.type === 'GRANT_SPAM_PENALTY';
+  };
+
+  const canDispute = (entry: CreditEntry) => {
+    if (!isSpamEntry(entry)) return false;
+
+    const createdAt = dayjs(entry.createdAt);
+    const now = dayjs();
+    const daysSinceCreation = now.diff(createdAt, 'days');
+
+    return daysSinceCreation <= 7;
+  };
+
+  const handleOpenDispute = (entry: CreditEntry) => {
+    setSelectedEntry(entry);
+    setIsDisputeModalOpen(true);
+  };
+
+  const handleCloseDispute = async () => {
+    const currentHash = window.location.hash;
+    if (currentHash.startsWith('#dispute-submission-')) {
+      await router.replace(router.asPath.replace(currentHash, ''), undefined, {
+        shallow: true,
+      });
+    }
+
+    setIsDisputeModalOpen(false);
+    setSelectedEntry(null);
+  };
+
   return (
     <div className="w-full">
       <div className="flex items-center gap-1 px-4 pt-5 pb-3 text-slate-500">
         {title}
       </div>
       <Separator className="flex-1" />
-      <div className={cn(isUpcoming && 'opacity-60')}>
+      <div className={cn(isUpcoming && 'opacity-100')}>
         {entries.map((entry) => {
           const isNonLinkableEntry =
             entry.type === 'CREDIT_EXPIRY' || entry.type === 'MONTHLY_CREDIT';
@@ -94,9 +159,37 @@ export function CreditHistoryCard({ title, entries }: CreditHistoryCardProps) {
                 )}
               </div>
               <div className="flex-1">
-                <h3 className="text-sm font-semibold text-gray-900">
-                  {getEntryTitle(entry)}
-                </h3>
+                <div className="flex items-center gap-2">
+                  <h3 className="text-sm font-semibold text-gray-900">
+                    {getEntryTitle(entry)}
+                  </h3>
+                  {canDispute(entry) && (
+                    <DropdownMenu>
+                      <DropdownMenuTrigger
+                        asChild
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          e.preventDefault();
+                        }}
+                      >
+                        <button className="flex items-center justify-center rounded-full px-0.5 hover:bg-slate-100">
+                          <BsThreeDotsVertical className="size-3 text-slate-500 sm:size-4" />
+                        </button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="start" className="z-[100]">
+                        <DropdownMenuItem
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleOpenDispute(entry);
+                          }}
+                          className="cursor-pointer text-red-500 hover:text-red-600"
+                        >
+                          Raise Dispute
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  )}
+                </div>
                 <p className="line-clamp-1 text-xs font-medium text-slate-600 sm:text-sm">
                   {entry.submission.listing.title}
                 </p>
@@ -122,17 +215,22 @@ export function CreditHistoryCard({ title, entries }: CreditHistoryCardProps) {
           return (
             <div key={entry.id}>
               {isNonLinkableEntry ? (
-                <div className="flex items-center gap-4 px-4 py-4 hover:bg-slate-100">
+                <div className="flex items-center gap-2 px-4 py-4 hover:bg-slate-100 sm:gap-4">
                   <EntryContent />
                 </div>
               ) : (
                 <Link
-                  href={`/listing/${entry.submission.listing.slug}`}
+                  href={
+                    entry.type === 'GRANT_SPAM_PENALTY' ||
+                    entry.type === 'GRANT_WIN_BONUS'
+                      ? `/grants/${entry.submission.listing.slug}`
+                      : `/listing/${entry.submission.listing.slug}`
+                  }
                   onClick={() => {
                     posthog.capture('clicked activity_credits');
                   }}
                 >
-                  <div className="flex cursor-pointer items-center gap-4 px-4 py-4 hover:bg-slate-100">
+                  <div className="flex cursor-pointer items-center gap-2 px-4 py-4 hover:bg-slate-100 sm:gap-4">
                     <EntryContent />
                   </div>
                 </Link>
@@ -141,6 +239,12 @@ export function CreditHistoryCard({ title, entries }: CreditHistoryCardProps) {
           );
         })}
       </div>
+
+      <DisputeModal
+        isOpen={isDisputeModalOpen}
+        onClose={handleCloseDispute}
+        entry={selectedEntry}
+      />
     </div>
   );
 }
@@ -192,7 +296,7 @@ function getStatusIcon(type: CreditEventType) {
     );
   }
 
-  if (type === 'SPAM_PENALTY') {
+  if (type === 'SPAM_PENALTY' || type === 'GRANT_SPAM_PENALTY') {
     return (
       <div className="absolute -right-1 -bottom-1 flex size-5 items-center justify-center rounded-full border-3 border-white bg-white text-gray-700">
         <span className="text-xs">🚫</span>
@@ -200,7 +304,7 @@ function getStatusIcon(type: CreditEventType) {
     );
   }
 
-  if (type === 'WIN_BONUS') {
+  if (type === 'WIN_BONUS' || type === 'GRANT_WIN_BONUS') {
     return (
       <div className="absolute -right-1 -bottom-1 flex size-5 items-center justify-center rounded-full border-3 border-white bg-white text-gray-700">
         <span className="text-xs">🎉</span>
@@ -233,6 +337,10 @@ function getEntryTitle(entry: CreditEntry): string {
       return entry.submission.listing.type === 'project'
         ? 'Applied for Project'
         : 'Submitted to a Bounty';
+    case 'GRANT_SPAM_PENALTY':
+      return 'Application Flagged as Spam';
+    case 'GRANT_WIN_BONUS':
+      return 'Won Grant';
     case 'MONTHLY_CREDIT':
       const now = new Date();
       const effectiveDate = new Date(entry.effectiveMonth);

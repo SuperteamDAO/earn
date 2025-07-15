@@ -14,4 +14,7 @@ const telegramRegex = new RegExp(
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+export const tweetLinkRegex =
+  /^(https?:\/\/)?(www\.)?(twitter\.com|x\.com)\/[a-zA-Z0-9_]{4,15}\/status\/\d+\/?$/;
+
 export { emailRegex, telegramRegex, twitterRegex };

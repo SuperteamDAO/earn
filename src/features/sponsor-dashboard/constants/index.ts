@@ -1,6 +1,5 @@
 export const labelMenuOptions = [
   { label: 'Unreviewed', value: 'Unreviewed' },
-  { label: 'Reviewed', value: 'Reviewed' },
   { label: 'Shortlisted', value: 'Shortlisted' },
   { label: 'Mid Quality', value: 'Mid_Quality' },
   { label: 'Low Quality', value: 'Low_Quality' },

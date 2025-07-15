@@ -43,6 +43,7 @@ interface FeedCardContainerProps {
   link: string;
   userId: string;
   recentCommenters?: FeedDataProps['recentCommenters'];
+  isPrivate: boolean;
 }
 
 export const FeedCardContainer = ({
@@ -61,6 +62,7 @@ export const FeedCardContainer = ({
   link,
   userId,
   recentCommenters: initialRecentCommenters,
+  isPrivate,
 }: FeedCardContainerProps) => {
   const { user } = useUser();
 
@@ -145,17 +147,17 @@ export const FeedCardContainer = ({
             type={type}
           />
 
-          <Link
-            className="group mt-4 cursor-pointer rounded-md border border-slate-200 shadow-[0px_4px_4px_0px_rgba(0,0,0,0.01)] transition-all duration-100 ease-in-out hover:-translate-y-[0.5px] hover:shadow-[0px_4px_8px_0px_rgba(0,0,0,0.1)]"
-            href={sanitizedLink}
-            rel="noopener noreferrer"
-            target="_blank"
+          <FeedCardChildWrapper
+            isPrivate={isPrivate}
+            className={cn(
+              'group mt-4 rounded-md border border-slate-200 shadow-[0px_4px_4px_0px_rgba(0,0,0,0.01)] transition-all duration-100 ease-in-out hover:-translate-y-[0.5px] hover:shadow-[0px_4px_8px_0px_rgba(0,0,0,0.1)]',
+              !isPrivate && 'cursor-pointer',
+            )}
+            sanitizedLink={sanitizedLink}
+            actionLinks={actionLinks}
           >
             {children}
-            <div className="flex items-center justify-between gap-3 px-3 py-4 md:px-6 md:py-6">
-              {actionLinks}
-            </div>
-          </Link>
+          </FeedCardChildWrapper>
           {id && (
             <div
               className={cn(
@@ -261,3 +263,43 @@ export const FeedCardContainerSkeleton = () => {
     </div>
   );
 };
+
+interface FeedCardLinkOrDivProps {
+  isPrivate: boolean;
+  className?: string;
+  sanitizedLink: string;
+  children: ReactNode;
+  actionLinks: ReactNode;
+}
+
+function FeedCardChildWrapper({
+  isPrivate,
+  className,
+  sanitizedLink,
+  children,
+  actionLinks,
+}: FeedCardLinkOrDivProps) {
+  if (isPrivate) {
+    return (
+      <div className={className}>
+        {children}
+        <div className="flex items-center justify-between gap-3 px-3 py-4 md:px-6 md:py-6">
+          {actionLinks}
+        </div>
+      </div>
+    );
+  }
+  return (
+    <Link
+      className={className}
+      href={sanitizedLink}
+      rel="noopener noreferrer"
+      target="_blank"
+    >
+      {children}
+      <div className="flex items-center justify-between gap-3 px-3 py-4 md:px-6 md:py-6">
+        {actionLinks}
+      </div>
+    </Link>
+  );
+}

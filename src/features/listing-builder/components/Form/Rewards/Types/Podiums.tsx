@@ -10,6 +10,7 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/utils/cn';
 import { getRankLabels } from '@/utils/rank';
 
@@ -171,159 +172,160 @@ export const Podiums = () => {
       name="rewards"
       render={() => (
         <FormItem className="flex h-full flex-col gap-2">
-          <div
+          <ScrollArea
             ref={podiumsContainerRef}
-            className={cn(
-              'flex min-h-0 shrink flex-col space-y-4 overflow-y-auto rounded-md border p-4',
-            )}
+            className={cn('overflow-y-auto rounded-md border')}
+            type="auto"
           >
-            {rewardPositions.map((position, index) => (
-              <FormField
-                key={position}
-                name={`rewards.${position}`}
-                render={({ field }) => (
-                  <FormItem className="group relative gap-2">
-                    <div className="flex justify-between">
-                      <FormLabel isRequired className="w-fit capitalize">
-                        {getRankLabels(position)} Prize
-                      </FormLabel>
-                    </div>
-                    <FormControl>
-                      <div className="relative">
-                        <TokenNumberInput
-                          {...field}
-                          placeholder={`${5000 - index * 500}`}
-                          className="pr-6"
-                          value={rewards[position]}
-                          max={MAX_REWARD}
-                          onChange={(value) => {
-                            field.onChange(value);
-                            const updatedRewards = {
-                              ...rewards,
-                              [position]: value ?? NaN,
-                            };
-                            updateTotalReward(updatedRewards);
-                          }}
-                          onBlur={() => null}
-                        />
-                        {rewardPositions.length > 1 && (
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => removeReward(position)}
-                            className="text-muted-foreground hover:text-destructive absolute top-0 right-0 hidden group-hover:flex"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        )}
+            <div className="flex min-h-0 shrink flex-col space-y-4 p-4">
+              {rewardPositions.map((position, index) => (
+                <FormField
+                  key={position}
+                  name={`rewards.${position}`}
+                  render={({ field }) => (
+                    <FormItem className="group relative gap-2">
+                      <div className="flex justify-between">
+                        <FormLabel isRequired className="w-fit capitalize">
+                          {getRankLabels(position)} Prize
+                        </FormLabel>
                       </div>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            ))}
+                      <FormControl>
+                        <div className="relative">
+                          <TokenNumberInput
+                            {...field}
+                            placeholder={`${5000 - index * 500}`}
+                            className="pr-6"
+                            value={rewards[position]}
+                            max={MAX_REWARD}
+                            onChange={(value) => {
+                              field.onChange(value);
+                              const updatedRewards = {
+                                ...rewards,
+                                [position]: value ?? NaN,
+                              };
+                              updateTotalReward(updatedRewards);
+                            }}
+                            onBlur={() => null}
+                          />
+                          {rewardPositions.length > 1 && (
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => removeReward(position)}
+                              className="text-muted-foreground hover:text-destructive absolute top-0 right-0 hidden group-hover:flex"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          )}
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              ))}
 
-            {rewards[BONUS_REWARD_POSITION] !== undefined && (
-              <div className="group relative flex flex-col gap-2">
-                <div className="flex items-center justify-between">
-                  <div className="flex-1 space-y-2">
-                    <FormField
-                      name={`rewards.${BONUS_REWARD_POSITION}`}
-                      render={({ field }) => (
-                        <FormItem className="gap-2">
-                          <div className="flex justify-between">
-                            <FormLabel isRequired className="w-fit">
-                              Bonus Per Prize
-                            </FormLabel>
-                          </div>
-                          <FormControl>
-                            <TokenNumberInput
-                              {...field}
-                              placeholder="10"
-                              max={MAX_REWARD}
-                              className="relative rounded-r-none focus-within:z-10"
-                              value={rewards[BONUS_REWARD_POSITION]}
-                              onChange={(value) => {
-                                field.onChange(value);
-                                const updatedRewards = {
-                                  ...rewards,
-                                  [BONUS_REWARD_POSITION]: value ?? 0,
-                                };
-                                updateTotalReward(
-                                  updatedRewards,
-                                  maxBonusSpots,
-                                );
-                              }}
-                            />
-                          </FormControl>
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                  <div className="flex-1">
-                    <FormField
-                      control={form.control}
-                      name="maxBonusSpots"
-                      render={({ field }) => (
-                        <FormItem className="gap-2">
-                          <FormLabel isRequired># of Prizes</FormLabel>
-                          <FormControl>
-                            <div className="relative">
+              {rewards[BONUS_REWARD_POSITION] !== undefined && (
+                <div className="group relative flex flex-col gap-2">
+                  <div className="flex items-center justify-between">
+                    <div className="flex-1 space-y-2">
+                      <FormField
+                        name={`rewards.${BONUS_REWARD_POSITION}`}
+                        render={({ field }) => (
+                          <FormItem className="gap-2">
+                            <div className="flex justify-between">
+                              <FormLabel isRequired className="w-fit">
+                                Bonus Per Prize
+                              </FormLabel>
+                            </div>
+                            <FormControl>
                               <TokenNumberInput
-                                placeholder="50"
                                 {...field}
-                                min={1}
-                                max={MAX_BONUS_SPOTS}
+                                placeholder="10"
+                                max={MAX_REWARD}
+                                className="relative rounded-r-none focus-within:z-10"
+                                value={rewards[BONUS_REWARD_POSITION]}
                                 onChange={(value) => {
                                   field.onChange(value);
+                                  const updatedRewards = {
+                                    ...rewards,
+                                    [BONUS_REWARD_POSITION]: value ?? 0,
+                                  };
                                   updateTotalReward(
-                                    rewards,
-                                    value || undefined,
+                                    updatedRewards,
+                                    maxBonusSpots,
                                   );
                                 }}
-                                hideToken
-                                className="relative rounded-l-none pr-6 focus-within:z-10"
                               />
-                              <Button
-                                type="button"
-                                variant="ghost"
-                                size="icon"
-                                onClick={removeBonusReward}
-                                className="text-muted-foreground hover:text-destructive absolute top-0 right-0 hidden group-hover:flex"
-                              >
-                                <Trash2 className="h-4 w-4" />
-                              </Button>
-                            </div>
-                          </FormControl>
-                        </FormItem>
-                      )}
-                    />
+                            </FormControl>
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                    <div className="flex-1">
+                      <FormField
+                        control={form.control}
+                        name="maxBonusSpots"
+                        render={({ field }) => (
+                          <FormItem className="gap-2">
+                            <FormLabel isRequired># of Prizes</FormLabel>
+                            <FormControl>
+                              <div className="relative">
+                                <TokenNumberInput
+                                  placeholder="50"
+                                  {...field}
+                                  min={1}
+                                  max={MAX_BONUS_SPOTS}
+                                  onChange={(value) => {
+                                    field.onChange(value);
+                                    updateTotalReward(
+                                      rewards,
+                                      value || undefined,
+                                    );
+                                  }}
+                                  hideToken
+                                  className="relative rounded-l-none pr-6 focus-within:z-10"
+                                />
+                                <Button
+                                  type="button"
+                                  variant="ghost"
+                                  size="icon"
+                                  onClick={removeBonusReward}
+                                  className="text-muted-foreground hover:text-destructive absolute top-0 right-0 hidden group-hover:flex"
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              </div>
+                            </FormControl>
+                          </FormItem>
+                        )}
+                      />
+                    </div>
                   </div>
-                </div>
 
-                <FormField
-                  control={form.control}
-                  name={`rewards.${BONUS_REWARD_POSITION}`}
-                  render={() => (
-                    <FormItem className="group relative flex flex-col gap-2">
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="maxBonusSpots"
-                  render={() => (
-                    <FormItem className="group relative flex flex-col gap-2">
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-            )}
-          </div>
+                  <FormField
+                    control={form.control}
+                    name={`rewards.${BONUS_REWARD_POSITION}`}
+                    render={() => (
+                      <FormItem className="group relative flex flex-col gap-2">
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="maxBonusSpots"
+                    render={() => (
+                      <FormItem className="group relative flex flex-col gap-2">
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              )}
+            </div>
+          </ScrollArea>
 
           <div className="mt-8 shrink-0">
             <div className="flex justify-between gap-2">

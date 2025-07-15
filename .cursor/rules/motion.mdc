@@ -1,0 +1,37 @@
+---
+description: Framer motion is now motion/react
+alwaysApply: false
+---
+# Motion (formerly Framer Motion) — Cursor Rule
+
+## Summary
+
+- **Framer Motion** has been rebranded and spun out as an independent project called **Motion**.
+- The official site is now [https://motion.dev](https://motion.dev).
+- The library is no longer under the Framer umbrella, but is maintained by the original author with Framer's support.
+- Motion now supports not just React, but also vanilla JS and other frameworks (e.g., Vue).
+
+## Import Path Changes
+
+- **Old (Framer Motion):**
+  ```js
+  import { motion } from "framer-motion"
+  ```
+- **New (Motion):**
+  ```js
+  import { motion } from "motion/react"
+  ```
+- The npm package is now `motion` (not `framer-motion`).
+
+
+2. **Imports:**
+   - new import path: `import { motion } from "framer-motion"` to `import { motion } from "motion/react"`.
+
+
+## Key Points for LLMs and Users
+- **Framer Motion** and **Motion** refer to the same animation library, but Motion is the new, actively maintained version.
+- All new documentation, features, and support are at [motion.dev](https://motion.dev).
+- Do **not** use `framer-motion` for new projects; use `motion` instead.
+- For React, always import from `motion/react`.
+- If you see references to Framer Motion in older code or docs, they now map to Motion.
+- Everything component / code inside the library is same, only the import path for react is updated

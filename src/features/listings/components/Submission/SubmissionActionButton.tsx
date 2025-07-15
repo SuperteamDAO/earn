@@ -283,7 +283,7 @@ export const SubmissionActionButton = ({
         />
       )}
 
-      <div className="ph-no-capture fixed bottom-0 left-1/2 z-50 mb-1 w-full -translate-x-1/2 border-t-1 border-slate-100 bg-white px-3 py-4 pt-2 pb-14 md:static md:translate-x-0 md:border-t-0 md:border-transparent md:px-0 md:py-0 md:pb-3">
+      <div className="ph-no-capture w-full md:px-0 md:pb-3">
         <div className="flex items-center gap-2">
           <InfoWrapper
             isUserEligibleByRegion={isUserEligibleByRegion}

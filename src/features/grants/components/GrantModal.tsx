@@ -4,6 +4,7 @@ import { X } from 'lucide-react';
 import { useRef } from 'react';
 
 import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 import { applicationStateAtom } from '../atoms/applicationStateAtom';
 import { type Grant } from '../types';
@@ -43,35 +44,39 @@ export const GrantModal = ({
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent
         hideCloseIcon
-        className="max-w-xl p-0 md:max-h-[90svh]"
+        className="max-w-xl overflow-hidden p-0 md:max-h-[90svh]"
         ref={modalRef}
+        onInteractOutside={(e) => e.preventDefault()}
+        onEscapeKeyDown={(e) => e.preventDefault()}
       >
-        <X
-          className="absolute top-7 right-4 z-10 h-4 w-4 cursor-pointer text-slate-400 sm:top-6"
-          onClick={onClose}
-        />
-        {detailStates.includes(applicationState) && (
-          <ApplicationModal
-            grant={grant}
-            grantApplication={editableGrantApplication}
-            modalRef={modalRef}
-            onClose={onClose}
+        <ScrollArea className="h-full">
+          <X
+            className="absolute top-7 right-4 z-10 h-4 w-4 cursor-pointer text-slate-400 sm:top-6"
+            onClick={onClose}
           />
-        )}
-        {applicationState === 'KYC PENDING' && (
-          <KYCModal
-            applicationId={applicationId!}
-            grantId={grant.id}
-            onClose={onClose}
-          />
-        )}
-        {newTrancheFormStates.includes(applicationState) && (
-          <TrancheFormModal
-            grant={grant}
-            applicationId={applicationId!}
-            onClose={onClose}
-          />
-        )}
+          {detailStates.includes(applicationState) && (
+            <ApplicationModal
+              grant={grant}
+              grantApplication={editableGrantApplication}
+              modalRef={modalRef}
+              onClose={onClose}
+            />
+          )}
+          {applicationState === 'KYC PENDING' && (
+            <KYCModal
+              applicationId={applicationId!}
+              grantId={grant.id}
+              onClose={onClose}
+            />
+          )}
+          {newTrancheFormStates.includes(applicationState) && (
+            <TrancheFormModal
+              grant={grant}
+              applicationId={applicationId!}
+              onClose={onClose}
+            />
+          )}
+        </ScrollArea>
       </DialogContent>
     </Dialog>
   );

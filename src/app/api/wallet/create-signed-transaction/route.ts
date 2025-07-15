@@ -1,5 +1,6 @@
 import {
   createAssociatedTokenAccountInstruction,
+  createTransferCheckedInstruction,
   createTransferInstruction,
   getAssociatedTokenAddressSync,
   TOKEN_2022_PROGRAM_ID,
@@ -69,6 +70,39 @@ async function calculateAtaCreationCost(
   const ataCreationCostInUSD = solUSDValue * 0.0021;
   const tokenAmountToCharge = ataCreationCostInUSD / tokenUSDValue;
   return Math.ceil(tokenAmountToCharge * 10 ** decimals);
+}
+
+function createAppropriateTransferInstruction(
+  source: PublicKey,
+  destination: PublicKey,
+  owner: PublicKey,
+  amount: number,
+  mint: PublicKey,
+  decimals: number,
+  isToken2022: boolean,
+  programId: PublicKey,
+) {
+  if (isToken2022) {
+    return createTransferCheckedInstruction(
+      source,
+      mint,
+      destination,
+      owner,
+      amount,
+      decimals,
+      [],
+      programId,
+    );
+  } else {
+    return createTransferInstruction(
+      source,
+      destination,
+      owner,
+      amount,
+      [],
+      programId,
+    );
+  }
 }
 
 async function createFeePayerATA(
@@ -304,45 +338,53 @@ export async function POST(request: NextRequest) {
 
       if (ataCreationCost > 0) {
         allInstructions.push(
-          createTransferInstruction(
+          createAppropriateTransferInstruction(
             senderATA,
             feePayerATA,
             sender,
             ataCreationCost,
-            [],
+            tokenMint,
+            decimals,
+            isToken2022,
             programId,
           ),
         );
         allInstructions.push(
-          createTransferInstruction(
+          createAppropriateTransferInstruction(
             senderATA,
             receiverATA,
             sender,
             withdrawAmount - ataCreationCost,
-            [],
+            tokenMint,
+            decimals,
+            isToken2022,
             programId,
           ),
         );
       } else {
         allInstructions.push(
-          createTransferInstruction(
+          createAppropriateTransferInstruction(
             senderATA,
             receiverATA,
             sender,
             withdrawAmount,
-            [],
+            tokenMint,
+            decimals,
+            isToken2022,
             programId,
           ),
         );
       }
     } else {
       allInstructions.push(
-        createTransferInstruction(
+        createAppropriateTransferInstruction(
           senderATA,
           receiverATA,
           sender,
           withdrawAmount,
-          [],
+          tokenMint,
+          decimals,
+          isToken2022,
           programId,
         ),
       );
