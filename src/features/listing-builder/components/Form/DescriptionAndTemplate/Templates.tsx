@@ -37,7 +37,7 @@ import { LocalImage } from '@/components/ui/local-image';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useUser } from '@/store/user';
-import { WandAnimated } from '@/svg/wand-animated';
+import { WandAnimated } from '@/svg/WandAnimated/WandAnimated';
 import { cn } from '@/utils/cn';
 import { getURL } from '@/utils/validUrl';
 
