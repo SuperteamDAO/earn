@@ -17,9 +17,9 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { Progress } from '@/components/ui/progress';
 import { Tooltip } from '@/components/ui/tooltip';
 import { type SubmissionWithUser } from '@/interface/submission';
+import { GridScanAnimation } from '@/svg/DocumentScanAnimated/GridScanAnimation';
 import { WandAnimated } from '@/svg/WandAnimated/WandAnimated';
 // import { chunkArray } from '@/utils/chunkArray';
 import { cn } from '@/utils/cn';
@@ -43,7 +43,6 @@ export default function AiReviewProjectApplicationsModal({
   const [state, setState] = useState<'INIT' | 'PROCESSING' | 'DONE' | 'ERROR'>(
     'INIT',
   );
-  const [progress, setProgress] = useState(0);
   const [completedStats, setCompletedStats] = useState({
     totalReviewed: 0,
     shortlisted: 0,
@@ -99,11 +98,9 @@ export default function AiReviewProjectApplicationsModal({
     setState('PROCESSING');
 
     setTimeout(async () => {
-      setProgress(100);
       try {
-        console.log('Commiting Reviewed applications');
+        // Wait 10 seconds, then call commitReviews
         const data = await commitReviews();
-        console.log('commit data - ', data.data);
         setCompletedStats({
           totalReviewed: data.data.length,
           shortlisted: data.data.filter((s) => s.label === 'Shortlisted')
@@ -116,17 +113,12 @@ export default function AiReviewProjectApplicationsModal({
         setState('DONE');
         await refetchUnreviewedApplications();
       } catch (error: any) {
-        console.log(
-          'error occured while commiting reviewed applications',
-          error,
-        );
         setState('ERROR');
       }
-    }, 500);
+    }, 10000);
   }, [applications, unreviewedApplications, nonAnalysedApplications, posthog]);
   function onComplete() {
     setState('INIT');
-    setProgress(0);
     toast(
       <div className="flex flex-col gap-2">
         <div className="flex items-center gap-2">
@@ -285,15 +277,8 @@ export default function AiReviewProjectApplicationsModal({
           )}
           {state === 'PROCESSING' && (
             <>
-              <CardContent className="mt-8 flex flex-col items-center justify-center space-y-8 p-8">
-                <div className="relative h-2 w-2/4 max-w-md overflow-hidden rounded-md bg-[#f1f5f9]">
-                  <Progress
-                    value={progress}
-                    className="w-full bg-slate-100"
-                    indicatorClassName="bg-linear-to-r from-[#FF79C1] to-[#76C5FF]"
-                  />
-                </div>
-
+              <CardContent className="flex flex-col items-center justify-center space-y-8 p-8">
+                <GridScanAnimation />
                 <div className="text-center">
                   <p className="text-sm font-medium text-slate-500">
                     {`We're reviewing your submissions right now. Sit back and
