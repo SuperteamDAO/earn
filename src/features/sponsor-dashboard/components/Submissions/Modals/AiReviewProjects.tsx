@@ -20,6 +20,7 @@ import {
 import { Progress } from '@/components/ui/progress';
 import { Tooltip } from '@/components/ui/tooltip';
 import { type SubmissionWithUser } from '@/interface/submission';
+import { WandAnimated } from '@/svg/WandAnimated/WandAnimated';
 // import { chunkArray } from '@/utils/chunkArray';
 import { cn } from '@/utils/cn';
 
@@ -203,13 +204,17 @@ export default function AiReviewProjectApplicationsModal({
               <p className="mb-1 text-xs text-slate-400">
                 {unreviewedApplications?.length} Applications to review
               </p>
-              <div className="group bg-background relative inline-flex h-10 overflow-hidden rounded-[calc(1.5px+0.375rem-2px)] p-[1.5px] pb-[1.8px] shadow-[0px_2px_2.3px_0px_#0000002B] focus:outline-hidden">
-                <span className="absolute inset-[-1000%] animate-[spin_2s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#FF79C1_0%,#76C5FF_50%,#FF79C1_100%)]" />
-                <span className="ph-no-capture bg-background inline-flex h-full w-full cursor-pointer items-center justify-center gap-2 rounded-md px-4 py-1 text-sm font-medium text-slate-500 backdrop-blur-3xl group-hover:bg-slate-50">
-                  <img src="/assets/ai-wand.svg" alt="Auto Review AI" />
-                  Auto Review
-                </span>
-              </div>
+              <Button
+                className="text-accent-foreground from-primary-100 to-primary-200 shadow-primary ring-primary-100 flex h-9 items-center justify-center gap-2 rounded-lg bg-gradient-to-b px-4 transition-all hover:ring-0"
+                variant="outline"
+              >
+                <WandAnimated
+                  className="!size-4"
+                  starColor="bg-slate-500"
+                  stickColor="bg-slate-800"
+                />
+                Auto Review
+              </Button>
             </button>
           </DialogTrigger>
         )}
