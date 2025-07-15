@@ -44,7 +44,7 @@ export const GrantModal = ({
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent
         hideCloseIcon
-        className="max-w-xl overflow-hidden p-0 md:max-h-[90svh]"
+        className="max-w-xl overflow-y-scroll p-0 md:max-h-[90svh]"
         ref={modalRef}
         onInteractOutside={(e) => e.preventDefault()}
         onEscapeKeyDown={(e) => e.preventDefault()}
