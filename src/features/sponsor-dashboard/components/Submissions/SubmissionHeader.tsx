@@ -260,6 +260,13 @@ export const SubmissionHeader = ({
           >
             {bountyStatus}
           </StatusPill>
+
+          <div className="ml-4 -translate-y-2.5">
+            <AiReviewProjectApplicationsModal
+              listing={bounty}
+              applications={submissions}
+            />
+          </div>
         </div>
       </div>
       {!isProject && !bounty?.isWinnersAnnounced && (
@@ -327,12 +334,6 @@ export const SubmissionHeader = ({
               Click here
             </span>
           </p>
-          <div className="-translate-y-2">
-            <AiReviewProjectApplicationsModal
-              listing={bounty}
-              applications={submissions}
-            />
-          </div>
         </div>
       )}
 
