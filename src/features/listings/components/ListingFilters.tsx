@@ -48,7 +48,10 @@ export const ListingFilters = ({
       }}
     >
       <DropdownMenuTrigger>
-        <div className="relative cursor-pointer rounded-md p-2 hover:bg-slate-100">
+        <div className="relative flex cursor-pointer items-center gap-1.5 rounded-md p-2 hover:bg-slate-100 sm:p-1.5">
+          <span className="hidden text-[0.8rem] font-semibold text-slate-500 sm:flex">
+            Filter
+          </span>
           <LucideListFilter className="size-4 stroke-3 text-slate-600" />
           {!isDefaultFilterApplied && (
             <span

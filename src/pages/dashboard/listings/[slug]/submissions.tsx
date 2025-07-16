@@ -480,7 +480,7 @@ export default function BountySubmissions({ slug }: Props) {
               </div>
 
               {(!!searchText || selectedFilters.size > 0) && (
-                <div className="mt-4 flex items-center justify-start gap-4">
+                <div className="mt-4 ml-4 flex items-center justify-start gap-4">
                   <p className="text-sm text-slate-400">
                     Found{' '}
                     <span className="font-bold">

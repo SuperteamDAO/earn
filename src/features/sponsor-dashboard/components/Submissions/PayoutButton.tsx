@@ -24,7 +24,6 @@ import { tokenList } from '@/constants/tokenList';
 import { type SubmissionWithUser } from '@/interface/submission';
 import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
-import { cn } from '@/utils/cn';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
 
@@ -227,27 +226,32 @@ export const PayoutButton = ({ bounty, submission }: Props) => {
           posthog.capture('connect wallet_payment');
         }}
       >
-        <DynamicWalletMultiButton
-          style={{
-            height: '40px',
-            fontWeight: 500,
-            fontFamily: 'Inter',
-            paddingRight: '20px',
-            paddingLeft: '20px',
-            fontSize: '14px',
-            margin: '0px',
-          }}
-        >
-          {connected
-            ? truncatePublicKey(publicKey?.toBase58(), 3)
-            : `Pay ${
-                formatNumberWithSuffix(remainingAmount, 2, true) || '0'
-              } ${bounty?.token}`}
-        </DynamicWalletMultiButton>
+        {!connected && (
+          <DynamicWalletMultiButton
+            style={{
+              height: '40px',
+              minWidth: '160px',
+              textAlign: 'center',
+              justifyContent: 'center',
+              alignItems: 'center',
+              fontWeight: 600,
+              fontFamily: 'Inter',
+              paddingRight: '20px',
+              paddingLeft: '20px',
+              fontSize: '14px',
+            }}
+          >
+            {connected
+              ? truncatePublicKey(publicKey?.toBase58(), 3)
+              : `Pay ${
+                  formatNumberWithSuffix(remainingAmount, 2, true) || '0'
+                } ${bounty?.token}`}
+          </DynamicWalletMultiButton>
+        )}
       </div>
       {connected && (
         <Button
-          className={cn('ph-no-capture disabled:cursor-not-allowed')}
+          className="ph-no-capture min-w-[160px] text-center disabled:cursor-not-allowed"
           disabled={!bounty?.isWinnersAnnounced || remainingAmount <= 0}
           onClick={async () => {
             if (!submission?.user.walletAddress) {
