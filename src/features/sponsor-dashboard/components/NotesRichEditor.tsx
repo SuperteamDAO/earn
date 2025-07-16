@@ -1,3 +1,4 @@
+import CharacterCount from '@tiptap/extension-character-count';
 import Placeholder from '@tiptap/extension-placeholder';
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
@@ -5,8 +6,6 @@ import * as React from 'react';
 
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/utils/cn';
-
-import { getTextCharacterCount } from '../utils/convertTextToNotesHTML';
 
 export interface NotesRichEditorProps {
   value?: string;
@@ -58,6 +57,9 @@ const useNotesEditor = ({
       }),
       Placeholder.configure({
         placeholder,
+      }),
+      CharacterCount.configure({
+        limit: maxLength,
       }),
     ],
     content: value || '',
@@ -170,25 +172,6 @@ const useNotesEditor = ({
   React.useEffect(() => {
     if (!editor || !maxLength) return;
 
-    const getCurrentTextLength = () => {
-      // Use the same character counting method as the display counter
-      const htmlContent = editor.getHTML();
-      const length = getTextCharacterCount(htmlContent);
-      console.log(
-        `[NotesRichEditor] Current character count: ${length}/${maxLength}`,
-      );
-      return length;
-    };
-
-    const wouldExceedLimit = (newContent: string) => {
-      const currentLength = getCurrentTextLength();
-      const wouldExceed = currentLength + newContent.length > maxLength;
-      console.log(
-        `[NotesRichEditor] Adding "${newContent}" (${newContent.length} chars) would exceed limit: ${wouldExceed}`,
-      );
-      return wouldExceed;
-    };
-
     const handleKeyDown = (event: KeyboardEvent) => {
       // Stop arrow key events from bubbling up to prevent interference with submission navigation
       if (
@@ -210,17 +193,11 @@ const useNotesEditor = ({
 
       // For printable characters, check if they would exceed the limit
       if (event.key.length === 1) {
-        const currentLength = getCurrentTextLength();
+        const currentLength = editor.storage.characterCount.characters();
         if (currentLength >= maxLength) {
-          console.log(
-            `[NotesRichEditor] Blocking key "${event.key}" - already at limit (${currentLength}/${maxLength})`,
-          );
           event.preventDefault();
           return;
         }
-        console.log(
-          `[NotesRichEditor] Allowing key "${event.key}" - still room (${currentLength}/${maxLength})`,
-        );
       }
     };
 
@@ -232,45 +209,44 @@ const useNotesEditor = ({
         event.inputType === 'deleteContent' ||
         event.inputType === 'deleteByCut'
       ) {
-        console.log(
-          `[NotesRichEditor] Allowing deletion operation: ${event.inputType}`,
-        );
         return;
       }
 
       // For insertions, check character limit
       const newContent = event.data || '';
-      if (newContent && wouldExceedLimit(newContent)) {
-        console.log(
-          `[NotesRichEditor] Blocking beforeinput - would exceed limit`,
-        );
+      const currentLength = editor.storage.characterCount.characters();
+      if (newContent && currentLength + newContent.length > maxLength) {
         event.preventDefault();
       }
     };
 
     const handlePaste = (event: ClipboardEvent) => {
       event.preventDefault();
-
-      const pastedText = event.clipboardData?.getData('text') || '';
+      let pastedText = event.clipboardData?.getData('text') || '';
       if (!pastedText) return;
 
-      const currentLength = getCurrentTextLength();
-      const remainingChars = maxLength - currentLength;
+      pastedText = pastedText
+        .split('\n')
+        .map((line) => line.trim())
+        .filter((line) => line.length > 0)
+        .join('\n');
 
-      console.log(
-        `[NotesRichEditor] Paste attempt: ${pastedText.length} chars, remaining: ${remainingChars}`,
-      );
-
-      if (remainingChars > 0) {
-        // Insert only the portion that fits
-        const textToInsert = pastedText.substring(0, remainingChars);
-        console.log(
-          `[NotesRichEditor] Inserting ${textToInsert.length} chars from paste`,
-        );
-        editor.commands.insertContent(textToInsert);
-      } else {
-        console.log(`[NotesRichEditor] No room for paste - already at limit`);
+      const currentLength = editor.storage.characterCount.characters();
+      if (currentLength + pastedText.length > maxLength) {
+        // Block paste if it would exceed the limit
+        return;
       }
+      editor.commands.insertContent(pastedText);
+      setTimeout(() => {
+        const text = editor.getText().trim();
+        if (
+          text.length > 0 &&
+          !editor.isActive('bulletList') &&
+          !editor.isActive('orderedList')
+        ) {
+          editor.commands.toggleBulletList();
+        }
+      }, 0);
     };
 
     const editorElement = editor.view.dom;
@@ -339,6 +315,12 @@ export const NotesRichEditor: React.FC<NotesRichEditorProps> = ({
             max-height: 25rem;
             padding-left: 0px !important;
             padding-right: 0px !important;
+            word-break: break-word;
+            overflow-wrap: break-word;
+            word-wrap: break-word; /* Fallback for older browsers */
+            overflow-x: hidden;
+            max-width: 100%;
+            box-sizing: border-box;
           }
 
           .notes-rich-editor p.is-editor-empty:first-child::before {
