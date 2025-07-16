@@ -88,7 +88,7 @@ export default function AiReviewProjectApplicationsModal({
     return estimateTime(nonAnalysedApplications?.length || 1);
   }, [nonAnalysedApplications?.length]);
 
-  const [estimatedTimeSingular] = useState('~0mins');
+  const [estimatedTimeSingular] = useState('~15 seconds');
   useMemo(() => {
     return estimateTime(nonAnalysedApplications?.length || 1, true);
   }, [nonAnalysedApplications?.length]);
