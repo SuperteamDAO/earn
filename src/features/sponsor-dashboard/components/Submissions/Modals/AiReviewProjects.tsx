@@ -1,9 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
 import { Check, InfoIcon, Wand2, XCircle } from 'lucide-react';
+import { AnimatePresence, motion } from 'motion/react';
 import posthog from 'posthog-js';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
+import { AnimateChangeInHeight } from '@/components/shared/AnimateChangeInHeight';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -17,9 +19,9 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import { Progress } from '@/components/ui/progress';
 import { Tooltip } from '@/components/ui/tooltip';
 import { type SubmissionWithUser } from '@/interface/submission';
-import { GridScanAnimation } from '@/svg/DocumentScanAnimated/GridScanAnimation';
 import { WandAnimated } from '@/svg/WandAnimated/WandAnimated';
 // import { chunkArray } from '@/utils/chunkArray';
 import { cn } from '@/utils/cn';
@@ -43,6 +45,44 @@ export default function AiReviewProjectApplicationsModal({
   const [state, setState] = useState<'INIT' | 'PROCESSING' | 'DONE' | 'ERROR'>(
     'INIT',
   );
+  const [progress, setProgress] = useState(0);
+  const progressIntervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Simplified fake progress effect
+  useEffect(() => {
+    if (state !== 'PROCESSING') {
+      if (progressIntervalRef.current) {
+        clearInterval(progressIntervalRef.current);
+        progressIntervalRef.current = null;
+      }
+      return;
+    }
+
+    setProgress(0);
+    let currentProgress = 0;
+
+    progressIntervalRef.current = setInterval(() => {
+      currentProgress += Math.random() * 15 + 6; // Random increment between 2-10
+      const cappedProgress = Math.min(currentProgress, 99);
+      setProgress(cappedProgress);
+
+      if (cappedProgress >= 99) {
+        if (progressIntervalRef.current) {
+          clearInterval(progressIntervalRef.current);
+          progressIntervalRef.current = null;
+        }
+      }
+    }, 400); // Update every 400ms
+
+    // Cleanup on unmount or state change
+    return () => {
+      if (progressIntervalRef.current) {
+        clearInterval(progressIntervalRef.current);
+        progressIntervalRef.current = null;
+      }
+    };
+  }, [state]);
+
   const [completedStats, setCompletedStats] = useState({
     totalReviewed: 0,
     shortlisted: 0,
@@ -88,7 +128,7 @@ export default function AiReviewProjectApplicationsModal({
     return estimateTime(nonAnalysedApplications?.length || 1);
   }, [nonAnalysedApplications?.length]);
 
-  const [estimatedTimeSingular] = useState('~15 seconds');
+  const [estimatedTimeSingular] = useState('~30 seconds');
   useMemo(() => {
     return estimateTime(nonAnalysedApplications?.length || 1, true);
   }, [nonAnalysedApplications?.length]);
@@ -98,9 +138,11 @@ export default function AiReviewProjectApplicationsModal({
     setState('PROCESSING');
 
     setTimeout(async () => {
+      setProgress(100);
       try {
-        // Wait 10 seconds, then call commitReviews
+        console.log('Commiting Reviewed applications');
         const data = await commitReviews();
+        console.log('commit data - ', data.data);
         setCompletedStats({
           totalReviewed: data.data.length,
           shortlisted: data.data.filter((s) => s.label === 'Shortlisted')
@@ -113,12 +155,17 @@ export default function AiReviewProjectApplicationsModal({
         setState('DONE');
         await refetchUnreviewedApplications();
       } catch (error: any) {
+        console.log(
+          'error occured while commiting reviewed applications',
+          error,
+        );
         setState('ERROR');
       }
-    }, 10000);
+    }, 10000); // Wait for 10 seconds
   }, [applications, unreviewedApplications, nonAnalysedApplications, posthog]);
   function onComplete() {
     setState('INIT');
+    setProgress(0);
     toast(
       <div className="flex flex-col gap-2">
         <div className="flex items-center gap-2">
@@ -188,7 +235,7 @@ export default function AiReviewProjectApplicationsModal({
         !!unreviewedApplications?.length && (
           <DialogTrigger asChild>
             <button
-              className="ph-no-capture"
+              className="h-9"
               onClick={() => {
                 posthog.capture('open_ai review grants');
               }}
@@ -196,17 +243,17 @@ export default function AiReviewProjectApplicationsModal({
               <p className="mb-1 text-xs text-slate-400">
                 {unreviewedApplications?.length} Applications to review
               </p>
-              <Button
-                className="text-accent-foreground from-primary-100 to-primary-200 shadow-primary ring-primary-100 flex h-9 items-center justify-center gap-2 rounded-lg bg-gradient-to-b px-4 transition-all hover:ring-0"
-                variant="outline"
-              >
-                <WandAnimated
-                  className="!size-4"
-                  starColor="bg-slate-500"
-                  stickColor="bg-slate-800"
-                />
-                Auto Review
-              </Button>
+              <div className="group bg-background relative inline-flex h-full overflow-hidden rounded-lg p-[0.125rem] focus:outline-hidden">
+                <span className="absolute inset-[-1000%] animate-[spin_2s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#FF79C1_0%,#76C5FF_50%,#FF79C1_100%)]" />
+                <span className="ph-no-capture bg-background inline-flex h-full w-full cursor-pointer items-center justify-center gap-2 rounded-md px-4 py-1 text-xs font-medium text-slate-800 backdrop-blur-3xl group-hover:bg-slate-50">
+                  <WandAnimated
+                    className="!size-4"
+                    stickColor="bg-slate-600"
+                    starColor="bg-slate-400"
+                  />
+                  Auto Review
+                </span>
+              </div>
             </button>
           </DialogTrigger>
         )}
@@ -218,160 +265,195 @@ export default function AiReviewProjectApplicationsModal({
             </DialogTitle>
           </CardHeader>
 
-          {state === 'INIT' && (
-            <>
-              <CardContent className="px-6 py-4">
-                <div className="space-y-2 font-medium">
-                  <div className="flex items-center justify-between">
-                    <span className="flex items-center gap-2 text-base text-slate-500">
-                      Unreviewed Applications
-                      <Tooltip
-                        content="We will only review unreviewed submissions. If you’ve already reviewed some submissions, those will remain untouched."
-                        contentProps={{
-                          style: {
-                            zIndex: '100',
-                          },
-                        }}
-                      >
-                        <InfoIcon className="h-4 w-4 text-slate-400" />
-                      </Tooltip>
-                    </span>
-                    <span className="text-xl font-semibold">
-                      {totalApplications}
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-base text-slate-500">
-                      Credits Used
-                    </span>
-                    <div className="flex items-center gap-2">
-                      <span className="rounded-full bg-green-100 px-2 py-0 text-sm text-green-700">
-                        Free
-                      </span>
+          <AnimateChangeInHeight>
+            <AnimatePresence mode="popLayout">
+              {state === 'INIT' && (
+                <motion.div
+                  key="init"
+                  initial={{ opacity: 0, y: -20, filter: 'blur(8px)' }}
+                  animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                  exit={{ opacity: 0, y: 20, filter: 'blur(8px)' }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <CardContent className="px-6 py-4">
+                    <div className="space-y-2 font-medium">
+                      <div className="flex items-center justify-between">
+                        <span className="flex items-center gap-2 text-base text-slate-500">
+                          Unreviewed Applications
+                          <Tooltip
+                            content="We will only review unreviewed submissions. If you've already reviewed some submissions, those will remain untouched."
+                            contentProps={{
+                              style: {
+                                zIndex: '100',
+                              },
+                            }}
+                          >
+                            <InfoIcon className="h-4 w-4 text-slate-400" />
+                          </Tooltip>
+                        </span>
+                        <span className="text-xl font-semibold">
+                          {totalApplications}
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-base text-slate-500">
+                          Credits Used
+                        </span>
+                        <div className="flex items-center gap-2">
+                          <span className="rounded-full bg-green-100 px-2 py-0 text-sm text-green-700">
+                            Free
+                          </span>
+                        </div>
+                      </div>
+                      <div className="flex items-center justify-between text-slate-500">
+                        <span className="text-base">Estimated Time</span>
+                        <span className="text-lg">{estimatedTime}</span>
+                      </div>
                     </div>
-                  </div>
-                  <div className="flex items-center justify-between text-slate-500">
-                    <span className="text-base">Estimated Time</span>
-                    <span className="text-lg">{estimatedTime}</span>
-                  </div>
-                </div>
-              </CardContent>
-              <CardFooter className="flex flex-col px-6">
-                <Button
-                  className="ph-no-capture mt-4 w-full"
-                  size="lg"
-                  onClick={() => {
-                    onReviewClick?.();
-                  }}
+                  </CardContent>
+                  <CardFooter className="flex flex-col px-6">
+                    <Button
+                      className="ph-no-capture mt-4 w-full"
+                      size="lg"
+                      onClick={() => {
+                        onReviewClick?.();
+                      }}
+                    >
+                      <Wand2 className="mr-2 h-5 w-5" />
+                      Auto Review
+                    </Button>
+
+                    <p className="text-muted-foreground mt-2 text-center text-sm">
+                      AI can make mistakes. Check important info before
+                      approving or rejecting a grant application.
+                    </p>
+                  </CardFooter>
+                </motion.div>
+              )}
+              {state === 'PROCESSING' && (
+                <motion.div
+                  key="processing"
+                  initial={{ opacity: 0, y: -20, filter: 'blur(8px)' }}
+                  animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                  exit={{ opacity: 0, y: 20, filter: 'blur(8px)' }}
+                  transition={{ duration: 0.3 }}
                 >
-                  <Wand2 className="mr-2 h-5 w-5" />
-                  Auto Review
-                </Button>
+                  <CardContent className="mt-8 flex flex-col items-center justify-center space-y-8 p-8">
+                    <div className="relative h-2 w-2/4 max-w-md overflow-hidden rounded-md bg-[#f1f5f9]">
+                      <Progress
+                        value={progress}
+                        className="w-full bg-slate-100"
+                        indicatorClassName="bg-linear-to-r from-[#FF79C1] to-[#76C5FF] duration-200"
+                      />
+                    </div>
 
-                <p className="text-muted-foreground mt-2 text-center text-sm">
-                  AI can make mistakes. Check important info before approving or
-                  rejecting a grant application.
-                </p>
-              </CardFooter>
-            </>
-          )}
-          {state === 'PROCESSING' && (
-            <>
-              <CardContent className="flex flex-col items-center justify-center space-y-8 p-8">
-                <GridScanAnimation />
-                <div className="text-center">
-                  <p className="text-sm font-medium text-slate-500">
-                    {`We're reviewing your submissions right now. Sit back and
-                    relax, or contemplate your life choices for a moment.`}
-                  </p>
-                </div>
-              </CardContent>
-              <CardFooter className="w-full bg-slate-50 py-3 text-center text-base text-slate-500">
-                <p className="w-full text-sm">
-                  Approx. {estimatedTimeSingular} remaining
-                </p>
-              </CardFooter>
-            </>
-          )}
-          {state === 'DONE' && (
-            <>
-              <CardContent className="flex flex-col items-center space-y-8 p-8 text-center">
-                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-emerald-50">
-                  <Check className="h-8 w-8 stroke-[2.5] text-emerald-700" />
-                </div>
-
-                <div className="space-y-2">
-                  <h2 className="text-xl font-semibold">
-                    Successfully Reviewed
-                  </h2>
-                  <p className="mx-auto w-4/5 text-sm text-slate-500">
-                    Remember, AI can make mistakes. Check before finalizing.
-                  </p>
-                </div>
-
-                <div className="w-full space-y-2">
-                  <StatItem
-                    label="Total Reviewed"
-                    value={completedStats.totalReviewed}
-                    dotColor="bg-blue-400"
-                  />
-                  <StatItem
-                    label="Shortlisted"
-                    value={completedStats.shortlisted}
-                    dotColor="bg-violet-400"
-                  />
-                  <StatItem
-                    label="Low Quality"
-                    value={completedStats.lowQuality}
-                    dotColor="bg-stone-400"
-                  />
-                  <StatItem
-                    label="Mid Quality"
-                    value={completedStats.midQuality}
-                    dotColor="bg-cyan-400"
-                  />
-                  <StatItem
-                    label="Total time saved"
-                    value={formatTime(completedStats.totalHoursSaved)}
-                    dotColor="bg-green-400"
-                  />
-                </div>
-
-                <Button
-                  variant="outline"
-                  className="w-full border-[#e2e8f0] text-[#62748e]"
-                  onClick={onComplete}
+                    <div className="text-center">
+                      <p className="text-sm font-medium text-slate-500">
+                        {`We're reviewing your submissions right now. Sit back and
+                        relax, or contemplate your life choices for a moment.`}
+                      </p>
+                    </div>
+                  </CardContent>
+                  <CardFooter className="w-full bg-slate-50 py-3 text-center text-base text-slate-500">
+                    <p className="w-full text-sm">
+                      Approx. {estimatedTimeSingular} remaining
+                    </p>
+                  </CardFooter>
+                </motion.div>
+              )}
+              {state === 'DONE' && (
+                <motion.div
+                  key="done"
+                  initial={{ opacity: 0, y: -20, filter: 'blur(8px)' }}
+                  animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                  exit={{ opacity: 0, y: 20, filter: 'blur(8px)' }}
+                  transition={{ duration: 0.3 }}
                 >
-                  Have a look
-                </Button>
-              </CardContent>
-            </>
-          )}
-          {state === 'ERROR' && (
-            <>
-              <CardContent className="flex flex-col items-center space-y-8 p-8 text-center">
-                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-red-50">
-                  <XCircle className="h-8 w-8 stroke-[2.5] text-red-600" />
-                </div>
+                  <CardContent className="flex flex-col items-center space-y-8 p-8 text-center">
+                    <div className="flex h-16 w-16 items-center justify-center rounded-full bg-emerald-50">
+                      <Check className="h-8 w-8 stroke-[2.5] text-emerald-700" />
+                    </div>
 
-                <div className="space-y-2">
-                  <h2 className="text-xl font-semibold">Review Failed</h2>
-                  <p className="mx-auto w-4/5 text-sm text-slate-500">
-                    Something went wrong while reviewing the applications.
-                    Please try again.
-                  </p>
-                </div>
+                    <div className="space-y-2">
+                      <h2 className="text-xl font-semibold">
+                        Successfully Reviewed
+                      </h2>
+                      <p className="mx-auto w-4/5 text-sm text-slate-500">
+                        Remember, AI can make mistakes. Check before finalizing.
+                      </p>
+                    </div>
 
-                <Button
-                  variant="outline"
-                  className="w-full border-[#e2e8f0] text-[#62748e]"
-                  onClick={() => setState('INIT')}
+                    <div className="w-full space-y-2">
+                      <StatItem
+                        label="Total Reviewed"
+                        value={completedStats.totalReviewed}
+                        dotColor="bg-blue-400"
+                      />
+                      <StatItem
+                        label="Shortlisted"
+                        value={completedStats.shortlisted}
+                        dotColor="bg-violet-400"
+                      />
+                      <StatItem
+                        label="Low Quality"
+                        value={completedStats.lowQuality}
+                        dotColor="bg-stone-400"
+                      />
+                      <StatItem
+                        label="Mid Quality"
+                        value={completedStats.midQuality}
+                        dotColor="bg-cyan-400"
+                      />
+                      <StatItem
+                        label="Total time saved"
+                        value={formatTime(completedStats.totalHoursSaved)}
+                        dotColor="bg-green-400"
+                      />
+                    </div>
+
+                    <Button
+                      variant="outline"
+                      className="w-full border-[#e2e8f0] text-[#62748e]"
+                      onClick={onComplete}
+                    >
+                      Have a look
+                    </Button>
+                  </CardContent>
+                </motion.div>
+              )}
+              {state === 'ERROR' && (
+                <motion.div
+                  key="error"
+                  initial={{ opacity: 0, y: -20, filter: 'blur(8px)' }}
+                  animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                  exit={{ opacity: 0, y: 20, filter: 'blur(8px)' }}
+                  transition={{ duration: 0.3 }}
                 >
-                  Try Again
-                </Button>
-              </CardContent>
-            </>
-          )}
+                  <CardContent className="flex flex-col items-center space-y-8 p-8 text-center">
+                    <div className="flex h-16 w-16 items-center justify-center rounded-full bg-red-50">
+                      <XCircle className="h-8 w-8 stroke-[2.5] text-red-600" />
+                    </div>
+
+                    <div className="space-y-2">
+                      <h2 className="text-xl font-semibold">Review Failed</h2>
+                      <p className="mx-auto w-4/5 text-sm text-slate-500">
+                        Something went wrong while reviewing the applications.
+                        Please try again.
+                      </p>
+                    </div>
+
+                    <Button
+                      variant="outline"
+                      className="w-full border-[#e2e8f0] text-[#62748e]"
+                      onClick={() => setState('INIT')}
+                    >
+                      Try Again
+                    </Button>
+                  </CardContent>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </AnimateChangeInHeight>
         </Card>
       </DialogContent>
     </Dialog>
