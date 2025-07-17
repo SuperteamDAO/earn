@@ -23,13 +23,11 @@ import { Progress } from '@/components/ui/progress';
 import { Tooltip } from '@/components/ui/tooltip';
 import { type SubmissionWithUser } from '@/interface/submission';
 import { WandAnimated } from '@/svg/WandAnimated/WandAnimated';
-// import { chunkArray } from '@/utils/chunkArray';
 import { cn } from '@/utils/cn';
 
 import { type GrantApplicationAi } from '@/features/grants/types';
 import { type Listing } from '@/features/listings/types';
 import { useCommitReviewsSubmissions } from '@/features/sponsor-dashboard/mutations/useCommitReviewsSubmissions';
-// import { useReviewApplication } from '@/features/sponsor-dashboard/mutations/useReviewApplication';
 import { unreviewedSubmissionsQuery } from '@/features/sponsor-dashboard/queries/unreviewed-submissions';
 import { colorMap } from '@/features/sponsor-dashboard/utils/statusColorMap';
 
@@ -48,7 +46,6 @@ export default function AiReviewProjectApplicationsModal({
   const [progress, setProgress] = useState(0);
   const progressIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Simplified fake progress effect
   useEffect(() => {
     if (state !== 'PROCESSING') {
       if (progressIntervalRef.current) {
@@ -62,7 +59,7 @@ export default function AiReviewProjectApplicationsModal({
     let currentProgress = 0;
 
     progressIntervalRef.current = setInterval(() => {
-      currentProgress += Math.random() * 15 + 6; // Random increment between 2-10
+      currentProgress += Math.random() * 15 + 6;
       const cappedProgress = Math.min(currentProgress, 99);
       setProgress(cappedProgress);
 
@@ -72,9 +69,8 @@ export default function AiReviewProjectApplicationsModal({
           progressIntervalRef.current = null;
         }
       }
-    }, 400); // Update every 400ms
+    }, 400);
 
-    // Cleanup on unmount or state change
     return () => {
       if (progressIntervalRef.current) {
         clearInterval(progressIntervalRef.current);
@@ -105,9 +101,6 @@ export default function AiReviewProjectApplicationsModal({
     refetchUnreviewedApplications();
   }, [applications, refetchUnreviewedApplications]);
 
-  // const { mutateAsync: reviewApplication } = useReviewApplication(
-  //   grant?.slug || '',
-  // );
   const { mutateAsync: commitReviews } = useCommitReviewsSubmissions(
     listing?.slug || '',
     listing?.id || '',
@@ -161,7 +154,7 @@ export default function AiReviewProjectApplicationsModal({
         );
         setState('ERROR');
       }
-    }, 10000); // Wait for 10 seconds
+    }, 10000);
   }, [applications, unreviewedApplications, nonAnalysedApplications, posthog]);
   function onComplete() {
     setState('INIT');

@@ -33,7 +33,6 @@ const useNotesEditor = ({
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
-        // Only include the features we want
         bulletList: {
           HTMLAttributes: {
             class: 'list-disc list-inside space-y-1',
@@ -44,7 +43,6 @@ const useNotesEditor = ({
             class: 'list-decimal list-inside space-y-1',
           },
         },
-        // Disable other features
         heading: false,
         horizontalRule: false,
         codeBlock: false,
@@ -72,7 +70,6 @@ const useNotesEditor = ({
     onUpdate: ({ editor }) => {
       const text = editor.getText();
 
-      // If editor is empty, return empty string
       if (!text.trim()) {
         onChange?.('');
         return;
@@ -81,14 +78,12 @@ const useNotesEditor = ({
       onChange?.(editor.getHTML());
     },
     onCreate: ({ editor }) => {
-      // Set initial content if provided
       if (value) {
         editor.commands.setContent(value);
       }
     },
   });
 
-  // Handle content changes and enforce bullet point rules
   React.useEffect(() => {
     if (!editor) return;
 
@@ -96,12 +91,10 @@ const useNotesEditor = ({
       const text = editor.getText().trim();
 
       if (text.length > 0) {
-        // Check if we're in a list
         const isInList =
           editor.isActive('bulletList') || editor.isActive('orderedList');
 
         if (!isInList) {
-          // If we have content but not in a list, convert to bullet list
           editor.commands.toggleBulletList();
         }
       }
@@ -114,7 +107,6 @@ const useNotesEditor = ({
     };
   }, [editor, id]);
 
-  // Handle Enter key to ensure new bullet points
   React.useEffect(() => {
     if (!editor) return;
 
@@ -125,7 +117,6 @@ const useNotesEditor = ({
           editor.isActive('bulletList') || editor.isActive('orderedList');
 
         if (!isInList && text.length > 0) {
-          // If not in a list but have content, prevent default and create a bullet list
           event.preventDefault();
           editor.commands.toggleBulletList();
           return;
@@ -141,7 +132,6 @@ const useNotesEditor = ({
     };
   }, [editor]);
 
-  // Handle typing to auto-create bullet points
   React.useEffect(() => {
     if (!editor) return;
 
@@ -151,11 +141,9 @@ const useNotesEditor = ({
       const text = doc.textContent.trim();
 
       if (text.length === 1) {
-        // First character typed, ensure we're in a bullet list
         const isInList =
           editor.isActive('bulletList') || editor.isActive('orderedList');
         if (!isInList) {
-          // Wrap the content in a bullet list
           editor.commands.toggleBulletList();
         }
       }
@@ -168,19 +156,16 @@ const useNotesEditor = ({
     };
   }, [editor]);
 
-  // Handle character limit enforcement
   React.useEffect(() => {
     if (!editor || !maxLength) return;
 
     const handleKeyDown = (event: KeyboardEvent) => {
-      // Stop arrow key events from bubbling up to prevent interference with submission navigation
       if (
         ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(event.key)
       ) {
         event.stopPropagation();
       }
 
-      // Always allow deletion keys
       if (
         event.key === 'Backspace' ||
         event.key === 'Delete' ||
@@ -191,7 +176,6 @@ const useNotesEditor = ({
         return;
       }
 
-      // For printable characters, check if they would exceed the limit
       if (event.key.length === 1) {
         const currentLength = editor.storage.characterCount.characters();
         if (currentLength >= maxLength) {
@@ -202,7 +186,6 @@ const useNotesEditor = ({
     };
 
     const handleBeforeInput = (event: InputEvent) => {
-      // Allow deletion operations
       if (
         event.inputType === 'deleteContentBackward' ||
         event.inputType === 'deleteContentForward' ||
@@ -212,7 +195,6 @@ const useNotesEditor = ({
         return;
       }
 
-      // For insertions, check character limit
       const newContent = event.data || '';
       const currentLength = editor.storage.characterCount.characters();
       if (newContent && currentLength + newContent.length > maxLength) {
@@ -233,7 +215,6 @@ const useNotesEditor = ({
 
       const currentLength = editor.storage.characterCount.characters();
       if (currentLength + pastedText.length > maxLength) {
-        // Block paste if it would exceed the limit
         return;
       }
       editor.commands.insertContent(pastedText);
@@ -317,7 +298,7 @@ export const NotesRichEditor: React.FC<NotesRichEditorProps> = ({
             padding-right: 0px !important;
             word-break: break-word;
             overflow-wrap: break-word;
-            word-wrap: break-word; /* Fallback for older browsers */
+            word-wrap: break-word;
             overflow-x: hidden;
             max-width: 100%;
             box-sizing: border-box;

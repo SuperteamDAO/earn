@@ -18,7 +18,6 @@ import { NotesRichEditor } from '../NotesRichEditor';
 const MAX_CHARACTERS = 1000;
 
 type Props = {
-  initialNotes?: string;
   slug: string | undefined;
 };
 
@@ -28,9 +27,7 @@ export const Notes = ({ slug }: Props) => {
   );
   const setNotesUpdating = useSetAtom(isStateUpdatingAtom);
   const [notes, setNotes] = useState(selectedSubmission?.notes);
-  useEffect(() => {
-    setNotes(selectedSubmission?.notes);
-  }, [selectedSubmission]);
+
   const queryClient = useQueryClient();
   const submissionId = useMemo(
     () => selectedSubmission?.id,
