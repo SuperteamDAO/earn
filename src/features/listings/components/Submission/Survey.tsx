@@ -1,4 +1,4 @@
-import posthog, { type Survey, type SurveyQuestion } from 'posthog-js';
+import posthog, { type SurveyQuestion } from 'posthog-js';
 import { useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -9,10 +9,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 
-function getMatchingSurvey(surveys: Survey[], id: string): Survey | null {
-  const survey = surveys.find((survey) => survey.id === id);
-  return survey || null;
-}
+import { getMatchingSurvey } from '@/features/surveys/utils/get-matching-survey';
 
 export const SurveyModal = ({
   isOpen,
