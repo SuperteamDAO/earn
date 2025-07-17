@@ -12,7 +12,7 @@ const telegramRegex = new RegExp(
   }|\\+[a-zA-Z0-9_-]+)\/?$`,
 );
 
-const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{1,}$/;
 
 export const tweetLinkRegex =
   /^(https?:\/\/)?(www\.)?(twitter\.com|x\.com)\/[a-zA-Z0-9_]{4,15}\/status\/\d+\/?$/;

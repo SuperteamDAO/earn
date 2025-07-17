@@ -6,7 +6,11 @@ import React, { useEffect, useRef, useState } from 'react';
 import { LoadingSection } from '@/components/shared/LoadingSection';
 import { UserFlag } from '@/components/shared/UserFlag';
 import { Button } from '@/components/ui/button';
-import { Superteams, unofficialSuperteams } from '@/constants/Superteam';
+import {
+  type Superteam,
+  Superteams,
+  unofficialSuperteams,
+} from '@/constants/Superteam';
 import { SponsorLayout } from '@/layouts/Sponsor';
 import { useUser } from '@/store/user';
 
@@ -136,6 +140,7 @@ export default function LocalProfiles() {
           setCheckedItems={setCheckedItems}
           debouncedSetSearchText={debouncedSetSearchText}
           setCurrentPage={setCurrentPage}
+          superteam={superteam as Superteam}
         />
       </div>
       {isLoading && <LoadingSection />}
