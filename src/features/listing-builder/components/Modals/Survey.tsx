@@ -36,14 +36,18 @@ export function Survey({ open, setOpen }: Props) {
 
   const handleDone = async () => {
     setStage('form_loading');
-    if (survey) {
-      const scoreKey = `$survey_response_${survey.questions[0]?.id}`;
-      const feedbackKey = `$survey_response_${survey.questions[1]?.id}`;
-      posthog.capture('survey sent', {
-        $survey_id: survey.id,
-        [scoreKey]: score,
-        [feedbackKey]: feedback,
-      });
+    try {
+      if (survey) {
+        const scoreKey = `$survey_response_${survey.questions[0]?.id}`;
+        const feedbackKey = `$survey_response_${survey.questions[1]?.id}`;
+        posthog.capture('survey sent', {
+          $survey_id: survey.id,
+          [scoreKey]: score,
+          [feedbackKey]: feedback,
+        });
+      }
+    } catch (error) {
+      console.error('Error in handleDone:', error);
     }
     await new Promise((resolve) => setTimeout(resolve, 500));
     setStage('final');
@@ -55,10 +59,20 @@ export function Survey({ open, setOpen }: Props) {
   };
 
   useEffect(() => {
-    posthog.getActiveMatchingSurveys((surveys) => {
-      const survey = getMatchingSurvey(surveys, surveyId);
-      setSurvey(survey);
-    }, true);
+    try {
+      posthog.getActiveMatchingSurveys((surveys) => {
+        try {
+          const survey = getMatchingSurvey(surveys, surveyId);
+          setSurvey(survey);
+        } catch (err) {
+          console.error('Error processing survey data:', err);
+          setSurvey(null);
+        }
+      }, true);
+    } catch (error) {
+      console.error('Error fetching survey:', error);
+      setSurvey(null);
+    }
   }, [posthog]);
 
   return (
