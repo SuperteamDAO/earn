@@ -77,7 +77,7 @@ export async function POST(request: Request) {
     const prompt = generateListingSkillsPrompt(description);
 
     const { object } = await generateObject({
-      model: openrouter('google/gemini-2.5-flash-preview-05-20'),
+      model: openrouter('google/gemini-2.5-flash'),
       system:
         'Your role is to generate proper skills for listings, strictly adhering to the rules provided with each description and type.',
       prompt,

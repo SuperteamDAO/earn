@@ -1,8 +1,7 @@
-import { TooltipArrow } from '@radix-ui/react-tooltip';
 import { ChevronDown, ExternalLink } from 'lucide-react';
 import React, { useState } from 'react';
 
-import { Button } from '@/components/ui/button';
+import { CopyButton } from '@/components/ui/copy-tooltip';
 import { Progress } from '@/components/ui/progress';
 import {
   Table,
@@ -12,7 +11,6 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Tooltip } from '@/components/ui/tooltip';
 import { tokenList } from '@/constants/tokenList';
 import { type SubmissionWithUser } from '@/interface/submission';
 import { cn } from '@/utils/cn';
@@ -20,6 +18,7 @@ import { getRankLabels } from '@/utils/rank';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
 
 import { type Listing, type Rewards } from '@/features/listings/types';
+import { getListingStatus } from '@/features/listings/utils/status';
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
 import { PayoutButton } from './PayoutButton';
@@ -124,18 +123,35 @@ export const PayoutSection = ({
 
   const isProject = bounty.type === 'project';
 
+  const listingStatus = getListingStatus(bounty);
+
+  const isFndnToPay = listingStatus === 'Fndn to Pay';
+
   return (
     <div className="h-full w-full overflow-x-auto rounded-md border border-gray-200">
       <Table className="overflow-hidden">
         <TableHeader className="bg-slate-50">
           <TableRow>
-            <TableHead className="w-[40%]">Winner Name</TableHead>
-            <TableHead className="w-[10%]">Position</TableHead>
-            <TableHead className="w-[15%]">Prize</TableHead>
-            {isProject && <TableHead className="w-[15%]">% Paid</TableHead>}
-            <TableHead className="w-[15%] whitespace-nowrap">
-              Payment Details
+            <TableHead className={cn('w-[40%]', isFndnToPay && 'w-[60%]')}>
+              Winner Name
             </TableHead>
+            <TableHead className={cn('w-[10%]', isFndnToPay && 'w-[20%]')}>
+              Position
+            </TableHead>
+            <TableHead className={cn('w-[10%]', isFndnToPay && 'w-[20%]')}>
+              Wallet Address
+            </TableHead>
+            <TableHead className={cn('w-[15%]', isFndnToPay && 'w-[20%]')}>
+              Prize
+            </TableHead>
+            {isProject && !isFndnToPay && (
+              <TableHead className="w-[15%]">% Paid</TableHead>
+            )}
+            {!isFndnToPay && (
+              <TableHead className="w-[15%] whitespace-nowrap">
+                Payment
+              </TableHead>
+            )}
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -183,6 +199,15 @@ export const PayoutSection = ({
                     </span>
                   </TableCell>
                   <TableCell>
+                    <CopyButton
+                      text={submission.user.walletAddress || ''}
+                      className="gap-1 text-sm text-slate-600 underline-offset-1 hover:text-slate-500 hover:underline"
+                      contentProps={{ side: 'right' }}
+                    >
+                      {truncatePublicKey(submission.user.walletAddress, 5)}
+                    </CopyButton>
+                  </TableCell>
+                  <TableCell>
                     <div className="flex items-center gap-2">
                       <img
                         src={
@@ -202,7 +227,7 @@ export const PayoutSection = ({
                       </span>
                     </div>
                   </TableCell>
-                  {isProject && (
+                  {isProject && !isFndnToPay && (
                     <TableCell>
                       <div className="flex items-center gap-3">
                         <Progress
@@ -252,8 +277,8 @@ export const PayoutSection = ({
                             <ExternalLink className="ml-1 h-4 w-4" />
                           </div>
                         )
-                      ) : bounty.isWinnersAnnounced ? (
-                        <div className="flex items-center gap-8">
+                      ) : bounty.isWinnersAnnounced && !isFndnToPay ? (
+                        <div className="flex items-center">
                           <PayoutButton
                             bounty={bounty}
                             submission={submission}
@@ -264,7 +289,7 @@ export const PayoutSection = ({
                             >
                               <ChevronDown
                                 className={cn(
-                                  'h-4 w-4 text-slate-400 transition-transform duration-300 ease-in-out',
+                                  'ml-8 h-4 w-4 text-slate-400 transition-transform duration-300 ease-in-out',
                                   isExpanded ? 'rotate-180' : 'rotate-0',
                                 )}
                               />
@@ -272,24 +297,7 @@ export const PayoutSection = ({
                           )}
                         </div>
                       ) : (
-                        <Tooltip
-                          content={
-                            <>
-                              Please announce the winners before paying out the
-                              winners
-                              <TooltipArrow />
-                            </>
-                          }
-                          contentProps={{ sideOffset: 5 }}
-                        >
-                          <Button disabled size="sm" variant="default">
-                            Pay {bounty.token}{' '}
-                            {!!bounty.rewards &&
-                              bounty.rewards[
-                                submission.winnerPosition as keyof Rewards
-                              ]}
-                          </Button>
-                        </Tooltip>
+                        <></>
                       )}
                     </div>
                   </TableCell>

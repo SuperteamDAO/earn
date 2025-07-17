@@ -230,7 +230,7 @@ export function SponsorLayout({
             Please use a desktop to check out the Sponsor Dashboard
           </p>
         </div>
-        <div className="hidden min-h-screen justify-start transition-all duration-300 ease-in-out hover:shadow-lg md:flex">
+        <div className="hidden min-h-[max(100vh,1000px)] justify-start transition-all duration-300 ease-in-out hover:shadow-lg md:flex">
           <div
             className={cn(
               'sponsor-dashboard-sidebar overflow-x-hidden border-r border-slate-200 bg-white pt-5 whitespace-nowrap',

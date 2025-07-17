@@ -1,7 +1,6 @@
 import type { NextApiResponse } from 'next';
 import Papa from 'papaparse';
 
-import { Superteams, unofficialSuperteams } from '@/constants/Superteam';
 import { type Skills } from '@/interface/skills';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
@@ -12,41 +11,50 @@ import { type NextApiRequestWithSponsor } from '@/features/auth/types';
 import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
 
 async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
+  const params = req.query;
   const userId = req.userId;
-  const userSponsorId = req.userSponsorId;
 
-  logger.debug(`Request query: ${safeStringify(req.query)}`);
+  logger.debug(`Query params: ${safeStringify(params)}`);
+
+  const superteamRegion = params.superteamRegion as string;
+  const superteamCountriesParam = params.superteamCountries as
+    | string
+    | string[];
+
+  let superteamCountries: string[];
+  if (typeof superteamCountriesParam === 'string') {
+    superteamCountries = superteamCountriesParam.includes(',')
+      ? superteamCountriesParam.split(',').map((c) => c.trim())
+      : [superteamCountriesParam];
+  } else if (Array.isArray(superteamCountriesParam)) {
+    superteamCountries = superteamCountriesParam;
+  } else {
+    superteamCountries = [];
+  }
+
+  if (!superteamRegion || !superteamCountries.length) {
+    return res.status(400).json({ error: 'Missing required parameters' });
+  }
 
   try {
-    const user = await prisma.user.findUnique({
+    const requestingUser = await prisma.user.findUnique({
       where: { id: userId as string },
       select: { stLead: true },
     });
 
-    const sponsor = await prisma.sponsors.findUnique({
-      where: { id: userSponsorId },
-      select: { name: true },
-    });
+    const leadRegion = requestingUser?.stLead;
 
-    const superteam =
-      Superteams.find((st) => st.name === sponsor?.name) ||
-      unofficialSuperteams.find((st) => st.name === sponsor?.name);
-    if (!superteam) {
-      return res.status(403).json({ error: 'Invalid sponsor' });
-    }
-
-    const region = superteam.region;
-    const countries = superteam.country;
-
-    const isLocalProfileVisible =
-      user?.stLead === region || user?.stLead === 'MAHADEV';
-
-    if (!isLocalProfileVisible) {
+    if (
+      leadRegion?.toLowerCase() !== superteamRegion.toLowerCase() &&
+      leadRegion !== 'MAHADEV'
+    ) {
       return res.status(403).json({ error: 'Unauthorized' });
     }
 
-    const users = await prisma.user.findMany({
-      where: { location: { in: countries } },
+    logger.debug('Fetching user details with optimized query');
+
+    const localTalent = await prisma.user.findMany({
+      where: { location: { in: superteamCountries } },
       select: {
         id: true,
         firstName: true,
@@ -62,6 +70,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         bio: true,
         community: true,
         interests: true,
+        createdAt: true,
         Submission: {
           select: {
             isWinner: true,
@@ -82,20 +91,18 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       },
     });
 
-    const processedUsers = users.map((user) => {
-      const totalSubmissions = user.Submission.length;
-      const wins = user.Submission.filter(
+    const talentWithStats = localTalent.map((talent) => {
+      const totalSubmissions = talent.Submission.length;
+      const wins = talent.Submission.filter(
         (s) => s.isWinner && s.listing.isWinnersAnnounced,
       ).length;
 
-      const listingWinnings = user.Submission.filter(
+      const listingWinnings = talent.Submission.filter(
         (s) => s.isWinner && s.listing.isWinnersAnnounced,
       ).reduce((sum, submission) => sum + (submission.rewardInUSD || 0), 0);
 
-      const grantWinnings = user.GrantApplication.filter(
-        (g) =>
-          g.applicationStatus === 'Approved' ||
-          g.applicationStatus === 'Completed',
+      const grantWinnings = talent.GrantApplication.filter(
+        (g) => g.applicationStatus === 'Approved',
       ).reduce(
         (sum, application) => sum + (application.approvedAmountInUSD || 0),
         0,
@@ -103,18 +110,18 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
       const totalEarnings = listingWinnings + grantWinnings;
 
-      return { ...user, totalSubmissions, wins, totalEarnings };
+      return { ...talent, totalSubmissions, wins, totalEarnings };
     });
 
-    const rankedUsers = processedUsers
+    const rankedTalent = talentWithStats
       .sort((a, b) => b.totalEarnings - a.totalEarnings)
-      .map((user, index) => ({
-        ...user,
+      .map((talent, index) => ({
+        ...talent,
         rank: index + 1,
       }));
 
     logger.debug('Transforming users to JSON format for CSV export');
-    const finalJson = rankedUsers.map((user) => {
+    const finalJson = rankedTalent.map((user) => {
       const parentSkills = (user?.skills as Skills)?.map(
         (skill: any) => skill.skills,
       );
@@ -142,13 +149,13 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
     logger.debug('Converting JSON to CSV');
     const csv = Papa.unparse(finalJson);
-    const fileName = `${region}-local-profiles-${Date.now()}`;
+    const fileName = `${superteamRegion}-local-profiles-${Date.now()}`;
     const file = str2ab(csv, fileName);
 
     logger.debug('Uploading CSV to Cloudinary');
-    const cloudinaryDetails = await csvUpload(file, fileName, region);
+    const cloudinaryDetails = await csvUpload(file, fileName, superteamRegion);
 
-    logger.info(`CSV export successful for region: ${region}`);
+    logger.info(`CSV export successful for region: ${superteamRegion}`);
     return res.status(200).json({
       url: cloudinaryDetails?.secure_url || cloudinaryDetails?.url,
     });

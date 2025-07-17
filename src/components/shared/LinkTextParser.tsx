@@ -1,3 +1,5 @@
+import { emailRegex } from '@/features/social/utils/regex';
+
 const URL_REGEX =
   /((?:(?:https?):\/\/)?(?:www\.)?(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}(?::\d{2,5})?(?:\/[a-zA-Z0-9\-._~:/?#[\]@!$&'()*+,;=%]*)?|(?:[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}))/gi;
 
@@ -7,7 +9,7 @@ type Props = React.HTMLAttributes<HTMLParagraphElement> & {
 
 const addProtocolIfNeeded = (url: string): string => {
   // if it's an email, add mailto:
-  if (url.includes('@') && !url.startsWith('mailto:')) {
+  if (emailRegex.test(url)) {
     return `mailto:${url}`;
   }
 
@@ -21,7 +23,7 @@ const addProtocolIfNeeded = (url: string): string => {
 
 const getDisplayText = (url: string): string => {
   // for email addresses, show as-is
-  if (url.includes('@')) {
+  if (emailRegex.test(url)) {
     return url.replace('mailto:', '');
   }
 
