@@ -257,15 +257,29 @@ async function listing(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     }
 
     // Handle bonus submissions update
-    if ((maxBonusSpots ?? 0) < listing.maxBonusSpots) {
+    const currentBonusWinners = await prisma.submission.count({
+      where: {
+        listingId: id as string,
+        isWinner: true,
+        winnerPosition: BONUS_REWARD_POSITION,
+      },
+    });
+
+    const newMaxBonusSpots = maxBonusSpots ?? 0;
+
+    if (currentBonusWinners > newMaxBonusSpots) {
+      const submissionsToReset = currentBonusWinners - newMaxBonusSpots;
+
       logger.info(
-        'Atempting to reset selected bonus winners since new bonus spots are less than previous',
+        'Attempting to reset selected bonus winners since current bonus winners exceed new limit',
         {
           id,
-          newBonusSpots: maxBonusSpots,
-          previousBonusSpots: listing.maxBonusSpots,
+          currentBonusWinners,
+          newMaxBonusSpots,
+          submissionsToReset,
         },
       );
+
       const bonusSubmissionsToUpdate = await prisma.submission.findMany({
         where: {
           listingId: id as string,
@@ -273,12 +287,16 @@ async function listing(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           winnerPosition: BONUS_REWARD_POSITION,
         },
         select: { id: true },
-        take: listing.maxBonusSpots - (maxBonusSpots ?? 0),
+        orderBy: { createdAt: 'asc' },
+        take: submissionsToReset,
       });
+
       logger.info('Updating the following bonus winner selected submissions ', {
         id,
         bonusSubmissionsToUpdate,
+        submissionsToReset,
       });
+
       await prisma.submission.updateMany({
         where: {
           id: {
@@ -292,6 +310,12 @@ async function listing(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           isWinner: false,
           winnerPosition: null,
         },
+      });
+    } else {
+      logger.info('No bonus submissions need to be reset', {
+        id,
+        currentBonusWinners,
+        newMaxBonusSpots,
       });
     }
 
