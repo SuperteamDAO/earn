@@ -318,7 +318,7 @@ export const SubmissionHeader = ({
       {isProject && !bounty?.isWinnersAnnounced && bounty?.isPublished && (
         <div>
           <p className="text-slate-800">
-            Didnt find a suitable candidate?{' '}
+            {`Didn't find a suitable candidate? `}
             <span
               className="cursor-pointer text-blue-500 underline"
               onClick={unpublishOnOpen}
