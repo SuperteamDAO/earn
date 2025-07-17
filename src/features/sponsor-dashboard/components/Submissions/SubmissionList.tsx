@@ -91,7 +91,7 @@ export const SubmissionList = ({
     } else if (submission.status === 'Rejected') {
       return 'Rejected';
     } else if (submission?.label) {
-      return labelMenuOptions.find(
+      return labelMenuOptions(listing?.type).find(
         (option) => option.value === submission.label,
       )?.label;
     } else {

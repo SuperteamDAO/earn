@@ -1,9 +1,15 @@
-export const labelMenuOptions = [
+import { type BountyType } from '@prisma/client';
+
+export const labelMenuOptions = (type: BountyType | 'grant' | undefined) => [
   { label: 'Unreviewed', value: 'Unreviewed' },
+  ...(type !== 'project' ? [{ label: 'Reviewed', value: 'Reviewed' }] : []),
   { label: 'Shortlisted', value: 'Shortlisted' },
-  { label: 'Mid Quality', value: 'Mid_Quality' },
-  { label: 'Low Quality', value: 'Low_Quality' },
-  { label: 'Spam', value: 'Spam' },
+  ...(type === 'project'
+    ? [
+        { label: 'Mid Quality', value: 'Mid_Quality' },
+        { label: 'Low Quality', value: 'Low_Quality' },
+      ]
+    : []),
 ];
 
 export const labelMenuOptionsGrants = [

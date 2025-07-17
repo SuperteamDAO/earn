@@ -78,7 +78,10 @@ export const SubmissionPanel = ({
                     !bounty?.isWinnersAnnounced &&
                     !selectedSubmission.isWinner &&
                     selectedSubmission?.label !== SubmissionLabels.Spam && (
-                      <SelectLabel listingSlug={bounty?.slug!} />
+                      <SelectLabel
+                        type={bounty?.type}
+                        listingSlug={bounty?.slug!}
+                      />
                     )}
                 </div>
               </div>
