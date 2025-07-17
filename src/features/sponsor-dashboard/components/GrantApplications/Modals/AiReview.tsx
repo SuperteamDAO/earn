@@ -27,7 +27,7 @@ import {
   type GrantsAi,
   type GrantWithApplicationCount,
 } from '@/features/grants/types';
-import { useCommitReviews } from '@/features/sponsor-dashboard/mutations/useCommitReviews';
+import { useCommitReviewsGrantApplications } from '@/features/sponsor-dashboard/mutations/useCommitReviewsGrantApplications';
 // import { useReviewApplication } from '@/features/sponsor-dashboard/mutations/useReviewApplication';
 import { unreviewedGrantApplicationsQuery } from '@/features/sponsor-dashboard/queries/unreviewed-grant-applications';
 import { type GrantApplicationWithUser } from '@/features/sponsor-dashboard/types';
@@ -68,7 +68,7 @@ export default function AiReviewModal({ applications, grant }: Props) {
   // const { mutateAsync: reviewApplication } = useReviewApplication(
   //   grant?.slug || '',
   // );
-  const { mutateAsync: commitReviews } = useCommitReviews(
+  const { mutateAsync: commitReviews } = useCommitReviewsGrantApplications(
     grant?.slug || '',
     grant?.id || '',
   );
