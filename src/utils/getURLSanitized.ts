@@ -1,8 +1,9 @@
+import { emailRegex } from '@/features/social/utils/regex';
+
 export const getURLSanitized = (url: string) => {
   if (!url || url === '-' || url === '#') return url;
 
-  const isEmail =
-    url.includes('@') && !url.includes('http://') && !url.includes('https://');
+  const isEmail = emailRegex?.test(url);
 
   if (isEmail) {
     return `mailto:${url}`;
