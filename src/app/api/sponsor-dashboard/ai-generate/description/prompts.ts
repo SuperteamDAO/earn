@@ -295,7 +295,7 @@ Explicitly reason through the compensation calculations and formatting. This inv
 *   **Adapt Structure Flexibly:** While the section order above is preferred, slightly adapt the structure *only if necessary* to best present the *provided information*. Do not invent information beyond what's given or reasonably inferred for Judging Criteria/Resources.
 *   **Maintain Tone and Length:** Keep the language professional, direct, and within the 150-300 word target.
 *   **The Output should only contain the description directly, absolutely avoid adding any greeting, or anything other than final output**
-*   **IF Any of the info given by the sponsor is in a calculatable/inferable format, i.e natural language that hints to calculate/infer the specific field, you are supposed to do the calculation and show a proper output
+*   **IF Any of the info given by the sponsor is in a calculable/inferable format, i.e natural language that hints to calculate/infer the specific field, you are supposed to do the calculation and show a proper output
 *  Make sure **zero citations** or links from web search apart from <company-description> are included in the final output.
 `;
 
