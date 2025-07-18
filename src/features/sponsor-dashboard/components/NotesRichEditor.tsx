@@ -274,7 +274,7 @@ export const NotesRichEditor: React.FC<NotesRichEditorProps> = ({
 
   return (
     <div className="h-full w-full" key={id}>
-      <ScrollArea className="h-full w-full pr-3" type="always" key={id}>
+      <ScrollArea className="h-full w-full" type="always" key={id}>
         <EditorContent
           key={id}
           editor={editor}
