@@ -131,6 +131,9 @@ importers:
       '@tiptap/core':
         specifier: ^2.24.0
         version: 2.24.0(@tiptap/pm@2.24.0)
+      '@tiptap/extension-character-count':
+        specifier: ^3.0.6
+        version: 3.0.6(@tiptap/extensions@3.0.6(@tiptap/core@2.24.0(@tiptap/pm@2.24.0))(@tiptap/pm@2.24.0))
       '@tiptap/extension-code-block-lowlight':
         specifier: ^2.24.0
         version: 2.24.0(@tiptap/core@2.24.0(@tiptap/pm@2.24.0))(@tiptap/extension-code-block@2.24.0(@tiptap/core@2.24.0(@tiptap/pm@2.24.0))(@tiptap/pm@2.24.0))(@tiptap/pm@2.24.0)(highlight.js@11.11.1)(lowlight@3.3.0)
@@ -3311,6 +3314,11 @@ packages:
     peerDependencies:
       '@tiptap/core': ^2.7.0
 
+  '@tiptap/extension-character-count@3.0.6':
+    resolution: {integrity: sha512-KC2Ue053di9BMLNKb62n0Nt+csCaQ0CdblywVT+tliN6tF5UTrA9UY6CfbQ7yZT61PpMTsgJBBFWB95TgGzmkQ==}
+    peerDependencies:
+      '@tiptap/extensions': ^3.0.6
+
   '@tiptap/extension-code-block-lowlight@2.24.0':
     resolution: {integrity: sha512-NXE6DG3uLdkchIJlnQGp45FNvaEJhE5CM9fgJ/4ylDgd9S2aXXP6BVPjti35L2DszNui+QeHa75ZjcBAQyG4YQ==}
     peerDependencies:
@@ -3454,6 +3462,12 @@ packages:
     resolution: {integrity: sha512-RJZZHA6NJLhkbUNlj8OYl0masXdmMhG9KGrG5JAx8GjCepbfSisVf3Hll/w6bNPnXUYxGztmEZia4x8fOYj2hQ==}
     peerDependencies:
       '@tiptap/core': ^2.7.0
+
+  '@tiptap/extensions@3.0.6':
+    resolution: {integrity: sha512-rrTFjX3JoaRj/eEFR+8rYiiqOcCWDBIfFPLcb6TIvj+mo2kLp3QtbuhjqSSkpUxxn/hcVj7iwa5c4n33IyQ8lA==}
+    peerDependencies:
+      '@tiptap/core': ^3.0.6
+      '@tiptap/pm': ^3.0.6
 
   '@tiptap/pm@2.24.0':
     resolution: {integrity: sha512-rjvy3LmNweyDU/ttqQd+fi4A29KbcqNiQ/oWvzv7JNPS9bh4WmuSeWvlNfivo39hHXe46OQhzRVJrSAvyKp+wQ==}
@@ -12352,6 +12366,10 @@ snapshots:
     dependencies:
       '@tiptap/core': 2.24.0(@tiptap/pm@2.24.0)
 
+  '@tiptap/extension-character-count@3.0.6(@tiptap/extensions@3.0.6(@tiptap/core@2.24.0(@tiptap/pm@2.24.0))(@tiptap/pm@2.24.0))':
+    dependencies:
+      '@tiptap/extensions': 3.0.6(@tiptap/core@2.24.0(@tiptap/pm@2.24.0))(@tiptap/pm@2.24.0)
+
   '@tiptap/extension-code-block-lowlight@2.24.0(@tiptap/core@2.24.0(@tiptap/pm@2.24.0))(@tiptap/extension-code-block@2.24.0(@tiptap/core@2.24.0(@tiptap/pm@2.24.0))(@tiptap/pm@2.24.0))(@tiptap/pm@2.24.0)(highlight.js@11.11.1)(lowlight@3.3.0)':
     dependencies:
       '@tiptap/core': 2.24.0(@tiptap/pm@2.24.0)
@@ -12471,6 +12489,11 @@ snapshots:
   '@tiptap/extension-underline@2.24.0(@tiptap/core@2.24.0(@tiptap/pm@2.24.0))':
     dependencies:
       '@tiptap/core': 2.24.0(@tiptap/pm@2.24.0)
+
+  '@tiptap/extensions@3.0.6(@tiptap/core@2.24.0(@tiptap/pm@2.24.0))(@tiptap/pm@2.24.0)':
+    dependencies:
+      '@tiptap/core': 2.24.0(@tiptap/pm@2.24.0)
+      '@tiptap/pm': 2.24.0
 
   '@tiptap/pm@2.24.0':
     dependencies:

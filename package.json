@@ -56,6 +56,7 @@
     "@sumsub/websdk-react": "^2.3.18",
     "@tanstack/react-query": "^5.81.5",
     "@tiptap/core": "^2.24.0",
+    "@tiptap/extension-character-count": "^3.0.6",
     "@tiptap/extension-code-block-lowlight": "^2.24.0",
     "@tiptap/extension-color": "^2.24.0",
     "@tiptap/extension-heading": "^2.24.0",
