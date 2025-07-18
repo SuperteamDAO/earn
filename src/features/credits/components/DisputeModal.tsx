@@ -91,6 +91,7 @@ export function DisputeModal({ isOpen, onClose, entry }: DisputeModalProps) {
         description: data.description,
         listingTitle: entry.submission.listing.title,
         listingType,
+        submissionId: entry.submission.id,
       });
 
       if (response.status !== 200) {
@@ -99,17 +100,30 @@ export function DisputeModal({ isOpen, onClose, entry }: DisputeModalProps) {
 
       reset();
       onClose();
-      toast.success('Thank you for raising a dispute!', {
-        description:
-          "We'll take a look at this dispute. Thanks for flagging — we appreciate it!",
+      toast.success('We have received your dispute request.', {
+        description: 'Your request will be reviewed by our team.',
         duration: 10000,
         classNames: {
           title: 'text-sm font-semibold',
           description: 'text-xs',
         },
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error submitting dispute:', error);
+
+      let errorMessage = 'Failed to submit dispute. Please try again.';
+
+      if (error.response?.data?.error) {
+        errorMessage = error.response.data.error;
+      }
+
+      toast.error(errorMessage, {
+        duration: 10000,
+        classNames: {
+          title: 'text-sm font-semibold',
+          description: 'text-xs',
+        },
+      });
     } finally {
       setIsSubmitting(false);
     }

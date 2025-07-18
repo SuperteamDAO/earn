@@ -52,14 +52,12 @@ export async function addGrantWinBonusCredit(
   userId: string,
   applicationId: string,
 ) {
-  const effectiveMonth = dayjs.utc().add(1, 'month').startOf('month').toDate();
-
   await prisma.creditLedger.create({
     data: {
       userId,
       applicationId,
       type: CreditEventType.GRANT_WIN_BONUS,
-      effectiveMonth,
+      effectiveMonth: nextMonth,
       change: 1,
     },
   });
@@ -98,20 +96,46 @@ export async function addSpamPenaltyGrant(
   userId: string,
   applicationId: string,
 ) {
-  const effectiveMonth = dayjs.utc().add(1, 'month').startOf('month').toDate();
-
   await prisma.creditLedger.create({
     data: {
       userId,
       applicationId,
       type: CreditEventType.GRANT_SPAM_PENALTY,
-      effectiveMonth,
+      effectiveMonth: nextMonth,
       change: -1,
     },
   });
 }
 
-export async function refundCredit(listingId: string) {
+export async function addCreditDispute(
+  userId: string,
+  type: CreditEventType,
+  id: string,
+) {
+  if (type === CreditEventType.SPAM_DISPUTE) {
+    await prisma.creditLedger.create({
+      data: {
+        userId,
+        type: CreditEventType.SPAM_DISPUTE,
+        effectiveMonth: nextMonth,
+        change: -1,
+        submissionId: id,
+      },
+    });
+  } else if (type === CreditEventType.GRANT_SPAM_DISPUTE) {
+    await prisma.creditLedger.create({
+      data: {
+        userId,
+        type: CreditEventType.GRANT_SPAM_DISPUTE,
+        effectiveMonth: nextMonth,
+        change: -1,
+        applicationId: id,
+      },
+    });
+  }
+}
+
+export async function refundCredits(listingId: string) {
   try {
     const submissions = await prisma.submission.findMany({
       where: { listingId },

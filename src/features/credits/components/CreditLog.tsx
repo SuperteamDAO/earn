@@ -14,9 +14,9 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Separator } from '@/components/ui/separator';
 import { cn } from '@/utils/cn';
-import { dayjs } from '@/utils/dayjs';
 
 import { CreditIcon } from '../icon/credit';
+import { canDispute } from '../utils/canDispute';
 import { DisputeModal } from './DisputeModal';
 
 type CreditEventType =
@@ -27,9 +27,11 @@ type CreditEventType =
   | 'CREDIT_EXPIRY'
   | 'CREDIT_REFUND'
   | 'GRANT_SPAM_PENALTY'
-  | 'GRANT_WIN_BONUS';
+  | 'GRANT_WIN_BONUS'
+  | 'SPAM_DISPUTE'
+  | 'GRANT_SPAM_DISPUTE';
 
-interface CreditEntry {
+export interface CreditEntry {
   id: string;
   type: CreditEventType;
   change: number;
@@ -68,7 +70,7 @@ export function CreditHistoryCard({
       const entryToDispute = entries.find(
         (entry) => entry.submission?.id === disputeSubmissionId,
       );
-      if (entryToDispute && canDispute(entryToDispute)) {
+      if (entryToDispute && canDispute(entryToDispute, entries)) {
         setSelectedEntry(entryToDispute);
         setIsDisputeModalOpen(true);
       }
@@ -92,20 +94,6 @@ export function CreditHistoryCard({
 
     return false;
   });
-
-  const isSpamEntry = (entry: CreditEntry) => {
-    return entry.type === 'SPAM_PENALTY' || entry.type === 'GRANT_SPAM_PENALTY';
-  };
-
-  const canDispute = (entry: CreditEntry) => {
-    if (!isSpamEntry(entry)) return false;
-
-    const createdAt = dayjs(entry.createdAt);
-    const now = dayjs();
-    const daysSinceCreation = now.diff(createdAt, 'days');
-
-    return daysSinceCreation <= 7;
-  };
 
   const handleOpenDispute = (entry: CreditEntry) => {
     setSelectedEntry(entry);
@@ -163,7 +151,7 @@ export function CreditHistoryCard({
                   <h3 className="text-sm font-semibold text-gray-900">
                     {getEntryTitle(entry)}
                   </h3>
-                  {canDispute(entry) && (
+                  {canDispute(entry, entries) && (
                     <DropdownMenu>
                       <DropdownMenuTrigger
                         asChild
@@ -320,6 +308,14 @@ function getStatusIcon(type: CreditEventType) {
     );
   }
 
+  if (type === 'SPAM_DISPUTE' || type === 'GRANT_SPAM_DISPUTE') {
+    return (
+      <div className="absolute -right-1 -bottom-1 flex size-5 items-center justify-center rounded-full border-3 border-white bg-blue-600 text-white">
+        <span className="text-xs">📝</span>
+      </div>
+    );
+  }
+
   return null;
 }
 
@@ -354,5 +350,9 @@ function getEntryTitle(entry: CreditEntry): string {
         : `Credits Renewed for ${format(effectiveDate, 'MMMM')}`;
     case 'CREDIT_EXPIRY':
       return `Credits Expired For ${format(new Date(entry.effectiveMonth), 'MMMM')}`;
+    case 'SPAM_DISPUTE':
+      return 'Spam Dispute Submitted';
+    case 'GRANT_SPAM_DISPUTE':
+      return 'Grant Spam Dispute Submitted';
   }
 }

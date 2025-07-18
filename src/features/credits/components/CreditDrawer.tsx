@@ -15,6 +15,7 @@ import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';
 
 import { CreditIcon } from '../icon/credit';
+import { canDispute } from '../utils/canDispute';
 import { CreditHistoryCard } from './CreditLog';
 
 export function CreditDrawer({
@@ -31,6 +32,12 @@ export function CreditDrawer({
     null,
   );
 
+  const { data: creditHistory, isLoading } = useQuery({
+    queryKey: ['creditHistory', user?.id],
+    queryFn: () => api.get('/api/user/credit/history'),
+    enabled: !!user?.id,
+  });
+
   useEffect(() => {
     const checkForDisputeHash = () => {
       const url = window.location.href;
@@ -40,7 +47,21 @@ export function CreditDrawer({
 
       if (hashValue?.startsWith('dispute-submission-')) {
         const submissionId = hashValue.replace('dispute-submission-', '');
-        setDisputeSubmissionId(submissionId);
+
+        if (creditHistory?.data) {
+          const allEntries = processEntries(creditHistory.data);
+          const entryToDispute = allEntries.find(
+            (entry) => entry.submission?.id === submissionId,
+          );
+
+          if (entryToDispute && canDispute(entryToDispute, allEntries)) {
+            setDisputeSubmissionId(submissionId);
+          } else {
+            const pathWithoutHash =
+              router.asPath.split('#')[0] || router.pathname;
+            router.replace(pathWithoutHash, undefined, { shallow: true });
+          }
+        }
       } else {
         setDisputeSubmissionId(null);
       }
@@ -49,7 +70,7 @@ export function CreditDrawer({
     if (isOpen) {
       checkForDisputeHash();
     }
-  }, [isOpen]);
+  }, [isOpen, creditHistory?.data, router]);
 
   const handleClose = () => {
     const currentPath = window.location.hash;
@@ -66,12 +87,6 @@ export function CreditDrawer({
   };
 
   const padding = 'px-6 sm:px-8';
-
-  const { data: creditHistory, isLoading } = useQuery({
-    queryKey: ['creditHistory', user?.id],
-    queryFn: () => api.get('/api/user/credit/history'),
-    enabled: !!user?.id,
-  });
 
   const processEntries = (entries: any[] = []) => {
     return entries.map((entry) => ({
