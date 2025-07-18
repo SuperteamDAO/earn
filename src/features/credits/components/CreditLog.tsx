@@ -26,6 +26,7 @@ type CreditEventType =
   | 'MONTHLY_CREDIT'
   | 'CREDIT_EXPIRY'
   | 'CREDIT_REFUND'
+  | 'GRANT_CREDIT_REFUND'
   | 'GRANT_SPAM_PENALTY'
   | 'GRANT_WIN_BONUS'
   | 'SPAM_DISPUTE'
@@ -311,7 +312,7 @@ function getStatusIcon(type: CreditEventType) {
     );
   }
 
-  if (type === 'CREDIT_REFUND') {
+  if (type === 'CREDIT_REFUND' || type === 'GRANT_CREDIT_REFUND') {
     return (
       <div className="absolute -right-1 -bottom-1 flex size-5 items-center justify-center rounded-full border-3 border-white bg-emerald-600 text-white">
         <Undo className="size-3" />
@@ -333,7 +334,9 @@ function getStatusIcon(type: CreditEventType) {
 function getEntryTitle(entry: CreditEntry): string {
   switch (entry.type) {
     case 'CREDIT_REFUND':
-      return 'Credit Refunded (Listing Unpublished)';
+      return 'Credit Refunded';
+    case 'GRANT_CREDIT_REFUND':
+      return 'Grant Credit Refunded';
     case 'SPAM_PENALTY':
       return 'Submission Flagged as Spam';
     case 'WIN_BONUS':

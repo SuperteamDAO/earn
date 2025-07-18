@@ -137,6 +137,8 @@ export async function POST(request: NextRequest) {
       listingUrl,
       description,
       userEmail: user.email,
+      submissionId,
+      listingType,
     };
 
     logger.info('Sending Spam Dispute notification', payload);
