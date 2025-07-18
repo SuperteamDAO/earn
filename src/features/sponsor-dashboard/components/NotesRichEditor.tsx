@@ -312,6 +312,9 @@ export const NotesRichEditor: React.FC<NotesRichEditorProps> = ({
             list-style: disc;
             padding-left: 1rem;
           }
+          .notes-rich-editor ul.list-inside {
+            padding-right: 0rem;
+          }
 
           .notes-rich-editor ol {
             list-style: decimal;
