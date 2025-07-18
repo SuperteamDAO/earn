@@ -448,6 +448,12 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           type: 'generateContextProject',
           id: result.id,
         });
+        logger.error(
+          `Successfully queued agent job for generateContextProject with id ${result.id}`,
+        );
+        console.log(
+          `Successfully queued agent job for generateContextProject with id ${result.id}`,
+        );
       }
     } catch (err) {
       logger.error(

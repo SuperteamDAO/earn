@@ -25,8 +25,10 @@ import { type SubmissionWithUser } from '@/interface/submission';
 import { WandAnimated } from '@/svg/WandAnimated/WandAnimated';
 import { cn } from '@/utils/cn';
 
-import { type GrantApplicationAi } from '@/features/grants/types';
-import { type Listing } from '@/features/listings/types';
+import {
+  type Listing,
+  type ProjectApplicationAi,
+} from '@/features/listings/types';
 import { useCommitReviewsSubmissions } from '@/features/sponsor-dashboard/mutations/useCommitReviewsSubmissions';
 import { unreviewedSubmissionsQuery } from '@/features/sponsor-dashboard/queries/unreviewed-submissions';
 import { colorMap } from '@/features/sponsor-dashboard/utils/statusColorMap';
@@ -109,7 +111,7 @@ export default function AiReviewProjectApplicationsModal({
   const nonAnalysedApplications = useMemo(() => {
     console.log('unreviewedApplications', unreviewedApplications);
     return unreviewedApplications?.filter(
-      (appl) => !(appl.ai as GrantApplicationAi)?.review,
+      (appl) => !(appl.ai as ProjectApplicationAi)?.review,
     );
   }, [unreviewedApplications]);
 
@@ -127,7 +129,7 @@ export default function AiReviewProjectApplicationsModal({
   }, [nonAnalysedApplications?.length]);
 
   const onReviewClick = useCallback(async () => {
-    posthog.capture('start_ai review grants');
+    posthog.capture('start_ai review projects');
     setState('PROCESSING');
 
     setTimeout(async () => {
@@ -215,7 +217,7 @@ export default function AiReviewProjectApplicationsModal({
       open={open}
       onOpenChange={(s) => {
         if (state === 'PROCESSING') return;
-        if (s === false) posthog.capture('close_ai review grants');
+        if (s === false) posthog.capture('close_ai review projects');
         setOpen(s);
       }}
     >
@@ -230,7 +232,7 @@ export default function AiReviewProjectApplicationsModal({
             <button
               className="h-9"
               onClick={() => {
-                posthog.capture('open_ai review grants');
+                posthog.capture('open_ai review projects');
               }}
             >
               <p className="mb-1 text-xs text-slate-400">
@@ -318,7 +320,7 @@ export default function AiReviewProjectApplicationsModal({
 
                     <p className="text-muted-foreground mt-2 text-center text-sm">
                       AI can make mistakes. Check important info before
-                      approving or rejecting a grant application.
+                      approving or rejecting a project application.
                     </p>
                   </CardFooter>
                 </motion.div>
