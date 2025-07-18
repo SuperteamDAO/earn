@@ -87,9 +87,8 @@ export function DisputeModal({ isOpen, onClose, entry }: DisputeModalProps) {
 
     setIsSubmitting(true);
     try {
-      const response = await api.post('/api/email/manual/spam-dispute', {
+      const response = await api.post('/api/spam-dispute', {
         description: data.description,
-        listingTitle: entry.submission.listing.title,
         listingType,
         submissionId: entry.submission.id,
       });
