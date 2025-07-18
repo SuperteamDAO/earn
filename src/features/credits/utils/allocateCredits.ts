@@ -117,7 +117,7 @@ export async function addCreditDispute(
       data: {
         userId,
         type: CreditEventType.SPAM_DISPUTE,
-        effectiveMonth: currentMonth,
+        effectiveMonth: nextMonth,
         change: 0,
         submissionId: id,
         decision: 'Pending',
@@ -128,7 +128,7 @@ export async function addCreditDispute(
       data: {
         userId,
         type: CreditEventType.GRANT_SPAM_DISPUTE,
-        effectiveMonth: currentMonth,
+        effectiveMonth: nextMonth,
         change: 0,
         applicationId: id,
         decision: 'Pending',
