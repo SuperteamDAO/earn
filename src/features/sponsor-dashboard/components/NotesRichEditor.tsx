@@ -313,12 +313,15 @@ export const NotesRichEditor: React.FC<NotesRichEditorProps> = ({
             padding-left: 1rem;
           }
           .notes-rich-editor ul.list-inside {
-            padding-right: 0rem;
+            padding-right: 0.5rem;
           }
 
           .notes-rich-editor ol {
             list-style: decimal;
             padding-left: 1rem;
+          }
+          .notes-rich-editor ol.list-inside {
+            padding-right: 0.5rem;
           }
 
           .notes-rich-editor li {
