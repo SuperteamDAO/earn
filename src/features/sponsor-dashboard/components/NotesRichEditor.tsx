@@ -329,6 +329,14 @@ export const NotesRichEditor: React.FC<NotesRichEditorProps> = ({
             margin: 0;
           }
 
+          .notes-rich-editor ol > li {
+            margin: 0 0 0.5rem 0;
+          }
+
+          .notes-rich-editor ol > li:last-child {
+            margin-bottom: 0;
+          }
+
           .notes-rich-editor p {
             margin: 0;
           }
