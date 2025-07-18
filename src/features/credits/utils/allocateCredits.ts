@@ -117,9 +117,10 @@ export async function addCreditDispute(
       data: {
         userId,
         type: CreditEventType.SPAM_DISPUTE,
-        effectiveMonth: nextMonth,
-        change: -1,
+        effectiveMonth: currentMonth,
+        change: 0,
         submissionId: id,
+        decision: 'Pending',
       },
     });
   } else if (type === CreditEventType.GRANT_SPAM_DISPUTE) {
@@ -127,9 +128,10 @@ export async function addCreditDispute(
       data: {
         userId,
         type: CreditEventType.GRANT_SPAM_DISPUTE,
-        effectiveMonth: nextMonth,
-        change: -1,
+        effectiveMonth: currentMonth,
+        change: 0,
         applicationId: id,
+        decision: 'Pending',
       },
     });
   }

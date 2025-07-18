@@ -57,6 +57,7 @@ export async function GET(_request: NextRequest) {
         effectiveMonth: true,
         type: true,
         change: true,
+        decision: true,
         submission: {
           select: {
             id: true,

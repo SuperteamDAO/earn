@@ -48,6 +48,7 @@ export interface CreditEntry {
       };
     };
   };
+  decision: string;
 }
 
 interface CreditHistoryCardProps {
@@ -187,11 +188,21 @@ export function CreditHistoryCard({
                   <p
                     className={`text-xs font-semibold text-slate-900 sm:text-sm`}
                   >
-                    {entry.change > 0
-                      ? `+ ${entry.change} Credit`
-                      : `- ${Math.abs(entry.change)} Credit`}
+                    {entry.type === 'SPAM_DISPUTE' ||
+                    entry.type === 'GRANT_SPAM_DISPUTE'
+                      ? entry.decision === 'Pending'
+                        ? '⏳ Pending'
+                        : entry.decision === 'Approved'
+                          ? '✅ Approved'
+                          : '❌ Rejected'
+                      : entry.change > 0
+                        ? `+ ${entry.change} Credit`
+                        : `- ${Math.abs(entry.change)} Credit`}
                   </p>
-                  <CreditIcon className="text-brand-purple size-4" />
+                  {entry.type !== 'SPAM_DISPUTE' &&
+                    entry.type !== 'GRANT_SPAM_DISPUTE' && (
+                      <CreditIcon className="text-brand-purple size-4" />
+                    )}
                 </div>
                 <p className="text-xxs text-slate-500 sm:text-xs">
                   {formatDate(entry)}
@@ -310,7 +321,7 @@ function getStatusIcon(type: CreditEventType) {
 
   if (type === 'SPAM_DISPUTE' || type === 'GRANT_SPAM_DISPUTE') {
     return (
-      <div className="absolute -right-1 -bottom-1 flex size-5 items-center justify-center rounded-full border-3 border-white bg-blue-600 text-white">
+      <div className="absolute -right-1 -bottom-1 flex size-5 items-center justify-center rounded-full border-3 border-white bg-white text-white">
         <span className="text-xs">📝</span>
       </div>
     );

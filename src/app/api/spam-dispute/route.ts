@@ -122,25 +122,28 @@ export async function POST(request: NextRequest) {
         select: { grant: { select: { title: true, slug: true } } },
       });
       listingTitle = listing?.grant?.title;
-      listingUrl = `${process.env.NEXT_PUBLIC_APP_URL}/grants/${listing?.grant?.slug}`;
+      listingUrl = `https://earn.superteam.fun/grants/${listing?.grant?.slug}`;
     } else {
       const listing = await prisma.submission.findUnique({
         where: { id: submissionId },
         select: { listing: { select: { title: true, slug: true } } },
       });
       listingTitle = listing?.listing?.title;
-      listingUrl = `${process.env.NEXT_PUBLIC_APP_URL}/listings/${listing?.listing?.slug}`;
+      listingUrl = `https://earn.superteam.fun/listing/${listing?.listing?.slug}`;
     }
 
-    logger.info('Sending Spam Dispute notification');
+    const payload = {
+      listingTitle,
+      listingUrl,
+      description,
+      userEmail: user.email,
+    };
+
+    logger.info('Sending Spam Dispute notification', payload);
+
     const botResponse = await earncognitoClient.post(
       '/telegram/spam-dispute',
-      {
-        listingTitle,
-        listingUrl,
-        description,
-        userEmail: user.email,
-      },
+      payload,
       { validateStatus: () => true },
     );
 

@@ -718,6 +718,7 @@ model CreditLedger {
   user           User              @relation(fields: [userId], references: [id])
   submission     Submission?       @relation(fields: [submissionId], references: [id])
   application    GrantApplication? @relation(fields: [applicationId], references: [id])
+  decision       SubmissionStatus?
 
   @@index([userId])
   @@index([submissionId])

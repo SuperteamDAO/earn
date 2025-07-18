@@ -1,4 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -58,6 +59,7 @@ export function DisputeModal({ isOpen, onClose, entry }: DisputeModalProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const isDesktop = useBreakpoint('md');
   const maxCharacters = 1000;
+  const queryClient = useQueryClient();
 
   const listingType =
     entry?.type === 'SPAM_PENALTY'
@@ -96,6 +98,10 @@ export function DisputeModal({ isOpen, onClose, entry }: DisputeModalProps) {
       if (response.status !== 200) {
         throw new Error('Failed to submit dispute');
       }
+
+      await queryClient.invalidateQueries({
+        queryKey: ['creditHistory'],
+      });
 
       reset();
       onClose();
