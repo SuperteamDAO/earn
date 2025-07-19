@@ -47,7 +47,7 @@ export function convertTextToNotesHTML(text: string): string {
 
       if (isIndented && inOrderedList) {
         if (!inSubList) {
-          html += '</ul>';
+          html += '<ul>';
           inSubList = true;
         }
         html += `<li>${bulletMatch[1]}</li>`;
