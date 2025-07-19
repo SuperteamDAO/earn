@@ -21,18 +21,12 @@ async function application(req: NextApiRequestWithUser, res: NextApiResponse) {
       where: {
         userId,
         grantId: id,
-        applicationStatus: {
-          not: { in: ['Completed', 'Rejected'] },
-        },
+        applicationStatus: { not: { in: ['Completed'] } },
       },
-      orderBy: {
-        createdAt: 'desc',
-      },
+      orderBy: { createdAt: 'desc' },
       include: {
         GrantTranche: {
-          orderBy: {
-            createdAt: 'asc',
-          },
+          orderBy: { createdAt: 'asc' },
         },
         user: true,
       },

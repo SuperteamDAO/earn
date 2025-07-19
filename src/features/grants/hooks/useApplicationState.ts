@@ -19,8 +19,31 @@ export const useApplicationState = (
     grant.airtableId &&
     !grant.title.toLowerCase().includes('coindcx');
 
+  const isInCooldownPeriod = () => {
+    if (
+      !application ||
+      application.applicationStatus !== 'Rejected' ||
+      !grant.title.toLowerCase().includes('coindcx')
+    ) {
+      return false;
+    }
+
+    const decidedAt = application.decidedAt;
+    if (!decidedAt) return false;
+
+    const thirtyDaysInMs = 30 * 24 * 60 * 60 * 1000;
+    const timeSinceDecision = Date.now() - new Date(decidedAt).getTime();
+
+    return timeSinceDecision < thirtyDaysInMs;
+  };
+
   useEffect(() => {
     if (!application) return;
+
+    if (isInCooldownPeriod()) {
+      setApplicationState('COOLDOWN');
+      return;
+    }
 
     if (application.applicationStatus === 'Pending') {
       if (grant.isNative) {
@@ -99,6 +122,14 @@ export const useApplicationState = (
           bg: 'bg-white',
           isDisabled: false,
           loadingText: 'Checking Application..',
+        };
+
+      case 'COOLDOWN':
+        return {
+          text: 'Reapply Later',
+          bg: 'bg-gray-500',
+          isDisabled: true,
+          loadingText: null,
         };
 
       case 'KYC PENDING':

@@ -5,7 +5,8 @@ import logger from '@/lib/logger';
 
 export type AgentActionType =
   | 'autoReviewGrantApplication'
-  | 'autoReviewGrantApplicationInitiateAll';
+  | 'generateContextProject'
+  | 'autoReviewProjectApplication';
 
 interface AgentNotificationParams {
   type: AgentActionType;

@@ -4,6 +4,7 @@ import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
 
+import { queueAgent } from '@/features/agents/utils/queueAgent';
 import { type NextApiRequestWithUser } from '@/features/auth/types';
 import { withAuth } from '@/features/auth/utils/withAuth';
 import { consumeCredit } from '@/features/credits/utils/allocateCredits';
@@ -131,6 +132,22 @@ async function submission(req: NextApiRequestWithUser, res: NextApiResponse) {
       userId: userId as string,
       triggeredBy: userId,
     });
+
+    try {
+      if (listing.type === 'project') {
+        await queueAgent({
+          type: 'autoReviewProjectApplication',
+          id: result.id,
+        });
+      }
+    } catch (err) {
+      logger.error(
+        `Failed to queue agent job for autoReviewProjectApplication with id ${result.id}`,
+      );
+      console.log(
+        `Failed to queue agent job for autoReviewProjectApplication with id ${result.id}`,
+      );
+    }
 
     return res.status(200).json(result);
   } catch (error: any) {

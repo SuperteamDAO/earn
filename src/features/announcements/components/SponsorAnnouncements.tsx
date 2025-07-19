@@ -7,12 +7,13 @@ import { useUser } from '@/store/user';
 import { dashboardQuery } from '@/features/sponsor-dashboard/queries/dashboard';
 
 import { AutoGenerateFeature } from '../sponsor/AutoGenerate';
-import { AutoReviewFeature } from '../sponsor/AutoReview';
+import { AutoReviewGrantsFeature } from '../sponsor/AutoReviewGrants';
+import { AutoReviewProjectsFeature } from '../sponsor/AutoReviewProjects';
 import { CreditFeature } from '../sponsor/Credits';
 import type { Announcement } from '../types/announcement';
 import { AnnouncementModal } from './AnnouncementModal';
 
-const LOCAL_STORAGE_KEY = 'sponsorAnnouncementsSeen';
+const LOCAL_STORAGE_KEY = 'sponsorAnnouncementsSeen-autoreviewprojects';
 
 export function SponsorAnnouncements({
   isAnyModalOpen,
@@ -46,6 +47,16 @@ export function SponsorAnnouncements({
 
   const announcements: Announcement[] = [
     {
+      id: 'auto-review-projects',
+      title: 'Auto Review for Projects',
+      Content: AutoReviewProjectsFeature,
+      shouldShow: isLoggedInAndIsSponsor,
+      imagesToPreload: [`${ASSET_URL}/announcements/auto-review-projects`],
+      cta: {
+        label: 'Understood',
+      },
+    },
+    {
       id: 'auto-generate',
       title: 'Auto Generate',
       Content: AutoGenerateFeature,
@@ -56,11 +67,11 @@ export function SponsorAnnouncements({
       },
     },
     {
-      id: 'auto-review',
-      title: 'Auto Review',
-      Content: AutoReviewFeature,
+      id: 'auto-review-grants',
+      title: 'Auto Review for Grants',
+      Content: AutoReviewGrantsFeature,
       shouldShow: isLoggedInAndIsSponsor && hasGrants,
-      imagesToPreload: [`${ASSET_URL}/announcements/auto-review`],
+      imagesToPreload: [`${ASSET_URL}/announcements/auto-review-grants`],
       cta: {
         label: 'Understood',
       },

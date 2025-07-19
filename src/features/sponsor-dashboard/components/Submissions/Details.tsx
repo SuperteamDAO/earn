@@ -72,14 +72,9 @@ export const Details = ({ bounty, isHackathonPage }: Props) => {
         />
       </ScrollArea>
       {!isHackathonPage && (
-        <div className="w-1/3 max-w-[20rem] p-4">
+        <div className="w-1/3 max-w-[22.5rem] p-4">
           {selectedSubmission && !isHackathonPage && (
-            <Notes
-              key={selectedSubmission.id}
-              submissionId={selectedSubmission.id}
-              initialNotes={selectedSubmission.notes}
-              slug={bounty?.slug}
-            />
+            <Notes key={selectedSubmission.id} slug={bounty?.slug} />
           )}
         </div>
       )}

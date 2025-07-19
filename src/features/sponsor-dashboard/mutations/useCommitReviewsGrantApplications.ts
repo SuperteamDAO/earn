@@ -8,7 +8,10 @@ import { type GrantApplicationAi } from '@/features/grants/types';
 import { selectedGrantApplicationAtom } from '../atoms';
 import { type GrantApplicationWithUser } from '../types';
 
-export const useCommitReviews = (slug: string, grantId: string) => {
+export const useCommitReviewsGrantApplications = (
+  slug: string,
+  grantId: string,
+) => {
   const queryClient = useQueryClient();
   const [selectedApplication, setSelectedApplication] = useAtom(
     selectedGrantApplicationAtom,

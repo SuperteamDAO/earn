@@ -103,17 +103,21 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         if (submission.status === 'Approved') {
           sortKey = 100;
         } else if (submission.status === 'Rejected') {
-          sortKey = 500;
+          sortKey = 900;
         } else if (submission.label === 'Shortlisted') {
           sortKey = 200;
         } else if (submission.label === 'Unreviewed') {
           sortKey = 300;
-        } else if (submission.label === 'Reviewed') {
+        } else if (submission.label === 'Mid_Quality') {
           sortKey = 400;
+        } else if (submission.label === 'Low_Quality') {
+          sortKey = 500;
+        } else if (submission.label === 'Reviewed') {
+          sortKey = 600;
         } else if (submission.label === 'Spam') {
           sortKey = 1000;
         } else {
-          sortKey = 600;
+          sortKey = 700;
         }
       }
       return { submission, sortKey };

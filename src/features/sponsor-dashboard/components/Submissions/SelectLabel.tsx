@@ -1,4 +1,4 @@
-import type { SubmissionLabels } from '@prisma/client';
+import type { BountyType, SubmissionLabels } from '@prisma/client';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAtom, useSetAtom } from 'jotai';
 import { ChevronDown } from 'lucide-react';
@@ -20,9 +20,10 @@ import { colorMap } from '../../utils/statusColorMap';
 
 interface Props {
   listingSlug: string;
+  type: BountyType | 'grant' | undefined;
 }
 
-export const SelectLabel = ({ listingSlug }: Props) => {
+export const SelectLabel = ({ listingSlug, type }: Props) => {
   const queryClient = useQueryClient();
   const [selectedSubmission, setSelectedSubmission] = useAtom(
     selectedSubmissionAtom,
@@ -97,7 +98,9 @@ export const SelectLabel = ({ listingSlug }: Props) => {
             border,
           )}
         >
-          {selectedSubmission?.label || 'Select Option'}
+          {labelMenuOptions(type).find(
+            (option) => option.value === selectedSubmission?.label,
+          )?.label || 'Select Option'}
           <ChevronDown className="ml-2 size-3" />
         </button>
       </DropdownMenuTrigger>
@@ -106,7 +109,7 @@ export const SelectLabel = ({ listingSlug }: Props) => {
         sideOffset={-1}
         className="w-full min-w-[110px] rounded-t-none px-0 pt-1.5"
       >
-        {labelMenuOptions.map((option) => (
+        {labelMenuOptions(type).map((option) => (
           <DropdownMenuItem
             key={option.value}
             className="cursor-pointer px-1.5 py-1 text-center text-[0.7rem]"

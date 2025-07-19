@@ -64,7 +64,7 @@ function DrawerContent({
       >
         <div
           className={cn(
-            'bg-muted mx-auto mt-4 h-2 w-[100px] rounded-full',
+            'mx-auto mt-2 h-1.5 w-[100px] rounded-full bg-slate-200',
             classNames?.bar,
           )}
         />

@@ -23,6 +23,7 @@ export const ApprovalStages = ({ application, grant }: Props) => {
       'ALLOW NEW',
       'APPLIED',
       'ALLOW EDIT',
+      'COOLDOWN',
       'KYC PENDING',
       'KYC APPROVED',
       'TRANCHE1 PENDING',

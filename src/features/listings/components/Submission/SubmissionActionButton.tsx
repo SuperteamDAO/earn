@@ -6,7 +6,6 @@ import { useRouter } from 'next/router';
 import posthog from 'posthog-js';
 import React, { useState } from 'react';
 
-import { SurveyModal } from '@/components/shared/Survey';
 import { Button } from '@/components/ui/button';
 import { Tooltip } from '@/components/ui/tooltip';
 import { useDisclosure } from '@/hooks/use-disclosure';
@@ -16,6 +15,7 @@ import { cn } from '@/utils/cn';
 
 import { AuthWrapper } from '@/features/auth/components/AuthWrapper';
 import { CreditIcon } from '@/features/credits/icon/credit';
+import { SurveyModal } from '@/features/listings/components/Submission/Survey';
 
 import { userSubmissionQuery } from '../../queries/user-submission-status';
 import { type Listing } from '../../types';

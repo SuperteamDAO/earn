@@ -10,6 +10,7 @@ import { dayjs } from '@/utils/dayjs';
 import { filterAllowedFields } from '@/utils/filterAllowedFields';
 import { safeStringify } from '@/utils/safeStringify';
 
+import { queueAgent } from '@/features/agents/utils/queueAgent';
 import { type NextApiRequestWithSponsor } from '@/features/auth/types';
 import { checkListingSponsorAuth } from '@/features/auth/utils/checkListingSponsorAuth';
 import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
@@ -458,6 +459,28 @@ async function listing(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         triggeredBy: req.userId,
       });
       logger.debug(`Sent email notification for deadline extension`, { id });
+    }
+
+    try {
+      if (result.type === 'project') {
+        await queueAgent({
+          type: 'generateContextProject',
+          id: result.id,
+        });
+        logger.error(
+          `Successfully queued agent job for generateContextProject with id ${result.id}`,
+        );
+        console.log(
+          `Successfully queued agent job for generateContextProject with id ${result.id}`,
+        );
+      }
+    } catch (err) {
+      logger.error(
+        `Failed to queue agent job for generateContextProject with id ${result.id}`,
+      );
+      console.log(
+        `Failed to queue agent job for generateContextProject with id ${result.id}`,
+      );
     }
 
     logger.info(`Listing Updation API Fully Successful with ID: ${id}`);

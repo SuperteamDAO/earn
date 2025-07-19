@@ -21,6 +21,7 @@ import { type Listing } from '@/features/listings/types';
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
 import { selectedSubmissionAtom } from '../../atoms';
+import { labelMenuOptions } from '../../constants';
 import { colorMap } from '../../utils/statusColorMap';
 import { MultiSelectFilter } from './MultiSelectFilter';
 
@@ -90,7 +91,9 @@ export const SubmissionList = ({
     } else if (submission.status === 'Rejected') {
       return 'Rejected';
     } else if (submission?.label) {
-      return submission.label;
+      return labelMenuOptions(listing?.type).find(
+        (option) => option.value === submission.label,
+      )?.label;
     } else {
       return '';
     }

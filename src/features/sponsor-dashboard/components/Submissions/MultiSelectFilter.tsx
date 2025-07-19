@@ -1,4 +1,4 @@
-import type { SubmissionLabels } from '@prisma/client';
+import type { BountyType, SubmissionLabels } from '@prisma/client';
 import { LucideListFilter } from 'lucide-react';
 import { useMemo } from 'react';
 
@@ -19,23 +19,23 @@ interface Props {
   onFilterChange: (
     filters: Set<SubmissionLabels | 'Winner' | 'Rejected'>,
   ) => void;
-  listingType?: string;
+  listingType?: BountyType | 'grant' | undefined;
 }
-
-const DECISION_FILTERS = [
-  { label: 'Winner', value: 'Winner' as const },
-  { label: 'Rejected', value: 'Rejected' as const },
-  ...labelMenuOptions.map((option) => ({
-    label: option.label,
-    value: option.value as SubmissionLabels,
-  })),
-];
 
 export const MultiSelectFilter = ({
   selectedFilters,
   onFilterChange,
   listingType,
 }: Props) => {
+  const DECISION_FILTERS = [
+    { label: 'Winner', value: 'Winner' as const },
+    { label: 'Rejected', value: 'Rejected' as const },
+    ...labelMenuOptions(listingType).map((option) => ({
+      label: option.label,
+      value: option.value as SubmissionLabels,
+    })),
+  ];
+
   const availableFilters = useMemo(() => {
     if (listingType === 'project') {
       return DECISION_FILTERS;
