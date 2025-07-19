@@ -294,7 +294,7 @@ export const NotesRichEditor: React.FC<NotesRichEditorProps> = ({
             flex-direction: column;
             min-height: 25rem !important;
             max-height: 25rem;
-            padding-left: 0px !important;
+            padding-left: 0rem !important;
             padding-right: 0px !important;
             word-break: break-word;
             overflow-wrap: break-word;
@@ -311,6 +311,7 @@ export const NotesRichEditor: React.FC<NotesRichEditorProps> = ({
           .notes-rich-editor ul {
             list-style: disc;
             padding-left: 1rem;
+            padding-bottom: 0.5rem;
           }
           .notes-rich-editor ul.list-inside {
             padding-right: 0.5rem;
@@ -319,9 +320,21 @@ export const NotesRichEditor: React.FC<NotesRichEditorProps> = ({
           .notes-rich-editor ol {
             list-style: decimal;
             padding-left: 1rem;
+            padding-bottom: 0.5rem;
           }
           .notes-rich-editor ol.list-inside {
             padding-right: 0.5rem;
+          }
+
+          /* Safari-specific fix for list marker containment */
+          @supports (-webkit-hyphens: none) {
+            .notes-rich-editor ul {
+              list-style: disc inside;
+            }
+            .notes-rich-editor ol {
+              list-style: decimal inside;
+              padding-left: 0rem;
+            }
           }
 
           .notes-rich-editor li {
@@ -331,6 +344,10 @@ export const NotesRichEditor: React.FC<NotesRichEditorProps> = ({
 
           .notes-rich-editor ol > li {
             margin: 0 0 0.5rem 0;
+          }
+
+          .notes-rich-editor ol ul {
+            padding-bottom: 0rem;
           }
 
           .notes-rich-editor ol > li:last-child {
