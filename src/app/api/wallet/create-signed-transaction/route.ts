@@ -131,7 +131,7 @@ async function createFeePayerATA(
     );
 
     const computeBudgetInstructions = [
-      ComputeBudgetProgram.setComputeUnitLimit({ units: 40000 }),
+      ComputeBudgetProgram.setComputeUnitLimit({ units: 200000 }),
       ComputeBudgetProgram.setComputeUnitPrice({ microLamports: 100000 }),
     ];
 
@@ -313,7 +313,7 @@ export async function POST(request: NextRequest) {
     );
 
     const allInstructions = [
-      ComputeBudgetProgram.setComputeUnitLimit({ units: 40000 }),
+      ComputeBudgetProgram.setComputeUnitLimit({ units: 200000 }),
       ComputeBudgetProgram.setComputeUnitPrice({ microLamports: 100000 }),
     ];
 
