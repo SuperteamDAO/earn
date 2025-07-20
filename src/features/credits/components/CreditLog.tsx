@@ -234,8 +234,10 @@ function getEntryTitle(entry: CreditEntry): string {
       return 'Submission Flagged as Spam';
     case 'WIN_BONUS':
       return entry.submission.listing.type === 'project'
-        ? 'Selected for Project'
-        : 'Won Bounty';
+        ? 'Won a Project'
+        : entry.submission.listing.type === 'bounty'
+          ? 'Won a Bounty'
+          : 'Won a Hackathon Track';
     case 'SUBMISSION':
       return entry.submission.listing.type === 'project'
         ? 'Applied for Project'
@@ -243,7 +245,7 @@ function getEntryTitle(entry: CreditEntry): string {
     case 'GRANT_SPAM_PENALTY':
       return 'Grant Application Flagged as Spam';
     case 'GRANT_WIN_BONUS':
-      return 'Won Grant';
+      return 'Won a Grant';
     case 'MONTHLY_CREDIT':
       const now = new Date();
       const effectiveDate = new Date(entry.effectiveMonth);
