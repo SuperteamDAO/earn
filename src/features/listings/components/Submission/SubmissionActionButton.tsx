@@ -44,6 +44,7 @@ const InfoWrapper = ({
   isProject,
   isBounty,
   isEditMode,
+  isAuthenticated,
 }: {
   children: React.ReactNode;
   isUserEligibleByRegion: boolean;
@@ -55,18 +56,22 @@ const InfoWrapper = ({
   isProject: boolean;
   isBounty: boolean;
   isEditMode: boolean;
+  isAuthenticated: boolean;
 }) => {
+  const { user } = useUser();
   return (
     <Tooltip
       disabled={
-        hasHackathonStarted &&
-        (isUserEligibleByRegion || pastDeadline) &&
-        !(
-          creditBalance === 0 &&
-          (isProject || isBounty) &&
-          !isEditMode &&
-          !pastDeadline
-        )
+        !isAuthenticated ||
+        (isAuthenticated && user?.id && !user?.isTalentFilled) ||
+        (hasHackathonStarted &&
+          (isUserEligibleByRegion || pastDeadline) &&
+          !(
+            creditBalance === 0 &&
+            (isProject || isBounty) &&
+            !isEditMode &&
+            !pastDeadline
+          ))
       }
       content={
         !isUserEligibleByRegion
@@ -207,8 +212,12 @@ export const SubmissionActionButton = ({
           (user?.id &&
             user?.isTalentFilled &&
             (!hasHackathonStarted || !isUserEligibleByRegion)) ||
-          !hasHackathonStarted ||
-          (creditBalance === 0 && (isProject || isBounty)),
+          (!isAuthenticated ? false : !hasHackathonStarted) ||
+          (isAuthenticated &&
+            user?.id &&
+            user?.isTalentFilled &&
+            creditBalance === 0 &&
+            (isProject || isBounty)),
       );
       isSubmitDisabled = Boolean(
         pastDeadline ||
@@ -295,6 +304,7 @@ export const SubmissionActionButton = ({
             isProject={isProject}
             isBounty={isBounty}
             isEditMode={isEditMode}
+            isAuthenticated={isAuthenticated}
           >
             <AuthWrapper
               showCompleteProfileModal
