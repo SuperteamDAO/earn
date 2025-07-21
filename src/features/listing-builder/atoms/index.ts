@@ -48,6 +48,18 @@ const submitListingMutationAtom = atomWithMutation((get) => ({
   mutationKey: ['submitListing'],
   mutationFn: async (data: ListingFormData) => {
     if (!data.id) throw new Error('Missing ID');
+
+    if (typeof window !== 'undefined' && window.__processImageCleanup) {
+      console.log('Processing image cleanup before submission');
+      try {
+        await window.__processImageCleanup();
+      } catch (error) {
+        console.error('Failed to process image cleanup:', error);
+      }
+    } else {
+      console.warn('Image cleanup not initialized');
+    }
+
     const isEditing = get(isEditingAtom);
     const endpoint = isEditing
       ? '/api/listings/update'

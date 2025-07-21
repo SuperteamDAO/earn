@@ -1,4 +1,5 @@
-import { useAtom } from 'jotai';
+import { useAtom, useAtomValue } from 'jotai';
+import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { useWatch } from 'react-hook-form';
 
@@ -12,7 +13,10 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 
-import { descriptionKeyAtom } from '@/features/listing-builder/atoms';
+import {
+  descriptionKeyAtom,
+  isEditingAtom,
+} from '@/features/listing-builder/atoms';
 
 import { useListingForm } from '../../../hooks';
 import { AiGenerateDialog } from '../../AiGenerate/Dialog';
@@ -20,6 +24,8 @@ import { Templates } from './Templates';
 
 export function DescriptionAndTemplate() {
   const form = useListingForm();
+  const router = useRouter();
+  const isEditing = useAtomValue(isEditingAtom);
   const templateId = useWatch({
     control: form.control,
     name: 'templateId',
@@ -29,6 +35,37 @@ export function DescriptionAndTemplate() {
   useEffect(() => {
     setDescriptionKey(`editor-${templateId || 'default'}`);
   }, [templateId]);
+
+  useEffect(() => {
+    if (isEditing) return;
+
+    const processCleanup = () => {
+      if (typeof window !== 'undefined' && window.__processImageCleanup) {
+        console.log('Processing image cleanup (draft mode)');
+        try {
+          window.__processImageCleanup();
+        } catch (error) {
+          console.error('Failed to process image cleanup:', error);
+        }
+      }
+    };
+
+    const handleRouteStart = () => {
+      processCleanup();
+    };
+
+    const handleBeforeUnload = () => {
+      processCleanup();
+    };
+
+    router.events.on('routeChangeStart', handleRouteStart);
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      router.events.off('routeChangeStart', handleRouteStart);
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [router.events, isEditing]);
 
   return (
     <FormField
