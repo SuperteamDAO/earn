@@ -22,6 +22,7 @@ import {
 import { Progress } from '@/components/ui/progress';
 import { Tooltip } from '@/components/ui/tooltip';
 import { type SubmissionWithUser } from '@/interface/submission';
+import { GridScanAnimation } from '@/svg/DocumentScanAnimated/GridScanAnimated';
 import { WandAnimated } from '@/svg/WandAnimated/WandAnimated';
 import { cn } from '@/utils/cn';
 
@@ -41,9 +42,9 @@ export default function AiReviewProjectApplicationsModal({
   applications,
   listing,
 }: Props) {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
   const [state, setState] = useState<'INIT' | 'PROCESSING' | 'DONE' | 'ERROR'>(
-    'INIT',
+    'PROCESSING',
   );
   const [progress, setProgress] = useState(0);
   const progressIntervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -216,7 +217,7 @@ export default function AiReviewProjectApplicationsModal({
     <Dialog
       open={open}
       onOpenChange={(s) => {
-        if (state === 'PROCESSING') return;
+        // if (state === 'PROCESSING') return;
         if (s === false) posthog.capture('close_ai review projects');
         setOpen(s);
       }}
@@ -334,6 +335,7 @@ export default function AiReviewProjectApplicationsModal({
                   transition={{ duration: 0.3 }}
                 >
                   <CardContent className="mt-8 flex flex-col items-center justify-center space-y-8 p-8">
+                    <GridScanAnimation />
                     <div className="relative h-2 w-2/4 max-w-md overflow-hidden rounded-md bg-[#f1f5f9]">
                       <Progress
                         value={progress}
