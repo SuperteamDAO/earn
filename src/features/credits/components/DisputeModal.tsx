@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useQueryClient } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
@@ -83,6 +83,12 @@ export function DisputeModal({ isOpen, onClose, entry }: DisputeModalProps) {
     formState: { errors, isValid },
   } = form;
   const description = watch('description');
+
+  useEffect(() => {
+    if (!isOpen || !entry) {
+      reset();
+    }
+  }, [isOpen, entry?.id, reset]);
 
   const handleFormSubmit = async (data: DisputeFormData) => {
     if (!entry) return;

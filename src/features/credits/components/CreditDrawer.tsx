@@ -51,10 +51,15 @@ export function CreditDrawer({
         if (creditHistory?.data) {
           const allEntries = processEntries(creditHistory.data);
           const entryToDispute = allEntries.find(
-            (entry) => entry.submission?.id === submissionId,
+            (entry) =>
+              entry.submission?.id === submissionId &&
+              (entry.type === 'SPAM_PENALTY' ||
+                entry.type === 'GRANT_SPAM_PENALTY'),
           );
 
-          if (entryToDispute && canDispute(entryToDispute, allEntries)) {
+          const dispute = canDispute(entryToDispute, allEntries, true);
+
+          if (entryToDispute && dispute) {
             setDisputeSubmissionId(submissionId);
           } else {
             const pathWithoutHash =
@@ -70,7 +75,7 @@ export function CreditDrawer({
     if (isOpen) {
       checkForDisputeHash();
     }
-  }, [isOpen, creditHistory?.data, router]);
+  }, [isOpen, creditHistory?.data, router, canDispute]);
 
   const handleClose = () => {
     const currentPath = window.location.hash;
