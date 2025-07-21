@@ -44,12 +44,12 @@ export const GrantModal = ({
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent
         hideCloseIcon
-        className="max-w-xl overflow-y-scroll p-0 md:max-h-[90svh]"
+        className="h-[100svh] max-w-xl overflow-y-hidden p-0 md:max-h-[90svh]"
         ref={modalRef}
         onInteractOutside={(e) => e.preventDefault()}
         onEscapeKeyDown={(e) => e.preventDefault()}
       >
-        <ScrollArea className="h-full">
+        <ScrollArea className="h-[100svh] md:max-h-[90svh]">
           <X
             className="absolute top-7 right-4 z-10 h-4 w-4 cursor-pointer text-slate-400 sm:top-6"
             onClick={onClose}
