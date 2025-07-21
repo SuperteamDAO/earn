@@ -213,7 +213,7 @@ export const DesktopNavbar = ({
                     router.push('/sponsor');
                   }}
                 >
-                  <span>Become a Sponsor</span>
+                  <span>Become a Gaandu</span>
                   <div className="block h-1.5 w-1.5 rounded-full bg-sky-400" />
                 </Button>
                 <Button
