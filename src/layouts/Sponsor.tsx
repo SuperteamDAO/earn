@@ -1,6 +1,6 @@
 import { usePrivy } from '@privy-io/react-auth';
 import { useQuery } from '@tanstack/react-query';
-import { Lock, Plus, Users } from 'lucide-react';
+import { Lock, Pencil, Plus, Users } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import posthog from 'posthog-js';
@@ -156,7 +156,11 @@ export function SponsorLayout({
 
   const LinkItems: Array<LinkItemProps> = isHackathonRoute
     ? [
-        { name: 'All Tracks', link: `/hackathon`, icon: MdList },
+        {
+          name: 'All Tracks',
+          link: `/hackathon`,
+          icon: MdList,
+        },
         {
           name: 'Get Help',
           link: PDTG,
@@ -165,7 +169,11 @@ export function SponsorLayout({
         },
       ]
     : [
-        { name: 'My Listings', link: '/listings', icon: BiListUl },
+        {
+          name: 'My Listings',
+          link: '/listings',
+          icon: BiListUl,
+        },
         {
           name: 'Team Settings',
           link: '/team-settings',
@@ -180,6 +188,11 @@ export function SponsorLayout({
               },
             ]
           : []),
+        {
+          name: 'Edit Profile',
+          link: '/sponsor/edit',
+          icon: Pencil,
+        },
         {
           name: 'FAQ',
           link: '/faq',

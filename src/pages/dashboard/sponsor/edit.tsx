@@ -21,8 +21,7 @@ import { FormFieldWrapper } from '@/components/ui/form-field-wrapper';
 import { Input } from '@/components/ui/input';
 import { MultiSelect } from '@/components/ui/multi-select';
 import { Tooltip } from '@/components/ui/tooltip';
-import { Default } from '@/layouts/Default';
-import { Meta } from '@/layouts/Meta';
+import { SponsorLayout } from '@/layouts/Sponsor';
 import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 import { uploadAndReplaceImage } from '@/utils/image';
@@ -183,17 +182,10 @@ export default function UpdateSponsor() {
   };
 
   return (
-    <Default
-      meta={
-        <Meta
-          title="Edit Sponsor Profile | Superteam Earn"
-          description="Every Solana opportunity in one place!"
-        />
-      }
-    >
-      <div className="mx-auto flex flex-col gap-2 pt-12 pb-24">
+    <SponsorLayout>
+      <div className="mx-auto ml-4 flex flex-col gap-2">
         <div className="flex flex-col gap-2">
-          <p className="mb-8 text-3xl font-semibold tracking-tight text-gray-900">
+          <p className="mb-4 text-2xl font-bold tracking-tight text-gray-900">
             Edit Sponsor Profile
           </p>
         </div>
@@ -362,6 +354,6 @@ export default function UpdateSponsor() {
           </Form>
         </div>
       </div>
-    </Default>
+    </SponsorLayout>
   );
 }

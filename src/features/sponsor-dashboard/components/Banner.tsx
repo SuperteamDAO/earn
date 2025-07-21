@@ -1,5 +1,4 @@
-import { Info, Pencil } from 'lucide-react';
-import Link from 'next/link';
+import { Info } from 'lucide-react';
 
 import { VerifiedBadgeLarge } from '@/components/shared/VerifiedBadge';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -104,15 +103,6 @@ export function Banner({
                     )}
                   </div>
                 </div>
-
-                {!isHackathon && (
-                  <Link
-                    className="ml-2 text-slate-500 hover:text-slate-800"
-                    href={`/sponsor/edit`}
-                  >
-                    <Pencil className="h-4 w-4 text-slate-400" />
-                  </Link>
-                )}
               </div>
               {isLoading ? (
                 <Skeleton className="mt-2 h-5 w-[170px]" />
