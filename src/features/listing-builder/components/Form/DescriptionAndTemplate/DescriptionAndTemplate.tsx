@@ -1,6 +1,6 @@
 import { useAtom, useAtomValue } from 'jotai';
 import { useRouter } from 'next/router';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useWatch } from 'react-hook-form';
 
 import { MinimalTiptapEditor } from '@/components/tiptap';
@@ -16,6 +16,7 @@ import {
 import {
   descriptionKeyAtom,
   isEditingAtom,
+  submitListingMutationAtom,
 } from '@/features/listing-builder/atoms';
 
 import { useListingForm } from '../../../hooks';
@@ -26,26 +27,55 @@ export function DescriptionAndTemplate() {
   const form = useListingForm();
   const router = useRouter();
   const isEditing = useAtomValue(isEditingAtom);
+  const submitMutation = useAtomValue(submitListingMutationAtom);
   const templateId = useWatch({
     control: form.control,
     name: 'templateId',
   });
   const [descriptionKey, setDescriptionKey] = useAtom(descriptionKeyAtom);
 
+  const originalDescriptionRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    const currentDescription = form.getValues('description');
+    if (originalDescriptionRef.current === null) {
+      originalDescriptionRef.current = currentDescription || '';
+      console.log('Saved original description for image cleanup');
+    }
+  }, [form]);
+
   useEffect(() => {
     setDescriptionKey(`editor-${templateId || 'default'}`);
-  }, [templateId]);
+  }, [templateId, setDescriptionKey]);
 
   useEffect(() => {
-    if (isEditing) return;
-
     const processCleanup = () => {
-      if (typeof window !== 'undefined' && window.__processImageCleanup) {
-        console.log('Processing image cleanup (draft mode)');
-        try {
-          window.__processImageCleanup();
-        } catch (error) {
-          console.error('Failed to process image cleanup:', error);
+      if (
+        submitMutation.isPending ||
+        submitMutation.isSuccess ||
+        submitMutation.isError
+      ) {
+        console.log('Skipping cleanup - submit mutation is active/completed');
+        return;
+      }
+
+      if (typeof window !== 'undefined') {
+        if (isEditing && window.__processOrphanedImageCleanup) {
+          console.log('Processing orphaned image cleanup (edit mode)');
+          try {
+            window.__processOrphanedImageCleanup(
+              originalDescriptionRef.current || '',
+            );
+          } catch (error) {
+            console.error('Failed to process orphaned image cleanup:', error);
+          }
+        } else if (!isEditing && window.__processImageCleanup) {
+          console.log('Processing image cleanup (draft mode)');
+          try {
+            window.__processImageCleanup();
+          } catch (error) {
+            console.error('Failed to process image cleanup:', error);
+          }
         }
       }
     };
@@ -65,7 +95,13 @@ export function DescriptionAndTemplate() {
       router.events.off('routeChangeStart', handleRouteStart);
       window.removeEventListener('beforeunload', handleBeforeUnload);
     };
-  }, [router.events, isEditing]);
+  }, [
+    router.events,
+    isEditing,
+    submitMutation.isPending,
+    submitMutation.isSuccess,
+    submitMutation.isError,
+  ]);
 
   return (
     <FormField

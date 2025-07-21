@@ -32,6 +32,16 @@ import { UnsetAllMarks } from '../extensions/unset-all-marks';
 import { getOutput, reasonToText } from '../utils';
 import { useThrottle } from './use-throttle';
 
+declare global {
+  interface Window {
+    __processImageCleanup?: () => Promise<void>;
+    __clearImageCleanup?: () => void;
+    __processOrphanedImageCleanup?: (
+      originalDescription: string,
+    ) => Promise<void>;
+  }
+}
+
 interface ImageSetting {
   folderName: EARN_IMAGE_FOLDER;
   type: string;
@@ -52,7 +62,23 @@ export interface MinimalTiptapEditorReturn {
   getPendingImageDeletions: () => string[];
   processPendingDeletions: () => Promise<void>;
   clearPendingDeletions: () => void;
+  processOrphanedImageCleanup: (originalDescription: string) => Promise<void>;
 }
+
+const extractImageUrls = (htmlContent: string): Set<string> => {
+  const urls = new Set<string>();
+  const imgRegex = /<img[^>]+src=["']([^"']+)["'][^>]*>/gi;
+  let match;
+
+  while ((match = imgRegex.exec(htmlContent)) !== null) {
+    const src = match[1];
+    if (src && !src.startsWith('blob:') && !src.startsWith('data:')) {
+      urls.add(src);
+    }
+  }
+
+  return urls;
+};
 
 export const useMinimalTiptapEditor = ({
   value,
@@ -77,10 +103,17 @@ export const useMinimalTiptapEditor = ({
     const manager = {
       getPendingDeletions: () => Array.from(pendingDeletionsRef.current),
       processPendingDeletions: async () => {
+        const pendingCount = pendingDeletionsRef.current.size;
         console.log(
-          'Processing pending deletions',
-          pendingDeletionsRef.current,
+          `Processing pending deletions: ${pendingCount} images`,
+          Array.from(pendingDeletionsRef.current),
         );
+
+        if (pendingCount === 0) {
+          console.log('No images to delete');
+          return;
+        }
+
         const deletionPromises = Array.from(pendingDeletionsRef.current).map(
           async (src) => {
             try {
@@ -94,9 +127,41 @@ export const useMinimalTiptapEditor = ({
         );
         await Promise.all(deletionPromises);
         pendingDeletionsRef.current.clear();
+        console.log('Cleanup completed');
       },
       clearPendingDeletions: () => {
         pendingDeletionsRef.current.clear();
+      },
+      processOrphanedImageCleanup: async (originalDescription: string) => {
+        const originalImageUrls = extractImageUrls(originalDescription);
+        const orphanedImages = Array.from(trackedImagesRef.current).filter(
+          (src) => !originalImageUrls.has(src),
+        );
+
+        console.log(
+          `Processing orphaned image cleanup: ${orphanedImages.length} images`,
+          orphanedImages,
+        );
+        console.log('Original images:', Array.from(originalImageUrls));
+        console.log('Tracked images:', Array.from(trackedImagesRef.current));
+
+        if (orphanedImages.length === 0) {
+          console.log('No orphaned images to delete');
+          return;
+        }
+
+        const deletionPromises = orphanedImages.map(async (src) => {
+          try {
+            await deleteFromCld(src);
+            trackedImagesRef.current.delete(src);
+            console.log('Successfully deleted orphaned image:', src);
+          } catch (error) {
+            console.error('Error deleting orphaned image:', error);
+          }
+        });
+
+        await Promise.all(deletionPromises);
+        console.log('Orphaned image cleanup completed');
       },
     };
 
@@ -104,6 +169,8 @@ export const useMinimalTiptapEditor = ({
       console.log('Setting up global window functions');
       window.__processImageCleanup = manager.processPendingDeletions;
       window.__clearImageCleanup = manager.clearPendingDeletions;
+      window.__processOrphanedImageCleanup =
+        manager.processOrphanedImageCleanup;
     }
 
     return manager;
@@ -159,6 +226,8 @@ export const useMinimalTiptapEditor = ({
         },
         onImageRemoved({ id, src }) {
           console.log('Image removed', { id, src });
+          console.log('Is tracked?', trackedImagesRef.current.has(src));
+          console.log('Tracked images:', Array.from(trackedImagesRef.current));
           if (src && trackedImagesRef.current.has(src)) {
             pendingDeletionsRef.current.add(src);
             console.log('Image marked for deletion:', src);
@@ -166,6 +235,8 @@ export const useMinimalTiptapEditor = ({
               'Current pending deletions:',
               pendingDeletionsRef.current,
             );
+          } else {
+            console.log('Image not tracked, not adding to pending deletions');
           }
         },
         onImageRestored: async ({ id, src }) => {
@@ -174,10 +245,12 @@ export const useMinimalTiptapEditor = ({
           if (pendingDeletionsRef.current.has(src)) {
             pendingDeletionsRef.current.delete(src);
             console.log('Image unmarked for deletion:', src);
-            return;
           }
 
-          if (!trackedImagesRef.current.has(src)) {
+          trackedImagesRef.current.add(src);
+          console.log('Image re-added to tracking:', src);
+
+          if (!src.includes('cloudinary.com')) {
             try {
               const response = await fetch(src, { method: 'HEAD' });
               if (!response.ok) {
@@ -319,5 +392,6 @@ export const useMinimalTiptapEditor = ({
     getPendingImageDeletions: imageManager.getPendingDeletions,
     processPendingDeletions: imageManager.processPendingDeletions,
     clearPendingDeletions: imageManager.clearPendingDeletions,
+    processOrphanedImageCleanup: imageManager.processOrphanedImageCleanup,
   };
 };
