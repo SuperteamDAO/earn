@@ -170,7 +170,7 @@ export function PrePublish() {
           <DialogTitle className="relative h-5 text-base">
             {isUpdate ? <span>Update</span> : <span>Publish</span>}{' '}
             <span>Listing</span>
-            {!isDisabledSoft && (
+            {isDisabledSoft && (
               <Loader2 className="absolute top-2/4 -right-7 mt-0.5 h-4 w-4 -translate-y-2/4 animate-spin text-slate-500" />
             )}
           </DialogTitle>
