@@ -1,13 +1,15 @@
 'use client';
 
-import { useAtom } from 'jotai';
+import { atom, useAtom } from 'jotai';
 import { useRouter } from 'next/router';
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import { toast } from 'sonner';
 
 import type { useUser } from '@/store/user';
 
 import { loginEventAtom } from '@/features/auth/atoms';
+
+const forcedRedirectedAtom = atom(false);
 
 type User = ReturnType<typeof useUser>['user'];
 
@@ -22,7 +24,7 @@ export const useForcedProfileRedirect = ({
 }: UseForcedProfileRedirectProps): void => {
   const router = useRouter();
   const { pathname, asPath } = router;
-  const forcedRedirected = useRef(false);
+  const [forcedRedirected, setForcedRedirected] = useAtom(forcedRedirectedAtom);
   const [loginEvent, setLoginEvent] = useAtom(loginEventAtom);
 
   useEffect(() => {
@@ -39,16 +41,16 @@ export const useForcedProfileRedirect = ({
       !user ||
       user.isTalentFilled ||
       user.currentSponsorId ||
-      forcedRedirected.current ||
+      forcedRedirected ||
       isExcludedPath
     ) {
       return;
     }
 
     const performRedirect = (wait: number) => {
-      if (forcedRedirected.current) return;
+      if (forcedRedirected) return;
 
-      forcedRedirected.current = true;
+      setForcedRedirected(true);
       setLoginEvent('idle');
 
       const redirectAction = () => {
@@ -99,5 +101,7 @@ export const useForcedProfileRedirect = ({
     router,
     loginEvent,
     setLoginEvent,
+    forcedRedirected,
+    setForcedRedirected,
   ]);
 };

@@ -64,6 +64,7 @@ model Bounties {
   Scouts             Scouts[]
   Comments           Comment[]
   discordMessageIds  Json?
+  ai                 Json?
 
   @@index([id, slug])
   @@index([sponsorId])
@@ -341,9 +342,10 @@ model Submission {
   listing            Bounties         @relation(fields: [listingId], references: [id])
   user               User             @relation(fields: [userId], references: [id])
   ogImage            String?          @db.Text
-  notes              String?          @db.VarChar(1000)
+  notes              String?          @db.VarChar(10000)
   Comments           Comment[]
   CreditLedger       CreditLedger[]
+  ai                 Json?
 
   @@index([id, listingId])
   @@index([userId])
@@ -716,6 +718,7 @@ model CreditLedger {
   user           User              @relation(fields: [userId], references: [id])
   submission     Submission?       @relation(fields: [submissionId], references: [id])
   application    GrantApplication? @relation(fields: [applicationId], references: [id])
+  decision       SubmissionStatus?
 
   @@index([userId])
   @@index([submissionId])
@@ -731,6 +734,8 @@ enum CreditEventType {
   CREDIT_REFUND
   GRANT_WIN_BONUS
   GRANT_SPAM_PENALTY
+  SPAM_DISPUTE
+  GRANT_SPAM_DISPUTE
 }
 
 enum TalentRankingSkills {

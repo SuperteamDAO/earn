@@ -47,6 +47,7 @@ import { getListingStatus } from '@/features/listings/utils/status';
 import { VerifyPaymentModal } from '@/features/sponsor-dashboard/components/Modals/VerifyPayment';
 
 import { UnpublishModal } from '../Modals/UnpublishModal';
+import AiReviewProjectApplicationsModal from './Modals/AiReviewProjects';
 
 interface Props {
   bounty: Listing | undefined;
@@ -260,6 +261,13 @@ export const SubmissionHeader = ({
           >
             {bountyStatus}
           </StatusPill>
+
+          <div className="ml-4 -translate-y-2.5">
+            <AiReviewProjectApplicationsModal
+              listing={bounty}
+              applications={submissions}
+            />
+          </div>
         </div>
       </div>
       {!isProject && !bounty?.isWinnersAnnounced && (
@@ -350,9 +358,9 @@ export const SubmissionHeader = ({
       )}
 
       {isProject && !bounty?.isWinnersAnnounced && bounty?.isPublished && (
-        <div>
+        <div className="flex flex-row-reverse items-center gap-8">
           <p className="text-slate-800">
-            Didnt find a suitable candidate?{' '}
+            {`Didn't find a suitable candidate? `}
             <span
               className="cursor-pointer text-blue-500 underline"
               onClick={unpublishOnOpen}

@@ -444,7 +444,7 @@ const CreateSponsor = () => {
                       name="sponsor.twitter"
                       socialName={'twitter'}
                       formLabel="Company Twitter"
-                      placeholder="@solanalabs"
+                      placeholder="solanalabs"
                       required
                       control={form.control}
                       height="h-9"

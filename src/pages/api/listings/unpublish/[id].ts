@@ -8,7 +8,7 @@ import { safeStringify } from '@/utils/safeStringify';
 import { type NextApiRequestWithSponsor } from '@/features/auth/types';
 import { checkListingSponsorAuth } from '@/features/auth/utils/checkListingSponsorAuth';
 import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
-import { refundCredit } from '@/features/credits/utils/allocateCredits';
+import { refundCredits } from '@/features/credits/utils/allocateCredits';
 import { queueEmail } from '@/features/emails/utils/queueEmail';
 
 async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
@@ -124,7 +124,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       }
     }
 
-    await refundCredit(id);
+    await refundCredits(id);
 
     try {
       await earncognitoClient.post(`/discord/listing-update`, {

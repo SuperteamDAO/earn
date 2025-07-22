@@ -56,6 +56,7 @@ interface CustomImageOptions
     options: CustomImageOptions,
   ) => Promise<void>;
   onValidationError?: (errors: FileError[]) => void;
+  onImageRestored?: (props: ImageInfo) => void;
 }
 
 declare module '@tiptap/react' {
@@ -314,6 +315,20 @@ export const Image = TiptapImage.extend<CustomImageOptions>({
           !imageInfo.src.startsWith('data:')
         ) {
           this.options.onImageRemoved?.({
+            id: imageInfo.id,
+            src: imageInfo.src,
+          });
+        }
+      }
+    });
+
+    newImages.forEach((imageInfo, key) => {
+      if (!oldImages.has(key)) {
+        if (
+          imageInfo.src.includes('cloudinary.com') &&
+          this.options.onImageRestored
+        ) {
+          this.options.onImageRestored({
             id: imageInfo.id,
             src: imageInfo.src,
           });

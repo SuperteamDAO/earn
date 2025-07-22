@@ -14,6 +14,7 @@ import { truncateString } from '@/utils/truncateString';
 
 import type { Listing } from '@/features/listings/types';
 import {
+  GitHub,
   Telegram,
   Twitter,
   Website,
@@ -77,7 +78,10 @@ export const SubmissionPanel = ({
                     !bounty?.isWinnersAnnounced &&
                     !selectedSubmission.isWinner &&
                     selectedSubmission?.label !== SubmissionLabels.Spam && (
-                      <SelectLabel listingSlug={bounty?.slug!} />
+                      <SelectLabel
+                        type={bounty?.type}
+                        listingSlug={bounty?.slug!}
+                      />
                     )}
                 </div>
               </div>
@@ -157,6 +161,11 @@ export const SubmissionPanel = ({
                 <Twitter
                   className="h-[0.9rem] w-[0.9rem] text-slate-600"
                   link={selectedSubmission?.user?.twitter || ''}
+                />
+
+                <GitHub
+                  className="h-[0.9rem] w-[0.9rem] text-slate-600"
+                  link={selectedSubmission?.user?.github || ''}
                 />
 
                 <Website

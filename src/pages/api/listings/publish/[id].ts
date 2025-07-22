@@ -9,6 +9,7 @@ import { cleanSkills } from '@/utils/cleanSkills';
 import { dayjs } from '@/utils/dayjs';
 import { safeStringify } from '@/utils/safeStringify';
 
+import { queueAgent } from '@/features/agents/utils/queueAgent';
 import { type NextApiRequestWithSponsor } from '@/features/auth/types';
 import { checkListingSponsorAuth } from '@/features/auth/utils/checkListingSponsorAuth';
 import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
@@ -439,6 +440,28 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           error,
         });
       }
+    }
+
+    try {
+      if (result.type === 'project') {
+        await queueAgent({
+          type: 'generateContextProject',
+          id: result.id,
+        });
+        logger.error(
+          `Successfully queued agent job for generateContextProject with id ${result.id}`,
+        );
+        console.log(
+          `Successfully queued agent job for generateContextProject with id ${result.id}`,
+        );
+      }
+    } catch (err) {
+      logger.error(
+        `Failed to queue agent job for generateContextProject with id ${result.id}`,
+      );
+      console.log(
+        `Failed to queue agent job for generateContextProject with id ${result.id}`,
+      );
     }
 
     logger.info(`Listing Publish API Fully Successful with ID: ${id}`);

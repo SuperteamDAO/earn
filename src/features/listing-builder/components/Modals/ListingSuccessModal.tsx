@@ -1,7 +1,7 @@
 import { useAtom } from 'jotai';
 import { Check, ChevronRight, Copy, Plus } from 'lucide-react';
 import Link from 'next/link';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useWatch } from 'react-hook-form';
 
 import FaXTwitter from '@/components/icons/FaXTwitter';
@@ -13,9 +13,11 @@ import { getURL } from '@/utils/validUrl';
 
 import { confirmModalAtom } from '../../atoms';
 import { useListingForm } from '../../hooks';
+import { Survey } from './Survey';
 
 export const ListingSuccessModal = () => {
   const [confirmModal] = useAtom(confirmModalAtom);
+  const [surveyOpen, setSurveyOpen] = useState(true);
 
   const form = useListingForm();
   const slug = useWatch({
@@ -107,6 +109,8 @@ export const ListingSuccessModal = () => {
             </div>
           </div>
         </div>
+
+        <Survey open={surveyOpen} setOpen={setSurveyOpen} />
       </DialogContent>
     </Dialog>
   );

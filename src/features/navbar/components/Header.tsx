@@ -69,11 +69,22 @@ export const Header = () => {
     onWalletOpen();
   };
 
+  const openCreditWithEvent = () => {
+    posthog.capture('open_credits');
+    onCreditOpen();
+  };
+
   useEffect(() => {
     const checkHashAndOpenModal = () => {
       const hashHasEmail = window.location.hash === '#emailPreferences';
       const hashHasWallet = window.location.hash === '#wallet';
-      if ((hashHasEmail || hashHasWallet) && ready && !authenticated) {
+      const hashHasDispute =
+        window.location.hash.startsWith('#dispute-submission-') || false;
+      if (
+        (hashHasEmail || hashHasWallet || hashHasDispute) &&
+        ready &&
+        !authenticated
+      ) {
         onLoginOpen();
       }
     };
@@ -88,13 +99,18 @@ export const Header = () => {
       const afterHash = hashIndex !== -1 ? url.substring(hashIndex + 1) : '';
       const [hashValue] = afterHash.split('?');
       const hashHasWallet = hashValue === 'wallet';
+      const hashHasDispute =
+        hashValue?.startsWith('dispute-submission-') || false;
+
       if (hashHasWallet) {
         openWalletWithEvent();
+      } else if (hashHasDispute && authenticated) {
+        openCreditWithEvent();
       }
     };
 
     checkHashAndOpenModal();
-  }, [isWalletOpen, onWalletOpen]);
+  }, [isWalletOpen, onWalletOpen, isCreditOpen, onCreditOpen, authenticated]);
 
   const {
     data: tokens,
@@ -120,14 +136,14 @@ export const Header = () => {
           onSearchOpen={searchOpenWithEvent}
           onWalletOpen={openWalletWithEvent}
           walletBalance={walletBalance || 0}
-          onCreditOpen={onCreditOpen}
+          onCreditOpen={openCreditWithEvent}
         />
       </div>
       <MobileNavbar
         onLoginOpen={onLoginOpen}
         onWalletOpen={openWalletWithEvent}
         walletBalance={walletBalance || 0}
-        onCreditOpen={onCreditOpen}
+        onCreditOpen={openCreditWithEvent}
       />
       <SearchModal isOpen={isSearchOpen} onClose={onSearchClose} />
       <div className="fixed bottom-0 z-60 w-full">

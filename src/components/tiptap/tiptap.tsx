@@ -1,9 +1,9 @@
-import { type Content, type Editor, EditorContent } from '@tiptap/react';
+import { type Editor, EditorContent } from '@tiptap/react';
 import * as React from 'react';
 
-import { Separator } from '@/components/ui/separator';
 import { cn } from '@/utils/cn';
 
+import { Separator } from '../ui/separator';
 import { LinkBubbleMenu } from './components/bubble-menu/link-bubble-menu';
 import { MeasuredContainer } from './components/measured-container';
 import { SectionFive } from './components/section/five';
@@ -12,14 +12,15 @@ import { SectionOne } from './components/section/one';
 import { SectionThree } from './components/section/three';
 import { SectionTwo } from './components/section/two';
 import {
+  type MinimalTiptapEditorReturn,
   useMinimalTiptapEditor,
   type UseMinimalTiptapEditorProps,
 } from './hooks/use-minimal-tiptap';
 
 export interface MinimalTiptapProps
   extends Omit<UseMinimalTiptapEditorProps, 'onUpdate'> {
-  value?: Content;
-  onChange?: (value: Content) => void;
+  value?: UseMinimalTiptapEditorProps['value'];
+  onChange?: UseMinimalTiptapEditorProps['onUpdate'];
   className?: string;
   editorContentClassName?: string;
   toolbarClassName?: string;
@@ -94,7 +95,7 @@ export const MinimalTiptapEditor = React.forwardRef<
     },
     ref,
   ) => {
-    const editor = useMinimalTiptapEditor({
+    const { editor } = useMinimalTiptapEditor({
       value,
       onUpdate: onChange,
       ...props,
@@ -126,3 +127,55 @@ export const MinimalTiptapEditor = React.forwardRef<
 );
 
 MinimalTiptapEditor.displayName = 'MinimalTiptapEditor';
+
+export interface MinimalTiptapWithImageManagementProps
+  extends MinimalTiptapProps {
+  onGetImageManager?: (manager: {
+    getPendingImageDeletions: () => string[];
+    processPendingDeletions: () => Promise<void>;
+    clearPendingDeletions: () => void;
+  }) => void;
+}
+
+export const useMinimalTiptapWithImageManagement = (
+  props: MinimalTiptapWithImageManagementProps,
+) => {
+  const {
+    editor,
+    getPendingImageDeletions,
+    processPendingDeletions,
+    clearPendingDeletions,
+  } = useMinimalTiptapEditor({
+    value: props.value,
+    onUpdate: props.onChange,
+    ...props,
+  });
+
+  React.useEffect(() => {
+    if (props.onGetImageManager) {
+      props.onGetImageManager({
+        getPendingImageDeletions,
+        processPendingDeletions,
+        clearPendingDeletions,
+      });
+    }
+  }, [
+    props.onGetImageManager,
+    getPendingImageDeletions,
+    processPendingDeletions,
+    clearPendingDeletions,
+  ]);
+
+  return {
+    editor,
+    getPendingImageDeletions,
+    processPendingDeletions,
+    clearPendingDeletions,
+  };
+};
+
+export {
+  type MinimalTiptapEditorReturn,
+  useMinimalTiptapEditor,
+  type UseMinimalTiptapEditorProps,
+};

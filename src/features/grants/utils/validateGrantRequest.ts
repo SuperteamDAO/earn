@@ -7,6 +7,7 @@ export async function validateGrantRequest(userId: string, grantId: string) {
     where: { id: grantId },
     select: {
       id: true,
+      title: true,
       isActive: true,
       isPublished: true,
       region: true,

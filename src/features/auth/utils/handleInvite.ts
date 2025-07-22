@@ -47,7 +47,7 @@ export async function handleInviteAcceptance(
       };
     }
 
-    if (user.email !== invite.email) {
+    if (user.email.toLowerCase() !== invite.email.toLowerCase()) {
       logger.warn(
         `Email mismatch for invite acceptance. User email: ${user.email}, Invited email: ${invite.email}, User ID: ${userId}`,
       );

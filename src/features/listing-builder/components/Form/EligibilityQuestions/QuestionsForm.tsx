@@ -24,6 +24,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Switch } from '@/components/ui/switch';
 import { cn } from '@/utils/cn';
 
 import { useListingForm, type UseListingFormReturn } from '../../../hooks';
@@ -60,12 +61,38 @@ function EligibilityQuestionItem({
       render={() => (
         <div key={field.id} className="group">
           <FormItem className="gap-2">
-            <FormLabel
-              isRequired
-              className="font-medium text-slate-500 sm:text-sm"
-            >
-              Question {index + 1}
-            </FormLabel>
+            <div className="flex items-center justify-between">
+              <FormLabel
+                isRequired
+                className="font-medium text-slate-500 sm:text-sm"
+              >
+                Question {index + 1}
+              </FormLabel>
+              <FormField
+                control={form.control}
+                name={`eligibility.${index}.optional`}
+                render={({ field: optionalField }) => {
+                  const isFirstProjectQuestion =
+                    type === 'project' && index === 0;
+                  return (
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs text-slate-500">Required</span>
+                      <Switch
+                        checked={!optionalField.value}
+                        onCheckedChange={(checked) => {
+                          if (!isFirstProjectQuestion) {
+                            optionalField.onChange(!checked);
+                            if (form.getValues().id) form.saveDraft();
+                          }
+                        }}
+                        disabled={isFirstProjectQuestion}
+                        className="scale-75"
+                      />
+                    </div>
+                  );
+                }}
+              />
+            </div>
             <div className="ring-primary flex items-start rounded-md border has-focus:ring-1">
               <FormField
                 control={form.control}
@@ -206,6 +233,7 @@ export function EligibilityQuestionsForm() {
           order: fields.length + 1,
           question: '',
           type: 'text',
+          optional: false,
         },
         {
           shouldFocus: focus,
@@ -213,15 +241,20 @@ export function EligibilityQuestionsForm() {
       );
       scrollToBottom();
     },
-    [append, scrollToBottom],
+    [append, scrollToBottom, type, fields.length],
   );
 
   const handleRemoveQuestion = useCallback(
     (index: number) => {
       remove(index);
+
+      if (type === 'project' && index === 0 && fields.length > 1) {
+        form.setValue('eligibility.0.optional', false);
+      }
+
       form.saveDraft();
     },
-    [form],
+    [form, remove, type, fields.length],
   );
 
   return (
@@ -253,7 +286,7 @@ export function EligibilityQuestionsForm() {
               ))}
             </div>
           </ScrollArea>
-          {type !== 'bounty' || fields.length < 2 ? (
+          {type !== 'bounty' || fields.length < 5 ? (
             <div
               className={cn(
                 'flex justify-between',
@@ -276,7 +309,7 @@ export function EligibilityQuestionsForm() {
             </div>
           ) : (
             <FormDescription>
-              Max two custom questions allowed for bounties
+              Max five custom questions allowed for bounties
             </FormDescription>
           )}
         </FormItem>

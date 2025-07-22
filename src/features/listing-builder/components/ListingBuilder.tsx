@@ -57,8 +57,11 @@ export function ListingBuilder({ route, slug }: ListingBuilderLayout) {
       });
     };
 
-    router.events.on('routeChangeStart', handleRouteComplete);
-    return () => router.events.off('routeChangeStart', handleRouteComplete);
+    router.events.on('routeChangeComplete', handleRouteComplete);
+
+    return () => {
+      router.events.off('routeChangeComplete', handleRouteComplete);
+    };
   }, [router.events, queryClient, slug]);
 
   useEffect(() => {

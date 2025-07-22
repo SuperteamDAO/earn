@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { Info, X } from 'lucide-react';
 import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
 import Countdown from 'react-countdown';
 
 import { CountDownRenderer } from '@/components/shared/countdownRenderer';
@@ -14,6 +15,7 @@ import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';
 
 import { CreditIcon } from '../icon/credit';
+import { canDispute } from '../utils/canDispute';
 import { CreditHistoryCard } from './CreditLog';
 
 export function CreditDrawer({
@@ -26,24 +28,70 @@ export function CreditDrawer({
   const { user } = useUser();
   const { creditBalance } = useCreditBalance();
   const router = useRouter();
-
-  const handleClose = () => {
-    const currentPath = window.location.hash;
-
-    if (currentPath === '#wallet') {
-      router.push(window.location.pathname, undefined, { shallow: true });
-    }
-
-    onClose();
-  };
-
-  const padding = 'px-6 sm:px-8';
+  const [disputeSubmissionId, setDisputeSubmissionId] = useState<string | null>(
+    null,
+  );
 
   const { data: creditHistory, isLoading } = useQuery({
     queryKey: ['creditHistory', user?.id],
     queryFn: () => api.get('/api/user/credit/history'),
     enabled: !!user?.id,
   });
+
+  useEffect(() => {
+    const checkForDisputeHash = () => {
+      const url = window.location.href;
+      const hashIndex = url.indexOf('#');
+      const afterHash = hashIndex !== -1 ? url.substring(hashIndex + 1) : '';
+      const [hashValue] = afterHash.split('?');
+
+      if (hashValue?.startsWith('dispute-submission-')) {
+        const submissionId = hashValue.replace('dispute-submission-', '');
+
+        if (creditHistory?.data) {
+          const allEntries = processEntries(creditHistory.data);
+          const entryToDispute = allEntries.find(
+            (entry) =>
+              entry.submission?.id === submissionId &&
+              (entry.type === 'SPAM_PENALTY' ||
+                entry.type === 'GRANT_SPAM_PENALTY'),
+          );
+
+          const dispute = canDispute(entryToDispute, allEntries, true);
+
+          if (entryToDispute && dispute) {
+            setDisputeSubmissionId(submissionId);
+          } else {
+            const pathWithoutHash =
+              router.asPath.split('#')[0] || router.pathname;
+            router.replace(pathWithoutHash, undefined, { shallow: true });
+          }
+        }
+      } else {
+        setDisputeSubmissionId(null);
+      }
+    };
+
+    if (isOpen) {
+      checkForDisputeHash();
+    }
+  }, [isOpen, creditHistory?.data, router, canDispute]);
+
+  const handleClose = () => {
+    const currentPath = window.location.hash;
+
+    if (
+      currentPath === '#wallet' ||
+      currentPath.startsWith('#dispute-submission-')
+    ) {
+      router.push(window.location.pathname, undefined, { shallow: true });
+    }
+
+    setDisputeSubmissionId(null);
+    onClose();
+  };
+
+  const padding = 'px-6 sm:px-8';
 
   const processEntries = (entries: any[] = []) => {
     return entries.map((entry) => ({
@@ -188,12 +236,14 @@ export function CreditDrawer({
                       </div>
                     }
                     entries={upcomingMonthEntries}
+                    disputeSubmissionId={disputeSubmissionId}
                   />
                 )}
                 {currentMonthEntries.length > 0 && (
                   <CreditHistoryCard
                     title={<h2 className="text-sm font-medium">This Month</h2>}
                     entries={currentMonthEntries}
+                    disputeSubmissionId={disputeSubmissionId}
                   />
                 )}
                 {pastMonthEntries.length > 0 && (
@@ -202,6 +252,7 @@ export function CreditDrawer({
                       <h2 className="text-sm font-medium">Past 3 Months</h2>
                     }
                     entries={pastMonthEntries}
+                    disputeSubmissionId={disputeSubmissionId}
                   />
                 )}
               </div>

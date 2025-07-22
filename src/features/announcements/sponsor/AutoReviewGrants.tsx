@@ -1,13 +1,13 @@
 import { AspectRatio } from '@/components/ui/aspect-ratio';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 
-export const AutoReviewFeature = () => {
+export const AutoReviewGrantsFeature = () => {
   return (
     <div>
       <AspectRatio ratio={960 / 632}>
         <ExternalImage
-          src="/announcements/auto-review"
-          alt="Auto Review Announcement Illustration"
+          src="/announcements/auto-review-grants"
+          alt="Auto Review Grants Announcement Illustration"
           className="mx-auto w-full"
           loading="eager"
           decoding="sync"
