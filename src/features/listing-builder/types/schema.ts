@@ -281,6 +281,18 @@ export const createListingRefinements = async (
   hackathons?: Hackathon[],
   pick?: ValidationFields,
 ) => {
+  if (data.type === 'project') {
+    if (!data.eligibility || data.eligibility.length === 0) {
+      if ((!!pick && pick.eligibility) || !pick) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Please add some questions',
+          path: ['eligibility'],
+        });
+      }
+    }
+  }
+
   if (data.compensationType === 'fixed') {
     if (!data.rewardAmount) {
       if ((!!pick && pick.rewards) || !pick) {
@@ -305,16 +317,6 @@ export const createListingRefinements = async (
             code: z.ZodIssueCode.custom,
             message: 'Please fill in the rewards',
             path: ['rewards'],
-          });
-        }
-      }
-    } else {
-      if (!data.eligibility || data.eligibility.length === 0) {
-        if ((!!pick && pick.eligibility) || !pick) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: 'Please add some questions',
-            path: ['eligibility'],
           });
         }
       }
