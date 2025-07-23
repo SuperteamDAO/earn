@@ -309,7 +309,7 @@ export function EligibilityQuestionsForm() {
             </div>
           ) : (
             <FormDescription>
-              Max five custom questions allowed for bounties
+              You can add up to five custom questions only
             </FormDescription>
           )}
         </FormItem>
