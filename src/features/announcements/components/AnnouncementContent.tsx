@@ -2,7 +2,6 @@ import { AnimatePresence, motion } from 'motion/react';
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 
-import { AnimateChangeInHeight } from '@/components/shared/AnimateChangeInHeight';
 import { Button } from '@/components/ui/button';
 import { easeOutQuad } from '@/utils/easings';
 
@@ -106,8 +105,8 @@ export function AnnouncementContent({
   };
 
   return (
-    <div className="flex w-full flex-col justify-between md:w-[55.1%]">
-      <AnimateChangeInHeight>
+    <div className="flex h-[46.25rem] w-full flex-col md:w-[55.1%]">
+      <div className="flex-1">
         <AnimatePresence mode="popLayout" initial={false}>
           <motion.div
             ref={contentRef}
@@ -165,7 +164,7 @@ export function AnnouncementContent({
             <currentAnnouncement.Content />
           </motion.div>
         </AnimatePresence>
-      </AnimateChangeInHeight>
+      </div>
 
       {/* CTA Button */}
       <div className="mt-4 flex flex-col justify-end gap-2 px-4 pb-4 sm:mt-8 sm:pb-2">
