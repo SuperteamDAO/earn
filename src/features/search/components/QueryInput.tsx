@@ -1,5 +1,5 @@
 import { Loader2, Search, Undo2 } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -45,19 +45,36 @@ export function SearchButton({
   );
 }
 
-interface Props {
-  loading: boolean;
+interface QueryInputProps {
   query: string;
-  onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+  onQueryChange: (query: string) => void;
   resultCount?: number;
+  loading?: boolean;
 }
 
-export function QueryInput({ loading, query, onSubmit, resultCount }: Props) {
+export function QueryInput({
+  query,
+  onQueryChange,
+  resultCount,
+  loading = false,
+}: QueryInputProps) {
   const [localQuery, setLocalQuery] = useState(query);
+
+  // Sync localQuery when query prop changes (e.g., from URL navigation)
+  useEffect(() => {
+    setLocalQuery(query);
+  }, [query]);
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (localQuery.trim()) {
+      onQueryChange(localQuery.trim());
+    }
+  };
 
   return (
     <div className="ph-no-capture w-full px-1 sm:px-4">
-      <form onSubmit={onSubmit}>
+      <form onSubmit={handleSubmit}>
         <div className="relative">
           <div className="absolute top-1/2 left-[0.0625rem] grid h-[calc(100%-0.125rem)] -translate-y-1/2 items-center rounded-l-lg border-r bg-slate-50 px-2.5">
             <Search className="h-4 w-4 text-slate-400" />
