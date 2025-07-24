@@ -1,9 +1,8 @@
-import debounce from 'lodash.debounce';
 import { type GetServerSideProps } from 'next';
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/router';
 import posthog from 'posthog-js';
-import { useCallback, useEffect, useState, useTransition } from 'react';
+import { useEffect, useState, useTransition } from 'react';
 
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
@@ -57,10 +56,17 @@ const Search = ({
   const [, startTransition] = useTransition();
 
   const [results, setResults] = useState<SearchResult[]>(resultsP ?? []);
-  const [query, setQuery] = useState(searchParams?.get('q') ?? '');
+  const [query] = useState(searchParams?.get('q') ?? '');
   const [loading, setLoading] = useState(false);
 
-  const debouncedServerSearch = useCallback(debounce(serverSearch, 500), []);
+  const handleSearchSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setLoading(true);
+    const formData = new FormData(e.currentTarget);
+    const queryValue = formData.get('query') as string;
+    serverSearch(startTransition, router, queryValue);
+    setLoading(false);
+  };
 
   const handleStart = (url: string) => {
     if (url !== router.asPath) {
@@ -96,14 +102,6 @@ const Search = ({
   }, [router]);
 
   useEffect(() => {
-    debouncedServerSearch(startTransition, router, query);
-    setLoading(false);
-    return () => {
-      debouncedServerSearch.cancel();
-    };
-  }, [query]);
-
-  useEffect(() => {
     posthog.capture('detailed results_search', {
       query,
       count,
@@ -122,9 +120,14 @@ const Search = ({
       }
     >
       <div className="min-h-screen w-full bg-white">
-        <div className="mx-auto flex w-full max-w-7xl gap-8 px-3 py-4 md:px-4">
-          <div className="flex w-full flex-col items-start md:w-[70%]">
-            <QueryInput loading={loading} query={query} setQuery={setQuery} />
+        <div className="mx-auto flex w-full max-w-6xl gap-8 px-3 py-4 md:px-4">
+          <div className="flex w-full flex-col items-start">
+            <QueryInput
+              loading={loading}
+              query={query}
+              onSubmit={handleSearchSubmit}
+              resultCount={count}
+            />
             <Info loading={loading} count={count} query={query} />
             <div className="w-full md:hidden">
               <Filters
@@ -150,14 +153,6 @@ const Search = ({
                 .filter((s) => s.checked)
                 .map((s) => s.value)
                 .join(',')}
-            />
-          </div>
-          <div className="hidden w-full md:block md:w-[30%]">
-            <Filters
-              query={query}
-              loading={loading}
-              statusFilters={statusFilters}
-              skillsFilters={skillsFilters}
             />
           </div>
         </div>

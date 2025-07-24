@@ -36,7 +36,7 @@ export function Results({
   return (
     <div className="flex w-full flex-col">
       {results.length === 0 && (
-        <div className="flex flex-col items-center gap-6">
+        <div className="mt-40 flex flex-col items-center gap-6">
           <div className="flex h-32 w-32 items-center justify-center rounded-full bg-slate-100 p-8">
             <svg
               width="43"
