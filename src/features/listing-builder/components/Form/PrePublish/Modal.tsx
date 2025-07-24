@@ -171,7 +171,9 @@ export function PrePublish() {
             {isUpdate ? <span>Update</span> : <span>Publish</span>}{' '}
             <span>Listing</span>
             {isDisabledSoft && (
-              <Loader2 className="absolute top-2/4 -right-7 mt-0.5 h-4 w-4 -translate-y-2/4 animate-spin text-slate-500" />
+              <span className="absolute top-2/4 -right-7 mt-0.5 h-4 w-4 -translate-y-2/4">
+                <Loader2 className="h-full w-full origin-center translate-z-0 animate-spin text-slate-500" />
+              </span>
             )}
           </DialogTitle>
         </DialogHeader>

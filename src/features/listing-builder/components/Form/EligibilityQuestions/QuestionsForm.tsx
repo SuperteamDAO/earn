@@ -63,35 +63,30 @@ function EligibilityQuestionItem({
           <FormItem className="gap-2">
             <div className="flex items-center justify-between">
               <FormLabel
-                isRequired
                 className="font-medium text-slate-500 sm:text-sm"
+                isRequired={type === 'project' && index === 0}
               >
                 Question {index + 1}
               </FormLabel>
-              <FormField
-                control={form.control}
-                name={`eligibility.${index}.optional`}
-                render={({ field: optionalField }) => {
-                  const isFirstProjectQuestion =
-                    type === 'project' && index === 0;
-                  return (
+              {!(type === 'project' && index === 0) && (
+                <FormField
+                  control={form.control}
+                  name={`eligibility.${index}.optional`}
+                  render={({ field: optionalField }) => (
                     <div className="flex items-center gap-2">
                       <span className="text-xs text-slate-500">Required</span>
                       <Switch
                         checked={!optionalField.value}
                         onCheckedChange={(checked) => {
-                          if (!isFirstProjectQuestion) {
-                            optionalField.onChange(!checked);
-                            if (form.getValues().id) form.saveDraft();
-                          }
+                          optionalField.onChange(!checked);
+                          if (form.getValues().id) form.saveDraft();
                         }}
-                        disabled={isFirstProjectQuestion}
                         className="scale-75"
                       />
                     </div>
-                  );
-                }}
-              />
+                  )}
+                />
+              )}
             </div>
             <div className="ring-primary flex items-start rounded-md border has-focus:ring-1">
               <FormField
@@ -286,7 +281,9 @@ export function EligibilityQuestionsForm() {
               ))}
             </div>
           </ScrollArea>
-          {type !== 'bounty' || fields.length < 5 ? (
+          {(type !== 'bounty' && type !== 'project') ||
+          (type === 'bounty' && fields.length < 5) ||
+          (type === 'project' && fields.length < 10) ? (
             <div
               className={cn(
                 'flex justify-between',
@@ -309,7 +306,9 @@ export function EligibilityQuestionsForm() {
             </div>
           ) : (
             <FormDescription>
-              Max five custom questions allowed for bounties
+              {type === 'bounty'
+                ? 'You can add up to five custom questions'
+                : 'You can add up to ten custom questions'}
             </FormDescription>
           )}
         </FormItem>

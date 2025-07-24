@@ -1,4 +1,5 @@
 import type { GetServerSideProps } from 'next';
+import Head from 'next/head';
 
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { ListingPageLayout } from '@/layouts/Listing';
@@ -16,22 +17,30 @@ interface BountyDetailsProps {
 
 function BountyDetails({ bounty: initialBounty }: BountyDetailsProps) {
   return (
-    <ListingPageLayout bounty={initialBounty}>
-      <ListingPop listing={initialBounty} />
-      {initialBounty?.isWinnersAnnounced && (
-        <div className="mt-6 hidden w-full md:block">
-          <ListingWinners bounty={initialBounty} />
-        </div>
+    <>
+      {initialBounty?.isPrivate && (
+        <Head>
+          <meta name="robots" content="noindex, nofollow" />
+          <meta name="googlebot" content="noindex, nofollow" />
+        </Head>
       )}
-      {initialBounty?.Hackathon?.slug === 'redacted' && (
-        <ExternalImage
-          src="/hackathon/redacted/redacted-listing-banner"
-          alt="Redacted Listing Banner"
-          className="mt-4"
-        />
-      )}
-      <DescriptionUI description={initialBounty?.description} />
-    </ListingPageLayout>
+      <ListingPageLayout bounty={initialBounty}>
+        <ListingPop listing={initialBounty} />
+        {initialBounty?.isWinnersAnnounced && (
+          <div className="mt-6 hidden w-full md:block">
+            <ListingWinners bounty={initialBounty} />
+          </div>
+        )}
+        {initialBounty?.Hackathon?.slug === 'redacted' && (
+          <ExternalImage
+            src="/hackathon/redacted/redacted-listing-banner"
+            alt="Redacted Listing Banner"
+            className="mt-4"
+          />
+        )}
+        <DescriptionUI description={initialBounty?.description} />
+      </ListingPageLayout>
+    </>
   );
 }
 
