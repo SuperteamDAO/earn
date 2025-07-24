@@ -14,44 +14,47 @@ import { cn } from '@/utils/cn';
 
 import { CategoryPill } from '@/features/listings/components/CategoryPill';
 
-import type { CheckboxFilter } from '../types';
+import {
+  type SearchSkills,
+  type SearchStatus,
+  skillsData,
+  statusData,
+} from '../constants/schema';
 
 interface DropdownFilterProps {
-  statusFilters: CheckboxFilter[];
-  skillsFilters: CheckboxFilter[];
-  onStatusChange: (value: string) => void;
-  onSkillChange: (value: string) => void;
-  loading?: boolean;
+  activeStatus: SearchStatus[];
+  activeSkills: SearchSkills[];
+  onStatusToggle: (value: SearchStatus) => void;
+  onSkillToggle: (value: SearchSkills) => void;
 }
 
 export function DropdownFilter({
-  statusFilters,
-  skillsFilters,
-  onStatusChange,
-  onSkillChange,
-  loading,
+  activeStatus,
+  activeSkills,
+  onStatusToggle,
+  onSkillToggle,
 }: DropdownFilterProps) {
   const isMd = useBreakpoint('md');
 
-  const activeStatusFilters = statusFilters.filter((f) => f.checked);
-  const activeSkillsFilters = skillsFilters.filter((f) => f.checked);
-  const hasActiveFilters =
-    activeStatusFilters.length > 0 || activeSkillsFilters.length > 0;
+  const activeStatusWithLabels = statusData.filter((f) =>
+    activeStatus.includes(f.value),
+  );
+  const activeSkillsWithLabels = skillsData.filter((f) =>
+    activeSkills.includes(f.value),
+  );
 
-  const handleStatusRemove = (value: string) => {
-    onStatusChange(value);
-    posthog.capture('remove_status_filter', { filter: value });
-  };
+  const hasActiveFilters =
+    activeStatusWithLabels.length > 0 || activeSkillsWithLabels.length > 0;
 
   return (
     <div className="flex items-center gap-2">
-      {isMd && activeStatusFilters.length > 0 && (
+      {isMd && activeStatusWithLabels.length > 0 && (
         <div className="flex flex-wrap gap-2">
-          {activeStatusFilters.map((filter) => (
+          {activeStatusWithLabels.map((filter) => (
             <CategoryPill
               key={filter.value}
               isActive={true}
-              onClick={() => handleStatusRemove(filter.value)}
+              onClick={() => onStatusToggle(filter.value)}
             >
               <span className="flex items-center gap-1">
                 {filter.label}
@@ -69,14 +72,12 @@ export function DropdownFilter({
           }
         }}
       >
-        <DropdownMenuTrigger
-          disabled={loading}
-          className="focus-visible:outline-none"
-        >
+        <DropdownMenuTrigger className="focus-visible:outline-none">
           <div
             className={cn(
               'relative flex cursor-pointer items-center gap-1.5 rounded-md p-2 hover:bg-slate-100 sm:p-1.5',
               'text-sm font-normal md:rounded-full md:border md:border-slate-200 md:px-2 md:py-0.5',
+              !isMd && hasActiveFilters && 'bg-indigo-50',
             )}
           >
             {isMd ? (
@@ -103,62 +104,50 @@ export function DropdownFilter({
           </div>
         </DropdownMenuTrigger>
 
-        <DropdownMenuContent align="end" className="z-[60] w-56">
-          {/* Status Filters */}
-          <DropdownMenuLabel className="font-medium text-slate-600">
+        <DropdownMenuContent align="end" className="z-[60] w-40">
+          <DropdownMenuLabel className="text-sm font-medium text-slate-600 md:hidden">
             Filter by Status
           </DropdownMenuLabel>
-          {statusFilters.map((filter) => (
+          {statusData.map((filter) => (
             <DropdownMenuItem
               key={filter.value}
-              onSelect={() => onStatusChange(filter.value)}
+              onSelect={() => onStatusToggle(filter.value)}
               className={cn(
-                'flex items-center gap-2 text-slate-600',
-                filter.checked && 'bg-slate-100 font-medium',
+                'mb-1 flex items-center gap-2 text-slate-600 last:mb-0',
+                activeStatus.includes(filter.value) &&
+                  'bg-slate-100 font-medium',
               )}
             >
               <div
                 className={cn(
-                  'flex h-4 w-4 items-center justify-center rounded-full border-[1.5px]',
-                  filter.checked ? 'border-brand-purple' : 'border-slate-300',
+                  'flex size-4 items-center justify-center rounded-full border-[1.5px]',
+                  filter.circleClasses.border,
                 )}
               >
-                {filter.checked && (
-                  <div className="bg-brand-purple h-2 w-2 rounded-full" />
-                )}
+                <div
+                  className={cn('size-2 rounded-full', filter.circleClasses.bg)}
+                />
               </div>
               {filter.label}
             </DropdownMenuItem>
           ))}
 
-          {/* Skills Filters - Mobile Only */}
           {!isMd && (
             <>
               <DropdownMenuSeparator />
               <DropdownMenuLabel className="font-medium text-slate-600">
                 Filter by Skill
               </DropdownMenuLabel>
-              {skillsFilters.map((filter) => (
+              {skillsData.map((filter) => (
                 <DropdownMenuItem
                   key={filter.value}
-                  onSelect={() => onSkillChange(filter.value)}
+                  onSelect={() => onSkillToggle(filter.value)}
                   className={cn(
-                    'flex items-center gap-2 text-slate-600',
-                    filter.checked && 'bg-slate-100 font-medium',
+                    'mb-1 flex items-center gap-2 text-slate-600 last:mb-0',
+                    activeSkills.includes(filter.value) &&
+                      'bg-slate-100 font-medium text-indigo-600',
                   )}
                 >
-                  <div
-                    className={cn(
-                      'flex h-4 w-4 items-center justify-center rounded-full border-[1.5px]',
-                      filter.checked
-                        ? 'border-brand-purple'
-                        : 'border-slate-300',
-                    )}
-                  >
-                    {filter.checked && (
-                      <div className="bg-brand-purple h-2 w-2 rounded-full" />
-                    )}
-                  </div>
                   {filter.label}
                 </DropdownMenuItem>
               ))}

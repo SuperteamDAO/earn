@@ -1,20 +1,26 @@
+import { useQueryClient } from '@tanstack/react-query';
 import debounce from 'lodash.debounce';
 import { ArrowRight, Search } from 'lucide-react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/router';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import { api } from '@/lib/api';
+import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 
 import { GrantsCard } from '@/features/grants/components/GrantsCard';
 import { ListingCard } from '@/features/listings/components/ListingCard';
 
+import {
+  fetchSearchListings,
+  useSearchListings,
+} from '../hooks/useSearchListings';
 import { type SearchResult } from '../types';
+import { getUserRegion } from '../utils/userRegionSearch';
 
 interface Props {
   isOpen: boolean;
@@ -23,40 +29,84 @@ interface Props {
 
 export function SearchModal({ isOpen, onClose }: Props) {
   const router = useRouter();
+  const queryClient = useQueryClient();
+
   useEffect(() => {
     router.prefetch('/search');
-  }, []);
+  }, [router]);
+
+  const { user } = useUser();
+
+  const userRegion = useMemo(() => {
+    if (!user) return null;
+    return getUserRegion(user.location);
+  }, [user]);
 
   const searchParams = useSearchParams();
 
-  const [query, setQuery] = useState(searchParams?.get('q') ?? '');
-  const [results, setResults] = useState<SearchResult[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [inputValue, setInputValue] = useState(searchParams?.get('q') ?? '');
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(
+    searchParams?.get('q') ?? '',
+  );
 
-  const debouncedSearch = useCallback(debounce(search, 500), []);
-
-  async function search(query: string) {
-    try {
-      setLoading(true);
-      if (query.length > 0) {
-        const resp = await api.get(`/api/search/${encodeURIComponent(query)}`);
-        setResults(resp.data.results as SearchResult[]);
-        router.prefetch(`/search?q=${query}`);
-      }
-      setLoading(false);
-    } catch (err) {
-      console.log('search failed - ', err);
-      setLoading(false);
-      return;
-    }
-  }
+  const debouncedSetSearchTerm = useCallback(
+    debounce((value: string) => {
+      setDebouncedSearchTerm(value);
+    }, 500),
+    [],
+  );
 
   useEffect(() => {
-    debouncedSearch(query);
+    debouncedSetSearchTerm(inputValue);
     return () => {
-      debouncedSearch.cancel();
+      debouncedSetSearchTerm.cancel();
     };
-  }, [query]);
+  }, [inputValue, debouncedSetSearchTerm]);
+
+  const { data, isFetching } = useSearchListings({
+    query: debouncedSearchTerm,
+    status: [],
+    skills: [],
+    bountiesLimit: 5,
+    grantsLimit: 2,
+    userRegion: userRegion || undefined,
+  });
+
+  const results: SearchResult[] = useMemo(() => {
+    return data?.pages.flatMap((page) => page.results) ?? [];
+  }, [data]);
+
+  const prefetchSearchPageData = useCallback(
+    (query: string) => {
+      router.prefetch(`/search?q=${debouncedSearchTerm}`);
+      if (query.trim()) {
+        queryClient.prefetchInfiniteQuery({
+          queryKey: [
+            'search-listings',
+            query.trim(),
+            [],
+            [],
+            10,
+            3,
+            userRegion,
+          ],
+          queryFn: ({ pageParam = { bountiesOffset: 0, grantsOffset: 0 } }) =>
+            fetchSearchListings({
+              query: query.trim(),
+              status: [],
+              skills: [],
+              bountiesLimit: 10,
+              grantsLimit: 3,
+              userRegion: userRegion || undefined,
+              bountiesOffset: pageParam.bountiesOffset,
+              grantsOffset: pageParam.grantsOffset,
+            }),
+          initialPageParam: { bountiesOffset: 0, grantsOffset: 0 },
+        });
+      }
+    },
+    [queryClient, userRegion],
+  );
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -69,9 +119,12 @@ export function SearchModal({ isOpen, onClose }: Props) {
         )}
       >
         <form
-          onSubmit={(e) => {
+          onSubmit={async (e) => {
             e.preventDefault();
-            router.push(`/search?q=${encodeURIComponent(query)}`);
+
+            prefetchSearchPageData(inputValue);
+
+            router.push(`/search?q=${encodeURIComponent(inputValue)}`);
           }}
           className="relative"
         >
@@ -82,15 +135,15 @@ export function SearchModal({ isOpen, onClose }: Props) {
               'text-sm md:text-base',
               'focus-visible:ring-0 focus-visible:ring-offset-0',
             )}
-            onChange={(e) => setQuery(e.target.value)}
+            onChange={(e) => setInputValue(e.target.value)}
             placeholder="Search for Superteam Earn Listings"
-            value={query}
+            value={inputValue}
           />
           <button
             type="submit"
             className="absolute top-1/2 right-3 -translate-y-1/2 text-slate-400"
           >
-            {loading ? (
+            {isFetching ? (
               <div className="h-4 w-4 animate-spin rounded-full border-2 border-slate-400 border-t-transparent" />
             ) : (
               <ArrowRight className="h-4 w-4" />
@@ -98,7 +151,7 @@ export function SearchModal({ isOpen, onClose }: Props) {
           </button>
         </form>
 
-        {query.length > 0 && results.length > 0 && (
+        {debouncedSearchTerm.length > 0 && results.length > 0 && (
           <div className="flex w-full flex-col">
             <div className="flex w-full flex-col py-0">
               {results.map((listing) => (
@@ -116,8 +169,9 @@ export function SearchModal({ isOpen, onClose }: Props) {
               ))}
             </div>
             <Link
-              href={`/search?q=${encodeURIComponent(query)}`}
+              href={`/search?q=${encodeURIComponent(inputValue)}`}
               className="w-full"
+              onClick={() => prefetchSearchPageData(inputValue)}
             >
               <Button
                 variant="ghost"

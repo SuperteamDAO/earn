@@ -1,322 +1,194 @@
-// import debounce from 'lodash.debounce';
-// import { type GetServerSideProps } from 'next';
-// import { useSearchParams } from 'next/navigation';
-// import { useRouter } from 'next/router';
-// import posthog from 'posthog-js';
-// import { useCallback, useEffect, useState, useTransition } from 'react';
+import { type GetServerSideProps } from 'next';
 
-// import { Default } from '@/layouts/Default';
-// import { Meta } from '@/layouts/Meta';
-// import { api } from '@/lib/api';
-// import { prisma } from '@/prisma';
-// import { getURL } from '@/utils/validUrl';
+import { AnimateChangeInHeight } from '@/components/shared/AnimateChangeInHeight';
+import { Default } from '@/layouts/Default';
+import { Meta } from '@/layouts/Meta';
+import { prisma } from '@/prisma';
 
-// import { getPrivyToken } from '@/features/auth/utils/getPrivyToken';
-// import {
-//   filterRegionCountry,
-//   getCombinedRegion,
-//   getParentRegions,
-// } from '@/features/listings/utils/region';
-// import { DropdownFilter } from '@/features/search/components/DropdownFilter';
-// import { PillsFilter } from '@/features/search/components/PillsFilter';
-// import { QueryInput } from '@/features/search/components/QueryInput';
-// import { Results } from '@/features/search/components/Results';
-// import { type SearchResult } from '@/features/search/types';
-// import {
-//   preSkillFilters,
-//   preStatusFilters,
-// } from '@/features/search/utils/filters';
-// import { serverSearch } from '@/features/search/utils/search';
-// import { updateCheckboxes } from '@/features/search/utils/updateCheckboxes';
+import { getPrivyToken } from '@/features/auth/utils/getPrivyToken';
+import { DropdownFilter } from '@/features/search/components/DropdownFilter';
+import { PillsFilter } from '@/features/search/components/PillsFilter';
+import { QueryInput } from '@/features/search/components/QueryInput';
+import { Results } from '@/features/search/components/Results';
+import type {
+  SearchSkills,
+  SearchStatus,
+} from '@/features/search/constants/schema';
+import {
+  fetchSearchListings,
+  type SearchListingsResponse,
+  useSearchListings,
+} from '@/features/search/hooks/useSearchListings';
+import { useSearchState } from '@/features/search/hooks/useSearchState';
+import { getUserRegion } from '@/features/search/utils/userRegionSearch';
 
-// interface CheckboxFilter {
-//   label: string;
-//   value: string;
-//   checked: boolean;
-// }
+interface SearchProps {
+  initialQuery?: string;
+  initialData?: SearchListingsResponse | null;
+  userRegion?: string[] | null;
+}
 
-// interface SearchProps {
-//   statusFilters: CheckboxFilter[];
-//   skillsFilters: CheckboxFilter[];
-//   results?: SearchResult[];
-//   count?: number;
-//   bountiesCount?: number;
-//   grantsCount?: number;
-// }
+const SearchPage = ({
+  initialQuery = '',
+  initialData,
+  userRegion,
+}: SearchProps) => {
+  const {
+    searchTerm,
+    activeStatus,
+    activeSkills,
+    handleSearchTermChange,
+    handleSkillsChange,
+    handleToggleStatus,
+    handleToggleSkill,
+  } = useSearchState({
+    defaultSearchTerm: initialQuery,
+  });
 
-// const Search = ({
-//   statusFilters,
-//   skillsFilters,
-//   results: resultsP,
-//   count = 0,
-//   bountiesCount = 0,
-//   grantsCount = 0,
-// }: SearchProps) => {
-//   const searchParams = useSearchParams();
-//   const router = useRouter();
-//   const [, startTransition] = useTransition();
+  const {
+    data,
+    isFetching,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    error,
+  } = useSearchListings({
+    query: searchTerm,
+    status: activeStatus,
+    skills: activeSkills,
+    bountiesLimit: 10,
+    grantsLimit: 3,
+    userRegion: userRegion || undefined,
+    initialData,
+  });
 
-//   const [results, setResults] = useState<SearchResult[]>(resultsP ?? []);
-//   const [query] = useState(searchParams?.get('q') ?? '');
-//   const [loading, setLoading] = useState(false);
+  const allResults = data?.pages.flatMap((page) => page.results) ?? [];
+  const totalCount = data?.pages[0]?.count
+    ? parseInt(data.pages[0].count, 10)
+    : 0;
 
-//   const [status, setStatus] = useState(
-//     searchParams?.get('status') ?? undefined,
-//   );
-//   const [skills, setSkills] = useState(
-//     searchParams?.get('skills') ?? undefined,
-//   );
+  return (
+    <Default
+      meta={
+        <Meta
+          title={`New Search - ${searchTerm} | Superteam Earn`}
+          description={`Search Results for ${searchTerm}`}
+        />
+      }
+    >
+      <div className="min-h-screen w-full bg-white">
+        <div className="mx-auto flex w-full max-w-6xl gap-8 px-3 py-4 md:px-4">
+          <div className="flex w-full flex-col items-start">
+            <QueryInput
+              query={searchTerm}
+              onQueryChange={handleSearchTermChange}
+              resultCount={totalCount}
+              loading={isFetching}
+            />
 
-//   const debouncedServerSearch = useCallback(debounce(serverSearch, 500), []);
+            <div className="mt-4 w-full">
+              <div className="flex items-center justify-between">
+                <div className="hidden md:flex">
+                  <PillsFilter
+                    activeSkills={activeSkills}
+                    onSkillsChange={handleSkillsChange}
+                    loading={isFetching}
+                  />
+                </div>
+                <div className="ml-auto">
+                  <DropdownFilter
+                    activeStatus={activeStatus}
+                    activeSkills={activeSkills}
+                    onStatusToggle={handleToggleStatus}
+                    onSkillToggle={handleToggleSkill}
+                  />
+                </div>
+              </div>
+            </div>
 
-//   const handleSkillsChange = (value: string) => {
-//     const skillsArray = skills ? skills.split(',') : [];
-//     let skillQuery = '';
-//     if (skillsArray.includes(value)) {
-//       skillQuery = skillsArray.filter((skill) => skill !== value).join(',');
-//     } else {
-//       skillQuery = [...skillsArray, value].join(',');
-//     }
-//     setSkills(skillQuery);
-//     if (skillQuery === '') {
-//       debouncedServerSearch(startTransition, router, query, { status });
-//     } else {
-//       debouncedServerSearch(startTransition, router, query, {
-//         status,
-//         skills: skillQuery,
-//       });
-//     }
-//   };
+            <AnimateChangeInHeight disableOnHeightZero className="w-full">
+              <Results
+                allResults={allResults}
+                hasNextPage={!!hasNextPage}
+                isFetchingNextPage={!!isFetchingNextPage}
+                error={error}
+                query={searchTerm}
+                onFetchNextPage={fetchNextPage}
+                loading={allResults.length === 0}
+              />
+            </AnimateChangeInHeight>
+          </div>
+        </div>
+      </div>
+    </Default>
+  );
+};
 
-//   const handleStatusChange = (value: string) => {
-//     const statusArray = status ? status.split(',') : [];
-//     let statusQuery = '';
-//     if (statusArray.includes(value)) {
-//       if (statusArray.length !== 1) {
-//         statusQuery = statusArray.filter((s) => s !== value).join(',');
-//       }
-//     } else {
-//       statusQuery = [...statusArray, value].join(',');
-//     }
-//     setStatus(statusQuery);
-//     if (statusQuery === '') {
-//       debouncedServerSearch(startTransition, router, query, { skills });
-//     } else {
-//       debouncedServerSearch(startTransition, router, query, {
-//         status: statusQuery,
-//         skills,
-//       });
-//     }
-//   };
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const privyDid = await getPrivyToken(context.req);
 
-//   const handleSearchSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-//     e.preventDefault();
-//     setLoading(true);
-//     const formData = new FormData(e.currentTarget);
-//     const queryValue = formData.get('query') as string;
-//     serverSearch(startTransition, router, queryValue);
-//     setLoading(false);
-//   };
+  let userRegion: string[] | null = null;
 
-//   const handleStart = (url: string) => {
-//     if (url !== router.asPath) {
-//       document.body.style.cursor = 'wait';
-//       setLoading(true);
-//     }
-//   };
+  if (privyDid) {
+    const user = await prisma.user.findFirst({
+      where: { privyDid },
+      select: { location: true },
+    });
 
-//   const handleComplete = (url: string) => {
-//     if (url === router.asPath) {
-//       document.body.style.cursor = 'auto';
-//       setLoading(false);
-//     }
-//   };
+    userRegion = getUserRegion(user?.location);
+  }
 
-//   useEffect(() => {
-//     return () => {
-//       document.body.style.cursor = 'auto';
-//       setLoading(false);
-//     };
-//   }, []);
+  const query = (context.query.q as string)?.trim() || '';
 
-//   useEffect(() => {
-//     router.events.on('routeChangeStart', handleStart);
-//     router.events.on('routeChangeComplete', handleComplete);
-//     router.events.on('routeChangeError', handleComplete);
+  // Parse status and skills from query params (comma-separated)
+  const statusParam = context.query.status as string;
+  const status = statusParam ? statusParam.split(',') : [];
 
-//     return () => {
-//       router.events.off('routeChangeStart', handleStart);
-//       router.events.off('routeChangeComplete', handleComplete);
-//       router.events.off('routeChangeError', handleComplete);
-//     };
-//   }, [router]);
+  const skillsParam = context.query.skills as string;
+  const skills = skillsParam ? skillsParam.split(',') : [];
 
-//   useEffect(() => {
-//     posthog.capture('detailed results_search', {
-//       query,
-//       count,
-//       status: statusFilters.filter((f) => f.checked).map((f) => f.value),
-//       skills: skillsFilters.filter((f) => f.checked).map((f) => f.value),
-//     });
-//   }, []);
+  // Use same limits as useSearchListings defaults
+  const bountiesLimit = 10;
+  const grantsLimit = 3;
 
-//   return (
-//     <Default
-//       meta={
-//         <Meta
-//           title={`Search - ${query} | Superteam Earn`}
-//           description={`Search Results for ${query}`}
-//         />
-//       }
-//     >
-//       <div className="min-h-screen w-full bg-white">
-//         <div className="mx-auto flex w-full max-w-6xl gap-8 px-3 py-4 md:px-4">
-//           <div className="flex w-full flex-col items-start">
-//             <QueryInput
-//               loading={loading}
-//               query={query}
-//               onSubmit={handleSearchSubmit}
-//               resultCount={count}
-//             />
-//             <div className="mt-4 w-full">
-//               <div className="flex items-center justify-between">
-//                 <div className="hidden md:flex">
-//                   <PillsFilter
-//                     skillsFilters={skillsFilters.map((filter) => ({
-//                       ...filter,
-//                       checked: skills
-//                         ? skills.split(',').includes(filter.value)
-//                         : filter.checked,
-//                     }))}
-//                     onSkillChange={handleSkillsChange}
-//                     loading={loading}
-//                   />
-//                 </div>
-//                 <div className="ml-auto">
-//                   <DropdownFilter
-//                     statusFilters={statusFilters.map((filter) => ({
-//                       ...filter,
-//                       checked: status
-//                         ? status.split(',').includes(filter.value)
-//                         : filter.checked,
-//                     }))}
-//                     skillsFilters={skillsFilters.map((filter) => ({
-//                       ...filter,
-//                       checked: skills
-//                         ? skills.split(',').includes(filter.value)
-//                         : filter.checked,
-//                     }))}
-//                     onStatusChange={handleStatusChange}
-//                     onSkillChange={handleSkillsChange}
-//                     loading={loading}
-//                   />
-//                 </div>
-//               </div>
-//             </div>
-//             {/* <Info loading={loading} count={count} query={query} /> */}
-//             {/* <div className="w-full md:hidden">
-//               <Filters
-//                 loading={loading}
-//                 query={query}
-//                 statusFilters={statusFilters}
-//                 skillsFilters={skillsFilters}
-//               />
-//             </div> */}
-//             <div className="mx-3 h-[1px] bg-slate-200 md:mx-4" />
-//             <Results
-//               query={query}
-//               results={results}
-//               setResults={setResults}
-//               count={count}
-//               grantsCount={grantsCount}
-//               bountiesCount={bountiesCount}
-//               status={statusFilters
-//                 .filter((s) => s.checked)
-//                 .map((s) => s.value)
-//                 .join(',')}
-//               skills={skillsFilters
-//                 .filter((s) => s.checked)
-//                 .map((s) => s.value)
-//                 .join(',')}
-//             />
-//           </div>
-//         </div>
-//       </div>
-//     </Default>
-//   );
-// };
+  // Only fetch if we have a query term
+  if (!query) {
+    return {
+      props: {
+        initialQuery: query,
+        initialData: null,
+        userRegion,
+      },
+    };
+  }
 
-// export const getServerSideProps: GetServerSideProps = async (context) => {
-//   const privyDid = await getPrivyToken(context.req);
+  try {
+    const initialData = await fetchSearchListings({
+      query,
+      status: status as SearchStatus[],
+      skills: skills as SearchSkills[],
+      bountiesLimit,
+      grantsLimit,
+      userRegion: userRegion || undefined,
+    });
 
-//   let userRegion: string[] | null | undefined = null;
+    return {
+      props: {
+        initialQuery: query,
+        initialData,
+        userRegion,
+      },
+    };
+  } catch (error) {
+    console.error('Server-side search fetch error:', error);
+    return {
+      props: {
+        initialQuery: query,
+        initialData: null,
+        userRegion,
+      },
+    };
+  }
+};
 
-//   if (privyDid) {
-//     const user = await prisma.user.findFirst({
-//       where: { privyDid },
-//       select: { location: true },
-//     });
-
-//     if (user?.location) {
-//       const matchedRegion = user.location
-//         ? getCombinedRegion(user.location, true)
-//         : undefined;
-//       if (matchedRegion?.name) {
-//         userRegion = [
-//           matchedRegion.name,
-//           'Global',
-//           ...(filterRegionCountry(matchedRegion, user.location || '').country ||
-//             []),
-//           ...(getParentRegions(matchedRegion) || []),
-//         ];
-//       } else {
-//         userRegion = ['Global'];
-//       }
-//     }
-//   }
-
-//   const fullUrl = getURL();
-//   const queryTerm = (context.query.q as string).trim();
-
-//   const status = (context.query.status as string) || undefined;
-//   const statusFilters = updateCheckboxes(status ?? '', preStatusFilters);
-
-//   const skills = (context.query.skills as string) || undefined;
-//   const skillsFilters = updateCheckboxes(skills ?? '', preSkillFilters);
-//   try {
-//     const searchUrl = new URL(
-//       `${fullUrl}/api/search/${encodeURIComponent(queryTerm)}`,
-//     );
-//     searchUrl.search = new URLSearchParams(context.query as any).toString();
-//     searchUrl.searchParams.set('bountiesLimit', '10');
-//     searchUrl.searchParams.set('grantsLimit', '3');
-//     if (userRegion?.length) {
-//       searchUrl.searchParams.set('userRegion', userRegion.join(','));
-//     }
-
-//     const response = await api.get(searchUrl.toString());
-//     const results = await response.data;
-//     return {
-//       props: {
-//         statusFilters,
-//         skillsFilters,
-//         results: results.results,
-//         count: results.count,
-//         bountiesCount: results.bountiesCount,
-//         grantsCount: results.grantsCount,
-//         userRegion,
-//       },
-//     };
-//   } catch (e) {
-//     console.log(e);
-//     return {
-//       props: {
-//         statusFilters,
-//         skillsFilters,
-//         userRegion,
-//       },
-//     };
-//   }
-// };
-
-// export default Search;
+export default SearchPage;

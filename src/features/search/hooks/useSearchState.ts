@@ -90,10 +90,6 @@ export const useSearchState = ({
 
   useEffect(() => {
     const searchTermFromUrl = getSearchTermFromParams(searchParams);
-    // This effect syncs the URL search term to the internal state, primarily for external navigation (back/forward) or initial load.
-    // internalSearchTerm is intentionally omitted from deps to prevent this effect from reverting an optimistic update
-    // made by handleSearchTermChange before searchParams has a chance to reflect that update.
-    // The functional update form of setInternalSearchTerm ensures we compare against the most current state.
     // eslint-disable-next-line react-hooks/exhaustive-deps
     setInternalSearchTerm((currentInternalTerm) => {
       if (searchTermFromUrl !== currentInternalTerm) {
@@ -105,9 +101,6 @@ export const useSearchState = ({
 
   useEffect(() => {
     const statusFromUrl = getStatusFromParams(searchParams);
-    // Sync URL status to internal state for external navigation or initial load.
-    // internalActiveStatus is intentionally omitted from deps to prevent this effect
-    // from reverting an optimistic update made by handleStatusChange.
     // eslint-disable-next-line react-hooks/exhaustive-deps
     setInternalActiveStatus((currentInternalStatus) => {
       const statusChanged =
@@ -125,9 +118,6 @@ export const useSearchState = ({
 
   useEffect(() => {
     const skillsFromUrl = getSkillsFromParams(searchParams);
-    // Sync URL skills to internal state for external navigation or initial load.
-    // internalActiveSkills is intentionally omitted from deps to prevent this effect
-    // from reverting an optimistic update made by handleSkillsChange.
     // eslint-disable-next-line react-hooks/exhaustive-deps
     setInternalActiveSkills((currentInternalSkills) => {
       const skillsChanged =
@@ -149,8 +139,8 @@ export const useSearchState = ({
 
       const paramDefaults: Record<keyof QueryParamUpdates, unknown> = {
         q: defaultSearchTerm,
-        status: null, // Empty array means no filter
-        skills: null, // Empty array means no filter
+        status: null,
+        skills: null,
       };
 
       for (const key in updates) {
@@ -172,7 +162,11 @@ export const useSearchState = ({
 
       const queryString = newParams.toString();
       const newPath = `${pathname}${queryString ? `?${queryString}` : ''}`;
-      router.replace(newPath, { scroll: false });
+      window.history.replaceState(
+        window.history.state,
+        document.title,
+        newPath,
+      );
     },
     [searchParams, router, defaultSearchTerm, pathname],
   );

@@ -1,4 +1,4 @@
-import { useInfiniteQuery } from '@tanstack/react-query';
+import { keepPreviousData, useInfiniteQuery } from '@tanstack/react-query';
 
 import { api } from '@/lib/api';
 
@@ -12,16 +12,17 @@ interface SearchListingsParams {
   bountiesLimit?: number;
   grantsLimit?: number;
   userRegion?: string[];
+  initialData?: SearchListingsResponse | null;
 }
 
-interface SearchListingsResponse {
+export interface SearchListingsResponse {
   results: SearchResult[];
   count: string;
   bountiesCount: number;
   grantsCount: number;
 }
 
-const fetchSearchListings = async ({
+export const fetchSearchListings = async ({
   query,
   status = [],
   skills = [],
@@ -39,17 +40,14 @@ const fetchSearchListings = async ({
     grantsLimit: grantsLimit.toString(),
   });
 
-  // Add status filters (multiple values comma-separated)
   if (status.length > 0) {
     queryParams.set('status', status.join(','));
   }
 
-  // Add skills filters (multiple values comma-separated)
   if (skills.length > 0) {
     queryParams.set('skills', skills.join(','));
   }
 
-  // Add offset parameters
   if (bountiesOffset > 0) {
     queryParams.set('bountiesOffset', bountiesOffset.toString());
   }
@@ -58,7 +56,6 @@ const fetchSearchListings = async ({
     queryParams.set('grantsOffset', grantsOffset.toString());
   }
 
-  // Add user region if provided
   if (userRegion && userRegion.length > 0) {
     queryParams.set('userRegion', userRegion.join(','));
   }
@@ -77,6 +74,7 @@ export function useSearchListings({
   bountiesLimit = 10,
   grantsLimit = 5,
   userRegion,
+  initialData,
 }: SearchListingsParams) {
   return useInfiniteQuery({
     queryKey: [
@@ -100,21 +98,17 @@ export function useSearchListings({
         grantsOffset: pageParam.grantsOffset,
       }),
     getNextPageParam: (lastPage, allPages) => {
-      // Calculate how many total results we've loaded so far
       const totalLoadedResults = allPages.reduce(
         (sum, page) => sum + page.results.length,
         0,
       );
 
-      // Parse the total available count from the API
       const totalAvailableResults = parseInt(lastPage.count, 10);
 
-      // If we've loaded all available results, no more pages
       if (totalLoadedResults >= totalAvailableResults) {
         return undefined;
       }
 
-      // Calculate the next offsets based on what we've loaded so far
       const currentBountiesOffset = allPages.reduce(
         (sum, page) => sum + page.bountiesCount,
         0,
@@ -129,8 +123,14 @@ export function useSearchListings({
         grantsOffset: currentGrantsOffset,
       };
     },
-    enabled: Boolean(query?.trim()), // Only run query if search term is provided
+    enabled: Boolean(query?.trim()),
     initialPageParam: { bountiesOffset: 0, grantsOffset: 0 },
-    placeholderData: (previousData) => previousData, // Keep previous data visible during filter changes
+    placeholderData: keepPreviousData,
+    ...(initialData && {
+      initialData: {
+        pages: [initialData],
+        pageParams: [{ bountiesOffset: 0, grantsOffset: 0 }],
+      },
+    }),
   });
 }

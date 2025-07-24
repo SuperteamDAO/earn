@@ -1,8 +1,10 @@
 import { Loader2, Search, Undo2 } from 'lucide-react';
+import { AnimatePresence, motion } from 'motion/react';
 import { useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { easeOutQuad } from '@/utils/easings';
 
 interface SearchButtonProps {
   onClick?: () => void;
@@ -60,7 +62,6 @@ export function QueryInput({
 }: QueryInputProps) {
   const [localQuery, setLocalQuery] = useState(query);
 
-  // Sync localQuery when query prop changes (e.g., from URL navigation)
   useEffect(() => {
     setLocalQuery(query);
   }, [query]);
@@ -88,12 +89,34 @@ export function QueryInput({
             value={localQuery}
           />
           <div className="absolute top-1/2 right-1 grid h-[calc(80%-0.125rem)] -translate-y-1/2 place-items-center">
-            <SearchButton
-              resultCount={resultCount}
-              loading={loading}
-              resultsStale={query.trim() !== localQuery.trim()}
-              disabled={localQuery.trim() === ''}
-            />
+            <AnimatePresence mode="wait">
+              <motion.div
+                className="flex h-full items-center justify-end"
+                key={
+                  resultCount &&
+                  !loading &&
+                  !(query.trim() !== localQuery.trim())
+                    ? 'results-count'
+                    : loading
+                      ? 'loading'
+                      : 'search-button'
+                }
+                initial={{ opacity: 0, filter: 'blur(6px)' }}
+                animate={{ opacity: 1, filter: 'blur(0px)' }}
+                exit={{ opacity: 0, filter: 'blur(6px)' }}
+                transition={{
+                  duration: 0.125,
+                  ease: easeOutQuad,
+                }}
+              >
+                <SearchButton
+                  resultCount={resultCount}
+                  loading={loading}
+                  resultsStale={query.trim() !== localQuery.trim()}
+                  disabled={localQuery.trim() === ''}
+                />
+              </motion.div>
+            </AnimatePresence>
           </div>
         </div>
       </form>

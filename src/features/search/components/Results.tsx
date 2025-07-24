@@ -5,35 +5,28 @@ import { Button } from '@/components/ui/button';
 import { GrantsCard } from '@/features/grants/components/GrantsCard';
 import { ListingCard } from '@/features/listings/components/ListingCard';
 
-import type { SearchSkills, SearchStatus } from '../constants/schema';
-import { useSearchListings } from '../hooks/useSearchListings';
+import type { SearchResult } from '../types';
 
 interface ResultsProps {
+  allResults: SearchResult[];
+  hasNextPage: boolean;
+  isFetchingNextPage: boolean;
+  error: unknown;
   query: string;
-  status?: SearchStatus[];
-  skills?: SearchSkills[];
-  bountiesLimit?: number;
-  grantsLimit?: number;
+  onFetchNextPage: () => void;
+  loading: boolean;
 }
 
 export function Results({
+  allResults,
+  hasNextPage,
+  isFetchingNextPage,
+  error,
   query,
-  status,
-  skills,
-  bountiesLimit = 10,
-  grantsLimit = 3,
+  onFetchNextPage,
+  loading,
 }: ResultsProps) {
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, error } =
-    useSearchListings({
-      query,
-      status,
-      skills,
-      bountiesLimit,
-      grantsLimit,
-    });
-
-  const allResults = data?.pages.flatMap((page) => page.results) ?? [];
-
+  if (loading) return null;
   if (error) {
     return (
       <div className="mt-40 flex flex-col items-center gap-6">
@@ -105,7 +98,7 @@ export function Results({
         <Button
           className="w-full gap-2 rounded-none text-sm font-semibold text-slate-400"
           variant="ghost"
-          onClick={() => fetchNextPage()}
+          onClick={onFetchNextPage}
           disabled={isFetchingNextPage}
         >
           {isFetchingNextPage ? (

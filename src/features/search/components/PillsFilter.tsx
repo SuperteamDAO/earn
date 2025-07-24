@@ -1,35 +1,68 @@
+import debounce from 'lodash.debounce';
+import { useCallback, useEffect, useState } from 'react';
+
 import { CategoryPill } from '@/features/listings/components/CategoryPill';
 
-import type { SearchSkills } from '../constants/schema';
+import { type SearchSkills, skillsData } from '../constants/schema';
 
 interface PillsFilterProps {
   activeSkills: SearchSkills[];
-  onSkillToggle: (skill: SearchSkills) => void;
+  onSkillsChange: (skills: SearchSkills[]) => void;
   loading?: boolean;
+  isLoading?: boolean;
 }
-
-const skillsData: Array<{ label: string; value: SearchSkills }> = [
-  { label: 'Content', value: 'CONTENT' },
-  { label: 'Design', value: 'DESIGN' },
-  { label: 'Development', value: 'DEVELOPMENT' },
-  { label: 'Others', value: 'OTHER' },
-];
 
 export function PillsFilter({
   activeSkills,
-  onSkillToggle,
+  onSkillsChange,
   loading = false,
+  isLoading = false,
 }: PillsFilterProps) {
+  const [localActiveSkills, setLocalActiveSkills] =
+    useState<SearchSkills[]>(activeSkills);
+
+  const isDisabled = loading || isLoading;
+
+  useEffect(() => {
+    setLocalActiveSkills(activeSkills);
+  }, [activeSkills]);
+
+  const debouncedSkillsChange = useCallback(
+    debounce((skills: SearchSkills[]) => {
+      onSkillsChange(skills);
+    }, 500),
+    [onSkillsChange],
+  );
+
+  const handleSkillToggle = useCallback(
+    (skill: SearchSkills) => {
+      if (isDisabled) return;
+
+      const newSkills = localActiveSkills.includes(skill)
+        ? localActiveSkills.filter((s) => s !== skill)
+        : [...localActiveSkills, skill];
+
+      setLocalActiveSkills(newSkills);
+
+      debouncedSkillsChange(newSkills);
+    },
+    [localActiveSkills, isDisabled, debouncedSkillsChange],
+  );
+
   return (
     <div className="flex flex-wrap gap-2 px-1 py-2 sm:px-4">
       {skillsData.map((skill) => (
-        <CategoryPill
+        <div
           key={skill.value}
-          isActive={activeSkills.includes(skill.value)}
-          onClick={() => !loading && onSkillToggle(skill.value)}
+          className={isDisabled ? 'cursor-not-allowed opacity-50' : ''}
         >
-          {skill.label}
-        </CategoryPill>
+          <CategoryPill
+            isActive={localActiveSkills.includes(skill.value)}
+            onClick={() => !isDisabled && handleSkillToggle(skill.value)}
+          >
+            {skill.label}
+          </CategoryPill>
+        </div>
       ))}
     </div>
   );
