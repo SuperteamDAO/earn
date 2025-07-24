@@ -1,8 +1,9 @@
+import debounce from 'lodash.debounce';
 import { type GetServerSideProps } from 'next';
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/router';
 import posthog from 'posthog-js';
-import { useEffect, useState, useTransition } from 'react';
+import { useCallback, useEffect, useState, useTransition } from 'react';
 
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
@@ -16,8 +17,8 @@ import {
   getCombinedRegion,
   getParentRegions,
 } from '@/features/listings/utils/region';
-import { Filters } from '@/features/search/components/Filters';
-import { Info } from '@/features/search/components/Info';
+import { DropdownFilter } from '@/features/search/components/DropdownFilter';
+import { PillsFilter } from '@/features/search/components/PillsFilter';
 import { QueryInput } from '@/features/search/components/QueryInput';
 import { Results } from '@/features/search/components/Results';
 import { type SearchResult } from '@/features/search/types';
@@ -58,6 +59,55 @@ const Search = ({
   const [results, setResults] = useState<SearchResult[]>(resultsP ?? []);
   const [query] = useState(searchParams?.get('q') ?? '');
   const [loading, setLoading] = useState(false);
+
+  const [status, setStatus] = useState(
+    searchParams?.get('status') ?? undefined,
+  );
+  const [skills, setSkills] = useState(
+    searchParams?.get('skills') ?? undefined,
+  );
+
+  const debouncedServerSearch = useCallback(debounce(serverSearch, 500), []);
+
+  const handleSkillsChange = (value: string) => {
+    const skillsArray = skills ? skills.split(',') : [];
+    let skillQuery = '';
+    if (skillsArray.includes(value)) {
+      skillQuery = skillsArray.filter((skill) => skill !== value).join(',');
+    } else {
+      skillQuery = [...skillsArray, value].join(',');
+    }
+    setSkills(skillQuery);
+    if (skillQuery === '') {
+      debouncedServerSearch(startTransition, router, query, { status });
+    } else {
+      debouncedServerSearch(startTransition, router, query, {
+        status,
+        skills: skillQuery,
+      });
+    }
+  };
+
+  const handleStatusChange = (value: string) => {
+    const statusArray = status ? status.split(',') : [];
+    let statusQuery = '';
+    if (statusArray.includes(value)) {
+      if (statusArray.length !== 1) {
+        statusQuery = statusArray.filter((s) => s !== value).join(',');
+      }
+    } else {
+      statusQuery = [...statusArray, value].join(',');
+    }
+    setStatus(statusQuery);
+    if (statusQuery === '') {
+      debouncedServerSearch(startTransition, router, query, { skills });
+    } else {
+      debouncedServerSearch(startTransition, router, query, {
+        status: statusQuery,
+        skills,
+      });
+    }
+  };
 
   const handleSearchSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -128,15 +178,50 @@ const Search = ({
               onSubmit={handleSearchSubmit}
               resultCount={count}
             />
-            <Info loading={loading} count={count} query={query} />
-            <div className="w-full md:hidden">
+            <div className="mt-4 w-full">
+              <div className="flex items-center justify-between">
+                <div className="hidden md:flex">
+                  <PillsFilter
+                    skillsFilters={skillsFilters.map((filter) => ({
+                      ...filter,
+                      checked: skills
+                        ? skills.split(',').includes(filter.value)
+                        : filter.checked,
+                    }))}
+                    onSkillChange={handleSkillsChange}
+                    loading={loading}
+                  />
+                </div>
+                <div className="ml-auto">
+                  <DropdownFilter
+                    statusFilters={statusFilters.map((filter) => ({
+                      ...filter,
+                      checked: status
+                        ? status.split(',').includes(filter.value)
+                        : filter.checked,
+                    }))}
+                    skillsFilters={skillsFilters.map((filter) => ({
+                      ...filter,
+                      checked: skills
+                        ? skills.split(',').includes(filter.value)
+                        : filter.checked,
+                    }))}
+                    onStatusChange={handleStatusChange}
+                    onSkillChange={handleSkillsChange}
+                    loading={loading}
+                  />
+                </div>
+              </div>
+            </div>
+            {/* <Info loading={loading} count={count} query={query} /> */}
+            {/* <div className="w-full md:hidden">
               <Filters
                 loading={loading}
                 query={query}
                 statusFilters={statusFilters}
                 skillsFilters={skillsFilters}
               />
-            </div>
+            </div> */}
             <div className="mx-3 h-[1px] bg-slate-200 md:mx-4" />
             <Results
               query={query}
