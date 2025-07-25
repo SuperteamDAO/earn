@@ -81,7 +81,6 @@ export async function POST(
       },
       include: {
         user: true,
-        listing: true,
       },
     });
 

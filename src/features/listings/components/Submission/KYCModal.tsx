@@ -1,4 +1,3 @@
-import { useUser } from '@privy-io/react-auth';
 import {
   type AnyEventPayload,
   type MessageHandler,
@@ -12,6 +11,7 @@ import { toast } from 'sonner';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { api } from '@/lib/api';
+import { useUser } from '@/store/user';
 
 import { userSubmissionQuery } from '../../queries/user-submission-status';
 
@@ -90,7 +90,7 @@ export const KYCModal = ({
         onInteractOutside={(e) => e.preventDefault()}
         onEscapeKeyDown={(e) => e.preventDefault()}
       >
-        <ScrollArea className="max:h-[100svh] h-full md:h-auto md:max-h-[90svh]">
+        <ScrollArea className="h-full max-h-[100svh] md:h-auto md:max-h-[90svh]">
           <X
             className="absolute top-7 right-4 z-10 h-4 w-4 cursor-pointer text-slate-400 sm:top-6"
             onClick={onClose}

@@ -126,7 +126,7 @@ export async function createPayment({ submissionId }: CreatePaymentProps) {
     },
   };
 
-  logger.info(`Successfully created payment for submission ${submissionId}`);
+  logger.info(`Prepared payment data for submission ${submissionId}`);
 
   try {
     logger.info(

@@ -1,7 +1,8 @@
-import { usePrivy, useUser } from '@privy-io/react-auth';
+import { usePrivy } from '@privy-io/react-auth';
 import { useQuery } from '@tanstack/react-query';
 
 import FaCheck from '@/components/icons/FaCheck';
+import { useUser } from '@/store/user';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 
 import type { Listing } from '@/features/listings/types';

@@ -41,11 +41,9 @@ const handler = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
       return res.status(500).json({ message: 'Missing environment variables' });
     }
 
-    const { id: applicantId } = await getApplicantData(
-      userId,
-      secretKey,
-      appToken,
-    );
+    const applicantData = await getApplicantData(userId, secretKey, appToken);
+
+    const { id: applicantId } = applicantData;
     const result = await checkVerificationStatus(
       applicantId,
       secretKey,
@@ -58,7 +56,7 @@ const handler = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
       }
 
       const { fullName, country, address, dob, idNumber, idType } =
-        await getApplicantData(userId, secretKey, appToken);
+        applicantData;
 
       await prisma.user.update({
         where: { id: userId },
