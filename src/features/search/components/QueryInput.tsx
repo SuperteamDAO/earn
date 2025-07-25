@@ -73,6 +73,8 @@ export function QueryInput({
     }
   };
 
+  const resultsStale = query.trim() !== localQuery.trim();
+
   return (
     <div className="ph-no-capture w-full px-1 sm:px-4">
       <form onSubmit={handleSubmit}>
@@ -93,9 +95,7 @@ export function QueryInput({
               <motion.div
                 className="flex h-full items-center justify-end"
                 key={
-                  resultCount &&
-                  !loading &&
-                  !(query.trim() !== localQuery.trim())
+                  resultCount && !loading && !resultsStale
                     ? 'results-count'
                     : loading
                       ? 'loading'
@@ -112,7 +112,7 @@ export function QueryInput({
                 <SearchButton
                   resultCount={resultCount}
                   loading={loading}
-                  resultsStale={query.trim() !== localQuery.trim()}
+                  resultsStale={resultsStale}
                   disabled={localQuery.trim() === ''}
                 />
               </motion.div>

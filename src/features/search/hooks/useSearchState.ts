@@ -106,8 +106,9 @@ export const useSearchState = ({
       const statusChanged =
         statusFromUrl.length !== currentInternalStatus.length ||
         statusFromUrl.some(
-          (status, index) => status !== currentInternalStatus[index],
-        );
+          (status) => !currentInternalStatus.includes(status),
+        ) ||
+        currentInternalStatus.some((status) => !statusFromUrl.includes(status));
 
       if (statusChanged) {
         return statusFromUrl;

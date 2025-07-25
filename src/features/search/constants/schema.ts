@@ -1,4 +1,4 @@
-import z from 'zod';
+import { z } from 'zod';
 
 export const SearchStatusSchema = z.enum(['OPEN', 'REVIEW', 'CLOSED']);
 export const SearchSkillsSchema = z.enum([

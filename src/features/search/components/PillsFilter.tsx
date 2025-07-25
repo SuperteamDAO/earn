@@ -1,5 +1,5 @@
 import debounce from 'lodash.debounce';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { CategoryPill } from '@/features/listings/components/CategoryPill';
 
@@ -21,12 +21,19 @@ export function PillsFilter({
     setLocalActiveSkills(activeSkills);
   }, [activeSkills]);
 
-  const debouncedSkillsChange = useCallback(
-    debounce((skills: SearchSkills[]) => {
-      onSkillsChange(skills);
-    }, 500),
+  const debouncedSkillsChange = useMemo(
+    () =>
+      debounce((skills: SearchSkills[]) => {
+        onSkillsChange(skills);
+      }, 500),
     [onSkillsChange],
   );
+
+  useEffect(() => {
+    return () => {
+      debouncedSkillsChange.cancel();
+    };
+  }, [debouncedSkillsChange]);
 
   const handleSkillToggle = useCallback(
     (skill: SearchSkills) => {

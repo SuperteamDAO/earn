@@ -72,9 +72,10 @@ export function SearchModal({ isOpen, onClose }: Props) {
     return data?.pages.flatMap((page) => page.results) ?? [];
   }, [data]);
 
+  // Makes sure that search page loads instantly and avoids initial flicker
   const prefetchSearchPageData = useCallback(
     (query: string) => {
-      router.prefetch(`/search?q=${debouncedSearchTerm}`);
+      router.prefetch(`/search?q=${encodeURIComponent(debouncedSearchTerm)}`);
       if (query.trim()) {
         queryClient.prefetchInfiniteQuery({
           queryKey: [
