@@ -19,6 +19,7 @@ export async function createPayment({ submissionId }: CreatePaymentProps) {
           id: true,
           title: true,
           rewards: true,
+          type: true,
         },
       },
       user: {
@@ -91,6 +92,15 @@ export async function createPayment({ submissionId }: CreatePaymentProps) {
     throw new Error(errorMessage);
   }
 
+  if (
+    submission.listing.type !== 'bounty' &&
+    submission.listing.type !== 'hackathon'
+  ) {
+    const errorMessage = `Listing type "${submission.listing.type}" is not supported for payment.`;
+    logger.error(errorMessage);
+    throw new Error(errorMessage);
+  }
+
   logger.info(`Creating payment for submission ${submissionId}`);
 
   const typedSubmission = {
@@ -100,6 +110,7 @@ export async function createPayment({ submissionId }: CreatePaymentProps) {
       id: submission.listing.id,
       title: submission.listing.title,
       rewards: submission.listing.rewards as Record<string, number>,
+      type: submission.listing.type,
     },
     user: {
       walletAddress: submission.user.walletAddress,

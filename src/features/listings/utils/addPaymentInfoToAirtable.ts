@@ -35,8 +35,9 @@ const AirtableInputSchema = z.object({
     }),
     listing: z.object({
       id: z.string(),
-      title: z.string().min(1, 'Grant Title is required'),
+      title: z.string().min(1, 'Listing Title is required'),
       rewards: z.record(z.string(), z.number()),
+      type: z.enum(['bounty', 'hackathon']),
     }),
   }),
 });
@@ -64,11 +65,6 @@ interface PaymentAirtableSchema {
   'Discord / Earn Username': string;
 }
 
-const grantCategory =
-  process.env.NODE_ENV === 'production'
-    ? 'rec5KcbpJVSeLQX76'
-    : 'recd0Kn3N4Ffhtwhd';
-
 function submissionToAirtable(
   validatedSubmission: ValidatedSubmission,
   listingRegionId: string,
@@ -78,14 +74,25 @@ function submissionToAirtable(
     `Looked up country for ISO '${validatedSubmission.user.kycCountry}': ${country ?? 'Not found'}`,
   );
 
-  const purposeOfPayment =
-    validatedSubmission.listing.title +
-    ' - ' +
-    validatedSubmission.user.username +
-    ' - ';
+  const purposeOfPayment = `${validatedSubmission.listing.title} - ${validatedSubmission.user.username}`;
 
   const amount =
     validatedSubmission.listing.rewards[validatedSubmission.winnerPosition];
+
+  const getListingCategory = () => {
+    const isProd = process.env.NODE_ENV === 'production';
+    const listingType = validatedSubmission.listing.type.toLowerCase();
+
+    switch (listingType) {
+      case 'bounty':
+        return isProd ? 'recVJBMFEtm3Fj4Rg' : 'rec3Z9YjIC94bWD1n';
+      case 'hackathon':
+        return isProd ? 'rec03uWVyyixPpSVM' : 'rec8j28zCH5yl2r5T';
+      default: {
+        throw new Error(`Unhandled listing type: ${listingType}`);
+      }
+    }
+  };
 
   const paymentData: PaymentAirtableSchema = {
     Name: validatedSubmission.user.kycName,
@@ -96,8 +103,8 @@ function submissionToAirtable(
     'Country of Residence': country || validatedSubmission.user.kycCountry,
     Amount: amount ?? 0,
     'Wallet Address': validatedSubmission.user.walletAddress,
-    Category: [grantCategory],
-    'Purpose of Payment': purposeOfPayment || 'Grant Payment',
+    Category: [getListingCategory()],
+    'Purpose of Payment': purposeOfPayment || 'Listing Payment',
     'Project (Archive)': validatedSubmission.listing.title ?? '',
     Email: validatedSubmission.user.email,
     Status: 'Verified',
