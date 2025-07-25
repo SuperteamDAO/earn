@@ -15,6 +15,7 @@ import { queueEmail } from '@/features/emails/utils/queueEmail';
 import { BONUS_REWARD_POSITION } from '@/features/listing-builder/constants';
 import { calculateTotalPrizes } from '@/features/listing-builder/utils/rewards';
 import { type Rewards } from '@/features/listings/types';
+import { createPayment } from '@/features/listings/utils/createPayment';
 import { fetchHistoricalTokenUSDValue } from '@/features/wallet/utils/fetchHistoricalTokenUSDValue';
 
 export const maxDuration = 300;
@@ -80,6 +81,7 @@ export async function POST(
       },
       include: {
         user: true,
+        listing: true,
       },
     });
 
@@ -333,22 +335,19 @@ export async function POST(
           triggeredBy: userId,
         });
 
-        if (
-          listing?.sponsor?.st &&
-          listing.type !== 'project' &&
-          listing.isFndnPaying
-        ) {
-          await queueEmail({
-            type: 'STWinners',
-            id,
-            triggeredBy: userId,
-          });
+        if (listing.type !== 'project' && listing.isFndnPaying) {
+          for (const winner of winners) {
+            if (winner.user.isKYCVerified) {
+              await createPayment({ submissionId: winner.id });
+            } else {
+              logger.warn(
+                `Skipping payment info addition for winner ${winner.user.username} because they are not KYC verified`,
+              );
+            }
+          }
+          await queueEmail({ type: 'STWinners', id, triggeredBy: userId });
         } else {
-          await queueEmail({
-            type: 'nonSTWinners',
-            id,
-            triggeredBy: userId,
-          });
+          await queueEmail({ type: 'nonSTWinners', id, triggeredBy: userId });
         }
 
         try {

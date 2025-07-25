@@ -31,16 +31,45 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       select: {
         id: true,
         status: true,
+        isWinner: true,
+        isPaid: true,
+        winnerPosition: true,
+        listing: {
+          select: {
+            isWinnersAnnounced: true,
+          },
+        },
+        user: {
+          select: {
+            isKYCVerified: true,
+          },
+        },
       },
     });
+
+    const responseData: {
+      isSubmitted: boolean;
+      status: string | null;
+      isWinner?: boolean;
+      isKYCVerified?: boolean;
+      isPaid?: boolean;
+      winnerPosition?: number;
+    } = {
+      isSubmitted: !!submission,
+      status: submission ? submission.status : null,
+    };
+
+    if (submission?.listing.isWinnersAnnounced) {
+      responseData.isWinner = submission.isWinner;
+      responseData.isKYCVerified = submission.user.isKYCVerified;
+      responseData.isPaid = submission.isPaid;
+      responseData.winnerPosition = submission.winnerPosition ?? undefined;
+    }
 
     logger.info(
       `Checked submission existence for listing ID: ${listingId} and user ID: ${userId}`,
     );
-    res.status(200).json({
-      isSubmitted: !!submission,
-      status: submission ? submission?.status : null,
-    });
+    res.status(200).json(responseData);
   } catch (error: any) {
     logger.error(
       `Error occurred while checking submission existence for listing ID=${listingId} and user ID=${userId}: ${safeStringify(error)}`,

@@ -6,29 +6,31 @@ import { safeStringify } from '@/utils/safeStringify';
 
 import { type NextApiRequestWithUser } from '@/features/auth/types';
 import { withAuth } from '@/features/auth/utils/withAuth';
-import { createTranche } from '@/features/grants/utils/createTranche';
 import { checkVerificationStatus } from '@/features/kyc/utils/checkVerificationStatus';
 import { getApplicantData } from '@/features/kyc/utils/getApplicantData';
+import { createPayment } from '@/features/listings/utils/createPayment';
 
 const handler = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
   const userId = req.userId;
-  const grantApplicationId = req.query.grantApplicationId as string;
+  const submissionId = req.query.submissionId as string;
   if (!userId) {
-    logger.warn(`Missing user ID for grant application verification`);
+    logger.warn(`Missing user ID for submission verification`);
     return res.status(400).json({ message: 'Missing user ID' });
   }
 
   try {
-    const grantApplication = await prisma.grantApplication.findUniqueOrThrow({
-      where: { id: grantApplicationId },
-      include: { user: true, grant: true },
+    const submission = await prisma.submission.findUniqueOrThrow({
+      where: { id: submissionId, userId },
+      include: { user: true, listing: true },
     });
 
     const isAllowed =
-      grantApplication.grant.id !== 'c72940f7-81ae-4c03-9bfe-9979d4371267' &&
-      !!grantApplication.grant.airtableId &&
-      grantApplication.grant.isNative &&
-      grantApplication.applicationStatus === 'Approved';
+      submission.isWinner &&
+      submission.listing.isWinnersAnnounced &&
+      submission.listing.isFndnPaying &&
+      !submission.isPaid &&
+      submission.listing.winnersAnnouncedAt &&
+      new Date(submission.listing.winnersAnnouncedAt) > new Date('2025-07-24');
 
     if (!isAllowed) {
       return res.status(200).json({ message: 'Not allowed' });
@@ -53,7 +55,7 @@ const handler = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
     );
 
     if (result === 'verified') {
-      if (grantApplication.user.isKYCVerified) {
+      if (submission.user.isKYCVerified) {
         return res.status(200).json({ message: 'KYC already verified' });
       }
 
@@ -72,12 +74,9 @@ const handler = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
           kycIDType: idType,
         },
       });
-
-      await createTranche({
-        applicationId: grantApplicationId,
-        isFirstTranche: true,
-      });
     }
+
+    await createPayment({ submissionId });
 
     return res.status(200).json(result);
   } catch (error) {
@@ -85,7 +84,7 @@ const handler = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
       error instanceof Error ? error.message : 'Internal server error';
 
     logger.error(
-      `Grant application KYC verification failed: ${safeStringify(error)}, grantApplicationId: ${grantApplicationId}`,
+      `Submission KYC verification failed: ${safeStringify(error)}, submissionId: ${submissionId}`,
     );
 
     if (typeof message === 'string' && message.includes('Sumsub')) {

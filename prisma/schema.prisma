@@ -346,6 +346,7 @@ model Submission {
   Comments           Comment[]
   CreditLedger       CreditLedger[]
   ai                 Json?
+  paymentSynced      Boolean          @default(false)
 
   @@index([id, listingId])
   @@index([userId])
