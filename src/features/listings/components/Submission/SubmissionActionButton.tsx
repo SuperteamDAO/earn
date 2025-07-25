@@ -26,6 +26,7 @@ import {
 } from '../../utils/region';
 import { getListingDraftStatus } from '../../utils/status';
 import { EasterEgg } from './EasterEgg';
+import { KYCModal } from './KYCModal';
 import { SubmissionDrawer } from './SubmissionDrawer';
 
 interface Props {
@@ -103,10 +104,12 @@ export const SubmissionActionButton = ({
     region,
     type,
     isWinnersAnnounced,
+    isFndnPaying,
     Hackathon,
   } = listing;
 
   const [isEasterEggOpen, setEasterEggOpen] = useState(false);
+  const [isKYCModalOpen, setIsKYCModalOpen] = useState(false);
 
   const { user } = useUser();
   const { creditBalance } = useCreditBalance();
@@ -143,11 +146,15 @@ export const SubmissionActionButton = ({
   const isEditMode = buttonState === 'edit';
 
   const handleSubmit = () => {
-    onOpen();
-    if (buttonState === 'submit') {
-      posthog.capture('start_submission');
-    } else if (isEditMode) {
-      posthog.capture('edit_submission');
+    if (buttonState === 'kyc') {
+      setIsKYCModalOpen(true);
+    } else {
+      onOpen();
+      if (buttonState === 'submit') {
+        posthog.capture('start_submission');
+      } else if (isEditMode) {
+        posthog.capture('edit_submission');
+      }
     }
   };
 
@@ -170,6 +177,23 @@ export const SubmissionActionButton = ({
   let isSubmitDisabled = false;
 
   function getButtonState() {
+    if (
+      isWinnersAnnounced &&
+      isFndnPaying &&
+      submission?.isWinner &&
+      dayjs(listing.winnersAnnouncedAt).isAfter(dayjs('2025-07-24'))
+    ) {
+      if (!submission?.isKYCVerified) {
+        return 'kyc';
+      }
+      if (submission?.isKYCVerified && !submission.isPaid) {
+        return 'kyc_done';
+      }
+      if (submission?.isKYCVerified && submission.isPaid) {
+        return 'paid';
+      }
+    }
+
     if (isSubmitted && !pastDeadline && submissionStatus === 'Rejected')
       return 'rejected';
     if (isSubmitted && !pastDeadline) return 'edit';
@@ -194,6 +218,27 @@ export const SubmissionActionButton = ({
       buttonText = isProject
         ? 'Applied Successfully'
         : 'Submitted Successfully';
+      buttonBG = 'bg-green-600';
+      isBtnDisabled = true;
+      btnLoadingText = null;
+      break;
+
+    case 'kyc':
+      buttonText = 'Submit KYC';
+      buttonBG = 'bg-brand-purple';
+      isBtnDisabled = false;
+      btnLoadingText = null;
+      break;
+
+    case 'kyc_done':
+      buttonText = 'Processing Payment';
+      buttonBG = 'bg-green-600';
+      isBtnDisabled = true;
+      btnLoadingText = null;
+      break;
+
+    case 'paid':
+      buttonText = 'Payment Successful';
       buttonBG = 'bg-green-600';
       isBtnDisabled = true;
       btnLoadingText = null;
@@ -232,7 +277,10 @@ export const SubmissionActionButton = ({
   if (isDeadlineOver(deadline) && !isWinnersAnnounced) {
     buttonText = 'Submissions in Review';
     buttonBG = 'bg-gray-500';
-  } else if (isWinnersAnnounced) {
+  } else if (
+    isWinnersAnnounced &&
+    !['kyc', 'kyc_done', 'paid'].includes(buttonState)
+  ) {
     buttonText = 'Winners Announced';
     buttonBG = 'bg-gray-500';
   }
@@ -291,8 +339,16 @@ export const SubmissionActionButton = ({
           isProject={isProject}
         />
       )}
+      {isKYCModalOpen && (
+        <KYCModal
+          isOpen={isKYCModalOpen}
+          submissionId={submission?.id!}
+          listingId={id!}
+          onClose={() => setIsKYCModalOpen(false)}
+        />
+      )}
 
-      <div className="ph-no-capture w-full md:px-0 md:pb-3">
+      <div className="ph-no-capture w-full">
         <div className="flex items-center gap-2">
           <InfoWrapper
             isUserEligibleByRegion={isUserEligibleByRegion}

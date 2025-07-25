@@ -49,7 +49,7 @@ export const GrantModal = ({
         onInteractOutside={(e) => e.preventDefault()}
         onEscapeKeyDown={(e) => e.preventDefault()}
       >
-        <ScrollArea className="max:h-[100svh] h-full md:h-auto md:max-h-[90svh]">
+        <ScrollArea className="h-full max-h-[100svh] md:h-auto md:max-h-[90svh]">
           <X
             className="absolute top-7 right-4 z-10 h-4 w-4 cursor-pointer text-slate-400 sm:top-6"
             onClick={onClose}

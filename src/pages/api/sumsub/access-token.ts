@@ -3,12 +3,10 @@ import type { NextApiResponse } from 'next';
 
 import { type NextApiRequestWithUser } from '@/features/auth/types';
 import { withAuth } from '@/features/auth/utils/withAuth';
-import {
-  createSumSubHeaders,
-  handleSumSubError,
-  SUMSUB_BASE_URL,
-  type SumSubBaseResponse,
-} from '@/features/kyc/utils';
+import { SUMSUB_BASE_URL } from '@/features/kyc/constants/SUMSUB_BASE_URL';
+import { type SumSubBaseResponse } from '@/features/kyc/types/SumSubBaseResponse';
+import { createSumSubHeaders } from '@/features/kyc/utils/createSumSubHeaders';
+import { handleSumSubError } from '@/features/kyc/utils/handleSumSubError';
 
 const createSumsubToken = async (
   userId: string,

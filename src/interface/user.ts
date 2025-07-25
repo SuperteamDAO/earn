@@ -64,6 +64,7 @@ interface User {
   emailSettings?: EmailSettings[];
   stLead?: string;
   isBlocked?: boolean;
+  isKYCVerified: boolean;
 }
 
 type PrismaUserWithoutKYC = Prisma.UserGetPayload<{

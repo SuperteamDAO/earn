@@ -90,13 +90,13 @@ export const ApprovalStages = ({ application, grant }: Props) => {
   });
 
   const CheckIcon = () => (
-    <div className="flex h-9 w-9 items-center justify-center rounded-full border-[4px] border-green-600 bg-white text-green-600">
+    <div className="flex h-9 w-9 items-center justify-center rounded-full border-4 border-green-600 bg-white text-green-600">
       <FaCheck />
     </div>
   );
 
   const PendingIcon = () => (
-    <div className="flex h-9 w-9 items-center justify-center rounded-full border-[4px] border-slate-200 bg-slate-200 text-slate-200" />
+    <div className="flex h-9 w-9 items-center justify-center rounded-full border-4 border-slate-200 bg-slate-200 text-slate-200" />
   );
 
   const Heading = ({ children }: { children: React.ReactNode }) => (
@@ -114,7 +114,7 @@ export const ApprovalStages = ({ application, grant }: Props) => {
     isStartComplete: boolean;
     isEndComplete: boolean;
   }) => (
-    <div className="absolute top-[36px] left-4 h-[72px] w-[4px]">
+    <div className="absolute top-9 left-4 h-12 w-1">
       {isStartComplete && isEndComplete ? (
         <div className="h-full bg-green-600" />
       ) : isStartComplete ? (

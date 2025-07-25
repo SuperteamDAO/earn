@@ -165,7 +165,7 @@ export function ListingPageLayout({
                 )}
               >
                 {!isSubmissionPage && (
-                  <div className="static top-14 h-full w-full grow border-slate-100 md:sticky md:w-[23rem] md:border-r md:pr-2 lg:pr-5">
+                  <div className="top-14 h-full w-full grow border-slate-100 md:sticky md:w-[23rem] md:border-r md:pr-2 lg:pr-5">
                     <RightSideBar
                       isTemplate={isTemplate}
                       listing={initialBounty}
@@ -226,13 +226,6 @@ export function ListingPageLayout({
                     </div>
                   )}
 
-                  <div className="sticky bottom-14 z-40 w-full border-t-1 border-slate-100 bg-white py-1 md:hidden">
-                    <SubmissionActionButton
-                      listing={initialBounty}
-                      isTemplate={isTemplate}
-                    />
-                  </div>
-
                   <Comments
                     isTemplate={isTemplate}
                     isAnnounced={initialBounty?.isWinnersAnnounced ?? false}
@@ -252,6 +245,12 @@ export function ListingPageLayout({
                   />
                 </div>
               </div>
+            </div>
+            <div className="sticky bottom-14 z-40 mb-12 w-full border-t-1 border-slate-100 bg-white py-1 md:hidden">
+              <SubmissionActionButton
+                listing={initialBounty}
+                isTemplate={isTemplate}
+              />
             </div>
           </div>
         )}
