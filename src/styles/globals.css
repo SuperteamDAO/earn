@@ -495,7 +495,7 @@ h3.tiptap-heading + h2.tiptap-heading {
   background-color: rgba(0, 0, 0, 0.05);
 }
 
-/* Image Zoom functionality */
+/* Image Zoom functionality for minimal tiptap editor (needs to be global)*/
 [data-rmiz-ghost] {
   position: absolute;
   pointer-events: none;

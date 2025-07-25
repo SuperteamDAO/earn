@@ -1,5 +1,4 @@
-.editor {}
-:root {
+.editor {
   --mt-overlay: rgba(251, 251, 251, 0.75);
   --mt-transparent-foreground: rgba(0, 0, 0, 0.4);
   --mt-bg-secondary: rgba(251, 251, 251, 0.8);
@@ -45,7 +44,7 @@
   --hljs-number: #3da067;
 }
 
-.dark {
+.editor .dark {
   --mt-overlay: rgba(31, 32, 35, 0.75);
   --mt-transparent-foreground: rgba(255, 255, 255, 0.4);
   --mt-bg-secondary: rgba(31, 32, 35, 0.8);
@@ -158,7 +157,7 @@
 
 .editor .ProseMirror .selection,
 .editor .ProseMirror *::selection,
-::selection {
+.editor .ProseMirror ::selection {
   background-color: var(--content-selection-bg);
 }
 
