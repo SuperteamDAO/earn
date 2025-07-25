@@ -94,86 +94,112 @@
 }
 
 .minimal-tiptap-editor .ProseMirror {
-  @apply flex max-w-full cursor-text flex-col;
-  @apply z-0 outline-0;
+  display: flex !important;
+  max-width: 100% !important;
+  cursor: text !important;
+  flex-direction: column !important;
+  z-index: 0 !important;
+  outline: none !important;
 }
 
 .minimal-tiptap-editor .ProseMirror > div.editor {
-  @apply block flex-1 whitespace-pre-wrap;
+  display: block !important;
+  flex: 1 !important;
+  white-space: pre-wrap !important;
 }
 
 .minimal-tiptap-editor .ProseMirror .block-node:not(:last-child),
 .minimal-tiptap-editor .ProseMirror .list-node:not(:last-child),
 .minimal-tiptap-editor .ProseMirror .text-node:not(:last-child) {
-  @apply mb-2.5;
+  margin-bottom: var(--content-paragraph-margin-bottom);
 }
 
 .minimal-tiptap-editor .ProseMirror ol,
 .minimal-tiptap-editor .ProseMirror ul {
-  @apply pl-6;
+  padding-left: var(--content-list-padding-left) !important;
+  margin-bottom: var(--content-paragraph-margin-bottom) !important;
 }
 
 .minimal-tiptap-editor .ProseMirror blockquote,
-.minimal-tiptap-editor .ProseMirror dl,
-.minimal-tiptap-editor .ProseMirror ol,
-.minimal-tiptap-editor .ProseMirror p,
-.minimal-tiptap-editor .ProseMirror pre,
-.minimal-tiptap-editor .ProseMirror ul {
-  @apply m-0;
+.minimal-tiptap-editor .ProseMirror dl {
+  margin: 0 !important;
 }
 
 .minimal-tiptap-editor .ProseMirror li {
-  @apply leading-7;
+  line-height: 1.5rem !important;
 }
 
 .minimal-tiptap-editor .ProseMirror p {
-  @apply break-words;
+  word-break: break-words !important;
+  margin-bottom: var(--content-paragraph-margin-bottom) !important;
+  white-space: pre-wrap !important;
 }
 
 .minimal-tiptap-editor .ProseMirror li .text-node:has(+ .list-node),
 .minimal-tiptap-editor .ProseMirror li > .list-node,
 .minimal-tiptap-editor .ProseMirror li > .text-node,
 .minimal-tiptap-editor .ProseMirror li p {
-  @apply mb-0;
+  margin-bottom: 0 !important;
 }
 
 .minimal-tiptap-editor .ProseMirror blockquote {
-  @apply relative pl-3.5 py-1;
+  padding-left: var(--content-blockquote-padding-left) !important;
+  padding-top: var(--content-blockquote-padding-vertical) !important;
+  padding-bottom: var(--content-blockquote-padding-vertical) !important;
+  position: relative !important;
+  margin-bottom: var(--content-paragraph-margin-bottom) !important;
 }
 
 .minimal-tiptap-editor .ProseMirror blockquote::before,
 .minimal-tiptap-editor .ProseMirror blockquote.is-empty::before {
-  @apply absolute bottom-0 left-0 top-0 h-full w-full rounded-sm bg-accent-foreground/15 content-[''];
+  content: '' !important;
+  position: absolute !important;
+  left: 0 !important;
+  top: 0 !important;
+  bottom: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  background-color: var(--content-blockquote-bg) !important;
+  border-radius: var(--content-border-radius-sm) !important;
 }
 
 .minimal-tiptap-editor .ProseMirror hr {
-  @apply my-3 h-0.5 w-full border-none bg-[var(--mt-hr)];
+  height: var(--content-hr-height) !important;
+  width: 100% !important;
+  border: none !important;
+  background-color: var(--content-hr-color) !important;
+  margin: var(--content-hr-margin-vertical) 0 !important;
 }
 
 .minimal-tiptap-editor .ProseMirror-focused hr.ProseMirror-selectednode {
-  @apply rounded-full outline outline-2 outline-offset-1 outline-muted-foreground;
+  border-radius: 9999px !important;
+  outline: 2px solid !important;
+  outline-offset: 1px !important;
+  outline-color: var(--color-muted-foreground) !important;
 }
 
 .minimal-tiptap-editor .ProseMirror .ProseMirror-gapcursor {
-  @apply pointer-events-none absolute hidden;
+  pointer-events: none !important;
+  position: absolute !important;
+  display: none !important;
 }
 
 .minimal-tiptap-editor .ProseMirror .ProseMirror-hideselection {
-  @apply caret-transparent;
+  caret-color: transparent !important;
 }
 
 .minimal-tiptap-editor .ProseMirror.resize-cursor {
-  @apply cursor-col-resize;
+  cursor: col-resize !important;
 }
 
 .minimal-tiptap-editor .ProseMirror .selection {
-  @apply inline-block;
+  display: inline-block !important;
 }
 
 .minimal-tiptap-editor .ProseMirror .selection,
 .minimal-tiptap-editor .ProseMirror *::selection,
 ::selection {
-  @apply bg-primary/25;
+  background-color: var(--content-selection-bg) !important;
 }
 
 /* Override native selection when custom selection is present */
@@ -187,21 +213,42 @@
 
 
 .minimal-tiptap-editor .ProseMirror code.inline {
-  @apply rounded border border-[var(--mt-code-color)] bg-[var(--mt-code-background)] px-1 py-0.5 text-sm;
+  background-color: var(--content-code-bg) !important;
+  color: var(--content-code-color) !important;
+  padding: var(--content-code-padding-vertical) var(--content-code-padding-horizontal) !important;
+  border-radius: var(--content-border-radius-md) !important;
+  font-size: 0.875rem !important;
+  white-space: pre-wrap !important;
+  word-break: break-all !important;
 }
 
 .minimal-tiptap-editor .ProseMirror pre {
-  @apply relative overflow-auto rounded border font-mono text-sm;
-  @apply border-[var(--mt-pre-border)] bg-[var(--mt-pre-background)] text-[var(--mt-pre-color)];
-  @apply hyphens-none whitespace-pre text-left;
+  background: var(--content-pre-bg) !important;
+  color: var(--content-pre-color) !important;
+  font-family: var(--font-mono), monospace !important;
+  padding: var(--content-pre-padding-vertical) var(--content-pre-padding-horizontal) !important;
+  border-radius: var(--content-border-radius-lg) !important;
+  margin-bottom: var(--content-paragraph-margin-bottom) !important;
+  overflow-x: auto !important;
+  white-space: pre-wrap !important;
+  word-break: break-all !important;
 }
 
 .minimal-tiptap-editor .ProseMirror code {
-  @apply break-words leading-[1.7em];
+  background-color: var(--content-code-bg) !important;
+  color: var(--content-code-color) !important;
+  padding: var(--content-code-padding-vertical) var(--content-code-padding-horizontal) !important;
+  border-radius: var(--content-border-radius-md) !important;
+  font-size: 0.875rem !important;
+  white-space: pre-wrap !important;
+  word-break: break-all !important;
 }
 
 .minimal-tiptap-editor .ProseMirror pre code {
-  @apply block overflow-x-auto p-3.5;
+  color: inherit !important;
+  padding: 0 !important;
+  background: none !important;
+  font-size: 0.8rem !important;
 }
 
 .minimal-tiptap-editor .ProseMirror pre {
@@ -265,11 +312,11 @@
   }
 
   .hljs-emphasis {
-    @apply italic;
+    font-style: italic !important;
   }
 
   .hljs-strong {
-    @apply font-bold;
+    font-weight: bold !important;
   }
 }
 
@@ -444,51 +491,59 @@
 
 /* lists */
 .minimal-tiptap-editor .ProseMirror ol {
-  @apply list-decimal;
+  list-style: decimal !important;
 }
 
 .minimal-tiptap-editor .ProseMirror ol ol {
-  list-style: lower-alpha;
+  list-style: lower-alpha !important;
 }
 
 .minimal-tiptap-editor .ProseMirror ol ol ol {
-  list-style: lower-roman;
+  list-style: lower-roman !important;
 }
 
 .minimal-tiptap-editor .ProseMirror ul {
-  list-style: disc;
+  list-style: disc !important;
 }
 
 .minimal-tiptap-editor .ProseMirror ul ul {
-  list-style: circle;
+  list-style: circle !important;
 }
 
 .minimal-tiptap-editor .ProseMirror ul ul ul {
-  list-style: square;
+  list-style: square !important;
 }
 
 
 /* placeholder */
 .minimal-tiptap-editor .ProseMirror > p.is-editor-empty::before {
-  content: attr(data-placeholder);
-  @apply pointer-events-none float-left h-0 text-[var(--mt-secondary)];
+  content: attr(data-placeholder) !important;
+  pointer-events: none !important;
+  float: left !important;
+  height: 0 !important;
+  color: var(--content-placeholder-color) !important;
 }
 
 
 /* typography */
 .minimal-tiptap-editor .ProseMirror .heading-node {
-  @apply !relative !font-semibold;
+  position: relative !important;
+  font-weight: 600 !important;
+}
+
+.minimal-tiptap-editor .ProseMirror > *:first-child {
+  margin-top: 0 !important;
 }
 
 .minimal-tiptap-editor .ProseMirror .heading-node:first-child {
-  @apply mt-0;
+  margin-top: 0 !important;
 }
 
 .minimal-tiptap-editor {
   * {
     color: inherit;
   }
-  color: #334155;
+  color: var(--content-text-color);
 
   h1,
   h2,
@@ -496,56 +551,95 @@
   h4,
   h5,
   h6 {
-    color: #475569 !important;
+    color: var(--content-heading-color) !important;
     font-weight: bold !important;
   }
 
   li::marker {
-    color: #475569 !important;
+    color: var(--content-heading-color) !important;
   }
 
   b, strong {
     font-weight: bold !important;
   }
 }
+
+/* Text formatting - match module styles */
+.minimal-tiptap-editor .ProseMirror strong,
+.minimal-tiptap-editor .ProseMirror b {
+  font-weight: bold !important;
+}
 .minimal-tiptap-editor .ProseMirror h1 {
-  @apply mb-4 mt-[46px] !text-[1.5rem] !leading-7 !tracking-[-0.004375rem];
+  font-size: var(--content-h1-size) !important;
+  line-height: var(--content-h1-line-height) !important;
+  margin-top: var(--content-h1-margin-top) !important;
+  margin-bottom: var(--content-h1-margin-bottom) !important;
+  letter-spacing: var(--content-h1-tracking) !important;
 }
 
 .minimal-tiptap-editor .ProseMirror h2 {
-  @apply mb-3.5 mt-8 !text-[1.25rem] !leading-7 !tracking-[0.003125rem];
+  font-size: var(--content-h2-size) !important;
+  line-height: var(--content-h2-line-height) !important;
+  margin-top: var(--content-h2-margin-top) !important;
+  margin-bottom: var(--content-h2-margin-bottom) !important;
+  letter-spacing: var(--content-h2-tracking) !important;
 }
 
 .minimal-tiptap-editor .ProseMirror h3 {
-  @apply mb-3 mt-6 !text-[1.125rem] !leading-6 !tracking-[0.00625rem];
+  font-size: var(--content-h3-size) !important;
+  line-height: var(--content-h3-line-height) !important;
+  margin-top: var(--content-h3-margin-top) !important;
+  margin-bottom: var(--content-h3-margin-bottom) !important;
+  letter-spacing: var(--content-h3-tracking) !important;
 }
 
 .minimal-tiptap-editor .ProseMirror h4 {
-  @apply mb-2 mt-4 !text-[1rem] !leading-6 !tracking-[0.00425rem];
+  font-size: var(--content-h4-size) !important;
+  line-height: var(--content-h4-line-height) !important;
+  margin-top: var(--content-h4-margin-top) !important;
+  margin-bottom: var(--content-h4-margin-bottom) !important;
+  letter-spacing: var(--content-h4-tracking) !important;
 }
 
 .minimal-tiptap-editor .ProseMirror h5 {
-  @apply mb-2 mt-4 !text-[0.875rem] !leading-6 !tracking-[0.00425rem];
+  font-size: var(--content-h5-size) !important;
+  line-height: var(--content-h5-line-height) !important;
+  margin-top: var(--content-h5-margin-top) !important;
+  margin-bottom: var(--content-h5-margin-bottom) !important;
+  letter-spacing: var(--content-h5-tracking) !important;
 }
 
 .minimal-tiptap-editor .ProseMirror h6 {
-  @apply mb-2 mt-4 !text-[0.75rem] !leading-6 !tracking-[0.00425rem];
+  font-size: var(--content-h6-size) !important;
+  line-height: var(--content-h6-line-height) !important;
+  margin-top: var(--content-h6-margin-top) !important;
+  margin-bottom: var(--content-h6-margin-bottom) !important;
+  letter-spacing: var(--content-h6-tracking) !important;
 }
 
 .minimal-tiptap-editor .ProseMirror a {
-  @apply !cursor-pointer !text-primary;
+  color: var(--content-link-color) !important;
+  cursor: pointer !important;
 }
 
 .minimal-tiptap-editor .ProseMirror a * {
-  @apply !cursor-pointer !text-primary;
+  color: var(--content-link-color) !important;
+  cursor: pointer !important;
 }
 
 .minimal-tiptap-editor .ProseMirror a:hover {
-  @apply !underline;
+  text-decoration: underline !important;
 }
 
 .minimal-tiptap-editor .ProseMirror a:hover * {
-  @apply !underline;
+  text-decoration: underline !important;
+}
+
+/* Images */
+.minimal-tiptap-editor .ProseMirror img {
+  max-width: 100% !important;
+  height: auto !important;
+  margin: 0 auto !important;
 }
 
 
