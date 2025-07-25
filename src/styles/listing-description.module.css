@@ -35,32 +35,26 @@
   --content-h6-margin-bottom: 0.5rem;
   --content-h6-tracking: 0.00425rem;
   
-  /* Content Spacing */
-  --content-paragraph-margin-bottom: 0.625rem; /* 8px */
-  --content-list-padding-left: 1.5rem; /* 24px, same as pl-6 */
-  --content-li-line-height: 1.5rem; /* 20px */
-  --content-p-line-height: 1.5rem; /* 28px */
+  --content-paragraph-margin-bottom: 0.625rem;
+  --content-list-padding-left: 1.5rem;
+  --content-li-line-height: 1.35rem;
+  --content-p-line-height: 1.35rem;
   
-  /* Blockquote Spacing */
-  --content-blockquote-padding-left: 0.875rem; /* 14px */
-  --content-blockquote-padding-vertical: 0.25rem; /* 4px */
+  --content-blockquote-padding-left: 0.875rem;
+  --content-blockquote-padding-vertical: 0.25rem;
   
-  /* Code Spacing */
-  --content-code-padding-horizontal: 0.25rem; /* 4px */
-  --content-code-padding-vertical: 0.125rem; /* 2px */
-  --content-pre-padding-horizontal: 1rem; /* 16px */
-  --content-pre-padding-vertical: 0.875rem; /* 14px */
+  --content-code-padding-horizontal: 0.25rem;
+  --content-code-padding-vertical: 0.125rem;
+  --content-pre-padding-horizontal: 1rem;
+  --content-pre-padding-vertical: 0.875rem;
   
-  /* Border Radius */
-  --content-border-radius-sm: 0.125rem; /* 2px */
-  --content-border-radius-md: 0.25rem; /* 4px */
-  --content-border-radius-lg: 0.5rem; /* 8px */
+  --content-border-radius-sm: 0.125rem;
+  --content-border-radius-md: 0.25rem;
+  --content-border-radius-lg: 0.5rem;
   
-  /* HR Spacing */
-  --content-hr-margin-vertical: 0.75rem; /* 12px */
-  --content-hr-height: 0.125rem; /* 2px */
+  --content-hr-margin-vertical: 0.75rem;
+  --content-hr-height: 0.125rem;
   
-  /* Content Colors */
   --content-text-color: #334155;
   --content-heading-color: #475569;
   --content-link-color: #6366f1;
@@ -74,7 +68,6 @@
   --content-blockquote-bg: rgba(0, 0, 0, 0.05);
 }
 
-/* Main content container */
 .content {
   color: var(--content-text-color);
   word-wrap: break-word;
@@ -86,12 +79,10 @@
   word-break: break-word;
 }
 
-/* Remove top margin from first elements */
 .content > *:first-child {
-  margin-top: 0;
+  margin-top: 0 !important;
 }
 
-/* Headings */
 .content h1 {
   font-size: var(--content-h1-size);
   line-height: var(--content-h1-line-height);
@@ -152,7 +143,6 @@
   font-weight: 600;
 }
 
-/* Paragraphs */
 .content p {
   margin-bottom: var(--content-paragraph-margin-bottom);
   word-break: break-words;
@@ -160,7 +150,6 @@
   line-height: var(--content-p-line-height);
 }
 
-/* Lists */
 .content ul, 
 .content ol {
   padding-left: var(--content-list-padding-left);
@@ -203,7 +192,6 @@
   color: var(--content-heading-color);
 }
 
-/* Links */
 .content a {
   color: var(--content-link-color);
   cursor: pointer;
@@ -224,13 +212,11 @@
   text-decoration: underline;
 }
 
-/* Text formatting */
 .content strong,
 .content b {
   font-weight: bold;
 }
 
-/* Blockquotes */
 .content blockquote { 
   padding-left: var(--content-blockquote-padding-left);
   padding-top: var(--content-blockquote-padding-vertical);
@@ -251,7 +237,6 @@
   border-radius: var(--content-border-radius-sm);
 }
 
-/* Code */
 .content code {
   background-color: var(--content-code-bg);
   color: var(--content-code-color);
@@ -281,7 +266,6 @@
   font-size: 0.8rem;
 }
 
-/* Horizontal rules */
 .content hr {
   height: var(--content-hr-height);
   width: 100%;
@@ -290,7 +274,6 @@
   margin: var(--content-hr-margin-vertical) 0;
 }
 
-/* Images */
 .content img {
   max-width: 100%;
   height: auto;

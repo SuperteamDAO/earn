@@ -1,5 +1,3 @@
-/* InfoBox richtext styles extracted from globals.css */
-
 .richtext blockquote {
   all: revert !important;
 }
