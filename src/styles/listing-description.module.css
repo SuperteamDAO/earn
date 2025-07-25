@@ -37,8 +37,8 @@
   
   --content-paragraph-margin-bottom: 0.625rem;
   --content-list-padding-left: 1.5rem;
-  --content-li-line-height: 1.35rem;
-  --content-p-line-height: 1.35rem;
+  --content-li-line-height: 1.5rem;
+  --content-p-line-height: 1.5rem;
   
   --content-blockquote-padding-left: 0.875rem;
   --content-blockquote-padding-vertical: 0.25rem;
@@ -90,7 +90,7 @@
   margin-bottom: var(--content-h1-margin-bottom);
   letter-spacing: var(--content-h1-tracking);
   color: var(--content-heading-color);
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .content h2 {
@@ -100,7 +100,7 @@
   margin-bottom: var(--content-h2-margin-bottom);
   letter-spacing: var(--content-h2-tracking);
   color: var(--content-heading-color);
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .content h3 {
@@ -110,7 +110,7 @@
   margin-bottom: var(--content-h3-margin-bottom);
   letter-spacing: var(--content-h3-tracking);
   color: var(--content-heading-color);
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .content h4 {
@@ -120,7 +120,7 @@
   margin-bottom: var(--content-h4-margin-bottom);
   letter-spacing: var(--content-h4-tracking);
   color: var(--content-heading-color);
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .content h5 {
@@ -130,7 +130,7 @@
   margin-bottom: var(--content-h5-margin-bottom);
   letter-spacing: var(--content-h5-tracking);
   color: var(--content-heading-color);
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .content h6 {
@@ -140,7 +140,7 @@
   margin-bottom: var(--content-h6-margin-bottom);
   letter-spacing: var(--content-h6-tracking);
   color: var(--content-heading-color);
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .content p {
@@ -182,10 +182,11 @@
 
 .content li {
   line-height: var(--content-li-line-height);
+  margin-bottom: 0.5rem;
 }
 
 .content li p {
-  margin-bottom: 0.35rem;
+  margin-bottom: 0rem;
 }
 
 .content li::marker {
