@@ -52,6 +52,7 @@ const SearchPage = ({
     hasNextPage,
     isFetchingNextPage,
     error,
+    isLoading,
   } = useSearchListings({
     query: searchTerm,
     status: activeStatus,
@@ -87,13 +88,17 @@ const SearchPage = ({
             />
 
             <div className="mt-4 w-full">
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between md:px-4 md:py-2">
                 <div className="hidden md:flex">
                   <PillsFilter
                     activeSkills={activeSkills}
                     onSkillsChange={handleSkillsChange}
-                    loading={isFetching}
                   />
+                </div>
+                <div className="px-2 md:hidden">
+                  <p className="text-sm font-medium text-slate-500">
+                    Search Results
+                  </p>
                 </div>
                 <div className="ml-auto">
                   <DropdownFilter
@@ -114,7 +119,7 @@ const SearchPage = ({
                 error={error}
                 query={searchTerm}
                 onFetchNextPage={fetchNextPage}
-                loading={allResults.length === 0}
+                firstRequestLoading={isLoading}
               />
             </AnimateChangeInHeight>
           </div>
