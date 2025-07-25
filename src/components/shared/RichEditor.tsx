@@ -24,6 +24,7 @@ import React, {
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import styles from '@/styles/rich-editor.module.css';
 import { cn } from '@/utils/cn';
 import { getURLSanitized } from '@/utils/getURLSanitized';
 
@@ -98,8 +99,8 @@ export const RichEditor: React.FC<RichEditorProps> = ({
           error ? 'border-destructive border' : 'border-input',
           'focus-within:border-brand-purple focus-within:border',
           `editor-${id}`,
+          styles.resetDes,
         )}
-        id="reset-des"
         ref={editorRef}
       >
         <EditorContent editor={editor} className="mt-0 text-xs sm:text-sm" />

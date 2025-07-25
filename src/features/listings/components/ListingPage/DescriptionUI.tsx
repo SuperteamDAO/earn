@@ -7,6 +7,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { useMediaQuery } from '@/hooks/use-media-query';
+import styles from '@/styles/listing-description.module.css';
 import { cn } from '@/utils/cn';
 
 interface Props {
@@ -82,15 +83,15 @@ export function DescriptionUI({ description }: Props) {
             !showMore && 'h-[50vh] overflow-hidden',
           )}
         >
-          <div className="minimal-tiptap-editor tiptap ProseMirror h-full w-full overflow-visible px-0! pb-7">
-            <div className="tiptap ProseMirror listing-description mt-0! px-0!">
-              {parse(
-                description?.startsWith('"')
-                  ? JSON.parse(description || '')
-                  : (description ?? ''),
-                options,
-              )}
-            </div>
+          <div
+            className={`${styles.content} mt-4 w-full overflow-visible pb-7`}
+          >
+            {parse(
+              description?.startsWith('"')
+                ? JSON.parse(description || '')
+                : (description ?? ''),
+              options,
+            )}
           </div>
           {!showMore && (
             <div

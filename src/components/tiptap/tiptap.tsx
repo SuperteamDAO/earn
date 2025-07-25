@@ -17,6 +17,8 @@ import {
   type UseMinimalTiptapEditorProps,
 } from './hooks/use-minimal-tiptap';
 
+import editorStyles from './styles/index.module.css';
+
 export interface MinimalTiptapProps
   extends Omit<UseMinimalTiptapEditorProps, 'onUpdate'> {
   value?: UseMinimalTiptapEditorProps['value'];
@@ -112,14 +114,12 @@ export const MinimalTiptapEditor = React.forwardRef<
         ref={ref}
         className={cn(
           'border-input focus-within:border-primary flex h-auto min-h-72 w-full flex-col rounded-md border shadow-xs',
+          editorStyles.editor,
           className,
         )}
       >
         <Toolbar editor={editor} className={toolbarClassName} />
-        <EditorContent
-          editor={editor}
-          className={cn('minimal-tiptap-editor', editorContentClassName)}
-        />
+        <EditorContent editor={editor} className={cn(editorContentClassName)} />
         <LinkBubbleMenu editor={editor} />
       </MeasuredContainer>
     );

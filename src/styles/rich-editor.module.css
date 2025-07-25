@@ -1,0 +1,125 @@
+.resetDes blockquote {
+  all: revert !important;
+}
+
+.resetDes ol {
+  all: revert !important;
+}
+
+.resetDes a {
+  word-break: break-word;
+  overflow-wrap: break-word;
+  color: blue;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.resetDes ul {
+  all: revert !important;
+}
+
+.resetDes strong {
+  all: revert !important;
+}
+
+.resetDes br {
+  all: revert !important;
+}
+
+.resetDes h1 {
+  all: revert !important;
+}
+
+.resetDes h2 {
+  all: revert !important;
+}
+
+.resetDes h3 {
+  all: revert !important;
+}
+
+.resetDes h4 {
+  all: revert !important;
+}
+
+.resetDes h5 {
+  all: revert !important;
+}
+
+.resetDes h6 {
+  all: revert !important;
+}
+
+.resetDes code {
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.resetDes pre {
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.resetDes p {
+  white-space: pre-wrap;
+}
+
+/* Flattened nested selectors for .resetDes */
+.resetDes h1,
+.resetDes h2,
+.resetDes h3,
+.resetDes h4,
+.resetDes h5,
+.resetDes h6,
+.resetDes li::marker {
+  color: #475569 !important;
+}
+
+.resetDes * {
+  font-size: 1rem;
+  word-break: break-word;
+}
+
+.resetDes h1,
+.resetDes h1 * {
+  font-size: 1.5rem !important;
+}
+
+.resetDes h2,
+.resetDes h2 * {
+  font-size: 1.25rem !important;
+}
+
+.resetDes h3,
+.resetDes h3 * {
+  font-size: 1.125rem !important;
+}
+
+.resetDes h4,
+.resetDes h4 * {
+  font-size: 1rem !important;
+}
+
+.resetDes h5,
+.resetDes h5 * {
+  font-size: 0.875rem !important;
+}
+
+.resetDes h6,
+.resetDes h6 * {
+  font-size: 0.75rem !important;
+}
+
+.resetDes {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.resetDes * {
+  color: #475569 !important;
+}
+
+.resetDes a,
+.resetDes a * {
+  color: #6366f1 !important;
+} 
