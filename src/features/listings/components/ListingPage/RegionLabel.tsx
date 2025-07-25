@@ -21,14 +21,20 @@ export const RegionLabel = ({
 
   let displayValue = 'Global';
 
-  const titlecase = (str: string) => {
-    return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
-  };
-
   if (region !== 'Global' && region) {
-    const country = titlecase(region);
-    const details = lookup.byCountry(country);
-    displayValue = details?.iso3 || country;
+    const details = lookup.byCountry(region);
+    console.log('region object', regionObject);
+    console.log('region details', details);
+    if (regionObject?.regions?.length)
+      displayValue = regionObject?.displayValue || regionObject?.name || region;
+    else
+      displayValue =
+        details?.internet ||
+        details?.iso3 ||
+        regionObject?.displayValue ||
+        region;
+
+    console.log('final display value', displayValue);
   }
 
   return (

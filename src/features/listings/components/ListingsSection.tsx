@@ -63,6 +63,7 @@ export const ListingsSection = ({
     order: activeOrder,
     region,
     sponsor,
+    authenticated,
   });
 
   const viewAllLink = () => {
@@ -165,7 +166,7 @@ export const ListingsSection = ({
           ref={scrollContainerRef}
           className="hide-scrollbar flex gap-1.5 overflow-x-auto px-2 py-1"
         >
-          {potentialSession && (
+          {(potentialSession || authenticated) && (
             <CategoryPill
               key="foryou"
               phEvent="foryou_navpill"

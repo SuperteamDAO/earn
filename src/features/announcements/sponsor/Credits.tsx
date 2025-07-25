@@ -43,14 +43,12 @@ export const CreditFeature = () => {
           height={632}
         />
       </AspectRatio>
-      <div className="flex flex-col items-start gap-2 px-2 pt-4 sm:px-6">
-        <p className="font-semibold tracking-tight text-slate-900 sm:text-lg">
+      <div className="flex flex-col items-start gap-2 px-6 pt-4">
+        <p className="text-xl font-semibold tracking-tight text-slate-900">
           {content.title}
         </p>
-        <p className="text-sm text-slate-500 sm:text-base">
-          {content.description}
-        </p>
-        <div className="mt-4 flex flex-col gap-2 text-sm sm:gap-4 sm:text-base">
+        <p className="text-base text-slate-500">{content.description}</p>
+        <div className="mt-4 flex flex-col gap-2 text-base sm:gap-4">
           {content.points.map((point, index) => (
             <Point key={index} title={point} />
           ))}
