@@ -31,10 +31,6 @@ export function SearchModal({ isOpen, onClose }: Props) {
   const router = useRouter();
   const queryClient = useQueryClient();
 
-  useEffect(() => {
-    router.prefetch('/search');
-  }, [router]);
-
   const { user } = useUser();
 
   const userRegion = useMemo(() => {

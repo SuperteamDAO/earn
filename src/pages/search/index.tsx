@@ -1,38 +1,28 @@
 import { type GetServerSideProps } from 'next';
+import NProgress from 'nprogress';
+import { useEffect, useMemo } from 'react';
 
 import { AnimateChangeInHeight } from '@/components/shared/AnimateChangeInHeight';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
-import { prisma } from '@/prisma';
+import { useUser } from '@/store/user';
 
-import { getPrivyToken } from '@/features/auth/utils/getPrivyToken';
 import { DropdownFilter } from '@/features/search/components/DropdownFilter';
 import { PillsFilter } from '@/features/search/components/PillsFilter';
 import { QueryInput } from '@/features/search/components/QueryInput';
 import { Results } from '@/features/search/components/Results';
-import type {
-  SearchSkills,
-  SearchStatus,
-} from '@/features/search/constants/schema';
-import {
-  fetchSearchListings,
-  type SearchListingsResponse,
-  useSearchListings,
-} from '@/features/search/hooks/useSearchListings';
+import { useSearchListings } from '@/features/search/hooks/useSearchListings';
 import { useSearchState } from '@/features/search/hooks/useSearchState';
 import { getUserRegion } from '@/features/search/utils/userRegionSearch';
 
 interface SearchProps {
   initialQuery?: string;
-  initialData?: SearchListingsResponse | null;
-  userRegion?: string[] | null;
 }
 
-const SearchPage = ({
-  initialQuery = '',
-  initialData,
-  userRegion,
-}: SearchProps) => {
+const SearchPage = ({ initialQuery = '' }: SearchProps) => {
+  const { user } = useUser();
+  const userRegion = useMemo(() => getUserRegion(user?.location), [user]);
+
   const {
     searchTerm,
     activeStatus,
@@ -60,13 +50,23 @@ const SearchPage = ({
     bountiesLimit: 10,
     grantsLimit: 3,
     userRegion: userRegion || undefined,
-    initialData,
   });
 
   const allResults = data?.pages.flatMap((page) => page.results) ?? [];
   const totalCount = data?.pages[0]?.count
     ? parseInt(data.pages[0].count, 10)
     : 0;
+
+  useEffect(() => {
+    if (isFetching) {
+      NProgress.start();
+    } else {
+      NProgress.done();
+    }
+    return () => {
+      NProgress.done();
+    };
+  }, [isFetching]);
 
   return (
     <Default
@@ -130,70 +130,13 @@ const SearchPage = ({
 };
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const privyDid = await getPrivyToken(context.req);
-
-  let userRegion: string[] | null = null;
-
-  if (privyDid) {
-    const user = await prisma.user.findFirst({
-      where: { privyDid },
-      select: { location: true },
-    });
-
-    userRegion = getUserRegion(user?.location);
-  }
-
   const query = (context.query.q as string)?.trim() || '';
 
-  // Parse status and skills from query params (comma-separated)
-  const statusParam = context.query.status as string;
-  const status = statusParam ? statusParam.split(',') : [];
-
-  const skillsParam = context.query.skills as string;
-  const skills = skillsParam ? skillsParam.split(',') : [];
-
-  // Use same limits as useSearchListings defaults
-  const bountiesLimit = 10;
-  const grantsLimit = 3;
-
-  // Only fetch if we have a query term
-  if (!query) {
-    return {
-      props: {
-        initialQuery: query,
-        initialData: null,
-        userRegion,
-      },
-    };
-  }
-
-  try {
-    const initialData = await fetchSearchListings({
-      query,
-      status: status as SearchStatus[],
-      skills: skills as SearchSkills[],
-      bountiesLimit,
-      grantsLimit,
-      userRegion: userRegion || undefined,
-    });
-
-    return {
-      props: {
-        initialQuery: query,
-        initialData,
-        userRegion,
-      },
-    };
-  } catch (error) {
-    console.error('Server-side search fetch error:', error);
-    return {
-      props: {
-        initialQuery: query,
-        initialData: null,
-        userRegion,
-      },
-    };
-  }
+  return {
+    props: {
+      initialQuery: query,
+    },
+  };
 };
 
 export default SearchPage;
