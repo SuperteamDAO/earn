@@ -339,12 +339,12 @@ export const SubmissionActionButton = ({
           isProject={isProject}
         />
       )}
-      {isKYCModalOpen && (
+      {isKYCModalOpen && submission?.id && (
         <KYCModal
           isOpen={isKYCModalOpen}
-          submissionId={submission?.id!}
           listingId={id!}
           onClose={() => setIsKYCModalOpen(false)}
+          submissionId={submission.id}
         />
       )}
 

@@ -54,9 +54,11 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       isKYCVerified?: boolean;
       isPaid?: boolean;
       winnerPosition?: number;
+      id?: string;
     } = {
       isSubmitted: !!submission,
       status: submission ? submission.status : null,
+      id: submission?.id,
     };
 
     if (submission?.listing.isWinnersAnnounced) {
