@@ -7,6 +7,7 @@ interface CategoryPillProps {
   phEvent?: string;
   isActive?: boolean;
   onClick?: () => void;
+  disabled?: boolean;
 }
 
 export function CategoryPill({
@@ -14,18 +15,25 @@ export function CategoryPill({
   phEvent,
   isActive,
   onClick,
+  disabled = false,
 }: CategoryPillProps) {
   return (
     <div
       className={cn(
-        'ph-no-capture flex cursor-pointer items-center gap-2 px-3.5 py-0.5 whitespace-nowrap select-none sm:py-0.5',
-        'rounded-full border border-slate-200 text-[0.8rem] sm:text-sm',
-        'hover:bg-indigo-100 hover:text-slate-700 hover:no-underline',
-        isActive
-          ? 'border-indigo-300/70 bg-indigo-200 text-slate-700 hover:bg-indigo-200'
-          : 'text-slate-500',
+        'ph-no-capture flex items-center gap-2 px-3.5 py-0.5 whitespace-nowrap select-none sm:py-0.5',
+        'rounded-full border border-slate-200 text-[0.8rem] transition-colors duration-100 sm:text-sm',
+        disabled
+          ? 'cursor-not-allowed text-slate-400 opacity-50'
+          : 'cursor-pointer',
+        isActive && !disabled
+          ? 'border-indigo-300 bg-indigo-100 text-indigo-600 hover:bg-indigo-200 hover:text-indigo-600 hover:no-underline'
+          : !disabled
+            ? 'text-slate-500 hover:bg-indigo-100 hover:text-slate-700 hover:no-underline'
+            : 'text-slate-400',
       )}
       onClick={() => {
+        if (disabled) return;
+
         if (phEvent) {
           posthog.capture(phEvent);
         }
