@@ -1,0 +1,18 @@
+version: "3.8"
+services:
+  mysql:
+    image: mysql:8.0
+    cap_add:
+      - SYS_NICE
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=123456 # Set password
+      - MYSQL_DATABASE=bounty_earn
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql:/var/lib/mysql
+
+volumes:
+  mysql:
+    driver: local
