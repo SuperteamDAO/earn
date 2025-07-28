@@ -19,7 +19,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { Progress } from '@/components/ui/progress';
 import { Tooltip } from '@/components/ui/tooltip';
 import { type SubmissionWithUser } from '@/interface/submission';
 import { GridScanAnimation } from '@/svg/DocumentScanAnimated/GridScanAnimated';
@@ -44,9 +43,9 @@ export default function AiReviewProjectApplicationsModal({
 }: Props) {
   const [open, setOpen] = useState(true);
   const [state, setState] = useState<'INIT' | 'PROCESSING' | 'DONE' | 'ERROR'>(
-    'PROCESSING',
+    'INIT',
   );
-  const [progress, setProgress] = useState(0);
+  const [, setProgress] = useState(0);
   const progressIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
@@ -334,15 +333,15 @@ export default function AiReviewProjectApplicationsModal({
                   exit={{ opacity: 0, y: 20, filter: 'blur(8px)' }}
                   transition={{ duration: 0.3 }}
                 >
-                  <CardContent className="mt-8 flex flex-col items-center justify-center space-y-8 p-8">
+                  <CardContent className="mt-2 flex flex-col items-center justify-center space-y-8 p-8">
                     <GridScanAnimation />
-                    <div className="relative h-2 w-2/4 max-w-md overflow-hidden rounded-md bg-[#f1f5f9]">
+                    {/*  <div className="relative h-2 w-2/4 max-w-md overflow-hidden rounded-md bg-[#f1f5f9]">
                       <Progress
                         value={progress}
                         className="w-full bg-slate-100"
                         indicatorClassName="bg-linear-to-r from-[#FF79C1] to-[#76C5FF] duration-200"
                       />
-                    </div>
+                    </div> */}
 
                     <div className="text-center">
                       <p className="text-sm font-medium text-slate-500">
