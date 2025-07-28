@@ -90,10 +90,10 @@ export function Results({
         </div>
         <div className="flex flex-col">
           <p className="text-center text-sm font-semibold">
-            We couldn&apos;t find anything for that keyword
+            No listings match your search
           </p>
           <p className="text-center text-sm font-medium text-slate-400">
-            Try searching for something else
+            Try a different keyword or adjust the filters
           </p>
         </div>
       </div>

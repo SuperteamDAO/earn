@@ -1,5 +1,6 @@
 import { ChevronDown, LucideListFilter, X } from 'lucide-react';
 
+import { Checkbox } from '@/components/ui/checkbox';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -68,20 +69,18 @@ function StatusFilterList({
           key={filter.value}
           onSelect={() => onStatusToggle(filter.value)}
           className={cn(
-            'mb-1 flex items-center gap-2 text-slate-600 last:mb-0',
-            activeStatus.includes(filter.value) && 'bg-slate-100 font-medium',
+            'mb-1 flex items-center gap-2 text-sm text-slate-600 last:mb-0',
+            activeStatus.includes(filter.value) &&
+              'bg-indigo-50 font-normal text-indigo-600',
           )}
         >
-          <div
-            className={cn(
-              'flex size-4 items-center justify-center rounded-full border-[1.5px]',
-              filter.circleClasses.border,
-            )}
-          >
-            <div
-              className={cn('size-2 rounded-full', filter.circleClasses.bg)}
-            />
-          </div>
+          <Checkbox
+            checked={activeStatus.includes(filter.value)}
+            className="data-[state=checked]:border-indigo-600 data-[state=checked]:bg-transparent"
+            classNames={{
+              indicatorClassName: 'text-indigo-600',
+            }}
+          />
           {filter.label}
         </DropdownMenuItem>
       ))}
@@ -148,7 +147,6 @@ export function DropdownFilter({
             className={cn(
               'relative flex cursor-pointer items-center gap-1.5 rounded-md p-2 hover:bg-slate-100 sm:p-1.5',
               'text-sm font-normal md:rounded-full md:border md:border-slate-200 md:px-2 md:py-0.5',
-              !isMd && hasActiveFilters && 'bg-indigo-50',
             )}
           >
             {isMd ? (
@@ -168,7 +166,7 @@ export function DropdownFilter({
             )}
             {!isMd && hasActiveFilters && (
               <span
-                className="bg-brand-purple absolute -top-1 -right-1 block h-2 w-2 rounded-full"
+                className="absolute top-5 right-2 block h-1 w-1 rounded-full bg-green-500"
                 aria-hidden="true"
               />
             )}

@@ -103,7 +103,7 @@ export function useSearchListings({
         0,
       );
 
-      const totalAvailableResults = parseInt(lastPage.count, 10);
+      const totalAvailableResults = parseInt(lastPage.count, 10) || 0;
 
       if (totalLoadedResults >= totalAvailableResults) {
         return undefined;

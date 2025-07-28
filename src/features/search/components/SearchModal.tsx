@@ -133,7 +133,7 @@ export function SearchModal({ isOpen, onClose }: Props) {
               'focus-visible:ring-0 focus-visible:ring-offset-0',
             )}
             onChange={(e) => setInputValue(e.target.value)}
-            placeholder="Search for Superteam Earn Listings"
+            placeholder="Search for Listings"
             value={inputValue}
           />
           <button
