@@ -135,6 +135,10 @@ export function SearchModal({ isOpen, onClose }: Props) {
             onChange={(e) => setInputValue(e.target.value)}
             placeholder="Search for Listings"
             value={inputValue}
+            autoComplete="off"
+            autoCapitalize="off"
+            spellCheck={false}
+            autoCorrect="off"
           />
           <button
             type="submit"

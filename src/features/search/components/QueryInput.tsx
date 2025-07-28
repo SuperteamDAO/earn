@@ -107,6 +107,10 @@ export function QueryInput({
               onChange={(e) => setLocalQuery(e.target.value)}
               placeholder="Search for Listings"
               value={localQuery}
+              autoComplete="off"
+              autoCapitalize="off"
+              spellCheck={false}
+              autoCorrect="off"
             />
             <div className="absolute top-1/2 right-1 hidden h-[calc(80%-0.125rem)] -translate-y-1/2 place-items-center md:grid">
               <AnimatePresence mode="wait">
