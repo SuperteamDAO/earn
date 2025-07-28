@@ -1,4 +1,5 @@
 import { atom, useSetAtom } from 'jotai';
+import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { components } from 'react-select';
 import AsyncSelect from 'react-select/async';
@@ -31,6 +32,7 @@ export function SelectSponsor({
 }) {
   const { user } = useUser();
   const updateUser = useUpdateUser();
+  const router = useRouter();
 
   const [selectedSponsor, setSelectedSponsor] = useState<SponsorOption | null>(
     null,
@@ -77,6 +79,14 @@ export function SelectSponsor({
       setSelectedSponsor(option);
     } else {
       await updateSponsor(option.value);
+      // Redirect god mode users to main sponsor dashboard if on any /dashboard/* page except /dashboard/listings
+      if (
+        user?.role === 'GOD' &&
+        router.asPath.startsWith('/dashboard/') &&
+        router.asPath !== '/dashboard/listings'
+      ) {
+        router.push('/dashboard/listings/');
+      }
     }
   };
 

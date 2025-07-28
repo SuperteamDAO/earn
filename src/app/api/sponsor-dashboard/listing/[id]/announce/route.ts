@@ -8,7 +8,7 @@ import { prisma } from '@/prisma';
 import { dayjs } from '@/utils/dayjs';
 import { safeStringify } from '@/utils/safeStringify';
 
-import { checkListingSponsorAuth } from '@/features/auth/utils/checkListingSponsorAuth';
+import { validateListingSponsorAuth } from '@/features/auth/utils/checkListingSponsorAuth';
 import { getSponsorSession } from '@/features/auth/utils/getSponsorSession';
 import { addWinBonusCredit } from '@/features/credits/utils/allocateCredits';
 import { queueEmail } from '@/features/emails/utils/queueEmail';
@@ -39,13 +39,14 @@ export async function POST(
     const { userId, userSponsorId } = session.data;
     const id = params.id;
 
-    const { error, listing } = await checkListingSponsorAuth(userSponsorId, id);
-    if (error) {
-      return NextResponse.json(
-        { error: error.message },
-        { status: error.status },
-      );
+    const listingAuthResult = await validateListingSponsorAuth(
+      userSponsorId,
+      id,
+    );
+    if ('error' in listingAuthResult) {
+      return listingAuthResult.error;
     }
+    const listing = listingAuthResult.listing;
 
     if (listing?.isWinnersAnnounced) {
       logger.warn(`Winners already announced for bounty with ID: ${id}`);

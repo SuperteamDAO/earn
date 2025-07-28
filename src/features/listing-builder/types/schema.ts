@@ -17,9 +17,9 @@ import {
   twitterRegex,
 } from '@/features/social/utils/regex';
 
-import { DEADLINE_FORMAT } from '../components/Form/Deadline';
 import {
   BONUS_REWARD_POSITION,
+  DEADLINE_FORMAT,
   MAX_BONUS_SPOTS,
   MAX_PODIUMS,
   MAX_REWARD,

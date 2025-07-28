@@ -1,7 +1,7 @@
+import axios from 'axios';
 import dayjs from 'dayjs';
 
 import { tokenList } from '@/constants/tokenList';
-import { api } from '@/lib/api';
 import logger from '@/lib/logger';
 
 import { COINGECKO_API_URL } from '@/features/wallet/constants/coingecko';
@@ -21,12 +21,13 @@ export async function fetchHistoricalTokenUSDValue(token: string, date: Date) {
     const { coingeckoSymbol } = tokenEntry;
 
     const formattedDate = dayjs(date).format('DD-MM-YYYY');
-    const { data } = await api.get(
+    const { data } = await axios.get(
       `${COINGECKO_API_URL}/coins/${coingeckoSymbol}/history`,
       { params: { date: formattedDate } },
     );
     return data.market_data.current_price.usd;
   } catch (error) {
+    console.log('Error fetching token value from CoinGecko:', error);
     logger.error('Error fetching token value from CoinGecko:', error);
     return 0;
   }

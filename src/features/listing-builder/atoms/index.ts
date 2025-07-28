@@ -37,9 +37,12 @@ const previewAtom = atom(false);
 const saveDraftMutationAtom = atomWithMutation(() => ({
   mutationKey: ['saveDraft'],
   mutationFn: async (data: Partial<ListingFormData>) => {
-    const response = await api.post<ListingFormData>('/api/listings/draft', {
-      ...convertUndefinedToNull(data),
-    });
+    const response = await api.post<ListingFormData>(
+      '/api/sponsor-dashboard/listing/draft',
+      {
+        ...convertUndefinedToNull(data),
+      },
+    );
     return response.data;
   },
 }));
@@ -61,11 +64,10 @@ const submitListingMutationAtom = atomWithMutation((get) => ({
     }
 
     const isEditing = get(isEditingAtom);
-    const endpoint = isEditing
-      ? '/api/listings/update'
-      : '/api/listings/publish';
+    const endpoint = '/api/sponsor-dashboard/listing/';
+    const action = isEditing ? 'update' : 'publish';
     const response = await api.post<ListingFormData & { reason?: string }>(
-      `${endpoint}/${data.id}`,
+      `${endpoint}${data.id}/${action}`,
       {
         ...convertUndefinedToNull(data),
       },

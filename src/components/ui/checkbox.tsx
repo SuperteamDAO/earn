@@ -1,13 +1,17 @@
 import * as CheckboxPrimitive from '@radix-ui/react-checkbox';
 import { CheckIcon } from 'lucide-react';
 import * as React from 'react';
+import { type ClassNameValue } from 'tailwind-merge';
 
 import { cn } from '@/utils/cn';
 
-function Checkbox({
-  className,
-  ...props
-}: React.ComponentProps<typeof CheckboxPrimitive.Root>) {
+interface CheckboxProps
+  extends React.ComponentProps<typeof CheckboxPrimitive.Root> {
+  classNames?: {
+    indicatorClassName?: ClassNameValue;
+  };
+}
+function Checkbox({ className, classNames, ...props }: CheckboxProps) {
   return (
     <CheckboxPrimitive.Root
       data-slot="checkbox"
@@ -19,7 +23,10 @@ function Checkbox({
     >
       <CheckboxPrimitive.Indicator
         data-slot="checkbox-indicator"
-        className={cn('flex items-center justify-center text-current')}
+        className={cn(
+          'flex items-center justify-center text-current',
+          classNames?.indicatorClassName,
+        )}
       >
         <CheckIcon className="size-4" />
       </CheckboxPrimitive.Indicator>
