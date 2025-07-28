@@ -9,7 +9,7 @@ import { dayjs } from '@/utils/dayjs';
 
 import { type Listing } from '@/features/listings/types';
 
-import { DEADLINE_FORMAT } from '../components/Form/Deadline';
+import { DEADLINE_FORMAT } from '../constants';
 import { type ListingFormData } from '../types';
 import { createListingFormSchema } from '../types/schema';
 interface ListingDefaults {

@@ -15,6 +15,7 @@ import {
 import { useUser } from '@/store/user';
 
 import { hackathonsAtom, isEditingAtom } from '../../atoms';
+import { DEADLINE_FORMAT } from '../../constants';
 import { useListingForm } from '../../hooks';
 
 const deadlineOptions = [
@@ -22,8 +23,6 @@ const deadlineOptions = [
   { label: '2 Weeks', value: 14 },
   { label: '3 Weeks', value: 21 },
 ];
-
-export const DEADLINE_FORMAT = 'YYYY-MM-DDTHH:mm:ss.SSS[Z]';
 
 export function Deadline() {
   const form = useListingForm();
