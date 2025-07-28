@@ -62,6 +62,7 @@ interface QueryInputProps {
   onQueryChange: (query: string) => void;
   resultCount?: number;
   loading?: boolean;
+  onQueryEmptyChange?: (isEmpty: boolean) => void;
 }
 
 export function QueryInput({
@@ -69,12 +70,18 @@ export function QueryInput({
   onQueryChange,
   resultCount,
   loading = false,
+  onQueryEmptyChange,
 }: QueryInputProps) {
   const [localQuery, setLocalQuery] = useState(query);
 
   useEffect(() => {
     setLocalQuery(query);
   }, [query]);
+
+  useEffect(() => {
+    const isQueryEmpty = localQuery.trim() === '';
+    onQueryEmptyChange?.(isQueryEmpty);
+  }, [query, localQuery, onQueryEmptyChange]);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -95,7 +102,7 @@ export function QueryInput({
             </div>
             <Input
               name="query"
-              className="ph-no-capture rounded-lg border-slate-200 pr-2 pl-13 text-sm font-normal text-slate-600 md:text-base"
+              className="ph-no-capture rounded-lg border-slate-200 pr-2 pl-13 text-sm font-normal text-slate-600 placeholder:text-sm md:text-base"
               autoFocus
               onChange={(e) => setLocalQuery(e.target.value)}
               placeholder="Search for Listings"

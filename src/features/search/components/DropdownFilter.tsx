@@ -26,14 +26,17 @@ interface DropdownFilterProps {
   activeSkills: SearchSkills[];
   onStatusToggle: (value: SearchStatus) => void;
   onSkillToggle: (value: SearchSkills) => void;
+  disabled?: boolean;
 }
 
 function ActiveStatusPills({
   activeStatus,
   onStatusToggle,
+  disabled = false,
 }: {
   activeStatus: SearchStatus[];
   onStatusToggle: (value: SearchStatus) => void;
+  disabled?: boolean;
 }) {
   return (
     <div className="flex flex-wrap gap-2">
@@ -44,6 +47,7 @@ function ActiveStatusPills({
             key={filter.value}
             isActive={true}
             onClick={() => onStatusToggle(filter.value)}
+            disabled={disabled}
           >
             <span className="flex items-center gap-1">
               {filter.label}
@@ -58,24 +62,28 @@ function ActiveStatusPills({
 function StatusFilterList({
   activeStatus,
   onStatusToggle,
+  disabled = false,
 }: {
   activeStatus: SearchStatus[];
   onStatusToggle: (value: SearchStatus) => void;
+  disabled?: boolean;
 }) {
   return (
     <>
       {statusData.map((filter) => (
         <DropdownMenuItem
           key={filter.value}
-          onSelect={() => onStatusToggle(filter.value)}
+          onSelect={() => !disabled && onStatusToggle(filter.value)}
           className={cn(
             'mb-1 flex items-center gap-2 text-sm text-slate-600 last:mb-0',
+            disabled && 'pointer-events-none opacity-50',
             activeStatus.includes(filter.value) &&
               'bg-indigo-50 font-normal text-indigo-600',
           )}
         >
           <Checkbox
             checked={activeStatus.includes(filter.value)}
+            disabled={disabled}
             className="data-[state=checked]:border-indigo-600 data-[state=checked]:bg-transparent"
             classNames={{
               indicatorClassName: 'text-indigo-600',
@@ -91,18 +99,21 @@ function StatusFilterList({
 function SkillFilterList({
   activeSkills,
   onSkillToggle,
+  disabled = false,
 }: {
   activeSkills: SearchSkills[];
   onSkillToggle: (value: SearchSkills) => void;
+  disabled?: boolean;
 }) {
   return (
     <>
       {skillsData.map((filter) => (
         <DropdownMenuItem
           key={filter.value}
-          onSelect={() => onSkillToggle(filter.value)}
+          onSelect={() => !disabled && onSkillToggle(filter.value)}
           className={cn(
             'mb-1 flex items-center gap-2 text-slate-600 last:mb-0',
+            disabled && 'pointer-events-none opacity-50',
             activeSkills.includes(filter.value) &&
               'bg-slate-100 font-medium text-indigo-600',
           )}
@@ -119,6 +130,7 @@ export function DropdownFilter({
   activeSkills,
   onStatusToggle,
   onSkillToggle,
+  disabled = false,
 }: DropdownFilterProps) {
   const isMd = useBreakpoint('md');
 
@@ -138,15 +150,20 @@ export function DropdownFilter({
         <ActiveStatusPills
           activeStatus={activeStatus}
           onStatusToggle={onStatusToggle}
+          disabled={disabled}
         />
       )}
 
       <DropdownMenu>
-        <DropdownMenuTrigger className="focus-visible:outline-none">
+        <DropdownMenuTrigger
+          className="focus-visible:outline-none"
+          disabled={disabled}
+        >
           <div
             className={cn(
-              'relative flex cursor-pointer items-center gap-1.5 rounded-md p-2 hover:bg-slate-100 sm:p-1.5',
+              'relative flex items-center gap-1.5 rounded-md p-2 hover:bg-slate-100 sm:p-1.5',
               'text-sm font-normal md:rounded-full md:border md:border-slate-200 md:px-2 md:py-0.5',
+              disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer',
             )}
           >
             {isMd ? (
@@ -180,6 +197,7 @@ export function DropdownFilter({
           <StatusFilterList
             activeStatus={activeStatus}
             onStatusToggle={onStatusToggle}
+            disabled={disabled}
           />
           {!isMd && (
             <>
@@ -190,6 +208,7 @@ export function DropdownFilter({
               <SkillFilterList
                 activeSkills={activeSkills}
                 onSkillToggle={onSkillToggle}
+                disabled={disabled}
               />
             </>
           )}

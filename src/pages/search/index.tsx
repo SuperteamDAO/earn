@@ -1,6 +1,6 @@
 import { type GetServerSideProps } from 'next';
 import NProgress from 'nprogress';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { AnimateChangeInHeight } from '@/components/shared/AnimateChangeInHeight';
 import { Default } from '@/layouts/Default';
@@ -22,6 +22,7 @@ interface SearchProps {
 const SearchPage = ({ initialQuery = '' }: SearchProps) => {
   const { user } = useUser();
   const userRegion = useMemo(() => getUserRegion(user?.location), [user]);
+  const [isQueryEmpty, setIsQueryEmpty] = useState(initialQuery.trim() === '');
 
   const {
     searchTerm,
@@ -85,6 +86,7 @@ const SearchPage = ({ initialQuery = '' }: SearchProps) => {
               onQueryChange={handleSearchTermChange}
               resultCount={totalCount}
               loading={isFetching}
+              onQueryEmptyChange={setIsQueryEmpty}
             />
 
             <div className="mt-4 w-full">
@@ -93,6 +95,7 @@ const SearchPage = ({ initialQuery = '' }: SearchProps) => {
                   <PillsFilter
                     activeSkills={activeSkills}
                     onSkillsChange={handleSkillsChange}
+                    disabled={isQueryEmpty}
                   />
                 </div>
                 <div className="px-2 md:hidden">
@@ -106,6 +109,7 @@ const SearchPage = ({ initialQuery = '' }: SearchProps) => {
                     activeSkills={activeSkills}
                     onStatusToggle={handleToggleStatus}
                     onSkillToggle={handleToggleSkill}
+                    disabled={isQueryEmpty}
                   />
                 </div>
               </div>

@@ -8,11 +8,13 @@ import { type SearchSkills, skillsData } from '../constants/schema';
 interface PillsFilterProps {
   activeSkills: SearchSkills[];
   onSkillsChange: (skills: SearchSkills[]) => void;
+  disabled?: boolean;
 }
 
 export function PillsFilter({
   activeSkills,
   onSkillsChange,
+  disabled = false,
 }: PillsFilterProps) {
   const [localActiveSkills, setLocalActiveSkills] =
     useState<SearchSkills[]>(activeSkills);
@@ -37,6 +39,8 @@ export function PillsFilter({
 
   const handleSkillToggle = useCallback(
     (skill: SearchSkills) => {
+      if (disabled) return;
+
       const newSkills = localActiveSkills.includes(skill)
         ? localActiveSkills.filter((s) => s !== skill)
         : [...localActiveSkills, skill];
@@ -45,7 +49,7 @@ export function PillsFilter({
 
       debouncedSkillsChange(newSkills);
     },
-    [localActiveSkills, debouncedSkillsChange],
+    [localActiveSkills, debouncedSkillsChange, disabled],
   );
 
   return (
@@ -55,6 +59,7 @@ export function PillsFilter({
           <CategoryPill
             isActive={localActiveSkills.includes(skill.value)}
             onClick={() => handleSkillToggle(skill.value)}
+            disabled={disabled}
           >
             {skill.label}
           </CategoryPill>
