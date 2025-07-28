@@ -41,11 +41,11 @@ import { cn } from '@/utils/cn';
 import { getURL } from '@/utils/validUrl';
 
 import { grantAmount } from '@/features/grants/utils/grantAmount';
+import { isListingEditable } from '@/features/listing-builder/utils/isListingEditable';
 import { type ListingWithSubmissions } from '@/features/listings/types';
 import { formatDeadline } from '@/features/listings/utils/deadline';
 import { getColorStyles } from '@/features/listings/utils/getColorStyles';
 import { getListingIcon } from '@/features/listings/utils/getListingIcon';
-import { isListingEditable } from '@/features/listings/utils/isListingEditable';
 import {
   getListingStatus,
   getListingTypeLabel,

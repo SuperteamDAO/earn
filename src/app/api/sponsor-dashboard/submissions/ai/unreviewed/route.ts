@@ -4,8 +4,8 @@ import { type NextRequest, NextResponse } from 'next/server';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 
-import { checkListingSponsorAuth } from '@/features/auth/utils/checkListingSponsorAuth';
-import { getSponsorSession } from '@/features/auth/utils/getSponsorSession';
+import { validateListingSponsorAuth } from '@/features/auth/utils/checkListingSponsorAuth';
+import { validateSession } from '@/features/auth/utils/getSponsorSession';
 import { type ProjectApplicationAi } from '@/features/listings/types';
 
 export const maxDuration = 300;
@@ -23,23 +23,16 @@ export async function GET(request: NextRequest) {
     );
   }
   try {
-    const session = await getSponsorSession(await headers());
-
-    if (session.error || !session.data) {
-      return NextResponse.json(
-        { error: session.error },
-        { status: session.status },
-      );
+    const sessionResult = await validateSession(await headers());
+    if ('error' in sessionResult) {
+      return sessionResult.error;
     }
-    const { error } = await checkListingSponsorAuth(
-      session.data.userSponsorId,
+    const listingAuthResult = await validateListingSponsorAuth(
+      sessionResult.session.userSponsorId,
       id,
     );
-    if (error) {
-      return NextResponse.json(
-        { error: error.message },
-        { status: error.status },
-      );
+    if ('error' in listingAuthResult) {
+      return listingAuthResult.error;
     }
     const unreviewedApplications = await prisma.submission.findMany({
       where: {
