@@ -14,6 +14,11 @@ interface SyncData {
   syncedAt: string;
 }
 
+interface DriftCheckpoint {
+  performanceTime: number;
+  dateTime: number;
+}
+
 interface UseServerTimeSyncOptions {
   syncInterval?: number;
   autoSync?: boolean;
@@ -22,6 +27,9 @@ interface UseServerTimeSyncOptions {
   onSync?: (data: SyncData) => void;
   maxRetries?: number;
   retryDelay?: number;
+  driftCheckInterval?: number;
+  driftThreshold?: number;
+  onDriftDetected?: (driftAmount: number) => void;
 }
 
 interface UseServerTimeSyncReturn {
@@ -32,26 +40,35 @@ interface UseServerTimeSyncReturn {
   manualSync: () => Promise<void>;
   isSyncing: boolean;
   lastSyncData: SyncData | null;
+  detectedDrift: number | null;
 }
 
 const useServerTimeSync = (
   options: UseServerTimeSyncOptions = {},
 ): UseServerTimeSyncReturn => {
   const {
-    syncInterval = 30 * 1000, // 30 seconds
+    syncInterval = 30 * 1000,
     autoSync = true,
     endpoint = '/api/server-time',
     onError,
     onSync,
     maxRetries = 3,
     retryDelay = 1000,
+    driftCheckInterval = 5 * 1000,
+    driftThreshold = 2500,
+    onDriftDetected,
   } = options;
 
   const [serverOffset, setServerOffset] = useState<number>(0);
   const [lastSyncData, setLastSyncData] = useState<SyncData | null>(null);
+  const [detectedDrift, setDetectedDrift] = useState<number | null>(null);
+  const [driftCheckpoint, setDriftCheckpoint] =
+    useState<DriftCheckpoint | null>(null);
 
   const onErrorRef = useRef(onError);
   const onSyncRef = useRef(onSync);
+  const onDriftDetectedRef = useRef(onDriftDetected);
+  const driftCheckIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     onErrorRef.current = onError;
@@ -60,6 +77,10 @@ const useServerTimeSync = (
   useEffect(() => {
     onSyncRef.current = onSync;
   }, [onSync]);
+
+  useEffect(() => {
+    onDriftDetectedRef.current = onDriftDetected;
+  }, [onDriftDetected]);
 
   const fetchServerTime = useCallback(async (): Promise<SyncData> => {
     const clientTimeBeforeRequest = Date.now();
@@ -112,9 +133,9 @@ const useServerTimeSync = (
     enabled: autoSync,
     refetchInterval: autoSync ? syncInterval : false,
     retry: maxRetries,
-    retryDelay: (attemptIndex) => retryDelay * Math.pow(2, attemptIndex), // Exponential backoff
-    staleTime: syncInterval / 2, // Consider data stale after half the sync interval
-    gcTime: syncInterval * 2, // Keep in cache for 2x sync interval
+    retryDelay: (attemptIndex) => retryDelay * Math.pow(2, attemptIndex),
+    staleTime: syncInterval / 2,
+    gcTime: syncInterval * 2,
     refetchOnWindowFocus: false,
     refetchOnReconnect: true,
   });
@@ -123,6 +144,12 @@ const useServerTimeSync = (
     if (data) {
       setServerOffset(data.offset);
       setLastSyncData(data);
+      setDetectedDrift(null);
+
+      setDriftCheckpoint({
+        performanceTime: performance.now(),
+        dateTime: Date.now(),
+      });
 
       if (onSyncRef.current) {
         onSyncRef.current(data);
@@ -138,9 +165,58 @@ const useServerTimeSync = (
     }
   }, [error]);
 
+  const checkForDrift = useCallback(() => {
+    if (!driftCheckpoint || !isSync) return;
+
+    const currentPerformanceTime = performance.now();
+    const currentDateTime = Date.now();
+
+    const performanceElapsed =
+      currentPerformanceTime - driftCheckpoint.performanceTime;
+    const expectedDateTime = driftCheckpoint.dateTime + performanceElapsed;
+
+    const drift = Math.abs(currentDateTime - expectedDateTime);
+
+    if (drift > driftThreshold) {
+      setDetectedDrift(drift);
+
+      if (onDriftDetectedRef.current) {
+        onDriftDetectedRef.current(drift);
+      }
+
+      refetch();
+    }
+  }, [driftCheckpoint, isSync, driftThreshold, refetch]);
+
+  useEffect(() => {
+    if (driftCheckIntervalRef.current) {
+      clearInterval(driftCheckIntervalRef.current);
+    }
+
+    if (driftCheckpoint && autoSync && isSync) {
+      driftCheckIntervalRef.current = setInterval(
+        checkForDrift,
+        driftCheckInterval,
+      );
+    }
+
+    return () => {
+      if (driftCheckIntervalRef.current) {
+        clearInterval(driftCheckIntervalRef.current);
+      }
+    };
+  }, [driftCheckpoint, autoSync, isSync, checkForDrift, driftCheckInterval]);
+
   const serverTime = useCallback((): number => {
+    if (driftCheckpoint && isSync) {
+      const performanceElapsed =
+        performance.now() - driftCheckpoint.performanceTime;
+      const originalServerTime = driftCheckpoint.dateTime + serverOffset;
+      return originalServerTime + performanceElapsed;
+    }
+
     return Date.now() + serverOffset;
-  }, [serverOffset]);
+  }, [serverOffset, driftCheckpoint, isSync]);
 
   const manualSync = useCallback(async (): Promise<void> => {
     await refetch();
@@ -158,6 +234,7 @@ const useServerTimeSync = (
     manualSync,
     isSyncing,
     lastSyncData,
+    detectedDrift,
   };
 };
 
