@@ -102,7 +102,7 @@ export async function POST(
         error: error.message,
         message: `Error occurred while updating listing with id = ${id}.`,
       },
-      { status: 400 },
+      { status: 500 },
     );
   }
 }

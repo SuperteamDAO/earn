@@ -64,8 +64,8 @@ async function handleDiscordNotifications({
   isVerifying,
   reason,
 }: {
-  result: any;
-  originalListing?: any;
+  result: Bounties;
+  originalListing?: ListingWithSponsor;
   listingId: string;
   isEditing: boolean;
   isVerifying: boolean;
@@ -130,8 +130,8 @@ async function handleDeadlineChanges({
   userId,
   listingId,
 }: {
-  originalListing: any;
-  result: any;
+  originalListing: ListingWithSponsor;
+  result: Bounties;
   userId: string;
   listingId: string;
 }) {
@@ -196,7 +196,7 @@ async function handleDeadlineChanges({
   }
 }
 
-async function handleAgentJobQueuing(result: any) {
+async function handleAgentJobQueuing(result: Bounties) {
   if (result.type !== 'project') return;
 
   try {

@@ -35,7 +35,7 @@ export const validateListing = async ({
       isEditing,
       isST: !!sponsor?.st,
       hackathonId: hackathon?.id,
-      pastListing: listing as any,
+      pastListing: listing,
     });
     const listingSchema = createListingFormSchema({
       isGod: user?.role === 'GOD',
@@ -54,12 +54,8 @@ export const validateListing = async ({
       sponsorId: true,
     });
     const superValidator = innerSchema.superRefine(async (data, ctx) => {
-      await createListingRefinements(
-        data as any,
-        ctx,
-        hackathon ? [hackathon] : [],
-      );
-      await backendListingRefinements(data as any, ctx);
+      await createListingRefinements(data, ctx, hackathon ? [hackathon] : []);
+      await backendListingRefinements(data, ctx);
     });
     const validatedData = await superValidator.parseAsync({
       ...(isEditing ? listing : {}),
