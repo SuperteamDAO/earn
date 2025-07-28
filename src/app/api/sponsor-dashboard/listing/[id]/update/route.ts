@@ -60,11 +60,6 @@ export async function POST(
       formData: data,
     });
 
-    await handleWinnerResets({
-      listingId: id,
-      validatedListing: validatedData,
-    });
-
     const dataToUpdate = await transformToPrismaData({
       validatedListing: validatedData,
       listing,
@@ -73,6 +68,12 @@ export async function POST(
     });
     logger.debug(`Updating listing with data: ${safeStringify(dataToUpdate)}`, {
       id,
+    });
+
+    // we want reset right before update
+    await handleWinnerResets({
+      listingId: id,
+      validatedListing: validatedData,
     });
 
     const result = await prisma.bounties.update({

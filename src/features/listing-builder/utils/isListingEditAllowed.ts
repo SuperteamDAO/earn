@@ -1,3 +1,4 @@
+// used for api route, dont add use client here.
 import { type User } from '@prisma/client';
 import { NextResponse } from 'next/server';
 
@@ -6,7 +7,6 @@ import logger from '@/lib/logger';
 import { type ListingWithSponsor } from '@/features/auth/utils/checkListingSponsorAuth';
 import { isDeadlineOver } from '@/features/listings/utils/deadline';
 
-// used for api route, dont add use client here.
 export function validateUpdatePermissions(
   listing: ListingWithSponsor,
   user: User,
