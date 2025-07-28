@@ -96,7 +96,7 @@ const SearchPage = ({ initialQuery = '' }: SearchProps) => {
                   />
                 </div>
                 <div className="px-2 md:hidden">
-                  <p className="text-sm text-slate-500">
+                  <p className="text-xs text-slate-500">
                     Found {totalCount} results
                   </p>
                 </div>

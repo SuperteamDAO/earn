@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { cn } from '@/utils/cn';
 import { easeOutQuad } from '@/utils/easings';
 
 interface SearchButtonProps {
@@ -42,10 +43,16 @@ export function SearchButton({
       type="submit"
       onClick={onClick}
       disabled={disabled || loading}
-      className={`h-full px-2.5 py-0 text-xs`}
+      className={cn(`h-full px-2.5 py-0 text-xs`, isOutside && 'w-16 px-0')}
     >
-      <span>Search</span>
-      <Undo2 className="hidden size-3 rotate-x-180 md:block" />
+      {loading ? (
+        <Loader2 className="h-4 w-4 animate-spin" />
+      ) : (
+        <>
+          <span>Search</span>
+          <Undo2 className="hidden size-3 rotate-x-180 md:block" />
+        </>
+      )}
     </Button>
   );
 }
@@ -82,7 +89,7 @@ export function QueryInput({
     <div className="ph-no-capture w-full px-1 sm:px-4">
       <form onSubmit={handleSubmit}>
         <div className="flex items-stretch gap-2">
-          <div className="relative">
+          <div className="relative flex-1">
             <div className="absolute top-1/2 left-[0.0625rem] grid h-[calc(100%-0.125rem)] -translate-y-1/2 items-center rounded-l-lg border-r bg-slate-50 px-2.5">
               <Search className="h-4 w-4 text-slate-400" />
             </div>
