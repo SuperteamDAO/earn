@@ -8,6 +8,7 @@ import { CountDownRenderer } from '@/components/shared/countdownRenderer';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { exclusiveSponsorData } from '@/constants/exclusiveSponsors';
 import { tokenList } from '@/constants/tokenList';
+import useServerTimeSync from '@/hooks/use-server-time';
 import { type ParentSkills } from '@/interface/skills';
 import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';
@@ -63,6 +64,10 @@ export function RightSideBar({
     maxBonusSpots,
     isWinnersAnnounced,
   } = listing;
+
+  const { serverTime, isSync } = useServerTimeSync({
+    syncInterval: 30 * 1000, // Sync every 30 seconds
+  });
 
   const { data: submissionNumber, isLoading: isSubmissionNumberLoading } =
     useQuery(submissionCountQuery(id!));
@@ -238,11 +243,16 @@ export function RightSideBar({
                     />
                     <div className="flex flex-col items-start">
                       <p className="text-lg font-medium text-black md:text-xl">
-                        <Countdown
-                          date={deadline}
-                          renderer={CountDownRenderer}
-                          zeroPadDays={1}
-                        />
+                        {isSync ? (
+                          <Countdown
+                            date={deadline}
+                            now={serverTime}
+                            renderer={CountDownRenderer}
+                            zeroPadDays={1}
+                          />
+                        ) : (
+                          <span className="text-slate-400">Syncing...</span>
+                        )}
                       </p>
                     </div>
                   </div>
@@ -259,11 +269,16 @@ export function RightSideBar({
                   />
                   <div className="flex flex-col items-start">
                     <p className="text-lg font-medium text-black md:text-xl">
-                      <Countdown
-                        date={Hackathon?.startDate}
-                        renderer={CountDownRenderer}
-                        zeroPadDays={1}
-                      />
+                      {isSync ? (
+                        <Countdown
+                          date={Hackathon?.startDate}
+                          now={serverTime}
+                          renderer={CountDownRenderer}
+                          zeroPadDays={1}
+                        />
+                      ) : (
+                        <span className="text-slate-400">Syncing...</span>
+                      )}
                     </p>
                     <p className="text-slate-400">Until Submissions Open</p>
                   </div>

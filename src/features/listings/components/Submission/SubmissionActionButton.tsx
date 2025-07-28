@@ -9,6 +9,7 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Tooltip } from '@/components/ui/tooltip';
 import { useDisclosure } from '@/hooks/use-disclosure';
+import useServerTimeSync from '@/hooks/use-server-time';
 import { useCreditBalance } from '@/store/credit';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
@@ -133,11 +134,14 @@ export const SubmissionActionButton = ({
 
   const { isOpen, onOpen, onClose } = useDisclosure();
 
+  const { serverTime } = useServerTimeSync();
+
   const regionTooltipLabel = getRegionTooltipLabel(region);
 
   const bountyDraftStatus = getListingDraftStatus(status, isPublished);
 
-  const pastDeadline = isDeadlineOver(deadline) || isWinnersAnnounced;
+  const pastDeadline =
+    isDeadlineOver(deadline, serverTime()) || isWinnersAnnounced;
   const buttonState = getButtonState();
 
   const isEditMode = buttonState === 'edit';
@@ -156,7 +160,7 @@ export const SubmissionActionButton = ({
     : null;
 
   const hasHackathonStarted = hackathonStartDate
-    ? dayjs().isAfter(hackathonStartDate)
+    ? dayjs(serverTime()).isAfter(hackathonStartDate)
     : true;
 
   const isProject = type === 'project';
@@ -229,7 +233,7 @@ export const SubmissionActionButton = ({
       );
       btnLoadingText = 'Checking Submission..';
   }
-  if (isDeadlineOver(deadline) && !isWinnersAnnounced) {
+  if (isDeadlineOver(deadline, serverTime()) && !isWinnersAnnounced) {
     buttonText = 'Submissions in Review';
     buttonBG = 'bg-gray-500';
   } else if (isWinnersAnnounced) {

@@ -9,6 +9,7 @@ import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
 import { Tooltip } from '@/components/ui/tooltip';
 import { ASSET_URL } from '@/constants/ASSET_URL';
 import { useMediaQuery } from '@/hooks/use-media-query';
+import useServerTimeSync from '@/hooks/use-server-time';
 import { PulseIcon } from '@/svg/pulse-icon';
 import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';
@@ -48,9 +49,11 @@ export function ListingHeader({
   } = listing;
   const router = useRouter();
 
+  const { serverTime } = useServerTimeSync();
+
   const isMD = useMediaQuery('(min-width: 768px)');
-  const hasDeadlineEnded = dayjs().isAfter(deadline);
-  const hasHackathonStarted = dayjs().isAfter(Hackathon?.startDate);
+  const hasDeadlineEnded = dayjs(serverTime()).isAfter(deadline);
+  const hasHackathonStarted = dayjs(serverTime()).isAfter(Hackathon?.startDate);
   const isProject = type === 'project';
   const isHackathon = type === 'hackathon';
 

@@ -6,6 +6,7 @@ import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ASSET_URL } from '@/constants/ASSET_URL';
 import { tokenList } from '@/constants/tokenList';
+import useServerTimeSync from '@/hooks/use-server-time';
 import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';
 import { timeAgoShort } from '@/utils/timeAgo';
@@ -56,12 +57,13 @@ export const ListingCard = ({ bounty }: { bounty: Listing }) => {
     _count,
   } = bounty;
 
-  const isBeforeDeadline = dayjs().isBefore(dayjs(deadline));
+  const { serverTime } = useServerTimeSync();
+  const isBeforeDeadline = dayjs(serverTime()).isBefore(dayjs(deadline));
 
   const targetDate =
     isWinnersAnnounced && winnersAnnouncedAt ? winnersAnnouncedAt : deadline;
 
-  const formattedDeadline = timeAgoShort(targetDate!);
+  const formattedDeadline = timeAgoShort(targetDate!, serverTime());
 
   let deadlineText;
 
@@ -182,9 +184,10 @@ export const ListingCard = ({ bounty }: { bounty: Listing }) => {
                 </div>
               )}
 
-              {dayjs().isBefore(dayjs(deadline)) && !isWinnersAnnounced && (
-                <div className="mx-1 h-2 w-2 rounded-full bg-[#16A35F] sm:mx-0" />
-              )}
+              {dayjs(serverTime()).isBefore(dayjs(deadline)) &&
+                !isWinnersAnnounced && (
+                  <div className="mx-1 h-2 w-2 rounded-full bg-[#16A35F] sm:mx-0" />
+                )}
             </div>
           </div>
         </div>
