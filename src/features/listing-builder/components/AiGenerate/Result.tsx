@@ -6,10 +6,10 @@ import { useWatch } from 'react-hook-form';
 
 import { type TRewardsGenerateResponse } from '@/app/api/sponsor-dashboard/ai-generate/rewards/route';
 import { MarkdownRenderer } from '@/components/shared/MarkdownRenderer';
-import { MinimalTiptapEditor } from '@/components/tiptap';
 import { Button } from '@/components/ui/button';
 import { tokenList } from '@/constants/tokenList';
 import { type Skills } from '@/interface/skills';
+import styles from '@/styles/listing-description.module.css';
 import { easeOutQuad } from '@/utils/easings';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 
@@ -133,28 +133,12 @@ export function AiGenerateResult({
               <LoaderCircle className="h-4 w-4 animate-spin" />
               <span className="text-gray-500">Thinking…</span>
             </div>
-          ) : isDescriptionLoading ? (
-            <div className="minimal-tiptap-editor tiptap ProseMirror h-min w-full overflow-visible px-0! pb-7">
-              <div className="tiptap ProseMirror listing-description mt-0! px-0!">
-                <MarkdownRenderer>{description}</MarkdownRenderer>
-              </div>
-            </div>
           ) : (
-            <MinimalTiptapEditor
-              key={isDescriptionLoading ? 1 : 0}
-              value={description}
-              immediatelyRender
-              throttleDelay={0}
-              output="html"
-              editable={false}
-              imageSetting={{
-                folderName: 'listing-description',
-                type: 'description',
-              }}
-              className="min-h-0 border-0 shadow-none"
-              editorClassName="!px-0"
-              toolbarClassName="hidden"
-            />
+            <div
+              className={`${styles.content} mt-4 w-full overflow-visible pb-7`}
+            >
+              <MarkdownRenderer>{description}</MarkdownRenderer>
+            </div>
           )}
           {isDescriptionError && (
             <p className="w-full rounded-md bg-slate-100 py-4 text-center text-sm text-slate-600">

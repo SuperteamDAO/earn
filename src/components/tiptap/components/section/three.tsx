@@ -11,9 +11,12 @@ import {
 import type { toggleVariants } from '@/components/ui/toggle';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { Tooltip } from '@/components/ui/tooltip';
+import { cn } from '@/utils/cn';
 
 import { useTheme } from '../../hooks/use-theme';
 import { ToolbarButton } from '../toolbar-button';
+
+import editorStyles from '../../styles/index.module.css';
 
 interface ColorItem {
   cssVar: string;
@@ -56,9 +59,9 @@ const COLORS: ColorPalette[] = [
   },
   {
     label: 'Palette 3',
-    inverse: 'hsl(var(--foreground))',
+    inverse: 'hsl(var(--background))',
     colors: [
-      { cssVar: 'hsl(var(--background))', label: 'White', darkLabel: 'Black' },
+      { cssVar: 'hsl(var(--foreground))', label: 'White', darkLabel: 'Black' },
       { cssVar: 'var(--mt-accent-blue-subtler)', label: 'Blue subtle' },
       { cssVar: 'var(--mt-accent-teal-subtler)', label: 'Teal subtle' },
       { cssVar: 'var(--mt-accent-green-subtler)', label: 'Green subtle' },
@@ -188,7 +191,7 @@ export const SectionThree: React.FC<SectionThreeProps> = ({
         </ToolbarButton>
       </PopoverTrigger>
       <PopoverContent align="start" className="w-full">
-        <div className="space-y-1.5">
+        <div className={cn('space-y-1.5', editorStyles.editor)}>
           {COLORS.map((palette, index) => (
             <MemoizedColorPicker
               key={index}

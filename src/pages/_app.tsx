@@ -6,7 +6,6 @@ import { useRouter } from 'next/router';
 import Providers from '@/components/providers';
 
 import '../styles/globals.css';
-import '@/components/tiptap/styles/index.css';
 
 const Toaster = dynamic(() => import('sonner').then((mod) => mod.Toaster), {
   ssr: false,

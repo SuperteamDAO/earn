@@ -1,0 +1,282 @@
+.content {
+  --content-h1-size: 1.5rem;
+  --content-h1-line-height: 1.75rem;
+  --content-h1-margin-top: 46px;
+  --content-h1-margin-bottom: 1rem;
+  --content-h1-tracking: -0.004375rem;
+  
+  --content-h2-size: 1.25rem;
+  --content-h2-line-height: 1.75rem;
+  --content-h2-margin-top: 2rem;
+  --content-h2-margin-bottom: 0.875rem;
+  --content-h2-tracking: 0.003125rem;
+  
+  --content-h3-size: 1.125rem;
+  --content-h3-line-height: 1.5rem;
+  --content-h3-margin-top: 1.5rem;
+  --content-h3-margin-bottom: 0.75rem;
+  --content-h3-tracking: 0.00625rem;
+  
+  --content-h4-size: 1rem;
+  --content-h4-line-height: 1.5rem;
+  --content-h4-margin-top: 1rem;
+  --content-h4-margin-bottom: 0.5rem;
+  --content-h4-tracking: 0.00425rem;
+  
+  --content-h5-size: 0.875rem;
+  --content-h5-line-height: 1.5rem;
+  --content-h5-margin-top: 1rem;
+  --content-h5-margin-bottom: 0.5rem;
+  --content-h5-tracking: 0.00425rem;
+  
+  --content-h6-size: 0.75rem;
+  --content-h6-line-height: 1.5rem;
+  --content-h6-margin-top: 1rem;
+  --content-h6-margin-bottom: 0.5rem;
+  --content-h6-tracking: 0.00425rem;
+  
+  --content-paragraph-margin-bottom: 0.625rem;
+  --content-list-padding-left: 1.5rem;
+  --content-li-line-height: 1.5rem;
+  --content-p-line-height: 1.5rem;
+  
+  --content-blockquote-padding-left: 0.875rem;
+  --content-blockquote-padding-vertical: 0.25rem;
+  
+  --content-code-padding-horizontal: 0.25rem;
+  --content-code-padding-vertical: 0.125rem;
+  --content-pre-padding-horizontal: 1rem;
+  --content-pre-padding-vertical: 0.875rem;
+  
+  --content-border-radius-sm: 0.125rem;
+  --content-border-radius-md: 0.25rem;
+  --content-border-radius-lg: 0.5rem;
+  
+  --content-hr-margin-vertical: 0.75rem;
+  --content-hr-height: 0.125rem;
+  
+  --content-text-color: #334155;
+  --content-heading-color: #475569;
+  --content-link-color: #6366f1;
+  --content-code-bg: rgba(97, 97, 97, 0.1);
+  --content-code-color: #616161;
+  --content-pre-bg: #0d0d0d;
+  --content-pre-color: #fff;
+  --content-placeholder-color: #9d9d9f;
+  --content-hr-color: #dcdcdc;
+  --content-selection-bg: rgba(99, 102, 241, 0.25);
+  --content-blockquote-bg: rgba(0, 0, 0, 0.05);
+}
+
+.content {
+  color: var(--content-text-color);
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.content * {
+  color: inherit;
+  word-break: break-word;
+}
+
+.content > *:first-child {
+  margin-top: 0 !important;
+}
+
+.content h1 {
+  font-size: var(--content-h1-size);
+  line-height: var(--content-h1-line-height);
+  margin-top: var(--content-h1-margin-top);
+  margin-bottom: var(--content-h1-margin-bottom);
+  letter-spacing: var(--content-h1-tracking);
+  color: var(--content-heading-color);
+  font-weight: 700;
+}
+
+.content h2 {
+  font-size: var(--content-h2-size);
+  line-height: var(--content-h2-line-height);
+  margin-top: var(--content-h2-margin-top);
+  margin-bottom: var(--content-h2-margin-bottom);
+  letter-spacing: var(--content-h2-tracking);
+  color: var(--content-heading-color);
+  font-weight: 700;
+}
+
+.content h3 {
+  font-size: var(--content-h3-size);
+  line-height: var(--content-h3-line-height);
+  margin-top: var(--content-h3-margin-top);
+  margin-bottom: var(--content-h3-margin-bottom);
+  letter-spacing: var(--content-h3-tracking);
+  color: var(--content-heading-color);
+  font-weight: 700;
+}
+
+.content h4 {
+  font-size: var(--content-h4-size);
+  line-height: var(--content-h4-line-height);
+  margin-top: var(--content-h4-margin-top);
+  margin-bottom: var(--content-h4-margin-bottom);
+  letter-spacing: var(--content-h4-tracking);
+  color: var(--content-heading-color);
+  font-weight: 700;
+}
+
+.content h5 {
+  font-size: var(--content-h5-size);
+  line-height: var(--content-h5-line-height);
+  margin-top: var(--content-h5-margin-top);
+  margin-bottom: var(--content-h5-margin-bottom);
+  letter-spacing: var(--content-h5-tracking);
+  color: var(--content-heading-color);
+  font-weight: 700;
+}
+
+.content h6 {
+  font-size: var(--content-h6-size);
+  line-height: var(--content-h6-line-height);
+  margin-top: var(--content-h6-margin-top);
+  margin-bottom: var(--content-h6-margin-bottom);
+  letter-spacing: var(--content-h6-tracking);
+  color: var(--content-heading-color);
+  font-weight: 700;
+}
+
+.content p {
+  margin-bottom: var(--content-paragraph-margin-bottom);
+  word-break: break-words;
+  white-space: pre-wrap;
+  line-height: var(--content-p-line-height);
+}
+
+.content ul, 
+.content ol {
+  padding-left: var(--content-list-padding-left);
+  margin-bottom: var(--content-paragraph-margin-bottom);
+}
+
+.content ul {
+  list-style: disc;
+}
+
+.content ol {
+  list-style: decimal;
+}
+
+.content ul ul {
+  list-style: circle;
+}
+
+.content ol ol {
+  list-style: lower-alpha;
+}
+
+.content ul ul ul {
+  list-style: square;
+}
+
+.content ol ol ol {
+  list-style: lower-roman;
+}
+
+.content li {
+  line-height: var(--content-li-line-height);
+  margin-bottom: 0.5rem;
+}
+
+.content li p {
+  margin-bottom: 0rem;
+}
+
+.content li::marker {
+  color: var(--content-heading-color);
+}
+
+.content a {
+  color: var(--content-link-color);
+  cursor: pointer;
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
+.content a:hover {
+  text-decoration: underline;
+}
+
+.content a * {
+  color: var(--content-link-color);
+  cursor: pointer;
+}
+
+.content a:hover * {
+  text-decoration: underline;
+}
+
+.content strong,
+.content b {
+  font-weight: bold;
+}
+
+.content blockquote { 
+  padding-left: var(--content-blockquote-padding-left);
+  padding-top: var(--content-blockquote-padding-vertical);
+  padding-bottom: var(--content-blockquote-padding-vertical);
+  position: relative;
+  margin-bottom: var(--content-paragraph-margin-bottom);
+}
+
+.content blockquote::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  background-color: var(--content-blockquote-bg);
+  border-radius: var(--content-border-radius-sm);
+}
+
+.content code {
+  background-color: var(--content-code-bg);
+  color: var(--content-code-color);
+  padding: var(--content-code-padding-vertical) var(--content-code-padding-horizontal);
+  border-radius: var(--content-border-radius-md);
+  font-size: 0.875rem;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.content pre {
+  background: var(--content-pre-bg);
+  color: var(--content-pre-color);
+  font-family: var(--font-mono), monospace;
+  padding: var(--content-pre-padding-vertical) var(--content-pre-padding-horizontal);
+  border-radius: var(--content-border-radius-lg);
+  margin-bottom: var(--content-paragraph-margin-bottom);
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.content pre code {
+  color: inherit;
+  padding: 0;
+  background: none;
+  font-size: 0.8rem;
+}
+
+.content hr {
+  height: var(--content-hr-height);
+  width: 100%;
+  border: none;
+  background-color: var(--content-hr-color);
+  margin: var(--content-hr-margin-vertical) 0;
+}
+
+.content img {
+  max-width: 100%;
+  height: auto;
+  margin: 0 auto;
+} 

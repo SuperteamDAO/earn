@@ -13,8 +13,8 @@ import {
 import { Tooltip } from '@/components/ui/tooltip';
 import { dayjs } from '@/utils/dayjs';
 
+import { DEADLINE_FORMAT } from '../../constants';
 import { useListingForm } from '../../hooks';
-import { DEADLINE_FORMAT } from './Deadline';
 
 const quickOptions = [
   { label: '1 Week', value: 7 },
