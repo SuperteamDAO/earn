@@ -25,112 +25,49 @@ export default async function auth(req: NextApiRequest, res: NextApiResponse) {
 
     callbacks: {
       async signIn({ user, account, profile }) {
-        console.log('🚀 [NextAuth] signIn callback triggered');
-        console.log(
-          '📝 [NextAuth] User object:',
-          JSON.stringify(user, null, 2),
-        );
-        console.log(
-          '🔐 [NextAuth] Account object:',
-          JSON.stringify(account, null, 2),
-        );
-        console.log(
-          '👤 [NextAuth] Profile object:',
-          JSON.stringify(profile, null, 2),
-        );
-
         if (account?.provider === 'twitter') {
-          console.log('🐦 [NextAuth] Twitter provider detected');
-
           if (!profile) {
-            console.warn('⚠️ [NextAuth] No profile found from Twitter');
+            console.warn('[NextAuth] No profile found from Twitter');
             return true;
           }
 
-          // Extract Twitter handle from profile and store for later processing
+          // Extract Twitter handle from profile
           const rawHandle =
             (profile as any)?.username ||
             (profile as any)?.data?.username ||
             (profile as any)?.screen_name ||
             '';
 
-          console.log('🔍 [NextAuth] Raw handle extracted:', rawHandle);
-          console.log(
-            '🔍 [NextAuth] Available profile fields:',
-            Object.keys(profile),
-          );
-
           if (rawHandle) {
             const handle = normalizeTwitterHandle(rawHandle);
-            console.log('✨ [NextAuth] Normalized handle:', handle);
-            console.log(
-              '💾 [NextAuth] Storing Twitter handle in token for later processing',
-            );
+            console.log(`[NextAuth] Extracted Twitter handle: ${handle}`);
 
-            // Store the handle in the user object so it gets passed to the jwt callback
+            // Store handle for processing in jwt callback
             (user as any).twitterHandle = handle;
           } else {
-            console.warn('⚠️ [NextAuth] No Twitter username found in profile');
-            console.log(
-              '🔍 [NextAuth] Profile debug - checking for username fields:',
-            );
-            console.log('  - profile.username:', (profile as any)?.username);
-            console.log(
-              '  - profile.data?.username:',
-              (profile as any)?.data?.username,
-            );
-            console.log(
-              '  - profile.screen_name:',
-              (profile as any)?.screen_name,
-            );
-            console.log('  - profile.login:', (profile as any)?.login);
-            console.log('  - profile.handle:', (profile as any)?.handle);
+            console.warn('[NextAuth] No Twitter username found in profile');
           }
-        } else {
-          console.log('ℹ️ [NextAuth] Non-Twitter provider:', account?.provider);
         }
 
-        console.log('✅ [NextAuth] signIn callback completed, returning true');
         return true;
       },
 
-      /**
-       * Handle the actual Twitter handle linking when we have access to Privy credentials
-       */
       async jwt({ token, user }) {
-        console.log('🎟️ [NextAuth] jwt callback triggered');
-
-        // If we have a Twitter handle from the signIn callback, process it
+        // Transfer Twitter handle from user to token
         if ((user as any)?.twitterHandle) {
-          console.log(
-            '🔗 [NextAuth] Found Twitter handle to link:',
-            (user as any).twitterHandle,
-          );
           token.twitterHandle = (user as any).twitterHandle;
         }
 
-        // If we have a pending Twitter handle, try to link it
+        // Process pending Twitter handle linking
         if (token.twitterHandle) {
-          console.log(
-            '🔍 [NextAuth] Attempting to link Twitter handle:',
-            token.twitterHandle,
-          );
-
           try {
             const privyDid = await getPrivyToken(req);
 
             if (privyDid) {
-              console.log(
-                '✅ [NextAuth] Privy DID found in jwt callback:',
-                privyDid,
-              );
-
               const existingUser = await prisma.user.findUnique({
                 where: { privyDid },
                 select: { id: true, linkedTwitter: true },
               });
-
-              console.log('📊 [NextAuth] User lookup result:', existingUser);
 
               if (existingUser) {
                 const currentLinkedTwitter = existingUser.linkedTwitter as
@@ -141,165 +78,63 @@ export default async function auth(req: NextApiRequest, res: NextApiResponse) {
                     token.twitterHandle as string,
                   ) ?? false;
 
-                console.log(
-                  '🔍 [NextAuth] Already linked check:',
-                  alreadyLinked,
-                );
-
                 if (!alreadyLinked) {
-                  console.log(
-                    '➕ [NextAuth] Adding Twitter handle to linkedTwitter array',
-                  );
-
-                  // Handle the case where linkedTwitter is null vs already has values
                   const newLinkedTwitter = currentLinkedTwitter
                     ? [...currentLinkedTwitter, token.twitterHandle as string]
                     : [token.twitterHandle as string];
 
-                  console.log(
-                    '📝 [NextAuth] New linkedTwitter array:',
-                    newLinkedTwitter,
-                  );
-
                   await prisma.user.update({
                     where: { id: existingUser.id },
-                    data: {
-                      linkedTwitter: newLinkedTwitter,
-                    },
+                    data: { linkedTwitter: newLinkedTwitter },
                   });
 
                   console.log(
-                    `✅ [NextAuth] Successfully linked Twitter handle "${token.twitterHandle}" to user ${privyDid}`,
-                  );
-
-                  // Verify the update
-                  const updatedUser = await prisma.user.findUnique({
-                    where: { id: existingUser.id },
-                    select: { linkedTwitter: true },
-                  });
-                  console.log(
-                    '🔄 [NextAuth] Updated linkedTwitter:',
-                    updatedUser?.linkedTwitter,
-                  );
-                } else {
-                  console.log(
-                    `ℹ️ [NextAuth] Twitter handle "${token.twitterHandle}" already linked to user ${privyDid}`,
+                    `[NextAuth] Successfully linked Twitter handle "${token.twitterHandle}" to user`,
                   );
                 }
 
                 // Clear the flag since we've processed it
-                console.log(
-                  '🧹 [NextAuth] Clearing twitterHandle flag from token',
-                );
                 delete token.twitterHandle;
               } else {
                 console.warn(
-                  `❌ [NextAuth] No user found with privyDid ${privyDid} to link Twitter handle`,
+                  `[NextAuth] No user found with privyDid ${privyDid}`,
                 );
               }
-            } else {
-              console.warn(
-                '⚠️ [NextAuth] No Privy DID found in jwt callback, will retry later',
-              );
             }
           } catch (err) {
-            console.error(
-              '💥 [NextAuth] Failed to persist linkedTwitter during jwt:',
-              err,
-            );
-            console.error('💥 [NextAuth] Error details:', {
-              message: (err as Error).message,
-              stack: (err as Error).stack,
-              name: (err as Error).name,
-            });
+            console.error('[NextAuth] Failed to link Twitter handle:', err);
           }
         }
 
-        console.log('✅ [NextAuth] jwt callback completed');
         return token;
       },
 
-      /**
-       * Attach `linkedTwitter` array to the session so the client can access it
-       */
       async session({ session, token: _token }) {
-        console.log('🎫 [NextAuth] session callback triggered');
-        console.log(
-          '📝 [NextAuth] Incoming session:',
-          JSON.stringify(session, null, 2),
-        );
-
-        if (!session.user) {
-          console.warn(
-            '⚠️ [NextAuth] No user in session, returning session as-is',
-          );
-          return session;
-        }
+        if (!session.user) return session;
 
         try {
-          console.log('🔍 [NextAuth] Getting Privy token for session...');
           const privyDid = await getPrivyToken(req);
-
-          if (!privyDid) {
-            console.warn('⚠️ [NextAuth] No Privy DID found for session');
-            return session;
-          }
-
-          console.log(
-            '🔍 [NextAuth] Fetching user data for privyDid:',
-            privyDid,
-          );
+          if (!privyDid) return session;
 
           const user = await prisma.user.findUnique({
             where: { privyDid },
             select: {
               id: true,
               linkedTwitter: true,
-              email: true,
-              username: true,
             },
           });
 
-          console.log('📊 [NextAuth] User data from database:', user);
-
           if (user) {
-            console.log('✅ [NextAuth] User found, attaching data to session');
-
-            // Attach linkedTwitter to the session for client access
             (session.user as any).linkedTwitter = user.linkedTwitter || [];
             (session.user as any).id = user.id;
-
-            console.log(
-              '🔗 [NextAuth] Final session.user.linkedTwitter:',
-              (session.user as any).linkedTwitter,
-            );
-            console.log(
-              '🆔 [NextAuth] Final session.user.id:',
-              (session.user as any).id,
-            );
-          } else {
-            console.warn(
-              '❌ [NextAuth] No user found in database for privyDid:',
-              privyDid,
-            );
           }
         } catch (err) {
           console.error(
-            '💥 [NextAuth] Failed to fetch user data for session:',
+            '[NextAuth] Failed to fetch user data for session:',
             err,
           );
-          console.error('💥 [NextAuth] Error details:', {
-            message: (err as Error).message,
-            stack: (err as Error).stack,
-            name: (err as Error).name,
-          });
         }
 
-        console.log(
-          '📤 [NextAuth] Final session object:',
-          JSON.stringify(session, null, 2),
-        );
-        console.log('✅ [NextAuth] session callback completed');
         return session;
       },
     },
