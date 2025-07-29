@@ -34,6 +34,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
         isWinner: true,
         isPaid: true,
         winnerPosition: true,
+        paymentSynced: true,
         listing: {
           select: {
             isWinnersAnnounced: true,
@@ -54,9 +55,12 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       isKYCVerified?: boolean;
       isPaid?: boolean;
       winnerPosition?: number;
+      id?: string;
+      paymentSynced?: boolean;
     } = {
       isSubmitted: !!submission,
       status: submission ? submission.status : null,
+      id: submission?.id,
     };
 
     if (submission?.listing.isWinnersAnnounced) {
@@ -64,6 +68,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       responseData.isKYCVerified = submission.user.isKYCVerified;
       responseData.isPaid = submission.isPaid;
       responseData.winnerPosition = submission.winnerPosition ?? undefined;
+      responseData.paymentSynced = submission.paymentSynced;
     }
 
     logger.info(

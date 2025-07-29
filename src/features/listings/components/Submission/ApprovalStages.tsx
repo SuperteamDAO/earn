@@ -23,7 +23,7 @@ export const ApprovalStages = ({ listing }: Props) => {
     enabled: ready && isAuthenticated && !!user?.id,
   });
 
-  if (isUserSubmissionLoading || !ready || !submission.isWinner) return null;
+  if (isUserSubmissionLoading || !ready || !submission?.isWinner) return null;
 
   const CheckIcon = () => (
     <div className="flex h-9 w-9 items-center justify-center rounded-full border-4 border-green-600 bg-white text-green-600">
@@ -66,6 +66,8 @@ export const ApprovalStages = ({ listing }: Props) => {
 
   const isKycVerified = submission.isKYCVerified ?? false;
   const isPaid = submission.isPaid;
+
+  const isPaymentSynced = submission.paymentSynced ?? false;
 
   const isHackathon = listing.type === 'hackathon';
   const wonTitle = isHackathon ? 'Hackathon Track Won' : 'Bounty Won';
@@ -110,9 +112,12 @@ export const ApprovalStages = ({ listing }: Props) => {
 
         <div className="relative flex items-start gap-4">
           <div className="relative z-10">
-            {isPaid ? <CheckIcon /> : <PendingIcon />}
+            {isPaymentSynced ? <CheckIcon /> : <PendingIcon />}
           </div>
-          <ConnectingLine isStartComplete={isPaid} isEndComplete={isPaid} />
+          <ConnectingLine
+            isStartComplete={isPaid}
+            isEndComplete={isPaymentSynced}
+          />
           <div>
             <Heading>Payment Processing</Heading>
             <Subheading>
