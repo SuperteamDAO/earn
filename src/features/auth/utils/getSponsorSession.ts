@@ -1,5 +1,6 @@
 import type { ReadonlyHeaders } from 'next/dist/server/web/spec-extension/adapters/headers';
 import { cookies } from 'next/headers';
+import { NextResponse } from 'next/server';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
@@ -87,4 +88,24 @@ export async function getSponsorSession(
       data: null,
     };
   }
+}
+
+// Helper function to handle session validation in app router routes
+export async function validateSession(
+  headers: ReadonlyHeaders,
+): Promise<
+  { session: NonNullable<SessionResponse['data']> } | { error: NextResponse }
+> {
+  const session = await getSponsorSession(headers);
+
+  if (session.error || !session.data) {
+    return {
+      error: NextResponse.json(
+        { error: session.error },
+        { status: session.status },
+      ),
+    };
+  }
+
+  return { session: session.data };
 }

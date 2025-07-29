@@ -36,6 +36,8 @@ export const KYCModal = ({
   isOpen: boolean;
 }) => {
   const modalRef = useRef<HTMLDivElement>(null);
+  const verificationProcessedRef = useRef(false);
+
   const { data: accessToken, refetch } = useQuery({
     queryKey: ['sumsubToken'],
     queryFn: async () => {
@@ -68,10 +70,16 @@ export const KYCModal = ({
       type === 'idCheck.onApplicantStatusChanged' &&
       'reviewStatus' in payload
     ) {
+      if (verificationProcessedRef.current) {
+        return;
+      }
+
       const result = await checkVerification();
       if (result.data === 'verified') {
+        verificationProcessedRef.current = true;
+
         toast.success(
-          'Your KYC is verified! You will receive your first tranche in around a week.',
+          'Your KYC is verified! You will receive your payment in around a week.',
         );
         await queryClient.invalidateQueries({
           queryKey: userSubmissionQuery(listingId, user?.id).queryKey,

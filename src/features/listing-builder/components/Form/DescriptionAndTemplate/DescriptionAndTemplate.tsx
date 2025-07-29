@@ -12,6 +12,7 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
+import styles from '@/styles/listing-description.module.css';
 
 import {
   descriptionKeyAtom,
@@ -141,8 +142,8 @@ export function DescriptionAndTemplate() {
                   }}
                   onBlur={field.onBlur}
                   ref={field.ref}
-                  className="min-h-[60vh] w-full border-0 text-sm"
-                  editorContentClassName="p-4 px-2 h-full"
+                  className="min-h-[60vh] w-full border-0"
+                  editorContentClassName={`${styles.content} mt-4 mb-4 px-2 h-full [&>*:first-child>*:first-child]:mt-0!`}
                   output="html"
                   placeholder="Type your description here..."
                   editable={true}

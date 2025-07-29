@@ -339,12 +339,12 @@ export const SubmissionActionButton = ({
           isProject={isProject}
         />
       )}
-      {isKYCModalOpen && (
+      {isKYCModalOpen && submission?.id && (
         <KYCModal
           isOpen={isKYCModalOpen}
-          submissionId={submission?.id!}
           listingId={id!}
           onClose={() => setIsKYCModalOpen(false)}
+          submissionId={submission.id}
         />
       )}
 
@@ -373,7 +373,7 @@ export const SubmissionActionButton = ({
                 <Button
                   className={cn(
                     'h-12 w-full gap-4',
-                    'disabled:opacity-70',
+                    'disabled:cursor-default disabled:opacity-70',
                     'text-base md:text-lg',
                     'font-semibold sm:font-medium',
                     buttonBG,
