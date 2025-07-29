@@ -35,31 +35,46 @@ pnpm i
 
 DATABASE_URL="mysql://earn:123456@localhost:3306/bounty_earn"
 
+# 邮件服务
 # https://resend.com/
 RESEND_API_KEY=''
 REPLY_TO_EMAIL='onboarding@resend.dev'
 RESEND_EMAIL='onboard@send.booming3.com' #
 
-# https://cloudinary.com/
+# 邮件服务
+# 不用改动
+EMAIL_SERVER_USER='resend'
+EMAIL_SERVER_HOST='smtp.resend.com'
+EMAIL_SERVER_PORT='465'
+
+# 图片储存服务
+# 通过 https://cloudinary.com/ 直接申请即可
 CLOUDINARY_CLOUD_NAME="bounty-earn"
 CLOUDINARY_SUBMISSIONS_FOLDER=""
 CLOUDINARY_API_KEY=""
 CLOUDINARY_API_SECRET=""
 
-EMAIL_SERVER_USER='resend'
-EMAIL_SERVER_HOST='smtp.resend.com'
-EMAIL_SERVER_PORT='465'
 
-ZEROBOUNCE_API_KEY=''
-
+# 识别垃圾邮件
+# https://www.zerobounce.net/ 直接申请即可
+# 在此版本中 已经skip，可以不用申请
 EARNCOGNITO_URL='https://earn.booming3.com'
+ZEROBOUNCE_API_KEY=''
 EARNCOGNITO_SECRET=''
 
+# 随机密钥
+# 通过 openssl rand -base64 32 即可获取
+# 参考：https://stackoverflow.com/questions/75000633/where-to-generate-next-auth-secret-for-next-auth
 NEXTAUTH_SECRET=""
-NEXTAUTH_URL="https://earn.booming3.com"
 
+# 在本地运行 可以替换为 http://localhost:3000
+NEXTAUTH_URL="https://earn.booming3.com"
 NEXT_PUBLIC_SITE_URL="https://earn.booming3.com/"
 NEXT_PUBLIC_VERCEL_URL="https://earn.booming3.com/"
+
+# solana rpc 服务
+# https://www.helius.dev/ 直接申请即可
+# 正式环境请用 mainnet：https://mainnet.helius-rpc.com/?api-key=
 NEXT_PUBLIC_RPC_URL="https://devnet.helius-rpc.com/?api-key="
 ```
 
