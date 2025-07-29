@@ -5,6 +5,11 @@ import { type User } from '@/interface/user';
 
 import { tweetLinkRegex } from '@/features/social/utils/regex';
 import { telegramUsernameSchema } from '@/features/social/utils/schema';
+import {
+  extractTwitterHandle,
+  isHandleVerified,
+  isTwitterUrl,
+} from '@/features/social/utils/twitter-verification';
 
 import { type Listing } from '../types';
 
@@ -58,6 +63,21 @@ const submissionSchema = (
           message: 'Add a valid link to continue',
         });
       }
+
+      if (data.tweet && isTwitterUrl(data.tweet)) {
+        const handle = extractTwitterHandle(data.tweet);
+        if (handle) {
+          const verifiedHandles = user?.linkedTwitter || [];
+          if (!isHandleVerified(handle, verifiedHandles)) {
+            ctx.addIssue({
+              code: 'custom',
+              path: ['tweet'],
+              message: 'We need to verify that you own this Twitter account.',
+            });
+          }
+        }
+      }
+
       if (listing.type === 'project' && listing.compensationType !== 'fixed') {
         if (data.ask === undefined || data.ask === null || !data.ask) {
           ctx.addIssue({

@@ -493,6 +493,7 @@ model User {
   kycIDType          String?
   CreditLedger       CreditLedger[]
   blockRationale     String?
+  linkedTwitter      Json?
 
   @@index([currentSponsorId])
   @@index([hackathonId])

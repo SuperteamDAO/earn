@@ -3,6 +3,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { X } from 'lucide-react';
 import { useRouter } from 'next/router';
+import { signOut } from 'next-auth/react';
 import posthog from 'posthog-js';
 import { type JSX, useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -29,8 +30,14 @@ import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 
+import { usePopupAuth } from '@/features/auth/hooks/use-popup-auth';
 import { CreditIcon } from '@/features/credits/icon/credit';
 import { SocialInput } from '@/features/social/components/SocialInput';
+import {
+  extractTwitterHandle,
+  isHandleVerified,
+  isTwitterUrl,
+} from '@/features/social/utils/twitter-verification';
 
 import { submissionCountQuery } from '../../queries/submission-count';
 import { userSubmissionQuery } from '../../queries/user-submission-status';
@@ -80,6 +87,7 @@ export const SubmissionDrawer = ({
   const [isLoading, setIsLoading] = useState(false);
   const [isTOSModalOpen, setIsTOSModalOpen] = useState(false);
   const [termsAccepted, setTermsAccepted] = useState(false);
+  const [isVerifying, setIsVerifying] = useState(false);
 
   const { user, refetchUser } = useUser();
   const form = useForm<FormData>({
@@ -100,6 +108,22 @@ export const SubmissionDrawer = ({
 
   const router = useRouter();
   const { query } = router;
+
+  const tweetValue = form.watch('tweet');
+
+  const needsTwitterVerification = useMemo(() => {
+    if (!tweetValue || !isTwitterUrl(tweetValue)) {
+      return false;
+    }
+
+    const handle = extractTwitterHandle(tweetValue);
+    if (!handle) {
+      return false;
+    }
+
+    const verifiedHandles = user?.linkedTwitter || [];
+    return !isHandleVerified(handle, verifiedHandles);
+  }, [tweetValue, user?.linkedTwitter]);
 
   const handleClose = () => {
     form.reset({
@@ -168,6 +192,31 @@ export const SubmissionDrawer = ({
       form.formState.isSubmitting,
     ],
   );
+
+  const { signIn: popupSignIn, error: authError } = usePopupAuth();
+
+  const handleVerifyClick = async () => {
+    if (!tweetValue) return;
+
+    try {
+      setIsVerifying(true);
+
+      const success = await popupSignIn('twitter');
+
+      if (success) {
+        await refetchUser();
+        form.trigger('tweet');
+        toast.success('Twitter account verified successfully!');
+      } else {
+        toast.error(authError || 'Twitter verification failed');
+      }
+    } catch (error: any) {
+      console.error('Twitter verification failed:', error);
+      toast.error(error.message || 'Twitter verification failed');
+    } finally {
+      setIsVerifying(false);
+    }
+  };
 
   const onSubmit = async (data: FormData) => {
     if (isLoading) return;
@@ -281,9 +330,9 @@ export const SubmissionDrawer = ({
         <>
           Note:
           <p>
-            1. In the “Link to your Submission” field, submit your hackathon
-            project’s most useful link (could be a loom video, GitHub link,
-            website, etc)
+            1. In the &quot;Link to your Submission&quot; field, submit your
+            hackathon project&apos;s most useful link (could be a loom video,
+            GitHub link, website, etc)
           </p>
           <p>
             2. To be eligible for different tracks, you need to submit to each
@@ -305,6 +354,13 @@ export const SubmissionDrawer = ({
           className="absolute top-10 right-4 z-10 h-4 w-4 text-slate-400 sm:top-8 sm:right-8"
           onClick={handleClose}
         />
+        <Button
+          onClick={() => {
+            signOut();
+          }}
+        >
+          Log Out
+        </Button>
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
@@ -337,7 +393,7 @@ export const SubmissionDrawer = ({
                               </div>
                               <div>
                                 <FormControl>
-                                  <div className="flex">
+                                  <div className="mr-0.5 flex">
                                     <div className="border-input bg-muted flex items-center gap-1 rounded-l-md border border-r-0 px-2 shadow-xs">
                                       <p className="text-sm font-medium text-slate-500">
                                         https://
@@ -374,19 +430,42 @@ export const SubmissionDrawer = ({
                               </div>
                               <div>
                                 <FormControl>
-                                  <div className="flex">
+                                  <div className="mr-0.5 flex">
                                     <div className="border-input bg-muted flex items-center gap-1 rounded-l-md border border-r-0 px-2 shadow-xs">
                                       <p className="text-sm font-medium text-slate-500">
                                         https://
                                       </p>
                                     </div>
-                                    <Input
-                                      {...field}
-                                      maxLength={500}
-                                      placeholder="Add a tweet's link"
-                                      className="rounded-l-none"
-                                      autoComplete="off"
-                                    />
+                                    <div className="relative flex-1">
+                                      <Input
+                                        {...field}
+                                        maxLength={500}
+                                        placeholder="Add a tweet's link"
+                                        className={cn(
+                                          'rounded-l-none',
+                                          needsTwitterVerification && 'pr-20',
+                                        )}
+                                        autoComplete="off"
+                                      />
+                                      {needsTwitterVerification && (
+                                        <Button
+                                          type="button"
+                                          onClick={handleVerifyClick}
+                                          disabled={isVerifying}
+                                          size="sm"
+                                          className="absolute top-1/2 right-1 h-7 -translate-y-1/2 px-3 text-xs"
+                                        >
+                                          {isVerifying ? (
+                                            <>
+                                              <span className="loading loading-spinner loading-xs mr-1"></span>
+                                              Verifying...
+                                            </>
+                                          ) : (
+                                            'Verify'
+                                          )}
+                                        </Button>
+                                      )}
+                                    </div>
                                   </div>
                                 </FormControl>
                                 <FormMessage className="pt-1" />
