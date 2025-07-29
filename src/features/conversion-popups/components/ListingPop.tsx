@@ -21,7 +21,7 @@ import {
   DrawerTitle,
 } from '@/components/ui/drawer';
 import { useBreakpoint } from '@/hooks/use-breakpoint';
-import useServerTimeSync from '@/hooks/use-server-time';
+import { useServerTimeSync } from '@/hooks/use-server-time';
 import { useTimeout } from '@/hooks/use-timeout';
 import { roundToNearestTenth } from '@/utils/number';
 

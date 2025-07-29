@@ -43,11 +43,11 @@ interface UseServerTimeSyncReturn {
   detectedDrift: number | null;
 }
 
-const useServerTimeSync = (
+export const useServerTimeSync = (
   options: UseServerTimeSyncOptions = {},
 ): UseServerTimeSyncReturn => {
   const {
-    syncInterval = 30 * 1000,
+    syncInterval = 2.5 * 60 * 1000,
     autoSync = true,
     endpoint = '/api/server-time',
     onError,
@@ -237,5 +237,3 @@ const useServerTimeSync = (
     detectedDrift,
   };
 };
-
-export default useServerTimeSync;

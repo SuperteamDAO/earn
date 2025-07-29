@@ -9,7 +9,7 @@ import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
 import { Tooltip } from '@/components/ui/tooltip';
 import { ASSET_URL } from '@/constants/ASSET_URL';
 import { useMediaQuery } from '@/hooks/use-media-query';
-import useServerTimeSync from '@/hooks/use-server-time';
+import { useServerTimeSync } from '@/hooks/use-server-time';
 import { PulseIcon } from '@/svg/pulse-icon';
 import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';

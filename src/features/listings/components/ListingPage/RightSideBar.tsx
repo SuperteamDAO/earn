@@ -8,7 +8,7 @@ import { CountDownRenderer } from '@/components/shared/countdownRenderer';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { exclusiveSponsorData } from '@/constants/exclusiveSponsors';
 import { tokenList } from '@/constants/tokenList';
-import useServerTimeSync from '@/hooks/use-server-time';
+import { useServerTimeSync } from '@/hooks/use-server-time';
 import { type ParentSkills } from '@/interface/skills';
 import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';
@@ -65,9 +65,7 @@ export function RightSideBar({
     isWinnersAnnounced,
   } = listing;
 
-  const { serverTime, isSync } = useServerTimeSync({
-    syncInterval: 30 * 1000, // Sync every 30 seconds
-  });
+  const { serverTime, isSync } = useServerTimeSync();
 
   const { data: submissionNumber, isLoading: isSubmissionNumberLoading } =
     useQuery(submissionCountQuery(id!));

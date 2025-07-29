@@ -9,7 +9,7 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Tooltip } from '@/components/ui/tooltip';
 import { useDisclosure } from '@/hooks/use-disclosure';
-import useServerTimeSync from '@/hooks/use-server-time';
+import { useServerTimeSync } from '@/hooks/use-server-time';
 import { useCreditBalance } from '@/store/credit';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
