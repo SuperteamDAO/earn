@@ -1,6 +1,8 @@
 # 硬件配置
 
-内存推荐 8GB 以上
+内存推荐 至少 8GB
+
+操作系统 Ubunut 24.04
 
 # 安装 node 环境
 
@@ -86,7 +88,9 @@ NEXT_PUBLIC_RPC_URL="https://devnet.helius-rpc.com/?api-key="
 docker-compose up
 ```
 
-服务器安装 nysql
+本地运行 mysql 后，直接跳过 `服务器安装 mysql` 步骤
+
+## 服务器安装 mysql
 
 ```sh
 sudo apt install mysql
@@ -132,7 +136,7 @@ pnpm build
 pnpm start
 ```
 
-# 访问
+# 本地访问
 
 ```
 http://localhost:3000
