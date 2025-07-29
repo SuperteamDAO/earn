@@ -20,6 +20,7 @@ export async function createPayment({ submissionId }: CreatePaymentProps) {
           title: true,
           rewards: true,
           type: true,
+          slug: true,
         },
       },
       user: {
@@ -111,6 +112,7 @@ export async function createPayment({ submissionId }: CreatePaymentProps) {
       title: submission.listing.title,
       rewards: submission.listing.rewards as Record<string, number>,
       type: submission.listing.type,
+      slug: submission.listing.slug,
     },
     user: {
       walletAddress: submission.user.walletAddress,

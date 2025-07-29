@@ -10,6 +10,7 @@ import {
   airtableUrl,
   fetchAirtableRecordId,
 } from '@/utils/airtable';
+import { getRankLabels } from '@/utils/rank';
 import { safeStringify } from '@/utils/safeStringify';
 
 const AirtableInputSchema = z.object({
@@ -38,6 +39,7 @@ const AirtableInputSchema = z.object({
       title: z.string().min(1, 'Listing Title is required'),
       rewards: z.record(z.string(), z.number()),
       type: z.enum(['bounty', 'hackathon']),
+      slug: z.string().min(1, 'Listing Slug is required'),
     }),
   }),
 });
@@ -74,13 +76,25 @@ function submissionToAirtable(
     `Looked up country for ISO '${validatedSubmission.user.kycCountry}': ${country ?? 'Not found'}`,
   );
 
-  const purposeOfPayment = `${validatedSubmission.listing.title} - ${validatedSubmission.user.username}`;
+  const rank = getRankLabels(validatedSubmission.winnerPosition)?.toUpperCase();
+  const listingUrl =
+    'https://earn.superteam.fun/listing/' + validatedSubmission.listing.slug;
+  const listingTitle = validatedSubmission.listing.title;
+
+  const purposeOfPayment =
+    rank +
+    ' in ' +
+    listingTitle +
+    ' (' +
+    listingUrl +
+    ') — ' +
+    validatedSubmission.user.email;
 
   const amount =
     validatedSubmission.listing.rewards[validatedSubmission.winnerPosition];
 
   const getListingCategory = () => {
-    const isProd = process.env.NODE_ENV === 'production';
+    const isProd = process.env.VERCEL_ENV === 'production';
     const listingType = validatedSubmission.listing.type.toLowerCase();
 
     switch (listingType) {
@@ -105,7 +119,7 @@ function submissionToAirtable(
     'Wallet Address': validatedSubmission.user.walletAddress,
     Category: [getListingCategory()],
     'Purpose of Payment': purposeOfPayment || 'Listing Payment',
-    'Project (Archive)': validatedSubmission.listing.title ?? '',
+    'Project (Archive)': listingTitle ?? '',
     Email: validatedSubmission.user.email,
     Status: 'Verified',
     Region: [listingRegionId],
