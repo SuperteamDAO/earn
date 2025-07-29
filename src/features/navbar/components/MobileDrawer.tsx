@@ -6,7 +6,6 @@ import React, { useState } from 'react';
 
 import { SupportFormDialog } from '@/components/shared/SupportFormDialog';
 import { Button } from '@/components/ui/button';
-import { ExternalImage } from '@/components/ui/cloudinary-image';
 import {
   Collapsible,
   CollapsibleContent,
@@ -18,7 +17,6 @@ import { useDisclosure } from '@/hooks/use-disclosure';
 import { useLogout, useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 
-import { HACKATHONS } from '@/features/hackathon/constants/hackathons';
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 import { EmailSettingsModal } from '@/features/talent/components/EmailSettingsModal';
 
@@ -230,7 +228,7 @@ export const MobileDrawer = ({
             </Collapsible>
             <div>
               <NavItem label="Live Hackathons" onClick={() => {}} />
-              <div className="ml-4">
+              {/* <div className="ml-4">
                 {HACKATHONS?.map((hackathon) => (
                   <NavItem
                     key={hackathon.slug}
@@ -248,7 +246,7 @@ export const MobileDrawer = ({
                     }}
                   />
                 ))}
-              </div>
+              </div> */}
             </div>
             <NavItem
               label="Activity Feed"
