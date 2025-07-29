@@ -491,8 +491,10 @@ model User {
   kycDOB             String?
   kycIDNumber        String?
   kycIDType          String?
+  kycVerifiedAt      DateTime?
   CreditLedger       CreditLedger[]
   blockRationale     String?
+  linkedTwitter      Json?
 
   @@index([currentSponsorId])
   @@index([hackathonId])

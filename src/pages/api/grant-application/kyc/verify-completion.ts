@@ -68,6 +68,7 @@ const handler = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
           kycDOB: dob,
           kycIDNumber: idNumber,
           kycIDType: idType,
+          kycVerifiedAt: new Date(),
         },
       });
 
