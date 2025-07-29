@@ -198,15 +198,46 @@ export const SubmissionDrawer = ({
   const handleVerifyClick = async () => {
     if (!tweetValue) return;
 
+    const handle = extractTwitterHandle(tweetValue);
+    if (!handle) return;
+
     try {
       setIsVerifying(true);
 
       const success = await popupSignIn('twitter');
 
       if (success) {
-        await refetchUser();
-        form.trigger('tweet');
-        toast.success('Twitter account verified successfully!');
+        let attempts = 0;
+        const maxAttempts = 10;
+        const pollForUpdate = async (): Promise<boolean> => {
+          await refetchUser();
+
+          const currentVerifiedHandles = user?.linkedTwitter || [];
+          const isNowVerified = isHandleVerified(
+            handle,
+            currentVerifiedHandles,
+          );
+
+          if (isNowVerified) {
+            form.trigger('tweet');
+            toast.success('Twitter account verified successfully!');
+            return true;
+          }
+
+          attempts++;
+          if (attempts >= maxAttempts) {
+            toast.error(
+              "Verification completed, but the tweet handle doesn't match the verified account. Please check the tweet URL.",
+            );
+            return false;
+          }
+
+          const delay = Math.min(500 * Math.pow(2, attempts - 1), 5000);
+          await new Promise((resolve) => setTimeout(resolve, delay));
+          return pollForUpdate();
+        };
+
+        await pollForUpdate();
       } else {
         toast.error(authError || 'Twitter verification failed');
       }
