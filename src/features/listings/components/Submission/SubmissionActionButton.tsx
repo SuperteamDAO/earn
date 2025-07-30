@@ -8,6 +8,7 @@ import React, { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Tooltip } from '@/components/ui/tooltip';
+import { SIX_MONTHS } from '@/constants/SIX_MONTHS';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { useCreditBalance } from '@/store/credit';
 import { useUser } from '@/store/user';
@@ -183,13 +184,17 @@ export const SubmissionActionButton = ({
       submission?.isWinner &&
       dayjs(listing.winnersAnnouncedAt).isAfter(dayjs('2025-07-24'))
     ) {
-      if (!submission?.isKYCVerified) {
+      const isKycExpired =
+        !submission?.kycVerifiedAt ||
+        Date.now() - new Date(submission.kycVerifiedAt).getTime() > SIX_MONTHS;
+
+      if (!submission?.isKYCVerified || isKycExpired) {
         return 'kyc';
       }
-      if (submission?.isKYCVerified && !submission.isPaid) {
+      if (submission?.isKYCVerified && !isKycExpired && !submission.isPaid) {
         return 'kyc_done';
       }
-      if (submission?.isKYCVerified && submission.isPaid) {
+      if (submission?.isKYCVerified && !isKycExpired && submission.isPaid) {
         return 'paid';
       }
     }

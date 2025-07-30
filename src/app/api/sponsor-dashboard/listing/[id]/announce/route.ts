@@ -2,6 +2,7 @@ import { waitUntil } from '@vercel/functions';
 import { headers } from 'next/headers';
 import { type NextRequest, NextResponse } from 'next/server';
 
+import { SIX_MONTHS } from '@/constants/SIX_MONTHS';
 import earncognitoClient from '@/lib/earncognitoClient';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
@@ -337,7 +338,12 @@ export async function POST(
 
         if (listing.type !== 'project' && listing.isFndnPaying) {
           for (const winner of winners) {
-            if (winner.user.isKYCVerified) {
+            const user = winner.user;
+            const isKycExpired =
+              !user.kycVerifiedAt ||
+              Date.now() - new Date(user.kycVerifiedAt).getTime() > SIX_MONTHS;
+
+            if (user.isKYCVerified && user.kycVerifiedAt && !isKycExpired) {
               await createPayment({ submissionId: winner.id });
             } else {
               logger.warn(

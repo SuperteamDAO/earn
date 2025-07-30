@@ -4,7 +4,7 @@ import {
 } from '@sumsub/websdk/types/types';
 import SumsubWebSdk from '@sumsub/websdk-react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { X } from 'lucide-react';
+import { Loader2, X } from 'lucide-react';
 import { useRef } from 'react';
 import { toast } from 'sonner';
 
@@ -38,7 +38,11 @@ export const KYCModal = ({
   const modalRef = useRef<HTMLDivElement>(null);
   const verificationProcessedRef = useRef(false);
 
-  const { data: accessToken, refetch } = useQuery({
+  const {
+    data: accessToken,
+    isLoading: isTokenLoading,
+    refetch,
+  } = useQuery({
     queryKey: ['sumsubToken'],
     queryFn: async () => {
       const { data } = await api.post('/api/sumsub/access-token');
@@ -74,18 +78,26 @@ export const KYCModal = ({
         return;
       }
 
-      const result = await checkVerification();
-      if (result.data === 'verified') {
-        verificationProcessedRef.current = true;
+      const verificationPromise = checkVerification().then(async (result) => {
+        if (result.data === 'verified') {
+          verificationProcessedRef.current = true;
 
-        toast.success(
+          await queryClient.invalidateQueries({
+            queryKey: userSubmissionQuery(listingId, user?.id).queryKey,
+          });
+          onClose();
+
+          return result.data;
+        }
+        throw new Error('Verification not completed yet');
+      });
+
+      toast.promise(verificationPromise, {
+        loading: 'Verifying your KYC submission...',
+        success:
           'Your KYC is verified! You will receive your payment in around a week.',
-        );
-        await queryClient.invalidateQueries({
-          queryKey: userSubmissionQuery(listingId, user?.id).queryKey,
-        });
-        onClose();
-      }
+        error: 'KYC verification check failed. Please try again.',
+      });
     }
   }
 
@@ -103,6 +115,17 @@ export const KYCModal = ({
             className="absolute top-7 right-4 z-10 h-4 w-4 cursor-pointer text-slate-400 sm:top-6"
             onClick={onClose}
           />
+          {isTokenLoading && (
+            <div className="flex min-h-[400px] items-center justify-center p-8">
+              <div className="flex items-center gap-2">
+                <Loader2 className="size-4 animate-spin text-slate-600" />
+                <p className="text-sm text-slate-600">
+                  Loading KYC verification...
+                </p>
+              </div>
+            </div>
+          )}
+
           {accessToken && (
             <SumsubWebSdk
               accessToken={accessToken}

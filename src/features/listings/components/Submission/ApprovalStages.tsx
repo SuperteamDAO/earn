@@ -102,7 +102,7 @@ export const ApprovalStages = ({ listing }: Props) => {
           </div>
           <ConnectingLine
             isStartComplete={isKycVerified}
-            isEndComplete={isPaid}
+            isEndComplete={isPaymentSynced}
           />
           <div>
             <Heading>KYC Successful</Heading>
@@ -115,8 +115,8 @@ export const ApprovalStages = ({ listing }: Props) => {
             {isPaymentSynced ? <CheckIcon /> : <PendingIcon />}
           </div>
           <ConnectingLine
-            isStartComplete={isPaid}
-            isEndComplete={isPaymentSynced}
+            isStartComplete={isPaymentSynced}
+            isEndComplete={isPaid}
           />
           <div>
             <Heading>Payment Processing</Heading>
