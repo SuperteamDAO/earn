@@ -103,7 +103,7 @@ interface PaymentAirtableSchema {
 }
 
 const grantCategory =
-  process.env.NODE_ENV === 'production'
+  process.env.VERCEL_ENV === 'production'
     ? 'rec5KcbpJVSeLQX76'
     : 'recd0Kn3N4Ffhtwhd';
 

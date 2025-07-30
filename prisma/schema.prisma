@@ -346,6 +346,7 @@ model Submission {
   Comments           Comment[]
   CreditLedger       CreditLedger[]
   ai                 Json?
+  paymentSynced      Boolean          @default(false)
 
   @@index([id, listingId])
   @@index([userId])
@@ -490,8 +491,10 @@ model User {
   kycDOB             String?
   kycIDNumber        String?
   kycIDType          String?
+  kycVerifiedAt      DateTime?
   CreditLedger       CreditLedger[]
   blockRationale     String?
+  linkedTwitter      Json?
 
   @@index([currentSponsorId])
   @@index([hackathonId])
