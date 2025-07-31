@@ -287,9 +287,9 @@ export const SubmissionDrawer = ({
         let attempts = 0;
         const maxAttempts = 10;
         const pollForUpdate = async (): Promise<boolean> => {
-          await refetchUser();
+          const { data: freshUser } = await refetchUser();
 
-          const currentVerifiedHandles = user?.linkedTwitter || [];
+          const currentVerifiedHandles = freshUser?.linkedTwitter || [];
           const isNowVerified = isHandleVerified(
             handle,
             currentVerifiedHandles,

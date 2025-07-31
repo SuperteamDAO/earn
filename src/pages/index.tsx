@@ -2,7 +2,6 @@ import { usePrivy } from '@privy-io/react-auth';
 import { useQuery } from '@tanstack/react-query';
 import { type GetServerSideProps } from 'next';
 import dynamic from 'next/dynamic';
-import { useEffect } from 'react';
 
 import { useBreakpoint } from '@/hooks/use-breakpoint';
 import { useDelayedMount } from '@/hooks/use-delayed-mount';
@@ -54,21 +53,6 @@ interface HomePageProps {
 }
 
 export default function HomePage({ potentialSession }: HomePageProps) {
-  // Handle popup authentication callback
-  useEffect(() => {
-    // Check if this is running in a popup window
-    if (window.opener && window.opener !== window) {
-      // Get the URL parameters which will include the auth token or error
-      const params = window.location.search;
-
-      // Send the result to the opening window
-      window.opener.postMessage(params, window.location.origin);
-
-      // Close the popup
-      window.close();
-    }
-  }, []);
-
   const { authenticated } = usePrivy();
   const { data: totalUsers } = useQuery(userCountQuery);
   const isLg = useBreakpoint('lg');
