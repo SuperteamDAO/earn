@@ -78,6 +78,20 @@ const submissionSchema = (
         }
       }
 
+      if (data.link && isTwitterUrl(data.link)) {
+        const handle = extractTwitterHandle(data.link);
+        if (handle) {
+          const verifiedHandles = user?.linkedTwitter || [];
+          if (!isHandleVerified(handle, verifiedHandles)) {
+            ctx.addIssue({
+              code: 'custom',
+              path: ['link'],
+              message: 'We need to verify that you own this Twitter account.',
+            });
+          }
+        }
+      }
+
       if (listing.type === 'project' && listing.compensationType !== 'fixed') {
         if (data.ask === undefined || data.ask === null || !data.ask) {
           ctx.addIssue({

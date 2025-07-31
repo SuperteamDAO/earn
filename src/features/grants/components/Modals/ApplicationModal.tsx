@@ -2,7 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { type GrantApplication } from '@prisma/client';
 import { useQueryClient } from '@tanstack/react-query';
 import { Check, Loader2 } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { type z } from 'zod';
@@ -23,14 +23,21 @@ import {
 import { FormFieldWrapper } from '@/components/ui/form-field-wrapper';
 import { Input } from '@/components/ui/input';
 import { Progress } from '@/components/ui/progress';
+import { useDisclosure } from '@/hooks/use-disclosure';
 import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';
 
+import { usePopupAuth } from '@/features/auth/hooks/use-popup-auth';
 import { SubmissionTerms } from '@/features/listings/components/Submission/SubmissionTerms';
 import { SocialInput } from '@/features/social/components/SocialInput';
+import { TwitterVerificationModal } from '@/features/social/components/TwitterVerificationModal';
 import { extractSocialUsername } from '@/features/social/utils/extractUsername';
+import {
+  extractTwitterHandle,
+  isHandleVerified,
+} from '@/features/social/utils/twitter-verification';
 
 import { userApplicationQuery } from '../../queries/user-application';
 import { type Grant } from '../../types';
@@ -63,6 +70,10 @@ export const ApplicationModal = ({
   const [isTOSModalOpen, setIsTOSModalOpen] = useState(false);
   const [acknowledgementAccepted, setAcknowledgementAccepted] = useState(false);
   const [acknowledgementError, setAcknowledgementError] = useState('');
+  const verificationModal = useDisclosure();
+  const [verificationStatus, setVerificationStatus] = useState<
+    'loading' | 'error'
+  >('loading');
 
   const { id, token, minReward, maxReward, questions } = grant;
 
@@ -74,6 +85,7 @@ export const ApplicationModal = ({
         maxReward || 0,
         token || 'USDC',
         grant.questions,
+        user,
       ),
     ),
     defaultValues: {
@@ -112,6 +124,115 @@ export const ApplicationModal = ({
           : [],
     },
   });
+
+  const twitterValue = form.watch('twitter');
+
+  const needsTwitterVerification = useMemo(() => {
+    if (!twitterValue) {
+      return false;
+    }
+
+    const handle = extractTwitterHandle(`https://x.com/${twitterValue}`);
+    if (!handle) {
+      return false;
+    }
+
+    const verifiedHandles = user?.linkedTwitter || [];
+    const isVerified = isHandleVerified(handle, verifiedHandles);
+
+    return !isVerified;
+  }, [twitterValue, user?.linkedTwitter]);
+
+  const isTwitterVerified = useMemo(() => {
+    if (!twitterValue) {
+      return false;
+    }
+
+    const handle = extractTwitterHandle(`https://x.com/${twitterValue}`);
+    if (!handle) {
+      return false;
+    }
+
+    const verifiedHandles = user?.linkedTwitter || [];
+    return isHandleVerified(handle, verifiedHandles);
+  }, [twitterValue, user?.linkedTwitter]);
+
+  useEffect(() => {
+    const newResolver = zodResolver(
+      grantApplicationSchema(
+        minReward || 0,
+        maxReward || 0,
+        token || 'USDC',
+        grant.questions,
+        user,
+      ),
+    );
+    form.control._options.resolver = newResolver;
+  }, [user, minReward, maxReward, token, grant.questions, form.control]);
+
+  useEffect(() => {
+    if (needsTwitterVerification) {
+      form.setError('twitter', {
+        type: 'manual',
+        message: 'We need to verify that you own this Twitter account',
+      });
+    } else {
+      form.clearErrors('twitter');
+    }
+  }, [needsTwitterVerification, form]);
+
+  const { signIn: popupSignIn } = usePopupAuth();
+
+  const handleVerifyClick = async () => {
+    if (!twitterValue) return;
+
+    const handle = extractTwitterHandle(`https://x.com/${twitterValue}`);
+    if (!handle) return;
+
+    try {
+      setVerificationStatus('loading');
+      verificationModal.onOpen();
+
+      const success = await popupSignIn('twitter');
+
+      if (success) {
+        let attempts = 0;
+        const maxAttempts = 10;
+        const pollForUpdate = async (): Promise<boolean> => {
+          await refetchUser();
+
+          const currentVerifiedHandles = user?.linkedTwitter || [];
+          const isNowVerified = isHandleVerified(
+            handle,
+            currentVerifiedHandles,
+          );
+
+          if (isNowVerified) {
+            form.trigger('twitter');
+            verificationModal.onClose();
+            return true;
+          }
+
+          attempts++;
+          if (attempts >= maxAttempts) {
+            setVerificationStatus('error');
+            return false;
+          }
+
+          const delay = Math.min(500 * Math.pow(2, attempts - 1), 5000);
+          await new Promise((resolve) => setTimeout(resolve, delay));
+          return pollForUpdate();
+        };
+
+        await pollForUpdate();
+      } else {
+        setVerificationStatus('error');
+      }
+    } catch (error: any) {
+      console.error('Twitter verification failed:', error);
+      setVerificationStatus('error');
+    }
+  };
 
   const queryClient = useQueryClient();
 
@@ -477,6 +598,10 @@ export const ApplicationModal = ({
                   formDescription="Include links to your best work that will make the community trust you to execute on this project."
                   control={form.control}
                   height="h-9"
+                  showVerification
+                  needsVerification={needsTwitterVerification}
+                  isVerified={isTwitterVerified}
+                  onVerify={handleVerifyClick}
                 />
                 <SocialInput
                   name="github"
@@ -613,6 +738,11 @@ export const ApplicationModal = ({
           sponsorName={grant.sponsor.name}
         />
       )}
+      <TwitterVerificationModal
+        isOpen={verificationModal.isOpen}
+        onClose={verificationModal.onClose}
+        status={verificationStatus}
+      />
     </div>
   );
 };
