@@ -167,6 +167,7 @@ export function RegionCombobox({
     return regions;
   }, []);
   const [open, setOpen] = React.useState(false);
+  const listRef = React.useRef<HTMLDivElement>(null);
 
   const isGroupedOption = (option: SelectOption): option is GroupedOption => {
     return 'options' in option && Array.isArray(option.options);
@@ -233,8 +234,20 @@ export function RegionCombobox({
         className={cn('w-[200px] p-0', classNames?.popoverContent)}
       >
         <Command>
-          <CommandInput placeholder="Search..." />
-          <CommandList className="scrollbar-visible max-h-[200px] overflow-auto md:max-h-[300px]">
+          <CommandInput
+            placeholder="Search..."
+            onValueChange={() => {
+              setTimeout(() => {
+                if (listRef.current) {
+                  listRef.current.scrollTop = 0;
+                }
+              }, 0);
+            }}
+          />
+          <CommandList
+            ref={listRef}
+            className="scrollbar-visible max-h-[200px] overflow-auto md:max-h-[300px]"
+          >
             <CommandEmpty>No region found.</CommandEmpty>
             <CommandGroup>
               {!!value && unset && (

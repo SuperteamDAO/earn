@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { type GetServerSideProps } from 'next';
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/router';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
 import MdCheck from '@/components/icons/MdCheck';
 import { SponsorButton } from '@/components/ProfileSetup/SponsorButton';
@@ -20,7 +20,6 @@ import { getURL } from '@/utils/validUrl';
 
 import { AuthWrapper } from '@/features/auth/components/AuthWrapper';
 import { userCountQuery } from '@/features/home/queries/user-count';
-import { ONBOARDING_KEY } from '@/features/talent/constants';
 
 export default function NewProfilePage({
   showTalentProfile,
@@ -42,7 +41,7 @@ export default function NewProfilePage({
   const [isSponsorLoading, setIsSponsorLoading] = useState(false);
 
   const checkTalent = async () => {
-    localStorage.setItem(ONBOARDING_KEY, 'talent');
+    // localStorage.setItem(ONBOARDING_KEY, 'talent');
     if (!user) return;
     try {
       // localStorage.removeItem(ONBOARDING_KEY);
@@ -65,7 +64,7 @@ export default function NewProfilePage({
   };
 
   const checkSponsor = async () => {
-    localStorage.setItem(ONBOARDING_KEY, 'sponsor');
+    // localStorage.setItem(ONBOARDING_KEY, 'sponsor');
     if (!user) return;
     try {
       // localStorage.removeItem(ONBOARDING_KEY);
@@ -83,19 +82,6 @@ export default function NewProfilePage({
       setIsSponsorLoading(false);
     }
   };
-
-  useEffect(() => {
-    const onboardingStep = localStorage.getItem(ONBOARDING_KEY);
-    if (onboardingStep) {
-      if (onboardingStep === 'talent') {
-        setIsTalentLoading(true);
-        checkTalent();
-      } else if (onboardingStep === 'sponsor') {
-        setIsSponsorLoading(true);
-        checkSponsor();
-      }
-    }
-  }, [router, user]);
 
   return (
     <Default
