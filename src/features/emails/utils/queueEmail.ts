@@ -29,7 +29,8 @@ type EmailType =
   | 'commentReply'
   | 'commentTag'
   | 'scoutInvite'
-  | 'spamCredit';
+  | 'spamCredit'
+  | 'spamRejection';
 
 interface EmailNotificationParams {
   type: EmailType;

@@ -38,7 +38,18 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
   try {
     const currentSubmissions = await prisma.submission.findMany({
-      where: { id: { in: submissionIds } },
+      where: {
+        id: {
+          in: submissionIds,
+        },
+      },
+      include: {
+        listing: {
+          select: {
+            type: true,
+          },
+        },
+      },
     });
 
     if (currentSubmissions.length !== submissionIds.length) {
@@ -117,21 +128,26 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
       if (label === 'Spam') {
         await addSpamPenaltyCredit(submission.id);
-        try {
-          await queueEmail({
-            type: 'spamCredit',
-            id: submission.id,
-            userId: submission.userId,
-            triggeredBy: userId,
-          });
-          logger.info(
-            `Spam credit email queued for submission ${submission.id}`,
-          );
-        } catch (err) {
-          logger.warn(
-            `Failed to queue spam credit email for submission ${submission.id}:`,
-            err,
-          );
+
+        // Only send spamCredit email for non-project submissions
+        // For projects, we send the merged spamRejection email from the frontend
+        if (submission.listing?.type !== 'project') {
+          try {
+            await queueEmail({
+              type: 'spamCredit',
+              id: submission.id,
+              userId: submission.userId,
+              triggeredBy: userId,
+            });
+            logger.info(
+              `Spam credit email queued for submission ${submission.id}`,
+            );
+          } catch (err) {
+            logger.warn(
+              `Failed to queue spam credit email for submission ${submission.id}:`,
+              err,
+            );
+          }
         }
       }
 
