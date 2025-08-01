@@ -17,9 +17,7 @@ export default async function auth(req: NextApiRequest, res: NextApiResponse) {
       }),
     ],
 
-    pages: {
-      error: '/auth/error',
-    },
+    pages: { error: '/auth/error', signIn: '/auth/error' },
 
     callbacks: {
       async signIn({ user, account, profile }) {
