@@ -17,6 +17,10 @@ export default async function auth(req: NextApiRequest, res: NextApiResponse) {
       }),
     ],
 
+    pages: {
+      error: '/auth/error',
+    },
+
     callbacks: {
       async signIn({ user, account, profile }) {
         if (account?.provider === 'twitter') {
