@@ -7,12 +7,6 @@ import { prisma } from '@/prisma';
 import { getPrivyToken } from '@/features/auth/utils/getPrivyToken';
 import { normalizeTwitterHandle } from '@/features/social/utils/twitter-verification';
 
-/**
- * NextAuth configuration extended to:
- * 1. Extract Twitter handle in signIn and store in JWT token
- * 2. Link Twitter handle to user when Privy credentials are available (jwt callback)
- * 3. Expose `linkedTwitter` on the client session object so the UI updates immediately
- */
 export default async function auth(req: NextApiRequest, res: NextApiResponse) {
   const authOptions: NextAuthOptions = {
     providers: [
@@ -31,7 +25,6 @@ export default async function auth(req: NextApiRequest, res: NextApiResponse) {
             return true;
           }
 
-          // Extract Twitter handle from profile
           const rawHandle =
             (profile as any)?.username ||
             (profile as any)?.data?.username ||
@@ -42,7 +35,6 @@ export default async function auth(req: NextApiRequest, res: NextApiResponse) {
             const handle = normalizeTwitterHandle(rawHandle);
             console.log(`[NextAuth] Extracted Twitter handle: ${handle}`);
 
-            // Store handle for processing in jwt callback
             (user as any).twitterHandle = handle;
           } else {
             console.warn('[NextAuth] No Twitter username found in profile');
@@ -53,12 +45,10 @@ export default async function auth(req: NextApiRequest, res: NextApiResponse) {
       },
 
       async jwt({ token, user }) {
-        // Transfer Twitter handle from user to token
         if ((user as any)?.twitterHandle) {
           token.twitterHandle = (user as any).twitterHandle;
         }
 
-        // Process pending Twitter handle linking
         if (token.twitterHandle) {
           try {
             const privyDid = await getPrivyToken(req);
@@ -91,9 +81,13 @@ export default async function auth(req: NextApiRequest, res: NextApiResponse) {
                   console.log(
                     `[NextAuth] Successfully linked Twitter handle "${token.twitterHandle}" to user`,
                   );
+
+                  console.log(
+                    '[NextAuth] Logging out user after Twitter linking',
+                  );
+                  return {};
                 }
 
-                // Clear the flag since we've processed it
                 delete token.twitterHandle;
               } else {
                 console.warn(

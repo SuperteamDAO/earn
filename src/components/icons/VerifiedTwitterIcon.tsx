@@ -6,7 +6,7 @@ export const VerifiedTwitterIcon = () => {
   return (
     <Tooltip
       content="Your Twitter profile is verified"
-      triggerClassName="absolute top-1/2 right-2 -translate-y-1/2"
+      triggerClassName="top-1/2 right-2 -translate-y-1/2 absolute"
       contentProps={{ side: 'bottom' }}
     >
       <svg
