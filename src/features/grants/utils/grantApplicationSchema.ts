@@ -1,5 +1,6 @@
 import { z } from 'zod';
 
+import { type User } from '@/interface/user';
 import { validateSolAddress } from '@/utils/validateSolAddress';
 
 import {
@@ -7,12 +8,17 @@ import {
   telegramUsernameSchema,
   twitterUsernameSchema,
 } from '@/features/social/utils/schema';
+import {
+  extractTwitterHandle,
+  isHandleVerified,
+} from '@/features/social/utils/twitter-verification';
 
 export const grantApplicationSchema = (
   minReward: number,
   maxReward: number,
   token: string,
   questions?: { order: number; question: string }[],
+  user?: User | null,
 ) =>
   z
     .object({
@@ -59,6 +65,22 @@ export const grantApplicationSchema = (
             path: ['walletAddress'],
             message: 'Invalid Solana Wallet Address',
           });
+        }
+      }
+
+      if (data.twitter) {
+        const handle = extractTwitterHandle(data.twitter);
+        if (handle) {
+          const verifiedHandles = user?.linkedTwitter || [];
+          const isVerified = isHandleVerified(handle, verifiedHandles);
+
+          if (!isVerified) {
+            ctx.addIssue({
+              code: 'custom',
+              path: ['twitter'],
+              message: 'We need to verify that you own this Twitter account.',
+            });
+          }
         }
       }
 

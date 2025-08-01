@@ -20,11 +20,16 @@ async function updateGrantApplication(
   data: any,
   grant: any,
 ) {
+  const user = await prisma.user.findUniqueOrThrow({
+    where: { id: userId },
+  });
+
   const validationResult = grantApplicationSchema(
     grant.minReward,
     grant.maxReward,
     grant.token,
     grant.questions,
+    user as any,
   ).safeParse({
     ...data,
     twitter:
