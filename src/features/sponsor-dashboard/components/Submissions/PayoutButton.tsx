@@ -208,7 +208,7 @@ export const PayoutButton = ({ bounty, submission }: Props) => {
     } catch (error) {
       console.log(error);
       log.error(
-        `Sponsor unable to pay, user id: ${user?.id}, sponsor id: ${user?.currentSponsorId}, error: ${error?.toString()}`,
+        `Sponsor unable to pay, user id: ${user?.id}, sponsor id: ${user?.currentSponsorId}, error: ${error?.toString()}, sponsor wallet: ${publicKey?.toBase58()}`,
       );
       toast.error(
         'Alert: Payment might have gone through. Please check your wallet history to confirm.',
