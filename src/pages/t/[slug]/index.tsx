@@ -1,10 +1,11 @@
-import { ChevronDown, ChevronUp, SquarePen } from 'lucide-react';
+import { ChevronDown, ChevronUp, CircleAlert, SquarePen } from 'lucide-react';
 import type { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import posthog from 'posthog-js';
 import React, { type JSX, useEffect, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
+import { toast } from 'sonner';
 
 import { EmptySection } from '@/components/shared/EmptySection';
 import { ShareIcon } from '@/components/shared/shareIcon';
@@ -22,6 +23,7 @@ import { cn } from '@/utils/cn';
 import { getURL } from '@/utils/validUrl';
 
 import { AuthWrapper } from '@/features/auth/components/AuthWrapper';
+import { usePopupAuth } from '@/features/auth/hooks/use-popup-auth';
 import { FeedLoop } from '@/features/feed/components/FeedLoop';
 import { useGetFeed } from '@/features/feed/queries/useGetFeed';
 import { type FeedDataProps } from '@/features/feed/types';
@@ -31,6 +33,7 @@ import {
   Twitter,
   Website,
 } from '@/features/social/components/SocialIcons';
+import { TwitterVerificationModal } from '@/features/social/components/TwitterVerificationModal';
 import { AddProject } from '@/features/talent/components/AddProject';
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 import { ShareProfile } from '@/features/talent/components/shareProfile';
@@ -100,6 +103,61 @@ function TalentProfile({ talent, stats }: TalentProps) {
     onOpen: onOpenPow,
     onClose: onClosePow,
   } = useDisclosure();
+  const {
+    isOpen: isVerificationModalOpen,
+    onOpen: onVerificationModalOpen,
+    onClose: onVerificationModalClose,
+  } = useDisclosure();
+  const [verificationStatus, setVerificationStatus] = useState<
+    'loading' | 'error'
+  >('loading');
+  const { signIn: popupSignIn } = usePopupAuth();
+  const { refetchUser } = useUser();
+
+  const handleVerifyClick = async () => {
+    if (!user) return;
+
+    try {
+      setVerificationStatus('loading');
+      onVerificationModalOpen();
+
+      const success = await popupSignIn('twitter');
+
+      if (success) {
+        let attempts = 0;
+        const maxAttempts = 10;
+        const pollForUpdate = async (): Promise<boolean> => {
+          const { data: freshUser } = await refetchUser();
+
+          const currentVerifiedHandles = freshUser?.linkedTwitter || [];
+          const isNowVerified = currentVerifiedHandles.length > 0;
+
+          if (isNowVerified) {
+            onVerificationModalClose();
+            toast.success('Twitter verified successfully');
+            return true;
+          }
+
+          attempts++;
+          if (attempts >= maxAttempts) {
+            setVerificationStatus('error');
+            return false;
+          }
+
+          const delay = Math.min(500 * Math.pow(2, attempts - 1), 5000);
+          await new Promise((resolve) => setTimeout(resolve, delay));
+          return pollForUpdate();
+        };
+
+        await pollForUpdate();
+      } else {
+        setVerificationStatus('error');
+      }
+    } catch (error: any) {
+      console.error('Twitter verification failed:', error);
+      setVerificationStatus('error');
+    }
+  };
 
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -390,7 +448,24 @@ function TalentProfile({ talent, stats }: TalentProps) {
                 )}
               </div>
             </div>
-            <Separator className="my-8" />
+            <Separator className="mt-8 mb-4" />
+            {user?.id === talent?.id &&
+              (!user?.linkedTwitter || user?.linkedTwitter?.length === 0) && (
+                <div className="mb-6 flex w-full items-center justify-between rounded-md bg-slate-50 px-4 py-2">
+                  <p className="flex items-center gap-2 text-sm font-medium text-slate-500">
+                    <CircleAlert className="h-4 w-4" />
+                    Verify your Twitter profile now to submit applications
+                  </p>
+                  <Button
+                    type="button"
+                    onClick={handleVerifyClick}
+                    size="sm"
+                    className="h-7 px-3 text-xs font-medium"
+                  >
+                    Verify
+                  </Button>
+                </div>
+              )}
             <div className="flex flex-col justify-between gap-12 md:flex-row md:gap-[6.25rem]">
               <div className="flex w-full gap-6 md:w-1/2">
                 {socialLinks.map(({ Icon, link }, i) => {
@@ -513,6 +588,11 @@ function TalentProfile({ talent, stats }: TalentProps) {
         onClose={onClosePow}
         upload
         onNewPow={addNewPow}
+      />
+      <TwitterVerificationModal
+        isOpen={isVerificationModalOpen}
+        onClose={onVerificationModalClose}
+        status={verificationStatus}
       />
     </Default>
   );
