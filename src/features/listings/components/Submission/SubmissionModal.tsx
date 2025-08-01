@@ -158,16 +158,33 @@ export const SubmissionModal = ({
         ? '/api/submission/update/'
         : '/api/submission/create/';
 
-      await axios.post(submissionEndpoint, {
-        listingId: id,
-        link: applicationLink || '',
-        tweet: tweetLink || '',
-        otherInfo: otherInfo || '',
-        ask: ask || null,
-        eligibilityAnswers: eligibilityAnswers?.length
-          ? eligibilityAnswers
-          : null,
-      });
+      // 使用 Promise.allSettled 处理多个异步操作
+      const operations = [
+        axios.post(
+          submissionEndpoint,
+          {
+            listingId: id,
+            link: applicationLink || '',
+            tweet: tweetLink || '',
+            otherInfo: otherInfo || '',
+            ask: ask || null,
+            eligibilityAnswers: eligibilityAnswers?.length
+              ? eligibilityAnswers
+              : null,
+          },
+          {
+            timeout: 30000, // 30秒超时
+          },
+        ),
+      ];
+
+      const results = await Promise.allSettled(operations);
+      const submissionResult = results[0];
+
+      if (submissionResult?.status === 'rejected') {
+        const error = submissionResult as PromiseRejectedResult;
+        throw new Error(error.reason?.message || '提交失败');
+      }
 
       const hideEasterEggFromSponsorIds = [
         '53cbd2eb-14e5-4b8a-b6fe-e18e0c885145', // network schoool

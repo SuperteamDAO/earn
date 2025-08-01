@@ -6,6 +6,15 @@ import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
 import logger from '@/lib/logger';
 import { safeStringify } from '@/utils/safeStringify';
 
+// 检查 Cloudinary 环境变量配置
+if (
+  !process.env.CLOUDINARY_CLOUD_NAME ||
+  !process.env.CLOUDINARY_API_KEY ||
+  !process.env.CLOUDINARY_API_SECRET
+) {
+  logger.error('Missing Cloudinary environment variables');
+}
+
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
@@ -42,7 +51,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
     logger.info('Uploading processed image to Cloudinary');
     cloudinary.uploader
       .upload_stream(
-        { resource_type: 'image', folderName },
+        { resource_type: 'image', folder: folderName },
         (error, result) => {
           if (error) {
             logger.error(

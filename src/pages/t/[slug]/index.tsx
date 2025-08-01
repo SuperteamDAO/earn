@@ -616,23 +616,72 @@ function TalentProfile({ talent, stats }: TalentProps) {
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { slug } = context.query;
+
+  // 参数验证
+  if (!slug || typeof slug !== 'string' || slug.trim() === '') {
+    return {
+      notFound: true,
+    };
+  }
+
   try {
-    const talentReq = await axios.post(`${getURL()}/api/user/info`, {
-      username: slug,
-    });
-    const statsReq = await axios.post(`${getURL()}/api/user/public-stats`, {
-      username: slug,
-    });
-    const talent = talentReq.data;
-    const stats = statsReq.data;
+    // 使用 Promise.allSettled 处理多个请求，添加超时处理
+    const requests = [
+      axios.post(
+        `${getURL()}/api/user/info`,
+        {
+          username: slug,
+        },
+        {
+          timeout: 10000, // 10秒超时
+        },
+      ),
+      axios.post(
+        `${getURL()}/api/user/public-stats`,
+        {
+          username: slug,
+        },
+        {
+          timeout: 10000, // 10秒超时
+        },
+      ),
+    ];
+
+    const results = await Promise.allSettled(requests);
+    const talentResult = results[0];
+    const statsResult = results[1];
+
+    // 检查主要数据是否获取成功
+    if (talentResult?.status === 'rejected') {
+      const error = talentResult as PromiseRejectedResult;
+      console.error('Failed to fetch talent data:', error.reason);
+      return {
+        notFound: true,
+      };
+    }
+
+    const talent = (talentResult as PromiseFulfilledResult<any>).value.data;
+
+    // 数据验证：确保返回有效用户数据
+    if (!talent || !talent.id) {
+      return {
+        notFound: true,
+      };
+    }
+
+    // 统计数据可选，失败时使用默认值
+    const stats =
+      statsResult?.status === 'fulfilled'
+        ? (statsResult as PromiseFulfilledResult<any>).value.data
+        : { wins: 0, submissions: 0, participations: 0, totalWinnings: 0 };
 
     return {
       props: { talent, stats },
     };
   } catch (error) {
-    console.error(error);
+    console.error('Unexpected error in getServerSideProps:', error);
     return {
-      props: { talent: null },
+      notFound: true,
     };
   }
 };

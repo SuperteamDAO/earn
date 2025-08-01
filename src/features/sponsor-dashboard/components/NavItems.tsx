@@ -21,10 +21,28 @@ export const NavItem = ({
   const router = useRouter();
   const currentPath = router.asPath.split('?')[0];
   const isExternalLink = link?.startsWith('https://');
-  const resolvedLink = isExternalLink ? link : `/dashboard${link}`;
+  const resolvedLink = link
+    ? isExternalLink
+      ? link
+      : `/dashboard${link}`
+    : undefined;
   const isActiveLink = resolvedLink
     ? currentPath?.startsWith(resolvedLink)
     : false;
+
+  // 如果没有有效链接，渲染为普通 div
+  if (!resolvedLink) {
+    return (
+      <NavItemContent
+        icon={icon}
+        isActiveLink={isActiveLink}
+        isExpanded={isExpanded}
+        {...rest}
+      >
+        {children}
+      </NavItemContent>
+    );
+  }
 
   return (
     <Link

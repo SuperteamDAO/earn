@@ -30,6 +30,7 @@
     "allowJs": false, // earlier - true
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
+    "typeRoots": ["./node_modules/@types", "./types"],
 
     "jsx": "preserve",
     "noEmit": true,
