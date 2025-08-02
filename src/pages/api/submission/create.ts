@@ -14,7 +14,7 @@ import { submissionSchema } from '@/features/listings/utils/submissionFormSchema
 import { validateSubmissionRequest } from '@/features/listings/utils/validateSubmissionRequest';
 import { extractSocialUsername } from '@/features/social/utils/extractUsername';
 
-async function createSubmission(
+export async function createSubmission(
   userId: string,
   listingId: string,
   data: any,
