@@ -1,4 +1,4 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
+import { type NextRequest, NextResponse } from 'next/server';
 import slugify from 'slugify';
 
 import logger from '@/lib/logger';
@@ -57,42 +57,49 @@ export const generateUniqueSlug = async (
   return newSlug;
 };
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse,
-) {
-  const { slug, check, id } = req.query;
+export async function GET(request: NextRequest) {
+  const { searchParams } = new URL(request.url);
+  const slug = searchParams.get('slug');
+  const check = searchParams.get('check');
+  const id = searchParams.get('id');
 
-  logger.debug(`Request query: ${safeStringify(req.query)}`);
+  logger.debug(
+    `Request query: ${safeStringify(Object.fromEntries(searchParams))}`,
+  );
 
-  if (typeof slug !== 'string') {
+  if (!slug || typeof slug !== 'string') {
     logger.warn('Slug is required and must be a string');
-    return res
-      .status(400)
-      .json({ error: 'Slug is required and must be a string' });
+    return NextResponse.json(
+      { error: 'Slug is required and must be a string' },
+      { status: 400 },
+    );
   }
 
   try {
     if (check === 'true') {
       logger.debug(`Checking if slug exists: ${slug}`);
-      const slugExists = await checkSlug(slug, id as string | undefined);
+      const slugExists = await checkSlug(slug, id || undefined);
       if (slugExists) {
         logger.warn(`Slug ${slug} already exists`);
-        return res
-          .status(400)
-          .json({ slugExists: true, error: 'Slug already exists' });
+        return NextResponse.json(
+          { slugExists: true, error: 'Slug already exists' },
+          { status: 400 },
+        );
       } else {
         logger.info(`Slug ${slug} is available`);
-        return res.status(200).json({ slugExists: false });
+        return NextResponse.json({ slugExists: false }, { status: 200 });
       }
     } else {
       logger.debug(`Generating unique slug for title: ${slug}`);
-      const newSlug = await generateUniqueSlug(slug, id as string | undefined);
+      const newSlug = await generateUniqueSlug(slug, id || undefined);
       logger.info(`Generated unique slug: ${newSlug}`);
-      return res.status(200).json({ slug: newSlug });
+      return NextResponse.json({ slug: newSlug }, { status: 200 });
     }
   } catch (error: any) {
     logger.error('Error in handler:', safeStringify(error));
-    return res.status(500).json({ error: 'Internal server error' });
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 },
+    );
   }
 }
