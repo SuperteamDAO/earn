@@ -46,16 +46,37 @@ export const DesktopNavbar = ({
     () => router.pathname.startsWith('/dashboard'),
     [router.pathname],
   );
-
-  const maxWidth = useMemo(
-    () => (isDashboardRoute ? 'max-w-full' : 'max-w-7xl'),
-    [isDashboardRoute],
+  const isNewTalentRoute = useMemo(
+    () => router.pathname.startsWith('/new/talent'),
+    [router.pathname],
   );
 
-  const padding = useMemo(
-    () => (isDashboardRoute ? 'pr-8 pl-6' : 'px-2 lg:px-6'),
-    [isDashboardRoute],
-  );
+  const maxWidth = useMemo(() => {
+    if (isDashboardRoute) {
+      return 'max-w-full';
+    }
+    if (isNewTalentRoute) {
+      return '2xl:max-w-[82rem]';
+    }
+    return 'max-w-7xl';
+  }, [isDashboardRoute, isNewTalentRoute]);
+
+  const padding = useMemo(() => {
+    if (isDashboardRoute) {
+      return 'pr-8 pl-6';
+    }
+    if (isNewTalentRoute) {
+      return 'pr-8 pl-24 2xl:pl-0';
+    }
+    return 'px-2 lg:px-6';
+  }, [isDashboardRoute, isNewTalentRoute]);
+
+  const margin = useMemo(() => {
+    if (isNewTalentRoute) {
+      return 'mx-0 2xl:mx-auto';
+    }
+    return 'mx-auto';
+  }, [isNewTalentRoute]);
 
   const openCreditDrawer = () => {
     posthog.capture('open_credits');
@@ -69,7 +90,13 @@ export const DesktopNavbar = ({
         padding,
       )}
     >
-      <div className={cn('mx-auto flex w-full justify-between', maxWidth)}>
+      <div
+        className={cn(
+          'mx-auto flex w-full max-w-7xl justify-between',
+          maxWidth,
+          margin,
+        )}
+      >
         <div className="flex w-fit items-center gap-3 lg:gap-4">
           <LogoContextMenu>
             <Link

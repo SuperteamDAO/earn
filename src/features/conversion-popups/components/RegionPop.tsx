@@ -73,7 +73,8 @@ export const RegionPop = ({ st }: { st: Superteam }) => {
       ready &&
       !authenticated &&
       popupsShowed < 2 &&
-      !open
+      !open &&
+      process.env.NEXT_PUBLIC_VERCEL_ENV === 'production'
     ) {
       initated.current = true;
       setTimeout(() => {

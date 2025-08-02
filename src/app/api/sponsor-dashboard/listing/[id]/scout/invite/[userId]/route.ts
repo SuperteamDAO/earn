@@ -1,35 +1,37 @@
-import type { NextApiResponse } from 'next';
+import { headers } from 'next/headers';
+import { NextResponse } from 'next/server';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
 
-import { type NextApiRequestWithSponsor } from '@/features/auth/types';
-import { checkListingSponsorAuth } from '@/features/auth/utils/checkListingSponsorAuth';
-import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
+import { validateListingSponsorAuth } from '@/features/auth/utils/checkListingSponsorAuth';
+import { validateSession } from '@/features/auth/utils/getSponsorSession';
 import { queueEmail } from '@/features/emails/utils/queueEmail';
 
-async function scoutInvite(
-  req: NextApiRequestWithSponsor,
-  res: NextApiResponse,
+export async function POST(
+  _: Request,
+  props: { params: Promise<{ id: string; userId: string }> },
 ) {
-  const params = req.query;
-  const id = params.id as string;
-  const userId = params.userId as string;
+  const { id, userId } = await props.params;
 
-  logger.debug(`Request query: ${safeStringify(req.query)}`);
-
-  if (req.method !== 'POST') {
-    return res.status(405).send('Method Not Allowed');
-  }
+  logger.debug(
+    `Scout invite request for listing ID: ${id} and user ID: ${userId}`,
+  );
 
   try {
-    const sponsorUserId = req.userId;
-    const userSponsorId = req.userSponsorId;
+    const sessionResult = await validateSession(await headers());
+    if ('error' in sessionResult) {
+      return sessionResult.error;
+    }
+    const { userId: sponsorUserId, userSponsorId } = sessionResult.session;
 
-    const { error } = await checkListingSponsorAuth(userSponsorId, id);
-    if (error) {
-      return res.status(error.status).json({ error: error.message });
+    const listingAuthResult = await validateListingSponsorAuth(
+      userSponsorId,
+      id,
+    );
+    if ('error' in listingAuthResult) {
+      return listingAuthResult.error;
     }
 
     const invitedCount = await prisma.scouts.count({
@@ -43,9 +45,10 @@ async function scoutInvite(
       logger.warn(
         `Maximum number of invited scouts reached for listing ID: ${id}`,
       );
-      return res.status(400).json({
-        error: 'Maximum number of invited scouts reached',
-      });
+      return NextResponse.json(
+        { error: 'Maximum number of invited scouts reached' },
+        { status: 400 },
+      );
     }
 
     logger.debug(`Fetching scout for listing ID: ${id} and user ID: ${userId}`);
@@ -60,7 +63,7 @@ async function scoutInvite(
       logger.warn(
         `Scout not found for listing ID: ${id} and user ID: ${userId}`,
       );
-      return res.status(404).send('Scout Not Found');
+      return NextResponse.json({ error: 'Scout Not Found' }, { status: 404 });
     }
 
     logger.debug(
@@ -86,16 +89,17 @@ async function scoutInvite(
     logger.info(
       `Scout invitation sent successfully for listing ID: ${id} and user ID: ${userId}`,
     );
-    return res.status(200).json({ message: 'Success' });
+    return NextResponse.json({ message: 'Success' }, { status: 200 });
   } catch (error: any) {
     logger.error(
       `Error occurred while inviting scout user=${userId} for bounty with id=${id}: ${safeStringify(error)}`,
     );
-    return res.status(400).json({
-      error: error.message,
-      message: `Error occurred while inviting scout user=${userId} for bounty with id=${id}.`,
-    });
+    return NextResponse.json(
+      {
+        error: error.message,
+        message: `Error occurred while inviting scout user=${userId} for bounty with id=${id}.`,
+      },
+      { status: 400 },
+    );
   }
 }
-
-export default withSponsorAuth(scoutInvite);

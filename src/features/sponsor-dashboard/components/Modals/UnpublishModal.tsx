@@ -32,7 +32,9 @@ export const UnpublishModal = ({
           isPublished: status,
         });
       } else {
-        result = await api.post(`/api/listings/unpublish/${listing?.id}/`);
+        result = await api.post(
+          `/api/sponsor-dashboard/listing/${listing?.id}/unpublish`,
+        );
       }
       return result.data;
     },

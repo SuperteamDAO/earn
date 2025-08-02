@@ -21,6 +21,7 @@ import {
   DrawerTitle,
 } from '@/components/ui/drawer';
 import { useBreakpoint } from '@/hooks/use-breakpoint';
+import { useServerTimeSync } from '@/hooks/use-server-time';
 import { useTimeout } from '@/hooks/use-timeout';
 import { roundToNearestTenth } from '@/utils/number';
 
@@ -81,6 +82,7 @@ export const ListingPop = ({ listing }: { listing: Listing | null }) => {
   const { authenticated, ready } = usePrivy();
 
   const isMD = useBreakpoint('md');
+  const { serverTime } = useServerTimeSync();
 
   const [bountySnackbar] = useAtom(bountySnackbarAtom);
 
@@ -91,9 +93,10 @@ export const ListingPop = ({ listing }: { listing: Listing | null }) => {
       ready &&
       !authenticated &&
       listing?.status === 'OPEN' &&
-      !isDeadlineOver(listing.deadline) &&
+      !isDeadlineOver(listing.deadline, serverTime()) &&
       popupsShowed < 2 &&
-      !open
+      !open &&
+      process.env.NEXT_PUBLIC_VERCEL_ENV === 'production'
     ) {
       initated.current = true;
       setTimeout(() => {

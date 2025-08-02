@@ -1,7 +1,10 @@
 import { dayjs } from '@/utils/dayjs';
 
-export const timeAgoShort = (date: Date | string): string => {
-  const now = dayjs();
+export const timeAgoShort = (
+  date: Date | string,
+  serverTime?: number,
+): string => {
+  const now = dayjs(serverTime);
   const then = dayjs(date);
 
   const diffInMinutes = Math.abs(then.diff(now, 'minute'));

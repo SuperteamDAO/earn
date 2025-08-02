@@ -4,7 +4,9 @@ import { type Scouts } from '@/interface/scouts';
 import { api } from '@/lib/api';
 
 const fetchScouts = async (bountyId: string) => {
-  const response = await api.get<Scouts[]>(`/api/listings/scout/${bountyId}`);
+  const response = await api.get<Scouts[]>(
+    `/api/sponsor-dashboard/listing/${bountyId}/scout`,
+  );
   return response.data;
 };
 

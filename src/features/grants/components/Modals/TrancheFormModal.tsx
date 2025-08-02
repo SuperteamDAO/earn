@@ -119,6 +119,7 @@ export const TrancheFormModal = ({ grant, applicationId, onClose }: Props) => {
         <p className="text-xxs mt-3 w-full pb-6 text-center text-slate-400 sm:pb-0 sm:text-xs">
           By applying to this tranche request, you agree to our{' '}
           <button
+            type="button"
             onClick={() => setIsTOSModalOpen(true)}
             className="cursor-pointer underline underline-offset-2"
             rel="noopener noreferrer"

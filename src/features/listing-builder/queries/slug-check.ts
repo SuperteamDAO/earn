@@ -11,7 +11,7 @@ interface SlugCheckParams {
 
 export const fetchSlugCheck = async (params: SlugCheckParams) => {
   const newSlug = await axios.get<{ slugExists?: boolean; slug?: string }>(
-    `${getURL()}api/listings/check-slug`,
+    `${getURL()}api/sponsor-dashboard/listing/check-slug`,
     {
       params: { ...params },
     },

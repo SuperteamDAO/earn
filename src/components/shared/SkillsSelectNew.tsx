@@ -25,7 +25,7 @@ const SELECTABLE_PARENTS = [
 ] as const;
 type SelectableParent = (typeof SELECTABLE_PARENTS)[number];
 
-const MAX_SUGGESTIONS = 6;
+const MAX_SUGGESTIONS = 3;
 
 interface SkillsSelectProps {
   defaultValue?: Skills;

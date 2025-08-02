@@ -527,10 +527,10 @@ export const SubmissionDrawer = ({
                 <p className="mt-2 text-center text-xs text-slate-400 sm:text-sm">
                   By submitting/applying to this listing, you agree to our{' '}
                   <button
+                    type="button"
                     onClick={() => setIsTOSModalOpen(true)}
                     className="cursor-pointer underline underline-offset-2"
                     rel="noopener noreferrer"
-                    type="button"
                   >
                     Terms of Use
                   </button>

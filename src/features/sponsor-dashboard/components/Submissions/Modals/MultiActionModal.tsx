@@ -139,7 +139,13 @@ export const MultiActionModal = ({
             label: 'Spam',
           });
           if (listing?.type === 'project') {
-            rejectSubmissions.mutate(submissionIds);
+            // For projects, send the merged spam rejection email instead of separate emails
+            await api.post(
+              `/api/sponsor-dashboard/submission/send-spam-rejection/`,
+              {
+                ids: submissionIds,
+              },
+            );
           }
 
           queryClient.setQueryData<SubmissionWithUser[]>(

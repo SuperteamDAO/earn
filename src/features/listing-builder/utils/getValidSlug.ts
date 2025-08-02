@@ -2,7 +2,7 @@
 
 import { type Prisma } from '@prisma/client';
 
-import { generateUniqueSlug } from '@/pages/api/listings/check-slug';
+import { generateUniqueSlug } from '@/app/api/sponsor-dashboard/listing/check-slug/route';
 
 import { fetchSlugCheck } from '../queries/slug-check';
 

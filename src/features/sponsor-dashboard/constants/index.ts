@@ -4,6 +4,7 @@ export const labelMenuOptions = (type: BountyType | 'grant' | undefined) => [
   { label: 'Unreviewed', value: 'Unreviewed' },
   ...(type !== 'project' ? [{ label: 'Reviewed', value: 'Reviewed' }] : []),
   { label: 'Shortlisted', value: 'Shortlisted' },
+  ...(type !== 'project' ? [{ label: 'Spam', value: 'Spam' }] : []),
   ...(type === 'project'
     ? [
         { label: 'Mid Quality', value: 'Mid_Quality' },

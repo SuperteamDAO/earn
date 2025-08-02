@@ -1,12 +1,12 @@
 import { type BountyType } from '@prisma/client';
 import { queryOptions } from '@tanstack/react-query';
 
+import { type BountyTemplateWithSponsor } from '@/app/api/sponsor-dashboard/templates/route';
 import { api } from '@/lib/api';
-import { type BountyTemplateWithSponsor } from '@/pages/api/listings/templates';
 
 const fetchListingTemplates = async (type: string) => {
   const { data } = await api.get<BountyTemplateWithSponsor[]>(
-    '/api/listings/templates/',
+    '/api/sponsor-dashboard/templates/',
     {
       params: { type },
     },

@@ -1,6 +1,7 @@
 import { usePrivy } from '@privy-io/react-auth';
 import { useQuery } from '@tanstack/react-query';
 import dynamic from 'next/dynamic';
+import { useSearchParams } from 'next/navigation';
 import posthog from 'posthog-js';
 import { useEffect } from 'react';
 
@@ -34,6 +35,7 @@ const MobileNavbar = dynamic(() =>
 
 export const Header = () => {
   const { authenticated, ready } = usePrivy();
+  const searchParams = useSearchParams();
 
   const {
     isOpen: isLoginOpen,
@@ -80,8 +82,10 @@ export const Header = () => {
       const hashHasWallet = window.location.hash === '#wallet';
       const hashHasDispute =
         window.location.hash.startsWith('#dispute-submission-') || false;
+      const hasLoginParam = searchParams?.get('login') !== null;
+
       if (
-        (hashHasEmail || hashHasWallet || hashHasDispute) &&
+        (hashHasEmail || hashHasWallet || hashHasDispute || hasLoginParam) &&
         ready &&
         !authenticated
       ) {
@@ -90,7 +94,7 @@ export const Header = () => {
     };
 
     checkHashAndOpenModal();
-  }, [isLoginOpen, onLoginOpen, ready, authenticated]);
+  }, [isLoginOpen, onLoginOpen, ready, authenticated, searchParams]);
 
   useEffect(() => {
     const checkHashAndOpenModal = () => {
