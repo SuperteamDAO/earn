@@ -1,5 +1,6 @@
 import { type NextRequest, NextResponse } from 'next/server';
 
+import logger from '@/lib/logger';
 import { createSubmission } from '@/pages/api/submission/create';
 import { prisma } from '@/prisma';
 
@@ -19,14 +20,12 @@ function generateSubmissionData(listing: any, user: any) {
       otherInfo: getRandomElement(dummySubmissionData.project.otherInfos),
     };
 
-    // Add telegram if user doesn't have one
     if (!user.telegram) {
       data.telegram = getRandomElement(dummySubmissionData.telegramUsernames);
     }
 
     if (compensationType !== 'fixed') {
       if (compensationType === 'range' && minRewardAsk && maxRewardAsk) {
-        // Generate random ask within the specified range
         const min = minRewardAsk;
         const max = maxRewardAsk;
         data.ask = Math.floor(Math.random() * (max - min + 1)) + min;
@@ -157,7 +156,7 @@ export async function POST(request: NextRequest) {
 
         submissions.push(submission);
       } catch (error) {
-        console.error(
+        logger.error(
           `Failed to create submission for user ${randomUser.id}:`,
           error,
         );
@@ -174,7 +173,7 @@ export async function POST(request: NextRequest) {
       })),
     });
   } catch (error) {
-    console.error('Error creating dummy submissions:', error);
+    logger.error('Error creating dummy submissions:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 },
