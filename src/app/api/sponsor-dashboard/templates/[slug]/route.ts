@@ -1,15 +1,17 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
+import { NextResponse } from 'next/server';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { dayjs } from '@/utils/dayjs';
 import { safeStringify } from '@/utils/safeStringify';
 
-export default async function user(req: NextApiRequest, res: NextApiResponse) {
-  const params = req.query;
-  const slug = params.slug as string;
+export async function GET(
+  _: Request,
+  props: { params: Promise<{ slug: string }> },
+) {
+  const { slug } = await props.params;
 
-  logger.debug(`Request query: ${safeStringify(req.query)}`);
+  logger.debug(`Request for bounty template with slug: ${slug}`);
 
   try {
     logger.debug(`Fetching bounty template with slug: ${slug}`);
@@ -26,23 +28,28 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
 
     if (!result) {
       logger.warn(`No bounty template found with slug: ${slug}`);
-      return res.status(404).json({
-        message: `No bounty template found with slug=${slug}.`,
-      });
+      return NextResponse.json(
+        {
+          message: `No bounty template found with slug=${slug}.`,
+        },
+        { status: 404 },
+      );
     }
 
-    // set deadline dynamically
     result.deadline = dayjs(new Date()).add(6, 'days').toDate();
 
     logger.info(`Successfully fetched bounty template for slug: ${slug}`);
-    return res.status(200).json(result);
+    return NextResponse.json(result, { status: 200 });
   } catch (error: any) {
     logger.error(
       `Error occurred while fetching bounty template with slug=${slug}: ${safeStringify(error)}`,
     );
-    return res.status(400).json({
-      error: error.message,
-      message: `Error occurred while fetching bounty template with slug=${slug}.`,
-    });
+    return NextResponse.json(
+      {
+        error: error.message,
+        message: `Error occurred while fetching bounty template with slug=${slug}.`,
+      },
+      { status: 400 },
+    );
   }
 }

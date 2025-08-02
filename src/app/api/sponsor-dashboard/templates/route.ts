@@ -1,5 +1,5 @@
 import type { BountyType, Prisma } from '@prisma/client';
-import type { NextApiRequest, NextApiResponse } from 'next';
+import { type NextRequest, NextResponse } from 'next/server';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
@@ -37,13 +37,13 @@ export type BountyTemplateWithSponsor = Prisma.BountiesTemplatesGetPayload<{
   };
 }>;
 
-export default async function bounties(
-  req: NextApiRequest,
-  res: NextApiResponse,
-) {
-  const type = req.query.type as BountyType;
+export async function GET(request: NextRequest) {
+  const { searchParams } = new URL(request.url);
+  const type = searchParams.get('type') as BountyType;
 
-  logger.debug(`Request query: ${safeStringify(req.query)}`);
+  logger.debug(
+    `Request query: ${safeStringify(Object.fromEntries(searchParams))}`,
+  );
 
   try {
     logger.debug(`Fetching bounty templates of type: ${type}`);
@@ -98,20 +98,26 @@ export default async function bounties(
 
     if (result.length === 0) {
       logger.warn(`No bounty templates found for type: ${type}`);
-      return res.status(404).json({
-        message: `No bounty templates found for type=${type}.`,
-      });
+      return NextResponse.json(
+        {
+          message: `No bounty templates found for type=${type}.`,
+        },
+        { status: 404 },
+      );
     }
 
     logger.info(`Successfully fetched bounty templates for type: ${type}`);
-    return res.status(200).json(result);
+    return NextResponse.json(result, { status: 200 });
   } catch (err: any) {
     logger.error(
       `Error occurred while fetching bounty templates: ${safeStringify(err)}`,
     );
-    return res.status(400).json({
-      error: err.message,
-      message: 'Error occurred while fetching bounties.',
-    });
+    return NextResponse.json(
+      {
+        error: err.message,
+        message: 'Error occurred while fetching bounties.',
+      },
+      { status: 400 },
+    );
   }
 }
