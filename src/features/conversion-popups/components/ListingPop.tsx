@@ -95,7 +95,8 @@ export const ListingPop = ({ listing }: { listing: Listing | null }) => {
       listing?.status === 'OPEN' &&
       !isDeadlineOver(listing.deadline, serverTime()) &&
       popupsShowed < 2 &&
-      !open
+      !open &&
+      process.env.NEXT_PUBLIC_VERCEL_ENV === 'production'
     ) {
       initated.current = true;
       setTimeout(() => {
