@@ -5,10 +5,7 @@ import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
 
-export const checkSlug = async (
-  slug: string,
-  id?: string,
-): Promise<boolean> => {
+const checkSlug = async (slug: string, id?: string): Promise<boolean> => {
   try {
     const existingBounty = await prisma.bounties.findFirst({
       where: {
