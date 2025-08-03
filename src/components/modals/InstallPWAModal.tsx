@@ -99,7 +99,7 @@ export const InstallPWAModal = () => {
       }
     };
 
-    setTimeout(showInstallAppModal, 60000);
+    setTimeout(showInstallAppModal, 20000);
   }, [user, onPWAModalOpen]);
 
   const isAutoInstallable = mobileOs !== 'iOS';
