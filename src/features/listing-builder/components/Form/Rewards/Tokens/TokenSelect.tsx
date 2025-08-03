@@ -1,5 +1,4 @@
 import { Check, ChevronDown, CopyIcon } from 'lucide-react';
-import { useState } from 'react';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -32,8 +31,6 @@ import { TokenLabel } from './TokenLabel';
 
 export function TokenSelect() {
   const form = useListingForm();
-  const [open, setOpen] = useState(false);
-
   return (
     <FormField
       name="token"
@@ -41,7 +38,7 @@ export function TokenSelect() {
       render={({ field }) => (
         <FormItem className="gap-2">
           <FormLabel>Payment</FormLabel>
-          <Popover open={open} onOpenChange={setOpen}>
+          <Popover>
             <PopoverTrigger asChild>
               <FormControl>
                 <Button
@@ -111,7 +108,6 @@ export function TokenSelect() {
                         onSelect={() => {
                           field.onChange(token.tokenSymbol);
                           form.saveDraft();
-                          setOpen(false);
                         }}
                       >
                         <TokenLabel token={token} showIcon showName />
