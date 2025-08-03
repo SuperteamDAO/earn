@@ -1,10 +1,65 @@
 // used for api route, dont add use client here.
 
 import { type Prisma } from '@prisma/client';
+import slugify from 'slugify';
 
-import { generateUniqueSlug } from '@/app/api/sponsor-dashboard/listing/check-slug/route';
+import logger from '@/lib/logger';
+import { prisma } from '@/prisma';
+import { safeStringify } from '@/utils/safeStringify';
 
 import { fetchSlugCheck } from '../queries/slug-check';
+
+export const checkSlug = async (
+  slug: string,
+  id?: string,
+): Promise<boolean> => {
+  try {
+    const existingBounty = await prisma.bounties.findFirst({
+      where: {
+        slug,
+        NOT: id ? { id } : undefined,
+      },
+      select: { id: true },
+    });
+    return !!existingBounty;
+  } catch (error) {
+    logger.error(`Error checking slug: ${slug}`, safeStringify(error));
+    throw new Error('Error checking slug');
+  }
+};
+
+export const generateUniqueSlug = async (
+  title: string,
+  id?: string,
+): Promise<string> => {
+  const baseSlug = slugify(title, { lower: true, strict: true });
+
+  const existingSlugs = await prisma.bounties
+    .findMany({
+      where: {
+        slug: {
+          startsWith: baseSlug,
+        },
+        NOT: id ? { id } : undefined,
+      },
+      select: { slug: true },
+    })
+    .then((bounties) => bounties.map((bounty) => bounty.slug));
+
+  if (!existingSlugs.includes(baseSlug)) {
+    return baseSlug;
+  }
+
+  let i = 1;
+  let newSlug = '';
+
+  do {
+    newSlug = `${baseSlug}-${i}`;
+    i++;
+  } while (existingSlugs.includes(newSlug));
+
+  return newSlug;
+};
 
 export async function getValidSlug({
   id,

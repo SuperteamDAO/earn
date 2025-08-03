@@ -1,58 +1,12 @@
 import { type NextRequest, NextResponse } from 'next/server';
-import slugify from 'slugify';
 
 import logger from '@/lib/logger';
-import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
 
-const checkSlug = async (slug: string, id?: string): Promise<boolean> => {
-  try {
-    const existingBounty = await prisma.bounties.findFirst({
-      where: {
-        slug,
-        NOT: id ? { id } : undefined,
-      },
-      select: { id: true },
-    });
-    return !!existingBounty;
-  } catch (error) {
-    logger.error(`Error checking slug: ${slug}`, safeStringify(error));
-    throw new Error('Error checking slug');
-  }
-};
-
-export const generateUniqueSlug = async (
-  title: string,
-  id?: string,
-): Promise<string> => {
-  const baseSlug = slugify(title, { lower: true, strict: true });
-
-  const existingSlugs = await prisma.bounties
-    .findMany({
-      where: {
-        slug: {
-          startsWith: baseSlug,
-        },
-        NOT: id ? { id } : undefined,
-      },
-      select: { slug: true },
-    })
-    .then((bounties) => bounties.map((bounty) => bounty.slug));
-
-  if (!existingSlugs.includes(baseSlug)) {
-    return baseSlug;
-  }
-
-  let i = 1;
-  let newSlug = '';
-
-  do {
-    newSlug = `${baseSlug}-${i}`;
-    i++;
-  } while (existingSlugs.includes(newSlug));
-
-  return newSlug;
-};
+import {
+  checkSlug,
+  generateUniqueSlug,
+} from '@/features/listing-builder/utils/getValidSlug';
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
