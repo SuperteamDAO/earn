@@ -88,7 +88,10 @@ export const SubmissionList = ({
       } else {
         return getRankLabels(submission.winnerPosition);
       }
-    } else if (submission.status === 'Rejected') {
+    } else if (
+      submission.status === 'Rejected' &&
+      listing?.type === 'project'
+    ) {
       return 'Rejected';
     } else if (submission?.label) {
       return labelMenuOptions(listing?.type).find(
