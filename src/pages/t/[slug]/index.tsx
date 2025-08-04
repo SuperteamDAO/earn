@@ -125,7 +125,7 @@ function TalentProfile({ talent, stats }: TalentProps) {
 
       if (success) {
         let attempts = 0;
-        const maxAttempts = 10;
+        const maxAttempts = 6;
         const pollForUpdate = async (): Promise<boolean> => {
           const { data: freshUser } = await refetchUser();
 

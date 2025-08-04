@@ -278,8 +278,6 @@ export const SubmissionDrawer = ({
     const handle = extractTwitterHandle(fieldValue);
     if (!handle) return;
 
-    const initialVerifiedHandles = user?.linkedTwitter || [];
-
     try {
       setVerificationStatus('loading');
       onVerificationModalOpen();
@@ -288,11 +286,11 @@ export const SubmissionDrawer = ({
 
       if (success) {
         let attempts = 0;
-        const maxAttempts = 10;
+        const maxAttempts = 6;
         const pollForUpdate = async (): Promise<boolean> => {
           const { data: freshUser } = await refetchUser();
-          const currentVerifiedHandles = freshUser?.linkedTwitter || [];
 
+          const currentVerifiedHandles = freshUser?.linkedTwitter || [];
           const isNowVerified = isHandleVerified(
             handle,
             currentVerifiedHandles,
@@ -302,15 +300,6 @@ export const SubmissionDrawer = ({
             form.trigger(fieldName);
             onVerificationModalClose();
             return true;
-          }
-
-          const newlyAddedHandles = currentVerifiedHandles.filter(
-            (h) => !initialVerifiedHandles.includes(h),
-          );
-
-          if (newlyAddedHandles.length > 0) {
-            setVerificationStatus('error');
-            return false;
           }
 
           attempts++;

@@ -184,15 +184,10 @@ export const ApplicationModal = ({
   const { signIn: popupSignIn } = usePopupAuth();
 
   const handleVerifyClick = async () => {
-    if (!user) return;
-
-    const twitterValue = form.getValues('twitter');
     if (!twitterValue) return;
 
     const handle = extractTwitterHandle(`https://x.com/${twitterValue}`);
     if (!handle) return;
-
-    const initialVerifiedHandles = user.linkedTwitter || [];
 
     try {
       setVerificationStatus('loading');
@@ -202,12 +197,11 @@ export const ApplicationModal = ({
 
       if (success) {
         let attempts = 0;
-        const maxAttempts = 10;
-
+        const maxAttempts = 6;
         const pollForUpdate = async (): Promise<boolean> => {
           const { data: freshUser } = await refetchUser();
-          const currentVerifiedHandles = freshUser?.linkedTwitter || [];
 
+          const currentVerifiedHandles = freshUser?.linkedTwitter || [];
           const isNowVerified = isHandleVerified(
             handle,
             currentVerifiedHandles,
@@ -217,15 +211,6 @@ export const ApplicationModal = ({
             form.trigger('twitter');
             verificationModal.onClose();
             return true;
-          }
-
-          const newlyAddedHandles = currentVerifiedHandles.filter(
-            (h) => !initialVerifiedHandles.includes(h),
-          );
-
-          if (newlyAddedHandles.length > 0) {
-            setVerificationStatus('error');
-            return false;
           }
 
           attempts++;
