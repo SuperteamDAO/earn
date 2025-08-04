@@ -11,9 +11,9 @@ export default async function auth(req: NextApiRequest, res: NextApiResponse) {
   const authOptions: NextAuthOptions = {
     providers: [
       TwitterProvider({
-        clientId: process.env.TWITTER_CONSUMER_KEY!,
-        clientSecret: process.env.TWITTER_CONSUMER_SECRET!,
-        version: '1.0',
+        clientId: process.env.TWITTER_CLIENT_ID!,
+        clientSecret: process.env.TWITTER_CLIENT_SECRET!,
+        version: '2.0',
       }),
     ],
 
@@ -28,9 +28,9 @@ export default async function auth(req: NextApiRequest, res: NextApiResponse) {
           }
 
           const rawHandle =
-            (profile as any)?.screen_name ||
             (profile as any)?.username ||
             (profile as any)?.data?.username ||
+            (profile as any)?.screen_name ||
             '';
 
           if (rawHandle) {
