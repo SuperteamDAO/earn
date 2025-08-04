@@ -4,7 +4,6 @@ import { type GetServerSideProps } from 'next';
 import dynamic from 'next/dynamic';
 
 import { useBreakpoint } from '@/hooks/use-breakpoint';
-import { useDelayedMount } from '@/hooks/use-delayed-mount';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { cn } from '@/utils/cn';
@@ -57,8 +56,6 @@ export default function HomePage({ potentialSession }: HomePageProps) {
   const { data: totalUsers } = useQuery(userCountQuery);
   const isLg = useBreakpoint('lg');
 
-  const shouldLoadDelayedComponents = useDelayedMount();
-
   return (
     <Default
       className="bg-white"
@@ -100,13 +97,9 @@ export default function HomePage({ potentialSession }: HomePageProps) {
           </div>
         </div>
       </div>
-      {shouldLoadDelayedComponents && (
-        <>
-          <InstallPWAModal />
-          <HomepagePop />
-          <TalentAnnouncements />
-        </>
-      )}
+      <InstallPWAModal />
+      <HomepagePop />
+      <TalentAnnouncements />
     </Default>
   );
 }

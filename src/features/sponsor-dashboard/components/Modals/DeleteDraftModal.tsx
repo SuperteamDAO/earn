@@ -31,7 +31,7 @@ export const DeleteDraftModal = ({
       if (listingType === 'grant') {
         await api.post(`/api/grants/delete/${listingId}`);
       } else {
-        await api.post(`/api/listings/delete/${listingId}`);
+        await api.delete(`/api/sponsor-dashboard/listing/${listingId}/delete`);
       }
     },
     onSuccess: () => {

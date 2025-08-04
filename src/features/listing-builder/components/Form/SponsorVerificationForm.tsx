@@ -223,7 +223,9 @@ export const SponsorVerificationForm = () => {
             </p>
             <div className="w-full pt-8">
               <Link href="/dashboard/listings" className="w-full">
-                <Button className="w-full">Understood</Button>
+                <Button type="button" className="w-full">
+                  Understood
+                </Button>
               </Link>
             </div>
           </div>

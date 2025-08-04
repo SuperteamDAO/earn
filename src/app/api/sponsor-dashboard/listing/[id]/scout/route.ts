@@ -1,13 +1,13 @@
 import { Prisma } from '@prisma/client';
 import dayjs from 'dayjs';
-import type { NextApiResponse } from 'next';
+import { headers } from 'next/headers';
+import { NextResponse } from 'next/server';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
 
-import { type NextApiRequestWithUser } from '@/features/auth/types';
-import { withAuth } from '@/features/auth/utils/withAuth';
+import { validateSession } from '@/features/auth/utils/getSponsorSession';
 
 function flattenSubSkills(skillsArray: any[]): string[] {
   const flattenedSubSkills: string[] = [];
@@ -48,14 +48,22 @@ function skillContainQuery(skills: string[], alias: string) {
   );
 }
 
-async function scoutTalent(req: NextApiRequestWithUser, res: NextApiResponse) {
-  const params = req.query;
-  const id = params.id as string;
+export async function GET(
+  _: Request,
+  props: { params: Promise<{ id: string }> },
+) {
+  const { id } = await props.params;
   const LIMIT = 10;
 
-  logger.debug(`Request query: ${safeStringify(req.query)}`);
+  logger.debug(`Request for scout generation with ID: ${id}`);
 
   try {
+    const sessionResult = await validateSession(await headers());
+    if ('error' in sessionResult) {
+      return sessionResult.error;
+    }
+    const { userId } = sessionResult.session;
+
     logger.debug(`Fetching bounty with ID: ${id}`);
     const scoutBounty = await prisma.bounties.findFirst({
       where: {
@@ -64,10 +72,9 @@ async function scoutTalent(req: NextApiRequestWithUser, res: NextApiResponse) {
     });
     if (scoutBounty === null) {
       logger.warn(`Bounty with ID: ${id} not found`);
-      return res.status(404).send('Bounty Not Found');
+      return NextResponse.json({ error: 'Bounty Not Found' }, { status: 404 });
     }
 
-    const userId = req.userId;
     logger.debug(`Fetching user details for user ID: ${userId}`);
     const user = await prisma.user.findUnique({
       where: {
@@ -78,14 +85,18 @@ async function scoutTalent(req: NextApiRequestWithUser, res: NextApiResponse) {
       logger.warn(
         `User ID: ${userId} is not authorized to generate scouts for bounty ID: ${id}`,
       );
-      return res
-        .status(403)
-        .send(`Bounty doesn't belong to requesting sponsor`);
+      return NextResponse.json(
+        { error: `Bounty doesn't belong to requesting sponsor` },
+        { status: 403 },
+      );
     }
 
     if ((scoutBounty.skills as any)?.[0].subskills === null) {
       logger.warn('Bounty has no skills');
-      return res.status(404).send('Bounty has No skills');
+      return NextResponse.json(
+        { error: 'Bounty has No skills' },
+        { status: 404 },
+      );
     }
 
     const subskills = flattenSubSkills(scoutBounty.skills as any);
@@ -115,7 +126,7 @@ async function scoutTalent(req: NextApiRequestWithUser, res: NextApiResponse) {
         logger.info(
           'Returning previous scouts as they were generated within the last 6 hours',
         );
-        return res.send(prevScouts);
+        return NextResponse.json(prevScouts, { status: 200 });
       }
     }
 
@@ -610,16 +621,17 @@ END)
     );
 
     logger.info(`Successfully generated scouts for bounty ID: ${id}`);
-    res.send(scouts);
+    return NextResponse.json(scouts, { status: 200 });
   } catch (error: any) {
     logger.error(
       `Error occurred while generating scouts for bounty with id=${id}: ${safeStringify(error)}`,
     );
-    return res.status(400).json({
-      error: error.message,
-      message: `Error occurred while generating scouts for bounty with id=${id}.`,
-    });
+    return NextResponse.json(
+      {
+        error: error.message,
+        message: `Error occurred while generating scouts for bounty with id=${id}.`,
+      },
+      { status: 400 },
+    );
   }
 }
-
-export default withAuth(scoutTalent);

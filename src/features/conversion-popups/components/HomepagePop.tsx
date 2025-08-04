@@ -71,7 +71,7 @@ export const HomepagePop = () => {
     posthog.capture('conversion pop up_initiated', {
       'Popup Source': 'Homepage Pop-up',
     });
-  }, 10000);
+  }, 4000);
 
   const [variant, setVariant] = useState<number>(1);
   const [open, setOpen] = useAtom(popupOpenAtom);
@@ -100,7 +100,8 @@ export const HomepagePop = () => {
       ready &&
       !authenticated &&
       popupsShowed < 2 &&
-      !open
+      !open &&
+      process.env.NEXT_PUBLIC_VERCEL_ENV === 'production'
     ) {
       initated.current = true;
       setTimeout(() => {

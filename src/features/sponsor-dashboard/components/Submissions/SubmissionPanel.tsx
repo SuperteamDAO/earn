@@ -86,10 +86,11 @@ export const SubmissionPanel = ({
                 </div>
               </div>
               <div className="ph-no-capture flex w-full items-center justify-end gap-2">
-                {!bounty?.isWinnersAnnounced &&
-                  !selectedSubmission?.isWinner &&
-                  (selectedSubmission?.status === 'Pending' ||
-                    selectedSubmission?.label === SubmissionLabels.Spam) && (
+                {!selectedSubmission?.isWinner &&
+                  (bounty?.isWinnersAnnounced
+                    ? selectedSubmission?.label === SubmissionLabels.Spam
+                    : selectedSubmission?.status === 'Pending' ||
+                      selectedSubmission?.label === SubmissionLabels.Spam) && (
                     <SpamButton
                       listingSlug={bounty?.slug!}
                       isMultiSelectOn={!!isMultiSelectOn}

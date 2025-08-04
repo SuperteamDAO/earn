@@ -247,6 +247,7 @@ function MainContent({
                   Want to take this further?
                 </div>
                 <Button
+                  type="button"
                   asChild
                   variant="link"
                   className="h-fit p-0 text-slate-500 underline underline-offset-3"

@@ -2,6 +2,8 @@ import {
   createAssociatedTokenAccountInstruction,
   createTransferInstruction,
   getAssociatedTokenAddressSync,
+  TOKEN_2022_PROGRAM_ID,
+  TOKEN_PROGRAM_ID,
 } from '@solana/spl-token';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import {
@@ -61,6 +63,29 @@ export const PayoutButton = ({ bounty, submission }: Props) => {
     { ssr: false },
   );
 
+  const detectTokenProgram = async (mintAddress: string) => {
+    try {
+      const mintPubkey = new PublicKey(mintAddress);
+      const accountInfo = await connection.getAccountInfo(mintPubkey);
+
+      if (!accountInfo) {
+        throw new Error('Token mint not found');
+      }
+
+      if (accountInfo.owner.equals(TOKEN_2022_PROGRAM_ID)) {
+        return TOKEN_2022_PROGRAM_ID;
+      }
+
+      return TOKEN_PROGRAM_ID;
+    } catch (error) {
+      console.warn(
+        'Failed to detect token program, defaulting to legacy:',
+        error,
+      );
+      return TOKEN_PROGRAM_ID;
+    }
+  };
+
   const { mutate: addPayment } = useMutation({
     mutationFn: ({ id, paymentDetails }: { id: string; paymentDetails: any }) =>
       api.post(`/api/sponsor-dashboard/submission/add-payment/`, {
@@ -107,15 +132,6 @@ export const PayoutButton = ({ bounty, submission }: Props) => {
       const tokenAddress = tokenDetails?.mintAddress as string;
       const power = tokenDetails?.decimals as number;
 
-      const senderATA = await getAssociatedTokenAddressSync(
-        new PublicKey(tokenAddress),
-        publicKey as PublicKey,
-      );
-      const receiverATA = await getAssociatedTokenAddressSync(
-        new PublicKey(tokenAddress),
-        receiver as PublicKey,
-      );
-
       if (token === 'SOL') {
         transaction.add(
           SystemProgram.transfer({
@@ -125,6 +141,21 @@ export const PayoutButton = ({ bounty, submission }: Props) => {
           }),
         );
       } else {
+        const tokenProgramId = await detectTokenProgram(tokenAddress);
+
+        const senderATA = getAssociatedTokenAddressSync(
+          new PublicKey(tokenAddress),
+          publicKey as PublicKey,
+          false,
+          tokenProgramId,
+        );
+        const receiverATA = getAssociatedTokenAddressSync(
+          new PublicKey(tokenAddress),
+          receiver as PublicKey,
+          false,
+          tokenProgramId,
+        );
+
         const receiverATAExists = await connection.getAccountInfo(receiverATA);
 
         if (!receiverATAExists) {
@@ -134,6 +165,7 @@ export const PayoutButton = ({ bounty, submission }: Props) => {
               receiverATA,
               receiver,
               new PublicKey(tokenAddress),
+              tokenProgramId,
             ),
           );
         }
@@ -144,6 +176,8 @@ export const PayoutButton = ({ bounty, submission }: Props) => {
             receiverATA,
             publicKey as PublicKey,
             amount * 10 ** power,
+            [],
+            tokenProgramId,
           ),
         );
       }
@@ -208,7 +242,7 @@ export const PayoutButton = ({ bounty, submission }: Props) => {
     } catch (error) {
       console.log(error);
       log.error(
-        `Sponsor unable to pay, user id: ${user?.id}, sponsor id: ${user?.currentSponsorId}, error: ${error?.toString()}`,
+        `Sponsor unable to pay, user id: ${user?.id}, sponsor id: ${user?.currentSponsorId}, error: ${error?.toString()}, sponsor wallet: ${publicKey?.toBase58()}`,
       );
       toast.error(
         'Alert: Payment might have gone through. Please check your wallet history to confirm.',

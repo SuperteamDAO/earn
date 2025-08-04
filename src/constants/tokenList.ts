@@ -502,7 +502,7 @@ export const tokenList: Token[] = [
     tokenName: 'USD Star',
     tokenSymbol: 'USD*',
     mintAddress: 'BenJy1n3WTx9mTjEvy63e8Q1j4RqUc6E4VBMz3ir4Wo6',
-    icon: 'https://statics.solscan.io/cdn/imgs/s60?ref=68747470733a2f2f697066732e66696c65626173652e696f2f697066732f516d5041333735546558756e6a6145513561674c42375251576745705161553539544438526d554a786f31374563',
+    icon: 'https://res.cloudinary.com/dgvnuwspr/image/upload/v1754053412/2025-08-01_18.30.41_utc1fs.jpg',
     decimals: 6,
     coingeckoSymbol: '',
   },

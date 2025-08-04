@@ -21,6 +21,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { Tooltip } from '@/components/ui/tooltip';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import type { UserSponsor } from '@/interface/userSponsor';
 import { SponsorLayout } from '@/layouts/Sponsor';
@@ -139,13 +140,7 @@ const Index = () => {
           </p>
         </div>
         <div className="flex items-center gap-3">
-          {(user?.role === 'GOD' ||
-            !!(
-              user?.UserSponsors?.length &&
-              user?.UserSponsors.find(
-                (s) => s.sponsorId === user.currentSponsorId,
-              )?.role === 'ADMIN'
-            )) && (
+          {isAdminLoggedIn ? (
             <Button
               className="ph-no-capture text-brand-purple h-9 rounded-lg border border-indigo-500 bg-indigo-50 hover:bg-indigo-100"
               onClick={() => {
@@ -156,6 +151,19 @@ const Index = () => {
               <Plus className="mr-2 h-4 w-4" />
               Invite Members
             </Button>
+          ) : (
+            <Tooltip
+              content="Only Admins can invite new members to a sponsor profile. Please ask one of your Admins to invite a new user."
+              contentProps={{ side: 'bottom' }}
+            >
+              <Button
+                disabled
+                className="ph-no-capture h-9 cursor-not-allowed rounded-lg border border-slate-300 bg-slate-50 text-slate-400"
+              >
+                <Plus className="mr-2 h-4 w-4" />
+                Invite Members
+              </Button>
+            </Tooltip>
           )}
           <div className="relative w-64">
             <Search className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-slate-400" />
