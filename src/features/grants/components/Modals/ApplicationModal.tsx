@@ -197,7 +197,7 @@ export const ApplicationModal = ({
 
       if (success) {
         let attempts = 0;
-        const maxAttempts = 6;
+        const maxAttempts = 5;
         const pollForUpdate = async (): Promise<boolean> => {
           const { data: freshUser } = await refetchUser();
 

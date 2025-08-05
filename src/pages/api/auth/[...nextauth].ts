@@ -14,6 +14,11 @@ export default async function auth(req: NextApiRequest, res: NextApiResponse) {
         clientId: process.env.TWITTER_CLIENT_ID!,
         clientSecret: process.env.TWITTER_CLIENT_SECRET!,
         version: '2.0',
+        authorization: {
+          params: {
+            prompt: 'login',
+          },
+        },
       }),
     ],
 
