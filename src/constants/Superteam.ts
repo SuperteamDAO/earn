@@ -447,6 +447,7 @@ export const unofficialSuperteams = [
     region: 'PAKISTAN',
     country: ['Pakistan'],
     code: 'PK',
+    icons: '',
   },
   {
     name: 'Superteam Nepal',
@@ -454,6 +455,15 @@ export const unofficialSuperteams = [
     region: 'NEPAL',
     country: ['Nepal'],
     code: 'NP',
+    icons: '',
+  },
+  {
+    name: 'Superteam Kazakhstan',
+    displayValue: 'Kazakhstan',
+    region: 'KAZAKHSTAN',
+    country: ['Kazakhstan'],
+    code: 'KZ',
+    icons: '',
   },
 ];
 

@@ -2,6 +2,7 @@
 import { ChevronsUpDown } from 'lucide-react';
 import React, { type JSX, useMemo } from 'react';
 
+import { UserFlag } from '@/components/shared/UserFlag';
 import { Button } from '@/components/ui/button';
 import {
   Command,
@@ -16,7 +17,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import { Superteams } from '@/constants/Superteam';
+import { Superteams, unofficialSuperteams } from '@/constants/Superteam';
 import { cn } from '@/utils/cn';
 
 interface SuperteamOption {
@@ -82,7 +83,7 @@ export function SuperteamCombobox({
   classNames,
 }: SuperteamComboboxProps): JSX.Element {
   const options: SuperteamOption[] = useMemo(() => {
-    return Superteams.map((superteam) => ({
+    return [...Superteams, ...unofficialSuperteams].map((superteam) => ({
       value: superteam.name ?? '-',
       label: superteam.name,
       code: superteam.code,
@@ -111,13 +112,20 @@ export function SuperteamCombobox({
         >
           {!!value && (
             <span className="mr-2 min-h-4 min-w-4">
-              {findOptionByValue(value) && (
-                <img
-                  src={findOptionByValue(value)?.icon || '/placeholder.svg'}
-                  alt={findOptionByValue(value)?.label}
-                  className="h-4 w-4 rounded-full object-cover"
-                />
-              )}
+              {findOptionByValue(value) &&
+                (findOptionByValue(value)?.icon ? (
+                  <img
+                    src={findOptionByValue(value)?.icon}
+                    alt={findOptionByValue(value)?.label}
+                    className="h-4 w-4 rounded-full object-cover"
+                  />
+                ) : (
+                  <UserFlag
+                    location={findOptionByValue(value)?.code || ''}
+                    isCode
+                    size="16px"
+                  />
+                ))}
             </span>
           )}
           <p className="truncate">
@@ -163,11 +171,15 @@ export function SuperteamCombobox({
                   )}
                 >
                   <span className="mx-2 min-h-4 min-w-4">
-                    <img
-                      src={item.icon || '/placeholder.svg'}
-                      alt={item.label}
-                      className="h-4 w-4 rounded-full object-cover"
-                    />
+                    {item.icon ? (
+                      <img
+                        src={item.icon}
+                        alt={item.label}
+                        className="h-4 w-4 rounded-full object-cover"
+                      />
+                    ) : (
+                      <UserFlag location={item.code} isCode size="16px" />
+                    )}
                   </span>
                   <p>{item.label}</p>
                 </CommandItem>
