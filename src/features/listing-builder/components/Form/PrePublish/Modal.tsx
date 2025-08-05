@@ -168,8 +168,11 @@ export function PrePublish() {
       <DialogContent className="overflow-y-visible py-4 sm:max-w-[500px]">
         <DialogHeader className="flex flex-row items-center gap-4">
           <DialogTitle className="relative flex h-5 items-center text-base">
-            {isUpdate ? <span>Update</span> : <span>Publish</span>}{' '}
-            <span>Listing</span>
+            {isUpdate ? (
+              <span>Update Listing</span>
+            ) : (
+              <span>Publish Listing</span>
+            )}
             {isDisabledSoft && (
               <span className="absolute -right-7 flex h-4 w-4 items-center justify-center">
                 <Loader2 className="h-4 w-4 animate-spin text-slate-500" />

@@ -527,7 +527,7 @@ export const VerifyPaymentModal = ({
                                 <CopyButton
                                   text={submission.user?.walletAddress || ''}
                                   contentProps={{
-                                    side: 'left',
+                                    side: 'right',
                                     className: 'text-[0.6875rem] px-2 py-0.5',
                                   }}
                                 >
