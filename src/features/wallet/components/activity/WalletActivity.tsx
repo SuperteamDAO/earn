@@ -1,14 +1,14 @@
 import { usePrivy } from '@privy-io/react-auth';
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
-import { GrTransaction } from 'react-icons/gr';
 
+import GrTransaction from '@/components/icons/GrTransaction';
 import { Button } from '@/components/ui/button';
 
 import { tokenActivityQuery } from '../../queries/fetch-activity';
 import { type TxData } from '../../types/TxData';
+import { type DrawerView } from '../../types/WalletTypes';
 import { TokenSkeleton } from '../tokens/TokenSkeleton';
-import { type DrawerView } from '../WalletDrawer';
 import { ActivityItem } from './ActivityItem';
 
 export const WalletActivity = ({

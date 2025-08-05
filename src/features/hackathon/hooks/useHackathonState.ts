@@ -1,5 +1,5 @@
 import { useRouter, useSearchParams } from 'next/navigation';
-import { usePostHog } from 'posthog-js/react';
+import posthog from 'posthog-js';
 import { useCallback, useMemo } from 'react';
 
 import {
@@ -30,7 +30,6 @@ type QueryParamUpdates = Partial<
 >;
 
 export const useHackathonState = () => {
-  const posthog = usePostHog();
   const router = useRouter();
   const searchParamsFromHook = useSearchParams();
 

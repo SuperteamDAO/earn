@@ -10,6 +10,8 @@ interface ExternalImageProps {
   loading?: 'lazy' | 'eager';
   decoding?: 'async' | 'sync';
   transformations?: Record<string, string | number>;
+  width?: number | string;
+  height?: number | string;
 }
 
 const buildCloudinaryURL = (
@@ -37,6 +39,8 @@ export const ExternalImage = ({
   loading = 'lazy',
   decoding = 'async',
   transformations,
+  width,
+  height,
 }: ExternalImageProps) => {
   const cloudinaryUrl = buildCloudinaryURL(src, transformations);
 
@@ -49,6 +53,8 @@ export const ExternalImage = ({
       loading={loading}
       referrerPolicy="no-referrer"
       decoding={decoding}
+      width={width}
+      height={height}
     />
   );
 };

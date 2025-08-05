@@ -12,8 +12,10 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
+import { useUser } from '@/store/user';
 
 import { hackathonsAtom, isEditingAtom } from '../../atoms';
+import { DEADLINE_FORMAT } from '../../constants';
 import { useListingForm } from '../../hooks';
 
 const deadlineOptions = [
@@ -22,10 +24,11 @@ const deadlineOptions = [
   { label: '3 Weeks', value: 21 },
 ];
 
-export const DEADLINE_FORMAT = 'YYYY-MM-DDTHH:mm:ss.SSS[Z]';
-
 export function Deadline() {
   const form = useListingForm();
+  const { user } = useUser();
+  const isGodMode = user?.role === 'GOD';
+
   const deadline = useWatch({
     name: 'deadline',
     control: form.control,
@@ -41,20 +44,32 @@ export function Deadline() {
   const hackathons = useAtomValue(hackathonsAtom);
 
   const [maxDeadline, setMaxDeadline] = useState<Date | undefined>(undefined);
-  const [minDeadline] = useState<Date | undefined>(new Date());
+  const [minDeadline] = useState<Date | undefined>(
+    dayjs().add(1, 'day').startOf('day').toDate(),
+  );
 
   const isEditing = useAtomValue(isEditingAtom);
 
   useEffect(() => {
-    if (isEditing && deadline) {
-      const originalDeadline = dayjs(deadline);
-      const twoWeeksLater = originalDeadline.add(2, 'weeks');
-      setMaxDeadline(twoWeeksLater.toDate());
+    if (isEditing) {
+      if (deadline) {
+        const originalDeadline = dayjs(deadline);
+        const twoWeeksLater = originalDeadline.add(2, 'weeks');
+        setMaxDeadline(twoWeeksLater.endOf('day').toDate());
+        if (isGodMode) {
+          setMaxDeadline(undefined);
+          return;
+        }
+      }
+    }
+    if (!isEditing) {
+      const threeMonthsLater = dayjs().add(3, 'months');
+      setMaxDeadline(threeMonthsLater.endOf('day').toDate());
     }
     return () => {
       setMaxDeadline(undefined);
     };
-  }, [isEditing]);
+  }, [isEditing, isGodMode]);
 
   const handleDeadlineSelection = (days: number) => {
     return dayjs().add(days, 'day').format(DEADLINE_FORMAT).replace('Z', '');
@@ -115,7 +130,11 @@ export function Deadline() {
                 }}
                 disabled={type === 'hackathon'}
                 minDateTooltipContent="Deadline cannot be in the past"
-                maxDateTooltipContent="Cannot extend deadline more than 2 weeks from original deadline"
+                maxDateTooltipContent={
+                  isEditing
+                    ? 'Cannot extend deadline more than 2 weeks from original deadline'
+                    : 'Deadline cannot be more than 3 months from today'
+                }
               />
             </div>
             {type !== 'hackathon' && (

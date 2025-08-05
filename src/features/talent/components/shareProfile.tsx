@@ -1,8 +1,11 @@
 import React from 'react';
-import { type IconType } from 'react-icons';
-import { FaCheck, FaCopy } from 'react-icons/fa';
-import { FaTelegram, FaWhatsapp, FaXTwitter } from 'react-icons/fa6';
 
+import FaCheck from '@/components/icons/FaCheck';
+import FaCopy from '@/components/icons/FaCopy';
+import FaTelegram from '@/components/icons/FaTelegram';
+import FaWhatsapp from '@/components/icons/FaWhatsapp';
+import FaXTwitter from '@/components/icons/FaXTwitter';
+import { type IconType } from '@/components/icons/helpers/GenIcon';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { useUser } from '@/store/user';
@@ -105,6 +108,7 @@ export const ShareProfile = ({ isOpen, onClose, username, id }: Props) => {
               readOnly
               value={profileUrl}
             />
+
             <div className="absolute top-1/2 right-4 -translate-y-1/2">
               {hasCopied ? (
                 <FaCheck className="h-5 w-5 text-slate-500" />

@@ -37,9 +37,12 @@ const previewAtom = atom(false);
 const saveDraftMutationAtom = atomWithMutation(() => ({
   mutationKey: ['saveDraft'],
   mutationFn: async (data: Partial<ListingFormData>) => {
-    const response = await api.post<ListingFormData>('/api/listings/draft', {
-      ...convertUndefinedToNull(data),
-    });
+    const response = await api.post<ListingFormData>(
+      '/api/sponsor-dashboard/listing/draft',
+      {
+        ...convertUndefinedToNull(data),
+      },
+    );
     return response.data;
   },
 }));
@@ -48,12 +51,23 @@ const submitListingMutationAtom = atomWithMutation((get) => ({
   mutationKey: ['submitListing'],
   mutationFn: async (data: ListingFormData) => {
     if (!data.id) throw new Error('Missing ID');
+
+    if (typeof window !== 'undefined' && window.__processImageCleanup) {
+      console.log('Processing image cleanup before submission');
+      try {
+        await window.__processImageCleanup();
+      } catch (error) {
+        console.error('Failed to process image cleanup:', error);
+      }
+    } else {
+      console.warn('Image cleanup not initialized');
+    }
+
     const isEditing = get(isEditingAtom);
-    const endpoint = isEditing
-      ? '/api/listings/update'
-      : '/api/listings/publish';
+    const endpoint = '/api/sponsor-dashboard/listing/';
+    const action = isEditing ? 'update' : 'publish';
     const response = await api.post<ListingFormData & { reason?: string }>(
-      `${endpoint}/${data.id}`,
+      `${endpoint}${data.id}/${action}`,
       {
         ...convertUndefinedToNull(data),
       },

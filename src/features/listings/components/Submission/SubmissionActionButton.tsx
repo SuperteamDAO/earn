@@ -3,10 +3,9 @@ import { useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import { Loader2, Pencil } from 'lucide-react';
 import { useRouter } from 'next/router';
-import { usePostHog } from 'posthog-js/react';
+import posthog from 'posthog-js';
 import React, { useState } from 'react';
 
-import { SurveyModal } from '@/components/shared/Survey';
 import { Button } from '@/components/ui/button';
 import { Tooltip } from '@/components/ui/tooltip';
 import { useDisclosure } from '@/hooks/use-disclosure';
@@ -16,6 +15,7 @@ import { cn } from '@/utils/cn';
 
 import { AuthWrapper } from '@/features/auth/components/AuthWrapper';
 import { CreditIcon } from '@/features/credits/icon/credit';
+import { SurveyModal } from '@/features/listings/components/Submission/Survey';
 
 import { userSubmissionQuery } from '../../queries/user-submission-status';
 import { type Listing } from '../../types';
@@ -44,6 +44,7 @@ const InfoWrapper = ({
   isProject,
   isBounty,
   isEditMode,
+  isAuthenticated,
 }: {
   children: React.ReactNode;
   isUserEligibleByRegion: boolean;
@@ -55,18 +56,22 @@ const InfoWrapper = ({
   isProject: boolean;
   isBounty: boolean;
   isEditMode: boolean;
+  isAuthenticated: boolean;
 }) => {
+  const { user } = useUser();
   return (
     <Tooltip
       disabled={
-        hasHackathonStarted &&
-        (isUserEligibleByRegion || pastDeadline) &&
-        !(
-          creditBalance === 0 &&
-          (isProject || isBounty) &&
-          !isEditMode &&
-          !pastDeadline
-        )
+        !isAuthenticated ||
+        (isAuthenticated && user?.id && !user?.isTalentFilled) ||
+        (hasHackathonStarted &&
+          (isUserEligibleByRegion || pastDeadline) &&
+          !(
+            creditBalance === 0 &&
+            (isProject || isBounty) &&
+            !isEditMode &&
+            !pastDeadline
+          ))
       }
       content={
         !isUserEligibleByRegion
@@ -122,7 +127,7 @@ export const SubmissionActionButton = ({
 
   const isSubmitted = submission?.isSubmitted ?? false;
   const submissionStatus = submission?.status;
-  const posthog = usePostHog();
+
   const router = useRouter();
   const { query } = router;
 
@@ -207,8 +212,12 @@ export const SubmissionActionButton = ({
           (user?.id &&
             user?.isTalentFilled &&
             (!hasHackathonStarted || !isUserEligibleByRegion)) ||
-          !hasHackathonStarted ||
-          (creditBalance === 0 && (isProject || isBounty)),
+          (!isAuthenticated ? false : !hasHackathonStarted) ||
+          (isAuthenticated &&
+            user?.id &&
+            user?.isTalentFilled &&
+            creditBalance === 0 &&
+            (isProject || isBounty)),
       );
       isSubmitDisabled = Boolean(
         pastDeadline ||
@@ -283,7 +292,7 @@ export const SubmissionActionButton = ({
         />
       )}
 
-      <div className="ph-no-capture fixed bottom-0 left-1/2 z-50 mb-1 w-full -translate-x-1/2 border-t-1 border-slate-100 bg-white px-3 py-4 pt-2 pb-14 md:static md:translate-x-0 md:border-t-0 md:border-transparent md:px-0 md:py-0 md:pb-3">
+      <div className="ph-no-capture w-full md:px-0 md:pb-3">
         <div className="flex items-center gap-2">
           <InfoWrapper
             isUserEligibleByRegion={isUserEligibleByRegion}
@@ -295,6 +304,7 @@ export const SubmissionActionButton = ({
             isProject={isProject}
             isBounty={isBounty}
             isEditMode={isEditMode}
+            isAuthenticated={isAuthenticated}
           >
             <AuthWrapper
               showCompleteProfileModal

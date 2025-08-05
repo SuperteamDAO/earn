@@ -1,5 +1,5 @@
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { usePostHog } from 'posthog-js/react';
+import posthog from 'posthog-js';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import {
@@ -39,7 +39,6 @@ type QueryParamUpdates = Partial<
 export const useListingState = ({
   defaultCategory = DEFAULT_HOOK_INITIAL_CATEGORY_VALUE,
 }: UseListingStateProps) => {
-  const posthog = usePostHog();
   const router = useRouter();
   const pathname = usePathname();
   const searchParamsFromHook = useSearchParams();

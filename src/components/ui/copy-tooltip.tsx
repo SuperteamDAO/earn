@@ -69,7 +69,7 @@ export function CopyButton({
     >
       <div
         role="button"
-        className={cn('relative inline-flex items-center', className)}
+        className={cn('inline-flex items-center', className)}
         onClick={onCopy}
         tabIndex={0}
         onKeyDown={(e) => {

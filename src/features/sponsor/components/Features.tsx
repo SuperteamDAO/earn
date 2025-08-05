@@ -1,49 +1,55 @@
-import { usePostHog } from 'posthog-js/react';
+import posthog from 'posthog-js';
 
+import { Wand } from '@/svg/wand';
 import { cn } from '@/utils/cn';
 
+import { DollarIcon } from '../icons/DollarIcon';
+import { EnterIcon } from '../icons/EnterIcon';
+import { InviteIcon } from '../icons/InviteIcon';
+import { ReviewIcon } from '../icons/ReviewIcon';
+import { SkillIcon } from '../icons/SkillIcon';
 import { maxW2 } from '../utils/styles';
 import { HighQualityImage } from './HighQualityImage';
 
 interface FeatureProps {
-  icon: string;
+  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
   title: string;
   description: string;
 }
 
 const features: FeatureProps[] = [
   {
-    icon: '/landingsponsor/icons/Doc.svg',
-    title: '< 1 Min to Publish a Listing',
+    icon: Wand,
+    title: 'Auto-Generate Listings Instantly',
     description:
-      'Never start from scratch. No hassle of writing your own descriptions: either duplicate an existing bounty, or choose from 10+ templates.',
+      'AI-powered tool to create high-quality drafts in seconds - structured, editable, and ready to publish. Go from idea to live listing in <1 min.',
   },
   {
-    icon: '/landingsponsor/icons/Review.svg',
+    icon: ReviewIcon,
     title: 'Review & Sort',
     description:
       'Reviewing submissions is no longer a pain. Effortlessly categorize submissions with our intuitive labelling system. ',
   },
   {
-    icon: '/icons/green-dollar.svg',
+    icon: DollarIcon,
     title: 'Easy Payments',
     description:
       'Pay talent directly from the platform without worrying about sending payment to the wrong address.',
   },
   {
-    icon: '/landingsponsor/icons/Skill.svg',
+    icon: SkillIcon,
     title: 'Skill Based Targetting',
     description:
       'Each new listing gets sent to relevant people via e-mail and Discord.',
   },
   {
-    icon: '/landingsponsor/icons/Enter.svg',
+    icon: EnterIcon,
     title: 'Get Quotes',
     description:
       'Not sure how to budget your freelance gig? Opt to receive quotes from participants instead.',
   },
   {
-    icon: '/landingsponsor/icons/Invite.svg',
+    icon: InviteIcon,
     title: 'Invite & Collaborate',
     description:
       'Invite multiple team members via email, and collaborate on managing your listings.',
@@ -55,8 +61,6 @@ interface Props {
 }
 
 export function Features({ showVideo }: Props) {
-  const posthog = usePostHog();
-
   return (
     <div
       className="relative mx-auto my-32 w-full px-[1.875rem] lg:px-[7rem] xl:px-[11rem]"
@@ -132,10 +136,10 @@ export function Features({ showVideo }: Props) {
   );
 }
 
-function Feature({ icon, title, description }: FeatureProps) {
+function Feature({ icon: Icon, title, description }: FeatureProps) {
   return (
     <div className="flex flex-col items-start gap-4">
-      <HighQualityImage src={icon} alt={title} className="h-[1.8rem] w-8" />
+      <Icon className="text-primary h-[1.8rem] w-8" />
       <div className="flex flex-col items-start">
         <p className="text-lg font-semibold text-slate-700">{title}</p>
         <p

@@ -1,4 +1,8 @@
-import type { BountyType, status } from '@prisma/client';
+import {
+  type BountyType,
+  type status,
+  type SubmissionLabels,
+} from '@prisma/client';
 
 import type { Skills } from '@/interface/skills';
 import type { SponsorType } from '@/interface/sponsor';
@@ -15,6 +19,7 @@ export interface Listing {
   applicationLink?: string;
   skills?: Skills;
   deadline?: string;
+  commitmentDate?: string;
   eligibility?: Eligibility[];
   status?: status;
   isActive?: boolean;
@@ -53,6 +58,7 @@ export interface Listing {
   isFndnPaying?: boolean;
   usdValue?: number;
   referredBy?: string;
+  ai?: ProjectAi;
 }
 
 export interface ListingHackathon {
@@ -99,3 +105,41 @@ export interface ListingTabsProps {
   region?: string;
   sponsor?: string;
 }
+
+type ProjectContextQuestionsType = {
+  type: 'pow' | 'qualitative' | 'yesno' | 'contact';
+  question: string;
+  order: number;
+}[];
+
+type ProjectContextSummary = {
+  projectSummary: string;
+  skills: string;
+  responsibilities: string;
+  experience: string;
+  companyInfo: string;
+};
+
+export interface ProjectAi {
+  context?: {
+    summary?: ProjectContextSummary;
+    questionTypes?: ProjectContextQuestionsType;
+  };
+}
+
+export type EvaluationResult = {
+  predictedLabel?: SubmissionLabels;
+  shortNote?: string;
+  scores?: Scores;
+};
+
+export interface ProjectApplicationAi {
+  review?: EvaluationResult;
+  commited?: boolean;
+}
+
+export type Scores = {
+  skills: number;
+  experience: number;
+  application: number;
+};

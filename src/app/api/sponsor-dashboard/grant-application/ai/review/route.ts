@@ -1,12 +1,11 @@
 import { headers } from 'next/headers';
 import { type NextRequest, NextResponse } from 'next/server';
 
-import earncognitoClient from '@/lib/earncognitoClient';
 import logger from '@/lib/logger';
 import { safeStringify } from '@/utils/safeStringify';
 
+import { queueAgent } from '@/features/agents/utils/queueAgent';
 import { getSponsorSession } from '@/features/auth/utils/getSponsorSession';
-import { type EvaluationResult } from '@/features/grants/types';
 
 export const maxDuration = 300;
 
@@ -36,13 +35,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const data = await earncognitoClient.post<EvaluationResult>(
-      '/ai/grants/review-application',
-      {
-        id,
-      },
+    await queueAgent({
+      type: 'autoReviewGrantApplication',
+      id,
+    });
+    return NextResponse.json(
+      { message: 'Queued Successfully' },
+      { status: 200 },
     );
-    return NextResponse.json(data.data, { status: 200 });
   } catch (error: any) {
     logger.error(
       `Error occurred while committing reviewed grant applications`,

@@ -6,6 +6,8 @@ import { NextResponse } from 'next/server';
 import { z } from 'zod';
 
 import logger from '@/lib/logger';
+import { aiGenerateRateLimiter } from '@/lib/ratelimit';
+import { checkAndApplyRateLimitApp } from '@/lib/rateLimiterService';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { getSponsorSession } from '@/features/auth/utils/getSponsorSession';
@@ -21,6 +23,27 @@ const requestBodySchema = z.object({
 
 export async function POST(request: Request) {
   try {
+    const session = await getSponsorSession(await headers());
+
+    if (session.error || !session.data) {
+      return NextResponse.json(
+        { error: session.error },
+        { status: session.status },
+      );
+    }
+
+    const userId = session.data.userId;
+
+    const rateLimitResponse = await checkAndApplyRateLimitApp({
+      limiter: aiGenerateRateLimiter,
+      identifier: userId,
+      routeName: 'aiGenerateQuestions',
+    });
+
+    if (rateLimitResponse) {
+      return rateLimitResponse;
+    }
+
     let description: string, type: BountyType, inputRequirements: string;
     try {
       const body = await request.json();
@@ -51,15 +74,6 @@ export async function POST(request: Request) {
       throw e;
     }
 
-    const session = await getSponsorSession(await headers());
-
-    if (session.error || !session.data) {
-      return NextResponse.json(
-        { error: session.error },
-        { status: session.status },
-      );
-    }
-
     const prompt = generateListingQuestionsPrompt(
       description,
       inputRequirements,
@@ -67,11 +81,7 @@ export async function POST(request: Request) {
     );
 
     const { object } = await generateObject({
-      model: openrouter('google/gemini-2.5-pro-preview-03-25', {
-        reasoning: {
-          effort: 'low',
-        },
-      }),
+      model: openrouter('google/gemini-2.5-flash'),
       system:
         'Your role is to generate high-quality evaluation questions for listings, strictly adhering to the rules provided with each description and type.',
       prompt,

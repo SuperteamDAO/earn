@@ -79,21 +79,30 @@ const getApplicantData = async (
   idNumber: string;
   idType: string;
 }> => {
-  const url = `/resources/applicants/-;externalUserId=${userId}/one`;
+  const applicantUrl = `/resources/applicants/-;externalUserId=${userId}/one`;
   const method = 'GET';
   const body = '';
 
-  const headers = createSumSubHeaders(method, url, body, secretKey, appToken);
+  const headers = createSumSubHeaders(
+    method,
+    applicantUrl,
+    body,
+    secretKey,
+    appToken,
+  );
 
   try {
-    const response = await axios.get(`${SUMSUB_BASE_URL}${url}`, { headers });
+    const applicantResponse = await axios.get(
+      `${SUMSUB_BASE_URL}${applicantUrl}`,
+      { headers },
+    );
 
-    const id = response.data.id;
+    const id = applicantResponse.data.id;
     if (!id) {
       throw new Error('Sumsub: Applicant ID not found in response');
     }
 
-    const info = response.data.info;
+    const info = applicantResponse.data.info;
 
     const firstName = info.firstNameEn || '';
     const middleName = info.middleNameEn || '';
@@ -109,12 +118,69 @@ const getApplicantData = async (
     const country = info.country || '';
     const dob = info.dob || '';
 
-    const idDoc = info.idDocs?.[0] || {};
+    const statusUrl = `/resources/applicants/${id}/requiredIdDocsStatus`;
+    const statusHeaders = createSumSubHeaders(
+      method,
+      statusUrl,
+      body,
+      secretKey,
+      appToken,
+    );
 
-    const formattedAddress = idDoc?.address?.formattedAddress;
+    const statusResponse = await axios.get(`${SUMSUB_BASE_URL}${statusUrl}`, {
+      headers: statusHeaders,
+    });
+
+    const identityStep = statusResponse.data.IDENTITY;
+    let approvedIdDoc = null;
+
+    if (identityStep && identityStep.imageReviewResults) {
+      const approvedImageId = Object.keys(identityStep.imageReviewResults).find(
+        (imageId) =>
+          identityStep.imageReviewResults[imageId].reviewAnswer === 'GREEN',
+      );
+
+      if (approvedImageId) {
+        const approvedImageIndex = identityStep.imageIds.indexOf(
+          parseInt(approvedImageId),
+        );
+        if (approvedImageIndex !== -1 && info.idDocs?.[approvedImageIndex]) {
+          approvedIdDoc = info.idDocs[approvedImageIndex];
+          logger.info(
+            `Found approved ID document at index ${approvedImageIndex} for applicant ${id}`,
+          );
+        } else {
+          logger.warn(
+            `Approved image ID ${approvedImageId} not found in imageIds array for applicant ${id}`,
+          );
+        }
+      } else {
+        logger.warn(
+          `No approved (GREEN) ID documents found for applicant ${id}`,
+        );
+      }
+    } else {
+      logger.warn(
+        `No IDENTITY step or imageReviewResults found for applicant ${id}`,
+      );
+    }
+
+    if (!approvedIdDoc && info.idDocs?.[0]) {
+      logger.warn(
+        `No approved ID document found for applicant ${id}, using first document as fallback`,
+      );
+      approvedIdDoc = info.idDocs[0];
+    }
+
+    if (!approvedIdDoc) {
+      logger.error(`No ID documents available for applicant ${id}`);
+      throw new Error('Sumsub: No ID documents found for applicant');
+    }
+
+    const formattedAddress = approvedIdDoc?.address?.formattedAddress;
     const address = formattedAddress ? formattedAddress : null;
-    const idNumber = idDoc.number || '';
-    const idType = idDoc.idDocType || '';
+    const idNumber = approvedIdDoc?.number || '';
+    const idType = approvedIdDoc?.idDocType || '';
 
     return {
       id,

@@ -1,5 +1,6 @@
 import { queryOptions } from '@tanstack/react-query';
 
+import { Superteams, unofficialSuperteams } from '@/constants/Superteam';
 import { api } from '@/lib/api';
 
 export interface LocalProfile {
@@ -24,39 +25,32 @@ export interface LocalProfile {
   createdAt: string;
 }
 
-interface PaginatedResponse {
-  users: LocalProfile[];
-  pagination: {
-    total: number;
-    page: number;
-    limit: number;
-    totalPages: number;
-  };
-}
-
-interface FetchLocalProfilesParams {
-  page?: number;
-  limit?: number;
-  region: string;
-}
-
 const fetchLocalProfiles = async ({
-  page = 1,
-  limit = 10,
-  region,
-}: FetchLocalProfilesParams): Promise<PaginatedResponse> => {
-  const { data } = await api.get('/api/sponsor-dashboard/local-profiles/', {
-    params: {
-      page,
-      limit,
-      region,
-    },
-  });
+  sponsorName,
+}: {
+  sponsorName: string;
+}): Promise<LocalProfile[]> => {
+  const matchedSuperteam =
+    Superteams.find(
+      (team) => team.name.toLowerCase() === sponsorName.toLowerCase(),
+    ) ||
+    unofficialSuperteams.find(
+      (team) => team.name.toLowerCase() === sponsorName.toLowerCase(),
+    );
+
+  const matchedSuperteamRegion = matchedSuperteam?.region;
+  const matchedSuperteamCountries = matchedSuperteam?.country;
+
+  const { data } = await api.get(
+    `/api/sponsor-dashboard/local-talent/?superteamRegion=${matchedSuperteamRegion}&superteamCountries=${matchedSuperteamCountries}`,
+  );
   return data;
 };
 
-export const localProfilesQuery = (params: FetchLocalProfilesParams) =>
+export const localProfilesQuery = (sponsorName: string) =>
   queryOptions({
-    queryKey: ['localProfiles', params],
-    queryFn: () => fetchLocalProfiles(params),
+    queryKey: ['localProfiles', sponsorName],
+    queryFn: () => fetchLocalProfiles({ sponsorName }),
+    enabled: !!sponsorName,
+    retry: false,
   });

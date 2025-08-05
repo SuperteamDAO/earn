@@ -62,6 +62,7 @@ export function PowCard({ pow, type, commentCount }: PowCardProps) {
 
   return (
     <FeedCardContainer
+      isPrivate={false}
       type={type}
       content={content}
       actionLinks={actionLinks}

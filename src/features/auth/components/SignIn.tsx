@@ -1,16 +1,18 @@
 import { useLoginWithOAuth } from '@privy-io/react-auth';
+import { useSetAtom } from 'jotai';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { usePostHog } from 'posthog-js/react';
+import posthog from 'posthog-js';
 import React, { type Dispatch, type SetStateAction, useState } from 'react';
-import { MdOutlineEmail } from 'react-icons/md';
 
+import MdOutlineEmail from '@/components/icons/MdOutlineEmail';
 import { Button } from '@/components/ui/button';
 import { CopyButton } from '@/components/ui/copy-tooltip';
 import { TERMS_OF_USE } from '@/constants/TERMS_OF_USE';
 import { useBreakpoint } from '@/hooks/use-breakpoint';
 import { GoogleIcon } from '@/svg/google';
 
+import { loginEventAtom } from '../atoms';
 import { handleUserCreation } from '../utils/handleUserCreation';
 import { EmailSignIn } from './EmailSignIn';
 
@@ -26,9 +28,9 @@ export const SignIn = ({
   redirectTo,
 }: SigninProps) => {
   const router = useRouter();
-  const posthog = usePostHog();
   const [isLoading, setIsLoading] = useState(false);
   const isMD = useBreakpoint('md');
+  const setLoginEvent = useSetAtom(loginEventAtom);
 
   const { initOAuth } = useLoginWithOAuth({
     onComplete: async ({ user, wasAlreadyAuthenticated }) => {
@@ -45,11 +47,12 @@ export const SignIn = ({
           'privy_oauth_provider',
           'privy_oauth_code',
         ];
+
         privyParams.forEach((param) => url.searchParams.delete(param));
-        if (!wasAlreadyAuthenticated) {
-          url.searchParams.set('loginState', 'signedIn');
-        }
         router.replace(url.toString());
+      }
+      if (!wasAlreadyAuthenticated) {
+        setLoginEvent('fresh_login');
       }
     },
   });

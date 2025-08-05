@@ -3,8 +3,8 @@ import { useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { X } from 'lucide-react';
 import { useRouter } from 'next/router';
-import { usePostHog } from 'posthog-js/react';
-import { type JSX, useEffect, useState } from 'react';
+import posthog from 'posthog-js';
+import { type JSX, useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { type z } from 'zod';
@@ -23,8 +23,8 @@ import {
 } from '@/components/ui/form';
 import { FormFieldWrapper } from '@/components/ui/form-field-wrapper';
 import { Input } from '@/components/ui/input';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { SideDrawer, SideDrawerContent } from '@/components/ui/side-drawer';
-import { WalletConnectField } from '@/components/ui/wallet-connect-field';
 import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
@@ -32,7 +32,6 @@ import { cn } from '@/utils/cn';
 import { CreditIcon } from '@/features/credits/icon/credit';
 import { SocialInput } from '@/features/social/components/SocialInput';
 
-import { walletFieldListings } from '../../constants/walletFieldListings';
 import { submissionCountQuery } from '../../queries/submission-count';
 import { userSubmissionQuery } from '../../queries/user-submission-status';
 import { type Listing } from '../../types';
@@ -98,7 +97,7 @@ export const SubmissionDrawer = ({
           : [],
     },
   });
-  const posthog = usePostHog();
+
   const router = useRouter();
   const { query } = router;
 
@@ -147,8 +146,32 @@ export const SubmissionDrawer = ({
     fetchData();
   }, [id, editMode, form.reset]);
 
+  const isDisabled = useMemo(
+    () =>
+      Boolean(
+        isSubmitDisabled ||
+          isTemplate ||
+          !!query['preview'] ||
+          (isHackathon && !editMode && !termsAccepted) ||
+          isLoading ||
+          form.formState.isSubmitting,
+      ),
+
+    [
+      isSubmitDisabled,
+      isTemplate,
+      query,
+      isHackathon,
+      editMode,
+      termsAccepted,
+      isLoading,
+      form.formState.isSubmitting,
+    ],
+  );
+
   const onSubmit = async (data: FormData) => {
     if (isLoading) return;
+    if (isDisabled) return;
 
     posthog.capture('confirmed_submission');
     setIsLoading(true);
@@ -229,18 +252,28 @@ export const SubmissionDrawer = ({
       headerText = 'Submit Your Application';
       subheadingText = (
         <>
-          Don&apos;t start working just yet! Apply first, and then begin working
-          only once you&apos;ve been hired for the project by the sponsor.
           <p>
-            Please note that the sponsor might contact you to assess fit before
-            picking the winner.
+            {`Don't start working on the scope just yet! Apply first. Only the winning candidate will have to work on the scope mentioned in this listing. `}
+          </p>
+          <p>Note:</p>
+          <p>
+            1. The sponsor might contact you to assess fit before picking the
+            winner.
+          </p>
+          <p>
+            2. You can edit this application until the deadline of this listing.
           </p>
         </>
       );
       break;
     case 'bounty':
       headerText = 'Bounty Submission';
-      subheadingText = "We can't wait to see what you've created!";
+      subheadingText = (
+        <>
+          <p>{`We can't wait to see what you've created!`}</p>
+          <p>Note: You can edit this submission until the bounty deadline.</p>
+        </>
+      );
       break;
     case 'hackathon':
       headerText = `${Hackathon?.name || ''} Track Submission`;
@@ -278,7 +311,7 @@ export const SubmissionDrawer = ({
             style={{ width: '100%', height: '100%' }}
           >
             <div className="flex h-full flex-col justify-between gap-6">
-              <div className="h-full overflow-y-auto rounded-lg border border-slate-200 px-2 shadow-[0px_1px_3px_rgba(0,0,0,0.08),_0px_1px_2px_rgba(0,0,0,0.06)] md:px-4 [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-slate-300 [&::-webkit-scrollbar-track]:w-1.5">
+              <ScrollArea className="h-full overflow-y-auto rounded-lg border border-slate-200 px-2 shadow-[0px_1px_3px_rgba(0,0,0,0.08),_0px_1px_2px_rgba(0,0,0,0.06)]">
                 <div className="mb-4 border-b border-slate-100 bg-white py-3">
                   <p className="text-lg font-medium text-slate-700">
                     {headerText}
@@ -287,7 +320,7 @@ export const SubmissionDrawer = ({
                 </div>
                 <div>
                   <div className="mb-5 flex flex-col gap-4">
-                    {!isProject && !walletFieldListings.includes(id!) && (
+                    {!isProject && (
                       <>
                         <FormField
                           control={form.control}
@@ -364,22 +397,6 @@ export const SubmissionDrawer = ({
                       </>
                     )}
                     {eligibility?.map((e, index) => {
-                      if (
-                        walletFieldListings.includes(id!) &&
-                        e.question === 'Connect Your Solana Wallet'
-                      ) {
-                        return (
-                          <WalletConnectField
-                            key={e.order}
-                            control={form.control}
-                            name={`eligibilityAnswers.${index}.answer`}
-                            label={e.question}
-                            isRequired
-                            description="Connect your wallet to verify ownership. This is mandatory for this bounty."
-                          />
-                        );
-                      }
-
                       return (
                         <FormField
                           key={e.order}
@@ -457,7 +474,7 @@ export const SubmissionDrawer = ({
                     />
                   </div>
                 </div>
-              </div>
+              </ScrollArea>
 
               <div className="flex w-full flex-col">
                 {isHackathon && !editMode && (
@@ -485,14 +502,7 @@ export const SubmissionDrawer = ({
 
                 <Button
                   className="ph-no-capture h-12 w-full"
-                  disabled={
-                    isSubmitDisabled ||
-                    isTemplate ||
-                    !!query['preview'] ||
-                    (isHackathon && !editMode && !termsAccepted) ||
-                    isLoading ||
-                    form.formState.isSubmitting
-                  }
+                  disabled={isDisabled}
                   type="submit"
                 >
                   {isLoading ? (
@@ -520,6 +530,7 @@ export const SubmissionDrawer = ({
                     onClick={() => setIsTOSModalOpen(true)}
                     className="cursor-pointer underline underline-offset-2"
                     rel="noopener noreferrer"
+                    type="button"
                   >
                     Terms of Use
                   </button>

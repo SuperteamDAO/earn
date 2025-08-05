@@ -6,8 +6,11 @@ import { cn } from '@/utils/cn';
 function ScrollArea({
   className,
   children,
+  viewportProps,
   ...props
-}: React.ComponentProps<typeof ScrollAreaPrimitive.Root>) {
+}: React.ComponentProps<typeof ScrollAreaPrimitive.Root> & {
+  viewportProps?: React.ComponentProps<typeof ScrollAreaPrimitive.Viewport>;
+}) {
   return (
     <ScrollAreaPrimitive.Root
       data-slot="scroll-area"
@@ -16,7 +19,8 @@ function ScrollArea({
     >
       <ScrollAreaPrimitive.Viewport
         data-slot="scroll-area-viewport"
-        className="size-full rounded-[inherit]"
+        {...viewportProps}
+        className={cn('size-full rounded-[inherit]', viewportProps?.className)}
       >
         {children}
       </ScrollAreaPrimitive.Viewport>
@@ -47,7 +51,7 @@ function ScrollBar({
     >
       <ScrollAreaPrimitive.ScrollAreaThumb
         data-slot="scroll-area-thumb"
-        className="bg-border relative flex-1 rounded-full"
+        className="relative flex-1 rounded-full bg-slate-300"
       />
     </ScrollAreaPrimitive.ScrollAreaScrollbar>
   );

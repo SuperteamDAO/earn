@@ -8,6 +8,8 @@ import { toast } from 'sonner';
 import { type z } from 'zod';
 
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
+import { DateTimePicker } from '@/components/ui/datetime-picker';
 import { DialogTitle } from '@/components/ui/dialog';
 import {
   Form,
@@ -59,6 +61,8 @@ export const ApplicationModal = ({
 
   const [activeStep, setActiveStep] = useState(0);
   const [isTOSModalOpen, setIsTOSModalOpen] = useState(false);
+  const [acknowledgementAccepted, setAcknowledgementAccepted] = useState(false);
+  const [acknowledgementError, setAcknowledgementError] = useState('');
 
   const { id, token, minReward, maxReward, questions } = grant;
 
@@ -89,6 +93,9 @@ export const ApplicationModal = ({
       twitter: grantApplication?.twitter
         ? extractSocialUsername('twitter', grantApplication?.twitter) || ''
         : extractSocialUsername('twitter', user?.twitter || '') || '',
+      github: grantApplication?.github
+        ? extractSocialUsername('github', grantApplication?.github) || ''
+        : extractSocialUsername('github', user?.github || '') || '',
       telegram: extractSocialUsername('telegram', user?.telegram || '') || '',
       answers:
         Array.isArray(questions) && questions.length > 0
@@ -108,6 +115,15 @@ export const ApplicationModal = ({
 
   const queryClient = useQueryClient();
 
+  const validateAcknowledgement = () => {
+    if (!grantApplication && !acknowledgementAccepted) {
+      setAcknowledgementError('Acknowledgement required');
+      return false;
+    }
+    setAcknowledgementError('');
+    return true;
+  };
+
   const submitApplication = async (data: FormData) => {
     setIsLoading(true);
     try {
@@ -122,6 +138,7 @@ export const ApplicationModal = ({
         milestones,
         kpi,
         twitter,
+        github,
         answers,
         telegram,
       } = data;
@@ -140,6 +157,7 @@ export const ApplicationModal = ({
         walletAddress,
         ask: ask || null,
         twitter,
+        github,
         answers: answers || [],
         telegram: telegram || user?.telegram || '',
       });
@@ -185,6 +203,7 @@ export const ApplicationModal = ({
         'projectTimeline',
         'proofOfWork',
         'twitter',
+        'github',
         ...(questions?.map(
           (_: any, index: number) => `answers.${index}.answer` as const,
         ) || []),
@@ -276,11 +295,23 @@ export const ApplicationModal = ({
         <Form {...form}>
           <form
             style={{ width: '100%' }}
-            onSubmit={form.handleSubmit((data) => {
-              if (activeStep === steps.length - 1) {
-                submitApplication(data);
-              }
-            })}
+            onSubmit={form.handleSubmit(
+              (data) => {
+                if (activeStep === steps.length - 1) {
+                  if (!validateAcknowledgement()) {
+                    return;
+                  }
+                  submitApplication(data);
+                }
+              },
+              () => {
+                if (
+                  activeStep === steps.length - 1 &&
+                  !validateAcknowledgement()
+                ) {
+                }
+              },
+            )}
           >
             {activeStep === 0 && (
               <div className="mb-5 flex flex-col gap-4">
@@ -385,28 +416,47 @@ export const ApplicationModal = ({
                   richEditorPlaceholder="Describe the problem & solution"
                 />
 
-                <FormFieldWrapper
+                <FormField
                   control={form.control}
                   name="projectTimeline"
-                  label={`Deadline (in ${Intl.DateTimeFormat().resolvedOptions().timeZone})`}
-                  description="What is the expected completion date for the project?"
-                  isRequired
-                >
-                  <Input
-                    className={cn(
-                      'relative w-full',
-                      '[&::-webkit-calendar-picker-indicator]:opacity-0',
-                      '[&::-webkit-calendar-picker-indicator]:absolute',
-                      '[&::-webkit-calendar-picker-indicator]:inset-0',
-                      '[&::-webkit-calendar-picker-indicator]:w-full',
-                      '[&::-webkit-calendar-picker-indicator]:h-full',
-                      '[&::-webkit-calendar-picker-indicator]:cursor-pointer',
-                    )}
-                    min={date}
-                    placeholder="deadline"
-                    type="date"
-                  />
-                </FormFieldWrapper>
+                  render={({ field }) => (
+                    <FormItem className="flex flex-col gap-2">
+                      <div>
+                        <FormLabel isRequired>
+                          {`Deadline (in ${Intl.DateTimeFormat().resolvedOptions().timeZone})`}
+                        </FormLabel>
+                        <FormDescription>
+                          What is the expected completion date for the project?
+                        </FormDescription>
+                      </div>
+                      <div>
+                        <FormControl>
+                          <DateTimePicker
+                            value={
+                              field.value
+                                ? dayjs(field.value, 'YYYY-MM-DD').toDate()
+                                : undefined
+                            }
+                            onChange={(selectedDate) => {
+                              if (selectedDate) {
+                                field.onChange(
+                                  dayjs(selectedDate).format('YYYY-MM-DD'),
+                                );
+                              } else {
+                                field.onChange(undefined);
+                              }
+                            }}
+                            min={dayjs(date, 'YYYY-MM-DD').toDate()}
+                            hideTime={true}
+                            minDateTooltipContent="Deadline cannot be in the past"
+                            defaultDisplayValue="Pick a date"
+                          />
+                        </FormControl>
+                        <FormMessage className="pt-1" />
+                      </div>
+                    </FormItem>
+                  )}
+                />
 
                 <FormFieldWrapper
                   control={form.control}
@@ -425,6 +475,15 @@ export const ApplicationModal = ({
                   required
                   formLabel="Personal Twitter Profile"
                   formDescription="Include links to your best work that will make the community trust you to execute on this project."
+                  control={form.control}
+                  height="h-9"
+                />
+                <SocialInput
+                  name="github"
+                  socialName={'github'}
+                  placeholder="TonyStark"
+                  formLabel="Personal Github Profile"
+                  formDescription="If this is a dev-based grant, please add your best github profile here."
                   control={form.control}
                   height="h-9"
                 />
@@ -462,6 +521,36 @@ export const ApplicationModal = ({
                   isRichEditor
                   richEditorPlaceholder="What's the key metric for success"
                 />
+
+                {!grantApplication && (
+                  <div className="flex flex-col gap-2">
+                    <div className="flex items-start space-x-2">
+                      <Checkbox
+                        id="acknowledgement"
+                        className="data-[state=checked]:border-brand-purple data-[state=checked]:bg-brand-purple mt-1"
+                        checked={acknowledgementAccepted}
+                        onCheckedChange={(checked) => {
+                          setAcknowledgementAccepted(checked as boolean);
+                          if (checked) {
+                            setAcknowledgementError('');
+                          }
+                        }}
+                      />
+                      <label
+                        htmlFor="acknowledgement"
+                        className="text-xs text-slate-500"
+                      >
+                        To receive grant funding, you may need to send proofs of
+                        milestone completion and of outcomes that reflect your
+                        application and this grant listing.
+                        <span className="text-red-500">*</span>
+                      </label>
+                    </div>
+                    {acknowledgementError && (
+                      <FormMessage>{acknowledgementError}</FormMessage>
+                    )}
+                  </div>
+                )}
               </div>
             )}
             <div className="mt-8 flex gap-2">
@@ -509,6 +598,7 @@ export const ApplicationModal = ({
             onClick={() => setIsTOSModalOpen(true)}
             className="cursor-pointer underline underline-offset-2"
             rel="noopener noreferrer"
+            type="button"
           >
             Terms of Use
           </button>

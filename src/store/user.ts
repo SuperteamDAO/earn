@@ -1,24 +1,16 @@
+'use client';
+
 import { usePrivy } from '@privy-io/react-auth';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { useRouter } from 'next/router';
-import { usePostHog } from 'posthog-js/react';
+import posthog from 'posthog-js';
 import { useEffect } from 'react';
-import { removeCookie, setCookie } from 'typescript-cookie';
-import { create } from 'zustand';
+import { getCookie, removeCookie, setCookie } from 'typescript-cookie';
 
+import { useForcedProfileRedirect } from '@/hooks/use-forced-profile-redirect';
 import { type User } from '@/interface/user';
 import { api } from '@/lib/api';
-
-interface UserState {
-  readonly user: User | null;
-  readonly setUser: (user: User | null) => void;
-}
-
-const useUserStore = create<UserState>((set) => ({
-  user: null,
-  setUser: (user) => set({ user }),
-}));
 
 export const USER_ID_COOKIE_NAME = 'user-id-hint';
 const COOKIE_OPTIONS = {
@@ -29,19 +21,27 @@ const COOKIE_OPTIONS = {
 };
 
 export const useUser = () => {
-  const { user, setUser } = useUserStore();
   const { authenticated, ready, logout } = usePrivy();
   const router = useRouter();
-  const posthog = usePostHog();
 
-  const { data, error, refetch, isLoading } = useQuery({
+  const {
+    data: user,
+    error,
+    refetch,
+    isLoading,
+  } = useQuery({
     queryKey: ['user'],
     queryFn: async () => {
       try {
         const { data: fetchedUser } = await api.get<User>('/api/user/');
-        if (fetchedUser) {
-          setCookie(USER_ID_COOKIE_NAME, fetchedUser.id, COOKIE_OPTIONS);
+
+        if (fetchedUser?.id) {
+          const currentUserId = getCookie(USER_ID_COOKIE_NAME);
+          if (fetchedUser.id !== currentUserId) {
+            setCookie(USER_ID_COOKIE_NAME, fetchedUser.id, COOKIE_OPTIONS);
+          }
         }
+
         if (fetchedUser?.isBlocked && !router.pathname.includes('/blocked')) {
           router.push('/blocked');
         }
@@ -61,26 +61,47 @@ export const useUser = () => {
       }
     },
     enabled: authenticated && ready,
-    staleTime: 5 * 60 * 1000,
+    staleTime: 10 * 60 * 1000,
+    gcTime: 15 * 60 * 1000,
     refetchOnWindowFocus: true,
+    refetchOnReconnect: true,
+  });
+
+  useForcedProfileRedirect({
+    user: user || null,
+    isUserLoading: !ready || isLoading,
   });
 
   useEffect(() => {
-    if (data) {
-      setUser(data);
+    if (isLoading || !ready) return;
+
+    if (!user) {
+      if (posthog._isIdentified()) posthog.reset();
+      return;
     }
-  }, [data]);
 
-  const refetchUser = async () => {
-    await refetch();
+    const profileComplete = user.isTalentFilled || !!user.currentSponsorId;
+
+    if (profileComplete) {
+      const alreadyIdentified = posthog._isIdentified();
+      const sameUser = posthog.get_distinct_id() === String(user.id);
+
+      if (!alreadyIdentified || !sameUser) {
+        posthog.identify(user.id, { email: user.email });
+      }
+    }
+  }, [user, isLoading, ready]);
+
+  return {
+    user: user || null,
+    isLoading: !ready || isLoading,
+    error,
+    refetchUser: refetch,
   };
-
-  return { user, isLoading: !ready || isLoading, error, refetchUser };
 };
 
 export const useUpdateUser = () => {
   const queryClient = useQueryClient();
-  const setUser = useUserStore((state) => state.setUser);
 
   return useMutation({
     mutationFn: (userData: Partial<User>) =>
@@ -89,8 +110,11 @@ export const useUpdateUser = () => {
       const updatedUser = response.data;
       if (updatedUser) {
         queryClient.setQueryData(['user'], updatedUser);
-        setUser(updatedUser);
-        setCookie(USER_ID_COOKIE_NAME, updatedUser.id, COOKIE_OPTIONS);
+
+        const currentUserId = getCookie(USER_ID_COOKIE_NAME);
+        if (updatedUser.id !== currentUserId) {
+          setCookie(USER_ID_COOKIE_NAME, updatedUser.id, COOKIE_OPTIONS);
+        }
       }
     },
   });
@@ -99,15 +123,15 @@ export const useUpdateUser = () => {
 export const useLogout = () => {
   const { logout } = usePrivy();
   const queryClient = useQueryClient();
-  const setUser = useUserStore((state) => state.setUser);
-  const posthog = usePostHog();
 
   return async () => {
-    await logout();
-    queryClient.setQueryData(['user'], null);
-    queryClient.removeQueries({ queryKey: ['user'] });
-    setUser(null);
     removeCookie(USER_ID_COOKIE_NAME, { path: '/' });
+
+    await logout();
+
+    queryClient.clear();
     if (posthog._isIdentified()) posthog.reset();
+
+    window.location.reload();
   };
 };

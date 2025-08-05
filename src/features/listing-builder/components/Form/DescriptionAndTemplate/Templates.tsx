@@ -3,7 +3,7 @@ import { useAtomValue, useSetAtom } from 'jotai';
 import { ChevronRight, Eye, LayoutGrid, Plus } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { usePostHog } from 'posthog-js/react';
+import posthog from 'posthog-js';
 import { useEffect, useState } from 'react';
 import { useWatch } from 'react-hook-form';
 
@@ -34,9 +34,10 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { LocalImage } from '@/components/ui/local-image';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useUser } from '@/store/user';
-import { Wand } from '@/svg/wand';
+import { WandAnimated } from '@/svg/WandAnimated/WandAnimated';
 import { cn } from '@/utils/cn';
 import { getURL } from '@/utils/validUrl';
 
@@ -46,10 +47,8 @@ import { cleanTemplate } from '@/features/listing-builder/utils/form';
 
 import { isAutoGenerateOpenAtom, isEditingAtom } from '../../../atoms';
 import { useListingForm } from '../../../hooks';
-import { AiGenerateFeatureModal } from '../../Modals/AiGenerateFeature';
 
 export function Templates() {
-  const posthog = usePostHog();
   const { user } = useUser();
   const router = useRouter();
 
@@ -84,9 +83,9 @@ export function Templates() {
     !isEditing;
 
   const [open, setOpen] = useState(false);
-  // useEffect(() => {
-  //   setOpen(router.pathname === '/dashboard/new' && type !== 'hackathon');
-  // }, [router.pathname]);
+  useEffect(() => {
+    setOpen(router.pathname === '/dashboard/new' && type !== 'hackathon');
+  }, [router.pathname]);
 
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
   const [selectedTemplate, setSelectedTemplate] =
@@ -139,11 +138,6 @@ export function Templates() {
 
   return (
     <>
-      <AiGenerateFeatureModal
-        onClose={() =>
-          setOpen(router.pathname === '/dashboard/new' && type !== 'hackathon')
-        }
-      />
       <Dialog
         open={open}
         onOpenChange={(e) => {
@@ -203,138 +197,145 @@ export function Templates() {
             )}
           </DialogHeader>
           <div className="mt-4">
-            <div className="grid max-h-[80vh] gap-6 overflow-y-auto md:grid-cols-3 xl:grid-cols-4">
-              <DialogClose asChild>
-                <Button
-                  className="ph-no-capture flex h-full w-60 flex-col items-center justify-center gap-4 bg-white text-slate-500 hover:text-slate-700"
-                  variant="outline"
-                  disabled={isDisabled}
-                  onClick={handleStartFromScratch}
-                >
-                  <Plus className="!size-7" />
-                  <span className="text-base font-medium">
-                    Start from Scratch
-                  </span>
-                </Button>
-              </DialogClose>
-              <DialogClose asChild>
-                <Button
-                  className="ph-no-capture relative flex h-full w-60 flex-col items-center justify-center gap-4 bg-white text-slate-500 hover:text-slate-700 focus-visible:ring-0"
-                  variant="outline"
-                  disabled={isDisabled}
-                  onClick={handleAutoGenerate}
-                >
-                  <Wand className="!size-6" />
-                  <span className="text-base font-medium">Auto Generate</span>
-                </Button>
-              </DialogClose>
-              {templatesLoading &&
-                Array(5)
-                  .fill(1)
-                  .map((_, i) => (
-                    <div
-                      key={i}
-                      className="flex h-64 w-60 flex-col rounded-lg border"
-                    >
-                      <Skeleton className="h-2/4" />
-                      <div className="flex h-2/4 w-full flex-col gap-2 p-4">
-                        <Skeleton className="h-2/6 w-2/4" />
-                        <div className="flex h-2/5 gap-2">
-                          <Skeleton className="h-full w-1/4" />
-                          <Skeleton className="h-full w-3/4" />
-                        </div>
-                        <div className="flex h-2/4 gap-2">
-                          <Skeleton className="h-full w-2/4" />
-                          <Skeleton className="h-full w-2/4" />
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-
-              {templates.map((template) => {
-                const sponsors = [
-                  ...new Set(template?.Bounties?.map((b) => b.sponsor)),
-                ];
-                const uniqueSponsors = sponsors.slice(0, 3);
-
-                return (
-                  <Card key={template.id} className="w-60">
-                    <CardHeader
-                      className={cn(
-                        'flex h-28 items-center justify-center text-4xl',
-                      )}
-                      style={{
-                        backgroundColor: template.color || 'white',
-                      }}
-                    >
-                      {template.emoji}
-                    </CardHeader>
-
-                    <CardContent className="mt-4 space-y-4">
-                      <div className="">
-                        <h3 className="line-clamp-2 h-12 font-medium text-slate-700">
-                          {template.title}
-                        </h3>
-                        {uniqueSponsors.length > 0 ? (
-                          <div className="mt-1 flex items-center gap-4">
-                            <div className="flex">
-                              {uniqueSponsors.map((sponsor, idx) => (
-                                <div
-                                  key={sponsor.name}
-                                  className={cn(
-                                    'h-6 w-6 rounded-full border border-white',
-                                    idx !== 0 && '-ml-3',
-                                  )}
-                                >
-                                  <LocalImage
-                                    src={sponsor.logo || ''}
-                                    alt={sponsor.name}
-                                    className="h-full w-full rounded-full object-cover"
-                                  />
-                                </div>
-                              ))}
-                            </div>
-                            <span className="line-clamp-2 text-xs text-slate-400">
-                              Used by {uniqueSponsors[0]?.name}
-                              {uniqueSponsors[1] &&
-                                ` & ${uniqueSponsors[1].name}`}
-                            </span>
+            <ScrollArea type="auto" className="h-full max-h-[80vh]">
+              <div className="grid h-full gap-6 overflow-y-auto md:grid-cols-3 xl:grid-cols-4">
+                <DialogClose asChild>
+                  <Button
+                    className="ph-no-capture flex h-full w-60 flex-col items-center justify-center gap-4 bg-white text-slate-500 hover:text-slate-700"
+                    autoFocus={false}
+                    variant="outline"
+                    disabled={isDisabled}
+                    onClick={handleStartFromScratch}
+                  >
+                    <Plus className="!size-10" />
+                    <span className="text-base font-medium">
+                      Start from Scratch
+                    </span>
+                  </Button>
+                </DialogClose>
+                <DialogClose asChild>
+                  <Button
+                    className="ph-no-capture relative flex h-full w-60 flex-col items-center justify-center gap-4 bg-white text-slate-500 hover:text-slate-700 focus-visible:ring-0"
+                    autoFocus={true}
+                    variant="outline"
+                    disabled={isDisabled}
+                    onClick={handleAutoGenerate}
+                  >
+                    <WandAnimated
+                      className="!size-10"
+                      stickColor="bg-slate-500"
+                      starColor="bg-slate-300"
+                    />
+                    <span className="text-base font-medium">Auto Generate</span>
+                  </Button>
+                </DialogClose>
+                {templatesLoading &&
+                  Array(5)
+                    .fill(1)
+                    .map((_, i) => (
+                      <div
+                        key={i}
+                        className="flex h-64 w-60 flex-col rounded-lg border"
+                      >
+                        <Skeleton className="h-2/4" />
+                        <div className="flex h-2/4 w-full flex-col gap-2 p-4">
+                          <Skeleton className="h-2/6 w-2/4" />
+                          <div className="flex h-2/5 gap-2">
+                            <Skeleton className="h-full w-1/4" />
+                            <Skeleton className="h-full w-3/4" />
                           </div>
-                        ) : (
-                          <p className="text-sm text-slate-400">{`Pre-fill info with "${template.title}" template`}</p>
-                        )}
+                          <div className="flex h-2/4 gap-2">
+                            <Skeleton className="h-full w-2/4" />
+                            <Skeleton className="h-full w-2/4" />
+                          </div>
+                        </div>
                       </div>
-                    </CardContent>
+                    ))}
+                {templates.map((template) => {
+                  const sponsors = [
+                    ...new Set(template?.Bounties?.map((b) => b.sponsor)),
+                  ];
+                  const uniqueSponsors = sponsors.slice(0, 3);
 
-                    <CardFooter className="flex gap-4">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="flex-1 text-slate-500"
-                        asChild
+                  return (
+                    <Card key={template.id} className="w-60">
+                      <CardHeader
+                        className={cn(
+                          'flex h-28 items-center justify-center text-4xl',
+                        )}
+                        style={{
+                          backgroundColor: template.color || 'white',
+                        }}
                       >
-                        <Link
-                          href={`${getURL()}templates/listings/${template.slug}`}
-                          target="_blank"
+                        {template.emoji}
+                      </CardHeader>
+
+                      <CardContent className="mt-4 space-y-4">
+                        <div className="">
+                          <h3 className="line-clamp-2 h-12 font-medium text-slate-700">
+                            {template.title}
+                          </h3>
+                          {uniqueSponsors.length > 0 ? (
+                            <div className="mt-1 flex items-center gap-4">
+                              <div className="flex">
+                                {uniqueSponsors.map((sponsor, idx) => (
+                                  <div
+                                    key={sponsor.name}
+                                    className={cn(
+                                      'h-6 w-6 rounded-full border border-white',
+                                      idx !== 0 && '-ml-3',
+                                    )}
+                                  >
+                                    <LocalImage
+                                      src={sponsor.logo || ''}
+                                      alt={sponsor.name}
+                                      className="h-full w-full rounded-full bg-slate-100 object-cover"
+                                    />
+                                  </div>
+                                ))}
+                              </div>
+                              <span className="line-clamp-2 text-xs text-slate-400">
+                                Used by {uniqueSponsors[0]?.name}
+                                {uniqueSponsors[1] &&
+                                  ` & ${uniqueSponsors[1].name}`}
+                              </span>
+                            </div>
+                          ) : (
+                            <p className="text-sm text-slate-400">{`Pre-fill info with "${template.title}" template`}</p>
+                          )}
+                        </div>
+                      </CardContent>
+
+                      <CardFooter className="flex gap-4">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="flex-1 text-slate-500"
+                          asChild
                         >
-                          <Eye />
-                          <span>Preview</span>
-                        </Link>
-                      </Button>
-                      <Button
-                        variant="default"
-                        size="sm"
-                        className="ph-no-capture !w-full flex-1"
-                        disabled={isDisabled}
-                        onClick={() => handleUseClick(template)}
-                      >
-                        Use
-                      </Button>
-                    </CardFooter>
-                  </Card>
-                );
-              })}
-            </div>
+                          <Link
+                            href={`${getURL()}templates/listings/${template.slug}`}
+                            target="_blank"
+                          >
+                            <Eye />
+                            <span>Preview</span>
+                          </Link>
+                        </Button>
+                        <Button
+                          variant="default"
+                          size="sm"
+                          className="ph-no-capture !w-full flex-1"
+                          disabled={isDisabled}
+                          onClick={() => handleUseClick(template)}
+                        >
+                          Use
+                        </Button>
+                      </CardFooter>
+                    </Card>
+                  );
+                })}
+              </div>
+            </ScrollArea>
           </div>
         </DialogContent>
 

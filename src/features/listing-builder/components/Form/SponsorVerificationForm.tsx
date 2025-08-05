@@ -2,10 +2,10 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
 import React, { useState } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
-import { MdPendingActions } from 'react-icons/md';
 import { toast } from 'sonner';
 import type * as z from 'zod';
 
+import MdPendingActions from '@/components/icons/MdPendingActions';
 import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
 import { Button } from '@/components/ui/button';
 import {
@@ -135,6 +135,7 @@ export const SponsorVerificationForm = () => {
                     </FormItem>
                   )}
                 />
+
                 <SocialInput
                   name="telegram"
                   socialName={'telegram'}
@@ -191,6 +192,7 @@ export const SponsorVerificationForm = () => {
                     </FormItem>
                   )}
                 />
+
                 <div className="flex w-full flex-col pt-8 pb-4">
                   <Button
                     type="submit"

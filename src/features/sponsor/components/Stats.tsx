@@ -4,6 +4,7 @@ import { cn } from '@/utils/cn';
 
 import { userCountQuery } from '@/features/home/queries/user-count';
 
+import { EarnTinyIcon } from '../icons/EarnTinyIcon';
 import { maxW } from '../utils/styles';
 import { HighQualityImage } from './HighQualityImage';
 
@@ -100,11 +101,7 @@ export function Stats() {
               <p className="relative flex items-center gap-1 text-[0.68rem] font-medium whitespace-nowrap text-slate-500 lg:text-base">
                 {s.showEarn && (
                   <span className="top-0 w-[0.6rem] lg:w-[0.9rem]">
-                    <HighQualityImage
-                      src="/landingsponsor/icons/earn.svg"
-                      alt="Earn Icon"
-                      className="h-full w-full"
-                    />
+                    <EarnTinyIcon className="h-full w-full" />
                   </span>
                 )}
                 {s.label}

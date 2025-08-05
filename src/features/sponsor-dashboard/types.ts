@@ -1,4 +1,4 @@
-import { type GrantApplication } from '@prisma/client';
+import { type GrantApplication, type GrantTranche } from '@prisma/client';
 import { z } from 'zod';
 
 import { type PrismaUserWithoutKYC } from '@/interface/user';
@@ -19,6 +19,7 @@ export type ScoutRowType = {
 export interface GrantApplicationWithUser extends GrantApplication {
   user: PrismaUserWithoutKYC;
   totalEarnings?: number;
+  GrantTranche?: GrantTranche[];
 }
 
 export interface SponsorStats {
@@ -59,7 +60,8 @@ export const verifyPaymentsSchema = z.object({
             );
           },
           {
-            message: `Please add a valid transaction link (${ALLOWED_URL_PREFIXES.join(' or ')})`,
+            message: 'Please add a Solscan/Solana.fm link',
+            path: ['link'],
           },
         )
         .transform((data) => ({
@@ -81,4 +83,5 @@ export type ValidatePaymentResult = {
   txId: string;
   status: 'SUCCESS' | 'FAIL' | 'ALREADY_VERIFIED';
   message?: string;
+  actualAmount?: number;
 };

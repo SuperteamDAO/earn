@@ -54,9 +54,7 @@ export async function syncGrantApplicationWithAirtable(
       ) || s.region === application.user.location,
   );
 
-  const regionName = superteam
-    ? superteam.airtableKey || superteam.displayValue
-    : 'Global';
+  const regionName = superteam ? superteam.displayValue : 'Global';
 
   logger.info(
     {
@@ -74,7 +72,7 @@ export async function syncGrantApplicationWithAirtable(
   const region = await fetchAirtableRecordId(
     grantsRegionAirtableURL,
     'Name',
-    superteam ? superteam.airtableKey || superteam.displayValue : 'Global',
+    superteam ? superteam.displayValue : 'Global',
     grantsAirtableConfig,
   );
   logger.info(

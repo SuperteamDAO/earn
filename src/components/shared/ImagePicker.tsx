@@ -1,8 +1,8 @@
 import { ImagePlus, X } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
-import { RxUpload } from 'react-icons/rx';
 import { toast } from 'sonner';
 
+import RxUpload from '@/components/icons/RxUpload';
 import { cn } from '@/utils/cn';
 
 import { Input } from '../ui/input';
@@ -146,6 +146,7 @@ export const ImagePicker = ({
           }}
           type="file"
         />
+
         <div
           className="absolute top-0 right-0 bottom-0 left-0 cursor-pointer"
           onClick={(e) => {
@@ -205,6 +206,7 @@ export const ImagePicker = ({
           }}
           type="file"
         />
+
         <div
           className="absolute top-0 right-0 bottom-0 left-0 cursor-pointer"
           onClick={(e) => {

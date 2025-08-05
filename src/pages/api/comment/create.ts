@@ -2,6 +2,8 @@ import { type CommentRefType } from '@prisma/client';
 import type { NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
+import { commentRateLimiter } from '@/lib/ratelimit';
+import { checkAndApplyRateLimit } from '@/lib/rateLimiterService';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
 
@@ -15,18 +17,69 @@ type CommentType =
   | 'DEADLINE_EXTENSION'
   | 'WINNER_ANNOUNCEMENT';
 
-async function comment(req: NextApiRequestWithUser, res: NextApiResponse) {
+async function commentHandler(
+  req: NextApiRequestWithUser,
+  res: NextApiResponse,
+) {
   const userId = req.userId;
-  logger.debug(`Request body: ${safeStringify(req.body)}`);
+
+  if (!userId) {
+    logger.warn(
+      '[CommentCreateAPI] userId not found after withAuth. This should not happen.',
+    );
+    return res
+      .status(401)
+      .json({ message: 'Authentication required and user ID missing.' });
+  }
+
+  const canProceed = await checkAndApplyRateLimit(res, {
+    limiter: commentRateLimiter,
+    identifier: userId,
+    routeName: 'commentCreate',
+  });
+
+  if (!canProceed) {
+    return;
+  }
+
+  logger.debug(
+    `[CommentCreateAPI] Request body for user ${userId}: ${safeStringify(req.body)}`,
+  );
 
   try {
-    const { pocId, message, refId, replyToId, submissionId, replyToUserId } =
-      req.body;
+    const {
+      pocId,
+      message,
+      refId,
+      replyToId,
+      submissionId,
+      replyToUserId,
+      isPinned,
+    } = req.body;
     const refType = req.body.refType as CommentRefType;
     let { type } = req.body as { type: CommentType | undefined };
     if (!type) type = 'NORMAL';
 
-    logger.debug('Creating a new comment in the database');
+    if (isPinned) {
+      if (refType === 'BOUNTY') {
+        const listing = await prisma.bounties.findUnique({
+          where: { id: refId },
+          select: { pocId: true },
+        });
+        if (!listing || listing.pocId !== userId) {
+          logger.warn(`Unauthorized pin attempt by user ID: ${userId}`);
+          return res
+            .status(403)
+            .json({ error: 'Only the listing POC can pin comments' });
+        }
+      } else {
+        return res
+          .status(403)
+          .json({ error: 'Pinning is only allowed for bounty comments' });
+      }
+    }
+
+    logger.debug(`[CommentCreateAPI] Creating comment for user: ${userId}`);
     const result = await prisma.comment.create({
       data: {
         authorId: userId as string,
@@ -36,6 +89,7 @@ async function comment(req: NextApiRequestWithUser, res: NextApiResponse) {
         refType: refType as CommentRefType,
         type,
         submissionId: submissionId as string | undefined,
+        isPinned: isPinned || false,
       },
       include: {
         author: {
@@ -152,17 +206,18 @@ async function comment(req: NextApiRequestWithUser, res: NextApiResponse) {
       logger.error(`Error Sending Email Notifications - ${err}`);
     }
 
-    logger.info(`Comment added successfully by user ID: ${userId}`);
+    logger.info(
+      `[CommentCreateAPI] Comment added by user ${userId}: ${result.id}`,
+    );
     return res.status(200).json(result);
   } catch (error: any) {
     logger.error(
-      `User ${userId} unable to add comment: ${safeStringify(error)}`,
+      `[CommentCreateAPI] Error adding comment for user ${userId}: ${safeStringify(error)}`,
     );
     return res.status(400).json({
-      error,
       message: 'Error occurred while adding a new comment.',
     });
   }
 }
 
-export default withAuth(comment);
+export default withAuth(commentHandler);

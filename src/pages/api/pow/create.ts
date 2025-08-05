@@ -1,6 +1,8 @@
 import type { NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
+import { powCreateRateLimiter } from '@/lib/ratelimit';
+import { checkAndApplyRateLimit } from '@/lib/rateLimiterService';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
 
@@ -20,6 +22,24 @@ interface PoW {
 
 async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
   const userId = req.userId;
+
+  if (!userId) {
+    logger.warn('The user is not authenticated');
+    return res.status(400).json({
+      error: 'The user is not authenticated.',
+    });
+  }
+
+  const canProceed = await checkAndApplyRateLimit(res, {
+    limiter: powCreateRateLimiter,
+    identifier: userId,
+    routeName: 'powCreate',
+  });
+
+  if (!canProceed) {
+    return;
+  }
+
   const { pows } = req.body as { pows: PoW[] };
   const errors: string[] = [];
 
@@ -29,13 +49,6 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
     logger.warn('The "pows" field is missing in the request body');
     return res.status(400).json({
       error: 'The "pows" field is missing in the request body.',
-    });
-  }
-
-  if (!userId) {
-    logger.warn('The user is not authenticated');
-    return res.status(400).json({
-      error: 'The user is not authenticated.',
     });
   }
 

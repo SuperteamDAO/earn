@@ -1,4 +1,4 @@
-import { usePostHog } from 'posthog-js/react';
+import posthog from 'posthog-js';
 import React, { useState } from 'react';
 import { toast } from 'sonner';
 
@@ -24,6 +24,7 @@ const AlertOption = ({
   <div className="flex items-center justify-between">
     <p className="mt-1 font-medium text-slate-500">{title}</p>
     <Switch
+      autoFocus={false}
       className="mt-0.5"
       checked={selectedCategories.includes(category)}
       onCheckedChange={() => onCategoryChange(category)}
@@ -39,7 +40,6 @@ export const EmailSettingsModal = ({
   onClose: () => void;
 }) => {
   const { user, refetchUser } = useUser();
-  const posthog = usePostHog();
 
   const emailSettings = user?.emailSettings || [];
   const [selectedCategories, setSelectedCategories] = useState<string[]>(

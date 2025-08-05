@@ -1,9 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
 import { Info, X } from 'lucide-react';
 import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
 import Countdown from 'react-countdown';
 
 import { CountDownRenderer } from '@/components/shared/countdownRenderer';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { SideDrawer, SideDrawerContent } from '@/components/ui/side-drawer';
 import { Tooltip } from '@/components/ui/tooltip';
 import { api } from '@/lib/api';
@@ -13,6 +15,7 @@ import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';
 
 import { CreditIcon } from '../icon/credit';
+import { canDispute } from '../utils/canDispute';
 import { CreditHistoryCard } from './CreditLog';
 
 export function CreditDrawer({
@@ -25,24 +28,70 @@ export function CreditDrawer({
   const { user } = useUser();
   const { creditBalance } = useCreditBalance();
   const router = useRouter();
-
-  const handleClose = () => {
-    const currentPath = window.location.hash;
-
-    if (currentPath === '#wallet') {
-      router.push(window.location.pathname, undefined, { shallow: true });
-    }
-
-    onClose();
-  };
-
-  const padding = 'px-6 sm:px-8';
+  const [disputeSubmissionId, setDisputeSubmissionId] = useState<string | null>(
+    null,
+  );
 
   const { data: creditHistory, isLoading } = useQuery({
     queryKey: ['creditHistory', user?.id],
     queryFn: () => api.get('/api/user/credit/history'),
     enabled: !!user?.id,
   });
+
+  useEffect(() => {
+    const checkForDisputeHash = () => {
+      const url = window.location.href;
+      const hashIndex = url.indexOf('#');
+      const afterHash = hashIndex !== -1 ? url.substring(hashIndex + 1) : '';
+      const [hashValue] = afterHash.split('?');
+
+      if (hashValue?.startsWith('dispute-submission-')) {
+        const submissionId = hashValue.replace('dispute-submission-', '');
+
+        if (creditHistory?.data) {
+          const allEntries = processEntries(creditHistory.data);
+          const entryToDispute = allEntries.find(
+            (entry) =>
+              entry.submission?.id === submissionId &&
+              (entry.type === 'SPAM_PENALTY' ||
+                entry.type === 'GRANT_SPAM_PENALTY'),
+          );
+
+          const dispute = canDispute(entryToDispute, allEntries, true);
+
+          if (entryToDispute && dispute) {
+            setDisputeSubmissionId(submissionId);
+          } else {
+            const pathWithoutHash =
+              router.asPath.split('#')[0] || router.pathname;
+            router.replace(pathWithoutHash, undefined, { shallow: true });
+          }
+        }
+      } else {
+        setDisputeSubmissionId(null);
+      }
+    };
+
+    if (isOpen) {
+      checkForDisputeHash();
+    }
+  }, [isOpen, creditHistory?.data, router, canDispute]);
+
+  const handleClose = () => {
+    const currentPath = window.location.hash;
+
+    if (
+      currentPath === '#wallet' ||
+      currentPath.startsWith('#dispute-submission-')
+    ) {
+      router.push(window.location.pathname, undefined, { shallow: true });
+    }
+
+    setDisputeSubmissionId(null);
+    onClose();
+  };
+
+  const padding = 'px-6 sm:px-8';
 
   const processEntries = (entries: any[] = []) => {
     return entries.map((entry) => ({
@@ -85,7 +134,7 @@ export function CreditDrawer({
 
   return (
     <SideDrawer isOpen={isOpen} onClose={handleClose}>
-      <SideDrawerContent className="flex h-full w-screen flex-col sm:w-[30rem]">
+      <SideDrawerContent className="flex h-full w-screen flex-col overflow-hidden sm:w-[30rem]">
         <X
           className="absolute top-5 right-4 z-10 h-5 w-5 cursor-pointer text-slate-600 sm:hidden"
           onClick={onClose}
@@ -103,7 +152,7 @@ export function CreditDrawer({
                 Credit History
                 <Tooltip
                   contentProps={{ className: 'z-[200]' }}
-                  content="See what led to changes in your Submission Credit balances. Bounty or Project submissions, spam reports and wins lead to changes in your Submission Credits."
+                  content="See what led to changes in your submission credit balance. Your credits are affected by bounty and project submissions, as well as wins and spam reports across grants, and listings."
                 >
                   <Info className="size-4 text-slate-500" />
                 </Tooltip>
@@ -126,7 +175,7 @@ export function CreditDrawer({
 
               <div>
                 <p className="text-sm font-medium tracking-tight text-slate-500">
-                  EXPIRES IN
+                  {creditBalance <= 0 ? 'RENEWS IN' : 'EXPIRES IN'}
                 </p>
                 <p className="mt-1.5 text-base font-medium text-slate-800 sm:text-lg">
                   <Countdown
@@ -150,7 +199,7 @@ export function CreditDrawer({
             </div>
           </div>
 
-          <div className="flex-1 overflow-y-auto bg-white">
+          <ScrollArea className="flex-1 overflow-y-auto bg-white">
             {isLoading ? (
               <div className="flex justify-center py-8">
                 <p className="text-slate-500">Loading credit history...</p>
@@ -187,12 +236,14 @@ export function CreditDrawer({
                       </div>
                     }
                     entries={upcomingMonthEntries}
+                    disputeSubmissionId={disputeSubmissionId}
                   />
                 )}
                 {currentMonthEntries.length > 0 && (
                   <CreditHistoryCard
                     title={<h2 className="text-sm font-medium">This Month</h2>}
                     entries={currentMonthEntries}
+                    disputeSubmissionId={disputeSubmissionId}
                   />
                 )}
                 {pastMonthEntries.length > 0 && (
@@ -201,11 +252,12 @@ export function CreditDrawer({
                       <h2 className="text-sm font-medium">Past 3 Months</h2>
                     }
                     entries={pastMonthEntries}
+                    disputeSubmissionId={disputeSubmissionId}
                   />
                 )}
               </div>
             )}
-          </div>
+          </ScrollArea>
 
           <div className="w-full border-t border-slate-50 bg-white py-1 shadow-[0_-2px_3px_rgba(0,0,0,0.05)]">
             <p className="mx-auto flex items-center justify-center text-xs text-slate-400 transition-colors sm:text-sm">

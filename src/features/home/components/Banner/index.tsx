@@ -1,6 +1,6 @@
 import Autoplay from 'embla-carousel-autoplay';
 import { useAtomValue } from 'jotai';
-import * as React from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import {
   Carousel,
@@ -18,33 +18,40 @@ import {
 import { HomeSponsorBanner } from './SponsorBanner';
 import { HomeTalentBanner } from './TalentBanner';
 
-export function BannerCarousel() {
-  const plugin = React.useRef(
+interface BannerCarouselProps {
+  readonly totalUsers?: number | null;
+}
+
+/**
+ * an optimized carousel that renders a static version first for performance,
+ * and then progressively enhances to the full interactive version on the client.
+ */
+export function BannerCarousel({ totalUsers }: BannerCarouselProps) {
+  const plugin = useRef(
     Autoplay({
-      delay: 6000,
+      delay: 7000,
       stopOnInteraction: false,
       stopOnFocusIn: false,
     }),
   );
   const isPopupOpen = useAtomValue(popupOpenAtom);
   const popupsShowed = useAtomValue(popupsShowedAtom);
-  const [carouselApi, setCarouselApi] = React.useState<CarouselApi | undefined>(
+  const [carouselApi, setCarouselApi] = useState<CarouselApi | undefined>(
     undefined,
   );
-  React.useEffect(() => {
+  useEffect(() => {
     const autoplay = carouselApi?.plugins()?.autoplay;
 
     if (autoplay) {
       if (isPopupOpen) return autoplay.stop();
-      else {
-        if (popupsShowed > 0) {
-          const resumeTimer: ReturnType<typeof setTimeout> = setTimeout(() => {
-            carouselApi.scrollNext();
-            plugin.current.options.delay = 5000;
-            autoplay.play();
-          }, 2000);
-          return () => clearTimeout(resumeTimer);
-        }
+
+      if (popupsShowed > 0) {
+        const resumeTimer: ReturnType<typeof setTimeout> = setTimeout(() => {
+          carouselApi.scrollNext();
+          plugin.current.options.delay = 5000;
+          autoplay.play();
+        }, 2000);
+        return () => clearTimeout(resumeTimer);
       }
     }
   }, [isPopupOpen, carouselApi, popupsShowed, plugin]);
@@ -58,14 +65,10 @@ export function BannerCarousel() {
     >
       <CarouselContent>
         <CarouselItem>
-          <div className="h-full">
-            <HomeTalentBanner />
-          </div>
+          <HomeTalentBanner totalUsers={totalUsers} />
         </CarouselItem>
         <CarouselItem>
-          <div className="h-full">
-            <HomeSponsorBanner />
-          </div>
+          <HomeSponsorBanner totalUsers={totalUsers} />
         </CarouselItem>
       </CarouselContent>
       <CarouselDots

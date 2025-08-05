@@ -1,33 +1,26 @@
 import { useMfaEnrollment, usePrivy } from '@privy-io/react-auth';
 import { ArrowLeft, ArrowUpRight, CopyIcon, X } from 'lucide-react';
 import { useRouter } from 'next/router';
-import { usePostHog } from 'posthog-js/react';
-import { useEffect, useState } from 'react';
+import posthog from 'posthog-js';
+import { useState } from 'react';
 import { toast } from 'sonner';
 
-import { WalletFeature } from '@/components/modals/WalletFeature';
 import { Button } from '@/components/ui/button';
 import { CopyButton } from '@/components/ui/copy-tooltip';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { SideDrawer, SideDrawerContent } from '@/components/ui/side-drawer';
 import { useBreakpoint } from '@/hooks/use-breakpoint';
-import { useUpdateUser, useUser } from '@/store/user';
+import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
 
 import { type TokenAsset } from '../types/TokenAsset';
 import { type TxData } from '../types/TxData';
+import { type DrawerView } from '../types/WalletTypes';
 import { WalletActivity } from './activity/WalletActivity';
 import { TokenList } from './tokens/TokenList';
 import { WithdrawFundsFlow } from './withdraw/WithdrawFundsFlow';
-
-export type DrawerView =
-  | 'main'
-  | 'withdraw'
-  | 'success'
-  | 'history'
-  | 'intro'
-  | 'ata-confirm';
 
 export function WalletDrawer({
   isOpen,
@@ -54,8 +47,7 @@ export function WalletDrawer({
 
   const { user } = useUser();
   const router = useRouter();
-  const updateUser = useUpdateUser();
-  const posthog = usePostHog();
+
   const { user: privyUser } = usePrivy();
   const { showMfaEnrollmentModal } = useMfaEnrollment();
 
@@ -64,25 +56,6 @@ export function WalletDrawer({
   const handleBack = () => {
     setView('main');
   };
-
-  const handleIntroClose = () => {
-    setView('main');
-    updateUser.mutateAsync({ featureModalShown: true });
-  };
-
-  useEffect(() => {
-    const targetDate = new Date('2025-02-09T00:00:00.000Z');
-    const userCreatedDate = user?.createdAt ? new Date(user.createdAt) : null;
-    if (
-      user &&
-      user.featureModalShown === false &&
-      user.isTalentFilled &&
-      userCreatedDate &&
-      userCreatedDate > targetDate
-    ) {
-      setView('intro');
-    }
-  }, [user]);
 
   const totalBalance = tokens?.reduce((acc, token) => {
     return acc + (token.usdValue || 0);
@@ -143,17 +116,12 @@ export function WalletDrawer({
 
   return (
     <SideDrawer isOpen={isOpen} onClose={handleClose}>
-      <SideDrawerContent className="w-screen overflow-y-auto sm:w-[30rem]">
-        <X
-          className="absolute top-5 right-4 z-10 h-5 w-5 cursor-pointer text-slate-600 sm:hidden"
-          onClick={onClose}
-        />
-        {view === 'intro' && (
-          <div className="flex h-full flex-col justify-center">
-            <WalletFeature onClick={handleIntroClose} />
-          </div>
-        )}
-        {view !== 'intro' && (
+      <SideDrawerContent className="w-screen overflow-hidden sm:w-[30rem]">
+        <ScrollArea className="h-full overflow-y-auto">
+          <X
+            className="absolute top-5 right-4 z-10 h-5 w-5 cursor-pointer text-slate-600 sm:hidden"
+            onClick={onClose}
+          />
           <div className="flex h-full flex-col">
             <div
               className={cn(
@@ -294,7 +262,7 @@ export function WalletDrawer({
               )}
             </p>
           </div>
-        )}
+        </ScrollArea>
       </SideDrawerContent>
     </SideDrawer>
   );

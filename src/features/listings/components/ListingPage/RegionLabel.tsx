@@ -21,20 +21,26 @@ export const RegionLabel = ({
 
   let displayValue = 'Global';
 
-  const titlecase = (str: string) => {
-    return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
-  };
+  if (region !== 'Global' && region) {
+    const details = lookup.byCountry(region);
+    console.log('region object', regionObject);
+    console.log('region details', details);
+    if (regionObject?.regions?.length)
+      displayValue = regionObject?.displayValue || regionObject?.name || region;
+    else
+      displayValue =
+        details?.internet ||
+        details?.iso3 ||
+        regionObject?.displayValue ||
+        region;
 
-  if (region !== 'GLOBAL' && region) {
-    const country = titlecase(region);
-    const details = lookup.byCountry(country);
-    displayValue = details?.iso3 || country;
+    console.log('final display value', displayValue);
   }
 
   return (
     <Tooltip content={regionTooltipLabel}>
       <div className="flex items-center gap-0.5">
-        {region === 'GLOBAL' ? (
+        {region === 'Global' ? (
           <Globe className="h-4 w-4 text-slate-400" strokeWidth={1} />
         ) : (
           <UserFlag location={code || ''} isCode />

@@ -1,6 +1,10 @@
 import { type SubmissionLabels, type SubmissionStatus } from '@prisma/client';
 
-import type { Listing, Rewards } from '@/features/listings/types';
+import type {
+  Listing,
+  ProjectApplicationAi,
+  Rewards,
+} from '@/features/listings/types';
 
 import { type User } from './user';
 
@@ -16,9 +20,11 @@ interface SubmissionWithUser {
   isWinner: boolean;
   winnerPosition?: keyof Rewards;
   isPaid: boolean;
-  paymentDetails?: {
-    txId?: string;
-  };
+  paymentDetails?: Array<{
+    txId: string;
+    amount: number;
+    tranche: number;
+  }>;
   rewardInUSD: number;
   isActive: boolean;
   isArchived: boolean;
@@ -31,6 +37,7 @@ interface SubmissionWithUser {
   label: SubmissionLabels;
   notes?: string;
   totalEarnings?: number;
+  ai?: ProjectApplicationAi;
 }
 
 export type { SubmissionWithUser };

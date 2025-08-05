@@ -18,6 +18,7 @@ import { Testimonials } from '@/features/sponsor/components/Testimonials';
 const font = localFont({
   src: '../../../public/OverusedGrotesk-VF.woff2',
   variable: '--font-overused-grotesk',
+  preload: false,
 });
 
 const Sponsor = () => {

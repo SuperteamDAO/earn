@@ -6,6 +6,8 @@ import { NextResponse } from 'next/server';
 import { z } from 'zod';
 
 import logger from '@/lib/logger';
+import { aiGenerateRateLimiter } from '@/lib/ratelimit';
+import { checkAndApplyRateLimitApp } from '@/lib/rateLimiterService';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { getSponsorSession } from '@/features/auth/utils/getSponsorSession';
@@ -61,6 +63,27 @@ export type TRewardsGenerateResponse = Omit<
 };
 export async function POST(request: Request) {
   try {
+    const session = await getSponsorSession(await headers());
+
+    if (session.error || !session.data) {
+      return NextResponse.json(
+        { error: session.error },
+        { status: session.status },
+      );
+    }
+
+    const userId = session.data.userId;
+
+    const rateLimitResponse = await checkAndApplyRateLimitApp({
+      limiter: aiGenerateRateLimiter,
+      identifier: userId,
+      routeName: 'aiGenerateRewards',
+    });
+
+    if (rateLimitResponse) {
+      return rateLimitResponse;
+    }
+
     let input: RewardInputSchema;
     try {
       const body = await request.json();
@@ -89,23 +112,10 @@ export async function POST(request: Request) {
       throw e;
     }
 
-    const session = await getSponsorSession(await headers());
-
-    if (session.error || !session.data) {
-      return NextResponse.json(
-        { error: session.error },
-        { status: session.status },
-      );
-    }
-
     const prompt = generateListingRewardsPrompt(input);
 
     const { object } = await generateObject({
-      model: openrouter('google/gemini-2.5-pro-preview-03-25', {
-        reasoning: {
-          effort: 'medium',
-        },
-      }),
+      model: openrouter('google/gemini-2.5-flash'),
       system:
         'Your role is to generate proper rewards for listings, strictly adhering to the rules provided with each description and type.',
       prompt,

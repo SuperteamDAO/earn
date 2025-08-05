@@ -13,15 +13,27 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Tooltip } from '@/components/ui/tooltip';
 
 import { type SKILL, type TIMEFRAME } from '../types';
+import { SearchInput } from './SearchInput';
 
 interface Props {
   timeframe: TIMEFRAME;
   setTimeframe: (value: TIMEFRAME) => void;
   skill: SKILL;
   setSkill: (value: SKILL) => void;
+  search: string;
+  onSearch: (value: string) => void;
+  isSearchLoading?: boolean;
 }
 
-export function FilterRow({ timeframe, setTimeframe, setSkill, skill }: Props) {
+export function FilterRow({
+  timeframe,
+  setTimeframe,
+  setSkill,
+  skill,
+  search,
+  onSearch,
+  isSearchLoading,
+}: Props) {
   const debouncedSetSkill = useCallback(debounce(decideSkill, 500), []);
 
   function decideSkill(value: number) {
@@ -63,7 +75,7 @@ export function FilterRow({ timeframe, setTimeframe, setSkill, skill }: Props) {
 
   return (
     <div className="flex w-full flex-col">
-      <div className="hide-scrollbar flex w-full justify-between overflow-x-auto overflow-y-hidden border-slate-200 pb-2">
+      <div className="hide-scrollbar flex w-full justify-between gap-4 overflow-x-auto overflow-y-hidden border-slate-200 pb-2">
         <Tabs
           defaultValue={String(skillIndexOf(skill))}
           onValueChange={(value) => debouncedSetSkill(Number(value))}
@@ -119,14 +131,28 @@ export function FilterRow({ timeframe, setTimeframe, setSkill, skill }: Props) {
             </div>
           </TabsList>
         </Tabs>
-        <div className="hidden items-center md:flex">
-          <Timeframe value={timeframe} setValue={setTimeframe} />
+        <div className="hidden w-fit min-w-52 items-center gap-4 md:flex">
+          <SearchInput
+            onSearch={onSearch}
+            isLoading={isSearchLoading}
+            currSearch={search}
+          />
+          <div className="w-min">
+            <Timeframe value={timeframe} setValue={setTimeframe} />
+          </div>
         </div>
       </div>
       <div className="-mt-2.5 h-0.5 w-full bg-slate-200 sm:-mt-2" />
       <div className="mt-3 flex w-full justify-between pl-2 text-xs sm:text-sm md:hidden">
-        <div className="ml-auto flex">
-          <Timeframe value={timeframe} setValue={setTimeframe} />
+        <div className="flex w-full items-center justify-between gap-4">
+          <SearchInput
+            onSearch={onSearch}
+            isLoading={isSearchLoading}
+            currSearch={search}
+          />
+          <div className="w-min">
+            <Timeframe value={timeframe} setValue={setTimeframe} />
+          </div>
         </div>
       </div>
     </div>
@@ -147,7 +173,7 @@ function Timeframe({
       onValueChange={(value) => debouncedSetTimeframe(value as TIMEFRAME)}
       value={value}
     >
-      <SelectTrigger className="h-auto border-0 p-0 text-xs font-medium text-slate-500 focus:ring-0 focus:ring-offset-0 sm:text-sm">
+      <SelectTrigger className="h-auto gap-2 border-0 p-0 text-xs font-medium text-slate-500 focus:ring-0 focus:ring-offset-0 sm:text-sm">
         <SelectValue />
       </SelectTrigger>
       <SelectContent className="text-slate-500">

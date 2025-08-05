@@ -5,17 +5,12 @@ import { toast } from 'sonner';
 
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { FormLabel } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Separator } from '@/components/ui/separator';
 import { api } from '@/lib/api';
 
 interface Props {
@@ -63,16 +58,17 @@ export function InviteMembers({ isOpen, onClose }: Props) {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Invite Member</DialogTitle>
-        </DialogHeader>
+      <DialogContent className="m-0 p-0" hideCloseIcon>
+        <DialogTitle className="text-md -mb-1 px-6 pt-4 font-semibold text-slate-900">
+          Invite Member
+        </DialogTitle>
+        <Separator />
 
         {inviteMutation.isSuccess ? (
-          <>
+          <div className="px-6 pb-6 text-[0.95rem]">
             <Alert
               variant="default"
-              className="flex flex-col items-center justify-center py-5 text-center"
+              className="mb-4 flex flex-col items-center justify-center py-5 text-center"
             >
               <div className="mb-3 flex items-center gap-2">
                 <CheckCircle2 className="mb-1 h-5 w-5 text-green-500" />
@@ -86,17 +82,20 @@ export function InviteMembers({ isOpen, onClose }: Props) {
               </AlertDescription>
             </Alert>
 
-            <DialogFooter>
-              <Button onClick={onClose}>Close</Button>
-            </DialogFooter>
-          </>
+            <div className="flex gap-3">
+              <div className="w-1/2" />
+              <Button className="flex-1" onClick={onClose}>
+                Close
+              </Button>
+            </div>
+          </div>
         ) : (
-          <>
-            <div className="space-y-4">
+          <div className="px-6 pb-6 text-[0.95rem]">
+            <div className="mb-6 space-y-4">
               <div>
-                <FormLabel>Add Email Address</FormLabel>
+                <FormLabel className="font-medium">Add Email Address</FormLabel>
                 <Input
-                  className="focus-visible:ring-brand-purple border-slate-300 text-slate-500"
+                  className="focus-visible:ring-brand-purple mt-1 border-slate-300 text-slate-500"
                   onChange={(e) => handleInput(e.target.value)}
                   type="email"
                   placeholder="Enter email address"
@@ -107,16 +106,16 @@ export function InviteMembers({ isOpen, onClose }: Props) {
                   </p>
                 )}
               </div>
-              <div className="space-y-2">
+              <div className="mt-6">
                 <FormLabel>Member Type</FormLabel>
                 <RadioGroup
                   value={memberType}
                   onValueChange={(value) => setMemberType(value)}
-                  className="space-y-2"
+                  className="mt-1"
                 >
                   <Label
                     htmlFor="member"
-                    className="flex cursor-pointer items-center space-x-2 rounded-md p-2 hover:bg-slate-100"
+                    className="flex cursor-pointer items-center space-x-2 rounded-md px-2 py-1 hover:bg-slate-100"
                   >
                     <RadioGroupItem
                       value="MEMBER"
@@ -124,8 +123,10 @@ export function InviteMembers({ isOpen, onClose }: Props) {
                       className="text-brand-purple"
                     />
                     <div className="ml-2">
-                      <p className="text-sm font-bold">Member</p>
-                      <p className="text-sm">
+                      <p className="text-sm font-medium text-slate-700">
+                        Member
+                      </p>
+                      <p className="text-xs">
                         Members can manage listings, submissions, winner
                         announcements and payments.
                       </p>
@@ -134,7 +135,7 @@ export function InviteMembers({ isOpen, onClose }: Props) {
 
                   <Label
                     htmlFor="admin"
-                    className="flex cursor-pointer items-center space-x-2 rounded-md p-2 hover:bg-slate-100"
+                    className="flex cursor-pointer items-center space-x-2 rounded-md px-2 py-1 hover:bg-slate-100"
                   >
                     <RadioGroupItem
                       value="ADMIN"
@@ -142,8 +143,10 @@ export function InviteMembers({ isOpen, onClose }: Props) {
                       className="text-brand-purple"
                     />
                     <div className="ml-2">
-                      <p className="text-sm font-bold">Member Admin</p>
-                      <p className="text-sm">
+                      <p className="text-sm font-medium text-slate-700">
+                        Member Admin
+                      </p>
+                      <p className="text-xs">
                         Admins can add or remove anyone from the team, in
                         addition to having all Member privileges.
                       </p>
@@ -153,8 +156,13 @@ export function InviteMembers({ isOpen, onClose }: Props) {
               </div>
             </div>
 
-            <DialogFooter className="gap-4">
-              <Button variant="ghost" onClick={onClose}>
+            <div className="flex gap-3">
+              <div className="w-1/2" />
+              <Button
+                variant="ghost"
+                onClick={onClose}
+                disabled={inviteMutation.isPending}
+              >
                 Close
               </Button>
               <Button
@@ -168,13 +176,13 @@ export function InviteMembers({ isOpen, onClose }: Props) {
                   </>
                 ) : (
                   <>
-                    <Send className="mr-2 h-4 w-4" />
+                    <Send className="mr-2 size-4" />
                     Send Invite
                   </>
                 )}
               </Button>
-            </DialogFooter>
-          </>
+            </div>
+          </div>
         )}
       </DialogContent>
     </Dialog>

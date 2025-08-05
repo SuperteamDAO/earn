@@ -1,11 +1,13 @@
 import { usePrivy } from '@privy-io/react-auth';
 import { Menu } from 'lucide-react';
+import dynamic from 'next/dynamic';
 import Link from 'next/link';
-import { usePostHog } from 'posthog-js/react';
+import posthog from 'posthog-js';
 import React from 'react';
-import { IoWalletOutline } from 'react-icons/io5';
 
+import IoWalletOutline from '@/components/icons/IoWalletOutline';
 import { Button } from '@/components/ui/button';
+import { LocalImage } from '@/components/ui/local-image';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { useCreditBalance } from '@/store/credit';
 import { useUser } from '@/store/user';
@@ -13,8 +15,6 @@ import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 
 import { CreditIcon } from '@/features/credits/icon/credit';
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
-
-import { MobileDrawer } from './MobileDrawer';
 
 interface Props {
   onLoginOpen: () => void;
@@ -26,6 +26,13 @@ interface Props {
 // const AnnouncementBar = dynamic(() =>
 //   import('@/features/navbar').then((mod) => mod.AnnouncementBar),
 // );
+
+const MobileDrawer = dynamic(
+  () => import('./MobileDrawer').then((mod) => mod.MobileDrawer),
+  {
+    ssr: false,
+  },
+);
 
 export const MobileNavbar = ({
   onLoginOpen,
@@ -40,9 +47,8 @@ export const MobileNavbar = ({
   } = useDisclosure();
 
   const { authenticated, ready } = usePrivy();
-  const posthog = usePostHog();
 
-  const { user } = useUser();
+  const { user, isLoading } = useUser();
   const { creditBalance } = useCreditBalance();
 
   const openCreditDrawer = () => {
@@ -50,23 +56,26 @@ export const MobileNavbar = ({
     onCreditOpen();
   };
 
+  const openDrawer = () => {
+    onDrawerOpen();
+    posthog.capture('open_mobile nav');
+  };
+
   return (
     <>
       {/* {router.pathname === '/' && <AnnouncementBar />} */}
       <div className="sticky top-0 z-50">
-        <div className="flex items-center justify-between border-b border-black/20 bg-white px-1 py-1 lg:hidden">
+        <div className="flex min-h-12 items-center justify-between border-b border-black/20 bg-white px-1 py-1 lg:hidden">
           <div className="flex items-center gap-0">
-            <div
-              onClick={onDrawerOpen}
-              className="relative ml-1 cursor-pointer"
-            >
-              {ready && authenticated ? (
+            <div onClick={openDrawer} className="relative ml-1 cursor-pointer">
+              {ready && authenticated && !isLoading ? (
                 <>
                   <EarnAvatar
                     className="size-8"
                     id={user?.id}
                     avatar={user?.photo}
                   />
+
                   <div className="absolute -right-2 -bottom-0.5 flex flex-col gap-[2px] rounded-full bg-white px-[5px] py-1.5">
                     <div className="w-2.5 border-[0.5px] border-slate-400" />
                     <div className="w-2.5 border-[0.5px] border-slate-400" />
@@ -87,10 +96,11 @@ export const MobileNavbar = ({
                 posthog.capture('homepage logo click_universal');
               }}
             >
-              <img
+              <LocalImage
                 className="h-[1.3rem] cursor-pointer object-contain"
                 alt="Superteam Earn"
                 src="/assets/logo.svg"
+                loading="eager"
               />
             </Link>
           </div>
@@ -100,6 +110,7 @@ export const MobileNavbar = ({
             onDrawerClose={onDrawerClose}
             onLoginOpen={onLoginOpen}
           />
+
           <div className="flex items-center gap-1">
             {ready && authenticated && user?.isTalentFilled && (
               <div className="flex items-center gap-0 sm:gap-1">

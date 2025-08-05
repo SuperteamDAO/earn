@@ -1,4 +1,4 @@
-import { AiOutlineWarning } from 'react-icons/ai';
+import AiOutlineWarning from '@/components/icons/AiOutlineWarning';
 
 export function ErrorSection({
   title,

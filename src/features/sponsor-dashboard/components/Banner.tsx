@@ -1,18 +1,14 @@
-import { Info, Pencil } from 'lucide-react';
-import Link from 'next/link';
-import { usePostHog } from 'posthog-js/react';
-import { MdOutlineChatBubbleOutline } from 'react-icons/md';
+import { Info } from 'lucide-react';
 
 import { VerifiedBadgeLarge } from '@/components/shared/VerifiedBadge';
-import { LocalImage } from '@/components/ui/local-image';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tooltip } from '@/components/ui/tooltip';
-import { PDTG } from '@/constants/Telegram';
 import { useUser } from '@/store/user';
 
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
 import { type SponsorStats } from '../types';
+import { HelpBanner } from './HelpBanner';
 
 interface StatsTooltipProps {
   label: string;
@@ -72,7 +68,7 @@ export function Banner({
   isLoading: boolean;
 }) {
   const { user } = useUser();
-  const posthog = usePostHog();
+
   const sponsorId = isHackathon ? user?.hackathonId : user?.currentSponsorId;
 
   const tooltipTextReward = !isHackathon
@@ -94,6 +90,7 @@ export function Banner({
               id={sponsor?.name}
               avatar={sponsor?.logo}
             />
+
             <div>
               <div className="flex items-center">
                 <div className="flex w-min items-center gap-1">
@@ -106,15 +103,6 @@ export function Banner({
                     )}
                   </div>
                 </div>
-
-                {!isHackathon && (
-                  <Link
-                    className="ml-2 text-slate-500 hover:text-slate-800"
-                    href={`/sponsor/edit`}
-                  >
-                    <Pencil className="h-4 w-4 text-slate-400" />
-                  </Link>
-                )}
               </div>
               {isLoading ? (
                 <Skeleton className="mt-2 h-5 w-[170px]" />
@@ -164,33 +152,8 @@ export function Banner({
         </div>
       </div>
 
-      <div className="mb-6 w-[60%] max-w-[400px] rounded-md border border-slate-200 bg-indigo-50 px-8 py-5 text-white">
-        <a
-          className="ph-no-capture no-underline"
-          href={PDTG}
-          target="_blank"
-          rel="noopener noreferrer"
-          onClick={() => posthog.capture('message pratik_sponsor')}
-        >
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <LocalImage
-                className="mr-3 h-[3.3rem] w-[3.2rem]"
-                alt="message pratik"
-                src={'/assets/sponsor/pratik.webp'}
-              />
-              <div>
-                <p className="font-semibold whitespace-nowrap text-slate-900">
-                  Stuck somewhere?
-                </p>
-                <p className="font-semibold whitespace-nowrap text-slate-500">
-                  Message Us
-                </p>
-              </div>
-            </div>
-            <MdOutlineChatBubbleOutline color="#1E293B" size={24} />
-          </div>
-        </a>
+      <div className="mb-6 w-[60%] max-w-[400px]">
+        <HelpBanner />
       </div>
     </div>
   );

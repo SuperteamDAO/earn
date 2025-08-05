@@ -14,6 +14,7 @@ import { Header } from '@/features/navbar/components/Header';
 import { activeHackathonsQuery } from '@/features/sponsor-dashboard/queries/active-hackathons';
 import { sponsorDashboardListingQuery } from '@/features/sponsor-dashboard/queries/listing';
 
+import { AUTO_GENERATE_STORAGE_KEY } from '../constants';
 import { ListingBuilderProvider } from './ListingBuilderProvider';
 
 interface ListingBuilderLayout {
@@ -22,7 +23,7 @@ interface ListingBuilderLayout {
 }
 
 export function ListingBuilder({ route, slug }: ListingBuilderLayout) {
-  const { user } = useUser();
+  const { user, isLoading: isUserLoading } = useUser();
   const { authenticated, ready } = usePrivy();
   const router = useRouter();
   const queryClient = useQueryClient();
@@ -40,6 +41,7 @@ export function ListingBuilder({ route, slug }: ListingBuilderLayout) {
   });
 
   useEffect(() => {
+    if (isListingLoading || isUserLoading || !ready) return;
     if (listing) {
       if (listing.sponsorId !== user?.currentSponsorId) {
         router.push('/dashboard/listings');
@@ -55,9 +57,16 @@ export function ListingBuilder({ route, slug }: ListingBuilderLayout) {
       });
     };
 
-    router.events.on('routeChangeStart', handleRouteComplete);
-    return () => router.events.off('routeChangeStart', handleRouteComplete);
+    router.events.on('routeChangeComplete', handleRouteComplete);
+
+    return () => {
+      router.events.off('routeChangeComplete', handleRouteComplete);
+    };
   }, [router.events, queryClient, slug]);
+
+  useEffect(() => {
+    localStorage.removeItem(AUTO_GENERATE_STORAGE_KEY);
+  }, []);
 
   if (ready && !authenticated) {
     return <Login isOpen={true} onClose={() => {}} />;

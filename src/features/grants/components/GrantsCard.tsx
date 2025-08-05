@@ -41,7 +41,7 @@ export const GrantsCard = ({ grant }: { grant: GrantWithApplicationCount }) => {
             src={sponsorLogo}
           />
           <div className="flex w-full flex-col justify-between">
-            <p className="line-clamp-1 text-sm font-semibold text-slate-700 hover:underline sm:text-base">
+            <p className="line-clamp-1 text-sm font-semibold text-slate-700 sm:text-base">
               {title}
             </p>
             <div className="flex w-min items-center gap-1">

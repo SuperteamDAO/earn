@@ -1,3 +1,4 @@
+import { AnimateChangeInHeight } from '@/components/shared/AnimateChangeInHeight';
 import { EmptySection } from '@/components/shared/EmptySection';
 import { useBreakpoint } from '@/hooks/use-breakpoint';
 import { cn } from '@/utils/cn';
@@ -86,7 +87,9 @@ export const GrantsSection = ({ type, region, sponsor }: GrantSectionProps) => {
         ))}
       </div>
 
-      {renderContent()}
+      <AnimateChangeInHeight disableOnHeightZero>
+        {renderContent()}
+      </AnimateChangeInHeight>
     </div>
   );
 };

@@ -1,10 +1,11 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { usePostHog } from 'posthog-js/react';
+import posthog from 'posthog-js';
 import { type ReactNode, useEffect, useState } from 'react';
-import { GoComment } from 'react-icons/go';
-import { IoMdHeart, IoMdHeartEmpty } from 'react-icons/io';
 
+import GoComment from '@/components/icons/GoComment';
+import IoMdHeart from '@/components/icons/IoMdHeart';
+import IoMdHeartEmpty from '@/components/icons/IoMdHeartEmpty';
 import { Collapsible, CollapsibleContent } from '@/components/ui/collapsible';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useDisclosure } from '@/hooks/use-disclosure';
@@ -42,6 +43,7 @@ interface FeedCardContainerProps {
   link: string;
   userId: string;
   recentCommenters?: FeedDataProps['recentCommenters'];
+  isPrivate: boolean;
 }
 
 export const FeedCardContainer = ({
@@ -60,6 +62,7 @@ export const FeedCardContainer = ({
   link,
   userId,
   recentCommenters: initialRecentCommenters,
+  isPrivate,
 }: FeedCardContainerProps) => {
   const { user } = useUser();
 
@@ -113,7 +116,6 @@ export const FeedCardContainer = ({
   };
 
   const router = useRouter();
-  const posthog = usePostHog();
 
   return (
     <div
@@ -133,6 +135,7 @@ export const FeedCardContainer = ({
             router.push(`/t/${username}`);
           }}
         />
+
         <div className="flex w-full flex-col">
           <FeedCardHeader
             name={`${firstName} ${lastName}`}
@@ -143,17 +146,18 @@ export const FeedCardContainer = ({
             description={content.description}
             type={type}
           />
-          <Link
-            className="group mt-4 cursor-pointer rounded-md border border-slate-200 shadow-[0px_4px_4px_0px_rgba(0,0,0,0.01)] transition-all duration-100 ease-in-out hover:-translate-y-[0.5px] hover:shadow-[0px_4px_8px_0px_rgba(0,0,0,0.1)]"
-            href={sanitizedLink}
-            rel="noopener noreferrer"
-            target="_blank"
+
+          <FeedCardChildWrapper
+            isPrivate={isPrivate}
+            className={cn(
+              'group mt-4 rounded-md border border-slate-200 shadow-[0px_4px_4px_0px_rgba(0,0,0,0.01)] transition-all duration-100 ease-in-out hover:-translate-y-[0.5px] hover:shadow-[0px_4px_8px_0px_rgba(0,0,0,0.1)]',
+              !isPrivate && 'cursor-pointer',
+            )}
+            sanitizedLink={sanitizedLink}
+            actionLinks={actionLinks}
           >
             {children}
-            <div className="flex items-center justify-between gap-3 px-3 py-4 md:px-6 md:py-6">
-              {actionLinks}
-            </div>
-          </Link>
+          </FeedCardChildWrapper>
           {id && (
             <div
               className={cn(
@@ -198,16 +202,14 @@ export const FeedCardContainer = ({
                   </p>
                 )}
                 <div className="ml-1 flex -space-x-2">
-                  {recentCommenters
-                    ?.slice(0, 4)
-                    .map((comment, index) => (
-                      <EarnAvatar
-                        avatar={comment.author.photo!}
-                        id={comment.author.name!}
-                        key={index}
-                        className="h-6 w-6 border border-white"
-                      />
-                    ))}
+                  {recentCommenters?.slice(0, 4).map((comment, index) => (
+                    <EarnAvatar
+                      avatar={comment.author.photo!}
+                      id={comment.author.name!}
+                      key={index}
+                      className="h-6 w-6 border border-white"
+                    />
+                  ))}
                 </div>
               </div>
             </div>
@@ -261,3 +263,43 @@ export const FeedCardContainerSkeleton = () => {
     </div>
   );
 };
+
+interface FeedCardLinkOrDivProps {
+  isPrivate: boolean;
+  className?: string;
+  sanitizedLink: string;
+  children: ReactNode;
+  actionLinks: ReactNode;
+}
+
+function FeedCardChildWrapper({
+  isPrivate,
+  className,
+  sanitizedLink,
+  children,
+  actionLinks,
+}: FeedCardLinkOrDivProps) {
+  if (isPrivate) {
+    return (
+      <div className={className}>
+        {children}
+        <div className="flex items-center justify-between gap-3 px-3 py-4 md:px-6 md:py-6">
+          {actionLinks}
+        </div>
+      </div>
+    );
+  }
+  return (
+    <Link
+      className={className}
+      href={sanitizedLink}
+      rel="noopener noreferrer"
+      target="_blank"
+    >
+      {children}
+      <div className="flex items-center justify-between gap-3 px-3 py-4 md:px-6 md:py-6">
+        {actionLinks}
+      </div>
+    </Link>
+  );
+}

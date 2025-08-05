@@ -11,11 +11,11 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { usePostHog } from 'posthog-js/react';
+import posthog from 'posthog-js';
 import React, { useState } from 'react';
-import { IoDuplicateOutline } from 'react-icons/io5';
 import { toast } from 'sonner';
 
+import IoDuplicateOutline from '@/components/icons/IoDuplicateOutline';
 import { SortableTH } from '@/components/shared/sortable-th';
 import { Button } from '@/components/ui/button';
 import {
@@ -24,6 +24,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { StatusPill } from '@/components/ui/status-pill';
 import {
   Table,
   TableBody,
@@ -40,11 +41,9 @@ import { cn } from '@/utils/cn';
 import { getURL } from '@/utils/validUrl';
 
 import { grantAmount } from '@/features/grants/utils/grantAmount';
+import { isListingEditable } from '@/features/listing-builder/utils/isListingEditable';
 import { type ListingWithSubmissions } from '@/features/listings/types';
-import {
-  formatDeadline,
-  isDeadlineOver,
-} from '@/features/listings/utils/deadline';
+import { formatDeadline } from '@/features/listings/utils/deadline';
 import { getColorStyles } from '@/features/listings/utils/getColorStyles';
 import { getListingIcon } from '@/features/listings/utils/getListingIcon';
 import {
@@ -56,6 +55,7 @@ import { DeleteDraftModal } from './Modals/DeleteDraftModal';
 import { UnpublishModal } from './Modals/UnpublishModal';
 import { VerifyPaymentModal } from './Modals/VerifyPayment';
 import { SponsorPrize } from './SponsorPrize';
+
 interface ListingTableProps {
   listings: ListingWithSubmissions[];
   currentSort: {
@@ -89,7 +89,7 @@ export const ListingTable = ({
     useState<ListingWithSubmissions>({});
 
   const router = useRouter();
-  const posthog = usePostHog();
+
   const { user } = useUser();
 
   const {
@@ -141,26 +141,24 @@ export const ListingTable = ({
   return (
     <>
       <UnpublishModal
-        listingId={selectedListing.id}
-        listingSlug={selectedListing.slug}
+        listing={selectedListing}
         unpublishIsOpen={unpublishIsOpen}
         unpublishOnClose={unpublishOnClose}
-        listingType={selectedListing.type}
       />
+
       <DeleteDraftModal
         deleteDraftIsOpen={deleteDraftIsOpen}
         deleteDraftOnClose={deleteDraftOnClose}
         listingId={selectedListing.id}
         listingType={selectedListing.type}
       />
+
       <VerifyPaymentModal
         listing={selectedListing}
-        setListing={setSelectedListing}
         isOpen={verifyPaymentIsOpen}
         onClose={verifyPaymentOnClose}
-        listingId={selectedListing.id}
-        listingType={selectedListing.type}
       />
+
       <div className="w-full overflow-x-auto rounded-md border border-slate-200">
         <Table>
           <TableHeader>
@@ -204,8 +202,6 @@ export const ListingTable = ({
 
               const deadline = formatDeadline(listing?.deadline, listing?.type);
 
-              const pastDeadline = isDeadlineOver(listing?.deadline);
-
               const listingStatus = getListingStatus(listing);
               const listingLabel =
                 listingStatus === 'Draft'
@@ -224,6 +220,7 @@ export const ListingTable = ({
 
               const textColor = getColorStyles(listingStatus).color;
               const bgColor = getColorStyles(listingStatus).bgColor;
+              const borderColor = getColorStyles(listingStatus).borderColor;
 
               return (
                 <TableRow key={listing?.id}>
@@ -275,6 +272,7 @@ export const ListingTable = ({
                           )[0]?.icon ?? '/assets/dollar.svg'
                         }
                       />
+
                       {listing?.type === 'grant' && (
                         <p className="text-sm font-medium whitespace-nowrap text-slate-700">
                           {grantAmount({
@@ -290,27 +288,28 @@ export const ListingTable = ({
                         rewardAmount={listing?.rewardAmount}
                         className="text-sm font-medium text-slate-700"
                       />
+
                       <p className="text-sm font-medium text-slate-400">
                         {listing.token}
                       </p>
                     </div>
                   </TableCell>
                   <TableCell className="items-center py-2">
-                    <button
+                    <StatusPill
                       className={cn(
-                        'inline-flex cursor-default items-center rounded-full px-3 py-1 text-xs font-medium whitespace-nowrap',
-                        textColor,
-                        bgColor,
+                        'cursor-default py-1 text-[0.65rem]',
                         listingStatus === 'Payment Pending' && 'cursor-pointer',
                       )}
-                      disabled={listingStatus !== 'Payment Pending'}
+                      color={textColor}
+                      backgroundColor={bgColor}
+                      borderColor={borderColor}
                       onClick={() => {
                         if (listingStatus !== 'Payment Pending') return;
                         handleVerifyPayment(listing);
                       }}
                     >
                       {listingStatus}
-                    </button>
+                    </StatusPill>
                   </TableCell>
                   <TableCell className="px-3 py-2">
                     {listing.status === 'OPEN' && !!listing.isPublished ? (
@@ -330,12 +329,7 @@ export const ListingTable = ({
                           <span>Submissions</span>
                         )}
                       </Button>
-                    ) : (user?.role === 'GOD' &&
-                        listing.type !== 'grant' &&
-                        !listing.isPublished) ||
-                      (!pastDeadline &&
-                        listing.type !== 'grant' &&
-                        listing.status === 'OPEN') ? (
+                    ) : isListingEditable({ listing, user }) ? (
                       <Link href={`/dashboard/listings/${listing.slug}/edit/`}>
                         <Button
                           variant="ghost"
@@ -347,7 +341,7 @@ export const ListingTable = ({
                         </Button>
                       </Link>
                     ) : (
-                      <p className="px-3 text-slate-400">—</p>
+                      <></>
                     )}
                   </TableCell>
                   <TableCell className="px-0 py-2">
@@ -380,20 +374,14 @@ export const ListingTable = ({
                           </DropdownMenuItem>
                         )}
 
-                        {!!(
-                          (user?.role === 'GOD' && listing.type !== 'grant') ||
-                          (!pastDeadline &&
-                            listing.type !== 'grant' &&
-                            (listing.status === 'OPEN' ||
-                              listing.status === 'VERIFYING'))
-                        ) && (
+                        {isListingEditable({ listing, user }) && (
                           <Link
                             className="block"
                             href={`/dashboard/listings/${listing.slug}/edit`}
                           >
                             <DropdownMenuItem className="cursor-pointer text-sm font-medium text-slate-500">
                               <PencilLine className="mr-2 h-4 w-4" />
-                              Edit <span>{listingLabel}</span>
+                              Edit {listingLabel}
                             </DropdownMenuItem>
                           </Link>
                         )}

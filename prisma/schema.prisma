@@ -15,6 +15,7 @@ model Bounties {
   slug               String             @unique
   description        String?            @db.LongText
   deadline           DateTime?
+  commitmentDate     DateTime?
   eligibility        Json?
   status             status             @default(OPEN)
   token              String?
@@ -37,7 +38,7 @@ model Bounties {
   requirements       String?            @db.Text
   isWinnersAnnounced Boolean            @default(false)
   templateId         String?
-  region             String             @default("GLOBAL")
+  region             String             @default("Global")
   pocSocials         String?
   hackathonprize     Boolean            @default(false)
   applicationType    ApplicationType    @default(fixed)
@@ -63,6 +64,7 @@ model Bounties {
   Scouts             Scouts[]
   Comments           Comment[]
   discordMessageIds  Json?
+  ai                 Json?
 
   @@index([id, slug])
   @@index([sponsorId])
@@ -85,6 +87,19 @@ model Bounties {
   @@index([compensationType, maxRewardAsk])
   @@index([isWinnersAnnounced, isPublished, status])
   @@index([region, isPublished, status])
+  @@index([isPublished, isActive, isArchived, isPrivate, type])
+  @@index([deadline, isWinnersAnnounced])
+  @@index([usdValue, maxRewardAsk])
+  @@index([region, isPublished, isActive])
+  @@index([sponsorId, isPublished, isActive])
+  @@index([isFeatured, deadline])
+  @@index([createdAt, isPublished])
+  @@index([winnersAnnouncedAt, isWinnersAnnounced])
+  @@index([language, compensationType])
+  @@index([type, isPublished, isActive, isArchived])
+  @@index([isPublished, isActive, isArchived, isPrivate, hackathonprize, type])
+  @@index([region, type, isPublished, isActive])
+  @@index([deadline, isWinnersAnnounced, type])
 }
 
 model BountiesTemplates {
@@ -103,7 +118,7 @@ model BountiesTemplates {
   skills           Json?
   type             BountyType       @default(bounty)
   requirements     String?          @db.Text
-  region           Regions          @default(GLOBAL)
+  region           String           @default("Global")
   applicationType  ApplicationType  @default(fixed)
   status           status           @default(OPEN)
   timeToComplete   String?
@@ -142,6 +157,7 @@ model Comment {
   refId            String
   isActive         Boolean           @default(true)
   isArchived       Boolean           @default(false)
+  isPinned         Boolean           @default(false)
   createdAt        DateTime          @default(now())
   updatedAt        DateTime          @updatedAt
   replyToId        String?
@@ -163,6 +179,7 @@ model Comment {
   @@index([refId, isActive, isArchived, replyToId])
   @@index([refType, type])
   @@index([updatedAt(sort: Desc)])
+  @@index([refId, isPinned])
 }
 
 model Grants {
@@ -189,7 +206,7 @@ model Grants {
   updatedAt              DateTime           @updatedAt
   skills                 Json?
   logo                   String?
-  region                 String             @default("GLOBAL")
+  region                 String             @default("Global")
   sponsor                Sponsors           @relation(fields: [sponsorId], references: [id])
   poc                    User               @relation(fields: [pocId], references: [id])
   questions              Json?
@@ -219,6 +236,15 @@ model Grants {
   @@index([sponsorId, isActive, isArchived, status])
   @@index([createdAt(sort: Desc)])
   @@index([totalApproved(sort: Desc)])
+  @@index([isPublished, isActive, isArchived, isPrivate, status])
+  @@index([region, isPublished, isActive, isArchived])
+  @@index([sponsorId, isPublished, isActive, isArchived])
+  @@index([isFeatured, createdAt])
+  @@index([status, isPublished, isActive])
+  @@index([region, status, isPublished])
+  @@index([minReward, maxReward])
+  @@index([totalPaid, totalApproved])
+  @@index([historicalApplications, totalApproved])
 }
 
 model GrantApplication {
@@ -233,6 +259,7 @@ model GrantApplication {
   proofOfWork         String                 @db.Text
   walletAddress       String
   twitter             String?
+  github              String?
   milestones          String?                @db.Text
   kpi                 String?                @db.Text
   answers             Json?                  @default("[]")
@@ -256,6 +283,7 @@ model GrantApplication {
   notes               String?                @db.VarChar(1000)
   ai                  Json?
   GrantTranche        GrantTranche[]
+  CreditLedger        CreditLedger[]
 
   @@index([userId])
   @@index([grantId])
@@ -314,9 +342,10 @@ model Submission {
   listing            Bounties         @relation(fields: [listingId], references: [id])
   user               User             @relation(fields: [userId], references: [id])
   ogImage            String?          @db.Text
-  notes              String?          @db.VarChar(1000)
+  notes              String?          @db.VarChar(10000)
   Comments           Comment[]
   CreditLedger       CreditLedger[]
+  ai                 Json?
 
   @@index([id, listingId])
   @@index([userId])
@@ -462,6 +491,7 @@ model User {
   kycIDNumber        String?
   kycIDType          String?
   CreditLedger       CreditLedger[]
+  blockRationale     String?
 
   @@index([currentSponsorId])
   @@index([hackathonId])
@@ -677,18 +707,22 @@ model BlockedEmail {
 }
 
 model CreditLedger {
-  id             String          @id @default(uuid())
+  id             String            @id @default(uuid())
   userId         String
-  submissionId   String
+  submissionId   String?
+  applicationId  String?
   type           CreditEventType
   change         Int
   effectiveMonth DateTime
-  createdAt      DateTime        @default(now())
-  user           User            @relation(fields: [userId], references: [id])
-  submission     Submission      @relation(fields: [submissionId], references: [id])
+  createdAt      DateTime          @default(now())
+  user           User              @relation(fields: [userId], references: [id])
+  submission     Submission?       @relation(fields: [submissionId], references: [id])
+  application    GrantApplication? @relation(fields: [applicationId], references: [id])
+  decision       SubmissionStatus?
 
   @@index([userId])
   @@index([submissionId])
+  @@index([applicationId])
   @@index([effectiveMonth])
 }
 
@@ -697,6 +731,11 @@ enum CreditEventType {
   SPAM_PENALTY
   WIN_BONUS
   MONTHLY_CREDIT
+  CREDIT_REFUND
+  GRANT_WIN_BONUS
+  GRANT_SPAM_PENALTY
+  SPAM_DISPUTE
+  GRANT_SPAM_DISPUTE
 }
 
 enum TalentRankingSkills {
@@ -787,35 +826,6 @@ enum JobType {
   internship
 }
 
-enum Regions {
-  GLOBAL
-  INDIA
-  VIETNAM
-  GERMANY
-  TURKEY
-  MEXICO
-  UK
-  UAE
-  NIGERIA
-  ISRAEL
-  BRAZIL
-  MALAYSIA
-  BALKAN
-  PHILIPPINES
-  JAPAN
-  FRANCE
-  CANADA
-  SINGAPORE
-  POLAND
-  KOREA
-  IRELAND
-
-  UKRAINE
-  ARGENTINA
-  USA
-  SPAIN
-}
-
 enum CompensationType {
   fixed
   range
@@ -849,6 +859,6 @@ enum SubmissionStatus {
 enum GrantTrancheStatus {
   Pending
   Approved
-  Rejected
   Paid
+  Rejected
 }

@@ -1,7 +1,7 @@
 import Link from 'next/link';
-import { IoIosStar } from 'react-icons/io';
-import { MdModeComment } from 'react-icons/md';
 
+import IoIosStar from '@/components/icons/IoIosStar';
+import MdModeComment from '@/components/icons/MdModeComment';
 import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ASSET_URL } from '@/constants/ASSET_URL';
@@ -97,6 +97,7 @@ export const ListingCard = ({ bounty }: { bounty: Listing }) => {
             alt={sponsor?.name}
             src={sponsorLogo}
           />
+
           <div className="flex w-full flex-col justify-between">
             <p className="line-clamp-1 text-sm font-semibold text-slate-700 sm:text-base">
               {title}
@@ -125,6 +126,7 @@ export const ListingCard = ({ bounty }: { bounty: Listing }) => {
                     isWinnersAnnounced={isWinnersAnnounced}
                     className="text-xs font-semibold whitespace-nowrap text-slate-600 sm:text-base"
                   />
+
                   {!!showToken && (
                     <p className="text-xs font-medium text-gray-400">{token}</p>
                   )}
@@ -208,6 +210,7 @@ export const ListingCard = ({ bounty }: { bounty: Listing }) => {
               isWinnersAnnounced={isWinnersAnnounced}
               className="text-xs font-semibold whitespace-nowrap text-slate-600 sm:text-base"
             />
+
             {!!showToken && (
               <p className="text-xs font-medium text-gray-400 sm:text-base">
                 {token}

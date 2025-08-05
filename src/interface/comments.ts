@@ -18,4 +18,6 @@ export interface Comment {
   refId: string;
   refType: 'BOUNTY' | 'SUBMISSION';
   updatedAt: Date;
+  createdAt: Date;
+  isPinned: boolean;
 }

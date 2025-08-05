@@ -1,62 +1,38 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { EyeOff } from 'lucide-react';
-import Link from 'next/link';
-import { useMemo } from 'react';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { X } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
-import { Skeleton } from '@/components/ui/skeleton';
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
+import { Separator } from '@/components/ui/separator';
 import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 
-import {
-  type Listing,
-  type ListingWithSubmissions,
-} from '@/features/listings/types';
-import { unpublishAllowedQuery } from '@/features/sponsor-dashboard/queries/unpublish-allowed';
+import { type ListingWithSubmissions } from '@/features/listings/types';
 
 interface UnpublishModalProps {
   unpublishIsOpen: boolean;
   unpublishOnClose: () => void;
-  listingId: string | undefined;
-  listingSlug: string | undefined;
-  listingType: Listing['type'] | undefined;
+  listing: ListingWithSubmissions | undefined;
 }
 
 export const UnpublishModal = ({
   unpublishIsOpen,
   unpublishOnClose,
-  listingId,
-  listingSlug,
-  listingType,
+  listing,
 }: UnpublishModalProps) => {
   const queryClient = useQueryClient();
   const { user } = useUser();
 
-  const { data: isUnpublishAllowed, isFetching } = useQuery({
-    ...unpublishAllowedQuery(listingId || ''),
-    enabled: !!listingId && listingType === 'project',
-    initialData: listingType === 'project' ? false : true,
-  });
-
   const updateMutation = useMutation({
     mutationFn: async (status: boolean) => {
-      if (!isUnpublishAllowed) throw new Error('Unpublish not allowed');
       let result;
-      if (listingType === 'grant') {
-        result = await api.post(`/api/grants/update/${listingId}/`, {
+      if (listing?.type === 'grant') {
+        result = await api.post(`/api/grants/update/${listing.id}/`, {
           isPublished: status,
         });
       } else {
-        result = await api.post(`/api/listings/unpublish/${listingId}/`);
+        result = await api.post(`/api/listings/unpublish/${listing?.id}/`);
       }
       return result.data;
     },
@@ -72,6 +48,11 @@ export const UnpublishModal = ({
               )
             : [],
       );
+
+      queryClient.invalidateQueries({
+        queryKey: ['sponsor-submissions', listing?.slug],
+      });
+
       toast.success('Listing unpublished successfully');
       unpublishOnClose();
     },
@@ -85,55 +66,48 @@ export const UnpublishModal = ({
     updateMutation.mutate(status);
   };
 
-  const dialogContent: { header: string; subtext: string } = useMemo(() => {
-    if (isUnpublishAllowed) {
-      return {
-        header: 'Unpublish Listing?',
-        subtext:
-          'This listing will be hidden from the homepage once unpublished. Are you sure you want to unpublish this listing?',
-      };
-    } else {
-      return {
-        header: 'Accept/Reject applications before unpublishing',
-        subtext:
-          'You must either pick a winner or reject all applications before unpublishing this Project listing. It takes a few minutes to do so, but it makes sure that applicants hear back and retain trust on your future listings',
-      };
-    }
-  }, [isUnpublishAllowed]);
+  const dialogContent: { header: string; subtext: React.ReactNode } =
+    listing?.type === 'project'
+      ? {
+          header: "Didn't find a suitable candidate?",
+          subtext: (
+            <>
+              You can unpublish this listing if you have not found any suitable
+              candidate.{' '}
+              <span className="font-semibold text-slate-500">
+                Unpublishing the listing will send rejection emails to all
+                applicants.
+              </span>
+            </>
+          ),
+        }
+      : {
+          header: 'Unpublish Listing?',
+          subtext:
+            'This listing will be hidden from the homepage once unpublished. Are you sure you want to unpublish this listing?',
+        };
 
   return (
     <Dialog open={unpublishIsOpen} onOpenChange={unpublishOnClose}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>
-            {isFetching ? (
-              <Skeleton className="h-5 w-3/4" />
-            ) : (
-              dialogContent.header
-            )}
-          </DialogTitle>
-          <DialogDescription className="pt-2 text-slate-500">
-            {isFetching ? (
-              <div className="flex flex-col gap-1">
-                <Skeleton className="h-2 w-full" />
-                <Skeleton className="h-2 w-full" />
-                <Skeleton className="h-2 w-full" />
-                <Skeleton className="h-2 w-full" />
-              </div>
-            ) : (
-              dialogContent.subtext
-            )}
-          </DialogDescription>
-        </DialogHeader>
+      <DialogContent className="m-0 p-0" hideCloseIcon>
+        <DialogTitle className="text-md -mb-1 px-6 pt-4 font-semibold text-slate-900">
+          {dialogContent.header}
+        </DialogTitle>
+        <Separator />
+        <div className="px-6 pb-6 text-[0.95rem]">
+          <div className="mb-4 text-slate-500">{dialogContent.subtext}</div>
 
-        <DialogFooter>
-          <Button variant="ghost" onClick={unpublishOnClose} className="mr-4">
-            Close
-          </Button>
-          {isFetching && <Skeleton className="h-10 w-24" />}
-          {!isFetching && isUnpublishAllowed && (
+          <div className="flex gap-3">
+            <div className="w-1/2" />
             <Button
-              variant="default"
+              variant="ghost"
+              onClick={unpublishOnClose}
+              disabled={updateMutation.isPending}
+            >
+              Close
+            </Button>
+            <Button
+              className="flex-1 rounded-lg border border-red-500 bg-red-50 text-red-600 hover:bg-red-100"
               disabled={updateMutation.isPending}
               onClick={() => changeBountyStatus(false)}
             >
@@ -144,22 +118,15 @@ export const UnpublishModal = ({
                 </>
               ) : (
                 <>
-                  <EyeOff className="mr-2 h-4 w-4" />
+                  <div className="rounded-full bg-red-600 p-0.5">
+                    <X className="size-2 text-white" />
+                  </div>
                   <span>Unpublish</span>
                 </>
               )}
             </Button>
-          )}
-          {!isFetching && !isUnpublishAllowed && (
-            <Button asChild>
-              <Link
-                href={`/dashboard/${listingType === 'grant' ? 'grants' : 'listings'}/${listingSlug}/submissions`}
-              >
-                Review Applications
-              </Link>
-            </Button>
-          )}
-        </DialogFooter>
+          </div>
+        </div>
       </DialogContent>
     </Dialog>
   );

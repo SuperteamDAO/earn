@@ -4,19 +4,21 @@ import { ExternalLink } from 'lucide-react';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { usePostHog } from 'posthog-js/react';
+import posthog from 'posthog-js';
 import { useEffect, useState } from 'react';
 
 import { ErrorSection } from '@/components/shared/ErrorSection';
 import { type User } from '@/interface/user';
 import { Default } from '@/layouts/Default';
 import { cn } from '@/utils/cn';
+import { dayjs } from '@/utils/dayjs';
 import { getURLSanitized } from '@/utils/getURLSanitized';
 import { getURL } from '@/utils/validUrl';
 
 import { Comments } from '@/features/comments/components/Comments';
 import { ListingHeader } from '@/features/listings/components/ListingPage/ListingHeader';
 import { RightSideBar } from '@/features/listings/components/ListingPage/RightSideBar';
+import { SubmissionActionButton } from '@/features/listings/components/Submission/SubmissionActionButton';
 import { submissionCountQuery } from '@/features/listings/queries/submission-count';
 import { type Listing } from '@/features/listings/types';
 import { getListingTypeLabel } from '@/features/listings/utils/status';
@@ -36,7 +38,6 @@ export function ListingPageLayout({
   isTemplate = false,
 }: ListingPageProps) {
   const [, setBountySnackbar] = useAtom(bountySnackbarAtom);
-  const posthog = usePostHog();
 
   const { data: submissionNumber = 0 } = useQuery(
     submissionCountQuery(initialBounty?.id ?? ''),
@@ -209,6 +210,28 @@ export function ListingPageLayout({
                       </p>
                     </div>
                   )}
+                  {!!initialBounty.commitmentDate && (
+                    <div className="flex w-full flex-col items-start md:hidden">
+                      <p className="h-full text-center text-xs font-semibold text-slate-600">
+                        WINNER ANNOUNCEMENT BY
+                      </p>
+                      <div>
+                        <span className="text-xs text-slate-500">
+                          {dayjs(initialBounty.commitmentDate).format(
+                            'MMMM DD, YYYY',
+                          )}{' '}
+                          - as scheduled by the sponsor.
+                        </span>
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="sticky bottom-14 z-40 w-full border-t-1 border-slate-100 bg-white py-1 md:hidden">
+                    <SubmissionActionButton
+                      listing={initialBounty}
+                      isTemplate={isTemplate}
+                    />
+                  </div>
 
                   <Comments
                     isTemplate={isTemplate}

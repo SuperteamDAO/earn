@@ -3,7 +3,7 @@ import { useAtom } from 'jotai';
 import { ExternalLink } from 'lucide-react';
 import Head from 'next/head';
 import Link from 'next/link';
-import { usePostHog } from 'posthog-js/react';
+import posthog from 'posthog-js';
 import { useEffect, useState } from 'react';
 
 import { EmptySection } from '@/components/shared/EmptySection';
@@ -35,7 +35,7 @@ export function GrantPageLayout({
 }: GrantPageProps) {
   const [grant] = useState<typeof initialGrant>(initialGrant);
   const encodedTitle = encodeURIComponent(initialGrant?.title || '');
-  const posthog = usePostHog();
+
   const [, setGrantSnackbar] = useAtom(grantSnackbarAtom);
   const { user } = useUser();
 
@@ -128,7 +128,9 @@ export function GrantPageLayout({
                       ) : (
                         <GrantStats grant={grant} />
                       )}
-                      <ApplicationActionButton grant={grant} />
+                      <div className="hidden w-full md:flex">
+                        <ApplicationActionButton grant={grant} />
+                      </div>
                       {isApproved && application && isST ? (
                         <ApprovalStages
                           application={application}
@@ -198,6 +200,9 @@ export function GrantPageLayout({
                   )}
                 </div>
               </div>
+            </div>
+            <div className="sticky bottom-14 z-40 mb-10 w-full border-t-1 border-slate-100 bg-white py-1 md:hidden">
+              <ApplicationActionButton grant={grant} />
             </div>
           </div>
         )}

@@ -20,6 +20,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
+import { StatusPill } from '@/components/ui/status-pill';
 import {
   Table,
   TableBody,
@@ -33,7 +34,6 @@ import { useDisclosure } from '@/hooks/use-disclosure';
 import { SponsorLayout } from '@/layouts/Sponsor';
 import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
-import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';
 
 import { type ListingWithSubmissions } from '@/features/listings/types';
@@ -251,15 +251,14 @@ export default function Hackathon() {
                         </div>
                       </TableCell>
                       <TableCell className="items-center py-2">
-                        <p
-                          className={cn(
-                            'inline-flex items-center rounded-full px-3 py-1 text-xs font-medium whitespace-nowrap',
-                            getColorStyles(bountyStatus).color,
-                            getColorStyles(bountyStatus).bgColor,
-                          )}
+                        <StatusPill
+                          className="w-fit"
+                          color={getColorStyles(bountyStatus).color}
+                          backgroundColor={getColorStyles(bountyStatus).bgColor}
+                          borderColor={getColorStyles(bountyStatus).borderColor}
                         >
                           {bountyStatus}
-                        </p>
+                        </StatusPill>
                       </TableCell>
                       <TableCell className="px-3 py-2">
                         {currentBounty.status === 'OPEN' &&

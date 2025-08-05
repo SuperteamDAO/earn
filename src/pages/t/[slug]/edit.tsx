@@ -3,7 +3,7 @@ import { usePrivy } from '@privy-io/react-auth';
 import { Edit, Info, Loader2, Plus, Trash } from 'lucide-react';
 import type { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
-import { usePostHog } from 'posthog-js/react';
+import posthog from 'posthog-js';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -22,10 +22,16 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import { FormFieldSelect } from '@/components/ui/form-field-select';
 import { FormFieldWrapper } from '@/components/ui/form-field-wrapper';
 import { Input } from '@/components/ui/input';
 import { MultiSelect, type Option } from '@/components/ui/multi-select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { Tooltip } from '@/components/ui/tooltip';
 import { useDisclosure } from '@/hooks/use-disclosure';
@@ -85,7 +91,6 @@ export default function EditProfilePage({ slug }: { slug: string }) {
   );
 
   const router = useRouter();
-  const posthog = usePostHog();
 
   const [pow, setPow] = useState<PoW[]>([]);
   const [selectedProject, setSelectedProject] = useState<number | null>(null);
@@ -495,12 +500,33 @@ export default function EditProfilePage({ slug }: { slug: string }) {
                 )}
               />
 
-              <FormFieldSelect
-                label="Work Experience"
-                options={workExp}
+              <FormField
                 name="experience"
-                placeholder="Pick Your Experience"
                 control={control}
+                render={({ field }) => (
+                  <FormItem className="mb-5 w-full">
+                    <FormLabel>Work Experience</FormLabel>
+                    <FormControl>
+                      <Select
+                        key={skillsRefreshKey}
+                        onValueChange={field.onChange}
+                        defaultValue={field.value || undefined}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Pick Your Experience" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {workExp.map((option) => (
+                            <SelectItem key={option} value={option}>
+                              {option}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
 
               <FormField
@@ -527,20 +553,62 @@ export default function EditProfilePage({ slug }: { slug: string }) {
                 )}
               />
 
-              <FormFieldSelect
-                label="How familiar are you with Web3?"
-                options={web3Exp}
+              <FormField
                 name="cryptoExperience"
-                placeholder="Pick your Experience"
                 control={control}
+                render={({ field }) => (
+                  <FormItem className="mb-5 w-full">
+                    <FormLabel>How familiar are you with Web3?</FormLabel>
+                    <FormControl>
+                      <Select
+                        key={skillsRefreshKey}
+                        onValueChange={field.onChange}
+                        defaultValue={field.value || undefined}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Pick your Experience" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {web3Exp.map((option) => (
+                            <SelectItem key={option} value={option}>
+                              {option}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
 
-              <FormFieldSelect
-                label="Work Preference"
-                options={workType}
+              <FormField
                 name="workPrefernce"
-                placeholder="Type of Work"
                 control={control}
+                render={({ field }) => (
+                  <FormItem className="mb-5 w-full">
+                    <FormLabel>Work Preference</FormLabel>
+                    <FormControl>
+                      <Select
+                        key={skillsRefreshKey}
+                        onValueChange={field.onChange}
+                        defaultValue={field.value || undefined}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Type of Work" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {workType.map((option) => (
+                            <SelectItem key={option} value={option}>
+                              {option}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
 
               <FormFieldWrapper

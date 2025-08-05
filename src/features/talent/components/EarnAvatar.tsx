@@ -34,10 +34,12 @@ export const EarnAvatar = ({
     >
       {!hasError && avatar ? (
         <img
-          src={avatar.replace('/upload/', '/upload/c_scale,f_auto/')}
+          src={avatar.replace('/upload/', '/upload/c_scale,f_auto,q_auto/')}
           alt={id || 'avatar'}
           className={cn(commonClassName, className)}
           onError={handleImageError}
+          loading="lazy"
+          decoding="async"
         />
       ) : (
         <div className={cn(commonClassName, className)}>

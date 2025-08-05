@@ -1,5 +1,5 @@
-import { BsFillLaptopFill } from 'react-icons/bs';
-import { TbBriefcase2Filled } from 'react-icons/tb';
+import BsFillLaptopFill from '@/components/icons/BsFillLaptopFill';
+import TbBriefcase2Filled from '@/components/icons/TbBriefcase2Filled';
 
 import { cn } from '../../../utils/cn';
 

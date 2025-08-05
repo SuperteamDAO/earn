@@ -1,6 +1,6 @@
 import { Info } from 'lucide-react';
 import Link from 'next/link';
-import { usePostHog } from 'posthog-js/react';
+import posthog from 'posthog-js';
 
 import { Button } from '@/components/ui/button';
 import { LocalImage } from '@/components/ui/local-image';
@@ -42,7 +42,6 @@ interface Props {
 }
 
 export function ScoutTable({ bountyId, scouts, setInvited }: Props) {
-  const posthog = usePostHog();
   const invitedCount = scouts.filter((scout) => scout.invited).length;
   const MAX_INVITES = scouts.length;
   const maxInvitesReached = invitedCount >= MAX_INVITES;
@@ -112,43 +111,6 @@ export function ScoutTable({ bountyId, scouts, setInvited }: Props) {
             </TableHead>
           </TableRow>
         </TableHeader>
-        {scouts.length === 0 && (
-          <div className="absolute top-48 left-1/2 flex -translate-x-1/2 flex-col items-center gap-3">
-            <div className="flex items-center justify-center rounded-full bg-slate-100 p-5">
-              <svg
-                width="54"
-                height="54"
-                viewBox="0 0 54 54"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <rect
-                  opacity="0.3"
-                  x="9"
-                  y="11.25"
-                  width="36"
-                  height="13.5"
-                  rx="1.5"
-                  fill="#94A3B8"
-                />
-                <rect
-                  x="9"
-                  y="29.25"
-                  width="36"
-                  height="13.5"
-                  rx="1.5"
-                  fill="#94A3B8"
-                />
-              </svg>
-            </div>
-            <div className="flex flex-col items-center gap-0 text-base">
-              <p className="font-semibold">No Profiles Found</p>
-              <p className="font-normal text-slate-500">
-                We couldn’t find any suitable matches for your listing.
-              </p>
-            </div>
-          </div>
-        )}
         {scouts.length > 0 && (
           <TableBody className="text-sm font-medium text-slate-500">
             {scouts.map((scout) => (
@@ -279,6 +241,43 @@ export function ScoutTable({ bountyId, scouts, setInvited }: Props) {
           </TableBody>
         )}
       </Table>
+      {scouts.length === 0 && (
+        <div className="mx-auto my-12 flex w-full flex-col items-center gap-3">
+          <div className="flex items-center justify-center rounded-full bg-slate-100 p-5">
+            <svg
+              width="54"
+              height="54"
+              viewBox="0 0 54 54"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <rect
+                opacity="0.3"
+                x="9"
+                y="11.25"
+                width="36"
+                height="13.5"
+                rx="1.5"
+                fill="#94A3B8"
+              />
+              <rect
+                x="9"
+                y="29.25"
+                width="36"
+                height="13.5"
+                rx="1.5"
+                fill="#94A3B8"
+              />
+            </svg>
+          </div>
+          <div className="flex flex-col items-center gap-0 py-4 text-base">
+            <p className="font-semibold">No Profiles Found</p>
+            <p className="font-normal text-slate-500">
+              We couldn’t find any suitable matches for your listing.
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

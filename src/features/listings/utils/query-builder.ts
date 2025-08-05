@@ -1,9 +1,8 @@
-import { type Prisma, Regions } from '@prisma/client';
+import { type Prisma } from '@prisma/client';
 import type { z } from 'zod';
 
 import { exclusiveSponsorData } from '@/constants/exclusiveSponsors';
 import { Superteams } from '@/constants/Superteam';
-import { prisma } from '@/prisma';
 
 import {
   type ListingCategorySchema,
@@ -99,24 +98,54 @@ function getOrderBy(
   const { sortBy, order } = args;
   const oppositeOrder = order === 'asc' ? 'desc' : 'asc';
 
+  let primarySort: Prisma.BountiesOrderByWithRelationInput;
+
   switch (sortBy) {
     case 'Date':
       if (status === 'review') {
-        return { deadline: { sort: oppositeOrder, nulls: 'last' } };
+        primarySort = { deadline: { sort: oppositeOrder, nulls: 'last' } };
       } else if (status === 'completed') {
-        return { winnersAnnouncedAt: { sort: oppositeOrder, nulls: 'last' } };
+        primarySort = {
+          winnersAnnouncedAt: { sort: oppositeOrder, nulls: 'last' },
+        };
+      } else {
+        primarySort = { deadline: { sort: order, nulls: 'last' } };
       }
-      return { deadline: { sort: order, nulls: 'last' } };
+      break;
 
     case 'Prize':
-      return { usdValue: { sort: order, nulls: 'last' } };
+      primarySort = { usdValue: { sort: order, nulls: 'last' } };
+      break;
 
     case 'Submissions':
-      return { Submission: { _count: order } };
+      primarySort = { Submission: { _count: order } };
+      break;
 
     default:
-      return { deadline: { sort: order, nulls: 'last' } };
+      primarySort = { deadline: { sort: order, nulls: 'last' } };
+      break;
   }
+
+  // add isFeatured prioritization only for default sorting (date + asc) and open status
+  const isDefaultSort =
+    sortBy === 'Date' && order === 'asc' && status === 'open';
+
+  return isDefaultSort ? [{ isFeatured: 'desc' }, primarySort] : primarySort;
+}
+
+function getUserRegionFilter(userLocation: string | null): string[] {
+  if (!userLocation) return ['Global'];
+
+  const userRegion = getCombinedRegion(userLocation, true);
+  const regions = userRegion?.name
+    ? [
+        'Global',
+        userRegion.name,
+        ...(filterRegionCountry(userRegion, userLocation).country || []),
+        ...(getParentRegions(userRegion) || []),
+      ]
+    : ['Global'];
+  return regions;
 }
 
 export async function buildListingQuery(
@@ -152,55 +181,37 @@ export async function buildListingQuery(
   }
 
   if (user?.isTalentFilled && (context === 'all' || context === 'home')) {
-    const userRegion = user?.location
-      ? getCombinedRegion(user?.location, true)
-      : undefined;
-
     where.region = {
-      in: userRegion?.name
-        ? [
-            Regions.GLOBAL,
-            userRegion.name,
-            ...(filterRegionCountry(userRegion, user.location || '').country ||
-              []),
-            ...(getParentRegions(userRegion) || []),
-          ]
-        : [Regions.GLOBAL],
+      in: getUserRegionFilter(user.location),
     };
+  }
 
-    if (category === 'For You') {
-      const subscribedListings = await prisma.subscribeBounty.findMany({
-        where: { userId: user.id },
-        select: { bountyId: true },
+  if (category === 'For You') {
+    const userSkills =
+      (user?.skills as { skills: string }[] | null)?.map(
+        (skill) => skill.skills,
+      ) || [];
+
+    const forYouConditions: Prisma.BountiesWhereInput[] = [];
+
+    if (user?.id) {
+      forYouConditions.push({
+        SubscribeBounty: { some: { userId: user.id } },
       });
-      const subscribedListingIds = subscribedListings.map(
-        (sub) => sub.bountyId,
-      );
+    }
 
-      const userSkills =
-        (user?.skills as { skills: string }[] | null)?.map(
-          (skill) => skill.skills,
-        ) || [];
+    if (userSkills.length > 0) {
+      const skillConditions = userSkills.map((skill) => ({
+        skills: {
+          path: '$[*].skills',
+          array_contains: [skill],
+        },
+      }));
+      forYouConditions.push(...skillConditions);
+    }
 
-      const forYouConditions: Prisma.BountiesWhereInput[] = [];
-
-      if (subscribedListingIds && subscribedListingIds.length > 0) {
-        forYouConditions.push({ id: { in: subscribedListingIds } });
-      }
-
-      if (userSkills.length > 0) {
-        const skillConditions = userSkills.map((skill) => ({
-          skills: {
-            path: '$[*].skills',
-            array_contains: [skill],
-          },
-        }));
-        forYouConditions.push(...skillConditions);
-      }
-
-      if (forYouConditions.length > 0) {
-        andConditions.push({ OR: forYouConditions });
-      }
+    if (forYouConditions.length > 0) {
+      andConditions.push({ OR: forYouConditions });
     }
   }
 
@@ -211,7 +222,10 @@ export async function buildListingQuery(
     where.OR = [
       {
         region: {
-          in: [region.toUpperCase() as Regions, ...(st?.country || [])],
+          in: [
+            region.charAt(0).toUpperCase() + region.slice(1),
+            ...(st?.country || []),
+          ],
         },
       },
       {
@@ -224,7 +238,6 @@ export async function buildListingQuery(
 
   if (context === 'sponsor' && sponsor) {
     const sponsorKey = sponsor.toLowerCase();
-
     const sponsorInfo = exclusiveSponsorData[sponsorKey];
 
     where.sponsor = {

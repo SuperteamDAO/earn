@@ -1,15 +1,11 @@
 import { GrantApplicationStatus, type SubmissionLabels } from '@prisma/client';
-import {
-  keepPreviousData,
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useAtom } from 'jotai';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { LucideFlag } from 'lucide-react';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 
+import { LoadingSection } from '@/components/shared/LoadingSection';
 import { Button } from '@/components/ui/button';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
@@ -18,16 +14,16 @@ import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 
 import { applicationsAtom, selectedGrantApplicationAtom } from '../atoms';
+import { useRejectGrantApplications } from '../mutations/useRejectGrantApplications';
 import {
   applicationsQuery,
   type GrantApplicationsReturn,
 } from '../queries/applications';
 import { sponsorGrantQuery } from '../queries/grant';
-import { type GrantApplicationWithUser } from '../types';
 import { ApplicationDetails } from './GrantApplications/ApplicationDetails';
 import { ApplicationList } from './GrantApplications/ApplicationList';
 import { ApproveModal } from './GrantApplications/Modals/ApproveModal';
-import { RejectAllGrantApplicationModal } from './GrantApplications/Modals/RejectAllModal';
+import { MultiActionModal } from './GrantApplications/Modals/MultiActionModal';
 import { RejectGrantApplicationModal } from './GrantApplications/Modals/RejectModal';
 
 interface Props {
@@ -36,40 +32,80 @@ interface Props {
 
 export const ApplicationsTab = ({ slug }: Props) => {
   const [searchText, setSearchText] = useState('');
-  const [skip, setSkip] = useState(0);
-  const [filterLabel, setFilterLabel] = useState<
-    SubmissionLabels | GrantApplicationStatus | undefined
-  >(undefined);
+  const [selectedFilters, setSelectedFilters] = useState<
+    Set<GrantApplicationStatus | SubmissionLabels>
+  >(new Set());
 
-  const params = { searchText, length: 20, skip, filterLabel };
-
-  const [applications, setApplications] = useAtom(applicationsAtom);
+  const [allApplications, setAllApplications] = useAtom(applicationsAtom);
 
   const { data: applicationReturn, isLoading: isApplicationsLoading } =
     useQuery({
-      ...applicationsQuery(slug, params),
+      ...applicationsQuery(slug),
       retry: false,
-      placeholderData: keepPreviousData,
     });
 
   useEffect(() => {
     if (applicationReturn?.data) {
-      setApplications(applicationReturn.data);
+      setAllApplications(applicationReturn.data);
     }
-  }, [applicationReturn?.data, setApplications]);
+  }, [applicationReturn?.data, setAllApplications]);
 
-  const totalCount = useMemo(
-    () => applicationReturn?.count || 0,
-    [applicationReturn],
-  );
+  const applications = useMemo(() => {
+    if (!allApplications) return [];
+
+    let filtered = allApplications;
+
+    if (searchText.trim()) {
+      const lowerSearchText = searchText.toLowerCase();
+      filtered = filtered.filter((application) => {
+        const user = application.user;
+        if (!user) return false;
+
+        const nameParts = searchText.split(' ').filter(Boolean);
+        const firstName = user.firstName?.toLowerCase() || '';
+        const lastName = user.lastName?.toLowerCase() || '';
+
+        return (
+          firstName.includes(lowerSearchText) ||
+          lastName.includes(lowerSearchText) ||
+          user.email?.toLowerCase().includes(lowerSearchText) ||
+          user.username?.toLowerCase().includes(lowerSearchText) ||
+          user.twitter?.toLowerCase().includes(lowerSearchText) ||
+          user.discord?.toLowerCase().includes(lowerSearchText) ||
+          application.projectTitle?.toLowerCase().includes(lowerSearchText) ||
+          (nameParts.length > 1 &&
+            firstName.includes(nameParts[0]?.toLowerCase() || '') &&
+            lastName.includes(nameParts[1]?.toLowerCase() || ''))
+        );
+      });
+    }
+
+    if (selectedFilters.size > 0) {
+      filtered = filtered.filter((application) => {
+        if (selectedFilters.has(application.applicationStatus)) {
+          return true;
+        }
+        if (
+          application.applicationStatus === 'Pending' &&
+          application.label &&
+          selectedFilters.has(application.label)
+        ) {
+          return true;
+        }
+
+        return false;
+      });
+    }
+
+    return filtered;
+  }, [allApplications, searchText, selectedFilters]);
 
   const [isToggledAll, setIsToggledAll] = useState(false);
-  let length = 20;
   const [selectedApplicationIds, setSelectedApplicationIds] = useState<
     Set<string>
   >(new Set());
-  const [pageSelections, setPageSelections] = useState<Record<number, string>>(
-    {},
+  const [currentAction, setCurrentAction] = useState<'reject' | 'spam' | null>(
+    null,
   );
 
   const { user } = useUser();
@@ -78,22 +114,110 @@ export const ApplicationsTab = ({ slug }: Props) => {
     sponsorGrantQuery(slug, user?.currentSponsorId),
   );
 
-  const queryClient = useQueryClient();
-
   const [selectedApplication, setSelectedApplication] = useAtom(
     selectedGrantApplicationAtom,
   );
 
   useEffect(() => {
-    if (searchText) {
-      length = 999;
-      if (skip !== 0) {
-        setSkip(0);
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!applications.length) return;
+
+      const currentIndex = applications.findIndex(
+        (sub) => sub.id === selectedApplication?.id,
+      );
+
+      switch (e.key) {
+        case 'ArrowUp':
+          e.preventDefault();
+          if (currentIndex > 0) {
+            setSelectedApplication(applications[currentIndex - 1]);
+          }
+          break;
+        case 'ArrowDown':
+          e.preventDefault();
+          if (currentIndex < applications.length - 1) {
+            setSelectedApplication(applications[currentIndex + 1]);
+          }
+          break;
       }
-    } else {
-      length = 20;
-    }
-  }, [searchText]);
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [applications, selectedApplication, setSelectedApplication]);
+
+  const rejectGrantApplications = useRejectGrantApplications(slug);
+
+  const queryClient = useQueryClient();
+
+  const approveGrantMutation = useMutation({
+    mutationFn: async ({
+      applicationId,
+      approvedAmount,
+    }: {
+      applicationId: string;
+      approvedAmount: number;
+    }) => {
+      const response = await api.post(
+        '/api/sponsor-dashboard/grants/update-application-status',
+        {
+          data: [{ id: applicationId, approvedAmount }],
+          applicationStatus: 'Approved',
+        },
+      );
+      return response.data;
+    },
+    onMutate: async ({ applicationId, approvedAmount }) => {
+      const previousApplications =
+        queryClient.getQueryData<GrantApplicationsReturn>([
+          'sponsor-applications',
+          grant?.slug,
+        ]);
+
+      queryClient.setQueryData<GrantApplicationsReturn>(
+        ['sponsor-applications', grant?.slug],
+        (oldData) => {
+          if (!oldData) return oldData;
+          const updatedApplications = oldData.data.map((application) =>
+            application.id === applicationId
+              ? {
+                  ...application,
+                  applicationStatus: GrantApplicationStatus.Approved,
+                  approvedAmount: approvedAmount,
+                  label:
+                    application.label === 'Unreviewed' ||
+                    application.label === 'Pending'
+                      ? 'Reviewed'
+                      : application.label,
+                }
+              : application,
+          );
+          const updatedApplication = updatedApplications.find(
+            (application) => application.id === applicationId,
+          );
+          setSelectedApplication(updatedApplication);
+          return {
+            ...oldData,
+            data: updatedApplications,
+          };
+        },
+      );
+
+      return { previousApplications };
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['sponsor-applications', slug],
+      });
+    },
+    onError: (_, __, context) => {
+      queryClient.setQueryData<GrantApplicationsReturn>(
+        ['sponsor-applications', grant?.slug],
+        context?.previousApplications,
+      );
+      toast.error('Failed to approve grant. Please try again.');
+    },
+  });
 
   useEffect(() => {
     selectedApplicationIds.size > 0 ? onTogglerOpen() : onTogglerClose();
@@ -158,119 +282,6 @@ export const ApplicationsTab = ({ slug }: Props) => {
     onClose: rejectedOnClose,
   } = useDisclosure();
 
-  const isAnyModalOpen = rejectedIsOpen || approveIsOpen || isTogglerOpen;
-
-  const changePage = useCallback(
-    async (newSkip: number, selectIndex: number) => {
-      if (newSkip < 0 || newSkip >= grant?.totalApplications!) return;
-      setSkip(newSkip);
-      await new Promise((resolve) => setTimeout(resolve, 0));
-
-      await queryClient.prefetchQuery({
-        ...applicationsQuery(slug, { ...params, skip: newSkip }),
-        staleTime: Infinity,
-      });
-
-      const newApplications = queryClient.getQueryData<GrantApplicationsReturn>(
-        ['sponsor-applications', slug, { ...params, skip: newSkip }],
-      );
-      setApplications(newApplications?.data || []);
-
-      if (newApplications && newApplications.count > 0) {
-        if (selectIndex === -1) {
-          const savedSelectionId = pageSelections[newSkip];
-          const savedApplication = savedSelectionId
-            ? newApplications.data.find((app) => app.id === savedSelectionId)
-            : null;
-
-          if (savedApplication) {
-            setSelectedApplication(savedApplication);
-          } else {
-            setSelectedApplication(newApplications.data[0]);
-          }
-        } else {
-          setSelectedApplication(
-            newApplications.data[
-              Math.min(selectIndex, newApplications.data.length - 1)
-            ],
-          );
-        }
-      }
-    },
-    [
-      queryClient,
-      slug,
-      params,
-      grant?.totalApplications,
-      setSelectedApplication,
-      pageSelections,
-    ],
-  );
-
-  useEffect(() => {
-    const handleKeyDown = async (e: KeyboardEvent) => {
-      if (!applications?.length) return;
-
-      if (!isAnyModalOpen) {
-        const currentIndex = applications.findIndex(
-          (app) => app.id === selectedApplication?.id,
-        );
-
-        switch (e.key) {
-          case 'ArrowUp':
-            e.preventDefault();
-            if (currentIndex > 0) {
-              setSelectedApplication(applications[currentIndex - 1]);
-            } else if (skip > 0) {
-              // When going to the previous page, select the last item
-              await changePage(Math.max(skip - length, 0), length - 1);
-            }
-            break;
-          case 'ArrowDown':
-            e.preventDefault();
-            if (currentIndex < applications.length - 1) {
-              setSelectedApplication(applications[currentIndex + 1]);
-            } else if (skip + length < totalCount!) {
-              await changePage(skip + length, 0);
-            }
-            break;
-          case 'ArrowLeft':
-            e.preventDefault();
-            if (skip > 0) {
-              await changePage(Math.max(skip - length, 0), -1);
-            }
-            break;
-          case 'ArrowRight':
-            e.preventDefault();
-            if (skip + length < totalCount!) {
-              await changePage(skip + length, -1);
-            }
-            break;
-        }
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [
-    applications,
-    selectedApplication,
-    skip,
-    length,
-    grant?.totalApplications,
-    changePage,
-    isAnyModalOpen,
-  ]);
-
-  useEffect(() => {
-    if (selectedApplication) {
-      setPageSelections((prev) => ({
-        ...prev,
-        [skip]: selectedApplication.id,
-      }));
-    }
-  }, [selectedApplication, skip]);
-
   const toggleApplication = (id: string) => {
     setSelectedApplicationIds((prev) => {
       const newSet = new Set(prev);
@@ -308,260 +319,9 @@ export const ApplicationsTab = ({ slug }: Props) => {
     }
   };
 
-  const rejectMultipleGrantMutation = useMutation({
-    mutationFn: async (applicationIds: string[]) => {
-      const batchSize = 10;
-      for (let i = 0; i < applicationIds.length; i += batchSize) {
-        const batch = applicationIds.slice(i, i + batchSize);
-        await api.post(
-          `/api/sponsor-dashboard/grants/update-application-status`,
-          {
-            data: batch.map((a) => ({ id: a })),
-            applicationStatus: 'Rejected',
-          },
-        );
-      }
-    },
-    onMutate: async (applicationIds) => {
-      queryClient.setQueryData<GrantApplicationsReturn>(
-        ['sponsor-applications', slug, params],
-        (old) => {
-          if (!old) return old;
-          const data = old.data.map((application: GrantApplicationWithUser) =>
-            applicationIds.includes(application.id)
-              ? {
-                  ...application,
-                  applicationStatus: GrantApplicationStatus.Rejected,
-                  label:
-                    application.label === 'Unreviewed' ||
-                    application.label === 'Pending'
-                      ? 'Reviewed'
-                      : application.label,
-                }
-              : application,
-          );
-          if (selectedApplication?.id) {
-            const updatedApplication = data.find(
-              (application) => application.id === selectedApplication?.id,
-            );
-            setSelectedApplication(updatedApplication);
-          }
-          return {
-            ...old,
-            data,
-          };
-        },
-      );
-    },
-    onError: () => {
-      toast.error(
-        'An error occurred while rejecting applications. Please try again.',
-      );
-    },
-    onSuccess: (_, applicationIds) => {
-      queryClient.invalidateQueries({
-        queryKey: ['sponsor-applications', slug],
-      });
-
-      queryClient.setQueryData<GrantApplicationsReturn>(
-        ['sponsor-applications', slug, params],
-        (old) => {
-          if (!old) return old;
-          const data = old.data.map((application: GrantApplicationWithUser) =>
-            applicationIds.includes(application.id)
-              ? {
-                  ...application,
-                  applicationStatus: GrantApplicationStatus.Rejected,
-                  label:
-                    application.label === 'Unreviewed' ||
-                    application.label === 'Pending'
-                      ? 'Reviewed'
-                      : application.label,
-                }
-              : application,
-          );
-          if (selectedApplication?.id) {
-            const updatedApplication = data.find(
-              (application) => application.id === selectedApplication?.id,
-            );
-            setSelectedApplication(updatedApplication);
-          }
-          return {
-            ...old,
-            data,
-          };
-        },
-      );
-
-      const updatedApplication = queryClient
-        .getQueryData<GrantApplicationsReturn>([
-          'sponsor-applications',
-          slug,
-          params,
-        ])
-        ?.data?.find((application) => applicationIds.includes(application.id));
-
-      setSelectedApplication(updatedApplication);
-      setSelectedApplicationIds(new Set());
-      toast.success('Applications rejected successfully');
-    },
-  });
-
-  const moveToNextPendingApplication = () => {
-    if (!selectedApplication) return;
-
-    const currentIndex =
-      applications?.findIndex((app) => app.id === selectedApplication.id) || 0;
-    if (currentIndex === -1) return;
-
-    const nextPendingApplication = applications
-      ?.slice(currentIndex + 1)
-      .find((app) => app.applicationStatus === GrantApplicationStatus.Pending);
-
-    if (nextPendingApplication) {
-      setSelectedApplication(nextPendingApplication);
-    }
+  const handleRejectGrant = (applicationId: string) => {
+    rejectGrantApplications.mutate([applicationId]);
   };
-
-  const handleRejectMultipleGrants = (applicationIds: string[]) => {
-    rejectMultipleGrantMutation.mutate(applicationIds);
-    rejectedMultipleOnClose();
-  };
-
-  const rejectGrantMutation = useMutation({
-    mutationFn: async (applicationId: string) => {
-      const response = await api.post(
-        '/api/sponsor-dashboard/grants/update-application-status',
-        {
-          data: [{ id: applicationId }],
-          applicationStatus: 'Rejected',
-        },
-      );
-      return response.data;
-    },
-    onMutate: async (applicationId) => {
-      const previousApplications =
-        queryClient.getQueryData<GrantApplicationsReturn>([
-          'sponsor-applications',
-          grant?.slug,
-          params,
-        ]);
-
-      queryClient.setQueryData<GrantApplicationsReturn>(
-        ['sponsor-applications', grant?.slug, params],
-        (oldData) => {
-          if (!oldData) return oldData;
-          const updatedApplications = oldData.data.map((application) =>
-            application.id === applicationId
-              ? {
-                  ...application,
-                  applicationStatus: GrantApplicationStatus.Rejected,
-                  label:
-                    application.label === 'Unreviewed' ||
-                    application.label === 'Pending'
-                      ? 'Reviewed'
-                      : application.label,
-                }
-              : application,
-          );
-          const updatedApplication = updatedApplications.find(
-            (application) => application.id === applicationId,
-          );
-          setSelectedApplication(updatedApplication);
-          moveToNextPendingApplication();
-          return {
-            ...oldData,
-            data: updatedApplications,
-          };
-        },
-      );
-
-      return { previousApplications };
-    },
-    onError: (_, __, context) => {
-      queryClient.setQueryData<GrantApplicationsReturn>(
-        ['sponsor-applications', grant?.slug, params],
-        context?.previousApplications,
-      );
-      toast.error('Failed to reject grant. Please try again.');
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ['sponsor-applications', slug],
-      });
-    },
-  });
-
-  const approveGrantMutation = useMutation({
-    mutationFn: async ({
-      applicationId,
-      approvedAmount,
-    }: {
-      applicationId: string;
-      approvedAmount: number;
-    }) => {
-      const response = await api.post(
-        '/api/sponsor-dashboard/grants/update-application-status',
-        {
-          data: [{ id: applicationId, approvedAmount }],
-          applicationStatus: 'Approved',
-        },
-      );
-      return response.data;
-    },
-    onMutate: async ({ applicationId, approvedAmount }) => {
-      const previousApplications =
-        queryClient.getQueryData<GrantApplicationsReturn>([
-          'sponsor-applications',
-          grant?.slug,
-          params,
-        ]);
-
-      queryClient.setQueryData<GrantApplicationsReturn>(
-        ['sponsor-applications', grant?.slug, params],
-        (oldData) => {
-          if (!oldData) return oldData;
-          const updatedApplications = oldData.data.map((application) =>
-            application.id === applicationId
-              ? {
-                  ...application,
-                  applicationStatus: GrantApplicationStatus.Approved,
-                  approvedAmount: approvedAmount,
-                  label:
-                    application.label === 'Unreviewed' ||
-                    application.label === 'Pending'
-                      ? 'Reviewed'
-                      : application.label,
-                }
-              : application,
-          );
-          const updatedApplication = updatedApplications.find(
-            (application) => application.id === applicationId,
-          );
-          setSelectedApplication(updatedApplication);
-          moveToNextPendingApplication();
-          return {
-            ...oldData,
-            data: updatedApplications,
-          };
-        },
-      );
-
-      return { previousApplications };
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ['sponsor-applications', slug],
-      });
-    },
-    onError: (_, __, context) => {
-      queryClient.setQueryData<GrantApplicationsReturn>(
-        ['sponsor-applications', grant?.slug, params],
-        context?.previousApplications,
-      );
-      toast.error('Failed to approve grant. Please try again.');
-    },
-  });
 
   const handleApproveGrant = (
     applicationId: string,
@@ -570,17 +330,23 @@ export const ApplicationsTab = ({ slug }: Props) => {
     approveGrantMutation.mutate({ applicationId, approvedAmount });
   };
 
-  const handleRejectGrant = (applicationId: string) => {
-    rejectGrantMutation.mutate(applicationId);
+  const handleModalAction = (actionType: 'reject' | 'spam') => {
+    setCurrentAction(actionType);
+    rejectedMultipleOnOpen();
   };
+
+  if (isApplicationsLoading) {
+    return <LoadingSection />;
+  }
+
   return (
     <>
       <div className="flex w-full items-start bg-white">
         <div className="grid min-h-[600px] w-full grid-cols-[23rem_1fr] bg-white">
           <div className="h-full w-full">
             <ApplicationList
-              filterLabel={filterLabel}
-              setFilterLabel={setFilterLabel}
+              selectedFilters={selectedFilters}
+              onFilterChange={setSelectedFilters}
               applications={applications}
               setSearchText={setSearchText}
               isToggled={isToggled}
@@ -604,10 +370,12 @@ export const ApplicationsTab = ({ slug }: Props) => {
                   src={'/bg/talent-empty.svg'}
                 />
                 <p className="mx-auto mt-5 text-center text-lg font-semibold text-slate-600">
-                  {filterLabel ? 'Zero Results' : 'People are working!'}
+                  {selectedFilters.size > 0 || searchText
+                    ? 'Zero Results'
+                    : 'People are working!'}
                 </p>
                 <p className="mx-auto mb-[200px] text-center font-medium text-slate-400">
-                  {filterLabel
+                  {selectedFilters.size > 0 || searchText
                     ? 'For the filters you have selected'
                     : 'Submissions will start appearing here'}
                 </p>
@@ -617,7 +385,6 @@ export const ApplicationsTab = ({ slug }: Props) => {
                 isMultiSelectOn={selectedApplicationIds.size > 0}
                 grant={grant}
                 applications={applications}
-                params={params}
                 approveOnOpen={approveOnOpen}
                 rejectedOnOpen={rejectedOnOpen}
               />
@@ -627,44 +394,11 @@ export const ApplicationsTab = ({ slug }: Props) => {
       </div>
 
       <div className="mt-4 flex items-center justify-start gap-4">
-        {!!searchText ? (
+        {!!searchText && (
           <p className="text-sm text-slate-400">
             Found <span className="font-bold">{applications?.length || 0}</span>{' '}
             {applications?.length === 1 ? 'result' : 'results'}
           </p>
-        ) : (
-          <>
-            <Button
-              disabled={skip <= 0}
-              onClick={() => changePage(Math.max(skip - length, 0), length - 1)}
-              size="sm"
-              variant="outline"
-            >
-              <ChevronLeft className="mr-2 h-5 w-5" />
-              Previous
-            </Button>
-
-            <p className="text-sm text-slate-400">
-              <span className="font-bold">{skip + 1}</span> -{' '}
-              <span className="font-bold">
-                {Math.min(skip + length, totalCount)}
-              </span>{' '}
-              of <span className="font-bold">{totalCount}</span> Applications
-            </p>
-
-            <Button
-              disabled={
-                totalCount! <= skip + length ||
-                (skip > 0 && skip % length !== 0)
-              }
-              onClick={() => changePage(skip + length, 0)}
-              size="sm"
-              variant="outline"
-            >
-              Next
-              <ChevronRight className="ml-2 h-5 w-5" />
-            </Button>
-          </>
         )}
       </div>
 
@@ -677,25 +411,24 @@ export const ApplicationsTab = ({ slug }: Props) => {
           }}
           unsetDefaultPosition
           hideCloseIcon
-          className="fixed bottom-4 left-1/2 -translate-x-1/2 p-1"
+          className="fixed bottom-4 left-1/2 w-fit max-w-none -translate-x-1/2 overflow-hidden px-5 py-2"
         >
-          <div className="mx-auto w-fit rounded-lg bg-white">
+          <div className="mx-auto w-fit rounded-lg">
             {selectedApplicationIds.size > 100 && (
               <p className="pb-2 text-center text-red-500">
                 Cannot select more than 100 applications
               </p>
             )}
 
-            <div className="flex items-center gap-4 text-base">
-              <div className="flex items-center font-medium">
-                <p>{selectedApplicationIds.size}</p>
-                <p className="ml-1 text-slate-500">Selected</p>
-              </div>
+            <div className="flex items-center gap-3">
+              <p className="text-base font-medium whitespace-nowrap">
+                {selectedApplicationIds.size} Selected
+              </p>
 
               <div className="h-4 w-px bg-slate-300" />
 
               <Button
-                className="bg-transparent font-medium hover:bg-transparent"
+                className="px-2 font-semibold text-slate-500"
                 onClick={() => {
                   setSelectedApplicationIds(new Set());
                 }}
@@ -705,12 +438,21 @@ export const ApplicationsTab = ({ slug }: Props) => {
               </Button>
 
               <Button
-                className="gap-2 bg-red-50 font-medium text-rose-600 hover:bg-red-50/90 disabled:opacity-50"
+                className="rounded-lg border border-orange-300 bg-orange-50 text-orange-600 hover:bg-orange-100 disabled:opacity-50"
+                disabled={selectedApplicationIds.size === 0}
+                onClick={() => handleModalAction('spam')}
+              >
+                <LucideFlag className="size-1" />
+                Mark as Spam
+              </Button>
+
+              <Button
+                className="rounded-lg border border-red-300 bg-red-50 text-red-600 hover:bg-red-100 disabled:opacity-50"
                 disabled={
                   selectedApplicationIds.size === 0 ||
                   selectedApplicationIds.size > 100
                 }
-                onClick={rejectedMultipleOnOpen}
+                onClick={() => handleModalAction('reject')}
               >
                 <svg
                   width="13"
@@ -751,12 +493,20 @@ export const ApplicationsTab = ({ slug }: Props) => {
         onApproveGrant={handleApproveGrant}
         max={grant?.maxReward}
       />
-      <RejectAllGrantApplicationModal
-        applicationIds={Array.from(selectedApplicationIds)}
-        rejectIsOpen={rejectedMultipleIsOpen}
-        rejectOnClose={rejectedMultipleOnClose}
-        onRejectGrant={handleRejectMultipleGrants}
-      />
+      {currentAction && (
+        <MultiActionModal
+          isOpen={rejectedMultipleIsOpen}
+          onClose={() => {
+            rejectedMultipleOnClose();
+            setCurrentAction(null);
+          }}
+          applicationIds={Array.from(selectedApplicationIds)}
+          setSelectedApplicationIds={setSelectedApplicationIds}
+          allApplicationsLength={applications?.length || 0}
+          actionType={currentAction}
+          slug={slug}
+        />
+      )}
     </>
   );
 };

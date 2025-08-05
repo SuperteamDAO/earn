@@ -1,10 +1,11 @@
 import { usePrivy } from '@privy-io/react-auth';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { usePostHog } from 'posthog-js/react';
+import posthog from 'posthog-js';
 import React from 'react';
 
 import { Button } from '@/components/ui/button';
+import { LocalImage } from '@/components/ui/local-image';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
@@ -16,7 +17,7 @@ import { NAV_LINKS } from '../utils/constants';
 export const DesktopNavbar = () => {
   const { authenticated, ready } = usePrivy();
   const { user } = useUser();
-  const posthog = usePostHog();
+
   const router = useRouter();
 
   const isDashboardRoute = router.pathname.startsWith('/dashboard');
@@ -33,10 +34,11 @@ export const DesktopNavbar = () => {
               posthog.capture('homepage logo click_universal');
             }}
           >
-            <img
+            <LocalImage
               className="h-[1.4rem] cursor-pointer object-contain"
               alt="Superteam Earn"
               src="/assets/logo.svg"
+              loading="eager"
             />
             <div className="h-6 w-[1.5px] bg-slate-300" />
             <p className="text-sm font-semibold tracking-[1.5px] text-slate-500">

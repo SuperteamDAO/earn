@@ -8,6 +8,8 @@ import { safeStringify } from '@/utils/safeStringify';
 import { type NextApiRequestWithSponsor } from '@/features/auth/types';
 import { checkListingSponsorAuth } from '@/features/auth/utils/checkListingSponsorAuth';
 import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
+import { refundCredits } from '@/features/credits/utils/allocateCredits';
+import { queueEmail } from '@/features/emails/utils/queueEmail';
 
 async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   const id = req.query.id as string;
@@ -82,6 +84,48 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         winnerPosition: null,
       },
     });
+
+    if (listing.type === 'project') {
+      const submissionsToReject = await prisma.submission.findMany({
+        where: {
+          listingId: id,
+          isWinner: false,
+        },
+        select: {
+          id: true,
+          userId: true,
+        },
+      });
+
+      await prisma.submission.updateMany({
+        where: {
+          listingId: id,
+          isWinner: false,
+        },
+        data: {
+          status: 'Rejected',
+        },
+      });
+
+      for (const submission of submissionsToReject) {
+        try {
+          await queueEmail({
+            type: 'submissionRejected',
+            id: submission.id,
+            userId: submission.userId,
+            triggeredBy: req.userId,
+          });
+        } catch (err) {
+          logger.warn(
+            'Failed to send email notification for submission rejection for submission: ',
+            submission.id,
+          );
+        }
+      }
+    }
+
+    await refundCredits(id);
+
     try {
       await earncognitoClient.post(`/discord/listing-update`, {
         listingId: id,

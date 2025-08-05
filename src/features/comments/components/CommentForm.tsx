@@ -1,8 +1,9 @@
 import type { CommentRefType } from '@prisma/client';
-import { usePostHog } from 'posthog-js/react';
+import posthog from 'posthog-js';
 import React, { useCallback, useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import type { Comment } from '@/interface/comments';
 import type { User } from '@/interface/user';
 import { api } from '@/lib/api';
@@ -34,12 +35,12 @@ export const CommentForm = ({
   onSuccess,
 }: Props) => {
   const { user } = useUser();
-  const posthog = usePostHog();
 
   const [newComment, setNewComment] = useState('');
   const [newCommentLoading, setNewCommentLoading] = useState(false);
   const [newCommentError, setNewCommentError] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(true);
+  const [isPinned, setIsPinned] = useState(false);
 
   const addNewComment = async () => {
     posthog.capture('publish_comment');
@@ -51,9 +52,11 @@ export const CommentForm = ({
         refType: refType,
         refId: refId,
         pocId: poc?.id,
+        isPinned,
       });
       onSuccess?.(newCommentData.data);
       setNewComment('');
+      setIsPinned(false);
       setNewCommentLoading(false);
     } catch (e) {
       setNewCommentError(true);
@@ -104,6 +107,8 @@ export const CommentForm = ({
     setIsCollapsed(!newComment);
   }, [newComment]);
 
+  const isPoc = poc?.id === user?.id;
+
   return (
     <div className="mb-4 flex w-full flex-col gap-4">
       <div className="flex w-full gap-3">
@@ -130,10 +135,27 @@ export const CommentForm = ({
           isCollapsed ? 'h-0 opacity-0' : 'h-auto opacity-100',
         )}
       >
-        <div className="flex w-full justify-end gap-4">
+        <div className="flex w-full items-center justify-end gap-4">
+          {isPoc && (
+            <div className="flex items-center gap-2">
+              <Checkbox
+                id="pin-comment"
+                checked={isPinned}
+                onCheckedChange={(checked) => setIsPinned(checked as boolean)}
+                disabled={newCommentLoading || !newComment}
+                className="mb-0.5"
+              />
+              <label
+                htmlFor="pin-comment"
+                className="text-[11px] font-medium text-slate-600 md:text-sm"
+              >
+                Pin Comment
+              </label>
+            </div>
+          )}
           <Button
             variant="ghost"
-            className="h-auto px-5 py-1.5 text-[10px] font-medium text-slate-500 md:text-sm"
+            className="h-auto px-5 py-1.5 text-[11px] font-medium text-slate-500 md:text-sm"
             disabled={newCommentLoading || !newComment}
             onClick={() => setNewComment('')}
           >
@@ -148,7 +170,7 @@ export const CommentForm = ({
           >
             <Button
               variant="default"
-              className="h-auto px-5 py-1.5 text-[10px] font-medium md:text-sm"
+              className="h-auto px-5 py-1.5 text-[11px] font-medium md:text-sm"
               disabled={
                 newCommentLoading || !newComment || isTemplate || isDisabled
               }

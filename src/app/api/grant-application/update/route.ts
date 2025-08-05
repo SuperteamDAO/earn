@@ -3,11 +3,11 @@ import dayjs from 'dayjs';
 import { headers } from 'next/headers';
 import { type NextRequest, NextResponse } from 'next/server';
 
-import earncognitoClient from '@/lib/earncognitoClient';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
 
+import { queueAgent } from '@/features/agents/utils/queueAgent';
 import { getUserSession } from '@/features/auth/utils/getUserSession';
 import { grantApplicationSchema } from '@/features/grants/utils/grantApplicationSchema';
 import { syncGrantApplicationWithAirtable } from '@/features/grants/utils/syncGrantApplicationWithAirtable';
@@ -31,6 +31,9 @@ async function updateGrantApplication(
       data.twitter !== undefined
         ? extractSocialUsername('twitter', data.twitter) || ''
         : undefined,
+    github: !!data.github
+      ? extractSocialUsername('github', data.github) || ''
+      : null,
   });
 
   if (!validationResult.success) {
@@ -69,6 +72,7 @@ async function updateGrantApplication(
     walletAddress: validatedData.walletAddress,
     ask: validatedData.ask,
     twitter: validatedData.twitter,
+    github: validatedData.github,
     answers: validatedData.answers || [],
   };
 
@@ -144,6 +148,18 @@ export async function POST(request: NextRequest) {
 
     waitUntil(
       (async () => {
+        try {
+          await queueAgent({
+            type: 'autoReviewGrantApplication',
+            id: result.id,
+          });
+        } catch (error) {
+          logger.error('Failed to update AI review for grant application: ', {
+            error,
+            grantId,
+            userId,
+          });
+        }
         if (grant.airtableId) {
           try {
             await syncGrantApplicationWithAirtable(result);
@@ -154,17 +170,6 @@ export async function POST(request: NextRequest) {
               grantId,
             });
           }
-        }
-        try {
-          await earncognitoClient.post('/ai/grants/review-application', {
-            id: result.id,
-          });
-        } catch (error) {
-          logger.error('Failed to update AI review for grant application: ', {
-            error,
-            grantId,
-            userId,
-          });
         }
       })(),
     );

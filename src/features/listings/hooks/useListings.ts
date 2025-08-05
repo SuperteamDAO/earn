@@ -30,6 +30,7 @@ interface ListingsParams {
   order?: OrderDirection;
   region?: string;
   sponsor?: string;
+  authenticated?: boolean;
 }
 
 const fetchListings = async ({
@@ -67,6 +68,7 @@ export function useListings({
   order,
   region,
   sponsor,
+  authenticated,
 }: ListingsParams) {
   return useQuery({
     queryKey: [
@@ -79,6 +81,7 @@ export function useListings({
       order,
       region,
       sponsor,
+      authenticated,
     ],
     queryFn: () =>
       fetchListings({

@@ -1,7 +1,7 @@
 import { usePrivy } from '@privy-io/react-auth';
 import { useAtom, useSetAtom } from 'jotai';
 import Image from 'next/image';
-import { usePostHog } from 'posthog-js/react';
+import posthog from 'posthog-js';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 import {
@@ -81,7 +81,7 @@ export const ListingPop = ({ listing }: { listing: Listing | null }) => {
   const { authenticated, ready } = usePrivy();
 
   const isMD = useBreakpoint('md');
-  const posthog = usePostHog();
+
   const [bountySnackbar] = useAtom(bountySnackbarAtom);
 
   const initated = useRef(false); // only run use effect once

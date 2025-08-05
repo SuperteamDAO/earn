@@ -1,8 +1,9 @@
 import { X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
-import { BsThreeDotsVertical } from 'react-icons/bs';
-import { MdIosShare, MdOutlineInstallMobile } from 'react-icons/md';
 
+import BsThreeDotsVertical from '@/components/icons/BsThreeDotsVertical';
+import MdIosShare from '@/components/icons/MdIosShare';
+import MdOutlineInstallMobile from '@/components/icons/MdOutlineInstallMobile';
 import { Button } from '@/components/ui/button';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { useUser } from '@/store/user';
@@ -98,7 +99,7 @@ export const InstallPWAModal = () => {
       }
     };
 
-    setTimeout(showInstallAppModal, 60000);
+    setTimeout(showInstallAppModal, 20000);
   }, [user, onPWAModalOpen]);
 
   const isAutoInstallable = mobileOs !== 'iOS';
@@ -126,6 +127,7 @@ export const InstallPWAModal = () => {
                   alt="Superteam Earn Icon"
                   className="h-16 w-16"
                 />
+
                 <div className="my-12 flex flex-col items-center">
                   <p className="font-bold">Never miss a listing again!</p>
                   <p className="mt-1 w-3/4 text-center text-slate-500">

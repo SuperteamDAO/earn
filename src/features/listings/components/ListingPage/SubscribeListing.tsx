@@ -1,9 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Loader2 } from 'lucide-react';
-import { usePostHog } from 'posthog-js/react';
-import { TbBell, TbBellRinging } from 'react-icons/tb';
+import posthog from 'posthog-js';
 import { toast } from 'sonner';
 
+import TbBell from '@/components/icons/TbBell';
+import TbBellRinging from '@/components/icons/TbBellRinging';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { ASSET_URL } from '@/constants/ASSET_URL';
@@ -26,7 +27,7 @@ const toggleSubscription = async (id: string) => {
 
 export const SubscribeListing = ({ id, isTemplate = false }: Props) => {
   const { user } = useUser();
-  const posthog = usePostHog();
+
   const queryClient = useQueryClient();
 
   const { data: sub = [] } = useQuery(listingSubscriptionsQuery(id));
@@ -104,7 +105,7 @@ export const SubscribeListing = ({ id, isTemplate = false }: Props) => {
             ) : (
               <TbBell />
             )}
-            <span className="hidden">
+            <span className="hidden md:block">
               {isSubscribeLoading ? (
                 <span>Subscribing</span>
               ) : isSubscribed ? (

@@ -2,7 +2,7 @@ import { useIsFetching, useQuery } from '@tanstack/react-query';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { ExternalLink, Loader2 } from 'lucide-react';
 import { useRouter } from 'next/router';
-import { usePostHog } from 'posthog-js/react';
+import posthog from 'posthog-js';
 import { useEffect, useMemo, useState } from 'react';
 import { useWatch } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -59,7 +59,7 @@ export function PrePublish() {
   const submitListingMutation = useAtomValue(submitListingMutationAtom);
 
   const router = useRouter();
-  const posthog = usePostHog();
+
   const { user } = useUser();
 
   const {
@@ -167,13 +167,15 @@ export function PrePublish() {
       </Tooltip>
       <DialogContent className="overflow-y-visible py-4 sm:max-w-[500px]">
         <DialogHeader className="flex flex-row items-center gap-4">
-          <DialogTitle className="h-4 text-base">
+          <DialogTitle className="relative h-5 text-base">
             {isUpdate ? <span>Update</span> : <span>Publish</span>}{' '}
             <span>Listing</span>
+            {isDisabledSoft && (
+              <span className="absolute top-2/4 -right-7 mt-0.5 h-4 w-4 -translate-y-2/4">
+                <Loader2 className="h-full w-full origin-center translate-z-0 animate-spin text-slate-500" />
+              </span>
+            )}
           </DialogTitle>
-          {isDisabledSoft && (
-            <Loader2 className="mt-0.5 h-4 w-4 animate-spin text-slate-500" />
-          )}
         </DialogHeader>
         <Separator className="relativerl w-[100%]" />
         <div className="space-y-4">

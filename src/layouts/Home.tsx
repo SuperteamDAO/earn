@@ -1,7 +1,8 @@
 import { usePrivy } from '@privy-io/react-auth';
+import { useQuery } from '@tanstack/react-query';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
-import React, { type ReactNode, useEffect, useState } from 'react';
+import React, { type ReactNode, useMemo } from 'react';
 
 import { type Superteam } from '@/constants/Superteam';
 import { Default } from '@/layouts/Default';
@@ -10,12 +11,13 @@ import { cn } from '@/utils/cn';
 
 import { BannerCarousel } from '@/features/home/components/Banner';
 import { UserStatsBanner } from '@/features/home/components/UserStatsBanner';
+import { userCountQuery } from '@/features/home/queries/user-count';
 
 interface HomeProps {
-  children: ReactNode;
-  type: 'landing' | 'listing' | 'region' | 'feed';
-  st?: Superteam;
-  potentialSession?: boolean;
+  readonly children: ReactNode;
+  readonly type: 'listing' | 'region' | 'feed';
+  readonly st?: Superteam;
+  readonly potentialSession?: boolean;
 }
 
 type CategoryTypes = 'content' | 'development' | 'design' | 'other' | 'all';
@@ -43,11 +45,11 @@ export function Home({
   potentialSession = false,
 }: HomeProps) {
   const router = useRouter();
-  const [currentCategory, setCurrentCategory] = useState<CategoryTypes | null>(
-    null,
-  );
+  const { authenticated } = usePrivy();
 
-  useEffect(() => {
+  const { data: totalUsers } = useQuery(userCountQuery);
+
+  const currentCategory = useMemo(() => {
     const categoryParam = router.query.category?.toString().toLowerCase();
     const isAllPage = router.asPath.includes('/all');
 
@@ -57,27 +59,20 @@ export function Home({
         categoryParam === 'all' ||
         categoryParam === 'for you'
       ) {
-        setCurrentCategory('all');
-      } else if (
+        return 'all';
+      }
+      if (
         categoryParam === 'development' ||
         categoryParam === 'design' ||
         categoryParam === 'content' ||
         categoryParam === 'other'
       ) {
-        setCurrentCategory(categoryParam as CategoryTypes);
-      } else {
-        setCurrentCategory(null);
+        return categoryParam as CategoryTypes;
       }
-    } else {
-      setCurrentCategory(null);
+      return null;
     }
+    return null;
   }, [router.query.category, router.asPath]);
-
-  const { authenticated } = usePrivy();
-
-  useEffect(() => {
-    console.log('currentCategory', currentCategory);
-  }, [currentCategory]);
 
   return (
     <Default
@@ -97,16 +92,15 @@ export function Home({
           <div className="flex items-start justify-between">
             <div className="w-full lg:border-r lg:border-slate-100">
               <div className="w-full lg:pr-6">
-                {!currentCategory &&
-                  (type === 'landing' || type === 'listing') && (
-                    <div className="pt-3">
-                      {potentialSession || authenticated ? (
-                        <UserStatsBanner />
-                      ) : (
-                        <BannerCarousel />
-                      )}
-                    </div>
-                  )}
+                {!currentCategory && type === 'listing' && (
+                  <div className="pt-3">
+                    {potentialSession || authenticated ? (
+                      <UserStatsBanner />
+                    ) : (
+                      <BannerCarousel totalUsers={totalUsers?.totalUsers} />
+                    )}
+                  </div>
+                )}
                 {children}
               </div>
             </div>

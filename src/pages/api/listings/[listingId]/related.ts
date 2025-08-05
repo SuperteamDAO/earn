@@ -116,7 +116,7 @@ async function findRelatedListings(
   }
 
   const regionFilter = userRegion
-    ? Prisma.sql`AND (region = ${userRegion} OR region = 'GLOBAL')`
+    ? Prisma.sql`AND (region = ${userRegion} OR region = 'Global')`
     : Prisma.empty;
 
   return await prisma.$queryRaw`

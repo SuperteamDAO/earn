@@ -118,6 +118,10 @@ export const useListingForm = (
         if (!dataToSave.deadline.endsWith('Z'))
           dataToSave.deadline += dayjs().format('Z');
       }
+      if (dataToSave.commitmentDate) {
+        if (!dataToSave.commitmentDate.endsWith('Z'))
+          dataToSave.commitmentDate += dayjs().format('Z');
+      }
       const data = await saveDraftMutation.mutateAsync(dataToSave);
       setHideAutoSave(false);
       formMethods.setValue('id', data.id);
@@ -166,6 +170,14 @@ export const useListingForm = (
   }, [getValues, submitListingMutation]);
 
   const resetForm = useCallback(() => {
+    if (typeof window !== 'undefined' && window.__clearImageCleanup) {
+      try {
+        window.__clearImageCleanup();
+      } catch (error) {
+        console.error('Failed to clear image cleanup on reset:', error);
+      }
+    }
+
     const defaultValues = getListingDefaults({
       isGod,
       isEditing,
@@ -266,6 +278,7 @@ export const useListingForm = (
       description: true,
       rewards: true,
       deadline: true,
+      commitmentDate: true,
       skills: true,
       pocSocials: true,
       eligibility: true,

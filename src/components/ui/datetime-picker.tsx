@@ -135,6 +135,11 @@ export type DateTimePickerProps = {
    * Content to show in tooltip for dates after maxDate
    */
   maxDateTooltipContent?: string;
+
+  /**
+   * The default display value to show when the picker is empty.
+   */
+  defaultDisplayValue?: string;
 };
 
 export type DateTimeRenderTriggerProps = {
@@ -163,6 +168,7 @@ export function DateTimePicker({
   hideSeconds,
   minDateTooltipContent,
   maxDateTooltipContent,
+  defaultDisplayValue = 'Pick a date',
   ...props
 }: DateTimePickerProps & CalendarProps) {
   const [open, setOpen] = useState(false);
@@ -244,7 +250,7 @@ export function DateTimePicker({
   const displayValue = value;
 
   const dislayFormat = useMemo(() => {
-    if (!displayValue) return 'Pick a date';
+    if (!displayValue) return defaultDisplayValue;
     return format(
       displayValue,
       `${!hideTime ? 'MMM' : 'MMMM'} d, yyyy${!hideTime ? (use12HourFormat ? ' hh:mm a' : ' HH:mm:ss') : ''}`,
@@ -274,7 +280,7 @@ export function DateTimePicker({
             )}
             tabIndex={0}
           >
-            <div className="flex grow items-center">
+            <div className="flex grow items-center text-slate-700">
               <CalendarIcon className="mr-2 size-4" />
               {dislayFormat}
             </div>

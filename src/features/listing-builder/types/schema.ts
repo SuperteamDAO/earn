@@ -2,7 +2,6 @@ import {
   BountyType,
   CompensationType,
   type Hackathon,
-  Regions,
   status,
 } from '@prisma/client';
 import { z } from 'zod';
@@ -18,9 +17,9 @@ import {
   twitterRegex,
 } from '@/features/social/utils/regex';
 
-import { DEADLINE_FORMAT } from '../components/Form/Deadline';
 import {
   BONUS_REWARD_POSITION,
+  DEADLINE_FORMAT,
   MAX_BONUS_SPOTS,
   MAX_PODIUMS,
   MAX_REWARD,
@@ -172,7 +171,7 @@ export const createListingFormSchema = ({
           }
           return true;
         }, 'Hackathon is not allowed for now'),
-      region: z.string().trim().min(1).max(256).default(Regions.GLOBAL),
+      region: z.string().trim().min(1).max(256).default('Global'),
       referredBy: z.string().trim().min(1).max(256).optional().nullable(),
       deadline: z
         .string()
@@ -197,6 +196,15 @@ export const createListingFormSchema = ({
             newDeadline.isBefore(maxDeadline) || newDeadline.isSame(maxDeadline)
           );
         }, 'Cannot extend deadline more than 2 weeks from original deadline'),
+      commitmentDate: z
+        .string()
+        .trim()
+        .datetime({
+          message: 'Required',
+          local: true,
+          offset: true,
+        })
+        .min(1, 'Required'),
       templateId: z.string().optional().nullable(),
       eligibility: z.array(eligibilityQuestionSchema).optional().nullable(),
       skills: skillsArraySchema,
@@ -273,6 +281,18 @@ export const createListingRefinements = async (
   hackathons?: Hackathon[],
   pick?: ValidationFields,
 ) => {
+  if (data.type === 'project') {
+    if (!data.eligibility || data.eligibility.length === 0) {
+      if ((!!pick && pick.eligibility) || !pick) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Please add some questions',
+          path: ['eligibility'],
+        });
+      }
+    }
+  }
+
   if (data.compensationType === 'fixed') {
     if (!data.rewardAmount) {
       if ((!!pick && pick.rewards) || !pick) {
@@ -297,16 +317,6 @@ export const createListingRefinements = async (
             code: z.ZodIssueCode.custom,
             message: 'Please fill in the rewards',
             path: ['rewards'],
-          });
-        }
-      }
-    } else {
-      if (!data.eligibility || data.eligibility.length === 0) {
-        if ((!!pick && pick.eligibility) || !pick) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: 'Please add some questions',
-            path: ['eligibility'],
           });
         }
       }
@@ -396,6 +406,29 @@ export const createListingRefinements = async (
           path: ['deadline'],
         });
       }
+    }
+  }
+
+  if (data.commitmentDate && data.deadline) {
+    const deadline = dayjs(data.deadline);
+    const min = deadline.add(1, 'day');
+    const max = deadline.add(30, 'day');
+    const selected = dayjs(data.commitmentDate);
+    if (selected.isBefore(min)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message:
+          'Winner announcement date must be at least 1 day after the deadline',
+        path: ['commitmentDate'],
+      });
+    }
+    if (selected.isAfter(max)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message:
+          'Winner announcement date must be no more than 30 days after the deadline',
+        path: ['commitmentDate'],
+      });
     }
   }
 };

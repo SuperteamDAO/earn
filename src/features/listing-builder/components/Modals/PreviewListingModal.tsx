@@ -1,6 +1,6 @@
 import { useAtom } from 'jotai';
 import { ExternalLink, Info, Loader2 } from 'lucide-react';
-import { usePostHog } from 'posthog-js/react';
+import posthog from 'posthog-js';
 import React, { useMemo, useState } from 'react';
 import { useWatch } from 'react-hook-form';
 
@@ -21,7 +21,6 @@ export const PreviewListingModal = () => {
   const [showPreview, setShowPreview] = useAtom(previewAtom);
   const [activeView, setActiveView] = useState('desktop');
   const [isLoading, setIsLoading] = useState(true);
-  const posthog = usePostHog();
 
   const form = useListingForm();
   const type = useWatch({

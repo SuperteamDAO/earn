@@ -1,4 +1,4 @@
-import { type Prisma, Regions } from '@prisma/client';
+import { type Prisma } from '@prisma/client';
 import type { z } from 'zod';
 
 import { exclusiveSponsorData } from '@/constants/exclusiveSponsors';
@@ -59,6 +59,22 @@ function getSkillFilter(
   }
 }
 
+function getUserRegionFilter(userLocation: string | null): string[] {
+  if (!userLocation) return ['Global'];
+
+  const userRegion = getCombinedRegion(userLocation, true);
+  const regions = userRegion?.name
+    ? [
+        'Global',
+        userRegion.name,
+        ...(filterRegionCountry(userRegion, userLocation).country || []),
+        ...(getParentRegions(userRegion) || []),
+      ]
+    : ['Global'];
+
+  return regions;
+}
+
 export async function buildGrantsQuery(
   args: BuildGrantsQueryArgs,
   user: {
@@ -80,32 +96,19 @@ export async function buildGrantsQuery(
   const andConditions: Prisma.GrantsWhereInput[] = [];
 
   if (user?.isTalentFilled && (context === 'all' || context === 'home')) {
-    const userRegion = user?.location
-      ? getCombinedRegion(user?.location, true)
-      : undefined;
-
     where.region = {
-      in: userRegion?.name
-        ? [
-            Regions.GLOBAL,
-            userRegion.name,
-            ...(filterRegionCountry(userRegion, user.location || '').country ||
-              []),
-            ...(getParentRegions(userRegion) || []),
-          ]
-        : [Regions.GLOBAL],
+      in: getUserRegionFilter(user.location),
     };
   }
 
   if (context === 'region' && region) {
     where.region = {
-      in: [region.toUpperCase() as Regions, Regions.GLOBAL],
+      in: [region.charAt(0).toUpperCase() + region.slice(1), 'Global'],
     };
   }
 
   if (context === 'sponsor' && sponsor) {
     const sponsorKey = sponsor.toLowerCase();
-
     const sponsorInfo = exclusiveSponsorData[sponsorKey];
 
     where.sponsor = {

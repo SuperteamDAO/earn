@@ -1,4 +1,4 @@
-import { type GrantTrancheStatus, type Prisma } from '@prisma/client';
+import { type Prisma } from '@prisma/client';
 import type { NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
@@ -14,40 +14,9 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
   const params = req.query;
   const slug = params.slug as string;
-  const skip = params.skip ? parseInt(params.skip as string, 10) : 0;
-  const take = params.take ? parseInt(params.take as string, 10) : 10;
-  const searchText = params.searchText as string;
-  const filterLabel = params.filterLabel as GrantTrancheStatus | undefined;
-
-  const textSearch = searchText
-    ? {
-        OR: [
-          { user: { firstName: { contains: searchText } } },
-          { user: { email: { contains: searchText } } },
-          { user: { username: { contains: searchText } } },
-          { user: { twitter: { contains: searchText } } },
-          { user: { discord: { contains: searchText } } },
-          { projectTitle: { contains: searchText } },
-          {
-            AND: [
-              {
-                user: { firstName: { contains: searchText.split(' ')[0] } },
-              },
-              {
-                user: {
-                  lastName: { contains: searchText.split(' ')[1] || '' },
-                },
-              },
-            ],
-          },
-        ],
-      }
-    : {};
 
   try {
-    logger.info(
-      `Fetching grant applications for slug: ${slug}, skip: ${skip}, take: ${take}, searchText: ${searchText}`,
-    );
+    logger.info(`Fetching grant tranches for slug: ${slug}`);
 
     const grant = await prisma.grants.findUnique({
       where: { slug },
@@ -71,19 +40,16 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         isActive: true,
         sponsorId: req.userSponsorId!,
       },
-      ...textSearch,
     };
     const totalCount = await prisma.grantTranche.count({
       where: {
         GrantApplication: grantApplicationWhere,
-        ...(filterLabel ? { status: filterLabel } : {}),
       },
     });
 
     const query = await prisma.grantTranche.findMany({
       where: {
         GrantApplication: grantApplicationWhere,
-        ...(filterLabel ? { status: filterLabel } : {}),
       },
       include: {
         GrantApplication: {
@@ -124,9 +90,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           },
         },
       },
-      orderBy: [{ createdAt: 'desc' }],
-      skip,
-      take,
+      orderBy: [{ status: 'asc' }, { createdAt: 'desc' }],
     });
 
     const applications = query.map((application) => {

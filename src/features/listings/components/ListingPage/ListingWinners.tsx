@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import Link from 'next/link';
-import { usePostHog } from 'posthog-js/react';
+import posthog from 'posthog-js';
 import { useMemo } from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -40,7 +40,6 @@ const getOrRemoveBonuses = (
 export function ListingWinners({ bounty }: Props) {
   const isProject = bounty?.type === 'project';
 
-  const posthog = usePostHog();
   const isMD = useBreakpoint('md');
   const isSM = useBreakpoint('sm');
   const isLG = useBreakpoint('lg');
@@ -51,11 +50,11 @@ export function ListingWinners({ bounty }: Props) {
   );
 
   const openWinnerLink = () => {
-    let path = window.location.href.split('?')[0];
-    if (!path) return;
-    path += 'winner/';
-
-    return tweetEmbedLink(tweetTemplate(path));
+    return tweetEmbedLink(
+      tweetTemplate(
+        'https://earn.superteam.fun/listing/' + bounty?.slug + '/winner',
+      ),
+    );
   };
 
   const sliceValue = useMemo(() => {

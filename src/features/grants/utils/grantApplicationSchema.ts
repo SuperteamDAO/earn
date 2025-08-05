@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { validateSolAddress } from '@/utils/validateSolAddress';
 
 import {
+  githubUsernameSchema,
   telegramUsernameSchema,
   twitterUsernameSchema,
 } from '@/features/social/utils/schema';
@@ -37,6 +38,13 @@ export const grantApplicationSchema = (
       milestones: z.string().min(1, 'Milestones are required'),
       kpi: z.string().min(1, 'KPI is required'),
       twitter: twitterUsernameSchema,
+      github: z
+        .preprocess(
+          (val) => (val === '' ? undefined : val),
+          githubUsernameSchema.optional().nullable(),
+        )
+        .optional()
+        .nullable(),
       answers: z
         .array(z.object({ question: z.string(), answer: z.string() }))
         .optional(),

@@ -8,6 +8,7 @@ import { getCloudinaryFetchUrl } from '@/utils/cloudinary';
 import { dayjs } from '@/utils/dayjs';
 import { safeStringify } from '@/utils/safeStringify';
 
+import { getPrivyToken } from '@/features/auth/utils/getPrivyToken';
 import { type FeedPostType } from '@/features/feed/types';
 
 export default async function handler(
@@ -23,6 +24,18 @@ export default async function handler(
     filter,
     userId,
   } = req.query;
+
+  let currentUserId: string | null = null;
+  const privyDid = await getPrivyToken(req);
+  if (privyDid) {
+    const user = await prisma.user.findUnique({
+      where: { privyDid },
+      select: { id: true },
+    });
+    if (user) currentUserId = user.id;
+  }
+
+  const isOwnerProfile = currentUserId === userId;
 
   const highlightType = req.query.highlightType as FeedPostType;
   let highlightId = req.query.highlightId as string | undefined;
@@ -110,6 +123,7 @@ export default async function handler(
             },
           },
           winnersAnnouncedAt: true,
+          isPrivate: true,
         },
       },
       Comments: commentsInclude,
@@ -128,10 +142,8 @@ export default async function handler(
                 lte: endDate,
               },
               ...winnerFilter,
-              listing: {
-                isPrivate: false,
-              },
               ...(userId ? { userId: userId as string } : {}),
+              listing: userId ? {} : { isPrivate: false },
             },
             skip: parseInt(skip as string, 10),
             take: parseInt(take as string, 10),
@@ -143,8 +155,12 @@ export default async function handler(
                     { createdAt: 'desc' },
                   ]
                 : filter === 'popular'
-                  ? [{ likeCount: 'desc' }, { createdAt: 'desc' }]
-                  : { createdAt: 'desc' },
+                  ? [
+                      { likeCount: 'desc' },
+                      { listing: { winnersAnnouncedAt: 'desc' } },
+                      { createdAt: 'desc' },
+                    ]
+                  : [{ createdAt: 'desc' }],
             include: submissionInclude,
           })
         : [];
@@ -252,6 +268,7 @@ export default async function handler(
           title: true,
           slug: true,
           token: true,
+          isPrivate: true,
           sponsor: {
             select: {
               name: true,
@@ -283,10 +300,8 @@ export default async function handler(
                 ...(startDate ? { gte: startDate } : {}),
                 lte: endDate,
               },
-              grant: {
-                isPrivate: false,
-              },
               ...(userId ? { userId: userId as string } : {}),
+              grant: userId ? {} : { isPrivate: false },
             },
             skip: parseInt(skip as string, 10),
             take: parseInt(take as string, 10),
@@ -328,16 +343,32 @@ export default async function handler(
 
     const results = [
       ...submissions.map((sub) => ({
-        id: sub.listing.isWinnersAnnounced ? sub.id : null,
+        id:
+          isOwnerProfile ||
+          (sub.listing.isWinnersAnnounced && !sub.listing.isPrivate)
+            ? sub.id
+            : null,
         createdAt:
           sub.isWinner &&
           sub.listing.isWinnersAnnounced &&
           sub.listing.winnersAnnouncedAt
             ? sub.listing.winnersAnnouncedAt
             : sub.createdAt,
-        link: sub.listing.isWinnersAnnounced ? sub.link : null,
-        tweet: sub.listing.isWinnersAnnounced ? sub.tweet : null,
-        otherInfo: sub.listing.isWinnersAnnounced ? sub.otherInfo : null,
+        link:
+          isOwnerProfile ||
+          (sub.listing.isWinnersAnnounced && !sub.listing.isPrivate)
+            ? sub.link
+            : null,
+        tweet:
+          isOwnerProfile ||
+          (sub.listing.isWinnersAnnounced && !sub.listing.isPrivate)
+            ? sub.tweet
+            : null,
+        otherInfo:
+          isOwnerProfile ||
+          (sub.listing.isWinnersAnnounced && !sub.listing.isPrivate)
+            ? sub.otherInfo
+            : null,
         isWinner: sub.listing.isWinnersAnnounced ? sub.isWinner : null,
         winnerPosition: sub.listing.isWinnersAnnounced
           ? sub.winnerPosition
@@ -346,23 +377,33 @@ export default async function handler(
         lastName: sub.user.lastName,
         photo: sub.user.photo,
         username: sub.user.username,
-        listingId: sub.listing.id,
-        listingTitle: sub.listing.title,
+        listingId:
+          isOwnerProfile || !sub.listing.isPrivate ? sub.listing.id : null,
+        listingTitle:
+          isOwnerProfile || !sub.listing.isPrivate ? sub.listing.title : null,
         rewards: sub.listing.rewards,
         listingType: sub.listing.type,
-        listingSlug: sub.listing.slug,
+        listingSlug:
+          isOwnerProfile || !sub.listing.isPrivate ? sub.listing.slug : null,
         isWinnersAnnounced: sub.listing.isWinnersAnnounced,
         token: sub.listing.token,
-        //@ts-expect-error prisma ts error, this exists based on above include
-        sponsorName: sub.listing.sponsor.name,
-        //@ts-expect-error prisma ts error, this exists based on above include
-        sponsorLogo: sub.listing.sponsor.logo,
+        sponsorName:
+          isOwnerProfile || !sub.listing.isPrivate //@ts-expect-error prisma ts error, this exists based on above include
+            ? sub.listing.sponsor.name
+            : null,
+        sponsorLogo:
+          isOwnerProfile || !sub.listing.isPrivate //@ts-expect-error prisma ts error, this exists based on above include
+            ? sub.listing.sponsor.logo
+            : null,
         type: 'submission',
         like: sub.like,
         likeCount: sub.likeCount,
-        ogImage: getCloudinaryFetchUrl(sub.ogImage),
+        ogImage: !sub.listing.isPrivate
+          ? getCloudinaryFetchUrl(sub.ogImage)
+          : null,
         commentCount: sub._count.Comments,
         recentCommenters: sub.Comments,
+        isPrivate: isOwnerProfile ? false : sub.listing.isPrivate,
       })),
       ...pow.map((pow) => ({
         id: pow.id,
@@ -382,26 +423,33 @@ export default async function handler(
         recentCommenters: pow.Comments,
       })),
       ...grantApplications.map((ga) => ({
-        id: ga.id,
+        id: isOwnerProfile || !ga.grant.isPrivate ? ga.id : null,
         createdAt: ga.decidedAt || ga.createdAt,
         firstName: ga.user.firstName,
         lastName: ga.user.lastName,
         photo: ga.user.photo,
         username: ga.user.username,
-        listingId: ga.grant.id,
-        listingTitle: ga.grant.title,
-        listingSlug: ga.grant.slug,
+        listingId: isOwnerProfile || !ga.grant.isPrivate ? ga.grant.id : null,
+        listingTitle:
+          isOwnerProfile || !ga.grant.isPrivate ? ga.grant.title : null,
+        listingSlug:
+          isOwnerProfile || !ga.grant.isPrivate ? ga.grant.slug : null,
         token: ga.grant.token,
-        //@ts-expect-error prisma ts error, this exists based on above include
-        sponsorName: ga.grant.sponsor.name,
-        //@ts-expect-error prisma ts error, this exists based on above include
-        sponsorLogo: ga.grant.sponsor.logo,
+        sponsorName:
+          isOwnerProfile || !ga.grant.isPrivate //@ts-expect-error prisma ts error, this exists based on above include
+            ? ga.grant.sponsor.name
+            : null,
+        sponsorLogo:
+          isOwnerProfile || !ga.grant.isPrivate //@ts-expect-error prisma ts error, this exists based on above include
+            ? ga.grant.sponsor.logo
+            : null,
         type: 'grant-application',
         grantApplicationAmount: ga.approvedAmount,
         like: ga.like,
         likeCount: ga.likeCount,
         commentCount: ga._count.Comments,
         recentCommenters: ga.Comments,
+        isPrivate: isOwnerProfile ? false : ga.grant.isPrivate,
       })),
     ];
 

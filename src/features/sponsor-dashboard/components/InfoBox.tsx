@@ -1,6 +1,7 @@
 import parse, { type HTMLReactParserOptions } from 'html-react-parser';
 
 import { LinkTextParser } from '@/components/shared/LinkTextParser';
+import styles from '@/styles/info-box.module.css';
 
 const options: HTMLReactParserOptions = {
   replace: ({ name, children, attribs }: any) => {
@@ -26,13 +27,14 @@ export const InfoBox = ({
     </p>
     {isHtml ? (
       <div
-        className="h-full w-full overflow-visible text-sm font-medium text-slate-600"
-        id="richtext"
+        className={`h-full w-full text-sm font-medium break-words whitespace-normal text-slate-600 ${styles.richtext}`}
       >
         {parse(content || '-', options)}
       </div>
     ) : (
-      <LinkTextParser text={content || '-'} />
+      <div className="break-words whitespace-normal">
+        <LinkTextParser text={content || '-'} />
+      </div>
     )}
   </div>
 );

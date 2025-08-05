@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Check, Clock, File, MessageSquare, Pause } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { usePostHog } from 'posthog-js/react';
+import posthog from 'posthog-js';
 import React from 'react';
 
 import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
@@ -18,8 +18,8 @@ import { type Listing } from '../../types';
 import { getListingIcon } from '../../utils/getListingIcon';
 import { ListingTabLink } from './ListingTabLink';
 import { RegionLabel } from './RegionLabel';
+import { SecondaryOptions } from './SecondaryOptions';
 import { ListingHeaderSeparator } from './Separator';
-import { ShareListing } from './ShareListing';
 import { StatusBadge } from './StatusBadge';
 import { SubscribeListing } from './SubscribeListing';
 
@@ -47,7 +47,7 @@ export function ListingHeader({
     isPrivate,
   } = listing;
   const router = useRouter();
-  const posthog = usePostHog();
+
   const isMD = useMediaQuery('(min-width: 768px)');
   const hasDeadlineEnded = dayjs().isAfter(deadline);
   const hasHackathonStarted = dayjs().isAfter(Hackathon?.startDate);
@@ -212,7 +212,7 @@ export function ListingHeader({
         {listing.id && (
           <div className="flex items-center gap-2">
             <SubscribeListing isTemplate={isTemplate} id={listing.id} />
-            <ShareListing source="listing" listing={listing} />
+            <SecondaryOptions listing={listing} />
           </div>
         )}
       </div>

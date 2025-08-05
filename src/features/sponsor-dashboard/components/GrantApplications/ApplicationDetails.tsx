@@ -4,21 +4,23 @@ import { useAtom } from 'jotai';
 import { ArrowRight, Check, Copy, X } from 'lucide-react';
 import Link from 'next/link';
 import React, { useMemo } from 'react';
-import { MdOutlineAccountBalanceWallet, MdOutlineMail } from 'react-icons/md';
 
+import MdOutlineAccountBalanceWallet from '@/components/icons/MdOutlineAccountBalanceWallet';
+import MdOutlineMail from '@/components/icons/MdOutlineMail';
 import { Button } from '@/components/ui/button';
 import { CopyButton } from '@/components/ui/copy-tooltip';
 import { CircularProgress } from '@/components/ui/progress';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { Tooltip } from '@/components/ui/tooltip';
 import { Superteams } from '@/constants/Superteam';
 import { tokenList } from '@/constants/tokenList';
-import { cn } from '@/utils/cn';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
 import { truncateString } from '@/utils/truncateString';
 
 import { type Grant } from '@/features/grants/types';
 import {
+  GitHub,
   Telegram,
   Twitter,
   Website,
@@ -33,16 +35,12 @@ import { MarkCompleted } from './MarkCompleted';
 import { Notes } from './Notes';
 import { RecordPaymentButton } from './RecordPaymentButton';
 import { SelectLabel } from './SelectLabel';
+import { SpamButton } from './SpamButton';
 
 interface Props {
   grant: Grant | undefined;
   applications: GrantApplicationWithUser[] | undefined;
   isMultiSelectOn: boolean;
-  params: {
-    searchText: string;
-    length: number;
-    skip: number;
-  };
   approveOnOpen: () => void;
   rejectedOnOpen: () => void;
 }
@@ -50,7 +48,6 @@ export const ApplicationDetails = ({
   grant,
   applications,
   isMultiSelectOn,
-  params,
   approveOnOpen,
   rejectedOnOpen,
 }: Props) => {
@@ -80,7 +77,7 @@ export const ApplicationDetails = ({
     setSelectedApplication(updatedApplication);
 
     queryClient.setQueryData<GrantApplicationsReturn>(
-      ['sponsor-applications', grant?.slug, params],
+      ['sponsor-applications', grant?.slug],
       (oldData) => {
         if (!oldData) return oldData;
         const data = oldData?.data.map((application) =>
@@ -109,7 +106,7 @@ export const ApplicationDetails = ({
     <div className="w-full rounded-r-xl bg-white">
       {applications?.length ? (
         <>
-          <div className="sticky top-[3rem] rounded-t-xl border-b border-slate-200 bg-white py-1">
+          <div className="sticky top-[3rem] z-20 rounded-t-xl border-b border-slate-200 bg-white py-1">
             <div className="flex w-full items-center justify-between px-4 py-2">
               <div className="flex w-full items-center gap-2">
                 <EarnAvatar
@@ -117,6 +114,7 @@ export const ApplicationDetails = ({
                   id={selectedApplication?.user?.id}
                   avatar={selectedApplication?.user?.photo || undefined}
                 />
+
                 <div>
                   <span className="flex gap-2">
                     <p className="w-fit text-base font-medium whitespace-nowrap text-slate-900">
@@ -146,41 +144,37 @@ export const ApplicationDetails = ({
                     <ArrowRight className="mb-0.5 h-4 w-4" />
                   </Link>
                 </div>
+                <div className="self-start">
+                  {isPending && <SelectLabel grantSlug={grant?.slug!} />}
+                </div>
               </div>
               <div className="ph-no-capture flex w-full items-center justify-end gap-2">
-                {isPending && <SelectLabel grantSlug={grant?.slug!} />}
+                {(isPending || selectedApplication?.label === 'Spam') && (
+                  <SpamButton
+                    grantSlug={grant?.slug!}
+                    isMultiSelectOn={isMultiSelectOn}
+                  />
+                )}
                 {isPending && (
                   <>
                     <Button
-                      className={cn(
-                        'bg-emerald-50 text-emerald-600 hover:bg-emerald-100 hover:text-emerald-600',
-                        isMultiSelectOn && 'cursor-not-allowed opacity-50',
-                      )}
+                      className="rounded-lg border border-emerald-500 bg-emerald-50 text-emerald-600 hover:bg-emerald-100 hover:text-emerald-600 disabled:cursor-not-allowed disabled:opacity-50"
                       disabled={isMultiSelectOn}
                       onClick={approveOnOpen}
-                      variant="ghost"
                     >
-                      <div className="mr-2 flex items-center">
-                        <div className="rounded-full bg-emerald-600 p-[5px]">
-                          <Check className="h-2.5 w-2.5 text-white" />
-                        </div>
+                      <div className="rounded-full bg-emerald-600 p-0.5">
+                        <Check className="size-1 text-white" />
                       </div>
                       Approve
                     </Button>
 
                     <Button
-                      className={cn(
-                        'bg-rose-50 text-rose-600 hover:bg-rose-100 hover:text-rose-600',
-                        isMultiSelectOn && 'cursor-not-allowed opacity-50',
-                      )}
+                      className="rounded-lg border border-red-500 bg-red-50 text-red-600 hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-50"
                       disabled={isMultiSelectOn}
                       onClick={rejectedOnOpen}
-                      variant="ghost"
                     >
-                      <div className="mr-2 flex items-center">
-                        <div className="rounded-full bg-rose-600 p-[5px]">
-                          <X className="h-2 w-2 text-white" />
-                        </div>
+                      <div className="rounded-full bg-red-600 p-0.5">
+                        <X className="size-1 text-white" />
                       </div>
                       Reject
                     </Button>
@@ -188,13 +182,12 @@ export const ApplicationDetails = ({
                 )}
                 {isCompleted && (
                   <Button
-                    className="pointer-events-none bg-blue-100 text-blue-600 disabled:opacity-100"
+                    className="rounded-lg border border-blue-500 bg-blue-50 text-blue-600 hover:bg-blue-100 disabled:opacity-100"
                     disabled={true}
-                    variant="ghost"
                   >
                     <div className="flex items-center">
-                      <div className="rounded-full bg-blue-600 p-[5px]">
-                        <Check className="h-2.5 w-2.5 text-white" />
+                      <div className="rounded-full bg-blue-600 p-0.5">
+                        <Check className="size-1 text-white" />
                       </div>
                     </div>
                     Completed
@@ -209,6 +202,7 @@ export const ApplicationDetails = ({
                         applicationId={selectedApplication.id}
                         onMarkCompleted={updateApplicationState}
                       />
+
                       {isNativeAndNonST &&
                         selectedApplication.totalPaid !==
                           selectedApplication.approvedAmount && (
@@ -221,14 +215,11 @@ export const ApplicationDetails = ({
                           />
                         )}
                       <Button
-                        className="pointer-events-none bg-emerald-50 text-emerald-600 disabled:opacity-100"
+                        className="rounded-lg border border-emerald-500 bg-emerald-50 text-emerald-600 hover:bg-emerald-100 disabled:cursor-not-allowed disabled:opacity-100"
                         disabled={true}
-                        variant="ghost"
                       >
-                        <div className="flex items-center">
-                          <div className="rounded-full bg-emerald-600 p-[5px]">
-                            <Check className="h-2.5 w-2.5 text-white" />
-                          </div>
+                        <div className="rounded-full bg-emerald-600 p-0.5">
+                          <Check className="size-1 text-white" />
                         </div>
                         Approved
                       </Button>
@@ -237,13 +228,12 @@ export const ApplicationDetails = ({
                 {isRejected && (
                   <>
                     <Button
-                      className="pointer-events-none bg-rose-50 text-rose-600 disabled:opacity-100"
+                      className="rounded-lg border border-red-500 bg-red-50 text-red-600 hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-100"
                       disabled={true}
-                      variant="ghost"
                     >
                       <div className="flex items-center">
-                        <div className="rounded-full bg-rose-600 p-[5px]">
-                          <X className="h-2 w-2 text-white" />
+                        <div className="rounded-full bg-red-600 p-0.5">
+                          <X className="size-1 text-white" />
                         </div>
                       </div>
                       Rejected
@@ -264,6 +254,7 @@ export const ApplicationDetails = ({
                     src={tokenIcon}
                     alt="token"
                   />
+
                   <p className="text-sm font-semibold whitespace-nowrap text-slate-600">
                     {`${selectedApplication?.approvedAmount?.toLocaleString('en-us')}`}
                     <span className="ml-0.5 text-slate-400">
@@ -282,6 +273,7 @@ export const ApplicationDetails = ({
                           ).toFixed(2),
                         )}
                       />
+
                       <p className="ml-1 text-sm font-medium whitespace-nowrap text-slate-600">
                         {Number(
                           (
@@ -324,10 +316,17 @@ export const ApplicationDetails = ({
                   className="h-[0.9rem] w-[0.9rem] text-slate-600"
                   link={selectedApplication?.user?.telegram || ''}
                 />
+
                 <Twitter
                   className="h-[0.9rem] w-[0.9rem] text-slate-600"
                   link={selectedApplication?.user?.twitter || ''}
                 />
+
+                <GitHub
+                  className="h-[0.9rem] w-[0.9rem] text-slate-600"
+                  link={selectedApplication?.user?.github || ''}
+                />
+
                 <Website
                   className="h-[0.9rem] w-[0.9rem] text-slate-600"
                   link={selectedApplication?.user?.website || ''}
@@ -343,9 +342,12 @@ export const ApplicationDetails = ({
             </div>
           </div>
 
-          <div className="flex h-[67.15rem] w-full">
-            <div className="scrollbar-thumb-rounded-full scrollbar-thin scrollbar-track-slate-100 scrollbar-thumb-slate-300 flex w-full flex-1 flex-col overflow-y-auto border-r border-slate-200 p-4">
-              <div className="mb-4">
+          <div className="relative z-10 flex max-h-[39.7rem] w-full">
+            <ScrollArea
+              type="auto"
+              className="flex w-2/3 flex-1 flex-col overflow-y-auto px-4"
+            >
+              <div className="mb-4 pt-2">
                 <p className="mb-1 text-xs font-semibold text-slate-400 uppercase">
                   ASK
                 </p>
@@ -355,6 +357,7 @@ export const ApplicationDetails = ({
                     src={tokenIcon}
                     alt="token"
                   />
+
                   <p className="text-sm font-semibold whitespace-nowrap text-slate-600">
                     {`${selectedApplication?.ask?.toLocaleString('en-us')}`}
                     <span className="ml-0.5 text-slate-400">
@@ -407,35 +410,43 @@ export const ApplicationDetails = ({
                 label="Project Title"
                 content={selectedApplication?.projectTitle}
               />
+
               <InfoBox
                 label="One-Liner Description"
                 content={selectedApplication?.projectOneLiner}
               />
+
               <InfoBox
                 label="Project Details"
                 content={selectedApplication?.projectDetails}
                 isHtml
               />
+
               <InfoBox label="Twitter" content={selectedApplication?.twitter} />
+              <InfoBox label="Github" content={selectedApplication?.github} />
               <InfoBox
                 label="Deadline"
                 content={selectedApplication?.projectTimeline}
               />
+
               <InfoBox
                 label="Proof of Work"
                 content={selectedApplication?.proofOfWork}
                 isHtml
               />
+
               <InfoBox
                 label="Goals and Milestones"
                 content={selectedApplication?.milestones}
                 isHtml
               />
+
               <InfoBox
                 label="Primary Key Performance Indicator"
                 content={selectedApplication?.kpi}
                 isHtml
               />
+
               {Array.isArray(selectedApplication?.answers) &&
                 selectedApplication.answers.map(
                   (answer: any, answerIndex: number) => (
@@ -447,8 +458,8 @@ export const ApplicationDetails = ({
                     />
                   ),
                 )}
-            </div>
-            <div className="w-1/4 p-4">
+            </ScrollArea>
+            <div className="w-1/3 max-w-[20rem] p-4">
               <Notes slug={grant?.slug} />
             </div>
           </div>

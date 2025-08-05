@@ -42,6 +42,7 @@ export interface FeedDataProps {
       name: string | null;
     };
   }[];
+  isPrivate?: boolean;
 }
 
 export const FeedPostTypeSchema = z.enum([

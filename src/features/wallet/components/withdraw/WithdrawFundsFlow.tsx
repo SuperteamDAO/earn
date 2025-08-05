@@ -8,7 +8,7 @@ import {
 import { PublicKey, VersionedTransaction } from '@solana/web3.js';
 import { useQueryClient } from '@tanstack/react-query';
 import { log } from 'next-axiom';
-import { usePostHog } from 'posthog-js/react';
+import posthog from 'posthog-js';
 import { useCallback, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -19,13 +19,13 @@ import { useUser } from '@/store/user';
 
 import { type TokenAsset } from '../../types/TokenAsset';
 import { type TxData } from '../../types/TxData';
+import { type DrawerView } from '../../types/WalletTypes';
 import { fetchTokenUSDValue } from '../../utils/fetchTokenUSDValue';
 import { getConnection } from '../../utils/getConnection';
 import {
   type WithdrawFormData,
   withdrawFormSchema,
 } from '../../utils/withdrawFormSchema';
-import { type DrawerView } from '../WalletDrawer';
 import { ATAConfirmation } from './ATAConfirmation';
 import { TransactionDetails } from './TransactionDetails';
 import { WithdrawForm } from './WithdrawForm';
@@ -48,7 +48,7 @@ export function WithdrawFundsFlow({
   setTxData,
 }: WithdrawFlowProps) {
   const { user } = useUser();
-  const posthog = usePostHog();
+
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string>('');
   const [ataCreationCost, setAtaCreationCost] = useState<number>(0);

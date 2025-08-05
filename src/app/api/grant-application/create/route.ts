@@ -2,12 +2,12 @@ import { waitUntil } from '@vercel/functions';
 import { headers } from 'next/headers';
 import { type NextRequest, NextResponse } from 'next/server';
 
-import earncognitoClient from '@/lib/earncognitoClient';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { dayjs } from '@/utils/dayjs';
 import { safeStringify } from '@/utils/safeStringify';
 
+import { queueAgent } from '@/features/agents/utils/queueAgent';
 import { getUserSession } from '@/features/auth/utils/getUserSession';
 import { queueEmail } from '@/features/emails/utils/queueEmail';
 import { grantApplicationSchema } from '@/features/grants/utils/grantApplicationSchema';
@@ -35,6 +35,10 @@ async function createGrantApplication(
     twitter:
       data.twitter !== undefined
         ? extractSocialUsername('twitter', data.twitter) || ''
+        : undefined,
+    github:
+      data.github !== undefined
+        ? extractSocialUsername('github', data.github) || ''
         : undefined,
   });
 
@@ -64,6 +68,7 @@ async function createGrantApplication(
     walletAddress: validatedData.walletAddress,
     ask: validatedData.ask,
     twitter: validatedData.twitter,
+    github: validatedData.github,
     answers: validatedData.answers || [],
   };
 
@@ -116,9 +121,7 @@ export async function POST(request: NextRequest) {
       where: {
         grantId,
         userId,
-        applicationStatus: {
-          in: ['Pending', 'Approved'],
-        },
+        applicationStatus: { in: ['Pending', 'Approved'] },
       },
     });
 
@@ -131,6 +134,40 @@ export async function POST(request: NextRequest) {
         { error: `Grant Application already exists` },
         { status: 400 },
       );
+    }
+
+    if (grant.title.toLowerCase().includes('coindcx')) {
+      const rejectedApplication = await prisma.grantApplication.findFirst({
+        where: {
+          grantId,
+          userId,
+          applicationStatus: 'Rejected',
+          decidedAt: { gte: dayjs().subtract(30, 'day').toDate() },
+        },
+        orderBy: { decidedAt: 'desc' },
+      });
+
+      if (rejectedApplication?.decidedAt) {
+        const remainingDays = Math.ceil(
+          (30 * 24 * 60 * 60 * 1000 -
+            new Date(rejectedApplication.decidedAt).getTime()) /
+            (24 * 60 * 60 * 1000),
+        );
+
+        if (remainingDays > 0) {
+          logger.debug(`User in cooldown period`, {
+            grantId,
+            userId,
+            remainingDays,
+          });
+          return NextResponse.json(
+            {
+              error: `You must wait 30 days before reapplying for this grant.`,
+            },
+            { status: 429 },
+          );
+        }
+      }
     }
 
     const result = await createGrantApplication(
@@ -159,6 +196,19 @@ export async function POST(request: NextRequest) {
           }
         }
 
+        try {
+          await queueAgent({
+            type: 'autoReviewGrantApplication',
+            id: result.id,
+          });
+        } catch (error) {
+          logger.error('Failed to create AI review for grant application: ', {
+            error,
+            grantId,
+            userId,
+          });
+        }
+
         if (grant.airtableId) {
           try {
             await syncGrantApplicationWithAirtable(result);
@@ -169,17 +219,6 @@ export async function POST(request: NextRequest) {
               grantId,
             });
           }
-        }
-        try {
-          await earncognitoClient.post('/ai/grants/review-application', {
-            id: result.id,
-          });
-        } catch (error) {
-          logger.error('Failed to create AI review for grant application: ', {
-            error,
-            grantId,
-            userId,
-          });
         }
       })(),
     );

@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 
+import MdOutlineMail from '@/components/icons/MdOutlineMail';
 import { SupportFormDialog } from '@/components/shared/SupportFormDialog';
 import { UserFlag } from '@/components/shared/UserFlag';
 import { LocalImage } from '@/components/ui/local-image';
@@ -13,11 +14,7 @@ import {
 import { ASSET_URL } from '@/constants/ASSET_URL';
 import { Superteams } from '@/constants/Superteam';
 
-import {
-  Discord,
-  GitHub,
-  Twitter,
-} from '@/features/social/components/SocialIcons';
+import { GitHub, Twitter } from '@/features/social/components/SocialIcons';
 
 type Country = {
   name: string;
@@ -27,8 +24,8 @@ type Country = {
 
 const countries: Country[] = Superteams.map((superteam) => ({
   name: superteam.displayValue,
-  code: superteam.code ?? 'GLOBAL',
-  slug: superteam.region,
+  code: superteam.code ?? 'Global',
+  slug: superteam.slug,
 }));
 
 const FooterColumn = ({
@@ -191,7 +188,7 @@ export const Footer = () => {
               best Solana companies in one place and apply to them using a
               single profile.
             </p>
-            <div className="flex gap-4">
+            <div className="flex items-center gap-4">
               <GitHub
                 link="https://github.com/SuperteamDAO/earn"
                 className="text-slate-500"
@@ -200,9 +197,11 @@ export const Footer = () => {
                 link="https://twitter.com/superteamearn"
                 className="text-slate-500"
               />
-              <Discord
-                link="https://discord.com/invite/Mq3ReaekgG"
-                className="text-slate-500"
+              <MdOutlineMail
+                className="'transition-opacity size-5 cursor-pointer text-slate-500 opacity-100 grayscale duration-200 hover:opacity-80"
+                onClick={() => {
+                  window.open('mailto:support@superteam.com', '_blank');
+                }}
               />
             </div>
 

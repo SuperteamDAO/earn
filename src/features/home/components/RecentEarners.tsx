@@ -1,8 +1,8 @@
 import Link from 'next/link';
-import { usePostHog } from 'posthog-js/react';
+import posthog from 'posthog-js';
 import React, { useEffect, useRef, useState } from 'react';
-import { MdArrowForward } from 'react-icons/md';
 
+import MdArrowForward from '@/components/icons/MdArrowForward';
 import { ASSET_URL } from '@/constants/ASSET_URL';
 import { tokenList } from '@/constants/tokenList';
 import { type User } from '@/interface/user';
@@ -36,7 +36,7 @@ const Earner = ({
     : ASSET_URL + '/landingsponsor/icons/usdc.svg';
 
   return (
-    <Link href={`${getURL()}t/${username}`} className="block">
+    <Link href={`${getURL()}t/${username}`} className="block" prefetch={false}>
       <div className="my-4 flex w-full items-center">
         <div className="mr-3 flex items-center justify-center">
           <EarnAvatar id={id} avatar={avatar} />
@@ -55,6 +55,7 @@ const Earner = ({
             alt={`${token} icon`}
             src={tokenIcon}
           />
+
           <span className="text-sm font-medium text-gray-600">
             {formatNumberWithSuffix(amount)}
           </span>
@@ -69,7 +70,6 @@ export const RecentEarners = ({ earners }: { earners?: User[] }) => {
   const marqueeRef = useRef<HTMLDivElement>(null);
   const animationFrameRef = useRef<number | null>(null);
   const [isPaused, setIsPaused] = useState(false);
-  const posthog = usePostHog();
 
   const multipliedEarners = earners ? [...earners, ...earners, ...earners] : [];
 
@@ -102,7 +102,7 @@ export const RecentEarners = ({ earners }: { earners?: User[] }) => {
         </span>
         <Link
           href="/leaderboard"
-          className="ph-no-capture text-brand-purple flex items-center text-xs font-semibold"
+          className="ph-no-capture text-brand-purple flex items-center text-xs font-medium"
           onClick={() => {
             posthog.capture('view leaderboard_homepage');
           }}
@@ -111,7 +111,7 @@ export const RecentEarners = ({ earners }: { earners?: User[] }) => {
           <MdArrowForward className="ml-1" />
         </Link>
       </div>
-      <div className="flex flex-col">
+      <div className="relative flex flex-col">
         <div
           ref={marqueeRef}
           className="h-[300px] overflow-hidden"
@@ -131,6 +131,14 @@ export const RecentEarners = ({ earners }: { earners?: User[] }) => {
             />
           ))}
         </div>
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-x-0 top-0 h-12 bg-gradient-to-b from-white"
+        />
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-white"
+        />
       </div>
     </div>
   );

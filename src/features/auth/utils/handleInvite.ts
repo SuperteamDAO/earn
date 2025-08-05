@@ -43,7 +43,18 @@ export async function handleInviteAcceptance(
       return {
         success: false,
         message: 'No valid invitation found',
-        redirectUrl: '/new?onboarding=true&loginState=signedIn',
+        redirectUrl: '/new?onboarding=true',
+      };
+    }
+
+    if (user.email.toLowerCase() !== invite.email.toLowerCase()) {
+      logger.warn(
+        `Email mismatch for invite acceptance. User email: ${user.email}, Invited email: ${invite.email}, User ID: ${userId}`,
+      );
+      return {
+        success: false,
+        message:
+          'This invitation was sent to a different email address. Please sign in with the correct email to accept this invitation.',
       };
     }
 
@@ -91,7 +102,7 @@ export async function handleInviteAcceptance(
     return {
       success: true,
       message: 'Invitation accepted successfully',
-      redirectUrl: '/dashboard/listings/?loginState=signedIn',
+      redirectUrl: '/dashboard/listings/',
     };
   } catch (error) {
     logger.error(`Error accepting invite: ${safeStringify(error)}`);

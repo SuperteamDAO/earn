@@ -1,8 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
 import Link from 'next/link';
-import { usePostHog } from 'posthog-js/react';
-import { MdArrowForward } from 'react-icons/md';
+import posthog from 'posthog-js';
+import { useMemo } from 'react';
 
+import MdArrowForward from '@/components/icons/MdArrowForward';
 import { LocalImage } from '@/components/ui/local-image';
 import { timeAgoShort } from '@/utils/timeAgo';
 
@@ -66,15 +67,16 @@ const ActivityCard = ({
   };
 
   const actionText = getActionText();
-  const ogImage = getRandomFallbackImage();
+  const ogImage = useMemo(() => getRandomFallbackImage(), []);
 
   return (
     <Link href={'/feed/?filter=new'} className="flex">
       <LocalImage
-        className="h-12 w-20 bg-center object-cover"
+        className="h-12 w-20 rounded-md bg-center object-cover"
         alt="OG Image"
         src={ogImage}
       />
+
       <div className="ml-3">
         <div className="flex items-center">
           <span className="mr-1.5 max-w-32 overflow-hidden text-[0.9rem] font-semibold text-ellipsis whitespace-nowrap text-slate-800">
@@ -95,7 +97,6 @@ const ActivityCard = ({
 };
 
 export const RecentActivity = () => {
-  const posthog = usePostHog();
   const { data, isLoading } = useQuery(homeFeedQuery);
 
   if (isLoading) return null;
@@ -108,7 +109,7 @@ export const RecentActivity = () => {
         </span>
         <Link
           href="/feed"
-          className="ph-no-capture text-brand-purple flex items-center text-xs font-semibold"
+          className="ph-no-capture text-brand-purple flex items-center text-xs font-medium"
           onClick={() => {
             posthog.capture('recent winners_view all_homepage');
           }}

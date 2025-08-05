@@ -15,13 +15,31 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   const userId = req.userId;
 
   logger.debug(`Request body: ${safeStringify(req.body)}`);
-  const { id, isPaid, paymentDetails } = req.body;
+  const { id, paymentDetails } = req.body;
 
-  if (!paymentDetails || paymentDetails.length === 0 || !isPaid) {
-    logger.warn('Payment details are required');
+  if (
+    !paymentDetails ||
+    !Array.isArray(paymentDetails) ||
+    paymentDetails.length === 0
+  ) {
+    logger.warn('Payment details array is required');
     return res.status(400).json({
-      error: 'Payment details are required',
-      message: 'Payment details are required',
+      error: 'Payment details array is required',
+      message: 'Payment details array is required',
+    });
+  }
+
+  const paymentDetail = paymentDetails[0];
+  if (
+    !paymentDetail?.txId ||
+    !paymentDetail?.amount ||
+    typeof paymentDetail?.tranche !== 'number'
+  ) {
+    logger.warn('Invalid payment details structure');
+    return res.status(400).json({
+      error: 'Invalid payment details: txId, amount, and tranche are required',
+      message:
+        'Invalid payment details: txId, amount, and tranche are required',
     });
   }
 
@@ -52,6 +70,34 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     }
 
     const { listing, user, winnerPosition } = currentSubmission;
+
+    const isProject = listing.type === 'project';
+    if (!isProject) {
+      if (paymentDetails.length > 1 || paymentDetail.tranche !== 1) {
+        logger.warn('Bounties only support single payment with tranche 1');
+        return res.status(400).json({
+          error: 'Bounties only support single payment with tranche 1',
+          message: 'Bounties only support single payment with tranche 1',
+        });
+      }
+    } else {
+      const existingPayments =
+        (currentSubmission.paymentDetails as any[]) || [];
+      const existingTranches = existingPayments.map((p) => p.tranche);
+      const newTranche = paymentDetail.tranche;
+      const expectedNextTranche = existingTranches.length + 1;
+
+      if (newTranche !== expectedNextTranche) {
+        logger.warn(
+          `Project tranche ${newTranche} is not the expected next tranche ${expectedNextTranche}`,
+        );
+        return res.status(400).json({
+          error: `Expected tranche ${expectedNextTranche}, but received tranche ${newTranche}`,
+          message: `Expected tranche ${expectedNextTranche}, but received tranche ${newTranche}`,
+        });
+      }
+    }
+
     if (!winnerPosition) {
       return res.status(400).json({
         error: 'Submission has no winner position',
@@ -79,9 +125,9 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
     logger.debug(`Validating transaction for submission ID: ${id}`);
     const validationResult = await validatePayment({
-      txId: paymentDetails.txId,
+      txId: paymentDetail.txId,
       recipientPublicKey: user.walletAddress!,
-      expectedAmount: winnerReward,
+      expectedAmount: paymentDetail.amount,
       tokenMint: dbToken,
     });
 
@@ -95,14 +141,27 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       });
     }
 
+    const finalPaymentDetails = isProject
+      ? [
+          ...((currentSubmission.paymentDetails as any[]) || []),
+          ...paymentDetails,
+        ]
+      : paymentDetails;
+
+    const totalAllPayments = finalPaymentDetails.reduce(
+      (sum, payment) => sum + payment.amount,
+      0,
+    );
+    const isFullyPaid = totalAllPayments >= winnerReward;
+
     logger.debug(`Updating submission with ID: ${id}`);
     const result = await prisma.submission.update({
       where: {
         id,
       },
       data: {
-        isPaid,
-        paymentDetails,
+        isPaid: isFullyPaid,
+        paymentDetails: finalPaymentDetails,
       },
     });
 

@@ -1,28 +1,27 @@
-import { useQuery } from '@tanstack/react-query';
 import { getImageProps } from 'next/image';
-import { usePostHog } from 'posthog-js/react';
+import posthog from 'posthog-js';
 import React from 'react';
 
-import { ASSET_URL } from '@/constants/ASSET_URL';
-import DesktopBanner from '@/public/assets/banner.webp';
-import MobileBanner from '@/public/assets/banner-mobile.webp';
+import { ExternalImage } from '@/components/ui/cloudinary-image';
 
 import { AuthWrapper } from '@/features/auth/components/AuthWrapper';
 
-import { userCountQuery } from '../../queries/user-count';
+interface HomeTalentBannerProps {
+  readonly totalUsers?: number | null;
+}
 
 const avatars = [
-  { name: 'Abhishek', src: ASSET_URL + '/pfps/t1.webp' },
-  { name: 'Pratik', src: ASSET_URL + '/pfps/md2.webp' },
-  { name: 'Yash', src: ASSET_URL + '/pfps/fff1.webp' },
+  { name: 'Abhishek', src: '/pfps/t1.webp' },
+  { name: 'Pratik', src: '/pfps/md2.webp' },
+  { name: 'Yash', src: '/pfps/fff1.webp' },
 ];
 
-export function HomeTalentBanner() {
-  const posthog = usePostHog();
+export function HomeTalentBanner({ totalUsers }: HomeTalentBannerProps) {
   const common = {
     alt: 'Illustration — Two people working on laptops outdoors at night, surrounded by a mystical mountainous landscape illuminated by the moonlight',
     quality: 85,
     priority: true,
+    fetchPriority: 'high' as const,
     loading: 'eager' as const,
     style: {
       width: '100%',
@@ -30,19 +29,28 @@ export function HomeTalentBanner() {
       borderRadius: '0.375rem',
       pointerEvents: 'none' as const,
       objectFit: 'cover' as const,
-      layout: 'fill' as const,
     },
   };
 
   const {
     props: { srcSet: desktop },
-  } = getImageProps({ ...common, src: DesktopBanner, sizes: '70vw' });
+  } = getImageProps({
+    ...common,
+    src: `https://res.cloudinary.com/dgvnuwspr/image/upload/assets/banner/banner`,
+    width: 1200,
+    height: 600,
+    sizes: '70vw',
+  });
 
   const {
     props: { srcSet: mobile, ...rest },
-  } = getImageProps({ ...common, src: MobileBanner, sizes: '100vw' });
-
-  const { data } = useQuery(userCountQuery);
+  } = getImageProps({
+    ...common,
+    src: `https://res.cloudinary.com/dgvnuwspr/image/upload/assets/banner/banner-mobile`,
+    width: 800,
+    height: 600,
+    sizes: '100vw',
+  });
 
   return (
     <div className="relative mx-auto flex h-full w-full flex-col overflow-hidden rounded-[0.5rem] p-5 md:p-10">
@@ -79,17 +87,18 @@ export function HomeTalentBanner() {
         <div className="flex items-center">
           <div className="flex -space-x-2">
             {avatars.map((avatar, index) => (
-              <img
+              <ExternalImage
                 key={index}
                 className="relative h-6 w-6 rounded-full border border-[#49139c] md:h-8 md:w-8"
                 src={avatar.src}
                 alt={avatar.name}
+                loading="eager"
               />
             ))}
           </div>
-          {data?.totalUsers !== null && (
+          {totalUsers !== null && totalUsers !== undefined && (
             <p className="relative ml-[0.6875rem] text-[0.8rem] text-slate-200 md:text-[0.875rem]">
-              Join {data?.totalUsers?.toLocaleString('en-us')}+ others
+              Join {totalUsers?.toLocaleString('en-us')}+ others
             </p>
           )}
         </div>
