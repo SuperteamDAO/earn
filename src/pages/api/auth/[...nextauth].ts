@@ -15,10 +15,9 @@ export default async function auth(req: NextApiRequest, res: NextApiResponse) {
         clientSecret: process.env.TWITTER_CLIENT_SECRET!,
         version: '2.0',
         authorization: {
-          params: {
-            prompt: 'login',
-          },
+          url: 'https://x.com/i/oauth2/authorize',
         },
+        token: 'https://api.x.com/2/oauth2/token',
       }),
     ],
 
