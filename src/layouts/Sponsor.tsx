@@ -133,7 +133,7 @@ export function SponsorLayout({
     }
   }, [user, authenticated, ready, user, isUserLoading]);
 
-  if (!ready) {
+  if (ready) {
     return <LoadingSection />;
   }
 
