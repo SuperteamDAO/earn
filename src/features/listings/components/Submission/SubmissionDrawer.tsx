@@ -1,5 +1,4 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useLinkAccount } from '@privy-io/react-auth';
 import { useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { X } from 'lucide-react';
@@ -272,8 +271,6 @@ export const SubmissionDrawer = ({
 
   const { signIn: popupSignIn } = usePopupAuth();
 
-  const { linkTwitter } = useLinkAccount();
-
   const handleVerifyClick = async (fieldName: 'tweet' | 'link') => {
     const fieldValue = fieldName === 'tweet' ? tweetValue : linkValue;
     if (!fieldValue) return;
@@ -474,9 +471,6 @@ export const SubmissionDrawer = ({
                     {headerText}
                   </p>
                   <p className="text-sm text-slate-500">{subheadingText}</p>
-                  <button type="button" onClick={linkTwitter}>
-                    Link Twitter to user
-                  </button>
                 </div>
                 <div>
                   <div className="mb-5 flex flex-col gap-4">
