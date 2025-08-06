@@ -405,7 +405,7 @@ export const Superteams = [
     banner: basePath + 'banners/Ireland.png',
     region: 'Ireland' as Region,
     displayValue: 'Ireland',
-    country: ['Ireland'],
+    country: ['Ireland (NI and ROI)'],
     code: 'IE',
     hello: 'Dia duit',
     nationality: 'Irish',

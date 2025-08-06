@@ -1039,7 +1039,7 @@ export const countries = [
     flag_1x1: 'flags/1x1/ie.svg',
     flag_4x3: 'flags/4x3/ie.svg',
     iso: true,
-    name: 'Ireland',
+    name: 'Ireland (NI and ROI)',
   },
   {
     capital: 'Douglas',
@@ -2414,7 +2414,7 @@ export const countries = [
       'Germany',
       'Greece',
       'Hungary',
-      'Ireland',
+      'Ireland (NI and ROI)',
       'Italy',
       'Latvia',
       'Lithuania',
