@@ -31,11 +31,11 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   let bountyData;
   try {
     const bountyDetails = await api.get(
-      `${getURL()}api/listings/templates/${slug}/`,
+      `${getURL()}api/sponsor-dashboard/templates/${slug}/`,
     );
     bountyData = bountyDetails.data;
   } catch (e) {
-    console.error(e);
+    console.error(JSON.stringify(e, null, 2));
     bountyData = null;
   }
 

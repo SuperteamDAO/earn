@@ -8,6 +8,7 @@ import { CountDownRenderer } from '@/components/shared/countdownRenderer';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { exclusiveSponsorData } from '@/constants/exclusiveSponsors';
 import { tokenList } from '@/constants/tokenList';
+import { useServerTimeSync } from '@/hooks/use-server-time';
 import { type ParentSkills } from '@/interface/skills';
 import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';
@@ -18,6 +19,7 @@ import { RelatedListings } from '@/features/home/components/RelatedListings';
 
 import { submissionCountQuery } from '../../queries/submission-count';
 import type { Listing } from '../../types';
+import { ApprovalStages } from '../Submission/ApprovalStages';
 import { SubmissionActionButton } from '../Submission/SubmissionActionButton';
 import { CompensationAmount } from './CompensationAmount';
 import { ExtraInfoSection } from './ExtraInfoSection';
@@ -63,6 +65,8 @@ export function RightSideBar({
     maxBonusSpots,
     isWinnersAnnounced,
   } = listing;
+
+  const { serverTime, isSync } = useServerTimeSync();
 
   const { data: submissionNumber, isLoading: isSubmissionNumberLoading } =
     useQuery(submissionCountQuery(id!));
@@ -238,11 +242,16 @@ export function RightSideBar({
                     />
                     <div className="flex flex-col items-start">
                       <p className="text-lg font-medium text-black md:text-xl">
-                        <Countdown
-                          date={deadline}
-                          renderer={CountDownRenderer}
-                          zeroPadDays={1}
-                        />
+                        {isSync ? (
+                          <Countdown
+                            date={deadline}
+                            now={serverTime}
+                            renderer={CountDownRenderer}
+                            zeroPadDays={1}
+                          />
+                        ) : (
+                          <span className="text-slate-400">Syncing...</span>
+                        )}
                       </p>
                     </div>
                   </div>
@@ -259,11 +268,16 @@ export function RightSideBar({
                   />
                   <div className="flex flex-col items-start">
                     <p className="text-lg font-medium text-black md:text-xl">
-                      <Countdown
-                        date={Hackathon?.startDate}
-                        renderer={CountDownRenderer}
-                        zeroPadDays={1}
-                      />
+                      {isSync ? (
+                        <Countdown
+                          date={Hackathon?.startDate}
+                          now={serverTime}
+                          renderer={CountDownRenderer}
+                          zeroPadDays={1}
+                        />
+                      ) : (
+                        <span className="text-slate-400">Syncing...</span>
+                      )}
                     </p>
                     <p className="text-slate-400">Until Submissions Open</p>
                   </div>
@@ -275,8 +289,15 @@ export function RightSideBar({
           <div className="hidden w-full md:flex">
             <SubmissionActionButton listing={listing} isTemplate={isTemplate} />
           </div>
+          <div className="w-full">
+            {listing.isWinnersAnnounced &&
+              listing.isFndnPaying &&
+              dayjs(listing.winnersAnnouncedAt).isAfter(
+                dayjs('2025-07-24'),
+              ) && <ApprovalStages listing={listing} />}
+          </div>
           {isProject && deadline && dayjs(deadline).isAfter(new Date()) && (
-            <div className="-mt-1 mb-4 flex w-full gap-2 bg-[#62F6FF10] p-3">
+            <div className="mb-4 flex w-full gap-2 bg-[#62F6FF10] p-3">
               <TriangleAlert color="#1A7F86" />
               <p className="text-xs font-medium text-[#1A7F86]" color="#1A7F86">
                 Don&apos;t start working just yet! Apply first, and then begin
@@ -284,7 +305,7 @@ export function RightSideBar({
               </p>
             </div>
           )}
-          <div className="w-full">
+          <div className="mt-4 w-full">
             <ExtraInfoSection
               skills={skills}
               region={listing.region}

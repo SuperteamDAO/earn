@@ -190,10 +190,6 @@ export const SubmissionDrawer = ({
         telegram: data.telegram || user?.telegram || '',
       });
 
-      const latestSubmissionNumber = (user?.Submission?.length ?? 0) + 1;
-      if (!editMode) showEasterEgg();
-      if (!editMode && latestSubmissionNumber % 3 !== 0) onSurveyOpen();
-
       form.reset();
       await queryClient.invalidateQueries({
         queryKey: userSubmissionQuery(id!, user!.id).queryKey,
@@ -212,6 +208,10 @@ export const SubmissionDrawer = ({
           queryKey: ['creditHistory', user!.id],
         });
       }
+
+      const latestSubmissionNumber = (user?.Submission?.length ?? 0) + 1;
+      if (!editMode) showEasterEgg();
+      if (!editMode && latestSubmissionNumber % 3 !== 0) onSurveyOpen();
 
       toast.success(
         editMode
@@ -527,10 +527,10 @@ export const SubmissionDrawer = ({
                 <p className="mt-2 text-center text-xs text-slate-400 sm:text-sm">
                   By submitting/applying to this listing, you agree to our{' '}
                   <button
+                    type="button"
                     onClick={() => setIsTOSModalOpen(true)}
                     className="cursor-pointer underline underline-offset-2"
                     rel="noopener noreferrer"
-                    type="button"
                   >
                     Terms of Use
                   </button>

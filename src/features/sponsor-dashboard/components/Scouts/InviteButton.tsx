@@ -28,7 +28,7 @@ export function InviteButton({
   const inviteMutation = useMutation({
     mutationFn: async () => {
       const response = await api.post(
-        `/api/listings/scout/invite/${bountyId}/${userId}`,
+        `/api/sponsor-dashboard/listing/${bountyId}/scout/invite/${userId}`,
       );
       return response.data;
     },

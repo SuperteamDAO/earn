@@ -1,14 +1,4 @@
-import axios from 'axios';
-import * as crypto from 'crypto';
-
-export interface SumSubBaseResponse {
-  status?: string;
-  reviewStatus?: string;
-  applicantId?: string;
-  token?: string;
-}
-
-export const SUMSUB_BASE_URL = 'https://api.sumsub.com';
+import crypto from 'crypto';
 
 const generateSignature = (
   timestamp: number,
@@ -40,13 +30,4 @@ export const createSumSubHeaders = (
     'X-App-Access-Sig': signature,
     'X-App-Access-Ts': ts.toString(),
   };
-};
-
-export const handleSumSubError = (error: unknown): never => {
-  if (axios.isAxiosError(error) && error.response?.status === 401) {
-    throw new Error('Sumsub: Invalid credentials');
-  }
-  throw new Error(
-    `Sumsub: ${error instanceof Error ? error.message : 'Failed to process request'}`,
-  );
 };

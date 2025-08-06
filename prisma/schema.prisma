@@ -346,6 +346,7 @@ model Submission {
   Comments           Comment[]
   CreditLedger       CreditLedger[]
   ai                 Json?
+  paymentSynced      Boolean          @default(false)
 
   @@index([id, listingId])
   @@index([userId])
@@ -490,8 +491,10 @@ model User {
   kycDOB             String?
   kycIDNumber        String?
   kycIDType          String?
+  kycVerifiedAt      DateTime?
   CreditLedger       CreditLedger[]
   blockRationale     String?
+  linkedTwitter      Json?
 
   @@index([currentSponsorId])
   @@index([hackathonId])
@@ -751,6 +754,7 @@ enum EmailType {
   BOUNTY_DEADLINE
   BOUNTY_DEADLINE_WEEK
   BOUNTY_CLOSE_DEADLINE
+  BOUNTY_COMMITMENT_2DAYS
   NO_VERIFICATION
   NO_ACTIVITY
   NO_REVIEW_SPONSOR_1

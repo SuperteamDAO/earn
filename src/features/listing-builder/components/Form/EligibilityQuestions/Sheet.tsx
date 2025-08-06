@@ -88,6 +88,7 @@ export function EligibilityQuestionsSheet() {
                   </p>
                 </span>
                 <Button
+                  type="button"
                   variant="link"
                   size="sm"
                   className="ml-auto group-hover:underline"

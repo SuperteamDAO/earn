@@ -8,7 +8,9 @@ import React, { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Tooltip } from '@/components/ui/tooltip';
+import { SIX_MONTHS } from '@/constants/SIX_MONTHS';
 import { useDisclosure } from '@/hooks/use-disclosure';
+import { useServerTimeSync } from '@/hooks/use-server-time';
 import { useCreditBalance } from '@/store/credit';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
@@ -26,6 +28,7 @@ import {
 } from '../../utils/region';
 import { getListingDraftStatus } from '../../utils/status';
 import { EasterEgg } from './EasterEgg';
+import { KYCModal } from './KYCModal';
 import { SubmissionDrawer } from './SubmissionDrawer';
 
 interface Props {
@@ -103,10 +106,12 @@ export const SubmissionActionButton = ({
     region,
     type,
     isWinnersAnnounced,
+    isFndnPaying,
     Hackathon,
   } = listing;
 
   const [isEasterEggOpen, setEasterEggOpen] = useState(false);
+  const [isKYCModalOpen, setIsKYCModalOpen] = useState(false);
 
   const { user } = useUser();
   const { creditBalance } = useCreditBalance();
@@ -133,21 +138,28 @@ export const SubmissionActionButton = ({
 
   const { isOpen, onOpen, onClose } = useDisclosure();
 
+  const { serverTime } = useServerTimeSync();
+
   const regionTooltipLabel = getRegionTooltipLabel(region);
 
   const bountyDraftStatus = getListingDraftStatus(status, isPublished);
 
-  const pastDeadline = isDeadlineOver(deadline) || isWinnersAnnounced;
+  const pastDeadline =
+    isDeadlineOver(deadline, serverTime()) || isWinnersAnnounced;
   const buttonState = getButtonState();
 
   const isEditMode = buttonState === 'edit';
 
   const handleSubmit = () => {
-    onOpen();
-    if (buttonState === 'submit') {
-      posthog.capture('start_submission');
-    } else if (isEditMode) {
-      posthog.capture('edit_submission');
+    if (buttonState === 'kyc') {
+      setIsKYCModalOpen(true);
+    } else {
+      onOpen();
+      if (buttonState === 'submit') {
+        posthog.capture('start_submission');
+      } else if (isEditMode) {
+        posthog.capture('edit_submission');
+      }
     }
   };
 
@@ -156,7 +168,7 @@ export const SubmissionActionButton = ({
     : null;
 
   const hasHackathonStarted = hackathonStartDate
-    ? dayjs().isAfter(hackathonStartDate)
+    ? dayjs(serverTime()).isAfter(hackathonStartDate)
     : true;
 
   const isProject = type === 'project';
@@ -170,6 +182,27 @@ export const SubmissionActionButton = ({
   let isSubmitDisabled = false;
 
   function getButtonState() {
+    if (
+      isWinnersAnnounced &&
+      isFndnPaying &&
+      submission?.isWinner &&
+      dayjs(listing.winnersAnnouncedAt).isAfter(dayjs('2025-07-24'))
+    ) {
+      const isKycExpired =
+        !submission?.kycVerifiedAt ||
+        Date.now() - new Date(submission.kycVerifiedAt).getTime() > SIX_MONTHS;
+
+      if (!submission?.isKYCVerified || isKycExpired) {
+        return 'kyc';
+      }
+      if (submission?.isKYCVerified && !isKycExpired && !submission.isPaid) {
+        return 'kyc_done';
+      }
+      if (submission?.isKYCVerified && !isKycExpired && submission.isPaid) {
+        return 'paid';
+      }
+    }
+
     if (isSubmitted && !pastDeadline && submissionStatus === 'Rejected')
       return 'rejected';
     if (isSubmitted && !pastDeadline) return 'edit';
@@ -194,6 +227,27 @@ export const SubmissionActionButton = ({
       buttonText = isProject
         ? 'Applied Successfully'
         : 'Submitted Successfully';
+      buttonBG = 'bg-green-600';
+      isBtnDisabled = true;
+      btnLoadingText = null;
+      break;
+
+    case 'kyc':
+      buttonText = 'Submit KYC';
+      buttonBG = 'bg-brand-purple';
+      isBtnDisabled = false;
+      btnLoadingText = null;
+      break;
+
+    case 'kyc_done':
+      buttonText = 'Processing Payment';
+      buttonBG = 'bg-green-600';
+      isBtnDisabled = true;
+      btnLoadingText = null;
+      break;
+
+    case 'paid':
+      buttonText = 'Payment Successful';
       buttonBG = 'bg-green-600';
       isBtnDisabled = true;
       btnLoadingText = null;
@@ -229,10 +283,13 @@ export const SubmissionActionButton = ({
       );
       btnLoadingText = 'Checking Submission..';
   }
-  if (isDeadlineOver(deadline) && !isWinnersAnnounced) {
+  if (isDeadlineOver(deadline, serverTime()) && !isWinnersAnnounced) {
     buttonText = 'Submissions in Review';
     buttonBG = 'bg-gray-500';
-  } else if (isWinnersAnnounced) {
+  } else if (
+    isWinnersAnnounced &&
+    !['kyc', 'kyc_done', 'paid'].includes(buttonState)
+  ) {
     buttonText = 'Winners Announced';
     buttonBG = 'bg-gray-500';
   }
@@ -291,8 +348,16 @@ export const SubmissionActionButton = ({
           isProject={isProject}
         />
       )}
+      {isKYCModalOpen && submission?.id && (
+        <KYCModal
+          isOpen={isKYCModalOpen}
+          listingId={id!}
+          onClose={() => setIsKYCModalOpen(false)}
+          submissionId={submission.id}
+        />
+      )}
 
-      <div className="ph-no-capture w-full md:px-0 md:pb-3">
+      <div className="ph-no-capture w-full">
         <div className="flex items-center gap-2">
           <InfoWrapper
             isUserEligibleByRegion={isUserEligibleByRegion}
@@ -317,7 +382,7 @@ export const SubmissionActionButton = ({
                 <Button
                   className={cn(
                     'h-12 w-full gap-4',
-                    'disabled:opacity-70',
+                    'disabled:cursor-default disabled:opacity-70',
                     'text-base md:text-lg',
                     'font-semibold sm:font-medium',
                     buttonBG,
