@@ -27,7 +27,10 @@ export const getCombinedRegion = (
     );
   }
   if (regionObject?.displayValue) {
-    regionObject.name = regionObject.displayValue;
+    regionObject = {
+      ...regionObject,
+      name: regionObject.displayValue,
+    };
   }
   if (!regionObject) {
     regionObject = countries.find(
