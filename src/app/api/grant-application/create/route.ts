@@ -30,6 +30,7 @@ async function createGrantApplication(
     grant.maxReward,
     grant.token,
     grant.questions,
+    user as any,
   ).safeParse({
     ...data,
     twitter:

@@ -106,6 +106,7 @@
     "micro": "^10.0.1",
     "motion": "^12.23.0",
     "next": "15.3.4",
+    "next-auth": "^4.24.11",
     "next-axiom": "^0.18.1",
     "next-pwa": "^5.6.0",
     "nprogress": "^0.2.0",

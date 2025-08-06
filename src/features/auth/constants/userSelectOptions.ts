@@ -34,6 +34,7 @@ export const userSelectOptions: Prisma.UserSelect = {
   isBlocked: true,
   role: true,
   createdAt: true,
+  linkedTwitter: true,
 
   currentSponsor: {
     select: {
