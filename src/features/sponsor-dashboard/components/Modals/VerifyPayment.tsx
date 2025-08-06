@@ -450,9 +450,6 @@ export const VerifyPaymentModal = ({
           <Form {...form}>
             <form onSubmit={handleSubmit(onSubmit)} className="h-full">
               <div className="flex flex-col items-start gap-2">
-                <p className="font-medium text-slate-900">
-                  Add Reward Payment Link
-                </p>
                 <p className="text-sm font-normal text-slate-500">
                   If you have paid the winners outside of Earn and want to
                   update the status of this listing as &quot;Completed&quot;,
@@ -462,7 +459,8 @@ export const VerifyPaymentModal = ({
               </div>
 
               <div className="my-6 flex flex-col gap-6">
-                {listing?.type === 'bounty' &&
+                {(listing?.type === 'bounty' ||
+                  listing?.type === 'hackathon') &&
                   data?.submission
                     .filter((sub) => sub.winnerPosition !== null)
                     .sort(
@@ -484,26 +482,31 @@ export const VerifyPaymentModal = ({
                                 : '',
                             )}
                           >
-                            <div className="flex justify-between gap-2">
-                              <div className="flex w-[40%] flex-col items-start gap-1">
-                                <div className="flex gap-1 text-xs font-semibold text-slate-500 uppercase">
-                                  <p>
-                                    {getRankLabels(
-                                      submission.winnerPosition || 0,
-                                    )}{' '}
-                                    PRIZE
-                                  </p>
-                                  {submission.winnerPosition ===
-                                    BONUS_REWARD_POSITION && (
-                                    <div className="flex">
-                                      <p>(</p>
-                                      <p className="line-clamp-1 max-w-[5rem] normal-case">
-                                        @{submission.user.username}
-                                      </p>
-                                      <p>)</p>
-                                    </div>
-                                  )}
+                            <div className="flex flex-col gap-2">
+                              <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-2">
+                                  <div className="flex gap-1 text-sm font-medium text-slate-500 uppercase">
+                                    <p>
+                                      {getRankLabels(
+                                        submission.winnerPosition || 0,
+                                      )}{' '}
+                                      PRIZE
+                                    </p>
+                                    {submission.winnerPosition ===
+                                      BONUS_REWARD_POSITION && (
+                                      <div className="flex">
+                                        <p>(</p>
+                                        <p className="line-clamp-1 max-w-[5rem] normal-case">
+                                          @{submission.user.username}
+                                        </p>
+                                        <p>)</p>
+                                      </div>
+                                    )}
+                                  </div>
                                 </div>
+                              </div>
+
+                              <div className="flex items-center gap-12">
                                 <div className="flex items-center gap-1">
                                   <img
                                     className="h-[1.2rem] w-[1.2rem] rounded-full"
@@ -517,10 +520,27 @@ export const VerifyPaymentModal = ({
                                       ] || 0,
                                     )}
                                   </p>
-                                  <p className="font-semibold text-slate-400">
+                                  <p className="font-medium text-slate-400">
                                     {selectedToken?.tokenSymbol}
                                   </p>
                                 </div>
+                                <CopyButton
+                                  text={submission.user?.walletAddress || ''}
+                                  contentProps={{
+                                    side: 'right',
+                                    className: 'text-[0.6875rem] px-2 py-0.5',
+                                  }}
+                                >
+                                  <div className="flex items-center gap-1 text-sm text-slate-600">
+                                    <p className="font-medium">
+                                      {truncatePublicKey(
+                                        submission.user?.walletAddress,
+                                        8,
+                                      )}
+                                    </p>
+                                    <CopyIcon className="h-3 w-3" />
+                                  </div>
+                                </CopyButton>
                               </div>
 
                               <div className="flex w-full flex-col items-start gap-1">
@@ -858,7 +878,7 @@ export const VerifyPaymentModal = ({
     <Dialog open={isOpen} onOpenChange={handleModalOpenChange} modal>
       <DialogContent className="m-0 max-w-2xl p-0" hideCloseIcon>
         <DialogTitle className="text-md -mb-1 px-6 pt-4 font-semibold text-slate-900">
-          Verify Payment
+          Add Reward Payment Link
         </DialogTitle>
         <Separator />
         <div className="px-6 pb-6 text-[0.95rem]">{renderContent()}</div>

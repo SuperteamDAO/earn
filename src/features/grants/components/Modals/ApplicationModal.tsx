@@ -559,6 +559,7 @@ export const ApplicationModal = ({
                   className="ph-no-capture w-full text-slate-500"
                   onClick={handleBack}
                   variant="ghost"
+                  type="button"
                 >
                   Back
                 </Button>

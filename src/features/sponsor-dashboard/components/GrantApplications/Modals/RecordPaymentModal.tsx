@@ -158,6 +158,7 @@ export const RecordPaymentModal = ({
               <div className="mt-6 flex gap-3">
                 <div className="w-1/2" />
                 <Button
+                  type="button"
                   variant="ghost"
                   onClick={recordPaymentOnClose}
                   disabled={addPaymentMutation.isPending}

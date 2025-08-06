@@ -9,6 +9,7 @@ export const IndustryList = [
   'Wallets and Payments',
   'NFTs',
   'Gaming',
+  'Other',
 ] as const;
 
 export const web3Exp = [
