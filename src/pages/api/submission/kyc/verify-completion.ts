@@ -30,7 +30,7 @@ const handler = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
       submission.listing.isFndnPaying &&
       !submission.isPaid &&
       submission.listing.winnersAnnouncedAt &&
-      new Date(submission.listing.winnersAnnouncedAt) > new Date('2025-07-24');
+      new Date(submission.listing.winnersAnnouncedAt) > new Date('2025-08-06');
 
     if (!isAllowed) {
       return res.status(200).json({ message: 'Not allowed' });

@@ -186,7 +186,7 @@ export const SubmissionActionButton = ({
       isWinnersAnnounced &&
       isFndnPaying &&
       submission?.isWinner &&
-      dayjs(listing.winnersAnnouncedAt).isAfter(dayjs('2025-07-24'))
+      dayjs(listing.winnersAnnouncedAt).isAfter(dayjs('2025-08-06'))
     ) {
       const isKycExpired =
         !submission?.kycVerifiedAt ||
