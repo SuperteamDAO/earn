@@ -17,7 +17,7 @@ export const useSlugValidation = (initialValue = '') => {
   const checkSlugAvailability = async (slug: string) => {
     if (!slugPattern.test(slug)) {
       setIsInvalid(true);
-      setValidationErrorMessage("Slug 只能包含小写字母、数字、 '_'和'-'");
+      setValidationErrorMessage("只能包含小写字母、数字、 '_'和'-'");
       return;
     }
 

@@ -220,7 +220,7 @@ const UpdateSponsor = () => {
                   fontWeight={600}
                   htmlFor={'slug'}
                 >
-                  组织 Slug
+                  组织 Username
                 </FormLabel>
                 <Input
                   w={'full'}
@@ -240,7 +240,7 @@ const UpdateSponsor = () => {
                   </Text>
                 )}
                 <Text mt={1} color={'brand.slate.400'} fontSize={'xs'}>
-                  Slug 是用于显示在网址中的简短名称，比如/company-slug。
+                  此项是用于显示在网址中的简短名称，比如 /company-slug。
                 </Text>
                 <FormErrorMessage>
                   {errors.slug ? <>{errors.slug.message}</> : <></>}

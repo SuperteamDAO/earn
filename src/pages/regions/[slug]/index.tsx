@@ -46,8 +46,8 @@ const RegionsPage = ({
           <ListingTabs
             bounties={listings?.bounties}
             isListingsLoading={isListingsLoading}
-            emoji="/assets/home/emojis/moneyman.webp"
-            title="Freelance Gigs"
+            emoji=""
+            title="自由职业机会"
             showViewAll
             viewAllLink={`/regions/${slug}/all`}
             take={10}

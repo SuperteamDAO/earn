@@ -109,13 +109,13 @@ export const ListingBasic = ({
       title: z.string().min(1, '标题是必填项'),
       slug: z
         .string()
-        .min(1, 'Slug 是必填项')
+        .min(1, '此为必填项')
         .regex(
           /^[a-z0-9]+(?:-[a-z0-9]+)*$/,
-          'Slug 只能包含小写字母、数字和连字符',
+          '只能包含小写字母、数字和连字符',
         )
         .refine(slugUniqueCheck, {
-          message: 'Slug 已经存在，请尝试另一个。',
+          message: '已经存在，请尝试另一个。',
         }),
       pocSocials: z
         .string()
