@@ -69,8 +69,8 @@ export const listingStatusCN = {
   'In Progress': '进行中',
   'Fndn to Pay': 'Fndn to Pay',
   'Payment Pending': '等待支付',
-  Completed: '完成',
-  'In Review': '检查中',
+  Completed: '已完成',
+  'In Review': '审核中',
 };
 
 export const getListingStatus = (

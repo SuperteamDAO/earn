@@ -41,7 +41,7 @@ function AllCategoryListingsPage({ slug }: { slug: string }) {
         <ListingTabs
           bounties={listings}
           isListingsLoading={isLoading}
-          emoji="/assets/home/emojis/moneyman.webp"
+          emoji=""
           title="自由职业"
           viewAllLink="/all"
         />

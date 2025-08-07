@@ -37,8 +37,8 @@ export default function AllRegionListingsPage({
         <ListingTabs
           bounties={listings?.bounties}
           isListingsLoading={isListingsLoading}
-          emoji="/assets/home/emojis/moneyman.webp"
-          title="Freelance Gigs"
+          emoji=""
+          title="自由职业机会"
           viewAllLink="/all"
         />
       </Box>

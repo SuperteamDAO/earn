@@ -32,8 +32,8 @@ export default function ProjectsPage() {
         <ListingTabs
           bounties={listings}
           isListingsLoading={isLoading}
-          emoji="/assets/home/emojis/moneyman.webp"
-          title="Projects"
+          emoji=""
+          title="定向任务"
           viewAllLink="/projects/all"
           showViewAll
           take={20}

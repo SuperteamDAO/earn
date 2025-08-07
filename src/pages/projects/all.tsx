@@ -25,7 +25,7 @@ export default function AllProjectsPage() {
           type="bounties"
           title="定向任务"
           sub="开启您的定向任务之旅"
-          emoji="/assets/home/emojis/moneyman.webp"
+          emoji=""
         >
           {isLoading &&
             Array.from({ length: 8 }, (_, index) => (
@@ -34,8 +34,8 @@ export default function AllProjectsPage() {
           {!isLoading && !listings?.length && (
             <Flex align="center" justify="center" mt={8}>
               <EmptySection
-                title="No listings available!"
-                message="Update your email preferences (from the user menu) to be notified about new work opportunities."
+                title="暂无可用任务!"
+                message="更新您的电子邮件偏好设置（从用户菜单），以便接收关于新任务的通知"
               />
             </Flex>
           )}

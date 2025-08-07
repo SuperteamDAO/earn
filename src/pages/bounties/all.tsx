@@ -24,8 +24,8 @@ export default function AllBountiesPage() {
         <ListingSection
           type="bounties"
           title="赏金任务"
-          sub="Bite sized tasks for freelancers"
-          emoji="/assets/home/emojis/moneyman.webp"
+          sub=""
+          emoji=""
         >
           {isLoading &&
             Array.from({ length: 8 }, (_, index) => (

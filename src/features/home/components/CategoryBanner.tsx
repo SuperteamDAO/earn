@@ -150,7 +150,7 @@ export function CategoryBanner({ category }: { category: CategoryTypes }) {
                   posthog.capture('signup_category banner');
                 }}
               >
-                Sign Up
+                注册
               </Button>
             </AuthWrapper>
           )}

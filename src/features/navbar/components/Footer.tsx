@@ -63,16 +63,18 @@ export const Footer = () => {
   const about = [
     {
       text: '常见问题',
-      href: '/guide.pdf',
+      href: 'https://drive.google.com/file/d/14bmMD3OkdZaQ_G6aoLe2-ddbmuF2o7Y-/view?usp=sharing',
     },
     {
-      text: '条款',
-      href: '/terms.pdf',
+      text: '使用条款',
+      href: 'https://drive.google.com/file/d/1cVvsrsHU9S-OSMSMVffr5zLmKK5N54-3/view?usp=sharing',
     },
-    { text: '隐私政策', href: '/policy.pdf' },
+    { text: '隐私政策',
+      href: 'https://drive.google.com/file/d/1AvNfpr4gE-3i4ZkhBmx1UmYvy2CU_jSv/view?usp=drive_link',
+    },
     {
       text: '联系我们',
-      href: `mailto:${SolarMail}`,
+      href: 'https://www.solar.team/4eaafe64453b4d96a1a91463052e5b88',
     },
   ];
 
@@ -114,7 +116,7 @@ export const Footer = () => {
             w={{ base: '100%', md: 'auto' }}
           >
             <FooterColumn title="项目机会" links={opportunities} />
-            <FooterColumn title="人才类型" links={categories} />
+            <FooterColumn title="任务类型" links={categories} />
             <FooterColumn title="关于" links={about} />
           </Flex>
         </Flex>

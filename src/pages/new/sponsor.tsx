@@ -73,7 +73,7 @@ const CreateSponsor = () => {
 
   const createNewSponsor = async (sponsor: SponsorType) => {
     if (getValues('bio').length > 180) {
-      setErrorMessage('公司简介长度超过限制');
+      setErrorMessage('组织简介长度超过限制');
       return;
     }
     setIsLoading(true);
@@ -192,7 +192,7 @@ const CreateSponsor = () => {
                     fontWeight={600}
                     htmlFor={'sponsorname'}
                   >
-                    公司名称
+                    组织名称
                   </FormLabel>
                   <Input
                     w={'full'}
@@ -232,7 +232,7 @@ const CreateSponsor = () => {
                     fontWeight={600}
                     htmlFor={'slug'}
                   >
-                    公司 Slug
+                    组织 Username
                   </FormLabel>
                   <Input
                     w={'full'}
@@ -295,7 +295,7 @@ const CreateSponsor = () => {
                     fontWeight={600}
                     htmlFor={'twitterHandle'}
                   >
-                    公司 Twitter
+                    组织 Twitter
                   </FormLabel>
                   <Input
                     w={'full'}
@@ -324,11 +324,11 @@ const CreateSponsor = () => {
                       fontWeight={600}
                       htmlFor={'entityName'}
                     >
-                      实体名称
+                      组织名称
                     </FormLabel>
                     <Tooltip
                       fontSize="xs"
-                      label="请填写您的项目的官方实体名称。如果您是 DAO，请填写 DAO 的名称。如果您既不是实体也不是 DAO，请填写您的全名。"
+                      label="请填写您的组织的官方实体名称。如果您是 DAO，请填写 DAO 的名称。如果您既不是实体也不是 DAO，请填写您的全名。"
                     >
                       <InfoOutlineIcon
                         color="brand.slate.500"
@@ -434,7 +434,7 @@ const CreateSponsor = () => {
                     fontSize={'15px'}
                     fontWeight={600}
                   >
-                    公司 logo{' '}
+                    组织 logo{' '}
                     <span
                       style={{
                         color: 'red',
@@ -530,7 +530,7 @@ const CreateSponsor = () => {
                     {errorMessage}
                     {(validationErrorMessage ||
                       sponsorNameValidationErrorMessage) &&
-                      '公司名称或用户名已经存在。'}
+                      '组织名称或用户名已经存在。'}
                   </Text>
                 )}
                 {(validationErrorMessage ||

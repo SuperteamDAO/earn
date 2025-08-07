@@ -133,7 +133,7 @@ const UpdateSponsor = () => {
       router.push('/dashboard/listings');
     } catch (e: any) {
       if (e?.response?.data?.error?.code === 'P2002') {
-        setErrorMessage('抱歉！公司名称或用户名已经存在。');
+        setErrorMessage('抱歉！组织名称或用户名已经存在。');
       }
       setHasError(true);
     } finally {
@@ -186,7 +186,7 @@ const UpdateSponsor = () => {
                   fontWeight={600}
                   htmlFor={'sponsorname'}
                 >
-                  公司名称
+                  组织名称
                 </FormLabel>
                 <Input
                   w={'full'}
@@ -220,7 +220,7 @@ const UpdateSponsor = () => {
                   fontWeight={600}
                   htmlFor={'slug'}
                 >
-                  公司 Slug
+                  组织 Slug
                 </FormLabel>
                 <Input
                   w={'full'}
@@ -239,6 +239,9 @@ const UpdateSponsor = () => {
                     {slugValidationErrorMessage}
                   </Text>
                 )}
+                <Text mt={1} color={'brand.slate.400'} fontSize={'xs'}>
+                  Slug 是用于显示在网址中的简短名称，比如/company-slug。
+                </Text>
                 <FormErrorMessage>
                   {errors.slug ? <>{errors.slug.message}</> : <></>}
                 </FormErrorMessage>
@@ -252,7 +255,7 @@ const UpdateSponsor = () => {
                   fontWeight={600}
                   htmlFor={'sponsorname'}
                 >
-                  公司网址
+                  组织网址
                 </FormLabel>
                 <Input
                   borderColor={'brand.slate.300'}
@@ -273,7 +276,7 @@ const UpdateSponsor = () => {
                   fontWeight={600}
                   htmlFor={'twitterHandle'}
                 >
-                  公司推特
+                  组织推特
                 </FormLabel>
                 <Input
                   w={'full'}

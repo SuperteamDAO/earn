@@ -987,17 +987,6 @@ export const ListingPayments = ({
                           )}{' '}
                           {selectedToken?.tokenSymbol}{' '}
                         </Text>
-                        xxx 每位获得 (total bonus of{' '}
-                        <Text pl={1} fontWeight={700}>
-                          {formatTotalPrice(
-                            caculateBonus(
-                              maxBonusSpots,
-                              rewards?.[BONUS_REWARD_POSITION],
-                            ),
-                          )}{' '}
-                          {selectedToken?.tokenSymbol}
-                        </Text>
-                        )
                       </FormHelperText>
                     )}
                 </FormControl>

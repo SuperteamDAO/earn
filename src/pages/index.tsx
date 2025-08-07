@@ -110,7 +110,7 @@ export default function HomePage({
           bounties={combinedListings}
           forYou={combinedForYouListings}
           isListingsLoading={false}
-          emoji="/assets/home/emojis/moneyman.webp"
+          emoji=""
           title="自由职业机会"
           viewAllLink="/all"
           take={20}
