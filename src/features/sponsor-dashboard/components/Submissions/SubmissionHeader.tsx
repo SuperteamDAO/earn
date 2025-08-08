@@ -47,6 +47,7 @@ import { getListingStatus } from '@/features/listings/utils/status';
 import { VerifyPaymentModal } from '@/features/sponsor-dashboard/components/Modals/VerifyPayment';
 
 import { UnpublishModal } from '../Modals/UnpublishModal';
+import AiReviewBountiesSubmissionsModal from './Modals/AiReviewBounties';
 import AiReviewProjectApplicationsModal from './Modals/AiReviewProjects';
 
 interface Props {
@@ -264,6 +265,12 @@ export const SubmissionHeader = ({
 
           <div className="ml-4 -translate-y-2.5">
             <AiReviewProjectApplicationsModal
+              listing={bounty}
+              applications={submissions}
+            />
+          </div>
+          <div className="ml-4 -translate-y-2.5">
+            <AiReviewBountiesSubmissionsModal
               listing={bounty}
               applications={submissions}
             />
