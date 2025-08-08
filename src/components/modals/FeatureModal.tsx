@@ -69,7 +69,7 @@ export const FeatureModal = ({
   };
 
   return (
-    <Modal autoFocus={false} isOpen={isOpen} onClose={handleClose} size="sm">
+    <Modal autoFocus={false} isOpen={false} onClose={handleClose} size="sm">
       <ModalOverlay />
       <ModalContent overflow="hidden" rounded="lg">
         <Box w="full" p={8} bg="#FAF5FF">
