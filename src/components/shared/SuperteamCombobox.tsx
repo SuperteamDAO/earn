@@ -17,6 +17,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
+import { ASSET_URL } from '@/constants/ASSET_URL';
 import { Superteams, unofficialSuperteams } from '@/constants/Superteam';
 import { cn } from '@/utils/cn';
 
@@ -58,6 +59,11 @@ interface SuperteamComboboxProps {
   unset?: boolean;
 
   /**
+   * Whether to show a "Global" option at the top of the list.
+   */
+  showGlobal?: boolean;
+
+  /**
    * Object containing class names for specific subcomponents.
    */
   classNames?: {
@@ -79,16 +85,21 @@ export function SuperteamCombobox({
   onChange,
   placeholder = 'Select Superteam',
   unset,
+  showGlobal,
   className,
   classNames,
 }: SuperteamComboboxProps): JSX.Element {
   const options: SuperteamOption[] = useMemo(() => {
-    return [...Superteams, ...unofficialSuperteams].map((superteam) => ({
-      value: superteam.name ?? '-',
-      label: superteam.name,
-      code: superteam.code,
-      icon: superteam.icons,
-    }));
+    const baseOptions = [...Superteams, ...unofficialSuperteams].map(
+      (superteam) => ({
+        value: superteam.name ?? '-',
+        label: superteam.name,
+        code: superteam.code,
+        icon: superteam.icons,
+      }),
+    );
+
+    return baseOptions;
   }, []);
 
   const [open, setOpen] = React.useState(false);
@@ -112,7 +123,15 @@ export function SuperteamCombobox({
         >
           {!!value && (
             <span className="mr-2 min-h-4 min-w-4">
-              {findOptionByValue(value) &&
+              {value === 'Global' ? (
+                <div
+                  className="flex h-4 w-4 items-center justify-center rounded-full border border-slate-50 bg-contain"
+                  style={{
+                    backgroundImage: `url('${ASSET_URL}/superteams/globe.png')`,
+                  }}
+                />
+              ) : (
+                findOptionByValue(value) &&
                 (findOptionByValue(value)?.icon ? (
                   <img
                     src={findOptionByValue(value)?.icon}
@@ -125,12 +144,15 @@ export function SuperteamCombobox({
                     isCode
                     size="16px"
                   />
-                ))}
+                ))
+              )}
             </span>
           )}
           <p className="truncate">
             {value
-              ? findOptionByValue(value)?.label || placeholder
+              ? value === 'Global'
+                ? 'Global'
+                : findOptionByValue(value)?.label || placeholder
               : placeholder}
           </p>
           <ChevronsUpDown className="ml-auto h-4 w-4 shrink-0 opacity-50" />
@@ -155,6 +177,29 @@ export function SuperteamCombobox({
                   <p className="text-slate-400">Select Superteam</p>
                 </CommandItem>
               </CommandGroup>
+            )}
+            {showGlobal && (
+              <CommandItem
+                value="Global"
+                onSelect={(currentValue) => {
+                  onChange?.(currentValue);
+                  setOpen(false);
+                }}
+                className={cn(
+                  'cursor-pointer',
+                  value === 'Global' && 'bg-gray-200',
+                )}
+              >
+                <span className="mx-2 min-h-4 min-w-4 pl-1">
+                  <div
+                    className="flex h-4 w-4 items-center justify-center rounded-full border border-slate-50 bg-contain"
+                    style={{
+                      backgroundImage: `url('${ASSET_URL}/superteams/globe.png')`,
+                    }}
+                  />
+                </span>
+                <p>Global</p>
+              </CommandItem>
             )}
             <CommandGroup heading="Superteams">
               {options.map((item) => (
