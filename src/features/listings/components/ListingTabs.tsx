@@ -2,8 +2,9 @@ import { ArrowForwardIcon, InfoOutlineIcon } from '@chakra-ui/icons';
 import { Box, Button, Flex, HStack, Image, Link, Text } from '@chakra-ui/react';
 import dynamic from 'next/dynamic';
 import NextLink from 'next/link';
+import { useRouter } from 'next/router';
 import { usePostHog } from 'posthog-js/react';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { Tooltip } from '@/components/shared/responsive-tooltip';
 import { type User } from '@/interface/user';
@@ -171,6 +172,7 @@ export const ListingTabs = ({
   showNotifSub = true,
 }: ListingTabsProps) => {
   const { user } = useUser();
+  const router = useRouter();
   const tabs: TabProps[] = [
     {
       id: 'tab1',
@@ -256,12 +258,80 @@ export const ListingTabs = ({
     },
   ];
 
-  const [activeTab, setActiveTab] = useState<string>(tabs[0]!.id);
+  const [activeTab, setActiveTab] = useState<string>(''); // Start with empty to avoid flash
   const posthog = usePostHog();
+  const isInitialized = useRef(false);
+
+  // Initialize tab from URL parameter
+  useEffect(() => {
+    const tabParam = router.query.tab as string;
+    const tabMap: Record<string, string> = {
+      open: 'tab1',
+      review: 'tab2',
+      completed: 'tab3',
+    };
+    
+    // Set initial tab from URL or default to tab1
+    const initialTab = tabParam && tabMap[tabParam] ? tabMap[tabParam] : tabs[0]!.id;
+    setActiveTab(initialTab);
+    isInitialized.current = true;
+  }, [router.query.tab]);
+
+  // Update URL when tab changes (only after user interaction)
+  useEffect(() => {
+    // Don't run on initial render or before initialization
+    if (!isInitialized.current || !activeTab) {
+      return;
+    }
+    
+    const tabParamMap: Record<string, string> = {
+      tab1: 'open',
+      tab2: 'review',
+      tab3: 'completed',
+    };
+    const currentTabParam = tabParamMap[activeTab];
+    
+    if (router.query.tab !== currentTabParam) {
+      router.push(
+        {
+          pathname: router.pathname,
+          query: { ...router.query, tab: currentTabParam },
+        },
+        undefined,
+        { shallow: true }
+      );
+    }
+  }, [activeTab, router]);
 
   useEffect(() => {
-    posthog.capture('open_listings');
-  }, []);
+    const tabParamMap: Record<string, string> = {
+      tab1: 'open_listings',
+      tab2: 'in review_listing',
+      tab3: 'completed_listing',
+    };
+    posthog.capture(tabParamMap[activeTab]);
+  }, [activeTab, posthog]);
+
+  // Generate view all link with current tab parameter
+  const getViewAllLinkWithTab = () => {
+    if (!viewAllLink) return '';
+    
+    const tabParamMap: Record<string, string> = {
+      tab1: 'open',
+      tab2: 'review',
+      tab3: 'completed',
+    };
+    const tabParam = tabParamMap[activeTab];
+    
+    // Check if the link already has query parameters
+    const hasQuery = viewAllLink.includes('?');
+    return `${viewAllLink}${hasQuery ? '&' : '?'}tab=${tabParam}`;
+  };
+
+  // Don't render anything until activeTab is set
+  if (!activeTab) {
+    return <Box mt={5} mb={10} />;
+  }
 
   return (
     <Box mt={5} mb={10}>
@@ -352,7 +422,7 @@ export const ListingTabs = ({
             className="ph-no-capture"
             display={{ base: 'none', sm: 'flex' }}
           >
-            <Link as={NextLink} href={viewAllLink}>
+            <Link as={NextLink} href={getViewAllLinkWithTab()}>
               <Button
                 px={2}
                 py={1}
