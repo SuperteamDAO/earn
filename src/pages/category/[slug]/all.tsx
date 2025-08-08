@@ -2,18 +2,25 @@ import { Box } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import type { NextPageContext } from 'next';
 import { useRouter } from 'next/router';
+import { useMemo } from 'react';
 
 import { listingsQuery, ListingTabs } from '@/features/listings';
 import { Home } from '@/layouts/Home';
 import { Meta } from '@/layouts/Meta';
+import { dayjs } from '@/utils/dayjs';
 
 type SlugKeys = 'design' | 'content' | 'development' | 'other';
 
 function AllCategoryListingsPage({ slug }: { slug: string }) {
   const router = useRouter();
+  const deadline = useMemo(
+    () => dayjs().subtract(1, 'month').toISOString(),
+    [],
+  );
   const { data: listings, isLoading } = useQuery(
     listingsQuery({
       filter: slug,
+      deadline,
       take: 100,
     }),
   );
