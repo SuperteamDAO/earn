@@ -51,7 +51,6 @@ const CreateSponsor = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [hasError, setHasError] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>('');
-  const [loginStep, setLoginStep] = useState(0);
 
   const { user } = useUser();
   const posthog = usePostHog();
@@ -226,14 +225,28 @@ const CreateSponsor = () => {
                   </FormErrorMessage>
                 </FormControl>
                 <FormControl w={'full'} isRequired>
-                  <FormLabel
-                    color={'brand.slate.500'}
-                    fontSize={'15px'}
-                    fontWeight={600}
-                    htmlFor={'slug'}
-                  >
-                    组织 Username
-                  </FormLabel>
+                  <HStack mb={2}>
+                    <FormLabel
+                      m={0}
+                      color={'brand.slate.500'}
+                      fontSize={'15px'}
+                      fontWeight={600}
+                      htmlFor={'slug'}
+                    >
+                      自定义网址后缀（Slug）
+                    </FormLabel>
+                    <Tooltip
+                      fontSize="xs"
+                      label="仅限字母、数字、短横线-，生成项目的专属链接"
+                    >
+                      <InfoOutlineIcon
+                        color="brand.slate.500"
+                        w={3}
+                        h={3}
+                        display={{ base: 'none', md: 'block' }}
+                      />
+                    </Tooltip>
+                  </HStack>
                   <Input
                     w={'full'}
                     borderColor={'brand.slate.300'}
@@ -270,7 +283,7 @@ const CreateSponsor = () => {
                     fontWeight={600}
                     htmlFor={'sponsorname'}
                   >
-                    公司网址
+                    组织网址
                   </FormLabel>
                   <Input
                     borderColor={'brand.slate.300'}
@@ -535,11 +548,11 @@ const CreateSponsor = () => {
                 )}
                 {(validationErrorMessage ||
                   sponsorNameValidationErrorMessage) && (
-                    <Text align={'center'} color="yellow.500">
-                      如果您想访问现有的帐户，请在 Telegram 上联系我们
-                      @cryptosheep1
-                    </Text>
-                  )}
+                  <Text align={'center'} color="yellow.500">
+                    如果您想访问现有的帐户，请在 Telegram 上联系我们
+                    @cryptosheep1
+                  </Text>
+                )}
               </Box>
               <Button
                 className="ph-no-capture"
