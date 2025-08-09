@@ -34,11 +34,24 @@ const dummyUsers = [
 ];
 
 export const VibeCard = () => {
-  const [vibeCount, setVibeCount] = useState(13);
+  const [vibeCount, setVibeCount] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('vibeCount');
+      return saved ? parseInt(saved, 10) : 13;
+    }
+    return 13;
+  });
   const [ws, setWs] = useState<WebSocket | null>(null);
-  const [userIds, setUserIds] = useState<string[]>([]);
+  const [userIds, setUserIds] = useState<string[]>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('vibeUserIds');
+      return saved ? JSON.parse(saved) : [];
+    }
+    return [];
+  });
   const [conductor, setConductor] = useState<TConductorInstance>();
   const [isAudioPlaying, setIsAudioPlaying] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const isMD = useBreakpointValue({ base: false, md: true });
@@ -47,15 +60,14 @@ export const VibeCard = () => {
   const { data: fetchedUsers = [] } = useQuery(pfpsQuery(userIds));
 
   useEffect(() => {
-    audioRef.current = new Audio('/assets/memes/jiesuan.mp3');
-    audioRef.current.onended = () => setIsAudioPlaying(false);
-    return () => {
-      if (audioRef.current) {
-        audioRef.current.pause();
-        audioRef.current.currentTime = 0;
-      }
-    };
-  }, []);
+    // 保存 vibeCount 到 localStorage
+    localStorage.setItem('vibeCount', vibeCount.toString());
+  }, [vibeCount]);
+
+  useEffect(() => {
+    // 保存 userIds 到 localStorage
+    localStorage.setItem('vibeUserIds', JSON.stringify(userIds));
+  }, [userIds]);
 
   const shootConfetti = () => {
     conductor?.shoot();
@@ -67,9 +79,16 @@ export const VibeCard = () => {
     }
   };
 
-  const onInit = ({ conductor }: { conductor: TConductorInstance }) => {
-    setConductor(conductor);
-  };
+  useEffect(() => {
+    audioRef.current = new Audio('/assets/memes/jiesuan.mp3');
+    audioRef.current.onended = () => setIsAudioPlaying(false);
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.currentTime = 0;
+      }
+    };
+  }, []);
 
   useEffect(() => {
     const newWs = new WebSocket('wss://earn-vibe-production.up.railway.app');
@@ -86,10 +105,28 @@ export const VibeCard = () => {
     };
   }, []);
 
+  const onInit = ({ conductor }: { conductor: TConductorInstance }) => {
+    setConductor(conductor);
+  };
+
   const handleVibeClick = () => {
-    if (ws && !!user?.id) {
+    if (ws && !!user?.id && !isLoading) {
+      // 检查防抖
+      const lastClickTime = localStorage.getItem('lastVibeClickTime');
+      const now = Date.now();
+      
+      if (lastClickTime && now - parseInt(lastClickTime, 10) < 1000) {
+        return; // 1秒内重复点击，忽略
+      }
+
+      setIsLoading(true);
+      localStorage.setItem('lastVibeClickTime', now.toString());
+      
       ws.send(JSON.stringify({ userId: user.id, action: 'vibe' }));
       shootConfetti();
+      
+      // 重置加载状态
+      setTimeout(() => setIsLoading(false), 1000);
     }
   };
 
@@ -137,15 +174,18 @@ export const VibeCard = () => {
       <Divider mx={4} orientation="vertical" />
       <AuthWrapper>
         <Button
-          maxW={40}
-          px={10}
+          bg="white"
+          borderColor="brand.slate.200"
           color="brand.slate.500"
           fontSize="sm"
           fontWeight={500}
-          bg="white"
-          borderColor={'brand.slate.200'}
+          isDisabled={!user}
+          isLoading={isLoading}
+          loadingText="贡献中"
+          maxW={40}
           onClick={handleVibeClick}
-          variant={'outline'}
+          px={10}
+          variant="outline"
         >
           点击一起贡献
         </Button>
