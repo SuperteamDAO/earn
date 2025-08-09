@@ -57,9 +57,10 @@ export function HomeBanner() {
         pos="relative"
         zIndex={1}
         color="white"
-        fontSize={{ base: '2xl', md: '25px' }}
+        fontSize={{ base: 'xl', md: '25px' }}
         fontWeight={'700'}
         lineHeight={'120%'}
+        maxW={{ base: '70%', md: '100%' }}
       >
         为你的 Solana 项目发掘人才
         <br />
