@@ -156,11 +156,14 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     });
   }
 
+  const tab = context.query.tab as string;
+  
   const openListings = await getListings({
     statusFilter: 'open',
     order: 'desc',
     userRegion,
     excludeIds: openForYouListings.map((listing) => listing.id),
+    tab,
   });
 
   return {

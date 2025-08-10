@@ -220,7 +220,7 @@ const UpdateSponsor = () => {
                   fontWeight={600}
                   htmlFor={'slug'}
                 >
-                  组织 Username
+                  自定义网址后缀（Slug）
                 </FormLabel>
                 <Input
                   w={'full'}
@@ -406,7 +406,7 @@ const UpdateSponsor = () => {
                 fontSize={'15px'}
                 fontWeight={600}
               >
-                公司 Logo{' '}
+                组织Logo{' '}
                 <span
                   style={{
                     color: 'red',
@@ -496,7 +496,7 @@ const UpdateSponsor = () => {
                   fontWeight={600}
                   htmlFor={'bio'}
                 >
-                  公司简介
+                  组织简介
                 </FormLabel>
                 <Input
                   w={'full'}
@@ -506,7 +506,7 @@ const UpdateSponsor = () => {
                   id="bio"
                   maxLength={180}
                   {...register('bio')}
-                  placeholder="您的公司做什么？"
+                  placeholder="您的组织做什么？"
                 />
                 <Text
                   color={
