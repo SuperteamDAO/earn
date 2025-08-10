@@ -11,12 +11,14 @@ interface BountyProps {
   statusFilter?: StatusFilter;
   userRegion?: string[] | null;
   excludeIds?: string[];
+  tab?: string;
 }
 
 export async function getListings({
   statusFilter,
   userRegion,
   excludeIds,
+  tab,
 }: BountyProps) {
   const statusFilterQuery = getStatusFilterQuery(statusFilter);
   let orderBy:
@@ -40,6 +42,8 @@ export async function getListings({
     };
   }
 
+  const isTabOpen = tab === 'open';
+  
   let bounties = await prisma.bounties.findMany({
     where: {
       id: {
@@ -48,17 +52,27 @@ export async function getListings({
       isPublished: true,
       isActive: true,
       isPrivate: false,
-      hackathonprize: false,
       isArchived: false,
-      OR: [
-        { compensationType: 'fixed', usdValue: { gt: 100 } },
-        { compensationType: 'range', maxRewardAsk: { gt: 100 } },
-        { compensationType: 'variable' },
-      ],
-      language: { in: ['eng', 'sco'] }, //cuz both eng and sco refer to listings in english
+      // Only filter out hackathon prizes when not in tab=open mode
+      ...(!isTabOpen ? { hackathonprize: false } : {}),
+      // When tab=open, use the same filtering as /api/listings
+      ...(isTabOpen ? {
+        // No compensation filter
+        // No language filter
+        // Note: /api/listings doesn't filter by hackathonprize or Hackathon
+      } : {
+        OR: [
+          { compensationType: 'fixed', usdValue: { gt: 100 } },
+          { compensationType: 'range', maxRewardAsk: { gt: 100 } },
+          { compensationType: 'variable' },
+        ],
+        language: { in: ['eng', 'sco'] }, //cuz both eng and sco refer to listings in english
+      }),
       ...statusFilterQuery,
-      ...(userRegion ? { region: { in: userRegion } } : {}),
-      Hackathon: null,
+      // Only apply region filter when not in tab=open mode
+      ...(!isTabOpen && userRegion ? { region: { in: userRegion } } : {}),
+      // Only exclude hackathons when not in tab=open mode
+      ...(!isTabOpen ? { Hackathon: null } : {}),
     },
     select: {
       id: true,
@@ -124,6 +138,7 @@ export default async function handler(
   const params = req.query;
   const order = (params.order as 'asc' | 'desc') ?? 'desc';
   const statusFilter = params.statusFilter as StatusFilter;
+  const tab = params.tab as string;
   let userRegion = params['userRegion[]'] as Regions[];
   if (typeof userRegion === 'string') {
     userRegion = [userRegion];
@@ -138,6 +153,7 @@ export default async function handler(
     statusFilter,
     userRegion,
     excludeIds,
+    tab,
   });
 
   res.status(200).json(listings);
