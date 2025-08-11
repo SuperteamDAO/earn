@@ -246,7 +246,7 @@ export default function AiReviewProjectApplicationsModal({
                     stickColor="bg-slate-600"
                     starColor="bg-slate-400"
                   />
-                  Auto Review
+                  Review with AI
                 </span>
               </div>
             </button>
@@ -256,7 +256,7 @@ export default function AiReviewProjectApplicationsModal({
         <Card className="border-0 shadow-none">
           <CardHeader className="flex flex-row items-center justify-between border-b p-0 px-6 py-3">
             <DialogTitle className="text-xl font-semibold">
-              Auto Review
+              Review with AI
             </DialogTitle>
           </CardHeader>
 
@@ -315,7 +315,7 @@ export default function AiReviewProjectApplicationsModal({
                       }}
                     >
                       <Wand2 className="mr-2 h-5 w-5" />
-                      Auto Review
+                      Proceed
                     </Button>
 
                     <p className="text-muted-foreground mt-2 text-center text-sm">
