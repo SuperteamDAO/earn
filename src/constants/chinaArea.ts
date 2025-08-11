@@ -1,5 +1,57 @@
 export const chinaArea = [
   {
+    code: '852',
+    name: '香港特别行政区',
+    children: [
+      { code: '852001', name: '香港岛' },
+      { code: '852002', name: '九龙' },
+      { code: '852003', name: '新界' },
+    ],
+  },
+  {
+    code: '853',
+    name: '澳门特别行政区',
+    children: [
+      { code: '853001', name: '澳门半岛' },
+      { code: '853002', name: '氹仔' },
+      { code: '853003', name: '路环' },
+    ],
+  },
+  {
+    code: '886',
+    name: '台湾省',
+    children: [
+      { code: '886001', name: '台北市' },
+      { code: '886002', name: '新北市' },
+      { code: '886003', name: '桃园市' },
+      { code: '886004', name: '台中市' },
+      { code: '886005', name: '台南市' },
+      { code: '886006', name: '高雄市' },
+    ],
+  },
+  {
+    code: '65',
+    name: '新加坡',
+    children: [
+      { code: '65001', name: '中部地区' },
+      { code: '65002', name: '东部地区' },
+      { code: '65003', name: '东北地区' },
+      { code: '65004', name: '北部地区' },
+      { code: '65005', name: '西部地区' },
+    ],
+  },
+  {
+    code: '60',
+    name: '马来西亚',
+    children: [
+      { code: '60001', name: '吉隆坡' },
+      { code: '60002', name: '槟城' },
+      { code: '60003', name: '新山' },
+      { code: '60004', name: '马六甲' },
+      { code: '60005', name: '怡保' },
+    ],
+  },
+  {
     code: '11',
     name: '北京市',
     children: [{ code: '110100', name: '北京市' }],

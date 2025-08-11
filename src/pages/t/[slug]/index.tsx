@@ -139,34 +139,46 @@ function TalentProfile({ talent, stats }: TalentProps) {
   const isMD = useBreakpointValue({ base: false, md: true });
 
   const getWorkPreferenceText = (workPrefernce?: string): string | null => {
-    if (!workPrefernce || workPrefernce === 'Not looking for Work') {
+    if (!workPrefernce || workPrefernce === 'Not looking for Work' || workPrefernce === '不找工作') {
       return null;
     }
+    
+    // Handle both English and Chinese values
     const fullTimePatterns = [
+      // English patterns
       'Passively looking for fulltime positions',
       'Actively looking for fulltime positions',
       'Fulltime',
+      // Chinese patterns
+      '全职',
     ];
     const freelancePatterns = [
+      // English patterns
       'Passively looking for freelance work',
       'Actively looking for freelance work',
       'Freelance',
+      // Chinese patterns
+      '自由职业',
     ];
     const internshipPatterns = [
+      // English patterns
       'Actively looking for internships',
       'Internship',
+      // Chinese patterns
+      '实习',
     ];
 
     if (fullTimePatterns.includes(workPrefernce)) {
-      return 'Fulltime Roles';
+      return '全职工作';
     }
     if (freelancePatterns.includes(workPrefernce)) {
-      return 'Freelance Opportunities';
+      return '自由职业机会';
     }
     if (internshipPatterns.includes(workPrefernce)) {
-      return 'Internship Opportunities';
+      return '实习机会';
     }
 
+    // Return the original value if no pattern matches
     return workPrefernce;
   };
 
@@ -363,7 +375,7 @@ function TalentProfile({ talent, stats }: TalentProps) {
                   )}
                   {talent?.location && (
                     <Text mt={3} color={'brand.slate.400'}>
-                      城市{' '}
+                      地区{' '}
                       <Text as={'span'} color={'brand.slate.500'}>
                         {talent?.location}
                       </Text>

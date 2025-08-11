@@ -37,7 +37,7 @@ export const ImagePicker = ({
   const handleFileChange = (file: File | null | undefined) => {
     if (file) {
       if (file.size > 5 * 1024 * 1024) {
-        toast.error('图片大小必须小于 5MB');
+        toast.error('图片大小必须小于1MB,超过请压缩再上传');
         return;
       }
 
@@ -148,7 +148,7 @@ export const ImagePicker = ({
             选择或拖拽图片
           </Text>
           <Text color="brand.slate.400" fontSize="sm">
-            图片最大体积不超过 5 MB
+            图片最大体积不超过 1 MB，超过请压缩再上传
           </Text>
         </Flex>
       </Flex>

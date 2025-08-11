@@ -225,10 +225,10 @@ export function AboutYou({ setStep, useFormStore }: Step1Props) {
         <FormControl isRequired>
           <Box w={'full'} mb={'1.25rem'}>
             <AreaSelectBox
-              label="城市"
+              label="地区"
               watchValue={watch('location')}
               id="location"
-              placeholder="选择城市"
+              placeholder="选择地区"
               register={register}
             />
           </Box>

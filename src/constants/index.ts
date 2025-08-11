@@ -58,6 +58,9 @@ export const IndustryList = [
   '消费级应用',
   '游戏',
   '社交',
+  'PayFi',
+  'RWA',
+  'Meme',
   '其他',
 ];
 
@@ -1086,24 +1089,13 @@ export const CommunityList: string[] = [
 ];
 
 export const web3Exp = [
-  'New to crypto',
-  'Occasionally contributing',
-  'Contributing regularly',
+  '刚接触Web3，正在学习相关知识',
+  '有时参与Web3相关项目或社区，有一定了解',
+  '持续、定期在Web3领域工作或贡献，有较深经验',
 ];
 
-export const workExp = [
-  '0 Years',
-  '<2 Years',
-  '2 to 5 Years',
-  '5 to 9 Years',
-  '>9 Years',
-];
-export const workType = [
-  'Not looking for Work',
-  'Freelance',
-  'Fulltime',
-  'Internship',
-];
+export const workExp = ['0年', '少于2年', '2-5年', '5-9年', '9年以上'];
+export const workType = ['不找工作', '自由职业', '全职', '实习'];
 
 export const MAX_COMMENT_SUGGESTIONS = 5;
 
