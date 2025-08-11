@@ -272,7 +272,7 @@ export const SubmissionHeader = ({
           <div className="ml-4 -translate-y-2.5">
             <AiReviewBountiesSubmissionsModal
               listing={bounty}
-              applications={submissions}
+              submissions={submissions}
             />
           </div>
         </div>

@@ -6,7 +6,11 @@ import { prisma } from '@/prisma';
 
 import { validateListingSponsorAuth } from '@/features/auth/utils/checkListingSponsorAuth';
 import { validateSession } from '@/features/auth/utils/getSponsorSession';
-import { type ProjectApplicationAi } from '@/features/listings/types';
+import {
+  type BountiesAi,
+  type BountySubmissionAi,
+  type ProjectApplicationAi,
+} from '@/features/listings/types';
 
 export const maxDuration = 300;
 
@@ -34,6 +38,20 @@ export async function GET(request: NextRequest) {
     if ('error' in listingAuthResult) {
       return listingAuthResult.error;
     }
+    const listing = listingAuthResult.listing;
+
+    if (listing.type === 'bounty') {
+      if (!(listing.ai as unknown as BountiesAi)?.evaluationCompleted) {
+        return NextResponse.json(
+          {
+            error: 'Evaluation not completed',
+            message: `Evaluation not completed for listing with ${id}.`,
+          },
+          { status: 400 },
+        );
+      }
+    }
+
     const unreviewedApplications = await prisma.submission.findMany({
       where: {
         listingId: id,
@@ -49,10 +67,19 @@ export async function GET(request: NextRequest) {
         status: true,
       },
     });
-    const hasAiReview = unreviewedApplications.filter(
-      (u) =>
-        !!(u.ai as unknown as ProjectApplicationAi)?.review?.predictedLabel,
-    );
+
+    let hasAiReview;
+    if (listing.type === 'bounty') {
+      hasAiReview = unreviewedApplications.filter(
+        (u) => !!(u.ai as unknown as BountySubmissionAi)?.evaluation,
+      );
+    } else {
+      hasAiReview = unreviewedApplications.filter(
+        (u) =>
+          !!(u.ai as unknown as ProjectApplicationAi)?.review?.predictedLabel,
+      );
+    }
+
     const notReviewedByAI = hasAiReview.filter(
       (u) => !(u.ai as unknown as ProjectApplicationAi)?.commited,
     );

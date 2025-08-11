@@ -94,6 +94,9 @@ export const SubmissionList = ({
     ) {
       return 'Rejected';
     } else if (submission?.label) {
+      if (listing?.type === 'bounty' && submission?.label === 'Inaccessible') {
+        return 'Inaccessible';
+      }
       return labelMenuOptions(listing?.type).find(
         (option) => option.value === submission.label,
       )?.label;

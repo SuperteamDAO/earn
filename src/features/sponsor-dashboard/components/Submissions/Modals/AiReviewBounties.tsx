@@ -3,7 +3,6 @@ import { Check, InfoIcon, ScanText, Wand2, XCircle } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import posthog from 'posthog-js';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { toast } from 'sonner';
 
 import { AnimateChangeInHeight } from '@/components/shared/AnimateChangeInHeight';
 import { Button } from '@/components/ui/button';
@@ -23,30 +22,29 @@ import { Progress } from '@/components/ui/progress';
 import { Tooltip } from '@/components/ui/tooltip';
 import { type SubmissionWithUser } from '@/interface/submission';
 import { WandAnimated } from '@/svg/WandAnimated/WandAnimated';
-import { cn } from '@/utils/cn';
 
 import {
+  type BountiesAi,
+  type BountySubmissionAi,
   type Listing,
-  type ProjectApplicationAi,
 } from '@/features/listings/types';
 import { useCommitReviewsSubmissions } from '@/features/sponsor-dashboard/mutations/useCommitReviewsSubmissions';
 import { unreviewedSubmissionsQuery } from '@/features/sponsor-dashboard/queries/unreviewed-submissions';
-import { colorMap } from '@/features/sponsor-dashboard/utils/statusColorMap';
 
 import { ReviewLoadingAnimation } from './ReviewLoadingAnimation';
 
 interface Props {
-  applications: SubmissionWithUser[] | undefined;
+  submissions: SubmissionWithUser[] | undefined;
   listing: Listing | undefined;
 }
 export default function AiReviewBountiesSubmissionsModal({
-  applications,
+  submissions,
   listing,
 }: Props) {
   const [open, setOpen] = useState(false);
   const [state, setState] = useState<
     'DISCLAIMER' | 'INIT' | 'PROCESSING' | 'DONE' | 'ERROR'
-  >('PROCESSING');
+  >('DISCLAIMER');
   const [progress, setProgress] = useState(0);
   const progressIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -88,56 +86,63 @@ export default function AiReviewBountiesSubmissionsModal({
     shortlisted: 0,
     midQuality: 0,
     lowQuality: 0,
+    inaccessible: 0,
     totalHoursSaved: 0,
   });
 
-  const {
-    data: unreviewedApplications,
-    refetch: refetchUnreviewedApplications,
-  } = useQuery({
-    ...unreviewedSubmissionsQuery({ id: listing?.id }, listing?.slug),
-    refetchOnMount: false,
-    refetchOnReconnect: false,
-    refetchOnWindowFocus: false,
-  });
+  const { data: unreviewedSubmissions, refetch: refetchUnreviewedSubmissions } =
+    useQuery({
+      ...unreviewedSubmissionsQuery(
+        {
+          id: listing?.id,
+          evaluationCompleted: (listing?.ai as unknown as BountiesAi)
+            ?.evaluationCompleted,
+        },
+        listing?.slug,
+      ),
+      refetchOnMount: false,
+      refetchOnReconnect: false,
+      refetchOnWindowFocus: false,
+      retry: false,
+    });
 
   useEffect(() => {
-    refetchUnreviewedApplications();
-  }, [applications, refetchUnreviewedApplications]);
+    refetchUnreviewedSubmissions();
+  }, [submissions, refetchUnreviewedSubmissions]);
 
   const { mutateAsync: commitReviews } = useCommitReviewsSubmissions(
     listing?.slug || '',
     listing?.id || '',
   );
 
-  const nonAnalysedApplications = useMemo(() => {
-    console.log('unreviewedApplications', unreviewedApplications);
-    return unreviewedApplications?.filter(
-      (appl) => !(appl.ai as ProjectApplicationAi)?.review,
+  const nonAnalysedSubmissions = useMemo(() => {
+    console.log('unreviewedSubmissions', unreviewedSubmissions);
+    return unreviewedSubmissions?.filter(
+      (appl) => !(appl.ai as BountySubmissionAi)?.evaluation,
     );
-  }, [unreviewedApplications]);
+  }, [unreviewedSubmissions]);
 
-  const totalApplications = useMemo(() => {
-    return unreviewedApplications?.length;
-  }, [unreviewedApplications]);
+  const totalSubmissions = useMemo(() => {
+    return unreviewedSubmissions?.length;
+  }, [unreviewedSubmissions]);
 
   const estimatedTime = useMemo(() => {
-    return estimateTime(nonAnalysedApplications?.length || 1);
-  }, [nonAnalysedApplications?.length]);
+    return estimateTime(nonAnalysedSubmissions?.length || 1);
+  }, [nonAnalysedSubmissions?.length]);
 
   const [estimatedTimeSingular] = useState('~30 seconds');
   useMemo(() => {
-    return estimateTime(nonAnalysedApplications?.length || 1, true);
-  }, [nonAnalysedApplications?.length]);
+    return estimateTime(nonAnalysedSubmissions?.length || 1, true);
+  }, [nonAnalysedSubmissions?.length]);
 
   const onReviewClick = useCallback(async () => {
-    posthog.capture('start_ai review projects');
+    posthog.capture('start_ai review bounties');
     setState('PROCESSING');
 
     setTimeout(async () => {
       setProgress(100);
       try {
-        console.log('Commiting Reviewed applications');
+        console.log('Commiting Reviewed submissions');
         const data = await commitReviews();
         console.log('commit data - ', data.data);
         setCompletedStats({
@@ -146,71 +151,25 @@ export default function AiReviewBountiesSubmissionsModal({
             .length,
           midQuality: data.data.filter((s) => s.label === 'Mid_Quality').length,
           lowQuality: data.data.filter((s) => s.label === 'Low_Quality').length,
+          inaccessible: data.data.filter((s) => s.label === 'Inaccessible')
+            .length,
           totalHoursSaved: data.data.length * 6_00_000,
         });
-        posthog.capture('complete_ai review project');
+        posthog.capture('complete_ai review bounties');
         setState('DONE');
-        await refetchUnreviewedApplications();
+        await refetchUnreviewedSubmissions();
       } catch (error: any) {
         console.log(
-          'error occured while commiting reviewed applications',
+          'error occured while commiting reviewed submissions',
           error,
         );
         setState('ERROR');
       }
     }, 10000);
-  }, [applications, unreviewedApplications, nonAnalysedApplications, posthog]);
+  }, [submissions, unreviewedSubmissions, nonAnalysedSubmissions, posthog]);
   function onComplete() {
     setState('DISCLAIMER');
     setProgress(0);
-    toast(
-      <div className="flex flex-col gap-2">
-        <div className="flex items-center gap-2">
-          <Check className="h-5 w-5 text-[#AEAEAE]" strokeWidth={3} />
-          <span className="text-base font-medium">AI Review Completed</span>
-        </div>
-        <div className="text-sm text-slate-500">
-          <p>{`We've added review notes and labelled the submissions as `}</p>
-          <span className="mt-1">
-            <span
-              className={cn(
-                'mr-2 inline-flex w-fit rounded-full px-2 text-center text-[10px] whitespace-nowrap capitalize',
-                colorMap['Shortlisted'].bg,
-                colorMap['Shortlisted'].color,
-              )}
-            >
-              Shortlisted
-            </span>
-            <span
-              className={cn(
-                'mr-2 inline-flex w-fit rounded-full px-2 text-center text-[10px] whitespace-nowrap capitalize',
-                colorMap['Mid_Quality'].bg,
-                colorMap['Mid_Quality'].color,
-              )}
-            >
-              Mid Quality
-            </span>
-            <span
-              className={cn(
-                'mr-2 inline-flex w-fit rounded-full px-2 text-center text-[10px] whitespace-nowrap capitalize',
-                colorMap['Low_Quality'].bg,
-                colorMap['Low_Quality'].color,
-              )}
-            >
-              Low Quality
-            </span>
-          </span>
-          <p className="mt-1">
-            Please review before announcing winners, as AI can make mistakes.
-          </p>
-        </div>
-      </div>,
-      {
-        duration: 5000,
-        closeButton: true,
-        className: 'w-[24rem] right-0',
-      },
-    );
     setOpen(false);
   }
 
@@ -218,8 +177,8 @@ export default function AiReviewBountiesSubmissionsModal({
     <Dialog
       open={open}
       onOpenChange={(s) => {
-        // if (state === 'PROCESSING') return;
-        if (s === false) posthog.capture('close_ai review projects');
+        if (state === 'PROCESSING') return;
+        if (s === false) posthog.capture('close_ai review bounties');
         setOpen(s);
       }}
     >
@@ -228,13 +187,13 @@ export default function AiReviewBountiesSubmissionsModal({
         listing?.type === 'bounty' &&
         !listing?.isWinnersAnnounced &&
         listing?.isPublished &&
-        !!listing?.ai?.context && (
-          // !!unreviewedApplications?.length && (
+        !!listing?.ai?.context &&
+        !!unreviewedSubmissions?.length && (
           <DialogTrigger asChild>
             <button
               className="h-10 translate-y-2 focus:outline-none"
               onClick={() => {
-                posthog.capture('open_ai review projects');
+                posthog.capture('open_ai review bounties');
               }}
             >
               <div className="relative flex h-full items-center gap-3 overflow-hidden rounded-[0.5rem] border-[0.09375rem] border-indigo-600 bg-indigo-50 px-4 text-sm text-indigo-600 drop-shadow drop-shadow-indigo-100 focus:outline-hidden">
@@ -331,7 +290,7 @@ export default function AiReviewBountiesSubmissionsModal({
                     <div className="space-y-2 font-medium">
                       <div className="flex items-center justify-between">
                         <span className="flex items-center gap-2 text-base text-slate-500">
-                          Unreviewed Applications
+                          Unreviewed Submissions
                           <Tooltip
                             content="We will only review unreviewed submissions. If you've already reviewed some submissions, those will remain untouched."
                             contentProps={{
@@ -344,7 +303,7 @@ export default function AiReviewBountiesSubmissionsModal({
                           </Tooltip>
                         </span>
                         <span className="text-xl font-semibold">
-                          {totalApplications}
+                          {totalSubmissions}
                         </span>
                       </div>
                       <div className="flex items-center justify-between">
@@ -376,8 +335,8 @@ export default function AiReviewBountiesSubmissionsModal({
                     </Button>
 
                     <p className="text-muted-foreground mt-2 text-center text-sm">
-                      AI can make mistakes. Check important info before
-                      approving or rejecting a project application.
+                      AI can make mistakes. Check important info before choosing
+                      winners.
                     </p>
                   </CardFooter>
                 </motion.div>
@@ -460,6 +419,11 @@ export default function AiReviewBountiesSubmissionsModal({
                         dotColor="bg-cyan-400"
                       />
                       <StatItem
+                        label="Inaccessible"
+                        value={completedStats.inaccessible}
+                        dotColor="bg-stone-400"
+                      />
+                      <StatItem
                         label="Total time saved"
                         value={formatTime(completedStats.totalHoursSaved)}
                         dotColor="bg-green-400"
@@ -492,7 +456,7 @@ export default function AiReviewBountiesSubmissionsModal({
                     <div className="space-y-2">
                       <h2 className="text-xl font-semibold">Review Failed</h2>
                       <p className="mx-auto w-4/5 text-sm text-slate-500">
-                        Something went wrong while reviewing the applications.
+                        Something went wrong while reviewing the submissions.
                         Please try again.
                       </p>
                     </div>
@@ -542,12 +506,12 @@ function formatTime(milliseconds: number): string {
   return `${hours}h ${minutes}m`;
 }
 export function estimateTime(
-  totalApplications: number,
+  totalSubmissions: number,
   singular = false,
 ): string {
-  console.log('total applications', totalApplications);
-  const lowerBoundSeconds = totalApplications * 10;
-  const upperBoundSeconds = totalApplications * 20;
+  console.log('total submissions', totalSubmissions);
+  const lowerBoundSeconds = totalSubmissions * 10;
+  const upperBoundSeconds = totalSubmissions * 20;
 
   if (singular) {
     const middleBoundSeconds = (lowerBoundSeconds + upperBoundSeconds) / 2;

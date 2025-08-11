@@ -1,4 +1,10 @@
 export const colorMap = {
+  Inaccessible: {
+    bg: 'bg-stone-100',
+    color: 'text-stone-800',
+    border: 'border-stone-300',
+    focus: 'focus:text-stone-900 focus:bg-stone-200',
+  },
   Low_Quality: {
     bg: 'bg-stone-100',
     color: 'text-stone-800',
