@@ -33,6 +33,8 @@ import { useCommitReviewsSubmissions } from '@/features/sponsor-dashboard/mutati
 import { unreviewedSubmissionsQuery } from '@/features/sponsor-dashboard/queries/unreviewed-submissions';
 import { colorMap } from '@/features/sponsor-dashboard/utils/statusColorMap';
 
+import { ReviewLoadingAnimation } from './ReviewLoadingAnimation';
+
 interface Props {
   applications: SubmissionWithUser[] | undefined;
   listing: Listing | undefined;
@@ -44,7 +46,7 @@ export default function AiReviewBountiesSubmissionsModal({
   const [open, setOpen] = useState(false);
   const [state, setState] = useState<
     'DISCLAIMER' | 'INIT' | 'PROCESSING' | 'DONE' | 'ERROR'
-  >('DISCLAIMER');
+  >('PROCESSING');
   const [progress, setProgress] = useState(0);
   const progressIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -216,7 +218,7 @@ export default function AiReviewBountiesSubmissionsModal({
     <Dialog
       open={open}
       onOpenChange={(s) => {
-        if (state === 'PROCESSING') return;
+        // if (state === 'PROCESSING') return;
         if (s === false) posthog.capture('close_ai review projects');
         setOpen(s);
       }}
@@ -388,12 +390,15 @@ export default function AiReviewBountiesSubmissionsModal({
                   exit={{ opacity: 0, y: 20, filter: 'blur(8px)' }}
                   transition={{ duration: 0.3 }}
                 >
-                  <CardContent className="mt-8 flex flex-col items-center justify-center space-y-8 p-8">
-                    <div className="relative h-2 w-2/4 max-w-md overflow-hidden rounded-md bg-[#f1f5f9]">
+                  <CardContent className="mt-4 flex flex-col items-center justify-center space-y-8 p-4">
+                    <div className="w-12/12">
+                      <ReviewLoadingAnimation />
+                    </div>
+                    <div className="relative mt-4 h-2 w-5/6 max-w-md overflow-hidden rounded-md bg-[#f1f5f9]">
                       <Progress
                         value={progress}
                         className="w-full bg-slate-100"
-                        indicatorClassName="bg-linear-to-r from-[#FF79C1] to-[#76C5FF] duration-200"
+                        indicatorClassName="bg-indigo-500 duration-200"
                       />
                     </div>
 
