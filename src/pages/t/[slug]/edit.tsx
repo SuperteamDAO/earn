@@ -348,7 +348,7 @@ export default function EditProfilePage({ slug }: { slug: string }) {
                     color={'brand.slate.500'}
                     requiredIndicator={<></>}
                   >
-                    项目图片
+                    个人头像
                   </FormLabel>
                   {isPhotoLoading ? (
                     <></>
@@ -518,10 +518,10 @@ export default function EditProfilePage({ slug }: { slug: string }) {
               />
 
               <AreaSelectBox
-                label="城市"
+                label="地区"
                 watchValue={watch('location')}
                 id="location"
-                placeholder="选择城市"
+                placeholder="选择地区"
                 register={register}
               />
 
