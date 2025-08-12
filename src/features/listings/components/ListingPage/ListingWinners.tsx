@@ -152,7 +152,7 @@ export function ListingWinners({ bounty }: Props) {
                       {!isProject && (
                         <Center
                           pos="absolute"
-                          bottom={-3}
+                          bottom={-1}
                           left="50%"
                           w={6}
                           h={6}
