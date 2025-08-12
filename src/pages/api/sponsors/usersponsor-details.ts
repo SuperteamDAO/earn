@@ -2,6 +2,10 @@ import type { NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import {
+  ALLOWED_IMAGE_FORMATS,
+  maybeUploadBase64AndDeletePrevious,
+} from '@/utils/cloudinary';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { userSelectOptions } from '@/features/auth/constants/userSelectOptions';
@@ -16,6 +20,25 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
   logger.debug(`Request body: ${safeStringify(req.body)}`);
 
   const { telegram, ...rest } = req.body;
+  if (typeof rest.photo === 'string' && rest.photo.startsWith('data:image')) {
+    const existing = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { photo: true },
+    });
+    try {
+      rest.photo = await maybeUploadBase64AndDeletePrevious(
+        rest.photo,
+        'earn-pfp',
+        existing?.photo,
+        200,
+      );
+    } catch (e: any) {
+      return res.status(400).json({
+        error: 'Invalid image format',
+        message: `File type must be one of: ${ALLOWED_IMAGE_FORMATS.map((f) => `image/${f}`).join(', ')}`,
+      });
+    }
+  }
   const telegramUsernameExtracted = extractSocialUsername('telegram', telegram);
 
   const dataToValidate = {

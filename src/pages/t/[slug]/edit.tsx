@@ -41,7 +41,7 @@ import { Meta } from '@/layouts/Meta';
 import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
-import { uploadAndReplaceImage } from '@/utils/image';
+import { fileToBase64 } from '@/utils/image';
 
 import { SocialInputAll } from '@/features/social/components/SocialInput';
 import { extractSocialUsername } from '@/features/social/utils/extractUsername';
@@ -230,14 +230,8 @@ export default function EditProfilePage({ slug }: { slug: string }) {
           async () => {
             if (selectedPhoto) {
               setUploading(true);
-              const oldPhotoUrl = user?.photo;
-              const photoUrl = await uploadAndReplaceImage({
-                newFile: selectedPhoto,
-                folder: 'earn-pfp',
-                oldImageUrl: oldPhotoUrl,
-              });
-
-              data.photo = photoUrl;
+              const base64 = await fileToBase64(selectedPhoto);
+              data.photo = base64;
               setUploading(false);
             }
 

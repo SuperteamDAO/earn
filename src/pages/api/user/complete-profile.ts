@@ -4,6 +4,10 @@ import logger from '@/lib/logger';
 import { privy } from '@/lib/privy';
 import { prisma } from '@/prisma';
 import { cleanSkills } from '@/utils/cleanSkills';
+import {
+  ALLOWED_IMAGE_FORMATS,
+  maybeUploadBase64AndDeletePrevious,
+} from '@/utils/cloudinary';
 import { filterAllowedFields } from '@/utils/filterAllowedFields';
 import { safeStringify } from '@/utils/safeStringify';
 
@@ -56,6 +60,28 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
     }
 
     const filteredData = filterAllowedFields(req.body, allowedFields);
+
+    if (
+      typeof filteredData.photo === 'string' &&
+      filteredData.photo.startsWith('data:image')
+    ) {
+      try {
+        filteredData.photo = await maybeUploadBase64AndDeletePrevious(
+          filteredData.photo,
+          'earn-pfp',
+          user.photo ?? undefined,
+          200,
+        );
+      } catch (e: any) {
+        return res.status(400).json({
+          error: 'Invalid image format',
+          message: `File type must be one of: ${ALLOWED_IMAGE_FORMATS.map(
+            (f) => `image/${f}`,
+          ).join(', ')}`,
+        });
+      }
+    }
+
     type SchemaKeys = keyof typeof profileSchema._def.schema.shape;
     const keysToValidate = Object.keys(filteredData).reduce<
       Record<SchemaKeys, true>

@@ -163,11 +163,7 @@ export const useSearchState = ({
 
       const queryString = newParams.toString();
       const newPath = `${pathname}${queryString ? `?${queryString}` : ''}`;
-      window.history.replaceState(
-        window.history.state,
-        document.title,
-        newPath,
-      );
+      router.replace(newPath, { scroll: false });
     },
     [searchParams, router, defaultSearchTerm, pathname],
   );

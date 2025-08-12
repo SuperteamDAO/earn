@@ -344,10 +344,6 @@ export const SubmissionDrawer = ({
         telegram: data.telegram || user?.telegram || '',
       });
 
-      const latestSubmissionNumber = (user?.Submission?.length ?? 0) + 1;
-      if (!editMode) showEasterEgg();
-      if (!editMode && latestSubmissionNumber % 3 !== 0) onSurveyOpen();
-
       form.reset();
       await queryClient.invalidateQueries({
         queryKey: userSubmissionQuery(id!, user!.id).queryKey,
@@ -366,6 +362,10 @@ export const SubmissionDrawer = ({
           queryKey: ['creditHistory', user!.id],
         });
       }
+
+      const latestSubmissionNumber = (user?.Submission?.length ?? 0) + 1;
+      if (!editMode) showEasterEgg();
+      if (!editMode && latestSubmissionNumber % 3 !== 0) onSurveyOpen();
 
       toast.success(
         editMode

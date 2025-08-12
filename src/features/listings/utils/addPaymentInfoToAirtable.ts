@@ -123,7 +123,7 @@ function submissionToAirtable(
     Email: validatedSubmission.user.email,
     Status: 'Verified',
     Region: [listingRegionId],
-    Approver: [validatedSubmission.user.username],
+    Approver: ['Pratik Dholani'],
     earnApplicationId: validatedSubmission.id,
     'Discord / Earn Username': validatedSubmission.user.username,
   };

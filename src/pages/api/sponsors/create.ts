@@ -2,6 +2,10 @@ import type { NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import {
+  ALLOWED_IMAGE_FORMATS,
+  uploadBase64ToCloudinary,
+} from '@/utils/cloudinary';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { type NextApiRequestWithUser } from '@/features/auth/types';
@@ -46,6 +50,18 @@ async function user(req: NextApiRequestWithUser, res: NextApiResponse) {
     const { name, slug, logo, url, industry, twitter, bio, entityName } =
       validationResult.data;
 
+    let finalLogo = logo;
+    if (typeof logo === 'string' && logo.startsWith('data:image')) {
+      try {
+        finalLogo = await uploadBase64ToCloudinary(logo, 'earn-sponsor');
+      } catch (e: any) {
+        return res.status(400).json({
+          error: 'Invalid image format',
+          message: `File type must be one of: ${ALLOWED_IMAGE_FORMATS.map((f) => `image/${f}`).join(', ')}`,
+        });
+      }
+    }
+
     if (!user.currentSponsorId || user.role === 'GOD') {
       logger.info(`Creating new sponsor for user: ${userId}`);
 
@@ -53,7 +69,7 @@ async function user(req: NextApiRequestWithUser, res: NextApiResponse) {
         data: {
           name,
           slug,
-          logo,
+          logo: finalLogo,
           url,
           industry,
           twitter,
