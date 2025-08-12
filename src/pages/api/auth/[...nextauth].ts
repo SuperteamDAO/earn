@@ -5,7 +5,7 @@ import TwitterProvider from 'next-auth/providers/twitter';
 import { prisma } from '@/prisma';
 
 import { getPrivyToken } from '@/features/auth/utils/getPrivyToken';
-import { normalizeTwitterHandle } from '@/features/social/utils/twitter-verification';
+import { normalizeXHandle } from '@/features/social/utils/x-verification';
 
 export default async function auth(req: NextApiRequest, res: NextApiResponse) {
   const authOptions: NextAuthOptions = {
@@ -27,7 +27,7 @@ export default async function auth(req: NextApiRequest, res: NextApiResponse) {
       async signIn({ user, account, profile }) {
         if (account?.provider === 'twitter') {
           if (!profile) {
-            console.warn('[NextAuth] No profile found from Twitter');
+            console.warn('[NextAuth] No profile found from X');
             return true;
           }
 
@@ -38,12 +38,12 @@ export default async function auth(req: NextApiRequest, res: NextApiResponse) {
             '';
 
           if (rawHandle) {
-            const handle = normalizeTwitterHandle(rawHandle);
-            console.log(`[NextAuth] Extracted Twitter handle: ${handle}`);
+            const handle = normalizeXHandle(rawHandle);
+            console.log(`[NextAuth] Extracted X handle: ${handle}`);
 
             (user as any).twitterHandle = handle;
           } else {
-            console.warn('[NextAuth] No Twitter username found in profile');
+            console.warn('[NextAuth] No X username found in profile');
           }
         }
 
@@ -85,12 +85,10 @@ export default async function auth(req: NextApiRequest, res: NextApiResponse) {
                   });
 
                   console.log(
-                    `[NextAuth] Successfully linked Twitter handle "${token.twitterHandle}" to user`,
+                    `[NextAuth] Successfully linked X handle "${token.twitterHandle}" to user`,
                   );
 
-                  console.log(
-                    '[NextAuth] Logging out user after Twitter linking',
-                  );
+                  console.log('[NextAuth] Logging out user after X linking');
                   return {};
                 }
 
@@ -102,7 +100,7 @@ export default async function auth(req: NextApiRequest, res: NextApiResponse) {
               }
             }
           } catch (err) {
-            console.error('[NextAuth] Failed to link Twitter handle:', err);
+            console.error('[NextAuth] Failed to link X handle:', err);
           }
         }
 

@@ -9,9 +9,9 @@ import {
   twitterUsernameSchema,
 } from '@/features/social/utils/schema';
 import {
-  extractTwitterHandle,
+  extractXHandle,
   isHandleVerified,
-} from '@/features/social/utils/twitter-verification';
+} from '@/features/social/utils/x-verification';
 
 export const grantApplicationSchema = (
   minReward: number,
@@ -69,7 +69,7 @@ export const grantApplicationSchema = (
       }
 
       if (data.twitter) {
-        const handle = extractTwitterHandle(data.twitter);
+        const handle = extractXHandle(data.twitter);
         if (handle) {
           const verifiedHandles = user?.linkedTwitter || [];
           const isVerified = isHandleVerified(handle, verifiedHandles);
@@ -78,7 +78,7 @@ export const grantApplicationSchema = (
             ctx.addIssue({
               code: 'custom',
               path: ['twitter'],
-              message: 'We need to verify that you own this Twitter account.',
+              message: 'We need to verify that you own this X account.',
             });
           }
         }

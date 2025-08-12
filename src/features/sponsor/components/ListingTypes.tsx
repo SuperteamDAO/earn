@@ -6,7 +6,7 @@ import { maxW } from '../utils/styles';
 const bountyFeatures = [
   'Great for awareness campaigns where you want to reach the most people possible',
   'Get multiple options to choose from',
-  'Examples: Twitter Threads, Deep-Dives, Memes, Product Feedback, and more',
+  'Examples: X Threads, Deep-Dives, Memes, Product Feedback, and more',
 ];
 
 const projectFeatures = [

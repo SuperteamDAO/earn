@@ -446,7 +446,7 @@ const CreateSponsor = () => {
                     <SocialInput
                       name="sponsor.twitter"
                       socialName={'twitter'}
-                      formLabel="Company Twitter"
+                      formLabel="Company X"
                       placeholder="solanalabs"
                       required
                       control={form.control}
@@ -458,7 +458,7 @@ const CreateSponsor = () => {
                   <SocialInput
                     name="sponsor.twitter"
                     socialName={'twitter'}
-                    formLabel="Company Twitter"
+                    formLabel="Company X"
                     placeholder="@solanalabs"
                     required
                     control={form.control}

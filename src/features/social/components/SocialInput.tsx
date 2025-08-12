@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { type Control } from 'react-hook-form';
 
-import { VerifiedTwitterIcon } from '@/components/icons/VerifiedTwitterIcon';
+import { VerifiedXIcon } from '@/components/icons/VerifiedXIcon';
 import { Button } from '@/components/ui/button';
 import {
   FormControl,
@@ -188,7 +188,7 @@ export const SocialInput = ({
                         Verify
                       </Button>
                     )}
-                    {showVerification && isVerified && <VerifiedTwitterIcon />}
+                    {showVerification && isVerified && <VerifiedXIcon />}
                   </div>
                 </FormControl>
               </div>

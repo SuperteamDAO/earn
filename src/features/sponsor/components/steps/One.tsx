@@ -25,7 +25,7 @@ export function StepOne() {
       </div>
 
       <div className="flex w-full grow flex-col items-start">
-        <p className="text-sm font-medium text-slate-400">Twitter Handle</p>
+        <p className="text-sm font-medium text-slate-400">X Handle</p>
         <p className="w-full border border-slate-200 bg-slate-50 px-2 py-1 text-sm font-medium text-slate-700">
           @piedpiper
         </p>

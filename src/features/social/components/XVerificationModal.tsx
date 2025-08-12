@@ -3,17 +3,17 @@ import React from 'react';
 
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 
-interface TwitterVerificationModalProps {
+interface XVerificationModalProps {
   isOpen: boolean;
   onClose: () => void;
   status: 'loading' | 'error';
 }
 
-export const TwitterVerificationModal = ({
+export const XVerificationModal = ({
   isOpen,
   onClose,
   status,
-}: TwitterVerificationModalProps) => {
+}: XVerificationModalProps) => {
   const renderContent = () => {
     switch (status) {
       case 'loading':
@@ -22,7 +22,7 @@ export const TwitterVerificationModal = ({
             <div className="mx-auto flex max-w-[20rem] flex-col items-center pt-20 pb-16">
               <div className="flex gap-1.5">
                 <p className="text-brand-purple font-medium">
-                  Verifying your Twitter profile
+                  Verifying your X profile
                 </p>
                 <div className="flex items-end gap-1 pb-[0.45rem]">
                   <span className="sr-only">Loading...</span>
@@ -64,7 +64,7 @@ export const TwitterVerificationModal = ({
               </div>
             </div>
             <p className="bg-slate-50 py-2 text-center text-xs font-medium text-slate-500">
-              Twitter verification is open in a different tab
+              X verification is open in a different tab
             </p>
           </div>
         );

@@ -21,7 +21,7 @@ const initialStats = [
   },
   {
     title: '210K',
-    label: 'Twitter Followers',
+    label: 'X Followers',
   },
   {
     title: '$12M',

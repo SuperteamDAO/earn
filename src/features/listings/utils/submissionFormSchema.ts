@@ -6,10 +6,10 @@ import { type User } from '@/interface/user';
 import { tweetLinkRegex } from '@/features/social/utils/regex';
 import { telegramUsernameSchema } from '@/features/social/utils/schema';
 import {
-  extractTwitterHandle,
+  extractXHandle,
   isHandleVerified,
-  isTwitterUrl,
-} from '@/features/social/utils/twitter-verification';
+  isXUrl,
+} from '@/features/social/utils/x-verification';
 
 import { type Listing } from '../types';
 
@@ -64,29 +64,29 @@ const submissionSchema = (
         });
       }
 
-      if (data.tweet && isTwitterUrl(data.tweet)) {
-        const handle = extractTwitterHandle(data.tweet);
+      if (data.tweet && isXUrl(data.tweet)) {
+        const handle = extractXHandle(data.tweet);
         if (handle) {
           const verifiedHandles = user?.linkedTwitter || [];
           if (!isHandleVerified(handle, verifiedHandles)) {
             ctx.addIssue({
               code: 'custom',
               path: ['tweet'],
-              message: 'We need to verify that you own this Twitter account.',
+              message: 'We need to verify that you own this X account.',
             });
           }
         }
       }
 
-      if (data.link && isTwitterUrl(data.link)) {
-        const handle = extractTwitterHandle(data.link);
+      if (data.link && isXUrl(data.link)) {
+        const handle = extractXHandle(data.link);
         if (handle) {
           const verifiedHandles = user?.linkedTwitter || [];
           if (!isHandleVerified(handle, verifiedHandles)) {
             ctx.addIssue({
               code: 'custom',
               path: ['link'],
-              message: 'We need to verify that you own this Twitter account.',
+              message: 'We need to verify that you own this X account.',
             });
           }
         }

@@ -2,10 +2,10 @@ import React from 'react';
 
 import { Tooltip } from '../ui/tooltip';
 
-export const VerifiedTwitterIcon = () => {
+export const VerifiedXIcon = () => {
   return (
     <Tooltip
-      content="Your Twitter profile is verified"
+      content="Your X profile is verified"
       triggerClassName="top-1/2 right-2 -translate-y-1/2 absolute"
       contentProps={{ side: 'bottom' }}
     >

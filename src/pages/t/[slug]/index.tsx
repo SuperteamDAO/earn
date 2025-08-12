@@ -33,7 +33,7 @@ import {
   Twitter,
   Website,
 } from '@/features/social/components/SocialIcons';
-import { TwitterVerificationModal } from '@/features/social/components/TwitterVerificationModal';
+import { XVerificationModal } from '@/features/social/components/XVerificationModal';
 import { AddProject } from '@/features/talent/components/AddProject';
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 import { ShareProfile } from '@/features/talent/components/shareProfile';
@@ -134,7 +134,7 @@ function TalentProfile({ talent, stats }: TalentProps) {
 
           if (isNowVerified) {
             onVerificationModalClose();
-            toast.success('Twitter verified successfully');
+            toast.success('X verified successfully');
             return true;
           }
 
@@ -154,7 +154,7 @@ function TalentProfile({ talent, stats }: TalentProps) {
         setVerificationStatus('error');
       }
     } catch (error: any) {
-      console.error('Twitter verification failed:', error);
+      console.error('X verification failed:', error);
       setVerificationStatus('error');
     }
   };
@@ -454,7 +454,7 @@ function TalentProfile({ talent, stats }: TalentProps) {
                 <div className="mb-6 flex w-full items-center justify-between rounded-md bg-slate-50 px-4 py-2">
                   <p className="flex items-center gap-2 text-sm font-medium text-slate-500">
                     <CircleAlert className="h-4 w-4" />
-                    Verify your Twitter profile now to submit applications
+                    Verify your X profile now to submit applications
                   </p>
                   <Button
                     type="button"
@@ -589,7 +589,7 @@ function TalentProfile({ talent, stats }: TalentProps) {
         upload
         onNewPow={addNewPow}
       />
-      <TwitterVerificationModal
+      <XVerificationModal
         isOpen={isVerificationModalOpen}
         onClose={onVerificationModalClose}
         status={verificationStatus}

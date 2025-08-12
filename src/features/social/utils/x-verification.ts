@@ -11,7 +11,7 @@ const TWITTER_HOSTS = ['twitter.com', 'x.com'];
  * @param handle - Raw handle that may include @
  * @returns normalized handle (lowercase, no @)
  */
-export function normalizeTwitterHandle(handle: string): string {
+export function normalizeXHandle(handle: string): string {
   if (!handle || typeof handle !== 'string') {
     return '';
   }
@@ -24,7 +24,7 @@ export function normalizeTwitterHandle(handle: string): string {
  * @param url - The URL to extract handle from
  * @returns normalized handle or null if invalid
  */
-export function extractTwitterHandle(url: string): string | null {
+export function extractXHandle(url: string): string | null {
   if (!url || typeof url !== 'string') {
     return null;
   }
@@ -56,7 +56,7 @@ export function extractTwitterHandle(url: string): string | null {
     }
 
     // Normalize handle
-    return normalizeTwitterHandle(handle);
+    return normalizeXHandle(handle);
   } catch {
     return null;
   }
@@ -67,8 +67,8 @@ export function extractTwitterHandle(url: string): string | null {
  * @param url - URL to check
  * @returns boolean indicating if it's a Twitter URL
  */
-export function isTwitterUrl(url: string): boolean {
-  return extractTwitterHandle(url) !== null;
+export function isXUrl(url: string): boolean {
+  return extractXHandle(url) !== null;
 }
 
 /**
@@ -85,6 +85,6 @@ export function isHandleVerified(
     return false;
   }
 
-  const normalizedHandle = normalizeTwitterHandle(handle);
+  const normalizedHandle = normalizeXHandle(handle);
   return verifiedHandles.includes(normalizedHandle);
 }

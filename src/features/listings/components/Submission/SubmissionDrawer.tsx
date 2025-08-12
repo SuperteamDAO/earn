@@ -9,7 +9,7 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { type z } from 'zod';
 
-import { VerifiedTwitterIcon } from '@/components/icons/VerifiedTwitterIcon';
+import { VerifiedXIcon } from '@/components/icons/VerifiedXIcon';
 import { RichEditor } from '@/components/shared/RichEditor';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -34,12 +34,12 @@ import { cn } from '@/utils/cn';
 import { usePopupAuth } from '@/features/auth/hooks/use-popup-auth';
 import { CreditIcon } from '@/features/credits/icon/credit';
 import { SocialInput } from '@/features/social/components/SocialInput';
-import { TwitterVerificationModal } from '@/features/social/components/TwitterVerificationModal';
+import { XVerificationModal } from '@/features/social/components/XVerificationModal';
 import {
-  extractTwitterHandle,
+  extractXHandle,
   isHandleVerified,
-  isTwitterUrl,
-} from '@/features/social/utils/twitter-verification';
+  isXUrl,
+} from '@/features/social/utils/x-verification';
 
 import { submissionCountQuery } from '../../queries/submission-count';
 import { userSubmissionQuery } from '../../queries/user-submission-status';
@@ -121,12 +121,12 @@ export const SubmissionDrawer = ({
   const tweetValue = form.watch('tweet');
   const linkValue = form.watch('link');
 
-  const needsTwitterVerification = useMemo(() => {
-    if (!tweetValue || !isTwitterUrl(tweetValue)) {
+  const needsXVerification = useMemo(() => {
+    if (!tweetValue || !isXUrl(tweetValue)) {
       return false;
     }
 
-    const handle = extractTwitterHandle(tweetValue);
+    const handle = extractXHandle(tweetValue);
     if (!handle) {
       return false;
     }
@@ -136,11 +136,11 @@ export const SubmissionDrawer = ({
   }, [tweetValue, user?.linkedTwitter]);
 
   const needsLinkVerification = useMemo(() => {
-    if (!linkValue || !isTwitterUrl(linkValue)) {
+    if (!linkValue || !isXUrl(linkValue)) {
       return false;
     }
 
-    const handle = extractTwitterHandle(linkValue);
+    const handle = extractXHandle(linkValue);
     if (!handle) {
       return false;
     }
@@ -150,11 +150,11 @@ export const SubmissionDrawer = ({
   }, [linkValue, user?.linkedTwitter]);
 
   const isTweetVerified = useMemo(() => {
-    if (!tweetValue || !isTwitterUrl(tweetValue)) {
+    if (!tweetValue || !isXUrl(tweetValue)) {
       return false;
     }
 
-    const handle = extractTwitterHandle(tweetValue);
+    const handle = extractXHandle(tweetValue);
     if (!handle) {
       return false;
     }
@@ -164,11 +164,11 @@ export const SubmissionDrawer = ({
   }, [tweetValue, user?.linkedTwitter]);
 
   const isLinkVerified = useMemo(() => {
-    if (!linkValue || !isTwitterUrl(linkValue)) {
+    if (!linkValue || !isXUrl(linkValue)) {
       return false;
     }
 
-    const handle = extractTwitterHandle(linkValue);
+    const handle = extractXHandle(linkValue);
     if (!handle) {
       return false;
     }
@@ -178,10 +178,10 @@ export const SubmissionDrawer = ({
   }, [linkValue, user?.linkedTwitter]);
 
   useEffect(() => {
-    if (needsTwitterVerification) {
+    if (needsXVerification) {
       form.setError('tweet', {
         type: 'manual',
-        message: 'We need to verify that you own this Twitter account',
+        message: 'We need to verify that you own this X account',
       });
     } else {
       form.clearErrors('tweet');
@@ -190,12 +190,12 @@ export const SubmissionDrawer = ({
     if (needsLinkVerification) {
       form.setError('link', {
         type: 'manual',
-        message: 'We need to verify that you own this Twitter account',
+        message: 'We need to verify that you own this X account',
       });
     } else {
       form.clearErrors('link');
     }
-  }, [needsTwitterVerification, needsLinkVerification, form]);
+  }, [needsXVerification, needsLinkVerification, form]);
 
   const handleClose = () => {
     form.reset({
@@ -251,7 +251,7 @@ export const SubmissionDrawer = ({
           (isHackathon && !editMode && !termsAccepted) ||
           isLoading ||
           form.formState.isSubmitting ||
-          needsTwitterVerification ||
+          needsXVerification ||
           needsLinkVerification,
       ),
 
@@ -264,7 +264,7 @@ export const SubmissionDrawer = ({
       termsAccepted,
       isLoading,
       form.formState.isSubmitting,
-      needsTwitterVerification,
+      needsXVerification,
       needsLinkVerification,
     ],
   );
@@ -275,7 +275,7 @@ export const SubmissionDrawer = ({
     const fieldValue = fieldName === 'tweet' ? tweetValue : linkValue;
     if (!fieldValue) return;
 
-    const handle = extractTwitterHandle(fieldValue);
+    const handle = extractXHandle(fieldValue);
     if (!handle) return;
 
     try {
@@ -318,7 +318,7 @@ export const SubmissionDrawer = ({
         setVerificationStatus('error');
       }
     } catch (error: any) {
-      console.error('Twitter verification failed:', error);
+      console.error('X verification failed:', error);
       setVerificationStatus('error');
     }
   };
@@ -522,9 +522,7 @@ export const SubmissionDrawer = ({
                                           Verify
                                         </Button>
                                       )}
-                                      {isLinkVerified && (
-                                        <VerifiedTwitterIcon />
-                                      )}
+                                      {isLinkVerified && <VerifiedXIcon />}
                                     </div>
                                   </div>
                                 </FormControl>
@@ -543,9 +541,9 @@ export const SubmissionDrawer = ({
                                 <FormLabel>Tweet Link</FormLabel>
                                 <FormDescription>
                                   This helps sponsors discover (and maybe
-                                  repost) your work on Twitter! If this
-                                  submission is for a Twitter thread bounty, you
-                                  can ignore this field.
+                                  repost) your work on X! If this submission is
+                                  for a X thread bounty, you can ignore this
+                                  field.
                                 </FormDescription>
                               </div>
                               <div>
@@ -563,13 +561,13 @@ export const SubmissionDrawer = ({
                                         placeholder="Add a tweet's link"
                                         className={cn(
                                           'rounded-l-none',
-                                          (needsTwitterVerification ||
+                                          (needsXVerification ||
                                             isTweetVerified) &&
                                             'pr-10',
                                         )}
                                         autoComplete="off"
                                       />
-                                      {needsTwitterVerification && (
+                                      {needsXVerification && (
                                         <Button
                                           type="button"
                                           onClick={() =>
@@ -581,9 +579,7 @@ export const SubmissionDrawer = ({
                                           Verify
                                         </Button>
                                       )}
-                                      {isTweetVerified && (
-                                        <VerifiedTwitterIcon />
-                                      )}
+                                      {isTweetVerified && <VerifiedXIcon />}
                                     </div>
                                   </div>
                                 </FormControl>
@@ -746,7 +742,7 @@ export const SubmissionDrawer = ({
             sponsorName={listing.sponsor.name}
           />
         )}
-        <TwitterVerificationModal
+        <XVerificationModal
           isOpen={isVerificationModalOpen}
           onClose={onVerificationModalClose}
           status={verificationStatus}

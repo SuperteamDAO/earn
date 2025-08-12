@@ -32,12 +32,12 @@ import { dayjs } from '@/utils/dayjs';
 import { usePopupAuth } from '@/features/auth/hooks/use-popup-auth';
 import { SubmissionTerms } from '@/features/listings/components/Submission/SubmissionTerms';
 import { SocialInput } from '@/features/social/components/SocialInput';
-import { TwitterVerificationModal } from '@/features/social/components/TwitterVerificationModal';
+import { XVerificationModal } from '@/features/social/components/XVerificationModal';
 import { extractSocialUsername } from '@/features/social/utils/extractUsername';
 import {
-  extractTwitterHandle,
+  extractXHandle,
   isHandleVerified,
-} from '@/features/social/utils/twitter-verification';
+} from '@/features/social/utils/x-verification';
 
 import { userApplicationQuery } from '../../queries/user-application';
 import { type Grant } from '../../types';
@@ -127,12 +127,12 @@ export const ApplicationModal = ({
 
   const twitterValue = form.watch('twitter');
 
-  const needsTwitterVerification = useMemo(() => {
+  const needsXVerification = useMemo(() => {
     if (!twitterValue) {
       return false;
     }
 
-    const handle = extractTwitterHandle(`https://x.com/${twitterValue}`);
+    const handle = extractXHandle(`https://x.com/${twitterValue}`);
     if (!handle) {
       return false;
     }
@@ -143,12 +143,12 @@ export const ApplicationModal = ({
     return !isVerified;
   }, [twitterValue, user?.linkedTwitter]);
 
-  const isTwitterVerified = useMemo(() => {
+  const isXVerified = useMemo(() => {
     if (!twitterValue) {
       return false;
     }
 
-    const handle = extractTwitterHandle(`https://x.com/${twitterValue}`);
+    const handle = extractXHandle(`https://x.com/${twitterValue}`);
     if (!handle) {
       return false;
     }
@@ -171,22 +171,22 @@ export const ApplicationModal = ({
   }, [user, minReward, maxReward, token, grant.questions, form.control]);
 
   useEffect(() => {
-    if (needsTwitterVerification) {
+    if (needsXVerification) {
       form.setError('twitter', {
         type: 'manual',
-        message: 'We need to verify that you own this Twitter account',
+        message: 'We need to verify that you own this X account',
       });
     } else {
       form.clearErrors('twitter');
     }
-  }, [needsTwitterVerification, form]);
+  }, [needsXVerification, form]);
 
   const { signIn: popupSignIn } = usePopupAuth();
 
   const handleVerifyClick = async () => {
     if (!twitterValue) return;
 
-    const handle = extractTwitterHandle(`https://x.com/${twitterValue}`);
+    const handle = extractXHandle(`https://x.com/${twitterValue}`);
     if (!handle) return;
 
     try {
@@ -229,7 +229,7 @@ export const ApplicationModal = ({
         setVerificationStatus('error');
       }
     } catch (error: any) {
-      console.error('Twitter verification failed:', error);
+      console.error('X verification failed:', error);
       setVerificationStatus('error');
     }
   };
@@ -594,13 +594,13 @@ export const ApplicationModal = ({
                   socialName={'twitter'}
                   placeholder="@StarkIndustries"
                   required
-                  formLabel="Personal Twitter Profile"
+                  formLabel="Personal X Profile"
                   formDescription="Include links to your best work that will make the community trust you to execute on this project."
                   control={form.control}
                   height="h-9"
                   showVerification
-                  needsVerification={needsTwitterVerification}
-                  isVerified={isTwitterVerified}
+                  needsVerification={needsXVerification}
+                  isVerified={isXVerified}
                   onVerify={handleVerifyClick}
                 />
                 <SocialInput
@@ -739,7 +739,7 @@ export const ApplicationModal = ({
           sponsorName={grant.sponsor.name}
         />
       )}
-      <TwitterVerificationModal
+      <XVerificationModal
         isOpen={verificationModal.isOpen}
         onClose={verificationModal.onClose}
         status={verificationStatus}
