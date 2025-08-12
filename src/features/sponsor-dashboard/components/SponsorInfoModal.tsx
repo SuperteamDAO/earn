@@ -13,7 +13,6 @@ import { FormFieldWrapper } from '@/components/ui/form-field-wrapper';
 import { Input } from '@/components/ui/input';
 import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
-import { uploadAndReplaceImage } from '@/utils/image';
 
 import { SocialInput } from '@/features/social/components/SocialInput';
 import {
@@ -86,20 +85,20 @@ export const SponsorInfoModal = ({
     try {
       setUploading(true);
 
-      let finalPhotoUrl = isGooglePhoto ? user?.photo : data.photo;
-
+      let finalPhoto = isGooglePhoto ? user?.photo : data.photo;
       if (selectedFile && !isGooglePhoto) {
-        const url = await uploadAndReplaceImage({
-          newFile: selectedFile,
-          folder: 'earn-pfp',
-          oldImageUrl: !isGooglePhoto && user?.photo ? user.photo : undefined,
+        const base64 = await new Promise<string>((resolve, reject) => {
+          const reader = new FileReader();
+          reader.readAsDataURL(selectedFile);
+          reader.onload = () => resolve(reader.result as string);
+          reader.onerror = reject;
         });
-        finalPhotoUrl = url;
+        finalPhoto = base64;
       }
 
       updateUserMutation.mutate({
         ...data,
-        photo: finalPhotoUrl,
+        photo: finalPhoto,
       });
     } catch (error) {
       console.error('Error uploading image:', error);

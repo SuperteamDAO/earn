@@ -8,6 +8,10 @@ import {
   airtableUrl,
   fetchAirtableRecordId,
 } from '@/utils/airtable';
+import {
+  ALLOWED_IMAGE_FORMATS,
+  maybeUploadBase64AndDeletePrevious,
+} from '@/utils/cloudinary';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { type NextApiRequestWithSponsor } from '@/features/auth/types';
@@ -51,6 +55,27 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     const { name, slug, logo, url, industry, twitter, bio, entityName } =
       validationResult.data;
 
+    let finalLogo = logo;
+    if (typeof logo === 'string' && logo.startsWith('data:image')) {
+      const existing = await prisma.sponsors.findUnique({
+        where: { id: userSponsorId },
+        select: { logo: true },
+      });
+      try {
+        const result = await maybeUploadBase64AndDeletePrevious(
+          logo,
+          'earn-sponsor',
+          existing?.logo ?? undefined,
+        );
+        finalLogo = result ?? finalLogo;
+      } catch (e: any) {
+        return res.status(400).json({
+          error: 'Invalid image format',
+          message: `File type must be one of: ${ALLOWED_IMAGE_FORMATS.map((f) => `image/${f}`).join(', ')}`,
+        });
+      }
+    }
+
     const preSponsor = await prisma.sponsors.findUnique({
       where: {
         id: userSponsorId,
@@ -65,7 +90,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       data: {
         name,
         slug,
-        logo,
+        logo: finalLogo,
         url,
         industry,
         twitter,

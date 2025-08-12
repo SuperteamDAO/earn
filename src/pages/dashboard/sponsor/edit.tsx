@@ -24,7 +24,6 @@ import { Tooltip } from '@/components/ui/tooltip';
 import { SponsorLayout } from '@/layouts/Sponsor';
 import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
-import { uploadAndReplaceImage } from '@/utils/image';
 
 import { SocialInput } from '@/features/social/components/SocialInput';
 import { extractSocialUsername } from '@/features/social/utils/extractUsername';
@@ -152,13 +151,13 @@ export default function UpdateSponsor() {
 
       if (selectedLogo) {
         setIsUploading(true);
-        const oldLogoUrl = sponsorData?.logo;
-        const uploadedUrl = await uploadAndReplaceImage({
-          newFile: selectedLogo,
-          folder: 'earn-sponsor',
-          oldImageUrl: oldLogoUrl,
+        const base64 = await new Promise<string>((resolve, reject) => {
+          const reader = new FileReader();
+          reader.readAsDataURL(selectedLogo);
+          reader.onload = () => resolve(reader.result as string);
+          reader.onerror = reject;
         });
-        data.logo = uploadedUrl;
+        data.logo = base64;
         setIsUploading(false);
       }
 
