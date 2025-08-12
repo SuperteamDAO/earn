@@ -17,20 +17,40 @@ import { BONUS_REWARD_POSITION } from '@/constants';
 import { formatTotalPrice } from '@/features/listing-builder';
 import { EarnAvatar } from '@/features/talent';
 import { type SubmissionWithUser } from '@/interface/submission';
-import { nthLabelGenerator } from '@/utils/rank';
 import { tweetEmbedLink } from '@/utils/socialEmbeds';
 
 const getRankLabel = (position: number | null | undefined) => {
   if (!position && position !== 0) return '';
   if (position === BONUS_REWARD_POSITION) return 'bonus';
-  
+
   const suffixes = ['th', 'st', 'nd', 'rd', 'th'];
   const relevantDigits = position % 100;
-  const suffix = relevantDigits >= 11 && relevantDigits <= 13 
-    ? 'th' 
-    : suffixes[Math.min(relevantDigits % 10, 4)];
-  
+  const suffix =
+    relevantDigits >= 11 && relevantDigits <= 13
+      ? 'th'
+      : suffixes[Math.min(relevantDigits % 10, 4)];
+
   return `${position}${suffix}`;
+};
+
+const getRewardAmount = (
+  bounty: Listing | undefined,
+  position: number | null | undefined,
+) => {
+  if (!bounty?.rewards || position === undefined || position === null)
+    return '';
+
+  if (position === BONUS_REWARD_POSITION) {
+    const bonusAmount = bounty?.rewards?.bonus ?? 0;
+    return bonusAmount > 0
+      ? `${formatTotalPrice(bonusAmount)} ${bounty?.token || ''}`.trim()
+      : '';
+  }
+
+  const amount = bounty?.rewards[Number(position) as keyof Rewards] ?? 0;
+  return amount > 0
+    ? `${formatTotalPrice(amount)} ${bounty?.token || ''}`.trim()
+    : '';
 };
 
 import { listingWinnersQuery } from '../../queries/listing-winners';
@@ -148,7 +168,12 @@ export function ListingWinners({ bounty }: Props) {
           color="white"
           rounded="md"
         >
-          <Flex align="center" justify="center" wrap="wrap" gap={10}>
+          <Flex
+            align="center"
+            justify="center"
+            wrap="wrap"
+            gap={{ base: 6, md: 8 }}
+          >
             {getOrRemoveBonuses(sortedSubmissions, true)
               .slice(0, 3)
               .map((submission) => (
@@ -169,29 +194,56 @@ export function ListingWinners({ bounty }: Props) {
                     cursor="pointer"
                   >
                     <Box pos="relative">
-                      {!isProject && (
-                        <Center
-                          pos="absolute"
-                          bottom={2}
-                          left="50%"
-                          w={{ base: 8, md: 10 }}
-                          h={{ base: 5, md: 6 }}
-                          px={1}
-                          color="brand.slate.500"
-                          fontSize={{ base: '2xs', md: 'xx-small' }}
-                          fontWeight={600}
-                          textAlign="center"
-                          textTransform="capitalize"
-                          bg="#fff"
-                          transform="translateX(-50%)"
-                          rounded={'full'}
-                          border="1px solid"
-                          borderColor="brand.slate.300"
-                          zIndex={1}
-                        >
-                          {getRankLabel(submission?.winnerPosition)}
-                        </Center>
-                      )}
+                      {!isProject &&
+                        submission?.winnerPosition !==
+                          BONUS_REWARD_POSITION && (
+                          <Center
+                            pos="absolute"
+                            zIndex={1}
+                            bottom={2}
+                            left="50%"
+                            w={{ base: 8, md: 10 }}
+                            h={{ base: 5, md: 6 }}
+                            px={1}
+                            color="brand.slate.500"
+                            fontSize={{ base: '2xs', md: 'xx-small' }}
+                            fontWeight={600}
+                            textAlign="center"
+                            textTransform="capitalize"
+                            bg="#fff"
+                            border="1px solid"
+                            borderColor="brand.slate.300"
+                            transform="translateX(-50%)"
+                            rounded={'full'}
+                          >
+                            {getRankLabel(submission?.winnerPosition)}
+                          </Center>
+                        )}
+                      {!isProject &&
+                        submission?.winnerPosition ===
+                          BONUS_REWARD_POSITION && (
+                          <Center
+                            pos="absolute"
+                            zIndex={1}
+                            bottom={2}
+                            left="50%"
+                            w={{ base: 8, md: 10 }}
+                            h={{ base: 5, md: 6 }}
+                            px={1}
+                            color="brand.slate.500"
+                            fontSize={{ base: '2xs', md: 'xx-small' }}
+                            fontWeight={600}
+                            textAlign="center"
+                            textTransform="capitalize"
+                            bg="#fff"
+                            border="1px solid"
+                            borderColor="brand.slate.300"
+                            transform="translateX(-50%)"
+                            rounded={'full'}
+                          >
+                            bonus
+                          </Center>
+                        )}
                       <EarnAvatar
                         size={isMD ? '64px' : '52px'}
                         id={submission?.user?.id}
@@ -214,13 +266,7 @@ export function ListingWinners({ bounty }: Props) {
                       textAlign="center"
                       opacity={0.6}
                     >
-                      {bounty?.rewards && submission?.winnerPosition !== undefined && submission?.winnerPosition !== null
-                        ? `${formatTotalPrice(
-                            bounty?.rewards[
-                            Number(submission.winnerPosition) as keyof Rewards
-                            ] ?? 0,
-                          )} ${bounty?.token || ''}`.trim()
-                        : ''}
+                      {getRewardAmount(bounty, submission?.winnerPosition)}
                     </Text>
                   </Flex>
                 </NextLink>
@@ -230,65 +276,95 @@ export function ListingWinners({ bounty }: Props) {
       </Box>
       {(getOrRemoveBonuses(sortedSubmissions, true).length > 3 ||
         getOrRemoveBonuses(sortedSubmissions, false).length > 0) && (
-          <HStack
-            justify="center"
-            flexWrap="wrap"
-            px={2}
-            py={3}
-            borderColor="#DDD6FE"
-            borderTopWidth="1px"
-          >
-            {[
-              ...getOrRemoveBonuses(sortedSubmissions, true).slice(3),
-              ...getOrRemoveBonuses(sortedSubmissions, false),
-            ].map((submission) => (
-              <Box key={submission.id} pos="relative">
-                <Tooltip label={`${submission?.user?.firstName} (${getRankLabel(submission?.winnerPosition)})`}>
-                  <Link
-                    key={submission.id}
-                    as={NextLink}
-                    href={
-                      !isProject
-                        ? `/feed/submission/${submission?.id}`
-                        : `/t/${submission?.user?.username}`
-                    }
-                    passHref
-                  >
-                    <Box pos="relative">
-                      {!isProject && submission?.winnerPosition !== BONUS_REWARD_POSITION && (
+        <HStack
+          justify="center"
+          flexWrap="wrap"
+          gap={{ base: 2, md: 3 }}
+          px={2}
+          py={3}
+          borderColor="#DDD6FE"
+          borderTopWidth="1px"
+        >
+          {[
+            ...getOrRemoveBonuses(sortedSubmissions, true).slice(3),
+            ...getOrRemoveBonuses(sortedSubmissions, false),
+          ].map((submission) => (
+            <Box key={submission.id} pos="relative">
+              <Tooltip
+                label={`${submission?.user?.firstName} ${submission?.user?.lastName} (${submission?.winnerPosition === BONUS_REWARD_POSITION ? 'bonus' : getRankLabel(submission?.winnerPosition)})`}
+              >
+                <Link
+                  key={submission.id}
+                  as={NextLink}
+                  href={
+                    !isProject
+                      ? `/feed/submission/${submission?.id}`
+                      : `/t/${submission?.user?.username}`
+                  }
+                  passHref
+                >
+                  <Box pos="relative">
+                    {!isProject &&
+                      submission?.winnerPosition !== BONUS_REWARD_POSITION && (
                         <Center
                           pos="absolute"
+                          zIndex={1}
                           bottom={0}
                           left="50%"
-                          w={6}
-                          h={4}
+                          w={{ base: 5, md: 6 }}
+                          h={{ base: 3.5, md: 4 }}
                           px={0.5}
                           color="brand.slate.500"
-                          fontSize={'3xs'}
+                          fontSize={{ base: '3xs', md: '3xs' }}
                           fontWeight={600}
                           textAlign="center"
                           bg="#fff"
-                          transform="translateX(-50%)"
-                          rounded={'full'}
                           border="1px solid"
                           borderColor="brand.slate.300"
-                          zIndex={1}
+                          transform="translateX(-50%)"
+                          rounded={'full'}
                         >
                           {getRankLabel(submission?.winnerPosition)}
                         </Center>
                       )}
-                      <EarnAvatar
-                        size={isMD ? '44px' : '36px'}
-                        id={submission?.user?.id}
-                        avatar={submission?.user?.photo as string}
-                      />
-                    </Box>
-                  </Link>
-                </Tooltip>
-              </Box>
-            ))}
-          </HStack>
-        )}
+                    {!isProject &&
+                      submission?.winnerPosition === BONUS_REWARD_POSITION && (
+                        <Center
+                          pos="absolute"
+                          zIndex={1}
+                          bottom={0}
+                          left="50%"
+                          w={{ base: 5, md: 6 }}
+                          h={{ base: 3.5, md: 4 }}
+                          px={0.5}
+                          color="brand.slate.500"
+                          fontSize={{ base: '3xs', md: '3xs' }}
+                          fontWeight={600}
+                          textAlign="center"
+                          bg="#fff"
+                          border="1px solid"
+                          borderColor="brand.slate.300"
+                          transform="translateX(-50%)"
+                          rounded={'full'}
+                        >
+                          bonus
+                        </Center>
+                      )}
+                    <EarnAvatar
+                      size={isMD ? '44px' : '36px'}
+                      id={submission?.user?.id}
+                      avatar={submission?.user?.photo as string}
+                    />
+                  </Box>
+                </Link>
+              </Tooltip>
+            </Box>
+          ))}
+        </HStack>
+      )}
+
+      {/* Add some bottom padding for better spacing */}
+      <Box pb={2} />
     </Box>
   );
 }
