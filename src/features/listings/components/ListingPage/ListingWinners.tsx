@@ -20,6 +20,19 @@ import { type SubmissionWithUser } from '@/interface/submission';
 import { nthLabelGenerator } from '@/utils/rank';
 import { tweetEmbedLink } from '@/utils/socialEmbeds';
 
+const getRankLabel = (position: number | null | undefined) => {
+  if (!position && position !== 0) return '';
+  if (position === BONUS_REWARD_POSITION) return 'bonus';
+  
+  const suffixes = ['th', 'st', 'nd', 'rd', 'th'];
+  const relevantDigits = position % 100;
+  const suffix = relevantDigits >= 11 && relevantDigits <= 13 
+    ? 'th' 
+    : suffixes[Math.min(relevantDigits % 10, 4)];
+  
+  return `${position}${suffix}`;
+};
+
 import { listingWinnersQuery } from '../../queries/listing-winners';
 import type { Listing, Rewards } from '../../types';
 import { tweetTemplate } from '../../utils';
@@ -63,6 +76,13 @@ export function ListingWinners({ bounty }: Props) {
   if (isLoading || !submissions.length) {
     return null;
   }
+
+  // Sort submissions by winnerPosition
+  const sortedSubmissions = [...submissions].sort((a, b) => {
+    const posA = a.winnerPosition ?? Infinity;
+    const posB = b.winnerPosition ?? Infinity;
+    return posA - posB;
+  });
 
   return (
     <Box
@@ -129,7 +149,7 @@ export function ListingWinners({ bounty }: Props) {
           rounded="md"
         >
           <Flex align="center" justify="center" wrap="wrap" gap={10}>
-            {getOrRemoveBonuses(submissions, true)
+            {getOrRemoveBonuses(sortedSubmissions, true)
               .slice(0, 3)
               .map((submission) => (
                 <NextLink
@@ -152,21 +172,24 @@ export function ListingWinners({ bounty }: Props) {
                       {!isProject && (
                         <Center
                           pos="absolute"
-                          bottom={-1}
+                          bottom={2}
                           left="50%"
-                          w={6}
-                          h={6}
+                          w={{ base: 8, md: 10 }}
+                          h={{ base: 5, md: 6 }}
                           px={1}
                           color="brand.slate.500"
-                          fontSize={'xx-small'}
+                          fontSize={{ base: '2xs', md: 'xx-small' }}
                           fontWeight={600}
                           textAlign="center"
                           textTransform="capitalize"
                           bg="#fff"
                           transform="translateX(-50%)"
                           rounded={'full'}
+                          border="1px solid"
+                          borderColor="brand.slate.300"
+                          zIndex={1}
                         >
-                          {nthLabelGenerator(submission?.winnerPosition ?? 0)}
+                          {getRankLabel(submission?.winnerPosition)}
                         </Center>
                       )}
                       <EarnAvatar
@@ -191,13 +214,13 @@ export function ListingWinners({ bounty }: Props) {
                       textAlign="center"
                       opacity={0.6}
                     >
-                      {bounty?.rewards &&
-                        formatTotalPrice(
-                          bounty?.rewards[
-                          Number(submission?.winnerPosition) as keyof Rewards
-                          ] ?? 0,
-                        )}{' '}
-                      {bounty?.token}
+                      {bounty?.rewards && submission?.winnerPosition !== undefined && submission?.winnerPosition !== null
+                        ? `${formatTotalPrice(
+                            bounty?.rewards[
+                            Number(submission.winnerPosition) as keyof Rewards
+                            ] ?? 0,
+                          )} ${bounty?.token || ''}`.trim()
+                        : ''}
                     </Text>
                   </Flex>
                 </NextLink>
@@ -205,8 +228,8 @@ export function ListingWinners({ bounty }: Props) {
           </Flex>
         </Box>
       </Box>
-      {(getOrRemoveBonuses(submissions, true).length > 3 ||
-        getOrRemoveBonuses(submissions, false).length > 0) && (
+      {(getOrRemoveBonuses(sortedSubmissions, true).length > 3 ||
+        getOrRemoveBonuses(sortedSubmissions, false).length > 0) && (
           <HStack
             justify="center"
             flexWrap="wrap"
@@ -216,11 +239,11 @@ export function ListingWinners({ bounty }: Props) {
             borderTopWidth="1px"
           >
             {[
-              ...getOrRemoveBonuses(submissions, true).slice(3),
-              ...getOrRemoveBonuses(submissions, false),
+              ...getOrRemoveBonuses(sortedSubmissions, true).slice(3),
+              ...getOrRemoveBonuses(sortedSubmissions, false),
             ].map((submission) => (
-              <Box key={submission.id}>
-                <Tooltip label={submission?.user?.firstName}>
+              <Box key={submission.id} pos="relative">
+                <Tooltip label={`${submission?.user?.firstName} (${getRankLabel(submission?.winnerPosition)})`}>
                   <Link
                     key={submission.id}
                     as={NextLink}
@@ -231,11 +254,35 @@ export function ListingWinners({ bounty }: Props) {
                     }
                     passHref
                   >
-                    <EarnAvatar
-                      size={isMD ? '44px' : '36px'}
-                      id={submission?.user?.id}
-                      avatar={submission?.user?.photo as string}
-                    />
+                    <Box pos="relative">
+                      {!isProject && submission?.winnerPosition !== BONUS_REWARD_POSITION && (
+                        <Center
+                          pos="absolute"
+                          bottom={0}
+                          left="50%"
+                          w={6}
+                          h={4}
+                          px={0.5}
+                          color="brand.slate.500"
+                          fontSize={'3xs'}
+                          fontWeight={600}
+                          textAlign="center"
+                          bg="#fff"
+                          transform="translateX(-50%)"
+                          rounded={'full'}
+                          border="1px solid"
+                          borderColor="brand.slate.300"
+                          zIndex={1}
+                        >
+                          {getRankLabel(submission?.winnerPosition)}
+                        </Center>
+                      )}
+                      <EarnAvatar
+                        size={isMD ? '44px' : '36px'}
+                        id={submission?.user?.id}
+                        avatar={submission?.user?.photo as string}
+                      />
+                    </Box>
                   </Link>
                 </Tooltip>
               </Box>
