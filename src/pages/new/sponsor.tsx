@@ -31,7 +31,6 @@ import { Meta } from '@/layouts/Meta';
 import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
-import { uploadAndReplaceImage } from '@/utils/image';
 
 import { SignIn } from '@/features/auth/components/SignIn';
 import { SocialInput } from '@/features/social/components/SocialInput';
@@ -262,21 +261,25 @@ const CreateSponsor = () => {
 
       let userPhotoUrl = data.user?.photo;
       if (selectedUserPhoto) {
-        const oldUserPhotoUrl = user?.photo;
-        userPhotoUrl = await uploadAndReplaceImage({
-          newFile: selectedUserPhoto,
-          folder: 'earn-pfp',
-          oldImageUrl: oldUserPhotoUrl,
+        const base64 = await new Promise<string>((resolve, reject) => {
+          const reader = new FileReader();
+          reader.readAsDataURL(selectedUserPhoto);
+          reader.onload = () => resolve(reader.result as string);
+          reader.onerror = reject;
         });
-        data.user!.photo = userPhotoUrl;
+        userPhotoUrl = base64;
+        if (data.user) data.user.photo = userPhotoUrl;
       }
 
       let logoUrl = data.sponsor.logo;
       if (selectedLogo) {
-        logoUrl = await uploadAndReplaceImage({
-          newFile: selectedLogo,
-          folder: 'earn-sponsor',
+        const base64 = await new Promise<string>((resolve, reject) => {
+          const reader = new FileReader();
+          reader.readAsDataURL(selectedLogo);
+          reader.onload = () => resolve(reader.result as string);
+          reader.onerror = reject;
         });
+        logoUrl = base64;
         data.sponsor.logo = logoUrl;
       }
 

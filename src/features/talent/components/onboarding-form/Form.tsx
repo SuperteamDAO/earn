@@ -19,7 +19,6 @@ import { FormFieldWrapper } from '@/components/ui/form-field-wrapper';
 import { Input } from '@/components/ui/input';
 import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
-import { uploadAndReplaceImage } from '@/utils/image';
 
 import { extractSocialUsername } from '@/features/social/utils/extractUsername';
 import {
@@ -49,7 +48,6 @@ export const TalentForm = () => {
     reset,
   } = form;
 
-  const [uploading, setUploading] = useState<boolean>(false);
   const [selectedPhoto, setSelectedPhoto] = useState<File | null>(null);
   const [isLoading, setisLoading] = useState<boolean>(false);
   const [isGooglePhoto, setIsGooglePhoto] = useState<boolean>(
@@ -93,8 +91,8 @@ export const TalentForm = () => {
   };
 
   const isSubmitDisabled = useMemo(() => {
-    return uploading || isLoading || isUsernameValidating;
-  }, [uploading, isLoading, isUsernameValidating]);
+    return isLoading || isUsernameValidating;
+  }, [isLoading, isUsernameValidating]);
 
   const onSubmit = async (data: NewTalentFormData) => {
     if (isSubmitDisabled) return false;
@@ -109,19 +107,18 @@ export const TalentForm = () => {
     return toast.promise(
       async () => {
         try {
-          setUploading(true);
-          const photoUrl = selectedPhoto
-            ? await uploadAndReplaceImage({
-                newFile: selectedPhoto,
-                folder: 'earn-pfp',
-                oldImageUrl:
-                  !isGooglePhoto && user?.photo ? user.photo : undefined,
+          const photo = selectedPhoto
+            ? await new Promise<string>((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(selectedPhoto);
+                reader.onload = () => resolve(reader.result as string);
+                reader.onerror = (error) => reject(error);
               })
             : data.photo;
 
           await api.post('/api/user/complete-profile/', {
             ...data,
-            photo: isGooglePhoto ? user?.photo : photoUrl,
+            photo: isGooglePhoto ? user?.photo : photo,
           });
           if (user) posthog.identify(user.email);
 
@@ -132,7 +129,6 @@ export const TalentForm = () => {
           throw error;
         } finally {
           setisLoading(false);
-          setUploading(false);
         }
       },
       {
