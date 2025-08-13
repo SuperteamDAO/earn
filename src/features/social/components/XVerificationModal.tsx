@@ -85,8 +85,8 @@ export const XVerificationModal = ({
                   Uh-Oh Verification Failed
                 </p>
                 <p className="text-center text-sm text-slate-500">
-                  We couldn&apos;t verify your twitter account. <br /> Please
-                  try again to make your submission.
+                  We couldn&apos;t verify your X account. <br /> Please try
+                  again to make your submission.
                 </p>
               </div>
             </div>
