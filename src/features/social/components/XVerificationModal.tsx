@@ -7,12 +7,14 @@ interface XVerificationModalProps {
   isOpen: boolean;
   onClose: () => void;
   status: 'loading' | 'error';
+  handle?: string | null;
 }
 
 export const XVerificationModal = ({
   isOpen,
   onClose,
   status,
+  handle,
 }: XVerificationModalProps) => {
   const renderContent = () => {
     switch (status) {
@@ -84,10 +86,15 @@ export const XVerificationModal = ({
                 <p className="mt-6 font-medium text-slate-900">
                   Uh-Oh Verification Failed
                 </p>
-                <p className="text-center text-sm text-slate-500">
-                  We couldn&apos;t verify your X account. <br /> Please try
-                  again to make your submission.
-                </p>
+                {handle ? (
+                  <p className="text-center text-sm text-slate-500">
+                    {`We couldn’t verify if you own the @${handle} profile on X. Make sure you’re logged into the correct X profile during authorisation.`}
+                  </p>
+                ) : (
+                  <p className="text-center text-sm text-slate-500">
+                    We couldn&apos;t verify your X account. Please try again.
+                  </p>
+                )}
               </div>
             </div>
           </div>

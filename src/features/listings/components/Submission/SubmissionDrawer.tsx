@@ -97,6 +97,9 @@ export const SubmissionDrawer = ({
   const [verificationStatus, setVerificationStatus] = useState<
     'loading' | 'error'
   >('loading');
+  const [verificationHandle, setVerificationHandle] = useState<string | null>(
+    null,
+  );
 
   const { user, refetchUser } = useUser();
   const form = useForm<FormData>({
@@ -280,6 +283,7 @@ export const SubmissionDrawer = ({
 
     try {
       setVerificationStatus('loading');
+      setVerificationHandle(handle);
       onVerificationModalOpen();
 
       const success = await popupSignIn('twitter');
@@ -298,6 +302,7 @@ export const SubmissionDrawer = ({
 
           if (isNowVerified) {
             form.trigger(fieldName);
+            setVerificationHandle(null);
             onVerificationModalClose();
             return true;
           }
@@ -744,8 +749,12 @@ export const SubmissionDrawer = ({
         )}
         <XVerificationModal
           isOpen={isVerificationModalOpen}
-          onClose={onVerificationModalClose}
+          onClose={() => {
+            setVerificationHandle(null);
+            onVerificationModalClose();
+          }}
           status={verificationStatus}
+          handle={verificationHandle}
         />
       </SideDrawerContent>
     </SideDrawer>
