@@ -1,13 +1,14 @@
 import { type Prisma, type Sponsors } from '@prisma/client';
 import { franc } from 'franc';
 
+import { tokenList } from '@/constants/tokenList';
 import logger from '@/lib/logger';
 import { cleanSkills } from '@/utils/cleanSkills';
 
 import { type ListingWithSponsor } from '@/features/auth/utils/checkListingSponsorAuth';
 import { type ListingFormData } from '@/features/listing-builder/types';
 import { isFndnPayingCheck } from '@/features/listing-builder/utils/isFndnPayingCheck';
-import { listingUsdCalculator } from '@/features/listing-builder/utils/listingUsdCalculator';
+import { fetchTokenUSDValue } from '@/features/wallet/utils/fetchTokenUSDValue';
 
 const processSkills = (skills: ListingFormData['skills']) => {
   const cleanedSkills = skills ? cleanSkills(skills) : [];
@@ -77,14 +78,70 @@ export const transformToPrismaData = async ({
     validatedListing,
   });
 
-  const usdValue = await listingUsdCalculator({
-    validatedListing,
-    isVerifying,
-  });
+  const calculateRewardAmount = (
+    data: ListingFormData,
+  ): number | undefined | null => {
+    const { compensationType, rewardAmount, minRewardAsk, maxRewardAsk } = data;
+
+    if (compensationType === 'fixed') return rewardAmount;
+    if (compensationType === 'range')
+      return ((minRewardAsk || 0) + (maxRewardAsk || 0)) / 2;
+    return undefined;
+  };
+
+  let tokenUsdAtPublish: number | undefined;
+  let usdValue: number = 0;
+  let includeUsdValue = false;
+  const amount = calculateRewardAmount(validatedListing) || 0;
+  const prevToken = listing.token ?? undefined;
+  const nextToken = token ?? undefined;
+  const tokenChanged = prevToken !== nextToken;
+
+  if (!isVerifying) {
+    if (!isEditing) {
+      if (validatedListing.token && amount > 0) {
+        const token = tokenList.find(
+          (t) => t.tokenSymbol === validatedListing.token,
+        );
+        if (token?.mintAddress) {
+          try {
+            tokenUsdAtPublish = await fetchTokenUSDValue(token.mintAddress);
+            usdValue = (tokenUsdAtPublish || 0) * amount;
+            includeUsdValue = true;
+          } catch (e) {
+            tokenUsdAtPublish = undefined;
+          }
+        }
+      }
+    } else {
+      if (listing.publishedAt && amount > 0) {
+        let priceToUse = (listing as any).tokenUsdAtPublish as
+          | number
+          | undefined;
+
+        if (tokenChanged && validatedListing.token) {
+          const token = tokenList.find(
+            (t) => t.tokenSymbol === validatedListing.token,
+          );
+          if (token?.mintAddress) {
+            try {
+              priceToUse = await fetchTokenUSDValue(token.mintAddress);
+              tokenUsdAtPublish = priceToUse; // update only when token changed
+            } catch (e) {}
+          }
+        }
+
+        if (typeof priceToUse === 'number') {
+          usdValue = priceToUse * amount;
+          includeUsdValue = true;
+        }
+      }
+    }
+  }
 
   const baseData: Prisma.BountiesUncheckedUpdateInput = {
     title,
-    usdValue,
+    ...(includeUsdValue ? { usdValue } : {}),
     skills,
     slug,
     deadline: new Date(deadline),
@@ -117,6 +174,7 @@ export const transformToPrismaData = async ({
 
     return {
       ...baseData,
+      ...(typeof tokenUsdAtPublish === 'number' ? { tokenUsdAtPublish } : {}),
       maxBonusSpots: maxBonusSpots || 0,
       // Preserve immutable fields from existing listing
       isWinnersAnnounced: listing.isWinnersAnnounced,
@@ -138,6 +196,7 @@ export const transformToPrismaData = async ({
 
     return {
       ...baseData,
+      ...(typeof tokenUsdAtPublish === 'number' ? { tokenUsdAtPublish } : {}),
       maxBonusSpots,
       // Set initial state for new publication
       status: isVerifying ? 'VERIFYING' : 'OPEN',

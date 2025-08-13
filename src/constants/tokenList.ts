@@ -6,7 +6,6 @@ export interface Token {
   mintAddress: string;
   icon: string;
   decimals: number;
-  coingeckoSymbol: string;
 }
 
 export const tokenList: Token[] = [
@@ -16,7 +15,6 @@ export const tokenList: Token[] = [
     mintAddress: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
     icon: 'https://s2.coinmarketcap.com/static/img/coins/128x128/3408.png',
     decimals: 6,
-    coingeckoSymbol: 'usd-coin',
   },
   {
     tokenName: 'Solana (SOL)',
@@ -24,7 +22,6 @@ export const tokenList: Token[] = [
     mintAddress: 'So11111111111111111111111111111111111111112',
     icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/16116.png',
     decimals: 9,
-    coingeckoSymbol: 'solana',
   },
   {
     tokenName: 'JUP',
@@ -32,7 +29,6 @@ export const tokenList: Token[] = [
     mintAddress: 'JUPyiwrYJFskUPiHa7hkeR8VUtAeFoSYbKedZNsDvCN',
     icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/29210.png',
     decimals: 6,
-    coingeckoSymbol: 'jupiter-exchange-solana',
   },
   {
     tokenName: 'BONK',
@@ -40,7 +36,6 @@ export const tokenList: Token[] = [
     mintAddress: 'DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263',
     icon: 'https://assets.coingecko.com/coins/images/28600/standard/bonk.jpg?1696527587',
     decimals: 5,
-    coingeckoSymbol: 'bonk',
   },
   {
     tokenName: 'ISC',
@@ -48,7 +43,6 @@ export const tokenList: Token[] = [
     mintAddress: 'J9BcrQfX4p9D1bvLzRNCbMDv8f44a9LFdeqNE4Yk2WMD',
     icon: 'https://res.cloudinary.com/dgvnuwspr/image/upload/v1683200072/sponsors/International%20Stable%20Currency.png',
     decimals: 6,
-    coingeckoSymbol: 'international-stable-currency',
   },
   {
     tokenName: 'STEP',
@@ -56,7 +50,6 @@ export const tokenList: Token[] = [
     mintAddress: 'StepAscQoEioFxxWGnh2sLBDFp9d8rvKz2Yp39iDpyT',
     icon: 'https://assets.coingecko.com/coins/images/14988/small/step.png?1619274762',
     decimals: 9,
-    coingeckoSymbol: 'step-finance',
   },
   {
     tokenName: 'Pyth Network (PYTH)',
@@ -64,7 +57,6 @@ export const tokenList: Token[] = [
     mintAddress: 'HZ1JovNiVvGrGNiiYvEozEVgZ58xaU3RKwX8eACQBCt3',
     icon: 'https://s2.coinmarketcap.com/static/img/coins/128x128/28177.png',
     decimals: 6,
-    coingeckoSymbol: 'pyth-network',
   },
   {
     tokenName: 'Kamino (KMNO)',
@@ -72,7 +64,6 @@ export const tokenList: Token[] = [
     mintAddress: 'KMNo3nJsBXfcpJTVhZcXLW7RmTwTt4GVFE7suUBo9sS',
     icon: ASSET_URL + '/coins/kamino.png',
     decimals: 6,
-    coingeckoSymbol: 'kamino',
   },
   {
     tokenName: 'Jito (JTO)',
@@ -80,7 +71,6 @@ export const tokenList: Token[] = [
     mintAddress: 'jtojtomepa8beP8AuQc6eXt5FriJwfFMwQx2v2f9mCL',
     icon: 'https://s2.coinmarketcap.com/static/img/coins/128x128/28541.png',
     decimals: 9,
-    coingeckoSymbol: 'jito-governance-token',
   },
   {
     tokenName: 'Metaplex (MPLX)',
@@ -88,7 +78,6 @@ export const tokenList: Token[] = [
     mintAddress: 'METAewgxyPbgwsseH8T16a39CQ5VyVxZi9zXiDPY18m',
     icon: 'https://s2.coinmarketcap.com/static/img/coins/128x128/21870.png',
     decimals: 6,
-    coingeckoSymbol: 'metaplex',
   },
   {
     tokenName: 'Send (SEND)',
@@ -96,7 +85,6 @@ export const tokenList: Token[] = [
     mintAddress: 'SENDdRQtYMWaQrBroBrJ2Q53fgVuq95CV9UPGEvpCxa',
     icon: 'https://assets.coingecko.com/coins/images/39222/standard/photo1719676966.jpeg?1721182505',
     decimals: 6,
-    coingeckoSymbol: 'send-2',
   },
   {
     tokenName: 'PayPal USD (PYUSD)',
@@ -104,7 +92,6 @@ export const tokenList: Token[] = [
     mintAddress: '2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo',
     icon: 'https://s2.coinmarketcap.com/static/img/coins/128x128/27772.png',
     decimals: 6,
-    coingeckoSymbol: 'paypal-usd',
   },
   {
     tokenName: 'Drift',
@@ -112,7 +99,6 @@ export const tokenList: Token[] = [
     mintAddress: 'DriFtupJYLTosbwoN8koMbEYSx54aFAVLddWsbksjwg7',
     icon: 'https://s2.coinmarketcap.com/static/img/coins/128x128/31278.png',
     decimals: 6,
-    coingeckoSymbol: 'drift-protocol',
   },
   {
     tokenName: 'SAROS',
@@ -120,7 +106,6 @@ export const tokenList: Token[] = [
     mintAddress: 'SarosY6Vscao718M4A778z4CGtvcwcGef5M9MEH1LGL',
     icon: 'https://assets.coingecko.com/coins/images/34594/standard/saros-token-logo.png?1705476813',
     decimals: 6,
-    coingeckoSymbol: 'saros-finance',
   },
   {
     tokenName: 'Samoyed Coin (SAMO)',
@@ -128,7 +113,6 @@ export const tokenList: Token[] = [
     mintAddress: '7xKXtg2CW87d97TXJSDpbD5jBkheTqA83TZRuJosgAsU',
     icon: 'https://assets.coingecko.com/coins/images/15051/standard/IXeEj5e.png?1696514710',
     decimals: 9,
-    coingeckoSymbol: 'samoyedcoin',
   },
   {
     tokenName: 'Pax Dollar (USDP)',
@@ -136,7 +120,6 @@ export const tokenList: Token[] = [
     mintAddress: 'HVbpJAQGNpkgBaYBZQBR1t7yFdvaYVp2vCQQfKKEN4tM',
     icon: 'https://assets.coingecko.com/coins/images/6013/standard/Pax_Dollar.png?1696506427',
     decimals: 6,
-    coingeckoSymbol: 'paxos-standard',
   },
   {
     tokenName: 'Zeus (ZEUS)',
@@ -144,7 +127,6 @@ export const tokenList: Token[] = [
     mintAddress: 'ZEUS1aR7aX8DFFJf5QjWj2ftDDdNTroMNGo8YoQm3Gq',
     icon: 'https://s2.coinmarketcap.com/static/img/coins/128x128/30391.png',
     decimals: 6,
-    coingeckoSymbol: 'zeus-network',
   },
   {
     tokenName: 'SynesisOne (SNS)',
@@ -152,7 +134,6 @@ export const tokenList: Token[] = [
     mintAddress: 'SNSNkV9zfG5ZKWQs6x4hxvBRV6s8SqMfSGCtECDvdMd',
     icon: 'https://assets.coingecko.com/coins/images/23289/standard/sns.png?1696522507',
     decimals: 9,
-    coingeckoSymbol: 'synesis-one',
   },
   {
     tokenName: "Dean's List",
@@ -160,7 +141,6 @@ export const tokenList: Token[] = [
     mintAddress: 'Ds52CDgqdWbTWsua1hgT3AuSSy4FNx2Ezge1br3jQ14a',
     icon: 'https://assets.coingecko.com/coins/images/36197/standard/logo_dl.png?1710811437',
     decimals: 6,
-    coingeckoSymbol: 'dean-s-list',
   },
   {
     tokenName: 'Assai',
@@ -168,7 +148,6 @@ export const tokenList: Token[] = [
     mintAddress: '12XbSPVc5hmWjKUzf5ExTysM2pEL3tM953YkMXmLWkGd',
     icon: 'https://s2.coinmarketcap.com/static/img/coins/128x128/35018.png',
     decimals: 9,
-    coingeckoSymbol: 'assai',
   },
   {
     tokenName: 'Ore',
@@ -176,7 +155,6 @@ export const tokenList: Token[] = [
     mintAddress: 'oreoU2P8bN6jkk3jbaiVxYnG1dCXcYxwhwyK9jSybcp',
     icon: 'https://s2.coinmarketcap.com/static/img/coins/128x128/32782.png',
     decimals: 9,
-    coingeckoSymbol: 'ore',
   },
   {
     tokenName: 'USDT',
@@ -184,7 +162,6 @@ export const tokenList: Token[] = [
     mintAddress: 'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB',
     icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/825.png',
     decimals: 6,
-    coingeckoSymbol: 'tether',
   },
   {
     tokenName: 'mSOL',
@@ -192,7 +169,6 @@ export const tokenList: Token[] = [
     mintAddress: 'mSoLzYCxHdYgdzU16g5QSh3i5K3z3KZK7ytfqcJm7So',
     icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11461.png',
     decimals: 9,
-    coingeckoSymbol: 'msol',
   },
   {
     tokenName: 'UXD Stablecoin (UXD)',
@@ -200,7 +176,6 @@ export const tokenList: Token[] = [
     mintAddress: '7kbnvuGBxxj8AG9qp8Scn56muWGaRaFqxg1FsRp3PaFT',
     icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/17535.png',
     decimals: 6,
-    coingeckoSymbol: 'uxd-stablecoin',
   },
   {
     tokenName: 'Solayer USD (sUSD)',
@@ -208,7 +183,6 @@ export const tokenList: Token[] = [
     mintAddress: 'susdabGDNbhrnCa6ncrYo81u4s9GM8ecK2UwMyZiq4X',
     icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/35429.png',
     decimals: 6,
-    coingeckoSymbol: 'solayer-usd',
   },
   {
     tokenName: 'Raydium (RAY)',
@@ -216,7 +190,6 @@ export const tokenList: Token[] = [
     mintAddress: '4k3Dyjzvzp8eMZWUXbBCjEvwSkkk59S5iCNLY3QrkX6R',
     icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/8526.png',
     decimals: 6,
-    coingeckoSymbol: 'raydium',
   },
   {
     tokenName: 'Saber (SBR)',
@@ -224,7 +197,6 @@ export const tokenList: Token[] = [
     mintAddress: 'Saber2gLauYim4Mvftnrasomsv6NvAuncvMEZwcLpD1',
     icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11181.png',
     decimals: 6,
-    coingeckoSymbol: 'saber',
   },
   {
     tokenName: 'KIWI',
@@ -232,7 +204,6 @@ export const tokenList: Token[] = [
     mintAddress: '66Qq2qS67K4L5xQ3xUTinCyxzdPeZQG1R1ipK8jrY7gc',
     icon: 'https://bafkreibcamcjwo5z3itvybznrdtb3fgeiplfy36izu75jygxkt7jzoq4ju.ipfs.nftstorage.link/',
     decimals: 5,
-    coingeckoSymbol: 'kiwi-token-2',
   },
   {
     tokenName: 'EUROe Stablecoin (EUROe)',
@@ -240,7 +211,6 @@ export const tokenList: Token[] = [
     mintAddress: '2VhjJ9WxaGC3EZFwJG9BDUs9KxKCAjQY4vgd1qxgYWVg',
     icon: 'https://assets.coingecko.com/coins/images/28913/standard/euroe-200x200-round.png?1696527889',
     decimals: 6,
-    coingeckoSymbol: 'euroe-stablecoin',
   },
   {
     tokenName: 'Solend (SLND)',
@@ -248,7 +218,6 @@ export const tokenList: Token[] = [
     mintAddress: 'SLNDpmoWTVADgEdndyvWzroNL7zSi1dF9PC3xHGtPwp',
     icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/13524.png',
     decimals: 6,
-    coingeckoSymbol: 'solend',
   },
   {
     tokenName: 'Coin98 (C98)',
@@ -256,7 +225,6 @@ export const tokenList: Token[] = [
     mintAddress: 'C98A4nkJXhpVZNAZdHUA95RpTF3T4whtQubL3YobiUX9',
     icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/10903.png',
     decimals: 6,
-    coingeckoSymbol: 'coin98',
   },
   {
     tokenName: 'Serum (SRM)',
@@ -264,7 +232,6 @@ export const tokenList: Token[] = [
     mintAddress: 'SRMuApVNdxXokk5GT7XD5cUUgXMBCoAz2LHeuAoKWRt',
     icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6187.png',
     decimals: 6,
-    coingeckoSymbol: 'serum',
   },
   {
     tokenName: 'DUST Protocol (DUST)',
@@ -272,7 +239,6 @@ export const tokenList: Token[] = [
     mintAddress: 'DUSTawucrTsGU8hcqRdHDCbuYhCPADMLM2VcCb8VnFnQ',
     icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/18802.png',
     decimals: 9,
-    coingeckoSymbol: 'dust-protocol',
   },
   {
     tokenName: 'Bonfida (FIDA)',
@@ -280,7 +246,6 @@ export const tokenList: Token[] = [
     mintAddress: 'EchesyfXePKdLtoiZSL8pBe8Myagyy8ZRqsACNCFGnvp',
     icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/7978.png',
     decimals: 6,
-    coingeckoSymbol: 'bonfida',
   },
   {
     tokenName: 'Orca (ORCA)',
@@ -288,7 +253,6 @@ export const tokenList: Token[] = [
     mintAddress: 'orcaEKTdK7LKz57vaAYr9QeNsVEPfiu6QeMU1kektZE',
     icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11165.png',
     decimals: 6,
-    coingeckoSymbol: 'orca',
   },
   {
     tokenName: 'Helium (HNT)',
@@ -296,7 +260,6 @@ export const tokenList: Token[] = [
     mintAddress: 'hntyVP6YFm1Hg25TN9WGLqM12b8TQmcknKrdu1oxWux',
     icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/5665.png',
     decimals: 8,
-    coingeckoSymbol: 'helium',
   },
   {
     tokenName: 'Helium Mobile (MOBILE)',
@@ -304,7 +267,6 @@ export const tokenList: Token[] = [
     mintAddress: 'mb1eu7TzEc71KxDpsmsKoucSSuuoGLv1drys1oP2jh6',
     icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/24600.png',
     decimals: 6,
-    coingeckoSymbol: 'helium-mobile',
   },
   {
     tokenName: 'Helium IOT (IOT)',
@@ -312,7 +274,6 @@ export const tokenList: Token[] = [
     mintAddress: 'iotEVVZLEywoTn1QdwNPddxPWszn3zFhEot3MfL9fns',
     icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/24686.png',
     decimals: 6,
-    coingeckoSymbol: 'helium-iot',
   },
   {
     tokenName: 'Gary (GARY)',
@@ -320,7 +281,6 @@ export const tokenList: Token[] = [
     mintAddress: '8c71AvjQeKKeWRe8jtTGG1bJ2WiYXQdbjqFbUfhHgSVk',
     icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/21046.png',
     decimals: 9,
-    coingeckoSymbol: 'gary',
   },
   {
     tokenName: 'Blaze (BLZE)',
@@ -328,7 +288,6 @@ export const tokenList: Token[] = [
     mintAddress: 'BLZEEuZUBVqFhj8adcCFPJvPVCiCyVmh3hkJMrU8KuJA',
     icon: 'https://assets.coingecko.com/coins/images/28392/standard/blze.png?1696527391',
     decimals: 9,
-    coingeckoSymbol: 'solblaze',
   },
   {
     tokenName: 'META (META)',
@@ -336,7 +295,6 @@ export const tokenList: Token[] = [
     mintAddress: 'METADDFL6wWMWEoKTFJwcThTbUmtarRJZjRpzUvkxhr',
     icon: 'https://avatars.githubusercontent.com/u/107701386?s=200&v=4',
     decimals: 9,
-    coingeckoSymbol: 'meta-2',
   },
   {
     tokenName: 'ZETA (ZEX)',
@@ -344,7 +302,6 @@ export const tokenList: Token[] = [
     mintAddress: 'ZEXy1pqteRu3n13kdyh4LwPQknkFk3GzmMYMuNadWPo',
     icon: 'https://s2.coinmarketcap.com/static/img/coins/128x128/32002.png',
     decimals: 6,
-    coingeckoSymbol: 'zeta',
   },
   {
     tokenName: 'Degod (DEGOD)',
@@ -352,7 +309,6 @@ export const tokenList: Token[] = [
     mintAddress: 'degod39zqQWzpG6h4b7SJLLTCFE6FeZnZD8BwHBFxaN',
     icon: ASSET_URL + '/coins/degods.png',
     decimals: 6,
-    coingeckoSymbol: 'degod',
   },
   {
     tokenName: 'DevWifHat (DWH)',
@@ -360,7 +316,6 @@ export const tokenList: Token[] = [
     mintAddress: 'DEVwHJ57QMPPArD2CyjboMbdWvjEMjXRigYpaUNDTD7o',
     icon: ASSET_URL + '/coins/dwh.png',
     decimals: 6,
-    coingeckoSymbol: '',
   },
   {
     tokenName: 'ChiitanCoin (CTAN)',
@@ -368,7 +323,6 @@ export const tokenList: Token[] = [
     mintAddress: 'A3gMddXMAhmc3P9dLjHv2n6ywWWzpGZbRCH6y8sta8ug',
     icon: ASSET_URL + '/coins/ctan.png',
     decimals: 9,
-    coingeckoSymbol: '',
   },
   {
     tokenName: 'Utgard (UTG)',
@@ -376,7 +330,6 @@ export const tokenList: Token[] = [
     mintAddress: 'FPZsqAgtwf58GmJMctZGSu9RaXiGAmQLL6ZtKUUewm7k',
     icon: ASSET_URL + '/coins/utg.png',
     decimals: 9,
-    coingeckoSymbol: '',
   },
   {
     tokenName: 'Vin (VIN)',
@@ -384,7 +337,6 @@ export const tokenList: Token[] = [
     mintAddress: '6B2X4NmSsmkiT8ytFEVt15igRSgsKNGZ3j3WWeidupE8',
     icon: ASSET_URL + '/coins/vin.png',
     decimals: 9,
-    coingeckoSymbol: '',
   },
   {
     tokenName: 'Octokn (OTK)',
@@ -392,7 +344,6 @@ export const tokenList: Token[] = [
     mintAddress: 'octo82drBEdm8CSDaEKBymVn86TBtgmPnDdmE64PTqJ',
     icon: 'https://s2.coinmarketcap.com/static/img/coins/128x128/24381.png',
     decimals: 9,
-    coingeckoSymbol: 'octo-gaming',
   },
   {
     tokenName: 'deBridge',
@@ -400,7 +351,6 @@ export const tokenList: Token[] = [
     mintAddress: 'DBRiDgJAMsM95moTzJs7M9LnkGErpbv9v6CUR1DXnUu5',
     icon: 'https://s2.coinmarketcap.com/static/img/coins/128x128/31528.png',
     decimals: 6,
-    coingeckoSymbol: 'debridge',
   },
   {
     tokenName: 'Adrena',
@@ -408,7 +358,6 @@ export const tokenList: Token[] = [
     mintAddress: 'AuQaustGiaqxRvj2gtCdrd22PBzTn8kM3kEPEkZCtuDw',
     icon: 'https://assets.coingecko.com/coins/images/50363/standard/adrena_logo_adx_color_200x200.png?1727331561',
     decimals: 6,
-    coingeckoSymbol: 'adrena',
   },
   {
     tokenName: 'Nosana',
@@ -416,7 +365,6 @@ export const tokenList: Token[] = [
     mintAddress: 'nosXBVoaCTtYdLvKY6Csb4AC8JCdQKKAaWYtx2ZMoo7',
     icon: 'https://assets.coingecko.com/coins/images/22553/standard/POfb_I4u_400x400.jpg?1696521873',
     decimals: 6,
-    coingeckoSymbol: 'nosana',
   },
   {
     tokenName: 'Edwin',
@@ -424,7 +372,6 @@ export const tokenList: Token[] = [
     mintAddress: 'GPrg1CgbBvAJS2SCuf9gF7NmQYsWudfyfWy5SUzypump',
     icon: 'https://assets.coingecko.com/coins/images/53937/standard/logo-background.png?1737783340',
     decimals: 6,
-    coingeckoSymbol: 'edwin',
   },
   {
     tokenName: 'Blockasset',
@@ -432,7 +379,6 @@ export const tokenList: Token[] = [
     mintAddress: 'NFTUkR4u7wKxy9QLaX2TGvd9oZSWoMo4jqSJqdMb7Nk',
     icon: 'https://assets.coingecko.com/coins/images/21332/standard/Blockasset_Square.png?1712955829',
     decimals: 6,
-    coingeckoSymbol: 'blockasset',
   },
   {
     tokenName: 'Magic Eden',
@@ -440,7 +386,6 @@ export const tokenList: Token[] = [
     mintAddress: 'MEFNBXixkEbait3xn9bkm8WsJzXtVsaJEn4c8Sam21u',
     icon: 'https://assets.coingecko.com/coins/images/39850/standard/_ME_Profile_Dark_2x.png?1734013082',
     decimals: 6,
-    coingeckoSymbol: 'magic-eden',
   },
   {
     tokenName: 'Zeus Network zBTC',
@@ -448,7 +393,6 @@ export const tokenList: Token[] = [
     mintAddress: 'zBTCug3er3tLyffELcvDNrKkCymbPWysGcWihESYfLg',
     icon: 'https://assets.coingecko.com/coins/images/55011/standard/zBTC.png?1743161954',
     decimals: 8,
-    coingeckoSymbol: 'zeus-netwok-zbtc',
   },
   {
     tokenName: 'Global Dollar (USDG)',
@@ -456,7 +400,6 @@ export const tokenList: Token[] = [
     mintAddress: '2u1tszSeqZ3qBWF3uNGPFc8TzMk2tdiwknnRMWGWjGWH',
     icon: 'https://assets.coingecko.com/coins/images/51281/standard/GDN_USDG_Token_200x200.png?1730484111',
     decimals: 6,
-    coingeckoSymbol: 'global-dollar',
   },
   {
     tokenName: 'DMCP',
@@ -464,7 +407,6 @@ export const tokenList: Token[] = [
     mintAddress: '81YHAzq9yfptVbNTHiYuMVKVQ6ZNs3XeQFFENnNUpump',
     icon: 'https://earn.superteam.fun/assets/dollar.svg',
     decimals: 6,
-    coingeckoSymbol: '',
   },
   {
     tokenName: 'Polymtrade',
@@ -472,7 +414,6 @@ export const tokenList: Token[] = [
     mintAddress: '3BWA5RBXyPXuMGZmVL8Snefu573FMJNGpsVi79baiBLV',
     icon: 'https://assets.coingecko.com/coins/images/66546/standard/polymtrade.png?1749711691',
     decimals: 9,
-    coingeckoSymbol: 'polymtrade',
   },
   {
     tokenName: 'SpineDAO',
@@ -480,7 +421,6 @@ export const tokenList: Token[] = [
     mintAddress: 'spinezMPKxkBpf4Q9xET2587fehM3LuKe4xoAoXtSjR',
     icon: 'https://assets.coingecko.com/coins/images/55920/standard/TOken_SPine_b.png',
     decimals: 9,
-    coingeckoSymbol: 'spinedao-token',
   },
   {
     tokenName: 'aeroSOL',
@@ -488,7 +428,6 @@ export const tokenList: Token[] = [
     mintAddress: 'aeroXvCT6tjGVNyTvZy86tFDwE4sYsKCh7FbNDcrcxF',
     icon: 'https://assets.coingecko.com/coins/images/40123/standard/Logo_-_Bright_%284%29.png',
     decimals: 9,
-    coingeckoSymbol: 'aerosol',
   },
   {
     tokenName: 'JuliaOS',
@@ -496,7 +435,6 @@ export const tokenList: Token[] = [
     mintAddress: 'JosjEXh69RckgSs2AWsN1xN8zmiSHxBuJjHLURJnHhg',
     icon: 'https://assets.coingecko.com/coins/images/55336/standard/JuliaOS-logo.png?1745507802',
     decimals: 6,
-    coingeckoSymbol: 'juliaos',
   },
   {
     tokenName: 'USD Star',
@@ -504,6 +442,5 @@ export const tokenList: Token[] = [
     mintAddress: 'BenJy1n3WTx9mTjEvy63e8Q1j4RqUc6E4VBMz3ir4Wo6',
     icon: 'https://res.cloudinary.com/dgvnuwspr/image/upload/v1754053412/2025-08-01_18.30.41_utc1fs.jpg',
     decimals: 6,
-    coingeckoSymbol: '',
   },
 ];

@@ -17,7 +17,6 @@ import { BONUS_REWARD_POSITION } from '@/features/listing-builder/constants';
 import { calculateTotalPrizes } from '@/features/listing-builder/utils/rewards';
 import { type Rewards } from '@/features/listings/types';
 import { createPayment } from '@/features/listings/utils/createPayment';
-import { fetchHistoricalTokenUSDValue } from '@/features/wallet/utils/fetchHistoricalTokenUSDValue';
 
 export const maxDuration = 300;
 
@@ -172,11 +171,11 @@ export async function POST(
 
     if (recalculateUsd && listing.token) {
       try {
-        const tokenUsdValue = await fetchHistoricalTokenUSDValue(
-          listing.token,
-          listing.publishedAt || new Date(),
-        );
-        updatedUsdValue = updatedRewardAmount * (tokenUsdValue || 1);
+        const tokenUsdValue: number | undefined = (listing as any)
+          .tokenUsdAtPublish as number | undefined;
+        if (typeof tokenUsdValue === 'number') {
+          updatedUsdValue = updatedRewardAmount * tokenUsdValue;
+        }
         logger.info(
           `Recalculated USD value for listing ${id}: ${updatedUsdValue} (token value: ${tokenUsdValue})`,
         );
