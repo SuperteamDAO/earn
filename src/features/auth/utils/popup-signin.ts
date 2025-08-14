@@ -36,6 +36,35 @@ export async function signInWithPopup<
   // session state.
   const openInNewWindow = options?.openInNewWindow ?? false;
 
+  // IMPORTANT (iOS Safari/Brave): open a placeholder popup synchronously
+  // within the original user gesture (click) before any awaits. Later, once
+  // the OAuth URL is known, we navigate this already-open window. This avoids
+  // popup blocking on iOS which requires synchronous opening.
+  const popupWindowName = 'twitter-auth';
+  const popupWindowFeatures =
+    'toolbar=no, menubar=no, width=600, height=700, top=100, left=100';
+  let preOpenedWindow: Window | null = null;
+  if (openInNewWindow) {
+    try {
+      preOpenedWindow = window.open('', popupWindowName, popupWindowFeatures);
+      // Optional lightweight inline content for better UX while we fetch
+      // the provider URL.
+      try {
+        preOpenedWindow?.document.write(
+          `<!doctype html><html><head><title>Sign in</title><meta name="viewport" content="width=device-width, initial-scale=1" /></head><body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+            <div style="padding:16px; color:#0f172a;">Opening Twitter…</div>
+          </body></html>`,
+        );
+      } catch {
+        // ignore document write errors (cross-origin/navigation races)
+      }
+    } catch {
+      // If the popup is blocked even on the initial synchronous call, we'll
+      // fall back to a regular redirect later when we have the URL.
+      preOpenedWindow = null;
+    }
+  }
+
   const defaultCallbackUrl = openInNewWindow
     ? `${window.location.origin}/auth/popup-callback`
     : window.location.href;
@@ -46,11 +75,14 @@ export async function signInWithPopup<
   const providers = await getProviders();
 
   if (!providers) {
+    // Close the pre-opened window if we cannot continue
+    if (preOpenedWindow && !preOpenedWindow.closed) preOpenedWindow.close();
     window.location.href = `${baseUrl}/error`;
     return;
   }
 
   if (!provider || !(provider in providers)) {
+    if (preOpenedWindow && !preOpenedWindow.closed) preOpenedWindow.close();
     window.location.href = `${baseUrl}/signin?${new URLSearchParams({
       callbackUrl,
     })}`;
@@ -83,10 +115,24 @@ export async function signInWithPopup<
   const data = await res.json();
 
   if (openInNewWindow) {
+    // If we failed to pre-open a window (likely blocked), fall back to a
+    // full-page redirect to ensure the auth flow still works on strict
+    // mobile browsers.
+    if (!preOpenedWindow) {
+      const url = data.url ?? callbackUrl;
+      window.location.href = url;
+      if (url.includes('#')) window.location.reload();
+      return;
+    }
+
     return new Promise((resolve) => {
+      // Navigate the already opened window to the provider URL and attach
+      // the message listener to resolve the promise on completion.
+      // If the initial open was blocked and no window exists, let the helper
+      // try opening (or fall back to redirect by browser behavior).
       openSignInWindow(
         data.url,
-        'twitter-auth',
+        popupWindowName,
         baseUrl,
         (success: boolean, error?: string) => {
           if (success) {
@@ -100,6 +146,7 @@ export async function signInWithPopup<
             } as SignInResult<P>);
           }
         },
+        preOpenedWindow,
       );
     });
   }
@@ -129,13 +176,28 @@ export const openSignInWindow = (
   name: string,
   baseURL: string,
   onComplete?: (success: boolean, error?: string) => void,
+  existingWindow?: Window | null,
 ): void => {
   const strWindowFeatures =
     'toolbar=no, menubar=no, width=600, height=700, top=100, left=100';
 
   console.log('openSignInWindow', url, name, baseURL);
 
-  if (windowObjectReference === null || windowObjectReference.closed) {
+  // Prefer an existing pre-opened window (opened synchronously in a user-gesture)
+  if (existingWindow && !existingWindow.closed) {
+    windowObjectReference = existingWindow;
+    try {
+      windowObjectReference.location.href = url;
+    } catch {
+      // Fallback if direct location set fails
+      try {
+        windowObjectReference.assign(url);
+      } catch {
+        // As a last resort, try reopening/navigating
+        windowObjectReference = window.open(url, name, strWindowFeatures);
+      }
+    }
+  } else if (windowObjectReference === null || windowObjectReference.closed) {
     /* if the pointer to the window object in memory does not exist
      or if such pointer exists but the window was closed */
     windowObjectReference = window.open(url, name, strWindowFeatures);
