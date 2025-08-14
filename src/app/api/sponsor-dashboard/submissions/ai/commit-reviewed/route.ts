@@ -4,6 +4,7 @@ import { type NextRequest, NextResponse } from 'next/server';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { cleanRewards } from '@/utils/rank';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { validateListingSponsorAuth } from '@/features/auth/utils/checkListingSponsorAuth';
@@ -12,6 +13,7 @@ import {
   type BountiesAi,
   type BountySubmissionAi,
   type ProjectApplicationAi,
+  type Rewards,
 } from '@/features/listings/types';
 import { convertTextToNotesHTML } from '@/features/sponsor-dashboard/utils/convertTextToNotesHTML';
 
@@ -153,7 +155,18 @@ export async function POST(request: NextRequest) {
         });
 
         const totalSubmissions = sortedSubmissions.length;
-        const top30Percentile = Math.ceil(totalSubmissions * 0.3);
+
+        const podiums = listing.rewards
+          ? cleanRewards(listing.rewards as Rewards, true).length
+          : 0;
+
+        const maxShortlistedCap = podiums <= 5 ? 10 : 15;
+
+        const topSubmissions = Math.min(
+          Math.ceil(totalSubmissions * 0.3),
+          maxShortlistedCap,
+        );
+
         const bottom20Percentile = Math.ceil(totalSubmissions * 0.2);
 
         processedWithoutFinalLabel = await Promise.all(
@@ -166,7 +179,7 @@ export async function POST(request: NextRequest) {
 
             let label: SubmissionLabels = 'Unreviewed';
 
-            if (index < top30Percentile) {
+            if (index < topSubmissions) {
               label = 'Shortlisted';
             } else if (index >= totalSubmissions - bottom20Percentile) {
               label = 'Low_Quality';

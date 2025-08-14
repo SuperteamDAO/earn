@@ -1,9 +1,9 @@
 export const colorMap = {
   Inaccessible: {
-    bg: 'bg-stone-100',
-    color: 'text-stone-800',
-    border: 'border-stone-300',
-    focus: 'focus:text-stone-900 focus:bg-stone-200',
+    bg: 'bg-red-50',
+    color: 'text-red-800',
+    border: 'border-red-200',
+    focus: 'focus:text-red-800 focus:bg-red-100',
   },
   Low_Quality: {
     bg: 'bg-stone-100',

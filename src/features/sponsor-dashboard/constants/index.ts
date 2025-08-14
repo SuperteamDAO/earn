@@ -13,6 +13,14 @@ export const labelMenuOptions = (type: BountyType | 'grant' | undefined) => [
     : []),
 ];
 
+export const aiOnlyLabelMenuOptions = (
+  type: BountyType | 'grant' | undefined,
+) => [
+  ...(type === 'bounty'
+    ? [{ label: 'Inaccessible', value: 'Inaccessible' }]
+    : []),
+];
+
 export const labelMenuOptionsGrants = [
   { label: 'Pending', value: 'Pending' },
   {

@@ -21,7 +21,7 @@ import { type Listing } from '@/features/listings/types';
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
 import { selectedSubmissionAtom } from '../../atoms';
-import { labelMenuOptions } from '../../constants';
+import { aiOnlyLabelMenuOptions, labelMenuOptions } from '../../constants';
 import { colorMap } from '../../utils/statusColorMap';
 import { MultiSelectFilter } from './MultiSelectFilter';
 
@@ -94,9 +94,14 @@ export const SubmissionList = ({
     ) {
       return 'Rejected';
     } else if (submission?.label) {
-      if (listing?.type === 'bounty' && submission?.label === 'Inaccessible') {
-        return 'Inaccessible';
+      const aiLabel = aiOnlyLabelMenuOptions(listing?.type).find(
+        (option) => option.value === submission.label,
+      )?.label;
+
+      if (aiLabel) {
+        return aiLabel;
       }
+
       return labelMenuOptions(listing?.type).find(
         (option) => option.value === submission.label,
       )?.label;

@@ -11,7 +11,7 @@ import {
 import { StatusPill } from '@/components/ui/status-pill';
 import { Switch } from '@/components/ui/switch';
 
-import { labelMenuOptions } from '../../constants';
+import { aiOnlyLabelMenuOptions, labelMenuOptions } from '../../constants';
 import { colorMap } from '../../utils/statusColorMap';
 
 interface Props {
@@ -31,6 +31,10 @@ export const MultiSelectFilter = ({
     { label: 'Winner', value: 'Winner' as const },
     { label: 'Rejected', value: 'Rejected' as const },
     ...labelMenuOptions(listingType).map((option) => ({
+      label: option.label,
+      value: option.value as SubmissionLabels,
+    })),
+    ...aiOnlyLabelMenuOptions(listingType).map((option) => ({
       label: option.label,
       value: option.value as SubmissionLabels,
     })),
