@@ -627,7 +627,6 @@ export const ApplicationModal = ({
                   placeholder="@StarkIndustries"
                   required
                   formLabel="Personal X Profile"
-                  formDescription="Include links to your best work that will make the community trust you to execute on this project."
                   control={form.control}
                   height="h-9"
                   showVerification
