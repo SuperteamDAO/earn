@@ -21,7 +21,7 @@ export const AutoReviewProjectsFeature = () => {
           Sometimes, reviewing project applications can take forever. Auto
           Review Projects speeds things up by generating smart summaries of
           every applicant - pulling from their application, Proof of Work,
-          GitHub, Twitter activity and more.
+          GitHub, X activity and more.
         </p>
         <div className="mt-6 flex flex-col justify-between gap-4 pr-4 text-sm">
           <Point text={'Top applications worth your time'} />

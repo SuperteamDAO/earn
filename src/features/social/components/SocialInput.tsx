@@ -1,6 +1,8 @@
 import React, { useMemo } from 'react';
 import { type Control } from 'react-hook-form';
 
+import { VerifiedXIcon } from '@/components/icons/VerifiedXIcon';
+import { Button } from '@/components/ui/button';
 import {
   FormControl,
   FormDescription,
@@ -66,6 +68,10 @@ interface SocialInputProps {
     input?: string;
   };
   showIcon?: boolean;
+  showVerification?: boolean;
+  needsVerification?: boolean;
+  isVerified?: boolean;
+  onVerify?: () => void;
 }
 export const SocialInput = ({
   control,
@@ -78,6 +84,10 @@ export const SocialInput = ({
   height,
   classNames,
   showIcon = true,
+  showVerification = false,
+  needsVerification = false,
+  isVerified = false,
+  onVerify,
 }: SocialInputProps) => {
   const social = useMemo(
     () => socials.find((s) => s.name === socialName),
@@ -133,37 +143,53 @@ export const SocialInput = ({
                 )}
 
                 <FormControl>
-                  <Input
-                    {...field}
-                    className={cn(
-                      'h-full w-full',
-                      social?.label ? 'rounded-l-none' : 'rounded-md',
-                      'placeholder:text-sm',
-                      classNames?.input,
-                    )}
-                    placeholder={placeholder}
-                    value={displayValue}
-                    onChange={(e) => {
-                      const value = e.currentTarget.value;
-                      const linkedUsernameValue =
-                        linkedUsernames.safeParse(socialName);
-                      if (linkedUsernameValue.data) {
-                        const extractedUsername = extractSocialUsername(
-                          linkedUsernameValue.data,
-                          value,
-                        );
-                        if (extractedUsername)
-                          field.onChange(removeAtSign(extractedUsername));
-                        else field.onChange(removeAtSign(value));
-                      } else {
-                        if (lowercaseOnly.safeParse(socialName).success) {
-                          field.onChange(removeAtSign(value.toLowerCase()));
+                  <div className="relative flex-1">
+                    <Input
+                      {...field}
+                      className={cn(
+                        'h-9 w-full',
+                        social?.label ? 'rounded-l-none' : 'rounded-md',
+                        'placeholder:text-sm',
+                        showVerification &&
+                          (needsVerification || isVerified) &&
+                          'pr-10',
+                        classNames?.input,
+                      )}
+                      placeholder={placeholder}
+                      value={displayValue}
+                      onChange={(e) => {
+                        const value = e.currentTarget.value;
+                        const linkedUsernameValue =
+                          linkedUsernames.safeParse(socialName);
+                        if (linkedUsernameValue.data) {
+                          const extractedUsername = extractSocialUsername(
+                            linkedUsernameValue.data,
+                            value,
+                          );
+                          if (extractedUsername)
+                            field.onChange(removeAtSign(extractedUsername));
+                          else field.onChange(removeAtSign(value));
                         } else {
-                          field.onChange(removeAtSign(value));
+                          if (lowercaseOnly.safeParse(socialName).success) {
+                            field.onChange(removeAtSign(value.toLowerCase()));
+                          } else {
+                            field.onChange(removeAtSign(value));
+                          }
                         }
-                      }
-                    }}
-                  />
+                      }}
+                    />
+                    {showVerification && needsVerification && (
+                      <Button
+                        type="button"
+                        onClick={onVerify}
+                        size="sm"
+                        className="absolute top-1/2 right-1 h-7 -translate-y-1/2 px-3 text-xs"
+                      >
+                        Verify
+                      </Button>
+                    )}
+                    {showVerification && isVerified && <VerifiedXIcon />}
+                  </div>
                 </FormControl>
               </div>
             </div>
