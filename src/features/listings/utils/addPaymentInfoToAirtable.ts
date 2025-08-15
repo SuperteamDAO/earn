@@ -233,7 +233,7 @@ export async function addPaymentInfoToAirtable(
         ) || s.region === submission.user.location,
     );
 
-    const regionName = superteam ? superteam.displayValue : 'Global';
+    const regionName = superteam ? superteam.region : 'Global';
 
     logger.info(
       `Determined region name: '${regionName}' based on user location: '${submission.user.location ?? 'N/A'}' for Submission ID: ${validatedSubmissionId}`,
