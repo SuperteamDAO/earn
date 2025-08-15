@@ -181,7 +181,9 @@ export const openSignInWindow = (
   const strWindowFeatures =
     'toolbar=no, menubar=no, width=600, height=700, top=100, left=100';
 
-  console.log('openSignInWindow', url, name, baseURL);
+  if (process.env.NODE_ENV === 'development') {
+    console.log('openSignInWindow', url, name, baseURL);
+  }
 
   // Prefer an existing pre-opened window (opened synchronously in a user-gesture)
   if (existingWindow && !existingWindow.closed) {

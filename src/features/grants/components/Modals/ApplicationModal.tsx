@@ -81,17 +81,23 @@ export const ApplicationModal = ({
 
   const { id, token, minReward, maxReward, questions } = grant;
 
+  const dynamicResolver = useMemo(
+    () =>
+      zodResolver(
+        grantApplicationSchema(
+          minReward || 0,
+          maxReward || 0,
+          token || 'USDC',
+          grant.questions,
+          user,
+        ),
+      ),
+    [minReward, maxReward, token, grant.questions, user],
+  );
+
   const [isLoading, setIsLoading] = useState(false);
   const form = useForm<FormData>({
-    resolver: zodResolver(
-      grantApplicationSchema(
-        minReward || 0,
-        maxReward || 0,
-        token || 'USDC',
-        grant.questions,
-        user,
-      ),
-    ),
+    resolver: dynamicResolver,
     defaultValues: {
       projectTitle: grantApplication?.projectTitle || '',
       projectOneLiner: grantApplication?.projectOneLiner || '',
@@ -168,19 +174,6 @@ export const ApplicationModal = ({
     const verifiedHandles = user?.linkedTwitter || [];
     return isHandleVerified(xHandleForVerification, verifiedHandles);
   }, [xHandleForVerification, user?.linkedTwitter]);
-
-  useEffect(() => {
-    const newResolver = zodResolver(
-      grantApplicationSchema(
-        minReward || 0,
-        maxReward || 0,
-        token || 'USDC',
-        grant.questions,
-        user,
-      ),
-    );
-    form.control._options.resolver = newResolver;
-  }, [user, minReward, maxReward, token, grant.questions, form.control]);
 
   useEffect(() => {
     if (twitterValue && !isValidXProfileInput) {

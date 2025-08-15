@@ -115,9 +115,7 @@ export const transformToPrismaData = async ({
       }
     } else {
       if (listing.publishedAt && amount > 0) {
-        let priceToUse = (listing as any).tokenUsdAtPublish as
-          | number
-          | undefined;
+        let priceToUse = listing.tokenUsdAtPublish as number | undefined;
 
         if (tokenChanged && validatedListing.token) {
           const token = tokenList.find(

@@ -1,5 +1,6 @@
 import { PrivyProvider } from '@privy-io/react-auth';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { type Session } from 'next-auth';
 import { SessionProvider } from 'next-auth/react';
 
 import { fontMono, fontSans } from '@/theme/fonts';
@@ -11,7 +12,7 @@ export default function Providers({
   session,
 }: {
   children: React.ReactNode;
-  session?: any;
+  session?: Session | null;
 }) {
   return (
     <SessionProvider session={session}>
