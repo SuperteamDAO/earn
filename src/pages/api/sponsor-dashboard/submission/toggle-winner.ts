@@ -7,7 +7,6 @@ import { type NextApiRequestWithSponsor } from '@/features/auth/types';
 import { checkListingSponsorAuth } from '@/features/auth/utils/checkListingSponsorAuth';
 import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
 import { BONUS_REWARD_POSITION } from '@/features/listing-builder/constants';
-import { fetchHistoricalTokenUSDValue } from '@/features/wallet/utils/fetchHistoricalTokenUSDValue';
 
 interface SubmissionUpdate {
   id: string;
@@ -305,11 +304,9 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           logger.debug(
             `Fetching token USD value for variable or range compensation for submission ${id}`,
           );
-          const tokenUSDValue = await fetchHistoricalTokenUSDValue(
-            firstListing.token!,
-            firstListing.publishedAt!,
-          );
-          const usdValue = tokenUSDValue * ask;
+          const tokenUSDValue: number | undefined = (firstListing as any)
+            .tokenUsdAtPublish as number | undefined;
+          const usdValue = (tokenUSDValue ?? 0) * ask;
 
           await prisma.bounties.update({
             where: { id: listingId },

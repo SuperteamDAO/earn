@@ -106,7 +106,7 @@ export const socialSuperRefine = async (
   } else if (!data.twitter) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
-      message: 'Twitter is requierd',
+      message: 'X is requierd',
       path: ['twitter'],
     });
   }

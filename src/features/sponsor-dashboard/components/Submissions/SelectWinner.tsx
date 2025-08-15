@@ -1,5 +1,5 @@
 import { useAtom } from 'jotai';
-import { Check, ChevronDown, X } from 'lucide-react';
+import { Check, ChevronDown, Trophy, X } from 'lucide-react';
 import { useMemo } from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -11,9 +11,8 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { tokenList } from '@/constants/tokenList';
 import { useDisclosure } from '@/hooks/use-disclosure';
-import { cn } from '@/utils/cn';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
-import { cleanRewards, getRankLabels, sortRank } from '@/utils/rank';
+import { cleanRewards, nthLabelGenerator, sortRank } from '@/utils/rank';
 
 import { BONUS_REWARD_POSITION } from '@/features/listing-builder/constants';
 import type { Listing, Rewards } from '@/features/listings/types';
@@ -112,51 +111,154 @@ export const SelectWinner = ({
           </div>
         ) : (
           <div className="relative">
-            <DropdownMenu>
-              <div className="relative flex">
-                <DropdownMenuTrigger asChild className="min-w-[180px]">
-                  <Button
-                    variant="outline"
-                    disabled={
-                      !!bounty?.isWinnersAnnounced ||
-                      isHackathonPage ||
-                      isMultiSelectOn
-                    }
-                    className={cn(
-                      'w-full justify-between rounded-lg py-4 transition-all duration-300 ease-out disabled:opacity-50 data-[state=open]:rounded-b-none data-[state=open]:border-slate-200',
-                      isValueSelected
-                        ? 'border border-emerald-600 bg-emerald-600 pr-10 text-white hover:bg-emerald-700 hover:text-white'
-                        : 'border border-emerald-500 bg-emerald-50 text-emerald-600 hover:bg-emerald-100 hover:text-emerald-600',
-                    )}
-                  >
-                    <div className="flex items-center">
-                      <div
-                        className={cn(
-                          'mr-2 rounded-full p-0.5 transition-all duration-300 ease-out',
-                          isValueSelected ? 'bg-white' : 'bg-emerald-600',
-                        )}
-                      >
-                        <Check
-                          className={cn(
-                            'size-1 transition-all duration-300 ease-out',
-                            isValueSelected ? 'text-emerald-600' : 'text-white',
-                          )}
-                        />
+            {!isValueSelected ? (
+              <DropdownMenu>
+                <div className="relative flex">
+                  <DropdownMenuTrigger asChild className="min-w-[180px]">
+                    <Button
+                      variant="outline"
+                      disabled={
+                        !!bounty?.isWinnersAnnounced ||
+                        isHackathonPage ||
+                        isMultiSelectOn
+                      }
+                      className="w-full justify-between rounded-lg border border-emerald-600 bg-emerald-50 py-4 text-emerald-600 transition-all duration-300 ease-out hover:bg-emerald-100 hover:text-emerald-700 disabled:opacity-50 data-[state=open]:rounded-b-none data-[state=open]:border-slate-200"
+                    >
+                      <div className="flex items-center">
+                        <div className="mr-2">
+                          <Trophy className="size-4 text-emerald-600 transition-all duration-300 ease-out" />
+                        </div>
+                        <span className="text-sm font-semibold text-emerald-600 capitalize">
+                          Select Winner
+                        </span>
                       </div>
-                      <span className="capitalize">
-                        {selectedSubmission?.isWinner &&
-                        selectedSubmission.winnerPosition
-                          ? getRankLabels(selectedSubmission.winnerPosition) +
-                            ' Prize'
-                          : 'Select Winner'}
-                      </span>
+                      <ChevronDown className="size-4 text-emerald-600" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                </div>
+                <DropdownMenuContent
+                  sideOffset={-1}
+                  className="w-full min-w-[180px] divide-y divide-slate-100 rounded-t-none p-0"
+                >
+                  {rewards.map((reward) => {
+                    let isRewardUsed = usedPositions.includes(reward);
+                    if (reward === BONUS_REWARD_POSITION) {
+                      if (
+                        usedPositions.filter((u) => u === BONUS_REWARD_POSITION)
+                          .length < (bounty?.maxBonusSpots ?? 0)
+                      ) {
+                        isRewardUsed = false;
+                      }
+                    }
+                    const isCurrentSubmissionReward =
+                      Number(selectedSubmission?.winnerPosition) === reward;
+
+                    return (
+                      (!isRewardUsed || isCurrentSubmissionReward) && (
+                        <DropdownMenuItem
+                          key={reward}
+                          className="cursor-pointer font-medium capitalize"
+                          onClick={() =>
+                            selectWinner(reward, selectedSubmission?.id)
+                          }
+                        >
+                          <div className="flex w-full justify-between px-0 py-0.5">
+                            <p className="text-slate-500">
+                              {nthLabelGenerator(reward)}
+                            </p>
+                            <div className="flex items-center gap-1">
+                              {bounty?.token && (
+                                <div className="flex items-center gap-1">
+                                  <img
+                                    src={
+                                      tokenList.find(
+                                        (t) => t.tokenSymbol === bounty?.token,
+                                      )?.icon
+                                    }
+                                    alt="token"
+                                    className="h-4 w-4"
+                                  />
+                                  <p className="font-semibold text-slate-700">
+                                    {bounty?.compensationType === 'fixed'
+                                      ? bounty?.rewards &&
+                                        formatNumberWithSuffix(
+                                          bounty?.rewards[
+                                            reward as keyof Rewards
+                                          ] ?? 0,
+                                          1,
+                                          false,
+                                        )
+                                      : selectedSubmission?.ask}
+                                  </p>
+                                  <span className="text-slate-400">
+                                    {bounty.token}
+                                  </span>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </DropdownMenuItem>
+                      )
+                    );
+                  })}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <div className="relative flex">
+                <Button
+                  variant="outline"
+                  disabled={
+                    !!bounty?.isWinnersAnnounced ||
+                    isHackathonPage ||
+                    isMultiSelectOn
+                  }
+                  className="w-full justify-between rounded-lg border border-slate-200 bg-white py-4 transition-all duration-300 ease-out hover:bg-slate-50 disabled:opacity-50"
+                >
+                  <div className="flex items-center">
+                    <div className="mr-2">
+                      <Trophy className="size-4 text-emerald-600 transition-all duration-300 ease-out" />
                     </div>
-                    {!isValueSelected && <ChevronDown className="size-4" />}
-                  </Button>
-                </DropdownMenuTrigger>
-                {isValueSelected && (
+                    <span className="text-sm font-semibold text-emerald-600 capitalize">
+                      {selectedSubmission?.winnerPosition &&
+                        nthLabelGenerator(selectedSubmission.winnerPosition)}
+                    </span>
+                    {selectedSubmission?.winnerPosition && (
+                      <>
+                        <div className="mx-3 h-4 w-px bg-slate-200" />
+                        <div className="flex items-center gap-2">
+                          {bounty?.token && (
+                            <img
+                              src={
+                                tokenList.find(
+                                  (t) => t.tokenSymbol === bounty?.token,
+                                )?.icon
+                              }
+                              alt={bounty.token}
+                              className="h-5 w-5 rounded-full"
+                            />
+                          )}
+                          <span className="font-semibold text-slate-900">
+                            {bounty?.rewards && bounty?.token && (
+                              <>
+                                {formatNumberWithSuffix(
+                                  bounty.rewards[
+                                    selectedSubmission.winnerPosition as keyof Rewards
+                                  ] ?? 0,
+                                  1,
+                                  false,
+                                )}
+                                <span className="ml-1 font-normal text-slate-400">
+                                  {bounty.token}
+                                </span>
+                              </>
+                            )}
+                          </span>
+                        </div>
+                      </>
+                    )}
+                  </div>
                   <button
-                    className="absolute top-1/2 right-4 z-10 flex size-4 -translate-y-1/2 items-center justify-center rounded-full border border-white text-white transition-all duration-300 ease-out hover:text-emerald-100 disabled:cursor-not-allowed disabled:opacity-50"
+                    className="flex h-6 w-6 items-center justify-center rounded-full border border-slate-300 text-slate-400 transition-all duration-300 ease-out hover:border-slate-400 hover:text-slate-500"
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
@@ -168,75 +270,9 @@ export const SelectWinner = ({
                   >
                     <X className="size-3" />
                   </button>
-                )}
+                </Button>
               </div>
-              <DropdownMenuContent
-                sideOffset={-1}
-                className="w-full min-w-[180px] divide-y divide-slate-100 rounded-t-none p-0"
-              >
-                {rewards.map((reward) => {
-                  let isRewardUsed = usedPositions.includes(reward);
-                  if (reward === BONUS_REWARD_POSITION) {
-                    if (
-                      usedPositions.filter((u) => u === BONUS_REWARD_POSITION)
-                        .length < (bounty?.maxBonusSpots ?? 0)
-                    ) {
-                      isRewardUsed = false;
-                    }
-                  }
-                  const isCurrentSubmissionReward =
-                    Number(selectedSubmission?.winnerPosition) === reward;
-
-                  return (
-                    (!isRewardUsed || isCurrentSubmissionReward) && (
-                      <DropdownMenuItem
-                        key={reward}
-                        className="cursor-pointer font-medium capitalize"
-                        onClick={() =>
-                          selectWinner(reward, selectedSubmission?.id)
-                        }
-                      >
-                        <div className="flex w-full justify-between px-0 py-0.5">
-                          <p className="text-slate-500">
-                            {getRankLabels(reward)}
-                          </p>
-                          <div className="flex items-center gap-1">
-                            {bounty?.token && (
-                              <div className="flex items-center gap-1">
-                                <img
-                                  src={
-                                    tokenList.find(
-                                      (t) => t.tokenSymbol === bounty?.token,
-                                    )?.icon
-                                  }
-                                  alt="token"
-                                  className="h-4 w-4"
-                                />
-                                <p className="font-semibold text-slate-700">
-                                  {bounty?.compensationType === 'fixed'
-                                    ? bounty?.rewards &&
-                                      formatNumberWithSuffix(
-                                        bounty?.rewards[
-                                          reward as keyof Rewards
-                                        ] ?? 0,
-                                        2,
-                                        true,
-                                      )
-                                    : selectedSubmission?.ask}
-                                </p>
-                                <span className="text-slate-400">
-                                  {bounty?.token}
-                                </span>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      </DropdownMenuItem>
-                    )
-                  );
-                })}
-              </DropdownMenuContent>
-            </DropdownMenu>
+            )}
           </div>
         )}
       </div>

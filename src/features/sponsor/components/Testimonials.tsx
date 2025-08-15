@@ -94,7 +94,7 @@ export function Testimonials() {
               />
             </div>
             <p className="text-base text-black md:text-[1.5rem]">
-              Tensor HQ, on Twitter
+              Tensor HQ, on X
             </p>
           </div>
         </div>

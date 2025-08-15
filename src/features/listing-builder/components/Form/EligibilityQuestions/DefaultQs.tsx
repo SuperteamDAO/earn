@@ -48,7 +48,7 @@ export function DefaultEligibilityQuestions() {
               icon={
                 <Twitter className="h-4 w-4 text-slate-400 opacity-100 grayscale-0" />
               }
-              label="Twitter post"
+              label="X post"
             />
           </>
         )}

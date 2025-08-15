@@ -48,7 +48,7 @@ export const ShareProfile = ({ isOpen, onClose, username, id }: Props) => {
 
   const socialPlatforms: SocialPlatform[] = [
     {
-      name: 'Twitter',
+      name: 'X',
       icon: FaXTwitter,
       share: (url, message) => {
         const encodedMessage = encodeURIComponent(message);

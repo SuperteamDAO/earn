@@ -236,7 +236,7 @@ export default function UpdateSponsor() {
                 <SocialInput
                   name="twitter"
                   socialName={'twitter'}
-                  formLabel="Company Twitter"
+                  formLabel="Company X"
                   placeholder="@StarkIndustries"
                   required
                   control={form.control}

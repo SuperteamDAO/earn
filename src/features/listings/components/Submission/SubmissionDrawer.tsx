@@ -9,6 +9,7 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { type z } from 'zod';
 
+import { VerifiedXIcon } from '@/components/icons/VerifiedXIcon';
 import { RichEditor } from '@/components/shared/RichEditor';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -25,12 +26,20 @@ import { FormFieldWrapper } from '@/components/ui/form-field-wrapper';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { SideDrawer, SideDrawerContent } from '@/components/ui/side-drawer';
+import { useDisclosure } from '@/hooks/use-disclosure';
 import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 
+import { usePopupAuth } from '@/features/auth/hooks/use-popup-auth';
 import { CreditIcon } from '@/features/credits/icon/credit';
 import { SocialInput } from '@/features/social/components/SocialInput';
+import { XVerificationModal } from '@/features/social/components/XVerificationModal';
+import {
+  extractXHandle,
+  isHandleVerified,
+  isXUrl,
+} from '@/features/social/utils/x-verification';
 
 import { submissionCountQuery } from '../../queries/submission-count';
 import { userSubmissionQuery } from '../../queries/user-submission-status';
@@ -80,6 +89,17 @@ export const SubmissionDrawer = ({
   const [isLoading, setIsLoading] = useState(false);
   const [isTOSModalOpen, setIsTOSModalOpen] = useState(false);
   const [termsAccepted, setTermsAccepted] = useState(false);
+  const {
+    isOpen: isVerificationModalOpen,
+    onOpen: onVerificationModalOpen,
+    onClose: onVerificationModalClose,
+  } = useDisclosure();
+  const [verificationStatus, setVerificationStatus] = useState<
+    'loading' | 'error'
+  >('loading');
+  const [verificationHandle, setVerificationHandle] = useState<string | null>(
+    null,
+  );
 
   const { user, refetchUser } = useUser();
   const form = useForm<FormData>({
@@ -100,6 +120,85 @@ export const SubmissionDrawer = ({
 
   const router = useRouter();
   const { query } = router;
+
+  const tweetValue = form.watch('tweet');
+  const linkValue = form.watch('link');
+
+  const needsXVerification = useMemo(() => {
+    if (!tweetValue || !isXUrl(tweetValue)) {
+      return false;
+    }
+
+    const handle = extractXHandle(tweetValue);
+    if (!handle) {
+      return false;
+    }
+
+    const verifiedHandles = user?.linkedTwitter || [];
+    return !isHandleVerified(handle, verifiedHandles);
+  }, [tweetValue, user?.linkedTwitter]);
+
+  const needsLinkVerification = useMemo(() => {
+    if (!linkValue || !isXUrl(linkValue)) {
+      return false;
+    }
+
+    const handle = extractXHandle(linkValue);
+    if (!handle) {
+      return false;
+    }
+
+    const verifiedHandles = user?.linkedTwitter || [];
+    return !isHandleVerified(handle, verifiedHandles);
+  }, [linkValue, user?.linkedTwitter]);
+
+  const isTweetVerified = useMemo(() => {
+    if (!tweetValue || !isXUrl(tweetValue)) {
+      return false;
+    }
+
+    const handle = extractXHandle(tweetValue);
+    if (!handle) {
+      return false;
+    }
+
+    const verifiedHandles = user?.linkedTwitter || [];
+    return isHandleVerified(handle, verifiedHandles);
+  }, [tweetValue, user?.linkedTwitter]);
+
+  const isLinkVerified = useMemo(() => {
+    if (!linkValue || !isXUrl(linkValue)) {
+      return false;
+    }
+
+    const handle = extractXHandle(linkValue);
+    if (!handle) {
+      return false;
+    }
+
+    const verifiedHandles = user?.linkedTwitter || [];
+    return isHandleVerified(handle, verifiedHandles);
+  }, [linkValue, user?.linkedTwitter]);
+
+  useEffect(() => {
+    if (needsXVerification) {
+      form.setError('tweet', {
+        type: 'manual',
+        message: 'We need to verify that you own this X account',
+      });
+    } else {
+      form.clearErrors('tweet');
+    }
+
+    if (needsLinkVerification) {
+      form.setError('link', {
+        type: 'manual',
+        message: 'We need to verify that you own this X account',
+      });
+    } else {
+      form.clearErrors('link');
+    }
+  }, [needsXVerification, needsLinkVerification, form]);
 
   const handleClose = () => {
     form.reset({
@@ -154,7 +253,9 @@ export const SubmissionDrawer = ({
           !!query['preview'] ||
           (isHackathon && !editMode && !termsAccepted) ||
           isLoading ||
-          form.formState.isSubmitting,
+          form.formState.isSubmitting ||
+          needsXVerification ||
+          needsLinkVerification,
       ),
 
     [
@@ -166,8 +267,66 @@ export const SubmissionDrawer = ({
       termsAccepted,
       isLoading,
       form.formState.isSubmitting,
+      needsXVerification,
+      needsLinkVerification,
     ],
   );
+
+  const { signIn: popupSignIn } = usePopupAuth();
+
+  const handleVerifyClick = async (fieldName: 'tweet' | 'link') => {
+    const fieldValue = fieldName === 'tweet' ? tweetValue : linkValue;
+    if (!fieldValue) return;
+
+    const handle = extractXHandle(fieldValue);
+    if (!handle) return;
+
+    try {
+      setVerificationStatus('loading');
+      setVerificationHandle(handle);
+      onVerificationModalOpen();
+
+      const success = await popupSignIn('twitter');
+
+      if (success) {
+        let attempts = 0;
+        const maxAttempts = 5;
+        const pollForUpdate = async (): Promise<boolean> => {
+          const { data: freshUser } = await refetchUser();
+
+          const currentVerifiedHandles = freshUser?.linkedTwitter || [];
+          const isNowVerified = isHandleVerified(
+            handle,
+            currentVerifiedHandles,
+          );
+
+          if (isNowVerified) {
+            form.trigger(fieldName);
+            setVerificationHandle(null);
+            onVerificationModalClose();
+            return true;
+          }
+
+          attempts++;
+          if (attempts >= maxAttempts) {
+            setVerificationStatus('error');
+            return false;
+          }
+
+          const delay = Math.min(500 * Math.pow(2, attempts - 1), 5000);
+          await new Promise((resolve) => setTimeout(resolve, delay));
+          return pollForUpdate();
+        };
+
+        await pollForUpdate();
+      } else {
+        setVerificationStatus('error');
+      }
+    } catch (error: any) {
+      console.error('X verification failed:', error);
+      setVerificationStatus('error');
+    }
+  };
 
   const onSubmit = async (data: FormData) => {
     if (isLoading) return;
@@ -281,9 +440,9 @@ export const SubmissionDrawer = ({
         <>
           Note:
           <p>
-            1. In the “Link to your Submission” field, submit your hackathon
-            project’s most useful link (could be a loom video, GitHub link,
-            website, etc)
+            1. In the &quot;Link to your Submission&quot; field, submit your
+            hackathon project&apos;s most useful link (could be a loom video,
+            GitHub link, website, etc)
           </p>
           <p>
             2. To be eligible for different tracks, you need to submit to each
@@ -337,19 +496,39 @@ export const SubmissionDrawer = ({
                               </div>
                               <div>
                                 <FormControl>
-                                  <div className="flex">
+                                  <div className="mr-0.5 flex">
                                     <div className="border-input bg-muted flex items-center gap-1 rounded-l-md border border-r-0 px-2 shadow-xs">
                                       <p className="text-sm font-medium text-slate-500">
                                         https://
                                       </p>
                                     </div>
-                                    <Input
-                                      {...field}
-                                      maxLength={500}
-                                      placeholder="Add a link"
-                                      className="rounded-l-none"
-                                      autoComplete="off"
-                                    />
+                                    <div className="relative flex-1">
+                                      <Input
+                                        {...field}
+                                        maxLength={500}
+                                        placeholder="Add a link"
+                                        className={cn(
+                                          'rounded-l-none',
+                                          (needsLinkVerification ||
+                                            isLinkVerified) &&
+                                            'pr-10',
+                                        )}
+                                        autoComplete="off"
+                                      />
+                                      {needsLinkVerification && (
+                                        <Button
+                                          type="button"
+                                          onClick={() =>
+                                            handleVerifyClick('link')
+                                          }
+                                          size="sm"
+                                          className="absolute top-1/2 right-1 h-7 -translate-y-1/2 px-3 text-xs"
+                                        >
+                                          Verify
+                                        </Button>
+                                      )}
+                                      {isLinkVerified && <VerifiedXIcon />}
+                                    </div>
                                   </div>
                                 </FormControl>
 
@@ -367,26 +546,46 @@ export const SubmissionDrawer = ({
                                 <FormLabel>Tweet Link</FormLabel>
                                 <FormDescription>
                                   This helps sponsors discover (and maybe
-                                  repost) your work on Twitter! If this
-                                  submission is for a Twitter thread bounty, you
-                                  can ignore this field.
+                                  repost) your work on X! If this submission is
+                                  for a X thread bounty, you can ignore this
+                                  field.
                                 </FormDescription>
                               </div>
                               <div>
                                 <FormControl>
-                                  <div className="flex">
+                                  <div className="mr-0.5 flex">
                                     <div className="border-input bg-muted flex items-center gap-1 rounded-l-md border border-r-0 px-2 shadow-xs">
                                       <p className="text-sm font-medium text-slate-500">
                                         https://
                                       </p>
                                     </div>
-                                    <Input
-                                      {...field}
-                                      maxLength={500}
-                                      placeholder="Add a tweet's link"
-                                      className="rounded-l-none"
-                                      autoComplete="off"
-                                    />
+                                    <div className="relative flex-1">
+                                      <Input
+                                        {...field}
+                                        maxLength={500}
+                                        placeholder="Add a tweet's link"
+                                        className={cn(
+                                          'rounded-l-none',
+                                          (needsXVerification ||
+                                            isTweetVerified) &&
+                                            'pr-10',
+                                        )}
+                                        autoComplete="off"
+                                      />
+                                      {needsXVerification && (
+                                        <Button
+                                          type="button"
+                                          onClick={() =>
+                                            handleVerifyClick('tweet')
+                                          }
+                                          size="sm"
+                                          className="absolute top-1/2 right-1 h-7 -translate-y-1/2 px-3 text-xs"
+                                        >
+                                          Verify
+                                        </Button>
+                                      )}
+                                      {isTweetVerified && <VerifiedXIcon />}
+                                    </div>
                                   </div>
                                 </FormControl>
                                 <FormMessage className="pt-1" />
@@ -548,6 +747,15 @@ export const SubmissionDrawer = ({
             sponsorName={listing.sponsor.name}
           />
         )}
+        <XVerificationModal
+          isOpen={isVerificationModalOpen}
+          onClose={() => {
+            setVerificationHandle(null);
+            onVerificationModalClose();
+          }}
+          status={verificationStatus}
+          handle={verificationHandle}
+        />
       </SideDrawerContent>
     </SideDrawer>
   );

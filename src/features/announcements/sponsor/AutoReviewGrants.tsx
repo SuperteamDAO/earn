@@ -19,7 +19,7 @@ export const AutoReviewGrantsFeature = () => {
         <p className="text-xl font-semibold">Auto Review has improved!</p>
         <p className="mt-2 text-base font-normal text-slate-500">
           {`Auto review now considers external links (such as Google Docs,
-            Github, Twitter, etc.) and the applicant's profile and proof of work
+            Github, X, etc.) and the applicant's profile and proof of work
             on Earn to give more accurate reviews.`}
         </p>
         <div className="mt-6 flex flex-col justify-between gap-4 pr-4 text-sm">
