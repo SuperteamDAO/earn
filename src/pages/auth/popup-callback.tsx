@@ -19,11 +19,16 @@ export default function PopupCallback() {
       // Send the search params (e.g., "?error=OAuthAccountNotLinked") back to
       // the opener. The listener on the parent page expects a raw query string.
       if (window.opener) {
-        window.opener.postMessage(
-          window.location.search,
-          window.location.origin,
-        );
+        try {
+          window.opener.postMessage(
+            { type: 'earn-auth', query: window.location.search },
+            window.location.origin,
+          );
+        } catch {
+          // Ignore postMessage errors and rely on storage fallback
+        }
       }
+      // Intentionally no storage fallback to minimize surface area.
     } finally {
       // Close the window if possible. Some browsers may block this if the page
       // wasn't opened via `window.open`.
