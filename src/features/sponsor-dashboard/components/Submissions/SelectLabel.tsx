@@ -15,7 +15,7 @@ import { api } from '@/lib/api';
 import { cn } from '@/utils/cn';
 
 import { isStateUpdatingAtom, selectedSubmissionAtom } from '../../atoms';
-import { labelMenuOptions } from '../../constants';
+import { aiOnlyLabelMenuOptions, labelMenuOptions } from '../../constants';
 import { colorMap } from '../../utils/statusColorMap';
 
 interface Props {
@@ -98,7 +98,7 @@ export const SelectLabel = ({ listingSlug, type }: Props) => {
             border,
           )}
         >
-          {labelMenuOptions(type).find(
+          {[...labelMenuOptions(type), ...aiOnlyLabelMenuOptions(type)].find(
             (option) => option.value === selectedSubmission?.label,
           )?.label || 'Select Option'}
           <ChevronDown className="ml-2 size-3" />

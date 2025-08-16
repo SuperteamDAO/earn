@@ -104,6 +104,8 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           sortKey = 100;
         } else if (submission.status === 'Rejected') {
           sortKey = 900;
+        } else if (submission.label === 'Needs_Review') {
+          sortKey = 150;
         } else if (submission.label === 'Shortlisted') {
           sortKey = 200;
         } else if (submission.label === 'Unreviewed') {

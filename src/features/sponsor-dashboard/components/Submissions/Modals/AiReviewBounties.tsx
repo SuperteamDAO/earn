@@ -42,6 +42,7 @@ export default function AiReviewBountiesSubmissionsModal({
   listing,
 }: Props) {
   const [open, setOpen] = useState(false);
+  const [tooltipOpen, setTooltipOpen] = useState(true);
   const [state, setState] = useState<
     'DISCLAIMER' | 'INIT' | 'PROCESSING' | 'DONE' | 'ERROR'
   >('DISCLAIMER');
@@ -181,6 +182,7 @@ export default function AiReviewBountiesSubmissionsModal({
       onOpenChange={(s) => {
         if (state === 'PROCESSING') return;
         if (s === false) posthog.capture('close_ai review bounties');
+        if (s === true) setTooltipOpen(false);
         setOpen(s);
       }}
     >
@@ -191,23 +193,36 @@ export default function AiReviewBountiesSubmissionsModal({
         listing?.isPublished &&
         !!listing?.ai?.context &&
         !!unreviewedSubmissions?.length && (
-          <DialogTrigger asChild>
-            <button
-              className="h-10 translate-y-2 focus:outline-none"
-              onClick={() => {
-                posthog.capture('open_ai review bounties');
-              }}
-            >
-              <div className="relative flex h-full items-center gap-3 overflow-hidden rounded-[0.5rem] border-[0.09375rem] border-indigo-600 bg-indigo-50 px-4 text-sm text-indigo-600 drop-shadow drop-shadow-indigo-100 focus:outline-hidden">
-                <WandAnimated
-                  className="!size-4"
-                  stickColor="bg-indigo-500"
-                  starColor="bg-indigo-500"
-                />
-                Review with AI
-              </div>
-            </button>
-          </DialogTrigger>
+          <Tooltip
+            open={tooltipOpen}
+            showArrow
+            content="Save hours by reviewing with AI"
+            contentProps={{
+              sideOffset: -4,
+              className: 'bg-black text-white border-none rounded-[0.5rem]',
+            }}
+            arrowProps={{
+              className: 'fill-black stroke-black',
+            }}
+          >
+            <DialogTrigger asChild>
+              <button
+                className="h-10 min-w-max translate-y-2 focus:outline-none"
+                onClick={() => {
+                  posthog.capture('open_ai review bounties');
+                }}
+              >
+                <div className="relative flex h-full items-center gap-3 overflow-hidden rounded-[0.5rem] border-[0.09375rem] border-indigo-400 bg-indigo-50 px-4 text-sm text-indigo-600 focus:outline-hidden">
+                  <WandAnimated
+                    className="!size-4"
+                    stickColor="bg-indigo-500"
+                    starColor="bg-indigo-500"
+                  />
+                  Review with AI
+                </div>
+              </button>
+            </DialogTrigger>
+          </Tooltip>
         )}
       <DialogContent className="p-0 sm:max-w-md" hideCloseIcon>
         <Card className="border-0 shadow-none">
@@ -428,7 +443,7 @@ export default function AiReviewBountiesSubmissionsModal({
                       <StatItem
                         label="Needs Manual Review"
                         value={completedStats.unreviewed}
-                        dotColor="bg-orange-300"
+                        dotColor="bg-amber-400"
                       />
                       <StatItem
                         label="Total time saved"

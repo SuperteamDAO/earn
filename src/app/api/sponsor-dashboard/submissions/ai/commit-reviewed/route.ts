@@ -160,10 +160,14 @@ export async function POST(request: NextRequest) {
           ? cleanRewards(listing.rewards as Rewards, true).length
           : 0;
 
+        const top10Percent = Math.ceil(totalSubmissions * 0.1);
+
+        const minShortlistedCount = Math.max(top10Percent, podiums + 3);
+
         const maxShortlistedCap = podiums <= 5 ? 10 : 15;
 
-        const topSubmissions = Math.min(
-          Math.ceil(totalSubmissions * 0.3),
+        const finalShortlistedCount = Math.min(
+          minShortlistedCount,
           maxShortlistedCap,
         );
 
@@ -179,7 +183,7 @@ export async function POST(request: NextRequest) {
 
             let label: SubmissionLabels = 'Unreviewed';
 
-            if (index < topSubmissions) {
+            if (index < finalShortlistedCount) {
               label = 'Shortlisted';
             } else if (index >= totalSubmissions - bottom20Percentile) {
               label = 'Low_Quality';

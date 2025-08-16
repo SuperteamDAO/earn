@@ -175,7 +175,7 @@ export const SubmissionHeader = ({
     bountyStatus === 'In Review';
 
   return (
-    <div className="mb-2 flex items-center justify-between">
+    <div className="mb-2 flex items-center justify-between gap-12">
       <div>
         <Breadcrumb className="text-slate-400">
           <BreadcrumbList>

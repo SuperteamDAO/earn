@@ -17,7 +17,10 @@ export const aiOnlyLabelMenuOptions = (
   type: BountyType | 'grant' | undefined,
 ) => [
   ...(type === 'bounty'
-    ? [{ label: 'Inaccessible', value: 'Inaccessible' }]
+    ? [
+        { label: 'Inaccessible', value: 'Inaccessible' },
+        { label: 'Needs Review', value: 'Needs_Review' },
+      ]
     : []),
 ];
 

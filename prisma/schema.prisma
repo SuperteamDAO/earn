@@ -846,6 +846,7 @@ enum SubmissionLabels {
   High_Quality
   Pending
   Inaccessible
+  Needs_Review
 }
 
 enum TalentRankingTimeframe {
