@@ -88,7 +88,7 @@ export default function AiReviewBountiesSubmissionsModal({
     midQuality: 0,
     lowQuality: 0,
     inaccessible: 0,
-    unreviewed: 0,
+    needsReview: 0,
     totalHoursSaved: 0,
   });
 
@@ -155,7 +155,8 @@ export default function AiReviewBountiesSubmissionsModal({
           lowQuality: data.data.filter((s) => s.label === 'Low_Quality').length,
           inaccessible: data.data.filter((s) => s.label === 'Inaccessible')
             .length,
-          unreviewed: data.data.filter((s) => s.label === 'Unreviewed').length,
+          needsReview: data.data.filter((s) => s.label === 'Needs_Review')
+            .length,
           totalHoursSaved: data.data.length * 6_00_000,
         });
         posthog.capture('complete_ai review bounties');
@@ -442,7 +443,7 @@ export default function AiReviewBountiesSubmissionsModal({
                       />
                       <StatItem
                         label="Needs Manual Review"
-                        value={completedStats.unreviewed}
+                        value={completedStats.needsReview}
                         dotColor="bg-amber-400"
                       />
                       <StatItem
