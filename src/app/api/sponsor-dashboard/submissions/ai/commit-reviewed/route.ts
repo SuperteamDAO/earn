@@ -144,7 +144,41 @@ export async function POST(request: NextRequest) {
       let processedWithoutFinalLabel: any[] = [];
 
       if (submissionsWithoutFinalLabel.length > 0) {
-        const sortedSubmissions = submissionsWithoutFinalLabel.sort((a, b) => {
+        const lowQualitySubmissions: any[] = [];
+        const remainingSubmissions: any[] = [];
+
+        submissionsWithoutFinalLabel.forEach((submission) => {
+          const ai = submission.ai as unknown as BountySubmissionAi;
+          const criteriaScore = ai?.evaluation?.criteriaScore || 0;
+          const qualityScore = ai?.evaluation?.qualityScore || 0;
+
+          if (criteriaScore < 10 || qualityScore < 10) {
+            lowQualitySubmissions.push(submission);
+          } else {
+            remainingSubmissions.push(submission);
+          }
+        });
+
+        const processedLowQuality = await Promise.all(
+          lowQualitySubmissions.map(async (submission) => {
+            const ai = submission.ai as unknown as BountySubmissionAi;
+            const commitedAi = {
+              ...(!!ai ? ai : {}),
+              commited: true,
+            };
+
+            return await prisma.submission.update({
+              where: { id: submission.id },
+              data: {
+                label: 'Low_Quality',
+                notes: convertTextToNotesHTML(ai?.evaluation?.notes || ''),
+                ai: commitedAi,
+              },
+            });
+          }),
+        );
+
+        const sortedRemainingSubmissions = remainingSubmissions.sort((a, b) => {
           const scoreA =
             (a.ai as unknown as BountySubmissionAi)?.evaluation?.totalScore ||
             0;
@@ -154,13 +188,13 @@ export async function POST(request: NextRequest) {
           return scoreB - scoreA;
         });
 
-        const totalSubmissions = sortedSubmissions.length;
+        const totalRemainingSubmissions = sortedRemainingSubmissions.length;
 
         const podiums = listing.rewards
           ? cleanRewards(listing.rewards as Rewards, true).length
           : 0;
 
-        const top10Percent = Math.ceil(totalSubmissions * 0.1);
+        const top10Percent = Math.ceil(totalRemainingSubmissions * 0.1);
 
         const minShortlistedCount = Math.max(top10Percent, podiums + 3);
 
@@ -171,10 +205,10 @@ export async function POST(request: NextRequest) {
           maxShortlistedCap,
         );
 
-        const bottom20Percentile = Math.ceil(totalSubmissions * 0.2);
+        const bottom15Percentile = Math.ceil(totalRemainingSubmissions * 0.15);
 
-        processedWithoutFinalLabel = await Promise.all(
-          sortedSubmissions.map(async (submission, index) => {
+        const processedRemainingSubmissions = await Promise.all(
+          sortedRemainingSubmissions.map(async (submission, index) => {
             const ai = submission.ai as unknown as BountySubmissionAi;
             const commitedAi = {
               ...(!!ai ? ai : {}),
@@ -185,7 +219,10 @@ export async function POST(request: NextRequest) {
 
             if (index < finalShortlistedCount) {
               label = 'Shortlisted';
-            } else if (index >= totalSubmissions - bottom20Percentile) {
+            } else if (
+              index >=
+              totalRemainingSubmissions - bottom15Percentile
+            ) {
               label = 'Low_Quality';
             } else {
               label = 'Mid_Quality';
@@ -201,6 +238,11 @@ export async function POST(request: NextRequest) {
             });
           }),
         );
+
+        processedWithoutFinalLabel = [
+          ...processedLowQuality,
+          ...processedRemainingSubmissions,
+        ];
       }
 
       const allProcessedSubmissions = [
