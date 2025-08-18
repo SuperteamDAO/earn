@@ -50,12 +50,10 @@ export const SelectLabel = ({ listingSlug, type }: Props) => {
         id,
         label,
       }),
-    onSuccess: (
-      _response,
-      variables: { id: string; label: SubmissionLabels },
-    ) => {
+    onSuccess: (_response) => {
       setLabelsUpdating(false);
-
+    },
+    onMutate: (variables) => {
       queryClient.setQueryData<SubmissionWithUser[]>(
         ['sponsor-submissions', listingSlug],
         (old) => {
@@ -75,8 +73,7 @@ export const SelectLabel = ({ listingSlug, type }: Props) => {
         }
         return prev;
       });
-    },
-    onMutate: () => {
+
       setLabelsUpdating(true);
     },
     onError: (e) => {
