@@ -219,13 +219,23 @@ export const openSignInWindow = (
 
   // Message handler for popup communication
   const receiveMessage = (event: MessageEvent) => {
-    // Verify origin for security
-    if (event.origin !== window.location.origin) {
+    // Some browsers on Windows may report different origins for OAuth redirects
+    // or transiently nullify opener relationships. We validate the payload shape
+    // and allow either same-origin or messages coming from the popup window.
+    const isSameOrigin =
+      event.origin === window.location.origin || event.origin === 'null';
+    const isFromPopup = event.source === windowObjectReference;
+    if (!isSameOrigin && !isFromPopup) {
       return;
     }
 
     try {
-      const params = new URLSearchParams(event.data);
+      const data =
+        typeof event.data === 'string'
+          ? { type: 'earn-auth', query: event.data }
+          : (event.data as any);
+      if (data?.type !== 'earn-auth') return;
+      const params = new URLSearchParams(String(data.query || ''));
       const error = params.get('error');
 
       if (error) {
@@ -246,7 +256,7 @@ export const openSignInWindow = (
     windowObjectReference = null;
   };
 
-  // Add the listener for receiving a message from the popup
+  // Add the listener for receiving completion from the popup
   window.addEventListener('message', receiveMessage, false);
 
   // assign the previous URL
