@@ -149,10 +149,9 @@ export async function POST(request: NextRequest) {
 
         submissionsWithoutFinalLabel.forEach((submission) => {
           const ai = submission.ai as unknown as BountySubmissionAi;
-          const criteriaScore = ai?.evaluation?.criteriaScore || 0;
           const qualityScore = ai?.evaluation?.qualityScore || 0;
 
-          if (criteriaScore < 10 || qualityScore < 10) {
+          if (qualityScore < 10) {
             lowQualitySubmissions.push(submission);
           } else {
             remainingSubmissions.push(submission);
