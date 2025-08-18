@@ -19,6 +19,7 @@ import {
 } from '@/components/ui/popover';
 import { ASSET_URL } from '@/constants/ASSET_URL';
 import { Superteams, unofficialSuperteams } from '@/constants/Superteam';
+import { useBreakpoint } from '@/hooks/use-breakpoint';
 import { cn } from '@/utils/cn';
 
 interface SuperteamOption {
@@ -104,6 +105,8 @@ export function SuperteamCombobox({
 
   const [open, setOpen] = React.useState(false);
 
+  const isMD = useBreakpoint('md');
+
   const findOptionByValue = (value: string): SuperteamOption | undefined => {
     return options.find((option) => option.value === value);
   };
@@ -162,7 +165,7 @@ export function SuperteamCombobox({
         className={cn('w-[200px] p-0', classNames?.popoverContent)}
       >
         <Command>
-          <CommandInput placeholder="Search..." />
+          {isMD && <CommandInput placeholder="Search..." />}
           <CommandList className="scrollbar-visible max-h-[200px] overflow-auto md:max-h-[300px]">
             <CommandEmpty>No superteam found.</CommandEmpty>
             {!!value && unset && (
@@ -231,6 +234,12 @@ export function SuperteamCombobox({
               ))}
             </CommandGroup>
           </CommandList>
+          {!isMD && (
+            <CommandInput
+              placeholder="Search..."
+              wrapperClassName="border-b-0 border-t"
+            />
+          )}
         </Command>
       </PopoverContent>
     </Popover>
