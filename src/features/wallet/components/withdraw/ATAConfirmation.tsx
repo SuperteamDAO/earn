@@ -59,7 +59,7 @@ export const ATAConfirmation = ({
           <div className="flex justify-between text-sm">
             <span className="text-slate-600">Setup Fee</span>
             <span className="font-medium text-slate-600">
-              - {ataCreationCostInTokens.toFixed(3)}{' '}
+              - {ataCreationCostInTokens.toFixed(2)}{' '}
               {selectedToken?.tokenSymbol}
             </span>
           </div>
@@ -70,14 +70,14 @@ export const ATAConfirmation = ({
                 className={`font-medium ${isInsufficient ? 'text-red-600' : ''}`}
               >
                 {(Number(formData.amount) - ataCreationCostInTokens).toFixed(
-                  3,
+                  2,
                 )}{' '}
               </span>
             </div>
             {isInsufficient ? (
               <p className="mt-2 text-xs text-red-700">
                 Your withdrawal amount is lower than the setup fee. Increase the
-                amount by at least {deficitAmount.toFixed(3)}{' '}
+                amount by at least {deficitAmount.toFixed(2)}{' '}
                 {selectedToken?.tokenSymbol} to continue.
               </p>
             ) : null}
@@ -90,15 +90,16 @@ export const ATAConfirmation = ({
         <div>
           <h3 className="text-base font-semibold text-slate-800">
             {isInsufficient
-              ? 'Amount too low to cover setup fee'
+              ? 'Withdrawal amount too low'
               : 'Additional Setup Required'}
           </h3>
           {isInsufficient ? (
             <p className="mt-1 text-sm text-slate-700">
-              The one-time setup fee is {ataCreationCostInTokens.toFixed(3)}{' '}
-              {token}. Your withdrawal amount of {withdrawalAmount.toFixed(3)}{' '}
-              {token} is {deficitAmount.toFixed(3)} {token} short. Please
-              increase the amount and try again.
+              Minimum withdrawal amount is {ataCreationCostInTokens.toFixed(2)}{' '}
+              {token} for this transaction, to cover the one-time
+              &quot;setup&quot; fee mentioned above. Please increase the amount
+              to {ataCreationCostInTokens.toFixed(2)} {token} or more and try
+              again.
             </p>
           ) : (
             <p className="mt-1 text-sm text-slate-700">
@@ -119,13 +120,8 @@ export const ATAConfirmation = ({
 
       {isInsufficient ? (
         <div className="flex gap-3">
-          <Button
-            variant="secondary"
-            className="flex-1 bg-slate-200"
-            onClick={onCancel}
-            disabled={isProcessing}
-          >
-            Go Back and Increase Amount
+          <Button className="flex-1" onClick={onCancel} disabled={isProcessing}>
+            Go Back
           </Button>
         </div>
       ) : (
