@@ -1,8 +1,8 @@
-import { useLoginWithEmail } from '@privy-io/react-auth';
+import { useLoginWithEmail, usePrivy } from '@privy-io/react-auth';
 import { useSetAtom } from 'jotai';
 import { useRouter } from 'next/router';
 import posthog from 'posthog-js';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -19,17 +19,34 @@ import { handleUserCreation } from '../utils/handleUserCreation';
 
 interface LoginProps {
   redirectTo?: string;
+  onAuthSuccess?: () => void;
 }
 
-export const EmailSignIn = ({ redirectTo }: LoginProps) => {
+export const EmailSignIn = ({ redirectTo, onAuthSuccess }: LoginProps) => {
   const [email, setEmail] = useState('');
   const [isEmailValid, setIsEmailValid] = useState(false);
   const [hasAttemptedSubmit, setHasAttemptedSubmit] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [emailError, setEmailError] = useState('');
+  const [shouldShowOTP, setShouldShowOTP] = useState(false);
 
   const router = useRouter();
   const setLoginEvent = useSetAtom(loginEventAtom);
+  const { authenticated } = usePrivy();
+
+  // Reset loading state when user becomes authenticated
+  useEffect(() => {
+    if (authenticated && isLoading) {
+      setIsLoading(false);
+      // Call the callback to close the modal
+      onAuthSuccess?.();
+    }
+  }, [authenticated, isLoading, onAuthSuccess]);
+
+  // Reset OTP state when component mounts to ensure email input is shown first
+  useEffect(() => {
+    setShouldShowOTP(false);
+  }, []);
 
   const { state, sendCode, loginWithCode } = useLoginWithEmail({
     onComplete: async ({ user, wasAlreadyAuthenticated }) => {
@@ -40,6 +57,9 @@ export const EmailSignIn = ({ redirectTo }: LoginProps) => {
       if (!wasAlreadyAuthenticated) {
         setLoginEvent('fresh_login');
       }
+      // Reset loading state and close modal
+      setIsLoading(false);
+      onAuthSuccess?.();
     },
     onError: () => {
       setEmailError('Authentication failed. Please try again.');
@@ -66,6 +86,7 @@ export const EmailSignIn = ({ redirectTo }: LoginProps) => {
           posthog.capture('email OTP_auth');
           localStorage.setItem('emailForSignIn', email);
           await sendCode({ email });
+          setShouldShowOTP(true);
         } else {
           setIsLoading(false);
           setEmailError(
@@ -103,12 +124,12 @@ export const EmailSignIn = ({ redirectTo }: LoginProps) => {
   };
 
   const isError = hasAttemptedSubmit && !isEmailValid;
-  const showOTPInput = state.status === 'awaiting-code-input';
+  const showOTPInput = shouldShowOTP && state.status === 'awaiting-code-input';
 
   if (showOTPInput) {
     return (
-      <div className="mb-20 flex flex-col items-center gap-4">
-        <h1 className="text-center text-lg font-medium text-slate-500">
+      <div className="mb-6 flex flex-col items-center gap-4">
+        <h1 className="max-w-[280px] text-center text-lg font-medium text-slate-500">
           Enter OTP
         </h1>
         <InputOTP

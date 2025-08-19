@@ -20,12 +20,14 @@ interface SigninProps {
   loginStep: number;
   setLoginStep: Dispatch<SetStateAction<number>>;
   redirectTo?: string;
+  onAuthSuccess?: () => void;
 }
 
 export const SignIn = ({
   loginStep,
   setLoginStep,
   redirectTo,
+  onAuthSuccess,
 }: SigninProps) => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
@@ -116,7 +118,13 @@ export const SignIn = ({
                 : 'translate-y-5 opacity-0'
             }`}
           >
-            {loginStep === 1 && <EmailSignIn redirectTo={redirectTo} />}
+            {loginStep === 1 && (
+              <EmailSignIn
+                key={loginStep}
+                redirectTo={redirectTo}
+                onAuthSuccess={onAuthSuccess}
+              />
+            )}
           </div>
         </div>
 

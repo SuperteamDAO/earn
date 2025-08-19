@@ -69,7 +69,11 @@ export function ListingBuilder({ route, slug }: ListingBuilderLayout) {
   }, []);
 
   if (ready && !authenticated) {
-    return <Login isOpen={true} onClose={() => {}} />;
+    const handleAuthSuccess = () => {
+      // Redirect to dashboard after successful authentication
+      router.push('/dashboard/listings');
+    };
+    return <Login isOpen={true} onClose={handleAuthSuccess} />;
   }
 
   if (!ready) {
