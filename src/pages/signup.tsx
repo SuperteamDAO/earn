@@ -60,7 +60,7 @@ export default function SignupPage() {
     authenticated &&
     user?.email &&
     inviteDetails?.invitedEmail &&
-    user.email !== inviteDetails.invitedEmail;
+    user.email.toLowerCase() !== inviteDetails.invitedEmail.toLowerCase();
 
   if (error) {
     return (
@@ -103,7 +103,9 @@ export default function SignupPage() {
           {inviteDetails?.invitedEmail && (
             <p className="mt-2 text-center text-sm text-slate-400">
               Invitation sent to:{' '}
-              <span className="font-medium">{inviteDetails.invitedEmail}</span>
+              <span className="font-medium">
+                {inviteDetails.invitedEmail.toLowerCase()}
+              </span>
             </p>
           )}
 
@@ -123,10 +125,12 @@ export default function SignupPage() {
                   </p>
                   <p className="mt-2 text-center text-sm text-orange-700">
                     You&apos;re signed in as{' '}
-                    <span className="font-medium">{user?.email}</span>, but this
-                    invitation was sent to{' '}
                     <span className="font-medium">
-                      {inviteDetails?.invitedEmail}
+                      {user?.email?.toLowerCase()}
+                    </span>
+                    , but this invitation was sent to{' '}
+                    <span className="font-medium">
+                      {inviteDetails?.invitedEmail?.toLowerCase()}
                     </span>
                     .
                   </p>
