@@ -146,12 +146,14 @@ export function SponsorLayout({
     Superteams.some(
       (team) =>
         team.name === user?.currentSponsor?.name &&
-        (user?.stLead === team.region || user?.stLead === 'MAHADEV'),
+        (user?.stLead?.toLowerCase() === team.region.toLowerCase() ||
+          user?.stLead === 'MAHADEV'),
     ) ||
     unofficialSuperteams.some(
       (team) =>
         team.name === user?.currentSponsor?.name &&
-        (user?.stLead === team.region || user?.stLead === 'MAHADEV'),
+        (user?.stLead?.toLowerCase() === team.region.toLowerCase() ||
+          user?.stLead === 'MAHADEV'),
     );
 
   const LinkItems: Array<LinkItemProps> = isHackathonRoute
