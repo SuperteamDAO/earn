@@ -29,7 +29,8 @@ type EmailType =
   | 'commentReply'
   | 'commentTag'
   | 'scoutInvite'
-  | 'spamCredit';
+  | 'spamCredit'
+  | 'telegramNewListings';
 
 interface EmailNotificationParams {
   type: EmailType;
