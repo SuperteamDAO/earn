@@ -14,6 +14,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { TELEGRAM_BOT_URL } from '@/constants/Telegram';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { useLogout, useUser } from '@/store/user';
 
@@ -169,6 +170,19 @@ export function UserMenu() {
               Email Preferences
             </DropdownMenuItem>
           )}
+
+          <DropdownMenuItem asChild>
+            <Link
+              href={TELEGRAM_BOT_URL}
+              target="_blank"
+              onClick={() => {
+                posthog.capture('telegram notifications_user menu');
+              }}
+              className="text-sm tracking-tight text-slate-500"
+            >
+              Telegram Notifications
+            </Link>
+          </DropdownMenuItem>
 
           <SupportFormDialog>
             <DropdownMenuItem
