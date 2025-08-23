@@ -6,6 +6,6 @@ export default async function handler(
   _req: NextApiRequest,
   res: NextApiResponse,
 ) {
-  await createPayment({ submissionId: 'ff260932-bfbb-477e-a8e3-e8818465e49d' });
+  await createPayment({ submissionId: 'c51d9cb6-faa8-428d-9f5a-b604a876e3b9' });
   res.status(200).json({ message: 'Hello, world!' });
 }
