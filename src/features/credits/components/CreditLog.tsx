@@ -15,6 +15,8 @@ import {
 import { Separator } from '@/components/ui/separator';
 import { cn } from '@/utils/cn';
 
+import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
+
 import { CreditIcon } from '../icon/credit';
 import { canDispute } from '../utils/canDispute';
 import { DisputeModal } from './DisputeModal';
@@ -29,7 +31,10 @@ type CreditEventType =
   | 'GRANT_SPAM_PENALTY'
   | 'GRANT_WIN_BONUS'
   | 'SPAM_DISPUTE'
-  | 'GRANT_SPAM_DISPUTE';
+  | 'GRANT_SPAM_DISPUTE'
+  | 'REFERRAL_INVITEE_WIN_BONUS_INVITER'
+  | 'REFERRAL_FIRST_SUBMISSION_BONUS_INVITER'
+  | 'REFERRAL_INVITEE_WIN_BONUS_INVITEE';
 
 export interface CreditEntry {
   id: string;
@@ -46,6 +51,11 @@ export interface CreditEntry {
       sponsor?: {
         logo: string;
       };
+    };
+    user?: {
+      photo: string;
+      id: string;
+      firstName: string;
     };
   };
   decision: string;
@@ -124,20 +134,33 @@ export function CreditHistoryCard({
           const isNonLinkableEntry =
             entry.type === 'CREDIT_EXPIRY' || entry.type === 'MONTHLY_CREDIT';
 
+          const isReferralEntry =
+            entry.type === 'REFERRAL_INVITEE_WIN_BONUS_INVITER' ||
+            entry.type === 'REFERRAL_FIRST_SUBMISSION_BONUS_INVITER' ||
+            entry.type === 'REFERRAL_INVITEE_WIN_BONUS_INVITEE';
+
           const EntryContent = () => (
             <>
               <div className="relative">
                 <div
                   className={`flex size-8 items-center justify-center overflow-hidden rounded-full sm:size-10`}
                 >
-                  <img
-                    src={
-                      entry.submission.listing.sponsor?.logo ||
-                      '/android-chrome-512x512.png'
-                    }
-                    alt="Sponsor logo"
-                    className="size-10 rounded-full object-contain"
-                  />
+                  {isReferralEntry ? (
+                    <EarnAvatar
+                      avatar={entry.submission.user?.photo}
+                      id={entry.submission.user?.id}
+                      className="size-10 rounded-full object-contain"
+                    />
+                  ) : (
+                    <img
+                      src={
+                        entry.submission.listing.sponsor?.logo ||
+                        '/android-chrome-512x512.png'
+                      }
+                      alt="Sponsor logo"
+                      className="size-10 rounded-full object-contain"
+                    />
+                  )}
                 </div>
                 {isUpcoming ? (
                   <div className="absolute -right-1 -bottom-1 flex size-5 items-center justify-center rounded-full border-3 border-white bg-white text-gray-700">
@@ -180,7 +203,11 @@ export function CreditHistoryCard({
                   )}
                 </div>
                 <p className="line-clamp-1 text-xs font-medium text-slate-600 sm:text-sm">
-                  {entry.submission.listing.title}
+                  {getEntrySubtitle(
+                    entry,
+                    entry.submission.user?.firstName || '',
+                    entry.submission.listing.title,
+                  )}
                 </p>
               </div>
               <div className="flex flex-col items-end">
@@ -367,5 +394,24 @@ function getEntryTitle(entry: CreditEntry): string {
       return 'Spam Dispute Submitted';
     case 'GRANT_SPAM_DISPUTE':
       return 'Grant Spam Dispute Submitted';
+    case 'REFERRAL_INVITEE_WIN_BONUS_INVITER':
+      return 'Bonus Referral Credit';
+    case 'REFERRAL_FIRST_SUBMISSION_BONUS_INVITER':
+      return 'Referred Successfully';
+    case 'REFERRAL_INVITEE_WIN_BONUS_INVITEE':
+      return 'Referred Successfully';
+  }
+}
+
+function getEntrySubtitle(entry: CreditEntry, name: string, title: string) {
+  switch (entry.type) {
+    case 'REFERRAL_INVITEE_WIN_BONUS_INVITER':
+      return name + ' won a bounty';
+    case 'REFERRAL_FIRST_SUBMISSION_BONUS_INVITER':
+      return name + ' made an eligible submission';
+    case 'REFERRAL_INVITEE_WIN_BONUS_INVITEE':
+      return 'You got referred successfully';
+    default:
+      return title;
   }
 }

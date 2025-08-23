@@ -1,4 +1,5 @@
 import { usePrivy } from '@privy-io/react-auth';
+import { Gift } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import posthog from 'posthog-js';
@@ -27,6 +28,7 @@ interface Props {
   onWalletOpen: () => void;
   walletBalance: number;
   onCreditOpen: () => void;
+  onReferralOpen: () => void;
 }
 
 export const DesktopNavbar = ({
@@ -34,6 +36,7 @@ export const DesktopNavbar = ({
   onSearchOpen,
   onWalletOpen,
   onCreditOpen,
+  onReferralOpen,
   walletBalance,
 }: Props) => {
   const { authenticated, ready } = usePrivy();
@@ -183,7 +186,7 @@ export const DesktopNavbar = ({
 
           {ready && authenticated && (
             <div className="ph-no-capture flex items-center gap-2">
-              {user?.currentSponsorId && !isDashboardRoute && (
+              {user?.currentSponsorId && !isDashboardRoute ? (
                 <Button
                   variant="ghost"
                   size="sm"
@@ -197,6 +200,16 @@ export const DesktopNavbar = ({
                     <span>Dashboard</span>
                     <div className="block h-1.5 w-1.5 rounded-full bg-sky-400" />
                   </Link>
+                </Button>
+              ) : (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-brand-purple hover:text-brand-purple bg-indigo-50 text-xs font-semibold hover:bg-indigo-100"
+                  onClick={onReferralOpen}
+                >
+                  <Gift />
+                  <span>Get Free Credits</span>
                 </Button>
               )}
 

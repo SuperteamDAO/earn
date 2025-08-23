@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import React, { useEffect } from 'react';
 import Pride from 'react-canvas-confetti/dist/presets/pride';
-import { type TDecorateOptionsFn } from 'react-canvas-confetti/dist/types';
+import type { TDecorateOptionsFn } from 'react-canvas-confetti/dist/types';
 
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { Dialog, DialogContent } from '@/components/ui/dialog';

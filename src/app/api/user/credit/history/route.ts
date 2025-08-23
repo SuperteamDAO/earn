@@ -69,6 +69,7 @@ export async function GET(_request: NextRequest) {
                 sponsor: { select: { name: true, logo: true } },
               },
             },
+            user: { select: { photo: true, id: true, firstName: true } },
           },
         },
         application: {
@@ -98,6 +99,7 @@ export async function GET(_request: NextRequest) {
               type: 'project' as const,
               sponsor: entry.application.grant.sponsor,
             },
+            user: { photo: '', id: '', firstName: '' },
           },
           application: null,
         };

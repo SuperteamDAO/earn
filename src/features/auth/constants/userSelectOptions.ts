@@ -35,6 +35,7 @@ export const userSelectOptions: Prisma.UserSelect = {
   role: true,
   createdAt: true,
   linkedTwitter: true,
+  referralCode: true,
 
   currentSponsor: {
     select: {

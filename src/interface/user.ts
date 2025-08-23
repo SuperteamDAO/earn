@@ -66,6 +66,7 @@ interface User {
   isBlocked?: boolean;
   isKYCVerified: boolean;
   linkedTwitter?: string[];
+  referralCode?: string;
 }
 
 type PrismaUserWithoutKYC = Prisma.UserGetPayload<{
