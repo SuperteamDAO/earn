@@ -30,6 +30,9 @@ async function sendInvites(
       .json({ error: 'Email and member type are required.' });
   }
 
+  // Convert email to lowercase to ensure consistency
+  const normalizedEmail = email.toLowerCase();
+
   try {
     logger.debug(`Fetching user details for user ID: ${userId}`);
     const user = await prisma.user.findUnique({
@@ -62,7 +65,7 @@ async function sendInvites(
     }
 
     const isBlocked = await prisma.blockedEmail.findUnique({
-      where: { email: email },
+      where: { email: normalizedEmail },
     });
 
     if (isBlocked) {
@@ -72,10 +75,10 @@ async function sendInvites(
     const expires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
     const token = crypto.randomBytes(32).toString('hex');
 
-    logger.debug(`Creating user invite for email: ${email}`);
+    logger.debug(`Creating user invite for email: ${normalizedEmail}`);
     await prisma.userInvites.create({
       data: {
-        email,
+        email: normalizedEmail,
         senderId: userId as string,
         sponsorId: user.currentSponsor.id,
         memberType,
@@ -84,10 +87,10 @@ async function sendInvites(
       },
     });
 
-    logger.debug(`Sending invite email to: ${email}`);
+    logger.debug(`Sending invite email to: ${normalizedEmail}`);
     await resend.emails.send({
       from: pratikEmail,
-      to: [email],
+      to: [normalizedEmail],
       subject: `${user.firstName} has invited you to join ${user.currentSponsor.name}'s profile on Superteam Earn`,
       react: InviteMemberTemplate({
         sponsorName: user.currentSponsor.name,
@@ -97,7 +100,9 @@ async function sendInvites(
       replyTo: replyToEmail,
     });
 
-    logger.info(`Invite sent successfully to ${email} by user ${userId}`);
+    logger.info(
+      `Invite sent successfully to ${normalizedEmail} by user ${userId}`,
+    );
     return res.status(200).json({ message: 'Invite sent successfully.' });
   } catch (error: any) {
     logger.error(

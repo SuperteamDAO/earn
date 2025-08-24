@@ -114,6 +114,7 @@ export function Slug() {
                   placeholder="write-a-twitter-thread-on-Solana"
                   disabled={!!publishedAt || isSlugLoading}
                   onBlur={() => null}
+                  className="pr-8"
                   onChange={(e) => {
                     const value = e.target.value
                       .toLowerCase()

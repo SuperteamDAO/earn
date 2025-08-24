@@ -9,10 +9,10 @@ function invalidCharacterMessage(_: string, allowed: string) {
 }
 
 function usernameShortMessage(min: number) {
-  return `Username is too short. Minimum length is ${min}.`;
+  return `Minimum username length is ${min}.`;
 }
 function usernameLongMessage(max: number) {
-  return `Username is too long. Maximum length is ${max}.`;
+  return `Maximum username length is ${max}.`;
 }
 
 function transformedUrl(name: SocialType, username: string) {

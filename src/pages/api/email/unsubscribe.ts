@@ -25,8 +25,11 @@ export default async function handler(
     return res.status(400).json({ message: 'Missing required parameters' });
   }
 
+  // Convert email to lowercase to ensure consistency
+  const normalizedEmail = email.toLowerCase();
+
   const expectedSignature = createHmac('sha256', process.env.UNSUB_SECRET!)
-    .update(email)
+    .update(normalizedEmail)
     .digest('hex');
 
   if (signature !== expectedSignature) {
@@ -35,7 +38,7 @@ export default async function handler(
 
   try {
     const existingUnsubscription = await prisma.unsubscribedEmail.findUnique({
-      where: { email },
+      where: { email: normalizedEmail },
     });
 
     if (existingUnsubscription) {
@@ -43,11 +46,11 @@ export default async function handler(
     }
 
     await prisma.unsubscribedEmail.create({
-      data: { email },
+      data: { email: normalizedEmail },
     });
 
     await prisma.emailSettings.deleteMany({
-      where: { user: { email } },
+      where: { user: { email: normalizedEmail } },
     });
 
     if (req.method === 'GET') {

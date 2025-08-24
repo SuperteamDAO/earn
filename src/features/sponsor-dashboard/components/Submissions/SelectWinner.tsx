@@ -258,7 +258,7 @@ export const SelectWinner = ({
                     )}
                   </div>
                   <button
-                    className="flex h-6 w-6 items-center justify-center rounded-full border border-slate-300 text-slate-400 transition-all duration-300 ease-out hover:border-slate-400 hover:text-slate-500"
+                    className="flex h-6 w-6 items-center justify-center text-slate-500 transition-all duration-300 ease-out hover:text-slate-600"
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();

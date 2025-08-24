@@ -41,10 +41,12 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
     });
 
     if (user && user.email && categories.length > 0) {
-      logger.debug(`Removing unsubscribe entry for email: ${user.email}`);
+      // Convert email to lowercase to ensure consistency
+      const normalizedEmail = user.email.toLowerCase();
+      logger.debug(`Removing unsubscribe entry for email: ${normalizedEmail}`);
       await prisma.unsubscribedEmail.deleteMany({
         where: {
-          email: user.email,
+          email: normalizedEmail,
         },
       });
     }

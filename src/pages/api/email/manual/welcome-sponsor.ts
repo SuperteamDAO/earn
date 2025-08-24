@@ -30,8 +30,11 @@ export default async function handler(
     return res.status(400).json({ error: 'Invalid token' });
   }
 
+  // Convert email to lowercase to ensure consistency
+  const normalizedEmail = user.email.toLowerCase();
+
   const isBlocked = await prisma.blockedEmail.findUnique({
-    where: { email: user.email },
+    where: { email: normalizedEmail },
   });
 
   if (isBlocked) {
@@ -39,20 +42,20 @@ export default async function handler(
   }
 
   try {
-    logger.debug(`Sending welcome email to: ${user.email}`);
+    logger.debug(`Sending welcome email to: ${normalizedEmail}`);
     await resend.emails.send({
       from: pratikEmail,
-      to: [user.email],
+      to: [normalizedEmail],
       subject: 'Welcome!',
       react: WelcomeSponsorTemplate(),
       replyTo: replyToEmail,
     });
 
-    logger.info(`Welcome email sent successfully to: ${user.email}`);
+    logger.info(`Welcome email sent successfully to: ${normalizedEmail}`);
     return res.status(200).json({ message: 'Ok' });
   } catch (error: any) {
     logger.error(
-      `Error occurred while sending welcome email to ${user.email}: ${safeStringify(error)}`,
+      `Error occurred while sending welcome email to ${normalizedEmail}: ${safeStringify(error)}`,
     );
     return res.status(500).json({ error: 'Something went wrong.' });
   }
