@@ -95,9 +95,11 @@ export const SelectLabel = ({ listingSlug, type }: Props) => {
             border,
           )}
         >
-          {labelMenuOptions(type).find(
-            (option) => option.value === selectedSubmission?.label,
-          )?.label || 'Select Option'}
+          {selectedSubmission?.label === 'Spam'
+            ? 'Spam'
+            : labelMenuOptions(type).find(
+                (option) => option.value === selectedSubmission?.label,
+              )?.label || 'Select Option'}
           <ChevronDown className="ml-2 size-3" />
         </button>
       </DropdownMenuTrigger>
