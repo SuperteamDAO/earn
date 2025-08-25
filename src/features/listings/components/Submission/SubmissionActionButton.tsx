@@ -117,7 +117,7 @@ export const SubmissionActionButton = ({
 
   const [isEasterEggOpen, setEasterEggOpen] = useState(false);
   const [isMobileNudgeOpen, setMobileNudgeOpen] = useState(false);
-  const [isDesktopNudgeVisible, setDesktopNudgeVisible] = useState(false);
+  const [isDesktopNudgeOpen, setDesktopNudgeOpen] = useState(false);
   const [isKYCModalOpen, setIsKYCModalOpen] = useState(false);
 
   const { user } = useUser();
@@ -349,7 +349,7 @@ export const SubmissionActionButton = ({
           listing={listing}
           isTemplate={isTemplate}
           showEasterEgg={() => {
-            setDesktopNudgeVisible(true);
+            setDesktopNudgeOpen(true);
             setEasterEggOpen(true);
           }}
           onSurveyOpen={onSurveyOpen}
@@ -376,7 +376,7 @@ export const SubmissionActionButton = ({
         />
       )}
       {isDesktop &&
-        isDesktopNudgeVisible &&
+        isDesktopNudgeOpen &&
         createPortal(
           <div className="fixed right-4 bottom-4 z-[200] hidden sm:block">
             <div className="relative rounded-lg border border-slate-100 shadow-lg">
@@ -384,11 +384,11 @@ export const SubmissionActionButton = ({
                 type="button"
                 aria-label="Dismiss"
                 className="absolute top-2 right-2 inline-flex size-5 items-center justify-center rounded-full bg-slate-400 text-white shadow-md hover:bg-slate-500"
-                onClick={() => setDesktopNudgeVisible(false)}
+                onClick={() => setDesktopNudgeOpen(false)}
               >
                 ×
               </button>
-              <Nudge />
+              <Nudge setNudgeState={setDesktopNudgeOpen} />
             </div>
           </div>,
           document.body,
@@ -397,7 +397,7 @@ export const SubmissionActionButton = ({
         <Drawer open={isMobileNudgeOpen} onOpenChange={setMobileNudgeOpen}>
           <DrawerContent className="bg-slate-50">
             <div className="mx-auto w-full">
-              <Nudge />
+              <Nudge setNudgeState={setMobileNudgeOpen} />
             </div>
           </DrawerContent>
         </Drawer>

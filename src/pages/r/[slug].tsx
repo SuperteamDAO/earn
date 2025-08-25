@@ -8,12 +8,12 @@ import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { Input } from '@/components/ui/input';
-import { LocalImage } from '@/components/ui/local-image';
 import { api } from '@/lib/api';
 
 import { Login } from '@/features/auth/components/Login';
 import { userCountQuery } from '@/features/home/queries/user-count';
 import { liveOpportunitiesQuery } from '@/features/listings/queries/live-opportunities';
+import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
 interface VerifyResponse {
   valid: boolean;
@@ -63,6 +63,7 @@ export default function ReferralLandingPage() {
     if (authenticated) {
       toast.warning(
         'This referral is invalid since you have signed up on Earn before with this email ID.',
+        { id: 'referral-invalid' },
       );
       router.replace('/');
     }
@@ -73,7 +74,7 @@ export default function ReferralLandingPage() {
     if (!isLoading && data && data.inviter && data.remaining === 0) {
       toast.error(
         'This invitation link has expired. You will be redirected to the profile creation page in 5 seconds.',
-        { duration: 4800 },
+        { duration: 4800, id: 'referral-expired' },
       );
       timeout = setTimeout(() => router.push('/new'), 5000);
     }
@@ -95,6 +96,7 @@ export default function ReferralLandingPage() {
           }
           toast.warning(
             'This referral is invalid since you have signed up on Earn before with this email ID.',
+            { id: 'referral-invalid' },
           );
           sessionStorage.removeItem('referralIntent');
           router.replace('/');
@@ -116,6 +118,7 @@ export default function ReferralLandingPage() {
 
     toast.warning(
       'This referral is invalid since you have signed up on Earn before with this email ID.',
+      { id: 'referral-invalid' },
     );
     router.replace('/');
   };
@@ -148,10 +151,10 @@ export default function ReferralLandingPage() {
       <div className="w-full px-6 pt-12 pb-16 sm:mt-10 sm:px-12">
         <div className="flex flex-col items-center">
           {data?.inviter?.photo ? (
-            <LocalImage
-              className="mb-6 block h-16 w-16 rounded-full"
-              alt={data.inviter.name}
-              src={data.inviter.photo}
+            <EarnAvatar
+              className="size-16"
+              id={data.inviter.id}
+              avatar={data.inviter.photo}
             />
           ) : (
             <div className="mb-6 h-16 w-16 rounded-full bg-gray-200" />

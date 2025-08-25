@@ -186,7 +186,7 @@ export const DesktopNavbar = ({
 
           {ready && authenticated && (
             <div className="ph-no-capture flex items-center gap-2">
-              {user?.currentSponsorId && !isDashboardRoute ? (
+              {user?.currentSponsorId && !isDashboardRoute && (
                 <Button
                   variant="ghost"
                   size="sm"
@@ -201,7 +201,9 @@ export const DesktopNavbar = ({
                     <div className="block h-1.5 w-1.5 rounded-full bg-sky-400" />
                   </Link>
                 </Button>
-              ) : (
+              )}
+
+              {!user?.currentSponsorId && user?.isTalentFilled && (
                 <Button
                   variant="ghost"
                   size="sm"

@@ -406,7 +406,11 @@ function getEntryTitle(entry: CreditEntry): string {
 function getEntrySubtitle(entry: CreditEntry, name: string, title: string) {
   switch (entry.type) {
     case 'REFERRAL_INVITEE_WIN_BONUS_INVITER':
-      return name + ' won a bounty';
+      return entry.submission.listing.type === 'project'
+        ? name + ' won a project'
+        : entry.submission.listing.type === 'bounty'
+          ? name + ' won a bounty'
+          : name + ' won a hackathon track';
     case 'REFERRAL_FIRST_SUBMISSION_BONUS_INVITER':
       return name + ' made an eligible submission';
     case 'REFERRAL_INVITEE_WIN_BONUS_INVITEE':

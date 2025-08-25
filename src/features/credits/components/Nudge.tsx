@@ -7,7 +7,11 @@ import { useDisclosure } from '@/hooks/use-disclosure';
 
 import { ReferralModal } from './ReferralModal';
 
-export const Nudge = () => {
+export const Nudge = ({
+  setNudgeState,
+}: {
+  setNudgeState: (state: boolean) => void;
+}) => {
   const {
     isOpen: isReferralOpen,
     onOpen: onReferralOpen,
@@ -17,6 +21,7 @@ export const Nudge = () => {
   const openReferralWithEvent = () => {
     posthog.capture('open_credits');
     onReferralOpen();
+    setNudgeState(false);
   };
 
   return (
