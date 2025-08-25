@@ -21,7 +21,7 @@ export const colorMap = {
     bg: 'bg-red-100',
     color: 'text-red-600',
     border: 'border-red-300',
-    focus: 'focus:text-red-900 focus:bg-red-200',
+    focus: 'focus:text-red-600 focus:bg-red-200',
   },
   Reviewed: {
     bg: 'bg-blue-100',
@@ -49,9 +49,9 @@ export const colorMap = {
   },
   Rejected: {
     bg: 'bg-red-100',
-    color: 'text-red-900',
+    color: 'text-red-600',
     border: 'border-red-300',
-    focus: 'focus:text-red-900 focus:bg-red-200',
+    focus: 'focus:text-red-600 focus:bg-red-200',
   },
   Pending: {
     bg: 'bg-orange-100',
