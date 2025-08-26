@@ -13,7 +13,7 @@ import {
 } from '@/components/ui/collapsible';
 import { Separator } from '@/components/ui/separator';
 import { Sheet, SheetContent } from '@/components/ui/sheet';
-import { TELEGRAM_BOT_URL } from '@/constants/Telegram';
+import { generateTelegramBotUrl } from '@/constants/Telegram';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { useLogout, useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
@@ -277,7 +277,7 @@ export const MobileDrawer = ({
               <NavItem
                 onClick={() => {
                   posthog.capture('telegram notifications_user menu');
-                  window.open(TELEGRAM_BOT_URL, '_blank');
+                  window.open(generateTelegramBotUrl(user?.email), '_blank');
                 }}
                 label="Telegram Notifications"
               />

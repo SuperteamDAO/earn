@@ -30,7 +30,7 @@ type EmailType =
   | 'commentTag'
   | 'scoutInvite'
   | 'spamCredit'
-  | 'telegramNewListings';
+  | 'telegramNewListing';
 
 interface EmailNotificationParams {
   type: EmailType;
