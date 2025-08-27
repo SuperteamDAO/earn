@@ -1,26 +1,16 @@
-import posthog from 'posthog-js';
 import React from 'react';
 
 import { Button } from '@/components/ui/button';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
-import { useDisclosure } from '@/hooks/use-disclosure';
 
-import { ReferralModal } from './ReferralModal';
-
-export const Nudge = ({
-  setNudgeState,
-}: {
+interface NudgeProps {
   setNudgeState: (state: boolean) => void;
-}) => {
-  const {
-    isOpen: isReferralOpen,
-    onOpen: onReferralOpen,
-    onClose: onReferralClose,
-  } = useDisclosure();
+  onOpenReferral?: () => void;
+}
 
+export const Nudge = ({ setNudgeState, onOpenReferral }: NudgeProps) => {
   const openReferralWithEvent = () => {
-    posthog.capture('open_credits');
-    onReferralOpen();
+    onOpenReferral?.();
     setNudgeState(false);
   };
 
@@ -49,7 +39,6 @@ export const Nudge = ({
           </div>
         </div>
       </div>
-      <ReferralModal isOpen={isReferralOpen} onClose={onReferralClose} />
     </>
   );
 };

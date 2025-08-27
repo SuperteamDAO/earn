@@ -116,8 +116,7 @@ export const SubmissionActionButton = ({
   } = listing;
 
   const [isEasterEggOpen, setEasterEggOpen] = useState(false);
-  const [isMobileNudgeOpen, setMobileNudgeOpen] = useState(false);
-  const [isDesktopNudgeOpen, setDesktopNudgeOpen] = useState(false);
+  const [isNudgeOpen, setNudgeOpen] = useState(false);
   const [isKYCModalOpen, setIsKYCModalOpen] = useState(false);
 
   const { user } = useUser();
@@ -349,7 +348,6 @@ export const SubmissionActionButton = ({
           listing={listing}
           isTemplate={isTemplate}
           showEasterEgg={() => {
-            setDesktopNudgeOpen(true);
             setEasterEggOpen(true);
           }}
           onSurveyOpen={onSurveyOpen}
@@ -368,15 +366,13 @@ export const SubmissionActionButton = ({
           isOpen={isEasterEggOpen}
           onClose={() => {
             setEasterEggOpen(false);
-            if (!isDesktop) {
-              setTimeout(() => setMobileNudgeOpen(true), 150);
-            }
+            setTimeout(() => setNudgeOpen(true), 150);
           }}
           isProject={isProject}
         />
       )}
       {isDesktop &&
-        isDesktopNudgeOpen &&
+        isNudgeOpen &&
         createPortal(
           <div className="fixed right-4 bottom-4 z-[200] hidden sm:block">
             <div className="relative rounded-lg border border-slate-100 shadow-lg">
@@ -384,20 +380,26 @@ export const SubmissionActionButton = ({
                 type="button"
                 aria-label="Dismiss"
                 className="absolute top-2 right-2 inline-flex size-5 items-center justify-center rounded-full bg-slate-400 text-white shadow-md hover:bg-slate-500"
-                onClick={() => setDesktopNudgeOpen(false)}
+                onClick={() => setNudgeOpen(false)}
               >
                 ×
               </button>
-              <Nudge setNudgeState={setDesktopNudgeOpen} />
+              <Nudge
+                setNudgeState={setNudgeOpen}
+                onOpenReferral={openReferralWithEvent}
+              />
             </div>
           </div>,
           document.body,
         )}
       {!isDesktop && (
-        <Drawer open={isMobileNudgeOpen} onOpenChange={setMobileNudgeOpen}>
+        <Drawer open={isNudgeOpen} onOpenChange={setNudgeOpen}>
           <DrawerContent className="bg-slate-50">
             <div className="mx-auto w-full">
-              <Nudge setNudgeState={setMobileNudgeOpen} />
+              <Nudge
+                setNudgeState={setNudgeOpen}
+                onOpenReferral={openReferralWithEvent}
+              />
             </div>
           </DrawerContent>
         </Drawer>

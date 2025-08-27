@@ -119,17 +119,15 @@ export default function ReferralLandingPage() {
     <div className="container mx-auto flex max-w-lg justify-center">
       <div className="w-full px-6 pt-12 pb-16 sm:mt-10 sm:px-12">
         <div className="flex flex-col items-center">
-          {data?.inviter?.photo ? (
+          {data?.inviter && (
             <EarnAvatar
               className="size-16"
               id={data.inviter.id}
-              avatar={data.inviter.photo}
+              avatar={data.inviter.photo ?? undefined}
             />
-          ) : (
-            <div className="mb-6 h-16 w-16 rounded-full bg-gray-200" />
           )}
 
-          <h1 className="text-center text-xl font-semibold text-slate-600 sm:text-2xl">
+          <h1 className="mt-3 text-center text-xl font-semibold text-slate-600 sm:text-2xl">
             {headline}
           </h1>
 

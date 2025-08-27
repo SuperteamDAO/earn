@@ -10,7 +10,6 @@ import { useClipboard } from '@/hooks/use-clipboard';
 import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
-import { getURL } from '@/utils/validUrl';
 
 import { CreditIcon } from '../icon/credit';
 
@@ -36,7 +35,7 @@ export function ReferralModal({ isOpen, onClose }: ReferralModalProps) {
   };
 
   const code = (user?.referralCode || '').toUpperCase();
-  const shareUrl = useMemo(() => `${getURL()}r/${code}`, [code]);
+  const shareUrl = useMemo(() => `earn.superteam.fun/r/${code}`, [code]);
 
   const { data } = useQuery<VerifyResponse>({
     queryKey: ['referral.verify.self', code],
