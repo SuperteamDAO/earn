@@ -47,7 +47,8 @@
     "./out/**/*",
     "./node_modules/**/*",
     "./utils/functions.ts",
-    "./src/generated/**/*"
+    "./src/generated/**/*",
+    ".next/types/validator.ts"
   ],
   "include": ["**/*.ts", "**/*.tsx"]
 }
