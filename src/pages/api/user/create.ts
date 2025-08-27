@@ -30,6 +30,9 @@ export default async function createUser(
       return res.status(401).json({ error: 'Unauthorized' });
     }
 
+    // Convert email to lowercase to ensure consistency
+    const normalizedEmail = email.toLowerCase();
+
     const existingUser = await prisma.user.findUnique({
       where: { privyDid },
       select: { id: true, email: true },
@@ -44,13 +47,13 @@ export default async function createUser(
     }
 
     const existingUserByEmail = await prisma.user.findUnique({
-      where: { email },
+      where: { email: normalizedEmail },
       select: { id: true, privyDid: true },
     });
 
     if (existingUserByEmail) {
       logger.warn(
-        `User exists with email ${email} but different privyDid. Existing: ${existingUserByEmail.privyDid}, New: ${privyDid}`,
+        `User exists with email ${normalizedEmail} but different privyDid. Existing: ${existingUserByEmail.privyDid}, New: ${privyDid}`,
       );
       return res.status(409).json({
         error:
@@ -85,7 +88,7 @@ export default async function createUser(
     }
 
     const user = await prisma.user.create({
-      data: { privyDid, email, referredById },
+      data: { privyDid, email: normalizedEmail, referredById },
       select: { id: true },
     });
 

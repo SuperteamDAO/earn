@@ -93,6 +93,8 @@ export const SubmissionList = ({
       listing?.type === 'project'
     ) {
       return 'Rejected';
+    } else if (submission?.label === 'Spam') {
+      return 'Spam';
     } else if (submission?.label) {
       return labelMenuOptions(listing?.type).find(
         (option) => option.value === submission.label,
