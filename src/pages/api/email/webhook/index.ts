@@ -115,20 +115,23 @@ const webhooks = async (req: NextApiRequest, res: NextApiResponse) => {
           return res.status(400).json({ error: 'No recipient email found' });
         }
 
+        // Convert email to lowercase to ensure consistency
+        const normalizedEmail = recipientEmail.toLowerCase();
+
         if (event.type === 'email.bounced') {
           const { data } = await axios.post(
             `https://earn.superteam.fun/api/email/validate`,
-            { email: recipientEmail },
+            { email: normalizedEmail },
           );
           const isValid = data?.isValid ?? false;
-          await handleEmailBounce(recipientEmail, isValid);
+          await handleEmailBounce(normalizedEmail, isValid);
         } else if (event.type === 'email.complained') {
-          await deleteEmailSettings(recipientEmail);
+          await deleteEmailSettings(normalizedEmail);
         }
 
         await prisma.resendLogs.create({
           data: {
-            email: recipientEmail,
+            email: normalizedEmail,
             subject: event.data.subject,
             status: event.type,
           },
