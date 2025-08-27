@@ -106,7 +106,9 @@ export function ReferralModal({ isOpen, onClose }: ReferralModalProps) {
                 </button>
               </div>
 
-              <div className="mt-6 grid grid-cols-[auto_1fr] items-center gap-4">
+              <div className="-mx-6 my-4 h-px bg-slate-200" />
+
+              <div className="grid grid-cols-[auto_1fr] items-center gap-4">
                 <div className="text-sm text-slate-500">Your Code</div>
                 <div className="text-right text-base tracking-[2px] text-slate-600">
                   {code || '—'}

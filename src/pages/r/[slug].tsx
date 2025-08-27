@@ -63,7 +63,7 @@ export default function ReferralLandingPage() {
     if (authenticated) {
       toast.warning(
         'This referral is invalid since you have signed up on Earn before with this email ID.',
-        { id: 'referral-invalid' },
+        { id: 'referral-invalid-existing-user' },
       );
       router.replace('/');
     }
@@ -74,7 +74,7 @@ export default function ReferralLandingPage() {
     if (!isLoading && data && data.inviter && data.remaining === 0) {
       toast.error(
         'This invitation link has expired. You will be redirected to the profile creation page in 5 seconds.',
-        { duration: 4800, id: 'referral-expired' },
+        { duration: 4800, id: 'referral-expired-link' },
       );
       timeout = setTimeout(() => router.push('/new'), 5000);
     }
@@ -96,7 +96,7 @@ export default function ReferralLandingPage() {
           }
           toast.warning(
             'This referral is invalid since you have signed up on Earn before with this email ID.',
-            { id: 'referral-invalid' },
+            { id: 'referral-invalid-existing-user' },
           );
           sessionStorage.removeItem('referralIntent');
           router.replace('/');
@@ -118,7 +118,7 @@ export default function ReferralLandingPage() {
 
     toast.warning(
       'This referral is invalid since you have signed up on Earn before with this email ID.',
-      { id: 'referral-invalid' },
+      { id: 'referral-invalid-existing-user' },
     );
     router.replace('/');
   };
