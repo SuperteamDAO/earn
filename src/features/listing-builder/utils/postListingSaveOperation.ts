@@ -1,9 +1,8 @@
 // used for api route, dont add use client here.
-import { type Bounties } from '@prisma/client';
-
 import earncognitoClient from '@/lib/earncognitoClient';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { type BountiesModel } from '@/prisma/models/Bounties';
 import { dayjs } from '@/utils/dayjs';
 
 import { queueAgent } from '@/features/agents/utils/queueAgent';
@@ -11,7 +10,7 @@ import { type ListingWithSponsor } from '@/features/auth/utils/checkListingSpons
 import { queueEmail } from '@/features/emails/utils/queueEmail';
 
 interface PostSaveParams {
-  result: Bounties;
+  result: BountiesModel;
   originalListing?: ListingWithSponsor;
   userId: string;
   isEditing: boolean;
@@ -64,7 +63,7 @@ async function handleDiscordNotifications({
   isVerifying,
   reason,
 }: {
-  result: Bounties;
+  result: BountiesModel;
   originalListing?: ListingWithSponsor;
   listingId: string;
   isEditing: boolean;
@@ -131,7 +130,7 @@ async function handleDeadlineChanges({
   listingId,
 }: {
   originalListing: ListingWithSponsor;
-  result: Bounties;
+  result: BountiesModel;
   userId: string;
   listingId: string;
 }) {
@@ -196,7 +195,7 @@ async function handleDeadlineChanges({
   }
 }
 
-async function handleAgentJobQueuing(result: Bounties) {
+async function handleAgentJobQueuing(result: BountiesModel) {
   if (result.type !== 'project') return;
 
   try {

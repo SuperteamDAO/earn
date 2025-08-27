@@ -1,8 +1,8 @@
-import { status as Status } from '@prisma/client';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { status as Status } from '@/prisma/enums';
 
 import { getPrivyToken } from '@/features/auth/utils/getPrivyToken';
 import {

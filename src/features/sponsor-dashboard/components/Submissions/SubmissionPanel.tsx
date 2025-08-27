@@ -1,4 +1,3 @@
-import { SubmissionLabels } from '@prisma/client';
 import { useAtom } from 'jotai';
 import { ArrowRight, ExternalLink } from 'lucide-react';
 import Link from 'next/link';
@@ -8,6 +7,7 @@ import MdOutlineAccountBalanceWallet from '@/components/icons/MdOutlineAccountBa
 import { Button } from '@/components/ui/button';
 import { CopyButton } from '@/components/ui/copy-tooltip';
 import type { SubmissionWithUser } from '@/interface/submission';
+import { SubmissionLabels } from '@/prisma/enums';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
 import { truncateString } from '@/utils/truncateString';

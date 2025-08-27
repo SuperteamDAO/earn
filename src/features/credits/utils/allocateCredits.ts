@@ -1,6 +1,5 @@
-import { CreditEventType, SubmissionLabels } from '@prisma/client';
-
 import { prisma } from '@/prisma';
+import { CreditEventType, SubmissionLabels } from '@/prisma/enums';
 import { dayjs } from '@/utils/dayjs';
 
 const currentMonth = dayjs.utc().startOf('month').toDate();

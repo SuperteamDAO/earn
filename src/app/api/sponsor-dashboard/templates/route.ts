@@ -1,11 +1,12 @@
-import type { BountyType, Prisma } from '@prisma/client';
 import { type NextRequest, NextResponse } from 'next/server';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import type { BountyType } from '@/prisma/enums';
+import { type BountiesTemplatesGetPayload } from '@/prisma/models';
 import { safeStringify } from '@/utils/safeStringify';
 
-export type BountyTemplateWithSponsor = Prisma.BountiesTemplatesGetPayload<{
+export type BountyTemplateWithSponsor = BountiesTemplatesGetPayload<{
   select: {
     id: true;
     title: true;

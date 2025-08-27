@@ -1,4 +1,3 @@
-import { SubmissionLabels } from '@prisma/client';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAtom, useSetAtom } from 'jotai';
 import { LucideFlag } from 'lucide-react';
@@ -8,6 +7,7 @@ import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import type { SubmissionWithUser } from '@/interface/submission';
 import { api } from '@/lib/api';
+import { SubmissionLabels } from '@/prisma/enums';
 
 import { isStateUpdatingAtom, selectedSubmissionAtom } from '../../atoms';
 import { useRejectSubmissions } from '../../mutations/useRejectSubmissions';

@@ -1,5 +1,3 @@
-import { CompensationType } from '@prisma/client';
-
 import {
   FormControl,
   FormDescription,
@@ -14,6 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { CompensationType } from '@/prisma/enums';
 
 import { useListingForm } from '../../../hooks';
 

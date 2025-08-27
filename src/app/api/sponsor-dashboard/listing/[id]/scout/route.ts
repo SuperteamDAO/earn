@@ -1,10 +1,10 @@
-import { Prisma } from '@prisma/client';
 import dayjs from 'dayjs';
 import { headers } from 'next/headers';
 import { NextResponse } from 'next/server';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { Decimal } from '@/prisma/internal/prismaNamespace';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { validateSession } from '@/features/auth/utils/getSponsorSession';
@@ -590,9 +590,9 @@ END)
           : 0;
       const adjustmentScore = (normalizedSkill + normalizedSubskill) * 5;
 
-      scout.score = Prisma.Decimal.add(
+      scout.score = Decimal.add(
         scout.score,
-        new Prisma.Decimal(adjustmentScore.toFixed(2)),
+        new Decimal(adjustmentScore.toFixed(2)),
       );
     });
 

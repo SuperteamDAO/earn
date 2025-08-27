@@ -1,7 +1,3 @@
-import {
-  type GrantApplicationStatus,
-  type GrantTrancheStatus,
-} from '@prisma/client';
 import { useAtom } from 'jotai';
 import debounce from 'lodash.debounce';
 import { Search } from 'lucide-react';
@@ -9,6 +5,10 @@ import React, { useEffect, useRef } from 'react';
 
 import { Input } from '@/components/ui/input';
 import { StatusPill } from '@/components/ui/status-pill';
+import {
+  type GrantApplicationStatus,
+  type GrantTrancheStatus,
+} from '@/prisma/enums';
 import { cn } from '@/utils/cn';
 import { nthLabelGenerator } from '@/utils/rank';
 

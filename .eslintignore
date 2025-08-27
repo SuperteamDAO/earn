@@ -4,4 +4,8 @@ public/**/*
 **/__next_data_cache_handler.js
 **/*.cache.js
 
-generated/
+src/generated/
+next-env.d.ts
+
+/.next/
+.next/

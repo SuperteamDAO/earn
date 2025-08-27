@@ -1,9 +1,9 @@
-import { type SubmissionLabels } from '@prisma/client';
 import { headers } from 'next/headers';
 import { type NextRequest, NextResponse } from 'next/server';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { type SubmissionLabels } from '@/prisma/enums';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { validateListingSponsorAuth } from '@/features/auth/utils/checkListingSponsorAuth';

@@ -1,7 +1,7 @@
-import type { EmailSettings, Prisma } from '@prisma/client';
-
 import type { SponsorType } from '@/interface/sponsor';
 import type { UserSponsor } from '@/interface/userSponsor';
+import type { EmailSettingsModel } from '@/prisma/models/EmailSettings';
+import { type UserGetPayload, type UserSelect } from '@/prisma/models/User';
 
 import type { PoW } from './pow';
 import type { SubmissionWithUser } from './submission';
@@ -61,7 +61,7 @@ interface User {
   surveysShown?: Record<string, boolean>;
   stRecommended?: boolean;
   acceptedTOS?: boolean;
-  emailSettings?: EmailSettings[];
+  emailSettings?: EmailSettingsModel[];
   stLead?: string;
   isBlocked?: boolean;
   isKYCVerified: boolean;
@@ -69,9 +69,9 @@ interface User {
   referralCode?: string;
 }
 
-type PrismaUserWithoutKYC = Prisma.UserGetPayload<{
+type PrismaUserWithoutKYC = UserGetPayload<{
   select: Omit<
-    Record<keyof Prisma.UserSelect, true>,
+    Record<keyof UserSelect, true>,
     | 'kycCountry'
     | 'kycAddress'
     | 'kycDOB'

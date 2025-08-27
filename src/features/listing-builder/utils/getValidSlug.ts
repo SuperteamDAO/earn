@@ -1,10 +1,10 @@
 // used for api route, dont add use client here.
 
-import { type Prisma } from '@prisma/client';
 import slugify from 'slugify';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { type BountiesGetPayload } from '@/prisma/models/Bounties';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { fetchSlugCheck } from '../queries/slug-check';
@@ -71,7 +71,7 @@ export async function getValidSlug({
   title?: string;
   slug?: string;
   listing?:
-    | Prisma.BountiesGetPayload<{
+    | BountiesGetPayload<{
         include: {
           sponsor: true;
         };

@@ -1,5 +1,4 @@
 import { useCompletion } from '@ai-sdk/react';
-import { type BountyType } from '@prisma/client';
 import { Cross2Icon } from '@radix-ui/react-icons';
 import { useMutation } from '@tanstack/react-query';
 import { useAtom, useSetAtom } from 'jotai';
@@ -27,6 +26,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { tokenList } from '@/constants/tokenList';
 import { type Skills } from '@/interface/skills';
 import { api } from '@/lib/api';
+import { type BountyType } from '@/prisma/enums';
 import { cn } from '@/utils/cn';
 import { easeOutQuad } from '@/utils/easings';
 

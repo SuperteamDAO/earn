@@ -1,4 +1,3 @@
-import { CreditEventType } from '@prisma/client';
 import { headers } from 'next/headers';
 import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
@@ -6,6 +5,7 @@ import { z } from 'zod';
 import earncognitoClient from '@/lib/earncognitoClient';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { CreditEventType } from '@/prisma/enums';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { getUserSession } from '@/features/auth/utils/getUserSession';

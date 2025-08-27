@@ -1,14 +1,14 @@
 // used for api route, dont add use client here.
-import { type Prisma } from '@prisma/client';
 import { NextResponse } from 'next/server';
 
 import logger from '@/lib/logger';
+import { type BountiesGetPayload } from '@/prisma/models/Bounties';
 
 import { type ListingWithSponsor } from '@/features/auth/utils/checkListingSponsorAuth';
 
 export function isDraftable(
   listing:
-    | Prisma.BountiesGetPayload<{
+    | BountiesGetPayload<{
         include: {
           sponsor: true;
         };

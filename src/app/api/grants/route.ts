@@ -1,8 +1,11 @@
-import { type Prisma, Prisma as PrismaNamespace } from '@prisma/client';
 import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
 import { prisma } from '@/prisma';
+import {
+  type JsonValue,
+  PrismaClientKnownRequestError,
+} from '@/prisma/internal/prismaNamespace';
 
 import {
   GrantQueryParamsSchema,
@@ -30,7 +33,7 @@ export async function GET(request: NextRequest) {
       id: string;
       isTalentFilled: boolean;
       location: string | null;
-      skills: Prisma.JsonValue;
+      skills: JsonValue;
     } | null = null;
 
     if (userIdFromCookie) {
@@ -74,7 +77,7 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    if (error instanceof PrismaNamespace.PrismaClientKnownRequestError) {
+    if (error instanceof PrismaClientKnownRequestError) {
       console.error('Prisma error:', error.code, error.message);
       return NextResponse.json({ message: 'Database error' }, { status: 500 });
     }

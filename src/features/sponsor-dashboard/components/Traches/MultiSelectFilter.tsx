@@ -1,4 +1,3 @@
-import type { GrantTrancheStatus } from '@prisma/client';
 import { LucideListFilter } from 'lucide-react';
 
 import {
@@ -9,6 +8,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { StatusPill } from '@/components/ui/status-pill';
 import { Switch } from '@/components/ui/switch';
+import type { GrantTrancheStatus } from '@/prisma/enums';
 
 import { colorMap } from '../../utils/statusColorMap';
 

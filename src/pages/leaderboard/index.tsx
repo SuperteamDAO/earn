@@ -1,8 +1,3 @@
-import {
-  type Prisma,
-  type TalentRankingSkills,
-  type TalentRankingTimeframe,
-} from '@prisma/client';
 import { useQuery } from '@tanstack/react-query';
 import { type GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
@@ -12,6 +7,11 @@ import { type PrismaUserWithoutKYC } from '@/interface/user';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { prisma } from '@/prisma';
+import {
+  type TalentRankingSkills,
+  type TalentRankingTimeframe,
+} from '@/prisma/enums';
+import { type TalentRankingsWhereInput } from '@/prisma/models/TalentRankings';
 
 import { getPrivyToken } from '@/features/auth/utils/getPrivyToken';
 import { HomepagePop } from '@/features/conversion-popups/components/HomepagePop';
@@ -193,7 +193,7 @@ export const getServerSideProps: GetServerSideProps = async ({
 
   const PAGE_SIZE = 10;
 
-  const whereClause: Prisma.TalentRankingsWhereInput = {
+  const whereClause: TalentRankingsWhereInput = {
     skill,
     timeframe,
     ...(search

@@ -1,9 +1,9 @@
-import { type SubmissionLabels } from '@prisma/client';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAtom } from 'jotai';
 
 import { type SubmissionWithUser } from '@/interface/submission';
 import { api } from '@/lib/api';
+import { type SubmissionLabels } from '@/prisma/enums';
 
 import { type ProjectApplicationAi } from '@/features/listings/types';
 

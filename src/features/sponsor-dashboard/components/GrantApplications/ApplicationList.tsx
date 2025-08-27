@@ -1,7 +1,3 @@
-import {
-  type GrantApplicationStatus,
-  type SubmissionLabels,
-} from '@prisma/client';
 import { useAtom } from 'jotai';
 import debounce from 'lodash.debounce';
 import { Search } from 'lucide-react';
@@ -12,6 +8,10 @@ import { Input } from '@/components/ui/input';
 import { StatusPill } from '@/components/ui/status-pill';
 import { Tooltip } from '@/components/ui/tooltip';
 import { Superteams } from '@/constants/Superteam';
+import {
+  type GrantApplicationStatus,
+  type SubmissionLabels,
+} from '@/prisma/enums';
 import { cn } from '@/utils/cn';
 
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';

@@ -1,10 +1,10 @@
-import { type Prisma } from '@prisma/client';
 import { NextResponse } from 'next/server';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { type BountiesGetPayload } from '@/prisma/models/Bounties';
 
-export type ListingWithSponsor = Prisma.BountiesGetPayload<{
+export type ListingWithSponsor = BountiesGetPayload<{
   include: { sponsor: true };
 }>;
 

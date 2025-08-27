@@ -1,5 +1,6 @@
-import { type Prisma } from '@prisma/client';
 import { z } from 'zod';
+
+import { type BountiesSelect } from '@/prisma/models/Bounties';
 
 export const ListingTabSchema = z
   .enum(['all', 'bounties', 'projects'])
@@ -68,4 +69,4 @@ export const listingSelect = {
       st: true,
     },
   },
-} satisfies Prisma.BountiesSelect;
+} satisfies BountiesSelect;
