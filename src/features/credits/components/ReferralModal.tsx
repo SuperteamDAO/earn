@@ -30,6 +30,11 @@ export function ReferralModal({ isOpen, onClose }: ReferralModalProps) {
   const { user } = useUser();
   const [showTerms, setShowTerms] = useState(false);
 
+  const closeModal = () => {
+    onClose();
+    setShowTerms(false);
+  };
+
   const code = (user?.referralCode || '').toUpperCase();
   const shareUrl = useMemo(() => `${getURL()}r/${code}`, [code]);
 
@@ -58,7 +63,7 @@ export function ReferralModal({ isOpen, onClose }: ReferralModalProps) {
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose} modal>
+    <Dialog open={isOpen} onOpenChange={closeModal} modal>
       <DialogContent
         className="w-96 gap-0 overflow-hidden rounded-2xl p-0 sm:rounded-2xl"
         onPointerDownOutside={(e) => e.preventDefault()}
@@ -120,7 +125,9 @@ export function ReferralModal({ isOpen, onClose }: ReferralModalProps) {
                 <Tooltip
                   disableOnClickClose
                   contentProps={{
-                    className: 'flex items-center gap-1',
+                    className:
+                      'pointer-events-none select-none flex items-center gap-1',
+                    sideOffset: 8,
                   }}
                   content={
                     <div className="relative">

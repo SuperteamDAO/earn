@@ -57,7 +57,12 @@ function Tooltip({
             className={cn('cursor-pointer', triggerClassName)}
             onClick={() => !disableOnClickClose && setOpen(!open)}
             onMouseEnter={() => setOpen(true)}
-            onMouseLeave={() => setOpen(false)}
+            onMouseLeave={(e) => {
+              const target = e.currentTarget;
+              setTimeout(() => {
+                if (!target.matches(':hover')) setOpen(false);
+              }, 60);
+            }}
             onTouchStart={() => setOpen(open)}
             onKeyDown={(e) => {
               if (e.key === 'Enter') {

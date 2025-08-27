@@ -54,6 +54,16 @@ export const DesktopNavbar = ({
     [router.pathname],
   );
 
+  const hideSponsorCTA = useMemo(() => {
+    if (!isNewTalentRoute) return false;
+    try {
+      const url = new URL(window.location.origin + router.asPath);
+      return url.searchParams.get('referral') === 'true';
+    } catch {
+      return router.asPath.includes('referral=true');
+    }
+  }, [isNewTalentRoute, router.asPath]);
+
   const maxWidth = useMemo(() => {
     if (isDashboardRoute) {
       return 'max-w-full';
@@ -244,18 +254,20 @@ export const DesktopNavbar = ({
           {ready && !authenticated && (
             <div className="ph-no-capture flex items-center gap-2">
               <div className="flex items-center gap-0">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="text-xs font-semibold"
-                  onClick={() => {
-                    posthog.capture('create a listing_navbar');
-                    router.push('/sponsor');
-                  }}
-                >
-                  <span>Become a Sponsor</span>
-                  <div className="block h-1.5 w-1.5 rounded-full bg-sky-400" />
-                </Button>
+                {!hideSponsorCTA && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-xs font-semibold"
+                    onClick={() => {
+                      posthog.capture('create a listing_navbar');
+                      router.push('/sponsor');
+                    }}
+                  >
+                    <span>Become a Sponsor</span>
+                    <div className="block h-1.5 w-1.5 rounded-full bg-sky-400" />
+                  </Button>
+                )}
                 <Button
                   variant="ghost"
                   size="sm"

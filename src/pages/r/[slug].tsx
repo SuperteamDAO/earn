@@ -52,22 +52,14 @@ export default function ReferralLandingPage() {
   });
 
   useEffect(() => {
-    if (!code) return;
-    try {
-      sessionStorage.setItem('referralCode', code);
-      localStorage.setItem('referralCode', code);
-    } catch {}
-  }, [code]);
-
-  useEffect(() => {
-    if (authenticated) {
-      toast.warning(
-        'This referral is invalid since you have signed up on Earn before with this email ID.',
-        { id: 'referral-invalid-existing-user' },
-      );
-      router.replace('/');
-    }
-  }, [authenticated, router]);
+    if (!authenticated) return;
+    if (isLoginOpen) return;
+    toast.warning(
+      'This referral is invalid since you have signed up on Earn before with this email ID.',
+      { id: 'referral-invalid-existing-user' },
+    );
+    router.replace('/');
+  }, [authenticated, isLoginOpen, router]);
 
   useEffect(() => {
     let timeout: ReturnType<typeof setTimeout> | undefined;
@@ -76,41 +68,18 @@ export default function ReferralLandingPage() {
         'This invitation link has expired. You will be redirected to the profile creation page in 5 seconds.',
         { duration: 4800, id: 'referral-expired-link' },
       );
-      timeout = setTimeout(() => router.push('/new'), 5000);
+      timeout = setTimeout(
+        () => router.push('/new/talent?onboarding=true&referral=true'),
+        5000,
+      );
     }
     return () => {
       if (timeout) clearTimeout(timeout);
     };
   }, [data, isLoading, router]);
 
-  useEffect(() => {
-    let timeout: ReturnType<typeof setTimeout> | undefined;
-    if (isLoginOpen && authenticated) {
-      const intent = sessionStorage.getItem('referralIntent');
-      if (intent) {
-        timeout = setTimeout(() => {
-          if (window.location.pathname.startsWith('/new')) {
-            // New users will be redirected by onboarding flow
-            sessionStorage.removeItem('referralIntent');
-            return;
-          }
-          toast.warning(
-            'This referral is invalid since you have signed up on Earn before with this email ID.',
-            { id: 'referral-invalid-existing-user' },
-          );
-          sessionStorage.removeItem('referralIntent');
-          router.replace('/');
-        }, 1200);
-      }
-    }
-    return () => {
-      if (timeout) clearTimeout(timeout);
-    };
-  }, [authenticated, isLoginOpen, router]);
-
   const handleAccept = () => {
     if (!code) return;
-    sessionStorage.setItem('referralIntent', 'true');
     if (!authenticated) {
       setIsLoginOpen(true);
       return;
@@ -263,7 +232,11 @@ export default function ReferralLandingPage() {
         </div>
       </div>
 
-      <Login isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)} />
+      <Login
+        isOpen={isLoginOpen}
+        onClose={() => setIsLoginOpen(false)}
+        redirectTo={'/new/talent?onboarding=true&referral=true'}
+      />
     </div>
   );
 }

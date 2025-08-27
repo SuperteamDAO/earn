@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -7,17 +7,6 @@ import { Input } from '@/components/ui/input';
 export default function ReferralIndexPage() {
   const router = useRouter();
   const [code, setCode] = useState('');
-
-  useEffect(() => {
-    try {
-      const stored =
-        sessionStorage.getItem('referralCode') ||
-        localStorage.getItem('referralCode');
-      if (stored) {
-        router.replace(`/r/${stored}`);
-      }
-    } catch {}
-  }, [router]);
 
   return (
     <div className="container mx-auto flex max-w-xl justify-center">

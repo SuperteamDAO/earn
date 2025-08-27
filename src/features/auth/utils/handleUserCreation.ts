@@ -9,11 +9,16 @@ interface CreateUserResponse {
 
 export async function handleUserCreation(email: string): Promise<boolean> {
   try {
-    const referralCode =
-      (typeof window !== 'undefined' &&
-        (sessionStorage.getItem('referralCode') ||
-          localStorage.getItem('referralCode'))) ||
-      undefined;
+    const referralCode = (() => {
+      try {
+        const path = window.location?.pathname || '';
+        const match = path.match(/^\/r\/([^/?#]+)/i);
+        const codeFromPath = match?.[1];
+        return codeFromPath ? codeFromPath.toUpperCase() : undefined;
+      } catch {
+        return undefined;
+      }
+    })();
     const response = await api.post<CreateUserResponse>('/api/user/create', {
       email,
       referralCode,
@@ -22,10 +27,6 @@ export async function handleUserCreation(email: string): Promise<boolean> {
     const { created } = response.data;
 
     if (created) {
-      try {
-        sessionStorage.removeItem('referralCode');
-        localStorage.removeItem('referralCode');
-      } catch {}
       if (
         allowedNewUserRedirections?.some((s) =>
           window.location.pathname.startsWith(s),
