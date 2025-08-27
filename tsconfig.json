@@ -50,5 +50,5 @@
     "./src/generated/**/*",
     ".next/types/validator.ts"
   ],
-  "include": ["**/*.ts", "**/*.tsx"]
+  "include": ["**/*.ts", "**/*.tsx", ".next/types/**/*.ts"]
 }
