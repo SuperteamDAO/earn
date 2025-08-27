@@ -48,7 +48,9 @@ export const SpamButton = ({ listingSlug, isMultiSelectOn }: Props) => {
       id: selectedSubmission.id,
       label: SubmissionLabels.Spam,
     });
-    setIsSpamDialogOpen(true);
+    setTimeout(() => {
+      setIsSpamDialogOpen(true);
+    }, 0);
   };
 
   const handleSpamConfirm = (id: string, label: SubmissionLabels) => {

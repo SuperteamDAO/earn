@@ -31,7 +31,7 @@ export const eligibilityQuestionSchema = z.object({
     .min(1, 'Please add your question')
     .max(200, 'Please limit your question to 200 characters max.'),
   type: z.enum(['text', 'link']),
-  optional: z.boolean().optional(),
+  optional: z.boolean().optional().nullable(),
 });
 export type TEligibilityQuestion = z.infer<typeof eligibilityQuestionSchema>;
 
