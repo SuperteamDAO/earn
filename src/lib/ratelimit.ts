@@ -22,3 +22,10 @@ export const powCreateRateLimiter = new Ratelimit({
   analytics: true,
   prefix: 'ratelimit:pow_create',
 });
+
+export const uploadSignatureRateLimiter = new Ratelimit({
+  redis: redis,
+  limiter: Ratelimit.fixedWindow(10, '1 m'),
+  analytics: true,
+  prefix: 'ratelimit:upload_signature',
+});

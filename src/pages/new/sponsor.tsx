@@ -26,6 +26,7 @@ import { MultiSelect } from '@/components/ui/multi-select';
 import { Separator } from '@/components/ui/separator';
 import { Tooltip } from '@/components/ui/tooltip';
 import { PDTG } from '@/constants/Telegram';
+import { useUploadImage } from '@/hooks/use-upload-image';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { api } from '@/lib/api';
@@ -50,11 +51,11 @@ const CreateSponsor = () => {
   const router = useRouter();
   const { ready, authenticated } = usePrivy();
   const { user, refetchUser } = useUser();
+  const { uploadFile } = useUploadImage();
 
   const [selectedUserPhoto, setSelectedUserPhoto] = useState<File | null>(null);
   const [selectedLogo, setSelectedLogo] = useState<File | null>(null);
   const [logoPreview, setLogoPreview] = useState<string>('');
-  const [isUploading, setIsUploading] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [loginStep, setLoginStep] = useState(0);
 
@@ -194,6 +195,15 @@ const CreateSponsor = () => {
       const { sponsorData, userData } = transformFormToApiData(data);
 
       try {
+        if (selectedLogo) {
+          const uploadResult = await uploadFile(selectedLogo, {
+            folder: 'earn-sponsor',
+            resource_type: 'image',
+          });
+          console.log('uploadResult', uploadResult);
+          sponsorData.logo = uploadResult.url;
+        }
+
         await api.post('/api/sponsors/create', sponsorData);
 
         if (userData && shouldUpdateUser(userData, user)) {
@@ -237,7 +247,6 @@ const CreateSponsor = () => {
   const isSubmitDisabled = useMemo(
     () =>
       (!selectedLogo && !logoPreview) ||
-      isUploading ||
       isPending ||
       isSlugInvalid ||
       isUsernameInvalid ||
@@ -245,7 +254,6 @@ const CreateSponsor = () => {
     [
       selectedLogo,
       logoPreview,
-      isUploading,
       isPending,
       isSlugInvalid,
       isUsernameInvalid,
@@ -257,8 +265,6 @@ const CreateSponsor = () => {
     if (isSubmitDisabled) return;
 
     try {
-      setIsUploading(true);
-
       let userPhotoUrl = data.user?.photo;
       if (selectedUserPhoto) {
         const base64 = await new Promise<string>((resolve, reject) => {
@@ -271,26 +277,12 @@ const CreateSponsor = () => {
         if (data.user) data.user.photo = userPhotoUrl;
       }
 
-      let logoUrl = data.sponsor.logo;
-      if (selectedLogo) {
-        const base64 = await new Promise<string>((resolve, reject) => {
-          const reader = new FileReader();
-          reader.readAsDataURL(selectedLogo);
-          reader.onload = () => resolve(reader.result as string);
-          reader.onerror = reject;
-        });
-        logoUrl = base64;
-        data.sponsor.logo = logoUrl;
-      }
-
       posthog.capture('complete profile_sponsor');
       await createSponsor(data);
       if (user) posthog.identify(user.email);
     } catch (error) {
-      console.error('Error uploading images:', error);
-      toast.error('Failed to upload images. Please try again.');
-    } finally {
-      setIsUploading(false);
+      console.error('Error submitting form:', error);
+      toast.error('Failed to create sponsor. Please try again.');
     }
   };
 
@@ -571,7 +563,7 @@ const CreateSponsor = () => {
                   disabled={isSubmitDisabled}
                   type="submit"
                 >
-                  {isUploading || isPending ? (
+                  {isPending ? (
                     <span className="flex items-center gap-1">
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                       <span>Creating...</span>
