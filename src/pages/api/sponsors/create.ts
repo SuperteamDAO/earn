@@ -115,3 +115,11 @@ async function user(req: NextApiRequestWithUser, res: NextApiResponse) {
 }
 
 export default withAuth(user);
+
+export const config = {
+  api: {
+    bodyParser: {
+      sizeLimit: '10mb',
+    },
+  },
+};
