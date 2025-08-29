@@ -63,26 +63,10 @@ export const useUploadImage = (): UseUploadReturn => {
           canvas.width = width;
           canvas.height = height;
 
-          ctx!.fillStyle = '#FFFFFF';
-          ctx!.fillRect(0, 0, width, height);
-
           ctx?.drawImage(img, 0, 0, width, height);
 
-          const originalFormat = file.type.toLowerCase();
-
-          let outputFormat: string;
-          let quality: number;
-
-          if (originalFormat.includes('png')) {
-            outputFormat = 'image/jpeg';
-            quality = 0.85;
-          } else if (originalFormat.includes('webp')) {
-            outputFormat = 'image/webp';
-            quality = 0.8;
-          } else {
-            outputFormat = 'image/jpeg';
-            quality = 0.8;
-          }
+          const outputFormat = 'image/webp';
+          const quality = 0.8;
 
           canvas.toBlob(
             (blob) => {

@@ -145,6 +145,24 @@ export const verifyImageExists = async (url: string): Promise<boolean> => {
   }
 };
 
+export const convertToJpegUrl = (url: string): string | null => {
+  if (!url || !url.includes('res.cloudinary.com')) return null;
+
+  if (url.includes('/f_jpg/') || url.includes('f_jpg')) {
+    return url;
+  }
+
+  const parts = url.split('/upload/');
+  if (parts.length < 2) return null;
+
+  const afterUpload = parts[1];
+  if (!afterUpload) return null;
+
+  const transformedUrl = url.replace('/upload/', '/upload/f_jpg/');
+
+  return transformedUrl;
+};
+
 export const extractPublicIdFromUrl = (url: string): string | null => {
   if (!url || !url.includes('res.cloudinary.com')) return null;
 
