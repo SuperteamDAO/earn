@@ -33,7 +33,8 @@ export const useForcedProfileRedirect = ({
     const isExcludedPath =
       pathname.startsWith('/new') ||
       pathname.startsWith('/sponsor') ||
-      pathname.startsWith('/signup');
+      pathname.startsWith('/signup') ||
+      pathname.startsWith('/r/');
 
     // guard clauses: exit early if a redirect is not needed.
     if (

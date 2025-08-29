@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { Input } from '@/components/ui/input';
 import { api } from '@/lib/api';
+import { useUser } from '@/store/user';
 
 import { Login } from '@/features/auth/components/Login';
 import { userCountQuery } from '@/features/home/queries/user-count';
@@ -31,6 +32,7 @@ const avatars = [
 export default function ReferralLandingPage() {
   const router = useRouter();
   const { authenticated } = usePrivy();
+  const { user } = useUser();
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [manualCode, setManualCode] = useState('');
 
@@ -54,12 +56,14 @@ export default function ReferralLandingPage() {
   useEffect(() => {
     if (!authenticated) return;
     if (isLoginOpen) return;
-    toast.warning(
-      'This referral is invalid since you have signed up on Earn before with this email ID.',
-      { id: 'referral-invalid-existing-user' },
-    );
-    router.replace('/');
-  }, [authenticated, isLoginOpen, router]);
+    if (user?.isTalentFilled) {
+      toast.warning(
+        'This referral is invalid since you have signed up on Earn before with this email ID.',
+        { id: 'referral-invalid-existing-user' },
+      );
+      router.replace('/');
+    }
+  }, [authenticated, isLoginOpen, router, user]);
 
   useEffect(() => {
     let timeout: ReturnType<typeof setTimeout> | undefined;

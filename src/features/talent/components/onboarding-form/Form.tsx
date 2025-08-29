@@ -62,20 +62,6 @@ export const TalentForm = () => {
   const [isReferralChecking, setIsReferralChecking] = useState<boolean>(false);
 
   useEffect(() => {
-    try {
-      const stored = (
-        sessionStorage.getItem('referralCode') ||
-        localStorage.getItem('referralCode') ||
-        ''
-      )
-        .toString()
-        .trim()
-        .toUpperCase();
-      if (stored) setReferralCode(stored);
-    } catch {}
-  }, []);
-
-  useEffect(() => {
     if (!referralCode) {
       setIsReferralValid(null);
       return;
@@ -103,10 +89,6 @@ export const TalentForm = () => {
   const handleReferralCodeChange = (value: string): void => {
     const next = value.toUpperCase();
     setReferralCode(next);
-    try {
-      sessionStorage.setItem('referralCode', next);
-      localStorage.setItem('referralCode', next);
-    } catch {}
   };
 
   useEffect(() => {
@@ -262,34 +244,36 @@ export const TalentForm = () => {
           <SkillsField skillsRefreshKey={skillsRefreshKey} />
           <SocialsField />
 
-          <div className="mt-6 flex w-full items-center justify-between gap-3">
-            <p className="text-sm text-slate-500">Have a Referral Code?</p>
-            <div className="relative w-32">
-              <Input
-                placeholder="Enter code"
-                value={referralCode}
-                onChange={(e) => handleReferralCodeChange(e.target.value)}
-                className="pr-9"
-                maxLength={10}
-                inputMode="text"
-                autoComplete="off"
-                spellCheck={false}
-              />
-              {referralCode && isReferralChecking && (
-                <Loader2 className="absolute top-1/2 right-2 h-4 w-4 -translate-y-1/2 animate-spin text-slate-400" />
-              )}
-              {referralCode &&
-                !isReferralChecking &&
-                isReferralValid === true && (
-                  <Check className="absolute top-1/2 right-2 h-4 w-4 -translate-y-1/2 text-emerald-500" />
+          {!user?.referredById && (
+            <div className="mt-6 flex w-full items-center justify-between gap-3">
+              <p className="text-sm text-slate-500">Have a Referral Code?</p>
+              <div className="relative w-32">
+                <Input
+                  placeholder="Enter code"
+                  value={referralCode}
+                  onChange={(e) => handleReferralCodeChange(e.target.value)}
+                  className="pr-9"
+                  maxLength={10}
+                  inputMode="text"
+                  autoComplete="off"
+                  spellCheck={false}
+                />
+                {referralCode && isReferralChecking && (
+                  <Loader2 className="absolute top-1/2 right-2 h-4 w-4 -translate-y-1/2 animate-spin text-slate-400" />
                 )}
-              {referralCode &&
-                !isReferralChecking &&
-                isReferralValid === false && (
-                  <XCircle className="absolute top-1/2 right-2 h-4 w-4 -translate-y-1/2 text-rose-500" />
-                )}
+                {referralCode &&
+                  !isReferralChecking &&
+                  isReferralValid === true && (
+                    <Check className="absolute top-1/2 right-2 h-4 w-4 -translate-y-1/2 text-emerald-500" />
+                  )}
+                {referralCode &&
+                  !isReferralChecking &&
+                  isReferralValid === false && (
+                    <XCircle className="absolute top-1/2 right-2 h-4 w-4 -translate-y-1/2 text-rose-500" />
+                  )}
+              </div>
             </div>
-          </div>
+          )}
           <Button
             type="submit"
             className="mt-5 mb-12 w-full sm:mt-8"

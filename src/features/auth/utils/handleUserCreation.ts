@@ -27,6 +27,7 @@ export async function handleUserCreation(email: string): Promise<boolean> {
     const { created } = response.data;
 
     if (created) {
+      console.log('window.location.pathname', window.location.pathname);
       if (
         allowedNewUserRedirections?.some((s) =>
           window.location.pathname.startsWith(s),
@@ -34,7 +35,13 @@ export async function handleUserCreation(email: string): Promise<boolean> {
       ) {
         window.location.reload();
       } else {
-        window.location.href = '/new?onboarding=true';
+        const isOnReferralPage =
+          window.location.pathname.startsWith('/r/') ||
+          window.location.pathname.startsWith('/new/talent');
+
+        window.location.href = isOnReferralPage
+          ? '/new/talent?onboarding=true&referral=true'
+          : '/new?onboarding=true';
       }
     }
 
