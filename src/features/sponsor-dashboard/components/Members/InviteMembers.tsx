@@ -50,7 +50,7 @@ export function InviteMembers({ isOpen, onClose }: Props) {
   const handleInput = (emailString: string) => {
     const isEmail = validateEmail(emailString);
     if (isEmail) {
-      setEmail(emailString);
+      setEmail(emailString.toLowerCase());
     } else {
       setEmail('');
     }

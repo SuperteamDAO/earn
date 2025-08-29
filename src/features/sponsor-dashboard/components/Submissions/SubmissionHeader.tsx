@@ -6,6 +6,7 @@ import {
   AlertTriangle,
   Check,
   ChevronLeft,
+  CopyIcon,
   Download,
   ExternalLink,
   MoreVertical,
@@ -38,6 +39,7 @@ import { type SubmissionWithUser } from '@/interface/submission';
 import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
+import { getURL } from '@/utils/validUrl';
 
 import { type Listing } from '@/features/listings/types';
 import { isDeadlineOver } from '@/features/listings/utils/deadline';
@@ -156,6 +158,34 @@ export const SubmissionHeader = ({
     exportMutation.mutate();
   };
 
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text).then(
+      () => {
+        toast.success('Link Copied', {
+          duration: 3000,
+        });
+      },
+      (err) => {
+        console.error('Failed to copy text: ', err);
+      },
+    );
+  };
+
+  const getEditText = () => {
+    if (bounty?.type === 'grant') return null;
+    if (bounty?.type === 'bounty') return 'Edit Bounty';
+    if (bounty?.type === 'project') return 'Edit Project';
+    if (bounty?.type === 'hackathon') return 'Edit Track';
+    return 'Edit';
+  };
+
+  const getListingUrl = () => {
+    if (bounty?.type === 'grant') {
+      return `${getURL()}grants/${bounty.slug}`;
+    }
+    return `${getURL()}listing/${bounty?.slug}`;
+  };
+
   const pastDeadline = isDeadlineOver(bounty?.deadline);
 
   const totalPodiumSpots = remainings
@@ -231,13 +261,22 @@ export const SubmissionHeader = ({
                 View Listing
               </DropdownMenuItem>
 
+              <DropdownMenuItem
+                onClick={() => copyToClipboard(getListingUrl())}
+                className="cursor-pointer"
+              >
+                <CopyIcon className="size-4" />
+                Copy Link
+              </DropdownMenuItem>
+
               {!!(
                 (user?.role === 'GOD' && bounty?.type !== 'grant') ||
                 (bounty?.isPublished &&
                   !pastDeadline &&
                   bounty.type !== 'grant')
               ) &&
-                !isHackathonPage && (
+                !isHackathonPage &&
+                getEditText() && (
                   <DropdownMenuItem className="cursor-pointer" asChild>
                     <Link
                       href={
@@ -247,7 +286,7 @@ export const SubmissionHeader = ({
                       }
                     >
                       <Pencil className="size-4" />
-                      Edit
+                      {getEditText()}
                     </Link>
                   </DropdownMenuItem>
                 )}

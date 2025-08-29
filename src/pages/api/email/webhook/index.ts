@@ -32,22 +32,17 @@ interface WebhookEvent {
 }
 
 async function deleteEmailSettings(recipientEmail: string) {
-  console.log(
-    `Deleting all EmailSettings for this user with email: ${recipientEmail}`,
-  );
-
   const users = await prisma.user.findMany({
     where: { email: recipientEmail },
-    select: { id: true },
   });
 
   if (users.length > 0) {
-    for (const user of users) {
-      await prisma.emailSettings.deleteMany({
-        where: { userId: user.id },
-      });
-      console.log(`Deleted EmailSettings for user ID: ${user.id}`);
-    }
+    await prisma.emailSettings.deleteMany({
+      where: { userId: { in: users.map((u) => u.id) } },
+    });
+    console.log(
+      `Deleted email settings for ${users.length} users with email ${recipientEmail}`,
+    );
   } else {
     console.log(`No users found with email ${recipientEmail}`);
   }
@@ -115,20 +110,23 @@ const webhooks = async (req: NextApiRequest, res: NextApiResponse) => {
           return res.status(400).json({ error: 'No recipient email found' });
         }
 
+        // Convert email to lowercase to ensure consistency
+        const normalizedEmail = recipientEmail.toLowerCase();
+
         if (event.type === 'email.bounced') {
           const { data } = await axios.post(
             `https://earn.superteam.fun/api/email/validate`,
-            { email: recipientEmail },
+            { email: normalizedEmail },
           );
           const isValid = data?.isValid ?? false;
-          await handleEmailBounce(recipientEmail, isValid);
+          await handleEmailBounce(normalizedEmail, isValid);
         } else if (event.type === 'email.complained') {
-          await deleteEmailSettings(recipientEmail);
+          await deleteEmailSettings(normalizedEmail);
         }
 
         await prisma.resendLogs.create({
           data: {
-            email: recipientEmail,
+            email: normalizedEmail,
             subject: event.data.subject,
             status: event.type,
           },

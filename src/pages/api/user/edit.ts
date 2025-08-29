@@ -147,3 +147,11 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
 }
 
 export default withAuth(handler);
+
+export const config = {
+  api: {
+    bodyParser: {
+      sizeLimit: '10mb',
+    },
+  },
+};
