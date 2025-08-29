@@ -30,7 +30,8 @@ export const SponsorInfoModal = ({
   onClose: () => void;
 }) => {
   const { user, refetchUser } = useUser();
-  const { uploadAndReplace, uploading: uploadUploading } = useUploadImage();
+  const { uploadAndReplace } = useUploadImage();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const form = useForm<UserSponsorDetails>({
     resolver: zodResolver(userSponsorDetailsSchema),
@@ -79,9 +80,13 @@ export const SponsorInfoModal = ({
       console.error('Error updating user details:', error);
       toast.error('Failed to update profile. Please try again.');
     },
+    onSettled: () => {
+      setIsLoading(false);
+    },
   });
 
   const onSubmit = async (data: UserSponsorDetails) => {
+    setIsLoading(true);
     if (isUsernameInvalid) return;
 
     try {
@@ -176,10 +181,10 @@ export const SponsorInfoModal = ({
 
             <Button
               className="w-full"
-              disabled={uploadUploading || updateUserMutation.isPending}
+              disabled={isLoading || updateUserMutation.isPending}
               type="submit"
             >
-              {uploadUploading || updateUserMutation.isPending ? (
+              {isLoading || updateUserMutation.isPending ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   <span>Submitting</span>

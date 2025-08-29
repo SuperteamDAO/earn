@@ -219,6 +219,9 @@ const CreateSponsor = () => {
       }
     },
     onSuccess: async () => {
+      toast.success('Your Sponsor has been created!', {
+        description: 'Redirecting to dashboard...',
+      });
       await refetchUser();
       router.push('/dashboard/listings?open=1');
     },
