@@ -39,6 +39,77 @@ export const useUploadImage = (): UseUploadReturn => {
   const [progress, setProgress] = useState(0);
   const [error, setError] = useState<string | null>(null);
 
+  const compressImage = async (file: File): Promise<File> => {
+    return new Promise((resolve, reject) => {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      const img = new Image();
+
+      img.onload = () => {
+        try {
+          let { width, height } = img;
+
+          const MAX_DIMENSION = 1920;
+          if (width > MAX_DIMENSION || height > MAX_DIMENSION) {
+            if (width > height) {
+              height = (height * MAX_DIMENSION) / width;
+              width = MAX_DIMENSION;
+            } else {
+              width = (width * MAX_DIMENSION) / height;
+              height = MAX_DIMENSION;
+            }
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+
+          ctx?.drawImage(img, 0, 0, width, height);
+
+          const originalFormat = file.type.toLowerCase();
+
+          let outputFormat: string;
+          let quality: number;
+
+          if (originalFormat.includes('png')) {
+            outputFormat = 'image/jpeg';
+            quality = 0.85;
+          } else if (originalFormat.includes('webp')) {
+            outputFormat = 'image/webp';
+            quality = 0.8;
+          } else {
+            outputFormat = 'image/jpeg';
+            quality = 0.8;
+          }
+
+          canvas.toBlob(
+            (blob) => {
+              if (blob) {
+                const extension = outputFormat.split('/')[1];
+                const originalName = file.name.replace(/\.[^/.]+$/, '');
+                const newFileName = `${originalName}.${extension}`;
+
+                const compressedFile = new File([blob], newFileName, {
+                  type: outputFormat,
+                  lastModified: Date.now(),
+                });
+                resolve(compressedFile);
+              } else {
+                reject(new Error('Failed to compress image'));
+              }
+            },
+            outputFormat,
+            quality,
+          );
+        } catch (error) {
+          reject(error);
+        }
+      };
+
+      img.onerror = () => reject(new Error('Failed to load image'));
+      img.src = URL.createObjectURL(file);
+    });
+  };
+
   const uploadFile = async (
     file: File,
     options: UploadOptions,
@@ -59,26 +130,33 @@ export const useUploadImage = (): UseUploadReturn => {
         );
       }
 
-      const signatureResponse = await fetch('/api/image/sign', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          folder: options.folder,
-          public_id: options.public_id,
-          resource_type: options.resource_type || 'auto',
-          file_size: file.size,
-        }),
-      });
-
-      if (!signatureResponse.ok) {
-        const errorData = await signatureResponse.json();
-        throw new Error(errorData.error || 'Failed to get upload signature');
+      let compressedFile: File;
+      try {
+        compressedFile = await compressImage(file);
+        setProgress(25);
+      } catch (compressionError) {
+        console.warn(
+          'Image compression failed, using original file:',
+          compressionError,
+        );
+        compressedFile = file;
+        setProgress(25);
       }
 
-      const signatureData = await signatureResponse.json();
+      setProgress(50);
+
+      const signatureResponse = await api.post('/api/image/sign', {
+        folder: options.folder,
+        public_id: options.public_id,
+        resource_type: options.resource_type || 'auto',
+        file_size: compressedFile.size,
+      });
+
+      const signatureData = signatureResponse.data;
+      setProgress(75);
 
       const formData = new FormData();
-      formData.append('file', file);
+      formData.append('file', compressedFile);
       formData.append('signature', signatureData.signature);
       formData.append('timestamp', signatureData.timestamp.toString());
       formData.append('folder', signatureData.folder);

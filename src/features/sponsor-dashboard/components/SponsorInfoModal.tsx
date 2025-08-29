@@ -11,6 +11,7 @@ import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Form, FormLabel } from '@/components/ui/form';
 import { FormFieldWrapper } from '@/components/ui/form-field-wrapper';
 import { Input } from '@/components/ui/input';
+import { useUploadImage } from '@/hooks/use-upload-image';
 import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 
@@ -29,6 +30,8 @@ export const SponsorInfoModal = ({
   onClose: () => void;
 }) => {
   const { user, refetchUser } = useUser();
+  const { uploadAndReplace, uploading: uploadUploading } = useUploadImage();
+
   const form = useForm<UserSponsorDetails>({
     resolver: zodResolver(userSponsorDetailsSchema),
     defaultValues: {
@@ -41,7 +44,6 @@ export const SponsorInfoModal = ({
   });
 
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [uploading, setUploading] = useState<boolean>(false);
   const [isGooglePhoto, setIsGooglePhoto] = useState<boolean>(
     user?.photo?.includes('googleusercontent.com') || false,
   );
@@ -83,17 +85,15 @@ export const SponsorInfoModal = ({
     if (isUsernameInvalid) return;
 
     try {
-      setUploading(true);
-
       let finalPhoto = isGooglePhoto ? user?.photo : data.photo;
+
       if (selectedFile && !isGooglePhoto) {
-        const base64 = await new Promise<string>((resolve, reject) => {
-          const reader = new FileReader();
-          reader.readAsDataURL(selectedFile);
-          reader.onload = () => resolve(reader.result as string);
-          reader.onerror = reject;
-        });
-        finalPhoto = base64;
+        const uploadResult = await uploadAndReplace(
+          selectedFile,
+          { folder: 'earn-pfp' },
+          user?.photo || undefined,
+        );
+        finalPhoto = uploadResult.url;
       }
 
       updateUserMutation.mutate({
@@ -103,8 +103,6 @@ export const SponsorInfoModal = ({
     } catch (error) {
       console.error('Error uploading image:', error);
       toast.error('Failed to upload image. Please try again.');
-    } finally {
-      setUploading(false);
     }
   };
 
@@ -178,10 +176,10 @@ export const SponsorInfoModal = ({
 
             <Button
               className="w-full"
-              disabled={uploading || updateUserMutation.isPending}
+              disabled={uploadUploading || updateUserMutation.isPending}
               type="submit"
             >
-              {uploading || updateUserMutation.isPending ? (
+              {uploadUploading || updateUserMutation.isPending ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   <span>Submitting</span>

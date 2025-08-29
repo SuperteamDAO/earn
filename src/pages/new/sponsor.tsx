@@ -51,7 +51,7 @@ const CreateSponsor = () => {
   const router = useRouter();
   const { ready, authenticated } = usePrivy();
   const { user, refetchUser } = useUser();
-  const { uploadFile } = useUploadImage();
+  const { uploadFile, uploadAndReplace } = useUploadImage();
 
   const [selectedUserPhoto, setSelectedUserPhoto] = useState<File | null>(null);
   const [selectedLogo, setSelectedLogo] = useState<File | null>(null);
@@ -200,7 +200,6 @@ const CreateSponsor = () => {
             folder: 'earn-sponsor',
             resource_type: 'image',
           });
-          console.log('uploadResult', uploadResult);
           sponsorData.logo = uploadResult.url;
         }
 
@@ -265,16 +264,14 @@ const CreateSponsor = () => {
     if (isSubmitDisabled) return;
 
     try {
-      let userPhotoUrl = data.user?.photo;
-      if (selectedUserPhoto) {
-        const base64 = await new Promise<string>((resolve, reject) => {
-          const reader = new FileReader();
-          reader.readAsDataURL(selectedUserPhoto);
-          reader.onload = () => resolve(reader.result as string);
-          reader.onerror = reject;
-        });
-        userPhotoUrl = base64;
-        if (data.user) data.user.photo = userPhotoUrl;
+      if (selectedUserPhoto && data.user) {
+        data.user.photo = user?.photo;
+        const uploadResult = await uploadAndReplace(
+          selectedUserPhoto,
+          { folder: 'earn-pfp' },
+          user?.photo || undefined,
+        );
+        data.user.photo = uploadResult.url;
       }
 
       posthog.capture('complete profile_sponsor');

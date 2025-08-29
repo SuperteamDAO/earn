@@ -17,6 +17,7 @@ import {
 } from '@/components/ui/form';
 import { FormFieldWrapper } from '@/components/ui/form-field-wrapper';
 import { Input } from '@/components/ui/input';
+import { useUploadImage } from '@/hooks/use-upload-image';
 import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 
@@ -34,6 +35,7 @@ import { UsernameField } from './fields/Username';
 export const TalentForm = () => {
   const router = useRouter();
   const { user, refetchUser } = useUser();
+  const { uploadAndReplace, uploading } = useUploadImage();
 
   const form = useForm<NewTalentFormData>({
     resolver: zodResolver(
@@ -91,8 +93,8 @@ export const TalentForm = () => {
   };
 
   const isSubmitDisabled = useMemo(() => {
-    return isLoading || isUsernameValidating;
-  }, [isLoading, isUsernameValidating]);
+    return isLoading || isUsernameValidating || uploading;
+  }, [isLoading, isUsernameValidating, uploading]);
 
   const onSubmit = async (data: NewTalentFormData) => {
     if (isSubmitDisabled) return false;
@@ -107,18 +109,22 @@ export const TalentForm = () => {
     return toast.promise(
       async () => {
         try {
-          const photo = selectedPhoto
-            ? await new Promise<string>((resolve, reject) => {
-                const reader = new FileReader();
-                reader.readAsDataURL(selectedPhoto);
-                reader.onload = () => resolve(reader.result as string);
-                reader.onerror = (error) => reject(error);
-              })
-            : data.photo;
+          let photoUrl = user?.photo;
+
+          if (selectedPhoto && !isGooglePhoto) {
+            const uploadResult = await uploadAndReplace(
+              selectedPhoto,
+              { folder: 'earn-pfp' },
+              user?.photo || undefined,
+            );
+            photoUrl = uploadResult.url;
+          } else if (isGooglePhoto) {
+            photoUrl = user?.photo;
+          }
 
           await api.post('/api/user/complete-profile/', {
             ...data,
-            photo: isGooglePhoto ? user?.photo : photo,
+            photo: photoUrl,
           });
           if (user) posthog.identify(user.email);
 
