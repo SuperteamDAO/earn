@@ -2,6 +2,7 @@ import type { NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { verifyImageExists } from '@/utils/cloudinary';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { userSelectOptions } from '@/features/auth/constants/userSelectOptions';
@@ -16,6 +17,32 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
   logger.debug(`Request body: ${safeStringify(req.body)}`);
 
   const { telegram, ...rest } = req.body;
+
+  if (rest.photo && typeof rest.photo === 'string') {
+    try {
+      const imageExists = await verifyImageExists(rest.photo);
+      if (!imageExists) {
+        logger.warn(
+          `Photo verification failed for user ${userId}: ${rest.photo}`,
+        );
+        return res.status(400).json({
+          error: 'Invalid photo: Image does not exist in our storage',
+        });
+      }
+      logger.info(
+        `Photo verification successful for user ${userId}: ${rest.photo}`,
+      );
+    } catch (error: any) {
+      logger.warn(
+        `Photo verification error for user ${userId}: ${safeStringify(error)}`,
+      );
+      const existingUser = await prisma.user.findUnique({
+        where: { id: userId },
+        select: { photo: true },
+      });
+      rest.photo = existingUser?.photo || undefined;
+    }
+  }
   const telegramUsernameExtracted = extractSocialUsername('telegram', telegram);
 
   const dataToValidate = {

@@ -21,10 +21,10 @@ import { FormFieldWrapper } from '@/components/ui/form-field-wrapper';
 import { Input } from '@/components/ui/input';
 import { MultiSelect } from '@/components/ui/multi-select';
 import { Tooltip } from '@/components/ui/tooltip';
+import { useUploadImage } from '@/hooks/use-upload-image';
 import { SponsorLayout } from '@/layouts/Sponsor';
 import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
-import { uploadAndReplaceImage } from '@/utils/image';
 
 import { SocialInput } from '@/features/social/components/SocialInput';
 import { extractSocialUsername } from '@/features/social/utils/extractUsername';
@@ -43,8 +43,9 @@ export default function UpdateSponsor() {
 
   const [selectedLogo, setSelectedLogo] = useState<File | null>(null);
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
-  const [isUploading, setIsUploading] = useState(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const { uploadAndReplace, uploading: isUploading } = useUploadImage();
 
   const form = useForm<SponsorBase>({
     resolver: zodResolver(sponsorBaseSchema),
@@ -150,19 +151,26 @@ export default function UpdateSponsor() {
     try {
       setIsLoading(true);
 
+      let finalLogo = logoPreview;
+
       if (selectedLogo) {
-        setIsUploading(true);
-        const oldLogoUrl = sponsorData?.logo;
-        const uploadedUrl = await uploadAndReplaceImage({
-          newFile: selectedLogo,
-          folder: 'earn-sponsor',
-          oldImageUrl: oldLogoUrl,
-        });
-        data.logo = uploadedUrl;
-        setIsUploading(false);
+        try {
+          const uploadResult = await uploadAndReplace(
+            selectedLogo,
+            { folder: 'earn-sponsor' },
+            logoPreview || undefined,
+          );
+
+          finalLogo = uploadResult.url;
+        } catch (error) {
+          console.error('Error uploading image:', error);
+        }
       }
 
-      await api.post('/api/sponsors/edit', data);
+      await api.post('/api/sponsors/edit', {
+        ...data,
+        logo: finalLogo,
+      });
       await refetchUser();
       toast.success('Sponsor profile updated successfully!');
       router.push('/dashboard/listings');
@@ -237,7 +245,7 @@ export default function UpdateSponsor() {
                 <SocialInput
                   name="twitter"
                   socialName={'twitter'}
-                  formLabel="Company Twitter"
+                  formLabel="Company X"
                   placeholder="@StarkIndustries"
                   required
                   control={form.control}

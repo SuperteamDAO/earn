@@ -262,6 +262,9 @@ export default function BountySubmissions({ slug }: Props) {
             return submission.isWinner;
           } else if (filter === 'Rejected') {
             return submission.status === 'Rejected';
+          } else if (filter === 'Spam') {
+            // Spam filter should work regardless of status
+            return submission.label === 'Spam';
           } else {
             const isDecided =
               submission.isWinner || submission.status === 'Rejected';

@@ -390,7 +390,7 @@ function TalentProfile({ talent, stats }: TalentProps) {
                 )}
               </div>
             </div>
-            <Separator className="my-8" />
+            <Separator className="mt-8 mb-4" />
             <div className="flex flex-col justify-between gap-12 md:flex-row md:gap-[6.25rem]">
               <div className="flex w-full gap-6 md:w-1/2">
                 {socialLinks.map(({ Icon, link }, i) => {

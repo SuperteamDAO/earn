@@ -21,7 +21,7 @@ import { type Listing } from '@/features/listings/types';
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
 import { selectedSubmissionAtom } from '../../atoms';
-import { aiOnlyLabelMenuOptions, labelMenuOptions } from '../../constants';
+import { labelMenuOptions } from '../../constants';
 import { colorMap } from '../../utils/statusColorMap';
 import { MultiSelectFilter } from './MultiSelectFilter';
 
@@ -93,15 +93,9 @@ export const SubmissionList = ({
       listing?.type === 'project'
     ) {
       return 'Rejected';
+    } else if (submission?.label === 'Spam') {
+      return 'Spam';
     } else if (submission?.label) {
-      const aiLabel = aiOnlyLabelMenuOptions(listing?.type).find(
-        (option) => option.value === submission.label,
-      )?.label;
-
-      if (aiLabel) {
-        return aiLabel;
-      }
-
       return labelMenuOptions(listing?.type).find(
         (option) => option.value === submission.label,
       )?.label;

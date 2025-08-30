@@ -9,6 +9,13 @@ interface PriceV3Response {
   };
 }
 
+const STABLE_MINTS = new Set<string>([
+  // USDC
+  'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
+  // USDT
+  'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB',
+]);
+
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
@@ -19,6 +26,10 @@ export async function GET(request: Request) {
         { error: 'Mint address is required' },
         { status: 400 },
       );
+    }
+
+    if (STABLE_MINTS.has(mintAddress)) {
+      return NextResponse.json({ price: 1 });
     }
 
     const baseUrl = 'https://lite-api.jup.ag/price/v3';

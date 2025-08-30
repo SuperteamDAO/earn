@@ -262,7 +262,7 @@ export async function POST(request: NextRequest) {
         SystemProgram.transfer({
           fromPubkey: sender,
           toPubkey: recipient,
-          lamports: LAMPORTS_PER_SOL * Number(amount),
+          lamports: Math.floor(Number(amount) * LAMPORTS_PER_SOL),
         }),
       ];
       const message = new TransactionMessage({
@@ -318,7 +318,10 @@ export async function POST(request: NextRequest) {
     ];
 
     let ataCreationCost = 0;
-    const withdrawAmount = Number(amount) * 10 ** decimals;
+    const withdrawAmount = Math.floor(Number(amount) * 10 ** decimals);
+    if (!Number.isFinite(withdrawAmount) || withdrawAmount <= 0) {
+      throw new Error('Amount is below the smallest unit');
+    }
 
     if (receiverATAWasMissing) {
       ataCreationCost = await calculateAtaCreationCost(tokenAddress, decimals);
@@ -337,6 +340,11 @@ export async function POST(request: NextRequest) {
       );
 
       if (ataCreationCost > 0) {
+        if (withdrawAmount <= ataCreationCost) {
+          throw new Error(
+            'Amount must be greater than associated token account creation fee',
+          );
+        }
         allInstructions.push(
           createAppropriateTransferInstruction(
             senderATA,

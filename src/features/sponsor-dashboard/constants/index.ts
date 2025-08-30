@@ -4,22 +4,17 @@ export const labelMenuOptions = (type: BountyType | 'grant' | undefined) => [
   { label: 'Unreviewed', value: 'Unreviewed' },
   ...(type !== 'project' ? [{ label: 'Reviewed', value: 'Reviewed' }] : []),
   { label: 'Shortlisted', value: 'Shortlisted' },
-  ...(type !== 'project' ? [{ label: 'Spam', value: 'Spam' }] : []),
+  { label: 'Spam', value: 'Spam', hidden: true },
   ...(type === 'project' || type === 'bounty'
     ? [
         { label: 'Mid Quality', value: 'Mid_Quality' },
         { label: 'Low Quality', value: 'Low_Quality' },
       ]
     : []),
-];
-
-export const aiOnlyLabelMenuOptions = (
-  type: BountyType | 'grant' | undefined,
-) => [
   ...(type === 'bounty'
     ? [
-        { label: 'Inaccessible', value: 'Inaccessible' },
-        { label: 'Needs Review', value: 'Needs_Review' },
+        { label: 'Inaccessible', value: 'Inaccessible', hidden: true },
+        { label: 'Needs Review', value: 'Needs_Review', hidden: true },
       ]
     : []),
 ];

@@ -46,7 +46,7 @@ const faqSections: readonly FAQSection[] = [
 <br />
 <strong>2. Discord Bot:</strong> Listings are shared in real-time in relevant Superteam Discord channels across Superteam discords.
 <br />
-<strong>3. Twitter:</strong> Listings with <strong>rewards over $1,000</strong> are amplified to reach a global audience via Superteam Earn's <a style="color: blue" href="http://x.com/superteamearn" target="_blank">Twitter</a> profile.
+<strong>3. X:</strong> Listings with <strong>rewards over $1,000</strong> are amplified to reach a global audience via Superteam Earn's <a style="color: blue" href="http://x.com/superteamearn" target="_blank">X</a> profile.
 <br />
 <strong>4. Email Blasts:</strong> Listings may be included in curated newsletters depending on factors like reward size, sponsor reputation, and past engagement reaching, Earn's users' inbox directly.`,
       },
@@ -57,7 +57,7 @@ const faqSections: readonly FAQSection[] = [
 <br />
 • Listings with <strong>rewards under $100</strong> are not featured on the homepage.
 <br />
-• Listings with <strong>rewards above $1,000</strong> are amplified via our <a style="color: blue" href="http://x.com/superteamearn" target="_blank">Twitter</a> and are more likely to be included in <strong>email blasts</strong> and other community channels.
+• Listings with <strong>rewards above $1,000</strong> are amplified via our <a style="color: blue" href="http://x.com/superteamearn" target="_blank">X</a> and are more likely to be included in <strong>email blasts</strong> and other community channels.
 <br />
 <br />
 <strong>Tip:</strong> Well-written scopes, clear evaluation criteria, and generous prizes tend to get more attention from both the community and the Earn distribution channels.`,

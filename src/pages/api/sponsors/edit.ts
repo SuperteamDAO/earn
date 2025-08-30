@@ -8,6 +8,7 @@ import {
   airtableUrl,
   fetchAirtableRecordId,
 } from '@/utils/airtable';
+import { verifyImageExists } from '@/utils/cloudinary';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { type NextApiRequestWithSponsor } from '@/features/auth/types';
@@ -51,6 +52,33 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     const { name, slug, logo, url, industry, twitter, bio, entityName } =
       validationResult.data;
 
+    let finalLogo = logo;
+    if (logo) {
+      try {
+        const imageExists = await verifyImageExists(logo);
+        if (!imageExists) {
+          logger.warn(
+            `Logo verification failed for sponsor ${userSponsorId}: ${logo}`,
+          );
+          return res.status(400).json({
+            error: 'Invalid logo: Image does not exist in our storage',
+          });
+        }
+        logger.info(
+          `Logo verification successful for sponsor ${userSponsorId}: ${logo}`,
+        );
+      } catch (error: any) {
+        logger.warn(
+          `Logo verification error for sponsor ${userSponsorId}: ${safeStringify(error)}`,
+        );
+        const existing = await prisma.sponsors.findUnique({
+          where: { id: userSponsorId },
+          select: { logo: true },
+        });
+        finalLogo = existing?.logo ?? logo;
+      }
+    }
+
     const preSponsor = await prisma.sponsors.findUnique({
       where: {
         id: userSponsorId,
@@ -65,7 +93,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       data: {
         name,
         slug,
-        logo,
+        logo: finalLogo,
         url,
         industry,
         twitter,

@@ -2,7 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { type GrantApplication } from '@prisma/client';
 import { useQueryClient } from '@tanstack/react-query';
 import { Check, Loader2 } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { type z } from 'zod';
@@ -23,14 +23,22 @@ import {
 import { FormFieldWrapper } from '@/components/ui/form-field-wrapper';
 import { Input } from '@/components/ui/input';
 import { Progress } from '@/components/ui/progress';
+import { useDisclosure } from '@/hooks/use-disclosure';
 import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';
 
+import { usePopupAuth } from '@/features/auth/hooks/use-popup-auth';
 import { SubmissionTerms } from '@/features/listings/components/Submission/SubmissionTerms';
 import { SocialInput } from '@/features/social/components/SocialInput';
+import { XVerificationModal } from '@/features/social/components/XVerificationModal';
 import { extractSocialUsername } from '@/features/social/utils/extractUsername';
+import { twitterRegex } from '@/features/social/utils/regex';
+import {
+  extractXHandle,
+  isHandleVerified,
+} from '@/features/social/utils/x-verification';
 
 import { userApplicationQuery } from '../../queries/user-application';
 import { type Grant } from '../../types';
@@ -63,19 +71,33 @@ export const ApplicationModal = ({
   const [isTOSModalOpen, setIsTOSModalOpen] = useState(false);
   const [acknowledgementAccepted, setAcknowledgementAccepted] = useState(false);
   const [acknowledgementError, setAcknowledgementError] = useState('');
+  const verificationModal = useDisclosure();
+  const [verificationStatus, setVerificationStatus] = useState<
+    'loading' | 'error'
+  >('loading');
+  const [verificationHandle, setVerificationHandle] = useState<string | null>(
+    null,
+  );
 
   const { id, token, minReward, maxReward, questions } = grant;
 
+  const dynamicResolver = useMemo(
+    () =>
+      zodResolver(
+        grantApplicationSchema(
+          minReward || 0,
+          maxReward || 0,
+          token || 'USDC',
+          grant.questions,
+          user,
+        ),
+      ),
+    [minReward, maxReward, token, grant.questions, user],
+  );
+
   const [isLoading, setIsLoading] = useState(false);
   const form = useForm<FormData>({
-    resolver: zodResolver(
-      grantApplicationSchema(
-        minReward || 0,
-        maxReward || 0,
-        token || 'USDC',
-        grant.questions,
-      ),
-    ),
+    resolver: dynamicResolver,
     defaultValues: {
       projectTitle: grantApplication?.projectTitle || '',
       projectOneLiner: grantApplication?.projectOneLiner || '',
@@ -112,6 +134,130 @@ export const ApplicationModal = ({
           : [],
     },
   });
+
+  const twitterValue = form.watch('twitter');
+
+  const normalizedTwitterValue = useMemo(
+    () => (twitterValue || '').trim(),
+    [twitterValue],
+  );
+
+  const isPlainUsernameValid = useMemo(() => {
+    return /^[A-Za-z0-9_]{1,15}$/.test(normalizedTwitterValue);
+  }, [normalizedTwitterValue]);
+
+  const isProfileUrlValid = useMemo(() => {
+    return twitterRegex.test(normalizedTwitterValue);
+  }, [normalizedTwitterValue]);
+
+  const isValidXProfileInput = useMemo(() => {
+    if (!normalizedTwitterValue) return false;
+    return isPlainUsernameValid || isProfileUrlValid;
+  }, [normalizedTwitterValue, isPlainUsernameValid, isProfileUrlValid]);
+
+  const xHandleForVerification = useMemo(() => {
+    if (!isValidXProfileInput) return null;
+    const urlToParse = isPlainUsernameValid
+      ? `https://x.com/${normalizedTwitterValue}`
+      : normalizedTwitterValue;
+    return extractXHandle(urlToParse);
+  }, [isValidXProfileInput, isPlainUsernameValid, normalizedTwitterValue]);
+
+  const needsXVerification = useMemo(() => {
+    if (!xHandleForVerification) return false;
+    const verifiedHandles = user?.linkedTwitter || [];
+    return !isHandleVerified(xHandleForVerification, verifiedHandles);
+  }, [xHandleForVerification, user?.linkedTwitter]);
+
+  const isXVerified = useMemo(() => {
+    if (!xHandleForVerification) return false;
+    const verifiedHandles = user?.linkedTwitter || [];
+    return isHandleVerified(xHandleForVerification, verifiedHandles);
+  }, [xHandleForVerification, user?.linkedTwitter]);
+
+  useEffect(() => {
+    if (twitterValue && !isValidXProfileInput) {
+      form.setError('twitter', {
+        type: 'manual',
+        message: 'Please add a valid X profile link',
+      });
+      return;
+    }
+
+    if (isValidXProfileInput && needsXVerification) {
+      form.setError('twitter', {
+        type: 'manual',
+        message: 'We need to verify that you own this X account',
+      });
+      return;
+    }
+
+    form.clearErrors('twitter');
+  }, [twitterValue, isValidXProfileInput, needsXVerification, form]);
+
+  const { signIn: popupSignIn } = usePopupAuth();
+
+  const handleVerifyClick = async () => {
+    if (!isValidXProfileInput) {
+      form.setError('twitter', {
+        type: 'manual',
+        message: 'Please add a valid X profile link',
+      });
+      return;
+    }
+
+    const urlToParse = isPlainUsernameValid
+      ? `https://x.com/${normalizedTwitterValue}`
+      : normalizedTwitterValue;
+    const handle = extractXHandle(urlToParse);
+    if (!handle) return;
+
+    try {
+      setVerificationStatus('loading');
+      setVerificationHandle(handle);
+      verificationModal.onOpen();
+
+      const success = await popupSignIn('twitter');
+
+      if (success) {
+        let attempts = 0;
+        const maxAttempts = 5;
+        const pollForUpdate = async (): Promise<boolean> => {
+          const { data: freshUser } = await refetchUser();
+
+          const currentVerifiedHandles = freshUser?.linkedTwitter || [];
+          const isNowVerified = isHandleVerified(
+            handle,
+            currentVerifiedHandles,
+          );
+
+          if (isNowVerified) {
+            form.trigger('twitter');
+            setVerificationHandle(null);
+            verificationModal.onClose();
+            return true;
+          }
+
+          attempts++;
+          if (attempts >= maxAttempts) {
+            setVerificationStatus('error');
+            return false;
+          }
+
+          const delay = Math.min(500 * Math.pow(2, attempts - 1), 5000);
+          await new Promise((resolve) => setTimeout(resolve, delay));
+          return pollForUpdate();
+        };
+
+        await pollForUpdate();
+      } else {
+        setVerificationStatus('error');
+      }
+    } catch (error: any) {
+      console.error('X verification failed:', error);
+      setVerificationStatus('error');
+    }
+  };
 
   const queryClient = useQueryClient();
 
@@ -473,10 +619,13 @@ export const ApplicationModal = ({
                   socialName={'twitter'}
                   placeholder="@StarkIndustries"
                   required
-                  formLabel="Personal Twitter Profile"
-                  formDescription="Include links to your best work that will make the community trust you to execute on this project."
+                  formLabel="Personal X Profile"
                   control={form.control}
                   height="h-9"
+                  showVerification
+                  needsVerification={needsXVerification}
+                  isVerified={isXVerified}
+                  onVerify={handleVerifyClick}
                 />
                 <SocialInput
                   name="github"
@@ -614,6 +763,15 @@ export const ApplicationModal = ({
           sponsorName={grant.sponsor.name}
         />
       )}
+      <XVerificationModal
+        isOpen={verificationModal.isOpen}
+        onClose={() => {
+          setVerificationHandle(null);
+          verificationModal.onClose();
+        }}
+        status={verificationStatus}
+        handle={verificationHandle}
+      />
     </div>
   );
 };

@@ -282,7 +282,9 @@ export function DateTimePicker({
           >
             <div className="flex grow items-center text-slate-700">
               <CalendarIcon className="mr-2 size-4" />
-              {dislayFormat}
+              <span className={!displayValue ? 'text-slate-400' : ''}>
+                {dislayFormat}
+              </span>
             </div>
             {clearable && value && (
               <Button

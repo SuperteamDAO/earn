@@ -11,9 +11,9 @@ import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Form, FormLabel } from '@/components/ui/form';
 import { FormFieldWrapper } from '@/components/ui/form-field-wrapper';
 import { Input } from '@/components/ui/input';
+import { useUploadImage } from '@/hooks/use-upload-image';
 import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
-import { uploadAndReplaceImage } from '@/utils/image';
 
 import { SocialInput } from '@/features/social/components/SocialInput';
 import {
@@ -30,6 +30,9 @@ export const SponsorInfoModal = ({
   onClose: () => void;
 }) => {
   const { user, refetchUser } = useUser();
+  const { uploadAndReplace } = useUploadImage();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
   const form = useForm<UserSponsorDetails>({
     resolver: zodResolver(userSponsorDetailsSchema),
     defaultValues: {
@@ -42,7 +45,6 @@ export const SponsorInfoModal = ({
   });
 
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [uploading, setUploading] = useState<boolean>(false);
   const [isGooglePhoto, setIsGooglePhoto] = useState<boolean>(
     user?.photo?.includes('googleusercontent.com') || false,
   );
@@ -78,40 +80,40 @@ export const SponsorInfoModal = ({
       console.error('Error updating user details:', error);
       toast.error('Failed to update profile. Please try again.');
     },
+    onSettled: () => {
+      setIsLoading(false);
+    },
   });
 
   const onSubmit = async (data: UserSponsorDetails) => {
+    setIsLoading(true);
     if (isUsernameInvalid) return;
 
     try {
-      setUploading(true);
-
-      let finalPhotoUrl = isGooglePhoto ? user?.photo : data.photo;
+      let finalPhoto = isGooglePhoto ? user?.photo : data.photo;
 
       if (selectedFile && !isGooglePhoto) {
-        const url = await uploadAndReplaceImage({
-          newFile: selectedFile,
-          folder: 'earn-pfp',
-          oldImageUrl: !isGooglePhoto && user?.photo ? user.photo : undefined,
-        });
-        finalPhotoUrl = url;
+        const uploadResult = await uploadAndReplace(
+          selectedFile,
+          { folder: 'earn-pfp' },
+          user?.photo || undefined,
+        );
+        finalPhoto = uploadResult.url;
       }
 
       updateUserMutation.mutate({
         ...data,
-        photo: finalPhotoUrl,
+        photo: finalPhoto,
       });
     } catch (error) {
       console.error('Error uploading image:', error);
       toast.error('Failed to upload image. Please try again.');
-    } finally {
-      setUploading(false);
     }
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={() => null} modal>
-      <DialogContent className="px-6 py-5 sm:max-w-xl">
+      <DialogContent className="px-6 py-5 sm:max-w-xl" hideCloseIcon>
         <h2 className="mb-3 text-xl font-semibold tracking-tight text-gray-900">
           Complete Your Profile
         </h2>
@@ -160,9 +162,10 @@ export const SponsorInfoModal = ({
               />
             </div>
 
-            <div className="my-3 mb-6 flex flex-col items-start gap-2">
+            <div className="my-3 mb-6 flex w-full flex-col items-start gap-2">
               <FormLabel>Profile Picture</FormLabel>
               <ImagePicker
+                className="w-full"
                 defaultValue={user?.photo ? { url: user.photo } : undefined}
                 onChange={(file, previewUrl) => {
                   setSelectedFile(file);
@@ -179,10 +182,10 @@ export const SponsorInfoModal = ({
 
             <Button
               className="w-full"
-              disabled={uploading || updateUserMutation.isPending}
+              disabled={isLoading || updateUserMutation.isPending}
               type="submit"
             >
-              {uploading || updateUserMutation.isPending ? (
+              {isLoading || updateUserMutation.isPending ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   <span>Submitting</span>

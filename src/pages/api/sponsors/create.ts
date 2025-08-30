@@ -2,6 +2,7 @@ import type { NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { verifyImageExists } from '@/utils/cloudinary';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { type NextApiRequestWithUser } from '@/features/auth/types';
@@ -43,8 +44,31 @@ async function user(req: NextApiRequestWithUser, res: NextApiResponse) {
       });
     }
 
-    const { name, slug, logo, url, industry, twitter, bio, entityName } =
+    const { name, slug, url, industry, twitter, bio, entityName } =
       validationResult.data;
+    let logo: string | undefined = validationResult.data.logo;
+
+    if (logo) {
+      try {
+        const imageExists = await verifyImageExists(logo);
+        if (!imageExists) {
+          logger.warn(
+            `Logo verification failed for sponsor creation by user ${userId}: ${logo}`,
+          );
+          return res.status(400).json({
+            error: 'Invalid logo: Image does not exist in our storage',
+          });
+        }
+        logger.info(
+          `Logo verification successful for sponsor creation by user ${userId}: ${logo}`,
+        );
+      } catch (error: any) {
+        logger.warn(
+          `Logo verification error for sponsor creation by user ${userId}: ${safeStringify(error)}`,
+        );
+        logo = undefined;
+      }
+    }
 
     if (!user.currentSponsorId || user.role === 'GOD') {
       logger.info(`Creating new sponsor for user: ${userId}`);
@@ -99,3 +123,11 @@ async function user(req: NextApiRequestWithUser, res: NextApiResponse) {
 }
 
 export default withAuth(user);
+
+export const config = {
+  api: {
+    bodyParser: {
+      sizeLimit: '10mb',
+    },
+  },
+};

@@ -4,6 +4,7 @@ import logger from '@/lib/logger';
 import { privy } from '@/lib/privy';
 import { prisma } from '@/prisma';
 import { cleanSkills } from '@/utils/cleanSkills';
+import { verifyImageExists } from '@/utils/cloudinary';
 import { filterAllowedFields } from '@/utils/filterAllowedFields';
 import { safeStringify } from '@/utils/safeStringify';
 
@@ -56,6 +57,29 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
     }
 
     const filteredData = filterAllowedFields(req.body, allowedFields);
+
+    if (filteredData.photo && typeof filteredData.photo === 'string') {
+      try {
+        const imageExists = await verifyImageExists(filteredData.photo);
+        if (!imageExists) {
+          logger.warn(
+            `Photo verification failed for user ${userId}: ${filteredData.photo}`,
+          );
+          return res.status(400).json({
+            error: 'Invalid photo: Image does not exist in our storage',
+          });
+        }
+        logger.info(
+          `Photo verification successful for user ${userId}: ${filteredData.photo}`,
+        );
+      } catch (error: any) {
+        logger.warn(
+          `Photo verification error for user ${userId}: ${safeStringify(error)}`,
+        );
+        filteredData.photo = user.photo || undefined;
+      }
+    }
+
     type SchemaKeys = keyof typeof profileSchema._def.schema.shape;
     const keysToValidate = Object.keys(filteredData).reduce<
       Record<SchemaKeys, true>

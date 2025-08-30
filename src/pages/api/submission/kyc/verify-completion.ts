@@ -72,9 +72,9 @@ const handler = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
           kycVerifiedAt: new Date(),
         },
       });
-    }
 
-    await createPayment({ submissionId });
+      await createPayment({ submissionId });
+    }
 
     return res.status(200).json(result);
   } catch (error) {

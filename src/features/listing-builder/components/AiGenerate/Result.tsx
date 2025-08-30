@@ -230,9 +230,7 @@ export function AiGenerateResult({
                 <span className="flex items-center justify-center self-stretch border-r px-4 text-slate-400">
                   <Twitter className="h-4 w-4 text-slate-400 opacity-100 grayscale-0" />
                 </span>
-                <p className="px-4 py-2 text-sm text-slate-500">
-                  Twitter post link
-                </p>
+                <p className="px-4 py-2 text-sm text-slate-500">X post link</p>
               </div>
             </>
           )}

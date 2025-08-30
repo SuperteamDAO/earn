@@ -28,6 +28,8 @@ export const REGIONS = [
   'Poland',
   'South Korea',
   'Ireland',
+  'Kazakhstan',
+  'Indonesia',
   'Ukraine',
   'Argentina',
   'USA',
@@ -411,6 +413,30 @@ export const Superteams = [
     nationality: 'Irish',
     slug: 'ireland',
   },
+  {
+    name: 'Superteam Kazakhstan',
+    icons: basePath + 'logos/kazakhstan',
+    banner: basePath + 'banners/kazakhstan',
+    region: 'Kazakhstan' as Region,
+    displayValue: 'Kazakhstan',
+    country: ['Kazakhstan'],
+    code: 'KZ',
+    hello: 'Sälem',
+    nationality: 'Kazakhstans',
+    slug: 'kazakhstan',
+  },
+  {
+    name: 'Superteam Indonesia',
+    icons: basePath + 'logos/indonesia',
+    banner: basePath + 'banners/indonesia',
+    region: 'Indonesia' as Region,
+    displayValue: 'Indonesia',
+    country: ['Indonesia'],
+    code: 'ID',
+    hello: 'Halo',
+    nationality: 'Indonesians',
+    slug: 'indonesia',
+  },
 ];
 
 const NonSTRegions = [
@@ -456,14 +482,6 @@ export const unofficialSuperteams = [
     country: ['Nepal'],
     code: 'NP',
     icons: basePath + 'logos/nepal',
-  },
-  {
-    name: 'Superteam Kazakhstan',
-    displayValue: 'Kazakhstan',
-    region: 'KAZAKHSTAN',
-    country: ['Kazakhstan'],
-    code: 'KZ',
-    icons: basePath + 'logos/kazakhstan',
   },
 ];
 

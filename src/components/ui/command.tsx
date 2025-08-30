@@ -40,12 +40,15 @@ function CommandDialog({
 
 function CommandInput({
   className,
+  wrapperClassName,
   ...props
-}: React.ComponentProps<typeof CommandPrimitive.Input>) {
+}: React.ComponentProps<typeof CommandPrimitive.Input> & {
+  wrapperClassName?: string;
+}) {
   return (
     <div
       data-slot="command-input-wrapper"
-      className="flex items-center border-b px-3"
+      className={cn('flex items-center border-b px-3', wrapperClassName)}
       cmdk-input-wrapper=""
     >
       <MagnifyingGlassIcon className="mr-2 h-4 w-4 shrink-0 opacity-50" />

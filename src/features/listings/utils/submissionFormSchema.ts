@@ -5,6 +5,11 @@ import { type User } from '@/interface/user';
 
 import { tweetLinkRegex } from '@/features/social/utils/regex';
 import { telegramUsernameSchema } from '@/features/social/utils/schema';
+import {
+  extractXHandle,
+  isHandleVerified,
+  isXUrl,
+} from '@/features/social/utils/x-verification';
 
 import { type Listing } from '../types';
 
@@ -32,7 +37,7 @@ const submissionSchema = (
           z.object({
             question: z.string(),
             answer: z.string(),
-            optional: z.boolean().optional(),
+            optional: z.boolean().optional().nullable(),
           }),
         )
         .optional(),
@@ -58,6 +63,35 @@ const submissionSchema = (
           message: 'Add a valid link to continue',
         });
       }
+
+      if (data.tweet && isXUrl(data.tweet)) {
+        const handle = extractXHandle(data.tweet);
+        if (handle) {
+          const verifiedHandles = user?.linkedTwitter || [];
+          if (!isHandleVerified(handle, verifiedHandles)) {
+            ctx.addIssue({
+              code: 'custom',
+              path: ['tweet'],
+              message: 'We need to verify that you own this X account.',
+            });
+          }
+        }
+      }
+
+      if (data.link && isXUrl(data.link)) {
+        const handle = extractXHandle(data.link);
+        if (handle) {
+          const verifiedHandles = user?.linkedTwitter || [];
+          if (!isHandleVerified(handle, verifiedHandles)) {
+            ctx.addIssue({
+              code: 'custom',
+              path: ['link'],
+              message: 'We need to verify that you own this X account.',
+            });
+          }
+        }
+      }
+
       if (listing.type === 'project' && listing.compensationType !== 'fixed') {
         if (data.ask === undefined || data.ask === null || !data.ask) {
           ctx.addIssue({

@@ -233,23 +233,29 @@ export const ListingTable = ({
                     </Tooltip>
                   </TableCell>
                   <TableCell className="max-w-80 font-medium break-words whitespace-normal text-slate-700">
-                    <Link
-                      className={cn(
-                        'ph-no-capture',
-                        !listing.isPublished && 'pointer-events-none',
-                      )}
-                      href={listingSubmissionLink}
-                      onClick={() => {
-                        posthog.capture('submissions_sponsor');
-                      }}
-                    >
+                    {listing.isPublished ? (
+                      <Link
+                        className="ph-no-capture"
+                        href={listingSubmissionLink}
+                        onClick={() => {
+                          posthog.capture('submissions_sponsor');
+                        }}
+                      >
+                        <p
+                          className="cursor-pointer overflow-hidden text-[15px] font-medium text-ellipsis whitespace-nowrap text-slate-500 hover:underline"
+                          title={listing.title}
+                        >
+                          {listing.title}
+                        </p>
+                      </Link>
+                    ) : (
                       <p
-                        className="cursor-pointer overflow-hidden text-[15px] font-medium text-ellipsis whitespace-nowrap text-slate-500 hover:underline"
+                        className="overflow-hidden text-[15px] font-medium text-ellipsis whitespace-nowrap text-slate-500"
                         title={listing.title}
                       >
                         {listing.title}
                       </p>
-                    </Link>
+                    )}
                   </TableCell>
                   <TableCell className="py-2">
                     <p className="text-center text-sm font-medium text-slate-500">

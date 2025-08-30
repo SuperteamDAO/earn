@@ -23,6 +23,7 @@ model Bounties {
   rewards            Json?
   maxBonusSpots      Int                @default(0)
   usdValue           Float?
+  tokenUsdAtPublish  Float?
   sponsorId          String
   pocId              String
   source             Source             @default(NATIVE)
@@ -495,6 +496,10 @@ model User {
   CreditLedger       CreditLedger[]
   blockRationale     String?
   linkedTwitter      Json?
+  referralCode       String?              @unique
+  referredById       String?
+  referredBy         User?                @relation("UserReferrals", fields: [referredById], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  referrals          User[]               @relation("UserReferrals")
 
   @@index([currentSponsorId])
   @@index([hackathonId])
@@ -503,6 +508,7 @@ model User {
   @@index([firstName])
   @@index([lastName])
   @@index([location])
+  @@index([referredById])
 }
 
 model Scouts {
@@ -739,6 +745,9 @@ enum CreditEventType {
   GRANT_SPAM_PENALTY
   SPAM_DISPUTE
   GRANT_SPAM_DISPUTE
+  REFERRAL_FIRST_SUBMISSION_BONUS_INVITEE
+  REFERRAL_FIRST_SUBMISSION_BONUS_INVITER
+  REFERRAL_INVITEE_WIN_BONUS_INVITER
 }
 
 enum TalentRankingSkills {

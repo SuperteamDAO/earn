@@ -1,18 +1,43 @@
 import { z } from 'zod';
 
+import { type User } from '@/interface/user';
 import { validateSolAddress } from '@/utils/validateSolAddress';
 
+import { twitterRegex } from '@/features/social/utils/regex';
 import {
   githubUsernameSchema,
   telegramUsernameSchema,
-  twitterUsernameSchema,
 } from '@/features/social/utils/schema';
+import {
+  extractXHandle,
+  isHandleVerified,
+} from '@/features/social/utils/x-verification';
+
+const X_USERNAME_REGEX = /^[A-Za-z0-9_]{1,15}$/;
+
+const twitterProfileSchema = z
+  .string()
+  .transform((val) => (typeof val === 'string' ? val.trim() : val))
+  .refine((val) => Boolean(val && val.length > 0), {
+    message: 'Please add a valid X profile link',
+  })
+  .refine((val) => X_USERNAME_REGEX.test(val) || twitterRegex.test(val), {
+    message: 'Please add a valid X profile link',
+  })
+  .transform((val) => {
+    if (X_USERNAME_REGEX.test(val)) {
+      return `https://x.com/${val}`;
+    }
+    const handle = extractXHandle(val);
+    return handle ? `https://x.com/${handle}` : val;
+  });
 
 export const grantApplicationSchema = (
   minReward: number,
   maxReward: number,
   token: string,
   questions?: { order: number; question: string }[],
+  user?: User | null,
 ) =>
   z
     .object({
@@ -37,7 +62,7 @@ export const grantApplicationSchema = (
       proofOfWork: z.string().min(1, 'Proof of work is required'),
       milestones: z.string().min(1, 'Milestones are required'),
       kpi: z.string().min(1, 'KPI is required'),
-      twitter: twitterUsernameSchema,
+      twitter: twitterProfileSchema,
       github: z
         .preprocess(
           (val) => (val === '' ? undefined : val),
@@ -59,6 +84,30 @@ export const grantApplicationSchema = (
             path: ['walletAddress'],
             message: 'Invalid Solana Wallet Address',
           });
+        }
+      }
+
+      if (data.twitter) {
+        const value = data.twitter;
+        const isValidProfile =
+          X_USERNAME_REGEX.test(value) || twitterRegex.test(value);
+
+        if (!isValidProfile) {
+          return;
+        }
+
+        const handle = extractXHandle(value);
+        if (handle) {
+          const verifiedHandles = user?.linkedTwitter || [];
+          const isVerified = isHandleVerified(handle, verifiedHandles);
+
+          if (!isVerified) {
+            ctx.addIssue({
+              code: 'custom',
+              path: ['twitter'],
+              message: 'We need to verify that you own this X account.',
+            });
+          }
         }
       }
 

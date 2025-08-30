@@ -35,13 +35,13 @@ import {
 import { Textarea } from '@/components/ui/textarea';
 import { Tooltip } from '@/components/ui/tooltip';
 import { useDisclosure } from '@/hooks/use-disclosure';
+import { useUploadImage } from '@/hooks/use-upload-image';
 import type { PoW } from '@/interface/pow';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
-import { uploadAndReplaceImage } from '@/utils/image';
 
 import { SocialInputAll } from '@/features/social/components/SocialInput';
 import { extractSocialUsername } from '@/features/social/utils/extractUsername';
@@ -70,8 +70,8 @@ export default function EditProfilePage({ slug }: { slug: string }) {
   const skills = watch('skills');
 
   const [selectedPhoto, setSelectedPhoto] = useState<File | null>(null);
-  const [uploading, setUploading] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const { uploadAndReplace, uploading } = useUploadImage();
 
   const interestDropdown = useMemo<Option[]>(
     () =>
@@ -229,16 +229,15 @@ export default function EditProfilePage({ slug }: { slug: string }) {
         .promise(
           async () => {
             if (selectedPhoto) {
-              setUploading(true);
-              const oldPhotoUrl = user?.photo;
-              const photoUrl = await uploadAndReplaceImage({
-                newFile: selectedPhoto,
-                folder: 'earn-pfp',
-                oldImageUrl: oldPhotoUrl,
-              });
-
-              data.photo = photoUrl;
-              setUploading(false);
+              const uploadResult = await uploadAndReplace(
+                selectedPhoto,
+                {
+                  folder: 'earn-pfp',
+                  resource_type: 'image',
+                },
+                user?.photo,
+              );
+              data.photo = uploadResult.url;
             }
 
             const finalUpdatedData = Object.keys(data).reduce((acc, key) => {
@@ -315,7 +314,6 @@ export default function EditProfilePage({ slug }: { slug: string }) {
       return false;
     } finally {
       setIsLoading(false);
-      setUploading(false);
     }
   };
 

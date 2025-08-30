@@ -3,6 +3,7 @@ import type { NextApiResponse } from 'next';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { cleanSkills } from '@/utils/cleanSkills';
+import { verifyImageExists } from '@/utils/cloudinary';
 import { filterAllowedFields } from '@/utils/filterAllowedFields';
 import { safeStringify } from '@/utils/safeStringify';
 
@@ -89,6 +90,28 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
     : undefined;
   logger.info(`Corrected skills: ${safeStringify(correctedSkills)}`);
 
+  if (updatedData.photo) {
+    try {
+      const imageExists = await verifyImageExists(updatedData.photo);
+      if (!imageExists) {
+        logger.warn(
+          `Photo verification failed for user ${userId}: ${updatedData.photo}`,
+        );
+        return res.status(400).json({
+          error: 'Invalid photo: Image does not exist in our storage',
+        });
+      }
+      logger.info(
+        `Photo verification successful for user ${userId}: ${updatedData.photo}`,
+      );
+    } catch (error: any) {
+      logger.warn(
+        `Photo verification error for user ${userId}: ${safeStringify(error)}`,
+      );
+      updatedData.photo = user.photo;
+    }
+  }
+
   try {
     logger.debug(`Updated data to be saved: ${safeStringify(updatedData)}`);
 
@@ -124,3 +147,11 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
 }
 
 export default withAuth(handler);
+
+export const config = {
+  api: {
+    bodyParser: {
+      sizeLimit: '10mb',
+    },
+  },
+};
