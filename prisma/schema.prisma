@@ -740,7 +740,6 @@ model TelegramUser {
   id           String   @id @default(uuid())
   telegramId   BigInt   @unique
   username     String?
-  name         String?
   chatId       BigInt
   isSubscribed Boolean  @default(false)
   isOnboarded  Boolean  @default(false)
