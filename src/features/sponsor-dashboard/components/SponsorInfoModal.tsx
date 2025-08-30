@@ -110,7 +110,7 @@ export const SponsorInfoModal = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={() => null} modal>
-      <DialogContent className="px-6 py-5 sm:max-w-xl">
+      <DialogContent className="px-6 py-5 sm:max-w-xl" hideCloseIcon>
         <h2 className="mb-3 text-xl font-semibold tracking-tight text-gray-900">
           Complete Your Profile
         </h2>
@@ -159,9 +159,10 @@ export const SponsorInfoModal = ({
               />
             </div>
 
-            <div className="my-3 mb-6 flex flex-col items-start gap-2">
+            <div className="my-3 mb-6 flex w-full flex-col items-start gap-2">
               <FormLabel>Profile Picture</FormLabel>
               <ImagePicker
+                className="w-full"
                 defaultValue={user?.photo ? { url: user.photo } : undefined}
                 onChange={(file, previewUrl) => {
                   setSelectedFile(file);
