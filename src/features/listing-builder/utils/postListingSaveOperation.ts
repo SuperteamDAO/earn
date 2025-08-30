@@ -45,6 +45,10 @@ export async function handlePostSaveOperations(context: PostSaveParams) {
 
     await handleAgentJobQueuing(result);
 
+    if (!isEditing) {
+      await handleTelegramNotifications(result);
+    }
+
     logger.info(
       `Listing ${isEditing ? 'Update' : 'Publish'} API Fully Successful with ID: ${listingId}`,
     );
@@ -222,6 +226,28 @@ async function handleAgentJobQueuing(result: Bounties) {
     );
     console.log(
       `Failed to queue agent job for ${agentType} with id ${result.id}`,
+    );
+  }
+}
+
+async function handleTelegramNotifications(result: Bounties) {
+  try {
+    await queueEmail({
+      type: 'telegramNewListing',
+      id: result.id,
+      triggeredBy: 'system',
+    });
+
+    logger.info(
+      `Successfully queued telegram notification for listing ${result.id}`,
+    );
+    console.log(
+      `Successfully queued telegram notification for listing ${result.id}`,
+    );
+  } catch (err) {
+    logger.error(
+      `Error in telegram notifications for listing ${result.id}`,
+      err,
     );
   }
 }
