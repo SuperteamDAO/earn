@@ -1,37 +1,40 @@
 import { AspectRatio } from '@/components/ui/aspect-ratio';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 
-export const AutoGenerateFeature = () => {
+export const AutoReviewBountiesFeature = () => {
   return (
     <div>
-      <AspectRatio ratio={960 / 638}>
+      <AspectRatio ratio={960 / 632}>
         <ExternalImage
-          src="/announcements/auto-generate"
-          alt="Auto Generate Announcement Illustration"
+          src="/announcements/auto-review-bounties"
+          alt="Auto Review Bounties Announcement Illustration"
           className="mx-auto w-full"
           loading="eager"
           decoding="sync"
           width={960}
-          height={638}
+          height={632}
         />
       </AspectRatio>
       <div className="p-6 pb-0">
-        <p className="text-lg font-semibold">Generate your Listings with AI</p>
+        <p className="text-xl font-semibold">Review Written Bounties with AI</p>
         <p className="mt-2 text-base font-normal text-slate-500">
-          Creating a listing is now effortless! Provide a few details and let
-          our AI generate a complete listing for you, saving you time and
-          effort.
+          AI Reviews are now being extended to written bounties! Save hours of
+          human effort by using AI-assisted reviews, which quickly add labels
+          and review notes to submissions you&apos;ve gotten.
         </p>
-        <div className="mt-6 flex flex-wrap justify-between gap-4 pr-4 text-sm">
-          <Point text={'Generate drafts in less than 1 min'} />
-          <Point text={'Get properly structured descriptions'} />
-          <Point text={'Regenerate descriptions if unsatisfied'} />
+        <div className="mt-6 flex flex-col justify-between gap-4 pr-4 text-sm">
+          <Point text={'Takes >1min to complete'} />
+          <Point
+            text={"Reviews based on your bounty's specific requirements"}
+          />
+          <Point
+            text={"Ready for review ~12 hours after your bounty's deadline"}
+          />
         </div>
       </div>
     </div>
   );
 };
-
 function Point({ text }: { text: string }) {
   return (
     <span className="flex items-center gap-3">
