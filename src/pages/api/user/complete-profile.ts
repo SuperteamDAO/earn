@@ -4,10 +4,7 @@ import logger from '@/lib/logger';
 import { privy } from '@/lib/privy';
 import { prisma } from '@/prisma';
 import { cleanSkills } from '@/utils/cleanSkills';
-import {
-  ALLOWED_IMAGE_FORMATS,
-  maybeUploadBase64AndDeletePrevious,
-} from '@/utils/cloudinary';
+import { verifyImageExists } from '@/utils/cloudinary';
 import { filterAllowedFields } from '@/utils/filterAllowedFields';
 import { safeStringify } from '@/utils/safeStringify';
 
@@ -61,24 +58,25 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
 
     const filteredData = filterAllowedFields(req.body, allowedFields);
 
-    if (
-      typeof filteredData.photo === 'string' &&
-      filteredData.photo.startsWith('data:image')
-    ) {
+    if (filteredData.photo && typeof filteredData.photo === 'string') {
       try {
-        filteredData.photo = await maybeUploadBase64AndDeletePrevious(
-          filteredData.photo,
-          'earn-pfp',
-          user.photo ?? undefined,
-          200,
+        const imageExists = await verifyImageExists(filteredData.photo);
+        if (!imageExists) {
+          logger.warn(
+            `Photo verification failed for user ${userId}: ${filteredData.photo}`,
+          );
+          return res.status(400).json({
+            error: 'Invalid photo: Image does not exist in our storage',
+          });
+        }
+        logger.info(
+          `Photo verification successful for user ${userId}: ${filteredData.photo}`,
         );
-      } catch (e: any) {
-        return res.status(400).json({
-          error: 'Invalid image format',
-          message: `File type must be one of: ${ALLOWED_IMAGE_FORMATS.map(
-            (f) => `image/${f}`,
-          ).join(', ')}`,
-        });
+      } catch (error: any) {
+        logger.warn(
+          `Photo verification error for user ${userId}: ${safeStringify(error)}`,
+        );
+        filteredData.photo = user.photo || undefined;
       }
     }
 
