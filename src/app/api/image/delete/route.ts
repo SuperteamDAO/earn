@@ -3,6 +3,7 @@ import { headers } from 'next/headers';
 import { type NextRequest, NextResponse } from 'next/server';
 
 import logger from '@/lib/logger';
+import { extractPublicIdFromUrl } from '@/utils/cloudinary';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { getUserSession } from '@/features/auth/utils/getUserSession';
@@ -14,17 +15,6 @@ cloudinary.config({
   api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
-
-const CLOUDINARY_REGEX =
-  /^.+\.cloudinary\.com\/(?:[^\/]+\/)(?:(image|video|raw)\/)?(?:(upload|fetch|private|authenticated|sprite|facebook|twitter|youtube|vimeo)\/)?(?:(?:[^_/]+_[^,/]+,?)*\/)?(?:v(\d+|\w{1,2})\/)?([^\.^\s]+)(?:\.(.+))?$/;
-
-const extractPublicId = (link: string) => {
-  if (!link) return '';
-
-  const parts = CLOUDINARY_REGEX.exec(link);
-
-  return parts && parts.length > 2 ? parts[parts.length - 2] : link;
-};
 
 export async function DELETE(request: NextRequest) {
   try {
@@ -56,7 +46,7 @@ export async function DELETE(request: NextRequest) {
       );
     }
 
-    const publicId = extractPublicId(imageUrl);
+    const publicId = extractPublicIdFromUrl(imageUrl);
 
     if (!publicId) {
       return NextResponse.json(

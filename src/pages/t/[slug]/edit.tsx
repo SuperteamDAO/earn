@@ -7,7 +7,6 @@ import posthog from 'posthog-js';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
-import { setTimeout } from 'timers';
 
 import { ImagePicker } from '@/components/shared/ImagePicker';
 import { RegionCombobox } from '@/components/shared/RegionCombobox';
