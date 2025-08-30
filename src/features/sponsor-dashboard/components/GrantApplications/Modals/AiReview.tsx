@@ -242,7 +242,7 @@ export default function AiReviewModal({ applications, grant }: Props) {
                 <span className="absolute inset-[-1000%] animate-[spin_2s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#FF79C1_0%,#76C5FF_50%,#FF79C1_100%)]" />
                 <span className="ph-no-capture bg-background inline-flex h-full w-full cursor-pointer items-center justify-center gap-2 rounded-md px-4 py-1 text-sm font-medium text-slate-500 backdrop-blur-3xl group-hover:bg-slate-50">
                   <img src="/assets/ai-wand.svg" alt="Auto Review AI" />
-                  Auto Review
+                  Review with AI
                 </span>
               </div>
             </button>
@@ -252,7 +252,7 @@ export default function AiReviewModal({ applications, grant }: Props) {
         <Card className="border-0 shadow-none">
           <CardHeader className="flex flex-row items-center justify-between border-b p-0 px-6 py-3">
             <DialogTitle className="text-xl font-semibold">
-              Auto Review
+              Review with AI
             </DialogTitle>
             {/* <div className="flex items-center text-muted-foreground"> */}
             {/*   <span className="text-sm">Powered by</span> */}
@@ -321,7 +321,7 @@ export default function AiReviewModal({ applications, grant }: Props) {
                   }}
                 >
                   <Wand2 className="mr-2 h-5 w-5" />
-                  Auto Review
+                  Proceed
                 </Button>
 
                 <p className="text-muted-foreground mt-2 text-center text-sm">

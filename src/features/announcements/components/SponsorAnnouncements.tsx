@@ -7,13 +7,14 @@ import { useUser } from '@/store/user';
 import { dashboardQuery } from '@/features/sponsor-dashboard/queries/dashboard';
 
 import { AutoGenerateFeature } from '../sponsor/AutoGenerate';
+import { AutoReviewBountiesFeature } from '../sponsor/AutoReviewBounties';
 import { AutoReviewGrantsFeature } from '../sponsor/AutoReviewGrants';
 import { AutoReviewProjectsFeature } from '../sponsor/AutoReviewProjects';
 import { CreditFeature } from '../sponsor/Credits';
 import type { Announcement } from '../types/announcement';
 import { AnnouncementModal } from './AnnouncementModal';
 
-const LOCAL_STORAGE_KEY = 'sponsorAnnouncementsSeen-autoreviewprojects';
+const LOCAL_STORAGE_KEY = 'sponsorAnnouncementsSeen-autoreviewbounties';
 
 export function SponsorAnnouncements({
   isAnyModalOpen,
@@ -47,8 +48,18 @@ export function SponsorAnnouncements({
 
   const announcements: Announcement[] = [
     {
+      id: 'auto-review-bounties',
+      title: 'Review Written Bounties with AI',
+      Content: AutoReviewBountiesFeature,
+      shouldShow: isLoggedInAndIsSponsor,
+      imagesToPreload: [`${ASSET_URL}/announcements/auto-review-bounties`],
+      cta: {
+        label: 'Understood',
+      },
+    },
+    {
       id: 'auto-review-projects',
-      title: 'Auto Review for Projects',
+      title: 'Review Projects with AI',
       Content: AutoReviewProjectsFeature,
       shouldShow: isLoggedInAndIsSponsor,
       imagesToPreload: [`${ASSET_URL}/announcements/auto-review-projects`],
@@ -58,7 +69,7 @@ export function SponsorAnnouncements({
     },
     {
       id: 'auto-generate',
-      title: 'Auto Generate',
+      title: 'Generate Listings with AI',
       Content: AutoGenerateFeature,
       shouldShow: isLoggedInAndIsSponsor,
       imagesToPreload: [`${ASSET_URL}/announcements/auto-generate`],
@@ -68,7 +79,7 @@ export function SponsorAnnouncements({
     },
     {
       id: 'auto-review-grants',
-      title: 'Auto Review for Grants',
+      title: 'Review Grants with AI',
       Content: AutoReviewGrantsFeature,
       shouldShow: isLoggedInAndIsSponsor && hasGrants,
       imagesToPreload: [`${ASSET_URL}/announcements/auto-review-grants`],

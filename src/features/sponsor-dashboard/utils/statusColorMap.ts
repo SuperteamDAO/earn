@@ -1,4 +1,16 @@
 export const colorMap = {
+  Needs_Review: {
+    bg: 'bg-amber-100',
+    color: 'text-amber-700',
+    border: 'border-amber-300',
+    focus: 'focus:text-amber-700 focus:bg-amber-200',
+  },
+  Inaccessible: {
+    bg: 'bg-red-50',
+    color: 'text-red-800',
+    border: 'border-red-200',
+    focus: 'focus:text-red-800 focus:bg-red-100',
+  },
   Low_Quality: {
     bg: 'bg-stone-100',
     color: 'text-stone-800',
@@ -21,7 +33,7 @@ export const colorMap = {
     bg: 'bg-red-100',
     color: 'text-red-600',
     border: 'border-red-300',
-    focus: 'focus:text-red-900 focus:bg-red-200',
+    focus: 'focus:text-red-600 focus:bg-red-200',
   },
   Reviewed: {
     bg: 'bg-blue-100',
@@ -49,9 +61,9 @@ export const colorMap = {
   },
   Rejected: {
     bg: 'bg-red-100',
-    color: 'text-red-900',
+    color: 'text-red-600',
     border: 'border-red-300',
-    focus: 'focus:text-red-900 focus:bg-red-200',
+    focus: 'focus:text-red-600 focus:bg-red-200',
   },
   Pending: {
     bg: 'bg-orange-100',

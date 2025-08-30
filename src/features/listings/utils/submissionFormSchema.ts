@@ -37,7 +37,7 @@ const submissionSchema = (
           z.object({
             question: z.string(),
             answer: z.string(),
-            optional: z.boolean().optional(),
+            optional: z.boolean().optional().nullable(),
           }),
         )
         .optional(),

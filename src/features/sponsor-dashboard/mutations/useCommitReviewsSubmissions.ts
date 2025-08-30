@@ -1,14 +1,10 @@
-import { type SubmissionLabels } from '@prisma/client';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAtom } from 'jotai';
 
 import { type SubmissionWithUser } from '@/interface/submission';
 import { api } from '@/lib/api';
 
-import { type ProjectApplicationAi } from '@/features/listings/types';
-
 import { selectedSubmissionAtom } from '../atoms';
-import { convertTextToNotesHTML } from '../utils/convertTextToNotesHTML';
 
 export const useCommitReviewsSubmissions = (
   slug: string,
@@ -35,7 +31,7 @@ export const useCommitReviewsSubmissions = (
         error,
       });
     },
-    onSuccess: () => {
+    onSuccess: (response) => {
       queryClient.invalidateQueries({
         predicate: (query) => {
           return (
@@ -44,31 +40,24 @@ export const useCommitReviewsSubmissions = (
           );
         },
       });
-      const aiReview = (selectedSubmission?.ai as ProjectApplicationAi)?.review;
-      const commitedAi = {
-        ...(!!aiReview ? { review: aiReview } : {}),
-        commited: true,
-      };
-      setSelectedSubmission((prevAppl) => {
-        let correctedLabel: SubmissionLabels = prevAppl?.label || 'Unreviewed';
-        if (aiReview?.predictedLabel === 'High_Quality')
-          correctedLabel = 'Shortlisted';
-        else correctedLabel = aiReview?.predictedLabel || 'Unreviewed';
-        console.log(
-          'new notes',
-          convertTextToNotesHTML(aiReview?.shortNote || ''),
-        );
-        if (prevAppl) {
-          return {
-            ...prevAppl,
-            label: correctedLabel,
-            notes:
-              convertTextToNotesHTML(aiReview?.shortNote || '') ||
-              prevAppl.notes,
-            ai: commitedAi,
-          };
-        }
-        return prevAppl;
+
+      if (!selectedSubmission) return;
+
+      const updatedSubmission = response.data?.find(
+        (submission: SubmissionWithUser) =>
+          submission.id === selectedSubmission.id,
+      );
+
+      if (!updatedSubmission) return;
+
+      setSelectedSubmission((prev) => {
+        if (!prev) return prev;
+        return {
+          ...prev,
+          label: updatedSubmission.label,
+          notes: updatedSubmission.notes,
+          ai: updatedSubmission.ai,
+        };
       });
     },
   });

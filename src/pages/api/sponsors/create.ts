@@ -2,10 +2,7 @@ import type { NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
-import {
-  ALLOWED_IMAGE_FORMATS,
-  uploadBase64ToCloudinary,
-} from '@/utils/cloudinary';
+import { verifyImageExists } from '@/utils/cloudinary';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { type NextApiRequestWithUser } from '@/features/auth/types';
@@ -47,18 +44,29 @@ async function user(req: NextApiRequestWithUser, res: NextApiResponse) {
       });
     }
 
-    const { name, slug, logo, url, industry, twitter, bio, entityName } =
+    const { name, slug, url, industry, twitter, bio, entityName } =
       validationResult.data;
+    let logo: string | undefined = validationResult.data.logo;
 
-    let finalLogo = logo;
-    if (typeof logo === 'string' && logo.startsWith('data:image')) {
+    if (logo) {
       try {
-        finalLogo = await uploadBase64ToCloudinary(logo, 'earn-sponsor');
-      } catch (e: any) {
-        return res.status(400).json({
-          error: 'Invalid image format',
-          message: `File type must be one of: ${ALLOWED_IMAGE_FORMATS.map((f) => `image/${f}`).join(', ')}`,
-        });
+        const imageExists = await verifyImageExists(logo);
+        if (!imageExists) {
+          logger.warn(
+            `Logo verification failed for sponsor creation by user ${userId}: ${logo}`,
+          );
+          return res.status(400).json({
+            error: 'Invalid logo: Image does not exist in our storage',
+          });
+        }
+        logger.info(
+          `Logo verification successful for sponsor creation by user ${userId}: ${logo}`,
+        );
+      } catch (error: any) {
+        logger.warn(
+          `Logo verification error for sponsor creation by user ${userId}: ${safeStringify(error)}`,
+        );
+        logo = undefined;
       }
     }
 
@@ -69,7 +77,7 @@ async function user(req: NextApiRequestWithUser, res: NextApiResponse) {
         data: {
           name,
           slug,
-          logo: finalLogo,
+          logo,
           url,
           industry,
           twitter,
@@ -115,3 +123,11 @@ async function user(req: NextApiRequestWithUser, res: NextApiResponse) {
 }
 
 export default withAuth(user);
+
+export const config = {
+  api: {
+    bodyParser: {
+      sizeLimit: '10mb',
+    },
+  },
+};

@@ -2,10 +2,7 @@ import type { NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
-import {
-  ALLOWED_IMAGE_FORMATS,
-  maybeUploadBase64AndDeletePrevious,
-} from '@/utils/cloudinary';
+import { verifyImageExists } from '@/utils/cloudinary';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { userSelectOptions } from '@/features/auth/constants/userSelectOptions';
@@ -20,23 +17,30 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
   logger.debug(`Request body: ${safeStringify(req.body)}`);
 
   const { telegram, ...rest } = req.body;
-  if (typeof rest.photo === 'string' && rest.photo.startsWith('data:image')) {
-    const existing = await prisma.user.findUnique({
-      where: { id: userId },
-      select: { photo: true },
-    });
+
+  if (rest.photo && typeof rest.photo === 'string') {
     try {
-      rest.photo = await maybeUploadBase64AndDeletePrevious(
-        rest.photo,
-        'earn-pfp',
-        existing?.photo,
-        200,
+      const imageExists = await verifyImageExists(rest.photo);
+      if (!imageExists) {
+        logger.warn(
+          `Photo verification failed for user ${userId}: ${rest.photo}`,
+        );
+        return res.status(400).json({
+          error: 'Invalid photo: Image does not exist in our storage',
+        });
+      }
+      logger.info(
+        `Photo verification successful for user ${userId}: ${rest.photo}`,
       );
-    } catch (e: any) {
-      return res.status(400).json({
-        error: 'Invalid image format',
-        message: `File type must be one of: ${ALLOWED_IMAGE_FORMATS.map((f) => `image/${f}`).join(', ')}`,
+    } catch (error: any) {
+      logger.warn(
+        `Photo verification error for user ${userId}: ${safeStringify(error)}`,
+      );
+      const existingUser = await prisma.user.findUnique({
+        where: { id: userId },
+        select: { photo: true },
       });
+      rest.photo = existingUser?.photo || undefined;
     }
   }
   const telegramUsernameExtracted = extractSocialUsername('telegram', telegram);

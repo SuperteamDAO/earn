@@ -201,27 +201,31 @@ async function handleDeadlineChanges({
 }
 
 async function handleAgentJobQueuing(result: Bounties) {
-  if (result.type !== 'project') return;
+  if (result.type !== 'project' && result.type !== 'bounty') return;
 
+  const agentType =
+    result.type === 'project'
+      ? 'generateContextProject'
+      : 'generateContextBounty';
   try {
     await queueAgent({
-      type: 'generateContextProject',
+      type: agentType,
       id: result.id,
     });
 
     logger.info(
-      `Successfully queued agent job for generateContextProject with id ${result.id}`,
+      `Successfully queued agent job for ${agentType} with id ${result.id}`,
     );
     console.log(
-      `Successfully queued agent job for generateContextProject with id ${result.id}`,
+      `Successfully queued agent job for ${agentType} with id ${result.id}`,
     );
   } catch (err) {
     logger.error(
-      `Failed to queue agent job for generateContextProject with id ${result.id}`,
+      `Failed to queue agent job for ${agentType} with id ${result.id}`,
       err,
     );
     console.log(
-      `Failed to queue agent job for generateContextProject with id ${result.id}`,
+      `Failed to queue agent job for ${agentType} with id ${result.id}`,
     );
   }
 }

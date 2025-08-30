@@ -1,6 +1,7 @@
 import { ImageResponse } from 'next/og';
 
 import { ASSET_URL } from '@/constants/ASSET_URL';
+import { convertToJpegUrl } from '@/utils/cloudinary';
 import { formatNumber, formatString, loadGoogleFont } from '@/utils/ogHelpers';
 
 export async function GET(request: Request) {
@@ -12,7 +13,7 @@ export async function GET(request: Request) {
 
     const name = getParam('name', (x) => formatString(x, 24));
     const username = getParam('username', (x) => formatString(x, 28));
-    const photo = getParam('photo', (x) => formatString(x, 100));
+    const photo = getParam('photo', (x) => convertToJpegUrl(x));
 
     const totalEarned = getParam('totalEarned', formatNumber);
     const submissionCount = getParam('submissionCount', formatNumber);

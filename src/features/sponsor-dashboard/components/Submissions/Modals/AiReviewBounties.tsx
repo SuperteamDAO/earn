@@ -1,9 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
-import { Check, InfoIcon, Wand2, XCircle } from 'lucide-react';
+import { Check, InfoIcon, ScanText, Wand2, XCircle } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import posthog from 'posthog-js';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { toast } from 'sonner';
 
 import { AnimateChangeInHeight } from '@/components/shared/AnimateChangeInHeight';
 import { Button } from '@/components/ui/button';
@@ -23,28 +22,30 @@ import { Progress } from '@/components/ui/progress';
 import { Tooltip } from '@/components/ui/tooltip';
 import { type SubmissionWithUser } from '@/interface/submission';
 import { WandAnimated } from '@/svg/WandAnimated/WandAnimated';
-import { cn } from '@/utils/cn';
 
 import {
+  type BountiesAi,
+  type BountySubmissionAi,
   type Listing,
-  type ProjectApplicationAi,
 } from '@/features/listings/types';
 import { useCommitReviewsSubmissions } from '@/features/sponsor-dashboard/mutations/useCommitReviewsSubmissions';
 import { unreviewedSubmissionsQuery } from '@/features/sponsor-dashboard/queries/unreviewed-submissions';
-import { colorMap } from '@/features/sponsor-dashboard/utils/statusColorMap';
+
+import { ReviewLoadingAnimation } from './ReviewLoadingAnimation';
 
 interface Props {
-  applications: SubmissionWithUser[] | undefined;
+  submissions: SubmissionWithUser[] | undefined;
   listing: Listing | undefined;
 }
-export default function AiReviewProjectApplicationsModal({
-  applications,
+export default function AiReviewBountiesSubmissionsModal({
+  submissions,
   listing,
 }: Props) {
   const [open, setOpen] = useState(false);
-  const [state, setState] = useState<'INIT' | 'PROCESSING' | 'DONE' | 'ERROR'>(
-    'INIT',
-  );
+  const [tooltipOpen, setTooltipOpen] = useState(true);
+  const [state, setState] = useState<
+    'DISCLAIMER' | 'INIT' | 'PROCESSING' | 'DONE' | 'ERROR'
+  >('DISCLAIMER');
   const [progress, setProgress] = useState(0);
   const progressIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -86,56 +87,64 @@ export default function AiReviewProjectApplicationsModal({
     shortlisted: 0,
     midQuality: 0,
     lowQuality: 0,
+    inaccessible: 0,
+    needsReview: 0,
     totalHoursSaved: 0,
   });
 
-  const {
-    data: unreviewedApplications,
-    refetch: refetchUnreviewedApplications,
-  } = useQuery({
-    ...unreviewedSubmissionsQuery({ id: listing?.id }, listing?.slug),
-    refetchOnMount: false,
-    refetchOnReconnect: false,
-    refetchOnWindowFocus: false,
-  });
+  const { data: unreviewedSubmissions, refetch: refetchUnreviewedSubmissions } =
+    useQuery({
+      ...unreviewedSubmissionsQuery(
+        {
+          id: listing?.id,
+          evaluationCompleted: (listing?.ai as unknown as BountiesAi)
+            ?.evaluationCompleted,
+        },
+        listing?.slug,
+      ),
+      refetchOnMount: false,
+      refetchOnReconnect: false,
+      refetchOnWindowFocus: false,
+      retry: false,
+    });
 
   useEffect(() => {
-    refetchUnreviewedApplications();
-  }, [applications, refetchUnreviewedApplications]);
+    refetchUnreviewedSubmissions();
+  }, [submissions, refetchUnreviewedSubmissions]);
 
   const { mutateAsync: commitReviews } = useCommitReviewsSubmissions(
     listing?.slug || '',
     listing?.id || '',
   );
 
-  const nonAnalysedApplications = useMemo(() => {
-    console.log('unreviewedApplications', unreviewedApplications);
-    return unreviewedApplications?.filter(
-      (appl) => !(appl.ai as ProjectApplicationAi)?.review,
+  const nonAnalysedSubmissions = useMemo(() => {
+    console.log('unreviewedSubmissions', unreviewedSubmissions);
+    return unreviewedSubmissions?.filter(
+      (appl) => !(appl.ai as BountySubmissionAi)?.evaluation,
     );
-  }, [unreviewedApplications]);
+  }, [unreviewedSubmissions]);
 
-  const totalApplications = useMemo(() => {
-    return unreviewedApplications?.length;
-  }, [unreviewedApplications]);
+  const totalSubmissions = useMemo(() => {
+    return unreviewedSubmissions?.length;
+  }, [unreviewedSubmissions]);
 
   const estimatedTime = useMemo(() => {
-    return estimateTime(nonAnalysedApplications?.length || 1);
-  }, [nonAnalysedApplications?.length]);
+    return estimateTime(nonAnalysedSubmissions?.length || 1);
+  }, [nonAnalysedSubmissions?.length]);
 
   const [estimatedTimeSingular] = useState('~30 seconds');
   useMemo(() => {
-    return estimateTime(nonAnalysedApplications?.length || 1, true);
-  }, [nonAnalysedApplications?.length]);
+    return estimateTime(nonAnalysedSubmissions?.length || 1, true);
+  }, [nonAnalysedSubmissions?.length]);
 
   const onReviewClick = useCallback(async () => {
-    posthog.capture('start_ai review projects');
+    posthog.capture('start_ai review bounties');
     setState('PROCESSING');
 
     setTimeout(async () => {
       setProgress(100);
       try {
-        console.log('Commiting Reviewed applications');
+        console.log('Commiting Reviewed submissions');
         const data = await commitReviews();
         console.log('commit data - ', data.data);
         setCompletedStats({
@@ -144,71 +153,27 @@ export default function AiReviewProjectApplicationsModal({
             .length,
           midQuality: data.data.filter((s) => s.label === 'Mid_Quality').length,
           lowQuality: data.data.filter((s) => s.label === 'Low_Quality').length,
+          inaccessible: data.data.filter((s) => s.label === 'Inaccessible')
+            .length,
+          needsReview: data.data.filter((s) => s.label === 'Needs_Review')
+            .length,
           totalHoursSaved: data.data.length * 6_00_000,
         });
-        posthog.capture('complete_ai review project');
+        posthog.capture('complete_ai review bounties');
         setState('DONE');
-        await refetchUnreviewedApplications();
+        await refetchUnreviewedSubmissions();
       } catch (error: any) {
         console.log(
-          'error occured while commiting reviewed applications',
+          'error occured while commiting reviewed submissions',
           error,
         );
         setState('ERROR');
       }
     }, 10000);
-  }, [applications, unreviewedApplications, nonAnalysedApplications, posthog]);
+  }, [submissions, unreviewedSubmissions, nonAnalysedSubmissions, posthog]);
   function onComplete() {
-    setState('INIT');
+    setState('DISCLAIMER');
     setProgress(0);
-    toast(
-      <div className="flex flex-col gap-2">
-        <div className="flex items-center gap-2">
-          <Check className="h-5 w-5 text-[#AEAEAE]" strokeWidth={3} />
-          <span className="text-base font-medium">AI Review Completed</span>
-        </div>
-        <div className="text-sm text-slate-500">
-          <p>{`We've added review notes and labelled the submissions as `}</p>
-          <span className="mt-1">
-            <span
-              className={cn(
-                'mr-2 inline-flex w-fit rounded-full px-2 text-center text-[10px] whitespace-nowrap capitalize',
-                colorMap['Shortlisted'].bg,
-                colorMap['Shortlisted'].color,
-              )}
-            >
-              Shortlisted
-            </span>
-            <span
-              className={cn(
-                'mr-2 inline-flex w-fit rounded-full px-2 text-center text-[10px] whitespace-nowrap capitalize',
-                colorMap['Mid_Quality'].bg,
-                colorMap['Mid_Quality'].color,
-              )}
-            >
-              Mid Quality
-            </span>
-            <span
-              className={cn(
-                'mr-2 inline-flex w-fit rounded-full px-2 text-center text-[10px] whitespace-nowrap capitalize',
-                colorMap['Low_Quality'].bg,
-                colorMap['Low_Quality'].color,
-              )}
-            >
-              Low Quality
-            </span>
-          </span>
-          <p className="mt-1">
-            Please review before announcing winners, as AI can make mistakes.
-          </p>
-        </div>
-      </div>,
-      {
-        duration: 5000,
-        closeButton: true,
-        className: 'w-[24rem] right-0',
-      },
-    );
     setOpen(false);
   }
 
@@ -217,51 +182,120 @@ export default function AiReviewProjectApplicationsModal({
       open={open}
       onOpenChange={(s) => {
         if (state === 'PROCESSING') return;
-        if (s === false) posthog.capture('close_ai review projects');
+        if (s === false) posthog.capture('close_ai review bounties');
+        if (s === true) setTooltipOpen(false);
         setOpen(s);
       }}
     >
       {!!listing?.isActive &&
         !listing?.isArchived &&
-        listing?.type === 'project' &&
+        listing?.type === 'bounty' &&
         !listing?.isWinnersAnnounced &&
         listing?.isPublished &&
         !!listing?.ai?.context &&
-        !!unreviewedApplications?.length && (
-          <DialogTrigger asChild>
-            <button
-              className="h-9"
-              onClick={() => {
-                posthog.capture('open_ai review projects');
-              }}
-            >
-              <p className="mb-1 text-xs text-slate-400">
-                {unreviewedApplications?.length} Applications to review
-              </p>
-              <div className="group bg-background relative inline-flex h-full overflow-hidden rounded-lg p-[0.125rem] focus:outline-hidden">
-                <span className="absolute inset-[-1000%] animate-[spin_2s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#FF79C1_0%,#76C5FF_50%,#FF79C1_100%)]" />
-                <span className="ph-no-capture bg-background inline-flex h-full w-full cursor-pointer items-center justify-center gap-2 rounded-md px-4 py-1 text-xs font-medium text-slate-800 backdrop-blur-3xl group-hover:bg-slate-50">
+        !!unreviewedSubmissions?.length && (
+          <Tooltip
+            open={tooltipOpen}
+            showArrow
+            content="Save hours by reviewing with AI"
+            contentProps={{
+              sideOffset: -4,
+              className: 'bg-black text-white border-none rounded-[0.5rem]',
+            }}
+            arrowProps={{
+              className: 'fill-black stroke-black',
+            }}
+          >
+            <DialogTrigger asChild>
+              <button
+                className="h-10 min-w-max translate-y-2 focus:outline-none"
+                onClick={() => {
+                  posthog.capture('open_ai review bounties');
+                }}
+              >
+                <div className="relative flex h-full items-center gap-3 overflow-hidden rounded-[0.5rem] border-[0.09375rem] border-indigo-400 bg-indigo-50 px-4 text-sm text-indigo-600 focus:outline-hidden">
                   <WandAnimated
                     className="!size-4"
-                    stickColor="bg-slate-600"
-                    starColor="bg-slate-400"
+                    stickColor="bg-indigo-500"
+                    starColor="bg-indigo-500"
                   />
                   Review with AI
-                </span>
-              </div>
-            </button>
-          </DialogTrigger>
+                </div>
+              </button>
+            </DialogTrigger>
+          </Tooltip>
         )}
       <DialogContent className="p-0 sm:max-w-md" hideCloseIcon>
         <Card className="border-0 shadow-none">
-          <CardHeader className="flex flex-row items-center justify-between border-b p-0 px-6 py-3">
-            <DialogTitle className="text-xl font-semibold">
-              Review with AI
-            </DialogTitle>
-          </CardHeader>
+          {state !== 'DISCLAIMER' && (
+            <CardHeader className="flex flex-row items-center justify-between border-b p-0 px-6 py-3">
+              <DialogTitle className="text-xl font-semibold">
+                Review with AI
+              </DialogTitle>
+            </CardHeader>
+          )}
 
           <AnimateChangeInHeight>
             <AnimatePresence mode="popLayout">
+              {state === 'DISCLAIMER' && (
+                <motion.div
+                  key="disclaimer"
+                  initial={{ opacity: 0, y: -20, filter: 'blur(8px)' }}
+                  animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                  exit={{ opacity: 0, y: 20, filter: 'blur(8px)' }}
+                  transition={{ duration: 0.3 }}
+                  className="py-2"
+                >
+                  <CardContent className="px-6 py-4">
+                    <div className="mb-4 flex flex-col items-start gap-3">
+                      <div className="flex items-center justify-center rounded-lg">
+                        <ScanText className="text-brand-purple !size-10" />
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <span className="text-lg font-semibold">
+                          Only Works With Text
+                        </span>
+                        <span className="rounded-full bg-gray-100 px-2 py-1 text-xs font-medium text-gray-700">
+                          Beta
+                        </span>
+                      </div>
+                    </div>
+
+                    <p className="mb-4 text-slate-600">
+                      Submissions that are design, video and other multimedia
+                      heavy will require manual review.
+                    </p>
+
+                    <ul className="list-disc space-y-2 pl-6 text-slate-500 marker:text-slate-600">
+                      <li>
+                        <span>AI Review works best with written content</span>
+                      </li>
+                      <li>
+                        <span>
+                          Images in X threads, blogs, and other platforms still
+                          remain inaccessible to AI models.
+                        </span>
+                      </li>
+                      <li>
+                        <span className="font-semibold">
+                          Double check the work before announcing winners
+                        </span>
+                      </li>
+                    </ul>
+                  </CardContent>
+                  <CardFooter className="flex flex-col px-6">
+                    <Button
+                      className="ph-no-capture mt-4 w-full"
+                      size="lg"
+                      onClick={() => {
+                        setState('INIT');
+                      }}
+                    >
+                      Agree & Proceed
+                    </Button>
+                  </CardFooter>
+                </motion.div>
+              )}
               {state === 'INIT' && (
                 <motion.div
                   key="init"
@@ -274,7 +308,7 @@ export default function AiReviewProjectApplicationsModal({
                     <div className="space-y-2 font-medium">
                       <div className="flex items-center justify-between">
                         <span className="flex items-center gap-2 text-base text-slate-500">
-                          Unreviewed Applications
+                          Unreviewed Submissions
                           <Tooltip
                             content="We will only review unreviewed submissions. If you've already reviewed some submissions, those will remain untouched."
                             contentProps={{
@@ -287,7 +321,7 @@ export default function AiReviewProjectApplicationsModal({
                           </Tooltip>
                         </span>
                         <span className="text-xl font-semibold">
-                          {totalApplications}
+                          {totalSubmissions}
                         </span>
                       </div>
                       <div className="flex items-center justify-between">
@@ -319,8 +353,8 @@ export default function AiReviewProjectApplicationsModal({
                     </Button>
 
                     <p className="text-muted-foreground mt-2 text-center text-sm">
-                      AI can make mistakes. Check important info before
-                      approving or rejecting a project application.
+                      AI can make mistakes. Check important info before choosing
+                      winners.
                     </p>
                   </CardFooter>
                 </motion.div>
@@ -333,12 +367,15 @@ export default function AiReviewProjectApplicationsModal({
                   exit={{ opacity: 0, y: 20, filter: 'blur(8px)' }}
                   transition={{ duration: 0.3 }}
                 >
-                  <CardContent className="mt-8 flex flex-col items-center justify-center space-y-8 p-8">
-                    <div className="relative h-2 w-2/4 max-w-md overflow-hidden rounded-md bg-[#f1f5f9]">
+                  <CardContent className="mt-4 flex flex-col items-center justify-center space-y-8 p-4">
+                    <div className="w-12/12">
+                      <ReviewLoadingAnimation />
+                    </div>
+                    <div className="relative mt-4 h-2 w-5/6 max-w-md overflow-hidden rounded-md bg-[#f1f5f9]">
                       <Progress
                         value={progress}
                         className="w-full bg-slate-100"
-                        indicatorClassName="bg-linear-to-r from-[#FF79C1] to-[#76C5FF] duration-200"
+                        indicatorClassName="bg-indigo-500 duration-200"
                       />
                     </div>
 
@@ -400,6 +437,16 @@ export default function AiReviewProjectApplicationsModal({
                         dotColor="bg-cyan-400"
                       />
                       <StatItem
+                        label="Inaccessible"
+                        value={completedStats.inaccessible}
+                        dotColor="bg-red-300"
+                      />
+                      <StatItem
+                        label="Needs Manual Review"
+                        value={completedStats.needsReview}
+                        dotColor="bg-amber-400"
+                      />
+                      <StatItem
                         label="Total time saved"
                         value={formatTime(completedStats.totalHoursSaved)}
                         dotColor="bg-green-400"
@@ -432,7 +479,7 @@ export default function AiReviewProjectApplicationsModal({
                     <div className="space-y-2">
                       <h2 className="text-xl font-semibold">Review Failed</h2>
                       <p className="mx-auto w-4/5 text-sm text-slate-500">
-                        Something went wrong while reviewing the applications.
+                        Something went wrong while reviewing the submissions.
                         Please try again.
                       </p>
                     </div>
@@ -482,12 +529,12 @@ function formatTime(milliseconds: number): string {
   return `${hours}h ${minutes}m`;
 }
 export function estimateTime(
-  totalApplications: number,
+  totalSubmissions: number,
   singular = false,
 ): string {
-  console.log('total applications', totalApplications);
-  const lowerBoundSeconds = totalApplications * 10;
-  const upperBoundSeconds = totalApplications * 20;
+  console.log('total submissions', totalSubmissions);
+  const lowerBoundSeconds = totalSubmissions * 10;
+  const upperBoundSeconds = totalSubmissions * 20;
 
   if (singular) {
     const middleBoundSeconds = (lowerBoundSeconds + upperBoundSeconds) / 2;
