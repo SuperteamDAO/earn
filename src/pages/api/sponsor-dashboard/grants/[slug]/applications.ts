@@ -1,9 +1,16 @@
-import { Prisma } from '@prisma/client';
 import type { NextApiResponse } from 'next';
 
 import { type PrismaUserWithoutKYC } from '@/interface/user';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import {
+  PrismaClientInitializationError,
+  PrismaClientKnownRequestError,
+  PrismaClientRustPanicError,
+  PrismaClientUnknownRequestError,
+  PrismaClientValidationError,
+  sql,
+} from '@/prisma/internal/prismaNamespace';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { type NextApiRequestWithSponsor } from '@/features/auth/types';
@@ -46,7 +53,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       return res.status(error.status).json({ error: error.message });
     }
 
-    const baseWhere = Prisma.sql`GrantApplication.grantId = ${grant.id} AND Grants.sponsorId = ${req.userSponsorId}`;
+    const baseWhere = sql`GrantApplication.grantId = ${grant.id} AND Grants.sponsorId = ${req.userSponsorId}`;
 
     const countResult = await prisma.grantApplication.aggregate({
       _count: { id: true },
@@ -56,7 +63,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     });
     const totalCount = countResult._count.id;
 
-    const orderByClause = Prisma.sql`
+    const orderByClause = sql`
       ORDER BY
         CASE
           WHEN GrantApplication.applicationStatus = 'Pending' AND GrantApplication.label = 'Unreviewed' THEN 1
@@ -206,17 +213,17 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       errorMessage += ` Code: ${error.code}`;
     }
     if (
-      error instanceof Prisma.PrismaClientKnownRequestError ||
-      error instanceof Prisma.PrismaClientUnknownRequestError ||
-      error instanceof Prisma.PrismaClientRustPanicError ||
-      error instanceof Prisma.PrismaClientInitializationError ||
-      error instanceof Prisma.PrismaClientValidationError
+      error instanceof PrismaClientKnownRequestError ||
+      error instanceof PrismaClientUnknownRequestError ||
+      error instanceof PrismaClientRustPanicError ||
+      error instanceof PrismaClientInitializationError ||
+      error instanceof PrismaClientValidationError
     ) {
       logger.error(
         `Prisma Error fetching submissions with slug=${slug}: ${safeStringify(error)}`,
         error.stack,
       );
-      if (error instanceof Prisma.PrismaClientKnownRequestError && error.meta) {
+      if (error instanceof PrismaClientKnownRequestError && error.meta) {
         errorMessage += ` Meta: ${safeStringify(error.meta)}`;
       }
     } else {

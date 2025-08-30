@@ -1,11 +1,12 @@
-import { type SubscribeBounty, type User } from '@prisma/client';
 import { queryOptions } from '@tanstack/react-query';
 
 import { api } from '@/lib/api';
+import { type SubscribeBountyModel } from '@/prisma/models/SubscribeBounty';
+import { type UserModel } from '@/prisma/models/User';
 
 const fetchSubscriptions = async (
   id: string,
-): Promise<(SubscribeBounty & { User: User | null })[]> => {
+): Promise<(SubscribeBountyModel & { User: UserModel | null })[]> => {
   const { data } = await api.get('/api/listings/notifications/status', {
     params: { listingId: id },
   });

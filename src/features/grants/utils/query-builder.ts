@@ -1,7 +1,8 @@
-import { type Prisma } from '@prisma/client';
 import type { z } from 'zod';
 
 import { exclusiveSponsorData } from '@/constants/exclusiveSponsors';
+import { type JsonValue } from '@/prisma/internal/prismaNamespace';
+import { type GrantsWhereInput } from '@/prisma/models';
 
 import {
   type GrantCategorySchema,
@@ -16,13 +17,13 @@ import {
 type BuildGrantsQueryArgs = z.infer<typeof GrantQueryParamsSchema>;
 
 interface GrantQueryResult {
-  readonly where: Prisma.GrantsWhereInput;
+  readonly where: GrantsWhereInput;
   readonly take?: number;
 }
 
 function getSkillFilter(
   category: z.infer<typeof GrantCategorySchema>,
-): Prisma.GrantsWhereInput | null {
+): GrantsWhereInput | null {
   if (category === 'All') {
     return null;
   }
@@ -81,19 +82,19 @@ export async function buildGrantsQuery(
     id: string;
     isTalentFilled: boolean;
     location: string | null;
-    skills: Prisma.JsonValue;
+    skills: JsonValue;
   } | null,
 ): Promise<GrantQueryResult> {
   const { category, context, region, sponsor } = args;
 
-  const where: Prisma.GrantsWhereInput = {
+  const where: GrantsWhereInput = {
     isPublished: true,
     isActive: true,
     isArchived: false,
     isPrivate: false,
   };
 
-  const andConditions: Prisma.GrantsWhereInput[] = [];
+  const andConditions: GrantsWhereInput[] = [];
 
   if (user?.isTalentFilled && (context === 'all' || context === 'home')) {
     where.region = {

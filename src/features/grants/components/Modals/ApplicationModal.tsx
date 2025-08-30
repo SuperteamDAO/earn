@@ -1,5 +1,4 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { type GrantApplication } from '@prisma/client';
 import { useQueryClient } from '@tanstack/react-query';
 import { Check, Loader2 } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
@@ -25,6 +24,7 @@ import { Input } from '@/components/ui/input';
 import { Progress } from '@/components/ui/progress';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { api } from '@/lib/api';
+import { type GrantApplicationModel } from '@/prisma/models/GrantApplication';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';
@@ -54,7 +54,7 @@ type FormData = z.infer<ReturnType<typeof grantApplicationSchema>>;
 
 interface Props {
   grant: Grant;
-  grantApplication: GrantApplication | undefined;
+  grantApplication: GrantApplicationModel | undefined;
   modalRef: React.RefObject<HTMLDivElement | null>;
   onClose: () => void;
 }

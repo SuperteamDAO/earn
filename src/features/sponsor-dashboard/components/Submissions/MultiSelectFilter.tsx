@@ -1,4 +1,3 @@
-import type { BountyType, SubmissionLabels } from '@prisma/client';
 import { LucideListFilter } from 'lucide-react';
 import { useMemo } from 'react';
 
@@ -10,6 +9,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { StatusPill } from '@/components/ui/status-pill';
 import { Switch } from '@/components/ui/switch';
+import type { BountyType, SubmissionLabels } from '@/prisma/enums';
 
 import { labelMenuOptions } from '../../constants';
 import { colorMap } from '../../utils/statusColorMap';

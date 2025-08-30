@@ -1,8 +1,9 @@
-import { type Prisma, type Sponsors } from '@prisma/client';
 import { franc } from 'franc';
 
 import { tokenList } from '@/constants/tokenList';
 import logger from '@/lib/logger';
+import { type BountiesUncheckedUpdateInput } from '@/prisma/models/Bounties';
+import { type SponsorsModel } from '@/prisma/models/Sponsors';
 import { cleanSkills } from '@/utils/cleanSkills';
 
 import { type ListingWithSponsor } from '@/features/auth/utils/checkListingSponsorAuth';
@@ -37,7 +38,7 @@ const processMaxBonusSpots = (
 interface TransformToPrismaDataProps {
   validatedListing: ListingFormData;
   listing: ListingWithSponsor;
-  sponsor: Sponsors;
+  sponsor: SponsorsModel;
   isEditing: boolean;
   isVerifying?: boolean;
 }
@@ -48,7 +49,7 @@ export const transformToPrismaData = async ({
   sponsor,
   isEditing,
   isVerifying = false,
-}: TransformToPrismaDataProps): Promise<Prisma.BountiesUncheckedUpdateInput> => {
+}: TransformToPrismaDataProps): Promise<BountiesUncheckedUpdateInput> => {
   const {
     title,
     slug,
@@ -137,7 +138,7 @@ export const transformToPrismaData = async ({
     }
   }
 
-  const baseData: Prisma.BountiesUncheckedUpdateInput = {
+  const baseData: BountiesUncheckedUpdateInput = {
     title,
     ...(includeUsdValue ? { usdValue } : {}),
     skills,

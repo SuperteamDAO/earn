@@ -1,12 +1,11 @@
+import type { Skills } from '@/interface/skills';
+import type { SponsorType } from '@/interface/sponsor';
+import { type User } from '@/interface/user';
 import {
   type BountyType,
   type status,
   type SubmissionLabels,
-} from '@prisma/client';
-
-import type { Skills } from '@/interface/skills';
-import type { SponsorType } from '@/interface/sponsor';
-import { type User } from '@/interface/user';
+} from '@/prisma/enums';
 
 import { type ListingContext } from '../hooks/useListings';
 

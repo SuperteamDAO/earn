@@ -1,8 +1,10 @@
-import { type BountyType, type Prisma } from '@prisma/client';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { type EnumBountyTypeFilter } from '@/prisma/commonInputTypes';
+import { type BountyType } from '@/prisma/enums';
+import { type BountiesFindManyArgs } from '@/prisma/models/Bounties';
 
 import { getPrivyToken } from '@/features/auth/utils/getPrivyToken';
 import { listingSelect } from '@/features/listings/constants/schema';
@@ -18,10 +20,7 @@ export default async function listings(
 ) {
   const params = req.query;
 
-  const type = params.type as
-    | Prisma.EnumBountyTypeFilter
-    | BountyType
-    | undefined;
+  const type = params.type as EnumBountyTypeFilter | BountyType | undefined;
   const take = params.take ? parseInt(params.take as string, 10) : 10;
   const deadline = params.deadline as string;
   const exclusiveSponsorId = params.exclusiveSponsorId as string | undefined;
@@ -44,7 +43,7 @@ export default async function listings(
     userLocation = user?.location;
   }
 
-  const listingQueryOptions: Prisma.BountiesFindManyArgs = {
+  const listingQueryOptions: BountiesFindManyArgs = {
     where: {
       id: {
         notIn: excludeIds,

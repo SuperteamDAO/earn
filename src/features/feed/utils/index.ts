@@ -1,4 +1,4 @@
-import { type CommentRefType } from '@prisma/client';
+import { type CommentRefType } from '@/prisma/enums';
 
 import { type FeedPostType } from '../types';
 

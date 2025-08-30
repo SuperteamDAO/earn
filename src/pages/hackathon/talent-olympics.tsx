@@ -1,4 +1,3 @@
-import { type SubscribeHackathon } from '@prisma/client';
 import { Loader2 } from 'lucide-react';
 import type { GetServerSideProps } from 'next';
 import Link from 'next/link';
@@ -33,6 +32,7 @@ import { Meta } from '@/layouts/Meta';
 import { api } from '@/lib/api';
 import { domPurify } from '@/lib/domPurify';
 import { prisma } from '@/prisma';
+import { type SubscribeHackathonModel } from '@/prisma/models/SubscribeHackathon';
 import { useUser } from '@/store/user';
 import { TalentOlympicsHeader } from '@/svg/talent-olympics-header';
 import { cn } from '@/utils/cn';
@@ -918,7 +918,7 @@ const CountDownRenderer = ({
 const SubscribeHackathon = () => {
   const [isSubscribeLoading, setIsSubscribeLoading] = useState(false);
   const [sub, setSub] = useState<
-    (SubscribeHackathon & { User: User | null })[]
+    (SubscribeHackathonModel & { User: User | null })[]
   >([]);
   const { user } = useUser();
 

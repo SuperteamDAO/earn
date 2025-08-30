@@ -1,7 +1,7 @@
-import { status } from '@prisma/client';
 import type { NextApiResponse } from 'next';
 
 import { prisma } from '@/prisma';
+import { status } from '@/prisma/enums';
 
 import { type NextApiRequestWithUser } from '@/features/auth/types';
 import { withAuth } from '@/features/auth/utils/withAuth';

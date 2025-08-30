@@ -1,4 +1,3 @@
-import { type CommentRefType } from '@prisma/client';
 import { useSetAtom } from 'jotai';
 import { ArrowRight, Loader2 } from 'lucide-react';
 import posthog from 'posthog-js';
@@ -11,6 +10,7 @@ import { ExternalImage } from '@/components/ui/cloudinary-image';
 import type { Comment } from '@/interface/comments';
 import { type User } from '@/interface/user';
 import { api } from '@/lib/api';
+import { type CommentRefType } from '@/prisma/enums';
 import { cn } from '@/utils/cn';
 
 import { validUsernamesAtom } from '../atoms';

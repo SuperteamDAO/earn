@@ -1,4 +1,3 @@
-import { type BountyType } from '@prisma/client';
 import { Loader } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import posthog, { type Survey } from 'posthog-js';
@@ -15,6 +14,7 @@ import {
   DialogHeader,
 } from '@/components/ui/dialog';
 import { Textarea } from '@/components/ui/textarea';
+import { type BountyType } from '@/prisma/enums';
 
 import { Rating } from '@/features/surveys/components/Rating';
 import { getMatchingSurvey } from '@/features/surveys/utils/get-matching-survey';

@@ -1,6 +1,6 @@
-import { type Prisma } from '@prisma/client';
+import { type UserSelect } from '@/prisma/models/User';
 
-export const userSelectOptions: Prisma.UserSelect = {
+export const userSelectOptions: UserSelect = {
   firstName: true,
   lastName: true,
   photo: true,
