@@ -2,6 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { generateUniqueReferralCode } from '@/utils/referralCodeGenerator';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { getPrivyToken } from '@/features/auth/utils/getPrivyToken';
@@ -19,7 +20,10 @@ export default async function createUser(
 
   try {
     const privyDid = await getPrivyToken(req);
-    const { email } = req.body;
+    const { email, referralCode } = req.body as {
+      email: string;
+      referralCode?: string;
+    };
 
     if (!privyDid || !email) {
       logger.warn('Unauthorized request - Missing token or email');
@@ -57,8 +61,41 @@ export default async function createUser(
       });
     }
 
+    let referredById: string | undefined = undefined;
+    const normalizedCode = referralCode
+      ? referralCode.toString().trim().toUpperCase()
+      : undefined;
+    if (normalizedCode) {
+      const inviter = await prisma.user.findUnique({
+        where: { referralCode: normalizedCode },
+        select: { id: true },
+      });
+
+      if (inviter) {
+        const accepted = await prisma.user.count({
+          where: { referredById: inviter.id },
+        });
+        if (accepted < 10) {
+          referredById = inviter.id;
+        } else {
+          logger.info(
+            `Referral cap reached for inviter ${inviter.id}, ignoring referralCode during signup`,
+          );
+        }
+      } else {
+        logger.info(`Invalid referralCode provided: ${referralCode}`);
+      }
+    }
+
     const user = await prisma.user.create({
-      data: { privyDid, email: normalizedEmail },
+      data: { privyDid, email: normalizedEmail, referredById },
+      select: { id: true },
+    });
+
+    const code = await generateUniqueReferralCode();
+    await prisma.user.update({
+      where: { id: user.id },
+      data: { referralCode: code },
     });
 
     logger.info(`Created new user with ID: ${user.id}`);

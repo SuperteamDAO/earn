@@ -9,6 +9,7 @@ import { useDisclosure } from '@/hooks/use-disclosure';
 
 import { Login } from '@/features/auth/components/Login';
 import { CreditDrawer } from '@/features/credits/components/CreditDrawer';
+import { ReferralModal } from '@/features/credits/components/ReferralModal';
 import { WalletDrawer } from '@/features/wallet/components/WalletDrawer';
 import { tokenAssetsQuery } from '@/features/wallet/queries/fetch-assets';
 
@@ -61,6 +62,12 @@ export const Header = () => {
     onClose: onCreditClose,
   } = useDisclosure();
 
+  const {
+    isOpen: isReferralOpen,
+    onOpen: onReferralOpen,
+    onClose: onReferralClose,
+  } = useDisclosure();
+
   function searchOpenWithEvent() {
     posthog.capture('initiate_search');
     onSearchOpen();
@@ -74,6 +81,11 @@ export const Header = () => {
   const openCreditWithEvent = () => {
     posthog.capture('open_credits');
     onCreditOpen();
+  };
+
+  const openReferralWithEvent = () => {
+    posthog.capture('open_credits');
+    onReferralOpen();
   };
 
   useEffect(() => {
@@ -114,7 +126,7 @@ export const Header = () => {
     };
 
     checkHashAndOpenModal();
-  }, [isWalletOpen, onWalletOpen, isCreditOpen, onCreditOpen, authenticated]);
+  }, [isWalletOpen, onWalletOpen, authenticated, onCreditOpen]);
 
   const {
     data: tokens,
@@ -141,17 +153,21 @@ export const Header = () => {
           onWalletOpen={openWalletWithEvent}
           walletBalance={walletBalance || 0}
           onCreditOpen={openCreditWithEvent}
+          onReferralOpen={openReferralWithEvent}
         />
       </div>
       <MobileNavbar
         onLoginOpen={onLoginOpen}
-        onWalletOpen={openWalletWithEvent}
-        walletBalance={walletBalance || 0}
         onCreditOpen={openCreditWithEvent}
+        onReferralOpen={openReferralWithEvent}
       />
       <SearchModal isOpen={isSearchOpen} onClose={onSearchClose} />
       <div className="fixed bottom-0 z-60 w-full">
-        <BottomBar onSearchOpen={searchOpenWithEvent} />
+        <BottomBar
+          onSearchOpen={searchOpenWithEvent}
+          onWalletOpen={openWalletWithEvent}
+          walletBalance={walletBalance || 0}
+        />
       </div>
       <WalletDrawer
         tokens={tokens || []}
@@ -160,6 +176,7 @@ export const Header = () => {
         isOpen={isWalletOpen}
         onClose={onWalletClose}
       />
+      <ReferralModal isOpen={isReferralOpen} onClose={onReferralClose} />
       <CreditDrawer isOpen={isCreditOpen} onClose={onCreditClose} />
     </>
   );

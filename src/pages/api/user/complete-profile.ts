@@ -61,6 +61,38 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
 
     const filteredData = filterAllowedFields(req.body, allowedFields);
 
+    const referralCodeRaw = (req.body?.referralCode || '')
+      .toString()
+      .trim()
+      .toUpperCase();
+    const referredByUpdate: { referredById?: string } = {};
+    if (referralCodeRaw) {
+      try {
+        const inviter = await prisma.user.findUnique({
+          where: { referralCode: referralCodeRaw },
+          select: { id: true },
+        });
+        if (inviter && inviter.id !== user.id) {
+          const accepted = await prisma.user.count({
+            where: { referredById: inviter.id },
+          });
+          if (accepted < 10) {
+            referredByUpdate.referredById = inviter.id;
+          } else {
+            logger.info(
+              `Referral cap reached for inviter ${inviter.id}, ignoring referralCode during profile completion`,
+            );
+          }
+        } else if (!inviter) {
+          logger.info(`Invalid referralCode provided on profile completion`);
+        }
+      } catch (e) {
+        logger.error(
+          `Error validating referral code on profile completion: ${safeStringify(e)}`,
+        );
+      }
+    }
+
     if (
       typeof filteredData.photo === 'string' &&
       filteredData.photo.startsWith('data:image')
@@ -159,6 +191,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       },
       data: {
         ...updatedData,
+        ...referredByUpdate,
         ...(correctedSkills
           ? {
               skills: correctedSkills,
