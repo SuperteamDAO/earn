@@ -155,3 +155,11 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 }
 
 export default withSponsorAuth(handler);
+
+export const config = {
+  api: {
+    bodyParser: {
+      sizeLimit: '10mb',
+    },
+  },
+};
