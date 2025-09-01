@@ -356,7 +356,7 @@ export const createListingRefinements = async (
   }
 
   if (data.compensationType === 'range') {
-    if (!data.minRewardAsk) {
+    if (data.minRewardAsk === null || data.minRewardAsk === undefined) {
       if ((!!pick && pick.minRewardAsk) || !pick) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
