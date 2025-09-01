@@ -7,7 +7,6 @@ import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
-import { Input } from '@/components/ui/input';
 import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 
@@ -34,7 +33,6 @@ export default function ReferralLandingPage() {
   const { authenticated } = usePrivy();
   const { user } = useUser();
   const [isLoginOpen, setIsLoginOpen] = useState(false);
-  const [manualCode, setManualCode] = useState('');
 
   const code = useMemo(() => {
     const slug = router.query.slug as string;
@@ -67,15 +65,26 @@ export default function ReferralLandingPage() {
 
   useEffect(() => {
     let timeout: ReturnType<typeof setTimeout> | undefined;
-    if (!isLoading && data && data.inviter && data.remaining === 0) {
-      toast.error(
-        'This invitation link has expired. You will be redirected to the profile creation page in 5 seconds.',
-        { duration: 4800, id: 'referral-expired-link' },
-      );
-      timeout = setTimeout(
-        () => router.push('/new/talent?onboarding=true&referral=true'),
-        5000,
-      );
+    if (!isLoading && data) {
+      if (data.reason === 'INVALID') {
+        toast.error(
+          'Referral code is invalid. You will be redirected to the profile creation page in 5 seconds.',
+          { duration: 4800, id: 'referral-invalid-link' },
+        );
+        timeout = setTimeout(
+          () => router.push('/new/talent?onboarding=true&referral=true'),
+          5000,
+        );
+      } else if (data.inviter && data.remaining === 0) {
+        toast.error(
+          'This invitation link has expired. You will be redirected to the profile creation page in 5 seconds.',
+          { duration: 4800, id: 'referral-expired-link' },
+        );
+        timeout = setTimeout(
+          () => router.push('/new/talent?onboarding=true&referral=true'),
+          5000,
+        );
+      }
     }
     return () => {
       if (timeout) clearTimeout(timeout);
@@ -130,7 +139,6 @@ export default function ReferralLandingPage() {
               avatar={data.inviter.photo ?? undefined}
             />
           )}
-
           <h1 className="mt-3 text-center text-xl font-semibold text-slate-600 sm:text-2xl">
             {headline}
           </h1>
@@ -206,31 +214,6 @@ export default function ReferralLandingPage() {
               </p>
             )}
           </div>
-
-          {!isLoading && data && !data.valid && (
-            <div className="mt-8 w-full">
-              <div className="mb-2 text-center text-sm text-slate-500">
-                Have a referral code?
-              </div>
-              <div className="flex items-center gap-2">
-                <Input
-                  placeholder="Enter code"
-                  value={manualCode}
-                  onChange={(e) => setManualCode(e.target.value.toUpperCase())}
-                />
-                <Button
-                  variant="outline"
-                  onClick={() => {
-                    const next = manualCode.trim().toUpperCase();
-                    if (!next) return;
-                    router.push(`/r/${next}`);
-                  }}
-                >
-                  Apply
-                </Button>
-              </div>
-            </div>
-          )}
         </div>
       </div>
 
