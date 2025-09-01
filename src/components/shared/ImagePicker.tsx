@@ -28,8 +28,7 @@ interface ImagePickerProps {
     url: string;
   };
   variant?: 'default' | 'short';
-  crop?: boolean;
-  square?: boolean;
+  crop?: boolean | 'square';
   className?: string;
 }
 
@@ -39,7 +38,6 @@ export const ImagePicker = ({
   defaultValue,
   variant = 'default',
   crop = false,
-  square = false,
   className,
 }: ImagePickerProps) => {
   const [preview, setPreview] = useState<string | null>(
@@ -289,7 +287,7 @@ export const ImagePicker = ({
               file={selectedFile}
               onCrop={handleCropApply}
               maxImageSize={5 * 1024 * 1024}
-              aspect={square ? 1 : undefined}
+              aspect={crop === 'square' ? 1 : undefined}
             >
               <ImageCropContent className="max-h-96" />
 
