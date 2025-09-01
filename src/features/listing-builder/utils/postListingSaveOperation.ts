@@ -44,6 +44,10 @@ export async function handlePostSaveOperations(context: PostSaveParams) {
 
     await handleAgentJobQueuing(result);
 
+    if (!isEditing) {
+      await handleTelegramNotifications(result);
+    }
+
     logger.info(
       `Listing ${isEditing ? 'Update' : 'Publish'} API Fully Successful with ID: ${listingId}`,
     );
@@ -196,27 +200,53 @@ async function handleDeadlineChanges({
 }
 
 async function handleAgentJobQueuing(result: BountiesModel) {
-  if (result.type !== 'project') return;
+  if (result.type !== 'project' && result.type !== 'bounty') return;
 
+  const agentType =
+    result.type === 'project'
+      ? 'generateContextProject'
+      : 'generateContextBounty';
   try {
     await queueAgent({
-      type: 'generateContextProject',
+      type: agentType,
       id: result.id,
     });
 
     logger.info(
-      `Successfully queued agent job for generateContextProject with id ${result.id}`,
+      `Successfully queued agent job for ${agentType} with id ${result.id}`,
     );
     console.log(
-      `Successfully queued agent job for generateContextProject with id ${result.id}`,
+      `Successfully queued agent job for ${agentType} with id ${result.id}`,
     );
   } catch (err) {
     logger.error(
-      `Failed to queue agent job for generateContextProject with id ${result.id}`,
+      `Failed to queue agent job for ${agentType} with id ${result.id}`,
       err,
     );
     console.log(
-      `Failed to queue agent job for generateContextProject with id ${result.id}`,
+      `Failed to queue agent job for ${agentType} with id ${result.id}`,
+    );
+  }
+}
+
+async function handleTelegramNotifications(result: BountiesModel) {
+  try {
+    await queueEmail({
+      type: 'telegramNewListing',
+      id: result.id,
+      triggeredBy: 'system',
+    });
+
+    logger.info(
+      `Successfully queued telegram notification for listing ${result.id}`,
+    );
+    console.log(
+      `Successfully queued telegram notification for listing ${result.id}`,
+    );
+  } catch (err) {
+    logger.error(
+      `Error in telegram notifications for listing ${result.id}`,
+      err,
     );
   }
 }

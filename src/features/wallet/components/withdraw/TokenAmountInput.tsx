@@ -9,8 +9,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { tokenList } from '@/constants/tokenList';
 
-import { type TokenAsset } from '../../types/TokenAsset';
+import type { TokenAsset } from '../../types/TokenAsset';
 
 interface TokenAmountInputProps {
   tokens: TokenAsset[];
@@ -33,6 +34,22 @@ export const TokenAmountInput = ({
     if (selectedToken) {
       onAmountChange(selectedToken.amount.toString());
     }
+  };
+
+  const clampToDecimals = (value: string, maxDecimals: number): string => {
+    if (!value) return value;
+    const dotIndex = value.indexOf('.');
+    if (dotIndex === -1) return value;
+    const whole = value.slice(0, dotIndex);
+    const frac = value.slice(dotIndex + 1);
+    if (frac.length <= maxDecimals) return value;
+    return `${whole}.${frac.slice(0, maxDecimals)}`;
+  };
+
+  const getMaxDecimals = (): number => {
+    const tokenAddress = selectedToken?.tokenAddress;
+    const meta = tokenList.find((t) => t.mintAddress === tokenAddress);
+    return meta?.decimals ?? 9;
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -94,7 +111,12 @@ export const TokenAmountInput = ({
 
         <Input
           value={amount}
-          onChange={(e) => onAmountChange(e.target.value)}
+          onChange={(e) => {
+            const raw = e.target.value;
+            const maxDecimals = getMaxDecimals();
+            const clamped = clampToDecimals(raw, maxDecimals);
+            onAmountChange(clamped);
+          }}
           className="rounded-l-none border-0 pr-4 text-right focus-visible:ring-transparent"
           placeholder="0.00"
           inputMode="decimal"

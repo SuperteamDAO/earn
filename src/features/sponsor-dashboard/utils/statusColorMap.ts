@@ -1,4 +1,16 @@
 export const colorMap = {
+  Needs_Review: {
+    bg: 'bg-amber-100',
+    color: 'text-amber-700',
+    border: 'border-amber-300',
+    focus: 'focus:text-amber-700 focus:bg-amber-200',
+  },
+  Inaccessible: {
+    bg: 'bg-red-50',
+    color: 'text-red-800',
+    border: 'border-red-200',
+    focus: 'focus:text-red-800 focus:bg-red-100',
+  },
   Low_Quality: {
     bg: 'bg-stone-100',
     color: 'text-stone-800',

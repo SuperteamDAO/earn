@@ -49,6 +49,7 @@ import { getListingStatus } from '@/features/listings/utils/status';
 import { VerifyPaymentModal } from '@/features/sponsor-dashboard/components/Modals/VerifyPayment';
 
 import { UnpublishModal } from '../Modals/UnpublishModal';
+import AiReviewBountiesSubmissionsModal from './Modals/AiReviewBounties';
 import AiReviewProjectApplicationsModal from './Modals/AiReviewProjects';
 
 interface Props {
@@ -204,7 +205,7 @@ export const SubmissionHeader = ({
     bountyStatus === 'In Review';
 
   return (
-    <div className="mb-2 flex items-center justify-between">
+    <div className="mb-2 flex items-center justify-between gap-12">
       <div>
         <Breadcrumb className="text-slate-400">
           <BreadcrumbList>
@@ -305,6 +306,12 @@ export const SubmissionHeader = ({
             <AiReviewProjectApplicationsModal
               listing={bounty}
               applications={submissions}
+            />
+          </div>
+          <div className="ml-4 -translate-y-2.5">
+            <AiReviewBountiesSubmissionsModal
+              listing={bounty}
+              submissions={submissions}
             />
           </div>
         </div>

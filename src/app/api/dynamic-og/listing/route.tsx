@@ -2,6 +2,7 @@ import { ImageResponse } from 'next/og';
 
 import { ASSET_URL } from '@/constants/ASSET_URL';
 import { tokenList } from '@/constants/tokenList';
+import { convertToJpegUrl } from '@/utils/cloudinary';
 import { formatNumber, formatString, loadGoogleFont } from '@/utils/ogHelpers';
 
 export async function GET(request: Request) {
@@ -20,7 +21,7 @@ export async function GET(request: Request) {
     );
     const type = getParam('type');
     const logo =
-      getParam('logo', (x) => formatString(x, 100)) ||
+      getParam('logo', (x) => convertToJpegUrl(x)) ||
       ASSET_URL + '/logo/sponsor-logo.png';
     const reward = getParam('reward', formatNumber);
     const minRewardAsk = getParam('minRewardAsk', formatNumber);

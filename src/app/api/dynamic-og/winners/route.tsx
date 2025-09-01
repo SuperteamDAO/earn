@@ -2,6 +2,7 @@ import { ImageResponse } from 'next/og';
 
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 import type { SubmissionWithUser } from '@/interface/submission';
+import { convertToJpegUrl } from '@/utils/cloudinary';
 import { formatString, loadGoogleFont } from '@/utils/ogHelpers';
 import { nthLabelGenerator } from '@/utils/rank';
 
@@ -104,7 +105,10 @@ export async function GET(request: Request) {
                       display: 'flex',
                     }}
                     alt={`${winner?.user?.firstName} ${winner?.user?.lastName}`}
-                    src={winner?.user?.photo}
+                    src={
+                      convertToJpegUrl(winner?.user?.photo) ||
+                      winner?.user?.photo
+                    }
                   />
                 ) : (
                   <ExternalImage

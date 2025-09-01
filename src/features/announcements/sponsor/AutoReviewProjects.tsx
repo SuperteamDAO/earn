@@ -18,10 +18,10 @@ export const AutoReviewProjectsFeature = () => {
       <div className="p-6 pb-0">
         <p className="text-xl font-semibold">Application reviews, simplified</p>
         <p className="mt-2 text-base font-normal text-slate-500">
-          Sometimes, reviewing project applications can take forever. Auto
-          Review Projects speeds things up by generating smart summaries of
-          every applicant - pulling from their application, Proof of Work,
-          GitHub, X activity and more.
+          Sometimes, reviewing project applications can take forever. AI Review
+          Projects speeds things up by generating smart summaries of every
+          applicant - pulling from their application, Proof of Work, GitHub,
+          Twitter activity and more.
         </p>
         <div className="mt-6 flex flex-col justify-between gap-4 pr-4 text-sm">
           <Point text={'Top applications worth your time'} />
