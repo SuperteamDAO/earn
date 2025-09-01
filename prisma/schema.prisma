@@ -70,6 +70,7 @@ model Bounties {
   Comments           Comment[]
   discordMessageIds  Json?
   ai                 Json?
+  publishedBy        String?
 
   @@index([id, slug])
   @@index([sponsorId])

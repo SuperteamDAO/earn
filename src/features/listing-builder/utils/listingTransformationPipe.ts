@@ -41,6 +41,7 @@ interface TransformToPrismaDataProps {
   sponsor: SponsorsModel;
   isEditing: boolean;
   isVerifying?: boolean;
+  userId?: string;
 }
 
 export const transformToPrismaData = async ({
@@ -49,6 +50,7 @@ export const transformToPrismaData = async ({
   sponsor,
   isEditing,
   isVerifying = false,
+  userId,
 }: TransformToPrismaDataProps): Promise<BountiesUncheckedUpdateInput> => {
   const {
     title,
@@ -163,6 +165,7 @@ export const transformToPrismaData = async ({
     hackathonId,
     referredBy,
     sponsorId: listing.sponsorId,
+    publishedBy: isEditing ? listing.publishedBy : userId,
   };
 
   if (isEditing) {
