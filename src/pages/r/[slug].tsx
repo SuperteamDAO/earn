@@ -129,8 +129,8 @@ export default function ReferralLandingPage() {
   );
 
   return (
-    <div className="container mx-auto flex max-w-lg justify-center">
-      <div className="w-full px-6 pt-12 pb-16 sm:mt-10 sm:px-12">
+    <div className="mx-auto flex min-h-screen w-full max-w-lg items-center justify-center pt-12 pb-36">
+      <div className="w-full px-6 sm:px-12">
         <div className="flex flex-col items-center">
           {data?.inviter && (
             <EarnAvatar

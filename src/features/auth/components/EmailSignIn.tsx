@@ -19,9 +19,10 @@ import { handleUserCreation } from '../utils/handleUserCreation';
 
 interface LoginProps {
   redirectTo?: string;
+  onSuccess?: () => void;
 }
 
-export const EmailSignIn = ({ redirectTo }: LoginProps) => {
+export const EmailSignIn = ({ redirectTo, onSuccess }: LoginProps) => {
   const [email, setEmail] = useState('');
   const [isEmailValid, setIsEmailValid] = useState(false);
   const [hasAttemptedSubmit, setHasAttemptedSubmit] = useState(false);
@@ -33,6 +34,7 @@ export const EmailSignIn = ({ redirectTo }: LoginProps) => {
 
   const { state, sendCode, loginWithCode } = useLoginWithEmail({
     onComplete: async ({ user, wasAlreadyAuthenticated }) => {
+      onSuccess?.();
       await handleUserCreation(user.email?.address || '');
       const url = new URL(redirectTo || router.asPath, window.location.origin);
       if (redirectTo) url.searchParams.set('originUrl', router.asPath);
