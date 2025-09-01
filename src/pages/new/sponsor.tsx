@@ -480,6 +480,8 @@ const CreateSponsor = () => {
                 <div className="mt-6 mb-3 w-full">
                   <FormLabel isRequired>Company Logo</FormLabel>
                   <ImagePicker
+                    crop
+                    square
                     onChange={(file, previewUrl) => {
                       setSelectedLogo(file);
                       setLogoPreview(previewUrl);
