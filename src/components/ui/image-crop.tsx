@@ -176,7 +176,7 @@ export const ImageCrop = ({
     setCrop(percentCrop);
     onChange?.(pixelCrop, percentCrop);
   };
-  // biome-ignore lint/suspicious/useAwait: "onComplete is async"
+
   const handleComplete = async (
     pixelCrop: PixelCrop,
     percentCrop: PercentCrop,
@@ -245,24 +245,26 @@ export const ImageCropContent = ({
     '--rc-focus-color': 'var(--color-primary)',
   } as CSSProperties;
   return (
-    <ReactCrop
-      className={cn('max-h-[277px] max-w-full', className)}
-      crop={crop}
-      onChange={handleChange}
-      onComplete={handleComplete}
-      style={{ ...shadcnStyle, ...style }}
-      {...reactCropProps}
-    >
-      {imgSrc && (
-        <img
-          alt="crop"
-          className="size-full"
-          onLoad={onImageLoad}
-          ref={imgRef}
-          src={imgSrc}
-        />
-      )}
-    </ReactCrop>
+    <div className="flex justify-center bg-gray-200">
+      <ReactCrop
+        className={cn('mx-auto max-h-[17.3125rem] w-fit', className)}
+        crop={crop}
+        onChange={handleChange}
+        onComplete={handleComplete}
+        style={{ ...shadcnStyle, ...style }}
+        {...reactCropProps}
+      >
+        {imgSrc && (
+          <img
+            alt="crop"
+            className="size-full object-contain"
+            onLoad={onImageLoad}
+            ref={imgRef}
+            src={imgSrc}
+          />
+        )}
+      </ReactCrop>
+    </div>
   );
 };
 export type ImageCropApplyProps = ComponentProps<'button'> & {

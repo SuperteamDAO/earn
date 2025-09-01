@@ -296,7 +296,7 @@ export const ImagePicker = ({
                   Cancel
                 </Button>
                 <ImageCropApply asChild>
-                  <Button>Apply Crop</Button>
+                  <Button>Apply</Button>
                 </ImageCropApply>
               </DialogFooter>
             </ImageCrop>
