@@ -193,7 +193,8 @@ export default function AiReviewBountiesSubmissionsModal({
         !listing?.isWinnersAnnounced &&
         listing?.isPublished &&
         !!listing?.ai?.context &&
-        !!unreviewedSubmissions?.length && (
+        !!unreviewedSubmissions?.length &&
+        !!(listing?.ai as BountiesAi)?.evaluationCompleted && (
           <Tooltip
             open={tooltipOpen}
             showArrow
