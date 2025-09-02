@@ -259,10 +259,20 @@ export default function ReferralLandingPage({
 export const getServerSideProps: GetServerSideProps = async ({
   params,
   req,
+  res,
 }) => {
   try {
     const slug =
       (params?.slug as string | undefined)?.trim().toUpperCase() || '';
+
+    if (slug) {
+      const cookie = `earn_ref=${encodeURIComponent(
+        slug,
+      )}; Path=/; Max-Age=604800; SameSite=Lax; ${
+        process.env.NODE_ENV === 'production' ? 'Secure; ' : ''
+      }`;
+      res.setHeader('Set-Cookie', cookie);
+    }
 
     const inviter = slug
       ? await prisma.user.findUnique({

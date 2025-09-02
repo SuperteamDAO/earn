@@ -20,25 +20,58 @@ export default async function createUser(
 
   try {
     const privyDid = await getPrivyToken(req);
-    const { email, referralCode } = req.body as {
-      email: string;
-      referralCode?: string;
-    };
+    const { email } = req.body as { email: string };
 
     if (!privyDid || !email) {
       logger.warn('Unauthorized request - Missing token or email');
       return res.status(401).json({ error: 'Unauthorized' });
     }
 
-    // Convert email to lowercase to ensure consistency
     const normalizedEmail = email.toLowerCase();
 
     const existingUser = await prisma.user.findUnique({
       where: { privyDid },
-      select: { id: true, email: true },
+      select: { id: true, email: true, referredById: true },
     });
 
+    const cookieCodeRaw = (req.cookies['earn_ref'] || '')
+      .toString()
+      .trim()
+      .toUpperCase();
+    const normalizedCode = cookieCodeRaw || undefined;
+
     if (existingUser) {
+      if (normalizedCode && !existingUser.referredById) {
+        const inviter = await prisma.user.findUnique({
+          where: { referralCode: normalizedCode },
+          select: { id: true },
+        });
+        if (inviter && inviter.id !== existingUser.id) {
+          const accepted = await prisma.user.count({
+            where: { referredById: inviter.id },
+          });
+          if (accepted < 10) {
+            await prisma.user.update({
+              where: { id: existingUser.id },
+              data: { referredById: inviter.id },
+            });
+          } else {
+            logger.info(
+              `Referral cap reached for inviter ${inviter.id}, ignoring referralCode during signup (backfill)`,
+            );
+          }
+        }
+      }
+
+      if (cookieCodeRaw) {
+        res.setHeader(
+          'Set-Cookie',
+          `earn_ref=; Path=/; Max-Age=0; SameSite=Lax; ${
+            process.env.NODE_ENV === 'production' ? 'Secure; ' : ''
+          }`,
+        );
+      }
+
       logger.warn(`User already exists with privyDid: ${privyDid}`);
       return res.status(200).json({
         message: `User already exists`,
@@ -62,9 +95,6 @@ export default async function createUser(
     }
 
     let referredById: string | undefined = undefined;
-    const normalizedCode = referralCode
-      ? referralCode.toString().trim().toUpperCase()
-      : undefined;
     if (normalizedCode) {
       const inviter = await prisma.user.findUnique({
         where: { referralCode: normalizedCode },
@@ -82,8 +112,6 @@ export default async function createUser(
             `Referral cap reached for inviter ${inviter.id}, ignoring referralCode during signup`,
           );
         }
-      } else {
-        logger.info(`Invalid referralCode provided: ${referralCode}`);
       }
     }
 
@@ -91,6 +119,15 @@ export default async function createUser(
       data: { privyDid, email: normalizedEmail, referredById },
       select: { id: true },
     });
+
+    if (cookieCodeRaw) {
+      res.setHeader(
+        'Set-Cookie',
+        `earn_ref=; Path=/; Max-Age=0; SameSite=Lax; ${
+          process.env.NODE_ENV === 'production' ? 'Secure; ' : ''
+        }`,
+      );
+    }
 
     const code = await generateUniqueReferralCode();
     await prisma.user.update({

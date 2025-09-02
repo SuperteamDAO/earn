@@ -58,12 +58,16 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
 
     const filteredData = filterAllowedFields(req.body, allowedFields);
 
-    const referralCodeRaw = (req.body?.referralCode || '')
+    const cookieCodeRaw = (req.cookies?.['earn_ref'] || '')
+      .toString()
+      .trim()
+      .toUpperCase();
+    const referralCodeRaw = (req.body?.referralCode || '' || cookieCodeRaw)
       .toString()
       .trim()
       .toUpperCase();
     const referredByUpdate: { referredById?: string } = {};
-    if (referralCodeRaw) {
+    if (referralCodeRaw && !user.referredById) {
       try {
         const inviter = await prisma.user.findUnique({
           where: { referralCode: referralCodeRaw },
@@ -211,6 +215,15 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       where: { id: userId as string },
       select: userSelectOptions,
     });
+
+    if (cookieCodeRaw) {
+      res.setHeader(
+        'Set-Cookie',
+        `earn_ref=; Path=/; Max-Age=0; SameSite=Lax; ${
+          process.env.NODE_ENV === 'production' ? 'Secure; ' : ''
+        }`,
+      );
+    }
 
     logger.info(`User onboarded successfully for user ID: ${userId}`);
     return res.status(200).json(result);
