@@ -1,6 +1,7 @@
 import { usePrivy } from '@privy-io/react-auth';
 import { useQuery } from '@tanstack/react-query';
 import { Check } from 'lucide-react';
+import type { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
@@ -8,9 +9,10 @@ import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { api } from '@/lib/api';
-import { useUser } from '@/store/user';
+import { prisma } from '@/prisma';
 
 import { Login } from '@/features/auth/components/Login';
+import { getPrivyToken } from '@/features/auth/utils/getPrivyToken';
 import { userCountQuery } from '@/features/home/queries/user-count';
 import { liveOpportunitiesQuery } from '@/features/listings/queries/live-opportunities';
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
@@ -28,10 +30,15 @@ const avatars = [
   { name: 'Yash', src: '/pfps/fff1.webp' },
 ];
 
-export default function ReferralLandingPage() {
+interface ReferralLandingProps {
+  redirectReason?: 'self_referral' | 'existing_user' | null;
+}
+
+export default function ReferralLandingPage({
+  redirectReason,
+}: ReferralLandingProps) {
   const router = useRouter();
   const { authenticated } = usePrivy();
-  const { user } = useUser();
   const [isLoginOpen, setIsLoginOpen] = useState(false);
 
   const code = useMemo(() => {
@@ -48,20 +55,8 @@ export default function ReferralLandingPage() {
       });
       return res.data;
     },
-    enabled: !!code,
+    enabled: !!code && !redirectReason,
   });
-
-  useEffect(() => {
-    if (!authenticated) return;
-    if (isLoginOpen) return;
-    if (user?.isTalentFilled) {
-      toast.warning(
-        'This referral is invalid since you have signed up on Earn before with this email ID.',
-        { id: 'referral-invalid-existing-user' },
-      );
-      router.replace('/');
-    }
-  }, [authenticated, isLoginOpen, router, user]);
 
   useEffect(() => {
     let timeout: ReturnType<typeof setTimeout> | undefined;
@@ -97,13 +92,40 @@ export default function ReferralLandingPage() {
       setIsLoginOpen(true);
       return;
     }
-
-    toast.warning(
-      'This referral is invalid since you have signed up on Earn before with this email ID.',
-      { id: 'referral-invalid-existing-user' },
-    );
-    router.replace('/');
+    router.push('/new/talent?onboarding=true&referral=true');
   };
+
+  function RedirectToast({
+    reason,
+  }: {
+    reason: 'self_referral' | 'existing_user';
+  }) {
+    useEffect(() => {
+      const show = () => {
+        if (reason === 'self_referral') {
+          toast.warning('You cannot refer yourself.', {
+            id: 'toast-self-ref',
+            duration: 10000,
+          });
+        } else if (reason === 'existing_user') {
+          toast.warning(
+            'This referral is invalid since you have signed up on Earn before with this email ID.',
+            {
+              id: 'referral-invalid-existing-user',
+              duration: 10000,
+            },
+          );
+        }
+      };
+      const t1 = setTimeout(show, 50);
+      const t2 = setTimeout(() => router.replace('/'), 500);
+      return () => {
+        clearTimeout(t1);
+        clearTimeout(t2);
+      };
+    }, [reason, router]);
+    return null;
+  }
 
   const { data: liveOpportunities } = useQuery({
     ...liveOpportunitiesQuery,
@@ -127,6 +149,14 @@ export default function ReferralLandingPage() {
       <Check className="mt-0.5 h-5 w-5 text-emerald-500" />
     </div>
   );
+
+  if (redirectReason)
+    return (
+      <>
+        <RedirectToast reason={redirectReason} />
+        <div className="flex h-screen w-full items-center justify-center"></div>
+      </>
+    );
 
   return (
     <div className="mx-auto flex min-h-screen w-full max-w-lg items-center justify-center pt-12 pb-36">
@@ -225,3 +255,40 @@ export default function ReferralLandingPage() {
     </div>
   );
 }
+
+export const getServerSideProps: GetServerSideProps = async ({
+  params,
+  req,
+}) => {
+  try {
+    const slug =
+      (params?.slug as string | undefined)?.trim().toUpperCase() || '';
+
+    const inviter = slug
+      ? await prisma.user.findUnique({
+          where: { referralCode: slug },
+          select: { id: true },
+        })
+      : null;
+
+    const privyDid = await getPrivyToken(req);
+    const viewer = privyDid
+      ? await prisma.user.findUnique({
+          where: { privyDid },
+          select: { id: true, isTalentFilled: true },
+        })
+      : null;
+
+    if (inviter && viewer && viewer.id === inviter.id) {
+      return { props: { redirectReason: 'self_referral' } };
+    }
+
+    if (viewer?.isTalentFilled) {
+      return { props: { redirectReason: 'existing_user' } };
+    }
+
+    return { props: { redirectReason: null } };
+  } catch {
+    return { props: { redirectReason: null } };
+  }
+};
