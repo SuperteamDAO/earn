@@ -185,7 +185,7 @@ export const SubmissionActionButton = ({
   } = useDisclosure();
 
   const openReferralWithEvent = () => {
-    posthog.capture('open_credits');
+    posthog.capture('open_referrals');
     onReferralOpen();
   };
 
