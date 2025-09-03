@@ -14,32 +14,23 @@ interface AutoGenerateFormProps {
   type: BountyType;
   setType: (type: BountyType) => void;
   onBack?: () => void;
-  onGenerate?: (data: {
-    description: string;
-    type: string;
-    template?: string;
-  }) => void;
+  onSubmit: () => void;
+  input: string;
+  setInput: (input: string) => void;
 }
 
 export function AutoGenerateForm({
   type,
   setType,
   onBack: _onBack,
-  onGenerate,
+  onSubmit,
+  input,
+  setInput,
 }: AutoGenerateFormProps) {
-  const [description, setDescription] = useState('');
   const [_selectedTemplate, _setSelectedTemplate] = useState<string>('');
 
-  const handleGenerate = () => {
-    onGenerate?.({
-      description,
-      type,
-      template: _selectedTemplate,
-    });
-  };
-
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 p-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           {type === 'bounty' ? (
@@ -63,8 +54,8 @@ export function AutoGenerateForm({
       <div className="space-y-4">
         <Textarea
           placeholder="Briefly describe the scope of your task"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
           className="min-h-55 w-full resize-none"
         />
       </div>
@@ -72,15 +63,15 @@ export function AutoGenerateForm({
       <div>
         <Templates
           type={type}
-          onSelectTemplate={() => {}}
-          onUnselectTemplate={() => {}}
+          onSelectTemplate={({ prompt }) => setInput(prompt)}
+          onUnselectTemplate={() => setInput('')}
         />
       </div>
 
       <div className="flex justify-end">
         <Button
-          onClick={handleGenerate}
-          disabled={!description.trim()}
+          onClick={onSubmit}
+          disabled={!input || input?.trim() === ''}
           className="w-fit"
         >
           <Sparkles />

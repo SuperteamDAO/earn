@@ -1,5 +1,5 @@
 import { openrouter } from '@openrouter/ai-sdk-provider';
-import { createDataStreamResponse, smoothStream, streamText } from 'ai';
+import { convertToModelMessages, streamText } from 'ai';
 import { headers } from 'next/headers';
 import { type NextRequest, NextResponse } from 'next/server';
 import { ZodError } from 'zod';
@@ -10,7 +10,7 @@ import { checkAndApplyRateLimitApp } from '@/lib/rateLimiterService';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { getSponsorSession } from '@/features/auth/utils/getSponsorSession';
-import { aiGenerateFormSchema } from '@/features/listing-builder/components/AiGenerate/schema';
+import { autoGenerateChatSchema } from '@/features/listing-builder/components/AutoGenerate/schema';
 
 import { getDescriptionPrompt } from './prompts';
 
@@ -37,44 +37,48 @@ export async function POST(req: NextRequest) {
       return rateLimitResponse;
     }
 
-    const rawData = await req.json();
-    logger.debug(`Request body: ${safeStringify(rawData)}`);
-    const validatedData = aiGenerateFormSchema.parse(rawData);
+    const parsed = await autoGenerateChatSchema.parseAsync(await req.json());
+    const {
+      messages,
+      listingType,
+      company,
+      token,
+      tokenUsdAmount,
+      hackathonName,
+    } = parsed;
+    logger.debug(
+      `UI messages: ${safeStringify(messages)}, listingType: ${safeStringify(
+        listingType,
+      )}, company: ${safeStringify(company)}`,
+    );
 
-    const prompt = getDescriptionPrompt(validatedData);
+    const systemPrompt = getDescriptionPrompt(listingType, {
+      company,
+      token,
+      tokenUsdAmount,
+      hackathonName,
+    });
 
-    return createDataStreamResponse({
-      execute: (dataStream) => {
-        const result = streamText({
-          model: openrouter('google/gemini-2.5-flash', {
-            extraBody: {
-              plugins: [
-                {
-                  id: 'web',
-                  max_results: 3,
-                },
-              ],
+    const result = streamText({
+      model: openrouter('google/gemini-2.5-flash', {
+        extraBody: {
+          plugins: [
+            {
+              id: 'web',
+              max_results: 3,
             },
-          }),
-          system:
-            'You are a professional content writer specializing in creating clear, concise, and compelling project descriptions for bounties and freelance opportunities.',
-          prompt,
-          experimental_transform: smoothStream({ chunking: 'word' }),
-          headers: {
-            'HTTP-Referer': process.env.NEXT_PUBLIC_SITE_URL,
-            'X-Title': 'Superteam Earn - AI Listing Builder',
-          },
-        });
-
-        result.consumeStream();
-
-        result.mergeIntoDataStream(dataStream);
-      },
-      onError: () => {
-        logger.error('Error in streamed response while generating description');
-        return 'Oops, an error occurred!';
+          ],
+        },
+      }),
+      system: systemPrompt,
+      messages: convertToModelMessages(messages),
+      headers: {
+        'HTTP-Referer': process.env.NEXT_PUBLIC_SITE_URL,
+        'X-Title': 'Superteam Earn - AI Listing Builder',
       },
     });
+
+    return result.toUIMessageStreamResponse();
   } catch (error) {
     if (error instanceof ZodError) {
       logger.error('Validation error:', safeStringify(error.errors));

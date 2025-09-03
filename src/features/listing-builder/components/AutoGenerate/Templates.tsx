@@ -10,10 +10,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { type BountyType } from '@/generated/prisma/enums';
 
-import {
-  BountyTemplates,
-  ProjectTemplates,
-} from '../../constants/template-prompts';
+import { BountyTemplates, ProjectTemplates } from './template-prompts';
 
 interface TemplatesProps {
   type: BountyType;

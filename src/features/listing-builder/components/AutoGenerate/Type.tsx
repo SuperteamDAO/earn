@@ -14,7 +14,7 @@ interface AutoGenerateTypeProps {
 }
 export function AutoGenerateStageType({ setType }: AutoGenerateTypeProps) {
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 p-4">
       <h2 className="text-lg font-medium">Select type of listing</h2>
       <div className="grid grid-cols-2 gap-4">
         <Button

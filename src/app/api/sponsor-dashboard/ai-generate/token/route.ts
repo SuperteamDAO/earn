@@ -4,7 +4,6 @@ import { headers } from 'next/headers';
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 
-import { tokenList } from '@/constants/tokenList';
 import logger from '@/lib/logger';
 import { aiGenerateRateLimiter } from '@/lib/ratelimit';
 import { checkAndApplyRateLimitApp } from '@/lib/rateLimiterService';
@@ -17,17 +16,10 @@ import { generateListingTokenPrompt } from './prompt';
 const requestBodySchema = z.object({
   description: z.string().min(1, 'Description cannot be empty'),
 });
-
 const responseSchema = z.object({
-  token: z
-    .enum(
-      tokenList.map((token) => token.tokenSymbol) as [string, ...string[]],
-      {
-        errorMap: () => ({ message: 'Token Not Allowed' }),
-      },
-    )
-    .default('USDC'),
+  token: z.string().optional().nullable(),
 });
+
 export type TTokenGenerateResponse = z.infer<typeof responseSchema>;
 
 export async function POST(request: Request) {
@@ -85,9 +77,9 @@ export async function POST(request: Request) {
 
     const { object } = await generateObject({
       model: openrouter('google/gemini-2.0-flash-lite-001'),
-      system: 'Your role is to extract the token mentioned in the listings.',
       prompt,
       schema: responseSchema,
+      system: 'Your role is to extract the token mentioned in the listings.',
     });
 
     logger.info('Generated eligibility token object: ', safeStringify(object));
@@ -95,6 +87,7 @@ export async function POST(request: Request) {
     return NextResponse.json(object, { status: 200 });
   } catch (error) {
     logger.error('Error generating token:', safeStringify(error));
+    console.log(error);
     return NextResponse.json(
       { error: 'Failed to generate token' },
       { status: 500 },

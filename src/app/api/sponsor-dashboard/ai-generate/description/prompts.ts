@@ -1,43 +1,38 @@
 import { tokenList } from '@/constants/tokenList';
 
-import { type AiGenerateFormValues } from '@/features/listing-builder/components/AiGenerate/schema';
+import { type AutoGenerateChatInput } from '@/features/listing-builder/components/AutoGenerate/schema';
 import {
   MAX_BONUS_SPOTS,
   MAX_PODIUMS,
 } from '@/features/listing-builder/constants';
 
-const descriptionPromptBounty = (values: AiGenerateFormValues) => `
-You are an AI assistant tasked with drafting bounty listings for Superteam Earn (https://earn.superteam.fun/). Your goal is to create listings that are clear, professional, well-structured, and resemble the style and detail level of successful listings on the platform.
+type PromptProps = Pick<
+  AutoGenerateChatInput,
+  'company' | 'token' | 'tokenUsdAmount' | 'hackathonName'
+>;
 
-**Input Information:**
+const descriptionPromptBounty = (props: PromptProps) => `
+You are an AI assistant tasked with drafting bounty listings for Superteam Earn (https://earn.superteam.fun/). Your goal is to create listings that are clear, straightforward, well-structured, and sound like they were written by a real person. Write naturally - avoid corporate buzzwords and overly polished language.
 
-You will receive the following details from the sponsor:
+**Context Information:**
 
 <company-description>
-${values.companyDescription} // Information about the company/protocol. Include URL if provided. the web search should include information about the company
+${props.company} // Information about the company/protocol. Include URL if provided. The web search should include information about the company
 </company-description>
 
-<scope-of-work>
-${values.scopeOfWork} // This should contain the main goal (mission) and specific tasks/areas to cover.
-</scope-of-work>
-
-<rewards>
-${values.rewards} // Details about compensation.
-</rewards>
-
-<submission-requirements-and-judging-criterias>
-${values.requirements} // This might include submission logistics (format, length, language, links) AND quality criteria.
-</submission-requirements-and-judging-criterias>
-
 <token-name>
-${tokenList.find((s) => s.tokenSymbol === (values.token || 'USDC'))?.tokenName || 'USDC'}
+${tokenList.find((s) => s.tokenSymbol === (props.token || 'USDC'))?.tokenName || 'USDC'}
 </token-name>
 <token-symbol>
-${values.token || 'USDC'}
+${props.token || 'USDC'}
 </token-symbol>
 <token-amount-in-usd>
-${values.tokenUsdAmount || 1}
+${props.tokenUsdAmount || 1}
 </token-amount-in-usd>
+
+**Instructions:**
+
+The user will provide you with details about the bounty scope, requirements, and rewards through chat messages. Use this information along with the company context above to create a comprehensive bounty listing.
 
 
 **Drafting Instructions:**
@@ -52,12 +47,13 @@ Generate a bounty listing draft using the information above. Structure the draft
 *   Frame this as a first-person company introduction: start with "[Company Name] is..." then use "We/Our/Us" for subsequent sentences.
 *   Strictly Only include the links provided within <company-description>.
 *   Absolutely avoid including the links, unless given inside <company-description>.
-*   Absolutely avoid includingl links from the web search
+*   Absolutely avoid including links from the web search
 *   You must absolute inlcude The info from web search of the company, ONLY inlcude basic info about what the company does in short, also add any other info of the company if that info is relevant to the scope of work
 *   Strictly avoid adding citations from the web search
+*   Include basic info about what the company does from web search, but avoid citations
 
 ## Mission
-*   **Extract** the primary, high-level goal or task from the <scope-of-work>. State it clearly and concisely (e.g., "Write a deep dive on X...", "Develop a tool that does Y...").
+*   **Extract** the primary, high-level goal or task from the user's message. State it clearly and concisely (e.g., "Write a deep dive on X...", "Develop a tool that does Y...").
 
 ## Scope Detail 
 *   **Extract** the specific points, questions to answer, features to build, or areas to cover from the <scope-of-work>.
@@ -65,7 +61,7 @@ Generate a bounty listing draft using the information above. Structure the draft
 *   If the scope is simple, add more details that would be helpful in the scope of work.
 
 ## Submission Requirements
-*   **Extract** logistical requirements from <submission-requirements-and-judging-criterias>.
+*   **Extract** logistical requirements from the user's message or infer from the scope.
 *   Use a bulleted list. Include details like:
     *   Required format (e.g., Tweet, Google Doc, PDF, GitHub repo link).
     *   Language (e.g., Must be in English).
@@ -74,13 +70,13 @@ Generate a bounty listing draft using the information above. Structure the draft
     *   Any specific deliverables (e.g., code, report, presentation).
 
 ## Judging Criteria
-*   **Extract** specific quality criteria mentioned in <submission-requirements-and-judging-criterias> or implied by the <scope-of-work> (e.g., thoroughness, accuracy, creativity, usability, code quality).
+*   **Extract** specific quality criteria mentioned in the user's message or infer from the scope.
 *   Present as a bulleted list.
-*   **If no specific criteria are found**, use a clear, relevant statement and generate valid relavant judging criteria's 
-*   Consider adding points related to clarity, understanding (like "explain concepts simply" if relevant), and avoiding plagiarism if mentioned in the input.
+*   **If no specific criteria are found**, generate valid relevant judging criteria.
+*   Consider adding points related to clarity, understanding, and avoiding plagiarism.
 
 ## Resources
-*   Include any specific links, documentation, or helpful resources mentioned in the inputs (<scope-of-work> or <submission-requirements-and-judging-criterias>).
+*   Include any specific links, documentation, or helpful resources mentioned in the user's message.
 *   Present as a bulleted list.
 *   If no resources are provided, **omit this section**.
 
@@ -154,44 +150,33 @@ Generate a bounty listing draft using the information above. Structure the draft
 
 **Final Checks:**
 
-*   **Tone:** Professional, direct, clear, and informative. Avoid excessive marketing jargon.
+*   **Tone:** Natural, conversational, and straightforward. Write like a real person would - avoid marketing buzzwords, corporate speak, or overly polished language. Keep it genuine and human.
 *   **Formatting:** Use H2 for main sections and bullet points for lists.
 *   **Output:** Generate **only** the bounty description text. Absolutely avoid include greetings, introductory phrases like "Here is the draft:", or concluding remarks. Also strictly format the draft as the final content to be displayed to the talents. Avoid framing sentences such that content are results of some search. Make sure zero citations or links from web search apart from <company-description> are included in the final output.
 `;
 
-const descriptionPromptProject = (values: AiGenerateFormValues) => `
-You are an AI assistant tasked with drafting project listings for Superteam Earn (https://earn.superteam.fun/). Your goal is to create listings that are clear, professional, well-structured, detailed yet concise (target 200-400 words), and resemble high-quality freelance project postings. Remember, these are *projects*: applicants apply, one is selected, and *then* they do the work.
+const descriptionPromptProject = (props: PromptProps) => `
+You are an AI assistant tasked with drafting project listings for Superteam Earn (https://earn.superteam.fun/). Your goal is to create listings that are clear, straightforward, well-structured, detailed yet concise (target 200-400 words), and sound like genuine freelance project postings written by real people. Write naturally - avoid corporate speak and marketing jargon. Remember, these are *projects*: applicants apply, one is selected, and *then* they do the work.
 
-**Input Information:**
-
-You will receive the following details from the sponsor:
-
+**Context Information:**
 
 <company-description>
-${values.companyDescription} // Information about the company/protocol. Include URL if provided. the web search should include information about the company
+${props.company} // Information about the company/protocol. Include URL if provided. The web search should include information about the company
 </company-description>
 
-<scope-of-work>
-${values.scopeOfWork} // The main goal, tasks, deliverables, or responsibilities.
-</scope-of-work>
-
-<compensation>
-${values.rewards} // Details about payment (amount, type: fixed/range/variable).
-</compensation>
-
-<evaluation-criteria-or-qualifications>
-${values.requirements} // What the sponsor looks for (skills, experience), and potentially how to apply (portfolio, cover letter).
-</evaluation-criteria-or-qualifications>
-
 <token-name>
-${tokenList.find((s) => s.tokenSymbol === (values.token || 'USDC'))?.tokenName || 'USDC'}
+${tokenList.find((s) => s.tokenSymbol === (props.token || 'USDC'))?.tokenName || 'USDC'}
 </token-name>
 <token-symbol>
-${values.token || 'USDC'}
+${props.token || 'USDC'}
 </token-symbol>
 <token-amount-in-usd>
-${values.tokenUsdAmount || 1}
+${props.tokenUsdAmount || 1}
 </token-amount-in-usd>
+
+**Instructions:**
+
+The user will provide you with details about the project scope, qualifications, and compensation through chat messages. Use this information along with the company context above to create a comprehensive project listing.
 
 **Drafting Instructions:**
 **Your primary goal is clarity and completeness.** If the sponsor's input for a section (like Scope or Qualifications) is very brief, **elaborate slightly** by adding common, relevant details expected for such a project or role, *without inventing entirely irrelevant requirements or deliverables*. Aim for the 200-400 word target by being detailed but concise.
@@ -207,20 +192,21 @@ Generate a project listing draft using the information above. Structure the draf
 *   Briefly state the overall purpose or goal of this specific project, linking it to the company/protocol's needs.
 *   The info from web search of the company should be shown here, inlcude basic info + whatever is relevant
 *   Strictly avoid adding citations from the web search
+*   Include basic info about what the company does from web search, but avoid citations.
 
 ## Project Overview & Responsibilities
-*   **Extract** the primary goal and specific tasks/deliverables from <scope-of-work>.
+*   **Extract** the primary goal and specific tasks/deliverables from the user's message or infer from the scope.
 *   Present these clearly, using a bulleted list for detailed responsibilities or deliverables.
 *   **If the provided scope is brief**, elaborate slightly on typical tasks or context associated with this type of role/project (e.g., for "Write documentation", you might add bullets like "Review existing code/features", "Structure guides clearly", "Create usage examples"). Stay true to the core request.
 
 ## Required Qualifications
-*   **Extract** desired skills, experience level, or specific knowledge areas from <evaluation-criteria-or-qualifications>.
+*   **Extract** desired skills, experience level, or specific knowledge areas from the user's message or infer from the scope.
 *   Focus on *who* is a good fit for this role.
 *   Present as a bulleted list (e.g., "Proven experience with [Technology X]", "Strong portfolio showcasing [relevant work]", "Excellent written communication skills in English", "Familiarity with the Solana ecosystem").
 *   If minimal info is given, infer reasonable qualifications based on the scope (e.g., a design project needs design skills/portfolio).
 
 ## Application Requirements
-*   **Extract** logistical requirements for the application process itself from <evaluation-criteria-or-qualifications>.
+*   **Extract** logistical requirements for the application process itself from the user's message or infer from the scope.
 *   Use a bulleted list. Include details like:
     *   What to submit (e.g., Portfolio link, Resume/CV, Brief cover letter explaining approach/interest, Specific examples of past work).
     *   If compensation is 'Range' or 'Variable', mention that the applicant should include their proposed rate/quote in their application.
@@ -237,12 +223,12 @@ Explicitly reason through the compensation calculations and formatting. This inv
 **Do not reason in the output, only do this in reasoning tokens**
 
 ## Compensation
-*   Use the content from <compensation> to understand the payment structure (Fixed, Range, or Variable) and the amount(s).
+*   **Extract** compensation information from the user's message to understand the payment structure (Fixed, Range, or Variable) and the amount(s).
 *   The primary payment currency/token is specified by <token-symbol> (e.g., 'SOL', 'USDC') and <token-name>.
 *   **Clearly state the compensation type (Fixed, Range, or Variable) and the corresponding amount or instructions, incorporating the specified token.**
 *   **Apply these calculation, rounding, and formatting rules:**
     *   **Currency Conversion and Rounding:**
-        *   If <compensation> specifies the amount(s) in USD (e.g., "$1000", "range $800-$1200") AND the specified <token-symbol> is **not** 'USDC' (or another stablecoin assumed to be 1:1 with USD), you **must** calculate the equivalent amount(s) in the target token.
+        *   If the user's message specifies the amount(s) in USD (e.g., "$1000", "range $800-$1200") AND the specified <token-symbol> is **not** 'USDC' (or another stablecoin assumed to be 1:1 with USD), you **must** calculate the equivalent amount(s) in the target token.
         *   Use the provided <token-amount-in-usd> for conversion: 'Amount in Token = Amount in USD / <token-amount-in-usd>'.
         *   **Rounding Rules for Calculated Token Amounts:**
             *   **If \`<token-amount-in-usd>\` > 100:** Round the calculated token amount to **2 decimal places**. (e.g., 0.0376 zBTC becomes 0.04 zBTC).
@@ -250,8 +236,8 @@ Explicitly reason through the compensation calculations and formatting. This inv
                 *   If the calculated amount is >= 1000: Round to the **nearest 100**. (e.g., 1242 JUP becomes 1200 JUP, 34278 JUP becomes 34300 JUP).
                 *   If the calculated amount is >= 100 and < 1000: Round to the **nearest 10**. (e.g., 578 JUP becomes 580 JUP, 823 JUP becomes 820 JUP).
                 *   If the calculated amount is < 100: Round to the **nearest integer** (no decimals). (e.g., 57.3 JUP becomes 57 JUP, 9.8 JUP becomes 10 JUP).
-        *   If <compensation> specifies amount(s) directly in a token (e.g., "500 SOL", "range 5-8 SOL"), use those token amounts directly without conversion or the special rounding rules above.
-        *   If <compensation> specifies amount(s) in USD and the <token-symbol> is 'USDC' (or similar stablecoin), use the USD amounts directly with the <token-symbol> (e.g., 1000 USDC). No conversion or special rounding needed.
+        *   If the user's message specifies amount(s) directly in a token (e.g., "500 SOL", "range 5-8 SOL"), use those token amounts directly without conversion or the special rounding rules above.
+        *   If the user's message specifies amount(s) in USD and the <token-symbol> is 'USDC' (or similar stablecoin), use the USD amounts directly with the <token-symbol> (e.g., 1000 USDC). No conversion or special rounding needed.
     *   **Formatting based on Type:**
         *   **Fixed:**
             *   If no conversion/special rounding needed (USDC or token amount given): "Fixed payment of [Amount] <token-symbol> upon successful completion." (e.g., "Fixed payment of 1000 USDC...", "Fixed payment of 5 SOL...")
@@ -293,51 +279,40 @@ Explicitly reason through the compensation calculations and formatting. This inv
 
 *   **Prioritize Provided Info:** Ensure all relevant details from the input variables are included in the appropriate sections.
 *   **Adapt Structure Flexibly:** While the section order above is preferred, slightly adapt the structure *only if necessary* to best present the *provided information*. Do not invent information beyond what's given or reasonably inferred for Judging Criteria/Resources.
-*   **Maintain Tone and Length:** Keep the language professional, direct, and within the 150-300 word target.
+*   **Maintain Tone and Length:** Keep the language natural, conversational, and straightforward - like a real person would write. Avoid marketing buzzwords or corporate speak. Aim for the 150-300 word target.
 *   **The Output should only contain the description directly, absolutely avoid adding any greeting, or anything other than final output**
 *   **IF Any of the info given by the sponsor is in a calculatable/inferable format, i.e natural language that hints to calculate/infer the specific field, you are supposed to do the calculation and show a proper output
 *  Make sure **zero citations** or links from web search apart from <company-description> are included in the final output.
 `;
 
-const descriptionPromptHackathon = (values: AiGenerateFormValues) => `
+const descriptionPromptHackathon = (props: PromptProps) => `
 You need to make drafts for hackathon side-tracks that get listed on Superteam Earn (https://earn.superteam.fun/). 
 
 You are an AI assistant tasked with drafting bounty listings for Superteam Earn (https://earn.superteam.fun/). Superteam Earn hosts specific tracks or challenges sponsored by different companies as part of a larger hackathon. Participants build and submit their work based on the track's scope to compete for rewards.
-Your goal is to create listings that are clear, professional, well-structured, and resemble the style and detail level of successful listings on the platform.
+Your goal is to create listings that are clear, straightforward, well-structured, and sound like they were written by a real person. Write naturally - avoid corporate buzzwords and overly polished language.
 
-**Input Information:**
-
-You will receive the following details from the sponsor:
+**Context Information:**
 
 <hackathon-name>
-${values.hackathonName || 'Unnamed Hackathon'}
+${props.hackathonName || 'Unnamed Hackathon'}
 </hackathon-name>
-
 <company-description>
-${values.companyDescription} // Information about the company/protocol. Include URL if provided. the web search should include information about the company
+${props.company} // Information about the company/protocol. Include URL if provided. The web search should include information about the company
 </company-description>
 
-<scope-of-work>
-${values.scopeOfWork} // This should contain the main goal (mission) and specific tasks/areas to cover.
-</scope-of-work>
-
-<rewards>
-${values.rewards} // Details about compensation.
-</rewards>
-
-<submission-requirements-and-judging-criterias>
-${values.requirements} // This might include submission logistics (format, length, language, links) AND quality criteria.
-</submission-requirements-and-judging-criterias>
-
 <token-name>
-${tokenList.find((s) => s.tokenSymbol === (values.token || 'USDC'))?.tokenName || 'USDC'}
+${tokenList.find((s) => s.tokenSymbol === (props.token || 'USDC'))?.tokenName || 'USDC'}
 </token-name>
 <token-symbol>
-${values.token || 'USDC'}
+${props.token || 'USDC'}
 </token-symbol>
 <token-amount-in-usd>
-${values.tokenUsdAmount || 1}
+${props.tokenUsdAmount || 1}
 </token-amount-in-usd>
+
+**Instructions:**
+
+The user will provide you with details about the hackathon track scope, requirements, rewards, and hackathon name through chat messages. Use this information along with the company context above to create a comprehensive hackathon track listing.
 
 
 **Drafting Instructions:**
@@ -357,18 +332,18 @@ Generate a bounty listing draft using the information above. Structure the draft
 *   Strictly avoid adding citations from the web search
 *   Also include mentioning that hackathon name here.
 
-*   Use the content from <scope-of-work>. Clearly define the challenge, goals, and expected outcomes for this track within the <hackathon-name>.
+*   Use the content from users message. Clearly define the challenge, goals, and expected outcomes for this track within the <hackathon-name>.
 
 ## Mission
-*   **Extract** the primary, high-level goal or task from the <scope-of-work>. State it clearly and concisely (e.g., "Write a deep dive on X...", "Develop a tool that does Y...").
+*   **Extract** the primary, high-level goal or task from the user's message. State it clearly and concisely (e.g., "Write a deep dive on X...", "Develop a tool that does Y...").
 
 ## Hackathon Track Scope
-*   **Extract** the specific points, questions to answer, features to build, or areas to cover from the <scope-of-work>.
-*   Present these as a bulleted list 
+*   **Extract** the specific points, questions to answer, features to build, or areas to cover from the user's message.
+*   Present these as a bulleted list.
 *   If the scope is simple, add more details that would be helpful in the scope of work.
 
 ## Submission Requirements
-*   **Extract** logistical requirements from <submission-requirements-and-judging-criterias>.
+*   **Extract** logistical requirements from the user's message.
 *   Use a bulleted list. Include details like:
     *   Required format (e.g., Tweet, Google Doc, PDF, GitHub repo link).
     *   Language (e.g., Must be in English).
@@ -377,13 +352,13 @@ Generate a bounty listing draft using the information above. Structure the draft
     *   Any specific deliverables (e.g., code, report, presentation).
 
 ## Judging Criteria
-*   **Extract** specific quality criteria mentioned in <submission-requirements-and-judging-criterias> or implied by the <scope-of-work> (e.g., thoroughness, accuracy, creativity, usability, code quality).
+*   **Extract** specific quality criteria mentioned in the user's message or infer from the scope.
 *   Present as a bulleted list.
 *   **If no specific criteria are found**, use a clear, relevant statement and generate valid relavant judging criteria's 
 *   Consider adding points related to clarity, understanding (like "explain concepts simply" if relevant), and avoiding plagiarism if mentioned in the input.
 
 ## Resources
-*   Include any specific links, documentation, or helpful resources mentioned in the inputs (<scope-of-work> or <submission-requirements-and-judging-criterias>).
+*   Include any specific links, documentation, or helpful resources mentioned in the user's message or infer from the scope.
 *   Present as a bulleted list.
 *   If no resources are provided, **omit this section**.
 
@@ -457,18 +432,23 @@ Generate a bounty listing draft using the information above. Structure the draft
 
 **Final Checks:**
 
-*   **Tone:** Professional, direct, clear, and informative. Avoid excessive marketing jargon.
+*   **Tone:** Natural, conversational, and straightforward. Write like a real person would - avoid marketing buzzwords, corporate speak, or overly polished language. Keep it genuine and human.
 *   **Formatting:** Use H2 for main sections and bullet points for lists.
 *   **Output:** Generate **only** the bounty description text. Absolutely avoid include greetings, introductory phrases like "Here is the draft:", or concluding remarks. Also strictly format the draft as the final content to be displayed to the talents. Avoid framing sentences such that content are results of some search. Make sure zero citations or links from web search apart from <company-description> are included in the final output.
 `;
 
-export const getDescriptionPrompt = (values: AiGenerateFormValues) => {
-  switch (values.type) {
+export const getDescriptionPrompt = (
+  listingType: string,
+  props: PromptProps,
+) => {
+  switch (listingType) {
     case 'bounty':
-      return descriptionPromptBounty(values);
+      return descriptionPromptBounty(props);
     case 'project':
-      return descriptionPromptProject(values);
+      return descriptionPromptProject(props);
     case 'hackathon':
-      return descriptionPromptHackathon(values);
+      return descriptionPromptHackathon(props);
+    default:
+      return descriptionPromptBounty(props);
   }
 };
