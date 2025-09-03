@@ -66,10 +66,18 @@ export function TitleAndType() {
 
   const debouncedTitle = useDebounce(title);
   const slugifiedTitle = useMemo(() => {
-    return slugify(debouncedTitle, {
+    let slug = slugify(debouncedTitle, {
       lower: true,
       strict: true,
     });
+
+    if (slug.length > 120) {
+      slug = slug.substring(0, 120);
+    }
+
+    slug = slug.replace(/[^a-z0-9]+$/, '');
+
+    return slug;
   }, [debouncedTitle]);
 
   const { dirtyFields } = form.formState;

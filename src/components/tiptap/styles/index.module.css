@@ -167,12 +167,12 @@
 }
 
 /* Placeholder */
-.editor .ProseMirror > p.is-editor-empty::before {
+.editor .ProseMirror > p.is-editor-empty:first-child::before {
   content: attr(data-placeholder);
   pointer-events: none;
   float: left;
   height: 0;
-  color: var(--content-placeholder-color);
+  color: var(--content-placeholder-color) !important;
 }
 
 /* HLJS Syntax Highlighting for Code Blocks */
