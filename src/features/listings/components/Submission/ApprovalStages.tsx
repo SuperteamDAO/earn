@@ -8,6 +8,7 @@ import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import type { Listing } from '@/features/listings/types';
 
 import { userSubmissionQuery } from '../../queries/user-submission-status';
+import { getPayoutCopy } from '../../utils/payout-date';
 
 interface Props {
   listing: Listing;
@@ -121,7 +122,12 @@ export const ApprovalStages = ({ listing }: Props) => {
           <div>
             <Heading>Payment Processing</Heading>
             <Subheading>
-              {isPaid ? 'Payment completed' : 'Will be done by coming Friday'}
+              {isPaid
+                ? 'Payment completed'
+                : getPayoutCopy({
+                    winnerAnnouncedAt: listing.winnersAnnouncedAt,
+                    kycVerifiedAt: submission.kycVerifiedAt,
+                  })}
             </Subheading>
           </div>
         </div>

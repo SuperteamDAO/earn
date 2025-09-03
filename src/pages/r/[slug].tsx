@@ -222,6 +222,7 @@ export default function ReferralLandingPage({
             size="lg"
             onClick={handleAccept}
             disabled={isLoading || !data?.valid}
+            type="submit"
           >
             Accept Invitation
           </Button>
@@ -247,11 +248,7 @@ export default function ReferralLandingPage({
         </div>
       </div>
 
-      <Login
-        isOpen={isLoginOpen}
-        onClose={() => setIsLoginOpen(false)}
-        redirectTo={'/new/talent?onboarding=true&referral=true'}
-      />
+      <Login isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)} />
     </div>
   );
 }
