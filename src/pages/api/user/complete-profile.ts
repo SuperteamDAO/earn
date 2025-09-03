@@ -6,6 +6,7 @@ import { prisma } from '@/prisma';
 import { cleanSkills } from '@/utils/cleanSkills';
 import { verifyImageExists } from '@/utils/cloudinary';
 import { filterAllowedFields } from '@/utils/filterAllowedFields';
+import { generateUniqueReferralCode } from '@/utils/referralCodeGenerator';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { userSelectOptions } from '@/features/auth/constants/userSelectOptions';
@@ -58,14 +59,11 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
 
     const filteredData = filterAllowedFields(req.body, allowedFields);
 
-    const cookieCodeRaw = (req.cookies?.['earn_ref'] || '')
+    const referralCodeRaw = (req.body?.referralCode || '')
       .toString()
       .trim()
       .toUpperCase();
-    const referralCodeRaw = (req.body?.referralCode || '' || cookieCodeRaw)
-      .toString()
-      .trim()
-      .toUpperCase();
+
     const referredByUpdate: { referredById?: string } = {};
     if (referralCodeRaw && !user.referredById) {
       try {
@@ -187,6 +185,8 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
 
     const walletAddress = createWalletResponse.wallet?.address;
 
+    const referralCode = await generateUniqueReferralCode();
+
     await prisma.user.update({
       where: {
         id: userId as string,
@@ -208,6 +208,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
         superteamLevel: 'Lurker',
         isTalentFilled: true,
         walletAddress,
+        referralCode,
       },
     });
 
@@ -215,15 +216,6 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       where: { id: userId as string },
       select: userSelectOptions,
     });
-
-    if (cookieCodeRaw) {
-      res.setHeader(
-        'Set-Cookie',
-        `earn_ref=; Path=/; Max-Age=0; SameSite=Lax; ${
-          process.env.NODE_ENV === 'production' ? 'Secure; ' : ''
-        }`,
-      );
-    }
 
     logger.info(`User onboarded successfully for user ID: ${userId}`);
     return res.status(200).json(result);
