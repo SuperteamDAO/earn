@@ -230,7 +230,9 @@ export const SubmissionActionButton = ({
 
   switch (buttonState) {
     case 'rejected':
-      buttonText = 'Application Rejected';
+      buttonText = isProject
+        ? 'Application Rejected'
+        : 'Submission Marked as Spam';
       buttonBG = 'bg-red-600';
       isBtnDisabled = true;
       btnLoadingText = null;
