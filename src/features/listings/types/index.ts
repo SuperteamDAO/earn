@@ -57,7 +57,7 @@ export interface Listing {
   isFndnPaying?: boolean;
   usdValue?: number;
   referredBy?: string;
-  ai?: ProjectAi;
+  ai?: ProjectAi | BountiesAi;
 }
 
 export interface ListingHackathon {

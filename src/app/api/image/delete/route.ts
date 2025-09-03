@@ -3,6 +3,7 @@ import { headers } from 'next/headers';
 import { type NextRequest, NextResponse } from 'next/server';
 
 import logger from '@/lib/logger';
+import { prisma } from '@/prisma';
 import { extractPublicIdFromUrl } from '@/utils/cloudinary';
 import { safeStringify } from '@/utils/safeStringify';
 
@@ -55,7 +56,41 @@ export async function DELETE(request: NextRequest) {
       );
     }
 
-    logger.info(`Attempting to delete image with public ID: ${publicId}`);
+    logger.info(
+      `Checking if image URL exists in bounty descriptions: ${imageUrl}`,
+    );
+
+    const bountyWithImage = await prisma.$queryRaw<
+      Array<{ id: string; title: string }>
+    >`
+      SELECT id, title
+      FROM Bounties
+      WHERE isActive = true
+        AND isArchived = false
+        AND description LIKE ${`%${imageUrl}%`}
+      LIMIT 1
+    `.then(
+      (results: Array<{ id: string; title: string }>) => results[0] || null,
+    );
+
+    if (bountyWithImage) {
+      logger.warn(
+        `Cannot delete image: Image is referenced in bounty "${bountyWithImage.title}" (ID: ${bountyWithImage.id})`,
+      );
+      return NextResponse.json(
+        {
+          error:
+            'Cannot delete image: Image is currently being used in a bounty description',
+          bountyTitle: bountyWithImage.title,
+          bountyId: bountyWithImage.id,
+        },
+        { status: 409 },
+      );
+    }
+
+    logger.info(
+      `Image URL not found in any bounty descriptions. Attempting to delete image with public ID: ${publicId}`,
+    );
 
     const result = await cloudinary.uploader.destroy(publicId);
 

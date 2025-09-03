@@ -133,6 +133,13 @@ export const maybeUploadBase64AndDeletePrevious = async (
 
 export const verifyImageExists = async (url: string): Promise<boolean> => {
   try {
+    try {
+      const { hostname } = new URL(url);
+      if (hostname === 'lh3.googleusercontent.com') {
+        return true;
+      }
+    } catch {}
+
     const publicId = extractPublicIdFromUrl(url);
     if (!publicId) return false;
     await cloudinary.api.resource(publicId, { resource_type: 'image' });
