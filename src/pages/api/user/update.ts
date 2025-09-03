@@ -41,11 +41,13 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
 
     logger.info(`Updating user with data: ${safeStringify(updatedData)}`);
 
-    const result = await prisma.user.update({
-      where: {
-        id: userId as string,
-      },
+    await prisma.user.update({
+      where: { id: userId as string },
       data: updatedData,
+    });
+
+    const result = await prisma.user.findUnique({
+      where: { id: userId as string },
       select: userSelectOptions,
     });
 
