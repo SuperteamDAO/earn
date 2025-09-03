@@ -22,8 +22,6 @@ export async function handleUserCreation(email: string): Promise<boolean> {
         )
       ) {
         window.location.reload();
-      } else {
-        window.location.href = '/new?onboarding=true';
       }
     }
 

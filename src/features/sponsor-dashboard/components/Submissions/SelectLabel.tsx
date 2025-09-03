@@ -1,4 +1,3 @@
-import type { BountyType, SubmissionLabels } from '@prisma/client';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAtom, useSetAtom } from 'jotai';
 import { ChevronDown } from 'lucide-react';
@@ -12,6 +11,7 @@ import {
 import { StatusPill } from '@/components/ui/status-pill';
 import type { SubmissionWithUser } from '@/interface/submission';
 import { api } from '@/lib/api';
+import type { BountyType, SubmissionLabels } from '@/prisma/enums';
 import { cn } from '@/utils/cn';
 
 import { isStateUpdatingAtom, selectedSubmissionAtom } from '../../atoms';

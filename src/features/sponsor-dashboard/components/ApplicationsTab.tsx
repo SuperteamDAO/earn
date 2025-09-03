@@ -1,4 +1,3 @@
-import { GrantApplicationStatus, type SubmissionLabels } from '@prisma/client';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useAtom } from 'jotai';
 import { LucideFlag } from 'lucide-react';
@@ -11,6 +10,7 @@ import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { api } from '@/lib/api';
+import { GrantApplicationStatus, type SubmissionLabels } from '@/prisma/enums';
 import { useUser } from '@/store/user';
 
 import { applicationsAtom, selectedGrantApplicationAtom } from '../atoms';

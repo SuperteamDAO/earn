@@ -1,6 +1,6 @@
-import { type Prisma } from '@prisma/client';
+import { type UserSelect } from '@/prisma/models/User';
 
-export const userSelectOptions: Prisma.UserSelect = {
+export const userSelectOptions: UserSelect = {
   firstName: true,
   lastName: true,
   photo: true,
@@ -35,6 +35,8 @@ export const userSelectOptions: Prisma.UserSelect = {
   role: true,
   createdAt: true,
   linkedTwitter: true,
+  referralCode: true,
+  referredById: true,
 
   currentSponsor: {
     select: {

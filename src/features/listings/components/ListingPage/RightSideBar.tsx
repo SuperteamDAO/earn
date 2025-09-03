@@ -19,6 +19,7 @@ import { RelatedListings } from '@/features/home/components/RelatedListings';
 
 import { submissionCountQuery } from '../../queries/submission-count';
 import type { Listing } from '../../types';
+import { isDeadlineOver } from '../../utils/deadline';
 import { ApprovalStages } from '../Submission/ApprovalStages';
 import { SubmissionActionButton } from '../Submission/SubmissionActionButton';
 import { CompensationAmount } from './CompensationAmount';
@@ -40,6 +41,21 @@ function digitsInLargestString(numbers: string[]): number {
   }, '');
 
   return largest.replace(/[,\.]/g, '').length;
+}
+
+function getOrdinalSuffix(day: number): string {
+  const teenRange = day % 100;
+  if (teenRange >= 11 && teenRange <= 13) return 'th';
+  switch (day % 10) {
+    case 1:
+      return 'st';
+    case 2:
+      return 'nd';
+    case 3:
+      return 'rd';
+    default:
+      return 'th';
+  }
 }
 
 export function RightSideBar({
@@ -127,6 +143,9 @@ export function RightSideBar({
     }
     return calculateWidthOfPrize;
   }, [largestDigits, rewards]);
+
+  const inReview =
+    isDeadlineOver(deadline, serverTime()) && !isWinnersAnnounced;
 
   return (
     <div className="h-full w-full md:w-auto">
@@ -289,6 +308,28 @@ export function RightSideBar({
           <div className="hidden w-full md:flex">
             <SubmissionActionButton listing={listing} isTemplate={isTemplate} />
           </div>
+          {inReview && listing.commitmentDate && (
+            <div className="mt-2 hidden w-full items-start gap-2 text-center text-sm font-medium text-gray-500 md:inline">
+              Winner announcement by{' '}
+              {(() => {
+                const d = dayjs(listing.commitmentDate);
+                const day = d.date();
+                const suffix = getOrdinalSuffix(day);
+                const month = d.format('MMM');
+                return (
+                  <span className="inline font-bold text-gray-600">
+                    {day}
+                    <sup className="relative top-px align-super text-[10px]">
+                      {suffix}
+                    </sup>{' '}
+                    {month}
+                  </span>
+                );
+              })()}
+              <br />
+              (as scheduled by the sponsor)
+            </div>
+          )}
           <div className="w-full">
             {listing.isWinnersAnnounced &&
               listing.isFndnPaying &&
@@ -313,6 +354,7 @@ export function RightSideBar({
               pocSocials={listing.pocSocials}
               commitmentDate={listing.commitmentDate}
               Hackathon={listing.Hackathon}
+              hideWinnerAnnouncement={inReview}
             />
           </div>
           <div className="hidden w-full py-8 text-sm md:block">

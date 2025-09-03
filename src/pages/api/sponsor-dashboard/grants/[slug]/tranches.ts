@@ -1,8 +1,8 @@
-import { type Prisma } from '@prisma/client';
 import type { NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { type GrantApplicationWhereInput } from '@/prisma/models/GrantApplication';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { type NextApiRequestWithSponsor } from '@/features/auth/types';
@@ -34,7 +34,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       return res.status(error.status).json({ error: error.message });
     }
 
-    const grantApplicationWhere: Prisma.GrantApplicationWhereInput = {
+    const grantApplicationWhere: GrantApplicationWhereInput = {
       grant: {
         slug,
         isActive: true,

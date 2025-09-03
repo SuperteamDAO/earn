@@ -1,9 +1,12 @@
 // activity feed
-import { type Prisma } from '@prisma/client';
 import { type NextApiRequest, type NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { type GrantApplicationInclude } from '@/prisma/models';
+import { type CommentFindManyArgs } from '@/prisma/models/Comment';
+import { type PoWGetPayload, type PoWInclude } from '@/prisma/models/PoW';
+import { type SubmissionInclude } from '@/prisma/models/Submission';
 import { getCloudinaryFetchUrl } from '@/utils/cloudinary';
 import { dayjs } from '@/utils/dayjs';
 import { safeStringify } from '@/utils/safeStringify';
@@ -71,13 +74,13 @@ export default async function handler(
         break;
     }
 
-    const commentsWhere: Prisma.CommentFindManyArgs['where'] = {
+    const commentsWhere: CommentFindManyArgs['where'] = {
       isActive: true,
       isArchived: false,
       replyToId: null,
     };
 
-    const commentsInclude: Prisma.CommentFindManyArgs = {
+    const commentsInclude: CommentFindManyArgs = {
       where: commentsWhere,
       orderBy: {
         createdAt: 'desc',
@@ -93,12 +96,12 @@ export default async function handler(
       },
     };
 
-    const commentsCountInclude: Prisma.CommentFindManyArgs = {
+    const commentsCountInclude: CommentFindManyArgs = {
       where: commentsWhere,
     };
 
     logger.debug(`Fetching submissions from ${startDate} to ${endDate}`);
-    const submissionInclude: Prisma.SubmissionInclude = {
+    const submissionInclude: SubmissionInclude = {
       user: {
         select: {
           firstName: true,
@@ -182,7 +185,7 @@ export default async function handler(
     }
 
     logger.debug('Fetching PoWs');
-    const poWInclude: Prisma.PoWInclude = {
+    const poWInclude: PoWInclude = {
       user: {
         select: {
           firstName: true,
@@ -207,7 +210,7 @@ export default async function handler(
       isKYCVerified: boolean;
     };
     type PoWWithUserAndCommentsCount = Omit<
-      Prisma.PoWGetPayload<{
+      PoWGetPayload<{
         include: typeof poWInclude;
       }>,
       'user'
@@ -253,7 +256,7 @@ export default async function handler(
     }
 
     logger.debug(`Fetching grants from ${startDate} to ${endDate}`);
-    const grantApplicationInclude: Prisma.GrantApplicationInclude = {
+    const grantApplicationInclude: GrantApplicationInclude = {
       user: {
         select: {
           firstName: true,

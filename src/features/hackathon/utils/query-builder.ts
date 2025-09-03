@@ -1,5 +1,10 @@
-import { type Prisma } from '@prisma/client';
 import type { z } from 'zod';
+
+import { type JsonValue } from '@/prisma/internal/prismaNamespace';
+import {
+  type BountiesOrderByWithRelationInput,
+  type BountiesWhereInput,
+} from '@/prisma/models/Bounties';
 
 import {
   filterRegionCountry,
@@ -16,16 +21,16 @@ import {
 type BuildHackathonQueryArgs = z.infer<typeof HackathonQueryParamsSchema>;
 
 interface HackathonQueryResult {
-  readonly where: Prisma.BountiesWhereInput;
+  readonly where: BountiesWhereInput;
   readonly orderBy:
-    | Prisma.BountiesOrderByWithRelationInput
-    | Prisma.BountiesOrderByWithRelationInput[];
+    | BountiesOrderByWithRelationInput
+    | BountiesOrderByWithRelationInput[];
   readonly take?: number;
 }
 
 function getStatusSpecificWhereClauses(
   status: z.infer<typeof HackathonStatusSchema>,
-): Prisma.BountiesWhereInput | null {
+): BountiesWhereInput | null {
   const now = new Date();
   switch (status) {
     case 'open':
@@ -49,9 +54,7 @@ function getStatusSpecificWhereClauses(
 
 function getOrderBy(
   args: BuildHackathonQueryArgs,
-):
-  | Prisma.BountiesOrderByWithRelationInput
-  | Prisma.BountiesOrderByWithRelationInput[] {
+): BountiesOrderByWithRelationInput | BountiesOrderByWithRelationInput[] {
   const { sortBy, order } = args;
 
   switch (sortBy) {
@@ -70,12 +73,12 @@ export async function buildHackathonQuery(
     id: string;
     isTalentFilled: boolean;
     location: string | null;
-    skills: Prisma.JsonValue;
+    skills: JsonValue;
   } | null,
 ): Promise<HackathonQueryResult> {
   const { name, status, context } = args;
 
-  const where: Prisma.BountiesWhereInput = {
+  const where: BountiesWhereInput = {
     isPublished: true,
     isActive: true,
     isArchived: false,
@@ -93,7 +96,7 @@ export async function buildHackathonQuery(
     where.Hackathon = { name: name };
   }
 
-  const andConditions: Prisma.BountiesWhereInput[] = [];
+  const andConditions: BountiesWhereInput[] = [];
 
   if (context === 'home') {
     andConditions.push({

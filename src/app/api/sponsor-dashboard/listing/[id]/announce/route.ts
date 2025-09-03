@@ -11,7 +11,11 @@ import { safeStringify } from '@/utils/safeStringify';
 
 import { validateListingSponsorAuth } from '@/features/auth/utils/checkListingSponsorAuth';
 import { getSponsorSession } from '@/features/auth/utils/getSponsorSession';
-import { addWinBonusCredit } from '@/features/credits/utils/allocateCredits';
+import {
+  addReferralInviterWinBonus,
+  addWinBonusCredit,
+  awardReferralFirstSubmissionBonusesForListing,
+} from '@/features/credits/utils/allocateCredits';
 import { queueEmail } from '@/features/emails/utils/queueEmail';
 import { BONUS_REWARD_POSITION } from '@/features/listing-builder/constants';
 import { calculateTotalPrizes } from '@/features/listing-builder/utils/rewards';
@@ -210,6 +214,14 @@ export async function POST(
     const promises = [];
     let currentIndex = 0;
 
+    const winnerUserIds = winners.map((w) => w.userId);
+    const referralMappings = await prisma.user.findMany({
+      where: { id: { in: winnerUserIds } },
+    });
+    const userIdToInviterId = new Map<string, string | null>(
+      referralMappings.map((u) => [u.id, (u as any).referredById ?? null]),
+    );
+
     while (currentIndex < winners?.length) {
       const winnerPosition = Number(winners[currentIndex]?.winnerPosition);
       let amount: number = 0;
@@ -242,10 +254,24 @@ export async function POST(
         ),
       );
 
+      const inviterId = userIdToInviterId.get(
+        winners[currentIndex]?.userId || '',
+      );
+      if (inviterId) {
+        promises.push(
+          addReferralInviterWinBonus(
+            inviterId,
+            winners[currentIndex]?.id || '',
+          ),
+        );
+      }
+
       currentIndex += 1;
     }
 
     await Promise.all(promises);
+
+    await awardReferralFirstSubmissionBonusesForListing(id);
 
     logger.info(`Applied spam penalties for submissions in listing ID: ${id}`);
 

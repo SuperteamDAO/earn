@@ -1,9 +1,9 @@
-import { SubmissionLabels } from '@prisma/client';
 import { Flag } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { Separator } from '@/components/ui/separator';
+import { SubmissionLabels } from '@/prisma/enums';
 
 interface SpamConfirmationDialogProps {
   isOpen: boolean;

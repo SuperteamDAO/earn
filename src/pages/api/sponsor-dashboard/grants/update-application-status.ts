@@ -1,4 +1,3 @@
-import { type SubmissionLabels } from '@prisma/client';
 import axios from 'axios';
 import type { NextApiResponse } from 'next';
 import { z } from 'zod';
@@ -7,6 +6,7 @@ import { SIX_MONTHS } from '@/constants/SIX_MONTHS';
 import { tokenList } from '@/constants/tokenList';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { type SubmissionLabels } from '@/prisma/enums';
 import { airtableConfig, airtableUpsert, airtableUrl } from '@/utils/airtable';
 import { safeStringify } from '@/utils/safeStringify';
 

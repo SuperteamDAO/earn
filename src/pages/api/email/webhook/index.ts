@@ -32,17 +32,22 @@ interface WebhookEvent {
 }
 
 async function deleteEmailSettings(recipientEmail: string) {
+  console.log(
+    `Deleting all EmailSettings for this user with email: ${recipientEmail}`,
+  );
+
   const users = await prisma.user.findMany({
     where: { email: recipientEmail },
+    select: { id: true },
   });
 
   if (users.length > 0) {
-    await prisma.emailSettings.deleteMany({
-      where: { userId: { in: users.map((u) => u.id) } },
-    });
-    console.log(
-      `Deleted email settings for ${users.length} users with email ${recipientEmail}`,
-    );
+    for (const user of users) {
+      await prisma.emailSettings.deleteMany({
+        where: { userId: user.id },
+      });
+      console.log(`Deleted EmailSettings for user ID: ${user.id}`);
+    }
   } else {
     console.log(`No users found with email ${recipientEmail}`);
   }

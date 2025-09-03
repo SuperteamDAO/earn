@@ -1,9 +1,9 @@
-import { GrantApplicationStatus } from '@prisma/client';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAtom } from 'jotai';
 import { toast } from 'sonner';
 
 import { api } from '@/lib/api';
+import { GrantApplicationStatus } from '@/prisma/enums';
 
 import { selectedGrantApplicationAtom } from '../atoms';
 import { type GrantApplicationsReturn } from '../queries/applications';

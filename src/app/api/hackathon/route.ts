@@ -1,8 +1,8 @@
-import { type Prisma } from '@prisma/client';
 import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
 import { prisma } from '@/prisma';
+import { type JsonValue } from '@/prisma/internal/prismaNamespace';
 
 import { HackathonQueryParamsSchema } from '@/features/hackathon/constants/schema';
 import { buildHackathonQuery } from '@/features/hackathon/utils/query-builder';
@@ -28,7 +28,7 @@ export async function GET(request: NextRequest) {
       id: string;
       isTalentFilled: boolean;
       location: string | null;
-      skills: Prisma.JsonValue;
+      skills: JsonValue;
     } | null = null;
 
     if (userIdFromCookie) {

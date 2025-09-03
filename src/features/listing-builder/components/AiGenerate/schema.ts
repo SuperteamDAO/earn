@@ -1,5 +1,6 @@
-import { BountyType } from '@prisma/client';
 import { z } from 'zod';
+
+import { BountyType } from '@/prisma/enums';
 
 import { eligibilityQuestionSchema } from '../../types/schema';
 

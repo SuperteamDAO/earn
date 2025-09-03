@@ -6,4 +6,8 @@ public/**/*
 
 pnpm-lock.yaml
 
-generated/
+src/generated/
+next-env.d.ts
+
+/.next/
+.next/

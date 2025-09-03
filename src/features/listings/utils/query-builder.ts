@@ -1,8 +1,12 @@
-import { type Prisma } from '@prisma/client';
 import type { z } from 'zod';
 
 import { exclusiveSponsorData } from '@/constants/exclusiveSponsors';
 import { Superteams } from '@/constants/Superteam';
+import { type JsonValue } from '@/prisma/internal/prismaNamespace';
+import {
+  type BountiesOrderByWithRelationInput,
+  type BountiesWhereInput,
+} from '@/prisma/models/Bounties';
 
 import {
   type ListingCategorySchema,
@@ -19,16 +23,16 @@ import {
 type BuildListingQueryArgs = z.infer<typeof QueryParamsSchema>;
 
 interface ListingQueryResult {
-  readonly where: Prisma.BountiesWhereInput;
+  readonly where: BountiesWhereInput;
   readonly orderBy:
-    | Prisma.BountiesOrderByWithRelationInput
-    | Prisma.BountiesOrderByWithRelationInput[];
+    | BountiesOrderByWithRelationInput
+    | BountiesOrderByWithRelationInput[];
   readonly take?: number;
 }
 
 function getSkillFilter(
   category: z.infer<typeof ListingCategorySchema>,
-): Prisma.BountiesWhereInput | null {
+): BountiesWhereInput | null {
   if (category === 'All' || category === 'For You') {
     return null;
   }
@@ -67,7 +71,7 @@ function getSkillFilter(
 
 function getStatusSpecificWhereClauses(
   status: z.infer<typeof ListingStatusSchema>,
-): Prisma.BountiesWhereInput | null {
+): BountiesWhereInput | null {
   const now = new Date();
   switch (status) {
     case 'open':
@@ -92,13 +96,11 @@ function getStatusSpecificWhereClauses(
 function getOrderBy(
   args: BuildListingQueryArgs,
   status: z.infer<typeof ListingStatusSchema>,
-):
-  | Prisma.BountiesOrderByWithRelationInput
-  | Prisma.BountiesOrderByWithRelationInput[] {
+): BountiesOrderByWithRelationInput | BountiesOrderByWithRelationInput[] {
   const { sortBy, order } = args;
   const oppositeOrder = order === 'asc' ? 'desc' : 'asc';
 
-  let primarySort: Prisma.BountiesOrderByWithRelationInput;
+  let primarySort: BountiesOrderByWithRelationInput;
 
   switch (sortBy) {
     case 'Date':
@@ -154,12 +156,12 @@ export async function buildListingQuery(
     id: string;
     isTalentFilled: boolean;
     location: string | null;
-    skills: Prisma.JsonValue;
+    skills: JsonValue;
   } | null,
 ): Promise<ListingQueryResult> {
   const { tab, category, status, context, region, sponsor } = args;
 
-  const where: Prisma.BountiesWhereInput = {
+  const where: BountiesWhereInput = {
     isPublished: true,
     isActive: true,
     isArchived: false,
@@ -167,7 +169,7 @@ export async function buildListingQuery(
     hackathonprize: false,
   };
 
-  const andConditions: Prisma.BountiesWhereInput[] = [];
+  const andConditions: BountiesWhereInput[] = [];
 
   if (context === 'home') {
     andConditions.push({
@@ -192,7 +194,7 @@ export async function buildListingQuery(
         (skill) => skill.skills,
       ) || [];
 
-    const forYouConditions: Prisma.BountiesWhereInput[] = [];
+    const forYouConditions: BountiesWhereInput[] = [];
 
     if (user?.id) {
       forYouConditions.push({

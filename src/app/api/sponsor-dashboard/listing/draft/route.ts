@@ -1,4 +1,3 @@
-import { type Bounties, type Prisma } from '@prisma/client';
 import { franc } from 'franc';
 import { headers } from 'next/headers';
 import { NextResponse } from 'next/server';
@@ -6,6 +5,11 @@ import { NextResponse } from 'next/server';
 import earncognitoClient from '@/lib/earncognitoClient';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { type InputJsonValue } from '@/prisma/internal/prismaNamespace';
+import {
+  type BountiesModel,
+  type BountiesUncheckedCreateInput,
+} from '@/prisma/models/Bounties';
 import { cleanSkills } from '@/utils/cleanSkills';
 import { safeStringify } from '@/utils/safeStringify';
 
@@ -23,7 +27,7 @@ async function transformToPrismaData(
   userId: string,
   userSponsorId: string,
   existingListing?: ListingWithSponsor,
-): Promise<Prisma.BountiesUncheckedCreateInput> {
+): Promise<BountiesUncheckedCreateInput> {
   const {
     title,
     slug,
@@ -70,16 +74,16 @@ async function transformToPrismaData(
     templateId,
     type,
     region,
-    eligibility: eligibility as Prisma.InputJsonValue,
+    eligibility: eligibility as InputJsonValue,
     rewardAmount,
-    rewards: rewards as Prisma.InputJsonValue,
+    rewards: rewards as InputJsonValue,
     maxBonusSpots: maxBonusSpots === undefined ? undefined : maxBonusSpots || 0,
     token,
     compensationType,
     minRewardAsk,
     maxRewardAsk,
     isPrivate,
-    skills: cleanedSkills as Prisma.InputJsonValue,
+    skills: cleanedSkills as InputJsonValue,
     language,
     sponsorId: userSponsorId,
     isFndnPaying,
@@ -91,14 +95,14 @@ async function transformToPrismaData(
 
 async function saveListing(
   listingId: string | undefined,
-  data: Prisma.BountiesUncheckedCreateInput,
+  data: BountiesUncheckedCreateInput,
 ) {
   return listingId
     ? await prisma.bounties.update({ where: { id: listingId }, data })
     : await prisma.bounties.create({ data });
 }
 
-async function handleDiscordNotification(result: Bounties): Promise<void> {
+async function handleDiscordNotification(result: BountiesModel): Promise<void> {
   if (result.status !== 'VERIFYING') {
     return;
   }

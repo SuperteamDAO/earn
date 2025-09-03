@@ -1,4 +1,3 @@
-import { type CommentRefType } from '@prisma/client';
 import { AlertCircle, ChevronDown, Loader2, Pin, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 import posthog from 'posthog-js';
@@ -27,6 +26,7 @@ import { useMediaQuery } from '@/hooks/use-media-query';
 import { type Comment as IComment } from '@/interface/comments';
 import { type User } from '@/interface/user';
 import { api } from '@/lib/api';
+import { type CommentRefType } from '@/prisma/enums';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';

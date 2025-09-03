@@ -1,4 +1,3 @@
-import { type BountyType, Prisma } from '@prisma/client';
 import { type NextApiRequest, type NextApiResponse } from 'next';
 
 import { CombinedRegions } from '@/constants/Superteam';
@@ -9,6 +8,8 @@ import {
 } from '@/interface/skills';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { type BountyType } from '@/prisma/enums';
+import { empty, join, raw, sql } from '@/prisma/internal/prismaNamespace';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { getPrivyToken } from '@/features/auth/utils/getPrivyToken';
@@ -104,20 +105,20 @@ async function findRelatedListings(
 
   let skillQuery;
   if (skills.length > 0) {
-    skillQuery = Prisma.sql`(${Prisma.join(
+    skillQuery = sql`(${join(
       skills.map(
         (skill) =>
-          Prisma.sql`JSON_CONTAINS(JSON_EXTRACT(skills, '$[*].${Prisma.raw(skillField)}'), JSON_QUOTE(${skill}))`,
+          sql`JSON_CONTAINS(JSON_EXTRACT(skills, '$[*].${raw(skillField)}'), JSON_QUOTE(${skill}))`,
       ),
       ' OR ',
     )})`;
   } else {
-    skillQuery = Prisma.sql`TRUE`;
+    skillQuery = sql`TRUE`;
   }
 
   const regionFilter = userRegion
-    ? Prisma.sql`AND (region = ${userRegion} OR region = 'Global')`
-    : Prisma.empty;
+    ? sql`AND (region = ${userRegion} OR region = 'Global')`
+    : empty;
 
   return await prisma.$queryRaw`
     SELECT 
@@ -155,7 +156,7 @@ async function findRelatedListings(
           WHEN ${skillQuery} THEN 1
           ELSE 0
         END
-      ) as ${Prisma.raw(matchingField)}
+      ) as ${raw(matchingField)}
     FROM Bounties b
     LEFT JOIN Sponsors s ON b.sponsorId = s.id
     WHERE b.id != ${listingId}
@@ -169,7 +170,7 @@ async function findRelatedListings(
       ${regionFilter}
       AND ${skillQuery}
     GROUP BY b.id
-    ORDER BY b.deadline ASC, ${Prisma.raw(matchingField)} DESC
+    ORDER BY b.deadline ASC, ${raw(matchingField)} DESC
     LIMIT ${take}
   `;
 }

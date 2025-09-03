@@ -1,4 +1,3 @@
-import { type BountyType } from '@prisma/client';
 import { Baseline, Link2, Loader2, LoaderCircle } from 'lucide-react';
 import { motion } from 'motion/react';
 import { useMemo } from 'react';
@@ -9,6 +8,7 @@ import { MarkdownRenderer } from '@/components/shared/MarkdownRenderer';
 import { Button } from '@/components/ui/button';
 import { tokenList } from '@/constants/tokenList';
 import { type Skills } from '@/interface/skills';
+import { type BountyType } from '@/prisma/enums';
 import styles from '@/styles/listing-description.module.css';
 import { easeOutQuad } from '@/utils/easings';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';

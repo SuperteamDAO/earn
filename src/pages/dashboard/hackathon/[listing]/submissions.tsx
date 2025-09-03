@@ -1,4 +1,3 @@
-import { type SubmissionLabels } from '@prisma/client';
 import { useQuery } from '@tanstack/react-query';
 import { useSetAtom } from 'jotai';
 import type { GetServerSideProps } from 'next';
@@ -14,6 +13,7 @@ import { Tooltip } from '@/components/ui/tooltip';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import type { SubmissionWithUser } from '@/interface/submission';
 import { SponsorLayout } from '@/layouts/Sponsor';
+import { type SubmissionLabels } from '@/prisma/enums';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';

@@ -1,5 +1,6 @@
 import { PrismaPlanetScale } from '@prisma/adapter-planetscale';
-import { PrismaClient } from '@prisma/client';
+
+import { PrismaClient } from '@/prisma/client';
 
 const omitConfig = {
   user: {
@@ -13,6 +14,7 @@ const omitConfig = {
 };
 
 // if using planetscale db, use this. if not, comment out and uncomment the local db setup below
+
 const adapter = new PrismaPlanetScale({ url: process.env.DATABASE_URL, fetch });
 const prismaClient = new PrismaClient({ adapter, omit: omitConfig });
 
