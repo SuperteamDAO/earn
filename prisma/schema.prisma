@@ -1,10 +1,6 @@
 generator client {
-  provider               = "prisma-client"
-  previewFeatures        = ["queryCompiler", "driverAdapters"]
-  output                 = "../src/generated/prisma"
-  moduleFormat           = "esm"
-  generatedFileExtension = "ts"
-  importFileExtension    = "ts"
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
 }
 
 datasource db {
@@ -802,6 +798,7 @@ enum EmailType {
   CREDITS_ANNOUNCEMENT
   AUTO_GENERATE_ANNOUNCEMENT
   NEW_LISTING_TELEGRAM
+  REFERRAL_ANNOUNCEMENT
 }
 
 enum Role {
