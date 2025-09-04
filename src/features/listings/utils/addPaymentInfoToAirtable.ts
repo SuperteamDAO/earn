@@ -18,7 +18,7 @@ const AirtableInputSchema = z.object({
     id: z.string(),
     winnerPosition: z.number(),
     user: z.object({
-      email: z.string().email(),
+      email: z.email(),
       username: z.string(),
       location: z.string().nullable(),
       walletAddress: z.string().min(1, 'Wallet address is required'),
@@ -31,7 +31,7 @@ const AirtableInputSchema = z.object({
         .string()
         .length(3, 'KYC Country must be a 3-letter ISO code')
         .refine((val) => lookup.byIso(val), {
-          message: 'Invalid KYC Country ISO code',
+            error: 'Invalid KYC Country ISO code'
         }),
     }),
     listing: z.object({

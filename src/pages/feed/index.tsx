@@ -13,7 +13,7 @@ export default function FeedPage({ id, type }: Props) {
   return <Feed id={id || undefined} type={type || undefined} />;
 }
 
-const UUIDSchema = z.string().uuid();
+const UUIDSchema = z.uuid();
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { query } = context;
 

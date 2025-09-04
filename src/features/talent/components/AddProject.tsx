@@ -30,8 +30,8 @@ const PowSchema = z.object({
   title: z.string().min(1, 'Required'),
   description: z.string().min(1, 'Required'),
   link: z.string().min(1, 'Required').regex(URL_REGEX, 'Invalid URL'),
-  skills: z.enum(allSkills).array().min(1, 'Required').default([]),
-  subSkills: z.enum(allSubSkills).array().min(1, 'Required').default([]),
+  skills: z.enum(allSkills).array().min(1, 'Required').prefault([]),
+  subSkills: z.enum(allSubSkills).array().min(1, 'Required').prefault([]),
 });
 type PowFormData = z.infer<typeof PowSchema>;
 

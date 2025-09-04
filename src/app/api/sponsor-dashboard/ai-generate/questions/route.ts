@@ -11,13 +11,14 @@ import { BountyType } from '@/prisma/enums';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { getSponsorSession } from '@/features/auth/utils/getSponsorSession';
-import { eligibilityQuestionSchema } from '@/features/listing-builder/types/schema';
 
 import { generateListingQuestionsPrompt } from './prompts';
+import { type } from 'os';
+import { eligibilityQuestionSchema } from '@/features/listing-builder/types/schema';
 
 const requestBodySchema = z.object({
   description: z.string().min(1, 'Description cannot be empty'),
-  type: z.nativeEnum(BountyType),
+  type: z.enum(BountyType),
 });
 
 export async function POST(request: Request) {
@@ -75,9 +76,9 @@ export async function POST(request: Request) {
     const prompt = generateListingQuestionsPrompt(description, type);
 
     const { object } = await generateObject({
-      model: openrouter('google/gemini-2.5-flash'),
       system:
         'Your role is to generate high-quality evaluation questions for listings, strictly adhering to the rules provided with each description and type.',
+      model: openrouter('google/gemini-2.5-flash'),
       prompt,
       schema: z.object({
         eligibilityQuestions: z.array(

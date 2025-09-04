@@ -26,7 +26,7 @@ const UpdateGrantApplicationSchema = z.object({
     .array(
       z.object({
         id: z.string(),
-        approvedAmount: z.union([z.number().int().min(0), z.null()]).optional(),
+        approvedAmount: z.union([z.int().min(0), z.null()]).optional(),
       }),
     )
     .min(1, 'Data array cannot be empty')

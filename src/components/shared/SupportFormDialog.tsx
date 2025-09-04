@@ -35,16 +35,22 @@ const hardDomPurify = (dirty: string | Node, cfg?: IsoDomPurify.Config) =>
   });
 
 const formSchema = z.object({
-  email: z.string().email({ message: 'Please enter a valid email address' }),
+  email: z.email({
+          error: 'Please enter a valid email address'
+    }),
   subject: z.preprocess(
     (val) => hardDomPurify(val as unknown as string),
-    z.string().min(1, { message: 'Subject is required' }),
+    z.string().min(1, {
+        error: 'Subject is required'
+    }),
   ),
   description: z.preprocess(
     (val) => hardDomPurify(val as unknown as string),
     z
       .string()
-      .min(10, { message: 'Description must be at least 10 valid characters' }),
+      .min(10, {
+          error: 'Description must be at least 10 valid characters'
+    }),
   ),
 });
 

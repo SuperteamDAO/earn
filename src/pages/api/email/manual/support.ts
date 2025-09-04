@@ -10,7 +10,7 @@ import { supportEmailTemplate } from '@/features/emails/components/supportEmailT
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 const supportEmailSchema = z.object({
-  email: z.string().email(),
+  email: z.email(),
   subject: z.string().min(1),
   description: z.string().min(10),
 });

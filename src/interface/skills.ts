@@ -125,8 +125,8 @@ const skillSchema = z
 
 export const skillsArraySchema = z
   .array(skillSchema, {
-    message: 'Required',
-  })
+      error: 'Required'
+})
   .refine((skills) => {
     return skills.length > 0;
   }, 'Required')

@@ -7,7 +7,7 @@ export const sponsorVerificationSchema = z.object({
   fundingSource: z.string().min(1, 'This field is required'),
   telegram: telegramUsernameSchema,
   commitToDeadline: z.enum(['yes', 'no'], {
-    required_error: 'Please select an option',
-  }),
+      error: (issue) => issue.input === undefined ? 'Please select an option' : undefined
+}),
   listingId: z.string(),
 });

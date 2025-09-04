@@ -14,7 +14,7 @@ import { addPaymentInfoToAirtable } from '@/features/grants/utils/addPaymentInfo
 
 const UpdateGrantTrancheSchema = z.object({
   id: z.string(),
-  approvedAmount: z.union([z.number().int().min(0), z.null()]).optional(),
+  approvedAmount: z.union([z.int().min(0), z.null()]).optional(),
   status: z.enum(['Approved', 'Rejected']),
 });
 

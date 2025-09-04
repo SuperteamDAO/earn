@@ -31,7 +31,7 @@ const submissionSchema = (
         ])
         .optional(),
       otherInfo: z.string().optional(),
-      ask: z.union([z.number().int().min(0), z.null()]).optional(),
+      ask: z.union([z.int().min(0), z.null()]).optional(),
       eligibilityAnswers: z
         .array(
           z.object({
@@ -148,7 +148,7 @@ const submissionSchema = (
                 .safeParse(answer);
               if (!urlResult.success) {
                 ctx.addIssue({
-                  code: z.ZodIssueCode.custom,
+                  code: "custom",
                   message: 'Please enter a valid URL',
                   path: ['eligibilityAnswers', index, 'answer'],
                 });

@@ -38,9 +38,7 @@ const paymentSchema = (maxAmount: number, token: string) =>
         maxAmount,
         `${maxAmount} ${token} is the total amount remaining to be paid. Tx amount here can't be higher than the remaining amount to be paid.`,
       ),
-    transactionLink: z
-      .string()
-      .url('Invalid URL')
+    transactionLink: z.url('Invalid URL')
       .min(1, 'Transaction link is required')
       .refine((link) => {
         const solscanRegex =

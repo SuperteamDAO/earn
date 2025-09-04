@@ -27,7 +27,7 @@ const AirtableInputSchema = z.object({
     projectOneLiner: z.string().optional(),
     projectTitle: z.string().optional(),
     user: z.object({
-      email: z.string().email(),
+      email: z.email(),
       username: z.string(),
       location: z.string().nullable(),
       kycName: z.string().min(1, 'KYC Name is required'),
@@ -39,7 +39,7 @@ const AirtableInputSchema = z.object({
         .string()
         .length(3, 'KYC Country must be a 3-letter ISO code')
         .refine((val) => lookup.byIso(val), {
-          message: 'Invalid KYC Country ISO code',
+            error: 'Invalid KYC Country ISO code'
         }),
     }),
     grant: z.object({
@@ -52,9 +52,7 @@ const AirtableInputSchema = z.object({
     id: z.string(),
     approvedAmount: z.number().positive('Approved amount must be positive'),
     status: z.literal('Approved', {
-      errorMap: () => ({
-        message: "Tranche status must be 'Approved' to add payment info",
-      }),
+      error: () => "Tranche status must be 'Approved' to add payment info",
     }),
   }),
 });

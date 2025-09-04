@@ -4,7 +4,7 @@ import { useCallback, useMemo } from 'react';
 
 import { GrantCategorySchema } from '../constants/schema';
 
-const defaultCategory = GrantCategorySchema._def.defaultValue();
+const defaultCategory = GrantCategorySchema.parse(undefined);
 
 type QueryParamUpdates = Partial<Record<'grantCategory', string | null>>;
 

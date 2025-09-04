@@ -2,17 +2,17 @@ import { z } from 'zod';
 
 export const HackathonOrderDirectionSchema = z
   .enum(['asc', 'desc'])
-  .default('desc');
+  .prefault('desc');
 export const HackathonSchema = z
   .enum(['Mobius', 'Redacted', 'Breakout', 'All'])
-  .default('All');
+  .prefault('All');
 export const HackathonStatusSchema = z
   .enum(['open', 'review', 'completed'])
-  .default('open');
+  .prefault('open');
 export const HackathonSortOptionSchema = z
   .enum(['Prize', 'Submissions'])
-  .default('Prize');
-export const HackathonContextSchema = z.enum(['home', 'all']).default('all');
+  .prefault('Prize');
+export const HackathonContextSchema = z.enum(['home', 'all']).prefault('all');
 
 export const HackathonQueryParamsSchema = z.object({
   order: HackathonOrderDirectionSchema,

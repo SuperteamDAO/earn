@@ -51,15 +51,15 @@ export const createListingFormSchema = ({
 }: ListingFormSchemaOptions) => {
   const rewardsSchema = z
     .record(
-      z.coerce.number(),
+      z.string(),
       z
         .number({
-          message: 'Required',
+          error: 'Required',
         })
         .min(0.01, 'Required')
         .max(MAX_REWARD),
       {
-        message: 'Required',
+        error: 'Required',
       },
     )
     .refine(
@@ -112,7 +112,7 @@ export const createListingFormSchema = ({
         return Object.values(rewards).every((value) => !Number.isNaN(value));
       },
       {
-        message: 'All reward values must be valid numbers',
+        error: 'All reward values must be valid numbers',
       },
     )
     .transform((rewards) => {
@@ -154,31 +154,32 @@ export const createListingFormSchema = ({
             );
           },
           {
-            message: 'Please enter a valid X / Telegram link, or email address',
+            error: 'Please enter a valid X / Telegram link, or email address',
           },
         ),
       description: z.string().trim().min(1, 'Required'),
       type: z
-        .nativeEnum(BountyType)
-        .default('bounty')
+        .enum(BountyType)
+        .prefault('bounty')
         .refine((data) => {
           if (data === 'hackathon') {
             return !!hackathons && hackathons.length > 0;
           }
           return true;
         }, 'Hackathon is not allowed for now'),
-      region: z.string().trim().min(1).max(256).default('Global'),
+      region: z.string().trim().min(1).max(256).prefault('Global'),
       referredBy: z.string().trim().min(1).max(256).optional().nullable(),
-      deadline: z
-        .string()
-        .trim()
+      deadline: z.iso
         .datetime({
-          message: 'Required',
           local: true,
           offset: true,
+          error: 'Required',
         })
+        .trim()
         .min(1, 'Required')
-        .default(dayjs().add(7, 'day').format(DEADLINE_FORMAT).replace('Z', ''))
+        .prefault(
+          dayjs().add(7, 'day').format(DEADLINE_FORMAT).replace('Z', ''),
+        )
         .refine((date) => {
           if (isGod && isEditing) return true;
           return isGod || dayjs(date).isAfter(dayjs());
@@ -192,14 +193,13 @@ export const createListingFormSchema = ({
             newDeadline.isBefore(maxDeadline) || newDeadline.isSame(maxDeadline)
           );
         }, 'Cannot extend deadline more than 2 weeks from original deadline'),
-      commitmentDate: z
-        .string()
-        .trim()
+      commitmentDate: z.iso
         .datetime({
-          message: 'Required',
           local: true,
           offset: true,
+          error: 'Required',
         })
+        .trim()
         .min(1, 'Required'),
       templateId: z.string().optional().nullable(),
       eligibility: z.array(eligibilityQuestionSchema).optional().nullable(),
@@ -209,25 +209,25 @@ export const createListingFormSchema = ({
         .enum(
           tokenList.map((token) => token.tokenSymbol) as [string, ...string[]],
           {
-            errorMap: () => ({ message: 'Token Not Allowed' }),
+            error: () => 'Token Not Allowed',
           },
         )
-        .default('USDC'),
+        .prefault('USDC'),
       rewardAmount: z
         .number({
-          message: 'Required',
+          error: 'Required',
         })
         .min(0)
         .max(MAX_REWARD)
         .optional()
         .nullable(),
       rewards: rewardsSchema.optional().nullable(),
-      compensationType: z.nativeEnum(CompensationType).default('fixed'),
+      compensationType: z.enum(CompensationType).prefault('fixed'),
       minRewardAsk: z.number().min(0).max(MAX_REWARD).optional().nullable(),
       maxRewardAsk: z.number().min(0).max(MAX_REWARD).optional().nullable(),
       maxBonusSpots: z
         .number({
-          message: 'Required',
+          error: 'Required',
         })
         .min(0)
         .max(
@@ -238,7 +238,7 @@ export const createListingFormSchema = ({
         .nullable(),
       isFndnPaying: z
         .boolean()
-        .default(false)
+        .prefault(false)
         .refine(
           (value) => {
             if (value === true && !isST) {
@@ -247,11 +247,11 @@ export const createListingFormSchema = ({
             return true;
           },
           {
-            message:
+            error:
               'Foundation paying can only be enabled for Superteam listings',
           },
         ),
-      isPrivate: z.boolean().default(false),
+      isPrivate: z.boolean().prefault(false),
       hackathonId: z.string().optional().nullable(),
 
       // values that will not be set on any API, but useful for response
@@ -259,9 +259,9 @@ export const createListingFormSchema = ({
       isWinnersAnnounced: z.boolean().optional().nullable(),
       totalWinnersSelected: z.number().optional().nullable(),
       totalPaymentsMade: z.number().optional().nullable(),
-      status: z.nativeEnum(status).optional().nullable(),
+      status: z.enum(status).optional().nullable(),
       publishedAt: z
-        .union([z.string().datetime(), z.date(), z.null()])
+        .union([z.iso.datetime(), z.date(), z.null()])
         .optional()
         .nullable(),
       sponsorId: z.string().optional().nullable(),
@@ -281,7 +281,7 @@ export const createListingRefinements = async (
     if (!data.eligibility || data.eligibility.length === 0) {
       if ((!!pick && pick.eligibility) || !pick) {
         ctx.addIssue({
-          code: z.ZodIssueCode.custom,
+          code: 'custom',
           message: 'Please add some questions',
           path: ['eligibility'],
         });
@@ -293,14 +293,14 @@ export const createListingRefinements = async (
     if (!data.rewardAmount) {
       if ((!!pick && pick.rewards) || !pick) {
         ctx.addIssue({
-          code: z.ZodIssueCode.custom,
+          code: 'custom',
           message: 'Please fill in the rewards',
           path: ['rewards'],
         });
       }
       if ((!!pick && pick.rewardAmount) || !pick) {
         ctx.addIssue({
-          code: z.ZodIssueCode.custom,
+          code: 'custom',
           message: 'Required',
           path: ['rewardAmount'],
         });
@@ -310,7 +310,7 @@ export const createListingRefinements = async (
       if (!data.rewards || Object.keys(data.rewards).length === 0) {
         if ((!!pick && pick.rewards) || !pick) {
           ctx.addIssue({
-            code: z.ZodIssueCode.custom,
+            code: 'custom',
             message: 'Please fill in the rewards',
             path: ['rewards'],
           });
@@ -333,7 +333,7 @@ export const createListingRefinements = async (
       if (data.type !== 'project' && totalRewards !== data.rewardAmount) {
         if ((!!pick && pick.rewards) || !pick) {
           ctx.addIssue({
-            code: z.ZodIssueCode.custom,
+            code: 'custom',
             message: 'Total of rewards must equal the reward amount',
             path: ['rewards'],
           });
@@ -343,12 +343,9 @@ export const createListingRefinements = async (
       if (!!data.rewards?.[BONUS_REWARD_POSITION] && !data.maxBonusSpots) {
         if ((!!pick && pick.maxBonusSpots) || !pick) {
           ctx.addIssue({
-            code: z.ZodIssueCode.too_small,
+            code: 'custom',
             path: ['maxBonusSpots'],
             message: 'Required',
-            minimum: 1,
-            inclusive: true,
-            type: 'number',
           });
         }
       }
@@ -359,7 +356,7 @@ export const createListingRefinements = async (
     if (data.minRewardAsk === null || data.minRewardAsk === undefined) {
       if ((!!pick && pick.minRewardAsk) || !pick) {
         ctx.addIssue({
-          code: z.ZodIssueCode.custom,
+          code: 'custom',
           message: 'Required',
           path: ['minRewardAsk'],
         });
@@ -368,7 +365,7 @@ export const createListingRefinements = async (
     if (!data.maxRewardAsk) {
       if ((!!pick && pick.maxRewardAsk) || !pick) {
         ctx.addIssue({
-          code: z.ZodIssueCode.custom,
+          code: 'custom',
           message: 'Required',
           path: ['maxRewardAsk'],
         });
@@ -381,7 +378,7 @@ export const createListingRefinements = async (
     ) {
       if ((!!pick && pick.maxRewardAsk) || !pick) {
         ctx.addIssue({
-          code: z.ZodIssueCode.custom,
+          code: 'custom',
           message: 'Maximum reward must be greater than minimum reward',
           path: ['maxRewardAsk'],
         });
@@ -397,7 +394,7 @@ export const createListingRefinements = async (
     ) {
       if ((!!pick && pick.deadline) || !pick) {
         ctx.addIssue({
-          code: z.ZodIssueCode.custom,
+          code: 'custom',
           message: 'Hackathon deadline cannot be changed',
           path: ['deadline'],
         });
@@ -412,7 +409,7 @@ export const createListingRefinements = async (
     const selected = dayjs(data.commitmentDate);
     if (selected.isBefore(min)) {
       ctx.addIssue({
-        code: z.ZodIssueCode.custom,
+        code: 'custom',
         message:
           'Winner announcement date must be at least 1 day after the deadline',
         path: ['commitmentDate'],
@@ -420,7 +417,7 @@ export const createListingRefinements = async (
     }
     if (selected.isAfter(max)) {
       ctx.addIssue({
-        code: z.ZodIssueCode.custom,
+        code: 'custom',
         message:
           'Winner announcement date must be no more than 30 days after the deadline',
         path: ['commitmentDate'],
@@ -451,14 +448,14 @@ export const backendListingRefinements = async (
 
   if (data.slug && !(await slugUniqueCheck(data.slug, data.id))) {
     ctx.addIssue({
-      code: z.ZodIssueCode.custom,
+      code: 'custom',
       message: 'Slug already exists. Please try another.',
       path: ['slug'],
     });
   }
   if (data.type !== 'project' && data.compensationType !== 'fixed') {
     ctx.addIssue({
-      code: z.ZodIssueCode.custom,
+      code: 'custom',
       message:
         'Selected Type is not allowed to have compensation type other than fixed',
       path: ['compensationType'],
@@ -468,14 +465,14 @@ export const backendListingRefinements = async (
   if (data.compensationType !== 'range') {
     if (data.minRewardAsk) {
       ctx.addIssue({
-        code: z.ZodIssueCode.custom,
+        code: 'custom',
         message: 'Should be empty',
         path: ['minRewardAsk'],
       });
     }
     if (data.maxRewardAsk) {
       ctx.addIssue({
-        code: z.ZodIssueCode.custom,
+        code: 'custom',
         message: 'Should be empty',
         path: ['maxRewardAsk'],
       });
@@ -486,21 +483,21 @@ export const backendListingRefinements = async (
   if (data.compensationType !== 'fixed') {
     if (data.rewards) {
       ctx.addIssue({
-        code: z.ZodIssueCode.custom,
+        code: 'custom',
         message: 'Should be empty',
         path: ['rewards'],
       });
     }
     if (data.rewardAmount) {
       ctx.addIssue({
-        code: z.ZodIssueCode.custom,
+        code: 'custom',
         message: 'Should be empty',
         path: ['rewardAmount'],
       });
     }
     if (data.maxBonusSpots) {
       ctx.addIssue({
-        code: z.ZodIssueCode.custom,
+        code: 'custom',
         message: 'Should be empty',
         path: ['maxBonusSpots'],
       });

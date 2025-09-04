@@ -16,7 +16,7 @@ import { generateListingTitlePrompt } from './prompt';
 
 const requestBodySchema = z.object({
   description: z.string().min(1, 'Description cannot be empty'),
-  type: z.nativeEnum(BountyType),
+  type: z.enum(BountyType),
 });
 
 const responseSchema = z.object({

@@ -25,7 +25,9 @@ import { hasDevSkills } from '../utils/skills';
 export const profileSchema = z
   .object({
     username: z
-      .string({ message: 'Username is required' })
+      .string({
+          error: 'Username is required'
+    })
       .min(1, 'Username is required')
       .max(40, 'Username cannot exceed 40 characters')
       .regex(
@@ -35,11 +37,15 @@ export const profileSchema = z
       .transform((val) => val.replace(/^[-\s]+|[-\s]+$/g, '')),
     photo: z.string().optional().nullable(),
     firstName: z
-      .string({ message: 'First name is required' })
+      .string({
+          error: 'First name is required'
+    })
       .min(1, 'First name is required')
       .regex(/^[A-Za-z\s]+$/, 'First name can only contain letters and spaces'),
     lastName: z
-      .string({ message: 'Last name is required' })
+      .string({
+          error: 'Last name is required'
+    })
       .min(1, 'Last name is required')
       .regex(/^[A-Za-z\s]+$/, 'Last name can only contain letters and spaces'),
     bio: z.string().max(180, 'Bio cannot exceed 180 characters').optional(),
@@ -61,28 +67,36 @@ export const profileSchema = z
     //   },
     // )
     interests: z
-      .enum(IndustryList, { message: 'Invalid Industry' })
+      .enum(IndustryList, {
+          error: 'Invalid Industry'
+    })
       .array()
       .optional()
       .nullable(),
     experience: z
-      .enum(workExp, { message: 'Invalid Work Experience' })
+      .enum(workExp, {
+          error: 'Invalid Work Experience'
+    })
       .optional()
       .nullable()
       .or(z.literal('')),
     cryptoExperience: z
-      .enum(web3Exp, { message: 'Invalid Crypto Experience' })
+      .enum(web3Exp, {
+          error: 'Invalid Crypto Experience'
+    })
       .optional()
       .nullable()
       .or(z.literal('')),
     workPrefernce: z
-      .enum(workType, { message: 'Invalid Work Preference' })
+      .enum(workType, {
+          error: 'Invalid Work Preference'
+    })
       .optional()
       .nullable()
       .or(z.literal('')),
     currentEmployer: z.string().optional(),
     skills: skillsArraySchema,
-    private: z.boolean().default(false),
+    private: z.boolean().prefault(false),
     location: z.string(),
   })
   .superRefine((data, ctx) => {
@@ -98,14 +112,14 @@ export const socialSuperRefine = async (
   if (data.skills && hasDevSkills(data.skills)) {
     if (!data.github) {
       ctx.addIssue({
-        code: z.ZodIssueCode.custom,
+        code: "custom",
         message: 'Github is requierd',
         path: ['github'],
       });
     }
   } else if (!data.twitter) {
     ctx.addIssue({
-      code: z.ZodIssueCode.custom,
+      code: "custom",
       message: 'X is requierd',
       path: ['twitter'],
     });
@@ -127,14 +141,14 @@ export const usernameSuperRefine = async (
       const available = response.data.available;
       if (!available) {
         ctx.addIssue({
-          code: z.ZodIssueCode.custom,
+          code: "custom",
           message: 'Username is unavailable! Please try another one.',
           path: ['username'],
         });
       }
     } catch (error) {
       ctx.addIssue({
-        code: z.ZodIssueCode.custom,
+        code: "custom",
         message: 'An error occurred while checking username availability.',
         path: ['username'],
       });

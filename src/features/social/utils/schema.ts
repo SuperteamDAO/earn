@@ -36,14 +36,14 @@ export const discordUsernameSchema = z
     // Check lowercase
     if (val.toLowerCase() !== val) {
       ctx.addIssue({
-        code: z.ZodIssueCode.custom,
+        code: "custom",
         message: 'Username must be in lowercase only.',
       });
     }
 
     if (val.startsWith('https://') || val.startsWith('http://')) {
       ctx.addIssue({
-        code: z.ZodIssueCode.custom,
+        code: "custom",
         message: platformNameMessage('discord'),
       });
     }
@@ -53,7 +53,7 @@ export const discordUsernameSchema = z
       const char = val[i] || '';
       if (!/[a-z0-9._]/.test(char)) {
         ctx.addIssue({
-          code: z.ZodIssueCode.custom,
+          code: "custom",
           message: invalidCharacterMessage(
             char,
             `letters, numbers, '_' and '.'`,
@@ -62,7 +62,7 @@ export const discordUsernameSchema = z
       }
       if (char === '.' && i > 0 && val[i - 1] === '.') {
         ctx.addIssue({
-          code: z.ZodIssueCode.custom,
+          code: "custom",
           message: "Username cannot contain consecutive '.'",
         });
       }
@@ -81,14 +81,14 @@ export const twitterUsernameSchema = z
   .superRefine((val, ctx) => {
     if (val.startsWith('https://') || val.startsWith('http://')) {
       ctx.addIssue({
-        code: z.ZodIssueCode.custom,
+        code: "custom",
         message: platformNameMessage('twitter'),
       });
     }
     for (const char of val) {
       if (!/[a-zA-Z0-9_]/.test(char)) {
         ctx.addIssue({
-          code: z.ZodIssueCode.custom,
+          code: "custom",
           message: invalidCharacterMessage(char, `letters, numbers and '_'`),
         });
       }
@@ -108,14 +108,14 @@ export const linkedinUsernameSchema = z
   .superRefine((val, ctx) => {
     if (val.startsWith('https://') || val.startsWith('http://')) {
       ctx.addIssue({
-        code: z.ZodIssueCode.custom,
+        code: "custom",
         message: platformNameMessage('linkedin'),
       });
     }
     for (const char of val) {
       if (!/[a-zA-Z0-9-]/.test(char)) {
         ctx.addIssue({
-          code: z.ZodIssueCode.custom,
+          code: "custom",
           message: invalidCharacterMessage(char, `letters, numbers and '-'`),
         });
       }
@@ -123,7 +123,7 @@ export const linkedinUsernameSchema = z
     // Ensure it doesn't start or end with dash
     if (val.endsWith('-')) {
       ctx.addIssue({
-        code: z.ZodIssueCode.custom,
+        code: "custom",
         message: 'Username cannot end with a dash',
       });
     }
@@ -143,14 +143,14 @@ export const telegramUsernameSchema = z
   .superRefine((val, ctx) => {
     if (!/^[a-zA-Z]/.test(val)) {
       ctx.addIssue({
-        code: z.ZodIssueCode.custom,
+        code: "custom",
         message: 'Username must start with a letter.',
       });
     }
 
     if (val.startsWith('https://') || val.startsWith('http://')) {
       ctx.addIssue({
-        code: z.ZodIssueCode.custom,
+        code: "custom",
         message: platformNameMessage('telegram'),
       });
     }
@@ -158,7 +158,7 @@ export const telegramUsernameSchema = z
     for (const char of val) {
       if (!/[a-zA-Z0-9_]/.test(char)) {
         ctx.addIssue({
-          code: z.ZodIssueCode.custom,
+          code: "custom",
           message: invalidCharacterMessage(char, `letters, numbers and '_' `),
         });
       }
@@ -179,7 +179,7 @@ export const githubUsernameSchema = z
   .superRefine((val, ctx) => {
     if (val.startsWith('https://') || val.startsWith('http://')) {
       ctx.addIssue({
-        code: z.ZodIssueCode.custom,
+        code: "custom",
         message: platformNameMessage('github'),
       });
     }
@@ -187,7 +187,7 @@ export const githubUsernameSchema = z
     for (const char of val) {
       if (!/[a-zA-Z0-9-]/.test(char)) {
         ctx.addIssue({
-          code: z.ZodIssueCode.custom,
+          code: "custom",
           message: invalidCharacterMessage(char, `letters, numbers and '-'`),
         });
       }
@@ -195,21 +195,21 @@ export const githubUsernameSchema = z
 
     if (val.startsWith('-')) {
       ctx.addIssue({
-        code: z.ZodIssueCode.custom,
+        code: "custom",
         message: "Username cannot start with '-'.",
       });
     }
 
     if (val.endsWith('-')) {
       ctx.addIssue({
-        code: z.ZodIssueCode.custom,
+        code: "custom",
         message: "Username cannot end with '-'.",
       });
     }
 
     if (val.includes('--')) {
       ctx.addIssue({
-        code: z.ZodIssueCode.custom,
+        code: "custom",
         message: "Username cannot contain consecutive '-'.",
       });
     }

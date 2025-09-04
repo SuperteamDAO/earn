@@ -13,7 +13,7 @@ export default function FeedPostPage({ type, id }: Props) {
   return <FeedPost type={type} id={id} />;
 }
 
-const UUIDSchema = z.string().uuid();
+const UUIDSchema = z.uuid();
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { params } = context;
 

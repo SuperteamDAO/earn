@@ -4,20 +4,20 @@ import { type BountiesSelect } from '@/prisma/models/Bounties';
 
 export const ListingTabSchema = z
   .enum(['all', 'bounties', 'projects'])
-  .default('all');
-export const OrderDirectionSchema = z.enum(['asc', 'desc']).default('asc');
+  .prefault('all');
+export const OrderDirectionSchema = z.enum(['asc', 'desc']).prefault('asc');
 export const ListingCategorySchema = z
   .enum(['For You', 'All', 'Content', 'Design', 'Development', 'Other'])
-  .default('All');
+  .prefault('All');
 export const ListingStatusSchema = z
   .enum(['open', 'review', 'completed'])
-  .default('open');
+  .prefault('open');
 export const ListingSortOptionSchema = z
   .enum(['Date', 'Prize', 'Submissions'])
-  .default('Date');
+  .prefault('Date');
 export const ListingContextSchema = z
   .enum(['home', 'all', 'region', 'region-all', 'sponsor'])
-  .default('all');
+  .prefault('all');
 
 export const QueryParamsSchema = z.object({
   tab: ListingTabSchema,

@@ -4,11 +4,11 @@ import { type GrantsSelect } from '@/prisma/models/Grants';
 
 export const GrantCategorySchema = z
   .enum(['All', 'Content', 'Design', 'Development', 'Other'])
-  .default('All');
+  .prefault('All');
 
 export const GrantContextSchema = z
   .enum(['home', 'all', 'region', 'sponsor'])
-  .default('all');
+  .prefault('all');
 
 export const GrantQueryParamsSchema = z.object({
   category: GrantCategorySchema,

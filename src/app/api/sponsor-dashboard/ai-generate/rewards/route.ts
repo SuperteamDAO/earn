@@ -20,14 +20,14 @@ import { generateListingRewardsPrompt } from './prompts';
 
 const requestBodySchema = z.object({
   description: z.string().min(1, 'Description cannot be empty'),
-  type: z.nativeEnum(BountyType),
+  type: z.enum(BountyType),
   token: z.string(),
   tokenUsdValue: z.number(),
 });
 export type RewardInputSchema = z.infer<typeof requestBodySchema>;
 
 const responseSchema = z.object({
-  compensationType: z.nativeEnum(CompensationType).default('fixed'),
+  compensationType: z.enum(CompensationType).prefault('fixed'),
   maxBonusSpots: z.coerce
     .number()
     .min(0)

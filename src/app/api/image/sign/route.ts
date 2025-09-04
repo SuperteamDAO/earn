@@ -31,12 +31,9 @@ const uploadSignatureSchema = z.object({
       'Public ID must contain only alphanumeric characters, hyphens, and underscores',
     ),
   resource_type: z.enum(['image', 'video', 'raw', 'auto'], {
-    required_error: 'Resource type is required',
-    invalid_type_error: 'Resource type must be one of: image, video, raw, auto',
-  }),
-  file_size: z
-    .number()
-    .int()
+      error: (issue) => issue.input === undefined ? 'Resource type is required' : 'Resource type must be one of: image, video, raw, auto'
+}),
+  file_size: z.int()
     .positive('File size must be a positive number')
     .max(
       MAX_FILE_SIZE_BYTES,

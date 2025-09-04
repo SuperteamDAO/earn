@@ -18,15 +18,15 @@ import type {
   OrderDirection,
 } from './useListings';
 
-const DEFAULT_TAB_VALUE: ListingTab = ListingTabSchema._def.defaultValue();
+const DEFAULT_TAB_VALUE: ListingTab = ListingTabSchema.parse(undefined);
 const DEFAULT_STATUS_VALUE: ListingStatus =
-  ListingStatusSchema._def.defaultValue();
+  ListingStatusSchema.parse(undefined);
 const DEFAULT_ORDER_VALUE: OrderDirection =
-  OrderDirectionSchema._def.defaultValue();
+  OrderDirectionSchema.parse(undefined);
 const DEFAULT_SORT_BY_VALUE: ListingSortOption =
-  ListingSortOptionSchema._def.defaultValue();
+  ListingSortOptionSchema.parse(undefined);
 const DEFAULT_HOOK_INITIAL_CATEGORY_VALUE: ListingCategory =
-  ListingCategorySchema._def.defaultValue();
+  ListingCategorySchema.parse(undefined);
 
 interface UseListingStateProps {
   readonly defaultCategory?: ListingCategory;

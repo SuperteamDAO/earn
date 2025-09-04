@@ -19,11 +19,11 @@ const twitterProfileSchema = z
   .string()
   .transform((val) => (typeof val === 'string' ? val.trim() : val))
   .refine((val) => Boolean(val && val.length > 0), {
-    message: 'Please add a valid X profile link',
-  })
+      error: 'Please add a valid X profile link'
+})
   .refine((val) => X_USERNAME_REGEX.test(val) || twitterRegex.test(val), {
-    message: 'Please add a valid X profile link',
-  })
+      error: 'Please add a valid X profile link'
+})
   .transform((val) => {
     if (X_USERNAME_REGEX.test(val)) {
       return `https://x.com/${val}`;
@@ -51,8 +51,7 @@ export const grantApplicationSchema = (
         .max(150, 'Description must be less than 150 characters'),
       ask: z
         .number({
-          required_error: 'Grant amount is required',
-          invalid_type_error: 'Please enter a valid number',
+            error: (issue) => issue.input === undefined ? 'Grant amount is required' : 'Please enter a valid number'
         })
         .min(minReward, `Amount must be at least ${minReward} ${token}`)
         .max(maxReward, `Amount cannot exceed ${maxReward} ${token}`),

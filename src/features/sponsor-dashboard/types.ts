@@ -61,9 +61,9 @@ export const verifyPaymentsSchema = z.object({
             );
           },
           {
-            message: 'Please add a Solscan/Solana.fm link',
             path: ['link'],
-          },
+              error: 'Please add a Solscan/Solana.fm link'
+        },
         )
         .transform((data) => ({
           ...data,
@@ -73,7 +73,7 @@ export const verifyPaymentsSchema = z.object({
         })),
     )
     .refine((links) => links.some((link) => link.link || link.isVerified), {
-      message: 'Please add atleast one valid payment link',
+        error: 'Please add atleast one valid payment link'
     }),
 });
 

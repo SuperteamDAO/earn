@@ -26,7 +26,7 @@ const formSchema = z.object({
       return getURLSanitized(url);
     }),
   text: z.string().optional(),
-  isNewTab: z.boolean().default(false),
+  isNewTab: z.boolean().prefault(false),
 });
 
 interface LinkEditorProps extends React.HTMLAttributes<HTMLDivElement> {
