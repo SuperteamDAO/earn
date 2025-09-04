@@ -7,6 +7,7 @@ import {
 } from '@solana/spl-token';
 import { PublicKey, VersionedTransaction } from '@solana/web3.js';
 import { useQueryClient } from '@tanstack/react-query';
+import { isAxiosError } from 'axios';
 import { log } from 'next-axiom';
 import posthog from 'posthog-js';
 import { useCallback, useState } from 'react';
@@ -329,9 +330,15 @@ export function WithdrawFundsFlow({
         e instanceof Error &&
         (e.message === 'MFA canceled' || e.message === 'MFA cancelled');
 
+      const isUnsupportedToken =
+        isAxiosError(e) && e.response?.data?.error === 'Invalid token selected';
+
       if (isMfaCancelled) {
         console.error('[handleWithdraw] MFA authentication cancelled by user.');
         posthog.capture('mfa cancelled_withdraw');
+      } else if (isUnsupportedToken) {
+        console.error('[handleWithdraw] Unsupported token selected');
+        posthog.capture('withdraw_unsupported_token');
       } else {
         console.error('[handleWithdraw] Withdrawal failed:', e);
         posthog.capture('withdraw_failed');
@@ -346,6 +353,9 @@ export function WithdrawFundsFlow({
 
       if (isMfaCancelled) {
         errorMessage = 'Please complete two-factor authentication to withdraw';
+      } else if (isUnsupportedToken) {
+        errorMessage =
+          "We don't support this token yet. Contact support@superteamearn.com for us to add it.";
       }
 
       console.log(`[handleWithdraw] Setting error state: "${errorMessage}"`);
