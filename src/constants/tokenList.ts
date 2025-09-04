@@ -443,4 +443,11 @@ export const tokenList: Token[] = [
     icon: 'https://res.cloudinary.com/dgvnuwspr/image/upload/v1754053412/2025-08-01_18.30.41_utc1fs.jpg',
     decimals: 6,
   },
+  {
+    tokenName: 'Marinade',
+    tokenSymbol: 'MNDE',
+    mintAddress: 'MNDEFzGvMt87ueuHvVU9VcTqsAP5b3fTGPsHuuPA5ey',
+    icon: 'https://s2.coinmarketcap.com/static/img/coins/128x128/13803.png',
+    decimals: 9,
+  },
 ];
