@@ -1,5 +1,5 @@
 import { Cross2Icon } from '@radix-ui/react-icons';
-import { ArrowLeft, ArrowUp } from 'lucide-react';
+import { ArrowLeft, ArrowUp, Loader2 } from 'lucide-react';
 import TextareaAutosize from 'react-textarea-autosize';
 
 import { MarkdownRenderer } from '@/components/shared/MarkdownRenderer';
@@ -21,6 +21,10 @@ interface AutoGenerateChatProps {
   handleBack: () => void;
   handleProceed: () => Promise<void>;
   scrollEl: HTMLDivElement | null;
+  isLoading: boolean;
+  isDisabled: boolean;
+  isRefineDisabled: boolean;
+  isThinking: boolean;
 }
 
 export function AutoGenerateChat({
@@ -32,7 +36,23 @@ export function AutoGenerateChat({
   handleBack,
   handleProceed,
   scrollEl,
+  isLoading,
+  isDisabled,
+  isRefineDisabled,
+  isThinking,
 }: AutoGenerateChatProps) {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter') {
+      if (e.metaKey || e.ctrlKey) {
+        return;
+      }
+      if (e.shiftKey) {
+        return;
+      }
+      e.preventDefault();
+      handleRefine();
+    }
+  };
   return (
     <div className="flex min-h-159 flex-col gap-y-4">
       <div className="flex items-center justify-between bg-slate-50 p-4 py-2">
@@ -58,47 +78,67 @@ export function AutoGenerateChat({
         </div>
       </div>
       <div className="flex-1">
-        <div className="m-4 mt-2 rounded-md border bg-white px-4 py-2">
-          {!description || description.length === 0 ? (
-            <div className="flex animate-pulse items-center gap-2 py-1 text-sm">
-              <SparkleLoading className="max-h-5 w-fit" />
-              <TextLightSweep
-                text="Thinking…"
-                className="text-primary-300 font-medium"
-              />
-            </div>
-          ) : (
+        {isThinking && (
+          <div className="mx-4 flex w-fit items-center gap-2 rounded-lg p-2 text-sm">
+            <SparkleLoading className="max-h-5 w-fit" />
+            <TextLightSweep
+              text="Thinking…"
+              className="text-primary-300 font-medium"
+            />
+          </div>
+        )}
+        {description && description.length > 0 && (
+          <div className="m-4 mt-2 rounded-md border bg-white px-4 py-0">
             <div className={`${styles.content} mt-4 w-full pb-7`}>
               <MarkdownRenderer>{description}</MarkdownRenderer>
             </div>
-          )}
-          {error && (
+          </div>
+        )}
+        {error && (
+          <div className="m-2 rounded-md border bg-white px-4 py-2">
             <p className="w-full rounded-md bg-slate-100 py-4 text-center text-sm text-slate-600">
               {`Failed to generate description, please try again later`}
             </p>
-          )}
-        </div>
+          </div>
+        )}
       </div>
-      <div className="border-border/50 sticky bottom-0 z-10 mt-auto flex items-start justify-between gap-x-2 border-t bg-white p-4 pb-2">
+      <div className="border-border sticky bottom-0 z-10 mt-auto flex items-start justify-between gap-x-2 border-t bg-white p-4 pb-2">
         <ProgressiveBlurOut scrollEl={scrollEl} className="absolute -top-22" />
         <div className="relative h-fit w-full">
           <TextareaAutosize
             placeholder="Ask for changes or refinements"
             value={input}
             onChange={(e) => setInput(e.target.value)}
+            onKeyDown={handleKeyDown}
+            maxRows={5}
             className="focus:border-primary min-h-10 w-full resize-none rounded-md border bg-white p-2 pr-7 text-sm placeholder:text-sm focus:outline-none"
           />
           <Button
             onClick={handleRefine}
             size="icon"
             className="absolute right-2 bottom-3.5 size-6! rounded-full bg-black text-white hover:bg-black/70"
+            disabled={isRefineDisabled}
           >
-            <ArrowUp />
+            {isDisabled ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <ArrowUp />
+            )}
           </Button>
         </div>
-        <Button className="px-8" onClick={handleProceed}>
-          Proceed
-        </Button>
+        {input.length === 0 && (
+          <Button
+            className="w-36 px-0"
+            onClick={handleProceed}
+            disabled={isLoading || isDisabled}
+          >
+            {isLoading ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              'Proceed'
+            )}
+          </Button>
+        )}
       </div>
     </div>
   );

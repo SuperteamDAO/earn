@@ -29,6 +29,18 @@ export function AutoGenerateForm({
 }: AutoGenerateFormProps) {
   const [_selectedTemplate, _setSelectedTemplate] = useState<string>('');
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter') {
+      if (e.metaKey || e.ctrlKey || e.shiftKey) {
+        e.preventDefault();
+        if (input && input.trim() !== '') {
+          onSubmit();
+        }
+        return;
+      }
+    }
+  };
+
   return (
     <div className="space-y-4 p-4">
       <div className="flex items-center justify-between">
@@ -56,6 +68,7 @@ export function AutoGenerateForm({
           placeholder="Briefly describe the scope of your task"
           value={input}
           onChange={(e) => setInput(e.target.value)}
+          onKeyDown={handleKeyDown}
           className="min-h-55 w-full resize-none"
         />
         {input.length === 0 && (
