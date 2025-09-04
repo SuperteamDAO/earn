@@ -334,7 +334,7 @@ export function RightSideBar({
             {listing.isWinnersAnnounced &&
               listing.isFndnPaying &&
               dayjs(listing.winnersAnnouncedAt).isAfter(
-                dayjs('2025-08-06'),
+                dayjs.utc('2025-08-06'),
               ) && <ApprovalStages listing={listing} />}
           </div>
           {isProject && deadline && dayjs(deadline).isAfter(new Date()) && (
