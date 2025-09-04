@@ -8,6 +8,7 @@ import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
+import { LocalImage } from '@/components/ui/local-image';
 import { api } from '@/lib/api';
 import { prisma } from '@/prisma';
 
@@ -159,97 +160,107 @@ export default function ReferralLandingPage({
     );
 
   return (
-    <div className="mx-auto flex min-h-screen w-full max-w-lg items-center justify-center pt-12 pb-36">
-      <div className="w-full px-6 sm:px-12">
-        <div className="flex flex-col items-center">
-          {data?.inviter && (
-            <EarnAvatar
-              className="size-16"
-              id={data.inviter.id}
-              avatar={data.inviter.photo ?? undefined}
-            />
-          )}
-          <h1 className="mt-3 text-center text-xl font-semibold text-slate-600 sm:text-2xl">
-            {headline}
-          </h1>
-
-          {data?.valid && (
-            <div className="mt-6 w-full max-w-xl rounded-lg border border-slate-100 bg-white px-6 py-8 shadow-lg">
-              <ul className="space-y-8">
-                <li className="flex items-start gap-5 text-sm text-slate-500 sm:text-base">
-                  <Tick />
-                  <div>
-                    Participate in bounties or gigs from the world&apos;s best
-                    crypto companies
-                  </div>
-                </li>
-                <li className="flex items-start gap-5 text-sm text-slate-500 sm:text-base">
-                  <Tick />
-                  <div>
-                    Get paid in global standards for your design, development,
-                    or content skills
-                  </div>
-                </li>
-                <li className="flex items-start gap-5 text-sm text-slate-500 sm:text-base">
-                  <Tick />
-                  <div>
-                    Work from anywhere in the world — all you need is a laptop
-                    and internet
-                  </div>
-                </li>
-              </ul>
-            </div>
-          )}
-
-          <div className="mt-6 flex w-full gap-2 rounded-lg bg-indigo-50 px-6 py-4">
-            <ExternalImage
-              alt="Worth of live opportunities right now"
-              className="size-7"
-              src={'/hackathon/talent-olympics/cashbag.png'}
-            />
-            <div>
-              <p className="text-lg font-semibold text-black">
-                ${liveOpportunities?.totalUsdValue.toLocaleString()}
-              </p>
-              <p className="text-sm text-slate-500">
-                Worth of live opportunities right now
-              </p>
-            </div>
-          </div>
-
-          <Button
-            className="mt-3 h-12 w-full rounded-lg"
-            size="lg"
-            onClick={handleAccept}
-            disabled={isLoading || !data?.valid}
-            type="submit"
-          >
-            Accept Invitation
-          </Button>
-
-          <div className="mt-5 flex items-center gap-2">
-            <div className="flex -space-x-2">
-              {avatars.map((avatar, index) => (
-                <ExternalImage
-                  key={index}
-                  className="relative size-7 rounded-full"
-                  src={avatar.src}
-                  alt={avatar.name}
-                  loading="eager"
-                />
-              ))}
-            </div>
-            {totalUsers !== null && totalUsers !== undefined && (
-              <p className="text-sm font-semibold text-slate-500">
-                Join {totalUsers.totalUsers?.toLocaleString('en-us')}+ others
-              </p>
+    <>
+      <div className="flex w-full items-center justify-center border-b py-3">
+        <LocalImage
+          src="/assets/logo.svg"
+          alt="Superteam Earn"
+          className="h-[1.4rem] w-auto cursor-pointer object-contain"
+          loading="eager"
+        />
+      </div>
+      <div className="mx-auto flex min-h-screen w-full max-w-lg items-center justify-center pt-12 pb-36">
+        <div className="w-full px-6 sm:px-12">
+          <div className="flex flex-col items-center">
+            {data?.inviter && (
+              <EarnAvatar
+                className="size-16"
+                id={data.inviter.id}
+                avatar={data.inviter.photo ?? undefined}
+              />
             )}
+            <h1 className="mt-3 text-center text-xl font-semibold text-slate-600 sm:text-2xl">
+              {headline}
+            </h1>
+
+            {data?.valid && (
+              <div className="mt-6 w-full max-w-xl rounded-lg border border-slate-100 bg-white px-6 py-8 shadow-lg">
+                <ul className="space-y-8">
+                  <li className="flex items-start gap-5 text-sm text-slate-500 sm:text-base">
+                    <Tick />
+                    <div>
+                      Participate in bounties or gigs from the world&apos;s best
+                      crypto companies
+                    </div>
+                  </li>
+                  <li className="flex items-start gap-5 text-sm text-slate-500 sm:text-base">
+                    <Tick />
+                    <div>
+                      Get paid in global standards for your design, development,
+                      or content skills
+                    </div>
+                  </li>
+                  <li className="flex items-start gap-5 text-sm text-slate-500 sm:text-base">
+                    <Tick />
+                    <div>
+                      Work from anywhere in the world — all you need is a laptop
+                      and internet
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            )}
+
+            <div className="mt-6 flex w-full gap-2 rounded-lg bg-indigo-50 px-6 py-4">
+              <ExternalImage
+                alt="Worth of live opportunities right now"
+                className="size-7"
+                src={'/hackathon/talent-olympics/cashbag.png'}
+              />
+              <div>
+                <p className="text-lg font-semibold text-black">
+                  ${liveOpportunities?.totalUsdValue.toLocaleString()}
+                </p>
+                <p className="text-sm text-slate-500">
+                  Worth of live opportunities right now
+                </p>
+              </div>
+            </div>
+
+            <Button
+              className="mt-3 h-12 w-full rounded-lg"
+              size="lg"
+              onClick={handleAccept}
+              disabled={isLoading || !data?.valid}
+              type="submit"
+            >
+              Accept Invitation
+            </Button>
+
+            <div className="mt-5 flex items-center gap-2">
+              <div className="flex -space-x-2">
+                {avatars.map((avatar, index) => (
+                  <ExternalImage
+                    key={index}
+                    className="relative size-7 rounded-full"
+                    src={avatar.src}
+                    alt={avatar.name}
+                    loading="eager"
+                  />
+                ))}
+              </div>
+              {totalUsers !== null && totalUsers !== undefined && (
+                <p className="text-sm font-semibold text-slate-500">
+                  Join {totalUsers.totalUsers?.toLocaleString('en-us')}+ others
+                </p>
+              )}
+            </div>
           </div>
         </div>
-      </div>
 
-      <Login isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)} />
-    </div>
+        <Login isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)} />
+      </div>
+    </>
   );
 }
 
