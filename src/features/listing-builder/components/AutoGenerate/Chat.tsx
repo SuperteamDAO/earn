@@ -7,9 +7,9 @@ import { Button } from '@/components/ui/button';
 import { DialogClose } from '@/components/ui/dialog';
 import styles from '@/styles/listing-description.module.css';
 
-import { ProgressiveBlurOut } from '../AiGenerate/extras/ProgressiveBlurOut';
-import { SparkleLoading } from '../AiGenerate/extras/SparkleLoading';
-import { TextLightSweep } from '../AiGenerate/extras/TextLightSweep';
+import { ProgressiveBlurOut } from './extras/ProgressiveBlurOut';
+import { SparkleLoading } from './extras/SparkleLoading';
+import { TextLightSweep } from './extras/TextLightSweep';
 
 interface AutoGenerateChatProps {
   description: string;
