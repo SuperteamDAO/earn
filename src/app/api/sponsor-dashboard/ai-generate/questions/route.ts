@@ -17,7 +17,6 @@ import { generateListingQuestionsPrompt } from './prompts';
 
 const requestBodySchema = z.object({
   description: z.string().min(1, 'Description cannot be empty'),
-  inputRequirements: z.string(),
   type: z.nativeEnum(BountyType),
 });
 
@@ -44,7 +43,7 @@ export async function POST(request: Request) {
       return rateLimitResponse;
     }
 
-    let description: string, type: BountyType, inputRequirements: string;
+    let description: string, type: BountyType;
     try {
       const body = await request.json();
       logger.debug(`Request body: ${safeStringify(body)}`);
@@ -62,7 +61,6 @@ export async function POST(request: Request) {
       }
       description = parsedBody.data.description;
       type = parsedBody.data.type;
-      inputRequirements = parsedBody.data.inputRequirements;
     } catch (e) {
       if (e instanceof SyntaxError) {
         logger.error('Invalid JSON in request body');
@@ -74,11 +72,7 @@ export async function POST(request: Request) {
       throw e;
     }
 
-    const prompt = generateListingQuestionsPrompt(
-      description,
-      inputRequirements,
-      type,
-    );
+    const prompt = generateListingQuestionsPrompt(description, type);
 
     const { object } = await generateObject({
       model: openrouter('google/gemini-2.5-flash'),

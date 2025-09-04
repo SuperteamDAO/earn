@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { DialogClose } from '@/components/ui/dialog';
 import styles from '@/styles/listing-description.module.css';
 
+import { ProgressiveBlurOut } from '../AiGenerate/extras/ProgressiveBlurOut';
 import { SparkleLoading } from '../AiGenerate/extras/SparkleLoading';
 import { TextLightSweep } from '../AiGenerate/extras/TextLightSweep';
 
@@ -18,6 +19,8 @@ interface AutoGenerateChatProps {
   setInput: (input: string) => void;
   handleRefine: () => void;
   handleBack: () => void;
+  handleProceed: () => Promise<void>;
+  scrollEl: HTMLDivElement | null;
 }
 
 export function AutoGenerateChat({
@@ -27,10 +30,12 @@ export function AutoGenerateChat({
   setInput,
   handleRefine,
   handleBack,
+  handleProceed,
+  scrollEl,
 }: AutoGenerateChatProps) {
   return (
     <div className="flex min-h-159 flex-col gap-y-4">
-      <div className="flex items-start justify-between bg-slate-50 p-4 pb-2">
+      <div className="flex items-center justify-between bg-slate-50 p-4 py-2">
         <div className="flex items-center gap-2">
           <Button
             variant="outline"
@@ -74,7 +79,8 @@ export function AutoGenerateChat({
           )}
         </div>
       </div>
-      <div className="sticky bottom-0 mt-auto flex items-start justify-between gap-x-2 border-t bg-white p-4 pb-2">
+      <div className="border-border/50 sticky bottom-0 z-10 mt-auto flex items-start justify-between gap-x-2 border-t bg-white p-4 pb-2">
+        <ProgressiveBlurOut scrollEl={scrollEl} className="absolute -top-22" />
         <div className="relative h-fit w-full">
           <TextareaAutosize
             placeholder="Ask for changes or refinements"
@@ -90,7 +96,9 @@ export function AutoGenerateChat({
             <ArrowUp />
           </Button>
         </div>
-        <Button className="px-8">Create</Button>
+        <Button className="px-8" onClick={handleProceed}>
+          Proceed
+        </Button>
       </div>
     </div>
   );

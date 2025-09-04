@@ -20,7 +20,6 @@ import { generateListingRewardsPrompt } from './prompts';
 
 const requestBodySchema = z.object({
   description: z.string().min(1, 'Description cannot be empty'),
-  inputReward: z.string().min(1, 'Input Reward cannot be empty'),
   type: z.nativeEnum(BountyType),
   token: z.string(),
   tokenUsdValue: z.number(),

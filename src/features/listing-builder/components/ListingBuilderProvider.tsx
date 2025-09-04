@@ -1,4 +1,4 @@
-import { Provider, useSetAtom } from 'jotai';
+import { Provider, useAtomValue, useSetAtom } from 'jotai';
 import { useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
 
@@ -15,6 +15,7 @@ import { Header } from '@/features/navbar/components/Header';
 import {
   confirmModalAtom,
   draftQueueAtom,
+  generatedListingAtom,
   hackathonsAtom,
   isEditingAtom,
   isGodAtom,
@@ -161,6 +162,7 @@ function ListingBuilderProvider({
   const isGod = user?.role === 'GOD';
   const isST = !!user?.currentSponsor?.st;
 
+  const generatedListing = useAtomValue(generatedListingAtom);
   const params = useSearchParams();
   const defaultListing = listing
     ? transformListingToFormListing(listing)
@@ -170,6 +172,7 @@ function ListingBuilderProvider({
         isST: isST,
         type: (params?.get('type') as BountyType) || 'bounty',
         hackathons,
+        generatedListing,
       });
 
   return (
@@ -181,6 +184,7 @@ function ListingBuilderProvider({
           [isSTAtom, isST],
           [hackathonsAtom, hackathons],
           [listingStatusAtom, listingToStatus(defaultListing)],
+          [generatedListingAtom, generatedListing],
           [
             draftQueueAtom,
             {
