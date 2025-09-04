@@ -1,11 +1,14 @@
 import { Cross2Icon } from '@radix-ui/react-icons';
-import { ArrowLeft, ArrowUp, LoaderCircle } from 'lucide-react';
+import { ArrowLeft, ArrowUp } from 'lucide-react';
 import TextareaAutosize from 'react-textarea-autosize';
 
 import { MarkdownRenderer } from '@/components/shared/MarkdownRenderer';
 import { Button } from '@/components/ui/button';
 import { DialogClose } from '@/components/ui/dialog';
 import styles from '@/styles/listing-description.module.css';
+
+import { SparkleLoading } from '../AiGenerate/extras/SparkleLoading';
+import { TextLightSweep } from '../AiGenerate/extras/TextLightSweep';
 
 interface AutoGenerateChatProps {
   description: string;
@@ -52,9 +55,12 @@ export function AutoGenerateChat({
       <div className="flex-1">
         <div className="m-4 mt-2 rounded-md border bg-white px-4 py-2">
           {!description || description.length === 0 ? (
-            <div className="flex animate-pulse items-center gap-2 py-2 text-sm">
-              <LoaderCircle className="h-4 w-4 animate-spin" />
-              <span className="text-gray-500">Thinking…</span>
+            <div className="flex animate-pulse items-center gap-2 py-1 text-sm">
+              <SparkleLoading className="max-h-5 w-fit" />
+              <TextLightSweep
+                text="Thinking…"
+                className="text-primary-300 font-medium"
+              />
             </div>
           ) : (
             <div className={`${styles.content} mt-4 w-full pb-7`}>

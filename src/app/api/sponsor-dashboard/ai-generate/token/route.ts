@@ -75,14 +75,54 @@ export async function POST(request: Request) {
 
     const prompt = generateListingTokenPrompt(description);
 
-    const { object } = await generateObject({
-      model: openrouter('google/gemini-2.0-flash-lite-001'),
-      prompt,
-      schema: responseSchema,
-      system: 'Your role is to extract the token mentioned in the listings.',
-    });
+    let object: TTokenGenerateResponse;
 
-    logger.info('Generated eligibility token object: ', safeStringify(object));
+    try {
+      const result = await generateObject({
+        model: openrouter('openai/gpt-oss-120b', {
+          provider: {
+            only: ['baseten'],
+            allow_fallbacks: true,
+          },
+        }),
+        prompt,
+        schema: responseSchema,
+        system: 'Your role is to extract the token mentioned in the listings.',
+      });
+      object = result.object;
+      logger.info(
+        'Generated eligibility token object with primary model: ',
+        safeStringify(object),
+      );
+    } catch (primaryModelError) {
+      logger.warn(
+        'Primary model failed, attempting fallback model:',
+        safeStringify(primaryModelError),
+      );
+
+      try {
+        const result = await generateObject({
+          model: openrouter('google/gemini-2.0-flash-lite-001'),
+          prompt,
+          schema: responseSchema,
+          system:
+            'Your role is to extract the token mentioned in the listings.',
+        });
+        object = result.object;
+        logger.info(
+          'Generated eligibility token object with fallback model: ',
+          safeStringify(object),
+        );
+      } catch (fallbackModelError) {
+        logger.error(
+          'Both primary and fallback models failed. Primary error:',
+          safeStringify(primaryModelError),
+          'Fallback error:',
+          safeStringify(fallbackModelError),
+        );
+        throw fallbackModelError;
+      }
+    }
 
     return NextResponse.json(object, { status: 200 });
   } catch (error) {

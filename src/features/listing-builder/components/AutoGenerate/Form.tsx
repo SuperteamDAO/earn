@@ -51,21 +51,22 @@ export function AutoGenerateForm({
         </div>
       </div>
 
-      <div className="space-y-4">
+      <div className="relative space-y-4">
         <Textarea
           placeholder="Briefly describe the scope of your task"
           value={input}
           onChange={(e) => setInput(e.target.value)}
           className="min-h-55 w-full resize-none"
         />
-      </div>
-
-      <div>
-        <Templates
-          type={type}
-          onSelectTemplate={({ prompt }) => setInput(prompt)}
-          onUnselectTemplate={() => setInput('')}
-        />
+        {input.length === 0 && (
+          <div className="absolute bottom-2 left-2/4 w-max -translate-x-2/4">
+            <Templates
+              type={type}
+              onSelectTemplate={({ prompt }) => setInput(prompt)}
+              onUnselectTemplate={() => setInput('')}
+            />
+          </div>
+        )}
       </div>
 
       <div className="flex justify-end">
