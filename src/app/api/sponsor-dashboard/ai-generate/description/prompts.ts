@@ -63,7 +63,7 @@ Generate a bounty listing draft using the information above. Structure the draft
 ## Submission Requirements
 *   **Extract** logistical requirements from the user's message or infer from the scope.
 *   Use a bulleted list. Include details like:
-    *   Required format (e.g., Tweet, Google Doc, PDF, GitHub repo link).
+    *   Required format (e.g., Tweet, Google Doc, GitHub repo link). **Note: Do not include PDF as a submission format for bounties.**
     *   Language (e.g., Must be in English).
     *   Minimum/Target length or word count.
     *   Sources/References (if specified).
@@ -345,7 +345,7 @@ Generate a bounty listing draft using the information above. Structure the draft
 ## Submission Requirements
 *   **Extract** logistical requirements from the user's message.
 *   Use a bulleted list. Include details like:
-    *   Required format (e.g., Tweet, Google Doc, PDF, GitHub repo link).
+    *   Required format (e.g., Tweet, Google Doc, GitHub repo link). **Note: Do not include PDF as a submission format for hackathon tracks.**
     *   Language (e.g., Must be in English).
     *   Minimum/Target length or word count.
     *   Sources/References (if specified).

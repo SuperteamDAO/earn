@@ -1,7 +1,7 @@
 import { usePrivy } from '@privy-io/react-auth';
 import { useQuery } from '@tanstack/react-query';
 import { useSetAtom } from 'jotai';
-import { Lock, Pencil, PencilLine, Plus, Sparkles, Users } from 'lucide-react';
+import { Lock, Pencil, PencilLine, Plus, Users } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import posthog from 'posthog-js';
@@ -35,6 +35,7 @@ import { useDisclosure } from '@/hooks/use-disclosure';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { useUser } from '@/store/user';
+import Sparkle from '@/svg/sparkle';
 import { cn } from '@/utils/cn';
 
 import { SponsorAnnouncements } from '@/features/announcements/components/SponsorAnnouncements';
@@ -342,7 +343,7 @@ export function SponsorLayout({
                         }}
                       >
                         <span className="flex items-center gap-2 text-sm">
-                          <Sparkles className="h-4 w-4" />
+                          <Sparkle className="h-4 w-4" />
                           Generate with AI
                         </span>
                         <span>

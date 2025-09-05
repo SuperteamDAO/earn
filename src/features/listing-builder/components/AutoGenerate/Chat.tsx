@@ -1,5 +1,8 @@
 import { Cross2Icon } from '@radix-ui/react-icons';
+import { type UIMessage } from 'ai';
 import { ArrowLeft, ArrowUp, Loader2 } from 'lucide-react';
+import { motion } from 'motion/react';
+import { useState } from 'react';
 import TextareaAutosize from 'react-textarea-autosize';
 
 import { MarkdownRenderer } from '@/components/shared/MarkdownRenderer';
@@ -25,6 +28,7 @@ interface AutoGenerateChatProps {
   isDisabled: boolean;
   isRefineDisabled: boolean;
   isThinking: boolean;
+  messages: UIMessage[];
 }
 
 export function AutoGenerateChat({
@@ -40,7 +44,10 @@ export function AutoGenerateChat({
   isDisabled,
   isRefineDisabled,
   isThinking,
+  messages,
 }: AutoGenerateChatProps) {
+  const [isHovering, setIsHovering] = useState(false);
+
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter') {
       if (e.metaKey || e.ctrlKey) {
@@ -89,8 +96,27 @@ export function AutoGenerateChat({
         )}
         {description && description.length > 0 && (
           <div className="m-4 mt-2 rounded-md border bg-white px-4 py-0">
-            <div className={`${styles.content} mt-4 w-full pb-7`}>
-              <MarkdownRenderer>{description}</MarkdownRenderer>
+            <div className={`${styles.content} -mt-4 w-full pb-7`}>
+              {[...messages]
+                .filter((message) => message.role === 'assistant')
+                .slice(-1)
+                ?.map((message) => (
+                  <div key={message.id}>
+                    {message.parts
+                      .filter((part) => part.type === 'text')
+                      .map((part, index) => (
+                        <motion.div
+                          key={index}
+                          initial={{ opacity: 0, filter: 'blur(4px)' }}
+                          animate={{ opacity: 1, filter: 'blur(0px)' }}
+                          exit={{ opacity: 0, filter: 'blur(4px)' }}
+                          transition={{ duration: 0.3 }}
+                        >
+                          <MarkdownRenderer>{part.text}</MarkdownRenderer>
+                        </motion.div>
+                      ))}
+                  </div>
+                ))}
             </div>
           </div>
         )}
@@ -115,14 +141,22 @@ export function AutoGenerateChat({
           />
           <Button
             onClick={handleRefine}
-            size="icon"
-            className="absolute right-2 bottom-3.5 size-6! rounded-full bg-black text-white hover:bg-black/70"
+            className="absolute right-2 bottom-3.5 h-6 rounded-full bg-black px-1 text-white hover:bg-black/70"
             disabled={isRefineDisabled}
+            onMouseEnter={() => setIsHovering(true)}
+            onMouseLeave={() => setIsHovering(false)}
           >
             {isDisabled ? (
               <Loader2 className="h-4 w-4 animate-spin" />
             ) : (
-              <ArrowUp />
+              <>
+                {isHovering && (
+                  <span className="ml-2 block overflow-hidden text-xs whitespace-nowrap">
+                    Refine
+                  </span>
+                )}
+                <ArrowUp />
+              </>
             )}
           </Button>
         </div>

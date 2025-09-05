@@ -1,4 +1,7 @@
+import { Cross2Icon } from '@radix-ui/react-icons';
+
 import { Button } from '@/components/ui/button';
+import { DialogClose } from '@/components/ui/dialog';
 import {
   Select,
   SelectContent,
@@ -15,7 +18,14 @@ interface AutoGenerateTypeProps {
 export function AutoGenerateStageType({ setType }: AutoGenerateTypeProps) {
   return (
     <div className="space-y-4 p-4">
-      <h2 className="text-lg font-medium">Select type of listing</h2>
+      <div className="flex items-center justify-between">
+        <h2 className="text-lg font-medium">Select type of listing</h2>
+        <DialogClose asChild>
+          <Button variant="ghost" size="icon">
+            <Cross2Icon className="h-4 w-4 text-slate-400" />
+          </Button>
+        </DialogClose>
+      </div>
       <div className="grid grid-cols-2 gap-4">
         <Button
           className="flex h-55 flex-col gap-4 whitespace-normal text-slate-500 hover:text-slate-500"
