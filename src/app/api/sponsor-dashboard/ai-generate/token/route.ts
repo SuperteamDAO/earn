@@ -86,7 +86,7 @@ export async function POST(request: Request) {
           },
         }),
         prompt,
-        schema: responseSchema,
+        schema: responseSchema as any,
         system: 'Your role is to extract the token mentioned in the listings.',
       });
       object = result.object;
@@ -104,7 +104,7 @@ export async function POST(request: Request) {
         const result = await generateObject({
           model: openrouter('google/gemini-2.0-flash-lite-001'),
           prompt,
-          schema: responseSchema,
+          schema: responseSchema as any,
           system:
             'Your role is to extract the token mentioned in the listings.',
         });

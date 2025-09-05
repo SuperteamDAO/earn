@@ -118,13 +118,16 @@ export async function POST(request: Request) {
       system:
         'Your role is to generate proper rewards for listings, strictly adhering to the rules provided with each description and type.',
       prompt,
-      schema: responseSchema,
+      schema: responseSchema as any,
     });
 
     logger.info('Generated rewards object: ', safeStringify(object));
 
     const rewardsRecord: Record<string, number> = object.rewards.reduce(
-      (acc, rewardItem) => {
+      (
+        acc: Record<string, number>,
+        rewardItem: { rank: string; amount: number },
+      ) => {
         acc[rewardItem.rank] = rewardItem.amount;
         return acc;
       },

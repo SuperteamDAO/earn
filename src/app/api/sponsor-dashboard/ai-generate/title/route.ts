@@ -82,7 +82,7 @@ export async function POST(request: Request) {
       model: openrouter('google/gemini-2.0-flash-lite-001'),
       system: 'Your role is to extract the token mentioned in the listings.',
       prompt,
-      schema: responseSchema,
+      schema: responseSchema as any,
     });
 
     logger.info('Generated eligibility title object: ', safeStringify(object));

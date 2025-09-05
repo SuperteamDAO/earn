@@ -81,7 +81,7 @@ export async function POST(request: Request) {
       system:
         'Your role is to generate proper skills for listings, strictly adhering to the rules provided with each description and type.',
       prompt,
-      schema: responseSchema,
+      schema: responseSchema as any,
     });
 
     logger.info('Generated skills object: ', safeStringify(object));

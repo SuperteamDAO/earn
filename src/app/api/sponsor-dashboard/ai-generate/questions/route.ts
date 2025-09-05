@@ -74,16 +74,18 @@ export async function POST(request: Request) {
 
     const prompt = generateListingQuestionsPrompt(description, type);
 
+    const schema = z.object({
+      eligibilityQuestions: z.array(
+        eligibilityQuestionSchema.omit({ optional: true }),
+      ),
+    });
+
     const { object } = await generateObject({
       model: openrouter('google/gemini-2.5-flash'),
       system:
         'Your role is to generate high-quality evaluation questions for listings, strictly adhering to the rules provided with each description and type.',
       prompt,
-      schema: z.object({
-        eligibilityQuestions: z.array(
-          eligibilityQuestionSchema.omit({ optional: true }),
-        ),
-      }),
+      schema: schema as any,
     });
 
     logger.info(
