@@ -138,8 +138,9 @@ export function ReferralModal({ isOpen, onClose }: ReferralModalProps) {
             <div className="px-6 py-4 text-slate-500">
               <ol className="list-decimal space-y-4 pb-6 pl-5">
                 <li>
-                  Credits rewarded 30 days after your invitee makes a non-spam
-                  submission.
+                  Credits are rewarded after your invitee makes a non-spam
+                  submission and winners are announced for the listing they
+                  submitted to.
                 </li>
                 <li>You get one extra credit every time your invitee wins.</li>
                 <li>
