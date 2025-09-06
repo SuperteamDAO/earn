@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { ArrowLeftIcon, CopyIcon } from 'lucide-react';
+import posthog from 'posthog-js';
 import { useMemo, useState } from 'react';
 
 import { ExternalImage } from '@/components/ui/cloudinary-image';
@@ -110,6 +111,7 @@ export function ReferralModal({ isOpen, onClose }: ReferralModalProps) {
                 <p className="text-sm text-slate-500">{shareUrl}</p>
                 <CopyButton
                   text={shareUrl}
+                  onCopy={() => posthog.capture('copy_referral_link')}
                   contentProps={{
                     side: 'right',
                     className: 'text-sm px-2 py-1 text-slate-500',
