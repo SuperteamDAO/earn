@@ -1,4 +1,5 @@
 import { ChevronDown } from 'lucide-react';
+import posthog from 'posthog-js';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -32,6 +33,7 @@ export function Templates({ type, onSelectTemplate }: TemplatesProps) {
     prompt: string;
     icon: any;
   }) => {
+    posthog.capture('select template_auto-generate');
     onSelectTemplate?.(template);
   };
 

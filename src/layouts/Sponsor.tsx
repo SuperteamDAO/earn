@@ -349,6 +349,7 @@ export function SponsorLayout({
                       <DropdownMenuItem
                         className="flex items-center justify-between"
                         onClick={() => {
+                          posthog.capture('new generate with ai_sponsor');
                           setAutoGenerateOpen(true);
                         }}
                       >
@@ -365,7 +366,7 @@ export function SponsorLayout({
                       <DropdownMenuItem
                         className="flex items-center justify-between"
                         onClick={() => {
-                          posthog.capture('start from scratch_sponsor');
+                          posthog.capture('new start from scratch_sponsor');
                           onOpen();
                         }}
                       >

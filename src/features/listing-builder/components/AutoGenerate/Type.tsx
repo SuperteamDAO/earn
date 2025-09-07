@@ -37,9 +37,10 @@ export function AutoGenerateStageType({
         <div className="relative flex-1">
           <div className="relative mb-6 flex items-center justify-center bg-violet-50 px-32 py-12">
             <ExternalImage
-              className="h-auto w-full"
+              className="h-60 w-full object-contain"
               alt="Bounty Illustration"
               src={'/dashboard/bounty_illustration.svg'}
+              loading="eager"
             />
             <div className="absolute top-4 right-4 flex items-center rounded-full bg-white px-3 py-1 text-violet-500">
               <BountyIcon
@@ -76,9 +77,10 @@ export function AutoGenerateStageType({
         <div className="relative flex-1 border-l border-slate-200">
           <div className="relative mb-6 flex items-center justify-center bg-blue-50 px-32 py-12">
             <ExternalImage
-              className="h-auto w-full"
+              className="h-60 w-full object-contain"
               alt="Project Illustration"
               src={'/dashboard/project_illustration.svg'}
+              loading="eager"
             />
             <div className="absolute top-4 right-4 flex items-center rounded-full bg-white px-3 py-1 text-blue-500">
               <ProjectIcon
@@ -117,9 +119,10 @@ export function AutoGenerateStageType({
             <div className="flex border-t border-slate-200 bg-stone-50">
               <div className="relative flex items-center justify-center bg-rose-50 px-16 py-2">
                 <ExternalImage
-                  className="w-52"
+                  className="w-52 object-contain"
                   alt="Hackathons Illustration"
                   src={'/dashboard/hackathons_illustration.svg'}
+                  loading="eager"
                 />
                 <div className="absolute right-4 bottom-4 flex items-center gap-2 rounded-full bg-white px-3 py-1 text-rose-400">
                   <BsFillLaptopFill className="size-3 fill-rose-400" />

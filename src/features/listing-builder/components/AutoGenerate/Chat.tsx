@@ -96,7 +96,9 @@ export function AutoGenerateChat({
         )}
         {description && description.length > 0 && (
           <div className="m-4 mt-2 rounded-md border bg-white px-4 py-0">
-            <div className={`${styles.content} -mt-4 w-full pb-7`}>
+            <div
+              className={`${styles.content} mt-3 w-full pb-7 [&_h2:first-child]:!mt-0`}
+            >
               {[...messages]
                 .filter((message) => message.role === 'assistant')
                 .slice(-1)
@@ -110,7 +112,7 @@ export function AutoGenerateChat({
                           initial={{ opacity: 0, filter: 'blur(4px)' }}
                           animate={{ opacity: 1, filter: 'blur(0px)' }}
                           exit={{ opacity: 0, filter: 'blur(4px)' }}
-                          transition={{ duration: 0.3 }}
+                          transition={{ duration: 0.4 }}
                         >
                           <MarkdownRenderer>{part.text}</MarkdownRenderer>
                         </motion.div>

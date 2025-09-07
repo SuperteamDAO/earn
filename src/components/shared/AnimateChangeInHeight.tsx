@@ -37,6 +37,9 @@ export const AnimateChangeInHeight = ({
       setTimeout(() => {
         window.dispatchEvent(new Event('resize'));
       }, 100);
+      setTimeout(() => {
+        window.dispatchEvent(new Event('resize'));
+      }, 250);
     }
     prevHeight.current = bounds.height;
   }, [bounds.height, shouldAnimate]);
