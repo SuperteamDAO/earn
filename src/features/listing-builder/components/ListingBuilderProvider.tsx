@@ -164,6 +164,9 @@ function ListingBuilderProvider({
 
   const generatedListing = useAtomValue(generatedListingAtom);
   const params = useSearchParams();
+
+  const hackathonSlug = params?.get('hackathon');
+  const hackathonId = hackathons?.find((h) => h.slug === hackathonSlug)?.id;
   const defaultListing = listing
     ? transformListingToFormListing(listing)
     : getListingDefaults({
@@ -173,6 +176,7 @@ function ListingBuilderProvider({
         type: (params?.get('type') as BountyType) || 'bounty',
         hackathons,
         generatedListing,
+        hackathonId,
       });
 
   return (

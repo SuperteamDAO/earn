@@ -133,7 +133,7 @@ export const getListingDefaults = ({
     if (generatedListing.skills) {
       defaults['skills'] = generatedListing.skills;
     }
-    if (generatedListing.eligibilityQuestions) {
+    if (generatedListing.eligibilityQuestions && type !== 'hackathon') {
       defaults['eligibility'] = generatedListing.eligibilityQuestions;
     }
   }

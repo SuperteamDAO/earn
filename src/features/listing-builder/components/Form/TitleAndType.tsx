@@ -184,6 +184,10 @@ function Type() {
   const [pendingTypeChange, setPendingTypeChange] = useState<string | null>(
     null,
   );
+  const type = useWatch({
+    name: 'type',
+    control: form.control,
+  });
   const hackathonId = useWatch({
     name: 'hackathonId',
     control: form.control,
@@ -245,6 +249,17 @@ function Type() {
     ]);
     if (!!form.getValues().id) form.saveDraft();
   };
+
+  const currentTypeLabel = useMemo(() => {
+    if (type === 'hackathon') return currentHackathon?.name;
+    return type;
+  }, [type, currentHackathon]);
+
+  const pendingTypeLabel = useMemo(() => {
+    if (hackathons?.some((h) => h.slug === pendingTypeChange))
+      return hackathons.find((h) => h.slug === pendingTypeChange)?.name;
+    return pendingTypeChange;
+  }, [pendingTypeChange, hackathons]);
 
   return (
     <FormField
@@ -313,8 +328,8 @@ function Type() {
                 <AlertDialogHeader>
                   <AlertDialogTitle>
                     Change Listing Type from{' '}
-                    <span className="capitalize">{field.value}</span> to{' '}
-                    <span className="capitalize">{pendingTypeChange}</span>
+                    <span className="capitalize">{currentTypeLabel}</span> to{' '}
+                    <span className="capitalize">{pendingTypeLabel}</span>
                   </AlertDialogTitle>
                   <AlertDialogDescription>
                     Changing the listing type will affect your listing details.
