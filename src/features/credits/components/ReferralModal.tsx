@@ -111,7 +111,7 @@ export function ReferralModal({ isOpen, onClose }: ReferralModalProps) {
                 <p className="text-sm text-slate-500">{shareUrl}</p>
                 <CopyButton
                   text={shareUrl}
-                  onCopy={() => posthog.capture('copy_referral_link')}
+                  onCopy={() => posthog.capture('copy_referral link')}
                   contentProps={{
                     side: 'right',
                     className: 'text-sm px-2 py-1 text-slate-500',
