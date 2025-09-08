@@ -1,10 +1,18 @@
-import dayjs from 'dayjs';
-import { ArrowDown } from 'lucide-react';
+import { Cross2Icon } from '@radix-ui/react-icons';
 import { useState } from 'react';
 
-import BsFillLaptopFill from '@/components/icons/BsFillLaptopFill';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
-import { ExternalImage } from '@/components/ui/cloudinary-image';
+import { DialogClose } from '@/components/ui/dialog';
 import {
   Select,
   SelectContent,
@@ -18,179 +26,65 @@ import { ProjectIcon } from '@/svg/project-icon';
 
 import { getListingIcon } from '@/features/listings/utils/getListingIcon';
 interface AutoGenerateTypeProps {
+  input: string;
+  setInput: (input: string) => void;
   setType: (type: BountyType | 'hackathon') => void;
   type: BountyType | 'hackathon';
   hackathons?: HackathonModel[];
   setHackathonSlug: (hackathon: string) => void;
   hackathonSlug: string;
 }
-export function AutoGenerateStageType({
-  setType,
-  hackathons,
-  setHackathonSlug,
-}: AutoGenerateTypeProps) {
-  const [showHackathon, setShowHackathon] = useState(false);
-
+export function AutoGenerateStageType({ setType }: AutoGenerateTypeProps) {
   return (
-    <div>
-      <div className="flex">
-        <div className="relative flex-1">
-          <div className="relative mb-6 flex items-center justify-center bg-violet-50 px-32 py-12">
-            <ExternalImage
-              className="h-60 w-full object-contain"
-              alt="Bounty Illustration"
-              src={'/dashboard/bounty_illustration.svg'}
-              loading="eager"
-            />
-            <div className="absolute top-4 right-4 flex items-center rounded-full bg-white px-3 py-1 text-violet-500">
-              <BountyIcon
-                styles={{
-                  width: '1rem',
-                  height: '1rem',
-                  marginRight: '0.25rem',
-                  color: 'red',
-                  fill: '#8B5CF6',
-                }}
-              />
-              <p className="text-sm font-bold">Bounty</p>
-            </div>
-          </div>
-
-          <div className="p-8">
-            <h3 className="mb-4 text-lg font-semibold">
-              Host a Work Competition
-            </h3>
-            <p className="mb-4 text-slate-500">
-              All participants complete your scope of work, and the best
-              submission(s) are rewarded. Get multiple options to choose from.
-            </p>
-            <Button
-              className="w-full py-6"
-              onClick={() => setType('bounty')}
-              size="lg"
-            >
-              Create a Bounty
-            </Button>
-          </div>
-        </div>
-
-        <div className="relative flex-1 border-l border-slate-200">
-          <div className="relative mb-6 flex items-center justify-center bg-blue-50 px-32 py-12">
-            <ExternalImage
-              className="h-60 w-full object-contain"
-              alt="Project Illustration"
-              src={'/dashboard/project_illustration.svg'}
-              loading="eager"
-            />
-            <div className="absolute top-4 right-4 flex items-center rounded-full bg-white px-3 py-1 text-blue-500">
-              <ProjectIcon
-                styles={{
-                  width: '1rem',
-                  height: '1rem',
-                  marginRight: '0.25rem',
-                  color: 'red',
-                  fill: '#3B82F6',
-                }}
-              />
-              <p className="text-sm font-bold">Project</p>
-            </div>
-          </div>
-
-          <div className="p-8">
-            <h3 className="mb-4 text-lg font-semibold">Hire a Freelancer</h3>
-            <p className="mb-4 text-slate-500">
-              Get applications based on a questionnaire set by you, and select
-              one applicant to work with. Give a fixed budget, or ask for
-              quotes.
-            </p>
-            <Button
-              className="w-full py-6"
-              onClick={() => setType('project')}
-              size="lg"
-            >
-              Create a Project
-            </Button>
-          </div>
-        </div>
+    <div className="space-y-4 p-4">
+      <div className="flex items-center justify-between">
+        <h2 className="text-lg font-medium">Select type of listing</h2>
+        <DialogClose asChild>
+          <Button variant="ghost" size="icon">
+            <Cross2Icon className="h-4 w-4 text-slate-400" />
+          </Button>
+        </DialogClose>
       </div>
-      {hackathons && (
-        <>
-          {showHackathon ? (
-            <div className="flex border-t border-slate-200 bg-stone-50">
-              <div className="relative flex items-center justify-center bg-rose-50 px-16 py-2">
-                <ExternalImage
-                  className="w-52 object-contain"
-                  alt="Hackathons Illustration"
-                  src={'/dashboard/hackathons_illustration.svg'}
-                  loading="eager"
-                />
-                <div className="absolute right-4 bottom-4 flex items-center gap-2 rounded-full bg-white px-3 py-1 text-rose-400">
-                  <BsFillLaptopFill className="size-3 fill-rose-400" />
-                  <p className="text-xs font-bold">Hackathon</p>
-                </div>
-              </div>
-              <div className="p-8">
-                <h3 className="mb-2 text-lg font-semibold">
-                  Host a Hackathon Track
-                </h3>
-                <p className="mb-4 text-slate-500">
-                  Add your challenge to an ongoing hackathon. Pick winners and
-                  reward the best work. Choose one to get started.
-                </p>
-                <div className="flex flex-wrap gap-8">
-                  {hackathons?.map((hackathon) => (
-                    <Button
-                      key={hackathon.id}
-                      variant="outline"
-                      size="sm"
-                      className="h-auto border-slate-300 py-2"
-                      onClick={() => {
-                        setHackathonSlug(hackathon.slug);
-                        setType('hackathon');
-                      }}
-                    >
-                      {hackathon.altLogo ? (
-                        <img
-                          src={hackathon.altLogo}
-                          alt={hackathon.name}
-                          className="size-8 rounded-sm"
-                        />
-                      ) : (
-                        <BsFillLaptopFill className="size-4 fill-rose-400" />
-                      )}
-                      <div className="flex flex-col items-start gap-0">
-                        <p className="text-sm font-semibold text-slate-700">
-                          {hackathon.name}
-                        </p>
-                        <p className="text-xs text-slate-500">
-                          Deadline:{' '}
-                          {dayjs(hackathon.deadline).format('DD/MM/YYYY')}
-                        </p>
-                      </div>
-                    </Button>
-                  ))}
-                </div>
-              </div>
-            </div>
-          ) : (
-            <div className="w-full">
-              <Button
-                onClick={() => setShowHackathon(true)}
-                className="w-full justify-between px-8 pb-2"
-                variant="outline"
-              >
-                <span className="flex items-center gap-3 text-slate-500">
-                  <BsFillLaptopFill className="size-4 fill-slate-500" />
-                  Host a Hackathon Track
-                </span>
-                <span>
-                  <ArrowDown className="!size-4 text-slate-500" />
-                </span>
-              </Button>
-            </div>
-          )}
-        </>
-      )}
+      <div className="grid grid-cols-2 gap-4">
+        <Button
+          className="flex h-55 flex-col gap-4 whitespace-normal text-slate-500 hover:text-slate-500"
+          variant="outline"
+          onClick={() => setType('bounty')}
+        >
+          <BountyIcon
+            className="fill-slate-500"
+            styles={{
+              width: '3rem',
+              height: '3rem',
+            }}
+          />
+          <span className="flex max-w-3/4 flex-col gap-1">
+            <h3 className="text-base font-medium text-slate-900">Bounty</h3>
+            <p className="text-sm font-normal">
+              Get multiple submissions for your task, and reward the best work
+            </p>
+          </span>
+        </Button>
+        <Button
+          className="flex h-55 flex-col gap-4 whitespace-normal text-slate-500 hover:text-slate-500"
+          variant="outline"
+          onClick={() => setType('project')}
+        >
+          <ProjectIcon
+            className="fill-slate-500"
+            styles={{
+              width: '3rem',
+              height: '3rem',
+            }}
+          />
+          <span className="flex max-w-3/4 flex-col gap-1">
+            <h3 className="text-base font-medium text-slate-900">Project</h3>
+            <p className="text-sm font-normal">
+              Receive proposals for your work and pick the right candidate
+            </p>
+          </span>
+        </Button>
+      </div>
     </div>
   );
 }
@@ -201,16 +95,49 @@ export function AutoGenerateDropdownType({
   hackathons,
   setHackathonSlug,
   hackathonSlug,
+  input,
+  setInput,
 }: AutoGenerateTypeProps) {
+  const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
+  const [pendingTypeChange, setPendingTypeChange] = useState<string | null>(
+    null,
+  );
+
   const currentHackathon = hackathons?.find((h) => h.slug === hackathonSlug);
 
   const handleValueChange = (value: string) => {
-    if (value === 'bounty' || value === 'project') {
-      setType(value);
+    if (value === getDisplayValue()) return;
+    if (value === currentHackathon?.slug) return;
+    if (value === 'hackathon') return;
+    if (value === '') return;
+
+    // Only show dialog if there's input text
+    if (input.trim()) {
+      setPendingTypeChange(value);
+      setConfirmDialogOpen(true);
     } else {
-      setType('hackathon');
-      setHackathonSlug(value);
+      // If no input, change type immediately
+      if (value === 'bounty' || value === 'project') {
+        setType(value);
+      } else {
+        setType('hackathon');
+        setHackathonSlug(value);
+      }
     }
+  };
+
+  const handleConfirmTypeChange = () => {
+    if (pendingTypeChange) {
+      if (pendingTypeChange === 'bounty' || pendingTypeChange === 'project') {
+        setType(pendingTypeChange);
+      } else {
+        setType('hackathon');
+        setHackathonSlug(pendingTypeChange);
+      }
+      setPendingTypeChange(null);
+      setInput('');
+    }
+    setConfirmDialogOpen(false);
   };
 
   const getDisplayValue = () => {
@@ -228,35 +155,58 @@ export function AutoGenerateDropdownType({
   };
 
   return (
-    <Select value={getDisplayValue()} onValueChange={handleValueChange}>
-      <SelectTrigger className="h-8 w-auto font-medium text-slate-500">
-        <div className="flex items-center gap-2 pr-2">
-          {getListingIcon(type)}
-          <span className="max-w-20 truncate">{getDisplayLabel()}</span>
-        </div>
-      </SelectTrigger>
-      <SelectContent className="font-medium text-slate-500">
-        <SelectItem value="bounty">
-          <div className="flex items-center gap-2">
-            {getListingIcon('bounty')}
-            <span>Bounty</span>
+    <>
+      <Select value={getDisplayValue()} onValueChange={handleValueChange}>
+        <SelectTrigger className="h-8 w-auto font-medium text-slate-500">
+          <div className="flex items-center gap-2 pr-2">
+            {getListingIcon(type)}
+            <span className="max-w-20 truncate">{getDisplayLabel()}</span>
           </div>
-        </SelectItem>
-        <SelectItem value="project">
-          <div className="flex items-center gap-2">
-            {getListingIcon('project')}
-            <span>Project</span>
-          </div>
-        </SelectItem>
-        {hackathons?.map((hackathon) => (
-          <SelectItem key={hackathon.id} value={hackathon.slug}>
+        </SelectTrigger>
+        <SelectContent className="font-medium text-slate-500">
+          <SelectItem value="bounty">
             <div className="flex items-center gap-2">
-              {getListingIcon('hackathon')}
-              <span className="max-w-20 truncate">{hackathon.name}</span>
+              {getListingIcon('bounty')}
+              <span>Bounty</span>
             </div>
           </SelectItem>
-        ))}
-      </SelectContent>
-    </Select>
+          <SelectItem value="project">
+            <div className="flex items-center gap-2">
+              {getListingIcon('project')}
+              <span>Project</span>
+            </div>
+          </SelectItem>
+          {hackathons?.map((hackathon) => (
+            <SelectItem key={hackathon.id} value={hackathon.slug}>
+              <div className="flex items-center gap-2">
+                {getListingIcon('hackathon')}
+                <span className="max-w-20 truncate">{hackathon.name}</span>
+              </div>
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+
+      <AlertDialog
+        open={confirmDialogOpen}
+        onOpenChange={() => setConfirmDialogOpen(false)}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Continue?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Changing the listing type means your prompt text will be cleared
+              and you will have to write a new prompt. Do you want to continue?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleConfirmTypeChange}>
+              Continue
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
   );
 }

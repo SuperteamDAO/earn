@@ -1,13 +1,11 @@
-import dayjs from 'dayjs';
+import { Cross2Icon } from '@radix-ui/react-icons';
 import { motion } from 'motion/react';
 import { useRouter } from 'next/router';
 import posthog from 'posthog-js';
-import React from 'react';
+import React, { useEffect } from 'react';
 
-import BsFillLaptopFill from '@/components/icons/BsFillLaptopFill';
 import { Button } from '@/components/ui/button';
-import { ExternalImage } from '@/components/ui/cloudinary-image';
-import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { Dialog, DialogClose, DialogContent } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { type HackathonModel } from '@/prisma/models/Hackathon';
@@ -17,13 +15,18 @@ import { ProjectIcon } from '@/svg/project-icon';
 export const CreateListingModal = ({
   isOpen = false,
   onClose,
-  hackathons,
 }: {
   isOpen: boolean;
   onClose: () => void;
   hackathons?: HackathonModel[];
 }) => {
   const router = useRouter();
+
+  useEffect(() => {
+    if (isOpen) {
+      router.prefetch('/dashboard/new');
+    }
+  }, [isOpen, router]);
 
   const handleCreateBounty = () => {
     posthog.capture('create new bounty_sponsor');
@@ -35,10 +38,10 @@ export const CreateListingModal = ({
     router.push('/dashboard/new?type=project');
   };
 
-  const handleCreateHackathon = (hackathon: string) => {
-    posthog.capture('create new hackathon_sponsor');
-    router.push(`/dashboard/new?type=hackathon&hackathon=${hackathon}`);
-  };
+  // const handleCreateHackathon = (hackathon: string) => {
+  //   posthog.capture('create new hackathon_sponsor');
+  //   router.push(`/dashboard/new?type=hackathon&hackathon=${hackathon}`);
+  // };
 
   const isMD = useMediaQuery('(min-width: 768px)');
 
@@ -47,7 +50,7 @@ export const CreateListingModal = ({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent
         hideCloseIcon
-        className="max-w-5xl overflow-hidden rounded-lg bg-white p-0"
+        className="overflow-hidden rounded-lg bg-white p-0 sm:max-w-160"
       >
         <ScrollArea
           className="max-h-[100svh]"
@@ -68,144 +71,62 @@ export const CreateListingModal = ({
             }}
             transition={{ type: 'spring', bounce: 0, duration: 0.4 }}
           >
-            <div className="flex">
-              <div className="relative flex-1">
-                <div className="relative mb-6 flex items-center justify-center bg-violet-50 px-32 py-12">
-                  <ExternalImage
-                    className="h-60 w-full object-contain"
-                    alt="Bounty Illustration"
-                    src={'/dashboard/bounty_illustration.svg'}
-                    loading="eager"
-                  />
-                  <div className="absolute top-4 right-4 flex items-center rounded-full bg-white px-3 py-1 text-violet-500">
-                    <BountyIcon
-                      styles={{
-                        width: '1rem',
-                        height: '1rem',
-                        marginRight: '0.25rem',
-                        color: 'red',
-                        fill: '#8B5CF6',
-                      }}
-                    />
-                    <p className="text-sm font-bold">Bounty</p>
-                  </div>
-                </div>
-
-                <div className="p-8">
-                  <h3 className="mb-4 text-lg font-semibold">
-                    Host a Work Competition
-                  </h3>
-                  <p className="mb-4 text-slate-500">
-                    All participants complete your scope of work, and the best
-                    submission(s) are rewarded. Get multiple options to choose
-                    from.
-                  </p>
-                  <Button
-                    className="w-full py-6"
-                    onClick={handleCreateBounty}
-                    size="lg"
-                  >
-                    Create a Bounty
+            <div className="space-y-4 p-4">
+              <div className="flex items-center justify-between">
+                <h2 className="text-lg font-medium">Select type of listing</h2>
+                <DialogClose asChild>
+                  <Button variant="ghost" size="icon">
+                    <Cross2Icon className="h-4 w-4 text-slate-400" />
                   </Button>
-                </div>
+                </DialogClose>
               </div>
-
-              <div className="relative flex-1 border-l border-slate-200">
-                <div className="relative mb-6 flex items-center justify-center bg-blue-50 px-32 py-12">
-                  <ExternalImage
-                    className="h-60 w-full object-contain"
-                    alt="Project Illustration"
-                    src={'/dashboard/project_illustration.svg'}
-                    loading="eager"
+              <div className="grid grid-cols-2 gap-4">
+                <Button
+                  className="flex h-55 flex-col gap-4 whitespace-normal text-slate-500 hover:text-slate-500"
+                  variant="outline"
+                  onClick={handleCreateBounty}
+                >
+                  <BountyIcon
+                    className="fill-slate-500"
+                    styles={{
+                      width: '3rem',
+                      height: '3rem',
+                    }}
                   />
-                  <div className="absolute top-4 right-4 flex items-center rounded-full bg-white px-3 py-1 text-blue-500">
-                    <ProjectIcon
-                      styles={{
-                        width: '1rem',
-                        height: '1rem',
-                        marginRight: '0.25rem',
-                        color: 'red',
-                        fill: '#3B82F6',
-                      }}
-                    />
-                    <p className="text-sm font-bold">Project</p>
-                  </div>
-                </div>
-
-                <div className="p-8">
-                  <h3 className="mb-4 text-lg font-semibold">
-                    Hire a Freelancer
-                  </h3>
-                  <p className="mb-4 text-slate-500">
-                    Get applications based on a questionnaire set by you, and
-                    select one applicant to work with. Give a fixed budget, or
-                    ask for quotes.
-                  </p>
-                  <Button
-                    className="w-full py-6"
-                    onClick={handleCreateProject}
-                    size="lg"
-                  >
-                    Create a Project
-                  </Button>
-                </div>
+                  <span className="flex max-w-3/4 flex-col gap-1">
+                    <h3 className="text-base font-medium text-slate-900">
+                      Bounty
+                    </h3>
+                    <p className="text-sm font-normal">
+                      Get multiple submissions for your task, and reward the
+                      best work
+                    </p>
+                  </span>
+                </Button>
+                <Button
+                  className="flex h-55 flex-col gap-4 whitespace-normal text-slate-500 hover:text-slate-500"
+                  variant="outline"
+                  onClick={handleCreateProject}
+                >
+                  <ProjectIcon
+                    className="fill-slate-500"
+                    styles={{
+                      width: '3rem',
+                      height: '3rem',
+                    }}
+                  />
+                  <span className="flex max-w-3/4 flex-col gap-1">
+                    <h3 className="text-base font-medium text-slate-900">
+                      Project
+                    </h3>
+                    <p className="text-sm font-normal">
+                      Receive proposals for your work and pick the right
+                      candidate
+                    </p>
+                  </span>
+                </Button>
               </div>
             </div>
-            {hackathons && (
-              <div className="flex border-t border-slate-200 bg-stone-50">
-                <div className="relative flex items-center justify-center bg-rose-50 px-16 py-2">
-                  <ExternalImage
-                    className="w-52 object-contain"
-                    alt="Hackathons Illustration"
-                    src={'/dashboard/hackathons_illustration.svg'}
-                    loading="eager"
-                  />
-                  <div className="absolute right-4 bottom-4 flex items-center gap-2 rounded-full bg-white px-3 py-1 text-rose-400">
-                    <BsFillLaptopFill className="size-3 fill-rose-400" />
-                    <p className="text-xs font-bold">Hackathon</p>
-                  </div>
-                </div>
-                <div className="p-8">
-                  <h3 className="mb-2 text-lg font-semibold">
-                    Host a Hackathon Track
-                  </h3>
-                  <p className="mb-4 text-slate-500">
-                    Add your challenge to an ongoing hackathon. Pick winners and
-                    reward the best work. Choose one to get started.
-                  </p>
-                  <div className="flex flex-wrap gap-8">
-                    {hackathons?.map((hackathon) => (
-                      <Button
-                        key={hackathon.id}
-                        variant="outline"
-                        size="sm"
-                        className="h-auto border-slate-300 py-2"
-                        onClick={() => handleCreateHackathon(hackathon.slug)}
-                      >
-                        {hackathon.altLogo ? (
-                          <img
-                            src={hackathon.altLogo}
-                            alt={hackathon.name}
-                            className="size-8 rounded-sm"
-                          />
-                        ) : (
-                          <BsFillLaptopFill className="size-4 fill-rose-400" />
-                        )}
-                        <div className="flex flex-col items-start gap-0">
-                          <p className="text-sm font-semibold text-slate-700">
-                            {hackathon.name}
-                          </p>
-                          <p className="text-xs text-slate-500">
-                            Deadline:{' '}
-                            {dayjs(hackathon.deadline).format('DD/MM/YYYY')}
-                          </p>
-                        </div>
-                      </Button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            )}
           </motion.div>
         </ScrollArea>
       </DialogContent>
