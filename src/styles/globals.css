@@ -463,8 +463,9 @@ h3.tiptap-heading + h2.tiptap-heading {
 }
 
 .tiptap p.is-editor-empty:first-child::before {
-  @apply text-accent-foreground pointer-events-none float-left h-0;
+  @apply pointer-events-none float-left h-0;
   content: attr(data-placeholder);
+  color: var(--content-placeholder-color, #94a3b8) !important;
 }
 
 .tiptap ul,

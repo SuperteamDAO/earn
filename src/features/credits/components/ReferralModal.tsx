@@ -1,15 +1,13 @@
 import { useQuery } from '@tanstack/react-query';
-import { ArrowLeftIcon, Check, CopyIcon } from 'lucide-react';
+import { ArrowLeftIcon, CopyIcon } from 'lucide-react';
 import posthog from 'posthog-js';
 import { useMemo, useState } from 'react';
 
 import { ExternalImage } from '@/components/ui/cloudinary-image';
+import { CopyButton } from '@/components/ui/copy-tooltip';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
-import { Tooltip } from '@/components/ui/tooltip';
-import { useClipboard } from '@/hooks/use-clipboard';
 import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
-import { cn } from '@/utils/cn';
 
 import { CreditIcon } from '../icon/credit';
 
@@ -50,16 +48,6 @@ export function ReferralModal({ isOpen, onClose }: ReferralModalProps) {
   });
 
   const remaining = data?.remaining ?? 10;
-
-  const { onCopy: copyToClipboard, hasCopied } = useClipboard(shareUrl);
-
-  const handleCopyReferralLink = () => {
-    posthog.capture('referral_link_copied', {
-      referral_code: code,
-      share_url: shareUrl,
-    });
-    copyToClipboard();
-  };
 
   return (
     <Dialog open={isOpen} onOpenChange={closeModal} modal>
@@ -121,53 +109,18 @@ export function ReferralModal({ isOpen, onClose }: ReferralModalProps) {
 
               <div className="relative mt-3 flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50 px-4 py-3">
                 <p className="text-sm text-slate-500">{shareUrl}</p>
-                <Tooltip
-                  disableOnClickClose
+                <CopyButton
+                  text={shareUrl}
+                  onCopy={() => posthog.capture('copy_referral_link')}
                   contentProps={{
-                    className:
-                      'pointer-events-none select-none flex items-center gap-1',
-                    sideOffset: 8,
+                    side: 'right',
+                    className: 'text-sm px-2 py-1 text-slate-500',
                   }}
-                  content={
-                    <div className="relative">
-                      <div
-                        className={cn(
-                          'absolute left-2/4 flex -translate-x-2/4 items-center gap-1 transition-all duration-200 ease-in-out',
-                          hasCopied ? 'opacity-100' : 'opacity-0',
-                        )}
-                      >
-                        <Check className="h-3.5 w-3.5" />
-                        <span>Copied!</span>
-                      </div>
-                      <div
-                        className={cn(
-                          'flex items-center gap-1 transition-all duration-200 ease-in-out',
-                          hasCopied ? 'opacity-0' : 'opacity-100',
-                        )}
-                      >
-                        <CopyIcon className="h-3 w-3" />
-                        <span>Click to copy</span>
-                      </div>
-                    </div>
-                  }
                 >
-                  <div
-                    role="button"
-                    className="absolute top-1/2 right-4 inline-flex -translate-y-1/2 items-center text-sm text-slate-500"
-                    onClick={handleCopyReferralLink}
-                    tabIndex={0}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault();
-                        handleCopyReferralLink();
-                      }
-                    }}
-                  >
-                    <div className="p-2">
-                      <CopyIcon className="size-4 text-slate-400" />
-                    </div>
+                  <div className="flex items-center gap-1">
+                    <CopyIcon className="size-4 text-slate-500" />
                   </div>
-                </Tooltip>
+                </CopyButton>
               </div>
             </div>
           </div>
@@ -185,8 +138,9 @@ export function ReferralModal({ isOpen, onClose }: ReferralModalProps) {
             <div className="px-6 py-4 text-slate-500">
               <ol className="list-decimal space-y-4 pb-6 pl-5">
                 <li>
-                  Credits rewarded 30 days after your invitee makes a non-spam
-                  submission.
+                  Credits are rewarded after your invitee makes a non-spam
+                  submission and winners are announced for the listing they
+                  submitted to.
                 </li>
                 <li>You get one extra credit every time your invitee wins.</li>
                 <li>

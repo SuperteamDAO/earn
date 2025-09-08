@@ -1,7 +1,7 @@
 import { usePrivy } from '@privy-io/react-auth';
 import { useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
-import { ArrowRight, Gift, Loader2, Pencil } from 'lucide-react';
+import { ArrowRight, Gift, Loader2, Pencil, X } from 'lucide-react';
 import { useRouter } from 'next/router';
 import posthog from 'posthog-js';
 import React, { useState } from 'react';
@@ -185,7 +185,7 @@ export const SubmissionActionButton = ({
   } = useDisclosure();
 
   const openReferralWithEvent = () => {
-    posthog.capture('open_credits');
+    posthog.capture('open_referrals');
     onReferralOpen();
   };
 
@@ -204,7 +204,7 @@ export const SubmissionActionButton = ({
       isWinnersAnnounced &&
       isFndnPaying &&
       submission?.isWinner &&
-      dayjs(listing.winnersAnnouncedAt).isAfter(dayjs('2025-08-06'))
+      dayjs(listing.winnersAnnouncedAt).isAfter(dayjs.utc('2025-08-06'))
     ) {
       const isKycExpired =
         !submission?.kycVerifiedAt ||
@@ -230,7 +230,9 @@ export const SubmissionActionButton = ({
 
   switch (buttonState) {
     case 'rejected':
-      buttonText = 'Application Rejected';
+      buttonText = isProject
+        ? 'Application Rejected'
+        : 'Submission Marked as Spam';
       buttonBG = 'bg-red-600';
       isBtnDisabled = true;
       btnLoadingText = null;
@@ -318,7 +320,10 @@ export const SubmissionActionButton = ({
     onClose: onSurveyClose,
   } = useDisclosure();
 
-  const surveyId = '018c6743-c893-0000-a90e-f35d31c16692';
+  const surveyId =
+    process.env.NEXT_PUBLIC_VERCEL_ENV === 'production'
+      ? '018c6743-c893-0000-a90e-f35d31c16692'
+      : '';
 
   const requiresCredits =
     (isProject || isBounty) &&
@@ -354,6 +359,7 @@ export const SubmissionActionButton = ({
         />
       )}
       {isSurveyOpen &&
+        surveyId &&
         (!user?.surveysShown || !(surveyId in user.surveysShown)) && (
           <SurveyModal
             isOpen={isSurveyOpen}
@@ -382,7 +388,7 @@ export const SubmissionActionButton = ({
                 className="absolute top-2 right-2 inline-flex size-5 items-center justify-center rounded-full bg-slate-400 text-white shadow-md hover:bg-slate-500"
                 onClick={() => setNudgeOpen(false)}
               >
-                ×
+                <X className="size-3" />
               </button>
               <Nudge
                 setNudgeState={setNudgeOpen}

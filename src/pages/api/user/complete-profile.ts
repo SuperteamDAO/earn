@@ -6,6 +6,7 @@ import { prisma } from '@/prisma';
 import { cleanSkills } from '@/utils/cleanSkills';
 import { verifyImageExists } from '@/utils/cloudinary';
 import { filterAllowedFields } from '@/utils/filterAllowedFields';
+import { generateUniqueReferralCode } from '@/utils/referralCodeGenerator';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { userSelectOptions } from '@/features/auth/constants/userSelectOptions';
@@ -62,8 +63,9 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       .toString()
       .trim()
       .toUpperCase();
+
     const referredByUpdate: { referredById?: string } = {};
-    if (referralCodeRaw) {
+    if (referralCodeRaw && !user.referredById) {
       try {
         const inviter = await prisma.user.findUnique({
           where: { referralCode: referralCodeRaw },
@@ -183,6 +185,8 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
 
     const walletAddress = createWalletResponse.wallet?.address;
 
+    const referralCode = await generateUniqueReferralCode();
+
     await prisma.user.update({
       where: {
         id: userId as string,
@@ -204,6 +208,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
         superteamLevel: 'Lurker',
         isTalentFilled: true,
         walletAddress,
+        referralCode,
       },
     });
 

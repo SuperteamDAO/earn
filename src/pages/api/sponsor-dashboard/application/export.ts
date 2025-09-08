@@ -90,6 +90,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         Ask: application.ask || '',
         'Approved Amount': application.approvedAmount,
         'Grant Decision': application.applicationStatus,
+        Notes: plainTextFromHtmlTurndown.turndown(application.notes || ''),
       };
     });
 

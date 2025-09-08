@@ -32,9 +32,9 @@ type CreditEventType =
   | 'GRANT_WIN_BONUS'
   | 'SPAM_DISPUTE'
   | 'GRANT_SPAM_DISPUTE'
-  | 'REFERRAL_INVITEE_WIN_BONUS_INVITER'
+  | 'REFERRAL_FIRST_SUBMISSION_BONUS_INVITEE'
   | 'REFERRAL_FIRST_SUBMISSION_BONUS_INVITER'
-  | 'REFERRAL_INVITEE_WIN_BONUS_INVITEE';
+  | 'REFERRAL_INVITEE_WIN_BONUS_INVITER';
 
 export interface CreditEntry {
   id: string;
@@ -135,9 +135,9 @@ export function CreditHistoryCard({
             entry.type === 'CREDIT_EXPIRY' || entry.type === 'MONTHLY_CREDIT';
 
           const isReferralEntry =
-            entry.type === 'REFERRAL_INVITEE_WIN_BONUS_INVITER' ||
+            entry.type === 'REFERRAL_FIRST_SUBMISSION_BONUS_INVITEE' ||
             entry.type === 'REFERRAL_FIRST_SUBMISSION_BONUS_INVITER' ||
-            entry.type === 'REFERRAL_INVITEE_WIN_BONUS_INVITEE';
+            entry.type === 'REFERRAL_INVITEE_WIN_BONUS_INVITER';
 
           const EntryContent = () => (
             <>
@@ -394,12 +394,12 @@ function getEntryTitle(entry: CreditEntry): string {
       return 'Spam Dispute Submitted';
     case 'GRANT_SPAM_DISPUTE':
       return 'Grant Spam Dispute Submitted';
-    case 'REFERRAL_INVITEE_WIN_BONUS_INVITER':
-      return 'Bonus Referral Credit';
+    case 'REFERRAL_FIRST_SUBMISSION_BONUS_INVITEE':
+      return 'Referral Accepted Successfully';
     case 'REFERRAL_FIRST_SUBMISSION_BONUS_INVITER':
       return 'Referred Successfully';
-    case 'REFERRAL_INVITEE_WIN_BONUS_INVITEE':
-      return 'Referred Successfully';
+    case 'REFERRAL_INVITEE_WIN_BONUS_INVITER':
+      return 'Bonus Referral Credit';
   }
 }
 
@@ -413,8 +413,8 @@ function getEntrySubtitle(entry: CreditEntry, name: string, title: string) {
           : name + ' won a hackathon track';
     case 'REFERRAL_FIRST_SUBMISSION_BONUS_INVITER':
       return name + ' made an eligible submission';
-    case 'REFERRAL_INVITEE_WIN_BONUS_INVITEE':
-      return 'You got referred successfully';
+    case 'REFERRAL_FIRST_SUBMISSION_BONUS_INVITEE':
+      return 'You got bonus referral credit';
     default:
       return title;
   }

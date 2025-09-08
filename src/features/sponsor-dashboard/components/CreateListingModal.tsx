@@ -50,7 +50,7 @@ export const CreateListingModal = ({
         className="max-w-5xl overflow-hidden rounded-lg bg-white p-0"
       >
         <ScrollArea
-          className="max-h-[90svh]"
+          className="max-h-[100svh]"
           viewportProps={{
             className: 'h-full *:h-full',
           }}

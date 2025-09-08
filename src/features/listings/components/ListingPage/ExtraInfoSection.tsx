@@ -15,6 +15,7 @@ interface ExtraInfoSectionProps {
   commitmentDate?: string | undefined;
   Hackathon?: ListingHackathon;
   isGrant?: boolean;
+  hideWinnerAnnouncement?: boolean;
 }
 
 export function ExtraInfoSection({
@@ -25,6 +26,7 @@ export function ExtraInfoSection({
   region,
   commitmentDate,
   isGrant = false,
+  hideWinnerAnnouncement = false,
 }: ExtraInfoSectionProps) {
   return (
     <div className="flex w-full flex-col gap-8 pt-2 md:w-[23rem]">
@@ -103,7 +105,7 @@ export function ExtraInfoSection({
           </div>
         </div>
       )}
-      {!!commitmentDate && (
+      {!!commitmentDate && !hideWinnerAnnouncement && (
         <div className="hidden w-full flex-col items-start gap-2 text-sm md:flex">
           <p className="h-full text-center font-semibold text-slate-600">
             WINNER ANNOUNCEMENT BY

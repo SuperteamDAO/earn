@@ -4,7 +4,7 @@ import { prisma } from '@/prisma';
 
 const ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
 
-const generateCandidate = (length = 8): string => {
+const generateCandidate = (length = 7): string => {
   const bytes = randomBytes(length);
   let result = '';
   for (let i = 0; i < length; i++) {
@@ -16,7 +16,7 @@ const generateCandidate = (length = 8): string => {
 
 export const generateUniqueReferralCode = async (): Promise<string> => {
   for (let attempt = 0; attempt < 5; attempt++) {
-    const candidate = generateCandidate(8);
+    const candidate = generateCandidate(7);
     const exists = await prisma.user.findUnique({
       where: { referralCode: candidate },
       select: { id: true },
@@ -25,7 +25,7 @@ export const generateUniqueReferralCode = async (): Promise<string> => {
   }
 
   while (true) {
-    const candidate = generateCandidate(10);
+    const candidate = generateCandidate(7);
     const exists = await prisma.user.findUnique({
       where: { referralCode: candidate },
       select: { id: true },

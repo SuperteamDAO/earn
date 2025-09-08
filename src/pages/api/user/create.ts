@@ -2,7 +2,6 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
-import { generateUniqueReferralCode } from '@/utils/referralCodeGenerator';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { getPrivyToken } from '@/features/auth/utils/getPrivyToken';
@@ -20,31 +19,14 @@ export default async function createUser(
 
   try {
     const privyDid = await getPrivyToken(req);
-    const { email, referralCode } = req.body as {
-      email: string;
-      referralCode?: string;
-    };
+    const { email } = req.body as { email: string };
 
     if (!privyDid || !email) {
       logger.warn('Unauthorized request - Missing token or email');
       return res.status(401).json({ error: 'Unauthorized' });
     }
 
-    // Convert email to lowercase to ensure consistency
     const normalizedEmail = email.toLowerCase();
-
-    const existingUser = await prisma.user.findUnique({
-      where: { privyDid },
-      select: { id: true, email: true },
-    });
-
-    if (existingUser) {
-      logger.warn(`User already exists with privyDid: ${privyDid}`);
-      return res.status(200).json({
-        message: `User already exists`,
-        created: false,
-      });
-    }
 
     const existingUserByEmail = await prisma.user.findUnique({
       where: { email: normalizedEmail },
@@ -61,41 +43,9 @@ export default async function createUser(
       });
     }
 
-    let referredById: string | undefined = undefined;
-    const normalizedCode = referralCode
-      ? referralCode.toString().trim().toUpperCase()
-      : undefined;
-    if (normalizedCode) {
-      const inviter = await prisma.user.findUnique({
-        where: { referralCode: normalizedCode },
-        select: { id: true },
-      });
-
-      if (inviter) {
-        const accepted = await prisma.user.count({
-          where: { referredById: inviter.id },
-        });
-        if (accepted < 10) {
-          referredById = inviter.id;
-        } else {
-          logger.info(
-            `Referral cap reached for inviter ${inviter.id}, ignoring referralCode during signup`,
-          );
-        }
-      } else {
-        logger.info(`Invalid referralCode provided: ${referralCode}`);
-      }
-    }
-
     const user = await prisma.user.create({
-      data: { privyDid, email: normalizedEmail, referredById },
+      data: { privyDid, email: normalizedEmail },
       select: { id: true },
-    });
-
-    const code = await generateUniqueReferralCode();
-    await prisma.user.update({
-      where: { id: user.id },
-      data: { referralCode: code },
     });
 
     logger.info(`Created new user with ID: ${user.id}`);

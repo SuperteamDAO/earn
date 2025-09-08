@@ -62,7 +62,7 @@
   --content-code-color: #616161;
   --content-pre-bg: #0d0d0d;
   --content-pre-color: #fff;
-  --content-placeholder-color: #9d9d9f;
+  --content-placeholder-color: #94a3b8;
   --content-hr-color: #dcdcdc;
   --content-selection-bg: rgba(99, 102, 241, 0.25);
   --content-blockquote-bg: rgba(0, 0, 0, 0.05);
@@ -280,3 +280,12 @@
   height: auto;
   margin: 0 auto;
 } 
+
+
+.content p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  pointer-events: none;
+  float: left;
+  height: 0;
+  color: var(--content-placeholder-color) !important;
+}
