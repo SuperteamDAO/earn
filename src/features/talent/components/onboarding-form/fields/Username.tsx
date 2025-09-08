@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import debounce from 'lodash.debounce';
 import { CheckIcon } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
-import { useFormContext } from 'react-hook-form';
+import { useFormContext, useWatch } from 'react-hook-form';
 
 import {
   FormControl,
@@ -46,6 +46,13 @@ export function UsernameField({
     debounce(setIsUsernameTyping, 500),
   ).current;
   const debouncedSetUsername = useRef(debounce(setUsername, 500)).current;
+
+  const watchedUsername = useWatch({ control, name: 'username' });
+  useEffect(() => {
+    if (typeof watchedUsername === 'string') {
+      setUsername(watchedUsername);
+    }
+  }, [watchedUsername, setUsername, clearErrors]);
 
   useEffect(() => {
     if (isUsernameTyping || validating) {
