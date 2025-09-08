@@ -145,14 +145,23 @@ export function transformListingToFormListing(
     id: listing.id,
     deadline:
       listing.deadline ||
-      dayjs().add(7, 'day').format(DEADLINE_FORMAT).replace('Z', ''),
+      dayjs()
+        .add(7, 'day')
+        .endOf('day')
+        .format(DEADLINE_FORMAT)
+        .replace('Z', ''),
     commitmentDate:
       listing.commitmentDate ||
       dayjs(
         listing.deadline ||
-          dayjs().add(7, 'day').format(DEADLINE_FORMAT).replace('Z', ''),
+          dayjs()
+            .add(7, 'day')
+            .endOf('day')
+            .format(DEADLINE_FORMAT)
+            .replace('Z', ''),
       )
         .add(14, 'day')
+        .endOf('day')
         .format(DEADLINE_FORMAT)
         .replace('Z', ''),
     slug: listing.slug || '',

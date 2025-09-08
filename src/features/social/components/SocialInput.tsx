@@ -143,11 +143,11 @@ export const SocialInput = ({
                 )}
 
                 <FormControl>
-                  <div className="relative flex-1">
+                  <div className="relative h-full flex-1">
                     <Input
                       {...field}
                       className={cn(
-                        'h-9 w-full',
+                        'h-full w-full',
                         social?.label ? 'rounded-l-none' : 'rounded-md',
                         'placeholder:text-sm',
                         showVerification &&

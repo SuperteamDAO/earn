@@ -38,7 +38,7 @@ export function WinnerAnnouncementDate() {
 
   const handleQuickSelect = (days: number, autoSave: boolean = true) => {
     if (!deadline) return;
-    const newDate = dayjs(deadline).add(days, 'day').toDate();
+    const newDate = dayjs(deadline).add(days, 'day').endOf('day').toDate();
     form.setValue(
       'commitmentDate',
       dayjs(newDate).format(DEADLINE_FORMAT).replace('Z', ''),
