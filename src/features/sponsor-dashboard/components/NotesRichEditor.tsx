@@ -217,17 +217,20 @@ const useNotesEditor = ({
       if (currentLength + pastedText.length > maxLength) {
         return;
       }
-      editor.commands.insertContent(pastedText);
-      setTimeout(() => {
-        const text = editor.getText().trim();
-        if (
-          text.length > 0 &&
-          !editor.isActive('bulletList') &&
-          !editor.isActive('orderedList')
-        ) {
-          editor.commands.toggleBulletList();
-        }
-      }, 0);
+
+      requestAnimationFrame(() => {
+        editor.commands.insertContent(pastedText);
+        setTimeout(() => {
+          const text = editor.getText().trim();
+          if (
+            text.length > 0 &&
+            !editor.isActive('bulletList') &&
+            !editor.isActive('orderedList')
+          ) {
+            editor.commands.toggleBulletList();
+          }
+        }, 0);
+      });
     };
 
     const editorElement = editor.view.dom;
