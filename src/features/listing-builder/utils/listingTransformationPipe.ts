@@ -2,11 +2,13 @@ import { franc } from 'franc';
 
 import { tokenList } from '@/constants/tokenList';
 import logger from '@/lib/logger';
+import { prisma } from '@/prisma';
 import { type BountiesUncheckedUpdateInput } from '@/prisma/models/Bounties';
 import { type SponsorsModel } from '@/prisma/models/Sponsors';
 import { cleanSkills } from '@/utils/cleanSkills';
 
 import { type ListingWithSponsor } from '@/features/auth/utils/checkListingSponsorAuth';
+import { hasMoreThan72HoursLeft } from '@/features/listing-builder/components/Form/Boost/utils';
 import { type ListingFormData } from '@/features/listing-builder/types';
 import { isFndnPayingCheck } from '@/features/listing-builder/utils/isFndnPayingCheck';
 import { fetchTokenUSDValue } from '@/features/wallet/utils/fetchTokenUSDValue';
@@ -33,6 +35,25 @@ const processMaxBonusSpots = (
     return 0;
   }
   return newMaxBonusSpots;
+};
+
+const isAutoFeatureUsdThresholdMet = (
+  price: number | undefined,
+  amount: number,
+): boolean => {
+  if (typeof price !== 'number' || amount <= 0) return false;
+  return price * amount >= 4900;
+};
+
+const countLiveFeaturedListings = async (): Promise<number> => {
+  return prisma.bounties.count({
+    where: {
+      isFeatured: true,
+      isPublished: true,
+      isActive: true,
+      deadline: { gte: new Date() },
+    },
+  });
 };
 
 interface TransformToPrismaDataProps {
@@ -140,9 +161,23 @@ export const transformToPrismaData = async ({
     }
   }
 
+  let autoIsFeatured = false;
+  try {
+    if (
+      isAutoFeatureUsdThresholdMet(tokenUsdAtPublish, amount) &&
+      hasMoreThan72HoursLeft(deadline)
+    ) {
+      const liveFeaturedCount = await countLiveFeaturedListings();
+      autoIsFeatured = liveFeaturedCount < 2;
+    }
+  } catch (error) {
+    logger.error('Auto-feature evaluation failed', { error });
+  }
+
   const baseData: BountiesUncheckedUpdateInput = {
     title,
     ...(includeUsdValue ? { usdValue } : {}),
+    ...(autoIsFeatured ? { isFeatured: true } : {}),
     skills,
     slug,
     deadline: new Date(deadline),

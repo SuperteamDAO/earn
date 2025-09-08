@@ -43,11 +43,6 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   trailingSlash: true,
   reactStrictMode: true,
-  api: {
-    bodyParser: {
-      sizeLimit: '10mb',
-    },
-  },
   images: {
     minimumCacheTTL: 86400,
     remotePatterns: [

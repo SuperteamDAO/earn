@@ -17,7 +17,8 @@ export const formatNumberWithSuffix = (
     tier = 0;
   }
 
-  if (tier === 0) return amount.toLocaleString('en-us');
+  if (tier === 0)
+    return amount.toLocaleString('en-us', { maximumFractionDigits: decimals });
 
   const suffix = suffixes[tier];
   const scale = Math.pow(10, tier * 3);

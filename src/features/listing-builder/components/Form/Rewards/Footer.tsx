@@ -1,5 +1,5 @@
 import debounce from 'lodash.debounce';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useWatch } from 'react-hook-form';
 import { toast } from 'sonner';
 
@@ -10,9 +10,18 @@ import { calculateTotalPrizes } from '@/features/listing-builder/utils/rewards';
 import { fetchTokenUSDValue } from '@/features/wallet/utils/fetchTokenUSDValue';
 
 import { useListingForm } from '../../../hooks';
+import { hasMoreThan72HoursLeft } from '../Boost/utils';
 import { RewardsLabel } from './Sheet';
 
-function RewardsFooter({ closeSheet }: { closeSheet: () => void }) {
+function RewardsFooter({
+  panel,
+  setPanel,
+  setOpen,
+}: {
+  panel: 'rewards' | 'boost';
+  setPanel: (panel: 'rewards' | 'boost') => void;
+  setOpen: (open: boolean) => void;
+}) {
   const form = useListingForm();
   const type = useWatch({
     control: form.control,
@@ -46,12 +55,22 @@ function RewardsFooter({ closeSheet }: { closeSheet: () => void }) {
     control: form.control,
     name: 'maxRewardAsk',
   });
+  const deadline = useWatch({
+    control: form.control,
+    name: 'deadline',
+  });
+
   const [tokenUsdValue, setTokenUsdValue] = useState<number | null>(null);
+
+  const rewardsSnapshotRef = useRef<any>(null);
+  const rewardAmountSnapshotRef = useRef<number | null>(null);
 
   const totalPrize = useMemo(
     () => calculateTotalPrizes(rewards, maxBonusSpots || 0),
     [type, maxBonusSpots, rewards],
   );
+
+  const deadlineMoreThan72HoursLeft = hasMoreThan72HoursLeft(deadline);
 
   const totalUsdPrize = useMemo(() => {
     if (type !== 'project') return (tokenUsdValue || 1) * (rewardAmount || 0);
@@ -129,19 +148,72 @@ function RewardsFooter({ closeSheet }: { closeSheet: () => void }) {
           <RewardsLabel hideCompensationType />
         </div>
       </div>
-      <Button
-        type="submit"
-        className="w-full"
-        onClick={async () => {
-          if (await form.validateRewards()) {
-            closeSheet();
-          } else {
-            toast.warning('Please resolve all errors in Rewards to Continue');
-          }
-        }}
-      >
-        Continue
-      </Button>
+      {panel === 'boost' && (
+        <div>
+          <Button
+            type="submit"
+            className="w-full"
+            onClick={async () => {
+              if (await form.validateRewards()) {
+                setOpen(false);
+              } else {
+                toast.warning(
+                  'Please resolve all errors in Rewards to Continue',
+                );
+              }
+            }}
+          >
+            Continue
+          </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            className="mt-2 w-full text-slate-500"
+            onClick={() => {
+              if (rewardsSnapshotRef.current !== null) {
+                form.setValue('rewards', rewardsSnapshotRef.current, {
+                  shouldValidate: true,
+                });
+              }
+              if (rewardAmountSnapshotRef.current !== null) {
+                form.setValue('rewardAmount', rewardAmountSnapshotRef.current, {
+                  shouldValidate: true,
+                });
+              }
+              form.saveDraft();
+              setOpen(false);
+            }}
+          >
+            Skip
+          </Button>
+        </div>
+      )}
+
+      {panel === 'rewards' && (
+        <Button
+          type="submit"
+          className="w-full"
+          onClick={async () => {
+            if (await form.validateRewards()) {
+              if (compensationType === 'fixed' && deadlineMoreThan72HoursLeft) {
+                rewardsSnapshotRef.current =
+                  rewards !== undefined
+                    ? JSON.parse(JSON.stringify(rewards))
+                    : null;
+                rewardAmountSnapshotRef.current =
+                  typeof rewardAmount === 'number' ? rewardAmount : null;
+                setPanel('boost');
+              } else {
+                setOpen(false);
+              }
+            } else {
+              toast.warning('Please resolve all errors in Rewards to Continue');
+            }
+          }}
+        >
+          Continue
+        </Button>
+      )}
     </div>
   );
 }
