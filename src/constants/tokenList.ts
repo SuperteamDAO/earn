@@ -450,4 +450,11 @@ export const tokenList: Token[] = [
     icon: 'https://s2.coinmarketcap.com/static/img/coins/128x128/13803.png',
     decimals: 9,
   },
+  {
+    tokenName: 'Swop.Meme',
+    tokenSymbol: 'SWOP',
+    mintAddress: 'AhhtUFVLUSDxgsPTuky7JXEi92e3QcqnagfgZoDSjups',
+    icon: '',
+    decimals: 6,
+  },
 ];
