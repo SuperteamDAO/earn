@@ -302,11 +302,7 @@ export const SubmissionHeader = ({
           >
             {bountyStatus}
           </StatusPill>
-          <BoostButton
-            deadline={bounty?.deadline || ''}
-            usdValue={bounty?.usdValue || 0}
-            slug={bounty?.slug || ''}
-          />
+          <BoostButton listing={bounty!} />
 
           <div className="ml-4 -translate-y-2.5">
             <AiReviewProjectApplicationsModal

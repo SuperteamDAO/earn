@@ -220,11 +220,7 @@ export function ListingHeader({
         {listing.id && listing.isPublished && (
           <div className="flex items-center gap-2">
             {user?.currentSponsorId === listing.sponsorId ? (
-              <BoostButton
-                deadline={listing.deadline || ''}
-                usdValue={listing.usdValue || 0}
-                slug={slug || ''}
-              />
+              <BoostButton listing={listing} />
             ) : (
               <SubscribeListing isTemplate={isTemplate} id={listing.id} />
             )}

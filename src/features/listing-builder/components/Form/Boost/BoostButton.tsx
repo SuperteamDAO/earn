@@ -19,49 +19,54 @@ const BoostArrow = () => (
   </svg>
 );
 
-import { DEFAULT_EMAIL_IMPRESSIONS } from './constants';
-import { featuredAvailabilityQuery } from './queries';
+import { type Listing } from '@/features/listings/types';
+
+import { DEFAULT_EMAIL_IMPRESSIONS, isSkillsSelected } from './constants';
+import { emailEstimateQuery, featuredAvailabilityQuery } from './queries';
 import {
   amountToStep,
   calculateTotalImpressions,
   hasMoreThan72HoursLeft,
 } from './utils';
 
-export const BoostButton = ({
-  deadline,
-  usdValue,
-  slug,
-}: {
-  deadline: string;
-  usdValue: number;
-  slug: string;
-}) => {
-  const deadlineMoreThan72HoursLeft = hasMoreThan72HoursLeft(deadline);
+export const BoostButton = ({ listing }: { listing: Listing }) => {
+  const { deadline, usdValue, skills, region, slug } = listing;
+
+  const deadlineMoreThan72HoursLeft = hasMoreThan72HoursLeft(deadline ?? '');
 
   const { data: featuredData } = useQuery(featuredAvailabilityQuery());
   const isFeatureAvailable = featuredData?.isAvailable ?? false;
 
-  const currentStep = amountToStep(usdValue, isFeatureAvailable);
+  const currentStep = amountToStep(usdValue ?? 0, isFeatureAvailable);
   const maxAvailableStep = isFeatureAvailable ? 75 : 50;
   const canBeBoosted = currentStep < maxAvailableStep;
 
+  const { data: emailEstimate } = useQuery(
+    emailEstimateQuery(skills, region as string | undefined),
+  );
+
+  const emailImpressions =
+    isSkillsSelected(skills) && typeof emailEstimate === 'number'
+      ? emailEstimate
+      : DEFAULT_EMAIL_IMPRESSIONS;
+
   const currentImpressions = calculateTotalImpressions(
     currentStep,
-    DEFAULT_EMAIL_IMPRESSIONS,
+    emailImpressions,
     isFeatureAvailable,
   );
 
-  const nextStep = currentStep === 0 ? 25 : currentStep === 25 ? 50 : 75;
+  const maxStep = isFeatureAvailable ? 75 : 50;
 
-  const nextImpressions = calculateTotalImpressions(
-    nextStep,
-    DEFAULT_EMAIL_IMPRESSIONS,
+  const maxImpressions = calculateTotalImpressions(
+    maxStep,
+    emailImpressions,
     isFeatureAvailable,
   );
-  const additionalImpressions = nextImpressions - currentImpressions;
+  const additionalImpressions = maxImpressions - currentImpressions;
 
   if (deadlineMoreThan72HoursLeft && canBeBoosted) {
-    const deadlineDate = new Date(deadline);
+    const deadlineDate = new Date(deadline ?? '');
     const seventyTwoHoursBeforeDeadline = new Date(
       deadlineDate.getTime() - 72 * 60 * 60 * 1000,
     );

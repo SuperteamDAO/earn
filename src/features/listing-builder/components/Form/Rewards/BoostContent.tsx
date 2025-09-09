@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import dayjs from 'dayjs';
 import { MailIcon, StarIcon } from 'lucide-react';
 import { useWatch } from 'react-hook-form';
 
@@ -134,6 +135,27 @@ export function BoostContent() {
 
   const totalImpressions = getTotalImpressions(sliderStep);
 
+  const referenceDate = dayjs('2025-08-28');
+  const nextThursday = referenceDate.add(
+    (4 - referenceDate.day() + 7) % 7,
+    'day',
+  );
+  const mod2Thursday = nextThursday.add(14, 'day');
+
+  const day = mod2Thursday.date();
+  const month = mod2Thursday.format('MMM');
+
+  const getOrdinalSuffix = (num: number): string => {
+    const j = num % 10;
+    const k = num % 100;
+    if (j === 1 && k !== 11) return num + 'st';
+    if (j === 2 && k !== 12) return num + 'nd';
+    if (j === 3 && k !== 13) return num + 'rd';
+    return num + 'th';
+  };
+
+  const formattedNextPostDate = `${getOrdinalSuffix(day)} ${month}`;
+
   return (
     <div className="flex h-full flex-col gap-6">
       <div className="mx-20 flex items-center justify-around">
@@ -196,15 +218,15 @@ export function BoostContent() {
         <PerkRow
           active={true}
           icon={<FaXTwitter className="size-5" />}
-          title="X Live Listings Thread"
-          subtitle={`${formatNumberWithSuffix(LIVE_LISTINGS_THREAD_IMPRESSIONS, 1, true)} Impressions`}
+          title="X Fortnightly Thread"
+          subtitle={`~${formatNumberWithSuffix(LIVE_LISTINGS_THREAD_IMPRESSIONS, 1, false, true)} Impressions | next post on ${formattedNextPostDate}`}
         />
 
         <PerkRow
           active={sliderStep >= 25}
           icon={<FaXTwitter className="size-5" />}
           title="X Standalone Post"
-          subtitle={`${formatNumberWithSuffix(STANDALONE_POST_IMPRESSIONS, 1, true)} Impressions`}
+          subtitle={`~${formatNumberWithSuffix(STANDALONE_POST_IMPRESSIONS, 1, false, true)} Impressions`}
           locked={sliderStep < 25}
           onClick={sliderStep < 25 ? () => handlePerkClick(25) : undefined}
           requiredValue={BOOST_STEP_TO_AMOUNT_USD[25]}
@@ -215,7 +237,7 @@ export function BoostContent() {
           active={sliderStep >= 50}
           icon={<MailIcon className="size-5" />}
           title="Email Broadcast"
-          subtitle={`${formatNumberWithSuffix(emailImpressions, 1, true)} Emails`}
+          subtitle={`${formatNumberWithSuffix(emailImpressions, 1, false, true)} Emails`}
           locked={sliderStep < 50}
           onClick={sliderStep < 50 ? () => handlePerkClick(50) : undefined}
           requiredValue={BOOST_STEP_TO_AMOUNT_USD[50]}
@@ -227,7 +249,7 @@ export function BoostContent() {
             active={sliderStep >= 75}
             icon={<StarIcon className="size-5" />}
             title="Featured on Homepage"
-            subtitle={`${formatNumberWithSuffix(FEATURED_HOMEPAGE_IMPRESSIONS, 1, true)} Impressions`}
+            subtitle={`${formatNumberWithSuffix(FEATURED_HOMEPAGE_IMPRESSIONS, 1, false, true)} Impressions`}
             locked={sliderStep < 75}
             onClick={sliderStep < 75 ? () => handlePerkClick(75) : undefined}
             requiredValue={BOOST_STEP_TO_AMOUNT_USD[75]}
