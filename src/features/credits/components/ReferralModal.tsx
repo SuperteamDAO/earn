@@ -139,8 +139,7 @@ export function ReferralModal({ isOpen, onClose }: ReferralModalProps) {
               <ol className="list-decimal space-y-4 pb-6 pl-5">
                 <li>
                   Credits are rewarded after your invitee makes a non-spam
-                  submission and winners are announced for the listing they
-                  submitted to.
+                  submission to a listing, upon winner announcement.
                 </li>
                 <li>You get one extra credit every time your invitee wins.</li>
                 <li>
