@@ -1,5 +1,6 @@
 import { ArrowLeftIcon } from 'lucide-react';
-import { memo, useMemo, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
+import { memo, useEffect, useMemo, useState } from 'react';
 import { useWatch } from 'react-hook-form';
 
 import { Button } from '@/components/ui/button';
@@ -36,6 +37,15 @@ export function RewardsSheet() {
   const form = useListingForm();
   const [open, setOpen] = useState(false);
   const [panel, setPanel] = useState<'rewards' | 'boost'>('rewards');
+  const params = useSearchParams();
+
+  useEffect(() => {
+    const shouldOpenBoost = params?.get('boost') === 'true';
+    if (shouldOpenBoost) {
+      setOpen(true);
+      setPanel('boost');
+    }
+  }, [params]);
 
   const type = useWatch({
     control: form.control,

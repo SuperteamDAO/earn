@@ -37,12 +37,9 @@ const processMaxBonusSpots = (
   return newMaxBonusSpots;
 };
 
-const isAutoFeatureUsdThresholdMet = (
-  price: number | undefined,
-  amount: number,
-): boolean => {
-  if (typeof price !== 'number' || amount <= 0) return false;
-  return price * amount >= 4900;
+const isAutoFeatureUsdThresholdMet = (usdValue: number): boolean => {
+  if (typeof usdValue !== 'number' || usdValue <= 0) return false;
+  return usdValue >= 4900;
 };
 
 const countLiveFeaturedListings = async (): Promise<number> => {
@@ -164,7 +161,7 @@ export const transformToPrismaData = async ({
   let autoIsFeatured = false;
   try {
     if (
-      isAutoFeatureUsdThresholdMet(tokenUsdAtPublish, amount) &&
+      isAutoFeatureUsdThresholdMet(usdValue) &&
       hasMoreThan72HoursLeft(deadline)
     ) {
       const liveFeaturedCount = await countLiveFeaturedListings();
