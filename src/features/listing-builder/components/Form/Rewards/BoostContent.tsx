@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import { MailIcon, StarIcon } from 'lucide-react';
+import { useEffect } from 'react';
 import { useWatch } from 'react-hook-form';
 
 import FaXTwitter from '@/components/icons/FaXTwitter';
@@ -37,6 +38,10 @@ import {
 
 export function BoostContent() {
   const form = useListingForm();
+
+  const buildVideoUrl = (name: string) => {
+    return `https://res.cloudinary.com/dgvnuwspr/video/upload/assets/boost/${name}.webm`;
+  };
 
   const rewards = useWatch({
     control: form.control,
@@ -156,6 +161,31 @@ export function BoostContent() {
 
   const formattedNextPostDate = `${getOrdinalSuffix(day)} ${month}`;
 
+  useEffect(() => {
+    const videoNames = ['x-thread', 'x-standalone', 'email', 'featured'];
+    const sources = videoNames.map(buildVideoUrl);
+    const created: HTMLVideoElement[] = [];
+    const preload = () => {
+      sources.forEach((src) => {
+        const v = document.createElement('video');
+        v.src = src;
+        v.preload = 'auto';
+        v.muted = true;
+        v.playsInline = true as any;
+        v.load();
+        created.push(v);
+      });
+    };
+    if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
+      (window as any).requestIdleCallback(preload);
+    } else {
+      setTimeout(preload, 0);
+    }
+    return () => {
+      created.forEach((v) => v.remove());
+    };
+  }, []);
+
   return (
     <div className="flex h-full flex-col gap-6">
       <div className="mx-20 flex items-center justify-around">
@@ -220,6 +250,7 @@ export function BoostContent() {
           icon={<FaXTwitter className="size-5" />}
           title="X Fortnightly Thread"
           subtitle={`~${formatNumberWithSuffix(LIVE_LISTINGS_THREAD_IMPRESSIONS, 1, false, true)} Impressions | next post on ${formattedNextPostDate}`}
+          previewVideoSrc={buildVideoUrl('x-thread')}
         />
 
         <PerkRow
@@ -231,6 +262,7 @@ export function BoostContent() {
           onClick={sliderStep < 25 ? () => handlePerkClick(25) : undefined}
           requiredValue={BOOST_STEP_TO_AMOUNT_USD[25]}
           currentValue={estimatedUsdValue || 0}
+          previewVideoSrc={buildVideoUrl('x-standalone')}
         />
 
         <PerkRow
@@ -242,6 +274,7 @@ export function BoostContent() {
           onClick={sliderStep < 50 ? () => handlePerkClick(50) : undefined}
           requiredValue={BOOST_STEP_TO_AMOUNT_USD[50]}
           currentValue={estimatedUsdValue || 0}
+          previewVideoSrc={buildVideoUrl('email')}
         />
 
         {isFeatureAvailable ? (
@@ -254,6 +287,7 @@ export function BoostContent() {
             onClick={sliderStep < 75 ? () => handlePerkClick(75) : undefined}
             requiredValue={BOOST_STEP_TO_AMOUNT_USD[75]}
             currentValue={estimatedUsdValue || 0}
+            previewVideoSrc={buildVideoUrl('featured')}
           />
         ) : null}
       </div>

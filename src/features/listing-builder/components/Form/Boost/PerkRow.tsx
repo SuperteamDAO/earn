@@ -11,6 +11,7 @@ export function PerkRow({
   onClick,
   requiredValue,
   currentValue,
+  previewVideoSrc,
 }: {
   active?: boolean;
   icon: React.ReactNode;
@@ -20,11 +21,12 @@ export function PerkRow({
   onClick?: () => void;
   requiredValue?: number;
   currentValue?: number;
+  previewVideoSrc?: string;
 }) {
   return (
     <div
       className={cn(
-        'flex items-center rounded-lg border px-4 py-3 shadow-lg',
+        'group relative flex items-center rounded-lg border px-4 py-3 shadow-lg',
         active ? 'border-brand-purple text-slate-500 shadow-indigo-600/10' : '',
         locked ? 'cursor-pointer text-slate-500/60' : '',
       )}
@@ -50,6 +52,19 @@ export function PerkRow({
       ) : active ? (
         <div className="flex items-center justify-center rounded-full bg-violet-50 p-1.5">
           <CheckIcon className="text-brand-purple size-4" />
+        </div>
+      ) : null}
+
+      {previewVideoSrc ? (
+        <div className="pointer-events-none absolute top-1/2 right-full z-50 ml-3 w-80 -translate-y-1/2 overflow-hidden rounded-md border bg-white opacity-0 shadow-xl transition-opacity duration-100 group-hover:opacity-100">
+          <video
+            src={previewVideoSrc}
+            className="h-54 w-full object-cover"
+            muted
+            loop
+            playsInline
+            autoPlay
+          />
         </div>
       ) : null}
     </div>
