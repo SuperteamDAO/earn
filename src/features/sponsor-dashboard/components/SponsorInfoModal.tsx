@@ -14,6 +14,7 @@ import { Input } from '@/components/ui/input';
 import { useUploadImage } from '@/hooks/use-upload-image';
 import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
+import { IMAGE_SOURCE } from '@/utils/image';
 
 import { SocialInput } from '@/features/social/components/SocialInput';
 import {
@@ -95,7 +96,7 @@ export const SponsorInfoModal = ({
       if (selectedFile && !isGooglePhoto) {
         const uploadResult = await uploadAndReplace(
           selectedFile,
-          { folder: 'earn-pfp' },
+          { folder: 'earn-pfp', source: IMAGE_SOURCE.USER },
           user?.photo || undefined,
         );
         finalPhoto = uploadResult.url;

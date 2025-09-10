@@ -21,6 +21,7 @@ import { Input } from '@/components/ui/input';
 import { useUploadImage } from '@/hooks/use-upload-image';
 import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
+import { IMAGE_SOURCE } from '@/utils/image';
 
 import { extractSocialUsername } from '@/features/social/utils/extractUsername';
 import {
@@ -161,7 +162,7 @@ export const TalentForm = () => {
           if (selectedPhoto && !isGooglePhoto) {
             const uploadResult = await uploadAndReplace(
               selectedPhoto,
-              { folder: 'earn-pfp' },
+              { folder: 'earn-pfp', source: IMAGE_SOURCE.USER },
               user?.photo || undefined,
             );
             photoUrl = uploadResult.url;
