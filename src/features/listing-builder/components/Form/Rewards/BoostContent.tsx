@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import { MailIcon, StarIcon } from 'lucide-react';
+import { AnimatePresence, LayoutGroup, motion } from 'motion/react';
 import { useEffect } from 'react';
 import { useWatch } from 'react-hook-form';
 
@@ -196,22 +197,54 @@ export function BoostContent() {
               alt={token!}
               className="size-8"
             />
-            {formatNumberWithSuffix(safeRewardAmount, 1, true)}
+            <AnimatePresence mode="popLayout">
+              <motion.span
+                key={`tokens-${Math.round(safeRewardAmount * 1000)}`}
+                initial={{ y: 8, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                exit={{ y: -8, opacity: 0 }}
+                transition={{ duration: 0.18 }}
+              >
+                {formatNumberWithSuffix(safeRewardAmount, 1, true)}
+              </motion.span>
+            </AnimatePresence>
           </p>
           <p className="text-sm text-slate-500">
             {token} <span className="text-slate-500/30">•</span> ~$
-            {isUsdPending
-              ? '...'
-              : estimatedUsdValue !== null
-                ? formatNumberWithSuffix(estimatedUsdValue, 1, true)
-                : 'N/A'}
+            <AnimatePresence mode="popLayout">
+              {isUsdPending ? (
+                <motion.span key="pending">...</motion.span>
+              ) : estimatedUsdValue !== null ? (
+                <motion.span
+                  key={`usd-${Math.round(estimatedUsdValue)}`}
+                  initial={{ y: 8, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  exit={{ y: -8, opacity: 0 }}
+                  transition={{ duration: 0.18 }}
+                >
+                  {formatNumberWithSuffix(estimatedUsdValue, 1, true)}
+                </motion.span>
+              ) : (
+                <motion.span key="na">N/A</motion.span>
+              )}
+            </AnimatePresence>
           </p>
         </div>
 
         <Separator orientation="vertical" />
         <div className="text-center">
           <p className="text-4xl font-semibold text-slate-900">
-            {formatNumberWithSuffix(totalImpressions, 1, true)}
+            <AnimatePresence mode="popLayout">
+              <motion.span
+                key={`imp-${Math.round(totalImpressions)}`}
+                initial={{ y: 8, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                exit={{ y: -8, opacity: 0 }}
+                transition={{ duration: 0.18 }}
+              >
+                {formatNumberWithSuffix(totalImpressions, 1, true)}
+              </motion.span>
+            </AnimatePresence>
           </p>
           <p className="text-sm text-slate-500">Estimated Reach</p>
         </div>
@@ -240,57 +273,108 @@ export function BoostContent() {
         <Separator className="my-2" />
       </div>
 
-      <div className="space-y-4">
-        <p className="text-base font-medium text-slate-600">
-          What&apos;s included
-        </p>
+      <LayoutGroup>
+        <div className="space-y-4">
+          <p className="text-base font-medium text-slate-600">
+            What&apos;s included
+          </p>
 
-        <PerkRow
-          active={true}
-          icon={<FaXTwitter className="size-5" />}
-          title="X Fortnightly Thread"
-          subtitle={`~${formatNumberWithSuffix(LIVE_LISTINGS_THREAD_IMPRESSIONS, 1, false, true)} Impressions | next post on ${formattedNextPostDate}`}
-          previewVideoSrc={buildVideoUrl('x-thread')}
-        />
+          <motion.div
+            layout
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ type: 'spring', stiffness: 420, damping: 32 }}
+          >
+            <PerkRow
+              active={true}
+              icon={<FaXTwitter className="size-5" />}
+              title="X Fortnightly Thread"
+              subtitle={`~${formatNumberWithSuffix(LIVE_LISTINGS_THREAD_IMPRESSIONS, 1, false, true)} Impressions | next post on ${formattedNextPostDate}`}
+              previewVideoSrc={buildVideoUrl('x-thread')}
+            />
+          </motion.div>
 
-        <PerkRow
-          active={sliderStep >= 25}
-          icon={<FaXTwitter className="size-5" />}
-          title="X Standalone Post"
-          subtitle={`~${formatNumberWithSuffix(STANDALONE_POST_IMPRESSIONS, 1, false, true)} Impressions`}
-          locked={sliderStep < 25}
-          onClick={sliderStep < 25 ? () => handlePerkClick(25) : undefined}
-          requiredValue={BOOST_STEP_TO_AMOUNT_USD[25]}
-          currentValue={estimatedUsdValue || 0}
-          previewVideoSrc={buildVideoUrl('x-standalone')}
-        />
+          <motion.div
+            layout
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{
+              type: 'spring',
+              stiffness: 420,
+              damping: 32,
+              delay: 0.03,
+            }}
+          >
+            <PerkRow
+              active={sliderStep >= 25}
+              icon={<FaXTwitter className="size-5" />}
+              title="X Standalone Post"
+              subtitle={`~${formatNumberWithSuffix(STANDALONE_POST_IMPRESSIONS, 1, false, true)} Impressions`}
+              locked={sliderStep < 25}
+              onClick={sliderStep < 25 ? () => handlePerkClick(25) : undefined}
+              requiredValue={BOOST_STEP_TO_AMOUNT_USD[25]}
+              currentValue={estimatedUsdValue || 0}
+              previewVideoSrc={buildVideoUrl('x-standalone')}
+            />
+          </motion.div>
 
-        <PerkRow
-          active={sliderStep >= 50}
-          icon={<MailIcon className="size-5" />}
-          title="Email Broadcast"
-          subtitle={`${formatNumberWithSuffix(emailImpressions, 1, false, true)} Emails`}
-          locked={sliderStep < 50}
-          onClick={sliderStep < 50 ? () => handlePerkClick(50) : undefined}
-          requiredValue={BOOST_STEP_TO_AMOUNT_USD[50]}
-          currentValue={estimatedUsdValue || 0}
-          previewVideoSrc={buildVideoUrl('email')}
-        />
+          <motion.div
+            layout
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{
+              type: 'spring',
+              stiffness: 420,
+              damping: 32,
+              delay: 0.06,
+            }}
+          >
+            <PerkRow
+              active={sliderStep >= 50}
+              icon={<MailIcon className="size-5" />}
+              title="Email Broadcast"
+              subtitle={`${formatNumberWithSuffix(emailImpressions, 1, false, true)} Emails`}
+              locked={sliderStep < 50}
+              onClick={sliderStep < 50 ? () => handlePerkClick(50) : undefined}
+              requiredValue={BOOST_STEP_TO_AMOUNT_USD[50]}
+              currentValue={estimatedUsdValue || 0}
+              previewVideoSrc={buildVideoUrl('email')}
+            />
+          </motion.div>
 
-        {isFeatureAvailable ? (
-          <PerkRow
-            active={sliderStep >= 75}
-            icon={<StarIcon className="size-5" />}
-            title="Featured on Homepage"
-            subtitle={`${formatNumberWithSuffix(FEATURED_HOMEPAGE_IMPRESSIONS, 1, false, true)} Impressions`}
-            locked={sliderStep < 75}
-            onClick={sliderStep < 75 ? () => handlePerkClick(75) : undefined}
-            requiredValue={BOOST_STEP_TO_AMOUNT_USD[75]}
-            currentValue={estimatedUsdValue || 0}
-            previewVideoSrc={buildVideoUrl('featured')}
-          />
-        ) : null}
-      </div>
+          <AnimatePresence>
+            {isFeatureAvailable ? (
+              <motion.div
+                key="featured"
+                layout
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -6 }}
+                transition={{
+                  type: 'spring',
+                  stiffness: 420,
+                  damping: 34,
+                  delay: 0.09,
+                }}
+              >
+                <PerkRow
+                  active={sliderStep >= 75}
+                  icon={<StarIcon className="size-5" />}
+                  title="Featured on Homepage"
+                  subtitle={`${formatNumberWithSuffix(FEATURED_HOMEPAGE_IMPRESSIONS, 1, false, true)} Impressions`}
+                  locked={sliderStep < 75}
+                  onClick={
+                    sliderStep < 75 ? () => handlePerkClick(75) : undefined
+                  }
+                  requiredValue={BOOST_STEP_TO_AMOUNT_USD[75]}
+                  currentValue={estimatedUsdValue || 0}
+                  previewVideoSrc={buildVideoUrl('featured')}
+                />
+              </motion.div>
+            ) : null}
+          </AnimatePresence>
+        </div>
+      </LayoutGroup>
     </div>
   );
 }
