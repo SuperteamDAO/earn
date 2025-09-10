@@ -65,19 +65,6 @@ export const useRejectSubmissions = (slug: string) => {
           ? { ...prev, status: 'Rejected' }
           : prev,
       );
-      const submissions = queryClient.getQueryData<SubmissionWithUser[]>([
-        'sponsor-submissions',
-        slug,
-      ]);
-      if (submissions) {
-        const nextAvailableSubmission = submissions.find(
-          (sub) =>
-            !submissionIds.includes(sub.id) &&
-            sub.status !== SubmissionStatus.Rejected,
-        );
-        if (nextAvailableSubmission)
-          setSelectedSubmission(nextAvailableSubmission || undefined);
-      }
     },
   });
 };

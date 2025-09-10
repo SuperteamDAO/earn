@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useAtom, useSetAtom } from 'jotai';
+import { useAtom } from 'jotai';
 import { LucideFlag } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
@@ -9,7 +9,7 @@ import type { SubmissionWithUser } from '@/interface/submission';
 import { api } from '@/lib/api';
 import { SubmissionLabels } from '@/prisma/enums';
 
-import { isStateUpdatingAtom, selectedSubmissionAtom } from '../../atoms';
+import { selectedSubmissionAtom } from '../../atoms';
 import { useRejectSubmissions } from '../../mutations/useRejectSubmissions';
 import { SpamConfirmationDialog } from './SpamConfirmationDialog';
 
@@ -32,7 +32,6 @@ export const SpamButton = ({ listingSlug, isMultiSelectOn }: Props) => {
   const [selectedSubmission, setSelectedSubmission] = useAtom(
     selectedSubmissionAtom,
   );
-  const setLabelsUpdating = useSetAtom(isStateUpdatingAtom);
   const [isSpamDialogOpen, setIsSpamDialogOpen] = useState(false);
   const [pendingSpamLabel, setPendingSpamLabel] = useState<{
     id: string;
@@ -67,8 +66,6 @@ export const SpamButton = ({ listingSlug, isMultiSelectOn }: Props) => {
       response: UpdateLabelResponse,
       variables: { id: string; label: SubmissionLabels },
     ) => {
-      setLabelsUpdating(false);
-
       const { autoFixed } = response.data || {};
       if (autoFixed) {
         toast.info(
@@ -120,14 +117,8 @@ export const SpamButton = ({ listingSlug, isMultiSelectOn }: Props) => {
         return prev;
       });
     },
-    onMutate: () => {
-      setLabelsUpdating(true);
-    },
     onError: (e) => {
       console.log(e);
-    },
-    onSettled: () => {
-      setLabelsUpdating(false);
     },
   });
 
