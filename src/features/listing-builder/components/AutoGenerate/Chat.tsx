@@ -28,6 +28,7 @@ interface AutoGenerateChatProps {
   isDisabled: boolean;
   isRefineDisabled: boolean;
   isThinking: boolean;
+  isRefining: boolean;
   messages: UIMessage[];
 }
 
@@ -44,6 +45,7 @@ export function AutoGenerateChat({
   isDisabled,
   isRefineDisabled,
   isThinking,
+  isRefining,
   messages,
 }: AutoGenerateChatProps) {
   const [isHovering, setIsHovering] = useState(false);
@@ -95,7 +97,7 @@ export function AutoGenerateChat({
             />
           </div>
         )}
-        {description && description.length > 0 && (
+        {description && description.length > 0 && !isRefining && (
           <div className="m-4 mt-2 mb-0 rounded-md border bg-white px-4 py-0">
             <div
               className={`${styles.content} mt-3 w-full pb-7 [&_h2:first-child]:!mt-0`}
