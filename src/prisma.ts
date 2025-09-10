@@ -1,6 +1,6 @@
 import { PrismaPlanetScale } from '@prisma/adapter-planetscale';
 
-import { PrismaClient } from '@/prisma/client';
+import { PrismaClient } from '@/generated/prisma/client';
 
 const omitConfig = {
   user: {
