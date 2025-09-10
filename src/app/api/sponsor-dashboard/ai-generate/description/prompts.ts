@@ -43,14 +43,13 @@ Generate a bounty listing draft using the information above. Structure the draft
 
 ## About [Company Name]
 *   Use the content from <company-description> to introduce the company or protocol.
-*   Briefly state the overall purpose of the bounty, linking it to the company/protocol.
-*   Frame this as a first-person company introduction: start with "[Company Name] is..." then use "We/Our/Us" for subsequent sentences.
-*   Strictly Only include the links provided within <company-description>.
-*   Absolutely avoid including the links, unless given inside <company-description>.
-*   Absolutely avoid including links from the web search
-*   You must absolute inlcude The info from web search of the company, ONLY inlcude basic info about what the company does in short, also add any other info of the company if that info is relevant to the scope of work
-*   Strictly avoid adding citations from the web search
-*   Include basic info about what the company does from web search, but avoid citations
+*   Frame this as a first-person intro: start with "[Company Name] is...", then use "we/our/us" after that.
+*   Tone: crypto-native and casual. Use contractions and short, direct sentences. Avoid corporate/boomer jargon (e.g., "industry-leading", "cutting-edge", "mission-driven", "synergy", "revolutionize", "at scale"). Prefer "we're building / we make" over "Our mission is to".
+*   If the source text sounds formal, rewrite it in plain English without changing facts.
+*   Keep this section to 3-4 short sentences.
+*   Strictly only include the links provided within <company-description>. Do not add any other links.
+*   Absolutely avoid including links from the web search.
+*   You must include basic info about what the company does from the web search if relevant to the scope, but do not add citations or URLs.
 
 ## Mission
 *   **Extract** the primary, high-level goal or task from the user's message. State it clearly and concisely (e.g., "Write a deep dive on X...", "Develop a tool that does Y...").
@@ -185,14 +184,12 @@ Generate a project listing draft using the information above. Structure the draf
 
 ## About [Company Name]
 *   Use the content from <company-description> to introduce the company or protocol.
-*   Frame this as a first-person company introduction: start with "[Company Name] is..." then use "We/Our/Us" for subsequent sentences.
-*   Strictly Only include the links provided within <company-description>.
-*   Absolutely avoid including the links, unless given inside <company-description>.
-*   Absolutely avoid including links from the web search
-*   Briefly state the overall purpose or goal of this specific project, linking it to the company/protocol's needs.
-*   The info from web search of the company should be shown here, inlcude basic info + whatever is relevant
-*   Strictly avoid adding citations from the web search
-*   Include basic info about what the company does from web search, but avoid citations.
+*   Frame this as a first-person intro: start with "[Company Name] is...", then use "we/our/us" after that.
+*   Tone: crypto-native and casual. Use contractions, short sentences, and plain English. Avoid corporate/boomer jargon ("industry-leading", "cutting-edge", "mission-driven", "synergy", "revolutionize", "ecosystem-leading", "at scale"). Prefer "we're building / we make" over "Our mission is to".
+*   If the source text is formal, rewrite it to sound natural for crypto folks, without changing facts.
+*   Briefly state the goal of this project and how it ties to the company/protocol (1-2 short sentences).
+*   Strictly only include the links provided within <company-description>. Do not add any other links.
+*   Absolutely avoid including links from the web search. Include basic info from web search only if relevant, and never add citations or URLs.
 
 ## Project Overview & Responsibilities
 *   **Extract** the primary goal and specific tasks/deliverables from the user's message or infer from the scope.
@@ -323,14 +320,12 @@ Generate a bounty listing draft using the information above. Structure the draft
 
 ## About [Company Name]
 *   Use the content from <company-description> to introduce the company or protocol.
-*   Briefly state the overall purpose of the bounty, linking it to the company/protocol.
-*   Frame this as a first-person company introduction: start with "[Company Name] is..." then use "We/Our/Us" for subsequent sentences.
-*   Strictly Only include the links provided within <company-description>.
-*   Absolutely avoid including the links, unless given inside <company-description>.
-*   Absolutely avoid includingl links from the web search
-*   You must absolute inlcude The info from web search of the company, ONLY inlcude basic info about what the company does in short, also add any other info of the company if that info is relevant to the scope of work
-*   Strictly avoid adding citations from the web search
-*   Also include mentioning that hackathon name here.
+*   Frame this as a first-person intro: start with "[Company Name] is...", then use "we/our/us" after that.
+*   Tone: crypto-native and casual. Use contractions and short, clear sentences. Skip corporate jargon (no "industry-leading", "cutting-edge", "mission-driven", "synergy", "revolutionize", "at scale"). Prefer "we're building / we make" over "Our mission is to".
+*   If the source sounds formal, rewrite in plain English without changing the facts.
+*   Mention the hackathon name from <hackathon-name> naturally in 1 sentence.
+*   Strictly only include the links provided within <company-description>. Do not add any other links.
+*   Absolutely avoid including links from the web search. You may include basic info from web search if relevant, but never add citations or URLs.
 
 *   Use the content from users message. Clearly define the challenge, goals, and expected outcomes for this track within the <hackathon-name>.
 

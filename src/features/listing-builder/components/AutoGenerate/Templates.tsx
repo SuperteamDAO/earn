@@ -38,7 +38,7 @@ export function Templates({ type, onSelectTemplate }: TemplatesProps) {
   };
 
   return (
-    <div className="flex flex-wrap gap-3">
+    <div className="flex justify-between gap-3">
       {visibleTemplates.map((template) => {
         const IconComponent = template.icon;
         return (

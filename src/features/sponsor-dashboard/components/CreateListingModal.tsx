@@ -73,7 +73,9 @@ export const CreateListingModal = ({
           >
             <div className="space-y-4 p-4">
               <div className="flex items-center justify-between">
-                <h2 className="text-lg font-medium">Select type of listing</h2>
+                <h2 className="text-lg font-medium">
+                  Select the type of listing
+                </h2>
                 <DialogClose asChild>
                   <Button variant="ghost" size="icon">
                     <Cross2Icon className="h-4 w-4 text-slate-400" />
@@ -93,13 +95,13 @@ export const CreateListingModal = ({
                       height: '3rem',
                     }}
                   />
-                  <span className="flex max-w-3/4 flex-col gap-1">
+                  <span className="flex max-w-11/12 flex-col gap-1">
                     <h3 className="text-base font-medium text-slate-900">
                       Bounty
                     </h3>
                     <p className="text-sm font-normal">
-                      Get multiple submissions for your task, and reward the
-                      best work
+                      Get multiple submissions for your task and reward the best
+                      work
                     </p>
                   </span>
                 </Button>
@@ -115,7 +117,7 @@ export const CreateListingModal = ({
                       height: '3rem',
                     }}
                   />
-                  <span className="flex max-w-3/4 flex-col gap-1">
+                  <span className="flex max-w-11/12 flex-col gap-1">
                     <h3 className="text-base font-medium text-slate-900">
                       Project
                     </h3>

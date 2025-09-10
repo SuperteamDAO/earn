@@ -57,18 +57,19 @@ export function AutoGenerateChat({
         return;
       }
       e.preventDefault();
-      handleRefine();
+      if (!isRefineDisabled && !isDisabled) handleRefine();
     }
   };
   return (
     <div className="flex min-h-159 flex-col gap-y-4">
-      <div className="flex items-center justify-between bg-slate-50 p-4 py-2">
+      <div className="sticky top-0 z-100 flex items-center justify-between bg-slate-50 p-4 py-2">
         <div className="flex items-center gap-2">
           <Button
-            variant="outline"
+            variant="ghost"
             size="icon"
             className="!size-6 rounded-full bg-slate-50 px-0 text-xs text-slate-400"
             onClick={handleBack}
+            disabled={isDisabled}
           >
             <ArrowLeft className="size-4! text-slate-400" />
           </Button>
@@ -89,13 +90,13 @@ export function AutoGenerateChat({
           <div className="mx-4 flex w-fit items-center gap-2 rounded-lg p-2 text-sm">
             <SparkleLoading className="max-h-5 w-fit" />
             <TextLightSweep
-              text="Thinking…"
+              text="Generating your listing…"
               className="text-primary-300 font-medium"
             />
           </div>
         )}
         {description && description.length > 0 && (
-          <div className="m-4 mt-2 rounded-md border bg-white px-4 py-0">
+          <div className="m-4 mt-2 mb-0 rounded-md border bg-white px-4 py-0">
             <div
               className={`${styles.content} mt-3 w-full pb-7 [&_h2:first-child]:!mt-0`}
             >
@@ -130,7 +131,7 @@ export function AutoGenerateChat({
           </div>
         )}
       </div>
-      <div className="border-border sticky bottom-0 z-10 mt-auto flex items-start justify-between gap-x-2 border-t bg-white p-4 pb-2">
+      <div className="sticky bottom-0 z-10 mt-auto flex items-start justify-between gap-x-2 bg-white p-4 pb-2">
         <ProgressiveBlurOut scrollEl={scrollEl} className="absolute -top-22" />
         <div className="relative h-fit w-full">
           <TextareaAutosize
@@ -141,26 +142,35 @@ export function AutoGenerateChat({
             maxRows={5}
             className="focus:border-primary min-h-10 w-full resize-none rounded-md border bg-white p-2 pr-7 text-sm placeholder:text-sm focus:outline-none"
           />
-          <Button
-            onClick={handleRefine}
-            className="absolute right-2 bottom-3.5 h-6 rounded-full bg-black px-1 text-white hover:bg-black/70"
-            disabled={isRefineDisabled}
-            onMouseEnter={() => setIsHovering(true)}
-            onMouseLeave={() => setIsHovering(false)}
-          >
-            {isDisabled ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : (
-              <>
-                {isHovering && (
-                  <span className="ml-2 block overflow-hidden text-xs whitespace-nowrap">
-                    Refine
-                  </span>
+          {input.length > 0 && (
+            <motion.div
+              className="absolute right-2 bottom-3.5 flex h-6 items-center justify-center"
+              initial={{ opacity: 0, scale: 0.7 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.2, type: 'spring', bounce: 0 }}
+            >
+              <Button
+                onClick={handleRefine}
+                className="flex h-full items-center justify-center rounded-full bg-black px-1 text-white hover:bg-black/70"
+                disabled={isRefineDisabled || isDisabled}
+                onMouseEnter={() => setIsHovering(true)}
+                onMouseLeave={() => setIsHovering(false)}
+              >
+                {isDisabled ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <>
+                    {isHovering && (
+                      <span className="ml-2 block overflow-hidden text-xs whitespace-nowrap">
+                        Refine
+                      </span>
+                    )}
+                    <ArrowUp />
+                  </>
                 )}
-                <ArrowUp />
-              </>
-            )}
-          </Button>
+              </Button>
+            </motion.div>
+          )}
         </div>
         {input.length === 0 && (
           <Button
