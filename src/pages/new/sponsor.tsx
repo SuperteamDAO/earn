@@ -12,6 +12,7 @@ import { toast } from 'sonner';
 
 import { ImagePicker } from '@/components/shared/ImagePicker';
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import {
   Form,
   FormControl,
@@ -58,6 +59,8 @@ const CreateSponsor = () => {
   const [logoPreview, setLogoPreview] = useState<string>('');
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [loginStep, setLoginStep] = useState(0);
+  const [acknowledgementAccepted, setAcknowledgementAccepted] = useState(false);
+  const [acknowledgementError, setAcknowledgementError] = useState('');
 
   const form = useForm<SponsorFormValues>({
     resolver: zodResolver(sponsorFormSchema),
@@ -263,7 +266,17 @@ const CreateSponsor = () => {
     ],
   );
 
+  const validateAcknowledgement = (): boolean => {
+    if (!acknowledgementAccepted) {
+      setAcknowledgementError('Acknowledgement required');
+      return false;
+    }
+    setAcknowledgementError('');
+    return true;
+  };
+
   const onSubmit = async (data: SponsorFormValues) => {
+    if (!validateAcknowledgement()) return;
     if (isSubmitDisabled) return;
 
     try {
@@ -554,6 +567,34 @@ const CreateSponsor = () => {
                         @pratikdholani
                       </Link>
                     </p>
+                  )}
+                </div>
+                <div className="my-6 flex flex-col gap-2">
+                  <div className="flex items-start space-x-2">
+                    <Checkbox
+                      id="acknowledgement"
+                      className="data-[state=checked]:border-brand-purple data-[state=checked]:bg-brand-purple mt-1"
+                      checked={acknowledgementAccepted}
+                      onCheckedChange={(checked) => {
+                        setAcknowledgementAccepted(checked as boolean);
+                        if (checked) {
+                          setAcknowledgementError('');
+                        }
+                      }}
+                    />
+                    <label
+                      htmlFor="acknowledgement"
+                      className="text-xs text-slate-500"
+                    >
+                      I understand and acknowledge that this project is built
+                      on, or supports, the Solana blockchain, and that Superteam
+                      Earn is a platform exclusively for teams and projects
+                      within the Solana ecosystem.
+                      <span className="text-red-500">*</span>
+                    </label>
+                  </div>
+                  {acknowledgementError && (
+                    <FormMessage>{acknowledgementError}</FormMessage>
                   )}
                 </div>
                 <Button
