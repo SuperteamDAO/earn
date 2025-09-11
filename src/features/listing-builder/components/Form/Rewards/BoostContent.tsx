@@ -356,6 +356,7 @@ export function BoostContent() {
                   damping: 34,
                   delay: 0.09,
                 }}
+                className="pb-12"
               >
                 <PerkRow
                   active={sliderStep >= 75}

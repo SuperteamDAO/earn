@@ -141,13 +141,13 @@ export function RewardsSheet() {
         </SheetHeader>
 
         <div
-          className="flex min-h-0 flex-1 flex-col p-6 pt-4"
+          className="flex min-h-0 flex-1 flex-col overflow-y-auto px-6 pt-4 pb-16"
           id="main-content"
         >
           {panel === 'rewards' ? <Type /> : <BoostContent />}
         </div>
 
-        <div className="shrink-0">
+        <div className="relative shrink-0 bg-white">
           <Separator className="mb-4" />
           <SheetFooter className="p-6 pt-0">
             <Footer panel={panel} setPanel={setPanel} setOpen={setOpen} />
