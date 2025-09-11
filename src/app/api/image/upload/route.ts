@@ -1,9 +1,11 @@
 import { headers } from 'next/headers';
 import { type NextRequest, NextResponse } from 'next/server';
 import sharp from 'sharp';
+import { z } from 'zod';
 
 import logger from '@/lib/logger';
 import { uploadImage } from '@/utils/cloudinary';
+import { IMAGE_SOURCE } from '@/utils/image';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { getUserSession } from '@/features/auth/utils/getUserSession';
@@ -11,6 +13,18 @@ import { getUserSession } from '@/features/auth/utils/getUserSession';
 export const runtime = 'nodejs';
 
 const ALLOWED_FORMATS = ['jpeg', 'png', 'webp'];
+
+const uploadImageSchema = z.object({
+  imageBase64: z.string().min(1, 'Image base64 is required'),
+  folder: z.string().min(1, 'Folder is required'),
+  source: z.enum(
+    [IMAGE_SOURCE.DESCRIPTION, IMAGE_SOURCE.USER, IMAGE_SOURCE.SPONSOR],
+    {
+      required_error: 'Source is required',
+      invalid_type_error: 'Invalid source',
+    },
+  ),
+});
 
 export async function POST(request: NextRequest) {
   try {
@@ -30,10 +44,24 @@ export async function POST(request: NextRequest) {
     const userId = session.data.userId;
     logger.debug(`Authenticated user: ${userId}`);
 
-    const body = await request.json();
-    logger.debug(`Request body: ${safeStringify(body)}`);
+    const rawBody = await request.json();
+    logger.debug(`Request body: ${safeStringify(rawBody)}`);
 
-    const { imageBase64, folder, type } = body;
+    const validationResult = uploadImageSchema.safeParse(rawBody);
+    if (!validationResult.success) {
+      logger.warn(
+        `Invalid request body: ${safeStringify(validationResult.error.format())}`,
+      );
+      return NextResponse.json(
+        {
+          error: 'Invalid request body',
+          details: validationResult.error.format(),
+        },
+        { status: 400 },
+      );
+    }
+
+    const { imageBase64, folder, source } = validationResult.data;
     const buffer = Buffer.from(imageBase64, 'base64');
 
     const metadata = await sharp(buffer).metadata();
@@ -54,7 +82,7 @@ export async function POST(request: NextRequest) {
     const url = await uploadImage(
       buffer,
       folderName,
-      type === 'pfp' ? 200 : undefined,
+      source === IMAGE_SOURCE.USER ? 200 : undefined,
     );
 
     return NextResponse.json({
