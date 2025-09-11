@@ -29,8 +29,15 @@ import {
   hasMoreThan72HoursLeft,
 } from './utils';
 
-export const BoostButton = ({ listing }: { listing: Listing }) => {
+export const BoostButton = ({
+  listing,
+  showDate = true,
+}: {
+  listing: Listing;
+  showDate?: boolean;
+}) => {
   const { deadline, usdValue, skills, region, slug } = listing;
+  console.log(deadline, usdValue, skills, region, slug);
 
   const deadlineMoreThan72HoursLeft = hasMoreThan72HoursLeft(deadline ?? '');
 
@@ -80,29 +87,44 @@ export const BoostButton = ({ listing }: { listing: Listing }) => {
         ? `${Math.floor(hoursUntilSeventyTwoHoursLeft / 24)}d`
         : `${hoursUntilSeventyTwoHoursLeft}h`;
 
-    return (
-      <div className="relative">
-        <Tooltip
-          content={`Reach ${additionalImpressions.toLocaleString()} more people`}
-          open={true}
-          onOpenChange={() => {}}
-          contentProps={{
-            side: 'bottom',
-            align: 'start',
-            className: 'bg-slate-800 text-white border-slate-800 relative',
-          }}
-        >
-          <Link href={`/dashboard/listings/${slug}/edit?boost=true`}>
-            <Button variant="outline" className="border-slate-300 shadow">
-              <RocketIcon className="text-emerald-500" />
-              <p className="mr-2 font-semibold text-slate-600">Boost</p>
-              <p className="text-slate-400">{timeFormatted} Remaining</p>
-            </Button>
-          </Link>
-        </Tooltip>
-        <BoostArrow />
-      </div>
-    );
+    if (showDate) {
+      return (
+        <div className="relative">
+          <Tooltip
+            content={`Reach ${additionalImpressions.toLocaleString()} more people`}
+            open={true}
+            onOpenChange={() => {}}
+            contentProps={{
+              side: 'bottom',
+              align: 'start',
+              className: 'bg-slate-800 text-white border-slate-800 relative',
+            }}
+          >
+            <Link href={`/dashboard/listings/${slug}/edit?boost=true`}>
+              <Button variant="outline" className="border-slate-300 shadow">
+                <RocketIcon className="text-emerald-500" />
+                <p className="mr-2 font-semibold text-slate-600">Boost</p>
+                <p className="text-slate-400">{timeFormatted} Remaining</p>
+              </Button>
+            </Link>
+          </Tooltip>
+          <BoostArrow />
+        </div>
+      );
+    } else {
+      return (
+        <Link href={`/dashboard/listings/${slug}/edit?boost=true`}>
+          <Button
+            variant="outline"
+            className="rounded-lg border-slate-300 px-2"
+            size="sm"
+          >
+            <RocketIcon className="text-emerald-500" />
+            <p className="font-semibold text-slate-600">Boost</p>
+          </Button>
+        </Link>
+      );
+    }
   }
   return null;
 };
