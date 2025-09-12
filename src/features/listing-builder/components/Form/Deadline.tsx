@@ -72,7 +72,11 @@ export function Deadline() {
   }, [isEditing, isGodMode]);
 
   const handleDeadlineSelection = (days: number) => {
-    return dayjs().add(days, 'day').format(DEADLINE_FORMAT).replace('Z', '');
+    return dayjs()
+      .add(days, 'day')
+      .endOf('day')
+      .format(DEADLINE_FORMAT)
+      .replace('Z', '');
   };
 
   // TODO: Debug why zod default for deadline specifically is not working

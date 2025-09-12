@@ -475,7 +475,7 @@ export const SubmissionActionButton = ({
             </AuthWrapper>
           </InfoWrapper>
         </div>
-        {requiresCredits && (
+        {requiresCredits && user?.isTalentFilled && (
           <div className="mt-1 md:my-1.5 md:flex">
             {creditBalance > 0 && (
               <p className="mx-auto w-full rounded-md py-0.5 text-center text-xs font-medium text-slate-500 md:text-xs">

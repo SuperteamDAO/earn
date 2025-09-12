@@ -1,7 +1,7 @@
 generator client {
   provider               = "prisma-client"
-  previewFeatures        = ["queryCompiler", "driverAdapters"]
   output                 = "../src/generated/prisma"
+  engineType             = "client"
   moduleFormat           = "esm"
   generatedFileExtension = "ts"
   importFileExtension    = "ts"
@@ -506,6 +506,7 @@ model User {
   referredBy         User?                @relation("UserReferrals", fields: [referredById], references: [id], onDelete: NoAction, onUpdate: NoAction)
   referrals          User[]               @relation("UserReferrals")
   telegramUsers      TelegramUser[]
+  emailLogs          emailLogs[]
 
   @@index([currentSponsorId])
   @@index([hackathonId])
@@ -628,6 +629,7 @@ model emailLogs {
   type      EmailType
   bountyId  String?
   userId    String?
+  user      User?     @relation(fields: [userId], references: [id])
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 
@@ -635,6 +637,7 @@ model emailLogs {
   @@index([userId, type])
   @@index([type, createdAt(sort: Desc)])
   @@index([email, type])
+  @@index([userId])
 }
 
 model ResendLogs {
