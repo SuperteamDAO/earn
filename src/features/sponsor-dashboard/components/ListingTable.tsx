@@ -41,6 +41,7 @@ import { cn } from '@/utils/cn';
 import { getURL } from '@/utils/validUrl';
 
 import { grantAmount } from '@/features/grants/utils/grantAmount';
+import { BoostButton } from '@/features/listing-builder/components/Form/Boost/BoostButton';
 import { isListingEditable } from '@/features/listing-builder/utils/isListingEditable';
 import { type ListingWithSubmissions } from '@/features/listings/types';
 import { formatDeadline } from '@/features/listings/utils/deadline';
@@ -192,6 +193,7 @@ export const ListingTable = ({
               <ListingTh>Status</ListingTh>
               <ListingTh className="pl-6">Actions</ListingTh>
               <TableHead className="pl-0" />
+              <TableHead className="pl-0" />
             </TableRow>
           </TableHeader>
           <TableBody className="w-full">
@@ -317,7 +319,7 @@ export const ListingTable = ({
                       {listingStatus}
                     </StatusPill>
                   </TableCell>
-                  <TableCell className="px-3 py-2">
+                  <TableCell className="px-0 py-2">
                     {listing.status === 'OPEN' && !!listing.isPublished ? (
                       <Button
                         variant="ghost"
@@ -346,6 +348,13 @@ export const ListingTable = ({
                           Edit
                         </Button>
                       </Link>
+                    ) : (
+                      <></>
+                    )}
+                  </TableCell>
+                  <TableCell className="px-0 py-2">
+                    {listingStatus === 'In Progress' ? (
+                      <BoostButton listing={listing} showDate={false} />
                     ) : (
                       <></>
                     )}

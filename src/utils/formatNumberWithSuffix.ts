@@ -2,6 +2,7 @@ export const formatNumberWithSuffix = (
   amount: number,
   decimals: number = 2,
   skipThousands: boolean = false,
+  capitalizeSuffix: boolean = false,
 ) => {
   if (!amount || isNaN(amount)) return '0';
 
@@ -17,7 +18,8 @@ export const formatNumberWithSuffix = (
     tier = 0;
   }
 
-  if (tier === 0) return amount.toLocaleString('en-us');
+  if (tier === 0)
+    return amount.toLocaleString('en-us', { maximumFractionDigits: decimals });
 
   const suffix = suffixes[tier];
   const scale = Math.pow(10, tier * 3);
@@ -36,5 +38,8 @@ export const formatNumberWithSuffix = (
         : scaled.toFixed(1).replace(/\.0$/, '').toLocaleString();
   }
 
-  return formattedNumber + suffix;
+  return (
+    formattedNumber +
+    (capitalizeSuffix && suffix ? suffix.toUpperCase() : suffix)
+  );
 };
