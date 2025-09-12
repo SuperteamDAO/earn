@@ -46,11 +46,7 @@ export async function POST(req: NextRequest) {
       tokenUsdAmount,
       hackathonName,
     } = parsed;
-    logger.debug(
-      `UI messages: ${safeStringify(messages)}, listingType: ${safeStringify(
-        listingType,
-      )}, company: ${safeStringify(company)}`,
-    );
+    logger.debug('Request body: ', safeStringify(parsed));
 
     const systemPrompt = getDescriptionPrompt(listingType, {
       company,

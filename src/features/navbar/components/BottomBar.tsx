@@ -1,3 +1,4 @@
+import { usePrivy } from '@privy-io/react-auth';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 
@@ -26,6 +27,7 @@ export function BottomBar({
 }: Props) {
   const { user } = useUser();
   const router = useRouter();
+  const { authenticated, ready } = usePrivy();
 
   function setColor(href: string, routerPath: string) {
     return routerPath === href ? 'text-brand-purple' : 'text-slate-500';
@@ -108,18 +110,34 @@ export function BottomBar({
         </Link>
       </Button>
 
-      <Button
-        variant="ghost"
-        className={cn(
-          'relative m-0 w-12 p-0 hover:bg-transparent active:bg-transparent',
-        )}
-        onClick={onWalletOpen}
-      >
-        <IoWalletOutline style={iconStyle} className="text-slate-500" />
-        <span className="bg-brand-purple/95 absolute top-px -right-0.5 block rounded-md px-1 py-px text-[10px] font-semibold tracking-tight text-white">
-          ${formatNumberWithSuffix(walletBalance || 0, 1, false)}
-        </span>
-      </Button>
+      {authenticated && user?.isTalentFilled ? (
+        <Button
+          variant="ghost"
+          className={cn(
+            'relative m-0 w-12 p-0 hover:bg-transparent active:bg-transparent',
+          )}
+          onClick={onWalletOpen}
+        >
+          <IoWalletOutline style={iconStyle} className="text-slate-500" />
+          <span className="bg-brand-purple/95 absolute top-px -right-0.5 block rounded-md px-1 py-px text-[10px] font-semibold tracking-tight text-white">
+            ${formatNumberWithSuffix(walletBalance || 0, 1, false)}
+          </span>
+        </Button>
+      ) : !authenticated && ready ? (
+        <AuthWrapper>
+          <Button
+            variant="ghost"
+            className={cn(
+              'relative m-0 w-12 p-0 hover:bg-transparent active:bg-transparent',
+            )}
+          >
+            <IoWalletOutline style={iconStyle} className="text-slate-500" />
+            <span className="bg-brand-purple/95 absolute top-px -right-0.5 block rounded-md px-1 py-px text-[10px] font-semibold tracking-tight text-white">
+              ${formatNumberWithSuffix(walletBalance || 0, 1, false)}
+            </span>
+          </Button>
+        </AuthWrapper>
+      ) : null}
 
       <AuthWrapper>
         <Button
