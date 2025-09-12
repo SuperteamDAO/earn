@@ -71,6 +71,8 @@ model Bounties {
   discordMessageIds  Json?
   ai                 Json?
   publishedBy        String?
+  XWeeklyThread      String?
+  XStandalonePost    String?
 
   @@index([id, slug])
   @@index([sponsorId])
