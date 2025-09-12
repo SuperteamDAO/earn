@@ -180,7 +180,7 @@ export function UserMenu() {
               }}
               className="text-sm tracking-tight text-slate-500"
             >
-              Telegram Notifications
+              Telegram Alerts
             </Link>
           </DropdownMenuItem>
 
