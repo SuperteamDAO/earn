@@ -2,7 +2,7 @@ import { Ratelimit } from '@upstash/ratelimit';
 
 import { redis } from './redis';
 
-export const commentRateLimiter = new Ratelimit({
+export const commentCreateRateLimiter = new Ratelimit({
   redis: redis,
   limiter: Ratelimit.fixedWindow(10, '1 m'),
   analytics: true,
@@ -28,4 +28,11 @@ export const uploadSignatureRateLimiter = new Ratelimit({
   limiter: Ratelimit.fixedWindow(10, '1 m'),
   analytics: true,
   prefix: 'ratelimit:upload_signature',
+});
+
+export const commentGetRateLimiter = new Ratelimit({
+  redis: redis,
+  limiter: Ratelimit.fixedWindow(30, '1 m'),
+  analytics: true,
+  prefix: 'ratelimit:comment_get',
 });
