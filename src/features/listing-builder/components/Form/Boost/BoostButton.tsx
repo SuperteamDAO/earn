@@ -36,8 +36,8 @@ export const BoostButton = ({
   listing: Listing;
   showDate?: boolean;
 }) => {
-  const { deadline, usdValue, skills, region, slug } = listing;
-  console.log(deadline, usdValue, skills, region, slug);
+  const { deadline, usdValue, skills, region, slug, compensationType } =
+    listing;
 
   const deadlineMoreThan72HoursLeft = hasMoreThan72HoursLeft(deadline ?? '');
 
@@ -72,7 +72,11 @@ export const BoostButton = ({
   );
   const additionalImpressions = maxImpressions - currentImpressions;
 
-  if (deadlineMoreThan72HoursLeft && canBeBoosted) {
+  if (
+    deadlineMoreThan72HoursLeft &&
+    canBeBoosted &&
+    compensationType === 'fixed'
+  ) {
     const deadlineDate = new Date(deadline ?? '');
     const seventyTwoHoursBeforeDeadline = new Date(
       deadlineDate.getTime() - 72 * 60 * 60 * 1000,
