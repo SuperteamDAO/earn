@@ -89,7 +89,7 @@ export const BoostButton = ({
 
     if (showDate) {
       return (
-        <div className="relative">
+        <div className="relative hidden sm:block">
           <Tooltip
             content={`Reach ${additionalImpressions.toLocaleString()} more people`}
             open={true}
@@ -113,7 +113,10 @@ export const BoostButton = ({
       );
     } else {
       return (
-        <Link href={`/dashboard/listings/${slug}/edit?boost=true`}>
+        <Link
+          href={`/dashboard/listings/${slug}/edit?boost=true`}
+          className="hidden sm:block"
+        >
           <Button
             variant="outline"
             className="rounded-lg border-slate-300 px-2"

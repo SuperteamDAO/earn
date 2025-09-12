@@ -101,11 +101,12 @@ export function BoostContent() {
       targetUSD,
     );
 
+    form.setValue('rewardAmount', newTotalTokens, { shouldValidate: false });
     if (scaledRewards) {
-      form.setValue('rewards', scaledRewards, { shouldValidate: true });
+      form.setValue('rewards', scaledRewards, { shouldValidate: false });
     }
 
-    form.setValue('rewardAmount', newTotalTokens, { shouldValidate: true });
+    form.trigger(['rewards', 'rewardAmount'] as any);
     form.saveDraft();
   };
 
@@ -131,7 +132,7 @@ export function BoostContent() {
     : null;
 
   const sliderStepUnclamped = amountToStep(
-    estimatedUsdValue || 0,
+    estimatedUsdValue ? Math.round(estimatedUsdValue) : 0,
     isFeatureAvailable,
   );
   const sliderStep = clampStepForAvailability(

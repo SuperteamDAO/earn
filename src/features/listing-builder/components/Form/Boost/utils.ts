@@ -89,16 +89,67 @@ export const computeScaledRewardsForTargetUSD = (
   }
 
   const ratio = newTotalTokens / oldTotal;
-  const scaledRewards = Object.entries(currentRewards).reduce(
+
+  const floatScaled: Record<string, number> = Object.entries(
+    currentRewards,
+  ).reduce(
     (acc, [position, value]) => {
       const numeric = Number(value);
-      if (Number.isNaN(numeric)) return { ...acc, [position]: value };
-      return { ...acc, [position]: numeric * ratio };
+      if (Number.isNaN(numeric))
+        return { ...acc, [position]: value } as Record<string, number>;
+      return { ...acc, [position]: numeric * ratio } as Record<string, number>;
     },
     {} as Record<string, number>,
   );
 
-  return { scaledRewards, newTotalTokens };
+  if (tokenUsdValue !== null && tokenUsdValue <= 10) {
+    const numericEntries = Object.entries(floatScaled).filter(
+      ([, v]) => typeof v === 'number' && Number.isFinite(v),
+    ) as Array<[string, number]>;
+
+    const floors = numericEntries.map(([key, v]) => ({
+      key,
+      floor: Math.floor(v),
+      frac: v - Math.floor(v),
+    }));
+    const sumFloors = floors.reduce((sum, item) => sum + item.floor, 0);
+    const targetTotal = Math.ceil(newTotalTokens);
+    let remaining = targetTotal - sumFloors;
+
+    if (remaining > 0) {
+      const byFracDesc = [...floors].sort((a, b) => b.frac - a.frac);
+      let i = 0;
+      while (remaining > 0 && byFracDesc.length > 0) {
+        const idx = i % byFracDesc.length;
+        const elem = byFracDesc[idx];
+        if (!elem) break;
+        elem.floor += 1;
+        remaining -= 1;
+        i += 1;
+      }
+    } else if (remaining < 0) {
+      const byFracAsc = [...floors].sort((a, b) => a.frac - b.frac);
+      let i = 0;
+      while (remaining < 0 && byFracAsc.length > 0) {
+        const idx = i % byFracAsc.length;
+        const elem = byFracAsc[idx];
+        if (!elem) break;
+        elem.floor = Math.max(0, elem.floor - 1);
+        remaining += 1;
+        i += 1;
+      }
+    }
+
+    const rounded: Record<string, number> = { ...floatScaled };
+    for (const { key, floor } of floors) {
+      rounded[key] = floor;
+    }
+
+    const adjustedTotal = floors.reduce((sum, i) => sum + i.floor, 0);
+    return { scaledRewards: rounded, newTotalTokens: adjustedTotal };
+  }
+
+  return { scaledRewards: floatScaled, newTotalTokens };
 };
 
 export const hasMoreThan72HoursLeft = (deadline: string | Date): boolean => {

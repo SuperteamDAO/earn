@@ -169,17 +169,19 @@ function RewardsFooter({
             type="button"
             variant="ghost"
             className="mt-2 w-full text-slate-500"
-            onClick={() => {
+            onClick={async () => {
+              // Batch revert snapshot to avoid intermediate validation flicker
               if (rewardsSnapshotRef.current !== null) {
                 form.setValue('rewards', rewardsSnapshotRef.current, {
-                  shouldValidate: true,
+                  shouldValidate: false,
                 });
               }
               if (rewardAmountSnapshotRef.current !== null) {
                 form.setValue('rewardAmount', rewardAmountSnapshotRef.current, {
-                  shouldValidate: true,
+                  shouldValidate: false,
                 });
               }
+              await form.trigger(['rewards', 'rewardAmount'] as any);
               form.saveDraft();
               setOpen(false);
             }}
