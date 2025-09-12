@@ -33,6 +33,7 @@ import { Meta } from '@/layouts/Meta';
 import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
+import { IMAGE_SOURCE } from '@/utils/image';
 
 import { SignIn } from '@/features/auth/components/SignIn';
 import { SocialInput } from '@/features/social/components/SocialInput';
@@ -202,6 +203,7 @@ const CreateSponsor = () => {
           const uploadResult = await uploadFile(selectedLogo, {
             folder: 'earn-sponsor',
             resource_type: 'image',
+            source: IMAGE_SOURCE.SPONSOR,
           });
           sponsorData.logo = uploadResult.url;
         }
@@ -284,7 +286,7 @@ const CreateSponsor = () => {
         data.user.photo = user?.photo;
         const uploadResult = await uploadAndReplace(
           selectedUserPhoto,
-          { folder: 'earn-pfp' },
+          { folder: 'earn-pfp', source: IMAGE_SOURCE.USER },
           user?.photo || undefined,
         );
         data.user.photo = uploadResult.url;

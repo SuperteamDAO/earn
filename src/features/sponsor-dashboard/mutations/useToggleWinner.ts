@@ -85,6 +85,16 @@ export const useToggleWinner = (bounty: Listing | undefined) => {
                 update.isWinner && submission.label === 'Spam'
                   ? 'Unreviewed'
                   : submission.label;
+              console.log(
+                'updateWinner',
+                update.isWinner,
+                'submission status',
+                submission.status,
+              );
+              const updatedStatus =
+                update.isWinner && submission.status === 'Rejected'
+                  ? 'Pending'
+                  : submission.status;
 
               if (selectedSubmission && update.id === selectedSubmission.id) {
                 setSelectedSubmission({
@@ -96,6 +106,7 @@ export const useToggleWinner = (bounty: Listing | undefined) => {
                       | undefined
                       | null) ?? undefined,
                   label: updatedLabel,
+                  status: updatedStatus,
                 });
               }
               return {
@@ -105,6 +116,7 @@ export const useToggleWinner = (bounty: Listing | undefined) => {
                   (update.winnerPosition as keyof Rewards | undefined | null) ??
                   undefined,
                 label: updatedLabel,
+                status: updatedStatus,
               };
             }
             return submission;

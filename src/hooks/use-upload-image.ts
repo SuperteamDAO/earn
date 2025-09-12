@@ -1,11 +1,13 @@
 import { useState } from 'react';
 
 import { api } from '@/lib/api';
+import type { ImageSource } from '@/utils/image';
 
 interface UploadOptions {
   folder: string;
   public_id?: string;
   resource_type?: 'image' | 'video' | 'raw' | 'auto';
+  source: ImageSource;
 }
 
 interface CloudinaryUploadResult {
@@ -137,6 +139,7 @@ export const useUploadImage = (): UseUploadReturn => {
         public_id: options.public_id,
         resource_type: options.resource_type || 'auto',
         file_size: compressedFile.size,
+        source: options.source,
       });
 
       const signatureData = signatureResponse.data;
@@ -192,17 +195,16 @@ export const useUploadImage = (): UseUploadReturn => {
     options: UploadOptions,
     oldImageUrl?: string,
   ): Promise<CloudinaryUploadResult> => {
-    const uploadResult = await uploadFile(file, options);
-
-    if (uploadResult && oldImageUrl) {
+    if (oldImageUrl) {
       try {
         await api.delete('/api/image/delete', {
-          data: { imageUrl: oldImageUrl },
+          data: { imageUrl: oldImageUrl, source: options.source },
         });
       } catch (deleteError) {
         console.warn('Failed to delete old image:', deleteError);
       }
     }
+    const uploadResult = await uploadFile(file, options);
 
     return uploadResult;
   };

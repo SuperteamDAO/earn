@@ -42,6 +42,7 @@ import { Meta } from '@/layouts/Meta';
 import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
+import { IMAGE_SOURCE } from '@/utils/image';
 
 import { SocialInputAll } from '@/features/social/components/SocialInput';
 import { extractSocialUsername } from '@/features/social/utils/extractUsername';
@@ -234,6 +235,7 @@ export default function EditProfilePage({ slug }: { slug: string }) {
                 {
                   folder: 'earn-pfp',
                   resource_type: 'image',
+                  source: IMAGE_SOURCE.USER,
                 },
                 user?.photo,
               );

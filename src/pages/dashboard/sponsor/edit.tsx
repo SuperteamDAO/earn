@@ -25,6 +25,7 @@ import { useUploadImage } from '@/hooks/use-upload-image';
 import { SponsorLayout } from '@/layouts/Sponsor';
 import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
+import { IMAGE_SOURCE } from '@/utils/image';
 
 import { SocialInput } from '@/features/social/components/SocialInput';
 import { extractSocialUsername } from '@/features/social/utils/extractUsername';
@@ -157,8 +158,8 @@ export default function UpdateSponsor() {
         try {
           const uploadResult = await uploadAndReplace(
             selectedLogo,
-            { folder: 'earn-sponsor' },
-            logoPreview || undefined,
+            { folder: 'earn-sponsor', source: IMAGE_SOURCE.SPONSOR },
+            sponsorData?.logo || undefined,
           );
 
           finalLogo = uploadResult.url;
