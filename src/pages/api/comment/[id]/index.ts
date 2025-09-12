@@ -16,6 +16,7 @@ export default async function comment(
     req.socket.remoteAddress ||
     (req.headers['x-forwarded-for'] as string)?.split(',')[0]?.trim() ||
     'unknown';
+  logger.info(`Comment Get Identifier: ${identifier}`);
 
   const canProceed = await checkAndApplyRateLimit(res, {
     limiter: commentGetRateLimiter,

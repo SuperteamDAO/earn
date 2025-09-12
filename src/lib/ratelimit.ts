@@ -32,7 +32,7 @@ export const uploadSignatureRateLimiter = new Ratelimit({
 
 export const commentGetRateLimiter = new Ratelimit({
   redis: redis,
-  limiter: Ratelimit.fixedWindow(10, '1 m'),
+  limiter: Ratelimit.fixedWindow(30, '1 m'),
   analytics: true,
   prefix: 'ratelimit:comment_get',
 });
