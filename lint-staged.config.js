@@ -5,7 +5,6 @@
 
 module.exports = {
   '*.{js,jsx,ts,tsx}': ['eslint --fix', 'eslint'],
-  '**/.ts?(x)': () =>
-    'NODE_OPTIONS="--max-old-space-size=4096" pnpm check-types',
+  '**/*.ts?(x)': () => 'pnpm check-types',
   '*.{json,yaml}': ['prettier --write'],
 };
