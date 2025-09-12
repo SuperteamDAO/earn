@@ -2,7 +2,6 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAtom } from 'jotai';
 import { LucideFlag } from 'lucide-react';
 import { useState } from 'react';
-import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
 import type { SubmissionWithUser } from '@/interface/submission';
@@ -63,36 +62,24 @@ export const SpamButton = ({ listingSlug, isMultiSelectOn }: Props) => {
         label,
       }),
     onSuccess: (
-      response: UpdateLabelResponse,
+      _: UpdateLabelResponse,
       variables: { id: string; label: SubmissionLabels },
     ) => {
-      const { autoFixed } = response.data || {};
-      if (autoFixed) {
-        toast.info(
-          "A submission can't be both a winner and marked as spam — we've adjusted its status.",
-        );
-      }
-
       if (variables.label === SubmissionLabels.Spam) {
         rejectSubmissions.mutate([variables.id]);
       }
-
+    },
+    onMutate: (variables) => {
       queryClient.setQueryData<SubmissionWithUser[]>(
         ['sponsor-submissions', listingSlug],
         (old) => {
           if (!old) return old;
           return old.map((submission) => {
             if (submission.id === variables.id) {
-              if (
-                variables.label === 'Spam' &&
-                submission.isWinner &&
-                autoFixed
-              ) {
+              if (variables.label === 'Spam') {
                 return {
                   ...submission,
                   label: variables.label,
-                  isWinner: false,
-                  winnerPosition: undefined,
                 };
               }
               return { ...submission, label: variables.label };
@@ -104,14 +91,6 @@ export const SpamButton = ({ listingSlug, isMultiSelectOn }: Props) => {
 
       setSelectedSubmission((prev) => {
         if (prev && prev.id === variables.id) {
-          if (variables.label === 'Spam' && prev.isWinner && autoFixed) {
-            return {
-              ...prev,
-              label: variables.label,
-              isWinner: false,
-              winnerPosition: undefined,
-            };
-          }
           return { ...prev, label: variables.label };
         }
         return prev;
