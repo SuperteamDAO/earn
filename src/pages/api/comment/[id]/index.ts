@@ -1,6 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
+import { commentGetRateLimiter } from '@/lib/ratelimit';
+import { checkAndApplyRateLimit } from '@/lib/rateLimiterService';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
 
@@ -10,6 +12,21 @@ export default async function comment(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
+  const identifier =
+    req.socket.remoteAddress ||
+    (req.headers['x-forwarded-for'] as string)?.split(',')[0]?.trim() ||
+    'unknown';
+
+  const canProceed = await checkAndApplyRateLimit(res, {
+    limiter: commentGetRateLimiter,
+    identifier: identifier as string,
+    routeName: 'commentGet',
+  });
+
+  if (!canProceed) {
+    return;
+  }
+
   logger.info(`Request Query: ${safeStringify(req.query)}`);
 
   const params = req.query;
