@@ -44,12 +44,21 @@ export function AutoGenerateForm({
     if (e.key === 'Enter') {
       if (e.metaKey || e.ctrlKey || e.shiftKey) {
         e.preventDefault();
-        if (input && input.trim() !== '') {
-          onSubmit();
-        }
+        handleSubmit();
         return;
       }
     }
+  };
+
+  const handleSubmit = () => {
+    setShowValidation(true);
+
+    const trimmedInput = input.trim();
+    if (!trimmedInput || trimmedInput.length < MIN_CHARACTERS) {
+      return;
+    }
+
+    onSubmit();
   };
 
   const currentHackathon = hackathons?.find((h) => h.slug === hackathonSlug);
@@ -145,7 +154,7 @@ export function AutoGenerateForm({
 
       <div className="flex justify-end">
         <Button
-          onClick={onSubmit}
+          onClick={handleSubmit}
           disabled={
             !input ||
             input?.trim() === '' ||

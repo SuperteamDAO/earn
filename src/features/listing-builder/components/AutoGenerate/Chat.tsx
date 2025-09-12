@@ -71,7 +71,6 @@ export function AutoGenerateChat({
             size="icon"
             className="!size-6 rounded-full bg-slate-50 px-0 text-xs text-slate-400"
             onClick={handleBack}
-            disabled={isDisabled}
           >
             <ArrowLeft className="size-4! text-slate-400" />
           </Button>
