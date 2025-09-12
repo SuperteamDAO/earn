@@ -13,7 +13,6 @@ export default async function comment(
   res: NextApiResponse,
 ) {
   const identifier =
-    req.socket.remoteAddress ||
     (req.headers['x-forwarded-for'] as string)?.split(',')[0]?.trim() ||
     'unknown';
   logger.info(`Comment Get Identifier: ${identifier}`);
