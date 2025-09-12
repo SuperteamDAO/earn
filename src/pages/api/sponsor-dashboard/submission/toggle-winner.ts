@@ -271,6 +271,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       // if marked as winner and currently has 'Spam' label, change label to 'Unreviewed'
       if (isWinner && currentSubmission.label === 'Spam') {
         updateData.label = 'Unreviewed';
+        updateData.status = 'Pending';
         autoFixedSubmissions.push(id);
         logger.info(
           `Automatically removing Spam label from submission ${id} as it's being marked as a winner`,
