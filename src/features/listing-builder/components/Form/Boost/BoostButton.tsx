@@ -21,11 +21,16 @@ const BoostArrow = () => (
 
 import { type Listing } from '@/features/listings/types';
 
-import { DEFAULT_EMAIL_IMPRESSIONS, isSkillsSelected } from './constants';
+import {
+  BOOST_STEP_TO_AMOUNT_USD,
+  DEFAULT_EMAIL_IMPRESSIONS,
+  isSkillsSelected,
+} from './constants';
 import { emailEstimateQuery, featuredAvailabilityQuery } from './queries';
 import {
   amountToStep,
-  calculateTotalImpressions,
+  getAllowedMaxStep,
+  getTotalImpressionsForValue,
   hasMoreThan72HoursLeft,
 } from './utils';
 
@@ -45,7 +50,7 @@ export const BoostButton = ({
   const isFeatureAvailable = featuredData?.isAvailable ?? false;
 
   const currentStep = amountToStep(usdValue ?? 0, isFeatureAvailable);
-  const maxAvailableStep = isFeatureAvailable ? 75 : 50;
+  const maxAvailableStep = getAllowedMaxStep(isFeatureAvailable);
   const canBeBoosted = currentStep < maxAvailableStep;
 
   const { data: emailEstimate } = useQuery(
@@ -57,15 +62,20 @@ export const BoostButton = ({
       ? emailEstimate
       : DEFAULT_EMAIL_IMPRESSIONS;
 
-  const currentImpressions = calculateTotalImpressions(
-    currentStep,
-    emailImpressions,
-    isFeatureAvailable,
-  );
+  const isUnderMin =
+    typeof usdValue === 'number' && usdValue < BOOST_STEP_TO_AMOUNT_USD[0];
 
-  const maxStep = isFeatureAvailable ? 75 : 50;
+  const currentImpressions = isUnderMin
+    ? 0
+    : getTotalImpressionsForValue(
+        currentStep,
+        emailImpressions,
+        isFeatureAvailable,
+      );
 
-  const maxImpressions = calculateTotalImpressions(
+  const maxStep = getAllowedMaxStep(isFeatureAvailable);
+
+  const maxImpressions = getTotalImpressionsForValue(
     maxStep,
     emailImpressions,
     isFeatureAvailable,

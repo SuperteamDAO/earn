@@ -1,5 +1,5 @@
 import { ArrowLeftIcon } from 'lucide-react';
-import { useSearchParams } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { memo, useEffect, useMemo, useState } from 'react';
 import { useWatch } from 'react-hook-form';
 
@@ -24,6 +24,7 @@ import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import { calculateTotalPrizes } from '@/features/listing-builder/utils/rewards';
 
 import { useListingForm } from '../../../hooks';
+import type { BoostStep } from '../Boost/utils';
 import { BoostContent } from './BoostContent';
 import { Footer } from './Footer';
 import { PaymentType } from './PaymentType';
@@ -37,7 +38,11 @@ export function RewardsSheet() {
   const form = useListingForm();
   const [open, setOpen] = useState(false);
   const [panel, setPanel] = useState<'rewards' | 'boost'>('rewards');
+  const [boostStep, setBoostStep] = useState<BoostStep>(0);
   const params = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+  const isBoostFromUrl = params?.get('boost') === 'true';
 
   useEffect(() => {
     const shouldOpenBoost = params?.get('boost') === 'true';
@@ -65,14 +70,26 @@ export function RewardsSheet() {
     );
   }, [form]);
 
+  const handleOpenChange = (nextOpen: boolean) => {
+    setOpen(nextOpen);
+    if (nextOpen) {
+      setPanel('rewards');
+      return;
+    }
+    try {
+      const current = new URLSearchParams(params?.toString() || '');
+      if (current.has('boost')) {
+        current.delete('boost');
+        const search = current.toString();
+        const base = pathname ?? '/';
+        const href = search ? `${base}?${search}` : base;
+        router.replace(href);
+      }
+    } catch (err) {}
+  };
+
   return (
-    <Sheet
-      open={open}
-      onOpenChange={(e) => {
-        setOpen(e);
-        if (e) setPanel('rewards');
-      }}
-    >
+    <Sheet open={open} onOpenChange={handleOpenChange}>
       <SheetTrigger className="w-full">
         <FormField
           control={form.control}
@@ -144,13 +161,26 @@ export function RewardsSheet() {
           className="flex min-h-0 flex-1 flex-col overflow-y-auto px-6 pt-4 pb-16"
           id="main-content"
         >
-          {panel === 'rewards' ? <Type /> : <BoostContent />}
+          {panel === 'rewards' ? (
+            <Type />
+          ) : (
+            <BoostContent
+              boostStep={boostStep}
+              setBoostStep={(s: number) => setBoostStep(s as BoostStep)}
+            />
+          )}
         </div>
 
         <div className="relative shrink-0 bg-white">
           <Separator className="mb-4" />
           <SheetFooter className="p-6 pt-0">
-            <Footer panel={panel} setPanel={setPanel} setOpen={setOpen} />
+            <Footer
+              panel={panel}
+              setPanel={setPanel}
+              setOpen={handleOpenChange}
+              boostStep={boostStep}
+              isBoostFromUrl={isBoostFromUrl}
+            />
           </SheetFooter>
         </div>
       </SheetContent>

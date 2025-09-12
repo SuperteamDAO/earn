@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import { MailIcon, StarIcon } from 'lucide-react';
 import { AnimatePresence, LayoutGroup, motion } from 'motion/react';
-import { useEffect } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useWatch } from 'react-hook-form';
 
 import FaXTwitter from '@/components/icons/FaXTwitter';
@@ -16,9 +16,7 @@ import { useListingForm } from '@/features/listing-builder/hooks';
 
 import {
   BOOST_STEP_TO_AMOUNT_USD,
-  DEFAULT_EMAIL_IMPRESSIONS,
   FEATURED_HOMEPAGE_IMPRESSIONS,
-  isSkillsSelected,
   LIVE_LISTINGS_THREAD_IMPRESSIONS,
   STANDALONE_POST_IMPRESSIONS,
 } from '../Boost/constants';
@@ -31,28 +29,28 @@ import {
 import {
   amountToStep,
   type BoostStep,
-  calculateTotalImpressions,
   clampStepForAvailability,
-  computeScaledRewardsForTargetUSD,
+  computeEstimatedUsdValue,
+  getAllowedMaxStep,
+  getAllowedTopUsd,
   getDollarAmountForStep,
+  getTotalImpressionsForValue,
+  resolveEmailImpressions,
 } from '../Boost/utils';
 
-export function BoostContent() {
+export function BoostContent({
+  boostStep,
+  setBoostStep,
+}: {
+  boostStep: number;
+  setBoostStep: (s: number) => void;
+}) {
   const form = useListingForm();
+  const [hasInteracted, setHasInteracted] = useState(false);
 
   const buildVideoUrl = (name: string) => {
     return `https://res.cloudinary.com/dgvnuwspr/video/upload/assets/boost/${name}.webm`;
   };
-
-  const rewards = useWatch({
-    control: form.control,
-    name: 'rewards',
-  }) as Record<string, number> | undefined;
-
-  const maxBonusSpots = useWatch({
-    control: form.control,
-    name: 'maxBonusSpots',
-  }) as number | undefined;
 
   const token = useWatch({
     control: form.control,
@@ -89,58 +87,91 @@ export function BoostContent() {
 
   const safeRewardAmount = typeof rewardAmount === 'number' ? rewardAmount : 0;
 
-  const applyBoostStep = (step: number) => {
-    const safeStep = clampStepForAvailability(step, isFeatureAvailable);
-    const targetUSD = getDollarAmountForStep(safeStep);
-
-    const currentRewards = rewards || {};
-    const { scaledRewards, newTotalTokens } = computeScaledRewardsForTargetUSD(
-      currentRewards as Record<string, number>,
-      (maxBonusSpots as number) || 0,
-      tokenUsdValue,
-      targetUSD,
-    );
-
-    form.setValue('rewardAmount', newTotalTokens, { shouldValidate: false });
-    if (scaledRewards) {
-      form.setValue('rewards', scaledRewards, { shouldValidate: false });
-    }
-
-    form.trigger(['rewards', 'rewardAmount'] as any);
-    form.saveDraft();
-  };
-
   const handlePerkClick = (unlockValue: number) => {
-    applyBoostStep(unlockValue);
+    const safeStep = clampStepForAvailability(unlockValue, isFeatureAvailable);
+    setBoostStep(safeStep);
+    setHasInteracted(true);
   };
 
-  const emailImpressions =
-    isSkillsSelected(skills) && typeof emailEstimate === 'number'
-      ? emailEstimate
-      : DEFAULT_EMAIL_IMPRESSIONS;
+  const emailImpressions = resolveEmailImpressions(skills, emailEstimate);
 
-  const getTotalImpressions = (sliderValue: BoostStep): number => {
-    return calculateTotalImpressions(
-      sliderValue,
-      emailImpressions,
+  const estimatedUsdValue = computeEstimatedUsdValue(
+    safeRewardAmount,
+    tokenUsdValue,
+  );
+
+  const minUsd = BOOST_STEP_TO_AMOUNT_USD[0];
+  const allowedTopUsd = getAllowedTopUsd(isFeatureAvailable);
+
+  const hasLeftExtra = estimatedUsdValue !== null && estimatedUsdValue < minUsd;
+  const hasRightExtra =
+    estimatedUsdValue !== null && estimatedUsdValue > allowedTopUsd;
+
+  const sliderMin = hasLeftExtra ? -25 : 0;
+  const sliderMax = hasRightExtra
+    ? isFeatureAvailable
+      ? 100
+      : 75
+    : getAllowedMaxStep(isFeatureAvailable);
+
+  const getTotalImpressions = (value: number): number =>
+    getTotalImpressionsForValue(value, emailImpressions, isFeatureAvailable);
+
+  const defaultStep = useMemo(() => {
+    const unclamped = amountToStep(
+      estimatedUsdValue ? Math.round(estimatedUsdValue) : 0,
       isFeatureAvailable,
     );
-  };
+    const base = clampStepForAvailability(unclamped, isFeatureAvailable);
+    if (hasLeftExtra) return -25;
+    if (hasRightExtra) return isFeatureAvailable ? 100 : 75;
+    return base;
+  }, [estimatedUsdValue, isFeatureAvailable, hasLeftExtra, hasRightExtra]);
 
-  const estimatedUsdValue = tokenUsdValue
-    ? safeRewardAmount * tokenUsdValue
-    : null;
+  useEffect(() => {
+    setBoostStep(defaultStep);
+    setHasInteracted(false);
+  }, [defaultStep]);
 
-  const sliderStepUnclamped = amountToStep(
-    estimatedUsdValue ? Math.round(estimatedUsdValue) : 0,
+  const totalImpressions = getTotalImpressions(boostStep);
+
+  const initialUSD = useMemo(() => {
+    return estimatedUsdValue !== null ? Math.round(estimatedUsdValue) : null;
+  }, [estimatedUsdValue]);
+
+  const previewUSD = useMemo(() => {
+    const allowedMax = getAllowedMaxStep(isFeatureAvailable);
+    if (!hasInteracted && initialUSD !== null) {
+      return initialUSD;
+    }
+    if (boostStep < 0 && hasLeftExtra && estimatedUsdValue !== null) {
+      return Math.round(estimatedUsdValue);
+    }
+    if (boostStep > allowedMax && hasRightExtra && estimatedUsdValue !== null) {
+      return Math.round(estimatedUsdValue);
+    }
+    const stepForCalc = Math.max(
+      0,
+      Math.min(boostStep, allowedMax),
+    ) as BoostStep;
+    return getDollarAmountForStep(stepForCalc);
+  }, [
+    boostStep,
+    hasInteracted,
+    initialUSD,
     isFeatureAvailable,
-  );
-  const sliderStep = clampStepForAvailability(
-    sliderStepUnclamped,
-    isFeatureAvailable,
-  );
+    hasLeftExtra,
+    hasRightExtra,
+    estimatedUsdValue,
+  ]);
 
-  const totalImpressions = getTotalImpressions(sliderStep);
+  const previewTokens = useMemo(() => {
+    if (!hasInteracted) {
+      return safeRewardAmount;
+    }
+    if (tokenUsdValue) return previewUSD / tokenUsdValue;
+    return safeRewardAmount;
+  }, [previewUSD, tokenUsdValue, safeRewardAmount, hasInteracted]);
 
   const referenceDate = dayjs('2025-08-28');
   const nextThursday = referenceDate.add(
@@ -172,7 +203,7 @@ export function BoostContent() {
         const v = document.createElement('video');
         v.src = src;
         v.preload = 'auto';
-        v.muted = true;
+        v.muted = true as any;
         v.playsInline = true as any;
         v.load();
         created.push(v);
@@ -200,13 +231,13 @@ export function BoostContent() {
             />
             <AnimatePresence mode="popLayout">
               <motion.span
-                key={`tokens-${Math.round(safeRewardAmount * 1000)}`}
+                key={`tokens-${Math.round(previewTokens * 1000)}`}
                 initial={{ y: 8, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 exit={{ y: -8, opacity: 0 }}
                 transition={{ duration: 0.18 }}
               >
-                {formatNumberWithSuffix(safeRewardAmount, 1, true)}
+                {formatNumberWithSuffix(previewTokens, 1, true)}
               </motion.span>
             </AnimatePresence>
           </p>
@@ -215,15 +246,15 @@ export function BoostContent() {
             <AnimatePresence mode="popLayout">
               {isUsdPending ? (
                 <motion.span key="pending">...</motion.span>
-              ) : estimatedUsdValue !== null ? (
+              ) : previewUSD !== null ? (
                 <motion.span
-                  key={`usd-${Math.round(estimatedUsdValue)}`}
+                  key={`usd-${Math.round(previewUSD)}`}
                   initial={{ y: 8, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                   exit={{ y: -8, opacity: 0 }}
                   transition={{ duration: 0.18 }}
                 >
-                  {formatNumberWithSuffix(estimatedUsdValue, 1, true)}
+                  {formatNumberWithSuffix(previewUSD, 1, true)}
                 </motion.span>
               ) : (
                 <motion.span key="na">N/A</motion.span>
@@ -243,7 +274,7 @@ export function BoostContent() {
                 exit={{ y: -8, opacity: 0 }}
                 transition={{ duration: 0.18 }}
               >
-                {formatNumberWithSuffix(totalImpressions, 1, true)}
+                {new Intl.NumberFormat('en-US').format(totalImpressions)}
               </motion.span>
             </AnimatePresence>
           </p>
@@ -253,19 +284,28 @@ export function BoostContent() {
       <div className="space-y-2.5">
         <p className="text-sm font-medium text-slate-500">Prize Pool</p>
         <Slider
-          value={[sliderStep]}
-          onValueChange={(value) => applyBoostStep(value[0] ?? 0)}
-          min={0}
-          max={isFeatureAvailable ? 75 : 50}
+          value={[boostStep]}
+          onValueChange={(value) => {
+            setBoostStep(value[0] ?? 0);
+            setHasInteracted(true);
+          }}
+          min={sliderMin}
+          max={sliderMax}
           step={25}
-          className="h-3 w-full"
+          className="h-3 w-full hover:cursor-grab"
         />
         <div className="flex justify-between text-base font-medium text-slate-500">
+          {estimatedUsdValue !== null && estimatedUsdValue < minUsd ? (
+            <span>${Math.round(estimatedUsdValue).toLocaleString()}</span>
+          ) : null}
           <span>${BOOST_STEP_TO_AMOUNT_USD[0].toLocaleString()}</span>
           <span>${BOOST_STEP_TO_AMOUNT_USD[25].toLocaleString()}</span>
           <span>${BOOST_STEP_TO_AMOUNT_USD[50].toLocaleString()}</span>
           {isFeatureAvailable ? (
             <span>${BOOST_STEP_TO_AMOUNT_USD[75].toLocaleString()}</span>
+          ) : null}
+          {hasRightExtra && estimatedUsdValue !== null ? (
+            <span>${Math.round(estimatedUsdValue).toLocaleString()}</span>
           ) : null}
         </div>
       </div>
@@ -287,10 +327,14 @@ export function BoostContent() {
             transition={{ type: 'spring', stiffness: 420, damping: 32 }}
           >
             <PerkRow
-              active={true}
+              active={(previewUSD || 0) >= BOOST_STEP_TO_AMOUNT_USD[0]}
               icon={<FaXTwitter className="size-5" />}
               title="X Fortnightly Thread"
               subtitle={`~${formatNumberWithSuffix(LIVE_LISTINGS_THREAD_IMPRESSIONS, 1, false, true)} Impressions | next post on ${formattedNextPostDate}`}
+              locked={(previewUSD || 0) < BOOST_STEP_TO_AMOUNT_USD[0]}
+              onClick={boostStep < 0 ? () => handlePerkClick(0) : undefined}
+              requiredValue={BOOST_STEP_TO_AMOUNT_USD[0]}
+              currentValue={previewUSD || 0}
               previewVideoSrc={buildVideoUrl('x-thread')}
             />
           </motion.div>
@@ -307,14 +351,14 @@ export function BoostContent() {
             }}
           >
             <PerkRow
-              active={sliderStep >= 25}
+              active={(previewUSD || 0) >= BOOST_STEP_TO_AMOUNT_USD[25]}
               icon={<FaXTwitter className="size-5" />}
               title="X Standalone Post"
               subtitle={`~${formatNumberWithSuffix(STANDALONE_POST_IMPRESSIONS, 1, false, true)} Impressions`}
-              locked={sliderStep < 25}
-              onClick={sliderStep < 25 ? () => handlePerkClick(25) : undefined}
+              locked={(previewUSD || 0) < BOOST_STEP_TO_AMOUNT_USD[25]}
+              onClick={boostStep < 25 ? () => handlePerkClick(25) : undefined}
               requiredValue={BOOST_STEP_TO_AMOUNT_USD[25]}
-              currentValue={estimatedUsdValue || 0}
+              currentValue={previewUSD || 0}
               previewVideoSrc={buildVideoUrl('x-standalone')}
             />
           </motion.div>
@@ -331,14 +375,14 @@ export function BoostContent() {
             }}
           >
             <PerkRow
-              active={sliderStep >= 50}
+              active={(previewUSD || 0) >= BOOST_STEP_TO_AMOUNT_USD[50]}
               icon={<MailIcon className="size-5" />}
               title="Email Broadcast"
               subtitle={`${formatNumberWithSuffix(emailImpressions, 1, false, true)} Emails`}
-              locked={sliderStep < 50}
-              onClick={sliderStep < 50 ? () => handlePerkClick(50) : undefined}
+              locked={(previewUSD || 0) < BOOST_STEP_TO_AMOUNT_USD[50]}
+              onClick={boostStep < 50 ? () => handlePerkClick(50) : undefined}
               requiredValue={BOOST_STEP_TO_AMOUNT_USD[50]}
-              currentValue={estimatedUsdValue || 0}
+              currentValue={previewUSD || 0}
               previewVideoSrc={buildVideoUrl('email')}
             />
           </motion.div>
@@ -360,16 +404,16 @@ export function BoostContent() {
                 className="pb-12"
               >
                 <PerkRow
-                  active={sliderStep >= 75}
+                  active={(previewUSD || 0) >= BOOST_STEP_TO_AMOUNT_USD[75]}
                   icon={<StarIcon className="size-5" />}
                   title="Featured on Homepage"
                   subtitle={`${formatNumberWithSuffix(FEATURED_HOMEPAGE_IMPRESSIONS, 1, false, true)} Impressions`}
-                  locked={sliderStep < 75}
+                  locked={(previewUSD || 0) < BOOST_STEP_TO_AMOUNT_USD[75]}
                   onClick={
-                    sliderStep < 75 ? () => handlePerkClick(75) : undefined
+                    boostStep < 75 ? () => handlePerkClick(75) : undefined
                   }
                   requiredValue={BOOST_STEP_TO_AMOUNT_USD[75]}
-                  currentValue={estimatedUsdValue || 0}
+                  currentValue={previewUSD || 0}
                   previewVideoSrc={buildVideoUrl('featured')}
                 />
               </motion.div>

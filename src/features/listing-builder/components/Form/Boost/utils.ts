@@ -1,10 +1,10 @@
-import { calculateTotalRewardsForPodium } from '@/features/listing-builder/utils/rewards';
-
 import {
   BOOST_STEP_TO_AMOUNT_USD,
   BOOST_STEPS,
   type BoostStep as BoostStepFromConstants,
+  DEFAULT_EMAIL_IMPRESSIONS,
   FEATURED_HOMEPAGE_IMPRESSIONS,
+  isSkillsSelected,
   LIVE_LISTINGS_THREAD_IMPRESSIONS,
   STANDALONE_POST_IMPRESSIONS,
 } from './constants';
@@ -42,6 +42,24 @@ export const clampStepForAvailability = (
   return (isFeatureAvailable ? step : step === 75 ? 50 : step) as BoostStep;
 };
 
+export const getAllowedMaxStep = (isFeatureAvailable: boolean): BoostStep => {
+  return (isFeatureAvailable ? 75 : 50) as BoostStep;
+};
+
+export const getAllowedTopUsd = (isFeatureAvailable: boolean): number => {
+  const topStep = getAllowedMaxStep(isFeatureAvailable);
+  return BOOST_STEP_TO_AMOUNT_USD[topStep];
+};
+
+export const clampToAllowedStep = (
+  step: number,
+  isFeatureAvailable: boolean,
+): BoostStep => {
+  const max = getAllowedMaxStep(isFeatureAvailable);
+  const bounded = Math.max(0, Math.min(step, max)) as BoostStep;
+  return clampStepForAvailability(bounded, isFeatureAvailable);
+};
+
 export const calculateTotalImpressions = (
   step: BoostStep,
   emailImpressions: number,
@@ -64,97 +82,72 @@ export const calculateTotalImpressions = (
   return total;
 };
 
-export const computeScaledRewardsForTargetUSD = (
-  currentRewards: Record<string, number> | undefined,
-  maxBonusSpots: number | undefined,
-  tokenUsdValue: number | null,
-  targetUSD: number,
-): {
-  readonly scaledRewards: Readonly<Record<string, number>> | undefined;
-  readonly newTotalTokens: number;
-} => {
-  const newTotalTokens = tokenUsdValue ? targetUSD / tokenUsdValue : targetUSD;
-
-  if (!currentRewards || Object.keys(currentRewards).length === 0) {
-    return { scaledRewards: undefined, newTotalTokens };
-  }
-
-  const oldTotal = calculateTotalRewardsForPodium(
-    currentRewards as Record<string, number>,
-    (maxBonusSpots as number) || 0,
-  );
-
-  if (oldTotal <= 0) {
-    return { scaledRewards: undefined, newTotalTokens };
-  }
-
-  const ratio = newTotalTokens / oldTotal;
-
-  const floatScaled: Record<string, number> = Object.entries(
-    currentRewards,
-  ).reduce(
-    (acc, [position, value]) => {
-      const numeric = Number(value);
-      if (Number.isNaN(numeric))
-        return { ...acc, [position]: value } as Record<string, number>;
-      return { ...acc, [position]: numeric * ratio } as Record<string, number>;
-    },
-    {} as Record<string, number>,
-  );
-
-  if (tokenUsdValue !== null && tokenUsdValue <= 10) {
-    const numericEntries = Object.entries(floatScaled).filter(
-      ([, v]) => typeof v === 'number' && Number.isFinite(v),
-    ) as Array<[string, number]>;
-
-    const floors = numericEntries.map(([key, v]) => ({
-      key,
-      floor: Math.floor(v),
-      frac: v - Math.floor(v),
-    }));
-    const sumFloors = floors.reduce((sum, item) => sum + item.floor, 0);
-    const targetTotal = Math.ceil(newTotalTokens);
-    let remaining = targetTotal - sumFloors;
-
-    if (remaining > 0) {
-      const byFracDesc = [...floors].sort((a, b) => b.frac - a.frac);
-      let i = 0;
-      while (remaining > 0 && byFracDesc.length > 0) {
-        const idx = i % byFracDesc.length;
-        const elem = byFracDesc[idx];
-        if (!elem) break;
-        elem.floor += 1;
-        remaining -= 1;
-        i += 1;
-      }
-    } else if (remaining < 0) {
-      const byFracAsc = [...floors].sort((a, b) => a.frac - b.frac);
-      let i = 0;
-      while (remaining < 0 && byFracAsc.length > 0) {
-        const idx = i % byFracAsc.length;
-        const elem = byFracAsc[idx];
-        if (!elem) break;
-        elem.floor = Math.max(0, elem.floor - 1);
-        remaining += 1;
-        i += 1;
-      }
-    }
-
-    const rounded: Record<string, number> = { ...floatScaled };
-    for (const { key, floor } of floors) {
-      rounded[key] = floor;
-    }
-
-    const adjustedTotal = floors.reduce((sum, i) => sum + i.floor, 0);
-    return { scaledRewards: rounded, newTotalTokens: adjustedTotal };
-  }
-
-  return { scaledRewards: floatScaled, newTotalTokens };
-};
-
 export const hasMoreThan72HoursLeft = (deadline: string | Date): boolean => {
   const now = Date.now();
   const deadlineMs = new Date(deadline).getTime();
   const seventyTwoHoursMs = 72 * 60 * 60 * 1000;
   return deadlineMs - now > seventyTwoHoursMs;
+};
+
+export const resolveEmailImpressions = (
+  skills: unknown,
+  estimate: unknown,
+): number => {
+  return isSkillsSelected(skills) && typeof estimate === 'number'
+    ? estimate
+    : DEFAULT_EMAIL_IMPRESSIONS;
+};
+
+export const computeEstimatedUsdValue = (
+  rewardAmount: unknown,
+  tokenUsdValue: unknown,
+): number | null => {
+  const amount = typeof rewardAmount === 'number' ? rewardAmount : 0;
+  const usd =
+    typeof tokenUsdValue === 'number' && Number.isFinite(tokenUsdValue)
+      ? tokenUsdValue
+      : null;
+  return usd !== null ? amount * usd : null;
+};
+
+export const resolveTargetUsdFromBoost = (
+  boostStep: number,
+  estimatedUsdValue: number | null,
+  isFeatureAvailable: boolean,
+): number => {
+  const allowedTopStep = getAllowedMaxStep(isFeatureAvailable);
+  const allowedTopUsd = BOOST_STEP_TO_AMOUNT_USD[allowedTopStep];
+
+  if (
+    boostStep < 0 &&
+    estimatedUsdValue !== null &&
+    estimatedUsdValue < allowedTopUsd
+  ) {
+    return Math.round(estimatedUsdValue);
+  }
+
+  if (
+    boostStep > allowedTopStep &&
+    estimatedUsdValue !== null &&
+    estimatedUsdValue > allowedTopUsd
+  ) {
+    return Math.round(estimatedUsdValue);
+  }
+
+  const clamped = Math.max(0, Math.min(boostStep, allowedTopStep));
+  return getDollarAmountForStep(clamped);
+};
+
+export const getTotalImpressionsForValue = (
+  value: number,
+  emailImpressions: number,
+  isFeatureAvailable: boolean,
+): number => {
+  if (value < 0) return 0;
+  const clamped = clampToAllowedStep(value, isFeatureAvailable);
+  return calculateTotalImpressions(
+    clamped,
+    emailImpressions,
+    isFeatureAvailable,
+  );
 };

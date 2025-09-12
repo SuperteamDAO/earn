@@ -12,6 +12,7 @@ export async function POST() {
         deadline: {
           gte: new Date(),
         },
+        region: 'Global',
       },
     });
     return NextResponse.json({ count });

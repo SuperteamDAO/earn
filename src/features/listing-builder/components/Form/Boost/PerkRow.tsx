@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from 'motion/react';
 
 import { Tooltip } from '@/components/ui/tooltip';
 import { cn } from '@/utils/cn';
+import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 
 export function PerkRow({
   active,
@@ -93,7 +94,8 @@ export function PerkRow({
             whileHover={{ scale: 1.06 }}
             transition={{ duration: 0.25 }}
           >
-            +Add ${(requiredValue! - currentValue!).toLocaleString()}
+            +Add $
+            {formatNumberWithSuffix(requiredValue! - currentValue!, 1, true)}
           </motion.span>
         ) : (
           <AnimatePresence>
