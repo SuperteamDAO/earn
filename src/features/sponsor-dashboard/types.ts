@@ -69,7 +69,11 @@ export const verifyPaymentsSchema = z.object({
           ...data,
           txId: data.isVerified
             ? ''
-            : data.link?.split('/tx/')[1]?.split('?')[0] || '',
+            : data.link
+                ?.split('/tx/')[1]
+                ?.split('?')[0]
+                ?.split('#')[0]
+                ?.trim() || '',
         })),
     )
     .refine((links) => links.some((link) => link.link || link.isVerified), {
