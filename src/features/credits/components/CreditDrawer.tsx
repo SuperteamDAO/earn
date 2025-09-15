@@ -35,7 +35,11 @@ export function CreditDrawer({
   const { data: creditHistory, isLoading } = useQuery({
     queryKey: ['creditHistory', user?.id],
     queryFn: () => api.get('/api/user/credit/history'),
-    enabled: !!user?.id,
+    enabled: !!user?.id && isOpen,
+    staleTime: 5 * 60 * 1000,
+    gcTime: 30 * 60 * 1000,
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
   });
 
   useEffect(() => {
