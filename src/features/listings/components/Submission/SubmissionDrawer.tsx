@@ -27,6 +27,7 @@ import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { SideDrawer, SideDrawerContent } from '@/components/ui/side-drawer';
 import { useDisclosure } from '@/hooks/use-disclosure';
+import { useServerTimeSync } from '@/hooks/use-server-time';
 import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
@@ -274,6 +275,8 @@ export const SubmissionDrawer = ({
 
   const { signIn: popupSignIn } = usePopupAuth();
 
+  const { manualSync } = useServerTimeSync();
+
   const handleVerifyClick = async (fieldName: 'tweet' | 'link') => {
     const fieldValue = fieldName === 'tweet' ? tweetValue : linkValue;
     if (!fieldValue) return;
@@ -334,6 +337,9 @@ export const SubmissionDrawer = ({
 
     posthog.capture('confirmed_submission');
     setIsLoading(true);
+    try {
+      await manualSync();
+    } catch {}
     try {
       const submissionEndpoint = editMode
         ? '/api/submission/update/'
