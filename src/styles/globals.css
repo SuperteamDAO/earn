@@ -96,6 +96,7 @@
   --animate-slide-in-from-right: slide-in-from-right 1s ease-out;
   --animate-slide-out-to-right: slide-out-to-right 1s ease-in;
   --animate-float: float 2s ease-in-out infinite;
+  --animate-skeleton-pulse: skeleton-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 
   @keyframes caret-blink {
     0%,
@@ -148,6 +149,16 @@
     }
     50% {
       transform: translateY(var(--float-y, -4px));
+    }
+  }
+
+  @keyframes skeleton-pulse {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.5;
     }
   }
 }

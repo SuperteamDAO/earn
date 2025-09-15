@@ -7,6 +7,7 @@ import Countdown from 'react-countdown';
 import { CountDownRenderer } from '@/components/shared/countdownRenderer';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { SideDrawer, SideDrawerContent } from '@/components/ui/side-drawer';
+import { Skeleton } from '@/components/ui/skeleton';
 import { Tooltip } from '@/components/ui/tooltip';
 import { api } from '@/lib/api';
 import { useCreditBalance } from '@/store/credit';
@@ -205,9 +206,7 @@ export function CreditDrawer({
 
           <ScrollArea className="flex-1 overflow-y-auto bg-white">
             {isLoading ? (
-              <div className="flex justify-center py-8">
-                <p className="text-slate-500">Loading credit history...</p>
-              </div>
+              <CreditHistorySkeleton />
             ) : creditHistory?.data?.length === 0 ? (
               <div className="flex justify-center py-8">
                 <p className="text-slate-500">No credit history available</p>
@@ -279,5 +278,71 @@ export function CreditDrawer({
         </div>
       </SideDrawerContent>
     </SideDrawer>
+  );
+}
+
+function CreditHistorySkeleton() {
+  return (
+    <div className="mb-4 pb-2">
+      <div className="w-full">
+        <div className="flex items-center gap-1 px-4 pt-5 pb-3">
+          <Skeleton className="h-4 w-20" />
+        </div>
+        <div className="border-t border-slate-200" />
+        <div className="space-y-0">
+          {Array.from({ length: 3 }).map((_, index) => (
+            <div
+              key={index}
+              className="flex items-center gap-2 px-4 py-4 sm:gap-4"
+            >
+              <div className="relative">
+                <Skeleton className="size-8 rounded-full sm:size-10" />
+                <div className="absolute -right-1 -bottom-1">
+                  <Skeleton className="size-5 rounded-full" />
+                </div>
+              </div>
+              <div className="flex-1 space-y-2">
+                <Skeleton className="h-4 w-3/4" />
+                <Skeleton className="h-3 w-1/2" />
+              </div>
+              <div className="flex flex-col items-end space-y-1">
+                <Skeleton className="h-4 w-16" />
+                <Skeleton className="h-3 w-12" />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="w-full">
+        <div className="flex items-center gap-1 px-4 pt-5 pb-3">
+          <Skeleton className="h-4 w-24" />
+        </div>
+        <div className="border-t border-slate-200" />
+        <div className="space-y-0">
+          {Array.from({ length: 2 }).map((_, index) => (
+            <div
+              key={index}
+              className="flex items-center gap-2 px-4 py-4 sm:gap-4"
+            >
+              <div className="relative">
+                <Skeleton className="size-8 rounded-full sm:size-10" />
+                <div className="absolute -right-1 -bottom-1">
+                  <Skeleton className="size-5 rounded-full" />
+                </div>
+              </div>
+              <div className="flex-1 space-y-2">
+                <Skeleton className="h-4 w-2/3" />
+                <Skeleton className="h-3 w-1/3" />
+              </div>
+              <div className="flex flex-col items-end space-y-1">
+                <Skeleton className="h-4 w-14" />
+                <Skeleton className="h-3 w-10" />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
   );
 }
