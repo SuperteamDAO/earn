@@ -100,10 +100,10 @@ export function SponsorLayout({
     setIsExpanded(false);
   }, []);
 
-  const open = !!query.open; // Replace 'paramName' with the actual parameter name
+  const open = !!query.open;
   useEffect(() => {
     if (open) {
-      onOpen();
+      setAutoGenerateOpen(true);
     }
   }, [open]);
 

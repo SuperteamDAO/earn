@@ -196,6 +196,18 @@ const CreateSponsor = () => {
     isError,
   } = useMutation({
     mutationFn: async (data: SponsorFormValues) => {
+      router.prefetch('/dashboard/listings?open=1');
+
+      if (selectedUserPhoto && data.user) {
+        data.user.photo = user?.photo;
+        const uploadResult = await uploadAndReplace(
+          selectedUserPhoto,
+          { folder: 'earn-pfp', source: IMAGE_SOURCE.USER },
+          user?.photo || undefined,
+        );
+        data.user.photo = uploadResult.url;
+      }
+
       const { sponsorData, userData } = transformFormToApiData(data);
 
       try {
@@ -282,16 +294,6 @@ const CreateSponsor = () => {
     if (isSubmitDisabled) return;
 
     try {
-      if (selectedUserPhoto && data.user) {
-        data.user.photo = user?.photo;
-        const uploadResult = await uploadAndReplace(
-          selectedUserPhoto,
-          { folder: 'earn-pfp', source: IMAGE_SOURCE.USER },
-          user?.photo || undefined,
-        );
-        data.user.photo = uploadResult.url;
-      }
-
       posthog.capture('complete profile_sponsor');
       await createSponsor(data);
       if (user) posthog.identify(user.email);
