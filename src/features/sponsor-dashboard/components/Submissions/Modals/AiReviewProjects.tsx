@@ -59,9 +59,13 @@ export default function AiReviewProjectApplicationsModal({
 
     setProgress(0);
     let currentProgress = 0;
+    const totalDuration = 10000;
+    const updateInterval = 200;
+    const steps = totalDuration / updateInterval;
+    const progressPerStep = 100 / steps;
 
     progressIntervalRef.current = setInterval(() => {
-      currentProgress += Math.random() * 15 + 6;
+      currentProgress += progressPerStep;
       const cappedProgress = Math.min(currentProgress, 99);
       setProgress(cappedProgress);
 
@@ -71,7 +75,7 @@ export default function AiReviewProjectApplicationsModal({
           progressIntervalRef.current = null;
         }
       }
-    }, 400);
+    }, updateInterval);
 
     return () => {
       if (progressIntervalRef.current) {
