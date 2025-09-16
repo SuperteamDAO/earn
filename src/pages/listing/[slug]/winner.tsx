@@ -4,7 +4,8 @@ import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
 import type { SubmissionWithUser } from '@/interface/submission';
-import { api } from '@/lib/api';
+import { getWinningSubmissionsByListingId } from '@/pages/api/listings/[listingId]/winners';
+import { getListingDetailsBySlug } from '@/pages/api/listings/details/[slug]';
 import { sortRank } from '@/utils/rank';
 import { getURL } from '@/utils/validUrl';
 
@@ -98,15 +99,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   let bountyData;
   const submissions: StrippedSubmission[] = [];
   try {
-    const bountyDetails = await api.get(
-      `${fullUrl}api/listings/details/${slug}`,
-    );
-    bountyData = bountyDetails.data;
+    bountyData = await getListingDetailsBySlug(String(slug));
 
-    const submissionsDetails = await api.get<SubmissionWithUser[]>(
-      `${fullUrl}api/listings/${bountyDetails.data.id}/winners/`,
-    );
-    let { data } = submissionsDetails;
+    let data = await getWinningSubmissionsByListingId(String(bountyData.id));
     data = data.filter((d) => d.winnerPosition !== BONUS_REWARD_POSITION);
     const winners = sortRank(
       data.map((submission) => submission.winnerPosition || NaN),
