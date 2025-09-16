@@ -33,6 +33,7 @@ import { Meta } from '@/layouts/Meta';
 import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
+import { IMAGE_SOURCE } from '@/utils/image';
 
 import { SignIn } from '@/features/auth/components/SignIn';
 import { SocialInput } from '@/features/social/components/SocialInput';
@@ -195,6 +196,18 @@ const CreateSponsor = () => {
     isError,
   } = useMutation({
     mutationFn: async (data: SponsorFormValues) => {
+      router.prefetch('/dashboard/listings?open=1');
+
+      if (selectedUserPhoto && data.user) {
+        data.user.photo = user?.photo;
+        const uploadResult = await uploadAndReplace(
+          selectedUserPhoto,
+          { folder: 'earn-pfp', source: IMAGE_SOURCE.USER },
+          user?.photo || undefined,
+        );
+        data.user.photo = uploadResult.url;
+      }
+
       const { sponsorData, userData } = transformFormToApiData(data);
 
       try {
@@ -202,6 +215,7 @@ const CreateSponsor = () => {
           const uploadResult = await uploadFile(selectedLogo, {
             folder: 'earn-sponsor',
             resource_type: 'image',
+            source: IMAGE_SOURCE.SPONSOR,
           });
           sponsorData.logo = uploadResult.url;
         }
@@ -280,16 +294,6 @@ const CreateSponsor = () => {
     if (isSubmitDisabled) return;
 
     try {
-      if (selectedUserPhoto && data.user) {
-        data.user.photo = user?.photo;
-        const uploadResult = await uploadAndReplace(
-          selectedUserPhoto,
-          { folder: 'earn-pfp' },
-          user?.photo || undefined,
-        );
-        data.user.photo = uploadResult.url;
-      }
-
       posthog.capture('complete profile_sponsor');
       await createSponsor(data);
       if (user) posthog.identify(user.email);

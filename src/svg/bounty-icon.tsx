@@ -1,6 +1,12 @@
 import React, { type CSSProperties } from 'react';
 
-export const BountyIcon = ({ styles }: { styles?: CSSProperties }) => {
+export const BountyIcon = ({
+  styles,
+  className,
+}: {
+  styles?: CSSProperties;
+  className?: string;
+}) => {
   return (
     <svg
       width="16"
@@ -9,6 +15,7 @@ export const BountyIcon = ({ styles }: { styles?: CSSProperties }) => {
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       style={styles}
+      className={className}
     >
       <path
         fillRule="evenodd"

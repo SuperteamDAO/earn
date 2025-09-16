@@ -80,9 +80,10 @@ export async function POST(request: Request) {
 
     const { object } = await generateObject({
       model: openrouter('google/gemini-2.0-flash-lite-001'),
-      system: 'Your role is to extract the token mentioned in the listings.',
+      system:
+        'You generate concise, compelling listing titles for provided listing description. Follow the prompt rules and strictly satisfy the response schema.',
       prompt,
-      schema: responseSchema,
+      schema: responseSchema as any,
     });
 
     logger.info('Generated eligibility title object: ', safeStringify(object));

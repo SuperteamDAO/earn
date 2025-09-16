@@ -1,15 +1,14 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useAtom, useSetAtom } from 'jotai';
+import { useAtom } from 'jotai';
 import { LucideFlag } from 'lucide-react';
 import { useState } from 'react';
-import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
 import type { SubmissionWithUser } from '@/interface/submission';
 import { api } from '@/lib/api';
 import { SubmissionLabels } from '@/prisma/enums';
 
-import { isStateUpdatingAtom, selectedSubmissionAtom } from '../../atoms';
+import { selectedSubmissionAtom } from '../../atoms';
 import { useRejectSubmissions } from '../../mutations/useRejectSubmissions';
 import { SpamConfirmationDialog } from './SpamConfirmationDialog';
 
@@ -32,7 +31,6 @@ export const SpamButton = ({ listingSlug, isMultiSelectOn }: Props) => {
   const [selectedSubmission, setSelectedSubmission] = useAtom(
     selectedSubmissionAtom,
   );
-  const setLabelsUpdating = useSetAtom(isStateUpdatingAtom);
   const [isSpamDialogOpen, setIsSpamDialogOpen] = useState(false);
   const [pendingSpamLabel, setPendingSpamLabel] = useState<{
     id: string;
@@ -64,38 +62,24 @@ export const SpamButton = ({ listingSlug, isMultiSelectOn }: Props) => {
         label,
       }),
     onSuccess: (
-      response: UpdateLabelResponse,
+      _: UpdateLabelResponse,
       variables: { id: string; label: SubmissionLabels },
     ) => {
-      setLabelsUpdating(false);
-
-      const { autoFixed } = response.data || {};
-      if (autoFixed) {
-        toast.info(
-          "A submission can't be both a winner and marked as spam — we've adjusted its status.",
-        );
-      }
-
       if (variables.label === SubmissionLabels.Spam) {
         rejectSubmissions.mutate([variables.id]);
       }
-
+    },
+    onMutate: (variables) => {
       queryClient.setQueryData<SubmissionWithUser[]>(
         ['sponsor-submissions', listingSlug],
         (old) => {
           if (!old) return old;
           return old.map((submission) => {
             if (submission.id === variables.id) {
-              if (
-                variables.label === 'Spam' &&
-                submission.isWinner &&
-                autoFixed
-              ) {
+              if (variables.label === 'Spam') {
                 return {
                   ...submission,
                   label: variables.label,
-                  isWinner: false,
-                  winnerPosition: undefined,
                 };
               }
               return { ...submission, label: variables.label };
@@ -107,27 +91,13 @@ export const SpamButton = ({ listingSlug, isMultiSelectOn }: Props) => {
 
       setSelectedSubmission((prev) => {
         if (prev && prev.id === variables.id) {
-          if (variables.label === 'Spam' && prev.isWinner && autoFixed) {
-            return {
-              ...prev,
-              label: variables.label,
-              isWinner: false,
-              winnerPosition: undefined,
-            };
-          }
           return { ...prev, label: variables.label };
         }
         return prev;
       });
     },
-    onMutate: () => {
-      setLabelsUpdating(true);
-    },
     onError: (e) => {
       console.log(e);
-    },
-    onSettled: () => {
-      setLabelsUpdating(false);
     },
   });
 

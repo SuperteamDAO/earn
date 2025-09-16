@@ -4,8 +4,6 @@ import * as React from 'react';
 import { useDropzone } from 'react-dropzone';
 
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 
 interface ImageEditBlockProps {
   editor: Editor;
@@ -16,7 +14,7 @@ export const ImageEditBlock: React.FC<ImageEditBlockProps> = ({
   editor,
   close,
 }) => {
-  const [link, setLink] = React.useState('');
+  const [link] = React.useState('');
 
   const handleSubmit = React.useCallback(
     (e: React.FormEvent<HTMLFormElement>) => {
@@ -60,26 +58,6 @@ export const ImageEditBlock: React.FC<ImageEditBlockProps> = ({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      <div className="space-y-1">
-        <Label htmlFor="image-link">Attach an image link</Label>
-        <div className="flex">
-          <Input
-            id="image-link"
-            type="url"
-            required
-            placeholder="https://example.com"
-            value={link}
-            className="grow"
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              setLink(e.target.value)
-            }
-          />
-          <Button type="submit" className="ml-2">
-            Submit
-          </Button>
-        </div>
-      </div>
-      <span className="block w-full text-center text-slate-500 italic">OR</span>
       <div
         {...getRootProps()}
         className={`rounded-md border-2 border-dashed bg-slate-50 p-8 text-center transition-colors ${isDragActive ? 'border-primary bg-primary/5' : 'border-slate-200 hover:border-slate-300'} `}

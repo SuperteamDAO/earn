@@ -1,4 +1,24 @@
-export async function GET() {
+import { ipAddress } from '@vercel/functions';
+import { type NextRequest } from 'next/server';
+
+import logger from '@/lib/logger';
+import { serverTimeRateLimiter } from '@/lib/ratelimit';
+import { checkAndApplyRateLimitApp } from '@/lib/rateLimiterService';
+
+export const runtime = 'edge';
+
+export async function GET(request: NextRequest) {
+  const identifier = ipAddress(request) || 'unknown';
+  const rateLimitResponse = await checkAndApplyRateLimitApp({
+    limiter: serverTimeRateLimiter,
+    identifier,
+    routeName: 'serverTime',
+  });
+  if (rateLimitResponse) {
+    logger.warn('Rate limit exceeded for server time', { identifier });
+    return rateLimitResponse;
+  }
+
   if (process.env.IS_LOCAL === 'true') {
     try {
       const response = await fetch('https://httpbin.org/get', {

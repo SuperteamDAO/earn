@@ -1,6 +1,12 @@
 import React, { type CSSProperties } from 'react';
 
-export const ProjectIcon = ({ styles }: { styles?: CSSProperties }) => {
+export const ProjectIcon = ({
+  styles,
+  className,
+}: {
+  styles?: CSSProperties;
+  className?: string;
+}) => {
   return (
     <svg
       width="15"
@@ -9,6 +15,7 @@ export const ProjectIcon = ({ styles }: { styles?: CSSProperties }) => {
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       style={styles}
+      className={className}
     >
       <path
         fillRule="evenodd"

@@ -16,6 +16,14 @@ export function fileToBase64(file: File): Promise<string> {
   });
 }
 
+export const IMAGE_SOURCE = {
+  DESCRIPTION: 'description',
+  USER: 'user',
+  SPONSOR: 'sponsor',
+} as const;
+
+export type ImageSource = (typeof IMAGE_SOURCE)[keyof typeof IMAGE_SOURCE];
+
 export type EARN_IMAGE_FOLDER =
   | 'earn-pfp'
   | 'earn-sponsor'
@@ -24,7 +32,7 @@ export type EARN_IMAGE_FOLDER =
 async function uploadToCld(
   file: File,
   folder: EARN_IMAGE_FOLDER,
-  type = 'pfp',
+  source: ImageSource = IMAGE_SOURCE.USER,
 ) {
   try {
     const base64Image = await fileToBase64(file);
@@ -32,7 +40,7 @@ async function uploadToCld(
 
     const response = await api.post('/api/image/upload', {
       imageBase64: base64Content,
-      type,
+      source,
       folder,
     });
 
@@ -43,9 +51,11 @@ async function uploadToCld(
   }
 }
 
-export async function deleteFromCld(imageUrl: string) {
+export async function deleteFromCld(imageUrl: string, source: ImageSource) {
   try {
-    await api.delete('/api/image/delete', { data: { imageUrl } });
+    await api.delete('/api/image/delete', {
+      data: { imageUrl, source },
+    });
   } catch (error) {
     console.error('Error deleting image:', error);
     logger.error('Error deleting image:', error);
@@ -56,19 +66,19 @@ export async function uploadAndReplaceImage({
   newFile,
   folder,
   oldImageUrl,
-  type = 'pfp',
+  source = IMAGE_SOURCE.USER,
 }: {
   newFile: File;
   folder: EARN_IMAGE_FOLDER;
   oldImageUrl?: string;
-  type?: 'pfp' | 'sponsor';
+  source?: ImageSource;
 }) {
   try {
-    const newImageUrl = await uploadToCld(newFile, folder, type);
+    const newImageUrl = await uploadToCld(newFile, folder, source);
 
     if (oldImageUrl) {
       try {
-        await deleteFromCld(oldImageUrl);
+        await deleteFromCld(oldImageUrl, source);
       } catch (error) {
         logger.error('Failed to delete old image during replacement:', {
           error,

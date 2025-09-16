@@ -145,7 +145,7 @@ export const SubmissionActionButton = ({
 
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const { serverTime } = useServerTimeSync();
+  const { serverTime, manualSync } = useServerTimeSync();
 
   const regionTooltipLabel = getRegionTooltipLabel(region);
 
@@ -158,6 +158,7 @@ export const SubmissionActionButton = ({
   const isEditMode = buttonState === 'edit';
 
   const handleSubmit = () => {
+    void manualSync();
     if (buttonState === 'kyc') {
       setIsKYCModalOpen(true);
     } else {
