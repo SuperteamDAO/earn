@@ -451,17 +451,10 @@ export const tokenList: Token[] = [
     decimals: 9,
   },
   {
-    tokenName: 'Swop.Meme',
+    tokenName: 'Swop.gosp',
     tokenSymbol: 'SWOP',
     mintAddress: 'AhhtUFVLUSDxgsPTuky7JXEi92e3QcqnagfgZoDSjups',
     icon: '',
     decimals: 6,
-  },
-  {
-    tokenName: 'Sonic SVM',
-    tokenSymbol: 'SONIC',
-    mintAddress: 'SonicxvLud67EceaEzCLRnMTBqzYUUYNr93DBkBdDES',
-    icon: 'https://assets.coingecko.com/coins/images/53061/standard/Token.png?1735169618',
-    decimals: 9,
   },
 ];
