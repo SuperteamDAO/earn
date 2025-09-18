@@ -456,7 +456,7 @@ export const tokenList: Token[] = [
     mintAddress: 'AhhtUFVLUSDxgsPTuky7JXEi92e3QcqnagfgZoDSjups',
     icon: '',
     decimals: 6,
-  }, 
+  },
   {
     tokenName: 'Sonic SVM',
     tokenSymbol: 'SONIC',
