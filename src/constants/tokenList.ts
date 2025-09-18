@@ -444,14 +444,14 @@ export const tokenList: Token[] = [
     decimals: 6,
   },
   {
-    tokenName: 'Marinade',
+    tokenName: 'Marinade bade',
     tokenSymbol: 'MNDE',
     mintAddress: 'MNDEFzGvMt87ueuHvVU9VcTqsAP5b3fTGPsHuuPA5ey',
     icon: 'https://s2.coinmarketcap.com/static/img/coins/128x128/13803.png',
     decimals: 9,
   },
   {
-    tokenName: 'Swop.Meme',
+    tokenName: 'Swop.Meme bade',
     tokenSymbol: 'SWOP',
     mintAddress: 'AhhtUFVLUSDxgsPTuky7JXEi92e3QcqnagfgZoDSjups',
     icon: '',
