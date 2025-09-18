@@ -136,7 +136,7 @@ export const tokenList: Token[] = [
     decimals: 9,
   },
   {
-    tokenName: "Dean's List",
+    tokenName: 'Dean\'s List',
     tokenSymbol: 'DEAN',
     mintAddress: 'Ds52CDgqdWbTWsua1hgT3AuSSy4FNx2Ezge1br3jQ14a',
     icon: 'https://assets.coingecko.com/coins/images/36197/standard/logo_dl.png?1710811437',
@@ -463,5 +463,12 @@ export const tokenList: Token[] = [
     mintAddress: 'SonicxvLud67EceaEzCLRnMTBqzYUUYNr93DBkBdDES',
     icon: 'https://assets.coingecko.com/coins/images/53061/standard/Token.png?1735169618',
     decimals: 9,
+  },
+  {
+    tokenName: 'Pope',
+    tokenSymbol: 'POPE',
+    mintAddress: 'SonicxvLud67EceaEzCLRnMTBqzYUUYNr93DBkBdDES',
+    icon: 'https://s2.coinmarketcap.com/static/img/coins/128x128/13803.png',
+    decimals: 6,
   },
 ];
