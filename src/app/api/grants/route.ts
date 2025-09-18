@@ -53,6 +53,7 @@ export async function GET(request: NextRequest) {
     const grants = await prisma.grants.findMany({
       where,
       take,
+      orderBy: { createdAt: 'desc' },
       select: grantsSelect,
     });
 

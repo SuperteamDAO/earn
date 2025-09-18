@@ -11,7 +11,6 @@ import { type RewardInputSchema } from './route';
 
 export function generateListingRewardsPrompt({
   description,
-  inputReward,
   token,
   tokenUsdValue,
   type,
@@ -33,10 +32,6 @@ ${type}
 <input-description>
 ${description}
 </input-description>
-
-<input-reward-context>
-${inputReward || 'N/A'}
-</input-reward-context>
 
 <target-token-details>
   <name>${targetTokenName}</name>

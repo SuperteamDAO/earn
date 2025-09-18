@@ -131,11 +131,11 @@ export const useServerTimeSync = (
     queryKey: ['server-time', endpoint],
     queryFn: fetchServerTime,
     enabled: autoSync,
-    refetchInterval: autoSync ? syncInterval : false,
+    refetchInterval: false,
     retry: maxRetries,
     retryDelay: (attemptIndex) => retryDelay * Math.pow(2, attemptIndex),
-    staleTime: syncInterval / 2,
     gcTime: syncInterval * 2,
+    staleTime: syncInterval,
     refetchOnWindowFocus: false,
     refetchOnReconnect: true,
   });

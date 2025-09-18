@@ -14,4 +14,6 @@ export const submissionCountQuery = (listingId: string) =>
     queryKey: ['submissionCount', listingId],
     queryFn: () => fetchSubmissionCount(listingId),
     enabled: !!listingId,
+    staleTime: 1000 * 60 * 60,
+    gcTime: 1000 * 60 * 60 * 2,
   });

@@ -6,9 +6,12 @@ import { dayjs } from '@/utils/dayjs';
 
 import { type Listing } from '@/features/listings/types';
 
+import { type GeneratedListingData } from '../atoms';
 import { DEADLINE_FORMAT } from '../constants';
 import { type ListingFormData } from '../types';
 import { createListingFormSchema } from '../types/schema';
+import { calculateTotalRewardsForPodium } from './rewards';
+
 interface ListingDefaults {
   isGod: boolean;
   isEditing: boolean;
@@ -16,6 +19,7 @@ interface ListingDefaults {
   type?: BountyType;
   hackathons?: HackathonModel[];
   hackathonId?: string;
+  generatedListing?: GeneratedListingData;
 }
 
 export const getListingDefaults = ({
@@ -25,6 +29,7 @@ export const getListingDefaults = ({
   type = 'bounty',
   hackathons,
   hackathonId,
+  generatedListing,
 }: ListingDefaults) => {
   const schema = createListingFormSchema({
     isGod,
@@ -92,6 +97,47 @@ export const getListingDefaults = ({
     }
   }
   defaults['isFndnPaying'] = false;
+
+  if (generatedListing) {
+    if (generatedListing.type) {
+      defaults['type'] = generatedListing.type;
+    }
+    if (generatedListing.description) {
+      defaults['description'] = generatedListing.description;
+    }
+    if (generatedListing.title) {
+      defaults['title'] = generatedListing.title;
+    }
+    if (generatedListing.token) {
+      defaults['token'] = generatedListing.token;
+    }
+    if (generatedListing.rewards) {
+      defaults['compensationType'] = generatedListing.rewards.compensationType;
+      const generatedCompensationType =
+        generatedListing.rewards.compensationType;
+      if (generatedCompensationType === 'fixed') {
+        defaults['rewards'] = generatedListing.rewards.rewards;
+        defaults['maxBonusSpots'] = generatedListing.rewards.maxBonusSpots || 0;
+        const totalReward = calculateTotalRewardsForPodium(
+          generatedListing.rewards.rewards || {},
+          generatedListing.rewards.maxBonusSpots || 0,
+        );
+        defaults['rewardAmount'] = totalReward;
+      } else if (generatedCompensationType === 'range') {
+        defaults['minRewardAsk'] =
+          generatedListing.rewards.minRewardAsk || null;
+        defaults['maxRewardAsk'] =
+          generatedListing.rewards.maxRewardAsk || null;
+      }
+    }
+    if (generatedListing.skills) {
+      defaults['skills'] = generatedListing.skills;
+    }
+    if (generatedListing.eligibilityQuestions && type !== 'hackathon') {
+      defaults['eligibility'] = generatedListing.eligibilityQuestions;
+    }
+  }
+
   return defaults as ListingFormData;
 };
 

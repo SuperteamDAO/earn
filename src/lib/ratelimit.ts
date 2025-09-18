@@ -36,3 +36,10 @@ export const commentGetRateLimiter = new Ratelimit({
   analytics: true,
   prefix: 'ratelimit:comment_get',
 });
+
+export const serverTimeRateLimiter = new Ratelimit({
+  redis: redis,
+  limiter: Ratelimit.fixedWindow(30, '1 m'),
+  analytics: true,
+  prefix: 'ratelimit:server_time',
+});

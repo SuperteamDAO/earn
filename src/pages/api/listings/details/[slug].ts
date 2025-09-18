@@ -2,7 +2,63 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
-import { safeStringify } from '@/utils/safeStringify';
+import { convertDatesToISO, safeStringify } from '@/utils/safeStringify';
+
+export async function getListingDetailsBySlug(slug: string): Promise<any> {
+  if (!slug) {
+    throw new Error('Missing required query parameters: slug');
+  }
+
+  const result = await prisma.bounties.findFirst({
+    where: {
+      slug,
+      isActive: true,
+    },
+    include: {
+      sponsor: {
+        select: {
+          name: true,
+          logo: true,
+          entityName: true,
+          isVerified: true,
+          isCaution: true,
+        },
+      },
+      poc: {
+        select: {
+          id: true,
+          firstName: true,
+          lastName: true,
+          username: true,
+          photo: true,
+        },
+      },
+      Hackathon: {
+        select: {
+          logo: true,
+          altLogo: true,
+          startDate: true,
+          name: true,
+          description: true,
+          slug: true,
+          announceDate: true,
+          sponsorId: true,
+          Sponsor: {
+            select: {
+              name: true,
+              logo: true,
+              entityName: true,
+              isVerified: true,
+              isCaution: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  return convertDatesToISO(result);
+}
 
 export default async function handler(
   req: NextApiRequest,
@@ -21,53 +77,7 @@ export default async function handler(
   }
 
   try {
-    const result = await prisma.bounties.findFirst({
-      where: {
-        slug,
-        isActive: true,
-      },
-      include: {
-        sponsor: {
-          select: {
-            name: true,
-            logo: true,
-            entityName: true,
-            isVerified: true,
-            isCaution: true,
-          },
-        },
-        poc: {
-          select: {
-            id: true,
-            firstName: true,
-            lastName: true,
-            username: true,
-            photo: true,
-          },
-        },
-        Hackathon: {
-          select: {
-            logo: true,
-            altLogo: true,
-            startDate: true,
-            name: true,
-            description: true,
-            slug: true,
-            announceDate: true,
-            sponsorId: true,
-            Sponsor: {
-              select: {
-                name: true,
-                logo: true,
-                entityName: true,
-                isVerified: true,
-                isCaution: true,
-              },
-            },
-          },
-        },
-      },
-    });
+    const result = await getListingDetailsBySlug(slug);
 
     if (!result) {
       logger.warn(`Bounty with slug=${slug} not found`);

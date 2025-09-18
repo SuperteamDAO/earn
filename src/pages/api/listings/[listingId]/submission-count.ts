@@ -4,6 +4,24 @@ import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
 
+export async function getSubmissionCount(listingId: string): Promise<number> {
+  logger.debug(`Fetching submission count for listing ID: ${listingId}`);
+  const result = await prisma.submission.aggregate({
+    _count: true,
+    where: {
+      listingId,
+      isActive: true,
+      isArchived: false,
+    },
+  });
+
+  const submissionCount = result?._count || 0;
+  logger.info(
+    `Fetched submission count for listing ID: ${listingId}: ${submissionCount}`,
+  );
+  return submissionCount;
+}
+
 export default async function submission(
   req: NextApiRequest,
   res: NextApiResponse,
@@ -14,20 +32,7 @@ export default async function submission(
   logger.debug(`Request query: ${safeStringify(req.query)}`);
 
   try {
-    logger.debug(`Fetching submission count for listing ID: ${listingId}`);
-    const result = await prisma.submission.aggregate({
-      _count: true,
-      where: {
-        listingId,
-        isActive: true,
-        isArchived: false,
-      },
-    });
-
-    const submissionCount = result?._count || 0;
-    logger.info(
-      `Fetched submission count for listing ID: ${listingId}: ${submissionCount}`,
-    );
+    const submissionCount = await getSubmissionCount(listingId);
     res.status(200).json(submissionCount);
   } catch (error: any) {
     logger.error(

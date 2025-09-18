@@ -1,8 +1,38 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
+import { type SubmissionWithUser } from '@/interface/submission';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
-import { safeStringify } from '@/utils/safeStringify';
+import { convertDatesToISO, safeStringify } from '@/utils/safeStringify';
+
+export async function getWinningSubmissionsByListingId(listingId: string) {
+  if (!listingId) {
+    throw new Error('Missing required query parameters: listingId');
+  }
+
+  const result = await prisma.submission.findMany({
+    where: {
+      listingId,
+      isActive: true,
+      isArchived: false,
+      isWinner: true,
+    },
+    orderBy: { updatedAt: 'desc' },
+    include: {
+      user: {
+        select: {
+          id: true,
+          username: true,
+          firstName: true,
+          lastName: true,
+          photo: true,
+        },
+      },
+    },
+  });
+
+  return convertDatesToISO(result) as unknown as SubmissionWithUser[];
+}
 
 export default async function submission(
   req: NextApiRequest,
@@ -15,26 +45,7 @@ export default async function submission(
 
   try {
     logger.debug(`Fetching winning submissions for listing ID: ${listingId}`);
-    const result = await prisma.submission.findMany({
-      where: {
-        listingId,
-        isActive: true,
-        isArchived: false,
-        isWinner: true,
-      },
-      orderBy: { updatedAt: 'desc' },
-      include: {
-        user: {
-          select: {
-            id: true,
-            username: true,
-            firstName: true,
-            lastName: true,
-            photo: true,
-          },
-        },
-      },
-    });
+    const result = await getWinningSubmissionsByListingId(listingId);
 
     logger.info(
       `Fetched ${result.length} winning submissions for listing ID: ${listingId}`,
