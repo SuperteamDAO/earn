@@ -10,6 +10,13 @@ export interface Token {
 
 export const tokenList: Token[] = [
   {
+    tokenName: 'Popey',
+    tokenSymbol: 'POPEY',
+    mintAddress: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
+    icon: 'https://s2.coinmarketcap.com/static/img/coins/128x128/3408.png',
+    decimals: 6,
+  },
+  {
     tokenName: 'USDC',
     tokenSymbol: 'USDC',
     mintAddress: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
@@ -136,7 +143,7 @@ export const tokenList: Token[] = [
     decimals: 9,
   },
   {
-    tokenName: "Dean's List",
+    tokenName: 'Dean\'s List',
     tokenSymbol: 'DEAN',
     mintAddress: 'Ds52CDgqdWbTWsua1hgT3AuSSy4FNx2Ezge1br3jQ14a',
     icon: 'https://assets.coingecko.com/coins/images/36197/standard/logo_dl.png?1710811437',
