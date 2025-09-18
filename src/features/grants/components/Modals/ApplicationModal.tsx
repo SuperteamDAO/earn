@@ -85,8 +85,8 @@ export const ApplicationModal = ({
     () =>
       zodResolver(
         grantApplicationSchema(
-          minReward || 0,
-          maxReward || 0,
+          minReward || 1,
+          maxReward || 1,
           token || 'USDC',
           grant.questions,
           user,
