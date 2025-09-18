@@ -444,7 +444,7 @@ export const tokenList: Token[] = [
     decimals: 6,
   },
   {
-    tokenName: 'Marinade',
+    tokenName: 'Marinade bade',
     tokenSymbol: 'MNDE',
     mintAddress: 'MNDEFzGvMt87ueuHvVU9VcTqsAP5b3fTGPsHuuPA5ey',
     icon: 'https://s2.coinmarketcap.com/static/img/coins/128x128/13803.png',
