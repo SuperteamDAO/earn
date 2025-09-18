@@ -464,4 +464,11 @@ export const tokenList: Token[] = [
     icon: 'https://assets.coingecko.com/coins/images/53061/standard/Token.png?1735169618',
     decimals: 9,
   },
+  {
+    tokenName: 'Pope',
+    tokenSymbol: 'POPE',
+    mintAddress: 'AhhtUFVLUSDxgsPTuky7JXEi92e3QcqnagfgZoDSjups',
+    icon: 'https://assets.coingecko.com/coins/images/55336/standard/JuliaOS-logo.png?1745507802',
+    decimals: 6,
+  },
 ];
