@@ -20,28 +20,43 @@ interface Props {
     filters: Set<SubmissionLabels | 'Winner' | 'Rejected'>,
   ) => void;
   listingType?: BountyType | 'grant' | undefined;
+  isAiCommitted?: boolean;
 }
 
 export const MultiSelectFilter = ({
   selectedFilters,
   onFilterChange,
   listingType,
+  isAiCommitted,
 }: Props) => {
-  const DECISION_FILTERS = [
-    { label: 'Winner', value: 'Winner' as const },
-    { label: 'Rejected', value: 'Rejected' as const },
-    ...labelMenuOptions(listingType).map((option) => ({
-      label: option.label,
-      value: option.value as SubmissionLabels,
-    })),
-  ];
+  const DECISION_FILTERS = useMemo(
+    () => [
+      { label: 'Winner', value: 'Winner' as const },
+      { label: 'Rejected', value: 'Rejected' as const },
+      ...labelMenuOptions(listingType)
+        .filter((option) => !option.aiOnly)
+        .map((option) => ({
+          label: option.label,
+          value: option.value as SubmissionLabels,
+        })),
+      ...(isAiCommitted
+        ? labelMenuOptions(listingType)
+            .filter((option) => option.aiOnly)
+            .map((option) => ({
+              label: option.label,
+              value: option.value as SubmissionLabels,
+            }))
+        : []),
+    ],
+    [listingType, isAiCommitted],
+  );
 
   const availableFilters = useMemo(() => {
     if (listingType === 'project') {
       return DECISION_FILTERS;
     }
     return DECISION_FILTERS.filter((filter) => filter.value !== 'Rejected');
-  }, [listingType]);
+  }, [listingType, DECISION_FILTERS]);
 
   const hasActiveFilters = selectedFilters.size > 0;
 

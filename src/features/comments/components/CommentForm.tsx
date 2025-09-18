@@ -3,10 +3,11 @@ import React, { useCallback, useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
+import { URL_REGEX } from '@/constants/URL_REGEX';
 import type { Comment } from '@/interface/comments';
 import type { User } from '@/interface/user';
 import { api } from '@/lib/api';
-import { type CommentRefType } from '@/prisma/enums';
+import { CommentRefType } from '@/prisma/enums';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 
@@ -41,6 +42,10 @@ export const CommentForm = ({
   const [newCommentError, setNewCommentError] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(true);
   const [isPinned, setIsPinned] = useState(false);
+
+  const containsLink = newComment
+    .split(/\s+/)
+    .some((part) => URL_REGEX.test(part));
 
   const addNewComment = async () => {
     posthog.capture('publish_comment');
@@ -124,6 +129,13 @@ export const CommentForm = ({
           />
         </div>
       </div>
+      {containsLink && refType === CommentRefType.BOUNTY && (
+        <p className="mt-1 text-sm text-red-500">
+          If this is your submission link, do not add it as a comment since it
+          might be plagiarised. Your submission needs to be added to the
+          submission form above to be considered.
+        </p>
+      )}
       {!!newCommentError && (
         <p className="mt-4 text-red-500">
           Error in adding your comment! Please try again!

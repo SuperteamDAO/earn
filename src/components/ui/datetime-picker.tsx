@@ -66,7 +66,7 @@ export type DateTimePickerProps = {
   /**
    * Callback function to handle datetime changes.
    */
-  onChange: (date: Date | undefined) => void;
+  onChange: (date: Date | undefined, uiOnly?: boolean) => void;
   /**
    * The minimum datetime value allowed.
    * @default undefined
@@ -588,7 +588,7 @@ function TimePicker({
 }: {
   use12HourFormat?: boolean;
   value: Date;
-  onChange: (date: Date) => void;
+  onChange: (date: Date, uiOnly?: boolean) => void;
   min?: Date;
   max?: Date;
   timePicker?: DateTimePickerProps['timePicker'];
@@ -623,6 +623,7 @@ function TimePicker({
         second,
         ampm,
       }),
+      true,
     );
   }, [hour, minute, second, ampm, formatStr, use12HourFormat]);
 

@@ -28,6 +28,12 @@ export function UserMenu() {
   const logout = useLogout();
   const { isOpen, onClose, onOpen } = useDisclosure();
 
+  // Check if user has clicked on telegram alerts before
+  const hasSeenTelegramAlerts = () => {
+    if (typeof window === 'undefined') return false;
+    return localStorage.getItem('telegram-alerts-shown') === 'true';
+  };
+
   useEffect(() => {
     const checkHashAndOpenModal = () => {
       const url = window.location.href;
@@ -51,6 +57,14 @@ export function UserMenu() {
       { shallow: true },
     );
     onClose();
+  };
+
+  const handleTelegramAlertsClick = () => {
+    // Mark telegram alerts as shown in localStorage
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('telegram-alerts-shown', 'true');
+    }
+    posthog.capture('telegram notifications_user menu');
   };
 
   if (isLoading) {
@@ -91,6 +105,9 @@ export function UserMenu() {
                 {user?.firstName ?? user?.email ?? ''}
               </p>
             </div>
+            {!hasSeenTelegramAlerts() && (
+              <div className="block h-1.5 w-1.5 rounded-full bg-sky-400" />
+            )}
             <ChevronDown className="block size-4 text-slate-400" />
           </div>
         </DropdownMenuTrigger>
@@ -175,12 +192,15 @@ export function UserMenu() {
             <Link
               href={generateTelegramBotUrl(user?.email)}
               target="_blank"
-              onClick={() => {
-                posthog.capture('telegram notifications_user menu');
-              }}
+              onClick={handleTelegramAlertsClick}
               className="text-sm tracking-tight text-slate-500"
             >
-              Telegram Alerts
+              <div className="flex items-center gap-2">
+                <span>Telegram Alerts</span>
+                {!hasSeenTelegramAlerts() && (
+                  <div className="block h-1.5 w-1.5 rounded-full bg-sky-400" />
+                )}
+              </div>
             </Link>
           </DropdownMenuItem>
 

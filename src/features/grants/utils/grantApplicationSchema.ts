@@ -54,8 +54,8 @@ export const grantApplicationSchema = (
           required_error: 'Grant amount is required',
           invalid_type_error: 'Please enter a valid number',
         })
-        .min(minReward, `Amount must be at least ${minReward} ${token}`)
-        .max(maxReward, `Amount cannot exceed ${maxReward} ${token}`),
+        .min(minReward, `Amount must be at least ${minReward || 1} ${token}`)
+        .max(maxReward, `Amount cannot exceed ${maxReward || 1} ${token}`),
       projectDetails: z.string().min(1, 'Project details are required'),
       walletAddress: z.string().min(1, 'Solana Wallet Address is required'),
       projectTimeline: z.string().min(1, 'Project timeline is required'),
