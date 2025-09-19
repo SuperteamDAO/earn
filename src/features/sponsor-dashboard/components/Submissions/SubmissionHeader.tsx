@@ -41,6 +41,7 @@ import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 import { getURL } from '@/utils/validUrl';
 
+import { BoostButton } from '@/features/listing-builder/components/Form/Boost/BoostButton';
 import { type Listing } from '@/features/listings/types';
 import { isDeadlineOver } from '@/features/listings/utils/deadline';
 import { getColorStyles } from '@/features/listings/utils/getColorStyles';
@@ -294,13 +295,14 @@ export const SubmissionHeader = ({
             </DropdownMenuContent>
           </DropdownMenu>
           <StatusPill
-            className="ml-2 w-fit text-[0.8rem]"
+            className="mr-6 ml-2 w-fit text-[0.8rem]"
             color={getColorStyles(bountyStatus).color}
             backgroundColor={getColorStyles(bountyStatus).bgColor}
             borderColor={getColorStyles(bountyStatus).borderColor}
           >
             {bountyStatus}
           </StatusPill>
+          <BoostButton listing={bounty!} />
 
           <div className="ml-4 -translate-y-2.5">
             <AiReviewProjectApplicationsModal
