@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import { MailIcon, StarIcon } from 'lucide-react';
 import { AnimatePresence, LayoutGroup, motion } from 'motion/react';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useWatch } from 'react-hook-form';
 
 import FaXTwitter from '@/components/icons/FaXTwitter';
@@ -44,6 +44,7 @@ export function BoostContent({
 }) {
   const form = useListingForm();
   const [hasInteracted, setHasInteracted] = useState(false);
+  const SWITCH_FRACTION = 0.1;
 
   const buildVideoUrl = (name: string) => {
     return `https://res.cloudinary.com/dgvnuwspr/video/upload/assets/boost/${name}.webm`;
@@ -110,10 +111,31 @@ export function BoostContent({
 
   const defaultStep = anchorMap.defaultStep;
 
+  const anchorSteps = useMemo(
+    () =>
+      anchorMap.anchors
+        .map((a) => a.step)
+        .slice()
+        .sort((a, b) => a - b),
+    [anchorMap.anchors],
+  );
+
+  const [snappedIndex, setSnappedIndex] = useState(() => {
+    const idx = anchorSteps.findIndex((s) => s === defaultStep);
+    return idx >= 0 ? idx : 0;
+  });
+
+  const prevRawRef = useRef<number | null>(null);
+  const justSwitchedRef = useRef(false);
+
   useEffect(() => {
+    const idx = anchorSteps.findIndex((s) => s === defaultStep);
+    setSnappedIndex(idx >= 0 ? idx : 0);
     setBoostStep(defaultStep);
     setHasInteracted(false);
-  }, [defaultStep]);
+    prevRawRef.current = null;
+    justSwitchedRef.current = false;
+  }, [defaultStep, anchorSteps]);
 
   const activeStep = hasInteracted ? (boostStep as number) : defaultStep;
   const activeAnchor = anchorMap.anchors.find((a) => a.step === activeStep);
@@ -264,14 +286,53 @@ export function BoostContent({
       <div className="space-y-2.5">
         <p className="text-sm font-medium text-slate-500">Prize Pool</p>
         <Slider
-          value={[boostStep]}
+          value={[anchorSteps[snappedIndex] ?? defaultStep]}
           onValueChange={(value) => {
-            setBoostStep(value[0] ?? 0);
+            const raw = Math.max(
+              sliderMin,
+              Math.min(sliderMax, value[0] ?? sliderMin),
+            );
+            const prevRaw = prevRawRef.current;
+            const dir = prevRaw === null ? 0 : raw - prevRaw;
+            prevRawRef.current = raw;
+
+            if (justSwitchedRef.current) {
+              setHasInteracted(true);
+              return;
+            }
+            const currentIdx = snappedIndex;
+            const a = anchorSteps[currentIdx]!;
+            const b = anchorSteps[currentIdx + 1];
+            const p = anchorSteps[currentIdx - 1];
+            let newIdx = currentIdx;
+
+            if (dir > 0) {
+              const forwardThreshold =
+                b !== undefined ? a + (b - a) * SWITCH_FRACTION : Infinity;
+              if (b !== undefined && raw >= forwardThreshold) {
+                newIdx = currentIdx + 1;
+              }
+            } else if (dir < 0) {
+              const backwardThreshold =
+                p !== undefined ? a - (a - p) * SWITCH_FRACTION : -Infinity;
+              if (p !== undefined && raw <= backwardThreshold) {
+                newIdx = currentIdx - 1;
+              }
+            }
+
+            if (newIdx !== currentIdx) {
+              setSnappedIndex(newIdx);
+              setBoostStep(anchorSteps[newIdx] as number);
+              justSwitchedRef.current = true;
+              requestAnimationFrame(() => {
+                justSwitchedRef.current = false;
+              });
+            }
             setHasInteracted(true);
           }}
           min={sliderMin}
           max={sliderMax}
-          step={25}
+          step={1}
           className="h-3 w-full hover:cursor-grab"
         />
         <div className="flex justify-between text-base font-medium text-slate-500">
@@ -280,6 +341,10 @@ export function BoostContent({
               key={`anchor-${a.step}-${a.usd}`}
               type="button"
               onClick={() => {
+                const idx = anchorSteps.findIndex(
+                  (s) => s === (a.step as number),
+                );
+                if (idx >= 0) setSnappedIndex(idx);
                 setBoostStep(a.step as number);
                 setHasInteracted(true);
               }}
