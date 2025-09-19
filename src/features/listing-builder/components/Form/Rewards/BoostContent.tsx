@@ -181,14 +181,15 @@ export function BoostContent({
   }, [previewUSD, tokenUsdValue, safeRewardAmount, hasInteracted]);
 
   const referenceDate = dayjs('2025-08-28');
-  const nextThursday = referenceDate.add(
-    (4 - referenceDate.day() + 7) % 7,
-    'day',
-  );
-  const mod2Thursday = nextThursday.add(14, 'day');
+  const now = dayjs();
 
-  const day = mod2Thursday.date();
-  const month = mod2Thursday.format('MMM');
+  let nextPostDate = referenceDate;
+  while (nextPostDate.isBefore(now) || nextPostDate.isSame(now, 'day')) {
+    nextPostDate = nextPostDate.add(14, 'day');
+  }
+
+  const day = nextPostDate.date();
+  const month = nextPostDate.format('MMM');
 
   const getOrdinalSuffix = (num: number): string => {
     const j = num % 10;
