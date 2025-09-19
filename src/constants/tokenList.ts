@@ -457,4 +457,11 @@ export const tokenList: Token[] = [
     icon: '',
     decimals: 6,
   },
+  {
+    tokenName: 'Sonic SVM',
+    tokenSymbol: 'SONIC',
+    mintAddress: 'SonicxvLud67EceaEzCLRnMTBqzYUUYNr93DBkBdDES',
+    icon: 'https://assets.coingecko.com/coins/images/53061/standard/Token.png?1735169618',
+    decimals: 9,
+  },
 ];
