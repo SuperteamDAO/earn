@@ -237,12 +237,24 @@ function Type() {
           values.maxBonusSpots || 0,
         ),
       );
+      if (Object.keys(values.rewards || {}).length === 0) {
+        form.setValue('rewards', { '1': NaN });
+      }
     } else {
       form.setValue('compensationType', prevCompType);
       if (prevCompType === 'fixed') {
         form.setValue('rewardAmount', values.rewards?.[1]);
       } else {
         form.setValue('rewardAmount', undefined);
+        console.log('pre type change ', values.rewards);
+        if (
+          values.rewards &&
+          Object.values(values.rewards).some(
+            (v) => v === null || v === undefined || v === 0 || Number.isNaN(v),
+          )
+        ) {
+          form.setValue('rewards', {});
+        }
       }
     }
 
