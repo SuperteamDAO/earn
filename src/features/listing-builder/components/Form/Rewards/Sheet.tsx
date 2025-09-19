@@ -1,4 +1,6 @@
-import { memo, useMemo, useState } from 'react';
+import { ArrowLeftIcon } from 'lucide-react';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { memo, useEffect, useMemo, useState } from 'react';
 import { useWatch } from 'react-hook-form';
 
 import { Button } from '@/components/ui/button';
@@ -22,6 +24,8 @@ import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import { calculateTotalPrizes } from '@/features/listing-builder/utils/rewards';
 
 import { useListingForm } from '../../../hooks';
+import type { BoostStep } from '../Boost/utils';
+import { BoostContent } from './BoostContent';
 import { Footer } from './Footer';
 import { PaymentType } from './PaymentType';
 import { TokenLabel } from './Tokens/TokenLabel';
@@ -33,6 +37,20 @@ import { Range } from './Types/Range';
 export function RewardsSheet() {
   const form = useListingForm();
   const [open, setOpen] = useState(false);
+  const [panel, setPanel] = useState<'rewards' | 'boost'>('rewards');
+  const [boostStep, setBoostStep] = useState<BoostStep>(0);
+  const params = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+  const isBoostFromUrl = params?.get('boost') === 'true';
+
+  useEffect(() => {
+    const shouldOpenBoost = params?.get('boost') === 'true';
+    if (shouldOpenBoost) {
+      setOpen(true);
+      setPanel('boost');
+    }
+  }, [params]);
 
   const type = useWatch({
     control: form.control,
@@ -52,13 +70,26 @@ export function RewardsSheet() {
     );
   }, [form]);
 
+  const handleOpenChange = (nextOpen: boolean) => {
+    setOpen(nextOpen);
+    if (nextOpen) {
+      setPanel('rewards');
+      return;
+    }
+    try {
+      const current = new URLSearchParams(params?.toString() || '');
+      if (current.has('boost')) {
+        current.delete('boost');
+        const search = current.toString();
+        const base = pathname ?? '/';
+        const href = search ? `${base}?${search}` : base;
+        router.replace(href);
+      }
+    } catch (err) {}
+  };
+
   return (
-    <Sheet
-      open={open}
-      onOpenChange={async (e) => {
-        setOpen(e);
-      }}
-    >
+    <Sheet open={open} onOpenChange={handleOpenChange}>
       <SheetTrigger className="w-full">
         <FormField
           control={form.control}
@@ -97,22 +128,59 @@ export function RewardsSheet() {
         className="flex h-[100vh] flex-col p-0 sm:max-w-xl"
       >
         <SheetHeader className="shrink-0 space-y-6 p-6 pb-0">
-          <SheetTitle>Add Rewards</SheetTitle>
-          <TokenSelect />
-          {type === 'project' && <PaymentType />}
+          <SheetTitle>
+            {panel === 'rewards' ? (
+              'Add Rewards'
+            ) : (
+              <>
+                <div className="flex items-center gap-2">
+                  <div className="-ml-4 cursor-pointer">
+                    <ArrowLeftIcon
+                      className="size-4 text-slate-400"
+                      onClick={() => setPanel('rewards')}
+                    />
+                  </div>
+                  Boost to reach more people
+                </div>
+                <p className="ml-2.5 text-sm font-normal text-slate-500">
+                  Increase your prize pool to unlock promotions across Twitter,
+                  Email, and more.
+                </p>
+              </>
+            )}
+          </SheetTitle>
+          {panel === 'rewards' && (
+            <>
+              <TokenSelect />
+              {type === 'project' && <PaymentType />}
+            </>
+          )}
         </SheetHeader>
 
         <div
-          className="flex min-h-0 flex-1 flex-col p-6 pt-4"
+          className="flex min-h-0 flex-1 flex-col overflow-y-auto px-6 pt-4 pb-16"
           id="main-content"
         >
-          <Type />
+          {panel === 'rewards' ? (
+            <Type />
+          ) : (
+            <BoostContent
+              boostStep={boostStep}
+              setBoostStep={(s: number) => setBoostStep(s as BoostStep)}
+            />
+          )}
         </div>
 
-        <div className="shrink-0">
+        <div className="relative shrink-0 bg-white">
           <Separator className="mb-4" />
           <SheetFooter className="p-6 pt-0">
-            <Footer closeSheet={() => setOpen(false)} />
+            <Footer
+              panel={panel}
+              setPanel={setPanel}
+              setOpen={handleOpenChange}
+              boostStep={boostStep}
+              isBoostFromUrl={isBoostFromUrl}
+            />
           </SheetFooter>
         </div>
       </SheetContent>
