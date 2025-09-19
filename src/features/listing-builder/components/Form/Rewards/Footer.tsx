@@ -281,7 +281,11 @@ function RewardsFooter({
           className="w-full"
           onClick={async () => {
             if (await form.validateRewards()) {
-              if (compensationType === 'fixed' && deadlineMoreThan72HoursLeft) {
+              if (
+                compensationType === 'fixed' &&
+                deadlineMoreThan72HoursLeft &&
+                type !== 'hackathon'
+              ) {
                 setPanel('boost');
               } else {
                 setOpen(false);

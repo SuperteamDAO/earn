@@ -41,7 +41,7 @@ export const BoostButton = ({
   listing: Listing;
   showDate?: boolean;
 }) => {
-  const { deadline, usdValue, skills, region, slug, compensationType } =
+  const { deadline, usdValue, skills, region, slug, compensationType, type } =
     listing;
 
   const deadlineMoreThan72HoursLeft = hasMoreThan72HoursLeft(deadline ?? '');
@@ -85,7 +85,8 @@ export const BoostButton = ({
   if (
     deadlineMoreThan72HoursLeft &&
     canBeBoosted &&
-    compensationType === 'fixed'
+    compensationType === 'fixed' &&
+    type !== 'hackathon'
   ) {
     const deadlineDate = new Date(deadline ?? '');
     const seventyTwoHoursBeforeDeadline = new Date(
@@ -127,19 +128,20 @@ export const BoostButton = ({
       );
     } else {
       return (
-        <Link
-          href={`/dashboard/listings/${slug}/edit?boost=true`}
-          className="hidden sm:block"
+        <Button
+          variant="outline"
+          className="hidden rounded-lg border-slate-300 px-2 sm:block"
+          size="sm"
+          asChild
         >
-          <Button
-            variant="outline"
-            className="rounded-lg border-slate-300 px-2"
-            size="sm"
+          <Link
+            href={`/dashboard/listings/${slug}/edit?boost=true`}
+            prefetch={false}
           >
             <RocketIcon className="text-emerald-500" />
             <p className="font-semibold text-slate-600">Boost</p>
-          </Button>
-        </Link>
+          </Link>
+        </Button>
       );
     }
   }

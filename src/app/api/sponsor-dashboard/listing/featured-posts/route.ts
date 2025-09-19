@@ -17,7 +17,7 @@ export async function POST() {
     });
     return NextResponse.json({ count });
   } catch (error) {
-    console.error('email-estimate error', error);
+    console.error('featured-posts error', error);
     return NextResponse.json({ error: 'Bad Request' }, { status: 400 });
   }
 }
