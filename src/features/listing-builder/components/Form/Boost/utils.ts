@@ -157,7 +157,7 @@ export const getTotalImpressionsForUsd = (
   emailImpressions: number,
   isFeatureAvailable: boolean,
 ): number => {
-  if (usdAmount === null || usdAmount <= 0) return 0;
+  if (usdAmount === null || usdAmount < BOOST_STEP_TO_AMOUNT_USD[0]) return 0;
 
   let total = LIVE_LISTINGS_THREAD_IMPRESSIONS;
 

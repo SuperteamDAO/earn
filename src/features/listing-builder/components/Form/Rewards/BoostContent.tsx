@@ -91,6 +91,11 @@ export function BoostContent({
     const target = map.anchors.find((a) => a.usd === requiredUsd);
     const stepToSet = target?.step ?? (unlockValue as BoostStep);
     setBoostStep(stepToSet);
+
+    const idx = anchorSteps.findIndex((s) => s === (stepToSet as number));
+    if (idx >= 0) {
+      setSnappedIndex(idx);
+    }
     setHasInteracted(true);
   };
 
@@ -225,7 +230,7 @@ export function BoostContent({
     <div className="flex h-full flex-col gap-6">
       <div className="mx-20 flex items-center justify-around">
         <div className="text-center">
-          <p className="flex items-center gap-2 text-4xl font-semibold text-slate-900">
+          <p className="relative flex items-center gap-2 text-4xl font-semibold text-slate-900">
             <LocalImage
               src={tokenList.find((t) => t.tokenSymbol === token)?.icon || ''}
               alt={token!}
@@ -243,7 +248,7 @@ export function BoostContent({
               </motion.span>
             </AnimatePresence>
           </p>
-          <p className="text-sm text-slate-500">
+          <p className="relative text-sm text-slate-500">
             {token} <span className="text-slate-500/30">•</span> ~$
             <AnimatePresence mode="popLayout">
               {isUsdPending ? (
@@ -267,7 +272,7 @@ export function BoostContent({
 
         <Separator orientation="vertical" />
         <div className="text-center">
-          <p className="text-4xl font-semibold text-slate-900">
+          <p className="relative text-4xl font-semibold text-slate-900">
             <AnimatePresence mode="popLayout">
               <motion.span
                 key={`imp-${Math.round(totalImpressions)}`}
