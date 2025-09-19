@@ -128,20 +128,19 @@ export const BoostButton = ({
       );
     } else {
       return (
-        <Button
-          variant="outline"
-          className="hidden rounded-lg border-slate-300 px-2 sm:block"
-          size="sm"
-          asChild
+        <Link
+          href={`/dashboard/listings/${slug}/edit?boost=true`}
+          className="hidden sm:block"
         >
-          <Link
-            href={`/dashboard/listings/${slug}/edit?boost=true`}
-            prefetch={false}
+          <Button
+            variant="outline"
+            className="rounded-lg border-slate-300 px-2"
+            size="sm"
           >
             <RocketIcon className="text-emerald-500" />
             <p className="font-semibold text-slate-600">Boost</p>
-          </Link>
-        </Button>
+          </Button>
+        </Link>
       );
     }
   }
