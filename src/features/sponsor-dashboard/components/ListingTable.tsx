@@ -248,6 +248,21 @@ export const ListingTable = ({
                           {listing.title}
                         </p>
                       </Link>
+                    ) : isListingEditable({ listing, user }) ? (
+                      <Link
+                        className="ph-no-capture"
+                        href={`/dashboard/listings/${listing.slug}/edit`}
+                        onClick={() => {
+                          posthog.capture('edit_listing_title_click');
+                        }}
+                      >
+                        <p
+                          className="cursor-pointer overflow-hidden text-[15px] font-medium text-ellipsis whitespace-nowrap text-slate-500 hover:underline"
+                          title={listing.title}
+                        >
+                          {listing.title}
+                        </p>
+                      </Link>
                     ) : (
                       <p
                         className="overflow-hidden text-[15px] font-medium text-ellipsis whitespace-nowrap text-slate-500"
@@ -336,7 +351,7 @@ export const ListingTable = ({
                         )}
                       </Button>
                     ) : isListingEditable({ listing, user }) ? (
-                      <Link href={`/dashboard/listings/${listing.slug}/edit/`}>
+                      <Link href={`/dashboard/listings/${listing.slug}/edit`}>
                         <Button
                           variant="ghost"
                           size="sm"
