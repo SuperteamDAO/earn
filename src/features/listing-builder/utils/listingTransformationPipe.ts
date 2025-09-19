@@ -162,7 +162,9 @@ export const transformToPrismaData = async ({
   try {
     if (
       isAutoFeatureUsdThresholdMet(usdValue) &&
-      hasMoreThan72HoursLeft(deadline)
+      hasMoreThan72HoursLeft(deadline) &&
+      compensationType === 'fixed' &&
+      type !== 'hackathon'
     ) {
       const liveFeaturedCount = await countLiveFeaturedListings();
       autoIsFeatured = liveFeaturedCount < 2;

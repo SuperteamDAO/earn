@@ -143,7 +143,7 @@ function RewardsFooter({
       {panel === 'boost' && (
         <div>
           <Button
-            type="submit"
+            type="button"
             className="w-full"
             disabled={
               isBoostFromUrl
@@ -277,7 +277,7 @@ function RewardsFooter({
 
       {panel === 'rewards' && (
         <Button
-          type="submit"
+          type="button"
           className="w-full"
           onClick={async () => {
             if (await form.validateRewards()) {

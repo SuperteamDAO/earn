@@ -1,8 +1,5 @@
-export type BoostStep = 0 | 25 | 50 | 75;
-
-export const BOOST_STEPS = [
-  0, 25, 50, 75,
-] as const satisfies readonly BoostStep[];
+export const BOOST_STEPS = [0, 25, 50, 75] as const;
+export type BoostStep = (typeof BOOST_STEPS)[number];
 
 export const BOOST_STEP_TO_AMOUNT_USD: Readonly<Record<BoostStep, number>> = {
   0: 500,
