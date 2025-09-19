@@ -21,17 +21,14 @@ const BoostArrow = () => (
 
 import { type Listing } from '@/features/listings/types';
 
-import {
-  BOOST_STEP_TO_AMOUNT_USD,
-  DEFAULT_EMAIL_IMPRESSIONS,
-  isSkillsSelected,
-} from './constants';
+import { BOOST_STEP_TO_AMOUNT_USD } from './constants';
 import { emailEstimateQuery, featuredAvailabilityQuery } from './queries';
 import {
   amountToStep,
   getAllowedMaxStep,
   getTotalImpressionsForValue,
   hasMoreThan72HoursLeft,
+  resolveEmailImpressions,
 } from './utils';
 
 export const BoostButton = ({
@@ -57,10 +54,7 @@ export const BoostButton = ({
     emailEstimateQuery(skills, region as string | undefined),
   );
 
-  const emailImpressions =
-    isSkillsSelected(skills) && typeof emailEstimate === 'number'
-      ? emailEstimate
-      : DEFAULT_EMAIL_IMPRESSIONS;
+  const emailImpressions = resolveEmailImpressions(skills, emailEstimate);
 
   const isUnderMin =
     typeof usdValue === 'number' && usdValue < BOOST_STEP_TO_AMOUNT_USD[0];
