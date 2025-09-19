@@ -27,14 +27,11 @@ import {
   tokenUsdValueQuery,
 } from '../Boost/queries';
 import {
-  amountToStep,
   type BoostStep,
-  clampStepForAvailability,
+  buildAnchorMap,
   computeEstimatedUsdValue,
-  getAllowedMaxStep,
-  getAllowedTopUsd,
   getDollarAmountForStep,
-  getTotalImpressionsForValue,
+  getTotalImpressionsForUsd,
   resolveEmailImpressions,
 } from '../Boost/utils';
 
@@ -88,8 +85,11 @@ export function BoostContent({
   const safeRewardAmount = typeof rewardAmount === 'number' ? rewardAmount : 0;
 
   const handlePerkClick = (unlockValue: number) => {
-    const safeStep = clampStepForAvailability(unlockValue, isFeatureAvailable);
-    setBoostStep(safeStep);
+    const requiredUsd = BOOST_STEP_TO_AMOUNT_USD[unlockValue as BoostStep] ?? 0;
+    const map = buildAnchorMap(estimatedUsdValue, isFeatureAvailable);
+    const target = map.anchors.find((a) => a.usd === requiredUsd);
+    const stepToSet = target?.step ?? (unlockValue as BoostStep);
+    setBoostStep(stepToSet);
     setHasInteracted(true);
   };
 
@@ -100,76 +100,56 @@ export function BoostContent({
     tokenUsdValue,
   );
 
-  const minUsd = BOOST_STEP_TO_AMOUNT_USD[0];
-  const allowedTopUsd = getAllowedTopUsd(isFeatureAvailable);
+  const anchorMap = useMemo(
+    () => buildAnchorMap(estimatedUsdValue, isFeatureAvailable),
+    [estimatedUsdValue, isFeatureAvailable],
+  );
 
-  const hasLeftExtra = estimatedUsdValue !== null && estimatedUsdValue < minUsd;
-  const hasRightExtra =
-    estimatedUsdValue !== null && estimatedUsdValue > allowedTopUsd;
+  const sliderMin = 0;
+  const sliderMax = anchorMap.maxStep;
 
-  const sliderMin = hasLeftExtra ? -25 : 0;
-  const sliderMax = hasRightExtra
-    ? isFeatureAvailable
-      ? 100
-      : 75
-    : getAllowedMaxStep(isFeatureAvailable);
-
-  const getTotalImpressions = (value: number): number =>
-    getTotalImpressionsForValue(value, emailImpressions, isFeatureAvailable);
-
-  const defaultStep = useMemo(() => {
-    const unclamped = amountToStep(
-      estimatedUsdValue ? Math.round(estimatedUsdValue) : 0,
-      isFeatureAvailable,
-    );
-    const base = clampStepForAvailability(unclamped, isFeatureAvailable);
-    if (hasLeftExtra) return -25;
-    if (hasRightExtra) return isFeatureAvailable ? 100 : 75;
-    return base;
-  }, [estimatedUsdValue, isFeatureAvailable, hasLeftExtra, hasRightExtra]);
+  const defaultStep = anchorMap.defaultStep;
 
   useEffect(() => {
     setBoostStep(defaultStep);
     setHasInteracted(false);
   }, [defaultStep]);
 
-  const totalImpressions = getTotalImpressions(boostStep);
+  const activeStep = hasInteracted ? (boostStep as number) : defaultStep;
+  const activeAnchor = anchorMap.anchors.find((a) => a.step === activeStep);
+  const activeUsd = activeAnchor
+    ? activeAnchor.usd
+    : activeStep === 100
+      ? (anchorMap.anchors[anchorMap.anchors.length - 1]?.usd ?? null)
+      : getDollarAmountForStep(
+          (Math.max(0, Math.min(75, activeStep)) || 0) as BoostStep,
+        );
+  const totalImpressions = getTotalImpressionsForUsd(
+    typeof activeUsd === 'number' ? activeUsd : null,
+    emailImpressions,
+    isFeatureAvailable,
+  );
 
   const initialUSD = useMemo(() => {
     return estimatedUsdValue !== null ? Math.round(estimatedUsdValue) : null;
   }, [estimatedUsdValue]);
 
   const previewUSD = useMemo(() => {
-    const allowedMax = getAllowedMaxStep(isFeatureAvailable);
-    if (!hasInteracted && initialUSD !== null) {
-      return initialUSD;
-    }
-    if (boostStep < 0 && hasLeftExtra && estimatedUsdValue !== null) {
-      return Math.round(estimatedUsdValue);
-    }
-    if (boostStep > allowedMax && hasRightExtra && estimatedUsdValue !== null) {
-      return Math.round(estimatedUsdValue);
-    }
-    const stepForCalc = Math.max(
-      0,
-      Math.min(boostStep, allowedMax),
-    ) as BoostStep;
-    return getDollarAmountForStep(stepForCalc);
-  }, [
-    boostStep,
-    hasInteracted,
-    initialUSD,
-    isFeatureAvailable,
-    hasLeftExtra,
-    hasRightExtra,
-    estimatedUsdValue,
-  ]);
+    if (!hasInteracted && initialUSD !== null) return initialUSD;
+    const step = hasInteracted ? boostStep : defaultStep;
+    const a = anchorMap.anchors.find((x) => x.step === step);
+    if (a) return a.usd;
+    if (step === 100)
+      return anchorMap.anchors[anchorMap.anchors.length - 1]?.usd ?? null;
+    const clamped = Math.max(0, Math.min(step, 75)) as BoostStep;
+    return getDollarAmountForStep(clamped);
+  }, [hasInteracted, initialUSD, anchorMap.anchors, boostStep, defaultStep]);
 
   const previewTokens = useMemo(() => {
     if (!hasInteracted) {
       return safeRewardAmount;
     }
-    if (tokenUsdValue) return previewUSD / tokenUsdValue;
+    if (tokenUsdValue && previewUSD !== null) return previewUSD / tokenUsdValue;
     return safeRewardAmount;
   }, [previewUSD, tokenUsdValue, safeRewardAmount, hasInteracted]);
 
@@ -295,18 +275,19 @@ export function BoostContent({
           className="h-3 w-full hover:cursor-grab"
         />
         <div className="flex justify-between text-base font-medium text-slate-500">
-          {estimatedUsdValue !== null && estimatedUsdValue < minUsd ? (
-            <span>${Math.round(estimatedUsdValue).toLocaleString()}</span>
-          ) : null}
-          <span>${BOOST_STEP_TO_AMOUNT_USD[0].toLocaleString()}</span>
-          <span>${BOOST_STEP_TO_AMOUNT_USD[25].toLocaleString()}</span>
-          <span>${BOOST_STEP_TO_AMOUNT_USD[50].toLocaleString()}</span>
-          {isFeatureAvailable ? (
-            <span>${BOOST_STEP_TO_AMOUNT_USD[75].toLocaleString()}</span>
-          ) : null}
-          {hasRightExtra && estimatedUsdValue !== null ? (
-            <span>${Math.round(estimatedUsdValue).toLocaleString()}</span>
-          ) : null}
+          {anchorMap.anchors.map((a) => (
+            <button
+              key={`anchor-${a.step}-${a.usd}`}
+              type="button"
+              onClick={() => {
+                setBoostStep(a.step as number);
+                setHasInteracted(true);
+              }}
+              className="cursor-pointer text-slate-500 transition-colors select-none hover:text-slate-600 focus:outline-none"
+            >
+              ${a.usd.toLocaleString()}
+            </button>
+          ))}
         </div>
       </div>
 
@@ -332,7 +313,11 @@ export function BoostContent({
               title="X Fortnightly Thread"
               subtitle={`~${formatNumberWithSuffix(LIVE_LISTINGS_THREAD_IMPRESSIONS, 1, false, true)} Impressions | next post on ${formattedNextPostDate}`}
               locked={(previewUSD || 0) < BOOST_STEP_TO_AMOUNT_USD[0]}
-              onClick={boostStep < 0 ? () => handlePerkClick(0) : undefined}
+              onClick={
+                (previewUSD || 0) < BOOST_STEP_TO_AMOUNT_USD[0]
+                  ? () => handlePerkClick(0)
+                  : undefined
+              }
               requiredValue={BOOST_STEP_TO_AMOUNT_USD[0]}
               currentValue={previewUSD || 0}
               previewVideoSrc={buildVideoUrl('x-thread')}
@@ -356,7 +341,11 @@ export function BoostContent({
               title="X Standalone Post"
               subtitle={`~${formatNumberWithSuffix(STANDALONE_POST_IMPRESSIONS, 1, false, true)} Impressions`}
               locked={(previewUSD || 0) < BOOST_STEP_TO_AMOUNT_USD[25]}
-              onClick={boostStep < 25 ? () => handlePerkClick(25) : undefined}
+              onClick={
+                (previewUSD || 0) < BOOST_STEP_TO_AMOUNT_USD[25]
+                  ? () => handlePerkClick(25)
+                  : undefined
+              }
               requiredValue={BOOST_STEP_TO_AMOUNT_USD[25]}
               currentValue={previewUSD || 0}
               previewVideoSrc={buildVideoUrl('x-standalone')}
@@ -380,7 +369,11 @@ export function BoostContent({
               title="Email Broadcast"
               subtitle={`${formatNumberWithSuffix(emailImpressions, 1, false, true)} Emails`}
               locked={(previewUSD || 0) < BOOST_STEP_TO_AMOUNT_USD[50]}
-              onClick={boostStep < 50 ? () => handlePerkClick(50) : undefined}
+              onClick={
+                (previewUSD || 0) < BOOST_STEP_TO_AMOUNT_USD[50]
+                  ? () => handlePerkClick(50)
+                  : undefined
+              }
               requiredValue={BOOST_STEP_TO_AMOUNT_USD[50]}
               currentValue={previewUSD || 0}
               previewVideoSrc={buildVideoUrl('email')}
@@ -410,7 +403,9 @@ export function BoostContent({
                   subtitle={`${formatNumberWithSuffix(FEATURED_HOMEPAGE_IMPRESSIONS, 1, false, true)} Impressions`}
                   locked={(previewUSD || 0) < BOOST_STEP_TO_AMOUNT_USD[75]}
                   onClick={
-                    boostStep < 75 ? () => handlePerkClick(75) : undefined
+                    (previewUSD || 0) < BOOST_STEP_TO_AMOUNT_USD[75]
+                      ? () => handlePerkClick(75)
+                      : undefined
                   }
                   requiredValue={BOOST_STEP_TO_AMOUNT_USD[75]}
                   currentValue={previewUSD || 0}

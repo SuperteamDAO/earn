@@ -10,7 +10,10 @@ import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 
 import { submitListingMutationAtom } from '@/features/listing-builder/atoms';
-import { calculateTotalPrizes } from '@/features/listing-builder/utils/rewards';
+import {
+  calculateTotalPrizes,
+  calculateTotalRewardsForPodium,
+} from '@/features/listing-builder/utils/rewards';
 
 import { useListingForm } from '../../../hooks';
 import {
@@ -167,10 +170,9 @@ function RewardsFooter({
                 const usd = tokenUsdValue || 1;
                 const newTotalTokens = targetUSD / usd;
 
+                let computedRewardAmountTokens = newTotalTokens;
+
                 if (currentRewards && Object.keys(currentRewards).length > 0) {
-                  const { calculateTotalRewardsForPodium } = await import(
-                    '@/features/listing-builder/utils/rewards'
-                  );
                   const oldTotal = calculateTotalRewardsForPodium(
                     currentRewards,
                     (maxBonusSpots as number) || 0,
@@ -188,11 +190,32 @@ function RewardsFooter({
                       },
                       {} as Record<string, number>,
                     );
-                    form.setValue('rewards', scaled, { shouldValidate: false });
+
+                    if ((tokenUsdValue || 0) <= 10) {
+                      const rounded: Record<string, number> = {};
+                      for (const [key, value] of Object.entries(scaled)) {
+                        const numeric = Number(value) || 0;
+                        const nearestTen = Math.round(numeric / 10) * 10;
+                        rounded[key] = nearestTen;
+                      }
+                      const roundedSum = Object.values(rounded).reduce(
+                        (sum, n) =>
+                          sum + (Number.isFinite(n) ? (n as number) : 0),
+                        0,
+                      );
+                      form.setValue('rewards', rounded, {
+                        shouldValidate: false,
+                      });
+                      computedRewardAmountTokens = roundedSum;
+                    } else {
+                      form.setValue('rewards', scaled, {
+                        shouldValidate: false,
+                      });
+                    }
                   }
                 }
 
-                form.setValue('rewardAmount', newTotalTokens, {
+                form.setValue('rewardAmount', computedRewardAmountTokens, {
                   shouldValidate: false,
                 });
                 if (isBoostFromUrl) {
