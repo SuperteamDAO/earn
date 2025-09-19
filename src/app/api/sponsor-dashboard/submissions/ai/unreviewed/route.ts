@@ -83,6 +83,28 @@ export async function GET(request: NextRequest) {
     const notReviewedByAI = hasAiReview.filter(
       (u) => !(u.ai as unknown as ProjectApplicationAi)?.commited,
     );
+
+    if (listing.type === 'bounty') {
+      const needsReviewCount = unreviewedApplications.filter((u) => {
+        const aiData = u.ai as unknown as BountySubmissionAi;
+        return aiData?.evaluation?.finalLabel === 'Needs_Review';
+      }).length;
+
+      const totalSubmissions = unreviewedApplications.length;
+      const needsReviewPercentage =
+        totalSubmissions > 0 ? (needsReviewCount / totalSubmissions) * 100 : 0;
+
+      if (needsReviewPercentage >= 50) {
+        return NextResponse.json(
+          {
+            error: `More than 50% of submissions have 'Needs Review' label`,
+            message: `More than 50% of submissions have 'Needs Review' label for listing with ${id}.`,
+          },
+          { status: 400 },
+        );
+      }
+    }
+
     return NextResponse.json(notReviewedByAI, { status: 200 });
   } catch (error: any) {
     logger.error(`Error occurred while retrieving unreviewed submissions`, {
