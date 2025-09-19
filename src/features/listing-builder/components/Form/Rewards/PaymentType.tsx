@@ -1,3 +1,5 @@
+import { useWatch } from 'react-hook-form';
+
 import {
   FormControl,
   FormDescription,
@@ -35,6 +37,10 @@ const descriptionByType = (type: CompensationType) => {
 
 export function PaymentType() {
   const form = useListingForm();
+  const rewards = useWatch({
+    control: form.control,
+    name: 'rewards',
+  });
   return (
     <FormField
       name="compensationType"
@@ -54,6 +60,14 @@ export function PaymentType() {
                   field.onChange(e);
                   if (e !== 'fixed') {
                     form.setValue('rewardAmount', undefined);
+                    if (
+                      rewards &&
+                      Object.values(rewards).some(
+                        (v) => v === null || v === undefined || v === 0,
+                      )
+                    ) {
+                      form.setValue('rewards', {});
+                    }
                   }
                   form.saveDraft();
                 }}
