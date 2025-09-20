@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { differenceInHours } from 'date-fns';
 import { RocketIcon } from 'lucide-react';
 import Link from 'next/link';
+import posthog from 'posthog-js';
 
 import { Button } from '@/components/ui/button';
 import { Tooltip } from '@/components/ui/tooltip';
@@ -21,17 +22,14 @@ const BoostArrow = () => (
 
 import { type Listing } from '@/features/listings/types';
 
-import {
-  BOOST_STEP_TO_AMOUNT_USD,
-  DEFAULT_EMAIL_IMPRESSIONS,
-  isSkillsSelected,
-} from './constants';
+import { BOOST_STEP_TO_AMOUNT_USD } from './constants';
 import { emailEstimateQuery, featuredAvailabilityQuery } from './queries';
 import {
   amountToStep,
   getAllowedMaxStep,
   getTotalImpressionsForValue,
   hasMoreThan72HoursLeft,
+  resolveEmailImpressions,
 } from './utils';
 
 export const BoostButton = ({
@@ -57,10 +55,7 @@ export const BoostButton = ({
     emailEstimateQuery(skills, region as string | undefined),
   );
 
-  const emailImpressions =
-    isSkillsSelected(skills) && typeof emailEstimate === 'number'
-      ? emailEstimate
-      : DEFAULT_EMAIL_IMPRESSIONS;
+  const emailImpressions = resolveEmailImpressions(skills, emailEstimate);
 
   const isUnderMin =
     typeof usdValue === 'number' && usdValue < BOOST_STEP_TO_AMOUNT_USD[0];
@@ -116,7 +111,11 @@ export const BoostButton = ({
             }}
           >
             <Link href={`/dashboard/listings/${slug}/edit?boost=true`}>
-              <Button variant="outline" className="border-slate-300 shadow">
+              <Button
+                variant="outline"
+                className="border-slate-300 shadow"
+                onClick={() => posthog.capture('clicked_boost cta')}
+              >
                 <RocketIcon className="text-emerald-500" />
                 <p className="mr-2 font-semibold text-slate-600">Boost</p>
                 <p className="text-slate-400">{timeFormatted} Remaining</p>
@@ -136,6 +135,7 @@ export const BoostButton = ({
             variant="outline"
             className="rounded-lg border-slate-300 px-2"
             size="sm"
+            onClick={() => posthog.capture('clicked_boost cta')}
           >
             <RocketIcon className="text-emerald-500" />
             <p className="font-semibold text-slate-600">Boost</p>
