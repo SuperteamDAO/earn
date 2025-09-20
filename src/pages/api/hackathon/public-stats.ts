@@ -11,9 +11,6 @@ export default async function handler(
 
     const hackathon = await prisma.hackathon.findUnique({
       where: { slug: hackathonSlug },
-      include: {
-        listings: true,
-      },
     });
 
     if (!hackathon) {

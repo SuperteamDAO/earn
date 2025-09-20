@@ -63,7 +63,11 @@ export function PaymentType() {
                     if (
                       rewards &&
                       Object.values(rewards).some(
-                        (v) => v === null || v === undefined || v === 0,
+                        (v) =>
+                          v === null ||
+                          v === undefined ||
+                          v === 0 ||
+                          Number.isNaN(v),
                       )
                     ) {
                       form.setValue('rewards', {});
