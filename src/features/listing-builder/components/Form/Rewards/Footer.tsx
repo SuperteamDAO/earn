@@ -215,6 +215,11 @@ function RewardsFooter({
                   }
                 }
 
+                const prevTokens = Number(rewardAmount) || 0;
+                if (computedRewardAmountTokens > prevTokens) {
+                  posthog.capture('boost_listing');
+                }
+
                 form.setValue('rewardAmount', computedRewardAmountTokens, {
                   shouldValidate: false,
                 });
