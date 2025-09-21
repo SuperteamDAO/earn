@@ -253,16 +253,25 @@ export async function buildListingQuery(
     }
   }
 
-  switch (tab) {
-    case 'bounties':
-      where.type = 'bounty';
-      break;
-    case 'projects':
-      where.type = 'project';
-      break;
-    case 'all':
-      where.type = { not: 'hackathon' };
-      break;
+  const standardTabs = ['all', 'bounties', 'projects'];
+
+  if (standardTabs.includes(tab)) {
+    switch (tab) {
+      case 'bounties':
+        where.type = 'bounty';
+        break;
+      case 'projects':
+        where.type = 'project';
+        break;
+      case 'all':
+        where.type = { not: 'hackathon' };
+        break;
+    }
+  } else {
+    where.type = 'hackathon';
+    where.Hackathon = {
+      slug: tab,
+    };
   }
 
   const statusWhereClauses = getStatusSpecificWhereClauses(status);

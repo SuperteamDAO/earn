@@ -43,6 +43,9 @@ export default async function handler(
     return res.status(200).json({
       totalRewardAmount: totalRewardAmount._sum.usdValue || 0,
       totalListings,
+      deadline: hackathon.deadline,
+      startDate: hackathon.startDate,
+      announceDate: hackathon.announceDate,
     });
   } catch (error) {
     return res.status(500).json({ error: error });

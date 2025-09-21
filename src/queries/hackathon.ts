@@ -6,6 +6,9 @@ import { api } from '@/lib/api';
 export interface Stats {
   totalRewardAmount: number;
   totalListings: number;
+  deadline: string;
+  startDate: string;
+  announceDate: string;
 }
 
 const fetchTracks = async (slug: string): Promise<TrackProps[]> => {

@@ -15,6 +15,7 @@ import { totalsQuery } from '../queries/totals';
 import { HowItWorks } from './HowItWorks';
 import { RecentActivity } from './RecentActivity';
 import { RecentEarners } from './RecentEarners';
+import { SidebarBannerCypherpunk } from './SidebarBanner';
 import { SponsorBanner } from './SponsorBanner';
 import { TotalStats } from './TotalStats';
 
@@ -54,6 +55,7 @@ export const HomeSideBar = ({ type }: SideBarProps) => {
         {type === 'feed' && (
           <>
             <VibeCard />
+            <SidebarBannerCypherpunk />
             <LiveListings>
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium text-gray-400">
@@ -86,6 +88,7 @@ export const HomeSideBar = ({ type }: SideBarProps) => {
               />
             </div>
 
+            <SidebarBannerCypherpunk />
             <HowItWorks />
             <RecentEarners earners={recentEarners} />
             <RecentActivity />

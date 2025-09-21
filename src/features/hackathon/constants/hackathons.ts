@@ -1,12 +1,7 @@
 export const HACKATHONS = [
   {
-    label: 'Breakout',
-    slug: 'breakout',
-    logo: '/hackathon/breakout/logo',
+    label: 'Cypherpunk',
+    slug: 'cypherpunk',
+    logo: '/hackathon/cypherpunk/logo',
   },
-  // {
-  //   label: 'Redacted',
-  //   slug: 'redacted',
-  //   logo: '/hackathon/redacted/logo-black',
-  // },
 ];

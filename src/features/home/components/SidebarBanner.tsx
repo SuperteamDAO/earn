@@ -1,47 +1,62 @@
-// const base = `/hackathon/breakout/`;
-// const baseAsset = (filename: string) => base + filename;
+import { useQuery } from '@tanstack/react-query';
+import Link from 'next/link';
 
-// interface SidebarPosterProps {
-//   className?: string;
-// }
+import { Button } from '@/components/ui/button';
+import { ExternalImage } from '@/components/ui/cloudinary-image';
+import { statsDataQuery } from '@/queries/hackathon';
+import { CypherpunkLogo } from '@/svg/cypherpunk-logo';
+import { dayjs } from '@/utils/dayjs';
+import { roundToNearestTenThousand } from '@/utils/number';
 
-// export function SidebarBannerBreakout({ className }: SidebarPosterProps) {
-//   // const { data: stats } = useQuery(statsDataQuery(slug));
-//   return (
-//     <Link href="/hackathon/breakout">
-//       <div
-//         className={`relative flex h-[21.125rem] w-full flex-col items-center overflow-hidden rounded-xl border border-white/20 ${className}`}
-//       >
-//         <ExternalImage
-//           src={baseAsset('sidebar-bg')}
-//           alt="Breakout Hackathon"
-//           className="absolute top-0 left-0 h-full w-full object-cover"
-//         />
+const base = `/hackathon/cypherpunk/`;
+const baseAsset = (filename: string) => base + filename;
 
-//         <div className="relative z-10 flex h-full w-full flex-col px-4 pt-6 pb-4 text-black">
-//           <div className="flex items-center justify-between px-4">
-//             <BreakoutLogo className="h-[10.8125rem]" />
-//           </div>
-//           <div
-//             className={`${animeAce.className} flex flex-col items-center justify-center`}
-//           >
-//             <p className="text-xs italic">
-//               Submissions Due May 16 (11:59PM PST)
-//             </p>
-//             <p className="pt-1 text-lg font-bold">
-//               $300K+ in side tracks
-//               {/* ${stats?.totalRewardAmount.toLocaleString('en-us') ?? '-'} in side */}
-//             </p>
-//           </div>
+interface SidebarPosterProps {
+  className?: string;
+}
 
-//           <Button
-//             variant="secondary"
-//             className={`${animeAce.className} mt-auto mb-2 w-full rounded-md bg-black text-base font-bold text-white hover:bg-black/70`}
-//           >
-//             SUBMIT NOW
-//           </Button>
-//         </div>
-//       </div>
-//     </Link>
-//   );
-// }
+export function SidebarBannerCypherpunk({ className }: SidebarPosterProps) {
+  const { data: stats } = useQuery(statsDataQuery('cypherpunk'));
+  const CLOSE_DATE = stats?.deadline;
+  return (
+    <Link href="/hackathon/cypherpunk">
+      <div
+        className={`relative flex h-[26.3rem] w-full flex-col items-center overflow-hidden rounded-lg border border-white/20 bg-[#F8F5FF] ${className}`}
+      >
+        <ExternalImage
+          src={baseAsset('home-banner-square')}
+          alt="Cypherpunk Hackathon"
+          className="absolute top-0 left-0 w-full object-contain"
+        />
+
+        <div className="relative z-10 flex h-full w-full flex-col px-8 pt-36 pb-0 text-black">
+          <div className="flex items-center justify-between">
+            <CypherpunkLogo className="w-full" />
+          </div>
+          <p className="relative z-10 mt-2 text-xl leading-[120%] font-semibold text-black">
+            Are you a dev? We have worth $
+            {roundToNearestTenThousand(
+              stats?.totalRewardAmount ?? 0,
+              true,
+            )?.toLocaleString('en-us') || '0'}
+            + in prizes for you
+          </p>
+          <p className="relative z-10 mt-3 text-sm leading-[130%] text-black/80 md:text-base">
+            Submit to any of the Cypherpunk side tracks on Earn and stand to win
+            from $
+            {roundToNearestTenThousand(
+              stats?.totalRewardAmount ?? 0,
+              true,
+            )?.toLocaleString('en-us') || '0'}
+            +. Deadline for submissions is{' '}
+            {dayjs(CLOSE_DATE)
+              .tz('America/Los_Angeles')
+              .format('MMM D (h:mmA PST)')}
+          </p>
+
+          <Button className={`mt-4 text-base`}>View Tracks</Button>
+        </div>
+      </div>
+    </Link>
+  );
+}
