@@ -1,5 +1,5 @@
 import { usePrivy } from '@privy-io/react-auth';
-import { useIsFetching } from '@tanstack/react-query';
+import { useIsFetching, useQueryClient } from '@tanstack/react-query';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { ChevronLeft, Eye, Loader2 } from 'lucide-react';
 import Link from 'next/link';
@@ -36,9 +36,14 @@ export function Header() {
     control: form.control,
     name: 'id',
   });
+  const slug = useWatch({
+    control: form.control,
+    name: 'slug',
+  });
   const isEditing = useAtomValue(isEditingAtom);
   const hideAutoSave = useAtomValue(hideAutoSaveAtom);
   const isSlugLoading = useIsFetching({ queryKey: ['slug'] }) > 0;
+  const queryClient = useQueryClient();
 
   return (
     <div className="bg-background sticky top-0 z-50 hidden border-b md:block">
@@ -58,7 +63,15 @@ export function Header() {
             <div className="h-6 w-[1.5px] bg-slate-300" />
             <p className="text-sm tracking-[1.5px] text-slate-600">SPONSORS</p>
           </Link>
-          <Button variant="outline" onClick={() => router.back()}>
+          <Button
+            variant="outline"
+            onClick={() => {
+              queryClient.invalidateQueries({
+                queryKey: ['sponsor-dashboard-listing', slug],
+              });
+              router.push('/dashboard/listings');
+            }}
+          >
             <ChevronLeft /> Go Back
           </Button>
         </div>
