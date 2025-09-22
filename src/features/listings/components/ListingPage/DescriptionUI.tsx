@@ -7,6 +7,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { useMediaQuery } from '@/hooks/use-media-query';
+import { domPurify } from '@/lib/domPurify';
 import styles from '@/styles/listing-description.module.css';
 import { cn } from '@/utils/cn';
 
@@ -87,9 +88,11 @@ export function DescriptionUI({ description }: Props) {
             className={`${styles.content} mt-4 w-full overflow-visible pb-7`}
           >
             {parse(
-              description?.startsWith('"')
-                ? JSON.parse(description || '')
-                : (description ?? ''),
+              domPurify(
+                description?.startsWith('"')
+                  ? JSON.parse(description || '')
+                  : (description ?? ''),
+              ),
               options,
             )}
           </div>
