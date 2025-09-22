@@ -2,7 +2,6 @@ import { usePrivy } from '@privy-io/react-auth';
 
 import { AnimateChangeInHeight } from '@/components/shared/AnimateChangeInHeight';
 import { EmptySection } from '@/components/shared/EmptySection';
-import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { Separator } from '@/components/ui/separator';
 import { useBreakpoint } from '@/hooks/use-breakpoint';
 import { useScrollShadow } from '@/hooks/use-scroll-shadow';
@@ -11,11 +10,7 @@ import { cn } from '@/utils/cn';
 import { HACKATHONS } from '@/features/hackathon/constants/hackathons';
 import { CATEGORY_NAV_ITEMS } from '@/features/navbar/constants';
 
-import {
-  type ListingCategory,
-  type ListingTab,
-  useListings,
-} from '../hooks/useListings';
+import { type ListingCategory, useListings } from '../hooks/useListings';
 import { useListingState } from '../hooks/useListingState';
 import type { ListingTabsProps } from '../types';
 import { CategoryPill } from './CategoryPill';
@@ -73,6 +68,9 @@ export const ListingsSection = ({
   });
 
   const viewAllLink = () => {
+    if (HACKATHONS.some((hackathon) => hackathon.slug === activeTab)) {
+      return `/hackathon/${activeTab}`;
+    }
     let basePath: string;
     if (type === 'home') {
       basePath = '/all';
@@ -139,27 +137,10 @@ export const ListingsSection = ({
           <div className="hidden items-center md:flex">
             <Separator orientation="vertical" className="mx-3 h-6" />
             <ListingTabs
+              type={type}
               activeTab={activeTab}
               handleTabChange={handleTabChange}
             />
-            {HACKATHONS.map((hackathon) => (
-              <div
-                key={hackathon.slug}
-                className="cursor-pointer"
-                onClick={() =>
-                  handleTabChange(
-                    hackathon.slug as ListingTab,
-                    `${hackathon.slug}_navpill`,
-                  )
-                }
-              >
-                <ExternalImage
-                  src={hackathon.logo}
-                  alt={hackathon.label}
-                  className="ml-4 h-4 object-contain"
-                />
-              </div>
-            ))}
           </div>
         </div>
 
@@ -172,7 +153,11 @@ export const ListingsSection = ({
         />
       </div>
       <div className="mt-2 mb-1 md:hidden">
-        <ListingTabs activeTab={activeTab} handleTabChange={handleTabChange} />
+        <ListingTabs
+          type={type}
+          activeTab={activeTab}
+          handleTabChange={handleTabChange}
+        />
       </div>
 
       <div className="mb-2 h-px w-full bg-slate-200" />
