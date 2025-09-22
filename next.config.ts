@@ -31,7 +31,7 @@ const baseCsp = `
   media-src 'self' blob: data: https://res.cloudinary.com;
   font-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com;
   child-src 'self' https://auth.privy.io https://verify.walletconnect.com https://verify.walletconnect.org;
-  frame-src 'self' https://auth.privy.io https://*.sumsub.com https://verify.walletconnect.com https://verify.walletconnect.org https://www.youtube.com;
+  frame-src 'self' https://auth.privy.io https://*.sumsub.com https://verify.walletconnect.com https://verify.walletconnect.org https://www.youtube.com https://challenges.cloudflare.com;
   frame-ancestors 'self' https://*.sumsub.com;
   ${process.env.NODE_ENV === 'production' ? 'upgrade-insecure-requests;' : ''}
 `;
