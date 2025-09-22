@@ -457,4 +457,18 @@ export const tokenList: Token[] = [
     icon: '',
     decimals: 6,
   },
+  {
+    tokenName: 'Sonic SVM',
+    tokenSymbol: 'SONIC',
+    mintAddress: 'SonicxvLud67EceaEzCLRnMTBqzYUUYNr93DBkBdDES',
+    icon: 'https://assets.coingecko.com/coins/images/53061/standard/Token.png?1735169618',
+    decimals: 9,
+  },
+  {
+    tokenName: 'XNET Mobile',
+    tokenSymbol: 'XNET',
+    mintAddress: 'xNETbUB7cRb3AAu2pNG2pUwQcJ2BHcktfvSB8x1Pq6L',
+    icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/32753.png',
+    decimals: 8,
+  },
 ];

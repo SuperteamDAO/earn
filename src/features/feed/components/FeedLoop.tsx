@@ -20,7 +20,7 @@ export const FeedLoop = forwardRef<HTMLDivElement, Omit<Props, 'ref'>>(
     return (
       <>
         {isLoading ? (
-          Array.from({ length: 5 }).map((_, index) => (
+          Array.from({ length: 2 }).map((_, index) => (
             <FeedCardContainerSkeleton key={index} />
           ))
         ) : feedItems.length > 0 ? (

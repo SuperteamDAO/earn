@@ -7,6 +7,9 @@ interface EarnAvatarProps extends React.HTMLAttributes<HTMLDivElement> {
   id: string | undefined;
   avatar?: string;
   className?: string;
+  imgLoading?: 'lazy' | 'eager';
+  imgDecoding?: 'async' | 'sync';
+  imgFetchPriority?: 'high' | 'low' | 'auto';
 }
 
 export const EarnAvatar = ({
@@ -14,6 +17,9 @@ export const EarnAvatar = ({
   avatar,
   className,
   onClick,
+  imgLoading = 'lazy',
+  imgDecoding = 'async',
+  imgFetchPriority = 'auto',
   ...props
 }: EarnAvatarProps) => {
   const [hasError, setHasError] = useState(false);
@@ -38,8 +44,10 @@ export const EarnAvatar = ({
           alt={id || 'avatar'}
           className={cn(commonClassName, className)}
           onError={handleImageError}
-          loading="lazy"
-          decoding="async"
+          loading={imgLoading}
+          decoding={imgDecoding}
+          // fetchPriority is relatively new; cast for TS compatibility
+          fetchPriority={imgFetchPriority as any}
         />
       ) : (
         <div className={cn(commonClassName, className)}>
