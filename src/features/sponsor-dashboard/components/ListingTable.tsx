@@ -233,44 +233,40 @@ export const ListingTable = ({
                     </Tooltip>
                   </TableCell>
                   <TableCell className="max-w-80 font-medium break-words whitespace-normal text-slate-700">
-                    {listing.isPublished ? (
-                      <Link
-                        className="ph-no-capture"
-                        href={listingSubmissionLink}
-                        onClick={() => {
-                          posthog.capture('submissions_sponsor');
-                        }}
-                      >
+                    {(() => {
+                      const isClickable =
+                        listing.isPublished ||
+                        isListingEditable({ listing, user });
+                      const href = listing.isPublished
+                        ? listingSubmissionLink
+                        : `/dashboard/listings/${listing.slug}/edit`;
+                      const onClick = listing.isPublished
+                        ? () => posthog.capture('submissions_sponsor')
+                        : () => posthog.capture('edit listing_sponsor');
+
+                      const titleElement = (
                         <p
-                          className="cursor-pointer overflow-hidden text-[15px] font-medium text-ellipsis whitespace-nowrap text-slate-500 hover:underline"
+                          className={`overflow-hidden text-[15px] font-medium text-ellipsis whitespace-nowrap text-slate-500 ${
+                            isClickable ? 'cursor-pointer hover:underline' : ''
+                          }`}
                           title={listing.title}
                         >
                           {listing.title}
                         </p>
-                      </Link>
-                    ) : isListingEditable({ listing, user }) ? (
-                      <Link
-                        className="ph-no-capture"
-                        href={`/dashboard/listings/${listing.slug}/edit`}
-                        onClick={() => {
-                          posthog.capture('edit_listing_title_click');
-                        }}
-                      >
-                        <p
-                          className="cursor-pointer overflow-hidden text-[15px] font-medium text-ellipsis whitespace-nowrap text-slate-500 hover:underline"
-                          title={listing.title}
+                      );
+
+                      return isClickable ? (
+                        <Link
+                          className="ph-no-capture"
+                          href={href}
+                          onClick={onClick}
                         >
-                          {listing.title}
-                        </p>
-                      </Link>
-                    ) : (
-                      <p
-                        className="overflow-hidden text-[15px] font-medium text-ellipsis whitespace-nowrap text-slate-500"
-                        title={listing.title}
-                      >
-                        {listing.title}
-                      </p>
-                    )}
+                          {titleElement}
+                        </Link>
+                      ) : (
+                        titleElement
+                      );
+                    })()}
                   </TableCell>
                   <TableCell className="py-2">
                     <p className="text-center text-sm font-medium text-slate-500">
@@ -356,6 +352,9 @@ export const ListingTable = ({
                           variant="ghost"
                           size="sm"
                           className="text-[13px] font-medium text-slate-500 hover:bg-slate-200"
+                          onClick={() => {
+                            posthog.capture('edit listing_sponsor');
+                          }}
                         >
                           <Pencil className="h-4 w-4" />
                           Edit
