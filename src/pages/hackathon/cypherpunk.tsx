@@ -146,8 +146,8 @@ function Hero({
             {status === 'Start In' && (
               <PulseIcon
                 isPulsing={false}
-                w={6}
-                h={6}
+                w={8}
+                h={8}
                 bg={'#ff9305'}
                 text="#f9305"
               />
