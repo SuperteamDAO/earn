@@ -1,16 +1,17 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useSignTransaction } from '@privy-io/react-auth/solana';
+import { usePrivy } from '@privy-io/react-auth';
+import { useWallets } from '@privy-io/react-auth/solana';
 import {
   getAssociatedTokenAddressSync,
   TOKEN_2022_PROGRAM_ID,
   TOKEN_PROGRAM_ID,
 } from '@solana/spl-token';
-import { PublicKey, VersionedTransaction } from '@solana/web3.js';
+import { PublicKey } from '@solana/web3.js';
 import { useQueryClient } from '@tanstack/react-query';
 import { isAxiosError } from 'axios';
 import { log } from 'next-axiom';
 import posthog from 'posthog-js';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
@@ -50,13 +51,25 @@ export function WithdrawFundsFlow({
 }: WithdrawFlowProps) {
   const { user } = useUser();
 
+  const { user: privyUser, ready: privyReady } = usePrivy();
+  const { wallets, ready } = useWallets();
+  const wallet = wallets[0];
+
+  useEffect(() => {
+    console.log(privyUser, 'privyUser');
+    console.log(privyReady, 'privyReady');
+  }, [privyUser]);
+
+  useEffect(() => {
+    console.log(wallets, 'wallets');
+    console.log(ready, 'ready');
+  }, [wallets]);
+
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string>('');
   const [ataCreationCost, setAtaCreationCost] = useState<number>(0);
   const [pendingFormData, setPendingFormData] =
     useState<WithdrawFormData | null>(null);
-
-  const { signTransaction } = useSignTransaction();
 
   const form = useForm<WithdrawFormData>({
     resolver: zodResolver(withdrawFormSchema),
@@ -175,21 +188,19 @@ export function WithdrawFundsFlow({
         tokenAddress: values.tokenAddress,
       });
 
-      const transaction = VersionedTransaction.deserialize(
-        Buffer.from(response.data.serializedTransaction, 'base64'),
-      );
+      const serializedTransaction = response.data.serializedTransaction;
+      console.log('wallets', wallets);
 
-      const userSignedTransaction = await signTransaction({
-        transaction,
-        connection,
-        uiOptions: {
-          showWalletUIs: false,
-        },
+      if (!wallet) {
+        throw new Error('No wallet found');
+      }
+
+      const signedTransaction = await wallet.signAndSendTransaction({
+        chain: 'solana:mainnet',
+        transaction: new Uint8Array(serializedTransaction),
       });
 
-      signature = await connection.sendRawTransaction(
-        userSignedTransaction.serialize(),
-      );
+      signature = Buffer.from(signedTransaction.signature).toString('base64');
 
       const pollForSignature = async (sig: string) => {
         const MAX_RETRIES = 60;
