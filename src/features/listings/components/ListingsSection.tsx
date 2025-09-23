@@ -7,6 +7,7 @@ import { useBreakpoint } from '@/hooks/use-breakpoint';
 import { useScrollShadow } from '@/hooks/use-scroll-shadow';
 import { cn } from '@/utils/cn';
 
+import { HACKATHONS } from '@/features/hackathon/constants/hackathons';
 import { CATEGORY_NAV_ITEMS } from '@/features/navbar/constants';
 
 import { type ListingCategory, useListings } from '../hooks/useListings';
@@ -67,6 +68,9 @@ export const ListingsSection = ({
   });
 
   const viewAllLink = () => {
+    if (HACKATHONS.some((hackathon) => hackathon.slug === activeTab)) {
+      return `/hackathon/${activeTab}`;
+    }
     let basePath: string;
     if (type === 'home') {
       basePath = '/all';
@@ -108,7 +112,7 @@ export const ListingsSection = ({
     }
 
     return (
-      <>
+      <div className="space-y-1">
         {listings.map((listing) => (
           <ListingCard key={listing.id} bounty={listing} />
         ))}
@@ -118,7 +122,7 @@ export const ListingsSection = ({
             href={viewAllLink()}
           />
         )}
-      </>
+      </div>
     );
   };
 
@@ -133,6 +137,7 @@ export const ListingsSection = ({
           <div className="hidden items-center md:flex">
             <Separator orientation="vertical" className="mx-3 h-6" />
             <ListingTabs
+              type={type}
               activeTab={activeTab}
               handleTabChange={handleTabChange}
             />
@@ -148,11 +153,15 @@ export const ListingsSection = ({
         />
       </div>
       <div className="mt-2 mb-1 md:hidden">
-        <ListingTabs activeTab={activeTab} handleTabChange={handleTabChange} />
+        <ListingTabs
+          type={type}
+          activeTab={activeTab}
+          handleTabChange={handleTabChange}
+        />
       </div>
 
       <div className="mb-2 h-px w-full bg-slate-200" />
-      <div className="relative -mx-2">
+      <div className="relative -mx-2 mb-1">
         <div
           className={cn(
             'pointer-events-none absolute top-0 bottom-0 left-0 z-10 w-8',

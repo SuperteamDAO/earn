@@ -1,12 +1,11 @@
-export const HACKATHONS = [
-  {
-    label: 'Breakout',
-    slug: 'breakout',
-    logo: '/hackathon/breakout/logo',
-  },
+export const HACKATHONS: {
+  label: string;
+  slug: string;
+  logo: string;
+}[] = [
   // {
-  //   label: 'Redacted',
-  //   slug: 'redacted',
-  //   logo: '/hackathon/redacted/logo-black',
+  //   label: 'Cypherpunk',
+  //   slug: 'cypherpunk',
+  //   logo: '/hackathon/cypherpunk/logo',
   // },
 ];

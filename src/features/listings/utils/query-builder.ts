@@ -8,6 +8,7 @@ import {
   type BountiesWhereInput,
 } from '@/prisma/models/Bounties';
 
+import { HACKATHONS } from '@/features/hackathon/constants/hackathons';
 import {
   type ListingCategorySchema,
   type ListingStatusSchema,
@@ -212,6 +213,11 @@ export async function buildListingQuery(
       forYouConditions.push(...skillConditions);
     }
 
+    forYouConditions.push({
+      type: 'hackathon',
+      isFeatured: true,
+    });
+
     if (forYouConditions.length > 0) {
       andConditions.push({ OR: forYouConditions });
     }
@@ -253,16 +259,28 @@ export async function buildListingQuery(
     }
   }
 
-  switch (tab) {
-    case 'bounties':
-      where.type = 'bounty';
-      break;
-    case 'projects':
-      where.type = 'project';
-      break;
-    case 'all':
-      where.type = { not: 'hackathon' };
-      break;
+  const standardTabs = ['all', 'bounties', 'projects'];
+
+  if (standardTabs.includes(tab)) {
+    switch (tab) {
+      case 'bounties':
+        where.type = 'bounty';
+        break;
+      case 'projects':
+        where.type = 'project';
+        break;
+      case 'all':
+        where.OR = [
+          { type: { not: 'hackathon' } },
+          { type: 'hackathon', isFeatured: true },
+        ];
+        break;
+    }
+  } else if (HACKATHONS.some((hackathon) => hackathon.slug === tab)) {
+    where.type = 'hackathon';
+    where.Hackathon = {
+      slug: tab,
+    };
   }
 
   const statusWhereClauses = getStatusSpecificWhereClauses(status);

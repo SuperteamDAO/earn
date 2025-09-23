@@ -8,6 +8,7 @@ import { useMemo } from 'react';
 import IoSearchOutline from '@/components/icons/IoSearchOutline';
 import IoWalletOutline from '@/components/icons/IoWalletOutline';
 import { Button } from '@/components/ui/button';
+import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { LocalImage } from '@/components/ui/local-image';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useCreditBalance } from '@/store/credit';
@@ -16,6 +17,7 @@ import { cn } from '@/utils/cn';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 
 import { CreditIcon } from '@/features/credits/icon/credit';
+import { HACKATHONS } from '@/features/hackathon/constants/hackathons';
 
 import { LISTING_NAV_ITEMS } from '../constants';
 import { LogoContextMenu } from './LogoContextMenu';
@@ -164,7 +166,7 @@ export const DesktopNavbar = ({
                     />
                   );
                 })}
-                {/* {HACKATHONS.map((hackathon) => (
+                {HACKATHONS.map((hackathon) => (
                   <Link
                     href={`/hackathon/${hackathon.slug}`}
                     key={hackathon.slug}
@@ -180,7 +182,7 @@ export const DesktopNavbar = ({
                       className="h-full object-contain"
                     />
                   </Link>
-                ))} */}
+                ))}
               </div>
             </div>
           </div>
