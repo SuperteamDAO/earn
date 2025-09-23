@@ -34,12 +34,12 @@ export function SidebarBannerCypherpunk({ className }: SidebarPosterProps) {
             <CypherpunkLogo className="w-full" />
           </div>
           <p className="relative z-10 mt-2 text-xl leading-[120%] font-semibold text-black">
-            Are you a dev? We have worth $
+            Are you a dev? We have prizes worth $
             {roundToNearestTenThousand(
               stats?.totalRewardAmount ?? 0,
               true,
             )?.toLocaleString('en-us') || '0'}
-            + in prizes for you
+            + for you
           </p>
           <p className="relative z-10 mt-3 text-sm leading-[130%] text-black/80 md:text-base">
             Submit to any of the Cypherpunk side tracks on Earn and stand to win

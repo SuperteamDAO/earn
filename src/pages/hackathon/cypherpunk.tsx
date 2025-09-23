@@ -86,7 +86,7 @@ function Hero({
   stats: Stats | undefined;
 }) {
   const isSM = useBreakpoint('sm');
-  const [status, setStatus] = useState<'Start In' | 'Due In' | 'Closed'>(
+  const [status, setStatus] = useState<'Start In' | 'Close In' | 'Closed'>(
     'Start In',
   );
 
@@ -95,7 +95,7 @@ function Hero({
       if (dayjs().isAfter(dayjs(CLOSE_DATE))) {
         setStatus('Closed');
       } else if (dayjs().isAfter(dayjs(START_DATE))) {
-        setStatus('Due In');
+        setStatus('Close In');
       }
     }
 
@@ -112,14 +112,9 @@ function Hero({
     >
       <CypherpunkLogo className="max-w-[80%] sm:max-w-none" />
       <div className="mt-4 mb-1 flex w-full max-w-[18.5rem] flex-col items-center gap-4 text-black sm:w-auto sm:max-w-none">
-        <div className={`italic`}>
-          <p className="text-sm font-medium sm:text-base">
-            Submissions Due{' '}
-            {dayjs(CLOSE_DATE)
-              .tz('America/Los_Angeles')
-              .format('MMM D (h:mmA PST)')}
-          </p>
-        </div>
+        <p className="max-w-76 text-sm sm:text-base">
+          Submit to side tracks of the latest Solana Global Hackathon
+        </p>
         <div className={`flex w-full flex-col gap-1 sm:flex-row`}>
           <Button
             variant="outline"
@@ -139,7 +134,7 @@ function Hero({
               }
             }}
           >
-            {status === 'Due In' && (
+            {status === 'Close In' && (
               <PulseIcon
                 isPulsing={true}
                 w={6}
@@ -148,8 +143,17 @@ function Hero({
                 text="#16A34A"
               />
             )}
+            {status === 'Start In' && (
+              <PulseIcon
+                isPulsing={false}
+                w={6}
+                h={6}
+                bg={'#ff9305'}
+                text="#f9305"
+              />
+            )}
             {status === 'Start In' && 'Submissions Open Soon'}
-            {status === 'Due In' && 'Submissions Open'}
+            {status === 'Close In' && 'Submissions Open'}
             {status === 'Closed' && 'Submissions Closed'}
           </Button>
         </div>
@@ -178,7 +182,7 @@ function HeroMini({
   const [countdownDate, setCountdownDate] = useState<Date>(
     dayjs.utc(START_DATE).toDate(),
   );
-  const [status, setStatus] = useState<'Start In' | 'Due In' | 'Closed'>(
+  const [status, setStatus] = useState<'Start In' | 'Close In' | 'Closed'>(
     'Start In',
   );
 
@@ -190,7 +194,7 @@ function HeroMini({
         setStatus('Closed');
       } else if (dayjs().isAfter(dayjs(START_DATE))) {
         setCountdownDate(dayjs.utc(CLOSE_DATE).toDate());
-        setStatus('Due In');
+        setStatus('Close In');
       }
     }
 
@@ -236,9 +240,9 @@ function HeroMini({
   );
 }
 
-function mobileTitleForCountdown(status: 'Start In' | 'Due In' | 'Closed') {
+function mobileTitleForCountdown(status: 'Start In' | 'Close In' | 'Closed') {
   if (status === 'Start In') return 'Starts In';
-  if (status === 'Due In') return 'Closes In';
+  if (status === 'Close In') return 'Closes In';
   return status;
 }
 

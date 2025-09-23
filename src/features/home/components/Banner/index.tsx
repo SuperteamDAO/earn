@@ -30,7 +30,7 @@ interface BannerCarouselProps {
 export function BannerCarousel({ totalUsers }: BannerCarouselProps) {
   const plugin = useRef(
     Autoplay({
-      delay: 7000,
+      delay: 4000,
       stopOnInteraction: false,
       stopOnFocusIn: false,
     }),

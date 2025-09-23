@@ -79,12 +79,12 @@ export function HomeCypherpunkBanner() {
       </div>
       <CypherpunkLogo className="relative z-10 mb-4 h-6 w-auto max-w-[60%] sm:hidden" />
       <p className="relative z-10 max-w-[25rem] text-xl leading-[120%] font-semibold text-black md:max-w-[30rem] md:text-[28px]">
-        Are you a dev? We have worth $
+        Are you a dev? We have prizes worth $
         {roundToNearestTenThousand(
           stats?.totalRewardAmount ?? 0,
           true,
         )?.toLocaleString('en-us') || '0'}
-        + in prizes for you
+        + for you
       </p>
       <p className="relative z-10 mt-3 max-w-none text-sm leading-[130%] text-black/80 sm:max-w-[27rem] md:max-w-[30rem] md:text-lg lg:max-w-[30rem] xl:max-w-[30rem]">
         Explore sidetracks worth $

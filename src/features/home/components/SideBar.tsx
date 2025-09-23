@@ -88,8 +88,8 @@ export const HomeSideBar = ({ type }: SideBarProps) => {
               />
             </div>
 
-            <SidebarBannerCypherpunk />
             <HowItWorks />
+            <SidebarBannerCypherpunk />
             <RecentEarners earners={recentEarners} />
             <RecentActivity />
           </>
