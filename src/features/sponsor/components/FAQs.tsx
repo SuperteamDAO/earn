@@ -1,10 +1,11 @@
+import { SupportFormDialog } from '@/components/shared/SupportFormDialog';
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
-import { cn } from '@/utils/cn';
+import { domPurify } from '@/lib/domPurify';
 
 import { maxW } from '../utils/styles';
 
@@ -38,45 +39,50 @@ Earn can be used to get any small to medium scale task done, including but not l
     answer: `You can get in touch with us at <a style="color: blue" href="mailto:support@superteamearn.com" target="_blank">support@superteamearn.com</a> and we will get back to you ASAP.`,
   },
 ];
-
 export function FAQs() {
   return (
-    <div
-      className="flex w-full flex-col items-center bg-indigo-50 pt-8 pb-16"
-      id="faqs"
-    >
-      <h2
-        className={cn(
-          'relative w-full text-center font-semibold text-slate-800',
-          'text-[2rem] md:text-[3.5rem]',
-        )}
-      >
-        FAQs
-      </h2>
-
+    <div className="w-full bg-white py-10 md:py-16" id="faqs">
       <div
-        className={cn(
-          'w-full rounded',
-          maxW,
-          'mx-[1.875rem] px-[1.875rem] lg:mx-[7rem] lg:px-[7rem] xl:mx-[11rem] xl:px-[11rem]',
-        )}
+        className={`${maxW} mx-[1.875rem] grid grid-cols-1 gap-8 md:grid-cols-2 lg:mx-[7rem] xl:mx-[11rem]`}
       >
-        <Accordion collapsible type="single">
-          {faqs.map((faq) => (
-            <AccordionItem
-              className="my-4 rounded border-0 bg-white"
-              key={faq.question}
-              value={faq.question}
-            >
-              <AccordionTrigger className="rounded px-3 py-4 text-base font-normal hover:bg-black/5 hover:no-underline data-[state=open]:bg-black/5">
-                <span className="flex-1 text-left">{faq.question}</span>
-              </AccordionTrigger>
-              <AccordionContent className="px-3 pt-2 pb-4 text-base">
-                <div dangerouslySetInnerHTML={{ __html: faq.answer }} />
-              </AccordionContent>
-            </AccordionItem>
-          ))}
-        </Accordion>
+        <div className="max-w-md space-y-4">
+          <p className="text-sm font-semibold text-indigo-600">FAQs</p>
+          <h2 className="text-[2rem] leading-[1.1] font-semibold text-slate-900 md:text-[3.25rem]">
+            Frequently Asked Questions
+          </h2>
+          <p className="text-base text-slate-600 md:text-lg">
+            Here are the most commonly asked questions. Feel free to{' '}
+            <SupportFormDialog>
+              <span className="cursor-pointer text-indigo-600 underline">
+                reach out
+              </span>
+            </SupportFormDialog>{' '}
+            if you have any other questions!
+          </p>
+        </div>
+
+        <div>
+          <Accordion collapsible type="single">
+            {faqs.map((faq) => (
+              <AccordionItem
+                className="my-4 rounded-lg border border-slate-200 bg-white shadow-sm"
+                key={faq.question}
+                value={faq.question}
+              >
+                <AccordionTrigger className="rounded px-4 py-4 text-base font-normal hover:bg-black/5 hover:no-underline data-[state=open]:bg-black/5">
+                  <span className="flex-1 text-left">{faq.question}</span>
+                </AccordionTrigger>
+                <AccordionContent className="px-4 pt-2 pb-5 text-base text-slate-700 [&_a]:text-blue-700 [&_a]:underline">
+                  <div
+                    dangerouslySetInnerHTML={{
+                      __html: domPurify(faq.answer),
+                    }}
+                  />
+                </AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
+        </div>
       </div>
     </div>
   );

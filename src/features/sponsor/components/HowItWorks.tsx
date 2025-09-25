@@ -29,7 +29,6 @@ export function HowItWorks() {
         className="mx-auto grid gap-16 md:gap-24"
         style={{ maxWidth: '84rem' }}
       >
-        {/* Step 1 */}
         <div
           className={`grid grid-cols-1 items-center gap-8 md:grid-cols-2 md:gap-16 ${maxW2}`}
         >
@@ -46,7 +45,6 @@ export function HowItWorks() {
           </div>
         </div>
 
-        {/* Step 2 */}
         <div
           className={`grid grid-cols-1 items-center gap-8 md:grid-cols-2 md:gap-16 ${maxW2}`}
         >
@@ -65,7 +63,6 @@ export function HowItWorks() {
           </div>
         </div>
 
-        {/* Step 3 */}
         <div
           className={`grid grid-cols-1 items-center gap-8 md:grid-cols-2 md:gap-16 ${maxW2}`}
         >

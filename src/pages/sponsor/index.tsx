@@ -6,14 +6,14 @@ import { Meta } from '@/layouts/Meta';
 import { cn } from '@/utils/cn';
 
 import { CallOut } from '@/features/sponsor/components/CallOut';
-import { FAQs2 } from '@/features/sponsor/components/FAQs2';
-import { Footer2 } from '@/features/sponsor/components/Footer2';
+import { FAQs } from '@/features/sponsor/components/FAQs';
+import { Footer } from '@/features/sponsor/components/Footer';
 import { Header } from '@/features/sponsor/components/Header';
 import { Hero } from '@/features/sponsor/components/Hero';
 import { HowItWorks } from '@/features/sponsor/components/HowItWorks';
 import { ListingExamples } from '@/features/sponsor/components/ListingExamples';
 import { Pricing } from '@/features/sponsor/components/Pricing';
-import { Stats2 } from '@/features/sponsor/components/Stats2';
+import { Stats } from '@/features/sponsor/components/Stats';
 import { SuperteamNetwork } from '@/features/sponsor/components/SuperteamNetwork';
 import { Testimonials2 } from '@/features/sponsor/components/Testimonials2';
 import { Video } from '@/features/sponsor/components/Video';
@@ -70,13 +70,13 @@ const Sponsor = () => {
           <Video showVideo={() => setVideoPopup(true)} />
           <HowItWorks />
           <ListingExamples />
-          <Stats2 />
+          <Stats />
           <Testimonials2 />
           <SuperteamNetwork />
           <Pricing />
-          <FAQs2 />
+          <FAQs />
           <CallOut />
-          <Footer2 />
+          <Footer />
         </div>
       </div>
     </>
