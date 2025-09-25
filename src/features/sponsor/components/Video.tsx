@@ -24,7 +24,7 @@ export function Video({ showVideo }: Props) {
           maxW2,
         )}
       >
-        <h2 className="text-center text-[2rem] leading-[1.1] font-semibold text-slate-800 md:text-left md:text-[3.5rem]">
+        <h2 className="text-left text-[2.5rem] leading-[1.1] font-semibold text-slate-800 md:text-left md:text-[2.75rem]">
           It Takes Less Than 2 Mins To Post
         </h2>
         <p className="text-base text-slate-500 md:text-[1.2rem]">

@@ -20,7 +20,7 @@ export function Hero() {
     return '/dashboard/listings/?open=1';
   }
   return (
-    <div className="relative flex w-full flex-col items-center justify-start overflow-hidden pb-[4rem] md:pb-[1rem]">
+    <div className="relative flex w-full flex-col items-center justify-start overflow-hidden pb-[1rem]">
       <div className="relative flex w-full flex-col items-center gap-8 bg-slate-50 px-8 pt-30 text-center md:pt-54">
         <div>
           <div className="absolute top-0 left-0 flex opacity-20">
@@ -38,8 +38,8 @@ export function Hero() {
         <div className="absolute top-[-16rem] md:left-2/4 md:-translate-x-2/4">
           <ShaderGradient className="w-[100%] scale-125 md:w-auto md:scale-100" />
         </div>
-        <div className="absolute top-0 left-2/4 -translate-x-2/4">
-          <SereneDotGrid />
+        <div className="absolute top-0 left-2/4 origin-top -translate-x-2/4 scale-50 md:scale-100">
+          <SereneDotGrid className="" />
         </div>
 
         <h1 className="max-w-[40rem] text-[2.8rem] leading-[1.1] font-semibold text-slate-800 md:text-[4rem]">
@@ -62,7 +62,7 @@ export function Hero() {
               {/* <LucideChevronRight className="absolute top-2/4 right-4 !size-4 -translate-y-2/4" /> */}
             </Button>
           </Link>
-          <p className="text-xl font-medium text-slate-500">
+          <p className="text-base font-medium text-slate-500 md:text-xl">
             Trusted by Top Teams on Solana
           </p>
         </div>

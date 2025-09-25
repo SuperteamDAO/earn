@@ -39,7 +39,7 @@ export function Stats() {
     >
       <div className="flex w-full flex-col justify-between gap-10 md:flex-row md:items-center md:gap-0 xl:gap-20">
         <div className="flex flex-col md:items-center md:text-center">
-          <p className="text-[3.5rem] leading-none font-semibold text-indigo-600">
+          <p className="text-[3.25rem] leading-none font-semibold text-indigo-600">
             {freelancers}
           </p>
           <p className="mt-2 text-xl text-slate-600">Freelancers on Earn</p>
@@ -49,7 +49,7 @@ export function Stats() {
         <span className="block h-px w-56 bg-slate-200 md:hidden" />
 
         <div className="flex flex-col md:items-center md:text-center">
-          <p className="text-[3.5rem] leading-none font-semibold text-indigo-600">
+          <p className="text-[3.25rem] leading-none font-semibold text-indigo-600">
             {paidOut}
           </p>
           <p className="mt-2 text-xl text-slate-600">Paid Out by Sponsors</p>
@@ -59,7 +59,7 @@ export function Stats() {
         <span className="block h-px w-56 bg-slate-200 md:hidden" />
 
         <div className="flex flex-col md:items-center md:text-center">
-          <p className="text-[3.5rem] leading-none font-semibold text-indigo-600">
+          <p className="text-[3.25rem] leading-none font-semibold text-indigo-600">
             {mav}
           </p>
           <p className="mt-2 text-xl text-slate-600">Monthly Active Visitors</p>

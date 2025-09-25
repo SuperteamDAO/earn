@@ -12,7 +12,7 @@ export function WhyChooseEarn() {
           maxW,
         )}
       >
-        <h2 className="text-center text-[2.25rem] leading-[1.1] font-semibold text-slate-800 md:text-[3.25rem]">
+        <h2 className="text-center text-[2.5rem] leading-[1.1] font-semibold text-slate-800 md:text-[2.75rem]">
           Why Choose Earn?
         </h2>
 

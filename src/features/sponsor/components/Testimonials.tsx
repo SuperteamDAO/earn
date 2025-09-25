@@ -172,7 +172,7 @@ export function Testimonials() {
         )}
         id="trusted-by"
       >
-        <h2 className="mx-auto w-full max-w-sm text-center text-[1.4rem] leading-[1] font-semibold text-slate-800 md:text-[3rem]">
+        <h2 className="mx-auto w-full text-center text-[2.45rem] leading-[1.1] font-semibold text-slate-800 md:text-[2.75rem]">
           Trusted By Top Solana Teams
         </h2>
 

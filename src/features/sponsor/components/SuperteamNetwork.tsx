@@ -19,7 +19,7 @@ export function SuperteamNetwork() {
     >
       <div className="relative flex w-full flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm md:flex-row">
         <div className="flex w-full flex-col gap-6 p-6 sm:p-8 md:w-[55%] md:p-10">
-          <h2 className="text-[1.6rem] leading-[1.1] font-semibold text-slate-800 sm:text-[1.8rem] md:text-[2rem]">
+          <h2 className="text-[2.45rem] leading-[1.1] font-semibold text-slate-800 sm:text-[2.75rem]">
             Distribute to the Superteam Network
           </h2>
 

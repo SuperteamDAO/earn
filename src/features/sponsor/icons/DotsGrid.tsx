@@ -201,7 +201,8 @@ const pickNewTarget = (base: number) => {
   );
 };
 
-export default function SereneDotGrid() {
+interface SereneDotGridProps extends React.SVGProps<SVGSVGElement> {}
+export default function SereneDotGrid({ ...props }: SereneDotGridProps) {
   const current = useRef<number[]>(DOTS.map((d) => d.baseOpacity));
   const start = useRef<number[]>(DOTS.map((d) => d.baseOpacity));
   const target = useRef<number[]>(
@@ -270,7 +271,8 @@ export default function SereneDotGrid() {
       xmlns="http://www.w3.org/2000/svg"
       role="img"
       aria-label="Serene animated grid of dots"
-      style={{ display: 'block' }}
+      {...props}
+      style={{ display: 'block', ...props.style }}
     >
       <defs>
         <filter id="glow">
