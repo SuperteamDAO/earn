@@ -77,7 +77,9 @@ export const DesktopNavbar = () => {
                 <Link
                   className="ph-no-capture"
                   href="/dashboard/listings/?open=1"
-                  onClick={() => posthog.capture('create a listing_navbar')}
+                  onClick={() => {
+                    posthog?.capture('get started navbar_sponsor lp');
+                  }}
                 >
                   <Button
                     variant="outline"
@@ -92,14 +94,16 @@ export const DesktopNavbar = () => {
                 <Link
                   className="ph-no-capture"
                   href="/new/sponsor/"
-                  onClick={() => posthog.capture('get started_sponsor navbar')}
+                  onClick={() => {
+                    posthog?.capture('get started navbar_sponsor lp');
+                  }}
                 >
                   <Button
                     variant="ghost"
                     size="sm"
                     className="bg-white font-semibold text-indigo-600"
                   >
-                    Get Started
+                    Post for Free
                   </Button>
                 </Link>
               )}
@@ -122,14 +126,16 @@ export const DesktopNavbar = () => {
                 <Link
                   className="ph-no-capture"
                   href="/new/sponsor/"
-                  onClick={() => posthog.capture('get started_sponsor navbar')}
+                  onClick={() => {
+                    posthog?.capture('get started navbar_sponsor lp');
+                  }}
                 >
                   <Button
                     variant="ghost"
                     size="sm"
                     className="bg-white font-semibold text-indigo-600"
                   >
-                    Get Started
+                    Post for Free
                   </Button>
                 </Link>
               </div>

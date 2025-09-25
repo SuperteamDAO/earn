@@ -5,7 +5,7 @@ export const NAV_LINKS = [
   },
   {
     label: 'Results',
-    link: '#results',
+    link: '#trusted-by',
   },
   {
     label: 'Pricing',

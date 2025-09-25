@@ -51,7 +51,7 @@ export function Hero() {
             className="ph-no-capture mx-auto w-fit"
             href={getStartedWhere(authenticated, !!user?.currentSponsorId)}
             onClick={() => {
-              posthog?.capture('clicked_hero_get_started');
+              posthog?.capture('get started hero_sponsor lp');
             }}
           >
             <Button

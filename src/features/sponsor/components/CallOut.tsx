@@ -54,7 +54,9 @@ export function CallOut() {
           <Link
             className="ph-no-capture"
             href={getStartedWhere(authenticated, !!user?.currentSponsorId)}
-            onClick={() => posthog?.capture('clicked_callout_get_started')}
+            onClick={() => {
+              posthog?.capture('get started callout_sponsor lp');
+            }}
           >
             <Button className="h-[3.125rem] w-[12.5rem] rounded-[0.4rem] bg-indigo-600 text-lg font-medium text-white">
               Post for Free 🙌
