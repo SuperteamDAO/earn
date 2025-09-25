@@ -34,10 +34,10 @@ export function Stats() {
       className={cn(
         'flex w-screen items-center justify-center py-20',
         maxW,
-        'mx-[1.875rem] px-[1.875rem] lg:mx-[7rem] lg:px-[7rem] xl:mx-[11rem] xl:px-[11rem]',
+        'px-[1.875rem] lg:px-[7rem] xl:px-[11rem]',
       )}
     >
-      <div className="flex w-full flex-col justify-between gap-10 md:flex-row md:items-center md:gap-20">
+      <div className="flex w-full flex-col justify-between gap-10 md:flex-row md:items-center md:gap-0 xl:gap-20">
         <div className="flex flex-col md:items-center md:text-center">
           <p className="text-[3.5rem] leading-none font-semibold text-indigo-600">
             {freelancers}

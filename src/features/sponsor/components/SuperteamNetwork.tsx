@@ -12,7 +12,7 @@ export function SuperteamNetwork() {
   return (
     <section
       className={cn(
-        'mb-10 flex w-full items-center justify-center',
+        'my-10 flex w-full items-center justify-center md:py-16',
         maxW,
         'px-[1.875rem] lg:px-[7rem] xl:px-[11rem]',
       )}
@@ -30,7 +30,7 @@ export function SuperteamNetwork() {
               <p className="text-[2rem] leading-none font-semibold text-slate-700 md:text-[2.25rem]">
                 36,200
               </p>
-              <p className="ml-auto text-[0.95rem] text-slate-600 md:ml-0 md:text-[1rem]">
+              <p className="ml-auto text-[0.95rem] text-slate-600 md:ml-11 md:text-[1rem]">
                 Global Community
               </p>
             </div>
@@ -39,7 +39,7 @@ export function SuperteamNetwork() {
               <p className="text-[2rem] leading-none font-semibold text-slate-700 md:text-[2.25rem]">
                 385,000
               </p>
-              <p className="ml-6.5 text-[0.95rem] text-slate-600 md:ml-0 md:text-[1rem]">
+              <p className="ml-6.5 text-[0.95rem] text-slate-600 md:ml-6 md:text-[1rem]">
                 Event Attendees
               </p>
             </div>
@@ -48,7 +48,7 @@ export function SuperteamNetwork() {
               <p className="text-[2rem] leading-none font-semibold text-slate-700 md:text-[2.25rem]">
                 15
               </p>
-              <p className="ml-28 text-[0.95rem] text-slate-600 md:ml-0 md:text-[1rem]">
+              <p className="ml-28 text-[0.95rem] text-slate-600 md:ml-30.5 md:text-[1rem]">
                 Countries
               </p>
             </div>

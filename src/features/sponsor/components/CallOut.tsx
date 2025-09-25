@@ -23,7 +23,7 @@ export function CallOut() {
   return (
     <section
       className={cn(
-        'relative mx-auto w-full overflow-hidden bg-slate-900 px-4 py-16 text-center md:py-24 xl:py-52',
+        'relative mx-auto w-full overflow-hidden bg-slate-900 px-4 py-16 text-center md:py-24 xl:py-62',
       )}
     >
       <div
@@ -58,7 +58,6 @@ export function CallOut() {
           >
             <Button className="h-[3.125rem] w-[12.5rem] rounded-[0.4rem] bg-indigo-600 text-lg font-medium text-white">
               Post for Free 🙌
-              <span className="ml-2">→</span>
             </Button>
           </Link>
         </div>

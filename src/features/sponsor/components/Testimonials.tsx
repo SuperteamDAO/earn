@@ -166,7 +166,7 @@ export function Testimonials() {
     <section className="mx-auto w-full bg-slate-50">
       <div
         className={cn(
-          'mx-auto mb-16 flex w-full flex-col items-start gap-6 py-10',
+          'mx-auto mb-16 flex w-full flex-col items-start gap-6 py-10 md:py-16',
           maxW,
           'px-[1.875rem] lg:px-[7rem] xl:px-[11rem]',
         )}
@@ -176,7 +176,7 @@ export function Testimonials() {
           Trusted By Top Solana Teams
         </h2>
 
-        <div className="grid w-full grid-cols-1 gap-6 md:grid-cols-3">
+        <div className="mt-4 grid w-full grid-cols-1 gap-6 md:grid-cols-3">
           <div className="md:col-span-3">
             <TestimonialTile
               hero

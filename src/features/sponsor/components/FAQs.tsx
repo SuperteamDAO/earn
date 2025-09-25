@@ -6,8 +6,9 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion';
 import { domPurify } from '@/lib/domPurify';
+import { cn } from '@/utils/cn';
 
-import { maxW } from '../utils/styles';
+import { maxW, maxW2 } from '../utils/styles';
 
 const faqs = [
   {
@@ -41,11 +42,18 @@ Earn can be used to get any small to medium scale task done, including but not l
 ];
 export function FAQs() {
   return (
-    <div className="w-full bg-white py-10 md:py-16" id="faqs">
+    <div
+      className={cn(
+        'w-full bg-white py-10 md:py-16',
+        maxW,
+        'px-[1.875rem] lg:px-[7rem] xl:px-[11rem]',
+      )}
+      id="faqs"
+    >
       <div
-        className={`${maxW} mx-[1.875rem] grid grid-cols-1 gap-8 md:grid-cols-2 lg:mx-[7rem] xl:mx-[11rem]`}
+        className={`${maxW2} mx-auto grid grid-cols-1 gap-8 md:grid-cols-2 md:gap-20`}
       >
-        <div className="max-w-md space-y-4">
+        <div className={cn('mx-auto space-y-4', maxW2)}>
           <p className="text-sm font-semibold text-indigo-600">FAQs</p>
           <h2 className="text-[2rem] leading-[1.1] font-semibold text-slate-900 md:text-[3.25rem]">
             Frequently Asked Questions

@@ -20,7 +20,7 @@ export function HowItWorks() {
   return (
     <section
       className={cn(
-        'mx-auto my-24 w-full px-[1.875rem] lg:px-[7rem] xl:px-[11rem]',
+        'mx-auto my-8 w-full px-[1.875rem] md:my-24 lg:px-[7rem] xl:px-[11rem]',
         maxW,
       )}
       id="how-it-works"
@@ -38,8 +38,8 @@ export function HowItWorks() {
               description="Just explain what you want to achieve, include some rewards, and watch the submissions come in!"
             />
           </div>
-          <div className="order-2 flex items-center justify-center rounded-2xl bg-violet-50/60 p-6 md:order-1">
-            <div className="scale-75 sm:scale-90 md:scale-100">
+          <div className="order-2 flex items-center justify-center rounded-2xl bg-violet-50/60 md:order-1 md:p-6">
+            <div className="scale-60 sm:scale-90 lg:scale-100">
               <StepOne />
             </div>
           </div>
@@ -54,11 +54,9 @@ export function HowItWorks() {
               description="You will receive dozens (sometimes hundreds) of options to choose from, you only reward the best out of the best."
             />
           </div>
-          <div className="order-2 rounded-2xl bg-sky-50 p-6 md:order-2">
-            <div className="mx-auto w-fit">
-              <div className="scale-75 sm:scale-90 md:scale-100">
-                <StepTwo />
-              </div>
+          <div className="order-2 flex items-center justify-center rounded-2xl bg-sky-50 md:order-2 md:p-6">
+            <div className="scale-60 sm:scale-90 lg:scale-100">
+              <StepTwo />
             </div>
           </div>
         </div>
@@ -72,11 +70,9 @@ export function HowItWorks() {
               description="All the prize money goes directly to the talent. Superteam Earn takes zero commission on work done through the platform."
             />
           </div>
-          <div className="order-2 rounded-2xl bg-emerald-50 p-6 py-12 md:order-1">
-            <div className="mx-auto w-fit">
-              <div className="scale-75 sm:scale-90 md:scale-100">
-                <StepThree />
-              </div>
+          <div className="order-2 flex items-center justify-center rounded-2xl bg-emerald-50 md:order-1 md:p-6 md:py-10">
+            <div className="scale-60 sm:scale-90 lg:scale-100">
+              <StepThree />
             </div>
           </div>
         </div>

@@ -68,24 +68,23 @@ const CARDS: readonly ListingExampleCard[] = [
 export function ListingExamples() {
   const [isPaused, setIsPaused] = useState(false);
 
-  // Create enough copies for seamless scrolling
   const multipliedCards = [...CARDS, ...CARDS];
   return (
-    <section>
+    <section className="w-full">
       <div
         className={cn(
-          'relative mx-auto my-24 w-full px-[1.875rem] lg:px-[7rem] xl:px-[11rem]',
+          'relative mx-auto my-5 w-full px-[1.875rem] md:my-24 lg:px-[7rem] xl:px-[11rem]',
           maxW,
         )}
       >
         <div
           className={cn(
-            'relative mx-auto flex w-full flex-col items-start py-6 md:flex-row md:py-10 lg:gap-30',
+            'relative z-1 mx-auto grid w-full items-start gap-6 py-6 md:grid-cols-2 md:py-10',
             maxW2,
           )}
         >
-          <h2 className="w-fit max-w-sm text-center text-[2rem] leading-[1.1] font-semibold text-slate-800 md:text-left md:text-[3.5rem]">
-            Hire Across All Kinds of Skills
+          <h2 className="text-left text-[2rem] leading-[1.1] font-semibold text-slate-800 md:text-left md:text-[3.5rem]">
+            Hire Across All <br /> Kinds of Skills
           </h2>
           <p className="text-base text-slate-500 md:text-[1.2rem]">
             Thousands of designers, thread writers, devs, community managers,
@@ -93,7 +92,6 @@ export function ListingExamples() {
           </p>
         </div>
       </div>
-
       <div className="relative w-full overflow-hidden">
         <div
           className="flex gap-4"

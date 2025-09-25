@@ -13,14 +13,14 @@ export function Video({ showVideo }: Props) {
   return (
     <section
       className={cn(
-        'relative mx-auto my-24 w-full px-[1.875rem] lg:px-[7rem] xl:px-[11rem]',
+        'relative mx-auto my-5 w-full px-[1.875rem] md:my-24 lg:px-[7rem] xl:px-[11rem]',
         maxW,
       )}
       id="video"
     >
       <div
         className={cn(
-          'relative mx-auto grid w-full items-start gap-6 py-6 md:py-10 lg:grid-cols-2',
+          'relative z-1 mx-auto grid w-full items-start gap-6 py-6 md:py-10 lg:grid-cols-2',
           maxW2,
         )}
       >
@@ -43,7 +43,7 @@ export function Video({ showVideo }: Props) {
           showVideo();
         }}
       >
-        <div className="absolute -top-10 h-3/5 w-full rounded-[0.5rem] bg-slate-50 md:h-3/5" />
+        <div className="absolute -top-10 h-3/5 w-full scale-x-150 rounded-[0.5rem] bg-slate-50 md:h-3/5 md:scale-x-100" />
 
         <div className="bg-brand-purple absolute inset-0 z-10 m-auto flex h-fit w-fit cursor-pointer items-center justify-center rounded-full p-3">
           <svg
@@ -67,8 +67,7 @@ export function Video({ showVideo }: Props) {
           </svg>
         </div>
 
-        {/* Poster thumbnail with rounded corners, subtle dual shadows and ring */}
-        <div className="relative w-10/12 overflow-hidden rounded-[0.75rem] bg-white shadow-[0px_4px_8px_0px_rgba(0,0,0,0.06),0px_0px_4px_0px_rgba(0,0,0,0.04)] ring-1 ring-slate-200/70">
+        <div className="relative w-full overflow-hidden rounded-[0.75rem] bg-white shadow-[0px_4px_8px_0px_rgba(0,0,0,0.06),0px_0px_4px_0px_rgba(0,0,0,0.04)] ring-1 ring-slate-200/70 md:w-10/12">
           <HighQualityImage
             className="block h-full w-full cursor-pointer rounded-none"
             src="/landingsponsor/displays/sponsor-dashboard.webp"

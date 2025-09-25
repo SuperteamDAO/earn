@@ -32,7 +32,7 @@ export function Pricing() {
       )}
     >
       <div className="flex w-full flex-col overflow-hidden rounded-xl">
-        <div className="grid grid-cols-1 gap-8 sm:p-8 md:grid-cols-2 md:gap-12 md:divide-x md:divide-slate-200 md:p-10 md:pt-12">
+        <div className="grid grid-cols-1 gap-8 sm:py-8 md:grid-cols-2 md:gap-12 md:divide-x md:divide-slate-200 md:py-10 md:pt-12">
           <div className="flex flex-col items-center justify-start text-center md:items-start">
             <h2 className="mb-6 text-[1.8rem] leading-[1.1] font-semibold text-slate-800 sm:text-[2rem]">
               Pricing

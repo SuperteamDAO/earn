@@ -3,8 +3,11 @@ import React from 'react';
 
 import MdOutlineMail from '@/components/icons/MdOutlineMail';
 import { SupportFormDialog } from '@/components/shared/SupportFormDialog';
+import { cn } from '@/utils/cn';
 
 import { Twitter } from '@/features/social/components/SocialIcons';
+
+import { maxW } from '../utils/styles';
 
 type FooterLink = { href?: string; text: string; supportForm?: boolean };
 
@@ -76,9 +79,15 @@ export const Footer = () => {
 
   return (
     <footer className="w-full border-t border-slate-800 bg-slate-950 text-white">
-      <div className="mx-auto max-w-7xl px-4 py-10">
+      <div
+        className={cn(
+          'mx-auto max-w-7xl px-4 py-10',
+          maxW,
+          'px-[1.875rem] lg:px-[7rem] xl:px-[11rem]',
+        )}
+      >
         <div className="flex flex-col items-start justify-between md:flex-row">
-          <div className="mb-8 flex max-w-[560px] flex-col md:mb-0">
+          <div className="mb-8 flex flex-col md:mb-0">
             <div className="mb-4 flex items-center gap-4">
               <svg
                 width="75"
@@ -178,7 +187,13 @@ export const Footer = () => {
         </div>
       </div>
       <div className="border-t border-slate-800 bg-white/11 py-4 pb-2 md:pb-4">
-        <div className="mx-auto max-w-7xl px-4">
+        <div
+          className={cn(
+            'mx-auto max-w-7xl px-4',
+            maxW,
+            'px-[1.875rem] lg:px-[7rem] xl:px-[11rem]',
+          )}
+        >
           <div className="flex flex-col items-start justify-between md:flex-row md:items-center">
             <p className="mb-3 text-sm text-slate-400 md:mb-0">
               © {currentYear} Superteam All Rights Reserved

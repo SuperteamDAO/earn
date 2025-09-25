@@ -42,7 +42,7 @@ export function Hero() {
           <SereneDotGrid />
         </div>
 
-        <h1 className="max-w-[40rem] text-[3rem] leading-[1.1] font-semibold text-slate-800 md:text-[4rem]">
+        <h1 className="max-w-[40rem] text-[2.8rem] leading-[1.1] font-semibold text-slate-800 md:text-[4rem]">
           Ship Faster With 150K Solana Freelancers
         </h1>
 
