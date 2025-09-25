@@ -32,32 +32,34 @@ export function Stats() {
   return (
     <div
       className={cn(
-        'flex w-screen items-center justify-center',
+        'flex w-screen items-center justify-center py-20',
         maxW,
         'mx-[1.875rem] px-[1.875rem] lg:mx-[7rem] lg:px-[7rem] xl:mx-[11rem] xl:px-[11rem]',
       )}
     >
-      <div className="flex w-full items-center justify-center gap-10 md:gap-20">
-        <div className="flex flex-col items-center text-center">
-          <p className="text-[2rem] leading-none font-semibold text-indigo-600 md:text-[2.5rem]">
+      <div className="flex w-full flex-col justify-between gap-10 md:flex-row md:items-center md:gap-20">
+        <div className="flex flex-col md:items-center md:text-center">
+          <p className="text-[3.5rem] leading-none font-semibold text-indigo-600">
             {freelancers}
           </p>
           <p className="mt-2 text-xl text-slate-600">Freelancers on Earn</p>
         </div>
 
-        <span className="hidden h-8 w-px bg-slate-200 md:block" />
+        <span className="hidden h-16 w-px bg-slate-200 md:block" />
+        <span className="block h-px w-56 bg-slate-200 md:hidden" />
 
-        <div className="flex flex-col items-center text-center">
-          <p className="text-[2rem] leading-none font-semibold text-indigo-600 md:text-[2.5rem]">
+        <div className="flex flex-col md:items-center md:text-center">
+          <p className="text-[3.5rem] leading-none font-semibold text-indigo-600">
             {paidOut}
           </p>
           <p className="mt-2 text-xl text-slate-600">Paid Out by Sponsors</p>
         </div>
 
-        <span className="hidden h-8 w-px bg-slate-200 md:block" />
+        <span className="hidden h-16 w-px bg-slate-200 md:block" />
+        <span className="block h-px w-56 bg-slate-200 md:hidden" />
 
-        <div className="flex flex-col items-center text-center">
-          <p className="text-[2rem] leading-none font-semibold text-indigo-600 md:text-[2.5rem]">
+        <div className="flex flex-col md:items-center md:text-center">
+          <p className="text-[3.5rem] leading-none font-semibold text-indigo-600">
             {mav}
           </p>
           <p className="mt-2 text-xl text-slate-600">Monthly Active Visitors</p>

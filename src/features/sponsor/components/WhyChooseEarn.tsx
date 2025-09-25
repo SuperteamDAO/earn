@@ -5,7 +5,7 @@ import { maxW } from '../utils/styles';
 
 export function WhyChooseEarn() {
   return (
-    <section className="w-full bg-white py-16 md:py-24">
+    <section className="w-full border-b bg-white py-16 md:py-24">
       <div
         className={cn(
           'mx-auto flex w-full flex-col items-center gap-12 px-[1.875rem] lg:px-[7rem] xl:px-[11rem]',

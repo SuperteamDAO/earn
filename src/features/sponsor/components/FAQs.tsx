@@ -69,7 +69,7 @@ export function FAQs() {
                 key={faq.question}
                 value={faq.question}
               >
-                <AccordionTrigger className="rounded px-4 py-4 text-base font-normal hover:bg-black/5 hover:no-underline data-[state=open]:bg-black/5">
+                <AccordionTrigger className="rounded px-4 py-4 text-base font-medium text-slate-500 hover:bg-black/5 hover:no-underline data-[state=open]:bg-black/5">
                   <span className="flex-1 text-left">{faq.question}</span>
                 </AccordionTrigger>
                 <AccordionContent className="px-4 pt-2 pb-5 text-base text-slate-700 [&_a]:text-blue-700 [&_a]:underline">

@@ -15,7 +15,8 @@ import { ListingExamples } from '@/features/sponsor/components/ListingExamples';
 import { Pricing } from '@/features/sponsor/components/Pricing';
 import { Stats } from '@/features/sponsor/components/Stats';
 import { SuperteamNetwork } from '@/features/sponsor/components/SuperteamNetwork';
-import { Testimonials2 } from '@/features/sponsor/components/Testimonials2';
+import { Testimonials } from '@/features/sponsor/components/Testimonials';
+import { TrustedTeams } from '@/features/sponsor/components/TrustedTeams';
 import { Video } from '@/features/sponsor/components/Video';
 import { WhyChooseEarn } from '@/features/sponsor/components/WhyChooseEarn';
 
@@ -66,12 +67,13 @@ const Sponsor = () => {
       >
         <div className="relative flex w-full flex-col items-center justify-center overflow-hidden">
           <Hero />
+          <TrustedTeams />
           <WhyChooseEarn />
           <Video showVideo={() => setVideoPopup(true)} />
           <HowItWorks />
           <ListingExamples />
           <Stats />
-          <Testimonials2 />
+          <Testimonials />
           <SuperteamNetwork />
           <Pricing />
           <FAQs />

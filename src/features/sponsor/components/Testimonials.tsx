@@ -161,71 +161,77 @@ const TestimonialTile = ({
   );
 };
 
-export function Testimonials2() {
+export function Testimonials() {
   return (
-    <section
-      className={cn(
-        'mb-16 flex w-full flex-col items-start gap-6',
-        maxW,
-        'px-[1.875rem] lg:px-[7rem] xl:px-[11rem]',
-      )}
-      id="trusted-by"
-    >
-      <h2 className="text-[1.4rem] font-semibold text-slate-800 md:text-[1.8rem]">
-        Trusted By Top Solana Teams
-      </h2>
+    <section className="mx-auto w-full bg-slate-50">
+      <div
+        className={cn(
+          'mx-auto mb-16 flex w-full flex-col items-start gap-6 py-10',
+          maxW,
+          'px-[1.875rem] lg:px-[7rem] xl:px-[11rem]',
+        )}
+        id="trusted-by"
+      >
+        <h2 className="mx-auto w-full max-w-sm text-center text-[1.4rem] leading-[1] font-semibold text-slate-800 md:text-[3rem]">
+          Trusted By Top Solana Teams
+        </h2>
 
-      <div className="grid w-full grid-cols-1 gap-6 md:grid-cols-3">
-        <div className="md:col-span-3">
+        <div className="grid w-full grid-cols-1 gap-6 md:grid-cols-3">
+          <div className="md:col-span-3">
+            <TestimonialTile
+              hero
+              logo={`${SPONSOR_LOGO_BASE}/jupiter-2.webp`}
+              logoAlt="Jupiter"
+              quote={
+                "Earn is the default place for us at Jupiter to find Solana native freelancers. We've been powerusers of it for a while — its distribution to talent is unmatched."
+              }
+              metrics={{
+                views: '2M+',
+                submissions: '3000+',
+                paidOut: '$300k+',
+              }}
+              personName="Kash Dhanda"
+              personTitle="COO, Jupiter"
+              personPfp={`${USER_PFP_BASE}/kash-dhanda.webp`}
+            />
+          </div>
+
           <TestimonialTile
-            hero
-            logo={`${SPONSOR_LOGO_BASE}/jupiter-2.webp`}
-            logoAlt="Jupiter"
+            logo={`${SPONSOR_LOGO_BASE}/solana-foundation.webp`}
+            logoAlt="Solana Foundation"
             quote={
-              "Earn is the default place for us at Jupiter to find Solana native freelancers. We've been powerusers of it for a while — its distribution to talent is unmatched."
+              'Within moments, we set up our bounty and drew in exceptional talent. The dashboard is incredibly intuitive, making the entire process feel effortless!'
             }
-            metrics={{ views: '2M+', submissions: '3000+', paidOut: '$300k+' }}
-            personName="Kash Dhanda"
-            personTitle="COO, Jupiter"
-            personPfp={`${USER_PFP_BASE}/kash-dhanda.webp`}
+            metrics={{ views: '200k+', submissions: '1,000+' }}
+            personName="Akshay BD"
+            personTitle="nCMO, Solana Foundation"
+            personPfp={`${USER_PFP_BASE}/akshay-bd.webp`}
+          />
+
+          <TestimonialTile
+            logo={`${SPONSOR_LOGO_BASE}/helius.webp`}
+            logoAlt="Helius"
+            quote={
+              "Superteam Earn is the default place for us to find Solana native freelancers. We've been powerusers of it for a while — its distribution to talent is unmatched."
+            }
+            metrics={{ views: '2M+', submissions: '3,700+' }}
+            personName="Brady"
+            personTitle="BD Lead, Helius"
+            personPfp={`${USER_PFP_BASE}/brady.webp`}
+          />
+
+          <TestimonialTile
+            logo={`${SPONSOR_LOGO_BASE}/civic.webp`}
+            logoAlt="Civic"
+            quote={
+              'I have tested several platforms and Earn is by far the most intuitive and user-friendly. Many of the others feel overbuilt, with lots of confusing tabs and unnecessary complexity.'
+            }
+            metrics={{ views: '100k+', submissions: '100' }}
+            personName="Nancy Li"
+            personTitle="Dir. of Marketing, Civic"
+            personPfp={`${USER_PFP_BASE}/nancy-li.webp`}
           />
         </div>
-
-        <TestimonialTile
-          logo={`${SPONSOR_LOGO_BASE}/solana-foundation.webp`}
-          logoAlt="Solana Foundation"
-          quote={
-            'Within moments, we set up our bounty and drew in exceptional talent. The dashboard is incredibly intuitive, making the entire process feel effortless!'
-          }
-          metrics={{ views: '200k+', submissions: '1,000+' }}
-          personName="Akshay BD"
-          personTitle="nCMO, Solana Foundation"
-          personPfp={`${USER_PFP_BASE}/akshay-bd.webp`}
-        />
-
-        <TestimonialTile
-          logo={`${SPONSOR_LOGO_BASE}/helius.webp`}
-          logoAlt="Helius"
-          quote={
-            "Superteam Earn is the default place for us to find Solana native freelancers. We've been powerusers of it for a while — its distribution to talent is unmatched."
-          }
-          metrics={{ views: '2M+', submissions: '3,700+' }}
-          personName="Brady"
-          personTitle="BD Lead, Helius"
-          personPfp={`${USER_PFP_BASE}/brady.webp`}
-        />
-
-        <TestimonialTile
-          logo={`${SPONSOR_LOGO_BASE}/civic.webp`}
-          logoAlt="Civic"
-          quote={
-            'I have tested several platforms and Earn is by far the most intuitive and user-friendly. Many of the others feel overbuilt, with lots of confusing tabs and unnecessary complexity.'
-          }
-          metrics={{ views: '100k+', submissions: '100' }}
-          personName="Nancy Li"
-          personTitle="Dir. of Marketing, Civic"
-          personPfp={`${USER_PFP_BASE}/nancy-li.webp`}
-        />
       </div>
     </section>
   );
