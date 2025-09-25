@@ -1,39 +1,66 @@
+import { ExternalImage } from '@/components/ui/cloudinary-image';
+
 import { HighQualityImage } from '../HighQualityImage';
 
 export function StepOne() {
   return (
-    <div className="flex h-[18.75rem] w-[21.5rem] flex-col items-start gap-4 rounded-md border border-slate-200 bg-white p-4 shadow-[0px_4px_6px_0px_rgba(226,232,240,0.41)]">
-      <div className="flex w-full gap-4">
-        <HighQualityImage
-          alt="Pied Piper Logo"
-          className="h-12 w-12"
-          src="/landingsponsor/sponsors/piedPiper.webp"
-        />
-        <div className="flex w-full grow flex-col items-start">
-          <p className="text-sm font-medium text-slate-400">Company name</p>
-          <p className="w-full border border-slate-200 bg-slate-50 px-2 py-1 text-sm font-medium text-slate-700">
-            Pied Piper
-          </p>
+    <div className="flex h-[18.75rem] w-[21.5rem] flex-col rounded-md border border-slate-200 bg-white shadow-[0px_4px_6px_0px_rgba(226,232,240,0.41)]">
+      <div className="flex flex-col items-start gap-4 p-4 pb-3">
+        <div className="flex w-full gap-4">
+          <HighQualityImage
+            alt="Pied Piper Logo"
+            className="h-12 w-12"
+            src="/landingsponsor/sponsors/piedPiper.webp"
+          />
+          <div className="flex w-full flex-col items-start gap-0 text-sm">
+            <p className="font-semibold text-slate-700">
+              Write a Deep Dive on PiperCoin
+            </p>
+            <div className="flex gap-2">
+              <p className="bg-slate-50 font-semibold text-slate-400">
+                By Pied Piper
+              </p>
+              <div className="h-6 w-px bg-slate-200" />
+              <p className="bg-slate-50 font-medium text-slate-400">
+                Ends in 21 days
+              </p>
+            </div>
+          </div>
+        </div>
+        <p className="text-sm font-medium text-slate-500">
+          Pied Piper is a pioneering middle-out compression company. The company
+          is looking for bounty hunters to deep dive into the $PIPER coin, and
+          explain the coin’s background and utility to noobs.
+        </p>
+        <div className="flex w-full justify-between text-xs">
+          <p className="font-medium text-slate-400">Skills</p>
+          <div className="flex gap-2">
+            <p className="rounded-md bg-[#0D3D990A] px-2 py-1 font-medium text-[#0d3d99]">
+              Writing
+            </p>
+            <p className="rounded-md bg-[#F56f230A] px-2 py-1 font-medium text-[#F56f23]">
+              Marketing
+            </p>
+            <p className="rounded-md bg-[#8382810A] px-2 py-1 font-medium text-[#838281]">
+              Community
+            </p>
+          </div>
         </div>
       </div>
-
-      <div className="flex w-full grow flex-col items-start">
-        <p className="text-sm font-medium text-slate-400">Website URL</p>
-        <p className="w-full border border-slate-200 bg-slate-50 px-2 py-1 text-sm font-medium text-slate-700">
-          https://piedpier.com
+      <div className="h-px bg-slate-200" />
+      <div className="flex w-full justify-between px-4 pt-3">
+        <div className="flex items-center gap-2">
+          <ExternalImage
+            src="/landingsponsor/icons/usdc.svg"
+            className="h-5 w-5"
+            alt="usdc icon"
+          />
+          <p className="font-semibold text-slate-800">$1,000</p>
+        </div>
+        <p className="text-brand-purple rounded-lg bg-indigo-50 px-4 py-2 text-sm font-medium">
+          Post Bounty
         </p>
       </div>
-
-      <div className="flex w-full grow flex-col items-start">
-        <p className="text-sm font-medium text-slate-400">X Handle</p>
-        <p className="w-full border border-slate-200 bg-slate-50 px-2 py-1 text-sm font-medium text-slate-700">
-          @piedpiper
-        </p>
-      </div>
-
-      <p className="text-brand-purple self-end rounded-lg bg-indigo-50 px-4 py-2 text-sm font-medium">
-        Create Profile
-      </p>
     </div>
   );
 }

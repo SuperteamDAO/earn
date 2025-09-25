@@ -5,15 +5,20 @@ import { ASSET_URL } from '@/constants/ASSET_URL';
 import { Meta } from '@/layouts/Meta';
 import { cn } from '@/utils/cn';
 
+import { CallOut } from '@/features/sponsor/components/CallOut';
 import { FAQs } from '@/features/sponsor/components/FAQs';
-import { Features } from '@/features/sponsor/components/Features';
 import { Footer } from '@/features/sponsor/components/Footer';
 import { Header } from '@/features/sponsor/components/Header';
 import { Hero } from '@/features/sponsor/components/Hero';
-import { ListingTypes } from '@/features/sponsor/components/ListingTypes';
-import { ListingWork } from '@/features/sponsor/components/ListingWork';
+import { HowItWorks } from '@/features/sponsor/components/HowItWorks';
+import { ListingExamples } from '@/features/sponsor/components/ListingExamples';
+import { Pricing } from '@/features/sponsor/components/Pricing';
 import { Stats } from '@/features/sponsor/components/Stats';
+import { SuperteamNetwork } from '@/features/sponsor/components/SuperteamNetwork';
 import { Testimonials } from '@/features/sponsor/components/Testimonials';
+import { TrustedTeams } from '@/features/sponsor/components/TrustedTeams';
+import { Video } from '@/features/sponsor/components/Video';
+import { WhyChooseEarn } from '@/features/sponsor/components/WhyChooseEarn';
 
 const font = localFont({
   src: '../../../public/OverusedGrotesk-VF.woff2',
@@ -62,12 +67,17 @@ const Sponsor = () => {
       >
         <div className="relative flex w-full flex-col items-center justify-center overflow-hidden">
           <Hero />
-          <ListingTypes />
-          <Features showVideo={() => setVideoPopup(true)} />
+          <TrustedTeams />
+          <WhyChooseEarn />
+          <Video showVideo={() => setVideoPopup(true)} />
+          <HowItWorks />
+          <ListingExamples />
           <Stats />
-          <ListingWork />
           <Testimonials />
+          <SuperteamNetwork />
+          <Pricing />
           <FAQs />
+          <CallOut />
           <Footer />
         </div>
       </div>

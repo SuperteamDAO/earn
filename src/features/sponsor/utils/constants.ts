@@ -1,14 +1,18 @@
 export const NAV_LINKS = [
   {
-    label: 'Features',
-    link: '#features',
+    label: 'How It Works',
+    link: '#how-it-works',
   },
   {
-    label: 'Customers',
-    link: '#customers',
+    label: 'Results',
+    link: '#trusted-by',
   },
   {
-    label: 'FAQs',
-    link: '#faqs',
+    label: 'Pricing',
+    link: '#pricing',
   },
+  // {
+  //   label: 'FAQs',
+  //   link: '#faqs',
+  // },
 ];
