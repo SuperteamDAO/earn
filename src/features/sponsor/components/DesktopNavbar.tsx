@@ -80,11 +80,11 @@ export const DesktopNavbar = () => {
                   onClick={() => posthog.capture('create a listing_navbar')}
                 >
                   <Button
-                    variant="ghost"
+                    variant="outline"
                     size="sm"
                     className="bg-white font-semibold text-indigo-600"
                   >
-                    Create a Listing
+                    Post for Free
                   </Button>
                 </Link>
               )}
