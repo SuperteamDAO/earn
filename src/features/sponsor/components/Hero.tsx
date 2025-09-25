@@ -6,11 +6,11 @@ import { Button } from '@/components/ui/button';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 
+import SereneDotGrid from '../icons/DotsGrid';
+import { GridBg } from '../icons/GridBg';
+import { ShaderGradient } from '../icons/ShaderGradient';
 import { maxW } from '../utils/styles';
 import { HighQualityImage } from './HighQualityImage';
-import { StepOne } from './steps/One';
-import { StepThree } from './steps/Three';
-import { StepTwo } from './steps/Two';
 
 export function Hero() {
   const { authenticated } = usePrivy();
@@ -26,17 +26,32 @@ export function Hero() {
   }
   return (
     <div className="relative flex w-full flex-col items-center justify-start overflow-hidden pb-[4rem] md:pb-[1rem]">
-      <div className="relative flex w-full flex-col items-center gap-8 bg-slate-50 px-8 pt-36 text-center">
-        <h1 className="max-w-[45rem] text-[2rem] leading-[1.1] font-semibold text-gray-700 md:text-[3.5rem]">
-          Where Solana teams come to get sh*t done
+      <div className="relative flex w-full flex-col items-center gap-8 bg-slate-50 px-8 pt-54 text-center">
+        <div>
+          <div className="absolute top-0 left-0 flex opacity-20">
+            <GridBg />
+            <GridBg />
+            <GridBg />
+            <GridBg />
+            <GridBg />
+            <GridBg />
+            <GridBg />
+            <GridBg />
+            <GridBg />
+          </div>
+        </div>
+        <div className="absolute top-[-16rem] left-2/4 -translate-x-2/4">
+          <ShaderGradient />
+        </div>
+        <div className="absolute top-0 left-2/4 -translate-x-2/4">
+          <SereneDotGrid />
+        </div>
+
+        <h1 className="max-w-[40rem] text-[2rem] leading-[1.1] font-semibold text-slate-800 md:text-[4rem]">
+          Ship Faster With 150K Solana Freelancers
         </h1>
 
-        <p className="w-full max-w-[39rem] text-[1.25rem] font-medium [text-wrap:pretty] text-gray-500">
-          The world’s best Solana talent is on Superteam Earn. Get work done
-          from the right people, at the right time.
-        </p>
-
-        <div className="flex w-full justify-center gap-8">
+        <div className="flex w-full flex-col justify-center gap-8 pb-8">
           <Link
             className="ph-no-capture"
             href={getStartedWhere(authenticated, !!user?.currentSponsorId)}
@@ -45,78 +60,24 @@ export function Hero() {
             }}
           >
             <Button
-              className="mx-auto h-[3.125rem] w-[12.5rem] rounded-[0.625rem] bg-[#6562FF] text-lg text-white"
+              className="relative mx-auto h-[3.125rem] w-[12.5rem] items-center rounded-[0.4rem] bg-indigo-600 text-lg font-medium text-white"
               variant="default"
             >
-              Get Started
+              Post for Free 🙌
+              {/* <LucideChevronRight className="absolute top-2/4 right-4 !size-4 -translate-y-2/4" /> */}
             </Button>
           </Link>
+          <p className="text-xl font-medium text-slate-500">
+            Trusted by Top Teams on Solana
+          </p>
         </div>
 
-        <div className="absolute bottom-[-12rem] h-[12rem] w-full bg-slate-50" />
+        {/* <div className="absolute bottom-[-12rem] h-[12rem] w-full bg-slate-50" /> */}
       </div>
 
       <div
         className={cn(
-          'relative mt-8 flex items-center gap-6',
-          'flex-col md:flex-row md:gap-0',
-          'scale-100 md:scale-[0.7] lg:scale-[0.8] xl:scale-100',
-        )}
-      >
-        <div className="flex flex-col items-start">
-          <StepOne />
-          <div className="mt-2 flex gap-2">
-            <p className="font-semibold text-slate-800">STEP 1</p>
-            <p className="font-semibold text-slate-500">Create a profile</p>
-          </div>
-        </div>
-
-        <div className="relative top-[-1rem] hidden md:block">
-          <svg
-            width="23"
-            height="2"
-            viewBox="0 0 23 2"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path d="M0.5 1H23" stroke="#CBD5E1" />
-          </svg>
-        </div>
-
-        <div className="flex flex-col items-start">
-          <StepTwo />
-          <div className="mt-2 flex gap-2">
-            <p className="font-semibold text-slate-800">STEP 2</p>
-            <p className="font-semibold text-slate-500">Post your listing</p>
-          </div>
-        </div>
-
-        <div className="relative top-[-1rem] hidden md:block">
-          <svg
-            width="24"
-            height="216"
-            viewBox="0 0 24 216"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M0 109H11.5M11.5 109V1H23.5M11.5 109H23.5M11.5 109V215.5H23.5"
-              stroke="#CBD5E1"
-            />
-          </svg>
-        </div>
-
-        <div className="flex flex-col items-start">
-          <StepThree />
-          <div className="mt-2 flex gap-2">
-            <p className="font-semibold text-slate-800">STEP 3</p>
-            <p className="font-semibold text-slate-500">Get submissions</p>
-          </div>
-        </div>
-      </div>
-      <div
-        className={cn(
-          'mx-auto mt-8 mb-[3.125rem] flex h-28 w-full flex-wrap items-center justify-around gap-5',
+          'relative z-10 mx-auto mt-8 mb-[3.125rem] flex h-28 w-full flex-wrap items-center justify-around gap-5',
           'px-[1.875rem] lg:px-[7rem] xl:px-[11rem]',
           maxW,
         )}
