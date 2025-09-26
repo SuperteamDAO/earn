@@ -1,4 +1,5 @@
 import { usePrivy } from '@privy-io/react-auth';
+import { useMemo } from 'react';
 
 import { AnimateChangeInHeight } from '@/components/shared/AnimateChangeInHeight';
 import { EmptySection } from '@/components/shared/EmptySection';
@@ -11,6 +12,7 @@ import { HACKATHONS } from '@/features/hackathon/constants/hackathons';
 import { CATEGORY_NAV_ITEMS } from '@/features/navbar/constants';
 
 import { type ListingCategory, useListings } from '../hooks/useListings';
+import { useListingsFilterCount } from '../hooks/useListingsFilterCount';
 import { useListingState } from '../hooks/useListingState';
 import type { ListingTabsProps } from '../types';
 import { CategoryPill } from './CategoryPill';
@@ -34,6 +36,35 @@ export const ListingsSection = ({
     showRightShadow,
   } = useScrollShadow<HTMLDivElement>();
 
+  const { data: categoryCounts, isLoading: countsLoading } =
+    useListingsFilterCount({
+      context: type,
+      tab: 'all',
+      status: 'open',
+      region,
+      sponsor,
+    });
+
+  const optimalDefaultCategory = useMemo((): ListingCategory => {
+    if (countsLoading || !categoryCounts) {
+      return (potentialSession || authenticated) && type === 'home'
+        ? 'For You'
+        : 'All';
+    }
+
+    const forYouCount = categoryCounts['For You'] || 0;
+
+    if (
+      (potentialSession || authenticated) &&
+      type === 'home' &&
+      forYouCount > 2
+    ) {
+      return 'For You';
+    }
+
+    return 'All';
+  }, [categoryCounts, countsLoading, potentialSession, authenticated, type]);
+
   const {
     activeTab,
     activeCategory,
@@ -45,10 +76,7 @@ export const ListingsSection = ({
     handleStatusChange,
     handleSortChange,
   } = useListingState({
-    defaultCategory:
-      (potentialSession || authenticated) && type === 'home'
-        ? 'For You'
-        : 'All',
+    defaultCategory: optimalDefaultCategory,
   });
 
   const {
@@ -66,6 +94,24 @@ export const ListingsSection = ({
     sponsor,
     authenticated,
   });
+
+  const shouldShowForYou = useMemo(() => {
+    if (!categoryCounts) return false;
+    return (
+      (potentialSession || authenticated) &&
+      type === 'home' &&
+      (categoryCounts['For You'] || 0) > 2
+    );
+  }, [categoryCounts, potentialSession, authenticated, type]);
+
+  const visibleCategoryNavItems = useMemo(() => {
+    if (!categoryCounts) return CATEGORY_NAV_ITEMS;
+
+    return CATEGORY_NAV_ITEMS.filter((item) => {
+      const count = categoryCounts[item.label] || 0;
+      return count > 0;
+    });
+  }, [categoryCounts]);
 
   const viewAllLink = () => {
     if (HACKATHONS.some((hackathon) => hackathon.slug === activeTab)) {
@@ -175,7 +221,7 @@ export const ListingsSection = ({
           ref={scrollContainerRef}
           className="hide-scrollbar flex gap-1.5 overflow-x-auto px-2 py-1"
         >
-          {(potentialSession || authenticated) && (
+          {shouldShowForYou && (
             <CategoryPill
               key="foryou"
               phEvent="foryou_navpill"
@@ -200,7 +246,7 @@ export const ListingsSection = ({
           >
             All
           </CategoryPill>
-          {CATEGORY_NAV_ITEMS?.map((navItem) => (
+          {visibleCategoryNavItems?.map((navItem) => (
             <CategoryPill
               key={navItem.label}
               phEvent={navItem.pillPH}
