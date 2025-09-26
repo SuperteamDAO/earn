@@ -214,7 +214,6 @@ export async function buildListingQuery(
     }
 
     forYouConditions.push({
-      type: 'hackathon',
       isFeatured: true,
     });
 
