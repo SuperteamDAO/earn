@@ -471,4 +471,11 @@ export const tokenList: Token[] = [
     icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/32753.png',
     decimals: 8,
   },
+  {
+    tokenName: 'toy',
+    tokenSymbol: 'TOY',
+    mintAddress: 'toyjaljkfaklefja',
+    icon: '',
+    decimals: 6,
+  },
 ];
