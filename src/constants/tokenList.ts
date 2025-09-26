@@ -471,4 +471,11 @@ export const tokenList: Token[] = [
     icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/32753.png',
     decimals: 8,
   },
+  {
+    tokenName: 'romeo',
+    tokenSymbol: 'ROMEO',
+    mintAddress: 'romeoTbUB7cRb3AAu2pNG2pUwQcJ2BHcktfvSB8x1Pq6L',
+    icon: 'https://assets.coingecko.com/coins/images/53061/standard/Token.png?1735169618',
+    decimals: 6,
+  },
 ];
