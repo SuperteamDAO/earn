@@ -332,7 +332,7 @@ const faqs: { question: string; answer: string }[] = [
   {
     question: 'Where can I find developer resources for my project?',
     answer:
-      'Check out <a href="https://www.colosseum.org/radar/resources" target="_blank">Colosseum’s Developer Resources page</a>. You’ll find documentation, tools, tutorials, and everything you need to build on Solana.',
+      'Check out <a href="https://www.colosseum.com/cypherpunk/resources" target="_blank">Colosseum’s Developer Resources page</a>. You’ll find documentation, tools, tutorials, and everything you need to build on Solana.',
   },
   {
     question: 'What is the evaluation criteria for Sidetracks?',
