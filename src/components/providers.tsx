@@ -22,7 +22,6 @@ export default function Providers({
         config={{
           externalWallets: {
             walletConnect: { enabled: false },
-            disableAllExternalWallets: true,
           },
           appearance: { walletChainType: 'solana-only' },
           loginMethods: ['email', 'google'],

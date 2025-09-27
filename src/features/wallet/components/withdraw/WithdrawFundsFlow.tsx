@@ -1,5 +1,4 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { usePrivy } from '@privy-io/react-auth';
 import { useWallets } from '@privy-io/react-auth/solana';
 import {
   getAssociatedTokenAddressSync,
@@ -9,9 +8,10 @@ import {
 import { PublicKey } from '@solana/web3.js';
 import { useQueryClient } from '@tanstack/react-query';
 import { isAxiosError } from 'axios';
+import bs58 from 'bs58';
 import { log } from 'next-axiom';
 import posthog from 'posthog-js';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
@@ -51,19 +51,8 @@ export function WithdrawFundsFlow({
 }: WithdrawFlowProps) {
   const { user } = useUser();
 
-  const { user: privyUser, ready: privyReady } = usePrivy();
-  const { wallets, ready } = useWallets();
+  const { wallets } = useWallets();
   const wallet = wallets[0];
-
-  useEffect(() => {
-    console.log(privyUser, 'privyUser');
-    console.log(privyReady, 'privyReady');
-  }, [privyUser]);
-
-  useEffect(() => {
-    console.log(wallets, 'wallets');
-    console.log(ready, 'ready');
-  }, [wallets]);
 
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string>('');
@@ -189,18 +178,17 @@ export function WithdrawFundsFlow({
       });
 
       const serializedTransaction = response.data.serializedTransaction;
-      console.log('wallets', wallets);
 
       if (!wallet) {
         throw new Error('No wallet found');
       }
 
-      const signedTransaction = await wallet.signAndSendTransaction({
+      const { signature: sig } = await wallet.signAndSendTransaction({
         chain: 'solana:mainnet',
-        transaction: new Uint8Array(serializedTransaction),
+        transaction: serializedTransaction,
       });
 
-      signature = Buffer.from(signedTransaction.signature).toString('base64');
+      signature = bs58.encode(sig);
 
       const pollForSignature = async (sig: string) => {
         const MAX_RETRIES = 60;
