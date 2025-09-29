@@ -394,16 +394,6 @@ model Sponsors {
   @@index([isActive, isArchived])
 }
 
-model Session {
-  id           String   @id @default(uuid())
-  sessionToken String   @unique
-  userId       String
-  expires      DateTime
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([userId])
-}
-
 model User {
   id                 String               @id @default(uuid())
   publicKey          String?
@@ -479,7 +469,6 @@ model User {
   referrals          User[]               @relation("UserReferrals")
   telegramUsers      TelegramUser[]
   emailLogs          emailLogs[]
-  Session            Session[]
 
   @@index([currentSponsorId])
   @@index([hackathonId])
