@@ -1,6 +1,5 @@
 import { usePrivy } from '@privy-io/react-auth';
 import { useAtom, useSetAtom } from 'jotai';
-import Image from 'next/image';
 import posthog from 'posthog-js';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
@@ -20,6 +19,7 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from '@/components/ui/drawer';
+import { LocalImage } from '@/components/ui/local-image';
 import { useBreakpoint } from '@/hooks/use-breakpoint';
 import { useServerTimeSync } from '@/hooks/use-server-time';
 import { useTimeout } from '@/hooks/use-timeout';
@@ -38,7 +38,7 @@ interface VariantInfo {
   sponsorName: string | undefined;
   sponsorLogo: string | undefined;
 }
-const VariantInfo = (
+const getVariantInfoMap = (
   listing: Listing | null,
   submissionCount: number,
 ): Record<number, VariantInfo> => {
@@ -77,7 +77,6 @@ export const ListingPop = ({ listing }: { listing: Listing | null }) => {
     });
   }, 5_000);
 
-  const [variant, setVariant] = useState<VariantInfo>();
   const [open, setOpen] = useAtom(popupOpenAtom);
   const { authenticated, ready } = usePrivy();
 
@@ -106,17 +105,10 @@ export const ListingPop = ({ listing }: { listing: Listing | null }) => {
     }
   }, [ready, authenticated]);
 
-  useMemo(() => {
-    const variantInfo = VariantInfo(
-      listing,
-      bountySnackbar?.submissionCount || 0,
-    );
-    if ((bountySnackbar?.submissionCount || 0) < 20 ? 1 : 0) {
-      // high chances of winning
-      setVariant(variantInfo[1]);
-    } else {
-      setVariant(variantInfo[0]);
-    }
+  const variant = useMemo<VariantInfo>(() => {
+    const submissionCount = bountySnackbar?.submissionCount || 0;
+    const map = getVariantInfoMap(listing, submissionCount);
+    return map[submissionCount < 20 ? 1 : 0] as VariantInfo;
   }, [bountySnackbar?.submissionCount, listing]);
 
   const setPopupOpen = (e: boolean) => {
@@ -140,7 +132,7 @@ const Desktop = ({
 }: {
   open: boolean;
   setOpen: (e: boolean) => void;
-  variant: VariantInfo | undefined;
+  variant: VariantInfo;
 }) => {
   return (
     <Dialog open={open} onOpenChange={setOpen} modal={false}>
@@ -155,12 +147,11 @@ const Desktop = ({
         className="data-[state=closed]:slide-out-to-right-full data-[state=open]:slide-in-from-right-full right-4 bottom-4 max-w-[22.5rem] translate-x-0 translate-y-0 overflow-hidden duration-500"
       >
         <DialogHeader className="">
-          <Image
+          <LocalImage
             src={variant?.sponsorLogo || ''}
             alt={`${variant?.sponsorName} logo`}
-            width={100}
-            height={100}
             className="h-12 w-12 rounded-md"
+            loading="eager"
           />
           <DialogTitle className="pt-2 text-base font-semibold">
             {variant?.title}
@@ -184,7 +175,7 @@ const Mobile = ({
 }: {
   open: boolean;
   setOpen: (e: boolean) => void;
-  variant: VariantInfo | undefined;
+  variant: VariantInfo;
 }) => {
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   return (
@@ -196,12 +187,11 @@ const Mobile = ({
         className="border-0! ring-0!"
       >
         <DrawerHeader className="text-left">
-          <Image
+          <LocalImage
             src={variant?.sponsorLogo || ''}
             alt={`${variant?.sponsorName} logo`}
-            width={100}
-            height={100}
             className="w-12 rounded-md object-contain"
+            loading="eager"
           />
           <DrawerTitle className="pt-2 text-base font-semibold">
             {variant?.title}

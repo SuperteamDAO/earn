@@ -10,6 +10,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { type HackathonModel } from '@/prisma/models/Hackathon';
 import { BountyIcon } from '@/svg/bounty-icon';
+import { CypherpunkLogo } from '@/svg/cypherpunk-logo';
 import { ProjectIcon } from '@/svg/project-icon';
 
 export const CreateListingModal = ({
@@ -38,10 +39,10 @@ export const CreateListingModal = ({
     router.push('/dashboard/new?type=project');
   };
 
-  // const handleCreateHackathon = (hackathon: string) => {
-  //   posthog.capture('create new hackathon_sponsor');
-  //   router.push(`/dashboard/new?type=hackathon&hackathon=${hackathon}`);
-  // };
+  const handleCreateHackathon = (hackathon: string) => {
+    posthog.capture('create new hackathon_sponsor');
+    router.push(`/dashboard/new?type=hackathon&hackathon=${hackathon}`);
+  };
 
   const isMD = useMediaQuery('(min-width: 768px)');
 
@@ -124,6 +125,28 @@ export const CreateListingModal = ({
                     <p className="text-sm font-normal">
                       Receive proposals for your work and pick the right
                       candidate
+                    </p>
+                  </span>
+                </Button>
+                <Button
+                  className="col-span-2 flex h-55 flex-col gap-4 whitespace-normal text-slate-500 hover:text-slate-500"
+                  variant="outline"
+                  onClick={() => {
+                    handleCreateHackathon('cypherpunk');
+                  }}
+                >
+                  <CypherpunkLogo
+                    styles={{
+                      width: '12rem',
+                    }}
+                  />
+                  <span className="flex max-w-6/12 flex-col gap-1">
+                    <h3 className="text-base font-medium text-slate-900">
+                      Cypherpunk Sidetrack
+                    </h3>
+                    <p className="text-sm font-normal">
+                      Get developers participating in Cypherpunk to build on top
+                      of your project
                     </p>
                   </span>
                 </Button>

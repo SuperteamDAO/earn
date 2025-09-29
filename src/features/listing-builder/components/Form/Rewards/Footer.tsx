@@ -78,6 +78,10 @@ function RewardsFooter({
     control: form.control,
     name: 'deadline',
   });
+  const isPrivate = useWatch({
+    control: form.control,
+    name: 'isPrivate',
+  });
 
   const { data: featuredData } = useQuery(featuredAvailabilityQuery());
   const isFeatureAvailable = featuredData?.isAvailable ?? true;
@@ -289,7 +293,8 @@ function RewardsFooter({
               if (
                 compensationType === 'fixed' &&
                 deadlineMoreThan72HoursLeft &&
-                type !== 'hackathon'
+                type !== 'hackathon' &&
+                isPrivate
               ) {
                 setPanel('boost');
               } else {
