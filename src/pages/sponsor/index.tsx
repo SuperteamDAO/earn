@@ -40,7 +40,7 @@ const Sponsor = () => {
             width="100%"
             height="100%"
             className="absolute inset-0"
-            src="https://www.youtube.com/embed/tHdS-JNwsgg?autoplay=1&mute=1"
+            src="https://www.youtube.com/embed/_OyQ_Bxz1xo?si=U12Uh2foC2Ma914e?autoplay=1&mute=1"
           />
         </div>
       </div>
