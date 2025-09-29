@@ -101,7 +101,7 @@ const TestimonialTile = ({
 
         <div className="flex flex-1 flex-col gap-4 p-5 md:p-8">
           <p className="mb-auto text-[1.05rem] leading-snug text-slate-600 md:text-[1.15rem]">
-            {quote}
+            “{quote}”
           </p>
           <Metrics data={metrics} />
           <div className="mt-1 flex items-center gap-3">
@@ -112,7 +112,7 @@ const TestimonialTile = ({
                 className="h-full w-full rounded-full object-cover"
               />
             </div>
-            <p className="text-[0.95rem] text-slate-600">
+            <p className="text-[0.95rem] font-medium text-slate-500">
               <span className="text-slate-700">{personName}</span>,{' '}
               {personTitle}
             </p>
@@ -138,7 +138,7 @@ const TestimonialTile = ({
 
       <div className="flex flex-1 flex-col gap-4 p-5">
         <p className="mb-auto text-[0.98rem] leading-snug text-slate-600 md:text-[1.05rem]">
-          {quote}
+          “{quote}”
         </p>
         <Metrics data={metrics} />
 
@@ -203,16 +203,16 @@ export function Testimonials() {
               'Within moments, we set up our bounty and drew in exceptional talent. The dashboard is incredibly intuitive, making the entire process feel effortless!'
             }
             metrics={{ views: '200k+', submissions: '1,000+' }}
-            personName="Akshay BD"
-            personTitle="nCMO, Solana Foundation"
-            personPfp={`${USER_PFP_BASE}/akshay-bd.webp`}
+            personName="Vibhu"
+            personTitle="Product Marketing, Solana"
+            personPfp={`${USER_PFP_BASE}/vibhu.webp`}
           />
 
           <TestimonialTile
             logo={`${SPONSOR_LOGO_BASE}/helius.webp`}
             logoAlt="Helius"
             quote={
-              "Superteam Earn is the default place for us to find Solana native freelancers. We've been powerusers of it for a while — its distribution to talent is unmatched."
+              'Running a hackathon without Superteam is nearly impossible. Earn gave us everything we needed to operate and they provided us with first-class support.'
             }
             metrics={{ views: '2M+', submissions: '3,700+' }}
             personName="Brady"
