@@ -235,7 +235,7 @@ async function handleTelegramNotifications(result: BountiesModel) {
       type: 'telegramNewListing',
       id: result.id,
       triggeredBy: 'system',
-      delay: 10 * 60 * 1000,
+      delay: 3 * 60 * 60 * 1000,
     });
 
     logger.info(
