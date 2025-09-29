@@ -292,7 +292,8 @@ export const SubmissionActionButton = ({
             user?.id &&
             user?.isTalentFilled &&
             creditBalance === 0 &&
-            (isProject || isBounty)),
+            (isProject || isBounty)) ||
+          (bountyDraftStatus !== 'PUBLISHED' && !query['preview']),
       );
       isSubmitDisabled = Boolean(
         pastDeadline ||
