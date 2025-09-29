@@ -90,7 +90,6 @@ export function DescriptionUI({ description }: Props) {
               description?.startsWith('"')
                 ? JSON.parse(description || '')
                 : (description ?? ''),
-              options,
             )}
           </div>
           {!showMore && (

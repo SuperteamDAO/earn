@@ -10,20 +10,21 @@ import {
 
 import { getUserSession } from '@/features/auth/utils/getUserSession';
 import {
-  listingSelect,
+  ListingCategorySchema,
   QueryParamsSchema,
 } from '@/features/listings/constants/schema';
 import { buildListingQuery } from '@/features/listings/utils/query-builder';
 
+const CountQueryParamsSchema = QueryParamsSchema.omit({ category: true });
+
 export async function GET(request: NextRequest) {
   try {
-    // const userIdFromCookie = request.cookies.get('user-id-hint')?.value;
     const session = await getUserSession(await headers());
 
     const { searchParams } = new URL(request.url);
     const queryParams = Object.fromEntries(searchParams.entries());
 
-    const validationResult = QueryParamsSchema.safeParse(queryParams);
+    const validationResult = CountQueryParamsSchema.safeParse(queryParams);
     if (!validationResult.success) {
       return NextResponse.json(
         { errors: validationResult.error.flatten() },
@@ -51,33 +52,36 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    // build optimized query
-    const { where, orderBy, take } = await buildListingQuery(queryData, user);
+    const categories = ListingCategorySchema._def.innerType.options;
 
-    const listings = await prisma.bounties.findMany({
-      where,
-      orderBy,
-      take,
-      select: {
-        ...listingSelect,
-        ...(queryData.category === 'For You' && user?.id
-          ? {
-              SubscribeBounty: {
-                where: { userId: user.id },
-                select: { userId: true },
-              },
-            }
-          : {}),
-      },
+    const counts = await Promise.all(
+      categories.map(async (category) => {
+        try {
+          const { where } = await buildListingQuery(
+            { ...queryData, category },
+            user,
+          );
+          const count = await prisma.bounties.count({ where });
+          return { category, count };
+        } catch (error) {
+          console.error(`Error counting category ${category}:`, error);
+          return { category, count: 0 };
+        }
+      }),
+    );
+
+    const categoryCounts: Record<string, number> = {};
+    counts.forEach(({ category, count }) => {
+      categoryCounts[category] = count;
     });
 
-    return NextResponse.json(listings, {
+    return NextResponse.json(categoryCounts, {
       headers: {
         'Cache-Control': 'private, max-age=300, stale-while-revalidate=600',
       },
     });
   } catch (error) {
-    console.error('Error in API handler:', error);
+    console.error('Error in count API handler:', error);
 
     if (error instanceof z.ZodError) {
       return NextResponse.json(

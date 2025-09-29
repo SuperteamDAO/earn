@@ -76,8 +76,7 @@ export function ListingBuilder({ route, slug }: ListingBuilderLayout) {
     return <LoadingSection />;
   }
 
-  const showContent =
-    user?.currentSponsor?.id || user?.hackathonId || user?.role === 'GOD';
+  const showContent = user?.currentSponsor?.id || user?.role === 'GOD';
   if (!user || !authenticated || !showContent) {
     return <LoadingSection />;
   }

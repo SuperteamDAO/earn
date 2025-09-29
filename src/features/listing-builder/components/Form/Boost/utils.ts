@@ -103,7 +103,7 @@ export const resolveEmailImpressions = (
   estimate: unknown,
 ): number => {
   return isSkillsSelected(skills) && typeof estimate === 'number'
-    ? Math.round(estimate / 100) * 100
+    ? Math.round(estimate / 1000) * 1000
     : DEFAULT_EMAIL_IMPRESSIONS;
 };
 

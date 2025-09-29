@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { differenceInHours } from 'date-fns';
 import { RocketIcon } from 'lucide-react';
 import Link from 'next/link';
+import posthog from 'posthog-js';
 
 import { Button } from '@/components/ui/button';
 import { Tooltip } from '@/components/ui/tooltip';
@@ -38,8 +39,16 @@ export const BoostButton = ({
   listing: Listing;
   showDate?: boolean;
 }) => {
-  const { deadline, usdValue, skills, region, slug, compensationType, type } =
-    listing;
+  const {
+    deadline,
+    usdValue,
+    skills,
+    region,
+    slug,
+    compensationType,
+    type,
+    isPrivate,
+  } = listing;
 
   const deadlineMoreThan72HoursLeft = hasMoreThan72HoursLeft(deadline ?? '');
 
@@ -80,7 +89,8 @@ export const BoostButton = ({
     deadlineMoreThan72HoursLeft &&
     canBeBoosted &&
     compensationType === 'fixed' &&
-    type !== 'hackathon'
+    type !== 'hackathon' &&
+    !isPrivate
   ) {
     const deadlineDate = new Date(deadline ?? '');
     const seventyTwoHoursBeforeDeadline = new Date(
@@ -110,7 +120,11 @@ export const BoostButton = ({
             }}
           >
             <Link href={`/dashboard/listings/${slug}/edit?boost=true`}>
-              <Button variant="outline" className="border-slate-300 shadow">
+              <Button
+                variant="outline"
+                className="border-slate-300 shadow"
+                onClick={() => posthog.capture('clicked_boost cta')}
+              >
                 <RocketIcon className="text-emerald-500" />
                 <p className="mr-2 font-semibold text-slate-600">Boost</p>
                 <p className="text-slate-400">{timeFormatted} Remaining</p>
@@ -130,6 +144,7 @@ export const BoostButton = ({
             variant="outline"
             className="rounded-lg border-slate-300 px-2"
             size="sm"
+            onClick={() => posthog.capture('clicked_boost cta')}
           >
             <RocketIcon className="text-emerald-500" />
             <p className="font-semibold text-slate-600">Boost</p>
