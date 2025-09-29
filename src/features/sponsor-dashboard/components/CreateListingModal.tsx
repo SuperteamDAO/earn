@@ -53,6 +53,7 @@ export const CreateListingModal = ({
         hideCloseIcon
         className="overflow-hidden rounded-lg bg-white p-0 sm:max-w-160"
       >
+        <button className="sr-only" />
         <ScrollArea
           className="max-h-[100svh]"
           viewportProps={{
