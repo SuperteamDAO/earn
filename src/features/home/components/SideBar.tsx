@@ -19,7 +19,7 @@ import { SponsorBanner } from './SponsorBanner';
 import { TotalStats } from './TotalStats';
 
 interface SideBarProps {
-  type: 'landing' | 'listing' | 'category' | 'region' | 'feed';
+  type: 'landing' | 'listing' | 'category' | 'region' | 'feed' | 'region-all';
 }
 
 const VibeCard = dynamic(() =>
