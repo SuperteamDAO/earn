@@ -33,7 +33,6 @@ export function StepOne() {
           explain the coin’s background and utility to noobs.
         </p>
         <div className="flex w-full justify-between text-xs">
-          <p className="font-medium text-slate-400">Skills</p>
           <div className="flex gap-2">
             <p className="rounded-md bg-[#0D3D990A] px-2 py-1 font-medium text-[#0d3d99]">
               Writing

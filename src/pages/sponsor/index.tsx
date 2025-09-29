@@ -65,7 +65,7 @@ const Sponsor = () => {
           font.className,
         )}
       >
-        <div className="relative flex w-full flex-col items-center justify-center overflow-hidden">
+        <div className="relative flex w-full flex-col overflow-hidden">
           <Hero />
           <TrustedTeams />
           <WhyChooseEarn />

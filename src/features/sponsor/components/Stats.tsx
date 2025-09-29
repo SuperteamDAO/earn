@@ -32,7 +32,7 @@ export function Stats() {
   return (
     <div
       className={cn(
-        'flex w-screen items-center justify-center py-20',
+        'mx-auto flex w-screen items-center justify-center py-20',
         maxW,
         'px-[1.875rem] lg:px-[7rem] xl:px-[11rem]',
       )}

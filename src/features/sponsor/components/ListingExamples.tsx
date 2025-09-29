@@ -79,16 +79,17 @@ export function ListingExamples() {
       >
         <div
           className={cn(
-            'relative z-1 mx-auto grid w-full items-start gap-6 py-6 md:grid-cols-2 md:py-10',
+            'relative z-1 mx-auto grid w-full items-start gap-6 py-6 md:grid-cols-3 md:py-10',
             maxW2,
           )}
         >
           <h2 className="text-left text-[2.5rem] leading-[1.1] font-semibold text-slate-800 md:text-left md:text-[2.75rem]">
             Hire Across All <br /> Kinds of Skills
           </h2>
-          <p className="text-base text-slate-500 md:text-[1.2rem]">
+          <p className="col-span-2 text-base text-slate-500 md:ml-20 md:text-[1.2rem]">
             Thousands of designers, thread writers, devs, community managers,
-            and many other highly skilled freelancers ready for work on Earn.
+            and many other highly skilled freelancers are ready for work on
+            Earn.
           </p>
         </div>
       </div>

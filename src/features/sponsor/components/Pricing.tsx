@@ -41,7 +41,7 @@ export function Pricing() {
       <span id="pricing" />
       <section
         className={cn(
-          'mb-10 flex w-full items-center justify-center',
+          'mx-auto mb-10 flex w-full items-center justify-center',
           maxW,
           'px-[1.875rem] lg:px-[7rem] xl:px-[11rem]',
         )}

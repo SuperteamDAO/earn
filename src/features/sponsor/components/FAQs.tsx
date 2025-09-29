@@ -29,7 +29,7 @@ const faqs = [
   },
   {
     question: 'What can I use Superteam Earn for?',
-    answer: `Superteam Earn is a platform to get work done from crypto-native talent. This can be in the form of boutnies (get the same work done by many people) or hiring freelancers in the form of Project listings.
+    answer: `Superteam Earn is a platform to get work done from crypto-native talent. This can be in the form of bounties (get the same work done by many people) or hiring freelancers in the form of Project listings.
 <br />
 Earn can be used to get any small to medium scale task done, including but not limited to development, writing, design, research, and product feedback.
 <br />
@@ -44,7 +44,7 @@ export function FAQs() {
   return (
     <div
       className={cn(
-        'w-full bg-white py-10 md:py-16',
+        'mx-auto w-full bg-white py-10 md:py-16',
         maxW,
         'px-[1.875rem] lg:px-[7rem] xl:px-[11rem]',
       )}

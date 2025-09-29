@@ -87,7 +87,7 @@ const COMPANY_LOGOS: readonly CompanyLogo[] = [
     className: 'h-8',
   },
   {
-    src: base + 'tars',
+    src: base + 'tars.webp',
     alt: 'Tars Logo',
     className: 'h-8',
   },
@@ -100,8 +100,8 @@ export function TrustedTeams() {
     ...COMPANY_LOGOS,
     ...COMPANY_LOGOS,
     ...COMPANY_LOGOS,
+    ...COMPANY_LOGOS,
   ];
-
   return (
     <section>
       <div className="relative mt-4 w-full overflow-hidden">
@@ -110,9 +110,9 @@ export function TrustedTeams() {
           onMouseEnter={() => setIsPaused(true)}
           onMouseLeave={() => setIsPaused(false)}
           style={{
-            animation: 'marquee 50s linear infinite',
+            animation: 'marquee-logos 40s linear infinite',
             animationPlayState: isPaused ? 'paused' : 'running',
-            width: 'max-content',
+            width: 'fit-content',
           }}
         >
           {multipliedLogos.map((logo, index) => (
@@ -131,12 +131,12 @@ export function TrustedTeams() {
       </div>
 
       <style jsx>{`
-        @keyframes marquee {
+        @keyframes marquee-logos {
           0% {
             transform: translateX(0);
           }
           100% {
-            transform: translateX(-33.333%);
+            transform: translateX(-50%);
           }
         }
       `}</style>

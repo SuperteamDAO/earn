@@ -12,7 +12,7 @@ export function SuperteamNetwork() {
   return (
     <section
       className={cn(
-        'my-10 flex w-full items-center justify-center md:py-16',
+        'mx-auto my-10 flex w-full items-center justify-center md:py-16',
         maxW,
         'px-[1.875rem] lg:px-[7rem] xl:px-[11rem]',
       )}
@@ -30,7 +30,7 @@ export function SuperteamNetwork() {
               <p className="text-[2rem] leading-none font-semibold text-slate-700 md:text-[2.25rem]">
                 36,200
               </p>
-              <p className="ml-auto text-[0.95rem] text-slate-600 md:ml-11 md:text-[1rem]">
+              <p className="ml-11 text-[0.95rem] text-slate-600 md:text-[1rem]">
                 Global Community
               </p>
             </div>
@@ -61,7 +61,7 @@ export function SuperteamNetwork() {
             alt="Superteam globe"
             className="pointer-events-none absolute -top-24 -right-12 h-[180%] w-[180%] object-contain opacity-80"
           />
-          <SuperteamIcon className="pointer-events-none absolute top-1/2 left-1/2 h-24 w-24 -translate-x-1/2 -translate-y-1/2 opacity-90" />
+          <SuperteamIcon className="pointer-events-none absolute top-5/8 right-1/8 size-32 -translate-x-1/2 -translate-y-1/2 opacity-90" />
         </div>
 
         <div className="relative flex h-[12rem] w-full items-center justify-center md:hidden">
