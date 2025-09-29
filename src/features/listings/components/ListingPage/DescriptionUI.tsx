@@ -7,6 +7,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { useMediaQuery } from '@/hooks/use-media-query';
+import { domPurify } from '@/lib/domPurify';
 import styles from '@/styles/listing-description.module.css';
 import { cn } from '@/utils/cn';
 
@@ -87,9 +88,70 @@ export function DescriptionUI({ description }: Props) {
             className={`${styles.content} mt-4 w-full overflow-visible pb-7`}
           >
             {parse(
-              description?.startsWith('"')
-                ? JSON.parse(description || '')
-                : (description ?? ''),
+              domPurify(
+                description?.startsWith('"')
+                  ? JSON.parse(description || '')
+                  : (description ?? ''),
+                {
+                  ALLOWED_TAGS: [
+                    'a',
+                    'p',
+                    'br',
+                    'strong',
+                    'em',
+                    'b',
+                    'i',
+                    'u',
+                    's',
+                    'blockquote',
+                    'pre',
+                    'code',
+                    'ul',
+                    'ol',
+                    'li',
+                    'h1',
+                    'h2',
+                    'h3',
+                    'h4',
+                    'h5',
+                    'h6',
+                    'hr',
+                    'table',
+                    'thead',
+                    'tbody',
+                    'tr',
+                    'td',
+                    'th',
+                    'span',
+                    'img',
+                  ],
+                  ALLOWED_ATTR: [
+                    'href',
+                    'target',
+                    'rel',
+                    'src',
+                    'alt',
+                    'title',
+                    'width',
+                    'height',
+                    'colspan',
+                    'rowspan',
+                    'class',
+                  ],
+                  FORBID_TAGS: [
+                    'script',
+                    'iframe',
+                    'style',
+                    'meta',
+                    'link',
+                    'object',
+                    'embed',
+                    'base',
+                    'form',
+                  ],
+                },
+              ),
+              options,
             )}
           </div>
           {!showMore && (

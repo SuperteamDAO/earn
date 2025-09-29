@@ -30,9 +30,14 @@ const baseCsp = `
   connect-src 'self' blob:  https://auth.privy.io https://*.rpc.privy.systems https://api.mainnet-beta.solana.com https://api.devnet.solana.com https://api.testnet.solana.com https://us.i.posthog.com https://app.posthog.com https://internal-j.posthog.com https://us.posthog.com https://*.helius-rpc.com wss://mainnet.helius-rpc.com https://ipapi.co wss://earn-vibe-production.up.railway.app https://verify.walletconnect.com https://verify.walletconnect.org https://res.cloudinary.com https://api.cloudinary.com https://www.google-analytics.com;
   media-src 'self' blob: data: https://res.cloudinary.com;
   font-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com;
+  object-src 'none';
+  base-uri 'self';
+  form-action 'self';
   child-src 'self' https://auth.privy.io https://verify.walletconnect.com https://verify.walletconnect.org;
   frame-src 'self' https://auth.privy.io https://*.sumsub.com https://verify.walletconnect.com https://verify.walletconnect.org https://www.youtube.com https://challenges.cloudflare.com;
   frame-ancestors 'self' https://*.sumsub.com;
+  worker-src 'self';
+  manifest-src 'self';
   ${process.env.NODE_ENV === 'production' ? 'upgrade-insecure-requests;' : ''}
 `;
 
@@ -91,7 +96,7 @@ const nextConfig: NextConfig = {
     const headers = [];
 
     headers.push({
-      source: '/(.*)',
+      source: '/:path*',
       headers: [
         { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
         { key: 'Content-Security-Policy', value: csp },
