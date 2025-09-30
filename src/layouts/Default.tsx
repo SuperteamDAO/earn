@@ -37,8 +37,16 @@ export const Default = ({
     >
       {meta}
       <OutdatedBrowserWarning />
+      <a
+        href="#main-content"
+        className="skip-link sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[1000] focus:rounded-md focus:bg-white focus:px-3 focus:py-2 focus:text-slate-900 focus:shadow"
+      >
+        Skip to main content
+      </a>
       <Header />
-      <div className="flex flex-1 flex-col">{children}</div>
+      <main id="main-content" tabIndex={-1} className="flex flex-1 flex-col">
+        {children}
+      </main>
       {!hideFooter && <Footer />}
     </div>
   );

@@ -28,6 +28,7 @@ export const ListingTabLink = ({
       )}
       href={href}
       onClick={onClick}
+      aria-current={isActive ? 'page' : undefined}
     >
       {text}
       {subText && (

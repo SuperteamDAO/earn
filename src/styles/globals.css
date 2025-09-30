@@ -181,6 +181,29 @@
   }
 }
 
+/* Accessible focus styles */
+:focus {
+  outline: none;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-brand-purple, #6366f1);
+  outline-offset: 2px;
+}
+
+/* Skip link base utility (paired with focus styles above) */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 :root {
   interpolate-size: allow-keywords;
   --background: hsl(0 0% 100%);

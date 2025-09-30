@@ -220,12 +220,17 @@ export const ListingsSection = ({
         <div
           ref={scrollContainerRef}
           className="hide-scrollbar flex gap-1.5 overflow-x-auto px-2 py-1"
+          role="tablist"
+          aria-label="Listing categories"
         >
           {shouldShowForYou && (
             <CategoryPill
               key="foryou"
               phEvent="foryou_navpill"
               isActive={activeCategory === 'For You'}
+              // role=tab semantics are conveyed by the button with aria-pressed
+              // We complement with aria-selected for assistive tech expectations
+              // and manage tabIndex for roving focus
               onClick={() =>
                 handleCategoryChange(
                   'For You' as ListingCategory,
@@ -233,7 +238,13 @@ export const ListingsSection = ({
                 )
               }
             >
-              For You
+              <span
+                role="tab"
+                aria-selected={activeCategory === 'For You'}
+                tabIndex={activeCategory === 'For You' ? 0 : -1}
+              >
+                For You
+              </span>
             </CategoryPill>
           )}
           <CategoryPill
@@ -244,7 +255,13 @@ export const ListingsSection = ({
               handleCategoryChange('All' as ListingCategory, 'all_navpill')
             }
           >
-            All
+            <span
+              role="tab"
+              aria-selected={activeCategory === 'All'}
+              tabIndex={activeCategory === 'All' ? 0 : -1}
+            >
+              All
+            </span>
           </CategoryPill>
           {visibleCategoryNavItems?.map((navItem) => (
             <CategoryPill
@@ -258,7 +275,13 @@ export const ListingsSection = ({
                 )
               }
             >
-              {isMd ? navItem.label : navItem.mobileLabel || navItem.label}
+              <span
+                role="tab"
+                aria-selected={activeCategory === navItem.label}
+                tabIndex={activeCategory === navItem.label ? 0 : -1}
+              >
+                {isMd ? navItem.label : navItem.mobileLabel || navItem.label}
+              </span>
             </CategoryPill>
           ))}
         </div>
