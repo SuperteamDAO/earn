@@ -228,9 +228,9 @@ export const ListingsSection = ({
               key="foryou"
               phEvent="foryou_navpill"
               isActive={activeCategory === 'For You'}
-              // role=tab semantics are conveyed by the button with aria-pressed
-              // We complement with aria-selected for assistive tech expectations
-              // and manage tabIndex for roving focus
+              role="tab"
+              aria-selected={activeCategory === 'For You'}
+              tabIndex={activeCategory === 'For You' ? 0 : -1}
               onClick={() =>
                 handleCategoryChange(
                   'For You' as ListingCategory,
@@ -238,36 +238,30 @@ export const ListingsSection = ({
                 )
               }
             >
-              <span
-                role="tab"
-                aria-selected={activeCategory === 'For You'}
-                tabIndex={activeCategory === 'For You' ? 0 : -1}
-              >
-                For You
-              </span>
+              For You
             </CategoryPill>
           )}
           <CategoryPill
             key="all"
             phEvent="all_navpill"
             isActive={activeCategory === 'All'}
+            role="tab"
+            aria-selected={activeCategory === 'All'}
+            tabIndex={activeCategory === 'All' ? 0 : -1}
             onClick={() =>
               handleCategoryChange('All' as ListingCategory, 'all_navpill')
             }
           >
-            <span
-              role="tab"
-              aria-selected={activeCategory === 'All'}
-              tabIndex={activeCategory === 'All' ? 0 : -1}
-            >
-              All
-            </span>
+            All
           </CategoryPill>
           {visibleCategoryNavItems?.map((navItem) => (
             <CategoryPill
               key={navItem.label}
               phEvent={navItem.pillPH}
               isActive={activeCategory === navItem.label}
+              role="tab"
+              aria-selected={activeCategory === navItem.label}
+              tabIndex={activeCategory === navItem.label ? 0 : -1}
               onClick={() =>
                 handleCategoryChange(
                   navItem.label as ListingCategory,
@@ -275,13 +269,7 @@ export const ListingsSection = ({
                 )
               }
             >
-              <span
-                role="tab"
-                aria-selected={activeCategory === navItem.label}
-                tabIndex={activeCategory === navItem.label ? 0 : -1}
-              >
-                {isMd ? navItem.label : navItem.mobileLabel || navItem.label}
-              </span>
+              {isMd ? navItem.label : navItem.mobileLabel || navItem.label}
             </CategoryPill>
           ))}
         </div>

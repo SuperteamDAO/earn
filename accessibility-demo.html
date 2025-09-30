@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Keyboard Accessibility Demo - Superteam Earn</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: white;
+            color: #1e293b;
+            line-height: 1.5;
+        }
+
+        /* Skip link */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 6px;
+            background: #6366f1;
+            color: white;
+            padding: 8px;
+            text-decoration: none;
+            border-radius: 4px;
+            z-index: 1000;
+        }
+
+        .skip-link:focus {
+            top: 6px;
+        }
+
+        /* Focus styles */
+        :focus {
+            outline: none;
+        }
+
+        :focus-visible {
+            outline: 2px solid #6366f1;
+            outline-offset: 2px;
+        }
+
+        /* Header */
+        .header {
+            background: white;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 1rem 0;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #6366f1;
+        }
+
+        /* Main content */
+        .main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #1e293b;
+        }
+
+        /* Category pills */
+        .category-container {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            overflow-x: auto;
+            padding: 0.5rem 0;
+        }
+
+        .category-pill {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 9999px;
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.1s;
+            text-decoration: none;
+            color: #64748b;
+        }
+
+        .category-pill:hover {
+            background: #f1f5f9;
+            color: #1e293b;
+        }
+
+        .category-pill[aria-pressed="true"] {
+            background: #e0e7ff;
+            border-color: #a5b4fc;
+            color: #4f46e5;
+        }
+
+        .category-pill:focus-visible {
+            outline: 2px solid #6366f1;
+            outline-offset: 2px;
+        }
+
+        /* Listing cards */
+        .listings {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .listing-card {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.1s;
+        }
+
+        .listing-card:hover {
+            background: #f8fafc;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .listing-card:focus-visible {
+            outline: 2px solid #6366f1;
+            outline-offset: 2px;
+        }
+
+        .listing-logo {
+            width: 4rem;
+            height: 4rem;
+            border-radius: 8px;
+            background: #f1f5f9;
+            margin-right: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .listing-content {
+            flex: 1;
+        }
+
+        .listing-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .listing-sponsor {
+            font-size: 0.875rem;
+            color: #64748b;
+            margin-bottom: 0.5rem;
+        }
+
+        .listing-meta {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.75rem;
+            color: #64748b;
+        }
+
+        .listing-amount {
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #e2e8f0;
+            margin-bottom: 2rem;
+        }
+
+        .tab {
+            padding: 0.75rem 1rem;
+            text-decoration: none;
+            color: #64748b;
+            border-bottom: 2px solid transparent;
+            transition: all 0.1s;
+        }
+
+        .tab:hover {
+            color: #1e293b;
+        }
+
+        .tab[aria-current="page"] {
+            color: #6366f1;
+            border-bottom-color: #6366f1;
+        }
+
+        .tab:focus-visible {
+            outline: 2px solid #6366f1;
+            outline-offset: 2px;
+        }
+
+        /* Instructions */
+        .instructions {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .instructions h3 {
+            margin-bottom: 0.5rem;
+            color: #1e293b;
+        }
+
+        .instructions ul {
+            margin-left: 1rem;
+        }
+
+        .instructions li {
+            margin-bottom: 0.25rem;
+        }
+    </style>
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">Superteam Earn</div>
+            <nav>
+                <a href="#" class="tab">Home</a>
+                <a href="#" class="tab">Bounties</a>
+                <a href="#" class="tab">Projects</a>
+            </nav>
+        </div>
+    </header>
+
+    <main id="main-content" class="main">
+        <div class="instructions">
+            <h3>Keyboard Accessibility Demo</h3>
+            <p>Use the following keys to test accessibility:</p>
+            <ul>
+                <li><strong>Tab</strong> - Navigate through interactive elements</li>
+                <li><strong>Enter/Space</strong> - Activate buttons and links</li>
+                <li><strong>Arrow Keys</strong> - Navigate within tab groups (category pills)</li>
+            </ul>
+        </div>
+
+        <h1 class="section-title">Browse Opportunities</h1>
+        
+        <!-- Category Pills with Tablist Pattern -->
+        <div class="category-container" role="tablist" aria-label="Listing categories">
+            <button class="category-pill" role="tab" aria-selected="true" tabindex="0" aria-pressed="true">
+                For You
+            </button>
+            <button class="category-pill" role="tab" aria-selected="false" tabindex="-1" aria-pressed="false">
+                All
+            </button>
+            <button class="category-pill" role="tab" aria-selected="false" tabindex="-1" aria-pressed="false">
+                Content
+            </button>
+            <button class="category-pill" role="tab" aria-selected="false" tabindex="-1" aria-pressed="false">
+                Design
+            </button>
+            <button class="category-pill" role="tab" aria-selected="false" tabindex="-1" aria-pressed="false">
+                Development
+            </button>
+        </div>
+
+        <!-- Listing Cards -->
+        <div class="listings">
+            <a href="#" class="listing-card">
+                <div class="listing-logo">🏢</div>
+                <div class="listing-content">
+                    <div class="listing-title">Build a React Component Library</div>
+                    <div class="listing-sponsor">by Acme Corp</div>
+                    <div class="listing-meta">
+                        <span class="listing-amount">$2,000 USDC</span>
+                        <span>Due in 5 days</span>
+                        <span>Bounty</span>
+                    </div>
+                </div>
+            </a>
+
+            <a href="#" class="listing-card">
+                <div class="listing-logo">🎨</div>
+                <div class="listing-content">
+                    <div class="listing-title">Design a Mobile App Interface</div>
+                    <div class="listing-sponsor">by Design Studio</div>
+                    <div class="listing-meta">
+                        <span class="listing-amount">$1,500 USDC</span>
+                        <span>Due in 3 days</span>
+                        <span>Project</span>
+                    </div>
+                </div>
+            </a>
+
+            <a href="#" class="listing-card">
+                <div class="listing-logo">📝</div>
+                <div class="listing-content">
+                    <div class="listing-title">Write Technical Documentation</div>
+                    <div class="listing-sponsor">by Tech Corp</div>
+                    <div class="listing-meta">
+                        <span class="listing-amount">$800 USDC</span>
+                        <span>Due in 7 days</span>
+                        <span>Content</span>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <!-- Listing Page Tabs -->
+        <h2 class="section-title" style="margin-top: 3rem;">Listing Page Tabs</h2>
+        <div class="tabs">
+            <a href="#" class="tab" aria-current="page">Details</a>
+            <a href="#" class="tab">Submissions</a>
+            <a href="#" class="tab">Comments</a>
+        </div>
+    </main>
+
+    <script>
+        // Simple tablist functionality for category pills
+        const categoryPills = document.querySelectorAll('.category-pill[role="tab"]');
+        
+        categoryPills.forEach((pill, index) => {
+            pill.addEventListener('click', () => {
+                // Update aria-selected and tabindex
+                categoryPills.forEach((p, i) => {
+                    p.setAttribute('aria-selected', i === index);
+                    p.setAttribute('tabindex', i === index ? '0' : '-1');
+                    p.setAttribute('aria-pressed', i === index);
+                });
+            });
+
+            // Handle keyboard navigation
+            pill.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+                    e.preventDefault();
+                    const nextIndex = e.key === 'ArrowRight' 
+                        ? (index + 1) % categoryPills.length
+                        : (index - 1 + categoryPills.length) % categoryPills.length;
+                    
+                    categoryPills[nextIndex].focus();
+                    categoryPills[nextIndex].click();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
