@@ -182,15 +182,9 @@
 }
 
 /* Accessible focus styles */
-:focus {
+:focus-visible {
   outline: 2px solid var(--color-brand-purple, #6366f1);
   outline-offset: 2px;
-}
-
-/* Enhanced focus for keyboard navigation */
-:focus:not(:focus-visible) {
-  outline: 1px solid var(--color-brand-purple, #6366f1);
-  outline-offset: 1px;
 }
 
 /* Skip link base utility (paired with focus styles above) */

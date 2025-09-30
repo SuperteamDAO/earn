@@ -36,10 +36,6 @@
         }
 
         /* Focus styles */
-        :focus {
-            outline: none;
-        }
-
         :focus-visible {
             outline: 2px solid #6366f1;
             outline-offset: 2px;
@@ -108,7 +104,7 @@
             color: #1e293b;
         }
 
-        .category-pill[aria-pressed="true"] {
+        .category-pill[aria-selected="true"] {
             background: #e0e7ff;
             border-color: #a5b4fc;
             color: #4f46e5;
@@ -269,19 +265,19 @@
         
         <!-- Category Pills with Tablist Pattern -->
         <div class="category-container" role="tablist" aria-label="Listing categories">
-            <button class="category-pill" role="tab" aria-selected="true" tabindex="0" aria-pressed="true">
+            <button class="category-pill" role="tab" aria-selected="true" tabindex="0">
                 For You
             </button>
-            <button class="category-pill" role="tab" aria-selected="false" tabindex="-1" aria-pressed="false">
+            <button class="category-pill" role="tab" aria-selected="false" tabindex="-1">
                 All
             </button>
-            <button class="category-pill" role="tab" aria-selected="false" tabindex="-1" aria-pressed="false">
+            <button class="category-pill" role="tab" aria-selected="false" tabindex="-1">
                 Content
             </button>
-            <button class="category-pill" role="tab" aria-selected="false" tabindex="-1" aria-pressed="false">
+            <button class="category-pill" role="tab" aria-selected="false" tabindex="-1">
                 Design
             </button>
-            <button class="category-pill" role="tab" aria-selected="false" tabindex="-1" aria-pressed="false">
+            <button class="category-pill" role="tab" aria-selected="false" tabindex="-1">
                 Development
             </button>
         </div>
@@ -347,7 +343,7 @@
                 categoryPills.forEach((p, i) => {
                     p.setAttribute('aria-selected', i === index);
                     p.setAttribute('tabindex', i === index ? '0' : '-1');
-                    p.setAttribute('aria-pressed', i === index);
+                    // Tabs use aria-selected, not aria-pressed
                 });
             });
 
