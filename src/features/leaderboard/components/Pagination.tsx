@@ -61,6 +61,8 @@ export function Pagination({ page, setPage, count }: Props) {
                 : 'border-slate-200 text-slate-500',
               i === page && 'active',
             )}
+            aria-current={page === i ? 'page' : undefined}
+            aria-label={`Go to page ${i}`}
             onClick={() => debouncedHandleClick(i)}
             variant="outline"
           >
@@ -81,6 +83,8 @@ export function Pagination({ page, setPage, count }: Props) {
               : 'border-slate-200 text-slate-500',
             page === 1 && 'active',
           )}
+          aria-current={page === 1 ? 'page' : undefined}
+          aria-label={`Go to page 1`}
           onClick={() => debouncedHandleClick(1)}
           variant="outline"
         >
@@ -91,18 +95,16 @@ export function Pagination({ page, setPage, count }: Props) {
       // Show ellipsis if needed
       if (page > 4) {
         pageNumbers.push(
-          <Button
+          <span
             key="ellipsis1"
+            aria-hidden="true"
             className={cn(
               `w-[${SIZE}] h-[${SIZE}] min-w-0 rounded-md px-1 py-2 text-xs`,
-              'border',
-              'disabled:border-slate-200 disabled:text-slate-500',
+              'grid place-items-center border border-slate-200 text-slate-400 select-none',
             )}
-            disabled
-            variant="outline"
           >
             ...
-          </Button>,
+          </span>,
         );
       }
 
@@ -123,6 +125,8 @@ export function Pagination({ page, setPage, count }: Props) {
                   : 'border-slate-200 text-slate-500',
                 i === page && 'active',
               )}
+              aria-current={page === i ? 'page' : undefined}
+              aria-label={`Go to page ${i}`}
               onClick={() => debouncedHandleClick(i)}
               variant="outline"
             >
@@ -135,18 +139,16 @@ export function Pagination({ page, setPage, count }: Props) {
       // Show ellipsis if needed
       if (page < totalPages - 3) {
         pageNumbers.push(
-          <Button
+          <span
             key="ellipsis2"
+            aria-hidden="true"
             className={cn(
               `w-[${SIZE}] h-[${SIZE}] min-w-0 rounded-md px-1 py-2 text-xs`,
-              'border',
-              'disabled:border-slate-200 disabled:text-slate-500',
+              'grid place-items-center border border-slate-200 text-slate-400 select-none',
             )}
-            disabled
-            variant="outline"
           >
             ...
-          </Button>,
+          </span>,
         );
       }
 
@@ -163,6 +165,8 @@ export function Pagination({ page, setPage, count }: Props) {
                 : 'border-slate-200 text-slate-500',
               page === totalPages && 'active',
             )}
+            aria-current={page === totalPages ? 'page' : undefined}
+            aria-label={`Go to page ${totalPages}`}
             onClick={() => debouncedHandleClick(totalPages)}
             variant="outline"
           >
@@ -175,15 +179,24 @@ export function Pagination({ page, setPage, count }: Props) {
     return pageNumbers;
   };
   return (
-    <div className="my-4 flex flex-col gap-4">
+    <nav
+      className="my-4 flex flex-col gap-4"
+      aria-label="Pagination Navigation"
+    >
       {/* Main pagination controls */}
-      <div className="flex flex-wrap gap-2">
+      <div
+        className="flex flex-wrap gap-2"
+        role="group"
+        aria-label="Pagination"
+      >
         <Button
           className={cn(
             `w-[${SIZE}] h-[${SIZE}] min-w-0 rounded-md p-1`,
             'disabled:pointer-events-none disabled:border-slate-300 disabled:bg-slate-300 disabled:text-slate-500 disabled:opacity-50',
           )}
           disabled={page === 1}
+          aria-disabled={page === 1 || undefined}
+          aria-label="Previous page"
           onClick={() => debouncedHandleClick(page - 1)}
           variant="outline"
         >
@@ -198,6 +211,8 @@ export function Pagination({ page, setPage, count }: Props) {
             'disabled:pointer-events-none disabled:border-slate-300 disabled:bg-slate-300 disabled:text-slate-500 disabled:opacity-50',
           )}
           disabled={page === totalPages}
+          aria-disabled={page === totalPages || undefined}
+          aria-label="Next page"
           onClick={() => debouncedHandleClick(page + 1)}
           variant="outline"
         >
@@ -207,9 +222,15 @@ export function Pagination({ page, setPage, count }: Props) {
 
       {/* Jump to page input */}
       {totalPages > 5 && (
-        <div className="flex items-center gap-2 text-sm text-slate-600">
-          <span>Go to page:</span>
+        <div
+          className="flex items-center gap-2 text-sm text-slate-600"
+          aria-label="Jump to page"
+        >
+          <label htmlFor="jump-to-page" className="sr-only">
+            Go to page
+          </label>
           <Input
+            id="jump-to-page"
             type="number"
             min="1"
             max={totalPages}
@@ -232,6 +253,6 @@ export function Pagination({ page, setPage, count }: Props) {
           <span className="text-slate-400">of {totalPages}</span>
         </div>
       )}
-    </div>
+    </nav>
   );
 }
