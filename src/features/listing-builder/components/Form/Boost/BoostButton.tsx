@@ -39,8 +39,16 @@ export const BoostButton = ({
   listing: Listing;
   showDate?: boolean;
 }) => {
-  const { deadline, usdValue, skills, region, slug, compensationType, type } =
-    listing;
+  const {
+    deadline,
+    usdValue,
+    skills,
+    region,
+    slug,
+    compensationType,
+    type,
+    isPrivate,
+  } = listing;
 
   const deadlineMoreThan72HoursLeft = hasMoreThan72HoursLeft(deadline ?? '');
 
@@ -81,7 +89,8 @@ export const BoostButton = ({
     deadlineMoreThan72HoursLeft &&
     canBeBoosted &&
     compensationType === 'fixed' &&
-    type !== 'hackathon'
+    type !== 'hackathon' &&
+    !isPrivate
   ) {
     const deadlineDate = new Date(deadline ?? '');
     const seventyTwoHoursBeforeDeadline = new Date(

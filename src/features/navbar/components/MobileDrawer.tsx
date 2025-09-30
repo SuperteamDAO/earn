@@ -6,6 +6,7 @@ import React, { useState } from 'react';
 
 import { SupportFormDialog } from '@/components/shared/SupportFormDialog';
 import { Button } from '@/components/ui/button';
+import { ExternalImage } from '@/components/ui/cloudinary-image';
 import {
   Collapsible,
   CollapsibleContent,
@@ -18,6 +19,7 @@ import { useDisclosure } from '@/hooks/use-disclosure';
 import { useLogout, useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 
+import { HACKATHONS } from '@/features/hackathon/constants/hackathons';
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 import { EmailSettingsModal } from '@/features/talent/components/EmailSettingsModal';
 
@@ -131,7 +133,6 @@ export const MobileDrawer = ({
               </div>
             </div>
           )}
-
           {user && !user.currentSponsorId && !user.isTalentFilled && (
             <Button
               variant="ghost"
@@ -143,6 +144,23 @@ export const MobileDrawer = ({
               Complete your Profile
             </Button>
           )}
+          {HACKATHONS?.map((hackathon) => (
+            <NavItem
+              key={hackathon.slug}
+              label={
+                <div className="relateive flex -translate-x-1 items-center gap-2">
+                  <ExternalImage
+                    src={hackathon.logo}
+                    alt={hackathon.label}
+                    className="h-4"
+                  />
+                </div>
+              }
+              onClick={() => {
+                router.push(`/hackathon/${hackathon.slug}`);
+              }}
+            />
+          ))}
           <div className="ph-no-capture flex flex-col">
             {isLoggedIn && (
               <>
@@ -235,28 +253,7 @@ export const MobileDrawer = ({
                 </div>
               </CollapsibleContent>
             </Collapsible>
-            <div>
-              <NavItem label="Live Hackathons" onClick={() => {}} />
-              {/* <div className="ml-4">
-                {HACKATHONS?.map((hackathon) => (
-                  <NavItem
-                    key={hackathon.slug}
-                    label={
-                      <div className="flex items-center gap-2">
-                        <ExternalImage
-                          src={hackathon.logo}
-                          alt={hackathon.label}
-                          className="h-4"
-                        />
-                      </div>
-                    }
-                    onClick={() => {
-                      router.push(`/hackathon/${hackathon.slug}`);
-                    }}
-                  />
-                ))}
-              </div> */}
-            </div>
+
             <NavItem
               label="Activity Feed"
               onClick={() => router.push(`/feed`)}

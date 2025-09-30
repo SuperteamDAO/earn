@@ -1,6 +1,9 @@
+import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { cn } from '@/utils/cn';
 
-import { type ListingTab } from '../hooks/useListings';
+import { HACKATHONS } from '@/features/hackathon/constants/hackathons';
+
+import { type ListingContext, type ListingTab } from '../hooks/useListings';
 
 const TABS = [
   { id: 'all', title: 'All', posthog: 'all_listings' },
@@ -36,11 +39,13 @@ const ListingTabTrigger = ({
 );
 
 interface ListingTabsProps {
+  type: ListingContext;
   activeTab: ListingTab;
   handleTabChange: (tabId: ListingTab, posthog: string) => void;
 }
 
 export const ListingTabs = ({
+  type,
   activeTab,
   handleTabChange,
 }: ListingTabsProps) => {
@@ -55,6 +60,25 @@ export const ListingTabs = ({
           <span>{tab.title}</span>
         </ListingTabTrigger>
       ))}
+      {type === 'home' &&
+        HACKATHONS.map((hackathon) => (
+          <ListingTabTrigger
+            key={hackathon.slug}
+            isActive={activeTab === hackathon.slug}
+            onClick={() =>
+              handleTabChange(
+                hackathon.slug as ListingTab,
+                `${hackathon.slug}_navpill`,
+              )
+            }
+          >
+            <ExternalImage
+              src={hackathon.logo}
+              alt={hackathon.label}
+              className="my-[0.1875rem] ml-0 h-3.5 object-contain"
+            />
+          </ListingTabTrigger>
+        ))}
     </div>
   );
 };
