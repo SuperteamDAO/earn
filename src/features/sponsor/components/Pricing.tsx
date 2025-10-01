@@ -20,8 +20,8 @@ const PRICING_ITEMS: readonly PricingItem[] = [
   { label: 'Build Apps with SDK', value: '$2,000 - $3,000' },
   { label: 'Telegram Bot', value: '$1,500 - $2,500' },
   { label: 'Logo Design', value: '$750 - $1,000' },
-  { label: 'Analytics Dashboard', value: '$1,500 to $2,000' },
-  { label: 'Landing Page Developement', value: '$2,000 to $3,000' },
+  { label: 'Analytics Dashboard', value: '$1,500 - $2,000' },
+  { label: 'Landing Page Developement', value: '$2,000 - $3,000' },
 ] as const;
 
 export function Pricing() {
@@ -68,10 +68,10 @@ export function Pricing() {
                 }}
               >
                 <Button
-                  className="h-[2.5rem] w-[8.5rem] rounded-[0.4rem] bg-indigo-600 text-sm font-medium text-white md:h-[3.125rem] md:w-[12.5rem] md:text-lg"
+                  className="bg-primary h-[2.5rem] w-[8.5rem] rounded-[0.4rem] text-sm font-medium text-white md:h-[3.125rem] md:w-[12.5rem] md:text-lg"
                   variant="default"
                 >
-                  Post for Free
+                  Post for Free 🙌
                 </Button>
               </Link>
             </div>

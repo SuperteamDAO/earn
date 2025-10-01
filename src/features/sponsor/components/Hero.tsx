@@ -55,7 +55,7 @@ export function Hero() {
             }}
           >
             <Button
-              className="relative mx-auto h-[3.125rem] w-[12.5rem] items-center rounded-[0.4rem] bg-indigo-600 text-lg font-medium text-white"
+              className="bg-primary relative mx-auto h-[3.125rem] w-[12.5rem] items-center rounded-[0.4rem] text-lg font-medium text-white"
               variant="default"
             >
               Post for Free 🙌

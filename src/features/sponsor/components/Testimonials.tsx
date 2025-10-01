@@ -202,7 +202,7 @@ export function Testimonials() {
             quote={
               'Within moments, we set up our bounty and drew in exceptional talent. The dashboard is incredibly intuitive, making the entire process feel effortless!'
             }
-            metrics={{ views: '200k+', submissions: '1,000+' }}
+            metrics={{ views: '1M+', submissions: '1,000+' }}
             personName="Vibhu"
             personTitle="Product Marketing, Solana"
             personPfp={`${USER_PFP_BASE}/vibhu.webp`}
@@ -214,7 +214,7 @@ export function Testimonials() {
             quote={
               'Running a hackathon without Superteam is nearly impossible. Earn gave us everything we needed to operate and they provided us with first-class support.'
             }
-            metrics={{ views: '2M+', submissions: '3,700+' }}
+            metrics={{ views: '250k+', submissions: '200+' }}
             personName="Brady"
             personTitle="BD Lead, Helius"
             personPfp={`${USER_PFP_BASE}/brady.webp`}

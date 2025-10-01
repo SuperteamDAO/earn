@@ -40,7 +40,7 @@ export function HowItWorks() {
               />
             </div>
             <div className="order-2 flex items-center justify-center rounded-2xl bg-violet-50/60 md:order-1 md:p-6">
-              <div className="scale-60 sm:scale-90 lg:scale-100">
+              <div className="scale-60 min-[351px]:scale-75 sm:scale-90 lg:scale-100">
                 <StepOne />
               </div>
             </div>
@@ -56,7 +56,7 @@ export function HowItWorks() {
               />
             </div>
             <div className="order-2 flex items-center justify-center rounded-2xl bg-sky-50 md:order-2 md:p-6">
-              <div className="scale-60 sm:scale-90 lg:scale-100">
+              <div className="scale-60 min-[351px]:scale-75 sm:scale-90 lg:scale-100">
                 <StepTwo />
               </div>
             </div>
@@ -72,7 +72,7 @@ export function HowItWorks() {
               />
             </div>
             <div className="order-2 flex items-center justify-center rounded-2xl bg-emerald-50 md:order-1 md:p-6 md:py-10">
-              <div className="scale-60 sm:scale-90 lg:scale-100">
+              <div className="scale-60 min-[351px]:scale-75 sm:scale-90 lg:scale-100">
                 <StepThree />
               </div>
             </div>

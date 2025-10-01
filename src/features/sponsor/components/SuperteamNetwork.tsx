@@ -59,7 +59,7 @@ export function SuperteamNetwork() {
           <img
             src={GLOBE_URL}
             alt="Superteam globe"
-            className="pointer-events-none absolute -top-24 -right-12 h-[180%] w-[180%] object-contain opacity-80"
+            className="pointer-events-none absolute -top-4 -right-12 h-[160%] w-[160%] object-contain opacity-80"
           />
           <SuperteamIcon className="pointer-events-none absolute top-5/8 right-1/8 size-32 -translate-x-1/2 -translate-y-1/2 opacity-90" />
         </div>
