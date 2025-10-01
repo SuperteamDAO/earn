@@ -70,6 +70,7 @@ export function SuperteamNetwork() {
             alt="Superteam globe"
             className="pointer-events-none relative top-[10rem] -left-10 h-full w-full scale-250 object-contain"
           />
+          <SuperteamIcon className="pointer-events-none absolute top-5/9 left-2/4 size-18 -translate-x-1/2 -translate-y-1/2 opacity-90" />
         </div>
       </div>
     </section>
