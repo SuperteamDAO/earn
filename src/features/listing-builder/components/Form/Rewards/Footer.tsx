@@ -294,7 +294,7 @@ function RewardsFooter({
                 compensationType === 'fixed' &&
                 deadlineMoreThan72HoursLeft &&
                 type !== 'hackathon' &&
-                isPrivate
+                !isPrivate
               ) {
                 setPanel('boost');
               } else {
