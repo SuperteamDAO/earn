@@ -1,4 +1,3 @@
-import { PrismaPlanetScale } from '@prisma/adapter-planetscale';
 import { PrismaClient } from '@prisma/client';
 
 const omitConfig = {
@@ -13,12 +12,12 @@ const omitConfig = {
 };
 
 // if using planetscale db, use this. if not, comment out and uncomment the local db setup below
-const adapter = new PrismaPlanetScale({ url: process.env.DATABASE_URL, fetch });
-const prismaClient = new PrismaClient({ adapter, omit: omitConfig });
+// const adapter = new PrismaPlanetScale({ url: process.env.DATABASE_URL, fetch });
+// const prismaClient = new PrismaClient({ adapter, omit: omitConfig });
 
 // if using local db, uncomment this and comment out the above
-// const datasourceUrl = process.env.LOCAL_DATABASE_URL;
-// const prismaClient = new PrismaClient({ datasourceUrl, omit: omitConfig });
+const datasourceUrl = process.env.LOCAL_DATABASE_URL;
+const prismaClient = new PrismaClient({ datasourceUrl, omit: omitConfig });
 
 declare const globalThis: { prismaGlobal: typeof prismaClient } & typeof global;
 
