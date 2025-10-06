@@ -1,6 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 import {
   ChevronLeft,
+  CopyIcon,
   Download,
   ExternalLink,
   MoreVertical,
@@ -23,6 +24,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { StatusPill } from '@/components/ui/status-pill';
 import { api } from '@/lib/api';
+import { getURL } from '@/utils/validUrl';
 
 import { type Grant } from '@/features/grants/types';
 import { getColorStyles } from '@/features/listings/utils/getColorStyles';
@@ -110,6 +112,23 @@ export const ApplicationHeader = ({
     exportMutation.mutate();
   };
 
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text).then(
+      () => {
+        toast.success('Link Copied', {
+          duration: 3000,
+        });
+      },
+      (err) => {
+        console.error('Failed to copy text: ', err);
+      },
+    );
+  };
+
+  const getGrantUrl = () => {
+    return `${getURL()}grants/${grant?.slug}`;
+  };
+
   return (
     <div className="mb-2 flex items-center justify-between">
       <div>
@@ -164,6 +183,14 @@ export const ApplicationHeader = ({
               >
                 <ExternalLink className="size-4" />
                 View Listing
+              </DropdownMenuItem>
+
+              <DropdownMenuItem
+                onClick={() => copyToClipboard(getGrantUrl())}
+                className="cursor-pointer"
+              >
+                <CopyIcon className="size-4" />
+                Copy Link
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

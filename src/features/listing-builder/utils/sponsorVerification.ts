@@ -1,7 +1,8 @@
-import { type BountyType, type Sponsors, type User } from '@prisma/client';
-
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { type BountyType } from '@/prisma/enums';
+import { type SponsorsModel } from '@/prisma/models/Sponsors';
+import { type UserModel } from '@/prisma/models/User';
 import { dayjs } from '@/utils/dayjs';
 
 import { type ListingWithSponsor } from '@/features/auth/utils/checkListingSponsorAuth';
@@ -13,10 +14,10 @@ export interface SponsorVerificationResult {
   reason: string;
 }
 
-const isVerifiedHackathonListing = (
-  user: { hackathonId: string | null },
+const shouldVerifyHackathonListing = (
   type: BountyType,
-): boolean => !!user?.hackathonId && type === 'hackathon';
+  user: { role: string },
+): boolean => type === 'hackathon' && user?.role !== 'GOD';
 
 const shouldSkipVerification = (
   sponsor: { isVerified: boolean },
@@ -114,9 +115,9 @@ const checkOverdueListings = async (
 };
 
 interface SponsorVerificationProps {
-  sponsor: Sponsors;
+  sponsor: SponsorsModel;
   listing: ListingWithSponsor;
-  user: User;
+  user: UserModel;
   validatedListing: ListingFormData;
 }
 export const sponsorVerificationCheck = async ({
@@ -143,21 +144,22 @@ export const sponsorVerificationCheck = async ({
     };
   }
 
-  const isVerifiedHackathonListingCheck = isVerifiedHackathonListing(
-    user,
+  const isHackathonListing = shouldVerifyHackathonListing(
     validatedListing.type,
+    user,
   );
-  if (isVerifiedHackathonListingCheck) {
-    logger.debug(
-      'User has hackathon ID: Skipping Sponsor Verification Process',
-      {
-        userHackathonId: user?.hackathonId,
-        userId: user?.id,
-        userSponsorId: user?.currentSponsorId,
-      },
-    );
+  if (isHackathonListing) {
+    logger.debug('Hackathon listing requires verification', {
+      listingType: validatedListing.type,
+      listingId: listing.id,
+      userId: user?.id,
+      sponsorId: sponsor.id,
+    });
 
-    return { isVerifying: false, reason: 'Verified hackathon listing' };
+    return {
+      isVerifying: true,
+      reason: 'Hackathon Listing',
+    };
   }
 
   if (shouldSkipVerification(sponsor, user)) {

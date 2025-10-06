@@ -1,12 +1,11 @@
+import type { Skills } from '@/interface/skills';
+import type { SponsorType } from '@/interface/sponsor';
+import { type User } from '@/interface/user';
 import {
   type BountyType,
   type status,
   type SubmissionLabels,
-} from '@prisma/client';
-
-import type { Skills } from '@/interface/skills';
-import type { SponsorType } from '@/interface/sponsor';
-import { type User } from '@/interface/user';
+} from '@/prisma/enums';
 
 import { type ListingContext } from '../hooks/useListings';
 
@@ -58,7 +57,7 @@ export interface Listing {
   isFndnPaying?: boolean;
   usdValue?: number;
   referredBy?: string;
-  ai?: ProjectAi;
+  ai?: ProjectAi | BountiesAi;
 }
 
 export interface ListingHackathon {
@@ -127,14 +126,14 @@ export interface ProjectAi {
   };
 }
 
-export type EvaluationResult = {
+export type ProjectApplicationEvaluation = {
   predictedLabel?: SubmissionLabels;
   shortNote?: string;
   scores?: Scores;
 };
 
 export interface ProjectApplicationAi {
-  review?: EvaluationResult;
+  review?: ProjectApplicationEvaluation;
   commited?: boolean;
 }
 
@@ -142,4 +141,53 @@ export type Scores = {
   skills: number;
   experience: number;
   application: number;
+};
+export interface BountySubmissionAi {
+  analytics?: TwitterAnalytics;
+  invalidTwitterLink?: boolean;
+  evaluation?: BountySubmissionEvaluation;
+  commited?: boolean;
+}
+
+export type BountySubmissionEvaluation = {
+  finalLabel?: SubmissionLabels;
+  notes?: string;
+  criteriaScore?: number;
+  qualityScore?: number;
+  totalScore?: number;
+};
+
+export type TwitterAnalytics = {
+  totalViews: number;
+  totalLikes: number;
+  totalRetweets: number;
+  totalReplies: number;
+  totalBookmarks: number;
+  lastSynced: string;
+};
+export interface BountiesAi {
+  analytics?: TwitterAnalytics;
+  invalidTwitterLinkCount?: number;
+  context?: {
+    criterias?: JudgingCriterias['criterias'];
+    checks?: Checks;
+    summary?: string;
+    category?: Category;
+  };
+  evaluationCompleted?: boolean;
+}
+
+type Category = 'tweet' | 'feedback' | 'blog' | 'other';
+type Checks = {
+  tweets_shouldTag: string[];
+  language?: string | null | undefined;
+  template?: string | null | undefined;
+  tweets_minimum?: number | null | undefined;
+  tweets_maximum?: number | null | undefined;
+};
+type JudgingCriterias = {
+  criterias: {
+    criterion: string;
+    weightage: number;
+  }[];
 };

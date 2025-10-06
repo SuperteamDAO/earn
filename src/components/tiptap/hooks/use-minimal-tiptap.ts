@@ -16,6 +16,7 @@ import { cn } from '@/utils/cn';
 import {
   deleteFromCld,
   type EARN_IMAGE_FOLDER,
+  type ImageSource,
   uploadAndReplaceImage,
 } from '@/utils/image';
 
@@ -44,7 +45,7 @@ declare global {
 
 interface ImageSetting {
   folderName: EARN_IMAGE_FOLDER;
-  type: string;
+  type: ImageSource;
 }
 export interface UseMinimalTiptapEditorProps extends UseEditorOptions {
   value?: Content;
@@ -117,7 +118,7 @@ export const useMinimalTiptapEditor = ({
         const deletionPromises = Array.from(pendingDeletionsRef.current).map(
           async (src) => {
             try {
-              await deleteFromCld(src);
+              await deleteFromCld(src, imageSetting.type);
               trackedImagesRef.current.delete(src);
               console.log('Successfully deleted image:', src);
             } catch (error) {
@@ -152,7 +153,7 @@ export const useMinimalTiptapEditor = ({
 
         const deletionPromises = orphanedImages.map(async (src) => {
           try {
-            await deleteFromCld(src);
+            await deleteFromCld(src, imageSetting.type);
             trackedImagesRef.current.delete(src);
             console.log('Successfully deleted orphaned image:', src);
           } catch (error) {
@@ -218,7 +219,7 @@ export const useMinimalTiptapEditor = ({
           const src = await uploadAndReplaceImage({
             newFile: file,
             folder: imageSetting.folderName,
-            type: imageSetting.type as 'pfp' | 'sponsor',
+            source: imageSetting.type,
           });
           trackedImagesRef.current.add(src);
           pendingDeletionsRef.current.delete(src);
@@ -316,7 +317,7 @@ export const useMinimalTiptapEditor = ({
             const src = await uploadAndReplaceImage({
               newFile: file,
               folder: imageSetting.folderName,
-              type: imageSetting.type as 'pfp' | 'sponsor',
+              source: imageSetting.type,
             });
             trackedImagesRef.current.add(src);
             pendingDeletionsRef.current.delete(src);
@@ -331,7 +332,7 @@ export const useMinimalTiptapEditor = ({
             const src = await uploadAndReplaceImage({
               newFile: file,
               folder: imageSetting.folderName,
-              type: imageSetting.type as 'pfp' | 'sponsor',
+              source: imageSetting.type,
             });
             trackedImagesRef.current.add(src);
             pendingDeletionsRef.current.delete(src);

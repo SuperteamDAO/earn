@@ -64,7 +64,7 @@ function DrawerContent({
       >
         <div
           className={cn(
-            'mx-auto mt-2 h-1.5 w-[100px] rounded-full bg-slate-200',
+            'mx-auto my-1 h-1 w-[100px] rounded-full bg-slate-200',
             classNames?.bar,
           )}
         />

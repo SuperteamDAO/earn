@@ -1,7 +1,7 @@
-import { type GrantApplication } from '@prisma/client';
 import axios from 'axios';
 
 import logger from '@/lib/logger';
+import { type GrantApplicationModel } from '@/prisma/models/GrantApplication';
 import {
   airtableConfig,
   airtableInsert,
@@ -9,7 +9,7 @@ import {
   fetchAirtableRecordId,
 } from '@/utils/airtable';
 
-interface GrantApplicationWithUserAndGrant extends GrantApplication {
+interface GrantApplicationWithUserAndGrant extends GrantApplicationModel {
   grant: {
     airtableId: string | null;
   };

@@ -1,5 +1,4 @@
 import { openrouter } from '@openrouter/ai-sdk-provider';
-import { BountyType } from '@prisma/client';
 import { generateObject } from 'ai';
 import { headers } from 'next/headers';
 import { NextResponse } from 'next/server';
@@ -8,6 +7,7 @@ import { z } from 'zod';
 import logger from '@/lib/logger';
 import { aiGenerateRateLimiter } from '@/lib/ratelimit';
 import { checkAndApplyRateLimitApp } from '@/lib/rateLimiterService';
+import { BountyType } from '@/prisma/enums';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { getSponsorSession } from '@/features/auth/utils/getSponsorSession';
@@ -80,9 +80,10 @@ export async function POST(request: Request) {
 
     const { object } = await generateObject({
       model: openrouter('google/gemini-2.0-flash-lite-001'),
-      system: 'Your role is to extract the token mentioned in the listings.',
+      system:
+        'You generate concise, compelling listing titles for provided listing description. Follow the prompt rules and strictly satisfy the response schema.',
       prompt,
-      schema: responseSchema,
+      schema: responseSchema as any,
     });
 
     logger.info('Generated eligibility title object: ', safeStringify(object));

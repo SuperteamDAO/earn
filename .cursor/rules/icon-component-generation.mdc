@@ -1,0 +1,93 @@
+---
+description: Generate icon components from pasted SVG using the project's GenIcon pattern
+globs: src/components/icons/**/*
+alwaysApply: false
+---
+# Icon Component Generation (GenIcon pattern)
+
+Paste any raw SVG and convert it into a React TypeScript icon component that matches the existing pattern in `src/components/icons/*` using `GenIcon`.
+
+## Rules
+
+1. File location and naming
+   - Place new icons in `src/components/icons/`.
+   - Filename and component name must match and be PascalCase, e.g. `RiHomeLine.tsx` with component `RiHomeLine`.
+   - Follow existing library/style prefixes if relevant (e.g., `Fa`, `Io`, `Md`, `Ri`, `Tb`, etc.).
+   - Use a default export to stay consistent with the current codebase icons.
+
+2. Header and imports
+   - Always begin the file with:
+     ```tsx
+     /* eslint-disable prettier/prettier */
+     import { GenIcon, type IconBaseProps } from '@/components/icons/helpers/GenIcon';
+     ```
+
+3. Component template
+   - Wrap the converted JSON tree with `GenIcon` and pass through `props`:
+     ```tsx
+     const ComponentName = (props: IconBaseProps) => {
+       return GenIcon({ /* JSON tree here */ })(props);
+     };
+     export default ComponentName;
+     ```
+
+4. SVG to GenIcon JSON conversion
+   - Top-level node is always:
+     ```json
+     { "tag": "svg", "attr": { "viewBox": "<from-svg>" }, "child": [ /* children */ ] }
+     ```
+   - Keep `viewBox` from the original SVG. Remove `width`, `height`, and `xmlns` on the root. `IconBase` sets `height`/`width` from `size` and adds `xmlns`.
+   - Convert each SVG element into an object with keys:
+     - `tag`: e.g., `"path"`, `"rect"`, `"circle"`, `"g"`, etc.
+     - `attr`: copy over attributes from the SVG element
+     - `child`: array of children (omit or use empty array when no children)
+   - Attribute naming:
+     - Convert hyphenated attribute names to camelCase (e.g., `stroke-linejoin` → `strokeLinejoin`, `stroke-width` → `strokeWidth`).
+     - Preserve values exactly.
+   - Do not include `width`, `height`, `id`, or `class` on any node unless essential. Keep visual attributes such as `fill`, `stroke`, `strokeWidth`, `strokeLinejoin`, `rx`, `ry`, etc. Child-level `fill="none"` or stroke overrides are allowed and should be preserved.
+
+5. Defaults from IconBase
+   - The base `<svg>` provided by `IconBase` already sets `stroke="currentColor"`, `fill="currentColor"`, and `strokeWidth="0"`. You only need to specify overrides at child level when different (e.g., `fill="none"`).
+
+## Example
+
+Input SVG:
+```svg
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
+  <path d="M11.03 2.59a1.501 1.501 0 0 1 1.94 0l7.5 6.363a1.5 1.5 0 0 1 .53 1.144V19.5a1.5 1.5 0 0 1-1.5 1.5h-5.75a.75.75 0 0 1-.75-.75V14h-2v6.25a.75.75 0 0 1-.75.75H4.5A1.5 1.5 0 0 1 3 19.5v-9.403c0-.44.194-.859.53-1.144ZM12 3.734l-7.5 6.363V19.5h5v-6.25a.75.75 0 0 1 .75-.75h3.5a.75.75 0 0 1 .75.75v6.25h5v-9.403Z"></path>
+</svg>
+```
+
+Generated file `src/components/icons/RiHomeLine.tsx`:
+```tsx
+/* eslint-disable prettier/prettier */
+import { GenIcon, type IconBaseProps } from '@/components/icons/helpers/GenIcon';
+const RiHomeLine = (props: IconBaseProps) => {
+  return GenIcon({
+    "tag": "svg",
+    "attr": { "viewBox": "0 0 24 24" },
+    "child": [
+      {
+        "tag": "path",
+        "attr": {
+          "d": "M11.03 2.59a1.501 1.501 0 0 1 1.94 0l7.5 6.363a1.5 1.5 0 0 1 .53 1.144V19.5a1.5 1.5 0 0 1-1.5 1.5h-5.75a.75.75 0 0 1-.75-.75V14h-2v6.25a.75.75 0 0 1-.75.75H4.5A1.5 1.5 0 0 1 3 19.5v-9.403c0-.44.194-.859.53-1.144ZM12 3.734l-7.5 6.363V19.5h5v-6.25a.75.75 0 0 1 .75-.75h3.5a.75.75 0 0 1 .75.75v6.25h5v-9.403Z"
+        },
+        "child": []
+      }
+    ]
+  })(props);
+};
+export default RiHomeLine;
+```
+
+## Quick checklist
+
+- [ ] File placed in `src/components/icons/`
+- [ ] Component and file names match (PascalCase)
+- [ ] Prettier disabled header present
+- [ ] Imports `GenIcon` and `IconBaseProps` from `@/components/icons/helpers/GenIcon`
+- [ ] Root JSON has `tag: "svg"`, `attr.viewBox` set, children converted
+- [ ] Attributes converted to camelCase where needed
+- [ ] Removed `width`, `height`, `xmlns` at the root
+- [ ] Default export used
+

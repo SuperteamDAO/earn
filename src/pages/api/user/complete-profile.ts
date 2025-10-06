@@ -4,11 +4,9 @@ import logger from '@/lib/logger';
 import { privy } from '@/lib/privy';
 import { prisma } from '@/prisma';
 import { cleanSkills } from '@/utils/cleanSkills';
-import {
-  ALLOWED_IMAGE_FORMATS,
-  maybeUploadBase64AndDeletePrevious,
-} from '@/utils/cloudinary';
+import { verifyImageExists } from '@/utils/cloudinary';
 import { filterAllowedFields } from '@/utils/filterAllowedFields';
+import { generateUniqueReferralCode } from '@/utils/referralCodeGenerator';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { userSelectOptions } from '@/features/auth/constants/userSelectOptions';
@@ -61,24 +59,58 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
 
     const filteredData = filterAllowedFields(req.body, allowedFields);
 
-    if (
-      typeof filteredData.photo === 'string' &&
-      filteredData.photo.startsWith('data:image')
-    ) {
+    const referralCodeRaw = (req.body?.referralCode || '')
+      .toString()
+      .trim()
+      .toUpperCase();
+
+    const referredByUpdate: { referredById?: string } = {};
+    if (referralCodeRaw && !user.referredById) {
       try {
-        filteredData.photo = await maybeUploadBase64AndDeletePrevious(
-          filteredData.photo,
-          'earn-pfp',
-          user.photo ?? undefined,
-          200,
-        );
-      } catch (e: any) {
-        return res.status(400).json({
-          error: 'Invalid image format',
-          message: `File type must be one of: ${ALLOWED_IMAGE_FORMATS.map(
-            (f) => `image/${f}`,
-          ).join(', ')}`,
+        const inviter = await prisma.user.findUnique({
+          where: { referralCode: referralCodeRaw },
+          select: { id: true },
         });
+        if (inviter && inviter.id !== user.id) {
+          const accepted = await prisma.user.count({
+            where: { referredById: inviter.id },
+          });
+          if (accepted < 10) {
+            referredByUpdate.referredById = inviter.id;
+          } else {
+            logger.info(
+              `Referral cap reached for inviter ${inviter.id}, ignoring referralCode during profile completion`,
+            );
+          }
+        } else if (!inviter) {
+          logger.info(`Invalid referralCode provided on profile completion`);
+        }
+      } catch (e) {
+        logger.error(
+          `Error validating referral code on profile completion: ${safeStringify(e)}`,
+        );
+      }
+    }
+
+    if (filteredData.photo && typeof filteredData.photo === 'string') {
+      try {
+        const imageExists = await verifyImageExists(filteredData.photo);
+        if (!imageExists) {
+          logger.warn(
+            `Photo verification failed for user ${userId}: ${filteredData.photo}`,
+          );
+          return res.status(400).json({
+            error: 'Invalid photo: Image does not exist in our storage',
+          });
+        }
+        logger.info(
+          `Photo verification successful for user ${userId}: ${filteredData.photo}`,
+        );
+      } catch (error: any) {
+        logger.warn(
+          `Photo verification error for user ${userId}: ${safeStringify(error)}`,
+        );
+        filteredData.photo = user.photo || undefined;
       }
     }
 
@@ -153,12 +185,15 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
 
     const walletAddress = createWalletResponse.wallet?.address;
 
+    const referralCode = await generateUniqueReferralCode();
+
     await prisma.user.update({
       where: {
         id: userId as string,
       },
       data: {
         ...updatedData,
+        ...referredByUpdate,
         ...(correctedSkills
           ? {
               skills: correctedSkills,
@@ -173,6 +208,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
         superteamLevel: 'Lurker',
         isTalentFilled: true,
         walletAddress,
+        referralCode,
       },
     });
 
@@ -194,3 +230,11 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
 }
 
 export default withAuth(handler);
+
+export const config = {
+  api: {
+    bodyParser: {
+      sizeLimit: '10mb',
+    },
+  },
+};

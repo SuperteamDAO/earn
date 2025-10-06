@@ -112,6 +112,7 @@ export async function POST(
       sponsor,
       isVerifying,
       isEditing: false,
+      userId,
     });
     logger.debug(`Publishing listing with data: ${safeStringify(data)}`, {
       id,

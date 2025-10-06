@@ -1,7 +1,6 @@
-import type { Role } from '@prisma/client';
-
 import type { SponsorType } from '@/interface/sponsor';
 import type { User } from '@/interface/user';
+import type { Role } from '@/prisma/enums';
 
 interface UserSponsor {
   userId?: string;

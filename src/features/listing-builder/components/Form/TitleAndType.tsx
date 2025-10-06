@@ -1,4 +1,3 @@
-import type { CompensationType } from '@prisma/client';
 import { useQuery } from '@tanstack/react-query';
 import { useAtomValue } from 'jotai';
 import { Link } from 'lucide-react';
@@ -33,6 +32,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import type { CompensationType } from '@/prisma/enums';
 
 import { getListingIcon } from '@/features/listings/utils/getListingIcon';
 
@@ -66,10 +66,18 @@ export function TitleAndType() {
 
   const debouncedTitle = useDebounce(title);
   const slugifiedTitle = useMemo(() => {
-    return slugify(debouncedTitle, {
+    let slug = slugify(debouncedTitle, {
       lower: true,
       strict: true,
     });
+
+    if (slug.length > 120) {
+      slug = slug.substring(0, 120);
+    }
+
+    slug = slug.replace(/[^a-z0-9]+$/, '');
+
+    return slug;
   }, [debouncedTitle]);
 
   const { dirtyFields } = form.formState;
@@ -184,6 +192,10 @@ function Type() {
   const [pendingTypeChange, setPendingTypeChange] = useState<string | null>(
     null,
   );
+  const type = useWatch({
+    name: 'type',
+    control: form.control,
+  });
   const hackathonId = useWatch({
     name: 'hackathonId',
     control: form.control,
@@ -225,12 +237,24 @@ function Type() {
           values.maxBonusSpots || 0,
         ),
       );
+      if (Object.keys(values.rewards || {}).length === 0) {
+        form.setValue('rewards', { '1': NaN });
+      }
     } else {
       form.setValue('compensationType', prevCompType);
       if (prevCompType === 'fixed') {
         form.setValue('rewardAmount', values.rewards?.[1]);
       } else {
         form.setValue('rewardAmount', undefined);
+        console.log('pre type change ', values.rewards);
+        if (
+          values.rewards &&
+          Object.values(values.rewards).some(
+            (v) => v === null || v === undefined || v === 0 || Number.isNaN(v),
+          )
+        ) {
+          form.setValue('rewards', {});
+        }
       }
     }
 
@@ -245,6 +269,17 @@ function Type() {
     ]);
     if (!!form.getValues().id) form.saveDraft();
   };
+
+  const currentTypeLabel = useMemo(() => {
+    if (type === 'hackathon') return currentHackathon?.name;
+    return type;
+  }, [type, currentHackathon]);
+
+  const pendingTypeLabel = useMemo(() => {
+    if (hackathons?.some((h) => h.slug === pendingTypeChange))
+      return hackathons.find((h) => h.slug === pendingTypeChange)?.name;
+    return pendingTypeChange;
+  }, [pendingTypeChange, hackathons]);
 
   return (
     <FormField
@@ -313,8 +348,8 @@ function Type() {
                 <AlertDialogHeader>
                   <AlertDialogTitle>
                     Change Listing Type from{' '}
-                    <span className="capitalize">{field.value}</span> to{' '}
-                    <span className="capitalize">{pendingTypeChange}</span>
+                    <span className="capitalize">{currentTypeLabel}</span> to{' '}
+                    <span className="capitalize">{pendingTypeLabel}</span>
                   </AlertDialogTitle>
                   <AlertDialogDescription>
                     Changing the listing type will affect your listing details.

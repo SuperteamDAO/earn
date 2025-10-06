@@ -11,9 +11,13 @@
 cypress/screenshots
 cypress/videos
 
+# generated prisma client
+src/generated/
+
 # next.js
 /.next
 /out
+/next-env.d.ts
 
 # next-sitemap
 # public/robots.txt

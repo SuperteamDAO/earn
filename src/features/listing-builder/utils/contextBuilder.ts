@@ -1,14 +1,14 @@
 // used for api route, dont add use client here.
-import { type Hackathon, type User } from '@prisma/client';
-
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { type HackathonModel } from '@/prisma/models/Hackathon';
+import { type UserModel } from '@/prisma/models/User';
 
 import { type ListingWithSponsor } from '@/features/auth/utils/checkListingSponsorAuth';
 
 const fetchHackathon = async (
   hackathonId?: string,
-): Promise<Hackathon | undefined> => {
+): Promise<HackathonModel | undefined> => {
   if (!hackathonId) return undefined;
 
   const hackathon = await prisma.hackathon.findUnique({
@@ -25,7 +25,7 @@ const fetchHackathon = async (
   return hackathon || undefined;
 };
 
-const fetchUser = async (userId: string): Promise<User> => {
+const fetchUser = async (userId: string): Promise<UserModel> => {
   const user = await prisma.user.findUnique({
     where: { id: userId },
   });

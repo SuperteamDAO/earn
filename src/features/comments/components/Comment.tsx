@@ -1,4 +1,3 @@
-import { type CommentRefType } from '@prisma/client';
 import { AlertCircle, ChevronDown, Loader2, Pin, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 import posthog from 'posthog-js';
@@ -22,11 +21,13 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { URL_REGEX } from '@/constants/URL_REGEX';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { type Comment as IComment } from '@/interface/comments';
 import { type User } from '@/interface/user';
 import { api } from '@/lib/api';
+import { CommentRefType } from '@/prisma/enums';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';
@@ -100,6 +101,10 @@ export const Comment = ({
   const [pinError, setPinError] = useState(false);
   const [showOptions, setShowOptions] = useState(false);
   const cancelRef = useRef<any>(null);
+
+  const containsLink = newReply
+    .split(/\s+/)
+    .some((part) => URL_REGEX.test(part));
 
   useEffect(() => {
     const reply = localStorage.getItem(`comment-${refId}-${comment.id}`);
@@ -323,6 +328,13 @@ export const Comment = ({
                   onKeyDown={handleKeyDown}
                 />
               </div>
+              {containsLink && refType === CommentRefType.BOUNTY && (
+                <p className="mt-1 text-sm text-red-500">
+                  If this is your submission link, do not add it as a comment
+                  since it might be plagiarised. Your submission needs to be
+                  added to the submission form above to be considered.
+                </p>
+              )}
               {!!newReplyError && (
                 <p className="my-0 mt-4 text-xs text-red-500">
                   Error in adding your comment! Please try again!

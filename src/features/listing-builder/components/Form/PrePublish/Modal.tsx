@@ -20,6 +20,7 @@ import { Tooltip } from '@/components/ui/tooltip';
 import { useUser } from '@/store/user';
 
 import { isCreateListingAllowedQuery } from '@/features/listing-builder/queries/is-create-allowed';
+import { type SponsorVerificationSchema } from '@/features/sponsor/utils/sponsorVerificationSchema';
 
 import {
   confirmModalAtom,
@@ -219,7 +220,13 @@ export function PrePublish() {
                     if (isUpdate) posthog.capture('update listing_sponsor');
                     else posthog.capture('publish listing_sponsor');
                     if (data.status === 'VERIFYING') {
-                      if (data.reason?.includes('New sponsor'))
+                      const verificationInfo = user?.currentSponsor
+                        ?.verificationInfo as SponsorVerificationSchema;
+                      if (
+                        !verificationInfo?.fundingSource ||
+                        !verificationInfo?.telegram ||
+                        !verificationInfo?.superteamLead
+                      )
                         setConfirmModal('VERIFICATION_SHOW_FORM');
                       else setConfirmModal('VERIFICATION_SHOW_MODAL');
                     } else {

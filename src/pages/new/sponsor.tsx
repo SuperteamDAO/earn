@@ -12,6 +12,7 @@ import { toast } from 'sonner';
 
 import { ImagePicker } from '@/components/shared/ImagePicker';
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import {
   Form,
   FormControl,
@@ -26,11 +27,13 @@ import { MultiSelect } from '@/components/ui/multi-select';
 import { Separator } from '@/components/ui/separator';
 import { Tooltip } from '@/components/ui/tooltip';
 import { PDTG } from '@/constants/Telegram';
+import { useUploadImage } from '@/hooks/use-upload-image';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
+import { IMAGE_SOURCE } from '@/utils/image';
 
 import { SignIn } from '@/features/auth/components/SignIn';
 import { SocialInput } from '@/features/social/components/SocialInput';
@@ -50,13 +53,15 @@ const CreateSponsor = () => {
   const router = useRouter();
   const { ready, authenticated } = usePrivy();
   const { user, refetchUser } = useUser();
+  const { uploadFile, uploadAndReplace } = useUploadImage();
 
   const [selectedUserPhoto, setSelectedUserPhoto] = useState<File | null>(null);
   const [selectedLogo, setSelectedLogo] = useState<File | null>(null);
   const [logoPreview, setLogoPreview] = useState<string>('');
-  const [isUploading, setIsUploading] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [loginStep, setLoginStep] = useState(0);
+  const [acknowledgementAccepted, setAcknowledgementAccepted] = useState(false);
+  const [acknowledgementError, setAcknowledgementError] = useState('');
 
   const form = useForm<SponsorFormValues>({
     resolver: zodResolver(sponsorFormSchema),
@@ -191,9 +196,30 @@ const CreateSponsor = () => {
     isError,
   } = useMutation({
     mutationFn: async (data: SponsorFormValues) => {
+      router.prefetch('/dashboard/listings?open=1');
+
+      if (selectedUserPhoto && data.user) {
+        data.user.photo = user?.photo;
+        const uploadResult = await uploadAndReplace(
+          selectedUserPhoto,
+          { folder: 'earn-pfp', source: IMAGE_SOURCE.USER },
+          user?.photo || undefined,
+        );
+        data.user.photo = uploadResult.url;
+      }
+
       const { sponsorData, userData } = transformFormToApiData(data);
 
       try {
+        if (selectedLogo) {
+          const uploadResult = await uploadFile(selectedLogo, {
+            folder: 'earn-sponsor',
+            resource_type: 'image',
+            source: IMAGE_SOURCE.SPONSOR,
+          });
+          sponsorData.logo = uploadResult.url;
+        }
+
         await api.post('/api/sponsors/create', sponsorData);
 
         if (userData && shouldUpdateUser(userData, user)) {
@@ -210,6 +236,9 @@ const CreateSponsor = () => {
       }
     },
     onSuccess: async () => {
+      toast.success('Your Sponsor has been created!', {
+        description: 'Redirecting to dashboard...',
+      });
       await refetchUser();
       router.push('/dashboard/listings?open=1');
     },
@@ -237,7 +266,6 @@ const CreateSponsor = () => {
   const isSubmitDisabled = useMemo(
     () =>
       (!selectedLogo && !logoPreview) ||
-      isUploading ||
       isPending ||
       isSlugInvalid ||
       isUsernameInvalid ||
@@ -245,7 +273,6 @@ const CreateSponsor = () => {
     [
       selectedLogo,
       logoPreview,
-      isUploading,
       isPending,
       isSlugInvalid,
       isUsernameInvalid,
@@ -253,44 +280,26 @@ const CreateSponsor = () => {
     ],
   );
 
+  const validateAcknowledgement = (): boolean => {
+    if (!acknowledgementAccepted) {
+      setAcknowledgementError('Acknowledgement required');
+      return false;
+    }
+    setAcknowledgementError('');
+    return true;
+  };
+
   const onSubmit = async (data: SponsorFormValues) => {
+    if (!validateAcknowledgement()) return;
     if (isSubmitDisabled) return;
 
     try {
-      setIsUploading(true);
-
-      let userPhotoUrl = data.user?.photo;
-      if (selectedUserPhoto) {
-        const base64 = await new Promise<string>((resolve, reject) => {
-          const reader = new FileReader();
-          reader.readAsDataURL(selectedUserPhoto);
-          reader.onload = () => resolve(reader.result as string);
-          reader.onerror = reject;
-        });
-        userPhotoUrl = base64;
-        if (data.user) data.user.photo = userPhotoUrl;
-      }
-
-      let logoUrl = data.sponsor.logo;
-      if (selectedLogo) {
-        const base64 = await new Promise<string>((resolve, reject) => {
-          const reader = new FileReader();
-          reader.readAsDataURL(selectedLogo);
-          reader.onload = () => resolve(reader.result as string);
-          reader.onerror = reject;
-        });
-        logoUrl = base64;
-        data.sponsor.logo = logoUrl;
-      }
-
       posthog.capture('complete profile_sponsor');
       await createSponsor(data);
       if (user) posthog.identify(user.email);
     } catch (error) {
-      console.error('Error uploading images:', error);
-      toast.error('Failed to upload images. Please try again.');
-    } finally {
-      setIsUploading(false);
+      console.error('Error submitting form:', error);
+      toast.error('Failed to create sponsor. Please try again.');
     }
   };
 
@@ -488,6 +497,7 @@ const CreateSponsor = () => {
                 <div className="mt-6 mb-3 w-full">
                   <FormLabel isRequired>Company Logo</FormLabel>
                   <ImagePicker
+                    crop="square"
                     onChange={(file, previewUrl) => {
                       setSelectedLogo(file);
                       setLogoPreview(previewUrl);
@@ -563,6 +573,34 @@ const CreateSponsor = () => {
                     </p>
                   )}
                 </div>
+                <div className="my-6 flex flex-col gap-2">
+                  <div className="flex items-start space-x-2">
+                    <Checkbox
+                      id="acknowledgement"
+                      className="data-[state=checked]:border-brand-purple data-[state=checked]:bg-brand-purple mt-1"
+                      checked={acknowledgementAccepted}
+                      onCheckedChange={(checked) => {
+                        setAcknowledgementAccepted(checked as boolean);
+                        if (checked) {
+                          setAcknowledgementError('');
+                        }
+                      }}
+                    />
+                    <label
+                      htmlFor="acknowledgement"
+                      className="text-xs text-slate-500"
+                    >
+                      I understand and acknowledge that this project is built
+                      on, or supports, the Solana blockchain, and that Superteam
+                      Earn is a platform exclusively for teams and projects
+                      within the Solana ecosystem.
+                      <span className="text-red-500">*</span>
+                    </label>
+                  </div>
+                  {acknowledgementError && (
+                    <FormMessage>{acknowledgementError}</FormMessage>
+                  )}
+                </div>
                 <Button
                   className={cn(
                     'ph-no-capture h-11 w-full',
@@ -571,7 +609,7 @@ const CreateSponsor = () => {
                   disabled={isSubmitDisabled}
                   type="submit"
                 >
-                  {isUploading || isPending ? (
+                  {isPending ? (
                     <span className="flex items-center gap-1">
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                       <span>Creating...</span>

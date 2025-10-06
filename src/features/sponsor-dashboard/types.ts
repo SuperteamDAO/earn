@@ -1,7 +1,8 @@
-import { type GrantApplication, type GrantTranche } from '@prisma/client';
 import { z } from 'zod';
 
 import { type PrismaUserWithoutKYC } from '@/interface/user';
+import { type GrantApplicationModel } from '@/prisma/models/GrantApplication';
+import { type GrantTrancheModel } from '@/prisma/models/GrantTranche';
 
 export type ScoutRowType = {
   id: string;
@@ -16,10 +17,10 @@ export type ScoutRowType = {
   userId: string;
 };
 
-export interface GrantApplicationWithUser extends GrantApplication {
+export interface GrantApplicationWithUser extends GrantApplicationModel {
   user: PrismaUserWithoutKYC;
   totalEarnings?: number;
-  GrantTranche?: GrantTranche[];
+  GrantTranche?: GrantTrancheModel[];
 }
 
 export interface SponsorStats {
@@ -68,7 +69,11 @@ export const verifyPaymentsSchema = z.object({
           ...data,
           txId: data.isVerified
             ? ''
-            : data.link?.split('/tx/')[1]?.split('?')[0] || '',
+            : data.link
+                ?.split('/tx/')[1]
+                ?.split('?')[0]
+                ?.split('#')[0]
+                ?.trim() || '',
         })),
     )
     .refine((links) => links.some((link) => link.link || link.isVerified), {

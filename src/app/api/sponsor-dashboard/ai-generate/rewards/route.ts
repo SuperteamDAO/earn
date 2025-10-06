@@ -1,5 +1,4 @@
 import { openrouter } from '@openrouter/ai-sdk-provider';
-import { BountyType, CompensationType } from '@prisma/client';
 import { generateObject } from 'ai';
 import { headers } from 'next/headers';
 import { NextResponse } from 'next/server';
@@ -8,6 +7,7 @@ import { z } from 'zod';
 import logger from '@/lib/logger';
 import { aiGenerateRateLimiter } from '@/lib/ratelimit';
 import { checkAndApplyRateLimitApp } from '@/lib/rateLimiterService';
+import { BountyType, CompensationType } from '@/prisma/enums';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { getSponsorSession } from '@/features/auth/utils/getSponsorSession';
@@ -20,7 +20,6 @@ import { generateListingRewardsPrompt } from './prompts';
 
 const requestBodySchema = z.object({
   description: z.string().min(1, 'Description cannot be empty'),
-  inputReward: z.string().min(1, 'Input Reward cannot be empty'),
   type: z.nativeEnum(BountyType),
   token: z.string(),
   tokenUsdValue: z.number(),
@@ -119,13 +118,16 @@ export async function POST(request: Request) {
       system:
         'Your role is to generate proper rewards for listings, strictly adhering to the rules provided with each description and type.',
       prompt,
-      schema: responseSchema,
+      schema: responseSchema as any,
     });
 
     logger.info('Generated rewards object: ', safeStringify(object));
 
     const rewardsRecord: Record<string, number> = object.rewards.reduce(
-      (acc, rewardItem) => {
+      (
+        acc: Record<string, number>,
+        rewardItem: { rank: string; amount: number },
+      ) => {
         acc[rewardItem.rank] = rewardItem.amount;
         return acc;
       },

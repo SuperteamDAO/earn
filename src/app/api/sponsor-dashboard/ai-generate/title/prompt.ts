@@ -1,4 +1,4 @@
-import { type BountyType } from '@prisma/client';
+import { type BountyType } from '@/prisma/enums';
 
 export const generateListingTitlePrompt = (
   description: string,

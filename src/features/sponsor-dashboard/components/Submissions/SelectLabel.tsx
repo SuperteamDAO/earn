@@ -1,4 +1,3 @@
-import type { BountyType, SubmissionLabels } from '@prisma/client';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAtom, useSetAtom } from 'jotai';
 import { ChevronDown } from 'lucide-react';
@@ -12,6 +11,7 @@ import {
 import { StatusPill } from '@/components/ui/status-pill';
 import type { SubmissionWithUser } from '@/interface/submission';
 import { api } from '@/lib/api';
+import type { BountyType, SubmissionLabels } from '@/prisma/enums';
 import { cn } from '@/utils/cn';
 
 import { isStateUpdatingAtom, selectedSubmissionAtom } from '../../atoms';
@@ -50,12 +50,10 @@ export const SelectLabel = ({ listingSlug, type }: Props) => {
         id,
         label,
       }),
-    onSuccess: (
-      _response,
-      variables: { id: string; label: SubmissionLabels },
-    ) => {
+    onSuccess: (_response) => {
       setLabelsUpdating(false);
-
+    },
+    onMutate: (variables) => {
       queryClient.setQueryData<SubmissionWithUser[]>(
         ['sponsor-submissions', listingSlug],
         (old) => {
@@ -75,8 +73,7 @@ export const SelectLabel = ({ listingSlug, type }: Props) => {
         }
         return prev;
       });
-    },
-    onMutate: () => {
+
       setLabelsUpdating(true);
     },
     onError: (e) => {
@@ -109,27 +106,29 @@ export const SelectLabel = ({ listingSlug, type }: Props) => {
         sideOffset={-1}
         className="w-full min-w-[110px] rounded-t-none px-0 pt-1.5"
       >
-        {labelMenuOptions(type).map((option) => (
-          <DropdownMenuItem
-            key={option.value}
-            className="cursor-pointer px-1.5 py-1 text-center text-[0.7rem]"
-            onClick={() =>
-              selectLabel(
-                option.value as SubmissionLabels,
-                selectedSubmission?.id,
-              )
-            }
-          >
-            <StatusPill
-              color={colorMap[option.value as SubmissionLabels].color}
-              backgroundColor={colorMap[option.value as SubmissionLabels].bg}
-              borderColor={colorMap[option.value as SubmissionLabels].border}
-              className="w-fit text-[10px]"
+        {labelMenuOptions(type)
+          .filter((option) => !option.hidden)
+          .map((option) => (
+            <DropdownMenuItem
+              key={option.value}
+              className="cursor-pointer px-1.5 py-1 text-center text-[0.7rem]"
+              onClick={() =>
+                selectLabel(
+                  option.value as SubmissionLabels,
+                  selectedSubmission?.id,
+                )
+              }
             >
-              {option.label}
-            </StatusPill>
-          </DropdownMenuItem>
-        ))}
+              <StatusPill
+                color={colorMap[option.value as SubmissionLabels].color}
+                backgroundColor={colorMap[option.value as SubmissionLabels].bg}
+                borderColor={colorMap[option.value as SubmissionLabels].border}
+                className="w-fit text-[10px]"
+              >
+                {option.label}
+              </StatusPill>
+            </DropdownMenuItem>
+          ))}
       </DropdownMenuContent>
     </DropdownMenu>
   );

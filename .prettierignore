@@ -2,7 +2,7 @@ node_modules
 coverage
 .pnp
 .pnp.js
-generated/
+src/generated/
 
 .changeset
 .github

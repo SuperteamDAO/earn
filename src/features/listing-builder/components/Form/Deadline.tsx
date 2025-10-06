@@ -72,7 +72,11 @@ export function Deadline() {
   }, [isEditing, isGodMode]);
 
   const handleDeadlineSelection = (days: number) => {
-    return dayjs().add(days, 'day').format(DEADLINE_FORMAT).replace('Z', '');
+    return dayjs()
+      .add(days, 'day')
+      .endOf('day')
+      .format(DEADLINE_FORMAT)
+      .replace('Z', '');
   };
 
   // TODO: Debug why zod default for deadline specifically is not working
@@ -111,7 +115,7 @@ export function Deadline() {
             <div className="ring-primary flex rounded-md border has-focus:ring-1 has-[data-[state=open]]:ring-1">
               <DateTimePicker
                 value={field.value ? new Date(field.value) : undefined}
-                onChange={(date) => {
+                onChange={(date, uiOnly) => {
                   if (date) {
                     const formattedDate = dayjs(date).format(DEADLINE_FORMAT);
                     const localFormat = formattedDate.replace('Z', '');
@@ -119,7 +123,9 @@ export function Deadline() {
                   } else {
                     field.onChange(undefined);
                   }
-                  form.saveDraft();
+                  if (!uiOnly) {
+                    form.saveDraft();
+                  }
                 }}
                 use12HourFormat
                 hideSeconds

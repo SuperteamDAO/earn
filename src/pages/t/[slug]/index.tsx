@@ -1,9 +1,9 @@
 import { ChevronDown, ChevronUp, SquarePen } from 'lucide-react';
 import type { GetServerSideProps } from 'next';
+import dynamic from 'next/dynamic';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import posthog from 'posthog-js';
-import React, { type JSX, useEffect, useState } from 'react';
+import { type JSX, useEffect, useMemo, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 
 import { EmptySection } from '@/components/shared/EmptySection';
@@ -16,13 +16,19 @@ import { useDisclosure } from '@/hooks/use-disclosure';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import type { User } from '@/interface/user';
 import { Default } from '@/layouts/Default';
-import { api } from '@/lib/api';
+import { prisma } from '@/prisma';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 import { getURL } from '@/utils/validUrl';
 
 import { AuthWrapper } from '@/features/auth/components/AuthWrapper';
-import { FeedLoop } from '@/features/feed/components/FeedLoop';
+const FeedLoop = dynamic(
+  () =>
+    import('@/features/feed/components/FeedLoop').then((mod) => mod.FeedLoop),
+  {
+    ssr: false,
+  },
+);
 import { useGetFeed } from '@/features/feed/queries/useGetFeed';
 import { type FeedDataProps } from '@/features/feed/types';
 import {
@@ -31,9 +37,21 @@ import {
   Twitter,
   Website,
 } from '@/features/social/components/SocialIcons';
-import { AddProject } from '@/features/talent/components/AddProject';
+const AddProject = dynamic(
+  () =>
+    import('@/features/talent/components/AddProject').then(
+      (mod) => mod.AddProject,
+    ),
+  { ssr: false },
+);
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
-import { ShareProfile } from '@/features/talent/components/shareProfile';
+const ShareProfile = dynamic(
+  () =>
+    import('@/features/talent/components/shareProfile').then(
+      (mod) => mod.ShareProfile,
+    ),
+  { ssr: false },
+);
 
 type UserWithFeed = User & {
   feed: FeedDataProps[];
@@ -51,7 +69,6 @@ function TalentProfile({ talent, stats }: TalentProps) {
   const [activeTab, setActiveTab] = useState<'activity' | 'projects'>(
     'activity',
   );
-  const [randomIndex, setRandomIndex] = useState<number>(0);
   const [showSubskills, setShowSubskills] = useState<Record<number, boolean>>(
     {},
   );
@@ -67,14 +84,10 @@ function TalentProfile({ talent, stats }: TalentProps) {
     filter: 'new',
     timePeriod: '',
     isWinner: false,
-    take: 15,
+    take: 5,
     userId: talent?.id,
     takeOnlyType: activeTab === 'activity' ? undefined : 'pow',
   });
-
-  useEffect(() => {
-    refetch();
-  }, [activeTab]);
 
   useEffect(() => {
     if (inView && hasNextPage) {
@@ -91,9 +104,14 @@ function TalentProfile({ talent, stats }: TalentProps) {
   const { user } = useUser();
 
   useEffect(() => {
-    if (user?.id && talent?.id && user.id !== talent?.id)
-      posthog.capture('clicked profile_talent');
-  }, [talent]);
+    const track = async () => {
+      if (user?.id && talent?.id && user.id !== talent?.id) {
+        const { default: posthog } = await import('posthog-js');
+        posthog.capture('clicked profile_talent');
+      }
+    };
+    track();
+  }, [talent, user?.id]);
 
   const {
     isOpen: isOpenPow,
@@ -104,10 +122,22 @@ function TalentProfile({ talent, stats }: TalentProps) {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const bgImages = ['1.webp', '2.webp', '3.webp', '4.webp', '5.webp'];
-
-  useEffect(() => {
-    setRandomIndex(Math.floor(Math.random() * bgImages.length));
-  }, []);
+  const hashStringToInt = (input: string): number => {
+    let hash = 0;
+    for (let i = 0; i < input.length; i++) {
+      hash = (hash << 5) - hash + input.charCodeAt(i);
+      hash |= 0;
+    }
+    return Math.abs(hash);
+  };
+  const bgIndex = useMemo(() => {
+    return talent?.id ? hashStringToInt(talent.id) % bgImages.length : 0;
+  }, [talent?.id]);
+  const coverUrl = `${ASSET_URL}/bg/profile-cover/${bgImages[bgIndex]}`;
+  const optimizedCoverUrl = coverUrl.replace(
+    '/upload/',
+    '/upload/f_auto,q_auto/',
+  );
 
   const socialLinks = [
     { Icon: Twitter, link: talent?.twitter },
@@ -247,6 +277,13 @@ function TalentProfile({ talent, stats }: TalentProps) {
             content="width=device-width, initial-scale=1, maximum-scale=1"
             key="viewport"
           />
+          <link
+            rel="preconnect"
+            href="https://res.cloudinary.com"
+            crossOrigin=""
+          />
+          <link rel="dns-prefetch" href="https://res.cloudinary.com" />
+          <link rel="preload" as="image" href={optimizedCoverUrl} />
         </Head>
       }
     >
@@ -258,7 +295,7 @@ function TalentProfile({ talent, stats }: TalentProps) {
           <div
             className="h-[100px] w-full bg-cover bg-no-repeat md:h-[30vh]"
             style={{
-              backgroundImage: `url(${ASSET_URL}/bg/profile-cover/${bgImages[randomIndex]})`,
+              backgroundImage: `url(${optimizedCoverUrl})`,
             }}
           />
           <div className="relative top-0 mx-auto max-w-[700px] rounded-[20px] bg-white px-4 py-7 md:-top-40 md:px-7">
@@ -268,6 +305,8 @@ function TalentProfile({ talent, stats }: TalentProps) {
                   className="h-14 w-14 md:h-16 md:w-16"
                   id={talent?.id}
                   avatar={talent?.photo}
+                  imgLoading="eager"
+                  imgFetchPriority="high"
                 />
 
                 <p className="mt-6 text-lg font-semibold text-slate-900 md:text-xl">
@@ -467,10 +506,9 @@ function TalentProfile({ talent, stats }: TalentProps) {
               </div>
             </div>
             <Separator className="my-4" />
-            <div>
+            <div style={{ contentVisibility: 'auto' }}>
               <FeedLoop
                 feed={feedItems}
-                ref={ref}
                 isFetchingNextPage={isFetchingNextPage}
                 isLoading={isLoading}
                 type="profile"
@@ -504,6 +542,7 @@ function TalentProfile({ talent, stats }: TalentProps) {
                   Browse Bounties
                 </Button>
               </FeedLoop>
+              <div ref={ref} style={{ height: 10 }} />
             </div>
           </div>
         </div>
@@ -521,14 +560,69 @@ function TalentProfile({ talent, stats }: TalentProps) {
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { slug } = context.query;
   try {
-    const talentReq = await api.post(`${getURL()}/api/user/info`, {
-      username: slug,
+    context.res.setHeader(
+      'Cache-Control',
+      's-maxage=60, stale-while-revalidate=600',
+    );
+
+    const username = Array.isArray(slug) ? slug[0] : (slug as string);
+
+    const talent = await prisma.user.findUnique({
+      where: { username },
+      select: {
+        id: true,
+        twitter: true,
+        linkedin: true,
+        github: true,
+        website: true,
+        username: true,
+        workPrefernce: true,
+        firstName: true,
+        lastName: true,
+        skills: true,
+        photo: true,
+        currentEmployer: true,
+        location: true,
+      },
     });
-    const statsReq = await api.post(`${getURL()}/api/user/public-stats`, {
-      username: slug,
-    });
-    const talent = talentReq.data;
-    const stats = statsReq.data;
+
+    if (!talent) {
+      return { props: { talent: null } };
+    }
+
+    const userId = talent.id;
+
+    const [participations, wins, listingAgg, grantAgg] = await Promise.all([
+      prisma.submission.count({ where: { userId } }),
+      prisma.submission.count({
+        where: {
+          userId,
+          isWinner: true,
+          listing: { isWinnersAnnounced: true },
+        },
+      }),
+      prisma.submission.aggregate({
+        where: {
+          userId,
+          isWinner: true,
+          listing: { isWinnersAnnounced: true },
+        },
+        _sum: { rewardInUSD: true },
+      }),
+      prisma.grantApplication.aggregate({
+        where: {
+          userId,
+          applicationStatus: { in: ['Approved', 'Completed'] },
+        },
+        _sum: { approvedAmountInUSD: true },
+      }),
+    ]);
+
+    const listingWinnings = listingAgg._sum.rewardInUSD || 0;
+    const grantWinnings = grantAgg._sum.approvedAmountInUSD || 0;
+    const totalWinnings = (listingWinnings || 0) + (grantWinnings || 0);
+
+    const stats = { participations, wins, totalWinnings };
 
     return {
       props: { talent, stats },

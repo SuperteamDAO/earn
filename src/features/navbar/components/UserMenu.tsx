@@ -14,6 +14,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { generateTelegramBotUrl } from '@/constants/Telegram';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { useLogout, useUser } from '@/store/user';
 
@@ -26,6 +27,12 @@ export function UserMenu() {
   const { user, isLoading } = useUser();
   const logout = useLogout();
   const { isOpen, onClose, onOpen } = useDisclosure();
+
+  // Check if user has clicked on telegram alerts before
+  const hasSeenTelegramAlerts = () => {
+    if (typeof window === 'undefined') return false;
+    return localStorage.getItem('telegram-alerts-shown') === 'true';
+  };
 
   useEffect(() => {
     const checkHashAndOpenModal = () => {
@@ -50,6 +57,14 @@ export function UserMenu() {
       { shallow: true },
     );
     onClose();
+  };
+
+  const handleTelegramAlertsClick = () => {
+    // Mark telegram alerts as shown in localStorage
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('telegram-alerts-shown', 'true');
+    }
+    posthog.capture('telegram notifications_user menu');
   };
 
   if (isLoading) {
@@ -90,6 +105,9 @@ export function UserMenu() {
                 {user?.firstName ?? user?.email ?? ''}
               </p>
             </div>
+            {!hasSeenTelegramAlerts() && (
+              <div className="block h-1.5 w-1.5 rounded-full bg-sky-400" />
+            )}
             <ChevronDown className="block size-4 text-slate-400" />
           </div>
         </DropdownMenuTrigger>
@@ -169,6 +187,22 @@ export function UserMenu() {
               Email Preferences
             </DropdownMenuItem>
           )}
+
+          <DropdownMenuItem asChild>
+            <Link
+              href={generateTelegramBotUrl(user?.email)}
+              target="_blank"
+              onClick={handleTelegramAlertsClick}
+              className="text-sm tracking-tight text-slate-500"
+            >
+              <div className="flex items-center gap-2">
+                <span>Telegram Alerts</span>
+                {!hasSeenTelegramAlerts() && (
+                  <div className="block h-1.5 w-1.5 rounded-full bg-sky-400" />
+                )}
+              </div>
+            </Link>
+          </DropdownMenuItem>
 
           <SupportFormDialog>
             <DropdownMenuItem

@@ -1,4 +1,3 @@
-import { SubmissionLabels, SubmissionStatus } from '@prisma/client';
 import { TooltipArrow } from '@radix-ui/react-tooltip';
 import { useMutation } from '@tanstack/react-query';
 import dayjs from 'dayjs';
@@ -6,6 +5,7 @@ import {
   AlertTriangle,
   Check,
   ChevronLeft,
+  CopyIcon,
   Download,
   ExternalLink,
   MoreVertical,
@@ -36,9 +36,12 @@ import { PDTG } from '@/constants/Telegram';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { type SubmissionWithUser } from '@/interface/submission';
 import { api } from '@/lib/api';
+import { SubmissionLabels, SubmissionStatus } from '@/prisma/enums';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
+import { getURL } from '@/utils/validUrl';
 
+import { BoostButton } from '@/features/listing-builder/components/Form/Boost/BoostButton';
 import { type Listing } from '@/features/listings/types';
 import { isDeadlineOver } from '@/features/listings/utils/deadline';
 import { getColorStyles } from '@/features/listings/utils/getColorStyles';
@@ -47,6 +50,7 @@ import { getListingStatus } from '@/features/listings/utils/status';
 import { VerifyPaymentModal } from '@/features/sponsor-dashboard/components/Modals/VerifyPayment';
 
 import { UnpublishModal } from '../Modals/UnpublishModal';
+import AiReviewBountiesSubmissionsModal from './Modals/AiReviewBounties';
 import AiReviewProjectApplicationsModal from './Modals/AiReviewProjects';
 
 interface Props {
@@ -156,6 +160,34 @@ export const SubmissionHeader = ({
     exportMutation.mutate();
   };
 
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text).then(
+      () => {
+        toast.success('Link Copied', {
+          duration: 3000,
+        });
+      },
+      (err) => {
+        console.error('Failed to copy text: ', err);
+      },
+    );
+  };
+
+  const getEditText = () => {
+    if (bounty?.type === 'grant') return null;
+    if (bounty?.type === 'bounty') return 'Edit Bounty';
+    if (bounty?.type === 'project') return 'Edit Project';
+    if (bounty?.type === 'hackathon') return 'Edit Track';
+    return 'Edit';
+  };
+
+  const getListingUrl = () => {
+    if (bounty?.type === 'grant') {
+      return `${getURL()}grants/${bounty.slug}`;
+    }
+    return `${getURL()}listing/${bounty?.slug}`;
+  };
+
   const pastDeadline = isDeadlineOver(bounty?.deadline);
 
   const totalPodiumSpots = remainings
@@ -174,7 +206,7 @@ export const SubmissionHeader = ({
     bountyStatus === 'In Review';
 
   return (
-    <div className="mb-2 flex items-center justify-between">
+    <div className="mb-2 flex items-center justify-between gap-12">
       <div>
         <Breadcrumb className="text-slate-400">
           <BreadcrumbList>
@@ -231,13 +263,22 @@ export const SubmissionHeader = ({
                 View Listing
               </DropdownMenuItem>
 
+              <DropdownMenuItem
+                onClick={() => copyToClipboard(getListingUrl())}
+                className="cursor-pointer"
+              >
+                <CopyIcon className="size-4" />
+                Copy Link
+              </DropdownMenuItem>
+
               {!!(
                 (user?.role === 'GOD' && bounty?.type !== 'grant') ||
                 (bounty?.isPublished &&
                   !pastDeadline &&
                   bounty.type !== 'grant')
               ) &&
-                !isHackathonPage && (
+                !isHackathonPage &&
+                getEditText() && (
                   <DropdownMenuItem className="cursor-pointer" asChild>
                     <Link
                       href={
@@ -247,25 +288,32 @@ export const SubmissionHeader = ({
                       }
                     >
                       <Pencil className="size-4" />
-                      Edit
+                      {getEditText()}
                     </Link>
                   </DropdownMenuItem>
                 )}
             </DropdownMenuContent>
           </DropdownMenu>
           <StatusPill
-            className="ml-2 w-fit text-[0.8rem]"
+            className="mr-6 ml-2 w-fit text-[0.8rem]"
             color={getColorStyles(bountyStatus).color}
             backgroundColor={getColorStyles(bountyStatus).bgColor}
             borderColor={getColorStyles(bountyStatus).borderColor}
           >
             {bountyStatus}
           </StatusPill>
+          <BoostButton listing={bounty!} />
 
           <div className="ml-4 -translate-y-2.5">
             <AiReviewProjectApplicationsModal
               listing={bounty}
               applications={submissions}
+            />
+          </div>
+          <div className="ml-4 -translate-y-2.5">
+            <AiReviewBountiesSubmissionsModal
+              listing={bounty}
+              submissions={submissions}
             />
           </div>
         </div>

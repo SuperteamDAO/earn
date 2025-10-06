@@ -29,7 +29,8 @@ type EmailType =
   | 'commentReply'
   | 'commentTag'
   | 'scoutInvite'
-  | 'spamCredit';
+  | 'spamCredit'
+  | 'telegramNewListing';
 
 interface EmailNotificationParams {
   type: EmailType;
@@ -37,6 +38,7 @@ interface EmailNotificationParams {
   userId?: string;
   otherInfo?: any;
   triggeredBy: any;
+  delay?: number;
 }
 
 const redis = new Redis(process.env.REDIS_URL!, { maxRetriesPerRequest: null });
@@ -48,6 +50,7 @@ export async function queueEmail({
   userId, // pass userId of the person you are sending the email to
   otherInfo,
   triggeredBy,
+  delay,
 }: EmailNotificationParams): Promise<void> {
   logger.info(
     `Queueing email notification: type=${type}, userId=${userId}, id=${id}, triggeredBy=${triggeredBy}`,
@@ -68,6 +71,7 @@ export async function queueEmail({
         priority: 1,
         removeOnComplete: true,
         removeOnFail: 500,
+        delay,
       },
     );
 

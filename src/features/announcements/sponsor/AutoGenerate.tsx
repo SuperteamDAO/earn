@@ -16,7 +16,7 @@ export const AutoGenerateFeature = () => {
         />
       </AspectRatio>
       <div className="p-6 pb-0">
-        <p className="text-lg font-semibold">Auto Generate your Listings</p>
+        <p className="text-lg font-semibold">Generate your Listings with AI</p>
         <p className="mt-2 text-base font-normal text-slate-500">
           Creating a listing is now effortless! Provide a few details and let
           our AI generate a complete listing for you, saving you time and

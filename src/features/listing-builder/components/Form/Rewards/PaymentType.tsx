@@ -1,4 +1,4 @@
-import { CompensationType } from '@prisma/client';
+import { useWatch } from 'react-hook-form';
 
 import {
   FormControl,
@@ -14,6 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { CompensationType } from '@/prisma/enums';
 
 import { useListingForm } from '../../../hooks';
 
@@ -36,6 +37,10 @@ const descriptionByType = (type: CompensationType) => {
 
 export function PaymentType() {
   const form = useListingForm();
+  const rewards = useWatch({
+    control: form.control,
+    name: 'rewards',
+  });
   return (
     <FormField
       name="compensationType"
@@ -55,6 +60,18 @@ export function PaymentType() {
                   field.onChange(e);
                   if (e !== 'fixed') {
                     form.setValue('rewardAmount', undefined);
+                    if (
+                      rewards &&
+                      Object.values(rewards).some(
+                        (v) =>
+                          v === null ||
+                          v === undefined ||
+                          v === 0 ||
+                          Number.isNaN(v),
+                      )
+                    ) {
+                      form.setValue('rewards', {});
+                    }
                   }
                   form.saveDraft();
                 }}

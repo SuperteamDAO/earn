@@ -1,24 +1,25 @@
-import {
-  type BountyType,
-  type CompensationType,
-  type Hackathon,
-} from '@prisma/client';
 import { z } from 'zod';
 
+import { type BountyType, type CompensationType } from '@/prisma/enums';
+import { type HackathonModel } from '@/prisma/models/Hackathon';
 import { dayjs } from '@/utils/dayjs';
 
 import { type Listing } from '@/features/listings/types';
 
+import { type GeneratedListingData } from '../atoms';
 import { DEADLINE_FORMAT } from '../constants';
 import { type ListingFormData } from '../types';
 import { createListingFormSchema } from '../types/schema';
+import { calculateTotalRewardsForPodium } from './rewards';
+
 interface ListingDefaults {
   isGod: boolean;
   isEditing: boolean;
   isST: boolean;
   type?: BountyType;
-  hackathons?: Hackathon[];
+  hackathons?: HackathonModel[];
   hackathonId?: string;
+  generatedListing?: GeneratedListingData;
 }
 
 export const getListingDefaults = ({
@@ -28,6 +29,7 @@ export const getListingDefaults = ({
   type = 'bounty',
   hackathons,
   hackathonId,
+  generatedListing,
 }: ListingDefaults) => {
   const schema = createListingFormSchema({
     isGod,
@@ -95,6 +97,47 @@ export const getListingDefaults = ({
     }
   }
   defaults['isFndnPaying'] = false;
+
+  if (generatedListing) {
+    if (generatedListing.type) {
+      defaults['type'] = generatedListing.type;
+    }
+    if (generatedListing.description) {
+      defaults['description'] = generatedListing.description;
+    }
+    if (generatedListing.title) {
+      defaults['title'] = generatedListing.title;
+    }
+    if (generatedListing.token) {
+      defaults['token'] = generatedListing.token;
+    }
+    if (generatedListing.rewards) {
+      defaults['compensationType'] = generatedListing.rewards.compensationType;
+      const generatedCompensationType =
+        generatedListing.rewards.compensationType;
+      if (generatedCompensationType === 'fixed') {
+        defaults['rewards'] = generatedListing.rewards.rewards;
+        defaults['maxBonusSpots'] = generatedListing.rewards.maxBonusSpots || 0;
+        const totalReward = calculateTotalRewardsForPodium(
+          generatedListing.rewards.rewards || {},
+          generatedListing.rewards.maxBonusSpots || 0,
+        );
+        defaults['rewardAmount'] = totalReward;
+      } else if (generatedCompensationType === 'range') {
+        defaults['minRewardAsk'] =
+          generatedListing.rewards.minRewardAsk || null;
+        defaults['maxRewardAsk'] =
+          generatedListing.rewards.maxRewardAsk || null;
+      }
+    }
+    if (generatedListing.skills) {
+      defaults['skills'] = generatedListing.skills;
+    }
+    if (generatedListing.eligibilityQuestions && type !== 'hackathon') {
+      defaults['eligibility'] = generatedListing.eligibilityQuestions;
+    }
+  }
+
   return defaults as ListingFormData;
 };
 
@@ -148,14 +191,23 @@ export function transformListingToFormListing(
     id: listing.id,
     deadline:
       listing.deadline ||
-      dayjs().add(7, 'day').format(DEADLINE_FORMAT).replace('Z', ''),
+      dayjs()
+        .add(7, 'day')
+        .endOf('day')
+        .format(DEADLINE_FORMAT)
+        .replace('Z', ''),
     commitmentDate:
       listing.commitmentDate ||
       dayjs(
         listing.deadline ||
-          dayjs().add(7, 'day').format(DEADLINE_FORMAT).replace('Z', ''),
+          dayjs()
+            .add(7, 'day')
+            .endOf('day')
+            .format(DEADLINE_FORMAT)
+            .replace('Z', ''),
       )
         .add(14, 'day')
+        .endOf('day')
         .format(DEADLINE_FORMAT)
         .replace('Z', ''),
     slug: listing.slug || '',

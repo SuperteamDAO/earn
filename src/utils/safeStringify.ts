@@ -14,3 +14,19 @@ export function safeStringify(obj: unknown) {
     return obj;
   }
 }
+
+export function convertDatesToISO<TInput>(input: TInput): TInput {
+  const recur = (value: any): any => {
+    if (value instanceof Date) return value.toISOString();
+    if (Array.isArray(value)) return value.map(recur);
+    if (value && typeof value === 'object') {
+      const out: Record<string, any> = {};
+      for (const key of Object.keys(value)) {
+        out[key] = recur((value as any)[key]);
+      }
+      return out;
+    }
+    return value;
+  };
+  return recur(input);
+}

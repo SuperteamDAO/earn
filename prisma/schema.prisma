@@ -66,15 +66,16 @@ model Bounties {
   Comments           Comment[]
   discordMessageIds  Json?
   ai                 Json?
+  publishedBy        String?
+  XWeeklyThread      String?
+  XStandalonePost    String?
 
   @@index([id, slug])
-  @@index([sponsorId])
   @@index([pocId])
   @@index([templateId])
   @@index([hackathonId])
   @@index([isPublished, isPrivate])
   @@index([deadline, updatedAt])
-  @@index([isWinnersAnnounced])
   @@index([title])
   @@index([deadline(sort: Asc)], map: "Bounties_deadline_asc_idx")
   @@index([deadline(sort: Desc)], map: "Bounties_deadline_desc_idx")
@@ -175,7 +176,6 @@ model Comment {
   @@index([id, refId])
   @@index([authorId])
   @@index([replyToId])
-  @@index([refId])
   @@index([refId, isActive, isArchived, type])
   @@index([refId, isActive, isArchived, replyToId])
   @@index([refType, type])
@@ -229,8 +229,6 @@ model Grants {
 
   @@index([id, slug])
   @@index([pocId])
-  @@index([sponsorId])
-  @@index([isPublished, isActive, isArchived, isPrivate])
   @@index([isPublished, isActive, isArchived, status])
   @@index([region, isPublished, isActive])
   @@index([slug])
@@ -286,8 +284,6 @@ model GrantApplication {
   GrantTranche        GrantTranche[]
   CreditLedger        CreditLedger[]
 
-  @@index([userId])
-  @@index([grantId])
   @@index([likeCount])
   @@index([grantId, userId, applicationStatus])
   @@index([applicationStatus, decidedAt])
@@ -350,8 +346,6 @@ model Submission {
   paymentSynced      Boolean          @default(false)
 
   @@index([id, listingId])
-  @@index([userId])
-  @@index([listingId])
   @@index([isWinner])
   @@index([createdAt, isWinner])
   @@index([createdAt, listingId])
@@ -394,35 +388,6 @@ model Sponsors {
   @@index([isVerified, st])
   @@index([isCaution, isVerified])
   @@index([isActive, isArchived])
-}
-
-model Account {
-  id                String  @id @default(uuid())
-  userId            String
-  type              String
-  provider          String
-  providerAccountId String
-  refresh_token     String? @db.Text
-  access_token      String? @db.Text
-  expires_at        Int?
-  token_type        String?
-  scope             String?
-  id_token          String? @db.Text
-  session_state     String?
-  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([provider, providerAccountId])
-  @@index([userId])
-}
-
-model Session {
-  id           String   @id @default(uuid())
-  sessionToken String   @unique
-  userId       String
-  expires      DateTime
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([userId])
 }
 
 model User {
@@ -475,8 +440,6 @@ model User {
   UserInvites        UserInvites[]
   SubscribeBounty    SubscribeBounty[]
   PoW                PoW[]
-  accounts           Account[]
-  sessions           Session[]
   Hackathon          Hackathon?           @relation(fields: [hackathonId], references: [id])
   emailSettings      EmailSettings[]
   TalentRankings     TalentRankings[]
@@ -500,6 +463,8 @@ model User {
   referredById       String?
   referredBy         User?                @relation("UserReferrals", fields: [referredById], references: [id], onDelete: NoAction, onUpdate: NoAction)
   referrals          User[]               @relation("UserReferrals")
+  telegramUsers      TelegramUser[]
+  emailLogs          emailLogs[]
 
   @@index([currentSponsorId])
   @@index([hackathonId])
@@ -524,7 +489,6 @@ model Scouts {
   user          User     @relation(fields: [userId], references: [id])
 
   @@unique([userId, listingId])
-  @@index([listingId])
   @@index([listingId, invited])
   @@index([listingId, score(sort: Desc)])
   @@index([userId, listingId, invited])
@@ -544,7 +508,6 @@ model TalentRankings {
   user             User                   @relation(fields: [userId], references: [id])
 
   @@unique([userId, skill, timeframe])
-  @@index([skill, timeframe])
   @@index([skill, timeframe, rank(sort: Asc)])
   @@index([totalEarnedInUSD(sort: Desc)])
   @@index([rank(sort: Asc)])
@@ -567,7 +530,6 @@ model PoW {
   ogImage     String?   @db.Text
   Comments    Comment[]
 
-  @@index([userId])
   @@index([createdAt])
   @@index([likeCount])
   @@index([likeCount(sort: Desc), createdAt(sort: Desc)])
@@ -582,7 +544,6 @@ model EmailSettings {
   user     User   @relation(fields: [userId], references: [id])
 
   @@index([userId, category])
-  @@index([userId])
   @@index([category])
 }
 
@@ -622,6 +583,7 @@ model emailLogs {
   type      EmailType
   bountyId  String?
   userId    String?
+  user      User?     @relation(fields: [userId], references: [id])
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 
@@ -656,9 +618,6 @@ model SubscribeBounty {
   Bounties   Bounties? @relation(fields: [bountyId], references: [id])
 
   @@unique([userId, bountyId])
-  @@index([bountyId])
-  @@index([userId])
-  @@index([userId, bountyId])
   @@index([bountyId, isArchived])
   @@index([userId, isArchived])
 }
@@ -675,14 +634,6 @@ model SubscribeHackathon {
 
   @@index([hackathonId])
   @@index([userId])
-}
-
-model VerificationToken {
-  identifier String
-  token      String   @unique
-  expires    DateTime
-
-  @@unique([identifier, token])
 }
 
 model Hackathon {
@@ -735,6 +686,24 @@ model CreditLedger {
   @@index([effectiveMonth])
 }
 
+model TelegramUser {
+  id           String   @id @default(uuid())
+  telegramId   BigInt   @unique
+  username     String?
+  chatId       BigInt
+  isSubscribed Boolean  @default(false)
+  isOnboarded  Boolean  @default(false)
+  preferences  Json?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  user   User?   @relation(fields: [userId], references: [id])
+  userId String?
+
+  @@index([userId])
+  @@index([isSubscribed])
+}
+
 enum CreditEventType {
   SUBMISSION
   SPAM_PENALTY
@@ -776,6 +745,8 @@ enum EmailType {
   WALLET_ANNOUNCEMENT
   CREDITS_ANNOUNCEMENT
   AUTO_GENERATE_ANNOUNCEMENT
+  NEW_LISTING_TELEGRAM
+  REFERRAL_ANNOUNCEMENT
 }
 
 enum Role {
@@ -854,6 +825,8 @@ enum SubmissionLabels {
   Mid_Quality
   High_Quality
   Pending
+  Inaccessible
+  Needs_Review
 }
 
 enum TalentRankingTimeframe {

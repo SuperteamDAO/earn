@@ -41,6 +41,7 @@ import { cn } from '@/utils/cn';
 import { getURL } from '@/utils/validUrl';
 
 import { grantAmount } from '@/features/grants/utils/grantAmount';
+import { BoostButton } from '@/features/listing-builder/components/Form/Boost/BoostButton';
 import { isListingEditable } from '@/features/listing-builder/utils/isListingEditable';
 import { type ListingWithSubmissions } from '@/features/listings/types';
 import { formatDeadline } from '@/features/listings/utils/deadline';
@@ -192,6 +193,7 @@ export const ListingTable = ({
               <ListingTh>Status</ListingTh>
               <ListingTh className="pl-6">Actions</ListingTh>
               <TableHead className="pl-0" />
+              <TableHead className="pl-0" />
             </TableRow>
           </TableHeader>
           <TableBody className="w-full">
@@ -233,29 +235,40 @@ export const ListingTable = ({
                     </Tooltip>
                   </TableCell>
                   <TableCell className="max-w-80 font-medium break-words whitespace-normal text-slate-700">
-                    {listing.isPublished ? (
-                      <Link
-                        className="ph-no-capture"
-                        href={listingSubmissionLink}
-                        onClick={() => {
-                          posthog.capture('submissions_sponsor');
-                        }}
-                      >
+                    {(() => {
+                      const isClickable =
+                        listing.isPublished ||
+                        isListingEditable({ listing, user });
+                      const href = listing.isPublished
+                        ? listingSubmissionLink
+                        : `/dashboard/listings/${listing.slug}/edit`;
+                      const onClick = listing.isPublished
+                        ? () => posthog.capture('submissions_sponsor')
+                        : () => posthog.capture('edit listing_sponsor');
+
+                      const titleElement = (
                         <p
-                          className="cursor-pointer overflow-hidden text-[15px] font-medium text-ellipsis whitespace-nowrap text-slate-500 hover:underline"
+                          className={`overflow-hidden text-[15px] font-medium text-ellipsis whitespace-nowrap text-slate-500 ${
+                            isClickable ? 'cursor-pointer hover:underline' : ''
+                          }`}
                           title={listing.title}
                         >
                           {listing.title}
                         </p>
-                      </Link>
-                    ) : (
-                      <p
-                        className="overflow-hidden text-[15px] font-medium text-ellipsis whitespace-nowrap text-slate-500"
-                        title={listing.title}
-                      >
-                        {listing.title}
-                      </p>
-                    )}
+                      );
+
+                      return isClickable ? (
+                        <Link
+                          className="ph-no-capture"
+                          href={href}
+                          onClick={onClick}
+                        >
+                          {titleElement}
+                        </Link>
+                      ) : (
+                        titleElement
+                      );
+                    })()}
                   </TableCell>
                   <TableCell className="py-2">
                     <p className="text-center text-sm font-medium text-slate-500">
@@ -317,7 +330,7 @@ export const ListingTable = ({
                       {listingStatus}
                     </StatusPill>
                   </TableCell>
-                  <TableCell className="px-3 py-2">
+                  <TableCell className="px-0 py-2">
                     {listing.status === 'OPEN' && !!listing.isPublished ? (
                       <Button
                         variant="ghost"
@@ -336,16 +349,26 @@ export const ListingTable = ({
                         )}
                       </Button>
                     ) : isListingEditable({ listing, user }) ? (
-                      <Link href={`/dashboard/listings/${listing.slug}/edit/`}>
+                      <Link href={`/dashboard/listings/${listing.slug}/edit`}>
                         <Button
                           variant="ghost"
                           size="sm"
                           className="text-[13px] font-medium text-slate-500 hover:bg-slate-200"
+                          onClick={() => {
+                            posthog.capture('edit listing_sponsor');
+                          }}
                         >
                           <Pencil className="h-4 w-4" />
                           Edit
                         </Button>
                       </Link>
+                    ) : (
+                      <></>
+                    )}
+                  </TableCell>
+                  <TableCell className="px-0 py-2">
+                    {listingStatus === 'In Progress' ? (
+                      <BoostButton listing={listing} showDate={false} />
                     ) : (
                       <></>
                     )}

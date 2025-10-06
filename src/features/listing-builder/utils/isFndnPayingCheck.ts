@@ -1,11 +1,10 @@
-import { type Sponsors } from '@prisma/client';
-
 import logger from '@/lib/logger';
+import { type SponsorsModel } from '@/prisma/models/Sponsors';
 
 import { type ListingFormData } from '../types';
 
 interface IsFndnPayingCheckProps {
-  sponsor: Sponsors;
+  sponsor: SponsorsModel;
   validatedListing: ListingFormData;
 }
 export const isFndnPayingCheck = ({

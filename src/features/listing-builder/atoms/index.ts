@@ -1,11 +1,27 @@
-import { type Hackathon } from '@prisma/client';
 import { atom, createStore } from 'jotai';
 import { atomWithMutation } from 'jotai-tanstack-query';
 
+import { type TRewardsGenerateResponse } from '@/app/api/sponsor-dashboard/ai-generate/rewards/route';
+import { type TTitleGenerateResponse } from '@/app/api/sponsor-dashboard/ai-generate/title/route';
+import { type TTokenGenerateResponse } from '@/app/api/sponsor-dashboard/ai-generate/token/route';
+import { type BountyType } from '@/generated/prisma/enums';
+import { type Skills } from '@/interface/skills';
 import { api } from '@/lib/api';
+import { type HackathonModel } from '@/prisma/models/Hackathon';
 import { convertUndefinedToNull } from '@/utils/undefinedToNull';
 
 import { type ListingFormData, type ListingStatus } from '../types';
+import { type TEligibilityQuestion } from '../types/schema';
+
+export interface GeneratedListingData {
+  description?: string;
+  token?: TTokenGenerateResponse['token'];
+  title?: TTitleGenerateResponse['title'];
+  rewards?: TRewardsGenerateResponse;
+  skills?: Skills;
+  eligibilityQuestions?: TEligibilityQuestion[];
+  type?: BountyType;
+}
 
 const store: ReturnType<typeof createStore> = createStore();
 
@@ -14,11 +30,12 @@ const isSTAtom = atom<boolean>(false);
 const isEditingAtom = atom<boolean>(false);
 const listingStatusAtom = atom<ListingStatus | undefined>(undefined);
 const isDraftSavingAtom = atom(false);
-const hackathonsAtom = atom<Hackathon[] | undefined>(undefined);
+const hackathonsAtom = atom<HackathonModel[] | undefined>(undefined);
 const hideAutoSaveAtom = atom<boolean>(true);
 const descriptionKeyAtom = atom<string | number>(1);
 const skillsKeyAtom = atom<string | number>(1);
 const isAutoGenerateOpenAtom = atom<boolean>(false);
+const generatedListingAtom = atom<GeneratedListingData | undefined>(undefined);
 
 interface SaveQueueState {
   isProcessing: boolean;
@@ -80,6 +97,7 @@ export {
   confirmModalAtom,
   descriptionKeyAtom,
   draftQueueAtom,
+  generatedListingAtom,
   hackathonsAtom,
   hideAutoSaveAtom,
   isAutoGenerateOpenAtom,

@@ -6,6 +6,7 @@ import React, { useState } from 'react';
 
 import { SupportFormDialog } from '@/components/shared/SupportFormDialog';
 import { Button } from '@/components/ui/button';
+import { ExternalImage } from '@/components/ui/cloudinary-image';
 import {
   Collapsible,
   CollapsibleContent,
@@ -13,10 +14,12 @@ import {
 } from '@/components/ui/collapsible';
 import { Separator } from '@/components/ui/separator';
 import { Sheet, SheetContent } from '@/components/ui/sheet';
+import { generateTelegramBotUrl } from '@/constants/Telegram';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { useLogout, useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 
+import { HACKATHONS } from '@/features/hackathon/constants/hackathons';
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 import { EmailSettingsModal } from '@/features/talent/components/EmailSettingsModal';
 
@@ -75,7 +78,11 @@ export const MobileDrawer = ({
         side="left"
         className="w-[300px] overflow-y-auto p-0 text-sm sm:w-[380px] sm:text-base"
         showCloseIcon={false}
+        onOpenAutoFocus={() => false}
       >
+        {/* Hidden element to prevent auto-focus */}
+        <div tabIndex={-1} className="sr-only" />
+
         <EmailSettingsModal isOpen={isOpen} onClose={onClose} />
 
         {isLoggedIn && (
@@ -126,7 +133,6 @@ export const MobileDrawer = ({
               </div>
             </div>
           )}
-
           {user && !user.currentSponsorId && !user.isTalentFilled && (
             <Button
               variant="ghost"
@@ -138,6 +144,23 @@ export const MobileDrawer = ({
               Complete your Profile
             </Button>
           )}
+          {HACKATHONS?.map((hackathon) => (
+            <NavItem
+              key={hackathon.slug}
+              label={
+                <div className="relateive flex -translate-x-1 items-center gap-2">
+                  <ExternalImage
+                    src={hackathon.logo}
+                    alt={hackathon.label}
+                    className="h-4"
+                  />
+                </div>
+              }
+              onClick={() => {
+                router.push(`/hackathon/${hackathon.slug}`);
+              }}
+            />
+          ))}
           <div className="ph-no-capture flex flex-col">
             {isLoggedIn && (
               <>
@@ -158,8 +181,10 @@ export const MobileDrawer = ({
               onOpenChange={setCategoriesOpen}
             >
               <CollapsibleTrigger
+                tabIndex={-1}
+                data-no-focus
                 className={cn(
-                  'flex w-full items-center justify-between rounded-lg p-2 text-slate-600 transition-colors',
+                  'flex w-full items-center justify-between rounded-lg p-2 text-slate-600 transition-colors focus:outline-none focus-visible:ring-0 focus-visible:outline-none',
                   'hover:bg-slate-100',
                   categoriesOpen && 'bg-slate-100',
                 )}
@@ -195,8 +220,10 @@ export const MobileDrawer = ({
               onOpenChange={setSkillsOpen}
             >
               <CollapsibleTrigger
+                tabIndex={-1}
+                data-no-focus
                 className={cn(
-                  'flex w-full items-center justify-between rounded-lg p-2 text-slate-600 transition-colors',
+                  'flex w-full items-center justify-between rounded-lg p-2 text-slate-600 transition-colors focus:outline-none focus-visible:ring-0 focus-visible:outline-none',
                   'hover:bg-slate-100',
                   skillsOpen && 'bg-slate-100',
                 )}
@@ -226,28 +253,7 @@ export const MobileDrawer = ({
                 </div>
               </CollapsibleContent>
             </Collapsible>
-            <div>
-              <NavItem label="Live Hackathons" onClick={() => {}} />
-              {/* <div className="ml-4">
-                {HACKATHONS?.map((hackathon) => (
-                  <NavItem
-                    key={hackathon.slug}
-                    label={
-                      <div className="flex items-center gap-2">
-                        <ExternalImage
-                          src={hackathon.logo}
-                          alt={hackathon.label}
-                          className="h-4"
-                        />
-                      </div>
-                    }
-                    onClick={() => {
-                      router.push(`/hackathon/${hackathon.slug}`);
-                    }}
-                  />
-                ))}
-              </div> */}
-            </div>
+
             <NavItem
               label="Activity Feed"
               onClick={() => router.push(`/feed`)}
@@ -264,6 +270,15 @@ export const MobileDrawer = ({
                 }}
               />
             </SupportFormDialog>
+            {isLoggedIn && (
+              <NavItem
+                onClick={() => {
+                  posthog.capture('telegram notifications_user menu');
+                  window.open(generateTelegramBotUrl(user?.email), '_blank');
+                }}
+                label="Telegram Notifications"
+              />
+            )}
             {isLoggedIn && (
               <NavItem
                 label="Logout"

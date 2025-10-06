@@ -104,6 +104,7 @@ export const Login = ({
           redirectTo={redirectTo}
           loginStep={loginStep}
           setLoginStep={setLoginStep}
+          onSuccess={onClose}
         />
       </DialogContent>
     </Dialog>

@@ -1,5 +1,5 @@
 import { motion } from 'motion/react';
-import React from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import useMeasure from 'react-use-measure';
 import { type ClassNameValue } from 'tailwind-merge';
 
@@ -19,13 +19,36 @@ export const AnimateChangeInHeight = ({
   disableOnHeightZero = false,
 }: AnimateChangeInHeightProps) => {
   const [elementRef, bounds] = useMeasure();
+  const prevHeight = useRef(bounds.height);
 
-  const shouldAnimate = !disableOnHeightZero || bounds.height !== 0;
+  const shouldAnimate = useMemo(
+    () => !disableOnHeightZero || bounds.height !== 0,
+    [disableOnHeightZero, bounds.height],
+  );
+
+  useEffect(() => {
+    if (shouldAnimate && prevHeight.current === 0 && bounds.height > 0) {
+      setTimeout(() => {
+        window.dispatchEvent(new Event('resize'));
+      }, 0);
+      setTimeout(() => {
+        window.dispatchEvent(new Event('resize'));
+      }, 50);
+      setTimeout(() => {
+        window.dispatchEvent(new Event('resize'));
+      }, 100);
+      setTimeout(() => {
+        window.dispatchEvent(new Event('resize'));
+      }, 250);
+    }
+    prevHeight.current = bounds.height;
+  }, [bounds.height, shouldAnimate]);
 
   return (
     <motion.div
       className={cn(className)}
-      {...(shouldAnimate
+      initial={false}
+      {...(shouldAnimate && prevHeight.current !== 0
         ? {
             animate: {
               height: bounds.height,

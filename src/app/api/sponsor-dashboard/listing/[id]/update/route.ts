@@ -76,11 +76,18 @@ export async function POST(
       validatedListing: validatedData,
     });
 
-    const result = await prisma.bounties.update({
+    await prisma.bounties.update({
       where: { id: id as string },
       data: dataToUpdate,
     });
     logger.debug(`Update Listing Successful`, { id });
+
+    const result = await prisma.bounties.findUniqueOrThrow({
+      where: { id: id as string },
+      include: {
+        sponsor: true,
+      },
+    });
 
     await handlePostSaveOperations({
       result,

@@ -1,9 +1,12 @@
-import { type Prisma } from '@prisma/client';
 import { type NextApiRequest, type NextApiResponse } from 'next';
 import { z } from 'zod';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { type CommentFindManyArgs } from '@/prisma/models/Comment';
+import { type GrantApplicationInclude } from '@/prisma/models/GrantApplication';
+import { type PoWGetPayload, type PoWInclude } from '@/prisma/models/PoW';
+import { type SubmissionInclude } from '@/prisma/models/Submission';
 import { getCloudinaryFetchUrl } from '@/utils/cloudinary';
 import { safeStringify } from '@/utils/safeStringify';
 
@@ -37,13 +40,13 @@ export default async function handler(
   }
 
   try {
-    const commentsWhere: Prisma.CommentFindManyArgs['where'] = {
+    const commentsWhere: CommentFindManyArgs['where'] = {
       isActive: true,
       isArchived: false,
       replyToId: null,
     };
 
-    const commentsInclude: Prisma.CommentFindManyArgs = {
+    const commentsInclude: CommentFindManyArgs = {
       where: commentsWhere,
       orderBy: {
         createdAt: 'desc',
@@ -59,13 +62,13 @@ export default async function handler(
       },
     };
 
-    const commentsCountInclude: Prisma.CommentFindManyArgs = {
+    const commentsCountInclude: CommentFindManyArgs = {
       where: commentsWhere,
     };
     let feedPost: any[] | null = null;
     switch (type) {
       case 'submission': {
-        const submissionInclude: Prisma.SubmissionInclude = {
+        const submissionInclude: SubmissionInclude = {
           user: {
             select: {
               firstName: true,
@@ -156,7 +159,7 @@ export default async function handler(
         break;
       }
       case 'pow': {
-        const poWInclude: Prisma.PoWInclude = {
+        const poWInclude: PoWInclude = {
           user: {
             select: {
               firstName: true,
@@ -172,7 +175,7 @@ export default async function handler(
             },
           },
         };
-        type PoWWithUserAndCommentsCount = Prisma.PoWGetPayload<{
+        type PoWWithUserAndCommentsCount = PoWGetPayload<{
           include: {
             user: {
               select: {
@@ -219,7 +222,7 @@ export default async function handler(
         break;
       }
       case 'grant-application': {
-        const grantApplicationInclude: Prisma.GrantApplicationInclude = {
+        const grantApplicationInclude: GrantApplicationInclude = {
           user: {
             select: {
               firstName: true,

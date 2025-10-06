@@ -20,12 +20,14 @@ interface SigninProps {
   loginStep: number;
   setLoginStep: Dispatch<SetStateAction<number>>;
   redirectTo?: string;
+  onSuccess?: () => void;
 }
 
 export const SignIn = ({
   loginStep,
   setLoginStep,
   redirectTo,
+  onSuccess,
 }: SigninProps) => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
@@ -34,6 +36,7 @@ export const SignIn = ({
 
   const { initOAuth } = useLoginWithOAuth({
     onComplete: async ({ user, wasAlreadyAuthenticated }) => {
+      onSuccess?.();
       await handleUserCreation(user.google?.email || '');
 
       if (redirectTo) {
@@ -116,7 +119,9 @@ export const SignIn = ({
                 : 'translate-y-5 opacity-0'
             }`}
           >
-            {loginStep === 1 && <EmailSignIn redirectTo={redirectTo} />}
+            {loginStep === 1 && (
+              <EmailSignIn redirectTo={redirectTo} onSuccess={onSuccess} />
+            )}
           </div>
         </div>
 

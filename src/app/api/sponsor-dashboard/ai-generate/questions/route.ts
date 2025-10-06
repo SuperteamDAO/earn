@@ -1,5 +1,4 @@
 import { openrouter } from '@openrouter/ai-sdk-provider';
-import { BountyType } from '@prisma/client';
 import { generateObject } from 'ai';
 import { headers } from 'next/headers';
 import { NextResponse } from 'next/server';
@@ -8,6 +7,7 @@ import { z } from 'zod';
 import logger from '@/lib/logger';
 import { aiGenerateRateLimiter } from '@/lib/ratelimit';
 import { checkAndApplyRateLimitApp } from '@/lib/rateLimiterService';
+import { BountyType } from '@/prisma/enums';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { getSponsorSession } from '@/features/auth/utils/getSponsorSession';
@@ -17,7 +17,6 @@ import { generateListingQuestionsPrompt } from './prompts';
 
 const requestBodySchema = z.object({
   description: z.string().min(1, 'Description cannot be empty'),
-  inputRequirements: z.string(),
   type: z.nativeEnum(BountyType),
 });
 
@@ -44,7 +43,7 @@ export async function POST(request: Request) {
       return rateLimitResponse;
     }
 
-    let description: string, type: BountyType, inputRequirements: string;
+    let description: string, type: BountyType;
     try {
       const body = await request.json();
       logger.debug(`Request body: ${safeStringify(body)}`);
@@ -62,7 +61,6 @@ export async function POST(request: Request) {
       }
       description = parsedBody.data.description;
       type = parsedBody.data.type;
-      inputRequirements = parsedBody.data.inputRequirements;
     } catch (e) {
       if (e instanceof SyntaxError) {
         logger.error('Invalid JSON in request body');
@@ -74,22 +72,20 @@ export async function POST(request: Request) {
       throw e;
     }
 
-    const prompt = generateListingQuestionsPrompt(
-      description,
-      inputRequirements,
-      type,
-    );
+    const prompt = generateListingQuestionsPrompt(description, type);
+
+    const schema = z.object({
+      eligibilityQuestions: z.array(
+        eligibilityQuestionSchema.omit({ optional: true }),
+      ),
+    });
 
     const { object } = await generateObject({
       model: openrouter('google/gemini-2.5-flash'),
       system:
         'Your role is to generate high-quality evaluation questions for listings, strictly adhering to the rules provided with each description and type.',
       prompt,
-      schema: z.object({
-        eligibilityQuestions: z.array(
-          eligibilityQuestionSchema.omit({ optional: true }),
-        ),
-      }),
+      schema: schema as any,
     });
 
     logger.info(

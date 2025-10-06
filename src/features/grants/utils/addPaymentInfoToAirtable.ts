@@ -1,10 +1,11 @@
-import { type GrantApplication, type GrantTranche } from '@prisma/client';
 import axios from 'axios';
 import lookup from 'country-code-lookup';
 import { z } from 'zod';
 
 import { Superteams } from '@/constants/Superteam';
 import logger from '@/lib/logger';
+import { type GrantApplicationModel } from '@/prisma/models/GrantApplication';
+import { type GrantTrancheModel } from '@/prisma/models/GrantTranche';
 import {
   airtableConfig,
   airtableInsert,
@@ -62,7 +63,7 @@ type ValidatedInput = z.infer<typeof AirtableInputSchema>;
 type ValidatedApplication = ValidatedInput['application'];
 type ValidatedGrantTranche = ValidatedInput['grantTranche'];
 
-interface GrantApplicationWithUserAndGrant extends GrantApplication {
+interface GrantApplicationWithUserAndGrant extends GrantApplicationModel {
   grant: {
     airtableId: string | null;
     approverRecordId: string | null;
@@ -155,7 +156,7 @@ function grantApplicationToAirtable(
 
 export async function addPaymentInfoToAirtable(
   inputApplication: GrantApplicationWithUserAndGrant,
-  inputGrantTranche: GrantTranche,
+  inputGrantTranche: GrantTrancheModel,
 ) {
   const trancheIdForLogging = inputGrantTranche?.id ?? 'unknown';
   const applicationIdForLogging = inputApplication?.id ?? 'unknown_input_app';

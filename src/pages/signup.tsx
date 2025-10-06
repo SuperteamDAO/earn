@@ -1,11 +1,10 @@
 import { usePrivy } from '@privy-io/react-auth';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
-import { LocalImage } from '@/components/ui/local-image';
 import { useUser } from '@/store/user';
 
 import { SignIn } from '@/features/auth/components/SignIn';
@@ -13,11 +12,12 @@ import {
   acceptInvite,
   verifyInviteQuery,
 } from '@/features/sponsor-dashboard/queries/accept-invite';
+import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
 export default function SignupPage() {
   const [loginStep, setLoginStep] = useState(0);
   const router = useRouter();
-  const { authenticated } = usePrivy();
+  const { authenticated, logout, ready } = usePrivy();
   const [isNavigating, setIsNavigating] = useState(false);
   const { user, refetchUser } = useUser();
 
@@ -25,9 +25,11 @@ export default function SignupPage() {
   const cleanToken =
     (Array.isArray(invite) ? invite[0] : invite)?.split('?')[0] || '';
 
-  const { data: inviteDetails, error } = useQuery(
-    verifyInviteQuery(cleanToken),
-  );
+  const {
+    data: inviteDetails,
+    error,
+    isPending,
+  } = useQuery(verifyInviteQuery(cleanToken));
 
   const acceptInviteMutation = useMutation({
     mutationFn: acceptInvite,
@@ -46,21 +48,12 @@ export default function SignupPage() {
     acceptInviteMutation.mutate(cleanToken);
   };
 
-  useEffect(() => {
-    if (error) {
-      toast.error(
-        error instanceof Error
-          ? error.message
-          : 'An error occurred while verifying the invitation',
-      );
-    }
-  }, [error]);
-
   const isEmailMismatch =
+    ready &&
     authenticated &&
     user?.email &&
     inviteDetails?.invitedEmail &&
-    user.email !== inviteDetails.invitedEmail;
+    user.email.toLowerCase() !== inviteDetails.invitedEmail.toLowerCase();
 
   if (error) {
     return (
@@ -76,36 +69,49 @@ export default function SignupPage() {
     );
   }
 
+  if (!ready || isPending) {
+    return (
+      <div className="container mx-auto flex max-w-xl justify-center">
+        <div className="mt-10 w-full rounded-lg border border-gray-200 bg-white px-20 pt-20 pb-40 shadow-lg">
+          <div className="flex flex-col items-center">
+            <p className="text-center text-2xl font-semibold text-slate-600">
+              Welcome to Superteam Earn
+            </p>
+            <p className="text-center text-lg text-slate-400">
+              Start your journey to access top global talent!
+            </p>
+            <div className="mt-8 text-center text-slate-500">Loading...</div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="container mx-auto flex max-w-xl justify-center">
       <div className="mt-10 w-full rounded-lg border border-gray-200 bg-white px-20 pt-20 pb-40 shadow-lg">
         <div className="flex flex-col items-center">
-          <p className="text-center text-2xl font-medium text-slate-600">
+          <p className="text-center text-2xl font-semibold text-slate-600">
             Welcome to Superteam Earn
           </p>
-          <p className="text-center text-lg text-slate-600">
+          <p className="mb-6 text-center text-lg text-slate-400">
             Start your journey to access top global talent!
           </p>
 
-          <div>
-            <LocalImage
-              className="my-5 block h-20 w-20 rounded"
-              alt={inviteDetails?.sponsorName!}
-              src={inviteDetails?.sponsorLogo!}
-            />
-          </div>
+          {inviteDetails?.sponsorLogo && inviteDetails?.sponsorName ? (
+            <div>
+              <EarnAvatar
+                className="my-5 size-20 rounded-lg"
+                avatar={inviteDetails.sponsorLogo}
+                id={inviteDetails.sponsorName}
+              />
+            </div>
+          ) : null}
 
-          <p className="text-center leading-6 font-medium text-slate-500">
-            {inviteDetails?.senderName} has invited you to join <br />
-            {inviteDetails?.sponsorName}
+          <p className="text-center text-xl font-medium text-slate-800">
+            {inviteDetails?.senderName} has invited you to join{' '}
+            <span className="font-bold">{inviteDetails?.sponsorName}</span>
           </p>
-
-          {inviteDetails?.invitedEmail && (
-            <p className="mt-2 text-center text-sm text-slate-400">
-              Invitation sent to:{' '}
-              <span className="font-medium">{inviteDetails.invitedEmail}</span>
-            </p>
-          )}
 
           <div>
             {!authenticated ? (
@@ -116,24 +122,36 @@ export default function SignupPage() {
                 <SignIn loginStep={loginStep} setLoginStep={setLoginStep} />
               </div>
             ) : isEmailMismatch ? (
-              <div className="mt-6 w-full max-w-md">
-                <div className="rounded-lg border border-orange-200 bg-orange-50 p-4">
-                  <p className="text-center text-sm font-medium text-orange-800">
-                    Email Mismatch
-                  </p>
-                  <p className="mt-2 text-center text-sm text-orange-700">
+              <div className="mt-16 w-full max-w-md">
+                <div className="mt-4">
+                  <p className="text-center text-sm text-slate-500">
                     You&apos;re signed in as{' '}
-                    <span className="font-medium">{user?.email}</span>, but this
-                    invitation was sent to{' '}
                     <span className="font-medium">
-                      {inviteDetails?.invitedEmail}
+                      {user?.email?.toLowerCase()}
+                    </span>
+                    . <br />
+                    To accept, log out and sign in as{' '}
+                    <span className="font-medium">
+                      {inviteDetails?.invitedEmail?.toLowerCase()}
                     </span>
                     .
                   </p>
-                  <p className="mt-2 text-center text-sm text-orange-700">
-                    Please sign in with the correct email to accept this
-                    invitation.
-                  </p>
+                </div>
+                <div className="mt-4 text-center">
+                  <Button
+                    onClick={async () => {
+                      try {
+                        await logout();
+                        router.push(`/signup?invite=${cleanToken}`);
+                      } catch (error) {
+                        router.push(`/signup?invite=${cleanToken}`);
+                      }
+                    }}
+                    className="cursor-pointer text-sm text-white hover:underline"
+                  >
+                    Log out and continue as{' '}
+                    {inviteDetails?.invitedEmail?.toLowerCase()}
+                  </Button>
                 </div>
               </div>
             ) : (

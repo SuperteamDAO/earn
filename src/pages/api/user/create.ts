@@ -19,34 +19,23 @@ export default async function createUser(
 
   try {
     const privyDid = await getPrivyToken(req);
-    const { email } = req.body;
+    const { email } = req.body as { email: string };
 
     if (!privyDid || !email) {
       logger.warn('Unauthorized request - Missing token or email');
       return res.status(401).json({ error: 'Unauthorized' });
     }
 
-    const existingUser = await prisma.user.findUnique({
-      where: { privyDid },
-      select: { id: true, email: true },
-    });
-
-    if (existingUser) {
-      logger.warn(`User already exists with privyDid: ${privyDid}`);
-      return res.status(200).json({
-        message: `User already exists`,
-        created: false,
-      });
-    }
+    const normalizedEmail = email.toLowerCase();
 
     const existingUserByEmail = await prisma.user.findUnique({
-      where: { email },
+      where: { email: normalizedEmail },
       select: { id: true, privyDid: true },
     });
 
     if (existingUserByEmail) {
       logger.warn(
-        `User exists with email ${email} but different privyDid. Existing: ${existingUserByEmail.privyDid}, New: ${privyDid}`,
+        `User exists with email ${normalizedEmail} but different privyDid. Existing: ${existingUserByEmail.privyDid}, New: ${privyDid}`,
       );
       return res.status(409).json({
         error:
@@ -55,7 +44,8 @@ export default async function createUser(
     }
 
     const user = await prisma.user.create({
-      data: { privyDid, email },
+      data: { privyDid, email: normalizedEmail },
+      select: { id: true },
     });
 
     logger.info(`Created new user with ID: ${user.id}`);

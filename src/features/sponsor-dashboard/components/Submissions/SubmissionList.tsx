@@ -1,4 +1,3 @@
-import { type SubmissionLabels } from '@prisma/client';
 import { useAtom } from 'jotai';
 import debounce from 'lodash.debounce';
 import { Search } from 'lucide-react';
@@ -13,11 +12,16 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { StatusPill } from '@/components/ui/status-pill';
 import type { SubmissionWithUser } from '@/interface/submission';
+import { type SubmissionLabels } from '@/prisma/enums';
 import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';
 import { getRankLabels } from '@/utils/rank';
 
-import { type Listing } from '@/features/listings/types';
+import {
+  type BountySubmissionAi,
+  type Listing,
+  type ProjectApplicationAi,
+} from '@/features/listings/types';
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
 import { selectedSubmissionAtom } from '../../atoms';
@@ -93,6 +97,8 @@ export const SubmissionList = ({
       listing?.type === 'project'
     ) {
       return 'Rejected';
+    } else if (submission?.label === 'Spam') {
+      return 'Spam';
     } else if (submission?.label) {
       return labelMenuOptions(listing?.type).find(
         (option) => option.value === submission.label,
@@ -145,6 +151,14 @@ export const SubmissionList = ({
           selectedFilters={selectedFilters}
           onFilterChange={onFilterChange}
           listingType={listing?.type}
+          isAiCommitted={submissions.some(
+            (submission) =>
+              (
+                submission?.ai as unknown as
+                  | ProjectApplicationAi
+                  | BountySubmissionAi
+              )?.commited,
+          )}
         />
       </div>
       <div

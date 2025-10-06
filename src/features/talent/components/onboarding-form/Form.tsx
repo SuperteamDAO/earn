@@ -1,4 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Check, Loader2, XCircle } from 'lucide-react';
 import { useRouter } from 'next/router';
 import posthog from 'posthog-js';
 import React, { useEffect, useMemo, useState } from 'react';
@@ -17,8 +18,10 @@ import {
 } from '@/components/ui/form';
 import { FormFieldWrapper } from '@/components/ui/form-field-wrapper';
 import { Input } from '@/components/ui/input';
+import { useUploadImage } from '@/hooks/use-upload-image';
 import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
+import { IMAGE_SOURCE } from '@/utils/image';
 
 import { extractSocialUsername } from '@/features/social/utils/extractUsername';
 import {
@@ -34,6 +37,7 @@ import { UsernameField } from './fields/Username';
 export const TalentForm = () => {
   const router = useRouter();
   const { user, refetchUser } = useUser();
+  const { uploadAndReplace, uploading } = useUploadImage();
 
   const form = useForm<NewTalentFormData>({
     resolver: zodResolver(
@@ -55,6 +59,52 @@ export const TalentForm = () => {
   );
   const [skillsRefreshKey, setSkillsRefreshKey] = useState<number>(0);
   const [isUsernameValidating, setUsernameValidating] = useState(false);
+
+  const [referralCode, setReferralCode] = useState<string>('');
+  const [isReferralValid, setIsReferralValid] = useState<boolean | null>(null);
+  const [isReferralChecking, setIsReferralChecking] = useState<boolean>(false);
+
+  const hasLockedReferralCode = useMemo(() => {
+    const queryCode = router.query.code;
+    return typeof queryCode === 'string' && queryCode.trim().length > 0;
+  }, [router.query.code]);
+
+  useEffect(() => {
+    const queryCode = router.query.code;
+    if (typeof queryCode === 'string' && queryCode.trim().length > 0) {
+      setReferralCode(queryCode.trim().toUpperCase());
+    }
+  }, [router.query.code]);
+
+  useEffect(() => {
+    if (!referralCode) {
+      setIsReferralValid(null);
+      return;
+    }
+    setIsReferralChecking(true);
+    let ignore = false;
+    const timeout = setTimeout(async () => {
+      try {
+        const res = await api.get('/api/user/referral/verify', {
+          params: { code: referralCode },
+        });
+        if (!ignore) setIsReferralValid(!!res.data?.valid);
+      } catch {
+        if (!ignore) setIsReferralValid(false);
+      } finally {
+        if (!ignore) setIsReferralChecking(false);
+      }
+    }, 400);
+    return () => {
+      ignore = true;
+      clearTimeout(timeout);
+    };
+  }, [referralCode]);
+
+  const handleReferralCodeChange = (value: string): void => {
+    const next = value.toUpperCase();
+    setReferralCode(next);
+  };
 
   useEffect(() => {
     if (user) {
@@ -91,8 +141,8 @@ export const TalentForm = () => {
   };
 
   const isSubmitDisabled = useMemo(() => {
-    return isLoading || isUsernameValidating;
-  }, [isLoading, isUsernameValidating]);
+    return isLoading || isUsernameValidating || uploading;
+  }, [isLoading, isUsernameValidating, uploading]);
 
   const onSubmit = async (data: NewTalentFormData) => {
     if (isSubmitDisabled) return false;
@@ -107,18 +157,23 @@ export const TalentForm = () => {
     return toast.promise(
       async () => {
         try {
-          const photo = selectedPhoto
-            ? await new Promise<string>((resolve, reject) => {
-                const reader = new FileReader();
-                reader.readAsDataURL(selectedPhoto);
-                reader.onload = () => resolve(reader.result as string);
-                reader.onerror = (error) => reject(error);
-              })
-            : data.photo;
+          let photoUrl = user?.photo;
+
+          if (selectedPhoto && !isGooglePhoto) {
+            const uploadResult = await uploadAndReplace(
+              selectedPhoto,
+              { folder: 'earn-pfp', source: IMAGE_SOURCE.USER },
+              user?.photo || undefined,
+            );
+            photoUrl = uploadResult.url;
+          } else if (isGooglePhoto) {
+            photoUrl = user?.photo;
+          }
 
           await api.post('/api/user/complete-profile/', {
             ...data,
-            photo: isGooglePhoto ? user?.photo : photo,
+            referralCode: referralCode || undefined,
+            photo: photoUrl,
           });
           if (user) posthog.identify(user.email);
 
@@ -207,6 +262,42 @@ export const TalentForm = () => {
 
           <SkillsField skillsRefreshKey={skillsRefreshKey} />
           <SocialsField />
+
+          <div className="mt-6 flex w-full items-center justify-between gap-3">
+            <p className="text-[0.85rem] text-slate-600 sm:text-[0.9rem]">
+              {hasLockedReferralCode
+                ? 'Referral code'
+                : 'Have a Referral Code?'}
+            </p>
+            <div className="relative w-32">
+              <Input
+                placeholder="Enter code"
+                value={referralCode}
+                onChange={(e) => handleReferralCodeChange(e.target.value)}
+                className="pr-9 disabled:cursor-not-allowed disabled:opacity-100"
+                maxLength={10}
+                inputMode="text"
+                autoComplete="off"
+                spellCheck={false}
+                readOnly={hasLockedReferralCode}
+                disabled={hasLockedReferralCode}
+              />
+              {referralCode && isReferralChecking && (
+                <Loader2 className="absolute top-1/2 right-2 h-4 w-4 -translate-y-1/2 animate-spin text-slate-400" />
+              )}
+              {referralCode &&
+                !isReferralChecking &&
+                isReferralValid === true && (
+                  <Check className="absolute top-1/2 right-2 h-4 w-4 -translate-y-1/2 text-emerald-500" />
+                )}
+              {referralCode &&
+                !isReferralChecking &&
+                isReferralValid === false && (
+                  <XCircle className="absolute top-1/2 right-2 h-4 w-4 -translate-y-1/2 text-rose-500" />
+                )}
+            </div>
+          </div>
+
           <Button
             type="submit"
             className="mt-5 mb-12 w-full sm:mt-8"

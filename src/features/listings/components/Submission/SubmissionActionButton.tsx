@@ -1,21 +1,26 @@
 import { usePrivy } from '@privy-io/react-auth';
 import { useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
-import { Loader2, Pencil } from 'lucide-react';
+import { ArrowRight, Gift, Loader2, Pencil, X } from 'lucide-react';
 import { useRouter } from 'next/router';
 import posthog from 'posthog-js';
 import React, { useState } from 'react';
+import { createPortal } from 'react-dom';
 
 import { Button } from '@/components/ui/button';
+import { Drawer, DrawerContent } from '@/components/ui/drawer';
 import { Tooltip } from '@/components/ui/tooltip';
 import { SIX_MONTHS } from '@/constants/SIX_MONTHS';
 import { useDisclosure } from '@/hooks/use-disclosure';
+import { useMediaQuery } from '@/hooks/use-media-query';
 import { useServerTimeSync } from '@/hooks/use-server-time';
 import { useCreditBalance } from '@/store/credit';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 
 import { AuthWrapper } from '@/features/auth/components/AuthWrapper';
+import { Nudge } from '@/features/credits/components/Nudge';
+import { ReferralModal } from '@/features/credits/components/ReferralModal';
 import { CreditIcon } from '@/features/credits/icon/credit';
 import { SurveyModal } from '@/features/listings/components/Submission/Survey';
 
@@ -111,6 +116,7 @@ export const SubmissionActionButton = ({
   } = listing;
 
   const [isEasterEggOpen, setEasterEggOpen] = useState(false);
+  const [isNudgeOpen, setNudgeOpen] = useState(false);
   const [isKYCModalOpen, setIsKYCModalOpen] = useState(false);
 
   const { user } = useUser();
@@ -119,6 +125,7 @@ export const SubmissionActionButton = ({
   const { authenticated, ready } = usePrivy();
 
   const isAuthenticated = authenticated;
+  const isDesktop = useMediaQuery('(min-width: 768px)');
 
   const isUserEligibleByRegion = userRegionEligibilty({
     region,
@@ -138,7 +145,7 @@ export const SubmissionActionButton = ({
 
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const { serverTime } = useServerTimeSync();
+  const { serverTime, manualSync } = useServerTimeSync();
 
   const regionTooltipLabel = getRegionTooltipLabel(region);
 
@@ -151,6 +158,7 @@ export const SubmissionActionButton = ({
   const isEditMode = buttonState === 'edit';
 
   const handleSubmit = () => {
+    void manualSync();
     if (buttonState === 'kyc') {
       setIsKYCModalOpen(true);
     } else {
@@ -171,6 +179,17 @@ export const SubmissionActionButton = ({
     ? dayjs(serverTime()).isAfter(hackathonStartDate)
     : true;
 
+  const {
+    isOpen: isReferralOpen,
+    onOpen: onReferralOpen,
+    onClose: onReferralClose,
+  } = useDisclosure();
+
+  const openReferralWithEvent = () => {
+    posthog.capture('open_referrals');
+    onReferralOpen();
+  };
+
   const isProject = type === 'project';
   const isBounty = type === 'bounty';
   const isHackathon = type === 'hackathon';
@@ -186,7 +205,7 @@ export const SubmissionActionButton = ({
       isWinnersAnnounced &&
       isFndnPaying &&
       submission?.isWinner &&
-      dayjs(listing.winnersAnnouncedAt).isAfter(dayjs('2025-08-06'))
+      dayjs(listing.winnersAnnouncedAt).isAfter(dayjs.utc('2025-08-06'))
     ) {
       const isKycExpired =
         !submission?.kycVerifiedAt ||
@@ -212,7 +231,9 @@ export const SubmissionActionButton = ({
 
   switch (buttonState) {
     case 'rejected':
-      buttonText = 'Application Rejected';
+      buttonText = isProject
+        ? 'Application Rejected'
+        : 'Submission Marked as Spam';
       buttonBG = 'bg-red-600';
       isBtnDisabled = true;
       btnLoadingText = null;
@@ -271,7 +292,8 @@ export const SubmissionActionButton = ({
             user?.id &&
             user?.isTalentFilled &&
             creditBalance === 0 &&
-            (isProject || isBounty)),
+            (isProject || isBounty)) ||
+          (bountyDraftStatus !== 'PUBLISHED' && !query['preview']),
       );
       isSubmitDisabled = Boolean(
         pastDeadline ||
@@ -300,7 +322,10 @@ export const SubmissionActionButton = ({
     onClose: onSurveyClose,
   } = useDisclosure();
 
-  const surveyId = '018c6743-c893-0000-a90e-f35d31c16692';
+  const surveyId =
+    process.env.NEXT_PUBLIC_VERCEL_ENV === 'production'
+      ? '018c6743-c893-0000-a90e-f35d31c16692'
+      : '';
 
   const requiresCredits =
     (isProject || isBounty) &&
@@ -329,11 +354,14 @@ export const SubmissionActionButton = ({
           editMode={isEditMode}
           listing={listing}
           isTemplate={isTemplate}
-          showEasterEgg={() => setEasterEggOpen(true)}
+          showEasterEgg={() => {
+            setEasterEggOpen(true);
+          }}
           onSurveyOpen={onSurveyOpen}
         />
       )}
       {isSurveyOpen &&
+        surveyId &&
         (!user?.surveysShown || !(surveyId in user.surveysShown)) && (
           <SurveyModal
             isOpen={isSurveyOpen}
@@ -344,9 +372,45 @@ export const SubmissionActionButton = ({
       {isEasterEggOpen && (
         <EasterEgg
           isOpen={isEasterEggOpen}
-          onClose={() => setEasterEggOpen(false)}
+          onClose={() => {
+            setEasterEggOpen(false);
+            setTimeout(() => setNudgeOpen(true), 150);
+          }}
           isProject={isProject}
         />
+      )}
+      {isDesktop &&
+        isNudgeOpen &&
+        createPortal(
+          <div className="fixed right-4 bottom-4 z-[200] hidden sm:block">
+            <div className="relative rounded-lg border border-slate-100 shadow-lg">
+              <button
+                type="button"
+                aria-label="Dismiss"
+                className="absolute top-2 right-2 inline-flex size-5 items-center justify-center rounded-full bg-slate-400 text-white shadow-md hover:bg-slate-500"
+                onClick={() => setNudgeOpen(false)}
+              >
+                <X className="size-3" />
+              </button>
+              <Nudge
+                setNudgeState={setNudgeOpen}
+                onOpenReferral={openReferralWithEvent}
+              />
+            </div>
+          </div>,
+          document.body,
+        )}
+      {!isDesktop && (
+        <Drawer open={isNudgeOpen} onOpenChange={setNudgeOpen}>
+          <DrawerContent className="bg-slate-50">
+            <div className="mx-auto w-full">
+              <Nudge
+                setNudgeState={setNudgeOpen}
+                onOpenReferral={openReferralWithEvent}
+              />
+            </div>
+          </DrawerContent>
+        </Drawer>
       )}
       {isKYCModalOpen && submission?.id && (
         <KYCModal
@@ -413,17 +477,31 @@ export const SubmissionActionButton = ({
             </AuthWrapper>
           </InfoWrapper>
         </div>
-        {requiresCredits && (
+        {requiresCredits && user?.isTalentFilled && (
           <div className="mt-1 md:my-1.5 md:flex">
             {creditBalance > 0 && (
-              <p className="bg-brand-purple/20 mx-auto w-full rounded-md py-0.5 text-center text-xs font-medium text-slate-500 md:text-xs">
+              <p className="mx-auto w-full rounded-md py-0.5 text-center text-xs font-medium text-slate-500 md:text-xs">
                 {`* Costs 1 credit to ${isProject ? 'apply' : 'submit'}`}
               </p>
             )}
             {creditBalance <= 0 && (
-              <p className="mx-auto w-full rounded-md bg-red-100 py-0.5 text-center text-xs font-medium text-red-400 md:text-xs">
-                {`* You don't have enough credits to ${isProject ? 'apply' : 'submit'}`}
-              </p>
+              <div className="w-full space-y-3">
+                <p className="mx-auto w-full rounded-md py-0.5 text-center text-xs font-medium text-slate-400 md:text-xs">
+                  {`* You don't have enough credits to ${isProject ? 'apply' : 'submit'}`}
+                </p>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-brand-purple hover:text-brand-purple h-10 w-full justify-between rounded-lg border border-gray-200 bg-white text-sm font-medium shadow hover:bg-indigo-50"
+                  onClick={openReferralWithEvent}
+                >
+                  <div className="flex items-center gap-2">
+                    <Gift className="size-7" />
+                    <span>Get Free Credits</span>
+                  </div>
+                  <ArrowRight className="size-4" />
+                </Button>
+              </div>
             )}
           </div>
         )}
@@ -435,6 +513,7 @@ export const SubmissionActionButton = ({
           </div>
         )}
       </div>
+      <ReferralModal isOpen={isReferralOpen} onClose={onReferralClose} />
     </>
   );
 };

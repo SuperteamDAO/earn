@@ -1,9 +1,8 @@
 // used for api route, dont add use client here.
-import { type Bounties } from '@prisma/client';
-
 import earncognitoClient from '@/lib/earncognitoClient';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { type BountiesModel } from '@/prisma/models/Bounties';
 import { dayjs } from '@/utils/dayjs';
 
 import { queueAgent } from '@/features/agents/utils/queueAgent';
@@ -11,7 +10,7 @@ import { type ListingWithSponsor } from '@/features/auth/utils/checkListingSpons
 import { queueEmail } from '@/features/emails/utils/queueEmail';
 
 interface PostSaveParams {
-  result: Bounties;
+  result: BountiesModel;
   originalListing?: ListingWithSponsor;
   userId: string;
   isEditing: boolean;
@@ -45,6 +44,10 @@ export async function handlePostSaveOperations(context: PostSaveParams) {
 
     await handleAgentJobQueuing(result);
 
+    if (!isEditing) {
+      await handleTelegramNotifications(result);
+    }
+
     logger.info(
       `Listing ${isEditing ? 'Update' : 'Publish'} API Fully Successful with ID: ${listingId}`,
     );
@@ -64,7 +67,7 @@ async function handleDiscordNotifications({
   isVerifying,
   reason,
 }: {
-  result: Bounties;
+  result: BountiesModel;
   originalListing?: ListingWithSponsor;
   listingId: string;
   isEditing: boolean;
@@ -131,7 +134,7 @@ async function handleDeadlineChanges({
   listingId,
 }: {
   originalListing: ListingWithSponsor;
-  result: Bounties;
+  result: BountiesModel;
   userId: string;
   listingId: string;
 }) {
@@ -196,28 +199,55 @@ async function handleDeadlineChanges({
   }
 }
 
-async function handleAgentJobQueuing(result: Bounties) {
-  if (result.type !== 'project') return;
+async function handleAgentJobQueuing(result: BountiesModel) {
+  if (result.type !== 'project' && result.type !== 'bounty') return;
 
+  const agentType =
+    result.type === 'project'
+      ? 'generateContextProject'
+      : 'generateContextBounty';
   try {
     await queueAgent({
-      type: 'generateContextProject',
+      type: agentType,
       id: result.id,
     });
 
     logger.info(
-      `Successfully queued agent job for generateContextProject with id ${result.id}`,
+      `Successfully queued agent job for ${agentType} with id ${result.id}`,
     );
     console.log(
-      `Successfully queued agent job for generateContextProject with id ${result.id}`,
+      `Successfully queued agent job for ${agentType} with id ${result.id}`,
     );
   } catch (err) {
     logger.error(
-      `Failed to queue agent job for generateContextProject with id ${result.id}`,
+      `Failed to queue agent job for ${agentType} with id ${result.id}`,
       err,
     );
     console.log(
-      `Failed to queue agent job for generateContextProject with id ${result.id}`,
+      `Failed to queue agent job for ${agentType} with id ${result.id}`,
+    );
+  }
+}
+
+async function handleTelegramNotifications(result: BountiesModel) {
+  try {
+    await queueEmail({
+      type: 'telegramNewListing',
+      id: result.id,
+      triggeredBy: 'system',
+      delay: 3 * 60 * 60 * 1000,
+    });
+
+    logger.info(
+      `Successfully queued telegram notification for listing ${result.id}`,
+    );
+    console.log(
+      `Successfully queued telegram notification for listing ${result.id}`,
+    );
+  } catch (err) {
+    logger.error(
+      `Error in telegram notifications for listing ${result.id}`,
+      err,
     );
   }
 }

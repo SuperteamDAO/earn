@@ -59,9 +59,13 @@ export default function AiReviewProjectApplicationsModal({
 
     setProgress(0);
     let currentProgress = 0;
+    const totalDuration = 10000;
+    const updateInterval = 200;
+    const steps = totalDuration / updateInterval;
+    const progressPerStep = 100 / steps;
 
     progressIntervalRef.current = setInterval(() => {
-      currentProgress += Math.random() * 15 + 6;
+      currentProgress += progressPerStep;
       const cappedProgress = Math.min(currentProgress, 99);
       setProgress(cappedProgress);
 
@@ -71,7 +75,7 @@ export default function AiReviewProjectApplicationsModal({
           progressIntervalRef.current = null;
         }
       }
-    }, 400);
+    }, updateInterval);
 
     return () => {
       if (progressIntervalRef.current) {
@@ -246,7 +250,7 @@ export default function AiReviewProjectApplicationsModal({
                     stickColor="bg-slate-600"
                     starColor="bg-slate-400"
                   />
-                  Auto Review
+                  Review with AI
                 </span>
               </div>
             </button>
@@ -256,7 +260,7 @@ export default function AiReviewProjectApplicationsModal({
         <Card className="border-0 shadow-none">
           <CardHeader className="flex flex-row items-center justify-between border-b p-0 px-6 py-3">
             <DialogTitle className="text-xl font-semibold">
-              Auto Review
+              Review with AI
             </DialogTitle>
           </CardHeader>
 
@@ -315,7 +319,7 @@ export default function AiReviewProjectApplicationsModal({
                       }}
                     >
                       <Wand2 className="mr-2 h-5 w-5" />
-                      Auto Review
+                      Proceed
                     </Button>
 
                     <p className="text-muted-foreground mt-2 text-center text-sm">

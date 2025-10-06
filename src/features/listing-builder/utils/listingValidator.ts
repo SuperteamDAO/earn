@@ -1,7 +1,8 @@
 // used for api route, dont add use client here.
-import { type Hackathon, type Sponsors, type User } from '@prisma/client';
-
 import logger from '@/lib/logger';
+import { type HackathonModel } from '@/prisma/models/Hackathon';
+import { type SponsorsModel } from '@/prisma/models/Sponsors';
+import { type UserModel } from '@/prisma/models/User';
 
 import { type ListingWithSponsor } from '@/features/auth/utils/checkListingSponsorAuth';
 
@@ -14,9 +15,9 @@ import {
 
 interface ListingValidatorParams {
   listing: ListingWithSponsor;
-  sponsor: Sponsors;
-  user: User;
-  hackathon: Hackathon | undefined;
+  sponsor: SponsorsModel;
+  user: UserModel;
+  hackathon: HackathonModel | undefined;
   isEditing: boolean;
   formData: any;
 }

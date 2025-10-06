@@ -5,6 +5,7 @@ import { api } from '@/lib/api';
 
 interface ApplicationsParams {
   id?: string;
+  evaluationCompleted?: boolean;
 }
 
 const fetchUnreviewedSubmissions = async (
@@ -24,5 +25,5 @@ export const unreviewedSubmissionsQuery = (
   queryOptions({
     queryKey: ['unreviewed-submissions', slug, params],
     queryFn: () => fetchUnreviewedSubmissions(params),
-    enabled: !!slug && !!params.id,
+    enabled: !!slug && !!params.id && !!params.evaluationCompleted,
   });

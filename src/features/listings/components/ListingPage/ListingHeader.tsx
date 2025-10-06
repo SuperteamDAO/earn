@@ -10,9 +10,12 @@ import { Tooltip } from '@/components/ui/tooltip';
 import { ASSET_URL } from '@/constants/ASSET_URL';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { useServerTimeSync } from '@/hooks/use-server-time';
+import { useUser } from '@/store/user';
 import { PulseIcon } from '@/svg/pulse-icon';
 import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';
+
+import { BoostButton } from '@/features/listing-builder/components/Form/Boost/BoostButton';
 
 import { submissionCountQuery } from '../../queries/submission-count';
 import { type Listing } from '../../types';
@@ -48,6 +51,8 @@ export function ListingHeader({
     isPrivate,
   } = listing;
   const router = useRouter();
+
+  const { user } = useUser();
 
   const { serverTime } = useServerTimeSync();
 
@@ -212,9 +217,13 @@ export function ListingHeader({
             </div>
           </div>
         </div>
-        {listing.id && (
+        {listing.id && listing.isPublished && (
           <div className="flex items-center gap-2">
-            <SubscribeListing isTemplate={isTemplate} id={listing.id} />
+            {user?.currentSponsorId === listing.sponsorId ? (
+              <BoostButton listing={listing} />
+            ) : (
+              <SubscribeListing isTemplate={isTemplate} id={listing.id} />
+            )}
             <SecondaryOptions listing={listing} />
           </div>
         )}

@@ -443,4 +443,32 @@ export const tokenList: Token[] = [
     icon: 'https://res.cloudinary.com/dgvnuwspr/image/upload/v1754053412/2025-08-01_18.30.41_utc1fs.jpg',
     decimals: 6,
   },
+  {
+    tokenName: 'Marinade',
+    tokenSymbol: 'MNDE',
+    mintAddress: 'MNDEFzGvMt87ueuHvVU9VcTqsAP5b3fTGPsHuuPA5ey',
+    icon: 'https://s2.coinmarketcap.com/static/img/coins/128x128/13803.png',
+    decimals: 9,
+  },
+  {
+    tokenName: 'Swop.Meme',
+    tokenSymbol: 'SWOP',
+    mintAddress: 'AhhtUFVLUSDxgsPTuky7JXEi92e3QcqnagfgZoDSjups',
+    icon: '',
+    decimals: 6,
+  },
+  {
+    tokenName: 'Sonic SVM',
+    tokenSymbol: 'SONIC',
+    mintAddress: 'SonicxvLud67EceaEzCLRnMTBqzYUUYNr93DBkBdDES',
+    icon: 'https://assets.coingecko.com/coins/images/53061/standard/Token.png?1735169618',
+    decimals: 9,
+  },
+  {
+    tokenName: 'XNET Mobile',
+    tokenSymbol: 'XNET',
+    mintAddress: 'xNETbUB7cRb3AAu2pNG2pUwQcJ2BHcktfvSB8x1Pq6L',
+    icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/32753.png',
+    decimals: 8,
+  },
 ];

@@ -1,4 +1,3 @@
-import { type SubmissionLabels } from '@prisma/client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { atom, useAtom } from 'jotai';
 import { LucideFlag } from 'lucide-react';
@@ -16,6 +15,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import type { SubmissionWithUser } from '@/interface/submission';
 import { SponsorLayout } from '@/layouts/Sponsor';
+import { type SubmissionLabels } from '@/prisma/enums';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';
@@ -262,6 +262,9 @@ export default function BountySubmissions({ slug }: Props) {
             return submission.isWinner;
           } else if (filter === 'Rejected') {
             return submission.status === 'Rejected';
+          } else if (filter === 'Spam') {
+            // Spam filter should work regardless of status
+            return submission.label === 'Spam';
           } else {
             const isDecided =
               submission.isWinner || submission.status === 'Rejected';

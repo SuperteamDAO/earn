@@ -38,7 +38,7 @@ export function WinnerAnnouncementDate() {
 
   const handleQuickSelect = (days: number, autoSave: boolean = true) => {
     if (!deadline) return;
-    const newDate = dayjs(deadline).add(days, 'day').toDate();
+    const newDate = dayjs(deadline).add(days, 'day').endOf('day').toDate();
     form.setValue(
       'commitmentDate',
       dayjs(newDate).format(DEADLINE_FORMAT).replace('Z', ''),
@@ -77,7 +77,7 @@ export function WinnerAnnouncementDate() {
           <div className="ring-primary flex rounded-md border has-focus:ring-1 has-[data-[state=open]]:ring-1">
             <DateTimePicker
               value={field.value ? new Date(field.value) : undefined}
-              onChange={(date) => {
+              onChange={(date, uiOnly) => {
                 if (date) {
                   const formattedDate = dayjs(date).format(
                     'YYYY-MM-DDTHH:mm:ss.SSS',
@@ -86,7 +86,9 @@ export function WinnerAnnouncementDate() {
                 } else {
                   field.onChange(undefined);
                 }
-                form.saveDraft();
+                if (!uiOnly) {
+                  form.saveDraft();
+                }
               }}
               use12HourFormat
               hideSeconds

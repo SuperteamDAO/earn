@@ -96,7 +96,7 @@ export const Notes = ({ slug }: Props) => {
 
   useEffect(() => {
     setNotes(selectedSubmission?.notes);
-  }, [selectedSubmission]);
+  }, [selectedSubmission?.id]);
 
   const isAiCommited = useMemo(
     () => (selectedSubmission?.ai as ProjectApplicationAi)?.commited,

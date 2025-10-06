@@ -11,6 +11,7 @@ interface CopyButtonProps extends Omit<TooltipProps, 'content'> {
   className?: string;
   content?: React.ReactNode;
   copiedContent?: React.ReactNode;
+  onCopy?: () => void;
 }
 
 export function CopyButton({
@@ -20,9 +21,15 @@ export function CopyButton({
   contentProps,
   content,
   copiedContent,
+  onCopy: customOnCopy,
   ...props
 }: CopyButtonProps) {
   const { onCopy, hasCopied } = useClipboard(text);
+
+  const handleCopy = () => {
+    onCopy();
+    customOnCopy?.();
+  };
 
   return (
     <Tooltip
@@ -70,12 +77,12 @@ export function CopyButton({
       <div
         role="button"
         className={cn('inline-flex items-center', className)}
-        onClick={onCopy}
+        onClick={handleCopy}
         tabIndex={0}
         onKeyDown={(e) => {
           if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault();
-            onCopy();
+            handleCopy();
           }
         }}
       >

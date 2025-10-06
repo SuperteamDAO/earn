@@ -1,11 +1,14 @@
-import { type Prisma, type Sponsors } from '@prisma/client';
 import { franc } from 'franc';
 
 import { tokenList } from '@/constants/tokenList';
 import logger from '@/lib/logger';
+import { prisma } from '@/prisma';
+import { type BountiesUncheckedUpdateInput } from '@/prisma/models/Bounties';
+import { type SponsorsModel } from '@/prisma/models/Sponsors';
 import { cleanSkills } from '@/utils/cleanSkills';
 
 import { type ListingWithSponsor } from '@/features/auth/utils/checkListingSponsorAuth';
+import { hasMoreThan72HoursLeft } from '@/features/listing-builder/components/Form/Boost/utils';
 import { type ListingFormData } from '@/features/listing-builder/types';
 import { isFndnPayingCheck } from '@/features/listing-builder/utils/isFndnPayingCheck';
 import { fetchTokenUSDValue } from '@/features/wallet/utils/fetchTokenUSDValue';
@@ -34,12 +37,29 @@ const processMaxBonusSpots = (
   return newMaxBonusSpots;
 };
 
+const isAutoFeatureUsdThresholdMet = (usdValue: number): boolean => {
+  if (typeof usdValue !== 'number' || usdValue <= 0) return false;
+  return usdValue >= 4900;
+};
+
+const countLiveFeaturedListings = async (): Promise<number> => {
+  return prisma.bounties.count({
+    where: {
+      isFeatured: true,
+      isPublished: true,
+      isActive: true,
+      deadline: { gte: new Date() },
+    },
+  });
+};
+
 interface TransformToPrismaDataProps {
   validatedListing: ListingFormData;
   listing: ListingWithSponsor;
-  sponsor: Sponsors;
+  sponsor: SponsorsModel;
   isEditing: boolean;
   isVerifying?: boolean;
+  userId?: string;
 }
 
 export const transformToPrismaData = async ({
@@ -48,7 +68,8 @@ export const transformToPrismaData = async ({
   sponsor,
   isEditing,
   isVerifying = false,
-}: TransformToPrismaDataProps): Promise<Prisma.BountiesUncheckedUpdateInput> => {
+  userId,
+}: TransformToPrismaDataProps): Promise<BountiesUncheckedUpdateInput> => {
   const {
     title,
     slug,
@@ -137,9 +158,25 @@ export const transformToPrismaData = async ({
     }
   }
 
-  const baseData: Prisma.BountiesUncheckedUpdateInput = {
+  let autoIsFeatured = false;
+  try {
+    if (
+      isAutoFeatureUsdThresholdMet(usdValue) &&
+      hasMoreThan72HoursLeft(deadline) &&
+      compensationType === 'fixed' &&
+      type !== 'hackathon'
+    ) {
+      const liveFeaturedCount = await countLiveFeaturedListings();
+      autoIsFeatured = liveFeaturedCount < 2;
+    }
+  } catch (error) {
+    logger.error('Auto-feature evaluation failed', { error });
+  }
+
+  const baseData: BountiesUncheckedUpdateInput = {
     title,
     ...(includeUsdValue ? { usdValue } : {}),
+    ...(autoIsFeatured ? { isFeatured: true } : {}),
     skills,
     slug,
     deadline: new Date(deadline),
@@ -162,6 +199,7 @@ export const transformToPrismaData = async ({
     hackathonId,
     referredBy,
     sponsorId: listing.sponsorId,
+    publishedBy: isEditing ? listing.publishedBy : userId,
   };
 
   if (isEditing) {

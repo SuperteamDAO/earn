@@ -1,9 +1,14 @@
-import { type Prisma, Prisma as PrismaNamespace } from '@prisma/client';
+import { headers } from 'next/headers';
 import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
 import { prisma } from '@/prisma';
+import {
+  type JsonValue,
+  PrismaClientKnownRequestError,
+} from '@/prisma/internal/prismaNamespace';
 
+import { getUserSession } from '@/features/auth/utils/getUserSession';
 import {
   listingSelect,
   QueryParamsSchema,
@@ -12,7 +17,8 @@ import { buildListingQuery } from '@/features/listings/utils/query-builder';
 
 export async function GET(request: NextRequest) {
   try {
-    const userIdFromCookie = request.cookies.get('user-id-hint')?.value;
+    // const userIdFromCookie = request.cookies.get('user-id-hint')?.value;
+    const session = await getUserSession(await headers());
 
     const { searchParams } = new URL(request.url);
     const queryParams = Object.fromEntries(searchParams.entries());
@@ -30,12 +36,12 @@ export async function GET(request: NextRequest) {
       id: string;
       isTalentFilled: boolean;
       location: string | null;
-      skills: Prisma.JsonValue;
+      skills: JsonValue;
     } | null = null;
 
-    if (userIdFromCookie) {
+    if (session.data?.userId) {
       user = await prisma.user.findUnique({
-        where: { id: userIdFromCookie },
+        where: { id: session.data.userId },
         select: {
           id: true,
           isTalentFilled: true,
@@ -80,7 +86,7 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    if (error instanceof PrismaNamespace.PrismaClientKnownRequestError) {
+    if (error instanceof PrismaClientKnownRequestError) {
       console.error('Prisma error:', error.code, error.message);
       return NextResponse.json({ message: 'Database error' }, { status: 500 });
     }

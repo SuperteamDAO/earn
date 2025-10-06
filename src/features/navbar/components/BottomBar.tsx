@@ -1,26 +1,43 @@
-import { Home, Newspaper, Search, User } from 'lucide-react';
+import { usePrivy } from '@privy-io/react-auth';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 
+import GoHome from '@/components/icons/GoHome';
+import IoNewspaperOutline from '@/components/icons/IoNewspaperOutline';
+import IoSearchOutline from '@/components/icons/IoSearchOutline';
+import IoWalletOutline from '@/components/icons/IoWalletOutline';
 import { Button } from '@/components/ui/button';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
+import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 
 import { AuthWrapper } from '@/features/auth/components/AuthWrapper';
+import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
 interface Props {
   onSearchOpen: () => void;
+  onWalletOpen: () => void;
+  walletBalance: number;
 }
 
-export function BottomBar({ onSearchOpen }: Props) {
+export function BottomBar({
+  onSearchOpen,
+  onWalletOpen,
+  walletBalance,
+}: Props) {
   const { user } = useUser();
   const router = useRouter();
+  const { authenticated, ready } = usePrivy();
 
   function setColor(href: string, routerPath: string) {
-    return routerPath === href ? 'text-brand-purple' : 'text-slate-400';
+    return routerPath === href ? 'text-brand-purple' : 'text-slate-500';
   }
 
-  const iconStyle = { width: '1.5rem', height: '1.5rem' };
+  const iconStyle = {
+    width: '1.7rem',
+    height: '1.7rem',
+    strokeWidth: '1.5',
+  };
 
   const linkStyle = {
     WebkitTapHighlightColor: 'transparent',
@@ -41,12 +58,18 @@ export function BottomBar({ onSearchOpen }: Props) {
         variant="ghost"
         className={cn(
           setColor('/', router.asPath),
-          'hover:bg-transparent active:bg-transparent',
+          'w-12 hover:bg-transparent active:bg-transparent',
         )}
         asChild
       >
         <Link href="/" style={linkStyle}>
-          <Home style={iconStyle} />
+          <GoHome
+            style={{
+              width: '1.7rem',
+              height: '1.7rem',
+              strokeWidth: 0.2,
+            }}
+          />
         </Link>
       </Button>
 
@@ -56,32 +79,72 @@ export function BottomBar({ onSearchOpen }: Props) {
         style={linkStyle}
         className={cn(
           setColor('/search', router.pathname),
-          'hover:bg-transparent active:bg-transparent',
+          'w-12 hover:bg-transparent active:bg-transparent',
         )}
       >
-        <Search style={iconStyle} />
+        <IoSearchOutline
+          style={{
+            width: '1.6rem',
+            height: '1.6rem',
+            strokeWidth: 1.5,
+          }}
+        />
       </Button>
 
       <Button
         variant="ghost"
         className={cn(
           setColor('/feed/', router.asPath),
-          'relative hover:bg-transparent active:bg-transparent',
+          'relative w-12 hover:bg-transparent active:bg-transparent',
         )}
         asChild
       >
         <Link href="/feed/" style={linkStyle}>
-          <Newspaper style={iconStyle} />
+          <IoNewspaperOutline
+            style={{
+              width: '1.55rem',
+              height: '1.55rem',
+            }}
+          />
           <div className="absolute top-1 right-3 h-2.5 w-2.5 rounded-full bg-red-500" />
         </Link>
       </Button>
+
+      {authenticated && user?.isTalentFilled ? (
+        <Button
+          variant="ghost"
+          className={cn(
+            'relative m-0 w-12 p-0 hover:bg-transparent active:bg-transparent',
+          )}
+          onClick={onWalletOpen}
+        >
+          <IoWalletOutline style={iconStyle} className="text-slate-500" />
+          <span className="bg-brand-purple/95 absolute top-px -right-0.5 block rounded-md px-1 py-px text-[10px] font-semibold tracking-tight text-white">
+            ${formatNumberWithSuffix(walletBalance || 0, 1, false)}
+          </span>
+        </Button>
+      ) : !authenticated && ready ? (
+        <AuthWrapper>
+          <Button
+            variant="ghost"
+            className={cn(
+              'relative m-0 w-12 p-0 hover:bg-transparent active:bg-transparent',
+            )}
+          >
+            <IoWalletOutline style={iconStyle} className="text-slate-500" />
+            <span className="bg-brand-purple/95 absolute top-px -right-0.5 block rounded-md px-1 py-px text-[10px] font-semibold tracking-tight text-white">
+              ${formatNumberWithSuffix(walletBalance || 0, 1, false)}
+            </span>
+          </Button>
+        </AuthWrapper>
+      ) : null}
 
       <AuthWrapper>
         <Button
           variant="ghost"
           className={cn(
             setColor(`/t/${user?.username}/`, router.asPath),
-            'hover:bg-transparent active:bg-transparent',
+            'w-12 hover:bg-transparent active:bg-transparent',
           )}
           asChild
         >
@@ -92,7 +155,7 @@ export function BottomBar({ onSearchOpen }: Props) {
               pointerEvents: user ? 'auto' : 'none',
             }}
           >
-            <User style={iconStyle} />
+            <EarnAvatar className="size-7" id={user?.id} avatar={user?.photo} />
           </Link>
         </Button>
       </AuthWrapper>
