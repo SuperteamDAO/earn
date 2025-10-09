@@ -439,7 +439,7 @@ export const tokenList: Token[] = [
   {
     tokenName: 'USD Star',
     tokenSymbol: 'USD*',
-    mintAddress: 'BenJy1n3WTx9mTjEvy63e8Q1j4RqUc6E4VBMz3ir4Wo6',
+    mintAddress: 'star9agSpjiFe3M49B3RniVU4CMBBEK3Qnaqn3RGiFM',
     icon: 'https://res.cloudinary.com/dgvnuwspr/image/upload/v1754053412/2025-08-01_18.30.41_utc1fs.jpg',
     decimals: 6,
   },
