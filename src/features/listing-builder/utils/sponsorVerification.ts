@@ -17,7 +17,8 @@ export interface SponsorVerificationResult {
 const shouldVerifyHackathonListing = (
   type: BountyType,
   user: { role: string },
-): boolean => type === 'hackathon' && user?.role !== 'GOD';
+  sponsor: { st: boolean },
+): boolean => type === 'hackathon' && user?.role !== 'GOD' && !sponsor.st;
 
 const shouldSkipVerification = (
   sponsor: { isVerified: boolean },
@@ -147,6 +148,7 @@ export const sponsorVerificationCheck = async ({
   const isHackathonListing = shouldVerifyHackathonListing(
     validatedListing.type,
     user,
+    sponsor,
   );
   if (isHackathonListing) {
     logger.debug('Hackathon listing requires verification', {
