@@ -88,8 +88,11 @@ export const MobileNavbar = () => {
                   posthog.capture('create a listing_sponsor navbar')
                 }
               >
-                <Button variant="ghost" className="text-brand-purple text-base">
-                  Create a Listing
+                <Button
+                  variant="outline"
+                  className="text-brand-purple text-base"
+                >
+                  Post for Free
                 </Button>
               </Link>
             )}
@@ -144,8 +147,8 @@ export const MobileNavbar = () => {
             src="/assets/logo.svg"
             loading="eager"
           />
-          <div className="h-6 w-px bg-slate-300" />
-          <p className="text-sm font-semibold tracking-[1.5px] text-slate-500">
+          <div className="h-6 w-[1.5px] rotate-10 bg-slate-300" />
+          <p className="text-sm font-medium tracking-[1.5px] text-slate-400">
             SPONSORS
           </p>
         </Link>
@@ -160,11 +163,6 @@ export const MobileNavbar = () => {
                 id={user?.id}
                 avatar={user?.photo}
               />
-              <div className="absolute -right-2 -bottom-0.5 flex flex-col gap-[2px] rounded-full bg-white px-[5px] py-1.5">
-                <div className="w-2.5 border-[0.5px] border-slate-400" />
-                <div className="w-2.5 border-[0.5px] border-slate-400" />
-                <div className="w-2.5 border-[0.5px] border-slate-400" />
-              </div>
             </>
           ) : (
             <Menu className="size-6 text-slate-500" />
