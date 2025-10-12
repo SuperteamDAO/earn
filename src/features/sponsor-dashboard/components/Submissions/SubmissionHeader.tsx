@@ -10,6 +10,7 @@ import {
   ExternalLink,
   MoreVertical,
   Pencil,
+  Sheet,
 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -160,6 +161,40 @@ export const SubmissionHeader = ({
     exportMutation.mutate();
   };
 
+  const exportSheetsMutation = useMutation({
+    mutationFn: async () => {
+      const response = await api.get(
+        `/api/sponsor-dashboard/submission/export-sheets/`,
+        {
+          params: {
+            listingId: bounty?.id,
+          },
+        },
+      );
+      return response.data;
+    },
+    onSuccess: (data) => {
+      toast.dismiss('export-sheets');
+      const url = data?.url || '';
+      if (url) {
+        window.open(url, '_blank');
+        toast.success('Google Sheet created successfully');
+      } else {
+        toast.error('Export URL is empty');
+      }
+    },
+    onError: (error) => {
+      toast.dismiss('export-sheets');
+      console.error('Export error:', error);
+      toast.error('Failed to export to Google Sheets. Please try again.');
+    },
+  });
+
+  const exportSubmissionsSheets = () => {
+    toast.loading('Creating Google Sheet...', { id: 'export-sheets' });
+    exportSheetsMutation.mutate();
+  };
+
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text).then(
       () => {
@@ -234,23 +269,43 @@ export const SubmissionHeader = ({
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start" className="w-48 text-slate-500">
               {!isHackathonPage && (
-                <DropdownMenuItem
-                  disabled={exportMutation.isPending}
-                  onClick={() => exportSubmissionsCsv()}
-                  className="cursor-pointer"
-                >
-                  {exportMutation.isPending ? (
-                    <>
-                      <span className="loading loading-spinner" />
-                      Exporting...
-                    </>
-                  ) : (
-                    <>
-                      <Download className="size-4" />
-                      Export CSV
-                    </>
-                  )}
-                </DropdownMenuItem>
+                <>
+                  <DropdownMenuItem
+                    disabled={exportMutation.isPending}
+                    onClick={() => exportSubmissionsCsv()}
+                    className="cursor-pointer"
+                  >
+                    {exportMutation.isPending ? (
+                      <>
+                        <span className="loading loading-spinner" />
+                        Exporting...
+                      </>
+                    ) : (
+                      <>
+                        <Download className="size-4" />
+                        Export CSV
+                      </>
+                    )}
+                  </DropdownMenuItem>
+
+                  <DropdownMenuItem
+                    disabled={exportSheetsMutation.isPending}
+                    onClick={() => exportSubmissionsSheets()}
+                    className="cursor-pointer"
+                  >
+                    {exportSheetsMutation.isPending ? (
+                      <>
+                        <span className="loading loading-spinner" />
+                        Exporting...
+                      </>
+                    ) : (
+                      <>
+                        <Sheet className="size-4" />
+                        Export Sheets
+                      </>
+                    )}
+                  </DropdownMenuItem>
+                </>
               )}
 
               <DropdownMenuItem
