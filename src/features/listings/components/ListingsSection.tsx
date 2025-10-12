@@ -21,12 +21,17 @@ import { ListingFilters } from './ListingFilters';
 import { ListingTabs } from './ListingTabs';
 import { ViewAllButton } from './ViewAllButton';
 
+interface ListingsSectionProps extends ListingTabsProps {
+  customEmptySection?: React.ReactNode;
+}
+
 export const ListingsSection = ({
   type,
   potentialSession,
   region,
   sponsor,
-}: ListingTabsProps) => {
+  customEmptySection,
+}: ListingsSectionProps) => {
   const isMd = useBreakpoint('md');
 
   const { authenticated } = usePrivy();
@@ -150,10 +155,12 @@ export const ListingsSection = ({
 
     if (!listings?.length) {
       return (
-        <EmptySection
-          title="No opportunities found"
-          message="We don't have any relevant opportunities for the current filters."
-        />
+        customEmptySection ?? (
+          <EmptySection
+            title="No opportunities found"
+            message="We don't have any relevant opportunities for the current filters."
+          />
+        )
       );
     }
 

@@ -1,4 +1,4 @@
-import { Globe, InfoIcon } from 'lucide-react';
+import { Globe, InfoIcon, Pencil } from 'lucide-react';
 import { type GetServerSideProps } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
@@ -6,6 +6,7 @@ import Link from 'next/link';
 import FaXTwitter from '@/components/icons/FaXTwitter';
 import { LinkTextParser } from '@/components/shared/LinkTextParser';
 import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
+import { Button } from '@/components/ui/button';
 import { LocalImage } from '@/components/ui/local-image';
 import { Separator } from '@/components/ui/separator';
 import { Tooltip } from '@/components/ui/tooltip';
@@ -13,6 +14,7 @@ import { type SponsorType } from '@/interface/sponsor';
 import { Default } from '@/layouts/Default';
 import { getSponsorStats, type SponsorStats } from '@/pages/api/sponsors/stats';
 import { prisma } from '@/prisma';
+import { useUser } from '@/store/user';
 import { getURLSanitized } from '@/utils/getURLSanitized';
 import { getURL } from '@/utils/validUrl';
 
@@ -25,6 +27,7 @@ interface Props {
 }
 
 const SponsorPage = ({ sponsor, stats }: Props) => {
+  console.log('stats', stats);
   const logo = sponsor.logo;
   const url = sponsor.url;
   const twitter = sponsor.twitter;
@@ -37,6 +40,50 @@ const SponsorPage = ({ sponsor, stats }: Props) => {
   ogImage.searchParams.set('logo', logo || '');
   ogImage.searchParams.set('title', name || '');
   ogImage.searchParams.set('slug', sSlug || '');
+
+  const { user } = useUser();
+  const isSponsor = user?.currentSponsorId === sponsor.id;
+
+  const getTwitterIntentUrl = () => {
+    const twitterHandle = twitter ? twitter.split('/').pop() : name;
+    const sponsorHandle = `@${twitterHandle}`;
+    const message = `Would love to participate in a bounty by ${sponsorHandle} on @SuperteamEarn!\n${sponsorHandle} please add one soon`;
+    return `https://twitter.com/intent/tweet?text=${encodeURIComponent(message)}`;
+  };
+
+  const customEmptySection = (
+    <div className="flex flex-col items-center justify-center py-16 text-center">
+      <div className="mb-6 flex h-18 w-18 items-center justify-center rounded-full bg-slate-100">
+        <Pencil className="h-8 w-8 text-slate-500" />
+      </div>
+      <h3 className="mb-2 text-lg leading-[1.2] font-semibold text-slate-700">
+        {isSponsor ? (
+          <>Create your next listing</>
+        ) : (
+          <>
+            This sponsor doesn&apos;t have <br /> listings yet
+          </>
+        )}
+      </h3>
+      <p className="mb-6 text-slate-500">
+        {isSponsor ? (
+          <>You don’t have a listing yet</>
+        ) : (
+          <>You can tweet at them to create some</>
+        )}
+      </p>
+      <Button variant="default" className="rounded-[0.5rem] px-10">
+        <Link
+          href={
+            isSponsor ? '/dashboard/listings/?open=1' : getTwitterIntentUrl()
+          }
+          target="_blank"
+        >
+          {isSponsor ? <>Create Listing</> : <>Post on X</>}
+        </Link>
+      </Button>
+    </div>
+  );
 
   return (
     <Default
@@ -151,8 +198,12 @@ Check out all of ${name}'s latest earning opportunities on a single page.
 
       <div className="w-full bg-white">
         <div className="mx-auto max-w-5xl px-4 pb-20">
-          <ListingsSection type="sponsor" sponsor={sSlug} />
-          <GrantsSection type="sponsor" sponsor={sSlug} />
+          <ListingsSection
+            type="sponsor"
+            sponsor={sSlug}
+            customEmptySection={customEmptySection}
+          />
+          <GrantsSection hideWhenEmpty type="sponsor" sponsor={sSlug} />
         </div>
       </div>
     </Default>
