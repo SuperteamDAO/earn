@@ -126,7 +126,7 @@ export function EligibilityQuestionsSheet() {
         </SheetHeader>
 
         <div
-          className={cn('flex min-h-0 flex-1 flex-col p-6 pt-0')}
+          className={cn('flex min-h-0 flex-1 flex-col p-6 pt-4')}
           id="main-content"
         >
           <EligibilityQuestionsForm />
