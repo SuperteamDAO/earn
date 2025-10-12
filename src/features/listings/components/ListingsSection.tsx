@@ -99,7 +99,7 @@ export const ListingsSection = ({
     if (!categoryCounts) return false;
     return (
       (potentialSession || authenticated) &&
-      type === 'home' &&
+      (type === 'home' || type === 'all') &&
       (categoryCounts['For You'] || 0) > 2
     );
   }, [categoryCounts, potentialSession, authenticated, type]);
