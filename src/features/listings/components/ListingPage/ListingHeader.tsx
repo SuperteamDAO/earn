@@ -132,7 +132,17 @@ export function ListingHeader({
   const HeaderSub = () => {
     return (
       <div className="flex flex-wrap items-center gap-1 md:gap-2">
-        <Link href={`/s/${sponsor?.slug}`} className="flex items-center gap-1">
+        <Link
+          href={`/s/${sponsor?.slug}`}
+          className="flex items-center gap-1"
+          onClick={() => {
+            posthog.capture('sponsor_listing', {
+              sponsor_slug: sponsor?.slug,
+              sponsor_name: sponsor?.name,
+              listing_title: title,
+            });
+          }}
+        >
           <p className="max-w-[200px] overflow-hidden text-sm font-medium text-ellipsis whitespace-nowrap text-slate-500">
             by {sponsor?.name}
           </p>
