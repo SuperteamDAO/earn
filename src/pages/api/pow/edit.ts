@@ -23,7 +23,6 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
   const errors: string[] = [];
 
   logger.debug(`Request body: ${safeStringify(req.body)}`);
-
   if (!pows) {
     logger.warn('The "pows" field is missing in the request body');
     return res
@@ -93,13 +92,23 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       return res.status(400).json({ errors });
     }
 
-    const transactionActions = [
-      prisma.poW.createMany({ data: createData as any }),
-      ...updateData.map((data) => prisma.poW.update(data)),
-      ...idsToDelete.map((id) => prisma.poW.delete({ where: { id } })),
-    ];
+    if (idsToDelete.length > 0) {
+      await prisma.poW.deleteMany({
+        where: { userId, id: { in: idsToDelete } },
+      });
+    }
 
-    await prisma.$transaction(transactionActions);
+    if (createData.length > 0) {
+      await prisma.poW.createMany({ data: createData as any });
+    }
+
+    if (updateData.length > 0) {
+      const CONCURRENCY = 5;
+      for (let i = 0; i < updateData.length; i += CONCURRENCY) {
+        const slice = updateData.slice(i, i + CONCURRENCY);
+        await Promise.all(slice.map((data) => prisma.poW.update(data)));
+      }
+    }
     logger.info(`Successfully processed PoWs for user ${userId}`);
     return res.status(200).json({ message: 'Success' });
   } catch (error: any) {

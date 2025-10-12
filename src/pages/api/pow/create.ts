@@ -78,7 +78,10 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
   }
 
   try {
-    const results = await prisma.poW.createMany({ data: createData });
+    const results = await prisma.poW.createMany({
+      data: createData,
+      skipDuplicates: true,
+    });
     logger.info(
       `Successfully created ${results.count} PoWs for user ${userId}`,
     );
