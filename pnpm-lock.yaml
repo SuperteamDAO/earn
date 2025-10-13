@@ -11,6 +11,12 @@ importers:
       '@ai-sdk/react':
         specifier: ^2.0.29
         version: 2.0.29(react@19.1.0)(zod@3.25.71)
+      '@googleapis/drive':
+        specifier: ^18.0.0
+        version: 18.0.0
+      '@googleapis/sheets':
+        specifier: ^12.0.0
+        version: 12.0.0
       '@hookform/resolvers':
         specifier: ^4.1.3
         version: 4.1.3(react-hook-form@7.59.0(react@19.1.0))
@@ -248,9 +254,6 @@ importers:
       google-auth-library:
         specifier: ^10.4.0
         version: 10.4.0
-      googleapis:
-        specifier: ^162.0.0
-        version: 162.0.0
       html-react-parser:
         specifier: ^5.2.5
         version: 5.2.5(@types/react@19.1.8)(react@19.1.0)
@@ -1385,6 +1388,14 @@ packages:
 
   '@floating-ui/utils@0.2.10':
     resolution: {integrity: sha512-aGTxbpbg8/b5JfU1HXSrbH3wXZuLPJcNEcZQFMxLs3oSzgtVu6nFPkbbGGUvBcUjKV2YyB9Wxxabo+HEH9tcRQ==}
+
+  '@googleapis/drive@18.0.0':
+    resolution: {integrity: sha512-nk4TirsHttwZSOjBEBjltCPDKUqwFso59G3WitNE+EGNVSVseSEq981f8Dmjq2ah0/fk3i206wuCU4PUCwcoTQ==}
+    engines: {node: '>=12.0.0'}
+
+  '@googleapis/sheets@12.0.0':
+    resolution: {integrity: sha512-VCJAm3Vzz1nzuUrPP9ETOujlC7kuwdeWiWLdgXAeg+NWu7tKUzu+pe5l55GDqYAEEpCXrxkAlw4gSx+A44zgLg==}
+    engines: {node: '>=12.0.0'}
 
   '@headlessui/react@2.2.7':
     resolution: {integrity: sha512-WKdTymY8Y49H8/gUc/lIyYK1M+/6dq0Iywh4zTZVAaiTDprRfioxSgD0wnXTQTBpjpGJuTL1NO/mqEvc//5SSg==}
@@ -5775,10 +5786,6 @@ packages:
   googleapis-common@8.0.0:
     resolution: {integrity: sha512-66if47It7y+Sab3HMkwEXx1kCq9qUC9px8ZXoj1CMrmLmUw81GpbnsNlXnlyZyGbGPGcj+tDD9XsZ23m7GLaJQ==}
     engines: {node: '>=18.0.0'}
-
-  googleapis@162.0.0:
-    resolution: {integrity: sha512-dxHgGExRjbRLHxHZuPyiFB2692H9hP4Qg9OI6nhzw5OOFlxl6ufG5GMqraKv6HAFvHltz7Ytx/C1ndcM85USxA==}
-    engines: {node: '>=18'}
 
   gopd@1.2.0:
     resolution: {integrity: sha512-ZUKRh6/kUFoAiTAtTYPZJ3hw9wNxx+BIBOijnlG9PnrJsCcSjs1wyyD6vJpaYtgnzDrKYRSqf3OO6Rfa93xsRg==}
@@ -10332,6 +10339,18 @@ snapshots:
       tabbable: 6.2.0
 
   '@floating-ui/utils@0.2.10': {}
+
+  '@googleapis/drive@18.0.0':
+    dependencies:
+      googleapis-common: 8.0.0
+    transitivePeerDependencies:
+      - supports-color
+
+  '@googleapis/sheets@12.0.0':
+    dependencies:
+      googleapis-common: 8.0.0
+    transitivePeerDependencies:
+      - supports-color
 
   '@headlessui/react@2.2.7(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
     dependencies:
@@ -16246,13 +16265,6 @@ snapshots:
       google-auth-library: 10.4.0
       qs: 6.14.0
       url-template: 2.0.8
-    transitivePeerDependencies:
-      - supports-color
-
-  googleapis@162.0.0:
-    dependencies:
-      google-auth-library: 10.4.0
-      googleapis-common: 8.0.0
     transitivePeerDependencies:
       - supports-color
 

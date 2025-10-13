@@ -301,7 +301,7 @@ export const SubmissionHeader = ({
                     ) : (
                       <>
                         <Sheet className="size-4" />
-                        Export Sheets
+                        Export to Google Sheets
                       </>
                     )}
                   </DropdownMenuItem>

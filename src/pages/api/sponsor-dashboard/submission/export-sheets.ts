@@ -1,5 +1,6 @@
+import { drive } from '@googleapis/drive';
+import { sheets } from '@googleapis/sheets';
 import { OAuth2Client } from 'google-auth-library';
-import { google } from 'googleapis';
 import type { NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
@@ -170,8 +171,8 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       );
     }
 
-    const sheets = google.sheets({ version: 'v4', auth });
-    const drive = google.drive({ version: 'v3', auth });
+    const sheetsClient = sheets({ version: 'v4', auth });
+    const driveClient = drive({ version: 'v3', auth });
 
     const sheetTitle = `${listing.title || listingId} - Submissions - ${dayjs().format('YYYY-MM-DD')}`;
 
@@ -179,7 +180,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
     const parentFolderId = process.env.GA_LISTINGS_SHEET_PARENT_FOLDER_ID;
 
-    const createResponse = await drive.files.create({
+    const createResponse = await driveClient.files.create({
       requestBody: {
         name: sheetTitle,
         mimeType: 'application/vnd.google-apps.spreadsheet',
@@ -202,7 +203,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     if (rows.length > 0) {
       const MAX_ROWS_PER_UPDATE = 10000;
       if (rows.length <= MAX_ROWS_PER_UPDATE) {
-        await sheets.spreadsheets.values.update({
+        await sheetsClient.spreadsheets.values.update({
           spreadsheetId,
           range: 'Sheet1!A1',
           valueInputOption: 'RAW',
@@ -214,7 +215,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         const chunks = chunkArray(rows, MAX_ROWS_PER_UPDATE);
         let startRow = 1;
         for (const chunk of chunks) {
-          await sheets.spreadsheets.values.update({
+          await sheetsClient.spreadsheets.values.update({
             spreadsheetId,
             range: `Sheet1!A${startRow}`,
             valueInputOption: 'RAW',
@@ -229,7 +230,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
     logger.debug('Formatting first row with larger font size');
 
-    await sheets.spreadsheets.batchUpdate({
+    await sheetsClient.spreadsheets.batchUpdate({
       spreadsheetId,
       requestBody: {
         requests: [
@@ -259,7 +260,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
     logger.debug('Setting public read permissions on spreadsheet');
 
-    await drive.permissions.create({
+    await driveClient.permissions.create({
       fileId: spreadsheetId,
       requestBody: {
         type: 'anyone',
