@@ -118,7 +118,7 @@ Check out all of ${name}'s latest earning opportunities on a single page.
       }
     >
       <div className="flex bg-slate-50 px-4">
-        <div className="mx-auto flex w-full max-w-5xl flex-col gap-8 rounded-[10] px-4 py-14 md:flex-row">
+        <div className="mx-auto flex w-full max-w-5xl flex-col gap-8 rounded-[10] py-14 md:flex-row md:px-4">
           <div className="justify-center rounded-md">
             <LocalImage
               className="size-20 rounded-md"
