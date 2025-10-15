@@ -667,6 +667,7 @@ model UnsubscribedEmail {
 model BlockedEmail {
   id        String   @id @default(uuid())
   email     String   @unique
+  reason    String?
   createdAt DateTime @default(now())
 }
 

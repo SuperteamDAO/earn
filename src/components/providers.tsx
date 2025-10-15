@@ -1,8 +1,8 @@
-import { PrivyProvider } from '@privy-io/react-auth';
+import { PrivyProvider, usePrivy } from '@privy-io/react-auth';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { type Session } from 'next-auth';
 import { SessionProvider } from 'next-auth/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { fontMono, fontSans } from '@/theme/fonts';
 
@@ -35,6 +35,7 @@ export default function Providers({
         appId={process.env.NEXT_PUBLIC_PRIVY_APP_ID!}
       >
         <QueryClientProvider client={queryClient}>
+          <PrivyInitFlagBridge />
           <style jsx global>{`
             :root {
               --font-sans: ${fontSans.style.fontFamily};
@@ -46,4 +47,14 @@ export default function Providers({
       </PrivyProvider>
     </SessionProvider>
   );
+}
+
+function PrivyInitFlagBridge(): null {
+  const { ready } = usePrivy();
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      (window as any).__privyInitializing = !ready;
+    }
+  }, [ready]);
+  return null;
 }
