@@ -1,4 +1,5 @@
 import { Info } from 'lucide-react';
+import Link from 'next/link';
 
 import { VerifiedBadgeLarge } from '@/components/shared/VerifiedBadge';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -84,7 +85,12 @@ export function Banner({
     <div className="flex w-full gap-4">
       <div className="mb-6 w-full rounded-md border border-slate-200 bg-white px-6 py-5 text-white">
         <div className="flex items-center gap-6">
-          <div className="flex shrink-0 items-center gap-3">
+          <Link
+            href={`/s/${sponsor?.slug}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex shrink-0 items-center gap-3 transition-opacity hover:opacity-80"
+          >
             <EarnAvatar
               className="h-12 w-12 rounded-md object-contain"
               id={sponsor?.name}
@@ -114,7 +120,7 @@ export function Banner({
                 </p>
               )}
             </div>
-          </div>
+          </Link>
           <div className="h-14 w-0.5 border-r border-slate-200" />
           <StatsTooltip
             label={!isHackathon ? 'Rewarded' : 'Total Prizes'}

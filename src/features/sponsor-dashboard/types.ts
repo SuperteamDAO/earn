@@ -25,6 +25,7 @@ export interface GrantApplicationWithUser extends GrantApplicationModel {
 
 export interface SponsorStats {
   name?: string;
+  slug?: string;
   logo?: string;
   yearOnPlatform?: number;
   totalRewardAmount?: number;
