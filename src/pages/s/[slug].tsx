@@ -47,7 +47,7 @@ const SponsorPage = ({ sponsor, stats }: Props) => {
   const getTwitterIntentUrl = () => {
     const twitterHandle = twitter ? twitter.split('/').pop() : name;
     const sponsorHandle = `@${twitterHandle}`;
-    const message = `Would love to participate in a bounty by ${sponsorHandle} on @SuperteamEarn!\n${sponsorHandle} please add one soon`;
+    const message = `Would love to contribute to ${sponsorHandle}\nHow about you add a listing on @SuperteamEarn!`;
     return `https://twitter.com/intent/tweet?text=${encodeURIComponent(message)}`;
   };
 
@@ -61,7 +61,7 @@ const SponsorPage = ({ sponsor, stats }: Props) => {
           <>Create your next listing</>
         ) : (
           <>
-            This sponsor doesn&apos;t have <br /> listings yet
+            This sponsor doesn&apos;t have <br /> any active listings yet
           </>
         )}
       </h3>
