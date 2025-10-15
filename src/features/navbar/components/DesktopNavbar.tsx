@@ -3,7 +3,7 @@ import { Gift } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import posthog from 'posthog-js';
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import IoSearchOutline from '@/components/icons/IoSearchOutline';
 import IoWalletOutline from '@/components/icons/IoWalletOutline';
@@ -46,6 +46,27 @@ export const DesktopNavbar = ({
 
   const { user, isLoading } = useUser();
   const { creditBalance } = useCreditBalance();
+
+  const [authUiReady, setAuthUiReady] = useState(() => ready);
+  useEffect(() => {
+    if (!ready) {
+      setAuthUiReady(false);
+      return;
+    }
+    setAuthUiReady(true);
+  }, [ready, authenticated]);
+
+  useEffect(() => {
+    console.log('[DesktopNavbar] Auth State:', {
+      ready,
+      authenticated,
+      authUiReady,
+      isLoading,
+      hasUser: !!user,
+      userId: user?.id,
+      showingSkeleton: (!authUiReady && !authenticated) || (isLoading && !user),
+    });
+  }, [ready, authenticated, authUiReady, isLoading, user]);
 
   const isDashboardRoute = useMemo(
     () => router.pathname.startsWith('/dashboard'),
@@ -189,14 +210,14 @@ export const DesktopNavbar = ({
         )}
 
         <div className="flex items-center gap-4 py-1.5">
-          {(!ready || isLoading) && (
+          {((!authUiReady && !authenticated) || (isLoading && !user)) && (
             <div className="flex items-center gap-2">
               <Skeleton className="size-7 rounded-full" />
               <Skeleton className="mr-4 h-3 w-20" />
             </div>
           )}
 
-          {ready && authenticated && (
+          {authUiReady && authenticated && (
             <div className="ph-no-capture flex items-center gap-2">
               {user?.currentSponsorId && !isDashboardRoute && (
                 <Button
@@ -253,7 +274,7 @@ export const DesktopNavbar = ({
             </div>
           )}
 
-          {ready && !authenticated && (
+          {authUiReady && !authenticated && (
             <div className="ph-no-capture flex items-center gap-2">
               <div className="flex items-center gap-0">
                 {!hideSponsorCTA && (
