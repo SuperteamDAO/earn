@@ -2,112 +2,67 @@ import { useQuery } from '@tanstack/react-query';
 
 import { cn } from '@/utils/cn';
 
+import { totalsQuery } from '@/features/home/queries/totals';
 import { userCountQuery } from '@/features/home/queries/user-count';
 
-import { EarnTinyIcon } from '../icons/EarnTinyIcon';
 import { maxW } from '../utils/styles';
-import { HighQualityImage } from './HighQualityImage';
 
-type Stats = {
-  title: string;
-  label: string;
-  showEarn?: boolean;
+const formatNumber = (value: number | undefined): string => {
+  if (typeof value !== 'number') return '—';
+  return new Intl.NumberFormat('en-US').format(value);
 };
 
-const initialStats = [
-  {
-    title: '40K',
-    label: 'Global Community',
-  },
-  {
-    title: '210K',
-    label: 'X Followers',
-  },
-  {
-    title: '$12M',
-    label: 'Community GDP',
-  },
-  {
-    title: '200K',
-    label: 'Monthly Views',
-    showEarn: true,
-  },
-  {
-    title: '16K',
-    label: 'Verified Earn Users',
-    showEarn: true,
-  },
-  {
-    title: '15',
-    label: 'Superteam Countries',
-  },
-];
+const formatUSD = (value: number | undefined): string => {
+  if (typeof value !== 'number') return '$—';
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    maximumFractionDigits: 0,
+  }).format(value);
+};
 
 export function Stats() {
-  const { data: totals } = useQuery(userCountQuery);
+  const { data: users } = useQuery(userCountQuery);
+  const { data: totals } = useQuery(totalsQuery);
 
-  const stats = initialStats.map((stat) => {
-    if (stat.label === 'Verified Earn Users' && totals?.totalUsers) {
-      return {
-        ...stat,
-        title: new Intl.NumberFormat('en-US', {
-          notation: 'compact',
-          compactDisplay: 'short',
-          maximumFractionDigits: 0,
-        }).format(totals.totalUsers),
-      };
-    }
-    return stat;
-  });
+  const freelancers = formatNumber(users?.totalUsers);
+  const paidOut = formatUSD(totals?.totalInUSD);
+  const mav = '>50,000';
 
   return (
     <div
       className={cn(
-        'flex w-screen flex-col items-center gap-16 lg:flex-row-reverse lg:gap-20',
+        'mx-auto flex w-screen items-center justify-center py-20',
         maxW,
-        'mx-[1.875rem] px-[1.875rem] lg:mx-[7rem] lg:px-[7rem] xl:mx-[11rem] xl:px-[11rem]',
+        'px-[1.875rem] lg:px-[7rem] xl:px-[11rem]',
       )}
     >
-      <div className="w-full max-w-[20rem] xl:max-w-[30rem]">
-        <HighQualityImage
-          src="/landingsponsor/displays/global-earn.webp"
-          alt="Superteam Earn Global"
-          className="w-full max-w-[30rem]"
-        />
-      </div>
-
-      <div className="flex flex-col gap-8">
-        <div className="flex flex-col items-center text-center lg:items-start lg:text-left">
-          <h2 className="text-[2rem] leading-none font-semibold md:text-[3.5rem]">
-            The distribution of the Superteam network
-          </h2>
-          <p className="mt-4 text-[1.25rem] font-medium text-slate-500 lg:text-[1.4rem]">
-            Get instant access to Superteam’s network of the best crypto talent
-            in the world
+      <div className="flex w-full flex-col justify-between gap-10 md:flex-row md:items-center md:gap-0 xl:gap-20">
+        <div className="flex flex-col md:items-center md:text-center">
+          <p className="text-[3.25rem] leading-none font-semibold text-indigo-600">
+            {freelancers}
           </p>
+          <p className="mt-2 text-xl text-slate-600">Freelancers on Earn</p>
         </div>
 
-        <hr className="hidden lg:block" />
+        <span className="hidden h-16 w-px bg-slate-200 md:block" />
+        <span className="block h-px w-56 bg-slate-200 md:hidden" />
 
-        <div className="grid w-full grid-cols-3 gap-4 gap-x-8">
-          {stats.map((s) => (
-            <div
-              key={s.title}
-              className="flex flex-col items-center gap-0 overflow-visible lg:items-start"
-            >
-              <p className="text-[2.3rem] leading-[1.15] font-semibold lg:text-[3.5rem]">
-                {s.title}
-              </p>
-              <p className="relative flex items-center gap-1 text-[0.68rem] font-medium whitespace-nowrap text-slate-500 lg:text-base">
-                {s.showEarn && (
-                  <span className="top-0 w-[0.6rem] lg:w-[0.9rem]">
-                    <EarnTinyIcon className="h-full w-full" />
-                  </span>
-                )}
-                {s.label}
-              </p>
-            </div>
-          ))}
+        <div className="flex flex-col md:items-center md:text-center">
+          <p className="text-[3.25rem] leading-none font-semibold text-indigo-600">
+            {paidOut}
+          </p>
+          <p className="mt-2 text-xl text-slate-600">Paid Out by Sponsors</p>
+        </div>
+
+        <span className="hidden h-16 w-px bg-slate-200 md:block" />
+        <span className="block h-px w-56 bg-slate-200 md:hidden" />
+
+        <div className="flex flex-col md:items-center md:text-center">
+          <p className="text-[3.25rem] leading-none font-semibold text-indigo-600">
+            {mav}
+          </p>
+          <p className="mt-2 text-xl text-slate-600">Monthly Active Visitors</p>
         </div>
       </div>
     </div>

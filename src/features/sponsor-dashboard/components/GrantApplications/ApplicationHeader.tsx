@@ -5,6 +5,7 @@ import {
   Download,
   ExternalLink,
   MoreVertical,
+  Sheet,
 } from 'lucide-react';
 import { useRouter } from 'next/router';
 import React from 'react';
@@ -112,6 +113,40 @@ export const ApplicationHeader = ({
     exportMutation.mutate();
   };
 
+  const exportSheetsMutation = useMutation({
+    mutationFn: async () => {
+      const response = await api.get(
+        `/api/sponsor-dashboard/application/export-sheets/`,
+        {
+          params: {
+            grantId: grant?.id,
+          },
+        },
+      );
+      return response.data;
+    },
+    onSuccess: (data) => {
+      toast.dismiss('export-sheets');
+      const url = data?.url || '';
+      if (url) {
+        window.open(url, '_blank');
+        toast.success('Google Sheet created successfully');
+      } else {
+        toast.error('Export URL is empty');
+      }
+    },
+    onError: (error) => {
+      toast.dismiss('export-sheets');
+      console.error('Export error:', error);
+      toast.error('Failed to export to Google Sheets. Please try again.');
+    },
+  });
+
+  const exportApplicationsSheets = () => {
+    toast.loading('Creating Google Sheet...', { id: 'export-sheets' });
+    exportSheetsMutation.mutate();
+  };
+
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text).then(
       () => {
@@ -171,6 +206,24 @@ export const ApplicationHeader = ({
                   <>
                     <Download className="size-4" />
                     Export CSV
+                  </>
+                )}
+              </DropdownMenuItem>
+
+              <DropdownMenuItem
+                disabled={exportSheetsMutation.isPending}
+                onClick={() => exportApplicationsSheets()}
+                className="cursor-pointer"
+              >
+                {exportSheetsMutation.isPending ? (
+                  <>
+                    <span className="loading loading-spinner" />
+                    Exporting...
+                  </>
+                ) : (
+                  <>
+                    <Sheet className="size-4" />
+                    Export to Google Sheets
                   </>
                 )}
               </DropdownMenuItem>

@@ -74,6 +74,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(listings, {
       headers: {
         'Cache-Control': 'private, max-age=300, stale-while-revalidate=600',
+        Vary: 'Cookie',
       },
     });
   } catch (error) {

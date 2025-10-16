@@ -667,6 +667,7 @@ model UnsubscribedEmail {
 model BlockedEmail {
   id        String   @id @default(uuid())
   email     String   @unique
+  reason    String?
   createdAt DateTime @default(now())
 }
 
@@ -751,6 +752,7 @@ enum EmailType {
   AUTO_GENERATE_ANNOUNCEMENT
   NEW_LISTING_TELEGRAM
   REFERRAL_ANNOUNCEMENT
+  GRANTEE_ACTIVATION
 }
 
 enum Role {

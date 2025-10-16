@@ -61,11 +61,8 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         },
       },
     });
-    if (
-      user.role !== 'GOD' &&
-      result?.sponsorId !== user.currentSponsorId &&
-      result?.hackathonId !== user.hackathonId
-    ) {
+
+    if (result?.sponsorId !== user.currentSponsorId) {
       logger.warn(
         `Listing with slug=${slug} does not belong to user ${userId}`,
       );

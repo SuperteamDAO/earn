@@ -202,10 +202,9 @@ function RewardsFooter({
                         const nearestTen = Math.round(numeric / 10) * 10;
                         rounded[key] = nearestTen;
                       }
-                      const roundedSum = Object.values(rounded).reduce(
-                        (sum, n) =>
-                          sum + (Number.isFinite(n) ? (n as number) : 0),
-                        0,
+                      const roundedSum = calculateTotalRewardsForPodium(
+                        rounded,
+                        (maxBonusSpots as number) || 0,
                       );
                       form.setValue('rewards', rounded, {
                         shouldValidate: false,
@@ -294,7 +293,7 @@ function RewardsFooter({
                 compensationType === 'fixed' &&
                 deadlineMoreThan72HoursLeft &&
                 type !== 'hackathon' &&
-                isPrivate
+                !isPrivate
               ) {
                 setPanel('boost');
               } else {
