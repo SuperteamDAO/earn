@@ -1,4 +1,4 @@
-import { Info } from 'lucide-react';
+import { ExternalLink, Info } from 'lucide-react';
 import Link from 'next/link';
 
 import { VerifiedBadgeLarge } from '@/components/shared/VerifiedBadge';
@@ -89,7 +89,7 @@ export function Banner({
             href={`/s/${sponsor?.slug}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex shrink-0 items-center gap-3 transition-opacity hover:opacity-80"
+            className="group flex shrink-0 items-center gap-3 transition-opacity hover:opacity-80"
           >
             <EarnAvatar
               className="h-12 w-12 rounded-md object-contain"
@@ -108,6 +108,7 @@ export function Banner({
                       <VerifiedBadgeLarge />
                     )}
                   </div>
+                  <ExternalLink className="ml-1 h-4 w-4 text-slate-400 opacity-0 transition-opacity group-hover:opacity-100" />
                 </div>
               </div>
               {isLoading ? (

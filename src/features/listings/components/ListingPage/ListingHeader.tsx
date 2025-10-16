@@ -196,11 +196,13 @@ export function ListingHeader({
 
   const SponsorLogo = () => {
     return (
-      <img
-        className="mr-2 h-12 w-12 rounded-md object-cover md:h-16 md:w-16"
-        alt={sponsor?.name}
-        src={sponsor?.logo || `${ASSET_URL}/logo/sponsor-logo.png`}
-      />
+      <Link href={`/s/${sponsor?.slug}`}>
+        <img
+          className="mr-2 h-12 w-12 rounded-md object-cover md:h-16 md:w-16"
+          alt={sponsor?.name}
+          src={sponsor?.logo || `${ASSET_URL}/logo/sponsor-logo.png`}
+        />
+      </Link>
     );
   };
 
