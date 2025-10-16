@@ -11,7 +11,11 @@ import { cn } from '@/utils/cn';
 import { HACKATHONS } from '@/features/hackathon/constants/hackathons';
 import { CATEGORY_NAV_ITEMS } from '@/features/navbar/constants';
 
-import { type ListingCategory, useListings } from '../hooks/useListings';
+import {
+  type ListingCategory,
+  type ListingContext,
+  useListings,
+} from '../hooks/useListings';
 import { useListingsFilterCount } from '../hooks/useListingsFilterCount';
 import { useListingState } from '../hooks/useListingState';
 import type { ListingTabsProps } from '../types';
@@ -21,6 +25,11 @@ import { ListingFilters } from './ListingFilters';
 import { ListingTabs } from './ListingTabs';
 import { ViewAllButton } from './ViewAllButton';
 
+const FOR_YOU_SUPPORTED_TYPES: ReadonlyArray<ListingContext> = [
+  'home',
+  'all',
+] as const;
+
 export const ListingsSection = ({
   type,
   potentialSession,
@@ -29,7 +38,8 @@ export const ListingsSection = ({
 }: ListingTabsProps) => {
   const isMd = useBreakpoint('md');
 
-  const { authenticated } = usePrivy();
+  const { authenticated, ready } = usePrivy();
+  const supportsForYou = FOR_YOU_SUPPORTED_TYPES.includes(type);
   const {
     ref: scrollContainerRef,
     showLeftShadow,
@@ -47,7 +57,7 @@ export const ListingsSection = ({
 
   const optimalDefaultCategory = useMemo((): ListingCategory => {
     if (countsLoading || !categoryCounts) {
-      return (potentialSession || authenticated) && type === 'home'
+      return (potentialSession || (ready && authenticated)) && supportsForYou
         ? 'For You'
         : 'All';
     }
@@ -55,15 +65,22 @@ export const ListingsSection = ({
     const forYouCount = categoryCounts['For You'] || 0;
 
     if (
-      (potentialSession || authenticated) &&
-      type === 'home' &&
+      (potentialSession || (ready && authenticated)) &&
+      supportsForYou &&
       forYouCount > 2
     ) {
       return 'For You';
     }
 
     return 'All';
-  }, [categoryCounts, countsLoading, potentialSession, authenticated, type]);
+  }, [
+    categoryCounts,
+    countsLoading,
+    potentialSession,
+    authenticated,
+    ready,
+    supportsForYou,
+  ]);
 
   const {
     activeTab,
@@ -98,11 +115,11 @@ export const ListingsSection = ({
   const shouldShowForYou = useMemo(() => {
     if (!categoryCounts) return false;
     return (
-      (potentialSession || authenticated) &&
-      (type === 'home' || type === 'all') &&
+      (potentialSession || (ready && authenticated)) &&
+      supportsForYou &&
       (categoryCounts['For You'] || 0) > 2
     );
-  }, [categoryCounts, potentialSession, authenticated, type]);
+  }, [categoryCounts, potentialSession, authenticated, ready, supportsForYou]);
 
   const visibleCategoryNavItems = useMemo(() => {
     if (!categoryCounts) return CATEGORY_NAV_ITEMS;
