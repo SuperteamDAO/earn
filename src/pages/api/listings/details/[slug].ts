@@ -19,6 +19,7 @@ export async function getListingDetailsBySlug(slug: string): Promise<any> {
         select: {
           name: true,
           logo: true,
+          slug: true,
           entityName: true,
           isVerified: true,
           isCaution: true,

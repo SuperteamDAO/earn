@@ -1,6 +1,5 @@
 import type { z } from 'zod';
 
-import { exclusiveSponsorData } from '@/constants/exclusiveSponsors';
 import { type JsonValue } from '@/prisma/internal/prismaNamespace';
 import { type GrantsWhereInput } from '@/prisma/models';
 
@@ -109,18 +108,9 @@ export async function buildGrantsQuery(
   }
 
   if (context === 'sponsor' && sponsor) {
-    const sponsorKey = sponsor.toLowerCase();
-    const sponsorInfo = exclusiveSponsorData[sponsorKey];
-
     where.sponsor = {
-      name: sponsorInfo?.title,
+      name: sponsor,
     };
-
-    if (!!sponsorInfo?.showPrivates) {
-      delete where.isPrivate;
-    } else {
-      where.isPrivate = false;
-    }
   }
 
   const skillFilter = getSkillFilter(category);

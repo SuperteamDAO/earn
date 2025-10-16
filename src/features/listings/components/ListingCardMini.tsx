@@ -51,12 +51,16 @@ export const ListingCardMini = ({ bounty }: { bounty: Listing }) => {
             <p className="ph-no-capture line-clamp-1 text-sm font-semibold text-slate-700 hover:underline">
               {title}
             </p>
-            <div className="flex w-min items-center gap-1">
+            <Link
+              href={`/s/${sponsor?.slug}`}
+              onClick={(e) => e.stopPropagation()}
+              className="flex w-min items-center gap-1 hover:underline"
+            >
               <p className="w-full text-xs whitespace-nowrap text-slate-500">
                 {sponsor?.name}
               </p>
               <div>{!!sponsor?.isVerified && <VerifiedBadge />}</div>
-            </div>
+            </Link>
             <div className="mt-px flex flex-wrap items-center gap-1">
               <div className="flex items-center justify-start">
                 {!!showToken && (

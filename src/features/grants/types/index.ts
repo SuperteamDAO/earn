@@ -15,11 +15,13 @@ interface Grant {
   link?: string;
   sponsorId?: string;
   sponsor?: {
+    id?: string;
     name: string;
     logo: string;
+    slug: string;
     isVerified: boolean;
-    entityName: string;
-    st: boolean;
+    entityName?: string;
+    st?: boolean;
   };
   pocId?: string;
   poc?: User;

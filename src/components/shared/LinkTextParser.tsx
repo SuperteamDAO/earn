@@ -1,3 +1,5 @@
+import { cn } from '@/utils/cn';
+
 import { emailRegex } from '@/features/social/utils/regex';
 
 const URL_REGEX =
@@ -34,7 +36,10 @@ export function LinkTextParser({ text, className, ...props }: Props) {
   const parts = text.split(URL_REGEX);
 
   return (
-    <p className={className} {...props}>
+    <p
+      className={cn('text-sm font-medium text-slate-500', className)}
+      {...props}
+    >
       {parts.map((part, index) => {
         if (part.match(URL_REGEX)) {
           const href = addProtocolIfNeeded(part);
@@ -43,7 +48,7 @@ export function LinkTextParser({ text, className, ...props }: Props) {
           return (
             <a
               key={index}
-              className="text-brand-purple text-sm font-medium hover:underline"
+              className="text-brand-purple hover:underline"
               href={href}
               target="_blank"
               rel="noopener noreferrer"
@@ -53,7 +58,7 @@ export function LinkTextParser({ text, className, ...props }: Props) {
           );
         }
         return (
-          <span key={index} className="text-sm font-medium text-slate-600">
+          <span key={index} className="">
             {part}
           </span>
         );

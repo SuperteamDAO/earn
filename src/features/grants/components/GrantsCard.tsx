@@ -44,12 +44,16 @@ export const GrantsCard = ({ grant }: { grant: GrantWithApplicationCount }) => {
             <p className="line-clamp-1 text-sm font-semibold text-slate-700 sm:text-base">
               {title}
             </p>
-            <div className="flex w-min items-center gap-1">
+            <Link
+              href={`/s/${sponsor?.slug}`}
+              onClick={(e) => e.stopPropagation()}
+              className="flex w-min items-center gap-1 hover:underline"
+            >
               <p className="w-full text-xs whitespace-nowrap text-slate-500 md:text-sm">
                 {sponsor?.name}
               </p>
               <div>{!!sponsor?.isVerified && <VerifiedBadge />}</div>
-            </div>
+            </Link>
             <div className="mt-[1px] flex items-center gap-1 sm:gap-3">
               <div className="flex items-center justify-start sm:hidden">
                 <LocalImage
