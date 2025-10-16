@@ -36,9 +36,21 @@ export function GrantCard({ grant, type, commentCount }: GrantCardProps) {
     <>
       {!grant?.isPrivate ? (
         <div className="flex items-center gap-1.5 sm:gap-3">
-          <Avatar className="size-5 sm:size-7">
-            <AvatarImage src={grant?.sponsorLogo} alt="Sponsor Logo" />
-          </Avatar>
+          {grant?.sponsorSlug ? (
+            <Link
+              href={`/s/${grant.sponsorSlug}`}
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              <Avatar className="size-5 sm:size-7">
+                <AvatarImage src={grant?.sponsorLogo} alt="Sponsor Logo" />
+              </Avatar>
+            </Link>
+          ) : (
+            <Avatar className="size-5 sm:size-7">
+              <AvatarImage src={grant?.sponsorLogo} alt="Sponsor Logo" />
+            </Avatar>
+          )}
           <Link
             className={`text-xs font-semibold text-gray-500 sm:text-sm md:text-base ${isViewGrantHovered ? '' : 'group-hover:underline'} line-clamp-1 group-hover:decoration-current`}
             href={listingLink}

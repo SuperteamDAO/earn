@@ -195,7 +195,7 @@ s.name LIKE CONCAT('%', ?, '%')
     b.rewardAmount, 
     b.deadline, 
     b.type, 
-    JSON_OBJECT('name', s.name, 'logo', s.logo, 'isVerified', s.isVerified) as sponsor,
+    JSON_OBJECT('name', s.name, 'logo', s.logo, 'isVerified', s.isVerified, 'slug', s.slug) as sponsor,
     b.title, 
     b.token, 
     b.slug, 
@@ -263,7 +263,7 @@ s.name LIKE CONCAT('%', ?, '%')
     b.updatedAt,
     b.totalApproved,
     b.historicalApplications,
-    JSON_OBJECT('name', s.name, 'logo', s.logo, 'isVerified', s.isVerified) as sponsor,
+    JSON_OBJECT('name', s.name, 'logo', s.logo, 'isVerified', s.isVerified, 'slug', s.slug) as sponsor,
     (
       SELECT COUNT(*)
       FROM GrantApplication ga
