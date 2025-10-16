@@ -17,7 +17,7 @@ import { buildListingQuery } from '@/features/listings/utils/query-builder';
 
 export async function GET(request: NextRequest) {
   try {
-    // const userIdFromCookie = request.cookies.get('user-id-hint')?.value;
+    const userIdFromCookie = request.cookies.get('user-id-hint')?.value;
     const session = await getUserSession(await headers());
 
     const { searchParams } = new URL(request.url);
@@ -39,9 +39,11 @@ export async function GET(request: NextRequest) {
       skills: JsonValue;
     } | null = null;
 
-    if (session.data?.userId) {
+    const userId = userIdFromCookie || session.data?.userId;
+
+    if (userId) {
       user = await prisma.user.findUnique({
-        where: { id: session.data.userId },
+        where: { id: userId },
         select: {
           id: true,
           isTalentFilled: true,
