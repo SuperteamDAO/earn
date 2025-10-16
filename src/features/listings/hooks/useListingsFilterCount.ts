@@ -19,6 +19,7 @@ interface ListingsFilterCountParams {
   status?: ListingStatus;
   region?: string;
   sponsor?: string;
+  authenticated?: boolean;
 }
 
 export type CategoryCounts = Record<string, number>;
@@ -51,9 +52,18 @@ export function useListingsFilterCount({
   status,
   region,
   sponsor,
+  authenticated,
 }: ListingsFilterCountParams) {
   return useQuery({
-    queryKey: ['listings-filter-count', context, tab, status, region, sponsor],
+    queryKey: [
+      'listings-filter-count',
+      context,
+      tab,
+      status,
+      region,
+      sponsor,
+      authenticated,
+    ],
     queryFn: () =>
       fetchListingsFilterCount({
         context,
