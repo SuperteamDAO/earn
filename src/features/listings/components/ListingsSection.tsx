@@ -53,6 +53,7 @@ export const ListingsSection = ({
       status: 'open',
       region,
       sponsor,
+      authenticated,
     });
 
   const optimalDefaultCategory = useMemo((): ListingCategory => {
