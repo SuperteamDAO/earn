@@ -165,45 +165,54 @@ export function ScoutTable({ bountyId, scouts, setInvited }: Props) {
                 </TableCell>
                 <TableCell className="h-full px-1 md:px-2">
                   <div className="flex h-full gap-2 text-center">
-                    {scout.skills.slice(0, MAX_SHOW_SKILLS).map((s) => {
-                      const skillColor =
-                        skillMap.find((e) => e.mainskill === s)?.color ||
-                        '#64739C';
-                      const bgColor = skillMap.find((e) => e.mainskill === s)
-                        ? `${skillMap.find((e) => e.mainskill === s)?.color}1A`
-                        : '#EFF1F5';
+                    {scout.skills
+                      .filter((s) => s !== null)
+                      .slice(0, MAX_SHOW_SKILLS)
+                      .map((s) => {
+                        const skillColor =
+                          skillMap.find((e) => e.mainskill === s)?.color ||
+                          '#64739C';
+                        const bgColor = skillMap.find((e) => e.mainskill === s)
+                          ? `${skillMap.find((e) => e.mainskill === s)?.color}1A`
+                          : '#EFF1F5';
 
-                      return (
-                        <span
-                          key={s}
-                          className="inline-flex px-2 text-xs font-medium"
-                          style={{
-                            color: skillColor,
-                            backgroundColor: bgColor,
-                          }}
-                        >
-                          {s}
-                        </span>
-                      );
-                    })}
+                        return (
+                          <span
+                            key={s}
+                            className="inline-flex px-2 text-xs font-medium"
+                            style={{
+                              color: skillColor,
+                              backgroundColor: bgColor,
+                            }}
+                          >
+                            {s}
+                          </span>
+                        );
+                      })}
 
-                    {scout.skills.length > MAX_SHOW_SKILLS && (
+                    {scout.skills.filter((s) => s !== null).length >
+                      MAX_SHOW_SKILLS && (
                       <Popover>
                         <PopoverTrigger>
                           <span className="inline-flex rounded-full bg-[#EFF1F5] px-2 text-xs font-medium text-[#64739C]">
-                            +{scout.skills.length - MAX_SHOW_SKILLS}
+                            +
+                            {scout.skills.filter((s) => s !== null).length -
+                              MAX_SHOW_SKILLS}
                           </span>
                         </PopoverTrigger>
                         <PopoverContent className="w-fit max-w-40 px-4 py-2 shadow-lg">
                           <div className="flex h-full w-fit flex-wrap gap-2 text-center">
-                            {scout.skills.slice(MAX_SHOW_SKILLS).map((s) => (
-                              <span
-                                key={s}
-                                className="inline-flex rounded-full bg-[#EFF1F5] px-2 text-xs font-medium text-[#64739C]"
-                              >
-                                {s}
-                              </span>
-                            ))}
+                            {scout.skills
+                              .filter((s) => s !== null)
+                              .slice(MAX_SHOW_SKILLS)
+                              .map((s) => (
+                                <span
+                                  key={s}
+                                  className="inline-flex rounded-full bg-[#EFF1F5] px-2 text-xs font-medium text-[#64739C]"
+                                >
+                                  {s}
+                                </span>
+                              ))}
                           </div>
                         </PopoverContent>
                       </Popover>
