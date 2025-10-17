@@ -11,6 +11,7 @@ import { queueAgent } from '@/features/agents/utils/queueAgent';
 import { getUserSession } from '@/features/auth/utils/getUserSession';
 import { queueEmail } from '@/features/emails/utils/queueEmail';
 import { grantApplicationSchema } from '@/features/grants/utils/grantApplicationSchema';
+import { isGrantPausedForNewApplications } from '@/features/grants/utils/pause-applications';
 import { syncGrantApplicationWithAirtable } from '@/features/grants/utils/syncGrantApplicationWithAirtable';
 import { validateGrantRequest } from '@/features/grants/utils/validateGrantRequest';
 import { extractSocialUsername } from '@/features/social/utils/extractUsername';
@@ -117,6 +118,13 @@ export async function POST(request: NextRequest) {
       userId,
       grantId,
     });
+
+    if (isGrantPausedForNewApplications(grant)) {
+      return NextResponse.json(
+        { error: 'New grant applications have been temporarily paused' },
+        { status: 403 },
+      );
+    }
 
     const existingApplication = await prisma.grantApplication.findFirst({
       where: {
