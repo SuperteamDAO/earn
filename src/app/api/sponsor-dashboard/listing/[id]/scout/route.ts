@@ -179,36 +179,24 @@ export async function GET(
       subskills: string[],
       skills: string[],
       alias: string,
-    ) => `
-      JSON_ARRAY_COMPACT(
-        JSON_ARRAYAGG(
-          CASE
-            ${
-              subskills.length > 0
-                ? subskills
-                    .map(
-                      (s) => `
-                WHEN JSON_CONTAINS(JSON_EXTRACT(${alias}.skills, '$[*].subskills'), JSON_QUOTE('${s}')) THEN '${s}'
-              `,
-                    )
-                    .join(`\n`)
-                : ''
-            }
-            ${
-              skills.length > 0
-                ? skills
-                    .map(
-                      (s) => `
-                WHEN JSON_CONTAINS(JSON_EXTRACT(${alias}.skills, '$[*].skills'), JSON_QUOTE('${s}')) THEN '${s}'
-              `,
-                    )
-                    .join(`\n`)
-                : ''
-            }
-          END
-        )
+    ) => {
+      const allSkills = [
+        ...subskills.map((s) => ({ skill: s, type: 'subskills' })),
+        ...skills.map((s) => ({ skill: s, type: 'skills' })),
+      ];
+
+      return `
+      JSON_ARRAY(
+        ${allSkills
+          .map(
+            ({ skill, type }) => `
+          IF(JSON_CONTAINS(JSON_EXTRACT(ANY_VALUE(${alias}.skills), '$[*].${type}'), JSON_QUOTE('${skill}')), '${skill}', NULL)
+        `,
+          )
+          .join(', ')}
       ) AS matchedSkillsArray
       `;
+    };
 
     const matchingWhereClause = (
       subskills: string[],
