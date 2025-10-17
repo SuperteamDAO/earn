@@ -180,41 +180,34 @@ export async function GET(
       skills: string[],
       alias: string,
     ) => `
-      CONCAT('[',
-        GROUP_CONCAT(DISTINCT
-          CONCAT_WS(',',
-          ${
-            subskills.length > 0
-              ? subskills
-                  .map(
-                    (s) => `
-                CASE
-                  WHEN JSON_CONTAINS(JSON_EXTRACT(${alias}.skills, '$[*].subskills'), JSON_QUOTE('${s}')) THEN JSON_QUOTE('${s}')
-                  ELSE NULL
-                END
+      JSON_ARRAY_COMPACT(
+        JSON_ARRAYAGG(
+          CASE
+            ${
+              subskills.length > 0
+                ? subskills
+                    .map(
+                      (s) => `
+                WHEN JSON_CONTAINS(JSON_EXTRACT(${alias}.skills, '$[*].subskills'), JSON_QUOTE('${s}')) THEN '${s}'
               `,
-                  )
-                  .join(`, \n`)
-              : ''
-          }
-      ${skills.length > 0 && subskills.length > 0 ? ',' : ''}
-        ${
-          skills.length > 0
-            ? skills
-                .map(
-                  (s) => `
-                  CASE
-                    WHEN JSON_CONTAINS(JSON_EXTRACT(${alias}.skills, '$[*].skills'), JSON_QUOTE('${s}')) THEN JSON_QUOTE('${s}')
-                    ELSE NULL
-                  END
-                `,
-                )
-                .join(`, \n`)
-            : ''
-        }
+                    )
+                    .join(`\n`)
+                : ''
+            }
+            ${
+              skills.length > 0
+                ? skills
+                    .map(
+                      (s) => `
+                WHEN JSON_CONTAINS(JSON_EXTRACT(${alias}.skills, '$[*].skills'), JSON_QUOTE('${s}')) THEN '${s}'
+              `,
+                    )
+                    .join(`\n`)
+                : ''
+            }
+          END
         )
-        ),
-        ']') AS matchedSkillsArray
+      ) AS matchedSkillsArray
       `;
 
     const matchingWhereClause = (
