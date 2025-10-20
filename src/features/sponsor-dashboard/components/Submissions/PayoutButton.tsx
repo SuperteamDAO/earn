@@ -23,6 +23,15 @@ import posthog from 'posthog-js';
 import React, { useState } from 'react';
 import { toast } from 'sonner';
 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 import { tokenList } from '@/constants/tokenList';
 import { type SubmissionWithUser } from '@/interface/submission';
@@ -41,6 +50,11 @@ interface Props {
 
 export const PayoutButton = ({ bounty, submission }: Props) => {
   const [isPaying, setIsPaying] = useState(false);
+  const [warning, setWarning] = useState<{
+    firstName: string;
+    signature?: string;
+  } | null>(null);
+  const [lastSignature, setLastSignature] = useState<string | null>(null);
 
   const { user } = useUser();
 
@@ -335,6 +349,7 @@ export const PayoutButton = ({ bounty, submission }: Props) => {
       if (typeof window !== 'undefined') {
         window.localStorage.setItem(guardKey, signature);
       }
+      setLastSignature(signature);
 
       let confirmed = false;
       while (!confirmed) {
@@ -387,13 +402,87 @@ export const PayoutButton = ({ bounty, submission }: Props) => {
       log.error(
         `Sponsor unable to pay, user id: ${user?.id}, sponsor id: ${user?.currentSponsorId}, error: ${error?.toString()}, sponsor wallet: ${publicKey?.toBase58()}`,
       );
-      const msg = (error as Error)?.message || 'Transaction failed';
-      toast.error(
-        msg.includes('expired')
-          ? 'Payment not sent: blockhash expired.'
-          : `Payment failed: ${msg}`,
-      );
-      setIsPaying(false);
+
+      const firstName = (() => {
+        const name =
+          (submission as any)?.user?.name ||
+          (submission as any)?.user?.firstName ||
+          'the winner';
+        return typeof name === 'string' && name.trim().length > 0
+          ? name.trim().split(' ')[0]
+          : 'the winner';
+      })();
+
+      const classifyError = (
+        e: unknown,
+      ): 'user-rejected' | 'expired' | 'timeout' | 'rpc' | 'unknown' => {
+        const text = String((e as any)?.message ?? e ?? '').toLowerCase();
+        if (
+          text.includes('user rejected') ||
+          text.includes('rejected the request') ||
+          text.includes('denied') ||
+          text.includes('declined')
+        ) {
+          return 'user-rejected';
+        }
+        if (
+          text.includes('expired') ||
+          text.includes('blockhash') ||
+          text.includes('lastvalidblockheight')
+        ) {
+          return 'expired';
+        }
+        if (
+          text.includes('timed out') ||
+          text.includes('timeout') ||
+          text.includes('was not confirmed')
+        ) {
+          return 'timeout';
+        }
+        if (
+          text.includes('failed to fetch') ||
+          text.includes('429') ||
+          text.includes('503') ||
+          text.includes('network') ||
+          text.includes('econnreset') ||
+          text.includes('enotfound')
+        ) {
+          return 'rpc';
+        }
+        return 'unknown';
+      };
+
+      const reason = classifyError(error);
+      switch (reason) {
+        case 'user-rejected':
+          toast.error('Payment cancelled in wallet.');
+          setIsPaying(false);
+          break;
+        case 'expired':
+          toast.error('Blockhash expired. Payment not sent.');
+          setIsPaying(false);
+          break;
+        case 'timeout': {
+          if (typeof lastSignature === 'string' && lastSignature.length > 0) {
+            toast.info(
+              'Network congestion: transaction may still confirm. Check explorer.',
+            );
+          } else {
+            setWarning({ firstName: firstName as string, signature: '' });
+          }
+          setIsPaying(false);
+          break;
+        }
+        case 'rpc':
+        case 'unknown':
+        default:
+          setWarning({
+            firstName: firstName as string,
+            signature: (lastSignature as string) ?? '',
+          });
+          setIsPaying(false);
+          break;
+      }
     } finally {
       try {
         if (typeof window !== 'undefined') {
@@ -469,6 +558,28 @@ export const PayoutButton = ({ bounty, submission }: Props) => {
           )}
         </Button>
       )}
+      <AlertDialog
+        open={Boolean(warning)}
+        onOpenChange={(open) => {
+          if (!open) setWarning(null);
+        }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              ⚠️ Important: Check your wallet history
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {`Your payment to ${warning?.firstName ?? 'the winner'} might have gone through. Please check your wallet history before reattempting to pay ${warning?.firstName ?? 'the winner'}.`}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogAction onClick={() => setWarning(null)}>
+              Understood
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 };
