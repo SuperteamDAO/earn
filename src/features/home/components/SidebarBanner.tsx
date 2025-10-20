@@ -50,8 +50,9 @@ export function SidebarBannerCypherpunk({ className }: SidebarPosterProps) {
             )?.toLocaleString('en-us') || '0'}
             +. Deadline for submissions is{' '}
             {dayjs(CLOSE_DATE)
-              .tz('America/Los_Angeles')
-              .format('MMM D (h:mmA PST)')}
+              .utc()
+              .add(1, 'minute')
+              .format('MMM D (h:mmA [UTC])')}
           </p>
 
           <Button className={`mt-4 text-base`}>View Tracks</Button>
