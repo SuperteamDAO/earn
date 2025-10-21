@@ -424,7 +424,7 @@ export function SponsorLayout({
           {showContent && (
             <div
               className={cn(
-                'w-full flex-1 bg-white py-5 pr-8 pl-4 transition-[margin-left] duration-300 ease-in-out',
+                'w-full flex-1 overflow-x-auto bg-white py-5 pr-8 pl-4 transition-[margin-left] duration-300 ease-in-out',
                 isCollapsible ? 'ml-20' : 'ml-0',
               )}
             >

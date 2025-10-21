@@ -204,7 +204,7 @@ export default function FAQ() {
   return (
     <SponsorLayout>
       <div className="py=4 px-8">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col justify-between gap-4 lg:flex-row lg:items-center">
           <p className="text-3xl font-semibold">Frequently Asked Questions</p>
           <div className="w-[400px]">
             <HelpBanner />

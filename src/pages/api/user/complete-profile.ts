@@ -205,7 +205,6 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
         community: updatedData.community
           ? JSON.stringify(updatedData.community)
           : undefined,
-        superteamLevel: 'Lurker',
         isTalentFilled: true,
         walletAddress,
         referralCode,

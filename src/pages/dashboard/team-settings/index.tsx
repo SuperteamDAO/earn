@@ -131,10 +131,11 @@ const Index = () => {
     <SponsorLayout>
       {isOpen && <InviteMembers isOpen={isOpen} onClose={onClose} />}
       <Banner stats={sponsorStats} isLoading={isStatsLoading} />
-      <div className="mb-4 flex justify-between">
-        <div className="flex items-center gap-3">
-          <p className="text-lg font-semibold text-slate-800">Team Members</p>
-          <div className="h-[60%] border-r border-slate-200" />
+      <div className="mb-4 flex flex-col justify-between gap-3 xl:flex-row xl:items-center">
+        <div className="flex min-w-0 flex-shrink-0 items-start gap-3 lg:items-center">
+          <p className="font-semibold whitespace-nowrap text-slate-800 lg:text-lg">
+            Team Members
+          </p>
           <p className="text-slate-500">
             Manage who gets access to your sponsor profile
           </p>

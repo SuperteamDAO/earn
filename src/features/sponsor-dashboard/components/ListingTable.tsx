@@ -280,7 +280,7 @@ export const ListingTable = ({
                       {deadline}
                     </p>
                   </TableCell>
-                  <TableCell className="py-2">
+                  <TableCell className="py-2 pr-6">
                     <div className="flex items-center justify-start gap-1">
                       <img
                         className="h-5 w-5 rounded-full"

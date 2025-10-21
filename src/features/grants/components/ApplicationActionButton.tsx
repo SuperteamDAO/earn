@@ -9,6 +9,7 @@ import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 
 import { AuthWrapper } from '@/features/auth/components/AuthWrapper';
+import { isGrantPausedForNewApplications } from '@/features/grants/utils/pause-applications';
 import {
   getRegionTooltipLabel,
   userRegionEligibilty,
@@ -56,11 +57,18 @@ export const ApplicationActionButton = ({
 
   const cooldownTooltipContent = getCooldownTooltipContent() || undefined;
 
+  const isPausedForNew = isGrantPausedForNewApplications(grant);
+  const pausedForThisState = applicationState === 'ALLOW NEW' && isPausedForNew;
+  const pausedTooltipContent = pausedForThisState
+    ? 'New grant applications have been temporarily paused'
+    : undefined;
+
   const isBtnDisabled =
     buttonConfig.isDisabled ||
     Boolean(
       !isPublished ||
-        (user?.id && user?.isTalentFilled && !isUserEligibleByRegion),
+        (user?.id && user?.isTalentFilled && !isUserEligibleByRegion) ||
+        pausedForThisState,
     );
 
   const handleSubmit = () => {
@@ -100,6 +108,7 @@ export const ApplicationActionButton = ({
             regionTooltipLabel={regionTooltipLabel}
             user={user}
             cooldownTooltipContent={cooldownTooltipContent}
+            pausedTooltipContent={pausedTooltipContent}
           >
             <AuthWrapper
               showCompleteProfileModal
