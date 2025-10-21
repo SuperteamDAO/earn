@@ -201,7 +201,7 @@ export const ListingsSection = ({
       <div className="flex w-full items-center justify-between md:mb-1.5">
         <div className="flex items-center">
           <p className="text-lg font-semibold text-slate-800">
-            {type === 'sponsor' ? 'All Listings' : 'Browse Bounties'}
+            {type === 'sponsor' ? 'All Listings' : 'Browse Opportunities'}
           </p>
 
           <div className="hidden items-center md:flex">
