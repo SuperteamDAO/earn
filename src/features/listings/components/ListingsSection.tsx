@@ -25,6 +25,9 @@ import { ListingFilters } from './ListingFilters';
 import { ListingTabs } from './ListingTabs';
 import { ViewAllButton } from './ViewAllButton';
 
+interface ListingsSectionProps extends ListingTabsProps {
+  customEmptySection?: React.ReactNode;
+}
 const FOR_YOU_SUPPORTED_TYPES: ReadonlyArray<ListingContext> = [
   'home',
   'all',
@@ -35,7 +38,8 @@ export const ListingsSection = ({
   potentialSession,
   region,
   sponsor,
-}: ListingTabsProps) => {
+  customEmptySection,
+}: ListingsSectionProps) => {
   const isMd = useBreakpoint('md');
 
   const { authenticated, ready } = usePrivy();
@@ -168,10 +172,12 @@ export const ListingsSection = ({
 
     if (!listings?.length) {
       return (
-        <EmptySection
-          title="No opportunities found"
-          message="We don't have any relevant opportunities for the current filters."
-        />
+        customEmptySection ?? (
+          <EmptySection
+            title="No opportunities found"
+            message="We don't have any relevant opportunities for the current filters."
+          />
+        )
       );
     }
 
@@ -195,7 +201,7 @@ export const ListingsSection = ({
       <div className="flex w-full items-center justify-between md:mb-1.5">
         <div className="flex items-center">
           <p className="text-lg font-semibold text-slate-800">
-            Browse Opportunities
+            {type === 'sponsor' ? 'All Listings' : 'Browse Opportunities'}
           </p>
 
           <div className="hidden items-center md:flex">

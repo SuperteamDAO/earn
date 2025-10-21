@@ -1,6 +1,5 @@
 import type { z } from 'zod';
 
-import { exclusiveSponsorData } from '@/constants/exclusiveSponsors';
 import { Superteams } from '@/constants/Superteam';
 import { type JsonValue } from '@/prisma/internal/prismaNamespace';
 import {
@@ -245,17 +244,16 @@ export async function buildListingQuery(
 
   if (context === 'sponsor' && sponsor) {
     const sponsorKey = sponsor.toLowerCase();
-    const sponsorInfo = exclusiveSponsorData[sponsorKey];
 
     where.sponsor = {
-      name: sponsorInfo?.title,
+      slug: sponsorKey,
     };
 
-    if (!!sponsorInfo?.showPrivates) {
-      delete where.isPrivate;
-    } else {
-      where.isPrivate = false;
-    }
+    // if (!!sponsorInfo?.showPrivates) {
+    //   delete where.isPrivate;
+    // } else {
+    //   where.isPrivate = false;
+    // }
   }
 
   const standardTabs = ['all', 'bounties', 'projects'];
