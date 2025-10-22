@@ -1,3 +1,5 @@
+'use client';
+
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';

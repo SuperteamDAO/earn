@@ -1,4 +1,6 @@
-import { type GetServerSideProps } from 'next';
+'use client';
+
+import { useSearchParams } from 'next/navigation';
 import NProgress from 'nprogress';
 import { useEffect, useMemo, useState } from 'react';
 
@@ -15,11 +17,9 @@ import { useSearchListings } from '@/features/search/hooks/useSearchListings';
 import { useSearchState } from '@/features/search/hooks/useSearchState';
 import { getUserRegion } from '@/features/search/utils/userRegionSearch';
 
-interface SearchProps {
-  initialQuery?: string;
-}
-
-const SearchPage = ({ initialQuery = '' }: SearchProps) => {
+const SearchPage = () => {
+  const searchParams = useSearchParams();
+  const initialQuery = searchParams?.get('q')?.trim() || '';
   const { user } = useUser();
   const userRegion = useMemo(() => getUserRegion(user?.location), [user]);
   const [isQueryEmpty, setIsQueryEmpty] = useState(initialQuery.trim() === '');
@@ -131,16 +131,6 @@ const SearchPage = ({ initialQuery = '' }: SearchProps) => {
       </div>
     </Default>
   );
-};
-
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const query = (context.query.q as string)?.trim() || '';
-
-  return {
-    props: {
-      initialQuery: query,
-    },
-  };
 };
 
 export default SearchPage;

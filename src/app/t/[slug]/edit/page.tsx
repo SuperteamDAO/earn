@@ -2,8 +2,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { usePrivy } from '@privy-io/react-auth';
 import { Edit, Info, Loader2, Plus, Trash } from 'lucide-react';
-import type { GetServerSideProps } from 'next';
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import posthog from 'posthog-js';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -59,7 +58,9 @@ import { type ProfileFormData, profileSchema } from '@/features/talent/schema';
 import { hasDevSkills } from '@/features/talent/utils/skills';
 import { useUsernameValidation } from '@/features/talent/utils/useUsernameValidation';
 
-export default function EditProfilePage({ slug }: { slug: string }) {
+export default function EditProfilePage() {
+  const params = useParams();
+  const slug = params?.slug as string;
   const { user, refetchUser } = useUser();
   const { authenticated, ready } = usePrivy();
 
@@ -760,10 +761,3 @@ export default function EditProfilePage({ slug }: { slug: string }) {
     </Default>
   );
 }
-
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { slug } = context.query;
-  return {
-    props: { slug },
-  };
-};

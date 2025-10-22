@@ -1,8 +1,7 @@
 'use client';
+
 import { ChevronDown, ChevronUp, SquarePen } from 'lucide-react';
-import type { GetServerSideProps } from 'next';
 import dynamic from 'next/dynamic';
-import Head from 'next/head';
 import { useRouter } from 'next/navigation';
 import { type JSX, useEffect, useMemo, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
@@ -16,11 +15,8 @@ import { ASSET_URL } from '@/constants/ASSET_URL';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import type { User } from '@/interface/user';
-import { Default } from '@/layouts/Default';
-import { prisma } from '@/prisma';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
-import { getURL } from '@/utils/validUrl';
 
 import { AuthWrapper } from '@/features/auth/components/AuthWrapper';
 const FeedLoop = dynamic(
@@ -31,13 +27,6 @@ const FeedLoop = dynamic(
   },
 );
 import { useGetFeed } from '@/features/feed/queries/useGetFeed';
-import { type FeedDataProps } from '@/features/feed/types';
-import {
-  GitHub,
-  Linkedin,
-  Twitter,
-  Website,
-} from '@/features/social/components/SocialIcons';
 const AddProject = dynamic(
   () =>
     import('@/features/talent/components/AddProject').then(
@@ -53,20 +42,23 @@ const ShareProfile = dynamic(
     ),
   { ssr: false },
 );
+import {
+  GitHub,
+  Linkedin,
+  Twitter,
+  Website,
+} from '@/features/social/components/SocialIcons';
 
-type UserWithFeed = User & {
-  feed: FeedDataProps[];
-};
-interface TalentProps {
-  talent: UserWithFeed;
-  stats: {
-    wins: number;
-    participations: number;
-    totalWinnings: number;
+interface TalentClientProps {
+  readonly talent: User | null;
+  readonly stats: {
+    readonly wins: number;
+    readonly participations: number;
+    readonly totalWinnings: number;
   };
 }
 
-function TalentProfile({ talent, stats }: TalentProps) {
+export function TalentProfileClient({ talent, stats }: TalentClientProps) {
   const [activeTab, setActiveTab] = useState<'activity' | 'projects'>(
     'activity',
   );
@@ -112,7 +104,7 @@ function TalentProfile({ talent, stats }: TalentProps) {
       }
     };
     track();
-  }, [talent, user?.id]);
+  }, [user?.id, talent?.id]);
 
   const {
     isOpen: isOpenPow,
@@ -237,57 +229,10 @@ function TalentProfile({ talent, stats }: TalentProps) {
     );
   };
 
-  const ogImage = new URL(`${getURL()}api/dynamic-og/talent/`);
-  ogImage.searchParams.set('name', `${talent?.firstName} ${talent?.lastName}`);
-  ogImage.searchParams.set('username', talent?.username!);
-  ogImage.searchParams.set('skills', JSON.stringify(talent?.skills));
-  ogImage.searchParams.set(
-    'totalEarned',
-    stats?.totalWinnings?.toFixed(0) || '0',
-  );
-  ogImage.searchParams.set(
-    'submissionCount',
-    stats?.participations?.toString(),
-  );
-  ogImage.searchParams.set('winnerCount', stats?.wins?.toString());
-  ogImage.searchParams.set('photo', talent?.photo!);
-
-  const title =
-    talent?.firstName && talent?.lastName
-      ? `${talent?.firstName} ${talent?.lastName} | Superteam Earn Talent`
-      : 'Superteam Earn';
-
   const feedItems = feed?.pages.flatMap((page) => page) ?? [];
 
   return (
-    <Default
-      meta={
-        <Head>
-          <title>{title}</title>
-          <meta property="og:title" content={title} />
-          <meta property="og:image" content={ogImage.toString()} />
-          <meta name="twitter:title" content={title} />
-          <meta name="twitter:image" content={ogImage.toString()} />
-          <meta name="twitter:card" content="summary_large_image" />
-          <meta property="og:image:width" content="1200" />
-          <meta property="og:image:height" content="630" />
-          <meta property="og:image:alt" content="Talent on Superteam" />
-          <meta charSet="UTF-8" key="charset" />
-          <meta
-            name="viewport"
-            content="width=device-width, initial-scale=1, maximum-scale=1"
-            key="viewport"
-          />
-          <link
-            rel="preconnect"
-            href="https://res.cloudinary.com"
-            crossOrigin=""
-          />
-          <link rel="dns-prefetch" href="https://res.cloudinary.com" />
-          <link rel="preload" as="image" href={optimizedCoverUrl} />
-        </Head>
-      }
-    >
+    <>
       {!talent?.id && (
         <EmptySection message="Sorry! The profile you are looking for is not available." />
       )}
@@ -365,66 +310,68 @@ function TalentProfile({ talent, stats }: TalentProps) {
               </div>
               <div className="w-full md:w-1/2">
                 <p className="font-medium text-slate-900">Skills</p>
-                {Array.isArray(talent.skills) ? (
-                  talent.skills.map((skillItem: any, index: number) => {
-                    return skillItem ? (
-                      <div className="mt-4" key={index}>
-                        <p className="text-xs font-medium text-slate-400">
-                          {skillItem.skills.toUpperCase()}
-                        </p>
-                        <div className="flex items-center">
-                          <div className="mt-2 flex flex-wrap gap-2">
-                            {skillItem.subskills
-                              .slice(0, 3)
-                              .map((subskill: string, subIndex: number) => (
-                                <div
-                                  key={subIndex}
-                                  className="rounded bg-[#EFF1F5] px-3 py-1 text-sm font-medium text-[#64739C]"
-                                >
-                                  {subskill}
-                                </div>
-                              ))}
+                {Array.isArray(talent?.skills) ? (
+                  (talent?.skills as any[]).map(
+                    (skillItem: any, index: number) => {
+                      return skillItem ? (
+                        <div className="mt-4" key={index}>
+                          <p className="text-xs font-medium text-slate-400">
+                            {skillItem.skills.toUpperCase()}
+                          </p>
+                          <div className="flex items-center">
+                            <div className="mt-2 flex flex-wrap gap-2">
+                              {skillItem.subskills
+                                .slice(0, 3)
+                                .map((subskill: string, subIndex: number) => (
+                                  <div
+                                    key={subIndex}
+                                    className="rounded bg-[#EFF1F5] px-3 py-1 text-sm font-medium text-[#64739C]"
+                                  >
+                                    {subskill}
+                                  </div>
+                                ))}
+                            </div>
+                            {skillItem.subskills.length > 3 && (
+                              <button
+                                aria-label="Toggle subskills"
+                                className={cn(
+                                  'mt-2 ml-1 p-1 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-hidden',
+                                  'rounded transition hover:bg-gray-100',
+                                )}
+                                onClick={() => handleToggleSubskills(index)}
+                              >
+                                {showSubskills[index] ? (
+                                  <ChevronUp className="h-4 w-4" />
+                                ) : (
+                                  <ChevronDown className="h-4 w-4" />
+                                )}
+                              </button>
+                            )}
                           </div>
-                          {skillItem.subskills.length > 3 && (
-                            <button
-                              aria-label="Toggle subskills"
+
+                          {showSubskills[index] && (
+                            <div
                               className={cn(
-                                'mt-2 ml-1 p-1 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-hidden',
-                                'rounded transition hover:bg-gray-100',
+                                'mt-2 flex flex-wrap gap-2',
+                                'transition-all duration-300 ease-in-out',
                               )}
-                              onClick={() => handleToggleSubskills(index)}
                             >
-                              {showSubskills[index] ? (
-                                <ChevronUp className="h-4 w-4" />
-                              ) : (
-                                <ChevronDown className="h-4 w-4" />
-                              )}
-                            </button>
+                              {skillItem.subskills
+                                .slice(3)
+                                .map((subskill: string, subIndex: number) => (
+                                  <div
+                                    key={subIndex}
+                                    className="rounded bg-[#EFF1F5] px-3 py-1 text-sm font-medium text-[#64739C]"
+                                  >
+                                    {subskill}
+                                  </div>
+                                ))}
+                            </div>
                           )}
                         </div>
-
-                        {showSubskills[index] && (
-                          <div
-                            className={cn(
-                              'mt-2 flex flex-wrap gap-2',
-                              'transition-all duration-300 ease-in-out',
-                            )}
-                          >
-                            {skillItem.subskills
-                              .slice(3)
-                              .map((subskill: string, subIndex: number) => (
-                                <div
-                                  key={subIndex}
-                                  className="rounded bg-[#EFF1F5] px-3 py-1 text-sm font-medium text-[#64739C]"
-                                >
-                                  {subskill}
-                                </div>
-                              ))}
-                          </div>
-                        )}
-                      </div>
-                    ) : null;
-                  })
+                      ) : null;
+                    },
+                  )
                 ) : (
                   <p>No skills available</p>
                 )}
@@ -554,86 +501,6 @@ function TalentProfile({ talent, stats }: TalentProps) {
         upload
         onNewPow={addNewPow}
       />
-    </Default>
+    </>
   );
 }
-
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { slug } = context.query;
-  try {
-    context.res.setHeader(
-      'Cache-Control',
-      's-maxage=60, stale-while-revalidate=600',
-    );
-
-    const username = Array.isArray(slug) ? slug[0] : (slug as string);
-
-    const talent = await prisma.user.findUnique({
-      where: { username },
-      select: {
-        id: true,
-        twitter: true,
-        linkedin: true,
-        github: true,
-        website: true,
-        username: true,
-        workPrefernce: true,
-        firstName: true,
-        lastName: true,
-        skills: true,
-        photo: true,
-        currentEmployer: true,
-        location: true,
-      },
-    });
-
-    if (!talent) {
-      return { props: { talent: null } };
-    }
-
-    const userId = talent.id;
-
-    const [participations, wins, listingAgg, grantAgg] = await Promise.all([
-      prisma.submission.count({ where: { userId } }),
-      prisma.submission.count({
-        where: {
-          userId,
-          isWinner: true,
-          listing: { isWinnersAnnounced: true },
-        },
-      }),
-      prisma.submission.aggregate({
-        where: {
-          userId,
-          isWinner: true,
-          listing: { isWinnersAnnounced: true },
-        },
-        _sum: { rewardInUSD: true },
-      }),
-      prisma.grantApplication.aggregate({
-        where: {
-          userId,
-          applicationStatus: { in: ['Approved', 'Completed'] },
-        },
-        _sum: { approvedAmountInUSD: true },
-      }),
-    ]);
-
-    const listingWinnings = listingAgg._sum.rewardInUSD || 0;
-    const grantWinnings = grantAgg._sum.approvedAmountInUSD || 0;
-    const totalWinnings = (listingWinnings || 0) + (grantWinnings || 0);
-
-    const stats = { participations, wins, totalWinnings };
-
-    return {
-      props: { talent, stats },
-    };
-  } catch (error) {
-    console.error(error);
-    return {
-      props: { talent: null },
-    };
-  }
-};
-
-export default TalentProfile;

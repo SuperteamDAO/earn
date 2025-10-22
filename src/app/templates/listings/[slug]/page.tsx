@@ -1,5 +1,3 @@
-import type { GetServerSideProps } from 'next';
-
 import { ListingPageLayout } from '@/layouts/Listing';
 import { api } from '@/lib/api';
 import { getURL } from '@/utils/validUrl';
@@ -8,11 +6,23 @@ import { DescriptionUI } from '@/features/listings/components/ListingPage/Descri
 import { ListingWinners } from '@/features/listings/components/ListingPage/ListingWinners';
 import { type Listing } from '@/features/listings/types';
 
-interface BountyDetailsProps {
-  bounty: Listing | null;
+interface PageProps {
+  readonly params: Promise<{ slug: string }>;
 }
 
-function BountyDetails({ bounty: bounty }: BountyDetailsProps) {
+async function BountyDetails({ params }: PageProps) {
+  const { slug } = await params;
+
+  let bounty: Listing | null = null;
+  try {
+    const bountyDetails = await api.get(
+      `${getURL()}api/sponsor-dashboard/templates/${slug}/`,
+    );
+    bounty = bountyDetails.data;
+  } catch (e) {
+    console.error(JSON.stringify(e, null, 2));
+    bounty = null;
+  }
   return (
     <ListingPageLayout isTemplate listing={bounty}>
       {bounty?.isWinnersAnnounced && (
@@ -24,26 +34,5 @@ function BountyDetails({ bounty: bounty }: BountyDetailsProps) {
     </ListingPageLayout>
   );
 }
-
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { slug } = context.query;
-
-  let bountyData;
-  try {
-    const bountyDetails = await api.get(
-      `${getURL()}api/sponsor-dashboard/templates/${slug}/`,
-    );
-    bountyData = bountyDetails.data;
-  } catch (e) {
-    console.error(JSON.stringify(e, null, 2));
-    bountyData = null;
-  }
-
-  return {
-    props: {
-      bounty: bountyData,
-    },
-  };
-};
 
 export default BountyDetails;
