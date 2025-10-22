@@ -1,7 +1,8 @@
+'use client';
 import { usePrivy } from '@privy-io/react-auth';
 import { useQuery } from '@tanstack/react-query';
 import { Check } from 'lucide-react';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import posthog from 'posthog-js';
 
 import { useUser } from '@/store/user';

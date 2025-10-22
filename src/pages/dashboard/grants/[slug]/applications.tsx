@@ -1,7 +1,8 @@
+'use client';
 import { useQuery } from '@tanstack/react-query';
 import { useAtomValue } from 'jotai';
 import type { GetServerSideProps } from 'next';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 import { LoadingSection } from '@/components/shared/LoadingSection';

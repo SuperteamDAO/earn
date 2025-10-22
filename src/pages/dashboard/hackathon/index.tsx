@@ -1,3 +1,4 @@
+'use client';
 import {
   ChevronLeft,
   ChevronRight,
@@ -7,7 +8,7 @@ import {
   Plus,
   Search,
 } from 'lucide-react';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 
 import { LoadingSection } from '@/components/shared/LoadingSection';
@@ -306,7 +307,7 @@ export default function Hackathon() {
                               className="flex items-center gap-2 py-2 text-sm font-medium text-slate-500"
                               onClick={() =>
                                 window.open(
-                                  `${router.basePath}/listing/${currentBounty.slug}`,
+                                  `/listing/${currentBounty.slug}`,
                                   '_blank',
                                 )
                               }

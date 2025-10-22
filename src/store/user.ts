@@ -3,7 +3,7 @@
 import { usePrivy } from '@privy-io/react-auth';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
-import { useRouter } from 'next/router';
+import { usePathname, useRouter } from 'next/navigation';
 import posthog from 'posthog-js';
 import { useEffect } from 'react';
 
@@ -14,6 +14,7 @@ import { api } from '@/lib/api';
 export const useUser = () => {
   const { authenticated, ready, logout } = usePrivy();
   const router = useRouter();
+  const pathname = usePathname();
 
   const {
     data: user,
@@ -26,7 +27,7 @@ export const useUser = () => {
       try {
         const { data: fetchedUser } = await api.get<User>('/api/user/');
 
-        if (fetchedUser?.isBlocked && !router.pathname.includes('/blocked')) {
+        if (fetchedUser?.isBlocked && !pathname?.includes('/blocked')) {
           router.push('/blocked');
         }
         return fetchedUser;

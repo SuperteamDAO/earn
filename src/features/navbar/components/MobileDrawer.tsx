@@ -1,6 +1,7 @@
+'use client';
 import { usePrivy } from '@privy-io/react-auth';
 import { ChevronDown, ChevronUp } from 'lucide-react';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import posthog from 'posthog-js';
 import React, { useState } from 'react';
 

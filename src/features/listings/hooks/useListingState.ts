@@ -1,3 +1,4 @@
+'use client';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import posthog from 'posthog-js';
 import { useCallback, useEffect, useMemo, useState } from 'react';

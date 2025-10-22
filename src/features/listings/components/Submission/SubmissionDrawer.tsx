@@ -1,8 +1,9 @@
+'use client';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { X } from 'lucide-react';
-import { useRouter } from 'next/router';
+import { useSearchParams } from 'next/navigation';
 import posthog from 'posthog-js';
 import { type JSX, useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -119,8 +120,7 @@ export const SubmissionDrawer = ({
     },
   });
 
-  const router = useRouter();
-  const { query } = router;
+  const searchParams = useSearchParams();
 
   const tweetValue = form.watch('tweet');
   const linkValue = form.watch('link');
@@ -251,7 +251,7 @@ export const SubmissionDrawer = ({
       Boolean(
         isSubmitDisabled ||
           isTemplate ||
-          !!query['preview'] ||
+          !!searchParams?.get('preview') ||
           (isHackathon && !editMode && !termsAccepted) ||
           isLoading ||
           form.formState.isSubmitting ||
@@ -262,7 +262,7 @@ export const SubmissionDrawer = ({
     [
       isSubmitDisabled,
       isTemplate,
-      query,
+      searchParams,
       isHackathon,
       editMode,
       termsAccepted,

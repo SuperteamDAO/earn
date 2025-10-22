@@ -1,3 +1,5 @@
+'use client';
+
 import { PrivyProvider, usePrivy } from '@privy-io/react-auth';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { type Session } from 'next-auth';

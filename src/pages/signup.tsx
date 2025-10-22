@@ -1,6 +1,7 @@
+'use client';
 import { usePrivy } from '@privy-io/react-auth';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { useRouter } from 'next/router';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
@@ -17,13 +18,13 @@ import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 export default function SignupPage() {
   const [loginStep, setLoginStep] = useState(0);
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { authenticated, logout, ready } = usePrivy();
   const [isNavigating, setIsNavigating] = useState(false);
   const { user, refetchUser } = useUser();
 
-  const { invite } = router.query;
-  const cleanToken =
-    (Array.isArray(invite) ? invite[0] : invite)?.split('?')[0] || '';
+  const invite = searchParams?.get('invite');
+  const cleanToken = invite?.split('?')[0] || '';
 
   const {
     data: inviteDetails,

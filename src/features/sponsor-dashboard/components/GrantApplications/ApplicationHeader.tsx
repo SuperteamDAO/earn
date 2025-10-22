@@ -1,3 +1,4 @@
+'use client';
 import { useMutation } from '@tanstack/react-query';
 import {
   ChevronLeft,
@@ -7,7 +8,7 @@ import {
   MoreVertical,
   Sheet,
 } from 'lucide-react';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import React from 'react';
 import { toast } from 'sonner';
 
@@ -229,9 +230,7 @@ export const ApplicationHeader = ({
               </DropdownMenuItem>
 
               <DropdownMenuItem
-                onClick={() =>
-                  window.open(`${router.basePath}/${listingPath}`, '_blank')
-                }
+                onClick={() => window.open(`/${listingPath}`, '_blank')}
                 className="cursor-pointer"
               >
                 <ExternalLink className="size-4" />

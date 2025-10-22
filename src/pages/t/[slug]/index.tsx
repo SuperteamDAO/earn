@@ -1,8 +1,9 @@
+'use client';
 import { ChevronDown, ChevronUp, SquarePen } from 'lucide-react';
 import type { GetServerSideProps } from 'next';
 import dynamic from 'next/dynamic';
 import Head from 'next/head';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import { type JSX, useEffect, useMemo, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 

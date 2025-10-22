@@ -1,7 +1,7 @@
 'use client';
 
 import { atom, useAtom } from 'jotai';
-import { useRouter } from 'next/router';
+import { usePathname, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { toast } from 'sonner';
 
@@ -23,7 +23,7 @@ export const useForcedProfileRedirect = ({
   isUserLoading,
 }: UseForcedProfileRedirectProps): void => {
   const router = useRouter();
-  const { pathname, asPath } = router;
+  const pathname = usePathname();
   const [forcedRedirected, setForcedRedirected] = useAtom(forcedRedirectedAtom);
   const [loginEvent, setLoginEvent] = useAtom(loginEventAtom);
 
@@ -31,10 +31,10 @@ export const useForcedProfileRedirect = ({
     let redirectTimeout: NodeJS.Timeout | undefined;
 
     const isExcludedPath =
-      pathname.startsWith('/new') ||
-      pathname.startsWith('/sponsor') ||
-      pathname.startsWith('/signup') ||
-      pathname.startsWith('/r/');
+      pathname?.startsWith('/new') ||
+      pathname?.startsWith('/sponsor') ||
+      pathname?.startsWith('/signup') ||
+      pathname?.startsWith('/r/');
 
     // guard clauses: exit early if a redirect is not needed.
     if (
@@ -55,10 +55,11 @@ export const useForcedProfileRedirect = ({
       setLoginEvent('idle');
 
       const redirectAction = () => {
-        router.push({
-          pathname: '/new',
-          query: { type: 'forced', originUrl: asPath },
+        const params = new URLSearchParams({
+          type: 'forced',
+          originUrl: pathname || '/',
         });
+        router.push(`/new?${params.toString()}`);
       };
 
       if (wait > 0) {
@@ -98,7 +99,6 @@ export const useForcedProfileRedirect = ({
     user,
     isUserLoading,
     pathname,
-    asPath,
     router,
     loginEvent,
     setLoginEvent,

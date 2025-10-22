@@ -1,7 +1,8 @@
+'use client';
 import { usePrivy } from '@privy-io/react-auth';
 import { Gift } from 'lucide-react';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import posthog from 'posthog-js';
 import { useEffect, useMemo, useState } from 'react';
 
@@ -43,6 +44,8 @@ export const DesktopNavbar = ({
 }: Props) => {
   const { authenticated, ready } = usePrivy();
   const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
 
   const { user, isLoading } = useUser();
   const { creditBalance } = useCreditBalance();
@@ -69,23 +72,18 @@ export const DesktopNavbar = ({
   }, [ready, authenticated, authUiReady, isLoading, user]);
 
   const isDashboardRoute = useMemo(
-    () => router.pathname.startsWith('/dashboard'),
-    [router.pathname],
+    () => pathname?.startsWith('/dashboard'),
+    [pathname],
   );
   const isNewTalentRoute = useMemo(
-    () => router.pathname.startsWith('/new/talent'),
-    [router.pathname],
+    () => pathname?.startsWith('/new/talent'),
+    [pathname],
   );
 
   const hideSponsorCTA = useMemo(() => {
     if (!isNewTalentRoute) return false;
-    try {
-      const url = new URL(window.location.origin + router.asPath);
-      return url.searchParams.get('referral') === 'true';
-    } catch {
-      return router.asPath.includes('referral=true');
-    }
-  }, [isNewTalentRoute, router.asPath]);
+    return searchParams?.get('referral') === 'true';
+  }, [isNewTalentRoute, searchParams]);
 
   const maxWidth = useMemo(() => {
     if (isDashboardRoute) {
@@ -157,8 +155,8 @@ export const DesktopNavbar = ({
             </Link>
           </LogoContextMenu>
 
-          {!router.pathname.startsWith('/search') &&
-            !router.pathname.startsWith('/new/') && (
+          {!pathname?.startsWith('/search') &&
+            !pathname?.startsWith('/new/') && (
               <div
                 className="flex cursor-pointer items-center gap-1.5 rounded-md px-3 py-2 text-slate-500 transition-all duration-100 hover:bg-slate-100 hover:text-slate-700"
                 onClick={onSearchOpen}
@@ -168,12 +166,12 @@ export const DesktopNavbar = ({
             )}
         </div>
 
-        {!router.pathname.startsWith('/new/') && (
+        {!pathname?.startsWith('/new/') && (
           <div className="w-fit xl:absolute xl:left-2/4 xl:-translate-x-2/4">
             <div className="mx-6 flex h-full items-center justify-center">
               <div className="ph-no-capture flex h-full flex-row items-center gap-4.5">
                 {LISTING_NAV_ITEMS?.map((navItem) => {
-                  const isCurrent = `${navItem.href}` === router.asPath;
+                  const isCurrent = `${navItem.href}` === pathname;
                   return (
                     <NavLink
                       className="ph-no-capture"

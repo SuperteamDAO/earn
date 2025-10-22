@@ -1,6 +1,7 @@
+'use client';
 import type { GetServerSideProps } from 'next';
 import Head from 'next/head';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 import type { SubmissionWithUser } from '@/interface/submission';

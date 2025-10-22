@@ -1,3 +1,4 @@
+'use client';
 import { zodResolver } from '@hookform/resolvers/zod';
 import IsoDomPurify from 'isomorphic-dompurify';
 import posthog from 'posthog-js';

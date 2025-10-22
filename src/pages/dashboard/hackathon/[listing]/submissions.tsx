@@ -1,8 +1,8 @@
+'use client';
 import { useQuery } from '@tanstack/react-query';
 import { useSetAtom } from 'jotai';
 import type { GetServerSideProps } from 'next';
-import { useSearchParams } from 'next/navigation';
-import { useRouter } from 'next/router';
+import { useRouter, useSearchParams } from 'next/navigation';
 import posthog from 'posthog-js';
 import { useEffect, useMemo, useState } from 'react';
 

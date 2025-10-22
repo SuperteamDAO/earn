@@ -1,3 +1,4 @@
+'use client';
 import { TooltipArrow } from '@radix-ui/react-tooltip';
 import { useMutation } from '@tanstack/react-query';
 import dayjs from 'dayjs';
@@ -13,7 +14,7 @@ import {
   Sheet,
 } from 'lucide-react';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import React from 'react';
 import { toast } from 'sonner';
 
@@ -309,9 +310,7 @@ export const SubmissionHeader = ({
               )}
 
               <DropdownMenuItem
-                onClick={() =>
-                  window.open(`${router.basePath}/${listingPath}`, '_blank')
-                }
+                onClick={() => window.open(`/${listingPath}`, '_blank')}
                 className="cursor-pointer"
               >
                 <ExternalLink className="size-4" />

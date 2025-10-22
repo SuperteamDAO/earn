@@ -1,9 +1,9 @@
+'use client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { atom, useAtom } from 'jotai';
 import { LucideFlag } from 'lucide-react';
 import type { GetServerSideProps } from 'next';
-import { useSearchParams } from 'next/navigation';
-import { useRouter } from 'next/router';
+import { useRouter, useSearchParams } from 'next/navigation';
 import posthog from 'posthog-js';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
@@ -97,21 +97,17 @@ export default function BountySubmissions({ slug }: Props) {
       url.searchParams.set('tab', value);
     }
 
-    router.push(url.pathname + url.search, undefined, { shallow: true });
+    router.push(url.pathname + url.search);
     setActiveTab(value);
   };
 
+  // Note: In App Router, route change events are handled differently
+  // Clear selected submissions on unmount instead
   useEffect(() => {
-    const handleRouteChange = () => {
+    return () => {
       setSelectedSubmissionIds(new Set());
     };
-
-    router.events.on('routeChangeStart', handleRouteChange);
-
-    return () => {
-      router.events.off('routeChangeStart', handleRouteChange);
-    };
-  }, [router.events, setSelectedSubmissionIds]);
+  }, [setSelectedSubmissionIds]);
 
   const [isToggledAll, setIsToggledAll] = useState(false);
   const [currentAction, setCurrentAction] = useState<

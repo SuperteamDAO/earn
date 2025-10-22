@@ -1,10 +1,11 @@
+'use client';
 import { useChat } from '@ai-sdk/react';
 import { useMutation } from '@tanstack/react-query';
 import { DefaultChatTransport } from 'ai';
 import { useAtom, useSetAtom } from 'jotai';
 import { marked } from 'marked';
 import { AnimatePresence, motion } from 'motion/react';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import posthog from 'posthog-js';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 

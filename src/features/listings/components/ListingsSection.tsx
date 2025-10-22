@@ -1,3 +1,4 @@
+'use client';
 import { usePrivy } from '@privy-io/react-auth';
 import { useMemo } from 'react';
 

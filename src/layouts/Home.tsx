@@ -1,7 +1,9 @@
+'use client';
+
 import { usePrivy } from '@privy-io/react-auth';
 import { useQuery } from '@tanstack/react-query';
 import dynamic from 'next/dynamic';
-import { useRouter } from 'next/router';
+import { usePathname, useSearchParams } from 'next/navigation';
 import React, { type ReactNode, useMemo } from 'react';
 
 import { type Superteam } from '@/constants/Superteam';
@@ -38,14 +40,17 @@ const HomeSideBar = dynamic(() =>
 );
 
 export function Home({ children, type, st }: HomeProps) {
-  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const { authenticated } = usePrivy();
 
   const { data: totalUsers } = useQuery(userCountQuery);
 
   const currentCategory = useMemo(() => {
-    const categoryParam = router.query.category?.toString().toLowerCase();
-    const isAllPage = router.asPath.includes('/all');
+    if (!pathname || !searchParams) return null;
+
+    const categoryParam = searchParams.get('category')?.toLowerCase();
+    const isAllPage = pathname.includes('/all');
 
     if (isAllPage) {
       if (
@@ -66,7 +71,7 @@ export function Home({ children, type, st }: HomeProps) {
       return null;
     }
     return null;
-  }, [router.query.category, router.asPath]);
+  }, [searchParams, pathname]);
 
   return (
     <Default

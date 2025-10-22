@@ -1,8 +1,9 @@
+'use client';
 import { usePrivy } from '@privy-io/react-auth';
 import { useQuery } from '@tanstack/react-query';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
+import { usePathname } from 'next/navigation';
 
 import MdArrowForward from '@/components/icons/MdArrowForward';
 import { AnimateChangeInHeight } from '@/components/shared/AnimateChangeInHeight';
@@ -34,7 +35,7 @@ const LiveListings = dynamic(() =>
 );
 
 export const HomeSideBar = ({ type }: SideBarProps) => {
-  const router = useRouter();
+  const pathname = usePathname();
   const { user, isLoading: isUserLoading } = useUser();
   const isLg = useBreakpoint('lg');
 
@@ -75,7 +76,7 @@ export const HomeSideBar = ({ type }: SideBarProps) => {
         {type !== 'feed' ? (
           <>
             <div className="flex flex-col gap-4">
-              {router.asPath === '/' &&
+              {pathname === '/' &&
                 ready &&
                 !isUserLoading &&
                 (!user || (!user.isTalentFilled && !user.currentSponsorId)) && (

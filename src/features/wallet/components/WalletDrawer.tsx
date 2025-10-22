@@ -1,6 +1,7 @@
+'use client';
 import { useMfaEnrollment, usePrivy } from '@privy-io/react-auth';
 import { ArrowLeft, ArrowUpRight, CopyIcon, X } from 'lucide-react';
-import { useRouter } from 'next/router';
+import { usePathname, useRouter } from 'next/navigation';
 import posthog from 'posthog-js';
 import { useState } from 'react';
 import { toast } from 'sonner';
@@ -47,6 +48,7 @@ export function WalletDrawer({
 
   const { user } = useUser();
   const router = useRouter();
+  const pathname = usePathname();
 
   const { user: privyUser } = usePrivy();
   const { showMfaEnrollmentModal } = useMfaEnrollment();
@@ -66,8 +68,8 @@ export function WalletDrawer({
   const handleClose = () => {
     const currentPath = window.location.hash;
 
-    if (currentPath === '#wallet') {
-      router.push(window.location.pathname, undefined, { shallow: true });
+    if (currentPath === '#wallet' && pathname) {
+      router.push(pathname);
     }
 
     onClose();

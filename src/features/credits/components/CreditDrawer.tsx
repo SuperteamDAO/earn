@@ -1,6 +1,7 @@
+'use client';
 import { useQuery } from '@tanstack/react-query';
 import { Info, X } from 'lucide-react';
-import { useRouter } from 'next/router';
+import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import Countdown from 'react-countdown';
 
@@ -29,6 +30,7 @@ export function CreditDrawer({
   const { user } = useUser();
   const { creditBalance } = useCreditBalance();
   const router = useRouter();
+  const pathname = usePathname();
   const [disputeSubmissionId, setDisputeSubmissionId] = useState<string | null>(
     null,
   );
@@ -66,10 +68,8 @@ export function CreditDrawer({
 
           if (entryToDispute && dispute) {
             setDisputeSubmissionId(submissionId);
-          } else {
-            const pathWithoutHash =
-              router.asPath.split('#')[0] || router.pathname;
-            router.replace(pathWithoutHash, undefined, { shallow: true });
+          } else if (pathname) {
+            router.replace(pathname);
           }
         }
       } else {
@@ -80,7 +80,7 @@ export function CreditDrawer({
     if (isOpen) {
       checkForDisputeHash();
     }
-  }, [isOpen, creditHistory?.data, router, canDispute]);
+  }, [isOpen, creditHistory?.data, router, pathname, canDispute]);
 
   const handleClose = () => {
     const currentPath = window.location.hash;
@@ -89,7 +89,9 @@ export function CreditDrawer({
       currentPath === '#wallet' ||
       currentPath.startsWith('#dispute-submission-')
     ) {
-      router.push(window.location.pathname, undefined, { shallow: true });
+      if (pathname) {
+        router.push(pathname);
+      }
     }
 
     setDisputeSubmissionId(null);

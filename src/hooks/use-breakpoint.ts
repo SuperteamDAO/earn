@@ -1,3 +1,4 @@
+'use client';
 import { useCallback, useSyncExternalStore } from 'react';
 
 type Breakpoint = 'sm' | 'md' | 'lg' | 'xl' | '2xl';

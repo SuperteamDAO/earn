@@ -1,3 +1,4 @@
+'use client';
 import { usePrivy } from '@privy-io/react-auth';
 import dynamic from 'next/dynamic';
 import { type ReactNode, useEffect, useState } from 'react';

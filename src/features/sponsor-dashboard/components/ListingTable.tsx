@@ -1,3 +1,4 @@
+'use client';
 import {
   Copy,
   DollarSign,
@@ -10,7 +11,7 @@ import {
   Trash,
 } from 'lucide-react';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import posthog from 'posthog-js';
 import React, { useState } from 'react';
 import { toast } from 'sonner';
@@ -422,7 +423,7 @@ export const ListingTable = ({
                             onClick={() => {
                               posthog.capture('duplicate listing_sponsor');
                               window.open(
-                                `${router.basePath}/dashboard/listings/${listing.slug}/duplicate`,
+                                `/dashboard/listings/${listing.slug}/duplicate`,
                                 '_blank',
                               );
                             }}

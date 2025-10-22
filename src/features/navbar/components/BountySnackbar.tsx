@@ -1,6 +1,7 @@
+'use client';
 import { atom, useAtom } from 'jotai';
 import { Pencil } from 'lucide-react';
-import { useRouter } from 'next/router';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 import { type status } from '@/prisma/enums';
 import { useUser } from '@/store/user';
@@ -23,12 +24,12 @@ export const bountySnackbarAtom = atom<BountySnackbarType | null>(null);
 
 export const BountySnackbar = () => {
   const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const [bountySnackbar] = useAtom(bountySnackbarAtom);
   const user = useUser();
 
-  const { asPath, query } = router;
-
-  const showSnackbar = asPath.split('/')[1] === 'listings';
+  const showSnackbar = pathname?.split('/')[1] === 'listings';
 
   if (!bountySnackbar) return null;
 
@@ -43,9 +44,9 @@ export const BountySnackbar = () => {
     slug,
   } = bountySnackbar;
 
-  const isPreview = !!query['preview'];
+  const isPreview = searchParams?.has('preview');
   // nsb == no snackbar, but only for previews or drafts, solves edge case of isCaution listing snackbar
-  if (!!query['nsb'] && !isPublished) return null;
+  if (searchParams?.has('nsb') && !isPublished) return null;
 
   const isExpired = deadline && dayjs(deadline).isBefore(dayjs());
 

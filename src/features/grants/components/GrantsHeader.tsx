@@ -1,4 +1,5 @@
-import { useRouter } from 'next/router';
+'use client';
+import { usePathname } from 'next/navigation';
 import React from 'react';
 
 import BsFillCircleFill from '@/components/icons/BsFillCircleFill';
@@ -59,7 +60,7 @@ export const GrantsHeader = ({
     statusText = 'Closed';
   }
 
-  const router = useRouter();
+  const pathname = usePathname();
 
   return (
     <div className="w-full bg-white">
@@ -125,14 +126,14 @@ export const GrantsHeader = ({
           <ListingTabLink
             href={`/grants/${slug}/`}
             text="Details"
-            isActive={!router.asPath.split('/')[3]?.includes('references')}
+            isActive={!pathname?.split('/')[3]?.includes('references')}
           />
 
           {references && references?.length > 0 && (
             <ListingTabLink
               href={`/grants/${slug}/references`}
               text="References"
-              isActive={!!router.asPath.split('/')[3]?.includes('references')}
+              isActive={!!pathname?.split('/')[3]?.includes('references')}
             />
           )}
         </div>

@@ -1,6 +1,6 @@
+'use client';
 import { usePrivy } from '@privy-io/react-auth';
-import { useSearchParams } from 'next/navigation';
-import { useRouter } from 'next/router';
+import { useRouter, useSearchParams } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 
 import { useBreakpoint } from '@/hooks/use-breakpoint';
