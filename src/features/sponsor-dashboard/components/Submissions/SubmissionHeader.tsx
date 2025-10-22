@@ -191,7 +191,10 @@ export const SubmissionHeader = ({
   });
 
   const exportSubmissionsSheets = () => {
-    toast.loading('Creating Google Sheet...', { id: 'export-sheets' });
+    toast.loading('Creating Google Sheet...', {
+      id: 'export-sheets',
+      style: { background: '#e2e8f0' },
+    });
     exportSheetsMutation.mutate();
   };
 
