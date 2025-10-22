@@ -1,6 +1,5 @@
 import { usePrivy } from '@privy-io/react-auth';
 import { useQuery } from '@tanstack/react-query';
-import { type GetServerSideProps } from 'next';
 import dynamic from 'next/dynamic';
 
 import { useBreakpoint } from '@/hooks/use-breakpoint';
@@ -47,11 +46,7 @@ const TalentAnnouncements = dynamic(
   { ssr: false },
 );
 
-interface HomePageProps {
-  readonly potentialSession: boolean;
-}
-
-export default function HomePage({ potentialSession }: HomePageProps) {
+export default function HomePage() {
   const { authenticated } = usePrivy();
   const { data: totalUsers } = useQuery(userCountQuery);
   const isLg = useBreakpoint('lg');
@@ -73,17 +68,14 @@ export default function HomePage({ potentialSession }: HomePageProps) {
             <div className="w-full lg:border-r lg:border-slate-100">
               <div className="w-full lg:pr-6">
                 <div className="pt-3">
-                  {potentialSession || authenticated ? (
+                  {authenticated ? (
                     <UserStatsBanner />
                   ) : (
                     <BannerCarousel totalUsers={totalUsers?.totalUsers} />
                   )}
                 </div>
                 <div className="w-full">
-                  <ListingsSection
-                    type="home"
-                    potentialSession={potentialSession}
-                  />
+                  <ListingsSection type="home" />
                   {/* <HackathonSection type="home" /> */}
                   <GrantsSection type="home" />
                 </div>
@@ -103,13 +95,3 @@ export default function HomePage({ potentialSession }: HomePageProps) {
     </Default>
   );
 }
-
-export const getServerSideProps: GetServerSideProps<HomePageProps> = async ({
-  req,
-}) => {
-  const cookies = req.headers.cookie || '';
-
-  const cookieExists = /(^|;)\s*user-id-hint=/.test(cookies);
-
-  return { props: { potentialSession: cookieExists } };
-};

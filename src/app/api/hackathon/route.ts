@@ -1,17 +1,17 @@
+import { headers } from 'next/headers';
 import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
 import { prisma } from '@/prisma';
 import { type JsonValue } from '@/prisma/internal/prismaNamespace';
 
+import { getUserSession } from '@/features/auth/utils/getUserSession';
 import { HackathonQueryParamsSchema } from '@/features/hackathon/constants/schema';
 import { buildHackathonQuery } from '@/features/hackathon/utils/query-builder';
 import { listingSelect } from '@/features/listings/constants/schema';
 
 export async function GET(request: NextRequest) {
   try {
-    const userIdFromCookie = request.cookies.get('user-id-hint')?.value;
-
     const { searchParams } = new URL(request.url);
     const queryParams = Object.fromEntries(searchParams.entries());
 
@@ -24,6 +24,8 @@ export async function GET(request: NextRequest) {
     }
     const queryData = validationResult.data;
 
+    const session = await getUserSession(await headers());
+
     let user: {
       id: string;
       isTalentFilled: boolean;
@@ -31,9 +33,9 @@ export async function GET(request: NextRequest) {
       skills: JsonValue;
     } | null = null;
 
-    if (userIdFromCookie) {
+    if (session.data?.userId) {
       user = await prisma.user.findUnique({
-        where: { id: userIdFromCookie },
+        where: { id: session.data.userId },
         select: {
           id: true,
           isTalentFilled: true,

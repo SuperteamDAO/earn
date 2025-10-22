@@ -17,7 +17,6 @@ interface HomeProps {
   readonly children: ReactNode;
   readonly type: 'listing' | 'region' | 'feed' | 'region-all';
   readonly st?: Superteam;
-  readonly potentialSession?: boolean;
 }
 
 type CategoryTypes = 'content' | 'development' | 'design' | 'other' | 'all';
@@ -38,12 +37,7 @@ const HomeSideBar = dynamic(() =>
   import('@/features/home/components/SideBar').then((mod) => mod.HomeSideBar),
 );
 
-export function Home({
-  children,
-  type,
-  st,
-  potentialSession = false,
-}: HomeProps) {
+export function Home({ children, type, st }: HomeProps) {
   const router = useRouter();
   const { authenticated } = usePrivy();
 
@@ -96,7 +90,7 @@ export function Home({
               <div className="w-full lg:pr-6">
                 {!currentCategory && type === 'listing' && (
                   <div className="pt-3">
-                    {potentialSession || authenticated ? (
+                    {authenticated ? (
                       <UserStatsBanner />
                     ) : (
                       <BannerCarousel totalUsers={totalUsers?.totalUsers} />

@@ -35,7 +35,6 @@ const FOR_YOU_SUPPORTED_TYPES: ReadonlyArray<ListingContext> = [
 
 export const ListingsSection = ({
   type,
-  potentialSession,
   region,
   sponsor,
   customEmptySection,
@@ -62,30 +61,17 @@ export const ListingsSection = ({
 
   const optimalDefaultCategory = useMemo((): ListingCategory => {
     if (countsLoading || !categoryCounts) {
-      return (potentialSession || (ready && authenticated)) && supportsForYou
-        ? 'For You'
-        : 'All';
+      return ready && authenticated && supportsForYou ? 'For You' : 'All';
     }
 
     const forYouCount = categoryCounts['For You'] || 0;
 
-    if (
-      (potentialSession || (ready && authenticated)) &&
-      supportsForYou &&
-      forYouCount > 2
-    ) {
+    if (ready && authenticated && supportsForYou && forYouCount > 2) {
       return 'For You';
     }
 
     return 'All';
-  }, [
-    categoryCounts,
-    countsLoading,
-    potentialSession,
-    authenticated,
-    ready,
-    supportsForYou,
-  ]);
+  }, [categoryCounts, countsLoading, authenticated, ready, supportsForYou]);
 
   const {
     activeTab,
@@ -120,11 +106,12 @@ export const ListingsSection = ({
   const shouldShowForYou = useMemo(() => {
     if (!categoryCounts) return false;
     return (
-      (potentialSession || (ready && authenticated)) &&
+      ready &&
+      authenticated &&
       supportsForYou &&
       (categoryCounts['For You'] || 0) > 2
     );
-  }, [categoryCounts, potentialSession, authenticated, ready, supportsForYou]);
+  }, [categoryCounts, authenticated, ready, supportsForYou]);
 
   const visibleCategoryNavItems = useMemo(() => {
     if (!categoryCounts) return CATEGORY_NAV_ITEMS;

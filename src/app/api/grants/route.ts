@@ -1,3 +1,4 @@
+import { headers } from 'next/headers';
 import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
@@ -7,6 +8,7 @@ import {
   PrismaClientKnownRequestError,
 } from '@/prisma/internal/prismaNamespace';
 
+import { getUserSession } from '@/features/auth/utils/getUserSession';
 import {
   GrantQueryParamsSchema,
   grantsSelect,
@@ -15,10 +17,10 @@ import { buildGrantsQuery } from '@/features/grants/utils/query-builder';
 
 export async function GET(request: NextRequest) {
   try {
-    const userIdFromCookie = request.cookies.get('user-id-hint')?.value;
-
     const { searchParams } = new URL(request.url);
     const queryParams = Object.fromEntries(searchParams.entries());
+
+    const session = await getUserSession(await headers());
 
     const validationResult = GrantQueryParamsSchema.safeParse(queryParams);
     if (!validationResult.success) {
@@ -36,9 +38,9 @@ export async function GET(request: NextRequest) {
       skills: JsonValue;
     } | null = null;
 
-    if (userIdFromCookie) {
+    if (session.data?.userId) {
       user = await prisma.user.findUnique({
-        where: { id: userIdFromCookie },
+        where: { id: session.data.userId },
         select: {
           id: true,
           isTalentFilled: true,
