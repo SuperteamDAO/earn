@@ -1,9 +1,11 @@
 import type { Metadata } from 'next';
+import { Suspense } from 'react';
 
 import { Home } from '@/layouts/Home';
 import { generatePageMetadata } from '@/layouts/metadata';
 
 import { HomepagePop } from '@/features/conversion-popups/components/HomepagePop';
+import { ListingCardSkeleton } from '@/features/listings/components/ListingCard';
 import { ListingsSection } from '@/features/listings/components/ListingsSection';
 
 export const metadata: Metadata = generatePageMetadata({
@@ -13,12 +15,24 @@ export const metadata: Metadata = generatePageMetadata({
   canonical: 'https://earn.superteam.fun',
 });
 
+function ListingsSectionFallback() {
+  return (
+    <div className="space-y-1">
+      {Array.from({ length: 5 }).map((_, index) => (
+        <ListingCardSkeleton key={index} />
+      ))}
+    </div>
+  );
+}
+
 export default function AllListingsPage() {
   return (
     <Home type="listing">
       <HomepagePop />
       <div className="w-full">
-        <ListingsSection type="all" />
+        <Suspense fallback={<ListingsSectionFallback />}>
+          <ListingsSection type="all" />
+        </Suspense>
       </div>
     </Home>
   );
