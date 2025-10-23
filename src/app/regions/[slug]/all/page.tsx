@@ -1,10 +1,12 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
+import { Suspense } from 'react';
 
 import { Superteams } from '@/constants/Superteam';
 import { Home } from '@/layouts/Home';
 import { getURL } from '@/utils/validUrl';
 
+import { ListingCardSkeleton } from '@/features/listings/components/ListingCard';
 import { ListingsSection } from '@/features/listings/components/ListingsSection';
 
 interface PageProps {
@@ -38,6 +40,16 @@ export async function generateMetadata({
   };
 }
 
+function ListingsSectionFallback() {
+  return (
+    <div className="space-y-1">
+      {Array.from({ length: 5 }).map((_, index) => (
+        <ListingCardSkeleton key={index} />
+      ))}
+    </div>
+  );
+}
+
 export default async function AllRegionsPage({ params }: PageProps) {
   const { slug } = await params;
 
@@ -52,7 +64,9 @@ export default async function AllRegionsPage({ params }: PageProps) {
   return (
     <Home type="region" st={st}>
       <div className="w-full">
-        <ListingsSection type="region-all" region={st.region} />
+        <Suspense fallback={<ListingsSectionFallback />}>
+          <ListingsSection type="region-all" region={st.region} />
+        </Suspense>
       </div>
     </Home>
   );

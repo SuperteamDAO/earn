@@ -2,6 +2,7 @@ import { Globe, InfoIcon, Pencil } from 'lucide-react';
 import { type GetServerSideProps } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
+import { Suspense } from 'react';
 
 import FaXTwitter from '@/components/icons/FaXTwitter';
 import { LinkTextParser } from '@/components/shared/LinkTextParser';
@@ -19,11 +20,22 @@ import { getURLSanitized } from '@/utils/getURLSanitized';
 import { getURL } from '@/utils/validUrl';
 
 import { GrantsSection } from '@/features/grants/components/GrantsSection';
+import { ListingCardSkeleton } from '@/features/listings/components/ListingCard';
 import { ListingsSection } from '@/features/listings/components/ListingsSection';
 
 interface Props {
   sponsor: SponsorType;
   stats: SponsorStats | null;
+}
+
+function ListingsSectionFallback() {
+  return (
+    <div className="mt-5 space-y-1">
+      {Array.from({ length: 5 }).map((_, index) => (
+        <ListingCardSkeleton key={index} />
+      ))}
+    </div>
+  );
 }
 
 const SponsorPage = ({ sponsor, stats }: Props) => {
@@ -198,11 +210,13 @@ Check out all of ${name}'s latest earning opportunities on a single page.
 
       <div className="w-full bg-white">
         <div className="mx-auto max-w-5xl px-4 pb-20">
-          <ListingsSection
-            type="sponsor"
-            sponsor={sSlug}
-            customEmptySection={customEmptySection}
-          />
+          <Suspense fallback={<ListingsSectionFallback />}>
+            <ListingsSection
+              type="sponsor"
+              sponsor={sSlug}
+              customEmptySection={customEmptySection}
+            />
+          </Suspense>
           <GrantsSection hideWhenEmpty type="sponsor" sponsor={sSlug} />
         </div>
       </div>

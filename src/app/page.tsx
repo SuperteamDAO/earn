@@ -3,6 +3,7 @@
 import { usePrivy } from '@privy-io/react-auth';
 import { useQuery } from '@tanstack/react-query';
 import dynamic from 'next/dynamic';
+import { Suspense } from 'react';
 
 import { useBreakpoint } from '@/hooks/use-breakpoint';
 import { Default } from '@/layouts/Default';
@@ -12,6 +13,7 @@ import { cn } from '@/utils/cn';
 import { BannerCarousel } from '@/features/home/components/Banner';
 import { UserStatsBanner } from '@/features/home/components/UserStatsBanner';
 import { userCountQuery } from '@/features/home/queries/user-count';
+import { ListingCardSkeleton } from '@/features/listings/components/ListingCard';
 import { ListingsSection } from '@/features/listings/components/ListingsSection';
 
 const GrantsSection = dynamic(() =>
@@ -48,6 +50,16 @@ const TalentAnnouncements = dynamic(
   { ssr: false },
 );
 
+function ListingsSectionFallback() {
+  return (
+    <div className="mt-5 space-y-1">
+      {Array.from({ length: 5 }).map((_, index) => (
+        <ListingCardSkeleton key={index} />
+      ))}
+    </div>
+  );
+}
+
 export default function HomePage() {
   const { authenticated } = usePrivy();
   const { data: totalUsers } = useQuery(userCountQuery);
@@ -77,7 +89,9 @@ export default function HomePage() {
                   )}
                 </div>
                 <div className="w-full">
-                  <ListingsSection type="home" />
+                  <Suspense fallback={<ListingsSectionFallback />}>
+                    <ListingsSection type="home" />
+                  </Suspense>
                   {/* <HackathonSection type="home" /> */}
                   <GrantsSection type="home" />
                 </div>

@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import { z } from 'zod';
 
 import { Feed } from '@/features/feed/components/Feed';
@@ -13,6 +14,24 @@ interface Props {
 }
 
 const UUIDSchema = z.string().uuid();
+
+function FeedPageFallback() {
+  return (
+    <div className="min-h-screen w-full bg-white">
+      <div className="mx-auto w-full max-w-4xl px-4 py-8">
+        <div className="animate-pulse space-y-4">
+          <div className="h-8 w-48 rounded bg-slate-200" />
+          <div className="h-4 w-64 rounded bg-slate-200" />
+          <div className="mt-8 space-y-4">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <div key={i} className="h-64 w-full rounded-lg bg-slate-200" />
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default async function FeedPage({ searchParams }: Props) {
   const params = await searchParams;
@@ -34,5 +53,9 @@ export default async function FeedPage({ searchParams }: Props) {
     id = params.id;
   }
 
-  return <Feed id={id} type={type} />;
+  return (
+    <Suspense fallback={<FeedPageFallback />}>
+      <Feed id={id} type={type} />
+    </Suspense>
+  );
 }
