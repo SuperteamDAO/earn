@@ -1,3 +1,4 @@
+'use client';
 import React, { useState } from 'react';
 
 import { OgImageViewer } from '@/components/shared/ogImageViewer';
