@@ -50,6 +50,7 @@ import { getListingIcon } from '@/features/listings/utils/getListingIcon';
 import { getListingStatus } from '@/features/listings/utils/status';
 import { VerifyPaymentModal } from '@/features/sponsor-dashboard/components/Modals/VerifyPayment';
 
+import { ExportSheetsModal } from '../Modals/ExportSheetsModal';
 import { UnpublishModal } from '../Modals/UnpublishModal';
 import AiReviewBountiesSubmissionsModal from './Modals/AiReviewBounties';
 import AiReviewProjectApplicationsModal from './Modals/AiReviewProjects';
@@ -84,6 +85,12 @@ export const SubmissionHeader = ({
     isOpen: unpublishIsOpen,
     onOpen: unpublishOnOpen,
     onClose: unpublishOnClose,
+  } = useDisclosure();
+
+  const {
+    isOpen: exportSheetsIsOpen,
+    onOpen: exportSheetsOnOpen,
+    onClose: exportSheetsOnClose,
   } = useDisclosure();
 
   const handleVerifyPayment = () => {
@@ -159,43 +166,6 @@ export const SubmissionHeader = ({
 
   const exportSubmissionsCsv = () => {
     exportMutation.mutate();
-  };
-
-  const exportSheetsMutation = useMutation({
-    mutationFn: async () => {
-      const response = await api.get(
-        `/api/sponsor-dashboard/submission/export-sheets/`,
-        {
-          params: {
-            listingId: bounty?.id,
-          },
-        },
-      );
-      return response.data;
-    },
-    onSuccess: (data) => {
-      toast.dismiss('export-sheets');
-      const url = data?.url || '';
-      if (url) {
-        window.open(url, '_blank');
-        toast.success('Google Sheet created successfully');
-      } else {
-        toast.error('Export URL is empty');
-      }
-    },
-    onError: (error) => {
-      toast.dismiss('export-sheets');
-      console.error('Export error:', error);
-      toast.error('Failed to export to Google Sheets. Please try again.');
-    },
-  });
-
-  const exportSubmissionsSheets = () => {
-    toast.loading('Creating Google Sheet...', {
-      id: 'export-sheets',
-      style: { background: '#e2e8f0' },
-    });
-    exportSheetsMutation.mutate();
   };
 
   const copyToClipboard = (text: string) => {
@@ -292,21 +262,11 @@ export const SubmissionHeader = ({
                   </DropdownMenuItem>
 
                   <DropdownMenuItem
-                    disabled={exportSheetsMutation.isPending}
-                    onClick={() => exportSubmissionsSheets()}
+                    onClick={exportSheetsOnOpen}
                     className="cursor-pointer"
                   >
-                    {exportSheetsMutation.isPending ? (
-                      <>
-                        <span className="loading loading-spinner" />
-                        Exporting...
-                      </>
-                    ) : (
-                      <>
-                        <Sheet className="size-4" />
-                        Export to Google Sheets
-                      </>
-                    )}
+                    <Sheet className="size-4" />
+                    Export to Google Sheets
                   </DropdownMenuItem>
                 </>
               )}
@@ -521,6 +481,14 @@ export const SubmissionHeader = ({
         unpublishIsOpen={unpublishIsOpen}
         unpublishOnClose={unpublishOnClose}
         listing={bounty}
+      />
+
+      <ExportSheetsModal
+        isOpen={exportSheetsIsOpen}
+        onClose={exportSheetsOnClose}
+        apiEndpoint="/api/sponsor-dashboard/submission/export-sheets/"
+        queryParams={{ listingId: bounty?.id }}
+        entityName="submissions"
       />
     </div>
   );
