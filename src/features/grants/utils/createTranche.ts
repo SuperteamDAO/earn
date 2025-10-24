@@ -8,6 +8,7 @@ type CreateTrancheProps = {
   applicationId: string;
   helpWanted?: string;
   update?: string;
+  walletAddress?: string;
   isFirstTranche?: boolean;
 };
 
@@ -15,6 +16,7 @@ export async function createTranche({
   applicationId,
   helpWanted,
   update,
+  walletAddress,
   isFirstTranche,
 }: CreateTrancheProps) {
   const application = await prisma.grantApplication.findUniqueOrThrow({
@@ -137,6 +139,7 @@ export async function createTranche({
       status: isFirstTranche ? 'Approved' : 'Pending',
       helpWanted,
       update,
+      walletAddress,
       grantId: application.grantId,
       trancheNumber: existingTranches + 1,
       ...(isFirstTranche && { approvedAmount: trancheAmount }),
@@ -167,6 +170,16 @@ export async function createTranche({
   logger.info(
     `Successfully created tranche ${tranche.id} for application ${applicationId}`,
   );
+
+  if (walletAddress) {
+    await prisma.grantApplication.update({
+      where: { id: applicationId },
+      data: { walletAddress },
+    });
+    logger.info(
+      `Updated grant application ${applicationId} with wallet address ${walletAddress}`,
+    );
+  }
 
   if (isFirstTranche) {
     const updatedGrantApplication =
