@@ -1,7 +1,8 @@
+'use client';
 import { useIsFetching, useQuery } from '@tanstack/react-query';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { ExternalLink, Loader2 } from 'lucide-react';
-import { useRouter } from 'next/router';
+import { usePathname, useRouter } from 'next/navigation';
 import posthog from 'posthog-js';
 import { useEffect, useMemo, useState } from 'react';
 import { useWatch } from 'react-hook-form';
@@ -60,6 +61,7 @@ export function PrePublish() {
   const submitListingMutation = useAtomValue(submitListingMutationAtom);
 
   const router = useRouter();
+  const pathname = usePathname();
 
   const { user } = useUser();
 
@@ -86,14 +88,14 @@ export function PrePublish() {
   const [isDisabledSoft, setIsDisabledSoft] = useState(true);
 
   useEffect(() => {
-    if (router.pathname.includes('/dashboard/new')) {
+    if (pathname?.includes('/dashboard/new')) {
       if (isST) {
         form.setValue('isFndnPaying', true);
       } else {
         form.setValue('isFndnPaying', false);
       }
     }
-  }, [isST, router.pathname]);
+  }, [isST, pathname, form]);
 
   useEffect(() => {
     const shouldBeDisabled =

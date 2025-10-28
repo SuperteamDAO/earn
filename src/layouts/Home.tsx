@@ -1,7 +1,9 @@
+'use client';
+
 import { usePrivy } from '@privy-io/react-auth';
 import { useQuery } from '@tanstack/react-query';
 import dynamic from 'next/dynamic';
-import { useRouter } from 'next/router';
+import { usePathname, useSearchParams } from 'next/navigation';
 import React, { type ReactNode, useMemo } from 'react';
 
 import { type Superteam } from '@/constants/Superteam';
@@ -17,7 +19,6 @@ interface HomeProps {
   readonly children: ReactNode;
   readonly type: 'listing' | 'region' | 'feed' | 'region-all';
   readonly st?: Superteam;
-  readonly potentialSession?: boolean;
 }
 
 type CategoryTypes = 'content' | 'development' | 'design' | 'other' | 'all';
@@ -38,20 +39,18 @@ const HomeSideBar = dynamic(() =>
   import('@/features/home/components/SideBar').then((mod) => mod.HomeSideBar),
 );
 
-export function Home({
-  children,
-  type,
-  st,
-  potentialSession = false,
-}: HomeProps) {
-  const router = useRouter();
+export function Home({ children, type, st }: HomeProps) {
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const { authenticated } = usePrivy();
 
   const { data: totalUsers } = useQuery(userCountQuery);
 
   const currentCategory = useMemo(() => {
-    const categoryParam = router.query.category?.toString().toLowerCase();
-    const isAllPage = router.asPath.includes('/all');
+    if (!pathname || !searchParams) return null;
+
+    const categoryParam = searchParams.get('category')?.toLowerCase();
+    const isAllPage = pathname.includes('/all');
 
     if (isAllPage) {
       if (
@@ -72,7 +71,7 @@ export function Home({
       return null;
     }
     return null;
-  }, [router.query.category, router.asPath]);
+  }, [searchParams, pathname]);
 
   return (
     <Default
@@ -96,7 +95,7 @@ export function Home({
               <div className="w-full lg:pr-6">
                 {!currentCategory && type === 'listing' && (
                   <div className="pt-3">
-                    {potentialSession || authenticated ? (
+                    {authenticated ? (
                       <UserStatsBanner />
                     ) : (
                       <BannerCarousel totalUsers={totalUsers?.totalUsers} />

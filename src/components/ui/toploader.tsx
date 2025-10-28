@@ -1,4 +1,3 @@
-import Router from 'next/router';
 import { configure, done, start } from 'nprogress';
 import { useEffect } from 'react';
 
@@ -17,6 +16,22 @@ export const TopLoader = () => {
     </style>
   );
 
+  const isAnchorOfCurrentUrl = (currentUrl: string, newUrl: string) => {
+    const currentUrlObj = new URL(currentUrl);
+    const newUrlObj = new URL(newUrl);
+    const currentHash = currentUrlObj.hash;
+    const newHash = newUrlObj.hash;
+
+    return (
+      currentUrlObj.hostname === newUrlObj.hostname &&
+      currentUrlObj.pathname === newUrlObj.pathname &&
+      currentUrlObj.search === newUrlObj.search &&
+      currentHash !== newHash &&
+      currentUrlObj.href.replace(currentHash, '') ===
+        newUrlObj.href.replace(newHash, '')
+    );
+  };
+
   useEffect(() => {
     configure({
       showSpinner: false,
@@ -29,17 +44,61 @@ export const TopLoader = () => {
         '<div class="bar" role="bar"><div class="peg"></div></div><div class="spinner" role="spinner"><div class="spinner-icon"></div></div>',
     });
 
-    const progressStarted = () => start();
-    const progressComplete = () => done(true);
+    const handleNProgressStart = () => {
+      let isDone = false;
+      setTimeout(() => {
+        if (!isDone) {
+          start();
+        }
+      }, 100);
 
-    Router.events.on('routeChangeStart', progressStarted);
-    Router.events.on('routeChangeComplete', progressComplete);
-    Router.events.on('routeChangeError', progressComplete);
+      const originalPushState = window.history.pushState;
+      window.history.pushState = function (...args) {
+        isDone = true;
+        done();
+        for (const el of Array.from(document.querySelectorAll('html'))) {
+          el.classList.remove('nprogress-busy');
+        }
+        return originalPushState.apply(window.history, args);
+      };
+    };
+
+    const handleQuickProgress = () => {
+      start();
+      done();
+      for (const el of Array.from(document.querySelectorAll('html'))) {
+        el.classList.remove('nprogress-busy');
+      }
+    };
+
+    const handleClick = (event: MouseEvent) => {
+      if (event.ctrlKey || event.metaKey) return;
+
+      try {
+        const target = event.target as HTMLElement;
+        const anchor = target.closest('a');
+
+        if (!anchor) return;
+
+        const currentUrl = window.location.href;
+        const newUrl = anchor.href;
+        const isExternalLink = anchor.target === '_blank';
+        const isAnchor = isAnchorOfCurrentUrl(currentUrl, newUrl);
+
+        if (newUrl === currentUrl || isAnchor || isExternalLink) {
+          handleQuickProgress();
+        } else {
+          handleNProgressStart();
+        }
+      } catch {
+        handleQuickProgress();
+      }
+    };
+
+    document.addEventListener('click', handleClick);
 
     return () => {
-      Router.events.off('routeChangeStart', progressStarted);
-      Router.events.off('routeChangeComplete', progressComplete);
-      Router.events.off('routeChangeError', progressComplete);
+      document.removeEventListener('click', handleClick);
     };
   }, []);
 

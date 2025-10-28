@@ -1,9 +1,10 @@
+'use client';
 import { useQuery } from '@tanstack/react-query';
 import { useAtom } from 'jotai';
 import { ExternalLink } from 'lucide-react';
 import Head from 'next/head';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
+import { usePathname } from 'next/navigation';
 import posthog from 'posthog-js';
 import { useEffect, useState } from 'react';
 
@@ -98,8 +99,8 @@ export function ListingPageLayout({
     initialListing?.sponsor?.isVerified?.toString() || 'false',
   );
 
-  const router = useRouter();
-  const isSubmissionPage = router.pathname.endsWith('/submission');
+  const pathname = usePathname();
+  const isSubmissionPage = pathname?.endsWith('/submission');
 
   return (
     <Default

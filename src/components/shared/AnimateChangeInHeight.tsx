@@ -1,3 +1,4 @@
+'use client';
 import { motion } from 'motion/react';
 import React, { useEffect, useMemo, useRef } from 'react';
 import useMeasure from 'react-use-measure';

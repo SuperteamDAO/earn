@@ -1,8 +1,9 @@
+'use client';
 import { usePrivy } from '@privy-io/react-auth';
 import { useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import { ArrowRight, Gift, Loader2, Pencil, X } from 'lucide-react';
-import { useRouter } from 'next/router';
+import { useSearchParams } from 'next/navigation';
 import posthog from 'posthog-js';
 import React, { useState } from 'react';
 import { createPortal } from 'react-dom';
@@ -140,8 +141,7 @@ export const SubmissionActionButton = ({
   const isSubmitted = submission?.isSubmitted ?? false;
   const submissionStatus = submission?.status;
 
-  const router = useRouter();
-  const { query } = router;
+  const searchParams = useSearchParams();
 
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -195,7 +195,8 @@ export const SubmissionActionButton = ({
   const isHackathon = type === 'hackathon';
 
   const isListingSponsor = user?.currentSponsorId === listing.sponsorId;
-  const isNotPublished = bountyDraftStatus !== 'PUBLISHED' && !query['preview'];
+  const isNotPublished =
+    bountyDraftStatus !== 'PUBLISHED' && !searchParams?.get('preview');
 
   let buttonText;
   let buttonBG;

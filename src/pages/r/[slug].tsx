@@ -1,8 +1,9 @@
+'use client';
 import { usePrivy } from '@privy-io/react-auth';
 import { useQuery } from '@tanstack/react-query';
 import { Check } from 'lucide-react';
 import type { GetServerSideProps } from 'next';
-import { useRouter } from 'next/router';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 
@@ -39,13 +40,14 @@ export default function ReferralLandingPage({
   redirectReason,
 }: ReferralLandingProps) {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { authenticated } = usePrivy();
   const [isLoginOpen, setIsLoginOpen] = useState(false);
 
   const code = useMemo(() => {
-    const slug = router.query.slug as string;
+    const slug = searchParams?.get('slug');
     return slug ? slug.trim().toUpperCase() : '';
-  }, [router.query.slug]);
+  }, [searchParams]);
 
   const { data, isLoading } = useQuery<VerifyResponse>({
     queryKey: ['referral.verify', code],

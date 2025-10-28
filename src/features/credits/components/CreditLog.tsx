@@ -1,7 +1,8 @@
+'use client';
 import { format } from 'date-fns';
 import { Check, Minus, Plus, Undo } from 'lucide-react';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
+import { usePathname, useRouter } from 'next/navigation';
 import posthog from 'posthog-js';
 import { type ReactNode, useEffect, useState } from 'react';
 
@@ -75,6 +76,7 @@ export function CreditHistoryCard({
   const [isDisputeModalOpen, setIsDisputeModalOpen] = useState(false);
   const [selectedEntry, setSelectedEntry] = useState<CreditEntry | null>(null);
   const router = useRouter();
+  const pathname = usePathname();
 
   useEffect(() => {
     if (disputeSubmissionId && entries.length > 0) {
@@ -113,10 +115,8 @@ export function CreditHistoryCard({
 
   const handleCloseDispute = async () => {
     const currentHash = window.location.hash;
-    if (currentHash.startsWith('#dispute-submission-')) {
-      await router.replace(router.asPath.replace(currentHash, ''), undefined, {
-        shallow: true,
-      });
+    if (currentHash.startsWith('#dispute-submission-') && pathname) {
+      await router.replace(pathname);
     }
 
     setIsDisputeModalOpen(false);

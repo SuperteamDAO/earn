@@ -1,9 +1,10 @@
+'use client';
 import { usePrivy } from '@privy-io/react-auth';
 import { useIsFetching, useQueryClient } from '@tanstack/react-query';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { ChevronLeft, Eye, Loader2 } from 'lucide-react';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import posthog from 'posthog-js';
 import { useWatch } from 'react-hook-form';
 

@@ -1,3 +1,4 @@
+'use client';
 import parse, {
   domToReact,
   type HTMLReactParserOptions,

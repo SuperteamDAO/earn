@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { type GetServerSideProps } from 'next';
-import { useRouter } from 'next/router';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState, useTransition } from 'react';
 
 import { type PrismaUserWithoutKYC } from '@/interface/user';
@@ -59,19 +59,12 @@ function TalentLeaderboard({
 
   const [, startTransition] = useTransition();
   const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
 
-  const handleStart = (url: string) => {
-    if (url !== router.asPath) {
-      setLoading(true);
-      setIsSearchLoading(true);
-    }
-  };
-
-  const handleComplete = (url: string) => {
-    if (url === router.asPath) {
-      setLoading(false);
-      setIsSearchLoading(false);
-    }
+  const handleComplete = (): void => {
+    setLoading(false);
+    setIsSearchLoading(false);
   };
 
   useEffect(() => {
@@ -82,38 +75,23 @@ function TalentLeaderboard({
   }, []);
 
   useEffect(() => {
-    router.events.on('routeChangeStart', handleStart);
-    router.events.on('routeChangeComplete', handleComplete);
-    router.events.on('routeChangeError', handleComplete);
-
-    return () => {
-      router.events.off('routeChangeStart', handleStart);
-      router.events.off('routeChangeComplete', handleComplete);
-      router.events.off('routeChangeError', handleComplete);
-    };
-  }, [router]);
+    // When pathname or search params change, consider navigation completed for loading UI
+    handleComplete();
+  }, [pathname, searchParams]);
 
   useEffect(() => {
-    const url = new URL(window.location.href);
+    const params = new URLSearchParams(searchParams?.toString());
+    if (params.get('skill') !== skill) params.set('skill', skill);
+    if (params.get('timeframe') !== timeframe)
+      params.set('timeframe', timeframe);
+    if (Number(params.get('page')) !== page) params.set('page', String(page));
+    if (params.get('search') !== search) params.set('search', search);
 
-    if (url.searchParams.get('skill') !== skill)
-      url.searchParams.set('skill', skill);
-
-    if (url.searchParams.get('timeframe') !== timeframe)
-      url.searchParams.set('timeframe', timeframe);
-
-    if (Number(url.searchParams.get('page')) !== page)
-      url.searchParams.set('page', String(page));
-
-    if (url.searchParams.get('search') !== search)
-      url.searchParams.set('search', search);
-
+    const qs = params.toString();
     startTransition(() => {
-      router.replace(`?${url.searchParams.toString()}`, undefined, {
-        scroll: false,
-      });
+      router.replace(`?${qs}`, { scroll: false });
     });
-  }, [skill, timeframe, page, search]);
+  }, [skill, timeframe, page, search, searchParams, router, startTransition]);
 
   return (
     <Default

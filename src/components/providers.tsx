@@ -1,3 +1,5 @@
+'use client';
+
 import { PrivyProvider, usePrivy } from '@privy-io/react-auth';
 import { createSolanaRpc, createSolanaRpcSubscriptions } from '@solana/kit';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';

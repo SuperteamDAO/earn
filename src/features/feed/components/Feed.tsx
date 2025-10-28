@@ -1,4 +1,5 @@
-import { useRouter } from 'next/router';
+'use client';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 
@@ -28,10 +29,13 @@ interface Props {
 
 export const Feed = ({ isWinner = false, id, type }: Props) => {
   const router = useRouter();
-  const { query } = router;
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  const filterParam = searchParams?.get('filter') as 'new' | 'popular' | null;
 
   const [activeMenu, setActiveMenu] = useState<'new' | 'popular'>(
-    (query.filter as 'new' | 'popular') || 'popular',
+    filterParam || 'popular',
   );
   const [timePeriod, setTimePeriod] = useState('This Month');
 
@@ -55,20 +59,16 @@ export const Feed = ({ isWinner = false, id, type }: Props) => {
   }, [inView, fetchNextPage, hasNextPage]);
 
   useEffect(() => {
-    if (query.filter && query.filter !== activeMenu) {
-      setActiveMenu(query.filter as 'new' | 'popular');
+    if (filterParam && filterParam !== activeMenu) {
+      setActiveMenu(filterParam);
     }
-  }, [query]);
+  }, [filterParam, activeMenu]);
 
   const updateQuery = (key: string, value: string) => {
-    router.push(
-      {
-        pathname: router.pathname,
-        query: { ...query, [key]: value },
-      },
-      undefined,
-      { shallow: true },
-    );
+    if (!pathname) return;
+    const params = new URLSearchParams(searchParams?.toString());
+    params.set(key, value);
+    router.push(`${pathname}?${params.toString()}`);
   };
 
   const MenuOption = ({ option }: { option: 'new' | 'popular' }) => {

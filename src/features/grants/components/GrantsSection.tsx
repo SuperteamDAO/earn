@@ -1,3 +1,4 @@
+'use client';
 import { AnimateChangeInHeight } from '@/components/shared/AnimateChangeInHeight';
 import { EmptySection } from '@/components/shared/EmptySection';
 import { useBreakpoint } from '@/hooks/use-breakpoint';

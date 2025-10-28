@@ -1,7 +1,8 @@
+'use client';
 import { useLoginWithOAuth } from '@privy-io/react-auth';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { ArrowLeft } from 'lucide-react';
-import { useRouter } from 'next/router';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import React, { useCallback, useEffect, useState } from 'react';
 
 import { Dialog, DialogContent } from '@/components/ui/dialog';
@@ -29,6 +30,8 @@ export const Login = ({
   hideOverlay,
 }: Props) => {
   const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const [loginStep, setLoginStep] = useState(0);
   const popupTimeout = useAtomValue(popupTimeoutAtom);
   const setLoginEvent = useSetAtom(loginEventAtom);
@@ -38,18 +41,19 @@ export const Login = ({
       await handleUserCreation(user.google?.email || '');
       if (redirectTo) {
         router.push(redirectTo);
-      } else {
-        const currentPath = router.asPath;
-        const url = new URL(window.location.origin + currentPath);
-
+      } else if (pathname) {
+        const params = new URLSearchParams(searchParams?.toString());
         const privyParams = [
           'privy_oauth_state',
           'privy_oauth_provider',
           'privy_oauth_code',
         ];
-        privyParams.forEach((param) => url.searchParams.delete(param));
+        privyParams.forEach((param) => params.delete(param));
 
-        router.replace(url.toString());
+        const newUrl = params.toString()
+          ? `${pathname}?${params.toString()}`
+          : pathname;
+        router.replace(newUrl);
       }
       if (!wasAlreadyAuthenticated) {
         setLoginEvent('fresh_login');

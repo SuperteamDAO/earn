@@ -1,7 +1,8 @@
+'use client';
 import { useQuery } from '@tanstack/react-query';
 import { Check, Clock, File, MessageSquare, Pause } from 'lucide-react';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
+import { usePathname } from 'next/navigation';
 import posthog from 'posthog-js';
 import React from 'react';
 
@@ -50,7 +51,7 @@ export function ListingHeader({
     Hackathon,
     isPrivate,
   } = listing;
-  const router = useRouter();
+  const pathname = usePathname();
 
   const { user } = useUser();
 
@@ -206,7 +207,7 @@ export function ListingHeader({
     );
   };
 
-  const isSubmissionPage = router.pathname.endsWith('/submission');
+  const isSubmissionPage = pathname?.endsWith('/submission');
 
   return (
     <div className="flex flex-col gap-1 bg-white">
@@ -266,7 +267,7 @@ export function ListingHeader({
               !isTemplate ? `/listing/${slug}/` : `/templates/listings/${slug}/`
             }
             text="Details"
-            isActive={!router.asPath.split('/')[3]?.includes('submission')}
+            isActive={!pathname?.split('/')[3]?.includes('submission')}
             className="mr-6"
           />
 
@@ -275,7 +276,7 @@ export function ListingHeader({
               onClick={() => posthog.capture('submissions tab_listing')}
               href={`/listing/${slug}/submission`}
               text="Submissions"
-              isActive={!!router.asPath.split('/')[3]?.includes('submission')}
+              isActive={!!pathname?.split('/')[3]?.includes('submission')}
               subText={
                 isSubmissionNumberLoading ? '...' : submissionNumber + ''
               }

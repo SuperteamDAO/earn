@@ -1,3 +1,4 @@
+'use client';
 import { usePrivy } from '@privy-io/react-auth';
 import { useQuery } from '@tanstack/react-query';
 import { useAtom, useSetAtom } from 'jotai';

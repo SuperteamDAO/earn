@@ -1,5 +1,6 @@
+'use client';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
+import { usePathname, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 
 import MdOutlineMail from '@/components/icons/MdOutlineMail';
@@ -50,18 +51,19 @@ const FooterColumn = ({
 export const Footer = () => {
   const currentYear = new Date().getFullYear();
   const router = useRouter();
+  const pathname = usePathname();
 
   const [selectedSuperteam, setSelectedSuperteam] = useState<string | null>(
     null,
   );
 
   useEffect((): void => {
-    const path = router.asPath.toLowerCase();
+    const path = pathname?.toLowerCase();
     const matched = Superteams.find((team) =>
-      path.includes(`/regions/${team.slug?.toLowerCase()}`),
+      path?.includes(`/regions/${team.slug?.toLowerCase()}`),
     );
     setSelectedSuperteam(matched ? matched.name : 'Global');
-  }, [router.asPath]);
+  }, [pathname]);
 
   const handleSuperteamChange = (value: string | null): void => {
     if (!value) {

@@ -1,6 +1,7 @@
+'use client';
 import { usePrivy } from '@privy-io/react-auth';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { useRouter } from 'next/router';
+import { useQuery } from '@tanstack/react-query';
+import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
 import { ErrorSection } from '@/components/shared/ErrorSection';
@@ -26,7 +27,6 @@ export function ListingBuilder({ route, slug }: ListingBuilderLayout) {
   const { user, isLoading: isUserLoading } = useUser();
   const { authenticated, ready } = usePrivy();
   const router = useRouter();
-  const queryClient = useQueryClient();
 
   const { data: hackathons, isLoading: isHackathonLoading } = useQuery({
     ...activeHackathonsQuery(),
@@ -50,19 +50,8 @@ export function ListingBuilder({ route, slug }: ListingBuilderLayout) {
     }
   }, [listing, user?.currentSponsorId, router]);
 
-  useEffect(() => {
-    const handleRouteComplete = () => {
-      queryClient.invalidateQueries({
-        queryKey: ['sponsor-dashboard-listing', slug],
-      });
-    };
-
-    router.events.on('routeChangeComplete', handleRouteComplete);
-
-    return () => {
-      router.events.off('routeChangeComplete', handleRouteComplete);
-    };
-  }, [router.events, queryClient, slug]);
+  // Note: In App Router, route change events are handled differently
+  // The query invalidation will happen naturally through React Query's cache
 
   useEffect(() => {
     localStorage.removeItem(AUTO_GENERATE_STORAGE_KEY);

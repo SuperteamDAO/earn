@@ -1,6 +1,7 @@
+'use client';
 import { Cross2Icon } from '@radix-ui/react-icons';
 import { motion } from 'motion/react';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import posthog from 'posthog-js';
 import React, { useEffect } from 'react';
 

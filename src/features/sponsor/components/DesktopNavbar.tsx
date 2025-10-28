@@ -1,6 +1,7 @@
+'use client';
 import { usePrivy } from '@privy-io/react-auth';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
+import { usePathname } from 'next/navigation';
 import posthog from 'posthog-js';
 import React from 'react';
 
@@ -18,9 +19,9 @@ export const DesktopNavbar = () => {
   const { authenticated, ready } = usePrivy();
   const { user } = useUser();
 
-  const router = useRouter();
+  const pathname = usePathname();
 
-  const isDashboardRoute = router.pathname.startsWith('/dashboard');
+  const isDashboardRoute = pathname?.startsWith('/dashboard');
   const maxWValue = isDashboardRoute ? '' : 'max-w-7xl';
 
   return (

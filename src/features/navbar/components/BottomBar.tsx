@@ -1,6 +1,7 @@
+'use client';
 import { usePrivy } from '@privy-io/react-auth';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
+import { usePathname } from 'next/navigation';
 
 import GoHome from '@/components/icons/GoHome';
 import IoNewspaperOutline from '@/components/icons/IoNewspaperOutline';
@@ -26,11 +27,11 @@ export function BottomBar({
   walletBalance,
 }: Props) {
   const { user } = useUser();
-  const router = useRouter();
+  const pathname = usePathname();
   const { authenticated, ready } = usePrivy();
 
-  function setColor(href: string, routerPath: string) {
-    return routerPath === href ? 'text-brand-purple' : 'text-slate-500';
+  function setColor(href: string, currentPath: string | null) {
+    return currentPath === href ? 'text-brand-purple' : 'text-slate-500';
   }
 
   const iconStyle = {
@@ -43,7 +44,7 @@ export function BottomBar({
     WebkitTapHighlightColor: 'transparent',
   } as React.CSSProperties;
 
-  if (router.asPath.startsWith('/new/')) {
+  if (pathname?.startsWith('/new/')) {
     return null;
   }
 
@@ -57,7 +58,7 @@ export function BottomBar({
       <Button
         variant="ghost"
         className={cn(
-          setColor('/', router.asPath),
+          setColor('/', pathname),
           'w-12 hover:bg-transparent active:bg-transparent',
         )}
         asChild
@@ -78,7 +79,7 @@ export function BottomBar({
         onClick={onSearchOpen}
         style={linkStyle}
         className={cn(
-          setColor('/search', router.pathname),
+          setColor('/search', pathname),
           'w-12 hover:bg-transparent active:bg-transparent',
         )}
       >
@@ -94,7 +95,7 @@ export function BottomBar({
       <Button
         variant="ghost"
         className={cn(
-          setColor('/feed/', router.asPath),
+          setColor('/feed/', pathname),
           'relative w-12 hover:bg-transparent active:bg-transparent',
         )}
         asChild
@@ -143,7 +144,7 @@ export function BottomBar({
         <Button
           variant="ghost"
           className={cn(
-            setColor(`/t/${user?.username}/`, router.asPath),
+            setColor(`/t/${user?.username}/`, pathname),
             'w-12 hover:bg-transparent active:bg-transparent',
           )}
           asChild

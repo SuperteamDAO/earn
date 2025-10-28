@@ -1,6 +1,7 @@
+'use client';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Check, Loader2, XCircle } from 'lucide-react';
-import { useRouter } from 'next/router';
+import { useSearchParams } from 'next/navigation';
 import posthog from 'posthog-js';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -35,7 +36,7 @@ import { SkillsField } from './fields/Skills';
 import { SocialsField } from './fields/Socials';
 import { UsernameField } from './fields/Username';
 export const TalentForm = () => {
-  const router = useRouter();
+  const searchParams = useSearchParams();
   const { user, refetchUser } = useUser();
   const { uploadAndReplace, uploading } = useUploadImage();
 
@@ -65,16 +66,16 @@ export const TalentForm = () => {
   const [isReferralChecking, setIsReferralChecking] = useState<boolean>(false);
 
   const hasLockedReferralCode = useMemo(() => {
-    const queryCode = router.query.code;
+    const queryCode = searchParams?.get('code');
     return typeof queryCode === 'string' && queryCode.trim().length > 0;
-  }, [router.query.code]);
+  }, [searchParams]);
 
   useEffect(() => {
-    const queryCode = router.query.code;
+    const queryCode = searchParams?.get('code');
     if (typeof queryCode === 'string' && queryCode.trim().length > 0) {
       setReferralCode(queryCode.trim().toUpperCase());
     }
-  }, [router.query.code]);
+  }, [searchParams]);
 
   useEffect(() => {
     if (!referralCode) {
@@ -130,8 +131,8 @@ export const TalentForm = () => {
   }, [user, setValue]);
 
   const isForcedRedirect = useMemo(() => {
-    return router.query.type === 'forced';
-  }, [router, user]);
+    return searchParams?.get('type') === 'forced';
+  }, [searchParams]);
 
   const TitleArray = {
     title: isForcedRedirect ? 'Finish Your Profile' : 'Complete your Profile',

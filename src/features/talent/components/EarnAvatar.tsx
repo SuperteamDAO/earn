@@ -1,3 +1,4 @@
+'use client';
 import Avatar from 'boring-avatars';
 import React, { useState } from 'react';
 

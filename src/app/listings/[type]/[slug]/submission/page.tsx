@@ -1,0 +1,12 @@
+import { redirect } from 'next/navigation';
+
+interface PageProps {
+  readonly params: Promise<{ slug: string }>;
+}
+
+export default async function ListingSubmissionRedirectPage({
+  params,
+}: PageProps) {
+  const { slug } = await params;
+  redirect(`/listing/${slug}/submission/`);
+}

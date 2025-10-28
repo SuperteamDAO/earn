@@ -1,5 +1,5 @@
+'use client';
 import { useAtom, useAtomValue } from 'jotai';
-import { useRouter } from 'next/router';
 import { useEffect, useRef } from 'react';
 import { useWatch } from 'react-hook-form';
 
@@ -24,7 +24,6 @@ import { Templates } from './Templates';
 
 export function DescriptionAndTemplate() {
   const form = useListingForm();
-  const router = useRouter();
   const isEditing = useAtomValue(isEditingAtom);
   const submitMutation = useAtomValue(submitListingMutationAtom);
   const templateId = useWatch({
@@ -79,23 +78,16 @@ export function DescriptionAndTemplate() {
       }
     };
 
-    const handleRouteStart = () => {
-      processCleanup();
-    };
-
     const handleBeforeUnload = () => {
       processCleanup();
     };
 
-    router.events.on('routeChangeStart', handleRouteStart);
     window.addEventListener('beforeunload', handleBeforeUnload);
 
     return () => {
-      router.events.off('routeChangeStart', handleRouteStart);
       window.removeEventListener('beforeunload', handleBeforeUnload);
     };
   }, [
-    router.events,
     isEditing,
     submitMutation.isPending,
     submitMutation.isSuccess,

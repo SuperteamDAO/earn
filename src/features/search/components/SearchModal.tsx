@@ -2,8 +2,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import debounce from 'lodash.debounce';
 import { ArrowRight, Search } from 'lucide-react';
 import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
-import { useRouter } from 'next/router';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { Button } from '@/components/ui/button';

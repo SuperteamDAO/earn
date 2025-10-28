@@ -1,3 +1,4 @@
+'use client';
 import Link from 'next/link';
 import posthog from 'posthog-js';
 import React, { useEffect, useRef, useState } from 'react';

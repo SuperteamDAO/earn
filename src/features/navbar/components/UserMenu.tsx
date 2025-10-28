@@ -1,6 +1,7 @@
+'use client';
 import { ChevronDown } from 'lucide-react';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
+import { usePathname, useRouter } from 'next/navigation';
 import posthog from 'posthog-js';
 import { useEffect } from 'react';
 
@@ -23,6 +24,7 @@ import { EmailSettingsModal } from '@/features/talent/components/EmailSettingsMo
 
 export function UserMenu() {
   const router = useRouter();
+  const pathname = usePathname();
 
   const { user, isLoading } = useUser();
   const logout = useLogout();
@@ -50,12 +52,10 @@ export function UserMenu() {
   }, [isOpen, onOpen]);
 
   const handleClose = async () => {
-    console.log('close -', router);
-    await router.replace(
-      router.asPath.replace('#emailPreferences', ''),
-      undefined,
-      { shallow: true },
-    );
+    const currentHash = window.location.hash;
+    if (currentHash === '#emailPreferences' && pathname) {
+      router.replace(pathname);
+    }
     onClose();
   };
 
@@ -77,7 +77,7 @@ export function UserMenu() {
       {user &&
         !user.currentSponsorId &&
         !user.isTalentFilled &&
-        !router.pathname.startsWith('/new') && (
+        !pathname?.startsWith('/new') && (
           <Button
             variant="ghost"
             size="sm"

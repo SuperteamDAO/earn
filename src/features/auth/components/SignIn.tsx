@@ -1,7 +1,8 @@
+'use client';
 import { useLoginWithOAuth } from '@privy-io/react-auth';
 import { useSetAtom } from 'jotai';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import posthog from 'posthog-js';
 import React, { type Dispatch, type SetStateAction, useState } from 'react';
 
@@ -30,6 +31,8 @@ export const SignIn = ({
   onSuccess,
 }: SigninProps) => {
   const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const [isLoading, setIsLoading] = useState(false);
   const isMD = useBreakpoint('md');
   const setLoginEvent = useSetAtom(loginEventAtom);
@@ -41,9 +44,8 @@ export const SignIn = ({
 
       if (redirectTo) {
         router.push(redirectTo);
-      } else {
-        const currentPath = router.asPath;
-        const url = new URL(window.location.origin + currentPath);
+      } else if (pathname) {
+        const params = new URLSearchParams(searchParams?.toString());
 
         const privyParams = [
           'privy_oauth_state',
@@ -51,8 +53,12 @@ export const SignIn = ({
           'privy_oauth_code',
         ];
 
-        privyParams.forEach((param) => url.searchParams.delete(param));
-        router.replace(url.toString());
+        privyParams.forEach((param) => params.delete(param));
+
+        const newUrl = params.toString()
+          ? `${pathname}?${params.toString()}`
+          : pathname;
+        router.replace(newUrl);
       }
       if (!wasAlreadyAuthenticated) {
         setLoginEvent('fresh_login');
@@ -137,7 +143,7 @@ export const SignIn = ({
           </Link>{' '}
           and our{' '}
           <Link
-            href={`${router.basePath}/privacy-policy.pdf`}
+            href="/privacy-policy.pdf"
             className="font-semibold hover:underline"
             target="_blank"
           >

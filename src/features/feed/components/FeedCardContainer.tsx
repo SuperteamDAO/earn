@@ -1,5 +1,6 @@
+'use client';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import posthog from 'posthog-js';
 import { type ReactNode, useEffect, useState } from 'react';
 

@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useSetAtom } from 'jotai';
 import { Lock, Pencil, PencilLine, Plus, Users } from 'lucide-react';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import posthog from 'posthog-js';
 import {
   type ReactNode,
@@ -68,6 +68,8 @@ export function SponsorLayout({
   const { user, isLoading: isUserLoading } = useUser();
   const { authenticated, ready } = usePrivy();
   const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const {
     isOpen: isSponsorInfoModalOpen,
@@ -76,7 +78,6 @@ export function SponsorLayout({
   } = useDisclosure();
 
   const [isEntityModalOpen, setIsEntityModalOpen] = useState(false);
-  const { query } = router;
   const [isExpanded, setIsExpanded] = useState(!isCollapsible ? true : false);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -100,7 +101,7 @@ export function SponsorLayout({
     setIsExpanded(false);
   }, []);
 
-  const open = !!query.open;
+  const open = (searchParams?.get('open') ?? null) !== null;
   useEffect(() => {
     if (open) {
       setAutoGenerateOpen(true);
@@ -159,7 +160,7 @@ export function SponsorLayout({
     return <Login isOpen={true} onClose={() => {}} />;
   }
 
-  const isHackathonRoute = router.asPath.startsWith('/dashboard/hackathon');
+  const isHackathonRoute = (pathname ?? '').startsWith('/dashboard/hackathon');
   const isLocalProfileVisible =
     Superteams.some(
       (team) =>
@@ -248,7 +249,7 @@ export function SponsorLayout({
           isOpen={isSponsorInfoModalOpen}
         />
 
-        {router.pathname === '/dashboard/listings' && (
+        {(pathname ?? '') === '/dashboard/listings' && (
           <SponsorAnnouncements isAnyModalOpen={isAnyModalOpen} />
         )}
 

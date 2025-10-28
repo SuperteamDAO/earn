@@ -1,10 +1,11 @@
+'use client';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { usePrivy } from '@privy-io/react-auth';
 import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
 import { Info, Loader2 } from 'lucide-react';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import posthog from 'posthog-js';
 import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';

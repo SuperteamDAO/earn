@@ -1,3 +1,4 @@
+'use client';
 import { usePrivy } from '@privy-io/react-auth';
 import { DialogTitle } from '@radix-ui/react-dialog';
 import { useQuery } from '@tanstack/react-query';

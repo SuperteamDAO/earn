@@ -1,5 +1,7 @@
+'use client';
+
 import { atom, useAtom } from 'jotai';
-import { useRouter } from 'next/router';
+import { usePathname } from 'next/navigation';
 
 import { cn } from '@/utils/cn';
 
@@ -10,13 +12,11 @@ type GrantSnackbarType = {
 export const grantSnackbarAtom = atom<GrantSnackbarType | null>(null);
 
 export const GrantSnackbar = () => {
-  const router = useRouter();
+  const pathname = usePathname();
   const [grantSnackbar] = useAtom(grantSnackbarAtom);
 
-  const { asPath } = router;
-
   const showSnackbar =
-    asPath.split('/')[1] === 'grants' && !!asPath.split('/')[2];
+    pathname?.split('/')[1] === 'grants' && !!pathname?.split('/')[2];
 
   if (!grantSnackbar) return null;
 

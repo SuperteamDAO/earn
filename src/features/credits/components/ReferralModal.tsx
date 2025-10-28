@@ -1,3 +1,4 @@
+'use client';
 import { useQuery } from '@tanstack/react-query';
 import { ArrowLeftIcon, CopyIcon } from 'lucide-react';
 import posthog from 'posthog-js';

@@ -1,6 +1,7 @@
+'use client';
 import { useQuery } from '@tanstack/react-query';
 import { TriangleAlert } from 'lucide-react';
-import { useRouter } from 'next/router';
+import { usePathname } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import Countdown from 'react-countdown';
 
@@ -115,7 +116,7 @@ export function RightSideBar({
 
   const isProject = type === 'project';
 
-  const router = useRouter();
+  const pathname = usePathname();
 
   const largestDigits = useMemo(() => {
     const consideringDigitsArray = cleanRewardPrizes(rewards).map(
@@ -151,7 +152,7 @@ export function RightSideBar({
     <div className="h-full w-full md:w-auto">
       <div className="flex w-full flex-col gap-2 pt-4">
         <div className="flex w-full flex-col justify-center rounded-xl bg-white">
-          {!router.asPath.split('/')[4]?.includes('submission') &&
+          {!pathname?.split('/')[4]?.includes('submission') &&
             listing.isWinnersAnnounced && (
               <div className="block w-full pb-6 md:hidden">
                 <ListingWinners bounty={listing} />
