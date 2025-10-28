@@ -37,13 +37,16 @@ export async function getPrivyToken(
       return null;
     }
 
-    const claims = await privy.verifyAuthToken(
-      accessToken,
-      process.env.PRIVY_VERIFICATION_KEY,
+    const verifiedClaims = await privy
+      .utils()
+      .auth()
+      .verifyAuthToken(accessToken);
+    logger.debug(
+      'Authorized, found full privy claim from token',
+      verifiedClaims,
     );
-    logger.debug('Authorized, found full privy claim from token', claims);
 
-    return claims.userId;
+    return verifiedClaims.user_id;
   } catch (error) {
     logger.error(
       'Unauthorized, Error verifying auth token ',
