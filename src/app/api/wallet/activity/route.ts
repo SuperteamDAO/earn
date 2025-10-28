@@ -2,7 +2,7 @@ import { PublicKey } from '@solana/web3.js';
 import { headers } from 'next/headers';
 import { type NextRequest, NextResponse } from 'next/server';
 
-import { privy } from '@/lib/privy';
+import { prisma } from '@/prisma';
 
 import { getUserSession } from '@/features/auth/utils/getUserSession';
 import { type TokenActivity } from '@/features/wallet/types/TokenActivity';
@@ -27,24 +27,21 @@ export async function GET(
       );
     }
 
-    const { privyDid } = sessionResponse.data;
+    const { userId } = sessionResponse.data;
 
-    if (!privyDid) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { walletAddress: true },
+    });
 
-    const user = await privy.getUser(privyDid);
-
-    const walletAddress = user.wallet?.address;
-
-    if (!walletAddress) {
+    if (!user?.walletAddress) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const connection = getConnection('confirmed');
     const activities = await fetchWalletActivity(
       connection,
-      new PublicKey(walletAddress),
+      new PublicKey(user?.walletAddress),
     );
     return NextResponse.json(activities);
   } catch (error) {

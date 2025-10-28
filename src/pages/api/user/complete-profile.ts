@@ -178,12 +178,14 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       `Completing user profile with data: ${safeStringify(updatedData)}`,
     );
 
-    const createWalletResponse = await privy.createWallets({
-      userId: user.privyDid,
-      createSolanaWallet: true,
+    const createWalletResponse = await privy.wallets().create({
+      chain_type: 'solana',
+      owner: {
+        user_id: user.privyDid,
+      },
     });
 
-    const walletAddress = createWalletResponse.wallet?.address;
+    const walletAddress = createWalletResponse.address;
 
     const referralCode = await generateUniqueReferralCode();
 
