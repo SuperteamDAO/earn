@@ -6,9 +6,11 @@ import dynamic from 'next/dynamic';
 import { useBreakpoint } from '@/hooks/use-breakpoint';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
+import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 
 import { BannerCarousel } from '@/features/home/components/Banner';
+import { SponsorStageBanner } from '@/features/home/components/SponsorStage/SponsorStageBanner';
 import { UserStatsBanner } from '@/features/home/components/UserStatsBanner';
 import { userCountQuery } from '@/features/home/queries/user-count';
 import { ListingsSection } from '@/features/listings/components/ListingsSection';
@@ -54,6 +56,7 @@ interface HomePageProps {
 export default function HomePage({ potentialSession }: HomePageProps) {
   const { authenticated } = usePrivy();
   const { data: totalUsers } = useQuery(userCountQuery);
+  const { user } = useUser();
   const isLg = useBreakpoint('lg');
 
   return (
@@ -74,7 +77,13 @@ export default function HomePage({ potentialSession }: HomePageProps) {
               <div className="w-full lg:pr-6">
                 <div className="pt-3">
                   {potentialSession || authenticated ? (
-                    <UserStatsBanner />
+                    <>
+                      {!!user?.currentSponsorId && isLg ? (
+                        <SponsorStageBanner />
+                      ) : (
+                        <UserStatsBanner />
+                      )}
+                    </>
                   ) : (
                     <BannerCarousel totalUsers={totalUsers?.totalUsers} />
                   )}
