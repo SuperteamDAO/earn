@@ -128,194 +128,199 @@ export const PayoutSection = ({
   const isFndnToPay = listingStatus === 'Fndn to Pay';
 
   return (
-    <div className="h-full w-full overflow-x-auto rounded-md border border-gray-200">
-      <Table className="overflow-hidden">
-        <TableHeader className="bg-slate-50">
-          <TableRow>
-            <TableHead className={cn('w-[40%]', isFndnToPay && 'w-[60%]')}>
-              Winner Name
-            </TableHead>
-            <TableHead className={cn('w-[10%]', isFndnToPay && 'w-[20%]')}>
-              Position
-            </TableHead>
-            <TableHead className={cn('w-[10%]', isFndnToPay && 'w-[20%]')}>
-              Wallet Address
-            </TableHead>
-            <TableHead className={cn('w-[15%]', isFndnToPay && 'w-[20%]')}>
-              Prize
-            </TableHead>
-            {isProject && !isFndnToPay && (
-              <TableHead className="w-[15%]">% Paid</TableHead>
-            )}
-            {!isFndnToPay && (
-              <TableHead className="w-[15%] whitespace-nowrap">
-                Payment
+    <div className="h-full w-full">
+      <div className="overflow-x-auto rounded-md border border-gray-200">
+        <Table className="overflow-hidden">
+          <TableHeader className="bg-slate-50">
+            <TableRow>
+              <TableHead className={cn('w-[40%]', isFndnToPay && 'w-[60%]')}>
+                Winner Name
               </TableHead>
-            )}
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {winners.map((submission) => {
-            const hasMultipleTranches =
-              submission.paymentDetails && submission.paymentDetails.length > 0;
+              <TableHead className={cn('w-[10%]', isFndnToPay && 'w-[20%]')}>
+                Position
+              </TableHead>
+              <TableHead className={cn('w-[10%]', isFndnToPay && 'w-[20%]')}>
+                Wallet Address
+              </TableHead>
+              <TableHead className={cn('w-[15%]', isFndnToPay && 'w-[20%]')}>
+                Prize
+              </TableHead>
+              {isProject && !isFndnToPay && (
+                <TableHead className="w-[15%]">% Paid</TableHead>
+              )}
+              {!isFndnToPay && (
+                <TableHead className="w-[15%] whitespace-nowrap">
+                  Payment
+                </TableHead>
+              )}
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {winners.map((submission) => {
+              const hasMultipleTranches =
+                submission.paymentDetails &&
+                submission.paymentDetails.length > 0;
 
-            const isExpanded = expandedRows.has(submission.id);
+              const isExpanded = expandedRows.has(submission.id);
 
-            const totalPaid = submission.paymentDetails?.reduce(
-              (acc, payment) => acc + payment.amount,
-              0,
-            );
+              const totalPaid = submission.paymentDetails?.reduce(
+                (acc, payment) => acc + payment.amount,
+                0,
+              );
 
-            const paidPercentage = (
-              ((totalPaid ?? 0) / (bounty.rewardAmount ?? 0)) *
-              100
-            ).toFixed(2);
+              const paidPercentage = (
+                ((totalPaid ?? 0) / (bounty.rewardAmount ?? 0)) *
+                100
+              ).toFixed(2);
 
-            return (
-              <React.Fragment key={submission.id}>
-                <TableRow>
-                  <TableCell className="font-medium">
-                    <div className="flex items-center gap-2">
-                      <EarnAvatar
-                        id={submission.user.id}
-                        avatar={submission.user.photo}
-                        className="size-8"
-                      />
-                      <div>
-                        <div>
-                          {submission.user.firstName} {submission.user.lastName}
-                        </div>
-                        <div className="text-xs text-slate-500">
-                          @{submission.user.email}
-                        </div>
-                      </div>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <span className="font-medium text-slate-800 capitalize">
-                      {isProject
-                        ? 'Winner'
-                        : getRankLabels(submission.winnerPosition!)}
-                    </span>
-                  </TableCell>
-                  <TableCell>
-                    <CopyButton
-                      text={submission.user.walletAddress || ''}
-                      className="gap-1 text-sm text-slate-600 underline-offset-1 hover:text-slate-500 hover:underline"
-                      contentProps={{ side: 'right' }}
-                    >
-                      {truncatePublicKey(submission.user.walletAddress, 5)}
-                    </CopyButton>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      <img
-                        src={
-                          tokenList.find(
-                            (ele) => ele.tokenSymbol === bounty.token,
-                          )?.icon
-                        }
-                        alt={bounty.token}
-                        className="h-4 w-4"
-                      />
-                      <span className="font-medium text-slate-900">
-                        {!!bounty.rewards &&
-                          bounty.rewards[
-                            submission.winnerPosition as keyof Rewards
-                          ]}{' '}
-                        <span className="text-slate-400">{bounty.token}</span>
-                      </span>
-                    </div>
-                  </TableCell>
-                  {isProject && !isFndnToPay && (
-                    <TableCell>
-                      <div className="flex items-center gap-3">
-                        <Progress
-                          className="h-1.5 w-16 rounded-full"
-                          value={Number(paidPercentage)}
+              return (
+                <React.Fragment key={submission.id}>
+                  <TableRow>
+                    <TableCell className="font-medium">
+                      <div className="flex items-center gap-2">
+                        <EarnAvatar
+                          id={submission.user.id}
+                          avatar={submission.user.photo}
+                          className="size-8"
                         />
-                        <p className="text-sm font-medium text-slate-500">
-                          {paidPercentage}%
-                        </p>
+                        <div>
+                          <div>
+                            {submission.user.firstName}{' '}
+                            {submission.user.lastName}
+                          </div>
+                          <div className="text-xs text-slate-500">
+                            @{submission.user.email}
+                          </div>
+                        </div>
                       </div>
                     </TableCell>
-                  )}
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      {submission.isPaid ? (
-                        isProject && hasMultipleTranches ? (
-                          <div
-                            className="flex cursor-pointer items-center gap-1 text-sm font-medium text-slate-600 hover:text-slate-900"
-                            onClick={() => toggleExpandRow(submission.id)}
-                          >
-                            <span>View transaction links</span>
-                            <ChevronDown
-                              className={cn(
-                                'h-4 w-4 text-slate-400 transition-transform duration-300 ease-in-out',
-                                isExpanded ? 'rotate-180' : 'rotate-0',
-                              )}
-                            />
-                          </div>
-                        ) : (
-                          <div
-                            className="flex cursor-pointer items-center text-sm font-medium text-slate-600 hover:text-slate-900"
-                            onClick={() => {
-                              const txId = submission.paymentDetails?.[0]?.txId;
-                              if (txId) {
-                                window.open(
-                                  `https://solscan.io/tx/${txId}?cluster=${process.env.NEXT_PUBLIC_PAYMENT_CLUSTER}`,
-                                  '_blank',
-                                );
-                              }
-                            }}
-                          >
-                            {submission.paymentDetails?.[0]?.txId &&
-                              truncatePublicKey(
-                                submission.paymentDetails[0].txId,
-                                5,
-                              )}
-                            <ExternalLink className="ml-1 h-4 w-4" />
-                          </div>
-                        )
-                      ) : bounty.isWinnersAnnounced && !isFndnToPay ? (
-                        <div className="flex items-center">
-                          <PayoutButton
-                            bounty={bounty}
-                            submission={submission}
+                    <TableCell>
+                      <span className="font-medium text-slate-800 capitalize">
+                        {isProject
+                          ? 'Winner'
+                          : getRankLabels(submission.winnerPosition!)}
+                      </span>
+                    </TableCell>
+                    <TableCell>
+                      <CopyButton
+                        text={submission.user.walletAddress || ''}
+                        className="gap-1 text-sm text-slate-600 underline-offset-1 hover:text-slate-500 hover:underline"
+                        contentProps={{ side: 'right' }}
+                      >
+                        {truncatePublicKey(submission.user.walletAddress, 5)}
+                      </CopyButton>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        <img
+                          src={
+                            tokenList.find(
+                              (ele) => ele.tokenSymbol === bounty.token,
+                            )?.icon
+                          }
+                          alt={bounty.token}
+                          className="h-4 w-4"
+                        />
+                        <span className="font-medium text-slate-900">
+                          {!!bounty.rewards &&
+                            bounty.rewards[
+                              submission.winnerPosition as keyof Rewards
+                            ]}{' '}
+                          <span className="text-slate-400">{bounty.token}</span>
+                        </span>
+                      </div>
+                    </TableCell>
+                    {isProject && !isFndnToPay && (
+                      <TableCell>
+                        <div className="flex items-center gap-3">
+                          <Progress
+                            className="h-1.5 w-16 rounded-full"
+                            value={Number(paidPercentage)}
                           />
-                          {hasMultipleTranches && (
-                            <span
+                          <p className="text-sm font-medium text-slate-500">
+                            {paidPercentage}%
+                          </p>
+                        </div>
+                      </TableCell>
+                    )}
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        {submission.isPaid ? (
+                          isProject && hasMultipleTranches ? (
+                            <div
+                              className="flex cursor-pointer items-center gap-1 text-sm font-medium text-slate-600 hover:text-slate-900"
                               onClick={() => toggleExpandRow(submission.id)}
                             >
+                              <span>View transaction links</span>
                               <ChevronDown
                                 className={cn(
-                                  'ml-8 h-4 w-4 text-slate-400 transition-transform duration-300 ease-in-out',
+                                  'h-4 w-4 text-slate-400 transition-transform duration-300 ease-in-out',
                                   isExpanded ? 'rotate-180' : 'rotate-0',
                                 )}
                               />
-                            </span>
-                          )}
-                        </div>
-                      ) : (
-                        <></>
-                      )}
-                    </div>
-                  </TableCell>
-                </TableRow>
-                {isExpanded && isProject && hasMultipleTranches && (
-                  <TableRow>
-                    <TableCell />
-                    <PaymentDetailsRow
-                      paymentDetails={submission.paymentDetails!}
-                      token={bounty.token || 'USDC'}
-                    />
+                            </div>
+                          ) : (
+                            <div
+                              className="flex cursor-pointer items-center text-sm font-medium text-slate-600 hover:text-slate-900"
+                              onClick={() => {
+                                const txId =
+                                  submission.paymentDetails?.[0]?.txId;
+                                if (txId) {
+                                  window.open(
+                                    `https://solscan.io/tx/${txId}?cluster=${process.env.NEXT_PUBLIC_PAYMENT_CLUSTER}`,
+                                    '_blank',
+                                  );
+                                }
+                              }}
+                            >
+                              {submission.paymentDetails?.[0]?.txId &&
+                                truncatePublicKey(
+                                  submission.paymentDetails[0].txId,
+                                  5,
+                                )}
+                              <ExternalLink className="ml-1 h-4 w-4" />
+                            </div>
+                          )
+                        ) : bounty.isWinnersAnnounced && !isFndnToPay ? (
+                          <div className="flex items-center">
+                            <PayoutButton
+                              bounty={bounty}
+                              submission={submission}
+                            />
+                            {hasMultipleTranches && (
+                              <span
+                                onClick={() => toggleExpandRow(submission.id)}
+                              >
+                                <ChevronDown
+                                  className={cn(
+                                    'ml-8 h-4 w-4 text-slate-400 transition-transform duration-300 ease-in-out',
+                                    isExpanded ? 'rotate-180' : 'rotate-0',
+                                  )}
+                                />
+                              </span>
+                            )}
+                          </div>
+                        ) : (
+                          <></>
+                        )}
+                      </div>
+                    </TableCell>
                   </TableRow>
-                )}
-              </React.Fragment>
-            );
-          })}
-        </TableBody>
-      </Table>
+                  {isExpanded && isProject && hasMultipleTranches && (
+                    <TableRow>
+                      <TableCell />
+                      <PaymentDetailsRow
+                        paymentDetails={submission.paymentDetails!}
+                        token={bounty.token || 'USDC'}
+                      />
+                    </TableRow>
+                  )}
+                </React.Fragment>
+              );
+            })}
+          </TableBody>
+        </Table>
+      </div>
     </div>
   );
 };
