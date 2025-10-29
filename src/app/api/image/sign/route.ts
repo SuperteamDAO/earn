@@ -13,8 +13,6 @@ import { getUserSession } from '@/features/auth/utils/getUserSession';
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
-const MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024; // 5MB
-
 const uploadSignatureSchema = z.object({
   folder: z
     .string()
@@ -38,10 +36,6 @@ const uploadSignatureSchema = z.object({
     .number()
     .int()
     .positive('File size must be a positive number')
-    .max(
-      MAX_FILE_SIZE_BYTES,
-      `File size cannot exceed ${MAX_FILE_SIZE_BYTES / (1024 * 1024)}MB`,
-    )
     .describe('File size in bytes'),
 });
 
