@@ -94,13 +94,29 @@ export async function syncGrantApplicationWithAirtable(
     { applicationId, url: grantsAirtableURL },
     `Attempting Airtable upsert for Application ID: ${applicationId}`,
   );
-  await axios.patch(
-    grantsAirtableURL,
-    JSON.stringify(airtablePayload),
-    grantsAirtableConfig,
-  );
-  logger.info(
-    { applicationId },
-    `Successfully synced Application ID: ${applicationId} with Airtable`,
-  );
+  try {
+    await axios.patch(
+      grantsAirtableURL,
+      JSON.stringify(airtablePayload),
+      grantsAirtableConfig,
+    );
+    logger.info(
+      { applicationId },
+      `Successfully synced Application ID: ${applicationId} with Airtable`,
+    );
+  } catch (error: any) {
+    console.error('Failed to sync grant application with Airtable:', {
+      applicationId,
+      error: error?.response?.data || error?.message || error,
+      errorStatus: error?.response?.status,
+      errorResponse: error?.response?.data,
+    });
+    logger.error('Failed to sync grant application with Airtable:', {
+      applicationId,
+      error: error?.response?.data || error?.message || error,
+      errorStatus: error?.response?.status,
+      errorResponse: error?.response?.data,
+    });
+    throw error;
+  }
 }
