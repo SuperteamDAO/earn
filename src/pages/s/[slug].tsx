@@ -19,7 +19,10 @@ import { getURLSanitized } from '@/utils/getURLSanitized';
 import { getURL } from '@/utils/validUrl';
 
 import { GrantsSection } from '@/features/grants/components/GrantsSection';
-import { ListingsSection } from '@/features/listings/components/ListingsSection';
+import {
+  type EmptySectionFilters,
+  ListingsSection,
+} from '@/features/listings/components/ListingsSection';
 
 interface Props {
   sponsor: SponsorType;
@@ -51,39 +54,60 @@ const SponsorPage = ({ sponsor, stats }: Props) => {
     return `https://twitter.com/intent/tweet?text=${encodeURIComponent(message)}`;
   };
 
-  const customEmptySection = (
-    <div className="flex flex-col items-center justify-center py-16 text-center">
-      <div className="mb-6 flex h-18 w-18 items-center justify-center rounded-full bg-slate-100">
-        <Pencil className="h-8 w-8 text-slate-500" />
+  const customEmptySection = (filters: EmptySectionFilters) => {
+    const getEmptySectionCopy = () => {
+      const isStatusAll = filters.activeStatus === 'all';
+      const isTabAll = filters.activeTab === 'all';
+      const isDefaultFilters = isStatusAll && isTabAll;
+
+      if (isDefaultFilters) {
+        if (isSponsor) {
+          return {
+            title: 'Create your next listing',
+            message: "You don't have any listings",
+            buttonText: 'Create Listing',
+            buttonHref: '/dashboard/listings/?open=1',
+          };
+        }
+
+        return {
+          title: 'The sponsor has not posted a listing on Earn yet',
+          message: 'you can tweet at them to create some!',
+          buttonText: 'Post on X',
+          buttonHref: getTwitterIntentUrl(),
+        };
+      }
+
+      return {
+        title: 'Zero results for your current filters',
+        message: 'Try resetting the filters',
+        buttonText: 'Reset Filters',
+        buttonHref: `/s/${sSlug}`,
+      };
+    };
+
+    const copy = getEmptySectionCopy();
+
+    return (
+      <div className="flex flex-col items-center justify-center py-16 text-center">
+        <div className="mb-6 flex h-18 w-18 items-center justify-center rounded-full bg-slate-100">
+          <Pencil className="h-8 w-8 text-slate-500" />
+        </div>
+        <h3 className="mb-2 text-lg leading-[1.2] font-semibold text-slate-700">
+          {copy.title}
+        </h3>
+        <p className="mb-6 text-slate-500">{copy.message}</p>
+        <Button variant="default" className="rounded-[0.5rem] px-10" asChild>
+          <Link
+            href={copy.buttonHref}
+            target={copy.buttonHref.startsWith('http') ? '_blank' : undefined}
+          >
+            {copy.buttonText}
+          </Link>
+        </Button>
       </div>
-      <h3 className="mb-2 text-lg leading-[1.2] font-semibold text-slate-700">
-        {isSponsor ? (
-          <>Create your next listing</>
-        ) : (
-          <>
-            This sponsor doesn&apos;t have <br /> any active listings yet
-          </>
-        )}
-      </h3>
-      <p className="mb-6 text-slate-500">
-        {isSponsor ? (
-          <>You don’t have a listing yet</>
-        ) : (
-          <>You can tweet at them to create some</>
-        )}
-      </p>
-      <Button variant="default" className="rounded-[0.5rem] px-10">
-        <Link
-          href={
-            isSponsor ? '/dashboard/listings/?open=1' : getTwitterIntentUrl()
-          }
-          target="_blank"
-        >
-          {isSponsor ? <>Create Listing</> : <>Post on X</>}
-        </Link>
-      </Button>
-    </div>
-  );
+    );
+  };
 
   return (
     <Default

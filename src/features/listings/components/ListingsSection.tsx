@@ -14,6 +14,9 @@ import { CATEGORY_NAV_ITEMS } from '@/features/navbar/constants';
 import {
   type ListingCategory,
   type ListingContext,
+  type ListingSortOption,
+  type ListingStatus,
+  type ListingTab,
   useListings,
 } from '../hooks/useListings';
 import { useListingsFilterCount } from '../hooks/useListingsFilterCount';
@@ -25,8 +28,17 @@ import { ListingFilters } from './ListingFilters';
 import { ListingTabs } from './ListingTabs';
 import { ViewAllButton } from './ViewAllButton';
 
+export type EmptySectionFilters = {
+  activeTab: ListingTab;
+  activeCategory: ListingCategory;
+  activeStatus: ListingStatus;
+  activeSortBy: ListingSortOption;
+};
+
 interface ListingsSectionProps extends ListingTabsProps {
-  customEmptySection?: React.ReactNode;
+  customEmptySection?:
+    | React.ReactNode
+    | ((filters: EmptySectionFilters) => React.ReactNode);
 }
 const FOR_YOU_SUPPORTED_TYPES: ReadonlyArray<ListingContext> = [
   'home',
@@ -173,8 +185,18 @@ export const ListingsSection = ({
     }
 
     if (!listings?.length) {
+      const emptySectionContent =
+        typeof customEmptySection === 'function'
+          ? customEmptySection({
+              activeTab,
+              activeCategory,
+              activeStatus,
+              activeSortBy,
+            })
+          : customEmptySection;
+
       return (
-        customEmptySection ?? (
+        emptySectionContent ?? (
           <EmptySection
             title="No opportunities found"
             message="We don't have any relevant opportunities for the current filters."
