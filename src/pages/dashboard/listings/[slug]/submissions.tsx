@@ -236,7 +236,8 @@ export default function BountySubmissions({ slug }: Props) {
     enabled: !!(
       !!bounty?.id &&
       bounty.isPublished &&
-      !bounty.isWinnersAnnounced
+      !bounty.isWinnersAnnounced &&
+      bounty.sponsorId === user?.currentSponsorId
     ),
   });
 
