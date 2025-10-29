@@ -54,9 +54,12 @@
 
     **Option 1: Local MySQL (Recommended for Development)**
 
-    The app automatically detects local MySQL vs PlanetScale based on your `DATABASE_URL`.
+    The app automatically detects your database type based on `DATABASE_URL`. Choose your platform:
 
-    1. Install MySQL (if not already installed):
+    <details>
+    <summary><b>🍎 macOS</b></summary>
+
+    1. Install MySQL using Homebrew:
        ```bash
        brew install mysql
        ```
@@ -66,29 +69,118 @@
        brew services start mysql
        ```
 
-    3. Create a database:
+    3. Create database:
        ```bash
        mysql -u root -e "CREATE DATABASE earn_db"
        ```
 
-    4. Set your `DATABASE_URL` in `.env`:
+    4. Set `DATABASE_URL` in `.env`:
        ```
        DATABASE_URL='mysql://root@localhost:3306/earn_db'
        ```
-       Replace `root` with your MySQL username if different, and add `:password` after username if you have one.
+    </details>
 
-    5. Generate Prisma client and push schema to database:
-       ```bash
-       npx prisma generate && npx prisma db push
+    <details>
+    <summary><b>🪟 Windows</b></summary>
+
+    1. **Option A: Using MySQL Installer (Recommended for beginners)**
+       - Download [MySQL Community Server Installer](https://dev.mysql.com/downloads/installer/)
+       - Run the installer and choose "Developer Default"
+       - Set root password when prompted (remember this!)
+       - Complete installation
+
+    2. **Option B: Using Package Manager**
+       ```powershell
+       # Using Chocolatey
+       choco install mysql
+
+       # OR using winget
+       winget install Oracle.MySQL
        ```
+
+    3. Start MySQL (if not already running):
+       - Open "Services" app (Win + R, type `services.msc`)
+       - Find "MySQL" service and start it
+
+       OR via command line:
+       ```powershell
+       net start MySQL
+       ```
+
+    4. Create database:
+       ```powershell
+       mysql -u root -p -e "CREATE DATABASE earn_db"
+       ```
+       Enter your root password when prompted.
+
+    5. Set `DATABASE_URL` in `.env`:
+       ```
+       DATABASE_URL='mysql://root:YOUR_PASSWORD@localhost:3306/earn_db'
+       ```
+       Replace `YOUR_PASSWORD` with your MySQL root password.
+    </details>
+
+    <details>
+    <summary><b>🐧 Linux</b></summary>
+
+    **Ubuntu/Debian:**
+    ```bash
+    # Install MySQL
+    sudo apt update
+    sudo apt install mysql-server
+
+    # Start MySQL service
+    sudo systemctl start mysql
+    sudo systemctl enable mysql
+
+    # Secure installation (optional but recommended)
+    sudo mysql_secure_installation
+
+    # Create database
+    sudo mysql -e "CREATE DATABASE earn_db"
+
+    # Create user (optional, for better security)
+    sudo mysql -e "CREATE USER 'earnuser'@'localhost' IDENTIFIED BY 'your_password';"
+    sudo mysql -e "GRANT ALL PRIVILEGES ON earn_db.* TO 'earnuser'@'localhost';"
+    sudo mysql -e "FLUSH PRIVILEGES;"
+    ```
+
+    **Fedora/RHEL/CentOS:**
+    ```bash
+    # Install MySQL
+    sudo dnf install mysql-server  # or 'yum' for older versions
+
+    # Start MySQL service
+    sudo systemctl start mysqld
+    sudo systemctl enable mysqld
+
+    # Create database
+    sudo mysql -e "CREATE DATABASE earn_db"
+    ```
+
+    **Set `DATABASE_URL` in `.env`:**
+    ```
+    # If using root:
+    DATABASE_URL='mysql://root@localhost:3306/earn_db'
+
+    # If you created a user:
+    DATABASE_URL='mysql://earnuser:your_password@localhost:3306/earn_db'
+    ```
+    </details>
+
+    **After setting up MySQL, generate Prisma client:**
+    ```bash
+    npx prisma generate && npx prisma db push
+    ```
 
     **Option 2: Cloud MySQL Database**
 
-    If you don't want to run MySQL locally, you can use cloud services:
+    If you prefer not to run MySQL locally, you can use cloud services (all have free tiers):
     - <img src="https://avatars.githubusercontent.com/u/66716858" title="Railway" alt="railway" width="28" height="28" /> [Setup MySQL with Railway](https://docs.railway.app/guides/mysql)
     - <img src="https://avatars.githubusercontent.com/u/36424661" title="Render" alt="render" width="28" height="28" /> [Setup MySQL with Render](https://docs.render.com/deploy-mysql)
+    - [Setup MySQL with PlanetScale](https://planetscale.com/)
 
-    Then set `DATABASE_URL` with the connection string from your cloud provider.
+    Then set `DATABASE_URL` in `.env` with the connection string from your cloud provider.
     
   - <img src="https://avatars.githubusercontent.com/u/81824329" title="Privy" alt="privy" width="28" height="28" /> [Privy](https://www.privy.io/) setup:
     - Create a new privy app, Client Side Web App
