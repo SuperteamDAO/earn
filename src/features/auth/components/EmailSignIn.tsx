@@ -1,3 +1,4 @@
+'use client';
 import { useLoginWithEmail } from '@privy-io/react-auth';
 import { useSetAtom } from 'jotai';
 import { useRouter } from 'next/router';

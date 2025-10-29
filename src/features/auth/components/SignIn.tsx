@@ -1,3 +1,4 @@
+'use client';
 import { useLoginWithOAuth } from '@privy-io/react-auth';
 import { useSetAtom } from 'jotai';
 import Link from 'next/link';

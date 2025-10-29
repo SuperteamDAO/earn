@@ -1,3 +1,4 @@
+'use client';
 import { useLoginWithOAuth } from '@privy-io/react-auth';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { ArrowLeft } from 'lucide-react';

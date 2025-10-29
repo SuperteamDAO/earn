@@ -1,3 +1,4 @@
+'use client';
 import { format } from 'date-fns';
 import { Check, Minus, Plus, Undo } from 'lucide-react';
 import Link from 'next/link';

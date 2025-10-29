@@ -1,3 +1,4 @@
+'use client';
 import { useQuery } from '@tanstack/react-query';
 import { Info, X } from 'lucide-react';
 import { useRouter } from 'next/router';
