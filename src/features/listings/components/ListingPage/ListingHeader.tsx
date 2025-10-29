@@ -134,7 +134,7 @@ export function ListingHeader({
       <div className="flex flex-wrap items-center gap-1 md:gap-2">
         <Link
           href={`/s/${sponsor?.slug}`}
-          className="flex items-center gap-1"
+          className="group flex items-center gap-1"
           onClick={() => {
             posthog.capture('sponsor_listing', {
               sponsor_slug: sponsor?.slug,
@@ -144,7 +144,7 @@ export function ListingHeader({
           }}
         >
           <p className="max-w-[200px] overflow-hidden text-sm font-medium text-ellipsis whitespace-nowrap text-slate-500">
-            by {sponsor?.name}
+            by <span className="group-hover:underline">{sponsor?.name}</span>
           </p>
           {!!sponsor?.isVerified && <VerifiedBadge />}
         </Link>

@@ -11,7 +11,10 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { cn } from '@/utils/cn';
 
-import { LISTING_FILTER_OPTIONS } from '../constants/LISTING_FILTER_OPTIONS';
+import {
+  ALL_FILTER_OPTION,
+  LISTING_FILTER_OPTIONS,
+} from '../constants/LISTING_FILTER_OPTIONS';
 import { getListingSortOptions } from '../constants/SORT_OPTIONS';
 import type {
   ListingSortOption,
@@ -25,6 +28,8 @@ interface ListingFiltersProps {
   activeOrder: OrderDirection;
   onStatusChange: (status: ListingStatus) => void;
   onSortChange: (sortBy: ListingSortOption, order: OrderDirection) => void;
+  showAllFilter?: boolean;
+  showStatusSort?: boolean;
 }
 
 export const ListingFilters = ({
@@ -33,11 +38,23 @@ export const ListingFilters = ({
   activeOrder,
   onStatusChange,
   onSortChange,
+  showAllFilter = false,
+  showStatusSort = false,
 }: ListingFiltersProps) => {
-  const sortOptions = getListingSortOptions(activeStatus);
+  const sortOptions = getListingSortOptions(activeStatus, showStatusSort);
 
   const isDefaultFilterApplied =
-    activeStatus === 'open' && activeSortBy === 'Date' && activeOrder === 'asc';
+    ((activeStatus === 'open' || (activeStatus === 'all' && showAllFilter)) &&
+      activeSortBy === 'Date' &&
+      activeOrder === 'asc') ||
+    (showStatusSort &&
+      activeStatus === 'all' &&
+      activeSortBy === 'Status' &&
+      activeOrder === 'asc');
+
+  const filterOptions = showAllFilter
+    ? [ALL_FILTER_OPTION, ...LISTING_FILTER_OPTIONS]
+    : LISTING_FILTER_OPTIONS;
 
   return (
     <DropdownMenu
@@ -65,7 +82,7 @@ export const ListingFilters = ({
         <DropdownMenuLabel className="font-medium text-slate-600">
           Filter By
         </DropdownMenuLabel>
-        {LISTING_FILTER_OPTIONS.map((option) => (
+        {filterOptions.map((option) => (
           <DropdownMenuItem
             key={option.label}
             onSelect={() => onStatusChange(option.params.status)}

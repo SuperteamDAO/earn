@@ -9,6 +9,15 @@ interface FilterOption {
   };
 }
 
+export const ALL_FILTER_OPTION: FilterOption = {
+  label: 'All',
+  params: { status: 'all' },
+  circleClasses: {
+    border: 'border-slate-300',
+    bg: 'bg-slate-400',
+  },
+};
+
 export const LISTING_FILTER_OPTIONS: readonly FilterOption[] = [
   {
     label: 'Open',

@@ -99,6 +99,8 @@ export const ListingsSection = ({
     handleSortChange,
   } = useListingState({
     defaultCategory: optimalDefaultCategory,
+    defaultStatus: type === 'sponsor' ? 'all' : undefined,
+    defaultSortBy: type === 'sponsor' ? 'Status' : undefined,
   });
 
   const {
@@ -220,6 +222,8 @@ export const ListingsSection = ({
           activeOrder={activeOrder}
           onStatusChange={handleStatusChange}
           onSortChange={handleSortChange}
+          showAllFilter={type === 'sponsor'}
+          showStatusSort={type === 'sponsor'}
         />
       </div>
       <div className="mt-2 mb-1 md:hidden">

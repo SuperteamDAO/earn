@@ -10,10 +10,10 @@ export const ListingCategorySchema = z
   .enum(['For You', 'All', 'Content', 'Design', 'Development', 'Other'])
   .default('All');
 export const ListingStatusSchema = z
-  .enum(['open', 'review', 'completed'])
+  .enum(['open', 'review', 'completed', 'all'])
   .default('open');
 export const ListingSortOptionSchema = z
-  .enum(['Date', 'Prize', 'Submissions'])
+  .enum(['Date', 'Prize', 'Submissions', 'Status'])
   .default('Date');
 export const ListingContextSchema = z
   .enum(['home', 'all', 'region', 'region-all', 'sponsor'])
