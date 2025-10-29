@@ -15,7 +15,7 @@ import { userCountQuery } from '@/features/home/queries/user-count';
 
 interface HomeProps {
   readonly children: ReactNode;
-  readonly type: 'listing' | 'region' | 'feed';
+  readonly type: 'listing' | 'region' | 'feed' | 'region-all';
   readonly st?: Superteam;
   readonly potentialSession?: boolean;
 }
@@ -86,7 +86,9 @@ export function Home({
       }
     >
       {type === 'region' && st && <RegionBanner st={st} />}
-      {!!currentCategory && <CategoryBanner category={currentCategory} />}
+      {!!currentCategory && type !== 'region' && type !== 'region-all' && (
+        <CategoryBanner category={currentCategory} />
+      )}
       <div className={cn('mx-auto w-full px-2 lg:px-6')}>
         <div className="mx-auto w-full max-w-7xl p-0">
           <div className="flex items-start justify-between">

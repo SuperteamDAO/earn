@@ -10,6 +10,7 @@ import {
   ExternalLink,
   MoreVertical,
   Pencil,
+  Sheet,
 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -49,6 +50,7 @@ import { getListingIcon } from '@/features/listings/utils/getListingIcon';
 import { getListingStatus } from '@/features/listings/utils/status';
 import { VerifyPaymentModal } from '@/features/sponsor-dashboard/components/Modals/VerifyPayment';
 
+import { ExportSheetsModal } from '../Modals/ExportSheetsModal';
 import { UnpublishModal } from '../Modals/UnpublishModal';
 import AiReviewBountiesSubmissionsModal from './Modals/AiReviewBounties';
 import AiReviewProjectApplicationsModal from './Modals/AiReviewProjects';
@@ -83,6 +85,12 @@ export const SubmissionHeader = ({
     isOpen: unpublishIsOpen,
     onOpen: unpublishOnOpen,
     onClose: unpublishOnClose,
+  } = useDisclosure();
+
+  const {
+    isOpen: exportSheetsIsOpen,
+    onOpen: exportSheetsOnOpen,
+    onClose: exportSheetsOnClose,
   } = useDisclosure();
 
   const handleVerifyPayment = () => {
@@ -234,23 +242,33 @@ export const SubmissionHeader = ({
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start" className="w-48 text-slate-500">
               {!isHackathonPage && (
-                <DropdownMenuItem
-                  disabled={exportMutation.isPending}
-                  onClick={() => exportSubmissionsCsv()}
-                  className="cursor-pointer"
-                >
-                  {exportMutation.isPending ? (
-                    <>
-                      <span className="loading loading-spinner" />
-                      Exporting...
-                    </>
-                  ) : (
-                    <>
-                      <Download className="size-4" />
-                      Export CSV
-                    </>
-                  )}
-                </DropdownMenuItem>
+                <>
+                  <DropdownMenuItem
+                    disabled={exportMutation.isPending}
+                    onClick={() => exportSubmissionsCsv()}
+                    className="cursor-pointer"
+                  >
+                    {exportMutation.isPending ? (
+                      <>
+                        <span className="loading loading-spinner" />
+                        Exporting...
+                      </>
+                    ) : (
+                      <>
+                        <Download className="size-4" />
+                        Export CSV
+                      </>
+                    )}
+                  </DropdownMenuItem>
+
+                  <DropdownMenuItem
+                    onClick={exportSheetsOnOpen}
+                    className="cursor-pointer"
+                  >
+                    <Sheet className="size-4" />
+                    Export to Google Sheets
+                  </DropdownMenuItem>
+                </>
               )}
 
               <DropdownMenuItem
@@ -463,6 +481,14 @@ export const SubmissionHeader = ({
         unpublishIsOpen={unpublishIsOpen}
         unpublishOnClose={unpublishOnClose}
         listing={bounty}
+      />
+
+      <ExportSheetsModal
+        isOpen={exportSheetsIsOpen}
+        onClose={exportSheetsOnClose}
+        apiEndpoint="/api/sponsor-dashboard/submission/export-sheets/"
+        queryParams={{ listingId: bounty?.id }}
+        entityName="submissions"
       />
     </div>
   );

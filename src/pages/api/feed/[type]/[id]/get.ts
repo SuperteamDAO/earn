@@ -90,6 +90,7 @@ export default async function handler(
                 select: {
                   name: true,
                   logo: true,
+                  slug: true,
                 },
               },
               winnersAnnouncedAt: true,
@@ -148,6 +149,8 @@ export default async function handler(
             sponsorName: sub.listing.sponsor.name,
             //@ts-expect-error prisma ts error, this exists based on above include
             sponsorLogo: sub.listing.sponsor.logo,
+            //@ts-expect-error prisma ts error, this exists based on above include
+            sponsorSlug: sub.listing.sponsor.slug,
             type: 'submission',
             like: sub.like,
             likeCount: sub.likeCount,
@@ -241,6 +244,7 @@ export default async function handler(
                 select: {
                   name: true,
                   logo: true,
+                  slug: true,
                 },
               },
             },
@@ -274,6 +278,8 @@ export default async function handler(
             sponsorName: ga.grant.sponsor.name,
             //@ts-expect-error prisma ts error, this exists based on above include
             sponsorLogo: ga.grant.sponsor.logo,
+            //@ts-expect-error prisma ts error, this exists based on above include
+            sponsorSlug: ga.grant.sponsor.slug,
             type: 'grant-application',
             grantApplicationAmount: ga.approvedAmount,
             like: ga.like,

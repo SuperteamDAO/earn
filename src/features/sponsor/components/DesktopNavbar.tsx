@@ -40,8 +40,8 @@ export const DesktopNavbar = () => {
               src="/assets/logo.svg"
               loading="eager"
             />
-            <div className="h-6 w-[1.5px] bg-slate-300" />
-            <p className="text-sm font-semibold tracking-[1.5px] text-slate-500">
+            <div className="h-6 w-[1.5px] rotate-10 bg-slate-300" />
+            <p className="text-sm font-medium tracking-[1.6px] text-slate-400">
               SPONSORS
             </p>
           </Link>
@@ -77,14 +77,16 @@ export const DesktopNavbar = () => {
                 <Link
                   className="ph-no-capture"
                   href="/dashboard/listings/?open=1"
-                  onClick={() => posthog.capture('create a listing_navbar')}
+                  onClick={() => {
+                    posthog?.capture('get started navbar_sponsor lp');
+                  }}
                 >
                   <Button
-                    variant="ghost"
+                    variant="outline"
                     size="sm"
                     className="bg-white font-semibold text-indigo-600"
                   >
-                    Create a Listing
+                    Post for Free
                   </Button>
                 </Link>
               )}
@@ -92,14 +94,16 @@ export const DesktopNavbar = () => {
                 <Link
                   className="ph-no-capture"
                   href="/new/sponsor/"
-                  onClick={() => posthog.capture('get started_sponsor navbar')}
+                  onClick={() => {
+                    posthog?.capture('get started navbar_sponsor lp');
+                  }}
                 >
                   <Button
                     variant="ghost"
                     size="sm"
                     className="bg-white font-semibold text-indigo-600"
                   >
-                    Get Started
+                    Post for Free
                   </Button>
                 </Link>
               )}
@@ -122,14 +126,16 @@ export const DesktopNavbar = () => {
                 <Link
                   className="ph-no-capture"
                   href="/new/sponsor/"
-                  onClick={() => posthog.capture('get started_sponsor navbar')}
+                  onClick={() => {
+                    posthog?.capture('get started navbar_sponsor lp');
+                  }}
                 >
                   <Button
                     variant="ghost"
                     size="sm"
                     className="bg-white font-semibold text-indigo-600"
                   >
-                    Get Started
+                    Post for Free
                   </Button>
                 </Link>
               </div>

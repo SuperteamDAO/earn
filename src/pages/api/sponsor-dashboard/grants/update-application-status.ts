@@ -47,8 +47,14 @@ const checkAndUpdateKYCStatus = async (
     Date.now() - new Date(user.kycVerifiedAt).getTime() > SIX_MONTHS;
 
   if (user.isKYCVerified && user.kycVerifiedAt && !isKycExpired) {
+    const grantApplication = await prisma.grantApplication.findUniqueOrThrow({
+      where: { id: grantApplicationId },
+      select: { walletAddress: true },
+    });
+
     await createTranche({
       applicationId: grantApplicationId,
+      walletAddress: grantApplication.walletAddress || undefined,
       isFirstTranche: true,
     });
   }

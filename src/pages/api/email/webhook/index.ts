@@ -17,7 +17,9 @@ type EmailType =
   | 'email.delivered'
   | 'email.delivery_delayed'
   | 'email.complained'
-  | 'email.bounced';
+  | 'email.bounced'
+  | 'email.opened'
+  | 'email.clicked';
 
 interface WebhookEvent {
   created_at: string;

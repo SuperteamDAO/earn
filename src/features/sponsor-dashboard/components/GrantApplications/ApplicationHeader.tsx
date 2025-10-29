@@ -5,6 +5,7 @@ import {
   Download,
   ExternalLink,
   MoreVertical,
+  Sheet,
 } from 'lucide-react';
 import { useRouter } from 'next/router';
 import React from 'react';
@@ -23,6 +24,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { StatusPill } from '@/components/ui/status-pill';
+import { useDisclosure } from '@/hooks/use-disclosure';
 import { api } from '@/lib/api';
 import { getURL } from '@/utils/validUrl';
 
@@ -30,6 +32,7 @@ import { type Grant } from '@/features/grants/types';
 import { getColorStyles } from '@/features/listings/utils/getColorStyles';
 import { getListingIcon } from '@/features/listings/utils/getListingIcon';
 import { getListingStatus } from '@/features/listings/utils/status';
+import { ExportSheetsModal } from '@/features/sponsor-dashboard/components/Modals/ExportSheetsModal';
 
 import { type GrantApplicationWithUser } from '../../types';
 import AiReviewModal from './Modals/AiReview';
@@ -52,6 +55,12 @@ export const ApplicationHeader = ({
   const listingPath = `grants/${grant?.slug}`;
   const grantStatus = getListingStatus(grant, true);
   const router = useRouter();
+
+  const {
+    isOpen: exportSheetsIsOpen,
+    onOpen: exportSheetsOnOpen,
+    onClose: exportSheetsOnClose,
+  } = useDisclosure();
 
   const exportMutation = useMutation({
     mutationFn: async () => {
@@ -131,6 +140,7 @@ export const ApplicationHeader = ({
 
   return (
     <div className="mb-2 flex items-center justify-between">
+      <button className="sr-only" />
       <div>
         <Breadcrumb className="text-slate-400">
           <BreadcrumbList>
@@ -176,6 +186,14 @@ export const ApplicationHeader = ({
               </DropdownMenuItem>
 
               <DropdownMenuItem
+                onClick={exportSheetsOnOpen}
+                className="cursor-pointer"
+              >
+                <Sheet className="size-4" />
+                Export to Google Sheets
+              </DropdownMenuItem>
+
+              <DropdownMenuItem
                 onClick={() =>
                   window.open(`${router.basePath}/${listingPath}`, '_blank')
                 }
@@ -209,6 +227,14 @@ export const ApplicationHeader = ({
           <AiReviewModal applications={applications} grant={grant} />
         </div>
       )}
+
+      <ExportSheetsModal
+        isOpen={exportSheetsIsOpen}
+        onClose={exportSheetsOnClose}
+        apiEndpoint="/api/sponsor-dashboard/application/export-sheets/"
+        queryParams={{ grantId: grant?.id }}
+        entityName="applications"
+      />
     </div>
   );
 };

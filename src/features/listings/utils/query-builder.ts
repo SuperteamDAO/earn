@@ -1,6 +1,5 @@
 import type { z } from 'zod';
 
-import { exclusiveSponsorData } from '@/constants/exclusiveSponsors';
 import { Superteams } from '@/constants/Superteam';
 import { type JsonValue } from '@/prisma/internal/prismaNamespace';
 import {
@@ -8,6 +7,7 @@ import {
   type BountiesWhereInput,
 } from '@/prisma/models/Bounties';
 
+import { HACKATHONS } from '@/features/hackathon/constants/hackathons';
 import {
   type ListingCategorySchema,
   type ListingStatusSchema,
@@ -212,6 +212,10 @@ export async function buildListingQuery(
       forYouConditions.push(...skillConditions);
     }
 
+    forYouConditions.push({
+      isFeatured: true,
+    });
+
     if (forYouConditions.length > 0) {
       andConditions.push({ OR: forYouConditions });
     }
@@ -240,29 +244,40 @@ export async function buildListingQuery(
 
   if (context === 'sponsor' && sponsor) {
     const sponsorKey = sponsor.toLowerCase();
-    const sponsorInfo = exclusiveSponsorData[sponsorKey];
 
     where.sponsor = {
-      name: sponsorInfo?.title,
+      slug: sponsorKey,
     };
 
-    if (!!sponsorInfo?.showPrivates) {
-      delete where.isPrivate;
-    } else {
-      where.isPrivate = false;
-    }
+    // if (!!sponsorInfo?.showPrivates) {
+    //   delete where.isPrivate;
+    // } else {
+    //   where.isPrivate = false;
+    // }
   }
 
-  switch (tab) {
-    case 'bounties':
-      where.type = 'bounty';
-      break;
-    case 'projects':
-      where.type = 'project';
-      break;
-    case 'all':
-      where.type = { not: 'hackathon' };
-      break;
+  const standardTabs = ['all', 'bounties', 'projects'];
+
+  if (standardTabs.includes(tab)) {
+    switch (tab) {
+      case 'bounties':
+        where.type = 'bounty';
+        break;
+      case 'projects':
+        where.type = 'project';
+        break;
+      case 'all':
+        where.OR = [
+          { type: { not: 'hackathon' } },
+          { type: 'hackathon', isFeatured: true },
+        ];
+        break;
+    }
+  } else if (HACKATHONS.some((hackathon) => hackathon.slug === tab)) {
+    where.type = 'hackathon';
+    where.Hackathon = {
+      slug: tab,
+    };
   }
 
   const statusWhereClauses = getStatusSpecificWhereClauses(status);

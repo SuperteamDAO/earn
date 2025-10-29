@@ -134,9 +134,8 @@ export function SupportFormDialog({ children, onSubmit }: ModalFormProps) {
             Get In Touch With Us
           </DialogTitle>
           <DialogDescription className="text-sm">
-            Leave your information and a brief message about what you are
-            looking for and someone will get in touch to schedule a conversation
-            with you.
+            Describe what you need from us, and we&apos;ll get in touch with you
+            as soon as possible
           </DialogDescription>
         </DialogHeader>
 
@@ -172,7 +171,7 @@ export function SupportFormDialog({ children, onSubmit }: ModalFormProps) {
                     Subject
                   </FormLabel>
                   <FormControl>
-                    <Input placeholder="What does the fox say?" {...field} />
+                    <Input placeholder="Add a short subject line" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

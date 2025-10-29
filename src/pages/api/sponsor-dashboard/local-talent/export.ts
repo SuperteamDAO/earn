@@ -1,6 +1,7 @@
 import type { NextApiResponse } from 'next';
 import Papa from 'papaparse';
 
+import { type Prisma } from '@/generated/prisma/client';
 import { type Skills } from '@/interface/skills';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
@@ -53,43 +54,66 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
     logger.debug('Fetching user details with optimized query');
 
-    const localTalent = await prisma.user.findMany({
-      where: { location: { in: superteamCountries } },
-      select: {
-        id: true,
-        firstName: true,
-        lastName: true,
-        email: true,
-        skills: true,
-        telegram: true,
-        twitter: true,
-        website: true,
-        discord: true,
-        username: true,
-        photo: true,
-        bio: true,
-        community: true,
-        interests: true,
-        createdAt: true,
-        Submission: {
-          select: {
-            isWinner: true,
-            rewardInUSD: true,
-            listing: {
-              select: {
-                isWinnersAnnounced: true,
-              },
+    const localTalentSelect = {
+      id: true,
+      firstName: true,
+      lastName: true,
+      email: true,
+      skills: true,
+      telegram: true,
+      twitter: true,
+      website: true,
+      discord: true,
+      username: true,
+      photo: true,
+      bio: true,
+      community: true,
+      interests: true,
+      createdAt: true,
+      Submission: {
+        select: {
+          isWinner: true,
+          rewardInUSD: true,
+          listing: {
+            select: {
+              isWinnersAnnounced: true,
             },
           },
         },
-        GrantApplication: {
-          select: {
-            approvedAmountInUSD: true,
-            applicationStatus: true,
-          },
+      },
+      GrantApplication: {
+        select: {
+          approvedAmountInUSD: true,
+          applicationStatus: true,
         },
       },
-    });
+    } satisfies Prisma.UserSelect;
+
+    const BATCH_SIZE = 10000;
+    const localTalent: Prisma.UserGetPayload<{
+      select: typeof localTalentSelect;
+    }>[] = [];
+    let cursor: string | undefined = undefined;
+
+    while (true) {
+      const batch: Prisma.UserGetPayload<{
+        select: typeof localTalentSelect;
+      }>[] = await prisma.user.findMany({
+        where: { location: { in: superteamCountries } },
+        select: localTalentSelect,
+        take: BATCH_SIZE,
+        ...(cursor && { skip: 1, cursor: { id: cursor } }),
+        orderBy: { id: 'asc' },
+      });
+
+      localTalent.push(...batch);
+
+      if (batch.length < BATCH_SIZE) {
+        break;
+      }
+
+      cursor = batch[batch.length - 1]!.id;
+    }
 
     const talentWithStats = localTalent.map((talent) => {
       const totalSubmissions = talent.Submission.length;

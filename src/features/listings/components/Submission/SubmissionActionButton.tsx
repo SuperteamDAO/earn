@@ -194,6 +194,9 @@ export const SubmissionActionButton = ({
   const isBounty = type === 'bounty';
   const isHackathon = type === 'hackathon';
 
+  const isListingSponsor = user?.currentSponsorId === listing.sponsorId;
+  const isNotPublished = bountyDraftStatus !== 'PUBLISHED' && !query['preview'];
+
   let buttonText;
   let buttonBG;
   let isBtnDisabled;
@@ -282,6 +285,9 @@ export const SubmissionActionButton = ({
       )
         buttonText = 'Send Quote';
       buttonBG = 'bg-brand-purple';
+      if (isNotPublished && !isListingSponsor) {
+        buttonText = 'Paused';
+      }
       isBtnDisabled = Boolean(
         pastDeadline ||
           (user?.id &&
@@ -292,13 +298,14 @@ export const SubmissionActionButton = ({
             user?.id &&
             user?.isTalentFilled &&
             creditBalance === 0 &&
-            (isProject || isBounty)),
+            (isProject || isBounty)) ||
+          (isNotPublished && !isListingSponsor),
       );
       isSubmitDisabled = Boolean(
         pastDeadline ||
           (user?.id &&
             user?.isTalentFilled &&
-            ((bountyDraftStatus !== 'PUBLISHED' && !query['preview']) ||
+            (isNotPublished ||
               !hasHackathonStarted ||
               !isUserEligibleByRegion)),
       );

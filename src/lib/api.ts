@@ -20,7 +20,16 @@ const api = axios.create();
 
 api.interceptors.request.use(
   async (config) => {
-    const authToken = await getAccessToken();
+    const isPrivyInitializing =
+      typeof window !== 'undefined' && (window as any).__privyInitializing;
+
+    let authToken = await getAccessToken();
+    if (!authToken && isPrivyInitializing) {
+      for (let i = 0; i < 2 && !authToken; i++) {
+        await new Promise((r) => setTimeout(r, 80));
+        authToken = await getAccessToken();
+      }
+    }
 
     if (authToken) {
       config.headers.Authorization = `Bearer ${authToken}`;

@@ -14,10 +14,11 @@ export interface SponsorVerificationResult {
   reason: string;
 }
 
-const isVerifiedHackathonListing = (
-  user: { hackathonId: string | null },
+const shouldVerifyHackathonListing = (
   type: BountyType,
-): boolean => !!user?.hackathonId && type === 'hackathon';
+  user: { role: string },
+  sponsor: { st: boolean },
+): boolean => type === 'hackathon' && user?.role !== 'GOD' && !sponsor.st;
 
 const shouldSkipVerification = (
   sponsor: { isVerified: boolean },
@@ -144,21 +145,23 @@ export const sponsorVerificationCheck = async ({
     };
   }
 
-  const isVerifiedHackathonListingCheck = isVerifiedHackathonListing(
-    user,
+  const isHackathonListing = shouldVerifyHackathonListing(
     validatedListing.type,
+    user,
+    sponsor,
   );
-  if (isVerifiedHackathonListingCheck) {
-    logger.debug(
-      'User has hackathon ID: Skipping Sponsor Verification Process',
-      {
-        userHackathonId: user?.hackathonId,
-        userId: user?.id,
-        userSponsorId: user?.currentSponsorId,
-      },
-    );
+  if (isHackathonListing) {
+    logger.debug('Hackathon listing requires verification', {
+      listingType: validatedListing.type,
+      listingId: listing.id,
+      userId: user?.id,
+      sponsorId: sponsor.id,
+    });
 
-    return { isVerifying: false, reason: 'Verified hackathon listing' };
+    return {
+      isVerifying: true,
+      reason: 'Hackathon Listing',
+    };
   }
 
   if (shouldSkipVerification(sponsor, user)) {

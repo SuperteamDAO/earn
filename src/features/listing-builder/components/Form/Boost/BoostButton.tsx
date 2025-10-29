@@ -36,24 +36,40 @@ export const BoostButton = ({
   listing,
   showDate = true,
 }: {
-  listing: Listing;
+  listing?: Listing;
   showDate?: boolean;
 }) => {
-  const { deadline, usdValue, skills, region, slug, compensationType, type } =
-    listing;
+  const { data: featuredData } = useQuery({
+    ...featuredAvailabilityQuery(),
+    enabled: !!listing,
+  });
+  const isFeatureAvailable = featuredData?.isAvailable ?? false;
+
+  const { data: emailEstimate } = useQuery({
+    ...emailEstimateQuery(
+      listing?.skills,
+      listing?.region as string | undefined,
+    ),
+    enabled: !!listing,
+  });
+
+  if (!listing) return null;
+
+  const {
+    deadline,
+    usdValue,
+    skills,
+    slug,
+    compensationType,
+    type,
+    isPrivate,
+  } = listing;
 
   const deadlineMoreThan72HoursLeft = hasMoreThan72HoursLeft(deadline ?? '');
-
-  const { data: featuredData } = useQuery(featuredAvailabilityQuery());
-  const isFeatureAvailable = featuredData?.isAvailable ?? false;
 
   const currentStep = amountToStep(usdValue ?? 0, isFeatureAvailable);
   const maxAvailableStep = getAllowedMaxStep(isFeatureAvailable);
   const canBeBoosted = currentStep < maxAvailableStep;
-
-  const { data: emailEstimate } = useQuery(
-    emailEstimateQuery(skills, region as string | undefined),
-  );
 
   const emailImpressions = resolveEmailImpressions(skills, emailEstimate);
 
@@ -81,7 +97,8 @@ export const BoostButton = ({
     deadlineMoreThan72HoursLeft &&
     canBeBoosted &&
     compensationType === 'fixed' &&
-    type !== 'hackathon'
+    type !== 'hackathon' &&
+    !isPrivate
   ) {
     const deadlineDate = new Date(deadline ?? '');
     const seventyTwoHoursBeforeDeadline = new Date(

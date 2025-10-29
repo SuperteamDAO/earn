@@ -3,11 +3,12 @@ import { Gift } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import posthog from 'posthog-js';
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import IoSearchOutline from '@/components/icons/IoSearchOutline';
 import IoWalletOutline from '@/components/icons/IoWalletOutline';
 import { Button } from '@/components/ui/button';
+import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { LocalImage } from '@/components/ui/local-image';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useCreditBalance } from '@/store/credit';
@@ -16,6 +17,7 @@ import { cn } from '@/utils/cn';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 
 import { CreditIcon } from '@/features/credits/icon/credit';
+import { HACKATHONS } from '@/features/hackathon/constants/hackathons';
 
 import { LISTING_NAV_ITEMS } from '../constants';
 import { LogoContextMenu } from './LogoContextMenu';
@@ -44,6 +46,27 @@ export const DesktopNavbar = ({
 
   const { user, isLoading } = useUser();
   const { creditBalance } = useCreditBalance();
+
+  const [authUiReady, setAuthUiReady] = useState(() => ready);
+  useEffect(() => {
+    if (!ready) {
+      setAuthUiReady(false);
+      return;
+    }
+    setAuthUiReady(true);
+  }, [ready, authenticated]);
+
+  useEffect(() => {
+    console.log('[DesktopNavbar] Auth State:', {
+      ready,
+      authenticated,
+      authUiReady,
+      isLoading,
+      hasUser: !!user,
+      userId: user?.id,
+      showingSkeleton: (!authUiReady && !authenticated) || (isLoading && !user),
+    });
+  }, [ready, authenticated, authUiReady, isLoading, user]);
 
   const isDashboardRoute = useMemo(
     () => router.pathname.startsWith('/dashboard'),
@@ -164,7 +187,7 @@ export const DesktopNavbar = ({
                     />
                   );
                 })}
-                {/* {HACKATHONS.map((hackathon) => (
+                {HACKATHONS.map((hackathon) => (
                   <Link
                     href={`/hackathon/${hackathon.slug}`}
                     key={hackathon.slug}
@@ -180,21 +203,21 @@ export const DesktopNavbar = ({
                       className="h-full object-contain"
                     />
                   </Link>
-                ))} */}
+                ))}
               </div>
             </div>
           </div>
         )}
 
         <div className="flex items-center gap-4 py-1.5">
-          {(!ready || isLoading) && (
+          {((!authUiReady && !authenticated) || (isLoading && !user)) && (
             <div className="flex items-center gap-2">
               <Skeleton className="size-7 rounded-full" />
               <Skeleton className="mr-4 h-3 w-20" />
             </div>
           )}
 
-          {ready && authenticated && (
+          {authUiReady && authenticated && (
             <div className="ph-no-capture flex items-center gap-2">
               {user?.currentSponsorId && !isDashboardRoute && (
                 <Button
@@ -251,7 +274,7 @@ export const DesktopNavbar = ({
             </div>
           )}
 
-          {ready && !authenticated && (
+          {authUiReady && !authenticated && (
             <div className="ph-no-capture flex items-center gap-2">
               <div className="flex items-center gap-0">
                 {!hideSponsorCTA && (

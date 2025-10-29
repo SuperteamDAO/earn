@@ -5,6 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/router';
 import posthog from 'posthog-js';
 import { useEffect, useMemo, useState } from 'react';
+import { toast } from 'sonner';
 
 import { LoadingSection } from '@/components/shared/LoadingSection';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
@@ -55,9 +56,21 @@ export default function BountySubmissions({ listing }: Props) {
     submissionsQuery(listing, true),
   );
 
-  const { data: bounty, isLoading: isBountyLoading } = useQuery(
-    sponsorDashboardListingQuery(listing),
-  );
+  const {
+    data: bounty,
+    isLoading: isBountyLoading,
+    error: bountyError,
+  } = useQuery(sponsorDashboardListingQuery(listing));
+
+  useEffect(() => {
+    if (bountyError) {
+      const error = bountyError as any;
+      if (error?.response?.status === 403) {
+        toast.error('This listing does not belong to you');
+        router.push('/dashboard/listings');
+      }
+    }
+  }, [bountyError, router]);
 
   const filteredSubmissions = useMemo(() => {
     if (!submissions) return [];

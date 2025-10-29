@@ -280,7 +280,7 @@ export default function SponsorListings({ tab: queryTab }: { tab: string }) {
   return (
     <SponsorLayout>
       <Banner stats={sponsorStats} isLoading={isStatsLoading} />
-      <div className="mb-4 flex w-full items-center justify-between">
+      <div className="mb-4 flex w-full flex-col justify-between gap-2 lg:flex-row lg:items-center">
         <div className="flex items-center whitespace-nowrap">
           <p className="text-lg font-semibold text-slate-800">My Listings </p>
           <Separator className="mx-3 h-6 w-px bg-slate-300" />
@@ -288,11 +288,11 @@ export default function SponsorListings({ tab: queryTab }: { tab: string }) {
             The one place to manage your listings
           </p>
         </div>
-        <div className="flex w-full items-center justify-end gap-2">
+        <div className="flex w-full items-center gap-2 lg:justify-end">
           <div className="flex items-center gap-2">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button className="flex h-9 min-w-40 items-center justify-between rounded-lg border border-slate-300 bg-transparent px-2 text-sm font-medium text-slate-500 capitalize shadow-xs transition-all duration-300 ease-in-out hover:border-slate-200 data-[state=open]:rounded-b-none data-[state=open]:border-slate-200">
+                <button className="flex h-9 items-center justify-between rounded-lg border border-slate-300 bg-transparent px-2 text-sm font-medium text-slate-500 capitalize shadow-xs transition-all duration-300 ease-in-out hover:border-slate-200 data-[state=open]:rounded-b-none data-[state=open]:border-slate-200 xl:min-w-40">
                   {activeStatus && (
                     <StatusPill
                       color={getColorStyles(activeStatus!).color}
@@ -350,7 +350,7 @@ export default function SponsorListings({ tab: queryTab }: { tab: string }) {
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
-          <div className="relative ml-3 w-64">
+          <div className="relative w-64 lg:w-35 xl:w-64">
             <Search className="pointer-events-none absolute top-1/2 left-3 size-3.5 -translate-y-1/2 text-slate-400" />
             <Input
               className="focus-visible:ring-brand-purple h-9 rounded-lg border-slate-300 bg-white pl-9 font-normal placeholder:text-xs placeholder:text-slate-500"

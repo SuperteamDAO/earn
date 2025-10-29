@@ -15,6 +15,7 @@ import {
   popupsShowedAtom,
 } from '@/features/conversion-popups/atoms';
 
+import { HomeCypherpunkBanner } from './CypherpunkBanner';
 import { HomeSponsorBanner } from './SponsorBanner';
 import { HomeTalentBanner } from './TalentBanner';
 
@@ -29,7 +30,7 @@ interface BannerCarouselProps {
 export function BannerCarousel({ totalUsers }: BannerCarouselProps) {
   const plugin = useRef(
     Autoplay({
-      delay: 7000,
+      delay: 4000,
       stopOnInteraction: false,
       stopOnFocusIn: false,
     }),
@@ -66,6 +67,9 @@ export function BannerCarousel({ totalUsers }: BannerCarouselProps) {
       <CarouselContent>
         <CarouselItem>
           <HomeTalentBanner totalUsers={totalUsers} />
+        </CarouselItem>
+        <CarouselItem>
+          <HomeCypherpunkBanner />
         </CarouselItem>
         <CarouselItem>
           <HomeSponsorBanner totalUsers={totalUsers} />

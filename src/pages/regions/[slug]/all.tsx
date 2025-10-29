@@ -7,15 +7,15 @@ import { getURL } from '@/utils/validUrl';
 
 import { ListingsSection } from '@/features/listings/components/ListingsSection';
 
-export default function AllRegionListingsPage({
+export default function AllRegionsPage({
   slug,
-  displayName,
   st,
 }: {
   slug: string;
-  displayName: string;
   st: Superteam;
 }) {
+  const displayName = st?.displayValue;
+
   const ogImage = new URL(`${getURL()}api/dynamic-og/region/`);
   ogImage.searchParams.set('region', st.region);
   ogImage.searchParams.set('code', st.code!);
@@ -29,7 +29,7 @@ export default function AllRegionListingsPage({
         og={ogImage.toString()}
       />
       <div className="w-full">
-        <ListingsSection type="region-all" region={slug} />
+        <ListingsSection type="region-all" region={st.region} />
       </div>
     </Home>
   );
@@ -38,20 +38,15 @@ export default function AllRegionListingsPage({
 export async function getServerSideProps(context: NextPageContext) {
   const { slug } = context.query;
 
-  const st = Superteams.find((team) => team.region.toLowerCase() === slug);
-  const displayName = st?.displayValue;
-
-  const validRegion = Superteams.some(
-    (team) => team.region.toLowerCase() === (slug as string).toLowerCase(),
+  const st = Superteams.find(
+    (team) => team.slug?.toLowerCase() === (slug as string).toLowerCase(),
   );
 
-  if (!validRegion) {
-    return {
-      notFound: true,
-    };
+  if (!st) {
+    return { notFound: true };
   }
 
   return {
-    props: { slug, displayName, st },
+    props: { slug, st },
   };
 }

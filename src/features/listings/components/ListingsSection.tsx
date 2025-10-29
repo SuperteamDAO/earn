@@ -1,4 +1,5 @@
 import { usePrivy } from '@privy-io/react-auth';
+import { useMemo } from 'react';
 
 import { AnimateChangeInHeight } from '@/components/shared/AnimateChangeInHeight';
 import { EmptySection } from '@/components/shared/EmptySection';
@@ -7,9 +8,15 @@ import { useBreakpoint } from '@/hooks/use-breakpoint';
 import { useScrollShadow } from '@/hooks/use-scroll-shadow';
 import { cn } from '@/utils/cn';
 
+import { HACKATHONS } from '@/features/hackathon/constants/hackathons';
 import { CATEGORY_NAV_ITEMS } from '@/features/navbar/constants';
 
-import { type ListingCategory, useListings } from '../hooks/useListings';
+import {
+  type ListingCategory,
+  type ListingContext,
+  useListings,
+} from '../hooks/useListings';
+import { useListingsFilterCount } from '../hooks/useListingsFilterCount';
 import { useListingState } from '../hooks/useListingState';
 import type { ListingTabsProps } from '../types';
 import { CategoryPill } from './CategoryPill';
@@ -18,20 +25,67 @@ import { ListingFilters } from './ListingFilters';
 import { ListingTabs } from './ListingTabs';
 import { ViewAllButton } from './ViewAllButton';
 
+interface ListingsSectionProps extends ListingTabsProps {
+  customEmptySection?: React.ReactNode;
+}
+const FOR_YOU_SUPPORTED_TYPES: ReadonlyArray<ListingContext> = [
+  'home',
+  'all',
+] as const;
+
 export const ListingsSection = ({
   type,
   potentialSession,
   region,
   sponsor,
-}: ListingTabsProps) => {
+  customEmptySection,
+}: ListingsSectionProps) => {
   const isMd = useBreakpoint('md');
 
-  const { authenticated } = usePrivy();
+  const { authenticated, ready } = usePrivy();
+  const supportsForYou = FOR_YOU_SUPPORTED_TYPES.includes(type);
   const {
     ref: scrollContainerRef,
     showLeftShadow,
     showRightShadow,
   } = useScrollShadow<HTMLDivElement>();
+
+  const { data: categoryCounts, isLoading: countsLoading } =
+    useListingsFilterCount({
+      context: type,
+      tab: 'all',
+      status: 'open',
+      region,
+      sponsor,
+      authenticated,
+    });
+
+  const optimalDefaultCategory = useMemo((): ListingCategory => {
+    if (countsLoading || !categoryCounts) {
+      return (potentialSession || (ready && authenticated)) && supportsForYou
+        ? 'For You'
+        : 'All';
+    }
+
+    const forYouCount = categoryCounts['For You'] || 0;
+
+    if (
+      (potentialSession || (ready && authenticated)) &&
+      supportsForYou &&
+      forYouCount > 2
+    ) {
+      return 'For You';
+    }
+
+    return 'All';
+  }, [
+    categoryCounts,
+    countsLoading,
+    potentialSession,
+    authenticated,
+    ready,
+    supportsForYou,
+  ]);
 
   const {
     activeTab,
@@ -44,10 +98,7 @@ export const ListingsSection = ({
     handleStatusChange,
     handleSortChange,
   } = useListingState({
-    defaultCategory:
-      (potentialSession || authenticated) && type === 'home'
-        ? 'For You'
-        : 'All',
+    defaultCategory: optimalDefaultCategory,
   });
 
   const {
@@ -66,7 +117,28 @@ export const ListingsSection = ({
     authenticated,
   });
 
+  const shouldShowForYou = useMemo(() => {
+    if (!categoryCounts) return false;
+    return (
+      (potentialSession || (ready && authenticated)) &&
+      supportsForYou &&
+      (categoryCounts['For You'] || 0) > 2
+    );
+  }, [categoryCounts, potentialSession, authenticated, ready, supportsForYou]);
+
+  const visibleCategoryNavItems = useMemo(() => {
+    if (!categoryCounts) return CATEGORY_NAV_ITEMS;
+
+    return CATEGORY_NAV_ITEMS.filter((item) => {
+      const count = categoryCounts[item.label] || 0;
+      return count > 0;
+    });
+  }, [categoryCounts]);
+
   const viewAllLink = () => {
+    if (HACKATHONS.some((hackathon) => hackathon.slug === activeTab)) {
+      return `/hackathon/${activeTab}`;
+    }
     let basePath: string;
     if (type === 'home') {
       basePath = '/all';
@@ -100,15 +172,17 @@ export const ListingsSection = ({
 
     if (!listings?.length) {
       return (
-        <EmptySection
-          title="No opportunities found"
-          message="We don't have any relevant opportunities for the current filters."
-        />
+        customEmptySection ?? (
+          <EmptySection
+            title="No opportunities found"
+            message="We don't have any relevant opportunities for the current filters."
+          />
+        )
       );
     }
 
     return (
-      <>
+      <div className="space-y-1">
         {listings.map((listing) => (
           <ListingCard key={listing.id} bounty={listing} />
         ))}
@@ -118,7 +192,7 @@ export const ListingsSection = ({
             href={viewAllLink()}
           />
         )}
-      </>
+      </div>
     );
   };
 
@@ -127,12 +201,13 @@ export const ListingsSection = ({
       <div className="flex w-full items-center justify-between md:mb-1.5">
         <div className="flex items-center">
           <p className="text-lg font-semibold text-slate-800">
-            Browse Opportunities
+            {type === 'sponsor' ? 'All Listings' : 'Browse Opportunities'}
           </p>
 
           <div className="hidden items-center md:flex">
             <Separator orientation="vertical" className="mx-3 h-6" />
             <ListingTabs
+              type={type}
               activeTab={activeTab}
               handleTabChange={handleTabChange}
             />
@@ -148,11 +223,15 @@ export const ListingsSection = ({
         />
       </div>
       <div className="mt-2 mb-1 md:hidden">
-        <ListingTabs activeTab={activeTab} handleTabChange={handleTabChange} />
+        <ListingTabs
+          type={type}
+          activeTab={activeTab}
+          handleTabChange={handleTabChange}
+        />
       </div>
 
       <div className="mb-2 h-px w-full bg-slate-200" />
-      <div className="relative -mx-2">
+      <div className="relative -mx-2 mb-1">
         <div
           className={cn(
             'pointer-events-none absolute top-0 bottom-0 left-0 z-10 w-8',
@@ -166,7 +245,7 @@ export const ListingsSection = ({
           ref={scrollContainerRef}
           className="hide-scrollbar flex gap-1.5 overflow-x-auto px-2 py-1"
         >
-          {(potentialSession || authenticated) && (
+          {shouldShowForYou && (
             <CategoryPill
               key="foryou"
               phEvent="foryou_navpill"
@@ -191,7 +270,7 @@ export const ListingsSection = ({
           >
             All
           </CategoryPill>
-          {CATEGORY_NAV_ITEMS?.map((navItem) => (
+          {visibleCategoryNavItems?.map((navItem) => (
             <CategoryPill
               key={navItem.label}
               phEvent={navItem.pillPH}

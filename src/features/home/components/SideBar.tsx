@@ -15,11 +15,12 @@ import { totalsQuery } from '../queries/totals';
 import { HowItWorks } from './HowItWorks';
 import { RecentActivity } from './RecentActivity';
 import { RecentEarners } from './RecentEarners';
+import { SidebarBannerCypherpunk } from './SidebarBanner';
 import { SponsorBanner } from './SponsorBanner';
 import { TotalStats } from './TotalStats';
 
 interface SideBarProps {
-  type: 'landing' | 'listing' | 'category' | 'region' | 'feed';
+  type: 'landing' | 'listing' | 'category' | 'region' | 'feed' | 'region-all';
 }
 
 const VibeCard = dynamic(() =>
@@ -54,6 +55,7 @@ export const HomeSideBar = ({ type }: SideBarProps) => {
         {type === 'feed' && (
           <>
             <VibeCard />
+            <SidebarBannerCypherpunk />
             <LiveListings>
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium text-gray-400">
@@ -87,6 +89,7 @@ export const HomeSideBar = ({ type }: SideBarProps) => {
             </div>
 
             <HowItWorks />
+            <SidebarBannerCypherpunk />
             <RecentEarners earners={recentEarners} />
             <RecentActivity />
           </>

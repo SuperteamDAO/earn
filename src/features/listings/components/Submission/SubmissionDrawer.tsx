@@ -201,6 +201,17 @@ export const SubmissionDrawer = ({
     }
   }, [needsXVerification, needsLinkVerification, form]);
 
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    return () => {
+      document.body.style.overflow = originalOverflow;
+    };
+  }, [isOpen]);
+
   const handleClose = () => {
     form.reset({
       link: '',
@@ -420,13 +431,17 @@ export const SubmissionDrawer = ({
           <p>
             {`Don't start working on the scope just yet! Apply first. Only the winning candidate will have to work on the scope mentioned in this listing. `}
           </p>
-          <p>Note:</p>
+          <p className="mt-2">Note:</p>
           <p>
             1. The sponsor might contact you to assess fit before picking the
             winner.
           </p>
           <p>
             2. You can edit this application until the deadline of this listing.
+          </p>
+          <p>
+            3. If this listing is unpublished, you will receive your credit back
+            the following month.
           </p>
         </>
       );
