@@ -166,11 +166,11 @@ Check out all of ${name}'s latest earning opportunities on a single page.
 
             {bio && (
               <LinkTextParser
-                className="mt-2 font-normal text-slate-500"
+                className="mt-1 font-normal text-slate-500 md:mt-2"
                 text={bio}
               />
             )}
-            <div className="mt-2 flex flex-wrap items-center gap-2 text-sm font-semibold">
+            <div className="mt-3 flex flex-wrap items-center gap-2 text-sm font-semibold">
               <span className="flex items-center gap-1">
                 <p>
                   $
@@ -192,10 +192,13 @@ Check out all of ${name}'s latest earning opportunities on a single page.
                 >
                   <InfoIcon className="h-3 w-3 text-slate-400" />
                 </Tooltip>
-                <Separator orientation="vertical" className="ml-1 h-4" />
+                <Separator
+                  orientation="vertical"
+                  className="ml-1 hidden h-4 md:block"
+                />
               </span>
 
-              <span className="flex items-center gap-2">
+              <span className="mt-3 flex w-full basis-full items-center gap-2 md:mt-0 md:w-auto md:basis-auto">
                 {twitter && (
                   <Link
                     className="flex items-center"
