@@ -51,18 +51,44 @@
   - Start by copying the `.env.example` file to a new file named `.env`. This file will store your local environment settings.
     
   - Database setup:
-    - Create a local `MySQL` instance and replace `<user>`, `<pass>`, `<db-host>`, and `<db-port>` with their applicable values.
-      ```
-      LOCAL_DATABASE_URL='mysql://<user>:<pass>@<db-host>:<db-port>'
-      ``` 
-    - If you don't want to create a local DB, then you can also consider using services like railway.app or render.
-      - <img src="https://avatars.githubusercontent.com/u/66716858" title="Railway" alt="railway" width="28" height="28" /> [Setup MySQL DB with railway.app](https://docs.railway.app/guides/mysql)
-      - <img src="https://avatars.githubusercontent.com/u/36424661" title="Render" alt="render" width="28" height="28" /> [Setup MYSQL DB with render](https://docs.render.com/deploy-mysql)
-      
-    - Generate prisma migrations & client.
-      ```bash
-      npx prisma migrate dev --name init && npx prisma generate
-      ```
+
+    **Option 1: Local MySQL (Recommended for Development)**
+
+    The app automatically detects local MySQL vs PlanetScale based on your `DATABASE_URL`.
+
+    1. Install MySQL (if not already installed):
+       ```bash
+       brew install mysql
+       ```
+
+    2. Start MySQL service:
+       ```bash
+       brew services start mysql
+       ```
+
+    3. Create a database:
+       ```bash
+       mysql -u root -e "CREATE DATABASE earn_db"
+       ```
+
+    4. Set your `DATABASE_URL` in `.env`:
+       ```
+       DATABASE_URL='mysql://root@localhost:3306/earn_db'
+       ```
+       Replace `root` with your MySQL username if different, and add `:password` after username if you have one.
+
+    5. Generate Prisma client and push schema to database:
+       ```bash
+       npx prisma generate && npx prisma db push
+       ```
+
+    **Option 2: Cloud MySQL Database**
+
+    If you don't want to run MySQL locally, you can use cloud services:
+    - <img src="https://avatars.githubusercontent.com/u/66716858" title="Railway" alt="railway" width="28" height="28" /> [Setup MySQL with Railway](https://docs.railway.app/guides/mysql)
+    - <img src="https://avatars.githubusercontent.com/u/36424661" title="Render" alt="render" width="28" height="28" /> [Setup MySQL with Render](https://docs.render.com/deploy-mysql)
+
+    Then set `DATABASE_URL` with the connection string from your cloud provider.
     
   - <img src="https://avatars.githubusercontent.com/u/81824329" title="Privy" alt="privy" width="28" height="28" /> [Privy](https://www.privy.io/) setup:
     - Create a new privy app, Client Side Web App
