@@ -141,11 +141,11 @@ importers:
         specifier: ^1.98.4
         version: 1.98.4(bufferutil@4.0.9)(encoding@0.1.13)(typescript@5.8.3)(utf-8-validate@5.0.10)
       '@sumsub/websdk':
-        specifier: ^2.3.18
-        version: 2.3.18
+        specifier: ^2.4.1
+        version: 2.4.1
       '@sumsub/websdk-react':
-        specifier: ^2.3.18
-        version: 2.3.18(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+        specifier: ^2.4.1
+        version: 2.4.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       '@tanstack/react-query':
         specifier: ^5.81.5
         version: 5.81.5(react@19.1.0)
@@ -3239,14 +3239,14 @@ packages:
   '@standard-schema/utils@0.3.0':
     resolution: {integrity: sha512-e7Mew686owMaPJVNNLs55PUvgz371nKgwsc4vxE49zsODpJEnxgxRo2y/OKrqueavXgZNMDVj3DdHFlaSAeU8g==}
 
-  '@sumsub/websdk-react@2.3.18':
-    resolution: {integrity: sha512-uhZww9s8d8R+cYk3/4+7l0KlBqQI7Caho8IzmFeRRE13Zbz5NhD4Tu+9OOdlTSKmgAwmfQENMc3FaFzazknCUA==}
+  '@sumsub/websdk-react@2.4.1':
+    resolution: {integrity: sha512-8VX5t/dhYqAhY4dYN7jpWEw1Vgz2gh2HxszvLTVJW47B+bt/O99Cc9B+geB/vsx9wAn1miNUsNullr3zGfyHbQ==}
     peerDependencies:
       react: '>=16.8.0'
       react-dom: '>=16.8.0'
 
-  '@sumsub/websdk@2.3.18':
-    resolution: {integrity: sha512-vNas81FG6t6rEu09Ox15yMY6STqDYHJH3SihA/HMzROIEWp/hrWT9k/Mq/v8iuu0BkN/M2PIcG+j3f9aLPG0Mg==}
+  '@sumsub/websdk@2.4.1':
+    resolution: {integrity: sha512-vDuY+B4UcvBtsFzn7FRVzNmJBYRY4/t6dR5QeHxWK9TDtN4jASSe4wvHYZXFqtBLvdgMsVBgOSV7kDGINKLKmg==}
 
   '@surma/rollup-plugin-off-main-thread@2.2.3':
     resolution: {integrity: sha512-lR8q/9W7hZpMWweNiAKU7NQerBnzQQLvi8qnTDU/fxItPhtZVMbPV3lbCwjhIlNBe9Bbr5V+KHshvWmVSG9cxQ==}
@@ -7345,7 +7345,6 @@ packages:
     engines: {node: '>=0.6.0', teleport: '>=0.2.0'}
     deprecated: |-
       You or someone you depend on is using Q, the JavaScript Promise library that gave JavaScript developers strong feelings about promises. They can almost certainly migrate to the native JavaScript promise now. Thank you literally everyone for joining me in this bet against the odds. Be excellent to each other.
-
       (For a CapTP with native promises, see @endo/eventual-send and @endo/captp)
 
   qrcode@1.5.3:
@@ -12434,12 +12433,12 @@ snapshots:
 
   '@standard-schema/utils@0.3.0': {}
 
-  '@sumsub/websdk-react@2.3.18(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
+  '@sumsub/websdk-react@2.4.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
     dependencies:
       react: 19.1.0
       react-dom: 19.1.0(react@19.1.0)
 
-  '@sumsub/websdk@2.3.18': {}
+  '@sumsub/websdk@2.4.1': {}
 
   '@surma/rollup-plugin-off-main-thread@2.2.3':
     dependencies:
