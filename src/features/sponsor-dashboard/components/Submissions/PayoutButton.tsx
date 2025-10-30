@@ -415,7 +415,13 @@ export const PayoutButton = ({ bounty, submission }: Props) => {
 
       const classifyError = (
         e: unknown,
-      ): 'user-rejected' | 'expired' | 'timeout' | 'rpc' | 'unknown' => {
+      ):
+        | 'user-rejected'
+        | 'expired'
+        | 'timeout'
+        | 'rpc'
+        | 'insufficient-funds'
+        | 'unknown' => {
         const text = String((e as any)?.message ?? e ?? '').toLowerCase();
         if (
           text.includes('user rejected') ||
@@ -449,6 +455,13 @@ export const PayoutButton = ({ bounty, submission }: Props) => {
         ) {
           return 'rpc';
         }
+        if (
+          text.includes('insufficient') ||
+          text.includes('insufficient token balance') ||
+          text.includes('insufficient funds')
+        ) {
+          return 'insufficient-funds';
+        }
         return 'unknown';
       };
 
@@ -460,6 +473,12 @@ export const PayoutButton = ({ bounty, submission }: Props) => {
           break;
         case 'expired':
           toast.error('Blockhash expired. Payment not sent.');
+          setIsPaying(false);
+          break;
+        case 'insufficient-funds':
+          toast.error(
+            `Insufficient ${bounty?.token} balance. Please add funds to your wallet and try again.`,
+          );
           setIsPaying(false);
           break;
         case 'timeout': {
