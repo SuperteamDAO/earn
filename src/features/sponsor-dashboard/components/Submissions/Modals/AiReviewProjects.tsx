@@ -22,6 +22,7 @@ import {
 import { Progress } from '@/components/ui/progress';
 import { Tooltip } from '@/components/ui/tooltip';
 import { type SubmissionWithUser } from '@/interface/submission';
+import { useUser } from '@/store/user';
 import { WandAnimated } from '@/svg/WandAnimated/WandAnimated';
 import { cn } from '@/utils/cn';
 
@@ -47,6 +48,7 @@ export default function AiReviewProjectApplicationsModal({
   );
   const [progress, setProgress] = useState(0);
   const progressIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const { user } = useUser();
 
   useEffect(() => {
     if (state !== 'PROCESSING') {
@@ -97,15 +99,38 @@ export default function AiReviewProjectApplicationsModal({
     data: unreviewedApplications,
     refetch: refetchUnreviewedApplications,
   } = useQuery({
-    ...unreviewedSubmissionsQuery({ id: listing?.id }, listing?.slug),
+    ...unreviewedSubmissionsQuery(
+      { id: listing?.id },
+      listing?.slug,
+      !!listing &&
+        !!user?.currentSponsorId &&
+        user?.currentSponsorId === listing?.sponsorId,
+    ),
+    enabled:
+      !!listing &&
+      listing.type === 'project' &&
+      !!user?.currentSponsorId &&
+      user?.currentSponsorId === listing?.sponsorId,
     refetchOnMount: false,
     refetchOnReconnect: false,
     refetchOnWindowFocus: false,
   });
 
   useEffect(() => {
-    refetchUnreviewedApplications();
-  }, [applications, refetchUnreviewedApplications]);
+    if (
+      !!listing &&
+      listing.type === 'project' &&
+      !!user?.currentSponsorId &&
+      user?.currentSponsorId === listing?.sponsorId
+    ) {
+      refetchUnreviewedApplications();
+    }
+  }, [
+    applications,
+    refetchUnreviewedApplications,
+    listing,
+    user?.currentSponsorId,
+  ]);
 
   const { mutateAsync: commitReviews } = useCommitReviewsSubmissions(
     listing?.slug || '',

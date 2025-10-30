@@ -21,6 +21,7 @@ import {
 import { Progress } from '@/components/ui/progress';
 import { Tooltip } from '@/components/ui/tooltip';
 import { type SubmissionWithUser } from '@/interface/submission';
+import { useUser } from '@/store/user';
 import { WandAnimated } from '@/svg/WandAnimated/WandAnimated';
 
 import {
@@ -48,6 +49,7 @@ export default function AiReviewBountiesSubmissionsModal({
   >('DISCLAIMER');
   const [progress, setProgress] = useState(0);
   const progressIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const { user } = useUser();
 
   useEffect(() => {
     if (state !== 'PROCESSING') {
@@ -101,7 +103,16 @@ export default function AiReviewBountiesSubmissionsModal({
             ?.evaluationCompleted,
         },
         listing?.slug,
+        !!listing &&
+          !!user?.currentSponsorId &&
+          user?.currentSponsorId === listing?.sponsorId,
       ),
+      enabled:
+        !!listing &&
+        listing.type === 'bounty' &&
+        !!user?.currentSponsorId &&
+        user?.currentSponsorId === listing?.sponsorId &&
+        (listing?.ai as unknown as BountiesAi)?.evaluationCompleted,
       refetchOnMount: false,
       refetchOnReconnect: false,
       refetchOnWindowFocus: false,
@@ -109,8 +120,21 @@ export default function AiReviewBountiesSubmissionsModal({
     });
 
   useEffect(() => {
-    refetchUnreviewedSubmissions();
-  }, [submissions, refetchUnreviewedSubmissions]);
+    if (
+      !!listing &&
+      listing.type === 'bounty' &&
+      !!user?.currentSponsorId &&
+      user?.currentSponsorId === listing?.sponsorId &&
+      (listing?.ai as unknown as BountiesAi)?.evaluationCompleted
+    ) {
+      refetchUnreviewedSubmissions();
+    }
+  }, [
+    submissions,
+    refetchUnreviewedSubmissions,
+    listing,
+    user?.currentSponsorId,
+  ]);
 
   const { mutateAsync: commitReviews } = useCommitReviewsSubmissions(
     listing?.slug || '',
