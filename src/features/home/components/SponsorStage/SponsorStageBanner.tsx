@@ -3,7 +3,6 @@
 import { useQuery } from '@tanstack/react-query';
 
 import { useBreakpoint } from '@/hooks/use-breakpoint';
-import { useUser } from '@/store/user';
 
 import { sponsorStageQuery } from '@/features/home/queries/sponsor-stage';
 import { SponsorStage } from '@/features/home/types/sponsor-stage';
@@ -18,12 +17,11 @@ import { ReviewBanner } from './ReviewBanner';
 import { ReviewUrgentBanner } from './ReviewUrgentBanner';
 
 export function SponsorStageBanner() {
-  const { user } = useUser();
   const isLg = useBreakpoint('lg');
 
   const { data, isLoading } = useQuery({
     ...sponsorStageQuery,
-    enabled: !!user?.currentSponsorId && isLg,
+    enabled: false,
   });
 
   if (isLoading || !data || !data.stage || !isLg) {
