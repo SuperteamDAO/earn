@@ -1,8 +1,6 @@
 import { headers } from 'next/headers';
 import { type NextRequest, NextResponse } from 'next/server';
 
-import { getEmailEstimate } from '@/app/api/sponsor-dashboard/listing/email-estimate/route';
-import { getFeaturedAvailability } from '@/app/api/sponsor-dashboard/listing/featured-posts/route';
 import { type Prisma } from '@/generated/prisma/client';
 import { type Skills, skillsArraySchema } from '@/interface/skills';
 import logger from '@/lib/logger';
@@ -20,6 +18,10 @@ import {
   BOOST_STEPS,
   DEFAULT_EMAIL_IMPRESSIONS,
 } from '@/features/listing-builder/components/Form/Boost/constants';
+import {
+  getEmailEstimate,
+  getFeaturedAvailability,
+} from '@/features/listing-builder/components/Form/Boost/server-queries';
 import {
   amountToStep,
   getTotalImpressionsForValue,
