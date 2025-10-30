@@ -23,11 +23,11 @@ export const AddListingCard = ({
   return (
     <Link
       href={createUrl}
-      className="block w-full rounded-md px-2 py-4 no-underline hover:bg-gray-100 sm:px-4"
+      className="group block w-full rounded-md px-2 py-4 no-underline hover:bg-gray-100 sm:px-4"
     >
       <div className="flex w-full items-center justify-between">
         <div className="flex w-full">
-          <div className="mr-5 h-16 w-18 rounded-md bg-gray-100">
+          <div className="mr-5 h-16 w-18 rounded-md bg-slate-100 transition group-hover:bg-slate-50">
             <div className="flex h-full w-full items-center justify-center">
               <Pencil className="h-6 w-6 text-gray-600" strokeWidth={2} />
             </div>
@@ -74,6 +74,7 @@ export const AddListingCard = ({
         <div className="flex items-center justify-start">
           <Button
             variant="outline"
+            size="sm"
             className="pointer-events-none text-slate-700 drop-shadow-sm"
           >
             Create {displayType}
