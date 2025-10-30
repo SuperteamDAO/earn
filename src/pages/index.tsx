@@ -79,7 +79,9 @@ export default function HomePage({ potentialSession }: HomePageProps) {
                   {potentialSession || authenticated ? (
                     <>
                       {!!user?.currentSponsorId && isLg ? (
-                        <SponsorStageBanner />
+                        <div className="mt-3">
+                          <SponsorStageBanner />
+                        </div>
                       ) : (
                         <UserStatsBanner />
                       )}

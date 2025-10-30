@@ -17,6 +17,7 @@ import { RecentActivity } from './RecentActivity';
 import { RecentEarners } from './RecentEarners';
 import { SidebarBannerCypherpunk } from './SidebarBanner';
 import { SponsorBanner } from './SponsorBanner';
+import { SponsorFeatures } from './SponsorFeatures';
 import { SponsorResources } from './SponsorResources';
 import { SponsorListing } from './SponsorStage/SponsorListing';
 import { SponsorWelcomeVideo } from './SponsorStage/SponsorWelcomeVideo';
@@ -52,6 +53,8 @@ export const HomeSideBar = ({ type }: SideBarProps) => {
     enabled: isLg,
   });
 
+  const isSponsor = !!(ready && !isUserLoading && user?.currentSponsorId);
+
   return (
     <AnimateChangeInHeight duration={0.3}>
       <div className="flex w-96 flex-col gap-8 py-3 pl-6">
@@ -78,12 +81,13 @@ export const HomeSideBar = ({ type }: SideBarProps) => {
         {type !== 'feed' ? (
           <>
             <div className="flex flex-col gap-4">
-              {ready && !isUserLoading && user?.currentSponsorId && (
-                <>
+              {isSponsor && (
+                <div className="mt-2 flex flex-col gap-8">
                   <SponsorWelcomeVideo />
                   <SponsorListing />
                   <SponsorResources />
-                </>
+                  <SponsorFeatures />
+                </div>
               )}
               {router.asPath === '/' &&
                 ready &&
@@ -91,17 +95,23 @@ export const HomeSideBar = ({ type }: SideBarProps) => {
                 (!user || (!user.isTalentFilled && !user.currentSponsorId)) && (
                   <SponsorBanner />
                 )}
-              <TotalStats
-                isTotalLoading={isTotalsLoading}
-                bountyCount={totals?.count}
-                TVE={totals?.totalInUSD}
-              />
+              {!isSponsor && (
+                <TotalStats
+                  isTotalLoading={isTotalsLoading}
+                  bountyCount={totals?.count}
+                  TVE={totals?.totalInUSD}
+                />
+              )}
             </div>
 
-            <HowItWorks />
-            <SidebarBannerCypherpunk />
-            <RecentEarners earners={recentEarners} />
-            <RecentActivity />
+            {!isSponsor && (
+              <>
+                <HowItWorks />
+                <SidebarBannerCypherpunk />
+                <RecentEarners earners={recentEarners} />
+                <RecentActivity />
+              </>
+            )}
           </>
         ) : (
           <>
