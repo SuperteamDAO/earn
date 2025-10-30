@@ -421,6 +421,7 @@ export const PayoutButton = ({ bounty, submission }: Props) => {
         | 'timeout'
         | 'rpc'
         | 'insufficient-funds'
+        | 'token-not-available'
         | 'unknown' => {
         const text = String((e as any)?.message ?? e ?? '').toLowerCase();
         if (
@@ -462,6 +463,9 @@ export const PayoutButton = ({ bounty, submission }: Props) => {
         ) {
           return 'insufficient-funds';
         }
+        if (text.includes('check token requirements')) {
+          return 'token-not-available';
+        }
         return 'unknown';
       };
 
@@ -478,6 +482,12 @@ export const PayoutButton = ({ bounty, submission }: Props) => {
         case 'insufficient-funds':
           toast.error(
             `Insufficient ${bounty?.token} balance. Please add funds to your wallet and try again.`,
+          );
+          setIsPaying(false);
+          break;
+        case 'token-not-available':
+          toast.error(
+            `${bounty?.token} not available in wallet. Please add ${bounty?.token} to your wallet and try again.`,
           );
           setIsPaying(false);
           break;
