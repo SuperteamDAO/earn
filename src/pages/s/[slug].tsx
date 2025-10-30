@@ -58,7 +58,8 @@ const SponsorPage = ({ sponsor, stats }: Props) => {
     const getEmptySectionCopy = () => {
       const isStatusAll = filters.activeStatus === 'all';
       const isTabAll = filters.activeTab === 'all';
-      const isDefaultFilters = isStatusAll && isTabAll;
+      const isCategoryAll = filters.activeCategory === 'All';
+      const isDefaultFilters = isStatusAll && isTabAll && isCategoryAll;
 
       if (isDefaultFilters) {
         if (isSponsor) {

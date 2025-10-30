@@ -141,13 +141,8 @@ export const ListingsSection = ({
   }, [categoryCounts, potentialSession, authenticated, ready, supportsForYou]);
 
   const visibleCategoryNavItems = useMemo(() => {
-    if (!categoryCounts) return CATEGORY_NAV_ITEMS;
-
-    return CATEGORY_NAV_ITEMS.filter((item) => {
-      const count = categoryCounts[item.label] || 0;
-      return count > 0;
-    });
-  }, [categoryCounts]);
+    return CATEGORY_NAV_ITEMS;
+  }, []);
 
   const viewAllLink = () => {
     if (HACKATHONS.some((hackathon) => hackathon.slug === activeTab)) {
