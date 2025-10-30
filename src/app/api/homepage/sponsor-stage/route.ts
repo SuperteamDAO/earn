@@ -169,31 +169,10 @@ function determineSponsorStage(
         )
       : 0;
 
-    console.log('Boost stage determination', {
-      listingId: listing.id,
-      usdValue,
-      currentStep,
-      nextStep,
-      isFeatureAvailable,
-      emailImpressions,
-      currentImpressions,
-      nextImpressions,
-      boostThreshold: BOOST_THRESHOLD,
-      impressionDifference: nextImpressions - currentImpressions,
-    });
-
     const hasNextTierWithImpressions =
       nextStep &&
       usdValue < BOOST_THRESHOLD &&
       nextImpressions > currentImpressions;
-
-    logger.info('Boost stage decision', {
-      listingId: listing.id,
-      hasNextTierWithImpressions,
-      stage: hasNextTierWithImpressions
-        ? SponsorStage.BOOST
-        : SponsorStage.BOOSTED,
-    });
 
     if (hasNextTierWithImpressions) {
       return {
@@ -328,9 +307,13 @@ function formatListingData(listing: BountyWithStageFields): Listing {
 }
 
 export async function GET(_request: NextRequest) {
+  const apiStartTime = performance.now();
+
   try {
+    const authStartTime = performance.now();
     const headersList = await headers();
     const sessionResponse = await getUserSession(headersList);
+    const authEndTime = performance.now();
 
     if (sessionResponse.status !== 200 || !sessionResponse.data) {
       logger.warn(
@@ -344,10 +327,12 @@ export async function GET(_request: NextRequest) {
 
     const { privyDid } = sessionResponse.data;
 
+    const userQueryStartTime = performance.now();
     const user = await prisma.user.findUnique({
       where: { privyDid },
       select: { currentSponsorId: true },
     });
+    const userQueryEndTime = performance.now();
 
     if (!user || !user.currentSponsorId) {
       logger.info('User has no currentSponsorId, returning null stage');
@@ -357,6 +342,7 @@ export async function GET(_request: NextRequest) {
       } as SponsorStageResponse);
     }
 
+    const listingsQueryStartTime = performance.now();
     const listings = await prisma.bounties.findMany({
       where: {
         sponsorId: user.currentSponsorId,
@@ -366,6 +352,7 @@ export async function GET(_request: NextRequest) {
       },
       select: listingSelectForStage,
     });
+    const listingsQueryEndTime = performance.now();
 
     if (listings.length === 0) {
       logger.info('Sponsor has no listings, returning NEW_SPONSOR stage');
@@ -378,16 +365,39 @@ export async function GET(_request: NextRequest) {
     const listingIds = listings.map((l) => l.id);
     const unpaidWinnersMap = new Map<string, boolean>();
     const uncommittedProjectAiReviewsMap = new Map<string, boolean>();
+    const projectListings = listings.filter((l) => l.type === 'project');
+    const projectListingIds = projectListings.map((l) => l.id);
 
-    const unpaidWinners = await prisma.submission.groupBy({
-      by: ['listingId'],
-      where: {
-        listingId: { in: listingIds },
-        isWinner: true,
-        isPaid: false,
-      },
-      _count: { id: true },
-    });
+    const parallelQueriesStartTime = performance.now();
+    const [unpaidWinners, projectSubmissions, isFeatureAvailable] =
+      await Promise.all([
+        prisma.submission.groupBy({
+          by: ['listingId'],
+          where: {
+            listingId: { in: listingIds },
+            isWinner: true,
+            isPaid: false,
+          },
+          _count: { id: true },
+        }),
+        projectListingIds.length > 0
+          ? prisma.submission.findMany({
+              where: {
+                listingId: { in: projectListingIds },
+                status: 'Pending',
+                label: {
+                  in: ['Unreviewed', 'Pending'],
+                },
+              },
+              select: {
+                listingId: true,
+                ai: true,
+              },
+            })
+          : Promise.resolve([]),
+        getFeaturedAvailability(),
+      ]);
+    const parallelQueriesEndTime = performance.now();
 
     unpaidWinners.forEach((item) => {
       if (item._count.id > 0) {
@@ -395,38 +405,75 @@ export async function GET(_request: NextRequest) {
       }
     });
 
-    const projectListings = listings.filter((l) => l.type === 'project');
-    if (projectListings.length > 0) {
-      const projectListingIds = projectListings.map((l) => l.id);
+    projectSubmissions.forEach((submission) => {
+      const aiData = submission.ai as ProjectApplicationAi | null;
+      if (aiData?.review?.predictedLabel && !aiData.commited) {
+        uncommittedProjectAiReviewsMap.set(submission.listingId, true);
+      }
+    });
 
-      const projectSubmissions = await prisma.submission.findMany({
-        where: {
-          listingId: { in: projectListingIds },
-          status: 'Pending',
-          label: {
-            in: ['Unreviewed', 'Pending'],
-          },
-        },
-        select: {
-          listingId: true,
-          ai: true,
-        },
-      });
-
-      projectSubmissions.forEach((submission) => {
-        const aiData = submission.ai as ProjectApplicationAi | null;
-        if (aiData?.review?.predictedLabel && !aiData.commited) {
-          uncommittedProjectAiReviewsMap.set(submission.listingId, true);
-        }
-      });
-    }
-
-    const isFeatureAvailable = await getFeaturedAvailability();
-    console.log('Featured availability', { isFeatureAvailable });
-
-    const listingsWithStages: ListingWithStage[] = [];
+    const emailEstimateStartTime = performance.now();
+    const emailEstimateCache = new Map<string, number>();
+    const estimatePromises: Promise<void>[] = [];
+    const seenEstimates = new Set<string>();
+    const urgentListingIds: string[] = [];
+    const now = dayjs();
 
     for (const listing of listings) {
+      const commitmentDate = listing.commitmentDate
+        ? dayjs(listing.commitmentDate)
+        : null;
+      if (
+        commitmentDate &&
+        commitmentDate.isBefore(now) &&
+        !listing.isWinnersAnnounced
+      ) {
+        urgentListingIds.push(listing.id);
+      }
+
+      const isActiveListing =
+        listing.isPublished &&
+        listing.isActive &&
+        !listing.isArchived &&
+        listing.deadline &&
+        dayjs(listing.deadline).isAfter(now);
+
+      if (isActiveListing && listing.skills && Array.isArray(listing.skills)) {
+        try {
+          const validatedSkills = skillsArraySchema.parse(listing.skills);
+          if (validatedSkills.length > 0) {
+            const sortedSkills = validatedSkills.sort().join(',');
+            const cacheKey = `${sortedSkills}|${listing.region || 'GLOBAL'}`;
+
+            if (!seenEstimates.has(cacheKey)) {
+              seenEstimates.add(cacheKey);
+              estimatePromises.push(
+                getEmailEstimate(validatedSkills, listing.region)
+                  .then((estimate) => {
+                    emailEstimateCache.set(cacheKey, estimate);
+                  })
+                  .catch((error) => {
+                    logger.warn('Failed to get email estimate', {
+                      skills: validatedSkills,
+                      region: listing.region,
+                      error:
+                        error instanceof Error
+                          ? error.message
+                          : 'Unknown error',
+                    });
+                    emailEstimateCache.set(cacheKey, DEFAULT_EMAIL_IMPRESSIONS);
+                  }),
+              );
+            }
+          }
+        } catch (error) {}
+      }
+    }
+
+    await Promise.all(estimatePromises);
+    const emailEstimateEndTime = performance.now();
+
+    const processListing = (listing: BountyWithStageFields) => {
       const hasUnpaidWinners = unpaidWinnersMap.get(listing.id) || false;
       const hasUncommittedProjectAiReviews =
         uncommittedProjectAiReviewsMap.get(listing.id) || false;
@@ -436,16 +483,11 @@ export async function GET(_request: NextRequest) {
         try {
           const validatedSkills = skillsArraySchema.parse(listing.skills);
           if (validatedSkills.length > 0) {
-            const estimate = await getEmailEstimate(
-              validatedSkills,
-              listing.region,
-            );
-            logger.info('Email estimate result', {
-              listingId: listing.id,
-              estimate,
-            });
-            // Round to nearest thousand, but always use at least the default
-            if (estimate > 0) {
+            const sortedSkills = validatedSkills.sort().join(',');
+            const cacheKey = `${sortedSkills}|${listing.region || 'GLOBAL'}`;
+
+            const estimate = emailEstimateCache.get(cacheKey);
+            if (estimate !== undefined && estimate > 0) {
               const roundedEstimate = Math.round(estimate / 1000) * 1000;
               emailImpressions = Math.max(
                 roundedEstimate,
@@ -453,26 +495,82 @@ export async function GET(_request: NextRequest) {
               );
             }
           }
-        } catch (error) {
-          logger.warn('Failed to get email estimate', {
-            listingId: listing.id,
-            error,
-          });
-        }
+        } catch (error) {}
       }
 
-      logger.info('Final email impressions', {
-        listingId: listing.id,
-        emailImpressions,
-      });
-
-      const stageData = determineSponsorStage(
+      return determineSponsorStage(
         listing,
         hasUnpaidWinners,
         hasUncommittedProjectAiReviews,
         isFeatureAvailable,
         emailImpressions,
       );
+    };
+
+    const processingStartTime = performance.now();
+    const listingsWithStages: ListingWithStage[] = [];
+
+    const urgentListings: ListingWithStage[] = [];
+
+    const listingsMap = new Map(listings.map((l) => [l.id, l]));
+
+    for (const listingId of urgentListingIds) {
+      const listing = listingsMap.get(listingId);
+      if (listing) {
+        const stageData = processListing(listing);
+        if (stageData) {
+          urgentListings.push({
+            listing,
+            stage: stageData.stage,
+            sortDate: stageData.sortDate,
+          });
+        }
+      }
+    }
+
+    if (urgentListings.length > 0) {
+      const processingEndTime = performance.now();
+
+      const selectedListing = applyPriorityAndTiebreaker(urgentListings);
+      if (selectedListing) {
+        const response: SponsorStageResponse = {
+          stage: selectedListing.stage,
+          listing: formatListingData(selectedListing.listing),
+        };
+
+        const totalTime = performance.now() - apiStartTime;
+        logger.info('Sponsor stage determined (urgent early exit)', {
+          stage: response.stage,
+          listingId: response.listing?.id,
+          sponsorId: user.currentSponsorId,
+          performanceMs: {
+            total: Math.round(totalTime),
+            auth: Math.round(authEndTime - authStartTime),
+            userQuery: Math.round(userQueryEndTime - userQueryStartTime),
+            listingsQuery: Math.round(
+              listingsQueryEndTime - listingsQueryStartTime,
+            ),
+            parallelQueries: Math.round(
+              parallelQueriesEndTime - parallelQueriesStartTime,
+            ),
+            emailEstimates: Math.round(
+              emailEstimateEndTime - emailEstimateStartTime,
+            ),
+            processing: Math.round(processingEndTime - processingStartTime),
+          },
+          stats: {
+            totalListings: listings.length,
+            urgentListings: urgentListings.length,
+            emailEstimatesCached: emailEstimateCache.size,
+          },
+        });
+
+        return NextResponse.json(response);
+      }
+    }
+
+    for (const listing of listings) {
+      const stageData = processListing(listing);
 
       if (stageData) {
         listingsWithStages.push({
@@ -482,6 +580,7 @@ export async function GET(_request: NextRequest) {
         });
       }
     }
+    const processingEndTime = performance.now();
 
     const selectedListing = applyPriorityAndTiebreaker(listingsWithStages);
 
@@ -498,9 +597,31 @@ export async function GET(_request: NextRequest) {
       listing: formatListingData(selectedListing.listing),
     };
 
-    logger.info('Successfully determined sponsor stage', {
+    const totalTime = performance.now() - apiStartTime;
+    logger.info('Sponsor stage determined successfully', {
       stage: response.stage,
       listingId: response.listing?.id,
+      sponsorId: user.currentSponsorId,
+      performanceMs: {
+        total: Math.round(totalTime),
+        auth: Math.round(authEndTime - authStartTime),
+        userQuery: Math.round(userQueryEndTime - userQueryStartTime),
+        listingsQuery: Math.round(
+          listingsQueryEndTime - listingsQueryStartTime,
+        ),
+        parallelQueries: Math.round(
+          parallelQueriesEndTime - parallelQueriesStartTime,
+        ),
+        emailEstimates: Math.round(
+          emailEstimateEndTime - emailEstimateStartTime,
+        ),
+        processing: Math.round(processingEndTime - processingStartTime),
+      },
+      stats: {
+        totalListings: listings.length,
+        processedListings: listingsWithStages.length,
+        emailEstimatesCached: emailEstimateCache.size,
+      },
     });
 
     return NextResponse.json(response);

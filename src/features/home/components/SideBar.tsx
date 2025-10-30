@@ -19,7 +19,7 @@ import { SidebarBannerCypherpunk } from './SidebarBanner';
 import { SponsorBanner } from './SponsorBanner';
 import { SponsorFeatures } from './SponsorFeatures';
 import { SponsorResources } from './SponsorResources';
-import { SponsorListing } from './SponsorStage/SponsorListing';
+import { SponsorListing } from './SponsorStage/SponsorSidebarListing';
 import { SponsorWelcomeVideo } from './SponsorStage/SponsorWelcomeVideo';
 import { TotalStats } from './TotalStats';
 
