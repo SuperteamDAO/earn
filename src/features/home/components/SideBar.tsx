@@ -17,6 +17,7 @@ import { RecentActivity } from './RecentActivity';
 import { RecentEarners } from './RecentEarners';
 import { SidebarBannerCypherpunk } from './SidebarBanner';
 import { SponsorBanner } from './SponsorBanner';
+import { SponsorResources } from './SponsorResources';
 import { SponsorListing } from './SponsorStage/SponsorListing';
 import { SponsorWelcomeVideo } from './SponsorStage/SponsorWelcomeVideo';
 import { TotalStats } from './TotalStats';
@@ -81,6 +82,7 @@ export const HomeSideBar = ({ type }: SideBarProps) => {
                 <>
                   <SponsorWelcomeVideo />
                   <SponsorListing />
+                  <SponsorResources />
                 </>
               )}
               {router.asPath === '/' &&
