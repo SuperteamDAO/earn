@@ -17,6 +17,7 @@ import { RecentActivity } from './RecentActivity';
 import { RecentEarners } from './RecentEarners';
 import { SidebarBannerCypherpunk } from './SidebarBanner';
 import { SponsorBanner } from './SponsorBanner';
+import { SponsorListing } from './SponsorStage/SponsorListing';
 import { SponsorWelcomeVideo } from './SponsorStage/SponsorWelcomeVideo';
 import { TotalStats } from './TotalStats';
 
@@ -77,7 +78,10 @@ export const HomeSideBar = ({ type }: SideBarProps) => {
           <>
             <div className="flex flex-col gap-4">
               {ready && !isUserLoading && user?.currentSponsorId && (
-                <SponsorWelcomeVideo />
+                <>
+                  <SponsorWelcomeVideo />
+                  <SponsorListing />
+                </>
               )}
               {router.asPath === '/' &&
                 ready &&

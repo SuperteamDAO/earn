@@ -4,7 +4,7 @@ import { type NextRequest, NextResponse } from 'next/server';
 import { getEmailEstimate } from '@/app/api/sponsor-dashboard/listing/email-estimate/route';
 import { getFeaturedAvailability } from '@/app/api/sponsor-dashboard/listing/featured-posts/route';
 import { type Prisma } from '@/generated/prisma/client';
-import { skillsArraySchema } from '@/interface/skills';
+import { type Skills, skillsArraySchema } from '@/interface/skills';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { dayjs } from '@/utils/dayjs';
@@ -24,7 +24,12 @@ import {
   amountToStep,
   getTotalImpressionsForValue,
 } from '@/features/listing-builder/components/Form/Boost/utils';
-import { type BountiesAi, type Listing } from '@/features/listings/types';
+import {
+  type BountiesAi,
+  type Listing,
+  type ProjectApplicationAi,
+  type Rewards,
+} from '@/features/listings/types';
 
 const PAYMENT_REMINDER_MAX_DAYS = 7;
 
@@ -51,6 +56,21 @@ const listingSelectForStage = {
   skills: true,
   region: true,
   sponsorId: true,
+  token: true,
+  rewardAmount: true,
+  compensationType: true,
+  minRewardAsk: true,
+  maxRewardAsk: true,
+  rewards: true,
+  maxBonusSpots: true,
+  isFndnPaying: true,
+  sponsor: {
+    select: {
+      name: true,
+      slug: true,
+      logo: true,
+    },
+  },
 } satisfies Prisma.BountiesSelect;
 
 type BountyWithStageFields = Prisma.BountiesGetPayload<{
@@ -66,6 +86,7 @@ interface ListingWithStage {
 function determineSponsorStage(
   listing: BountyWithStageFields,
   hasUnpaidWinners: boolean,
+  hasUncommittedProjectAiReviews: boolean,
   isFeatureAvailable: boolean,
   emailImpressions: number,
 ): { stage: SponsorStage; sortDate: Date } | null {
@@ -104,7 +125,9 @@ function determineSponsorStage(
     const hasAiReview =
       listing.type === 'bounty'
         ? (listing.ai as BountiesAi)?.evaluationCompleted === true
-        : false;
+        : listing.type === 'project'
+          ? hasUncommittedProjectAiReviews
+          : false;
 
     if (hasAiReview) {
       return { stage: SponsorStage.REVIEW_AI, sortDate: deadline.toDate() };
@@ -276,6 +299,29 @@ function formatListingData(listing: BountyWithStageFields): Listing {
     winnersAnnouncedAt: listing.winnersAnnouncedAt
       ? listing.winnersAnnouncedAt.toISOString()
       : undefined,
+    status: listing.status ?? undefined,
+    isPublished: listing.isPublished ?? undefined,
+    isActive: listing.isActive ?? undefined,
+    isArchived: listing.isArchived ?? undefined,
+    isWinnersAnnounced: listing.isWinnersAnnounced ?? undefined,
+    token: listing.token ?? undefined,
+    rewardAmount: listing.rewardAmount ?? undefined,
+    compensationType: listing.compensationType ?? undefined,
+    minRewardAsk: listing.minRewardAsk ?? undefined,
+    maxRewardAsk: listing.maxRewardAsk ?? undefined,
+    rewards: listing.rewards as Rewards | undefined,
+    maxBonusSpots: listing.maxBonusSpots ?? undefined,
+    isFndnPaying: listing.isFndnPaying ?? undefined,
+    skills: listing.skills as Skills | undefined,
+    region: listing.region ?? undefined,
+    sponsorId: listing.sponsorId ?? undefined,
+    sponsor: listing.sponsor
+      ? {
+          name: listing.sponsor.name,
+          slug: listing.sponsor.slug,
+          logo: listing.sponsor.logo ?? undefined,
+        }
+      : undefined,
   };
 }
 
@@ -329,6 +375,7 @@ export async function GET(_request: NextRequest) {
 
     const listingIds = listings.map((l) => l.id);
     const unpaidWinnersMap = new Map<string, boolean>();
+    const uncommittedProjectAiReviewsMap = new Map<string, boolean>();
 
     const unpaidWinners = await prisma.submission.groupBy({
       by: ['listingId'],
@@ -346,6 +393,32 @@ export async function GET(_request: NextRequest) {
       }
     });
 
+    const projectListings = listings.filter((l) => l.type === 'project');
+    if (projectListings.length > 0) {
+      const projectListingIds = projectListings.map((l) => l.id);
+
+      const projectSubmissions = await prisma.submission.findMany({
+        where: {
+          listingId: { in: projectListingIds },
+          status: 'Pending',
+          label: {
+            in: ['Unreviewed', 'Pending'],
+          },
+        },
+        select: {
+          listingId: true,
+          ai: true,
+        },
+      });
+
+      projectSubmissions.forEach((submission) => {
+        const aiData = submission.ai as ProjectApplicationAi | null;
+        if (aiData?.review?.predictedLabel && !aiData.commited) {
+          uncommittedProjectAiReviewsMap.set(submission.listingId, true);
+        }
+      });
+    }
+
     const isFeatureAvailable = await getFeaturedAvailability();
     console.log('Featured availability', { isFeatureAvailable });
 
@@ -353,6 +426,8 @@ export async function GET(_request: NextRequest) {
 
     for (const listing of listings) {
       const hasUnpaidWinners = unpaidWinnersMap.get(listing.id) || false;
+      const hasUncommittedProjectAiReviews =
+        uncommittedProjectAiReviewsMap.get(listing.id) || false;
 
       let emailImpressions = DEFAULT_EMAIL_IMPRESSIONS;
       if (listing.skills && Array.isArray(listing.skills)) {
@@ -392,6 +467,7 @@ export async function GET(_request: NextRequest) {
       const stageData = determineSponsorStage(
         listing,
         hasUnpaidWinners,
+        hasUncommittedProjectAiReviews,
         isFeatureAvailable,
         emailImpressions,
       );
