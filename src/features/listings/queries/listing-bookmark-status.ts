@@ -7,7 +7,7 @@ import type { UserModel } from '@/prisma/models/User';
 type ListingBookmark = BookmarkBountyModel & { User: UserModel | null };
 
 const fetchBookmarks = async (id: string): Promise<ListingBookmark[]> => {
-  const { data } = await api.get('/api/listings/notifications/status', {
+  const { data } = await api.get('/api/listings/bookmark/status', {
     params: { listingId: id },
   });
   return data;

@@ -14,7 +14,7 @@ import { cn } from '@/utils/cn';
 
 import { AuthWrapper } from '@/features/auth/components/AuthWrapper';
 
-import { listingBookmarksQuery } from '../../queries/listing-notification-status';
+import { listingBookmarksQuery } from '../../queries/listing-bookmark-status';
 
 interface Props {
   id: string;
@@ -22,7 +22,7 @@ interface Props {
 }
 
 const toggleBookmark = async (id: string): Promise<void> => {
-  await api.post('/api/listings/notifications/toggle', { bountyId: id });
+  await api.post('/api/listings/bookmark/toggle', { listingId: id });
 };
 export const BookmarkListing = ({ id, isTemplate = false }: Props) => {
   const { user } = useUser();

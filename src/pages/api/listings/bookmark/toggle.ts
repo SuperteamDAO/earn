@@ -12,21 +12,21 @@ async function toggleBookmark(
   res: NextApiResponse,
 ) {
   logger.debug(`Request body: ${safeStringify(req.body)}`);
-  const { bountyId } = req.body;
+  const { listingId } = req.body;
   const userId = req.userId;
 
   try {
     logger.debug(
-      `Fetching bookmark status for listing ID: ${bountyId} and user ID: ${userId}`,
+      `Fetching bookmark status for listing ID: ${listingId} and user ID: ${userId}`,
     );
     const bookmarkFound = await prisma.subscribeBounty.findFirst({
-      where: { bountyId, userId },
+      where: { bountyId: listingId, userId },
     });
 
     let result;
     if (bookmarkFound) {
       logger.info(
-        `Bookmark found for listing ID: ${bountyId} and user ID: ${userId}, toggling isArchived status`,
+        `Bookmark found for listing ID: ${listingId} and user ID: ${userId}, toggling isArchived status`,
       );
       result = await prisma.subscribeBounty.update({
         where: { id: bookmarkFound.id },
@@ -34,20 +34,20 @@ async function toggleBookmark(
       });
     } else {
       logger.info(
-        `No bookmark found for listing ID: ${bountyId} and user ID: ${userId}, creating new bookmark`,
+        `No bookmark found for listing ID: ${listingId} and user ID: ${userId}, creating new bookmark`,
       );
       result = await prisma.subscribeBounty.create({
-        data: { bountyId, userId: userId as string },
+        data: { bountyId: listingId, userId: userId as string },
       });
     }
 
     logger.info(
-      `Bookmark toggled successfully for listing ID: ${bountyId} and user ID: ${userId}`,
+      `Bookmark toggled successfully for listing ID: ${listingId} and user ID: ${userId}`,
     );
     return res.status(200).json(result);
   } catch (error: any) {
     logger.error(
-      `Error occurred while toggling bookmark for listing ID: ${bountyId} and user ID: ${userId}: ${safeStringify(error)}`,
+      `Error occurred while toggling bookmark for listing ID: ${listingId} and user ID: ${userId}: ${safeStringify(error)}`,
     );
     return res.status(400).json({
       error: error.message,
