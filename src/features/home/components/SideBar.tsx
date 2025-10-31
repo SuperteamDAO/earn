@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import posthog from 'posthog-js';
 
 import MdArrowForward from '@/components/icons/MdArrowForward';
 import { AnimateChangeInHeight } from '@/components/shared/AnimateChangeInHeight';
@@ -104,6 +105,9 @@ export const HomeSideBar = ({ type }: SideBarProps) => {
                   <Link
                     href="/bookmarks"
                     className="text-brand-purple flex items-center text-xs font-semibold"
+                    onClick={() => {
+                      posthog.capture('bookmarks_sidebar');
+                    }}
                   >
                     View All
                     <MdArrowForward className="ml-1" />

@@ -175,7 +175,10 @@ export const MobileDrawer = ({
                 <NavItem label="Email Preferences" onClick={onOpen} />
                 <NavItem
                   label="Bookmarks"
-                  onClick={() => router.push(`/bookmarks`)}
+                  onClick={() => {
+                    posthog.capture('bookmarks_user menu');
+                    router.push(`/bookmarks`);
+                  }}
                 />
               </>
             )}
