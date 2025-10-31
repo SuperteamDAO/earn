@@ -1,6 +1,5 @@
 import type { z } from 'zod';
 
-import { exclusiveSponsorData } from '@/constants/exclusiveSponsors';
 import { Superteams } from '@/constants/Superteam';
 import { type JsonValue } from '@/prisma/internal/prismaNamespace';
 import {
@@ -75,6 +74,8 @@ function getStatusSpecificWhereClauses(
 ): BountiesWhereInput | null {
   const now = new Date();
   switch (status) {
+    case 'all':
+      return null;
     case 'open':
       return {
         isWinnersAnnounced: false,
@@ -104,6 +105,12 @@ function getOrderBy(
   let primarySort: BountiesOrderByWithRelationInput;
 
   switch (sortBy) {
+    case 'Status':
+      return [
+        { isWinnersAnnounced: 'asc' },
+        { deadline: { sort: 'desc', nulls: 'first' } },
+      ];
+
     case 'Date':
       if (status === 'review') {
         primarySort = { deadline: { sort: oppositeOrder, nulls: 'last' } };
@@ -129,9 +136,11 @@ function getOrderBy(
       break;
   }
 
-  // add isFeatured prioritization only for default sorting (date + asc) and open status
+  // add isFeatured prioritization only for default sorting (date + asc) and open or all status
   const isDefaultSort =
-    sortBy === 'Date' && order === 'asc' && status === 'open';
+    sortBy === 'Date' &&
+    order === 'asc' &&
+    (status === 'open' || status === 'all');
 
   return isDefaultSort ? [{ isFeatured: 'desc' }, primarySort] : primarySort;
 }
@@ -245,17 +254,16 @@ export async function buildListingQuery(
 
   if (context === 'sponsor' && sponsor) {
     const sponsorKey = sponsor.toLowerCase();
-    const sponsorInfo = exclusiveSponsorData[sponsorKey];
 
     where.sponsor = {
-      name: sponsorInfo?.title,
+      slug: sponsorKey,
     };
 
-    if (!!sponsorInfo?.showPrivates) {
-      delete where.isPrivate;
-    } else {
-      where.isPrivate = false;
-    }
+    // if (!!sponsorInfo?.showPrivates) {
+    //   delete where.isPrivate;
+    // } else {
+    //   where.isPrivate = false;
+    // }
   }
 
   const standardTabs = ['all', 'bounties', 'projects'];

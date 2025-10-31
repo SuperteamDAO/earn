@@ -62,9 +62,21 @@ export function SubmissionCard({ sub, type, commentCount }: SubCardProps) {
     <>
       {!sub?.isPrivate ? (
         <div className="flex items-center gap-1.5 sm:gap-3">
-          <Avatar className="size-5 sm:size-7">
-            <AvatarImage src={sub?.sponsorLogo} alt="Sponsor Logo" />
-          </Avatar>
+          {sub?.sponsorSlug ? (
+            <Link
+              href={`/s/${sub.sponsorSlug}`}
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              <Avatar className="size-5 sm:size-7">
+                <AvatarImage src={sub?.sponsorLogo} alt="Sponsor Logo" />
+              </Avatar>
+            </Link>
+          ) : (
+            <Avatar className="size-5 sm:size-7">
+              <AvatarImage src={sub?.sponsorLogo} alt="Sponsor Logo" />
+            </Avatar>
+          )}
           <Link
             className={`text-xs font-semibold text-gray-500 sm:text-sm md:text-base ${isViewSubmissionHovered ? '' : 'group-hover:underline'} line-clamp-1 group-hover:decoration-current`}
             href={listingLink}

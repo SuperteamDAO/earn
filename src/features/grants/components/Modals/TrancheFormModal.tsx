@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -7,20 +7,45 @@ import * as z from 'zod';
 
 import { Button } from '@/components/ui/button';
 import { DialogTitle } from '@/components/ui/dialog';
-import { Form } from '@/components/ui/form';
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
 import { FormFieldWrapper } from '@/components/ui/form-field-wrapper';
+import { Input } from '@/components/ui/input';
 import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
+import { cn } from '@/utils/cn';
+import { validateSolAddress } from '@/utils/validateSolAddress';
 
 import { SubmissionTerms } from '@/features/listings/components/Submission/SubmissionTerms';
 
 import { userApplicationQuery } from '../../queries/user-application';
 import { type Grant } from '../../types';
 
-const trancheFormSchema = z.object({
-  projectUpdate: z.string().min(1, 'Project update is required'),
-  helpWanted: z.string().min(1, 'Help wanted details are required'),
-});
+const trancheFormSchema = z
+  .object({
+    walletAddress: z.string().min(1, 'Solana Wallet Address is required'),
+    projectUpdate: z.string().min(1, 'Project update is required'),
+    helpWanted: z.string().optional(),
+  })
+  .superRefine((data, ctx) => {
+    if (data.walletAddress) {
+      const validate = validateSolAddress(data.walletAddress);
+      if (!validate) {
+        ctx.addIssue({
+          code: 'custom',
+          path: ['walletAddress'],
+          message: 'Invalid Solana Wallet Address',
+        });
+      }
+    }
+  });
 
 type TrancheFormValues = z.infer<typeof trancheFormSchema>;
 
@@ -34,11 +59,21 @@ export const TrancheFormModal = ({ grant, applicationId, onClose }: Props) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isTOSModalOpen, setIsTOSModalOpen] = useState(false);
   const queryClient = useQueryClient();
-  const { refetchUser } = useUser();
+  const { user, refetchUser } = useUser();
+
+  const { data: grantApplication } = useQuery(userApplicationQuery(grant.id));
+
+  const lastWalletAddress =
+    grantApplication?.GrantTranche?.length &&
+    grantApplication.GrantTranche.length > 0
+      ? grantApplication.GrantTranche[grantApplication.GrantTranche.length - 1]
+          ?.walletAddress
+      : grantApplication?.walletAddress;
 
   const form = useForm<TrancheFormValues>({
     resolver: zodResolver(trancheFormSchema),
     defaultValues: {
+      walletAddress: lastWalletAddress || '',
       projectUpdate: '',
       helpWanted: '',
     },
@@ -48,8 +83,10 @@ export const TrancheFormModal = ({ grant, applicationId, onClose }: Props) => {
     try {
       setIsSubmitting(true);
       await api.post('/api/grant-application/request-tranche', {
-        ...values,
         applicationId,
+        walletAddress: values.walletAddress,
+        projectUpdate: values.projectUpdate,
+        helpWanted: values.helpWanted,
       });
       form.reset();
       await queryClient.invalidateQueries({
@@ -101,12 +138,54 @@ export const TrancheFormModal = ({ grant, applicationId, onClose }: Props) => {
               richEditorPlaceholder="Write your project update..."
             />
 
+            <FormField
+              control={form.control}
+              name="walletAddress"
+              render={({ field }) => (
+                <FormItem className={cn('flex flex-col gap-2')}>
+                  <div>
+                    <FormLabel isRequired>
+                      Wallet address for receiving this tranche
+                    </FormLabel>
+                    <FormDescription>
+                      This field is pre-filled with the wallet address you last
+                      added for this grant project. If you want to receive the
+                      grant tranche payment in a new wallet, please update this
+                      field.
+                    </FormDescription>
+                  </div>
+                  <div>
+                    <FormControl>
+                      <Input
+                        placeholder="Add your Solana wallet address"
+                        {...field}
+                      />
+                    </FormControl>
+                    <p className="pt-0.5 text-xs text-slate-500">
+                      <span
+                        className="cursor-pointer underline"
+                        onClick={() => {
+                          if (user?.walletAddress) {
+                            form.setValue('walletAddress', user.walletAddress);
+                          }
+                        }}
+                      >
+                        Click here
+                      </span>{' '}
+                      to update your Earn embedded wallet address which can
+                      accept any SPL token.
+                    </p>
+                    <FormMessage className="pt-1" />
+                  </div>
+                </FormItem>
+              )}
+            />
+
             <FormFieldWrapper
               control={form.control}
               name="helpWanted"
               label="Any help wanted?"
               description="Beyond funding, please detail specific challenges and how our expertise/resources can assist your project's success."
-              isRequired
               isRichEditor
               richEditorPlaceholder="Enter details..."
             />

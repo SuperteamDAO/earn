@@ -132,12 +132,22 @@ export function ListingHeader({
   const HeaderSub = () => {
     return (
       <div className="flex flex-wrap items-center gap-1 md:gap-2">
-        <div className="flex items-center gap-1">
+        <Link
+          href={`/s/${sponsor?.slug}`}
+          className="group flex items-center gap-1"
+          onClick={() => {
+            posthog.capture('sponsor_listing', {
+              sponsor_slug: sponsor?.slug,
+              sponsor_name: sponsor?.name,
+              listing_title: title,
+            });
+          }}
+        >
           <p className="max-w-[200px] overflow-hidden text-sm font-medium text-ellipsis whitespace-nowrap text-slate-500">
-            by {sponsor?.name}
+            by <span className="group-hover:underline">{sponsor?.name}</span>
           </p>
           {!!sponsor?.isVerified && <VerifiedBadge />}
-        </div>
+        </Link>
         <ListingHeaderSeparator />
         {isHackathon ? (
           <div className="flex items-center">
@@ -186,11 +196,13 @@ export function ListingHeader({
 
   const SponsorLogo = () => {
     return (
-      <img
-        className="mr-2 h-12 w-12 rounded-md object-cover md:h-16 md:w-16"
-        alt={sponsor?.name}
-        src={sponsor?.logo || `${ASSET_URL}/logo/sponsor-logo.png`}
-      />
+      <Link href={`/s/${sponsor?.slug}`}>
+        <img
+          className="mr-2 h-12 w-12 rounded-md object-cover md:h-16 md:w-16"
+          alt={sponsor?.name}
+          src={sponsor?.logo || `${ASSET_URL}/logo/sponsor-logo.png`}
+        />
+      </Link>
     );
   };
 

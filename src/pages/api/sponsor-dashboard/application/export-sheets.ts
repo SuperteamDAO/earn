@@ -229,30 +229,158 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       }
     }
 
-    logger.debug('Formatting first row with larger font size');
+    logger.debug('Formatting sheet with proper styling');
 
     await sheetsClient.spreadsheets.batchUpdate({
       spreadsheetId,
       requestBody: {
         requests: [
           {
-            repeatCell: {
+            mergeCells: {
               range: {
                 sheetId: 0,
                 startRowIndex: 0,
                 endRowIndex: 1,
                 startColumnIndex: 0,
-                endColumnIndex: 1,
+                endColumnIndex: 5,
+              },
+              mergeType: 'MERGE_ALL',
+            },
+          },
+          {
+            repeatCell: {
+              range: {
+                sheetId: 0,
+                startRowIndex: 0,
+                endRowIndex: 1,
               },
               cell: {
                 userEnteredFormat: {
                   textFormat: {
-                    fontSize: 14,
+                    fontSize: 10,
                     bold: true,
                   },
+                  wrapStrategy: 'WRAP',
+                  verticalAlignment: 'MIDDLE',
                 },
               },
-              fields: 'userEnteredFormat.textFormat',
+              fields:
+                'userEnteredFormat(textFormat,wrapStrategy,verticalAlignment)',
+            },
+          },
+          {
+            repeatCell: {
+              range: {
+                sheetId: 0,
+                startRowIndex: 2,
+                endRowIndex: 3,
+              },
+              cell: {
+                userEnteredFormat: {
+                  backgroundColor: {
+                    red: 226 / 255,
+                    green: 226 / 255,
+                    blue: 226 / 255,
+                  },
+                  textFormat: {
+                    bold: true,
+                  },
+                  wrapStrategy: 'WRAP',
+                },
+              },
+              fields:
+                'userEnteredFormat(backgroundColor,textFormat,wrapStrategy)',
+            },
+          },
+          {
+            updateDimensionProperties: {
+              range: {
+                sheetId: 0,
+                dimension: 'ROWS',
+                startIndex: 0,
+                endIndex: 1,
+              },
+              properties: {
+                pixelSize: 50,
+              },
+              fields: 'pixelSize',
+            },
+          },
+          ...(() => {
+            if (finalJson.length === 0) return [];
+
+            const headers = Object.keys(finalJson[0] || {});
+            const columnWidthRequests: any[] = [];
+
+            headers.forEach((header, colIndex) => {
+              const lengths: number[] = [];
+
+              lengths.push(header.length);
+
+              finalJson.forEach((row) => {
+                const value = row[header as keyof typeof row];
+                if (value !== null && value !== undefined) {
+                  const stringValue = String(value);
+                  lengths.push(stringValue.length);
+                }
+              });
+
+              const avgLength =
+                lengths.length > 0
+                  ? lengths.reduce((sum, len) => sum + len, 0) / lengths.length
+                  : 10;
+
+              const minWidth = colIndex === 0 ? 60 : 100;
+              const pixelWidth = Math.min(
+                Math.max(Math.ceil(avgLength * 8 + 20), minWidth),
+                400,
+              );
+
+              columnWidthRequests.push({
+                updateDimensionProperties: {
+                  range: {
+                    sheetId: 0,
+                    dimension: 'COLUMNS',
+                    startIndex: colIndex,
+                    endIndex: colIndex + 1,
+                  },
+                  properties: {
+                    pixelSize: pixelWidth,
+                  },
+                  fields: 'pixelSize',
+                },
+              });
+            });
+
+            return columnWidthRequests;
+          })(),
+          {
+            repeatCell: {
+              range: {
+                sheetId: 0,
+                startColumnIndex: 0,
+                endColumnIndex: 1,
+              },
+              cell: {
+                userEnteredFormat: {
+                  horizontalAlignment: 'CENTER',
+                },
+              },
+              fields: 'userEnteredFormat.horizontalAlignment',
+            },
+          },
+          {
+            repeatCell: {
+              range: {
+                sheetId: 0,
+                startRowIndex: 3,
+              },
+              cell: {
+                userEnteredFormat: {
+                  wrapStrategy: 'WRAP',
+                },
+              },
+              fields: 'userEnteredFormat.wrapStrategy',
             },
           },
         ],

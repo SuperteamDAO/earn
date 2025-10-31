@@ -1,4 +1,6 @@
+import Link from 'next/link';
 import { useRouter } from 'next/router';
+import posthog from 'posthog-js';
 import React from 'react';
 
 import BsFillCircleFill from '@/components/icons/BsFillCircleFill';
@@ -19,6 +21,7 @@ interface Props {
   sponsor?: {
     name: string;
     logo: string;
+    slug: string;
     isVerified: boolean;
   };
   title: string;
@@ -65,11 +68,13 @@ export const GrantsHeader = ({
     <div className="w-full bg-white">
       <div className="mx-auto flex w-full max-w-7xl flex-col items-start justify-start gap-5 py-10 md:flex-row md:justify-between">
         <div className="flex flex-col items-start gap-2 md:flex-row">
-          <img
-            className="h-16 w-16 rounded-md object-cover"
-            alt={sponsor?.name}
-            src={sponsor?.logo}
-          />
+          <Link href={`/s/${sponsor?.slug}`}>
+            <img
+              className="h-16 w-16 rounded-md object-cover"
+              alt={sponsor?.name}
+              src={sponsor?.logo}
+            />
+          </Link>
 
           <div className="flex flex-col items-start gap-1">
             <div className="flex flex-wrap items-center gap-1">
@@ -79,12 +84,23 @@ export const GrantsHeader = ({
             </div>
 
             <div className="flex flex-wrap items-center gap-1 md:gap-3">
-              <div className="flex items-center gap-1">
+              <Link
+                href={`/s/${sponsor?.slug}`}
+                className="group flex items-center gap-1"
+                onClick={() => {
+                  posthog.capture('sponsor_grant', {
+                    sponsor_slug: sponsor?.slug,
+                    sponsor_name: sponsor?.name,
+                    grant_title: title,
+                  });
+                }}
+              >
                 <p className="text-sm font-medium whitespace-nowrap text-slate-400">
-                  by {sponsor?.name}
+                  by{' '}
+                  <span className="group-hover:underline">{sponsor?.name}</span>
                 </p>
                 {!!sponsor?.isVerified && <VerifiedBadge />}
-              </div>
+              </Link>
               <ListingHeaderSeparator />
               <div className="flex items-center gap-1">
                 <LocalImage

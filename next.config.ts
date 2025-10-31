@@ -67,7 +67,7 @@ const nextConfig: NextConfig = {
   experimental: {
     optimizePackageImports: [
       '@privy-io/react-auth',
-      '@privy-io/server-auth',
+      '@privy-io/node',
       '@radix-ui/react-*',
       '@solana/*',
       '@tanstack/react-query',

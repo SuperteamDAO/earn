@@ -45,12 +45,16 @@ export const GrantsCardMini = ({
             <p className="ph-no-capture line-clamp-1 text-sm font-semibold text-slate-700 hover:underline">
               {title}
             </p>
-            <div className="flex w-fit items-center gap-1">
+            <Link
+              href={`/s/${sponsor?.slug}`}
+              onClick={(e) => e.stopPropagation()}
+              className="flex w-fit items-center gap-1 hover:underline"
+            >
               <p className="w-full text-xs whitespace-normal text-slate-500">
                 {sponsor?.name}
               </p>
               <div>{!!sponsor?.isVerified && <VerifiedBadge />}</div>
-            </div>
+            </Link>
             <div className="mt-px flex items-center gap-1 sm:gap-3">
               <div className="flex items-center justify-start gap-1">
                 <img
