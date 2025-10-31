@@ -53,6 +53,8 @@ export const ListingsSection = ({
   customEmptySection,
 }: ListingsSectionProps) => {
   const isMd = useBreakpoint('md');
+  const isSponsorContext = type === 'sponsor';
+  const isBookmarksContext = type === 'bookmarks';
 
   const { authenticated, ready } = usePrivy();
   const supportsForYou = FOR_YOU_SUPPORTED_TYPES.includes(type);
@@ -111,9 +113,14 @@ export const ListingsSection = ({
     handleSortChange,
   } = useListingState({
     defaultCategory: optimalDefaultCategory,
-    defaultStatus: type === 'sponsor' ? 'all' : undefined,
-    defaultSortBy: type === 'sponsor' ? 'Status' : undefined,
+    defaultStatus: isSponsorContext || isBookmarksContext ? 'all' : undefined,
+    defaultSortBy: isSponsorContext ? 'Status' : undefined,
   });
+
+  const effectiveCategory =
+    type === 'bookmarks' && activeCategory === 'For You'
+      ? ('All' as ListingCategory)
+      : activeCategory;
 
   const {
     data: listings,
@@ -122,7 +129,7 @@ export const ListingsSection = ({
   } = useListings({
     context: type,
     tab: activeTab,
-    category: activeCategory,
+    category: effectiveCategory,
     status: activeStatus,
     sortBy: activeSortBy,
     order: activeOrder,
@@ -141,13 +148,8 @@ export const ListingsSection = ({
   }, [categoryCounts, potentialSession, authenticated, ready, supportsForYou]);
 
   const visibleCategoryNavItems = useMemo(() => {
-    if (!categoryCounts) return CATEGORY_NAV_ITEMS;
-
-    return CATEGORY_NAV_ITEMS.filter((item) => {
-      const count = categoryCounts[item.label] || 0;
-      return count > 0;
-    });
-  }, [categoryCounts]);
+    return CATEGORY_NAV_ITEMS;
+  }, []);
 
   const viewAllLink = () => {
     if (HACKATHONS.some((hackathon) => hackathon.slug === activeTab)) {
@@ -189,7 +191,7 @@ export const ListingsSection = ({
         typeof customEmptySection === 'function'
           ? customEmptySection({
               activeTab,
-              activeCategory,
+              activeCategory: effectiveCategory,
               activeStatus,
               activeSortBy,
             })
@@ -220,23 +222,32 @@ export const ListingsSection = ({
     );
   };
 
+  const getTitle = () => {
+    if (isSponsorContext) {
+      return 'All Listings';
+    }
+    return 'Browse Opportunities';
+  };
+
   return (
     <div className="mt-5 mb-10">
       <div className="flex w-full items-center justify-between md:mb-1.5">
-        <div className="flex items-center">
-          <p className="text-lg font-semibold text-slate-800">
-            {type === 'sponsor' ? 'All Listings' : 'Browse Opportunities'}
-          </p>
+        {isBookmarksContext ? (
+          <p className="mb-2 text-xl font-semibold text-slate-700">Bookmarks</p>
+        ) : (
+          <div className="flex items-center">
+            <p className="text-lg font-semibold text-slate-800">{getTitle()}</p>
 
-          <div className="hidden items-center md:flex">
-            <Separator orientation="vertical" className="mx-3 h-6" />
-            <ListingTabs
-              type={type}
-              activeTab={activeTab}
-              handleTabChange={handleTabChange}
-            />
+            <div className="hidden items-center md:flex">
+              <Separator orientation="vertical" className="mx-3 h-6" />
+              <ListingTabs
+                type={type}
+                activeTab={activeTab}
+                handleTabChange={handleTabChange}
+              />
+            </div>
           </div>
-        </div>
+        )}
 
         <ListingFilters
           activeStatus={activeStatus}
@@ -244,8 +255,8 @@ export const ListingsSection = ({
           activeOrder={activeOrder}
           onStatusChange={handleStatusChange}
           onSortChange={handleSortChange}
-          showAllFilter={type === 'sponsor'}
-          showStatusSort={type === 'sponsor'}
+          showAllFilter={isSponsorContext || isBookmarksContext}
+          showStatusSort={isSponsorContext}
         />
       </div>
       <div className="mt-2 mb-1 md:hidden">
@@ -289,7 +300,7 @@ export const ListingsSection = ({
           <CategoryPill
             key="all"
             phEvent="all_navpill"
-            isActive={activeCategory === 'All'}
+            isActive={effectiveCategory === 'All'}
             onClick={() =>
               handleCategoryChange('All' as ListingCategory, 'all_navpill')
             }
@@ -300,7 +311,7 @@ export const ListingsSection = ({
             <CategoryPill
               key={navItem.label}
               phEvent={navItem.pillPH}
-              isActive={activeCategory === navItem.label}
+              isActive={effectiveCategory === navItem.label}
               onClick={() =>
                 handleCategoryChange(
                   navItem.label as ListingCategory,

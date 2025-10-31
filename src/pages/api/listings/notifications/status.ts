@@ -19,7 +19,7 @@ export default async function handler(
       return res.status(400).json({ message: 'Invalid listingId' });
     }
 
-    logger.debug(`Fetching subscription status for listing ID: ${listingId}`);
+    logger.debug(`Fetching bookmark status for listing ID: ${listingId}`);
     let result: { bountyId: string; userId?: string }[] =
       await prisma.subscribeBounty.findMany({
         where: { bountyId: listingId, isArchived: false },
@@ -43,15 +43,15 @@ export default async function handler(
       userId: userId === r.userId ? r.userId : '',
     }));
 
-    logger.info(`Fetched subscription status for listing ID: ${listingId}`);
+    logger.info(`Fetched bookmark status for listing ID: ${listingId}`);
     res.status(200).json(result);
   } catch (error: any) {
     logger.error(
-      `Error occurred while fetching subscription status for listing ID=${req.query.listingId}: ${safeStringify(error)}`,
+      `Error occurred while fetching bookmark status for listing ID=${req.query.listingId}: ${safeStringify(error)}`,
     );
     res.status(500).json({
       error: error.message,
-      message: 'Error occurred while fetching subscription status.',
+      message: 'Error occurred while fetching bookmark status.',
     });
   }
 }

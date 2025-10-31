@@ -10,6 +10,7 @@ import { useBreakpoint } from '@/hooks/use-breakpoint';
 import { useUser } from '@/store/user';
 
 import { recentEarnersQuery } from '@/features/listings/queries/recent-earners';
+import { yourBookmarksQuery } from '@/features/listings/queries/your-bookmarks';
 
 import { totalsQuery } from '../queries/totals';
 import { HowItWorks } from './HowItWorks';
@@ -18,6 +19,7 @@ import { RecentEarners } from './RecentEarners';
 import { SidebarBannerCypherpunk } from './SidebarBanner';
 import { SponsorBanner } from './SponsorBanner';
 import { TotalStats } from './TotalStats';
+import { YourBookmarks } from './YourBookmarks';
 
 interface SideBarProps {
   type: 'landing' | 'listing' | 'category' | 'region' | 'feed' | 'region-all';
@@ -48,6 +50,7 @@ export const HomeSideBar = ({ type }: SideBarProps) => {
     ...recentEarnersQuery,
     enabled: isLg,
   });
+  const { data: bookmarks } = useQuery(yourBookmarksQuery({ take: 5 }));
 
   return (
     <AnimateChangeInHeight duration={0.3}>
@@ -70,9 +73,11 @@ export const HomeSideBar = ({ type }: SideBarProps) => {
                 </Link>
               </div>
             </LiveListings>
+            <HowItWorks />
+            <RecentEarners earners={recentEarners} />
           </>
         )}
-        {type !== 'feed' ? (
+        {type !== 'feed' && (
           <>
             <div className="flex flex-col gap-4">
               {router.asPath === '/' &&
@@ -90,13 +95,24 @@ export const HomeSideBar = ({ type }: SideBarProps) => {
 
             <HowItWorks />
             <SidebarBannerCypherpunk />
+            {router.asPath !== '/bookmarks' && !!bookmarks?.length && (
+              <YourBookmarks>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium text-gray-400">
+                    BOOKMARKS
+                  </span>
+                  <Link
+                    href="/bookmarks"
+                    className="text-brand-purple flex items-center text-xs font-semibold"
+                  >
+                    View All
+                    <MdArrowForward className="ml-1" />
+                  </Link>
+                </div>
+              </YourBookmarks>
+            )}
             <RecentEarners earners={recentEarners} />
             <RecentActivity />
-          </>
-        ) : (
-          <>
-            <HowItWorks />
-            <RecentEarners earners={recentEarners} />
           </>
         )}
       </div>

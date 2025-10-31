@@ -7,7 +7,7 @@ import { safeStringify } from '@/utils/safeStringify';
 import { type NextApiRequestWithUser } from '@/features/auth/types';
 import { withAuth } from '@/features/auth/utils/withAuth';
 
-async function toggleSubscription(
+async function toggleBookmark(
   req: NextApiRequestWithUser,
   res: NextApiResponse,
 ) {
@@ -17,24 +17,24 @@ async function toggleSubscription(
 
   try {
     logger.debug(
-      `Fetching subscription status for bounty ID: ${bountyId} and user ID: ${userId}`,
+      `Fetching bookmark status for listing ID: ${bountyId} and user ID: ${userId}`,
     );
-    const subFound = await prisma.subscribeBounty.findFirst({
+    const bookmarkFound = await prisma.subscribeBounty.findFirst({
       where: { bountyId, userId },
     });
 
     let result;
-    if (subFound) {
+    if (bookmarkFound) {
       logger.info(
-        `Subscription found for bounty ID: ${bountyId} and user ID: ${userId}, toggling isArchived status`,
+        `Bookmark found for listing ID: ${bountyId} and user ID: ${userId}, toggling isArchived status`,
       );
       result = await prisma.subscribeBounty.update({
-        where: { id: subFound.id },
-        data: { isArchived: !subFound.isArchived },
+        where: { id: bookmarkFound.id },
+        data: { isArchived: !bookmarkFound.isArchived },
       });
     } else {
       logger.info(
-        `No subscription found for bounty ID: ${bountyId} and user ID: ${userId}, creating new subscription`,
+        `No bookmark found for listing ID: ${bountyId} and user ID: ${userId}, creating new bookmark`,
       );
       result = await prisma.subscribeBounty.create({
         data: { bountyId, userId: userId as string },
@@ -42,18 +42,18 @@ async function toggleSubscription(
     }
 
     logger.info(
-      `Subscription toggled successfully for bounty ID: ${bountyId} and user ID: ${userId}`,
+      `Bookmark toggled successfully for listing ID: ${bountyId} and user ID: ${userId}`,
     );
     return res.status(200).json(result);
   } catch (error: any) {
     logger.error(
-      `Error occurred while toggling subscription for bounty ID: ${bountyId} and user ID: ${userId}: ${safeStringify(error)}`,
+      `Error occurred while toggling bookmark for listing ID: ${bountyId} and user ID: ${userId}: ${safeStringify(error)}`,
     );
     return res.status(400).json({
       error: error.message,
-      message: 'Error occurred while toggling subscription.',
+      message: 'Error occurred while toggling bookmark.',
     });
   }
 }
 
-export default withAuth(toggleSubscription);
+export default withAuth(toggleBookmark);

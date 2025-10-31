@@ -5,6 +5,8 @@ import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
 import { LocalImage } from '@/components/ui/local-image';
 import { ASSET_URL } from '@/constants/ASSET_URL';
 import { tokenList } from '@/constants/tokenList';
+import { useServerTimeSync } from '@/hooks/use-server-time';
+import { timeAgoShort } from '@/utils/timeAgo';
 
 import { type Listing } from '../types';
 import { getListingIcon } from '../utils/getListingIcon';
@@ -22,11 +24,29 @@ export const ListingCardMini = ({ bounty }: { bounty: Listing }) => {
     compensationType,
     minRewardAsk,
     maxRewardAsk,
+    winnersAnnouncedAt,
     isWinnersAnnounced,
   } = bounty;
 
   const isVariable = compensationType === 'variable';
   const showToken = !isVariable || (isVariable && isWinnersAnnounced);
+
+  const { serverTime } = useServerTimeSync();
+  const isBeforeDeadline = dayjs(serverTime()).isBefore(dayjs(deadline));
+
+  const targetDate =
+    isWinnersAnnounced && winnersAnnouncedAt ? winnersAnnouncedAt : deadline;
+
+  const formattedDeadline = timeAgoShort(targetDate!, serverTime());
+
+  let deadlineText;
+  if (isBeforeDeadline) {
+    deadlineText = `Due in ${formattedDeadline}`;
+  } else {
+    deadlineText = isWinnersAnnounced
+      ? `Completed ${formattedDeadline} ago`
+      : `Expired ${formattedDeadline} ago`;
+  }
 
   return (
     <Link
@@ -94,9 +114,7 @@ export const ListingCardMini = ({ bounty }: { bounty: Listing }) => {
 
               <div className="flex items-center gap-1">
                 <p className="text-xs whitespace-nowrap text-gray-500">
-                  {dayjs().isBefore(dayjs(deadline))
-                    ? `Due ${dayjs(deadline).fromNow()}`
-                    : `Closed ${dayjs(deadline).fromNow()}`}
+                  {deadlineText}
                 </p>
               </div>
             </div>

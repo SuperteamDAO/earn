@@ -1,20 +1,20 @@
 import { queryOptions } from '@tanstack/react-query';
 
 import { api } from '@/lib/api';
-import { type SubscribeBountyModel } from '@/prisma/models/SubscribeBounty';
-import { type UserModel } from '@/prisma/models/User';
+import type { SubscribeBountyModel as BookmarkBountyModel } from '@/prisma/models/SubscribeBounty';
+import type { UserModel } from '@/prisma/models/User';
 
-const fetchSubscriptions = async (
-  id: string,
-): Promise<(SubscribeBountyModel & { User: UserModel | null })[]> => {
+type ListingBookmark = BookmarkBountyModel & { User: UserModel | null };
+
+const fetchBookmarks = async (id: string): Promise<ListingBookmark[]> => {
   const { data } = await api.get('/api/listings/notifications/status', {
     params: { listingId: id },
   });
   return data;
 };
 
-export const listingSubscriptionsQuery = (id: string) =>
+export const listingBookmarksQuery = (id: string) =>
   queryOptions({
-    queryKey: ['subscriptions', id],
-    queryFn: () => fetchSubscriptions(id),
+    queryKey: ['bookmarks', id],
+    queryFn: () => fetchBookmarks(id),
   });

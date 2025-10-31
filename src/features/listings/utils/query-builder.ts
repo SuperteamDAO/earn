@@ -170,6 +170,8 @@ export async function buildListingQuery(
   } | null,
 ): Promise<ListingQueryResult> {
   const { tab, category, status, context, region, sponsor } = args;
+  const effectiveCategory =
+    context === 'bookmarks' && category === 'For You' ? 'All' : category;
 
   const where: BountiesWhereInput = {
     isPublished: true,
@@ -198,7 +200,7 @@ export async function buildListingQuery(
     };
   }
 
-  if (category === 'For You') {
+  if (effectiveCategory === 'For You') {
     const userSkills =
       (user?.skills as { skills: string }[] | null)?.map(
         (skill) => skill.skills,
@@ -266,6 +268,21 @@ export async function buildListingQuery(
     // }
   }
 
+  if (context === 'bookmarks') {
+    if (!user?.id) {
+      throw new Error('Bookmarks context requires an authenticated user');
+    }
+
+    andConditions.push({
+      SubscribeBounty: {
+        some: {
+          userId: user.id,
+          isArchived: false,
+        },
+      },
+    });
+  }
+
   const standardTabs = ['all', 'bounties', 'projects'];
 
   if (standardTabs.includes(tab)) {
@@ -295,7 +312,7 @@ export async function buildListingQuery(
     andConditions.push(statusWhereClauses);
   }
 
-  const skillFilter = getSkillFilter(category);
+  const skillFilter = getSkillFilter(effectiveCategory);
   if (skillFilter) {
     andConditions.push(skillFilter);
   }
