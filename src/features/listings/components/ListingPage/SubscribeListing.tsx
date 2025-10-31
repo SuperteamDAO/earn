@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Loader2 } from 'lucide-react';
 import posthog from 'posthog-js';
+import { useEffect } from 'react';
 import { toast } from 'sonner';
 
 import TbBell from '@/components/icons/TbBell';
@@ -9,6 +10,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { ASSET_URL } from '@/constants/ASSET_URL';
 import { api } from '@/lib/api';
+import { useSubscribeIntent } from '@/store/subscribeIntent';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 
@@ -27,7 +29,7 @@ const toggleSubscription = async (id: string) => {
 
 export const SubscribeListing = ({ id, isTemplate = false }: Props) => {
   const { user } = useUser();
-
+  const { pendingListingId, setIntent } = useSubscribeIntent();
   const queryClient = useQueryClient();
 
   const { data: sub = [] } = useQuery(listingSubscriptionsQuery(id));
@@ -44,6 +46,7 @@ export const SubscribeListing = ({ id, isTemplate = false }: Props) => {
             ? 'Unsubscribed'
             : 'Subscribed',
         );
+        setIntent(null); // clear intent after success
       },
       onError: () => {
         toast.error('Error occurred while toggling subscription');
@@ -57,8 +60,19 @@ export const SubscribeListing = ({ id, isTemplate = false }: Props) => {
   ];
 
   const handleToggleSubscribe = () => {
+    if (!user) {
+      setIntent(id); // remember action before login
+      return;
+    }
     toggleSubscribe();
   };
+
+  // After login, check if there was a pending intent and auto-trigger it
+  useEffect(() => {
+    if (user && pendingListingId === id) {
+      toggleSubscribe();
+    }
+  }, [user, pendingListingId, id, toggleSubscribe]);
 
   const isSubscribed = sub.find((e) => e.userId === user?.id);
 
