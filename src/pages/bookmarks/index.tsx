@@ -27,7 +27,7 @@ export default function BookmarksPage() {
         <Meta
           title="Bookmarks | Superteam Earn"
           description="Your bookmarks on Superteam Earn"
-          canonical="https://earn.superteam.fun"
+          canonical="https://earn.superteam.fun/bookmarks"
         />
       }
     >

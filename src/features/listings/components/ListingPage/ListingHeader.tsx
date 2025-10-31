@@ -234,7 +234,9 @@ export function ListingHeader({
             {user?.currentSponsorId === listing.sponsorId ? (
               <BoostButton listing={listing} />
             ) : (
-              <BookmarkListing isTemplate={isTemplate} id={listing.id} />
+              user?.isTalentFilled && (
+                <BookmarkListing isTemplate={isTemplate} id={listing.id} />
+              )
             )}
             <SecondaryOptions listing={listing} />
           </div>
