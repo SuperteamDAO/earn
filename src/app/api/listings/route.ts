@@ -53,6 +53,10 @@ export async function GET(request: NextRequest) {
       });
     }
 
+    if (queryData.context === 'bookmarks' && !user?.id) {
+      return NextResponse.json([]);
+    }
+
     // build optimized query
     const { where, orderBy, take } = await buildListingQuery(queryData, user);
 

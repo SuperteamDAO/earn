@@ -188,6 +188,20 @@ export function UserMenu() {
             </DropdownMenuItem>
           )}
 
+          {user?.isTalentFilled && (
+            <DropdownMenuItem asChild>
+              <Link
+                href="/bookmarks"
+                onClick={() => {
+                  posthog.capture('bookmarks_user menu');
+                }}
+                className="text-sm tracking-tight text-slate-500"
+              >
+                Bookmarks
+              </Link>
+            </DropdownMenuItem>
+          )}
+
           <DropdownMenuItem asChild>
             <Link
               href={generateTelegramBotUrl(user?.email)}

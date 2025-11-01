@@ -162,7 +162,7 @@ export const MobileDrawer = ({
             />
           ))}
           <div className="ph-no-capture flex flex-col">
-            {isLoggedIn && (
+            {isLoggedIn && user?.isTalentFilled && (
               <>
                 <NavItem
                   label="Profile"
@@ -173,6 +173,13 @@ export const MobileDrawer = ({
                   onClick={() => router.push(`/t/${user?.username}/edit`)}
                 />
                 <NavItem label="Email Preferences" onClick={onOpen} />
+                <NavItem
+                  label="Bookmarks"
+                  onClick={() => {
+                    posthog.capture('bookmarks_user menu');
+                    router.push(`/bookmarks`);
+                  }}
+                />
               </>
             )}
             <Collapsible
