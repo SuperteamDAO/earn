@@ -1,4 +1,5 @@
-import { BubbleMenu, type Editor } from '@tiptap/react';
+import { type Editor } from '@tiptap/react';
+import { BubbleMenu } from '@tiptap/react/menus';
 import * as React from 'react';
 
 import type { ShouldShowProps } from '../../types';
@@ -88,9 +89,10 @@ export const LinkBubbleMenu: React.FC<LinkBubbleMenuProps> = ({ editor }) => {
     <BubbleMenu
       editor={editor}
       shouldShow={shouldShow}
-      tippyOptions={{
+      options={{
+        offset: 6,
         placement: 'bottom-start',
-        onHidden: () => setShowEdit(false),
+        onHide: () => setShowEdit(false),
       }}
     >
       {showEdit ? (
