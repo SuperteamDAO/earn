@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "cross-env NODE_ENV=development next dev --turbopack",
+    "dev": "cross-env NODE_ENV=development next dev",
     "build": "prisma generate && next build",
     "start": "cross-env NODE_ENV=production next start",
     "lint": "eslint .",
@@ -20,7 +20,7 @@
     "@googleapis/drive": "^18.0.0",
     "@googleapis/sheets": "^12.0.0",
     "@hookform/resolvers": "^4.1.3",
-    "@next/third-parties": "15.5.2",
+    "@next/third-parties": "16.0.1",
     "@openrouter/ai-sdk-provider": "^1.2.0",
     "@prisma/adapter-planetscale": "^6.18.0",
     "@prisma/client": "^6.18.0",
@@ -111,7 +111,7 @@
     "marked": "^16.4.1",
     "micro": "^10.0.1",
     "motion": "^12.23.24",
-    "next": "15.5.2",
+    "next": "16.0.1",
     "next-auth": "^4.24.13",
     "next-axiom": "^0.18.1",
     "next-pwa": "^5.6.0",
@@ -121,11 +121,11 @@
     "prosemirror-model": "^1.25.4",
     "prosemirror-state": "^1.4.4",
     "prosemirror-view": "^1.41.3",
-    "react": "19.1.0",
+    "react": "19.2.0",
     "react-canvas-confetti": "^2.0.7",
     "react-countdown": "^2.3.5",
     "react-day-picker": "9.11.1",
-    "react-dom": "19.1.0",
+    "react-dom": "19.2.0",
     "react-dropzone": "^14.3.8",
     "react-hook-form": "^7.66.0",
     "react-image-crop": "^11.0.10",
@@ -159,15 +159,15 @@
     "@types/node": "24.9.2",
     "@types/nprogress": "^0.2.3",
     "@types/papaparse": "^5.3.16",
-    "@types/react": "19.1.8",
-    "@types/react-dom": "19.1.6",
+    "@types/react": "19.2.2",
+    "@types/react-dom": "19.2.2",
     "@types/textarea-caret": "^3.0.4",
     "@types/turndown": "^5.0.6",
     "@typescript-eslint/eslint-plugin": "^7.11.0",
     "@typescript-eslint/parser": "^7.11.0",
     "cross-env": "^10.1.0",
     "eslint": "^8.57.0",
-    "eslint-config-next": "15.5.2",
+    "eslint-config-next": "16.0.1",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.5.4",
     "eslint-plugin-simple-import-sort": "^12.1.1",
@@ -191,5 +191,11 @@
     "Firefox >= 127",
     "Safari >= 16.8",
     "iOS >= 16.8"
-  ]
+  ],
+  "pnpm": {
+    "overrides": {
+      "@types/react": "19.2.2",
+      "@types/react-dom": "19.2.2"
+    }
+  }
 }
