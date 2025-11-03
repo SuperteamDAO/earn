@@ -14,6 +14,45 @@ interface Props {
   listing: Listing;
 }
 
+const CheckIcon = () => (
+  <div className="flex h-9 w-9 items-center justify-center rounded-full border-4 border-green-600 bg-white text-green-600">
+    <FaCheck />
+  </div>
+);
+
+const PendingIcon = () => (
+  <div className="flex h-9 w-9 items-center justify-center rounded-full border-4 border-slate-200 bg-slate-200 text-slate-200" />
+);
+
+const Heading = ({ children }: { children: React.ReactNode }) => (
+  <h3 className="text-sm font-semibold text-slate-700">{children}</h3>
+);
+
+const Subheading = ({ children }: { children: React.ReactNode }) => (
+  <p className="text-[0.8rem] text-slate-500">{children}</p>
+);
+
+const ConnectingLine = ({
+  isStartComplete,
+  isEndComplete,
+}: {
+  isStartComplete: boolean;
+  isEndComplete: boolean;
+}) => (
+  <div className="absolute top-9 left-4 h-12 w-1">
+    {isStartComplete && isEndComplete ? (
+      <div className="h-full bg-green-600" />
+    ) : isStartComplete ? (
+      <>
+        <div className="h-1/3 bg-green-600" />
+        <div className="h-2/3 bg-slate-200" />
+      </>
+    ) : (
+      <div className="h-full bg-slate-200" />
+    )}
+  </div>
+);
+
 export const ApprovalStages = ({ listing }: Props) => {
   const { user } = useUser();
   const { authenticated, ready } = usePrivy();
@@ -25,45 +64,6 @@ export const ApprovalStages = ({ listing }: Props) => {
   });
 
   if (isUserSubmissionLoading || !ready || !submission?.isWinner) return null;
-
-  const CheckIcon = () => (
-    <div className="flex h-9 w-9 items-center justify-center rounded-full border-4 border-green-600 bg-white text-green-600">
-      <FaCheck />
-    </div>
-  );
-
-  const PendingIcon = () => (
-    <div className="flex h-9 w-9 items-center justify-center rounded-full border-4 border-slate-200 bg-slate-200 text-slate-200" />
-  );
-
-  const Heading = ({ children }: { children: React.ReactNode }) => (
-    <h3 className="text-sm font-semibold text-slate-700">{children}</h3>
-  );
-
-  const Subheading = ({ children }: { children: React.ReactNode }) => (
-    <p className="text-[0.8rem] text-slate-500">{children}</p>
-  );
-
-  const ConnectingLine = ({
-    isStartComplete,
-    isEndComplete,
-  }: {
-    isStartComplete: boolean;
-    isEndComplete: boolean;
-  }) => (
-    <div className="absolute top-9 left-4 h-12 w-1">
-      {isStartComplete && isEndComplete ? (
-        <div className="h-full bg-green-600" />
-      ) : isStartComplete ? (
-        <>
-          <div className="h-1/3 bg-green-600" />
-          <div className="h-2/3 bg-slate-200" />
-        </>
-      ) : (
-        <div className="h-full bg-slate-200" />
-      )}
-    </div>
-  );
 
   const isKycVerified = submission.isKYCVerified ?? false;
   const isPaid = submission.isPaid;

@@ -26,26 +26,26 @@ const font = localFont({
   preload: false,
 });
 
+const VideoPlayback = ({ setVideoPopup }: { setVideoPopup: (value: boolean) => void }) => {
+  return (
+    <div
+      className="fixed z-50 grid h-screen w-screen place-content-center bg-[rgba(191,203,220,0.67)]"
+      onClick={() => setVideoPopup(false)}
+    >
+      <div className="relative flex w-[95vw] flex-col gap-5 overflow-hidden pt-[56.25%] lg:w-[60vw]">
+        <iframe
+          width="100%"
+          height="100%"
+          className="absolute inset-0"
+          src="https://www.youtube.com/embed/_OyQ_Bxz1xo?si=U12Uh2foC2Ma914e&autoplay=1&mute=1"
+        />
+      </div>
+    </div>
+  );
+};
+
 const Sponsor = () => {
   const [videoPopup, setVideoPopup] = useState<boolean>(false);
-
-  const VideoPlayback = () => {
-    return (
-      <div
-        className="fixed z-50 grid h-screen w-screen place-content-center bg-[rgba(191,203,220,0.67)]"
-        onClick={() => setVideoPopup(false)}
-      >
-        <div className="relative flex w-[95vw] flex-col gap-5 overflow-hidden pt-[56.25%] lg:w-[60vw]">
-          <iframe
-            width="100%"
-            height="100%"
-            className="absolute inset-0"
-            src="https://www.youtube.com/embed/_OyQ_Bxz1xo?si=U12Uh2foC2Ma914e&autoplay=1&mute=1"
-          />
-        </div>
-      </div>
-    );
-  };
 
   return (
     <>
@@ -55,7 +55,7 @@ const Sponsor = () => {
         og={ASSET_URL + `/og/sponsor.png`}
       />
 
-      {videoPopup && <VideoPlayback />}
+      {videoPopup && <VideoPlayback setVideoPopup={setVideoPopup} />}
 
       <Header />
 
