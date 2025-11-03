@@ -6,7 +6,7 @@
     "dev": "cross-env NODE_ENV=development next dev",
     "build": "prisma generate && next build",
     "start": "cross-env NODE_ENV=production next start",
-    "lint": "eslint .",
+    "lint": "eslint . --quiet",
     "format": "eslint --fix . && prettier '**/*.{json,yaml}' --write --ignore-path .gitignore",
     "check-types": "tsc --noEmit --pretty",
     "prepare": "husky",
