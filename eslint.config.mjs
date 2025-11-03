@@ -92,6 +92,7 @@ export default tseslint.config(
       '@typescript-eslint/no-var-requires': 'off',
       'no-unused-vars': 'off',
       '@typescript-eslint/no-unused-vars': ['warn', { caughtErrors: 'none' }],
+      'react-hooks/set-state-in-effect': 'warn',
     },
   },
 );
