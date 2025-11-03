@@ -421,7 +421,7 @@ const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
     );
 
     /** Avoid Creatable Selector freezing or lagging when paste a long string. */
-    const commandFilter = React.useCallback(() => {
+    const commandFilter = () => {
       if (commandProps?.filter) {
         return commandProps.filter;
       }
@@ -433,7 +433,7 @@ const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
       }
       // Using default filter in `cmdk`. We don't have to provide it.
       return undefined;
-    }, [creatable, commandProps?.filter]);
+    };
 
     return (
       <Command
