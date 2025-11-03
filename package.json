@@ -15,7 +15,7 @@
     "ui:add": "pnpx shadcn@latest add"
   },
   "dependencies": {
-    "@ai-sdk/react": "^2.0.86",
+    "@ai-sdk/react": "^2.0.29",
     "@floating-ui/dom": "^1.7.4",
     "@googleapis/drive": "^18.0.0",
     "@googleapis/sheets": "^12.0.0",
@@ -80,7 +80,7 @@
     "@upstash/ratelimit": "^2.0.6",
     "@upstash/redis": "^1.35.6",
     "@vercel/functions": "^3.1.4",
-    "ai": "^5.0.86",
+    "ai": "^5.0.29",
     "axios": "^1.13.1",
     "boring-avatars": "^2.0.4",
     "bs58": "^6.0.0",
@@ -164,7 +164,6 @@
     "@types/textarea-caret": "^3.0.4",
     "@types/turndown": "^5.0.6",
     "@typescript-eslint/eslint-plugin": "^7.18.0",
-    "@typescript-eslint/parser": "^7.18.0",
     "cross-env": "^10.1.0",
     "eslint": "^9.39.0",
     "eslint-config-next": "16.0.1",

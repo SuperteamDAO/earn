@@ -54,7 +54,7 @@ interface GrantWithApplicationCount extends Grant {
 
 import { type SubmissionLabels } from '@/prisma/enums';
 
-export interface GrantsAiContxt {
+interface GrantsAiContxt {
   totalInputTokens: number;
   totalOutputTokens: number;
   domainSummary: string[];
@@ -67,7 +67,7 @@ export interface GrantsAi {
   context?: GrantsAiContxt;
 }
 
-export type EvaluationResult = {
+type EvaluationResult = {
   predictedLabel: SubmissionLabels;
   reasoning: string;
   totalCostInUSD: number;

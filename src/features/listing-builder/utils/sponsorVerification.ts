@@ -9,7 +9,7 @@ import { type ListingWithSponsor } from '@/features/auth/utils/checkListingSpons
 
 import { type ListingFormData } from '../types';
 
-export interface SponsorVerificationResult {
+interface SponsorVerificationResult {
   isVerifying: boolean;
   reason: string;
 }

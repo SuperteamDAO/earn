@@ -11,7 +11,7 @@ import { useUser } from '@/store/user';
 
 import { CreditIcon } from '../icon/credit';
 
-export interface ReferralModalProps {
+interface ReferralModalProps {
   isOpen: boolean;
   onClose: () => void;
 }

@@ -14,7 +14,7 @@ import { type HackathonContext, useHackathons } from '../hooks/useHackathons';
 import { useHackathonState } from '../hooks/useHackathonState';
 import { HackathonFilters } from './HackathonFilters';
 
-export interface HackathonSectionProps {
+interface HackathonSectionProps {
   type: HackathonContext;
 }
 
