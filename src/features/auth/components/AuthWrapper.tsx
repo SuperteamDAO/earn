@@ -75,6 +75,7 @@ export function AuthWrapper({
     if (!isAuthenticated) {
       e.preventDefault();
       e.stopPropagation();
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
       onClick && onClick();
       loginOnOpen();
     } else if (
@@ -90,6 +91,7 @@ export function AuthWrapper({
 
   useEffect(() => {
     if (triggerLogin && !isAuthenticated) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setTriggerLogin(false);
       loginOnOpen();
     }

@@ -152,8 +152,12 @@ export default function BountySubmissions({ slug }: Props) {
   const isProject = useMemo(() => bounty?.type === 'project', [bounty]);
 
   useEffect(() => {
-    selectedSubmissionIds.size > 0 ? onTogglerOpen() : onTogglerClose();
-  }, [selectedSubmissionIds]);
+    if (selectedSubmissionIds.size > 0) {
+      onTogglerOpen();
+    } else {
+      onTogglerClose();
+    }
+  }, [selectedSubmissionIds, onTogglerOpen, onTogglerClose]);
 
   useEffect(() => {
     const newSet = new Set(selectedSubmissionIds);

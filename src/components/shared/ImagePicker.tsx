@@ -92,6 +92,7 @@ export const ImagePicker = ({
           setShowCropModal(true);
         } else {
           setPreview(previewUrl);
+          // eslint-disable-next-line @typescript-eslint/no-unused-expressions
           onChange && onChange(file, previewUrl);
         }
       };
@@ -105,6 +106,7 @@ export const ImagePicker = ({
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     onReset && onReset();
   };
 
@@ -114,6 +116,7 @@ export const ImagePicker = ({
       setPreview(croppedImageDataUrl);
       setShowCropModal(false);
       setSelectedFile(null);
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
       onChange && onChange(croppedFile, croppedImageDataUrl);
     }
   };

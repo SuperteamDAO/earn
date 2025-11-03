@@ -324,7 +324,7 @@ const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
       };
 
       void exec();
-      // eslint-disable-next-line react-hooks/exhaustive-deps
+       
     }, [debouncedSearchTerm, groupBy, open, triggerSearchOnFocus]);
 
     useEffect(() => {
@@ -350,7 +350,7 @@ const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
       };
 
       void exec();
-      // eslint-disable-next-line react-hooks/exhaustive-deps
+       
     }, [debouncedSearchTerm, groupBy, open, triggerSearchOnFocus]);
 
     const CreatableItem = () => {
@@ -521,6 +521,7 @@ const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
                 }}
                 onFocus={(event) => {
                   setOpen(true);
+                  // eslint-disable-next-line @typescript-eslint/no-unused-expressions
                   triggerSearchOnFocus && onSearch?.(debouncedSearchTerm);
                   inputProps?.onFocus?.(event);
                 }}
