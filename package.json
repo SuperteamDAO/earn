@@ -163,7 +163,7 @@
     "@types/react-dom": "19.2.2",
     "@types/textarea-caret": "^3.0.4",
     "@types/turndown": "^5.0.6",
-    "@typescript-eslint/eslint-plugin": "^7.18.0",
+    "@typescript-eslint/eslint-plugin": "^8.46.2",
     "cross-env": "^10.1.0",
     "eslint": "^9.39.0",
     "eslint-config-next": "16.0.1",
