@@ -1,6 +1,6 @@
 import React from 'react';
 
-interface ShaderGradientProps extends React.SVGProps<SVGSVGElement> {}
+type ShaderGradientProps = React.SVGProps<SVGSVGElement>;
 
 export const ShaderGradient: React.FC<ShaderGradientProps> = (props) => (
   <svg

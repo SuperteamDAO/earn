@@ -14,7 +14,7 @@ export interface SignInOptions extends Record<string, unknown> {
   openInNewWindow?: boolean;
 }
 
-export interface SignInAuthorisationParams extends Record<string, string> {}
+export type SignInAuthorisationParams = Record<string, string>;
 
 export interface PopupAuthResponse {
   error?: string | null;
