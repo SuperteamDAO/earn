@@ -17,7 +17,6 @@ import {
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import bs58 from 'bs58';
 import { Loader2 } from 'lucide-react';
-import dynamic from 'next/dynamic';
 import { log } from 'next-axiom';
 import posthog from 'posthog-js';
 import React, { useState } from 'react';
@@ -39,7 +38,7 @@ import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import { toBaseUnits } from '@/utils/to-base-units';
-import { truncatePublicKey } from '@/utils/truncatePublicKey';
+ 
 
 import { type Listing, type Rewards } from '@/features/listings/types';
 
@@ -75,11 +74,7 @@ export const PayoutButton = ({ bounty, submission }: Props) => {
 
   const remainingAmount = totalPrizeAmount - totalPaidAmount;
 
-  const DynamicWalletMultiButton = dynamic(
-    async () =>
-      (await import('@solana/wallet-adapter-react-ui')).WalletMultiButton,
-    { ssr: false },
-  );
+  
 
   const detectTokenProgram = async (mintAddress: string) => {
     try {
@@ -525,68 +520,47 @@ export const PayoutButton = ({ bounty, submission }: Props) => {
 
   return (
     <>
-      <div
-        className="ph-no-capture"
-        onClick={() => {
-          posthog.capture('connect wallet_payment');
-        }}
-      >
-        {!connected && (
-          <DynamicWalletMultiButton
-            style={{
-              height: '40px',
-              minWidth: '160px',
-              textAlign: 'center',
-              justifyContent: 'center',
-              alignItems: 'center',
-              fontWeight: 600,
-              fontFamily: 'Inter',
-              paddingRight: '20px',
-              paddingLeft: '20px',
-              fontSize: '14px',
-            }}
-          >
-            {connected
-              ? truncatePublicKey(publicKey?.toBase58(), 3)
-              : `Pay ${
-                  formatNumberWithSuffix(remainingAmount, 2, true) || '0'
-                } ${bounty?.token}`}
-          </DynamicWalletMultiButton>
-        )}
-      </div>
-      {connected && (
-        <Button
-          className="ph-no-capture min-w-[160px] text-center disabled:cursor-not-allowed"
-          disabled={
-            !bounty?.isWinnersAnnounced || remainingAmount <= 0 || isPaying
+      <Button
+        className="ph-no-capture min-w-[160px] text-center disabled:cursor-not-allowed"
+        disabled={
+          !connected ||
+          !bounty?.isWinnersAnnounced ||
+          remainingAmount <= 0 ||
+          isPaying ||
+          !submission?.user.walletAddress
+        }
+        onClick={async () => {
+          if (!connected) {
+            toast.error('Please connect your wallet first');
+            return;
           }
-          onClick={async () => {
-            if (!submission?.user.walletAddress) {
-              console.error('Public key is null, cannot proceed with payment');
-              return;
-            }
-            posthog.capture('pay winner_sponsor');
-            handlePayout({
-              id: submission?.id as string,
-              token: bounty?.token as string,
-              amount: remainingAmount,
-              receiver: new PublicKey(submission.user.walletAddress),
-            });
-          }}
-          variant="default"
-        >
-          {isPaying ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              <span>Paying...</span>
-            </>
-          ) : (
-            `Pay ${
-              formatNumberWithSuffix(remainingAmount, 2, true) || '0'
-            } ${bounty?.token}`
-          )}
-        </Button>
-      )}
+          if (!submission?.user.walletAddress) {
+            console.error('Public key is null, cannot proceed with payment');
+            return;
+          }
+          posthog.capture('pay winner_sponsor');
+          handlePayout({
+            id: submission?.id as string,
+            token: bounty?.token as string,
+            amount: remainingAmount,
+            receiver: new PublicKey(submission.user.walletAddress),
+          });
+        }}
+        variant="default"
+      >
+        {isPaying ? (
+          <>
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            <span>Paying...</span>
+          </>
+        ) : !connected ? (
+          'Connect wallet to pay'
+        ) : (
+          `Pay ${
+            formatNumberWithSuffix(remainingAmount, 2, true) || '0'
+          } ${bounty?.token}`
+        )}
+      </Button>
       <AlertDialog
         open={Boolean(warning)}
         onOpenChange={(open) => {
