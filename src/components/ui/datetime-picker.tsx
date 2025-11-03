@@ -482,30 +482,24 @@ function MonthYearPicker({
   className?: string;
 }) {
   const yearRef = useRef<HTMLDivElement>(null);
-  const years = useMemo(() => {
-    const years: TimeOption[] = [];
-    for (let i = 1912; i < 2100; i++) {
-      let disabled = false;
-      const startY = startOfYear(setYear(value, i));
-      const endY = endOfYear(setYear(value, i));
-      if (minDate && endY < minDate) disabled = true;
-      if (maxDate && startY > maxDate) disabled = true;
-      years.push({ value: i, label: i.toString(), disabled });
-    }
-    return years;
-  }, [value]);
-  const months = useMemo(() => {
-    const months: TimeOption[] = [];
-    for (let i = 0; i < 12; i++) {
-      let disabled = false;
-      const startM = startOfMonth(setMonthFns(value, i));
-      const endM = endOfMonth(setMonthFns(value, i));
-      if (minDate && endM < minDate) disabled = true;
-      if (maxDate && startM > maxDate) disabled = true;
-      months.push({ value: i, label: format(new Date(0, i), 'MMM'), disabled });
-    }
-    return months;
-  }, [value]);
+  const years: TimeOption[] = [];
+  for (let i = 1912; i < 2100; i++) {
+    let disabled = false;
+    const startY = startOfYear(setYear(value, i));
+    const endY = endOfYear(setYear(value, i));
+    if (minDate && endY < minDate) disabled = true;
+    if (maxDate && startY > maxDate) disabled = true;
+    years.push({ value: i, label: i.toString(), disabled });
+  }
+  const months: TimeOption[] = [];
+  for (let i = 0; i < 12; i++) {
+    let disabled = false;
+    const startM = startOfMonth(setMonthFns(value, i));
+    const endM = endOfMonth(setMonthFns(value, i));
+    if (minDate && endM < minDate) disabled = true;
+    if (maxDate && startM > maxDate) disabled = true;
+    months.push({ value: i, label: format(new Date(0, i), 'MMM'), disabled });
+  }
 
   const onYearChange = useCallback(
     (v: TimeOption) => {
@@ -718,80 +712,74 @@ function TimePicker({
       }
     }, 1);
     return () => clearTimeout(timeoutId);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
   }, [open]);
 
-  const onHourChange = useCallback(
-    (v: TimeOption) => {
-      if (min) {
-        const newTime = buildTime({
-          use12HourFormat,
-          value,
-          formatStr,
-          hour: v.value,
-          minute,
-          second,
-          ampm,
-        });
-        if (newTime < min) {
-          setMinute(min.getMinutes());
-          setSecond(min.getSeconds());
-        }
+  const onHourChange = (v: TimeOption) => {
+    if (min) {
+      const newTime = buildTime({
+        use12HourFormat,
+        value,
+        formatStr,
+        hour: v.value,
+        minute,
+        second,
+        ampm,
+      });
+      if (newTime < min) {
+        setMinute(min.getMinutes());
+        setSecond(min.getSeconds());
       }
-      if (max) {
-        const newTime = buildTime({
-          use12HourFormat,
-          value,
-          formatStr,
-          hour: v.value,
-          minute,
-          second,
-          ampm,
-        });
-        if (newTime > max) {
-          setMinute(max.getMinutes());
-          setSecond(max.getSeconds());
-        }
+    }
+    if (max) {
+      const newTime = buildTime({
+        use12HourFormat,
+        value,
+        formatStr,
+        hour: v.value,
+        minute,
+        second,
+        ampm,
+      });
+      if (newTime > max) {
+        setMinute(max.getMinutes());
+        setSecond(max.getSeconds());
       }
-      setHour(v.value);
-    },
-    [setHour, use12HourFormat, value, formatStr, minute, second, ampm],
-  );
+    }
+    setHour(v.value);
+  };
 
-  const onMinuteChange = useCallback(
-    (v: TimeOption) => {
-      if (min) {
-        const newTime = buildTime({
-          use12HourFormat,
-          value,
-          formatStr,
-          hour: v.value,
-          minute,
-          second,
-          ampm,
-        });
-        if (newTime < min) {
-          setSecond(min.getSeconds());
-        }
+  const onMinuteChange = (v: TimeOption) => {
+    if (min) {
+      const newTime = buildTime({
+        use12HourFormat,
+        value,
+        formatStr,
+        hour: v.value,
+        minute,
+        second,
+        ampm,
+      });
+      if (newTime < min) {
+        setSecond(min.getSeconds());
       }
-      if (max) {
-        const newTime = buildTime({
-          use12HourFormat,
-          value,
-          formatStr,
-          hour: v.value,
-          minute,
-          second,
-          ampm,
-        });
-        if (newTime > max) {
-          setSecond(newTime.getSeconds());
-        }
+    }
+    if (max) {
+      const newTime = buildTime({
+        use12HourFormat,
+        value,
+        formatStr,
+        hour: v.value,
+        minute,
+        second,
+        ampm,
+      });
+      if (newTime > max) {
+        setSecond(newTime.getSeconds());
       }
-      setMinute(v.value);
-    },
-    [setMinute, use12HourFormat, value, formatStr, hour, second, ampm],
-  );
+    }
+    setMinute(v.value);
+  };
 
   const onAmpmChange = useCallback(
     (v: TimeOption) => {

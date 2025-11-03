@@ -7,7 +7,6 @@ import { useRouter } from 'next/router';
 import posthog from 'posthog-js';
 import {
   type ReactNode,
-  useCallback,
   useEffect,
   useRef,
   useState,
@@ -82,7 +81,7 @@ export function SponsorLayout({
 
   const setAutoGenerateOpen = useSetAtom(isAutoGenerateOpenAtom);
 
-  const handleMouseEnter = useCallback(() => {
+  const handleMouseEnter = () => {
     if (!isCollapsible) return;
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
@@ -90,15 +89,15 @@ export function SponsorLayout({
     timeoutRef.current = setTimeout(() => {
       setIsExpanded(true);
     }, 250);
-  }, []);
+  };
 
-  const handleMouseLeave = useCallback(() => {
+  const handleMouseLeave = () => {
     if (!isCollapsible) return;
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
     }
     setIsExpanded(false);
-  }, []);
+  };
 
   const open = !!query.open;
   useEffect(() => {

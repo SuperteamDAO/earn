@@ -1,6 +1,6 @@
 import { type PrimitiveAtom, useAtom } from 'jotai';
 import { useHydrateAtoms } from 'jotai/utils';
-import { type ReactNode, useEffect, useMemo } from 'react';
+import { type ReactNode, useEffect } from 'react';
 
 // useful for provider (component locked atoms)
 interface HydrateAtomsProps {
@@ -23,5 +23,5 @@ export const useInitAtom = <T>(atom: PrimitiveAtom<T>, initialValue: T) => {
     setValue(initialValue);
   }, [initialValue]);
 
-  return useMemo(() => [value ?? initialValue, setValue], [value]);
+  return [value ?? initialValue, setValue];
 };

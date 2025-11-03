@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Check, InfoIcon, Wand2, XCircle } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import posthog from 'posthog-js';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
 import { AnimateChangeInHeight } from '@/components/shared/AnimateChangeInHeight';
@@ -157,7 +157,7 @@ export default function AiReviewProjectApplicationsModal({
     return estimateTime(nonAnalysedApplications?.length || 1, true);
   }, [nonAnalysedApplications?.length]);
 
-  const onReviewClick = useCallback(async () => {
+  const onReviewClick = async () => {
     posthog.capture('start_ai review projects');
     setState('PROCESSING');
 
@@ -186,7 +186,7 @@ export default function AiReviewProjectApplicationsModal({
         setState('ERROR');
       }
     }, 10000);
-  }, [applications, unreviewedApplications, nonAnalysedApplications, posthog]);
+  };
   function onComplete() {
     setState('INIT');
     setProgress(0);

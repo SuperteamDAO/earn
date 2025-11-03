@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import { MailIcon, StarIcon } from 'lucide-react';
 import { AnimatePresence, LayoutGroup, motion } from 'motion/react';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useWatch } from 'react-hook-form';
 
 import FaXTwitter from '@/components/icons/FaXTwitter';
@@ -106,24 +106,17 @@ export function BoostContent({
     tokenUsdValue,
   );
 
-  const anchorMap = useMemo(
-    () => buildAnchorMap(estimatedUsdValue, isFeatureAvailable),
-    [estimatedUsdValue, isFeatureAvailable],
-  );
+  const anchorMap = buildAnchorMap(estimatedUsdValue, isFeatureAvailable);
 
   const sliderMin = 0;
   const sliderMax = anchorMap.maxStep;
 
   const defaultStep = anchorMap.defaultStep;
 
-  const anchorSteps = useMemo(
-    () =>
-      anchorMap.anchors
-        .map((a) => a.step)
-        .slice()
-        .sort((a, b) => a - b),
-    [anchorMap.anchors],
-  );
+  const anchorSteps = anchorMap.anchors
+    .map((a) => a.step)
+    .slice()
+    .sort((a, b) => a - b);
 
   const [snappedIndex, setSnappedIndex] = useState(() => {
     const idx = anchorSteps.findIndex((s) => s === defaultStep);
@@ -157,11 +150,10 @@ export function BoostContent({
     isFeatureAvailable,
   );
 
-  const initialUSD = useMemo(() => {
-    return estimatedUsdValue !== null ? Math.round(estimatedUsdValue) : null;
-  }, [estimatedUsdValue]);
+  const initialUSD =
+    estimatedUsdValue !== null ? Math.round(estimatedUsdValue) : null;
 
-  const previewUSD = useMemo(() => {
+  const previewUSD = (() => {
     if (!hasInteracted && initialUSD !== null) return initialUSD;
     const step = hasInteracted ? boostStep : defaultStep;
     const a = anchorMap.anchors.find((x) => x.step === step);
@@ -170,15 +162,15 @@ export function BoostContent({
       return anchorMap.anchors[anchorMap.anchors.length - 1]?.usd ?? null;
     const clamped = Math.max(0, Math.min(step, 75)) as BoostStep;
     return getDollarAmountForStep(clamped);
-  }, [hasInteracted, initialUSD, anchorMap.anchors, boostStep, defaultStep]);
+  })();
 
-  const previewTokens = useMemo(() => {
+  const previewTokens = (() => {
     if (!hasInteracted) {
       return safeRewardAmount;
     }
     if (tokenUsdValue && previewUSD !== null) return previewUSD / tokenUsdValue;
     return safeRewardAmount;
-  }, [previewUSD, tokenUsdValue, safeRewardAmount, hasInteracted]);
+  })();
 
   const referenceDate = dayjs('2025-08-28');
   const now = dayjs();

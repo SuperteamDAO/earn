@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { Check, InfoIcon, Wand2, XCircle } from 'lucide-react';
 import posthog from 'posthog-js';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
@@ -93,7 +93,7 @@ export default function AiReviewModal({ applications, grant }: Props) {
     return estimateTime(nonAnalysedApplications?.length || 1, true);
   }, [nonAnalysedApplications?.length]);
 
-  const onReviewClick = useCallback(async () => {
+  const onReviewClick = async () => {
     posthog.capture('start_ai review grants');
     setState('PROCESSING');
 
@@ -163,7 +163,7 @@ export default function AiReviewModal({ applications, grant }: Props) {
         setState('ERROR');
       }
     }, 500);
-  }, [applications, unreviewedApplications, nonAnalysedApplications, posthog]);
+  };
   function onComplete() {
     setState('INIT');
     setProgress(0);
