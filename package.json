@@ -150,8 +150,6 @@
     "zod": "^3.25.71"
   },
   "devDependencies": {
-    "@eslint/compat": "^1.4.1",
-    "@eslint/js": "^9.39.0",
     "@tailwindcss/postcss": "^4.1.16",
     "@tailwindcss/typography": "^0.5.19",
     "@tanstack/eslint-plugin-query": "^5.91.2",
