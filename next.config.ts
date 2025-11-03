@@ -91,7 +91,13 @@ const nextConfig: NextConfig = {
       'vaul',
       'zod',
     ],
+    serverComponentsExternalPackages: [
+      'isomorphic-dompurify',
+      'jsdom',
+      'parse5',
+    ],
   },
+  serverExternalPackages: ['isomorphic-dompurify', 'jsdom', 'parse5'],
   async headers() {
     const headers = [];
 
