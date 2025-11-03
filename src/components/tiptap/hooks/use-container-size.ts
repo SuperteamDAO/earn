@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { type RefObject, useCallback, useLayoutEffect, useState } from 'react';
 
 const DEFAULT_RECT: DOMRect = {
   top: 0,
@@ -12,15 +12,19 @@ const DEFAULT_RECT: DOMRect = {
   toJSON: () => '{}',
 };
 
-export function useContainerSize(element: HTMLElement | null): DOMRect {
-  const [size, setSize] = useState<DOMRect>(
-    () => element?.getBoundingClientRect() ?? DEFAULT_RECT,
-  );
+export function useContainerSize(
+  elementOrRef: HTMLElement | null | RefObject<HTMLElement | null>,
+): DOMRect {
+  const [size, setSize] = useState<DOMRect>(DEFAULT_RECT);
 
   const handleResize = useCallback(() => {
-    if (!element) return;
+    const currentElement =
+      elementOrRef && 'current' in elementOrRef
+        ? elementOrRef.current
+        : elementOrRef;
+    if (!currentElement) return;
 
-    const newRect = element.getBoundingClientRect();
+    const newRect = currentElement.getBoundingClientRect();
 
     setSize((prevRect) => {
       if (
@@ -33,13 +37,46 @@ export function useContainerSize(element: HTMLElement | null): DOMRect {
       }
       return newRect;
     });
-  }, [element]);
+  }, [elementOrRef]);
 
-  useEffect(() => {
-    if (!element) return;
+  useLayoutEffect(() => {
+    const currentElement =
+      elementOrRef && 'current' in elementOrRef
+        ? elementOrRef.current
+        : elementOrRef;
+
+    if (!currentElement) {
+      setTimeout(() => {
+        setSize((prev) => {
+          if (
+            prev.width !== DEFAULT_RECT.width ||
+            prev.height !== DEFAULT_RECT.height
+          ) {
+            return DEFAULT_RECT;
+          }
+          return prev;
+        });
+      }, 0);
+      return;
+    }
+
+    const initialRect = currentElement.getBoundingClientRect();
+    setTimeout(() => {
+      setSize((prev) => {
+        if (
+          Math.round(prev.width) !== Math.round(initialRect.width) ||
+          Math.round(prev.height) !== Math.round(initialRect.height) ||
+          Math.round(prev.x) !== Math.round(initialRect.x) ||
+          Math.round(prev.y) !== Math.round(initialRect.y)
+        ) {
+          return initialRect;
+        }
+        return prev;
+      });
+    }, 0);
 
     const resizeObserver = new ResizeObserver(handleResize);
-    resizeObserver.observe(element);
+    resizeObserver.observe(currentElement);
 
     window.addEventListener('click', handleResize);
     window.addEventListener('resize', handleResize);
@@ -49,7 +86,7 @@ export function useContainerSize(element: HTMLElement | null): DOMRect {
       window.removeEventListener('click', handleResize);
       window.removeEventListener('resize', handleResize);
     };
-  }, [element, handleResize]);
+  }, [elementOrRef, handleResize]);
 
   return size;
 }

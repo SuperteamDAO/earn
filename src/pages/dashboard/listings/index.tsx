@@ -140,18 +140,27 @@ export default function SponsorListings({ tab: queryTab }: { tab: string }) {
     dashboardQuery(user?.currentSponsorId),
   );
 
-  const debouncedSetSearchText = useRef(debounce(setSearchText, 300)).current;
+  const debouncedSetSearchTextRef = useRef<ReturnType<typeof debounce> | null>(
+    null,
+  );
 
   useEffect(() => {
+    debouncedSetSearchTextRef.current = debounce(setSearchText, 300);
     return () => {
-      debouncedSetSearchText.cancel();
+      debouncedSetSearchTextRef.current?.cancel();
     };
-  }, [debouncedSetSearchText]);
+  }, []);
+
+  const debouncedSetSearchText = useCallback((value: string) => {
+    debouncedSetSearchTextRef.current?.(value);
+  }, []);
 
   useEffect(() => {
     if (user?.currentSponsorId) {
-      setSearchText('');
-      setCurrentPage(0);
+      setTimeout(() => {
+        setSearchText('');
+        setCurrentPage(0);
+      }, 0);
     }
   }, [user?.currentSponsorId]);
 
@@ -273,7 +282,9 @@ export default function SponsorListings({ tab: queryTab }: { tab: string }) {
 
   useEffect(() => {
     if (queryTab && queryTab !== activeTab) {
-      handleTabChange(queryTab);
+      setTimeout(() => {
+        handleTabChange(queryTab);
+      }, 0);
     }
   }, [queryTab, activeTab, handleTabChange]);
 
