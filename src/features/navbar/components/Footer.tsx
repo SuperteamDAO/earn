@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import MdOutlineMail from '@/components/icons/MdOutlineMail';
 import { SuperteamCombobox } from '@/components/shared/SuperteamCombobox';
@@ -60,7 +60,9 @@ export const Footer = () => {
     const matched = Superteams.find((team) =>
       path.includes(`/regions/${team.slug?.toLowerCase()}`),
     );
-    setSelectedSuperteam(matched ? matched.name : 'Global');
+    setTimeout(() => {
+      setSelectedSuperteam(matched ? matched.name : 'Global');
+    }, 0);
   }, [router.asPath]);
 
   const handleSuperteamChange = (value: string | null): void => {

@@ -1,5 +1,3 @@
-import React from 'react';
-
 export const RenaissanceLogo = ({ styles }: { styles?: any }) => {
   return (
     <svg

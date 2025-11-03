@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import React, { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import { Skeleton } from '@/components/ui/skeleton';
 import { api } from '@/lib/api';

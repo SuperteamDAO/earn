@@ -5,7 +5,7 @@ import {
   useQueryClient,
 } from '@tanstack/react-query';
 import { useAtom } from 'jotai';
-import React, { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 
 import { ExternalImage } from '@/components/ui/cloudinary-image';

@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 
 interface CompensationAmountType {

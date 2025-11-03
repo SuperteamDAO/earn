@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { Tooltip } from '../ui/tooltip';
 
 export const VerifiedXIcon = () => {

@@ -1,6 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 import { CheckCircle2, Send } from 'lucide-react';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { toast } from 'sonner';
 
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';

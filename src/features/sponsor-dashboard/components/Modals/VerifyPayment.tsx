@@ -1,7 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Check, CopyIcon, ExternalLink, Trash2, X } from 'lucide-react';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
@@ -107,6 +107,7 @@ export const VerifyPaymentModal = ({
     watch,
   } = form;
 
+  // eslint-disable-next-line react-hooks/incompatible-library
   const paymentLinks = watch('paymentLinks');
 
   useEffect(() => {

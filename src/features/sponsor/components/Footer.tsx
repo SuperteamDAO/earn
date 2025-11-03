@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import React from 'react';
 
 import MdOutlineMail from '@/components/icons/MdOutlineMail';
 import { SupportFormDialog } from '@/components/shared/SupportFormDialog';

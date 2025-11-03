@@ -1,7 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
+import debounce from 'lodash.debounce';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import posthog from 'posthog-js';
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { LoadingSection } from '@/components/shared/LoadingSection';
 import { UserFlag } from '@/components/shared/UserFlag';
@@ -20,7 +21,6 @@ import { localProfilesQuery } from '@/features/sponsor-dashboard/queries/local-p
 
 type SortDirection = 'asc' | 'desc' | null;
 
-const debounce = require('lodash.debounce');
 const usersPerPage = 15;
 
 export default function LocalProfiles() {
@@ -37,7 +37,17 @@ export default function LocalProfiles() {
     localProfilesQuery(user?.currentSponsor?.name || ''),
   );
 
-  const debouncedSetSearchText = useRef(debounce(setSearchText, 300)).current;
+  const debouncedSetSearchTextRef = useRef<
+    ReturnType<typeof debounce> | undefined
+  >(undefined);
+
+  useEffect(() => {
+    debouncedSetSearchTextRef.current = debounce(setSearchText, 300);
+
+    return () => {
+      debouncedSetSearchTextRef.current?.cancel();
+    };
+  }, [setSearchText]);
 
   console.log(allUsers?.[0]);
 
@@ -138,7 +148,9 @@ export default function LocalProfiles() {
         <FilterSection
           checkedItems={checkedItems}
           setCheckedItems={setCheckedItems}
-          debouncedSetSearchText={debouncedSetSearchText}
+          debouncedSetSearchText={(value: string) => {
+            debouncedSetSearchTextRef.current?.(value);
+          }}
           setCurrentPage={setCurrentPage}
           superteam={superteam as Superteam}
         />

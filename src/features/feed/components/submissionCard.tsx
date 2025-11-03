@@ -1,6 +1,6 @@
 import { Lock } from 'lucide-react';
 import Link from 'next/link';
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 import { OgImageViewer } from '@/components/shared/ogImageViewer';
 import { Avatar, AvatarImage } from '@/components/ui/avatar';

@@ -2,7 +2,7 @@ import { useLoginWithOAuth } from '@privy-io/react-auth';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { ArrowLeft } from 'lucide-react';
 import { useRouter } from 'next/router';
-import React, { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 
