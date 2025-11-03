@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/immutability */
 import { TextStyle } from '@tiptap/extension-text-style';
 import { Typography } from '@tiptap/extension-typography';
 import { Placeholder } from '@tiptap/extensions';

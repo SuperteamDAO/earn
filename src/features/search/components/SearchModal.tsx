@@ -45,11 +45,12 @@ export function SearchModal({ isOpen, onClose }: Props) {
     searchParams?.get('q') ?? '',
   );
 
-  const debouncedSetSearchTerm = useCallback(
-    debounce((value: string) => {
-      setDebouncedSearchTerm(value);
-    }, 500),
-    [],
+  const debouncedSetSearchTerm = useMemo(
+    () =>
+      debounce((value: string) => {
+        setDebouncedSearchTerm(value);
+      }, 500),
+    [setDebouncedSearchTerm],
   );
 
   useEffect(() => {
@@ -75,7 +76,7 @@ export function SearchModal({ isOpen, onClose }: Props) {
   // Makes sure that search page loads instantly and avoids initial flicker
   const prefetchSearchPageData = useCallback(
     (query: string) => {
-      router.prefetch(`/search?q=${encodeURIComponent(debouncedSearchTerm)}`);
+      router.prefetch(`/search?q=${encodeURIComponent(query)}`);
       if (query.trim()) {
         queryClient.prefetchInfiniteQuery({
           queryKey: [
@@ -102,7 +103,7 @@ export function SearchModal({ isOpen, onClose }: Props) {
         });
       }
     },
-    [queryClient, userRegion],
+    [queryClient, userRegion, router],
   );
 
   return (
