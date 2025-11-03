@@ -474,6 +474,11 @@ END)
       INSERT INTO Scouts (id, userId, listingId, dollarsEarned, 
         score, skills, invited, createdAt)
       ${selectScouts}
+      ON DUPLICATE KEY UPDATE
+        dollarsEarned = VALUES(dollarsEarned),
+        score = VALUES(score),
+        skills = VALUES(skills),
+        invited = VALUES(invited)
     `;
 
     logger.debug('Executing insert query for new scouts');

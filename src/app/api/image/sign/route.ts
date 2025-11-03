@@ -32,11 +32,7 @@ const uploadSignatureSchema = z.object({
     required_error: 'Resource type is required',
     invalid_type_error: 'Resource type must be one of: image, video, raw, auto',
   }),
-  file_size: z
-    .number()
-    .int()
-    .positive('File size must be a positive number')
-    .describe('File size in bytes'),
+  file_size: z.number().int().describe('File size in bytes'),
 });
 
 export async function POST(request: NextRequest) {
