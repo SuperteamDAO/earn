@@ -64,6 +64,7 @@ const nextConfig: NextConfig = {
     formats: ['image/avif', 'image/webp'],
   },
   experimental: {
+    turbopackFileSystemCacheForDev: true,
     optimizePackageImports: [
       '@privy-io/react-auth',
       '@privy-io/node',
