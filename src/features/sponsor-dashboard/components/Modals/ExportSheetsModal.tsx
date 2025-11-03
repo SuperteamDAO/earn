@@ -1,6 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 import { Check, ExternalLink, X } from 'lucide-react';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
@@ -28,17 +28,7 @@ export const ExportSheetsModal = ({
   );
   const [countdown, setCountdown] = useState(15);
   const [sheetUrl, setSheetUrl] = useState<string | null>(null);
-
-  // Reset state when modal opens
-  useEffect(() => {
-    if (isOpen) {
-      setStatus('loading');
-      setCountdown(15);
-      setSheetUrl(null);
-      exportMutation.reset();
-      exportMutation.mutate();
-    }
-  }, [isOpen]);
+  const hasTriggeredRef = useRef(false);
 
   const exportMutation = useMutation({
     mutationFn: async () => {
@@ -62,13 +52,28 @@ export const ExportSheetsModal = ({
     },
   });
 
-  // Countdown timer
+  useEffect(() => {
+    if (isOpen && !hasTriggeredRef.current) {
+      hasTriggeredRef.current = true;
+      // Reset state and trigger mutation when modal opens
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setStatus('loading');
+
+      setCountdown(15);
+
+      setSheetUrl(null);
+      exportMutation.reset();
+      exportMutation.mutate();
+    } else if (!isOpen) {
+      hasTriggeredRef.current = false;
+    }
+  }, [isOpen]);
+
   useEffect(() => {
     if (status !== 'loading' || !isOpen) return;
 
     const timer = setInterval(() => {
       setCountdown((prev) => {
-        // If we hit 1 second and still loading, extend by 5 seconds
         if (prev === 1 && !sheetUrl) {
           return prev + 5;
         }

@@ -2,7 +2,6 @@ import { useQuery } from '@tanstack/react-query';
 import { getImageProps } from 'next/image';
 import Link from 'next/link';
 import posthog from 'posthog-js';
-import React from 'react';
 
 import { cn } from '@/utils/cn';
 import { roundToNearestTenth, roundToNearestTenThousand } from '@/utils/number';

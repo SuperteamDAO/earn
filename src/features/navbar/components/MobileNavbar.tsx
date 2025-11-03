@@ -3,7 +3,6 @@ import { Gift, Menu } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import posthog from 'posthog-js';
-import React from 'react';
 
 import { Button } from '@/components/ui/button';
 import { LocalImage } from '@/components/ui/local-image';

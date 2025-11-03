@@ -1,6 +1,5 @@
 import { getImageProps } from 'next/image';
 import posthog from 'posthog-js';
-import React from 'react';
 
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 

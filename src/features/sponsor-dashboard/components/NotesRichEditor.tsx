@@ -30,6 +30,7 @@ const useNotesEditor = ({
   id?: string;
 }) => {
   const editor = useEditor({
+    immediatelyRender: false,
     extensions: [
       StarterKit.configure({
         bulletList: {

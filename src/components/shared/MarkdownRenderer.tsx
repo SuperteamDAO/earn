@@ -1,7 +1,6 @@
 import parse, { type HTMLReactParserOptions } from 'html-react-parser';
 import { marked } from 'marked';
-import React, { memo, useEffect, useState } from 'react';
-
+import { memo, useEffect, useState } from 'react';
 const options: HTMLReactParserOptions = {
   replace: ({ name, children, attribs }: any) => {
     if (name === 'p' && (!children || children.length === 0)) {

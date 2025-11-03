@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 
 import { ExternalImage } from '@/components/ui/cloudinary-image';
@@ -26,13 +26,34 @@ interface Props {
   isWinner?: boolean;
 }
 
+interface MenuOptionProps {
+  option: 'new' | 'popular';
+  activeMenu: 'new' | 'popular';
+  onSelect: (option: 'new' | 'popular') => void;
+}
+
+const MenuOption = ({ option, activeMenu, onSelect }: MenuOptionProps) => {
+  return (
+    <button
+      className={cn(
+        'cursor-pointer capitalize',
+        'text-sm lg:text-base',
+        activeMenu === option
+          ? 'font-semibold text-slate-700'
+          : 'font-normal text-slate-500',
+      )}
+      onClick={() => onSelect(option)}
+    >
+      {option}
+    </button>
+  );
+};
+
 export const Feed = ({ isWinner = false, id, type }: Props) => {
   const router = useRouter();
   const { query } = router;
 
-  const [activeMenu, setActiveMenu] = useState<'new' | 'popular'>(
-    (query.filter as 'new' | 'popular') || 'popular',
-  );
+  const activeMenu = (query.filter as 'new' | 'popular') || 'popular';
   const [timePeriod, setTimePeriod] = useState('This Month');
 
   const { ref, inView } = useInView();
@@ -54,40 +75,14 @@ export const Feed = ({ isWinner = false, id, type }: Props) => {
     }
   }, [inView, fetchNextPage, hasNextPage]);
 
-  useEffect(() => {
-    if (query.filter && query.filter !== activeMenu) {
-      setActiveMenu(query.filter as 'new' | 'popular');
-    }
-  }, [query]);
-
-  const updateQuery = (key: string, value: string) => {
+  const handleMenuSelect = (option: 'new' | 'popular') => {
     router.push(
       {
         pathname: router.pathname,
-        query: { ...query, [key]: value },
+        query: { ...query, filter: option },
       },
       undefined,
       { shallow: true },
-    );
-  };
-
-  const MenuOption = ({ option }: { option: 'new' | 'popular' }) => {
-    return (
-      <button
-        className={cn(
-          'cursor-pointer capitalize',
-          'text-sm lg:text-base',
-          activeMenu === option
-            ? 'font-semibold text-slate-700'
-            : 'font-normal text-slate-500',
-        )}
-        onClick={() => {
-          setActiveMenu(option);
-          updateQuery('filter', option);
-        }}
-      >
-        {option}
-      </button>
     );
   };
 
@@ -108,8 +103,16 @@ export const Feed = ({ isWinner = false, id, type }: Props) => {
         </div>
         <div className="mt-4 flex w-full items-center justify-between">
           <div className="mr-3 flex gap-3">
-            <MenuOption option="new" />
-            <MenuOption option="popular" />
+            <MenuOption
+              option="new"
+              activeMenu={activeMenu}
+              onSelect={handleMenuSelect}
+            />
+            <MenuOption
+              option="popular"
+              activeMenu={activeMenu}
+              onSelect={handleMenuSelect}
+            />
           </div>
 
           {activeMenu === 'popular' && (

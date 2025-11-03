@@ -1,6 +1,6 @@
 import type { GetServerSideProps } from 'next';
 import posthog from 'posthog-js';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { GrantPageLayout } from '@/layouts/Grants';
 import { api } from '@/lib/api';

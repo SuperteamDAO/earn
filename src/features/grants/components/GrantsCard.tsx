@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import React from 'react';
 
 import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
 import { LocalImage } from '@/components/ui/local-image';

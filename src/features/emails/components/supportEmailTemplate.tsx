@@ -1,5 +1,4 @@
 import parse from 'html-react-parser';
-import React from 'react';
 
 import { domPurify } from '@/lib/domPurify';
 

@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { PDTG } from '@/constants/Telegram';
 
 import { styles } from '../utils/styles';

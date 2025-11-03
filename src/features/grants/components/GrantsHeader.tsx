@@ -1,7 +1,6 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import posthog from 'posthog-js';
-import React from 'react';
 
 import BsFillCircleFill from '@/components/icons/BsFillCircleFill';
 import { VerifiedBadge } from '@/components/shared/VerifiedBadge';

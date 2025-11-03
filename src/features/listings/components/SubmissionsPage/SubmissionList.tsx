@@ -1,4 +1,4 @@
-import React, { type Dispatch, type SetStateAction } from 'react';
+import { type Dispatch, type SetStateAction, useEffect, useState } from 'react';
 
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 import type { SubmissionWithUser } from '@/interface/submission';
@@ -19,9 +19,15 @@ export const SubmissionList = ({
   endTime,
   setUpdate,
 }: Props) => {
+  const [isEndTimePassed, setIsEndTimePassed] = useState(false);
+
+  useEffect(() => {
+    setIsEndTimePassed(dayjs(endTime).valueOf() < Date.now());
+  }, [endTime]);
+
   return (
     <div className="mt-4 flex min-h-screen w-full flex-col items-center md:items-start">
-      {dayjs(endTime).valueOf() < Date.now() ? (
+      {isEndTimePassed ? (
         <div className="mx-auto flex w-full max-w-7xl flex-col items-start gap-2">
           <div className="grid w-full grid-cols-1 gap-5 px-3 md:grid-cols-2 md:gap-20 md:px-6 xl:grid-cols-3">
             {submissions?.map((submission) => {

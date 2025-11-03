@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { RegionCombobox } from '@/components/shared/RegionCombobox';
 import {
   FormControl,

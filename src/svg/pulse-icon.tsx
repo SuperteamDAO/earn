@@ -1,5 +1,3 @@
-import React from 'react';
-
 interface PulseIconProps {
   bg: string;
   text: string;

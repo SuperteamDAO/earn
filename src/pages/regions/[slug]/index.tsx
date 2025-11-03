@@ -1,5 +1,4 @@
 import type { NextPageContext } from 'next';
-import React from 'react';
 
 import { type Superteam, Superteams } from '@/constants/Superteam';
 import { Home } from '@/layouts/Home';

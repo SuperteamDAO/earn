@@ -3,7 +3,7 @@ import { useSetAtom } from 'jotai';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import posthog from 'posthog-js';
-import React, { type Dispatch, type SetStateAction, useState } from 'react';
+import { type Dispatch, type SetStateAction, useState } from 'react';
 
 import MdOutlineEmail from '@/components/icons/MdOutlineEmail';
 import { Button } from '@/components/ui/button';

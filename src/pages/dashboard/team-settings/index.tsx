@@ -1,7 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import debounce from 'lodash.debounce';
 import { ChevronLeft, ChevronRight, Copy, Plus, Search, X } from 'lucide-react';
 import posthog from 'posthog-js';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
 import { ErrorSection } from '@/components/shared/ErrorSection';
@@ -33,8 +34,6 @@ import { InviteMembers } from '@/features/sponsor-dashboard/components/Members/I
 import { membersQuery } from '@/features/sponsor-dashboard/queries/members';
 import { sponsorStatsQuery } from '@/features/sponsor-dashboard/queries/sponsor-stats';
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
-
-const debounce = require('lodash.debounce');
 
 const roleStyles: Record<
   Role,
@@ -69,7 +68,17 @@ const Index = () => {
 
   const queryClient = useQueryClient();
 
-  const debouncedSetSearchText = useRef(debounce(setSearchText, 300)).current;
+  const debouncedSetSearchTextRef = useRef<
+    ReturnType<typeof debounce> | undefined
+  >(undefined);
+
+  useEffect(() => {
+    debouncedSetSearchTextRef.current = debounce(setSearchText, 300);
+
+    return () => {
+      debouncedSetSearchTextRef.current?.cancel();
+    };
+  }, [setSearchText]);
 
   useEffect(() => {
     posthog.capture('members tab_sponsor');
@@ -170,7 +179,9 @@ const Index = () => {
             <Search className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-slate-400" />
             <Input
               className="placeholder:text-md focus-visible:ring-brand-purple h-9 border-slate-200 bg-white pl-9 placeholder:font-medium placeholder:text-slate-400"
-              onChange={(e) => debouncedSetSearchText(e.target.value)}
+              onChange={(e) => {
+                debouncedSetSearchTextRef.current?.(e.target.value);
+              }}
               placeholder="Search members..."
               type="text"
             />

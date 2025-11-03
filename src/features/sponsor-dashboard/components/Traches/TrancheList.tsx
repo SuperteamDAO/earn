@@ -1,7 +1,7 @@
 import { useAtom } from 'jotai';
 import debounce from 'lodash.debounce';
 import { Search } from 'lucide-react';
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 
 import { Input } from '@/components/ui/input';
 import { StatusPill } from '@/components/ui/status-pill';
@@ -32,16 +32,20 @@ export const TrancheList = ({
   selectedFilters,
   onFilterChange,
 }: Props) => {
-  const debouncedSetSearchText = useRef(debounce(setSearchText, 300)).current;
+  const debouncedSetSearchTextRef = useRef<
+    ReturnType<typeof debounce> | undefined
+  >(undefined);
   const [selectedTranche, setSelectedTranche] = useAtom(
     selectedGrantTrancheAtom,
   );
 
   useEffect(() => {
+    debouncedSetSearchTextRef.current = debounce(setSearchText, 300);
+
     return () => {
-      debouncedSetSearchText.cancel();
+      debouncedSetSearchTextRef.current?.cancel();
     };
-  }, [debouncedSetSearchText]);
+  }, [setSearchText]);
 
   return (
     <div className="h-full w-full rounded-l-lg border border-slate-200 bg-white">
@@ -50,7 +54,9 @@ export const TrancheList = ({
           <Search className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-slate-400" />
           <Input
             className="placeholder:text-md focus-visible:ring-brand-purple h-10 border-slate-200 bg-white pl-9 placeholder:font-medium placeholder:text-slate-400"
-            onChange={(e) => debouncedSetSearchText(e.target.value)}
+            onChange={(e) => {
+              debouncedSetSearchTextRef.current?.(e.target.value);
+            }}
             placeholder="Search Tranche Requests"
             type="text"
           />

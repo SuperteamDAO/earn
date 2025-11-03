@@ -1,5 +1,5 @@
 import posthog from 'posthog-js';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';

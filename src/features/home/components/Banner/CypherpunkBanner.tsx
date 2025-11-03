@@ -2,7 +2,6 @@ import { useQuery } from '@tanstack/react-query';
 import { getImageProps } from 'next/image';
 import Link from 'next/link';
 import posthog from 'posthog-js';
-import React from 'react';
 
 import { statsDataQuery } from '@/queries/hackathon';
 import { CypherpunkLogo } from '@/svg/cypherpunk-logo';

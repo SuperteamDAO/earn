@@ -1,6 +1,6 @@
 import { X } from 'lucide-react';
 import posthog from 'posthog-js';
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';

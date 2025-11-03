@@ -1,5 +1,4 @@
 import { Check } from 'lucide-react';
-import React from 'react';
 
 import { AspectRatio } from '@/components/ui/aspect-ratio';
 import { ExternalImage } from '@/components/ui/cloudinary-image';

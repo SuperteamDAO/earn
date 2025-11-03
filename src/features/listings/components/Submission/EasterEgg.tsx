@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import Pride from 'react-canvas-confetti/dist/presets/pride';
 import type { TDecorateOptionsFn } from 'react-canvas-confetti/dist/types';
 
