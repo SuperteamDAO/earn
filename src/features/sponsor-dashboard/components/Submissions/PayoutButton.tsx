@@ -20,7 +20,7 @@ import { Loader2 } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import { log } from 'next-axiom';
 import posthog from 'posthog-js';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { toast } from 'sonner';
 
 import {
@@ -481,13 +481,13 @@ export const PayoutButton = ({ bounty, submission }: Props) => {
           break;
         case 'insufficient-funds':
           toast.error(
-            `Insufficient ${bounty?.token} balance. Please add funds to your wallet and try again.`,
+            `Insufficient ${bounty?.token} or SOL balance. Please add funds to your wallet and try again.`,
           );
           setIsPaying(false);
           break;
         case 'token-not-available':
           toast.error(
-            `${bounty?.token} not available in wallet. Please add ${bounty?.token} to your wallet and try again.`,
+            `Insufficient ${bounty?.token} or SOL balance. Please add funds to your wallet and try again.`,
           );
           setIsPaying(false);
           break;
