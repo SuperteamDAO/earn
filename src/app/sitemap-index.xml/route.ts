@@ -23,12 +23,14 @@ function escapeXml(text: string): string {
 }
 
 function buildSitemapIndex(sitemapUrls: string[]): string {
+  const lastMod = new Date().toISOString();
   let xml = '<?xml version="1.0" encoding="UTF-8"?>\n';
   xml += '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n';
 
   for (const sitemapUrl of sitemapUrls) {
     xml += '  <sitemap>\n';
     xml += `    <loc>${escapeXml(sitemapUrl)}</loc>\n`;
+    xml += `    <lastmod>${lastMod}</lastmod>\n`;
     xml += '  </sitemap>\n';
   }
 
@@ -44,7 +46,8 @@ export async function GET(): Promise<NextResponse> {
         '<?xml version="1.0" encoding="UTF-8"?>\n<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"></sitemapindex>',
         {
           headers: {
-            'Content-Type': 'application/xml',
+            'Content-Type': 'application/xml; charset=UTF-8',
+            'Cache-Control': 'public, max-age=3600, s-maxage=3600',
           },
         },
       );
@@ -65,8 +68,9 @@ export async function GET(): Promise<NextResponse> {
 
     return new NextResponse(sitemapIndexXML, {
       headers: {
-        'Content-Type': 'application/xml',
+        'Content-Type': 'application/xml; charset=UTF-8',
         'Content-Length': Buffer.byteLength(sitemapIndexXML).toString(),
+        'Cache-Control': 'public, max-age=3600, s-maxage=3600',
       },
     });
   } catch (error) {
