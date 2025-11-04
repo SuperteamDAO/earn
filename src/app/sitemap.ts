@@ -188,11 +188,16 @@ export default async function sitemap({
     return [];
   }
 
+  const sitemapId = typeof id === 'string' ? parseInt(id, 10) : id;
+
   const boundaries = await getSitemapBoundaries();
 
   // Listings
-  if (id >= boundaries.listingsStart && id < boundaries.listingsEnd) {
-    const sitemapIndex = id - boundaries.listingsStart;
+  if (
+    sitemapId >= boundaries.listingsStart &&
+    sitemapId < boundaries.listingsEnd
+  ) {
+    const sitemapIndex = sitemapId - boundaries.listingsStart;
     const offset = sitemapIndex * MAX_URLS_PER_SITEMAP;
     const listings = await prisma.bounties.findMany({
       where: {
@@ -223,8 +228,11 @@ export default async function sitemap({
   }
 
   // Sponsors
-  if (id >= boundaries.sponsorsStart && id < boundaries.sponsorsEnd) {
-    const sitemapIndex = id - boundaries.sponsorsStart;
+  if (
+    sitemapId >= boundaries.sponsorsStart &&
+    sitemapId < boundaries.sponsorsEnd
+  ) {
+    const sitemapIndex = sitemapId - boundaries.sponsorsStart;
     const offset = sitemapIndex * MAX_URLS_PER_SITEMAP;
     const sponsors = await prisma.sponsors.findMany({
       where: {
@@ -251,8 +259,8 @@ export default async function sitemap({
   }
 
   // Grants
-  if (id >= boundaries.grantsStart && id < boundaries.grantsEnd) {
-    const sitemapIndex = id - boundaries.grantsStart;
+  if (sitemapId >= boundaries.grantsStart && sitemapId < boundaries.grantsEnd) {
+    const sitemapIndex = sitemapId - boundaries.grantsStart;
     const offset = sitemapIndex * MAX_URLS_PER_SITEMAP;
     const grants = await prisma.grants.findMany({
       where: {
@@ -314,8 +322,16 @@ export default async function sitemap({
   // }
 
   // Regions
-  if (id === boundaries.regionsId) {
-    return Superteams.map((region): MetadataRoute.Sitemap[number] => ({
+  if (sitemapId === boundaries.regionsId) {
+    const regionsWithSlugs = Superteams.filter(
+      (region) => region?.slug && typeof region.slug === 'string',
+    );
+
+    if (regionsWithSlugs.length === 0) {
+      return [];
+    }
+
+    return regionsWithSlugs.map((region): MetadataRoute.Sitemap[number] => ({
       url: `${baseUrl}/regions/${region.slug}/`,
       lastModified: now,
       changeFrequency: 'weekly',
