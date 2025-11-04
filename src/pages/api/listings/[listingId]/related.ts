@@ -47,7 +47,11 @@ export default async function relatedListings(
       return res.status(404).json({ error: 'Listing not found' });
     }
 
-    const listingSkills = listing.skills as Skills;
+    const listingSkills = (listing.skills as Skills) ?? [];
+    if (listingSkills.length === 0) {
+      return res.status(200).json([]);
+    }
+
     const devSkills = ['Frontend', 'Backend', 'Blockchain', 'Mobile'];
     const isDevListing = listingSkills.some((skill) =>
       devSkills.includes(skill.skills),

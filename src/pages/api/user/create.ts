@@ -2,6 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { PrismaClientKnownRequestError } from '@/prisma/internal/prismaNamespace';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { getPrivyToken } from '@/features/auth/utils/getPrivyToken';
@@ -26,7 +27,7 @@ export default async function createUser(
       return res.status(401).json({ error: 'Unauthorized' });
     }
 
-    const normalizedEmail = email.toLowerCase();
+    const normalizedEmail = email.trim().toLowerCase();
 
     const existingUserByEmail = await prisma.user.findUnique({
       where: { email: normalizedEmail },
@@ -43,16 +44,34 @@ export default async function createUser(
       });
     }
 
-    const user = await prisma.user.create({
-      data: { privyDid, email: normalizedEmail },
-      select: { id: true },
-    });
+    try {
+      const user = await prisma.user.create({
+        data: { privyDid, email: normalizedEmail },
+        select: { id: true },
+      });
 
-    logger.info(`Created new user with ID: ${user.id}`);
-    return res.status(201).json({
-      message: `Created new user with ID: ${user.id}`,
-      created: true,
-    });
+      logger.info(`Created new user with ID: ${user.id}`);
+      return res.status(201).json({
+        message: `Created new user with ID: ${user.id}`,
+        created: true,
+      });
+    } catch (createError: unknown) {
+      if (
+        createError instanceof PrismaClientKnownRequestError &&
+        createError.code === 'P2002'
+      ) {
+        logger.warn(
+          `User creation prevented due to existing email ${normalizedEmail}`,
+        );
+
+        return res.status(409).json({
+          error:
+            'User with this email already exists with different authentication method',
+        });
+      }
+
+      throw createError;
+    }
   } catch (error: any) {
     logger.error(
       `Error occurred while creating/checking user: ${safeStringify(error)}`,
