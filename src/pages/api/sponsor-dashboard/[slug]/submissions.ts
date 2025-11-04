@@ -78,7 +78,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
     const submissions = query.map((submission) => {
       const listingWinnings = submission.user.Submission.filter(
-        (s) => s.isWinner && s.listing.isWinnersAnnounced,
+        (s) => s.isWinner && s.listing?.isWinnersAnnounced,
       ).reduce((sum, submission) => sum + (submission.rewardInUSD || 0), 0);
 
       const grantWinnings = submission.user.GrantApplication.filter(
