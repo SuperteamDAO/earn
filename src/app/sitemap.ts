@@ -6,7 +6,7 @@ import { prisma } from '@/prisma';
 const baseUrl = 'https://earn.superteam.fun';
 const MAX_URLS_PER_SITEMAP = 50000;
 
-export const revalidate = 259200; // 3 days
+export const revalidate = 86400; // 1 day
 
 function isProduction(): boolean {
   return process.env.NEXT_PUBLIC_VERCEL_ENV === 'production';
