@@ -1,16 +1,15 @@
-import type { GetServerSideProps, NextPage } from 'next';
+import type { NextPage } from 'next';
+import { useRouter } from 'next/router';
+import { useEffect } from 'react';
 
 const ProjectsPage: NextPage = () => {
-  return null;
-};
+  const router = useRouter();
 
-export const getServerSideProps: GetServerSideProps = async () => {
-  return {
-    redirect: {
-      destination: `/all/?tab=projects`,
-      permanent: false,
-    },
-  };
+  useEffect(() => {
+    router.replace('/all/?tab=projects');
+  }, [router]);
+
+  return null;
 };
 
 export default ProjectsPage;

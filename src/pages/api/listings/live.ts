@@ -5,6 +5,7 @@ import { prisma } from '@/prisma';
 import { type EnumBountyTypeFilter } from '@/prisma/commonInputTypes';
 import { type BountyType } from '@/prisma/enums';
 import { type BountiesFindManyArgs } from '@/prisma/models/Bounties';
+import { setCacheHeaders } from '@/utils/cacheControl';
 
 import { getPrivyToken } from '@/features/auth/utils/getPrivyToken';
 import { listingSelect } from '@/features/listings/constants/schema';
@@ -75,6 +76,17 @@ export default async function listings(
 
   try {
     const listings = await prisma.bounties.findMany(listingQueryOptions);
+
+    // Apply conditional caching: only cache for unauthenticated users
+    if (!privyDid) {
+      setCacheHeaders(res, {
+        public: true,
+        maxAge: 5 * 60, // 5 minutes for authenticated users
+        sMaxAge: 5 * 60,
+        staleWhileRevalidate: 60, // 1 minute
+      });
+    }
+
     res.status(200).json(listings);
   } catch (error) {
     logger.error(error);

@@ -1,9 +1,19 @@
+import dynamic from 'next/dynamic';
 import React from 'react';
 import { type Control, type FieldValues, type Path } from 'react-hook-form';
 
 import { cn } from '@/utils/cn';
 
-import { RichEditor } from '../shared/RichEditor';
+const RichEditor = dynamic(
+  () =>
+    import('../shared/RichEditor').then((mod) => ({ default: mod.RichEditor })),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="bg-muted h-40 w-full animate-pulse rounded-md" />
+    ),
+  },
+);
 import {
   FormControl,
   FormDescription,

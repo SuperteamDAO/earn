@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAtom, useSetAtom } from 'jotai';
 import debounce from 'lodash.debounce';
 import { Loader2 } from 'lucide-react';
+import dynamic from 'next/dynamic';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { type SubmissionWithUser } from '@/interface/submission';
@@ -13,7 +14,19 @@ import { type ProjectApplicationAi } from '@/features/listings/types';
 
 import { isStateUpdatingAtom, selectedSubmissionAtom } from '../../atoms';
 import { getTextCharacterCount } from '../../utils/convertTextToNotesHTML';
-import { NotesRichEditor } from '../NotesRichEditor';
+
+const NotesRichEditor = dynamic(
+  () =>
+    import('../NotesRichEditor').then((mod) => ({
+      default: mod.NotesRichEditor,
+    })),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="bg-muted h-40 w-full animate-pulse rounded-md" />
+    ),
+  },
+);
 
 const MAX_CHARACTERS = 1000;
 

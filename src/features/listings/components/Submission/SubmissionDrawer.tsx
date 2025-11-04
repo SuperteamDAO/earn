@@ -2,6 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { X } from 'lucide-react';
+import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import posthog from 'posthog-js';
 import { type JSX, useEffect, useMemo, useState } from 'react';
@@ -10,7 +11,19 @@ import { toast } from 'sonner';
 import { type z } from 'zod';
 
 import { VerifiedXIcon } from '@/components/icons/VerifiedXIcon';
-import { RichEditor } from '@/components/shared/RichEditor';
+
+const RichEditor = dynamic(
+  () =>
+    import('@/components/shared/RichEditor').then((mod) => ({
+      default: mod.RichEditor,
+    })),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="bg-muted h-40 w-full animate-pulse rounded-md" />
+    ),
+  },
+);
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
