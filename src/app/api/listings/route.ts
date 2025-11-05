@@ -79,11 +79,19 @@ export async function GET(request: NextRequest) {
 
     const reorderedListings = reorderFeaturedOngoing(listings);
 
+    const isBookmarksContext = queryData.context === 'bookmarks';
+    const headersInit = isBookmarksContext
+      ? {
+          'Cache-Control': 'private, no-store',
+          Vary: 'Cookie',
+        }
+      : {
+          'Cache-Control': 'private, max-age=300, stale-while-revalidate=600',
+          Vary: 'Cookie',
+        };
+
     return NextResponse.json(reorderedListings, {
-      headers: {
-        'Cache-Control': 'private, max-age=300, stale-while-revalidate=600',
-        Vary: 'Cookie',
-      },
+      headers: headersInit,
     });
   } catch (error) {
     console.error('Error in API handler:', error);
