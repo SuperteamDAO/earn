@@ -15,6 +15,7 @@ import { PaymentPendingBanner } from './PaymentPendingBanner';
 import { ReviewAiBanner } from './ReviewAiBanner';
 import { ReviewBanner } from './ReviewBanner';
 import { ReviewUrgentBanner } from './ReviewUrgentBanner';
+import { UnderVerificationBanner } from './UnderVerificationBanner';
 
 export function SponsorStageBanner() {
   const isLg = useBreakpoint('lg');
@@ -51,6 +52,9 @@ export function SponsorStageBanner() {
 
     case SponsorStage.PAYMENT_PENDING:
       return listing ? <PaymentPendingBanner listing={listing} /> : null;
+
+    case SponsorStage.UNDER_VERIFICATION:
+      return listing ? <UnderVerificationBanner listing={listing} /> : null;
 
     case SponsorStage.NEXT_LISTING:
       return <NextListingBanner />;

@@ -72,7 +72,7 @@ export function SponsorStageSnackbar() {
           Please complete your payment or add your payment links for your latest
           bounty
         </p>
-        <ArrowUpRight className="size-4 flex-shrink-0" />
+        <ArrowUpRight className="size-4 shrink-0" />
       </Link>
     );
   }
@@ -131,7 +131,7 @@ export function SponsorStageSnackbar() {
         winners before{' '}
         <span className="font-bold">{commitmentDateFormatted}</span>
       </p>
-      <ArrowUpRight className="size-4 flex-shrink-0" />
+      <ArrowUpRight className="size-4 shrink-0" />
     </Link>
   );
 }

@@ -52,7 +52,7 @@ export const AddListingCard = ({
                 {sponsorName}
               </p>
             )}
-            <div className="mt-[1px] flex items-center gap-1 sm:gap-2">
+            <div className="mt-px flex items-center gap-1 sm:gap-2">
               <div className="flex items-center gap-1">
                 {getListingIcon(listingType)}
                 <p className="hidden text-xs font-medium text-gray-500 sm:flex">

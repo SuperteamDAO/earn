@@ -174,6 +174,16 @@ export function SponsorListing() {
             className="flex gap-3 border-gray-100 p-4 pt-6"
             onClick={(e) => e.stopPropagation()}
           >
+            {data.stage === SponsorStage.UNDER_VERIFICATION && (
+              <Button
+                variant="outline"
+                className="flex-1 border-gray-200 text-indigo-600 hover:bg-indigo-50 hover:text-indigo-700"
+                asChild
+              >
+                <Link href="/dashboard/listings">View Dashboard</Link>
+              </Button>
+            )}
+
             {data.stage === SponsorStage.BOOST && (
               <>
                 <Button

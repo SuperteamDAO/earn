@@ -280,7 +280,7 @@ export const ListingsSection = ({
         <div
           className={cn(
             'pointer-events-none absolute top-0 bottom-0 left-0 z-10 w-8',
-            'bg-gradient-to-r from-white/80 via-white/30 to-transparent',
+            'bg-linear-to-r from-white/80 via-white/30 to-transparent',
             'transition-opacity duration-300 ease-in-out',
             showLeftShadow ? 'opacity-100' : 'opacity-0',
           )}
@@ -334,7 +334,7 @@ export const ListingsSection = ({
         <div
           className={cn(
             'pointer-events-none absolute top-0 right-0 bottom-0 z-10 w-8',
-            'bg-gradient-to-l from-white/80 via-white/30 to-transparent',
+            'bg-linear-to-l from-white/80 via-white/30 to-transparent',
             'transition-opacity duration-300 ease-in-out',
             showRightShadow ? 'opacity-100' : 'opacity-0',
           )}

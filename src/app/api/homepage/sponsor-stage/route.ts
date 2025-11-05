@@ -112,7 +112,8 @@ function determineSponsorStage(
   if (
     listing.isWinnersAnnounced &&
     listing.type === 'bounty' &&
-    hasUnpaidWinners
+    hasUnpaidWinners &&
+    !listing.isFndnPaying
   ) {
     const announceDate = listing.winnersAnnouncedAt
       ? dayjs(listing.winnersAnnouncedAt)
@@ -136,6 +137,18 @@ function determineSponsorStage(
     } else {
       return { stage: SponsorStage.REVIEW, sortDate: deadline.toDate() };
     }
+  }
+
+  if (listing.status === 'VERIFYING') {
+    const verificationDate = listing.publishedAt
+      ? dayjs(listing.publishedAt)
+      : listing.updatedAt
+        ? dayjs(listing.updatedAt)
+        : now;
+    return {
+      stage: SponsorStage.UNDER_VERIFICATION,
+      sortDate: verificationDate.toDate(),
+    };
   }
 
   const isActiveListing =
@@ -216,8 +229,9 @@ function applyPriorityAndTiebreaker(
     [SponsorStage.REVIEW]: 4,
     [SponsorStage.BOOST]: 5,
     [SponsorStage.BOOSTED]: 6,
-    [SponsorStage.NEXT_LISTING]: 7,
-    [SponsorStage.NEW_SPONSOR]: 8,
+    [SponsorStage.UNDER_VERIFICATION]: 7,
+    [SponsorStage.NEXT_LISTING]: 8,
+    [SponsorStage.NEW_SPONSOR]: 9,
   };
 
   const showOldestFirst: Record<SponsorStage, boolean> = {
@@ -227,6 +241,7 @@ function applyPriorityAndTiebreaker(
     [SponsorStage.REVIEW]: true,
     [SponsorStage.BOOST]: false,
     [SponsorStage.BOOSTED]: false,
+    [SponsorStage.UNDER_VERIFICATION]: false,
     [SponsorStage.NEXT_LISTING]: false,
     [SponsorStage.NEW_SPONSOR]: false,
   };
@@ -346,9 +361,16 @@ export async function GET(_request: NextRequest) {
     const listings = await prisma.bounties.findMany({
       where: {
         sponsorId: user.currentSponsorId,
-        status: 'OPEN',
-        isPublished: true,
-        isActive: true,
+        OR: [
+          {
+            status: 'OPEN',
+            isPublished: true,
+            isActive: true,
+          },
+          {
+            status: 'VERIFYING',
+          },
+        ],
       },
       select: listingSelectForStage,
     });

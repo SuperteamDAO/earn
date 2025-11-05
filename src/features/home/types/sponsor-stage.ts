@@ -9,6 +9,7 @@ export enum SponsorStage {
   REVIEW_URGENT = 'REVIEW_URGENT',
   PAYMENT_PENDING = 'PAYMENT_PENDING',
   NEXT_LISTING = 'NEXT_LISTING',
+  UNDER_VERIFICATION = 'UNDER_VERIFICATION',
 }
 
 export interface SponsorStageResponse {
