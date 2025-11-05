@@ -21,15 +21,15 @@ interface Feature {
 const features: Feature[] = [
   {
     imageLink:
-      'https://res.cloudinary.com/dgvnuwspr/image/upload/v1761660567/assets/home/sponsor-stages/generate-with-ai.webp',
+      'https://res.cloudinary.com/dgvnuwspr/image/upload/v1750244098/assets/announcements/auto-generate.webp',
     title: 'AI Generate',
     subtext:
       'Go from idea prompt to a full fledged listing in under two minutes',
-    ctaLink: 'https://x.com/SuperteamEarn/status/1948718195214581841',
+    ctaLink: 'https://x.com/SuperteamEarn/status/1920451822965436468',
   },
   {
     imageLink:
-      'https://res.cloudinary.com/dgvnuwspr/image/upload/v1761660567/assets/home/sponsor-stages/generate-with-ai.webp',
+      'https://res.cloudinary.com/dgvnuwspr/image/upload/v1762377712/assets/home/sponsor-stages/ai-review-feature.webp',
     title: 'AI Review',
     subtext:
       'Save hours in time reviewing by using our reliable AI Review agent',
@@ -37,11 +37,11 @@ const features: Feature[] = [
   },
   {
     imageLink:
-      'https://res.cloudinary.com/dgvnuwspr/image/upload/v1761660567/assets/home/sponsor-stages/generate-with-ai.webp',
+      'https://res.cloudinary.com/dgvnuwspr/image/upload/v1762377726/assets/home/sponsor-stages/boost-feature.webp',
     title: 'Boost',
     subtext:
       'Get more eyeballs to your Earn listing by increasing your bounty rewards',
-    ctaLink: 'https://x.com/SuperteamEarn/status/1948718195214581841',
+    ctaLink: 'https://x.com/SuperteamEarn/status/1984248796155699506',
   },
 ];
 
@@ -70,13 +70,13 @@ export function SponsorFeatures() {
           {features.map((feature, index) => (
             <CarouselItem key={index}>
               <div className="rounded-lg border bg-white">
-                <div className="rounded-lg bg-slate-100 p-8">
-                  <div className="relative aspect-[16/6] w-full overflow-hidden rounded-lg">
+                <div className="rounded-lg bg-slate-100">
+                  <div className="relative aspect-16/6 w-full overflow-hidden rounded-lg rounded-b-none">
                     <Image
                       src={feature.imageLink}
                       alt={feature.title}
                       fill
-                      className="object-contain"
+                      className="object-cover"
                     />
                   </div>
                 </div>
