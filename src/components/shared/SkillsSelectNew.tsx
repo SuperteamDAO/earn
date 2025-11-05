@@ -81,32 +81,17 @@ export const SkillsSelect = React.forwardRef<MultiSelectRef, SkillsSelectProps>(
     );
     const [logicSkills, setLogicSkills] = React.useState<Skills>(defaultValue);
 
-    const options: Option[] = [];
+    const getSelectableOptions = React.useMemo(() => {
+      const options: Option[] = [];
 
-    SELECTABLE_PARENTS.forEach((parent) => {
-      options.push({
-        label: parent,
-        value: `parent:${parent}`,
-        group: 'Dev Skills',
-      });
+      SELECTABLE_PARENTS.forEach((parent) => {
+        options.push({
+          label: parent,
+          value: `parent:${parent}`,
+          group: 'Dev Skills',
+        });
 
-      skillSubSkillMap[parent].forEach(({ label, value }) => {
-        if (value !== 'Other') {
-          options.push({
-            label,
-            value: `${parent}:${value}`,
-            group: parent,
-          });
-        }
-      });
-    });
-
-    Object.entries(skillSubSkillMap).forEach(([parent, subskills]) => {
-      if (
-        !SELECTABLE_PARENTS.includes(parent as SelectableParent) &&
-        parent !== 'Other'
-      ) {
-        subskills.forEach(({ label, value }) => {
+        skillSubSkillMap[parent].forEach(({ label, value }) => {
           if (value !== 'Other') {
             options.push({
               label,
@@ -115,65 +100,85 @@ export const SkillsSelect = React.forwardRef<MultiSelectRef, SkillsSelectProps>(
             });
           }
         });
-      }
-    });
-
-    skillSubSkillMap.Other.forEach(({ label, value }) => {
-      options.push({
-        label,
-        value: `Other:${value}`,
-        group: 'Other Skills',
       });
-    });
 
-    const getSelectableOptions = options;
-
-    const transformToBackendSkills = (options: Option[]): Skills => {
-      const skillMap = new Map<ParentSkills, Set<SubSkillsType>>();
-      const parentSkills = new Set<ParentSkills>();
-
-      options.forEach((option) => {
-        const [prefix, value] = option.value.split(':');
-
-        if (prefix === 'parent') {
-          const isSelectableParent = SELECTABLE_PARENTS.includes(
-            value as SelectableParent,
-          );
-          if (isSelectableParent) {
-            parentSkills.add(value as ParentSkills);
-            if (!skillMap.has(value as ParentSkills)) {
-              skillMap.set(value as ParentSkills, new Set());
+      Object.entries(skillSubSkillMap).forEach(([parent, subskills]) => {
+        if (
+          !SELECTABLE_PARENTS.includes(parent as SelectableParent) &&
+          parent !== 'Other'
+        ) {
+          subskills.forEach(({ label, value }) => {
+            if (value !== 'Other') {
+              options.push({
+                label,
+                value: `${parent}:${value}`,
+                group: parent,
+              });
             }
-          }
-        } else {
-          const parentSkill = prefix as ParentSkills;
-          if (!skillMap.has(parentSkill)) {
-            skillMap.set(parentSkill, new Set());
-          }
-          skillMap.get(parentSkill)?.add(value as SubSkillsType);
-
-          // Auto-add parent in backend state
-          if (
-            SELECTABLE_PARENTS.includes(parentSkill as SelectableParent) &&
-            !parentSkills.has(parentSkill)
-          ) {
-            parentSkills.add(parentSkill);
-          }
-        }
-      });
-
-      const skills: Skills = [];
-      skillMap.forEach((subskills, parentSkill) => {
-        if (subskills.size > 0 || parentSkills.has(parentSkill)) {
-          skills.push({
-            skills: parentSkill,
-            subskills: Array.from(subskills),
           });
         }
       });
 
-      return skills;
-    };
+      skillSubSkillMap.Other.forEach(({ label, value }) => {
+        options.push({
+          label,
+          value: `Other:${value}`,
+          group: 'Other Skills',
+        });
+      });
+
+      return options;
+    }, []);
+
+    const transformToBackendSkills = React.useCallback(
+      (options: Option[]): Skills => {
+        const skillMap = new Map<ParentSkills, Set<SubSkillsType>>();
+        const parentSkills = new Set<ParentSkills>();
+
+        options.forEach((option) => {
+          const [prefix, value] = option.value.split(':');
+
+          if (prefix === 'parent') {
+            const isSelectableParent = SELECTABLE_PARENTS.includes(
+              value as SelectableParent,
+            );
+            if (isSelectableParent) {
+              parentSkills.add(value as ParentSkills);
+              if (!skillMap.has(value as ParentSkills)) {
+                skillMap.set(value as ParentSkills, new Set());
+              }
+            }
+          } else {
+            const parentSkill = prefix as ParentSkills;
+            if (!skillMap.has(parentSkill)) {
+              skillMap.set(parentSkill, new Set());
+            }
+            skillMap.get(parentSkill)?.add(value as SubSkillsType);
+
+            // Auto-add parent in backend state
+            if (
+              SELECTABLE_PARENTS.includes(parentSkill as SelectableParent) &&
+              !parentSkills.has(parentSkill)
+            ) {
+              parentSkills.add(parentSkill);
+            }
+          }
+        });
+
+        const skills: Skills = [];
+        skillMap.forEach((subskills, parentSkill) => {
+          if (subskills.size > 0 || parentSkills.has(parentSkill)) {
+            skills.push({
+              skills: parentSkill,
+              subskills: Array.from(subskills),
+            });
+          }
+        });
+
+        return skills;
+      },
+      [],
+    );
 
     const handleChange = (options: Option[]) => {
       setUiSkills(options);
@@ -186,7 +191,7 @@ export const SkillsSelect = React.forwardRef<MultiSelectRef, SkillsSelectProps>(
       handleChange([...uiSkills, suggestion]);
     };
 
-    const getSuggestions = (): Option[] => {
+    const getSuggestions = React.useCallback((): Option[] => {
       const suggestions: Option[] = [];
       const selectedValues = new Set(uiSkills.map((opt) => opt.value));
 
@@ -284,9 +289,9 @@ export const SkillsSelect = React.forwardRef<MultiSelectRef, SkillsSelectProps>(
       });
 
       return suggestions;
-    };
+    }, [logicSkills, uiSkills, maxSuggestions]);
 
-    const suggestions = getSuggestions();
+    const suggestions = React.useMemo(() => getSuggestions(), [getSuggestions]);
 
     const formContext = useFormContext();
     return (

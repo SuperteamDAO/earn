@@ -1,5 +1,5 @@
 import posthog from 'posthog-js';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -73,7 +73,7 @@ export const CommentForm = ({
     addNewComment();
   };
 
-  const canComment = () => {
+  const canComment = useCallback(() => {
     if (!user) {
       return false;
     }
@@ -81,17 +81,20 @@ export const CommentForm = ({
     const isSponsor = !!user.currentSponsorId;
     const isTalentFilled = !!user.isTalentFilled;
     return isTalentFilled || isSponsor;
-  };
+  }, [user]);
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (newComment && e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
-      e.preventDefault();
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (newComment && e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault();
 
-      if (canComment() && !isTemplate && !isDisabled) {
-        handleSubmit();
+        if (canComment() && !isTemplate && !isDisabled) {
+          handleSubmit();
+        }
       }
-    }
-  };
+    },
+    [newComment, canComment, isTemplate, isDisabled, handleSubmit],
+  );
 
   useEffect(() => {
     const comment = localStorage.getItem(`comment-${refId}`);

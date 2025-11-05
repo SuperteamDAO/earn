@@ -1,5 +1,5 @@
 import { Check, ChevronsUpDown, Earth } from 'lucide-react';
-import React, { type JSX } from 'react';
+import React, { type JSX, useMemo } from 'react';
 
 import { UserFlag } from '@/components/shared/UserFlag';
 import { Button } from '@/components/ui/button';
@@ -110,60 +110,62 @@ export function RegionCombobox({
   className,
   classNames,
 }: RegionComboboxProps): JSX.Element {
-  const regions: SelectOption[] = [];
-  if (global)
-    regions.push({ value: 'Global', label: 'Global', code: 'Global' });
-  if (superteams) {
-    const superteamCountries = Superteams.flatMap((region) =>
-      region.code.toLowerCase(),
-    );
+  const options: SelectOption[] = useMemo(() => {
+    const regions: SelectOption[] = [];
+    if (global)
+      regions.push({ value: 'Global', label: 'Global', code: 'Global' });
+    if (superteams) {
+      const superteamCountries = Superteams.flatMap((region) =>
+        region.code.toLowerCase(),
+      );
 
-    const nonSuperteamCountries = countries.filter(
-      (country) => !superteamCountries.includes(country.code.toLowerCase()),
-    );
-    regions.push({
-      label: 'Superteam Regions',
-      options: Superteams.map((region) => ({
-        value: region.region ?? '-',
-        label: region.displayValue,
-        code: region.code,
-      })),
-    });
-    regions.push({
-      label: 'Other Countries',
-      options: nonSuperteamCountries
-        .filter((s) => s.iso)
-        .map((country) => ({
-          value: country.name,
-          label: country.name,
-          code: country.code,
+      const nonSuperteamCountries = countries.filter(
+        (country) => !superteamCountries.includes(country.code.toLowerCase()),
+      );
+      regions.push({
+        label: 'Superteam Regions',
+        options: Superteams.map((region) => ({
+          value: region.region ?? '-',
+          label: region.displayValue,
+          code: region.code,
         })),
-    });
-  } else {
-    regions.push({
-      label: 'Countries',
-      options: countries
-        .filter((s) => s.iso)
-        .map((country) => ({
-          value: country.name,
-          label: country.name,
-          code: country.code,
-        })),
-    });
-  }
-  if (allowRegions) {
-    regions.push({
-      label: 'Regions',
-      options: countries
-        .filter((s) => s.region)
-        .map((country) => ({
-          value: country.name,
-          label: country.displayValue || country.name,
-          code: country.code,
-        })),
-    });
-  }
-  const options: SelectOption[] = regions;
+      });
+      regions.push({
+        label: 'Other Countries',
+        options: nonSuperteamCountries
+          .filter((s) => s.iso)
+          .map((country) => ({
+            value: country.name,
+            label: country.name,
+            code: country.code,
+          })),
+      });
+    } else {
+      regions.push({
+        label: 'Countries',
+        options: countries
+          .filter((s) => s.iso)
+          .map((country) => ({
+            value: country.name,
+            label: country.name,
+            code: country.code,
+          })),
+      });
+    }
+    if (allowRegions) {
+      regions.push({
+        label: 'Regions',
+        options: countries
+          .filter((s) => s.region)
+          .map((country) => ({
+            value: country.name,
+            label: country.displayValue || country.name,
+            code: country.code,
+          })),
+      });
+    }
+    return regions;
+  }, [global, superteams, allowRegions]);
   const [open, setOpen] = React.useState(false);
   const listRef = React.useRef<HTMLDivElement>(null);
 
@@ -185,13 +187,16 @@ export function RegionCombobox({
     return undefined;
   };
 
-  const filteredOptions = 
+  const filteredOptions = React.useMemo(
+    () =>
       options.filter((option) => {
         if (isGroupedOption(option)) {
           return Array.isArray(option.options) && option.options.length > 0;
         }
-      return true;
-    });
+        return true;
+      }),
+    [options],
+  );
 
   return (
     <Popover open={open} onOpenChange={setOpen}>

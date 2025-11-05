@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Check, InfoIcon, ScanText, Wand2, XCircle } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import posthog from 'posthog-js';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { AnimateChangeInHeight } from '@/components/shared/AnimateChangeInHeight';
 import { Button } from '@/components/ui/button';
@@ -161,7 +161,7 @@ export default function AiReviewBountiesSubmissionsModal({
     return estimateTime(nonAnalysedSubmissions?.length || 1, true);
   }, [nonAnalysedSubmissions?.length]);
 
-  const onReviewClick = async () => {
+  const onReviewClick = useCallback(async () => {
     posthog.capture('start_ai review bounties');
     setState('PROCESSING');
 
@@ -194,7 +194,7 @@ export default function AiReviewBountiesSubmissionsModal({
         setState('ERROR');
       }
     }, 10000);
-  };
+  }, [submissions, unreviewedSubmissions, nonAnalysedSubmissions, posthog, commitReviews, refetchUnreviewedSubmissions]);
   function onComplete() {
     setState('DISCLAIMER');
     setProgress(0);

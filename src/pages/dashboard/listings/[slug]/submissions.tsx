@@ -157,7 +157,7 @@ export default function BountySubmissions({ slug }: Props) {
     } else {
       onTogglerClose();
     }
-  }, [selectedSubmissionIds, onTogglerOpen, onTogglerClose]);
+  }, [selectedSubmissionIds]);
 
   useEffect(() => {
     const newSet = new Set(selectedSubmissionIds);
@@ -245,9 +245,10 @@ export default function BountySubmissions({ slug }: Props) {
     ),
   });
 
-  const filteredSubmissions = !submissions
-    ? []
-    : submissions.filter((submission: SubmissionWithUser) => {
+  // eslint-disable-next-line react-hooks/preserve-manual-memoization
+  const filteredSubmissions = useMemo(() => {
+    if (!submissions) return [];
+    return submissions.filter((submission: SubmissionWithUser) => {
       const firstName = submission.user.firstName?.toLowerCase() || '';
       const lastName = submission.user.lastName?.toLowerCase() || '';
       const fullName = `${firstName} ${lastName}`.trim();
@@ -296,6 +297,7 @@ export default function BountySubmissions({ slug }: Props) {
 
       return matchesSearch && matchesLabel;
     });
+  }, [submissions, searchText, selectedFilters]);
 
   useEffect(() => {
     if (filteredSubmissions && filteredSubmissions.length > 0) {
