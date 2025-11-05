@@ -3,6 +3,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { ArrowRight, Eye, Rocket } from 'lucide-react';
 import Link from 'next/link';
+import posthog from 'posthog-js';
 
 import { Button } from '@/components/ui/button';
 import { Tooltip } from '@/components/ui/tooltip';
@@ -180,7 +181,23 @@ export function SponsorListing() {
                 className="flex-1 border-gray-200 text-indigo-600 hover:bg-indigo-50 hover:text-indigo-700"
                 asChild
               >
-                <Link href="/dashboard/listings">View Dashboard</Link>
+                <Link
+                  href="/dashboard/listings"
+                  onClick={() => {
+                    posthog.capture('view dashboard_sponsor sidebar listing', {
+                      stage: 'UNDER_VERIFICATION',
+                      listing_type: listing.type,
+                      listing_slug: listing.slug,
+                    });
+                    posthog.capture('click_sponsor sidebar listing', {
+                      stage: 'UNDER_VERIFICATION',
+                      listing_type: listing.type,
+                      listing_slug: listing.slug,
+                    });
+                  }}
+                >
+                  View Dashboard
+                </Link>
               </Button>
             )}
 
@@ -193,6 +210,21 @@ export function SponsorListing() {
                 >
                   <Link
                     href={`/dashboard/listings/${listing.slug}/submissions`}
+                    onClick={() => {
+                      posthog.capture(
+                        'view submissions_sponsor sidebar listing',
+                        {
+                          stage: 'BOOST',
+                          listing_type: listing.type,
+                          listing_slug: listing.slug,
+                        },
+                      );
+                      posthog.capture('click_sponsor sidebar listing', {
+                        stage: 'BOOST',
+                        listing_type: listing.type,
+                        listing_slug: listing.slug,
+                      });
+                    }}
                   >
                     <Eye className="mr-1 h-4 w-4" />
                     {listing.type === 'bounty' ? 'Submissions' : 'Applications'}
@@ -206,6 +238,18 @@ export function SponsorListing() {
                 >
                   <Link
                     href={`/dashboard/listings/${listing.slug}/edit?boost=true`}
+                    onClick={() => {
+                      posthog.capture('boost listing_sponsor sidebar listing', {
+                        stage: 'BOOST',
+                        listing_type: listing.type,
+                        listing_slug: listing.slug,
+                      });
+                      posthog.capture('click_sponsor sidebar listing', {
+                        stage: 'BOOST',
+                        listing_type: listing.type,
+                        listing_slug: listing.slug,
+                      });
+                    }}
                   >
                     <Rocket className="mr-1 h-4 w-4" />
                     Boost
@@ -220,7 +264,24 @@ export function SponsorListing() {
                 className="flex-1 border-gray-200 text-indigo-600 hover:bg-indigo-50 hover:text-indigo-700"
                 asChild
               >
-                <Link href={`/dashboard/listings/${listing.slug}/submissions`}>
+                <Link
+                  href={`/dashboard/listings/${listing.slug}/submissions`}
+                  onClick={() => {
+                    posthog.capture(
+                      'view submissions_sponsor sidebar listing',
+                      {
+                        stage: 'BOOSTED',
+                        listing_type: listing.type,
+                        listing_slug: listing.slug,
+                      },
+                    );
+                    posthog.capture('click_sponsor sidebar listing', {
+                      stage: 'BOOSTED',
+                      listing_type: listing.type,
+                      listing_slug: listing.slug,
+                    });
+                  }}
+                >
                   <Eye className="mr-1 h-4 w-4" />
                   {listing.type === 'bounty' ? 'Submissions' : 'Applications'}
                 </Link>
@@ -233,7 +294,24 @@ export function SponsorListing() {
                 className="flex-1 border-gray-200 text-indigo-600 hover:bg-indigo-50 hover:text-indigo-700"
                 asChild
               >
-                <Link href={`/dashboard/listings/${listing.slug}/submissions`}>
+                <Link
+                  href={`/dashboard/listings/${listing.slug}/submissions`}
+                  onClick={() => {
+                    posthog.capture(
+                      'view submissions_sponsor sidebar listing',
+                      {
+                        stage: 'REVIEW_AI',
+                        listing_type: listing.type,
+                        listing_slug: listing.slug,
+                      },
+                    );
+                    posthog.capture('click_sponsor sidebar listing', {
+                      stage: 'REVIEW_AI',
+                      listing_type: listing.type,
+                      listing_slug: listing.slug,
+                    });
+                  }}
+                >
                   <Eye className="mr-1 h-4 w-4" />
                   {listing.type === 'bounty' ? 'Submissions' : 'Applications'}
                 </Link>
@@ -246,7 +324,24 @@ export function SponsorListing() {
                 className="flex-1 border-gray-200 text-indigo-600 hover:bg-indigo-50 hover:text-indigo-700"
                 asChild
               >
-                <Link href={`/dashboard/listings/${listing.slug}/submissions`}>
+                <Link
+                  href={`/dashboard/listings/${listing.slug}/submissions`}
+                  onClick={() => {
+                    posthog.capture(
+                      'announce winners_sponsor sidebar listing',
+                      {
+                        stage: 'REVIEW',
+                        listing_type: listing.type,
+                        listing_slug: listing.slug,
+                      },
+                    );
+                    posthog.capture('click_sponsor sidebar listing', {
+                      stage: 'REVIEW',
+                      listing_type: listing.type,
+                      listing_slug: listing.slug,
+                    });
+                  }}
+                >
                   Announce Winners
                   <ArrowRight className="ml-1 h-4 w-4" />
                 </Link>
@@ -259,7 +354,24 @@ export function SponsorListing() {
                 className="flex-1 border-gray-200 text-indigo-600 hover:bg-indigo-50 hover:text-indigo-700"
                 asChild
               >
-                <Link href={`/dashboard/listings/${listing.slug}/submissions`}>
+                <Link
+                  href={`/dashboard/listings/${listing.slug}/submissions`}
+                  onClick={() => {
+                    posthog.capture(
+                      'announce winners_sponsor sidebar listing',
+                      {
+                        stage: 'REVIEW_URGENT',
+                        listing_type: listing.type,
+                        listing_slug: listing.slug,
+                      },
+                    );
+                    posthog.capture('click_sponsor sidebar listing', {
+                      stage: 'REVIEW_URGENT',
+                      listing_type: listing.type,
+                      listing_slug: listing.slug,
+                    });
+                  }}
+                >
                   Announce Winners
                   <ArrowRight className="ml-1 h-4 w-4" />
                 </Link>
@@ -274,6 +386,18 @@ export function SponsorListing() {
               >
                 <Link
                   href={`/dashboard/listings/${listing.slug}/submissions?tab=payments`}
+                  onClick={() => {
+                    posthog.capture('clear payments_sponsor sidebar listing', {
+                      stage: 'PAYMENT_PENDING',
+                      listing_type: listing.type,
+                      listing_slug: listing.slug,
+                    });
+                    posthog.capture('click_sponsor sidebar listing', {
+                      stage: 'PAYMENT_PENDING',
+                      listing_type: listing.type,
+                      listing_slug: listing.slug,
+                    });
+                  }}
                 >
                   Clear Payments
                 </Link>

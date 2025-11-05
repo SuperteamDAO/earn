@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { ArrowUpRight } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import posthog from 'posthog-js';
 import { useEffect } from 'react';
 
 import { useBreakpoint } from '@/hooks/use-breakpoint';
@@ -67,6 +68,18 @@ export function SponsorStageSnackbar() {
           'flex w-full items-center justify-center bg-amber-50 px-6 py-3 text-amber-700 transition-colors hover:bg-amber-100',
           'gap-2 lg:flex',
         )}
+        onClick={() => {
+          posthog.capture('clear payments_sponsor stage snackbar', {
+            stage: 'PAYMENT_PENDING',
+            listing_type: listing.type,
+            listing_slug: listing.slug,
+          });
+          posthog.capture('click_sponsor stage snackbar', {
+            stage: 'PAYMENT_PENDING',
+            listing_type: listing.type,
+            listing_slug: listing.slug,
+          });
+        }}
       >
         <p className="text-sm font-normal">
           Please complete your payment or add your payment links for your latest
@@ -103,6 +116,18 @@ export function SponsorStageSnackbar() {
           'flex w-full items-center justify-center bg-red-100 px-6 py-3 text-orange-900 transition-colors hover:bg-red-200',
           'gap-2 lg:flex',
         )}
+        onClick={() => {
+          posthog.capture('announce winners_sponsor stage snackbar', {
+            stage: 'REVIEW_URGENT',
+            listing_type: listing.type,
+            listing_slug: listing.slug,
+          });
+          posthog.capture('click_sponsor stage snackbar', {
+            stage: 'REVIEW_URGENT',
+            listing_type: listing.type,
+            listing_slug: listing.slug,
+          });
+        }}
       >
         <p className="text-sm font-normal">
           Your commitment to announce winners was {timeDisplay}
@@ -118,6 +143,21 @@ export function SponsorStageSnackbar() {
     'Do MMM',
   );
 
+  const handleSnackbarClick = () => {
+    const stageValue =
+      stage === SponsorStage.REVIEW_AI ? 'REVIEW_AI' : 'REVIEW';
+    posthog.capture('announce winners_sponsor stage snackbar', {
+      stage: stageValue,
+      listing_type: listing.type,
+      listing_slug: listing.slug,
+    });
+    posthog.capture('click_sponsor stage snackbar', {
+      stage: stageValue,
+      listing_type: listing.type,
+      listing_slug: listing.slug,
+    });
+  };
+
   return (
     <Link
       href={`/dashboard/listings/${listing.slug}/submissions`}
@@ -125,6 +165,7 @@ export function SponsorStageSnackbar() {
         'flex w-full items-center justify-center bg-violet-50 px-6 py-3 text-indigo-700 transition-colors hover:bg-violet-100',
         'gap-2 lg:flex',
       )}
+      onClick={handleSnackbarClick}
     >
       <p className="text-sm font-normal">
         People are waiting for the winners to be finalised — please announce the

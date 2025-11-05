@@ -1,5 +1,6 @@
 import { ShieldAlert } from 'lucide-react';
 import Link from 'next/link';
+import posthog from 'posthog-js';
 
 import { Button } from '@/components/ui/button';
 import { dayjs } from '@/utils/dayjs';
@@ -33,13 +34,34 @@ export function ReviewUrgentBanner({ listing }: ReviewUrgentBannerProps) {
 
         <div className="flex items-center gap-8">
           <Button asChild>
-            <Link href={`/dashboard/listings/${listing.slug}/submissions`}>
+            <Link
+              href={`/dashboard/listings/${listing.slug}/submissions`}
+              onClick={() => {
+                posthog.capture('announce winners_sponsor stage banner', {
+                  stage: 'REVIEW_URGENT',
+                  listing_type: listing.type,
+                  listing_slug: listing.slug,
+                });
+                posthog.capture('click_sponsor stage banner', {
+                  stage: 'REVIEW_URGENT',
+                  listing_type: listing.type,
+                  listing_slug: listing.slug,
+                });
+              }}
+            >
               Announce Winners
             </Link>
           </Button>
           <Link
             href="https://t.me/pratikdholani/"
             className="flex items-center gap-3 text-sm text-slate-400 underline underline-offset-4 hover:text-slate-700"
+            onClick={() => {
+              posthog.capture('get help_sponsor stage banner', {
+                stage: 'REVIEW_URGENT',
+                listing_type: listing.type,
+                listing_slug: listing.slug,
+              });
+            }}
           >
             <img
               src="/assets/sponsor/pratik.webp"

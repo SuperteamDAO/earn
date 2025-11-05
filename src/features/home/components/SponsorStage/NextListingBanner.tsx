@@ -1,9 +1,25 @@
 import { PenLine } from 'lucide-react';
 import Link from 'next/link';
+import posthog from 'posthog-js';
 
 import { Button } from '@/components/ui/button';
 
 export function NextListingBanner() {
+  const handleCreateListingClick = () => {
+    posthog.capture('create listing_sponsor stage banner', {
+      stage: 'NEXT_LISTING',
+    });
+    posthog.capture('click_sponsor stage banner', {
+      stage: 'NEXT_LISTING',
+    });
+  };
+
+  const handleGetHelpClick = () => {
+    posthog.capture('get help_sponsor stage banner', {
+      stage: 'NEXT_LISTING',
+    });
+  };
+
   return (
     <div className="relative flex items-center justify-between overflow-hidden rounded-xl bg-slate-100 px-10 py-8">
       <div className="flex flex-col gap-6">
@@ -25,11 +41,17 @@ export function NextListingBanner() {
 
         <div className="flex items-center gap-8">
           <Button asChild>
-            <Link href="/dashboard/listings?open=1">Create Listing</Link>
+            <Link
+              href="/dashboard/listings?open=1"
+              onClick={handleCreateListingClick}
+            >
+              Create Listing
+            </Link>
           </Button>
           <Link
             href="https://t.me/pratikdholani/"
             className="flex items-center gap-3 text-sm text-slate-400 underline underline-offset-4 hover:text-slate-700"
+            onClick={handleGetHelpClick}
           >
             <img
               src="/assets/sponsor/pratik.webp"

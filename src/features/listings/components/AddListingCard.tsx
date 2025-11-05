@@ -1,5 +1,6 @@
 import { PenLine } from 'lucide-react';
 import Link from 'next/link';
+import posthog from 'posthog-js';
 
 import { Button } from '@/components/ui/button';
 import { useUser } from '@/store/user';
@@ -20,10 +21,17 @@ export const AddListingCard = ({
   const sponsorName = user?.currentSponsor?.name || 'Your Company Name';
   const sponsorSlug = user?.currentSponsor?.slug;
 
+  const handleCardClick = () => {
+    posthog.capture('add listing card_listings section', {
+      listing_type: listingType,
+    });
+  };
+
   return (
     <Link
       href={createUrl}
       className="group block w-full rounded-md px-2 py-4 no-underline hover:bg-gray-100 sm:px-4"
+      onClick={handleCardClick}
     >
       <div className="flex w-full items-center justify-between">
         <div className="flex w-full">
