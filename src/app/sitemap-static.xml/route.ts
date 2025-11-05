@@ -92,12 +92,6 @@ export async function GET(): Promise<NextResponse> {
       changeFrequency: 'daily',
       priority: 0.9,
     },
-    {
-      url: `${baseUrl}/regions/`,
-      lastModified: now,
-      changeFrequency: 'weekly',
-      priority: 0.8,
-    },
   ];
 
   // Convert to XML

@@ -13,6 +13,7 @@ import { Separator } from '@/components/ui/separator';
 import { Tooltip } from '@/components/ui/tooltip';
 import { type SponsorType } from '@/interface/sponsor';
 import { Default } from '@/layouts/Default';
+import { Meta } from '@/layouts/Meta';
 import { getSponsorStats, type SponsorStats } from '@/pages/api/sponsors/stats';
 import { prisma } from '@/prisma';
 import { useUser } from '@/store/user';
@@ -127,32 +128,18 @@ const SponsorPage = ({ sponsor, stats }: Props) => {
       hideFooter
       meta={
         <>
+          <Meta
+            title={`${name} Opportunities | Superteam Earn`}
+            description={`Check out all of ${name}'s latest earning opportunities on a single page.`}
+            canonical={`https://earn.superteam.fun/s/${sSlug}/`}
+            og={ogImage.toString()}
+          />
           <Head>
-            <title>{`${name} Opportunities | Superteam Earn`}</title>
-            <meta
-              name="description"
-              content={`
-Check out all of ${name}'s latest earning opportunities on a single page.
-`}
-            />
-
-            <meta property="og:title" content={`${name} on Superteam Earn`} />
-            <meta property="og:image" content={ogImage.toString()} />
-            <meta name="twitter:title" content={`${name} on Superteam Earn`} />
-            <meta name="twitter:image" content={ogImage.toString()} />
-            <meta name="twitter:card" content="summary_large_image" />
             <meta property="og:image:width" content="1200" />
             <meta property="og:image:height" content="630" />
             <meta
               property="og:image:alt"
               content={`${name} on Superteam Earn`}
-            />
-
-            <meta charSet="UTF-8" key="charset" />
-            <meta
-              name="viewport"
-              content="width=device-width, initial-scale=1, maximum-scale=1"
-              key="viewport"
             />
           </Head>
           <JsonLd data={[organizationSchema, breadcrumbSchema]} />

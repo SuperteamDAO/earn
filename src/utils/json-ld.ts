@@ -1,3 +1,4 @@
+import { type Superteam } from '@/constants/Superteam';
 import type { SponsorType } from '@/interface/sponsor';
 import { AppConfig } from '@/utils/AppConfig';
 import { getURL } from '@/utils/validUrl';
@@ -180,6 +181,23 @@ export function generateSponsorOrganizationSchema(
   };
 
   return schema;
+}
+
+/**
+ * Generate Organization schema for a regional Superteam chapter
+ */
+export function generateRegionalOrganizationSchema(
+  region: Pick<Superteam, 'displayValue' | 'region' | 'slug' | 'code'>,
+): OrganizationSchema {
+  const baseUrl = getURL();
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    name: `Superteam Earn ${region.displayValue}`,
+    url: `${baseUrl}regions/${region.slug}/`,
+    description: `Superteam Earn ${region.displayValue} - Discover bounties and grants in the ${region.displayValue} crypto community`,
+  };
 }
 
 /**
