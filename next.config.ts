@@ -47,6 +47,7 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   trailingSlash: true,
   reactStrictMode: true,
+  reactCompiler: true,
   images: {
     minimumCacheTTL: 86400,
     remotePatterns: [
