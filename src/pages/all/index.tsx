@@ -1,7 +1,7 @@
 import { type GetServerSideProps } from 'next';
 
 import { ASSET_URL } from '@/constants/ASSET_URL';
-import { Default } from '@/layouts/Default';
+import { Home } from '@/layouts/Home';
 import { Meta } from '@/layouts/Meta';
 
 import { HomepagePop } from '@/features/conversion-popups/components/HomepagePop';
@@ -13,8 +13,8 @@ interface HomePageProps {
 
 export default function AllListingsPage({ potentialSession }: HomePageProps) {
   return (
-    <Default
-      className="bg-white"
+    <Home
+      type="listing"
       meta={
         <Meta
           title="All Listings | Superteam Earn"
@@ -28,7 +28,7 @@ export default function AllListingsPage({ potentialSession }: HomePageProps) {
       <div className="w-full">
         <ListingsSection type="all" potentialSession={potentialSession} />
       </div>
-    </Default>
+    </Home>
   );
 }
 
