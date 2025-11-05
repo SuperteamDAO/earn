@@ -2,6 +2,7 @@
 
 import { useQuery } from '@tanstack/react-query';
 
+import { Skeleton } from '@/components/ui/skeleton';
 import { useBreakpoint } from '@/hooks/use-breakpoint';
 
 import { sponsorStageQuery } from '@/features/home/queries/sponsor-stage';
@@ -25,7 +26,15 @@ export function SponsorStageBanner() {
     enabled: false,
   });
 
-  if (isLoading || !data || !data.stage || !isLg) {
+  if (!isLg) {
+    return null;
+  }
+
+  if (isLoading) {
+    return <Skeleton className="h-63 w-full rounded-xl" />;
+  }
+
+  if (!data || !data.stage) {
     return null;
   }
 
