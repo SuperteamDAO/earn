@@ -21,12 +21,12 @@ import { BoostButton } from '@/features/listing-builder/components/Form/Boost/Bo
 import { submissionCountQuery } from '../../queries/submission-count';
 import { type Listing, type ListingHackathon } from '../../types';
 import { getListingIcon } from '../../utils/getListingIcon';
+import { BookmarkListing } from './BookmarkListing';
 import { ListingTabLink } from './ListingTabLink';
 import { RegionLabel } from './RegionLabel';
 import { SecondaryOptions } from './SecondaryOptions';
 import { ListingHeaderSeparator } from './Separator';
 import { StatusBadge } from './StatusBadge';
-import { SubscribeListing } from './SubscribeListing';
 
 const SponsorLogo = ({ sponsor }: { sponsor: SponsorType | undefined }) => {
   return (
@@ -279,7 +279,7 @@ export function ListingHeader({
             {user?.currentSponsorId === listing.sponsorId ? (
               <BoostButton listing={listing} />
             ) : (
-              <SubscribeListing isTemplate={isTemplate} id={listing.id} />
+              <BookmarkListing isTemplate={isTemplate} id={listing.id} />
             )}
             <SecondaryOptions listing={listing} />
           </div>
