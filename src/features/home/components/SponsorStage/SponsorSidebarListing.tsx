@@ -71,13 +71,16 @@ export function SponsorListing() {
   return (
     <div className="flex flex-col gap-3">
       <span className="text-sm font-medium tracking-wide text-gray-400 uppercase">
-        RECENT BOUNTY
+        RECENT {listing.type?.toUpperCase()}
       </span>
 
-      <div className="overflow-hidden rounded-lg border border-gray-200 bg-white">
+      <Link
+        href={`/listing/${listing.slug}`}
+        className="block overflow-hidden rounded-lg border border-gray-200 bg-white transition-colors hover:border-gray-300"
+      >
         <div className="flex flex-col">
           <div className="flex items-start gap-4 p-4">
-            <div className="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-lg bg-amber-50">
+            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-lg bg-amber-50">
               {listing.sponsor?.logo ? (
                 <img
                   src={sponsorLogo}
@@ -102,7 +105,7 @@ export function SponsorListing() {
                   triggerClassName="min-w-0 flex-1"
                   contentProps={{ className: 'max-w-xs break-words' }}
                 >
-                  <h3 className="min-w-0 flex-1 cursor-default truncate text-left text-base font-medium text-slate-500">
+                  <h3 className="min-w-0 flex-1 truncate text-left text-base font-medium text-slate-500">
                     {listing.title}
                   </h3>
                 </Tooltip>
@@ -167,7 +170,10 @@ export function SponsorListing() {
             </div>
           </div>
 
-          <div className="flex gap-3 border-gray-100 p-4 pt-6">
+          <div
+            className="flex gap-3 border-gray-100 p-4 pt-6"
+            onClick={(e) => e.stopPropagation()}
+          >
             {data.stage === SponsorStage.BOOST && (
               <>
                 <Button
@@ -265,7 +271,7 @@ export function SponsorListing() {
             )}
           </div>
         </div>
-      </div>
+      </Link>
     </div>
   );
 }

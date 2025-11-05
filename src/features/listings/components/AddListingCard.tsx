@@ -1,4 +1,4 @@
-import { Pencil } from 'lucide-react';
+import { PenLine } from 'lucide-react';
 import Link from 'next/link';
 
 import { Button } from '@/components/ui/button';
@@ -29,7 +29,7 @@ export const AddListingCard = ({
         <div className="flex w-full">
           <div className="mr-5 h-16 w-18 rounded-md bg-slate-100 transition group-hover:bg-slate-50">
             <div className="flex h-full w-full items-center justify-center">
-              <Pencil className="h-6 w-6 text-gray-600" strokeWidth={2} />
+              <PenLine className="h-6 w-6 text-slate-400" strokeWidth={2} />
             </div>
           </div>
 

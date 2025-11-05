@@ -47,7 +47,7 @@ export const SponsorWelcomeVideo = () => {
   const thumbnailUrl =
     'https://res.cloudinary.com/dgvnuwspr/image/upload/v1761809228/assets/home/sponsor-welcome-thumbnail.webp';
   const videoUrl =
-    'https://www.youtube.com/embed/Z7bo-gi7Fa0?si=-qvyHgLoVp4EaWO6';
+    'https://www.youtube.com/embed/Z7bo-gi7Fa0?si=-qvyHgLoVp4EaWO6&rel=0&modestbranding=1&iv_load_policy=3';
 
   const layoutId = 'sponsor-welcome-video';
 
@@ -117,13 +117,13 @@ export const SponsorWelcomeVideo = () => {
           <DialogPrimitive.Portal forceMount>
             <DialogPrimitive.Overlay asChild forceMount>
               <motion.div
-                className="fixed inset-0 z-[60] bg-black/50"
+                className="fixed inset-0 z-60 bg-black/50"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
               />
             </DialogPrimitive.Overlay>
-            <div className="fixed inset-0 z-[61] grid place-items-center outline-none">
+            <div className="fixed inset-0 z-61 grid place-items-center outline-none">
               <DialogPrimitive.Content asChild forceMount>
                 <motion.div
                   layoutId={layoutId}

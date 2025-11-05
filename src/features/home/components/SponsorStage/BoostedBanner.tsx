@@ -24,8 +24,8 @@ export function BoostedBanner({ listing }: BoostedBannerProps) {
               Your boost is active
             </h2>
             <p className="max-w-sm text-base text-slate-500">
-              You&apos;re in highest Boost tier. Your
-              {listing.type} will reach thousands of more Earn users.
+              You&apos;re in highest Boost tier. Your {listing.type} will reach
+              thousands of more Earn users.
             </p>
           </div>
         </div>

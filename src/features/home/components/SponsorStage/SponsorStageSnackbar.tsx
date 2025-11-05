@@ -83,6 +83,18 @@ export function SponsorStageSnackbar() {
 
   if (stage === SponsorStage.REVIEW_URGENT) {
     const daysPast = dayjs().diff(dayjs(listing.commitmentDate), 'day');
+    const hoursPast = dayjs().diff(dayjs(listing.commitmentDate), 'hour');
+
+    const timeDisplay =
+      daysPast === 0 ? (
+        <span>
+          {hoursPast} {hoursPast === 1 ? 'hour' : 'hours'} ago
+        </span>
+      ) : (
+        <span>
+          {daysPast} {daysPast === 1 ? 'day' : 'days'} ago
+        </span>
+      );
 
     return (
       <Link
@@ -93,14 +105,11 @@ export function SponsorStageSnackbar() {
         )}
       >
         <p className="text-sm font-normal">
-          Your commitment to announce winners was{' '}
-          <span>
-            {daysPast} {daysPast === 1 ? 'day' : 'days'} ago
-          </span>
+          Your commitment to announce winners was {timeDisplay}
           {' - '}
           <span className="font-bold">please announce winners ASAP</span>
         </p>
-        <ArrowUpRight className="size-4 flex-shrink-0" />
+        <ArrowUpRight className="size-4 shrink-0" />
       </Link>
     );
   }
