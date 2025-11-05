@@ -30,14 +30,16 @@ const NavItem = ({ name, icon: Icon, href }: NavItemProps) => {
 interface FeedPageProps {
   children: React.ReactNode;
   isHomePage?: boolean;
+  meta?: React.ReactNode;
 }
 
 export const FeedPageLayout = ({
   children,
   isHomePage = false,
+  meta,
 }: FeedPageProps) => {
   return (
-    <Home type="feed">
+    <Home type="feed" meta={meta}>
       <div className="-mt-4 -mr-[10px] -ml-5 border-r border-slate-200 lg:-mr-[25px] lg:ml-0">
         <div className="flex">
           <div className="sticky top-14 hidden h-screen w-48 flex-col gap-3 border-r pt-5 pr-5 lg:flex">

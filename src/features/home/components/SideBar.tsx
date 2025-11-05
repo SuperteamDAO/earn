@@ -17,7 +17,6 @@ import { totalsQuery } from '../queries/totals';
 import { HowItWorks } from './HowItWorks';
 import { RecentActivity } from './RecentActivity';
 import { RecentEarners } from './RecentEarners';
-import { SidebarBannerCypherpunk } from './SidebarBanner';
 import { SponsorBanner } from './SponsorBanner';
 import { TotalStats } from './TotalStats';
 import { YourBookmarks } from './YourBookmarks';
@@ -59,7 +58,7 @@ export const HomeSideBar = ({ type }: SideBarProps) => {
         {type === 'feed' && (
           <>
             <VibeCard />
-            <SidebarBannerCypherpunk />
+            {/* <SidebarBannerCypherpunk /> */}
             <LiveListings>
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium text-gray-400">
@@ -95,7 +94,7 @@ export const HomeSideBar = ({ type }: SideBarProps) => {
             </div>
 
             <HowItWorks />
-            <SidebarBannerCypherpunk />
+            {/* <SidebarBannerCypherpunk /> */}
             {router.asPath !== '/bookmarks' && !!bookmarks?.length && (
               <YourBookmarks>
                 <div className="flex items-center justify-between">

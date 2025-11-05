@@ -18,6 +18,7 @@ interface HomeProps {
   readonly type: 'listing' | 'region' | 'feed' | 'region-all';
   readonly st?: Superteam;
   readonly potentialSession?: boolean;
+  readonly meta?: ReactNode;
 }
 
 type CategoryTypes = 'content' | 'development' | 'design' | 'other' | 'all';
@@ -43,6 +44,7 @@ export function Home({
   type,
   st,
   potentialSession = false,
+  meta,
 }: HomeProps) {
   const router = useRouter();
   const { authenticated } = usePrivy();
@@ -78,11 +80,13 @@ export function Home({
     <Default
       className="bg-white"
       meta={
-        <Meta
-          title="Superteam Earn | Work to Earn in Crypto"
-          description="Explore the latest bounties on Superteam Earn, offering opportunities in the crypto space across Design, Development, and Content."
-          canonical="https://earn.superteam.fun"
-        />
+        meta || (
+          <Meta
+            title="Superteam Earn | Work to Earn in Crypto"
+            description="Explore the latest bounties on Superteam Earn, offering opportunities in the crypto space across Design, Development, and Content."
+            canonical="https://earn.superteam.fun"
+          />
+        )
       }
     >
       {type === 'region' && st && <RegionBanner st={st} />}

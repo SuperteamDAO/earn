@@ -4,6 +4,7 @@ import Head from 'next/head';
 import Link from 'next/link';
 
 import FaXTwitter from '@/components/icons/FaXTwitter';
+import { JsonLd } from '@/components/shared/JsonLd';
 import { LinkTextParser } from '@/components/shared/LinkTextParser';
 import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
 import { Button } from '@/components/ui/button';
@@ -12,10 +13,15 @@ import { Separator } from '@/components/ui/separator';
 import { Tooltip } from '@/components/ui/tooltip';
 import { type SponsorType } from '@/interface/sponsor';
 import { Default } from '@/layouts/Default';
+import { Meta } from '@/layouts/Meta';
 import { getSponsorStats, type SponsorStats } from '@/pages/api/sponsors/stats';
 import { prisma } from '@/prisma';
 import { useUser } from '@/store/user';
 import { getURLSanitized } from '@/utils/getURLSanitized';
+import {
+  generateBreadcrumbListSchema,
+  generateSponsorOrganizationSchema,
+} from '@/utils/json-ld';
 import { getURL } from '@/utils/validUrl';
 
 import { GrantsSection } from '@/features/grants/components/GrantsSection';
@@ -46,6 +52,12 @@ const SponsorPage = ({ sponsor, stats }: Props) => {
 
   const { user } = useUser();
   const isSponsor = user?.currentSponsorId === sponsor.id;
+
+  const organizationSchema = generateSponsorOrganizationSchema(sponsor);
+  const breadcrumbSchema = generateBreadcrumbListSchema([
+    { name: 'Home', url: '/' },
+    { name: name || 'Sponsor' },
+  ]);
 
   const getTwitterIntentUrl = () => {
     const twitterHandle = twitter ? twitter.split('/').pop() : name;
@@ -115,31 +127,23 @@ const SponsorPage = ({ sponsor, stats }: Props) => {
       className="bg-white"
       hideFooter
       meta={
-        <Head>
-          <title>{`${name} Opportunities | Superteam Earn`}</title>
-          <meta
-            name="description"
-            content={`
-Check out all of ${name}'s latest earning opportunities on a single page.
-`}
+        <>
+          <Meta
+            title={`${name} Opportunities | Superteam Earn`}
+            description={`Check out all of ${name}'s latest earning opportunities on a single page.`}
+            canonical={`https://earn.superteam.fun/s/${sSlug}/`}
+            og={ogImage.toString()}
           />
-
-          <meta property="og:title" content={`${name} on Superteam Earn`} />
-          <meta property="og:image" content={ogImage.toString()} />
-          <meta name="twitter:title" content={`${name} on Superteam Earn`} />
-          <meta name="twitter:image" content={ogImage.toString()} />
-          <meta name="twitter:card" content="summary_large_image" />
-          <meta property="og:image:width" content="1200" />
-          <meta property="og:image:height" content="630" />
-          <meta property="og:image:alt" content={`${name} on Superteam Earn`} />
-
-          <meta charSet="UTF-8" key="charset" />
-          <meta
-            name="viewport"
-            content="width=device-width, initial-scale=1, maximum-scale=1"
-            key="viewport"
-          />
-        </Head>
+          <Head>
+            <meta property="og:image:width" content="1200" />
+            <meta property="og:image:height" content="630" />
+            <meta
+              property="og:image:alt"
+              content={`${name} on Superteam Earn`}
+            />
+          </Head>
+          <JsonLd data={[organizationSchema, breadcrumbSchema]} />
+        </>
       }
     >
       <div className="flex bg-slate-50 px-4">

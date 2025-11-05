@@ -24,6 +24,7 @@ interface Props {
   type?: FeedPostType;
   id?: string;
   isWinner?: boolean;
+  meta?: React.ReactNode;
 }
 
 interface MenuOptionProps {
@@ -49,7 +50,7 @@ const MenuOption = ({ option, activeMenu, onSelect }: MenuOptionProps) => {
   );
 };
 
-export const Feed = ({ isWinner = false, id, type }: Props) => {
+export const Feed = ({ isWinner = false, id, type, meta }: Props) => {
   const router = useRouter();
   const { query } = router;
 
@@ -89,7 +90,7 @@ export const Feed = ({ isWinner = false, id, type }: Props) => {
   const feedItems = data?.pages.flatMap((page) => page) ?? [];
 
   return (
-    <FeedPageLayout isHomePage>
+    <FeedPageLayout isHomePage meta={meta}>
       <HomepagePop />
       <div className="border-b py-5 pr-2 pl-6 md:pl-5">
         <p className="text-lg font-medium text-slate-900 lg:text-xl">
