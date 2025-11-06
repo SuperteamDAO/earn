@@ -369,7 +369,7 @@ export async function POST(
               Date.now() - new Date(user.kycVerifiedAt).getTime() > SIX_MONTHS;
 
             if (user.isKYCVerified && user.kycVerifiedAt && !isKycExpired) {
-              await createPayment({ submissionId: winner.id });
+              await createPayment({ userId: winner.userId });
             } else {
               logger.warn(
                 `Skipping payment info addition for winner ${winner.user.username} because they are not KYC verified`,
