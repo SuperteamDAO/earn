@@ -1,6 +1,3 @@
-import { PrismaMariaDb } from '@prisma/adapter-mariadb';
-import { PrismaPlanetScale } from '@prisma/adapter-planetscale';
-
 import { PrismaClient } from '@/prisma/client';
 
 const omitConfig = {
@@ -23,24 +20,15 @@ const isPlanetScale =
 let prismaClient: PrismaClient;
 
 if (isPlanetScale) {
-  const adapter = new PrismaPlanetScale({ url: databaseUrl, fetch });
+  // const adapter = new PrismaPlanetScale({ url: databaseUrl, fetch });
 
   prismaClient = new PrismaClient({
-    adapter,
+    // adapter,
     omit: omitConfig,
     transactionOptions: { maxWait: 5000, timeout: 15000 },
   });
 } else {
-  const adapter = new PrismaMariaDb({
-    host: 'shinkansen.proxy.rlwy.net',
-    port: 44669,
-    user: 'root',
-    password: process.env.DB_PASSWORD || '',
-    database: 'earn_db',
-  });
-
   prismaClient = new PrismaClient({
-    adapter,
     omit: omitConfig,
     transactionOptions: { maxWait: 5000, timeout: 15000 },
   });

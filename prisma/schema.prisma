@@ -1,7 +1,7 @@
 generator client {
   provider               = "prisma-client"
   output                 = "../src/generated/prisma"
-  engineType             = "client"
+  engineType             = "binary"
   moduleFormat           = "esm"
   generatedFileExtension = "ts"
   importFileExtension    = "ts"
