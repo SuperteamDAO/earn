@@ -62,7 +62,7 @@ export const MobileDrawer = ({
 }: MobileDrawerProps) => {
   const router = useRouter();
   const { authenticated, ready } = usePrivy();
-  const [categoriesOpen, setCategoriesOpen] = useState(false);
+  const [categoriesOpen, setCategoriesOpen] = useState(true);
   const [skillsOpen, setSkillsOpen] = useState(false);
   const logout = useLogout();
 
