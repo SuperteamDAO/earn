@@ -348,6 +348,7 @@ export const Comment = ({
               >
                 <AuthWrapper
                   showCompleteProfileModal
+                  allowSponsor
                   completeProfileModalBodyText={
                     'Please complete your profile before commenting on the listing.'
                   }
@@ -360,7 +361,7 @@ export const Comment = ({
                     onClick={handleSubmit}
                   >
                     {newReplyLoading ? (
-                      <span>
+                      <span className="flex items-center">
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                         <span>Adding...</span>
                       </span>

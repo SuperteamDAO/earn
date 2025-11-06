@@ -36,6 +36,10 @@ export const HackathonFilters = ({
   onStatusChange,
   onSortChange,
 }: HackathonFiltersProps) => {
+  const hackathonFilterOptions = LISTING_FILTER_OPTIONS.filter(
+    (option) => option.params.status !== 'all',
+  );
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
@@ -47,10 +51,12 @@ export const HackathonFilters = ({
         <DropdownMenuLabel className="font-medium text-slate-600">
           Filter By
         </DropdownMenuLabel>
-        {LISTING_FILTER_OPTIONS.map((option) => (
+        {hackathonFilterOptions.map((option) => (
           <DropdownMenuItem
             key={option.label}
-            onSelect={() => onStatusChange(option.params.status)}
+            onSelect={() =>
+              onStatusChange(option.params.status as HackathonStatus)
+            }
             className={cn(
               'flex items-center gap-2 text-slate-600',
               activeStatus === option.params.status &&

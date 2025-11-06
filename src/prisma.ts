@@ -13,18 +13,28 @@ const omitConfig = {
   },
 };
 
-// if using planetscale db, use this. if not, comment out and uncomment the local db setup below
+const databaseUrl = process.env.DATABASE_URL || '';
+const isPlanetScale =
+  databaseUrl.includes('aws.connect.psdb.cloud') ||
+  databaseUrl.includes('.psdb.cloud') ||
+  databaseUrl.includes('planetscale');
 
-const adapter = new PrismaPlanetScale({ url: process.env.DATABASE_URL, fetch });
-const prismaClient = new PrismaClient({
-  adapter,
-  omit: omitConfig,
-  transactionOptions: { maxWait: 5000, timeout: 15000 },
-});
+let prismaClient: PrismaClient;
 
-// if using local db, uncomment this and comment out the above
-// const datasourceUrl = process.env.LOCAL_DATABASE_URL;
-// const prismaClient = new PrismaClient({ datasourceUrl, omit: omitConfig });
+if (isPlanetScale) {
+  const adapter = new PrismaPlanetScale({ url: databaseUrl, fetch });
+
+  prismaClient = new PrismaClient({
+    adapter,
+    omit: omitConfig,
+    transactionOptions: { maxWait: 5000, timeout: 15000 },
+  });
+} else {
+  prismaClient = new PrismaClient({
+    omit: omitConfig,
+    transactionOptions: { maxWait: 5000, timeout: 15000 },
+  });
+}
 
 declare const globalThis: { prismaGlobal: typeof prismaClient } & typeof global;
 

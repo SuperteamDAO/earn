@@ -282,7 +282,7 @@ export function EligibilityQuestionsForm() {
             </div>
           </ScrollArea>
           {(type !== 'bounty' && type !== 'project') ||
-          (type === 'bounty' && fields.length < 5) ||
+          (type === 'bounty' && fields.length < 25) ||
           (type === 'project' && fields.length < 10) ? (
             <div
               className={cn(
@@ -307,7 +307,7 @@ export function EligibilityQuestionsForm() {
           ) : (
             <FormDescription>
               {type === 'bounty'
-                ? 'You can add up to five custom questions'
+                ? 'You can add up to 25 custom questions'
                 : 'You can add up to ten custom questions'}
             </FormDescription>
           )}

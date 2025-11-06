@@ -14,6 +14,7 @@ import {
   QueryParamsSchema,
 } from '@/features/listings/constants/schema';
 import { buildListingQuery } from '@/features/listings/utils/query-builder';
+import { reorderFeaturedOngoing } from '@/features/listings/utils/reorderFeaturedOngoing';
 
 export async function GET(request: NextRequest) {
   try {
@@ -72,7 +73,9 @@ export async function GET(request: NextRequest) {
       },
     });
 
-    return NextResponse.json(listings, {
+    const reorderedListings = reorderFeaturedOngoing(listings);
+
+    return NextResponse.json(reorderedListings, {
       headers: {
         'Cache-Control': 'private, max-age=300, stale-while-revalidate=600',
         Vary: 'Cookie',

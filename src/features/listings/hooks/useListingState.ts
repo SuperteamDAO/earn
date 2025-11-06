@@ -30,6 +30,8 @@ const DEFAULT_HOOK_INITIAL_CATEGORY_VALUE: ListingCategory =
 
 interface UseListingStateProps {
   readonly defaultCategory?: ListingCategory;
+  readonly defaultStatus?: ListingStatus;
+  readonly defaultSortBy?: ListingSortOption;
 }
 
 type QueryParamUpdates = Partial<
@@ -38,6 +40,8 @@ type QueryParamUpdates = Partial<
 
 export const useListingState = ({
   defaultCategory = DEFAULT_HOOK_INITIAL_CATEGORY_VALUE,
+  defaultStatus = DEFAULT_STATUS_VALUE,
+  defaultSortBy = DEFAULT_SORT_BY_VALUE,
 }: UseListingStateProps) => {
   const router = useRouter();
   const pathname = usePathname();
@@ -122,8 +126,8 @@ export const useListingState = ({
       const paramDefaults: Record<keyof QueryParamUpdates, unknown> = {
         tab: DEFAULT_TAB_VALUE,
         category: defaultCategory,
-        status: DEFAULT_STATUS_VALUE,
-        sortBy: DEFAULT_SORT_BY_VALUE,
+        status: defaultStatus,
+        sortBy: defaultSortBy,
         order: DEFAULT_ORDER_VALUE,
       };
 
@@ -147,28 +151,35 @@ export const useListingState = ({
       const newPath = `${pathname}${queryString ? `?${queryString}` : ''}`;
       router.replace(newPath, { scroll: false });
     },
-    [searchParams, router, defaultCategory, pathname],
+    [
+      searchParams,
+      router,
+      defaultCategory,
+      defaultStatus,
+      defaultSortBy,
+      pathname,
+    ],
   );
 
   const activeStatus = useMemo((): ListingStatus => {
     const statusParam = searchParams.get('status');
-    if (statusParam === null) return DEFAULT_STATUS_VALUE;
+    if (statusParam === null) return defaultStatus;
     const parsed = ListingStatusSchema.safeParse(statusParam);
     if (parsed.success && parsed.data !== undefined) {
       return parsed.data;
     }
-    return DEFAULT_STATUS_VALUE;
-  }, [searchParams]);
+    return defaultStatus;
+  }, [searchParams, defaultStatus]);
 
   const activeSortBy = useMemo((): ListingSortOption => {
     const sortByParam = searchParams.get('sortBy');
-    if (sortByParam === null) return DEFAULT_SORT_BY_VALUE;
+    if (sortByParam === null) return defaultSortBy;
     const parsed = ListingSortOptionSchema.safeParse(sortByParam);
     if (parsed.success && parsed.data !== undefined) {
       return parsed.data;
     }
-    return DEFAULT_SORT_BY_VALUE;
-  }, [searchParams]);
+    return defaultSortBy;
+  }, [searchParams, defaultSortBy]);
 
   const activeOrder = useMemo((): OrderDirection => {
     const orderParam = searchParams.get('order');

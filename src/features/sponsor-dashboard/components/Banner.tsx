@@ -100,7 +100,7 @@ export function Banner({
             <div>
               <div className="flex items-center">
                 <div className="flex w-min items-center gap-1">
-                  <p className="text-lg font-semibold whitespace-nowrap text-slate-900">
+                  <p className="text-lg font-semibold whitespace-nowrap text-slate-900 group-hover:underline">
                     {sponsor?.name}
                   </p>
                   <div>

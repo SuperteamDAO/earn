@@ -261,12 +261,19 @@ export function WithdrawFundsFlow({
         e instanceof Error &&
         (e.message === 'MFA canceled' || e.message === 'MFA cancelled');
 
+      const maxMFAttemptsReached =
+        e instanceof Error &&
+        e.message.includes('Max MFA verification attempts reached');
+
       const isUnsupportedToken =
         isAxiosError(e) && e.response?.data?.error === 'Invalid token selected';
 
       if (isMfaCancelled) {
         console.error('[handleWithdraw] MFA authentication cancelled by user.');
         posthog.capture('mfa cancelled_withdraw');
+      } else if (maxMFAttemptsReached) {
+        console.error('[handleWithdraw] Max MFA verification attempts reached');
+        posthog.capture('mfa_max_attempts_reached');
       } else if (isUnsupportedToken) {
         console.error('[handleWithdraw] Unsupported token selected');
         posthog.capture('withdraw_unsupported_token');

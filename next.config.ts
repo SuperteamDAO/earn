@@ -110,6 +110,20 @@ const nextConfig: NextConfig = {
       });
     }
 
+    headers.push({
+      source: '/sitemap/:path*.xml',
+      headers: [
+        {
+          key: 'Content-Type',
+          value: 'application/xml; charset=UTF-8',
+        },
+        {
+          key: 'Cache-Control',
+          value: 'public, max-age=86400, s-maxage=86400',
+        },
+      ],
+    });
+
     return headers;
   },
   async rewrites() {

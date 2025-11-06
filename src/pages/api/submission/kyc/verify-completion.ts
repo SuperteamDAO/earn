@@ -71,7 +71,7 @@ const handler = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
         },
       });
 
-      await createPayment({ submissionId });
+      await createPayment({ userId });
     }
 
     return res.status(200).json(result);

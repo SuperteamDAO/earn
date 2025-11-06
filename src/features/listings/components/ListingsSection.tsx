@@ -14,6 +14,9 @@ import { CATEGORY_NAV_ITEMS } from '@/features/navbar/constants';
 import {
   type ListingCategory,
   type ListingContext,
+  type ListingSortOption,
+  type ListingStatus,
+  type ListingTab,
   useListings,
 } from '../hooks/useListings';
 import { useListingsFilterCount } from '../hooks/useListingsFilterCount';
@@ -25,8 +28,17 @@ import { ListingFilters } from './ListingFilters';
 import { ListingTabs } from './ListingTabs';
 import { ViewAllButton } from './ViewAllButton';
 
+export type EmptySectionFilters = {
+  activeTab: ListingTab;
+  activeCategory: ListingCategory;
+  activeStatus: ListingStatus;
+  activeSortBy: ListingSortOption;
+};
+
 interface ListingsSectionProps extends ListingTabsProps {
-  customEmptySection?: React.ReactNode;
+  customEmptySection?:
+    | React.ReactNode
+    | ((filters: EmptySectionFilters) => React.ReactNode);
 }
 const FOR_YOU_SUPPORTED_TYPES: ReadonlyArray<ListingContext> = [
   'home',
@@ -99,6 +111,8 @@ export const ListingsSection = ({
     handleSortChange,
   } = useListingState({
     defaultCategory: optimalDefaultCategory,
+    defaultStatus: type === 'sponsor' ? 'all' : undefined,
+    defaultSortBy: type === 'sponsor' ? 'Status' : undefined,
   });
 
   const {
@@ -127,13 +141,8 @@ export const ListingsSection = ({
   }, [categoryCounts, potentialSession, authenticated, ready, supportsForYou]);
 
   const visibleCategoryNavItems = useMemo(() => {
-    if (!categoryCounts) return CATEGORY_NAV_ITEMS;
-
-    return CATEGORY_NAV_ITEMS.filter((item) => {
-      const count = categoryCounts[item.label] || 0;
-      return count > 0;
-    });
-  }, [categoryCounts]);
+    return CATEGORY_NAV_ITEMS;
+  }, []);
 
   const viewAllLink = () => {
     if (HACKATHONS.some((hackathon) => hackathon.slug === activeTab)) {
@@ -171,8 +180,18 @@ export const ListingsSection = ({
     }
 
     if (!listings?.length) {
+      const emptySectionContent =
+        typeof customEmptySection === 'function'
+          ? customEmptySection({
+              activeTab,
+              activeCategory,
+              activeStatus,
+              activeSortBy,
+            })
+          : customEmptySection;
+
       return (
-        customEmptySection ?? (
+        emptySectionContent ?? (
           <EmptySection
             title="No opportunities found"
             message="We don't have any relevant opportunities for the current filters."
@@ -220,6 +239,8 @@ export const ListingsSection = ({
           activeOrder={activeOrder}
           onStatusChange={handleStatusChange}
           onSortChange={handleSortChange}
+          showAllFilter={type === 'sponsor'}
+          showStatusSort={type === 'sponsor'}
         />
       </div>
       <div className="mt-2 mb-1 md:hidden">
