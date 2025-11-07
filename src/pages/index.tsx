@@ -3,11 +3,16 @@ import { useQuery } from '@tanstack/react-query';
 import { type GetServerSideProps } from 'next';
 import dynamic from 'next/dynamic';
 
+import { JsonLd } from '@/components/shared/JsonLd';
 import { useBreakpoint } from '@/hooks/use-breakpoint';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
+import {
+  generateOrganizationSchema,
+  generateWebSiteSchema,
+} from '@/utils/json-ld';
 
 import { BannerCarousel } from '@/features/home/components/Banner';
 import { SponsorStageBanner } from '@/features/home/components/SponsorStage/SponsorStageBanner';
@@ -59,15 +64,21 @@ export default function HomePage({ potentialSession }: HomePageProps) {
   const { user } = useUser();
   const isLg = useBreakpoint('lg');
 
+  const organizationSchema = generateOrganizationSchema();
+  const websiteSchema = generateWebSiteSchema();
+
   return (
     <Default
       className="bg-white"
       meta={
-        <Meta
-          title="Superteam Earn | Work to Earn in Crypto"
-          description="Explore the latest bounties on Superteam Earn, offering opportunities in the crypto space across Design, Development, and Content."
-          canonical="https://earn.superteam.fun"
-        />
+        <>
+          <Meta
+            title="Superteam Earn | Work to Earn in Crypto"
+            description="Explore the latest bounties on Superteam Earn, offering opportunities in the crypto space across Design, Development, and Content."
+            canonical="https://earn.superteam.fun"
+          />
+          <JsonLd data={[organizationSchema, websiteSchema]} />
+        </>
       }
     >
       <div className={cn('mx-auto w-full px-2 lg:px-6')}>

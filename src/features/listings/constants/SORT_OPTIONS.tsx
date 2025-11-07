@@ -1,3 +1,5 @@
+import { Calendar } from 'lucide-react';
+
 import FaRegClock from '@/components/icons/FaRegClock';
 import TbBriefcase2 from '@/components/icons/TbBriefcase2';
 
@@ -28,11 +30,13 @@ interface HackathonSortOptions {
 
 export const getListingSortOptions = (
   status: ListingStatus,
+  showStatusSort?: boolean,
 ): readonly SortOption[] => {
   let dateAscLabel: string;
   let dateDescLabel: string;
 
   switch (status) {
+    case 'all':
     case 'open':
       dateAscLabel = 'Deadline: Soonest First';
       dateDescLabel = 'Deadline: Furthest First';
@@ -51,7 +55,7 @@ export const getListingSortOptions = (
       break;
   }
 
-  return [
+  const baseOptions: SortOption[] = [
     {
       label: dateAscLabel,
       params: { sortBy: 'Date', order: 'asc' },
@@ -62,6 +66,18 @@ export const getListingSortOptions = (
       params: { sortBy: 'Date', order: 'desc' },
       icon: <FaRegClock className="size-4" />,
     },
+  ];
+
+  if (showStatusSort) {
+    baseOptions.unshift({
+      label: 'Status',
+      params: { sortBy: 'Status', order: 'asc' },
+      icon: <Calendar className="size-[1.0625rem]" />,
+    });
+  }
+
+  return [
+    ...baseOptions,
     {
       label: 'Prize: High to Low',
       params: { sortBy: 'Prize', order: 'desc' },

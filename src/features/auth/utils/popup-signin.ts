@@ -171,7 +171,7 @@ export async function signInWithPopup<
 let windowObjectReference: Window | null = null;
 let previousUrl: string | null = null;
 
-export const openSignInWindow = (
+const openSignInWindow = (
   url: string,
   name: string,
   baseURL: string,

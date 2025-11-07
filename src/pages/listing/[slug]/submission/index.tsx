@@ -1,5 +1,5 @@
 import type { GetServerSideProps } from 'next';
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 import type { SubmissionWithUser } from '@/interface/submission';
 import { ListingPageLayout } from '@/layouts/Listing';

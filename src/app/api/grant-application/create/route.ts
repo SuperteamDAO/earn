@@ -221,11 +221,16 @@ export async function POST(request: NextRequest) {
         if (grant.airtableId) {
           try {
             await syncGrantApplicationWithAirtable(result);
-          } catch (error) {
+          } catch (error: any) {
             logger.error('Error syncing with Airtable:', {
-              error,
+              error: error?.response?.data || error?.message || error,
+              errorMessage: error?.message,
+              errorStatus: error?.response?.status,
+              errorResponse: error?.response?.data,
               userId,
               grantId,
+              applicationId: result.id,
+              grantAirtableId: grant.airtableId,
             });
           }
         }

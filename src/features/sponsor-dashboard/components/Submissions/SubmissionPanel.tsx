@@ -1,7 +1,6 @@
 import { useAtom } from 'jotai';
 import { ArrowRight, ExternalLink } from 'lucide-react';
 import Link from 'next/link';
-import React from 'react';
 
 import MdOutlineAccountBalanceWallet from '@/components/icons/MdOutlineAccountBalanceWallet';
 import { Button } from '@/components/ui/button';

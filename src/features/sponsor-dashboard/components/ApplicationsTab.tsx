@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useAtom } from 'jotai';
 import { LucideFlag } from 'lucide-react';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
 import { LoadingSection } from '@/components/shared/LoadingSection';
@@ -104,9 +104,15 @@ export const ApplicationsTab = ({ slug }: Props) => {
   const [selectedApplicationIds, setSelectedApplicationIds] = useState<
     Set<string>
   >(new Set());
+  const selectedApplicationIdsRef = useRef(selectedApplicationIds);
   const [currentAction, setCurrentAction] = useState<'reject' | 'spam' | null>(
     null,
   );
+
+  // Keep ref in sync with state
+  useEffect(() => {
+    selectedApplicationIdsRef.current = selectedApplicationIds;
+  }, [selectedApplicationIds]);
 
   const { user } = useUser();
 
@@ -117,6 +123,28 @@ export const ApplicationsTab = ({ slug }: Props) => {
   const [selectedApplication, setSelectedApplication] = useAtom(
     selectedGrantApplicationAtom,
   );
+
+  const {
+    isOpen: isTogglerOpen,
+    onOpen: onTogglerOpen,
+    onClose: onTogglerClose,
+  } = useDisclosure();
+  const {
+    isOpen: rejectedMultipleIsOpen,
+    onOpen: rejectedMultipleOnOpen,
+    onClose: rejectedMultipleOnClose,
+  } = useDisclosure();
+  const {
+    isOpen: approveIsOpen,
+    onOpen: approveOnOpen,
+    onClose: approveOnClose,
+  } = useDisclosure();
+
+  const {
+    isOpen: rejectedIsOpen,
+    onOpen: rejectedOnOpen,
+    onClose: rejectedOnClose,
+  } = useDisclosure();
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -219,35 +247,55 @@ export const ApplicationsTab = ({ slug }: Props) => {
     },
   });
 
+  const isAllCurrentToggled = useCallback(() => {
+    return (
+      applications
+        ?.filter((application) => application.applicationStatus === 'Pending')
+        .every((application) => selectedApplicationIds.has(application.id)) ||
+      false
+    );
+  }, [applications, selectedApplicationIds]);
+
   useEffect(() => {
-    selectedApplicationIds.size > 0 ? onTogglerOpen() : onTogglerClose();
-  }, [selectedApplicationIds]);
+    if (selectedApplicationIds.size > 0) {
+      onTogglerOpen();
+    } else {
+      onTogglerClose();
+    }
+  }, [selectedApplicationIds.size]); // Only depend on size, not the entire Set object
 
   useEffect(() => {
     setIsToggledAll(isAllCurrentToggled());
-  }, [selectedApplicationIds, applications]);
+  }, [isAllCurrentToggled]);
 
   useEffect(() => {
-    const newSet = new Set(selectedApplicationIds);
-    Array.from(selectedApplicationIds).forEach((a) => {
+    // Only clean up selectedApplicationIds when applications change
+    // Use ref to access current selectedApplicationIds without including it in dependencies
+    const currentSelectedIds = selectedApplicationIdsRef.current;
+
+    // Check if any selected IDs are invalid and need to be removed
+    const invalidIds = Array.from(currentSelectedIds).filter((a) => {
       const applicationWithId = applications?.find(
         (application) => application.id === a,
       );
-      if (
-        applicationWithId &&
-        applicationWithId.applicationStatus !== 'Pending'
-      ) {
-        newSet.delete(a);
-      }
+      return (
+        applicationWithId && applicationWithId.applicationStatus !== 'Pending'
+      );
     });
-    setSelectedApplicationIds(newSet);
-  }, [applications]);
 
-  const isAllCurrentToggled = () =>
-    applications
-      ?.filter((application) => application.applicationStatus === 'Pending')
-      .every((application) => selectedApplicationIds.has(application.id)) ||
-    false;
+    // Only update if there are invalid IDs to remove
+    if (invalidIds.length > 0) {
+      setSelectedApplicationIds((prev) => {
+        const newSet = new Set(prev);
+        invalidIds.forEach((id) => newSet.delete(id));
+        // Only return new Set if it actually changed
+        if (newSet.size !== prev.size) {
+          return newSet;
+        }
+        return prev; // Return same reference if no change
+      });
+    }
+  }, [applications]); // Only depend on applications, not selectedApplicationIds
 
   useEffect(() => {
     if (applications && applications.length > 0) {
@@ -259,28 +307,6 @@ export const ApplicationsTab = ({ slug }: Props) => {
       });
     }
   }, [applications, searchText]);
-
-  const {
-    isOpen: isTogglerOpen,
-    onOpen: onTogglerOpen,
-    onClose: onTogglerClose,
-  } = useDisclosure();
-  const {
-    isOpen: rejectedMultipleIsOpen,
-    onOpen: rejectedMultipleOnOpen,
-    onClose: rejectedMultipleOnClose,
-  } = useDisclosure();
-  const {
-    isOpen: approveIsOpen,
-    onOpen: approveOnOpen,
-    onClose: approveOnClose,
-  } = useDisclosure();
-
-  const {
-    isOpen: rejectedIsOpen,
-    onOpen: rejectedOnOpen,
-    onClose: rejectedOnClose,
-  } = useDisclosure();
 
   const toggleApplication = (id: string) => {
     setSelectedApplicationIds((prev) => {

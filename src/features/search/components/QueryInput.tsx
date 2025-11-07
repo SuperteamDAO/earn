@@ -16,7 +16,7 @@ interface SearchButtonProps {
   isOutside?: boolean;
 }
 
-export function SearchButton({
+function SearchButton({
   onClick,
   disabled = false,
   loading = false,

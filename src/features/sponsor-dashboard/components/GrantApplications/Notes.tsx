@@ -3,7 +3,6 @@ import { useAtom, useSetAtom } from 'jotai';
 import debounce from 'lodash.debounce';
 import { Loader2 } from 'lucide-react';
 import React, {
-  useCallback,
   useEffect,
   useMemo,
   useRef,
@@ -84,9 +83,9 @@ export const Notes = ({ slug }: Props) => {
     },
   });
 
-  const debouncedUpdateNotes = useCallback(
-    debounce((content: string) => updateNotes(content), 1000),
-    [applicationId, updateNotes],
+  const debouncedUpdateNotes = useMemo(
+    () => debounce((content: string) => updateNotes(content), 1000),
+    [updateNotes],
   );
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {

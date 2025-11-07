@@ -2,7 +2,7 @@ import { PublicKey } from '@solana/web3.js';
 import { headers } from 'next/headers';
 import { type NextRequest, NextResponse } from 'next/server';
 
-import { privy } from '@/lib/privy';
+import { prisma } from '@/prisma';
 
 import { getUserSession } from '@/features/auth/utils/getUserSession';
 import { type TokenAsset } from '@/features/wallet/types/TokenAsset';
@@ -27,10 +27,13 @@ export async function GET(
       );
     }
 
-    const { privyDid } = sessionResponse.data;
-    const user = await privy.getUser(privyDid);
+    const { userId } = sessionResponse.data;
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { walletAddress: true },
+    });
 
-    const walletAddress = user.wallet?.address;
+    const walletAddress = user?.walletAddress;
 
     if (!walletAddress) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });

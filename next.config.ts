@@ -1,8 +1,7 @@
 import { type NextConfig } from 'next';
-
-/* eslint-disable @typescript-eslint/no-var-requires */
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const { withAxiom } = require('next-axiom');
-
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const withPWA = require('next-pwa')({
   dest: 'public',
   disable: process.env.NODE_ENV === 'development',
@@ -44,10 +43,11 @@ const baseCsp = `
 const csp = baseCsp.replace(/\s{2,}/g, ' ').trim();
 
 const nextConfig: NextConfig = {
-  eslint: { dirs: ['.'] },
+  turbopack: {},
   poweredByHeader: false,
   trailingSlash: true,
   reactStrictMode: true,
+  reactCompiler: false,
   images: {
     minimumCacheTTL: 86400,
     remotePatterns: [
@@ -65,9 +65,10 @@ const nextConfig: NextConfig = {
     formats: ['image/avif', 'image/webp'],
   },
   experimental: {
+    turbopackFileSystemCacheForDev: true,
     optimizePackageImports: [
       '@privy-io/react-auth',
-      '@privy-io/server-auth',
+      '@privy-io/node',
       '@radix-ui/react-*',
       '@solana/*',
       '@tanstack/react-query',
@@ -92,6 +93,7 @@ const nextConfig: NextConfig = {
       'zod',
     ],
   },
+  serverExternalPackages: ['isomorphic-dompurify', 'jsdom', 'parse5'],
   async headers() {
     const headers = [];
 
@@ -109,6 +111,20 @@ const nextConfig: NextConfig = {
         headers: [{ key: 'X-Robots-Tag', value: 'noindex' }],
       });
     }
+
+    headers.push({
+      source: '/sitemap/:path*.xml',
+      headers: [
+        {
+          key: 'Content-Type',
+          value: 'application/xml; charset=UTF-8',
+        },
+        {
+          key: 'Cache-Control',
+          value: 'public, max-age=86400, s-maxage=86400',
+        },
+      ],
+    });
 
     return headers;
   },

@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import { cn } from '@/utils/cn';
 
-interface SpinnerProps extends React.SVGProps<SVGSVGElement> {}
+type SpinnerProps = React.SVGProps<SVGSVGElement>;
 
 const SpinnerComponent = React.forwardRef<SVGSVGElement, SpinnerProps>(
   function Spinner({ className, ...props }, ref) {

@@ -6,7 +6,7 @@ import { type BountiesGetPayload } from '@/prisma/models/Bounties';
 
 import { type ListingWithSponsor } from '@/features/auth/utils/checkListingSponsorAuth';
 
-export function isDraftable(
+function isDraftable(
   listing:
     | BountiesGetPayload<{
         include: {

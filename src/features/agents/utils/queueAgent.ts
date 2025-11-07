@@ -3,7 +3,7 @@ import Redis from 'ioredis';
 
 import logger from '@/lib/logger';
 
-export type AgentActionType =
+type AgentActionType =
   | 'autoReviewGrantApplication'
   | 'generateContextProject'
   | 'autoReviewProjectApplication'

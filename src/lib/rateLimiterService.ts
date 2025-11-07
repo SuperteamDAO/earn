@@ -174,17 +174,3 @@ export async function checkAndApplyRateLimitApp(
 
   return null;
 }
-
-/**
- * Utility function to get rate limit headers for successful requests in App Router.
- * Use this to add rate limit headers to successful responses.
- */
-export function getRateLimitHeaders(
-  result: RateLimitResult,
-): Record<string, string> {
-  return {
-    'X-RateLimit-Limit': result.limit.toString(),
-    'X-RateLimit-Remaining': result.remaining.toString(),
-    'X-RateLimit-Reset': Math.floor(result.reset / 1000).toString(),
-  };
-}

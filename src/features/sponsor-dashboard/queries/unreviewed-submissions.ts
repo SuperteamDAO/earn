@@ -21,9 +21,10 @@ const fetchUnreviewedSubmissions = async (
 export const unreviewedSubmissionsQuery = (
   params: ApplicationsParams,
   slug?: string,
+  enabled?: boolean,
 ) =>
   queryOptions({
     queryKey: ['unreviewed-submissions', slug, params],
     queryFn: () => fetchUnreviewedSubmissions(params),
-    enabled: !!slug && !!params.id && !!params.evaluationCompleted,
+    enabled: !!slug && !!params.id && !!params.evaluationCompleted && !!enabled,
   });

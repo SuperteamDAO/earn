@@ -7,12 +7,10 @@ import { type Listing } from '../../listings/types';
 import {
   type HackathonContextSchema,
   type HackathonOrderDirectionSchema,
-  type HackathonSchema,
   type HackathonSortOptionSchema,
   type HackathonStatusSchema,
 } from '../constants/schema';
 
-export type HackathonName = z.infer<typeof HackathonSchema>;
 export type HackathonStatus = z.infer<typeof HackathonStatusSchema>;
 export type HackathonSortOption = z.infer<typeof HackathonSortOptionSchema>;
 export type HackathonOrderDirection = z.infer<

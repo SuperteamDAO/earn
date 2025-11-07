@@ -14,20 +14,138 @@
     ```
 4. Set up your `.env` file.
   - Start by copying the `.env.example` file to a new file named `.env`. This file will store your local environment settings.
-  - Use `openssl rand -base64 32` to generate a key and add it under `NEXTAUTH_SECRET` in the .env file.
-  - Database setup
-    - Create a local `MySQL` instance and replace `<user>`, `<pass>`, `<db-host>`, and `<db-port>` with their applicable values.
-      ```
-      LOCAL_DATABASE_URL='mysql://<user>:<pass>@<db-host>:<db-port>'
-      ``` 
-    - If you don't want to create a local DB, then you can also consider using services like railway.app or render.
-      - [Setup MySQL DB with railway.app](https://docs.railway.app/guides/mysql)
-      - [Setup MYSQL DB with render](https://docs.render.com/deploy-mysql)
 
-    - Generate prisma migrations & client.
-      ```bash
-      npx prisma migrate dev --name init && npx prisma generate
-      ```
+  - Database setup:
+
+    **Option 1: Local MySQL (Recommended for Development)**
+
+    The app automatically detects your database type based on `DATABASE_URL`. Choose your platform:
+
+    <details>
+    <summary><b>🍎 macOS</b></summary>
+
+    1. Install MySQL using Homebrew:
+       ```bash
+       brew install mysql
+       ```
+
+    2. Start MySQL service:
+       ```bash
+       brew services start mysql
+       ```
+
+    3. Create database:
+       ```bash
+       mysql -u root -e "CREATE DATABASE earn_db"
+       ```
+
+    4. Set `DATABASE_URL` in `.env`:
+       ```
+       DATABASE_URL='mysql://root@localhost:3306/earn_db'
+       ```
+    </details>
+
+    <details>
+    <summary><b>🪟 Windows</b></summary>
+
+    1. **Option A: Using MySQL Installer (Recommended for beginners)**
+       - Download [MySQL Community Server Installer](https://dev.mysql.com/downloads/installer/)
+       - Run the installer and choose "Developer Default"
+       - Set root password when prompted (remember this!)
+       - Complete installation
+
+    2. **Option B: Using Package Manager**
+       ```powershell
+       # Using Chocolatey
+       choco install mysql
+
+       # OR using winget
+       winget install Oracle.MySQL
+       ```
+
+    3. Start MySQL (if not already running):
+       - Open "Services" app (Win + R, type `services.msc`)
+       - Find "MySQL" service and start it
+
+       OR via command line:
+       ```powershell
+       net start MySQL
+       ```
+
+    4. Create database:
+       ```powershell
+       mysql -u root -p -e "CREATE DATABASE earn_db"
+       ```
+       Enter your root password when prompted.
+
+    5. Set `DATABASE_URL` in `.env`:
+       ```
+       DATABASE_URL='mysql://root:YOUR_PASSWORD@localhost:3306/earn_db'
+       ```
+       Replace `YOUR_PASSWORD` with your MySQL root password.
+    </details>
+
+    <details>
+    <summary><b>🐧 Linux</b></summary>
+
+    **Ubuntu/Debian:**
+    ```bash
+    # Install MySQL
+    sudo apt update
+    sudo apt install mysql-server
+
+    # Start MySQL service
+    sudo systemctl start mysql
+    sudo systemctl enable mysql
+
+    # Secure installation (optional but recommended)
+    sudo mysql_secure_installation
+
+    # Create database
+    sudo mysql -e "CREATE DATABASE earn_db"
+
+    # Create user (optional, for better security)
+    sudo mysql -e "CREATE USER 'earnuser'@'localhost' IDENTIFIED BY 'your_password';"
+    sudo mysql -e "GRANT ALL PRIVILEGES ON earn_db.* TO 'earnuser'@'localhost';"
+    sudo mysql -e "FLUSH PRIVILEGES;"
+    ```
+
+    **Fedora/RHEL/CentOS:**
+    ```bash
+    # Install MySQL
+    sudo dnf install mysql-server  # or 'yum' for older versions
+
+    # Start MySQL service
+    sudo systemctl start mysqld
+    sudo systemctl enable mysqld
+
+    # Create database
+    sudo mysql -e "CREATE DATABASE earn_db"
+    ```
+
+    **Set `DATABASE_URL` in `.env`:**
+    ```
+    # If using root:
+    DATABASE_URL='mysql://root@localhost:3306/earn_db'
+
+    # If you created a user:
+    DATABASE_URL='mysql://earnuser:your_password@localhost:3306/earn_db'
+    ```
+    </details>
+
+    **After setting up MySQL, generate Prisma client:**
+    ```bash
+    npx prisma generate && npx prisma db push
+    ```
+
+    **Option 2: Cloud MySQL Database**
+
+    If you prefer not to run MySQL locally, use a cloud service:
+    - [Setup MySQL with Railway](https://docs.railway.app/guides/mysql) (Free tier available)
+    - [Setup MySQL with Render](https://docs.render.com/deploy-mysql) (Free tier available)
+    - [Setup MySQL with PlanetScale](https://planetscale.com/) (Free tier available)
+
+    Then set `DATABASE_URL` in `.env` with the connection string from your cloud provider.
       
   - You have to set up resend to run the app:
     - [Resend](https://resend.com): To obtain your `RESEND_API_KEY`, visit the Resend dashboard. This credential is essential for setting up Email Auth.

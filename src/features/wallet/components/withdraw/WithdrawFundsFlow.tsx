@@ -1,5 +1,8 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useSignTransaction } from '@privy-io/react-auth/solana';
+import {
+  useSignAndSendTransaction,
+  useWallets,
+} from '@privy-io/react-auth/solana';
 import {
   getAssociatedTokenAddressSync,
   TOKEN_2022_PROGRAM_ID,
@@ -8,6 +11,7 @@ import {
 import { PublicKey, VersionedTransaction } from '@solana/web3.js';
 import { useQueryClient } from '@tanstack/react-query';
 import { isAxiosError } from 'axios';
+import bs58 from 'bs58';
 import { log } from 'next-axiom';
 import posthog from 'posthog-js';
 import { useCallback, useState } from 'react';
@@ -56,7 +60,8 @@ export function WithdrawFundsFlow({
   const [pendingFormData, setPendingFormData] =
     useState<WithdrawFormData | null>(null);
 
-  const { signTransaction } = useSignTransaction();
+  const { wallets } = useWallets();
+  const { signAndSendTransaction } = useSignAndSendTransaction();
 
   const form = useForm<WithdrawFormData>({
     resolver: zodResolver(withdrawFormSchema),
@@ -179,17 +184,16 @@ export function WithdrawFundsFlow({
         Buffer.from(response.data.serializedTransaction, 'base64'),
       );
 
-      const userSignedTransaction = await signTransaction({
-        transaction,
-        connection,
-        uiOptions: {
-          showWalletUIs: false,
-        },
+      const wallet = wallets[0];
+      if (!wallet) throw new Error('No wallet found');
+
+      const result = await signAndSendTransaction({
+        wallet,
+        transaction: transaction.serialize(),
+        chain: 'solana:mainnet',
       });
 
-      signature = await connection.sendRawTransaction(
-        userSignedTransaction.serialize(),
-      );
+      signature = bs58.encode(result.signature);
 
       const pollForSignature = async (sig: string) => {
         const MAX_RETRIES = 60;
@@ -257,12 +261,19 @@ export function WithdrawFundsFlow({
         e instanceof Error &&
         (e.message === 'MFA canceled' || e.message === 'MFA cancelled');
 
+      const maxMFAttemptsReached =
+        e instanceof Error &&
+        e.message.includes('Max MFA verification attempts reached');
+
       const isUnsupportedToken =
         isAxiosError(e) && e.response?.data?.error === 'Invalid token selected';
 
       if (isMfaCancelled) {
         console.error('[handleWithdraw] MFA authentication cancelled by user.');
         posthog.capture('mfa cancelled_withdraw');
+      } else if (maxMFAttemptsReached) {
+        console.error('[handleWithdraw] Max MFA verification attempts reached');
+        posthog.capture('mfa_max_attempts_reached');
       } else if (isUnsupportedToken) {
         console.error('[handleWithdraw] Unsupported token selected');
         posthog.capture('withdraw_unsupported_token');

@@ -136,37 +136,42 @@ function EligibilityQuestionItem({
               <FormField
                 control={form.control}
                 name={`eligibility.${index}.question`}
-                render={({ field: questionField }) => (
-                  <FormItem className="relative w-full border-l">
-                    <FormControl>
-                      <TextareaAutosize
-                        value={questionField.value}
-                        placeholder="Enter your question"
-                        minRows={isFocused ? 2 : 1}
-                        rows={1}
-                        className="min-h-8 resize-none overflow-hidden border-none py-2 pl-2 text-sm transition-all duration-200 ease-in-out placeholder:text-sm placeholder:text-slate-400 focus:ring-0 focus:outline-hidden focus-visible:ring-0"
-                        onChange={(e) => {
-                          questionField.onChange(e);
-                          form.saveDraft();
-                        }}
-                        onFocus={() => setIsFocused(true)}
-                        onBlur={() => setIsFocused(false)}
-                      />
-                    </FormControl>
-                    {(isFocused || questionField.value.length > 200) && (
-                      <span
-                        className={cn(
-                          'absolute right-1 bottom-0 text-[0.625rem] text-slate-400',
-                          questionField.value.length > 200 && 'text-red-500',
-                          (fieldsLength !== 1 || type !== 'project') &&
-                            '-right-7',
-                        )}
-                      >
-                        {questionField.value.length}/200
-                      </span>
-                    )}
-                  </FormItem>
-                )}
+                render={({ field: questionField }) => {
+                  const questionValue = questionField.value ?? '';
+                  const questionLength = questionValue.length;
+
+                  return (
+                    <FormItem className="relative w-full border-l">
+                      <FormControl>
+                        <TextareaAutosize
+                          value={questionValue}
+                          placeholder="Enter your question"
+                          minRows={isFocused ? 2 : 1}
+                          rows={1}
+                          className="min-h-8 resize-none overflow-hidden border-none py-2 pl-2 text-sm transition-all duration-200 ease-in-out placeholder:text-sm placeholder:text-slate-400 focus:ring-0 focus:outline-hidden focus-visible:ring-0"
+                          onChange={(e) => {
+                            questionField.onChange(e);
+                            form.saveDraft();
+                          }}
+                          onFocus={() => setIsFocused(true)}
+                          onBlur={() => setIsFocused(false)}
+                        />
+                      </FormControl>
+                      {(isFocused || questionLength > 200) && (
+                        <span
+                          className={cn(
+                            'absolute right-1 bottom-0 text-[0.625rem] text-slate-400',
+                            questionLength > 200 && 'text-red-500',
+                            (fieldsLength !== 1 || type !== 'project') &&
+                              '-right-7',
+                          )}
+                        >
+                          {questionLength}/200
+                        </span>
+                      )}
+                    </FormItem>
+                  );
+                }}
               />
 
               <FormField
@@ -282,7 +287,7 @@ export function EligibilityQuestionsForm() {
             </div>
           </ScrollArea>
           {(type !== 'bounty' && type !== 'project') ||
-          (type === 'bounty' && fields.length < 5) ||
+          (type === 'bounty' && fields.length < 25) ||
           (type === 'project' && fields.length < 10) ? (
             <div
               className={cn(
@@ -307,7 +312,7 @@ export function EligibilityQuestionsForm() {
           ) : (
             <FormDescription>
               {type === 'bounty'
-                ? 'You can add up to five custom questions'
+                ? 'You can add up to 25 custom questions'
                 : 'You can add up to ten custom questions'}
             </FormDescription>
           )}

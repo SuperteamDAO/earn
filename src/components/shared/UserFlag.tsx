@@ -20,7 +20,7 @@ type FlagSize =
   | '52px'
   | '64px';
 
-export const CUSTOM_FLAGS: Record<string, string> = {
+const CUSTOM_FLAGS: Record<string, string> = {
   balkan: `${ASSET_URL}/superteams/logos/balkan.png`,
   latam: `${ASSET_URL}/regions/latam`,
   'north-america': `${ASSET_URL}/regions/north-america`,
@@ -40,16 +40,20 @@ export function UserFlag({ location, size = '16px', isCode = false }: Props) {
   useEffect(() => {
     if (isCode) {
       const lowerCaseCode = location.toLowerCase();
-      setCode(lowerCaseCode);
-      setIsCustomFlag(!!CUSTOM_FLAGS[lowerCaseCode]);
+      setTimeout(() => {
+        setCode(lowerCaseCode);
+        setIsCustomFlag(!!CUSTOM_FLAGS[lowerCaseCode]);
+      }, 0);
     } else {
       const country = countries.find(
         (c) => c.name.toLowerCase() === location.toLowerCase(),
       );
       if (country) {
         const lowerCaseCode = country.code.toLowerCase();
-        setCode(lowerCaseCode);
-        setIsCustomFlag(!!CUSTOM_FLAGS[lowerCaseCode]);
+        setTimeout(() => {
+          setCode(lowerCaseCode);
+          setIsCustomFlag(!!CUSTOM_FLAGS[lowerCaseCode]);
+        }, 0);
       }
     }
   }, [location, isCode]);

@@ -1,10 +1,34 @@
 import Link from 'next/link';
-import React from 'react';
 
 import { Button } from '@/components/ui/button';
 import { tokenList } from '@/constants/tokenList';
 
 import { grantAmount } from '../utils/grantAmount';
+
+interface GrantAmountProps {
+  token?: string;
+  minReward?: number;
+  maxReward?: number;
+}
+
+const GrantAmount = ({ token, minReward, maxReward }: GrantAmountProps) => {
+  const tokenIcon = tokenList.find((ele) => ele.tokenSymbol === token)?.icon;
+
+  return (
+    <div className="-mt-2 flex items-center">
+      <img className="mr-1 h-4 w-4 rounded-full" alt={token} src={tokenIcon} />
+      <div className="flex items-baseline gap-1">
+        <p className="text-sm font-semibold whitespace-nowrap text-slate-600">
+          {grantAmount({
+            maxReward: maxReward!,
+            minReward: minReward!,
+          })}
+        </p>
+        <p className="text-sm font-medium text-gray-600">{token}</p>
+      </div>
+    </div>
+  );
+};
 
 export const GrantEntry = ({
   title,
@@ -22,29 +46,6 @@ export const GrantEntry = ({
   minReward?: number;
   maxReward?: number;
 }) => {
-  const tokenIcon = tokenList.find((ele) => ele.tokenSymbol === token)?.icon;
-
-  const GrantAmount = () => {
-    return (
-      <div className="-mt-2 flex items-center">
-        <img
-          className="mr-1 h-4 w-4 rounded-full"
-          alt={token}
-          src={tokenIcon}
-        />
-        <div className="flex items-baseline gap-1">
-          <p className="text-sm font-semibold whitespace-nowrap text-slate-600">
-            {grantAmount({
-              maxReward: maxReward!,
-              minReward: minReward!,
-            })}
-          </p>
-          <p className="text-sm font-medium text-gray-600">{token}</p>
-        </div>
-      </div>
-    );
-  };
-
   return (
     <Link
       className="mx-auto block w-full cursor-pointer overflow-hidden rounded-lg border shadow-md transition-all duration-300 hover:shadow-lg sm:w-80"
@@ -64,7 +65,11 @@ export const GrantEntry = ({
         >
           {title}
         </p>
-        <GrantAmount />
+        <GrantAmount
+          token={token}
+          minReward={minReward}
+          maxReward={maxReward}
+        />
         <Link href={`/grants/${slug}`} className="block">
           <Button
             variant="outline"

@@ -1,9 +1,11 @@
 import localFont from 'next/font/local';
 import { useState } from 'react';
 
+import { JsonLd } from '@/components/shared/JsonLd';
 import { ASSET_URL } from '@/constants/ASSET_URL';
 import { Meta } from '@/layouts/Meta';
 import { cn } from '@/utils/cn';
+import { generateOrganizationSchema } from '@/utils/json-ld';
 
 import { CallOut } from '@/features/sponsor/components/CallOut';
 import { FAQs } from '@/features/sponsor/components/FAQs';
@@ -26,36 +28,38 @@ const font = localFont({
   preload: false,
 });
 
+const VideoPlayback = ({ setVideoPopup }: { setVideoPopup: (value: boolean) => void }) => {
+  return (
+    <div
+      className="fixed z-50 grid h-screen w-screen place-content-center bg-[rgba(191,203,220,0.67)]"
+      onClick={() => setVideoPopup(false)}
+    >
+      <div className="relative flex w-[95vw] flex-col gap-5 overflow-hidden pt-[56.25%] lg:w-[60vw]">
+        <iframe
+          width="100%"
+          height="100%"
+          className="absolute inset-0"
+          src="https://www.youtube.com/embed/_OyQ_Bxz1xo?si=U12Uh2foC2Ma914e&autoplay=1&mute=1"
+        />
+      </div>
+    </div>
+  );
+};
+
 const Sponsor = () => {
   const [videoPopup, setVideoPopup] = useState<boolean>(false);
-
-  const VideoPlayback = () => {
-    return (
-      <div
-        className="fixed z-50 grid h-screen w-screen place-content-center bg-[rgba(191,203,220,0.67)]"
-        onClick={() => setVideoPopup(false)}
-      >
-        <div className="relative flex w-[95vw] flex-col gap-5 overflow-hidden pt-[56.25%] lg:w-[60vw]">
-          <iframe
-            width="100%"
-            height="100%"
-            className="absolute inset-0"
-            src="https://www.youtube.com/embed/_OyQ_Bxz1xo?si=U12Uh2foC2Ma914e&autoplay=1&mute=1"
-          />
-        </div>
-      </div>
-    );
-  };
 
   return (
     <>
       <Meta
         title="Find Top Talent for Your Crypto Projects on Superteam Earn"
         description="Seeking top talent for your crypto project? Superteam Earn connects you with experts for Bounties, Projects, and Grants in the crypto space."
+        canonical="https://earn.superteam.fun/sponsor/"
         og={ASSET_URL + `/og/sponsor.png`}
       />
+      <JsonLd data={[generateOrganizationSchema()]} />
 
-      {videoPopup && <VideoPlayback />}
+      {videoPopup && <VideoPlayback setVideoPopup={setVideoPopup} />}
 
       <Header />
 

@@ -1,6 +1,6 @@
 import { Lock } from 'lucide-react';
 import Link from 'next/link';
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 import { Avatar, AvatarImage } from '@/components/ui/avatar';
 import { Tooltip } from '@/components/ui/tooltip';

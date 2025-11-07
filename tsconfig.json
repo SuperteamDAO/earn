@@ -27,7 +27,7 @@
     "allowJs": false, // earlier - true
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "jsx": "preserve",
+    "jsx": "react-jsx",
     "noEmit": true,
     "isolatedModules": true,
     "incremental": true,
@@ -50,5 +50,10 @@
     "./src/generated/**/*",
     ".next/types/validator.ts"
   ],
-  "include": ["**/*.ts", "**/*.tsx", ".next/types/**/*.ts"]
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    ".next/dev/types/**/*.ts"
+  ]
 }

@@ -3,7 +3,7 @@ import dayjs from 'dayjs';
 import { useAtom } from 'jotai';
 import { ArrowRight, Check, Copy, X } from 'lucide-react';
 import Link from 'next/link';
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 
 import MdOutlineAccountBalanceWallet from '@/components/icons/MdOutlineAccountBalanceWallet';
 import MdOutlineMail from '@/components/icons/MdOutlineMail';

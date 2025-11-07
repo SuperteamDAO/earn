@@ -7,10 +7,15 @@ import {
 import type { GetServerSideProps } from 'next';
 import Head from 'next/head';
 
+import { JsonLd } from '@/components/shared/JsonLd';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { ListingPageLayout } from '@/layouts/Listing';
 import { getSubmissionCount } from '@/pages/api/listings/[listingId]/submission-count';
 import { getListingDetailsBySlug } from '@/pages/api/listings/details/[slug]';
+import {
+  generateBreadcrumbListSchema,
+  generateJobPostingSchema,
+} from '@/utils/json-ld';
 
 import { ListingPop } from '@/features/conversion-popups/components/ListingPop';
 import { DescriptionUI } from '@/features/listings/components/ListingPage/DescriptionUI';
@@ -27,6 +32,21 @@ function ListingDetails({
   listing: initialListing,
   dehydratedState,
 }: ListingDetailsProps) {
+  const jobPostingSchema = initialListing
+    ? generateJobPostingSchema(initialListing)
+    : null;
+
+  const breadcrumbSchema = initialListing
+    ? generateBreadcrumbListSchema([
+        { name: 'Home', url: '/' },
+        {
+          name: initialListing.type === 'bounty' ? 'Bounties' : 'Jobs',
+          url: '/all',
+        },
+        { name: initialListing.title || 'Listing' },
+      ])
+    : null;
+
   return (
     <>
       <HydrationBoundary state={dehydratedState}>
@@ -35,6 +55,9 @@ function ListingDetails({
             <meta name="robots" content="noindex, nofollow" />
             <meta name="googlebot" content="noindex, nofollow" />
           </Head>
+        )}
+        {jobPostingSchema && breadcrumbSchema && (
+          <JsonLd data={[jobPostingSchema, breadcrumbSchema]} />
         )}
         <ListingPageLayout listing={initialListing}>
           <ListingPop listing={initialListing} />

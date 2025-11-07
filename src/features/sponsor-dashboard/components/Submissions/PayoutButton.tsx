@@ -20,7 +20,7 @@ import { Loader2 } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import { log } from 'next-axiom';
 import posthog from 'posthog-js';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { toast } from 'sonner';
 
 import {
@@ -415,7 +415,14 @@ export const PayoutButton = ({ bounty, submission }: Props) => {
 
       const classifyError = (
         e: unknown,
-      ): 'user-rejected' | 'expired' | 'timeout' | 'rpc' | 'unknown' => {
+      ):
+        | 'user-rejected'
+        | 'expired'
+        | 'timeout'
+        | 'rpc'
+        | 'insufficient-funds'
+        | 'token-not-available'
+        | 'unknown' => {
         const text = String((e as any)?.message ?? e ?? '').toLowerCase();
         if (
           text.includes('user rejected') ||
@@ -449,6 +456,16 @@ export const PayoutButton = ({ bounty, submission }: Props) => {
         ) {
           return 'rpc';
         }
+        if (
+          text.includes('insufficient') ||
+          text.includes('insufficient token balance') ||
+          text.includes('insufficient funds')
+        ) {
+          return 'insufficient-funds';
+        }
+        if (text.includes('check token requirements')) {
+          return 'token-not-available';
+        }
         return 'unknown';
       };
 
@@ -460,6 +477,18 @@ export const PayoutButton = ({ bounty, submission }: Props) => {
           break;
         case 'expired':
           toast.error('Blockhash expired. Payment not sent.');
+          setIsPaying(false);
+          break;
+        case 'insufficient-funds':
+          toast.error(
+            `Insufficient ${bounty?.token} or SOL balance. Please add funds to your wallet and try again.`,
+          );
+          setIsPaying(false);
+          break;
+        case 'token-not-available':
+          toast.error(
+            `Insufficient ${bounty?.token} or SOL balance. Please add funds to your wallet and try again.`,
+          );
           setIsPaying(false);
           break;
         case 'timeout': {

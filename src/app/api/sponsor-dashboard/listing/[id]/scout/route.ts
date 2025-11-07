@@ -470,10 +470,19 @@ END)
       LIMIT ${LIMIT};
     `;
 
+    const selectScoutsWithoutSemicolon = selectScouts.trim().replace(/;$/, '');
+
     const insertQuery = `
       INSERT INTO Scouts (id, userId, listingId, dollarsEarned, 
         score, skills, invited, createdAt)
-      ${selectScouts}
+      SELECT * FROM (
+        ${selectScoutsWithoutSemicolon}
+      ) AS src
+      ON DUPLICATE KEY UPDATE
+        dollarsEarned = src.dollarsEarned,
+        score = src.score,
+        skills = src.skills,
+        invited = src.invited
     `;
 
     logger.debug('Executing insert query for new scouts');

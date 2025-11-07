@@ -8,7 +8,6 @@ import {
   Sheet,
 } from 'lucide-react';
 import { useRouter } from 'next/router';
-import React from 'react';
 import { toast } from 'sonner';
 
 import {

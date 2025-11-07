@@ -195,7 +195,7 @@ export const useUploadImage = (): UseUploadReturn => {
     options: UploadOptions,
     oldImageUrl?: string,
   ): Promise<CloudinaryUploadResult> => {
-    if (oldImageUrl) {
+    if (oldImageUrl && oldImageUrl.includes('res.cloudinary.com')) {
       try {
         await api.delete('/api/image/delete', {
           data: { imageUrl: oldImageUrl, source: options.source },

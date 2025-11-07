@@ -105,6 +105,10 @@ export const TrancheFormModal = ({ grant, applicationId, onClose }: Props) => {
     }
   };
 
+  const currentWalletAddress = form.watch('walletAddress');
+  const isSameAsEmbeddedWallet =
+    currentWalletAddress?.toLowerCase() === user?.walletAddress?.toLowerCase();
+
   return (
     <div>
       <DialogTitle className="border-b px-8 py-6 text-lg tracking-normal text-slate-700 sm:text-xl">
@@ -161,20 +165,25 @@ export const TrancheFormModal = ({ grant, applicationId, onClose }: Props) => {
                         {...field}
                       />
                     </FormControl>
-                    <p className="pt-0.5 text-xs text-slate-500">
-                      <span
-                        className="cursor-pointer underline"
-                        onClick={() => {
-                          if (user?.walletAddress) {
-                            form.setValue('walletAddress', user.walletAddress);
-                          }
-                        }}
-                      >
-                        Click here
-                      </span>{' '}
-                      to update your Earn embedded wallet address which can
-                      accept any SPL token.
-                    </p>
+                    {!isSameAsEmbeddedWallet && (
+                      <p className="pt-0.5 text-xs text-slate-500">
+                        <span
+                          className="cursor-pointer underline"
+                          onClick={() => {
+                            if (user?.walletAddress) {
+                              form.setValue(
+                                'walletAddress',
+                                user.walletAddress,
+                              );
+                            }
+                          }}
+                        >
+                          Click here
+                        </span>{' '}
+                        to auto-fill this field with your Earn embedded wallet
+                        address
+                      </p>
+                    )}
                     <FormMessage className="pt-1" />
                   </div>
                 </FormItem>

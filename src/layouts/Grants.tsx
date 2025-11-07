@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react';
 
 import { EmptySection } from '@/components/shared/EmptySection';
 import { LoadingSection } from '@/components/shared/LoadingSection';
+import { Meta } from '@/layouts/Meta';
 import { useUser } from '@/store/user';
 import { getURLSanitized } from '@/utils/getURLSanitized';
 import { getURL } from '@/utils/validUrl';
@@ -64,38 +65,24 @@ export function GrantPageLayout({
     }
   }, [initialGrant]);
 
+  const ogImageUrl = `${getURL()}api/dynamic-og/grant/?title=${encodedTitle}&token=${initialGrant?.token}&sponsor=${initialGrant?.sponsor?.name}&logo=${initialGrant?.sponsor?.logo}&minReward=${initialGrant?.minReward}&maxReward=${initialGrant?.maxReward}&isSponsorVerified=${initialGrant?.sponsor?.isVerified}`;
+
   return (
     <Default
       meta={
-        <Head>
-          <title>{`${initialGrant?.title || 'Grant'} | Superteam Earn`}</title>
-          <meta
-            property="og:title"
-            content={`${initialGrant?.title || 'Grant'} | Superteam Earn`}
+        <>
+          <Meta
+            title={`${initialGrant?.title || 'Grant'} | Superteam Earn`}
+            description={`${initialGrant?.title || 'Grant'} by ${initialGrant?.sponsor?.name} | Apply for funding between $${initialGrant?.minReward}-$${initialGrant?.maxReward} in ${initialGrant?.token} on Superteam Earn`}
+            canonical={`https://earn.superteam.fun/grants/${initialGrant?.slug}/`}
+            og={ogImageUrl}
           />
-          <meta
-            property="og:image"
-            content={`${getURL()}api/dynamic-og/grant/?title=${encodedTitle}&token=${initialGrant?.token}&sponsor=${initialGrant?.sponsor?.name}&logo=${initialGrant?.sponsor?.logo}&minReward=${initialGrant?.minReward}&maxReward=${initialGrant?.maxReward}&isSponsorVerified=${initialGrant?.sponsor?.isVerified}`}
-          />
-          <meta
-            name="twitter:title"
-            content={`${initialGrant?.title || 'Grant'} | Superteam Earn`}
-          />
-          <meta
-            name="twitter:image"
-            content={`${getURL()}api/dynamic-og/grant/?title=${encodedTitle}&token=${initialGrant?.token}&sponsor=${initialGrant?.sponsor?.name}&logo=${initialGrant?.sponsor?.logo}&minReward=${initialGrant?.minReward}&maxReward=${initialGrant?.maxReward}&isSponsorVerified=${initialGrant?.sponsor?.isVerified}`}
-          />
-          <meta name="twitter:card" content="summary_large_image" />
-          <meta property="og:image:width" content="1200" />
-          <meta property="og:image:height" content="630" />
-          <meta property="og:image:alt" content="Superteam Grant" />
-          <meta charSet="UTF-8" key="charset" />
-          <meta
-            name="viewport"
-            content="width=device-width, initial-scale=1, maximum-scale=1"
-            key="viewport"
-          />
-        </Head>
+          <Head>
+            <meta property="og:image:width" content="1200" />
+            <meta property="og:image:height" content="630" />
+            <meta property="og:image:alt" content="Superteam Grant" />
+          </Head>
+        </>
       }
     >
       <div className="bg-white">

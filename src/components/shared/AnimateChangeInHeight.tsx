@@ -1,5 +1,5 @@
 import { motion } from 'motion/react';
-import React, { useEffect, useMemo, useRef } from 'react';
+import React, { useLayoutEffect, useMemo, useRef, useState } from 'react';
 import useMeasure from 'react-use-measure';
 import { type ClassNameValue } from 'tailwind-merge';
 
@@ -20,13 +20,21 @@ export const AnimateChangeInHeight = ({
 }: AnimateChangeInHeightProps) => {
   const [elementRef, bounds] = useMeasure();
   const prevHeight = useRef(bounds.height);
+  const [hasHadNonZeroHeight, setHasHadNonZeroHeight] = useState(
+    () => bounds.height !== 0,
+  );
 
   const shouldAnimate = useMemo(
     () => !disableOnHeightZero || bounds.height !== 0,
     [disableOnHeightZero, bounds.height],
   );
 
-  useEffect(() => {
+  const shouldAnimateThisRender = useMemo(
+    () => shouldAnimate && hasHadNonZeroHeight,
+    [shouldAnimate, hasHadNonZeroHeight],
+  );
+
+  useLayoutEffect(() => {
     if (shouldAnimate && prevHeight.current === 0 && bounds.height > 0) {
       setTimeout(() => {
         window.dispatchEvent(new Event('resize'));
@@ -41,14 +49,25 @@ export const AnimateChangeInHeight = ({
         window.dispatchEvent(new Event('resize'));
       }, 250);
     }
+    const prev = prevHeight.current;
     prevHeight.current = bounds.height;
-  }, [bounds.height, shouldAnimate]);
+
+    if (bounds.height !== 0 && !hasHadNonZeroHeight) {
+      setTimeout(() => {
+        setHasHadNonZeroHeight(true);
+      }, 0);
+    } else if (prev === 0 && bounds.height === 0 && hasHadNonZeroHeight) {
+      setTimeout(() => {
+        setHasHadNonZeroHeight(false);
+      }, 0);
+    }
+  }, [bounds.height, shouldAnimate, hasHadNonZeroHeight]);
 
   return (
     <motion.div
       className={cn(className)}
       initial={false}
-      {...(shouldAnimate && prevHeight.current !== 0
+      {...(shouldAnimateThisRender
         ? {
             animate: {
               height: bounds.height,

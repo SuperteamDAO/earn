@@ -232,7 +232,10 @@ s.name LIKE CONCAT('%', ?, '%')
     ) ${skills ? ` AND (${skillsQuery})` : ''}
     ${regionFilter}
     ORDER BY 
-    b.isFeatured DESC,
+      CASE 
+        WHEN b.isFeatured = 1 AND b.deadline >= CURRENT_TIMESTAMP THEN 1
+        ELSE 2
+      END,
       CASE 
         WHEN b.deadline >= CURRENT_TIMESTAMP THEN 1
         ELSE 2
