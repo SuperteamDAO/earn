@@ -9,9 +9,9 @@ import {
   type ListingTabSchema,
 } from '@/features/listings/constants/schema';
 
-export type ListingTab = z.infer<typeof ListingTabSchema>;
-export type ListingStatus = z.infer<typeof ListingStatusSchema>;
-export type ListingContext = z.infer<typeof ListingContextSchema>;
+type ListingTab = z.infer<typeof ListingTabSchema>;
+type ListingStatus = z.infer<typeof ListingStatusSchema>;
+type ListingContext = z.infer<typeof ListingContextSchema>;
 
 interface ListingsFilterCountParams {
   context: ListingContext;
@@ -22,7 +22,7 @@ interface ListingsFilterCountParams {
   authenticated?: boolean;
 }
 
-export type CategoryCounts = Record<string, number>;
+type CategoryCounts = Record<string, number>;
 
 const fetchListingsFilterCount = async ({
   context,

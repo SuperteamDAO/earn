@@ -2,7 +2,6 @@ import dayjs from 'dayjs';
 import { useAtomValue } from 'jotai';
 import { ArrowRight, Check, X } from 'lucide-react';
 import Link from 'next/link';
-import React from 'react';
 
 import MdOutlineAccountBalanceWallet from '@/components/icons/MdOutlineAccountBalanceWallet';
 import MdOutlineMail from '@/components/icons/MdOutlineMail';

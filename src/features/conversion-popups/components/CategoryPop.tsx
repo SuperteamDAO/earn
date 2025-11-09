@@ -110,6 +110,20 @@ export const CategoryPop = ({ category }: { category: CategoryKeys }) => {
   const [popupsShowed, setPopupsShowed] = useAtom(popupsShowedAtom);
   const setPopupTimeout = useSetAtom(popupTimeoutAtom);
 
+  const [variant, setVariant] = useState<CategoryVariantInfo>();
+  const [open, setOpen] = useAtom(popupOpenAtom);
+  const { authenticated, ready } = usePrivy();
+
+  const activateQuery = useMemo(
+    () => ready && !authenticated && popupsShowed < 2,
+    [ready, authenticated, popupsShowed],
+  );
+
+  const { data: totalEarnings } = useQuery({
+    ...categoryEarningsQuery(category),
+    enabled: activateQuery,
+  });
+
   const timeoutHandle = useTimeout(() => {
     const variant = Number(localStorage.getItem('category-pop-variant')) || 0;
     const newVariant = variant >= 2 ? 0 : variant + 1;
@@ -133,19 +147,6 @@ export const CategoryPop = ({ category }: { category: CategoryKeys }) => {
     });
   }, 5_000);
 
-  const [variant, setVariant] = useState<CategoryVariantInfo>();
-  const [open, setOpen] = useAtom(popupOpenAtom);
-  const { authenticated, ready } = usePrivy();
-
-  const activateQuery = useMemo(
-    () => ready && !authenticated && popupsShowed < 2,
-    [ready, authenticated, popupsShowed],
-  );
-
-  const { data: totalEarnings } = useQuery({
-    ...categoryEarningsQuery(category),
-    enabled: activateQuery,
-  });
 
   const isMD = useBreakpoint('md');
 

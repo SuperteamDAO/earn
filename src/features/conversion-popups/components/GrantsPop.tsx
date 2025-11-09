@@ -43,6 +43,9 @@ export const GrantsPop = () => {
   const [popupsShowed, setPopupsShowed] = useAtom(popupsShowedAtom);
   const setPopupTimeout = useSetAtom(popupTimeoutAtom);
 
+  const [open, setOpen] = useAtom(popupOpenAtom);
+  const { authenticated, ready } = usePrivy();
+
   const timeoutHandle = useTimeout(() => {
     setOpen(true);
     setPopupsShowed((s) => s + 1);
@@ -51,8 +54,7 @@ export const GrantsPop = () => {
     });
   }, 5_000);
 
-  const [open, setOpen] = useAtom(popupOpenAtom);
-  const { authenticated, ready } = usePrivy();
+
 
   const isMD = useBreakpoint('md');
 

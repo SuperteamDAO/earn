@@ -1,7 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { AlertTriangle, Loader2, Pencil } from 'lucide-react';
 import posthog from 'posthog-js';
-import React from 'react';
 
 import { Button } from '@/components/ui/button';
 import { useDisclosure } from '@/hooks/use-disclosure';

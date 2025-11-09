@@ -1,5 +1,4 @@
 import type { GetServerSideProps } from 'next';
-import React from 'react';
 
 import { ListingBuilder } from '@/features/listing-builder/components/ListingBuilder';
 

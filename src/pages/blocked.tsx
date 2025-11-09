@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';

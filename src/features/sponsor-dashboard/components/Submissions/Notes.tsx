@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAtom, useSetAtom } from 'jotai';
 import debounce from 'lodash.debounce';
 import { Loader2 } from 'lucide-react';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { type SubmissionWithUser } from '@/interface/submission';
 import { api } from '@/lib/api';
@@ -26,7 +26,7 @@ export const Notes = ({ slug }: Props) => {
     selectedSubmissionAtom,
   );
   const setNotesUpdating = useSetAtom(isStateUpdatingAtom);
-  const [notes, setNotes] = useState(selectedSubmission?.notes);
+  const [notes, setNotes] = useState(() => selectedSubmission?.notes);
 
   const queryClient = useQueryClient();
   const submissionId = useMemo(
@@ -72,10 +72,34 @@ export const Notes = ({ slug }: Props) => {
     },
   });
 
-  const debouncedUpdateNotes = useCallback(
-    debounce((content: string) => updateNotes(content), 1000),
-    [submissionId, updateNotes],
+  const debouncedUpdateNotesRef = useRef<
+    ReturnType<typeof debounce> | undefined
+  >(undefined);
+  const previousSubmissionIdRef = useRef<string | undefined>(
+    selectedSubmission?.id,
   );
+
+  useEffect(() => {
+    debouncedUpdateNotesRef.current = debounce(
+      (content: string) => updateNotes(content),
+      1000,
+    );
+
+    return () => {
+      debouncedUpdateNotesRef.current?.cancel();
+    };
+  }, [submissionId, updateNotes]);
+
+  // Sync notes when submission changes (only when ID changes, not on every render)
+  useEffect(() => {
+    if (previousSubmissionIdRef.current !== selectedSubmission?.id) {
+      previousSubmissionIdRef.current = selectedSubmission?.id;
+      // Setting state here is necessary to sync local state when submission changes
+      // The editor component has a key prop that will remount it when ID changes
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setNotes(selectedSubmission?.notes);
+    }
+  }, [selectedSubmission?.id, selectedSubmission?.notes]);
 
   const handleChange = (value: string) => {
     // Extract plain text for character counting
@@ -89,14 +113,24 @@ export const Notes = ({ slug }: Props) => {
         });
       }
       setNotes(value);
-      debouncedUpdateNotes(value);
+      debouncedUpdateNotesRef.current?.(value);
       setNotesUpdating(true);
     }
   };
 
   useEffect(() => {
-    setNotes(selectedSubmission?.notes);
-  }, [selectedSubmission?.id]);
+    // Only update notes when submission ID changes (not when notes content changes)
+    if (previousSubmissionIdRef.current !== selectedSubmission?.id) {
+      previousSubmissionIdRef.current = selectedSubmission?.id;
+      // Use setTimeout to defer state update and avoid cascading renders
+      const timeoutId = setTimeout(() => {
+        setNotes(selectedSubmission?.notes);
+      }, 0);
+      return () => clearTimeout(timeoutId);
+    }
+    // Return no-op cleanup function if condition is false
+    return () => {};
+  }, [selectedSubmission?.id, selectedSubmission?.notes]);
 
   const isAiCommited = useMemo(
     () => (selectedSubmission?.ai as ProjectApplicationAi)?.commited,

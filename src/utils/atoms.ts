@@ -23,5 +23,5 @@ export const useInitAtom = <T>(atom: PrimitiveAtom<T>, initialValue: T) => {
     setValue(initialValue);
   }, [initialValue]);
 
-  return useMemo(() => [value ?? initialValue, setValue], [value]);
+  return useMemo(() => [value ?? initialValue, setValue], [value, setValue]);
 };

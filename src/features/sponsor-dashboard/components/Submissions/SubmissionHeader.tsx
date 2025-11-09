@@ -14,7 +14,6 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import React from 'react';
 import { toast } from 'sonner';
 
 import { ShinyButton } from '@/components/shared/ShinyButton';

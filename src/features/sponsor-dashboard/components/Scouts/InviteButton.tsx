@@ -1,7 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 import { Check, Plus } from 'lucide-react';
 import posthog from 'posthog-js';
-import React from 'react';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';

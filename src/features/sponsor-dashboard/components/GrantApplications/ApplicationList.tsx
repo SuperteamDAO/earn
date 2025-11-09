@@ -1,7 +1,7 @@
 import { useAtom } from 'jotai';
 import debounce from 'lodash.debounce';
 import { Search } from 'lucide-react';
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
@@ -47,7 +47,9 @@ export const ApplicationList = ({
   onFilterChange,
   isToggleDisabled,
 }: Props) => {
-  const debouncedSetSearchText = useRef(debounce(setSearchText, 300)).current;
+  const debouncedSetSearchTextRef = useRef<
+    ReturnType<typeof debounce> | undefined
+  >(undefined);
   const [selectedApplication, setSelectedApplication] = useAtom(
     selectedGrantApplicationAtom,
   );
@@ -55,10 +57,12 @@ export const ApplicationList = ({
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    debouncedSetSearchTextRef.current = debounce(setSearchText, 300);
+
     return () => {
-      debouncedSetSearchText.cancel();
+      debouncedSetSearchTextRef.current?.cancel();
     };
-  }, [debouncedSetSearchText]);
+  }, [setSearchText]);
 
   useEffect(() => {
     if (selectedApplication?.id && scrollContainerRef.current) {
@@ -87,7 +91,9 @@ export const ApplicationList = ({
           <Search className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-slate-400" />
           <Input
             className="placeholder:text-md focus-visible:ring-brand-purple h-10 border-slate-200 bg-white pl-9 placeholder:font-medium placeholder:text-slate-400"
-            onChange={(e) => debouncedSetSearchText(e.target.value)}
+            onChange={(e) => {
+              debouncedSetSearchTextRef.current?.(e.target.value);
+            }}
             placeholder="Search Applications"
             type="text"
           />

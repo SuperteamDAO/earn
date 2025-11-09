@@ -62,7 +62,3 @@ export function getPayoutCopy(params: GetPayoutCopyParams): string {
   const payoutDate = computePayoutDateUtc(params);
   return `Will be paid by ${formatPayoutDate(payoutDate)}`;
 }
-
-export function getPayoutDateUtc(params: GetPayoutCopyParams): dayjs.Dayjs {
-  return computePayoutDateUtc(params);
-}

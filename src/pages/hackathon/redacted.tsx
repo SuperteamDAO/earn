@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { type GetServerSideProps } from 'next';
 import { Outfit } from 'next/font/google';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Countdown from 'react-countdown';
 
 import { TrackBox } from '@/components/hackathon/TrackBox';

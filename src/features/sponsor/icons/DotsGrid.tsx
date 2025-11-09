@@ -201,26 +201,35 @@ const pickNewTarget = (base: number) => {
   );
 };
 
-interface SereneDotGridProps extends React.SVGProps<SVGSVGElement> {}
+type SereneDotGridProps = React.SVGProps<SVGSVGElement>;
 export default function SereneDotGrid({ ...props }: SereneDotGridProps) {
-  const current = useRef<number[]>(DOTS.map((d) => d.baseOpacity));
+  const currentRef = useRef<number[]>(DOTS.map((d) => d.baseOpacity));
   const start = useRef<number[]>(DOTS.map((d) => d.baseOpacity));
-  const target = useRef<number[]>(
-    DOTS.map((d) => pickNewTarget(d.baseOpacity)),
-  );
-  const startTime = useRef<number[]>(DOTS.map(() => performance.now()));
-  const duration = useRef<number[]>(
-    DOTS.map(() => 3500 + Math.random() * 5000),
-  );
+  const target = useRef<number[]>(DOTS.map((d) => d.baseOpacity));
+  const startTime = useRef<number[]>([]);
+  const duration = useRef<number[]>([]);
 
-  const [, setTick] = useState(0);
+  const [current, setCurrent] = useState<number[]>(
+    DOTS.map((d) => d.baseOpacity),
+  );
   const raf = useRef<number | null>(null);
   const lastCommit = useRef<number>(0);
 
   useEffect(() => {
+    if (startTime.current.length === 0) {
+      startTime.current = DOTS.map(() => performance.now());
+    }
+    if (duration.current.length === 0) {
+      duration.current = DOTS.map(() => 3500 + Math.random() * 5000);
+    }
+    if (target.current.every((val, i) => val === DOTS[i]?.baseOpacity)) {
+      target.current = DOTS.map((d) => pickNewTarget(d.baseOpacity));
+    }
+
     const loop = () => {
       const now = performance.now();
       let changed = false;
+      const newCurrent = [...currentRef.current];
 
       for (let i = 0; i < DOTS.length; i++) {
         const elapsed = now - (startTime.current[i] ?? now);
@@ -229,7 +238,7 @@ export default function SereneDotGrid({ ...props }: SereneDotGridProps) {
 
         if (t >= 1) {
           const dot = DOTS[i]!;
-          start.current[i] = current.current[i] ?? dot.baseOpacity;
+          start.current[i] = currentRef.current[i] ?? dot.baseOpacity;
           target.current[i] = pickNewTarget(dot.baseOpacity);
           startTime.current[i] = now;
           duration.current[i] = 3500 + Math.random() * 5000;
@@ -242,15 +251,16 @@ export default function SereneDotGrid({ ...props }: SereneDotGridProps) {
         const targetVal = target.current[i] ?? dot.baseOpacity;
         const next = startVal + (targetVal - startVal) * k;
 
-        if (Math.abs(next - (current.current[i] ?? next)) > 0.0005) {
-          current.current[i] = next;
+        if (Math.abs(next - (currentRef.current[i] ?? next)) > 0.0005) {
+          currentRef.current[i] = next;
+          newCurrent[i] = next;
           changed = true;
         }
       }
 
       // Re-render at most ~20fps to keep CPU low but motion smooth
       if (changed && now - lastCommit.current > 50) {
-        setTick((v) => (v + 1) % 1_000_000);
+        setCurrent(newCurrent);
         lastCommit.current = now;
       }
 
@@ -293,7 +303,7 @@ export default function SereneDotGrid({ ...props }: SereneDotGridProps) {
           transform={`rotate(90 ${dot.cx} ${dot.cy})`}
           fill={FILL_COLOR}
           fillOpacity={FILL_OPACITY}
-          opacity={current.current[i]}
+          opacity={current[i]}
           filter="url(#glow)"
           style={{ willChange: 'opacity' }}
         />

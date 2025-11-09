@@ -3,7 +3,7 @@ import parse, {
   type HTMLReactParserOptions,
 } from 'html-react-parser';
 import { ChevronDown } from 'lucide-react';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { useMediaQuery } from '@/hooks/use-media-query';
@@ -41,18 +41,21 @@ export function DescriptionUI({ description }: Props) {
   const isNotMD = useMediaQuery('(max-width: 767px)');
 
   useEffect(() => {
-    setIsMounted(true);
+    // Use setTimeout to avoid calling setState synchronously in effect
+    setTimeout(() => {
+      setIsMounted(true);
+    }, 0);
   }, []);
 
   const decideCollapser = useCallback(() => {
-    if (descriptionRef) {
+    if (descriptionRef.current) {
       const fiftyVH = window.innerHeight / 2;
-      if (isNotMD && (descriptionRef.current?.clientHeight ?? 0) > fiftyVH) {
+      if (isNotMD && descriptionRef.current.clientHeight > fiftyVH) {
         setShowCollapser(true);
         setShowMore(false);
       }
     }
-  }, [descriptionRef.current, isNotMD]);
+  }, [isNotMD, setShowCollapser, setShowMore]);
 
   useEffect(() => {
     // Use a timeout to ensure the DOM has been updated

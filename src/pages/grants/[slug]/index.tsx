@@ -1,6 +1,6 @@
 import type { GetServerSideProps } from 'next';
 import posthog from 'posthog-js';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { JsonLd } from '@/components/shared/JsonLd';
 import { GrantPageLayout } from '@/layouts/Grants';

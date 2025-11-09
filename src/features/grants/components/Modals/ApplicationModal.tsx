@@ -380,6 +380,10 @@ export const ApplicationModal = ({
     form.setValue('walletAddress', user?.walletAddress || '');
   };
 
+  const currentWalletAddress = form.watch('walletAddress');
+  const isSameAsEmbeddedWallet =
+    currentWalletAddress?.toLowerCase() === user?.walletAddress?.toLowerCase();
+
   const isST = grant.sponsor?.name?.toLowerCase().match(/superteam|solana/);
 
   const date = dayjs().format('YYYY-MM-DD');
@@ -533,16 +537,18 @@ export const ApplicationModal = ({
                             {...field}
                           />
                         </FormControl>
-                        <p className="pt-0.5 text-xs text-slate-500">
-                          <span
-                            className="cursor-pointer underline"
-                            onClick={handleAutoFill}
-                          >
-                            Click
-                          </span>{' '}
-                          to auto-fill your Earn wallet address (can accept any
-                          Solana token).
-                        </p>
+                        {!isSameAsEmbeddedWallet && (
+                          <p className="pt-0.5 text-xs text-slate-500">
+                            <span
+                              className="cursor-pointer underline"
+                              onClick={handleAutoFill}
+                            >
+                              Click here
+                            </span>{' '}
+                            to auto-fill this field with your Earn embedded
+                            wallet address
+                          </p>
+                        )}
                         <FormMessage className="pt-1" />
                       </div>
                     </FormItem>

@@ -1,14 +1,14 @@
-import { Placeholder } from '@tiptap/extension-placeholder';
+/* eslint-disable react-hooks/immutability */
 import { TextStyle } from '@tiptap/extension-text-style';
 import { Typography } from '@tiptap/extension-typography';
-import { Underline } from '@tiptap/extension-underline';
+import { Placeholder } from '@tiptap/extensions';
 import {
   type Content,
   type Editor,
   useEditor,
   type UseEditorOptions,
 } from '@tiptap/react';
-import { StarterKit } from '@tiptap/starter-kit';
+import StarterKit from '@tiptap/starter-kit';
 import * as React from 'react';
 import { toast } from 'sonner';
 
@@ -208,9 +208,9 @@ export const useMinimalTiptapEditor = ({
         orderedList: { HTMLAttributes: { class: 'list-node' } },
         code: { HTMLAttributes: { class: 'inline', spellcheck: 'false' } },
         dropcursor: { width: 2, class: 'ProseMirror-dropcursor border' },
+        link: false,
       }),
       Link,
-      Underline,
       Image.configure({
         allowedMimeTypes: ['image/*'],
         maxFileSize: 5 * 1024 * 1024,
@@ -385,6 +385,7 @@ export const useMinimalTiptapEditor = ({
     onUpdate: ({ editor }) => handleUpdate(editor),
     onCreate: ({ editor }) => handleCreate(editor),
     onBlur: ({ editor }) => handleBlur(editor),
+    immediatelyRender: false,
     ...props,
   });
 

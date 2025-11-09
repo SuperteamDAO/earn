@@ -1,6 +1,6 @@
 import React from 'react';
 
-interface GridBgProps extends React.SVGProps<SVGSVGElement> {}
+type GridBgProps = React.SVGProps<SVGSVGElement>;
 
 export const GridBg: React.FC<GridBgProps> = (props) => (
   <svg

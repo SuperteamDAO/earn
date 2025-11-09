@@ -2,7 +2,7 @@ import { usePrivy } from '@privy-io/react-auth';
 import { useQuery } from '@tanstack/react-query';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
-import React, { type ReactNode, useMemo } from 'react';
+import { type ReactNode, useMemo } from 'react';
 
 import { type Superteam } from '@/constants/Superteam';
 import { Default } from '@/layouts/Default';

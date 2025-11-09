@@ -61,6 +61,10 @@ export const HomepagePop = () => {
   const [popupsShowed, setPopupsShowed] = useAtom(popupsShowedAtom);
   const setPopupTimeout = useSetAtom(popupTimeoutAtom);
 
+  const [variant, setVariant] = useState<number>(1);
+  const [open, setOpen] = useAtom(popupOpenAtom);
+  const { authenticated, ready } = usePrivy();
+
   const timeoutHandle = useTimeout(() => {
     const variant =
       Number(localStorage.getItem('homepage-desktop-pop-variant')) || 1;
@@ -72,10 +76,6 @@ export const HomepagePop = () => {
       'Popup Source': 'Homepage Pop-up',
     });
   }, 4000);
-
-  const [variant, setVariant] = useState<number>(1);
-  const [open, setOpen] = useAtom(popupOpenAtom);
-  const { authenticated, ready } = usePrivy();
 
   const activateQuery = useMemo(
     () => ready && !authenticated && popupsShowed < 2,

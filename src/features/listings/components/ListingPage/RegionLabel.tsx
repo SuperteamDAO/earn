@@ -1,6 +1,5 @@
 import lookup from 'country-code-lookup';
 import { Globe, Info } from 'lucide-react';
-import React from 'react';
 
 import { UserFlag } from '@/components/shared/UserFlag';
 import { Tooltip } from '@/components/ui/tooltip';

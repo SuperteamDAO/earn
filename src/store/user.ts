@@ -12,7 +12,7 @@ import { useForcedProfileRedirect } from '@/hooks/use-forced-profile-redirect';
 import { type User } from '@/interface/user';
 import { api } from '@/lib/api';
 
-export const USER_ID_COOKIE_NAME = 'user-id-hint';
+const USER_ID_COOKIE_NAME = 'user-id-hint';
 const COOKIE_OPTIONS = {
   path: '/',
   secure: process.env.NODE_ENV === 'production',

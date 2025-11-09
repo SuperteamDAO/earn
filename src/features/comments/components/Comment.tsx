@@ -203,7 +203,7 @@ export const Comment = ({
         handleSubmit();
       }
     },
-    [newReply],
+    [newReply, handleSubmit],
   );
 
   useEffect(() => {

@@ -91,6 +91,7 @@ const CreateSponsor = () => {
 
   useEffect(() => {
     if (user) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
       user.username && setUsername(user.username);
       form.reset({
         user: {

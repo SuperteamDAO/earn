@@ -152,7 +152,11 @@ export default function BountySubmissions({ slug }: Props) {
   const isProject = useMemo(() => bounty?.type === 'project', [bounty]);
 
   useEffect(() => {
-    selectedSubmissionIds.size > 0 ? onTogglerOpen() : onTogglerClose();
+    if (selectedSubmissionIds.size > 0) {
+      onTogglerOpen();
+    } else {
+      onTogglerClose();
+    }
   }, [selectedSubmissionIds]);
 
   useEffect(() => {
@@ -241,6 +245,7 @@ export default function BountySubmissions({ slug }: Props) {
     ),
   });
 
+  // eslint-disable-next-line react-hooks/preserve-manual-memoization
   const filteredSubmissions = useMemo(() => {
     if (!submissions) return [];
     return submissions.filter((submission: SubmissionWithUser) => {

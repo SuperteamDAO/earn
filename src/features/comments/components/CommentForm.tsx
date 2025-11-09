@@ -93,7 +93,7 @@ export const CommentForm = ({
         }
       }
     },
-    [newComment, canComment, isTemplate, isDisabled, user],
+    [newComment, canComment, isTemplate, isDisabled, handleSubmit],
   );
 
   useEffect(() => {

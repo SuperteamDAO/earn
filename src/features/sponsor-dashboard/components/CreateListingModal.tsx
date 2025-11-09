@@ -2,7 +2,7 @@ import { Cross2Icon } from '@radix-ui/react-icons';
 import { motion } from 'motion/react';
 import { useRouter } from 'next/router';
 import posthog from 'posthog-js';
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogClose, DialogContent } from '@/components/ui/dialog';

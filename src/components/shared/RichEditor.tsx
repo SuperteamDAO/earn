@@ -1,7 +1,5 @@
-import Link from '@tiptap/extension-link';
-import Placeholder from '@tiptap/extension-placeholder';
-import TaskItem from '@tiptap/extension-task-item';
-import TaskList from '@tiptap/extension-task-list';
+import { TaskItem, TaskList } from '@tiptap/extension-list';
+import { Placeholder } from '@tiptap/extensions';
 import { type Editor, EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import {
@@ -48,14 +46,15 @@ export const RichEditor: React.FC<RichEditorProps> = ({
   const editorRef = useRef<HTMLDivElement>(null);
   const editor = useEditor({
     extensions: [
-      StarterKit,
+      StarterKit.configure({
+        link: {
+          openOnClick: false,
+        },
+      }),
       TaskList,
       TaskItem,
       Placeholder.configure({
         placeholder,
-      }),
-      Link.configure({
-        openOnClick: false,
       }),
     ],
     content: value || undefined,

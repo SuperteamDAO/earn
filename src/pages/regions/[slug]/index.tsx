@@ -1,5 +1,4 @@
 import type { NextPageContext } from 'next';
-import React from 'react';
 
 import { JsonLd } from '@/components/shared/JsonLd';
 import { type Superteam, Superteams } from '@/constants/Superteam';

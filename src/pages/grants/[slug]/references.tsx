@@ -1,5 +1,5 @@
 import type { GetServerSideProps } from 'next';
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 import { GrantPageLayout } from '@/layouts/Grants';
 import { api } from '@/lib/api';

@@ -7,7 +7,7 @@ import { BONUS_REWARD_POSITION } from '@/features/listing-builder/constants';
 import { type ListingFormData } from '../types';
 import { calculateTotalPrizes } from './rewards';
 
-export async function resetExcessWinners(
+async function resetExcessWinners(
   listingId: string,
   newRewardsCount: number,
 ): Promise<void> {
@@ -63,7 +63,7 @@ export async function resetExcessWinners(
   }
 }
 
-export async function resetExcessBonusWinners(
+async function resetExcessBonusWinners(
   listingId: string,
   maxBonusSpots: number,
 ): Promise<void> {

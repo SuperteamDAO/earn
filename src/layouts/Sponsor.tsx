@@ -90,7 +90,7 @@ export function SponsorLayout({
     timeoutRef.current = setTimeout(() => {
       setIsExpanded(true);
     }, 250);
-  }, []);
+  }, [isCollapsible]);
 
   const handleMouseLeave = useCallback(() => {
     if (!isCollapsible) return;
@@ -98,7 +98,7 @@ export function SponsorLayout({
       clearTimeout(timeoutRef.current);
     }
     setIsExpanded(false);
-  }, []);
+  }, [isCollapsible]);
 
   const open = !!query.open;
   useEffect(() => {
