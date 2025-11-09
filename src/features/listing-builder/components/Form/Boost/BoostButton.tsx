@@ -118,6 +118,7 @@ export const BoostButton = ({
       return (
         <div className="relative hidden sm:block">
           <Tooltip
+            zIndex="z-0"
             content={`Reach ${additionalImpressions.toLocaleString()} more people`}
             open={true}
             onOpenChange={() => {}}
