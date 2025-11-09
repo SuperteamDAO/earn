@@ -73,6 +73,7 @@ model Bounties {
   publishedBy        String?
   XWeeklyThread      String?
   XStandalonePost    String?
+  isPro              Boolean            @default(false)
 
   @@index([id, slug])
   @@index([pocId])
@@ -470,6 +471,7 @@ model User {
   referrals          User[]               @relation("UserReferrals")
   telegramUsers      TelegramUser[]
   emailLogs          emailLogs[]
+  isPro              Boolean              @default(false)
 
   @@index([currentSponsorId])
   @@index([hackathonId])
