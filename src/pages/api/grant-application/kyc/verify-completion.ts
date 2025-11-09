@@ -55,8 +55,7 @@ const handler = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
         return res.status(200).json({ message: 'KYC already verified' });
       }
 
-      const { fullName, country, address, dob, idNumber, idType } =
-        applicantData;
+      const { fullName, country, dob, idNumber, idType } = applicantData;
 
       await prisma.user.update({
         where: { id: userId },
@@ -64,7 +63,6 @@ const handler = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
           isKYCVerified: true,
           kycName: fullName,
           kycCountry: country,
-          kycAddress: address,
           kycDOB: dob,
           kycIDNumber: idNumber,
           kycIDType: idType,

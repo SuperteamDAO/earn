@@ -15,7 +15,6 @@ export const getApplicantData = async (
   id: string;
   fullName: string;
   country: string;
-  address: string;
   dob: string;
   idNumber: string;
   idType: string;
@@ -75,40 +74,135 @@ export const getApplicantData = async (
     const identityStep = statusResponse.data.IDENTITY;
     let approvedIdDoc = null;
 
-    if (identityStep && identityStep.imageReviewResults) {
-      const approvedImageId = Object.keys(identityStep.imageReviewResults).find(
-        (imageId) =>
-          identityStep.imageReviewResults[imageId].reviewAnswer === 'GREEN',
-      );
-
-      if (approvedImageId) {
-        const approvedImageIndex = identityStep.imageIds.indexOf(
-          parseInt(approvedImageId),
-        );
-        if (approvedImageIndex !== -1 && info.idDocs?.[approvedImageIndex]) {
-          approvedIdDoc = info.idDocs[approvedImageIndex];
-          logger.info(
-            `Found approved ID document at index ${approvedImageIndex} for applicant ${id}`,
-          );
-        } else {
-          logger.warn(
-            `Approved image ID ${approvedImageId} not found in imageIds array for applicant ${id}`,
-          );
+    // Collect accepted image IDs (reviewAnswer === GREEN) from either imageStatuses or imageReviewResults
+    const acceptedImageIds: number[] = [];
+    if (identityStep) {
+      // Prefer imageStatuses if available (newer/structured)
+      if (Array.isArray(identityStep.imageStatuses)) {
+        for (const imgStatus of identityStep.imageStatuses as any[]) {
+          const reviewAnswer = imgStatus?.reviewResult?.reviewAnswer;
+          const imageId = imgStatus?.imageId;
+          if (
+            reviewAnswer === 'GREEN' &&
+            (typeof imageId === 'number' || typeof imageId === 'string')
+          ) {
+            const parsed =
+              typeof imageId === 'string' ? parseInt(imageId, 10) : imageId;
+            if (!Number.isNaN(parsed)) acceptedImageIds.push(parsed);
+          }
         }
-      } else {
-        logger.warn(
-          `No approved (GREEN) ID documents found for applicant ${id}`,
+      }
+
+      // Fallback to imageReviewResults if imageStatuses is absent
+      if (acceptedImageIds.length === 0 && identityStep.imageReviewResults) {
+        const entries = Object.entries(
+          identityStep.imageReviewResults as Record<string, any>,
         );
+        for (const [imageIdStr, result] of entries) {
+          if (result?.reviewAnswer === 'GREEN') {
+            const parsed = parseInt(imageIdStr, 10);
+            if (!Number.isNaN(parsed)) acceptedImageIds.push(parsed);
+          }
+        }
       }
     } else {
-      logger.warn(
-        `No IDENTITY step or imageReviewResults found for applicant ${id}`,
-      );
+      logger.warn(`No IDENTITY step found for applicant ${id}`);
     }
 
+    // Helper to extract image IDs from a document object in applicant info
+    const extractDocImageIds = (doc: any): number[] => {
+      const ids = new Set<number>();
+      if (!doc || typeof doc !== 'object') return [];
+
+      // Common shapes observed in Sumsub payloads
+      const possibleArrays = ['imageIds', 'images', 'pages', 'sides'];
+      for (const key of possibleArrays) {
+        const value = (doc as any)[key];
+        if (Array.isArray(value)) {
+          for (const item of value) {
+            const candidate =
+              typeof item === 'number'
+                ? item
+                : typeof item === 'string'
+                  ? parseInt(item, 10)
+                  : typeof item?.imageId === 'number'
+                    ? item.imageId
+                    : typeof item?.imageId === 'string'
+                      ? parseInt(item.imageId, 10)
+                      : typeof item?.id === 'number'
+                        ? item.id
+                        : typeof item?.id === 'string'
+                          ? parseInt(item.id, 10)
+                          : undefined;
+            if (typeof candidate === 'number' && !Number.isNaN(candidate)) {
+              ids.add(candidate);
+            }
+          }
+        }
+      }
+
+      // Some payloads may store a single image id
+      const singleCandidates = ['imageId', 'id'];
+      for (const key of singleCandidates) {
+        const value = (doc as any)[key];
+        if (typeof value === 'number' && !Number.isNaN(value)) ids.add(value);
+        if (typeof value === 'string') {
+          const parsed = parseInt(value, 10);
+          if (!Number.isNaN(parsed)) ids.add(parsed);
+        }
+      }
+
+      return Array.from(ids);
+    };
+
+    // Try to correlate accepted images to the correct idDoc
+    if (Array.isArray(info.idDocs) && info.idDocs.length > 0) {
+      let bestMatchDoc: any = null;
+      let bestMatchCount = -1;
+      for (const doc of info.idDocs as any[]) {
+        const docImageIds = extractDocImageIds(doc);
+        if (docImageIds.length === 0) continue;
+        const matchCount = docImageIds.filter((idNum) =>
+          acceptedImageIds.includes(idNum),
+        ).length;
+        if (matchCount > bestMatchCount) {
+          bestMatchCount = matchCount;
+          bestMatchDoc = doc;
+        }
+      }
+      if (bestMatchDoc && bestMatchCount > 0) {
+        approvedIdDoc = bestMatchDoc;
+        logger.info(
+          `Mapped accepted GREEN image(s) ${JSON.stringify(acceptedImageIds)} to an idDoc with ${bestMatchCount} matching image(s) for applicant ${id}`,
+        );
+      }
+    }
+
+    // If still not found, try a heuristic by matching step-level fields
+    if (!approvedIdDoc && identityStep) {
+      const stepDocType = identityStep.idDocType;
+      const stepCountry = identityStep.country;
+      if (Array.isArray(info.idDocs) && info.idDocs.length > 0) {
+        const byType = info.idDocs.find(
+          (d: any) =>
+            d?.idDocType && stepDocType && d.idDocType === stepDocType,
+        );
+        const byCountry = info.idDocs.find(
+          (d: any) => d?.country && stepCountry && d.country === stepCountry,
+        );
+        approvedIdDoc = byType || byCountry || null;
+        if (approvedIdDoc) {
+          logger.info(
+            `Selected idDoc by heuristic (type/country match) for applicant ${id}`,
+          );
+        }
+      }
+    }
+
+    // Final fallback to the first document to avoid missing data entirely
     if (!approvedIdDoc && info.idDocs?.[0]) {
       logger.warn(
-        `No approved ID document found for applicant ${id}, using first document as fallback`,
+        `No accepted idDoc matched by images for applicant ${id}, using first document as fallback`,
       );
       approvedIdDoc = info.idDocs[0];
     }
@@ -118,8 +212,6 @@ export const getApplicantData = async (
       throw new Error('Sumsub: No ID documents found for applicant');
     }
 
-    const formattedAddress = approvedIdDoc?.address?.formattedAddress;
-    const address = formattedAddress ? formattedAddress : null;
     const idNumber = approvedIdDoc?.number || '';
     const idType = approvedIdDoc?.idDocType || '';
 
@@ -127,7 +219,6 @@ export const getApplicantData = async (
       id,
       fullName,
       country,
-      address,
       dob,
       idNumber,
       idType,
