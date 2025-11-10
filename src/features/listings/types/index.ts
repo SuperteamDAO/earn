@@ -45,6 +45,7 @@ export interface Listing {
   hackathonprize?: boolean;
   publishedAt?: string;
   isPrivate?: boolean;
+  isPro?: boolean;
   Hackathon?: ListingHackathon;
   compensationType?: 'fixed' | 'range' | 'variable';
   minRewardAsk?: number;

@@ -34,6 +34,7 @@ import {
 import { useListingForm } from '../../../hooks';
 import { Foundation } from './Foundation';
 import { GeoLock } from './GeoLock';
+import { ProOnly } from './ProOnly';
 import { ReferredBy } from './ReferredBy';
 import { Slug } from './Slug';
 import { Visibility } from './Visibility';
@@ -188,8 +189,9 @@ export function PrePublish() {
           <ReferredBy />
           <Slug />
           {isST && type !== 'project' && <Foundation />}
+          <ProOnly />
         </div>
-        <DialogFooter className="flex w-full pt-4 sm:justify-between">
+        <DialogFooter className="flex w-full pt-20 sm:justify-between">
           {!isEditing && (
             <Button
               variant="outline"

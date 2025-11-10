@@ -39,11 +39,32 @@ const LiveListings = dynamic(() =>
   ),
 );
 
+const SectionHeader = ({
+  title,
+  href,
+  onLinkClick,
+}: {
+  title: string;
+  href: string;
+  onLinkClick?: () => void;
+}) => (
+  <div className="flex items-center justify-between">
+    <span className="text-sm font-medium text-gray-400">{title}</span>
+    <Link
+      href={href}
+      className="text-brand-purple flex items-center text-xs font-semibold"
+      onClick={onLinkClick}
+    >
+      View All
+      <MdArrowForward className="ml-1" />
+    </Link>
+  </div>
+);
+
 export const HomeSideBar = ({ type }: SideBarProps) => {
   const router = useRouter();
   const { user, isLoading: isUserLoading } = useUser();
   const isLg = useBreakpoint('lg');
-
   const { ready } = usePrivy();
 
   const { data: totals, isLoading: isTotalsLoading } = useQuery({
@@ -57,33 +78,26 @@ export const HomeSideBar = ({ type }: SideBarProps) => {
   const { data: bookmarks } = useQuery(yourBookmarksQuery({ take: 5 }));
 
   const isSponsor = !!(ready && !isUserLoading && user?.currentSponsorId);
+  const isFeed = type === 'feed';
+  const showSponsorBanner =
+    router.asPath === '/' &&
+    ready &&
+    !isUserLoading &&
+    (!user || (!user.isTalentFilled && !user.currentSponsorId));
 
   return (
     <AnimateChangeInHeight duration={0.3}>
       <div className="flex w-96 flex-col gap-8 py-3 pl-6">
-        {type === 'feed' && (
+        {isFeed ? (
           <>
             <VibeCard />
-            {/* <SidebarBannerCypherpunk /> */}
             <LiveListings>
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium text-gray-400">
-                  LIVE LISTINGS
-                </span>
-                <Link
-                  href="/"
-                  className="text-brand-purple flex items-center text-xs font-semibold"
-                >
-                  View All
-                  <MdArrowForward className="ml-1" />
-                </Link>
-              </div>
+              <SectionHeader title="LIVE LISTINGS" href="/" />
             </LiveListings>
             <HowItWorks />
             <RecentEarners earners={recentEarners} />
           </>
-        )}
-        {type !== 'feed' && (
+        ) : (
           <>
             <div className="flex flex-col gap-4">
               {isSponsor && (
@@ -94,12 +108,7 @@ export const HomeSideBar = ({ type }: SideBarProps) => {
                   <SponsorFeatures />
                 </div>
               )}
-              {router.asPath === '/' &&
-                ready &&
-                !isUserLoading &&
-                (!user || (!user.isTalentFilled && !user.currentSponsorId)) && (
-                  <SponsorBanner />
-                )}
+              {showSponsorBanner && <SponsorBanner />}
               {!isSponsor && (
                 <TotalStats
                   isTotalLoading={isTotalsLoading}
@@ -108,28 +117,16 @@ export const HomeSideBar = ({ type }: SideBarProps) => {
                 />
               )}
             </div>
-
             {!isSponsor && (
               <>
                 <HowItWorks />
-                {/* <SidebarBannerCypherpunk /> */}
                 {router.asPath !== '/bookmarks' && !!bookmarks?.length && (
                   <YourBookmarks>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium text-gray-400">
-                        BOOKMARKS
-                      </span>
-                      <Link
-                        href="/bookmarks"
-                        className="text-brand-purple flex items-center text-xs font-semibold"
-                        onClick={() => {
-                          posthog.capture('bookmarks_sidebar');
-                        }}
-                      >
-                        View All
-                        <MdArrowForward className="ml-1" />
-                      </Link>
-                    </div>
+                    <SectionHeader
+                      title="BOOKMARKS"
+                      href="/bookmarks"
+                      onLinkClick={() => posthog.capture('bookmarks_sidebar')}
+                    />
                   </YourBookmarks>
                 )}
                 <RecentEarners earners={recentEarners} />
