@@ -12,7 +12,7 @@ import { Button } from '@/components/ui/button';
 import { submitListingMutationAtom } from '@/features/listing-builder/atoms';
 import {
   calculateTotalPrizes,
-  calculateTotalRewardsForPodium,
+  scaleRewardsForTargetUsd,
 } from '@/features/listing-builder/utils/rewards';
 
 import { useListingForm } from '../../../hooks';
@@ -194,63 +194,28 @@ function RewardsFooter({
                   isFeatureAvailable,
                 );
 
-                const currentRewards = (rewards || {}) as Record<
-                  string,
-                  number
-                >;
-                const usd = tokenUsdValue || 1;
-                const newTotalTokens = targetUSD / usd;
+                const { rewardAmountTokens, rewardsToPersist } =
+                  scaleRewardsForTargetUsd({
+                    rewards,
+                    maxBonusSpots,
+                    targetUsd: targetUSD,
+                    tokenUsdValue: tokenUsdValue || 1,
+                    shouldScalePodium: true,
+                    shouldRoundToNearestTen: (tokenUsdValue || 0) <= 10,
+                  });
 
-                let computedRewardAmountTokens = newTotalTokens;
-
-                if (currentRewards && Object.keys(currentRewards).length > 0) {
-                  const oldTotal = calculateTotalRewardsForPodium(
-                    currentRewards,
-                    (maxBonusSpots as number) || 0,
-                  );
-                  if (oldTotal > 0) {
-                    const ratio = newTotalTokens / oldTotal;
-                    const scaled: Record<string, number> = Object.entries(
-                      currentRewards,
-                    ).reduce(
-                      (acc, [k, v]) => {
-                        const num = Number(v);
-                        return Number.isFinite(num)
-                          ? { ...acc, [k]: num * ratio }
-                          : { ...acc, [k]: v as any };
-                      },
-                      {} as Record<string, number>,
-                    );
-
-                    if ((tokenUsdValue || 0) <= 10) {
-                      const rounded: Record<string, number> = {};
-                      for (const [key, value] of Object.entries(scaled)) {
-                        const numeric = Number(value) || 0;
-                        const nearestTen = Math.round(numeric / 10) * 10;
-                        rounded[key] = nearestTen;
-                      }
-                      const roundedSum = calculateTotalRewardsForPodium(
-                        rounded,
-                        (maxBonusSpots as number) || 0,
-                      );
-                      form.setValue('rewards', rounded, {
-                        shouldValidate: false,
-                      });
-                      computedRewardAmountTokens = roundedSum;
-                    } else {
-                      form.setValue('rewards', scaled, {
-                        shouldValidate: false,
-                      });
-                    }
-                  }
+                if (rewardsToPersist) {
+                  form.setValue('rewards', rewardsToPersist, {
+                    shouldValidate: false,
+                  });
                 }
 
                 const prevTokens = Number(rewardAmount) || 0;
-                if (computedRewardAmountTokens > prevTokens) {
+                if (rewardAmountTokens > prevTokens) {
                   posthog.capture('boost_listing');
                 }
 
-                form.setValue('rewardAmount', computedRewardAmountTokens, {
+                form.setValue('rewardAmount', rewardAmountTokens, {
                   shouldValidate: false,
                 });
                 if (isBoostFromUrl) {
@@ -316,6 +281,10 @@ function RewardsFooter({
           className="w-full"
           onClick={async () => {
             if (await form.validateRewards()) {
+              if (proAdjustment) {
+                setOpen(false);
+                return;
+              }
               if (
                 compensationType === 'fixed' &&
                 deadlineMoreThan72HoursLeft &&
