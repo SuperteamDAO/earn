@@ -93,7 +93,7 @@ export const useListingState = ({
     // internalActiveTab is intentionally omitted from deps to prevent this effect from reverting an optimistic update
     // made by handleTabChange before searchParams has a chance to reflect that update.
     // The functional update form of setInternalActiveTab ensures we compare against the most current state.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
     setInternalActiveTab((currentInternalTab) => {
       if (tabFromUrl !== currentInternalTab) {
         return tabFromUrl;
@@ -110,7 +110,7 @@ export const useListingState = ({
     // Sync URL category to internal state for external navigation or initial load.
     // internalActiveCategory is intentionally omitted from deps to prevent this effect
     // from reverting an optimistic update made by handleCategoryChange.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
     setInternalActiveCategory((currentInternalCategory) => {
       if (categoryFromUrl !== currentInternalCategory) {
         return categoryFromUrl;

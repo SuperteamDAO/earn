@@ -1,4 +1,5 @@
 import { usePrivy } from '@privy-io/react-auth';
+import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 
 import { AnimateChangeInHeight } from '@/components/shared/AnimateChangeInHeight';
@@ -9,6 +10,8 @@ import { useScrollShadow } from '@/hooks/use-scroll-shadow';
 import { cn } from '@/utils/cn';
 
 import { HACKATHONS } from '@/features/hackathon/constants/hackathons';
+import { sponsorStageQuery } from '@/features/home/queries/sponsor-stage';
+import { SponsorStage } from '@/features/home/types/sponsor-stage';
 import { CATEGORY_NAV_ITEMS } from '@/features/navbar/constants';
 
 import {
@@ -22,6 +25,7 @@ import {
 import { useListingsFilterCount } from '../hooks/useListingsFilterCount';
 import { useListingState } from '../hooks/useListingState';
 import type { ListingTabsProps } from '../types';
+import { AddListingCard } from './AddListingCard';
 import { CategoryPill } from './CategoryPill';
 import { ListingCard, ListingCardSkeleton } from './ListingCard';
 import { ListingFilters } from './ListingFilters';
@@ -53,11 +57,28 @@ export const ListingsSection = ({
   customEmptySection,
 }: ListingsSectionProps) => {
   const isMd = useBreakpoint('md');
+  const isLg = useBreakpoint('lg');
   const isSponsorContext = type === 'sponsor';
   const isBookmarksContext = type === 'bookmarks';
 
   const { authenticated, ready } = usePrivy();
   const supportsForYou = FOR_YOU_SUPPORTED_TYPES.includes(type);
+
+  const { data: sponsorStageData } = useQuery({
+    ...sponsorStageQuery,
+    enabled: false,
+  });
+
+  const shouldShowAddListingCard = useMemo(() => {
+    if (type !== 'home') return false;
+    if (!isLg) return false;
+    if (!sponsorStageData?.stage) return false;
+    return (
+      sponsorStageData.stage === SponsorStage.NEW_SPONSOR ||
+      sponsorStageData.stage === SponsorStage.NEXT_LISTING
+    );
+  }, [sponsorStageData, isLg, type]);
+
   const {
     ref: scrollContainerRef,
     showLeftShadow,
@@ -198,17 +219,41 @@ export const ListingsSection = ({
           : customEmptySection;
 
       return (
-        emptySectionContent ?? (
-          <EmptySection
-            title="No opportunities found"
-            message="We don't have any relevant opportunities for the current filters."
-          />
-        )
+        <>
+          {shouldShowAddListingCard && (
+            <AddListingCard
+              listingType={
+                activeTab === 'bounties'
+                  ? 'bounty'
+                  : activeTab === 'projects'
+                    ? 'project'
+                    : 'bounty'
+              }
+            />
+          )}
+          {emptySectionContent ?? (
+            <EmptySection
+              title="No opportunities found"
+              message="We don't have any relevant opportunities for the current filters."
+            />
+          )}
+        </>
       );
     }
 
     return (
       <div className="space-y-1">
+        {shouldShowAddListingCard && (
+          <AddListingCard
+            listingType={
+              activeTab === 'bounties'
+                ? 'bounty'
+                : activeTab === 'projects'
+                  ? 'project'
+                  : 'bounty'
+            }
+          />
+        )}
         {listings.map((listing) => (
           <ListingCard key={listing.id} bounty={listing} />
         ))}
@@ -272,7 +317,7 @@ export const ListingsSection = ({
         <div
           className={cn(
             'pointer-events-none absolute top-0 bottom-0 left-0 z-10 w-8',
-            'bg-gradient-to-r from-white/80 via-white/30 to-transparent',
+            'bg-linear-to-r from-white/80 via-white/30 to-transparent',
             'transition-opacity duration-300 ease-in-out',
             showLeftShadow ? 'opacity-100' : 'opacity-0',
           )}
@@ -326,7 +371,7 @@ export const ListingsSection = ({
         <div
           className={cn(
             'pointer-events-none absolute top-0 right-0 bottom-0 z-10 w-8',
-            'bg-gradient-to-l from-white/80 via-white/30 to-transparent',
+            'bg-linear-to-l from-white/80 via-white/30 to-transparent',
             'transition-opacity duration-300 ease-in-out',
             showRightShadow ? 'opacity-100' : 'opacity-0',
           )}
