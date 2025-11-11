@@ -161,15 +161,20 @@ export async function POST(request: NextRequest) {
         const processedLowQuality = await Promise.all(
           lowQualitySubmissions.map(async (submission) => {
             const ai = submission.ai as unknown as BountySubmissionAi;
+            const calculatedLabel: SubmissionLabels = 'Low_Quality';
             const commitedAi = {
               ...(!!ai ? ai : {}),
+              evaluation: {
+                ...(ai?.evaluation || {}),
+                finalLabel: calculatedLabel,
+              },
               commited: true,
             };
 
             return await prisma.submission.update({
               where: { id: submission.id },
               data: {
-                label: 'Low_Quality',
+                label: calculatedLabel,
                 notes: convertTextToNotesHTML(ai?.evaluation?.notes || ''),
                 ai: commitedAi,
               },
@@ -209,10 +214,6 @@ export async function POST(request: NextRequest) {
         const processedRemainingSubmissions = await Promise.all(
           sortedRemainingSubmissions.map(async (submission, index) => {
             const ai = submission.ai as unknown as BountySubmissionAi;
-            const commitedAi = {
-              ...(!!ai ? ai : {}),
-              commited: true,
-            };
 
             let label: SubmissionLabels = 'Unreviewed';
 
@@ -226,6 +227,15 @@ export async function POST(request: NextRequest) {
             } else {
               label = 'Mid_Quality';
             }
+
+            const commitedAi = {
+              ...(!!ai ? ai : {}),
+              evaluation: {
+                ...(ai?.evaluation || {}),
+                finalLabel: label,
+              },
+              commited: true,
+            };
 
             return await prisma.submission.update({
               where: { id: submission.id },
