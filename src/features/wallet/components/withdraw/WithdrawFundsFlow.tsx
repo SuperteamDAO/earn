@@ -141,7 +141,7 @@ export function WithdrawFundsFlow({
       const receiverATA = getAssociatedTokenAddressSync(
         tokenMint,
         recipient,
-        false,
+        true,
         programId,
       );
 
@@ -180,12 +180,6 @@ export function WithdrawFundsFlow({
       if (message.includes('Non-base58') || message.includes('base58')) {
         errorMessage =
           'The destination address contains invalid characters. Please ensure it is a valid base58 Solana address.';
-      } else if (
-        message.includes('TokenOwnerOffCurve') ||
-        message.includes('TokenOwnerOffCurveError')
-      ) {
-        errorMessage =
-          'The destination is a program-derived address (PDA) or off-curve. Please use a wallet address or a valid token account.';
       }
 
       setError(errorMessage);

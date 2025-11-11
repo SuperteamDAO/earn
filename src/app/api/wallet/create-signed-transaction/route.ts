@@ -299,7 +299,7 @@ export async function POST(request: NextRequest) {
     const receiverATA = getAssociatedTokenAddressSync(
       tokenMint,
       recipient,
-      false,
+      true,
       programId,
     );
     const receiverATAExists = !!(await connection.getAccountInfo(receiverATA));
