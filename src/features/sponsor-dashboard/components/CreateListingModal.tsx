@@ -10,7 +10,6 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { type HackathonModel } from '@/prisma/models/Hackathon';
 import { BountyIcon } from '@/svg/bounty-icon';
-import { CypherpunkLogo } from '@/svg/cypherpunk-logo';
 import { ProjectIcon } from '@/svg/project-icon';
 
 export const CreateListingModal = ({
@@ -39,10 +38,10 @@ export const CreateListingModal = ({
     router.push('/dashboard/new?type=project');
   };
 
-  const handleCreateHackathon = (hackathon: string) => {
-    posthog.capture('create new hackathon_sponsor');
-    router.push(`/dashboard/new?type=hackathon&hackathon=${hackathon}`);
-  };
+  // const handleCreateHackathon = (hackathon: string) => {
+  //   posthog.capture('create new hackathon_sponsor');
+  //   router.push(`/dashboard/new?type=hackathon&hackathon=${hackathon}`);
+  // };
 
   const isMD = useMediaQuery('(min-width: 768px)');
 
@@ -55,7 +54,7 @@ export const CreateListingModal = ({
       >
         <button className="sr-only" />
         <ScrollArea
-          className="max-h-[100svh]"
+          className="max-h-svh"
           viewportProps={{
             className: 'h-full *:h-full',
           }}
@@ -129,7 +128,7 @@ export const CreateListingModal = ({
                     </p>
                   </span>
                 </Button>
-                <Button
+                {/* <Button
                   className="col-span-2 flex h-55 flex-col gap-4 whitespace-normal text-slate-500 hover:text-slate-500"
                   variant="outline"
                   onClick={() => {
@@ -150,7 +149,7 @@ export const CreateListingModal = ({
                       of your project
                     </p>
                   </span>
-                </Button>
+                </Button> */}
               </div>
             </div>
           </motion.div>
