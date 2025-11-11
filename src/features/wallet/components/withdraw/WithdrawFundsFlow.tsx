@@ -122,47 +122,82 @@ export function WithdrawFundsFlow({
   ): Promise<string> {
     const connection = getConnection('confirmed');
 
-    const recipient = new PublicKey(values.recipientAddress);
-    const tokenMint = new PublicKey(values.tokenAddress);
+    try {
+      const recipient = new PublicKey(values.recipientAddress);
+      const tokenMint = new PublicKey(values.tokenAddress);
 
-    if (values.tokenAddress === 'So11111111111111111111111111111111111111112') {
+      if (
+        values.tokenAddress === 'So11111111111111111111111111111111111111112'
+      ) {
+        return handleWithdraw(values);
+      }
+
+      const isToken2022 = await isToken2022Token(
+        connection,
+        values.tokenAddress,
+      );
+      const programId = isToken2022 ? TOKEN_2022_PROGRAM_ID : TOKEN_PROGRAM_ID;
+
+      const receiverATA = getAssociatedTokenAddressSync(
+        tokenMint,
+        recipient,
+        false,
+        programId,
+      );
+
+      const receiverATAExists = !!(await connection.getAccountInfo(
+        receiverATA,
+      ));
+      if (!receiverATAExists) {
+        const tokenUSDValue = await fetchTokenUSDValue(
+          selectedToken?.tokenAddress || '',
+        );
+        const solUSDValue = await fetchTokenUSDValue(
+          'So11111111111111111111111111111111111111112',
+        );
+        const ataCreationCostInUSD = solUSDValue * 0.0021;
+        const tokenAmountToCharge = ataCreationCostInUSD / tokenUSDValue;
+
+        const tokenDetails = tokenList.find(
+          (token) => token.tokenSymbol === selectedToken?.tokenSymbol,
+        );
+        const power = tokenDetails?.decimals as number;
+        const cost = Math.ceil(tokenAmountToCharge * 10 ** power);
+
+        setAtaCreationCost(cost);
+        setPendingFormData(values);
+        setView('ata-confirm');
+        return '';
+      }
+
       return handleWithdraw(values);
+    } catch (e) {
+      const message =
+        e instanceof Error ? e.message : 'Unknown address validation error';
+
+      let errorMessage =
+        'Invalid destination address. Please paste a valid Solana address.';
+      if (message.includes('Non-base58') || message.includes('base58')) {
+        errorMessage =
+          'The destination address contains invalid characters. Please ensure it is a valid base58 Solana address.';
+      } else if (
+        message.includes('TokenOwnerOffCurve') ||
+        message.includes('TokenOwnerOffCurveError')
+      ) {
+        errorMessage =
+          'The destination is a program-derived address (PDA) or off-curve. Please use a wallet address or a valid token account.';
+      }
+
+      setError(errorMessage);
+      toast.error(errorMessage);
+
+      log.error(
+        `Withdrawal precheck failed: ${message}, userId: ${user?.id}, amount: ${values.amount}, destinationAddress: ${values.recipientAddress}, token: ${values.tokenAddress}`,
+      );
+      posthog.capture('withdraw_failed');
+      setView('withdraw');
+      return Promise.reject(new Error('Withdrawal precheck failed'));
     }
-
-    const isToken2022 = await isToken2022Token(connection, values.tokenAddress);
-    const programId = isToken2022 ? TOKEN_2022_PROGRAM_ID : TOKEN_PROGRAM_ID;
-
-    const receiverATA = getAssociatedTokenAddressSync(
-      tokenMint,
-      recipient,
-      false,
-      programId,
-    );
-
-    const receiverATAExists = !!(await connection.getAccountInfo(receiverATA));
-    if (!receiverATAExists) {
-      const tokenUSDValue = await fetchTokenUSDValue(
-        selectedToken?.tokenAddress || '',
-      );
-      const solUSDValue = await fetchTokenUSDValue(
-        'So11111111111111111111111111111111111111112',
-      );
-      const ataCreationCostInUSD = solUSDValue * 0.0021;
-      const tokenAmountToCharge = ataCreationCostInUSD / tokenUSDValue;
-
-      const tokenDetails = tokenList.find(
-        (token) => token.tokenSymbol === selectedToken?.tokenSymbol,
-      );
-      const power = tokenDetails?.decimals as number;
-      const cost = Math.ceil(tokenAmountToCharge * 10 ** power);
-
-      setAtaCreationCost(cost);
-      setPendingFormData(values);
-      setView('ata-confirm');
-      return '';
-    }
-
-    return handleWithdraw(values);
   }
 
   async function handleWithdraw(values: WithdrawFormData) {
