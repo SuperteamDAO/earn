@@ -21,6 +21,14 @@ import { toast } from 'sonner';
 import { tokenList } from '@/constants/tokenList';
 import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
+import {
+  classifySolanaError,
+  cleanupTransactionGuards,
+  createTransactionGuard,
+  handleSolanaError,
+  updateTransactionGuard,
+  waitForTransactionConfirmation,
+} from '@/utils/solanaTransactionHelpers';
 
 import { type TokenAsset } from '../../types/TokenAsset';
 import { type TxData } from '../../types/TxData';
@@ -55,7 +63,6 @@ export function WithdrawFundsFlow({
   const { user } = useUser();
 
   const [isProcessing, setIsProcessing] = useState(false);
-  const [error, setError] = useState<string>('');
   const [ataCreationCost, setAtaCreationCost] = useState<number>(0);
   const [pendingFormData, setPendingFormData] =
     useState<WithdrawFormData | null>(null);
@@ -77,6 +84,8 @@ export function WithdrawFundsFlow({
   const selectedToken = tokens.find(
     (token) => token.tokenAddress === form.watch('tokenAddress'),
   );
+
+  const [lastSignature, setLastSignature] = useState<string | null>(null);
 
   const isToken2022Token = useCallback(
     async (connection: any, mintAddress: string): Promise<boolean> => {
@@ -182,7 +191,6 @@ export function WithdrawFundsFlow({
           'The destination address contains invalid characters. Please ensure it is a valid base58 Solana address.';
       }
 
-      setError(errorMessage);
       toast.error(errorMessage);
 
       log.error(
@@ -196,11 +204,20 @@ export function WithdrawFundsFlow({
 
   async function handleWithdraw(values: WithdrawFormData) {
     setIsProcessing(true);
-    setError('');
 
-    let signature: string | undefined;
+    let signature: string = '';
 
     try {
+      const guardKey = `withdraw:${user?.id ?? 'anon'}:${values.tokenAddress}:${values.amount}:${values.recipientAddress}`;
+      if (
+        !createTransactionGuard({
+          guardKey,
+          inFlightMessage: 'A similar withdrawal is already in progress.',
+        })
+      ) {
+        return '';
+      }
+
       const connection = getConnection('confirmed');
 
       const response = await api.post('/api/wallet/create-signed-transaction', {
@@ -223,45 +240,16 @@ export function WithdrawFundsFlow({
       });
 
       signature = bs58.encode(result.signature);
-
-      const pollForSignature = async (sig: string) => {
-        const MAX_RETRIES = 60;
-        let retries = 0;
-
-        while (retries < MAX_RETRIES) {
-          const status = await connection.getSignatureStatus(sig, {
-            searchTransactionHistory: true,
-          });
-
-          if (status?.value?.err) {
-            console.error(
-              `[pollForSignature] Transaction failed with error:`,
-              status.value.err,
-            );
-            throw new Error(
-              `Transaction failed: ${status.value.err.toString()}`,
-            );
-          }
-
-          if (
-            status?.value?.confirmationStatus === 'confirmed' ||
-            status.value?.confirmationStatus === 'finalized'
-          ) {
-            return true;
-          }
-
-          await new Promise((resolve) => setTimeout(resolve, 500));
-          retries++;
-        }
-
-        console.error(
-          `[pollForSignature] Transaction confirmation timeout after ${MAX_RETRIES} retries. Signature: ${sig}`,
-        );
-        throw new Error('Transaction confirmation timeout');
-      };
+      updateTransactionGuard(guardKey, signature);
+      setLastSignature(signature);
 
       try {
-        await pollForSignature(signature);
+        await waitForTransactionConfirmation({
+          connection,
+          signature,
+          maxRetries: 60,
+          retryDelayMs: 500,
+        });
       } catch (e) {
         console.error('[handleWithdraw] Transaction polling failed:', e);
         throw new Error(
@@ -309,31 +297,45 @@ export function WithdrawFundsFlow({
       } else {
         console.error('[handleWithdraw] Withdrawal failed:', e);
         posthog.capture('withdraw_failed');
-
-        log.error(
-          `Withdrawal failed: ${e}, userId: ${user?.id}, amount: ${values.amount}, destinationAddress: ${values.recipientAddress}, token: ${values.tokenAddress}, signature: ${signature}`,
-        );
       }
 
-      let errorMessage =
-        'Something went wrong. Please try again. If the issue persists, contact support at support@superteamearn.com.';
+      log.error(
+        `Withdrawal failed: ${String(e)}, userId: ${user?.id}, amount: ${values.amount}, destinationAddress: ${values.recipientAddress}, token: ${values.tokenAddress}, signature: ${signature}`,
+      );
 
       if (isMfaCancelled) {
-        errorMessage = 'Please complete two-factor authentication to withdraw';
+        const msg = 'Please complete two-factor authentication to withdraw';
+        toast.error(msg);
       } else if (isUnsupportedToken) {
-        errorMessage =
+        const msg =
           "We don't support this token yet. Contact support@superteamearn.com for us to add it.";
+        toast.error(msg);
+      } else {
+        const errorType = classifySolanaError(e);
+        const tokenSymbol =
+          selectedToken?.tokenSymbol ??
+          (values.tokenAddress === 'So11111111111111111111111111111111111111112'
+            ? 'SOL'
+            : 'token');
+
+        handleSolanaError({
+          errorType,
+          lastSignature,
+          tokenSymbol,
+          customMessages: {
+            userRejected: 'Payment cancelled in wallet.',
+            expired: 'Blockhash expired. Payment not sent.',
+            unknown:
+              'Something went wrong. Please try again. If the issue persists, contact support at support@superteamearn.com.',
+          },
+        });
       }
 
-      console.log(`[handleWithdraw] Setting error state: "${errorMessage}"`);
-      setError(errorMessage);
-      toast.error(errorMessage);
-      console.log(error);
       setView('withdraw');
       return Promise.reject(new Error('Transaction failed'));
     } finally {
-      console.log('[handleWithdraw] Executing finally block.');
       setIsProcessing(false);
+      cleanupTransactionGuards('withdraw:');
     }
   }
 
