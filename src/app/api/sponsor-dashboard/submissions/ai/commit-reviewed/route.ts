@@ -151,7 +151,7 @@ export async function POST(request: NextRequest) {
           const ai = submission.ai as unknown as BountySubmissionAi;
           const qualityScore = ai?.evaluation?.qualityScore || 0;
 
-          if (qualityScore < 10) {
+          if (qualityScore < 15) {
             lowQualitySubmissions.push(submission);
           } else {
             remainingSubmissions.push(submission);
@@ -209,7 +209,7 @@ export async function POST(request: NextRequest) {
           maxShortlistedCap,
         );
 
-        const bottom15Percentile = Math.ceil(totalRemainingSubmissions * 0.15);
+        const bottom25Percentile = Math.ceil(totalRemainingSubmissions * 0.25);
 
         const processedRemainingSubmissions = await Promise.all(
           sortedRemainingSubmissions.map(async (submission, index) => {
@@ -221,7 +221,7 @@ export async function POST(request: NextRequest) {
               label = 'Shortlisted';
             } else if (
               index >=
-              totalRemainingSubmissions - bottom15Percentile
+              totalRemainingSubmissions - bottom25Percentile
             ) {
               label = 'Low_Quality';
             } else {
