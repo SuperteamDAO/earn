@@ -20,7 +20,6 @@ Disallow: /`;
   const robotsTxt = `User-agent: *
 Allow: /
 Disallow: /dashboard/
-Disallow: /api/
 Disallow: /auth/
 Disallow: /signin
 Disallow: /signup
