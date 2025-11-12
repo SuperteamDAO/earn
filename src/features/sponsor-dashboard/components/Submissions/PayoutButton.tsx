@@ -21,7 +21,6 @@ import dynamic from 'next/dynamic';
 import { log } from 'next-axiom';
 import posthog from 'posthog-js';
 import { useState } from 'react';
-import { toast } from 'sonner';
 
 import {
   AlertDialog,
@@ -38,6 +37,14 @@ import { type SubmissionWithUser } from '@/interface/submission';
 import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
+import {
+  classifySolanaError,
+  cleanupTransactionGuards,
+  createTransactionGuard,
+  handleSolanaError,
+  updateTransactionGuard,
+  waitForTransactionConfirmation,
+} from '@/utils/solanaTransactionHelpers';
 import { toBaseUnits } from '@/utils/to-base-units';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
 
@@ -146,13 +153,13 @@ export const PayoutButton = ({ bounty, submission }: Props) => {
     setIsPaying(true);
     try {
       const guardKey = `payout:${id}`;
-      if (typeof window !== 'undefined') {
-        const inFlight = window.localStorage.getItem(guardKey);
-        if (inFlight) {
-          toast.info('Payout is already in progress for this submission.');
-          return;
-        }
-        window.localStorage.setItem(guardKey, 'in-progress');
+      if (
+        !createTransactionGuard({
+          guardKey,
+          inFlightMessage: 'Payout is already in progress for this submission.',
+        })
+      ) {
+        return;
       }
 
       const tokenDetails = tokenList.find((e) => e.tokenSymbol === token);
@@ -346,39 +353,17 @@ export const PayoutButton = ({ bounty, submission }: Props) => {
         );
       }
 
-      if (typeof window !== 'undefined') {
-        window.localStorage.setItem(guardKey, signature);
-      }
+      updateTransactionGuard(guardKey, signature);
       setLastSignature(signature);
 
-      let confirmed = false;
-      while (!confirmed) {
-        const statuses = await connection.getSignatureStatuses([signature]);
-        const status = statuses && statuses.value && statuses.value[0];
-        if (
-          status &&
-          (status.confirmationStatus === 'confirmed' ||
-            status.confirmationStatus === 'finalized')
-        ) {
-          confirmed = true;
-          break;
-        }
-
-        const currentBlockHeight = await connection.getBlockHeight();
-        if (currentBlockHeight > lastValidBlockHeight) {
-          throw new Error('Blockhash expired before confirmation');
-        }
-
-        if (rawBytes) {
-          try {
-            await connection.sendRawTransaction(rawBytes, {
-              skipPreflight: true,
-              maxRetries: 0,
-            });
-          } catch {}
-        }
-        await new Promise((resolve) => setTimeout(resolve, 1500));
-      }
+      await waitForTransactionConfirmation({
+        connection,
+        signature,
+        lastValidBlockHeight,
+        rawBytes,
+        maxRetries: 60,
+        retryDelayMs: 1500,
+      });
 
       const nextTranche = (submission?.paymentDetails?.length || 0) + 1;
 
@@ -398,7 +383,6 @@ export const PayoutButton = ({ bounty, submission }: Props) => {
       });
       setIsPaying(false);
     } catch (error) {
-      console.log(error);
       log.error(
         `Sponsor unable to pay, user id: ${user?.id}, sponsor id: ${user?.currentSponsorId}, error: ${error?.toString()}, sponsor wallet: ${publicKey?.toBase58()}`,
       );
@@ -413,113 +397,32 @@ export const PayoutButton = ({ bounty, submission }: Props) => {
           : 'the winner';
       })();
 
-      const classifyError = (
-        e: unknown,
-      ):
-        | 'user-rejected'
-        | 'expired'
-        | 'timeout'
-        | 'rpc'
-        | 'insufficient-funds'
-        | 'token-not-available'
-        | 'unknown' => {
-        const text = String((e as any)?.message ?? e ?? '').toLowerCase();
-        if (
-          text.includes('user rejected') ||
-          text.includes('rejected the request') ||
-          text.includes('denied') ||
-          text.includes('declined')
-        ) {
-          return 'user-rejected';
-        }
-        if (
-          text.includes('expired') ||
-          text.includes('blockhash') ||
-          text.includes('lastvalidblockheight')
-        ) {
-          return 'expired';
-        }
-        if (
-          text.includes('timed out') ||
-          text.includes('timeout') ||
-          text.includes('was not confirmed')
-        ) {
-          return 'timeout';
-        }
-        if (
-          text.includes('failed to fetch') ||
-          text.includes('429') ||
-          text.includes('503') ||
-          text.includes('network') ||
-          text.includes('econnreset') ||
-          text.includes('enotfound')
-        ) {
-          return 'rpc';
-        }
-        if (
-          text.includes('insufficient') ||
-          text.includes('insufficient token balance') ||
-          text.includes('insufficient funds')
-        ) {
-          return 'insufficient-funds';
-        }
-        if (text.includes('check token requirements')) {
-          return 'token-not-available';
-        }
-        return 'unknown';
-      };
+      const errorType = classifySolanaError(error);
+      const tokenSymbol = bounty?.token ?? 'token';
 
-      const reason = classifyError(error);
-      switch (reason) {
-        case 'user-rejected':
-          toast.error('Payment cancelled in wallet.');
-          setIsPaying(false);
-          break;
-        case 'expired':
-          toast.error('Blockhash expired. Payment not sent.');
-          setIsPaying(false);
-          break;
-        case 'insufficient-funds':
-          toast.error(
-            `Insufficient ${bounty?.token} or SOL balance. Please add funds to your wallet and try again.`,
-          );
-          setIsPaying(false);
-          break;
-        case 'token-not-available':
-          toast.error(
-            `Insufficient ${bounty?.token} or SOL balance. Please add funds to your wallet and try again.`,
-          );
-          setIsPaying(false);
-          break;
-        case 'timeout': {
-          if (typeof lastSignature === 'string' && lastSignature.length > 0) {
-            toast.info(
-              'Network congestion: transaction may still confirm. Check explorer.',
-            );
-          } else {
-            setWarning({ firstName: firstName as string, signature: '' });
-          }
-          setIsPaying(false);
-          break;
-        }
-        case 'rpc':
-        case 'unknown':
-        default:
-          setWarning({
-            firstName: firstName as string,
-            signature: (lastSignature as string) ?? '',
-          });
-          setIsPaying(false);
-          break;
+      if (errorType === 'timeout' && !lastSignature) {
+        setWarning({ firstName: firstName as string, signature: '' });
+        setIsPaying(false);
+      } else if (errorType === 'rpc' || errorType === 'unknown') {
+        setWarning({
+          firstName: firstName as string,
+          signature: (lastSignature as string) ?? '',
+        });
+        setIsPaying(false);
+      } else {
+        handleSolanaError({
+          errorType,
+          lastSignature,
+          tokenSymbol,
+          customMessages: {
+            userRejected: 'Payment cancelled in wallet.',
+            expired: 'Blockhash expired. Payment not sent.',
+          },
+        });
+        setIsPaying(false);
       }
     } finally {
-      try {
-        if (typeof window !== 'undefined') {
-          Object.keys(window.localStorage)
-            .filter((k) => k.startsWith('payout:'))
-            .forEach((k) => window.localStorage.removeItem(k));
-        }
-      } catch {}
+      cleanupTransactionGuards('payout:');
     }
   };
 
