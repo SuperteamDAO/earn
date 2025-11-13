@@ -154,9 +154,8 @@ export function WithdrawFundsFlow({
         programId,
       );
 
-      const receiverATAExists = !!(await connection.getAccountInfo(
-        receiverATA,
-      ));
+      const receiverATAExists =
+        !!(await connection.getAccountInfo(receiverATA));
       if (!receiverATAExists) {
         const tokenUSDValue = await fetchTokenUSDValue(
           selectedToken?.tokenAddress || '',

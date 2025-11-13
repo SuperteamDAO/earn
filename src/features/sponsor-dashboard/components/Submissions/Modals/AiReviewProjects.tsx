@@ -186,7 +186,14 @@ export default function AiReviewProjectApplicationsModal({
         setState('ERROR');
       }
     }, 10000);
-  }, [applications, unreviewedApplications, nonAnalysedApplications, posthog, commitReviews, refetchUnreviewedApplications]);
+  }, [
+    applications,
+    unreviewedApplications,
+    nonAnalysedApplications,
+    posthog,
+    commitReviews,
+    refetchUnreviewedApplications,
+  ]);
   function onComplete() {
     setState('INIT');
     setProgress(0);

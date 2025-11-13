@@ -194,7 +194,14 @@ export default function AiReviewBountiesSubmissionsModal({
         setState('ERROR');
       }
     }, 10000);
-  }, [submissions, unreviewedSubmissions, nonAnalysedSubmissions, posthog, commitReviews, refetchUnreviewedSubmissions]);
+  }, [
+    submissions,
+    unreviewedSubmissions,
+    nonAnalysedSubmissions,
+    posthog,
+    commitReviews,
+    refetchUnreviewedSubmissions,
+  ]);
   function onComplete() {
     setState('DISCLAIMER');
     setProgress(0);

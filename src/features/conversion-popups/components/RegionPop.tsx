@@ -54,7 +54,6 @@ export const RegionPop = ({ st }: { st: Superteam }) => {
     });
   }, 5_000);
 
-
   const activateQuery = useMemo(
     () => !authenticated && popupsShowed < 2,
     [authenticated, popupsShowed],

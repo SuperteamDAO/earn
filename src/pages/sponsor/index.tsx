@@ -28,7 +28,11 @@ const font = localFont({
   preload: false,
 });
 
-const VideoPlayback = ({ setVideoPopup }: { setVideoPopup: (value: boolean) => void }) => {
+const VideoPlayback = ({
+  setVideoPopup,
+}: {
+  setVideoPopup: (value: boolean) => void;
+}) => {
   return (
     <div
       className="fixed z-50 grid h-screen w-screen place-content-center bg-[rgba(191,203,220,0.67)]"
