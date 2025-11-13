@@ -147,7 +147,6 @@ export const CategoryPop = ({ category }: { category: CategoryKeys }) => {
     });
   }, 5_000);
 
-
   const isMD = useBreakpoint('md');
 
   const initated = useRef(false); // only run use effect once

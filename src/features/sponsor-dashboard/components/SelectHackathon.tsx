@@ -78,7 +78,6 @@ export function SelectHackathon({
     }
   };
 
-  // eslint-disable-next-line unused-imports/no-unused-vars
   const SingleValue = ({ children, ...props }: any) => {
     const { data, selectProps } = props;
 
