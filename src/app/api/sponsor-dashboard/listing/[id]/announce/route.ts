@@ -21,6 +21,7 @@ import { BONUS_REWARD_POSITION } from '@/features/listing-builder/constants';
 import { calculateTotalPrizes } from '@/features/listing-builder/utils/rewards';
 import { type Rewards } from '@/features/listings/types';
 import { createPayment } from '@/features/listings/utils/createPayment';
+import { checkKycCountryMatchesRegion } from '@/features/listings/utils/region';
 
 export const maxDuration = 300;
 
@@ -369,6 +370,18 @@ export async function POST(
               Date.now() - new Date(user.kycVerifiedAt).getTime() > SIX_MONTHS;
 
             if (user.isKYCVerified && user.kycVerifiedAt && !isKycExpired) {
+              const kycCountryCheck = checkKycCountryMatchesRegion(
+                user.kycCountry,
+                listing.region,
+              );
+
+              if (!kycCountryCheck.isValid) {
+                logger.warn(
+                  `Skipping payment sync to Airtable for winner ${winner.user.username} (submission ${winner.id}) because KYC country ${user.kycCountry} does not match listing region ${listing.region}`,
+                );
+                continue;
+              }
+
               await createPayment({ userId: winner.userId });
             } else {
               logger.warn(
