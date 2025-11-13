@@ -9,7 +9,10 @@ import { LocalImage } from '@/components/ui/local-image';
 import { Superteams } from '@/constants/Superteam';
 import { cn } from '@/utils/cn';
 
-import { findCountryBySlug, generateSlug } from '@/features/home/utils/regions';
+import {
+  findCountryBySlug,
+  generateSlug,
+} from '@/features/listings/utils/region';
 import { GitHub, Twitter } from '@/features/social/components/SocialIcons';
 
 const FooterColumn = ({

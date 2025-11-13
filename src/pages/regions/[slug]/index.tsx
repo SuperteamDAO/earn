@@ -12,8 +12,8 @@ import { getURL } from '@/utils/validUrl';
 
 import { RegionPop } from '@/features/conversion-popups/components/RegionPop';
 import { GrantsSection } from '@/features/grants/components/GrantsSection';
-import { findCountryBySlug } from '@/features/home/utils/regions';
 import { ListingsSection } from '@/features/listings/components/ListingsSection';
+import { findCountryBySlug } from '@/features/listings/utils/region';
 
 interface RegionsPageProps {
   readonly slug: string;

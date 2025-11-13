@@ -10,8 +10,8 @@ import {
 } from '@/utils/json-ld';
 import { getURL } from '@/utils/validUrl';
 
-import { findCountryBySlug } from '@/features/home/utils/regions';
 import { ListingsSection } from '@/features/listings/components/ListingsSection';
+import { findCountryBySlug } from '@/features/listings/utils/region';
 
 interface AllRegionsPageProps {
   readonly slug: string;

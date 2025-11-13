@@ -2,7 +2,7 @@ import type { MetadataRoute } from 'next';
 
 import { prisma } from '@/prisma';
 
-import { getAllRegionSlugs } from '@/features/home/utils/regions';
+import { getAllRegionSlugs } from '@/features/listings/utils/region';
 
 const baseUrl = 'https://earn.superteam.fun';
 const MAX_URLS_PER_SITEMAP = 50000;
