@@ -12,61 +12,133 @@ import { getURL } from '@/utils/validUrl';
 
 import { RegionPop } from '@/features/conversion-popups/components/RegionPop';
 import { GrantsSection } from '@/features/grants/components/GrantsSection';
+import { findCountryBySlug } from '@/features/home/utils/regions';
 import { ListingsSection } from '@/features/listings/components/ListingsSection';
 
-const RegionsPage = ({ slug, st }: { slug: string; st: Superteam }) => {
-  const displayName = st?.displayValue;
+interface RegionsPageProps {
+  readonly slug: string;
+  readonly st?: Superteam;
+  readonly countryData?: {
+    readonly name: string;
+    readonly code: string;
+  };
+}
 
-  const ogImage = new URL(`${getURL()}api/dynamic-og/region/`);
-  ogImage.searchParams.set('region', st.displayValue);
-  ogImage.searchParams.set('code', st.code!);
+const RegionsPage = ({ slug, st, countryData }: RegionsPageProps) => {
+  if (st) {
+    const displayName = st.displayValue;
 
-  const organizationSchema = generateRegionalOrganizationSchema(st);
-  const breadcrumbSchema = generateBreadcrumbListSchema([
-    { name: 'Home', url: '/' },
-    { name: displayName || st.region },
-  ]);
+    const ogImage = new URL(`${getURL()}api/dynamic-og/region/`);
+    ogImage.searchParams.set('region', st.displayValue);
+    ogImage.searchParams.set('code', st.code!);
 
-  return (
-    <Home
-      type="region"
-      st={st}
-      meta={
-        <>
-          <Meta
-            title={`Welcome to Superteam Earn ${displayName} | Discover Bounties and Grants`}
-            description={`Welcome to Superteam Earn ${displayName}'s page — Discover bounties and grants and become a part of the global crypto community`}
-            canonical={`https://earn.superteam.fun/regions/${slug}/`}
-            og={ogImage.toString()}
-          />
-          <JsonLd data={[organizationSchema, breadcrumbSchema]} />
-        </>
-      }
-    >
-      <div className="w-full">
-        <RegionPop st={st} />
-        <ListingsSection type="region" region={st.region} />
+    const organizationSchema = generateRegionalOrganizationSchema(st);
+    const breadcrumbSchema = generateBreadcrumbListSchema([
+      { name: 'Home', url: '/' },
+      { name: displayName || st.region },
+    ]);
 
-        <GrantsSection type="region" region={st.region} />
-      </div>
-    </Home>
-  );
+    return (
+      <Home
+        type="region"
+        st={st}
+        meta={
+          <>
+            <Meta
+              title={`Welcome to Superteam Earn ${displayName} | Discover Bounties and Grants`}
+              description={`Welcome to Superteam Earn ${displayName}'s page — Discover bounties and grants and become a part of the global crypto community`}
+              canonical={`https://earn.superteam.fun/regions/${slug}/`}
+              og={ogImage.toString()}
+            />
+            <JsonLd data={[organizationSchema, breadcrumbSchema]} />
+          </>
+        }
+      >
+        <div className="w-full">
+          <RegionPop st={st} />
+          <ListingsSection type="region" region={st.region} />
+
+          <GrantsSection type="region" region={st.region} />
+        </div>
+      </Home>
+    );
+  }
+
+  if (countryData) {
+    const countryName = countryData.name;
+    const countryCode = countryData.code.toUpperCase();
+
+    const ogImage = new URL(`${getURL()}api/dynamic-og/region/`);
+    ogImage.searchParams.set('region', countryName);
+    ogImage.searchParams.set('code', countryCode);
+
+    const organizationSchema = generateRegionalOrganizationSchema({
+      displayValue: countryName,
+      region: countryName,
+      slug,
+      code: countryCode,
+    });
+
+    const breadcrumbSchema = generateBreadcrumbListSchema([
+      { name: 'Home', url: '/' },
+      { name: countryName },
+    ]);
+
+    return (
+      <Home
+        type="region"
+        countryData={countryData}
+        meta={
+          <>
+            <Meta
+              title={`Welcome to Superteam Earn ${countryName} | Discover Bounties and Grants`}
+              description={`Welcome to Superteam Earn ${countryName}'s page — Discover bounties and grants and become a part of the global crypto community`}
+              canonical={`https://earn.superteam.fun/regions/${slug}/`}
+              og={ogImage.toString()}
+            />
+            <JsonLd data={[organizationSchema, breadcrumbSchema]} />
+          </>
+        }
+      >
+        <div className="w-full">
+          <ListingsSection type="region" region={countryName} />
+
+          <GrantsSection type="region" region={countryName} />
+        </div>
+      </Home>
+    );
+  }
+
+  return null;
 };
 
 export async function getServerSideProps(context: NextPageContext) {
   const { slug } = context.query;
+  const slugString = (slug as string)?.toLowerCase() || '';
 
-  const st = Superteams.find(
-    (team) => team.slug?.toLowerCase() === (slug as string).toLowerCase(),
-  );
+  const st = Superteams.find((team) => team.slug?.toLowerCase() === slugString);
 
-  if (!st) {
-    return { notFound: true };
+  if (st) {
+    return {
+      props: { slug, st },
+    };
   }
 
-  return {
-    props: { slug, st },
-  };
+  const country = findCountryBySlug(slugString);
+
+  if (country) {
+    return {
+      props: {
+        slug,
+        countryData: {
+          name: country.name,
+          code: country.code,
+        },
+      },
+    };
+  }
+
+  return { notFound: true };
 }
 
 export default RegionsPage;

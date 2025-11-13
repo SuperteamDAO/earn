@@ -1,5 +1,6 @@
 import type { z } from 'zod';
 
+import { countries } from '@/constants/country';
 import { Superteams } from '@/constants/Superteam';
 import { type JsonValue } from '@/prisma/internal/prismaNamespace';
 import {
@@ -237,21 +238,45 @@ export async function buildListingQuery(
     const st = Superteams.find((team) => team.region.toLowerCase() === region);
     const superteam = st?.name;
 
-    where.OR = [
-      {
-        region: {
-          in: [
-            region.charAt(0).toUpperCase() + region.slice(1),
-            ...(st?.country || []),
-          ],
+    if (st) {
+      where.OR = [
+        {
+          region: {
+            in: [
+              region.charAt(0).toUpperCase() + region.slice(1),
+              ...(st?.country || []),
+            ],
+          },
         },
-      },
-      {
-        sponsor: {
-          name: superteam,
+        {
+          sponsor: {
+            name: superteam,
+          },
         },
-      },
-    ];
+      ];
+    } else {
+      const country = countries.find(
+        (c) => c.name.toLowerCase() === region.toLowerCase(),
+      );
+
+      if (country) {
+        where.OR = [
+          {
+            region: {
+              in: [country.name, 'Global'],
+            },
+          },
+        ];
+      } else {
+        where.OR = [
+          {
+            region: {
+              in: [region.charAt(0).toUpperCase() + region.slice(1), 'Global'],
+            },
+          },
+        ];
+      }
+    }
   }
 
   if (context === 'sponsor' && sponsor) {

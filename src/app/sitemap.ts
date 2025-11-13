@@ -1,7 +1,8 @@
 import type { MetadataRoute } from 'next';
 
-import { Superteams } from '@/constants/Superteam';
 import { prisma } from '@/prisma';
+
+import { getAllRegionSlugs } from '@/features/home/utils/regions';
 
 const baseUrl = 'https://earn.superteam.fun';
 const MAX_URLS_PER_SITEMAP = 50000;
@@ -51,6 +52,10 @@ async function getGrantsCount(): Promise<number> {
   });
 }
 
+async function getRegionsCount(): Promise<number> {
+  return getAllRegionSlugs().length;
+}
+
 // COMMENTED OUT: Talent profiles - will decide later if we want this
 // async function getTalentProfilesCount(): Promise<number> {
 //   return await prisma.user.count({
@@ -74,12 +79,14 @@ export async function generateSitemaps(): Promise<Array<{ id: number }>> {
     return []; // Return empty for non-production
   }
 
-  const [listingsCount, sponsorsCount, grantsCount] = await Promise.all([
-    getListingsCount(),
-    getSponsorsCount(),
-    getGrantsCount(),
-    // getTalentProfilesCount(), // COMMENTED OUT: Talent profiles
-  ]);
+  const [listingsCount, sponsorsCount, grantsCount, regionsCount] =
+    await Promise.all([
+      getListingsCount(),
+      getSponsorsCount(),
+      getGrantsCount(),
+      getRegionsCount(),
+      // getTalentProfilesCount(), // COMMENTED OUT: Talent profiles
+    ]);
 
   const sitemaps: Array<{ id: number }> = [];
 
@@ -110,8 +117,11 @@ export async function generateSitemaps(): Promise<Array<{ id: number }>> {
   //   sitemaps.push({ id: currentId++ });
   // }
 
-  // Regions - always 1 sitemap (only ~30 regions)
-  sitemaps.push({ id: currentId });
+  // Regions - split if needed
+  const regionsSitemapCount = calculateSitemapCount(regionsCount);
+  for (let i = 0; i < regionsSitemapCount; i++) {
+    sitemaps.push({ id: currentId++ });
+  }
 
   return sitemaps;
 }
@@ -125,20 +135,24 @@ interface SitemapBoundaries {
   grantsEnd: number;
   // talentStart: number; // COMMENTED OUT: Talent profiles
   // talentEnd: number; // COMMENTED OUT: Talent profiles
-  regionsId: number;
+  regionsStart: number;
+  regionsEnd: number;
 }
 
 async function getSitemapBoundaries(): Promise<SitemapBoundaries> {
-  const [listingsCount, sponsorsCount, grantsCount] = await Promise.all([
-    getListingsCount(),
-    getSponsorsCount(),
-    getGrantsCount(),
-    // getTalentProfilesCount(), // COMMENTED OUT: Talent profiles
-  ]);
+  const [listingsCount, sponsorsCount, grantsCount, regionsCount] =
+    await Promise.all([
+      getListingsCount(),
+      getSponsorsCount(),
+      getGrantsCount(),
+      getRegionsCount(),
+      // getTalentProfilesCount(), // COMMENTED OUT: Talent profiles
+    ]);
 
   const listingsSitemapCount = calculateSitemapCount(listingsCount);
   const sponsorsSitemapCount = calculateSitemapCount(sponsorsCount);
   const grantsSitemapCount = calculateSitemapCount(grantsCount);
+  const regionsSitemapCount = calculateSitemapCount(regionsCount);
   // const talentSitemapCount = calculateSitemapCount(talentCount); // COMMENTED OUT: Talent profiles
 
   // Start from ID 0 for dynamic sitemaps
@@ -161,7 +175,8 @@ async function getSitemapBoundaries(): Promise<SitemapBoundaries> {
   // const talentEnd = currentId + talentSitemapCount;
   // currentId = talentEnd;
 
-  const regionsId = currentId;
+  const regionsStart = currentId;
+  const regionsEnd = currentId + regionsSitemapCount;
 
   return {
     listingsStart,
@@ -172,14 +187,13 @@ async function getSitemapBoundaries(): Promise<SitemapBoundaries> {
     grantsEnd,
     // talentStart, // COMMENTED OUT: Talent profiles
     // talentEnd, // COMMENTED OUT: Talent profiles
-    regionsId,
+    regionsStart,
+    regionsEnd,
   };
 }
 
-export default async function sitemap({
-  id,
-}: {
-  id: number;
+export default async function sitemap(props: {
+  id: Promise<number>;
 }): Promise<MetadataRoute.Sitemap> {
   const now = new Date();
 
@@ -187,6 +201,8 @@ export default async function sitemap({
   if (!isProduction()) {
     return [];
   }
+
+  const id = await props.id;
 
   const sitemapId = typeof id === 'string' ? parseInt(id, 10) : id;
 
@@ -322,20 +338,28 @@ export default async function sitemap({
   // }
 
   // Regions
-  if (sitemapId === boundaries.regionsId) {
-    const regionsWithSlugs = Superteams.filter(
-      (region) => region?.slug && typeof region.slug === 'string',
-    );
+  if (
+    sitemapId >= boundaries.regionsStart &&
+    sitemapId < boundaries.regionsEnd
+  ) {
+    const sitemapIndex = sitemapId - boundaries.regionsStart;
+    const offset = sitemapIndex * MAX_URLS_PER_SITEMAP;
+    const allRegionSlugs = getAllRegionSlugs();
 
-    if (regionsWithSlugs.length === 0) {
+    if (allRegionSlugs.length === 0) {
       return [];
     }
 
-    return regionsWithSlugs.map((region): MetadataRoute.Sitemap[number] => ({
-      url: `${baseUrl}/regions/${region.slug}/`,
+    const regionSlugs = allRegionSlugs.slice(
+      offset,
+      offset + MAX_URLS_PER_SITEMAP,
+    );
+
+    return regionSlugs.map((slug): MetadataRoute.Sitemap[number] => ({
+      url: `${baseUrl}/regions/${slug}/`,
       lastModified: now,
       changeFrequency: 'weekly',
-      priority: 0.7,
+      priority: 0.8,
     }));
   }
 
