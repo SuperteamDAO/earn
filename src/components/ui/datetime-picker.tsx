@@ -718,7 +718,6 @@ function TimePicker({
       }
     }, 1);
     return () => clearTimeout(timeoutId);
-     
   }, [open]);
 
   const onHourChange = useCallback(
@@ -755,7 +754,17 @@ function TimePicker({
       }
       setHour(v.value);
     },
-    [setHour, use12HourFormat, value, formatStr, minute, second, ampm, min, max],
+    [
+      setHour,
+      use12HourFormat,
+      value,
+      formatStr,
+      minute,
+      second,
+      ampm,
+      min,
+      max,
+    ],
   );
 
   const onMinuteChange = useCallback(
@@ -790,7 +799,18 @@ function TimePicker({
       }
       setMinute(v.value);
     },
-    [setMinute, use12HourFormat, value, formatStr, hour, second, ampm, min, max, minute],
+    [
+      setMinute,
+      use12HourFormat,
+      value,
+      formatStr,
+      hour,
+      second,
+      ampm,
+      min,
+      max,
+      minute,
+    ],
   );
 
   const onAmpmChange = useCallback(

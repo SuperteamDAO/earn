@@ -49,10 +49,7 @@ const MobileSponsorDrawer = ({
                   Login
                 </Button>
               </Link>
-              <Separator
-                orientation="vertical"
-                className="h-5 bg-slate-300"
-              />
+              <Separator orientation="vertical" className="h-5 bg-slate-300" />
               <Link
                 className="ph-no-capture"
                 href="/new/sponsor/"
@@ -84,14 +81,9 @@ const MobileSponsorDrawer = ({
             <Link
               className="ph-no-capture"
               href="/dashboard/listings/?open=1"
-              onClick={() =>
-                posthog.capture('create a listing_sponsor navbar')
-              }
+              onClick={() => posthog.capture('create a listing_sponsor navbar')}
             >
-              <Button
-                variant="outline"
-                className="text-brand-purple text-base"
-              >
+              <Button variant="outline" className="text-brand-purple text-base">
                 Post for Free
               </Button>
             </Link>

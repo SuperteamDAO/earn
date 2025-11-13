@@ -70,9 +70,8 @@ export const ImageViewBlock: React.FC<NodeViewProps> = ({
   const [activeResizeHandle, setActiveResizeHandle] = React.useState<
     'left' | 'right' | null
   >(null);
-  const [containerMaxWidth, setContainerMaxWidth] = React.useState<number>(
-    Infinity,
-  );
+  const [containerMaxWidth, setContainerMaxWidth] =
+    React.useState<number>(Infinity);
 
   const onDimensionsChange = React.useCallback(
     ({ width, height }: ElementDimensions) => {

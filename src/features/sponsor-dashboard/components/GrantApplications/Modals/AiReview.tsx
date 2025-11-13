@@ -163,7 +163,14 @@ export default function AiReviewModal({ applications, grant }: Props) {
         setState('ERROR');
       }
     }, 500);
-  }, [applications, unreviewedApplications, nonAnalysedApplications, posthog, commitReviews, refetchUnreviewedApplications]);
+  }, [
+    applications,
+    unreviewedApplications,
+    nonAnalysedApplications,
+    posthog,
+    commitReviews,
+    refetchUnreviewedApplications,
+  ]);
   function onComplete() {
     setState('INIT');
     setProgress(0);
