@@ -1,4 +1,5 @@
 import { waitUntil } from '@vercel/functions';
+import { headers } from 'next/headers';
 import { type NextRequest, NextResponse } from 'next/server';
 
 import { SIX_MONTHS } from '@/constants/SIX_MONTHS';
@@ -9,6 +10,8 @@ import { prisma } from '@/prisma';
 import { dayjs } from '@/utils/dayjs';
 import { safeStringify } from '@/utils/safeStringify';
 
+import { validateListingSponsorAuth } from '@/features/auth/utils/checkListingSponsorAuth';
+import { getSponsorSession } from '@/features/auth/utils/getSponsorSession';
 import {
   addReferralInviterWinBonus,
   addWinBonusCredit,
@@ -21,7 +24,6 @@ import { type Rewards } from '@/features/listings/types';
 import { createPayment } from '@/features/listings/utils/createPayment';
 
 export const maxDuration = 300;
-const userId = '000bd91e-a1b3-452c-aa93-15ba5a1421d8';
 
 export async function POST(
   _request: NextRequest,
@@ -29,16 +31,32 @@ export async function POST(
 ) {
   const params = await props.params;
   try {
+    const session = await getSponsorSession(await headers());
+
+    logger.debug(`Request params: ${safeStringify(params)}`);
+
+    if (session.error || !session.data) {
+      return NextResponse.json(
+        { error: session.error },
+        { status: session.status },
+      );
+    }
+
+    const { userId, userSponsorId } = session.data;
     const id = params.id;
 
     try {
       return await withRedisLock(
         `locks:announce-winners:${id}`,
         async () => {
-          const listing = await prisma.bounties.findUnique({
-            where: { id },
-            include: { sponsor: true },
-          });
+          const listingAuthResult = await validateListingSponsorAuth(
+            userSponsorId,
+            id,
+          );
+          if ('error' in listingAuthResult) {
+            return listingAuthResult.error;
+          }
+          const listing = listingAuthResult.listing;
 
           if (listing?.isWinnersAnnounced) {
             logger.warn(`Winners already announced for bounty with ID: ${id}`);
