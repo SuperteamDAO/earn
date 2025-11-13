@@ -1,6 +1,7 @@
 import nextConfig from 'eslint-config-next';
 import prettier from 'eslint-config-prettier';
 import prettierPlugin from 'eslint-plugin-prettier';
+import prettierRecommended from 'eslint-plugin-prettier/recommended';
 import simpleImportSort from 'eslint-plugin-simple-import-sort';
 import tseslint from 'typescript-eslint';
 import unusedImports from 'eslint-plugin-unused-imports';
@@ -32,6 +33,7 @@ export default tseslint.config(
   ...tseslint.configs.recommended,
   ...nextConfig,
   prettier,
+  prettierRecommended,
 
   // Global rules (from top-level "rules" in .eslintrc.json)
   {

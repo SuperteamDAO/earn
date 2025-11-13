@@ -78,8 +78,34 @@ export function BoostBanner({ listing }: BoostBannerProps) {
     return num.toString();
   };
 
+  const handleBoostClick = () => {
+    posthog.capture('boost listing_sponsor stage banner', {
+      stage: 'BOOST',
+      listing_type: listing.type,
+      listing_slug: listing.slug,
+    });
+    posthog.capture('click_sponsor stage banner', {
+      stage: 'BOOST',
+      listing_type: listing.type,
+      listing_slug: listing.slug,
+    });
+  };
+
+  const handleGetHelpClick = () => {
+    posthog.capture('get help_sponsor stage banner', {
+      stage: 'BOOST',
+      listing_type: listing.type,
+      listing_slug: listing.slug,
+    });
+  };
+
   return (
-    <div className="relative flex items-center justify-between overflow-hidden rounded-xl bg-slate-100 px-10 py-8">
+    <Link
+      href={`/dashboard/listings/${listing.slug}/edit?boost=true`}
+      className="relative flex items-center justify-between overflow-hidden rounded-xl bg-slate-100 px-10 py-8"
+      onClick={handleBoostClick}
+      prefetch={false}
+    >
       <div className="flex flex-col gap-6">
         <div className="flex flex-col gap-4">
           <div className="flex h-6 w-6 items-center justify-center rounded-lg">
@@ -99,44 +125,28 @@ export function BoostBanner({ listing }: BoostBannerProps) {
         </div>
 
         <div className="flex items-center gap-8">
-          <Button asChild>
+          <Button>Boost {listing.type}</Button>
+          <Button
+            variant="ghost"
+            asChild
+            className="flex items-center gap-3 text-sm text-slate-400 underline underline-offset-4 hover:text-slate-700"
+          >
             <Link
-              href={`/dashboard/listings/${listing.slug}/edit?boost=true`}
-              onClick={() => {
-                posthog.capture('boost listing_sponsor stage banner', {
-                  stage: 'BOOST',
-                  listing_type: listing.type,
-                  listing_slug: listing.slug,
-                });
-                posthog.capture('click_sponsor stage banner', {
-                  stage: 'BOOST',
-                  listing_type: listing.type,
-                  listing_slug: listing.slug,
-                });
+              href="https://t.me/pratikdholani/"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleGetHelpClick();
               }}
             >
-              Boost {listing.type}
+              <img
+                src="/assets/sponsor/pratik.webp"
+                alt="Get Help"
+                width={28}
+                height={28}
+              />
+              <span>Get Help</span>
             </Link>
           </Button>
-          <Link
-            href="https://t.me/pratikdholani/"
-            className="flex items-center gap-3 text-sm text-slate-400 underline underline-offset-4 hover:text-slate-700"
-            onClick={() => {
-              posthog.capture('get help_sponsor stage banner', {
-                stage: 'BOOST',
-                listing_type: listing.type,
-                listing_slug: listing.slug,
-              });
-            }}
-          >
-            <img
-              src="/assets/sponsor/pratik.webp"
-              alt="Get Help"
-              width={28}
-              height={28}
-            />
-            <span>Get Help</span>
-          </Link>
         </div>
       </div>
 
@@ -152,6 +162,6 @@ export function BoostBanner({ listing }: BoostBannerProps) {
           className="absolute top-5/9 right-9 size-28 -translate-y-1/2 rounded-full"
         />
       </div>
-    </div>
+    </Link>
   );
 }

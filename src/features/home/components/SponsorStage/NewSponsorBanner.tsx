@@ -21,7 +21,12 @@ export function NewSponsorBanner() {
   };
 
   return (
-    <div className="relative flex items-center justify-between overflow-hidden rounded-xl bg-slate-100 px-10 py-8">
+    <Link
+      href="/dashboard/listings?open=1"
+      className="relative flex items-center justify-between overflow-hidden rounded-xl bg-slate-100 px-10 py-8"
+      onClick={handleCreateBountyClick}
+      prefetch={false}
+    >
       <div className="flex flex-col gap-6">
         <div className="flex flex-col gap-4">
           <div className="flex h-6 w-6 items-center justify-center rounded-lg">
@@ -40,27 +45,28 @@ export function NewSponsorBanner() {
         </div>
 
         <div className="flex items-center gap-8">
-          <Button asChild>
+          <Button>Create Bounty</Button>
+          <Button
+            variant="ghost"
+            asChild
+            className="flex items-center gap-3 text-sm text-slate-400 underline underline-offset-4 hover:text-slate-700"
+          >
             <Link
-              href="/dashboard/listings?open=1"
-              onClick={handleCreateBountyClick}
+              href="https://t.me/pratikdholani/"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleGetHelpClick();
+              }}
             >
-              Create Bounty
+              <img
+                src="/assets/sponsor/pratik.webp"
+                alt="Get Help"
+                width={28}
+                height={28}
+              />
+              <span>Get Help</span>
             </Link>
           </Button>
-          <Link
-            href="https://t.me/pratikdholani/"
-            className="flex items-center gap-3 text-sm text-slate-400 underline underline-offset-4 hover:text-slate-700"
-            onClick={handleGetHelpClick}
-          >
-            <img
-              src="/assets/sponsor/pratik.webp"
-              alt="Get Help"
-              width={28}
-              height={28}
-            />
-            <span>Get Help</span>
-          </Link>
         </div>
       </div>
 
@@ -74,6 +80,6 @@ export function NewSponsorBanner() {
           className="object-contain object-right"
         />
       </div>
-    </div>
+    </Link>
   );
 }
