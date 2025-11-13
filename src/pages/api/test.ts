@@ -1,13 +1,14 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-const LISTING_ID = 'bcd4dda6-587e-4a63-8b42-b2096a48fc92';
+const LISTING_ID = 'e7a4de20-0bd9-4620-9df1-ab27bf0fab94';
 const CONCURRENT_REQUESTS = 5;
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
-  const baseUrl = 'http://localhost:3000';
+  const baseUrl =
+    'https://earn-git-fix-concurrent-winner-announcement-superteam-earn.vercel.app/';
 
   const announceUrl = `${baseUrl}/api/sponsor-dashboard/listing/${LISTING_ID}/announce`;
 
