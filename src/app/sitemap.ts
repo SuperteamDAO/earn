@@ -192,8 +192,10 @@ async function getSitemapBoundaries(): Promise<SitemapBoundaries> {
   };
 }
 
-export default async function sitemap(props: {
-  id: Promise<number>;
+export default async function sitemap({
+  id,
+}: {
+  id: number;
 }): Promise<MetadataRoute.Sitemap> {
   const now = new Date();
 
@@ -201,8 +203,6 @@ export default async function sitemap(props: {
   if (!isProduction()) {
     return [];
   }
-
-  const id = await props.id;
 
   const sitemapId = typeof id === 'string' ? parseInt(id, 10) : id;
 

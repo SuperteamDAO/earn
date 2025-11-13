@@ -3,12 +3,13 @@ import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
 import MdOutlineMail from '@/components/icons/MdOutlineMail';
-import { SuperteamCombobox } from '@/components/shared/SuperteamCombobox';
+import { RegionCombobox } from '@/components/shared/RegionCombobox';
 import { SupportFormDialog } from '@/components/shared/SupportFormDialog';
 import { LocalImage } from '@/components/ui/local-image';
 import { Superteams } from '@/constants/Superteam';
 import { cn } from '@/utils/cn';
 
+import { findCountryBySlug, generateSlug } from '@/features/home/utils/regions';
 import { GitHub, Twitter } from '@/features/social/components/SocialIcons';
 
 const FooterColumn = ({
@@ -51,32 +52,52 @@ export const Footer = () => {
   const currentYear = new Date().getFullYear();
   const router = useRouter();
 
-  const [selectedSuperteam, setSelectedSuperteam] = useState<string | null>(
-    null,
-  );
+  const [selectedRegion, setSelectedRegion] = useState<string>('Global');
 
   useEffect((): void => {
     const path = router.asPath.toLowerCase();
-    const matched = Superteams.find((team) =>
+
+    // Check if it's a Superteam region page
+    const matchedSuperteam = Superteams.find((team) =>
       path.includes(`/regions/${team.slug?.toLowerCase()}`),
     );
-    setTimeout(() => {
-      setSelectedSuperteam(matched ? matched.name : 'Global');
-    }, 0);
+
+    if (matchedSuperteam) {
+      setSelectedRegion(matchedSuperteam.region);
+    } else if (path.includes('/regions/')) {
+      // Extract the slug from the path and try to match it to a country/region
+      const slugMatch = path.match(/\/regions\/([^/?]+)/);
+      if (slugMatch) {
+        const slug = slugMatch[1];
+        const country = findCountryBySlug(slug || '');
+        if (country) {
+          setSelectedRegion(country.name);
+        } else {
+          setSelectedRegion('Global');
+        }
+      }
+    } else {
+      setSelectedRegion('Global');
+    }
   }, [router.asPath]);
 
-  const handleSuperteamChange = (value: string | null): void => {
-    if (!value) {
-      setSelectedSuperteam(null);
+  const handleRegionChange = (value: string): void => {
+    if (value === 'Global') {
+      setSelectedRegion('Global');
       router.push('/');
       return;
     }
-    setSelectedSuperteam(value);
-    const team = Superteams.find((t) => t.name === value);
-    if (team?.slug) {
-      router.push(`/regions/${team.slug.toLowerCase()}`);
+
+    setSelectedRegion(value);
+
+    // Check if it's a Superteam region
+    const superteam = Superteams.find((t) => t.region === value);
+    if (superteam?.slug) {
+      router.push(`/regions/${superteam.slug.toLowerCase()}`);
     } else {
-      router.push('/');
+      // It's a country or region, generate slug from the name
+      const slug = generateSlug(value);
+      router.push(`/regions/${slug}`);
     }
   };
 
@@ -164,12 +185,14 @@ export const Footer = () => {
             </p>
             <div className="flex items-center">
               <p className="mr-2 text-sm font-medium text-slate-500">REGION</p>
-              <SuperteamCombobox
+              <RegionCombobox
                 placeholder="Region"
-                value={selectedSuperteam}
-                onChange={handleSuperteamChange}
-                showGlobal
-                className={cn(selectedSuperteam !== 'Global' && 'w-fit')}
+                value={selectedRegion}
+                onChange={handleRegionChange}
+                global
+                superteams
+                regions
+                className={cn(selectedRegion !== 'Global' && 'w-fit')}
               />
             </div>
           </div>
