@@ -33,13 +33,19 @@ export function BoostBanner({ listing }: BoostBannerProps) {
   const highestTier = BOOST_STEPS[BOOST_STEPS.length - 1]!;
   const BOOST_THRESHOLD = BOOST_STEP_TO_AMOUNT_USD[highestTier];
 
-  const { data: featuredData } = useQuery(featuredAvailabilityQuery());
+  const { data: featuredData, isLoading: isFeaturedLoading } = useQuery(
+    featuredAvailabilityQuery(),
+  );
   const isFeatureAvailable = featuredData?.isAvailable ?? false;
 
-  const { data: emailEstimate } = useQuery(
+  const { data: emailEstimate, isLoading: isEmailLoading } = useQuery(
     emailEstimateQuery(skills, region as string | undefined),
   );
   const emailImpressions = resolveEmailImpressions(skills, emailEstimate);
+
+  if (isFeaturedLoading || isEmailLoading) {
+    return null;
+  }
 
   const currentStep = amountToStep(usdValue ?? 0, isFeatureAvailable);
 

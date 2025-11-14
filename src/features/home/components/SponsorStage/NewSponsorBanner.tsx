@@ -45,7 +45,7 @@ export function NewSponsorBanner() {
         </div>
 
         <div className="flex items-center gap-8">
-          <Button>Create Bounty</Button>
+          <Button>Create a Bounty</Button>
           <Button
             variant="ghost"
             asChild
@@ -75,7 +75,7 @@ export function NewSponsorBanner() {
       </div>
       <div className="absolute top-2/4 right-10 hidden w-69 -translate-y-1/2 xl:block">
         <img
-          src="https://res.cloudinary.com/dgvnuwspr/image/upload/v1761660567/assets/home/sponsor-stages/generate-with-ai.webp"
+          src="https://res.cloudinary.com/dgvnuwspr/image/upload/v1763104639/assets/home/sponsor-stages/generate-with-ai.webp"
           alt="Generate bounty with AI"
           className="object-contain object-right"
         />
