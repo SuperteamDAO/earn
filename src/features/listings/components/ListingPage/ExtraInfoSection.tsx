@@ -16,6 +16,7 @@ interface ExtraInfoSectionProps {
   Hackathon?: ListingHackathon;
   isGrant?: boolean;
   hideWinnerAnnouncement?: boolean;
+  isFndnPaying?: boolean;
 }
 
 export function ExtraInfoSection({
@@ -27,6 +28,7 @@ export function ExtraInfoSection({
   commitmentDate,
   isGrant = false,
   hideWinnerAnnouncement = false,
+  isFndnPaying = false,
 }: ExtraInfoSectionProps) {
   return (
     <div className="flex w-full flex-col gap-8 pt-2 md:w-[23rem]">
@@ -82,6 +84,16 @@ export function ExtraInfoSection({
           ))}
         </div>
       </div>
+
+      {isFndnPaying && (
+        <div className="flex w-full flex-col items-start gap-2 text-sm">
+          <p className="h-full font-semibold text-slate-600">KYC REQUIRED</p>
+          <p className="text-slate-500">
+            Winners will be required to complete KYC to receive their prize
+            money.
+          </p>
+        </div>
+      )}
 
       {pocSocials && (
         <div className="hidden w-full flex-col items-start gap-2 text-sm md:flex">

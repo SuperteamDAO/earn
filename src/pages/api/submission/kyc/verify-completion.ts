@@ -9,6 +9,7 @@ import { withAuth } from '@/features/auth/utils/withAuth';
 import { checkVerificationStatus } from '@/features/kyc/utils/checkVerificationStatus';
 import { getApplicantData } from '@/features/kyc/utils/getApplicantData';
 import { createPayment } from '@/features/listings/utils/createPayment';
+import { checkKycCountryMatchesRegion } from '@/features/listings/utils/region';
 
 const handler = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
   const userId = req.userId;
@@ -52,10 +53,7 @@ const handler = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
     );
 
     if (result === 'verified') {
-      if (submission.user.isKYCVerified) {
-        return res.status(200).json({ message: 'KYC already verified' });
-      }
-
+      const wasAlreadyVerified = submission.user.isKYCVerified;
       const { fullName, country, dob, idNumber, idType } = applicantData;
 
       await prisma.user.update({
@@ -71,7 +69,25 @@ const handler = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
         },
       });
 
-      await createPayment({ userId });
+      const kycCountryCheck = checkKycCountryMatchesRegion(
+        country,
+        submission.listing.region,
+      );
+
+      if (!kycCountryCheck.isValid) {
+        logger.warn(
+          `KYC country mismatch for submission ${submissionId}: KYC country ${country} does not match listing region ${submission.listing.region}`,
+        );
+        return res.status(400).json({
+          message: 'KYC_REJECTED',
+          error: `Your KYC document doesn't belong to ${kycCountryCheck.regionDisplayName}. Please verify again with a KYC document that belongs to ${kycCountryCheck.regionDisplayName}.`,
+          regionDisplayName: kycCountryCheck.regionDisplayName,
+        });
+      }
+
+      if (!wasAlreadyVerified) {
+        await createPayment({ userId });
+      }
     }
 
     return res.status(200).json(result);
