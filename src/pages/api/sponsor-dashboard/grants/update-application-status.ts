@@ -5,6 +5,7 @@ import { z } from 'zod';
 import { SIX_MONTHS } from '@/constants/SIX_MONTHS';
 import { tokenList } from '@/constants/tokenList';
 import logger from '@/lib/logger';
+import { LockNotAcquiredError, withRedisLock } from '@/lib/with-redis-lock';
 import { prisma } from '@/prisma';
 import { type SubmissionLabels } from '@/prisma/enums';
 import { airtableConfig, airtableUpsert, airtableUrl } from '@/utils/airtable';
@@ -47,16 +48,23 @@ const checkAndUpdateKYCStatus = async (
     Date.now() - new Date(user.kycVerifiedAt).getTime() > SIX_MONTHS;
 
   if (user.isKYCVerified && user.kycVerifiedAt && !isKycExpired) {
-    const grantApplication = await prisma.grantApplication.findUniqueOrThrow({
-      where: { id: grantApplicationId },
-      select: { walletAddress: true },
-    });
+    await withRedisLock(
+      `locks:create-tranche:${grantApplicationId}:first-tranche`,
+      async () => {
+        const grantApplication =
+          await prisma.grantApplication.findUniqueOrThrow({
+            where: { id: grantApplicationId },
+            select: { walletAddress: true },
+          });
 
-    await createTranche({
-      applicationId: grantApplicationId,
-      walletAddress: grantApplication.walletAddress || undefined,
-      isFirstTranche: true,
-    });
+        await createTranche({
+          applicationId: grantApplicationId,
+          walletAddress: grantApplication.walletAddress || undefined,
+          isFirstTranche: true,
+        });
+      },
+      { ttlSeconds: 300 },
+    );
   }
 };
 
@@ -245,9 +253,19 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       );
 
       await Promise.all(
-        result.map((application) =>
-          checkAndUpdateKYCStatus(application.userId, application.id),
-        ),
+        result.map(async (application) => {
+          try {
+            await checkAndUpdateKYCStatus(application.userId, application.id);
+          } catch (lockError) {
+            if (lockError instanceof LockNotAcquiredError) {
+              logger.warn(
+                `First tranche creation already in progress for application ${application.id}`,
+              );
+            } else {
+              throw lockError;
+            }
+          }
+        }),
       );
     }
 
