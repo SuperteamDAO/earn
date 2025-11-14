@@ -52,7 +52,12 @@ export function HomeTalentBanner({ totalUsers }: HomeTalentBannerProps) {
   });
 
   return (
-    <div className="relative mx-auto flex h-full w-full flex-col overflow-hidden rounded-[0.5rem] p-5 md:p-10">
+    <AuthWrapper
+      className="relative mx-auto flex h-full w-full flex-col overflow-hidden rounded-[0.5rem] p-5 md:p-10"
+      onClick={() => {
+        posthog.capture('signup_banner');
+      }}
+    >
       <div className="absolute inset-0 h-full overflow-hidden">
         <picture>
           <source media="(min-width: 40em)" srcSet={desktop} />
@@ -73,16 +78,9 @@ export function HomeTalentBanner({ totalUsers }: HomeTalentBannerProps) {
         companies, all with a single profile.
       </p>
       <div className="relative z-10 mt-auto flex flex-col items-center gap-3 pt-4 md:flex-row md:gap-4">
-        <AuthWrapper className="group w-full md:w-auto">
-          <button
-            className="ph-no-capture hover:bg-brand-purple w-full rounded-md bg-white px-9 py-3 text-sm font-medium text-[#3223A0] hover:text-white md:w-auto"
-            onClick={() => {
-              posthog.capture('signup_banner');
-            }}
-          >
-            Sign Up
-          </button>
-        </AuthWrapper>
+        <button className="ph-no-capture hover:bg-brand-purple w-full rounded-md bg-white px-9 py-3 text-sm font-medium text-[#3223A0] hover:text-white md:w-auto">
+          Sign Up
+        </button>
         <div className="flex items-center">
           <div className="flex -space-x-2">
             {avatars.map((avatar, index) => (
@@ -102,6 +100,6 @@ export function HomeTalentBanner({ totalUsers }: HomeTalentBannerProps) {
           )}
         </div>
       </div>
-    </div>
+    </AuthWrapper>
   );
 }

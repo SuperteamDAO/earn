@@ -1,4 +1,3 @@
-import { type Superteam } from '@/constants/Superteam';
 import type { SponsorType } from '@/interface/sponsor';
 import { AppConfig } from '@/utils/AppConfig';
 import { getURL } from '@/utils/validUrl';
@@ -186,9 +185,12 @@ export function generateSponsorOrganizationSchema(
 /**
  * Generate Organization schema for a regional Superteam chapter
  */
-export function generateRegionalOrganizationSchema(
-  region: Pick<Superteam, 'displayValue' | 'region' | 'slug' | 'code'>,
-): OrganizationSchema {
+export function generateRegionalOrganizationSchema(region: {
+  readonly displayValue: string;
+  readonly region: string;
+  readonly slug: string;
+  readonly code: string;
+}): OrganizationSchema {
   const baseUrl = getURL();
 
   return {
