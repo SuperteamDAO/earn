@@ -224,9 +224,24 @@ function getMultiCountryRegionsContainingCountry(
 function getSuperteamRegionsContainingCountries(
   countryNames: string[],
 ): string[] {
-  return Superteams.filter((st) =>
-    st.country.some((countryName) => countryNames.includes(countryName)),
-  ).map((st) => st.region);
+  return Superteams.filter((st) => {
+    // Only include Superteam regions if:
+    // 1. The Superteam represents a SINGLE country AND that country is in the countryNames list
+    // This allows GCC page → UAE (UAE represents United Arab Emirates which is in GCC)
+    // But prevents EU page → Balkan (Balkan represents multiple countries, not all in EU)
+    const isSingleCountrySuperteam = st.country.length === 1;
+
+    if (isSingleCountrySuperteam) {
+      // Single country Superteam: include if that country is in the list
+      const singleCountry = st.country[0];
+      return singleCountry ? countryNames.includes(singleCountry) : false;
+    } else {
+      // Multi-country Superteam: only include if ALL countries are in the list
+      return st.country.every((countryName) =>
+        countryNames.includes(countryName),
+      );
+    }
+  }).map((st) => st.region);
 }
 
 export function getRegionsForSuperteamPage(superteamRegion: string): string[] {
@@ -242,13 +257,23 @@ export function getRegionsForSuperteamPage(superteamRegion: string): string[] {
   ];
 
   if (st.country && Array.isArray(st.country)) {
+    // Only add multi-country regions if:
+    // 1. The Superteam represents a SINGLE country AND that country is in the multi-country region
+    // This allows UAE ↔ GCC to work (UAE represents United Arab Emirates which is in GCC)
+    // But prevents Balkan ↔ EU (Balkan represents multiple countries, not all in EU)
+    const isSingleCountrySuperteam = st.country.length === 1;
+
     const multiCountryRegions = countries
       .filter(
         (c) =>
           c.region &&
           c.regions &&
           Array.isArray(c.regions) &&
-          st.country.some((countryName) => c.regions.includes(countryName)),
+          (isSingleCountrySuperteam
+            ? st.country[0] && c.regions.includes(st.country[0])
+            : st.country.every((countryName) =>
+                c.regions.includes(countryName),
+              )),
       )
       .map((c) => c.name);
     regions.push(...multiCountryRegions);
@@ -293,21 +318,37 @@ export function getRegionsForUserLocation(
 ): string[] {
   if (!userLocation) return ['Global'];
 
-  const userRegion = getCombinedRegion(userLocation, true);
+  const countryObject = countries.find(
+    (c) => c.name.toLowerCase() === userLocation.toLowerCase(),
+  );
+
+  const userRegion = countryObject
+    ? countryObject
+    : getCombinedRegion(userLocation, true);
   if (!userRegion?.name) return ['Global'];
 
   const regions: string[] = ['Global'];
 
   regions.push(userLocation);
 
-  if (userRegion.country && Array.isArray(userRegion.country)) {
+  if (
+    'country' in userRegion &&
+    userRegion.country &&
+    Array.isArray(userRegion.country)
+  ) {
     regions.push(userRegion.name);
   } else {
     regions.push(userRegion.name);
   }
 
-  const parentRegions = getParentRegions(userRegion) || [];
-  regions.push(...parentRegions);
+  if (
+    !('country' in userRegion) ||
+    !userRegion.country ||
+    !Array.isArray(userRegion.country)
+  ) {
+    const parentRegions = getParentRegions(userRegion) || [];
+    regions.push(...parentRegions);
+  }
 
   const multiCountryRegionsFromCountries = countries
     .filter(
@@ -329,21 +370,6 @@ export function getRegionsForUserLocation(
     ),
   ).map((st) => st.region);
   regions.push(...multiCountryRegionsFromSuperteams);
-
-  if (userRegion.country && Array.isArray(userRegion.country)) {
-    const regionsContainingSuperteamCountries = countries
-      .filter(
-        (c) =>
-          c.region &&
-          c.regions &&
-          Array.isArray(c.regions) &&
-          userRegion.country?.some((countryName) =>
-            c.regions.includes(countryName),
-          ),
-      )
-      .map((c) => c.name);
-    regions.push(...regionsContainingSuperteamCountries);
-  }
 
   return Array.from(new Set(regions));
 }
