@@ -9,9 +9,9 @@ import {
   type ListingTabSchema,
 } from '@/features/listings/constants/schema';
 
-export type ListingTab = z.infer<typeof ListingTabSchema>;
-export type ListingStatus = z.infer<typeof ListingStatusSchema>;
-export type ListingContext = z.infer<typeof ListingContextSchema>;
+type ListingTab = z.infer<typeof ListingTabSchema>;
+type ListingStatus = z.infer<typeof ListingStatusSchema>;
+type ListingContext = z.infer<typeof ListingContextSchema>;
 
 interface ListingsFilterCountParams {
   context: ListingContext;
@@ -19,9 +19,10 @@ interface ListingsFilterCountParams {
   status?: ListingStatus;
   region?: string;
   sponsor?: string;
+  authenticated?: boolean;
 }
 
-export type CategoryCounts = Record<string, number>;
+type CategoryCounts = Record<string, number>;
 
 const fetchListingsFilterCount = async ({
   context,
@@ -51,9 +52,18 @@ export function useListingsFilterCount({
   status,
   region,
   sponsor,
+  authenticated,
 }: ListingsFilterCountParams) {
   return useQuery({
-    queryKey: ['listings-filter-count', context, tab, status, region, sponsor],
+    queryKey: [
+      'listings-filter-count',
+      context,
+      tab,
+      status,
+      region,
+      sponsor,
+      authenticated,
+    ],
     queryFn: () =>
       fetchListingsFilterCount({
         context,

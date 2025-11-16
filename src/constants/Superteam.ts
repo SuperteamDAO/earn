@@ -6,7 +6,7 @@ interface People {
   role?: string;
 }
 
-export const REGIONS = [
+const REGIONS = [
   'Global',
   'India',
   'Vietnam',

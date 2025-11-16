@@ -54,6 +54,20 @@ export async function GET(request: NextRequest) {
 
     const categories = ListingCategorySchema._def.innerType.options;
 
+    if (queryData.context === 'bookmarks' && !user?.id) {
+      const emptyCategoryCounts: Record<string, number> = {};
+      categories.forEach((category) => {
+        emptyCategoryCounts[category] = 0;
+      });
+
+      return NextResponse.json(emptyCategoryCounts, {
+        headers: {
+          'Cache-Control': 'private, max-age=300, stale-while-revalidate=600',
+          Vary: 'Cookie',
+        },
+      });
+    }
+
     const counts = await Promise.all(
       categories.map(async (category) => {
         try {
@@ -78,6 +92,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(categoryCounts, {
       headers: {
         'Cache-Control': 'private, max-age=300, stale-while-revalidate=600',
+        Vary: 'Cookie',
       },
     });
   } catch (error) {

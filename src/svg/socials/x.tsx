@@ -1,4 +1,4 @@
-import React, { type CSSProperties } from 'react';
+import { type CSSProperties } from 'react';
 export const X = ({ styles }: { styles?: CSSProperties }) => {
   return (
     <svg

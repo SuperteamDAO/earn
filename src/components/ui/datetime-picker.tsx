@@ -493,7 +493,7 @@ function MonthYearPicker({
       years.push({ value: i, label: i.toString(), disabled });
     }
     return years;
-  }, [value]);
+  }, [value, minDate, maxDate]);
   const months = useMemo(() => {
     const months: TimeOption[] = [];
     for (let i = 0; i < 12; i++) {
@@ -505,7 +505,7 @@ function MonthYearPicker({
       months.push({ value: i, label: format(new Date(0, i), 'MMM'), disabled });
     }
     return months;
-  }, [value]);
+  }, [value, minDate, maxDate]);
 
   const onYearChange = useCallback(
     (v: TimeOption) => {
@@ -718,7 +718,6 @@ function TimePicker({
       }
     }, 1);
     return () => clearTimeout(timeoutId);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
   const onHourChange = useCallback(
@@ -755,7 +754,17 @@ function TimePicker({
       }
       setHour(v.value);
     },
-    [setHour, use12HourFormat, value, formatStr, minute, second, ampm],
+    [
+      setHour,
+      use12HourFormat,
+      value,
+      formatStr,
+      minute,
+      second,
+      ampm,
+      min,
+      max,
+    ],
   );
 
   const onMinuteChange = useCallback(
@@ -790,7 +799,18 @@ function TimePicker({
       }
       setMinute(v.value);
     },
-    [setMinute, use12HourFormat, value, formatStr, hour, second, ampm],
+    [
+      setMinute,
+      use12HourFormat,
+      value,
+      formatStr,
+      hour,
+      second,
+      ampm,
+      min,
+      max,
+      minute,
+    ],
   );
 
   const onAmpmChange = useCallback(

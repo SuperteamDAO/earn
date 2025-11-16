@@ -1,5 +1,4 @@
-import CharacterCount from '@tiptap/extension-character-count';
-import Placeholder from '@tiptap/extension-placeholder';
+import { CharacterCount, Placeholder } from '@tiptap/extensions';
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import * as React from 'react';
@@ -7,7 +6,7 @@ import * as React from 'react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/utils/cn';
 
-export interface NotesRichEditorProps {
+interface NotesRichEditorProps {
   value?: string;
   onChange?: (value: string) => void;
   placeholder?: string;
@@ -31,6 +30,7 @@ const useNotesEditor = ({
   id?: string;
 }) => {
   const editor = useEditor({
+    immediatelyRender: false,
     extensions: [
       StarterKit.configure({
         bulletList: {

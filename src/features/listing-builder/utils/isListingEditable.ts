@@ -40,7 +40,7 @@ export const isListingEditable = ({
   const listingStatus = getListingStatus(listing);
 
   if (user.role === 'GOD') {
-    return listingStatus !== 'Unpublished';
+    return true;
   }
 
   if (['Draft', 'Under Verification'].includes(listingStatus)) {

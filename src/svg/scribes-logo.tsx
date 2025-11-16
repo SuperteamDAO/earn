@@ -1,5 +1,3 @@
-import React from 'react';
-
 export const ScribesLogo = ({
   styles,
   variant = 'black',

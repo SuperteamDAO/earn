@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { SuperteamCombobox } from '@/components/shared/SuperteamCombobox';
 import {
   FormControl,

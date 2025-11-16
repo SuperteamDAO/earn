@@ -22,7 +22,6 @@ import {
 import { type BountyType } from '@/generated/prisma/enums';
 import { type HackathonModel } from '@/prisma/models/Hackathon';
 import { BountyIcon } from '@/svg/bounty-icon';
-import { CypherpunkLogo } from '@/svg/cypherpunk-logo';
 import { ProjectIcon } from '@/svg/project-icon';
 
 import { getListingIcon } from '@/features/listings/utils/getListingIcon';
@@ -37,7 +36,7 @@ interface AutoGenerateTypeProps {
 }
 export function AutoGenerateStageType({
   setType,
-  setHackathonSlug,
+  // setHackathonSlug,
 }: AutoGenerateTypeProps) {
   return (
     <div className="space-y-4 p-4">
@@ -88,7 +87,7 @@ export function AutoGenerateStageType({
             </p>
           </span>
         </Button>
-        <Button
+        {/*   <Button
           className="col-span-2 flex h-55 flex-col gap-4 whitespace-normal text-slate-500 hover:text-slate-500"
           variant="outline"
           onClick={() => {
@@ -110,7 +109,7 @@ export function AutoGenerateStageType({
               project
             </p>
           </span>
-        </Button>
+        </Button> */}
       </div>
     </div>
   );

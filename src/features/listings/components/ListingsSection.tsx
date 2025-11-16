@@ -11,7 +11,14 @@ import { cn } from '@/utils/cn';
 import { HACKATHONS } from '@/features/hackathon/constants/hackathons';
 import { CATEGORY_NAV_ITEMS } from '@/features/navbar/constants';
 
-import { type ListingCategory, useListings } from '../hooks/useListings';
+import {
+  type ListingCategory,
+  type ListingContext,
+  type ListingSortOption,
+  type ListingStatus,
+  type ListingTab,
+  useListings,
+} from '../hooks/useListings';
 import { useListingsFilterCount } from '../hooks/useListingsFilterCount';
 import { useListingState } from '../hooks/useListingState';
 import type { ListingTabsProps } from '../types';
@@ -21,15 +28,36 @@ import { ListingFilters } from './ListingFilters';
 import { ListingTabs } from './ListingTabs';
 import { ViewAllButton } from './ViewAllButton';
 
+export type EmptySectionFilters = {
+  activeTab: ListingTab;
+  activeCategory: ListingCategory;
+  activeStatus: ListingStatus;
+  activeSortBy: ListingSortOption;
+};
+
+interface ListingsSectionProps extends ListingTabsProps {
+  customEmptySection?:
+    | React.ReactNode
+    | ((filters: EmptySectionFilters) => React.ReactNode);
+}
+const FOR_YOU_SUPPORTED_TYPES: ReadonlyArray<ListingContext> = [
+  'home',
+  'all',
+] as const;
+
 export const ListingsSection = ({
   type,
   potentialSession,
   region,
   sponsor,
-}: ListingTabsProps) => {
+  customEmptySection,
+}: ListingsSectionProps) => {
   const isMd = useBreakpoint('md');
+  const isSponsorContext = type === 'sponsor';
+  const isBookmarksContext = type === 'bookmarks';
 
-  const { authenticated } = usePrivy();
+  const { authenticated, ready } = usePrivy();
+  const supportsForYou = FOR_YOU_SUPPORTED_TYPES.includes(type);
   const {
     ref: scrollContainerRef,
     showLeftShadow,
@@ -43,11 +71,12 @@ export const ListingsSection = ({
       status: 'open',
       region,
       sponsor,
+      authenticated,
     });
 
   const optimalDefaultCategory = useMemo((): ListingCategory => {
     if (countsLoading || !categoryCounts) {
-      return (potentialSession || authenticated) && type === 'home'
+      return (potentialSession || (ready && authenticated)) && supportsForYou
         ? 'For You'
         : 'All';
     }
@@ -55,15 +84,22 @@ export const ListingsSection = ({
     const forYouCount = categoryCounts['For You'] || 0;
 
     if (
-      (potentialSession || authenticated) &&
-      type === 'home' &&
+      (potentialSession || (ready && authenticated)) &&
+      supportsForYou &&
       forYouCount > 2
     ) {
       return 'For You';
     }
 
     return 'All';
-  }, [categoryCounts, countsLoading, potentialSession, authenticated, type]);
+  }, [
+    categoryCounts,
+    countsLoading,
+    potentialSession,
+    authenticated,
+    ready,
+    supportsForYou,
+  ]);
 
   const {
     activeTab,
@@ -77,7 +113,14 @@ export const ListingsSection = ({
     handleSortChange,
   } = useListingState({
     defaultCategory: optimalDefaultCategory,
+    defaultStatus: isSponsorContext || isBookmarksContext ? 'all' : undefined,
+    defaultSortBy: isSponsorContext ? 'Status' : undefined,
   });
+
+  const effectiveCategory =
+    type === 'bookmarks' && activeCategory === 'For You'
+      ? ('All' as ListingCategory)
+      : activeCategory;
 
   const {
     data: listings,
@@ -86,7 +129,7 @@ export const ListingsSection = ({
   } = useListings({
     context: type,
     tab: activeTab,
-    category: activeCategory,
+    category: effectiveCategory,
     status: activeStatus,
     sortBy: activeSortBy,
     order: activeOrder,
@@ -98,20 +141,15 @@ export const ListingsSection = ({
   const shouldShowForYou = useMemo(() => {
     if (!categoryCounts) return false;
     return (
-      (potentialSession || authenticated) &&
-      type === 'home' &&
+      (potentialSession || (ready && authenticated)) &&
+      supportsForYou &&
       (categoryCounts['For You'] || 0) > 2
     );
-  }, [categoryCounts, potentialSession, authenticated, type]);
+  }, [categoryCounts, potentialSession, authenticated, ready, supportsForYou]);
 
   const visibleCategoryNavItems = useMemo(() => {
-    if (!categoryCounts) return CATEGORY_NAV_ITEMS;
-
-    return CATEGORY_NAV_ITEMS.filter((item) => {
-      const count = categoryCounts[item.label] || 0;
-      return count > 0;
-    });
-  }, [categoryCounts]);
+    return CATEGORY_NAV_ITEMS;
+  }, []);
 
   const viewAllLink = () => {
     if (HACKATHONS.some((hackathon) => hackathon.slug === activeTab)) {
@@ -149,11 +187,23 @@ export const ListingsSection = ({
     }
 
     if (!listings?.length) {
+      const emptySectionContent =
+        typeof customEmptySection === 'function'
+          ? customEmptySection({
+              activeTab,
+              activeCategory: effectiveCategory,
+              activeStatus,
+              activeSortBy,
+            })
+          : customEmptySection;
+
       return (
-        <EmptySection
-          title="No opportunities found"
-          message="We don't have any relevant opportunities for the current filters."
-        />
+        emptySectionContent ?? (
+          <EmptySection
+            title="No opportunities found"
+            message="We don't have any relevant opportunities for the current filters."
+          />
+        )
       );
     }
 
@@ -172,23 +222,32 @@ export const ListingsSection = ({
     );
   };
 
+  const getTitle = () => {
+    if (isSponsorContext) {
+      return 'All Listings';
+    }
+    return 'Browse Opportunities';
+  };
+
   return (
     <div className="mt-5 mb-10">
       <div className="flex w-full items-center justify-between md:mb-1.5">
-        <div className="flex items-center">
-          <p className="text-lg font-semibold text-slate-800">
-            Browse Opportunities
-          </p>
+        {isBookmarksContext ? (
+          <p className="mb-2 text-xl font-semibold text-slate-700">Bookmarks</p>
+        ) : (
+          <div className="flex items-center">
+            <p className="text-lg font-semibold text-slate-800">{getTitle()}</p>
 
-          <div className="hidden items-center md:flex">
-            <Separator orientation="vertical" className="mx-3 h-6" />
-            <ListingTabs
-              type={type}
-              activeTab={activeTab}
-              handleTabChange={handleTabChange}
-            />
+            <div className="hidden items-center md:flex">
+              <Separator orientation="vertical" className="mx-3 h-6" />
+              <ListingTabs
+                type={type}
+                activeTab={activeTab}
+                handleTabChange={handleTabChange}
+              />
+            </div>
           </div>
-        </div>
+        )}
 
         <ListingFilters
           activeStatus={activeStatus}
@@ -196,6 +255,8 @@ export const ListingsSection = ({
           activeOrder={activeOrder}
           onStatusChange={handleStatusChange}
           onSortChange={handleSortChange}
+          showAllFilter={isSponsorContext || isBookmarksContext}
+          showStatusSort={isSponsorContext}
         />
       </div>
       <div className="mt-2 mb-1 md:hidden">
@@ -239,7 +300,7 @@ export const ListingsSection = ({
           <CategoryPill
             key="all"
             phEvent="all_navpill"
-            isActive={activeCategory === 'All'}
+            isActive={effectiveCategory === 'All'}
             onClick={() =>
               handleCategoryChange('All' as ListingCategory, 'all_navpill')
             }
@@ -250,7 +311,7 @@ export const ListingsSection = ({
             <CategoryPill
               key={navItem.label}
               phEvent={navItem.pillPH}
-              isActive={activeCategory === navItem.label}
+              isActive={effectiveCategory === navItem.label}
               onClick={() =>
                 handleCategoryChange(
                   navItem.label as ListingCategory,

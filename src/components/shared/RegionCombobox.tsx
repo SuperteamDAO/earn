@@ -165,7 +165,7 @@ export function RegionCombobox({
       });
     }
     return regions;
-  }, []);
+  }, [global, superteams, allowRegions]);
   const [open, setOpen] = React.useState(false);
   const listRef = React.useRef<HTMLDivElement>(null);
 

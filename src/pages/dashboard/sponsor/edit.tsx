@@ -192,13 +192,13 @@ export default function UpdateSponsor() {
 
   return (
     <SponsorLayout>
-      <div className="mx-auto ml-4 flex flex-col gap-2">
+      <div className="mx-auto ml-4 flex flex-col gap-2 pr-4">
         <div className="flex flex-col gap-2">
           <p className="mb-4 text-2xl font-bold tracking-tight text-gray-900">
             Edit Sponsor Profile
           </p>
         </div>
-        <div className="flex w-[42rem] flex-col">
+        <div className="flex w-full flex-col">
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(onSubmit)}

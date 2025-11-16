@@ -27,6 +27,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
           select: {
             name: true,
             logo: true,
+            slug: true,
             isVerified: true,
             entityName: true,
           },

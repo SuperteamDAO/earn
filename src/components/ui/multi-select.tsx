@@ -324,7 +324,6 @@ const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
       };
 
       void exec();
-      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [debouncedSearchTerm, groupBy, open, triggerSearchOnFocus]);
 
     useEffect(() => {
@@ -350,7 +349,6 @@ const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
       };
 
       void exec();
-      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [debouncedSearchTerm, groupBy, open, triggerSearchOnFocus]);
 
     const CreatableItem = () => {
@@ -421,7 +419,7 @@ const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
     );
 
     /** Avoid Creatable Selector freezing or lagging when paste a long string. */
-    const commandFilter = React.useCallback(() => {
+    const commandFilter = () => {
       if (commandProps?.filter) {
         return commandProps.filter;
       }
@@ -433,7 +431,7 @@ const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
       }
       // Using default filter in `cmdk`. We don't have to provide it.
       return undefined;
-    }, [creatable, commandProps?.filter]);
+    };
 
     return (
       <Command
@@ -521,6 +519,7 @@ const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
                 }}
                 onFocus={(event) => {
                   setOpen(true);
+                  // eslint-disable-next-line @typescript-eslint/no-unused-expressions
                   triggerSearchOnFocus && onSearch?.(debouncedSearchTerm);
                   inputProps?.onFocus?.(event);
                 }}

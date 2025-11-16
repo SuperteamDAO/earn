@@ -1,3 +1,4 @@
+import debounce from 'lodash.debounce';
 import {
   ChevronLeft,
   ChevronRight,
@@ -8,7 +9,7 @@ import {
   Search,
 } from 'lucide-react';
 import { useRouter } from 'next/router';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { LoadingSection } from '@/components/shared/LoadingSection';
 import { Button } from '@/components/ui/button';
@@ -44,8 +45,6 @@ import { Banner } from '@/features/sponsor-dashboard/components/Banner';
 import { CreateListingModal } from '@/features/sponsor-dashboard/components/CreateListingModal';
 import { type SponsorStats } from '@/features/sponsor-dashboard/types';
 
-const debounce = require('lodash.debounce');
-
 export default function Hackathon() {
   const router = useRouter();
   const { user } = useUser();
@@ -60,13 +59,20 @@ export default function Hackathon() {
   const [sponsorStats, setSponsorStats] = useState<SponsorStats>({});
   const [isStatsLoading, setIsStatsLoading] = useState<boolean>(true);
 
-  const debouncedSetSearchText = useRef(debounce(setSearchText, 300)).current;
+  const debouncedSetSearchTextRef = useRef<ReturnType<typeof debounce> | null>(
+    null,
+  );
 
   useEffect(() => {
+    debouncedSetSearchTextRef.current = debounce(setSearchText, 300);
     return () => {
-      debouncedSetSearchText.cancel();
+      debouncedSetSearchTextRef.current?.cancel();
     };
-  }, [debouncedSetSearchText]);
+  }, []);
+
+  const debouncedSetSearchText = useCallback((value: string) => {
+    debouncedSetSearchTextRef.current?.(value);
+  }, []);
 
   const getBounties = async () => {
     setIsBountiesLoading(true);
@@ -90,7 +96,9 @@ export default function Hackathon() {
 
   useEffect(() => {
     if (user?.hackathonId || user?.role === 'GOD') {
-      getBounties();
+      setTimeout(() => {
+        getBounties();
+      }, 0);
     }
   }, [user?.hackathonId, skip, searchText]);
 

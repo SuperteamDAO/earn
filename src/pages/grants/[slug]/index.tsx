@@ -1,9 +1,14 @@
 import type { GetServerSideProps } from 'next';
 import posthog from 'posthog-js';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
+import { JsonLd } from '@/components/shared/JsonLd';
 import { GrantPageLayout } from '@/layouts/Grants';
 import { api } from '@/lib/api';
+import {
+  generateBreadcrumbListSchema,
+  generateMonetaryGrantSchema,
+} from '@/utils/json-ld';
 import { getURL } from '@/utils/validUrl';
 
 import { GrantsPop } from '@/features/conversion-popups/components/GrantsPop';
@@ -21,8 +26,21 @@ function Grants({ grant: initialGrant }: InitialGrant) {
     posthog.capture('open_grant');
   }, []);
 
+  const monetaryGrantSchema = grant ? generateMonetaryGrantSchema(grant) : null;
+
+  const breadcrumbSchema = grant
+    ? generateBreadcrumbListSchema([
+        { name: 'Home', url: '/' },
+        { name: 'Grants', url: '/grants' },
+        { name: grant.title || 'Grant' },
+      ])
+    : null;
+
   return (
     <GrantPageLayout grant={grant}>
+      {monetaryGrantSchema && breadcrumbSchema && (
+        <JsonLd data={[monetaryGrantSchema, breadcrumbSchema]} />
+      )}
       <GrantsPop />
       <DescriptionUI description={(grant?.description as string) ?? ''} />
     </GrantPageLayout>

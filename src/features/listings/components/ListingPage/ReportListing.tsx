@@ -17,7 +17,7 @@ import { cn } from '@/utils/cn';
 
 import type { Listing } from '../../types';
 
-export interface ReportListingProps {
+interface ReportListingProps {
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
   listing: Listing;

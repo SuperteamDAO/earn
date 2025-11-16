@@ -179,43 +179,24 @@ export async function GET(
       subskills: string[],
       skills: string[],
       alias: string,
-    ) => `
-      CONCAT('[',
-        GROUP_CONCAT(DISTINCT
-          CONCAT_WS(',',
-          ${
-            subskills.length > 0
-              ? subskills
-                  .map(
-                    (s) => `
-                CASE
-                  WHEN JSON_CONTAINS(JSON_EXTRACT(${alias}.skills, '$[*].subskills'), JSON_QUOTE('${s}')) THEN JSON_QUOTE('${s}')
-                  ELSE NULL
-                END
-              `,
-                  )
-                  .join(`, \n`)
-              : ''
-          }
-      ${skills.length > 0 && subskills.length > 0 ? ',' : ''}
-        ${
-          skills.length > 0
-            ? skills
-                .map(
-                  (s) => `
-                  CASE
-                    WHEN JSON_CONTAINS(JSON_EXTRACT(${alias}.skills, '$[*].skills'), JSON_QUOTE('${s}')) THEN JSON_QUOTE('${s}')
-                    ELSE NULL
-                  END
-                `,
-                )
-                .join(`, \n`)
-            : ''
-        }
-        )
-        ),
-        ']') AS matchedSkillsArray
+    ) => {
+      const allSkills = [
+        ...subskills.map((s) => ({ skill: s, type: 'subskills' })),
+        ...skills.map((s) => ({ skill: s, type: 'skills' })),
+      ];
+
+      return `
+      JSON_ARRAY(
+        ${allSkills
+          .map(
+            ({ skill, type }) => `
+          IF(JSON_CONTAINS(JSON_EXTRACT(ANY_VALUE(${alias}.skills), '$[*].${type}'), JSON_QUOTE('${skill}')), '${skill}', NULL)
+        `,
+          )
+          .join(', ')}
+      ) AS matchedSkillsArray
       `;
+    };
 
     const matchingWhereClause = (
       subskills: string[],
@@ -489,10 +470,19 @@ END)
       LIMIT ${LIMIT};
     `;
 
+    const selectScoutsWithoutSemicolon = selectScouts.trim().replace(/;$/, '');
+
     const insertQuery = `
       INSERT INTO Scouts (id, userId, listingId, dollarsEarned, 
         score, skills, invited, createdAt)
-      ${selectScouts}
+      SELECT * FROM (
+        ${selectScoutsWithoutSemicolon}
+      ) AS src
+      ON DUPLICATE KEY UPDATE
+        dollarsEarned = src.dollarsEarned,
+        score = src.score,
+        skills = src.skills,
+        invited = src.invited
     `;
 
     logger.debug('Executing insert query for new scouts');

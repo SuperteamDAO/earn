@@ -15,7 +15,7 @@ interface SearchListingsParams {
   initialData?: SearchListingsResponse | null;
 }
 
-export interface SearchListingsResponse {
+interface SearchListingsResponse {
   results: SearchResult[];
   count: string;
   bountiesCount: number;

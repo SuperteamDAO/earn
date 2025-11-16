@@ -1,32 +1,51 @@
 import {
-  createAssociatedTokenAccountInstruction,
-  createTransferInstruction,
+  createAssociatedTokenAccountIdempotentInstruction,
+  createTransferCheckedInstruction,
   getAssociatedTokenAddressSync,
+  getMint,
   TOKEN_2022_PROGRAM_ID,
   TOKEN_PROGRAM_ID,
 } from '@solana/spl-token';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import {
   ComputeBudgetProgram,
-  LAMPORTS_PER_SOL,
   PublicKey,
   SystemProgram,
-  Transaction,
+  TransactionMessage,
+  VersionedTransaction,
 } from '@solana/web3.js';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import bs58 from 'bs58';
 import { Loader2 } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import { log } from 'next-axiom';
 import posthog from 'posthog-js';
-import React, { useState } from 'react';
-import { toast } from 'sonner';
+import { useState } from 'react';
 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 import { tokenList } from '@/constants/tokenList';
 import { type SubmissionWithUser } from '@/interface/submission';
 import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
+import {
+  classifySolanaError,
+  cleanupTransactionGuards,
+  createTransactionGuard,
+  handleSolanaError,
+  updateTransactionGuard,
+  waitForTransactionConfirmation,
+} from '@/utils/solanaTransactionHelpers';
+import { toBaseUnits } from '@/utils/to-base-units';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
 
 import { type Listing, type Rewards } from '@/features/listings/types';
@@ -38,10 +57,16 @@ interface Props {
 
 export const PayoutButton = ({ bounty, submission }: Props) => {
   const [isPaying, setIsPaying] = useState(false);
+  const [warning, setWarning] = useState<{
+    firstName: string;
+    signature?: string;
+  } | null>(null);
+  const [lastSignature, setLastSignature] = useState<string | null>(null);
 
   const { user } = useUser();
 
-  const { connected, publicKey, sendTransaction } = useWallet();
+  const { connected, publicKey, sendTransaction, signTransaction } =
+    useWallet();
 
   const { connection } = useConnection();
   const queryClient = useQueryClient();
@@ -86,7 +111,7 @@ export const PayoutButton = ({ bounty, submission }: Props) => {
     }
   };
 
-  const { mutate: addPayment } = useMutation({
+  const { mutateAsync: addPayment } = useMutation({
     mutationFn: ({ id, paymentDetails }: { id: string; paymentDetails: any }) =>
       api.post(`/api/sponsor-dashboard/submission/add-payment/`, {
         id,
@@ -127,101 +152,218 @@ export const PayoutButton = ({ bounty, submission }: Props) => {
   }) => {
     setIsPaying(true);
     try {
-      const transaction = new Transaction();
+      const guardKey = `payout:${id}`;
+      if (
+        !createTransactionGuard({
+          guardKey,
+          inFlightMessage: 'Payout is already in progress for this submission.',
+        })
+      ) {
+        return;
+      }
+
       const tokenDetails = tokenList.find((e) => e.tokenSymbol === token);
       const tokenAddress = tokenDetails?.mintAddress as string;
-      const power = tokenDetails?.decimals as number;
+
+      const baseInstructions = [] as any[];
 
       if (token === 'SOL') {
-        transaction.add(
+        const lamportsBig = toBaseUnits(String(amount), 9);
+        const lamportsNum = Number(lamportsBig);
+        baseInstructions.push(
           SystemProgram.transfer({
             fromPubkey: publicKey as PublicKey,
             toPubkey: receiver,
-            lamports: LAMPORTS_PER_SOL * amount,
+            lamports: lamportsNum,
           }),
         );
       } else {
+        const mint = new PublicKey(tokenAddress);
         const tokenProgramId = await detectTokenProgram(tokenAddress);
 
+        let decimals = tokenDetails?.decimals as number;
+        try {
+          const mintInfo = await getMint(
+            connection,
+            mint,
+            'confirmed',
+            tokenProgramId,
+          );
+          decimals = mintInfo.decimals;
+        } catch (e) {}
+
         const senderATA = getAssociatedTokenAddressSync(
-          new PublicKey(tokenAddress),
+          mint,
           publicKey as PublicKey,
           false,
           tokenProgramId,
         );
         const receiverATA = getAssociatedTokenAddressSync(
-          new PublicKey(tokenAddress),
+          mint,
           receiver as PublicKey,
           false,
           tokenProgramId,
         );
 
-        const receiverATAExists = await connection.getAccountInfo(receiverATA);
-
-        if (!receiverATAExists) {
-          transaction.add(
-            createAssociatedTokenAccountInstruction(
-              publicKey as PublicKey,
-              receiverATA,
-              receiver,
-              new PublicKey(tokenAddress),
-              tokenProgramId,
-            ),
-          );
+        try {
+          const senderBal = await connection.getTokenAccountBalance(senderATA);
+          const senderBalRaw = BigInt(senderBal.value.amount);
+          const amountInBaseUnits = toBaseUnits(String(amount), decimals);
+          if (senderBalRaw < amountInBaseUnits) {
+            throw new Error('Insufficient token balance for payout');
+          }
+        } catch (e) {
+          if ((e as Error).message.includes('Insufficient token balance')) {
+            throw e;
+          }
         }
 
-        transaction.add(
-          createTransferInstruction(
+        baseInstructions.push(
+          createAssociatedTokenAccountIdempotentInstruction(
+            publicKey as PublicKey,
+            receiverATA,
+            receiver,
+            mint,
+            tokenProgramId,
+          ),
+        );
+
+        const amountInBaseUnits = toBaseUnits(String(amount), decimals);
+
+        baseInstructions.push(
+          createTransferCheckedInstruction(
             senderATA,
+            mint,
             receiverATA,
             publicKey as PublicKey,
-            amount * 10 ** power,
+            amountInBaseUnits,
+            decimals,
             [],
             tokenProgramId,
           ),
         );
       }
 
-      const compute = [
-        ComputeBudgetProgram.setComputeUnitLimit({ units: 100000 }),
-        ComputeBudgetProgram.setComputeUnitPrice({ microLamports: 1000000 }),
+      const { blockhash: simBlockhash } = await connection.getLatestBlockhash();
+      const testInstructions = [
+        ComputeBudgetProgram.setComputeUnitLimit({ units: 1_400_000 }),
+        ...baseInstructions,
       ];
 
-      transaction.add(...compute);
+      const testMessage = new TransactionMessage({
+        payerKey: publicKey as PublicKey,
+        recentBlockhash: simBlockhash,
+        instructions: testInstructions,
+      }).compileToV0Message();
+      const testTx = new VersionedTransaction(testMessage);
 
-      const signature = await sendTransaction(transaction, connection);
+      const simulation = await connection.simulateTransaction(testTx);
 
-      const pollForSignature = async (sig: string) => {
-        const MAX_RETRIES = 60;
-        let retries = 0;
+      if (!simulation.value) {
+        throw new Error('Simulation failed: no value returned');
+      }
 
-        while (retries < MAX_RETRIES) {
-          const status = await connection.getSignatureStatus(sig, {
-            searchTransactionHistory: true,
-          });
+      if (simulation.value.err) {
+        console.error('Simulation error logs:', simulation.value.logs);
+        throw new Error(
+          'Simulation failed; check token requirements or balance.',
+        );
+      }
 
-          if (status?.value?.err) {
-            console.log(status.value.err);
-            throw new Error(
-              `Transaction failed: ${status.value.err.toString()}`,
-            );
-          }
+      const unitsConsumed = simulation.value.unitsConsumed ?? 200_000;
+      const computedCuLimit = Math.ceil((unitsConsumed as number) * 1.1);
+      const setCuLimitInstruction = ComputeBudgetProgram.setComputeUnitLimit({
+        units: computedCuLimit,
+      });
 
-          if (
-            status?.value?.confirmationStatus === 'confirmed' ||
-            status.value?.confirmationStatus === 'finalized'
-          ) {
-            return true;
-          }
-
-          await new Promise((resolve) => setTimeout(resolve, 500));
-          retries++;
+      let microLamports = 0;
+      try {
+        const feeMsg = new TransactionMessage({
+          payerKey: publicKey as PublicKey,
+          recentBlockhash: simBlockhash,
+          instructions: baseInstructions,
+        }).compileToV0Message();
+        const feeTx = new VersionedTransaction(feeMsg);
+        const serialized = feeTx.serialize();
+        const rpcUrl = (connection as any).rpcEndpoint as string;
+        const res = await fetch(rpcUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            jsonrpc: '2.0',
+            id: '1',
+            method: 'getPriorityFeeEstimate',
+            params: [
+              {
+                transaction: bs58.encode(serialized),
+                options: { recommended: true },
+              },
+            ],
+          }),
+        });
+        const data = await res.json();
+        const est = data?.result?.priorityFeeEstimate;
+        if (typeof est === 'number' && est > 0) {
+          microLamports = est;
+        } else {
+          microLamports = 5_000;
         }
+      } catch (e) {
+        microLamports = 5_000;
+      }
+      const setCuPriceInstruction = ComputeBudgetProgram.setComputeUnitPrice({
+        microLamports,
+      });
 
-        throw new Error('Transaction confirmation timeout');
-      };
+      const { blockhash: latestBlockhash, lastValidBlockHeight } =
+        await connection.getLatestBlockhash();
 
-      await pollForSignature(signature);
+      const finalInstructions = [
+        setCuLimitInstruction,
+        setCuPriceInstruction,
+        ...baseInstructions,
+      ];
+
+      const finalMessage = new TransactionMessage({
+        payerKey: publicKey as PublicKey,
+        recentBlockhash: latestBlockhash,
+        instructions: finalInstructions,
+      }).compileToV0Message();
+
+      const finalTransaction = new VersionedTransaction(finalMessage);
+
+      let signature = '';
+      let rawBytes: Uint8Array | null = null;
+      if (signTransaction) {
+        const signed = await signTransaction(finalTransaction);
+        const raw = signed.serialize();
+        rawBytes = raw;
+        signature = await connection.sendRawTransaction(raw, {
+          skipPreflight: true,
+          maxRetries: 0,
+        });
+      } else {
+        signature = await sendTransaction(
+          finalTransaction as unknown as any,
+          connection,
+          {
+            skipPreflight: true,
+            maxRetries: 0,
+          } as any,
+        );
+      }
+
+      updateTransactionGuard(guardKey, signature);
+      setLastSignature(signature);
+
+      await waitForTransactionConfirmation({
+        connection,
+        signature,
+        lastValidBlockHeight,
+        rawBytes,
+        maxRetries: 60,
+        retryDelayMs: 1500,
+      });
 
       const nextTranche = (submission?.paymentDetails?.length || 0) + 1;
 
@@ -239,16 +381,48 @@ export const PayoutButton = ({ bounty, submission }: Props) => {
         id,
         paymentDetails: paymentDetailsPayload,
       });
+      setIsPaying(false);
     } catch (error) {
-      console.log(error);
       log.error(
         `Sponsor unable to pay, user id: ${user?.id}, sponsor id: ${user?.currentSponsorId}, error: ${error?.toString()}, sponsor wallet: ${publicKey?.toBase58()}`,
       );
-      toast.error(
-        'Alert: Payment might have gone through. Please check your wallet history to confirm.',
-      );
+
+      const firstName = (() => {
+        const name =
+          (submission as any)?.user?.name ||
+          (submission as any)?.user?.firstName ||
+          'the winner';
+        return typeof name === 'string' && name.trim().length > 0
+          ? name.trim().split(' ')[0]
+          : 'the winner';
+      })();
+
+      const errorType = classifySolanaError(error);
+      const tokenSymbol = bounty?.token ?? 'token';
+
+      if (errorType === 'timeout' && !lastSignature) {
+        setWarning({ firstName: firstName as string, signature: '' });
+        setIsPaying(false);
+      } else if (errorType === 'rpc' || errorType === 'unknown') {
+        setWarning({
+          firstName: firstName as string,
+          signature: (lastSignature as string) ?? '',
+        });
+        setIsPaying(false);
+      } else {
+        handleSolanaError({
+          errorType,
+          lastSignature,
+          tokenSymbol,
+          customMessages: {
+            userRejected: 'Payment cancelled in wallet.',
+            expired: 'Blockhash expired. Payment not sent.',
+          },
+        });
+        setIsPaying(false);
+      }
     } finally {
-      setIsPaying(false);
+      cleanupTransactionGuards('payout:');
     }
   };
 
@@ -286,7 +460,9 @@ export const PayoutButton = ({ bounty, submission }: Props) => {
       {connected && (
         <Button
           className="ph-no-capture min-w-[160px] text-center disabled:cursor-not-allowed"
-          disabled={!bounty?.isWinnersAnnounced || remainingAmount <= 0}
+          disabled={
+            !bounty?.isWinnersAnnounced || remainingAmount <= 0 || isPaying
+          }
           onClick={async () => {
             if (!submission?.user.walletAddress) {
               console.error('Public key is null, cannot proceed with payment');
@@ -314,6 +490,28 @@ export const PayoutButton = ({ bounty, submission }: Props) => {
           )}
         </Button>
       )}
+      <AlertDialog
+        open={Boolean(warning)}
+        onOpenChange={(open) => {
+          if (!open) setWarning(null);
+        }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              ⚠️ Important: Check your wallet history
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {`Your payment to ${warning?.firstName ?? 'the winner'} might have gone through. Please check your wallet history before reattempting to pay ${warning?.firstName ?? 'the winner'}.`}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogAction onClick={() => setWarning(null)}>
+              Understood
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 };

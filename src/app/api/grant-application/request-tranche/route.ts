@@ -20,7 +20,7 @@ export async function POST(request: Request) {
 
     const { userId } = session.data;
     const body = await request.json();
-    const { applicationId, helpWanted, projectUpdate } = body;
+    const { applicationId, helpWanted, projectUpdate, walletAddress } = body;
 
     logger.debug(`Request body: ${safeStringify(body)}`);
     logger.debug(`User ID: ${userId}`);
@@ -32,10 +32,18 @@ export async function POST(request: Request) {
       );
     }
 
+    if (!walletAddress) {
+      return NextResponse.json(
+        { message: 'Wallet address is required' },
+        { status: 400 },
+      );
+    }
+
     await createTranche({
       applicationId,
       helpWanted,
       update: projectUpdate,
+      walletAddress,
     });
 
     return NextResponse.json({

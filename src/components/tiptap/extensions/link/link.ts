@@ -3,6 +3,20 @@ import { Plugin, TextSelection } from '@tiptap/pm/state';
 import type { EditorView } from '@tiptap/pm/view';
 import { getMarkRange, mergeAttributes } from '@tiptap/react';
 
+interface ExtensionWithParent<TValue> {
+  readonly parent?: () => TValue;
+}
+
+type ParentLinkOptions = Record<string, unknown> & {
+  readonly HTMLAttributes: Record<string, unknown>;
+};
+
+const getParent = <TValue>(
+  extension: ExtensionWithParent<TValue>,
+): TValue | undefined => {
+  return extension.parent?.();
+};
+
 export const Link = TiptapLink.extend({
   /*
    * Determines whether typing next to a link automatically becomes part of the link.
@@ -23,7 +37,7 @@ export const Link = TiptapLink.extend({
     ];
   },
 
-  renderHTML({ HTMLAttributes }) {
+  renderHTML({ HTMLAttributes }: { HTMLAttributes: Record<string, unknown> }) {
     return [
       'a',
       mergeAttributes(this.options.HTMLAttributes, HTMLAttributes),
@@ -32,10 +46,16 @@ export const Link = TiptapLink.extend({
   },
 
   addOptions() {
+    const parentOptions =
+      getParent<ParentLinkOptions>(
+        this as unknown as ExtensionWithParent<ParentLinkOptions>,
+      ) ?? (this.options as unknown as ParentLinkOptions);
+
     return {
-      ...this.parent?.(),
+      ...parentOptions,
       openOnClick: false,
       HTMLAttributes: {
+        ...parentOptions.HTMLAttributes,
         class: 'link',
       },
     };
@@ -43,9 +63,12 @@ export const Link = TiptapLink.extend({
 
   addProseMirrorPlugins() {
     const { editor } = this;
+    const parentPlugins =
+      getParent<Plugin[]>(this as unknown as ExtensionWithParent<Plugin[]>) ??
+      [];
 
     return [
-      ...(this.parent?.() || []),
+      ...parentPlugins,
       new Plugin({
         props: {
           handleKeyDown: (_: EditorView, event: KeyboardEvent) => {
@@ -61,7 +84,7 @@ export const Link = TiptapLink.extend({
 
             return false;
           },
-          handleClick(view, pos) {
+          handleClick(view: EditorView, pos: number): boolean {
             /*
              * Marks the entire link when the user clicks on it.
              */
@@ -72,7 +95,7 @@ export const Link = TiptapLink.extend({
               : undefined;
 
             if (!range) {
-              return;
+              return false;
             }
 
             const { from, to } = range;
@@ -80,7 +103,7 @@ export const Link = TiptapLink.extend({
             const end = Math.max(from, to);
 
             if (pos < start || pos > end) {
-              return;
+              return false;
             }
 
             const $start = doc.resolve(start);
@@ -90,6 +113,7 @@ export const Link = TiptapLink.extend({
             );
 
             view.dispatch(transaction);
+            return true;
           },
         },
       }),

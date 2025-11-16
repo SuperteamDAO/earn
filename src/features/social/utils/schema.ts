@@ -169,8 +169,7 @@ export const telegramUsernameSchema = z
 // GITHUB
 // - Length: 1-39
 // - Allowed: letters (a-z, A-Z), numbers (0-9), '-'
-// - Cannot start or end with '-'
-// - No consecutive '--'
+// - Relaxed validation to support legacy usernames
 // - Transform to lowercase: https://github.com/<username>
 export const githubUsernameSchema = z
   .string()
@@ -191,27 +190,6 @@ export const githubUsernameSchema = z
           message: invalidCharacterMessage(char, `letters, numbers and '-'`),
         });
       }
-    }
-
-    if (val.startsWith('-')) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Username cannot start with '-'.",
-      });
-    }
-
-    if (val.endsWith('-')) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Username cannot end with '-'.",
-      });
-    }
-
-    if (val.includes('--')) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Username cannot contain consecutive '-'.",
-      });
     }
   })
   .transform((val) => transformedUrl('github', val));

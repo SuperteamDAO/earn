@@ -119,14 +119,14 @@ type ProjectContextSummary = {
   companyInfo: string;
 };
 
-export interface ProjectAi {
+interface ProjectAi {
   context?: {
     summary?: ProjectContextSummary;
     questionTypes?: ProjectContextQuestionsType;
   };
 }
 
-export type ProjectApplicationEvaluation = {
+type ProjectApplicationEvaluation = {
   predictedLabel?: SubmissionLabels;
   shortNote?: string;
   scores?: Scores;
@@ -137,7 +137,7 @@ export interface ProjectApplicationAi {
   commited?: boolean;
 }
 
-export type Scores = {
+type Scores = {
   skills: number;
   experience: number;
   application: number;
@@ -149,7 +149,7 @@ export interface BountySubmissionAi {
   commited?: boolean;
 }
 
-export type BountySubmissionEvaluation = {
+type BountySubmissionEvaluation = {
   finalLabel?: SubmissionLabels;
   notes?: string;
   criteriaScore?: number;
@@ -157,7 +157,7 @@ export type BountySubmissionEvaluation = {
   totalScore?: number;
 };
 
-export type TwitterAnalytics = {
+type TwitterAnalytics = {
   totalViews: number;
   totalLikes: number;
   totalRetweets: number;

@@ -1,6 +1,6 @@
 import debounce from 'lodash.debounce';
 import { Info } from 'lucide-react';
-import { useCallback } from 'react';
+import { useMemo } from 'react';
 
 import {
   Select,
@@ -34,27 +34,29 @@ export function FilterRow({
   onSearch,
   isSearchLoading,
 }: Props) {
-  const debouncedSetSkill = useCallback(debounce(decideSkill, 500), []);
-
-  function decideSkill(value: number) {
-    switch (value) {
-      case 0:
-        setSkill('ALL');
-        break;
-      case 1:
-        setSkill('CONTENT');
-        break;
-      case 2:
-        setSkill('DESIGN');
-        break;
-      case 3:
-        setSkill('DEVELOPMENT');
-        break;
-      case 4:
-        setSkill('OTHER');
-        break;
-    }
-  }
+  const debouncedSetSkill = useMemo(
+    () =>
+      debounce((value: number) => {
+        switch (value) {
+          case 0:
+            setSkill('ALL');
+            break;
+          case 1:
+            setSkill('CONTENT');
+            break;
+          case 2:
+            setSkill('DESIGN');
+            break;
+          case 3:
+            setSkill('DEVELOPMENT');
+            break;
+          case 4:
+            setSkill('OTHER');
+            break;
+        }
+      }, 500),
+    [setSkill],
+  );
 
   function skillIndexOf(value: SKILL): number {
     switch (value) {
@@ -166,7 +168,10 @@ function Timeframe({
   value: TIMEFRAME;
   setValue: (value: TIMEFRAME) => void;
 }) {
-  const debouncedSetTimeframe = useCallback(debounce(setValue, 500), []);
+  const debouncedSetTimeframe = useMemo(
+    () => debounce(setValue, 500),
+    [setValue],
+  );
 
   return (
     <Select

@@ -2,7 +2,7 @@ import { usePrivy } from '@privy-io/react-auth';
 import { Menu } from 'lucide-react';
 import Link from 'next/link';
 import posthog from 'posthog-js';
-import React, { useRef } from 'react';
+import { useRef } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { LocalImage } from '@/components/ui/local-image';
@@ -15,6 +15,97 @@ import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
 import { NAV_LINKS } from '../utils/constants';
 
+const MobileSponsorDrawer = ({
+  isDrawerOpen,
+  onDrawerClose,
+  ready,
+  authenticated,
+  user,
+}: {
+  isDrawerOpen: boolean;
+  onDrawerClose: () => void;
+  ready: boolean;
+  authenticated: boolean;
+  user: ReturnType<typeof useUser>['user'];
+}) => {
+  return (
+    <Sheet open={isDrawerOpen} onOpenChange={onDrawerClose}>
+      <SheetContent
+        side="left"
+        className="block w-[300px] p-0 sm:w-[380px] lg:hidden"
+      >
+        <div className="flex px-3 py-2">
+          <SheetClose />
+        </div>
+        <div className="px-6">
+          {ready && !authenticated && (
+            <div className="flex items-center gap-3">
+              <Link
+                className="ph-no-capture"
+                href="/new/sponsor/"
+                onClick={() => posthog.capture('login_navbar')}
+              >
+                <Button variant="ghost" className="text-base text-slate-500">
+                  Login
+                </Button>
+              </Link>
+              <Separator orientation="vertical" className="h-5 bg-slate-300" />
+              <Link
+                className="ph-no-capture"
+                href="/new/sponsor/"
+                onClick={() => posthog.capture('get started_sponsor navbar')}
+              >
+                <Button
+                  variant="ghost"
+                  className="bg-white font-semibold text-indigo-600"
+                >
+                  Get Started
+                </Button>
+              </Link>
+            </div>
+          )}
+
+          {user && !user.currentSponsorId && (
+            <Link
+              className="ph-no-capture"
+              href="/new/sponsor/"
+              onClick={() => posthog.capture('get started_sponsor navbar')}
+            >
+              <Button variant="ghost" className="text-brand-purple text-base">
+                Get Started
+              </Button>
+            </Link>
+          )}
+
+          {user && !!user.currentSponsorId && (
+            <Link
+              className="ph-no-capture"
+              href="/dashboard/listings/?open=1"
+              onClick={() => posthog.capture('create a listing_sponsor navbar')}
+            >
+              <Button variant="outline" className="text-brand-purple text-base">
+                Post for Free
+              </Button>
+            </Link>
+          )}
+
+          <div className="flex flex-col">
+            {NAV_LINKS?.map((navItem) => (
+              <Link
+                key={navItem.label}
+                className="flex h-8 items-center py-2 text-lg font-medium text-slate-500 hover:text-slate-600 hover:no-underline lg:h-14 lg:text-sm"
+                href={navItem.link ?? '#'}
+              >
+                {navItem.label}
+              </Link>
+            ))}
+          </div>
+        </div>
+      </SheetContent>
+    </Sheet>
+  );
+};
+
 export const MobileNavbar = () => {
   const {
     isOpen: isDrawerOpen,
@@ -26,93 +117,6 @@ export const MobileNavbar = () => {
   const { user } = useUser();
 
   const btnRef = useRef<HTMLButtonElement>(null);
-
-  const MobileSponsorDrawer = () => {
-    return (
-      <Sheet open={isDrawerOpen} onOpenChange={onDrawerClose}>
-        <SheetContent
-          side="left"
-          className="block w-[300px] p-0 sm:w-[380px] lg:hidden"
-        >
-          <div className="flex px-3 py-2">
-            <SheetClose />
-          </div>
-          <div className="px-6">
-            {ready && !authenticated && (
-              <div className="flex items-center gap-3">
-                <Link
-                  className="ph-no-capture"
-                  href="/new/sponsor/"
-                  onClick={() => posthog.capture('login_navbar')}
-                >
-                  <Button variant="ghost" className="text-base text-slate-500">
-                    Login
-                  </Button>
-                </Link>
-                <Separator
-                  orientation="vertical"
-                  className="h-5 bg-slate-300"
-                />
-                <Link
-                  className="ph-no-capture"
-                  href="/new/sponsor/"
-                  onClick={() => posthog.capture('get started_sponsor navbar')}
-                >
-                  <Button
-                    variant="ghost"
-                    className="bg-white font-semibold text-indigo-600"
-                  >
-                    Get Started
-                  </Button>
-                </Link>
-              </div>
-            )}
-
-            {user && !user.currentSponsorId && (
-              <Link
-                className="ph-no-capture"
-                href="/new/sponsor/"
-                onClick={() => posthog.capture('get started_sponsor navbar')}
-              >
-                <Button variant="ghost" className="text-brand-purple text-base">
-                  Get Started
-                </Button>
-              </Link>
-            )}
-
-            {user && !!user.currentSponsorId && (
-              <Link
-                className="ph-no-capture"
-                href="/dashboard/listings/?open=1"
-                onClick={() =>
-                  posthog.capture('create a listing_sponsor navbar')
-                }
-              >
-                <Button
-                  variant="outline"
-                  className="text-brand-purple text-base"
-                >
-                  Post for Free
-                </Button>
-              </Link>
-            )}
-
-            <div className="flex flex-col">
-              {NAV_LINKS?.map((navItem) => (
-                <Link
-                  key={navItem.label}
-                  className="flex h-8 items-center py-2 text-lg font-medium text-slate-500 hover:text-slate-600 hover:no-underline lg:h-14 lg:text-sm"
-                  href={navItem.link ?? '#'}
-                >
-                  {navItem.label}
-                </Link>
-              ))}
-            </div>
-          </div>
-        </SheetContent>
-      </Sheet>
-    );
-  };
 
   const openDrawer = () => {
     onDrawerOpen();
@@ -131,7 +135,13 @@ export const MobileNavbar = () => {
         <Menu className="h-6 w-6 text-slate-500" />
       </Button>
 
-      <MobileSponsorDrawer />
+      <MobileSponsorDrawer
+        isDrawerOpen={isDrawerOpen}
+        onDrawerClose={onDrawerClose}
+        ready={ready}
+        authenticated={authenticated}
+        user={user}
+      />
 
       <div className="absolute left-1/2 -translate-x-1/2">
         <Link

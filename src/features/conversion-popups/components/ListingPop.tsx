@@ -69,6 +69,9 @@ export const ListingPop = ({ listing }: { listing: Listing | null }) => {
   const [popupsShowed, setPopupsShowed] = useAtom(popupsShowedAtom);
   const setPopupTimeout = useSetAtom(popupTimeoutAtom);
 
+  const [open, setOpen] = useAtom(popupOpenAtom);
+  const { authenticated, ready } = usePrivy();
+
   const timeoutHandle = useTimeout(() => {
     setOpen(true);
     setPopupsShowed((s) => s + 1);
@@ -76,9 +79,6 @@ export const ListingPop = ({ listing }: { listing: Listing | null }) => {
       'Popup Source': 'Listing Pop-up',
     });
   }, 5_000);
-
-  const [open, setOpen] = useAtom(popupOpenAtom);
-  const { authenticated, ready } = usePrivy();
 
   const isMD = useBreakpoint('md');
   const { serverTime } = useServerTimeSync();

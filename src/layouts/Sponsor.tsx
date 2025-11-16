@@ -90,7 +90,7 @@ export function SponsorLayout({
     timeoutRef.current = setTimeout(() => {
       setIsExpanded(true);
     }, 250);
-  }, []);
+  }, [isCollapsible]);
 
   const handleMouseLeave = useCallback(() => {
     if (!isCollapsible) return;
@@ -98,7 +98,7 @@ export function SponsorLayout({
       clearTimeout(timeoutRef.current);
     }
     setIsExpanded(false);
-  }, []);
+  }, [isCollapsible]);
 
   const open = !!query.open;
   useEffect(() => {
@@ -424,7 +424,7 @@ export function SponsorLayout({
           {showContent && (
             <div
               className={cn(
-                'w-full flex-1 bg-white py-5 pr-8 pl-4 transition-[margin-left] duration-300 ease-in-out',
+                'w-full flex-1 overflow-x-auto bg-white py-5 pr-8 pl-4 transition-[margin-left] duration-300 ease-in-out',
                 isCollapsible ? 'ml-20' : 'ml-0',
               )}
             >

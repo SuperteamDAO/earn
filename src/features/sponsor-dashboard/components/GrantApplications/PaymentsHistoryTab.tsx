@@ -135,6 +135,14 @@ const GrantTrancheRow = ({
   );
 };
 
+const GrantTh = ({ children }: { children?: string }) => {
+  return (
+    <TableHead className="text-xs font-medium tracking-tight text-slate-500 uppercase">
+      {children}
+    </TableHead>
+  );
+};
+
 export const PaymentsHistoryTab = ({
   grantId,
   grant,
@@ -164,14 +172,6 @@ export const PaymentsHistoryTab = ({
       }
       return newSet;
     });
-  };
-
-  const GrantTh = ({ children }: { children?: string }) => {
-    return (
-      <TableHead className="text-xs font-medium tracking-tight text-slate-500 uppercase">
-        {children}
-      </TableHead>
-    );
   };
 
   const handlePaymentRecorded = (

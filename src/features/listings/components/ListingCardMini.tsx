@@ -5,6 +5,8 @@ import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
 import { LocalImage } from '@/components/ui/local-image';
 import { ASSET_URL } from '@/constants/ASSET_URL';
 import { tokenList } from '@/constants/tokenList';
+import { useServerTimeSync } from '@/hooks/use-server-time';
+import { timeAgoShort } from '@/utils/timeAgo';
 
 import { type Listing } from '../types';
 import { getListingIcon } from '../utils/getListingIcon';
@@ -22,11 +24,29 @@ export const ListingCardMini = ({ bounty }: { bounty: Listing }) => {
     compensationType,
     minRewardAsk,
     maxRewardAsk,
+    winnersAnnouncedAt,
     isWinnersAnnounced,
   } = bounty;
 
   const isVariable = compensationType === 'variable';
   const showToken = !isVariable || (isVariable && isWinnersAnnounced);
+
+  const { serverTime } = useServerTimeSync();
+  const isBeforeDeadline = dayjs(serverTime()).isBefore(dayjs(deadline));
+
+  const targetDate =
+    isWinnersAnnounced && winnersAnnouncedAt ? winnersAnnouncedAt : deadline;
+
+  const formattedDeadline = timeAgoShort(targetDate!, serverTime());
+
+  let deadlineText;
+  if (isBeforeDeadline) {
+    deadlineText = `Due in ${formattedDeadline}`;
+  } else {
+    deadlineText = isWinnersAnnounced
+      ? `Completed ${formattedDeadline} ago`
+      : `Expired ${formattedDeadline} ago`;
+  }
 
   return (
     <Link
@@ -51,12 +71,16 @@ export const ListingCardMini = ({ bounty }: { bounty: Listing }) => {
             <p className="ph-no-capture line-clamp-1 text-sm font-semibold text-slate-700 hover:underline">
               {title}
             </p>
-            <div className="flex w-min items-center gap-1">
+            <Link
+              href={`/s/${sponsor?.slug}`}
+              onClick={(e) => e.stopPropagation()}
+              className="flex w-min items-center gap-1 hover:underline"
+            >
               <p className="w-full text-xs whitespace-nowrap text-slate-500">
                 {sponsor?.name}
               </p>
               <div>{!!sponsor?.isVerified && <VerifiedBadge />}</div>
-            </div>
+            </Link>
             <div className="mt-px flex flex-wrap items-center gap-1">
               <div className="flex items-center justify-start">
                 {!!showToken && (
@@ -90,9 +114,7 @@ export const ListingCardMini = ({ bounty }: { bounty: Listing }) => {
 
               <div className="flex items-center gap-1">
                 <p className="text-xs whitespace-nowrap text-gray-500">
-                  {dayjs().isBefore(dayjs(deadline))
-                    ? `Due ${dayjs(deadline).fromNow()}`
-                    : `Closed ${dayjs(deadline).fromNow()}`}
+                  {deadlineText}
                 </p>
               </div>
             </div>

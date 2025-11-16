@@ -16,9 +16,15 @@ interface GrantSectionProps {
   type: GrantContext;
   region?: string;
   sponsor?: string;
+  hideWhenEmpty?: boolean;
 }
 
-export const GrantsSection = ({ type, region, sponsor }: GrantSectionProps) => {
+export const GrantsSection = ({
+  type,
+  region,
+  sponsor,
+  hideWhenEmpty,
+}: GrantSectionProps) => {
   const { activeCategory, handleCategoryChange } = useGrantState();
   const isMd = useBreakpoint('md');
 
@@ -32,6 +38,10 @@ export const GrantsSection = ({ type, region, sponsor }: GrantSectionProps) => {
     region,
     sponsor,
   });
+
+  if (hideWhenEmpty && !isLoading && !grants?.length) {
+    return null;
+  }
 
   const renderContent = () => {
     if (isLoading) {

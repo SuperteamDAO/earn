@@ -36,14 +36,29 @@ export const BoostButton = ({
   listing,
   showDate = true,
 }: {
-  listing: Listing;
+  listing?: Listing;
   showDate?: boolean;
 }) => {
+  const { data: featuredData } = useQuery({
+    ...featuredAvailabilityQuery(),
+    enabled: !!listing,
+  });
+  const isFeatureAvailable = featuredData?.isAvailable ?? false;
+
+  const { data: emailEstimate } = useQuery({
+    ...emailEstimateQuery(
+      listing?.skills,
+      listing?.region as string | undefined,
+    ),
+    enabled: !!listing,
+  });
+
+  if (!listing) return null;
+
   const {
     deadline,
     usdValue,
     skills,
-    region,
     slug,
     compensationType,
     type,
@@ -52,16 +67,9 @@ export const BoostButton = ({
 
   const deadlineMoreThan72HoursLeft = hasMoreThan72HoursLeft(deadline ?? '');
 
-  const { data: featuredData } = useQuery(featuredAvailabilityQuery());
-  const isFeatureAvailable = featuredData?.isAvailable ?? false;
-
   const currentStep = amountToStep(usdValue ?? 0, isFeatureAvailable);
   const maxAvailableStep = getAllowedMaxStep(isFeatureAvailable);
   const canBeBoosted = currentStep < maxAvailableStep;
-
-  const { data: emailEstimate } = useQuery(
-    emailEstimateQuery(skills, region as string | undefined),
-  );
 
   const emailImpressions = resolveEmailImpressions(skills, emailEstimate);
 
@@ -110,6 +118,7 @@ export const BoostButton = ({
       return (
         <div className="relative hidden sm:block">
           <Tooltip
+            zIndex="z-0"
             content={`Reach ${additionalImpressions.toLocaleString()} more people`}
             open={true}
             onOpenChange={() => {}}

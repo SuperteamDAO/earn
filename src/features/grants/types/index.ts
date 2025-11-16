@@ -15,11 +15,13 @@ interface Grant {
   link?: string;
   sponsorId?: string;
   sponsor?: {
+    id?: string;
     name: string;
     logo: string;
+    slug: string;
     isVerified: boolean;
-    entityName: string;
-    st: boolean;
+    entityName?: string;
+    st?: boolean;
   };
   pocId?: string;
   poc?: User;
@@ -52,7 +54,7 @@ interface GrantWithApplicationCount extends Grant {
 
 import { type SubmissionLabels } from '@/prisma/enums';
 
-export interface GrantsAiContxt {
+interface GrantsAiContxt {
   totalInputTokens: number;
   totalOutputTokens: number;
   domainSummary: string[];
@@ -65,7 +67,7 @@ export interface GrantsAi {
   context?: GrantsAiContxt;
 }
 
-export type EvaluationResult = {
+type EvaluationResult = {
   predictedLabel: SubmissionLabels;
   reasoning: string;
   totalCostInUSD: number;

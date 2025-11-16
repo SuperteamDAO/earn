@@ -126,7 +126,26 @@ export async function POST(request: Request) {
     }
     const { userId, userSponsorId } = sessionResult.session;
 
-    const body = await request.json();
+    let body: Partial<ListingFormData>;
+    try {
+      body = await request.json();
+    } catch (jsonError) {
+      const rawText = await request.text();
+      logger.debug('Request body raw:', rawText);
+      logger.error('Failed to parse JSON request body', {
+        error: jsonError,
+      });
+      return NextResponse.json(
+        {
+          error: 'Invalid JSON in request body',
+          message:
+            jsonError instanceof Error
+              ? jsonError.message
+              : 'Unknown JSON parsing error',
+        },
+        { status: 400 },
+      );
+    }
     logger.debug(`Request body: ${safeStringify(body)}`);
 
     let listing: ListingWithSponsor | undefined;
@@ -150,7 +169,7 @@ export async function POST(request: Request) {
       listing,
     );
 
-    const result = await saveListing(body.id, prismaData);
+    const result = await saveListing(body.id || undefined, prismaData);
     logger.debug(`Draft saved successfully: ${result.id}`);
 
     await handleDiscordNotification(result);

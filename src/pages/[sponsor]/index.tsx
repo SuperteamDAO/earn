@@ -1,21 +1,11 @@
 import { type GetServerSideProps } from 'next';
 import Head from 'next/head';
-import Link from 'next/link';
 
-import FaXTwitter from '@/components/icons/FaXTwitter';
-import MdOutlineInsertLink from '@/components/icons/MdOutlineInsertLink';
-import { LinkTextParser } from '@/components/shared/LinkTextParser';
-import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
-import { LocalImage } from '@/components/ui/local-image';
 import { exclusiveSponsorData } from '@/constants/exclusiveSponsors';
 import { type SponsorType } from '@/interface/sponsor';
 import { Default } from '@/layouts/Default';
 import { prisma } from '@/prisma';
-import { getTwitterUrl, getURLSanitized } from '@/utils/getURLSanitized';
 import { getURL } from '@/utils/validUrl';
-
-import { GrantsSection } from '@/features/grants/components/GrantsSection';
-import { ListingsSection } from '@/features/listings/components/ListingsSection';
 
 interface Props {
   slug: string;
@@ -23,11 +13,8 @@ interface Props {
   description: string;
   sponsor: SponsorType;
 }
-const SponsorListingsPage = ({ slug, sponsor, title, description }: Props) => {
+const SponsorListingsPage = ({ sponsor, title }: Props) => {
   const logo = sponsor.logo;
-  const url = sponsor.url;
-  const twitter = sponsor.twitter;
-  const isVerified = sponsor.isVerified;
   const sSlug = sponsor.slug;
 
   const ogImage = new URL(`${getURL()}api/dynamic-og/sponsor/`);
@@ -70,61 +57,7 @@ Check out all of ${title}’s latest earning opportunities on a single page.
         </Head>
       }
     >
-      <div className="flex bg-slate-50 px-4">
-        <div className="mx-auto flex w-full max-w-5xl flex-col gap-8 rounded-[10] py-14 md:flex-row">
-          <div className="justify-center rounded-full">
-            <LocalImage
-              className="h-28 w-28 rounded-full"
-              alt="Category icon"
-              src={logo!}
-            />
-          </div>
-
-          <div className="w-full md:w-[80%]">
-            <div className="flex items-center gap-2">
-              <p className="text-xl font-semibold">{title}</p>
-              {!!isVerified && (
-                <VerifiedBadge
-                  style={{
-                    width: '1rem',
-                    height: '1rem',
-                  }}
-                />
-              )}
-            </div>
-
-            <p className="max-w-[600px] text-slate-500">@{sSlug}</p>
-
-            <LinkTextParser
-              className="mt-2 text-slate-600"
-              text={description}
-            />
-
-            <div className="mt-3 flex gap-3 text-slate-500">
-              {url && (
-                <Link className="flex items-center" href={getURLSanitized(url)}>
-                  <MdOutlineInsertLink className="h-5 w-5" />
-                </Link>
-              )}
-              {twitter && (
-                <Link
-                  className="flex items-center"
-                  href={getTwitterUrl(twitter)}
-                >
-                  <FaXTwitter className="h-4 w-4" />
-                </Link>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="w-full bg-white">
-        <div className="mx-auto max-w-5xl px-4 pb-20">
-          <ListingsSection type="sponsor" sponsor={slug} />
-          <GrantsSection type="sponsor" sponsor={slug} />
-        </div>
-      </div>
+      redirecting...
     </Default>
   );
 };
@@ -152,12 +85,16 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     },
   });
 
+  if (!sponsorInfo) {
+    return {
+      notFound: true,
+    };
+  }
+
   return {
-    props: {
-      slug: (sponsorSlug as string).toLowerCase(),
-      sponsor: JSON.parse(JSON.stringify(sponsorInfo)),
-      title: sponsorExlusiveInfo.title,
-      description: sponsorExlusiveInfo.description,
+    redirect: {
+      destination: `/s/${sponsorInfo.slug}`,
+      permanent: true,
     },
   };
 };

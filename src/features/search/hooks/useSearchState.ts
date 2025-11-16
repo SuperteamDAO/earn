@@ -90,7 +90,7 @@ export const useSearchState = ({
 
   useEffect(() => {
     const searchTermFromUrl = getSearchTermFromParams(searchParams);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
     setInternalSearchTerm((currentInternalTerm) => {
       if (searchTermFromUrl !== currentInternalTerm) {
         return searchTermFromUrl;
@@ -101,7 +101,7 @@ export const useSearchState = ({
 
   useEffect(() => {
     const statusFromUrl = getStatusFromParams(searchParams);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
     setInternalActiveStatus((currentInternalStatus) => {
       const statusChanged =
         statusFromUrl.length !== currentInternalStatus.length ||
@@ -119,7 +119,7 @@ export const useSearchState = ({
 
   useEffect(() => {
     const skillsFromUrl = getSkillsFromParams(searchParams);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
     setInternalActiveSkills((currentInternalSkills) => {
       const skillsChanged =
         skillsFromUrl.length !== currentInternalSkills.length ||

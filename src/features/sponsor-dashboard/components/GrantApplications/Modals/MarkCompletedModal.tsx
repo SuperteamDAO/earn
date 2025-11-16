@@ -1,7 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import { Check } from 'lucide-react';
-import React from 'react';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';

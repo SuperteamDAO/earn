@@ -2,13 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAtom, useSetAtom } from 'jotai';
 import debounce from 'lodash.debounce';
 import { Loader2 } from 'lucide-react';
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 
 import { Textarea } from '@/components/ui/textarea';
 import { api } from '@/lib/api';
@@ -84,9 +78,9 @@ export const Notes = ({ slug }: Props) => {
     },
   });
 
-  const debouncedUpdateNotes = useCallback(
-    debounce((content: string) => updateNotes(content), 1000),
-    [applicationId, updateNotes],
+  const debouncedUpdateNotes = useMemo(
+    () => debounce((content: string) => updateNotes(content), 1000),
+    [updateNotes],
   );
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {

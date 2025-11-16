@@ -21,7 +21,7 @@ export function SidebarBannerCypherpunk({ className }: SidebarPosterProps) {
   return (
     <Link href="/hackathon/cypherpunk">
       <div
-        className={`relative flex h-[26.3rem] w-full flex-col items-center overflow-hidden rounded-lg border border-white/20 bg-[#F8F5FF] ${className}`}
+        className={`relative flex h-fit w-full flex-col items-center overflow-hidden rounded-lg border border-white/20 bg-[#F8F5FF] ${className}`}
       >
         <ExternalImage
           src={baseAsset('home-banner-square')}
@@ -29,7 +29,7 @@ export function SidebarBannerCypherpunk({ className }: SidebarPosterProps) {
           className="absolute top-0 left-0 w-full object-contain"
         />
 
-        <div className="relative z-10 flex h-full w-full flex-col px-8 pt-36 pb-0 text-black">
+        <div className="relative z-10 flex h-full w-full flex-col px-8 pt-36 pb-6 text-black">
           <div className="flex items-center justify-between">
             <CypherpunkLogo className="w-full" />
           </div>
@@ -50,8 +50,9 @@ export function SidebarBannerCypherpunk({ className }: SidebarPosterProps) {
             )?.toLocaleString('en-us') || '0'}
             +. Deadline for submissions is{' '}
             {dayjs(CLOSE_DATE)
-              .tz('America/Los_Angeles')
-              .format('MMM D (h:mmA PST)')}
+              .utc()
+              .add(1, 'minute')
+              .format('MMM D (h:mmA [UTC])')}
           </p>
 
           <Button className={`mt-4 text-base`}>View Tracks</Button>

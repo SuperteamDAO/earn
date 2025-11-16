@@ -195,7 +195,7 @@ s.name LIKE CONCAT('%', ?, '%')
     b.rewardAmount, 
     b.deadline, 
     b.type, 
-    JSON_OBJECT('name', s.name, 'logo', s.logo, 'isVerified', s.isVerified) as sponsor,
+    JSON_OBJECT('name', s.name, 'logo', s.logo, 'isVerified', s.isVerified, 'slug', s.slug) as sponsor,
     b.title, 
     b.token, 
     b.slug, 
@@ -232,7 +232,10 @@ s.name LIKE CONCAT('%', ?, '%')
     ) ${skills ? ` AND (${skillsQuery})` : ''}
     ${regionFilter}
     ORDER BY 
-    b.isFeatured DESC,
+      CASE 
+        WHEN b.isFeatured = 1 AND b.deadline >= CURRENT_TIMESTAMP THEN 1
+        ELSE 2
+      END,
       CASE 
         WHEN b.deadline >= CURRENT_TIMESTAMP THEN 1
         ELSE 2
@@ -263,7 +266,7 @@ s.name LIKE CONCAT('%', ?, '%')
     b.updatedAt,
     b.totalApproved,
     b.historicalApplications,
-    JSON_OBJECT('name', s.name, 'logo', s.logo, 'isVerified', s.isVerified) as sponsor,
+    JSON_OBJECT('name', s.name, 'logo', s.logo, 'isVerified', s.isVerified, 'slug', s.slug) as sponsor,
     (
       SELECT COUNT(*)
       FROM GrantApplication ga

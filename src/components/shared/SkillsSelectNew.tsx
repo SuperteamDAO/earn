@@ -289,7 +289,7 @@ export const SkillsSelect = React.forwardRef<MultiSelectRef, SkillsSelectProps>(
       });
 
       return suggestions;
-    }, [logicSkills, uiSkills]);
+    }, [logicSkills, uiSkills, maxSuggestions]);
 
     const suggestions = React.useMemo(() => getSuggestions(), [getSuggestions]);
 

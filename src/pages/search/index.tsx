@@ -3,9 +3,12 @@ import NProgress from 'nprogress';
 import { useEffect, useMemo, useState } from 'react';
 
 import { AnimateChangeInHeight } from '@/components/shared/AnimateChangeInHeight';
+import { JsonLd } from '@/components/shared/JsonLd';
+import { ASSET_URL } from '@/constants/ASSET_URL';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { useUser } from '@/store/user';
+import { generateWebSiteSchema } from '@/utils/json-ld';
 
 import { DropdownFilter } from '@/features/search/components/DropdownFilter';
 import { PillsFilter } from '@/features/search/components/PillsFilter';
@@ -72,10 +75,23 @@ const SearchPage = ({ initialQuery = '' }: SearchProps) => {
   return (
     <Default
       meta={
-        <Meta
-          title={`New Search - ${searchTerm} | Superteam Earn`}
-          description={`Search Results for ${searchTerm}`}
-        />
+        <>
+          <Meta
+            title={
+              searchTerm
+                ? `Search: ${searchTerm} | Superteam Earn`
+                : 'Search | Superteam Earn'
+            }
+            description={
+              searchTerm
+                ? `Search results for "${searchTerm}" on Superteam Earn`
+                : 'Search for bounties, grants, and opportunities on Superteam Earn'
+            }
+            canonical="https://earn.superteam.fun/search/"
+            og={ASSET_URL + `/og/og.png`}
+          />
+          <JsonLd data={[generateWebSiteSchema()]} />
+        </>
       }
     >
       <div className="min-h-screen w-full bg-white">

@@ -135,7 +135,7 @@ export async function DELETE(request: NextRequest) {
             error:
               'Cannot delete image: Image URL does not match your profile photo',
           },
-          { status: 403 },
+          { status: 409 },
         );
       }
     } else if (source === IMAGE_SOURCE.SPONSOR) {
@@ -145,7 +145,7 @@ export async function DELETE(request: NextRequest) {
           {
             error: 'Cannot delete image: You do not have a current sponsor',
           },
-          { status: 403 },
+          { status: 409 },
         );
       }
 
@@ -158,7 +158,7 @@ export async function DELETE(request: NextRequest) {
             error:
               'Cannot delete image: Image URL does not match your sponsor logo',
           },
-          { status: 403 },
+          { status: 409 },
         );
       }
     }

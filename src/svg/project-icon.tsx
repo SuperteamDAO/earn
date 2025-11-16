@@ -1,5 +1,4 @@
-import React, { type CSSProperties } from 'react';
-
+import { type CSSProperties } from 'react';
 export const ProjectIcon = ({
   styles,
   className,

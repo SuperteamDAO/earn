@@ -3,13 +3,9 @@ import { type z } from 'zod';
 
 import { api } from '@/lib/api';
 
-import {
-  type GrantCategorySchema,
-  type GrantContextSchema,
-} from '../constants/schema';
+import { type GrantContextSchema } from '../constants/schema';
 import { type GrantWithApplicationCount } from '../types';
 
-export type GrantCategory = z.infer<typeof GrantCategorySchema>;
 export type GrantContext = z.infer<typeof GrantContextSchema>;
 
 interface GrantsParams {

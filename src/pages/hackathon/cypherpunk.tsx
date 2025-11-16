@@ -57,13 +57,13 @@ export default function Cypherpunk({ hackathon }: { hackathon: Hackathon }) {
         <>
           <meta
             name="twitter:image"
-            content={`https://res.cloudinary.com/dgvnuwspr/image/upload/v1758521080/assets/hackathon/cypherpunk/og-image.png`}
+            content={`https://res.cloudinary.com/dgvnuwspr/image/upload/v1760541751/assets/hackathon/cypherpunk/og-image.png`}
           />
           <Meta
             title="Cypherpunk | Superteam Earn"
             description={`Solana Cypherpunk Online Hackathon`}
             canonical="https://earn.superteam.fun/hackathon/cypherpunk"
-            og="https://res.cloudinary.com/dgvnuwspr/image/upload/v1758521080/assets/hackathon/cypherpunk/og-image.png"
+            og="https://res.cloudinary.com/dgvnuwspr/image/upload/v1760541751/assets/hackathon/cypherpunk/og-image.png"
           />
         </>
       }

@@ -87,7 +87,7 @@ interface DefaultQuestionFieldProps {
   TOOLTIP_CONTENT: string;
 }
 
-export function DefaultQuestionField({
+function DefaultQuestionField({
   icon,
   label,
   required = false,
