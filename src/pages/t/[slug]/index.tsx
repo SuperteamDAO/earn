@@ -249,7 +249,9 @@ function TalentProfile({ talent, stats }: TalentProps) {
     stats?.participations?.toString(),
   );
   ogImage.searchParams.set('winnerCount', stats?.wins?.toString());
-  ogImage.searchParams.set('photo', talent?.photo!);
+  if (talent?.photo) {
+    ogImage.searchParams.set('photo', talent.photo);
+  }
 
   const title =
     talent?.firstName && talent?.lastName
