@@ -1,8 +1,18 @@
 import { ArrowLeftIcon } from 'lucide-react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { memo, useEffect, useMemo, useState } from 'react';
+import { memo, useEffect, useMemo, useRef, useState } from 'react';
 import { useWatch } from 'react-hook-form';
 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 import {
   FormField,
@@ -43,6 +53,9 @@ export function RewardsSheet() {
     increasedBy: number;
     minRequired: number;
   } | null>(null);
+  const [isBoostDismissPromptOpen, setIsBoostDismissPromptOpen] =
+    useState(false);
+  const bypassBoostCloseRef = useRef(false);
   const params = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
@@ -81,11 +94,20 @@ export function RewardsSheet() {
   }, [form]);
 
   const handleOpenChange = (nextOpen: boolean) => {
+    if (!nextOpen && panel === 'boost' && !bypassBoostCloseRef.current) {
+      setIsBoostDismissPromptOpen(true);
+      return;
+    }
+
     setOpen(nextOpen);
+
     if (nextOpen) {
+      bypassBoostCloseRef.current = false;
       setPanel('rewards');
       return;
     }
+
+    setIsBoostDismissPromptOpen(false);
     try {
       const current = new URLSearchParams(params?.toString() || '');
       if (current.has('boost')) {
@@ -95,7 +117,23 @@ export function RewardsSheet() {
         const href = search ? `${base}?${search}` : base;
         router.replace(href);
       }
-    } catch (err) {}
+    } catch (err) {
+    } finally {
+      bypassBoostCloseRef.current = false;
+    }
+  };
+
+  const changeOpen = (
+    nextOpen: boolean,
+    options?: { bypassPrompt?: boolean },
+  ): void => {
+    if (!nextOpen && options?.bypassPrompt) {
+      bypassBoostCloseRef.current = true;
+    }
+    if (nextOpen) {
+      bypassBoostCloseRef.current = false;
+    }
+    handleOpenChange(nextOpen);
   };
 
   useEffect(() => {
@@ -119,103 +157,138 @@ export function RewardsSheet() {
   }, []);
 
   return (
-    <Sheet open={open} onOpenChange={handleOpenChange}>
-      <SheetTrigger className="w-full">
-        <FormField
-          control={form.control}
-          name="rewards"
-          render={({}) => {
-            return (
-              <FormItem className="group items-start gap-1.5">
-                <FormLabel isRequired className="">
-                  Rewards
-                </FormLabel>
-                <div className="flex w-full items-center rounded-md border border-slate-200 bg-slate-50 py-0.5 pl-3">
-                  <RewardsLabel />
-                  <Button
-                    variant="link"
-                    size="sm"
-                    className="ml-auto group-hover:underline"
-                  >
-                    Edit
-                  </Button>
-                </div>
-                {hasRewardsErrors ? (
-                  <p className={'text-destructive text-[0.8rem] font-medium'}>
-                    Please resolve all errors in rewards
-                  </p>
-                ) : (
-                  <FormMessage />
-                )}
-              </FormItem>
-            );
-          }}
-        />
-      </SheetTrigger>
-      <SheetContent
-        showCloseIcon={false}
-        side="right"
-        className="flex h-[100vh] flex-col p-0 sm:max-w-xl"
-      >
-        <SheetHeader className="shrink-0 space-y-6 p-6 pb-0">
-          <SheetTitle>
-            {panel === 'rewards' ? (
-              'Add Rewards'
-            ) : (
-              <>
-                <div className="flex items-center gap-2">
-                  <div className="-ml-4 cursor-pointer">
-                    <ArrowLeftIcon
-                      className="size-4 text-slate-400"
-                      onClick={() => setPanel('rewards')}
-                    />
+    <>
+      <Sheet open={open} onOpenChange={handleOpenChange}>
+        <SheetTrigger className="w-full">
+          <FormField
+            control={form.control}
+            name="rewards"
+            render={({}) => {
+              return (
+                <FormItem className="group items-start gap-1.5">
+                  <FormLabel isRequired className="">
+                    Rewards
+                  </FormLabel>
+                  <div className="flex w-full items-center rounded-md border border-slate-200 bg-slate-50 py-0.5 pl-3">
+                    <RewardsLabel />
+                    <Button
+                      variant="link"
+                      size="sm"
+                      className="ml-auto group-hover:underline"
+                    >
+                      Edit
+                    </Button>
                   </div>
-                  Boost to reach more people
-                </div>
-                <p className="ml-2.5 text-sm font-normal text-slate-500">
-                  Increase your prize pool to unlock promotions across Twitter,
-                  Email, and more.
-                </p>
+                  {hasRewardsErrors ? (
+                    <p className={'text-destructive text-[0.8rem] font-medium'}>
+                      Please resolve all errors in rewards
+                    </p>
+                  ) : (
+                    <FormMessage />
+                  )}
+                </FormItem>
+              );
+            }}
+          />
+        </SheetTrigger>
+        <SheetContent
+          showCloseIcon={false}
+          side="right"
+          className="flex h-screen flex-col p-0 sm:max-w-xl"
+        >
+          <SheetHeader className="shrink-0 space-y-6 p-6 pb-0">
+            <SheetTitle>
+              {panel === 'rewards' ? (
+                'Add Rewards'
+              ) : (
+                <>
+                  <div className="flex items-center gap-2">
+                    <div className="-ml-4 cursor-pointer">
+                      <ArrowLeftIcon
+                        className="size-4 text-slate-400"
+                        onClick={() => setPanel('rewards')}
+                      />
+                    </div>
+                    Boost to reach more people
+                  </div>
+                  <p className="ml-2.5 text-sm font-normal text-slate-500">
+                    Increase your prize pool to unlock promotions across
+                    Twitter, Email, and more.
+                  </p>
+                </>
+              )}
+            </SheetTitle>
+            {panel === 'rewards' && (
+              <>
+                <TokenSelect />
+                {type === 'project' && <PaymentType />}
               </>
             )}
-          </SheetTitle>
-          {panel === 'rewards' && (
-            <>
-              <TokenSelect />
-              {type === 'project' && <PaymentType />}
-            </>
-          )}
-        </SheetHeader>
+          </SheetHeader>
 
-        <div
-          className="flex min-h-0 flex-1 flex-col overflow-y-auto px-6 pt-4 pb-16"
-          id="main-content"
-        >
-          {panel === 'rewards' ? (
-            <Type />
-          ) : (
-            <BoostContent
-              boostStep={boostStep}
-              setBoostStep={(s: number) => setBoostStep(s as BoostStep)}
-            />
-          )}
-        </div>
+          <div
+            className="flex min-h-0 flex-1 flex-col overflow-y-auto px-6 pt-4 pb-16"
+            id="main-content"
+          >
+            {panel === 'rewards' ? (
+              <Type />
+            ) : (
+              <BoostContent
+                boostStep={boostStep}
+                setBoostStep={(s: number) => setBoostStep(s as BoostStep)}
+              />
+            )}
+          </div>
 
-        <div className="relative shrink-0 bg-white">
-          <Separator className="mb-4" />
-          <SheetFooter className="p-6 pt-0">
-            <Footer
-              panel={panel}
-              setPanel={setPanel}
-              setOpen={handleOpenChange}
-              boostStep={boostStep}
-              isBoostFromUrl={isBoostFromUrl}
-              proAdjustment={proAdjustment}
-            />
-          </SheetFooter>
-        </div>
-      </SheetContent>
-    </Sheet>
+          <div className="relative shrink-0 bg-white">
+            <Separator className="mb-4" />
+            <SheetFooter className="p-6 pt-0">
+              <Footer
+                panel={panel}
+                setPanel={setPanel}
+                setOpen={handleOpenChange}
+                boostStep={boostStep}
+                isBoostFromUrl={isBoostFromUrl}
+                proAdjustment={proAdjustment}
+              />
+            </SheetFooter>
+          </div>
+        </SheetContent>
+      </Sheet>
+      <AlertDialog
+        open={isBoostDismissPromptOpen}
+        onOpenChange={(next) => {
+          setIsBoostDismissPromptOpen(next);
+        }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Skip boosting?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Closing now keeps your current rewards without applying the boost.
+              Continue editing to adjust your boost settings.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel
+              onClick={() => {
+                setIsBoostDismissPromptOpen(false);
+                changeOpen(false, { bypassPrompt: true });
+              }}
+            >
+              Skip Boost
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                setIsBoostDismissPromptOpen(false);
+              }}
+            >
+              Get more visibility
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
   );
 }
 
