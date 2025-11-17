@@ -85,7 +85,7 @@ export function ReviewUrgentBanner({ listing }: ReviewUrgentBannerProps) {
       </div>
 
       <div className="absolute -right-26 -bottom-32 hidden xl:block">
-        <span className="block size-100 rounded-full bg-red-100/80" />
+        <span className="block size-100 rounded-full bg-indigo-100/80" />
       </div>
       <div className="absolute top-2/4 right-14 hidden w-49 -translate-y-1/2 xl:block">
         <img

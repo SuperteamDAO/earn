@@ -71,8 +71,8 @@ export function SponsorListing() {
 
   return (
     <div className="flex flex-col gap-3">
-      <span className="text-sm font-medium tracking-wide text-gray-400 uppercase">
-        RECENT {listing.type?.toUpperCase()}
+      <span className="text-sm font-semibold tracking-wide text-slate-400 uppercase">
+        LATEST {listing.type?.toUpperCase()}
       </span>
 
       <Link

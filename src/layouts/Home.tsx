@@ -13,10 +13,16 @@ import { BannerCarousel } from '@/features/home/components/Banner';
 import { UserStatsBanner } from '@/features/home/components/UserStatsBanner';
 import { userCountQuery } from '@/features/home/queries/user-count';
 
+interface CountryData {
+  readonly name: string;
+  readonly code: string;
+}
+
 interface HomeProps {
   readonly children: ReactNode;
   readonly type: 'listing' | 'region' | 'feed' | 'region-all';
   readonly st?: Superteam;
+  readonly countryData?: CountryData;
   readonly potentialSession?: boolean;
   readonly meta?: ReactNode;
 }
@@ -35,6 +41,12 @@ const CategoryBanner = dynamic(() =>
   ),
 );
 
+const CountryBanner = dynamic(() =>
+  import('@/features/home/components/CountryBanner').then(
+    (mod) => mod.CountryBanner,
+  ),
+);
+
 const HomeSideBar = dynamic(() =>
   import('@/features/home/components/SideBar').then((mod) => mod.HomeSideBar),
 );
@@ -43,6 +55,7 @@ export function Home({
   children,
   type,
   st,
+  countryData,
   potentialSession = false,
   meta,
 }: HomeProps) {
@@ -90,6 +103,12 @@ export function Home({
       }
     >
       {type === 'region' && st && <RegionBanner st={st} />}
+      {type === 'region' && countryData && !st && (
+        <CountryBanner
+          countryName={countryData.name}
+          countryCode={countryData.code}
+        />
+      )}
       {!!currentCategory && type !== 'region' && type !== 'region-all' && (
         <CategoryBanner category={currentCategory} />
       )}

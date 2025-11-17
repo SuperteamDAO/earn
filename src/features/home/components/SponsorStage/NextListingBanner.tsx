@@ -45,7 +45,7 @@ export function NextListingBanner() {
         </div>
 
         <div className="flex items-center gap-8">
-          <Button>Create Listing</Button>
+          <Button>Create a Listing</Button>
           <Button
             variant="ghost"
             asChild

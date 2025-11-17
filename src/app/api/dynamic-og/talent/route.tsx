@@ -67,16 +67,35 @@ export async function GET(request: Request) {
                   gap: '24px',
                 }}
               >
-                <img
-                  style={{
-                    width: '120px',
-                    height: '120px',
-                    objectFit: 'contain',
-                    borderRadius: '120px',
-                  }}
-                  alt="pfp"
-                  src={photo as string}
-                />
+                {photo ? (
+                  <img
+                    style={{
+                      width: '120px',
+                      height: '120px',
+                      objectFit: 'cover',
+                      borderRadius: '120px',
+                    }}
+                    alt="pfp"
+                    src={photo}
+                  />
+                ) : (
+                  <div
+                    style={{
+                      width: '120px',
+                      height: '120px',
+                      borderRadius: '120px',
+                      backgroundColor: '#E5E7EB',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '48px',
+                      color: '#9CA3AF',
+                    }}
+                  >
+                    {name?.[0]?.toUpperCase() +
+                      (name.split(' ')?.[1]?.[0]?.toUpperCase() || '') || '?'}
+                  </div>
+                )}
                 <div
                   style={{
                     display: 'flex',
