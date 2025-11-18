@@ -4,6 +4,7 @@ import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
 import logger from '@/lib/logger';
+import { LockNotAcquiredError, withRedisLock } from '@/lib/with-redis-lock';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
 
@@ -46,160 +47,178 @@ export async function POST(request: NextRequest) {
     );
   }
   const { id, status, approvedAmount } = validationResult.data;
-  const userId = session.data.userId;
+  const { userId, userSponsorId } = session.data;
   try {
-    const currentTranche = await prisma.grantTranche.findUniqueOrThrow({
-      where: { id },
-    });
+    return await withRedisLock(
+      `locks:update-tranche-status:${id}`,
+      async () => {
+        const currentTranche = await prisma.grantTranche.findUniqueOrThrow({
+          where: { id },
+        });
 
-    const { error } = await checkGrantSponsorAuth(
-      session.data.userSponsorId,
-      currentTranche.grantId,
-    );
-    if (error) {
-      return NextResponse.json(
-        { error: error.message },
-        { status: error.status },
-      );
-    }
-
-    const updateData: any = {
-      status,
-      decidedAt: new Date().toISOString(),
-      approvedAmount,
-    };
-
-    const application = await prisma.grantApplication.findUniqueOrThrow({
-      where: { id: currentTranche.applicationId },
-      select: {
-        totalTranches: true,
-        approvedAmount: true,
-        totalPaid: true,
-      },
-    });
-
-    let totalTranches = application.totalTranches;
-
-    if (status === 'Approved') {
-      const approvedTranches = await prisma.grantTranche.findMany({
-        where: {
-          applicationId: currentTranche.applicationId,
-          status: 'Approved',
-          id: { not: id },
-        },
-        select: {
-          approvedAmount: true,
-        },
-      });
-
-      const totalApprovedSoFar = approvedTranches.reduce(
-        (sum, tranche) => sum + (tranche.approvedAmount || 0),
-        0,
-      );
-
-      if (totalApprovedSoFar + approvedAmount! > application.approvedAmount) {
-        return NextResponse.json(
-          {
-            error: 'Invalid approved amount',
-            message: `Total approved tranches (${totalApprovedSoFar + approvedAmount!}) would exceed grant's approved amount (${application.approvedAmount})`,
-          },
-          { status: 400 },
+        const { error } = await checkGrantSponsorAuth(
+          userSponsorId,
+          currentTranche.grantId,
         );
-      }
+        if (error) {
+          return NextResponse.json(
+            { error: error.message },
+            { status: error.status },
+          );
+        }
 
-      const existingTranches = await prisma.grantTranche.count({
-        where: {
-          applicationId: currentTranche.applicationId,
-          status: {
-            not: 'Rejected',
+        const updateData: any = {
+          status,
+          decidedAt: new Date().toISOString(),
+          approvedAmount,
+        };
+
+        const application = await prisma.grantApplication.findUniqueOrThrow({
+          where: { id: currentTranche.applicationId },
+          select: {
+            totalTranches: true,
+            approvedAmount: true,
+            totalPaid: true,
           },
-        },
-      });
-      if (
-        totalTranches - existingTranches === 0 &&
-        application.totalPaid + approvedAmount! < application.approvedAmount
-      ) {
-        totalTranches! += 1;
-      }
-      await prisma.grantApplication.update({
-        where: { id: currentTranche.applicationId },
-        include: {
-          grant: true,
-          user: true,
-        },
-        data: { totalTranches },
-      });
-    }
+        });
 
-    const result = await prisma.grantTranche.update({
-      where: { id },
-      data: updateData,
-      include: {
-        GrantApplication: {
-          include: {
-            user: {
-              select: {
-                firstName: true,
-                lastName: true,
-                email: true,
-                twitter: true,
-                discord: true,
-                kycName: true,
-                location: true,
-                kycAddress: true,
-                kycDOB: true,
-                kycIDNumber: true,
-                kycIDType: true,
-                kycCountry: true,
-                username: true,
-              },
-            },
-            grant: {
-              select: {
-                airtableId: true,
-                isNative: true,
-                title: true,
-                approverRecordId: true,
-              },
-            },
-          },
-        },
-      },
-    });
+        let totalTranches = application.totalTranches;
 
-    waitUntil(
-      (async () => {
-        if (result.status === 'Approved') {
-          try {
-            await addPaymentInfoToAirtable(result.GrantApplication, result);
-          } catch (airtableError: any) {
-            logger.error(
-              `Error adding payment info to Airtable: ${airtableError.message}`,
-            );
-            logger.error(
-              `Airtable error details: ${safeStringify(airtableError.response?.data || airtableError)}`,
+        if (status === 'Approved') {
+          const approvedTranches = await prisma.grantTranche.findMany({
+            where: {
+              applicationId: currentTranche.applicationId,
+              status: 'Approved',
+              id: { not: id },
+            },
+            select: {
+              approvedAmount: true,
+            },
+          });
+
+          const totalApprovedSoFar = approvedTranches.reduce(
+            (sum, tranche) => sum + (tranche.approvedAmount || 0),
+            0,
+          );
+
+          if (
+            totalApprovedSoFar + approvedAmount! >
+            application.approvedAmount
+          ) {
+            return NextResponse.json(
+              {
+                error: 'Invalid approved amount',
+                message: `Total approved tranches (${totalApprovedSoFar + approvedAmount!}) would exceed grant's approved amount (${application.approvedAmount})`,
+              },
+              { status: 400 },
             );
           }
-          await queueEmail({
-            type: 'trancheApproved',
-            id: result.id,
-            userId: result.GrantApplication.userId,
-            triggeredBy: userId,
+
+          const existingTranches = await prisma.grantTranche.count({
+            where: {
+              applicationId: currentTranche.applicationId,
+              status: {
+                not: 'Rejected',
+              },
+            },
+          });
+          if (
+            totalTranches - existingTranches === 0 &&
+            application.totalPaid + approvedAmount! < application.approvedAmount
+          ) {
+            totalTranches! += 1;
+          }
+          await prisma.grantApplication.update({
+            where: { id: currentTranche.applicationId },
+            include: {
+              grant: true,
+              user: true,
+            },
+            data: { totalTranches },
           });
         }
 
-        if (result.status === 'Rejected') {
-          await queueEmail({
-            type: 'trancheRejected',
-            id: result.id,
-            userId: result.GrantApplication.userId,
-            triggeredBy: userId,
-          });
-        }
-      })(),
+        const result = await prisma.grantTranche.update({
+          where: { id },
+          data: updateData,
+          include: {
+            GrantApplication: {
+              include: {
+                user: {
+                  select: {
+                    firstName: true,
+                    lastName: true,
+                    email: true,
+                    twitter: true,
+                    discord: true,
+                    kycName: true,
+                    location: true,
+                    kycAddress: true,
+                    kycDOB: true,
+                    kycIDNumber: true,
+                    kycIDType: true,
+                    kycCountry: true,
+                    username: true,
+                  },
+                },
+                grant: {
+                  select: {
+                    airtableId: true,
+                    isNative: true,
+                    title: true,
+                    approverRecordId: true,
+                  },
+                },
+              },
+            },
+          },
+        });
+
+        waitUntil(
+          (async () => {
+            if (result.status === 'Approved') {
+              try {
+                await addPaymentInfoToAirtable(result.GrantApplication, result);
+              } catch (airtableError: any) {
+                logger.error(
+                  `Error adding payment info to Airtable: ${airtableError.message}`,
+                );
+                logger.error(
+                  `Airtable error details: ${safeStringify(airtableError.response?.data || airtableError)}`,
+                );
+              }
+              await queueEmail({
+                type: 'trancheApproved',
+                id: result.id,
+                userId: result.GrantApplication.userId,
+                triggeredBy: userId,
+              });
+            }
+
+            if (result.status === 'Rejected') {
+              await queueEmail({
+                type: 'trancheRejected',
+                id: result.id,
+                userId: result.GrantApplication.userId,
+                triggeredBy: userId,
+              });
+            }
+          })(),
+        );
+        return NextResponse.json({ status: 200 });
+      },
+      { ttlSeconds: 300 },
     );
-    return NextResponse.json({ status: 200 });
   } catch (error: any) {
+    if (error instanceof LockNotAcquiredError) {
+      return NextResponse.json(
+        {
+          error: 'Tranche update already in progress',
+          message: `Tranche update is already being processed for tranche with id=${id}.`,
+        },
+        { status: 409 },
+      );
+    }
     logger.error(
       `Error occurred while updating grant tranche ID: ${id}:  ${error.message}`,
     );
