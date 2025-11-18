@@ -33,7 +33,7 @@ export function SponsorAnnouncements({
     if (isAnyModalOpen) return;
     if (!listingsFetched) return;
     const seen = localStorage.getItem(LOCAL_STORAGE_KEY);
-    if (!seen && !!user.user?.currentSponsor?.st) {
+    if (!seen && !!user.user?.currentSponsor) {
       setShowModal(true);
     }
   }, [isAnyModalOpen, listingsFetched]);

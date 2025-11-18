@@ -36,7 +36,7 @@ function RewardsFooter({
 }: {
   panel: 'rewards' | 'boost';
   setPanel: (panel: 'rewards' | 'boost') => void;
-  setOpen: (open: boolean) => void;
+  setOpen: (open: boolean, options?: { bypassPrompt?: boolean }) => void;
   boostStep?: number;
   isBoostFromUrl?: boolean;
 }) {
@@ -121,6 +121,33 @@ function RewardsFooter({
     minRewardAsk,
     maxRewardAsk,
   ]);
+  const prevRewardAmountTokens = Number(rewardAmount) || 0;
+  const targetBoostTokens = useMemo(() => {
+    if (panel !== 'boost') return prevRewardAmountTokens;
+    const estimatedUsdValue = computeEstimatedUsdValue(
+      rewardAmount,
+      tokenUsdValue,
+    );
+    const targetUSD = resolveTargetUsdFromBoost(
+      boostStep ?? 0,
+      estimatedUsdValue,
+      isFeatureAvailable,
+    );
+    const usd = tokenUsdValue || 1;
+    return targetUSD / usd;
+  }, [
+    boostStep,
+    isFeatureAvailable,
+    panel,
+    prevRewardAmountTokens,
+    rewardAmount,
+    tokenUsdValue,
+  ]);
+  const boostIncreasesReward = useMemo(
+    () =>
+      panel !== 'boost' ? true : targetBoostTokens > prevRewardAmountTokens,
+    [panel, prevRewardAmountTokens, targetBoostTokens],
+  );
 
   return (
     <div className="w-full space-y-4 bg-white">
@@ -150,29 +177,19 @@ function RewardsFooter({
             type="button"
             className="w-full"
             disabled={
-              isBoostFromUrl
+              !boostIncreasesReward ||
+              (isBoostFromUrl
                 ? submitListingMutation.isPending ||
                   submitListingMutation.isSuccess
-                : false
+                : false)
             }
             onClick={async () => {
               if (await form.validateRewards()) {
-                const estimatedUsdValue = computeEstimatedUsdValue(
-                  rewardAmount,
-                  tokenUsdValue,
-                );
-                const targetUSD = resolveTargetUsdFromBoost(
-                  boostStep ?? 0,
-                  estimatedUsdValue,
-                  isFeatureAvailable,
-                );
-
                 const currentRewards = (rewards || {}) as Record<
                   string,
                   number
                 >;
-                const usd = tokenUsdValue || 1;
-                const newTotalTokens = targetUSD / usd;
+                const newTotalTokens = targetBoostTokens;
 
                 let computedRewardAmountTokens = newTotalTokens;
 
@@ -218,7 +235,7 @@ function RewardsFooter({
                   }
                 }
 
-                const prevTokens = Number(rewardAmount) || 0;
+                const prevTokens = prevRewardAmountTokens;
                 if (computedRewardAmountTokens > prevTokens) {
                   posthog.capture('boost_listing');
                 }
@@ -247,7 +264,7 @@ function RewardsFooter({
                 } else {
                   await form.trigger(['rewards', 'rewardAmount'] as any);
                   form.saveDraft();
-                  setOpen(false);
+                  setOpen(false, { bypassPrompt: true });
                 }
               } else {
                 toast.warning(
@@ -275,7 +292,7 @@ function RewardsFooter({
             variant="ghost"
             className="mt-2 w-full text-slate-500"
             onClick={async () => {
-              setOpen(false);
+              setOpen(false, { bypassPrompt: true });
             }}
           >
             Skip

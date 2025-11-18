@@ -18,6 +18,10 @@ import { HowItWorks } from './HowItWorks';
 import { RecentActivity } from './RecentActivity';
 import { RecentEarners } from './RecentEarners';
 import { SponsorBanner } from './SponsorBanner';
+import { SponsorFeatures } from './SponsorFeatures';
+import { SponsorResources } from './SponsorResources';
+import { SponsorListing } from './SponsorStage/SponsorSidebarListing';
+import { SponsorWelcomeVideo } from './SponsorStage/SponsorWelcomeVideo';
 import { TotalStats } from './TotalStats';
 import { YourBookmarks } from './YourBookmarks';
 
@@ -52,6 +56,8 @@ export const HomeSideBar = ({ type }: SideBarProps) => {
   });
   const { data: bookmarks } = useQuery(yourBookmarksQuery({ take: 5 }));
 
+  const isSponsor = !!(ready && !isUserLoading && user?.currentSponsorId);
+
   return (
     <AnimateChangeInHeight duration={0.3}>
       <div className="flex w-96 flex-col gap-8 py-3 pl-6">
@@ -80,42 +86,56 @@ export const HomeSideBar = ({ type }: SideBarProps) => {
         {type !== 'feed' && (
           <>
             <div className="flex flex-col gap-4">
+              {isSponsor && (
+                <div className="mt-2 flex flex-col gap-8">
+                  <SponsorWelcomeVideo />
+                  <SponsorListing />
+                  <SponsorResources />
+                  <SponsorFeatures />
+                </div>
+              )}
               {router.asPath === '/' &&
                 ready &&
                 !isUserLoading &&
                 (!user || (!user.isTalentFilled && !user.currentSponsorId)) && (
                   <SponsorBanner />
                 )}
-              <TotalStats
-                isTotalLoading={isTotalsLoading}
-                bountyCount={totals?.count}
-                TVE={totals?.totalInUSD}
-              />
+              {!isSponsor && (
+                <TotalStats
+                  isTotalLoading={isTotalsLoading}
+                  bountyCount={totals?.count}
+                  TVE={totals?.totalInUSD}
+                />
+              )}
             </div>
 
-            <HowItWorks />
-            {/* <SidebarBannerCypherpunk /> */}
-            {router.asPath !== '/bookmarks' && !!bookmarks?.length && (
-              <YourBookmarks>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-gray-400">
-                    BOOKMARKS
-                  </span>
-                  <Link
-                    href="/bookmarks"
-                    className="text-brand-purple flex items-center text-xs font-semibold"
-                    onClick={() => {
-                      posthog.capture('bookmarks_sidebar');
-                    }}
-                  >
-                    View All
-                    <MdArrowForward className="ml-1" />
-                  </Link>
-                </div>
-              </YourBookmarks>
+            {!isSponsor && (
+              <>
+                <HowItWorks />
+                {/* <SidebarBannerCypherpunk /> */}
+                {router.asPath !== '/bookmarks' && !!bookmarks?.length && (
+                  <YourBookmarks>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium text-gray-400">
+                        BOOKMARKS
+                      </span>
+                      <Link
+                        href="/bookmarks"
+                        className="text-brand-purple flex items-center text-xs font-semibold"
+                        onClick={() => {
+                          posthog.capture('bookmarks_sidebar');
+                        }}
+                      >
+                        View All
+                        <MdArrowForward className="ml-1" />
+                      </Link>
+                    </div>
+                  </YourBookmarks>
+                )}
+                <RecentEarners earners={recentEarners} />
+                <RecentActivity />
+              </>
             )}
-            <RecentEarners earners={recentEarners} />
-            <RecentActivity />
           </>
         )}
       </div>

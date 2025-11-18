@@ -151,7 +151,7 @@ export async function POST(request: NextRequest) {
           const ai = submission.ai as unknown as BountySubmissionAi;
           const qualityScore = ai?.evaluation?.qualityScore || 0;
 
-          if (qualityScore < 10) {
+          if (qualityScore < 15) {
             lowQualitySubmissions.push(submission);
           } else {
             remainingSubmissions.push(submission);
@@ -161,15 +161,20 @@ export async function POST(request: NextRequest) {
         const processedLowQuality = await Promise.all(
           lowQualitySubmissions.map(async (submission) => {
             const ai = submission.ai as unknown as BountySubmissionAi;
+            const calculatedLabel: SubmissionLabels = 'Low_Quality';
             const commitedAi = {
               ...(!!ai ? ai : {}),
+              evaluation: {
+                ...(ai?.evaluation || {}),
+                finalLabel: calculatedLabel,
+              },
               commited: true,
             };
 
             return await prisma.submission.update({
               where: { id: submission.id },
               data: {
-                label: 'Low_Quality',
+                label: calculatedLabel,
                 notes: convertTextToNotesHTML(ai?.evaluation?.notes || ''),
                 ai: commitedAi,
               },
@@ -204,15 +209,11 @@ export async function POST(request: NextRequest) {
           maxShortlistedCap,
         );
 
-        const bottom15Percentile = Math.ceil(totalRemainingSubmissions * 0.15);
+        const bottom25Percentile = Math.ceil(totalRemainingSubmissions * 0.25);
 
         const processedRemainingSubmissions = await Promise.all(
           sortedRemainingSubmissions.map(async (submission, index) => {
             const ai = submission.ai as unknown as BountySubmissionAi;
-            const commitedAi = {
-              ...(!!ai ? ai : {}),
-              commited: true,
-            };
 
             let label: SubmissionLabels = 'Unreviewed';
 
@@ -220,12 +221,21 @@ export async function POST(request: NextRequest) {
               label = 'Shortlisted';
             } else if (
               index >=
-              totalRemainingSubmissions - bottom15Percentile
+              totalRemainingSubmissions - bottom25Percentile
             ) {
               label = 'Low_Quality';
             } else {
               label = 'Mid_Quality';
             }
+
+            const commitedAi = {
+              ...(!!ai ? ai : {}),
+              evaluation: {
+                ...(ai?.evaluation || {}),
+                finalLabel: label,
+              },
+              commited: true,
+            };
 
             return await prisma.submission.update({
               where: { id: submission.id },

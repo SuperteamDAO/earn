@@ -1,5 +1,6 @@
 import type { z } from 'zod';
 
+import { countries } from '@/constants/country';
 import { Superteams } from '@/constants/Superteam';
 import { type JsonValue } from '@/prisma/internal/prismaNamespace';
 import {
@@ -15,9 +16,10 @@ import {
 } from '@/features/listings/constants/schema';
 
 import {
-  filterRegionCountry,
-  getCombinedRegion,
-  getParentRegions,
+  getRegionsForCountryPage,
+  getRegionsForMultiCountryRegionPage,
+  getRegionsForSuperteamPage,
+  getRegionsForUserLocation,
 } from './region';
 
 type BuildListingQueryArgs = z.infer<typeof QueryParamsSchema>;
@@ -146,18 +148,7 @@ function getOrderBy(
 }
 
 function getUserRegionFilter(userLocation: string | null): string[] {
-  if (!userLocation) return ['Global'];
-
-  const userRegion = getCombinedRegion(userLocation, true);
-  const regions = userRegion?.name
-    ? [
-        'Global',
-        userRegion.name,
-        ...(filterRegionCountry(userRegion, userLocation).country || []),
-        ...(getParentRegions(userRegion) || []),
-      ]
-    : ['Global'];
-  return regions;
+  return getRegionsForUserLocation(userLocation);
 }
 
 export async function buildListingQuery(
@@ -234,24 +225,77 @@ export async function buildListingQuery(
   }
 
   if ((context === 'region' || context === 'region-all') && region) {
-    const st = Superteams.find((team) => team.region.toLowerCase() === region);
-    const superteam = st?.name;
+    const st = Superteams.find(
+      (team) => team.region.toLowerCase() === region.toLowerCase(),
+    );
 
-    where.OR = [
-      {
-        region: {
-          in: [
-            region.charAt(0).toUpperCase() + region.slice(1),
-            ...(st?.country || []),
+    if (st) {
+      const regionList = getRegionsForSuperteamPage(st.region);
+      andConditions.push({
+        OR: [
+          {
+            region: {
+              in: regionList,
+            },
+          },
+          {
+            sponsor: {
+              name: st.name,
+            },
+          },
+        ],
+      });
+    } else {
+      const country = countries.find(
+        (c) => c.name.toLowerCase() === region.toLowerCase(),
+      );
+
+      if (country) {
+        if (
+          country.region &&
+          country.regions &&
+          Array.isArray(country.regions)
+        ) {
+          // Multi-country region page (EU, GCC, etc.)
+          const regionList = getRegionsForMultiCountryRegionPage(country.name);
+          andConditions.push({
+            OR: [
+              {
+                region: {
+                  in: regionList,
+                },
+              },
+            ],
+          });
+        } else {
+          // Regular country page
+          const regionList = getRegionsForCountryPage(country.name);
+          andConditions.push({
+            OR: [
+              {
+                region: {
+                  in: regionList,
+                },
+              },
+            ],
+          });
+        }
+      } else {
+        // Fallback for unknown region
+        andConditions.push({
+          OR: [
+            {
+              region: {
+                in: [
+                  region.charAt(0).toUpperCase() + region.slice(1),
+                  'Global',
+                ],
+              },
+            },
           ],
-        },
-      },
-      {
-        sponsor: {
-          name: superteam,
-        },
-      },
-    ];
+        });
+      }
+    }
   }
 
   if (context === 'sponsor' && sponsor) {
