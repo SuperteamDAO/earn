@@ -1,6 +1,7 @@
 import type { NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
+import { LockNotAcquiredError, withRedisLock } from '@/lib/with-redis-lock';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
 
@@ -56,22 +57,37 @@ const handler = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
         return res.status(200).json({ message: 'KYC already verified' });
       }
 
-      const { fullName, country, dob, idNumber, idType } = applicantData;
+      try {
+        await withRedisLock(
+          `locks:create-payment:${userId}`,
+          async () => {
+            const { fullName, country, dob, idNumber, idType } = applicantData;
 
-      await prisma.user.update({
-        where: { id: userId },
-        data: {
-          isKYCVerified: true,
-          kycName: fullName,
-          kycCountry: country,
-          kycDOB: dob,
-          kycIDNumber: idNumber,
-          kycIDType: idType,
-          kycVerifiedAt: new Date(),
-        },
-      });
+            await prisma.user.update({
+              where: { id: userId },
+              data: {
+                isKYCVerified: true,
+                kycName: fullName,
+                kycCountry: country,
+                kycDOB: dob,
+                kycIDNumber: idNumber,
+                kycIDType: idType,
+                kycVerifiedAt: new Date(),
+              },
+            });
 
-      await createPayment({ userId });
+            await createPayment({ userId });
+          },
+          { ttlSeconds: 300 },
+        );
+      } catch (lockError) {
+        if (lockError instanceof LockNotAcquiredError) {
+          return res.status(409).json({
+            message: 'Payment processing already in progress for this user',
+          });
+        }
+        throw lockError;
+      }
     }
 
     return res.status(200).json(result);
