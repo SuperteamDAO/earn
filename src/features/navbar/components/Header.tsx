@@ -27,6 +27,11 @@ const BountySnackbar = dynamic(() =>
 const GrantSnackbar = dynamic(() =>
   import('./GrantSnackbar').then((mod) => mod.GrantSnackbar),
 );
+const SponsorStageSnackbar = dynamic(() =>
+  import('@/features/home/components/SponsorStage/SponsorStageSnackbar').then(
+    (mod) => mod.SponsorStageSnackbar,
+  ),
+);
 const DesktopNavbar = dynamic(() =>
   import('./DesktopNavbar').then((mod) => mod.DesktopNavbar),
 );
@@ -155,6 +160,7 @@ export const Header = () => {
           onCreditOpen={openCreditWithEvent}
           onReferralOpen={openReferralWithEvent}
         />
+        <SponsorStageSnackbar />
       </div>
       <MobileNavbar
         onLoginOpen={onLoginOpen}

@@ -1,5 +1,7 @@
 import type { z } from 'zod';
 
+import { countries } from '@/constants/country';
+import { Superteams } from '@/constants/Superteam';
 import { type JsonValue } from '@/prisma/internal/prismaNamespace';
 import { type GrantsWhereInput } from '@/prisma/models';
 
@@ -8,9 +10,10 @@ import {
   type GrantQueryParamsSchema,
 } from '@/features/grants/constants/schema';
 import {
-  filterRegionCountry,
-  getCombinedRegion,
-  getParentRegions,
+  getRegionsForCountryPage,
+  getRegionsForMultiCountryRegionPage,
+  getRegionsForSuperteamPage,
+  getRegionsForUserLocation,
 } from '@/features/listings/utils/region';
 
 type BuildGrantsQueryArgs = z.infer<typeof GrantQueryParamsSchema>;
@@ -60,19 +63,7 @@ function getSkillFilter(
 }
 
 function getUserRegionFilter(userLocation: string | null): string[] {
-  if (!userLocation) return ['Global'];
-
-  const userRegion = getCombinedRegion(userLocation, true);
-  const regions = userRegion?.name
-    ? [
-        'Global',
-        userRegion.name,
-        ...(filterRegionCountry(userRegion, userLocation).country || []),
-        ...(getParentRegions(userRegion) || []),
-      ]
-    : ['Global'];
-
-  return regions;
+  return getRegionsForUserLocation(userLocation);
 }
 
 export async function buildGrantsQuery(
@@ -102,9 +93,46 @@ export async function buildGrantsQuery(
   }
 
   if (context === 'region' && region) {
-    where.region = {
-      in: [region.charAt(0).toUpperCase() + region.slice(1), 'Global'],
-    };
+    // Check if this is a superteam region first
+    const st = Superteams.find(
+      (team) => team.region.toLowerCase() === region.toLowerCase(),
+    );
+
+    if (st) {
+      const regionList = getRegionsForSuperteamPage(st.region);
+      where.region = {
+        in: regionList,
+      };
+    } else {
+      const country = countries.find(
+        (c) => c.name.toLowerCase() === region.toLowerCase(),
+      );
+
+      if (country) {
+        if (
+          country.region &&
+          country.regions &&
+          Array.isArray(country.regions)
+        ) {
+          // Multi-country region page (EU, GCC, etc.)
+          const regionList = getRegionsForMultiCountryRegionPage(country.name);
+          where.region = {
+            in: regionList,
+          };
+        } else {
+          // Regular country page
+          const regionList = getRegionsForCountryPage(country.name);
+          where.region = {
+            in: regionList,
+          };
+        }
+      } else {
+        // Fallback for unknown region
+        where.region = {
+          in: [region.charAt(0).toUpperCase() + region.slice(1), 'Global'],
+        };
+      }
+    }
   }
 
   if (context === 'sponsor' && sponsor) {

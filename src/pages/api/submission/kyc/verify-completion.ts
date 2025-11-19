@@ -1,6 +1,7 @@
 import type { NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
+import { LockNotAcquiredError, withRedisLock } from '@/lib/with-redis-lock';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
 
@@ -53,40 +54,55 @@ const handler = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
     );
 
     if (result === 'verified') {
-      const wasAlreadyVerified = submission.user.isKYCVerified;
-      const { fullName, country, dob, idNumber, idType } = applicantData;
+      try {
+        await withRedisLock(
+          `locks:create-payment:${userId}`,
+          async () => {
+            const wasAlreadyVerified = submission.user.isKYCVerified ?? false;
+            const { fullName, country, dob, idNumber, idType } = applicantData;
 
-      await prisma.user.update({
-        where: { id: userId },
-        data: {
-          isKYCVerified: true,
-          kycName: fullName,
-          kycCountry: country,
-          kycDOB: dob,
-          kycIDNumber: idNumber,
-          kycIDType: idType,
-          kycVerifiedAt: new Date(),
-        },
-      });
+            await prisma.user.update({
+              where: { id: userId },
+              data: {
+                isKYCVerified: true,
+                kycName: fullName,
+                kycCountry: country,
+                kycDOB: dob,
+                kycIDNumber: idNumber,
+                kycIDType: idType,
+                kycVerifiedAt: new Date(),
+              },
+            });
 
-      const kycCountryCheck = checkKycCountryMatchesRegion(
-        country,
-        submission.listing.region,
-      );
+            const kycCountryCheck = checkKycCountryMatchesRegion(
+              country,
+              submission.listing.region,
+            );
 
-      if (!kycCountryCheck.isValid) {
-        logger.warn(
-          `KYC country mismatch for submission ${submissionId}: KYC country ${country} does not match listing region ${submission.listing.region}`,
+            if (!kycCountryCheck.isValid) {
+              logger.warn(
+                `KYC country mismatch for submission ${submissionId}: KYC country ${country} does not match listing region ${submission.listing.region}`,
+              );
+              return res.status(400).json({
+                message: 'KYC_REJECTED',
+                error: `Your KYC document doesn't belong to ${kycCountryCheck.regionDisplayName}. Please verify again with a KYC document that belongs to ${kycCountryCheck.regionDisplayName}.`,
+                regionDisplayName: kycCountryCheck.regionDisplayName,
+              });
+            }
+
+            if (!wasAlreadyVerified) {
+              await createPayment({ userId });
+            }
+          },
+          { ttlSeconds: 300 },
         );
-        return res.status(400).json({
-          message: 'KYC_REJECTED',
-          error: `Your KYC document doesn't belong to ${kycCountryCheck.regionDisplayName}. Please verify again with a KYC document that belongs to ${kycCountryCheck.regionDisplayName}.`,
-          regionDisplayName: kycCountryCheck.regionDisplayName,
-        });
-      }
-
-      if (!wasAlreadyVerified) {
-        await createPayment({ userId });
+      } catch (lockError) {
+        if (lockError instanceof LockNotAcquiredError) {
+          return res.status(409).json({
+            message: 'Payment processing already in progress for this user',
+          });
+        }
+        throw lockError;
       }
     }
 
