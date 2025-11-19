@@ -1,3 +1,5 @@
+import lookup from 'country-code-lookup';
+
 import { countries } from '@/constants/country';
 import { CombinedRegions, Superteams } from '@/constants/Superteam';
 
@@ -132,6 +134,65 @@ export function userRegionEligibilty({
     ) || false;
 
   return isEligible;
+}
+
+export function checkKycCountryMatchesRegion(
+  kycCountry: string | null | undefined,
+  listingRegion: string | null | undefined,
+): {
+  isValid: boolean;
+  regionDisplayName: string;
+} {
+  if (!listingRegion || listingRegion === 'Global') {
+    return { isValid: true, regionDisplayName: 'Global' };
+  }
+
+  if (!kycCountry) {
+    const regionObject = getCombinedRegion(listingRegion);
+    return {
+      isValid: false,
+      regionDisplayName:
+        regionObject?.displayValue || regionObject?.name || listingRegion,
+    };
+  }
+
+  const countryLookup = lookup.byIso(kycCountry);
+  if (!countryLookup || !countryLookup.country) {
+    const regionObject = getCombinedRegion(listingRegion);
+    return {
+      isValid: false,
+      regionDisplayName:
+        regionObject?.displayValue || regionObject?.name || listingRegion,
+    };
+  }
+
+  const kycCountryName = countryLookup.country;
+  const regionObject = getCombinedRegion(listingRegion);
+
+  if (!regionObject) {
+    const isValid =
+      listingRegion.toLowerCase() === kycCountryName.toLowerCase();
+    return {
+      isValid,
+      regionDisplayName: listingRegion,
+    };
+  }
+
+  const isEligible =
+    regionObject.name?.toLowerCase() === kycCountryName.toLowerCase() ||
+    regionObject.country?.some(
+      (c) => c.toLowerCase() === kycCountryName.toLowerCase(),
+    ) ||
+    regionObject.regions?.some(
+      (r) => r.toLowerCase() === kycCountryName.toLowerCase(),
+    ) ||
+    false;
+
+  return {
+    isValid: isEligible,
+    regionDisplayName:
+      regionObject.displayValue || regionObject.name || listingRegion,
+  };
 }
 
 export function generateSlug(name: string): string {
