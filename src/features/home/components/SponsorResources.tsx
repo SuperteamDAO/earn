@@ -1,5 +1,6 @@
 import { HandCoins, Megaphone, Sparkles } from 'lucide-react';
 import Link from 'next/link';
+import posthog from 'posthog-js';
 
 export function SponsorResources() {
   return (
@@ -9,8 +10,14 @@ export function SponsorResources() {
       </span>
 
       <div className="flex flex-col gap-4">
-        <Link href="#" className="flex items-start gap-4">
-          <div className="flex h-14 w-18 flex-shrink-0 items-center justify-center rounded-md bg-[#E7D3FF]">
+        <Link
+          href="https://superteamdao.notion.site/how-to-post-your-first-gig"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-start gap-4"
+          onClick={() => posthog.capture('getting started_sponsor resources')}
+        >
+          <div className="flex h-14 w-18 shrink-0 items-center justify-center rounded-md bg-[#E7D3FF]">
             <Sparkles className="h-6 w-6 text-[#321D89]" />
           </div>
           <div className="flex min-w-0 flex-1 flex-col gap-1">
@@ -29,6 +36,7 @@ export function SponsorResources() {
           target="_blank"
           rel="noopener noreferrer"
           className="flex items-start gap-4"
+          onClick={() => posthog.capture('rate card_sponsor resources')}
         >
           <div className="flex h-14 w-18 flex-shrink-0 items-center justify-center rounded-md bg-[#C5EAFF]">
             <HandCoins className="h-6 w-6 text-[#15457B]" />
@@ -41,7 +49,11 @@ export function SponsorResources() {
           </div>
         </Link>
 
-        <Link href="/dashboard/faq" className="flex items-start gap-4">
+        <Link
+          href="/dashboard/faq"
+          className="flex items-start gap-4"
+          onClick={() => posthog.capture('faq_sponsor resources')}
+        >
           <div className="flex h-14 w-18 flex-shrink-0 items-center justify-center rounded-md bg-[#BCDDFF]">
             <Megaphone className="h-6 w-6 text-[#413762]" />
           </div>

@@ -1,0 +1,82 @@
+---
+description: PostHog event naming conventions for analytics tracking
+alwaysApply: false
+---
+# PostHog Event Naming Convention
+
+When adding PostHog analytics events, follow the naming convention: `'action_location'`
+
+## Format
+
+- **Format**: `'action_location'`
+- Use lowercase with spaces
+- Use underscores to separate the action from the location
+- The name should be clear enough to understand which screen section we are looking for and what exactly is triggering it
+
+## Examples
+
+### Link Clicks
+- `'getting started_sponsor resources'` - Getting Started link in Sponsor Resources section
+- `'rate card_sponsor resources'` - Rate Card link in Sponsor Resources section
+- `'faq_sponsor resources'` - FAQ link in Sponsor Resources section
+- `'getting started_navbar'` - Getting Started link in navbar
+- `'login_navbar'` - Login link in navbar
+
+### User Actions
+- `'view profile_scout'` - Viewing a profile from scout section
+- `'clicked profile_talent'` - Clicking on a talent profile
+- `'open_wallet_drawer'` - Opening wallet drawer
+- `'initiate_search'` - Initiating a search
+
+### Tab/Section Navigation
+- `'new tab_preview'` - Opening new tab in preview
+- `'scout tab_scout'` - Clicking scout tab
+- `'submissions tab_listing'` - Clicking submissions tab on listing page
+
+### Component-Specific Actions
+- `'boost listing_sponsor'` - Boosting a listing from sponsor dashboard
+- `'create listing_sponsor'` - Creating a listing from sponsor section
+- `'announce winners_sponsor stage banner'` - Announcing winners from sponsor stage banner
+
+## Implementation Pattern
+
+```tsx
+import posthog from 'posthog-js';
+
+// For Link components
+<Link
+  href="/some/path"
+  onClick={() => posthog.capture('action_location')}
+>
+  Link Text
+</Link>
+
+// For button clicks
+<Button onClick={() => posthog.capture('action_location')}>
+  Button Text
+</Button>
+
+// For programmatic tracking
+posthog.capture('action_location');
+```
+
+## Guidelines
+
+1. **Be specific**: The location should clearly identify the UI section (e.g., `sponsor resources`, `navbar`, `sidebar`, `banner`)
+2. **Use action verbs**: The action should describe what the user is doing (e.g., `getting started`, `rate card`, `view profile`, `open`)
+3. **Keep it concise**: Use short, descriptive phrases
+4. **Consistency**: Use consistent naming patterns across similar components
+5. **Location clarity**: The location should make it easy to find the component in the codebase
+
+## Common Locations
+
+- `navbar` - Navigation bar
+- `sidebar` - Sidebar component
+- `banner` - Banner component
+- `sponsor resources` - Sponsor resources section
+- `sponsor` - Sponsor dashboard/section
+- `talent` - Talent-related pages
+- `listing` - Listing pages
+- `scout` - Scout section
+- `xyz drawer` - Drawer/modal components
+- `footer` - Footer component
