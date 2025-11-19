@@ -24,7 +24,7 @@
   "[prisma]": {
     "editor.defaultFormatter": "Prisma.prisma"
   },
-  "prettier.ignorePath": ".gitignore", // Don't run prettier for files listed in .gitignore
+  "prettier.ignorePath": ".prettierignore", // Use .prettierignore for Prettier ignore patterns
   "cSpell.words": ["CLOUDINARY"],
   "[typescript]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"

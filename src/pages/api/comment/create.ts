@@ -99,6 +99,7 @@ async function commentHandler(
             photo: true,
             username: true,
             currentSponsorId: true,
+            isPro: true,
           },
         },
         replies: {
@@ -110,6 +111,7 @@ async function commentHandler(
                 photo: true,
                 username: true,
                 currentSponsorId: true,
+                isPro: true,
               },
             },
           },

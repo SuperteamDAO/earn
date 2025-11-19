@@ -57,6 +57,7 @@ export default async function comment(
             photo: true,
             username: true,
             currentSponsorId: true,
+            isPro: true,
           },
         },
         replies: {
@@ -68,6 +69,7 @@ export default async function comment(
                 photo: true,
                 username: true,
                 currentSponsorId: true,
+                isPro: true,
               },
             },
           },

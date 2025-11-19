@@ -1,6 +1,6 @@
 import { ArrowLeftIcon } from 'lucide-react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { memo, useEffect, useMemo, useRef, useState } from 'react';
+import { memo, useEffect, useMemo, useState } from 'react';
 import { useWatch } from 'react-hook-form';
 
 import {
@@ -55,7 +55,6 @@ export function RewardsSheet() {
   } | null>(null);
   const [isBoostDismissPromptOpen, setIsBoostDismissPromptOpen] =
     useState(false);
-  const bypassBoostCloseRef = useRef(false);
   const params = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
@@ -93,20 +92,8 @@ export function RewardsSheet() {
     );
   }, [form]);
 
-  const handleOpenChange = (nextOpen: boolean) => {
-    if (!nextOpen && panel === 'boost' && !bypassBoostCloseRef.current) {
-      setIsBoostDismissPromptOpen(true);
-      return;
-    }
-
-    setOpen(nextOpen);
-
-    if (nextOpen) {
-      bypassBoostCloseRef.current = false;
-      setPanel('rewards');
-      return;
-    }
-
+  const closeSheet = () => {
+    setOpen(false);
     setIsBoostDismissPromptOpen(false);
     try {
       const current = new URLSearchParams(params?.toString() || '');
@@ -117,23 +104,38 @@ export function RewardsSheet() {
         const href = search ? `${base}?${search}` : base;
         router.replace(href);
       }
-    } catch (err) {
-    } finally {
-      bypassBoostCloseRef.current = false;
+    } catch (err) {}
+  };
+
+  const handleOpenChange = (nextOpen: boolean) => {
+    if (nextOpen) {
+      setOpen(true);
+      setPanel('rewards');
+      return;
     }
+
+    if (panel === 'boost') {
+      setIsBoostDismissPromptOpen(true);
+      return;
+    }
+
+    closeSheet();
   };
 
   const changeOpen = (
     nextOpen: boolean,
     options?: { bypassPrompt?: boolean },
   ): void => {
-    if (!nextOpen && options?.bypassPrompt) {
-      bypassBoostCloseRef.current = true;
-    }
     if (nextOpen) {
-      bypassBoostCloseRef.current = false;
+      setOpen(true);
+      setPanel('rewards');
+    } else {
+      if (options?.bypassPrompt) {
+        closeSheet();
+      } else {
+        handleOpenChange(false);
+      }
     }
-    handleOpenChange(nextOpen);
   };
 
   useEffect(() => {
@@ -246,7 +248,7 @@ export function RewardsSheet() {
               <Footer
                 panel={panel}
                 setPanel={setPanel}
-                setOpen={handleOpenChange}
+                setOpen={changeOpen}
                 boostStep={boostStep}
                 isBoostFromUrl={isBoostFromUrl}
                 proAdjustment={proAdjustment}

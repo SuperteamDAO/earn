@@ -22,6 +22,7 @@ export default tseslint.config(
       'next-env.d.ts',
       '.next/**',
       '/.next/**',
+      'src/components/icons/**/*.tsx',
     ],
   },
 

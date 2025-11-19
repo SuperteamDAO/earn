@@ -34,6 +34,7 @@ import { dayjs } from '@/utils/dayjs';
 import { getURL } from '@/utils/validUrl';
 
 import { AuthWrapper } from '@/features/auth/components/AuthWrapper';
+import { ProBadge } from '@/features/pro/components/ProBadge';
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
 import { formatFromNow } from '../utils';
@@ -254,13 +255,21 @@ export const Comment = ({
               </Link>
             </div>
 
-            <span className="flex gap-2">
+            <span className="flex items-center gap-2">
               {comment?.author?.currentSponsorId === sponsorId && (
                 <p className="flex items-center gap-0.5 pb-0.5 text-xs font-medium text-blue-500 md:text-sm">
                   {isVerified && <VerifiedBadge />}
                   Sponsor
                 </p>
               )}
+              {comment?.author?.currentSponsorId !== sponsorId &&
+                comment?.author?.isPro && (
+                  <ProBadge
+                    containerClassName="bg-zinc-700 px-2 py-[3px] gap-[3px]"
+                    iconClassName="size-2 md:size-2 text-zinc-400"
+                    textClassName="text-[8px] md:text-[9px] font-medium text-white"
+                  />
+                )}
               {comment.isPinned && (
                 <p className="flex items-center gap-0.5 pb-0.5 text-xs font-medium text-slate-500 md:text-sm">
                   <Pin className="h-3 w-3" />
