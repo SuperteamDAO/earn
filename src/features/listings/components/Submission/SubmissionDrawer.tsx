@@ -45,6 +45,7 @@ import {
 import { submissionCountQuery } from '../../queries/submission-count';
 import { userSubmissionQuery } from '../../queries/user-submission-status';
 import { type Listing } from '../../types';
+import { getCombinedRegion } from '../../utils/region';
 import { submissionSchema } from '../../utils/submissionFormSchema';
 import { SubmissionTerms } from './SubmissionTerms';
 
@@ -81,6 +82,8 @@ export const SubmissionDrawer = ({
     minRewardAsk,
     maxRewardAsk,
     Hackathon,
+    isFndnPaying,
+    region,
   } = listing;
 
   const queryClient = useQueryClient();
@@ -90,6 +93,7 @@ export const SubmissionDrawer = ({
   const [isLoading, setIsLoading] = useState(false);
   const [isTOSModalOpen, setIsTOSModalOpen] = useState(false);
   const [termsAccepted, setTermsAccepted] = useState(false);
+  const [kycAcknowledged, setKycAcknowledged] = useState(false);
   const {
     isOpen: isVerificationModalOpen,
     onOpen: onVerificationModalOpen,
@@ -181,6 +185,16 @@ export const SubmissionDrawer = ({
     return isHandleVerified(handle, verifiedHandles);
   }, [linkValue, user?.linkedTwitter]);
 
+  const regionAckCopy = useMemo(() => {
+    if (!region || region === 'Global') {
+      return `By submitting, you acknowledge that if you win, you will have to complete KYC to receive your prize money.`;
+    }
+    const regionObject = getCombinedRegion(region);
+    const regionDisplayName =
+      regionObject?.displayValue || regionObject?.name || region;
+    return `By submitting, you acknowledge that if you win, you will have to complete KYC that proves that you are from ${regionDisplayName}`;
+  }, [region]);
+
   useEffect(() => {
     if (needsXVerification) {
       form.setError('tweet', {
@@ -226,6 +240,7 @@ export const SubmissionDrawer = ({
         : [],
     });
     setTermsAccepted(false);
+    setKycAcknowledged(false);
     onClose();
   };
 
@@ -264,6 +279,7 @@ export const SubmissionDrawer = ({
           isTemplate ||
           !!query['preview'] ||
           (isHackathon && !editMode && !termsAccepted) ||
+          (isFndnPaying && !editMode && !kycAcknowledged) ||
           isLoading ||
           form.formState.isSubmitting ||
           needsXVerification ||
@@ -277,6 +293,8 @@ export const SubmissionDrawer = ({
       isHackathon,
       editMode,
       termsAccepted,
+      isFndnPaying,
+      kycAcknowledged,
       isLoading,
       form.formState.isSubmitting,
       needsXVerification,
@@ -716,6 +734,25 @@ export const SubmissionDrawer = ({
                       Submitting a project that does not meet the submission
                       requirements, including potential spam, may result in
                       restrictions on future submissions.
+                    </label>
+                  </div>
+                )}
+
+                {isFndnPaying && !editMode && (
+                  <div className="mb-4 flex items-start space-x-3">
+                    <Checkbox
+                      id="kyc-acknowledgement"
+                      className="data-[state=checked]:border-brand-purple data-[state=checked]:bg-brand-purple mt-1"
+                      checked={kycAcknowledged}
+                      onCheckedChange={(checked) =>
+                        setKycAcknowledged(checked as boolean)
+                      }
+                    />
+                    <label
+                      htmlFor="kyc-acknowledgement"
+                      className="text-sm leading-none text-slate-600"
+                    >
+                      {regionAckCopy}
                     </label>
                   </div>
                 )}
