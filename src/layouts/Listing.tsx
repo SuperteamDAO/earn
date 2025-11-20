@@ -10,6 +10,7 @@ import { useEffect, useState } from 'react';
 import { ErrorSection } from '@/components/shared/ErrorSection';
 import { type User } from '@/interface/user';
 import { Default } from '@/layouts/Default';
+import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';
 import { getURLSanitized } from '@/utils/getURLSanitized';
@@ -38,6 +39,7 @@ export function ListingPageLayout({
   isTemplate = false,
 }: ListingPageProps) {
   const [, setBountySnackbar] = useAtom(bountySnackbarAtom);
+  const { user } = useUser();
 
   const { data: submissionNumber = 0 } = useQuery(
     submissionCountQuery(initialListing?.id ?? ''),
@@ -242,11 +244,14 @@ export function ListingPageLayout({
                       !initialListing.isPublished &&
                       initialListing.status === 'OPEN'
                     }
+                    isListingAndUserPro={
+                      (initialListing?.isPro ?? false) && (user?.isPro ?? false)
+                    }
                   />
                 </div>
               </div>
             </div>
-            <div className="sticky bottom-14 z-40 mb-12 w-full border-t-1 border-slate-100 bg-white py-1 md:hidden">
+            <div className="sticky bottom-14 z-40 mb-12 w-full border-t border-slate-100 bg-white py-1 md:hidden">
               <SubmissionActionButton
                 listing={initialListing}
                 isTemplate={isTemplate}

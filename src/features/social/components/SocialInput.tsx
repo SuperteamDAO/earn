@@ -72,6 +72,7 @@ interface SocialInputProps {
   needsVerification?: boolean;
   isVerified?: boolean;
   onVerify?: () => void;
+  isPro?: boolean;
 }
 export const SocialInput = ({
   control,
@@ -88,6 +89,7 @@ export const SocialInput = ({
   needsVerification = false,
   isVerified = false,
   onVerify,
+  isPro = false,
 }: SocialInputProps) => {
   const social = useMemo(
     () => socials.find((s) => s.name === socialName),
@@ -115,7 +117,7 @@ export const SocialInput = ({
               )}
               <div
                 className={cn(
-                  'flex h-[2.6875rem] items-center justify-center',
+                  'flex h-10.75 items-center justify-center',
                   height,
                 )}
               >
@@ -153,6 +155,7 @@ export const SocialInput = ({
                         showVerification &&
                           (needsVerification || isVerified) &&
                           'pr-10',
+                        isPro && 'focus-visible:ring-zinc-400',
                         classNames?.input,
                       )}
                       placeholder={placeholder}

@@ -58,6 +58,7 @@ interface Props {
   isVerified?: boolean;
   isTemplate?: boolean;
   isDisabled?: boolean;
+  isListingAndUserPro?: boolean;
 }
 
 export const Comment = ({
@@ -77,6 +78,7 @@ export const Comment = ({
   isVerified = false,
   isTemplate = false,
   isDisabled = false,
+  isListingAndUserPro = false,
 }: Props) => {
   const { user } = useUser();
 
@@ -287,13 +289,19 @@ export const Comment = ({
               type={comment.type}
               submissionId={comment.submissionId}
               value={comment?.message}
+              isListingAndUserPro={isListingAndUserPro}
             />
           </p>
           <div className="flex gap-2 overflow-visible">
             {replies?.length > 0 && (
               <button
                 onClick={() => setShowReplies((prev) => !prev)}
-                className="text-brand-purple hover:text-brand-purple-dark relative -left-3 flex items-center text-xs font-medium md:text-sm"
+                className={cn(
+                  'relative -left-3 flex items-center text-xs font-medium md:text-sm',
+                  isListingAndUserPro
+                    ? 'text-zinc-800 hover:text-zinc-900'
+                    : 'text-brand-purple hover:text-brand-purple-dark',
+                )}
               >
                 <ChevronDown className="mr-1 h-4 w-4" />
                 <span className="mr-1">{replies?.length}</span>
@@ -335,6 +343,7 @@ export const Comment = ({
                   setValue={setNewReply}
                   variant="flushed"
                   onKeyDown={handleKeyDown}
+                  isListingAndUserPro={isListingAndUserPro}
                 />
               </div>
               {containsLink && refType === CommentRefType.BOUNTY && (
@@ -404,6 +413,7 @@ export const Comment = ({
                   sponsorId={sponsorId}
                   comment={reply}
                   refId={refId}
+                  isListingAndUserPro={isListingAndUserPro}
                 />
               ))}
             </div>

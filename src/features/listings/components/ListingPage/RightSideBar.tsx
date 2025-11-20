@@ -4,8 +4,9 @@ import { useRouter } from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
 import Countdown from 'react-countdown';
 
+import MdTimer from '@/components/icons/MdTimer';
+import TbBriefcase2 from '@/components/icons/TbBriefcase2';
 import { CountDownRenderer } from '@/components/shared/countdownRenderer';
-import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { exclusiveSponsorData } from '@/constants/exclusiveSponsors';
 import { tokenList } from '@/constants/tokenList';
 import { useServerTimeSync } from '@/hooks/use-server-time';
@@ -80,6 +81,7 @@ export function RightSideBar({
     Hackathon,
     maxBonusSpots,
     isWinnersAnnounced,
+    isPro,
   } = listing;
 
   const { serverTime, isSync } = useServerTimeSync();
@@ -230,10 +232,11 @@ export function RightSideBar({
               <>
                 <div className="flex flex-col items-start justify-center">
                   <div className="flex items-center justify-center gap-2">
-                    <ExternalImage
-                      className="w-[1.2rem]"
-                      alt={'suit case'}
-                      src={'/icons/purple-suitcase.svg'}
+                    <TbBriefcase2
+                      className={cn(
+                        isPro ? 'text-zinc-900' : 'text-brand-purple',
+                        'size-[1.4rem]',
+                      )}
                     />
                     <p className="text-lg font-medium text-black md:text-xl">
                       {isSubmissionNumberLoading
@@ -254,10 +257,11 @@ export function RightSideBar({
 
                 <div className="flex flex-col items-start justify-center py-3">
                   <div className="flex items-start justify-center gap-1">
-                    <ExternalImage
-                      className="mt-1 w-[1.4rem]"
-                      alt={'suit case'}
-                      src={'/icons/purple-timer.svg'}
+                    <MdTimer
+                      className={cn(
+                        isPro ? 'text-zinc-900' : 'text-brand-purple',
+                        'mt-0.5 size-[1.4rem]',
+                      )}
                     />
                     <div className="flex flex-col items-start">
                       <p className="text-lg font-medium text-black md:text-xl">
@@ -280,10 +284,11 @@ export function RightSideBar({
             ) : (
               <div className="flex flex-col items-start justify-center py-3">
                 <div className="flex items-start justify-center gap-1">
-                  <ExternalImage
-                    className="mt-1 w-[1.4rem]"
-                    alt={'suit case'}
-                    src={'/icons/purple-timer.svg'}
+                  <MdTimer
+                    className={cn(
+                      isPro ? 'text-zinc-900' : 'text-brand-purple',
+                      'mt-0.5 size-[1.4rem]',
+                    )}
                   />
                   <div className="flex flex-col items-start">
                     <p className="text-lg font-medium text-black md:text-xl">
