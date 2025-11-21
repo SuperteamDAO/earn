@@ -59,7 +59,7 @@ export const ProIntro = ({ className }: { className?: string }) => {
         .pro-intro-container:has(button:hover) [style*="background-color"] {
           background-color: #C0C0C0 !important;
         }
-        .pro-intro-container:has(button:hover) [style*="background-color"]:nth-child(15n+3) {
+        .pro-intro-container:has(button:hover) [style*="background-color"]:nth-child(8n+3) {
           background-color: #d4af37 !important;
         }
       `}</style>
@@ -74,10 +74,10 @@ export const ProIntro = ({ className }: { className?: string }) => {
         <div className="absolute -top-10 -left-10 size-64 rounded-full bg-white/20 blur-[60px]" />
 
         <AnimatedDots
-          dotSize={4}
+          dotSize={3}
           colors={['#a1a1aa']}
-          columns={30}
-          rows={4}
+          columns={50}
+          rows={6}
           spacing={1.5}
           className="z-10 mt-0.5 opacity-80 transition-colors duration-500"
         />

@@ -52,13 +52,18 @@ export const UserStatsBanner = () => {
         isPro && 'bg-black',
       )}
     >
-      <div className="absolute -top-20 -left-40 size-96 rounded-full bg-[#3F4041] blur-[90px]" />
+      <div
+        className={cn(
+          'absolute -top-20 -left-40 size-96 rounded-full bg-[#8667FB] blur-[90px]',
+          isPro && 'bg-[#3F4041]',
+        )}
+      />
 
       <AnimatedDots
-        dotSize={isPro ? 4 : 3}
+        dotSize={2}
         colors={isPro ? ['#939393'] : ['#B18CFF']}
-        columns={30}
-        rows={3}
+        columns={40}
+        rows={6}
         spacing={1.5}
         className="absolute top-0 left-10 z-10 opacity-80"
       />
