@@ -10,6 +10,7 @@ import IoWalletOutline from '@/components/icons/IoWalletOutline';
 import { Button } from '@/components/ui/button';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { LocalImage } from '@/components/ui/local-image';
+import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useCreditBalance } from '@/store/credit';
 import { useUser } from '@/store/user';
@@ -18,6 +19,7 @@ import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 
 import { CreditIcon } from '@/features/credits/icon/credit';
 import { HACKATHONS } from '@/features/hackathon/constants/hackathons';
+import { ProBadge } from '@/features/pro/components/ProBadge';
 
 import { LISTING_NAV_ITEMS } from '../constants';
 import { LogoContextMenu } from './LogoContextMenu';
@@ -55,18 +57,6 @@ export const DesktopNavbar = ({
     }
     setAuthUiReady(true);
   }, [ready, authenticated]);
-
-  useEffect(() => {
-    console.log('[DesktopNavbar] Auth State:', {
-      ready,
-      authenticated,
-      authUiReady,
-      isLoading,
-      hasUser: !!user,
-      userId: user?.id,
-      showingSkeleton: (!authUiReady && !authenticated) || (isLoading && !user),
-    });
-  }, [ready, authenticated, authUiReady, isLoading, user]);
 
   const isDashboardRoute = useMemo(
     () => router.pathname.startsWith('/dashboard'),
@@ -119,6 +109,8 @@ export const DesktopNavbar = ({
     onCreditOpen();
   };
 
+  const isPro = user?.isPro;
+
   return (
     <div
       className={cn(
@@ -133,7 +125,7 @@ export const DesktopNavbar = ({
           margin,
         )}
       >
-        <div className="flex w-fit items-center gap-3 lg:gap-4">
+        <div className="ph-no-capture flex w-fit items-center gap-3 lg:gap-5">
           <LogoContextMenu>
             <Link
               href="/"
@@ -157,57 +149,72 @@ export const DesktopNavbar = ({
             </Link>
           </LogoContextMenu>
 
+          <Separator orientation="vertical" className="h-6" />
+
+          {!router.pathname.startsWith('/new/') && (
+            <>
+              {LISTING_NAV_ITEMS?.map((navItem) => {
+                const isCurrent = `${navItem.href}` === router.asPath;
+                return (
+                  <NavLink
+                    className="ph-no-capture"
+                    onClick={() => {
+                      posthog.capture(navItem.posthog);
+                    }}
+                    key={navItem.label}
+                    href={navItem.href ?? '#'}
+                    label={navItem.label}
+                    isActive={isCurrent}
+                  />
+                );
+              })}
+
+              <NavLink
+                className="ph-no-capture"
+                onClick={() => {
+                  posthog.capture('pro_navbar');
+                }}
+                href="/pro"
+                label={
+                  <ProBadge
+                    containerClassName="gap-1 mt-px"
+                    iconClassName="size-4 text-zinc-600"
+                    textClassName="text-xs font-medium text-slate-600"
+                  />
+                }
+                isActive={router.pathname === '/pro'}
+              />
+
+              {HACKATHONS.map((hackathon) => (
+                <Link
+                  href={`/hackathon/${hackathon.slug}`}
+                  key={hackathon.slug}
+                  className={cn(
+                    'flex items-center py-2 font-medium',
+                    'h-[1.85rem]',
+                  )}
+                  prefetch={false}
+                >
+                  <ExternalImage
+                    src={hackathon.logo}
+                    alt={hackathon.label}
+                    className="h-full object-contain"
+                  />
+                </Link>
+              ))}
+            </>
+          )}
+
           {!router.pathname.startsWith('/search') &&
             !router.pathname.startsWith('/new/') && (
               <div
-                className="flex cursor-pointer items-center gap-1.5 rounded-md px-3 py-2 text-slate-500 transition-all duration-100 hover:bg-slate-100 hover:text-slate-700"
+                className="flex cursor-pointer items-center gap-1.5 rounded-md border border-slate-300 px-2 py-2 text-slate-500 transition-all duration-100 hover:bg-slate-100 hover:text-slate-700"
                 onClick={onSearchOpen}
               >
-                <IoSearchOutline className="size-5" />
+                <IoSearchOutline className="size-4" />
               </div>
             )}
         </div>
-
-        {!router.pathname.startsWith('/new/') && (
-          <div className="w-fit xl:absolute xl:left-2/4 xl:-translate-x-2/4">
-            <div className="mx-6 flex h-full items-center justify-center">
-              <div className="ph-no-capture flex h-full flex-row items-center gap-4.5">
-                {LISTING_NAV_ITEMS?.map((navItem) => {
-                  const isCurrent = `${navItem.href}` === router.asPath;
-                  return (
-                    <NavLink
-                      className="ph-no-capture"
-                      onClick={() => {
-                        posthog.capture(navItem.posthog);
-                      }}
-                      key={navItem.label}
-                      href={navItem.href ?? '#'}
-                      label={navItem.label}
-                      isActive={isCurrent}
-                    />
-                  );
-                })}
-                {HACKATHONS.map((hackathon) => (
-                  <Link
-                    href={`/hackathon/${hackathon.slug}`}
-                    key={hackathon.slug}
-                    className={cn(
-                      'flex items-center py-2 font-medium',
-                      'h-[1.85rem]',
-                    )}
-                    prefetch={false}
-                  >
-                    <ExternalImage
-                      src={hackathon.logo}
-                      alt={hackathon.label}
-                      className="h-full object-contain"
-                    />
-                  </Link>
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
 
         <div className="flex items-center gap-4 py-1.5">
           {((!authUiReady && !authenticated) || (isLoading && !user)) && (
@@ -240,7 +247,11 @@ export const DesktopNavbar = ({
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="text-brand-purple hover:text-brand-purple bg-indigo-50 text-xs font-semibold hover:bg-indigo-100"
+                  className={cn(
+                    'text-brand-purple hover:text-brand-purple bg-indigo-50 text-xs font-semibold hover:bg-indigo-100',
+                    isPro &&
+                      'bg-zinc-200 text-zinc-700 hover:bg-zinc-300 hover:text-zinc-700',
+                  )}
                   onClick={onReferralOpen}
                 >
                   <Gift />
@@ -254,16 +265,38 @@ export const DesktopNavbar = ({
                     className="flex cursor-pointer items-center gap-1.5 rounded-md px-2 py-2 text-slate-500 transition-all duration-100 hover:bg-slate-100 hover:text-slate-700"
                     onClick={openCreditDrawer}
                   >
-                    <CreditIcon className="text-brand-purple size-4" />
-                    <p className="text-sm font-semibold">{creditBalance}</p>
+                    <CreditIcon
+                      className={cn(
+                        'size-4',
+                        isPro ? 'text-zinc-600' : 'text-brand-purple',
+                      )}
+                    />
+                    <p
+                      className={cn(
+                        'text-sm font-semibold',
+                        isPro ? 'text-zinc-600' : 'text-slate-500',
+                      )}
+                    >
+                      {creditBalance}
+                    </p>
                   </div>
                   <div className="relative">
                     <div
                       className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-slate-500 transition-all duration-100 hover:bg-slate-100 hover:text-slate-700"
                       onClick={onWalletOpen}
                     >
-                      <IoWalletOutline className="text-brand-purple size-6" />
-                      <span className="bg-brand-purple/95 absolute top-px -right-1.5 block rounded-md px-1 py-px text-[10px] font-semibold tracking-tight text-white">
+                      <IoWalletOutline
+                        className={cn(
+                          'size-6',
+                          isPro ? 'text-zinc-600' : 'text-brand-purple',
+                        )}
+                      />
+                      <span
+                        className={cn(
+                          'absolute top-px -right-1.5 block rounded-md px-1 py-px text-[10px] font-semibold tracking-tight text-white',
+                          isPro ? 'bg-zinc-700' : 'bg-brand-purple/95',
+                        )}
+                      >
                         ${formatNumberWithSuffix(walletBalance || 0, 1, false)}
                       </span>
                     </div>

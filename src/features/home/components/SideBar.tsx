@@ -8,12 +8,16 @@ import posthog from 'posthog-js';
 import MdArrowForward from '@/components/icons/MdArrowForward';
 import { AnimateChangeInHeight } from '@/components/shared/AnimateChangeInHeight';
 import { useBreakpoint } from '@/hooks/use-breakpoint';
+import { type User } from '@/interface/user';
 import { useUser } from '@/store/user';
 
 import { recentEarnersQuery } from '@/features/listings/queries/recent-earners';
 import { yourBookmarksQuery } from '@/features/listings/queries/your-bookmarks';
+import { type Listing } from '@/features/listings/types';
+import { ProIntro } from '@/features/pro/components/ProIntro';
 
 import { totalsQuery } from '../queries/totals';
+import { userStatsQuery } from '../queries/user-stats';
 import { HowItWorks } from './HowItWorks';
 import { RecentActivity } from './RecentActivity';
 import { RecentEarners } from './RecentEarners';
@@ -61,6 +65,74 @@ const SectionHeader = ({
   </div>
 );
 
+interface FeedSidebarContentProps {
+  recentEarners: User[] | undefined;
+}
+
+const FeedSidebarContent = ({ recentEarners }: FeedSidebarContentProps) => (
+  <>
+    <VibeCard />
+    <LiveListings>
+      <SectionHeader title="LIVE LISTINGS" href="/" />
+    </LiveListings>
+    <HowItWorks />
+    <RecentEarners earners={recentEarners} />
+  </>
+);
+
+const SponsorSidebarContent = () => (
+  <div className="mt-2 flex flex-col gap-8">
+    <SponsorWelcomeVideo />
+    <SponsorListing />
+    <SponsorResources />
+    <SponsorFeatures />
+  </div>
+);
+
+interface NonSponsorSidebarContentProps {
+  totals: { count?: number; totalInUSD?: number } | undefined;
+  isTotalsLoading: boolean;
+  recentEarners: User[] | undefined;
+  bookmarks: Listing[] | undefined;
+  currentPath: string;
+  showSponsorBanner: boolean;
+  showProIntro: boolean;
+}
+
+const NonSponsorSidebarContent = ({
+  totals,
+  isTotalsLoading,
+  recentEarners,
+  bookmarks,
+  currentPath,
+  showSponsorBanner,
+  showProIntro,
+}: NonSponsorSidebarContentProps) => (
+  <>
+    <div className="flex flex-col gap-4">
+      {showSponsorBanner && <SponsorBanner />}
+      {showProIntro && <ProIntro />}
+      <TotalStats
+        isTotalLoading={isTotalsLoading}
+        bountyCount={totals?.count}
+        TVE={totals?.totalInUSD}
+      />
+    </div>
+    <HowItWorks />
+    {currentPath !== '/bookmarks' && !!bookmarks?.length && (
+      <YourBookmarks>
+        <SectionHeader
+          title="BOOKMARKS"
+          href="/bookmarks"
+          onLinkClick={() => posthog.capture('bookmarks_sidebar')}
+        />
+      </YourBookmarks>
+    )}
+    <RecentEarners earners={recentEarners} />
+    <RecentActivity />
+  </>
+);
+
 export const HomeSideBar = ({ type }: SideBarProps) => {
   const router = useRouter();
   const { user, isLoading: isUserLoading } = useUser();
@@ -77,6 +149,8 @@ export const HomeSideBar = ({ type }: SideBarProps) => {
   });
   const { data: bookmarks } = useQuery(yourBookmarksQuery({ take: 5 }));
 
+  const { data: stats, isLoading: isStatsLoading } = useQuery(userStatsQuery);
+
   const isSponsor = !!(ready && !isUserLoading && user?.currentSponsorId);
   const isFeed = type === 'feed';
   const showSponsorBanner =
@@ -85,56 +159,44 @@ export const HomeSideBar = ({ type }: SideBarProps) => {
     !isUserLoading &&
     (!user || (!user.isTalentFilled && !user.currentSponsorId));
 
+  const showProIntro = !!(
+    !user?.isPro &&
+    user?.isTalentFilled &&
+    !isStatsLoading &&
+    stats?.totalWinnings &&
+    stats.totalWinnings >= 1000
+  );
+
+  const renderContent = () => {
+    if (isFeed) {
+      return <FeedSidebarContent recentEarners={recentEarners} />;
+    }
+
+    if (isSponsor) {
+      return (
+        <div className="flex flex-col gap-4">
+          <SponsorSidebarContent />
+        </div>
+      );
+    }
+
+    return (
+      <NonSponsorSidebarContent
+        totals={totals}
+        isTotalsLoading={isTotalsLoading}
+        recentEarners={recentEarners}
+        bookmarks={bookmarks}
+        currentPath={router.asPath}
+        showSponsorBanner={showSponsorBanner}
+        showProIntro={showProIntro ?? false}
+      />
+    );
+  };
+
   return (
     <AnimateChangeInHeight duration={0.3}>
       <div className="flex w-96 flex-col gap-8 py-3 pl-6">
-        {isFeed ? (
-          <>
-            <VibeCard />
-            <LiveListings>
-              <SectionHeader title="LIVE LISTINGS" href="/" />
-            </LiveListings>
-            <HowItWorks />
-            <RecentEarners earners={recentEarners} />
-          </>
-        ) : (
-          <>
-            <div className="flex flex-col gap-4">
-              {isSponsor && (
-                <div className="mt-2 flex flex-col gap-8">
-                  <SponsorWelcomeVideo />
-                  <SponsorListing />
-                  <SponsorResources />
-                  <SponsorFeatures />
-                </div>
-              )}
-              {showSponsorBanner && <SponsorBanner />}
-              {!isSponsor && (
-                <TotalStats
-                  isTotalLoading={isTotalsLoading}
-                  bountyCount={totals?.count}
-                  TVE={totals?.totalInUSD}
-                />
-              )}
-            </div>
-            {!isSponsor && (
-              <>
-                <HowItWorks />
-                {router.asPath !== '/bookmarks' && !!bookmarks?.length && (
-                  <YourBookmarks>
-                    <SectionHeader
-                      title="BOOKMARKS"
-                      href="/bookmarks"
-                      onLinkClick={() => posthog.capture('bookmarks_sidebar')}
-                    />
-                  </YourBookmarks>
-                )}
-                <RecentEarners earners={recentEarners} />
-                <RecentActivity />
-              </>
-            )}
-          </>
-        )}
+        {renderContent()}
       </div>
     </AnimateChangeInHeight>
   );

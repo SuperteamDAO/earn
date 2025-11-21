@@ -5,9 +5,10 @@ import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
 
+import { userSelectOptions } from '@/features/auth/constants/userSelectOptions';
 import { getUserSession } from '@/features/auth/utils/getUserSession';
 
-export async function GET() {
+export async function POST() {
   try {
     const headersList = await headers();
     const sessionResponse = await getUserSession(headersList);
@@ -28,16 +29,12 @@ export async function GET() {
 
     const stats = await prisma.$queryRaw<
       Array<{
-        participations: bigint;
-        wins: bigint;
         listingWinnings: number;
         grantWinnings: number;
         totalWinnings: number;
       }>
     >`
       SELECT 
-        COALESCE(submission_stats.total_submissions, 0) as participations,
-        COALESCE(submission_stats.wins, 0) as wins,
         COALESCE(submission_stats.listing_winnings, 0) as listingWinnings,
         COALESCE(grant_stats.grant_winnings, 0) as grantWinnings,
         COALESCE(submission_stats.listing_winnings, 0) + COALESCE(grant_stats.grant_winnings, 0) as totalWinnings
@@ -45,8 +42,6 @@ export async function GET() {
       LEFT JOIN (
         SELECT 
           s.userId,
-          COUNT(*) as total_submissions,
-          COUNT(CASE WHEN s.isWinner = true AND l.isWinnersAnnounced = true THEN 1 END) as wins,
           COALESCE(SUM(CASE WHEN s.isWinner = true AND l.isWinnersAnnounced = true THEN s.rewardInUSD ELSE 0 END), 0) as listing_winnings
         FROM Submission s
         INNER JOIN Bounties l ON s.listingId = l.id
@@ -69,22 +64,54 @@ export async function GET() {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
-    const result = stats[0];
-    const participations = Number(result.participations);
-    const wins = Number(result.wins);
-    const totalWinnings = result.totalWinnings;
+    const totalWinnings = stats[0].totalWinnings;
 
-    logger.info(
-      `User data retrieved successfully: participations=${participations}, wins=${wins}, totalWinnings=${totalWinnings}`,
-    );
+    if (totalWinnings < 1000) {
+      logger.warn(
+        `User ${userId} attempted to upgrade to pro but only earned $${totalWinnings}`,
+      );
+      return NextResponse.json(
+        {
+          error: 'Not eligible for Pro',
+          message: `You need to earn at least $1,000 to upgrade to Pro. You've earned $${totalWinnings.toFixed(2)}.`,
+        },
+        { status: 403 },
+      );
+    }
 
-    return NextResponse.json({ participations, wins, totalWinnings });
+    const existingUser = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { isPro: true },
+    });
+
+    if (existingUser?.isPro) {
+      logger.info(`User ${userId} is already Pro`);
+      const updatedUser = await prisma.user.findUnique({
+        where: { id: userId },
+        select: userSelectOptions,
+      });
+      return NextResponse.json(updatedUser);
+    }
+
+    await prisma.user.update({
+      where: { id: userId },
+      data: { isPro: true },
+    });
+
+    const updatedUser = await prisma.user.findUnique({
+      where: { id: userId },
+      select: userSelectOptions,
+    });
+
+    logger.info(`User ${userId} successfully upgraded to Pro`);
+
+    return NextResponse.json(updatedUser);
   } catch (err) {
     logger.error(
-      `Error occurred while processing the request: ${safeStringify(err)}`,
+      `Error occurred while upgrading user to Pro: ${safeStringify(err)}`,
     );
     return NextResponse.json(
-      { error: 'Error occurred while processing the request.' },
+      { error: 'Error occurred while upgrading to Pro.' },
       { status: 500 },
     );
   }

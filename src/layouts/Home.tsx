@@ -12,6 +12,7 @@ import { cn } from '@/utils/cn';
 import { BannerCarousel } from '@/features/home/components/Banner';
 import { UserStatsBanner } from '@/features/home/components/UserStatsBanner';
 import { userCountQuery } from '@/features/home/queries/user-count';
+import { ProIntroDialog } from '@/features/pro/components/ProIntroDialog';
 
 interface CountryData {
   readonly name: string;
@@ -135,6 +136,7 @@ export function Home({
           </div>
         </div>
       </div>
+      {authenticated && <ProIntroDialog />}
     </Default>
   );
 }

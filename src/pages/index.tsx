@@ -19,6 +19,7 @@ import { SponsorStageBanner } from '@/features/home/components/SponsorStage/Spon
 import { UserStatsBanner } from '@/features/home/components/UserStatsBanner';
 import { userCountQuery } from '@/features/home/queries/user-count';
 import { ListingsSection } from '@/features/listings/components/ListingsSection';
+import { ProIntroDialog } from '@/features/pro/components/ProIntroDialog';
 
 const GrantsSection = dynamic(() =>
   import('@/features/grants/components/GrantsSection').then(
@@ -122,6 +123,7 @@ export default function HomePage({ potentialSession }: HomePageProps) {
       <InstallPWAModal />
       <HomepagePop />
       <TalentAnnouncements />
+      {authenticated && <ProIntroDialog />}
     </Default>
   );
 }
