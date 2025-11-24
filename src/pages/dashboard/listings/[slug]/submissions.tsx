@@ -425,11 +425,7 @@ export default function BountySubmissions({ slug }: Props) {
             />
           )}
           {surveyOpen && bounty?.type !== 'grant' && (
-            <Survey
-              open={surveyOpen}
-              setOpen={setSurveyOpen}
-              type={bounty?.type || 'bounty'}
-            />
+            <Survey open={surveyOpen} setOpen={setSurveyOpen} />
           )}
           <DummySubmissionsForm listingId={bounty?.id || ''} slug={slug} />
           <SubmissionHeader
