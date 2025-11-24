@@ -1,3 +1,4 @@
+import { useWallet } from '@solana/wallet-adapter-react';
 import { ChevronDown, ExternalLink } from 'lucide-react';
 import React, { useState } from 'react';
 
@@ -97,6 +98,7 @@ export const PayoutSection = ({
   bounty: Listing;
 }) => {
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
+  const { connected: walletConnected } = useWallet();
 
   const toggleExpandRow = (id: string) => {
     setExpandedRows((prev) => {
@@ -153,7 +155,9 @@ export const PayoutSection = ({
             Wallet Connection
           </h3>
           <p className="text-xs text-slate-500">
-            Connect your wallet to process payments to winners
+            {walletConnected
+              ? 'Process payments to winners using this wallet'
+              : 'Connect your wallet to process payments to winners'}
           </p>
         </div>
         <WalletConnectionBadge />
@@ -194,15 +198,16 @@ export const PayoutSection = ({
 
               const isExpanded = expandedRows.has(submission.id);
 
-              const totalPaid = submission.paymentDetails?.reduce(
-                (acc, payment) => acc + payment.amount,
-                0,
-              );
+              const totalPaid =
+                submission.paymentDetails?.reduce(
+                  (acc, payment) => acc + payment.amount,
+                  0,
+                ) ?? 0;
 
-              const paidPercentage = (
-                ((totalPaid ?? 0) / (bounty.rewardAmount ?? 0)) *
-                100
-              ).toFixed(2);
+              const paidPercentage =
+                bounty.rewardAmount && bounty.rewardAmount > 0
+                  ? ((totalPaid / bounty.rewardAmount) * 100).toFixed(2)
+                  : '0.00';
 
               return (
                 <React.Fragment key={submission.id}>

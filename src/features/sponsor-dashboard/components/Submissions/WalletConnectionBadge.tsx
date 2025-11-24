@@ -38,7 +38,11 @@ export function WalletConnectionBadge({
 
   const handleDisconnect = async () => {
     posthog.capture('disconnect_wallet_payments_tab');
-    await disconnect();
+    try {
+      await disconnect();
+    } catch (error) {
+      console.error('Failed to disconnect wallet:', error);
+    }
   };
 
   if (!connected) {

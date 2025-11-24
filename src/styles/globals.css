@@ -319,7 +319,6 @@ body {
   border-radius: calc(var(--radius) * 2) !important;
   padding: 1.25rem !important;
   min-width: 100vw !important;
-  min-width: auto !important;
   box-shadow: 0 24px 40px -24px rgb(15 23 42 / 0.45) !important;
 }
 
@@ -357,7 +356,7 @@ body {
   color: var(--color-black) !important;
 }
 
-.wallet-adapter-modal-button-close:hover .wallet-adapter-modal-button-close:active {
+.wallet-adapter-modal-button-close:hover, .wallet-adapter-modal-button-close:active {
   background: hsl(var(--muted)) !important;
   color: rgb(0, 0, 0) !important;
 }
