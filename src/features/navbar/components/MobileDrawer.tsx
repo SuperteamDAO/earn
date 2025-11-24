@@ -20,6 +20,7 @@ import { useLogout, useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 
 import { HACKATHONS } from '@/features/hackathon/constants/hackathons';
+import { ProBadge } from '@/features/pro/components/ProBadge';
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 import { EmailSettingsModal } from '@/features/talent/components/EmailSettingsModal';
 
@@ -218,6 +219,20 @@ export const MobileDrawer = ({
                       />
                     );
                   })}
+                  <NavItem
+                    className="ph-no-capture"
+                    onClick={() => {
+                      posthog.capture('pro_navbar');
+                      router.push('/pro');
+                    }}
+                    label={
+                      <ProBadge
+                        containerClassName="gap-1 mt-px"
+                        iconClassName="size-4 text-zinc-600"
+                        textClassName="text-xs font-medium text-slate-600"
+                      />
+                    }
+                  />
                 </div>
               </CollapsibleContent>
             </Collapsible>

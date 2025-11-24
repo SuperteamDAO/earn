@@ -15,6 +15,7 @@ import { recentEarnersQuery } from '@/features/listings/queries/recent-earners';
 import { yourBookmarksQuery } from '@/features/listings/queries/your-bookmarks';
 import { type Listing } from '@/features/listings/types';
 import { ProIntro } from '@/features/pro/components/ProIntro';
+import { useProUpgradeFlow } from '@/features/pro/state/pro-upgrade-flow';
 
 import { totalsQuery } from '../queries/totals';
 import { userStatsQuery } from '../queries/user-stats';
@@ -111,7 +112,7 @@ const NonSponsorSidebarContent = ({
   <>
     <div className="flex flex-col gap-4">
       {showSponsorBanner && <SponsorBanner />}
-      {showProIntro && <ProIntro />}
+      {showProIntro && <ProIntro origin="sidebar" />}
       <TotalStats
         isTotalLoading={isTotalsLoading}
         bountyCount={totals?.count}
@@ -138,6 +139,7 @@ export const HomeSideBar = ({ type }: SideBarProps) => {
   const { user, isLoading: isUserLoading } = useUser();
   const isLg = useBreakpoint('lg');
   const { ready } = usePrivy();
+  const { flow } = useProUpgradeFlow();
 
   const { data: totals, isLoading: isTotalsLoading } = useQuery({
     ...totalsQuery,
@@ -166,6 +168,9 @@ export const HomeSideBar = ({ type }: SideBarProps) => {
     stats?.totalWinnings &&
     stats.totalWinnings >= 1000
   );
+  const isSidebarFlowActive =
+    flow.source === 'sidebar' && flow.status !== 'idle';
+  const shouldRenderProIntro = (showProIntro ?? false) || isSidebarFlowActive;
 
   const renderContent = () => {
     if (isFeed) {
@@ -188,7 +193,7 @@ export const HomeSideBar = ({ type }: SideBarProps) => {
         bookmarks={bookmarks}
         currentPath={router.asPath}
         showSponsorBanner={showSponsorBanner}
-        showProIntro={showProIntro ?? false}
+        showProIntro={shouldRenderProIntro}
       />
     );
   };
