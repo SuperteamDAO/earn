@@ -1,6 +1,8 @@
 import type { MetadataRoute } from 'next';
 import { NextResponse } from 'next/server';
 
+export const revalidate = 86400;
+
 const baseUrl = 'https://earn.superteam.fun';
 
 function isProduction(): boolean {
