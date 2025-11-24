@@ -225,7 +225,17 @@ export const PayoutSection = ({
                             {submission.user.lastName}
                           </div>
                           <div className="text-xs text-slate-500">
-                            @{submission.user.email}
+                            @
+                            {submission.user.username ||
+                              (() => {
+                                const email = submission.user.email || '';
+                                const [localPart, domain] = email.split('@');
+                                if (!localPart)
+                                  return email.slice(0, 3) + '...';
+                                if (!domain)
+                                  return localPart.slice(0, 3) + '...';
+                                return `${localPart.slice(0, 1)}...@${domain}`;
+                              })()}
                           </div>
                         </div>
                       </div>
