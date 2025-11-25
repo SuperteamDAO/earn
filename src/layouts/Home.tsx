@@ -26,7 +26,13 @@ interface SkillData {
 
 interface HomeProps {
   readonly children: ReactNode;
-  readonly type: 'listing' | 'region' | 'feed' | 'region-all' | 'skill';
+  readonly type:
+    | 'listing'
+    | 'region'
+    | 'feed'
+    | 'region-all'
+    | 'skill'
+    | 'skill-all';
   readonly st?: Superteam;
   readonly countryData?: CountryData;
   readonly skillData?: SkillData;
@@ -123,13 +129,14 @@ export function Home({
           countryCode={countryData.code}
         />
       )}
-      {type === 'skill' && skillData && (
+      {(type === 'skill' || type === 'skill-all') && skillData && (
         <SkillBanner skillName={skillData.name} skillType={skillData.type} />
       )}
       {!!currentCategory &&
         type !== 'region' &&
         type !== 'region-all' &&
-        type !== 'skill' && <CategoryBanner category={currentCategory} />}
+        type !== 'skill' &&
+        type !== 'skill-all' && <CategoryBanner category={currentCategory} />}
       <div className={cn('mx-auto w-full px-2 lg:px-6')}>
         <div className="mx-auto w-full max-w-7xl p-0">
           <div className="flex items-start justify-between">

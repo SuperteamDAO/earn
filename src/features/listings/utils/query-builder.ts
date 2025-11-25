@@ -328,7 +328,7 @@ export async function buildListingQuery(
     });
   }
 
-  if (context === 'skill' && skill) {
+  if ((context === 'skill' || context === 'skill-all') && skill) {
     const skillInfo = findSkillBySlug(skill);
 
     if (skillInfo) {

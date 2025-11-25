@@ -185,7 +185,7 @@ export const ListingsSection = ({
     } else if (type === 'region') {
       basePath = `/regions/${region}/all`;
     } else if (type === 'skill' && skill) {
-      basePath = `/skill/${skill}`;
+      basePath = `/skill/${skill}/all`;
     } else {
       basePath = '/all';
     }
@@ -262,7 +262,7 @@ export const ListingsSection = ({
         {listings.map((listing) => (
           <ListingCard key={listing.id} bounty={listing} />
         ))}
-        {(type === 'home' || type === 'region') && (
+        {(type === 'home' || type === 'region' || type === 'skill') && (
           <ViewAllButton
             posthogEvent="viewall bottom_listings"
             href={viewAllLink()}

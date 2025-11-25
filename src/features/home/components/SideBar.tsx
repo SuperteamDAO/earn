@@ -33,7 +33,8 @@ interface SideBarProps {
     | 'region'
     | 'feed'
     | 'region-all'
-    | 'skill';
+    | 'skill'
+    | 'skill-all';
 }
 
 const VibeCard = dynamic(() =>
