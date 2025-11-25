@@ -26,7 +26,14 @@ import { TotalStats } from './TotalStats';
 import { YourBookmarks } from './YourBookmarks';
 
 interface SideBarProps {
-  type: 'landing' | 'listing' | 'category' | 'region' | 'feed' | 'region-all';
+  type:
+    | 'landing'
+    | 'listing'
+    | 'category'
+    | 'region'
+    | 'feed'
+    | 'region-all'
+    | 'skill';
 }
 
 const VibeCard = dynamic(() =>

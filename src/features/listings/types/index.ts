@@ -103,6 +103,7 @@ export interface ListingTabsProps {
   potentialSession?: boolean;
   region?: string;
   sponsor?: string;
+  skill?: string;
 }
 
 type ProjectContextQuestionsType = {

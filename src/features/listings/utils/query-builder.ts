@@ -21,6 +21,7 @@ import {
   getRegionsForSuperteamPage,
   getRegionsForUserLocation,
 } from './region';
+import { findSkillBySlug } from './skill';
 
 type BuildListingQueryArgs = z.infer<typeof QueryParamsSchema>;
 
@@ -160,7 +161,7 @@ export async function buildListingQuery(
     skills: JsonValue;
   } | null,
 ): Promise<ListingQueryResult> {
-  const { tab, category, status, context, region, sponsor } = args;
+  const { tab, category, status, context, region, sponsor, skill } = args;
   const effectiveCategory =
     context === 'bookmarks' && category === 'For You' ? 'All' : category;
 
@@ -325,6 +326,30 @@ export async function buildListingQuery(
         },
       },
     });
+  }
+
+  if (context === 'skill' && skill) {
+    const skillInfo = findSkillBySlug(skill);
+
+    if (skillInfo) {
+      if (skillInfo.type === 'parent') {
+        // Filter by parent skill
+        andConditions.push({
+          skills: {
+            path: '$[*].skills',
+            array_contains: [skillInfo.name],
+          },
+        });
+      } else {
+        // Filter by subskill
+        andConditions.push({
+          skills: {
+            path: '$[*].subskills',
+            array_contains: [skillInfo.name],
+          },
+        });
+      }
+    }
   }
 
   const standardTabs = ['all', 'bounties', 'projects'];

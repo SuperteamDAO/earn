@@ -54,6 +54,7 @@ export const ListingsSection = ({
   potentialSession,
   region,
   sponsor,
+  skill,
   customEmptySection,
 }: ListingsSectionProps) => {
   const isMd = useBreakpoint('md');
@@ -92,6 +93,7 @@ export const ListingsSection = ({
       status: 'open',
       region,
       sponsor,
+      skill,
       authenticated,
     });
 
@@ -156,6 +158,7 @@ export const ListingsSection = ({
     order: activeOrder,
     region,
     sponsor,
+    skill,
     authenticated,
   });
 
@@ -181,6 +184,8 @@ export const ListingsSection = ({
       basePath = '/all';
     } else if (type === 'region') {
       basePath = `/regions/${region}/all`;
+    } else if (type === 'skill' && skill) {
+      basePath = `/skill/${skill}`;
     } else {
       basePath = '/all';
     }

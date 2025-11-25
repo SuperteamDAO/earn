@@ -18,11 +18,18 @@ interface CountryData {
   readonly code: string;
 }
 
+interface SkillData {
+  readonly name: string;
+  readonly type: 'parent' | 'subskill';
+  readonly parent?: string;
+}
+
 interface HomeProps {
   readonly children: ReactNode;
-  readonly type: 'listing' | 'region' | 'feed' | 'region-all';
+  readonly type: 'listing' | 'region' | 'feed' | 'region-all' | 'skill';
   readonly st?: Superteam;
   readonly countryData?: CountryData;
+  readonly skillData?: SkillData;
   readonly potentialSession?: boolean;
   readonly meta?: ReactNode;
 }
@@ -47,6 +54,12 @@ const CountryBanner = dynamic(() =>
   ),
 );
 
+const SkillBanner = dynamic(() =>
+  import('@/features/home/components/SkillBanner').then(
+    (mod) => mod.SkillBanner,
+  ),
+);
+
 const HomeSideBar = dynamic(() =>
   import('@/features/home/components/SideBar').then((mod) => mod.HomeSideBar),
 );
@@ -56,6 +69,7 @@ export function Home({
   type,
   st,
   countryData,
+  skillData,
   potentialSession = false,
   meta,
 }: HomeProps) {
@@ -109,9 +123,13 @@ export function Home({
           countryCode={countryData.code}
         />
       )}
-      {!!currentCategory && type !== 'region' && type !== 'region-all' && (
-        <CategoryBanner category={currentCategory} />
+      {type === 'skill' && skillData && (
+        <SkillBanner skillName={skillData.name} skillType={skillData.type} />
       )}
+      {!!currentCategory &&
+        type !== 'region' &&
+        type !== 'region-all' &&
+        type !== 'skill' && <CategoryBanner category={currentCategory} />}
       <div className={cn('mx-auto w-full px-2 lg:px-6')}>
         <div className="mx-auto w-full max-w-7xl p-0">
           <div className="flex items-start justify-between">
