@@ -165,8 +165,8 @@ export const HomeSideBar = ({ type }: SideBarProps) => {
     !user?.isPro &&
     user?.isTalentFilled &&
     !isStatsLoading &&
-    stats?.totalWinnings &&
-    stats.totalWinnings >= 1000
+    ((stats?.totalWinnings && stats.totalWinnings >= 1000) ||
+      user?.superteamLevel?.includes('Superteam'))
   );
   const isSidebarFlowActive =
     flow.source === 'sidebar' && flow.status !== 'idle';

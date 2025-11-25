@@ -12,7 +12,6 @@ import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 
-import { ProUpgradeOverlay } from '@/features/pro/components/ProUpgradeOverlay';
 import {
   type ProUpgradeFlowSource,
   type ProUpgradeOriginRect,
@@ -154,7 +153,6 @@ export const ProIntro = ({ className, origin }: ProIntroProps) => {
           <span className="absolute inset-0 -translate-x-full bg-linear-to-r from-transparent via-white/10 to-transparent transition-transform duration-1000 ease-in-out group-hover:translate-x-full" />
         </Button>
       </div>
-      {isOriginActive && <ProUpgradeOverlay />}
     </>
   );
 };

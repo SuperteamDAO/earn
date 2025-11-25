@@ -27,7 +27,10 @@ export const ProIntroDialog = () => {
       ? true
       : localStorage.getItem('proIntroDialogShown') === 'true';
   const hasEarnedEnough = (stats.totalWinnings ?? 0) >= 1000;
-  const shouldAutoShow = !dialogSeen && hasEarnedEnough && !user.isPro;
+  const shouldAutoShow =
+    !dialogSeen &&
+    !user.isPro &&
+    (hasEarnedEnough || user.superteamLevel?.includes('Superteam'));
   const dialogOpen = shouldAutoShow || isDialogFlowActive;
 
   const handleOpenChange = (open: boolean) => {

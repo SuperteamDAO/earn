@@ -48,7 +48,7 @@ export const UserStatsBanner = () => {
   return (
     <div
       className={cn(
-        'relative flex flex-col gap-4 overflow-hidden rounded-xl bg-indigo-600 bg-linear-to-r px-6 py-6.5 text-white md:flex-row md:items-center md:justify-between md:px-8',
+        'relative flex flex-col gap-4 overflow-hidden rounded-xl bg-indigo-600 bg-linear-to-r px-6 py-4 text-white md:flex-row md:items-center md:justify-between md:px-8 md:py-6.5',
         isPro && 'bg-black',
       )}
     >
@@ -68,8 +68,21 @@ export const UserStatsBanner = () => {
         className="absolute top-0 left-10 z-10 opacity-80"
       />
 
-      <div className="relative z-10 flex items-center gap-4">
-        <EarnAvatar id={user?.id} avatar={user?.photo} className="h-12 w-12" />
+      <div className="relative z-10 flex items-center gap-4 pt-4 md:pt-0">
+        <div className="relative shrink-0">
+          <EarnAvatar
+            id={user?.id}
+            avatar={user?.photo}
+            className="h-12 w-12"
+          />
+          {isPro && (
+            <ProBadge
+              containerClassName="absolute -top-0.5 -right-1 gap-0.5 p-1 bg-zinc-800 rounded-full"
+              iconClassName="size-2.5 text-zinc-200"
+              textClassName="text-xxs text-white hidden"
+            />
+          )}
+        </div>
         <div className="flex flex-col gap-0">
           <div className="flex items-center gap-2">
             <p className="max-w-100 truncate text-lg font-semibold md:text-xl">
@@ -77,13 +90,6 @@ export const UserStatsBanner = () => {
                 ? `Welcome back, ${user.firstName}`
                 : 'Welcome!'}
             </p>
-            {isPro && (
-              <ProBadge
-                containerClassName="bg-zinc-700 px-2.5 py-0.5 gap-1"
-                iconClassName="size-3 text-zinc-400"
-                textClassName="text-xs font-medium text-white"
-              />
-            )}
           </div>
           <p
             className={cn(

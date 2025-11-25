@@ -9,6 +9,7 @@ import { LocalImage } from '@/components/ui/local-image';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { useCreditBalance } from '@/store/credit';
 import { useUser } from '@/store/user';
+import { cn } from '@/utils/cn';
 
 import { CreditIcon } from '@/features/credits/icon/credit';
 
@@ -92,7 +93,12 @@ export const MobileNavbar = ({
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="text-brand-purple hover:text-brand-purple bg-indigo-50 text-xs font-semibold hover:bg-indigo-100"
+                  className={cn(
+                    'text-brand-purple hover:text-brand-purple bg-indigo-50 text-xs font-semibold hover:bg-indigo-100',
+                    user?.isPro
+                      ? 'bg-zinc-200 text-zinc-700 hover:bg-zinc-300 hover:text-zinc-700'
+                      : 'bg-indigo-50 text-xs font-semibold hover:bg-indigo-100',
+                  )}
                   onClick={onReferralOpen}
                 >
                   <Gift />
@@ -103,7 +109,12 @@ export const MobileNavbar = ({
                     className="flex cursor-pointer items-center gap-1 rounded-md px-2 py-1.5 text-slate-500 transition-all duration-100 hover:bg-slate-100 hover:text-slate-700 md:gap-2"
                     onClick={openCreditDrawer}
                   >
-                    <CreditIcon className="text-brand-purple size-4.5" />
+                    <CreditIcon
+                      className={cn(
+                        'size-4.5',
+                        user?.isPro ? 'text-zinc-600' : 'text-brand-purple',
+                      )}
+                    />
                     <p className="text-sm font-medium">{creditBalance}</p>
                   </div>
                 </div>

@@ -27,6 +27,20 @@ export async function POST() {
       return NextResponse.json({ error: 'Invalid token' }, { status: 400 });
     }
 
+    const existingUser = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { isPro: true, superteamLevel: true },
+    });
+
+    if (existingUser?.isPro) {
+      logger.info(`User ${userId} is already Pro`);
+      const updatedUser = await prisma.user.findUnique({
+        where: { id: userId },
+        select: userSelectOptions,
+      });
+      return NextResponse.json(updatedUser);
+    }
+
     const stats = await prisma.$queryRaw<
       Array<{
         listingWinnings: number;
@@ -66,7 +80,10 @@ export async function POST() {
 
     const totalWinnings = stats[0].totalWinnings;
 
-    if (totalWinnings < 1000) {
+    if (
+      totalWinnings < 1000 &&
+      !existingUser?.superteamLevel?.includes('Superteam')
+    ) {
       logger.warn(
         `User ${userId} attempted to upgrade to pro but only earned $${totalWinnings}`,
       );
@@ -77,20 +94,6 @@ export async function POST() {
         },
         { status: 403 },
       );
-    }
-
-    const existingUser = await prisma.user.findUnique({
-      where: { id: userId },
-      select: { isPro: true },
-    });
-
-    if (existingUser?.isPro) {
-      logger.info(`User ${userId} is already Pro`);
-      const updatedUser = await prisma.user.findUnique({
-        where: { id: userId },
-        select: userSelectOptions,
-      });
-      return NextResponse.json(updatedUser);
     }
 
     await prisma.user.update({
