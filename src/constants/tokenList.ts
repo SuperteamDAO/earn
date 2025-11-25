@@ -478,4 +478,11 @@ export const tokenList: Token[] = [
     icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6872.png',
     decimals: 9,
   },
+  {
+    tokenName: 'Bambitz',
+    tokenSymbol: 'BAM',
+    mintAddress: '4PbgUNKua3k3VCc1Sg9x9ZKLFedwEUjj4VJXqbwQjupx',
+    icon: 'https://statics.solscan.io/cdn/imgs/s60?ref=68747470733a2f2f692e706f7374696d672e63632f476d6246335357622f62616d6269747a2e706e67',
+    decimals: 6,
+  },
 ];
