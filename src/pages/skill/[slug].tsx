@@ -79,7 +79,7 @@ const SkillPage = ({
     >
       <div className="w-full">
         <ListingsSection type="skill" skill={slug} />
-        <GrantsSection hideWhenEmpty type="all" />
+        <GrantsSection hideWhenEmpty type="skill" skill={slug} />
       </div>
     </Home>
   );

@@ -15,6 +15,7 @@ import {
   getRegionsForSuperteamPage,
   getRegionsForUserLocation,
 } from '@/features/listings/utils/region';
+import { findSkillBySlug } from '@/features/listings/utils/skill';
 
 type BuildGrantsQueryArgs = z.infer<typeof GrantQueryParamsSchema>;
 
@@ -75,7 +76,7 @@ export async function buildGrantsQuery(
     skills: JsonValue;
   } | null,
 ): Promise<GrantQueryResult> {
-  const { category, context, region, sponsor } = args;
+  const { category, context, region, sponsor, skill } = args;
 
   const where: GrantsWhereInput = {
     isPublished: true,
@@ -139,6 +140,30 @@ export async function buildGrantsQuery(
     where.sponsor = {
       name: sponsor,
     };
+  }
+
+  if (context === 'skill' && skill) {
+    const skillInfo = findSkillBySlug(skill);
+
+    if (skillInfo) {
+      if (skillInfo.type === 'parent') {
+        // Filter by parent skill
+        andConditions.push({
+          skills: {
+            path: '$[*].skills',
+            array_contains: [skillInfo.name],
+          },
+        });
+      } else {
+        // Filter by subskill
+        andConditions.push({
+          skills: {
+            path: '$[*].subskills',
+            array_contains: [skillInfo.name],
+          },
+        });
+      }
+    }
   }
 
   const skillFilter = getSkillFilter(category);

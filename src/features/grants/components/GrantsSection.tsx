@@ -16,6 +16,7 @@ interface GrantSectionProps {
   type: GrantContext;
   region?: string;
   sponsor?: string;
+  skill?: string;
   hideWhenEmpty?: boolean;
 }
 
@@ -23,6 +24,7 @@ export const GrantsSection = ({
   type,
   region,
   sponsor,
+  skill,
   hideWhenEmpty,
 }: GrantSectionProps) => {
   const { activeCategory, handleCategoryChange } = useGrantState();
@@ -37,6 +39,7 @@ export const GrantsSection = ({
     category: activeCategory,
     region,
     sponsor,
+    skill,
   });
 
   if (hideWhenEmpty && !isLoading && !grants?.length) {
