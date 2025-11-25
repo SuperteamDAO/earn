@@ -248,13 +248,17 @@ export const PayoutSection = ({
                       </span>
                     </TableCell>
                     <TableCell>
-                      <CopyButton
-                        text={submission.user.walletAddress || ''}
-                        className="gap-1 text-sm text-slate-600 underline-offset-1 hover:text-slate-500 hover:underline"
-                        contentProps={{ side: 'right' }}
-                      >
-                        {truncatePublicKey(submission.user.walletAddress, 5)}
-                      </CopyButton>
+                      {submission.user.walletAddress ? (
+                        <CopyButton
+                          text={submission.user.walletAddress}
+                          className="gap-1 text-sm text-slate-600 underline-offset-1 hover:text-slate-500 hover:underline"
+                          contentProps={{ side: 'right' }}
+                        >
+                          {truncatePublicKey(submission.user.walletAddress, 5)}
+                        </CopyButton>
+                      ) : (
+                        <span className="text-sm text-slate-400">No wallet</span>
+                      )}
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2">
