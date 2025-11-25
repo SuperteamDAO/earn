@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 
 import { generateSitemaps } from '../sitemap';
 
+export const revalidate = 86400;
+
 const baseUrl = 'https://earn.superteam.fun';
 
 function isProduction(): boolean {
