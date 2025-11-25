@@ -107,6 +107,21 @@ export interface BreadcrumbListSchema extends BaseSchema {
   readonly itemListElement: readonly BreadcrumbItemSchema[];
 }
 
+export interface CollectionPageSchema extends BaseSchema {
+  readonly '@type': 'CollectionPage';
+  readonly name: string;
+  readonly description?: string;
+  readonly url: string;
+  readonly about?: {
+    readonly '@type': 'Thing';
+    readonly name: string;
+  };
+  readonly mainEntity?: {
+    readonly '@type': 'ItemList';
+    readonly name: string;
+  };
+}
+
 export interface BreadcrumbItemSchema {
   readonly '@type': 'ListItem';
   readonly position: number;
@@ -405,4 +420,34 @@ export function generateBreadcrumbListSchema(
     '@type': 'BreadcrumbList',
     itemListElement,
   };
+}
+
+/**
+ * Generate CollectionPage schema for a skill page
+ */
+export function generateSkillCollectionSchema(
+  skillName: string,
+  skillSlug: string,
+  description: string,
+): CollectionPageSchema {
+  const baseUrl = getURL();
+  const skillUrl = `${baseUrl}skill/${skillSlug}/`;
+
+  const schema: CollectionPageSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: `${skillName} Opportunities`,
+    description,
+    url: skillUrl,
+    about: {
+      '@type': 'Thing',
+      name: skillName,
+    },
+    mainEntity: {
+      '@type': 'ItemList',
+      name: `${skillName} Bounties and Projects`,
+    },
+  };
+
+  return schema;
 }

@@ -4,7 +4,10 @@ import Head from 'next/head';
 import { JsonLd } from '@/components/shared/JsonLd';
 import { Home } from '@/layouts/Home';
 import { Meta } from '@/layouts/Meta';
-import { generateBreadcrumbListSchema } from '@/utils/json-ld';
+import {
+  generateBreadcrumbListSchema,
+  generateSkillCollectionSchema,
+} from '@/utils/json-ld';
 import { getURL } from '@/utils/validUrl';
 
 import { GrantsSection } from '@/features/grants/components/GrantsSection';
@@ -28,15 +31,21 @@ const SkillPage = ({
   ogImage.searchParams.set('skill', skillName);
   ogImage.searchParams.set('type', skillType);
 
+  const description =
+    skillType === 'parent'
+      ? `Explore ${skillName} opportunities on Superteam Earn. Find bounties and projects that match your ${skillName.toLowerCase()} skills and start earning in crypto.`
+      : `Discover ${skillName} opportunities on Superteam Earn. Find specialized bounties and projects that require ${skillName.toLowerCase()} expertise.`;
+
   const breadcrumbSchema = generateBreadcrumbListSchema([
     { name: 'Home', url: '/' },
     { name: skillName },
   ]);
 
-  const description =
-    skillType === 'parent'
-      ? `Explore ${skillName} opportunities on Superteam Earn. Find bounties and projects that match your ${skillName.toLowerCase()} skills and start earning in crypto.`
-      : `Discover ${skillName} opportunities within ${parentSkill} on Superteam Earn. Find specialized bounties and projects that require ${skillName.toLowerCase()} expertise.`;
+  const skillCollectionSchema = generateSkillCollectionSchema(
+    skillName,
+    slug,
+    description,
+  );
 
   return (
     <Home
@@ -55,6 +64,7 @@ const SkillPage = ({
             og={ogImage.toString()}
           />
           <Head>
+            <meta property="og:type" content="website" />
             <meta property="og:image:width" content="1200" />
             <meta property="og:image:height" content="630" />
             <meta
@@ -63,7 +73,7 @@ const SkillPage = ({
             />
             <meta name="twitter:card" content="summary_large_image" />
           </Head>
-          <JsonLd data={[breadcrumbSchema]} />
+          <JsonLd data={[breadcrumbSchema, skillCollectionSchema]} />
         </>
       }
     >
