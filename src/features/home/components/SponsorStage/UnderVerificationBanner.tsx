@@ -1,4 +1,4 @@
-import { ClockFading, ScanSearch } from 'lucide-react';
+import { ClockFading } from 'lucide-react';
 import Link from 'next/link';
 import posthog from 'posthog-js';
 
@@ -89,25 +89,12 @@ export function UnderVerificationBanner({
 
       <div className="pointer-events-none hidden xl:block">
         <span className="absolute top-4/9 right-25 size-28 -translate-y-1/2">
-          <span
-            className="absolute inset-0 flex scale-130 items-center justify-center"
-            aria-hidden="true"
-          >
-            <span
-              className="block h-full w-full rounded-full"
-              style={{
-                background:
-                  'radial-gradient(circle, rgb(253 230 138 / 0.7) 60%, rgb(253 230 138 / 0.1) 100%)',
-              }}
-            />
-          </span>
           <img
             src={user?.currentSponsor?.logo ?? ''}
             alt={user?.currentSponsor?.name ?? ''}
-            className="relative z-10 size-28 rounded-full border border-slate-400 bg-white"
+            className="relative z-10 size-28"
           />
         </span>
-        <ScanSearch className="absolute top-6/10 right-16 size-18 -translate-y-1/2 stroke-1 text-slate-500" />
       </div>
     </Link>
   );
