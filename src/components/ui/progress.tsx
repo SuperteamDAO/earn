@@ -40,8 +40,10 @@ function Progress({
 function CircularProgress({
   value,
   className,
+  color = '#818CF8',
 }: React.ComponentProps<'div'> & {
   value: number;
+  color?: string;
 }) {
   const normalizedValue = Math.min(100, Math.max(0, value));
 
@@ -58,7 +60,7 @@ function CircularProgress({
         data-slot="circular-progress-indicator"
         className="absolute h-full w-full rounded-full transition-all duration-300"
         style={{
-          background: `conic-gradient(#818CF8 ${normalizedValue}%, transparent ${normalizedValue}%)`,
+          background: `conic-gradient(${color} ${normalizedValue}%, transparent ${normalizedValue}%)`,
           transform: 'rotate(-108deg)',
         }}
       />
