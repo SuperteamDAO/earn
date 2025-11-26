@@ -104,7 +104,7 @@ export function UnderVerificationBanner({
           <img
             src={user?.currentSponsor?.logo ?? ''}
             alt={user?.currentSponsor?.name ?? ''}
-            className="relative z-10 size-28 rounded-full border border-slate-400"
+            className="relative z-10 size-28 rounded-full border border-slate-400 bg-white"
           />
         </span>
         <ScanSearch className="absolute top-6/10 right-16 size-18 -translate-y-1/2 stroke-1 text-slate-500" />
