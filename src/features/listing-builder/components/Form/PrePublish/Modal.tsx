@@ -191,7 +191,7 @@ export function PrePublish() {
           {isST && type !== 'project' && <Foundation />}
           <ProOnly />
         </div>
-        <DialogFooter className="flex w-full pt-20 sm:justify-between">
+        <DialogFooter className="flex w-full pt-10 sm:justify-between">
           {!isEditing && (
             <Button
               variant="outline"

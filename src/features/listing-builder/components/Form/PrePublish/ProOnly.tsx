@@ -37,6 +37,7 @@ const ProArrow = () => (
 export function ProOnly() {
   const form = useListingForm();
   const [showCallout, setShowCallout] = useState(false);
+  const [isShaking, setIsShaking] = useState(false);
 
   const isPrivate = useWatch({
     control: form.control,
@@ -120,12 +121,12 @@ export function ProOnly() {
   }, [isUnderMinimum, showCallout]);
 
   useEffect(() => {
-    if (isPro && isUnderMinimum) {
+    if (isPro && isUnderMinimum && !isShaking) {
       form.setValue('isPro', false, { shouldValidate: false });
       form.saveDraft();
       setShowCallout(true);
     }
-  }, [isPro, isUnderMinimum, form]);
+  }, [isPro, isUnderMinimum, form, isShaking]);
 
   const handleUpdateRewards = () => {
     if (!tokenUsdValue || estimatedUsdValue === null) return;
@@ -169,11 +170,14 @@ export function ProOnly() {
 
   const handleProToggle = (checked: boolean) => {
     if (checked && isUnderMinimum) {
-      setShowCallout(true);
+      setIsShaking(true);
       form.setValue('isPro', true, { shouldValidate: false });
+
       setTimeout(() => {
+        setIsShaking(false);
+        setShowCallout(true);
         form.setValue('isPro', false, { shouldValidate: false });
-      }, 300);
+      }, 500);
       return;
     }
 
@@ -181,13 +185,17 @@ export function ProOnly() {
     form.saveDraft();
   };
 
+  const shouldShowTooltip = !showCallout && !isPro;
+
   if (!form) return null;
 
   if (isPrivate) return null;
 
   return (
     <div
-      className="animate-in fade-in-0 slide-in-from-top-2 relative duration-200"
+      className={`animate-in fade-in-0 slide-in-from-top-2 relative duration-200 ${
+        isShaking ? 'animate-shake' : ''
+      }`}
       key="pro-only"
     >
       <FormField
@@ -207,7 +215,7 @@ export function ProOnly() {
                   <Tooltip
                     zIndex="z-[500]"
                     content="Reach High Quality Talent"
-                    open={!isUnderMinimum && !showCallout && !isPro}
+                    open={shouldShowTooltip}
                     onOpenChange={() => {}}
                     contentProps={{
                       side: 'bottom',
@@ -222,7 +230,7 @@ export function ProOnly() {
                       disabled={showCallout && isUnderMinimum}
                     />
                   </Tooltip>
-                  {!isUnderMinimum && !showCallout && !isPro && <ProArrow />}
+                  {shouldShowTooltip && <ProArrow />}
                 </div>
               </FormControl>
             </FormItem>
@@ -230,7 +238,7 @@ export function ProOnly() {
         }}
       />
       {showCallout && isUnderMinimum && (
-        <div className="animate-in fade-in-0 slide-in-from-top-1 mt-2 flex flex-col rounded-lg bg-orange-50 p-4 duration-200">
+        <div className="animate-in fade-in-0 slide-in-from-top-1 zoom-in-95 mt-2 flex flex-col rounded-lg bg-orange-50 p-4 duration-300">
           <p className="text-sm text-yellow-700">
             This PRO listing requires a minimum of $
             {hasDevelopmentSkills ? '5k' : '3k'} in rewards. Please add $
