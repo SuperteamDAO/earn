@@ -1,3 +1,4 @@
+// import { PrismaMariaDb } from '@prisma/adapter-mariadb'; // uncomment this if you are using local Mysql / MariaDB
 import { PrismaPlanetScale } from '@prisma/adapter-planetscale';
 
 import { PrismaClient } from '@/prisma/client';
@@ -30,7 +31,20 @@ if (isPlanetScale) {
     transactionOptions: { maxWait: 5000, timeout: 15000 },
   });
 } else {
+  // uncomment the following code if you are using local Mysql / MariaDB
+  // const url = new URL(databaseUrl);
+
+  // const adapter = new PrismaMariaDb({
+  //   host: url.hostname,
+  //   port: parseInt(url.port) || 3306,
+  //   user: url.username || 'root',
+  //   password: url.password || undefined,
+  //   database: url.pathname.slice(1),
+  //   connectionLimit: 5,
+  // });
+
   prismaClient = new PrismaClient({
+    // adapter,
     omit: omitConfig,
     transactionOptions: { maxWait: 5000, timeout: 15000 },
   });
