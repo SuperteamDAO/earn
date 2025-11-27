@@ -31,7 +31,7 @@ const submissionSchema = (
         ])
         .optional(),
       otherInfo: z.string().optional(),
-      ask: z.union([z.number().int().min(0), z.null()]).optional(),
+      ask: z.union([z.number().min(0), z.null()]).optional(),
       eligibilityAnswers: z
         .array(
           z.object({
