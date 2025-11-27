@@ -451,3 +451,30 @@ export function generateSkillCollectionSchema(
 
   return schema;
 }
+
+export function generateCategoryCollectionSchema(
+  categoryName: string,
+  categorySlug: string,
+  description: string,
+): CollectionPageSchema {
+  const baseUrl = getURL();
+  const categoryUrl = `${baseUrl}category/${categorySlug}/`;
+
+  const schema: CollectionPageSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: `${categoryName} Opportunities`,
+    description,
+    url: categoryUrl,
+    about: {
+      '@type': 'Thing',
+      name: categoryName,
+    },
+    mainEntity: {
+      '@type': 'ItemList',
+      name: `${categoryName} Bounties and Projects`,
+    },
+  };
+
+  return schema;
+}

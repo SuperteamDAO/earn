@@ -381,7 +381,12 @@ export async function buildListingQuery(
     andConditions.push(statusWhereClauses);
   }
 
-  const skillFilter = getSkillFilter(effectiveCategory);
+  const categoryToFilter =
+    context === 'category' || context === 'category-all'
+      ? category
+      : effectiveCategory;
+
+  const skillFilter = getSkillFilter(categoryToFilter);
   if (skillFilter) {
     andConditions.push(skillFilter);
   }

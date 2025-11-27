@@ -24,6 +24,11 @@ interface SkillData {
   readonly parent?: string;
 }
 
+interface CategoryData {
+  readonly name: string;
+  readonly slug: string;
+}
+
 interface HomeProps {
   readonly children: ReactNode;
   readonly type:
@@ -32,10 +37,13 @@ interface HomeProps {
     | 'feed'
     | 'region-all'
     | 'skill'
-    | 'skill-all';
+    | 'skill-all'
+    | 'category'
+    | 'category-all';
   readonly st?: Superteam;
   readonly countryData?: CountryData;
   readonly skillData?: SkillData;
+  readonly categoryData?: CategoryData;
   readonly potentialSession?: boolean;
   readonly meta?: ReactNode;
 }
@@ -76,6 +84,7 @@ export function Home({
   st,
   countryData,
   skillData,
+  categoryData,
   potentialSession = false,
   meta,
 }: HomeProps) {
@@ -132,11 +141,20 @@ export function Home({
       {(type === 'skill' || type === 'skill-all') && skillData && (
         <SkillBanner skillName={skillData.name} skillType={skillData.type} />
       )}
+      {(type === 'category' || type === 'category-all') && categoryData && (
+        <CategoryBanner
+          category={categoryData.name.toLowerCase() as CategoryTypes}
+        />
+      )}
       {!!currentCategory &&
         type !== 'region' &&
         type !== 'region-all' &&
         type !== 'skill' &&
-        type !== 'skill-all' && <CategoryBanner category={currentCategory} />}
+        type !== 'skill-all' &&
+        type !== 'category' &&
+        type !== 'category-all' && (
+          <CategoryBanner category={currentCategory} />
+        )}
       <div className={cn('mx-auto w-full px-2 lg:px-6')}>
         <div className="mx-auto w-full max-w-7xl p-0">
           <div className="flex items-start justify-between">

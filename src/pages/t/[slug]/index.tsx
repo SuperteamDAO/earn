@@ -286,6 +286,12 @@ function TalentProfile({ talent, stats }: TalentProps) {
           />
           <link rel="dns-prefetch" href="https://res.cloudinary.com" />
           <link rel="preload" as="image" href={optimizedCoverUrl} />
+          {talent.private && (
+            <>
+              <meta name="robots" content="noindex, nofollow" />
+              <meta name="googlebot" content="noindex, nofollow" />
+            </>
+          )}
         </Head>
       }
     >
@@ -585,6 +591,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         photo: true,
         currentEmployer: true,
         location: true,
+        private: true,
       },
     });
 

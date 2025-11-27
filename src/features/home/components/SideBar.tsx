@@ -30,6 +30,7 @@ interface SideBarProps {
     | 'landing'
     | 'listing'
     | 'category'
+    | 'category-all'
     | 'region'
     | 'feed'
     | 'region-all'

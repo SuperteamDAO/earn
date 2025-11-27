@@ -166,8 +166,10 @@ export async function buildGrantsQuery(
     }
   }
 
+  const shouldSkipCategoryFilter = context === 'skill' && category === 'All';
+
   const skillFilter = getSkillFilter(category);
-  if (skillFilter) {
+  if (skillFilter && !shouldSkipCategoryFilter) {
     andConditions.push(skillFilter);
   }
 

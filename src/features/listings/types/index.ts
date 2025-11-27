@@ -104,6 +104,7 @@ export interface ListingTabsProps {
   region?: string;
   sponsor?: string;
   skill?: string;
+  category?: string;
 }
 
 type ProjectContextQuestionsType = {

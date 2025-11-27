@@ -2,6 +2,7 @@ import type { MetadataRoute } from 'next';
 
 import { prisma } from '@/prisma';
 
+import { getAllCategorySlugs } from '@/features/listings/utils/category';
 import { getAllRegionSlugs } from '@/features/listings/utils/region';
 import { getAllSkillSlugs } from '@/features/listings/utils/skill';
 
@@ -19,8 +20,9 @@ function isProduction(): boolean {
 // ID 0+: Listings (split if > 50k)
 // Next IDs: Sponsors (split if > 50k)
 // Next IDs: Grants (split if > 50k)
-// Next IDs: Talent profiles (split if > 50k) - COMMENTED OUT
+// Next IDs: Talent profiles (split if > 50k)
 // Next IDs: Skills (split if > 50k)
+// Next IDs: Categories (split if > 50k)
 // Last ID: Regions
 
 async function getListingsCount(): Promise<number> {
@@ -62,18 +64,22 @@ async function getSkillsCount(): Promise<number> {
   return getAllSkillSlugs().length;
 }
 
-// COMMENTED OUT: Talent profiles - will decide later if we want this
-// async function getTalentProfilesCount(): Promise<number> {
-//   return await prisma.user.count({
-//     where: {
-//       username: {
-//         not: null,
-//       },
-//       isTalentFilled: true,
-//       private: false,
-//     },
-//   });
-// }
+async function getCategoriesCount(): Promise<number> {
+  return getAllCategorySlugs().length;
+}
+
+// Talent profiles
+async function getTalentProfilesCount(): Promise<number> {
+  return await prisma.user.count({
+    where: {
+      username: {
+        not: null,
+      },
+      isTalentFilled: true,
+      private: false,
+    },
+  });
+}
 
 function calculateSitemapCount(totalCount: number): number {
   return Math.max(1, Math.ceil(totalCount / MAX_URLS_PER_SITEMAP));
@@ -85,15 +91,23 @@ export async function generateSitemaps(): Promise<Array<{ id: number }>> {
     return []; // Return empty for non-production
   }
 
-  const [listingsCount, sponsorsCount, grantsCount, regionsCount, skillsCount] =
-    await Promise.all([
-      getListingsCount(),
-      getSponsorsCount(),
-      getGrantsCount(),
-      getRegionsCount(),
-      getSkillsCount(),
-      // getTalentProfilesCount(), // COMMENTED OUT: Talent profiles
-    ]);
+  const [
+    listingsCount,
+    sponsorsCount,
+    grantsCount,
+    regionsCount,
+    skillsCount,
+    categoriesCount,
+    talentCount,
+  ] = await Promise.all([
+    getListingsCount(),
+    getSponsorsCount(),
+    getGrantsCount(),
+    getRegionsCount(),
+    getSkillsCount(),
+    getCategoriesCount(),
+    getTalentProfilesCount(),
+  ]);
 
   const sitemaps: Array<{ id: number }> = [];
 
@@ -118,15 +132,21 @@ export async function generateSitemaps(): Promise<Array<{ id: number }>> {
     sitemaps.push({ id: currentId++ });
   }
 
-  // COMMENTED OUT: Talent profiles - split if needed
-  // const talentSitemapCount = calculateSitemapCount(talentCount);
-  // for (let i = 0; i < talentSitemapCount; i++) {
-  //   sitemaps.push({ id: currentId++ });
-  // }
+  // Talent profiles - split if needed
+  const talentSitemapCount = calculateSitemapCount(talentCount);
+  for (let i = 0; i < talentSitemapCount; i++) {
+    sitemaps.push({ id: currentId++ });
+  }
 
   // Skills - split if needed
   const skillsSitemapCount = calculateSitemapCount(skillsCount);
   for (let i = 0; i < skillsSitemapCount; i++) {
+    sitemaps.push({ id: currentId++ });
+  }
+
+  // Categories - split if needed
+  const categoriesSitemapCount = calculateSitemapCount(categoriesCount);
+  for (let i = 0; i < categoriesSitemapCount; i++) {
     sitemaps.push({ id: currentId++ });
   }
 
@@ -146,31 +166,42 @@ interface SitemapBoundaries {
   sponsorsEnd: number;
   grantsStart: number;
   grantsEnd: number;
-  // talentStart: number; // COMMENTED OUT: Talent profiles
-  // talentEnd: number; // COMMENTED OUT: Talent profiles
+  talentStart: number;
+  talentEnd: number;
   skillsStart: number;
   skillsEnd: number;
+  categoriesStart: number;
+  categoriesEnd: number;
   regionsStart: number;
   regionsEnd: number;
 }
 
 async function getSitemapBoundaries(): Promise<SitemapBoundaries> {
-  const [listingsCount, sponsorsCount, grantsCount, skillsCount, regionsCount] =
-    await Promise.all([
-      getListingsCount(),
-      getSponsorsCount(),
-      getGrantsCount(),
-      getSkillsCount(),
-      getRegionsCount(),
-      // getTalentProfilesCount(), // COMMENTED OUT: Talent profiles
-    ]);
+  const [
+    listingsCount,
+    sponsorsCount,
+    grantsCount,
+    skillsCount,
+    categoriesCount,
+    regionsCount,
+    talentCount,
+  ] = await Promise.all([
+    getListingsCount(),
+    getSponsorsCount(),
+    getGrantsCount(),
+    getSkillsCount(),
+    getCategoriesCount(),
+    getRegionsCount(),
+    getTalentProfilesCount(),
+  ]);
 
   const listingsSitemapCount = calculateSitemapCount(listingsCount);
   const sponsorsSitemapCount = calculateSitemapCount(sponsorsCount);
   const grantsSitemapCount = calculateSitemapCount(grantsCount);
   const skillsSitemapCount = calculateSitemapCount(skillsCount);
+  const categoriesSitemapCount = calculateSitemapCount(categoriesCount);
   const regionsSitemapCount = calculateSitemapCount(regionsCount);
-  // const talentSitemapCount = calculateSitemapCount(talentCount); // COMMENTED OUT: Talent profiles
+  const talentSitemapCount = calculateSitemapCount(talentCount);
 
   // Start from ID 0 for dynamic sitemaps
   let currentId = 0;
@@ -187,14 +218,18 @@ async function getSitemapBoundaries(): Promise<SitemapBoundaries> {
   const grantsEnd = currentId + grantsSitemapCount;
   currentId = grantsEnd;
 
-  // COMMENTED OUT: Talent profiles
-  // const talentStart = currentId;
-  // const talentEnd = currentId + talentSitemapCount;
-  // currentId = talentEnd;
+  // Talent profiles
+  const talentStart = currentId;
+  const talentEnd = currentId + talentSitemapCount;
+  currentId = talentEnd;
 
   const skillsStart = currentId;
   const skillsEnd = currentId + skillsSitemapCount;
   currentId = skillsEnd;
+
+  const categoriesStart = currentId;
+  const categoriesEnd = currentId + categoriesSitemapCount;
+  currentId = categoriesEnd;
 
   const regionsStart = currentId;
   const regionsEnd = currentId + regionsSitemapCount;
@@ -206,10 +241,12 @@ async function getSitemapBoundaries(): Promise<SitemapBoundaries> {
     sponsorsEnd,
     grantsStart,
     grantsEnd,
-    // talentStart, // COMMENTED OUT: Talent profiles
-    // talentEnd, // COMMENTED OUT: Talent profiles
+    talentStart,
+    talentEnd,
     skillsStart,
     skillsEnd,
+    categoriesStart,
+    categoriesEnd,
     regionsStart,
     regionsEnd,
   };
@@ -326,38 +363,38 @@ export default async function sitemap(props: {
     }));
   }
 
-  // COMMENTED OUT: Talent profiles - will decide later if we want this
-  // if (id >= boundaries.talentStart && id < boundaries.talentEnd) {
-  //   const sitemapIndex = id - boundaries.talentStart;
-  //   const offset = sitemapIndex * MAX_URLS_PER_SITEMAP;
-  //   const talentProfiles = await prisma.user.findMany({
-  //     where: {
-  //       username: {
-  //         not: null,
-  //       },
-  //       isTalentFilled: true,
-  //       private: false,
-  //     },
-  //     select: {
-  //       username: true,
-  //       updatedAt: true,
-  //     },
-  //     skip: offset,
-  //     take: MAX_URLS_PER_SITEMAP,
-  //     orderBy: {
-  //       updatedAt: 'desc',
-  //     },
-  //   });
-  //
-  //   return talentProfiles
-  //     .filter((talent) => talent.username)
-  //     .map((talent) => ({
-  //       url: `${baseUrl}/t/${talent.username}/`,
-  //       lastModified: talent.updatedAt,
-  //       changeFrequency: 'monthly',
-  //       priority: 0.6,
-  //     }));
-  // }
+  // Talent profiles
+  if (sitemapId >= boundaries.talentStart && sitemapId < boundaries.talentEnd) {
+    const sitemapIndex = sitemapId - boundaries.talentStart;
+    const offset = sitemapIndex * MAX_URLS_PER_SITEMAP;
+    const talentProfiles = await prisma.user.findMany({
+      where: {
+        username: {
+          not: null,
+        },
+        isTalentFilled: true,
+        private: false,
+      },
+      select: {
+        username: true,
+        updatedAt: true,
+      },
+      skip: offset,
+      take: MAX_URLS_PER_SITEMAP,
+      orderBy: {
+        updatedAt: 'desc',
+      },
+    });
+
+    return talentProfiles
+      .filter((talent) => talent.username)
+      .map((talent) => ({
+        url: `${baseUrl}/t/${talent.username}/`,
+        lastModified: talent.updatedAt,
+        changeFrequency: 'monthly',
+        priority: 0.6,
+      }));
+  }
 
   // Skills
   if (sitemapId >= boundaries.skillsStart && sitemapId < boundaries.skillsEnd) {
@@ -379,6 +416,32 @@ export default async function sitemap(props: {
       lastModified: now,
       changeFrequency: 'weekly',
       priority: 0.7,
+    }));
+  }
+
+  // Categories
+  if (
+    sitemapId >= boundaries.categoriesStart &&
+    sitemapId < boundaries.categoriesEnd
+  ) {
+    const sitemapIndex = sitemapId - boundaries.categoriesStart;
+    const offset = sitemapIndex * MAX_URLS_PER_SITEMAP;
+    const allCategorySlugs = getAllCategorySlugs();
+
+    if (allCategorySlugs.length === 0) {
+      return [];
+    }
+
+    const categorySlugs = allCategorySlugs.slice(
+      offset,
+      offset + MAX_URLS_PER_SITEMAP,
+    );
+
+    return categorySlugs.map((slug): MetadataRoute.Sitemap[number] => ({
+      url: `${baseUrl}/category/${slug}/`,
+      lastModified: now,
+      changeFrequency: 'weekly',
+      priority: 0.8,
     }));
   }
 

@@ -25,6 +25,8 @@ export const ListingContextSchema = z
     'bookmarks',
     'skill',
     'skill-all',
+    'category',
+    'category-all',
   ])
   .default('all');
 
