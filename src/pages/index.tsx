@@ -14,6 +14,7 @@ import {
   generateWebSiteSchema,
 } from '@/utils/json-ld';
 
+import { ProListingsAnnouncement } from '@/features/announcements/components/ProListingsAnnouncement';
 import { BannerCarousel } from '@/features/home/components/Banner';
 import { SponsorStageBanner } from '@/features/home/components/SponsorStage/SponsorStageBanner';
 import { UserStatsBanner } from '@/features/home/components/UserStatsBanner';
@@ -123,6 +124,7 @@ export default function HomePage({ potentialSession }: HomePageProps) {
       <InstallPWAModal />
       <HomepagePop />
       <TalentAnnouncements />
+      <ProListingsAnnouncement />
       {authenticated && <ProIntroDialog />}
     </Default>
   );

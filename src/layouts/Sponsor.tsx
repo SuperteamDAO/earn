@@ -38,6 +38,7 @@ import { useUser } from '@/store/user';
 import Sparkle from '@/svg/sparkle';
 import { cn } from '@/utils/cn';
 
+import { ProListingsAnnouncement } from '@/features/announcements/components/ProListingsAnnouncement';
 import { SponsorAnnouncements } from '@/features/announcements/components/SponsorAnnouncements';
 import { Login } from '@/features/auth/components/Login';
 import { isAutoGenerateOpenAtom } from '@/features/listing-builder/atoms';
@@ -251,6 +252,8 @@ export function SponsorLayout({
         {router.pathname === '/dashboard/listings' && (
           <SponsorAnnouncements isAnyModalOpen={isAnyModalOpen} />
         )}
+
+        <ProListingsAnnouncement isAnyModalOpen={isAnyModalOpen} />
 
         <EntityNameModal
           isOpen={isEntityModalOpen}
