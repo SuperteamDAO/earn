@@ -35,6 +35,7 @@ import { useListingForm } from '../../../hooks';
 import { Foundation } from './Foundation';
 import { GeoLock } from './GeoLock';
 import { ProOnly } from './ProOnly';
+import { ProSlideout } from './ProSlideout';
 import { ReferredBy } from './ReferredBy';
 import { Slug } from './Slug';
 import { Visibility } from './Visibility';
@@ -43,6 +44,9 @@ export function PrePublish() {
   const isST = useAtomValue(isSTAtom);
   const form = useListingForm();
   const [open, isOpen] = useState(false);
+  const [showNudges, setShowNudges] = useState(false);
+  const [proSwitchElement, setProSwitchElement] =
+    useState<HTMLDivElement | null>(null);
   const status = useAtomValue(listingStatusAtom);
 
   const isSlugLoading = useIsFetching({ queryKey: ['slug'] }) > 0;
@@ -167,7 +171,12 @@ export function PrePublish() {
           Continue
         </Button>
       </Tooltip>
-      <DialogContent className="overflow-y-visible py-4 sm:max-w-[500px]">
+      <DialogContent
+        classNames={{
+          overlay: 'bg-black/10 backdrop-blur-sm',
+        }}
+        className="overflow-y-visible py-4 sm:max-w-[500px]"
+      >
         <DialogHeader className="flex flex-row items-center gap-4">
           <DialogTitle className="relative flex h-5 items-center text-base">
             {isUpdate ? (
@@ -189,7 +198,10 @@ export function PrePublish() {
           <ReferredBy />
           <Slug />
           {isST && type !== 'project' && <Foundation />}
-          <ProOnly />
+          <ProOnly
+            onShowNudgesChange={setShowNudges}
+            onSwitchRef={setProSwitchElement}
+          />
         </div>
         <DialogFooter className="flex w-full pt-10 sm:justify-between">
           {!isEditing && (
@@ -257,6 +269,7 @@ export function PrePublish() {
           </Button>
         </DialogFooter>
       </DialogContent>
+      <ProSlideout show={showNudges && open} proSwitchRef={proSwitchElement} />
     </Dialog>
   );
 }

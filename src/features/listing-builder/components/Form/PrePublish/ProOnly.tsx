@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useWatch } from 'react-hook-form';
 
 import { Button } from '@/components/ui/button';
@@ -34,10 +34,16 @@ const ProArrow = () => (
   </svg>
 );
 
-export function ProOnly() {
+interface ProOnlyProps {
+  onShowNudgesChange?: (show: boolean) => void;
+  onSwitchRef?: (ref: HTMLDivElement | null) => void;
+}
+
+export function ProOnly({ onShowNudgesChange, onSwitchRef }: ProOnlyProps) {
   const form = useListingForm();
   const [showCallout, setShowCallout] = useState(false);
   const [isShaking, setIsShaking] = useState(false);
+  const switchRef = useRef<HTMLDivElement | null>(null);
 
   const isPrivate = useWatch({
     control: form.control,
@@ -185,7 +191,15 @@ export function ProOnly() {
     form.saveDraft();
   };
 
-  const shouldShowTooltip = !showCallout && !isPro;
+  const showNudges = !showCallout && !isPro;
+
+  useEffect(() => {
+    onShowNudgesChange?.(showNudges);
+  }, [showNudges, onShowNudgesChange]);
+
+  useEffect(() => {
+    onSwitchRef?.(switchRef.current ?? null);
+  }, [onSwitchRef]);
 
   if (!form) return null;
 
@@ -211,11 +225,11 @@ export function ProOnly() {
                 </FormDescription>
               </div>
               <FormControl className="flex items-center">
-                <div className="relative">
+                <div className="relative" ref={switchRef}>
                   <Tooltip
                     zIndex="z-[500]"
                     content="Reach High Quality Talent"
-                    open={shouldShowTooltip}
+                    open={showNudges}
                     onOpenChange={() => {}}
                     contentProps={{
                       side: 'bottom',
@@ -230,7 +244,7 @@ export function ProOnly() {
                       disabled={showCallout && isUnderMinimum}
                     />
                   </Tooltip>
-                  {shouldShowTooltip && <ProArrow />}
+                  {showNudges && <ProArrow />}
                 </div>
               </FormControl>
             </FormItem>
