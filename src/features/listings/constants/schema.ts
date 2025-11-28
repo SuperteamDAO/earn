@@ -27,6 +27,7 @@ export const ListingContextSchema = z
     'skill-all',
     'category',
     'category-all',
+    'opportunity',
   ])
   .default('all');
 

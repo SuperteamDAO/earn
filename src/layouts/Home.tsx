@@ -10,8 +10,10 @@ import { Meta } from '@/layouts/Meta';
 import { cn } from '@/utils/cn';
 
 import { BannerCarousel } from '@/features/home/components/Banner';
+import { OpportunityBanner } from '@/features/home/components/OpportunityBanner';
 import { UserStatsBanner } from '@/features/home/components/UserStatsBanner';
 import { userCountQuery } from '@/features/home/queries/user-count';
+import type { ParsedOpportunityTags } from '@/features/listings/utils/parse-opportunity-tags';
 
 interface CountryData {
   readonly name: string;
@@ -39,11 +41,13 @@ interface HomeProps {
     | 'skill'
     | 'skill-all'
     | 'category'
-    | 'category-all';
+    | 'category-all'
+    | 'opportunity';
   readonly st?: Superteam;
   readonly countryData?: CountryData;
   readonly skillData?: SkillData;
   readonly categoryData?: CategoryData;
+  readonly opportunityTags?: ParsedOpportunityTags;
   readonly potentialSession?: boolean;
   readonly meta?: ReactNode;
 }
@@ -85,6 +89,7 @@ export function Home({
   countryData,
   skillData,
   categoryData,
+  opportunityTags,
   potentialSession = false,
   meta,
 }: HomeProps) {
@@ -145,6 +150,9 @@ export function Home({
         <CategoryBanner
           category={categoryData.name.toLowerCase() as CategoryTypes}
         />
+      )}
+      {type === 'opportunity' && opportunityTags && (
+        <OpportunityBanner tags={opportunityTags} />
       )}
       {!!currentCategory &&
         type !== 'region' &&

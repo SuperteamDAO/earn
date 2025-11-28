@@ -67,7 +67,7 @@ export function findSkillBySlug(
 }
 
 /**
- * Gets all valid skill slugs (both parent and subskills) for sitemap generation
+ * Gets all valid skill slugs (both parent and subskills) for URL validation
  */
 export function getAllSkillSlugs(): readonly string[] {
   const parentSlugs = Object.keys(skillSubSkillMap).map((skill) =>
@@ -79,4 +79,12 @@ export function getAllSkillSlugs(): readonly string[] {
   );
 
   return [...parentSlugs, ...subskillSlugs];
+}
+
+/**
+ * Gets only parent skill slugs (Frontend, Backend, etc.) for sitemap generation
+ * Excludes subskills since they may have few/no listings
+ */
+export function getParentSkillSlugs(): readonly string[] {
+  return Object.keys(skillSubSkillMap).map((skill) => generateSkillSlug(skill));
 }
