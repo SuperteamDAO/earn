@@ -155,11 +155,13 @@ const HeaderSub = ({
       <ListingHeaderSeparator />
       {isPro && (
         <>
-          <ProBadge
-            containerClassName="bg-transparent px-0 py-0 gap-1"
-            iconClassName="size-3 text-zinc-600"
-            textClassName="text-xs font-medium text-zinc-800"
-          />
+          <Link href="/pro">
+            <ProBadge
+              containerClassName="bg-transparent px-0 py-0 gap-1"
+              iconClassName="size-3 text-zinc-600"
+              textClassName="text-xs font-medium text-zinc-800"
+            />
+          </Link>
           <ListingHeaderSeparator />
         </>
       )}

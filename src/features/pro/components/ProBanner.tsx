@@ -1,11 +1,15 @@
+import { usePrivy } from '@privy-io/react-auth';
 import { IBM_Plex_Serif } from 'next/font/google';
 
 import { AnimatedDots } from '@/components/shared/AnimatedDots';
+import { Button } from '@/components/ui/button';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { Progress } from '@/components/ui/progress';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
+
+import { AuthWrapper } from '@/features/auth/components/AuthWrapper';
 
 import { ProBadge } from './ProBadge';
 
@@ -44,11 +48,27 @@ const NotProUser = ({ totalEarnings }: { totalEarnings: number }) => {
   );
 };
 
+const NotLoggedInUser = () => {
+  return (
+    <div className="z-20 w-108">
+      <p className="text-2xl font-medium text-white">
+        Check if you&apos;re eligible for high paying bounties and exclusive
+        perks
+      </p>
+      <AuthWrapper className="mt-5 w-full sm:w-auto">
+        <Button className="ph-no-capture h-9 w-full bg-white px-9 py-1 text-sm font-semibold text-zinc-900 hover:bg-white/90 sm:w-auto md:h-10 md:py-3">
+          Sign In
+        </Button>
+      </AuthWrapper>
+    </div>
+  );
+};
+
 const ProUser = ({ name }: { name: string }) => {
   return (
     <div className="z-20 w-80">
       <p className="text-3xl text-white">
-        A premier club for the{' '}
+        An elite club for the{' '}
         <span className={cn(plex.className, 'font-4xl text-white italic')}>
           top 1%
         </span>{' '}
@@ -77,6 +97,7 @@ const ProBannerSkeleton = () => {
 export function ProBanner({ totalEarnings }: ProBannerProps) {
   const { user, isLoading } = useUser();
   const isPro = user?.isPro ?? false;
+  const { authenticated } = usePrivy();
   return (
     <div className="relative flex flex-col gap-4 overflow-hidden rounded-xl bg-zinc-800 px-11 pb-10 text-white">
       <AnimatedDots
@@ -94,6 +115,8 @@ export function ProBanner({ totalEarnings }: ProBannerProps) {
       />
       {isLoading ? (
         <ProBannerSkeleton />
+      ) : !authenticated ? (
+        <NotLoggedInUser />
       ) : isPro ? (
         <ProUser name={user?.firstName ?? ''} />
       ) : (

@@ -34,7 +34,6 @@ import { cn } from '@/utils/cn';
 
 import { usePopupAuth } from '@/features/auth/hooks/use-popup-auth';
 import { CreditIcon } from '@/features/credits/icon/credit';
-import { ProBadge } from '@/features/pro/components/ProBadge';
 import { SocialInput } from '@/features/social/components/SocialInput';
 import { XVerificationModal } from '@/features/social/components/XVerificationModal';
 import {
@@ -837,18 +836,6 @@ export const SubmissionDrawer = ({
                       </span>
                     )}
                   </Button>
-                  {user?.isPro &&
-                    isPro &&
-                    !editMode &&
-                    (isProject || isBounty) && (
-                      <div className="absolute top-1/2 right-4 -translate-y-1/2">
-                        <ProBadge
-                          containerClassName="bg-zinc-700 px-2 py-0.5 gap-1"
-                          iconClassName="size-2.5 text-zinc-400"
-                          textClassName="text-[10px] font-medium text-white"
-                        />
-                      </div>
-                    )}
                 </div>
                 <p className="mt-2 text-center text-xs text-slate-400 sm:text-sm">
                   By submitting/applying to this listing, you agree to our{' '}

@@ -24,10 +24,10 @@ export default function ProPage({ potentialSession }: HomePageProps) {
           <ProIcon className="size-8 text-slate-500" />
         </div>
         <h3 className="mb-1 text-lg leading-[1.2] font-semibold text-slate-700">
-          More PRO Listings Are Coming
+          More Pro listings are coming
         </h3>
         <p className="text-sm text-slate-500">
-          Stay Tuned for more PRO Listings
+          Stay turned for more Pro listings
         </p>
       </div>
     );

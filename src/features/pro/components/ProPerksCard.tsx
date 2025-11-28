@@ -1,5 +1,6 @@
 'use client';
 
+import { usePrivy } from '@privy-io/react-auth';
 import { useQuery } from '@tanstack/react-query';
 
 import { Button } from '@/components/ui/button';
@@ -20,8 +21,10 @@ interface ProPerkCardProps {
 
 const ProPerkCard = ({ perk }: ProPerkCardProps) => {
   const { user } = useUser();
+  const { authenticated } = usePrivy();
   const isPro = user?.isPro ?? false;
   const hasCtaLink = Boolean(perk.ctaLink);
+  const shouldShowCta = authenticated && isPro && hasCtaLink;
 
   return (
     <div className="bg- w-full rounded-xl bg-[#F8FAFC] p-4">
@@ -34,17 +37,18 @@ const ProPerkCard = ({ perk }: ProPerkCardProps) => {
 
         <h3 className="text-lg font-semibold text-slate-800">{perk.header}</h3>
         <p className="text-slate-500">{perk.description}</p>
-        <Button
-          disabled={!hasCtaLink || !isPro}
-          className="mt-2 w-full bg-white font-semibold text-slate-500 hover:bg-slate-100"
-          onClick={() => {
-            if (hasCtaLink && perk.ctaLink) {
-              window.open(perk.ctaLink, '_blank', 'noopener,noreferrer');
-            }
-          }}
-        >
-          {perk.cta}
-        </Button>
+        {shouldShowCta && (
+          <Button
+            className="mt-2 w-full bg-white font-semibold text-slate-500 hover:bg-slate-100"
+            onClick={() => {
+              if (perk.ctaLink) {
+                window.open(perk.ctaLink, '_blank', 'noopener,noreferrer');
+              }
+            }}
+          >
+            {perk.cta}
+          </Button>
+        )}
       </div>
     </div>
   );

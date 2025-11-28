@@ -80,6 +80,14 @@ function MainContent({
         decorateOptions={createDecorateOptions(isPro)}
         className="absolute -z-10 h-full w-full"
       />
+      {isPro && (
+        <>
+          <div className="absolute -top-40 right-1/2 -z-30 size-96 translate-x-1/2 rounded-full bg-[#3D3D3D] blur-[180px]" />
+          <div className="absolute right-1/2 -bottom-40 -z-30 size-96 translate-x-1/2 rounded-full bg-[#3D3D3D] blur-[120px]" />
+          <div className="absolute right-100 bottom-40 -z-30 size-96 translate-x-1/2 rounded-full bg-white/10 blur-[140px]" />
+          <div className="absolute bottom-40 left-100 -z-30 size-96 translate-x-1/2 rounded-full bg-white/10 blur-[140px]" />
+        </>
+      )}
       <div className="container mx-auto mt-auto px-4 md:mt-6">
         <div className="mx-auto mt-6 mb-6 w-14 md:mb-11 md:w-28">
           <ExternalImage
@@ -140,9 +148,7 @@ export const EasterEgg = ({ isOpen, onClose, isProject, isPro }: Props) => {
         <DialogContent
           className={cn(
             'h-screen w-screen max-w-none overflow-hidden rounded-none',
-            isPro
-              ? 'bg-gradient-to-b from-amber-900 via-yellow-900 to-amber-950'
-              : 'bg-[#5243FF]',
+            isPro ? 'bg-black' : 'bg-[#5243FF]',
           )}
           onInteractOutside={(e) => e.preventDefault()}
           classNames={{
