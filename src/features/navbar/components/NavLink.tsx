@@ -31,7 +31,7 @@ export const NavLink = ({
         'relative border-b',
         isActive
           ? isPro
-            ? 'border-zinc-700'
+            ? 'border-zinc-600'
             : 'border-brand-purple'
           : 'border-transparent',
         className,

@@ -36,7 +36,7 @@ const ProEligibility = ({ totalWinnings }: { totalWinnings: number }) => {
   return (
     <>
       <p className="text-[0.95rem] font-medium text-slate-400">Eligibility</p>
-      {totalWinnings && (
+      {!!totalWinnings && (
         <div className="mt-4 flex items-center gap-4">
           <CircularProgress
             className="size-6 shrink-0"

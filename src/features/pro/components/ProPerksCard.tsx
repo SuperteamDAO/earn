@@ -24,7 +24,7 @@ const ProPerkCard = ({ perk }: ProPerkCardProps) => {
   const hasCtaLink = Boolean(perk.ctaLink);
 
   return (
-    <div className="bg- w-full rounded-xl bg-slate-50 p-4">
+    <div className="bg- w-full rounded-xl bg-[#F8FAFC] p-4">
       <div className="flex flex-col items-start gap-3">
         <img
           src={perk.logo}

@@ -7,6 +7,7 @@ import ProGradientIcon from '@/components/icons/ProGradientIcon';
 import { AnimatedDots } from '@/components/shared/AnimatedDots';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { Separator } from '@/components/ui/separator';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 
@@ -99,6 +100,8 @@ export function ProListingsAnnouncement({
               about — Pro Listings. A way to target the top 1% talent on our
               platform.
             </p>
+
+            <Separator className="mt-2 mb-6" />
 
             <ul className="mb-6 space-y-3">
               <li className="flex items-start gap-3">
