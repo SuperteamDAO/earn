@@ -183,14 +183,14 @@ export function DescriptionUI({ description, isPro = false }: Props) {
               <p className="text-md mt-4 mb-4 font-medium text-slate-500">
                 You can become a PRO member by
               </p>
-              {stats && (
-                <div className="mt-4 flex items-center gap-3">
-                  <CircularProgress
-                    className="size-7 shrink-0"
-                    value={((stats.totalWinnings ?? 0) / 1000) * 100}
-                    color="#45556C"
-                  />
-                  <div className="flex flex-col">
+              <div className="mt-4 flex items-center gap-3">
+                <CircularProgress
+                  className="size-7 shrink-0"
+                  value={stats ? ((stats.totalWinnings ?? 0) / 1000) * 100 : 0}
+                  color="#45556C"
+                />
+                <div className="flex flex-col">
+                  {stats ? (
                     <p className="text-md text-slate-500">
                       Earn $1,000. You&apos;re{' '}
                       {new Intl.NumberFormat('en-US', {
@@ -200,9 +200,11 @@ export function DescriptionUI({ description, isPro = false }: Props) {
                       }).format(1000 - (stats.totalWinnings ?? 0))}{' '}
                       away
                     </p>
-                  </div>
+                  ) : (
+                    <p className="text-md text-slate-500">Win $1,000 on Earn</p>
+                  )}
                 </div>
-              )}
+              </div>
               <div className="mt-4 flex gap-3">
                 <SuperteamIcon className="text-brand-purple ml-0.5 size-9" />
                 <div className="flex flex-col">

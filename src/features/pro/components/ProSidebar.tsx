@@ -33,18 +33,20 @@ const PerksList = () => {
 };
 
 const ProEligibility = ({ totalWinnings }: { totalWinnings: number }) => {
+  const hasWinnings = totalWinnings > 0;
+
   return (
     <>
       <p className="text-[0.95rem] font-medium text-slate-400">Eligibility</p>
-      {!!totalWinnings && (
-        <div className="mt-4 flex items-center gap-4">
-          <CircularProgress
-            className="size-6 shrink-0"
-            value={((totalWinnings ?? 0) / 1000) * 100}
-            color="#6366f1"
-            thickness={2}
-          />
-          <div className="flex flex-col">
+      <div className="mt-4 flex items-center gap-4">
+        <CircularProgress
+          className="size-6 shrink-0"
+          value={hasWinnings ? ((totalWinnings ?? 0) / 1000) * 100 : 0}
+          color="#6366f1"
+          thickness={2}
+        />
+        <div className="flex flex-col">
+          {hasWinnings ? (
             <p className="text-sm text-slate-500">
               Earn atleast $1,000.{' '}
               <span className="ml-2 text-slate-400">
@@ -56,9 +58,11 @@ const ProEligibility = ({ totalWinnings }: { totalWinnings: number }) => {
                 /1000
               </span>
             </p>
-          </div>
+          ) : (
+            <p className="text-sm text-slate-500">Win $1,000 on Earn</p>
+          )}
         </div>
-      )}
+      </div>
       <div className="mt-4 flex items-center gap-4">
         <CircularProgress
           className="size-6 shrink-0"
