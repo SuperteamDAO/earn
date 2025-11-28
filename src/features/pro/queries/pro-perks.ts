@@ -12,8 +12,8 @@ interface ProPerk {
 }
 
 const fetchProPerks = async (): Promise<ProPerk[]> => {
-  const { data } = await api.get<ProPerk[]>('/api/pro/perks');
-  return data;
+  const { data } = await api.get<{ perks: ProPerk[] }>('/api/pro/perks');
+  return data.perks;
 };
 
 export const proPerksQuery = queryOptions({

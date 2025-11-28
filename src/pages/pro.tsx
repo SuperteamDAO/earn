@@ -6,9 +6,9 @@ import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { cn } from '@/utils/cn';
 
-import { BannerCarousel } from '@/features/home/components/Banner';
-import { userCountQuery } from '@/features/home/queries/user-count';
+import { userStatsQuery } from '@/features/home/queries/user-stats';
 import { ListingsSection } from '@/features/listings/components/ListingsSection';
+import { ProBanner } from '@/features/pro/components/ProBanner';
 import { ProSidebar } from '@/features/pro/components/ProSidebar';
 
 interface HomePageProps {
@@ -16,8 +16,7 @@ interface HomePageProps {
 }
 
 export default function ProPage({ potentialSession }: HomePageProps) {
-  const { data: totalUsers } = useQuery(userCountQuery);
-
+  const { data: stats } = useQuery(userStatsQuery);
   const customEmptySection = () => {
     return (
       <div className="flex w-full flex-col items-center justify-center py-16">
@@ -52,7 +51,7 @@ export default function ProPage({ potentialSession }: HomePageProps) {
           <div className="w-full">
             <div className="w-full lg:pr-6">
               <div className="pt-3">
-                <BannerCarousel totalUsers={totalUsers?.totalUsers} />
+                <ProBanner totalEarnings={stats?.totalWinnings ?? 0} />
               </div>
               <div className="w-full">
                 <ListingsSection

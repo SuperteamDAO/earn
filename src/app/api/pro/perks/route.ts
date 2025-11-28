@@ -33,11 +33,7 @@ export async function GET() {
       },
     });
 
-    return NextResponse.json(perks, {
-      headers: {
-        'Cache-Control': 'public, max-age=300, stale-while-revalidate=600',
-      },
-    });
+    return NextResponse.json({ perks }, { status: 200 });
   } catch (error) {
     logger.error('Error fetching pro perks:', error);
     return NextResponse.json(
