@@ -194,7 +194,10 @@ function TalentProfile({ talent, stats }: TalentProps) {
 
   const workPreferenceText = getWorkPreferenceText(talent?.workPrefernce);
 
-  const ogImage = new URL(`${getURL()}api/dynamic-og/talent/`);
+  const ogImagePath = talent?.isPro
+    ? `${getURL()}api/dynamic-og/pro-talent/`
+    : `${getURL()}api/dynamic-og/talent/`;
+  const ogImage = new URL(ogImagePath);
   ogImage.searchParams.set('name', `${talent?.firstName} ${talent?.lastName}`);
   ogImage.searchParams.set('username', talent?.username!);
   ogImage.searchParams.set('skills', JSON.stringify(talent?.skills));

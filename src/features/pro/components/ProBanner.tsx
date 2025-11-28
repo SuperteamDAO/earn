@@ -1,7 +1,7 @@
 import { IBM_Plex_Serif } from 'next/font/google';
 
 import { AnimatedDots } from '@/components/shared/AnimatedDots';
-import { LocalImage } from '@/components/ui/local-image';
+import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { Progress } from '@/components/ui/progress';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useUser } from '@/store/user';
@@ -99,10 +99,10 @@ export function ProBanner({ totalEarnings }: ProBannerProps) {
       ) : (
         <NotProUser totalEarnings={totalEarnings ?? 0} />
       )}
-      <LocalImage
-        src="/assets/pro-globe.png"
+      <ExternalImage
+        src={'/pro/globe.webp'}
         alt="Globe"
-        className="absolute top-8 -right-10 z-10 scale-60"
+        className="absolute top-20 -right-10 z-10 scale-80 sm:top-8 sm:scale-60"
       />
       <div className="absolute -top-20 -left-10 z-0 size-96 rounded-full bg-[#3D3D3D] blur-[60px]" />
     </div>
