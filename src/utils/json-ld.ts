@@ -129,6 +129,28 @@ export interface BreadcrumbItemSchema {
   readonly item?: string;
 }
 
+export interface PlaceSchema {
+  readonly '@type': 'Place';
+  readonly name: string;
+}
+
+export interface PersonSchema extends BaseSchema {
+  readonly '@type': 'Person';
+  readonly name: string;
+  readonly url?: string;
+  readonly image?: string | ImageObjectSchema;
+  readonly jobTitle?: string;
+  readonly worksFor?: OrganizationSchema;
+  readonly sameAs?: readonly string[];
+  readonly homeLocation?: PlaceSchema;
+  readonly knowsAbout?: readonly string[];
+  readonly identifier?: {
+    readonly '@type': 'PropertyValue';
+    readonly name: string;
+    readonly value: string;
+  };
+}
+
 /**
  * Generate Organization schema for Superteam Earn
  */
@@ -474,6 +496,120 @@ export function generateCategoryCollectionSchema(
       '@type': 'ItemList',
       name: `${categoryName} Bounties and Projects`,
     },
+  };
+
+  return schema;
+}
+
+/**
+ * Generate Person schema for a talent profile
+ */
+export function generatePersonSchema(person: {
+  readonly firstName?: string;
+  readonly lastName?: string;
+  readonly username?: string;
+  readonly photo?: string;
+  readonly workPreference?: string | null;
+  readonly currentEmployer?: string;
+  readonly location?: string;
+  readonly skills?: unknown;
+  readonly twitter?: string;
+  readonly linkedin?: string;
+  readonly github?: string;
+  readonly website?: string;
+}): PersonSchema {
+  const baseUrl = getURL();
+  const fullName = `${person.firstName || ''} ${person.lastName || ''}`.trim();
+  const profileUrl = person.username
+    ? `${baseUrl}t/${person.username}/`
+    : undefined;
+
+  // Build sameAs array from social links
+  const sameAs: string[] = [];
+  if (person.twitter) {
+    sameAs.push(
+      person.twitter.startsWith('http')
+        ? person.twitter
+        : `https://twitter.com/${person.twitter.replace(/^@/, '')}`,
+    );
+  }
+  if (person.linkedin) {
+    sameAs.push(
+      person.linkedin.startsWith('http')
+        ? person.linkedin
+        : `https://linkedin.com/in/${person.linkedin}`,
+    );
+  }
+  if (person.github) {
+    sameAs.push(
+      person.github.startsWith('http')
+        ? person.github
+        : `https://github.com/${person.github}`,
+    );
+  }
+  if (person.website) {
+    sameAs.push(person.website);
+  }
+
+  // Extract skills array
+  let knowsAbout: string[] | undefined;
+  if (person.skills && Array.isArray(person.skills)) {
+    const allSkills: string[] = [];
+    person.skills.forEach((skillItem: any) => {
+      if (skillItem?.skills) {
+        allSkills.push(skillItem.skills);
+      }
+      if (Array.isArray(skillItem?.subskills)) {
+        allSkills.push(...skillItem.subskills);
+      }
+    });
+    if (allSkills.length > 0) {
+      knowsAbout = allSkills;
+    }
+  }
+
+  // Create worksFor organization if currentEmployer exists
+  let worksFor: OrganizationSchema | undefined;
+  if (person.currentEmployer) {
+    worksFor = {
+      '@context': 'https://schema.org',
+      '@type': 'Organization',
+      name: person.currentEmployer,
+    };
+  }
+
+  // Create homeLocation if location exists
+  let homeLocation: PlaceSchema | undefined;
+  if (person.location) {
+    homeLocation = {
+      '@type': 'Place',
+      name: person.location,
+    };
+  }
+
+  const schema: PersonSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'Person',
+    name: fullName || 'Talent',
+    url: profileUrl,
+    image: person.photo
+      ? {
+          '@type': 'ImageObject',
+          url: person.photo,
+        }
+      : undefined,
+    jobTitle: person.workPreference || undefined,
+    worksFor,
+    sameAs: sameAs.length > 0 ? sameAs : undefined,
+    homeLocation,
+    knowsAbout,
+    identifier: person.username
+      ? {
+          '@type': 'PropertyValue',
+          name: 'Username',
+          value: person.username,
+        }
+      : undefined,
   };
 
   return schema;

@@ -136,6 +136,7 @@ export function ListingPageLayout({
           <meta property="og:image:width" content="1200" />
           <meta property="og:image:height" content="630" />
           <meta property="og:image:alt" content="Superteam Bounty" />
+          <meta property="og:type" content="website" />
           <meta charSet="UTF-8" key="charset" />
           <meta
             name="viewport"
