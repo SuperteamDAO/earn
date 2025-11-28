@@ -327,6 +327,10 @@ export async function buildListingQuery(
     });
   }
 
+  if (context === 'pro') {
+    where.isPro = true;
+  }
+
   const standardTabs = ['all', 'bounties', 'projects'];
 
   if (standardTabs.includes(tab)) {

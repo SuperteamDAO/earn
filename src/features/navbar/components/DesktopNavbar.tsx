@@ -157,6 +157,7 @@ export const DesktopNavbar = ({
                 const isCurrent = `${navItem.href}` === router.asPath;
                 return (
                   <NavLink
+                    isPro={isPro}
                     className="ph-no-capture"
                     onClick={() => {
                       posthog.capture(navItem.posthog);
@@ -170,6 +171,7 @@ export const DesktopNavbar = ({
               })}
 
               <NavLink
+                isPro={isPro}
                 className="ph-no-capture"
                 onClick={() => {
                   posthog.capture('pro_navbar');

@@ -8,6 +8,7 @@ interface CategoryPillProps {
   isActive?: boolean;
   onClick?: () => void;
   disabled?: boolean;
+  isPro?: boolean;
 }
 
 export function CategoryPill({
@@ -16,6 +17,7 @@ export function CategoryPill({
   isActive,
   onClick,
   disabled = false,
+  isPro = false,
 }: CategoryPillProps) {
   return (
     <div
@@ -26,9 +28,13 @@ export function CategoryPill({
           ? 'cursor-not-allowed text-slate-400 opacity-50'
           : 'cursor-pointer',
         isActive && !disabled
-          ? 'border-indigo-300 bg-indigo-100 text-indigo-600 hover:bg-indigo-200 hover:text-indigo-600 hover:no-underline'
+          ? isPro
+            ? 'border-zinc-800 bg-zinc-700 text-zinc-200 hover:bg-zinc-900 hover:text-zinc-200 hover:no-underline'
+            : 'border-indigo-300 bg-indigo-100 text-indigo-600 hover:bg-indigo-200 hover:text-indigo-600 hover:no-underline'
           : !disabled
-            ? 'text-slate-500 hover:bg-indigo-100 hover:text-slate-700 hover:no-underline'
+            ? isPro
+              ? 'text-zinc-500 hover:bg-zinc-100 hover:text-zinc-700 hover:no-underline'
+              : 'text-slate-500 hover:bg-indigo-100 hover:text-slate-700 hover:no-underline'
             : 'text-slate-400',
       )}
       onClick={() => {

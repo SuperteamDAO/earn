@@ -41,9 +41,11 @@ function CircularProgress({
   value,
   className,
   color = '#818CF8',
+  thickness = 3,
 }: React.ComponentProps<'div'> & {
   value: number;
   color?: string;
+  thickness?: number;
 }) {
   const normalizedValue = Math.min(100, Math.max(0, value));
 
@@ -54,7 +56,7 @@ function CircularProgress({
     >
       <div
         data-slot="circular-progress-track"
-        className="absolute h-full w-full rounded-full bg-gray-200"
+        className="absolute h-full w-full rounded-full bg-gray-300"
       />
       <div
         data-slot="circular-progress-indicator"
@@ -66,7 +68,13 @@ function CircularProgress({
       />
       <div
         data-slot="circular-progress-center"
-        className="absolute top-[3px] right-[3px] bottom-[3px] left-[3px] rounded-full bg-white"
+        className="absolute rounded-full bg-white"
+        style={{
+          top: `${thickness}px`,
+          right: `${thickness}px`,
+          bottom: `${thickness}px`,
+          left: `${thickness}px`,
+        }}
       />
     </div>
   );
