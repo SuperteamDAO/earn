@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import { useAtomValue } from 'jotai';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useWatch } from 'react-hook-form';
 
@@ -15,6 +16,7 @@ import { Tooltip } from '@/components/ui/tooltip';
 
 import { scaleRewardsForTargetUsd } from '@/features/listing-builder/utils/rewards';
 
+import { isEditingAtom } from '../../../atoms';
 import { useListingForm } from '../../../hooks';
 import { tokenUsdValueQuery } from '../Boost/queries';
 import { computeEstimatedUsdValue } from '../Boost/utils';
@@ -41,6 +43,7 @@ interface ProOnlyProps {
 
 export function ProOnly({ onShowNudgesChange, onSwitchRef }: ProOnlyProps) {
   const form = useListingForm();
+  const isEditing = useAtomValue(isEditingAtom);
   const [showCallout, setShowCallout] = useState(false);
   const [isShaking, setIsShaking] = useState(false);
   const switchRef = useRef<HTMLDivElement | null>(null);
@@ -48,6 +51,11 @@ export function ProOnly({ onShowNudgesChange, onSwitchRef }: ProOnlyProps) {
   const isPrivate = useWatch({
     control: form.control,
     name: 'isPrivate',
+  });
+
+  const publishedAt = useWatch({
+    control: form.control,
+    name: 'publishedAt',
   });
 
   const token = useWatch({
@@ -202,6 +210,8 @@ export function ProOnly({ onShowNudgesChange, onSwitchRef }: ProOnlyProps) {
   }, [onSwitchRef]);
 
   if (!form) return null;
+
+  if (!!publishedAt || isEditing) return null;
 
   if (isPrivate) return null;
 
