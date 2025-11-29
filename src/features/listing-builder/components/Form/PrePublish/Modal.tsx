@@ -3,7 +3,7 @@ import { useAtomValue, useSetAtom } from 'jotai';
 import { ExternalLink, Loader2 } from 'lucide-react';
 import { useRouter } from 'next/router';
 import posthog from 'posthog-js';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useWatch } from 'react-hook-form';
 import { toast } from 'sonner';
 
@@ -45,8 +45,10 @@ export function PrePublish() {
   const form = useListingForm();
   const [open, isOpen] = useState(false);
   const [showNudges, setShowNudges] = useState(false);
+  const [slideoutDismissed, setSlideoutDismissed] = useState(false);
   const [proSwitchElement, setProSwitchElement] =
     useState<HTMLDivElement | null>(null);
+  const slideoutRef = useRef<HTMLDivElement | null>(null);
   const status = useAtomValue(listingStatusAtom);
 
   const isSlugLoading = useIsFetching({ queryKey: ['slug'] }) > 0;
@@ -135,6 +137,13 @@ export function PrePublish() {
     [isEditing, status],
   );
 
+  useEffect(() => {
+    if (!open) {
+      // Reset dismissed state when modal closes
+      setSlideoutDismissed(false);
+    }
+  }, [open]);
+
   return (
     <Dialog
       open={open}
@@ -176,6 +185,18 @@ export function PrePublish() {
           overlay: 'bg-black/10 backdrop-blur-sm',
         }}
         className="overflow-y-visible py-4 sm:max-w-[500px]"
+        onInteractOutside={(e) => {
+          const target = e.target as HTMLElement;
+          if (slideoutRef.current && slideoutRef.current.contains(target)) {
+            e.preventDefault();
+          }
+        }}
+        onPointerDownOutside={(e) => {
+          const target = e.target as HTMLElement;
+          if (slideoutRef.current && slideoutRef.current.contains(target)) {
+            e.preventDefault();
+          }
+        }}
       >
         <DialogHeader className="flex flex-row items-center gap-4">
           <DialogTitle className="relative flex h-5 items-center text-base">
@@ -269,7 +290,12 @@ export function PrePublish() {
           </Button>
         </DialogFooter>
       </DialogContent>
-      <ProSlideout show={showNudges && open} proSwitchRef={proSwitchElement} />
+      <ProSlideout
+        show={showNudges && open && !slideoutDismissed}
+        proSwitchRef={proSwitchElement}
+        slideoutRef={slideoutRef}
+        onClose={() => setSlideoutDismissed(true)}
+      />
     </Dialog>
   );
 }

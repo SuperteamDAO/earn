@@ -108,12 +108,12 @@ export const ProSidebar = () => {
           )}
           <Separator className="my-8" />
           <p className="text-[0.95rem] font-medium text-slate-400">
-            Membership Perks
+            Pro Benefits
           </p>
           <PerksList />
           <Separator className="my-8" />
           <p className="text-[0.95rem] font-medium text-slate-400">
-            Exclusive Perks from our partners
+            Pro Ecosystem Perks
           </p>
           <ProPerksCards />
         </>

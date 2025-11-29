@@ -24,8 +24,12 @@ const font = localFont({
 
 export function ProListingsAnnouncement({
   isAnyModalOpen,
+  forceOpen,
+  onOpenChange,
 }: {
   isAnyModalOpen?: boolean;
+  forceOpen?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }) {
   const user = useUser();
   const [showModal, setShowModal] = useState(false);
@@ -37,12 +41,18 @@ export function ProListingsAnnouncement({
       : 150000;
 
   useEffect(() => {
+    if (forceOpen !== undefined) {
+      setShowModal(forceOpen);
+      onOpenChange?.(forceOpen);
+      return;
+    }
+
     if (isAnyModalOpen) return;
     const seen = localStorage.getItem(LOCAL_STORAGE_KEY);
     if (!seen && !!user.user?.currentSponsorId) {
       setShowModal(true);
     }
-  }, [isAnyModalOpen, user.user?.currentSponsorId]);
+  }, [forceOpen, isAnyModalOpen, user.user?.currentSponsorId, onOpenChange]);
 
   const isLoggedInAndIsSponsor = Boolean(
     user.user && !!user.user.currentSponsorId,
@@ -53,14 +63,18 @@ export function ProListingsAnnouncement({
   function handleModalClose() {
     localStorage.setItem(LOCAL_STORAGE_KEY, 'true');
     setShowModal(false);
+    onOpenChange?.(false);
   }
 
   return (
     <Dialog open={showModal} onOpenChange={handleModalClose}>
       <DialogContent
         hideCloseIcon
-        className="w-full max-w-md overflow-hidden border-0 bg-transparent p-0 sm:rounded-xl"
+        className="z-[500] w-full max-w-md overflow-hidden border-0 bg-transparent p-0 sm:rounded-xl"
         autoFocus={false}
+        classNames={{
+          overlay: 'z-[500]',
+        }}
       >
         <div className="mx-auto w-full overflow-hidden rounded-lg bg-white shadow-lg">
           <div className="relative overflow-hidden bg-black px-6 pt-6 pb-8">

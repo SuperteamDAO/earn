@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { useAtomValue } from 'jotai';
+import { HelpCircle } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useWatch } from 'react-hook-form';
 
@@ -14,6 +15,7 @@ import {
 import { Switch } from '@/components/ui/switch';
 import { Tooltip } from '@/components/ui/tooltip';
 
+import { ProListingsAnnouncement } from '@/features/announcements/components/ProListingsAnnouncement';
 import { scaleRewardsForTargetUsd } from '@/features/listing-builder/utils/rewards';
 
 import { isEditingAtom } from '../../../atoms';
@@ -46,6 +48,7 @@ export function ProOnly({ onShowNudgesChange, onSwitchRef }: ProOnlyProps) {
   const isEditing = useAtomValue(isEditingAtom);
   const [showCallout, setShowCallout] = useState(false);
   const [isShaking, setIsShaking] = useState(false);
+  const [showProAnnouncement, setShowProAnnouncement] = useState(false);
   const switchRef = useRef<HTMLDivElement | null>(null);
 
   const isPrivate = useWatch({
@@ -294,7 +297,17 @@ export function ProOnly({ onShowNudgesChange, onSwitchRef }: ProOnlyProps) {
           return (
             <FormItem className="flex flex-row items-center justify-between">
               <div className="">
-                <FormLabel className="">Pro Only (Top 1% of Earn)</FormLabel>
+                <div className="flex items-center gap-2">
+                  <FormLabel className="">Pro Only (Top 1% of Earn)</FormLabel>
+                  <button
+                    type="button"
+                    onClick={() => setShowProAnnouncement(true)}
+                    className="text-slate-400 transition-colors hover:text-slate-600"
+                    aria-label="Learn more about Pro Only"
+                  >
+                    <HelpCircle className="h-4 w-4" />
+                  </button>
+                </div>
                 <FormDescription>
                   Users with &gt;$1k Earnings + Superteam Members eligible
                 </FormDescription>
@@ -302,7 +315,7 @@ export function ProOnly({ onShowNudgesChange, onSwitchRef }: ProOnlyProps) {
               <FormControl className="flex items-center">
                 <div className="relative" ref={switchRef}>
                   <Tooltip
-                    zIndex="z-[500]"
+                    zIndex="z-[300]"
                     content="Reach High Quality Talent"
                     open={showNudges}
                     onOpenChange={() => {}}
@@ -345,6 +358,10 @@ export function ProOnly({ onShowNudgesChange, onSwitchRef }: ProOnlyProps) {
           </div>
         </div>
       )}
+      <ProListingsAnnouncement
+        forceOpen={showProAnnouncement}
+        onOpenChange={setShowProAnnouncement}
+      />
     </div>
   );
 }

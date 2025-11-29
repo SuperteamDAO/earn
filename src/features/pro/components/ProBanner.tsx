@@ -26,12 +26,16 @@ const plex = IBM_Plex_Serif({
 
 const NotProUser = ({ totalEarnings }: { totalEarnings: number }) => {
   return (
-    <div className="z-10 w-72">
-      <p className="text-3xl font-semibold text-white">
+    <div className="z-20 w-72">
+      <p className="text-2xl font-medium text-white md:text-3xl md:font-semibold">
         You’re very close to being eligible
       </p>
       <p className="mt-4 text-base text-zinc-400">
-        You need to earn ${(1000 - totalEarnings).toFixed(0)} more
+        You need to earn $
+        {(1000 - totalEarnings).toLocaleString('en-US', {
+          maximumFractionDigits: 0,
+        })}{' '}
+        more, or become a Superteam member
       </p>
       <div className="mt-5 flex items-center gap-4">
         <Progress
@@ -40,8 +44,17 @@ const NotProUser = ({ totalEarnings }: { totalEarnings: number }) => {
           indicatorClassName="bg-white"
         />
         <p className="text-base text-zinc-500">
-          ${totalEarnings.toFixed(0)} /{' '}
-          <span className="text-white">$1000</span>
+          $
+          {totalEarnings.toLocaleString('en-US', {
+            maximumFractionDigits: 0,
+          })}{' '}
+          /{' '}
+          <span className="text-white">
+            $
+            {(1000).toLocaleString('en-US', {
+              maximumFractionDigits: 0,
+            })}
+          </span>
         </p>
       </div>
     </div>
@@ -50,13 +63,13 @@ const NotProUser = ({ totalEarnings }: { totalEarnings: number }) => {
 
 const NotLoggedInUser = () => {
   return (
-    <div className="z-20 w-108">
-      <p className="text-2xl font-medium text-white">
-        Check if you&apos;re eligible for high paying bounties and exclusive
-        perks
+    <div className="z-20 w-72">
+      <p className="text-2xl font-medium text-white md:text-3xl md:font-semibold">
+        You’re very close to being eligible
       </p>
+      <p className="mt-4 text-base text-zinc-400">Sign in to see your status</p>
       <AuthWrapper className="mt-5 w-full sm:w-auto">
-        <Button className="ph-no-capture h-9 w-full bg-white px-9 py-1 text-sm font-semibold text-zinc-900 hover:bg-white/90 sm:w-auto md:h-10 md:py-3">
+        <Button className="ph-no-capture h-9 w-auto bg-white px-9 py-1 text-sm font-semibold text-zinc-900 hover:bg-white/90 sm:w-auto md:h-10 md:py-3">
           Sign In
         </Button>
       </AuthWrapper>
@@ -99,7 +112,7 @@ export function ProBanner({ totalEarnings }: ProBannerProps) {
   const isPro = user?.isPro ?? false;
   const { authenticated } = usePrivy();
   return (
-    <div className="relative flex flex-col gap-4 overflow-hidden rounded-xl bg-zinc-800 px-11 pb-10 text-white">
+    <div className="relative flex flex-col gap-4 overflow-hidden rounded-xl bg-zinc-800 px-6 pb-8 text-white sm:pb-10 md:px-11">
       <AnimatedDots
         dotSize={2}
         colors={['#939393']}
@@ -125,7 +138,7 @@ export function ProBanner({ totalEarnings }: ProBannerProps) {
       <ExternalImage
         src={'/pro/globe.webp'}
         alt="Globe"
-        className="absolute top-20 -right-10 z-10 scale-80 sm:top-8 sm:scale-60"
+        className="absolute top-10 -right-10 z-10 scale-80 sm:-top-15 sm:scale-60"
       />
       <div className="absolute -top-20 -left-10 z-0 size-96 rounded-full bg-[#3D3D3D] blur-[60px]" />
     </div>

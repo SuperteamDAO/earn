@@ -5,6 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 
 import { Button } from '@/components/ui/button';
 import { useUser } from '@/store/user';
+import { cn } from '@/utils/cn';
 
 import { proPerksQuery } from '../queries/pro-perks';
 
@@ -27,7 +28,7 @@ const ProPerkCard = ({ perk }: ProPerkCardProps) => {
   const shouldShowCta = authenticated && isPro && hasCtaLink;
 
   return (
-    <div className="bg- w-full rounded-xl bg-[#F8FAFC] p-4">
+    <div className="w-full rounded-xl border border-slate-100 bg-[#F8FAFC] px-4 pt-6 pb-8">
       <div className="flex flex-col items-start gap-3">
         <img
           src={perk.logo}
@@ -39,7 +40,7 @@ const ProPerkCard = ({ perk }: ProPerkCardProps) => {
         <p className="text-slate-500">{perk.description}</p>
         {shouldShowCta && (
           <Button
-            className="mt-2 w-full bg-white font-semibold text-slate-500 hover:bg-slate-100"
+            className="mt-2 w-full rounded-lg bg-white font-semibold text-slate-500 shadow transition-all hover:bg-slate-100 hover:shadow-lg"
             onClick={() => {
               if (perk.ctaLink) {
                 window.open(perk.ctaLink, '_blank', 'noopener,noreferrer');
@@ -56,12 +57,15 @@ const ProPerkCard = ({ perk }: ProPerkCardProps) => {
 
 export const ProPerksCards = () => {
   const { data: perks, isLoading } = useQuery(proPerksQuery);
+  const shouldShowCta = perks?.some((perk) => Boolean(perk.ctaLink));
 
   if (isLoading) {
     return (
-      <div className="mt-4 flex flex-col gap-4">
-        <div className="h-24 animate-pulse rounded-lg bg-zinc-200" />
-        <div className="h-24 animate-pulse rounded-lg bg-zinc-200" />
+      <div className="mt-4 max-h-150 overflow-y-auto">
+        <div className="flex flex-col gap-4 pr-2">
+          <div className="h-24 animate-pulse rounded-lg bg-zinc-200" />
+          <div className="h-24 animate-pulse rounded-lg bg-zinc-200" />
+        </div>
       </div>
     );
   }
@@ -71,10 +75,17 @@ export const ProPerksCards = () => {
   }
 
   return (
-    <div className="mt-4 flex flex-col gap-4">
-      {perks.map((perk) => (
-        <ProPerkCard key={perk.id} perk={perk} />
-      ))}
+    <div
+      className={cn(
+        'mt-4 overflow-y-auto pb-10',
+        shouldShowCta ? 'max-h-180' : 'max-h-140',
+      )}
+    >
+      <div className="flex flex-col gap-4 pr-2">
+        {perks.map((perk) => (
+          <ProPerkCard key={perk.id} perk={perk} />
+        ))}
+      </div>
     </div>
   );
 };

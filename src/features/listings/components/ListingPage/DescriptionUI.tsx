@@ -6,6 +6,7 @@ import parse, {
 import { ChevronDown } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
+import SuperteamIcon from '@/components/icons/SuperteamIcon';
 import { Button } from '@/components/ui/button';
 import { CircularProgress } from '@/components/ui/progress';
 import { useMediaQuery } from '@/hooks/use-media-query';
@@ -17,7 +18,6 @@ import { cn } from '@/utils/cn';
 import { userStatsQuery } from '@/features/home/queries/user-stats';
 import { ProBadge } from '@/features/pro/components/ProBadge';
 import { ProIntro } from '@/features/pro/components/ProIntro';
-import { SuperteamIcon } from '@/features/sponsor/icons/Superteam';
 
 interface Props {
   description?: string;
@@ -158,15 +158,17 @@ export function DescriptionUI({ description, isPro = false }: Props) {
       user?.superteamLevel?.includes('Superteam');
 
     return (
-      <div className="relative h-180 w-full border-b-2 border-slate-200 md:border-0">
-        <div className="p-4 text-lg leading-relaxed font-medium text-slate-600 blur-sm select-none">
-          {randomText}
-        </div>
-        <div className="p-4 text-lg leading-relaxed font-medium text-slate-600 blur-sm select-none">
-          {randomText}
-        </div>
-        <div className="p-4 text-lg leading-relaxed font-medium text-slate-600 blur-sm select-none">
-          {randomText}
+      <div className="relative h-180 w-full overflow-hidden border-b-2 border-slate-200 md:border-0">
+        <div className="absolute inset-0 p-4">
+          <div className="mx-auto max-w-4xl text-lg leading-relaxed font-medium text-slate-600 blur-sm select-none">
+            {randomText}
+          </div>
+          <div className="mx-auto max-w-4xl text-lg leading-relaxed font-medium text-slate-600 blur-sm select-none">
+            {randomText}
+          </div>
+          <div className="mx-auto max-w-4xl text-lg leading-relaxed font-medium text-slate-600 blur-sm select-none">
+            {randomText}
+          </div>
         </div>
         <div className="absolute inset-0 bg-white/0 backdrop-blur-sm" />
         <div className="absolute right-1/2 bottom-1/2 translate-x-1/2 translate-y-1/2 shadow-lg">
@@ -181,24 +183,24 @@ export function DescriptionUI({ description, isPro = false }: Props) {
                 This bounty is only eligible for PRO members
               </p>
               <p className="text-md mt-4 mb-4 font-medium text-slate-500">
-                You can become a PRO member by
+                To be eligible for Pro, you need to:
               </p>
               <div className="mt-4 flex items-center gap-3">
                 <CircularProgress
                   className="size-7 shrink-0"
                   value={stats ? ((stats.totalWinnings ?? 0) / 1000) * 100 : 0}
-                  color="#45556C"
+                  color="#6366f1"
                 />
                 <div className="flex flex-col">
                   {stats ? (
                     <p className="text-md text-slate-500">
-                      Earn $1,000. You&apos;re{' '}
+                      Earn ${' '}
                       {new Intl.NumberFormat('en-US', {
                         style: 'currency',
                         currency: 'USD',
                         maximumFractionDigits: 0,
                       }).format(1000 - (stats.totalWinnings ?? 0))}{' '}
-                      away
+                      more, or
                     </p>
                   ) : (
                     <p className="text-md text-slate-500">Win $1,000 on Earn</p>
@@ -209,7 +211,7 @@ export function DescriptionUI({ description, isPro = false }: Props) {
                 <SuperteamIcon className="text-brand-purple ml-0.5 size-9" />
                 <div className="flex flex-col">
                   <p className="text-md text-slate-500">
-                    or become a Superteam member of your region
+                    Become a Superteam member of your region
                   </p>
                 </div>
               </div>

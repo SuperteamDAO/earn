@@ -1,6 +1,6 @@
+import SuperteamIcon from '@/components/icons/SuperteamIcon';
 import { cn } from '@/utils/cn';
 
-import { SuperteamIcon } from '../icons/Superteam';
 import { maxW } from '../utils/styles';
 
 const GLOBE_URL =
@@ -59,7 +59,7 @@ export function SuperteamNetwork() {
             alt="Superteam globe"
             className="pointer-events-none absolute -top-4 -right-12 h-[160%] w-[160%] object-contain opacity-80"
           />
-          <SuperteamIcon className="pointer-events-none absolute top-5/8 right-1/8 size-32 -translate-x-1/2 -translate-y-1/2 opacity-90" />
+          <SuperteamIcon className="pointer-events-none absolute top-5/8 right-1/8 size-32 -translate-x-1/2 -translate-y-1/2 text-[#45556C] opacity-90" />
         </div>
 
         <div className="relative flex h-[12rem] w-full items-center justify-center md:hidden">
@@ -68,7 +68,7 @@ export function SuperteamNetwork() {
             alt="Superteam globe"
             className="pointer-events-none relative top-[10rem] -left-10 h-full w-full scale-250 object-contain"
           />
-          <SuperteamIcon className="pointer-events-none absolute top-5/9 left-2/4 size-18 -translate-x-1/2 -translate-y-1/2 opacity-90" />
+          <SuperteamIcon className="pointer-events-none absolute top-5/9 left-2/4 size-18 -translate-x-1/2 -translate-y-1/2 text-[#45556C] opacity-90" />
         </div>
       </div>
     </section>

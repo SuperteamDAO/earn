@@ -1,18 +1,26 @@
-import { useEffect, useRef, useState } from 'react';
+import { X } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 
 import { AnimatedDots } from '@/components/shared/AnimatedDots';
+import { Button } from '@/components/ui/button';
 
 import { ProBadge } from '@/features/pro/components/ProBadge';
 
 interface ProSlideoutProps {
   show: boolean;
   proSwitchRef: HTMLDivElement | null;
+  slideoutRef: React.MutableRefObject<HTMLDivElement | null>;
+  onClose: () => void;
 }
 
-export function ProSlideout({ show, proSwitchRef }: ProSlideoutProps) {
+export function ProSlideout({
+  show,
+  proSwitchRef,
+  slideoutRef,
+  onClose,
+}: ProSlideoutProps) {
   const [mounted, setMounted] = useState(false);
-  const slideoutRef = useRef<HTMLDivElement | null>(null);
   const [arrowPath, setArrowPath] = useState<string | null>(null);
   const [arrowHead, setArrowHead] = useState<{
     x: number;
@@ -124,9 +132,12 @@ export function ProSlideout({ show, proSwitchRef }: ProSlideoutProps) {
         </svg>
       )}
       <div
-        ref={slideoutRef}
-        className="animate-in fade-in-0 slide-in-from-right-full fixed right-4 bottom-4 z-70 max-w-120 duration-300"
+        ref={(node) => {
+          slideoutRef.current = node;
+        }}
+        className="animate-in fade-in-0 slide-in-from-right-full fixed right-4 bottom-4 z-[100] max-w-120 duration-300"
         data-state={show ? 'open' : 'closed'}
+        style={{ pointerEvents: 'auto' }}
       >
         <div className="flex overflow-hidden rounded-lg border border-slate-200 bg-white shadow-lg">
           <div className="relative flex w-30 flex-col items-center justify-center overflow-hidden rounded-r-lg bg-zinc-800 px-4 py-6">
@@ -149,7 +160,18 @@ export function ProSlideout({ show, proSwitchRef }: ProSlideoutProps) {
             <div className="absolute right-2 bottom-20 size-10 rounded-full bg-white/20 blur-[20px]" />
           </div>
 
-          <div className="flex-1 px-4 py-4">
+          <div className="relative flex-1 px-4 py-4">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="absolute top-2 right-2 z-50 h-6 w-6 text-slate-400 hover:text-slate-600"
+              onClick={(e) => {
+                e.stopPropagation();
+                onClose();
+              }}
+            >
+              <X className="h-4 w-4" />
+            </Button>
             <h3 className="mb-2 text-base font-semibold text-slate-800">
               Reach the top 1% talent
             </h3>

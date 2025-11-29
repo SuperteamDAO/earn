@@ -135,7 +135,10 @@ export const ListingsSection = ({
     handleSortChange,
   } = useListingState({
     defaultCategory: optimalDefaultCategory,
-    defaultStatus: isSponsorContext || isBookmarksContext ? 'all' : undefined,
+    defaultStatus:
+      isSponsorContext || isBookmarksContext || isProContext
+        ? 'all'
+        : undefined,
     defaultSortBy: isSponsorContext ? 'Status' : undefined,
   });
 
@@ -305,7 +308,7 @@ export const ListingsSection = ({
           activeOrder={activeOrder}
           onStatusChange={handleStatusChange}
           onSortChange={handleSortChange}
-          showAllFilter={isSponsorContext || isBookmarksContext}
+          showAllFilter={isSponsorContext || isBookmarksContext || isProContext}
           showStatusSort={isSponsorContext}
         />
       </div>
