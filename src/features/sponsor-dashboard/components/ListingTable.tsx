@@ -266,7 +266,7 @@ export const ListingTable = ({
                         >
                           {titleElement}
                           {listing.isPro && (
-                            <ProIcon className="size-4.5 text-slate-400" />
+                            <ProIcon className="size-3.5 text-slate-400" />
                           )}
                         </Link>
                       ) : (
