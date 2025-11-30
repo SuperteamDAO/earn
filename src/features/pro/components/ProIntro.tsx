@@ -119,6 +119,24 @@ export const ProIntro = ({ className, origin }: ProIntroProps) => {
         .pro-intro-container:has(button:hover) [style*="background-color"]:nth-child(8n+3) {
           background-color: #d4af37 !important;
         }
+        .pro-intro-upgrade-button {
+          will-change: transform;
+          transform: scale(1);
+          transform-origin: center center;
+          -webkit-transform: scale(1);
+          -webkit-transform-origin: center center;
+          backface-visibility: hidden;
+          -webkit-backface-visibility: hidden;
+          contain: style paint;
+        }
+        .pro-intro-upgrade-button:hover:not(:disabled) {
+          transform: scale(1.02);
+          -webkit-transform: scale(1.02);
+        }
+        .pro-intro-upgrade-button:disabled:hover {
+          transform: scale(1);
+          -webkit-transform: scale(1);
+        }
       `}</style>
       <div
         ref={containerRef}
@@ -148,7 +166,7 @@ export const ProIntro = ({ className, origin }: ProIntroProps) => {
         <Button
           onClick={handleUpgrade}
           disabled={isLoading || isOriginActive}
-          className="group relative z-10 mt-5 mb-4 w-full overflow-hidden rounded-lg bg-linear-to-b from-[#575656] to-[#5B5959] font-sans transition-all duration-500 ease-out hover:scale-[1.02] hover:from-[#7A7A7A] hover:to-[#5A5A5A] hover:shadow-[0_0_20px_rgba(192,192,192,0.3),inset_0_0_20px_rgba(128,128,128,0.1)] focus:ring-0 focus:outline-hidden focus-visible:ring-0 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:scale-100"
+          className="pro-intro-upgrade-button group relative z-10 mt-5 mb-4 w-full overflow-hidden rounded-lg bg-linear-to-b from-[#575656] to-[#5B5959] font-sans transition-all duration-500 ease-out hover:from-[#7A7A7A] hover:to-[#5A5A5A] hover:shadow-[0_0_20px_rgba(192,192,192,0.3),inset_0_0_20px_rgba(128,128,128,0.1)] focus:ring-0 focus:outline-hidden focus-visible:ring-0 disabled:cursor-not-allowed disabled:opacity-50"
         >
           <span className="relative z-10">
             {isLoading ? 'Upgrading...' : 'Upgrade'}
