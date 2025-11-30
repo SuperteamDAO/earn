@@ -11,6 +11,7 @@ import FaXTwitter from '@/components/icons/FaXTwitter';
 import { AnimatedDots } from '@/components/shared/AnimatedDots';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
+import { getURL } from '@/utils/validUrl';
 
 import { userStatsQuery } from '@/features/home/queries/user-stats';
 import { useProUpgradeFlow } from '@/features/pro/state/pro-upgrade-flow';
@@ -392,7 +393,15 @@ export const ProUpgradeOverlay = () => {
               className="pointer-events-auto flex items-center gap-2 rounded-lg bg-white px-8 py-3 text-sm text-black transition-opacity hover:opacity-90 md:px-20 md:text-base"
               onClick={(e) => {
                 e.stopPropagation();
-                // TODO: Implement post on X functionality
+                if (!user?.username) {
+                  return;
+                }
+
+                const shareUrl = `${getURL()}t/${user.username}/pro`;
+                const message = `🎉 I just upgraded to Pro on @SuperteamEarn! Check out my profile`;
+                const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(message)}&url=${encodeURIComponent(shareUrl)}`;
+
+                window.open(twitterUrl, '_blank', 'noopener,noreferrer');
               }}
             >
               <FaXTwitter className="size-5" />
