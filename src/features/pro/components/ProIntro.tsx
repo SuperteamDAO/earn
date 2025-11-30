@@ -1,6 +1,7 @@
 import { useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import localFont from 'next/font/local';
+import posthog from 'posthog-js';
 import { useRef, useState } from 'react';
 import { toast } from 'sonner';
 
@@ -66,6 +67,8 @@ export const ProIntro = ({ className, origin }: ProIntroProps) => {
     if (typeof window === 'undefined') {
       return;
     }
+
+    posthog.capture('upgrade pro');
 
     const viewport = {
       width: window.innerWidth,

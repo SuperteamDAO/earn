@@ -2,6 +2,7 @@
 
 import { usePrivy } from '@privy-io/react-auth';
 import { useQuery } from '@tanstack/react-query';
+import posthog from 'posthog-js';
 
 import { Button } from '@/components/ui/button';
 import { useUser } from '@/store/user';
@@ -42,6 +43,7 @@ const ProPerkCard = ({ perk }: ProPerkCardProps) => {
           <Button
             className="mt-2 w-full rounded-lg bg-white font-semibold text-slate-500 shadow transition-all hover:bg-slate-100 hover:shadow-lg"
             onClick={() => {
+              posthog.capture('clicked pro_perk');
               if (perk.ctaLink) {
                 window.open(perk.ctaLink, '_blank', 'noopener,noreferrer');
               }
