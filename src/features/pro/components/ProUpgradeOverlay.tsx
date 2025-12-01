@@ -378,11 +378,61 @@ export const ProUpgradeOverlay = () => {
               </p>
               {flow.status === 'full' ? (
                 <>
-                  <div className="absolute -top-30 left-1/2 size-96 -translate-x-1/2 rounded-full bg-[#d9d9d9]/20 blur-[150px]" />
-                  <div className="absolute -bottom-30 left-200 size-96 -translate-x-1/2 rounded-full bg-[#d9d9d9]/20 blur-[150px]" />
-                  <div className="absolute right-200 -bottom-30 size-96 -translate-x-1/2 rounded-full bg-[#d9d9d9]/20 blur-[150px]" />
-                  <div className="absolute -top-30 right-100 size-96 -translate-x-1/2 rounded-full bg-[#d9d9d9]/20 blur-[150px]" />
-                  <div className="absolute bottom-30 left-100 size-96 -translate-x-1/2 rounded-full bg-[#d9d9d9]/20 blur-[150px]" />
+                  <div
+                    className="pointer-events-none absolute h-[900px] w-[900px]"
+                    style={{
+                      top: '5%',
+                      left: '10%',
+                      background:
+                        'radial-gradient(circle, rgba(217, 217, 217, 0.08) 0%, rgba(217, 217, 217, 0.04) 30%, transparent 60%)',
+                      transform: 'translate3d(-50%, -50%, 0)',
+                      willChange: 'transform',
+                    }}
+                  />
+                  <div
+                    className="pointer-events-none absolute h-[900px] w-[900px]"
+                    style={{
+                      top: '5%',
+                      right: '10%',
+                      background:
+                        'radial-gradient(circle, rgba(217, 217, 217, 0.08) 0%, rgba(217, 217, 217, 0.04) 30%, transparent 60%)',
+                      transform: 'translate3d(50%, -50%, 0)',
+                      willChange: 'transform',
+                    }}
+                  />
+                  <div
+                    className="pointer-events-none absolute h-[900px] w-[900px]"
+                    style={{
+                      bottom: '5%',
+                      left: '10%',
+                      background:
+                        'radial-gradient(circle, rgba(217, 217, 217, 0.08) 0%, rgba(217, 217, 217, 0.04) 30%, transparent 60%)',
+                      transform: 'translate3d(-50%, 50%, 0)',
+                      willChange: 'transform',
+                    }}
+                  />
+                  <div
+                    className="pointer-events-none absolute h-[900px] w-[900px]"
+                    style={{
+                      bottom: '5%',
+                      right: '10%',
+                      background:
+                        'radial-gradient(circle, rgba(217, 217, 217, 0.08) 0%, rgba(217, 217, 217, 0.04) 30%, transparent 60%)',
+                      transform: 'translate3d(50%, 50%, 0)',
+                      willChange: 'transform',
+                    }}
+                  />
+                  <div
+                    className="pointer-events-none absolute h-[900px] w-[900px]"
+                    style={{
+                      top: '50%',
+                      left: '50%',
+                      background:
+                        'radial-gradient(circle, rgba(217, 217, 217, 0.08) 0%, rgba(217, 217, 217, 0.04) 30%, transparent 60%)',
+                      transform: 'translate3d(-50%, -50%, 0)',
+                      willChange: 'transform',
+                    }}
+                  />
                 </>
               ) : null}
 
