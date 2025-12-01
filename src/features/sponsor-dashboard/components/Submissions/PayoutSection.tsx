@@ -225,17 +225,9 @@ export const PayoutSection = ({
                             {submission.user.lastName}
                           </div>
                           <div className="text-xs text-slate-500">
-                            @
-                            {submission.user.username ||
-                              (() => {
-                                const email = submission.user.email || '';
-                                const [localPart, domain] = email.split('@');
-                                if (!localPart)
-                                  return email.slice(0, 3) + '...';
-                                if (!domain)
-                                  return localPart.slice(0, 3) + '...';
-                                return `${localPart.slice(0, 1)}...@${domain}`;
-                              })()}
+                            {'@' + submission.user.username ||
+                              submission.user.email ||
+                              ''}
                           </div>
                         </div>
                       </div>
@@ -257,7 +249,9 @@ export const PayoutSection = ({
                           {truncatePublicKey(submission.user.walletAddress, 5)}
                         </CopyButton>
                       ) : (
-                        <span className="text-sm text-slate-400">No wallet</span>
+                        <span className="text-sm text-slate-400">
+                          No wallet
+                        </span>
                       )}
                     </TableCell>
                     <TableCell>
