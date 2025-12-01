@@ -508,7 +508,9 @@ export const ProUpgradeOverlay = () => {
                   <span className="font-medium">Post on X</span>
                 </button>
                 <a
-                  href="#"
+                  href="https://x.com/superteamearn"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="pointer-events-auto pr-8 text-sm text-zinc-400 underline transition-colors hover:text-white md:text-lg"
                   onClick={(e) => {
                     e.stopPropagation();

@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import localFont from 'next/font/local';
+import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
 import MdCheck from '@/components/icons/MdCheck';
@@ -145,10 +146,16 @@ export function ProListingsAnnouncement({
             </ul>
 
             <Button
-              onClick={handleModalClose}
+              asChild
               className="bg-brand-purple hover:bg-brand-purple/90 w-full rounded-lg text-white"
             >
-              Learn More
+              <Link
+                href="https://x.com/superteamearn"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Learn More
+              </Link>
             </Button>
           </div>
         </div>
