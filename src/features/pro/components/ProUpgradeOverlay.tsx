@@ -17,6 +17,7 @@ import { getURL } from '@/utils/validUrl';
 import { userStatsQuery } from '@/features/home/queries/user-stats';
 import { useProUpgradeFlow } from '@/features/pro/state/pro-upgrade-flow';
 
+import { LargeRandomArrow } from './LargeRandomArrow';
 import { ProBadge } from './ProBadge';
 
 const celebratoryFont = localFont({
@@ -433,6 +434,7 @@ export const ProUpgradeOverlay = () => {
                       willChange: 'transform',
                     }}
                   />
+                  <LargeRandomArrow />
                 </>
               ) : null}
 
