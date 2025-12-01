@@ -1,3 +1,4 @@
+// import { PrismaMariaDb } from '@prisma/adapter-mariadb'; // uncomment this if you are using local Mysql / MariaDB
 import { PrismaPlanetScale } from '@prisma/adapter-planetscale';
 
 import { PrismaClient } from '@/prisma/client';
@@ -30,10 +31,28 @@ if (isPlanetScale) {
     transactionOptions: { maxWait: 5000, timeout: 15000 },
   });
 } else {
+  // For local DB setups (MySQL/MariaDB), use PrismaClient without adapter
+  // If you need the MariaDB adapter, uncomment the following code:
+  // const url = new URL(databaseUrl);
+  // const adapter = new PrismaMariaDb({
+  //   host: url.hostname,
+  //   port: parseInt(url.port) || 3306,
+  //   user: url.username || 'root',
+  //   password: url.password || undefined,
+  //   database: url.pathname.slice(1),
+  //   connectionLimit: 5,
+  // });
+  // prismaClient = new PrismaClient({
+  //   adapter,
+  //   omit: omitConfig,
+  //   transactionOptions: { maxWait: 5000, timeout: 15000 },
+  // });
+
+  // Default: PrismaClient without adapter (works for local MySQL/MariaDB)
   prismaClient = new PrismaClient({
     omit: omitConfig,
     transactionOptions: { maxWait: 5000, timeout: 15000 },
-  });
+  } as any);
 }
 
 declare const globalThis: { prismaGlobal: typeof prismaClient } & typeof global;

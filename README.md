@@ -47,7 +47,16 @@
     pnpm i
     ```
 
-4. Set up your `.env` file.
+4. Install the MariaDB adapter (required for local MySQL development):
+    ```bash
+    pnpm add @prisma/adapter-mariadb
+    ```
+    Then, uncomment the MariaDB adapter code in `src/prisma.ts`:
+    - Line 1: Uncomment the `PrismaMariaDb` import
+    - Lines 35-44: Uncomment the URL parsing and adapter creation code
+    - Line 47: Uncomment the `adapter` parameter in `PrismaClient`
+
+5. Set up your `.env` file.
   - Start by copying the `.env.example` file to a new file named `.env`. This file will store your local environment settings.
     
   - Database setup:
@@ -195,9 +204,17 @@
   - <img src="https://avatars.githubusercontent.com/u/1460763" title="Cloudinary" alt="cloudinary" width="28" height="28" /> [Cloudinary](https://cloudinary.com/) setup:
     - To obtain your `CLOUDINARY_*` API keys, visit the Cloudinary dashboard. 
 
+  - Set up Solana RPC WebSocket URL:
+    - Set `NEXT_PUBLIC_RPC_WS_URL` in your `.env` file. This is required for wallet-related features.
+    - You can use a public RPC endpoint or get one from providers like [Helius](https://helius.dev/), [Triton.one](https://triton.one/).
+      ```
+      NEXT_PUBLIC_RPC_WS_URL='wss://api.mainnet-beta.solana.com?api-key=abc-xyz'
+      ```
+    > **Note:** Public endpoints have rate limits. For development, consider using devnet: `wss://api.devnet.solana.com`
+
   ❗NOTE: If you are facing any issues with setup, feel free to contact [Abhishek](https://twitter.com/abhwshek) or [Jayesh](https://twitter.com/jayeshvp24)
 
-5. Run the development server
+6. Run the development server
     ```bash
     pnpm dev
     ```
