@@ -25,7 +25,7 @@ const celebratoryFont = localFont({
   preload: false,
 });
 
-const CONFETTI_PIECE_COUNT = 100;
+const CONFETTI_PIECE_COUNT = 300;
 
 interface ProBenefitItemProps {
   text: string;
@@ -104,7 +104,7 @@ const generateConfettiPieces = (count: number): readonly ConfettiPiece[] => {
     return {
       id: index,
       startX: Math.random() * 100,
-      delay: Math.random() * 420,
+      delay: Math.random() * 2000,
       duration: randomBetween(2400, 3600),
       rotationStart,
       rotationEnd,
@@ -192,27 +192,34 @@ export const ProUpgradeOverlay = () => {
     }
 
     let timeoutId: number | undefined;
+    let confettiDelayTimeoutId: number | undefined;
 
     const frameId = window.requestAnimationFrame(() => {
       const pieces = generateConfettiPieces(CONFETTI_PIECE_COUNT);
       setConfettiPieces(pieces);
-      setIsConfettiActive(true);
 
-      const longestLifetime = pieces.reduce(
-        (max, piece) => Math.max(max, piece.delay + piece.duration),
-        0,
-      );
+      confettiDelayTimeoutId = window.setTimeout(() => {
+        setIsConfettiActive(true);
 
-      timeoutId = window.setTimeout(() => {
-        setIsConfettiActive(false);
-        setConfettiPieces([]);
-      }, longestLifetime + 200);
+        const longestLifetime = pieces.reduce(
+          (max, piece) => Math.max(max, piece.delay + piece.duration),
+          0,
+        );
+
+        timeoutId = window.setTimeout(() => {
+          setIsConfettiActive(false);
+          setConfettiPieces([]);
+        }, longestLifetime + 200);
+      }, 1500);
     });
 
     return () => {
       window.cancelAnimationFrame(frameId);
       if (timeoutId) {
         window.clearTimeout(timeoutId);
+      }
+      if (confettiDelayTimeoutId) {
+        window.clearTimeout(confettiDelayTimeoutId);
       }
     };
   }, [shouldRunConfetti]);
@@ -511,6 +518,13 @@ export const ProUpgradeOverlay = () => {
                 </a>
               </div>
             </div>
+            {isVisible ? (
+              <audio
+                src={'/assets/JohnCenaEntry.mp3'}
+                style={{ display: 'none' }}
+                autoPlay
+              />
+            ) : null}
           </motion.div>
         </AnimatePresence>
       </DialogContent>
