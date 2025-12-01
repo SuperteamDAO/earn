@@ -44,6 +44,8 @@ const AddProject = dynamic(
     ),
   { ssr: false },
 );
+import { ProBadge } from '@/features/pro/components/ProBadge';
+import { ProBG } from '@/features/pro/components/ProBg';
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 const ShareProfile = dynamic(
   () =>
@@ -192,51 +194,10 @@ function TalentProfile({ talent, stats }: TalentProps) {
 
   const workPreferenceText = getWorkPreferenceText(talent?.workPrefernce);
 
-  const renderButton = (
-    icon: JSX.Element,
-    text: string,
-    onClickHandler: () => void,
-    outline: boolean = false,
-  ) => {
-    if (isMD) {
-      return (
-        <AuthWrapper showCompleteProfileModal allowSponsor>
-          <Button
-            className={cn(
-              'ph-no-capture w-full text-sm font-medium',
-              outline
-                ? 'border-slate-400 bg-white text-slate-500 hover:bg-gray-100'
-                : 'border-brand-purple/5 bg-brand-purple/10 text-brand-purple hover:bg-brand-purple/20',
-            )}
-            onClick={onClickHandler}
-            variant={outline ? 'outline' : 'default'}
-          >
-            {icon}
-            {text}
-          </Button>
-        </AuthWrapper>
-      );
-    }
-
-    return (
-      <AuthWrapper showCompleteProfileModal allowSponsor>
-        <Button
-          aria-label={text}
-          onClick={onClickHandler}
-          className={cn(
-            'inline-flex h-9 w-9 items-center justify-center rounded border p-2 text-sm font-medium transition',
-            outline
-              ? 'border-slate-400 bg-white text-slate-500 hover:bg-gray-100'
-              : 'border-indigo-100 bg-indigo-100 text-indigo-600 hover:bg-indigo-200',
-          )}
-        >
-          {icon}
-        </Button>
-      </AuthWrapper>
-    );
-  };
-
-  const ogImage = new URL(`${getURL()}api/dynamic-og/talent/`);
+  const ogImagePath = talent?.isPro
+    ? `${getURL()}api/dynamic-og/pro-talent/`
+    : `${getURL()}api/dynamic-og/talent/`;
+  const ogImage = new URL(ogImagePath);
   ogImage.searchParams.set('name', `${talent?.firstName} ${talent?.lastName}`);
   ogImage.searchParams.set('username', talent?.username!);
   ogImage.searchParams.set('skills', JSON.stringify(talent?.skills));
@@ -259,6 +220,58 @@ function TalentProfile({ talent, stats }: TalentProps) {
       : 'Superteam Earn';
 
   const feedItems = feed?.pages.flatMap((page) => page) ?? [];
+
+  const renderButton = (
+    icon: JSX.Element,
+    text: string,
+    onClickHandler: () => void,
+    outline: boolean = false,
+  ) => {
+    if (isMD) {
+      return (
+        <AuthWrapper showCompleteProfileModal allowSponsor>
+          <Button
+            className={cn(
+              'ph-no-capture w-full text-sm font-medium',
+              outline
+                ? talent?.isPro
+                  ? 'border-zinc-400 bg-zinc-100 text-zinc-600 hover:bg-zinc-200 hover:text-zinc-600'
+                  : 'border-slate-400 bg-white text-slate-500 hover:bg-gray-100'
+                : talent?.isPro
+                  ? 'border-zinc-600 bg-zinc-700 text-white hover:bg-zinc-800 hover:text-white'
+                  : 'border-brand-purple/5 bg-brand-purple/10 text-brand-purple hover:bg-brand-purple/20',
+            )}
+            onClick={onClickHandler}
+            variant={outline ? 'outline' : 'default'}
+          >
+            {icon}
+            {text}
+          </Button>
+        </AuthWrapper>
+      );
+    }
+
+    return (
+      <AuthWrapper showCompleteProfileModal allowSponsor>
+        <Button
+          aria-label={text}
+          onClick={onClickHandler}
+          className={cn(
+            'inline-flex h-9 w-9 items-center justify-center rounded border p-2 text-sm font-medium transition',
+            outline
+              ? talent?.isPro
+                ? 'border-zinc-400 bg-zinc-100 text-zinc-600 hover:bg-zinc-200 hover:text-zinc-600'
+                : 'border-slate-400 bg-white text-slate-500 hover:bg-gray-100'
+              : talent?.isPro
+                ? 'border-zinc-600 bg-zinc-700 text-white hover:bg-zinc-800 hover:text-white'
+                : 'border-indigo-100 bg-indigo-100 text-indigo-600 hover:bg-indigo-200',
+          )}
+        >
+          {icon}
+        </Button>
+      </AuthWrapper>
+    );
+  };
 
   return (
     <Default
@@ -294,12 +307,19 @@ function TalentProfile({ talent, stats }: TalentProps) {
       )}
       {!!talent?.id && (
         <div className="bg-white">
-          <div
-            className="h-[100px] w-full bg-cover bg-no-repeat md:h-[30vh]"
-            style={{
-              backgroundImage: `url(${optimizedCoverUrl})`,
-            }}
-          />
+          {talent?.isPro ? (
+            <ProBG
+              origin="dialog"
+              className="h-[100px] w-full rounded-none md:h-[30vh]"
+            />
+          ) : (
+            <div
+              className="h-[100px] w-full bg-cover bg-no-repeat md:h-[30vh]"
+              style={{
+                backgroundImage: `url(${optimizedCoverUrl})`,
+              }}
+            />
+          )}
           <div className="relative top-0 mx-auto max-w-[700px] rounded-[20px] bg-white px-4 py-7 md:-top-40 md:px-7">
             <div className="flex justify-between">
               <div>
@@ -311,9 +331,18 @@ function TalentProfile({ talent, stats }: TalentProps) {
                   imgFetchPriority="high"
                 />
 
-                <p className="mt-6 text-lg font-semibold text-slate-900 md:text-xl">
-                  {talent?.firstName} {talent?.lastName}
-                </p>
+                <div className="mt-6 flex items-center gap-1">
+                  <p className="text-lg font-semibold text-slate-900 md:text-xl">
+                    {talent?.firstName} {talent?.lastName}
+                  </p>
+                  {talent?.isPro && (
+                    <ProBadge
+                      containerClassName="bg-zinc-700 px-2 py-[3px] gap-[3px]"
+                      iconClassName="size-2 md:size-2 text-zinc-400"
+                      textClassName="text-[8px] md:text-[9px] font-medium text-white"
+                    />
+                  )}
+                </div>
                 <p className="text-base font-semibold text-slate-500">
                   @
                   {isMD
@@ -585,6 +614,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         photo: true,
         currentEmployer: true,
         location: true,
+        isPro: true,
       },
     });
 

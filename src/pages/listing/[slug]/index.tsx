@@ -73,7 +73,10 @@ function ListingDetails({
               className="mt-4"
             />
           )}
-          <DescriptionUI description={initialListing?.description} />
+          <DescriptionUI
+            description={initialListing?.description}
+            isPro={initialListing?.isPro ?? false}
+          />
         </ListingPageLayout>
       </HydrationBoundary>
     </>

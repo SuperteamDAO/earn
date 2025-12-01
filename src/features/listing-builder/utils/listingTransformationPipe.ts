@@ -88,6 +88,7 @@ export const transformToPrismaData = async ({
     minRewardAsk,
     maxRewardAsk,
     isPrivate,
+    isPro,
     hackathonId,
     referredBy,
   } = validatedListing;
@@ -194,6 +195,7 @@ export const transformToPrismaData = async ({
     minRewardAsk,
     maxRewardAsk,
     isPrivate,
+    isPro,
     language,
     isFndnPaying,
     hackathonId,

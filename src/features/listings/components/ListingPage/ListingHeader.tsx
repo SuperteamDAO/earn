@@ -17,6 +17,7 @@ import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';
 
 import { BoostButton } from '@/features/listing-builder/components/Form/Boost/BoostButton';
+import { ProBadge } from '@/features/pro/components/ProBadge';
 
 import { submissionCountQuery } from '../../queries/submission-count';
 import { type Listing, type ListingHackathon } from '../../types';
@@ -79,6 +80,7 @@ const HeaderSub = ({
   statusText,
   statusTextColor,
   region,
+  isPro,
 }: {
   sponsor: SponsorType | undefined;
   title: string | undefined;
@@ -92,6 +94,7 @@ const HeaderSub = ({
   statusText: string;
   statusTextColor: string;
   region: string | undefined;
+  isPro: boolean | undefined;
 }) => {
   return (
     <div className="flex flex-wrap items-center gap-1 md:gap-2">
@@ -150,6 +153,18 @@ const HeaderSub = ({
         />
       </div>
       <ListingHeaderSeparator />
+      {isPro && (
+        <>
+          <Link href="/pro">
+            <ProBadge
+              containerClassName="bg-transparent px-0 py-0 gap-1"
+              iconClassName="size-3 text-zinc-600"
+              textClassName="text-xs font-medium text-zinc-800"
+            />
+          </Link>
+          <ListingHeaderSeparator />
+        </>
+      )}
       <RegionLabel region={region} />
       {!!commentCount && (
         <>
@@ -189,6 +204,7 @@ export function ListingHeader({
     isPublished,
     Hackathon,
     isPrivate,
+    isPro,
   } = listing;
   const router = useRouter();
 
@@ -270,6 +286,7 @@ export function ListingHeader({
                 statusText={statusText}
                 statusTextColor={statusTextColor}
                 region={region}
+                isPro={isPro}
               />
             </div>
           </div>
@@ -300,6 +317,7 @@ export function ListingHeader({
           statusText={statusText}
           statusTextColor={statusTextColor}
           region={region}
+          isPro={isPro}
         />
       </div>
       <div className="flex h-10 w-full max-w-7xl items-center">
@@ -316,6 +334,7 @@ export function ListingHeader({
                   : 'Prizes'
               }
               isActive={false}
+              isPro={isPro}
             />
           )}
 
@@ -326,6 +345,7 @@ export function ListingHeader({
             text="Details"
             isActive={!router.asPath.split('/')[3]?.includes('submission')}
             className="mr-6"
+            isPro={isPro}
           />
 
           {!isProject && isWinnersAnnounced && (
@@ -337,6 +357,7 @@ export function ListingHeader({
               subText={
                 isSubmissionNumberLoading ? '...' : submissionNumber + ''
               }
+              isPro={isPro}
             />
           )}
         </div>

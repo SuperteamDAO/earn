@@ -9,6 +9,7 @@ import type { Listing } from '@/features/listings/types';
 
 import { userSubmissionQuery } from '../../queries/user-submission-status';
 import { getPayoutCopy } from '../../utils/payout-date';
+import { checkKycCountryMatchesRegion } from '../../utils/region';
 
 interface Props {
   listing: Listing;
@@ -70,6 +71,12 @@ export const ApprovalStages = ({ listing }: Props) => {
 
   const isPaymentSynced = submission.paymentSynced ?? false;
 
+  const kycCountryCheck = checkKycCountryMatchesRegion(
+    (submission as any).kycCountry,
+    (submission as any).listingRegion || listing.region,
+  );
+  const isKycValidForRegion = isKycVerified && kycCountryCheck.isValid;
+
   const isHackathon = listing.type === 'hackathon';
   const wonTitle = isHackathon ? 'Hackathon Track Won' : 'Bounty Won';
 
@@ -87,7 +94,7 @@ export const ApprovalStages = ({ listing }: Props) => {
           </div>
           <ConnectingLine
             isStartComplete={true}
-            isEndComplete={isKycVerified}
+            isEndComplete={isKycValidForRegion}
           />
           <div>
             <Heading>{wonTitle}</Heading>
@@ -99,10 +106,10 @@ export const ApprovalStages = ({ listing }: Props) => {
 
         <div className="relative flex items-start gap-4">
           <div className="relative z-10">
-            {isKycVerified ? <CheckIcon /> : <PendingIcon />}
+            {isKycValidForRegion ? <CheckIcon /> : <PendingIcon />}
           </div>
           <ConnectingLine
-            isStartComplete={isKycVerified}
+            isStartComplete={isKycValidForRegion}
             isEndComplete={isPaymentSynced}
           />
           <div>

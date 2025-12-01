@@ -1,7 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
-import { X } from 'lucide-react';
+import { Loader2, X } from 'lucide-react';
 import { useRouter } from 'next/router';
 import posthog from 'posthog-js';
 import { type JSX, useEffect, useMemo, useState } from 'react';
@@ -45,6 +45,7 @@ import {
 import { submissionCountQuery } from '../../queries/submission-count';
 import { userSubmissionQuery } from '../../queries/user-submission-status';
 import { type Listing } from '../../types';
+import { getCombinedRegion } from '../../utils/region';
 import { submissionSchema } from '../../utils/submissionFormSchema';
 import { SubmissionTerms } from './SubmissionTerms';
 
@@ -81,6 +82,9 @@ export const SubmissionDrawer = ({
     minRewardAsk,
     maxRewardAsk,
     Hackathon,
+    isFndnPaying,
+    region,
+    isPro,
   } = listing;
 
   const queryClient = useQueryClient();
@@ -90,6 +94,7 @@ export const SubmissionDrawer = ({
   const [isLoading, setIsLoading] = useState(false);
   const [isTOSModalOpen, setIsTOSModalOpen] = useState(false);
   const [termsAccepted, setTermsAccepted] = useState(false);
+  const [kycAcknowledged, setKycAcknowledged] = useState(false);
   const {
     isOpen: isVerificationModalOpen,
     onOpen: onVerificationModalOpen,
@@ -181,6 +186,16 @@ export const SubmissionDrawer = ({
     return isHandleVerified(handle, verifiedHandles);
   }, [linkValue, user?.linkedTwitter]);
 
+  const regionAckCopy = useMemo(() => {
+    if (!region || region === 'Global') {
+      return `By submitting, you acknowledge that if you win, you will have to complete KYC to receive your prize money.`;
+    }
+    const regionObject = getCombinedRegion(region);
+    const regionDisplayName =
+      regionObject?.displayValue || regionObject?.name || region;
+    return `By submitting, you acknowledge that if you win, you will have to complete KYC that proves that you are from ${regionDisplayName}`;
+  }, [region]);
+
   useEffect(() => {
     if (needsXVerification) {
       form.setError('tweet', {
@@ -226,6 +241,7 @@ export const SubmissionDrawer = ({
         : [],
     });
     setTermsAccepted(false);
+    setKycAcknowledged(false);
     onClose();
   };
 
@@ -264,6 +280,7 @@ export const SubmissionDrawer = ({
           isTemplate ||
           !!query['preview'] ||
           (isHackathon && !editMode && !termsAccepted) ||
+          (isFndnPaying && !editMode && !kycAcknowledged) ||
           isLoading ||
           form.formState.isSubmitting ||
           needsXVerification ||
@@ -277,6 +294,8 @@ export const SubmissionDrawer = ({
       isHackathon,
       editMode,
       termsAccepted,
+      isFndnPaying,
+      kycAcknowledged,
       isLoading,
       form.formState.isSubmitting,
       needsXVerification,
@@ -533,6 +552,8 @@ export const SubmissionDrawer = ({
                                           (needsLinkVerification ||
                                             isLinkVerified) &&
                                             'pr-10',
+                                          isPro &&
+                                            'focus-visible:ring-zinc-400',
                                         )}
                                         autoComplete="off"
                                       />
@@ -543,7 +564,10 @@ export const SubmissionDrawer = ({
                                             handleVerifyClick('link')
                                           }
                                           size="sm"
-                                          className="absolute top-1/2 right-1 h-7 -translate-y-1/2 px-3 text-xs"
+                                          className={cn(
+                                            'absolute top-1/2 right-1 h-7 -translate-y-1/2 px-3 text-xs',
+                                            isPro && 'bg-zinc-900',
+                                          )}
                                         >
                                           Verify
                                         </Button>
@@ -590,6 +614,8 @@ export const SubmissionDrawer = ({
                                           (needsXVerification ||
                                             isTweetVerified) &&
                                             'pr-10',
+                                          isPro &&
+                                            'focus-visible:ring-zinc-400',
                                         )}
                                         autoComplete="off"
                                       />
@@ -600,7 +626,10 @@ export const SubmissionDrawer = ({
                                             handleVerifyClick('tweet')
                                           }
                                           size="sm"
-                                          className="absolute top-1/2 right-1 h-7 -translate-y-1/2 px-3 text-xs"
+                                          className={cn(
+                                            'absolute top-1/2 right-1 h-7 -translate-y-1/2 px-3 text-xs',
+                                            isPro && 'bg-zinc-900',
+                                          )}
                                         >
                                           Verify
                                         </Button>
@@ -641,7 +670,11 @@ export const SubmissionDrawer = ({
                                       <Input
                                         {...field}
                                         placeholder="Add a link..."
-                                        className="rounded-l-none"
+                                        className={cn(
+                                          'rounded-l-none',
+                                          isPro &&
+                                            'focus-visible:ring-zinc-400',
+                                        )}
                                         autoComplete="off"
                                       />
                                     </div>
@@ -652,6 +685,7 @@ export const SubmissionDrawer = ({
                                       value={field.value || ''}
                                       error={false}
                                       placeholder={'Write something...'}
+                                      isPro={isPro}
                                     />
                                   )}
                                 </FormControl>
@@ -670,6 +704,7 @@ export const SubmissionDrawer = ({
                         isRequired
                         isTokenInput
                         token={token}
+                        isPro={isPro}
                       />
                     )}
                     {isProject && !user?.telegram && !editMode && (
@@ -682,6 +717,7 @@ export const SubmissionDrawer = ({
                         control={form.control}
                         height="h-9"
                         showIcon={false}
+                        isPro={isPro}
                       />
                     )}
                     <FormFieldWrapper
@@ -691,6 +727,7 @@ export const SubmissionDrawer = ({
                       description="If you have any other links or information you'd like to share with us, please add them here!"
                       isRichEditor
                       richEditorPlaceholder="Add info or link"
+                      isPro={isPro}
                     />
                   </div>
                 </div>
@@ -701,7 +738,11 @@ export const SubmissionDrawer = ({
                   <div className="mb-4 flex items-start space-x-3">
                     <Checkbox
                       id="terms"
-                      className="data-[state=checked]:border-brand-purple data-[state=checked]:bg-brand-purple mt-1"
+                      className={cn(
+                        'data-[state=checked]:border-brand-purple data-[state=checked]:bg-brand-purple mt-1',
+                        isPro &&
+                          'data-[state=checked]:border-zinc-400 data-[state=checked]:bg-zinc-700',
+                      )}
                       checked={termsAccepted}
                       onCheckedChange={(checked) =>
                         setTermsAccepted(checked as boolean)
@@ -720,30 +761,82 @@ export const SubmissionDrawer = ({
                   </div>
                 )}
 
-                <Button
-                  className="ph-no-capture h-12 w-full"
-                  disabled={isDisabled}
-                  type="submit"
-                >
-                  {isLoading ? (
-                    <>
-                      <span className="loading loading-spinner"></span>
-                      <span>{editMode ? 'Updating...' : 'Submitting...'}</span>
-                    </>
-                  ) : isProject ? (
-                    <span className="flex items-center gap-2">
-                      {editMode ? 'Update' : 'Apply using 1 credit'}
-                      {!editMode && <CreditIcon />}
-                    </span>
-                  ) : isBounty ? (
-                    <span className="flex items-center gap-2">
-                      {editMode ? 'Update' : 'Submit using 1 credit'}
-                      {!editMode && <CreditIcon />}
-                    </span>
-                  ) : (
-                    <span>{editMode ? 'Update' : 'Submit'}</span>
-                  )}
-                </Button>
+                {isFndnPaying && !editMode && (
+                  <div className="mb-4 flex items-start space-x-3">
+                    <Checkbox
+                      id="kyc-acknowledgement"
+                      className={cn(
+                        'data-[state=checked]:border-brand-purple data-[state=checked]:bg-brand-purple mt-1',
+                        isPro &&
+                          'border-zinc-400 data-[state=checked]:border-zinc-400 data-[state=checked]:bg-zinc-700',
+                      )}
+                      checked={kycAcknowledged}
+                      onCheckedChange={(checked) =>
+                        setKycAcknowledged(checked as boolean)
+                      }
+                    />
+                    <label
+                      htmlFor="kyc-acknowledgement"
+                      className="text-sm leading-none text-slate-600"
+                    >
+                      {regionAckCopy}
+                    </label>
+                  </div>
+                )}
+
+                <div className="relative w-full">
+                  <Button
+                    className={cn(
+                      'ph-no-capture h-11 w-full gap-4',
+                      'disabled:cursor-default disabled:opacity-70',
+                      user?.isPro && isPro ? 'bg-zinc-900' : 'bg-brand-purple',
+                      editMode &&
+                        (isPro
+                          ? 'border-zinc-900 text-white hover:text-white'
+                          : 'border-brand-purple text-brand-purple hover:text-brand-purple-dark'),
+                      user?.isPro && isPro && 'hover:bg-black',
+                      !user?.isPro && isPro && 'hover:opacity-90',
+                    )}
+                    disabled={isDisabled}
+                    type="submit"
+                    variant={editMode ? 'outline' : 'default'}
+                  >
+                    {isLoading ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        <span>
+                          {editMode ? 'Updating...' : 'Submitting...'}
+                        </span>
+                      </>
+                    ) : isProject ? (
+                      <span className="flex items-center gap-2">
+                        {editMode
+                          ? 'Update'
+                          : user?.isPro && isPro
+                            ? 'Apply'
+                            : 'Apply using 1 credit'}
+                        {!editMode && !(user?.isPro && isPro) && (
+                          <CreditIcon className="ml-1 size-6" />
+                        )}
+                      </span>
+                    ) : isBounty ? (
+                      <span className="flex items-center gap-2">
+                        {editMode
+                          ? 'Update'
+                          : user?.isPro && isPro
+                            ? 'Submit'
+                            : 'Submit using 1 credit'}
+                        {!editMode && !(user?.isPro && isPro) && (
+                          <CreditIcon className="ml-1 size-6" />
+                        )}
+                      </span>
+                    ) : (
+                      <span className="flex items-center gap-2">
+                        {editMode ? 'Update' : 'Submit'}
+                      </span>
+                    )}
+                  </Button>
+                </div>
                 <p className="mt-2 text-center text-xs text-slate-400 sm:text-sm">
                   By submitting/applying to this listing, you agree to our{' '}
                   <button

@@ -30,7 +30,11 @@ export function BottomBar({
   const { authenticated, ready } = usePrivy();
 
   function setColor(href: string, routerPath: string) {
-    return routerPath === href ? 'text-brand-purple' : 'text-slate-500';
+    return routerPath === href
+      ? user?.isPro
+        ? 'text-zinc-800'
+        : 'text-brand-purple'
+      : 'text-slate-500';
   }
 
   const iconStyle = {
@@ -119,7 +123,12 @@ export function BottomBar({
           onClick={onWalletOpen}
         >
           <IoWalletOutline style={iconStyle} className="text-slate-500" />
-          <span className="bg-brand-purple/95 absolute top-px -right-0.5 block rounded-md px-1 py-px text-[10px] font-semibold tracking-tight text-white">
+          <span
+            className={cn(
+              'absolute top-px -right-0.5 block rounded-md px-1 py-px text-[10px] font-semibold tracking-tight text-white',
+              user?.isPro ? 'bg-zinc-700' : 'bg-brand-purple/95',
+            )}
+          >
             ${formatNumberWithSuffix(walletBalance || 0, 1, false)}
           </span>
         </Button>

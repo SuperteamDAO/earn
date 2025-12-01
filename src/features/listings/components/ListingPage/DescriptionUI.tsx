@@ -1,3 +1,4 @@
+import { useQuery } from '@tanstack/react-query';
 import parse, {
   domToReact,
   type HTMLReactParserOptions,
@@ -5,17 +6,28 @@ import parse, {
 import { ChevronDown } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
+import SuperteamIcon from '@/components/icons/SuperteamIcon';
 import { Button } from '@/components/ui/button';
+import { CircularProgress } from '@/components/ui/progress';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { domPurify } from '@/lib/domPurify';
+import { useUser } from '@/store/user';
 import styles from '@/styles/listing-description.module.css';
 import { cn } from '@/utils/cn';
 
+import { userStatsQuery } from '@/features/home/queries/user-stats';
+import { ProBadge } from '@/features/pro/components/ProBadge';
+import { ProIntro } from '@/features/pro/components/ProIntro';
+
 interface Props {
   description?: string;
+  isPro?: boolean;
 }
 
-export function DescriptionUI({ description }: Props) {
+export function DescriptionUI({ description, isPro = false }: Props) {
+  const { user, isLoading: isUserLoading } = useUser();
+  const { data: stats, isLoading: isStatsLoading } = useQuery(userStatsQuery);
+
   const options: HTMLReactParserOptions = {
     replace: (domNode: any) => {
       const { name, children, attribs } = domNode;
@@ -66,8 +78,184 @@ export function DescriptionUI({ description }: Props) {
     return () => clearTimeout(timer);
   }, [decideCollapser, isMounted]);
 
+  const descriptionContent = parse(
+    domPurify(
+      description?.startsWith('"')
+        ? JSON.parse(description || '')
+        : (description ?? ''),
+      {
+        ALLOWED_TAGS: [
+          'a',
+          'p',
+          'br',
+          'strong',
+          'em',
+          'b',
+          'i',
+          'u',
+          's',
+          'blockquote',
+          'pre',
+          'code',
+          'ul',
+          'ol',
+          'li',
+          'h1',
+          'h2',
+          'h3',
+          'h4',
+          'h5',
+          'h6',
+          'hr',
+          'table',
+          'thead',
+          'tbody',
+          'tr',
+          'td',
+          'th',
+          'span',
+          'img',
+        ],
+        ALLOWED_ATTR: [
+          'href',
+          'target',
+          'rel',
+          'src',
+          'alt',
+          'title',
+          'width',
+          'height',
+          'colspan',
+          'rowspan',
+          'class',
+        ],
+        FORBID_TAGS: [
+          'script',
+          'iframe',
+          'style',
+          'meta',
+          'link',
+          'object',
+          'embed',
+          'base',
+          'form',
+        ],
+      },
+    ),
+    options,
+  );
+
   if (!isMounted) {
     return null;
+  }
+
+  const isProEligibilityLoading = isPro && (isUserLoading || isStatsLoading);
+  if (isProEligibilityLoading) {
+    return (
+      <div className="w-full overflow-visible border-b-2 border-slate-200 pb-4 md:border-0">
+        <div className="relative w-full overflow-visible rounded-xl bg-white">
+          <div className="mt-4 w-full overflow-visible pb-7">
+            <div className="space-y-4">
+              <div className="h-4 w-full rounded bg-slate-100" />
+              <div className="h-4 w-5/6 rounded bg-slate-100" />
+              <div className="h-4 w-full rounded bg-slate-100" />
+              <div className="h-4 w-4/5 rounded bg-slate-100" />
+              <div className="h-4 w-full rounded bg-slate-100" />
+              <div className="h-4 w-3/4 rounded bg-slate-100" />
+              <div className="h-4 w-full rounded bg-slate-100" />
+              <div className="h-4 w-5/6 rounded bg-slate-100" />
+              <div className="h-4 w-4/5 rounded bg-slate-100" />
+              <div className="h-4 w-full rounded bg-slate-100" />
+              <div className="h-4 w-full rounded bg-slate-100" />
+              <div className="h-4 w-5/6 rounded bg-slate-100" />
+              <div className="h-4 w-full rounded bg-slate-100" />
+              <div className="h-4 w-4/5 rounded bg-slate-100" />
+              <div className="h-4 w-full rounded bg-slate-100" />
+              <div className="h-4 w-5/6 rounded bg-slate-100" />
+              <div className="h-4 w-full rounded bg-slate-100" />
+              <div className="h-4 w-4/5 rounded bg-slate-100" />
+              <div className="h-4 w-full rounded bg-slate-100" />
+              <div className="h-4 w-3/4 rounded bg-slate-100" />
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (isPro && !user?.isPro) {
+    const randomText =
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. <br/> Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.';
+
+    const isUserEligibleForPro =
+      (stats && (stats.totalWinnings ?? 0) >= 1000) ||
+      user?.superteamLevel?.includes('Superteam');
+
+    return (
+      <div className="relative h-180 w-full overflow-hidden border-b-2 border-slate-200 md:border-0">
+        <div className="absolute inset-0 p-4">
+          <div className="mx-auto max-w-4xl text-lg leading-relaxed font-medium text-slate-600 blur-sm select-none">
+            {randomText}
+          </div>
+          <div className="mx-auto max-w-4xl text-lg leading-relaxed font-medium text-slate-600 blur-sm select-none">
+            {randomText}
+          </div>
+          <div className="mx-auto max-w-4xl text-lg leading-relaxed font-medium text-slate-600 blur-sm select-none">
+            {randomText}
+          </div>
+        </div>
+        <div className="absolute inset-0 bg-white/0 backdrop-blur-sm" />
+        <div className="absolute right-1/2 bottom-1/2 translate-x-1/2 translate-y-1/2 shadow-lg">
+          {!isUserEligibleForPro ? (
+            <div className="w-100 rounded-xl bg-white px-8 pt-6 pb-10">
+              <ProBadge
+                containerClassName="bg-zinc-200 w-fit px-2 py-0.5 gap-1"
+                iconClassName="size-3 text-zinc-500"
+                textClassName="text-sm text-zinc-800 text-medium"
+              />
+              <p className="mt-4 text-xl font-medium text-zinc-800">
+                This bounty is only eligible for PRO members
+              </p>
+              <p className="text-md mt-4 mb-4 font-medium text-slate-500">
+                To be eligible for Pro, you need to:
+              </p>
+              <div className="mt-4 flex items-center gap-3">
+                <CircularProgress
+                  className="size-7 shrink-0"
+                  value={stats ? ((stats.totalWinnings ?? 0) / 1000) * 100 : 0}
+                  color="#6366f1"
+                />
+                <div className="flex flex-col">
+                  {stats ? (
+                    <p className="text-md text-slate-500">
+                      Earn ${' '}
+                      {new Intl.NumberFormat('en-US', {
+                        style: 'currency',
+                        currency: 'USD',
+                        maximumFractionDigits: 0,
+                      }).format(1000 - (stats.totalWinnings ?? 0))}{' '}
+                      more, or
+                    </p>
+                  ) : (
+                    <p className="text-md text-slate-500">Win $1,000 on Earn</p>
+                  )}
+                </div>
+              </div>
+              <div className="mt-4 flex gap-3">
+                <SuperteamIcon className="text-brand-purple ml-0.5 size-9" />
+                <div className="flex flex-col">
+                  <p className="text-md text-slate-500">
+                    Become a Superteam member of your region
+                  </p>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <ProIntro origin="sidebar" className="w-80" />
+          )}
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -90,72 +278,7 @@ export function DescriptionUI({ description }: Props) {
           <div
             className={`${styles.content} mt-4 w-full overflow-visible pb-7`}
           >
-            {parse(
-              domPurify(
-                description?.startsWith('"')
-                  ? JSON.parse(description || '')
-                  : (description ?? ''),
-                {
-                  ALLOWED_TAGS: [
-                    'a',
-                    'p',
-                    'br',
-                    'strong',
-                    'em',
-                    'b',
-                    'i',
-                    'u',
-                    's',
-                    'blockquote',
-                    'pre',
-                    'code',
-                    'ul',
-                    'ol',
-                    'li',
-                    'h1',
-                    'h2',
-                    'h3',
-                    'h4',
-                    'h5',
-                    'h6',
-                    'hr',
-                    'table',
-                    'thead',
-                    'tbody',
-                    'tr',
-                    'td',
-                    'th',
-                    'span',
-                    'img',
-                  ],
-                  ALLOWED_ATTR: [
-                    'href',
-                    'target',
-                    'rel',
-                    'src',
-                    'alt',
-                    'title',
-                    'width',
-                    'height',
-                    'colspan',
-                    'rowspan',
-                    'class',
-                  ],
-                  FORBID_TAGS: [
-                    'script',
-                    'iframe',
-                    'style',
-                    'meta',
-                    'link',
-                    'object',
-                    'embed',
-                    'base',
-                    'form',
-                  ],
-                },
-              ),
-              options,
-            )}
+            {descriptionContent}
           </div>
           {!showMore && (
             <div

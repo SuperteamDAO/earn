@@ -2,10 +2,10 @@ import { usePrivy } from '@privy-io/react-auth';
 import Link from 'next/link';
 import posthog from 'posthog-js';
 
+import { AnimatedDots } from '@/components/shared/AnimatedDots';
 import { Button } from '@/components/ui/button';
 import { useUser } from '@/store/user';
 
-import SereneDotGrid from '../icons/DotsGrid';
 import { GridBg } from '../icons/GridBg';
 import { ShaderGradient } from '../icons/ShaderGradient';
 
@@ -39,7 +39,14 @@ export function Hero() {
           <ShaderGradient className="w-[100%] scale-125 md:w-auto md:scale-100" />
         </div>
         <div className="absolute top-0 left-2/4 origin-top -translate-x-2/4 scale-50 md:scale-100">
-          <SereneDotGrid className="" />
+          <AnimatedDots
+            dotSize={4}
+            colors={['#64748b', '#475569', '#334155']}
+            columns={80}
+            rows={10}
+            spacing={1.5}
+            className="z-10 opacity-60"
+          />
         </div>
 
         <h1 className="max-w-[40rem] text-[2.8rem] leading-[1.1] font-semibold text-slate-800 md:text-[4rem]">

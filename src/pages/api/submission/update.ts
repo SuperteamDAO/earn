@@ -70,10 +70,21 @@ async function submission(req: NextApiRequestWithUser, res: NextApiResponse) {
   }
 
   try {
-    const { listing } = await validateSubmissionRequest(
+    const { listing, user } = await validateSubmissionRequest(
       userId as string,
       listingId,
     );
+
+    if (listing.isPro && !user.isPro) {
+      logger.warn(
+        `User ${userId} attempted to update pro listing submission without pro membership`,
+      );
+      return res.status(403).json({
+        error: 'Pro membership required',
+        message:
+          'You need a Pro membership to update submissions for this listing.',
+      });
+    }
 
     const result = await updateSubmission(
       userId as string,

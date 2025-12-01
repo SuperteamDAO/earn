@@ -20,7 +20,10 @@ function BountyDetails({ bounty: bounty }: BountyDetailsProps) {
           <ListingWinners bounty={bounty} />
         </div>
       )}
-      <DescriptionUI description={bounty?.description} />
+      <DescriptionUI
+        description={bounty?.description}
+        isPro={bounty?.isPro ?? false}
+      />
     </ListingPageLayout>
   );
 }

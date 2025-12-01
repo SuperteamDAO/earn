@@ -22,7 +22,7 @@ export async function GET(_request: NextRequest) {
 
     const user = await prisma.user.findUniqueOrThrow({
       where: { id: userId },
-      select: { createdAt: true },
+      select: { createdAt: true, isPro: true },
     });
 
     const userCreatedAt = dayjs(user.createdAt).utc();
@@ -127,12 +127,13 @@ export async function GET(_request: NextRequest) {
       const entries = groupedByMonth.get(monthKey) ?? [];
 
       const ledgerSum = entries.reduce((sum, e) => sum + (e.change ?? 0), 0);
+      const baseCredits = user.isPro ? 4 : 3;
 
       if (
         monthKey !== startOfCurrentMonthISO &&
         dayjs(monthStart).isBefore(startOfCurrentMonth, 'month')
       ) {
-        const effectiveBalance = 3 + ledgerSum;
+        const effectiveBalance = baseCredits + ledgerSum;
         if (effectiveBalance > 0) {
           const monthEnd = dayjs(monthStart).endOf('month').toDate();
           syntheticEntries.push({
@@ -159,12 +160,12 @@ export async function GET(_request: NextRequest) {
         createdAt: creditDate,
         type: 'MONTHLY_CREDIT',
         effectiveMonth: new Date(monthKey),
-        change: +3,
+        change: +baseCredits,
         submission: {
           listing: {
             title: isUpcomingMonth
-              ? '3 Credits will be issued'
-              : 'Added 3 credits to your balance',
+              ? `${baseCredits} Credits will be issued`
+              : `Added ${baseCredits} credits to your balance`,
             type: '',
           },
         },

@@ -237,6 +237,7 @@ export const FeedCardContainer = ({
                   setCount={setCommentCount}
                   onSuccess={handleCommentSuccess}
                   take={3}
+                  isListingAndUserPro={false}
                 />
               </div>
             </CollapsibleContent>

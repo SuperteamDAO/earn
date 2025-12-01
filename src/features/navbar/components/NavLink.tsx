@@ -8,6 +8,7 @@ interface NavLinkProps extends React.ComponentPropsWithoutRef<typeof Link> {
   label: string | JSX.Element;
   isActive: boolean;
   className?: string;
+  isPro?: boolean;
 }
 
 export const NavLink = ({
@@ -15,6 +16,7 @@ export const NavLink = ({
   label,
   isActive,
   className,
+  isPro = false,
   ...props
 }: NavLinkProps) => {
   return (
@@ -27,7 +29,11 @@ export const NavLink = ({
         isActive ? 'text-slate-600' : 'text-slate-500',
         'hover:text-slate-600 hover:no-underline',
         'relative border-b',
-        isActive ? 'border-brand-purple' : 'border-transparent',
+        isActive
+          ? isPro
+            ? 'border-zinc-600'
+            : 'border-brand-purple'
+          : 'border-transparent',
         className,
       )}
       {...props}

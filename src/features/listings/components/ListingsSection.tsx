@@ -60,6 +60,7 @@ export const ListingsSection = ({
   const isLg = useBreakpoint('lg');
   const isSponsorContext = type === 'sponsor';
   const isBookmarksContext = type === 'bookmarks';
+  const isProContext = type === 'pro';
 
   const { authenticated, ready } = usePrivy();
   const supportsForYou = FOR_YOU_SUPPORTED_TYPES.includes(type);
@@ -134,12 +135,18 @@ export const ListingsSection = ({
     handleSortChange,
   } = useListingState({
     defaultCategory: optimalDefaultCategory,
-    defaultStatus: isSponsorContext || isBookmarksContext ? 'all' : undefined,
-    defaultSortBy: isSponsorContext ? 'Status' : undefined,
+    defaultStatus:
+      isSponsorContext || isBookmarksContext || isProContext
+        ? 'all'
+        : undefined,
+    defaultSortBy:
+      isSponsorContext || isBookmarksContext || isProContext
+        ? 'Status'
+        : undefined,
   });
 
   const effectiveCategory =
-    type === 'bookmarks' && activeCategory === 'For You'
+    (type === 'bookmarks' || type === 'pro') && activeCategory === 'For You'
       ? ('All' as ListingCategory)
       : activeCategory;
 
@@ -271,6 +278,9 @@ export const ListingsSection = ({
     if (isSponsorContext) {
       return 'All Listings';
     }
+    if (isProContext) {
+      return 'Premium Listings';
+    }
     return 'Browse Opportunities';
   };
 
@@ -286,6 +296,7 @@ export const ListingsSection = ({
             <div className="hidden items-center md:flex">
               <Separator orientation="vertical" className="mx-3 h-6" />
               <ListingTabs
+                isPro={isProContext}
                 type={type}
                 activeTab={activeTab}
                 handleTabChange={handleTabChange}
@@ -300,8 +311,10 @@ export const ListingsSection = ({
           activeOrder={activeOrder}
           onStatusChange={handleStatusChange}
           onSortChange={handleSortChange}
-          showAllFilter={isSponsorContext || isBookmarksContext}
-          showStatusSort={isSponsorContext}
+          showAllFilter={isSponsorContext || isBookmarksContext || isProContext}
+          showStatusSort={
+            isSponsorContext || isBookmarksContext || isProContext
+          }
         />
       </div>
       <div className="mt-2 mb-1 md:hidden">
@@ -349,6 +362,7 @@ export const ListingsSection = ({
             onClick={() =>
               handleCategoryChange('All' as ListingCategory, 'all_navpill')
             }
+            isPro={isProContext}
           >
             All
           </CategoryPill>
@@ -363,6 +377,7 @@ export const ListingsSection = ({
                   navItem.pillPH,
                 )
               }
+              isPro={isProContext}
             >
               {isMd ? navItem.label : navItem.mobileLabel || navItem.label}
             </CategoryPill>
