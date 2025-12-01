@@ -25,7 +25,9 @@ export function Pagination({ page, setPage, count }: Props) {
   const handleClick = (newPage: number) => {
     setPage(newPage);
   };
-  const debouncedHandleClick = useCallback(debounce(handleClick, 500), []);
+  const debouncedHandleClick = useCallback(debounce(handleClick, 500), [
+    setPage,
+  ]);
 
   // Sync input value when page prop changes
   useEffect(() => {
