@@ -498,7 +498,7 @@ export const ProUpgradeOverlay = () => {
                     }
 
                     const shareUrl = `${getURL()}t/${user.username}/pro`;
-                    const message = `🎉 I just upgraded to Pro on @SuperteamEarn! Check out my profile`;
+                    const message = `Hanging out with the 1% on @SuperteamEarn`;
                     const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(message)}&url=${encodeURIComponent(shareUrl)}`;
 
                     window.open(twitterUrl, '_blank', 'noopener,noreferrer');

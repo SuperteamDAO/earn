@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { type GetServerSideProps } from 'next';
 
 import ProIcon from '@/components/icons/ProIcon';
+import { ASSET_URL } from '@/constants/ASSET_URL';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { cn } from '@/utils/cn';
@@ -42,6 +43,7 @@ export default function ProPage({ potentialSession }: HomePageProps) {
             title="Superteam Earn | Work to Earn in Crypto"
             description="Explore the latest bounties on Superteam Earn, offering opportunities in the crypto space across Design, Development, and Content."
             canonical="https://earn.superteam.fun"
+            og={ASSET_URL + `/og/pro.png`}
           />
         </>
       }
