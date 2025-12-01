@@ -150,7 +150,7 @@ export function ProListingsAnnouncement({
               className="bg-brand-purple hover:bg-brand-purple/90 w-full rounded-lg text-white"
             >
               <Link
-                href="https://x.com/superteamearn"
+                href="https://x.com/SuperteamEarn/status/1995480188411646253"
                 target="_blank"
                 rel="noopener noreferrer"
               >
