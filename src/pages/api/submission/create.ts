@@ -96,12 +96,23 @@ async function submission(req: NextApiRequestWithUser, res: NextApiResponse) {
   logger.debug(`User: ${safeStringify(userId)}`);
 
   try {
-    const { listing } = await validateSubmissionRequest(
+    const { listing, user } = await validateSubmissionRequest(
       userId as string,
       listingId,
     );
 
     const isHackathon = listing.type === 'hackathon';
+    const isPro = listing.isPro;
+
+    if (isPro && !user.isPro) {
+      logger.warn(
+        `User ${userId} attempted to submit pro listing without pro membership`,
+      );
+      return res.status(403).json({
+        error: 'Pro membership required',
+        message: 'You need a Pro membership to submit to this listing.',
+      });
+    }
 
     if (!isHackathon) {
       const hasCredits = await canUserSubmit(userId as string);
@@ -121,7 +132,7 @@ async function submission(req: NextApiRequestWithUser, res: NextApiResponse) {
       listing,
     );
 
-    if (!isHackathon) {
+    if (!isHackathon && !isPro) {
       await consumeCredit(userId, result.id);
       logger.info(`Consumed 1 credit from user ${userId} for submission`);
     }

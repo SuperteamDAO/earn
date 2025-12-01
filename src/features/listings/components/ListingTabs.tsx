@@ -12,21 +12,25 @@ interface ListingTabTriggerProps {
   isActive: boolean;
   onClick: () => void;
   children: React.ReactNode;
+  isPro?: boolean;
 }
 
 const ListingTabTrigger = ({
   isActive,
   onClick,
   children,
+  isPro,
 }: ListingTabTriggerProps) => (
   <button
     onClick={onClick}
     className={cn(
       'group ring-offset-background relative inline-flex items-center justify-center rounded-md px-2 py-1 text-sm font-medium whitespace-nowrap transition-all',
-      'hover:text-brand-purple',
+      isPro ? 'hover:text-zinc-700' : 'hover:text-brand-purple',
       isActive && [
-        'text-brand-purple',
-        'after:bg-brand-purple/80 after:absolute after:bottom-[-5px] after:left-0 after:h-px after:w-full md:after:bottom-[-9px]',
+        isPro ? 'text-zinc-700' : 'text-brand-purple',
+        isPro
+          ? 'after:absolute after:bottom-[-5px] after:left-0 after:h-px after:w-full after:bg-zinc-700 md:after:bottom-[-9px]'
+          : 'after:bg-brand-purple/80 after:absolute after:bottom-[-5px] after:left-0 after:h-px after:w-full md:after:bottom-[-9px]',
       ],
       !isActive && 'text-slate-500',
     )}
@@ -39,16 +43,19 @@ interface ListingTabsProps {
   type: ListingContext;
   activeTab: ListingTab;
   handleTabChange: (tabId: ListingTab, posthog: string) => void;
+  isPro?: boolean;
 }
 
 export const ListingTabs = ({
   activeTab,
   handleTabChange,
+  isPro,
 }: ListingTabsProps) => {
   return (
     <div className="flex items-center gap-2">
       {TABS.map((tab) => (
         <ListingTabTrigger
+          isPro={isPro}
           key={tab.id}
           isActive={activeTab === tab.id}
           onClick={() => handleTabChange(tab.id, tab.posthog)}

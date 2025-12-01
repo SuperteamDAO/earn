@@ -24,6 +24,7 @@ interface Props {
   poc?: User | undefined;
   onSuccess?: (newComment: Comment) => void;
   isDisabled?: boolean;
+  isListingAndUserPro?: boolean;
 }
 
 export const CommentForm = ({
@@ -34,6 +35,7 @@ export const CommentForm = ({
   isTemplate = false,
   isDisabled = false,
   onSuccess,
+  isListingAndUserPro = false,
 }: Props) => {
   const { user } = useUser();
 
@@ -126,6 +128,7 @@ export const CommentForm = ({
             setValue={setNewComment}
             onKeyDown={handleKeyDown}
             variant="flushed"
+            isListingAndUserPro={isListingAndUserPro}
           />
         </div>
       </div>
@@ -182,7 +185,10 @@ export const CommentForm = ({
           >
             <Button
               variant="default"
-              className="h-auto px-5 py-1.5 text-[11px] font-medium md:text-sm"
+              className={cn(
+                'h-auto px-5 py-1.5 text-[11px] font-medium md:text-sm',
+                isListingAndUserPro && 'bg-zinc-800 hover:bg-zinc-900',
+              )}
               disabled={
                 newCommentLoading || !newComment || isTemplate || isDisabled
               }

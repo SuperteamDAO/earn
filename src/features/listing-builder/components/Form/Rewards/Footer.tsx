@@ -12,8 +12,9 @@ import { Button } from '@/components/ui/button';
 import { submitListingMutationAtom } from '@/features/listing-builder/atoms';
 import {
   calculateTotalPrizes,
-  calculateTotalRewardsForPodium,
+  scaleRewardsForTargetUsd,
 } from '@/features/listing-builder/utils/rewards';
+import { ProBadge } from '@/features/pro/components/ProBadge';
 
 import { useListingForm } from '../../../hooks';
 import {
@@ -33,12 +34,14 @@ function RewardsFooter({
   setOpen,
   boostStep,
   isBoostFromUrl,
+  proAdjustment,
 }: {
   panel: 'rewards' | 'boost';
   setPanel: (panel: 'rewards' | 'boost') => void;
   setOpen: (open: boolean, options?: { bypassPrompt?: boolean }) => void;
   boostStep?: number;
   isBoostFromUrl?: boolean;
+  proAdjustment?: { increasedBy: number; minRequired: number } | null;
 }) {
   const form = useListingForm();
   const router = useRouter();
@@ -121,6 +124,7 @@ function RewardsFooter({
     minRewardAsk,
     maxRewardAsk,
   ]);
+
   const prevRewardAmountTokens = Number(rewardAmount) || 0;
   const targetBoostTokens = useMemo(() => {
     if (panel !== 'boost') return prevRewardAmountTokens;
@@ -151,6 +155,21 @@ function RewardsFooter({
 
   return (
     <div className="w-full space-y-4 bg-white">
+      {proAdjustment && panel === 'rewards' && (
+        <div className="mr-3 flex rounded-lg border border-slate-200 bg-slate-50 p-3">
+          <ProBadge
+            containerClassName="mr-5 bg-slate-300 px-3 py-1"
+            iconClassName="size-2.5 text-slate-700"
+            textClassName="text-xxs ml-1 font-medium text-slate-700"
+          />
+          <p className="text-sm font-medium text-slate-600">
+            We increased your prize by $
+            {proAdjustment.increasedBy.toLocaleString()} to meet the $
+            {proAdjustment.minRequired.toLocaleString()} cap for the PRO
+            Listing.
+          </p>
+        </div>
+      )}
       {!!tokenUsdValue && totalUsdPrize <= 100 && panel === 'rewards' && (
         <p className="text-[0.8rem] text-yellow-600">
           {`Note: This listing will not show up on Earn's Landing Page since it is ≤$100 in value. Increase the total compensation for better discoverability.`}
@@ -185,62 +204,29 @@ function RewardsFooter({
             }
             onClick={async () => {
               if (await form.validateRewards()) {
-                const currentRewards = (rewards || {}) as Record<
-                  string,
-                  number
-                >;
-                const newTotalTokens = targetBoostTokens;
+                const targetUSD = targetBoostTokens * (tokenUsdValue || 1);
+                const { rewardAmountTokens, rewardsToPersist } =
+                  scaleRewardsForTargetUsd({
+                    rewards,
+                    maxBonusSpots,
+                    targetUsd: targetUSD,
+                    tokenUsdValue: tokenUsdValue || 1,
+                    shouldScalePodium: true,
+                    shouldRoundToNearestTen: (tokenUsdValue || 0) <= 10,
+                  });
 
-                let computedRewardAmountTokens = newTotalTokens;
-
-                if (currentRewards && Object.keys(currentRewards).length > 0) {
-                  const oldTotal = calculateTotalRewardsForPodium(
-                    currentRewards,
-                    (maxBonusSpots as number) || 0,
-                  );
-                  if (oldTotal > 0) {
-                    const ratio = newTotalTokens / oldTotal;
-                    const scaled: Record<string, number> = Object.entries(
-                      currentRewards,
-                    ).reduce(
-                      (acc, [k, v]) => {
-                        const num = Number(v);
-                        return Number.isFinite(num)
-                          ? { ...acc, [k]: num * ratio }
-                          : { ...acc, [k]: v as any };
-                      },
-                      {} as Record<string, number>,
-                    );
-
-                    if ((tokenUsdValue || 0) <= 10) {
-                      const rounded: Record<string, number> = {};
-                      for (const [key, value] of Object.entries(scaled)) {
-                        const numeric = Number(value) || 0;
-                        const nearestTen = Math.round(numeric / 10) * 10;
-                        rounded[key] = nearestTen;
-                      }
-                      const roundedSum = calculateTotalRewardsForPodium(
-                        rounded,
-                        (maxBonusSpots as number) || 0,
-                      );
-                      form.setValue('rewards', rounded, {
-                        shouldValidate: false,
-                      });
-                      computedRewardAmountTokens = roundedSum;
-                    } else {
-                      form.setValue('rewards', scaled, {
-                        shouldValidate: false,
-                      });
-                    }
-                  }
+                if (rewardsToPersist) {
+                  form.setValue('rewards', rewardsToPersist, {
+                    shouldValidate: false,
+                  });
                 }
 
                 const prevTokens = prevRewardAmountTokens;
-                if (computedRewardAmountTokens > prevTokens) {
+                if (rewardAmountTokens > prevTokens) {
                   posthog.capture('boost_listing');
                 }
 
-                form.setValue('rewardAmount', computedRewardAmountTokens, {
+                form.setValue('rewardAmount', rewardAmountTokens, {
                   shouldValidate: false,
                 });
                 if (isBoostFromUrl) {
@@ -306,6 +292,10 @@ function RewardsFooter({
           className="w-full"
           onClick={async () => {
             if (await form.validateRewards()) {
+              if (proAdjustment) {
+                setOpen(false, { bypassPrompt: true });
+                return;
+              }
               if (
                 compensationType === 'fixed' &&
                 deadlineMoreThan72HoursLeft &&
@@ -314,7 +304,7 @@ function RewardsFooter({
               ) {
                 setPanel('boost');
               } else {
-                setOpen(false);
+                setOpen(false, { bypassPrompt: true });
               }
             } else {
               toast.warning('Please resolve all errors in Rewards to Continue');

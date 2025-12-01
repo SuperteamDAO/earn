@@ -47,6 +47,7 @@ import { isDeadlineOver } from '@/features/listings/utils/deadline';
 import { getColorStyles } from '@/features/listings/utils/getColorStyles';
 import { getListingIcon } from '@/features/listings/utils/getListingIcon';
 import { getListingStatus } from '@/features/listings/utils/status';
+import { ProBadge } from '@/features/pro/components/ProBadge';
 import { VerifyPaymentModal } from '@/features/sponsor-dashboard/components/Modals/VerifyPayment';
 
 import { ExportSheetsModal } from '../Modals/ExportSheetsModal';
@@ -312,13 +313,22 @@ export const SubmissionHeader = ({
             </DropdownMenuContent>
           </DropdownMenu>
           <StatusPill
-            className="mr-6 ml-2 w-fit text-[0.8rem]"
+            className="mr-2 ml-2 w-fit text-[0.8rem]"
             color={getColorStyles(bountyStatus).color}
             backgroundColor={getColorStyles(bountyStatus).bgColor}
             borderColor={getColorStyles(bountyStatus).borderColor}
           >
             {bountyStatus}
           </StatusPill>
+
+          {bounty?.isPro && (
+            <ProBadge
+              containerClassName="mr-2 bg-gray-200 px-3 py-1 gap-1"
+              iconClassName="size-3 text-zinc-400"
+              textClassName="text-xs font-medium text-zinc-600"
+            />
+          )}
+
           <BoostButton listing={bounty!} />
 
           <div className="ml-4 -translate-y-2.5">

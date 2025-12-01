@@ -4,6 +4,7 @@ import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import type { CommentType } from '@/interface/comments';
+import { cn } from '@/utils/cn';
 import { isLink } from '@/utils/isLink';
 import { truncateString } from '@/utils/truncateString';
 
@@ -14,6 +15,7 @@ interface Props {
   type: CommentType;
   isAnnounced: boolean;
   submissionId?: string;
+  isListingAndUserPro?: boolean;
 }
 
 export const CommentParser = ({
@@ -21,6 +23,7 @@ export const CommentParser = ({
   type,
   submissionId,
   isAnnounced,
+  isListingAndUserPro = false,
 }: Props) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const validUsernames = useAtomValue(validUsernamesAtom);
@@ -50,7 +53,10 @@ export const CommentParser = ({
           <Link
             key={index}
             href={`/t/${part.value.substring(1)}`}
-            className="text-brand-purple hover:underline"
+            className={cn(
+              'hover:underline',
+              isListingAndUserPro ? 'text-zinc-800' : 'text-brand-purple',
+            )}
           >
             {truncateString(part.value, 12)}
           </Link>
@@ -83,7 +89,10 @@ export const CommentParser = ({
         {value} -{' '}
         <Link
           href={`/feed/submission/${submissionId}`}
-          className="text-brand-purple hover:underline"
+          className={cn(
+            'hover:underline',
+            isListingAndUserPro ? 'text-zinc-800' : 'text-brand-purple',
+          )}
         >
           check it out!
         </Link>

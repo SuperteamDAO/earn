@@ -16,6 +16,7 @@ import { useState } from 'react';
 import { toast } from 'sonner';
 
 import IoDuplicateOutline from '@/components/icons/IoDuplicateOutline';
+import ProIcon from '@/components/icons/ProIcon';
 import { SortableTH } from '@/components/shared/sortable-th';
 import { Button } from '@/components/ui/button';
 import {
@@ -234,7 +235,7 @@ export const ListingTable = ({
                       )}
                     </Tooltip>
                   </TableCell>
-                  <TableCell className="max-w-80 font-medium break-words whitespace-normal text-slate-700">
+                  <TableCell className="max-w-80 font-medium wrap-break-word whitespace-normal text-slate-700">
                     {(() => {
                       const isClickable =
                         listing.isPublished ||
@@ -259,11 +260,14 @@ export const ListingTable = ({
 
                       return isClickable ? (
                         <Link
-                          className="ph-no-capture"
+                          className="ph-no-capture flex items-center gap-1"
                           href={href}
                           onClick={onClick}
                         >
                           {titleElement}
+                          {listing.isPro && (
+                            <ProIcon className="size-3.5 text-slate-400" />
+                          )}
                         </Link>
                       ) : (
                         titleElement

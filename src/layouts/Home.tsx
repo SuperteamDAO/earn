@@ -14,6 +14,7 @@ import { OpportunityBanner } from '@/features/home/components/OpportunityBanner'
 import { UserStatsBanner } from '@/features/home/components/UserStatsBanner';
 import { userCountQuery } from '@/features/home/queries/user-count';
 import type { ParsedOpportunityTags } from '@/features/listings/utils/parse-opportunity-tags';
+import { ProIntroDialog } from '@/features/pro/components/ProIntroDialog';
 
 interface CountryData {
   readonly name: string;
@@ -186,6 +187,7 @@ export function Home({
           </div>
         </div>
       </div>
+      {authenticated && <ProIntroDialog />}
     </Default>
   );
 }

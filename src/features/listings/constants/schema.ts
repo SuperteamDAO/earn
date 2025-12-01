@@ -28,6 +28,7 @@ export const ListingContextSchema = z
     'category',
     'category-all',
     'opportunity',
+    'pro',
   ])
   .default('all');
 
@@ -58,6 +59,7 @@ export const listingSelect = {
   minRewardAsk: true,
   maxRewardAsk: true,
   status: true,
+  isPro: true,
   _count: {
     select: {
       Comments: {

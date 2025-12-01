@@ -1,6 +1,6 @@
 import { ArrowLeftIcon } from 'lucide-react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { memo, useEffect, useMemo, useRef, useState } from 'react';
+import { memo, useEffect, useMemo, useState } from 'react';
 import { useWatch } from 'react-hook-form';
 
 import {
@@ -49,9 +49,12 @@ export function RewardsSheet() {
   const [open, setOpen] = useState(false);
   const [panel, setPanel] = useState<'rewards' | 'boost'>('rewards');
   const [boostStep, setBoostStep] = useState<BoostStep>(0);
+  const [proAdjustment, setProAdjustment] = useState<{
+    increasedBy: number;
+    minRequired: number;
+  } | null>(null);
   const [isBoostDismissPromptOpen, setIsBoostDismissPromptOpen] =
     useState(false);
-  const bypassBoostCloseRef = useRef(false);
   const params = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
@@ -64,6 +67,12 @@ export function RewardsSheet() {
       setPanel('boost');
     }
   }, [params]);
+
+  useEffect(() => {
+    if (!open) {
+      setProAdjustment(null);
+    }
+  }, [open]);
 
   const type = useWatch({
     control: form.control,
@@ -83,20 +92,8 @@ export function RewardsSheet() {
     );
   }, [form]);
 
-  const handleOpenChange = (nextOpen: boolean) => {
-    if (!nextOpen && panel === 'boost' && !bypassBoostCloseRef.current) {
-      setIsBoostDismissPromptOpen(true);
-      return;
-    }
-
-    setOpen(nextOpen);
-
-    if (nextOpen) {
-      bypassBoostCloseRef.current = false;
-      setPanel('rewards');
-      return;
-    }
-
+  const closeSheet = () => {
+    setOpen(false);
     setIsBoostDismissPromptOpen(false);
     try {
       const current = new URLSearchParams(params?.toString() || '');
@@ -107,25 +104,59 @@ export function RewardsSheet() {
         const href = search ? `${base}?${search}` : base;
         router.replace(href);
       }
-    } catch (err) {
-      /* noop */
-    } finally {
-      bypassBoostCloseRef.current = false;
+    } catch (err) {}
+  };
+
+  const handleOpenChange = (nextOpen: boolean) => {
+    if (nextOpen) {
+      setOpen(true);
+      setPanel('rewards');
+      return;
     }
+
+    if (panel === 'boost') {
+      setIsBoostDismissPromptOpen(true);
+      return;
+    }
+
+    closeSheet();
   };
 
   const changeOpen = (
     nextOpen: boolean,
     options?: { bypassPrompt?: boolean },
   ): void => {
-    if (!nextOpen && options?.bypassPrompt) {
-      bypassBoostCloseRef.current = true;
-    }
     if (nextOpen) {
-      bypassBoostCloseRef.current = false;
+      setOpen(true);
+      setPanel('rewards');
+    } else {
+      if (options?.bypassPrompt) {
+        closeSheet();
+      } else {
+        handleOpenChange(false);
+      }
     }
-    handleOpenChange(nextOpen);
   };
+
+  useEffect(() => {
+    const handleProAdjustment = (event: CustomEvent) => {
+      const { increasedBy, minRequired } = event.detail;
+      setProAdjustment({ increasedBy, minRequired });
+      setOpen(true);
+      setPanel('rewards');
+    };
+
+    window.addEventListener(
+      'openRewardsWithProAdjustment' as any,
+      handleProAdjustment as any,
+    );
+    return () => {
+      window.removeEventListener(
+        'openRewardsWithProAdjustment' as any,
+        handleProAdjustment as any,
+      );
+    };
+  }, []);
 
   return (
     <>
@@ -183,7 +214,7 @@ export function RewardsSheet() {
                     Boost to reach more people
                   </div>
                   <p className="ml-2.5 text-sm font-normal text-slate-500">
-                    Increase your prize pool to unlock promotions across{' '}
+                    Increase your prize pool to unlock promotions across
                     Twitter, Email, and more.
                   </p>
                 </>
@@ -220,6 +251,7 @@ export function RewardsSheet() {
                 setOpen={changeOpen}
                 boostStep={boostStep}
                 isBoostFromUrl={isBoostFromUrl}
+                proAdjustment={proAdjustment}
               />
             </SheetFooter>
           </div>
@@ -233,12 +265,10 @@ export function RewardsSheet() {
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>
-              Don&rsquo;t want more visibility?
-            </AlertDialogTitle>
+            <AlertDialogTitle>Skip boosting?</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you don&rsquo;t want to boost your listing and get
-              more views on it? More visibility means more submissions.
+              Closing now keeps your current rewards without applying the boost.
+              Continue editing to adjust your boost settings.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

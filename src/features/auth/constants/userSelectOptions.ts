@@ -38,6 +38,7 @@ export const userSelectOptions: UserSelect = {
   referralCode: true,
   referredById: true,
   isPro: true,
+  superteamLevel: true,
 
   currentSponsor: {
     select: {

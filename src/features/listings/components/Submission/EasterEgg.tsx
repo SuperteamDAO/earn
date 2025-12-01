@@ -9,53 +9,85 @@ import { Drawer, DrawerContent } from '@/components/ui/drawer';
 import { ASSET_URL } from '@/constants/ASSET_URL';
 import { useBreakpoint } from '@/hooks/use-breakpoint';
 import { useMediaQuery } from '@/hooks/use-media-query';
+import { cn } from '@/utils/cn';
 
 interface Props {
   isOpen: boolean;
   onClose: () => void;
   isProject: boolean;
+  isPro: boolean;
 }
 
-const decorateOptions: TDecorateOptionsFn = (options) => {
-  const colors = [
-    '#E63946',
-    '#F1FAEE',
-    '##A8DADC',
-    '#457B9D',
-    '#1D3557',
-    '#F4A261',
-    '#E9C46A',
-    '#2A9D8F',
-    '#FF5733',
-    '#FF2400',
-    '#FFC0CB',
-  ];
-  const selectedColors: string[] = [];
+const createDecorateOptions = (isPro: boolean): TDecorateOptionsFn => {
+  return (options) => {
+    const colors = isPro
+      ? [
+          '#FFD700',
+          '#FFA500',
+          '#FFC125',
+          '#DAA520',
+          '#F4A460',
+          '#FFB347',
+          '#FFD700',
+          '#E6C200',
+          '#FFE135',
+          '#FFC72C',
+          '#F5DEB3',
+        ]
+      : [
+          '#E63946',
+          '#F1FAEE',
+          '##A8DADC',
+          '#457B9D',
+          '#1D3557',
+          '#F4A261',
+          '#E9C46A',
+          '#2A9D8F',
+          '#FF5733',
+          '#FF2400',
+          '#FFC0CB',
+        ];
+    const selectedColors: string[] = [];
 
-  while (selectedColors.length < 5) {
-    const randomIndex = Math.floor(Math.random() * colors.length);
-    const color = colors[randomIndex];
-    if (!selectedColors.includes(color!)) {
-      selectedColors.push(color!);
+    while (selectedColors.length < 5) {
+      const randomIndex = Math.floor(Math.random() * colors.length);
+      const color = colors[randomIndex];
+      if (!selectedColors.includes(color!)) {
+        selectedColors.push(color!);
+      }
     }
-  }
 
-  return {
-    ...options,
-    particleCount: 20,
-    colors: selectedColors,
+    return {
+      ...options,
+      particleCount: 20,
+      colors: selectedColors,
+    };
   };
 };
 
-function MainContent({ isProject }: { isProject: boolean }) {
+function MainContent({
+  isProject,
+  isPro,
+}: {
+  isProject: boolean;
+  isPro: boolean;
+}) {
   const isMD = useBreakpoint('md');
   return (
     <>
       <Pride
         autorun={{ speed: isMD ? 10 : 5 }}
-        decorateOptions={decorateOptions}
+        decorateOptions={createDecorateOptions(isPro)}
         className="absolute -z-10 h-full w-full"
       />
+      {isPro && (
+        <>
+          <div className="absolute -top-40 right-1/2 -z-30 size-96 translate-x-1/2 rounded-full bg-[#3D3D3D] blur-[180px]" />
+          <div className="absolute right-1/2 -bottom-40 -z-30 size-96 translate-x-1/2 rounded-full bg-[#3D3D3D] blur-[120px]" />
+          <div className="absolute right-100 bottom-40 -z-30 size-96 translate-x-1/2 rounded-full bg-white/10 blur-[140px]" />
+          <div className="absolute bottom-40 left-100 -z-30 size-96 translate-x-1/2 rounded-full bg-white/10 blur-[140px]" />
+        </>
+      )}
       <div className="container mx-auto mt-auto px-4 md:mt-6">
         <div className="mx-auto mt-6 mb-6 w-14 md:mb-11 md:w-28">
           <ExternalImage
@@ -99,7 +131,7 @@ function MainContent({ isProject }: { isProject: boolean }) {
   );
 }
 
-export const EasterEgg = ({ isOpen, onClose, isProject }: Props) => {
+export const EasterEgg = ({ isOpen, onClose, isProject, isPro }: Props) => {
   const isDesktop = useMediaQuery('(min-width: 768px)');
 
   useEffect(() => {
@@ -114,13 +146,16 @@ export const EasterEgg = ({ isOpen, onClose, isProject }: Props) => {
     return (
       <Dialog open={isOpen} onOpenChange={onClose}>
         <DialogContent
-          className="h-screen w-screen max-w-none overflow-hidden rounded-none bg-[#5243FF]"
+          className={cn(
+            'h-screen w-screen max-w-none overflow-hidden rounded-none',
+            isPro ? 'bg-black' : 'bg-[#5243FF]',
+          )}
           onInteractOutside={(e) => e.preventDefault()}
           classNames={{
             closeIcon: 'text-white',
           }}
         >
-          <MainContent isProject={isProject} />
+          <MainContent isProject={isProject} isPro={isPro} />
         </DialogContent>
       </Dialog>
     );
@@ -128,8 +163,15 @@ export const EasterEgg = ({ isOpen, onClose, isProject }: Props) => {
 
   return (
     <Drawer open={isOpen} onOpenChange={onClose}>
-      <DrawerContent className="h-screen w-screen max-w-none overflow-hidden rounded-none bg-[#5243FF]">
-        <MainContent isProject={isProject} />
+      <DrawerContent
+        className={cn(
+          'h-screen w-screen max-w-none overflow-hidden rounded-none',
+          isPro
+            ? 'bg-gradient-to-b from-amber-900 via-yellow-900 to-amber-950'
+            : 'bg-[#5243FF]',
+        )}
+      >
+        <MainContent isProject={isProject} isPro={isPro} />
       </DrawerContent>
     </Drawer>
   );

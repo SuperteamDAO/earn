@@ -3,6 +3,7 @@ coverage
 .pnp
 .pnp.js
 src/generated/
+src/components/icons/**/*.tsx
 
 .changeset
 .github

@@ -1,4 +1,5 @@
 import { usePrivy } from '@privy-io/react-auth';
+import { useQuery } from '@tanstack/react-query';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import { useRouter } from 'next/router';
 import posthog from 'posthog-js';
@@ -20,6 +21,9 @@ import { useLogout, useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 
 import { HACKATHONS } from '@/features/hackathon/constants/hackathons';
+import { userStatsQuery } from '@/features/home/queries/user-stats';
+import { ProBadge } from '@/features/pro/components/ProBadge';
+import { ProIntro } from '@/features/pro/components/ProIntro';
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 import { EmailSettingsModal } from '@/features/talent/components/EmailSettingsModal';
 
@@ -65,12 +69,21 @@ export const MobileDrawer = ({
   const [categoriesOpen, setCategoriesOpen] = useState(true);
   const [skillsOpen, setSkillsOpen] = useState(false);
   const logout = useLogout();
+  const { data: stats, isLoading: isStatsLoading } = useQuery(userStatsQuery);
 
   const { isOpen, onClose, onOpen } = useDisclosure();
 
   const { user } = useUser();
 
   const isLoggedIn = !!user && authenticated && ready;
+
+  const showProIntro = !!(
+    !user?.isPro &&
+    user?.isTalentFilled &&
+    !isStatsLoading &&
+    ((stats?.totalWinnings && stats.totalWinnings >= 1000) ||
+      user?.superteamLevel?.includes('Superteam'))
+  );
 
   return (
     <Sheet open={isDrawerOpen} onOpenChange={onDrawerClose}>
@@ -104,6 +117,11 @@ export const MobileDrawer = ({
               </p>
             </div>
             <Separator />
+            <div className="mt-1 px-1">
+              {showProIntro && (
+                <ProIntro className="rounded-lg" origin="sidebar" />
+              )}
+            </div>
           </div>
         )}
 
@@ -218,6 +236,20 @@ export const MobileDrawer = ({
                       />
                     );
                   })}
+                  <NavItem
+                    className="ph-no-capture"
+                    onClick={() => {
+                      posthog.capture('pro_navbar');
+                      router.push('/pro');
+                    }}
+                    label={
+                      <ProBadge
+                        containerClassName="gap-1 mt-px"
+                        iconClassName="size-4 text-zinc-600"
+                        textClassName="text-xs font-medium text-slate-600"
+                      />
+                    }
+                  />
                 </div>
               </CollapsibleContent>
             </Collapsible>

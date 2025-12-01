@@ -63,6 +63,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
             photo: true,
             username: true,
             currentSponsorId: true,
+            isPro: true,
           },
         },
       },

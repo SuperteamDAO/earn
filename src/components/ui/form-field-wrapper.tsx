@@ -27,6 +27,7 @@ interface FormFieldWrapperProps<T extends FieldValues> {
   richEditorPlaceholder?: string;
   className?: string;
   onChange?: (e: any) => void;
+  isPro?: boolean;
 }
 
 export function FormFieldWrapper<T extends FieldValues>({
@@ -42,6 +43,7 @@ export function FormFieldWrapper<T extends FieldValues>({
   richEditorPlaceholder,
   className,
   onChange,
+  isPro = false,
 }: FormFieldWrapperProps<T>) {
   return (
     <FormField
@@ -65,6 +67,7 @@ export function FormFieldWrapper<T extends FieldValues>({
                   }}
                   error={false}
                   placeholder={richEditorPlaceholder}
+                  isPro={isPro}
                 />
               ) : isTokenInput ? (
                 <TokenInput

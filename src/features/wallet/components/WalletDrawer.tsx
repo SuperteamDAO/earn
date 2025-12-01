@@ -82,7 +82,12 @@ export function WalletDrawer({
             className="absolute top-0 right-0 size-4 cursor-pointer text-slate-400 hover:text-slate-700"
             onClick={() => toast.dismiss()}
           />
-          <div className="text-brand-purple mt-1 pr-6 text-xl font-bold">
+          <div
+            className={cn(
+              'text-brand-purple mt-1 pr-6 text-xl font-bold',
+              user?.isPro && 'text-zinc-700',
+            )}
+          >
             Two-Factor Auth is Mandatory
           </div>
           <div className="text-sm text-slate-600">
@@ -94,7 +99,10 @@ export function WalletDrawer({
               await showMfaEnrollmentModal();
               setView('withdraw');
             }}
-            className="bg-brand-purple hover:bg-brand-purple-dark mt-2 w-full rounded-lg px-4 py-2.5 text-sm font-semibold text-white transition-colors"
+            className={cn(
+              'bg-brand-purple hover:bg-brand-purple-dark mt-2 w-full rounded-lg px-4 py-2.5 text-sm font-semibold text-white transition-colors',
+              user?.isPro && 'bg-zinc-700 hover:bg-zinc-800',
+            )}
           >
             Set up 2FA
           </Button>
@@ -116,7 +124,7 @@ export function WalletDrawer({
 
   return (
     <SideDrawer isOpen={isOpen} onClose={handleClose}>
-      <SideDrawerContent className="w-screen overflow-hidden sm:w-[30rem]">
+      <SideDrawerContent className="w-screen overflow-hidden sm:w-120">
         <ScrollArea className="h-full overflow-y-auto">
           <X
             className="absolute top-5 right-4 z-10 h-5 w-5 cursor-pointer text-slate-600 sm:hidden"
@@ -172,7 +180,10 @@ export function WalletDrawer({
                 <div className="w-full items-end justify-between">
                   <Button
                     onClick={handleWithdraw}
-                    className="bg-brand-purple mt-3 rounded-lg px-5 text-base"
+                    className={cn(
+                      'bg-brand-purple mt-3 rounded-lg px-5 text-base',
+                      user?.isPro && 'bg-zinc-700 hover:bg-zinc-800',
+                    )}
                     disabled={!tokens?.length}
                   >
                     Withdraw

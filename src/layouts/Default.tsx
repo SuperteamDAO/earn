@@ -4,6 +4,7 @@ import type { ReactNode } from 'react';
 import { cn } from '@/utils/cn';
 
 import { Header } from '@/features/navbar/components/Header';
+import { ProUpgradeOverlay } from '@/features/pro/components/ProUpgradeOverlay';
 
 interface IDefaultProps {
   readonly meta: ReactNode;
@@ -40,6 +41,7 @@ export const Default = ({
       <Header />
       <div className="flex flex-1 flex-col">{children}</div>
       {!hideFooter && <Footer />}
+      <ProUpgradeOverlay />
     </div>
   );
 };

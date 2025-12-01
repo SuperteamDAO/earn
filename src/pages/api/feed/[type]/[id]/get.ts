@@ -57,6 +57,7 @@ export default async function handler(
           select: {
             photo: true,
             firstName: true,
+            isPro: true,
           },
         },
       },
