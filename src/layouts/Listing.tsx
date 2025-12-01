@@ -137,7 +137,10 @@ export function ListingPageLayout({
           <meta name="twitter:card" content="summary_large_image" />
           <meta property="og:image:width" content="1200" />
           <meta property="og:image:height" content="630" />
-          <meta property="og:image:alt" content="Superteam Bounty" />
+          <meta
+            property="og:image:alt"
+            content={`${initialListing?.title || 'Listing'} - ${initialListing?.type === 'bounty' ? 'Bounty' : 'Project'} by ${initialListing?.sponsor?.name || 'Sponsor'} on Superteam Earn`}
+          />
           <meta property="og:type" content="website" />
           <meta charSet="UTF-8" key="charset" />
           <meta
