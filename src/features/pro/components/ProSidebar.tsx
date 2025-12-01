@@ -81,14 +81,67 @@ const ProEligibility = ({ totalWinnings }: { totalWinnings: number }) => {
 };
 
 export const ProSidebar = () => {
-  const { data: stats } = useQuery(userStatsQuery);
-  const { user } = useUser();
+  const { data: stats, isLoading: isStatsLoading } = useQuery(userStatsQuery);
+  const { user, isLoading: isUserLoading } = useUser();
   const isPro = user?.isPro;
+
+  const isProEligibilityLoading = isUserLoading || isStatsLoading;
 
   const isUserEligibleForPro =
     !isPro &&
     ((stats && (stats.totalWinnings ?? 0) >= 1000) ||
       user?.superteamLevel?.includes('Superteam'));
+
+  if (isProEligibilityLoading) {
+    return (
+      <div className="flex h-full w-full flex-col py-3 lg:w-130 lg:border-l lg:border-slate-100 lg:pl-6">
+        <Separator className="mb-4 lg:hidden" />
+        <div className="space-y-4">
+          <div className="h-4 w-24 rounded bg-slate-100" />
+          <div className="space-y-3">
+            <div className="flex items-center gap-4">
+              <div className="size-6 shrink-0 rounded-full bg-slate-100" />
+              <div className="h-4 w-48 rounded bg-slate-100" />
+            </div>
+            <div className="flex items-center gap-4">
+              <div className="size-6 shrink-0 rounded-full bg-slate-100" />
+              <div className="h-4 w-56 rounded bg-slate-100" />
+            </div>
+          </div>
+        </div>
+        <Separator className="my-8" />
+        <div className="space-y-4">
+          <div className="h-4 w-32 rounded bg-slate-100" />
+          <div className="space-y-3">
+            <div className="flex items-center gap-3">
+              <div className="size-6 shrink-0 rounded-full bg-slate-100" />
+              <div className="h-4 w-48 rounded bg-slate-100" />
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="size-6 shrink-0 rounded-full bg-slate-100" />
+              <div className="h-4 w-56 rounded bg-slate-100" />
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="size-6 shrink-0 rounded-full bg-slate-100" />
+              <div className="h-4 w-52 rounded bg-slate-100" />
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="size-6 shrink-0 rounded-full bg-slate-100" />
+              <div className="h-4 w-44 rounded bg-slate-100" />
+            </div>
+          </div>
+        </div>
+        <Separator className="my-8" />
+        <div className="space-y-4">
+          <div className="h-4 w-40 rounded bg-slate-100" />
+          <div className="space-y-3">
+            <div className="h-20 w-full rounded bg-slate-100" />
+            <div className="h-20 w-full rounded bg-slate-100" />
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex h-full w-full flex-col py-3 lg:w-130 lg:border-l lg:border-slate-100 lg:pl-6">

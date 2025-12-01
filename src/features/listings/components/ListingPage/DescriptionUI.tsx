@@ -25,8 +25,8 @@ interface Props {
 }
 
 export function DescriptionUI({ description, isPro = false }: Props) {
-  const { user } = useUser();
-  const { data: stats } = useQuery(userStatsQuery);
+  const { user, isLoading: isUserLoading } = useUser();
+  const { data: stats, isLoading: isStatsLoading } = useQuery(userStatsQuery);
 
   const options: HTMLReactParserOptions = {
     replace: (domNode: any) => {
@@ -147,6 +147,40 @@ export function DescriptionUI({ description, isPro = false }: Props) {
 
   if (!isMounted) {
     return null;
+  }
+
+  const isProEligibilityLoading = isPro && (isUserLoading || isStatsLoading);
+  if (isProEligibilityLoading) {
+    return (
+      <div className="w-full overflow-visible border-b-2 border-slate-200 pb-4 md:border-0">
+        <div className="relative w-full overflow-visible rounded-xl bg-white">
+          <div className="mt-4 w-full overflow-visible pb-7">
+            <div className="space-y-4">
+              <div className="h-4 w-full rounded bg-slate-100" />
+              <div className="h-4 w-5/6 rounded bg-slate-100" />
+              <div className="h-4 w-full rounded bg-slate-100" />
+              <div className="h-4 w-4/5 rounded bg-slate-100" />
+              <div className="h-4 w-full rounded bg-slate-100" />
+              <div className="h-4 w-3/4 rounded bg-slate-100" />
+              <div className="h-4 w-full rounded bg-slate-100" />
+              <div className="h-4 w-5/6 rounded bg-slate-100" />
+              <div className="h-4 w-4/5 rounded bg-slate-100" />
+              <div className="h-4 w-full rounded bg-slate-100" />
+              <div className="h-4 w-full rounded bg-slate-100" />
+              <div className="h-4 w-5/6 rounded bg-slate-100" />
+              <div className="h-4 w-full rounded bg-slate-100" />
+              <div className="h-4 w-4/5 rounded bg-slate-100" />
+              <div className="h-4 w-full rounded bg-slate-100" />
+              <div className="h-4 w-5/6 rounded bg-slate-100" />
+              <div className="h-4 w-full rounded bg-slate-100" />
+              <div className="h-4 w-4/5 rounded bg-slate-100" />
+              <div className="h-4 w-full rounded bg-slate-100" />
+              <div className="h-4 w-3/4 rounded bg-slate-100" />
+            </div>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   if (isPro && !user?.isPro) {

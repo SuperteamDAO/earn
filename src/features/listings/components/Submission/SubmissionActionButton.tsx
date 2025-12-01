@@ -297,7 +297,12 @@ export const SubmissionActionButton = ({
       break;
 
     default:
-      if (isPro && !isUserPro && buttonState === 'submit') {
+      if (
+        isPro &&
+        !isUserPro &&
+        buttonState === 'submit' &&
+        !isUserSubmissionLoading
+      ) {
         buttonText = 'Not Eligible';
         buttonBG = 'bg-zinc-300';
         isBtnDisabled = true;
@@ -309,7 +314,7 @@ export const SubmissionActionButton = ({
           listing.compensationType === 'range'
         )
           buttonText = 'Send Quote';
-        buttonBG = isUserPro && isPro ? 'bg-zinc-900' : 'bg-brand-purple';
+        buttonBG = isUserPro && isPro ? 'bg-zinc-800' : 'bg-brand-purple';
         if (isNotPublished && !isListingSponsor) {
           buttonText = 'Paused';
         }
@@ -499,7 +504,7 @@ export const SubmissionActionButton = ({
                     isNotEligible && 'text-zinc-700',
                     isEditMode &&
                       (isPro
-                        ? 'border-zinc-900 text-zinc-900 hover:text-white'
+                        ? 'border-zinc-700 text-zinc-700 hover:text-white'
                         : 'border-brand-purple text-brand-purple hover:text-brand-purple-dark'),
                     isUserPro && isPro && 'hover:bg-black',
                     !isUserPro && isPro && 'hover:opacity-90',
