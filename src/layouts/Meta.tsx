@@ -78,6 +78,11 @@ const Meta = (props: IMetaProps) => {
         content="@SuperteamEarn"
         key="twitter:creator"
       />
+      <meta
+        name="twitter:description"
+        content={props.description}
+        key="twitter:description"
+      />
     </Head>
   );
 };
