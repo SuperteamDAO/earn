@@ -2,8 +2,8 @@ import debounce from 'lodash.debounce';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import {
   type KeyboardEvent,
-  useCallback,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from 'react';
@@ -22,12 +22,16 @@ export function Pagination({ page, setPage, count }: Props) {
   const [inputValue, setInputValue] = useState(String(page));
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const handleClick = (newPage: number) => {
-    setPage(newPage);
-  };
-  const debouncedHandleClick = useCallback(debounce(handleClick, 500), [
-    setPage,
-  ]);
+  const debouncedHandleClick = useMemo(
+    () => debounce((newPage: number) => setPage(newPage), 500),
+    [setPage],
+  );
+
+  useEffect(() => {
+    return () => {
+      debouncedHandleClick.cancel();
+    };
+  }, [debouncedHandleClick]);
 
   // Sync input value when page prop changes
   useEffect(() => {
@@ -89,6 +93,7 @@ export function Pagination({ page, setPage, count }: Props) {
                 type="text"
                 inputMode="numeric"
                 pattern="[0-9]*"
+                aria-label={`Enter a page number between 1 and ${totalPages}`}
                 className="border-brand-purple text-brand-purple ring-brand-purple/20 h-9 w-12 min-w-0 rounded-md border bg-white px-2 py-2 text-center text-xs ring-2 outline-none"
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
@@ -106,6 +111,7 @@ export function Pagination({ page, setPage, count }: Props) {
                 onClick={() => setIsEditing(true)}
                 variant="outline"
                 title="Click to jump to a specific page"
+                aria-label={`Current page ${i}. Click to enter a specific page number`}
               >
                 <span>{i}</span>
               </Button>
