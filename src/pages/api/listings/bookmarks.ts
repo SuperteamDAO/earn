@@ -38,6 +38,7 @@ async function getBookmarks(req: NextApiRequestWithUser, res: NextApiResponse) {
         },
         isActive: true,
         isArchived: false,
+        isPublished: true,
       },
       select: listingSelect,
       take,
