@@ -139,7 +139,10 @@ export const ListingsSection = ({
       isSponsorContext || isBookmarksContext || isProContext
         ? 'all'
         : undefined,
-    defaultSortBy: isSponsorContext ? 'Status' : undefined,
+    defaultSortBy:
+      isSponsorContext || isBookmarksContext || isProContext
+        ? 'Status'
+        : undefined,
   });
 
   const effectiveCategory =
@@ -309,7 +312,9 @@ export const ListingsSection = ({
           onStatusChange={handleStatusChange}
           onSortChange={handleSortChange}
           showAllFilter={isSponsorContext || isBookmarksContext || isProContext}
-          showStatusSort={isSponsorContext}
+          showStatusSort={
+            isSponsorContext || isBookmarksContext || isProContext
+          }
         />
       </div>
       <div className="mt-2 mb-1 md:hidden">
