@@ -35,12 +35,10 @@ export function HomeTalentBanner({ totalUsers }: HomeTalentBannerProps) {
             type="image/webp"
           />
           <source
-            media="(max-width: 40em)"
             srcSet="/assets/banner/banner-mobile.avif"
             type="image/avif"
           />
           <source
-            media="(max-width: 40em)"
             srcSet="/assets/banner/banner-mobile.webp"
             type="image/webp"
           />
