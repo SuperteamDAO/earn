@@ -1,4 +1,3 @@
-import { getImageProps } from 'next/image';
 import posthog from 'posthog-js';
 
 import { ExternalImage } from '@/components/ui/cloudinary-image';
@@ -16,41 +15,6 @@ const avatars = [
 ];
 
 export function HomeTalentBanner({ totalUsers }: HomeTalentBannerProps) {
-  const common = {
-    alt: 'Illustration — Two people working on laptops outdoors at night, surrounded by a mystical mountainous landscape illuminated by the moonlight',
-    quality: 85,
-    priority: true,
-    fetchPriority: 'high' as const,
-    loading: 'eager' as const,
-    style: {
-      width: '100%',
-      maxWidth: '100%',
-      borderRadius: '0.375rem',
-      pointerEvents: 'none' as const,
-      objectFit: 'cover' as const,
-    },
-  };
-
-  const {
-    props: { srcSet: desktop },
-  } = getImageProps({
-    ...common,
-    src: `https://res.cloudinary.com/dgvnuwspr/image/upload/assets/banner/banner`,
-    width: 1200,
-    height: 600,
-    sizes: '70vw',
-  });
-
-  const {
-    props: { srcSet: mobile, ...rest },
-  } = getImageProps({
-    ...common,
-    src: `https://res.cloudinary.com/dgvnuwspr/image/upload/assets/banner/banner-mobile`,
-    width: 800,
-    height: 600,
-    sizes: '100vw',
-  });
-
   return (
     <AuthWrapper
       className="relative mx-auto flex h-full w-full flex-col overflow-hidden rounded-[0.5rem] p-5 md:p-10"
@@ -60,9 +24,34 @@ export function HomeTalentBanner({ totalUsers }: HomeTalentBannerProps) {
     >
       <div className="absolute inset-0 h-full overflow-hidden">
         <picture>
-          <source media="(min-width: 40em)" srcSet={desktop} />
-          <source media="(max-width: 40em)" srcSet={mobile} />
-          <img {...rest} className="h-full w-full" alt={rest.alt} />
+          <source
+            media="(min-width: 40em)"
+            srcSet="/assets/banner/banner.avif"
+            type="image/avif"
+          />
+          <source
+            media="(min-width: 40em)"
+            srcSet="/assets/banner/banner.webp"
+            type="image/webp"
+          />
+          <source
+            media="(max-width: 40em)"
+            srcSet="/assets/banner/banner-mobile.avif"
+            type="image/avif"
+          />
+          <source
+            media="(max-width: 40em)"
+            srcSet="/assets/banner/banner-mobile.webp"
+            type="image/webp"
+          />
+          <img
+            src="/assets/banner/banner-mobile.webp"
+            alt="Illustration — Two people working on laptops outdoors at night, surrounded by a mystical mountainous landscape illuminated by the moonlight"
+            className="h-full w-full"
+            style={{ objectFit: 'cover' }}
+            loading="eager"
+            fetchPriority="high"
+          />
         </picture>
       </div>
       <div
