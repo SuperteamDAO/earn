@@ -160,6 +160,7 @@ export const Footer = () => {
   const opportunities = [
     { text: 'Bounties', href: '/bounties' },
     { text: 'Projects', href: '/projects' },
+    { text: 'Jobs', href: '/jobs' },
     { text: 'Grants', href: '/grants' },
   ];
 

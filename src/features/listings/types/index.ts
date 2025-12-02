@@ -106,6 +106,7 @@ export interface ListingTabsProps {
   sponsor?: string;
   skill?: string;
   category?: string;
+  defaultTab?: 'bounties' | 'projects';
 }
 
 type ProjectContextQuestionsType = {

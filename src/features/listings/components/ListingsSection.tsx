@@ -56,6 +56,7 @@ export const ListingsSection = ({
   sponsor,
   skill,
   category,
+  defaultTab,
   customEmptySection,
 }: ListingsSectionProps) => {
   const isMd = useBreakpoint('md');
@@ -91,7 +92,7 @@ export const ListingsSection = ({
   const { data: categoryCounts, isLoading: countsLoading } =
     useListingsFilterCount({
       context: type,
-      tab: 'all',
+      tab: defaultTab ?? 'all',
       status: 'open',
       region,
       sponsor,
@@ -146,6 +147,7 @@ export const ListingsSection = ({
       isSponsorContext || isBookmarksContext || isProContext
         ? 'Status'
         : undefined,
+    defaultTab,
   });
 
   // For category contexts, use the category prop (route category)

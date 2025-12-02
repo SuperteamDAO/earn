@@ -49,6 +49,7 @@ interface HomeProps {
   readonly skillData?: SkillData;
   readonly categoryData?: CategoryData;
   readonly opportunityTags?: ParsedOpportunityTags;
+  readonly listingType?: 'bounties' | 'projects';
   readonly potentialSession?: boolean;
   readonly meta?: ReactNode;
 }
@@ -79,6 +80,10 @@ const SkillBanner = dynamic(() =>
   ),
 );
 
+const TypeBanner = dynamic(() =>
+  import('@/features/home/components/TypeBanner').then((mod) => mod.TypeBanner),
+);
+
 const HomeSideBar = dynamic(() =>
   import('@/features/home/components/SideBar').then((mod) => mod.HomeSideBar),
 );
@@ -91,6 +96,7 @@ export function Home({
   skillData,
   categoryData,
   opportunityTags,
+  listingType,
   potentialSession = false,
   meta,
 }: HomeProps) {
@@ -155,6 +161,7 @@ export function Home({
       {type === 'opportunity' && opportunityTags && (
         <OpportunityBanner tags={opportunityTags} />
       )}
+      {type === 'listing' && listingType && <TypeBanner type={listingType} />}
       {!!currentCategory &&
         type !== 'region' &&
         type !== 'region-all' &&
@@ -169,7 +176,7 @@ export function Home({
           <div className="flex items-start justify-between">
             <div className="w-full lg:border-r lg:border-slate-100">
               <div className="w-full lg:pr-6">
-                {!currentCategory && type === 'listing' && (
+                {!currentCategory && type === 'listing' && !listingType && (
                   <div className="pt-3">
                     {potentialSession || authenticated ? (
                       <UserStatsBanner />
