@@ -2,6 +2,8 @@
 import { type NextApiRequest, type NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
+import { publicApiRateLimiter } from '@/lib/ratelimit';
+import { checkAndApplyRateLimit } from '@/lib/rateLimiterService';
 import { prisma } from '@/prisma';
 import { type GrantApplicationInclude } from '@/prisma/models';
 import { type CommentFindManyArgs } from '@/prisma/models/Comment';
@@ -9,6 +11,7 @@ import { type PoWGetPayload, type PoWInclude } from '@/prisma/models/PoW';
 import { type SubmissionInclude } from '@/prisma/models/Submission';
 import { getCloudinaryFetchUrl } from '@/utils/cloudinary';
 import { dayjs } from '@/utils/dayjs';
+import { getClientIPPages } from '@/utils/getClientIPPages';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { getPrivyToken } from '@/features/auth/utils/getPrivyToken';
@@ -18,6 +21,14 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ): Promise<void> {
+  const clientIP = getClientIPPages(req);
+  const canProceed = await checkAndApplyRateLimit(res, {
+    limiter: publicApiRateLimiter,
+    identifier: `feed:${clientIP}`,
+    routeName: 'feed',
+  });
+  if (!canProceed) return;
+
   logger.debug(`Request query: ${safeStringify(req.query)}`);
   const {
     timePeriod,

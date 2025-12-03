@@ -1,10 +1,24 @@
+import { headers } from 'next/headers';
 import { type NextRequest, NextResponse } from 'next/server';
 
 import logger from '@/lib/logger';
+import { publicApiRateLimiter } from '@/lib/ratelimit';
+import { checkAndApplyRateLimitApp } from '@/lib/rateLimiterService';
 import { prisma } from '@/prisma';
+import { getClientIP } from '@/utils/getClientIP';
 import { safeStringify } from '@/utils/safeStringify';
 
 export async function GET(_request: NextRequest) {
+  const requestHeaders = await headers();
+  const clientIP = getClientIP(requestHeaders);
+
+  const rateLimitResponse = await checkAndApplyRateLimitApp({
+    limiter: publicApiRateLimiter,
+    identifier: `homepage_feed:${clientIP}`,
+    routeName: 'homepage-feed',
+  });
+  if (rateLimitResponse) return rateLimitResponse;
+
   try {
     const submissions = await prisma.submission.findMany({
       where: { isArchived: false, isActive: true },

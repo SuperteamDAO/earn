@@ -2,10 +2,7 @@ import { headers } from 'next/headers';
 import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
-import {
-  listingsRateLimiter,
-  listingsStrictRateLimiter,
-} from '@/lib/ratelimit';
+import { publicApiRateLimiter } from '@/lib/ratelimit';
 import { checkAndApplyRateLimitApp } from '@/lib/rateLimiterService';
 import { prisma } from '@/prisma';
 import {
@@ -27,19 +24,8 @@ export async function GET(request: NextRequest) {
     const requestHeaders = await headers();
     const clientIP = getClientIP(requestHeaders);
 
-    // Apply strict rate limiting first (10 req / 10s) to catch burst attacks
-    const strictRateLimitResponse = await checkAndApplyRateLimitApp({
-      limiter: listingsStrictRateLimiter,
-      identifier: `listings_strict:${clientIP}`,
-      routeName: 'listings-strict',
-    });
-    if (strictRateLimitResponse) {
-      return strictRateLimitResponse;
-    }
-
-    // Apply standard rate limiting (60 req / 1min)
     const rateLimitResponse = await checkAndApplyRateLimitApp({
-      limiter: listingsRateLimiter,
+      limiter: publicApiRateLimiter,
       identifier: `listings:${clientIP}`,
       routeName: 'listings',
     });

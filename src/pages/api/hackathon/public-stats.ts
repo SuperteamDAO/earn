@@ -1,11 +1,22 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
+import { publicApiRateLimiter } from '@/lib/ratelimit';
+import { checkAndApplyRateLimit } from '@/lib/rateLimiterService';
 import { prisma } from '@/prisma';
+import { getClientIPPages } from '@/utils/getClientIPPages';
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
+  const clientIP = getClientIPPages(req);
+  const canProceed = await checkAndApplyRateLimit(res, {
+    limiter: publicApiRateLimiter,
+    identifier: `hackathon_public_stats:${clientIP}`,
+    routeName: 'hackathon-public-stats',
+  });
+  if (!canProceed) return;
+
   try {
     const hackathonSlug = req.query.slug as string;
 

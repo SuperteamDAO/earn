@@ -2,18 +2,16 @@ import { Ratelimit } from '@upstash/ratelimit';
 
 import { redis } from './redis';
 
-export const listingsRateLimiter = new Ratelimit({
+/**
+ * Generic rate limiter for public API endpoints.
+ * 30 requests per 10 seconds per IP - allows normal browsing while blocking abuse.
+ * Uses sliding window for smoother rate limiting.
+ */
+export const publicApiRateLimiter = new Ratelimit({
   redis: redis,
-  limiter: Ratelimit.slidingWindow(60, '1 m'),
+  limiter: Ratelimit.slidingWindow(30, '10 s'),
   analytics: true,
-  prefix: 'ratelimit:listings',
-});
-
-export const listingsStrictRateLimiter = new Ratelimit({
-  redis: redis,
-  limiter: Ratelimit.slidingWindow(10, '10 s'),
-  analytics: true,
-  prefix: 'ratelimit:listings_strict',
+  prefix: 'ratelimit:public_api',
 });
 
 export const commentCreateRateLimiter = new Ratelimit({
