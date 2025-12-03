@@ -1,4 +1,5 @@
 import { usePrivy } from '@privy-io/react-auth';
+import { useQuery } from '@tanstack/react-query';
 import { IBM_Plex_Serif } from 'next/font/google';
 
 import { AnimatedDots } from '@/components/shared/AnimatedDots';
@@ -10,8 +11,10 @@ import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 
 import { AuthWrapper } from '@/features/auth/components/AuthWrapper';
+import { userStatsQuery } from '@/features/home/queries/user-stats';
 
 import { ProBadge } from './ProBadge';
+import { ProUpgradeButton } from './ProUpgradeButton';
 
 interface ProBannerProps {
   readonly totalEarnings?: number | null;
@@ -23,6 +26,24 @@ const plex = IBM_Plex_Serif({
   style: ['italic'],
   display: 'swap',
 });
+
+const EligibleUser = () => {
+  return (
+    <div className="z-20 w-72">
+      <p className="text-2xl font-medium text-white md:text-3xl md:font-semibold">
+        You&apos;re now eligible for Earn Pro
+      </p>
+      <p className="mt-4 text-base text-zinc-400">
+        Upgrade to Earn Pro to get access to exclusive opportunities and perks
+      </p>
+      <div className="mt-5 w-full sm:w-auto">
+        <ProUpgradeButton origin="banner" className="w-auto">
+          Upgrade to Pro
+        </ProUpgradeButton>
+      </div>
+    </div>
+  );
+};
 
 const NotProUser = ({ totalEarnings }: { totalEarnings: number }) => {
   return (
@@ -108,9 +129,20 @@ const ProBannerSkeleton = () => {
 };
 
 export function ProBanner({ totalEarnings }: ProBannerProps) {
-  const { user, isLoading } = useUser();
+  const { user, isLoading: isUserLoading } = useUser();
+  const { data: stats, isLoading: isStatsLoading } = useQuery(userStatsQuery);
   const isPro = user?.isPro ?? false;
   const { authenticated } = usePrivy();
+
+  const isLoading = isUserLoading || isStatsLoading;
+
+  const isUserEligibleForPro =
+    !isPro &&
+    authenticated &&
+    user &&
+    ((stats && (stats.totalWinnings ?? 0) >= 1000) ||
+      user?.superteamLevel?.includes('Superteam'));
+
   return (
     <div className="relative flex flex-col gap-4 overflow-hidden rounded-xl bg-zinc-800 px-6 pb-8 text-white sm:pb-10 md:px-11">
       <AnimatedDots
@@ -132,6 +164,8 @@ export function ProBanner({ totalEarnings }: ProBannerProps) {
         <NotLoggedInUser />
       ) : isPro ? (
         <ProUser name={user?.firstName ?? ''} />
+      ) : isUserEligibleForPro ? (
+        <EligibleUser />
       ) : (
         <NotProUser totalEarnings={totalEarnings ?? 0} />
       )}

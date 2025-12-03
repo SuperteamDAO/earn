@@ -17,6 +17,7 @@ import { getURL } from '@/utils/validUrl';
 import { userStatsQuery } from '@/features/home/queries/user-stats';
 import { useProUpgradeFlow } from '@/features/pro/state/pro-upgrade-flow';
 
+import { LargeRandomArrow } from './LargeRandomArrow';
 import { ProBadge } from './ProBadge';
 
 const celebratoryFont = localFont({
@@ -263,7 +264,7 @@ export const ProUpgradeOverlay = () => {
           <motion.div
             key="pro-upgrade-overlay"
             className={cn(
-              'fixed top-0 left-0 z-10000 flex flex-col items-center justify-center overflow-hidden bg-black',
+              'pointer-events-auto fixed top-0 left-0 z-10000 flex flex-col items-center justify-center overflow-hidden bg-black',
             )}
             style={{
               width: viewport.width,
@@ -357,7 +358,7 @@ export const ProUpgradeOverlay = () => {
               <Cross2Icon className="size-5 text-white" />
               <span className="sr-only">Close</span>
             </DialogClose>
-            <div className="relative z-10 flex flex-col items-center px-2">
+            <div className="pointer-events-auto relative z-10 flex flex-col items-center px-2">
               <ProBadge
                 containerClassName="bg-white/12 px-3 py-1.5 gap-2 mb-4"
                 iconClassName="size-2.5 md:size-3 text-white/34"
@@ -378,11 +379,62 @@ export const ProUpgradeOverlay = () => {
               </p>
               {flow.status === 'full' ? (
                 <>
-                  <div className="absolute -top-30 left-1/2 size-96 -translate-x-1/2 rounded-full bg-[#d9d9d9]/20 blur-[150px]" />
-                  <div className="absolute -bottom-30 left-200 size-96 -translate-x-1/2 rounded-full bg-[#d9d9d9]/20 blur-[150px]" />
-                  <div className="absolute right-200 -bottom-30 size-96 -translate-x-1/2 rounded-full bg-[#d9d9d9]/20 blur-[150px]" />
-                  <div className="absolute -top-30 right-100 size-96 -translate-x-1/2 rounded-full bg-[#d9d9d9]/20 blur-[150px]" />
-                  <div className="absolute bottom-30 left-100 size-96 -translate-x-1/2 rounded-full bg-[#d9d9d9]/20 blur-[150px]" />
+                  <div
+                    className="pointer-events-none absolute h-[900px] w-[900px]"
+                    style={{
+                      top: '5%',
+                      left: '10%',
+                      background:
+                        'radial-gradient(circle, rgba(217, 217, 217, 0.08) 0%, rgba(217, 217, 217, 0.04) 30%, transparent 60%)',
+                      transform: 'translate3d(-50%, -50%, 0)',
+                      willChange: 'transform',
+                    }}
+                  />
+                  <div
+                    className="pointer-events-none absolute h-[900px] w-[900px]"
+                    style={{
+                      top: '5%',
+                      right: '10%',
+                      background:
+                        'radial-gradient(circle, rgba(217, 217, 217, 0.08) 0%, rgba(217, 217, 217, 0.04) 30%, transparent 60%)',
+                      transform: 'translate3d(50%, -50%, 0)',
+                      willChange: 'transform',
+                    }}
+                  />
+                  <div
+                    className="pointer-events-none absolute h-[900px] w-[900px]"
+                    style={{
+                      bottom: '5%',
+                      left: '10%',
+                      background:
+                        'radial-gradient(circle, rgba(217, 217, 217, 0.08) 0%, rgba(217, 217, 217, 0.04) 30%, transparent 60%)',
+                      transform: 'translate3d(-50%, 50%, 0)',
+                      willChange: 'transform',
+                    }}
+                  />
+                  <div
+                    className="pointer-events-none absolute h-[900px] w-[900px]"
+                    style={{
+                      bottom: '5%',
+                      right: '10%',
+                      background:
+                        'radial-gradient(circle, rgba(217, 217, 217, 0.08) 0%, rgba(217, 217, 217, 0.04) 30%, transparent 60%)',
+                      transform: 'translate3d(50%, 50%, 0)',
+                      willChange: 'transform',
+                    }}
+                  />
+                  <div
+                    className="pointer-events-none absolute h-[900px] w-[900px]"
+                    style={{
+                      top: '50%',
+                      left: '50%',
+                      background:
+                        'radial-gradient(circle, rgba(217, 217, 217, 0.08) 0%, rgba(217, 217, 217, 0.04) 30%, transparent 60%)',
+                      transform: 'translate3d(-50%, -50%, 0)',
+                      willChange: 'transform',
+                    }}
+                  />
+                  <LargeRandomArrow />
                 </>
               ) : null}
 
@@ -488,7 +540,7 @@ export const ProUpgradeOverlay = () => {
                 <ProBenefitItem text="Ecosystem Perks" />
                 <ProBenefitItem text="Priority Support" />
               </div>
-              <div className="mt-10 flex w-full items-center justify-center gap-10 md:w-auto md:gap-16">
+              <div className="pointer-events-auto relative z-20 mt-10 flex w-full cursor-pointer items-center justify-center gap-10 md:w-auto md:gap-16">
                 <button
                   className="pointer-events-auto flex items-center gap-2 rounded-lg bg-white px-8 py-3 text-sm text-black transition-opacity hover:opacity-90 md:px-12 md:text-base"
                   onClick={(e) => {
@@ -498,7 +550,7 @@ export const ProUpgradeOverlay = () => {
                     }
 
                     const shareUrl = `${getURL()}t/${user.username}/pro`;
-                    const message = `🎉 I just upgraded to Pro on @SuperteamEarn! Check out my profile`;
+                    const message = `Hanging out with the 1% on @SuperteamEarn`;
                     const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(message)}&url=${encodeURIComponent(shareUrl)}`;
 
                     window.open(twitterUrl, '_blank', 'noopener,noreferrer');
@@ -508,7 +560,7 @@ export const ProUpgradeOverlay = () => {
                   <span className="font-medium">Post on X</span>
                 </button>
                 <a
-                  href="https://x.com/superteamearn"
+                  href="https://x.com/SuperteamEarn/status/1995480188411646253"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="pointer-events-auto pr-8 text-sm text-zinc-400 underline transition-colors hover:text-white md:text-lg"
