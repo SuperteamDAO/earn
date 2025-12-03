@@ -16,6 +16,8 @@ interface GrantSectionProps {
   type: GrantContext;
   region?: string;
   sponsor?: string;
+  skill?: string;
+  category?: string;
   hideWhenEmpty?: boolean;
 }
 
@@ -23,9 +25,18 @@ export const GrantsSection = ({
   type,
   region,
   sponsor,
+  skill,
+  category: categoryProp,
   hideWhenEmpty,
 }: GrantSectionProps) => {
   const { activeCategory, handleCategoryChange } = useGrantState();
+
+  // For category contexts, use the category prop (route category)
+  // For other contexts, use activeCategory (filter selection)
+  const effectiveCategory =
+    type === 'category' || type === 'category-all'
+      ? categoryProp || activeCategory
+      : activeCategory;
   const isMd = useBreakpoint('md');
 
   const {
@@ -34,9 +45,10 @@ export const GrantsSection = ({
     error,
   } = useGrants({
     context: type,
-    category: activeCategory,
+    category: effectiveCategory,
     region,
     sponsor,
+    skill,
   });
 
   if (hideWhenEmpty && !isLoading && !grants?.length) {
@@ -76,26 +88,30 @@ export const GrantsSection = ({
 
       <div className="mb-3 h-px w-full bg-slate-200" />
 
-      <div className="mb-2 flex gap-1 overflow-x-auto pb-1">
-        <CategoryPill
-          key="all"
-          phEvent="all_navpill"
-          isActive={activeCategory === 'All'}
-          onClick={() => handleCategoryChange('All', 'all_navpill')}
-        >
-          All
-        </CategoryPill>
-        {CATEGORY_NAV_ITEMS?.map((navItem) => (
+      {type !== 'category' && type !== 'category-all' && (
+        <div className="mb-2 flex gap-1 overflow-x-auto pb-1">
           <CategoryPill
-            key={navItem.label}
-            phEvent={navItem.pillPH}
-            isActive={activeCategory === navItem.label}
-            onClick={() => handleCategoryChange(navItem.label, navItem.pillPH)}
+            key="all"
+            phEvent="all_navpill"
+            isActive={activeCategory === 'All'}
+            onClick={() => handleCategoryChange('All', 'all_navpill')}
           >
-            {isMd ? navItem.label : navItem.mobileLabel || navItem.label}
+            All
           </CategoryPill>
-        ))}
-      </div>
+          {CATEGORY_NAV_ITEMS?.map((navItem) => (
+            <CategoryPill
+              key={navItem.label}
+              phEvent={navItem.pillPH}
+              isActive={activeCategory === navItem.label}
+              onClick={() =>
+                handleCategoryChange(navItem.label, navItem.pillPH)
+              }
+            >
+              {isMd ? navItem.label : navItem.mobileLabel || navItem.label}
+            </CategoryPill>
+          ))}
+        </div>
+      )}
 
       <AnimateChangeInHeight disableOnHeightZero>
         {renderContent()}

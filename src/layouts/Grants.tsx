@@ -80,7 +80,10 @@ export function GrantPageLayout({
           <Head>
             <meta property="og:image:width" content="1200" />
             <meta property="og:image:height" content="630" />
-            <meta property="og:image:alt" content="Superteam Grant" />
+            <meta
+              property="og:image:alt"
+              content={`${initialGrant?.title || 'Grant'} - Grant by ${initialGrant?.sponsor?.name || 'Sponsor'} on Superteam Earn`}
+            />
           </Head>
         </>
       }

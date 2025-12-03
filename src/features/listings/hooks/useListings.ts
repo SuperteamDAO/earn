@@ -30,6 +30,7 @@ interface ListingsParams {
   order?: OrderDirection;
   region?: string;
   sponsor?: string;
+  skill?: string;
   authenticated?: boolean;
 }
 
@@ -42,6 +43,7 @@ const fetchListings = async ({
   order = 'asc',
   region = '',
   sponsor = '',
+  skill = '',
 }: ListingsParams): Promise<Listing[]> => {
   const queryParams = new URLSearchParams({
     context,
@@ -53,6 +55,10 @@ const fetchListings = async ({
     region,
     sponsor,
   });
+
+  if (skill) {
+    queryParams.set('skill', skill);
+  }
 
   const { data } = await api.get(`/api/listings?${queryParams.toString()}`);
 
@@ -68,6 +74,7 @@ export function useListings({
   order,
   region,
   sponsor,
+  skill,
   authenticated,
 }: ListingsParams) {
   return useQuery({
@@ -81,6 +88,7 @@ export function useListings({
       order,
       region,
       sponsor,
+      skill,
       authenticated,
     ],
     queryFn: () =>
@@ -93,6 +101,7 @@ export function useListings({
         order,
         region,
         sponsor,
+        skill,
       }),
   });
 }

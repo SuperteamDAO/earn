@@ -15,12 +15,14 @@ import {
   type QueryParamsSchema,
 } from '@/features/listings/constants/schema';
 
+import { getCountryNameFromSlug } from './parse-opportunity-tags';
 import {
   getRegionsForCountryPage,
   getRegionsForMultiCountryRegionPage,
   getRegionsForSuperteamPage,
   getRegionsForUserLocation,
 } from './region';
+import { findSkillBySlug } from './skill';
 
 type BuildListingQueryArgs = z.infer<typeof QueryParamsSchema>;
 
@@ -160,7 +162,7 @@ export async function buildListingQuery(
     skills: JsonValue;
   } | null,
 ): Promise<ListingQueryResult> {
-  const { tab, category, status, context, region, sponsor } = args;
+  const { tab, category, status, context, region, sponsor, skill } = args;
   const effectiveCategory =
     context === 'bookmarks' && category === 'For You' ? 'All' : category;
 
@@ -327,8 +329,139 @@ export async function buildListingQuery(
     });
   }
 
+  if ((context === 'skill' || context === 'skill-all') && skill) {
+    const skillInfo = findSkillBySlug(skill);
+
+    if (skillInfo) {
+      if (skillInfo.type === 'parent') {
+        // Filter by parent skill
+        andConditions.push({
+          skills: {
+            path: '$[*].skills',
+            array_contains: [skillInfo.name],
+          },
+        });
+      } else {
+        // Filter by subskill
+        andConditions.push({
+          skills: {
+            path: '$[*].subskills',
+            array_contains: [skillInfo.name],
+          },
+        });
+      }
+    }
+  }
+
   if (context === 'pro') {
     where.isPro = true;
+  }
+
+  // Handle opportunity context - supports region, skill, category, and type filters
+  if (context === 'opportunity') {
+    // Region filter (same logic as region context)
+    if (region) {
+      // Convert slug to proper name for lookup (e.g., 'european-union' -> 'European Union')
+      const regionName = getCountryNameFromSlug(region);
+
+      const st = Superteams.find(
+        (team) =>
+          team.region.toLowerCase() === region.toLowerCase() ||
+          team.slug?.toLowerCase() === region.toLowerCase(),
+      );
+
+      if (st) {
+        const regionList = getRegionsForSuperteamPage(st.region);
+        andConditions.push({
+          OR: [
+            {
+              region: {
+                in: regionList,
+              },
+            },
+            {
+              sponsor: {
+                name: st.name,
+              },
+            },
+          ],
+        });
+      } else {
+        const country = countries.find(
+          (c) => c.name.toLowerCase() === regionName.toLowerCase(),
+        );
+
+        if (country) {
+          if (
+            country.region &&
+            country.regions &&
+            Array.isArray(country.regions)
+          ) {
+            // Multi-country region page (EU, GCC, etc.)
+            const regionList = getRegionsForMultiCountryRegionPage(
+              country.name,
+            );
+            andConditions.push({
+              OR: [
+                {
+                  region: {
+                    in: regionList,
+                  },
+                },
+              ],
+            });
+          } else {
+            // Regular country page
+            const regionList = getRegionsForCountryPage(country.name);
+            andConditions.push({
+              OR: [
+                {
+                  region: {
+                    in: regionList,
+                  },
+                },
+              ],
+            });
+          }
+        } else {
+          // Fallback for unknown region - use the converted name
+          andConditions.push({
+            OR: [
+              {
+                region: {
+                  in: [regionName, 'Global'],
+                },
+              },
+            ],
+          });
+        }
+      }
+    }
+
+    // Skill filter (same logic as skill context)
+    if (skill) {
+      const skillInfo = findSkillBySlug(skill);
+
+      if (skillInfo) {
+        if (skillInfo.type === 'parent') {
+          // Filter by parent skill
+          andConditions.push({
+            skills: {
+              path: '$[*].skills',
+              array_contains: [skillInfo.name],
+            },
+          });
+        } else {
+          // Filter by subskill
+          andConditions.push({
+            skills: {
+              path: '$[*].subskills',
+              array_contains: [skillInfo.name],
+            },
+          });
+        }
+      }
+    }
   }
 
   const standardTabs = ['all', 'bounties', 'projects'];
@@ -360,7 +493,14 @@ export async function buildListingQuery(
     andConditions.push(statusWhereClauses);
   }
 
-  const skillFilter = getSkillFilter(effectiveCategory);
+  const categoryToFilter =
+    context === 'category' ||
+    context === 'category-all' ||
+    context === 'opportunity'
+      ? category
+      : effectiveCategory;
+
+  const skillFilter = getSkillFilter(categoryToFilter);
   if (skillFilter) {
     andConditions.push(skillFilter);
   }

@@ -33,7 +33,7 @@ function TokenNumberInput({
   name,
   placeholder,
   hideToken = false,
-  maxDecimals = 2,
+  maxDecimals = 4,
   ...props
 }: TokenNumberInputProps) {
   const [isFocused, setIsFocused] = useState(false);

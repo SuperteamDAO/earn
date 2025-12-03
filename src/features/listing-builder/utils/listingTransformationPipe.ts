@@ -8,6 +8,7 @@ import { type SponsorsModel } from '@/prisma/models/Sponsors';
 import { cleanSkills } from '@/utils/cleanSkills';
 
 import { type ListingWithSponsor } from '@/features/auth/utils/checkListingSponsorAuth';
+import { FEATURED_USD_THRESHOLD } from '@/features/listing-builder/components/Form/Boost/constants';
 import { hasMoreThan72HoursLeft } from '@/features/listing-builder/components/Form/Boost/utils';
 import { type ListingFormData } from '@/features/listing-builder/types';
 import { isFndnPayingCheck } from '@/features/listing-builder/utils/isFndnPayingCheck';
@@ -39,7 +40,7 @@ const processMaxBonusSpots = (
 
 const isAutoFeatureUsdThresholdMet = (usdValue: number): boolean => {
   if (typeof usdValue !== 'number' || usdValue <= 0) return false;
-  return usdValue >= 4900;
+  return usdValue >= FEATURED_USD_THRESHOLD - 100;
 };
 
 const countLiveFeaturedListings = async (): Promise<number> => {
@@ -160,15 +161,21 @@ export const transformToPrismaData = async ({
   }
 
   let autoIsFeatured = false;
+  let shouldRemoveFeatured = false;
   try {
-    if (
+    const meetsThreshold =
       isAutoFeatureUsdThresholdMet(usdValue) &&
       hasMoreThan72HoursLeft(deadline) &&
       compensationType === 'fixed' &&
-      type !== 'hackathon'
-    ) {
+      type !== 'hackathon';
+
+    if (meetsThreshold) {
       const liveFeaturedCount = await countLiveFeaturedListings();
       autoIsFeatured = liveFeaturedCount < 2;
+    }
+
+    if (isEditing && listing.isFeatured && !meetsThreshold) {
+      shouldRemoveFeatured = true;
     }
   } catch (error) {
     logger.error('Auto-feature evaluation failed', { error });
@@ -178,6 +185,7 @@ export const transformToPrismaData = async ({
     title,
     ...(includeUsdValue ? { usdValue } : {}),
     ...(autoIsFeatured ? { isFeatured: true } : {}),
+    ...(shouldRemoveFeatured ? { isFeatured: false } : {}),
     skills,
     slug,
     deadline: new Date(deadline),

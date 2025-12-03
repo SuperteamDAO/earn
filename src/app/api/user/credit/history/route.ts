@@ -6,6 +6,7 @@ import { dayjs } from '@/utils/dayjs';
 
 import { getUserSession } from '@/features/auth/utils/getUserSession';
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export async function GET(_request: NextRequest) {
   try {
     const headersList = await headers();

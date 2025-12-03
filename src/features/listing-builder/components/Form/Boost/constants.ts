@@ -12,6 +12,7 @@ export const LIVE_LISTINGS_THREAD_IMPRESSIONS = 2000;
 export const STANDALONE_POST_IMPRESSIONS = 5000;
 export const FEATURED_HOMEPAGE_IMPRESSIONS = 50000;
 export const DEFAULT_EMAIL_IMPRESSIONS = 30000;
+export const FEATURED_USD_THRESHOLD = 5000;
 
 export const isSkillsSelected = (skills: unknown): boolean =>
   Array.isArray(skills) && skills.length > 0;

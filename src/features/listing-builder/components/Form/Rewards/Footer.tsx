@@ -35,6 +35,8 @@ function RewardsFooter({
   boostStep,
   isBoostFromUrl,
   proAdjustment,
+  shouldShowFeaturedWarning,
+  setFeaturedWarningAction,
 }: {
   panel: 'rewards' | 'boost';
   setPanel: (panel: 'rewards' | 'boost') => void;
@@ -42,6 +44,8 @@ function RewardsFooter({
   boostStep?: number;
   isBoostFromUrl?: boolean;
   proAdjustment?: { increasedBy: number; minRequired: number } | null;
+  shouldShowFeaturedWarning?: boolean;
+  setFeaturedWarningAction?: (action: 'close' | 'boost' | null) => void;
 }) {
   const form = useListingForm();
   const router = useRouter();
@@ -294,6 +298,11 @@ function RewardsFooter({
             if (await form.validateRewards()) {
               if (proAdjustment) {
                 setOpen(false, { bypassPrompt: true });
+                return;
+              }
+              // Check if we should show featured removal warning
+              if (shouldShowFeaturedWarning && setFeaturedWarningAction) {
+                setFeaturedWarningAction('boost');
                 return;
               }
               if (

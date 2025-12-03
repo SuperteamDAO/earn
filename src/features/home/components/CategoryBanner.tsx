@@ -76,15 +76,15 @@ export function CategoryBanner({ category }: { category: CategoryTypes }) {
         height={290}
         className="h-full w-full object-cover object-center"
       />
-      <div className="absolute inset-0 bg-black/50" />
-      <div className="absolute top-1/2 flex w-full max-w-7xl -translate-y-1/2 flex-col items-start px-2 md:px-6">
+      <div className="absolute inset-0 bg-black/60" />
+      <div className="absolute top-1/2 flex w-full max-w-7xl -translate-y-1/2 flex-col items-start px-2 lg:px-6 xl:px-0">
         {banner.heading && (
           <h2 className="text-2xl font-semibold text-white md:text-4xl">
             {banner.heading}
           </h2>
         )}
         {banner.description && (
-          <p className="mt-3 max-w-[42rem] text-sm text-white md:text-lg">
+          <p className="mt-3 max-w-2xl text-sm text-white md:text-lg">
             {banner.description}
           </p>
         )}

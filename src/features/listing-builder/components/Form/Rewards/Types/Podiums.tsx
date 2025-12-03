@@ -276,6 +276,7 @@ export const Podiums = () => {
                                   placeholder="50"
                                   {...field}
                                   min={1}
+                                  maxDecimals={0}
                                   max={MAX_BONUS_SPOTS}
                                   onChange={(value) => {
                                     field.onChange(value);

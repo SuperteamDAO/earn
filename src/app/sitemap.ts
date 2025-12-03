@@ -1,8 +1,18 @@
 import type { MetadataRoute } from 'next';
 
+import { countries } from '@/constants/country';
 import { prisma } from '@/prisma';
 
+import { getAllCategorySlugs } from '@/features/listings/utils/category';
+import {
+  generateCanonicalSlug,
+  type ParsedOpportunityTags,
+} from '@/features/listings/utils/parse-opportunity-tags';
 import { getAllRegionSlugs } from '@/features/listings/utils/region';
+import {
+  getAllSkillSlugs,
+  getParentSkillSlugs,
+} from '@/features/listings/utils/skill';
 
 const baseUrl = 'https://earn.superteam.fun';
 const MAX_URLS_PER_SITEMAP = 50000;
@@ -18,8 +28,11 @@ function isProduction(): boolean {
 // ID 0+: Listings (split if > 50k)
 // Next IDs: Sponsors (split if > 50k)
 // Next IDs: Grants (split if > 50k)
-// Next IDs: Talent profiles (split if > 50k) - COMMENTED OUT
-// Last ID: Regions
+// Next IDs: Talent profiles (split if > 50k)
+// Next IDs: Skills (split if > 50k)
+// Next IDs: Categories (split if > 50k)
+// Next IDs: Regions (split if > 50k)
+// Last IDs: Opportunity combinations (split if > 50k)
 
 async function getListingsCount(): Promise<number> {
   return await prisma.bounties.count({
@@ -56,18 +69,123 @@ async function getRegionsCount(): Promise<number> {
   return getAllRegionSlugs().length;
 }
 
-// COMMENTED OUT: Talent profiles - will decide later if we want this
-// async function getTalentProfilesCount(): Promise<number> {
-//   return await prisma.user.count({
-//     where: {
-//       username: {
-//         not: null,
-//       },
-//       isTalentFilled: true,
-//       private: false,
-//     },
-//   });
-// }
+/**
+ * Get short aliases for multi-country regions (where region: true)
+ * Uses the code field as the alias slug
+ */
+function getMultiCountryRegionAliases(): string[] {
+  return countries
+    .filter((c) => 'region' in c && c.region === true)
+    .map((c) => c.code.toLowerCase());
+}
+
+/**
+ * Generate opportunity tag combinations for sitemap
+ * Only includes 2+ tag combinations since single tags have dedicated pages:
+ * - Types: /bounties/, /projects/, /grants/
+ * - Categories: /category/{slug}/
+ * - Regions: /regions/{slug}/
+ * - Skills: /skill/{slug}/
+ */
+function generateOpportunityCombinations(): readonly string[] {
+  const types = ['bounties', 'projects', 'grants'] as const;
+  const baseRegions = getAllRegionSlugs();
+  // Include both full slugs and short aliases for multi-country regions
+  const multiCountryAliases = getMultiCountryRegionAliases();
+  const regions = [...baseRegions, ...multiCountryAliases];
+  const skills = getParentSkillSlugs();
+  const categories = getAllCategorySlugs();
+
+  const combinations: string[] = [];
+
+  // Two-tag combinations: type + region
+  for (const type of types) {
+    for (const region of regions) {
+      const tags: ParsedOpportunityTags = { type, region };
+      combinations.push(generateCanonicalSlug(tags));
+    }
+  }
+
+  // Two-tag combinations: type + skill
+  for (const type of types) {
+    for (const skill of skills) {
+      const tags: ParsedOpportunityTags = { type, skill };
+      combinations.push(generateCanonicalSlug(tags));
+    }
+  }
+
+  // Two-tag combinations: type + category
+  for (const type of types) {
+    for (const category of categories) {
+      const tags: ParsedOpportunityTags = { type, category };
+      combinations.push(generateCanonicalSlug(tags));
+    }
+  }
+
+  // Two-tag combinations: region + skill
+  for (const region of regions) {
+    for (const skill of skills) {
+      const tags: ParsedOpportunityTags = { region, skill };
+      combinations.push(generateCanonicalSlug(tags));
+    }
+  }
+
+  // Two-tag combinations: region + category
+  for (const region of regions) {
+    for (const category of categories) {
+      const tags: ParsedOpportunityTags = { region, category };
+      combinations.push(generateCanonicalSlug(tags));
+    }
+  }
+
+  // Three-tag combinations: type + region + skill
+  for (const type of types) {
+    for (const region of regions) {
+      for (const skill of skills) {
+        const tags: ParsedOpportunityTags = { type, region, skill };
+        combinations.push(generateCanonicalSlug(tags));
+      }
+    }
+  }
+
+  // Three-tag combinations: type + region + category
+  for (const type of types) {
+    for (const region of regions) {
+      for (const category of categories) {
+        const tags: ParsedOpportunityTags = { type, region, category };
+        combinations.push(generateCanonicalSlug(tags));
+      }
+    }
+  }
+
+  // Remove duplicates and return
+  return Array.from(new Set(combinations));
+}
+
+async function getOpportunitiesCount(): Promise<number> {
+  return generateOpportunityCombinations().length;
+}
+
+async function getSkillsCount(): Promise<number> {
+  return getAllSkillSlugs().length;
+}
+
+async function getCategoriesCount(): Promise<number> {
+  return getAllCategorySlugs().length;
+}
+
+// Talent profiles
+async function getTalentProfilesCount(): Promise<number> {
+  return await prisma.user.count({
+    where: {
+      username: {
+        not: null,
+      },
+      isTalentFilled: true,
+      private: false,
+    },
+  });
+}
 
 function calculateSitemapCount(totalCount: number): number {
   return Math.max(1, Math.ceil(totalCount / MAX_URLS_PER_SITEMAP));
@@ -79,14 +197,25 @@ export async function generateSitemaps(): Promise<Array<{ id: number }>> {
     return []; // Return empty for non-production
   }
 
-  const [listingsCount, sponsorsCount, grantsCount, regionsCount] =
-    await Promise.all([
-      getListingsCount(),
-      getSponsorsCount(),
-      getGrantsCount(),
-      getRegionsCount(),
-      // getTalentProfilesCount(), // COMMENTED OUT: Talent profiles
-    ]);
+  const [
+    listingsCount,
+    sponsorsCount,
+    grantsCount,
+    regionsCount,
+    skillsCount,
+    categoriesCount,
+    talentCount,
+    opportunitiesCount,
+  ] = await Promise.all([
+    getListingsCount(),
+    getSponsorsCount(),
+    getGrantsCount(),
+    getRegionsCount(),
+    getSkillsCount(),
+    getCategoriesCount(),
+    getTalentProfilesCount(),
+    getOpportunitiesCount(),
+  ]);
 
   const sitemaps: Array<{ id: number }> = [];
 
@@ -111,15 +240,33 @@ export async function generateSitemaps(): Promise<Array<{ id: number }>> {
     sitemaps.push({ id: currentId++ });
   }
 
-  // COMMENTED OUT: Talent profiles - split if needed
-  // const talentSitemapCount = calculateSitemapCount(talentCount);
-  // for (let i = 0; i < talentSitemapCount; i++) {
-  //   sitemaps.push({ id: currentId++ });
-  // }
+  // Talent profiles - split if needed
+  const talentSitemapCount = calculateSitemapCount(talentCount);
+  for (let i = 0; i < talentSitemapCount; i++) {
+    sitemaps.push({ id: currentId++ });
+  }
+
+  // Skills - split if needed
+  const skillsSitemapCount = calculateSitemapCount(skillsCount);
+  for (let i = 0; i < skillsSitemapCount; i++) {
+    sitemaps.push({ id: currentId++ });
+  }
+
+  // Categories - split if needed
+  const categoriesSitemapCount = calculateSitemapCount(categoriesCount);
+  for (let i = 0; i < categoriesSitemapCount; i++) {
+    sitemaps.push({ id: currentId++ });
+  }
 
   // Regions - split if needed
   const regionsSitemapCount = calculateSitemapCount(regionsCount);
   for (let i = 0; i < regionsSitemapCount; i++) {
+    sitemaps.push({ id: currentId++ });
+  }
+
+  // Opportunity combinations - split if needed
+  const opportunitiesSitemapCount = calculateSitemapCount(opportunitiesCount);
+  for (let i = 0; i < opportunitiesSitemapCount; i++) {
     sitemaps.push({ id: currentId++ });
   }
 
@@ -133,27 +280,47 @@ interface SitemapBoundaries {
   sponsorsEnd: number;
   grantsStart: number;
   grantsEnd: number;
-  // talentStart: number; // COMMENTED OUT: Talent profiles
-  // talentEnd: number; // COMMENTED OUT: Talent profiles
+  talentStart: number;
+  talentEnd: number;
+  skillsStart: number;
+  skillsEnd: number;
+  categoriesStart: number;
+  categoriesEnd: number;
   regionsStart: number;
   regionsEnd: number;
+  opportunitiesStart: number;
+  opportunitiesEnd: number;
 }
 
 async function getSitemapBoundaries(): Promise<SitemapBoundaries> {
-  const [listingsCount, sponsorsCount, grantsCount, regionsCount] =
-    await Promise.all([
-      getListingsCount(),
-      getSponsorsCount(),
-      getGrantsCount(),
-      getRegionsCount(),
-      // getTalentProfilesCount(), // COMMENTED OUT: Talent profiles
-    ]);
+  const [
+    listingsCount,
+    sponsorsCount,
+    grantsCount,
+    skillsCount,
+    categoriesCount,
+    regionsCount,
+    talentCount,
+    opportunitiesCount,
+  ] = await Promise.all([
+    getListingsCount(),
+    getSponsorsCount(),
+    getGrantsCount(),
+    getSkillsCount(),
+    getCategoriesCount(),
+    getRegionsCount(),
+    getTalentProfilesCount(),
+    getOpportunitiesCount(),
+  ]);
 
   const listingsSitemapCount = calculateSitemapCount(listingsCount);
   const sponsorsSitemapCount = calculateSitemapCount(sponsorsCount);
   const grantsSitemapCount = calculateSitemapCount(grantsCount);
+  const skillsSitemapCount = calculateSitemapCount(skillsCount);
+  const categoriesSitemapCount = calculateSitemapCount(categoriesCount);
   const regionsSitemapCount = calculateSitemapCount(regionsCount);
-  // const talentSitemapCount = calculateSitemapCount(talentCount); // COMMENTED OUT: Talent profiles
+  const talentSitemapCount = calculateSitemapCount(talentCount);
+  const opportunitiesSitemapCount = calculateSitemapCount(opportunitiesCount);
 
   // Start from ID 0 for dynamic sitemaps
   let currentId = 0;
@@ -170,13 +337,25 @@ async function getSitemapBoundaries(): Promise<SitemapBoundaries> {
   const grantsEnd = currentId + grantsSitemapCount;
   currentId = grantsEnd;
 
-  // COMMENTED OUT: Talent profiles
-  // const talentStart = currentId;
-  // const talentEnd = currentId + talentSitemapCount;
-  // currentId = talentEnd;
+  // Talent profiles
+  const talentStart = currentId;
+  const talentEnd = currentId + talentSitemapCount;
+  currentId = talentEnd;
+
+  const skillsStart = currentId;
+  const skillsEnd = currentId + skillsSitemapCount;
+  currentId = skillsEnd;
+
+  const categoriesStart = currentId;
+  const categoriesEnd = currentId + categoriesSitemapCount;
+  currentId = categoriesEnd;
 
   const regionsStart = currentId;
   const regionsEnd = currentId + regionsSitemapCount;
+  currentId = regionsEnd;
+
+  const opportunitiesStart = currentId;
+  const opportunitiesEnd = currentId + opportunitiesSitemapCount;
 
   return {
     listingsStart,
@@ -185,10 +364,16 @@ async function getSitemapBoundaries(): Promise<SitemapBoundaries> {
     sponsorsEnd,
     grantsStart,
     grantsEnd,
-    // talentStart, // COMMENTED OUT: Talent profiles
-    // talentEnd, // COMMENTED OUT: Talent profiles
+    talentStart,
+    talentEnd,
+    skillsStart,
+    skillsEnd,
+    categoriesStart,
+    categoriesEnd,
     regionsStart,
     regionsEnd,
+    opportunitiesStart,
+    opportunitiesEnd,
   };
 }
 
@@ -303,38 +488,87 @@ export default async function sitemap(props: {
     }));
   }
 
-  // COMMENTED OUT: Talent profiles - will decide later if we want this
-  // if (id >= boundaries.talentStart && id < boundaries.talentEnd) {
-  //   const sitemapIndex = id - boundaries.talentStart;
-  //   const offset = sitemapIndex * MAX_URLS_PER_SITEMAP;
-  //   const talentProfiles = await prisma.user.findMany({
-  //     where: {
-  //       username: {
-  //         not: null,
-  //       },
-  //       isTalentFilled: true,
-  //       private: false,
-  //     },
-  //     select: {
-  //       username: true,
-  //       updatedAt: true,
-  //     },
-  //     skip: offset,
-  //     take: MAX_URLS_PER_SITEMAP,
-  //     orderBy: {
-  //       updatedAt: 'desc',
-  //     },
-  //   });
-  //
-  //   return talentProfiles
-  //     .filter((talent) => talent.username)
-  //     .map((talent) => ({
-  //       url: `${baseUrl}/t/${talent.username}/`,
-  //       lastModified: talent.updatedAt,
-  //       changeFrequency: 'monthly',
-  //       priority: 0.6,
-  //     }));
-  // }
+  // Talent profiles
+  if (sitemapId >= boundaries.talentStart && sitemapId < boundaries.talentEnd) {
+    const sitemapIndex = sitemapId - boundaries.talentStart;
+    const offset = sitemapIndex * MAX_URLS_PER_SITEMAP;
+    const talentProfiles = await prisma.user.findMany({
+      where: {
+        username: {
+          not: null,
+        },
+        isTalentFilled: true,
+        private: false,
+      },
+      select: {
+        username: true,
+        updatedAt: true,
+      },
+      skip: offset,
+      take: MAX_URLS_PER_SITEMAP,
+      orderBy: {
+        updatedAt: 'desc',
+      },
+    });
+
+    return talentProfiles
+      .filter((talent) => talent.username)
+      .map((talent) => ({
+        url: `${baseUrl}/t/${talent.username}/`,
+        lastModified: talent.updatedAt,
+        changeFrequency: 'monthly',
+        priority: 0.6,
+      }));
+  }
+
+  // Skills
+  if (sitemapId >= boundaries.skillsStart && sitemapId < boundaries.skillsEnd) {
+    const sitemapIndex = sitemapId - boundaries.skillsStart;
+    const offset = sitemapIndex * MAX_URLS_PER_SITEMAP;
+    const allSkillSlugs = getAllSkillSlugs();
+
+    if (allSkillSlugs.length === 0) {
+      return [];
+    }
+
+    const skillSlugs = allSkillSlugs.slice(
+      offset,
+      offset + MAX_URLS_PER_SITEMAP,
+    );
+
+    return skillSlugs.map((slug): MetadataRoute.Sitemap[number] => ({
+      url: `${baseUrl}/skill/${slug}/`,
+      lastModified: now,
+      changeFrequency: 'weekly',
+      priority: 0.7,
+    }));
+  }
+
+  // Categories
+  if (
+    sitemapId >= boundaries.categoriesStart &&
+    sitemapId < boundaries.categoriesEnd
+  ) {
+    const sitemapIndex = sitemapId - boundaries.categoriesStart;
+    const offset = sitemapIndex * MAX_URLS_PER_SITEMAP;
+    const allCategorySlugs = getAllCategorySlugs();
+
+    if (allCategorySlugs.length === 0) {
+      return [];
+    }
+
+    const categorySlugs = allCategorySlugs.slice(
+      offset,
+      offset + MAX_URLS_PER_SITEMAP,
+    );
+
+    return categorySlugs.map((slug): MetadataRoute.Sitemap[number] => ({
+      url: `${baseUrl}/category/${slug}/`,
+      lastModified: now,
+      changeFrequency: 'weekly',
+      priority: 0.8,
+    }));
+  }
 
   // Regions
   if (
@@ -359,6 +593,32 @@ export default async function sitemap(props: {
       lastModified: now,
       changeFrequency: 'weekly',
       priority: 0.8,
+    }));
+  }
+
+  // Opportunity combinations
+  if (
+    sitemapId >= boundaries.opportunitiesStart &&
+    sitemapId < boundaries.opportunitiesEnd
+  ) {
+    const sitemapIndex = sitemapId - boundaries.opportunitiesStart;
+    const offset = sitemapIndex * MAX_URLS_PER_SITEMAP;
+    const allCombinations = generateOpportunityCombinations();
+
+    if (allCombinations.length === 0) {
+      return [];
+    }
+
+    const combinations = allCombinations.slice(
+      offset,
+      offset + MAX_URLS_PER_SITEMAP,
+    );
+
+    return combinations.map((slug): MetadataRoute.Sitemap[number] => ({
+      url: `${baseUrl}/opportunities/${slug}/`,
+      lastModified: now,
+      changeFrequency: 'daily',
+      priority: 0.7,
     }));
   }
 

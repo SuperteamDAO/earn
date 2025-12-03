@@ -13,6 +13,7 @@ interface GrantsParams {
   category: string;
   region?: string;
   sponsor?: string;
+  skill?: string;
 }
 
 const fetchGrants = async ({
@@ -20,6 +21,7 @@ const fetchGrants = async ({
   category,
   region = '',
   sponsor = '',
+  skill = '',
 }: GrantsParams): Promise<GrantWithApplicationCount[]> => {
   const queryParams = new URLSearchParams({
     context,
@@ -27,6 +29,10 @@ const fetchGrants = async ({
     region,
     sponsor,
   });
+
+  if (skill) {
+    queryParams.set('skill', skill);
+  }
 
   const { data } = await api.get(`/api/grants?${queryParams.toString()}`);
 
@@ -38,15 +44,17 @@ export function useGrants({
   category,
   region,
   sponsor,
+  skill,
 }: GrantsParams) {
   return useQuery({
-    queryKey: ['grants', context, category, region, sponsor],
+    queryKey: ['grants', context, category, region, sponsor, skill],
     queryFn: () =>
       fetchGrants({
         context,
         category,
         region,
         sponsor,
+        skill,
       }),
   });
 }
