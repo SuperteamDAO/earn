@@ -1,5 +1,4 @@
 import { type GetServerSideProps } from 'next';
-import Head from 'next/head';
 
 import { JsonLd } from '@/components/shared/JsonLd';
 import { ASSET_URL } from '@/constants/ASSET_URL';
@@ -32,12 +31,6 @@ export default function JobsPage({ potentialSession }: JobsPageProps) {
             canonical="https://earn.superteam.fun/jobs/"
             og={ASSET_URL + `/og/og.png`}
           />
-          <Head>
-            <meta
-              name="keywords"
-              content="crypto jobs, web3 jobs, solana jobs, blockchain jobs, remote crypto jobs, web3 careers, defi jobs, nft jobs, crypto freelance, blockchain developer jobs"
-            />
-          </Head>
           <JsonLd data={[breadcrumbSchema]} />
         </>
       }

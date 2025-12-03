@@ -1,5 +1,4 @@
 import { type GetServerSideProps } from 'next';
-import Head from 'next/head';
 
 import { JsonLd } from '@/components/shared/JsonLd';
 import { ASSET_URL } from '@/constants/ASSET_URL';
@@ -31,12 +30,6 @@ export default function BountiesPage({ potentialSession }: BountiesPageProps) {
             canonical="https://earn.superteam.fun/bounties/"
             og={ASSET_URL + `/og/og.png`}
           />
-          <Head>
-            <meta
-              name="keywords"
-              content="crypto bounties, web3 bounties, solana bounties, blockchain bounties, bug bounty crypto, earn crypto, bounty hunting crypto"
-            />
-          </Head>
           <JsonLd data={[breadcrumbSchema]} />
         </>
       }
