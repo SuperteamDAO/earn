@@ -40,7 +40,7 @@ const processMaxBonusSpots = (
 
 const isAutoFeatureUsdThresholdMet = (usdValue: number): boolean => {
   if (typeof usdValue !== 'number' || usdValue <= 0) return false;
-  return usdValue >= FEATURED_USD_THRESHOLD;
+  return usdValue >= FEATURED_USD_THRESHOLD - 100;
 };
 
 const countLiveFeaturedListings = async (): Promise<number> => {
