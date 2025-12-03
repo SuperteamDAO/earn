@@ -2,6 +2,20 @@ import { Ratelimit } from '@upstash/ratelimit';
 
 import { redis } from './redis';
 
+export const listingsRateLimiter = new Ratelimit({
+  redis: redis,
+  limiter: Ratelimit.slidingWindow(60, '1 m'),
+  analytics: true,
+  prefix: 'ratelimit:listings',
+});
+
+export const listingsStrictRateLimiter = new Ratelimit({
+  redis: redis,
+  limiter: Ratelimit.slidingWindow(10, '10 s'),
+  analytics: true,
+  prefix: 'ratelimit:listings_strict',
+});
+
 export const commentCreateRateLimiter = new Ratelimit({
   redis: redis,
   limiter: Ratelimit.fixedWindow(10, '1 m'),

@@ -2,11 +2,17 @@ import { headers } from 'next/headers';
 import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
+import {
+  listingsRateLimiter,
+  listingsStrictRateLimiter,
+} from '@/lib/ratelimit';
+import { checkAndApplyRateLimitApp } from '@/lib/rateLimiterService';
 import { prisma } from '@/prisma';
 import {
   type JsonValue,
   PrismaClientKnownRequestError,
 } from '@/prisma/internal/prismaNamespace';
+import { getClientIP } from '@/utils/getClientIP';
 
 import { getUserSession } from '@/features/auth/utils/getUserSession';
 import {
@@ -18,7 +24,30 @@ import { reorderFeaturedOngoing } from '@/features/listings/utils/reorderFeature
 
 export async function GET(request: NextRequest) {
   try {
-    const session = await getUserSession(await headers());
+    const requestHeaders = await headers();
+    const clientIP = getClientIP(requestHeaders);
+
+    // Apply strict rate limiting first (10 req / 10s) to catch burst attacks
+    const strictRateLimitResponse = await checkAndApplyRateLimitApp({
+      limiter: listingsStrictRateLimiter,
+      identifier: `listings_strict:${clientIP}`,
+      routeName: 'listings-strict',
+    });
+    if (strictRateLimitResponse) {
+      return strictRateLimitResponse;
+    }
+
+    // Apply standard rate limiting (60 req / 1min)
+    const rateLimitResponse = await checkAndApplyRateLimitApp({
+      limiter: listingsRateLimiter,
+      identifier: `listings:${clientIP}`,
+      routeName: 'listings',
+    });
+    if (rateLimitResponse) {
+      return rateLimitResponse;
+    }
+
+    const session = await getUserSession(requestHeaders);
 
     const { searchParams } = new URL(request.url);
     const queryParams = Object.fromEntries(searchParams.entries());
