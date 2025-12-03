@@ -10,11 +10,11 @@
     ```
 3. Install the dependencies with:
     ```bash
-    pnpm i
+    bun i
     ```
 4. Install the MariaDB adapter (required for local MySQL development):
     ```bash
-    pnpm add @prisma/adapter-mariadb
+    bun add @prisma/adapter-mariadb
     ```
     Then, uncomment the MariaDB adapter code in `src/prisma.ts`:
     - Line 1: Uncomment the `PrismaMariaDb` import
@@ -169,7 +169,7 @@
 
 6. Start Developing
     ```bash
-    pnpm dev
+    bun dev
     ```
 
 ## Making a Pull Request
@@ -179,16 +179,16 @@
 - If your PR refers to or fixes an issue, be sure to add `refs #XXX` or `fixes #XXX` to the PR description. Replacing `XXX` with the respective issue number. See more about [Linking a pull request to an issue](https://docs.github.com/en/issues/tracking-your-work-with-issues/linking-a-pull-request-to-an-issue).
 - Be sure to fill the PR Template accordingly.
 
-## Guidelines for committing pnpm lockfile
+## Guidelines for committing bun lockfile
 
-Do not commit your `pnpm-lock.yaml` unless you've made changes to the `package.json`. If you've already committed `pnpm-lock.yaml` unintentionally, follow these steps to undo:
+Do not commit your `bun.lock` unless you've made changes to the `package.json`. If you've already committed `bun.lock` unintentionally, follow these steps to undo:
 
-If your last commit has the `pnpm-lock.yaml` file alongside other files and you only wish to uncommit the `pnpm-lock.yaml`:
+If your last commit has the `bun.lock` file alongside other files and you only wish to uncommit the `bun.lock`:
    ```bash
-   git checkout HEAD~1 pnpm-lock.yaml
-   git commit -m "Revert pnpm-lock.yaml changes"
+   git checkout HEAD~1 bun.lock
+   git commit -m "Revert bun.lock changes"
    ```
-If you've pushed the commit with the `pnpm-lock.yaml`:
+If you've pushed the commit with the `bun.lock`:
    1. Correct the commit locally using the above method.
    2. Carefully force push:
 
@@ -196,22 +196,22 @@ If you've pushed the commit with the `pnpm-lock.yaml`:
    git push origin <your-branch-name> --force
    ```
 
-If `pnpm-lock.yaml` was committed a while ago and there have been several commits since, you can use the following steps to revert just the `pnpm-lock.yaml` changes without impacting the subsequent changes:
+If `bun.lock` was committed a while ago and there have been several commits since, you can use the following steps to revert just the `bun.lock` changes without impacting the subsequent changes:
 
 1. **Checkout a Previous Version**:
-   - Find the commit hash before the `pnpm-lock.yaml` was unintentionally committed. You can do this by viewing the Git log:
+   - Find the commit hash before the `bun.lock` was unintentionally committed. You can do this by viewing the Git log:
      ```bash
-     git log pnpm-lock.yaml
+     git log bun.lock
      ```
-   - Once you have identified the commit hash, use it to checkout the previous version of `pnpm-lock.yaml`:
+   - Once you have identified the commit hash, use it to checkout the previous version of `bun.lock`:
      ```bash
-     git checkout <commit_hash> pnpm-lock.yaml
+     git checkout <commit_hash> bun.lock
      ```
 
 2. **Commit the Reverted Version**:
-   - After checking out the previous version of the `pnpm-lock.yaml`, commit this change:
+   - After checking out the previous version of the `bun.lock`, commit this change:
      ```bash
-     git commit -m "Revert pnpm-lock.yaml to its state before unintended changes"
+     git commit -m "Revert bun.lock to its state before unintended changes"
      ```
 
 3. **Proceed with Caution**:

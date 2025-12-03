@@ -20,6 +20,7 @@ out/
 
 dist
 pnpm-lock.yaml
+bun.lock
 
 /coverage
 

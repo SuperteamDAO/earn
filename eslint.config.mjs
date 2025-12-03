@@ -18,6 +18,7 @@ export default tseslint.config(
       '**/__next_data_cache_handler.js',
       '**/*.cache.js',
       'pnpm-lock.yaml',
+      'bun.lock',
       'src/generated/**',
       'next-env.d.ts',
       '.next/**',

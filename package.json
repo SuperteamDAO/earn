@@ -191,12 +191,5 @@
     "Firefox >= 127",
     "Safari >= 16.8",
     "iOS >= 16.8"
-  ],
-  "pnpm": {
-    "overrides": {
-      "@types/react": "19.2.2",
-      "@types/react-dom": "19.2.2",
-      "parse5": "^7.1.2"
-    }
-  }
+  ]
 }

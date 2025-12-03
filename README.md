@@ -44,12 +44,12 @@
 
 3. Install the dependencies: 
     ```bash
-    pnpm i
+    bun i
     ```
 
 4. Install the MariaDB adapter (required for local MySQL development):
     ```bash
-    pnpm add @prisma/adapter-mariadb
+    bun add @prisma/adapter-mariadb
     ```
     Then, uncomment the MariaDB adapter code in `src/prisma.ts`:
     - Line 1: Uncomment the `PrismaMariaDb` import
@@ -216,7 +216,7 @@
 
 6. Run the development server
     ```bash
-    pnpm dev
+    bun dev
     ```
 
 ## ⭐Contributing
