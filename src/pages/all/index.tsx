@@ -17,8 +17,8 @@ export default function AllListingsPage({ potentialSession }: HomePageProps) {
       type="listing"
       meta={
         <Meta
-          title="All Listings | Superteam Earn"
-          description="Browse all bounties, projects, and opportunities on Superteam Earn. Find crypto jobs and gigs across Design, Development, Content, and more."
+          title="All Crypto Opportunities | Web3 Bounties & Jobs | Superteam Earn"
+          description="Browse all crypto bounties, web3 jobs, and Solana opportunities. Find remote work in blockchain development, design, content, and more. Earn cryptocurrency for your skills."
           canonical="https://earn.superteam.fun/all/"
           og={ASSET_URL + `/og/og.png`}
         />

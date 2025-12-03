@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
-import { ASSET_URL } from '@/constants/ASSET_URL';
 import { countries } from '@/constants/country';
+import { CUSTOM_FLAGS } from '@/constants/CUSTOM_FLAGS';
 import { cn } from '@/utils/cn';
 
 import 'flag-icons/css/flag-icons.min.css';
@@ -19,13 +19,6 @@ type FlagSize =
   | '44px'
   | '52px'
   | '64px';
-
-const CUSTOM_FLAGS: Record<string, string> = {
-  balkan: `${ASSET_URL}/superteams/logos/balkan.png`,
-  latam: `${ASSET_URL}/regions/latam`,
-  'north-america': `${ASSET_URL}/regions/north-america`,
-  gcc: `${ASSET_URL}/regions/gcc`,
-};
 
 interface Props {
   location: string;

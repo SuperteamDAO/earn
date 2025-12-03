@@ -7,6 +7,7 @@ import { type JSX, useEffect, useMemo, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 
 import { EmptySection } from '@/components/shared/EmptySection';
+import { JsonLd } from '@/components/shared/JsonLd';
 import { ShareIcon } from '@/components/shared/shareIcon';
 import { Button } from '@/components/ui/button';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
@@ -19,6 +20,10 @@ import { Default } from '@/layouts/Default';
 import { prisma } from '@/prisma';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
+import {
+  generateBreadcrumbListSchema,
+  generatePersonSchema,
+} from '@/utils/json-ld';
 import { getURL } from '@/utils/validUrl';
 
 import { AuthWrapper } from '@/features/auth/components/AuthWrapper';
@@ -194,32 +199,30 @@ function TalentProfile({ talent, stats }: TalentProps) {
 
   const workPreferenceText = getWorkPreferenceText(talent?.workPrefernce);
 
-  const ogImagePath = talent?.isPro
-    ? `${getURL()}api/dynamic-og/pro-talent/`
-    : `${getURL()}api/dynamic-og/talent/`;
-  const ogImage = new URL(ogImagePath);
-  ogImage.searchParams.set('name', `${talent?.firstName} ${talent?.lastName}`);
-  ogImage.searchParams.set('username', talent?.username!);
-  ogImage.searchParams.set('skills', JSON.stringify(talent?.skills));
-  ogImage.searchParams.set(
-    'totalEarned',
-    stats?.totalWinnings?.toFixed(0) || '0',
-  );
-  ogImage.searchParams.set(
-    'submissionCount',
-    stats?.participations?.toString(),
-  );
-  ogImage.searchParams.set('winnerCount', stats?.wins?.toString());
-  if (talent?.photo) {
-    ogImage.searchParams.set('photo', talent.photo);
-  }
+  const isPublicProfile = !!talent?.id && !talent.private;
 
-  const title =
-    talent?.firstName && talent?.lastName
-      ? `${talent?.firstName} ${talent?.lastName} | Superteam Earn Talent`
-      : 'Superteam Earn';
+  const description = useMemo(() => {
+    if (!isPublicProfile) return '';
 
-  const feedItems = feed?.pages.flatMap((page) => page) ?? [];
+    const parts: string[] = [];
+    const fullName = `${talent?.firstName || ''} ${
+      talent?.lastName || ''
+    }`.trim();
+
+    if (fullName) parts.push(fullName);
+    if (workPreferenceText) parts.push(`looking for ${workPreferenceText}`);
+    if (talent?.currentEmployer)
+      parts.push(`works at ${talent.currentEmployer}`);
+    if (talent?.location) parts.push(`based in ${talent.location}`);
+
+    const statsStr = `$${Math.round(
+      stats?.totalWinnings || 0,
+    ).toLocaleString()} earned, ${stats?.wins || 0} wins on Superteam Earn.`;
+
+    return parts.length > 0
+      ? `${parts.join(' | ')}. ${statsStr}`
+      : `Talent profile on Superteam Earn. ${statsStr}`;
+  }, [talent, workPreferenceText, stats, isPublicProfile]);
 
   const renderButton = (
     icon: JSX.Element,
@@ -273,33 +276,120 @@ function TalentProfile({ talent, stats }: TalentProps) {
     );
   };
 
+  const ogImagePath = talent?.isPro
+    ? `${getURL()}api/dynamic-og/pro-talent/`
+    : `${getURL()}api/dynamic-og/talent/`;
+  const ogImage = new URL(ogImagePath);
+  ogImage.searchParams.set('name', `${talent?.firstName} ${talent?.lastName}`);
+  ogImage.searchParams.set('username', talent?.username!);
+  ogImage.searchParams.set('skills', JSON.stringify(talent?.skills));
+  ogImage.searchParams.set(
+    'totalEarned',
+    stats?.totalWinnings?.toFixed(0) || '0',
+  );
+  ogImage.searchParams.set(
+    'submissionCount',
+    stats?.participations?.toString(),
+  );
+  ogImage.searchParams.set('winnerCount', stats?.wins?.toString());
+  if (talent?.photo) {
+    ogImage.searchParams.set('photo', talent.photo);
+  }
+
+  const title =
+    talent?.firstName && talent?.lastName
+      ? `${talent?.firstName} ${talent?.lastName} | Superteam Earn Talent`
+      : 'Superteam Earn';
+
+  const feedItems = feed?.pages.flatMap((page) => page) ?? [];
+
+  // Generate JSON-LD schemas for public profiles only
+  const personSchema = isPublicProfile
+    ? generatePersonSchema({
+        firstName: talent?.firstName,
+        lastName: talent?.lastName,
+        username: talent?.username,
+        photo: talent?.photo,
+        workPreference: workPreferenceText,
+        currentEmployer: talent?.currentEmployer,
+        location: talent?.location,
+        skills: talent?.skills,
+        twitter: talent?.twitter,
+        linkedin: talent?.linkedin,
+        github: talent?.github,
+        website: talent?.website,
+      })
+    : null;
+
+  const breadcrumbSchema = isPublicProfile
+    ? generateBreadcrumbListSchema([
+        { name: 'Home', url: '/' },
+        { name: 'Talent', url: '/leaderboard/' },
+        {
+          name:
+            `${talent?.firstName || ''} ${talent?.lastName || ''}`.trim() ||
+            'Talent',
+        },
+      ])
+    : null;
+
   return (
     <Default
       meta={
-        <Head>
-          <title>{title}</title>
-          <meta property="og:title" content={title} />
-          <meta property="og:image" content={ogImage.toString()} />
-          <meta name="twitter:title" content={title} />
-          <meta name="twitter:image" content={ogImage.toString()} />
-          <meta name="twitter:card" content="summary_large_image" />
-          <meta property="og:image:width" content="1200" />
-          <meta property="og:image:height" content="630" />
-          <meta property="og:image:alt" content="Talent on Superteam" />
-          <meta charSet="UTF-8" key="charset" />
-          <meta
-            name="viewport"
-            content="width=device-width, initial-scale=1, maximum-scale=1"
-            key="viewport"
-          />
-          <link
-            rel="preconnect"
-            href="https://res.cloudinary.com"
-            crossOrigin=""
-          />
-          <link rel="dns-prefetch" href="https://res.cloudinary.com" />
-          <link rel="preload" as="image" href={optimizedCoverUrl} />
-        </Head>
+        <>
+          <Head>
+            <title>{title}</title>
+            <meta property="og:title" content={title} />
+            <meta property="og:image" content={ogImage.toString()} />
+            <meta name="twitter:title" content={title} />
+            <meta name="twitter:image" content={ogImage.toString()} />
+            <meta name="twitter:card" content="summary_large_image" />
+            <meta property="og:image:width" content="1200" />
+            <meta property="og:image:height" content="630" />
+            <meta
+              property="og:image:alt"
+              content={
+                isPublicProfile
+                  ? `${talent?.firstName} ${talent?.lastName} - Talent profile on Superteam Earn`
+                  : 'Talent on Superteam'
+              }
+            />
+            <meta property="og:type" content="profile" />
+            <meta charSet="UTF-8" key="charset" />
+            <meta
+              name="viewport"
+              content="width=device-width, initial-scale=1, maximum-scale=1"
+              key="viewport"
+            />
+            <link
+              rel="preconnect"
+              href="https://res.cloudinary.com"
+              crossOrigin=""
+            />
+            <link rel="dns-prefetch" href="https://res.cloudinary.com" />
+            <link rel="preload" as="image" href={optimizedCoverUrl} />
+            {isPublicProfile && (
+              <>
+                <meta name="description" content={description} />
+                <meta property="og:description" content={description} />
+                <meta name="twitter:description" content={description} />
+                <link
+                  rel="canonical"
+                  href={`https://earn.superteam.fun/t/${talent?.username}/`}
+                />
+              </>
+            )}
+            {talent.private && (
+              <>
+                <meta name="robots" content="noindex, nofollow" />
+                <meta name="googlebot" content="noindex, nofollow" />
+              </>
+            )}
+          </Head>
+          {personSchema && breadcrumbSchema && (
+            <JsonLd data={[personSchema, breadcrumbSchema]} />
+          )}
+        </>
       }
     >
       {!talent?.id && (
@@ -614,6 +704,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         photo: true,
         currentEmployer: true,
         location: true,
+        private: true,
         isPro: true,
       },
     });
