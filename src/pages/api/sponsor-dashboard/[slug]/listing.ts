@@ -66,9 +66,17 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       logger.warn(
         `Listing with slug=${slug} does not belong to user ${userId}`,
       );
-      return res.status(403).json({
+      const response: {
+        message: string;
+        sponsorId?: string;
+      } = {
         message: `Listing with slug=${slug} does not belong to user ${userId}`,
-      });
+      };
+      // Include sponsorId for GOD users to enable auto-switching
+      if (user.role === 'GOD' && result?.sponsorId) {
+        response.sponsorId = result.sponsorId;
+      }
+      return res.status(403).json(response);
     }
 
     if (!result) {

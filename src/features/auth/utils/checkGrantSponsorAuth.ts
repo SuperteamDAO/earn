@@ -29,6 +29,7 @@ export const checkGrantSponsorAuth = async (
       error: {
         status: 403,
         message: 'User is not authorized to perform this action.',
+        sponsorId: grant.sponsorId,
       },
     };
   }

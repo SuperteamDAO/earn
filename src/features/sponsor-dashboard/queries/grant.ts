@@ -20,4 +20,13 @@ export const sponsorGrantQuery = (
       return response.data;
     },
     enabled: !!currentSponsorId,
+    retry: (failureCount, error) => {
+      // Don't retry on 403 errors (sponsor mismatch)
+      const axiosError = error as { response?: { status?: number } };
+      if (axiosError?.response?.status === 403) {
+        return false;
+      }
+      // Retry other errors up to 3 times
+      return failureCount < 3;
+    },
   });
