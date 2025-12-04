@@ -12,7 +12,6 @@ import { ShareIcon } from '@/components/shared/shareIcon';
 import { Button } from '@/components/ui/button';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { Separator } from '@/components/ui/separator';
-import { ASSET_URL } from '@/constants/ASSET_URL';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import type { User } from '@/interface/user';
@@ -52,6 +51,7 @@ const AddProject = dynamic(
 import { ProBadge } from '@/features/pro/components/ProBadge';
 import { ProBG } from '@/features/pro/components/ProBg';
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
+import { TalentProfileBackground } from '@/features/talent/components/TalentProfileBackground';
 const ShareProfile = dynamic(
   () =>
     import('@/features/talent/components/shareProfile').then(
@@ -70,9 +70,10 @@ interface TalentProps {
     participations: number;
     totalWinnings: number;
   };
+  bgIndex: number;
 }
 
-function TalentProfile({ talent, stats }: TalentProps) {
+function TalentProfile({ talent, stats, bgIndex }: TalentProps) {
   const [activeTab, setActiveTab] = useState<'activity' | 'projects'>(
     'activity',
   );
@@ -127,24 +128,6 @@ function TalentProfile({ talent, stats }: TalentProps) {
   } = useDisclosure();
 
   const { isOpen, onOpen, onClose } = useDisclosure();
-
-  const bgImages = ['1.webp', '2.webp', '3.webp', '4.webp', '5.webp'];
-  const hashStringToInt = (input: string): number => {
-    let hash = 0;
-    for (let i = 0; i < input.length; i++) {
-      hash = (hash << 5) - hash + input.charCodeAt(i);
-      hash |= 0;
-    }
-    return Math.abs(hash);
-  };
-  const bgIndex = useMemo(() => {
-    return talent?.id ? hashStringToInt(talent.id) % bgImages.length : 0;
-  }, [talent?.id]);
-  const coverUrl = `${ASSET_URL}/bg/profile-cover/${bgImages[bgIndex]}`;
-  const optimizedCoverUrl = coverUrl.replace(
-    '/upload/',
-    '/upload/f_auto,q_auto/',
-  );
 
   const socialLinks = [
     { Icon: Twitter, link: talent?.twitter },
@@ -367,7 +350,6 @@ function TalentProfile({ talent, stats }: TalentProps) {
               crossOrigin=""
             />
             <link rel="dns-prefetch" href="https://res.cloudinary.com" />
-            <link rel="preload" as="image" href={optimizedCoverUrl} />
             {isPublicProfile && (
               <>
                 <meta name="description" content={description} />
@@ -403,11 +385,9 @@ function TalentProfile({ talent, stats }: TalentProps) {
               className="h-[100px] w-full rounded-none md:h-[30vh]"
             />
           ) : (
-            <div
-              className="h-[100px] w-full bg-cover bg-no-repeat md:h-[30vh]"
-              style={{
-                backgroundImage: `url(${optimizedCoverUrl})`,
-              }}
+            <TalentProfileBackground
+              bgIndex={bgIndex}
+              className="h-[100px] w-full rounded-none md:h-[30vh]"
             />
           )}
           <div className="relative top-0 mx-auto max-w-[700px] rounded-[20px] bg-white px-4 py-7 md:-top-40 md:px-7">
@@ -678,6 +658,15 @@ function TalentProfile({ talent, stats }: TalentProps) {
   );
 }
 
+const hashStringToInt = (input: string): number => {
+  let hash = 0;
+  for (let i = 0; i < input.length; i++) {
+    hash = (hash << 5) - hash + input.charCodeAt(i);
+    hash |= 0;
+  }
+  return Math.abs(hash);
+};
+
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { slug } = context.query;
   try {
@@ -747,8 +736,18 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
     const stats = { participations, wins, totalWinnings };
 
+    const bgIndex = talent?.id ? hashStringToInt(talent.id) % 5 : 0;
+    const bgNum = bgIndex + 1;
+
+    if (!talent.isPro) {
+      context.res.setHeader(
+        'Link',
+        `</assets/backgrounds/${bgNum}-mobile.avif>; rel=preload; as=image; type=image/avif; fetchpriority=high; media="(max-width: 640px)", </assets/backgrounds/${bgNum}-desktop.avif>; rel=preload; as=image; type=image/avif; fetchpriority=high; media="(min-width: 641px)"`,
+      );
+    }
+
     return {
-      props: { talent, stats },
+      props: { talent, stats, bgIndex },
     };
   } catch (error) {
     console.error(error);
