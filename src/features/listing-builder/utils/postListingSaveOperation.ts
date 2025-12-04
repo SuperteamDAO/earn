@@ -83,7 +83,7 @@ async function handleDiscordNotifications({
           throw new Error('ENV EARNCOGNITO_URL not provided');
         }
 
-        await earncognitoClient.post(`/discord/verify-listing/initiate`, {
+        await earncognitoClient.post(`/telegram/verify-listing`, {
           listingId: result.id,
           reason,
         });

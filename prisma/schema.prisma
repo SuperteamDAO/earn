@@ -69,6 +69,7 @@ model Bounties {
   Scouts             Scouts[]
   Comments           Comment[]
   discordMessageIds  Json?
+  telegramMessageIds Json?
   ai                 Json?
   publishedBy        String?
   XWeeklyThread      String?
