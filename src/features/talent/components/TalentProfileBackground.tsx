@@ -12,22 +12,22 @@ export function TalentProfileBackground({
   return (
     <picture>
       <source
-        media="(min-width: 40em)"
+        media="(min-width: 640px)"
         srcSet={`/assets/backgrounds/${bgNum}-desktop.avif`}
         type="image/avif"
       />
       <source
-        media="(min-width: 40em)"
+        media="(min-width: 640px)"
         srcSet={`/assets/backgrounds/${bgNum}-desktop.webp`}
         type="image/webp"
       />
       <source
-        media="(max-width: 40em)"
+        media="(max-width: 639px)"
         srcSet={`/assets/backgrounds/${bgNum}-mobile.avif`}
         type="image/avif"
       />
       <source
-        media="(max-width: 40em)"
+        media="(max-width: 639px)"
         srcSet={`/assets/backgrounds/${bgNum}-mobile.webp`}
         type="image/webp"
       />
