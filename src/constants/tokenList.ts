@@ -503,7 +503,7 @@ export const tokenList: Token[] = [
     tokenName: 'ORO GOLD',
     tokenSymbol: 'GOLD',
     mintAddress: 'GoLDppdjB1vDTPSGxyMJFqdnj134yH6Prg9eqsGDiw6A',
-    icon: 'https://orogold-1.gitbook.io/oro/~gitbook/image?url=https%3A%2F%2F1097857587-files.gitbook.io%2F%7E%2Ffiles%2Fv0%2Fb%2Fgitbook-x-prod.appspot.com%2Fo%2Forganizations%252F28QOLNWDO79LdVNlrKJR%252Fsites%252Fsite_IgxcB%252Ficon%252FcGMtzyM2kjNea01Ob2QU%252Flogo_green_720.png%3Falt%3Dmedia%26token%3D57561e0b-f29c-4d1a-94d6-368b647aaabe&width=32&dpr=2&quality=100&sign=a700ac44&sv=2',
+    icon: 'https://res.cloudinary.com/dgvnuwspr/image/upload/v1764943260/GOLD_qdvnh8.png',
     decimals: 6,
   },  
 ];
