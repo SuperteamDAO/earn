@@ -485,4 +485,25 @@ export const tokenList: Token[] = [
     icon: 'https://statics.solscan.io/cdn/imgs/s60?ref=68747470733a2f2f692e706f7374696d672e63632f476d6246335357622f62616d6269747a2e706e67',
     decimals: 6,
   },
+  {
+    tokenName: 'OmniBridge Bridged Zcash',
+    tokenSymbol: 'ZEC',
+    mintAddress: 'A7bdiYdS5GjqGFtxf17ppRHtDKPkkRqbKtR27dxvQXaS',
+    icon: 'https://statics.solscan.io/cdn/imgs/s60?ref=68747470733a2f2f617277656176652e6e65742f515359716e6d42374e596c42376e315236727a393335593037646c524b307449754b65326d6f663553686f',
+    decimals: 8,
+  },
+  {
+    tokenName: 'Tesla xStock',
+    tokenSymbol: 'TSLAX',
+    mintAddress: 'XsDoVfqeBukxuZHWhdvWHBhgEHjGNst4MLodqsJHzoB',
+    icon: 'https://statics.solscan.io/cdn/imgs/s60?ref=68747470733a2f2f7873746f636b732d6d657461646174612e6261636b65642e66692f6c6f676f732f746f6b656e732f54534c41782e706e67',
+    decimals: 8,
+  },
+  {
+    tokenName: 'ORO GOLD',
+    tokenSymbol: 'GOLD',
+    mintAddress: 'GoLDppdjB1vDTPSGxyMJFqdnj134yH6Prg9eqsGDiw6A',
+    icon: 'https://wsrv.nl/?w=32&h=32&url=https%3A%2F%2Fraw.githubusercontent.com%2Foroweb3%2Fgold%2Fde58e6cdc6531d2a65fba2a3f5c708a5c0d5c777%2FGOLD.png&dpr=2&quality=80',
+    decimals: 6,
+  },  
 ];
