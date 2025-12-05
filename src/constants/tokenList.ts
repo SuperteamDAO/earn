@@ -486,7 +486,7 @@ export const tokenList: Token[] = [
     decimals: 6,
   },
   {
-    tokenName: 'OmniBridge Bridged Zcash',
+    tokenName: 'OmniBridge Bridged Zcash (ZEC)',
     tokenSymbol: 'ZEC',
     mintAddress: 'A7bdiYdS5GjqGFtxf17ppRHtDKPkkRqbKtR27dxvQXaS',
     icon: 'https://statics.solscan.io/cdn/imgs/s60?ref=68747470733a2f2f617277656176652e6e65742f515359716e6d42374e596c42376e315236727a393335593037646c524b307449754b65326d6f663553686f',
