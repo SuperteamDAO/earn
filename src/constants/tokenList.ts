@@ -505,5 +505,5 @@ export const tokenList: Token[] = [
     mintAddress: 'GoLDppdjB1vDTPSGxyMJFqdnj134yH6Prg9eqsGDiw6A',
     icon: 'https://res.cloudinary.com/dgvnuwspr/image/upload/v1764943260/GOLD_qdvnh8.png',
     decimals: 6,
-  },  
+  },
 ];
