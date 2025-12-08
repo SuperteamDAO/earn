@@ -1,8 +1,11 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
+import { publicApiRateLimiter } from '@/lib/ratelimit';
+import { checkAndApplyRateLimit } from '@/lib/rateLimiterService';
 import { prisma } from '@/prisma';
 import { status as Status } from '@/prisma/enums';
+import { getClientIPPages } from '@/utils/getClientIPPages';
 
 import { getPrivyToken } from '@/features/auth/utils/getPrivyToken';
 import {
@@ -29,6 +32,14 @@ const Skills = {
 };
 
 export default async function user(req: NextApiRequest, res: NextApiResponse) {
+  const clientIP = getClientIPPages(req);
+  const canProceed = await checkAndApplyRateLimit(res, {
+    limiter: publicApiRateLimiter,
+    identifier: `search:${clientIP}`,
+    routeName: 'search',
+  });
+  if (!canProceed) return;
+
   const params = req.query;
   const query = (params.query as string).replace(
     /[^a-zA-Z0-9 _\-@#$.&*():+=]/g,

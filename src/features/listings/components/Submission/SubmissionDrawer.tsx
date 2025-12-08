@@ -256,12 +256,52 @@ export const SubmissionDrawer = ({
           const { link, tweet, otherInfo, eligibilityAnswers, ask } =
             response.data;
 
+          const reconciledAnswers =
+            Array.isArray(listing.eligibility) && listing.eligibility.length > 0
+              ? listing.eligibility.map((currentQuestion, index) => {
+                  const savedAnswersArray = Array.isArray(eligibilityAnswers)
+                    ? (eligibilityAnswers as Array<{
+                        question: string;
+                        answer: string;
+                        optional?: boolean;
+                      }>)
+                    : [];
+
+                  const matchByText = savedAnswersArray.find(
+                    (saved) => saved.question === currentQuestion.question,
+                  );
+
+                  if (matchByText) {
+                    return {
+                      question: currentQuestion.question,
+                      answer: matchByText.answer || '',
+                      optional: currentQuestion.optional,
+                    };
+                  }
+
+                  const matchByIndex = savedAnswersArray[index];
+                  if (matchByIndex?.answer) {
+                    return {
+                      question: currentQuestion.question,
+                      answer: matchByIndex.answer,
+                      optional: currentQuestion.optional,
+                    };
+                  }
+
+                  return {
+                    question: currentQuestion.question,
+                    answer: '',
+                    optional: currentQuestion.optional,
+                  };
+                })
+              : [];
+
           form.reset({
             link,
             tweet,
             otherInfo,
             ask,
-            eligibilityAnswers,
+            eligibilityAnswers: reconciledAnswers,
           });
         } catch (error) {
           console.error('Failed to fetch submission data', error);
@@ -271,7 +311,7 @@ export const SubmissionDrawer = ({
     };
 
     fetchData();
-  }, [id, editMode, form.reset]);
+  }, [id, editMode, form.reset, listing.eligibility]);
 
   const isDisabled = useMemo(
     () =>
@@ -793,7 +833,7 @@ export const SubmissionDrawer = ({
                       editMode &&
                         (isPro
                           ? 'border-zinc-900 text-white hover:text-white'
-                          : 'border-brand-purple text-brand-purple hover:text-brand-purple-dark'),
+                          : 'border-brand-purple hover:text-brand-purple-dark text-white'),
                       user?.isPro && isPro && 'hover:bg-black',
                       !user?.isPro && isPro && 'hover:opacity-90',
                     )}

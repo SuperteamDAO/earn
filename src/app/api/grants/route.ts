@@ -1,11 +1,15 @@
+import { headers } from 'next/headers';
 import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
+import { publicApiRateLimiter } from '@/lib/ratelimit';
+import { checkAndApplyRateLimitApp } from '@/lib/rateLimiterService';
 import { prisma } from '@/prisma';
 import {
   type JsonValue,
   PrismaClientKnownRequestError,
 } from '@/prisma/internal/prismaNamespace';
+import { getClientIP } from '@/utils/getClientIP';
 
 import {
   GrantQueryParamsSchema,
@@ -14,6 +18,16 @@ import {
 import { buildGrantsQuery } from '@/features/grants/utils/query-builder';
 
 export async function GET(request: NextRequest) {
+  const requestHeaders = await headers();
+  const clientIP = getClientIP(requestHeaders);
+
+  const rateLimitResponse = await checkAndApplyRateLimitApp({
+    limiter: publicApiRateLimiter,
+    identifier: `grants:${clientIP}`,
+    routeName: 'grants',
+  });
+  if (rateLimitResponse) return rateLimitResponse;
+
   try {
     const userIdFromCookie = request.cookies.get('user-id-hint')?.value;
 

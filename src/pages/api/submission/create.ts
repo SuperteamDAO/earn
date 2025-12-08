@@ -114,7 +114,7 @@ async function submission(req: NextApiRequestWithUser, res: NextApiResponse) {
       });
     }
 
-    if (!isHackathon) {
+    if (!isHackathon && !isPro) {
       const hasCredits = await canUserSubmit(userId as string);
       if (!hasCredits) {
         logger.warn(`User ${userId} has insufficient credits for submission`);
