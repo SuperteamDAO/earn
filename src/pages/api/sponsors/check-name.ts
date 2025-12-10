@@ -1,13 +1,24 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
+import { publicApiRateLimiter } from '@/lib/ratelimit';
+import { checkAndApplyRateLimit } from '@/lib/rateLimiterService';
 import { prisma } from '@/prisma';
+import { getClientIPPages } from '@/utils/getClientIPPages';
 import { safeStringify } from '@/utils/safeStringify';
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
+  const clientIP = getClientIPPages(req);
+  const canProceed = await checkAndApplyRateLimit(res, {
+    limiter: publicApiRateLimiter,
+    identifier: `sponsors_check_name:${clientIP}`,
+    routeName: 'sponsors-check-name',
+  });
+  if (!canProceed) return;
+
   logger.info(`Request query: ${safeStringify(req.query)}`);
 
   if (req.method !== 'GET') {

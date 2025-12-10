@@ -64,6 +64,11 @@ export function PrePublish() {
     name: 'type',
   });
 
+  const isPrivate = useWatch({
+    control: form.control,
+    name: 'isPrivate',
+  });
+
   const submitListingMutation = useAtomValue(submitListingMutationAtom);
 
   const router = useRouter();
@@ -291,7 +296,9 @@ export function PrePublish() {
         </DialogFooter>
       </DialogContent>
       <ProSlideout
-        show={showNudges && open && !slideoutDismissed}
+        show={
+          showNudges && open && !slideoutDismissed && !isUpdate && !isPrivate
+        }
         proSwitchRef={proSwitchElement}
         slideoutRef={slideoutRef}
         onClose={() => setSlideoutDismissed(true)}

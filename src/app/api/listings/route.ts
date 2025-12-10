@@ -2,11 +2,14 @@ import { headers } from 'next/headers';
 import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
+import { publicApiRateLimiter } from '@/lib/ratelimit';
+import { checkAndApplyRateLimitApp } from '@/lib/rateLimiterService';
 import { prisma } from '@/prisma';
 import {
   type JsonValue,
   PrismaClientKnownRequestError,
 } from '@/prisma/internal/prismaNamespace';
+import { getClientIP } from '@/utils/getClientIP';
 
 import { getUserSession } from '@/features/auth/utils/getUserSession';
 import {
@@ -18,7 +21,19 @@ import { reorderFeaturedOngoing } from '@/features/listings/utils/reorderFeature
 
 export async function GET(request: NextRequest) {
   try {
-    const session = await getUserSession(await headers());
+    const requestHeaders = await headers();
+    const clientIP = getClientIP(requestHeaders);
+
+    const rateLimitResponse = await checkAndApplyRateLimitApp({
+      limiter: publicApiRateLimiter,
+      identifier: `listings:${clientIP}`,
+      routeName: 'listings',
+    });
+    if (rateLimitResponse) {
+      return rateLimitResponse;
+    }
+
+    const session = await getUserSession(requestHeaders);
 
     const { searchParams } = new URL(request.url);
     const queryParams = Object.fromEntries(searchParams.entries());

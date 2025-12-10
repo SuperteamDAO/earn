@@ -55,6 +55,7 @@ const InfoWrapper = ({
   isBounty,
   isEditMode,
   isAuthenticated,
+  isPro,
 }: {
   children: React.ReactNode;
   isUserEligibleByRegion: boolean;
@@ -67,6 +68,7 @@ const InfoWrapper = ({
   isBounty: boolean;
   isEditMode: boolean;
   isAuthenticated: boolean;
+  isPro: boolean;
 }) => {
   const { user } = useUser();
   return (
@@ -79,6 +81,7 @@ const InfoWrapper = ({
           !(
             creditBalance === 0 &&
             (isProject || isBounty) &&
+            !isPro &&
             !isEditMode &&
             !pastDeadline
           ))
@@ -88,7 +91,7 @@ const InfoWrapper = ({
           ? regionTooltipLabel
           : !hasHackathonStarted
             ? `This track will open for submissions on ${hackathonStartDate?.format('DD MMMM, YYYY')}`
-            : creditBalance === 0 && (isProject || isBounty)
+            : creditBalance === 0 && (isProject || isBounty) && !isPro
               ? "You don't have enough credits to" +
                 (isProject ? ' apply' : ' submit')
               : null
@@ -328,7 +331,8 @@ export const SubmissionActionButton = ({
               user?.id &&
               user?.isTalentFilled &&
               creditBalance === 0 &&
-              (isProject || isBounty)) ||
+              (isProject || isBounty) &&
+              !isPro) ||
             (isNotPublished && !isListingSponsor),
         );
         isSubmitDisabled = Boolean(
@@ -482,6 +486,7 @@ export const SubmissionActionButton = ({
             isBounty={isBounty}
             isEditMode={isEditMode}
             isAuthenticated={isAuthenticated}
+            isPro={isPro ?? false}
           >
             <AuthWrapper
               showCompleteProfileModal

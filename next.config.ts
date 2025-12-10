@@ -43,7 +43,7 @@ const baseCsp = `
 const csp = baseCsp.replace(/\s{2,}/g, ' ').trim();
 
 const nextConfig: NextConfig = {
-  turbopack: {},
+  // turbopack: {},
   poweredByHeader: false,
   trailingSlash: true,
   reactStrictMode: true,
@@ -65,7 +65,7 @@ const nextConfig: NextConfig = {
     formats: ['image/avif', 'image/webp'],
   },
   experimental: {
-    turbopackFileSystemCacheForDev: true,
+    // turbopackFileSystemCacheForDev: true,
     optimizePackageImports: [
       '@privy-io/react-auth',
       '@privy-io/node',
@@ -127,7 +127,18 @@ const nextConfig: NextConfig = {
     });
 
     headers.push({
-      source: '/assets/backgrounds/:path*',
+      source: '/',
+      headers: [
+        {
+          key: 'Link',
+          value:
+            '</assets/banner/banner-mobile.avif>; rel=preload; as=image; type=image/avif; fetchpriority=high; media="(max-width: 639px)", </assets/banner/banner.avif>; rel=preload; as=image; type=image/avif; fetchpriority=high; media="(min-width: 640px)"',
+        },
+      ],
+    });
+
+    headers.push({
+      source: '/assets/banner/:path*',
       headers: [
         {
           key: 'Cache-Control',

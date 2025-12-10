@@ -17,6 +17,7 @@ import { getURL } from '@/utils/validUrl';
 import { userStatsQuery } from '@/features/home/queries/user-stats';
 import { useProUpgradeFlow } from '@/features/pro/state/pro-upgrade-flow';
 
+import { LargeRandomArrow } from './LargeRandomArrow';
 import { ProBadge } from './ProBadge';
 
 const celebratoryFont = localFont({
@@ -263,7 +264,7 @@ export const ProUpgradeOverlay = () => {
           <motion.div
             key="pro-upgrade-overlay"
             className={cn(
-              'fixed top-0 left-0 z-10000 flex flex-col items-center justify-center overflow-hidden bg-black',
+              'pointer-events-auto fixed top-0 left-0 z-10000 flex flex-col items-center justify-center overflow-hidden bg-black',
             )}
             style={{
               width: viewport.width,
@@ -357,7 +358,7 @@ export const ProUpgradeOverlay = () => {
               <Cross2Icon className="size-5 text-white" />
               <span className="sr-only">Close</span>
             </DialogClose>
-            <div className="relative z-10 flex flex-col items-center px-2">
+            <div className="pointer-events-auto relative z-10 flex flex-col items-center px-2">
               <ProBadge
                 containerClassName="bg-white/12 px-3 py-1.5 gap-2 mb-4"
                 iconClassName="size-2.5 md:size-3 text-white/34"
@@ -433,6 +434,7 @@ export const ProUpgradeOverlay = () => {
                       willChange: 'transform',
                     }}
                   />
+                  <LargeRandomArrow />
                 </>
               ) : null}
 
@@ -538,7 +540,7 @@ export const ProUpgradeOverlay = () => {
                 <ProBenefitItem text="Ecosystem Perks" />
                 <ProBenefitItem text="Priority Support" />
               </div>
-              <div className="mt-10 flex w-full items-center justify-center gap-10 md:w-auto md:gap-16">
+              <div className="pointer-events-auto relative z-20 mt-10 flex w-full cursor-pointer items-center justify-center gap-10 md:w-auto md:gap-16">
                 <button
                   className="pointer-events-auto flex items-center gap-2 rounded-lg bg-white px-8 py-3 text-sm text-black transition-opacity hover:opacity-90 md:px-12 md:text-base"
                   onClick={(e) => {

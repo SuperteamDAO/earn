@@ -1,4 +1,9 @@
+import { headers } from 'next/headers';
 import { NextResponse } from 'next/server';
+
+import { publicApiRateLimiter } from '@/lib/ratelimit';
+import { checkAndApplyRateLimitApp } from '@/lib/rateLimiterService';
+import { getClientIP } from '@/utils/getClientIP';
 
 interface PriceV3Response {
   [key: string]: {
@@ -17,6 +22,15 @@ const STABLE_MINTS = new Set<string>([
 ]);
 
 export async function GET(request: Request) {
+  const requestHeaders = await headers();
+  const clientIP = getClientIP(requestHeaders);
+
+  const rateLimitResponse = await checkAndApplyRateLimitApp({
+    limiter: publicApiRateLimiter,
+    identifier: `wallet_price:${clientIP}`,
+    routeName: 'wallet-price',
+  });
+  if (rateLimitResponse) return rateLimitResponse;
   try {
     const { searchParams } = new URL(request.url);
     const mintAddress = searchParams.get('mintAddress');
