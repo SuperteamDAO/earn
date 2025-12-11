@@ -53,10 +53,7 @@ export function DescriptionUI({ description, isPro = false }: Props) {
   const isNotMD = useMediaQuery('(max-width: 767px)');
 
   useEffect(() => {
-    // Use setTimeout to avoid calling setState synchronously in effect
-    setTimeout(() => {
-      setIsMounted(true);
-    }, 0);
+    setIsMounted(true);
   }, []);
 
   const decideCollapser = useCallback(() => {
@@ -78,76 +75,74 @@ export function DescriptionUI({ description, isPro = false }: Props) {
     return () => clearTimeout(timer);
   }, [decideCollapser, isMounted]);
 
-  const descriptionContent = parse(
-    domPurify(
-      description?.startsWith('"')
-        ? JSON.parse(description || '')
-        : (description ?? ''),
-      {
-        ALLOWED_TAGS: [
-          'a',
-          'p',
-          'br',
-          'strong',
-          'em',
-          'b',
-          'i',
-          'u',
-          's',
-          'blockquote',
-          'pre',
-          'code',
-          'ul',
-          'ol',
-          'li',
-          'h1',
-          'h2',
-          'h3',
-          'h4',
-          'h5',
-          'h6',
-          'hr',
-          'table',
-          'thead',
-          'tbody',
-          'tr',
-          'td',
-          'th',
-          'span',
-          'img',
-        ],
-        ALLOWED_ATTR: [
-          'href',
-          'target',
-          'rel',
-          'src',
-          'alt',
-          'title',
-          'width',
-          'height',
-          'colspan',
-          'rowspan',
-          'class',
-        ],
-        FORBID_TAGS: [
-          'script',
-          'iframe',
-          'style',
-          'meta',
-          'link',
-          'object',
-          'embed',
-          'base',
-          'form',
-        ],
-      },
-    ),
-    options,
-  );
-
-  if (!isMounted) {
-    return null;
-  }
+  const descriptionContent = isMounted
+    ? parse(
+        domPurify(
+          description?.startsWith('"')
+            ? JSON.parse(description || '')
+            : (description ?? ''),
+          {
+            ALLOWED_TAGS: [
+              'a',
+              'p',
+              'br',
+              'strong',
+              'em',
+              'b',
+              'i',
+              'u',
+              's',
+              'blockquote',
+              'pre',
+              'code',
+              'ul',
+              'ol',
+              'li',
+              'h1',
+              'h2',
+              'h3',
+              'h4',
+              'h5',
+              'h6',
+              'hr',
+              'table',
+              'thead',
+              'tbody',
+              'tr',
+              'td',
+              'th',
+              'span',
+              'img',
+            ],
+            ALLOWED_ATTR: [
+              'href',
+              'target',
+              'rel',
+              'src',
+              'alt',
+              'title',
+              'width',
+              'height',
+              'colspan',
+              'rowspan',
+              'class',
+            ],
+            FORBID_TAGS: [
+              'script',
+              'iframe',
+              'style',
+              'meta',
+              'link',
+              'object',
+              'embed',
+              'base',
+              'form',
+            ],
+          },
+        ),
+        options,
+      )
+    : null;
 
   const isProEligibilityLoading = isPro && (isUserLoading || isStatsLoading);
   if (isProEligibilityLoading) {
