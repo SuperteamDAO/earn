@@ -4,7 +4,7 @@ import parse, {
   type HTMLReactParserOptions,
 } from 'html-react-parser';
 import { ChevronDown } from 'lucide-react';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import SuperteamIcon from '@/components/icons/SuperteamIcon';
 import { Button } from '@/components/ui/button';
@@ -75,74 +75,82 @@ export function DescriptionUI({ description, isPro = false }: Props) {
     return () => clearTimeout(timer);
   }, [decideCollapser, isMounted]);
 
-  const descriptionContent = isMounted
-    ? parse(
-        domPurify(
-          description?.startsWith('"')
-            ? JSON.parse(description || '')
-            : (description ?? ''),
-          {
-            ALLOWED_TAGS: [
-              'a',
-              'p',
-              'br',
-              'strong',
-              'em',
-              'b',
-              'i',
-              'u',
-              's',
-              'blockquote',
-              'pre',
-              'code',
-              'ul',
-              'ol',
-              'li',
-              'h1',
-              'h2',
-              'h3',
-              'h4',
-              'h5',
-              'h6',
-              'hr',
-              'table',
-              'thead',
-              'tbody',
-              'tr',
-              'td',
-              'th',
-              'span',
-              'img',
-            ],
-            ALLOWED_ATTR: [
-              'href',
-              'target',
-              'rel',
-              'src',
-              'alt',
-              'title',
-              'width',
-              'height',
-              'colspan',
-              'rowspan',
-              'class',
-            ],
-            FORBID_TAGS: [
-              'script',
-              'iframe',
-              'style',
-              'meta',
-              'link',
-              'object',
-              'embed',
-              'base',
-              'form',
-            ],
-          },
-        ),
-        options,
-      )
-    : null;
+  const descriptionContent = useMemo(() => {
+    if (!isMounted) return null;
+
+    // Safely parse JSON-encoded descriptions with fallback
+    let normalizedDescription = description ?? '';
+    if (normalizedDescription.startsWith('"')) {
+      try {
+        normalizedDescription = JSON.parse(normalizedDescription) as string;
+      } catch {
+        // Fallback: use original string if JSON parsing fails
+        normalizedDescription = description ?? '';
+      }
+    }
+
+    return parse(
+      domPurify(normalizedDescription, {
+        ALLOWED_TAGS: [
+          'a',
+          'p',
+          'br',
+          'strong',
+          'em',
+          'b',
+          'i',
+          'u',
+          's',
+          'blockquote',
+          'pre',
+          'code',
+          'ul',
+          'ol',
+          'li',
+          'h1',
+          'h2',
+          'h3',
+          'h4',
+          'h5',
+          'h6',
+          'hr',
+          'table',
+          'thead',
+          'tbody',
+          'tr',
+          'td',
+          'th',
+          'span',
+          'img',
+        ],
+        ALLOWED_ATTR: [
+          'href',
+          'target',
+          'rel',
+          'src',
+          'alt',
+          'title',
+          'width',
+          'height',
+          'colspan',
+          'rowspan',
+          'class',
+        ],
+        FORBID_TAGS: [
+          'script',
+          'iframe',
+          'style',
+          'meta',
+          'link',
+          'object',
+          'embed',
+          'base',
+          'form',
+        ],
+      }),
+      options,
+    );
+  }, [isMounted, description, options]);
 
   const isProEligibilityLoading = isPro && (isUserLoading || isStatsLoading);
   if (isProEligibilityLoading) {
