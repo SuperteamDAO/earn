@@ -4,7 +4,7 @@ import parse, {
   type HTMLReactParserOptions,
 } from 'html-react-parser';
 import { ChevronDown } from 'lucide-react';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import SuperteamIcon from '@/components/icons/SuperteamIcon';
 import { Button } from '@/components/ui/button';
@@ -53,10 +53,7 @@ export function DescriptionUI({ description, isPro = false }: Props) {
   const isNotMD = useMediaQuery('(max-width: 767px)');
 
   useEffect(() => {
-    // Use setTimeout to avoid calling setState synchronously in effect
-    setTimeout(() => {
-      setIsMounted(true);
-    }, 0);
+    setIsMounted(true);
   }, []);
 
   const decideCollapser = useCallback(() => {
@@ -78,12 +75,22 @@ export function DescriptionUI({ description, isPro = false }: Props) {
     return () => clearTimeout(timer);
   }, [decideCollapser, isMounted]);
 
-  const descriptionContent = parse(
-    domPurify(
-      description?.startsWith('"')
-        ? JSON.parse(description || '')
-        : (description ?? ''),
-      {
+  const descriptionContent = useMemo(() => {
+    if (!isMounted) return null;
+
+    // Safely parse JSON-encoded descriptions with fallback
+    let normalizedDescription = description ?? '';
+    if (normalizedDescription.startsWith('"')) {
+      try {
+        normalizedDescription = JSON.parse(normalizedDescription) as string;
+      } catch {
+        // Fallback: use original string if JSON parsing fails
+        normalizedDescription = description ?? '';
+      }
+    }
+
+    return parse(
+      domPurify(normalizedDescription, {
         ALLOWED_TAGS: [
           'a',
           'p',
@@ -140,14 +147,10 @@ export function DescriptionUI({ description, isPro = false }: Props) {
           'base',
           'form',
         ],
-      },
-    ),
-    options,
-  );
-
-  if (!isMounted) {
-    return null;
-  }
+      }),
+      options,
+    );
+  }, [isMounted, description, options]);
 
   const isProEligibilityLoading = isPro && (isUserLoading || isStatsLoading);
   if (isProEligibilityLoading) {
