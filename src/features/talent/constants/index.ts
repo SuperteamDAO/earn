@@ -10,6 +10,7 @@ export const IndustryList = [
   'NFTs',
   'Gaming',
   'Other',
+  'Prediction Markets',
 ] as const;
 
 export const web3Exp = [
