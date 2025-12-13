@@ -20,6 +20,7 @@ import { GrantsHeader } from '@/features/grants/components/GrantsHeader';
 import { GrantStats } from '@/features/grants/components/GrantStats';
 import { userApplicationQuery } from '@/features/grants/queries/user-application';
 import { type GrantWithApplicationCount } from '@/features/grants/types';
+import { grantAmount } from '@/features/grants/utils/grantAmount';
 import { LiveGrants } from '@/features/home/components/LiveGrants';
 import { ExtraInfoSection } from '@/features/listings/components/ListingPage/ExtraInfoSection';
 import { grantSnackbarAtom } from '@/features/navbar/components/GrantSnackbar';
@@ -67,20 +68,43 @@ export function GrantPageLayout({
 
   const ogImageUrl = `${getURL()}api/dynamic-og/grant/?title=${encodedTitle}&token=${initialGrant?.token}&sponsor=${initialGrant?.sponsor?.name}&logo=${initialGrant?.sponsor?.logo}&minReward=${initialGrant?.minReward}&maxReward=${initialGrant?.maxReward}&isSponsorVerified=${initialGrant?.sponsor?.isVerified}`;
 
+  const getRewardText = (): string => {
+    if (!initialGrant?.maxReward) return '';
+
+    const { minReward, maxReward } = initialGrant;
+    const amount = grantAmount({
+      minReward: minReward ?? 0,
+      maxReward,
+    });
+
+    const hasValidMinReward = minReward && minReward > 0;
+
+    if (hasValidMinReward) {
+      return `between $${amount}`;
+    }
+
+    return `up to $${amount.replace('Up to ', '')}`;
+  };
+
+  const rewardText = getRewardText();
+
   return (
     <Default
       meta={
         <>
           <Meta
             title={`${initialGrant?.title || 'Grant'} | Superteam Earn`}
-            description={`${initialGrant?.title || 'Grant'} by ${initialGrant?.sponsor?.name} | Apply for funding between $${initialGrant?.minReward}-$${initialGrant?.maxReward} in ${initialGrant?.token} on Superteam Earn`}
+            description={`${initialGrant?.title || 'Grant'} by ${initialGrant?.sponsor?.name}${rewardText ? ` | Apply for funding ${rewardText}` : ''} in ${initialGrant?.token} on Superteam Earn`}
             canonical={`https://earn.superteam.fun/grants/${initialGrant?.slug}/`}
             og={ogImageUrl}
           />
           <Head>
             <meta property="og:image:width" content="1200" />
             <meta property="og:image:height" content="630" />
-            <meta property="og:image:alt" content="Superteam Grant" />
+            <meta
+              property="og:image:alt"
+              content={`${initialGrant?.title || 'Grant'} - Grant by ${initialGrant?.sponsor?.name || 'Sponsor'} on Superteam Earn`}
+            />
           </Head>
         </>
       }
