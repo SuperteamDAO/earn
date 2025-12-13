@@ -203,7 +203,12 @@
     
   - <img src="https://avatars.githubusercontent.com/u/1460763" title="Cloudinary" alt="cloudinary" width="28" height="28" /> [Cloudinary](https://cloudinary.com/) setup:
     - To obtain your `CLOUDINARY_*` API keys, visit the Cloudinary dashboard. 
-
+    
+  - <img src="https://avatars.githubusercontent.com/u/109384852" title="Jupiter" alt="jupiter" width="28" height="28" /> [Jupiter](https://jup.ag/) API setup:
+    - Visit [portal.jup.ag](https://portal.jup.ag) to generate a free API key
+    - Add `JUPITER_API_KEY` to your `.env` file
+    - Required for token price fetching functionality
+    
   - Set up Solana RPC WebSocket URL:
     - Set `NEXT_PUBLIC_RPC_WS_URL` in your `.env` file. This is required for wallet-related features.
     - You can use a public RPC endpoint or get one from providers like [Helius](https://helius.dev/), [Triton.one](https://triton.one/).
