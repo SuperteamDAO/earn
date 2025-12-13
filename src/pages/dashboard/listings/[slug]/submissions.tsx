@@ -36,6 +36,7 @@ import { PayoutSection } from '@/features/sponsor-dashboard/components/Submissio
 import { SubmissionHeader } from '@/features/sponsor-dashboard/components/Submissions/SubmissionHeader';
 import { SubmissionList } from '@/features/sponsor-dashboard/components/Submissions/SubmissionList';
 import { SubmissionPanel } from '@/features/sponsor-dashboard/components/Submissions/SubmissionPanel';
+import { useAutoSwitchSponsor } from '@/features/sponsor-dashboard/hooks/use-auto-switch-sponsor';
 import { sponsorDashboardListingQuery } from '@/features/sponsor-dashboard/queries/listing';
 import { scoutsQuery } from '@/features/sponsor-dashboard/queries/scouts';
 import { submissionsQuery } from '@/features/sponsor-dashboard/queries/submissions';
@@ -137,17 +138,29 @@ export default function BountySubmissions({ slug }: Props) {
     data: bounty,
     isLoading: isBountyLoading,
     error: bountyError,
+    refetch: refetchBounty,
   } = useQuery(sponsorDashboardListingQuery(slug));
 
+  const { isSwitching: isSwitchingSponsor } = useAutoSwitchSponsor({
+    error: bountyError,
+    refetch: refetchBounty,
+    queryKey: ['sponsor-dashboard-listing', slug],
+  });
+
   useEffect(() => {
-    if (bountyError) {
+    // Don't show error toast if we're switching sponsors or if user is GOD mode
+    if (bountyError && !isSwitchingSponsor && user?.role !== 'GOD') {
       const error = bountyError as any;
       if (error?.response?.status === 403) {
-        toast.error('This listing does not belong to you');
-        router.push('/dashboard/listings');
+        // Don't show error if it's a sponsor mismatch that will be auto-switched
+        const hasSponsorId = error?.response?.data?.sponsorId;
+        if (!hasSponsorId) {
+          toast.error('This listing does not belong to you');
+          router.push('/dashboard/listings');
+        }
       }
     }
-  }, [bountyError, router]);
+  }, [bountyError, router, user?.role, isSwitchingSponsor]);
 
   const isProject = useMemo(() => bounty?.type === 'project', [bounty]);
 
@@ -312,8 +325,10 @@ export default function BountySubmissions({ slug }: Props) {
 
   useEffect(() => {
     if (bounty && user?.currentSponsorId) {
-      if (bounty.sponsorId !== user.currentSponsorId) {
+      // Only redirect non-GOD users on sponsor mismatch
+      if (bounty.sponsorId !== user.currentSponsorId && user.role !== 'GOD') {
         router.push('/dashboard/listings');
+        return;
       }
 
       const podiumWinnersSelected = submissions?.filter(
@@ -335,7 +350,7 @@ export default function BountySubmissions({ slug }: Props) {
             : 0) - (bonusWinnerSelected || 0),
       });
     }
-  }, [bounty, submissions, user?.currentSponsorId, router]);
+  }, [bounty, submissions, user?.currentSponsorId, user?.role, router]);
 
   useEffect(() => {
     if (searchParams?.has('scout')) posthog.capture('scout tab_scout');
@@ -406,7 +421,7 @@ export default function BountySubmissions({ slug }: Props) {
 
   return (
     <SponsorLayout isCollapsible>
-      {isBountyLoading || isSubmissionsLoading ? (
+      {isBountyLoading || isSubmissionsLoading || isSwitchingSponsor ? (
         <LoadingSection />
       ) : (
         <>

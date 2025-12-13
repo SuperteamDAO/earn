@@ -25,6 +25,7 @@ export function Range() {
               <TokenNumberInput
                 {...field}
                 max={MAX_REWARD}
+                maxDecimals={4}
                 placeholder="5,000"
                 className="relative rounded-r-none focus-within:z-10"
                 onChange={(e) => {
@@ -49,6 +50,7 @@ export function Range() {
                 placeholder="10,000"
                 className="relative rounded-l-none pr-6 focus-within:z-10"
                 max={MAX_REWARD}
+                maxDecimals={4}
                 onChange={(e) => {
                   field.onChange(e);
                   form.saveDraft();

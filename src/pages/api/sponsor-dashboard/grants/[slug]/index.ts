@@ -37,7 +37,17 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
     const { error } = await checkGrantSponsorAuth(req.userSponsorId, grant.id);
     if (error) {
-      return res.status(error.status).json({ error: error.message });
+      const response: {
+        error: string;
+        sponsorId?: string;
+      } = {
+        error: error.message,
+      };
+      // Include sponsorId for GOD users to enable auto-switching
+      if (req.role === 'GOD' && error.sponsorId) {
+        response.sponsorId = error.sponsorId;
+      }
+      return res.status(error.status).json(response);
     }
 
     const totalApplications = grant.GrantApplication.length;

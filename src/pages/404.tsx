@@ -1,3 +1,5 @@
+import Head from 'next/head';
+
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
@@ -6,10 +8,16 @@ export default function Custom404() {
   return (
     <Default
       meta={
-        <Meta
-          title="Not Found | Superteam Earn"
-          description="404 - Page Not Found"
-        />
+        <>
+          <Meta
+            title="Not Found | Superteam Earn"
+            description="404 - Page Not Found"
+          />
+          <Head>
+            <meta name="robots" content="noindex, nofollow" />
+            <meta name="googlebot" content="noindex, nofollow" />
+          </Head>
+        </>
       }
     >
       <div className="flex flex-col items-center justify-center gap-4">

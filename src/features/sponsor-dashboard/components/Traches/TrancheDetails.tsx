@@ -193,18 +193,15 @@ export const TrancheDetails = ({
                   )}
                 </CopyButton>
               )}
-              {selectedTranche?.GrantApplication?.walletAddress && (
+              {selectedTranche?.walletAddress && (
                 <CopyButton
-                  text={selectedTranche?.GrantApplication?.walletAddress || ''}
+                  text={selectedTranche?.walletAddress || ''}
                   className="gap-1 text-sm text-slate-400 underline-offset-1 hover:text-slate-500 hover:underline"
                   contentProps={{ side: 'right' }}
                 >
                   <MdOutlineAccountBalanceWallet />
                   <p>
-                    {truncatePublicKey(
-                      selectedTranche?.GrantApplication?.walletAddress || '',
-                      3,
-                    )}
+                    {truncatePublicKey(selectedTranche?.walletAddress || '', 3)}
                   </p>
                 </CopyButton>
               )}

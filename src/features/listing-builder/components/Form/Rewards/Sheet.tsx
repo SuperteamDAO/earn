@@ -1,3 +1,5 @@
+import { useQuery } from '@tanstack/react-query';
+import { useAtomValue } from 'jotai';
 import { ArrowLeftIcon } from 'lucide-react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { memo, useEffect, useMemo, useState } from 'react';
@@ -33,7 +35,10 @@ import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 
 import { calculateTotalPrizes } from '@/features/listing-builder/utils/rewards';
 
+import { isEditingAtom } from '../../../atoms';
 import { useListingForm } from '../../../hooks';
+import { FEATURED_USD_THRESHOLD } from '../Boost/constants';
+import { tokenUsdValueQuery } from '../Boost/queries';
 import type { BoostStep } from '../Boost/utils';
 import { BoostContent } from './BoostContent';
 import { Footer } from './Footer';
@@ -55,10 +60,14 @@ export function RewardsSheet() {
   } | null>(null);
   const [isBoostDismissPromptOpen, setIsBoostDismissPromptOpen] =
     useState(false);
+  const [featuredWarningAction, setFeaturedWarningAction] = useState<
+    'close' | 'boost' | null
+  >(null);
   const params = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
   const isBoostFromUrl = params?.get('boost') === 'true';
+  const isEditing = useAtomValue(isEditingAtom);
 
   useEffect(() => {
     const shouldOpenBoost = params?.get('boost') === 'true';
@@ -78,6 +87,74 @@ export function RewardsSheet() {
     control: form.control,
     name: 'type',
   });
+  const rewardAmount = useWatch({
+    control: form.control,
+    name: 'rewardAmount',
+  });
+  const token = useWatch({
+    control: form.control,
+    name: 'token',
+  });
+  const compensationType = useWatch({
+    control: form.control,
+    name: 'compensationType',
+  });
+  const minRewardAsk = useWatch({
+    control: form.control,
+    name: 'minRewardAsk',
+  });
+  const maxRewardAsk = useWatch({
+    control: form.control,
+    name: 'maxRewardAsk',
+  });
+  const isFeatured = useWatch({
+    control: form.control,
+    name: 'isFeatured',
+  });
+  const isPublished = useWatch({
+    control: form.control,
+    name: 'isPublished',
+  });
+
+  const { data: tokenUsdValueData } = useQuery(
+    tokenUsdValueQuery(token as string | undefined),
+  );
+  const tokenUsdValue =
+    typeof tokenUsdValueData === 'number' ? tokenUsdValueData : 1;
+
+  const currentUsdValue = useMemo(() => {
+    if (type !== 'project') {
+      return (tokenUsdValue || 1) * (rewardAmount || 0);
+    } else {
+      if (compensationType === 'fixed') {
+        return (tokenUsdValue || 1) * (rewardAmount || 0);
+      } else if (compensationType === 'range') {
+        return (
+          (tokenUsdValue || 1) *
+          (((minRewardAsk || 0) + (maxRewardAsk || 0)) / 2)
+        );
+      } else if (compensationType === 'variable') {
+        return 1000;
+      }
+    }
+    return 0;
+  }, [
+    tokenUsdValue,
+    rewardAmount,
+    type,
+    compensationType,
+    minRewardAsk,
+    maxRewardAsk,
+  ]);
+
+  const shouldShowFeaturedWarning = useMemo(() => {
+    return (
+      isEditing &&
+      isPublished === true &&
+      isFeatured === true &&
+      currentUsdValue < FEATURED_USD_THRESHOLD
+    );
+  }, [isEditing, isPublished, isFeatured, currentUsdValue]);
 
   const hasRewardsErrors = useMemo(() => {
     const errors = form.formState.errors;
@@ -116,6 +193,12 @@ export function RewardsSheet() {
 
     if (panel === 'boost') {
       setIsBoostDismissPromptOpen(true);
+      return;
+    }
+
+    // Check if we should show featured removal warning when closing sheet
+    if (panel === 'rewards' && shouldShowFeaturedWarning) {
+      setFeaturedWarningAction('close');
       return;
     }
 
@@ -252,6 +335,8 @@ export function RewardsSheet() {
                 boostStep={boostStep}
                 isBoostFromUrl={isBoostFromUrl}
                 proAdjustment={proAdjustment}
+                shouldShowFeaturedWarning={shouldShowFeaturedWarning}
+                setFeaturedWarningAction={setFeaturedWarningAction}
               />
             </SheetFooter>
           </div>
@@ -286,6 +371,42 @@ export function RewardsSheet() {
               }}
             >
               Get more visibility
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+      <AlertDialog
+        open={featuredWarningAction !== null}
+        onOpenChange={(next) => {
+          if (!next) setFeaturedWarningAction(null);
+        }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              Your Featured Status Will Be Removed
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              Your listing is currently featured on the homepage. Reducing
+              rewards below $5,000 will remove your listing&apos;s featured
+              status and its homepage visibility.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setFeaturedWarningAction(null)}>
+              Keep Editing
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                if (featuredWarningAction === 'close') {
+                  closeSheet();
+                } else if (featuredWarningAction === 'boost') {
+                  setPanel('boost');
+                }
+                setFeaturedWarningAction(null);
+              }}
+            >
+              Continue Anyway
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

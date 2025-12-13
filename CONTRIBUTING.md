@@ -159,6 +159,11 @@
   - You have to set up resend to run the app:
     - [Resend](https://resend.com): To obtain your `RESEND_API_KEY`, visit the Resend dashboard. This credential is essential for setting up Email Auth.
 
+  - Set up Jupiter API:
+    - Visit [portal.jup.ag](https://portal.jup.ag) to generate a free API key
+    - Add `JUPITER_API_KEY` to your `.env` file
+    - Required for token price fetching functionality
+
   - Set up Solana RPC WebSocket URL:
     - Set `NEXT_PUBLIC_RPC_WS_URL` in your `.env` file. This is required for wallet-related features.
     - You can use a public RPC endpoint or get one from providers like [Helius](https://helius.dev/), [Triton.one](https://triton.one/).

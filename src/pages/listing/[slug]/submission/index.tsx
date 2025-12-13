@@ -1,4 +1,5 @@
 import type { GetServerSideProps } from 'next';
+import Head from 'next/head';
 import { useState } from 'react';
 
 import type { SubmissionWithUser } from '@/interface/submission';
@@ -33,6 +34,10 @@ const SubmissionPage = ({
 
   return (
     <ListingPageLayout listing={bounty}>
+      <Head>
+        <meta name="robots" content="noindex, nofollow" />
+        <meta name="googlebot" content="noindex, nofollow" />
+      </Head>
       {bounty && submission && (
         <SubmissionList
           bounty={bounty}

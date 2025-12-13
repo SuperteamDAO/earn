@@ -126,6 +126,27 @@ const nextConfig: NextConfig = {
       ],
     });
 
+    headers.push({
+      source: '/',
+      headers: [
+        {
+          key: 'Link',
+          value:
+            '</assets/banner/banner-mobile.avif>; rel=preload; as=image; type=image/avif; fetchpriority=high; media="(max-width: 639px)", </assets/banner/banner.avif>; rel=preload; as=image; type=image/avif; fetchpriority=high; media="(min-width: 640px)"',
+        },
+      ],
+    });
+
+    headers.push({
+      source: '/assets/banner/:path*',
+      headers: [
+        {
+          key: 'Cache-Control',
+          value: 'public, max-age=31536000, immutable',
+        },
+      ],
+    });
+
     return headers;
   },
   async rewrites() {

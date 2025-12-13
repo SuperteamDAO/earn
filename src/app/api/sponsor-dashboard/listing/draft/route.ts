@@ -109,7 +109,7 @@ async function handleDiscordNotification(result: BountiesModel): Promise<void> {
 
   try {
     logger.info('Updating Discord Verification message', { id: result.id });
-    await earncognitoClient.post(`/discord/verify-listing/initiate`, {
+    await earncognitoClient.post(`/telegram/verify-listing`, {
       listingId: result.id,
     });
     logger.info('Updated Discord Verification message', { id: result.id });

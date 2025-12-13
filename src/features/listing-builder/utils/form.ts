@@ -233,6 +233,7 @@ export function transformListingToFormListing(
     templateId: listing.templateId,
     sponsorId: listing.sponsorId,
     isPublished: listing.isPublished,
+    isFeatured: listing.isFeatured || false,
     publishedAt: listing.publishedAt,
     totalPaymentsMade: listing.totalPaymentsMade,
     isWinnersAnnounced: listing.isWinnersAnnounced,

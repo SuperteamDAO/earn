@@ -32,6 +32,7 @@ interface UseListingStateProps {
   readonly defaultCategory?: ListingCategory;
   readonly defaultStatus?: ListingStatus;
   readonly defaultSortBy?: ListingSortOption;
+  readonly defaultTab?: ListingTab;
 }
 
 type QueryParamUpdates = Partial<
@@ -42,6 +43,7 @@ export const useListingState = ({
   defaultCategory = DEFAULT_HOOK_INITIAL_CATEGORY_VALUE,
   defaultStatus = DEFAULT_STATUS_VALUE,
   defaultSortBy = DEFAULT_SORT_BY_VALUE,
+  defaultTab,
 }: UseListingStateProps) => {
   const router = useRouter();
   const pathname = usePathname();
@@ -55,14 +57,14 @@ export const useListingState = ({
   const getTabFromParams = useCallback(
     (params: URLSearchParams): ListingTab => {
       const tabParam = params.get('tab');
-      if (tabParam === null) return DEFAULT_TAB_VALUE;
+      if (tabParam === null) return defaultTab ?? DEFAULT_TAB_VALUE;
       const parsed = ListingTabSchema.safeParse(tabParam);
       if (parsed.success && parsed.data !== undefined) {
         return parsed.data;
       }
-      return DEFAULT_TAB_VALUE;
+      return defaultTab ?? DEFAULT_TAB_VALUE;
     },
-    [],
+    [defaultTab],
   );
 
   const getCategoryFromParams = useCallback(
