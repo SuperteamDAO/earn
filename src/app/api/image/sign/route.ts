@@ -4,8 +4,6 @@ import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
 import logger from '@/lib/logger';
-import { uploadSignatureRateLimiter } from '@/lib/ratelimit';
-import { checkAndApplyRateLimitApp } from '@/lib/rateLimiterService';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { getUserSession } from '@/features/auth/utils/getUserSession';
@@ -52,17 +50,6 @@ export async function POST(request: NextRequest) {
 
     const userId = session.data.userId;
     logger.debug(`Authenticated user: ${userId}`);
-
-    const rateLimitResponse = await checkAndApplyRateLimitApp({
-      limiter: uploadSignatureRateLimiter,
-      identifier: userId,
-      routeName: 'uploadSignature',
-    });
-
-    if (rateLimitResponse) {
-      logger.warn('Rate limit exceeded for upload signature', { userId });
-      return rateLimitResponse;
-    }
 
     const rawBody = await request.json();
 

@@ -7,12 +7,9 @@ import {
   type SubSkillsType,
 } from '@/interface/skills';
 import logger from '@/lib/logger';
-import { publicApiRateLimiter } from '@/lib/ratelimit';
-import { checkAndApplyRateLimit } from '@/lib/rateLimiterService';
 import { prisma } from '@/prisma';
 import { type BountyType } from '@/prisma/enums';
 import { empty, join, raw, sql } from '@/prisma/internal/prismaNamespace';
-import { getClientIPPages } from '@/utils/getClientIPPages';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { getPrivyToken } from '@/features/auth/utils/getPrivyToken';
@@ -21,14 +18,6 @@ export default async function relatedListings(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
-  const clientIP = getClientIPPages(req);
-  const canProceed = await checkAndApplyRateLimit(res, {
-    limiter: publicApiRateLimiter,
-    identifier: `listings_related:${clientIP}`,
-    routeName: 'listings-related',
-  });
-  if (!canProceed) return;
-
   const params = req.query;
   const listingId = params.listingId as string;
   const take = params.take ? parseInt(params.take as string, 10) : 5;

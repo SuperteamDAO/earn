@@ -2,15 +2,12 @@ import { type NextApiRequest, type NextApiResponse } from 'next';
 import { z } from 'zod';
 
 import logger from '@/lib/logger';
-import { publicApiRateLimiter } from '@/lib/ratelimit';
-import { checkAndApplyRateLimit } from '@/lib/rateLimiterService';
 import { prisma } from '@/prisma';
 import { type CommentFindManyArgs } from '@/prisma/models/Comment';
 import { type GrantApplicationInclude } from '@/prisma/models/GrantApplication';
 import { type PoWGetPayload, type PoWInclude } from '@/prisma/models/PoW';
 import { type SubmissionInclude } from '@/prisma/models/Submission';
 import { getCloudinaryFetchUrl } from '@/utils/cloudinary';
-import { getClientIPPages } from '@/utils/getClientIPPages';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { type FeedPostType, FeedPostTypeSchema } from '@/features/feed/types';
@@ -21,14 +18,6 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ): Promise<void> {
-  const clientIP = getClientIPPages(req);
-  const canProceed = await checkAndApplyRateLimit(res, {
-    limiter: publicApiRateLimiter,
-    identifier: `feed_post:${clientIP}`,
-    routeName: 'feed-post',
-  });
-  if (!canProceed) return;
-
   logger.debug(`Request query: ${safeStringify(req.query)}`);
   const type = req.query.type as FeedPostType;
   const id = req.query.id as string;

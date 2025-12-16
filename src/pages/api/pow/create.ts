@@ -1,8 +1,6 @@
 import type { NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
-import { powCreateRateLimiter } from '@/lib/ratelimit';
-import { checkAndApplyRateLimit } from '@/lib/rateLimiterService';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
 
@@ -28,16 +26,6 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
     return res.status(400).json({
       error: 'The user is not authenticated.',
     });
-  }
-
-  const canProceed = await checkAndApplyRateLimit(res, {
-    limiter: powCreateRateLimiter,
-    identifier: userId,
-    routeName: 'powCreate',
-  });
-
-  if (!canProceed) {
-    return;
   }
 
   const { pows } = req.body as { pows: PoW[] };

@@ -1,10 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
-import { publicApiRateLimiter } from '@/lib/ratelimit';
-import { checkAndApplyRateLimit } from '@/lib/rateLimiterService';
 import { prisma } from '@/prisma';
-import { getClientIPPages } from '@/utils/getClientIPPages';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { getPrivyToken } from '@/features/auth/utils/getPrivyToken';
@@ -19,14 +16,6 @@ export default async function grants(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
-  const clientIP = getClientIPPages(req);
-  const canProceed = await checkAndApplyRateLimit(res, {
-    limiter: publicApiRateLimiter,
-    identifier: `grants_live:${clientIP}`,
-    routeName: 'grants-live',
-  });
-  if (!canProceed) return;
-
   try {
     logger.debug('Fetching grants from database');
 

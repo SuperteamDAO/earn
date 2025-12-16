@@ -2,14 +2,11 @@ import { headers } from 'next/headers';
 import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
-import { publicApiRateLimiter } from '@/lib/ratelimit';
-import { checkAndApplyRateLimitApp } from '@/lib/rateLimiterService';
 import { prisma } from '@/prisma';
 import {
   type JsonValue,
   PrismaClientKnownRequestError,
 } from '@/prisma/internal/prismaNamespace';
-import { getClientIP } from '@/utils/getClientIP';
 
 import { getUserSession } from '@/features/auth/utils/getUserSession';
 import {
@@ -22,14 +19,6 @@ const CountQueryParamsSchema = QueryParamsSchema.omit({ category: true });
 
 export async function GET(request: NextRequest) {
   const requestHeaders = await headers();
-  const clientIP = getClientIP(requestHeaders);
-
-  const rateLimitResponse = await checkAndApplyRateLimitApp({
-    limiter: publicApiRateLimiter,
-    identifier: `listings_count:${clientIP}`,
-    routeName: 'listings-count',
-  });
-  if (rateLimitResponse) return rateLimitResponse;
 
   try {
     const session = await getUserSession(requestHeaders);
