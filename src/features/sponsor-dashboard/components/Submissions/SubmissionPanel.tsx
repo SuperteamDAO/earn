@@ -12,6 +12,7 @@ import { truncatePublicKey } from '@/utils/truncatePublicKey';
 import { truncateString } from '@/utils/truncateString';
 
 import type { Listing } from '@/features/listings/types';
+import { getListingStatus } from '@/features/listings/utils/status';
 import {
   GitHub,
   Telegram,
@@ -46,6 +47,9 @@ export const SubmissionPanel = ({
   const isProject = bounty?.type === 'project';
 
   const [selectedSubmission] = useAtom(selectedSubmissionAtom);
+  const listingStatus = getListingStatus(bounty);
+  const shouldHideTxLinks =
+    bounty?.isFndnPaying && listingStatus === 'Completed';
 
   return (
     <div className="sticky top-[3rem] w-full">
@@ -107,7 +111,8 @@ export const SubmissionPanel = ({
                 {selectedSubmission?.isWinner &&
                   selectedSubmission?.winnerPosition &&
                   selectedSubmission?.isPaid &&
-                  !isProject && (
+                  !isProject &&
+                  !shouldHideTxLinks && (
                     <Button
                       className="mr-4 border-slate-300 text-slate-600"
                       onClick={() => {

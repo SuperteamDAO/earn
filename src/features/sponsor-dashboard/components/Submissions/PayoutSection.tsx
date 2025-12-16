@@ -126,6 +126,8 @@ export const PayoutSection = ({
   const listingStatus = getListingStatus(bounty);
 
   const isFndnToPay = listingStatus === 'Fndn to Pay';
+  const shouldHideTxLinks =
+    bounty.isFndnPaying && listingStatus === 'Completed';
 
   return (
     <div className="h-full w-full overflow-x-auto rounded-md border border-gray-200">
@@ -242,7 +244,7 @@ export const PayoutSection = ({
                   )}
                   <TableCell>
                     <div className="flex items-center gap-2">
-                      {submission.isPaid ? (
+                      {submission.isPaid && !shouldHideTxLinks ? (
                         isProject && hasMultipleTranches ? (
                           <div
                             className="flex cursor-pointer items-center gap-1 text-sm font-medium text-slate-600 hover:text-slate-900"
@@ -302,15 +304,18 @@ export const PayoutSection = ({
                     </div>
                   </TableCell>
                 </TableRow>
-                {isExpanded && isProject && hasMultipleTranches && (
-                  <TableRow>
-                    <TableCell />
-                    <PaymentDetailsRow
-                      paymentDetails={submission.paymentDetails!}
-                      token={bounty.token || 'USDC'}
-                    />
-                  </TableRow>
-                )}
+                {isExpanded &&
+                  isProject &&
+                  hasMultipleTranches &&
+                  !shouldHideTxLinks && (
+                    <TableRow>
+                      <TableCell />
+                      <PaymentDetailsRow
+                        paymentDetails={submission.paymentDetails!}
+                        token={bounty.token || 'USDC'}
+                      />
+                    </TableRow>
+                  )}
               </React.Fragment>
             );
           })}
