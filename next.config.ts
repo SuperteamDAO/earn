@@ -45,8 +45,9 @@ const csp = baseCsp.replace(/\s{2,}/g, ' ').trim();
 const nextConfig: NextConfig = {
   // turbopack: {},
   basePath: '/earn',
+  assetPrefix: '/earn',
   poweredByHeader: false,
-  trailingSlash: true,
+  // trailingSlash: true,
   reactStrictMode: true,
   reactCompiler: false,
   images: {
@@ -141,7 +142,7 @@ const nextConfig: NextConfig = {
       },
     ];
   },
-  skipTrailingSlashRedirect: true,
+  // skipTrailingSlashRedirect: true,
 };
 
 const combinedConfig = withAxiom(withPWA(nextConfig));
