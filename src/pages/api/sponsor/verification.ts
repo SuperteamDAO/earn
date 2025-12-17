@@ -62,7 +62,7 @@ async function verification(req: NextApiRequestWithUser, res: NextApiResponse) {
       if (!process.env.EARNCOGNITO_URL) {
         throw new Error('ENV EARNCOGNITO_URL not provided');
       }
-      await earncognitoClient.post(`/discord/verify-listing/initiate`, {
+      await earncognitoClient.post(`/telegram/verify-listing`, {
         listingId: validationResult.data.listingId,
       });
       logger.info('Sent Discord Verification message', {

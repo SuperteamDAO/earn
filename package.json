@@ -118,7 +118,7 @@
     "next-pwa": "^5.6.0",
     "nprogress": "^0.2.0",
     "papaparse": "^5.5.3",
-    "posthog-js": "^1.284.0",
+    "posthog-js": "^1.300.0",
     "prosemirror-model": "^1.25.4",
     "prosemirror-state": "^1.4.4",
     "prosemirror-view": "^1.41.3",

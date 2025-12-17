@@ -66,6 +66,7 @@ const Meta = (props: IMetaProps) => {
       />
       <meta property="og:image" content={ogImage} key="og:image" />
       <meta property="og:image:alt" content={props.title} key="og:image:alt" />
+      <meta property="og:type" content="website" key="og:type" />
       <meta
         name="twitter:card"
         content="summary_large_image"
@@ -76,6 +77,11 @@ const Meta = (props: IMetaProps) => {
         name="twitter:creator"
         content="@SuperteamEarn"
         key="twitter:creator"
+      />
+      <meta
+        name="twitter:description"
+        content={props.description}
+        key="twitter:description"
       />
     </Head>
   );

@@ -223,8 +223,34 @@ export const createListingFormSchema = ({
         .nullable(),
       rewards: rewardsSchema.optional().nullable(),
       compensationType: z.nativeEnum(CompensationType).default('fixed'),
-      minRewardAsk: z.number().min(0).max(MAX_REWARD).optional().nullable(),
-      maxRewardAsk: z.number().min(0).max(MAX_REWARD).optional().nullable(),
+      minRewardAsk: z
+        .number()
+        .min(0)
+        .max(MAX_REWARD)
+        .refine(
+          (val) => {
+            if (val === null || val === undefined) return true;
+            const decimalPlaces = (val.toString().split('.')[1] || '').length;
+            return decimalPlaces <= 4;
+          },
+          { message: 'Maximum 4 decimal places allowed' },
+        )
+        .optional()
+        .nullable(),
+      maxRewardAsk: z
+        .number()
+        .min(0)
+        .max(MAX_REWARD)
+        .refine(
+          (val) => {
+            if (val === null || val === undefined) return true;
+            const decimalPlaces = (val.toString().split('.')[1] || '').length;
+            return decimalPlaces <= 4;
+          },
+          { message: 'Maximum 4 decimal places allowed' },
+        )
+        .optional()
+        .nullable(),
       maxBonusSpots: z
         .number({
           message: 'Required',
@@ -257,6 +283,7 @@ export const createListingFormSchema = ({
 
       // values that will not be set on any API, but useful for response
       isPublished: z.boolean().optional().nullable(),
+      isFeatured: z.boolean().optional().nullable(),
       isWinnersAnnounced: z.boolean().optional().nullable(),
       totalWinnersSelected: z.number().optional().nullable(),
       totalPaymentsMade: z.number().optional().nullable(),

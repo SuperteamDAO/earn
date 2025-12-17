@@ -32,8 +32,18 @@ export async function GET(request: Request) {
       return NextResponse.json({ price: 1 });
     }
 
-    const baseUrl = 'https://lite-api.jup.ag/price/v3';
+    const baseUrl = 'https://api.jup.ag/price/v3';
+    const apiKey = process.env.JUPITER_API_KEY;
+
+    if (!apiKey) {
+      return NextResponse.json(
+        { error: 'Jupiter API key is not configured' },
+        { status: 500 },
+      );
+    }
+
     const response = await fetch(`${baseUrl}?ids=${mintAddress}`, {
+      headers: { 'x-api-key': apiKey },
       next: { revalidate: 60 },
     });
 
