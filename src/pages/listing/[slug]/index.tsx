@@ -12,11 +12,13 @@ import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { ListingPageLayout } from '@/layouts/Listing';
 import { getSubmissionCount } from '@/pages/api/listings/[listingId]/submission-count';
 import { getListingDetailsBySlug } from '@/pages/api/listings/details/[slug]';
+import { prisma } from '@/prisma';
 import {
   generateBreadcrumbListSchema,
   generateJobPostingSchema,
 } from '@/utils/json-ld';
 
+import { getPrivyToken } from '@/features/auth/utils/getPrivyToken';
 import { ListingPop } from '@/features/conversion-popups/components/ListingPop';
 import { DescriptionUI } from '@/features/listings/components/ListingPage/DescriptionUI';
 import { ListingWinners } from '@/features/listings/components/ListingPage/ListingWinners';
@@ -84,10 +86,25 @@ function ListingDetails({
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { slug } = context.query;
-  let listingData;
+  const slug = Array.isArray(context.query.slug)
+    ? context.query.slug[0]
+    : context.query.slug;
+  let listingData: Awaited<ReturnType<typeof getListingDetailsBySlug>> | null;
   try {
-    listingData = await getListingDetailsBySlug(String(slug));
+    const privyDid = await getPrivyToken(context.req);
+
+    let viewerIsPro = false;
+
+    if (privyDid) {
+      const viewer = await prisma.user.findUnique({
+        where: { privyDid },
+        select: { isPro: true },
+      });
+
+      viewerIsPro = viewer?.isPro ?? false;
+    }
+
+    listingData = await getListingDetailsBySlug(String(slug), { viewerIsPro });
   } catch (e) {
     console.error(e);
     listingData = null;

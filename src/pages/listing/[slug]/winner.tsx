@@ -6,9 +6,11 @@ import { useEffect, useState } from 'react';
 import type { SubmissionWithUser } from '@/interface/submission';
 import { getWinningSubmissionsByListingId } from '@/pages/api/listings/[listingId]/winners';
 import { getListingDetailsBySlug } from '@/pages/api/listings/details/[slug]';
+import { prisma } from '@/prisma';
 import { sortRank } from '@/utils/rank';
 import { getURL } from '@/utils/validUrl';
 
+import { getPrivyToken } from '@/features/auth/utils/getPrivyToken';
 import { BONUS_REWARD_POSITION } from '@/features/listing-builder/constants';
 import { type Listing, type Rewards } from '@/features/listings/types';
 import { getListingTypeLabel } from '@/features/listings/utils/status';
@@ -90,7 +92,9 @@ interface StrippedSubmission {
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { slug } = context.query;
+  const slug = Array.isArray(context.query.slug)
+    ? context.query.slug[0]
+    : context.query.slug;
   const { req } = context;
   const protocol = req.headers['x-forwarded-proto'] || 'http';
   const host = req.headers.host;
@@ -99,27 +103,42 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   let bountyData;
   const submissions: StrippedSubmission[] = [];
   try {
-    bountyData = await getListingDetailsBySlug(String(slug));
+    const privyDid = await getPrivyToken(req);
 
-    let data = await getWinningSubmissionsByListingId(String(bountyData.id));
-    data = data.filter((d) => d.winnerPosition !== BONUS_REWARD_POSITION);
-    const winners = sortRank(
-      data.map((submission) => submission.winnerPosition || NaN),
-    );
-    const sortedSubmissions = winners.map((position) =>
-      data.find((d: SubmissionWithUser) => d.winnerPosition === position),
-    ) as SubmissionWithUser[];
-    sortedSubmissions.forEach((s) => {
-      submissions.push({
-        id: s.id,
-        winnerPosition: s.winnerPosition,
-        user: {
-          firstName: s.user.firstName,
-          lastName: s.user.lastName,
-          photo: s.user.photo,
-        },
+    let viewerIsPro = false;
+
+    if (privyDid) {
+      const viewer = await prisma.user.findUnique({
+        where: { privyDid },
+        select: { isPro: true },
       });
-    });
+
+      viewerIsPro = viewer?.isPro ?? false;
+    }
+
+    bountyData = await getListingDetailsBySlug(String(slug), { viewerIsPro });
+
+    if (bountyData?.id) {
+      let data = await getWinningSubmissionsByListingId(String(bountyData.id));
+      data = data.filter((d) => d.winnerPosition !== BONUS_REWARD_POSITION);
+      const winners = sortRank(
+        data.map((submission) => submission.winnerPosition || NaN),
+      );
+      const sortedSubmissions = winners.map((position) =>
+        data.find((d: SubmissionWithUser) => d.winnerPosition === position),
+      ) as SubmissionWithUser[];
+      sortedSubmissions.forEach((s) => {
+        submissions.push({
+          id: s.id,
+          winnerPosition: s.winnerPosition,
+          user: {
+            firstName: s.user.firstName,
+            lastName: s.user.lastName,
+            photo: s.user.photo,
+          },
+        });
+      });
+    }
   } catch (e) {
     console.error(e);
     bountyData = null;
