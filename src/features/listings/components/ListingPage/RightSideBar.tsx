@@ -177,7 +177,7 @@ export function RightSideBar({
                             alt="token icon"
                             src={
                               tokenList.find((e) => e?.tokenSymbol === token)
-                                ?.icon ?? '/assets/dollar.svg'
+                                ?.icon ?? '/earn/assets/dollar.svg'
                             }
                           />
                         )}

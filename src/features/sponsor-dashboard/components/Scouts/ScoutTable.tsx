@@ -138,7 +138,7 @@ export function ScoutTable({ bountyId, scouts, setInvited }: Props) {
                             contentProps={{ className: 'text-xs' }}
                           >
                             <LocalImage
-                              src="/assets/sparkle.svg"
+                              src="/earn/assets/sparkle.svg"
                               alt="sparkle"
                             />
                           </Tooltip>

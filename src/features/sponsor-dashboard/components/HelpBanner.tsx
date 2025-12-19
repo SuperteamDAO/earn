@@ -19,7 +19,7 @@ export const HelpBanner = () => {
             <LocalImage
               className="mr-2 h-8 w-8 xl:mr-3 xl:h-[3.3rem] xl:w-[3.2rem]"
               alt="message pratik"
-              src={'/assets/sponsor/pratik.webp'}
+              src={'/earn/assets/sponsor/pratik.webp'}
             />
             <div className="flex gap-2 xl:block">
               <p className="text-sm font-semibold whitespace-nowrap text-slate-900 xl:text-base">

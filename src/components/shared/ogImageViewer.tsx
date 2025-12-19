@@ -26,7 +26,7 @@ const getRandomFallbackImage = (): string => {
   if (!fallbackImageCache.has(randomNumber)) {
     fallbackImageCache.set(
       randomNumber,
-      `/assets/fallback/og/${randomNumber}.webp`,
+      `/earn/assets/fallback/og/${randomNumber}.webp`,
     );
   }
   return fallbackImageCache.get(randomNumber)!;

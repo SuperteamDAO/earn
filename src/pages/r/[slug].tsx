@@ -163,7 +163,7 @@ export default function ReferralLandingPage({
     <>
       <div className="flex w-full items-center justify-center border-b py-3">
         <LocalImage
-          src="/assets/logo.svg"
+          src="/earn/assets/logo.svg"
           alt="Superteam Earn"
           className="h-[1.4rem] w-auto cursor-pointer object-contain"
           loading="eager"

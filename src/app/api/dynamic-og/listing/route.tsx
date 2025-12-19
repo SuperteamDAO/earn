@@ -136,7 +136,7 @@ export async function GET(request: Request) {
                     objectFit: 'contain',
                   }}
                   alt="logo"
-                  src={`https://earn.superteam.fun/assets/${listingIcon}`}
+                  src={`https://st.superteamearn.com/earn/assets/${listingIcon}`}
                   width="64px"
                   height="64px"
                 />

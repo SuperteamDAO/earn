@@ -37,7 +37,7 @@ export const ApplicationStats = ({ application, grant }: ApplicationStats) => {
               alt={'green doller'}
               src={
                 tokenList.filter((e) => e?.tokenSymbol === grant.token)[0]
-                  ?.icon ?? '/assets/dollar.svg'
+                  ?.icon ?? '/earn/assets/dollar.svg'
               }
             />
             <p className="font-semibold text-slate-600">

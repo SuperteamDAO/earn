@@ -1,6 +1,7 @@
 import { queryOptions } from '@tanstack/react-query';
 
 import { tokenList } from '@/constants/tokenList';
+import { api } from '@/lib/api';
 
 import { fetchTokenUSDValue } from '@/features/wallet/utils/fetchTokenUSDValue';
 
@@ -30,11 +31,9 @@ export const featuredAvailabilityQuery = () =>
       readonly isAvailable: boolean;
       readonly count?: number;
     }> => {
-      const res = await fetch('/api/sponsor-dashboard/listing/featured-posts', {
-        method: 'POST',
-      });
-      if (!res.ok) throw new Error('Failed to fetch featured-posts');
-      const data = (await res.json()) as { count?: number };
+      const { data } = await api.post<{ count?: number }>(
+        '/api/sponsor-dashboard/listing/featured-posts',
+      );
       const isAvailable =
         typeof data.count === 'number' ? data.count < 2 : true;
       return { isAvailable, count: data.count };
@@ -47,13 +46,10 @@ export const emailEstimateQuery = (skills: unknown, region?: string | null) => {
   return queryOptions({
     queryKey: ['boost.emailEstimate', { skills, region }],
     queryFn: async (): Promise<number> => {
-      const res = await fetch('/api/sponsor-dashboard/listing/email-estimate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ skills, region }),
-      });
-      if (!res.ok) throw new Error('Failed to estimate recipients');
-      const data = (await res.json()) as { count?: number };
+      const { data } = await api.post<{ count?: number }>(
+        '/api/sponsor-dashboard/listing/email-estimate',
+        { skills, region },
+      );
       return typeof data.count === 'number' ? data.count : 0;
     },
     enabled,

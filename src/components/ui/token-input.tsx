@@ -59,7 +59,7 @@ function TokenInput({
           alt="token"
           src={
             tokenList.filter((e) => e?.tokenSymbol === token)[0]?.icon ??
-            '/assets/dollar.svg'
+            '/earn/assets/dollar.svg'
           }
         />
         <p

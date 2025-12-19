@@ -59,7 +59,7 @@ export function AnnouncementNavigation({
         <LocalImage
           className="h-[1.4rem] cursor-pointer object-contain"
           alt="Superteam Earn"
-          src="/assets/logo.svg"
+          src="/earn/assets/logo.svg"
         />
       </div>
     </div>

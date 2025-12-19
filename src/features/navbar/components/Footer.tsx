@@ -194,7 +194,7 @@ export const Footer = () => {
               <LocalImage
                 className="mr-4 h-6"
                 alt="Superteam Earn"
-                src="/assets/logo.svg"
+                src="/earn/assets/logo.svg"
               />
             </div>
             <p className="mb-6 text-sm text-slate-500">
@@ -222,7 +222,7 @@ export const Footer = () => {
             <div>
               <img
                 alt="Powered by Solana"
-                src="/assets/solana-powered.svg"
+                src="/earn/assets/solana-powered.svg"
                 className="mt-6 w-36"
               />
             </div>

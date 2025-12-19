@@ -62,7 +62,7 @@ export function SponsorListing() {
 
   const tokenIcon =
     tokenList.filter((e) => e?.tokenSymbol === listing.token)[0]?.icon ??
-    '/assets/dollar.svg';
+    '/earn/assets/dollar.svg';
 
   const status = getListingStatus(listing);
   const statusColors = getColorStyles(status);
