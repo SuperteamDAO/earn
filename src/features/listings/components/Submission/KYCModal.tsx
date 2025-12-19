@@ -237,9 +237,9 @@ export const KYCModal = ({
             onClick={handleClose}
           />
           {showDisclaimer ? (
-            <div className="flex min-h-[400px] flex-col justify-between p-8">
+            <div className="flex flex-col justify-between px-6 pt-6">
               <div className="flex flex-col gap-4">
-                <h2 className="text-2xl font-semibold text-slate-900">
+                <h2 className="text-xl font-semibold text-slate-900">
                   Disclaimer
                 </h2>
                 <p className="text-base text-slate-600">
