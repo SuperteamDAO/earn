@@ -7,11 +7,11 @@ import { type JSX, useEffect, useMemo, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 
 import { EmptySection } from '@/components/shared/EmptySection';
+import { JsonLd } from '@/components/shared/JsonLd';
 import { ShareIcon } from '@/components/shared/shareIcon';
 import { Button } from '@/components/ui/button';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { Separator } from '@/components/ui/separator';
-import { ASSET_URL } from '@/constants/ASSET_URL';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import type { User } from '@/interface/user';
@@ -19,6 +19,10 @@ import { Default } from '@/layouts/Default';
 import { prisma } from '@/prisma';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
+import {
+  generateBreadcrumbListSchema,
+  generatePersonSchema,
+} from '@/utils/json-ld';
 import { getURL } from '@/utils/validUrl';
 
 import { AuthWrapper } from '@/features/auth/components/AuthWrapper';
@@ -47,6 +51,7 @@ const AddProject = dynamic(
 import { ProBadge } from '@/features/pro/components/ProBadge';
 import { ProBG } from '@/features/pro/components/ProBg';
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
+import { TalentProfileBackground } from '@/features/talent/components/TalentProfileBackground';
 const ShareProfile = dynamic(
   () =>
     import('@/features/talent/components/shareProfile').then(
@@ -65,9 +70,10 @@ interface TalentProps {
     participations: number;
     totalWinnings: number;
   };
+  bgIndex: number;
 }
 
-function TalentProfile({ talent, stats }: TalentProps) {
+function TalentProfile({ talent, stats, bgIndex }: TalentProps) {
   const [activeTab, setActiveTab] = useState<'activity' | 'projects'>(
     'activity',
   );
@@ -123,24 +129,6 @@ function TalentProfile({ talent, stats }: TalentProps) {
 
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const bgImages = ['1.webp', '2.webp', '3.webp', '4.webp', '5.webp'];
-  const hashStringToInt = (input: string): number => {
-    let hash = 0;
-    for (let i = 0; i < input.length; i++) {
-      hash = (hash << 5) - hash + input.charCodeAt(i);
-      hash |= 0;
-    }
-    return Math.abs(hash);
-  };
-  const bgIndex = useMemo(() => {
-    return talent?.id ? hashStringToInt(talent.id) % bgImages.length : 0;
-  }, [talent?.id]);
-  const coverUrl = `${ASSET_URL}/bg/profile-cover/${bgImages[bgIndex]}`;
-  const optimizedCoverUrl = coverUrl.replace(
-    '/upload/',
-    '/upload/f_auto,q_auto/',
-  );
-
   const socialLinks = [
     { Icon: Twitter, link: talent?.twitter },
     { Icon: Linkedin, link: talent?.linkedin },
@@ -194,32 +182,30 @@ function TalentProfile({ talent, stats }: TalentProps) {
 
   const workPreferenceText = getWorkPreferenceText(talent?.workPrefernce);
 
-  const ogImagePath = talent?.isPro
-    ? `${getURL()}api/dynamic-og/pro-talent/`
-    : `${getURL()}api/dynamic-og/talent/`;
-  const ogImage = new URL(ogImagePath);
-  ogImage.searchParams.set('name', `${talent?.firstName} ${talent?.lastName}`);
-  ogImage.searchParams.set('username', talent?.username!);
-  ogImage.searchParams.set('skills', JSON.stringify(talent?.skills));
-  ogImage.searchParams.set(
-    'totalEarned',
-    stats?.totalWinnings?.toFixed(0) || '0',
-  );
-  ogImage.searchParams.set(
-    'submissionCount',
-    stats?.participations?.toString(),
-  );
-  ogImage.searchParams.set('winnerCount', stats?.wins?.toString());
-  if (talent?.photo) {
-    ogImage.searchParams.set('photo', talent.photo);
-  }
+  const isPublicProfile = !!talent?.id && !talent.private;
 
-  const title =
-    talent?.firstName && talent?.lastName
-      ? `${talent?.firstName} ${talent?.lastName} | Superteam Earn Talent`
-      : 'Superteam Earn';
+  const description = useMemo(() => {
+    if (!isPublicProfile) return '';
 
-  const feedItems = feed?.pages.flatMap((page) => page) ?? [];
+    const parts: string[] = [];
+    const fullName = `${talent?.firstName || ''} ${
+      talent?.lastName || ''
+    }`.trim();
+
+    if (fullName) parts.push(fullName);
+    if (workPreferenceText) parts.push(`looking for ${workPreferenceText}`);
+    if (talent?.currentEmployer)
+      parts.push(`works at ${talent.currentEmployer}`);
+    if (talent?.location) parts.push(`based in ${talent.location}`);
+
+    const statsStr = `$${Math.round(
+      stats?.totalWinnings || 0,
+    ).toLocaleString()} earned, ${stats?.wins || 0} wins on Superteam Earn.`;
+
+    return parts.length > 0
+      ? `${parts.join(' | ')}. ${statsStr}`
+      : `Talent profile on Superteam Earn. ${statsStr}`;
+  }, [talent, workPreferenceText, stats, isPublicProfile]);
 
   const renderButton = (
     icon: JSX.Element,
@@ -273,33 +259,119 @@ function TalentProfile({ talent, stats }: TalentProps) {
     );
   };
 
+  const ogImagePath = talent?.isPro
+    ? `${getURL()}api/dynamic-og/pro-talent/`
+    : `${getURL()}api/dynamic-og/talent/`;
+  const ogImage = new URL(ogImagePath);
+  ogImage.searchParams.set('name', `${talent?.firstName} ${talent?.lastName}`);
+  ogImage.searchParams.set('username', talent?.username!);
+  ogImage.searchParams.set('skills', JSON.stringify(talent?.skills));
+  ogImage.searchParams.set(
+    'totalEarned',
+    stats?.totalWinnings?.toFixed(0) || '0',
+  );
+  ogImage.searchParams.set(
+    'submissionCount',
+    stats?.participations?.toString(),
+  );
+  ogImage.searchParams.set('winnerCount', stats?.wins?.toString());
+  if (talent?.photo) {
+    ogImage.searchParams.set('photo', talent.photo);
+  }
+
+  const title =
+    talent?.firstName && talent?.lastName
+      ? `${talent?.firstName} ${talent?.lastName} | Superteam Earn Talent`
+      : 'Superteam Earn';
+
+  const feedItems = feed?.pages.flatMap((page) => page) ?? [];
+
+  // Generate JSON-LD schemas for public profiles only
+  const personSchema = isPublicProfile
+    ? generatePersonSchema({
+        firstName: talent?.firstName,
+        lastName: talent?.lastName,
+        username: talent?.username,
+        photo: talent?.photo,
+        workPreference: workPreferenceText,
+        currentEmployer: talent?.currentEmployer,
+        location: talent?.location,
+        skills: talent?.skills,
+        twitter: talent?.twitter,
+        linkedin: talent?.linkedin,
+        github: talent?.github,
+        website: talent?.website,
+      })
+    : null;
+
+  const breadcrumbSchema = isPublicProfile
+    ? generateBreadcrumbListSchema([
+        { name: 'Home', url: '/' },
+        { name: 'Talent', url: '/leaderboard/' },
+        {
+          name:
+            `${talent?.firstName || ''} ${talent?.lastName || ''}`.trim() ||
+            'Talent',
+        },
+      ])
+    : null;
+
   return (
     <Default
       meta={
-        <Head>
-          <title>{title}</title>
-          <meta property="og:title" content={title} />
-          <meta property="og:image" content={ogImage.toString()} />
-          <meta name="twitter:title" content={title} />
-          <meta name="twitter:image" content={ogImage.toString()} />
-          <meta name="twitter:card" content="summary_large_image" />
-          <meta property="og:image:width" content="1200" />
-          <meta property="og:image:height" content="630" />
-          <meta property="og:image:alt" content="Talent on Superteam" />
-          <meta charSet="UTF-8" key="charset" />
-          <meta
-            name="viewport"
-            content="width=device-width, initial-scale=1, maximum-scale=1"
-            key="viewport"
-          />
-          <link
-            rel="preconnect"
-            href="https://res.cloudinary.com"
-            crossOrigin=""
-          />
-          <link rel="dns-prefetch" href="https://res.cloudinary.com" />
-          <link rel="preload" as="image" href={optimizedCoverUrl} />
-        </Head>
+        <>
+          <Head>
+            <title>{title}</title>
+            <meta property="og:title" content={title} />
+            <meta property="og:image" content={ogImage.toString()} />
+            <meta name="twitter:title" content={title} />
+            <meta name="twitter:image" content={ogImage.toString()} />
+            <meta name="twitter:card" content="summary_large_image" />
+            <meta property="og:image:width" content="1200" />
+            <meta property="og:image:height" content="630" />
+            <meta
+              property="og:image:alt"
+              content={
+                isPublicProfile
+                  ? `${talent?.firstName} ${talent?.lastName} - Talent profile on Superteam Earn`
+                  : 'Talent on Superteam'
+              }
+            />
+            <meta property="og:type" content="profile" />
+            <meta charSet="UTF-8" key="charset" />
+            <meta
+              name="viewport"
+              content="width=device-width, initial-scale=1, maximum-scale=1"
+              key="viewport"
+            />
+            <link
+              rel="preconnect"
+              href="https://res.cloudinary.com"
+              crossOrigin=""
+            />
+            <link rel="dns-prefetch" href="https://res.cloudinary.com" />
+            {isPublicProfile && (
+              <>
+                <meta name="description" content={description} />
+                <meta property="og:description" content={description} />
+                <meta name="twitter:description" content={description} />
+                <link
+                  rel="canonical"
+                  href={`https://earn.superteam.fun/t/${talent?.username}/`}
+                />
+              </>
+            )}
+            {talent.private && (
+              <>
+                <meta name="robots" content="noindex, nofollow" />
+                <meta name="googlebot" content="noindex, nofollow" />
+              </>
+            )}
+          </Head>
+          {personSchema && breadcrumbSchema && (
+            <JsonLd data={[personSchema, breadcrumbSchema]} />
+          )}
+        </>
       }
     >
       {!talent?.id && (
@@ -313,11 +385,9 @@ function TalentProfile({ talent, stats }: TalentProps) {
               className="h-[100px] w-full rounded-none md:h-[30vh]"
             />
           ) : (
-            <div
-              className="h-[100px] w-full bg-cover bg-no-repeat md:h-[30vh]"
-              style={{
-                backgroundImage: `url(${optimizedCoverUrl})`,
-              }}
+            <TalentProfileBackground
+              bgIndex={bgIndex}
+              className="h-[100px] w-full rounded-none md:h-[30vh]"
             />
           )}
           <div className="relative top-0 mx-auto max-w-[700px] rounded-[20px] bg-white px-4 py-7 md:-top-40 md:px-7">
@@ -588,6 +658,15 @@ function TalentProfile({ talent, stats }: TalentProps) {
   );
 }
 
+const hashStringToInt = (input: string): number => {
+  let hash = 0;
+  for (let i = 0; i < input.length; i++) {
+    hash = (hash << 5) - hash + input.charCodeAt(i);
+    hash |= 0;
+  }
+  return Math.abs(hash);
+};
+
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { slug } = context.query;
   try {
@@ -614,6 +693,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         photo: true,
         currentEmployer: true,
         location: true,
+        private: true,
         isPro: true,
       },
     });
@@ -656,8 +736,18 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
     const stats = { participations, wins, totalWinnings };
 
+    const bgIndex = talent?.id ? hashStringToInt(talent.id) % 5 : 0;
+    const bgNum = bgIndex + 1;
+
+    if (!talent.isPro) {
+      context.res.setHeader(
+        'Link',
+        `</assets/backgrounds/${bgNum}-mobile.avif>; rel=preload; as=image; type=image/avif; fetchpriority=high; media="(max-width: 639px)", </assets/backgrounds/${bgNum}-desktop.avif>; rel=preload; as=image; type=image/avif; fetchpriority=high; media="(min-width: 640px)"`,
+      );
+    }
+
     return {
-      props: { talent, stats },
+      props: { talent, stats, bgIndex },
     };
   } catch (error) {
     console.error(error);

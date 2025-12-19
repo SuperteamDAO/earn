@@ -12,6 +12,7 @@ import {
   createListingFormSchema,
   createListingRefinements,
 } from '../types/schema';
+import { checkSlug } from './getValidSlug';
 
 interface ListingValidatorParams {
   listing: ListingWithSponsor;
@@ -56,7 +57,7 @@ export const validateListing = async ({
     });
     const superValidator = innerSchema.superRefine(async (data, ctx) => {
       await createListingRefinements(data, ctx, hackathon ? [hackathon] : []);
-      await backendListingRefinements(data, ctx);
+      await backendListingRefinements(data, ctx, checkSlug);
     });
     const validatedData = await superValidator.parseAsync({
       ...(isEditing ? listing : {}),

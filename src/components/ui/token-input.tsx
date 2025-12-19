@@ -26,8 +26,23 @@ function TokenInput({
       return;
     }
 
-    const numericValue = inputValue.replace(/[^0-9]/g, '');
-    const finalValue = numericValue ? Number(numericValue) : null;
+    // Allow numbers and decimal point, limit to 4 decimal places
+    const numericValue = inputValue.replace(/[^0-9.]/g, '');
+
+    // Ensure only one decimal point
+    const parts = numericValue.split('.');
+    const formattedValue =
+      parts.length > 2
+        ? `${parts[0]}.${parts.slice(1).join('')}`
+        : numericValue;
+
+    // Limit to 4 decimal places
+    const [integerPart, decimalPart] = formattedValue.split('.');
+    const limitedValue = decimalPart
+      ? `${integerPart}.${decimalPart.slice(0, 4)}`
+      : formattedValue;
+
+    const finalValue = limitedValue ? Number(limitedValue) : null;
 
     onChange?.(finalValue);
   };
@@ -62,13 +77,13 @@ function TokenInput({
         )}
         onChange={handleInputChange}
         type="number"
-        inputMode="numeric"
-        pattern="[0-9]*"
+        inputMode="decimal"
+        step="0.0001"
         value={value ?? ''}
         min="0"
         onKeyDown={(e) => {
           if (
-            !/[0-9]|\Backspace|\Tab|\Delete|\ArrowLeft|\ArrowRight/.test(e.key)
+            !/[0-9.]|\Backspace|\Tab|\Delete|\ArrowLeft|\ArrowRight/.test(e.key)
           ) {
             e.preventDefault();
           }

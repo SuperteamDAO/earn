@@ -429,7 +429,7 @@ export const PayoutButton = ({ bounty, submission }: Props) => {
   return (
     <>
       <div
-        className="ph-no-capture"
+        className="ph-no-capture wallet-payout-button"
         onClick={() => {
           posthog.capture('connect wallet_payment');
         }}

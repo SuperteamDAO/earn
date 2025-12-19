@@ -1,4 +1,5 @@
 import { ExternalLink } from 'lucide-react';
+import Link from 'next/link';
 import posthog from 'posthog-js';
 
 import { type ParentSkills } from '@/interface/skills';
@@ -39,7 +40,12 @@ export function ExtraInfoSection({
           </p>
           <p className="h-full text-slate-500">
             This {isGrant ? 'grant' : 'listing'} is only open for people in{' '}
-            <span className="font-semibold">{region}</span>
+            <Link
+              href={`/regions/${region.toLowerCase().replace(/\s+/g, '-')}`}
+              className="font-semibold text-slate-500 hover:text-slate-700 hover:underline"
+            >
+              {region}
+            </Link>
           </p>
         </div>
       )}
@@ -75,12 +81,13 @@ export function ExtraInfoSection({
         </p>
         <div className="flex flex-wrap gap-3">
           {skills?.map((skill) => (
-            <div
+            <Link
               key={skill}
-              className="m-0 rounded-sm bg-slate-100 px-4 py-1 text-xs font-medium text-slate-600"
+              href={`/skill/${skill.toLowerCase().replace(/\s+/g, '-')}`}
+              className="m-0 rounded-sm bg-slate-100 px-4 py-1 text-xs font-medium text-slate-600 transition-colors hover:bg-slate-200 hover:text-slate-700"
             >
               {skill}
-            </div>
+            </Link>
           ))}
         </div>
       </div>

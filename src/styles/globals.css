@@ -276,30 +276,54 @@ body {
   font-family: var(--font-sans);
 }
 
-.wallet-adapter-button.wallet-adapter-button-trigger {
+/* Wallet buttons in header (Select Wallet) */
+.wallet-header-button .wallet-adapter-button.wallet-adapter-button-trigger {
   width: 100% !important;
-  background-color: #6366f1;
-  /* font-size: 10px !important; */
-  color: white !important;
-  /* border: 1px solid !important; */
-  border-color: #f1f5f9 !important;
-  margin-left: auto !important;
-  margin-right: auto !important;
+  background-color: var(--primary) !important;
+  color: var(--primary-foreground) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--radius) !important;
+  font-weight: 600 !important;
+  font-family: var(--font-sans) !important;
+  transition: background-color 0.2s ease !important;
+  opacity: 1 !important;
 }
 
-.wallet-adapter-button.wallet-adapter-button-trigger:hover,
-.wallet-adapter-button.wallet-adapter-button-trigger:active {
-  background-color: #6366f1;
+/* Wallet buttons in payout table (Pay X USDC) */
+.wallet-payout-button .wallet-adapter-button.wallet-adapter-button-trigger {
+  width: 100% !important;
+  background-color: var(--primary) !important;
+  color: var(--primary-foreground) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--radius) !important;
+  font-weight: 600 !important;
+  font-family: var(--font-sans) !important;
+  transition: background-color 0.2s ease !important;
+  opacity: 1 !important;
 }
 
-.wallet-adapter-button.wallet-adapter-button-trigger:not([disabled]):hover {
-  background-color: #6366f1;
+.wallet-header-button .wallet-adapter-button.wallet-adapter-button-trigger:hover,
+.wallet-header-button .wallet-adapter-button.wallet-adapter-button-trigger:active,
+.wallet-payout-button .wallet-adapter-button.wallet-adapter-button-trigger:hover,
+.wallet-payout-button .wallet-adapter-button.wallet-adapter-button-trigger:active {
+  background-color: color-mix(in srgb, var(--primary) 90%, transparent) !important;
 }
 
-.wallet-adapter-button-end-icon,
-.wallet-adapter-button-start-icon,
-.wallet-adapter-button-end-icon img,
-.wallet-adapter-button-start-icon img {
+.wallet-header-button .wallet-adapter-button.wallet-adapter-button-trigger:not([disabled]):hover,
+.wallet-payout-button .wallet-adapter-button.wallet-adapter-button-trigger:not([disabled]):hover {
+  background-color: color-mix(in srgb, var(--primary) 90%, transparent) !important;
+}
+
+.wallet-header-button .wallet-adapter-button-end-icon,
+.wallet-header-button .wallet-adapter-button.wallet-adapter-button-trigger .wallet-adapter-button-end-icon,
+.wallet-header-button .wallet-adapter-button.wallet-adapter-button-trigger .wallet-adapter-button-start-icon,
+.wallet-header-button .wallet-adapter-button.wallet-adapter-button-trigger .wallet-adapter-button-end-icon img,
+.wallet-header-button .wallet-adapter-button.wallet-adapter-button-trigger .wallet-adapter-button-start-icon img,
+.wallet-payout-button .wallet-adapter-button-end-icon,
+.wallet-payout-button .wallet-adapter-button.wallet-adapter-button-trigger .wallet-adapter-button-end-icon,
+.wallet-payout-button .wallet-adapter-button.wallet-adapter-button-trigger .wallet-adapter-button-start-icon,
+.wallet-payout-button .wallet-adapter-button.wallet-adapter-button-trigger .wallet-adapter-button-end-icon img,
+.wallet-payout-button .wallet-adapter-button.wallet-adapter-button-trigger .wallet-adapter-button-start-icon img {
   display: none !important;
 }
 
