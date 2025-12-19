@@ -188,12 +188,12 @@ export const SubmissionDrawer = ({
 
   const regionAckCopy = useMemo(() => {
     if (!region || region === 'Global') {
-      return `By submitting, you acknowledge that if you win, you will have to complete KYC to receive your prize money.`;
+      return `I acknowledge that if I win, I will have to complete KYC verification to receive my prize money.`;
     }
     const regionObject = getCombinedRegion(region);
     const regionDisplayName =
       regionObject?.displayValue || regionObject?.name || region;
-    return `By submitting, you acknowledge that if you win, you will have to complete KYC that proves that you are from ${regionDisplayName}`;
+    return `I acknowledge that if I win, I will have to complete KYC verification that proves I am from ${regionDisplayName}`;
   }, [region]);
 
   useEffect(() => {
@@ -781,7 +781,7 @@ export const SubmissionDrawer = ({
                       className={cn(
                         'data-[state=checked]:border-brand-purple data-[state=checked]:bg-brand-purple mt-1',
                         isPro &&
-                          'data-[state=checked]:border-zinc-400 data-[state=checked]:bg-zinc-700',
+                          'border-zinc-400 data-[state=checked]:border-zinc-400 data-[state=checked]:bg-zinc-700',
                       )}
                       checked={termsAccepted}
                       onCheckedChange={(checked) =>
@@ -802,11 +802,11 @@ export const SubmissionDrawer = ({
                 )}
 
                 {isFndnPaying && !editMode && (
-                  <div className="mb-4 flex items-start space-x-3">
+                  <div className="mb-4 flex items-center space-x-3">
                     <Checkbox
                       id="kyc-acknowledgement"
                       className={cn(
-                        'data-[state=checked]:border-brand-purple data-[state=checked]:bg-brand-purple mt-1',
+                        'data-[state=checked]:border-brand-purple data-[state=checked]:bg-brand-purple',
                         isPro &&
                           'border-zinc-400 data-[state=checked]:border-zinc-400 data-[state=checked]:bg-zinc-700',
                       )}
@@ -817,7 +817,7 @@ export const SubmissionDrawer = ({
                     />
                     <label
                       htmlFor="kyc-acknowledgement"
-                      className="text-sm leading-none text-slate-600"
+                      className="text-sm leading-4 text-slate-600"
                     >
                       {regionAckCopy}
                     </label>

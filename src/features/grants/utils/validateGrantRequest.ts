@@ -17,6 +17,7 @@ export async function validateGrantRequest(userId: string, grantId: string) {
       questions: true,
       isNative: true,
       airtableId: true,
+      isPro: true,
     },
   });
 

@@ -1,11 +1,7 @@
-import { headers } from 'next/headers';
 import { type NextRequest, NextResponse } from 'next/server';
 import { z, ZodError } from 'zod';
 
 import earncognitoClient from '@/lib/earncognitoClient';
-import { publicApiRateLimiter } from '@/lib/ratelimit';
-import { checkAndApplyRateLimitApp } from '@/lib/rateLimiterService';
-import { getClientIP } from '@/utils/getClientIP';
 
 const reportListingSchema = z.object({
   listingTitle: z.string().min(1, 'Listing title is required'),
@@ -18,15 +14,6 @@ const reportListingSchema = z.object({
 export type ReportListingPayload = z.infer<typeof reportListingSchema>;
 
 export async function POST(request: NextRequest) {
-  const requestHeaders = await headers();
-  const clientIP = getClientIP(requestHeaders);
-
-  const rateLimitResponse = await checkAndApplyRateLimitApp({
-    limiter: publicApiRateLimiter,
-    identifier: `report_listing:${clientIP}`,
-    routeName: 'report-listing',
-  });
-  if (rateLimitResponse) return rateLimitResponse;
   try {
     const body = await request.json();
     const payload = reportListingSchema.parse(body);

@@ -12,6 +12,7 @@ import { RegionLabel } from '@/features/listings/components/ListingPage/RegionLa
 import { ListingHeaderSeparator } from '@/features/listings/components/ListingPage/Separator';
 import { ShareListing } from '@/features/listings/components/ListingPage/ShareListing';
 import { StatusBadge } from '@/features/listings/components/ListingPage/StatusBadge';
+import { ProBadge } from '@/features/pro/components/ProBadge';
 
 import { type GrantWithApplicationCount } from '../types';
 
@@ -30,6 +31,7 @@ interface Props {
   references: any;
   isPublished: boolean;
   isApproved: boolean;
+  isPro?: boolean;
 }
 export const GrantsHeader = ({
   grant,
@@ -41,6 +43,7 @@ export const GrantsHeader = ({
   references,
   isPublished,
   isApproved,
+  isPro,
 }: Props) => {
   let statusTextColor = '';
   let statusText = '';
@@ -118,8 +121,19 @@ export const GrantsHeader = ({
                 textColor={statusTextColor}
                 text={statusText}
               />
-
               <ListingHeaderSeparator />
+              {isPro && (
+                <>
+                  <Link href="/pro">
+                    <ProBadge
+                      containerClassName="bg-transparent px-0 py-0 gap-1"
+                      iconClassName="size-3 text-zinc-600"
+                      textClassName="text-xs font-medium text-zinc-800"
+                    />
+                  </Link>
+                  <ListingHeaderSeparator />
+                </>
+              )}
               <RegionLabel region={region} isGrant />
             </div>
           </div>

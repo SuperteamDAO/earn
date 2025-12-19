@@ -1,8 +1,6 @@
 import type { NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
-import { commentCreateRateLimiter } from '@/lib/ratelimit';
-import { checkAndApplyRateLimit } from '@/lib/rateLimiterService';
 import { prisma } from '@/prisma';
 import { type CommentRefType } from '@/prisma/enums';
 import { safeStringify } from '@/utils/safeStringify';
@@ -30,16 +28,6 @@ async function commentHandler(
     return res
       .status(401)
       .json({ message: 'Authentication required and user ID missing.' });
-  }
-
-  const canProceed = await checkAndApplyRateLimit(res, {
-    limiter: commentCreateRateLimiter,
-    identifier: userId,
-    routeName: 'commentCreate',
-  });
-
-  if (!canProceed) {
-    return;
   }
 
   logger.debug(

@@ -1,26 +1,13 @@
-import { headers } from 'next/headers';
 import { type NextRequest, NextResponse } from 'next/server';
 import { unfurl } from 'unfurl.js';
 
 import logger from '@/lib/logger';
-import { publicApiRateLimiter } from '@/lib/ratelimit';
-import { checkAndApplyRateLimitApp } from '@/lib/rateLimiterService';
 import { getCloudinaryFetchUrl } from '@/utils/cloudinary';
-import { getClientIP } from '@/utils/getClientIP';
 import { safeStringify } from '@/utils/safeStringify';
 
 type UnfurlResult = Awaited<ReturnType<typeof unfurl>>;
 
 export async function GET(request: NextRequest) {
-  const requestHeaders = await headers();
-  const clientIP = getClientIP(requestHeaders);
-
-  const rateLimitResponse = await checkAndApplyRateLimitApp({
-    limiter: publicApiRateLimiter,
-    identifier: `og_get:${clientIP}`,
-    routeName: 'og-get',
-  });
-  if (rateLimitResponse) return rateLimitResponse;
   const { searchParams } = new URL(request.url);
   const url = searchParams.get('url');
 

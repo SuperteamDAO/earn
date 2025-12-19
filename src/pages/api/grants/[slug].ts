@@ -1,21 +1,10 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
-import { publicApiRateLimiter } from '@/lib/ratelimit';
-import { checkAndApplyRateLimit } from '@/lib/rateLimiterService';
 import { prisma } from '@/prisma';
-import { getClientIPPages } from '@/utils/getClientIPPages';
 import { safeStringify } from '@/utils/safeStringify';
 
 export default async function user(req: NextApiRequest, res: NextApiResponse) {
-  const clientIP = getClientIPPages(req);
-  const canProceed = await checkAndApplyRateLimit(res, {
-    limiter: publicApiRateLimiter,
-    identifier: `grants_slug:${clientIP}`,
-    routeName: 'grants-slug',
-  });
-  if (!canProceed) return;
-
   const params = req.query;
   const slug = params.slug as string;
   logger.debug(`Request query: ${safeStringify(req.query)}`);

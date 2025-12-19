@@ -1,13 +1,10 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
-import { publicApiRateLimiter } from '@/lib/ratelimit';
-import { checkAndApplyRateLimit } from '@/lib/rateLimiterService';
 import { prisma } from '@/prisma';
 import { type EnumBountyTypeFilter } from '@/prisma/commonInputTypes';
 import { type BountyType } from '@/prisma/enums';
 import { type BountiesFindManyArgs } from '@/prisma/models/Bounties';
-import { getClientIPPages } from '@/utils/getClientIPPages';
 
 import { getPrivyToken } from '@/features/auth/utils/getPrivyToken';
 import { listingSelect } from '@/features/listings/constants/schema';
@@ -21,13 +18,6 @@ export default async function listings(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
-  const clientIP = getClientIPPages(req);
-  const canProceed = await checkAndApplyRateLimit(res, {
-    limiter: publicApiRateLimiter,
-    identifier: `listings_live:${clientIP}`,
-    routeName: 'listings-live',
-  });
-  if (!canProceed) return;
   const params = req.query;
 
   const type = params.type as EnumBountyTypeFilter | BountyType | undefined;
