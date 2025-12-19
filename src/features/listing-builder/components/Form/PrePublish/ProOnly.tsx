@@ -130,7 +130,7 @@ export function ProOnly({ onShowNudgesChange, onSwitchRef }: ProOnlyProps) {
       form.saveDraft();
       setShowCallout(false);
     }
-  }, [isPrivate, form]);
+  }, [isPrivate]);
 
   useEffect(() => {
     if (!isUnderMinimum && showCallout) {
