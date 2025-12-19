@@ -125,6 +125,7 @@ export function GrantPageLayout({
                 references={grant.references}
                 isPublished={grant.isPublished || false}
                 isApproved={isApproved}
+                isPro={grant.isPro}
               />
 
               <div className="mb-10 flex max-w-6xl flex-col items-center justify-center gap-0 md:flex-row md:items-start md:justify-between md:gap-4">

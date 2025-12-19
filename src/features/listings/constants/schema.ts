@@ -16,7 +16,20 @@ export const ListingSortOptionSchema = z
   .enum(['Date', 'Prize', 'Submissions', 'Status'])
   .default('Date');
 export const ListingContextSchema = z
-  .enum(['home', 'all', 'region', 'region-all', 'sponsor', 'bookmarks', 'pro'])
+  .enum([
+    'home',
+    'all',
+    'region',
+    'region-all',
+    'sponsor',
+    'bookmarks',
+    'skill',
+    'skill-all',
+    'category',
+    'category-all',
+    'opportunity',
+    'pro',
+  ])
   .default('all');
 
 export const QueryParamsSchema = z.object({
@@ -28,6 +41,7 @@ export const QueryParamsSchema = z.object({
   context: ListingContextSchema,
   region: z.string().optional(),
   sponsor: z.string().optional(),
+  skill: z.string().optional(),
 });
 
 export const listingSelect = {

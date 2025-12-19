@@ -77,6 +77,7 @@ export function FormFieldWrapper<T extends FieldValues>({
                     field.onChange(e);
                     onChange?.(e);
                   }}
+                  isPro={isPro}
                 />
               ) : (
                 React.cloneElement(children as React.ReactElement<any>, {
@@ -85,6 +86,10 @@ export function FormFieldWrapper<T extends FieldValues>({
                     field.onChange(e);
                     onChange?.(e);
                   },
+                  className: cn(
+                    (children as React.ReactElement<any>).props?.className,
+                    isPro && 'focus-visible:ring-zinc-400',
+                  ),
                 })
               )}
             </FormControl>

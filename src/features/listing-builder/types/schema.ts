@@ -20,7 +20,6 @@ import {
   MAX_PODIUMS,
   MAX_REWARD,
 } from '../constants';
-import { fetchSlugCheck } from '../queries/slug-check';
 import { type ListingFormData, type ValidationFields } from '.';
 
 export const eligibilityQuestionSchema = z.object({
@@ -223,8 +222,34 @@ export const createListingFormSchema = ({
         .nullable(),
       rewards: rewardsSchema.optional().nullable(),
       compensationType: z.nativeEnum(CompensationType).default('fixed'),
-      minRewardAsk: z.number().min(0).max(MAX_REWARD).optional().nullable(),
-      maxRewardAsk: z.number().min(0).max(MAX_REWARD).optional().nullable(),
+      minRewardAsk: z
+        .number()
+        .min(0)
+        .max(MAX_REWARD)
+        .refine(
+          (val) => {
+            if (val === null || val === undefined) return true;
+            const decimalPlaces = (val.toString().split('.')[1] || '').length;
+            return decimalPlaces <= 4;
+          },
+          { message: 'Maximum 4 decimal places allowed' },
+        )
+        .optional()
+        .nullable(),
+      maxRewardAsk: z
+        .number()
+        .min(0)
+        .max(MAX_REWARD)
+        .refine(
+          (val) => {
+            if (val === null || val === undefined) return true;
+            const decimalPlaces = (val.toString().split('.')[1] || '').length;
+            return decimalPlaces <= 4;
+          },
+          { message: 'Maximum 4 decimal places allowed' },
+        )
+        .optional()
+        .nullable(),
       maxBonusSpots: z
         .number({
           message: 'Required',
@@ -257,6 +282,7 @@ export const createListingFormSchema = ({
 
       // values that will not be set on any API, but useful for response
       isPublished: z.boolean().optional().nullable(),
+      isFeatured: z.boolean().optional().nullable(),
       isWinnersAnnounced: z.boolean().optional().nullable(),
       totalWinnersSelected: z.number().optional().nullable(),
       totalPaymentsMade: z.number().optional().nullable(),
@@ -435,27 +461,17 @@ export const createListingRefinements = async (
 export const backendListingRefinements = async (
   data: ListingFormData,
   ctx: z.RefinementCtx,
+  checkSlugFn: (slug: string, id?: string) => Promise<boolean>,
 ) => {
-  const slugUniqueCheck = async (slug: string, id?: string | null) => {
-    try {
-      await fetchSlugCheck({
-        slug,
-        id: id || undefined,
-        check: true,
+  if (data.slug) {
+    const slugExists = await checkSlugFn(data.slug, data.id || undefined);
+    if (slugExists) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Slug already exists. Please try another.',
+        path: ['slug'],
       });
-      return true;
-    } catch (error) {
-      console.log(error);
-      return false;
     }
-  };
-
-  if (data.slug && !(await slugUniqueCheck(data.slug, data.id))) {
-    ctx.addIssue({
-      code: z.ZodIssueCode.custom,
-      message: 'Slug already exists. Please try another.',
-      path: ['slug'],
-    });
   }
   if (data.type !== 'project' && data.compensationType !== 'fixed') {
     ctx.addIssue({

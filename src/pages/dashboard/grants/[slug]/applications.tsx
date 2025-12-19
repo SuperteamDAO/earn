@@ -3,6 +3,7 @@ import { useAtomValue } from 'jotai';
 import type { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
 
 import { LoadingSection } from '@/components/shared/LoadingSection';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -14,6 +15,7 @@ import { ApplicationsTab } from '@/features/sponsor-dashboard/components/Applica
 import { ApplicationHeader } from '@/features/sponsor-dashboard/components/GrantApplications/ApplicationHeader';
 import { PaymentsHistoryTab } from '@/features/sponsor-dashboard/components/GrantApplications/PaymentsHistoryTab';
 import { TranchesTab } from '@/features/sponsor-dashboard/components/TranchesTab';
+import { useAutoSwitchSponsor } from '@/features/sponsor-dashboard/hooks/use-auto-switch-sponsor';
 import { sponsorGrantQuery } from '@/features/sponsor-dashboard/queries/grant';
 
 interface Props {
@@ -25,9 +27,18 @@ function GrantApplications({ slug }: Props) {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<string>('applications');
 
-  const { data: grant, isLoading: isGrantLoading } = useQuery(
-    sponsorGrantQuery(slug, user?.currentSponsorId),
-  );
+  const {
+    data: grant,
+    isLoading: isGrantLoading,
+    error: grantError,
+    refetch: refetchGrant,
+  } = useQuery(sponsorGrantQuery(slug, user?.currentSponsorId));
+
+  const { isSwitching: isSwitchingSponsor } = useAutoSwitchSponsor({
+    error: grantError,
+    refetch: refetchGrant,
+    queryKey: ['grant', slug],
+  });
 
   const applications = useAtomValue(applicationsAtom);
 
@@ -37,14 +48,29 @@ function GrantApplications({ slug }: Props) {
     grant?.id !== 'c72940f7-81ae-4c03-9bfe-9979d4371267';
 
   useEffect(() => {
-    if (grant && grant.sponsorId !== user?.currentSponsorId) {
+    // Handle 403 errors for non-GOD users
+    if (grantError && !isSwitchingSponsor && user?.role !== 'GOD') {
+      const error = grantError as any;
+      if (error?.response?.status === 403) {
+        toast.error('This grant does not belong to you');
+        router.push('/dashboard/listings');
+      }
+    }
+  }, [grantError, router, user?.role, isSwitchingSponsor]);
+
+  useEffect(() => {
+    if (
+      grant &&
+      grant.sponsorId !== user?.currentSponsorId &&
+      user?.role !== 'GOD'
+    ) {
       router.push('/dashboard/listings');
     }
-  }, [grant, user?.currentSponsorId, router]);
+  }, [grant, user?.currentSponsorId, user?.role, router]);
 
   return (
     <SponsorLayout isCollapsible>
-      {isGrantLoading ? (
+      {isGrantLoading || isSwitchingSponsor ? (
         <LoadingSection />
       ) : (
         <>

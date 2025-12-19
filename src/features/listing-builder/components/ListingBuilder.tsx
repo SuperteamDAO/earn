@@ -2,6 +2,7 @@ import { usePrivy } from '@privy-io/react-auth';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
+import { toast } from 'sonner';
 
 import { ErrorSection } from '@/components/shared/ErrorSection';
 import { LoadingSection } from '@/components/shared/LoadingSection';
@@ -11,6 +12,7 @@ import { useUser } from '@/store/user';
 
 import { Login } from '@/features/auth/components/Login';
 import { Header } from '@/features/navbar/components/Header';
+import { useAutoSwitchSponsor } from '@/features/sponsor-dashboard/hooks/use-auto-switch-sponsor';
 import { activeHackathonsQuery } from '@/features/sponsor-dashboard/queries/active-hackathons';
 import { sponsorDashboardListingQuery } from '@/features/sponsor-dashboard/queries/listing';
 
@@ -33,22 +35,57 @@ export function ListingBuilder({ route, slug }: ListingBuilderLayout) {
     enabled: !!user,
   });
 
-  const { data: listing, isLoading: isListingLoading } = useQuery({
+  const {
+    data: listing,
+    isLoading: isListingLoading,
+    error: listingError,
+    refetch: refetchListing,
+  } = useQuery({
     ...sponsorDashboardListingQuery(slug || ''),
     refetchOnMount: false,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
   });
 
+  const { isSwitching: isSwitchingSponsor } = useAutoSwitchSponsor({
+    error: listingError,
+    refetch: refetchListing,
+    queryKey: ['sponsor-dashboard-listing', slug || ''],
+  });
+
   useEffect(() => {
-    if (isListingLoading || isUserLoading || !ready) return;
-    if (listing) {
-      if (listing.sponsorId !== user?.currentSponsorId) {
+    // Handle 403 errors for non-GOD users (must run before error page check)
+    if (listingError && !isSwitchingSponsor && user?.role !== 'GOD') {
+      const error = listingError as any;
+      if (error?.response?.status === 403) {
+        toast.error('This listing does not belong to you');
         router.push('/dashboard/listings');
         return;
       }
     }
-  }, [listing, user?.currentSponsorId, router]);
+  }, [listingError, router, user?.role, isSwitchingSponsor]);
+
+  useEffect(() => {
+    if (isListingLoading || isUserLoading || !ready) return;
+    if (listing) {
+      // Only redirect non-GOD users on sponsor mismatch
+      if (
+        listing.sponsorId !== user?.currentSponsorId &&
+        user?.role !== 'GOD'
+      ) {
+        router.push('/dashboard/listings');
+        return;
+      }
+    }
+  }, [
+    listing,
+    user?.currentSponsorId,
+    user?.role,
+    router,
+    isListingLoading,
+    isUserLoading,
+    ready,
+  ]);
 
   useEffect(() => {
     const handleRouteComplete = () => {
@@ -81,7 +118,16 @@ export function ListingBuilder({ route, slug }: ListingBuilderLayout) {
     return <LoadingSection />;
   }
 
-  if (isListingLoading || isHackathonLoading) {
+  if (isListingLoading || isHackathonLoading || isSwitchingSponsor) {
+    return <LoadingSection />;
+  }
+
+  // Don't show error page if we're redirecting due to 403 error
+  const is403Error =
+    listingError &&
+    (listingError as any)?.response?.status === 403 &&
+    user?.role !== 'GOD';
+  if (is403Error) {
     return <LoadingSection />;
   }
 

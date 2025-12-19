@@ -47,6 +47,7 @@ Check out all of ${title}’s latest earning opportunities on a single page.
             property="og:image:alt"
             content={`${title} on Superteam Earn`}
           />
+          <meta property="og:type" content="website" />
 
           <meta charSet="UTF-8" key="charset" />
           <meta

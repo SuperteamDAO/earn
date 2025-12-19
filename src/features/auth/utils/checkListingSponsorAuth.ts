@@ -13,7 +13,10 @@ export const checkListingSponsorAuth = async (
   listingId: string,
 ): Promise<
   | { listing: ListingWithSponsor; error?: undefined }
-  | { error: { status: number; message: string }; listing?: undefined }
+  | {
+      error: { status: number; message: string; sponsorId?: string };
+      listing?: undefined;
+    }
 > => {
   if (!userSponsorId) {
     logger.warn('Invalid token: User Sponsor Id is missing');
@@ -45,6 +48,7 @@ export const checkListingSponsorAuth = async (
       error: {
         status: 403,
         message: 'User is not authorized to perform this action.',
+        sponsorId: listing.sponsorId,
       },
     };
   }

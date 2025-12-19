@@ -323,8 +323,8 @@ importers:
         specifier: ^5.5.3
         version: 5.5.3
       posthog-js:
-        specifier: ^1.284.0
-        version: 1.284.0
+        specifier: ^1.300.0
+        version: 1.300.0
       prosemirror-model:
         specifier: ^1.25.4
         version: 1.25.4
@@ -2072,8 +2072,8 @@ packages:
     resolution: {integrity: sha512-Tv4jcFUFAFjOWrGSio49H6R2ijALv0ZzVBfJKIdm+kl9X046Fh4LLawrF9OMsglVbK6ukqMJsUCeucGAFTBcMA==}
     engines: {node: '>=16'}
 
-  '@posthog/core@1.5.0':
-    resolution: {integrity: sha512-oxfV20QMNwH30jKybUyqi3yGuMghULQz1zkJgQG3rjpHDxhD2vDN6E7UpmaqgphMIvGG3Q+DgfU10zfSPA7w7w==}
+  '@posthog/core@1.7.0':
+    resolution: {integrity: sha512-d6ZV4grpzeH/6/LP8quMVpSjY1puRkrqfwcPvGRKUAX7tb7YHyp/zMiTDuJmOFbpUxAMBXH5nDwcPiyCY2WGzA==}
 
   '@prisma/adapter-planetscale@7.1.0':
     resolution: {integrity: sha512-2zvZ0SV4Nm5yRZgCYyHgmkRA/gIjdQWsMcMZV7vpRg4iDvS8FVa4FeLVCP+NJcNj6sPX+3CDcIYxnnX6p/mssQ==}
@@ -5504,8 +5504,8 @@ packages:
   core-js-compat@3.43.0:
     resolution: {integrity: sha512-2GML2ZsCc5LR7hZYz4AXmjQw8zuy2T//2QntwdnpuYI7jteT6GVYJL7F6C2C57R7gSYrcqVW3lAALefdbhBLDA==}
 
-  core-js@3.46.0:
-    resolution: {integrity: sha512-vDMm9B0xnqqZ8uSBpZ8sNtRtOdmfShrvT6h2TuQGLs0Is+cR0DYbj/KWP6ALVNbWPpqA/qPLoOuppJN07humpA==}
+  core-js@3.47.0:
+    resolution: {integrity: sha512-c3Q2VVkGAUyupsjRnaNX6u8Dq2vAdzm9iuPj5FW0fRxzlxgq9Q39MDq10IvmQSpLgHQNyQzQmOo6bgGHmH3NNg==}
 
   core-util-is@1.0.3:
     resolution: {integrity: sha512-ZQBvi1DcpJ4GDqanjucZ2Hj3wEO5pZDS89BWbkcrvdxksJorwUDDZamX9ldFkp9aw2lmBDLgkObEA4DWNJ9FYQ==}
@@ -8151,8 +8151,8 @@ packages:
     resolution: {integrity: sha512-Jtc2612XINuBjIl/QTWsV5UvE8UHuNblcO3vVADSrKsrc6RqGX6lOW1cEo3CM2v0XG4Nat8nI+YM7/f26VxXLw==}
     engines: {node: '>=12'}
 
-  posthog-js@1.284.0:
-    resolution: {integrity: sha512-GmycRGKWdTO6gUSMn8qzzoVTryQhxVwjK2y1Mn0eV7kldLS+tZhr/wM+Z8fXBkbrRwWUjofKFgB83gd1WzbJrA==}
+  posthog-js@1.300.0:
+    resolution: {integrity: sha512-FpeD4pkpg9i/3F5xpeX+CZeq3R3BaLyFDkzb4sOjpUIW1AAVuOEqPTxnWIess6C3pOw1u3mowq0WSeh1PmrqfA==}
 
   preact-render-to-string@5.2.6:
     resolution: {integrity: sha512-JyhErpYOvBV1hEPwIxc/fHWXPfnEGdRKxc8gFdAZ7XV4tlzyzG847XAyEZqoDnynP88akM4eaHcSOzNcLWFguw==}
@@ -11984,7 +11984,9 @@ snapshots:
 
   '@planetscale/database@1.19.0': {}
 
-  '@posthog/core@1.5.0': {}
+  '@posthog/core@1.7.0':
+    dependencies:
+      cross-spawn: 7.0.6
 
   '@prisma/adapter-planetscale@7.1.0':
     dependencies:
@@ -17617,7 +17619,7 @@ snapshots:
     dependencies:
       browserslist: 4.25.1
 
-  core-js@3.46.0: {}
+  core-js@3.47.0: {}
 
   core-util-is@1.0.3: {}
 
@@ -20646,12 +20648,12 @@ snapshots:
 
   postgres@3.4.7: {}
 
-  posthog-js@1.284.0:
+  posthog-js@1.300.0:
     dependencies:
-      '@posthog/core': 1.5.0
-      core-js: 3.46.0
+      '@posthog/core': 1.7.0
+      core-js: 3.47.0
       fflate: 0.4.8
-      preact: 10.27.2
+      preact: 10.28.0
       web-vitals: 4.2.4
 
   preact-render-to-string@5.2.6(preact@10.27.2):

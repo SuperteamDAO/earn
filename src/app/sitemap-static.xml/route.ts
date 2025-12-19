@@ -47,6 +47,36 @@ export async function GET(): Promise<NextResponse> {
       priority: 1.0,
     },
     {
+      url: `${baseUrl}/jobs/`,
+      lastModified: now,
+      changeFrequency: 'daily',
+      priority: 0.95,
+    },
+    {
+      url: `${baseUrl}/bounties/`,
+      lastModified: now,
+      changeFrequency: 'daily',
+      priority: 0.95,
+    },
+    {
+      url: `${baseUrl}/grants/`,
+      lastModified: now,
+      changeFrequency: 'daily',
+      priority: 0.9,
+    },
+    {
+      url: `${baseUrl}/all/`,
+      lastModified: now,
+      changeFrequency: 'daily',
+      priority: 0.9,
+    },
+    {
+      url: `${baseUrl}/projects/`,
+      lastModified: now,
+      changeFrequency: 'daily',
+      priority: 0.95,
+    },
+    {
       url: `${baseUrl}/sponsor/`,
       lastModified: now,
       changeFrequency: 'weekly',
@@ -65,34 +95,10 @@ export async function GET(): Promise<NextResponse> {
       priority: 0.8,
     },
     {
-      url: `${baseUrl}/grants/`,
-      lastModified: now,
-      changeFrequency: 'daily',
-      priority: 0.9,
-    },
-    {
-      url: `${baseUrl}/all/`,
-      lastModified: now,
-      changeFrequency: 'daily',
-      priority: 0.9,
-    },
-    {
       url: `${baseUrl}/search/`,
       lastModified: now,
       changeFrequency: 'monthly',
       priority: 0.7,
-    },
-    {
-      url: `${baseUrl}/bounties/`,
-      lastModified: now,
-      changeFrequency: 'daily',
-      priority: 0.9,
-    },
-    {
-      url: `${baseUrl}/projects/`,
-      lastModified: now,
-      changeFrequency: 'daily',
-      priority: 0.9,
     },
   ];
 

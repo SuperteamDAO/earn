@@ -31,7 +31,21 @@ const submissionSchema = (
         ])
         .optional(),
       otherInfo: z.string().optional(),
-      ask: z.union([z.number().int().min(0), z.null()]).optional(),
+      ask: z
+        .union([
+          z
+            .number()
+            .min(0)
+            .refine(
+              (val) => {
+                const decimalPlaces = (val.toString().split('.')[1] || '').length;
+                return decimalPlaces <= 4;
+              },
+              { message: 'Maximum 4 decimal places allowed' },
+            ),
+          z.null(),
+        ])
+        .optional(),
       eligibilityAnswers: z
         .array(
           z.object({

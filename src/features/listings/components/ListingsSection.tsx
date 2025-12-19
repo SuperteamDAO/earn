@@ -54,6 +54,9 @@ export const ListingsSection = ({
   potentialSession,
   region,
   sponsor,
+  skill,
+  category,
+  defaultTab,
   customEmptySection,
 }: ListingsSectionProps) => {
   const isMd = useBreakpoint('md');
@@ -89,10 +92,11 @@ export const ListingsSection = ({
   const { data: categoryCounts, isLoading: countsLoading } =
     useListingsFilterCount({
       context: type,
-      tab: 'all',
+      tab: defaultTab ?? 'all',
       status: 'open',
       region,
       sponsor,
+      skill,
       authenticated,
     });
 
@@ -143,12 +147,17 @@ export const ListingsSection = ({
       isSponsorContext || isBookmarksContext || isProContext
         ? 'Status'
         : undefined,
+    defaultTab,
   });
 
+  // For category contexts, use the category prop (route category)
+  // For other contexts, use activeCategory (filter selection)
   const effectiveCategory =
-    (type === 'bookmarks' || type === 'pro') && activeCategory === 'For You'
-      ? ('All' as ListingCategory)
-      : activeCategory;
+    type === 'category' || type === 'category-all'
+      ? (category as ListingCategory)
+      : (type === 'bookmarks' || type === 'pro') && activeCategory === 'For You'
+        ? ('All' as ListingCategory)
+        : activeCategory;
 
   const {
     data: listings,
@@ -163,6 +172,7 @@ export const ListingsSection = ({
     order: activeOrder,
     region,
     sponsor,
+    skill,
     authenticated,
   });
 
@@ -188,6 +198,8 @@ export const ListingsSection = ({
       basePath = '/all';
     } else if (type === 'region') {
       basePath = `/regions/${region}/all`;
+    } else if (type === 'skill' && skill) {
+      basePath = `/skill/${skill}/all`;
     } else {
       basePath = '/all';
     }
@@ -264,7 +276,7 @@ export const ListingsSection = ({
         {listings.map((listing) => (
           <ListingCard key={listing.id} bounty={listing} />
         ))}
-        {(type === 'home' || type === 'region') && (
+        {(type === 'home' || type === 'region' || type === 'skill') && (
           <ViewAllButton
             posthogEvent="viewall bottom_listings"
             href={viewAllLink()}
@@ -326,72 +338,73 @@ export const ListingsSection = ({
       </div>
 
       <div className="mb-2 h-px w-full bg-slate-200" />
-      <div className="relative -mx-2 mb-1">
-        <div
-          className={cn(
-            'pointer-events-none absolute top-0 bottom-0 left-0 z-10 w-8',
-            'bg-linear-to-r from-white/80 via-white/30 to-transparent',
-            'transition-opacity duration-300 ease-in-out',
-            showLeftShadow ? 'opacity-100' : 'opacity-0',
-          )}
-        />
+      {type !== 'category' && type !== 'category-all' && (
+        <div className="relative -mx-2 mb-1">
+          <div
+            className={cn(
+              'pointer-events-none absolute top-0 bottom-0 left-0 z-10 w-8',
+              'bg-linear-to-r from-white/80 via-white/30 to-transparent',
+              'transition-opacity duration-300 ease-in-out',
+              showLeftShadow ? 'opacity-100' : 'opacity-0',
+            )}
+          />
 
-        <div
-          ref={scrollContainerRef}
-          className="hide-scrollbar flex gap-1.5 overflow-x-auto px-2 py-1"
-        >
-          {shouldShowForYou && (
-            <CategoryPill
-              key="foryou"
-              phEvent="foryou_navpill"
-              isActive={activeCategory === 'For You'}
-              onClick={() =>
-                handleCategoryChange(
-                  'For You' as ListingCategory,
-                  'foryou_navpill',
-                )
-              }
-            >
-              For You
-            </CategoryPill>
-          )}
-          <CategoryPill
-            key="all"
-            phEvent="all_navpill"
-            isActive={effectiveCategory === 'All'}
-            onClick={() =>
-              handleCategoryChange('All' as ListingCategory, 'all_navpill')
-            }
-            isPro={isProContext}
+          <div
+            ref={scrollContainerRef}
+            className="hide-scrollbar flex gap-1.5 overflow-x-auto px-2 py-1"
           >
-            All
-          </CategoryPill>
-          {visibleCategoryNavItems?.map((navItem) => (
+            {shouldShowForYou && (
+              <CategoryPill
+                key="foryou"
+                phEvent="foryou_navpill"
+                isActive={activeCategory === 'For You'}
+                onClick={() =>
+                  handleCategoryChange(
+                    'For You' as ListingCategory,
+                    'foryou_navpill',
+                  )
+                }
+              >
+                For You
+              </CategoryPill>
+            )}
             <CategoryPill
-              key={navItem.label}
-              phEvent={navItem.pillPH}
-              isActive={effectiveCategory === navItem.label}
+              key="all"
+              phEvent="all_navpill"
+              isActive={effectiveCategory === 'All'}
               onClick={() =>
-                handleCategoryChange(
-                  navItem.label as ListingCategory,
-                  navItem.pillPH,
-                )
+                handleCategoryChange('All' as ListingCategory, 'all_navpill')
               }
               isPro={isProContext}
             >
-              {isMd ? navItem.label : navItem.mobileLabel || navItem.label}
+              All
             </CategoryPill>
-          ))}
+            {visibleCategoryNavItems?.map((navItem) => (
+              <CategoryPill
+                key={navItem.label}
+                phEvent={navItem.pillPH}
+                isActive={effectiveCategory === navItem.label}
+                onClick={() =>
+                  handleCategoryChange(
+                    navItem.label as ListingCategory,
+                    navItem.pillPH,
+                  )
+                }
+              >
+                {isMd ? navItem.label : navItem.mobileLabel || navItem.label}
+              </CategoryPill>
+            ))}
+          </div>
+          <div
+            className={cn(
+              'pointer-events-none absolute top-0 right-0 bottom-0 z-10 w-8',
+              'bg-linear-to-l from-white/80 via-white/30 to-transparent',
+              'transition-opacity duration-300 ease-in-out',
+              showRightShadow ? 'opacity-100' : 'opacity-0',
+            )}
+          />
         </div>
-        <div
-          className={cn(
-            'pointer-events-none absolute top-0 right-0 bottom-0 z-10 w-8',
-            'bg-linear-to-l from-white/80 via-white/30 to-transparent',
-            'transition-opacity duration-300 ease-in-out',
-            showRightShadow ? 'opacity-100' : 'opacity-0',
-          )}
-        />
-      </div>
+      )}
 
       <AnimateChangeInHeight disableOnHeightZero>
         {renderContent()}
