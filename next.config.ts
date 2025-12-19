@@ -47,7 +47,7 @@ const nextConfig: NextConfig = {
   basePath: '/earn',
   assetPrefix: '/earn',
   poweredByHeader: false,
-  // trailingSlash: true,
+  trailingSlash: true,
   reactStrictMode: true,
   reactCompiler: false,
   images: {
@@ -134,7 +134,7 @@ const nextConfig: NextConfig = {
         {
           key: 'Link',
           value:
-            '</assets/banner/banner-mobile.avif>; rel=preload; as=image; type=image/avif; fetchpriority=high; media="(max-width: 639px)", </assets/banner/banner.avif>; rel=preload; as=image; type=image/avif; fetchpriority=high; media="(min-width: 640px)"',
+            '</earn/assets/banner/banner-mobile.avif>; rel=preload; as=image; type=image/avif; fetchpriority=high; media="(max-width: 639px)", </earn/assets/banner/banner.avif>; rel=preload; as=image; type=image/avif; fetchpriority=high; media="(min-width: 640px)"',
         },
       ],
     });
@@ -163,7 +163,7 @@ const nextConfig: NextConfig = {
       },
     ];
   },
-  // skipTrailingSlashRedirect: true,
+  skipTrailingSlashRedirect: true,
 };
 
 const combinedConfig = withAxiom(withPWA(nextConfig));
