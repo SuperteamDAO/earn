@@ -16,7 +16,7 @@ export const sponsorGrantQuery = (
   queryOptions({
     queryKey: ['grant', slug],
     queryFn: async (): Promise<GrantWithApplicationCount> => {
-      const response = await api.get(`/api/sponsor-dashboard/grants/${slug}/`);
+      const response = await api.get(`/api/sponsor-dashboard/grants/${slug}`);
       return response.data;
     },
     enabled: !!currentSponsorId,

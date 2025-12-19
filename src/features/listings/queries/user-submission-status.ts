@@ -3,7 +3,7 @@ import { queryOptions } from '@tanstack/react-query';
 import { api } from '@/lib/api';
 
 const checkUserSubmission = async (listingId: string) => {
-  const { data } = await api.get('/api/submission/check/', {
+  const { data } = await api.get('/api/submission/check', {
     params: { listingId },
   });
   return data;

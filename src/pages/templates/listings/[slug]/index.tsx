@@ -34,7 +34,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   let bountyData;
   try {
     const bountyDetails = await api.get(
-      `${getURL()}api/sponsor-dashboard/templates/${slug}/`,
+      `${getURL()}api/sponsor-dashboard/templates/${slug}`,
     );
     bountyData = bountyDetails.data;
   } catch (e) {

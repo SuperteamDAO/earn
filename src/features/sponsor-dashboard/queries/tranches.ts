@@ -47,7 +47,7 @@ export interface TranchesReturn {
 
 const fetchTranches = async (slug: string) => {
   const { data } = await api.get<TranchesReturn>(
-    `/api/sponsor-dashboard/grants/${slug}/tranches/`,
+    `/api/sponsor-dashboard/grants/${slug}/tranches`,
   );
   return data;
 };

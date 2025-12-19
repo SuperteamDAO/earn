@@ -64,7 +64,7 @@ export const ApplicationHeader = ({
   const exportMutation = useMutation({
     mutationFn: async () => {
       const response = await api.get(
-        `/api/sponsor-dashboard/application/export/`,
+        `/api/sponsor-dashboard/application/export`,
         {
           params: { grantId: grant?.id },
         },

@@ -153,10 +153,6 @@ const nextConfig: NextConfig = {
   async rewrites() {
     return [
       {
-        source: '/api/:path*/',
-        destination: '/api/:path*',
-      },
-      {
         source: '/docs-keep/static/:path*',
         destination: 'https://us-assets.i.posthog.com/static/:path*',
       },

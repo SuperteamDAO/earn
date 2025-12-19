@@ -134,7 +134,7 @@ export const MultiActionModal = ({
           setSelectedSubmissionIds(new Set());
           break;
         case 'spam':
-          await api.post(`/api/sponsor-dashboard/submission/update-label/`, {
+          await api.post(`/api/sponsor-dashboard/submission/update-label`, {
             ids: submissionIds,
             label: 'Spam',
           });
@@ -165,7 +165,7 @@ export const MultiActionModal = ({
           setSelectedSubmissionIds(new Set());
           break;
         case 'shortlist':
-          await api.post(`/api/sponsor-dashboard/submission/update-label/`, {
+          await api.post(`/api/sponsor-dashboard/submission/update-label`, {
             ids: submissionIds,
             label: 'Shortlisted',
           });

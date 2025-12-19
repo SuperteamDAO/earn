@@ -64,10 +64,11 @@ export function WalletDrawer({
   const padding = 'px-6 sm:px-8';
 
   const handleClose = () => {
-    const currentPath = window.location.hash;
+    const currentHash = window.location.hash;
 
-    if (currentPath === '#wallet') {
-      router.push(window.location.pathname, undefined, { shallow: true });
+    if (currentHash === '#wallet') {
+      const pathWithoutHash = router.asPath.split('#')[0] ?? router.pathname;
+      router.push(pathWithoutHash, undefined, { shallow: true });
     }
 
     onClose();

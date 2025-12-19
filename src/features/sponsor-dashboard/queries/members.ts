@@ -14,7 +14,7 @@ const fetchMembersQueryFn = async ({
   skip,
   length,
 }: MembersQueryParams) => {
-  const response = await api.get('/api/sponsor-dashboard/members/', {
+  const response = await api.get('/api/sponsor-dashboard/members', {
     params: {
       searchText,
       skip,

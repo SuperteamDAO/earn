@@ -42,7 +42,7 @@ export const SurveyModal = ({
       $survey_id: surveyId,
       $survey_response: response,
     });
-    await api.post('/api/user/update-survey/', {
+    await api.post('/api/user/update-survey', {
       surveyId,
     });
     await refetchUser();

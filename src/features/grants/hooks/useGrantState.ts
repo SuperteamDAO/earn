@@ -1,4 +1,4 @@
-import { useRouter, useSearchParams } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import posthog from 'posthog-js';
 import { useCallback, useMemo } from 'react';
 
@@ -10,6 +10,7 @@ type QueryParamUpdates = Partial<Record<'grantCategory', string | null>>;
 
 export const useGrantState = () => {
   const router = useRouter();
+  const pathname = usePathname();
   const searchParamsFromHook = useSearchParams();
 
   const searchParams = useMemo(
@@ -42,10 +43,10 @@ export const useGrantState = () => {
       }
 
       const queryString = newParams.toString();
-      const newPath = `${window.location.pathname}${queryString ? `?${queryString}` : ''}`;
+      const newPath = `${pathname}${queryString ? `?${queryString}` : ''}`;
       router.replace(newPath, { scroll: false });
     },
-    [searchParams, router, defaultCategory],
+    [searchParams, router, defaultCategory, pathname],
   );
 
   const activeCategory = useMemo(

@@ -32,7 +32,7 @@ export function InviteMembers({ isOpen, onClose }: Props) {
 
   const inviteMutation = useMutation({
     mutationFn: async () => {
-      const response = await api.post('/api/member-invites/send/', {
+      const response = await api.post('/api/member-invites/send', {
         email,
         memberType,
       });

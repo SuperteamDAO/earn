@@ -170,7 +170,7 @@ export const TalentForm = () => {
             photoUrl = user?.photo;
           }
 
-          await api.post('/api/user/complete-profile/', {
+          await api.post('/api/user/complete-profile', {
             ...data,
             referralCode: referralCode || undefined,
             photo: photoUrl,

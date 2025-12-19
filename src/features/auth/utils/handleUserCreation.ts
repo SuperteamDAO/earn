@@ -1,6 +1,14 @@
 import { api } from '@/lib/api';
 
+const BASE_PATH = '/earn';
 const allowedNewUserRedirections = ['/signup', '/new/sponsor'];
+
+const stripBasePath = (pathname: string): string => {
+  if (pathname.startsWith(BASE_PATH)) {
+    return pathname.slice(BASE_PATH.length) || '/';
+  }
+  return pathname;
+};
 
 interface CreateUserResponse {
   message: string;
@@ -16,11 +24,8 @@ export async function handleUserCreation(email: string): Promise<boolean> {
     const { created } = response.data;
 
     if (created) {
-      if (
-        allowedNewUserRedirections?.some((s) =>
-          window.location.pathname.startsWith(s),
-        )
-      ) {
+      const pathname = stripBasePath(window.location.pathname);
+      if (allowedNewUserRedirections?.some((s) => pathname.startsWith(s))) {
         window.location.reload();
       }
     }

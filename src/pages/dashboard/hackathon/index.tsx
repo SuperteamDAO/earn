@@ -77,7 +77,7 @@ export default function Hackathon() {
   const getBounties = async () => {
     setIsBountiesLoading(true);
     try {
-      const hackathonQuery = await api.get('/api/hackathon/listings/', {
+      const hackathonQuery = await api.get('/api/hackathon/listings', {
         params: {
           searchText,
           skip,

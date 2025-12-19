@@ -6,7 +6,7 @@ import { type BountyType } from '@/prisma/enums';
 
 const fetchListingTemplates = async (type: string) => {
   const { data } = await api.get<BountyTemplateWithSponsor[]>(
-    '/api/sponsor-dashboard/templates/',
+    '/api/sponsor-dashboard/templates',
     {
       params: { type },
     },

@@ -11,7 +11,7 @@ export interface GrantApplicationsReturn {
 
 const fetchApplications = async (slug: string) => {
   const { data } = await api.get<GrantApplicationsReturn>(
-    `/api/sponsor-dashboard/grants/${slug}/applications/`,
+    `/api/sponsor-dashboard/grants/${slug}/applications`,
   );
   return data;
 };

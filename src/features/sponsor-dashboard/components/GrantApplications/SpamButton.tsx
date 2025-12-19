@@ -51,7 +51,7 @@ export const SpamButton = ({ grantSlug, isMultiSelectOn }: Props) => {
       id: string;
       label: SubmissionLabels;
     }) => {
-      await api.post(`/api/sponsor-dashboard/grants/update-label/`, {
+      await api.post(`/api/sponsor-dashboard/grants/update-label`, {
         id,
         label,
       });

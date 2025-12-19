@@ -3,9 +3,7 @@ import { queryOptions } from '@tanstack/react-query';
 import { api } from '@/lib/api';
 
 const fetchSubmissionCount = async (listingId: string): Promise<number> => {
-  const { data } = await api.get(
-    `/api/listings/${listingId}/submission-count/`,
-  );
+  const { data } = await api.get(`/api/listings/${listingId}/submission-count`);
   return data;
 };
 
