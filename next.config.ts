@@ -45,7 +45,6 @@ const csp = baseCsp.replace(/\s{2,}/g, ' ').trim();
 const nextConfig: NextConfig = {
   // turbopack: {},
   basePath: '/earn',
-  assetPrefix: '/earn',
   poweredByHeader: false,
   trailingSlash: true,
   reactStrictMode: true,
@@ -153,6 +152,10 @@ const nextConfig: NextConfig = {
   },
   async rewrites() {
     return [
+      {
+        source: '/api/:path*/',
+        destination: '/api/:path*',
+      },
       {
         source: '/docs-keep/static/:path*',
         destination: 'https://us-assets.i.posthog.com/static/:path*',
