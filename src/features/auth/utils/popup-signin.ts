@@ -10,9 +10,10 @@ import type {
   SignInResult,
 } from '../types/auth-popup';
 
-// Get NextAuth base URL
+const BASE_PATH = '/earn';
+
 function getNextAuthBaseUrl(): string {
-  return `${window.location.origin}/api/auth`;
+  return `${window.location.origin}${BASE_PATH}/api/auth`;
 }
 
 /**
@@ -66,7 +67,7 @@ export async function signInWithPopup<
   }
 
   const defaultCallbackUrl = openInNewWindow
-    ? `${window.location.origin}/auth/popup-callback`
+    ? `${window.location.origin}${BASE_PATH}/auth/popup-callback`
     : window.location.href;
 
   const { callbackUrl = defaultCallbackUrl, redirect = true } = options ?? {}; // openInNewWindow already extracted above
