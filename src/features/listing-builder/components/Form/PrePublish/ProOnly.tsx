@@ -124,6 +124,7 @@ export function ProOnly({ onShowNudgesChange, onSwitchRef }: ProOnlyProps) {
     : 0;
 
   useEffect(() => {
+    console.log('[DRAFT_DEBUG] ProOnly isPrivate effect', { isPrivate });
     if (isPrivate) {
       form.setValue('isPro', false);
       form.saveDraft();
@@ -138,12 +139,18 @@ export function ProOnly({ onShowNudgesChange, onSwitchRef }: ProOnlyProps) {
   }, [isUnderMinimum, showCallout]);
 
   useEffect(() => {
+    console.log('[DRAFT_DEBUG] ProOnly isPro/isUnderMinimum effect', {
+      isPro,
+      isUnderMinimum,
+      isShaking,
+      willSave: isPro && isUnderMinimum && !isShaking,
+    });
     if (isPro && isUnderMinimum && !isShaking) {
       form.setValue('isPro', false, { shouldValidate: false });
       form.saveDraft();
       setShowCallout(true);
     }
-  }, [isPro, isUnderMinimum, form, isShaking]);
+  }, [isPro, isUnderMinimum, isShaking]);
 
   const handleUpdateRewards = () => {
     if (!tokenUsdValue || estimatedUsdValue === null) return;

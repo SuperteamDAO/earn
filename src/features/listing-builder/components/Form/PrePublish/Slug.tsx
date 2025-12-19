@@ -80,6 +80,11 @@ export function Slug() {
       await form.trigger('slug');
       form.setFocus('slug');
       // Only save if slug actually changed
+      console.log('[DRAFT_DEBUG] Slug.tsx useEffect', {
+        prevSlug: prevDebouncedSlugRef.current,
+        debouncedSlug,
+        willSave: prevDebouncedSlugRef.current !== debouncedSlug,
+      });
       if (prevDebouncedSlugRef.current !== debouncedSlug) {
         prevDebouncedSlugRef.current = debouncedSlug;
         form.saveDraft();
