@@ -781,7 +781,7 @@ export const SubmissionDrawer = ({
                       className={cn(
                         'data-[state=checked]:border-brand-purple data-[state=checked]:bg-brand-purple mt-1',
                         isPro &&
-                          'data-[state=checked]:border-zinc-400 data-[state=checked]:bg-zinc-700',
+                          'border-zinc-400 data-[state=checked]:border-zinc-400 data-[state=checked]:bg-zinc-700',
                       )}
                       checked={termsAccepted}
                       onCheckedChange={(checked) =>

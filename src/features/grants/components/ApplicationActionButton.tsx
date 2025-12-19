@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { AlertTriangle, Loader2, Pencil } from 'lucide-react';
+import { AlertTriangle, Loader2, Lock, Pencil } from 'lucide-react';
 import posthog from 'posthog-js';
 
 import { Button } from '@/components/ui/button';
@@ -13,6 +13,7 @@ import {
   getRegionTooltipLabel,
   userRegionEligibilty,
 } from '@/features/listings/utils/region';
+import { ProBadge } from '@/features/pro/components/ProBadge';
 
 import { useApplicationState } from '../hooks/useApplicationState';
 import { userApplicationQuery } from '../queries/user-application';
@@ -29,7 +30,8 @@ export const ApplicationActionButton = ({
 }: GrantApplicationButtonProps) => {
   const { user } = useUser();
 
-  const { region, id, link, isNative, isPublished } = grant;
+  const { region, id, link, isNative, isPublished, isPro } = grant;
+  const isUserPro = user?.isPro;
 
   const { data: application, isLoading: isUserApplicationLoading } = useQuery({
     ...userApplicationQuery(id),
@@ -62,13 +64,34 @@ export const ApplicationActionButton = ({
     ? 'New grant applications have been temporarily paused'
     : undefined;
 
+  const isNotEligibleForPro =
+    isPro && !isUserPro && applicationState === 'ALLOW NEW';
+
   const isBtnDisabled =
     buttonConfig.isDisabled ||
     Boolean(
       !isPublished ||
         (user?.id && user?.isTalentFilled && !isUserEligibleByRegion) ||
-        pausedForThisState,
+        pausedForThisState ||
+        isNotEligibleForPro,
     );
+
+  const getButtonText = () => {
+    if (isNotEligibleForPro && !isUserApplicationLoading) {
+      return 'Not Eligible';
+    }
+    return buttonConfig.text;
+  };
+
+  const getButtonBg = () => {
+    if (isNotEligibleForPro && !isUserApplicationLoading) {
+      return 'bg-zinc-300';
+    }
+    if (isUserPro && isPro && applicationState === 'ALLOW NEW') {
+      return 'bg-zinc-800';
+    }
+    return buttonConfig.bg;
+  };
 
   const handleSubmit = () => {
     if (link && !isNative) {
@@ -116,36 +139,58 @@ export const ApplicationActionButton = ({
               }
               className="w-full flex-col"
             >
-              <Button
-                className={cn(
-                  'h-12 w-full gap-4',
-                  'disabled:opacity-70',
-                  'text-base md:text-lg',
-                  'font-medium',
-                  grant?.link && !grant?.isNative ? 'mt-4' : '',
-                  buttonConfig.bg,
-                  'size-lg',
-                  applicationState === 'ALLOW EDIT' &&
-                    'border-brand-purple text-brand-purple hover:text-brand-purple-dark',
-                )}
-                disabled={isBtnDisabled}
-                onClick={handleSubmit}
-                variant={
-                  applicationState === 'ALLOW EDIT' ? 'outline' : 'default'
-                }
-              >
-                {isUserApplicationLoading ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    <span>{buttonConfig.loadingText}</span>
-                  </>
-                ) : (
-                  <>
-                    {applicationState === 'ALLOW EDIT' && <Pencil />}
-                    <span>{buttonConfig.text}</span>
-                  </>
-                )}
-              </Button>
+              <div className="relative w-full">
+                <Button
+                  className={cn(
+                    'h-12 w-full gap-4',
+                    isNotEligibleForPro
+                      ? 'disabled:opacity-100'
+                      : 'disabled:opacity-70',
+                    'text-base md:text-lg',
+                    'font-medium',
+                    grant?.link && !grant?.isNative ? 'mt-4' : '',
+                    getButtonBg(),
+                    'size-lg',
+                    isNotEligibleForPro && 'text-zinc-700',
+                    applicationState === 'ALLOW EDIT' &&
+                      (isPro
+                        ? 'border-zinc-700 text-zinc-700 hover:bg-zinc-100'
+                        : 'border-brand-purple text-brand-purple hover:text-brand-purple-dark'),
+                    isUserPro && isPro && 'hover:bg-black',
+                    !isUserPro && isPro && 'hover:opacity-90',
+                  )}
+                  disabled={isBtnDisabled}
+                  onClick={handleSubmit}
+                  variant={
+                    applicationState === 'ALLOW EDIT' ? 'outline' : 'default'
+                  }
+                >
+                  {isUserApplicationLoading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      <span>{buttonConfig.loadingText}</span>
+                    </>
+                  ) : (
+                    <>
+                      {isNotEligibleForPro && <Lock className="h-4 w-4" />}
+                      {applicationState === 'ALLOW EDIT' && <Pencil />}
+                      <span>{getButtonText()}</span>
+                    </>
+                  )}
+                </Button>
+                {isUserPro &&
+                  isPro &&
+                  applicationState === 'ALLOW NEW' &&
+                  !isUserApplicationLoading && (
+                    <div className="absolute top-1/2 right-4 -translate-y-1/2">
+                      <ProBadge
+                        containerClassName="bg-zinc-700 px-2 py-0.5 gap-1"
+                        iconClassName="size-2.5 text-zinc-400"
+                        textClassName="text-[10px] font-medium text-white"
+                      />
+                    </div>
+                  )}
+              </div>
             </AuthWrapper>
           </InfoWrapper>
         </div>
@@ -158,7 +203,15 @@ export const ApplicationActionButton = ({
             </p>
           </div>
         )}
-        {grantCreditConditions && (
+        {isPro && !isUserPro && (
+          <div className="mt-1 md:my-1.5 md:flex">
+            <p className="mx-auto w-full rounded-md bg-gray-50 px-2 py-2 text-center text-xs text-slate-600 md:text-xs">
+              You need to be a part of the <strong>PRO membership</strong> to
+              apply for this grant
+            </p>
+          </div>
+        )}
+        {grantCreditConditions && !isPro && (
           <div className="mt-1 md:my-1.5 md:flex">
             <p className="mx-auto w-full rounded-md bg-[#62F6FF10] py-0.5 text-center text-xs font-medium text-[#1A7F86] md:text-xs">
               Grant applications do not require credits

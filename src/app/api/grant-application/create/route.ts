@@ -113,7 +113,10 @@ export async function POST(request: NextRequest) {
   const telegram = extractSocialUsername('telegram', telegramUsername);
 
   try {
-    const { grant } = await validateGrantRequest(userId as string, grantId);
+    const { grant, user } = await validateGrantRequest(
+      userId as string,
+      grantId,
+    );
     logger.info('Grant Request validated successfully', {
       userId,
       grantId,
@@ -122,6 +125,17 @@ export async function POST(request: NextRequest) {
     if (isGrantPausedForNewApplications(grant)) {
       return NextResponse.json(
         { error: 'New grant applications have been temporarily paused' },
+        { status: 403 },
+      );
+    }
+
+    if (grant.isPro && !user.isPro) {
+      logger.debug(`User is not eligible for pro grant`, {
+        grantId,
+        userId,
+      });
+      return NextResponse.json(
+        { error: 'This grant is only available for PRO members' },
         { status: 403 },
       );
     }

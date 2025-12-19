@@ -42,7 +42,10 @@ function Grants({ grant: initialGrant }: InitialGrant) {
         <JsonLd data={[monetaryGrantSchema, breadcrumbSchema]} />
       )}
       <GrantsPop />
-      <DescriptionUI description={(grant?.description as string) ?? ''} />
+      <DescriptionUI
+        description={(grant?.description as string) ?? ''}
+        isPro={grant?.isPro}
+      />
     </GrantPageLayout>
   );
 }
