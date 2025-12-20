@@ -79,7 +79,9 @@ export const ApplicationModal = ({
     null,
   );
 
-  const { id, token, minReward, maxReward, questions } = grant;
+  const { id, token, minReward, maxReward, questions, isPro } = grant;
+  const isUserPro = user?.isPro;
+  const isProGrant = isPro && isUserPro;
 
   const dynamicResolver = useMemo(
     () =>
@@ -397,7 +399,10 @@ export const ApplicationModal = ({
           soon!
         </p>
         <Progress
-          className="mt-6 h-[2px] bg-slate-200"
+          className={cn(
+            'mt-6 h-[2px] bg-slate-200',
+            isProGrant && '[&>div]:bg-zinc-800',
+          )}
           value={(activeStep / steps.length) * 100 + 33}
         />
         <div className="mt-3 flex w-full items-center justify-between">
@@ -414,7 +419,11 @@ export const ApplicationModal = ({
                     : i - 1 < activeStep
                       ? 'border-slate-500'
                       : 'border-slate-300',
-                  i < activeStep ? 'bg-brand-purple' : 'bg-transparent',
+                  i < activeStep
+                    ? isProGrant
+                      ? 'bg-zinc-800'
+                      : 'bg-brand-purple'
+                    : 'bg-transparent',
                   i - 1 < activeStep ? 'text-slate-500' : 'text-slate-400',
                   i - 1 < activeStep ? 'font-medium' : 'font-normal',
                 )}
@@ -471,6 +480,7 @@ export const ApplicationModal = ({
                   label="Project Title"
                   description="What should we call your project?"
                   isRequired
+                  isPro={isProGrant}
                 >
                   <Input placeholder="Project Title" />
                 </FormFieldWrapper>
@@ -481,6 +491,7 @@ export const ApplicationModal = ({
                   label="One-Liner Description"
                   description="Describe your idea in one sentence."
                   isRequired
+                  isPro={isProGrant}
                 >
                   <Input placeholder="Sum up your project in one sentence" />
                 </FormFieldWrapper>
@@ -492,6 +503,7 @@ export const ApplicationModal = ({
                   isRequired
                   isTokenInput
                   token={token}
+                  isPro={isProGrant}
                 />
 
                 {!grantApplication && (
@@ -504,6 +516,7 @@ export const ApplicationModal = ({
                     control={form.control}
                     height="h-9"
                     showIcon={false}
+                    isPro={isProGrant}
                   />
                 )}
                 <FormField
@@ -534,6 +547,9 @@ export const ApplicationModal = ({
                         <FormControl>
                           <Input
                             placeholder="Add your Solana wallet address"
+                            className={cn(
+                              isProGrant && 'focus-visible:ring-zinc-400',
+                            )}
                             {...field}
                           />
                         </FormControl>
@@ -566,6 +582,7 @@ export const ApplicationModal = ({
                   isRequired
                   isRichEditor
                   richEditorPlaceholder="Describe the problem & solution"
+                  isPro={isProGrant}
                 />
 
                 <FormField
@@ -602,6 +619,7 @@ export const ApplicationModal = ({
                             hideTime={true}
                             minDateTooltipContent="Deadline cannot be in the past"
                             defaultDisplayValue="Pick a date"
+                            isPro={isProGrant}
                           />
                         </FormControl>
                         <FormMessage className="pt-1" />
@@ -618,6 +636,7 @@ export const ApplicationModal = ({
                   isRequired
                   isRichEditor
                   richEditorPlaceholder="Provide links to your portfolio or previous work"
+                  isPro={isProGrant}
                 />
 
                 <SocialInput
@@ -632,6 +651,7 @@ export const ApplicationModal = ({
                   needsVerification={needsXVerification}
                   isVerified={isXVerified}
                   onVerify={handleVerifyClick}
+                  isPro={isProGrant}
                 />
                 <SocialInput
                   name="github"
@@ -641,6 +661,7 @@ export const ApplicationModal = ({
                   formDescription="If this is a dev-based grant, please add your best github profile here."
                   control={form.control}
                   height="h-9"
+                  isPro={isProGrant}
                 />
 
                 {questions?.map((question: any, index: number) => (
@@ -651,6 +672,7 @@ export const ApplicationModal = ({
                     label={question.question}
                     isRequired
                     isRichEditor
+                    isPro={isProGrant}
                   />
                 ))}
               </div>
@@ -665,6 +687,7 @@ export const ApplicationModal = ({
                   isRequired
                   isRichEditor
                   richEditorPlaceholder="Outline your project goals and milestones"
+                  isPro={isProGrant}
                 />
 
                 <FormFieldWrapper
@@ -675,6 +698,7 @@ export const ApplicationModal = ({
                   isRequired
                   isRichEditor
                   richEditorPlaceholder="What's the key metric for success"
+                  isPro={isProGrant}
                 />
 
                 {!grantApplication && (
@@ -682,7 +706,12 @@ export const ApplicationModal = ({
                     <div className="flex items-start space-x-2">
                       <Checkbox
                         id="acknowledgement"
-                        className="data-[state=checked]:border-brand-purple data-[state=checked]:bg-brand-purple mt-1"
+                        className={cn(
+                          'mt-1',
+                          isProGrant
+                            ? 'border-zinc-400 data-[state=checked]:border-zinc-800 data-[state=checked]:bg-zinc-800'
+                            : 'data-[state=checked]:border-brand-purple data-[state=checked]:bg-brand-purple',
+                        )}
                         checked={acknowledgementAccepted}
                         onCheckedChange={(checked) => {
                           setAcknowledgementAccepted(checked as boolean);
@@ -721,7 +750,10 @@ export const ApplicationModal = ({
               )}
               {activeStep === steps.length - 1 ? (
                 <Button
-                  className="ph-no-capture w-full"
+                  className={cn(
+                    'ph-no-capture w-full',
+                    isProGrant && 'bg-zinc-800 hover:bg-black',
+                  )}
                   disabled={isLoading}
                   type="submit"
                 >
@@ -738,7 +770,10 @@ export const ApplicationModal = ({
                 </Button>
               ) : (
                 <Button
-                  className="ph-no-capture w-full"
+                  className={cn(
+                    'ph-no-capture w-full',
+                    isProGrant && 'bg-zinc-800 hover:bg-black',
+                  )}
                   onClick={handleNext}
                   type="button"
                 >

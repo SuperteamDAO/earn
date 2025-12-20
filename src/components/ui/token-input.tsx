@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { tokenList } from '@/constants/tokenList';
+import { cn } from '@/utils/cn';
 
 import { Input } from './input';
 import { LocalImage } from './local-image';
@@ -9,11 +10,13 @@ function TokenInput({
   token,
   onChange,
   value,
+  isPro = false,
   ...props
 }: React.ComponentProps<typeof Input> & {
   token: string | undefined;
   onChange?: (value: number | null) => void;
   value?: number | null;
+  isPro?: boolean;
 }) {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value;
@@ -28,9 +31,10 @@ function TokenInput({
 
     // Ensure only one decimal point
     const parts = numericValue.split('.');
-    const formattedValue = parts.length > 2
-      ? `${parts[0]}.${parts.slice(1).join('')}`
-      : numericValue;
+    const formattedValue =
+      parts.length > 2
+        ? `${parts[0]}.${parts.slice(1).join('')}`
+        : numericValue;
 
     // Limit to 4 decimal places
     const [integerPart, decimalPart] = formattedValue.split('.');
@@ -67,7 +71,10 @@ function TokenInput({
       </div>
       <Input
         data-slot="token-input-field"
-        className="rounded-l-none"
+        className={cn(
+          'rounded-l-none',
+          isPro && 'focus-visible:ring-1 focus-visible:ring-zinc-400',
+        )}
         onChange={handleInputChange}
         type="number"
         inputMode="decimal"

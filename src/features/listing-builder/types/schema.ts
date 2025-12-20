@@ -20,7 +20,6 @@ import {
   MAX_PODIUMS,
   MAX_REWARD,
 } from '../constants';
-import { fetchSlugCheck } from '../queries/slug-check';
 import { type ListingFormData, type ValidationFields } from '.';
 
 export const eligibilityQuestionSchema = z.object({
@@ -462,27 +461,17 @@ export const createListingRefinements = async (
 export const backendListingRefinements = async (
   data: ListingFormData,
   ctx: z.RefinementCtx,
+  checkSlugFn: (slug: string, id?: string) => Promise<boolean>,
 ) => {
-  const slugUniqueCheck = async (slug: string, id?: string | null) => {
-    try {
-      await fetchSlugCheck({
-        slug,
-        id: id || undefined,
-        check: true,
+  if (data.slug) {
+    const slugExists = await checkSlugFn(data.slug, data.id || undefined);
+    if (slugExists) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Slug already exists. Please try another.',
+        path: ['slug'],
       });
-      return true;
-    } catch (error) {
-      console.log(error);
-      return false;
     }
-  };
-
-  if (data.slug && !(await slugUniqueCheck(data.slug, data.id))) {
-    ctx.addIssue({
-      code: z.ZodIssueCode.custom,
-      message: 'Slug already exists. Please try another.',
-      path: ['slug'],
-    });
   }
   if (data.type !== 'project' && data.compensationType !== 'fixed') {
     ctx.addIssue({

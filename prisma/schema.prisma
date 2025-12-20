@@ -231,6 +231,7 @@ model Grants {
   replyToEmail           String?
   emailSalutation        String?
   communityLink          String?
+  isPro                  Boolean            @default(false)
 
   @@index([id, slug])
   @@index([pocId])

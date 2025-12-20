@@ -94,10 +94,9 @@ export const useListingForm = (
     queueRefRef.current = queueRef;
   }, [queueRef]);
 
-  // queue ensures eeach call for auto save is sent synchronously
+  // queue ensures each call for auto save is sent synchronously
   const processSaveQueue = useCallback(async () => {
     if (isEditing) return;
-    setDraftSaving(true);
     if (queueRefRef.current.isProcessing) {
       setQueueRef((q) => ({
         ...q,
@@ -106,6 +105,7 @@ export const useListingForm = (
       return;
     }
 
+    setDraftSaving(true);
     setQueueRef((q) => ({
       ...q,
       shouldProcessNext: false,
