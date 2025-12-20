@@ -276,49 +276,6 @@ export const PayoutSection = ({
                         </span>
                       </div>
                     </TableCell>
-                  )}
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      {submission.isPaid && !shouldHideTxLinks ? (
-                        isProject && hasMultipleTranches ? (
-                          <div
-                            className="flex cursor-pointer items-center gap-1 text-sm font-medium text-slate-600 hover:text-slate-900"
-                            onClick={() => toggleExpandRow(submission.id)}
-                          >
-                            <span>View transaction links</span>
-                            <ChevronDown
-                              className={cn(
-                                'h-4 w-4 text-slate-400 transition-transform duration-300 ease-in-out',
-                                isExpanded ? 'rotate-180' : 'rotate-0',
-                              )}
-                            />
-                          </div>
-                        ) : (
-                          <div
-                            className="flex cursor-pointer items-center text-sm font-medium text-slate-600 hover:text-slate-900"
-                            onClick={() => {
-                              const txId = submission.paymentDetails?.[0]?.txId;
-                              if (txId) {
-                                window.open(
-                                  `https://solscan.io/tx/${txId}?cluster=${process.env.NEXT_PUBLIC_PAYMENT_CLUSTER}`,
-                                  '_blank',
-                                );
-                              }
-                            }}
-                          >
-                            {submission.paymentDetails?.[0]?.txId &&
-                              truncatePublicKey(
-                                submission.paymentDetails[0].txId,
-                                5,
-                              )}
-                            <ExternalLink className="ml-1 h-4 w-4" />
-                          </div>
-                        )
-                      ) : bounty.isWinnersAnnounced && !isFndnToPay ? (
-                        <div className="flex items-center">
-                          <PayoutButton
-                            bounty={bounty}
-                            submission={submission}
                     {isProject && !isFndnToPay && (
                       <TableCell>
                         <div className="flex items-center gap-3">
