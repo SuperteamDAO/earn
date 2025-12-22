@@ -24,6 +24,7 @@ function BountyDetails({ bounty: bounty }: BountyDetailsProps) {
         description={bounty?.description}
         isPro={bounty?.isPro ?? false}
         type={bounty?.type ?? 'bounty'}
+        sponsorId={bounty?.sponsorId ?? ''}
       />
     </ListingPageLayout>
   );

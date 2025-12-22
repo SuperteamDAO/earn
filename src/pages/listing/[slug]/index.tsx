@@ -77,6 +77,7 @@ function ListingDetails({
             description={initialListing?.description}
             isPro={initialListing?.isPro ?? false}
             type={initialListing?.type ?? 'bounty'}
+            sponsorId={initialListing?.sponsorId ?? ''}
           />
         </ListingPageLayout>
       </HydrationBoundary>

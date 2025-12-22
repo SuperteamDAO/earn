@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useQueryClient } from '@tanstack/react-query';
-import { Check, Loader2 } from 'lucide-react';
+import { Check, Loader2, Lock } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -82,6 +82,7 @@ export const ApplicationModal = ({
   const { id, token, minReward, maxReward, questions, isPro } = grant;
   const isUserPro = user?.isPro;
   const isProGrant = isPro && isUserPro;
+  const isNotEligibleForPro = isPro && !isUserPro;
 
   const dynamicResolver = useMemo(
     () =>
@@ -752,9 +753,11 @@ export const ApplicationModal = ({
                 <Button
                   className={cn(
                     'ph-no-capture w-full',
-                    isProGrant && 'bg-zinc-800 hover:bg-black',
+                    isNotEligibleForPro
+                      ? 'bg-zinc-300 text-zinc-700 disabled:opacity-100'
+                      : isProGrant && 'bg-zinc-800 hover:bg-black',
                   )}
-                  disabled={isLoading}
+                  disabled={isLoading || (isPro && !isUserPro)}
                   type="submit"
                 >
                   {isLoading ? (
@@ -762,6 +765,11 @@ export const ApplicationModal = ({
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                       <span>Applying...</span>
                     </>
+                  ) : isNotEligibleForPro ? (
+                    <span className="flex items-center gap-2">
+                      <Lock className="h-4 w-4" />
+                      <span>Not Eligible</span>
+                    </span>
                   ) : grantApplication ? (
                     <span>Update</span>
                   ) : (

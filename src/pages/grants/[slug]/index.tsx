@@ -46,6 +46,7 @@ function Grants({ grant: initialGrant }: InitialGrant) {
         description={(grant?.description as string) ?? ''}
         isPro={grant?.isPro}
         type="grant"
+        sponsorId={grant?.sponsorId ?? ''}
       />
     </GrantPageLayout>
   );
