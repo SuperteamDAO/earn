@@ -574,7 +574,7 @@ export const ProUpgradeOverlay = () => {
             </div>
             {isVisible ? (
               <audio
-                src={'/assets/JohnCenaEntry.mp3'}
+                src={'/earn/assets/JohnCenaEntry.mp3'}
                 style={{ display: 'none' }}
                 autoPlay
               />

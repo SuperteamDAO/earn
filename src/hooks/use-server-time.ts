@@ -49,7 +49,7 @@ export const useServerTimeSync = (
   const {
     syncInterval = 2.5 * 60 * 1000,
     autoSync = true,
-    endpoint = '/api/server-time',
+    endpoint = '/earn/api/server-time',
     onError,
     onSync,
     maxRetries = 3,

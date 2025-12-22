@@ -13,26 +13,26 @@ export function TalentProfileBackground({
     <picture>
       <source
         media="(min-width: 640px)"
-        srcSet={`/assets/backgrounds/${bgNum}-desktop.avif`}
+        srcSet={`/earn/assets/backgrounds/${bgNum}-desktop.avif`}
         type="image/avif"
       />
       <source
         media="(min-width: 640px)"
-        srcSet={`/assets/backgrounds/${bgNum}-desktop.webp`}
+        srcSet={`/earn/assets/backgrounds/${bgNum}-desktop.webp`}
         type="image/webp"
       />
       <source
         media="(max-width: 639px)"
-        srcSet={`/assets/backgrounds/${bgNum}-mobile.avif`}
+        srcSet={`/earn/assets/backgrounds/${bgNum}-mobile.avif`}
         type="image/avif"
       />
       <source
         media="(max-width: 639px)"
-        srcSet={`/assets/backgrounds/${bgNum}-mobile.webp`}
+        srcSet={`/earn/assets/backgrounds/${bgNum}-mobile.webp`}
         type="image/webp"
       />
       <img
-        src={`/assets/backgrounds/${bgNum}-mobile.webp`}
+        src={`/earn/assets/backgrounds/${bgNum}-mobile.webp`}
         alt=""
         className={className}
         style={{ objectFit: 'cover' }}

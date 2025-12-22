@@ -77,7 +77,7 @@ export default function Hackathon() {
   const getBounties = async () => {
     setIsBountiesLoading(true);
     try {
-      const hackathonQuery = await api.get('/api/hackathon/listings/', {
+      const hackathonQuery = await api.get('/api/hackathon/listings', {
         params: {
           searchText,
           skip,
@@ -245,7 +245,7 @@ export default function Hackathon() {
                             src={
                               tokenList.filter(
                                 (e) => e?.tokenSymbol === currentBounty.token,
-                              )[0]?.icon ?? '/assets/dollar.svg'
+                              )[0]?.icon ?? '/earn/assets/dollar.svg'
                             }
                           />
                           <p className="text-sm font-medium text-slate-700">

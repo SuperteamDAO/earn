@@ -33,7 +33,7 @@ export const useUser = () => {
     queryKey: ['user'],
     queryFn: async () => {
       try {
-        const { data: fetchedUser } = await api.get<User>('/api/user/');
+        const { data: fetchedUser } = await api.get<User>('/api/user');
 
         if (fetchedUser?.id) {
           const currentUserId = getCookie(USER_ID_COOKIE_NAME);

@@ -17,7 +17,7 @@ const fetchTracks = async (slug: string): Promise<TrackProps[]> => {
 };
 
 const fetchStats = async (slug: string): Promise<Stats> => {
-  const response = await api.get('/api/hackathon/public-stats/', {
+  const response = await api.get('/api/hackathon/public-stats', {
     params: { slug },
   });
   return response.data;

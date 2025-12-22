@@ -110,7 +110,7 @@ export const SubmissionHeader = ({
   const exportMutation = useMutation({
     mutationFn: async () => {
       const response = await api.get(
-        `/api/sponsor-dashboard/submission/export/`,
+        `/api/sponsor-dashboard/submission/export`,
         {
           params: {
             listingId: bounty?.id,

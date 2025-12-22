@@ -122,7 +122,7 @@ function MainContent({
         />
       </div>
       <audio
-        src={'/assets/JohnCenaVibingToCupid.mp3'}
+        src={'/earn/assets/JohnCenaVibingToCupid.mp3'}
         style={{ display: 'none' }}
         autoPlay
         loop

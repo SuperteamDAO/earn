@@ -294,7 +294,7 @@ export const ApplicationModal = ({
 
       const apiAction = !!grantApplication ? 'update' : 'create';
 
-      await api.post(`/api/grant-application/${apiAction}/`, {
+      await api.post(`/api/grant-application/${apiAction}`, {
         grantId: id,
         projectTitle,
         projectOneLiner,

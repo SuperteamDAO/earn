@@ -49,7 +49,7 @@ export const TalentImageCard = () => {
   useEffect(() => {
     const fetchLocation = async () => {
       try {
-        const response = await api.get('https://ipapi.co/json/');
+        const response = await api.get('https://ipapi.co/json');
         const locationData = response.data;
 
         if (locationData && locationData.country_code) {

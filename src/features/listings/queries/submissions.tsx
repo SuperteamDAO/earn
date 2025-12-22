@@ -18,7 +18,7 @@ const fetchListingSubmissions = async (
 }> => {
   const slug = params.slug;
   delete (params as any).slug;
-  const { data } = await api.get(`/api/listings/submissions/${slug}/`, {
+  const { data } = await api.get(`/api/listings/submissions/${slug}`, {
     params,
   });
   return data;

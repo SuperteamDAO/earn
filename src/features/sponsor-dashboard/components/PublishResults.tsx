@@ -113,7 +113,7 @@ export function PublishResults({
           ]);
         }
       }
-      await api.post(`/api/sponsor-dashboard/listing/${bounty?.id}/announce/`);
+      await api.post(`/api/sponsor-dashboard/listing/${bounty?.id}/announce`);
       setIsWinnersAnnounced(true);
       setIsPublishingResults(false);
     } catch (e) {

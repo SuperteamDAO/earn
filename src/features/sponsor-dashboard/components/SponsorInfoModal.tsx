@@ -67,7 +67,7 @@ export const SponsorInfoModal = ({
   const updateUserMutation = useMutation({
     mutationFn: async (data: UserSponsorDetails) => {
       const response = await api.post(
-        '/api/sponsors/usersponsor-details/',
+        '/api/sponsors/usersponsor-details',
         data,
       );
       return response.data;

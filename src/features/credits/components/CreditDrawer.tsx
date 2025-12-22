@@ -83,13 +83,14 @@ export function CreditDrawer({
   }, [isOpen, creditHistory?.data, router, canDispute]);
 
   const handleClose = () => {
-    const currentPath = window.location.hash;
+    const currentHash = window.location.hash;
 
     if (
-      currentPath === '#wallet' ||
-      currentPath.startsWith('#dispute-submission-')
+      currentHash === '#wallet' ||
+      currentHash.startsWith('#dispute-submission-')
     ) {
-      router.push(window.location.pathname, undefined, { shallow: true });
+      const pathWithoutHash = router.asPath.split('#')[0] ?? router.pathname;
+      router.push(pathWithoutHash, undefined, { shallow: true });
     }
 
     setDisputeSubmissionId(null);
