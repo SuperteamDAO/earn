@@ -76,6 +76,7 @@ function ListingDetails({
           <DescriptionUI
             description={initialListing?.description}
             isPro={initialListing?.isPro ?? false}
+            type={initialListing?.type ?? 'bounty'}
           />
         </ListingPageLayout>
       </HydrationBoundary>

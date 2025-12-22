@@ -45,6 +45,7 @@ function Grants({ grant: initialGrant }: InitialGrant) {
       <DescriptionUI
         description={(grant?.description as string) ?? ''}
         isPro={grant?.isPro}
+        type="grant"
       />
     </GrantPageLayout>
   );

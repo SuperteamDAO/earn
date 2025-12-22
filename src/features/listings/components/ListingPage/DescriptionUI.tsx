@@ -9,6 +9,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import SuperteamIcon from '@/components/icons/SuperteamIcon';
 import { Button } from '@/components/ui/button';
 import { CircularProgress } from '@/components/ui/progress';
+import { type BountyType } from '@/generated/prisma/enums';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { domPurify } from '@/lib/domPurify';
 import { useUser } from '@/store/user';
@@ -21,10 +22,11 @@ import { ProIntro } from '@/features/pro/components/ProIntro';
 
 interface Props {
   description?: string;
+  type: BountyType | 'grant';
   isPro?: boolean;
 }
 
-export function DescriptionUI({ description, isPro = false }: Props) {
+export function DescriptionUI({ description, type, isPro = false }: Props) {
   const { user, isLoading: isUserLoading } = useUser();
   const { data: stats, isLoading: isStatsLoading } = useQuery(userStatsQuery);
 
@@ -217,7 +219,7 @@ export function DescriptionUI({ description, isPro = false }: Props) {
                 textClassName="text-sm text-zinc-800 text-medium"
               />
               <p className="mt-4 text-xl font-medium text-zinc-800">
-                This bounty is only eligible for PRO members
+                This {type} is only eligible for PRO members
               </p>
               <p className="text-md mt-4 mb-4 font-medium text-slate-500">
                 To be eligible for Pro, you need to:
