@@ -140,6 +140,14 @@ export async function POST(
       logger.error('Discord Listing Unpublish Message Error', err);
     }
 
+    try {
+      await earncognitoClient.post(`/telegram/unpublish-listing`, {
+        listingId: id,
+      });
+    } catch (err) {
+      logger.error('Telegram Listing Unpublish Message Error', err);
+    }
+
     logger.info(`Listing ${id} unpublished successfully`);
     return NextResponse.json(result, { status: 200 });
   } catch (error: any) {
