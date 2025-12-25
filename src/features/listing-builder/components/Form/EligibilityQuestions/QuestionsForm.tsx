@@ -1,4 +1,22 @@
-import { Baseline, Link2, Plus, Trash2 } from 'lucide-react';
+import {
+  closestCenter,
+  DndContext,
+  type DragEndEvent,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core';
+import {
+  restrictToParentElement,
+  restrictToVerticalAxis,
+} from '@dnd-kit/modifiers';
+import {
+  SortableContext,
+  useSortable,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+import { Baseline, GripHorizontal, Link2, Plus, Trash2 } from 'lucide-react';
 import { useCallback, useRef, useState } from 'react';
 import {
   type FieldArrayWithId,
@@ -53,21 +71,47 @@ function EligibilityQuestionItem({
   fieldsLength,
 }: EligibilityQuestionItemProps) {
   const [isFocused, setIsFocused] = useState(false);
+
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: field.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
   return (
     <FormField
       key={field.id}
       control={form.control}
       name={`eligibility.${index}.question`}
       render={() => (
-        <div key={field.id} className="group">
+        <div key={field.id} ref={setNodeRef} style={style} className="group">
           <FormItem className="gap-2">
             <div className="flex items-center justify-between">
-              <FormLabel
-                className="font-medium text-slate-500 sm:text-sm"
-                isRequired={type === 'project' && index === 0}
-              >
-                Question {index + 1}
-              </FormLabel>
+              <div className="flex items-center gap-2">
+                <FormLabel
+                  className="font-medium text-slate-500 sm:text-sm"
+                  isRequired={type === 'project' && index === 0}
+                >
+                  Question {index + 1}
+                </FormLabel>
+                <button
+                  type="button"
+                  className="invisible cursor-grab text-slate-400 group-hover:visible hover:text-slate-600 active:cursor-grabbing"
+                  {...attributes}
+                  {...listeners}
+                >
+                  <GripHorizontal className="h-4 w-4" />
+                </button>
+              </div>
               {!(type === 'project' && index === 0) && (
                 <FormField
                   control={form.control}
@@ -221,10 +265,18 @@ export function EligibilityQuestionsForm() {
     }
   }, [questionsContainerRef]);
 
-  const { fields, append, remove } = useFieldArray({
+  const { fields, append, remove, move } = useFieldArray({
     control: form.control,
     name: 'eligibility',
   });
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    }),
+  );
 
   const handleAddQuestion = useCallback(
     (focus = true) => {
@@ -257,6 +309,30 @@ export function EligibilityQuestionsForm() {
     [form, remove, type, fields.length],
   );
 
+  const handleDragEnd = useCallback(
+    (event: DragEndEvent) => {
+      const { active, over } = event;
+      if (!over || active.id === over.id) return;
+
+      const oldIndex = fields.findIndex((field) => field.id === active.id);
+      const newIndex = fields.findIndex((field) => field.id === over.id);
+
+      if (oldIndex !== newIndex) {
+        move(oldIndex, newIndex);
+
+        // For project type, ensure first question remains required
+        if (type === 'project' && (oldIndex === 0 || newIndex === 0)) {
+          form.setValue('eligibility.0.optional', false);
+        }
+
+        if (form.getValues().id) {
+          form.saveDraft();
+        }
+      }
+    },
+    [fields, move, type, form],
+  );
+
   return (
     <FormField
       control={form.control}
@@ -268,24 +344,39 @@ export function EligibilityQuestionsForm() {
               {type === 'project' ? '' : 'Additional'} Custom Questions
             </FormLabel>
           </div>
-          <ScrollArea
-            ref={questionsContainerRef}
-            className={cn('rounded-md border', fields.length === 0 && 'hidden')}
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragEnd}
+            modifiers={[restrictToVerticalAxis, restrictToParentElement]}
           >
-            <div className="flex min-h-0 shrink flex-col space-y-4 overflow-y-auto p-4">
-              {fields.map((field, index) => (
-                <EligibilityQuestionItem
-                  key={index}
-                  field={field}
-                  index={index}
-                  form={form}
-                  type={type}
-                  handleRemoveQuestion={handleRemoveQuestion}
-                  fieldsLength={fields.length}
-                />
-              ))}
-            </div>
-          </ScrollArea>
+            <ScrollArea
+              ref={questionsContainerRef}
+              className={cn(
+                'rounded-md border',
+                fields.length === 0 && 'hidden',
+              )}
+            >
+              <SortableContext
+                items={fields.map((field) => field.id)}
+                strategy={verticalListSortingStrategy}
+              >
+                <div className="flex min-h-0 shrink flex-col space-y-4 overflow-y-auto p-4">
+                  {fields.map((field, index) => (
+                    <EligibilityQuestionItem
+                      key={field.id}
+                      field={field}
+                      index={index}
+                      form={form}
+                      type={type}
+                      handleRemoveQuestion={handleRemoveQuestion}
+                      fieldsLength={fields.length}
+                    />
+                  ))}
+                </div>
+              </SortableContext>
+            </ScrollArea>
+          </DndContext>
           {(type !== 'bounty' && type !== 'project') ||
           (type === 'bounty' && fields.length < 25) ||
           (type === 'project' && fields.length < 10) ? (
