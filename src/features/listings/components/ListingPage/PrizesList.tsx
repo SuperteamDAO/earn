@@ -146,7 +146,6 @@ function LabelOrAction({
   step,
   maxBonusSpots,
   seeAll,
-  index,
   setSeeAll,
   needsCollapse,
 }: LabelOrActionProps) {
@@ -164,10 +163,7 @@ function LabelOrAction({
     } else
       return (
         <p className="text-md flex items-center gap-2 text-sm font-medium text-slate-500">
-          {nthLabelGenerator(index + 1, true)}
-          {index + 1 !== index + maxBonusSpots && (
-            <> - {nthLabelGenerator(index + maxBonusSpots, true)}</>
-          )}
+          x{maxBonusSpots} {`(Bonus)`}
           {needsCollapse && (
             <button
               className="font-inherit flex items-center gap-1 bg-transparent hover:opacity-80"
