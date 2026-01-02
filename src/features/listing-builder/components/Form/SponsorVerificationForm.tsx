@@ -6,6 +6,7 @@ import { toast } from 'sonner';
 import type * as z from 'zod';
 
 import MdPendingActions from '@/components/icons/MdPendingActions';
+import { SuperteamCombobox } from '@/components/shared/SuperteamCombobox';
 import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
 import { Button } from '@/components/ui/button';
 import {
@@ -41,6 +42,7 @@ export const SponsorVerificationForm = () => {
     resolver: zodResolver(sponsorVerificationSchema),
     defaultValues: {
       superteamLead: '',
+      superteamName: '',
       fundingSource: '',
       telegram: '',
       commitToDeadline: undefined,
@@ -101,6 +103,31 @@ export const SponsorVerificationForm = () => {
                 onSubmit={form.handleSubmit(onSubmit)}
                 className="mt-6 space-y-4"
               >
+                <FormField
+                  control={form.control}
+                  name="superteamName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="mb-1 text-slate-500" isRequired>
+                        Which Superteam are you associated with?
+                      </FormLabel>
+                      <FormControl>
+                        <SuperteamCombobox
+                          value={field.value || null}
+                          onChange={(value) => field.onChange(value || '')}
+                          placeholder="Select a Superteam"
+                          className="w-full"
+                          classNames={{
+                            popoverContent:
+                              'w-[var(--radix-popper-anchor-width)]',
+                          }}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
                 <FormField
                   control={form.control}
                   name="superteamLead"

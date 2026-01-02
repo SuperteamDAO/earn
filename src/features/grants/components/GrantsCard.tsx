@@ -6,6 +6,8 @@ import { ASSET_URL } from '@/constants/ASSET_URL';
 import { tokenList } from '@/constants/tokenList';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 
+import { ProBadge } from '@/features/pro/components/ProBadge';
+
 import type { GrantWithApplicationCount } from '../types';
 import { grantAmount } from '../utils/grantAmount';
 
@@ -19,6 +21,7 @@ export const GrantsCard = ({ grant }: { grant: GrantWithApplicationCount }) => {
     token,
     totalApproved,
     totalApplications,
+    isPro,
   } = grant;
 
   const sponsorLogo = sponsor?.logo
@@ -99,6 +102,16 @@ export const GrantsCard = ({ grant }: { grant: GrantWithApplicationCount }) => {
                     </span>
                   </p>
                 </div>
+              )}
+              {!!isPro && (
+                <>
+                  <p className="flex text-xs text-slate-300 md:text-sm">|</p>
+                  <ProBadge
+                    containerClassName="bg-transparent p-0 gap-1"
+                    iconClassName="size-2.5 text-zinc-500"
+                    textClassName="text-xxs font-medium text-zinc-700"
+                  />
+                </>
               )}
             </div>
           </div>

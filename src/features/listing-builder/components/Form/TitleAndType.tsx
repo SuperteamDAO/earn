@@ -103,8 +103,10 @@ export function TitleAndType() {
   });
 
   useEffect(() => {
-    if (generatedSlugValidated?.data.slug && isTitleDirty) {
-      form.setValue('slug', generatedSlugValidated.data.slug, {
+    const newSlug = generatedSlugValidated?.data.slug;
+    const currentSlug = form.getValues('slug');
+    if (newSlug && isTitleDirty && newSlug !== currentSlug) {
+      form.setValue('slug', newSlug, {
         shouldValidate: true,
         shouldDirty: true,
       });

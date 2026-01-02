@@ -140,6 +140,11 @@ export type DateTimePickerProps = {
    * The default display value to show when the picker is empty.
    */
   defaultDisplayValue?: string;
+  /**
+   * Whether to use pro theme styling.
+   * @default false
+   */
+  isPro?: boolean;
 };
 
 export type DateTimeRenderTriggerProps = {
@@ -169,6 +174,7 @@ export function DateTimePicker({
   minDateTooltipContent,
   maxDateTooltipContent,
   defaultDisplayValue = 'Pick a date',
+  isPro = false,
   ...props
 }: DateTimePickerProps & CalendarProps) {
   const [open, setOpen] = useState(false);
@@ -411,8 +417,12 @@ export function DateTimePicker({
                 'size-9 rounded-md p-0 font-normal aria-selected:opacity-100',
               ),
               range_end: 'day-range-end',
-              selected:
-                'bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground rounded-l-md rounded-r-md',
+              selected: cn(
+                'text-primary-foreground rounded-l-md rounded-r-md',
+                isPro
+                  ? 'bg-zinc-800 hover:bg-zinc-900 focus:bg-zinc-800'
+                  : 'bg-primary hover:bg-primary focus:bg-primary',
+              ),
               today: 'bg-accent text-accent-foreground',
               outside:
                 'day-outside text-muted-foreground opacity-50 aria-selected:bg-accent/50 aria-selected:text-muted-foreground aria-selected:opacity-30',
@@ -436,6 +446,7 @@ export function DateTimePicker({
             onChange={onMonthYearChanged}
             minDate={minDate}
             maxDate={maxDate}
+            isPro={isPro}
             className={cn(
               'absolute top-0 right-0 bottom-0 left-0',
               monthYearPicker ? '' : 'hidden',
@@ -473,6 +484,7 @@ function MonthYearPicker({
   mode = 'month',
   onChange,
   className,
+  isPro = false,
 }: {
   value: Date;
   mode: 'month' | 'year';
@@ -480,6 +492,7 @@ function MonthYearPicker({
   maxDate?: Date;
   onChange: (value: Date, mode: 'month' | 'year') => void;
   className?: string;
+  isPro?: boolean;
 }) {
   const yearRef = useRef<HTMLDivElement>(null);
   const years = useMemo(() => {
@@ -539,7 +552,12 @@ function MonthYearPicker({
                 <Button
                   disabled={year.disabled}
                   variant={getYear(value) === year.value ? 'default' : 'ghost'}
-                  className="rounded-full"
+                  className={cn(
+                    'rounded-full',
+                    isPro &&
+                      getYear(value) === year.value &&
+                      'bg-zinc-800 hover:bg-zinc-900',
+                  )}
                   onClick={() => onYearChange(year)}
                 >
                   <span>{year.label}</span>
@@ -556,7 +574,12 @@ function MonthYearPicker({
                 size="lg"
                 disabled={month.disabled}
                 variant={getMonth(value) === month.value ? 'default' : 'ghost'}
-                className="rounded-full"
+                className={cn(
+                  'rounded-full',
+                  isPro &&
+                    getMonth(value) === month.value &&
+                    'bg-zinc-800 hover:bg-zinc-900',
+                )}
                 onClick={() =>
                   onChange(setMonthFns(value, month.value), 'month')
                 }

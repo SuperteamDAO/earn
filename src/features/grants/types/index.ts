@@ -46,6 +46,7 @@ interface Grant {
   airtableId?: string;
   isNative?: boolean;
   ai?: GrantsAi;
+  isPro?: boolean;
 }
 
 interface GrantWithApplicationCount extends Grant {

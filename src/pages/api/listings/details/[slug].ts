@@ -1,10 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
-import { publicApiRateLimiter } from '@/lib/ratelimit';
-import { checkAndApplyRateLimit } from '@/lib/rateLimiterService';
 import { prisma } from '@/prisma';
-import { getClientIPPages } from '@/utils/getClientIPPages';
 import { convertDatesToISO, safeStringify } from '@/utils/safeStringify';
 
 export async function getListingDetailsBySlug(slug: string): Promise<any> {
@@ -68,14 +65,6 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
-  const clientIP = getClientIPPages(req);
-  const canProceed = await checkAndApplyRateLimit(res, {
-    limiter: publicApiRateLimiter,
-    identifier: `listings_details:${clientIP}`,
-    routeName: 'listings-details',
-  });
-  if (!canProceed) return;
-
   const params = req.query;
   const slug = params.slug as string;
 
