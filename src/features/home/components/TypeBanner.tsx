@@ -42,6 +42,7 @@ export function TypeBanner({ type }: { type: TypeTypes }) {
         width={1440}
         height={290}
         className="h-full w-full object-cover object-center"
+        unoptimized
       />
       <div className="absolute inset-0 bg-black/60" />
       <div className="absolute top-1/2 flex w-full max-w-7xl -translate-y-1/2 flex-col items-start px-2 lg:px-6 xl:px-0">

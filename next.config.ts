@@ -43,7 +43,7 @@ const baseCsp = `
 const csp = baseCsp.replace(/\s{2,}/g, ' ').trim();
 
 const nextConfig: NextConfig = {
-  // turbopack: {},
+  turbopack: {},
   basePath: '/earn',
   poweredByHeader: false,
   trailingSlash: true,
