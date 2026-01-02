@@ -1,5 +1,4 @@
 import { useQuery } from '@tanstack/react-query';
-import { getImageProps } from 'next/image';
 import Link from 'next/link';
 import posthog from 'posthog-js';
 
@@ -13,38 +12,6 @@ interface HomeSponsorBannerProps {
 }
 
 export function HomeSponsorBanner({ totalUsers }: HomeSponsorBannerProps) {
-  const common = {
-    alt: 'Illustration — Gradient Light blue with Logos of Solana first Companies',
-    quality: 85,
-    loading: 'lazy' as const,
-    style: {
-      width: '100%',
-      maxWidth: '100%',
-      borderRadius: '0.375rem',
-      pointerEvents: 'none' as const,
-      objectFit: 'contain' as const,
-    },
-  };
-
-  const {
-    props: { srcSet: desktop, ...rest },
-  } = getImageProps({
-    ...common,
-    src: `https://res.cloudinary.com/dgvnuwspr/image/upload/assets/banner/banner-sponsor-logos`,
-    width: 1200,
-    height: 600,
-    sizes: '40vw',
-  });
-  const {
-    props: { srcSet: mobile },
-  } = getImageProps({
-    ...common,
-    src: `https://res.cloudinary.com/dgvnuwspr/image/upload/assets/banner/banner-sponsor-logos-mobile`,
-    width: 800,
-    height: 600,
-    sizes: '30vw',
-  });
-
   const { data } = useQuery(sponsorCountQuery);
   return (
     <Link
@@ -61,21 +28,59 @@ export function HomeSponsorBanner({ totalUsers }: HomeSponsorBannerProps) {
             'xl:relative xl:ml-auto xl:block xl:h-full',
           )}
         >
-          <source media="(min-width: 80em)" srcSet={desktop} />
+          <source
+            media="(min-width: 80em)"
+            srcSet="/assets/banner/banner-sponsor-logos.avif"
+            type="image/avif"
+          />
+          <source
+            media="(min-width: 80em)"
+            srcSet="/assets/banner/banner-sponsor-logos.webp"
+            type="image/webp"
+          />
           <source
             media="(min-width: 64em) and (max-width: 80em)"
-            srcSet={mobile}
+            srcSet="/assets/banner/banner-sponsor-logos-mobile.avif"
+            type="image/avif"
+          />
+          <source
+            media="(min-width: 64em) and (max-width: 80em)"
+            srcSet="/assets/banner/banner-sponsor-logos-mobile.webp"
+            type="image/webp"
           />
           <source
             media="(min-width: 48em) and (max-width: 64em)"
-            srcSet={desktop}
+            srcSet="/assets/banner/banner-sponsor-logos.avif"
+            type="image/avif"
           />
-          <source media="(max-width: 48em)" srcSet={mobile} />
+          <source
+            media="(min-width: 48em) and (max-width: 64em)"
+            srcSet="/assets/banner/banner-sponsor-logos.webp"
+            type="image/webp"
+          />
+          <source
+            media="(max-width: 48em)"
+            srcSet="/assets/banner/banner-sponsor-logos-mobile.avif"
+            type="image/avif"
+          />
+          <source
+            media="(max-width: 48em)"
+            srcSet="/assets/banner/banner-sponsor-logos-mobile.webp"
+            type="image/webp"
+          />
           <img
-            {...rest}
+            src="/assets/banner/banner-sponsor-logos-mobile.webp"
+            alt="Illustration — Gradient Light blue with Logos of Solana first Companies"
             className="h-full !w-auto"
-            alt={rest.alt}
-            decoding="async"
+            style={{
+              width: '100%',
+              maxWidth: '100%',
+              borderRadius: '0.375rem',
+              pointerEvents: 'none',
+              objectFit: 'contain',
+            }}
+            loading="eager"
+            fetchPriority="high"
           />
         </picture>
       </div>
