@@ -1,7 +1,7 @@
 import { useIsFetching, useQuery } from '@tanstack/react-query';
 import { useAtomValue } from 'jotai';
 import { CheckIcon, Loader2 } from 'lucide-react';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { useWatch } from 'react-hook-form';
 
 import { CopyButton } from '@/components/ui/copy-tooltip';
@@ -74,11 +74,21 @@ export function Slug() {
     }
   }, [isSlugCheckError]);
 
+  const prevDebouncedSlugRef = useRef<string | undefined>(undefined);
   useEffect(() => {
     async function validateSlug() {
       await form.trigger('slug');
       form.setFocus('slug');
-      form.saveDraft();
+      // Only save if slug actually changed
+      console.log('[DRAFT_DEBUG] Slug.tsx useEffect', {
+        prevSlug: prevDebouncedSlugRef.current,
+        debouncedSlug,
+        willSave: prevDebouncedSlugRef.current !== debouncedSlug,
+      });
+      if (prevDebouncedSlugRef.current !== debouncedSlug) {
+        prevDebouncedSlugRef.current = debouncedSlug;
+        form.saveDraft();
+      }
     }
     validateSlug();
   }, [debouncedSlug]);

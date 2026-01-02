@@ -357,7 +357,12 @@ export const createListingRefinements = async (
         },
         0,
       );
-      if (data.type !== 'project' && totalRewards !== data.rewardAmount) {
+      // Use epsilon comparison for floating point precision tolerance
+      const epsilon = 0.0001;
+      const rewardsDifference = Math.abs(
+        totalRewards - (data.rewardAmount || 0),
+      );
+      if (data.type !== 'project' && rewardsDifference > epsilon) {
         if ((!!pick && pick.rewards) || !pick) {
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
