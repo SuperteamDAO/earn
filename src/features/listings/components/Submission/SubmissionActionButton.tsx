@@ -303,6 +303,7 @@ export const SubmissionActionButton = ({
       if (
         isPro &&
         !isUserPro &&
+        !isListingSponsor &&
         buttonState === 'submit' &&
         !isUserSubmissionLoading
       ) {
@@ -348,7 +349,8 @@ export const SubmissionActionButton = ({
       break;
   }
 
-  const isNotEligible = isPro && !isUserPro && buttonState === 'submit';
+  const isNotEligible =
+    isPro && !isUserPro && !isListingSponsor && buttonState === 'submit';
   if (
     !isNotEligible &&
     isDeadlineOver(deadline, serverTime()) &&
@@ -525,9 +527,12 @@ export const SubmissionActionButton = ({
                     </>
                   ) : (
                     <>
-                      {isPro && !isUserPro && buttonState === 'submit' && (
-                        <Lock className="h-4 w-4" />
-                      )}
+                      {isPro &&
+                        !isUserPro &&
+                        !isListingSponsor &&
+                        buttonState === 'submit' && (
+                          <Lock className="h-4 w-4" />
+                        )}
                       {isEditMode && <Pencil />}
                       <span>{buttonText}</span>
                       {requiresCredits && (

@@ -30,7 +30,7 @@ export const ApplicationActionButton = ({
 }: GrantApplicationButtonProps) => {
   const { user } = useUser();
 
-  const { region, id, link, isNative, isPublished, isPro } = grant;
+  const { region, id, link, isNative, isPublished, isPro, sponsorId } = grant;
   const isUserPro = user?.isPro;
 
   const { data: application, isLoading: isUserApplicationLoading } = useQuery({
@@ -64,8 +64,9 @@ export const ApplicationActionButton = ({
     ? 'New grant applications have been temporarily paused'
     : undefined;
 
+  const isGrantSponsor = user?.currentSponsorId === sponsorId;
   const isNotEligibleForPro =
-    isPro && !isUserPro && applicationState === 'ALLOW NEW';
+    isPro && !isUserPro && !isGrantSponsor && applicationState === 'ALLOW NEW';
 
   const isBtnDisabled =
     buttonConfig.isDisabled ||
@@ -172,7 +173,12 @@ export const ApplicationActionButton = ({
                     </>
                   ) : (
                     <>
-                      {isNotEligibleForPro && <Lock className="h-4 w-4" />}
+                      {isPro &&
+                        !isUserPro &&
+                        !isGrantSponsor &&
+                        applicationState === 'ALLOW NEW' && (
+                          <Lock className="h-4 w-4" />
+                        )}
                       {applicationState === 'ALLOW EDIT' && <Pencil />}
                       <span>{getButtonText()}</span>
                     </>
