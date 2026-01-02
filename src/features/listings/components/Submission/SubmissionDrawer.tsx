@@ -1,7 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
-import { Loader2, X } from 'lucide-react';
+import { Loader2, Lock, X } from 'lucide-react';
 import { useRouter } from 'next/router';
 import posthog from 'posthog-js';
 import { type JSX, useEffect, useMemo, useState } from 'react';
@@ -108,6 +108,8 @@ export const SubmissionDrawer = ({
   );
 
   const { user, refetchUser } = useUser();
+  const isNotEligibleForPro = isPro && !user?.isPro;
+
   const form = useForm<FormData>({
     resolver: zodResolver(
       submissionSchema(listing, minRewardAsk || 0, maxRewardAsk || 0, user),
@@ -324,7 +326,8 @@ export const SubmissionDrawer = ({
           isLoading ||
           form.formState.isSubmitting ||
           needsXVerification ||
-          needsLinkVerification,
+          needsLinkVerification ||
+          (isPro && !user?.isPro),
       ),
 
     [
@@ -340,6 +343,8 @@ export const SubmissionDrawer = ({
       form.formState.isSubmitting,
       needsXVerification,
       needsLinkVerification,
+      isPro,
+      user?.isPro,
     ],
   );
 
@@ -828,14 +833,23 @@ export const SubmissionDrawer = ({
                   <Button
                     className={cn(
                       'ph-no-capture h-11 w-full gap-4',
-                      'disabled:cursor-default disabled:opacity-70',
-                      user?.isPro && isPro ? 'bg-zinc-900' : 'bg-brand-purple',
+                      isNotEligibleForPro
+                        ? 'disabled:opacity-100'
+                        : 'disabled:cursor-default disabled:opacity-70',
+                      isNotEligibleForPro
+                        ? 'bg-zinc-300 text-zinc-700'
+                        : user?.isPro && isPro
+                          ? 'bg-zinc-900'
+                          : 'bg-brand-purple',
                       editMode &&
                         (isPro
                           ? 'border-zinc-900 text-white hover:text-white'
                           : 'border-brand-purple hover:text-brand-purple-dark text-white'),
                       user?.isPro && isPro && 'hover:bg-black',
-                      !user?.isPro && isPro && 'hover:opacity-90',
+                      !user?.isPro &&
+                        isPro &&
+                        !isNotEligibleForPro &&
+                        'hover:opacity-90',
                     )}
                     disabled={isDisabled}
                     type="submit"
@@ -848,6 +862,11 @@ export const SubmissionDrawer = ({
                           {editMode ? 'Updating...' : 'Submitting...'}
                         </span>
                       </>
+                    ) : isNotEligibleForPro ? (
+                      <span className="flex items-center gap-2">
+                        <Lock className="h-4 w-4" />
+                        <span>Not Eligible</span>
+                      </span>
                     ) : isProject ? (
                       <span className="flex items-center gap-2">
                         {editMode

@@ -9,6 +9,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import SuperteamIcon from '@/components/icons/SuperteamIcon';
 import { Button } from '@/components/ui/button';
 import { CircularProgress } from '@/components/ui/progress';
+import { type BountyType } from '@/generated/prisma/enums';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { domPurify } from '@/lib/domPurify';
 import { useUser } from '@/store/user';
@@ -21,10 +22,17 @@ import { ProIntro } from '@/features/pro/components/ProIntro';
 
 interface Props {
   description?: string;
+  type: BountyType | 'grant';
+  sponsorId: string;
   isPro?: boolean;
 }
 
-export function DescriptionUI({ description, isPro = false }: Props) {
+export function DescriptionUI({
+  description,
+  type,
+  sponsorId,
+  isPro = false,
+}: Props) {
   const { user, isLoading: isUserLoading } = useUser();
   const { data: stats, isLoading: isStatsLoading } = useQuery(userStatsQuery);
 
@@ -186,7 +194,8 @@ export function DescriptionUI({ description, isPro = false }: Props) {
     );
   }
 
-  if (isPro && !user?.isPro) {
+  const isUserSponsor = user?.currentSponsorId === sponsorId;
+  if (isPro && !user?.isPro && !isUserSponsor) {
     const randomText =
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit. <br/> Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.';
 
@@ -217,7 +226,7 @@ export function DescriptionUI({ description, isPro = false }: Props) {
                 textClassName="text-sm text-zinc-800 text-medium"
               />
               <p className="mt-4 text-xl font-medium text-zinc-800">
-                This bounty is only eligible for PRO members
+                This {type} is only eligible for PRO members
               </p>
               <p className="text-md mt-4 mb-4 font-medium text-slate-500">
                 To be eligible for Pro, you need to:
