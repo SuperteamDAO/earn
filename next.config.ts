@@ -43,7 +43,7 @@ const baseCsp = `
 const csp = baseCsp.replace(/\s{2,}/g, ' ').trim();
 
 const nextConfig: NextConfig = {
-  // turbopack: {},
+  turbopack: {},
   poweredByHeader: false,
   trailingSlash: true,
   reactStrictMode: true,
@@ -65,7 +65,7 @@ const nextConfig: NextConfig = {
     formats: ['image/avif', 'image/webp'],
   },
   experimental: {
-    // turbopackFileSystemCacheForDev: true,
+    turbopackFileSystemCacheForDev: true,
     optimizePackageImports: [
       '@privy-io/react-auth',
       '@privy-io/node',
