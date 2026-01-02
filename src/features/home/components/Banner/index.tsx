@@ -67,9 +67,6 @@ export function BannerCarousel({ totalUsers }: BannerCarouselProps) {
         <CarouselItem>
           <HomeTalentBanner totalUsers={totalUsers} />
         </CarouselItem>
-        {/* <CarouselItem>
-          <HomeCypherpunkBanner />
-        </CarouselItem> */}
         <CarouselItem>
           <HomeSponsorBanner totalUsers={totalUsers} />
         </CarouselItem>
