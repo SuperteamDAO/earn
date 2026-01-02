@@ -4,7 +4,6 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { statsDataQuery } from '@/queries/hackathon';
-import { CypherpunkLogo } from '@/svg/cypherpunk-logo';
 import { dayjs } from '@/utils/dayjs';
 import { roundToNearestTenThousand } from '@/utils/number';
 
@@ -30,9 +29,6 @@ export function SidebarBannerCypherpunk({ className }: SidebarPosterProps) {
         />
 
         <div className="relative z-10 flex h-full w-full flex-col px-8 pt-36 pb-6 text-black">
-          <div className="flex items-center justify-between">
-            <CypherpunkLogo className="w-full" />
-          </div>
           <p className="relative z-10 mt-2 text-xl leading-[120%] font-semibold text-black">
             Are you a dev? We have prizes worth $
             {roundToNearestTenThousand(
