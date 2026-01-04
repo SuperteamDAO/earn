@@ -150,6 +150,34 @@ const nextConfig: NextConfig = {
 
     return headers;
   },
+  async redirects() {
+    return [
+      {
+        source: '/earn/:path*',
+        has: [
+          {
+            type: 'host',
+            value: 'testearn.superteam.fun',
+          },
+        ],
+        destination: 'https://test.superteam.fun/earn/:path*',
+        permanent: true,
+        basePath: false,
+      },
+      {
+        source: '/:path*',
+        has: [
+          {
+            type: 'host',
+            value: 'testearn.superteam.fun',
+          },
+        ],
+        destination: 'https://test.superteam.fun/earn/:path*',
+        permanent: true,
+        basePath: false,
+      },
+    ];
+  },
   async rewrites() {
     return [
       {

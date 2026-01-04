@@ -405,7 +405,7 @@ export const tokenList: Token[] = [
     tokenName: 'DMCP',
     tokenSymbol: 'DMCP',
     mintAddress: '81YHAzq9yfptVbNTHiYuMVKVQ6ZNs3XeQFFENnNUpump',
-    icon: 'https://st.superteamearn.com/earn/assets/dollar.svg',
+    icon: 'https://test.superteam.fun/earn/assets/dollar.svg',
     decimals: 6,
   },
   {
