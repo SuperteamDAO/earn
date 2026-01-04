@@ -1,0 +1,10 @@
+{
+  "redirects": [
+    {
+      "source": "/:path*",
+      "has": [{ "type": "host", "value": "testearn.superteam.fun" }],
+      "destination": "https://test.superteam.fun/earn/:path*",
+      "permanent": true
+    }
+  ]
+}
