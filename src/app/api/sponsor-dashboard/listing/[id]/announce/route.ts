@@ -91,7 +91,15 @@ export async function POST(
               isArchived: false,
             },
             include: {
-              user: true,
+              user: {
+                select: {
+                  id: true,
+                  username: true,
+                  isKYCVerified: true,
+                  kycVerifiedAt: true,
+                  kycCountry: true,
+                },
+              },
             },
           });
 
