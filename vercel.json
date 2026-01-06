@@ -1,7 +1,7 @@
 {
   "redirects": [
     {
-      "source": "/earn/:path*",
+      "source": "/earn/((?!_next|api|assets|sw\\.js|workbox|favicon|OverusedGrotesk|PerfectlyNineties).*)",
       "has": [{ "type": "host", "value": "testearn.superteam.fun" }],
       "missing": [
         {
@@ -10,11 +10,11 @@
           "value": "test.superteam.fun"
         }
       ],
-      "destination": "https://test.superteam.fun/earn/:path*",
+      "destination": "https://test.superteam.fun/earn/$1",
       "permanent": true
     },
     {
-      "source": "/:path((?!earn|_next|api).*)",
+      "source": "/((?!earn|_next|api).*)",
       "has": [{ "type": "host", "value": "testearn.superteam.fun" }],
       "missing": [
         {
@@ -23,7 +23,7 @@
           "value": "test.superteam.fun"
         }
       ],
-      "destination": "https://test.superteam.fun/earn/:path*",
+      "destination": "https://test.superteam.fun/earn/$1",
       "permanent": true
     }
   ]
