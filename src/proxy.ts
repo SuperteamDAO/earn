@@ -24,11 +24,17 @@ export function proxy(request: NextRequest) {
     forwardedHost !== 'test.superteam.fun';
 
   if (isDirectTestearnRequest) {
-    // If path already starts with /earn, use it directly
-    // If not, prepend /earn (handles legacy URLs without basePath)
-    const targetPath = pathname.startsWith('/earn')
-      ? pathname
-      : `/earn${pathname}`;
+    // If path already starts with /earn, use it as-is
+    // Otherwise, prepend /earn to any path
+    let targetPath: string;
+    if (pathname.startsWith('/earn')) {
+      targetPath = pathname;
+    } else if (pathname === '/') {
+      targetPath = '/earn/';
+    } else {
+      // Ensure path starts with /earn
+      targetPath = `/earn${pathname}`;
+    }
 
     const redirectUrl = new URL(targetPath, 'https://test.superteam.fun');
 
