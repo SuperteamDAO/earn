@@ -3,14 +3,26 @@
     {
       "source": "/earn/:path*",
       "has": [{ "type": "host", "value": "testearn.superteam.fun" }],
-      "missing": [{ "type": "header", "key": "x-forwarded-host" }],
+      "missing": [
+        {
+          "type": "header",
+          "key": "x-forwarded-host",
+          "value": "test.superteam.fun"
+        }
+      ],
       "destination": "https://test.superteam.fun/earn/:path*",
       "permanent": true
     },
     {
       "source": "/:path((?!earn|_next|api).*)",
       "has": [{ "type": "host", "value": "testearn.superteam.fun" }],
-      "missing": [{ "type": "header", "key": "x-forwarded-host" }],
+      "missing": [
+        {
+          "type": "header",
+          "key": "x-forwarded-host",
+          "value": "test.superteam.fun"
+        }
+      ],
       "destination": "https://test.superteam.fun/earn/:path*",
       "permanent": true
     }
