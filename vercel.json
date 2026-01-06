@@ -1,6 +1,32 @@
 {
   "redirects": [
     {
+      "source": "/earn",
+      "has": [{ "type": "host", "value": "testearn.superteam.fun" }],
+      "missing": [
+        {
+          "type": "header",
+          "key": "x-forwarded-host",
+          "value": "test.superteam.fun"
+        }
+      ],
+      "destination": "https://test.superteam.fun/earn",
+      "permanent": true
+    },
+    {
+      "source": "/earn/",
+      "has": [{ "type": "host", "value": "testearn.superteam.fun" }],
+      "missing": [
+        {
+          "type": "header",
+          "key": "x-forwarded-host",
+          "value": "test.superteam.fun"
+        }
+      ],
+      "destination": "https://test.superteam.fun/earn/",
+      "permanent": true
+    },
+    {
       "source": "/earn/((?!_next|api|assets|sw\\.js|workbox|favicon|OverusedGrotesk|PerfectlyNineties).*)",
       "has": [{ "type": "host", "value": "testearn.superteam.fun" }],
       "missing": [
