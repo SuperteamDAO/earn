@@ -3,6 +3,20 @@ import { type NextRequest, NextResponse } from 'next/server';
 export function proxy(request: NextRequest) {
   const host = request.headers.get('host') || '';
   const forwardedHost = request.headers.get('x-forwarded-host');
+  const pathname = request.nextUrl.pathname;
+
+  // Skip redirect for API routes and Next.js internal routes
+  const shouldSkipRedirect =
+    pathname.startsWith('/api') ||
+    pathname.startsWith('/_next') ||
+    pathname.startsWith('/_vercel') ||
+    pathname.startsWith('/favicon.ico') ||
+    pathname.startsWith('/robots.txt') ||
+    pathname.startsWith('/sitemap');
+
+  if (shouldSkipRedirect) {
+    return NextResponse.next();
+  }
 
   // Check if this is a direct request to testearn (not proxied from test.superteam.fun)
   const isDirectTestearnRequest =
@@ -10,8 +24,6 @@ export function proxy(request: NextRequest) {
     forwardedHost !== 'test.superteam.fun';
 
   if (isDirectTestearnRequest) {
-    const pathname = request.nextUrl.pathname;
-
     // If path already starts with /earn, use it directly
     // If not, prepend /earn (handles legacy URLs without basePath)
     const targetPath = pathname.startsWith('/earn')
