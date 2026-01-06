@@ -3,7 +3,10 @@ import { type NextRequest, NextResponse } from 'next/server';
 export function proxy(request: NextRequest) {
   const host = request.headers.get('host') || '';
   const forwardedHost = request.headers.get('x-forwarded-host');
-  const pathname = request.nextUrl.pathname;
+
+  // Use raw URL to get actual pathname (bypasses basePath manipulation)
+  const url = new URL(request.url);
+  const pathname = url.pathname;
 
   // Skip redirect for API routes and Next.js internal routes
   const shouldSkipRedirect =
@@ -39,7 +42,7 @@ export function proxy(request: NextRequest) {
     const redirectUrl = new URL(targetPath, 'https://test.superteam.fun');
 
     // Preserve query string
-    redirectUrl.search = request.nextUrl.search;
+    redirectUrl.search = url.search;
 
     return NextResponse.redirect(redirectUrl, { status: 301 });
   }
