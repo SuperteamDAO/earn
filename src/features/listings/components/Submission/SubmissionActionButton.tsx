@@ -307,9 +307,15 @@ export const SubmissionActionButton = ({
         buttonState === 'submit' &&
         !isUserSubmissionLoading
       ) {
-        buttonText = 'Not Eligible';
-        buttonBG = 'bg-zinc-300';
-        isBtnDisabled = true;
+        if (!isAuthenticated) {
+          buttonText = 'Check Eligibility';
+          buttonBG = 'bg-zinc-700';
+          isBtnDisabled = false;
+        } else {
+          buttonText = 'Not Eligible';
+          buttonBG = 'bg-zinc-300';
+          isBtnDisabled = true;
+        }
         btnLoadingText = null;
       } else {
         buttonText = isProject ? 'Apply Now' : 'Submit Now';
@@ -349,8 +355,9 @@ export const SubmissionActionButton = ({
       break;
   }
 
-  const isNotEligible =
+  const isNotEligibleForPro =
     isPro && !isUserPro && !isListingSponsor && buttonState === 'submit';
+  const isNotEligible = isAuthenticated && isNotEligibleForPro;
   if (
     !isNotEligible &&
     isDeadlineOver(deadline, serverTime()) &&
@@ -502,7 +509,7 @@ export const SubmissionActionButton = ({
                   className={cn(
                     'h-12 w-full gap-4',
                     'disabled:cursor-default',
-                    isNotEligible
+                    isNotEligibleForPro
                       ? 'disabled:opacity-100'
                       : 'disabled:opacity-70',
                     'text-base md:text-lg',
@@ -527,12 +534,7 @@ export const SubmissionActionButton = ({
                     </>
                   ) : (
                     <>
-                      {isPro &&
-                        !isUserPro &&
-                        !isListingSponsor &&
-                        buttonState === 'submit' && (
-                          <Lock className="h-4 w-4" />
-                        )}
+                      {isNotEligible && <Lock className="h-4 w-4" />}
                       {isEditMode && <Pencil />}
                       <span>{buttonText}</span>
                       {requiresCredits && (
