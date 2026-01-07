@@ -314,7 +314,7 @@ export async function POST(request: NextRequest) {
 
     const allInstructions = [
       ComputeBudgetProgram.setComputeUnitLimit({ units: 200000 }),
-      ComputeBudgetProgram.setComputeUnitPrice({ microLamports: 100000 }),
+      ComputeBudgetProgram.setComputeUnitPrice({ microLamports: 500000 }),
     ];
 
     let ataCreationCost = 0;
