@@ -229,16 +229,59 @@ export function WithdrawFundsFlow({
         Buffer.from(response.data.serializedTransaction, 'base64'),
       );
 
+      try {
+        const simulation = await connection.simulateTransaction(transaction, {
+          sigVerify: false,
+          replaceRecentBlockhash: true,
+        });
+        if (simulation.value.err) {
+          log.error(
+            `[handleWithdraw] Simulation failed for user ${user?.id}: ${JSON.stringify(simulation.value.err)}, logs: ${simulation.value.logs?.join('\n')}`,
+          );
+          throw new Error(
+            `Transaction simulation failed: ${JSON.stringify(simulation.value.err)}`,
+          );
+        }
+        log.info(
+          `[handleWithdraw] Simulation passed for user ${user?.id}, units consumed: ${simulation.value.unitsConsumed}`,
+        );
+      } catch (simError) {
+        if (
+          simError instanceof Error &&
+          simError.message.includes('simulation failed')
+        ) {
+          throw simError;
+        }
+        log.warn(
+          `[handleWithdraw] Simulation check failed (non-fatal): ${String(simError)}`,
+        );
+      }
+
       const wallet = wallets[0];
       if (!wallet) throw new Error('No wallet found');
 
-      const result = await signAndSendTransaction({
-        wallet,
-        transaction: transaction.serialize(),
-        chain: 'solana:mainnet',
-      });
+      log.info(
+        `[handleWithdraw] Sending transaction for user ${user?.id}, wallet: ${wallet.address}`,
+      );
+
+      let result;
+      try {
+        result = await signAndSendTransaction({
+          wallet,
+          transaction: transaction.serialize(),
+          chain: 'solana:mainnet',
+        });
+      } catch (sendError) {
+        log.error(
+          `[handleWithdraw] signAndSendTransaction failed for user ${user?.id}: ${String(sendError)}`,
+        );
+        throw sendError;
+      }
 
       signature = bs58.encode(result.signature);
+      log.info(
+        `[handleWithdraw] Transaction sent for user ${user?.id}, signature: ${signature}`,
+      );
       updateTransactionGuard(guardKey, signature);
       setLastSignature(signature);
 
@@ -249,10 +292,17 @@ export function WithdrawFundsFlow({
           maxRetries: 60,
           retryDelayMs: 500,
         });
+        log.info(
+          `[handleWithdraw] Transaction confirmed for user ${user?.id}, signature: ${signature}`,
+        );
       } catch (e) {
+        const status = await connection.getSignatureStatus(signature);
+        log.error(
+          `[handleWithdraw] Transaction polling failed for user ${user?.id}, signature: ${signature}, finalStatus: ${JSON.stringify(status?.value)}, error: ${String(e)}`,
+        );
         console.error('[handleWithdraw] Transaction polling failed:', e);
         throw new Error(
-          'Transaction might have gone through, check before proceeding',
+          `Transaction confirmation timed out. Signature: ${signature}. Check Solscan before retrying.`,
         );
       }
 
