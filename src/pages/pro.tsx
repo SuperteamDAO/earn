@@ -28,7 +28,7 @@ export default function ProPage({ potentialSession }: HomePageProps) {
           More Pro listings are coming
         </h3>
         <p className="text-sm text-slate-500">
-          Stay turned for more Pro listings
+          Stay tuned for more Pro listings
         </p>
       </div>
     );

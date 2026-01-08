@@ -70,7 +70,7 @@ export const TokenAmountInput = ({
               {selectedToken && (
                 <div className="flex items-center gap-2">
                   <img
-                    src={selectedToken.tokenImg}
+                    src={selectedToken.tokenImg || undefined}
                     alt={selectedToken.tokenSymbol}
                     className="h-5 w-5 rounded-full"
                   />
