@@ -1,12 +1,11 @@
-import {
-  LAMPORTS_PER_SOL,
-  type VersionedTransactionResponse,
-} from '@solana/web3.js';
+import { type Signature } from '@solana/kit';
 
 import { type Token } from '@/constants/tokenList';
 import logger from '@/lib/logger';
 
-import { getConnection } from '@/features/wallet/utils/getConnection';
+import { getRpc } from '@/features/wallet/utils/getConnection';
+
+const LAMPORTS_PER_SOL = 1_000_000_000n;
 
 interface ValidatePaymentParams {
   txId: string;
@@ -31,7 +30,7 @@ export async function validatePayment({
   expectedAmount,
   tokenMint,
 }: ValidatePaymentParams): Promise<ValidationResult> {
-  const connection = getConnection('confirmed');
+  const rpc = getRpc();
   const maxRetries = 3;
   const delayMs = 5000;
   const difference = 0.01;
@@ -39,14 +38,17 @@ export async function validatePayment({
   try {
     logger.debug(`Getting Transaction Information from RPC for txId: ${txId}`);
 
-    let tx: VersionedTransactionResponse | null = null;
+    let tx: any = null;
 
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
       try {
-        tx = await connection.getTransaction(txId, {
-          commitment: 'confirmed',
-          maxSupportedTransactionVersion: 10,
-        });
+        tx = await rpc
+          .getTransaction(txId as Signature, {
+            commitment: 'confirmed',
+            maxSupportedTransactionVersion: 0,
+            encoding: 'jsonParsed',
+          })
+          .send();
         break;
       } catch (err) {
         if (attempt === maxRetries) {
@@ -78,15 +80,18 @@ export async function validatePayment({
         };
       }
 
-      const accountKeys = tx.transaction.message.getAccountKeys();
+      const accountKeys = tx.transaction.message.accountKeys;
       let recipientIndex = -1;
 
       for (let i = 0; i < tx.meta.preBalances.length; i++) {
         const balanceChange =
-          (tx.meta.postBalances[i] || 0) - (tx.meta.preBalances[i] || 0);
+          Number(tx.meta.postBalances[i] || 0) -
+          Number(tx.meta.preBalances[i] || 0);
         if (balanceChange > 0) {
-          const accountKey = accountKeys.get(i);
-          if (accountKey?.toString() === recipientPublicKey) {
+          const key = accountKeys[i];
+          const accountKey =
+            typeof key === 'string' ? key : key?.pubkey || String(key);
+          if (accountKey === recipientPublicKey) {
             recipientIndex = i;
             break;
           }
@@ -100,11 +105,11 @@ export async function validatePayment({
         };
       }
 
-      const preBalance = tx.meta.preBalances[recipientIndex];
-      const postBalance = tx.meta.postBalances[recipientIndex];
+      const preBalance = BigInt(tx.meta.preBalances[recipientIndex] || 0);
+      const postBalance = BigInt(tx.meta.postBalances[recipientIndex] || 0);
 
       const actualTransferAmount =
-        ((postBalance || 0) - (preBalance || 0)) / LAMPORTS_PER_SOL;
+        Number(postBalance - preBalance) / Number(LAMPORTS_PER_SOL);
 
       if (
         expectedAmount > 0 &&
@@ -120,10 +125,10 @@ export async function validatePayment({
     }
 
     const preBalance = meta.preTokenBalances?.find(
-      (balance) => balance.owner === recipientPublicKey,
+      (balance: { owner?: string }) => balance.owner === recipientPublicKey,
     );
     const postBalance = meta.postTokenBalances?.find(
-      (balance) => balance.owner === recipientPublicKey,
+      (balance: { owner?: string }) => balance.owner === recipientPublicKey,
     );
 
     if (!postBalance) {
@@ -140,16 +145,19 @@ export async function validatePayment({
       };
     }
 
-    const preAmount = preBalance?.uiTokenAmount.uiAmount || 0;
-    const postAmount = postBalance.uiTokenAmount.uiAmount;
+    const preAmount = parseFloat(
+      preBalance?.uiTokenAmount?.uiAmountString ?? '0',
+    );
+    const postAmountStr = postBalance.uiTokenAmount?.uiAmountString;
 
-    if (!postAmount) {
+    if (!postAmountStr) {
       return {
         isValid: false,
         error: "Transferred amount doesn't match the amount",
       };
     }
 
+    const postAmount = parseFloat(postAmountStr);
     const actualTransferAmount = postAmount - preAmount;
 
     if (
@@ -168,19 +176,20 @@ export async function validatePayment({
   }
 }
 
-function isNativeSolTransfer(tx: VersionedTransactionResponse) {
+function isNativeSolTransfer(tx: any) {
   if (!tx.meta) return false;
   const hasTokenTransfers =
     (tx.meta?.preTokenBalances?.length || 0) > 0 ||
     (tx.meta?.postTokenBalances?.length || 0) > 0;
   if (hasTokenTransfers) return false;
 
-  const accountKeys = tx.transaction.message.getAccountKeys();
+  const accountKeys = tx.transaction.message.accountKeys;
   const SYSTEM_PROGRAM_ID = '11111111111111111111111111111111';
   let isSystemProgram = false;
   for (let i = 0; i < accountKeys.length; i++) {
-    const key = accountKeys.get(i);
-    if (key?.toString() === SYSTEM_PROGRAM_ID) {
+    const key = accountKeys[i];
+    const keyStr = typeof key === 'string' ? key : key?.pubkey || key;
+    if (keyStr === SYSTEM_PROGRAM_ID) {
       isSystemProgram = true;
       break;
     }
