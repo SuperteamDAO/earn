@@ -61,7 +61,15 @@ export const SponsorVerificationForm = () => {
     try {
       setIsSubmitting(true);
 
-      await api.post('/api/sponsor/verification', values);
+      const payload = {
+        ...values,
+        superteamName:
+          values.superteamName === 'No association'
+            ? null
+            : values.superteamName,
+      };
+
+      await api.post('/api/sponsor/verification', payload);
       await refetchUser();
 
       toast.success('Verification information updated successfully');
@@ -105,11 +113,31 @@ export const SponsorVerificationForm = () => {
               >
                 <FormField
                   control={form.control}
+                  name="superteamLead"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="mb-1 text-slate-500" isRequired>
+                        Is there a Superteam Lead that can vouch for you?
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Enter Superteam Lead name"
+                          {...field}
+                          value={field.value || ''}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
                   name="superteamName"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className="mb-1 text-slate-500" isRequired>
-                        Which Superteam are you associated with?
+                        Which Superteam does this lead represent?
                       </FormLabel>
                       <FormControl>
                         <SuperteamCombobox
@@ -121,25 +149,7 @@ export const SponsorVerificationForm = () => {
                             popoverContent:
                               'w-[var(--radix-popper-anchor-width)]',
                           }}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="superteamLead"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="mb-1 text-slate-500" isRequired>
-                        Is there a Superteam Lead that can vouch for you?
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Enter Superteam Lead name"
-                          {...field}
+                          showNoAssociation
                         />
                       </FormControl>
                       <FormMessage />
