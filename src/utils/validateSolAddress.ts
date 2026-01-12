@@ -1,10 +1,5 @@
-import { PublicKey } from '@solana/web3.js';
+import { isAddress } from '@solana/kit';
 
-export function validateSolAddress(address: string) {
-  try {
-    new PublicKey(address);
-    return true;
-  } catch {
-    return false;
-  }
+export function validateSolAddress(address: string): boolean {
+  return isAddress(address);
 }
