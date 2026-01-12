@@ -11,5 +11,10 @@ interface GrantPauseCheckInput {
 export function isGrantPausedForNewApplications(
   grant: GrantPauseCheckInput,
 ): boolean {
+  const isProduction = process.env.NEXT_PUBLIC_VERCEL_ENV === 'production';
+  if (!isProduction) {
+    return false;
+  }
+
   return Boolean(grant.airtableId) && !PAUSED_NEW_APPS_EXCEPTIONS.has(grant.id);
 }
