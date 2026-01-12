@@ -722,6 +722,16 @@ model ProPerks {
   logo        String
 }
 
+model Superteam {
+  id           String   @id @default(uuid())
+  name         String   @unique
+  tgChatId     String
+  tgThreadId   String?
+  registeredBy String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
 enum CreditEventType {
   SUBMISSION
   SPAM_PENALTY

@@ -65,6 +65,11 @@ interface SuperteamComboboxProps {
   showGlobal?: boolean;
 
   /**
+   * Whether to show a "No association" option.
+   */
+  showNoAssociation?: boolean;
+
+  /**
    * Object containing class names for specific subcomponents.
    */
   classNames?: {
@@ -87,6 +92,7 @@ export function SuperteamCombobox({
   placeholder = 'Select Superteam',
   unset,
   showGlobal,
+  showNoAssociation,
   className,
   classNames,
 }: SuperteamComboboxProps): JSX.Element {
@@ -124,7 +130,7 @@ export function SuperteamCombobox({
             !value && 'text-slate-400',
           )}
         >
-          {!!value && (
+          {!!value && value !== 'No association' && (
             <span className="mr-2 min-h-4 min-w-4">
               {value === 'Global' ? (
                 <div
@@ -155,7 +161,9 @@ export function SuperteamCombobox({
             {value
               ? value === 'Global'
                 ? 'Global'
-                : findOptionByValue(value)?.label || placeholder
+                : value === 'No association'
+                  ? 'No association'
+                  : findOptionByValue(value)?.label || placeholder
               : placeholder}
           </p>
           <ChevronsUpDown className="ml-auto h-4 w-4 shrink-0 opacity-50" />
@@ -233,6 +241,21 @@ export function SuperteamCombobox({
                 </CommandItem>
               ))}
             </CommandGroup>
+            {showNoAssociation && (
+              <CommandItem
+                value="No association"
+                onSelect={() => {
+                  onChange?.('No association');
+                  setOpen(false);
+                }}
+                className={cn(
+                  'cursor-pointer',
+                  value === 'No association' && 'bg-gray-200',
+                )}
+              >
+                <p className="pl-3 text-sm text-slate-600">No association</p>
+              </CommandItem>
+            )}
           </CommandList>
           {!isMD && (
             <CommandInput

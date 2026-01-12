@@ -6,6 +6,7 @@ import { toast } from 'sonner';
 import type * as z from 'zod';
 
 import MdPendingActions from '@/components/icons/MdPendingActions';
+import { SuperteamCombobox } from '@/components/shared/SuperteamCombobox';
 import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
 import { Button } from '@/components/ui/button';
 import {
@@ -41,6 +42,7 @@ export const SponsorVerificationForm = () => {
     resolver: zodResolver(sponsorVerificationSchema),
     defaultValues: {
       superteamLead: '',
+      superteamName: '',
       fundingSource: '',
       telegram: '',
       commitToDeadline: undefined,
@@ -59,7 +61,15 @@ export const SponsorVerificationForm = () => {
     try {
       setIsSubmitting(true);
 
-      await api.post('/api/sponsor/verification', values);
+      const payload = {
+        ...values,
+        superteamName:
+          values.superteamName === 'No association'
+            ? null
+            : values.superteamName,
+      };
+
+      await api.post('/api/sponsor/verification', payload);
       await refetchUser();
 
       toast.success('Verification information updated successfully');
@@ -113,6 +123,33 @@ export const SponsorVerificationForm = () => {
                         <Input
                           placeholder="Enter Superteam Lead name"
                           {...field}
+                          value={field.value || ''}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="superteamName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="mb-1 text-slate-500" isRequired>
+                        Which Superteam does this lead represent?
+                      </FormLabel>
+                      <FormControl>
+                        <SuperteamCombobox
+                          value={field.value || null}
+                          onChange={(value) => field.onChange(value || '')}
+                          placeholder="Select a Superteam"
+                          className="w-full"
+                          classNames={{
+                            popoverContent:
+                              'w-[var(--radix-popper-anchor-width)]',
+                          }}
+                          showNoAssociation
                         />
                       </FormControl>
                       <FormMessage />
