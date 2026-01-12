@@ -1,4 +1,4 @@
-import { PublicKey } from '@solana/web3.js';
+import { address } from '@solana/kit';
 import { headers } from 'next/headers';
 import { type NextRequest, NextResponse } from 'next/server';
 
@@ -7,7 +7,7 @@ import { prisma } from '@/prisma';
 import { getUserSession } from '@/features/auth/utils/getUserSession';
 import { type TokenActivity } from '@/features/wallet/types/TokenActivity';
 import { fetchWalletActivity } from '@/features/wallet/utils/fetchWalletActivity';
-import { getConnection } from '@/features/wallet/utils/getConnection';
+import { getRpc } from '@/features/wallet/utils/getConnection';
 
 interface ErrorResponse {
   error: string;
@@ -38,10 +38,10 @@ export async function GET(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const connection = getConnection('confirmed');
+    const rpc = getRpc();
     const activities = await fetchWalletActivity(
-      connection,
-      new PublicKey(user?.walletAddress),
+      rpc,
+      address(user.walletAddress),
     );
     return NextResponse.json(activities);
   } catch (error) {
