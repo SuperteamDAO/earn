@@ -24,10 +24,6 @@ const quickOptions = [
 export function WinnerAnnouncementDate() {
   const form = useListingForm();
   const deadline = useWatch({ name: 'deadline', control: form.control });
-  const commitmentDate = useWatch({
-    name: 'commitmentDate',
-    control: form.control,
-  });
 
   const minDate = deadline
     ? dayjs(deadline).add(1, 'day').startOf('day').toDate()
@@ -48,12 +44,9 @@ export function WinnerAnnouncementDate() {
   };
 
   useEffect(() => {
-    if (form) {
-      if (!commitmentDate) {
-        handleQuickSelect(14, false);
-      }
-    }
-  }, [form, commitmentDate, deadline]);
+    if (!deadline) return;
+    handleQuickSelect(14, false);
+  }, [deadline]);
 
   return (
     <FormField

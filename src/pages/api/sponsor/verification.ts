@@ -55,6 +55,29 @@ async function verification(req: NextApiRequestWithUser, res: NextApiResponse) {
       },
     });
 
+    // logger.info('Sending Telegram DM to Superteam Lead', {
+    //   listingId: validationResult.data.listingId,
+    //   superteamName: validationResult.data.superteamName,
+    //   superteamLead: validationResult.data.superteamLead,
+    // });
+    // try {
+    //   if (!process.env.EARNCOGNITO_URL) {
+    //     throw new Error('ENV EARNCOGNITO_URL not provided');
+    //   }
+    //   await earncognitoClient.post(`/telegram/verify-listing/dm-st`, {
+    //     listingId: validationResult.data.listingId,
+    //     superteamName: validationResult.data.superteamName,
+    //     superteamLead: validationResult.data.superteamLead,
+    //   });
+    //   logger.info('Sent Telegram DM to Superteam Lead', {
+    //     listingId: validationResult.data.listingId,
+    //     superteamName: validationResult.data.superteamName,
+    //     superteamLead: validationResult.data.superteamLead,
+    //   });
+    // } catch (err) {
+    //   logger.error('Failed to send Telegram DM to Superteam Lead', err);
+    // }
+
     logger.info('Sending Discord Verification message', {
       listingId: validationResult.data.listingId,
     });

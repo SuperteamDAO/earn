@@ -24,11 +24,13 @@ import { getTransferSolInstruction } from '@solana-program/system';
 import {
   findAssociatedTokenPda,
   getCreateAssociatedTokenInstruction,
-  getTransferCheckedInstruction,
   getTransferInstruction,
   TOKEN_PROGRAM_ADDRESS,
 } from '@solana-program/token';
-import { TOKEN_2022_PROGRAM_ADDRESS } from '@solana-program/token-2022';
+import {
+  getTransferCheckedInstruction as getTransferCheckedInstruction2022,
+  TOKEN_2022_PROGRAM_ADDRESS,
+} from '@solana-program/token-2022';
 import bs58 from 'bs58';
 import { headers } from 'next/headers';
 import { type NextRequest, NextResponse } from 'next/server';
@@ -43,8 +45,7 @@ import { fetchTokenUSDValue } from '@/features/wallet/utils/fetchTokenUSDValue';
 import { getRpc, type SolanaRpc } from '@/features/wallet/utils/getConnection';
 import { withdrawFormSchema } from '@/features/wallet/utils/withdrawFormSchema';
 
-const LAMPORTS_PER_SOL = 1_000_000_000n;
-
+const LAMPORTS_PER_SOL = 1_000_000_000;
 const tokenProgramCache: Record<string, string> = {};
 
 async function isToken2022Token(
@@ -96,7 +97,7 @@ function createAppropriateTransferInstruction(
   isToken2022: boolean,
 ): Instruction {
   if (isToken2022) {
-    return getTransferCheckedInstruction({
+    return getTransferCheckedInstruction2022({
       source,
       mint,
       destination,
@@ -164,15 +165,26 @@ async function createFeePayerATA(
       .sendTransaction(encodedTransaction, { skipPreflight: false })
       .send();
 
-    const confirmation = await rpc.getSignatureStatuses([signature]).send();
-
-    if (confirmation.value[0]?.err) {
-      logger.error(`${safeStringify(confirmation.value[0].err)}`);
-      return false;
+    // Poll for confirmation (getSignatureStatuses doesn't wait)
+    const maxAttempts = 30;
+    for (let i = 0; i < maxAttempts; i++) {
+      const { value } = await rpc.getSignatureStatuses([signature]).send();
+      const status = value[0];
+      if (status?.err) {
+        logger.error(`${safeStringify(status.err)}`);
+        return false;
+      }
+      if (
+        status?.confirmationStatus === 'confirmed' ||
+        status?.confirmationStatus === 'finalized'
+      ) {
+        logger.info(`Created fee payer ATA: ${feePayerATA}`);
+        return true;
+      }
+      await new Promise((r) => setTimeout(r, 500));
     }
-
-    logger.info(`Created fee payer ATA: ${feePayerATA}`);
-    return true;
+    logger.error('Transaction confirmation timeout');
+    return false;
   } catch (error) {
     logger.error(`Error creating fee payer ATA: ${safeStringify(error)}`);
     return false;
@@ -213,76 +225,40 @@ export async function POST(request: NextRequest) {
       bs58.decode(process.env.FEEPAYER_PRIVATE_KEY),
     );
     const feePayerSigner = await createSignerFromKeyPair(feePayerKeyPair);
-
-    if (tokenAddress !== 'So11111111111111111111111111111111111111112') {
-      const tokenMint = address(tokenAddress);
-
-      const isToken2022 = await isToken2022Token(rpc, tokenAddress);
-      const programId = isToken2022
-        ? TOKEN_2022_PROGRAM_ADDRESS
-        : TOKEN_PROGRAM_ADDRESS;
-
-      const [feePayerATA] = await findAssociatedTokenPda({
-        mint: tokenMint,
-        owner: feePayerSigner.address,
-        tokenProgram: programId,
-      });
-
-      const feePayerATAInfo = await rpc
-        .getAccountInfo(feePayerATA, { encoding: 'base64' })
-        .send();
-      const feePayerATAExists = !!feePayerATAInfo.value;
-
-      if (!feePayerATAExists) {
-        const success = await createFeePayerATA(
-          rpc,
-          tokenMint,
-          feePayerSigner,
-          programId,
-        );
-
-        if (!success) {
-          logger.error('Failed to create fee payer ATA');
-          throw new Error('Failed to create fee payer ATA');
-        }
-
-        logger.info('Fee payer ATA created successfully');
-      }
-    }
-
-    const user = await prisma.user.findUniqueOrThrow({
-      where: { id: userId },
-      select: { walletAddress: true },
-    });
-    if (!user.walletAddress) throw new Error('User wallet address not found');
-
-    const { value: latestBlockhash } = await rpc
-      .getLatestBlockhash({ commitment: 'finalized' })
-      .send();
-
-    const senderAddress = address(user.walletAddress);
-    const senderSigner = createNoopSigner(senderAddress);
     const recipient = address(recipientAddress);
-    const tokenMint = address(tokenAddress);
 
     if (tokenAddress === 'So11111111111111111111111111111111111111112') {
+      const user = await prisma.user.findUniqueOrThrow({
+        where: { id: userId },
+        select: { walletAddress: true },
+      });
+      if (!user.walletAddress) throw new Error('User wallet address not found');
+
+      const { value: latestBlockhash } = await rpc
+        .getLatestBlockhash({ commitment: 'finalized' })
+        .send();
+
+      const senderSigner = createNoopSigner(address(user.walletAddress));
       const lamportsAmount = BigInt(
-        Math.floor(Number(amount) * Number(LAMPORTS_PER_SOL)),
+        Math.floor(Number(amount) * LAMPORTS_PER_SOL),
       );
-      const instructions = [
-        getTransferSolInstruction({
-          source: senderSigner,
-          destination: recipient,
-          amount: lamportsAmount,
-        }),
-      ];
 
       const transactionMessage = pipe(
         createTransactionMessage({ version: 0 }),
         (tx) => setTransactionMessageFeePayerSigner(feePayerSigner, tx),
         (tx) =>
           setTransactionMessageLifetimeUsingBlockhash(latestBlockhash, tx),
-        (tx) => appendTransactionMessageInstructions(instructions, tx),
+        (tx) =>
+          appendTransactionMessageInstructions(
+            [
+              getTransferSolInstruction({
+                source: senderSigner,
+                destination: recipient,
+                amount: lamportsAmount,
+              }),
+            ],
+            tx,
+          ),
       );
 
       const partiallySignedTransaction =
@@ -297,6 +273,7 @@ export async function POST(request: NextRequest) {
       });
     }
 
+    const tokenMint = address(tokenAddress);
     const isToken2022 = await isToken2022Token(rpc, tokenAddress);
     const programId = isToken2022
       ? TOKEN_2022_PROGRAM_ADDRESS
@@ -304,6 +281,43 @@ export async function POST(request: NextRequest) {
 
     const token = tokenList.find((e) => e.mintAddress === tokenAddress);
     if (!token) throw new Error('Invalid token selected');
+
+    const [feePayerATA] = await findAssociatedTokenPda({
+      mint: tokenMint,
+      owner: feePayerSigner.address,
+      tokenProgram: programId,
+    });
+
+    const feePayerATAInfo = await rpc
+      .getAccountInfo(feePayerATA, { encoding: 'base64' })
+      .send();
+
+    if (!feePayerATAInfo.value) {
+      const success = await createFeePayerATA(
+        rpc,
+        tokenMint,
+        feePayerSigner,
+        programId,
+      );
+      if (!success) {
+        logger.error('Failed to create fee payer ATA');
+        throw new Error('Failed to create fee payer ATA');
+      }
+      logger.info('Fee payer ATA created successfully');
+    }
+
+    const user = await prisma.user.findUniqueOrThrow({
+      where: { id: userId },
+      select: { walletAddress: true },
+    });
+    if (!user.walletAddress) throw new Error('User wallet address not found');
+
+    const { value: latestBlockhash } = await rpc
+      .getLatestBlockhash({ commitment: 'finalized' })
+      .send();
+
+    const senderAddress = address(user.walletAddress);
+    const senderSigner = createNoopSigner(senderAddress);
     const decimals = token.decimals;
 
     const [senderATA] = await findAssociatedTokenPda({
@@ -316,17 +330,11 @@ export async function POST(request: NextRequest) {
       owner: recipient,
       tokenProgram: programId,
     });
+
     const receiverATAInfo = await rpc
       .getAccountInfo(receiverATA, { encoding: 'base64' })
       .send();
-    const receiverATAExists = !!receiverATAInfo.value;
-    const receiverATAWasMissing = !receiverATAExists;
-
-    const [feePayerATA] = await findAssociatedTokenPda({
-      mint: tokenMint,
-      owner: feePayerSigner.address,
-      tokenProgram: programId,
-    });
+    const receiverATAWasMissing = !receiverATAInfo.value;
 
     const allInstructions: Instruction[] = [
       getSetComputeUnitLimitInstruction({ units: 200000 }),
