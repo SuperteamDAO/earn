@@ -1,4 +1,4 @@
-import { type Signature } from '@solana/kit';
+import { signature } from '@solana/kit';
 
 import { type Token } from '@/constants/tokenList';
 import logger from '@/lib/logger';
@@ -43,7 +43,7 @@ export async function validatePayment({
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
       try {
         tx = await rpc
-          .getTransaction(txId as Signature, {
+          .getTransaction(signature(txId), {
             commitment: 'confirmed',
             maxSupportedTransactionVersion: 0,
             encoding: 'jsonParsed',

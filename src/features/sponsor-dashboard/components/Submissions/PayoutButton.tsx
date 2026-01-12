@@ -10,6 +10,7 @@ import {
   pipe,
   setTransactionMessageFeePayerSigner,
   setTransactionMessageLifetimeUsingBlockhash,
+  signature as toSignature,
   type TransactionSigner,
 } from '@solana/kit';
 import { useWallet } from '@solana/wallet-adapter-react';
@@ -161,7 +162,7 @@ export const PayoutButton = ({ bounty, submission }: Props) => {
     payoutsInFlight.add(id);
     setIsPaying(true);
     const rpc = getRpc();
-    let signature = '';
+    let txSignature = '';
 
     try {
       const senderAddress = address(publicKey.toBase58());
@@ -262,11 +263,11 @@ export const PayoutButton = ({ bounty, submission }: Props) => {
       } as any);
 
       const result = Array.isArray(results) ? results[0] : results;
-      signature = bs58.encode(result.signature);
+      txSignature = bs58.encode(result.signature);
 
       for (let i = 0; i < 30; i++) {
         const status = await rpc
-          .getSignatureStatuses([signature as any])
+          .getSignatureStatuses([toSignature(txSignature)])
           .send();
         if (status.value[0]?.confirmationStatus === 'confirmed') {
           break;
@@ -284,7 +285,7 @@ export const PayoutButton = ({ bounty, submission }: Props) => {
         id,
         paymentDetails: [
           {
-            txId: signature,
+            txId: txSignature,
             amount,
             tranche: isProject ? nextTranche : 1,
           },
@@ -310,7 +311,7 @@ export const PayoutButton = ({ bounty, submission }: Props) => {
 
       handleSolanaError({
         errorType,
-        lastSignature: signature || null,
+        lastSignature: txSignature || null,
         tokenSymbol,
         customMessages: {
           userRejected: 'Payment cancelled in wallet.',
@@ -320,9 +321,9 @@ export const PayoutButton = ({ bounty, submission }: Props) => {
 
       if (errorType === 'user-rejected') {
       } else if (errorType === 'timeout' || errorType === 'rpc') {
-        setWarning({ firstName, signature: signature || undefined });
-      } else if (signature) {
-        setWarning({ firstName, signature });
+        setWarning({ firstName, signature: txSignature || undefined });
+      } else if (txSignature) {
+        setWarning({ firstName, signature: txSignature });
       } else {
         setWarning({ firstName });
       }
