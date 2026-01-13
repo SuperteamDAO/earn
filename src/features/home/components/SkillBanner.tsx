@@ -27,6 +27,7 @@ export function SkillBanner({ skillName, skillType }: SkillBannerProps) {
         width={1440}
         height={290}
         className="h-full w-full object-cover object-center"
+        unoptimized
       />
       <div className="absolute inset-0 bg-black/50" />
       <div className="absolute top-1/2 flex w-full max-w-7xl -translate-y-1/2 flex-col items-start px-2 md:px-6">

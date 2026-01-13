@@ -251,7 +251,7 @@ export const SubmissionDrawer = ({
     const fetchData = async () => {
       if (editMode && id) {
         try {
-          const response = await api.get('/api/submission/get/', {
+          const response = await api.get('/api/submission/get', {
             params: { id },
           });
 
@@ -417,8 +417,8 @@ export const SubmissionDrawer = ({
     } catch {}
     try {
       const submissionEndpoint = editMode
-        ? '/api/submission/update/'
-        : '/api/submission/create/';
+        ? '/api/submission/update'
+        : '/api/submission/create';
 
       await api.post(submissionEndpoint, {
         listingId: id,

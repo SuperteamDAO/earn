@@ -22,7 +22,7 @@ interface ActivityCardProps {
 }
 
 const getRandomFallbackImage = (): string => {
-  const basePath = '/assets/fallback/resized-og';
+  const basePath = '/earn/assets/fallback/resized-og';
   const fallbackImages = Array.from(
     { length: 11 },
     (_, i) => `${basePath}/${i + 1}.webp`,

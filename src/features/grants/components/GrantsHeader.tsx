@@ -108,7 +108,7 @@ export const GrantsHeader = ({
                 <LocalImage
                   className="-ml-0.5"
                   alt={'grant'}
-                  src={'/assets/grant-icon.svg'}
+                  src={'/earn/assets/grant-icon.svg'}
                 />
 
                 <p className="text-xs font-medium text-gray-400 md:text-sm">

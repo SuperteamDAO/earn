@@ -80,7 +80,7 @@ export const GrantsCard = ({ grant }: { grant: GrantWithApplicationCount }) => {
                 <LocalImage
                   className="-ml-0.5 flex h-3 sm:h-4"
                   alt={'grant'}
-                  src={'/assets/grant-icon.svg'}
+                  src={'/earn/assets/grant-icon.svg'}
                 />
                 <p className="flex text-xs font-medium text-gray-500">Grant</p>
               </div>

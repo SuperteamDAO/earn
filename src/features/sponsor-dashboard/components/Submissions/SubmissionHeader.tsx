@@ -110,7 +110,7 @@ export const SubmissionHeader = ({
   const exportMutation = useMutation({
     mutationFn: async () => {
       const response = await api.get(
-        `/api/sponsor-dashboard/submission/export/`,
+        `/api/sponsor-dashboard/submission/export`,
         {
           params: {
             listingId: bounty?.id,
@@ -495,7 +495,7 @@ export const SubmissionHeader = ({
       <ExportSheetsModal
         isOpen={exportSheetsIsOpen}
         onClose={exportSheetsOnClose}
-        apiEndpoint="/api/sponsor-dashboard/submission/export-sheets/"
+        apiEndpoint="/api/sponsor-dashboard/submission/export-sheets"
         queryParams={{ listingId: bounty?.id }}
         entityName="submissions"
       />

@@ -50,7 +50,7 @@ export function SelectHackathon({
     callback: (options: HackathonOption[]) => void,
   ) => {
     api
-      .get(`/api/hackathon/list/`, {
+      .get(`/api/hackathon/list`, {
         params: {
           searchString: inputValue,
         },

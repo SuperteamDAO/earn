@@ -77,6 +77,7 @@ export function SponsorFeatures() {
                       alt={feature.title}
                       fill
                       className="object-cover"
+                      unoptimized
                     />
                   </div>
                 </div>

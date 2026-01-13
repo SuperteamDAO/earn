@@ -119,10 +119,11 @@ function MainContent({
           loading="eager"
           quality={80}
           className="scale-150 md:scale-125"
+          unoptimized
         />
       </div>
       <audio
-        src={'/assets/JohnCenaVibingToCupid.mp3'}
+        src={'/earn/assets/JohnCenaVibingToCupid.mp3'}
         style={{ display: 'none' }}
         autoPlay
         loop

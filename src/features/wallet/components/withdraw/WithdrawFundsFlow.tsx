@@ -3,38 +3,31 @@ import {
   useSignAndSendTransaction,
   useWallets,
 } from '@privy-io/react-auth/solana';
+import { address, type Signature } from '@solana/kit';
 import {
-  getAssociatedTokenAddressSync,
-  TOKEN_2022_PROGRAM_ID,
-  TOKEN_PROGRAM_ID,
-} from '@solana/spl-token';
-import { PublicKey, VersionedTransaction } from '@solana/web3.js';
+  findAssociatedTokenPda,
+  TOKEN_PROGRAM_ADDRESS,
+} from '@solana-program/token';
+import { TOKEN_2022_PROGRAM_ADDRESS } from '@solana-program/token-2022';
 import { useQueryClient } from '@tanstack/react-query';
 import { isAxiosError } from 'axios';
 import bs58 from 'bs58';
 import { log } from 'next-axiom';
 import posthog from 'posthog-js';
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
 import { tokenList } from '@/constants/tokenList';
 import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
-import {
-  classifySolanaError,
-  cleanupTransactionGuards,
-  createTransactionGuard,
-  handleSolanaError,
-  updateTransactionGuard,
-  waitForTransactionConfirmation,
-} from '@/utils/solanaTransactionHelpers';
+import { classifySolanaError } from '@/utils/solanaTransactionHelpers';
 
 import { type TokenAsset } from '../../types/TokenAsset';
 import { type TxData } from '../../types/TxData';
 import { type DrawerView } from '../../types/WalletTypes';
 import { fetchTokenUSDValue } from '../../utils/fetchTokenUSDValue';
-import { getConnection } from '../../utils/getConnection';
+import { getRpc } from '../../utils/getConnection';
 import {
   type WithdrawFormData,
   withdrawFormSchema,
@@ -42,8 +35,6 @@ import {
 import { ATAConfirmation } from './ATAConfirmation';
 import { TransactionDetails } from './TransactionDetails';
 import { WithdrawForm } from './WithdrawForm';
-
-const tokenProgramCache: Record<string, string> = {};
 
 interface WithdrawFlowProps {
   tokens: TokenAsset[];
@@ -85,78 +76,51 @@ export function WithdrawFundsFlow({
     (token) => token.tokenAddress === form.watch('tokenAddress'),
   );
 
-  const [lastSignature, setLastSignature] = useState<string | null>(null);
-
-  const isToken2022Token = useCallback(
-    async (connection: any, mintAddress: string): Promise<boolean> => {
-      if (mintAddress === 'So11111111111111111111111111111111111111112') {
-        return false;
+  const detectTokenProgram = async (mintAddress: string) => {
+    if (mintAddress === 'So11111111111111111111111111111111111111112') {
+      return TOKEN_PROGRAM_ADDRESS;
+    }
+    const rpc = getRpc();
+    try {
+      const mintInfo = await rpc
+        .getAccountInfo(address(mintAddress), { encoding: 'base64' })
+        .send();
+      if (mintInfo.value?.owner === TOKEN_2022_PROGRAM_ADDRESS) {
+        return TOKEN_2022_PROGRAM_ADDRESS;
       }
-      if (tokenProgramCache[mintAddress]) {
-        const isToken2022 =
-          tokenProgramCache[mintAddress] === TOKEN_2022_PROGRAM_ID.toString();
-        return isToken2022;
-      }
-
-      try {
-        const mintInfo = await connection.getAccountInfo(
-          new PublicKey(mintAddress),
-        );
-
-        if (!mintInfo) {
-          console.error(
-            `[isToken2022Token] Mint account not found: ${mintAddress}`,
-          );
-          return false;
-        }
-
-        const ownerString = mintInfo.owner.toString();
-        tokenProgramCache[mintAddress] = ownerString;
-
-        const isToken2022 = ownerString === TOKEN_2022_PROGRAM_ID.toString();
-        return isToken2022;
-      } catch (error) {
-        console.error(
-          `[isToken2022Token] Error checking token program:`,
-          error,
-        );
-        return false;
-      }
-    },
-    [],
-  );
+      return TOKEN_PROGRAM_ADDRESS;
+    } catch {
+      return TOKEN_PROGRAM_ADDRESS;
+    }
+  };
 
   async function checkATARequirement(
     values: WithdrawFormData,
   ): Promise<string> {
-    const connection = getConnection('confirmed');
+    const rpc = getRpc();
 
     try {
-      const recipient = new PublicKey(values.recipientAddress);
-      const tokenMint = new PublicKey(values.tokenAddress);
-
       if (
         values.tokenAddress === 'So11111111111111111111111111111111111111112'
       ) {
         return handleWithdraw(values);
       }
 
-      const isToken2022 = await isToken2022Token(
-        connection,
-        values.tokenAddress,
-      );
-      const programId = isToken2022 ? TOKEN_2022_PROGRAM_ID : TOKEN_PROGRAM_ID;
+      const recipient = address(values.recipientAddress);
+      const tokenMint = address(values.tokenAddress);
+      const programId = await detectTokenProgram(values.tokenAddress);
 
-      const receiverATA = getAssociatedTokenAddressSync(
-        tokenMint,
-        recipient,
-        true,
-        programId,
-      );
+      const [receiverATA] = await findAssociatedTokenPda({
+        mint: tokenMint,
+        owner: recipient,
+        tokenProgram: programId,
+      });
 
-      const receiverATAExists =
-        !!(await connection.getAccountInfo(receiverATA));
-      if (!receiverATAExists) {
+      const receiverATAInfo = await rpc
+        .getAccountInfo(receiverATA, { encoding: 'base64' })
+        .send();
+
+      if (!receiverATAInfo.value) {
         const tokenUSDValue = await fetchTokenUSDValue(
           selectedToken?.tokenAddress || '',
         );
@@ -191,7 +155,6 @@ export function WithdrawFundsFlow({
       }
 
       toast.error(errorMessage);
-
       log.error(
         `Withdrawal precheck failed: ${message}, userId: ${user?.id}, amount: ${values.amount}, destinationAddress: ${values.recipientAddress}, token: ${values.tokenAddress}`,
       );
@@ -202,108 +165,69 @@ export function WithdrawFundsFlow({
   }
 
   async function handleWithdraw(values: WithdrawFormData) {
-    setIsProcessing(true);
+    if (isProcessing) return '';
 
-    let signature: string = '';
+    setIsProcessing(true);
+    const rpc = getRpc();
+    let signature = '';
 
     try {
-      const guardKey = `withdraw:${user?.id ?? 'anon'}:${values.tokenAddress}:${values.amount}:${values.recipientAddress}`;
-      if (
-        !createTransactionGuard({
-          guardKey,
-          inFlightMessage: 'A similar withdrawal is already in progress.',
-        })
-      ) {
-        return '';
-      }
-
-      const connection = getConnection('confirmed');
-
       const response = await api.post('/api/wallet/create-signed-transaction', {
         recipientAddress: values.recipientAddress,
         amount: values.amount,
         tokenAddress: values.tokenAddress,
       });
 
-      const transaction = VersionedTransaction.deserialize(
-        Buffer.from(response.data.serializedTransaction, 'base64'),
-      );
+      const serializedTransaction = response.data.serializedTransaction;
+      const transactionBytes = Buffer.from(serializedTransaction, 'base64');
 
       try {
-        const simulation = await connection.simulateTransaction(transaction, {
-          sigVerify: false,
-          replaceRecentBlockhash: true,
-        });
+        const simulation = await rpc
+          .simulateTransaction(serializedTransaction, {
+            sigVerify: false,
+            replaceRecentBlockhash: true,
+            commitment: 'confirmed',
+          })
+          .send();
         if (simulation.value.err) {
-          log.error(
-            `[handleWithdraw] Simulation failed for user ${user?.id}: ${JSON.stringify(simulation.value.err)}, logs: ${simulation.value.logs?.join('\n')}`,
-          );
           throw new Error(
-            `Transaction simulation failed: ${JSON.stringify(simulation.value.err)}`,
+            `Simulation failed: ${JSON.stringify(simulation.value.err)}`,
           );
         }
-        log.info(
-          `[handleWithdraw] Simulation passed for user ${user?.id}, units consumed: ${simulation.value.unitsConsumed}`,
-        );
       } catch (simError) {
         if (
           simError instanceof Error &&
-          simError.message.includes('simulation failed')
+          simError.message.includes('Simulation failed')
         ) {
           throw simError;
         }
-        log.warn(
-          `[handleWithdraw] Simulation check failed (non-fatal): ${String(simError)}`,
-        );
       }
 
       const wallet = wallets[0];
       if (!wallet) throw new Error('No wallet found');
 
-      log.info(
-        `[handleWithdraw] Sending transaction for user ${user?.id}, wallet: ${wallet.address}`,
-      );
-
-      let result;
-      try {
-        result = await signAndSendTransaction({
-          wallet,
-          transaction: transaction.serialize(),
-          chain: 'solana:mainnet',
-        });
-      } catch (sendError) {
-        log.error(
-          `[handleWithdraw] signAndSendTransaction failed for user ${user?.id}: ${String(sendError)}`,
-        );
-        throw sendError;
-      }
+      const result = await signAndSendTransaction({
+        wallet,
+        transaction: transactionBytes,
+        chain: 'solana:mainnet',
+      });
 
       signature = bs58.encode(result.signature);
-      log.info(
-        `[handleWithdraw] Transaction sent for user ${user?.id}, signature: ${signature}`,
-      );
-      updateTransactionGuard(guardKey, signature);
-      setLastSignature(signature);
 
-      try {
-        await waitForTransactionConfirmation({
-          connection,
-          signature,
-          maxRetries: 60,
-          retryDelayMs: 500,
-        });
-        log.info(
-          `[handleWithdraw] Transaction confirmed for user ${user?.id}, signature: ${signature}`,
-        );
-      } catch (e) {
-        const status = await connection.getSignatureStatus(signature);
-        log.error(
-          `[handleWithdraw] Transaction polling failed for user ${user?.id}, signature: ${signature}, finalStatus: ${JSON.stringify(status?.value)}, error: ${String(e)}`,
-        );
-        console.error('[handleWithdraw] Transaction polling failed:', e);
-        throw new Error(
-          `Transaction confirmation timed out. Signature: ${signature}. Check Solscan before retrying.`,
-        );
+      for (let i = 0; i < 30; i++) {
+        const status = await rpc
+          .getSignatureStatuses([signature as Signature])
+          .send();
+        if (
+          status.value[0]?.confirmationStatus === 'confirmed' ||
+          status.value[0]?.confirmationStatus === 'finalized'
+        ) {
+          break;
+        }
+        if (status.value[0]?.err) {
+          throw new Error('Transaction failed on-chain');
+        }
+        await new Promise((r) => setTimeout(r, 1000));
       }
 
       setTxData({
@@ -312,79 +236,76 @@ export function WithdrawFundsFlow({
         timestamp: Date.now(),
         type: 'Withdrawn',
       });
-      await queryClient.invalidateQueries({
-        queryKey: ['wallet', 'assets'],
-      });
-      await queryClient.invalidateQueries({
-        queryKey: ['wallet', 'activity'],
-      });
+
+      await queryClient.invalidateQueries({ queryKey: ['wallet', 'assets'] });
+      await queryClient.invalidateQueries({ queryKey: ['wallet', 'activity'] });
+
       posthog.capture('withdraw_complete');
       setView('success');
 
       return signature;
     } catch (e) {
-      const isMfaCancelled =
-        e instanceof Error &&
-        (e.message === 'MFA canceled' || e.message === 'MFA cancelled');
-
-      const maxMFAttemptsReached =
-        e instanceof Error &&
-        e.message.includes('Max MFA verification attempts reached');
-
-      const isUnsupportedToken =
-        isAxiosError(e) && e.response?.data?.error === 'Invalid token selected';
-
-      if (isMfaCancelled) {
-        console.error('[handleWithdraw] MFA authentication cancelled by user.');
-        posthog.capture('mfa cancelled_withdraw');
-      } else if (maxMFAttemptsReached) {
-        console.error('[handleWithdraw] Max MFA verification attempts reached');
-        posthog.capture('mfa_max_attempts_reached');
-      } else if (isUnsupportedToken) {
-        console.error('[handleWithdraw] Unsupported token selected');
-        posthog.capture('withdraw_unsupported_token');
-      } else {
-        console.error('[handleWithdraw] Withdrawal failed:', e);
-        posthog.capture('withdraw_failed');
-      }
-
       log.error(
         `Withdrawal failed: ${String(e)}, userId: ${user?.id}, amount: ${values.amount}, destinationAddress: ${values.recipientAddress}, token: ${values.tokenAddress}, signature: ${signature}`,
       );
 
-      if (isMfaCancelled) {
-        const msg = 'Please complete two-factor authentication to withdraw';
-        toast.error(msg);
-      } else if (isUnsupportedToken) {
-        const msg =
-          "We don't support this token yet. Contact support@superteamearn.com for us to add it.";
-        toast.error(msg);
-      } else {
-        const errorType = classifySolanaError(e);
-        const tokenSymbol =
-          selectedToken?.tokenSymbol ??
-          (values.tokenAddress === 'So11111111111111111111111111111111111111112'
-            ? 'SOL'
-            : 'token');
+      const errorMessage = (e as Error)?.message?.toLowerCase() || '';
+      const isAxiosErr = isAxiosError(e);
+      const errorType = classifySolanaError(e);
+      const tokenSymbol = selectedToken?.tokenSymbol ?? 'token';
 
-        handleSolanaError({
-          errorType,
-          lastSignature,
-          tokenSymbol,
-          customMessages: {
-            userRejected: 'Payment cancelled in wallet.',
-            expired: 'Blockhash expired. Payment not sent.',
-            unknown:
-              'Something went wrong. Please try again. If the issue persists, contact support at support@superteamearn.com.',
-          },
-        });
+      if (
+        errorMessage.includes('mfa canceled') ||
+        errorMessage.includes('mfa cancelled')
+      ) {
+        toast.error('Please complete two-factor authentication to withdraw');
+        posthog.capture('mfa cancelled_withdraw');
+      } else if (errorMessage.includes('max mfa verification attempts')) {
+        toast.error('Maximum MFA attempts reached. Please try again later.');
+        posthog.capture('mfa_max_attempts_reached');
+      } else if (
+        isAxiosErr &&
+        e.response?.data?.error === 'Invalid token selected'
+      ) {
+        toast.error(
+          "We don't support this token yet. Contact support@superteamearn.com for us to add it.",
+        );
+        posthog.capture('withdraw_unsupported_token');
+      } else {
+        switch (errorType) {
+          case 'user-rejected':
+            toast.error('Transaction cancelled in wallet.');
+            break;
+          case 'expired':
+            toast.error('Blockhash expired. Transaction not sent.');
+            break;
+          case 'insufficient-funds':
+          case 'token-not-available':
+            toast.error(
+              `Insufficient ${tokenSymbol} or SOL balance. Please add funds and try again.`,
+            );
+            break;
+          case 'timeout':
+            toast.info(
+              signature
+                ? 'Transaction may still confirm. Check explorer before retrying.'
+                : 'Network congestion. Please check your wallet history before retrying.',
+            );
+            break;
+          case 'rpc':
+          case 'unknown':
+          default:
+            toast.error(
+              'Something went wrong. Please try again. If the issue persists, contact support@superteamearn.com.',
+            );
+            break;
+        }
       }
 
       setView('withdraw');
       return Promise.reject(new Error('Transaction failed'));
     } finally {
       setIsProcessing(false);
-      cleanupTransactionGuards('withdraw:');
     }
   }
 

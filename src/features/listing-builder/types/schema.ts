@@ -277,7 +277,10 @@ export const createListingFormSchema = ({
           },
         ),
       isPrivate: z.boolean().default(false),
-      isPro: z.boolean().default(false),
+      isPro: z.preprocess(
+        (val) => (val === null || val === undefined ? false : val),
+        z.boolean().default(false),
+      ),
       hackathonId: z.string().optional().nullable(),
 
       // values that will not be set on any API, but useful for response

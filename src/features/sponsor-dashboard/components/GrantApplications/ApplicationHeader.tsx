@@ -64,7 +64,7 @@ export const ApplicationHeader = ({
   const exportMutation = useMutation({
     mutationFn: async () => {
       const response = await api.get(
-        `/api/sponsor-dashboard/application/export/`,
+        `/api/sponsor-dashboard/application/export`,
         {
           params: { grantId: grant?.id },
         },
@@ -230,7 +230,7 @@ export const ApplicationHeader = ({
       <ExportSheetsModal
         isOpen={exportSheetsIsOpen}
         onClose={exportSheetsOnClose}
-        apiEndpoint="/api/sponsor-dashboard/application/export-sheets/"
+        apiEndpoint="/api/sponsor-dashboard/application/export-sheets"
         queryParams={{ grantId: grant?.id }}
         entityName="applications"
       />

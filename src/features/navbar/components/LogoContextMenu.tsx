@@ -29,7 +29,7 @@ export const LogoContextMenu = ({
   };
 
   const handleDownload = () => {
-    window.open('/earn-brand-assets.zip', '_blank');
+    window.open(`/earn/earn-brand-assets.zip`, '_blank');
   };
 
   const handleContextMenu = (e: React.MouseEvent) => {

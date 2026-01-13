@@ -17,7 +17,7 @@ export default function Providers({
   const [queryClient] = useState(() => new QueryClient());
 
   return (
-    <SessionProvider session={session}>
+    <SessionProvider session={session} basePath="/earn/api/auth">
       <PrivyProvider
         config={{
           loginMethods: ['email', 'google'],

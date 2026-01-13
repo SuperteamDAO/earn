@@ -26,24 +26,24 @@ export function HomeTalentBanner({ totalUsers }: HomeTalentBannerProps) {
         <picture>
           <source
             media="(min-width: 40em)"
-            srcSet="/assets/banner/banner.avif"
+            srcSet="/earn/assets/banner/banner.avif"
             type="image/avif"
           />
           <source
             media="(min-width: 40em)"
-            srcSet="/assets/banner/banner.webp"
+            srcSet="/earn/assets/banner/banner.webp"
             type="image/webp"
           />
           <source
-            srcSet="/assets/banner/banner-mobile.avif"
+            srcSet="/earn/assets/banner/banner-mobile.avif"
             type="image/avif"
           />
           <source
-            srcSet="/assets/banner/banner-mobile.webp"
+            srcSet="/earn/assets/banner/banner-mobile.webp"
             type="image/webp"
           />
           <img
-            src="/assets/banner/banner-mobile.webp"
+            src="/earn/assets/banner/banner-mobile.webp"
             alt="Illustration — Two people working on laptops outdoors at night, surrounded by a mystical mountainous landscape illuminated by the moonlight"
             className="h-full w-full"
             style={{ objectFit: 'cover' }}

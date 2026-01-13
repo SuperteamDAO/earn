@@ -240,7 +240,7 @@ export function DescriptionUI({
                 <div className="flex flex-col">
                   {stats ? (
                     <p className="text-md text-slate-500">
-                      Earn ${' '}
+                      Earn{' '}
                       {new Intl.NumberFormat('en-US', {
                         style: 'currency',
                         currency: 'USD',

@@ -44,6 +44,7 @@ export function RegionBanner({ st }: { st: Superteam }) {
         style={{
           ...(customBannerPosition[st.region] || {}),
         }}
+        unoptimized
       />
       <div className="absolute inset-0 block h-full w-full bg-[rgba(64,65,108,0.75)]" />
       <div className="absolute top-1/2 flex -translate-y-1/2 flex-col items-center px-4">

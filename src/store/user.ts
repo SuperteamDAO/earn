@@ -33,7 +33,7 @@ export const useUser = () => {
     queryKey: ['user'],
     queryFn: async () => {
       try {
-        const { data: fetchedUser } = await api.get<User>('/api/user/');
+        const { data: fetchedUser } = await api.get<User>('/api/user');
 
         if (fetchedUser?.id) {
           const currentUserId = getCookie(USER_ID_COOKIE_NAME);
@@ -105,7 +105,7 @@ export const useUpdateUser = () => {
 
   return useMutation({
     mutationFn: (userData: Partial<User>) =>
-      api.post<User>('/api/user/update/', userData),
+      api.post<User>('/api/user/update', userData),
     onSuccess: (response) => {
       const updatedUser = response.data;
       if (updatedUser) {

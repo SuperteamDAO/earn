@@ -101,7 +101,7 @@ export const MultiActionModal = ({
           setSelectedApplicationIds(new Set());
           break;
         case 'spam':
-          await api.post(`/api/sponsor-dashboard/grants/update-label/`, {
+          await api.post(`/api/sponsor-dashboard/grants/update-label`, {
             ids: applicationIds,
             label: 'Spam',
           });

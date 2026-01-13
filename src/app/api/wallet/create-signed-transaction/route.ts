@@ -1,22 +1,36 @@
 import {
-  createAssociatedTokenAccountInstruction,
-  createTransferCheckedInstruction,
-  createTransferInstruction,
-  getAssociatedTokenAddressSync,
-  TOKEN_2022_PROGRAM_ID,
-  TOKEN_PROGRAM_ID,
-} from '@solana/spl-token';
+  type Address,
+  address,
+  appendTransactionMessageInstructions,
+  createKeyPairFromBytes,
+  createNoopSigner,
+  createSignerFromKeyPair,
+  createTransactionMessage,
+  getBase64EncodedWireTransaction,
+  type Instruction,
+  type KeyPairSigner,
+  partiallySignTransactionMessageWithSigners,
+  pipe,
+  setTransactionMessageFeePayerSigner,
+  setTransactionMessageLifetimeUsingBlockhash,
+  signTransactionMessageWithSigners,
+  type TransactionSigner,
+} from '@solana/kit';
 import {
-  ComputeBudgetProgram,
-  type Connection,
-  Keypair,
-  LAMPORTS_PER_SOL,
-  PublicKey,
-  SendTransactionError,
-  SystemProgram,
-  TransactionMessage,
-  VersionedTransaction,
-} from '@solana/web3.js';
+  getSetComputeUnitLimitInstruction,
+  getSetComputeUnitPriceInstruction,
+} from '@solana-program/compute-budget';
+import { getTransferSolInstruction } from '@solana-program/system';
+import {
+  findAssociatedTokenPda,
+  getCreateAssociatedTokenInstruction,
+  getTransferInstruction,
+  TOKEN_PROGRAM_ADDRESS,
+} from '@solana-program/token';
+import {
+  getTransferCheckedInstruction as getTransferCheckedInstruction2022,
+  TOKEN_2022_PROGRAM_ADDRESS,
+} from '@solana-program/token-2022';
 import bs58 from 'bs58';
 import { headers } from 'next/headers';
 import { type NextRequest, NextResponse } from 'next/server';
@@ -28,31 +42,32 @@ import { safeStringify } from '@/utils/safeStringify';
 
 import { getUserSession } from '@/features/auth/utils/getUserSession';
 import { fetchTokenUSDValue } from '@/features/wallet/utils/fetchTokenUSDValue';
-import { getConnection } from '@/features/wallet/utils/getConnection';
+import { getRpc, type SolanaRpc } from '@/features/wallet/utils/getConnection';
 import { withdrawFormSchema } from '@/features/wallet/utils/withdrawFormSchema';
 
+const LAMPORTS_PER_SOL = 1_000_000_000;
 const tokenProgramCache: Record<string, string> = {};
 
 async function isToken2022Token(
-  connection: Connection,
+  rpc: SolanaRpc,
   mintAddress: string,
 ): Promise<boolean> {
   if (mintAddress === 'So11111111111111111111111111111111111111112') {
     return false;
   }
   if (tokenProgramCache[mintAddress]) {
-    return tokenProgramCache[mintAddress] === TOKEN_2022_PROGRAM_ID.toString();
+    return tokenProgramCache[mintAddress] === TOKEN_2022_PROGRAM_ADDRESS;
   }
   try {
-    const mintInfo = await connection.getAccountInfo(
-      new PublicKey(mintAddress),
-    );
-    if (!mintInfo) {
+    const mintInfo = await rpc
+      .getAccountInfo(address(mintAddress), { encoding: 'base64' })
+      .send();
+    if (!mintInfo.value) {
       logger.error(`Mint account not found: ${mintAddress}`);
       return false;
     }
-    tokenProgramCache[mintAddress] = mintInfo.owner.toString();
-    return mintInfo.owner.toString() === TOKEN_2022_PROGRAM_ID.toString();
+    tokenProgramCache[mintAddress] = mintInfo.value.owner;
+    return mintInfo.value.owner === TOKEN_2022_PROGRAM_ADDRESS;
   } catch (error) {
     logger.error(`Error checking token program: ${safeStringify(error)}`);
     return false;
@@ -73,98 +88,105 @@ async function calculateAtaCreationCost(
 }
 
 function createAppropriateTransferInstruction(
-  source: PublicKey,
-  destination: PublicKey,
-  owner: PublicKey,
-  amount: number,
-  mint: PublicKey,
+  source: Address,
+  destination: Address,
+  authority: TransactionSigner,
+  amount: bigint,
+  mint: Address,
   decimals: number,
   isToken2022: boolean,
-  programId: PublicKey,
-) {
+): Instruction {
   if (isToken2022) {
-    return createTransferCheckedInstruction(
+    return getTransferCheckedInstruction2022({
       source,
       mint,
       destination,
-      owner,
+      authority,
       amount,
       decimals,
-      [],
-      programId,
-    );
+    });
   } else {
-    return createTransferInstruction(
+    return getTransferInstruction({
       source,
       destination,
-      owner,
+      authority,
       amount,
-      [],
-      programId,
-    );
+    });
   }
 }
 
 async function createFeePayerATA(
-  connection: Connection,
-  tokenMint: PublicKey,
-  feePayerWallet: Keypair,
-  programId: PublicKey,
+  rpc: SolanaRpc,
+  tokenMint: Address,
+  feePayerSigner: KeyPairSigner,
+  programId: Address,
 ): Promise<boolean> {
   try {
-    const feePayer = feePayerWallet.publicKey;
-    const feePayerATA = getAssociatedTokenAddressSync(
-      tokenMint,
-      feePayer,
-      false,
-      programId,
-    );
+    const [feePayerATA] = await findAssociatedTokenPda({
+      mint: tokenMint,
+      owner: feePayerSigner.address,
+      tokenProgram: programId,
+    });
 
-    const { blockhash } = await connection.getLatestBlockhash('finalized');
+    const { value: latestBlockhash } = await rpc
+      .getLatestBlockhash({ commitment: 'finalized' })
+      .send();
 
-    const createATAInstruction = createAssociatedTokenAccountInstruction(
-      feePayer,
-      feePayerATA,
-      feePayer,
-      tokenMint,
-      programId,
-    );
+    const createATAInstruction = getCreateAssociatedTokenInstruction({
+      payer: feePayerSigner,
+      ata: feePayerATA,
+      owner: feePayerSigner.address,
+      mint: tokenMint,
+      tokenProgram: programId,
+    });
 
     const computeBudgetInstructions = [
-      ComputeBudgetProgram.setComputeUnitLimit({ units: 200000 }),
-      ComputeBudgetProgram.setComputeUnitPrice({ microLamports: 100000 }),
+      getSetComputeUnitLimitInstruction({ units: 200000 }),
+      getSetComputeUnitPriceInstruction({ microLamports: 100000n }),
     ];
 
-    const message = new TransactionMessage({
-      payerKey: feePayer,
-      recentBlockhash: blockhash,
-      instructions: [...computeBudgetInstructions, createATAInstruction],
-    }).compileToV0Message();
-
-    const transaction = new VersionedTransaction(message);
-    transaction.sign([feePayerWallet]);
-
-    const signature = await connection.sendTransaction(transaction);
-    const confirmation = await connection.confirmTransaction(
-      signature,
-      'confirmed',
+    const transactionMessage = pipe(
+      createTransactionMessage({ version: 0 }),
+      (tx) => setTransactionMessageFeePayerSigner(feePayerSigner, tx),
+      (tx) => setTransactionMessageLifetimeUsingBlockhash(latestBlockhash, tx),
+      (tx) =>
+        appendTransactionMessageInstructions(
+          [...computeBudgetInstructions, createATAInstruction],
+          tx,
+        ),
     );
 
-    if (confirmation.value.err) {
-      logger.error(`${safeStringify(confirmation.value.err)}`);
-      return false;
-    }
+    const signedTransaction =
+      await signTransactionMessageWithSigners(transactionMessage);
 
-    logger.info(`Created fee payer ATA: ${feePayerATA.toString()}`);
-    return true;
-  } catch (error) {
-    if (error instanceof SendTransactionError) {
-      logger.error(`${error.message}`);
-      const logs = error.logs ? error.logs.join('\n') : 'No logs available';
-      logger.error(`Transaction logs:\n${logs}`);
-    } else {
-      logger.error(`Error creating fee payer ATA: ${safeStringify(error)}`);
+    const encodedTransaction =
+      getBase64EncodedWireTransaction(signedTransaction);
+    const signature = await rpc
+      .sendTransaction(encodedTransaction, { skipPreflight: false })
+      .send();
+
+    // Poll for confirmation (getSignatureStatuses doesn't wait)
+    const maxAttempts = 30;
+    for (let i = 0; i < maxAttempts; i++) {
+      const { value } = await rpc.getSignatureStatuses([signature]).send();
+      const status = value[0];
+      if (status?.err) {
+        logger.error(`${safeStringify(status.err)}`);
+        return false;
+      }
+      if (
+        status?.confirmationStatus === 'confirmed' ||
+        status?.confirmationStatus === 'finalized'
+      ) {
+        logger.info(`Created fee payer ATA: ${feePayerATA}`);
+        return true;
+      }
+      await new Promise((r) => setTimeout(r, 500));
     }
+    logger.error('Transaction confirmation timeout');
+    return false;
+  } catch (error) {
+    logger.error(`Error creating fee payer ATA: ${safeStringify(error)}`);
     return false;
   }
 }
@@ -192,48 +214,96 @@ export async function POST(request: NextRequest) {
       `req body: ${safeStringify({ recipientAddress, amount, tokenAddress })}`,
     );
 
-    if (tokenAddress !== 'So11111111111111111111111111111111111111112') {
-      if (!process.env.FEEPAYER_PRIVATE_KEY) {
-        logger.error('Fee payer private key not configured');
-        throw new Error('Fee payer private key not configured');
-      }
+    const rpc = getRpc();
 
-      const feePayerWallet = Keypair.fromSecretKey(
-        bs58.decode(process.env.FEEPAYER_PRIVATE_KEY as string),
+    if (!process.env.FEEPAYER_PRIVATE_KEY) {
+      logger.error('Fee payer private key not configured');
+      throw new Error('Fee payer private key not configured');
+    }
+
+    const feePayerKeyPair = await createKeyPairFromBytes(
+      bs58.decode(process.env.FEEPAYER_PRIVATE_KEY),
+    );
+    const feePayerSigner = await createSignerFromKeyPair(feePayerKeyPair);
+    const recipient = address(recipientAddress);
+
+    if (tokenAddress === 'So11111111111111111111111111111111111111112') {
+      const user = await prisma.user.findUniqueOrThrow({
+        where: { id: userId },
+        select: { walletAddress: true },
+      });
+      if (!user.walletAddress) throw new Error('User wallet address not found');
+
+      const { value: latestBlockhash } = await rpc
+        .getLatestBlockhash({ commitment: 'finalized' })
+        .send();
+
+      const senderSigner = createNoopSigner(address(user.walletAddress));
+      const lamportsAmount = BigInt(
+        Math.floor(Number(amount) * LAMPORTS_PER_SOL),
       );
-      const feePayer = feePayerWallet.publicKey;
 
-      const connection = getConnection('confirmed');
-      const tokenMint = new PublicKey(tokenAddress);
+      const transactionMessage = pipe(
+        createTransactionMessage({ version: 0 }),
+        (tx) => setTransactionMessageFeePayerSigner(feePayerSigner, tx),
+        (tx) =>
+          setTransactionMessageLifetimeUsingBlockhash(latestBlockhash, tx),
+        (tx) =>
+          appendTransactionMessageInstructions(
+            [
+              getTransferSolInstruction({
+                source: senderSigner,
+                destination: recipient,
+                amount: lamportsAmount,
+              }),
+            ],
+            tx,
+          ),
+      );
 
-      const isToken2022 = await isToken2022Token(connection, tokenAddress);
-      const programId = isToken2022 ? TOKEN_2022_PROGRAM_ID : TOKEN_PROGRAM_ID;
+      const partiallySignedTransaction =
+        await partiallySignTransactionMessageWithSigners(transactionMessage);
 
-      const feePayerATA = getAssociatedTokenAddressSync(
+      return NextResponse.json({
+        serializedTransaction: getBase64EncodedWireTransaction(
+          partiallySignedTransaction,
+        ),
+        receiverATAExists: true,
+        ataCreationCost: 0,
+      });
+    }
+
+    const tokenMint = address(tokenAddress);
+    const isToken2022 = await isToken2022Token(rpc, tokenAddress);
+    const programId = isToken2022
+      ? TOKEN_2022_PROGRAM_ADDRESS
+      : TOKEN_PROGRAM_ADDRESS;
+
+    const token = tokenList.find((e) => e.mintAddress === tokenAddress);
+    if (!token) throw new Error('Invalid token selected');
+
+    const [feePayerATA] = await findAssociatedTokenPda({
+      mint: tokenMint,
+      owner: feePayerSigner.address,
+      tokenProgram: programId,
+    });
+
+    const feePayerATAInfo = await rpc
+      .getAccountInfo(feePayerATA, { encoding: 'base64' })
+      .send();
+
+    if (!feePayerATAInfo.value) {
+      const success = await createFeePayerATA(
+        rpc,
         tokenMint,
-        feePayer,
-        false,
+        feePayerSigner,
         programId,
       );
-
-      const feePayerATAExists =
-        !!(await connection.getAccountInfo(feePayerATA));
-
-      if (!feePayerATAExists) {
-        const success = await createFeePayerATA(
-          connection,
-          tokenMint,
-          feePayerWallet,
-          programId,
-        );
-
-        if (!success) {
-          logger.error('Failed to create fee payer ATA');
-          throw new Error('Failed to create fee payer ATA');
-        }
-
-        logger.info('Fee payer ATA created successfully');
+      if (!success) {
+        logger.error('Failed to create fee payer ATA');
+        throw new Error('Failed to create fee payer ATA');
       }
+      logger.info('Fee payer ATA created successfully');
     }
 
     const user = await prisma.user.findUniqueOrThrow({
@@ -242,79 +312,33 @@ export async function POST(request: NextRequest) {
     });
     if (!user.walletAddress) throw new Error('User wallet address not found');
 
-    const connection = getConnection('confirmed');
-    const { blockhash } = await connection.getLatestBlockhash('finalized');
+    const { value: latestBlockhash } = await rpc
+      .getLatestBlockhash({ commitment: 'finalized' })
+      .send();
 
-    const sender = new PublicKey(user.walletAddress);
-    const recipient = new PublicKey(recipientAddress);
-    const tokenMint = new PublicKey(tokenAddress);
-
-    if (!process.env.FEEPAYER_PRIVATE_KEY)
-      throw new Error('Fee payer private key not configured');
-
-    const feePayerWallet = Keypair.fromSecretKey(
-      bs58.decode(process.env.FEEPAYER_PRIVATE_KEY as string),
-    );
-    const feePayer = feePayerWallet.publicKey;
-
-    if (tokenAddress === 'So11111111111111111111111111111111111111112') {
-      const instructions = [
-        SystemProgram.transfer({
-          fromPubkey: sender,
-          toPubkey: recipient,
-          lamports: Math.floor(Number(amount) * LAMPORTS_PER_SOL),
-        }),
-      ];
-      const message = new TransactionMessage({
-        payerKey: feePayer,
-        recentBlockhash: blockhash,
-        instructions,
-      }).compileToV0Message();
-
-      const transaction = new VersionedTransaction(message);
-      transaction.sign([feePayerWallet]);
-
-      return NextResponse.json({
-        serializedTransaction: Buffer.from(transaction.serialize()).toString(
-          'base64',
-        ),
-        receiverATAExists: true,
-        ataCreationCost: 0,
-      });
-    }
-
-    const isToken2022 = await isToken2022Token(connection, tokenAddress);
-    const programId = isToken2022 ? TOKEN_2022_PROGRAM_ID : TOKEN_PROGRAM_ID;
-
-    const token = tokenList.find((e) => e.mintAddress === tokenAddress);
-    if (!token) throw new Error('Invalid token selected');
+    const senderAddress = address(user.walletAddress);
+    const senderSigner = createNoopSigner(senderAddress);
     const decimals = token.decimals;
 
-    const senderATA = getAssociatedTokenAddressSync(
-      tokenMint,
-      sender,
-      false,
-      programId,
-    );
-    const receiverATA = getAssociatedTokenAddressSync(
-      tokenMint,
-      recipient,
-      true,
-      programId,
-    );
-    const receiverATAExists = !!(await connection.getAccountInfo(receiverATA));
-    const receiverATAWasMissing = !receiverATAExists;
+    const [senderATA] = await findAssociatedTokenPda({
+      mint: tokenMint,
+      owner: senderAddress,
+      tokenProgram: programId,
+    });
+    const [receiverATA] = await findAssociatedTokenPda({
+      mint: tokenMint,
+      owner: recipient,
+      tokenProgram: programId,
+    });
 
-    const feePayerATA = getAssociatedTokenAddressSync(
-      tokenMint,
-      feePayer,
-      false,
-      programId,
-    );
+    const receiverATAInfo = await rpc
+      .getAccountInfo(receiverATA, { encoding: 'base64' })
+      .send();
+    const receiverATAWasMissing = !receiverATAInfo.value;
 
-    const allInstructions = [
-      ComputeBudgetProgram.setComputeUnitLimit({ units: 200000 }),
-      ComputeBudgetProgram.setComputeUnitPrice({ microLamports: 500000 }),
+    const allInstructions: Instruction[] = [
+      getSetComputeUnitLimitInstruction({ units: 200000 }),
+      getSetComputeUnitPriceInstruction({ microLamports: 500000n }),
     ];
 
     let ataCreationCost = 0;
@@ -330,13 +354,13 @@ export async function POST(request: NextRequest) {
       );
 
       allInstructions.push(
-        createAssociatedTokenAccountInstruction(
-          feePayer,
-          receiverATA,
-          recipient,
-          tokenMint,
-          programId,
-        ),
+        getCreateAssociatedTokenInstruction({
+          payer: feePayerSigner,
+          ata: receiverATA,
+          owner: recipient,
+          mint: tokenMint,
+          tokenProgram: programId,
+        }),
       );
 
       if (ataCreationCost > 0) {
@@ -349,24 +373,22 @@ export async function POST(request: NextRequest) {
           createAppropriateTransferInstruction(
             senderATA,
             feePayerATA,
-            sender,
-            ataCreationCost,
+            senderSigner,
+            BigInt(ataCreationCost),
             tokenMint,
             decimals,
             isToken2022,
-            programId,
           ),
         );
         allInstructions.push(
           createAppropriateTransferInstruction(
             senderATA,
             receiverATA,
-            sender,
-            withdrawAmount - ataCreationCost,
+            senderSigner,
+            BigInt(withdrawAmount - ataCreationCost),
             tokenMint,
             decimals,
             isToken2022,
-            programId,
           ),
         );
       } else {
@@ -374,12 +396,11 @@ export async function POST(request: NextRequest) {
           createAppropriateTransferInstruction(
             senderATA,
             receiverATA,
-            sender,
-            withdrawAmount,
+            senderSigner,
+            BigInt(withdrawAmount),
             tokenMint,
             decimals,
             isToken2022,
-            programId,
           ),
         );
       }
@@ -388,27 +409,27 @@ export async function POST(request: NextRequest) {
         createAppropriateTransferInstruction(
           senderATA,
           receiverATA,
-          sender,
-          withdrawAmount,
+          senderSigner,
+          BigInt(withdrawAmount),
           tokenMint,
           decimals,
           isToken2022,
-          programId,
         ),
       );
     }
 
-    const message = new TransactionMessage({
-      payerKey: feePayer,
-      recentBlockhash: blockhash,
-      instructions: allInstructions,
-    }).compileToV0Message();
+    const transactionMessage = pipe(
+      createTransactionMessage({ version: 0 }),
+      (tx) => setTransactionMessageFeePayerSigner(feePayerSigner, tx),
+      (tx) => setTransactionMessageLifetimeUsingBlockhash(latestBlockhash, tx),
+      (tx) => appendTransactionMessageInstructions(allInstructions, tx),
+    );
 
-    const transaction = new VersionedTransaction(message);
-    transaction.sign([feePayerWallet]);
+    const partiallySignedTransaction =
+      await partiallySignTransactionMessageWithSigners(transactionMessage);
 
-    const serializedTransaction = Buffer.from(transaction.serialize()).toString(
-      'base64',
+    const serializedTransaction = getBase64EncodedWireTransaction(
+      partiallySignedTransaction,
     );
 
     return NextResponse.json({

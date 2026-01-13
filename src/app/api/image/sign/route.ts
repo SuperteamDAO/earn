@@ -1,12 +1,12 @@
 import { v2 as cloudinary } from 'cloudinary';
-import { headers } from 'next/headers';
+import { cookies, headers } from 'next/headers';
 import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
 import logger from '@/lib/logger';
 import { safeStringify } from '@/utils/safeStringify';
 
-import { getUserSession } from '@/features/auth/utils/getUserSession';
+import { getPrivyToken } from '@/features/auth/utils/getPrivyToken';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -35,21 +35,27 @@ const uploadSignatureSchema = z.object({
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await getUserSession(await headers());
+    const headersList = await headers();
+    const authHeader = headersList.get('authorization');
+    const cookieHeader = headersList.get('cookie');
 
-    if (session.error || !session.data) {
-      logger.warn('Unauthorized upload signature request', {
-        error: session.error,
-        status: session.status,
-      });
-      return NextResponse.json(
-        { error: session.error || 'Unauthorized' },
-        { status: session.status || 401 },
+    const req = {
+      headers: { authorization: authHeader, cookie: cookieHeader },
+      cookies: Object.fromEntries(
+        (await cookies()).getAll().map((c) => [c.name, c.value]),
+      ),
+    };
+
+    const privyDid = await getPrivyToken(req as any);
+
+    if (!privyDid) {
+      logger.warn(
+        'Unauthorized upload signature request - no valid Privy token',
       );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const userId = session.data.userId;
-    logger.debug(`Authenticated user: ${userId}`);
+    logger.debug(`Authenticated Privy user: ${privyDid}`);
 
     const rawBody = await request.json();
 

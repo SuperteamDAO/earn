@@ -32,7 +32,7 @@ export const PreviewListingModal = () => {
     name: 'slug',
   });
   const previewUrl = useMemo(() => {
-    return `/listing/${slug}?preview=1`;
+    return `/earn/listing/${slug}?preview=1`;
   }, [type, slug]);
 
   return (

@@ -155,7 +155,7 @@ export function CreditHistoryCard({
                     <img
                       src={
                         entry.submission.listing.sponsor?.logo ||
-                        '/android-chrome-512x512.png'
+                        '/earn/android-chrome-512x512.png'
                       }
                       alt="Sponsor logo"
                       className="size-10 rounded-full object-contain"

@@ -25,6 +25,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 
 const hardDomPurify = (dirty: string | Node, cfg?: IsoDomPurify.Config) =>
@@ -79,23 +80,11 @@ export function SupportFormDialog({ children, onSubmit }: ModalFormProps) {
     try {
       setIsSubmitting(true);
       posthog.capture('submit_support form');
-      const response = await fetch('/api/email/manual/support', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email: user?.email || data.email,
-          subject: hardDomPurify(data.subject),
-          description: hardDomPurify(data.description),
-        }),
+      await api.post('/api/email/manual/support', {
+        email: user?.email || data.email,
+        subject: hardDomPurify(data.subject),
+        description: hardDomPurify(data.description),
       });
-
-      const result = await response.json();
-
-      if (!response.ok) {
-        throw new Error(result.error || 'Failed to send message');
-      }
 
       toast.success('Message sent');
 

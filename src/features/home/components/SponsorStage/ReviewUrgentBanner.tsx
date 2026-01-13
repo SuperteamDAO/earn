@@ -73,7 +73,7 @@ export function ReviewUrgentBanner({ listing }: ReviewUrgentBannerProps) {
               }}
             >
               <img
-                src="/assets/sponsor/pratik.webp"
+                src="/earn/assets/sponsor/pratik.webp"
                 alt="Get Help"
                 width={28}
                 height={28}

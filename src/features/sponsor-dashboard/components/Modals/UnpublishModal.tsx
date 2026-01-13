@@ -28,7 +28,7 @@ export const UnpublishModal = ({
     mutationFn: async (status: boolean) => {
       let result;
       if (listing?.type === 'grant') {
-        result = await api.post(`/api/grants/update/${listing.id}/`, {
+        result = await api.post(`/api/grants/update/${listing.id}`, {
           isPublished: status,
         });
       } else {

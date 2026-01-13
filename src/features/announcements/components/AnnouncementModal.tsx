@@ -1,5 +1,5 @@
 import Head from 'next/head';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Drawer, DrawerContent } from '@/components/ui/drawer';
@@ -67,7 +67,7 @@ export function AnnouncementModal({
   announcements,
   onClose,
 }: AnnouncementModalProps) {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
   const [current, setCurrent] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
 
@@ -83,14 +83,6 @@ export function AnnouncementModal({
     }
     return;
   };
-
-  const closedOnce = useRef<boolean>(false);
-
-  useEffect(() => {
-    if (announcements.length && !closedOnce.current) {
-      setOpen(true);
-    }
-  }, [announcements.length]);
 
   useEffect(() => {
     if (!open) return;
@@ -120,9 +112,8 @@ export function AnnouncementModal({
   if (!announcements.length) return null;
 
   function handleSetOpen(open: boolean) {
-    if (!open) {
-      closedOnce.current = true;
-      if (onClose) onClose();
+    if (!open && onClose) {
+      onClose();
     }
     setOpen(open);
   }

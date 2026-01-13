@@ -49,7 +49,7 @@ export const SubmissionCard = ({
     setIsLoading(true);
 
     const likePromise = api
-      .post('/api/submission/like/', { id })
+      .post('/api/submission/like', { id })
       .then()
       .finally(() => {
         setIsLoading(false);

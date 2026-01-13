@@ -224,7 +224,7 @@ const CreateSponsor = () => {
         await api.post('/api/sponsors/create', sponsorData);
 
         if (userData && shouldUpdateUser(userData, user)) {
-          await api.post('/api/sponsors/usersponsor-details/', userData);
+          await api.post('/api/sponsors/usersponsor-details', userData);
         }
 
         await api.post('/api/email/manual/welcome-sponsor');

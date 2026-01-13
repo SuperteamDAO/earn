@@ -56,7 +56,7 @@ export function ExtraInfoSection({
             {Hackathon.name?.toUpperCase()} TRACK
           </p>
           <p className="text-slate-500">{Hackathon.description}</p>
-          <a
+          <Link
             className="flex items-center font-medium text-slate-500"
             href={`/hackathon/${Hackathon.name?.toLowerCase()}`}
             target="_blank"
@@ -64,7 +64,7 @@ export function ExtraInfoSection({
           >
             View All Tracks
             <ExternalLink className="mx-1 mb-1 h-4 w-4 text-[#64768b]" />
-          </a>
+          </Link>
         </div>
       )}
 

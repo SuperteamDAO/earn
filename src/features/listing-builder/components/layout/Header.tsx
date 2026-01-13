@@ -55,7 +55,7 @@ export function Header() {
             className="flex items-center gap-3 hover:no-underline"
           >
             <LocalImage
-              src="/assets/logo.svg"
+              src="/earn/assets/logo.svg"
               alt="Superteam Earn"
               className="h-[1.4rem] w-auto cursor-pointer object-contain"
               loading="eager"

@@ -116,6 +116,14 @@ export const PayoutSection = ({
     (submission) => submission.isWinner && submission.winnerPosition,
   );
 
+  if (bounty.isFndnPaying) {
+    return (
+      <div className="rounded-lg border border-slate-200 bg-white py-8 text-center text-slate-500">
+        Payments for this listing are handled by the Solana Foundation.
+      </div>
+    );
+  }
+
   if (winners.length === 0) {
     return (
       <div className="space-y-4">

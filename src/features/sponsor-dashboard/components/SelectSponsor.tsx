@@ -54,7 +54,7 @@ export function SelectSponsor({
     callback: (options: SponsorOption[]) => void,
   ) => {
     api
-      .get(`/api/sponsors/list/`, {
+      .get(`/api/sponsors/list`, {
         params: {
           searchString: inputValue,
         },

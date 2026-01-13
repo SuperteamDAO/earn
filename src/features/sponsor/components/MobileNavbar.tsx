@@ -154,7 +154,7 @@ export const MobileNavbar = () => {
           <LocalImage
             className="h-[1.3rem] cursor-pointer object-contain"
             alt="Superteam Earn"
-            src="/assets/logo.svg"
+            src="/earn/assets/logo.svg"
             loading="eager"
           />
           <div className="h-6 w-[1.5px] rotate-10 bg-slate-300" />

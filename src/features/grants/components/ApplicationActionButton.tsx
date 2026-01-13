@@ -1,3 +1,4 @@
+import { usePrivy } from '@privy-io/react-auth';
 import { useQuery } from '@tanstack/react-query';
 import { AlertTriangle, Loader2, Lock, Pencil } from 'lucide-react';
 import posthog from 'posthog-js';
@@ -29,6 +30,8 @@ export const ApplicationActionButton = ({
   grant,
 }: GrantApplicationButtonProps) => {
   const { user } = useUser();
+  const { authenticated } = usePrivy();
+  const isAuthenticated = authenticated;
 
   const { region, id, link, isNative, isPublished, isPro, sponsorId } = grant;
   const isUserPro = user?.isPro;
@@ -65,8 +68,9 @@ export const ApplicationActionButton = ({
     : undefined;
 
   const isGrantSponsor = user?.currentSponsorId === sponsorId;
-  const isNotEligibleForPro =
+  const isProRestricted =
     isPro && !isUserPro && !isGrantSponsor && applicationState === 'ALLOW NEW';
+  const isNotEligibleForPro = isAuthenticated && isProRestricted;
 
   const isBtnDisabled =
     buttonConfig.isDisabled ||
@@ -78,14 +82,20 @@ export const ApplicationActionButton = ({
     );
 
   const getButtonText = () => {
-    if (isNotEligibleForPro && !isUserApplicationLoading) {
+    if (isProRestricted && !isUserApplicationLoading) {
+      if (!isAuthenticated) {
+        return 'Check Eligibility';
+      }
       return 'Not Eligible';
     }
     return buttonConfig.text;
   };
 
   const getButtonBg = () => {
-    if (isNotEligibleForPro && !isUserApplicationLoading) {
+    if (isProRestricted && !isUserApplicationLoading) {
+      if (!isAuthenticated) {
+        return 'bg-zinc-700';
+      }
       return 'bg-zinc-300';
     }
     if (isUserPro && isPro && applicationState === 'ALLOW NEW') {
@@ -144,7 +154,7 @@ export const ApplicationActionButton = ({
                 <Button
                   className={cn(
                     'h-12 w-full gap-4',
-                    isNotEligibleForPro
+                    isProRestricted
                       ? 'disabled:opacity-100'
                       : 'disabled:opacity-70',
                     'text-base md:text-lg',
@@ -173,12 +183,7 @@ export const ApplicationActionButton = ({
                     </>
                   ) : (
                     <>
-                      {isPro &&
-                        !isUserPro &&
-                        !isGrantSponsor &&
-                        applicationState === 'ALLOW NEW' && (
-                          <Lock className="h-4 w-4" />
-                        )}
+                      {isNotEligibleForPro && <Lock className="h-4 w-4" />}
                       {applicationState === 'ALLOW EDIT' && <Pencil />}
                       <span>{getButtonText()}</span>
                     </>

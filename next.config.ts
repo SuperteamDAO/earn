@@ -43,7 +43,8 @@ const baseCsp = `
 const csp = baseCsp.replace(/\s{2,}/g, ' ').trim();
 
 const nextConfig: NextConfig = {
-  // turbopack: {},
+  turbopack: {},
+  basePath: '/earn',
   poweredByHeader: false,
   trailingSlash: true,
   reactStrictMode: true,
@@ -132,7 +133,7 @@ const nextConfig: NextConfig = {
         {
           key: 'Link',
           value:
-            '</assets/banner/banner-mobile.avif>; rel=preload; as=image; type=image/avif; fetchpriority=high; media="(max-width: 639px)", </assets/banner/banner.avif>; rel=preload; as=image; type=image/avif; fetchpriority=high; media="(min-width: 640px)"',
+            '</earn/assets/banner/banner-mobile.avif>; rel=preload; as=image; type=image/avif; fetchpriority=high; media="(max-width: 639px)", </earn/assets/banner/banner.avif>; rel=preload; as=image; type=image/avif; fetchpriority=high; media="(min-width: 640px)"',
         },
       ],
     });
@@ -148,6 +149,9 @@ const nextConfig: NextConfig = {
     });
 
     return headers;
+  },
+  async redirects() {
+    return [];
   },
   async rewrites() {
     return [

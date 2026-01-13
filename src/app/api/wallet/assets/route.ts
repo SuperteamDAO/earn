@@ -1,4 +1,4 @@
-import { PublicKey } from '@solana/web3.js';
+import { address } from '@solana/kit';
 import { headers } from 'next/headers';
 import { type NextRequest, NextResponse } from 'next/server';
 
@@ -7,7 +7,7 @@ import { prisma } from '@/prisma';
 import { getUserSession } from '@/features/auth/utils/getUserSession';
 import { type TokenAsset } from '@/features/wallet/types/TokenAsset';
 import { fetchUserTokens } from '@/features/wallet/utils/fetchUserTokens';
-import { getConnection } from '@/features/wallet/utils/getConnection';
+import { getRpc } from '@/features/wallet/utils/getConnection';
 
 interface ErrorResponse {
   error: string;
@@ -39,11 +39,8 @@ export async function GET(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const connection = getConnection('confirmed');
-    const assets = await fetchUserTokens(
-      connection,
-      new PublicKey(walletAddress),
-    );
+    const rpc = getRpc();
+    const assets = await fetchUserTokens(rpc, address(walletAddress));
     return NextResponse.json(assets);
   } catch (error) {
     console.error('Error fetching token data:', error);

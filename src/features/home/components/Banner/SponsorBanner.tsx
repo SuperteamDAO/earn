@@ -30,46 +30,46 @@ export function HomeSponsorBanner({ totalUsers }: HomeSponsorBannerProps) {
         >
           <source
             media="(min-width: 80em)"
-            srcSet="/assets/banner/banner-sponsor-logos.avif"
+            srcSet="/earn/assets/banner/banner-sponsor-logos.avif"
             type="image/avif"
           />
           <source
             media="(min-width: 80em)"
-            srcSet="/assets/banner/banner-sponsor-logos.webp"
+            srcSet="/earn/assets/banner/banner-sponsor-logos.webp"
             type="image/webp"
           />
           <source
             media="(min-width: 64em) and (max-width: 80em)"
-            srcSet="/assets/banner/banner-sponsor-logos-mobile.avif"
+            srcSet="/earn/assets/banner/banner-sponsor-logos-mobile.avif"
             type="image/avif"
           />
           <source
             media="(min-width: 64em) and (max-width: 80em)"
-            srcSet="/assets/banner/banner-sponsor-logos-mobile.webp"
+            srcSet="/earn/assets/banner/banner-sponsor-logos-mobile.webp"
             type="image/webp"
           />
           <source
             media="(min-width: 48em) and (max-width: 64em)"
-            srcSet="/assets/banner/banner-sponsor-logos.avif"
+            srcSet="/earn/assets/banner/banner-sponsor-logos.avif"
             type="image/avif"
           />
           <source
             media="(min-width: 48em) and (max-width: 64em)"
-            srcSet="/assets/banner/banner-sponsor-logos.webp"
+            srcSet="/earn/assets/banner/banner-sponsor-logos.webp"
             type="image/webp"
           />
           <source
             media="(max-width: 48em)"
-            srcSet="/assets/banner/banner-sponsor-logos-mobile.avif"
+            srcSet="/earn/assets/banner/banner-sponsor-logos-mobile.avif"
             type="image/avif"
           />
           <source
             media="(max-width: 48em)"
-            srcSet="/assets/banner/banner-sponsor-logos-mobile.webp"
+            srcSet="/earn/assets/banner/banner-sponsor-logos-mobile.webp"
             type="image/webp"
           />
           <img
-            src="/assets/banner/banner-sponsor-logos-mobile.webp"
+            src="/earn/assets/banner/banner-sponsor-logos-mobile.webp"
             alt="Illustration — Gradient Light blue with Logos of Solana first Companies"
             className="h-full !w-auto"
             style={{

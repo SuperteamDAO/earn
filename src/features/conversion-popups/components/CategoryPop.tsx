@@ -209,6 +209,7 @@ const Mobile = ({
             width={100}
             height={100}
             className="w-12 rounded-md object-contain"
+            unoptimized
           />
           <DrawerTitle className="pt-2 text-base font-semibold">
             {variant?.title}
@@ -251,6 +252,7 @@ const Desktop = ({
             width={100}
             height={100}
             className="w-12 rounded-md object-contain"
+            unoptimized
           />
           <DialogTitle className="pt-2 text-base font-semibold">
             {variant?.title}
