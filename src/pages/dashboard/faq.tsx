@@ -179,7 +179,7 @@ To verify the transaction, the wallet address must match the winner's, and the t
       {
         question:
           'How can I add or remove team members from my sponsor profile?',
-        answer: `Go to <a href="/dashboard/team-settings" style="text-decoration: underline;"><strong>Team Settings</strong></a> in your dashboard. Use the "<strong>Invite Members</strong>" button to send an invitation email to your teammate to add them as a collaborator. You can also remove members at any time.`,
+        answer: `Go to <a href="/earn/dashboard/team-settings" style="text-decoration: underline;"><strong>Team Settings</strong></a> in your dashboard. Use the "<strong>Invite Members</strong>" button to send an invitation email to your teammate to add them as a collaborator. You can also remove members at any time.`,
       },
     ],
   },
