@@ -119,6 +119,7 @@ function MainContent({
           loading="eager"
           quality={80}
           className="scale-150 md:scale-125"
+          unoptimized
         />
       </div>
       <audio

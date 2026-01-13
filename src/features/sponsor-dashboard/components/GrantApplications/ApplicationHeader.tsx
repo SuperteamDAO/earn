@@ -230,7 +230,7 @@ export const ApplicationHeader = ({
       <ExportSheetsModal
         isOpen={exportSheetsIsOpen}
         onClose={exportSheetsOnClose}
-        apiEndpoint="/api/sponsor-dashboard/application/export-sheets/"
+        apiEndpoint="/api/sponsor-dashboard/application/export-sheets"
         queryParams={{ grantId: grant?.id }}
         entityName="applications"
       />

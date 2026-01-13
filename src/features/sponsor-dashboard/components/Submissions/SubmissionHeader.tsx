@@ -495,7 +495,7 @@ export const SubmissionHeader = ({
       <ExportSheetsModal
         isOpen={exportSheetsIsOpen}
         onClose={exportSheetsOnClose}
-        apiEndpoint="/api/sponsor-dashboard/submission/export-sheets/"
+        apiEndpoint="/api/sponsor-dashboard/submission/export-sheets"
         queryParams={{ listingId: bounty?.id }}
         entityName="submissions"
       />

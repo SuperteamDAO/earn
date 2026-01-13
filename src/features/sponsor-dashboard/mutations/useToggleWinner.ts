@@ -39,7 +39,7 @@ export const useToggleWinner = (bounty: Listing | undefined) => {
       }
 
       const batchPromises = updateBatches.map((batch) =>
-        api.post(`/api/sponsor-dashboard/submission/toggle-winner/`, {
+        api.post(`/api/sponsor-dashboard/submission/toggle-winner`, {
           submissions: batch,
         }),
       );

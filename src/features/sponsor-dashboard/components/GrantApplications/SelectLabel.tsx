@@ -46,7 +46,7 @@ export const SelectLabel = ({ grantSlug }: Props) => {
 
   const { mutate: updateLabel } = useMutation({
     mutationFn: ({ id, label }: { id: string; label: SubmissionLabels }) =>
-      api.post(`/api/sponsor-dashboard/grants/update-label/`, {
+      api.post(`/api/sponsor-dashboard/grants/update-label`, {
         id,
         label,
       }),

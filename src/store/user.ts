@@ -105,7 +105,7 @@ export const useUpdateUser = () => {
 
   return useMutation({
     mutationFn: (userData: Partial<User>) =>
-      api.post<User>('/api/user/update/', userData),
+      api.post<User>('/api/user/update', userData),
     onSuccess: (response) => {
       const updatedUser = response.data;
       if (updatedUser) {

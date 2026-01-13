@@ -113,7 +113,7 @@ export const PayoutButton = ({ bounty, submission }: Props) => {
 
   const { mutateAsync: addPayment } = useMutation({
     mutationFn: ({ id, paymentDetails }: { id: string; paymentDetails: any }) =>
-      api.post(`/api/sponsor-dashboard/submission/add-payment/`, {
+      api.post(`/api/sponsor-dashboard/submission/add-payment`, {
         id,
         paymentDetails,
       }),
