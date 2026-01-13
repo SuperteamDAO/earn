@@ -8,6 +8,10 @@
           "type": "header",
           "key": "x-forwarded-host",
           "value": "test.superteam.fun"
+        },
+        {
+          "type": "query",
+          "key": "preview"
         }
       ],
       "destination": "https://test.superteam.fun/earn",
@@ -21,6 +25,10 @@
           "type": "header",
           "key": "x-forwarded-host",
           "value": "test.superteam.fun"
+        },
+        {
+          "type": "query",
+          "key": "preview"
         }
       ],
       "destination": "https://test.superteam.fun/earn/",
@@ -34,6 +42,10 @@
           "type": "header",
           "key": "x-forwarded-host",
           "value": "test.superteam.fun"
+        },
+        {
+          "type": "query",
+          "key": "preview"
         }
       ],
       "destination": "https://test.superteam.fun/earn/$1",
@@ -47,6 +59,10 @@
           "type": "header",
           "key": "x-forwarded-host",
           "value": "test.superteam.fun"
+        },
+        {
+          "type": "query",
+          "key": "preview"
         }
       ],
       "destination": "https://test.superteam.fun/earn/$1",
