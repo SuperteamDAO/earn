@@ -165,6 +165,7 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+  skipTrailingSlashRedirect: true,
 };
 
 const combinedConfig = withAxiom(withPWA(nextConfig));
