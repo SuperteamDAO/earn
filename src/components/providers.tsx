@@ -5,8 +5,6 @@ import { type Session } from 'next-auth';
 import { SessionProvider } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 
-import { fontMono, fontSans } from '@/theme/fonts';
-
 export default function Providers({
   children,
   session,
@@ -38,12 +36,6 @@ export default function Providers({
       >
         <QueryClientProvider client={queryClient}>
           <PrivyInitFlagBridge />
-          <style jsx global>{`
-            :root {
-              --font-sans: ${fontSans.style.fontFamily};
-              --font-mono: ${fontMono.style.fontFamily};
-            }
-          `}</style>
           {children}
         </QueryClientProvider>
       </PrivyProvider>

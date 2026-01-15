@@ -42,27 +42,12 @@ const animeAce = localFont({
       style: 'normal',
     },
     {
-      path: '../../theme/animeace2_reg.otf',
-      weight: '400',
-      style: 'normal',
-    },
-    {
       path: '../../theme/animeace2_ital.ttf',
       weight: '400',
       style: 'italic',
     },
     {
-      path: '../../theme/animeace2_ital.otf',
-      weight: '400',
-      style: 'italic',
-    },
-    {
       path: '../../theme/animeace2_bld.ttf',
-      weight: '700',
-      style: 'normal',
-    },
-    {
-      path: '../../theme/animeace2_bld.otf',
       weight: '700',
       style: 'normal',
     },
