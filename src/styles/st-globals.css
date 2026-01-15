@@ -31,12 +31,12 @@
 }
 
 /* Global image fade-in on load */
-.st-app img {
+.st-app img:not(.st-no-fade) {
   opacity: 0;
   transition: opacity 200ms ease-in-out;
 }
 
-.st-app img.loaded {
+.st-app img.loaded:not(.st-no-fade) {
   opacity: 1;
 }
 

@@ -132,7 +132,7 @@ export default function Geographies() {
               <img
                 src={country.path}
                 alt={country.name}
-                className="h-full w-full object-cover opacity-80 transition-all duration-300 group-hover:scale-105 group-hover:opacity-60"
+                className="st-no-fade h-full w-full object-cover opacity-80 transition-all duration-300 group-hover:scale-105 group-hover:opacity-60"
               />
               <h3 className="font-secondary absolute bottom-6 left-6 text-2xl font-bold text-white">
                 {country.name}
