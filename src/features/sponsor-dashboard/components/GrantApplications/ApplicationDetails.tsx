@@ -135,7 +135,7 @@ export const ApplicationDetails = ({
                     )}
                   </span>
                   <Link
-                    href={`/t/${selectedApplication?.user?.username}`}
+                    href={`/earn/t/${selectedApplication?.user?.username}`}
                     className="text-brand-purple flex w-full items-center gap-1 text-xs font-medium whitespace-nowrap"
                     rel="noopener noreferrer"
                     target="_blank"

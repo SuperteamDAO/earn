@@ -12,7 +12,7 @@ export default function Blocked() {
 
   useEffect(() => {
     if (user && !user?.isBlocked) {
-      router.push('/');
+      router.push('/earn');
     }
   }, [user]);
 

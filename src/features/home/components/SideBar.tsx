@@ -84,7 +84,7 @@ const FeedSidebarContent = ({ recentEarners }: FeedSidebarContentProps) => (
   <>
     <VibeCard />
     <LiveListings>
-      <SectionHeader title="LIVE LISTINGS" href="/" />
+      <SectionHeader title="LIVE LISTINGS" href="/earn" />
     </LiveListings>
     <HowItWorks />
     <RecentEarners earners={recentEarners} />
@@ -134,7 +134,7 @@ const NonSponsorSidebarContent = ({
       <YourBookmarks>
         <SectionHeader
           title="BOOKMARKS"
-          href="/bookmarks"
+          href="/earn/bookmarks"
           onLinkClick={() => posthog.capture('bookmarks_sidebar')}
         />
       </YourBookmarks>

@@ -251,7 +251,7 @@ export function PrePublish() {
                   const data = await form.submitListing();
                   if (isEditing) {
                     posthog.capture('update listing_sponsor');
-                    router.push('/dashboard/listings');
+                    router.push('/earn/dashboard/listings');
                     toast.success('Listing Updated Successfully', {
                       description: 'Redirecting to dashboard',
                     });

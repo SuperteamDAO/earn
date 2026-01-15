@@ -139,7 +139,7 @@ function TalentProfile({ talent, stats, bgIndex }: TalentProps) {
   const router = useRouter();
 
   const handleEditProfileClick = () => {
-    router.push(`/t/${talent?.username}/edit`);
+    router.push(`/earn/t/${talent?.username}/edit`);
   };
 
   const addNewPow = () => {
@@ -636,7 +636,7 @@ function TalentProfile({ talent, stats, bgIndex }: TalentProps) {
                 )}
 
                 <Button
-                  onClick={() => router.push('/')}
+                  onClick={() => router.push('/earn')}
                   className="mx-auto mt-2 block w-[200px] border border-slate-400 bg-white font-medium text-slate-500 hover:bg-gray-100"
                   variant="outline"
                 >

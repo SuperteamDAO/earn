@@ -42,8 +42,11 @@ export const useUser = () => {
           }
         }
 
-        if (fetchedUser?.isBlocked && !router.pathname.includes('/blocked')) {
-          router.push('/blocked');
+        if (
+          fetchedUser?.isBlocked &&
+          !router.pathname.includes('/earn/blocked')
+        ) {
+          router.push('/earn/blocked');
         }
         return fetchedUser;
       } catch (error) {

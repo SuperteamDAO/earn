@@ -299,7 +299,7 @@ export default function EditProfilePage({ slug }: { slug: string }) {
             await refetchUser();
 
             setTimeout(() => {
-              router.push(`/t/${data.username}`);
+              router.push(`/earn/t/${data.username}`);
             }, 500);
           },
           {
@@ -321,12 +321,12 @@ export default function EditProfilePage({ slug }: { slug: string }) {
 
   useEffect(() => {
     if (user && slug !== user?.username) {
-      router.push(`/t/${slug}`);
+      router.push(`/earn/t/${slug}`);
     }
   }, [slug, router, user]);
 
   if (ready && !authenticated) {
-    router.push('/');
+    router.push('/earn');
   }
 
   return (

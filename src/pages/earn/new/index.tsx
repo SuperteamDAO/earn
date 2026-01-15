@@ -52,11 +52,11 @@ export default function NewProfilePage({
         if (originUrl) query['originUrl'] = originUrl;
         if (type) query['type'] = type;
         router.push({
-          pathname: '/new/talent',
+          pathname: '/earn/new/talent',
           query,
         });
       } else {
-        router.push(`/t/${user.username}`);
+        router.push(`/earn/t/${user.username}`);
       }
     } catch (error) {
       setIsTalentLoading(false);
@@ -70,11 +70,11 @@ export default function NewProfilePage({
       // localStorage.removeItem(ONBOARDING_KEY);
       const sponsors = await api.get('/api/user-sponsors');
       if (sponsors?.data?.length && user.currentSponsorId) {
-        router.push('/dashboard/listings?open=1');
+        router.push('/earn/dashboard/listings?open=1');
       } else {
         const originUrl = params?.get('originUrl');
         router.push({
-          pathname: '/new/sponsor',
+          pathname: '/earn/new/sponsor',
           query: originUrl ? { originUrl } : undefined,
         });
       }
@@ -254,7 +254,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     if (query.onboarding === 'true' && isTalentFilled) {
       return {
         redirect: {
-          destination: '/',
+          destination: '/earn',
           permanent: false,
         },
       };

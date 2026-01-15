@@ -30,12 +30,12 @@ export const CreateListingModal = ({
 
   const handleCreateBounty = () => {
     posthog.capture('create new bounty_sponsor');
-    router.push('/dashboard/new?type=bounty');
+    router.push('/earn/dashboard/new?type=bounty');
   };
 
   const handleCreateProject = () => {
     posthog.capture('create new project_sponsor');
-    router.push('/dashboard/new?type=project');
+    router.push('/earn/dashboard/new?type=project');
   };
 
   // const handleCreateHackathon = (hackathon: string) => {

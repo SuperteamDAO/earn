@@ -68,7 +68,7 @@ export default function ReferralLandingPage({
           { duration: 4800, id: 'referral-invalid-link' },
         );
         timeout = setTimeout(
-          () => router.push('/new/talent?onboarding=true&referral=true'),
+          () => router.push('/earn/new/talent?onboarding=true&referral=true'),
           5000,
         );
       } else if (data.inviter && data.remaining === 0) {
@@ -77,7 +77,7 @@ export default function ReferralLandingPage({
           { duration: 4800, id: 'referral-expired-link' },
         );
         timeout = setTimeout(
-          () => router.push('/new/talent?onboarding=true&referral=true'),
+          () => router.push('/earn/new/talent?onboarding=true&referral=true'),
           5000,
         );
       }
@@ -93,7 +93,7 @@ export default function ReferralLandingPage({
       setIsLoginOpen(true);
       return;
     }
-    router.push('/new/talent?onboarding=true&referral=true&code=' + code);
+    router.push('/earn/new/talent?onboarding=true&referral=true&code=' + code);
   };
 
   function RedirectToast({
@@ -119,7 +119,7 @@ export default function ReferralLandingPage({
         }
       };
       const t1 = setTimeout(show, 50);
-      const t2 = setTimeout(() => router.replace('/'), 500);
+      const t2 = setTimeout(() => router.replace('/earn'), 500);
       return () => {
         clearTimeout(t1);
         clearTimeout(t2);

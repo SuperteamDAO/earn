@@ -208,7 +208,7 @@ export const HowItWorks = () => {
                   if (!isLoading && hasWins) return;
                   if (user?.id) {
                     posthog.capture('win_getting started');
-                    router.push('/feed');
+                    router.push('/earn/feed');
                   }
                 }}
               >

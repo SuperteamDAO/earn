@@ -15,7 +15,7 @@ export function HomeSponsorBanner({ totalUsers }: HomeSponsorBannerProps) {
   const { data } = useQuery(sponsorCountQuery);
   return (
     <Link
-      href="/sponsor"
+      href="/earn/sponsor"
       className="relative mx-auto flex h-full w-full flex-col items-start overflow-hidden rounded-[0.5rem] p-5 md:p-10"
       prefetch={false}
     >

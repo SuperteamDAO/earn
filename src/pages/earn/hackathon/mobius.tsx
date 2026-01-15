@@ -407,7 +407,7 @@ const TrackBox = ({
 }: TrackProps) => {
   return (
     <Link
-      href={`/listing/${slug}`}
+      href={`/earn/listing/${slug}`}
       className={cn('block rounded-lg border border-slate-200 p-3 md:p-4')}
     >
       <div className="flex items-center gap-5">

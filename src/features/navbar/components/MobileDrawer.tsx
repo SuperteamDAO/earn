@@ -156,7 +156,7 @@ export const MobileDrawer = ({
               variant="ghost"
               className="text-semibold text-brand-purple hover:text-brand-purple-dark cursor-pointer"
               onClick={() => {
-                router.push('/new');
+                router.push('/earn/new');
               }}
             >
               Complete your Profile
@@ -240,7 +240,7 @@ export const MobileDrawer = ({
                     className="ph-no-capture"
                     onClick={() => {
                       posthog.capture('pro_navbar');
-                      router.push('/pro');
+                      router.push('/earn/pro');
                     }}
                     label={
                       <ProBadge

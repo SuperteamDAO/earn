@@ -37,7 +37,7 @@ export default function SignupPage() {
       toast.success("You've successfully joined the sponsor's dashboard.");
       await refetchUser();
       setIsNavigating(true);
-      router.push('/dashboard/listings');
+      router.push('/earn/dashboard/listings');
     },
     onError: (error: Error) => {
       toast.error(error.message);
@@ -61,7 +61,7 @@ export default function SignupPage() {
         <div className="mt-10 flex flex-col items-center gap-4">
           <h1 className="text-2xl font-bold">Invitation Error</h1>
           <p>{error instanceof Error ? error.message : 'An error occurred'}</p>
-          <Button onClick={() => router.push('/')} variant="default">
+          <Button onClick={() => router.push('/earn')} variant="default">
             Go to Homepage
           </Button>
         </div>
@@ -142,9 +142,9 @@ export default function SignupPage() {
                     onClick={async () => {
                       try {
                         await logout();
-                        router.push(`/signup?invite=${cleanToken}`);
+                        router.push(`/earn/signup?invite=${cleanToken}`);
                       } catch (error) {
-                        router.push(`/signup?invite=${cleanToken}`);
+                        router.push(`/earn/signup?invite=${cleanToken}`);
                       }
                     }}
                     className="cursor-pointer text-sm text-white hover:underline"

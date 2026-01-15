@@ -41,7 +41,7 @@ export function ExtraInfoSection({
           <p className="h-full text-slate-500">
             This {isGrant ? 'grant' : 'listing'} is only open for people in{' '}
             <Link
-              href={`/regions/${region.toLowerCase().replace(/\s+/g, '-')}`}
+              href={`/earn/regions/${region.toLowerCase().replace(/\s+/g, '-')}`}
               className="font-semibold text-slate-500 hover:text-slate-700 hover:underline"
             >
               {region}
@@ -58,7 +58,7 @@ export function ExtraInfoSection({
           <p className="text-slate-500">{Hackathon.description}</p>
           <a
             className="flex items-center font-medium text-slate-500"
-            href={`/hackathon/${Hackathon.name?.toLowerCase()}`}
+            href={`/earn/hackathon/${Hackathon.name?.toLowerCase()}`}
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -83,7 +83,7 @@ export function ExtraInfoSection({
           {skills?.map((skill) => (
             <Link
               key={skill}
-              href={`/skill/${skill.toLowerCase().replace(/\s+/g, '-')}`}
+              href={`/earn/skill/${skill.toLowerCase().replace(/\s+/g, '-')}`}
               className="m-0 rounded-sm bg-slate-100 px-4 py-1 text-xs font-medium text-slate-600 transition-colors hover:bg-slate-200 hover:text-slate-700"
             >
               {skill}

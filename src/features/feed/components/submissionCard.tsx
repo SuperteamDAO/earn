@@ -64,7 +64,7 @@ export function SubmissionCard({ sub, type, commentCount }: SubCardProps) {
         <div className="flex items-center gap-1.5 sm:gap-3">
           {sub?.sponsorSlug ? (
             <Link
-              href={`/s/${sub.sponsorSlug}`}
+              href={`/earn/s/${sub.sponsorSlug}`}
               rel="noopener noreferrer"
               target="_blank"
             >

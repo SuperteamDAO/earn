@@ -79,7 +79,7 @@ export default function BountySubmissions({ listing }: Props) {
         const hasSponsorId = error?.response?.data?.sponsorId;
         if (!hasSponsorId) {
           toast.error('This listing does not belong to you');
-          router.push('/dashboard/listings');
+          router.push('/earn/dashboard/listings');
         }
       }
     }

@@ -28,7 +28,7 @@ export default function Talent() {
       if (!!originUrl && typeof originUrl === 'string') {
         router.push(originUrl);
       } else {
-        router.push('/');
+        router.push('/earn');
       }
     }
   }, [user, authenticated, router]);

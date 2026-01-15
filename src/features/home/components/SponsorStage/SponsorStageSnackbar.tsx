@@ -63,7 +63,7 @@ export function SponsorStageSnackbar() {
   if (stage === SponsorStage.PAYMENT_PENDING) {
     return (
       <Link
-        href={`/dashboard/listings/${listing.slug}/submissions?tab=payments`}
+        href={`/earn/dashboard/listings/${listing.slug}/submissions?tab=payments`}
         className={cn(
           'flex w-full items-center justify-center bg-amber-50 px-6 py-3 text-amber-700 transition-colors hover:bg-amber-100',
           'gap-2 lg:flex',
@@ -111,7 +111,7 @@ export function SponsorStageSnackbar() {
 
     return (
       <Link
-        href={`/dashboard/listings/${listing.slug}/submissions`}
+        href={`/earn/dashboard/listings/${listing.slug}/submissions`}
         className={cn(
           'flex w-full items-center justify-center bg-red-100 px-6 py-3 text-orange-900 transition-colors hover:bg-red-200',
           'gap-2 lg:flex',
@@ -160,7 +160,7 @@ export function SponsorStageSnackbar() {
 
   return (
     <Link
-      href={`/dashboard/listings/${listing.slug}/submissions`}
+      href={`/earn/dashboard/listings/${listing.slug}/submissions`}
       className={cn(
         'flex w-full items-center justify-center bg-violet-50 px-6 py-3 text-indigo-700 transition-colors hover:bg-violet-100',
         'gap-2 lg:flex',

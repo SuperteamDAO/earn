@@ -806,7 +806,7 @@ function Rankings({
               <p className="text-slate-400">#{i + 1}</p>
               <Link
                 className="ph-no-capture flex items-center gap-2"
-                href={`/t/${r.user.username}`}
+                href={`/earn/t/${r.user.username}`}
                 target="_blank"
               >
                 <img

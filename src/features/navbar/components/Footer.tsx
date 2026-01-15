@@ -126,7 +126,7 @@ export const Footer = () => {
   const handleRegionChange = (value: string): void => {
     if (value === 'Global') {
       setSelectedRegion('Global');
-      router.push('/');
+      router.push('/earn');
       return;
     }
 
@@ -146,7 +146,7 @@ export const Footer = () => {
   const handleSkillChange = (value: string): void => {
     if (value === 'All') {
       setSelectedSkill('All');
-      router.push('/');
+      router.push('/earn');
       return;
     }
 

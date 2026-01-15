@@ -100,7 +100,7 @@ export const ListingSuccessModal = () => {
               </Link>
 
               <Link
-                href={`/listing/${slug?.replace(/^[-\s]+|[-\s]+$/g, '')}`}
+                href={`/earn/listing/${slug?.replace(/^[-\s]+|[-\s]+$/g, '')}`}
                 className="flex items-center gap-1 hover:text-slate-700"
               >
                 {'View Listing'}

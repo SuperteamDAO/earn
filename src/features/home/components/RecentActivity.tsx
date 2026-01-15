@@ -108,7 +108,7 @@ export const RecentActivity = () => {
           RECENT ACTIVITY
         </span>
         <Link
-          href="/feed"
+          href="/earn/feed"
           className="ph-no-capture text-brand-purple flex items-center text-xs font-medium"
           onClick={() => {
             posthog.capture('recent winners_view all_homepage');

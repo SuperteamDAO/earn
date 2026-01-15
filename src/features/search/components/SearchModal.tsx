@@ -171,7 +171,7 @@ export function SearchModal({ isOpen, onClose }: Props) {
               ))}
             </div>
             <Link
-              href={`/search?q=${encodeURIComponent(inputValue)}`}
+              href={`/earn/search?q=${encodeURIComponent(inputValue)}`}
               className="w-full"
               onClick={() => prefetchSearchPageData(inputValue)}
             >

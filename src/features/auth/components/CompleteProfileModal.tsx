@@ -53,7 +53,9 @@ export function CompleteProfileModal({
             asChild
             onClick={() => posthog.capture('complete profile_CTA pop up')}
           >
-            <Link href={`/new/talent?originUrl=${router.asPath}`}>{CTA}</Link>
+            <Link href={`/earn/new/talent?originUrl=${router.asPath}`}>
+              {CTA}
+            </Link>
           </Button>
         </DialogFooter>
       </DialogContent>

@@ -101,7 +101,7 @@ export const RecentEarners = ({ earners }: { earners?: User[] }) => {
           RECENT EARNERS
         </span>
         <Link
-          href="/leaderboard"
+          href="/earn/leaderboard"
           className="ph-no-capture text-brand-purple flex items-center text-xs font-medium"
           onClick={() => {
             posthog.capture('view leaderboard_homepage');

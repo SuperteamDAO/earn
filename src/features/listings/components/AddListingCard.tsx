@@ -47,7 +47,7 @@ export const AddListingCard = ({
             </p>
             {sponsorSlug ? (
               <Link
-                href={`/s/${sponsorSlug}`}
+                href={`/earn/s/${sponsorSlug}`}
                 onClick={(e) => e.stopPropagation()}
                 className="flex w-min items-center gap-1 hover:underline"
               >

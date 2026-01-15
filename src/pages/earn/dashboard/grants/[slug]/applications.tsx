@@ -53,7 +53,7 @@ function GrantApplications({ slug }: Props) {
       const error = grantError as any;
       if (error?.response?.status === 403) {
         toast.error('This grant does not belong to you');
-        router.push('/dashboard/listings');
+        router.push('/earn/dashboard/listings');
       }
     }
   }, [grantError, router, user?.role, isSwitchingSponsor]);
@@ -64,7 +64,7 @@ function GrantApplications({ slug }: Props) {
       grant.sponsorId !== user?.currentSponsorId &&
       user?.role !== 'GOD'
     ) {
-      router.push('/dashboard/listings');
+      router.push('/earn/dashboard/listings');
     }
   }, [grant, user?.currentSponsorId, user?.role, router]);
 

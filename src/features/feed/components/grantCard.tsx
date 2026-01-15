@@ -38,7 +38,7 @@ export function GrantCard({ grant, type, commentCount }: GrantCardProps) {
         <div className="flex items-center gap-1.5 sm:gap-3">
           {grant?.sponsorSlug ? (
             <Link
-              href={`/s/${grant.sponsorSlug}`}
+              href={`/earn/s/${grant.sponsorSlug}`}
               rel="noopener noreferrer"
               target="_blank"
             >

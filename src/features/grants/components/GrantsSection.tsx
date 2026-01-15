@@ -76,7 +76,10 @@ export const GrantsSection = ({
           <GrantsCard key={grant.id} grant={grant} />
         ))}
         {type === 'home' && (
-          <ViewAllButton posthogEvent="viewall bottom_grants" href="/grants" />
+          <ViewAllButton
+            posthogEvent="viewall bottom_grants"
+            href="/earn/grants"
+          />
         )}
       </>
     );

@@ -187,7 +187,7 @@ const CreateSponsor = () => {
 
   useEffect(() => {
     if (user?.currentSponsorId && user?.role !== 'GOD') {
-      router.push('/dashboard/listings?open=1');
+      router.push('/earn/dashboard/listings?open=1');
     }
   }, [user?.currentSponsorId, router]);
 
@@ -241,7 +241,7 @@ const CreateSponsor = () => {
         description: 'Redirecting to dashboard...',
       });
       await refetchUser();
-      router.push('/dashboard/listings?open=1');
+      router.push('/earn/dashboard/listings?open=1');
     },
     onError: (error) => {
       console.log('Failed to create sponsor', error);

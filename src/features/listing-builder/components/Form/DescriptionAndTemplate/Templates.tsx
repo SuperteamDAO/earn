@@ -185,7 +185,7 @@ export function Templates() {
             </div>
             {isDisabled && (
               <div>
-                <Link href="/dashboard/listings">
+                <Link href="/earn/dashboard/listings">
                   <Button variant="default" className="text-sm">
                     Go to Dashboard <ChevronRight />
                   </Button>

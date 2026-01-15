@@ -42,7 +42,7 @@ export default function PopupCallback() {
       <p className="text-center text-sm text-slate-600">
         You can now close this window and return to the original tab.
       </p>
-      <Link href="/" className="text-primary underline">
+      <Link href="/earn" className="text-primary underline">
         Go to home
       </Link>
     </div>

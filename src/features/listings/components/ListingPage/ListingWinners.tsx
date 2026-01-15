@@ -202,7 +202,7 @@ export function ListingWinners({ bounty }: Props) {
           {extraBonusSubmissions > 0 && (
             <>
               <Link
-                href={`/listing/${bounty.slug}/submission`}
+                href={`/earn/listing/${bounty.slug}/submission`}
                 className="flex items-center justify-center rounded-full bg-slate-200"
                 style={{
                   width: isMD ? '44px' : '36px',

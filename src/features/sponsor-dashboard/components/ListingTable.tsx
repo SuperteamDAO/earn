@@ -353,7 +353,9 @@ export const ListingTable = ({
                         )}
                       </Button>
                     ) : isListingEditable({ listing, user }) ? (
-                      <Link href={`/dashboard/listings/${listing.slug}/edit`}>
+                      <Link
+                        href={`/earn/dashboard/listings/${listing.slug}/edit`}
+                      >
                         <Button
                           variant="ghost"
                           size="sm"
@@ -410,7 +412,7 @@ export const ListingTable = ({
                         {isListingEditable({ listing, user }) && (
                           <Link
                             className="block"
-                            href={`/dashboard/listings/${listing.slug}/edit`}
+                            href={`/earn/dashboard/listings/${listing.slug}/edit`}
                           >
                             <DropdownMenuItem className="cursor-pointer text-sm font-medium text-slate-500">
                               <PencilLine className="mr-2 h-4 w-4" />

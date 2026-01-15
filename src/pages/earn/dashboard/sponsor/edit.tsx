@@ -174,7 +174,7 @@ export default function UpdateSponsor() {
       });
       await refetchUser();
       toast.success('Sponsor profile updated successfully!');
-      router.push('/dashboard/listings');
+      router.push('/earn/dashboard/listings');
     } catch (error) {
       console.error('Error updating sponsor:', error);
       if (
