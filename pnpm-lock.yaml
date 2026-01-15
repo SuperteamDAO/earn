@@ -46,6 +46,9 @@ importers:
       '@openrouter/ai-sdk-provider':
         specifier: ^1.2.0
         version: 1.2.0(ai@5.0.29(zod@3.25.76))(zod@3.25.76)
+      '@phosphor-icons/react':
+        specifier: ^2.1.10
+        version: 2.1.10(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@prisma/adapter-planetscale':
         specifier: ^7.1.0
         version: 7.1.0
@@ -57,7 +60,7 @@ importers:
         version: 0.7.0(@solana/kit@3.0.2(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.8.3)(ws@7.5.10(bufferutil@4.0.9)(utf-8-validate@5.0.10)))(viem@2.43.5(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76))
       '@privy-io/react-auth':
         specifier: 3.10.1
-        version: 3.10.1(9ca2136c63dcdc5cf90cd3328c37c906)
+        version: 3.10.1(ty7mwdc7gro3uvb5ssh2xazw4a)
       '@radix-ui/react-accordion':
         specifier: ^1.2.12
         version: 1.2.12(@types/react-dom@19.2.2(@types/react@19.2.2))(@types/react@19.2.2)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
@@ -283,6 +286,9 @@ importers:
       google-auth-library:
         specifier: ^10.4.0
         version: 10.4.0
+      gsap:
+        specifier: ^3.14.2
+        version: 3.14.2
       html-react-parser:
         specifier: ^5.2.7
         version: 5.2.7(@types/react@19.2.2)(react@19.2.3)
@@ -2106,6 +2112,13 @@ packages:
   '@paulmillr/qr@0.2.1':
     resolution: {integrity: sha512-IHnV6A+zxU7XwmKFinmYjUcwlyK9+xkG3/s9KcQhI9BjQKycrJ1JRO+FbNYPwZiPKW3je/DR0k7w8/gLa5eaxQ==}
     deprecated: 'The package is now available as "qr": npm install qr'
+
+  '@phosphor-icons/react@2.1.10':
+    resolution: {integrity: sha512-vt8Tvq8GLjheAZZYa+YG/pW7HDbov8El/MANW8pOAz4eGxrwhnbfrQZq0Cp4q8zBEu8NIhHdnr+r8thnfRSNYA==}
+    engines: {node: '>=10'}
+    peerDependencies:
+      react: '>= 16.8'
+      react-dom: '>= 16.8'
 
   '@phosphor-icons/webcomponents@2.1.5':
     resolution: {integrity: sha512-JcvQkZxvcX2jK+QCclm8+e8HXqtdFW9xV4/kk2aL9Y3dJA2oQVt+pzbv1orkumz3rfx4K9mn9fDoMr1He1yr7Q==}
@@ -6573,6 +6586,9 @@ packages:
 
   graphemer@1.4.0:
     resolution: {integrity: sha512-EtKwoO6kxCL9WO5xipiHTZlSzBm7WLT627TqC/uVRd0HKmq8NXyebnNYxDoBi7wt8eTWrUrKXCOVaFq9x1kgag==}
+
+  gsap@3.14.2:
+    resolution: {integrity: sha512-P8/mMxVLU7o4+55+1TCnQrPmgjPKnwkzkXOK1asnR9Jg2lna4tEY5qBJjMmAaOBDDZWtlRjBXjLa0w53G/uBLA==}
 
   gtoken@8.0.0:
     resolution: {integrity: sha512-+CqsMbHPiSTdtSO14O51eMNlrp9N79gmeqmXeouJOhfucAedHw9noVe/n5uJk3tbKE6a+6ZCQg3RPhVhHByAIw==}
@@ -12054,6 +12070,11 @@ snapshots:
 
   '@paulmillr/qr@0.2.1': {}
 
+  '@phosphor-icons/react@2.1.10(react-dom@19.2.3(react@19.2.3))(react@19.2.3)':
+    dependencies:
+      react: 19.2.3
+      react-dom: 19.2.3(react@19.2.3)
+
   '@phosphor-icons/webcomponents@2.1.5':
     dependencies:
       lit: 3.3.0
@@ -12198,7 +12219,7 @@ snapshots:
 
   '@privy-io/popup@0.0.1': {}
 
-  '@privy-io/react-auth@3.10.1(9ca2136c63dcdc5cf90cd3328c37c906)':
+  '@privy-io/react-auth@3.10.1(ty7mwdc7gro3uvb5ssh2xazw4a)':
     dependencies:
       '@base-org/account': 1.1.1(@types/react@19.2.2)(bufferutil@4.0.9)(react@19.2.3)(typescript@5.8.3)(use-sync-external-store@1.4.0(react@19.2.3))(utf-8-validate@5.0.10)(zod@3.25.76)
       '@coinbase/wallet-sdk': 4.3.2
@@ -15879,7 +15900,7 @@ snapshots:
 
   '@vercel/oidc@3.0.3': {}
 
-  '@wagmi/connectors@6.2.0(03ead81842abae10f8808ea18d253a3c)':
+  '@wagmi/connectors@6.2.0(xlruz4i47266lg6b7vz5o3frk4)':
     dependencies:
       '@base-org/account': 2.4.0(@types/react@19.2.2)(bufferutil@4.0.9)(encoding@0.1.13)(fastestsmallesttextencoderdecoder@1.0.22)(react@19.2.3)(typescript@5.8.3)(use-sync-external-store@1.4.0(react@19.2.3))(utf-8-validate@5.0.10)(ws@7.5.10(bufferutil@4.0.9)(utf-8-validate@5.0.10))(zod@3.25.76)
       '@coinbase/wallet-sdk': 4.3.6(@types/react@19.2.2)(bufferutil@4.0.9)(react@19.2.3)(typescript@5.8.3)(use-sync-external-store@1.4.0(react@19.2.3))(utf-8-validate@5.0.10)(zod@3.25.76)
@@ -15890,7 +15911,7 @@ snapshots:
       '@wagmi/core': 2.22.1(@tanstack/query-core@5.90.6)(@types/react@19.2.2)(react@19.2.3)(typescript@5.8.3)(use-sync-external-store@1.4.0(react@19.2.3))(viem@2.43.5(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76))
       '@walletconnect/ethereum-provider': 2.21.1(@planetscale/database@1.19.0)(@react-native-async-storage/async-storage@1.24.0(react-native@0.80.1(@babel/core@7.28.0)(@types/react@19.2.2)(bufferutil@4.0.9)(react@19.2.3)(utf-8-validate@5.0.10)))(@types/react@19.2.2)(@upstash/redis@1.35.6)(@vercel/functions@3.1.4)(bufferutil@4.0.9)(encoding@0.1.13)(ioredis@5.8.2)(react@19.2.3)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76)
       cbw-sdk: '@coinbase/wallet-sdk@3.9.3'
-      porto: 0.2.35(06c6fbe9310ed113fae2c27bcba59f4a)
+      porto: 0.2.35(zxx4g2yjzhsyzaqzrajbjoh2we)
       viem: 2.43.5(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76)
     optionalDependencies:
       typescript: 5.8.3
@@ -18929,6 +18950,8 @@ snapshots:
 
   graphemer@1.4.0: {}
 
+  gsap@3.14.2: {}
+
   gtoken@8.0.0:
     dependencies:
       gaxios: 7.1.2
@@ -20763,7 +20786,7 @@ snapshots:
 
   pony-cause@2.1.11: {}
 
-  porto@0.2.35(06c6fbe9310ed113fae2c27bcba59f4a):
+  porto@0.2.35(zxx4g2yjzhsyzaqzrajbjoh2we):
     dependencies:
       '@wagmi/core': 2.22.1(@tanstack/query-core@5.90.6)(@types/react@19.2.2)(react@19.2.3)(typescript@5.8.3)(use-sync-external-store@1.4.0(react@19.2.3))(viem@2.43.5(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76))
       hono: 4.11.3
@@ -22465,7 +22488,7 @@ snapshots:
   wagmi@2.19.5(@planetscale/database@1.19.0)(@react-native-async-storage/async-storage@1.24.0(react-native@0.80.1(@babel/core@7.28.0)(@types/react@19.2.2)(bufferutil@4.0.9)(react@19.2.3)(utf-8-validate@5.0.10)))(@tanstack/query-core@5.90.6)(@tanstack/react-query@5.90.6(react@19.2.3))(@types/react@19.2.2)(@upstash/redis@1.35.6)(@vercel/functions@3.1.4)(bufferutil@4.0.9)(encoding@0.1.13)(fastestsmallesttextencoderdecoder@1.0.22)(ioredis@5.8.2)(react-native@0.80.1(@babel/core@7.28.0)(@types/react@19.2.2)(bufferutil@4.0.9)(react@19.2.3)(utf-8-validate@5.0.10))(react@19.2.3)(typescript@5.8.3)(utf-8-validate@5.0.10)(viem@2.43.5(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76))(ws@7.5.10(bufferutil@4.0.9)(utf-8-validate@5.0.10))(zod@3.25.76):
     dependencies:
       '@tanstack/react-query': 5.90.6(react@19.2.3)
-      '@wagmi/connectors': 6.2.0(03ead81842abae10f8808ea18d253a3c)
+      '@wagmi/connectors': 6.2.0(xlruz4i47266lg6b7vz5o3frk4)
       '@wagmi/core': 2.22.1(@tanstack/query-core@5.90.6)(@types/react@19.2.2)(react@19.2.3)(typescript@5.8.3)(use-sync-external-store@1.4.0(react@19.2.3))(viem@2.43.5(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76))
       react: 19.2.3
       use-sync-external-store: 1.4.0(react@19.2.3)

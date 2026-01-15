@@ -19,6 +19,11 @@
   --font-sans: var(--font-sans);
   --font-mono: var(--font-mono);
 
+  /* ST fonts - mapped from Next.js font variables */
+  --font-primary: var(--font-satoshi);
+  --font-secondary: var(--font-archivo);
+  --font-display: var(--font-dm-sans);
+
   --text-xxs: 0.625rem;
   --text-xxs--line-height: 0.875rem;
 
