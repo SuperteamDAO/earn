@@ -4,6 +4,7 @@ import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 
 import Providers from '@/components/providers';
+import { fontVariables } from '@/theme/fonts';
 
 import '../styles/globals.css';
 
@@ -20,12 +21,14 @@ function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
 
   return (
-    <Providers>
-      <TopLoader />
-      <Component {...pageProps} key={router.asPath} />
-      <Toaster position="bottom-right" richColors />
-      <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_TRACKING_ID!} />
-    </Providers>
+    <div className={fontVariables}>
+      <Providers>
+        <TopLoader />
+        <Component {...pageProps} key={router.asPath} />
+        <Toaster position="bottom-right" richColors />
+        <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_TRACKING_ID!} />
+      </Providers>
+    </div>
   );
 }
 
