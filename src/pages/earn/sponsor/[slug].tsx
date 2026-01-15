@@ -15,7 +15,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   return {
     redirect: {
-      destination: `/${params.slug}`,
+      destination: `/earn/s/${params.slug}`,
       permanent: false,
     },
   };
