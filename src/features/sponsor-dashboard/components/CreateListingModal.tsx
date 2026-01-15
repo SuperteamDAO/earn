@@ -24,7 +24,7 @@ export const CreateListingModal = ({
 
   useEffect(() => {
     if (isOpen) {
-      router.prefetch('/dashboard/new');
+      router.prefetch('/earn/dashboard/new');
     }
   }, [isOpen, router]);
 
@@ -40,7 +40,7 @@ export const CreateListingModal = ({
 
   // const handleCreateHackathon = (hackathon: string) => {
   //   posthog.capture('create new hackathon_sponsor');
-  //   router.push(`/dashboard/new?type=hackathon&hackathon=${hackathon}`);
+  //   router.push(`/earn/dashboard/new?type=hackathon&hackathon=${hackathon}`);
   // };
 
   const isMD = useMediaQuery('(min-width: 768px)');

@@ -87,7 +87,7 @@ const SearchPage = ({ initialQuery = '' }: SearchProps) => {
                 ? `Search results for "${searchTerm}" on Superteam Earn`
                 : 'Search for bounties, grants, and opportunities on Superteam Earn'
             }
-            canonical="https://earn.superteam.fun/search/"
+            canonical="https://earn.superteam.fun/earn/search/"
             og={ASSET_URL + `/og/og.png`}
           />
           <JsonLd data={[generateWebSiteSchema()]} />

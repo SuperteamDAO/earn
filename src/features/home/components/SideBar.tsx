@@ -130,7 +130,7 @@ const NonSponsorSidebarContent = ({
       />
     </div>
     <HowItWorks />
-    {currentPath !== '/bookmarks' && !!bookmarks?.length && (
+    {currentPath !== '/earn/bookmarks' && !!bookmarks?.length && (
       <YourBookmarks>
         <SectionHeader
           title="BOOKMARKS"
@@ -166,7 +166,7 @@ export const HomeSideBar = ({ type }: SideBarProps) => {
   const isSponsor = !!(ready && !isUserLoading && user?.currentSponsorId);
   const isFeed = type === 'feed';
   const showSponsorBanner =
-    router.asPath === '/' &&
+    router.asPath === '/earn' &&
     ready &&
     !isUserLoading &&
     (!user || (!user.isTalentFilled && !user.currentSponsorId));

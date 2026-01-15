@@ -20,7 +20,7 @@ export function SponsorStageSnackbar() {
   const { user } = useUser();
   const isLg = useBreakpoint('lg');
 
-  const isHomepage = router.asPath === '/' || router.pathname === '/';
+  const isHomepage = router.asPath === '/earn' || router.pathname === '/earn';
 
   const { data, isLoading, refetch } = useQuery({
     ...sponsorStageQuery,

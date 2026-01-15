@@ -28,7 +28,7 @@ function WinnerBounty({
   const router = useRouter();
 
   useEffect(() => {
-    router.push(`${getURL()}listing/${bounty?.slug}/`);
+    router.push(`${getURL()}earn/listing/${bounty?.slug}/`);
   }, []);
 
   const image = new URL(`${url}api/dynamic-og/winners/`);
@@ -52,7 +52,7 @@ function WinnerBounty({
             : '| Apply Here'
         }`}
       />
-      <link rel="canonical" href={`${getURL()}listing/${bounty?.slug}/`} />
+      <link rel="canonical" href={`${getURL()}earn/listing/${bounty?.slug}/`} />
       <meta property="og:image" content={`${image.toString()}`} />
       <meta
         property="og:title"

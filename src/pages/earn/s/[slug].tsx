@@ -79,7 +79,7 @@ const SponsorPage = ({ sponsor, stats }: Props) => {
             title: 'Create your next listing',
             message: "You don't have any listings",
             buttonText: 'Create Listing',
-            buttonHref: '/dashboard/listings/?open=1',
+            buttonHref: '/earn/dashboard/listings/?open=1',
           };
         }
 
@@ -95,7 +95,7 @@ const SponsorPage = ({ sponsor, stats }: Props) => {
         title: 'Zero results for your current filters',
         message: 'Try resetting the filters',
         buttonText: 'Reset Filters',
-        buttonHref: `/s/${sSlug}`,
+        buttonHref: `/earn/s/${sSlug}`,
       };
     };
 

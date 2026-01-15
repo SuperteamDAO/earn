@@ -24,7 +24,6 @@ const TopLoader = dynamic(
   { ssr: false },
 );
 
-// ST routes that should render with the dark theme and ST layout
 const ST_ROUTES = [
   '/',
   '/collaborate',
@@ -41,7 +40,6 @@ function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
   const isST = isSTRoute(router.pathname);
 
-  // Register GSAP plugins for ST pages
   useEffect(() => {
     if (!isST || typeof window === 'undefined') {
       return;
@@ -49,7 +47,6 @@ function App({ Component, pageProps }: AppProps) {
 
     gsap.registerPlugin(ScrollTrigger);
 
-    // Image loading handler for ST pages
     const handleImageLoad = (img: HTMLImageElement) => {
       if (img.complete) {
         img.classList.add('loaded');
@@ -80,7 +77,6 @@ function App({ Component, pageProps }: AppProps) {
     return () => observer.disconnect();
   }, [isST]);
 
-  // ST layout (dark theme, ST Header/Footer)
   if (isST) {
     return (
       <div className={`${stFontVariables} st-app flex min-h-screen flex-col`}>
@@ -94,7 +90,6 @@ function App({ Component, pageProps }: AppProps) {
     );
   }
 
-  // Earn layout (existing)
   return (
     <div className={fontVariables}>
       <Providers>

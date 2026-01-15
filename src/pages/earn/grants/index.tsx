@@ -25,7 +25,7 @@ function Grants() {
         <Meta
           title="Grants | Superteam Earn"
           description="Discover Solana Grants for Development, Art, Content, and more to fund your ideas"
-          canonical="https://earn.superteam.fun/grants/"
+          canonical="https://earn.superteam.fun/earn/grants/"
           og={ASSET_URL + `/og/grants.png`}
         />
       }

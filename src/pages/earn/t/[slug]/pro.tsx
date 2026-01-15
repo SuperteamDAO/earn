@@ -23,7 +23,7 @@ export default function ProSharePage({
 
   useEffect(() => {
     if (talent?.username) {
-      router.push(`${getURL()}t/${talent.username}/`);
+      router.push(`${getURL()}earn/t/${talent.username}/`);
     }
   }, []);
 
@@ -49,7 +49,7 @@ export default function ProSharePage({
     <Head>
       <title>{title}</title>
       <meta name="description" content={description} />
-      <link rel="canonical" href={`${getURL()}t/${talent?.username}/`} />
+      <link rel="canonical" href={`${getURL()}earn/t/${talent?.username}/`} />
       <meta property="og:title" content={title} />
       <meta property="og:description" content={description} />
       <meta property="og:image" content={ogImage.toString()} />

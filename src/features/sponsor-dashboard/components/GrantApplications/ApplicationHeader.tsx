@@ -51,7 +51,7 @@ export const ApplicationHeader = ({
   applications,
   showAiReview = true,
 }: Props) => {
-  const listingPath = `grants/${grant?.slug}`;
+  const listingPath = `earn/grants/${grant?.slug}`;
   const grantStatus = getListingStatus(grant, true);
   const router = useRouter();
 
@@ -134,7 +134,7 @@ export const ApplicationHeader = ({
   };
 
   const getGrantUrl = () => {
-    return `${getURL()}grants/${grant?.slug}`;
+    return `${getURL()}earn/grants/${grant?.slug}`;
   };
 
   return (

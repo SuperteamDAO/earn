@@ -41,7 +41,7 @@ function ListingDetails({
         { name: 'Home', url: '/' },
         {
           name: initialListing.type === 'bounty' ? 'Bounties' : 'Jobs',
-          url: '/all',
+          url: '/earn/all',
         },
         { name: initialListing.title || 'Listing' },
       ])

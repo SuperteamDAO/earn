@@ -51,7 +51,7 @@ const CategoryPage = ({
           <Meta
             title={`${categoryName} Opportunities | Superteam Earn`}
             description={categoryDescription}
-            canonical={`https://earn.superteam.fun/category/${slug}/`}
+            canonical={`https://earn.superteam.fun/earn/category/${slug}/`}
             og={ogImage.toString()}
           />
           <Head>

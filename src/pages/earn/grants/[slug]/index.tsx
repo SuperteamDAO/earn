@@ -31,7 +31,7 @@ function Grants({ grant: initialGrant }: InitialGrant) {
   const breadcrumbSchema = grant
     ? generateBreadcrumbListSchema([
         { name: 'Home', url: '/' },
-        { name: 'Grants', url: '/grants' },
+        { name: 'Grants', url: '/earn/grants' },
         { name: grant.title || 'Grant' },
       ])
     : null;

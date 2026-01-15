@@ -120,7 +120,7 @@ export default function Hackathon() {
   const formattedDate = dayjs(startDate).format('MMM DD');
 
   const handleViewSubmissions = (listing: string | undefined) => {
-    router.push(`/dashboard/hackathon/${listing}/submissions/`);
+    router.push(`/earn/dashboard/hackathon/${listing}/submissions/`);
   };
 
   const {
@@ -314,7 +314,7 @@ export default function Hackathon() {
                               className="flex items-center gap-2 py-2 text-sm font-medium text-slate-500"
                               onClick={() =>
                                 window.open(
-                                  `${router.basePath}/listing/${currentBounty.slug}`,
+                                  `${router.basePath}/earn/listing/${currentBounty.slug}`,
                                   '_blank',
                                 )
                               }

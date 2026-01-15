@@ -16,7 +16,7 @@ interface ProjectsPageProps {
 export default function ProjectsPage({ potentialSession }: ProjectsPageProps) {
   const breadcrumbSchema = generateBreadcrumbListSchema([
     { name: 'Home', url: '/' },
-    { name: 'Crypto Projects', url: '/projects' },
+    { name: 'Crypto Projects', url: '/earn/projects' },
   ]);
 
   return (
@@ -28,7 +28,7 @@ export default function ProjectsPage({ potentialSession }: ProjectsPageProps) {
           <Meta
             title="Crypto Projects & Web3 Jobs | Solana Projects | Superteam Earn"
             description="Find remote crypto projects, web3 jobs, and Solana opportunities. Browse freelance projects, contract work, and full-time positions in blockchain, DeFi, NFTs, and more. Earn crypto for your skills."
-            canonical="https://earn.superteam.fun/projects/"
+            canonical="https://earn.superteam.fun/earn/projects/"
             og={ASSET_URL + `/og/og.png`}
           />
           <JsonLd data={[breadcrumbSchema]} />

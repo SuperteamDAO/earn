@@ -98,7 +98,7 @@ export function PrePublish() {
   const [isDisabledSoft, setIsDisabledSoft] = useState(true);
 
   useEffect(() => {
-    if (router.pathname.includes('/dashboard/new')) {
+    if (router.pathname.includes('/earn/dashboard/new')) {
       if (isST) {
         form.setValue('isFndnPaying', true);
       } else {

@@ -3,7 +3,7 @@ import type { GetServerSideProps } from 'next';
 export const getServerSideProps: GetServerSideProps = async () => {
   return {
     redirect: {
-      destination: '/hackathon/talent-olympics',
+      destination: '/earn/hackathon/talent-olympics',
       permanent: false,
     },
   };

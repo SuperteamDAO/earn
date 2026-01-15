@@ -7,7 +7,7 @@ export default function DashboardIndex() {
 export const getServerSideProps: GetServerSideProps = async () => {
   return {
     redirect: {
-      destination: '/dashboard/listings',
+      destination: '/earn/dashboard/listings',
       permanent: true,
     },
   };

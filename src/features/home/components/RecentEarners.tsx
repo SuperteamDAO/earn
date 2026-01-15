@@ -36,7 +36,11 @@ const Earner = ({
     : ASSET_URL + '/landingsponsor/icons/usdc.svg';
 
   return (
-    <Link href={`${getURL()}t/${username}`} className="block" prefetch={false}>
+    <Link
+      href={`${getURL()}earn/t/${username}`}
+      className="block"
+      prefetch={false}
+    >
       <div className="my-4 flex w-full items-center">
         <div className="mr-3 flex items-center justify-center">
           <EarnAvatar id={id} avatar={avatar} />

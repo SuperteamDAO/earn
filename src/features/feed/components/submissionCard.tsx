@@ -28,11 +28,11 @@ export function SubmissionCard({ sub, type, commentCount }: SubCardProps) {
 
   const isProject = sub?.listingType === 'project';
 
-  const listingLink = `${getURL()}listing/${sub?.listingSlug}`;
+  const listingLink = `${getURL()}earn/listing/${sub?.listingSlug}`;
 
   const submissionLink = sub?.link
     ? sub.link
-    : `${getURL()}feed/submission/${sub?.id}`;
+    : `${getURL()}earn/feed/submission/${sub?.id}`;
 
   let winningText: string = '';
   let submissionText: string = '';

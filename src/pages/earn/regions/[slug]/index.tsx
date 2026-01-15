@@ -47,7 +47,7 @@ const RegionsPage = ({ slug, st, countryData }: RegionsPageProps) => {
             <Meta
               title={`Welcome to Superteam Earn ${displayName} | Discover Bounties and Grants`}
               description={`Welcome to Superteam Earn ${displayName}'s page — Discover bounties and grants and become a part of the global crypto community`}
-              canonical={`https://earn.superteam.fun/regions/${slug}/`}
+              canonical={`https://earn.superteam.fun/earn/regions/${slug}/`}
               og={ogImage.toString()}
             />
             <JsonLd data={[organizationSchema, breadcrumbSchema]} />
@@ -93,7 +93,7 @@ const RegionsPage = ({ slug, st, countryData }: RegionsPageProps) => {
             <Meta
               title={`Welcome to Superteam Earn ${countryName} | Discover Bounties and Grants`}
               description={`Welcome to Superteam Earn ${countryName}'s page — Discover bounties and grants and become a part of the global crypto community`}
-              canonical={`https://earn.superteam.fun/regions/${slug}/`}
+              canonical={`https://earn.superteam.fun/earn/regions/${slug}/`}
               og={ogImage.toString()}
             />
             <JsonLd data={[organizationSchema, breadcrumbSchema]} />

@@ -45,7 +45,7 @@ const SLUG = 'talent-olympics';
 const base = `/hackathon/talent-olympics/`;
 const baseAsset = (filename: string) => base + filename;
 
-const slugLink = (slug: string) => `/listing/${slug}`;
+const slugLink = (slug: string) => `/earn/listing/${slug}`;
 
 const frontendTrack: TrackProps[] = [
   {

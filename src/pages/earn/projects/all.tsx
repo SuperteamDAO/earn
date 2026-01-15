@@ -7,7 +7,7 @@ const ProjectsPage: NextPage = () => {
 export const getServerSideProps: GetServerSideProps = async () => {
   return {
     redirect: {
-      destination: `/all/?tab=projects`,
+      destination: `/earn/all/?tab=projects`,
       permanent: false,
     },
   };

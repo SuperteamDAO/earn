@@ -28,7 +28,7 @@ export const BountySnackbar = () => {
 
   const { asPath, query } = router;
 
-  const showSnackbar = asPath.split('/')[1] === 'listings';
+  const showSnackbar = asPath.split('/')[1] === 'earn/listings';
 
   if (!bountySnackbar) return null;
 
@@ -116,7 +116,7 @@ export const BountySnackbar = () => {
         )}
         onClick={() => {
           if (!isPreviewSponsor) return;
-          router.push(`/dashboard/listings/${slug}/edit`);
+          router.push(`/earn/dashboard/listings/${slug}/edit`);
         }}
       >
         {isPreviewSponsor && <Pencil className="h-4 w-4" />}

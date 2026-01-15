@@ -197,7 +197,7 @@ const CreateSponsor = () => {
     isError,
   } = useMutation({
     mutationFn: async (data: SponsorFormValues) => {
-      router.prefetch('/dashboard/listings?open=1');
+      router.prefetch('/earn/dashboard/listings?open=1');
 
       if (selectedUserPhoto && data.user) {
         data.user.photo = user?.photo;
@@ -314,7 +314,7 @@ const CreateSponsor = () => {
         <Meta
           title="Create Sponsor | Superteam Earn"
           description="Every Solana opportunity in one place!"
-          canonical="https://earn.superteam.fun/new/sponsor/"
+          canonical="https://earn.superteam.fun/earn/new/sponsor/"
         />
       }
     >

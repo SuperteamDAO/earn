@@ -7,7 +7,7 @@ const BountiesPage: NextPage = () => {
 export const getServerSideProps: GetServerSideProps = async () => {
   return {
     redirect: {
-      destination: `/all/?tab=bounties`,
+      destination: `/earn/all/?tab=bounties`,
       permanent: false,
     },
   };

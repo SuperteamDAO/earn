@@ -340,7 +340,9 @@ export function ListingHeader({
 
           <ListingTabLink
             href={
-              !isTemplate ? `/listing/${slug}/` : `/templates/listings/${slug}/`
+              !isTemplate
+                ? `/earn/listing/${slug}/`
+                : `/earn/templates/listings/${slug}/`
             }
             text="Details"
             isActive={!router.asPath.split('/')[3]?.includes('submission')}

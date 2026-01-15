@@ -549,7 +549,7 @@ export const ProUpgradeOverlay = () => {
                       return;
                     }
 
-                    const shareUrl = `${getURL()}t/${user.username}/pro`;
+                    const shareUrl = `${getURL()}earn/t/${user.username}/pro`;
                     const message = `Hanging out with the 1% on @SuperteamEarn`;
                     const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(message)}&url=${encodeURIComponent(shareUrl)}`;
 

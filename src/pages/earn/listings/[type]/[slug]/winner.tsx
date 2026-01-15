@@ -9,7 +9,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   return {
     redirect: {
-      destination: `/listing/${slug}/winner/`,
+      destination: `/earn/listing/${slug}/winner/`,
       permanent: false,
     },
   };

@@ -127,8 +127,8 @@ export function ListingWinners({ bounty }: Props) {
                   key={submission.id}
                   href={
                     !isProject
-                      ? `/feed/submission/${submission?.id}`
-                      : `/t/${submission?.user?.username}`
+                      ? `/earn/feed/submission/${submission?.id}`
+                      : `/earn/t/${submission?.user?.username}`
                   }
                   passHref
                   className="flex cursor-pointer flex-col items-center justify-center"
@@ -185,8 +185,8 @@ export function ListingWinners({ bounty }: Props) {
                   key={submission.id}
                   href={
                     !isProject
-                      ? `/feed/submission/${submission?.id}`
-                      : `/t/${submission?.user?.username}`
+                      ? `/earn/feed/submission/${submission?.id}`
+                      : `/earn/t/${submission?.user?.username}`
                   }
                   className="inline-block"
                 >

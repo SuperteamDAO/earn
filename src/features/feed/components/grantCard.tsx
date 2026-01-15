@@ -25,7 +25,7 @@ export function GrantCard({ grant, type, commentCount }: GrantCardProps) {
   const photo = grant?.photo;
   const username = grant?.username;
 
-  const listingLink = `${getURL()}grants/${grant?.listingSlug}`;
+  const listingLink = `${getURL()}earn/grants/${grant?.listingSlug}`;
 
   const content = {
     actionText: 'won a grant',

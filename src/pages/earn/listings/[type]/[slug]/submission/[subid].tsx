@@ -8,7 +8,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const { subid } = context.query;
   return {
     redirect: {
-      destination: `/feed/submission/${subid}/`,
+      destination: `/earn/feed/submission/${subid}/`,
       permanent: false,
     },
   };

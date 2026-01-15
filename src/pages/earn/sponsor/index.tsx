@@ -58,7 +58,7 @@ const Sponsor = () => {
       <Meta
         title="Find Top Talent for Your Crypto Projects on Superteam Earn"
         description="Seeking top talent for your crypto project? Superteam Earn connects you with experts for Bounties, Projects, and Grants in the crypto space."
-        canonical="https://earn.superteam.fun/sponsor/"
+        canonical="https://earn.superteam.fun/earn/sponsor/"
         og={ASSET_URL + `/og/sponsor.png`}
       />
       <JsonLd data={[generateOrganizationSchema()]} />

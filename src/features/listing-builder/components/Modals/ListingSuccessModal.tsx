@@ -31,7 +31,7 @@ export const ListingSuccessModal = () => {
 
   const listingLink = useCallback(
     (medium?: 'twitter' | 'telegram') =>
-      `${getURL()}listing/${slug}/${medium ? `?utm_source=superteamearn&utm_medium=${medium}&utm_campaign=sharelisting` : ``}`,
+      `${getURL()}earn/listing/${slug}/${medium ? `?utm_source=superteamearn&utm_medium=${medium}&utm_campaign=sharelisting` : ``}`,
     [type, slug],
   );
 
@@ -41,7 +41,7 @@ export const ListingSuccessModal = () => {
   const { hasCopied, onCopy } = useClipboard(listingLink());
 
   const handleInvite = useMemo(
-    () => `/dashboard/listings/${slug}/submissions?scout`,
+    () => `/earn/dashboard/listings/${slug}/submissions?scout`,
     [slug],
   );
 
