@@ -510,7 +510,7 @@ export const tokenList: Token[] = [
     tokenName: 'Sorcerer',
     tokenSymbol: 'SORX',
     mintAddress: 'GmWjhA47wkPRSji6zR3RLLR9HohZFfi7ukXpSAiupump',
-    icon: 'https://ipfs.io/ipfs/QmRkSrjpGnBLD6B7GaiTpCaupqa8gzpoHqoqcnJkb7TrgX',
+    icon: 'https://www.geckoterminal.com/_next/image?url=https%3A%2F%2Fassets.geckoterminal.com%2Fgdqr2bg3vgyc9c2r3zglnfx9bbiy&w=128&q=75',
     decimals: 6,
   },
 ];
