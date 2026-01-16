@@ -115,7 +115,7 @@ export const CategoryPop = ({ category }: { category: CategoryKeys }) => {
   const { authenticated, ready } = usePrivy();
 
   const activateQuery = useMemo(
-    () => ready && !authenticated && popupsShowed < 2,
+    () => ready && !authenticated && popupsShowed < 1,
     [ready, authenticated, popupsShowed],
   );
 
@@ -145,7 +145,7 @@ export const CategoryPop = ({ category }: { category: CategoryKeys }) => {
     posthog.capture('conversion pop up_initiated', {
       'Popup Source': 'Category Pop-up',
     });
-  }, 5_000);
+  }, 7_000);
 
   const isMD = useBreakpoint('md');
 
@@ -155,7 +155,7 @@ export const CategoryPop = ({ category }: { category: CategoryKeys }) => {
       !initated.current &&
       ready &&
       !authenticated &&
-      popupsShowed < 2 &&
+      popupsShowed < 1 &&
       totalEarnings?.totalEarnings &&
       !open &&
       process.env.NEXT_PUBLIC_VERCEL_ENV === 'production'

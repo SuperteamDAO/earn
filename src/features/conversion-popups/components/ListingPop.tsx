@@ -78,7 +78,7 @@ export const ListingPop = ({ listing }: { listing: Listing | null }) => {
     posthog.capture('conversion pop up_initiated', {
       'Popup Source': 'Listing Pop-up',
     });
-  }, 5_000);
+  }, 7_000);
 
   const isMD = useBreakpoint('md');
   const { serverTime } = useServerTimeSync();
@@ -93,7 +93,7 @@ export const ListingPop = ({ listing }: { listing: Listing | null }) => {
       !authenticated &&
       listing?.status === 'OPEN' &&
       !isDeadlineOver(listing.deadline, serverTime()) &&
-      popupsShowed < 2 &&
+      popupsShowed < 1 &&
       !open &&
       process.env.NEXT_PUBLIC_VERCEL_ENV === 'production'
     ) {

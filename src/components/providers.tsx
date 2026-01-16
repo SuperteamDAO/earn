@@ -16,6 +16,8 @@ export default function Providers({
 }) {
   const [queryClient] = useState(() => new QueryClient());
 
+  const wsUrl = process.env.NEXT_PUBLIC_RPC_WS_URL;
+
   return (
     <SessionProvider session={session}>
       <PrivyProvider
@@ -27,9 +29,11 @@ export default function Providers({
                 rpc: createSolanaRpc(
                   `https://${process.env.NEXT_PUBLIC_RPC_URL}`,
                 ),
-                rpcSubscriptions: createSolanaRpcSubscriptions(
-                  `${process.env.NEXT_PUBLIC_RPC_WS_URL}`,
-                ),
+                ...(wsUrl
+                  ? {
+                      rpcSubscriptions: createSolanaRpcSubscriptions(wsUrl),
+                    }
+                  : {}),
               },
             },
           },
