@@ -506,4 +506,11 @@ export const tokenList: Token[] = [
     icon: 'https://res.cloudinary.com/dgvnuwspr/image/upload/v1764943260/GOLD_qdvnh8.png',
     decimals: 6,
   },
+  {
+    tokenName: 'Sorcerer',
+    tokenSymbol: 'SORX',
+    mintAddress: 'GmWjhA47wkPRSji6zR3RLLR9HohZFfi7ukXpSAiupump',
+    icon: 'https://ipfs.io/ipfs/QmRkSrjpGnBLD6B7GaiTpCaupqa8gzpoHqoqcnJkb7TrgX',
+    decimals: 6,
+  },
 ];
