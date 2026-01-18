@@ -513,4 +513,67 @@ export const tokenList: Token[] = [
     icon: 'https://www.geckoterminal.com/_next/image?url=https%3A%2F%2Fassets.geckoterminal.com%2Fgdqr2bg3vgyc9c2r3zglnfx9bbiy&w=128&q=75',
     decimals: 6,
   },
+  {
+    "tokenName": "Zora",
+    "tokenSymbol": "ZORA",
+    "mintAddress": "soKqZS9pASwBNS46G388nhK7XVtPaTyReffXEd3zora",
+    "icon": "https://assets.coingecko.com/coins/images/54693/standard/zora.jpg?1741094751",
+    "decimals": 9
+  },
+  {
+    "tokenName": "Starknet",
+    "tokenSymbol": "STRK",
+    "mintAddress": "HsRpHQn6VbyMs5b5j5SV6xQ2VvpvvCCzu19GjytVSCoz",
+    "icon": "https://assets.coingecko.com/coins/images/26433/standard/starknet.png?1696525507",
+    "decimals": 9
+  },
+  {
+    "tokenName": "Apple xStock",
+    "tokenSymbol": "AAPLx",
+    "mintAddress": "XsbEhLAtcf6HdfpFZ5xEMdqW8nfAvcsP5bdudRLJzJp",
+    "icon": "https://assets.coingecko.com/coins/images/55586/standard/Ticker_AAPL__Company_Name_Apple_Inc.__size_200x200_2x.png?1746807196",
+    "decimals": 8
+  },
+  {
+    "tokenName": "Berkshire Hathaway xStock",
+    "tokenSymbol": "BRK.BX",
+    "mintAddress": "Xs6B6zawENwAbWVi7w92rjazLuAr5Az59qgWKcNb45x",
+    "icon": "https://assets.coingecko.com/coins/images/55599/standard/Ticker_BRK.B__Company_Name_berkshire-hathaway__size_200x200_2x.png?1746857982",
+    "decimals": 8
+  },
+  {
+    "tokenName": "Circle xStock",
+    "tokenSymbol": "CRCLx",
+    "mintAddress": "XsueG8BtpquVJX9LVLLEGuViXUungE6WmK5YZ3p3bd1",
+    "icon": "https://assets.coingecko.com/coins/images/66918/standard/CRCLx.png?1751052233",
+    "decimals": 8
+  },
+  {
+    "tokenName": "MicroStrategy xStock",
+    "tokenSymbol": "MSTRx",
+    "mintAddress": "XsP7xzNPvEHS1m6qfanPUGjNmdnmsLKEoNAnHjdxxyZ",
+    "icon": "https://assets.coingecko.com/coins/images/55631/standard/Ticker_MSTR__Company_Name_MicroStrategy__size_200x200_2x.png?1746862528",
+    "decimals": 8
+  },
+  {
+    "tokenName": "NVIDIA xStock",
+    "tokenSymbol": "NVDAx",
+    "mintAddress": "Xsc9qvGR1efVDFGLrVsmkzv3qi45LTBjeUKSPmx9qEh",
+    "icon": "https://statics.solscan.io/cdn/imgs/s60?ref=68747470733a2f2f7873746f636b732d6d657461646174612e6261636b65642e66692f6c6f676f732f746f6b656e732f4e564441782e706e67",
+    "decimals": 8
+  },
+  {
+    "tokenName": "SP500 xStock",
+    "tokenSymbol": "SPYX",
+    "mintAddress": "XsoCS1TfEyfFhfvj8EtZ528L3CaKBDBRqRapnBbDF2W",
+    "icon": "https://assets.coingecko.com/coins/images/66695/standard/Ticker_SPX__Company_Name_SP500__size_200x200_2x.png?1750266819",
+    "decimals": 8
+  },
+  {
+    "tokenName": "Gamestop xStock",
+    "tokenSymbol": "GMEx",
+    "mintAddress": "Xsf9mBktVB9BSU5kf4nHxPq5hCBJ2j2ui3ecFGxPRGc",
+    "icon": "https://assets.coingecko.com/coins/images/55607/standard/Ticker_GME__Company_Name_gamestop__size_200x200_2x.png?1746858467",
+    "decimals": 8
+  },
 ];
