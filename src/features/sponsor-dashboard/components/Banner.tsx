@@ -86,7 +86,7 @@ export function Banner({
       <div className="w-full rounded-md border border-slate-200 bg-white px-6 py-5 text-white">
         <div className="flex flex-col gap-2 lg:flex-row lg:items-center lg:gap-6">
           <Link
-            href={`/s/${sponsor?.slug}`}
+            href={`/earn/s/${sponsor?.slug}`}
             target="_blank"
             rel="noopener noreferrer"
             className="group flex shrink-0 items-center gap-3 pb-1 transition-opacity hover:opacity-80 lg:pb-0"

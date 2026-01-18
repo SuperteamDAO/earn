@@ -89,7 +89,7 @@ export const ListingCard = ({ bounty }: { bounty: Listing }) => {
 
   return (
     <Link
-      href={`/listing/${slug}`}
+      href={`/earn/listing/${slug}`}
       className={cn(
         'block w-full rounded-md px-2 py-4 no-underline hover:bg-gray-100 sm:px-4',
         isFeatured && isBeforeDeadline ? 'bg-purple-50' : '',
@@ -108,7 +108,7 @@ export const ListingCard = ({ bounty }: { bounty: Listing }) => {
               {title}
             </p>
             <Link
-              href={`/s/${sponsor?.slug}`}
+              href={`/earn/s/${sponsor?.slug}`}
               onClick={(e) => e.stopPropagation()}
               className="flex w-min items-center gap-1 hover:underline"
             >

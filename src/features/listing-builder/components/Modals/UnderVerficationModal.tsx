@@ -47,7 +47,7 @@ export const UnderVerificationModal = () => {
         </div>
 
         <DialogFooter>
-          <Link href="/dashboard/listings" className="w-full">
+          <Link href="/earn/dashboard/listings" className="w-full">
             <Button className="w-full py-5">Understood</Button>
           </Link>
         </DialogFooter>

@@ -230,7 +230,7 @@ export const Comment = ({
         }}
       >
         <Link
-          href={`${getURL()}t/${comment?.author?.username}`}
+          href={`${getURL()}earn/t/${comment?.author?.username}`}
           className={cn('block', isReply ? 'w-8' : 'w-10')}
           tabIndex={-1}
           target="_blank"
@@ -246,7 +246,7 @@ export const Comment = ({
           <div className="flex flex-wrap items-center gap-x-2">
             <div className="flex items-end gap-2">
               <Link
-                href={`${getURL()}t/${comment?.author?.username}`}
+                href={`${getURL()}earn/t/${comment?.author?.username}`}
                 className="hover:underline"
                 tabIndex={-1}
                 target="_blank"

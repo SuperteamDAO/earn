@@ -43,15 +43,19 @@ export const FeedPageLayout = ({
       <div className="-mt-4 -mr-[10px] -ml-5 border-r border-slate-200 lg:-mr-[25px] lg:ml-0">
         <div className="flex">
           <div className="sticky top-14 hidden h-screen w-48 flex-col gap-3 border-r pt-5 pr-5 lg:flex">
-            <NavItem name="Homepage" icon={HomeIcon} href="/" />
+            <NavItem name="Homepage" icon={HomeIcon} href="/earn" />
             <NavItem
               name="Leaderboard"
               icon={LeaderboardIcon}
-              href="/leaderboard"
+              href="/earn/leaderboard"
             />
-            <NavItem name="Winners" icon={WinnersIcon} href="/feed/winners" />
+            <NavItem
+              name="Winners"
+              icon={WinnersIcon}
+              href="/earn/feed/winners"
+            />
             {!isHomePage && (
-              <NavItem name="All Posts" icon={AllPostsIcon} href="/feed" />
+              <NavItem name="All Posts" icon={AllPostsIcon} href="/earn/feed" />
             )}
           </div>
           <div className="flex w-full flex-col lg:max-w-[44rem]">

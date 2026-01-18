@@ -242,7 +242,7 @@ function RewardsFooter({
                         description: 'Redirecting to the listing page.',
                       });
                       posthog.capture('update listing_sponsor');
-                      router.push('/dashboard/listings');
+                      router.push('/earn/dashboard/listings');
                     } catch (error) {
                       console.log(error);
                       toast.error(

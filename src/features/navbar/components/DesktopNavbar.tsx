@@ -59,11 +59,11 @@ export const DesktopNavbar = ({
   }, [ready, authenticated]);
 
   const isDashboardRoute = useMemo(
-    () => router.pathname.startsWith('/dashboard'),
+    () => router.pathname.startsWith('/earn/dashboard'),
     [router.pathname],
   );
   const isNewTalentRoute = useMemo(
-    () => router.pathname.startsWith('/new/talent'),
+    () => router.pathname.startsWith('/earn/new/talent'),
     [router.pathname],
   );
 
@@ -128,7 +128,7 @@ export const DesktopNavbar = ({
         <div className="ph-no-capture flex w-fit items-center gap-3 lg:gap-5">
           <LogoContextMenu>
             <Link
-              href="/"
+              href="/earn"
               className="flex items-center gap-3 hover:no-underline"
               onClick={() => {
                 posthog.capture('homepage logo click_universal');
@@ -151,7 +151,7 @@ export const DesktopNavbar = ({
 
           <Separator orientation="vertical" className="h-6" />
 
-          {!router.pathname.startsWith('/new/') && (
+          {!router.pathname.startsWith('/earn/new/') && (
             <>
               {LISTING_NAV_ITEMS?.map((navItem) => {
                 const isCurrent = `${navItem.href}` === router.asPath;
@@ -176,7 +176,7 @@ export const DesktopNavbar = ({
                 onClick={() => {
                   posthog.capture('pro_navbar');
                 }}
-                href="/pro"
+                href="/earn/pro"
                 label={
                   <ProBadge
                     containerClassName="gap-1 mt-px"
@@ -184,12 +184,12 @@ export const DesktopNavbar = ({
                     textClassName="text-xs font-medium text-slate-600"
                   />
                 }
-                isActive={router.pathname === '/pro'}
+                isActive={router.pathname === '/earn/pro'}
               />
 
               {HACKATHONS.map((hackathon) => (
                 <Link
-                  href={`/hackathon/${hackathon.slug}`}
+                  href={`/earn/hackathon/${hackathon.slug}`}
                   key={hackathon.slug}
                   className={cn(
                     'flex items-center py-2 font-medium',
@@ -207,8 +207,8 @@ export const DesktopNavbar = ({
             </>
           )}
 
-          {!router.pathname.startsWith('/search') &&
-            !router.pathname.startsWith('/new/') && (
+          {!router.pathname.startsWith('/earn/search') &&
+            !router.pathname.startsWith('/earn/new/') && (
               <div
                 className="flex cursor-pointer items-center gap-1.5 rounded-md border border-slate-300 px-2 py-2 text-slate-500 transition-all duration-100 hover:bg-slate-100 hover:text-slate-700"
                 onClick={onSearchOpen}
@@ -238,7 +238,7 @@ export const DesktopNavbar = ({
                   }}
                   asChild
                 >
-                  <Link href="/dashboard/listings">
+                  <Link href="/earn/dashboard/listings">
                     <span>Dashboard</span>
                     <div className="block h-1.5 w-1.5 rounded-full bg-sky-400" />
                   </Link>
@@ -319,7 +319,7 @@ export const DesktopNavbar = ({
                     className="text-xs font-semibold"
                     onClick={() => {
                       posthog.capture('create a listing_navbar');
-                      router.push('/sponsor');
+                      router.push('/earn/sponsor');
                     }}
                   >
                     <span>Become a Sponsor</span>

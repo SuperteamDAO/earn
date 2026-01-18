@@ -19,7 +19,7 @@ export const DesktopNavbar = () => {
 
   const router = useRouter();
 
-  const isDashboardRoute = router.pathname.startsWith('/dashboard');
+  const isDashboardRoute = router.pathname.startsWith('/earn/dashboard');
   const maxWValue = isDashboardRoute ? '' : 'max-w-7xl';
 
   return (
@@ -27,7 +27,7 @@ export const DesktopNavbar = () => {
       <div className={cn('mx-auto flex w-full justify-between', maxWValue)}>
         <div className="flex items-center gap-6">
           <Link
-            href="/"
+            href="/earn"
             className="mr-5 flex items-center gap-3 hover:no-underline"
             onClick={() => {
               posthog.capture('homepage logo click_universal');
@@ -75,7 +75,7 @@ export const DesktopNavbar = () => {
               {authenticated && !!user?.currentSponsorId && (
                 <Link
                   className="ph-no-capture"
-                  href="/dashboard/listings/?open=1"
+                  href="/earn/dashboard/listings/?open=1"
                   onClick={() => {
                     posthog?.capture('get started navbar_sponsor lp');
                   }}
@@ -92,7 +92,7 @@ export const DesktopNavbar = () => {
               {authenticated && !user?.currentSponsorId && (
                 <Link
                   className="ph-no-capture"
-                  href="/new/sponsor/"
+                  href="/earn/new/sponsor/"
                   onClick={() => {
                     posthog?.capture('get started navbar_sponsor lp');
                   }}
@@ -115,7 +115,7 @@ export const DesktopNavbar = () => {
               <div className="flex">
                 <Link
                   className="ph-no-capture"
-                  href="/new/sponsor/"
+                  href="/earn/new/sponsor/"
                   onClick={() => posthog.capture('login_navbar')}
                 >
                   <Button variant="ghost" size="sm" className="text-xs">
@@ -124,7 +124,7 @@ export const DesktopNavbar = () => {
                 </Link>
                 <Link
                   className="ph-no-capture"
-                  href="/new/sponsor/"
+                  href="/earn/new/sponsor/"
                   onClick={() => {
                     posthog?.capture('get started navbar_sponsor lp');
                   }}

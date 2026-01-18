@@ -142,7 +142,7 @@ export function SponsorLayout({
       user &&
       !user?.currentSponsorId
     ) {
-      router.push('/');
+      router.push('/earn');
     }
   }, [user, authenticated, ready, user, isUserLoading]);
 
@@ -159,7 +159,9 @@ export function SponsorLayout({
     return <Login isOpen={true} onClose={() => {}} />;
   }
 
-  const isHackathonRoute = router.asPath.startsWith('/dashboard/hackathon');
+  const isHackathonRoute = router.asPath.startsWith(
+    '/earn/dashboard/hackathon',
+  );
   const isLocalProfileVisible =
     Superteams.some(
       (team) =>
@@ -391,7 +393,7 @@ export function SponsorLayout({
                   className={cn('w-full gap-2 py-5.5 text-base')}
                   variant="default"
                 >
-                  <Link href="/dashboard/new/?type=hackathon">
+                  <Link href="/earn/dashboard/new/?type=hackathon">
                     <Plus className="h-3 w-3" />
                     <p
                       className={cn(

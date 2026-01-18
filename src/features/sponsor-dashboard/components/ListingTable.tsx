@@ -213,13 +213,13 @@ export const ListingTable = ({
 
               const listingLink =
                 listing?.type === 'grant'
-                  ? `${getURL()}grants/${listing.slug}`
-                  : `${getURL()}listing/${listing.slug}`;
+                  ? `${getURL()}earn/grants/${listing.slug}`
+                  : `${getURL()}earn/listing/${listing.slug}`;
 
               const listingSubmissionLink =
                 listing.type === 'grant'
-                  ? `/dashboard/grants/${listing.slug}/applications/`
-                  : `/dashboard/listings/${listing.slug}/submissions/`;
+                  ? `/earn/dashboard/grants/${listing.slug}/applications/`
+                  : `/earn/dashboard/listings/${listing.slug}/submissions/`;
 
               const textColor = getColorStyles(listingStatus).color;
               const bgColor = getColorStyles(listingStatus).bgColor;
@@ -242,7 +242,7 @@ export const ListingTable = ({
                         isListingEditable({ listing, user });
                       const href = listing.isPublished
                         ? listingSubmissionLink
-                        : `/dashboard/listings/${listing.slug}/edit`;
+                        : `/earn/dashboard/listings/${listing.slug}/edit`;
                       const onClick = listing.isPublished
                         ? () => posthog.capture('submissions_sponsor')
                         : () => posthog.capture('edit listing_sponsor');
@@ -353,7 +353,9 @@ export const ListingTable = ({
                         )}
                       </Button>
                     ) : isListingEditable({ listing, user }) ? (
-                      <Link href={`/dashboard/listings/${listing.slug}/edit`}>
+                      <Link
+                        href={`/earn/dashboard/listings/${listing.slug}/edit`}
+                      >
                         <Button
                           variant="ghost"
                           size="sm"
@@ -410,7 +412,7 @@ export const ListingTable = ({
                         {isListingEditable({ listing, user }) && (
                           <Link
                             className="block"
-                            href={`/dashboard/listings/${listing.slug}/edit`}
+                            href={`/earn/dashboard/listings/${listing.slug}/edit`}
                           >
                             <DropdownMenuItem className="cursor-pointer text-sm font-medium text-slate-500">
                               <PencilLine className="mr-2 h-4 w-4" />
@@ -426,7 +428,7 @@ export const ListingTable = ({
                             onClick={() => {
                               posthog.capture('duplicate listing_sponsor');
                               window.open(
-                                `${router.basePath}/dashboard/listings/${listing.slug}/duplicate`,
+                                `${router.basePath}/earn/dashboard/listings/${listing.slug}/duplicate`,
                                 '_blank',
                               );
                             }}

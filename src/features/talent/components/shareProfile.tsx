@@ -27,7 +27,7 @@ interface SocialPlatform {
 
 export const ShareProfile = ({ isOpen, onClose, username, id }: Props) => {
   const [hasCopied, setHasCopied] = React.useState(false);
-  const profileUrl = `${getURL()}t/${username}`;
+  const profileUrl = `${getURL()}earn/t/${username}`;
 
   const onCopy = async () => {
     try {

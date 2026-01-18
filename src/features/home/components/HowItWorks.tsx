@@ -166,7 +166,7 @@ export const HowItWorks = () => {
                   if (!isLoading && !!user?.isTalentFilled) return;
                   if (user?.id) {
                     posthog.capture('create account_getting started');
-                    router.push(`/new/talent`);
+                    router.push(`/earn/new/talent`);
                   }
                 }}
               >
@@ -188,7 +188,7 @@ export const HowItWorks = () => {
                   if (!isLoading && hasSubmissions) return;
                   if (user?.id) {
                     posthog.capture('complete profile_getting started');
-                    router.push(`/all`);
+                    router.push(`/earn/all`);
                   }
                 }}
               >
@@ -208,7 +208,7 @@ export const HowItWorks = () => {
                   if (!isLoading && hasWins) return;
                   if (user?.id) {
                     posthog.capture('win_getting started');
-                    router.push('/feed');
+                    router.push('/earn/feed');
                   }
                 }}
               >

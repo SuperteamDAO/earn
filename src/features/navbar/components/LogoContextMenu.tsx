@@ -39,7 +39,7 @@ export const LogoContextMenu = ({
 
   const handleMouseDown = (e: React.MouseEvent) => {
     if (e.button === 0) {
-      router.push('/');
+      router.push('/earn');
     }
     if (e.button === 0 && isOpen) {
       setIsOpen(false);

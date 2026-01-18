@@ -15,9 +15,9 @@ export function CallOut() {
     isAuthenticated: boolean,
     isSponsor: boolean,
   ): string {
-    if (!isAuthenticated) return '/new/sponsor';
-    if (!isSponsor) return '/new/sponsor';
-    return '/dashboard/listings/?open=1';
+    if (!isAuthenticated) return '/earn/new/sponsor';
+    if (!isSponsor) return '/earn/new/sponsor';
+    return '/earn/dashboard/listings/?open=1';
   }
 
   return (

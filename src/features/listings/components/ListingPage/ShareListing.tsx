@@ -108,8 +108,9 @@ export function ShareListing({
 
 function MainContent({ listing, grant, source }: SourceType) {
   const listingLink = React.useCallback(() => {
-    if (source === 'listing') return `${getURL()}listing/${listing?.slug}/`;
-    else return `${getURL()}grants/${grant?.slug}/`;
+    if (source === 'listing')
+      return `${getURL()}earn/listing/${listing?.slug}/`;
+    else return `${getURL()}earn/grants/${grant?.slug}/`;
   }, [source, listing?.slug, grant?.slug]);
 
   const shareMessage = (

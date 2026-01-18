@@ -132,7 +132,7 @@ export const FeedCardContainer = ({
           onClick={(e) => {
             e.stopPropagation();
             e.nativeEvent.stopImmediatePropagation();
-            router.push(`/t/${username}`);
+            router.push(`/earn/t/${username}`);
           }}
         />
 

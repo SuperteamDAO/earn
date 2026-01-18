@@ -77,13 +77,13 @@ export function UserMenu() {
       {user &&
         !user.currentSponsorId &&
         !user.isTalentFilled &&
-        !router.pathname.startsWith('/new') && (
+        !router.pathname.startsWith('/earn/new') && (
           <Button
             variant="ghost"
             size="sm"
             onClick={() => {
               posthog.capture('complete profile_nav bar');
-              router.push('/new');
+              router.push('/earn/new');
             }}
             className="ph-no-capture flex text-xs"
           >
@@ -120,7 +120,7 @@ export function UserMenu() {
             <>
               <DropdownMenuItem asChild>
                 <Link
-                  href={`/t/${user?.username}`}
+                  href={`/earn/t/${user?.username}`}
                   onClick={() => {
                     posthog.capture('profile_user menu');
                   }}
@@ -131,7 +131,7 @@ export function UserMenu() {
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
                 <Link
-                  href={`/t/${user?.username}/edit`}
+                  href={`/earn/t/${user?.username}/edit`}
                   onClick={() => {
                     posthog.capture('edit profile_user menu');
                   }}
@@ -146,7 +146,7 @@ export function UserMenu() {
           {!!user?.currentSponsorId && (
             <DropdownMenuItem asChild>
               <Link
-                href="/dashboard/listings"
+                href="/earn/dashboard/listings"
                 onClick={() => {
                   posthog.capture('sponsor dashboard_user menu');
                 }}
@@ -166,7 +166,7 @@ export function UserMenu() {
               </DropdownMenuLabel>
               <DropdownMenuItem asChild>
                 <Link
-                  href="/new/sponsor"
+                  href="/earn/new/sponsor"
                   className="text-sm tracking-tight text-slate-500"
                 >
                   Create New Sponsor
@@ -191,7 +191,7 @@ export function UserMenu() {
           {user?.isTalentFilled && (
             <DropdownMenuItem asChild>
               <Link
-                href="/bookmarks"
+                href="/earn/bookmarks"
                 onClick={() => {
                   posthog.capture('bookmarks_user menu');
                 }}

@@ -16,7 +16,7 @@ export const GrantSnackbar = () => {
   const { asPath } = router;
 
   const showSnackbar =
-    asPath.split('/')[1] === 'grants' && !!asPath.split('/')[2];
+    asPath.split('/')[1] === 'earn/grants' && !!asPath.split('/')[2];
 
   if (!grantSnackbar) return null;
 

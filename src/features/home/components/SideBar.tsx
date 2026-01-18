@@ -84,7 +84,7 @@ const FeedSidebarContent = ({ recentEarners }: FeedSidebarContentProps) => (
   <>
     <VibeCard />
     <LiveListings>
-      <SectionHeader title="LIVE LISTINGS" href="/" />
+      <SectionHeader title="LIVE LISTINGS" href="/earn" />
     </LiveListings>
     <HowItWorks />
     <RecentEarners earners={recentEarners} />
@@ -130,11 +130,11 @@ const NonSponsorSidebarContent = ({
       />
     </div>
     <HowItWorks />
-    {currentPath !== '/bookmarks' && !!bookmarks?.length && (
+    {currentPath !== '/earn/bookmarks' && !!bookmarks?.length && (
       <YourBookmarks>
         <SectionHeader
           title="BOOKMARKS"
-          href="/bookmarks"
+          href="/earn/bookmarks"
           onLinkClick={() => posthog.capture('bookmarks_sidebar')}
         />
       </YourBookmarks>
@@ -166,7 +166,7 @@ export const HomeSideBar = ({ type }: SideBarProps) => {
   const isSponsor = !!(ready && !isUserLoading && user?.currentSponsorId);
   const isFeed = type === 'feed';
   const showSponsorBanner =
-    router.asPath === '/' &&
+    router.asPath === '/earn' &&
     ready &&
     !isUserLoading &&
     (!user || (!user.isTalentFilled && !user.currentSponsorId));

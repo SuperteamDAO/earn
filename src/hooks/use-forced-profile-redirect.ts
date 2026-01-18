@@ -31,10 +31,10 @@ export const useForcedProfileRedirect = ({
     let redirectTimeout: NodeJS.Timeout | undefined;
 
     const isExcludedPath =
-      pathname.startsWith('/new') ||
-      pathname.startsWith('/sponsor') ||
-      pathname.startsWith('/signup') ||
-      pathname.startsWith('/r/');
+      pathname.startsWith('/earn/new') ||
+      pathname.startsWith('/earn/sponsor') ||
+      pathname.startsWith('/earn/signup') ||
+      pathname.startsWith('/earn/r/');
 
     // guard clauses: exit early if a redirect is not needed.
     if (
@@ -56,7 +56,7 @@ export const useForcedProfileRedirect = ({
 
       const redirectAction = () => {
         router.push({
-          pathname: '/new',
+          pathname: '/earn/new',
           query: { type: 'forced', originUrl: asPath },
         });
       };

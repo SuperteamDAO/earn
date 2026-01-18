@@ -76,7 +76,7 @@ export function SearchModal({ isOpen, onClose }: Props) {
   // Makes sure that search page loads instantly and avoids initial flicker
   const prefetchSearchPageData = useCallback(
     (query: string) => {
-      router.prefetch(`/search?q=${encodeURIComponent(query)}`);
+      router.prefetch(`/earn/search?q=${encodeURIComponent(query)}`);
       if (query.trim()) {
         queryClient.prefetchInfiniteQuery({
           queryKey: [
@@ -122,7 +122,7 @@ export function SearchModal({ isOpen, onClose }: Props) {
 
             prefetchSearchPageData(inputValue);
 
-            router.push(`/search?q=${encodeURIComponent(inputValue)}`);
+            router.push(`/earn/search?q=${encodeURIComponent(inputValue)}`);
           }}
           className="relative"
         >
@@ -171,7 +171,7 @@ export function SearchModal({ isOpen, onClose }: Props) {
               ))}
             </div>
             <Link
-              href={`/search?q=${encodeURIComponent(inputValue)}`}
+              href={`/earn/search?q=${encodeURIComponent(inputValue)}`}
               className="w-full"
               onClick={() => prefetchSearchPageData(inputValue)}
             >

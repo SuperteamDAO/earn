@@ -259,7 +259,7 @@ export const SponsorVerificationForm = () => {
               We’ll notify you about your verification status via email.
             </p>
             <div className="w-full pt-8">
-              <Link href="/dashboard/listings" className="w-full">
+              <Link href="/earn/dashboard/listings" className="w-full">
                 <Button type="button" className="w-full">
                   Understood
                 </Button>

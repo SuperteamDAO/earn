@@ -59,7 +59,7 @@ export function ListingBuilder({ route, slug }: ListingBuilderLayout) {
       const error = listingError as any;
       if (error?.response?.status === 403) {
         toast.error('This listing does not belong to you');
-        router.push('/dashboard/listings');
+        router.push('/earn/dashboard/listings');
         return;
       }
     }
@@ -73,7 +73,7 @@ export function ListingBuilder({ route, slug }: ListingBuilderLayout) {
         listing.sponsorId !== user?.currentSponsorId &&
         user?.role !== 'GOD'
       ) {
-        router.push('/dashboard/listings');
+        router.push('/earn/dashboard/listings');
         return;
       }
     }

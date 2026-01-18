@@ -103,7 +103,7 @@ export const MobileDrawer = ({
             <div
               className="flex items-center gap-1.5 px-4 py-3 select-none sm:gap-2 sm:py-4"
               onClick={() => {
-                router.push(`/t/${user?.username}`);
+                router.push(`/earn/t/${user?.username}`);
                 onDrawerClose();
               }}
             >
@@ -156,7 +156,7 @@ export const MobileDrawer = ({
               variant="ghost"
               className="text-semibold text-brand-purple hover:text-brand-purple-dark cursor-pointer"
               onClick={() => {
-                router.push('/new');
+                router.push('/earn/new');
               }}
             >
               Complete your Profile
@@ -175,7 +175,7 @@ export const MobileDrawer = ({
                 </div>
               }
               onClick={() => {
-                router.push(`/hackathon/${hackathon.slug}`);
+                router.push(`/earn/hackathon/${hackathon.slug}`);
               }}
             />
           ))}
@@ -184,18 +184,18 @@ export const MobileDrawer = ({
               <>
                 <NavItem
                   label="Profile"
-                  onClick={() => router.push(`/t/${user?.username}`)}
+                  onClick={() => router.push(`/earn/t/${user?.username}`)}
                 />
                 <NavItem
                   label="Edit Profile"
-                  onClick={() => router.push(`/t/${user?.username}/edit`)}
+                  onClick={() => router.push(`/earn/t/${user?.username}/edit`)}
                 />
                 <NavItem label="Email Preferences" onClick={onOpen} />
                 <NavItem
                   label="Bookmarks"
                   onClick={() => {
                     posthog.capture('bookmarks_user menu');
-                    router.push(`/bookmarks`);
+                    router.push(`/earn/bookmarks`);
                   }}
                 />
               </>
@@ -240,7 +240,7 @@ export const MobileDrawer = ({
                     className="ph-no-capture"
                     onClick={() => {
                       posthog.capture('pro_navbar');
-                      router.push('/pro');
+                      router.push('/earn/pro');
                     }}
                     label={
                       <ProBadge
@@ -295,11 +295,11 @@ export const MobileDrawer = ({
 
             <NavItem
               label="Activity Feed"
-              onClick={() => router.push(`/feed`)}
+              onClick={() => router.push(`/earn/feed`)}
             />
             <NavItem
               label="Leaderboard"
-              onClick={() => router.push(`/leaderboard`)}
+              onClick={() => router.push(`/earn/leaderboard`)}
             />
             <SupportFormDialog>
               <NavItem

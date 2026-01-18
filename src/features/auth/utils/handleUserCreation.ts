@@ -1,6 +1,6 @@
 import { api } from '@/lib/api';
 
-const allowedNewUserRedirections = ['/signup', '/new/sponsor'];
+const allowedNewUserRedirections = ['/earn/signup', '/earn/new/sponsor'];
 
 interface CreateUserResponse {
   message: string;

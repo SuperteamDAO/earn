@@ -52,7 +52,7 @@ export const CommentParser = ({
         return (
           <Link
             key={index}
-            href={`/t/${part.value.substring(1)}`}
+            href={`/earn/t/${part.value.substring(1)}`}
             className={cn(
               'hover:underline',
               isListingAndUserPro ? 'text-zinc-800' : 'text-brand-purple',
@@ -88,7 +88,7 @@ export const CommentParser = ({
       <>
         {value} -{' '}
         <Link
-          href={`/feed/submission/${submissionId}`}
+          href={`/earn/feed/submission/${submissionId}`}
           className={cn(
             'hover:underline',
             isListingAndUserPro ? 'text-zinc-800' : 'text-brand-purple',

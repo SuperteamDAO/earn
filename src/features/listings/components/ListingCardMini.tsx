@@ -51,7 +51,7 @@ export const ListingCardMini = ({ bounty }: { bounty: Listing }) => {
   return (
     <Link
       className="ph-no-capture w-full rounded-md px-2 py-4 hover:bg-gray-100 hover:no-underline"
-      href={`/listing/${slug}`}
+      href={`/earn/listing/${slug}`}
     >
       <div className="ph-no-capture flex w-full items-center justify-between">
         <div className="flex w-full">
@@ -72,7 +72,7 @@ export const ListingCardMini = ({ bounty }: { bounty: Listing }) => {
               {title}
             </p>
             <Link
-              href={`/s/${sponsor?.slug}`}
+              href={`/earn/s/${sponsor?.slug}`}
               onClick={(e) => e.stopPropagation()}
               className="flex w-min items-center gap-1 hover:underline"
             >

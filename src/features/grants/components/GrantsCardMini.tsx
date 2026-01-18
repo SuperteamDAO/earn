@@ -32,7 +32,7 @@ export const GrantsCardMini = ({
   return (
     <Link
       className="block w-full rounded-md bg-white px-2 py-4 hover:bg-gray-100 hover:no-underline"
-      href={`/grants/${slug}`}
+      href={`/earn/grants/${slug}`}
     >
       <div className="ph-no-capture flex w-full items-center justify-between">
         <div className="flex w-full">
@@ -46,7 +46,7 @@ export const GrantsCardMini = ({
               {title}
             </p>
             <Link
-              href={`/s/${sponsor?.slug}`}
+              href={`/earn/s/${sponsor?.slug}`}
               onClick={(e) => e.stopPropagation()}
               className="flex w-fit items-center gap-1 hover:underline"
             >

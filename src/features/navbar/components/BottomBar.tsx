@@ -30,7 +30,7 @@ export function BottomBar({
   const { authenticated, ready } = usePrivy();
 
   function setColor(href: string, routerPath: string) {
-    return routerPath === href
+    return routerPath === href || routerPath === `/earn${href}`
       ? user?.isPro
         ? 'text-zinc-800'
         : 'text-brand-purple'
@@ -47,7 +47,7 @@ export function BottomBar({
     WebkitTapHighlightColor: 'transparent',
   } as React.CSSProperties;
 
-  if (router.asPath.startsWith('/new/')) {
+  if (router.asPath.startsWith('/earn/new/')) {
     return null;
   }
 
@@ -61,12 +61,12 @@ export function BottomBar({
       <Button
         variant="ghost"
         className={cn(
-          setColor('/', router.asPath),
+          setColor('/earn', router.asPath),
           'w-12 hover:bg-transparent active:bg-transparent',
         )}
         asChild
       >
-        <Link href="/" style={linkStyle}>
+        <Link href="/earn" style={linkStyle}>
           <GoHome
             style={{
               width: '1.7rem',
@@ -82,7 +82,7 @@ export function BottomBar({
         onClick={onSearchOpen}
         style={linkStyle}
         className={cn(
-          setColor('/search', router.pathname),
+          setColor('/earn/search', router.pathname),
           'w-12 hover:bg-transparent active:bg-transparent',
         )}
       >
@@ -98,12 +98,12 @@ export function BottomBar({
       <Button
         variant="ghost"
         className={cn(
-          setColor('/feed/', router.asPath),
+          setColor('/earn/feed/', router.asPath),
           'relative w-12 hover:bg-transparent active:bg-transparent',
         )}
         asChild
       >
-        <Link href="/feed/" style={linkStyle}>
+        <Link href="/earn/feed/" style={linkStyle}>
           <IoNewspaperOutline
             style={{
               width: '1.55rem',
@@ -152,13 +152,13 @@ export function BottomBar({
         <Button
           variant="ghost"
           className={cn(
-            setColor(`/t/${user?.username}/`, router.asPath),
+            setColor(`/earn/t/${user?.username}/`, router.asPath),
             'w-12 hover:bg-transparent active:bg-transparent',
           )}
           asChild
         >
           <Link
-            href={`/t/${user?.username}`}
+            href={`/earn/t/${user?.username}`}
             style={{
               ...linkStyle,
               pointerEvents: user ? 'auto' : 'none',

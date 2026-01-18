@@ -22,7 +22,7 @@ export function NextListingBanner() {
 
   return (
     <Link
-      href="/dashboard/listings?open=1"
+      href="/earn/dashboard/listings?open=1"
       className="relative flex items-center justify-between overflow-hidden rounded-xl bg-slate-100 px-10 py-8"
       onClick={handleCreateListingClick}
       prefetch={false}

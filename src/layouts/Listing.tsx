@@ -122,7 +122,7 @@ export function ListingPageLayout({
           />
           <link
             rel="canonical"
-            href={`${getURL()}listing/${initialListing?.slug}/`}
+            href={`${getURL()}earn/listing/${initialListing?.slug}/`}
           />
           <meta
             property="og:title"

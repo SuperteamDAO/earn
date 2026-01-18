@@ -50,7 +50,7 @@ export function SponsorResources() {
         </Link>
 
         <Link
-          href="/dashboard/faq"
+          href="/earn/dashboard/faq"
           className="flex items-start gap-4"
           onClick={() => posthog.capture('faq_sponsor resources')}
         >

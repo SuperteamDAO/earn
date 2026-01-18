@@ -22,4 +22,4 @@ const fontMono = JetBrains_Mono({
   variable: '--font-mono',
 });
 
-export { fontMono, fontSans };
+export const fontVariables = [fontSans.variable, fontMono.variable].join(' ');

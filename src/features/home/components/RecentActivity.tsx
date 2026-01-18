@@ -70,7 +70,7 @@ const ActivityCard = ({
   const ogImage = useMemo(() => getRandomFallbackImage(), []);
 
   return (
-    <Link href={'/feed/?filter=new'} className="flex">
+    <Link href={'/earn/feed/?filter=new'} className="flex">
       <LocalImage
         className="h-12 w-20 rounded-md bg-center object-cover"
         alt="OG Image"
@@ -108,7 +108,7 @@ export const RecentActivity = () => {
           RECENT ACTIVITY
         </span>
         <Link
-          href="/feed"
+          href="/earn/feed"
           className="ph-no-capture text-brand-purple flex items-center text-xs font-medium"
           onClick={() => {
             posthog.capture('recent winners_view all_homepage');

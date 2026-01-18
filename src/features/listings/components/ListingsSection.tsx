@@ -191,17 +191,17 @@ export const ListingsSection = ({
 
   const viewAllLink = () => {
     if (HACKATHONS.some((hackathon) => hackathon.slug === activeTab)) {
-      return `/hackathon/${activeTab}`;
+      return `/earn/hackathon/${activeTab}`;
     }
     let basePath: string;
     if (type === 'home') {
-      basePath = '/all';
+      basePath = '/earn/all';
     } else if (type === 'region') {
-      basePath = `/regions/${region}/all`;
+      basePath = `/earn/regions/${region}/all`;
     } else if (type === 'skill' && skill) {
-      basePath = `/skill/${skill}/all`;
+      basePath = `/earn/skill/${skill}/all`;
     } else {
-      basePath = '/all';
+      basePath = '/earn/all';
     }
 
     const params = new URLSearchParams();
