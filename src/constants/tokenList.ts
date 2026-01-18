@@ -576,4 +576,25 @@ export const tokenList: Token[] = [
     "icon": "https://assets.coingecko.com/coins/images/55607/standard/Ticker_GME__Company_Name_gamestop__size_200x200_2x.png?1746858467",
     "decimals": 8
   },
+  {
+    "tokenName": "Sport.fun",
+    "tokenSymbol": "FUN",
+    "mintAddress": "8cn4JeRLiHTtfX6maZAsipGGyyZPdEcos3s2X3Hw3BS6",
+    "icon": "https://statics.solscan.io/cdn/imgs/s60?ref=68747470733a2f2f70726f2e73706f72742e66756e2f7374617469632f6170706c652d746f7563682d69636f6e2e706e67",
+    "decimals": 9
+  },
+  {
+    "tokenName": "Lighter",
+    "tokenSymbol": "LIT",
+    "mintAddress": "EicWvteVi2fWepEzS3FYWsnuPoP6caZfjnKqNvydLjCH",
+    "icon": "https://statics.solscan.io/cdn/imgs/s60?ref=68747470733a2f2f617277656176652e6e65742f74536877746e7a4c71556a71745a632d59736f6b3637707051634f554948685833506745596c4f30326d45",
+    "decimals": 8
+  },
+  {
+    "tokenName": "NEAR",
+    "tokenSymbol": "NEAR",
+    "mintAddress": "3ZLekZYq2qkZiSpnSvabjit34tUkjSwD1JFuW9as9wBG",
+    "icon": "https://statics.solscan.io/cdn/imgs/s60?ref=68747470733a2f2f6261666b726569656b7864763475786d376374696a766a3777716c3662746f33636f6b77733678766664626737796c727674327674696d6e7172692e697066732e7733732e6c696e6b",
+    "decimals": 9
+  },
 ];
