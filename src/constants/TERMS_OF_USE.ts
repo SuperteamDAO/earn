@@ -1,1 +1,1 @@
-export const TERMS_OF_USE = 'https://superteam.fun/terms-of-use.pdf';
+export const TERMS_OF_USE = 'https://earn.superteam.fun/terms-of-use.pdf';
