@@ -150,10 +150,7 @@ export const useUploadImage = (): UseUploadReturn => {
       formData.append('signature', signatureData.signature);
       formData.append('timestamp', signatureData.timestamp.toString());
       formData.append('folder', signatureData.folder);
-      formData.append(
-        'api_key',
-        process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY || '',
-      );
+      formData.append('api_key', signatureData.apiKey);
 
       if (signatureData.publicId) {
         formData.append('public_id', signatureData.publicId);
