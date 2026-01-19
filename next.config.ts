@@ -188,9 +188,8 @@ const nextConfig: NextConfig = {
         destination: 'https://ipfs.io/:path*',
       },
       {
-        source: '/cdn/ipfs-nft/:path*',
-        destination:
-          'https://bafkreibcamcjwo5z3itvybznrdtb3fgeiplfy36izu75jygxkt7jzoq4ju.ipfs.nftstorage.link/:path*',
+        source: '/cdn/imagedelivery/:path*',
+        destination: 'https://imagedelivery.net/:path*',
       },
     ];
   },

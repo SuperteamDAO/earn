@@ -451,13 +451,6 @@ export const tokenList: Token[] = [
     decimals: 9,
   },
   {
-    tokenName: 'Swop.Meme',
-    tokenSymbol: 'SWOP',
-    mintAddress: 'AhhtUFVLUSDxgsPTuky7JXEi92e3QcqnagfgZoDSjups',
-    icon: '',
-    decimals: 6,
-  },
-  {
     tokenName: 'Sonic SVM',
     tokenSymbol: 'SONIC',
     mintAddress: 'SonicxvLud67EceaEzCLRnMTBqzYUUYNr93DBkBdDES',
@@ -510,7 +503,7 @@ export const tokenList: Token[] = [
     tokenName: 'Sorcerer',
     tokenSymbol: 'SORX',
     mintAddress: 'GmWjhA47wkPRSji6zR3RLLR9HohZFfi7ukXpSAiupump',
-    icon: '/cdn/phantom/image-proxy/?image=https%3A%2F%2Fipfs.io%2Fipfs%2FQmRkSrjpGnBLD6B7GaiTpCaupqa8gzpoHqoqcnJkb7TrgX&anim=false',
+    icon: '/cdn/imagedelivery/WL1JOIJiM_NAChp6rtB6Cw/coin-image/GmWjhA47wkPRSji6zR3RLLR9HohZFfi7ukXpSAiupump/86x86?alpha=true',
     decimals: 6,
   },
   {
