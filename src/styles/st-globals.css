@@ -40,12 +40,13 @@
   opacity: 1;
 }
 
-
 /* ==================== ST Keyframes ==================== */
 @keyframes shine {
   0%,
   10% {
-    background-position: center, -500px;
+    background-position:
+      center,
+      -500px;
   }
   100% {
     background-position: center, 500px;
@@ -129,7 +130,12 @@
     letter-spacing: -0.04em;
     padding: 0.1em 0;
 
-    background: linear-gradient(173.91deg, rgba(255, 255, 255, 0) -102.4%, #ffffff 116.87%),
+    background:
+      linear-gradient(
+        173.91deg,
+        rgba(255, 255, 255, 0) -102.4%,
+        #ffffff 116.87%
+      ),
       linear-gradient(
         -40deg,
         transparent 0%,
@@ -139,7 +145,9 @@
         transparent 100%
       );
     background-size: cover, 500px;
-    background-position: center, -1000px;
+    background-position:
+      center,
+      -1000px;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -170,19 +178,25 @@
   .stars {
     width: 1px;
     height: 1px;
-    animation: animStar 100s linear infinite, st-fadeIn 1s ease-in-out;
+    animation:
+      animStar 100s linear infinite,
+      st-fadeIn 1s ease-in-out;
   }
 
   .stars2 {
     width: 2px;
     height: 2px;
-    animation: animStar 125s linear infinite, st-fadeIn 1s ease-in-out;
+    animation:
+      animStar 125s linear infinite,
+      st-fadeIn 1s ease-in-out;
   }
 
   .stars3 {
     width: 3px;
     height: 3px;
-    animation: animStar 175s linear infinite, st-fadeIn 1s ease-in-out;
+    animation:
+      animStar 175s linear infinite,
+      st-fadeIn 1s ease-in-out;
   }
 
   .stars-after,
@@ -297,12 +311,13 @@
     left: 0px;
     width: 100%;
     height: 100%;
-    background: linear-gradient(144.34deg, #f7f3f3 -29.96%, rgba(63, 63, 63, 0.67) 131.56%);
+    background: linear-gradient(144.34deg, #f5a60b -29.96%, #d4900a 131.56%);
     opacity: 0;
     transition: opacity 0.3s ease;
   }
 
-  .accordion-overlay:hover::after {
+  .accordion-overlay:hover::after,
+  .accordion-overlay.superteam-card-hovered::after {
     opacity: 1;
   }
 
@@ -335,7 +350,9 @@
 
   .accordion-content,
   .accordion-btn {
-    transition: opacity 1s ease-in-out, transform 0.7s ease-in-out;
+    transition:
+      opacity 1s ease-in-out,
+      transform 0.7s ease-in-out;
   }
 
   .accordion-open .accordion-content {
@@ -359,7 +376,11 @@
   }
 
   .gradient-overlay {
-    background: linear-gradient(88.24deg, #121212 32.37%, rgba(14, 14, 14, 0) 87.4%);
+    background: linear-gradient(
+      88.24deg,
+      #121212 32.37%,
+      rgba(14, 14, 14, 0) 87.4%
+    );
   }
 
   /* ==================== Collab Section ==================== */
@@ -397,7 +418,9 @@
     position: relative;
     background: #202020;
     padding: 1px;
-    transition: background 0.5s ease, border 400ms;
+    transition:
+      background 0.5s ease,
+      border 400ms;
   }
 
   .image-with-text-content {
@@ -413,7 +436,11 @@
     left: 0px;
     width: 100%;
     height: 100%;
-    background: linear-gradient(144.34deg, #f7f3f3 -29.96%, rgba(63, 63, 63, 0.67) 131.56%);
+    background: linear-gradient(
+      144.34deg,
+      #f7f3f3 -29.96%,
+      rgba(63, 63, 63, 0.67) 131.56%
+    );
     opacity: 0;
     transition: opacity 0.3s ease;
   }
@@ -534,10 +561,13 @@
 
   /* ==================== PerkCard Component ==================== */
   .perk-card {
-    background: linear-gradient(180deg, #000000 -18.75%, rgba(0, 0, 0, 0) 114.5%),
+    background:
+      linear-gradient(180deg, #000000 -18.75%, rgba(0, 0, 0, 0) 114.5%),
       linear-gradient(180deg, #1d1d1d 0%, rgba(22, 22, 22, 0) 100%);
     border: 1px solid #3f3f3f;
-    transition: background 0.5s, border 0.5s ease-in-out;
+    transition:
+      background 0.5s,
+      border 0.5s ease-in-out;
   }
 
   .perk-card:hover {
@@ -547,10 +577,13 @@
 
   /* ==================== ProjectCard Component ==================== */
   .project-card {
-    background: linear-gradient(180deg, #000000 -18.75%, rgba(0, 0, 0, 0) 114.5%),
+    background:
+      linear-gradient(180deg, #000000 -18.75%, rgba(0, 0, 0, 0) 114.5%),
       linear-gradient(180deg, #1d1d1d 0%, rgba(22, 22, 22, 0) 100%);
     border: 1px solid #3f3f3f;
-    transition: background 0.5s, border 0.5s ease-in-out;
+    transition:
+      background 0.5s,
+      border 0.5s ease-in-out;
   }
 
   .project-card:hover {
@@ -561,7 +594,11 @@
   /* ==================== TestimonialCard Component ==================== */
   .test-container {
     width: 289px;
-    background: linear-gradient(180deg, #161616 6.99%, rgba(22, 22, 22, 0) 158.45%);
+    background: linear-gradient(
+      180deg,
+      #161616 6.99%,
+      rgba(22, 22, 22, 0) 158.45%
+    );
     border: 1px solid rgba(177, 177, 177, 0.2);
     border-radius: 5px;
   }
@@ -622,12 +659,18 @@
 
   .st-modal-content {
     position: relative;
-    transition: transform 0.3s ease, opacity 0.3s ease;
+    transition:
+      transform 0.3s ease,
+      opacity 0.3s ease;
   }
 
   .st-modal-overlay {
     z-index: 10;
-    background: linear-gradient(180deg, #000000 -18.75%, rgba(0, 0, 0, 0) 114.5%);
+    background: linear-gradient(
+      180deg,
+      #000000 -18.75%,
+      rgba(0, 0, 0, 0) 114.5%
+    );
   }
 
   .text-on-img {
@@ -772,7 +815,9 @@
 
   .answer-wrapper {
     overflow: hidden;
-    transition: max-height 0.3s ease-out, opacity 0.3s ease-out;
+    transition:
+      max-height 0.3s ease-out,
+      opacity 0.3s ease-out;
   }
 
   .answer-open {
@@ -873,7 +918,8 @@
     grid-template-columns: repeat(2, 240px);
     grid-template-rows: repeat(
       3,
-      calc(5 * var(--row-factor)) calc(32.5 * var(--row-factor)) calc(5 * var(--row-factor))
+      calc(5 * var(--row-factor)) calc(32.5 * var(--row-factor))
+        calc(5 * var(--row-factor))
     );
   }
 
@@ -893,9 +939,13 @@
   .cards-container {
     grid-template-columns: repeat(3, 320px);
     grid-template-rows:
-      calc(8 * var(--row-factor)) calc(42 * var(--row-factor)) calc(4 * var(--row-factor))
+      calc(8 * var(--row-factor)) calc(42 * var(--row-factor)) calc(
+        4 * var(--row-factor)
+      )
       calc(4 * var(--row-factor))
-      calc(4 * var(--row-factor)) calc(42 * var(--row-factor)) calc(8 * var(--row-factor));
+      calc(4 * var(--row-factor)) calc(42 * var(--row-factor)) calc(
+        8 * var(--row-factor)
+      );
   }
 
   .grid-cards-container {
@@ -958,7 +1008,9 @@
 
   .accordion-content,
   .accordion-btn {
-    transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+    transition:
+      opacity 0.3s ease-in-out,
+      transform 0.3s ease-in-out;
   }
 }
 

@@ -34,6 +34,8 @@ const REGIONS = [
   'Argentina',
   'USA',
   'Spain',
+  'Georgia',
+  'Netherlands',
 ] as const;
 
 export type Region = (typeof REGIONS)[number];
@@ -116,50 +118,6 @@ export const Superteams = [
       },
     ],
     slug: 'uk',
-  },
-  {
-    name: 'Superteam Turkey',
-    icons: basePath + 'logos/turkey.jpg',
-    banner: basePath + 'banners/Turkey.png',
-    region: 'Turkey' as Region,
-    displayValue: 'Turkey',
-    country: ['Turkey'],
-    code: 'TR',
-    hello: 'Merhaba',
-    nationality: 'Turks',
-    people: [
-      {
-        name: 'Ezgi Yaltay',
-        pfp: 'https://pbs.twimg.com/profile_images/1573011788769247234/zOaAXiv6_400x400.jpg',
-      },
-    ],
-    slug: 'turkey',
-  },
-  {
-    name: 'Superteam Vietnam',
-    icons: basePath + 'logos/vietnam.png',
-    banner: basePath + 'banners/Vietnam.png',
-    region: 'Vietnam' as Region,
-    displayValue: 'Vietnam',
-    country: ['Vietnam'],
-    code: 'VN',
-    hello: 'Xin chào',
-    nationality: 'Vietnamese',
-    people: [
-      {
-        name: 'Kelly Anh',
-        pfp: 'https://pbs.twimg.com/profile_images/1686209291303497728/T-Tft6D6_400x400.jpg',
-      },
-      {
-        name: 'Anh Tran',
-        pfp: 'https://pbs.twimg.com/profile_images/1672120350266785792/a0AjrF8B_400x400.jpg',
-      },
-      {
-        name: 'Minh Thach',
-        pfp: 'https://pbs.twimg.com/profile_images/926374044030484480/it1e5gQr_400x400.jpg',
-      },
-    ],
-    slug: 'vietnam',
   },
   {
     name: 'Superteam UAE',
@@ -272,28 +230,6 @@ export const Superteams = [
     slug: 'balkan',
   },
   {
-    name: 'Superteam Philippines',
-    icons: basePath + 'logos/philippines.png',
-    banner: basePath + 'banners/Philippines.png',
-    region: 'Philippines' as Region,
-    displayValue: 'Philippines',
-    country: ['Philippines'],
-    code: 'PH',
-    hello: 'Kumusta',
-    nationality: 'Filipinos',
-    people: [
-      {
-        name: 'Eli',
-        pfp: 'https://pbs.twimg.com/profile_images/1839557525529927680/AxyDcqKr_400x400.jpg',
-      },
-      {
-        name: 'Emerson',
-        pfp: 'https://pbs.twimg.com/profile_images/1787894665624305667/FF6y0ucq_400x400.jpg',
-      },
-    ],
-    slug: 'philippines',
-  },
-  {
     name: 'Superteam Japan',
     icons: basePath + 'logos/japan.png',
     banner: basePath + 'banners/Japan.png',
@@ -310,36 +246,6 @@ export const Superteams = [
       },
     ],
     slug: 'japan',
-  },
-  {
-    name: 'Superteam France',
-    icons: basePath + 'logos/france.png',
-    banner: basePath + 'banners/France.png',
-    region: 'France' as Region,
-    displayValue: 'France',
-    country: ['France'],
-    code: 'FR',
-    hello: `Bonjour`,
-    nationality: 'French',
-    people: [
-      {
-        name: 'Arthur',
-        pfp: 'https://pbs.twimg.com/profile_images/1504225711522996232/PeaEIwzk_400x400.jpg',
-      },
-    ],
-    slug: 'france',
-  },
-  {
-    name: 'Superteam Mexico',
-    icons: basePath + 'logos/mexico.jpg',
-    banner: basePath + 'banners/Mexico.png',
-    region: 'Mexico' as Region,
-    displayValue: 'Mexico',
-    country: ['Mexico'],
-    code: 'MX',
-    hello: `Hola`,
-    nationality: 'Mexicans',
-    slug: 'mexico',
   },
   {
     name: 'Superteam Canada',
@@ -437,15 +343,57 @@ export const Superteams = [
     nationality: 'Indonesians',
     slug: 'indonesia',
   },
-];
-
-const NonSTRegions = [
   {
+    name: 'Superteam Georgia',
+    icons: basePath + 'logos/georgia',
+    banner: basePath + 'banners/georgia',
+    region: 'Georgia' as Region,
+    displayValue: 'Georgia',
+    country: ['Georgia'],
+    code: 'GE',
+    hello: 'Gamarjoba',
+    nationality: 'Georgians',
+    slug: 'georgia',
+  },
+  {
+    name: 'Superteam Netherlands',
+    icons: basePath + 'logos/netherlands',
+    banner: basePath + 'banners/netherlands',
+    region: 'Netherlands' as Region,
+    displayValue: 'Netherlands',
+    country: ['Netherlands'],
+    code: 'NL',
+    hello: 'Hallo',
+    nationality: 'Dutch',
+    slug: 'netherlands',
+  },
+  {
+    name: 'Superteam Spain',
+    icons: basePath + 'logos/spain',
+    banner: basePath + 'banners/spain',
+    region: 'Spain' as Region,
+    displayValue: 'Spain',
+    country: ['Spain'],
+    code: 'ES',
+    hello: 'Hola',
+    nationality: 'Spaniards',
+    slug: 'spain',
+  },
+  {
+    name: 'Superteam Ukraine',
+    icons: basePath + 'logos/ukraine',
+    banner: basePath + 'banners/ukraine',
     region: 'Ukraine' as Region,
     displayValue: 'Ukraine',
     country: ['Ukraine'],
     code: 'UA',
+    hello: 'Привіт',
+    nationality: 'Ukrainians',
+    slug: 'ukraine',
   },
+];
+
+const NonSTRegions = [
   {
     region: 'Argentina' as Region,
     displayValue: 'Argentina',
@@ -457,12 +405,6 @@ const NonSTRegions = [
     displayValue: 'USA',
     country: ['United States'],
     code: 'US',
-  },
-  {
-    region: 'Spain' as Region,
-    displayValue: 'Spain',
-    country: ['Spain'],
-    code: 'ES',
   },
 ];
 

@@ -2,116 +2,18 @@
 
 import { useState } from 'react';
 
-import { ASSET_URL } from '@/constants/ASSET_URL';
+import { UserFlag } from '@/components/shared/UserFlag';
+import { Superteams } from '@/constants/Superteam';
 
-const countries = [
-  {
-    key: 'india',
-    name: 'India',
-    path: `${ASSET_URL}/st/chapters/india.webp`,
-    href: 'https://in.superteam.fun/',
-  },
-  {
-    key: 'vietnam',
-    name: 'Vietnam',
-    path: `${ASSET_URL}/st/chapters/vietnam.webp`,
-    href: 'https://vn.superteam.fun/',
-  },
-  {
-    key: 'germany',
-    name: 'Germany',
-    path: `${ASSET_URL}/st/chapters/germany.webp`,
-    href: 'https://de.superteam.fun/',
-  },
-  {
-    key: 'uk',
-    name: 'UK',
-    path: `${ASSET_URL}/st/chapters/uk.webp`,
-    href: 'https://uk.superteam.fun/',
-  },
-  {
-    key: 'uae',
-    name: 'UAE',
-    path: `${ASSET_URL}/st/chapters/uae.webp`,
-    href: 'https://uae.superteam.fun/',
-  },
-  {
-    key: 'nigeria',
-    name: 'Nigeria',
-    path: `${ASSET_URL}/st/chapters/nigeria.webp`,
-    href: 'https://ng.superteam.fun/',
-  },
-  {
-    key: 'balkan',
-    name: 'Balkan',
-    path: `${ASSET_URL}/st/chapters/balkan.webp`,
-    href: 'https://blkn.superteam.fun/',
-  },
-  {
-    key: 'malaysia',
-    name: 'Malaysia',
-    path: `${ASSET_URL}/st/chapters/malaysia.webp`,
-    href: 'https://my.superteam.fun/',
-  },
-  {
-    key: 'france',
-    name: 'France',
-    path: `${ASSET_URL}/st/chapters/france.webp`,
-    href: 'https://fr.superteam.fun/',
-  },
-  {
-    key: 'japan',
-    name: 'Japan',
-    path: `${ASSET_URL}/st/chapters/japan.webp`,
-    href: 'https://jp.superteam.fun/',
-  },
-  {
-    key: 'singapore',
-    name: 'Singapore',
-    path: `${ASSET_URL}/st/chapters/singapore.webp`,
-    href: 'https://sg.superteam.fun/',
-  },
-  {
-    key: 'canada',
-    name: 'Canada',
-    path: `${ASSET_URL}/st/chapters/canada.webp`,
-    href: 'https://ca.superteam.fun/',
-  },
-  {
-    key: 'poland',
-    name: 'Poland',
-    path: `${ASSET_URL}/st/chapters/poland.webp`,
-    href: 'https://pl.superteam.fun/',
-  },
-  {
-    key: 'korea',
-    name: 'Korea',
-    path: `${ASSET_URL}/st/chapters/korea.webp`,
-    href: 'https://kr.superteam.fun/',
-  },
-  {
-    key: 'indonesia',
-    name: 'Indonesia',
-    path: `${ASSET_URL}/st/chapters/indonesia.webp`,
-    href: 'https://id.superteam.fun/',
-  },
-  {
-    key: 'ireland',
-    name: 'Ireland',
-    path: `${ASSET_URL}/st/chapters/ireland.webp`,
-    href: 'https://x.com/superteamIE',
-  },
-];
-
-const FIRST_PART = 12;
+import SuperteamMap from '../common/SuperteamMap';
 
 export default function Geographies() {
-  const [showAllPartners, setShowAllPartners] = useState(false);
+  const [imageErrors, setImageErrors] = useState<Record<string, boolean>>({});
+  const [hoveredSuperteam, setHoveredSuperteam] = useState<string | null>(null);
 
-  const displayedCountries = showAllPartners
-    ? countries
-    : countries.slice(0, FIRST_PART);
-  const remainingCountries = countries.slice(FIRST_PART);
+  const handleImageError = (slug: string) => {
+    setImageErrors((prev) => ({ ...prev, [slug]: true }));
+  };
 
   return (
     <div className="col-span-5">
@@ -120,37 +22,59 @@ export default function Geographies() {
       </h2>
 
       <div className="col-span-5 mt-10">
-        <div className="grid grid-cols-1 gap-6 px-4 sm:grid-cols-2 sm:px-8 md:px-16 lg:grid-cols-3 xl:grid-cols-3">
-          {displayedCountries.map((country) => (
-            <a
-              key={country.key}
-              href={country.href}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group relative mx-auto aspect-4/3 w-full max-w-[450px] overflow-hidden rounded-lg bg-black"
-            >
-              <img
-                src={country.path}
-                alt={country.name}
-                className="st-no-fade h-full w-full object-cover opacity-80 transition-all duration-300 group-hover:scale-105 group-hover:opacity-60"
-              />
-              <h3 className="font-secondary absolute bottom-6 left-6 text-2xl font-bold text-white">
-                {country.name}
-              </h3>
-            </a>
-          ))}
-        </div>
+        <div className="mx-auto mt-0 max-w-[1200px] px-2 md:px-4 lg:mt-[53px]">
+          <div className="mb-10 flex flex-wrap justify-center gap-2.5 md:gap-3">
+            {Superteams.map((superteam) => {
+              const hasImageError = imageErrors[superteam.slug];
+              const showFlag = hasImageError || !superteam.icons;
+              const isHovered = hoveredSuperteam === superteam.code;
 
-        {remainingCountries.length > 0 && !showAllPartners && (
-          <div className="mt-8 flex justify-center">
-            <button
-              className="font-secondary rounded-md bg-white px-6 py-3 text-black hover:bg-gray-200"
-              onClick={() => setShowAllPartners(true)}
-            >
-              Load More
-            </button>
+              return (
+                <div
+                  key={superteam.slug}
+                  className={`accordion-overlay group z-1 basis-[calc(50%-5px)] rounded-lg object-cover transition-all duration-200 select-none md:basis-auto ${
+                    isHovered ? 'superteam-card-hovered scale-[1.02]' : ''
+                  } ${hoveredSuperteam && !isHovered ? 'opacity-50' : ''}`}
+                  onMouseEnter={() => setHoveredSuperteam(superteam.code)}
+                  onMouseLeave={() => setHoveredSuperteam(null)}
+                >
+                  <div className="st-accordion relative flex h-[40px] w-full flex-row items-center justify-between overflow-hidden rounded-lg pr-2 text-white md:h-[42px] md:pr-3">
+                    <div className="relative flex h-full items-center overflow-hidden">
+                      {showFlag ? (
+                        <div className="flex h-full items-center justify-center px-2 md:px-2">
+                          <UserFlag
+                            location={superteam.code}
+                            size="24px"
+                            isCode
+                          />
+                        </div>
+                      ) : (
+                        <img
+                          src={superteam.icons}
+                          alt={superteam.displayValue}
+                          className="h-full w-auto object-cover"
+                          onError={() => handleImageError(superteam.slug)}
+                        />
+                      )}
+                    </div>
+                    <div className="h-container flex w-full flex-col text-left md:flex-row md:items-center">
+                      <div className="font-secondary z-1 ml-[12px] text-left text-[12px] leading-[14px] font-semibold md:ml-[20px] md:text-[15px] md:leading-[18px] lg:ml-[24px] lg:text-[16px]">
+                        <p>{superteam.displayValue}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
           </div>
-        )}
+
+          <div className="-mx-2 w-[calc(100%+16px)] md:-mx-4 md:w-[calc(100%+32px)]">
+            <SuperteamMap
+              hoveredSuperteam={hoveredSuperteam}
+              onHoverChange={setHoveredSuperteam}
+            />
+          </div>
+        </div>
       </div>
     </div>
   );

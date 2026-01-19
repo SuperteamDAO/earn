@@ -159,6 +159,11 @@ const nextConfig: NextConfig = {
         source: '/docs-keep/:path*',
         destination: 'https://us.i.posthog.com/:path*',
       },
+      {
+        source: '/api/geo/world.geojson',
+        destination:
+          'https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson',
+      },
     ];
   },
   skipTrailingSlashRedirect: true,
