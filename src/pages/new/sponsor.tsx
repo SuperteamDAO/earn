@@ -10,7 +10,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
-import { ImagePicker } from '@/components/shared/ImagePicker';
+import { ImageUploader } from '@/components/shared/ImageUploader';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
@@ -27,13 +27,11 @@ import { MultiSelect } from '@/components/ui/multi-select';
 import { Separator } from '@/components/ui/separator';
 import { Tooltip } from '@/components/ui/tooltip';
 import { PDTG } from '@/constants/Telegram';
-import { useUploadImage } from '@/hooks/use-upload-image';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
-import { IMAGE_SOURCE } from '@/utils/image';
 
 import { SignIn } from '@/features/auth/components/SignIn';
 import { SocialInput } from '@/features/social/components/SocialInput';
@@ -53,11 +51,10 @@ const CreateSponsor = () => {
   const router = useRouter();
   const { ready, authenticated } = usePrivy();
   const { user, refetchUser } = useUser();
-  const { uploadFile, uploadAndReplace } = useUploadImage();
-
-  const [selectedUserPhoto, setSelectedUserPhoto] = useState<File | null>(null);
-  const [selectedLogo, setSelectedLogo] = useState<File | null>(null);
-  const [logoPreview, setLogoPreview] = useState<string>('');
+  const [uploadedUserPhotoUrl, setUploadedUserPhotoUrl] = useState<
+    string | null
+  >(null);
+  const [uploadedLogoUrl, setUploadedLogoUrl] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [loginStep, setLoginStep] = useState(0);
   const [acknowledgementAccepted, setAcknowledgementAccepted] = useState(false);
@@ -199,26 +196,15 @@ const CreateSponsor = () => {
     mutationFn: async (data: SponsorFormValues) => {
       router.prefetch('/dashboard/listings?open=1');
 
-      if (selectedUserPhoto && data.user) {
-        data.user.photo = user?.photo;
-        const uploadResult = await uploadAndReplace(
-          selectedUserPhoto,
-          { folder: 'earn-pfp', source: IMAGE_SOURCE.USER },
-          user?.photo || undefined,
-        );
-        data.user.photo = uploadResult.url;
+      if (uploadedUserPhotoUrl && data.user) {
+        data.user.photo = uploadedUserPhotoUrl;
       }
 
       const { sponsorData, userData } = transformFormToApiData(data);
 
       try {
-        if (selectedLogo) {
-          const uploadResult = await uploadFile(selectedLogo, {
-            folder: 'earn-sponsor',
-            resource_type: 'image',
-            source: IMAGE_SOURCE.SPONSOR,
-          });
-          sponsorData.logo = uploadResult.url;
+        if (uploadedLogoUrl) {
+          sponsorData.logo = uploadedLogoUrl;
         }
 
         await api.post('/api/sponsors/create', sponsorData);
@@ -266,14 +252,13 @@ const CreateSponsor = () => {
 
   const isSubmitDisabled = useMemo(
     () =>
-      (!selectedLogo && !logoPreview) ||
+      !uploadedLogoUrl ||
       isPending ||
       isSlugInvalid ||
       isUsernameInvalid ||
       isSponsorNameInvalid,
     [
-      selectedLogo,
-      logoPreview,
+      uploadedLogoUrl,
       isPending,
       isSlugInvalid,
       isUsernameInvalid,
@@ -396,14 +381,15 @@ const CreateSponsor = () => {
                 </div>
                 <>
                   <FormLabel isRequired>Profile Picture</FormLabel>
-                  <ImagePicker
-                    defaultValue={user?.photo ? { url: user.photo } : undefined}
-                    onChange={(file, previewUrl) => {
-                      setSelectedUserPhoto(file);
-                      form.setValue('user.photo', previewUrl);
+                  <ImageUploader
+                    source="user"
+                    defaultValue={user?.photo || undefined}
+                    onChange={(result) => {
+                      setUploadedUserPhotoUrl(result.secureUrl);
+                      form.setValue('user.photo', result.secureUrl);
                     }}
                     onReset={() => {
-                      setSelectedUserPhoto(null);
+                      setUploadedUserPhotoUrl(null);
                       form.setValue('user.photo', '');
                     }}
                   />
@@ -497,16 +483,15 @@ const CreateSponsor = () => {
                 </div>
                 <div className="mt-6 mb-3 w-full">
                   <FormLabel isRequired>Company Logo</FormLabel>
-                  <ImagePicker
+                  <ImageUploader
+                    source="sponsor"
                     crop="square"
-                    onChange={(file, previewUrl) => {
-                      setSelectedLogo(file);
-                      setLogoPreview(previewUrl);
-                      form.setValue('sponsor.logo', previewUrl);
+                    onChange={(result) => {
+                      setUploadedLogoUrl(result.secureUrl);
+                      form.setValue('sponsor.logo', result.secureUrl);
                     }}
                     onReset={() => {
-                      setSelectedLogo(null);
-                      setLogoPreview('');
+                      setUploadedLogoUrl(null);
                       form.setValue('sponsor.logo', '');
                     }}
                   />

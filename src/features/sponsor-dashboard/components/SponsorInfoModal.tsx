@@ -5,16 +5,14 @@ import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
-import { ImagePicker } from '@/components/shared/ImagePicker';
+import { ImageUploader } from '@/components/shared/ImageUploader';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Form, FormLabel } from '@/components/ui/form';
 import { FormFieldWrapper } from '@/components/ui/form-field-wrapper';
 import { Input } from '@/components/ui/input';
-import { useUploadImage } from '@/hooks/use-upload-image';
 import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
-import { IMAGE_SOURCE } from '@/utils/image';
 
 import { SocialInput } from '@/features/social/components/SocialInput';
 import {
@@ -31,8 +29,8 @@ export const SponsorInfoModal = ({
   onClose: () => void;
 }) => {
   const { user, refetchUser } = useUser();
-  const { uploadAndReplace } = useUploadImage();
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [uploadedPhotoUrl, setUploadedPhotoUrl] = useState<string | null>(null);
 
   const form = useForm<UserSponsorDetails>({
     resolver: zodResolver(userSponsorDetailsSchema),
@@ -45,7 +43,6 @@ export const SponsorInfoModal = ({
     },
   });
 
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isGooglePhoto, setIsGooglePhoto] = useState<boolean>(
     user?.photo?.includes('googleusercontent.com') || false,
   );
@@ -90,26 +87,13 @@ export const SponsorInfoModal = ({
     setIsLoading(true);
     if (isUsernameInvalid) return;
 
-    try {
-      let finalPhoto = isGooglePhoto ? user?.photo : data.photo;
+    const finalPhoto =
+      uploadedPhotoUrl || (isGooglePhoto ? user?.photo : data.photo);
 
-      if (selectedFile && !isGooglePhoto) {
-        const uploadResult = await uploadAndReplace(
-          selectedFile,
-          { folder: 'earn-pfp', source: IMAGE_SOURCE.USER },
-          user?.photo || undefined,
-        );
-        finalPhoto = uploadResult.url;
-      }
-
-      updateUserMutation.mutate({
-        ...data,
-        photo: finalPhoto,
-      });
-    } catch (error) {
-      console.error('Error uploading image:', error);
-      toast.error('Failed to upload image. Please try again.');
-    }
+    updateUserMutation.mutate({
+      ...data,
+      photo: finalPhoto,
+    });
   };
 
   return (
@@ -165,17 +149,18 @@ export const SponsorInfoModal = ({
 
             <div className="my-3 mb-6 flex w-full flex-col items-start gap-2">
               <FormLabel>Profile Picture</FormLabel>
-              <ImagePicker
+              <ImageUploader
+                source="user"
                 className="w-full"
-                defaultValue={user?.photo ? { url: user.photo } : undefined}
-                onChange={(file, previewUrl) => {
-                  setSelectedFile(file);
+                defaultValue={user?.photo || undefined}
+                onChange={(result) => {
                   setIsGooglePhoto(false);
-                  form.setValue('photo', previewUrl);
+                  setUploadedPhotoUrl(result.secureUrl);
+                  form.setValue('photo', result.secureUrl);
                 }}
                 onReset={() => {
-                  setSelectedFile(null);
                   setIsGooglePhoto(false);
+                  setUploadedPhotoUrl(null);
                   form.setValue('photo', '');
                 }}
               />

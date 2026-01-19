@@ -1,5 +1,4 @@
 import { v2 as cloudinary } from 'cloudinary';
-import sharp from 'sharp';
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const DatauriParser = require('datauri/parser');
@@ -45,29 +44,6 @@ export const getCloudinaryFetchUrl = (
   return `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/image/fetch/${encodedUrl}`;
 };
 
-export const uploadImage = async (
-  buffer: Buffer,
-  folder: string,
-  width?: number,
-): Promise<string> => {
-  const processedImage = await sharp(buffer)
-    .resize(width ? { width } : undefined)
-    .png({ quality: 80 })
-    .toBuffer();
-
-  return new Promise((resolve, reject) => {
-    cloudinary.uploader
-      .upload_stream({ resource_type: 'image', folder }, (error, result) => {
-        if (error || !result?.secure_url) {
-          reject(new Error('Failed to upload image to Cloudinary.'));
-        } else {
-          resolve(result.secure_url);
-        }
-      })
-      .end(processedImage);
-  });
-};
-
 export const verifyImageExists = async (url: string): Promise<boolean> => {
   try {
     try {
@@ -107,7 +83,7 @@ export const convertToJpegUrl = (url: string): string | null => {
   return transformedUrl;
 };
 
-export const extractPublicIdFromUrl = (url: string): string | null => {
+const extractPublicIdFromUrl = (url: string): string | null => {
   if (!url || !url.includes('res.cloudinary.com')) return null;
 
   const parts = url.split('/upload/');
