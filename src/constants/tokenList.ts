@@ -506,4 +506,95 @@ export const tokenList: Token[] = [
     icon: 'https://res.cloudinary.com/dgvnuwspr/image/upload/v1764943260/GOLD_qdvnh8.png',
     decimals: 6,
   },
+  {
+    tokenName: 'Sorcerer',
+    tokenSymbol: 'SORX',
+    mintAddress: 'GmWjhA47wkPRSji6zR3RLLR9HohZFfi7ukXpSAiupump',
+    icon: 'https://api.phantom.app/image-proxy/?image=https%3A%2F%2Fipfs.io%2Fipfs%2FQmRkSrjpGnBLD6B7GaiTpCaupqa8gzpoHqoqcnJkb7TrgX&anim=false',
+    decimals: 6,
+  },
+  {
+    "tokenName": "Zora",
+    "tokenSymbol": "ZORA",
+    "mintAddress": "soKqZS9pASwBNS46G388nhK7XVtPaTyReffXEd3zora",
+    "icon": "https://assets.coingecko.com/coins/images/54693/standard/zora.jpg?1741094751",
+    "decimals": 9
+  },
+  {
+    "tokenName": "Starknet",
+    "tokenSymbol": "STRK",
+    "mintAddress": "HsRpHQn6VbyMs5b5j5SV6xQ2VvpvvCCzu19GjytVSCoz",
+    "icon": "https://assets.coingecko.com/coins/images/26433/standard/starknet.png?1696525507",
+    "decimals": 9
+  },
+  {
+    "tokenName": "Apple xStock",
+    "tokenSymbol": "AAPLx",
+    "mintAddress": "XsbEhLAtcf6HdfpFZ5xEMdqW8nfAvcsP5bdudRLJzJp",
+    "icon": "https://assets.coingecko.com/coins/images/55586/standard/Ticker_AAPL__Company_Name_Apple_Inc.__size_200x200_2x.png?1746807196",
+    "decimals": 8
+  },
+  {
+    "tokenName": "Berkshire Hathaway xStock",
+    "tokenSymbol": "BRK.BX",
+    "mintAddress": "Xs6B6zawENwAbWVi7w92rjazLuAr5Az59qgWKcNb45x",
+    "icon": "https://assets.coingecko.com/coins/images/55599/standard/Ticker_BRK.B__Company_Name_berkshire-hathaway__size_200x200_2x.png?1746857982",
+    "decimals": 8
+  },
+  {
+    "tokenName": "Circle xStock",
+    "tokenSymbol": "CRCLx",
+    "mintAddress": "XsueG8BtpquVJX9LVLLEGuViXUungE6WmK5YZ3p3bd1",
+    "icon": "https://assets.coingecko.com/coins/images/66918/standard/CRCLx.png?1751052233",
+    "decimals": 8
+  },
+  {
+    "tokenName": "MicroStrategy xStock",
+    "tokenSymbol": "MSTRx",
+    "mintAddress": "XsP7xzNPvEHS1m6qfanPUGjNmdnmsLKEoNAnHjdxxyZ",
+    "icon": "https://assets.coingecko.com/coins/images/55631/standard/Ticker_MSTR__Company_Name_MicroStrategy__size_200x200_2x.png?1746862528",
+    "decimals": 8
+  },
+  {
+    "tokenName": "NVIDIA xStock",
+    "tokenSymbol": "NVDAx",
+    "mintAddress": "Xsc9qvGR1efVDFGLrVsmkzv3qi45LTBjeUKSPmx9qEh",
+    "icon": "https://statics.solscan.io/cdn/imgs/s60?ref=68747470733a2f2f7873746f636b732d6d657461646174612e6261636b65642e66692f6c6f676f732f746f6b656e732f4e564441782e706e67",
+    "decimals": 8
+  },
+  {
+    "tokenName": "SP500 xStock",
+    "tokenSymbol": "SPYX",
+    "mintAddress": "XsoCS1TfEyfFhfvj8EtZ528L3CaKBDBRqRapnBbDF2W",
+    "icon": "https://assets.coingecko.com/coins/images/66695/standard/Ticker_SPX__Company_Name_SP500__size_200x200_2x.png?1750266819",
+    "decimals": 8
+  },
+  {
+    "tokenName": "Gamestop xStock",
+    "tokenSymbol": "GMEx",
+    "mintAddress": "Xsf9mBktVB9BSU5kf4nHxPq5hCBJ2j2ui3ecFGxPRGc",
+    "icon": "https://assets.coingecko.com/coins/images/55607/standard/Ticker_GME__Company_Name_gamestop__size_200x200_2x.png?1746858467",
+    "decimals": 8
+  },
+  {
+    "tokenName": "Sport.fun",
+    "tokenSymbol": "FUN",
+    "mintAddress": "8cn4JeRLiHTtfX6maZAsipGGyyZPdEcos3s2X3Hw3BS6",
+    "icon": "https://statics.solscan.io/cdn/imgs/s60?ref=68747470733a2f2f70726f2e73706f72742e66756e2f7374617469632f6170706c652d746f7563682d69636f6e2e706e67",
+    "decimals": 9
+  },
+  {
+    "tokenName": "Lighter",
+    "tokenSymbol": "LIT",
+    "mintAddress": "EicWvteVi2fWepEzS3FYWsnuPoP6caZfjnKqNvydLjCH",
+    "icon": "https://statics.solscan.io/cdn/imgs/s60?ref=68747470733a2f2f617277656176652e6e65742f74536877746e7a4c71556a71745a632d59736f6b3637707051634f554948685833506745596c4f30326d45",
+    "decimals": 8
+  },
+  {
+    "tokenName": "NEAR",
+    "tokenSymbol": "NEAR",
+    "mintAddress": "3ZLekZYq2qkZiSpnSvabjit34tUkjSwD1JFuW9as9wBG",
+    "icon": "https://statics.solscan.io/cdn/imgs/s60?ref=68747470733a2f2f6261666b726569656b7864763475786d376374696a766a3777716c3662746f33636f6b77733678766664626737796c727674327674696d6e7172692e697066732e7733732e6c696e6b",
+    "decimals": 9
+  },
 ];
