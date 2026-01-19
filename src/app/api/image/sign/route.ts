@@ -113,6 +113,7 @@ export async function POST(request: NextRequest) {
       signature,
       timestamp,
       cloudName,
+      apiKey,
       folder: body.folder,
       publicId: body.public_id,
       resourceType: body.resource_type,
