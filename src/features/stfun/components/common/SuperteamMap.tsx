@@ -300,7 +300,7 @@ export default function SuperteamMap({
   return (
     <div
       ref={containerRef}
-      className="relative flex w-full items-center justify-center overflow-hidden rounded-2xl border-[#3f3f3f]"
+      className="relative -mt-6 flex w-full items-center justify-center overflow-hidden rounded-2xl border-[#3f3f3f]"
     />
   );
 }

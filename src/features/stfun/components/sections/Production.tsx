@@ -127,7 +127,7 @@ export default function Production() {
       </div>
 
       <div className="all-cards-wrapper mt-[68px] flex items-center justify-center lg:mt-0">
-        <div className="cards-container flex max-w-[240px] flex-col gap-x-8 sm:max-w-full sm:gap-y-8 md:grid">
+        <div className="cards-container flex max-w-[240px] flex-col gap-x-8 sm:max-w-full md:grid">
           <IllustrationCard
             text="Earn"
             imageUrl={`${ASSET_URL}/st/cards/Earn_new.png`}

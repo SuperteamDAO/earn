@@ -7,26 +7,24 @@ import { Superteams } from '@/constants/Superteam';
 
 import SuperteamMap from '../common/SuperteamMap';
 
-export default function Geographies() {
-  const [imageErrors, setImageErrors] = useState<Record<string, boolean>>({});
-  const [hoveredSuperteam, setHoveredSuperteam] = useState<string | null>(null);
+const forceFlagForCountries = ['georgia', 'netherlands', 'spain', 'ukraine'];
 
-  const handleImageError = (slug: string) => {
-    setImageErrors((prev) => ({ ...prev, [slug]: true }));
-  };
+export default function Geographies() {
+  const [hoveredSuperteam, setHoveredSuperteam] = useState<string | null>(null);
 
   return (
     <div className="col-span-5">
-      <h2 className="partners-text section-heading font-secondary mb-10 text-center text-[24px] leading-[22px] font-bold text-white md:text-[32px] lg:leading-[26px]">
+      <h2 className="partners-text section-heading font-secondary mb-10 text-center text-[24px] leading-[22px] font-bold text-white md:mb-10 md:text-[32px] lg:leading-[26px]">
         Find Your Nearest Superteam
       </h2>
 
-      <div className="col-span-5 mt-10">
-        <div className="mx-auto mt-0 max-w-[1200px] px-2 md:px-4 lg:mt-[53px]">
-          <div className="mb-10 flex flex-wrap justify-center gap-2.5 md:gap-3">
+      <div className="col-span-5">
+        <div className="mx-auto mt-10 max-w-[1200px] px-2">
+          <div className="flex flex-wrap justify-center gap-2.5 md:gap-3">
             {Superteams.map((superteam) => {
-              const hasImageError = imageErrors[superteam.slug];
-              const showFlag = hasImageError || !superteam.icons;
+              const showFlag =
+                !superteam.icons ||
+                forceFlagForCountries.includes(superteam.slug);
               const isHovered = hoveredSuperteam === superteam.code;
 
               return (
@@ -53,7 +51,6 @@ export default function Geographies() {
                           src={superteam.icons}
                           alt={superteam.displayValue}
                           className="h-full w-auto object-cover"
-                          onError={() => handleImageError(superteam.slug)}
                         />
                       )}
                     </div>
