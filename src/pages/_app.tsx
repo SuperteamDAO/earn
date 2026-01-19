@@ -1,6 +1,7 @@
 import { GoogleAnalytics } from '@next/third-parties/google';
 import type { AppProps } from 'next/app';
 import dynamic from 'next/dynamic';
+import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 
@@ -80,6 +81,14 @@ function App({ Component, pageProps }: AppProps) {
   if (isST) {
     return (
       <div className={`${stFontVariables} st-app flex min-h-screen flex-col`}>
+        <Head>
+          <link
+            rel="icon"
+            type="image/png"
+            href="/st-favicon.png"
+            key="icon-png"
+          />
+        </Head>
         <Header className="mx-auto px-10 md:px-[72px]" />
         <div className="relative mx-auto grid flex-1 grid-cols-5 gap-5 px-10 md:px-[72px]">
           <Component {...pageProps} key={router.asPath} />
