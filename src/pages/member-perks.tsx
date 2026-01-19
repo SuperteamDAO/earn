@@ -1,8 +1,8 @@
 import axios from 'axios';
 import { type GetServerSideProps } from 'next';
-import Head from 'next/head';
 
 import { ASSET_URL } from '@/constants/ASSET_URL';
+import { Meta } from '@/layouts/Meta';
 
 import HeroContainer from '@/features/stfun/components/common/HeroContainer';
 import PerksGrid from '@/features/stfun/components/grids/PerksGrid';
@@ -20,15 +20,12 @@ export default function MemberPerks({
 }: MemberPerksProps) {
   return (
     <>
-      <Head>
-        <title>Member Perks</title>
-        <meta
-          name="description"
-          content="Explore perks Superteam Members around the world are eligible to claim!"
-        />
-        <meta name="og:title" content="Member Perks" />
-        <meta name="twitter:title" content="Member Perks" />
-      </Head>
+      <Meta
+        title="Member Perks | Exclusive Benefits for Superteam Members"
+        description="Being a Superteam member comes with many perks. Explore exclusive perks available to members around the world."
+        canonical="https://superteam.fun/member-perks/"
+        og={`${ASSET_URL}/st/og/og-member-perks.png`}
+      />
 
       <img
         src={`${ASSET_URL}/st/images/project-bg-lg.webp`}

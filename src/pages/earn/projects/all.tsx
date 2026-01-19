@@ -8,7 +8,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
   return {
     redirect: {
       destination: `/earn/all/?tab=projects`,
-      permanent: false,
+      permanent: true,
     },
   };
 };

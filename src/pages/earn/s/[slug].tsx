@@ -131,7 +131,7 @@ const SponsorPage = ({ sponsor, stats }: Props) => {
           <Meta
             title={`${name} Opportunities | Superteam Earn`}
             description={`Check out all of ${name}'s latest earning opportunities on a single page.`}
-            canonical={`https://earn.superteam.fun/s/${sSlug}/`}
+            canonical={`https://superteam.fun/s/${sSlug}/`}
             og={ogImage.toString()}
           />
           <Head>

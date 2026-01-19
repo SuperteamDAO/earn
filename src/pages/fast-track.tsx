@@ -1,6 +1,5 @@
-import Head from 'next/head';
-
 import { ASSET_URL } from '@/constants/ASSET_URL';
+import { Meta } from '@/layouts/Meta';
 
 import FastTrackContainer from '@/features/stfun/components/common/FastTrackContainer';
 import Accelerator from '@/features/stfun/components/sections/Accelerator';
@@ -30,15 +29,12 @@ const stars3Shadow = generateStars(200, 2560, 2560);
 export default function FastTrack() {
   return (
     <>
-      <Head>
-        <title>Fast Track</title>
-        <meta
-          name="description"
-          content="Explore projects Superteam Members around the world have built and launched!"
-        />
-        <meta name="og:title" content="Fast Track" />
-        <meta name="twitter:title" content="Fast Track" />
-      </Head>
+      <Meta
+        title="Fast Track | Accelerate Your Solana Idea"
+        description="Global Superteam Members can receive perks & personalized support when applying to acceleration & incubation programs."
+        canonical="https://superteam.fun/fast-track/"
+        og={`${ASSET_URL}/st/og/og-fast-track.png`}
+      />
 
       <div className="col-span-5 flex min-h-[calc(100vh-72px)] flex-col">
         <section className="hero relative col-span-5 flex h-[calc(100vh-40px-32px)] flex-col items-center">

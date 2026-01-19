@@ -22,7 +22,7 @@ export default function Blocked() {
         <Meta
           title="Blocked | Superteam Earn"
           description="Explore the latest bounties on Superteam Earn, offering opportunities in the crypto space across Design, Development, and Content."
-          canonical="https://earn.superteam.fun"
+          canonical="https://superteam.fun/earn"
         />
       }
     >

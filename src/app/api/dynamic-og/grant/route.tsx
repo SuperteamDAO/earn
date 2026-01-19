@@ -103,7 +103,7 @@ export async function GET(request: Request) {
                     objectFit: 'contain',
                   }}
                   alt="logo"
-                  src={'https://earn.superteam.fun/assets/grant-icon.svg'}
+                  src={'https://superteam.fun/assets/grant-icon.svg'}
                   width="64px"
                   height="64px"
                 />

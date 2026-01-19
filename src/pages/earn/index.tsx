@@ -77,7 +77,7 @@ export default function HomePage({ potentialSession }: HomePageProps) {
           <Meta
             title="Superteam Earn | Crypto Bounties, Web3 Jobs & Solana Opportunities | Work to Earn in Crypto"
             description="Find crypto bounties, web3 jobs, and Solana opportunities. Earn crypto by completing bounties in design, development, and content. The leading platform for remote crypto work."
-            canonical="https://earn.superteam.fun"
+            canonical="https://superteam.fun/earn"
           />
           <JsonLd data={[organizationSchema, websiteSchema]} />
         </>

@@ -8,7 +8,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
   return {
     redirect: {
       destination: `/earn/all/?tab=bounties`,
-      permanent: false,
+      permanent: true,
     },
   };
 };

@@ -9,7 +9,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   return {
     redirect: {
       destination: `/earn/feed/submission/${subid}/`,
-      permanent: false,
+      permanent: true,
     },
   };
 };

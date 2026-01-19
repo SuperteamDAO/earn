@@ -52,7 +52,7 @@ export default function AllCategoryPage({
           <Meta
             title={`All ${categoryName} Opportunities | Superteam Earn`}
             description={description}
-            canonical={`https://earn.superteam.fun/earn/category/${slug}/all/`}
+            canonical={`https://superteam.fun/earn/category/${slug}/all/`}
             og={ogImage.toString()}
           />
           <Head>

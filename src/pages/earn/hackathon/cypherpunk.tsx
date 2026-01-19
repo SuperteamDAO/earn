@@ -62,7 +62,7 @@ export default function Cypherpunk({ hackathon }: { hackathon: Hackathon }) {
           <Meta
             title="Cypherpunk | Superteam Earn"
             description={`Solana Cypherpunk Online Hackathon`}
-            canonical="https://earn.superteam.fun/earn/hackathon/cypherpunk"
+            canonical="https://superteam.fun/earn/hackathon/cypherpunk"
             og="https://res.cloudinary.com/dgvnuwspr/image/upload/v1760541751/assets/hackathon/cypherpunk/og-image.png"
           />
         </>

@@ -191,7 +191,7 @@ function MainContent({ listing, grant, source }: SourceType) {
         onClick={onListingLinkCopy}
       >
         <span className="truncate font-normal text-slate-500">
-          earn.superteam.fun/{source === 'grant' ? 'grants' : 'listing'}/
+          superteam.fun/earn/{source === 'grant' ? 'grants' : 'listing'}/
           {source === 'grant' ? grant?.slug : listing?.slug}
         </span>
         {hasCopied ? (

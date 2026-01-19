@@ -4,7 +4,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
   return {
     redirect: {
       destination: '/earn/hackathon/talent-olympics',
-      permanent: false,
+      permanent: true,
     },
   };
 };

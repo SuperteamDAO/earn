@@ -60,7 +60,7 @@ const SkillPage = ({
           <Meta
             title={`${skillName} Opportunities | Superteam Earn`}
             description={description}
-            canonical={`https://earn.superteam.fun/earn/skill/${slug}/`}
+            canonical={`https://superteam.fun/earn/skill/${slug}/`}
             og={ogImage.toString()}
           />
           <Head>

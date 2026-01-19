@@ -4,7 +4,7 @@ import { generateSitemaps } from '../sitemap';
 
 export const revalidate = 86400;
 
-const baseUrl = 'https://earn.superteam.fun';
+const baseUrl = 'https://superteam.fun';
 
 function isProduction(): boolean {
   return process.env.NEXT_PUBLIC_VERCEL_ENV === 'production';

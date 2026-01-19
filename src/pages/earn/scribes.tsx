@@ -4,7 +4,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
   return {
     redirect: {
       destination: '/earn/hackathon/scribes',
-      permanent: false,
+      permanent: true,
     },
   };
 };

@@ -357,7 +357,7 @@ function TalentProfile({ talent, stats, bgIndex }: TalentProps) {
                 <meta name="twitter:description" content={description} />
                 <link
                   rel="canonical"
-                  href={`https://earn.superteam.fun/t/${talent?.username}/`}
+                  href={`https://superteam.fun/earn/t/${talent?.username}/`}
                 />
               </>
             )}

@@ -49,7 +49,7 @@ export default function AllRegionsPage({
             <Meta
               title={`Welcome to Superteam Earn ${displayName} | Discover Bounties and Grants`}
               description={`Welcome to Superteam ${displayName}'s page — Discover bounties and grants and become a part of the global crypto community`}
-              canonical={`https://earn.superteam.fun/earn/regions/${slug}/all/`}
+              canonical={`https://superteam.fun/earn/regions/${slug}/all/`}
               og={ogImage.toString()}
             />
             <JsonLd data={[organizationSchema, breadcrumbSchema]} />
@@ -92,7 +92,7 @@ export default function AllRegionsPage({
             <Meta
               title={`Welcome to Superteam Earn ${countryName} | Discover Bounties and Grants`}
               description={`Welcome to Superteam ${countryName}'s page — Discover bounties and grants and become a part of the global crypto community`}
-              canonical={`https://earn.superteam.fun/earn/regions/${slug}/all/`}
+              canonical={`https://superteam.fun/earn/regions/${slug}/all/`}
               og={ogImage.toString()}
             />
             <JsonLd data={[organizationSchema, breadcrumbSchema]} />

@@ -1,8 +1,8 @@
 import axios from 'axios';
 import { type GetServerSideProps } from 'next';
-import Head from 'next/head';
 
 import { ASSET_URL } from '@/constants/ASSET_URL';
+import { Meta } from '@/layouts/Meta';
 
 import HeroContainer from '@/features/stfun/components/common/HeroContainer';
 import ProjectsGrid from '@/features/stfun/components/grids/ProjectsGrid';
@@ -26,15 +26,12 @@ interface ProjectsPageProps {
 export default function Projects({ projects }: ProjectsPageProps) {
   return (
     <>
-      <Head>
-        <title>Projects</title>
-        <meta
-          name="description"
-          content="Explore projects Superteam Members around the world have built and launched!"
-        />
-        <meta name="og:title" content="Projects" />
-        <meta name="twitter:title" content="Projects" />
-      </Head>
+      <Meta
+        title="Projects | Industry Leading Builds by Superteam"
+        description="Explore industry-leading projects that Superteam Members around the world have built and launched on Solana."
+        canonical="https://superteam.fun/projects/"
+        og={`${ASSET_URL}/st/og/og-projects.png`}
+      />
 
       <img
         src={`${ASSET_URL}/st/images/project-bg-lg.webp`}

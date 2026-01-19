@@ -62,7 +62,7 @@ function WinnerBounty({
         name="twitter:title"
         content={`${initialBounty?.title || 'Bounty'} | Superteam Earn`}
       />
-      <meta name="twitter:site" content="https://earn.superteam.fun" />
+      <meta name="twitter:site" content="https://superteam.fun/earn" />
       <meta name="twitter:creator" content="@SuperteamEarn" />
       <meta name="twitter:image" content={`${image.toString()}`} />
       <meta name="twitter:card" content="summary_large_image" />

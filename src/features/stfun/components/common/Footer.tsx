@@ -22,7 +22,7 @@ export default function Footer() {
         <div className="footer-texts mt-[64px] ml-[40px] flex flex-col pb-10 text-white md:flex-row lg:mt-0 lg:mr-[72px] lg:ml-0 lg:text-right">
           <div className="text-col-1 flex flex-col items-start gap-4 md:items-end">
             <a
-              href="https://earn.superteam.fun"
+              href="https://superteam.fun/earn"
               target="_blank"
               rel="noopener noreferrer"
               className="footer-text"

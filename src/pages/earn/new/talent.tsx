@@ -39,7 +39,7 @@ export default function Talent() {
         <Meta
           title="Create Your Profile to Access Bounties & Grants | Superteam Earn"
           description="Become part of Superteam's talent network, where you can present your skills and collaborate on various crypto bounties, grants, and projects."
-          canonical="https://earn.superteam.fun/earn/new/talent/"
+          canonical="https://superteam.fun/earn/new/talent/"
         />
       }
     >

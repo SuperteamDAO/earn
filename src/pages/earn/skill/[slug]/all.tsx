@@ -59,7 +59,7 @@ export default function AllSkillPage({
           <Meta
             title={`All ${skillName} Opportunities | Superteam Earn`}
             description={description}
-            canonical={`https://earn.superteam.fun/earn/skill/${slug}/all/`}
+            canonical={`https://superteam.fun/earn/skill/${slug}/all/`}
             og={ogImage.toString()}
           />
           <Head>

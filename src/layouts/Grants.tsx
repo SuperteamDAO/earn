@@ -95,7 +95,7 @@ export function GrantPageLayout({
           <Meta
             title={`${initialGrant?.title || 'Grant'} | Superteam Earn`}
             description={`${initialGrant?.title || 'Grant'} by ${initialGrant?.sponsor?.name}${rewardText ? ` | Apply for funding ${rewardText}` : ''} in ${initialGrant?.token} on Superteam Earn`}
-            canonical={`https://earn.superteam.fun/grants/${initialGrant?.slug}/`}
+            canonical={`https://superteam.fun/earn/grants/${initialGrant?.slug}/`}
             og={ogImageUrl}
           />
           <Head>

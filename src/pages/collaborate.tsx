@@ -1,6 +1,5 @@
-import Head from 'next/head';
-
 import { ASSET_URL } from '@/constants/ASSET_URL';
+import { Meta } from '@/layouts/Meta';
 
 import HeroContainer from '@/features/stfun/components/common/HeroContainer';
 import CollabServices from '@/features/stfun/components/sections/CollabServices';
@@ -34,15 +33,12 @@ const stars3AfterShadow = generateStars(200, 2560, 2560);
 export default function Collaborate() {
   return (
     <>
-      <Head>
-        <title>Work with us</title>
-        <meta
-          name="description"
-          content="Explore projects Superteam Members around the world have built and launched!"
-        />
-        <meta name="og:title" content="Work with us" />
-        <meta name="twitter:title" content="Work with us" />
-      </Head>
+      <Meta
+        title="Work with Superteam | Access the Best Talent on Solana"
+        description="Get access to the best talent on Solana. Superteam is the forefront community for web3, powered by Solana."
+        canonical="https://superteam.fun/collaborate/"
+        og={`${ASSET_URL}/st/og/og-collaborate.png`}
+      />
 
       <div className="col-span-5 h-fit">
         <section className="hero relative col-span-5 flex h-[calc(100vh-40px-32px)] flex-col items-center">

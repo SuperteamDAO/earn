@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 
 import { ASSET_URL } from '@/constants/ASSET_URL';
 import { AppConfig } from '@/utils/AppConfig';
+import { STConfig } from '@/utils/STConfig';
 
 type IMetaProps = {
   readonly title: string;
@@ -11,10 +12,24 @@ type IMetaProps = {
   readonly og?: string;
 };
 
+const ST_ROUTES = [
+  '/',
+  '/collaborate',
+  '/fast-track',
+  '/member-perks',
+  '/projects',
+];
+
 const Meta = (props: IMetaProps) => {
   const router = useRouter();
-  const ogImage = props.og ?? `${ASSET_URL}/og/og.png`;
+  const isSTRoute = ST_ROUTES.includes(router.pathname);
   const isEarnRoute = router.pathname.startsWith('/earn');
+  const config = isSTRoute ? STConfig : AppConfig;
+  const twitterSite = isSTRoute ? '@Superteam' : '@SuperteamEarn';
+  const defaultOg = isSTRoute
+    ? `${ASSET_URL}/st/og/og.png`
+    : `${ASSET_URL}/og/og.png`;
+  const ogImage = props.og ?? defaultOg;
 
   return (
     <Head>
@@ -76,10 +91,10 @@ const Meta = (props: IMetaProps) => {
       {props.canonical && (
         <meta property="og:url" content={props.canonical} key="og:url" />
       )}
-      <meta property="og:locale" content={AppConfig.locale} key="og:locale" />
+      <meta property="og:locale" content={config.locale} key="og:locale" />
       <meta
         property="og:site_name"
-        content={AppConfig.site_name}
+        content={config.site_name}
         key="og:site_name"
       />
       <meta property="og:image" content={ogImage} key="og:image" />
@@ -90,10 +105,10 @@ const Meta = (props: IMetaProps) => {
         content="summary_large_image"
         key="twitter:card"
       />
-      <meta name="twitter:site" content="@SuperteamEarn" key="twitter:site" />
+      <meta name="twitter:site" content={twitterSite} key="twitter:site" />
       <meta
         name="twitter:creator"
-        content="@SuperteamEarn"
+        content={twitterSite}
         key="twitter:creator"
       />
       <meta

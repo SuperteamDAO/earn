@@ -241,7 +241,7 @@ export function SponsorLayout({
           <Meta
             title="Superteam Earn | Work to Earn in Crypto"
             description="Explore the latest bounties on Superteam Earn, offering opportunities in the crypto space across Design, Development, and Content."
-            canonical="https://earn.superteam.fun"
+            canonical="https://superteam.fun"
           />
         }
       >

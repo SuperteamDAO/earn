@@ -58,7 +58,7 @@ export default function Radar() {
         <Meta
           title="Radar | Superteam Earn"
           description="Build a project for the latest Solana global hackathon!"
-          canonical="https://earn.superteam.fun"
+          canonical="https://superteam.fun/earn/hackathon/radar"
           og={ASSET_URL + `/og/hackathon/${slug}.png`}
         />
       }

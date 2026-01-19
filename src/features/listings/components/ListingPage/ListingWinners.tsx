@@ -52,7 +52,7 @@ export function ListingWinners({ bounty }: Props) {
   const openWinnerLink = () => {
     return tweetEmbedLink(
       tweetTemplate(
-        'https://earn.superteam.fun/listing/' + bounty?.slug + '/winner',
+        'https://superteam.fun/earn/listing/' + bounty?.slug + '/winner',
       ),
     );
   };

@@ -144,7 +144,7 @@ export default function Production() {
                   'End-to-end bounty management',
                 ],
                 btnText: 'Start Earning',
-                btnLink: 'https://earn.superteam.fun',
+                btnLink: 'https://superteam.fun/earn',
               })
             }
           />
@@ -170,7 +170,7 @@ export default function Production() {
                   'paid out every week',
                 ],
                 btnText: 'Apply now!',
-                btnLink: 'https://earn.superteam.fun/grants/',
+                btnLink: 'https://superteam.fun/earn/grants/',
               })
             }
           />

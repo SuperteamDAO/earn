@@ -131,7 +131,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         'Sr no': i + 1,
         Name: `${user.firstName} ${user.lastName}`,
         'Email ID': user.email,
-        'Profile Link': `https://earn.superteam.fun/t/${user.username}`,
+        'Profile Link': `https://superteam.fun/earn/t/${user.username}`,
         'User Wallet': user.walletAddress,
         'User Social Link': getSocialMediaLink(user),
         'Twitter Link': application.twitter || '',

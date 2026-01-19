@@ -14,7 +14,7 @@ import {
   getParentSkillSlugs,
 } from '@/features/listings/utils/skill';
 
-const baseUrl = 'https://earn.superteam.fun';
+const baseUrl = 'https://superteam.fun';
 const MAX_URLS_PER_SITEMAP = 50000;
 
 export const revalidate = 86400; // 1 day
