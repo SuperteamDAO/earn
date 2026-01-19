@@ -36,13 +36,13 @@ export default function Geographies() {
                   onMouseEnter={() => setHoveredSuperteam(superteam.code)}
                   onMouseLeave={() => setHoveredSuperteam(null)}
                 >
-                  <div className="st-accordion relative flex h-[40px] w-full flex-row items-center justify-between overflow-hidden rounded-lg pr-2 text-white md:h-[42px] md:pr-3">
+                  <div className="st-accordion relative flex h-[40px] w-full flex-row items-center justify-between overflow-hidden rounded-lg pr-2 text-white md:h-[42px]">
                     <div className="relative flex h-full items-center overflow-hidden">
                       {showFlag ? (
-                        <div className="flex h-full items-center justify-center px-2 md:px-2">
+                        <div className="flex h-full items-center justify-center px-1">
                           <UserFlag
                             location={superteam.code}
-                            size="24px"
+                            size="20px"
                             isCode
                           />
                         </div>
@@ -54,10 +54,8 @@ export default function Geographies() {
                         />
                       )}
                     </div>
-                    <div className="h-container flex w-full flex-col text-left md:flex-row md:items-center">
-                      <div className="font-secondary z-1 ml-[12px] text-left text-[12px] leading-[14px] font-semibold md:ml-[20px] md:text-[15px] md:leading-[18px] lg:ml-[24px] lg:text-[16px]">
-                        <p>{superteam.displayValue}</p>
-                      </div>
+                    <div className="font-secondary z-1 pl-2 text-left text-[12px] leading-[14px] font-semibold md:text-[15px] md:leading-[18px] lg:text-[16px]">
+                      <p>{superteam.displayValue}</p>
                     </div>
                   </div>
                 </div>
