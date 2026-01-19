@@ -54,6 +54,10 @@ export function extractPublicIdFromUrl(url: string): string | null {
     'd_',
     'fl_',
     'if_',
+    'ar_',
+    'bo_',
+    'co_',
+    'dpr_',
   ];
 
   while (startIndex < segments.length) {

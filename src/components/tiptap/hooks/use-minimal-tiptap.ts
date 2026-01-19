@@ -212,20 +212,34 @@ export const useMinimalTiptapEditor = ({
           return;
         }
 
-        const deletionPromises = Array.from(pendingDeletionsRef.current).map(
-          async (src) => {
+        const deletionResults = await Promise.all(
+          Array.from(pendingDeletionsRef.current).map(async (src) => {
             try {
               await deleteImageFromCloudinary(src, imageSetting.source);
               trackedImagesRef.current.delete(src);
               console.log('Successfully deleted image:', src);
+              return { src, success: true };
             } catch (error) {
               console.error('Error deleting image:', error);
+              return { src, success: false };
             }
-          },
+          }),
         );
-        await Promise.all(deletionPromises);
-        pendingDeletionsRef.current.clear();
-        console.log('Cleanup completed');
+
+        deletionResults.forEach(({ src, success }) => {
+          if (success) {
+            pendingDeletionsRef.current.delete(src);
+          }
+        });
+
+        const failedCount = deletionResults.filter((r) => !r.success).length;
+        if (failedCount > 0) {
+          console.warn(
+            `Cleanup completed with ${failedCount} failed deletions (retained for retry)`,
+          );
+        } else {
+          console.log('Cleanup completed successfully');
+        }
       },
       clearPendingDeletions: () => {
         pendingDeletionsRef.current.clear();

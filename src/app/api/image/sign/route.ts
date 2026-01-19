@@ -84,7 +84,15 @@ export async function POST(request: NextRequest) {
         },
       });
 
-      if (!user?.currentSponsorId && user?.UserSponsors.length === 0) {
+      if (!user) {
+        logger.warn(`User ${userId} not found for sponsor upload`);
+        return NextResponse.json(
+          { error: 'User not found' },
+          { status: 404, headers: rateLimitHeaders },
+        );
+      }
+
+      if (!user.currentSponsorId && user.UserSponsors.length === 0) {
         logger.warn(
           `User ${userId} attempted sponsor upload without sponsor access`,
         );
@@ -104,7 +112,15 @@ export async function POST(request: NextRequest) {
         },
       });
 
-      if (!user?.currentSponsorId && user?.UserSponsors.length === 0) {
+      if (!user) {
+        logger.warn(`User ${userId} not found for description upload`);
+        return NextResponse.json(
+          { error: 'User not found' },
+          { status: 404, headers: rateLimitHeaders },
+        );
+      }
+
+      if (!user.currentSponsorId && user.UserSponsors.length === 0) {
         logger.warn(
           `User ${userId} attempted description upload without sponsor access`,
         );
