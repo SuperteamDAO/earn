@@ -134,12 +134,6 @@ export const useUploadImage = (): UseUploadReturn => {
 
       setProgress(50);
 
-      console.log('Requesting signature for upload...', {
-        folder: options.folder,
-        resource_type: options.resource_type || 'auto',
-        file_size: compressedFile.size,
-      });
-
       const signatureResponse = await api.post('/api/image/sign', {
         folder: options.folder,
         public_id: options.public_id,
@@ -148,45 +142,22 @@ export const useUploadImage = (): UseUploadReturn => {
         source: options.source,
       });
 
-      console.log('Signature response received:', {
-        hasSignature: !!signatureResponse.data.signature,
-        hasApiKey: !!signatureResponse.data.apiKey,
-        hasCloudName: !!signatureResponse.data.cloudName,
-        cloudName: signatureResponse.data.cloudName,
-      });
-
       const signatureData = signatureResponse.data;
       setProgress(75);
-
-      if (
-        !signatureData.signature ||
-        !signatureData.apiKey ||
-        !signatureData.cloudName
-      ) {
-        console.error('Invalid signature response:', signatureData);
-        throw new Error('Invalid signature data received from server');
-      }
 
       const formData = new FormData();
       formData.append('file', compressedFile);
       formData.append('signature', signatureData.signature);
       formData.append('timestamp', signatureData.timestamp.toString());
       formData.append('folder', signatureData.folder);
-      formData.append('api_key', signatureData.apiKey);
+      formData.append(
+        'api_key',
+        process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY || '',
+      );
 
       if (signatureData.publicId) {
         formData.append('public_id', signatureData.publicId);
       }
-
-      console.log('Uploading to Cloudinary with:', {
-        cloudName: signatureData.cloudName,
-        folder: signatureData.folder,
-        signature: signatureData.signature?.substring(0, 10) + '...',
-        timestamp: signatureData.timestamp,
-        apiKey: signatureData.apiKey
-          ? signatureData.apiKey.substring(0, 5) + '...'
-          : 'MISSING',
-      });
 
       const uploadResponse = await fetch(
         `https://api.cloudinary.com/v1_1/${signatureData.cloudName}/image/upload`,
@@ -205,27 +176,12 @@ export const useUploadImage = (): UseUploadReturn => {
 
       setProgress(100);
       return result;
-    } catch (err: any) {
-      let errorMessage = 'Upload failed';
-
-      if (err?.response?.status === 401) {
-        errorMessage = 'Authentication required. Please sign in and try again.';
-        console.error(
-          'Authentication error during upload:',
-          err.response?.data,
-        );
-      } else if (err?.response?.data?.error) {
-        errorMessage = err.response.data.error;
-        console.error('Upload API error:', err.response.data);
-      } else if (err instanceof Error) {
-        errorMessage = err.message;
-        console.error('Upload error:', err);
-      } else {
-        console.error('Unknown upload error:', err);
-      }
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Upload failed';
 
       setError(errorMessage);
-      throw new Error(errorMessage);
+      console.error('Upload error:', err);
+      throw err;
     } finally {
       setUploading(false);
     }

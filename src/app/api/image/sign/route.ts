@@ -1,21 +1,15 @@
 import { v2 as cloudinary } from 'cloudinary';
-import { cookies, headers } from 'next/headers';
+import { headers } from 'next/headers';
 import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
 import logger from '@/lib/logger';
 import { safeStringify } from '@/utils/safeStringify';
 
-import { getPrivyToken } from '@/features/auth/utils/getPrivyToken';
+import { getUserSession } from '@/features/auth/utils/getUserSession';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
-
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
 
 const uploadSignatureSchema = z.object({
   folder: z
@@ -37,32 +31,25 @@ const uploadSignatureSchema = z.object({
     invalid_type_error: 'Resource type must be one of: image, video, raw, auto',
   }),
   file_size: z.number().int().describe('File size in bytes'),
-  source: z.string().optional(),
 });
 
 export async function POST(request: NextRequest) {
   try {
-    const headersList = await headers();
-    const authHeader = headersList.get('authorization');
-    const cookieHeader = headersList.get('cookie');
+    const session = await getUserSession(await headers());
 
-    const req = {
-      headers: { authorization: authHeader, cookie: cookieHeader },
-      cookies: Object.fromEntries(
-        (await cookies()).getAll().map((c) => [c.name, c.value]),
-      ),
-    };
-
-    const privyDid = await getPrivyToken(req as any);
-
-    if (!privyDid) {
-      logger.warn(
-        'Unauthorized upload signature request - no valid Privy token',
+    if (session.error || !session.data) {
+      logger.warn('Unauthorized upload signature request', {
+        error: session.error,
+        status: session.status,
+      });
+      return NextResponse.json(
+        { error: session.error || 'Unauthorized' },
+        { status: session.status || 401 },
       );
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    logger.debug(`Authenticated Privy user: ${privyDid}`);
+    const userId = session.data.userId;
+    logger.debug(`Authenticated user: ${userId}`);
 
     const rawBody = await request.json();
 
@@ -120,7 +107,6 @@ export async function POST(request: NextRequest) {
       signature,
       timestamp,
       cloudName,
-      apiKey,
       folder: body.folder,
       publicId: body.public_id,
       resourceType: body.resource_type,
