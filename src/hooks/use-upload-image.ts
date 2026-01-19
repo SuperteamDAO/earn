@@ -174,13 +174,19 @@ export const useUploadImage = (): UseUploadReturn => {
       formData.append('folder', signatureData.folder);
       formData.append('api_key', signatureData.apiKey);
 
-      if (signatureData.resourceType) {
-        formData.append('resource_type', signatureData.resourceType);
-      }
-
       if (signatureData.publicId) {
         formData.append('public_id', signatureData.publicId);
       }
+
+      console.log('Uploading to Cloudinary with:', {
+        cloudName: signatureData.cloudName,
+        folder: signatureData.folder,
+        signature: signatureData.signature?.substring(0, 10) + '...',
+        timestamp: signatureData.timestamp,
+        apiKey: signatureData.apiKey
+          ? signatureData.apiKey.substring(0, 5) + '...'
+          : 'MISSING',
+      });
 
       const uploadResponse = await fetch(
         `https://api.cloudinary.com/v1_1/${signatureData.cloudName}/image/upload`,
