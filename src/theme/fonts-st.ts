@@ -4,7 +4,7 @@ import localFont from 'next/font/local';
  * Satoshi Variable Font - Primary font for ST body text
  * Supports weights 300-900 (use font-weight to control)
  */
-export const satoshi = localFont({
+const satoshi = localFont({
   src: [
     {
       path: '../../public/fonts/Satoshi-Variable.woff2',
@@ -20,7 +20,7 @@ export const satoshi = localFont({
  * Archivo Semi Expanded - Secondary font for ST headings
  * Multiple weights for different heading styles
  */
-export const archivo = localFont({
+const archivo = localFont({
   src: [
     {
       path: '../../public/fonts/Archivo_SemiExpanded-Regular.ttf',
@@ -46,7 +46,7 @@ export const archivo = localFont({
  * DM Sans Variable Font - Used for specific ST heading styles
  * Supports weights 100-900 (use font-weight to control)
  */
-export const dmSans = localFont({
+const dmSans = localFont({
   src: '../../public/fonts/DMSans-Variable.ttf',
   variable: '--font-dm-sans',
   display: 'swap',

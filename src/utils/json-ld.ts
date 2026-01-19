@@ -11,7 +11,7 @@ interface BaseSchema {
   readonly '@type': string;
 }
 
-export interface OrganizationSchema extends BaseSchema {
+interface OrganizationSchema extends BaseSchema {
   readonly '@type': 'Organization';
   readonly name: string;
   readonly url?: string;
@@ -23,7 +23,7 @@ export interface OrganizationSchema extends BaseSchema {
   readonly address?: string;
 }
 
-export interface WebSiteSchema extends BaseSchema {
+interface WebSiteSchema extends BaseSchema {
   readonly '@type': 'WebSite';
   readonly name: string;
   readonly url: string;
@@ -31,20 +31,20 @@ export interface WebSiteSchema extends BaseSchema {
   readonly potentialAction?: SearchActionSchema;
 }
 
-export interface SearchActionSchema {
+interface SearchActionSchema {
   readonly '@type': 'SearchAction';
   readonly target: string;
   readonly 'query-input': string;
 }
 
-export interface ImageObjectSchema {
+interface ImageObjectSchema {
   readonly '@type': 'ImageObject';
   readonly url: string;
   readonly width?: number;
   readonly height?: number;
 }
 
-export interface JobPostingSchema extends BaseSchema {
+interface JobPostingSchema extends BaseSchema {
   readonly '@type': 'JobPosting';
   readonly title: string;
   readonly description: string;
@@ -66,7 +66,7 @@ export interface JobPostingSchema extends BaseSchema {
   };
 }
 
-export interface MonetaryAmountSchema {
+interface MonetaryAmountSchema {
   readonly '@type': 'MonetaryAmount';
   readonly currency: string;
   readonly value?: {
@@ -78,7 +78,7 @@ export interface MonetaryAmountSchema {
   };
 }
 
-export interface JobLocationSchema {
+interface JobLocationSchema {
   readonly '@type': 'Place';
   readonly address?: {
     readonly '@type': 'PostalAddress';
@@ -90,7 +90,7 @@ export interface JobLocationSchema {
   };
 }
 
-export interface MonetaryGrantSchema extends BaseSchema {
+interface MonetaryGrantSchema extends BaseSchema {
   readonly '@type': 'MonetaryGrant';
   readonly name: string;
   readonly description: string;
@@ -102,12 +102,12 @@ export interface MonetaryGrantSchema extends BaseSchema {
   readonly image?: string | ImageObjectSchema;
 }
 
-export interface BreadcrumbListSchema extends BaseSchema {
+interface BreadcrumbListSchema extends BaseSchema {
   readonly '@type': 'BreadcrumbList';
   readonly itemListElement: readonly BreadcrumbItemSchema[];
 }
 
-export interface CollectionPageSchema extends BaseSchema {
+interface CollectionPageSchema extends BaseSchema {
   readonly '@type': 'CollectionPage';
   readonly name: string;
   readonly description?: string;
@@ -122,19 +122,19 @@ export interface CollectionPageSchema extends BaseSchema {
   };
 }
 
-export interface BreadcrumbItemSchema {
+interface BreadcrumbItemSchema {
   readonly '@type': 'ListItem';
   readonly position: number;
   readonly name: string;
   readonly item?: string;
 }
 
-export interface PlaceSchema {
+interface PlaceSchema {
   readonly '@type': 'Place';
   readonly name: string;
 }
 
-export interface PersonSchema extends BaseSchema {
+interface PersonSchema extends BaseSchema {
   readonly '@type': 'Person';
   readonly name: string;
   readonly url?: string;
