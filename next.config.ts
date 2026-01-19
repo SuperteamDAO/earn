@@ -25,7 +25,7 @@ const baseCsp = `
   default-src 'self';
   script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://us-assets.i.posthog.com https://www.google-analytics.com https://challenges.cloudflare.com;
   style-src 'self' 'unsafe-inline' https://unpkg.com https://fonts.googleapis.com https://us.posthog.com;
-  img-src 'self' blob: data: https://res.cloudinary.com https://*.googleusercontent.com https://s2.coinmarketcap.com https://statics.solscan.io https://googletagmanager.com https://assets.coingecko.com https://avatars.githubusercontent.com;
+  img-src 'self' blob: data: https://res.cloudinary.com https://*.googleusercontent.com https://googletagmanager.com;
   connect-src 'self' blob:  https://auth.privy.io https://*.rpc.privy.systems https://api.mainnet-beta.solana.com https://api.devnet.solana.com https://api.testnet.solana.com https://us.i.posthog.com https://app.posthog.com https://internal-j.posthog.com https://us.posthog.com https://*.helius-rpc.com wss://mainnet.helius-rpc.com https://ipapi.co wss://earn-vibe-production.up.railway.app https://verify.walletconnect.com https://verify.walletconnect.org https://res.cloudinary.com https://api.cloudinary.com https://www.google-analytics.com https://privy.earn.superteam.fun;
   media-src 'self' blob: data: https://res.cloudinary.com;
   font-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com;
@@ -158,6 +158,39 @@ const nextConfig: NextConfig = {
       {
         source: '/docs-keep/:path*',
         destination: 'https://us.i.posthog.com/:path*',
+      },
+      {
+        source: '/cdn/coinmarketcap/:path*',
+        destination: 'https://s2.coinmarketcap.com/:path*',
+      },
+      {
+        source: '/cdn/solscan/:path*',
+        destination: 'https://statics.solscan.io/:path*',
+      },
+      {
+        source: '/cdn/coingecko/:path*',
+        destination: 'https://assets.coingecko.com/:path*',
+      },
+      {
+        source: '/cdn/github/:path*',
+        destination: 'https://avatars.githubusercontent.com/:path*',
+      },
+      {
+        source: '/cdn/phantom/:path*',
+        destination: 'https://api.phantom.app/:path*',
+      },
+      {
+        source: '/cdn/arweave/:path*',
+        destination: 'https://arweave.net/:path*',
+      },
+      {
+        source: '/cdn/ipfs-io/:path*',
+        destination: 'https://ipfs.io/:path*',
+      },
+      {
+        source: '/cdn/ipfs-nft/:path*',
+        destination:
+          'https://bafkreibcamcjwo5z3itvybznrdtb3fgeiplfy36izu75jygxkt7jzoq4ju.ipfs.nftstorage.link/:path*',
       },
     ];
   },

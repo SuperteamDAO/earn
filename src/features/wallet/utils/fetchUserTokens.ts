@@ -48,7 +48,7 @@ export async function fetchUserTokens(
     const solAsset: TokenAsset = {
       tokenAddress: 'So11111111111111111111111111111111111111112',
       tokenSymbol: 'SOL',
-      tokenImg: 'https://s2.coinmarketcap.com/static/img/coins/64x64/16116.png',
+      tokenImg: '/cdn/coinmarketcap/static/img/coins/64x64/16116.png',
       amount: solAmountNumber,
       usdValue: solAmountNumber * solPrice,
       tokenName: 'Solana',
