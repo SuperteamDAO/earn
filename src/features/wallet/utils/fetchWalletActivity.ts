@@ -99,8 +99,7 @@ export async function fetchWalletActivity(
             tokenAddress: 'So11111111111111111111111111111111111111112',
             counterpartyAddress,
             tokenSymbol: 'SOL',
-            tokenImg:
-              'https://s2.coinmarketcap.com/static/img/coins/64x64/16116.png',
+            tokenImg: '/cdn/coinmarketcap/static/img/coins/64x64/16116.png',
             timestamp: tx.blockTime ? Number(tx.blockTime) * 1000 : Date.now(),
             signature: signature ?? '',
           });

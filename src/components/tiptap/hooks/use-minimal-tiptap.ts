@@ -12,13 +12,17 @@ import StarterKit from '@tiptap/starter-kit';
 import * as React from 'react';
 import { toast } from 'sonner';
 
-import { cn } from '@/utils/cn';
+import { api } from '@/lib/api';
 import {
-  deleteFromCld,
-  type EARN_IMAGE_FOLDER,
+  compressImage,
+  detectFormat,
+  extractPublicIdFromUrl,
   type ImageSource,
-  uploadAndReplaceImage,
-} from '@/utils/image';
+  type SignedUploadParams,
+  UPLOAD_CONFIGS,
+  validateImageBuffer,
+} from '@/lib/image-upload/client';
+import { cn } from '@/utils/cn';
 
 import { CodeBlockLowlight } from '../extensions/code-block-lowlight/code-block-lowlight';
 import { Color } from '../extensions/color';
@@ -44,9 +48,102 @@ declare global {
 }
 
 interface ImageSetting {
-  folderName: EARN_IMAGE_FOLDER;
-  type: ImageSource;
+  source: ImageSource;
 }
+
+async function uploadImageToCloudinary(
+  file: File,
+  source: ImageSource,
+): Promise<string> {
+  const config = UPLOAD_CONFIGS[source];
+
+  const buffer = await file.arrayBuffer();
+  const validation = validateImageBuffer(buffer, file.type);
+
+  if (!validation.valid) {
+    throw new Error(validation.error || 'Invalid image');
+  }
+
+  let processedFile: File;
+  try {
+    processedFile = await compressImage(file, {
+      maxWidth: config.maxWidth,
+      maxHeight: config.maxHeight,
+      quality: config.quality / 100,
+      format: 'image/webp',
+    });
+  } catch {
+    processedFile = file;
+  }
+
+  const processedBuffer = await processedFile.arrayBuffer();
+  const detectedFormat = detectFormat(processedBuffer);
+
+  if (!detectedFormat) {
+    throw new Error('Failed to detect format after compression');
+  }
+
+  const mimeType = `image/${detectedFormat}` as
+    | 'image/jpeg'
+    | 'image/png'
+    | 'image/webp';
+
+  const signResponse = await api.post<SignedUploadParams>('/api/image/sign', {
+    source,
+    contentType: mimeType,
+    contentLength: processedFile.size,
+  });
+
+  const signedParams = signResponse.data;
+
+  const formData = new FormData();
+  formData.append('file', processedFile);
+  formData.append('signature', signedParams.signature);
+  formData.append('timestamp', signedParams.timestamp.toString());
+  formData.append('folder', signedParams.folder);
+  formData.append('api_key', signedParams.apiKey);
+
+  if (signedParams.publicId) {
+    formData.append('public_id', signedParams.publicId);
+  }
+
+  if (signedParams.eager) {
+    formData.append('eager', signedParams.eager);
+  }
+
+  const uploadUrl = `https://api.cloudinary.com/v1_1/${signedParams.cloudName}/image/upload`;
+
+  const uploadResponse = await fetch(uploadUrl, {
+    method: 'POST',
+    body: formData,
+  });
+
+  if (!uploadResponse.ok) {
+    const errorData = await uploadResponse.json();
+    throw new Error(errorData.error?.message || 'Upload failed');
+  }
+
+  const result = await uploadResponse.json();
+
+  return result.secure_url;
+}
+
+async function deleteImageFromCloudinary(
+  imageUrl: string,
+  source: ImageSource,
+): Promise<void> {
+  const publicId = extractPublicIdFromUrl(imageUrl);
+  if (!publicId) return;
+
+  try {
+    await api.delete('/api/image/delete', {
+      data: { publicId, source },
+    });
+  } catch (err) {
+    console.warn('Failed to delete image:', err);
+  }
+}
+
 export interface UseMinimalTiptapEditorProps extends UseEditorOptions {
   value?: Content;
   output?: 'html' | 'json' | 'text';
@@ -115,20 +212,34 @@ export const useMinimalTiptapEditor = ({
           return;
         }
 
-        const deletionPromises = Array.from(pendingDeletionsRef.current).map(
-          async (src) => {
+        const deletionResults = await Promise.all(
+          Array.from(pendingDeletionsRef.current).map(async (src) => {
             try {
-              await deleteFromCld(src, imageSetting.type);
+              await deleteImageFromCloudinary(src, imageSetting.source);
               trackedImagesRef.current.delete(src);
               console.log('Successfully deleted image:', src);
+              return { src, success: true };
             } catch (error) {
               console.error('Error deleting image:', error);
+              return { src, success: false };
             }
-          },
+          }),
         );
-        await Promise.all(deletionPromises);
-        pendingDeletionsRef.current.clear();
-        console.log('Cleanup completed');
+
+        deletionResults.forEach(({ src, success }) => {
+          if (success) {
+            pendingDeletionsRef.current.delete(src);
+          }
+        });
+
+        const failedCount = deletionResults.filter((r) => !r.success).length;
+        if (failedCount > 0) {
+          console.warn(
+            `Cleanup completed with ${failedCount} failed deletions (retained for retry)`,
+          );
+        } else {
+          console.log('Cleanup completed successfully');
+        }
       },
       clearPendingDeletions: () => {
         pendingDeletionsRef.current.clear();
@@ -153,7 +264,7 @@ export const useMinimalTiptapEditor = ({
 
         const deletionPromises = orphanedImages.map(async (src) => {
           try {
-            await deleteFromCld(src, imageSetting.type);
+            await deleteImageFromCloudinary(src, imageSetting.source);
             trackedImagesRef.current.delete(src);
             console.log('Successfully deleted orphaned image:', src);
           } catch (error) {
@@ -175,7 +286,7 @@ export const useMinimalTiptapEditor = ({
     }
 
     return manager;
-  }, []);
+  }, [imageSetting.source]);
 
   const handleUpdate = React.useCallback(
     (editor: Editor) => throttledSetValue(getOutput(editor, output)),
@@ -216,11 +327,7 @@ export const useMinimalTiptapEditor = ({
         maxFileSize: 5 * 1024 * 1024,
         allowBase64: true,
         uploadFn: async (file) => {
-          const src = await uploadAndReplaceImage({
-            newFile: file,
-            folder: imageSetting.folderName,
-            source: imageSetting.type,
-          });
+          const src = await uploadImageToCloudinary(file, imageSetting.source);
           trackedImagesRef.current.add(src);
           pendingDeletionsRef.current.delete(src);
           return src;
@@ -314,11 +421,10 @@ export const useMinimalTiptapEditor = ({
         maxFileSize: 5 * 1024 * 1024,
         onDrop: (editor, files, pos) => {
           files.forEach(async (file) => {
-            const src = await uploadAndReplaceImage({
-              newFile: file,
-              folder: imageSetting.folderName,
-              source: imageSetting.type,
-            });
+            const src = await uploadImageToCloudinary(
+              file,
+              imageSetting.source,
+            );
             trackedImagesRef.current.add(src);
             pendingDeletionsRef.current.delete(src);
             editor.commands.insertContentAt(pos, {
@@ -329,11 +435,10 @@ export const useMinimalTiptapEditor = ({
         },
         onPaste: (editor, files) => {
           files.forEach(async (file) => {
-            const src = await uploadAndReplaceImage({
-              newFile: file,
-              folder: imageSetting.folderName,
-              source: imageSetting.type,
-            });
+            const src = await uploadImageToCloudinary(
+              file,
+              imageSetting.source,
+            );
             trackedImagesRef.current.add(src);
             pendingDeletionsRef.current.delete(src);
             editor.commands.insertContent({
@@ -370,7 +475,7 @@ export const useMinimalTiptapEditor = ({
       CodeBlockLowlight,
       Placeholder.configure({ placeholder: () => placeholder }),
     ];
-  }, [placeholder, imageSetting.folderName, imageSetting.type]);
+  }, [placeholder, imageSetting.source]);
 
   const editor = useEditor({
     extensions,

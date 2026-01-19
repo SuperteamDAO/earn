@@ -8,7 +8,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
-import { ImagePicker } from '@/components/shared/ImagePicker';
+import { ImageUploader } from '@/components/shared/ImageUploader';
 import { RegionCombobox } from '@/components/shared/RegionCombobox';
 import { SkillsSelect } from '@/components/shared/SkillsSelectNew';
 import { Button } from '@/components/ui/button';
@@ -35,14 +35,12 @@ import {
 import { Textarea } from '@/components/ui/textarea';
 import { Tooltip } from '@/components/ui/tooltip';
 import { useDisclosure } from '@/hooks/use-disclosure';
-import { useUploadImage } from '@/hooks/use-upload-image';
 import type { PoW } from '@/interface/pow';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
-import { IMAGE_SOURCE } from '@/utils/image';
 
 import { SocialInputAll } from '@/features/social/components/SocialInput';
 import { extractSocialUsername } from '@/features/social/utils/extractUsername';
@@ -70,9 +68,8 @@ export default function EditProfilePage({ slug }: { slug: string }) {
 
   const skills = watch('skills');
 
-  const [selectedPhoto, setSelectedPhoto] = useState<File | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const { uploadAndReplace, uploading } = useUploadImage();
+  const [uploadedPhotoUrl, setUploadedPhotoUrl] = useState<string | null>(null);
 
   const interestDropdown = useMemo<Option[]>(
     () =>
@@ -229,17 +226,8 @@ export default function EditProfilePage({ slug }: { slug: string }) {
       await toast
         .promise(
           async () => {
-            if (selectedPhoto) {
-              const uploadResult = await uploadAndReplace(
-                selectedPhoto,
-                {
-                  folder: 'earn-pfp',
-                  resource_type: 'image',
-                  source: IMAGE_SOURCE.USER,
-                },
-                user?.photo,
-              );
-              data.photo = uploadResult.url;
+            if (uploadedPhotoUrl) {
+              data.photo = uploadedPhotoUrl;
             }
 
             const finalUpdatedData = Object.keys(data).reduce((acc, key) => {
@@ -353,16 +341,15 @@ export default function EditProfilePage({ slug }: { slug: string }) {
                   <FormItem className="mb-4">
                     <FormLabel className="mb-1 pb-0">Profile Picture</FormLabel>
                     <FormControl>
-                      <ImagePicker
-                        defaultValue={
-                          field.value ? { url: field.value } : undefined
-                        }
-                        onChange={(file, previewUrl) => {
-                          setSelectedPhoto(file);
-                          field.onChange(previewUrl);
+                      <ImageUploader
+                        source="user"
+                        defaultValue={field.value || undefined}
+                        onChange={(result) => {
+                          setUploadedPhotoUrl(result.secureUrl);
+                          field.onChange(result.secureUrl);
                         }}
                         onReset={() => {
-                          setSelectedPhoto(null);
+                          setUploadedPhotoUrl(null);
                           field.onChange('');
                         }}
                       />
@@ -727,12 +714,12 @@ export default function EditProfilePage({ slug }: { slug: string }) {
               <Button
                 className={cn(
                   'ph-no-capture mb-12',
-                  (uploading || isLoading) && 'pointer-events-none opacity-50',
+                  isLoading && 'pointer-events-none opacity-50',
                 )}
                 type="submit"
-                disabled={uploading || isLoading}
+                disabled={isLoading}
               >
-                {uploading || isLoading ? (
+                {isLoading ? (
                   <span className="flex items-center gap-2">
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     <span>Updating...</span>

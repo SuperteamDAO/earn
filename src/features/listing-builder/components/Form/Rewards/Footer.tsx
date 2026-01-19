@@ -17,12 +17,14 @@ import {
 import { ProBadge } from '@/features/pro/components/ProBadge';
 
 import { useListingForm } from '../../../hooks';
+import { BOOST_STEP_TO_AMOUNT_USD } from '../Boost/constants';
 import {
   featuredAvailabilityQuery,
   tokenUsdValueQuery,
 } from '../Boost/queries';
 import {
   computeEstimatedUsdValue,
+  getAllowedMaxStep,
   hasMoreThan72HoursLeft,
   resolveTargetUsdFromBoost,
 } from '../Boost/utils';
@@ -151,6 +153,14 @@ function RewardsFooter({
     rewardAmount,
     tokenUsdValue,
   ]);
+  const estimatedUsdValue = useMemo(
+    () => computeEstimatedUsdValue(rewardAmount, tokenUsdValue),
+    [rewardAmount, tokenUsdValue],
+  );
+  const maxBoostStep = getAllowedMaxStep(isFeatureAvailable);
+  const maxBoostUsd = BOOST_STEP_TO_AMOUNT_USD[maxBoostStep] ?? 0;
+  const isAtMaxBoost =
+    typeof estimatedUsdValue === 'number' && estimatedUsdValue >= maxBoostUsd;
   const boostIncreasesReward = useMemo(
     () =>
       panel !== 'boost' ? true : targetBoostTokens > prevRewardAmountTokens,
@@ -200,7 +210,7 @@ function RewardsFooter({
             type="button"
             className="w-full"
             disabled={
-              !boostIncreasesReward ||
+              (!boostIncreasesReward && !isAtMaxBoost) ||
               (isBoostFromUrl
                 ? submitListingMutation.isPending ||
                   submitListingMutation.isSuccess

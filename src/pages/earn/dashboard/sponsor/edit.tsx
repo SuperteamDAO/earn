@@ -7,7 +7,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
-import { ImagePicker } from '@/components/shared/ImagePicker';
+import { ImageUploader } from '@/components/shared/ImageUploader';
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -21,11 +21,9 @@ import { FormFieldWrapper } from '@/components/ui/form-field-wrapper';
 import { Input } from '@/components/ui/input';
 import { MultiSelect } from '@/components/ui/multi-select';
 import { Tooltip } from '@/components/ui/tooltip';
-import { useUploadImage } from '@/hooks/use-upload-image';
 import { SponsorLayout } from '@/layouts/Sponsor';
 import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
-import { IMAGE_SOURCE } from '@/utils/image';
 
 import { SocialInput } from '@/features/social/components/SocialInput';
 import { extractSocialUsername } from '@/features/social/utils/extractUsername';
@@ -42,11 +40,9 @@ export default function UpdateSponsor() {
   const router = useRouter();
   const { user, refetchUser } = useUser();
 
-  const [selectedLogo, setSelectedLogo] = useState<File | null>(null);
-  const [logoPreview, setLogoPreview] = useState<string | null>(null);
+  const [uploadedLogoUrl, setUploadedLogoUrl] = useState<string | null>(null);
+  const [initialLogo, setInitialLogo] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-
-  const { uploadAndReplace, uploading: isUploading } = useUploadImage();
 
   const form = useForm<SponsorBase>({
     resolver: zodResolver(sponsorBaseSchema),
@@ -120,7 +116,7 @@ export default function UpdateSponsor() {
         sponsorData;
       setSponsorName(name);
       setSlug(slug);
-      setLogoPreview(logo || '');
+      setInitialLogo(logo || '');
       form.reset({
         name,
         slug,
@@ -136,14 +132,10 @@ export default function UpdateSponsor() {
     }
   }, [sponsorData, form.reset, setSlug, setSponsorName]);
 
+  const hasLogo = uploadedLogoUrl || initialLogo;
   const isSubmitDisabled = useMemo(
-    () =>
-      !logoPreview ||
-      isUploading ||
-      isLoading ||
-      isSlugInvalid ||
-      isSponsorNameInvalid,
-    [logoPreview, isUploading, isLoading, isSlugInvalid, isSponsorNameInvalid],
+    () => !hasLogo || isLoading || isSlugInvalid || isSponsorNameInvalid,
+    [hasLogo, isLoading, isSlugInvalid, isSponsorNameInvalid],
   );
 
   const onSubmit = async (data: SponsorBase) => {
@@ -152,21 +144,7 @@ export default function UpdateSponsor() {
     try {
       setIsLoading(true);
 
-      let finalLogo = logoPreview;
-
-      if (selectedLogo) {
-        try {
-          const uploadResult = await uploadAndReplace(
-            selectedLogo,
-            { folder: 'earn-sponsor', source: IMAGE_SOURCE.SPONSOR },
-            sponsorData?.logo || undefined,
-          );
-
-          finalLogo = uploadResult.url;
-        } catch (error) {
-          console.error('Error uploading image:', error);
-        }
-      }
+      const finalLogo = uploadedLogoUrl || initialLogo;
 
       await api.post('/api/sponsors/edit', {
         ...data,
@@ -277,17 +255,17 @@ export default function UpdateSponsor() {
 
               <div className="mt-6 mb-3 w-full">
                 <FormLabel isRequired>Company Logo</FormLabel>
-                <ImagePicker
+                <ImageUploader
+                  source="sponsor"
                   crop="square"
-                  defaultValue={logoPreview ? { url: logoPreview } : undefined}
-                  onChange={(file, previewUrl) => {
-                    setSelectedLogo(file);
-                    setLogoPreview(previewUrl);
-                    form.setValue('logo', previewUrl);
+                  defaultValue={initialLogo || undefined}
+                  onChange={(result) => {
+                    setUploadedLogoUrl(result.secureUrl);
+                    form.setValue('logo', result.secureUrl);
                   }}
                   onReset={() => {
-                    setSelectedLogo(null);
-                    setLogoPreview(null);
+                    setUploadedLogoUrl(null);
+                    setInitialLogo(null);
                     form.setValue('logo', '');
                   }}
                 />
