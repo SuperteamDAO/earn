@@ -7,8 +7,6 @@ import { Superteams } from '@/constants/Superteam';
 
 import SuperteamMap from '../common/SuperteamMap';
 
-const forceFlagForCountries = ['georgia', 'netherlands', 'spain', 'ukraine'];
-
 export default function Geographies() {
   const [hoveredSuperteam, setHoveredSuperteam] = useState<string | null>(null);
 
@@ -22,9 +20,7 @@ export default function Geographies() {
         <div className="mx-auto mt-10 max-w-[1200px] px-2">
           <div className="flex flex-wrap justify-center gap-2.5 md:gap-3">
             {Superteams.map((superteam) => {
-              const showFlag =
-                !superteam.icons ||
-                forceFlagForCountries.includes(superteam.slug);
+              const showFlag = !superteam.icons;
               const isHovered = hoveredSuperteam === superteam.code;
 
               return (
@@ -35,6 +31,30 @@ export default function Geographies() {
                   } ${hoveredSuperteam && !isHovered ? 'opacity-50' : ''}`}
                   onMouseEnter={() => setHoveredSuperteam(superteam.code)}
                   onMouseLeave={() => setHoveredSuperteam(null)}
+                  onClick={() => {
+                    if (superteam.link) {
+                      window.open(
+                        superteam.link,
+                        '_blank',
+                        'noopener,noreferrer',
+                      );
+                    }
+                  }}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (
+                      (e.key === 'Enter' || e.key === ' ') &&
+                      superteam.link
+                    ) {
+                      e.preventDefault();
+                      window.open(
+                        superteam.link,
+                        '_blank',
+                        'noopener,noreferrer',
+                      );
+                    }
+                  }}
                 >
                   <div className="st-accordion relative flex h-[40px] w-full flex-row items-center justify-between overflow-hidden rounded-lg pr-2 text-white md:h-[42px]">
                     <div className="relative flex h-full items-center overflow-hidden">

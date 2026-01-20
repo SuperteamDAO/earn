@@ -268,6 +268,19 @@ export default function SuperteamMap({
         })
         .on('mouseleave', function () {
           handleCountryHover(null);
+        })
+        .on('click', function (_event: any, d: any) {
+          if (superteamCodes.includes(d.id)) {
+            const superteamCode = iso3ToSuperteamMapRef.current?.get(d.id);
+            if (superteamCode) {
+              const superteam = Superteams.find(
+                (st) => st.code === superteamCode,
+              );
+              if (superteam?.link) {
+                window.open(superteam.link, '_blank', 'noopener,noreferrer');
+              }
+            }
+          }
         });
 
       resizeHandler = () => {

@@ -52,6 +52,7 @@ export interface Superteam {
   nationality: string;
   people?: People[];
   slug: string;
+  link: string;
 }
 
 const basePath = ASSET_URL + '/superteams/';
@@ -78,6 +79,7 @@ export const Superteams = [
       },
     ],
     slug: 'india',
+    link: 'https://x.com/SuperteamIN/',
   },
   {
     name: 'Superteam Germany',
@@ -100,6 +102,7 @@ export const Superteams = [
       },
     ],
     slug: 'germany',
+    link: 'https://x.com/SuperteamDE',
   },
 
   {
@@ -123,6 +126,7 @@ export const Superteams = [
       },
     ],
     slug: 'nigeria',
+    link: 'https://x.com/superteamng',
   },
   {
     name: 'Superteam Brazil',
@@ -141,6 +145,7 @@ export const Superteams = [
       },
     ],
     slug: 'brazil',
+    link: 'https://x.com/superteambr',
   },
   {
     name: 'Superteam Kazakhstan',
@@ -153,6 +158,7 @@ export const Superteams = [
     hello: 'Sälem',
     nationality: 'Kazakhstans',
     slug: 'kazakhstan',
+    link: 'https://x.com/SuperteamKZ',
   },
   {
     name: 'Superteam Malaysia',
@@ -171,6 +177,7 @@ export const Superteams = [
       },
     ],
     slug: 'malaysia',
+    link: 'https://x.com/SuperteamMY',
   },
   {
     name: 'Superteam Balkan',
@@ -205,6 +212,7 @@ export const Superteams = [
       },
     ],
     slug: 'balkan',
+    link: 'https://x.com/SuperteamBLKN',
   },
   {
     name: 'Superteam Korea',
@@ -217,6 +225,7 @@ export const Superteams = [
     hello: 'Annyeonghaseyo',
     nationality: 'Koreans',
     slug: 'korea',
+    link: 'https://x.com/superteamkorea',
   },
   {
     name: 'Superteam Canada',
@@ -235,6 +244,7 @@ export const Superteams = [
       },
     ],
     slug: 'canada',
+    link: 'https://x.com/SuperteamCAN',
   },
   {
     name: 'Superteam Singapore',
@@ -253,6 +263,7 @@ export const Superteams = [
       },
     ],
     slug: 'singapore',
+    link: 'https://x.com/SuperteamSG',
   },
   {
     name: 'Superteam Poland',
@@ -265,6 +276,7 @@ export const Superteams = [
     hello: 'Cześć',
     nationality: 'Poles',
     slug: 'poland',
+    link: 'https://x.com/SuperteamPOL',
   },
   {
     name: 'Superteam Indonesia',
@@ -277,10 +289,11 @@ export const Superteams = [
     hello: 'Halo',
     nationality: 'Indonesians',
     slug: 'indonesia',
+    link: 'https://x.com/SuperteamINDO',
   },
   {
     name: 'Superteam Netherlands',
-    icons: basePath + 'logos/netherlands',
+    icons: basePath + 'logos/netherlands.jpg',
     banner: basePath + 'banners/netherlands',
     region: 'Netherlands' as Region,
     displayValue: 'Netherlands',
@@ -289,6 +302,7 @@ export const Superteams = [
     hello: 'Hallo',
     nationality: 'Dutch',
     slug: 'netherlands',
+    link: '',
   },
   {
     name: 'Superteam Japan',
@@ -307,6 +321,7 @@ export const Superteams = [
       },
     ],
     slug: 'japan',
+    link: 'https://x.com/SuperteamJapan',
   },
   {
     name: 'Superteam UK',
@@ -325,6 +340,7 @@ export const Superteams = [
       },
     ],
     slug: 'uk',
+    link: 'https://x.com/superteamuk',
   },
   {
     name: 'Superteam UAE',
@@ -343,10 +359,11 @@ export const Superteams = [
       },
     ],
     slug: 'uae',
+    link: 'https://x.com/SuperteamAE',
   },
   {
     name: 'Superteam Georgia',
-    icons: basePath + 'logos/georgia',
+    icons: basePath + 'logos/georgia.jpg',
     banner: basePath + 'banners/georgia',
     region: 'Georgia' as Region,
     displayValue: 'Georgia',
@@ -355,6 +372,7 @@ export const Superteams = [
     hello: 'Gamarjoba',
     nationality: 'Georgians',
     slug: 'georgia',
+    link: '',
   },
   {
     name: 'Superteam Ireland',
@@ -367,10 +385,11 @@ export const Superteams = [
     hello: 'Dia duit',
     nationality: 'Irish',
     slug: 'ireland',
+    link: 'https://x.com/superteamie',
   },
   {
     name: 'Superteam Spain',
-    icons: basePath + 'logos/spain',
+    icons: basePath + 'logos/spain.jpg',
     banner: basePath + 'banners/spain',
     region: 'Spain' as Region,
     displayValue: 'Spain',
@@ -379,10 +398,11 @@ export const Superteams = [
     hello: 'Hola',
     nationality: 'Spaniards',
     slug: 'spain',
+    link: 'https://x.com/LaFamilia_so',
   },
   {
     name: 'Superteam Ukraine',
-    icons: basePath + 'logos/ukraine',
+    icons: basePath + 'logos/ukraine.jpg',
     banner: basePath + 'banners/ukraine',
     region: 'Ukraine' as Region,
     displayValue: 'Ukraine',
@@ -391,6 +411,7 @@ export const Superteams = [
     hello: 'Привіт',
     nationality: 'Ukrainians',
     slug: 'ukraine',
+    link: 'https://x.com/KumekaTeam',
   },
 ];
 
