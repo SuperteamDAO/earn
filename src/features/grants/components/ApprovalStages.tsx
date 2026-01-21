@@ -2,6 +2,7 @@ import { useAtom } from 'jotai';
 
 import FaCheck from '@/components/icons/FaCheck';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
+import { getPayoutCopy } from '@/utils/payout-date';
 
 import {
   type ApplicationState,
@@ -125,6 +126,7 @@ export const ApprovalStages = ({ application, grant }: Props) => {
     return {
       status: getTrancheStatus(i + 1),
       amount: Math.floor(amount ?? 0),
+      decidedAt: currentTranche?.decidedAt,
     };
   });
 
@@ -191,9 +193,16 @@ export const ApprovalStages = ({ application, grant }: Props) => {
                       : 'Third Tranche Paid'}
               </Heading>
               <Subheading>
-                {index === tranches.length - 1
-                  ? 'Project completed successfully'
-                  : `${formatNumberWithSuffix(tranche.amount, 1, true)} ${grant.token} sent to you`}
+                {tranche.status === 'Paid'
+                  ? index === tranches.length - 1
+                    ? 'Project completed successfully'
+                    : `${formatNumberWithSuffix(tranche.amount, 1, true)} ${grant.token} sent to you`
+                  : tranche.status === 'Approved' && tranche.decidedAt
+                    ? getPayoutCopy({
+                        trancheApprovedAt: tranche.decidedAt,
+                        kycVerifiedAt: application.user.kycVerifiedAt,
+                      })
+                    : 'Payment pending approval'}
               </Subheading>
             </div>
           </div>
