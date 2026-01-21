@@ -142,13 +142,12 @@ export async function DELETE(request: NextRequest) {
       }
     } else if (source === 'user') {
       if (!user.photo) {
-        logger.warn(
-          `User ${userId} attempted to delete user image but has no photo set`,
+        logger.info(
+          `User ${userId} attempted to delete user image but has no photo set - treating as successful no-op`,
         );
-        return NextResponse.json(
-          { error: 'You do not have a profile photo to delete' },
-          { status: 400 },
-        );
+        return NextResponse.json({
+          message: 'No profile photo to delete',
+        });
       }
 
       const userPhotoPublicId = extractPublicIdFromUrl(user.photo);
@@ -176,13 +175,12 @@ export async function DELETE(request: NextRequest) {
       }
 
       if (!user.currentSponsor?.logo) {
-        logger.warn(
-          `User ${userId} attempted to delete sponsor logo but sponsor has no logo`,
+        logger.info(
+          `User ${userId} attempted to delete sponsor logo but sponsor has no logo - treating as successful no-op`,
         );
-        return NextResponse.json(
-          { error: 'Your sponsor does not have a logo to delete' },
-          { status: 400 },
-        );
+        return NextResponse.json({
+          message: 'No sponsor logo to delete',
+        });
       }
 
       const sponsorLogoPublicId = extractPublicIdFromUrl(
