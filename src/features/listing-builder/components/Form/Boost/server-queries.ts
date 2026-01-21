@@ -7,6 +7,7 @@ import {
 } from '@/interface/skills';
 import { prisma } from '@/prisma';
 
+import { buildFeaturedAvailabilityWhere } from '@/features/listing-builder/utils/featured-availability';
 import { getCombinedRegion } from '@/features/listings/utils/region';
 
 const DEV_PARENTS = ['Frontend', 'Backend', 'Blockchain', 'Mobile'] as const;
@@ -75,15 +76,7 @@ export async function getEmailEstimate(
 
 export async function getFeaturedAvailability(): Promise<boolean> {
   const count = await prisma.bounties.count({
-    where: {
-      isFeatured: true,
-      isPublished: true,
-      isActive: true,
-      deadline: {
-        gte: new Date(),
-      },
-      region: 'Global',
-    },
+    where: buildFeaturedAvailabilityWhere(),
   });
   return count < 2;
 }

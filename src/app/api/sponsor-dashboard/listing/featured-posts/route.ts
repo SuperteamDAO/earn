@@ -2,18 +2,12 @@ import { NextResponse } from 'next/server';
 
 import { prisma } from '@/prisma';
 
+import { buildFeaturedAvailabilityWhere } from '@/features/listing-builder/utils/featured-availability';
+
 export async function POST() {
   try {
     const count = await prisma.bounties.count({
-      where: {
-        isFeatured: true,
-        isPublished: true,
-        isActive: true,
-        deadline: {
-          gte: new Date(),
-        },
-        region: 'Global',
-      },
+      where: buildFeaturedAvailabilityWhere(),
     });
     return NextResponse.json({ count });
   } catch (error) {
