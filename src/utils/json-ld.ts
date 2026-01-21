@@ -504,6 +504,58 @@ export function generateCategoryCollectionSchema(
 /**
  * Generate Person schema for a talent profile
  */
+interface SuperteamChaptersSchema {
+  readonly '@context': string;
+  readonly '@graph': readonly OrganizationSchema[];
+}
+
+interface SuperteamInput {
+  readonly name: string;
+  readonly displayValue: string;
+  readonly slug: string;
+  readonly code: string;
+  readonly country: readonly string[];
+  readonly icons?: string;
+  readonly link?: string;
+}
+
+/**
+ * Generate Organization schema for all Superteam chapters using @graph pattern
+ * Used for SEO on the main homepage to improve discoverability of regional communities
+ */
+export function generateSuperteamChaptersSchema(
+  superteams: readonly SuperteamInput[],
+): SuperteamChaptersSchema {
+  const baseUrl = getURL();
+
+  const organizations: OrganizationSchema[] = superteams
+    .filter((st) => st.link) // Only include chapters with active links
+    .map((st) => {
+      const sameAs: string[] = [];
+      if (st.link) {
+        sameAs.push(st.link);
+      }
+
+      const areaServed =
+        st.code === 'BALKAN' ? st.country.join(', ') : st.country[0] || '';
+
+      return {
+        '@context': 'https://schema.org',
+        '@type': 'Organization' as const,
+        name: st.name,
+        url: `${baseUrl}regions/${st.slug}/`,
+        logo: st.icons || undefined,
+        description: `${st.name} - Solana and Web3 talent community in ${areaServed}. Find crypto bounties, blockchain jobs, and grants.`,
+        sameAs: sameAs.length > 0 ? sameAs : undefined,
+      };
+    });
+
+  return {
+    '@context': 'https://schema.org',
+    '@graph': organizations,
+  };
+}
+
 export function generatePersonSchema(person: {
   readonly firstName?: string;
   readonly lastName?: string;

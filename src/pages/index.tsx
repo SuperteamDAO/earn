@@ -1,7 +1,10 @@
 import Head from 'next/head';
 
+import { JsonLd } from '@/components/shared/JsonLd';
 import { ASSET_URL } from '@/constants/ASSET_URL';
+import { Superteams } from '@/constants/Superteam';
 import { Meta } from '@/layouts/Meta';
+import { generateSuperteamChaptersSchema } from '@/utils/json-ld';
 
 import Collab from '@/features/stfun/components/sections/Collab';
 import Geographies from '@/features/stfun/components/sections/Geographies';
@@ -19,6 +22,7 @@ export default function Home() {
         canonical="https://superteam.fun/"
         og={`${ASSET_URL}/st/og/og-home.png`}
       />
+      <JsonLd data={generateSuperteamChaptersSchema(Superteams)} />
       <Head>
         <link
           rel="preload"
