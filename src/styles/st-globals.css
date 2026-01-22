@@ -323,13 +323,13 @@
 
   .accordion-open {
     height: 400px;
-    transition: height 0.3s ease-in-out;
+    transition: height 0.3s ease-in-out 0s;
   }
 
   .accordion-closed {
     height: 100px;
     overflow: hidden;
-    transition: height 0.3s ease-in-out;
+    transition: height 0.3s ease-in-out 0s;
   }
 
   .accordion-image {
@@ -337,7 +337,8 @@
     object-fit: none;
     object-position: top;
     overflow: hidden;
-    transition: height 0.3s ease-in-out;
+    transition: height 0.3s ease-in-out 0s;
+    will-change: height;
   }
 
   .accordion-image-closed {
@@ -345,7 +346,8 @@
     object-fit: none;
     object-position: top;
     overflow: hidden;
-    transition: height 0.3s ease-in-out;
+    transition: height 0.3s ease-in-out 0s;
+    will-change: height;
   }
 
   .accordion-content,

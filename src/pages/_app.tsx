@@ -46,6 +46,9 @@ function App({ Component, pageProps }: AppProps) {
       return;
     }
 
+    document.documentElement.style.backgroundColor = 'rgb(4, 5, 7)';
+    document.body.style.backgroundColor = 'rgb(4, 5, 7)';
+
     gsap.registerPlugin(ScrollTrigger);
 
     const handleImageLoad = (img: HTMLImageElement) => {
@@ -75,7 +78,11 @@ function App({ Component, pageProps }: AppProps) {
 
     observer.observe(document.body, { childList: true, subtree: true });
 
-    return () => observer.disconnect();
+    return () => {
+      observer.disconnect();
+      document.documentElement.style.backgroundColor = '';
+      document.body.style.backgroundColor = '';
+    };
   }, [isST]);
 
   if (isST) {

@@ -241,7 +241,7 @@ export function SponsorLayout({
           <Meta
             title="Superteam Earn | Work to Earn in Crypto"
             description="Explore the latest bounties on Superteam Earn, offering opportunities in the crypto space across Design, Development, and Content."
-            canonical="https://superteam.fun"
+            canonical="https://superteam.fun/earn"
           />
         }
       >
@@ -347,7 +347,7 @@ export function SponsorLayout({
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent
-                      className="w-[calc(var(--radix-dropdown-menu-trigger-width)+0rem)] font-medium text-slate-500"
+                      className="min-w-[200px] font-medium text-slate-500"
                       align="start"
                     >
                       <DropdownMenuItem

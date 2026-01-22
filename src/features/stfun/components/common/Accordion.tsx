@@ -24,9 +24,15 @@ export default function Accordion({
   btnLink,
 }: AccordionProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const [loadedImageSrc, setLoadedImageSrc] = useState<string | null>(null);
+  const isImageLoaded = loadedImageSrc === image;
 
   const toggleAccordion = () => {
-    setIsOpen(!isOpen);
+    setIsOpen((prevIsOpen) => !prevIsOpen);
+  };
+
+  const handleImageLoad = () => {
+    setLoadedImageSrc(image);
   };
 
   return (
@@ -73,10 +79,13 @@ export default function Accordion({
             <img
               src={image}
               alt=""
+              onLoad={handleImageLoad}
               className={cn(
+                'st-no-fade',
                 isOpen
                   ? 'accordion-image absolute w-full max-md:left-0 max-md:z-0 md:relative md:w-[400px]'
                   : 'accordion-image-closed absolute w-full overflow-hidden max-md:left-0 max-md:z-0 md:relative md:w-[400px]',
+                isImageLoaded ? 'loaded' : '',
               )}
             />
           </div>
