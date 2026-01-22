@@ -8,7 +8,6 @@ import posthog from 'posthog-js';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 
-import { LoadingSection } from '@/components/shared/LoadingSection';
 import { Button } from '@/components/ui/button';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
@@ -36,6 +35,7 @@ import { PayoutSection } from '@/features/sponsor-dashboard/components/Submissio
 import { SubmissionHeader } from '@/features/sponsor-dashboard/components/Submissions/SubmissionHeader';
 import { SubmissionList } from '@/features/sponsor-dashboard/components/Submissions/SubmissionList';
 import { SubmissionPanel } from '@/features/sponsor-dashboard/components/Submissions/SubmissionPanel';
+import { SubmissionsPageSkeleton } from '@/features/sponsor-dashboard/components/Submissions/SubmissionsPageSkeleton';
 import { useAutoSwitchSponsor } from '@/features/sponsor-dashboard/hooks/use-auto-switch-sponsor';
 import { sponsorDashboardListingQuery } from '@/features/sponsor-dashboard/queries/listing';
 import { scoutsQuery } from '@/features/sponsor-dashboard/queries/scouts';
@@ -422,7 +422,7 @@ export default function BountySubmissions({ slug }: Props) {
   return (
     <SponsorLayout isCollapsible>
       {isBountyLoading || isSubmissionsLoading || isSwitchingSponsor ? (
-        <LoadingSection />
+        <SubmissionsPageSkeleton />
       ) : (
         <>
           {isOpen && (
@@ -479,7 +479,7 @@ export default function BountySubmissions({ slug }: Props) {
             )}
 
             <TabsContent value="submissions" className="w-full px-0">
-              <div className="grid h-[40rem] w-full grid-cols-[23rem_1fr] bg-white">
+              <div className="grid h-160 w-full grid-cols-[23rem_1fr] bg-white">
                 <SubmissionList
                   listing={bounty}
                   selectedFilters={selectedFilters}

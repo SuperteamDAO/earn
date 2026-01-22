@@ -43,6 +43,7 @@ interface Props {
   isMultiSelectOn: boolean;
   approveOnOpen: () => void;
   rejectedOnOpen: () => void;
+  isLoading?: boolean;
 }
 export const ApplicationDetails = ({
   grant,
@@ -50,6 +51,7 @@ export const ApplicationDetails = ({
   isMultiSelectOn,
   approveOnOpen,
   rejectedOnOpen,
+  isLoading,
 }: Props) => {
   const [selectedApplication, setSelectedApplication] = useAtom(
     selectedGrantApplicationAtom,
@@ -106,7 +108,7 @@ export const ApplicationDetails = ({
     <div className="w-full rounded-r-xl bg-white">
       {applications?.length ? (
         <>
-          <div className="sticky top-[3rem] z-20 rounded-t-xl border-b border-slate-200 bg-white py-1">
+          <div className="sticky top-12 z-20 rounded-t-xl border-b border-slate-200 bg-white py-1">
             <div className="flex w-full items-center justify-between px-4 py-2">
               <div className="flex w-full items-center gap-2">
                 <EarnAvatar
@@ -464,7 +466,7 @@ export const ApplicationDetails = ({
             </div>
           </div>
         </>
-      ) : (
+      ) : isLoading ? null : (
         <div className="p-3">
           <p className="text-xl font-medium text-slate-500">
             No applications found

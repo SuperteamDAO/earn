@@ -80,48 +80,55 @@ export function Banner({
 
   const sponsor = isHackathon ? stats : user?.currentSponsor;
 
-  if (!sponsorId) return null;
+  const showSkeleton = !sponsorId || isLoading;
+
   return (
     <div className="mb-6 flex w-full flex-col gap-4 xl:flex-row xl:items-center">
       <div className="w-full rounded-md border border-slate-200 bg-white px-6 py-5 text-white">
         <div className="flex flex-col gap-2 lg:flex-row lg:items-center lg:gap-6">
-          <Link
-            href={`/earn/s/${sponsor?.slug}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="group flex shrink-0 items-center gap-3 pb-1 transition-opacity hover:opacity-80 lg:pb-0"
-          >
-            <EarnAvatar
-              className="h-12 w-12 rounded-md object-contain"
-              id={sponsor?.name}
-              avatar={sponsor?.logo}
-            />
-
-            <div>
-              <div className="flex items-center">
-                <div className="flex w-min items-center gap-1">
-                  <p className="text-lg font-semibold whitespace-nowrap text-slate-900 group-hover:underline">
-                    {sponsor?.name}
-                  </p>
-                  <div>
-                    {!!user?.currentSponsor?.isVerified && (
-                      <VerifiedBadgeLarge />
-                    )}
-                  </div>
-                  <ExternalLink className="ml-1 h-4 w-4 text-slate-400 opacity-0 transition-opacity group-hover:opacity-100" />
-                </div>
-              </div>
-              {isLoading ? (
+          {showSkeleton ? (
+            <div className="flex shrink-0 items-center gap-3 pb-1 lg:pb-0">
+              <Skeleton className="h-12 w-12 rounded-md" />
+              <div>
+                <Skeleton className="h-5 w-32" />
                 <Skeleton className="mt-2 h-5 w-[170px]" />
-              ) : (
+              </div>
+            </div>
+          ) : (
+            <Link
+              href={`/earn/s/${sponsor?.slug}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group flex shrink-0 items-center gap-3 pb-1 transition-opacity hover:opacity-80 lg:pb-0"
+            >
+              <EarnAvatar
+                className="h-12 w-12 rounded-md object-contain"
+                id={sponsor?.name}
+                avatar={sponsor?.logo}
+              />
+
+              <div>
+                <div className="flex items-center">
+                  <div className="flex w-min items-center gap-1">
+                    <p className="text-lg font-semibold whitespace-nowrap text-slate-900 group-hover:underline">
+                      {sponsor?.name}
+                    </p>
+                    <div>
+                      {!!user?.currentSponsor?.isVerified && (
+                        <VerifiedBadgeLarge />
+                      )}
+                    </div>
+                    <ExternalLink className="ml-1 h-4 w-4 text-slate-400 opacity-0 transition-opacity group-hover:opacity-100" />
+                  </div>
+                </div>
                 <p className="-mt-0.5 text-[1.05rem] font-normal whitespace-nowrap text-slate-500">
                   {!isHackathon
                     ? `Sponsor since ${stats?.yearOnPlatform}`
                     : 'Hackathon'}
                 </p>
-              )}
-            </div>
-          </Link>
+              </div>
+            </Link>
+          )}
           <div className="block h-0.5 w-full border-t border-slate-200 lg:h-14 lg:w-0.5 lg:border-r" />
           <div className="flex gap-6 xl:gap-4 2xl:gap-6 [@media(min-width:1305px)]:gap-6">
             <StatsTooltip
@@ -132,7 +139,7 @@ export function Banner({
                   ? stats?.totalRewardAmount
                   : stats?.totalHackathonRewards
               }
-              isLoading={isLoading}
+              isLoading={showSkeleton}
               isMonetary
             />
 
@@ -144,7 +151,7 @@ export function Banner({
                   ? stats?.totalListingsAndGrants
                   : stats?.totalHackathonTracks
               }
-              isLoading={isLoading}
+              isLoading={showSkeleton}
             />
 
             <StatsTooltip
@@ -155,7 +162,7 @@ export function Banner({
                   ? stats?.totalSubmissionsAndApplications
                   : stats?.totalHackathonSubmissions
               }
-              isLoading={isLoading}
+              isLoading={showSkeleton}
             />
           </div>
         </div>

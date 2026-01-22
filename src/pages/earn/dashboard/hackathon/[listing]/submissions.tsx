@@ -7,7 +7,6 @@ import posthog from 'posthog-js';
 import { useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 
-import { LoadingSection } from '@/components/shared/LoadingSection';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Tooltip } from '@/components/ui/tooltip';
@@ -26,6 +25,7 @@ import { PublishResults } from '@/features/sponsor-dashboard/components/PublishR
 import { SubmissionHeader } from '@/features/sponsor-dashboard/components/Submissions/SubmissionHeader';
 import { SubmissionList } from '@/features/sponsor-dashboard/components/Submissions/SubmissionList';
 import { SubmissionPanel } from '@/features/sponsor-dashboard/components/Submissions/SubmissionPanel';
+import { SubmissionsPageSkeleton } from '@/features/sponsor-dashboard/components/Submissions/SubmissionsPageSkeleton';
 import { useAutoSwitchSponsor } from '@/features/sponsor-dashboard/hooks/use-auto-switch-sponsor';
 import { sponsorDashboardListingQuery } from '@/features/sponsor-dashboard/queries/listing';
 import { submissionsQuery } from '@/features/sponsor-dashboard/queries/submissions';
@@ -186,7 +186,7 @@ export default function BountySubmissions({ listing }: Props) {
   return (
     <SponsorLayout isCollapsible={true}>
       {isBountyLoading || isSubmissionsLoading || isSwitchingSponsor ? (
-        <LoadingSection />
+        <SubmissionsPageSkeleton />
       ) : (
         <>
           {isOpen && (

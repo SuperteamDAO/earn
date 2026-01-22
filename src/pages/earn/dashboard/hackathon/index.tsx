@@ -11,7 +11,6 @@ import {
 import { useRouter } from 'next/router';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-import { LoadingSection } from '@/components/shared/LoadingSection';
 import { Button } from '@/components/ui/button';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 import {
@@ -43,6 +42,7 @@ import { getColorStyles } from '@/features/listings/utils/getColorStyles';
 import { getListingStatus } from '@/features/listings/utils/status';
 import { Banner } from '@/features/sponsor-dashboard/components/Banner';
 import { CreateListingModal } from '@/features/sponsor-dashboard/components/CreateListingModal';
+import { ListingTableSkeleton } from '@/features/sponsor-dashboard/components/ListingTableSkeleton';
 import { type SponsorStats } from '@/features/sponsor-dashboard/types';
 
 export default function Hackathon() {
@@ -150,7 +150,7 @@ export default function Hackathon() {
           />
         </div>
       </div>
-      {isBountiesLoading && <LoadingSection />}
+      {isBountiesLoading && <ListingTableSkeleton rows={10} />}
       {!isBountiesLoading && !bounties?.length && (
         <>
           <CreateListingModal
@@ -215,7 +215,7 @@ export default function Hackathon() {
 
                   return (
                     <TableRow key={currentBounty?.id}>
-                      <TableCell className="max-w-96 font-medium break-words whitespace-normal text-slate-700">
+                      <TableCell className="max-w-96 font-medium wrap-break-word whitespace-normal text-slate-700">
                         <div className="flex items-center">
                           <img
                             className="mr-2 h-5 rounded-sm"

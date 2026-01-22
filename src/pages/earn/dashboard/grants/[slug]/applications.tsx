@@ -5,7 +5,6 @@ import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
-import { LoadingSection } from '@/components/shared/LoadingSection';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { SponsorLayout } from '@/layouts/Sponsor';
 import { useUser } from '@/store/user';
@@ -14,6 +13,7 @@ import { applicationsAtom } from '@/features/sponsor-dashboard/atoms';
 import { ApplicationsTab } from '@/features/sponsor-dashboard/components/ApplicationsTab';
 import { ApplicationHeader } from '@/features/sponsor-dashboard/components/GrantApplications/ApplicationHeader';
 import { PaymentsHistoryTab } from '@/features/sponsor-dashboard/components/GrantApplications/PaymentsHistoryTab';
+import { SubmissionsPageSkeleton } from '@/features/sponsor-dashboard/components/Submissions/SubmissionsPageSkeleton';
 import { TranchesTab } from '@/features/sponsor-dashboard/components/TranchesTab';
 import { useAutoSwitchSponsor } from '@/features/sponsor-dashboard/hooks/use-auto-switch-sponsor';
 import { sponsorGrantQuery } from '@/features/sponsor-dashboard/queries/grant';
@@ -71,7 +71,7 @@ function GrantApplications({ slug }: Props) {
   return (
     <SponsorLayout isCollapsible>
       {isGrantLoading || isSwitchingSponsor ? (
-        <LoadingSection />
+        <SubmissionsPageSkeleton />
       ) : (
         <>
           <ApplicationHeader

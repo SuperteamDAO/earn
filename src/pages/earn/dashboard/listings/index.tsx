@@ -18,7 +18,6 @@ import React, {
   useState,
 } from 'react';
 
-import { LoadingSection } from '@/components/shared/LoadingSection';
 import { Button } from '@/components/ui/button';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 import {
@@ -41,6 +40,7 @@ import { getListingStatus } from '@/features/listings/utils/status';
 import { Banner } from '@/features/sponsor-dashboard/components/Banner';
 import { CreateListingModal } from '@/features/sponsor-dashboard/components/CreateListingModal';
 import { ListingTable } from '@/features/sponsor-dashboard/components/ListingTable';
+import { ListingTableSkeleton } from '@/features/sponsor-dashboard/components/ListingTableSkeleton';
 import { dashboardQuery } from '@/features/sponsor-dashboard/queries/dashboard';
 import { sponsorStatsQuery } from '@/features/sponsor-dashboard/queries/sponsor-stats';
 
@@ -373,7 +373,7 @@ export default function SponsorListings({ tab: queryTab }: { tab: string }) {
         </div>
       </div>
 
-      {isListingsLoading && <LoadingSection />}
+      {isListingsLoading && <ListingTableSkeleton rows={10} />}
       {!isListingsLoading && (
         <>
           <Tabs

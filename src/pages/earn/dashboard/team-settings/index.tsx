@@ -6,7 +6,6 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
 import { ErrorSection } from '@/components/shared/ErrorSection';
-import { LoadingSection } from '@/components/shared/LoadingSection';
 import { Button } from '@/components/ui/button';
 import { CopyButton } from '@/components/ui/copy-tooltip';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
@@ -31,6 +30,7 @@ import { useUser } from '@/store/user';
 
 import { Banner } from '@/features/sponsor-dashboard/components/Banner';
 import { InviteMembers } from '@/features/sponsor-dashboard/components/Members/InviteMembers';
+import { MembersTableSkeleton } from '@/features/sponsor-dashboard/components/Members/MembersTableSkeleton';
 import { membersQuery } from '@/features/sponsor-dashboard/queries/members';
 import { sponsorStatsQuery } from '@/features/sponsor-dashboard/queries/sponsor-stats';
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
@@ -141,7 +141,7 @@ const Index = () => {
       {isOpen && <InviteMembers isOpen={isOpen} onClose={onClose} />}
       <Banner stats={sponsorStats} isLoading={isStatsLoading} />
       <div className="mb-4 flex flex-col justify-between gap-3 xl:flex-row xl:items-center">
-        <div className="flex min-w-0 flex-shrink-0 items-start gap-3 lg:items-center">
+        <div className="flex min-w-0 shrink-0 items-start gap-3 lg:items-center">
           <p className="font-semibold whitespace-nowrap text-slate-800 lg:text-lg">
             Team Members
           </p>
@@ -188,7 +188,7 @@ const Index = () => {
           </div>
         </div>
       </div>
-      {isMembersLoading && <LoadingSection />}
+      {isMembersLoading && <MembersTableSkeleton rows={2} />}
       {!isMembersLoading && !members?.length && (
         <ErrorSection
           title="No members found!"

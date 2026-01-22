@@ -19,7 +19,6 @@ import MdList from '@/components/icons/MdList';
 import MdOutlineChatBubbleOutline from '@/components/icons/MdOutlineChatBubbleOutline';
 import RiUserSettingsLine from '@/components/icons/RiUserSettingsLine';
 import { EntityNameModal } from '@/components/modals/EntityNameModal';
-import { LoadingSection } from '@/components/shared/LoadingSection';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -34,6 +33,7 @@ import { SolanaWalletProvider } from '@/context/SolanaWallet';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
+import { SponsorContentSkeleton } from '@/layouts/SponsorLayoutSkeleton';
 import { useUser } from '@/store/user';
 import Sparkle from '@/svg/sparkle';
 import { cn } from '@/utils/cn';
@@ -151,13 +151,11 @@ export function SponsorLayout({
     enabled: !!user,
   });
 
-  if (!ready) {
-    return <LoadingSection />;
-  }
-
   if (ready && !authenticated) {
     return <Login isOpen={true} onClose={() => {}} />;
   }
+
+  const isLoading = !ready || (authenticated && isUserLoading);
 
   const isHackathonRoute = router.asPath.startsWith(
     '/earn/dashboard/hackathon',
@@ -222,10 +220,6 @@ export function SponsorLayout({
           posthog: 'faq_sponsor',
         },
       ];
-
-  const showLoading = !isHackathonRoute
-    ? !user?.currentSponsor?.id
-    : !user?.hackathonId && user?.role !== 'GOD';
 
   const showContent = isHackathonRoute
     ? user?.hackathonId || user?.role === 'GOD'
@@ -424,15 +418,14 @@ export function SponsorLayout({
               </NavItem>
             ))}
           </div>
-          {showLoading && <LoadingSection />}
-          {showContent && (
+          {(showContent || isLoading) && (
             <div
               className={cn(
                 'w-full flex-1 overflow-x-auto bg-white py-5 pr-8 pl-4 transition-[margin-left] duration-300 ease-in-out',
                 isCollapsible ? 'ml-20' : 'ml-0',
               )}
             >
-              {children}
+              {isLoading ? <SponsorContentSkeleton /> : children}
             </div>
           )}
         </div>

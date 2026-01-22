@@ -4,7 +4,6 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import posthog from 'posthog-js';
 import { useEffect, useRef, useState } from 'react';
 
-import { LoadingSection } from '@/components/shared/LoadingSection';
 import { UserFlag } from '@/components/shared/UserFlag';
 import { Button } from '@/components/ui/button';
 import {
@@ -17,6 +16,7 @@ import { useUser } from '@/store/user';
 
 import { FilterSection } from '@/features/sponsor-dashboard/components/LocalProfiles/FilterSection';
 import { UserTable } from '@/features/sponsor-dashboard/components/LocalProfiles/UserTable';
+import { UserTableSkeleton } from '@/features/sponsor-dashboard/components/LocalProfiles/UserTableSkeleton';
 import { localProfilesQuery } from '@/features/sponsor-dashboard/queries/local-profiles';
 
 type SortDirection = 'asc' | 'desc' | null;
@@ -155,7 +155,7 @@ export default function LocalProfiles() {
           superteam={superteam as Superteam}
         />
       </div>
-      {isLoading && <LoadingSection />}
+      {isLoading && <UserTableSkeleton rows={10} />}
       {!isLoading && currentUsers && currentUsers?.length > 0 && (
         <UserTable
           currentUsers={currentUsers}

@@ -55,8 +55,6 @@ local
 # vercel
 .vercel
 
-/public/assets/data
-
 # Sentry Config File
 .sentryclirc
 
