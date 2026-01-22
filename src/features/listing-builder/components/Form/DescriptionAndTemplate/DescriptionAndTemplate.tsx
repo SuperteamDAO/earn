@@ -133,8 +133,7 @@ export function DescriptionAndTemplate() {
                   editable={true}
                   editorClassName="focus:outline-hidden"
                   imageSetting={{
-                    folderName: 'listing-description',
-                    type: 'description',
+                    source: 'description',
                   }}
                   toolbarClassName="sticky top-18 bg-white z-10"
                 />

@@ -7,6 +7,7 @@ import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { cn } from '@/utils/cn';
 
+import { GrantsSection } from '@/features/grants/components/GrantsSection';
 import { userStatsQuery } from '@/features/home/queries/user-stats';
 import { ListingsSection } from '@/features/listings/components/ListingsSection';
 import { ProBanner } from '@/features/pro/components/ProBanner';
@@ -28,7 +29,7 @@ export default function ProPage({ potentialSession }: HomePageProps) {
           More Pro listings are coming
         </h3>
         <p className="text-sm text-slate-500">
-          Stay turned for more Pro listings
+          Stay tuned for more Pro listings
         </p>
       </div>
     );
@@ -61,6 +62,7 @@ export default function ProPage({ potentialSession }: HomePageProps) {
                   potentialSession={potentialSession}
                   customEmptySection={customEmptySection}
                 />
+                <GrantsSection type="pro" />
               </div>
             </div>
           </div>

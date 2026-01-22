@@ -178,16 +178,21 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       `Completing user profile with data: ${safeStringify(updatedData)}`,
     );
 
-    const createWalletResponse = await privy.wallets().create({
-      chain_type: 'solana',
-      owner: {
-        user_id: user.privyDid,
-      },
-    });
+    let walletAddress = user.walletAddress;
+    if (!walletAddress) {
+      const createWalletResponse = await privy.wallets().create({
+        chain_type: 'solana',
+        owner: {
+          user_id: user.privyDid,
+        },
+      });
+      walletAddress = createWalletResponse.address;
+    } else {
+      logger.info(`Using existing wallet for user ${userId}: ${walletAddress}`);
+    }
 
-    const walletAddress = createWalletResponse.address;
-
-    const referralCode = await generateUniqueReferralCode();
+    const referralCode =
+      user.referralCode ?? (await generateUniqueReferralCode());
 
     await prisma.user.update({
       where: {

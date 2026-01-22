@@ -1,30 +1,37 @@
-import { TOKEN_2022_PROGRAM_ID, TOKEN_PROGRAM_ID } from '@solana/spl-token';
-import { type Connection, PublicKey } from '@solana/web3.js';
+import { type Address } from '@solana/kit';
+import { TOKEN_PROGRAM_ADDRESS } from '@solana-program/token';
+import { TOKEN_2022_PROGRAM_ADDRESS } from '@solana-program/token-2022';
 
 import { tokenList } from '@/constants/tokenList';
 
 import { type TokenAsset } from '../types/TokenAsset';
 import { fetchTokenUSDValue } from './fetchTokenUSDValue';
+import { type SolanaRpc } from './getConnection';
 
 export async function fetchUserTokens(
-  connection: Connection,
-  publicKey: PublicKey,
+  rpc: SolanaRpc,
+  walletAddress: Address,
 ): Promise<TokenAsset[]> {
-  const [solBalance, tokenAccountsResponse, token2022AccountsResponse] =
+  const [solBalanceResponse, tokenAccountsResponse, token2022AccountsResponse] =
     await Promise.all([
-      connection.getBalance(publicKey),
-      connection.getParsedTokenAccountsByOwner(
-        publicKey,
-        { programId: TOKEN_PROGRAM_ID },
-        'confirmed',
-      ),
-      connection.getParsedTokenAccountsByOwner(
-        publicKey,
-        { programId: new PublicKey(TOKEN_2022_PROGRAM_ID) },
-        'confirmed',
-      ),
+      rpc.getBalance(walletAddress).send(),
+      rpc
+        .getTokenAccountsByOwner(
+          walletAddress,
+          { programId: TOKEN_PROGRAM_ADDRESS },
+          { encoding: 'jsonParsed', commitment: 'confirmed' },
+        )
+        .send(),
+      rpc
+        .getTokenAccountsByOwner(
+          walletAddress,
+          { programId: TOKEN_2022_PROGRAM_ADDRESS },
+          { encoding: 'jsonParsed', commitment: 'confirmed' },
+        )
+        .send(),
     ]);
 
+  const solBalance = solBalanceResponse.value;
   const allTokenAccounts = [
     ...tokenAccountsResponse.value,
     ...token2022AccountsResponse.value,
@@ -32,17 +39,18 @@ export async function fetchUserTokens(
 
   const assets: TokenAsset[] = [];
 
-  if (solBalance > 0) {
+  if (solBalance > 0n) {
     const solPrice = await fetchTokenUSDValue(
       'So11111111111111111111111111111111111111112',
     );
 
+    const solAmountNumber = Number(solBalance) / 1e9;
     const solAsset: TokenAsset = {
       tokenAddress: 'So11111111111111111111111111111111111111112',
       tokenSymbol: 'SOL',
-      tokenImg: 'https://s2.coinmarketcap.com/static/img/coins/64x64/16116.png',
-      amount: solBalance / 1e9,
-      usdValue: (solBalance / 1e9) * solPrice,
+      tokenImg: '/cdn/coinmarketcap/static/img/coins/64x64/16116.png',
+      amount: solAmountNumber,
+      usdValue: solAmountNumber * solPrice,
       tokenName: 'Solana',
     };
 

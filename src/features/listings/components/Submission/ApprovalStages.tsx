@@ -4,11 +4,11 @@ import { useQuery } from '@tanstack/react-query';
 import FaCheck from '@/components/icons/FaCheck';
 import { useUser } from '@/store/user';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
+import { getPayoutCopy } from '@/utils/payout-date';
 
 import type { Listing } from '@/features/listings/types';
 
 import { userSubmissionQuery } from '../../queries/user-submission-status';
-import { getPayoutCopy } from '../../utils/payout-date';
 import { checkKycCountryMatchesRegion } from '../../utils/region';
 
 interface Props {

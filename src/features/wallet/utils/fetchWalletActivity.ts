@@ -1,29 +1,34 @@
-import { type Connection, PublicKey } from '@solana/web3.js';
+import { type Address } from '@solana/kit';
 
 import { tokenList } from '@/constants/tokenList';
 
 import { type TokenActivity } from '../types/TokenActivity';
 import { fetchTokenUSDValue } from './fetchTokenUSDValue';
+import { type SolanaRpc } from './getConnection';
 
 export async function fetchWalletActivity(
-  connection: Connection,
-  publicKey: PublicKey,
+  rpc: SolanaRpc,
+  walletAddress: Address,
 ): Promise<TokenActivity[]> {
-  const signatures = await connection.getSignaturesForAddress(publicKey, {
-    limit: 50,
-  });
+  const signaturesResponse = await rpc
+    .getSignaturesForAddress(walletAddress, { limit: 50 })
+    .send();
+  const signatures = signaturesResponse;
 
   const activities: TokenActivity[] = [];
-  const batchSize = 10;
+  const batchSize = 5;
 
   for (let i = 0; i < signatures.length; i += batchSize) {
     const batchSignatures = signatures.slice(i, i + batchSize);
     const transactionBatch = await Promise.all(
       batchSignatures.map((sig) =>
-        connection.getParsedTransaction(sig.signature, {
-          maxSupportedTransactionVersion: 0,
-          commitment: 'confirmed',
-        }),
+        rpc
+          .getTransaction(sig.signature, {
+            maxSupportedTransactionVersion: 0,
+            commitment: 'confirmed',
+            encoding: 'jsonParsed',
+          })
+          .send(),
       ),
     );
 
@@ -45,13 +50,13 @@ export async function fetchWalletActivity(
       if (!tx?.meta) continue;
 
       const walletIndex = tx.transaction.message.accountKeys.findIndex(
-        (acc) => acc.pubkey.toString() === publicKey.toString(),
+        (acc: any) => acc.pubkey === walletAddress || acc === walletAddress,
       );
 
       if (walletIndex !== -1) {
-        const preBalance = tx.meta.preBalances[walletIndex] || 0;
-        const postBalance = tx.meta.postBalances[walletIndex] || 0;
-        const balanceChange = (postBalance - preBalance) / 1e9;
+        const preBalance = BigInt(tx.meta.preBalances[walletIndex] || 0);
+        const postBalance = BigInt(tx.meta.postBalances[walletIndex] || 0);
+        const balanceChange = Number(postBalance - preBalance) / 1e9;
 
         if (balanceChange !== 0) {
           const amount = Math.abs(balanceChange);
@@ -59,21 +64,31 @@ export async function fetchWalletActivity(
           let counterpartyAddress = '';
           if (tx.transaction.message.instructions) {
             const transferInstruction =
-              tx.transaction.message.instructions.find(
-                (instruction) =>
-                  'parsed' in instruction &&
-                  instruction.parsed.type === 'transfer' &&
-                  (instruction.parsed.info.source === publicKey.toString() ||
-                    instruction.parsed.info.destination ===
-                      publicKey.toString()),
-              );
+              tx.transaction.message.instructions.find((instruction) => {
+                if (!('parsed' in instruction)) return false;
+                const parsed = instruction.parsed as {
+                  type?: string;
+                  info?: { source?: string; destination?: string };
+                };
+                return (
+                  parsed.type === 'transfer' &&
+                  parsed.info &&
+                  (parsed.info.source === walletAddress ||
+                    parsed.info.destination === walletAddress)
+                );
+              });
 
             if (transferInstruction && 'parsed' in transferInstruction) {
-              const { info } = transferInstruction.parsed;
-              counterpartyAddress =
-                info.source === publicKey.toString()
-                  ? info.destination
-                  : info.source;
+              const parsed = transferInstruction.parsed as {
+                info?: { source?: string; destination?: string };
+              };
+              const info = parsed.info;
+              if (info?.source && info?.destination) {
+                counterpartyAddress =
+                  info.source === walletAddress
+                    ? info.destination
+                    : info.source;
+              }
             }
           }
 
@@ -84,9 +99,8 @@ export async function fetchWalletActivity(
             tokenAddress: 'So11111111111111111111111111111111111111112',
             counterpartyAddress,
             tokenSymbol: 'SOL',
-            tokenImg:
-              'https://s2.coinmarketcap.com/static/img/coins/64x64/16116.png',
-            timestamp: tx.blockTime ? tx.blockTime * 1000 : Date.now(),
+            tokenImg: '/cdn/coinmarketcap/static/img/coins/64x64/16116.png',
+            timestamp: tx.blockTime ? Number(tx.blockTime) * 1000 : Date.now(),
             signature: signature ?? '',
           });
         }
@@ -96,7 +110,7 @@ export async function fetchWalletActivity(
 
       const tokenPromises = tx.meta.postTokenBalances
         .map(async (post) => {
-          if (post.owner !== publicKey.toString()) {
+          if (post.owner !== walletAddress) {
             return null;
           }
 
@@ -104,8 +118,12 @@ export async function fetchWalletActivity(
             (pre) => pre.accountIndex === post.accountIndex,
           );
 
-          const preAmount = pre?.uiTokenAmount.uiAmount || 0;
-          const postAmount = post.uiTokenAmount.uiAmount || 0;
+          const preAmount = parseFloat(
+            pre?.uiTokenAmount?.uiAmountString ?? '0',
+          );
+          const postAmount = parseFloat(
+            post.uiTokenAmount?.uiAmountString ?? '0',
+          );
           const balanceChange = postAmount - preAmount;
 
           if (balanceChange === 0) return null;
@@ -133,33 +151,29 @@ export async function fetchWalletActivity(
           let counterpartyAddress = '';
           if (tx.transaction.message.instructions) {
             const transferInstruction =
-              tx.transaction.message.instructions.find(
-                (instruction) =>
-                  'parsed' in instruction &&
-                  (instruction.parsed.type === 'transfer' ||
-                    instruction.parsed.type === 'transferChecked') &&
-                  instruction.program === 'spl-token',
-              );
+              tx.transaction.message.instructions.find((instruction) => {
+                if (!('parsed' in instruction)) return false;
+                const parsed = instruction.parsed as { type?: string };
+                return (
+                  (parsed.type === 'transfer' ||
+                    parsed.type === 'transferChecked') &&
+                  (instruction as any).program === 'spl-token'
+                );
+              });
 
             if (transferInstruction && 'parsed' in transferInstruction) {
-              try {
-                const sourceAccount = transferInstruction.parsed.info.source;
-                const destAccount = transferInstruction.parsed.info.destination;
+              const parsed = transferInstruction.parsed as {
+                info?: {
+                  source?: string;
+                  destination?: string;
+                  authority?: string;
+                };
+              };
 
-                const [sourceInfo, destInfo] = await Promise.all([
-                  connection.getParsedAccountInfo(new PublicKey(sourceAccount)),
-                  connection.getParsedAccountInfo(new PublicKey(destAccount)),
-                ]);
-
-                const sourceOwner = (sourceInfo.value?.data as any)?.parsed
-                  ?.info?.owner;
-                const destOwner = (destInfo.value?.data as any)?.parsed?.info
-                  ?.owner;
-
+              const info = parsed.info;
+              if (info?.source && info?.destination) {
                 counterpartyAddress =
-                  balanceChange > 0 ? sourceOwner : destOwner;
-              } catch (error) {
-                console.error('Error fetching token account info:', error);
+                  balanceChange > 0 ? info.source : info.destination;
               }
             }
           }
@@ -172,7 +186,7 @@ export async function fetchWalletActivity(
             counterpartyAddress,
             tokenSymbol: metadata.tokenSymbol,
             tokenImg: metadata.icon,
-            timestamp: tx.blockTime ? tx.blockTime * 1000 : Date.now(),
+            timestamp: tx.blockTime ? Number(tx.blockTime) * 1000 : Date.now(),
             signature,
           } as TokenActivity;
         })
@@ -190,7 +204,7 @@ export async function fetchWalletActivity(
     }
 
     if (i + batchSize < signatures.length) {
-      await new Promise((resolve) => setTimeout(resolve, 100));
+      await new Promise((resolve) => setTimeout(resolve, 300));
     }
   }
 

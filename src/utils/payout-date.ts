@@ -1,8 +1,10 @@
 import { dayjs } from '@/utils/dayjs';
 
 interface GetPayoutCopyParams {
-  winnerAnnouncedAt: string | undefined;
-  kycVerifiedAt?: string | null;
+  approvedAt?: string | Date | undefined;
+  winnerAnnouncedAt?: string | Date | undefined;
+  trancheApprovedAt?: string | Date | undefined;
+  kycVerifiedAt?: string | Date | null;
   now?: string;
 }
 
@@ -10,13 +12,22 @@ const MONDAY_INDEX = 1; // Sunday=0, Monday=1
 const CUTOFF_HOUR_UTC = 12; // 12:00 UTC
 
 function getRefTimestamp(params: GetPayoutCopyParams): dayjs.Dayjs {
-  const { winnerAnnouncedAt, kycVerifiedAt, now } = params;
+  const {
+    approvedAt,
+    winnerAnnouncedAt,
+    trancheApprovedAt,
+    kycVerifiedAt,
+    now,
+  } = params;
 
   const nowUtc = dayjs.utc(now ?? undefined);
-  const announced = winnerAnnouncedAt ? dayjs.utc(winnerAnnouncedAt) : null;
+
+  const approvalDate = approvedAt ?? winnerAnnouncedAt ?? trancheApprovedAt;
+  const approved = approvalDate ? dayjs.utc(approvalDate) : null;
+
   const kyc = kycVerifiedAt ? dayjs.utc(kycVerifiedAt) : null;
 
-  const candidateA = announced ?? nowUtc;
+  const candidateA = approved ?? nowUtc;
   const candidateB = kyc ?? nowUtc;
   return dayjs.max(candidateA, candidateB);
 }
@@ -58,6 +69,11 @@ function formatPayoutDate(d: dayjs.Dayjs): string {
   return d.year() === currentYear ? base : `${base} ${d.year()}`;
 }
 
+/**
+ * Calculates the payout date copy based on approval and KYC verification dates.
+ * If approved before Monday 12:00 UTC, pays by Friday of the same week.
+ * If approved after Monday 12:00 UTC, pays by Friday of the next week.
+ */
 export function getPayoutCopy(params: GetPayoutCopyParams): string {
   const payoutDate = computePayoutDateUtc(params);
   return `Will be paid by ${formatPayoutDate(payoutDate)}`;
