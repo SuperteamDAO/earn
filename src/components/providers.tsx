@@ -3,7 +3,9 @@ import { createSolanaRpc, createSolanaRpcSubscriptions } from '@solana/kit';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { type Session } from 'next-auth';
 import { SessionProvider } from 'next-auth/react';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
+
+const queryClient = new QueryClient();
 
 export default function Providers({
   children,
@@ -12,8 +14,6 @@ export default function Providers({
   children: React.ReactNode;
   session?: Session | null;
 }) {
-  const [queryClient] = useState(() => new QueryClient());
-
   return (
     <SessionProvider session={session}>
       <PrivyProvider
