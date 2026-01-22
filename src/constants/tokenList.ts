@@ -591,3 +591,10 @@ export const tokenList: Token[] = [
     decimals: 9,
   },
 ];
+
+const tokenIconMap = new Map<string, string>(
+  tokenList.map((t) => [t.tokenSymbol, t.icon]),
+);
+
+export const getTokenIcon = (symbol: string): string =>
+  tokenIconMap.get(symbol) ?? '/assets/dollar.svg';

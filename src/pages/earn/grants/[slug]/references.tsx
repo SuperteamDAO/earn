@@ -1,5 +1,4 @@
 import type { GetServerSideProps } from 'next';
-import { useState } from 'react';
 
 import { GrantPageLayout } from '@/layouts/Grants';
 import { api } from '@/lib/api';
@@ -12,9 +11,7 @@ interface GrantsDetailsProps {
   grant: GrantWithApplicationCount | null;
 }
 
-function Grants({ grant: initialGrant }: GrantsDetailsProps) {
-  const [grant] = useState<typeof initialGrant>(initialGrant);
-
+function Grants({ grant }: GrantsDetailsProps) {
   return (
     <GrantPageLayout grant={grant}>
       <div>
