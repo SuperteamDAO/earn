@@ -1,7 +1,7 @@
 import { ImageResponse } from 'next/og';
 
 import { ASSET_URL } from '@/constants/ASSET_URL';
-import { tokenList } from '@/constants/tokenList';
+import { getTokenIcon } from '@/constants/tokenList';
 import { convertToJpegUrl } from '@/utils/cloudinary';
 import { formatNumber, formatString, loadGoogleFont } from '@/utils/ogHelpers';
 import { getURL } from '@/utils/validUrl';
@@ -55,9 +55,6 @@ export async function GET(request: Request) {
 
     const displayReward =
       minReward === '0' ? `Up to ${maxReward}` : `${minReward} - ${maxReward}`;
-
-    const getTokenIcon = (symbol: any) =>
-      tokenList.find((t) => t.tokenSymbol === symbol)?.icon;
 
     const icon = resolveAbsoluteUrl(getTokenIcon(token) ?? null);
 
