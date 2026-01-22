@@ -37,7 +37,7 @@ export default function Geographies() {
             {Superteams.map((superteam) => {
               const showFlag = !superteam.icons;
               const isHovered = hoveredSuperteam === superteam.code;
-              const hasLink = Boolean(superteam.link);
+              const hasLink = Boolean(superteam.link && superteam.link.trim());
 
               const cardContent = (
                 <div className="st-accordion relative flex h-[40px] w-full flex-row items-center justify-between overflow-hidden rounded-lg pr-2 text-white md:h-[42px]">
@@ -65,6 +65,10 @@ export default function Geographies() {
                 </div>
               );
 
+              const commonClassName = `accordion-overlay group z-1 basis-[calc(50%-5px)] rounded-lg object-cover transition-all duration-200 select-none md:basis-auto ${
+                isHovered ? 'superteam-card-hovered scale-[1.02]' : ''
+              } ${hoveredSuperteam && !isHovered ? 'opacity-50' : ''}`;
+
               return (
                 <li key={superteam.slug} className="contents">
                   {hasLink ? (
@@ -73,9 +77,7 @@ export default function Geographies() {
                       target="_blank"
                       rel="noopener noreferrer"
                       aria-label={`${superteam.name} - Solana community in ${superteam.country[0] || superteam.displayValue}`}
-                      className={`accordion-overlay group z-1 basis-[calc(50%-5px)] rounded-lg object-cover transition-all duration-200 select-none md:basis-auto ${
-                        isHovered ? 'superteam-card-hovered scale-[1.02]' : ''
-                      } ${hoveredSuperteam && !isHovered ? 'opacity-50' : ''}`}
+                      className={commonClassName}
                       onMouseEnter={() => setHoveredSuperteam(superteam.code)}
                       onMouseLeave={() => setHoveredSuperteam(null)}
                     >
@@ -84,9 +86,7 @@ export default function Geographies() {
                   ) : (
                     <div
                       aria-label={`${superteam.name} - Coming soon`}
-                      className={`accordion-overlay group z-1 basis-[calc(50%-5px)] cursor-default rounded-lg object-cover opacity-50 transition-all duration-200 select-none md:basis-auto ${
-                        isHovered ? 'superteam-card-hovered scale-[1.02]' : ''
-                      } ${hoveredSuperteam && !isHovered ? 'opacity-30' : ''}`}
+                      className={commonClassName}
                       onMouseEnter={() => setHoveredSuperteam(superteam.code)}
                       onMouseLeave={() => setHoveredSuperteam(null)}
                     >
