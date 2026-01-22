@@ -5,12 +5,14 @@ import {
   QueryClient,
 } from '@tanstack/react-query';
 import type { GetServerSideProps } from 'next';
+import dynamic from 'next/dynamic';
 import Head from 'next/head';
 
 import { JsonLd } from '@/components/shared/JsonLd';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { ListingPageLayout } from '@/layouts/Listing';
 import { getSubmissionCount } from '@/pages/api/listings/[listingId]/submission-count';
+import { getWinningSubmissionsByListingId } from '@/pages/api/listings/[listingId]/winners';
 import { getListingDetailsBySlug } from '@/pages/api/listings/details/[slug]';
 import {
   generateBreadcrumbListSchema,
@@ -19,9 +21,17 @@ import {
 
 import { ListingPop } from '@/features/conversion-popups/components/ListingPop';
 import { DescriptionUI } from '@/features/listings/components/ListingPage/DescriptionUI';
-import { ListingWinners } from '@/features/listings/components/ListingPage/ListingWinners';
+import { listingWinnersQuery } from '@/features/listings/queries/listing-winners';
 import { submissionCountQuery } from '@/features/listings/queries/submission-count';
 import { type Listing } from '@/features/listings/types';
+
+const ListingWinners = dynamic(
+  () =>
+    import('@/features/listings/components/ListingPage/ListingWinners').then(
+      (m) => m.ListingWinners,
+    ),
+  { ssr: false },
+);
 
 interface ListingDetailsProps {
   listing: Listing | null;
@@ -96,10 +106,23 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
   const queryClient = new QueryClient();
   if (listingData?.id) {
-    await queryClient.prefetchQuery({
-      ...submissionCountQuery(listingData.id),
-      queryFn: () => getSubmissionCount(listingData.id),
-    });
+    const prefetchPromises: Promise<void>[] = [
+      queryClient.prefetchQuery({
+        ...submissionCountQuery(listingData.id),
+        queryFn: () => getSubmissionCount(listingData.id),
+      }),
+    ];
+
+    if (listingData.isWinnersAnnounced) {
+      prefetchPromises.push(
+        queryClient.prefetchQuery({
+          ...listingWinnersQuery(listingData.id),
+          queryFn: () => getWinningSubmissionsByListingId(listingData.id),
+        }),
+      );
+    }
+
+    await Promise.all(prefetchPromises);
   }
   return {
     props: {

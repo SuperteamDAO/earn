@@ -1,17 +1,13 @@
 import { useQuery } from '@tanstack/react-query';
-import parse, {
-  domToReact,
-  type HTMLReactParserOptions,
-} from 'html-react-parser';
 import { ChevronDown } from 'lucide-react';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import dynamic from 'next/dynamic';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import SuperteamIcon from '@/components/icons/SuperteamIcon';
 import { Button } from '@/components/ui/button';
 import { CircularProgress } from '@/components/ui/progress';
 import { type BountyType } from '@/generated/prisma/enums';
 import { useMediaQuery } from '@/hooks/use-media-query';
-import { domPurify } from '@/lib/domPurify';
 import { useUser } from '@/store/user';
 import styles from '@/styles/listing-description.module.css';
 import { cn } from '@/utils/cn';
@@ -19,6 +15,34 @@ import { cn } from '@/utils/cn';
 import { userStatsQuery } from '@/features/home/queries/user-stats';
 import { ProBadge } from '@/features/pro/components/ProBadge';
 import { ProIntro } from '@/features/pro/components/ProIntro';
+
+const DescriptionSkeleton = () => (
+  <div className="animate-pulse space-y-6">
+    <div className="space-y-2">
+      <div className="h-4 w-full rounded bg-slate-100" />
+      <div className="h-4 w-[95%] rounded bg-slate-100" />
+      <div className="h-4 w-[88%] rounded bg-slate-100" />
+      <div className="h-4 w-[70%] rounded bg-slate-100" />
+    </div>
+    <div className="space-y-2">
+      <div className="h-4 w-full rounded bg-slate-100" />
+      <div className="h-4 w-[92%] rounded bg-slate-100" />
+      <div className="h-4 w-[85%] rounded bg-slate-100" />
+      <div className="h-4 w-full rounded bg-slate-100" />
+      <div className="h-4 w-[60%] rounded bg-slate-100" />
+    </div>
+    <div className="space-y-2">
+      <div className="h-4 w-[90%] rounded bg-slate-100" />
+      <div className="h-4 w-full rounded bg-slate-100" />
+      <div className="h-4 w-[75%] rounded bg-slate-100" />
+    </div>
+  </div>
+);
+
+const HtmlContent = dynamic(() => import('./HtmlContent'), {
+  ssr: false,
+  loading: () => <DescriptionSkeleton />,
+});
 
 interface Props {
   description?: string;
@@ -34,35 +58,15 @@ export function DescriptionUI({
   isPro = false,
 }: Props) {
   const { user, isLoading: isUserLoading } = useUser();
-  const { data: stats, isLoading: isStatsLoading } = useQuery(userStatsQuery);
+  const { data: stats, isLoading: isStatsLoading } = useQuery({
+    ...userStatsQuery,
+    enabled: isPro,
+  });
 
-  const options: HTMLReactParserOptions = {
-    replace: (domNode: any) => {
-      const { name, children, attribs } = domNode;
-      if (name === 'p' && (!children || children.length === 0)) {
-        return <br />;
-      }
-      if (name === 'a' && attribs) {
-        return (
-          <a {...attribs} target="_blank" rel="noopener noreferrer">
-            {domToReact(children, options)}
-          </a>
-        );
-      }
-      return domNode;
-    },
-  };
-
-  //to resolve a chain of hydration errors
-  const [isMounted, setIsMounted] = useState(false);
   const [showMore, setShowMore] = useState(true);
   const [showCollapser, setShowCollapser] = useState(false);
   const descriptionRef = useRef<HTMLDivElement>(null);
   const isNotMD = useMediaQuery('(max-width: 767px)');
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
 
   const decideCollapser = useCallback(() => {
     if (descriptionRef.current) {
@@ -72,132 +76,25 @@ export function DescriptionUI({
         setShowMore(false);
       }
     }
-  }, [isNotMD, setShowCollapser, setShowMore]);
+  }, [isNotMD]);
 
   useEffect(() => {
-    // Use a timeout to ensure the DOM has been updated
     const timer = setTimeout(() => {
       decideCollapser();
     }, 0);
-
     return () => clearTimeout(timer);
-  }, [decideCollapser, isMounted]);
-
-  const descriptionContent = useMemo(() => {
-    if (!isMounted) return null;
-
-    // Safely parse JSON-encoded descriptions with fallback
-    let normalizedDescription = description ?? '';
-    if (normalizedDescription.startsWith('"')) {
-      try {
-        normalizedDescription = JSON.parse(normalizedDescription) as string;
-      } catch {
-        // Fallback: use original string if JSON parsing fails
-        normalizedDescription = description ?? '';
-      }
-    }
-
-    return parse(
-      domPurify(normalizedDescription, {
-        ALLOWED_TAGS: [
-          'a',
-          'p',
-          'br',
-          'strong',
-          'em',
-          'b',
-          'i',
-          'u',
-          's',
-          'blockquote',
-          'pre',
-          'code',
-          'ul',
-          'ol',
-          'li',
-          'h1',
-          'h2',
-          'h3',
-          'h4',
-          'h5',
-          'h6',
-          'hr',
-          'table',
-          'thead',
-          'tbody',
-          'tr',
-          'td',
-          'th',
-          'span',
-          'img',
-        ],
-        ALLOWED_ATTR: [
-          'href',
-          'target',
-          'rel',
-          'src',
-          'alt',
-          'title',
-          'width',
-          'height',
-          'colspan',
-          'rowspan',
-          'class',
-        ],
-        FORBID_TAGS: [
-          'script',
-          'iframe',
-          'style',
-          'meta',
-          'link',
-          'object',
-          'embed',
-          'base',
-          'form',
-        ],
-      }),
-      options,
-    );
-  }, [isMounted, description, options]);
-
-  const isProEligibilityLoading = isPro && (isUserLoading || isStatsLoading);
-  if (isProEligibilityLoading) {
-    return (
-      <div className="w-full overflow-visible border-b-2 border-slate-200 pb-4 md:border-0">
-        <div className="relative w-full overflow-visible rounded-xl bg-white">
-          <div className="mt-4 w-full overflow-visible pb-7">
-            <div className="space-y-4">
-              <div className="h-4 w-full rounded bg-slate-100" />
-              <div className="h-4 w-5/6 rounded bg-slate-100" />
-              <div className="h-4 w-full rounded bg-slate-100" />
-              <div className="h-4 w-4/5 rounded bg-slate-100" />
-              <div className="h-4 w-full rounded bg-slate-100" />
-              <div className="h-4 w-3/4 rounded bg-slate-100" />
-              <div className="h-4 w-full rounded bg-slate-100" />
-              <div className="h-4 w-5/6 rounded bg-slate-100" />
-              <div className="h-4 w-4/5 rounded bg-slate-100" />
-              <div className="h-4 w-full rounded bg-slate-100" />
-              <div className="h-4 w-full rounded bg-slate-100" />
-              <div className="h-4 w-5/6 rounded bg-slate-100" />
-              <div className="h-4 w-full rounded bg-slate-100" />
-              <div className="h-4 w-4/5 rounded bg-slate-100" />
-              <div className="h-4 w-full rounded bg-slate-100" />
-              <div className="h-4 w-5/6 rounded bg-slate-100" />
-              <div className="h-4 w-full rounded bg-slate-100" />
-              <div className="h-4 w-4/5 rounded bg-slate-100" />
-              <div className="h-4 w-full rounded bg-slate-100" />
-              <div className="h-4 w-3/4 rounded bg-slate-100" />
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  }, [decideCollapser]);
 
   const isUserSponsor = user?.currentSponsorId === sponsorId;
-  if (isPro && !user?.isPro && !isUserSponsor) {
+  const isProEligibilityLoading =
+    isPro && !isUserSponsor && (isUserLoading || isStatsLoading);
+  const shouldShowProGate =
+    isPro && !isUserSponsor && !user?.isPro && !isProEligibilityLoading;
+  const shouldShowDescriptionSkeleton = isProEligibilityLoading;
+
+  if (shouldShowProGate) {
     const randomText =
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. <br/> Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.';
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.';
 
     const isUserEligibleForPro =
       (stats && (stats.totalWinnings ?? 0) >= 1000) ||
@@ -290,7 +187,11 @@ export function DescriptionUI({
           <div
             className={`${styles.content} mt-4 w-full overflow-visible pb-7`}
           >
-            {descriptionContent}
+            {shouldShowDescriptionSkeleton ? (
+              <DescriptionSkeleton />
+            ) : (
+              <HtmlContent description={description} />
+            )}
           </div>
           {!showMore && (
             <div
