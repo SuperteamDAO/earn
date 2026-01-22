@@ -30,6 +30,7 @@ export const GrantsSection = ({
   hideWhenEmpty,
 }: GrantSectionProps) => {
   const { activeCategory, handleCategoryChange } = useGrantState();
+  const isProContext = type === 'pro';
 
   // For category contexts, use the category prop (route category)
   // For other contexts, use activeCategory (filter selection)
@@ -38,6 +39,13 @@ export const GrantsSection = ({
       ? categoryProp || activeCategory
       : activeCategory;
   const isMd = useBreakpoint('md');
+
+  const getTitle = () => {
+    if (isProContext) {
+      return 'Premium Grants';
+    }
+    return 'Grants';
+  };
 
   const {
     data: grants,
@@ -87,9 +95,21 @@ export const GrantsSection = ({
 
   return (
     <div className={cn('mx-auto my-10 w-[98%] md:w-full')}>
-      <p className="mb-1.5 text-lg font-semibold text-slate-800">Grants</p>
+      <p
+        className={cn(
+          'mb-1.5 text-lg font-semibold',
+          isProContext ? 'text-zinc-800' : 'text-slate-800',
+        )}
+      >
+        {getTitle()}
+      </p>
 
-      <div className="mb-3 h-px w-full bg-slate-200" />
+      <div
+        className={cn(
+          'mb-3 h-px w-full',
+          isProContext ? 'bg-zinc-200' : 'bg-slate-200',
+        )}
+      />
 
       {type !== 'category' && type !== 'category-all' && (
         <div className="mb-2 flex gap-1 overflow-x-auto pb-1">
@@ -98,6 +118,7 @@ export const GrantsSection = ({
             phEvent="all_navpill"
             isActive={activeCategory === 'All'}
             onClick={() => handleCategoryChange('All', 'all_navpill')}
+            isPro={isProContext}
           >
             All
           </CategoryPill>
@@ -109,6 +130,7 @@ export const GrantsSection = ({
               onClick={() =>
                 handleCategoryChange(navItem.label, navItem.pillPH)
               }
+              isPro={isProContext}
             >
               {isMd ? navItem.label : navItem.mobileLabel || navItem.label}
             </CategoryPill>

@@ -16,6 +16,7 @@ export const GrantContextSchema = z
     'category',
     'category-all',
     'opportunity',
+    'pro',
   ])
   .default('all');
 

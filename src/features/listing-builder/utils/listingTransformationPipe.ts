@@ -11,6 +11,7 @@ import { type ListingWithSponsor } from '@/features/auth/utils/checkListingSpons
 import { FEATURED_USD_THRESHOLD } from '@/features/listing-builder/components/Form/Boost/constants';
 import { hasMoreThan72HoursLeft } from '@/features/listing-builder/components/Form/Boost/utils';
 import { type ListingFormData } from '@/features/listing-builder/types';
+import { buildFeaturedAvailabilityWhere } from '@/features/listing-builder/utils/featured-availability';
 import { isFndnPayingCheck } from '@/features/listing-builder/utils/isFndnPayingCheck';
 import { fetchTokenUSDValue } from '@/features/wallet/utils/fetchTokenUSDValue';
 
@@ -45,12 +46,7 @@ const isAutoFeatureUsdThresholdMet = (usdValue: number): boolean => {
 
 const countLiveFeaturedListings = async (): Promise<number> => {
   return prisma.bounties.count({
-    where: {
-      isFeatured: true,
-      isPublished: true,
-      isActive: true,
-      deadline: { gte: new Date() },
-    },
+    where: buildFeaturedAvailabilityWhere(),
   });
 };
 

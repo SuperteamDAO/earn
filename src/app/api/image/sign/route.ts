@@ -70,38 +70,7 @@ export async function POST(request: NextRequest) {
 
     const { source, contentType, contentLength } = validationResult.data;
 
-    if (source === 'sponsor') {
-      const user = await prisma.user.findUnique({
-        where: { id: userId },
-        select: {
-          currentSponsorId: true,
-          UserSponsors: {
-            where: {
-              OR: [{ role: 'ADMIN' }, { role: 'MEMBER' }],
-            },
-            select: { sponsorId: true },
-          },
-        },
-      });
-
-      if (!user) {
-        logger.warn(`User ${userId} not found for sponsor upload`);
-        return NextResponse.json(
-          { error: 'User not found' },
-          { status: 404, headers: rateLimitHeaders },
-        );
-      }
-
-      if (!user.currentSponsorId && user.UserSponsors.length === 0) {
-        logger.warn(
-          `User ${userId} attempted sponsor upload without sponsor access`,
-        );
-        return NextResponse.json(
-          { error: 'You do not have permission to upload sponsor images' },
-          { status: 403, headers: rateLimitHeaders },
-        );
-      }
-    } else if (source === 'description') {
+    if (source === 'description') {
       const user = await prisma.user.findUnique({
         where: { id: userId },
         select: {

@@ -14,8 +14,8 @@ const publicIdSchema = z
 
 export const signRequestSchema = z.object({
   source: imageSourceSchema,
-  contentType: contentTypeSchema,
-  contentLength: z.number().int().positive().max(MAX_FILE_SIZE),
+  contentType: contentTypeSchema.optional(),
+  contentLength: z.number().int().positive().max(MAX_FILE_SIZE).optional(),
   width: z.number().int().positive().max(4096).optional(),
   height: z.number().int().positive().max(4096).optional(),
 });

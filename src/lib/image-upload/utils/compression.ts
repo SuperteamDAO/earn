@@ -9,7 +9,7 @@ const DEFAULT_OPTIONS: Required<CompressionOptions> = {
   maxWidth: 1920,
   maxHeight: 1920,
   quality: 0.85,
-  format: 'image/webp',
+  format: 'image/jpeg',
 };
 
 export async function compressImage(

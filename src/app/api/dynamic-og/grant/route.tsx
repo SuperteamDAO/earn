@@ -4,6 +4,7 @@ import { ASSET_URL } from '@/constants/ASSET_URL';
 import { tokenList } from '@/constants/tokenList';
 import { convertToJpegUrl } from '@/utils/cloudinary';
 import { formatNumber, formatString, loadGoogleFont } from '@/utils/ogHelpers';
+import { getURL } from '@/utils/validUrl';
 
 export async function GET(request: Request) {
   try {
@@ -14,9 +15,26 @@ export async function GET(request: Request) {
     const title = getParam('title', (x) =>
       formatString(decodeURIComponent(x), 97),
     );
-    const logo =
+    const resolveAbsoluteUrl = (url: string | null): string | null => {
+      if (!url) {
+        return null;
+      }
+
+      if (/^https?:\/\//i.test(url)) {
+        return url;
+      }
+
+      if (url.startsWith('/')) {
+        return new URL(url, getURL()).toString();
+      }
+
+      return url;
+    };
+
+    const logo = resolveAbsoluteUrl(
       getParam('logo', (x) => convertToJpegUrl(x)) ||
-      ASSET_URL + '/logo/sponsor-logo.png';
+        `${ASSET_URL}/logo/sponsor-logo.png`,
+    );
     const minReward = getParam('minReward', formatNumber);
     const maxReward = getParam('maxReward', formatNumber);
     const sponsor = getParam('sponsor', (x) => formatString(x, 100));
@@ -41,7 +59,7 @@ export async function GET(request: Request) {
     const getTokenIcon = (symbol: any) =>
       tokenList.find((t) => t.tokenSymbol === symbol)?.icon;
 
-    const icon = getTokenIcon(token);
+    const icon = resolveAbsoluteUrl(getTokenIcon(token) ?? null);
 
     return new ImageResponse(
       (

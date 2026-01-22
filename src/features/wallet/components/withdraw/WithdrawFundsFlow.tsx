@@ -167,6 +167,24 @@ export function WithdrawFundsFlow({
   async function handleWithdraw(values: WithdrawFormData) {
     if (isProcessing) return '';
 
+    const userWalletAddress = user?.walletAddress;
+    const earnWallet = wallets.find(
+      (wallet) => wallet.address === userWalletAddress,
+    );
+
+    if (!userWalletAddress || !earnWallet) {
+      toast.error(
+        'Wallet mismatch. Please contact support@superteamearn.com to resolve this issue.',
+      );
+      log.error(
+        `Withdrawal wallet mismatch: userId: ${user?.id}, userWalletAddress: ${userWalletAddress ?? 'missing'}, availableWallets: ${wallets
+          .map((wallet) => wallet.address)
+          .join(',')}`,
+      );
+      setView('withdraw');
+      return Promise.reject(new Error('Wallet mismatch'));
+    }
+
     setIsProcessing(true);
     const rpc = getRpc();
     let signature = '';
@@ -203,11 +221,8 @@ export function WithdrawFundsFlow({
         }
       }
 
-      const wallet = wallets[0];
-      if (!wallet) throw new Error('No wallet found');
-
       const result = await signAndSendTransaction({
-        wallet,
+        wallet: earnWallet,
         transaction: transactionBytes,
         chain: 'solana:mainnet',
       });

@@ -1,21 +1,23 @@
 import { emailRegex } from '@/features/social/utils/regex';
 
-export const getURLSanitized = (url: string) => {
-  if (!url || url === '-' || url === '#') return url;
+export const getURLSanitized = (url: string): string => {
+  const trimmedUrl = url.trim();
 
-  const isEmail = emailRegex?.test(url);
-
-  if (isEmail) {
-    return `mailto:${url}`;
+  if (!trimmedUrl || trimmedUrl === '-' || trimmedUrl === '#') {
+    return trimmedUrl;
   }
 
-  if (
-    !url.includes('https://') &&
-    !url.includes('http://') &&
-    !url.includes('www')
-  ) {
-    return `https://${url}`;
+  if (emailRegex?.test(trimmedUrl)) {
+    return `mailto:${trimmedUrl}`;
   }
 
-  return url;
+  if (/^https?:\/\//i.test(trimmedUrl)) {
+    return trimmedUrl;
+  }
+
+  if (trimmedUrl.startsWith('/')) {
+    return trimmedUrl;
+  }
+
+  return `https://${trimmedUrl}`;
 };
