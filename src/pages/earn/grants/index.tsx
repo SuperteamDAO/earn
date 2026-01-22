@@ -1,6 +1,6 @@
 import { ErrorInfo } from '@/components/shared/ErrorInfo';
-import { Loading } from '@/components/shared/Loading';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
+import { Skeleton } from '@/components/ui/skeleton';
 import { ASSET_URL } from '@/constants/ASSET_URL';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
@@ -50,11 +50,27 @@ function Grants() {
           </p>
         </div>
         <div className="container mx-auto mb-12 max-w-7xl px-4">
-          {isLoading && <Loading />}
           {isError && <ErrorInfo />}
-          {!isLoading && !isError && (
-            <div className="flex flex-wrap justify-center gap-10">
-              {grants?.map((grant) => (
+          <div className="flex flex-wrap justify-center gap-10">
+            {isLoading &&
+              Array.from({ length: 6 }).map((_, i) => (
+                <div key={i} className="w-full max-w-[20rem]">
+                  <div className="mx-auto w-full overflow-hidden rounded-lg border shadow-md sm:w-80">
+                    <Skeleton className="h-[180px] w-full rounded-none" />
+                    <div className="flex flex-col gap-2 px-4 pt-1.5 pb-4">
+                      <Skeleton className="h-7 w-3/4" />
+                      <div className="flex items-center gap-1">
+                        <Skeleton className="h-4 w-4 rounded-full" />
+                        <Skeleton className="h-4 w-24" />
+                      </div>
+                      <Skeleton className="mt-1 h-9 w-full" />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            {!isLoading &&
+              !isError &&
+              grants?.map((grant) => (
                 <div key={grant?.id} className="w-full max-w-[20rem]">
                   <GrantEntry
                     title={grant?.title}
@@ -66,8 +82,7 @@ function Grants() {
                   />
                 </div>
               ))}
-            </div>
-          )}
+          </div>
         </div>
       </div>
     </Default>

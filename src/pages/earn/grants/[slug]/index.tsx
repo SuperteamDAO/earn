@@ -1,6 +1,6 @@
 import type { GetServerSideProps } from 'next';
 import posthog from 'posthog-js';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
 import { JsonLd } from '@/components/shared/JsonLd';
 import { GrantPageLayout } from '@/layouts/Grants';
@@ -20,33 +20,33 @@ interface InitialGrant {
 }
 
 function Grants({ grant: initialGrant }: InitialGrant) {
-  const [grant] = useState<typeof initialGrant>(initialGrant);
-
   useEffect(() => {
     posthog.capture('open_grant');
   }, []);
 
-  const monetaryGrantSchema = grant ? generateMonetaryGrantSchema(grant) : null;
+  const monetaryGrantSchema = initialGrant
+    ? generateMonetaryGrantSchema(initialGrant)
+    : null;
 
-  const breadcrumbSchema = grant
+  const breadcrumbSchema = initialGrant
     ? generateBreadcrumbListSchema([
         { name: 'Home', url: '/' },
         { name: 'Grants', url: '/earn/grants' },
-        { name: grant.title || 'Grant' },
+        { name: initialGrant.title || 'Grant' },
       ])
     : null;
 
   return (
-    <GrantPageLayout grant={grant}>
+    <GrantPageLayout grant={initialGrant}>
       {monetaryGrantSchema && breadcrumbSchema && (
         <JsonLd data={[monetaryGrantSchema, breadcrumbSchema]} />
       )}
       <GrantsPop />
       <DescriptionUI
-        description={(grant?.description as string) ?? ''}
-        isPro={grant?.isPro}
+        description={(initialGrant?.description as string) ?? ''}
+        isPro={initialGrant?.isPro}
         type="grant"
-        sponsorId={grant?.sponsorId ?? ''}
+        sponsorId={initialGrant?.sponsorId ?? ''}
       />
     </GrantPageLayout>
   );
