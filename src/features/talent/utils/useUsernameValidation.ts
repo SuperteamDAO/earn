@@ -1,5 +1,5 @@
 import debounce from 'lodash.debounce';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { api } from '@/lib/api';
 import logger from '@/lib/logger';
@@ -15,40 +15,48 @@ export const useUsernameValidation = (initialValue = '') => {
 
   const { user } = useUser();
 
-  const checkUsernameAvailability = async (username: string) => {
-    if (username === '') {
-      setIsInvalid(true);
-      setValidationErrorMessage('Username is required');
-      return;
-    }
-    if (!USERNAME_PATTERN.test(username)) {
-      setIsInvalid(true);
-      setValidationErrorMessage(
-        "Username can only contain letters, numbers, '_', and '-'",
-      );
-      return;
-    }
+  const checkUsernameAvailability = useCallback(
+    async (usernameToCheck: string) => {
+      if (usernameToCheck === '') {
+        setIsInvalid(true);
+        setValidationErrorMessage('Username is required');
+        return;
+      }
+      if (!USERNAME_PATTERN.test(usernameToCheck)) {
+        setIsInvalid(true);
+        setValidationErrorMessage(
+          "Username can only contain letters, numbers, '_', and '-'",
+        );
+        return;
+      }
 
-    try {
-      setValidating(true);
-      const response = await api.get(`/api/user/username?username=${username}`);
-      const available = response.data.available;
-      setIsInvalid(!available);
-      setValidationErrorMessage(
-        available ? '' : 'Username is unavailable! Please try another one.',
-      );
-      setValidating(false);
-    } catch (error) {
-      logger.error(error);
-      setIsInvalid(true);
-      setValidationErrorMessage(
-        'An error occurred while checking username availability.',
-      );
-      setValidating(false);
-    }
-  };
+      try {
+        setValidating(true);
+        const response = await api.get(
+          `/api/user/username?username=${usernameToCheck}`,
+        );
+        const available = response.data.available;
+        setIsInvalid(!available);
+        setValidationErrorMessage(
+          available ? '' : 'Username is unavailable! Please try another one.',
+        );
+        setValidating(false);
+      } catch (error) {
+        logger.error(error);
+        setIsInvalid(true);
+        setValidationErrorMessage(
+          'An error occurred while checking username availability.',
+        );
+        setValidating(false);
+      }
+    },
+    [],
+  );
 
-  const debouncedCheckUsername = debounce(checkUsernameAvailability, 300);
+  const debouncedCheckUsername = useMemo(
+    () => debounce(checkUsernameAvailability, 300),
+    [checkUsernameAvailability],
+  );
 
   useEffect(() => {
     if (username && username.toLowerCase() === user?.username?.toLowerCase()) {
@@ -59,7 +67,10 @@ export const useUsernameValidation = (initialValue = '') => {
     if (username) {
       debouncedCheckUsername(username);
     }
-  }, [username, user?.username]);
+    return () => {
+      debouncedCheckUsername.cancel();
+    };
+  }, [username, user?.username, debouncedCheckUsername]);
 
   return {
     setUsername,
