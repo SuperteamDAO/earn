@@ -114,7 +114,7 @@ export const useHackathonState = () => {
         posthog.capture(posthogEvent);
       }
     },
-    [updateQueryParams, posthog],
+    [updateQueryParams],
   );
 
   const handleStatusChange = useCallback(

@@ -1,6 +1,6 @@
 import { usePrivy } from '@privy-io/react-auth';
 import { useQuery } from '@tanstack/react-query';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 
 import { AnimateChangeInHeight } from '@/components/shared/AnimateChangeInHeight';
 import { EmptySection } from '@/components/shared/EmptySection';
@@ -13,6 +13,9 @@ import { HACKATHONS } from '@/features/hackathon/constants/hackathons';
 import { sponsorStageQuery } from '@/features/home/queries/sponsor-stage';
 import { SponsorStage } from '@/features/home/types/sponsor-stage';
 import { CATEGORY_NAV_ITEMS } from '@/features/navbar/constants';
+
+const SKELETON_COUNT = 5;
+const skeletonArray = Array.from({ length: SKELETON_COUNT }, (_, i) => i);
 
 import {
   type ListingCategory,
@@ -185,9 +188,7 @@ export const ListingsSection = ({
     );
   }, [categoryCounts, potentialSession, authenticated, ready, supportsForYou]);
 
-  const visibleCategoryNavItems = useMemo(() => {
-    return CATEGORY_NAV_ITEMS;
-  }, []);
+  const visibleCategoryNavItems = CATEGORY_NAV_ITEMS;
 
   const viewAllLink = () => {
     if (HACKATHONS.some((hackathon) => hackathon.slug === activeTab)) {
@@ -215,11 +216,17 @@ export const ListingsSection = ({
     return `${basePath}?${params.toString()}`;
   };
 
+  const handleForYouClick = useCallback(() => {
+    handleCategoryChange('For You' as ListingCategory, 'foryou_navpill');
+  }, [handleCategoryChange]);
+
+  const handleAllCategoryClick = useCallback(() => {
+    handleCategoryChange('All' as ListingCategory, 'all_navpill');
+  }, [handleCategoryChange]);
+
   const renderContent = () => {
     if (isLoading) {
-      return Array.from({ length: 5 }).map((_, index) => (
-        <ListingCardSkeleton key={index} />
-      ));
+      return skeletonArray.map((index) => <ListingCardSkeleton key={index} />);
     }
 
     if (error) {
@@ -358,12 +365,7 @@ export const ListingsSection = ({
                 key="foryou"
                 phEvent="foryou_navpill"
                 isActive={activeCategory === 'For You'}
-                onClick={() =>
-                  handleCategoryChange(
-                    'For You' as ListingCategory,
-                    'foryou_navpill',
-                  )
-                }
+                onClick={handleForYouClick}
               >
                 For You
               </CategoryPill>
@@ -372,9 +374,7 @@ export const ListingsSection = ({
               key="all"
               phEvent="all_navpill"
               isActive={effectiveCategory === 'All'}
-              onClick={() =>
-                handleCategoryChange('All' as ListingCategory, 'all_navpill')
-              }
+              onClick={handleAllCategoryClick}
               isPro={isProContext}
             >
               All

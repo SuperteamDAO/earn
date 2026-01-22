@@ -6,7 +6,6 @@ import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 
 import Providers from '@/components/providers';
-import { gsap, ScrollTrigger } from '@/lib/gsap';
 import { fontVariables } from '@/theme/fonts';
 import { stFontVariables } from '@/theme/fonts-st';
 
@@ -46,40 +45,49 @@ function App({ Component, pageProps }: AppProps) {
       return;
     }
 
-    document.documentElement.style.backgroundColor = 'rgb(4, 5, 7)';
-    document.body.style.backgroundColor = 'rgb(4, 5, 7)';
+    let observer: MutationObserver | null = null;
 
-    gsap.registerPlugin(ScrollTrigger);
+    import('@/lib/gsap').then(({ gsap, ScrollTrigger }) => {
+      document.documentElement.style.backgroundColor = 'rgb(4, 5, 7)';
+      document.body.style.backgroundColor = 'rgb(4, 5, 7)';
 
-    const handleImageLoad = (img: HTMLImageElement) => {
-      if (img.complete) {
-        img.classList.add('loaded');
-      } else {
-        img.addEventListener('load', () => img.classList.add('loaded'), {
-          once: true,
-        });
-      }
-    };
+      gsap.registerPlugin(ScrollTrigger);
 
-    document.querySelectorAll('img').forEach((img) => handleImageLoad(img));
+      const handleImageLoad = (img: HTMLImageElement) => {
+        if (img.complete) {
+          img.classList.add('loaded');
+        } else {
+          img.addEventListener('load', () => img.classList.add('loaded'), {
+            once: true,
+          });
+        }
+      };
 
-    const observer = new MutationObserver((mutations) => {
-      mutations.forEach((mutation) => {
-        mutation.addedNodes.forEach((node) => {
-          if (node instanceof HTMLImageElement) {
-            handleImageLoad(node);
-          }
-          if (node instanceof HTMLElement) {
-            node.querySelectorAll('img').forEach((img) => handleImageLoad(img));
-          }
+      document.querySelectorAll('img').forEach((img) => handleImageLoad(img));
+
+      observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+          mutation.addedNodes.forEach((node) => {
+            if (node instanceof HTMLImageElement) {
+              handleImageLoad(node);
+            }
+            if (node instanceof HTMLElement) {
+              node
+                .querySelectorAll('img')
+                .forEach((img) => handleImageLoad(img));
+            }
+          });
         });
       });
+
+      const stContainer = document.querySelector('.st-app');
+      if (stContainer) {
+        observer.observe(stContainer, { childList: true, subtree: true });
+      }
     });
 
-    observer.observe(document.body, { childList: true, subtree: true });
-
     return () => {
-      observer.disconnect();
+      observer?.disconnect();
       document.documentElement.style.backgroundColor = '';
       document.body.style.backgroundColor = '';
     };
