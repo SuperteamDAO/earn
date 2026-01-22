@@ -5,7 +5,7 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import posthog from 'posthog-js';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { ErrorSection } from '@/components/shared/ErrorSection';
 import { type User } from '@/interface/user';
@@ -41,11 +41,13 @@ export function ListingPageLayout({
   const [, setBountySnackbar] = useAtom(bountySnackbarAtom);
   const { user } = useUser();
 
-  const { data: submissionNumber = 0 } = useQuery(
-    submissionCountQuery(initialListing?.id ?? ''),
-  );
+  const { data: submissionNumber = 0, isLoading: isSubmissionNumberLoading } =
+    useQuery(submissionCountQuery(initialListing?.id ?? ''));
   const [commentCount, setCommentCount] = useState(0);
-  const iterableSkills = initialListing?.skills?.map((e) => e.skills) ?? [];
+  const iterableSkills = useMemo(
+    () => initialListing?.skills?.map((e) => e.skills) ?? [],
+    [initialListing?.skills],
+  );
 
   useEffect(() => {
     if (initialListing?.type === 'bounty') {
@@ -69,7 +71,7 @@ export function ListingPageLayout({
         slug: initialListing.slug,
       });
     }
-  }, [initialListing, submissionNumber]);
+  }, [initialListing, submissionNumber, setBountySnackbar]);
 
   const encodedTitle = encodeURIComponent(initialListing?.title || '');
   const ogImage = new URL(`${getURL()}api/dynamic-og/listing/`);
@@ -163,6 +165,8 @@ export function ListingPageLayout({
                 isTemplate={isTemplate}
                 commentCount={commentCount}
                 listing={initialListing}
+                submissionNumber={submissionNumber}
+                isSubmissionNumberLoading={isSubmissionNumberLoading}
               />
               <div
                 className={cn(
@@ -176,6 +180,8 @@ export function ListingPageLayout({
                       isTemplate={isTemplate}
                       listing={initialListing}
                       skills={iterableSkills}
+                      submissionNumber={submissionNumber}
+                      isSubmissionNumberLoading={isSubmissionNumberLoading}
                     />
                   </div>
                 )}
