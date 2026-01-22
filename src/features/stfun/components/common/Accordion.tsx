@@ -52,7 +52,7 @@ export default function Accordion({
           >
             <div
               className={cn(
-                'font-secondary z-1 ml-[32px] text-left text-[24px] leading-[26px] font-semibold max-[360px]:text-[20px] md:ml-[64px]',
+                'font-secondary relative z-20 ml-[32px] text-left text-[24px] leading-[26px] font-semibold max-[360px]:text-[20px] md:ml-[64px]',
                 isOpen ? 'max-md:pb-[32px]' : '',
               )}
             >
@@ -60,7 +60,7 @@ export default function Accordion({
             </div>
             <div
               className={cn(
-                'font-primary z-1 ml-[32px] text-[18px] leading-[24px] font-medium max-[360px]:text-[15px] max-md:mt-[8px] md:ml-[48px]',
+                'font-primary relative z-20 ml-[32px] text-[18px] leading-[24px] font-medium max-[360px]:text-[15px] max-md:mt-[8px] md:ml-[48px]',
                 isOpen ? 'hidden' : 'visible',
               )}
             >
@@ -70,7 +70,7 @@ export default function Accordion({
           <div className="image-container h-fit">
             <div
               className={cn(
-                'gradient-overlay absolute -ml-[56px] hidden md:block',
+                'gradient-overlay pointer-events-none absolute -ml-[56px] hidden md:block',
                 isOpen
                   ? 'accordion-image z-10 md:w-[263px]'
                   : 'accordion-image-closed z-10 overflow-hidden md:w-[263px]',
