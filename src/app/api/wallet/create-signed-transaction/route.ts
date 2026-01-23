@@ -162,7 +162,10 @@ async function createFeePayerATA(
     const encodedTransaction =
       getBase64EncodedWireTransaction(signedTransaction);
     const signature = await rpc
-      .sendTransaction(encodedTransaction, { skipPreflight: false })
+      .sendTransaction(encodedTransaction, {
+        skipPreflight: false,
+        encoding: 'base64',
+      })
       .send();
 
     // Poll for confirmation (getSignatureStatuses doesn't wait)
