@@ -10,7 +10,7 @@ import FaXTwitter from '@/components/icons/FaXTwitter';
 import { LocalImage } from '@/components/ui/local-image';
 import { Separator } from '@/components/ui/separator';
 import { Slider } from '@/components/ui/slider';
-import { tokenList } from '@/constants/tokenList';
+import { getTokenIcon } from '@/constants/tokenList';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 
 import { useListingForm } from '@/features/listing-builder/hooks';
@@ -234,7 +234,7 @@ export function BoostContent({
         <div className="text-center">
           <p className="relative flex items-center gap-2 text-4xl font-semibold text-slate-900">
             <LocalImage
-              src={tokenList.find((t) => t.tokenSymbol === token)?.icon || ''}
+              src={getTokenIcon(token ?? '')}
               alt={token!}
               className="size-8"
             />
