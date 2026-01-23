@@ -9,7 +9,7 @@ import MdTimer from '@/components/icons/MdTimer';
 import TbBriefcase2 from '@/components/icons/TbBriefcase2';
 import { CountDownRenderer } from '@/components/shared/countdownRenderer';
 import { exclusiveSponsorData } from '@/constants/exclusiveSponsors';
-import { tokenList } from '@/constants/tokenList';
+import { getTokenIcon } from '@/constants/tokenList';
 import { useServerTimeSync } from '@/hooks/use-server-time';
 import { type ParentSkills } from '@/interface/skills';
 import { cn } from '@/utils/cn';
@@ -168,10 +168,7 @@ export function RightSideBar({
                           <img
                             className="h-8 w-8 rounded-full"
                             alt="token icon"
-                            src={
-                              tokenList.find((e) => e?.tokenSymbol === token)
-                                ?.icon ?? '/assets/dollar.svg'
-                            }
+                            src={getTokenIcon(token ?? '')}
                           />
                         )}
                         <CompensationAmount
