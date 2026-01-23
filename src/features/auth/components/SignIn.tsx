@@ -137,7 +137,7 @@ export const SignIn = ({
           </Link>{' '}
           and our{' '}
           <Link
-            href={`${router.basePath}/privacy-policy.pdf`}
+            href={`https://superteam.fun/earn/privacy-policy.pdf`}
             className="font-semibold hover:underline"
             target="_blank"
           >
