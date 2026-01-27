@@ -26,7 +26,10 @@ import {
   getTransferCheckedInstruction,
   TOKEN_PROGRAM_ADDRESS,
 } from '@solana-program/token';
-import { TOKEN_2022_PROGRAM_ADDRESS } from '@solana-program/token-2022';
+import {
+  getTransferCheckedInstruction as getTransferCheckedInstruction2022,
+  TOKEN_2022_PROGRAM_ADDRESS,
+} from '@solana-program/token-2022';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import bs58 from 'bs58';
 import { Loader2 } from 'lucide-react';
@@ -187,6 +190,7 @@ export const PayoutButton = ({ bounty, submission }: Props) => {
         const decimals = tokenDetails?.decimals as number;
         const mint = address(mintAddress);
         const tokenProgramId = await detectTokenProgram(mintAddress);
+        const isToken2022 = tokenProgramId === TOKEN_2022_PROGRAM_ADDRESS;
 
         const [senderATA] = await findAssociatedTokenPda({
           mint,
@@ -207,14 +211,26 @@ export const PayoutButton = ({ bounty, submission }: Props) => {
             mint,
             tokenProgram: tokenProgramId,
           }),
-          getTransferCheckedInstruction({
-            source: senderATA,
-            mint,
-            destination: receiverATA,
-            authority: senderSigner,
-            amount: toBaseUnits(String(amount), decimals),
-            decimals,
-          }),
+          isToken2022
+            ? getTransferCheckedInstruction2022({
+                source: senderATA,
+                mint,
+                destination: receiverATA,
+                authority: senderSigner,
+                amount: toBaseUnits(String(amount), decimals),
+                decimals,
+              })
+            : getTransferCheckedInstruction(
+                {
+                  source: senderATA,
+                  mint,
+                  destination: receiverATA,
+                  authority: senderSigner,
+                  amount: toBaseUnits(String(amount), decimals),
+                  decimals,
+                },
+                { programAddress: tokenProgramId },
+              ),
         );
       }
 
@@ -241,7 +257,16 @@ export const PayoutButton = ({ bounty, submission }: Props) => {
           }
         | undefined;
 
-      if (!standardWallet?.accounts[0]) {
+      if (!standardWallet) {
+        throw new Error('Wallet not available');
+      }
+
+      const account =
+        standardWallet.accounts.find(
+          (item) => item.address === publicKey.toBase58(),
+        ) ?? standardWallet.accounts[0];
+
+      if (!account) {
         throw new Error('Wallet not available');
       }
 
@@ -256,7 +281,7 @@ export const PayoutButton = ({ bounty, submission }: Props) => {
       }
 
       const results = await signAndSend.signAndSendTransaction({
-        account: standardWallet.accounts[0] as any,
+        account: account as any,
         transaction: txBytes as Uint8Array,
         chain: 'solana:mainnet',
         options: { skipPreflight: true },
@@ -265,17 +290,25 @@ export const PayoutButton = ({ bounty, submission }: Props) => {
       const result = Array.isArray(results) ? results[0] : results;
       txSignature = bs58.encode(result.signature);
 
+      let confirmed = false;
       for (let i = 0; i < 30; i++) {
         const status = await rpc
           .getSignatureStatuses([toSignature(txSignature)])
           .send();
-        if (status.value[0]?.confirmationStatus === 'confirmed') {
+        if (
+          status.value[0]?.confirmationStatus === 'confirmed' ||
+          status.value[0]?.confirmationStatus === 'finalized'
+        ) {
+          confirmed = true;
           break;
         }
         if (status.value[0]?.err) {
           throw new Error('Transaction failed on-chain');
         }
         await new Promise((r) => setTimeout(r, 1000));
+      }
+      if (!confirmed) {
+        throw new Error('Transaction confirmation timeout');
       }
 
       const nextTranche = (submission?.paymentDetails?.length || 0) + 1;
