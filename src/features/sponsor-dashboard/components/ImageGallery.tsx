@@ -1,4 +1,4 @@
-import { ChevronLeft, ChevronRight, Download, X } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Download, FileText, X } from 'lucide-react';
 import { useState } from 'react';
 
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
@@ -14,10 +14,14 @@ function getFilenameFromUrl(url: string): string {
     const pathname = new URL(url).pathname;
     const segments = pathname.split('/');
     const filename = segments[segments.length - 1];
-    return filename || 'Image';
+    return filename || 'File';
   } catch {
-    return 'Image';
+    return 'File';
   }
+}
+
+function isPdfUrl(url: string): boolean {
+  return url.toLowerCase().endsWith('.pdf');
 }
 
 export const ImageGallery = ({ label, images }: ImageGalleryProps) => {
@@ -83,20 +87,30 @@ export const ImageGallery = ({ label, images }: ImageGalleryProps) => {
         {label}
       </p>
       <div className="mt-2 flex flex-wrap gap-2">
-        {images.map((imageUrl, index) => (
-          <button
-            key={index}
-            onClick={() => openAtIndex(index)}
-            className="group focus-visible:fing-brand-purplo/40 recus-visible:ring-brand-purple/40 hover:border-slatevisible:ring-2 focus-outliseboonn relative h-20 w-20 cursor-pointer overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm transition-all"
-            aria-label={`Open ${label} ${index + 1}`}
-          >
-            <img
-              src={imageUrl}
-              alt={`${label} ${index + 1}`}
-              className="h-full w-full object-cover"
-            />
-          </button>
-        ))}
+        {images.map((imageUrl, index) => {
+          const isPdf = isPdfUrl(imageUrl);
+          return (
+            <button
+              key={index}
+              onClick={() => openAtIndex(index)}
+              className="group focus-visible:ring-brand-purple/40 relative h-20 w-20 cursor-pointer overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm transition-all hover:border-slate-300 focus:outline-none focus-visible:ring-2"
+              aria-label={`Open ${label} ${index + 1}`}
+            >
+              {isPdf ? (
+                <div className="flex h-full w-full flex-col items-center justify-center bg-slate-50">
+                  <FileText className="h-8 w-8 text-slate-400" />
+                  <span className="mt-1 text-xs text-slate-500">PDF</span>
+                </div>
+              ) : (
+                <img
+                  src={imageUrl}
+                  alt={`${label} ${index + 1}`}
+                  className="h-full w-full object-cover"
+                />
+              )}
+            </button>
+          );
+        })}
       </div>
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -131,24 +145,32 @@ export const ImageGallery = ({ label, images }: ImageGalleryProps) => {
             {images.length > 1 && (
               <button
                 onClick={goToPrevious}
-                className="focus-visible:ring-brfnd-purple/40 aocus-visible:ring-brand-purple/40 rr:ge2late-700 focus-rntuisebnoon absolute left-4 z-10 rounded-full bg-white/90 p-2 text-slate-500 shadow-md backdrop-blur-sm transition-all hover:bg-white"
-                aria-label="Previous image"
+                className="focus-visible:ring-brand-purple/40 absolute left-4 z-10 rounded-full bg-white/90 p-2 text-slate-500 shadow-md backdrop-blur-sm transition-all hover:bg-white focus:outline-none focus-visible:ring-2"
+                aria-label="Previous file"
               >
                 <ChevronLeft className="h-6 w-6" />
               </button>
             )}
 
-            <img
-              src={currentImage}
-              alt={`${label} ${currentIndex + 1}`}
-              className="max-h-full max-w-full object-contain"
-            />
+            {isPdfUrl(currentImage || '') ? (
+              <iframe
+                src={currentImage}
+                className="h-full w-full"
+                title={`PDF Document - ${filename}`}
+              />
+            ) : (
+              <img
+                src={currentImage}
+                alt={`${label} ${currentIndex + 1}`}
+                className="max-h-full max-w-full object-contain"
+              />
+            )}
 
             {images.length > 1 && (
               <button
                 onClick={goToNext}
-                className="focus-visible:ring-brand-purple/40 late-700 absolute right-4 z-10 rounded-full bg-white/90 p-2 text-slate-500 shadow-md backdrop-blur-sm transition-all focus-visible:ring-2"
-                aria-label="Next image"
+                className="focus-visible:ring-brand-purple/40 absolute right-4 z-10 rounded-full bg-white/90 p-2 text-slate-500 shadow-md backdrop-blur-sm transition-all focus:outline-none focus-visible:ring-2"
+                aria-label="Next file"
               >
                 <ChevronRight className="h-6 w-6" />
               </button>
@@ -157,25 +179,34 @@ export const ImageGallery = ({ label, images }: ImageGalleryProps) => {
 
           {images.length > 1 && (
             <div className="flex items-center justify-center gap-2 border-t border-slate-200 bg-slate-50 px-4 py-3">
-              {images.map((imageUrl, index) => (
-                <button
-                  key={index}
-                  onClick={() => setCurrentIndex(index)}
-                  className={cn(
-                    'h-12 w-12 overflow-hidden rounded-md border-2 transition-all',
-                    index === currentIndex
-                      ? 'border-brand-purple ring-brand-purple/40 ring-2'
-                      : 'border-transparent opacity-70 hover:opacity-100',
-                  )}
-                  aria-label={`View thumbnail ${index + 1}`}
-                >
-                  <img
-                    src={imageUrl}
-                    alt={`Thumbnail ${index + 1}`}
-                    className="h-full w-full object-cover"
-                  />
-                </button>
-              ))}
+              {images.map((imageUrl, index) => {
+                const isPdf = isPdfUrl(imageUrl);
+                return (
+                  <button
+                    key={index}
+                    onClick={() => setCurrentIndex(index)}
+                    className={cn(
+                      'h-12 w-12 overflow-hidden rounded-md border-2 transition-all',
+                      index === currentIndex
+                        ? 'border-brand-purple ring-brand-purple/40 ring-2'
+                        : 'border-transparent opacity-70 hover:opacity-100',
+                    )}
+                    aria-label={`View thumbnail ${index + 1}`}
+                  >
+                    {isPdf ? (
+                      <div className="flex h-full w-full items-center justify-center bg-slate-100">
+                        <FileText className="h-6 w-6 text-slate-400" />
+                      </div>
+                    ) : (
+                      <img
+                        src={imageUrl}
+                        alt={`Thumbnail ${index + 1}`}
+                        className="h-full w-full object-cover"
+                      />
+                    )}
+                  </button>
+                );
+              })}
             </div>
           )}
         </DialogContent>

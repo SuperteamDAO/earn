@@ -63,6 +63,21 @@ const createTrancheFormSchema = (isTouchingGrass: boolean) =>
           });
         }
       }
+
+      if (isTouchingGrass && data.socialPost) {
+        try {
+          const url = new URL(data.socialPost);
+          if (!url.hostname.includes('.')) {
+            throw new Error('Invalid hostname');
+          }
+        } catch {
+          ctx.addIssue({
+            code: 'custom',
+            path: ['socialPost'],
+            message: 'Please enter a valid URL',
+          });
+        }
+      }
     });
 
 interface Props {
@@ -214,6 +229,7 @@ export const TrancheFormModal = ({ grant, applicationId, onClose }: Props) => {
                         description={
                           TOUCHING_GRASS_COPY.tranche.eventPictures.description
                         }
+                        allowLargeFiles
                       />
                       <FormMessage />
                     </FormItem>
@@ -235,6 +251,8 @@ export const TrancheFormModal = ({ grant, applicationId, onClose }: Props) => {
                         description={
                           TOUCHING_GRASS_COPY.tranche.eventReceipts.description
                         }
+                        allowPdf
+                        allowLargeFiles
                       />
                       <FormMessage />
                     </FormItem>
@@ -260,17 +278,34 @@ export const TrancheFormModal = ({ grant, applicationId, onClose }: Props) => {
                       <div>
                         <FormControl>
                           <Input
-                            type="number"
+                            type="text"
+                            inputMode="numeric"
                             placeholder={
                               TOUCHING_GRASS_COPY.tranche.attendeeCount
                                 .placeholder
                             }
                             {...field}
                             onChange={(e) => {
-                              const value = e.target.value;
+                              const value = e.target.value.replace(/\D/g, '');
                               field.onChange(
                                 value ? parseInt(value, 10) : undefined,
                               );
+                            }}
+                            onKeyDown={(e) => {
+                              if (
+                                !/^\d$/.test(e.key) &&
+                                ![
+                                  'Backspace',
+                                  'Delete',
+                                  'Tab',
+                                  'ArrowLeft',
+                                  'ArrowRight',
+                                  'Home',
+                                  'End',
+                                ].includes(e.key)
+                              ) {
+                                e.preventDefault();
+                              }
                             }}
                             value={field.value || ''}
                           />
@@ -333,19 +368,46 @@ export const TrancheFormModal = ({ grant, applicationId, onClose }: Props) => {
             />
 
             {isTouchingGrass && (
-              <FormFieldWrapper
+              <FormField
                 control={form.control}
                 name="socialPost"
-                label={TOUCHING_GRASS_COPY.tranche.socialPost.label}
-                description={TOUCHING_GRASS_COPY.tranche.socialPost.description}
-                isRequired
-              >
-                <Input
-                  placeholder={
-                    TOUCHING_GRASS_COPY.tranche.socialPost.placeholder
-                  }
-                />
-              </FormFieldWrapper>
+                render={({ field }) => (
+                  <FormItem className="flex flex-col gap-2">
+                    <div>
+                      <FormLabel isRequired>
+                        {TOUCHING_GRASS_COPY.tranche.socialPost.label}
+                      </FormLabel>
+                      <FormDescription>
+                        {TOUCHING_GRASS_COPY.tranche.socialPost.description}
+                      </FormDescription>
+                    </div>
+                    <div>
+                      <FormControl>
+                        <div className="flex h-9 items-center">
+                          <div className="flex h-full items-center justify-center rounded-l-md border border-r-0 border-slate-300 bg-slate-50 px-3 text-xs font-medium text-slate-600 shadow-xs md:justify-start md:text-sm">
+                            https://
+                          </div>
+                          <Input
+                            className="h-full rounded-l-none"
+                            placeholder="x.com/yourpost"
+                            value={
+                              field.value?.replace(/^https?:\/\//, '') || ''
+                            }
+                            onChange={(e) => {
+                              const value = e.target.value.replace(
+                                /^https?:\/\//,
+                                '',
+                              );
+                              field.onChange(value ? `https://${value}` : '');
+                            }}
+                          />
+                        </div>
+                      </FormControl>
+                      <FormMessage className="pt-1" />
+                    </div>
+                  </FormItem>
+                )}
+              />
             )}
 
             <FormFieldWrapper

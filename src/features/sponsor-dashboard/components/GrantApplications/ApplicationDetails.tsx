@@ -457,14 +457,12 @@ export const ApplicationDetails = ({
               {!isTouchingGrass && (
                 <InfoBox label="Github" content={selectedApplication?.github} />
               )}
-              <InfoBox
-                label={
-                  isTouchingGrass
-                    ? TOUCHING_GRASS_COPY.application.projectTimeline.label
-                    : 'Deadline'
-                }
-                content={selectedApplication?.projectTimeline}
-              />
+              {!isTouchingGrass && (
+                <InfoBox
+                  label="Deadline"
+                  content={selectedApplication?.projectTimeline}
+                />
+              )}
 
               <InfoBox
                 label={

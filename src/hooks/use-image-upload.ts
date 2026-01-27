@@ -10,6 +10,7 @@ import {
   type ImageSource,
   ImageUploadError,
   MAX_FILE_SIZE,
+  MAX_FILE_SIZE_LARGE,
   type SignedUploadParams,
   UPLOAD_CONFIGS,
   type UploadProgress,
@@ -19,6 +20,8 @@ import {
 
 interface UseImageUploadOptions {
   source: ImageSource;
+  allowPdf?: boolean;
+  allowLargeFiles?: boolean;
   onProgress?: (progress: UploadProgress) => void;
   onError?: (error: ImageUploadError) => void;
 }
@@ -35,12 +38,18 @@ interface UseImageUploadReturn {
 
 export function useImageUpload({
   source,
+  allowPdf = false,
+  allowLargeFiles = false,
   onProgress,
   onError,
 }: UseImageUploadOptions): UseImageUploadReturn {
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState(0);
   const [error, setError] = useState<ImageUploadError | null>(null);
+
+  const effectiveMaxSize = allowLargeFiles
+    ? MAX_FILE_SIZE_LARGE
+    : MAX_FILE_SIZE;
 
   const updateProgress = useCallback(
     (loaded: number, total: number) => {
@@ -70,51 +79,64 @@ export function useImageUpload({
       reset();
       setUploading(true);
 
+      const isPdf = file.type === 'application/pdf';
+
       try {
-        if (file.size > MAX_FILE_SIZE) {
-          throw ImageUploadError.fileTooLarge(MAX_FILE_SIZE);
+        if (file.size > effectiveMaxSize) {
+          throw ImageUploadError.fileTooLarge(effectiveMaxSize);
+        }
+
+        if (isPdf && !allowPdf) {
+          throw ImageUploadError.invalidFormat('PDF files are not allowed');
         }
 
         updateProgress(0, 100);
 
-        const buffer = await file.arrayBuffer();
-        const validation = validateImageBuffer(buffer, file.type);
-
-        if (!validation.valid) {
-          throw ImageUploadError.invalidMagicBytes(validation.error);
-        }
-
-        updateProgress(10, 100);
-
-        const config = UPLOAD_CONFIGS[source];
         let processedFile: File;
+        let mimeType: string;
 
-        try {
-          processedFile = await compressImage(file, {
-            maxWidth: config.maxWidth,
-            maxHeight: config.maxHeight,
-            quality: config.quality / 100,
-            format: 'image/webp',
-          });
-        } catch {
+        if (isPdf) {
+          // For PDFs, skip validation and compression
           processedFile = file;
+          mimeType = 'application/pdf';
+          updateProgress(40, 100);
+        } else {
+          // For images, validate and compress
+          const buffer = await file.arrayBuffer();
+          const validation = validateImageBuffer(buffer, file.type);
+
+          if (!validation.valid) {
+            throw ImageUploadError.invalidMagicBytes(validation.error);
+          }
+
+          updateProgress(10, 100);
+
+          const config = UPLOAD_CONFIGS[source];
+
+          try {
+            processedFile = await compressImage(file, {
+              maxWidth: config.maxWidth,
+              maxHeight: config.maxHeight,
+              quality: config.quality / 100,
+              format: 'image/webp',
+            });
+          } catch {
+            processedFile = file;
+          }
+
+          updateProgress(30, 100);
+
+          const processedBuffer = await processedFile.arrayBuffer();
+          const detectedFormat = detectFormat(processedBuffer);
+
+          if (!detectedFormat) {
+            throw ImageUploadError.invalidFormat(
+              'Failed to detect format after compression',
+            );
+          }
+
+          mimeType = `image/${detectedFormat}`;
         }
-
-        updateProgress(30, 100);
-
-        const processedBuffer = await processedFile.arrayBuffer();
-        const detectedFormat = detectFormat(processedBuffer);
-
-        if (!detectedFormat) {
-          throw ImageUploadError.invalidFormat(
-            'Failed to detect format after compression',
-          );
-        }
-
-        const mimeType = `image/${detectedFormat}` as
-          | 'image/jpeg'
-          | 'image/png'
-          | 'image/webp';
 
         updateProgress(40, 100);
 
@@ -122,7 +144,7 @@ export function useImageUpload({
           '/api/image/sign',
           {
             source,
-            contentType: mimeType,
+            contentType: mimeType as 'image/jpeg' | 'image/png' | 'image/webp',
             contentLength: processedFile.size,
           },
         );
@@ -146,7 +168,8 @@ export function useImageUpload({
           formData.append('eager', signedParams.eager);
         }
 
-        const uploadUrl = `https://api.cloudinary.com/v1_1/${signedParams.cloudName}/image/upload`;
+        const resourceType = isPdf ? 'raw' : 'image';
+        const uploadUrl = `https://api.cloudinary.com/v1_1/${signedParams.cloudName}/${resourceType}/upload`;
 
         const xhr = new XMLHttpRequest();
 
@@ -224,7 +247,7 @@ export function useImageUpload({
         setUploading(false);
       }
     },
-    [source, updateProgress, handleError, reset],
+    [source, effectiveMaxSize, allowPdf, updateProgress, handleError, reset],
   );
 
   const deleteImageFn = useCallback(

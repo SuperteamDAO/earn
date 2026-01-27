@@ -107,10 +107,6 @@ export const TOUCHING_GRASS_COPY = {
       description: 'Share your Luma event page link.',
       placeholder: 'your-event',
     },
-    projectTimeline: {
-      label: 'Event Date',
-      description: 'When do you plan to host the event?',
-    },
     proofOfWork: {
       label: 'Prior Event or Community Experience',
       description:

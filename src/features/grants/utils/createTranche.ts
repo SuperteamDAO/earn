@@ -52,11 +52,11 @@ const normalizeImageUrls = (
   }
   return value.map((entry) => {
     if (typeof entry !== 'string') {
-      throw new Error(`${label} must contain valid image URLs.`);
+      throw new Error(`${label} must contain valid file URLs.`);
     }
     const trimmed = entry.trim();
     if (!isCloudinaryUrl(trimmed)) {
-      throw new Error(`${label} must be Cloudinary image URLs.`);
+      throw new Error(`${label} must be Cloudinary URLs.`);
     }
     return trimmed;
   });
@@ -81,7 +81,7 @@ const normalizeSocialPost = (
       ? trimmed
       : `https://${trimmed}`;
   const parsed = parseHttpUrl(urlCandidate);
-  if (!parsed) {
+  if (!parsed || !parsed.hostname.includes('.')) {
     throw new Error('Social post link must be a valid URL.');
   }
   return parsed.toString();

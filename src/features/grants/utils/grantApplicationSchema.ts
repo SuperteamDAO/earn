@@ -82,7 +82,9 @@ export const grantApplicationSchema = (
         .max(maxReward, `Amount cannot exceed ${maxReward || 1} ${token}`),
       projectDetails: z.string().min(1, 'Project details are required'),
       walletAddress: z.string().min(1, 'Solana Wallet Address is required'),
-      projectTimeline: z.string().min(1, 'Project timeline is required'),
+      projectTimeline: isTouchingGrass
+        ? z.string().optional()
+        : z.string().min(1, 'Project timeline is required'),
       proofOfWork: isTouchingGrass
         ? z.string().optional()
         : z.string().min(1, 'Proof of work is required'),
