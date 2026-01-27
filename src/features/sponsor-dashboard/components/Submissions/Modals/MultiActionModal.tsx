@@ -138,9 +138,7 @@ export const MultiActionModal = ({
             ids: submissionIds,
             label: 'Spam',
           });
-          if (listing?.type === 'project') {
-            rejectSubmissions.mutate(submissionIds);
-          }
+          rejectSubmissions.mutate(submissionIds);
 
           queryClient.setQueryData<SubmissionWithUser[]>(
             ['sponsor-submissions', listing?.slug],
