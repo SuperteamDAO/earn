@@ -1,19 +1,35 @@
 import {
-  createAssociatedTokenAccountIdempotentInstruction,
-  createTransferCheckedInstruction,
-  getAssociatedTokenAddressSync,
-  getMint,
-  TOKEN_2022_PROGRAM_ID,
-  TOKEN_PROGRAM_ID,
-} from '@solana/spl-token';
-import { useConnection, useWallet } from '@solana/wallet-adapter-react';
+  type Address,
+  address,
+  appendTransactionMessageInstructions,
+  compileTransaction,
+  createNoopSigner,
+  createTransactionMessage,
+  getTransactionEncoder,
+  type Instruction,
+  pipe,
+  setTransactionMessageFeePayerSigner,
+  setTransactionMessageLifetimeUsingBlockhash,
+  signature as toSignature,
+  type TransactionSigner,
+} from '@solana/kit';
+import { useWallet } from '@solana/wallet-adapter-react';
+import type { SolanaSignAndSendTransactionFeature } from '@solana/wallet-standard-features';
 import {
-  ComputeBudgetProgram,
-  PublicKey,
-  SystemProgram,
-  TransactionMessage,
-  VersionedTransaction,
-} from '@solana/web3.js';
+  getSetComputeUnitLimitInstruction,
+  getSetComputeUnitPriceInstruction,
+} from '@solana-program/compute-budget';
+import { getTransferSolInstruction } from '@solana-program/system';
+import {
+  findAssociatedTokenPda,
+  getCreateAssociatedTokenIdempotentInstruction,
+  getTransferCheckedInstruction,
+  TOKEN_PROGRAM_ADDRESS,
+} from '@solana-program/token';
+import {
+  getTransferCheckedInstruction as getTransferCheckedInstruction2022,
+  TOKEN_2022_PROGRAM_ADDRESS,
+} from '@solana-program/token-2022';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import bs58 from 'bs58';
 import { Loader2 } from 'lucide-react';
@@ -39,16 +55,15 @@ import { useUser } from '@/store/user';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import {
   classifySolanaError,
-  cleanupTransactionGuards,
-  createTransactionGuard,
   handleSolanaError,
-  updateTransactionGuard,
-  waitForTransactionConfirmation,
 } from '@/utils/solanaTransactionHelpers';
 import { toBaseUnits } from '@/utils/to-base-units';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
 
 import { type Listing, type Rewards } from '@/features/listings/types';
+import { getRpc } from '@/features/wallet/utils/getConnection';
+
+const payoutsInFlight = new Set<string>();
 
 interface Props {
   bounty: Listing | null;
@@ -61,14 +76,9 @@ export const PayoutButton = ({ bounty, submission }: Props) => {
     firstName: string;
     signature?: string;
   } | null>(null);
-  const [lastSignature, setLastSignature] = useState<string | null>(null);
 
   const { user } = useUser();
-
-  const { connected, publicKey, sendTransaction, signTransaction } =
-    useWallet();
-
-  const { connection } = useConnection();
+  const { connected, publicKey, wallet } = useWallet();
   const queryClient = useQueryClient();
 
   const totalPrizeAmount =
@@ -88,26 +98,18 @@ export const PayoutButton = ({ bounty, submission }: Props) => {
     { ssr: false },
   );
 
-  const detectTokenProgram = async (mintAddress: string) => {
+  const detectTokenProgram = async (mintAddress: string): Promise<Address> => {
+    const rpc = getRpc();
     try {
-      const mintPubkey = new PublicKey(mintAddress);
-      const accountInfo = await connection.getAccountInfo(mintPubkey);
-
-      if (!accountInfo) {
-        throw new Error('Token mint not found');
+      const accountInfo = await rpc
+        .getAccountInfo(address(mintAddress), { encoding: 'base64' })
+        .send();
+      if (accountInfo.value?.owner === TOKEN_2022_PROGRAM_ADDRESS) {
+        return TOKEN_2022_PROGRAM_ADDRESS;
       }
-
-      if (accountInfo.owner.equals(TOKEN_2022_PROGRAM_ID)) {
-        return TOKEN_2022_PROGRAM_ID;
-      }
-
-      return TOKEN_PROGRAM_ID;
-    } catch (error) {
-      console.warn(
-        'Failed to detect token program, defaulting to legacy:',
-        error,
-      );
-      return TOKEN_PROGRAM_ID;
+      return TOKEN_PROGRAM_ADDRESS;
+    } catch {
+      return TOKEN_PROGRAM_ADDRESS;
     }
   };
 
@@ -123,14 +125,14 @@ export const PayoutButton = ({ bounty, submission }: Props) => {
       queryClient.setQueryData<SubmissionWithUser[]>(
         ['sponsor-submissions', bounty?.slug],
         (old) =>
-          old?.map((submission) =>
-            submission.id === variables.id
+          old?.map((sub) =>
+            sub.id === variables.id
               ? {
-                  ...submission,
+                  ...sub,
                   isPaid: updatedSubmission.isPaid,
                   paymentDetails: updatedSubmission.paymentDetails,
                 }
-              : submission,
+              : sub,
           ),
       );
     },
@@ -148,281 +150,219 @@ export const PayoutButton = ({ bounty, submission }: Props) => {
     id: string;
     token: string;
     amount: number;
-    receiver: PublicKey;
+    receiver: Address;
   }) => {
+    if (!publicKey || !wallet) {
+      console.error('Wallet not connected');
+      return;
+    }
+
+    if (payoutsInFlight.has(id)) {
+      console.warn('Payout already in progress for this submission');
+      return;
+    }
+
+    payoutsInFlight.add(id);
     setIsPaying(true);
+    const rpc = getRpc();
+    let txSignature = '';
+
     try {
-      const guardKey = `payout:${id}`;
-      if (
-        !createTransactionGuard({
-          guardKey,
-          inFlightMessage: 'Payout is already in progress for this submission.',
-        })
-      ) {
-        return;
-      }
-
+      const senderAddress = address(publicKey.toBase58());
+      const senderSigner: TransactionSigner = createNoopSigner(senderAddress);
       const tokenDetails = tokenList.find((e) => e.tokenSymbol === token);
-      const tokenAddress = tokenDetails?.mintAddress as string;
 
-      const baseInstructions = [] as any[];
+      const instructions: Instruction[] = [
+        getSetComputeUnitLimitInstruction({ units: 200_000 }),
+        getSetComputeUnitPriceInstruction({ microLamports: 50_000n }),
+      ];
 
       if (token === 'SOL') {
-        const lamportsBig = toBaseUnits(String(amount), 9);
-        const lamportsNum = Number(lamportsBig);
-        baseInstructions.push(
-          SystemProgram.transfer({
-            fromPubkey: publicKey as PublicKey,
-            toPubkey: receiver,
-            lamports: lamportsNum,
+        instructions.push(
+          getTransferSolInstruction({
+            source: senderSigner,
+            destination: receiver,
+            amount: toBaseUnits(String(amount), 9),
           }),
         );
       } else {
-        const mint = new PublicKey(tokenAddress);
-        const tokenProgramId = await detectTokenProgram(tokenAddress);
+        const mintAddress = tokenDetails?.mintAddress as string;
+        const decimals = tokenDetails?.decimals as number;
+        const mint = address(mintAddress);
+        const tokenProgramId = await detectTokenProgram(mintAddress);
+        const isToken2022 = tokenProgramId === TOKEN_2022_PROGRAM_ADDRESS;
 
-        let decimals = tokenDetails?.decimals as number;
-        try {
-          const mintInfo = await getMint(
-            connection,
-            mint,
-            'confirmed',
-            tokenProgramId,
-          );
-          decimals = mintInfo.decimals;
-        } catch (e) {}
-
-        const senderATA = getAssociatedTokenAddressSync(
+        const [senderATA] = await findAssociatedTokenPda({
           mint,
-          publicKey as PublicKey,
-          false,
-          tokenProgramId,
-        );
-        const receiverATA = getAssociatedTokenAddressSync(
+          owner: senderAddress,
+          tokenProgram: tokenProgramId,
+        });
+        const [receiverATA] = await findAssociatedTokenPda({
           mint,
-          receiver as PublicKey,
-          false,
-          tokenProgramId,
-        );
+          owner: receiver,
+          tokenProgram: tokenProgramId,
+        });
 
-        try {
-          const senderBal = await connection.getTokenAccountBalance(senderATA);
-          const senderBalRaw = BigInt(senderBal.value.amount);
-          const amountInBaseUnits = toBaseUnits(String(amount), decimals);
-          if (senderBalRaw < amountInBaseUnits) {
-            throw new Error('Insufficient token balance for payout');
-          }
-        } catch (e) {
-          if ((e as Error).message.includes('Insufficient token balance')) {
-            throw e;
-          }
-        }
-
-        baseInstructions.push(
-          createAssociatedTokenAccountIdempotentInstruction(
-            publicKey as PublicKey,
-            receiverATA,
-            receiver,
+        instructions.push(
+          getCreateAssociatedTokenIdempotentInstruction({
+            payer: senderSigner,
+            ata: receiverATA,
+            owner: receiver,
             mint,
-            tokenProgramId,
-          ),
-        );
-
-        const amountInBaseUnits = toBaseUnits(String(amount), decimals);
-
-        baseInstructions.push(
-          createTransferCheckedInstruction(
-            senderATA,
-            mint,
-            receiverATA,
-            publicKey as PublicKey,
-            amountInBaseUnits,
-            decimals,
-            [],
-            tokenProgramId,
-          ),
-        );
-      }
-
-      const { blockhash: simBlockhash } = await connection.getLatestBlockhash();
-      const testInstructions = [
-        ComputeBudgetProgram.setComputeUnitLimit({ units: 1_400_000 }),
-        ...baseInstructions,
-      ];
-
-      const testMessage = new TransactionMessage({
-        payerKey: publicKey as PublicKey,
-        recentBlockhash: simBlockhash,
-        instructions: testInstructions,
-      }).compileToV0Message();
-      const testTx = new VersionedTransaction(testMessage);
-
-      const simulation = await connection.simulateTransaction(testTx);
-
-      if (!simulation.value) {
-        throw new Error('Simulation failed: no value returned');
-      }
-
-      if (simulation.value.err) {
-        console.error('Simulation error logs:', simulation.value.logs);
-        throw new Error(
-          'Simulation failed; check token requirements or balance.',
-        );
-      }
-
-      const unitsConsumed = simulation.value.unitsConsumed ?? 200_000;
-      const computedCuLimit = Math.ceil((unitsConsumed as number) * 1.1);
-      const setCuLimitInstruction = ComputeBudgetProgram.setComputeUnitLimit({
-        units: computedCuLimit,
-      });
-
-      let microLamports = 0;
-      try {
-        const feeMsg = new TransactionMessage({
-          payerKey: publicKey as PublicKey,
-          recentBlockhash: simBlockhash,
-          instructions: baseInstructions,
-        }).compileToV0Message();
-        const feeTx = new VersionedTransaction(feeMsg);
-        const serialized = feeTx.serialize();
-        const rpcUrl = (connection as any).rpcEndpoint as string;
-        const res = await fetch(rpcUrl, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            jsonrpc: '2.0',
-            id: '1',
-            method: 'getPriorityFeeEstimate',
-            params: [
-              {
-                transaction: bs58.encode(serialized),
-                options: { recommended: true },
-              },
-            ],
+            tokenProgram: tokenProgramId,
           }),
-        });
-        const data = await res.json();
-        const est = data?.result?.priorityFeeEstimate;
-        if (typeof est === 'number' && est > 0) {
-          microLamports = est;
-        } else {
-          microLamports = 5_000;
-        }
-      } catch (e) {
-        microLamports = 5_000;
-      }
-      const setCuPriceInstruction = ComputeBudgetProgram.setComputeUnitPrice({
-        microLamports,
-      });
-
-      const { blockhash: latestBlockhash, lastValidBlockHeight } =
-        await connection.getLatestBlockhash();
-
-      const finalInstructions = [
-        setCuLimitInstruction,
-        setCuPriceInstruction,
-        ...baseInstructions,
-      ];
-
-      const finalMessage = new TransactionMessage({
-        payerKey: publicKey as PublicKey,
-        recentBlockhash: latestBlockhash,
-        instructions: finalInstructions,
-      }).compileToV0Message();
-
-      const finalTransaction = new VersionedTransaction(finalMessage);
-
-      let signature = '';
-      let rawBytes: Uint8Array | null = null;
-      if (signTransaction) {
-        const signed = await signTransaction(finalTransaction);
-        const raw = signed.serialize();
-        rawBytes = raw;
-        signature = await connection.sendRawTransaction(raw, {
-          skipPreflight: true,
-          maxRetries: 0,
-        });
-      } else {
-        signature = await sendTransaction(
-          finalTransaction as unknown as any,
-          connection,
-          {
-            skipPreflight: true,
-            maxRetries: 0,
-          } as any,
+          isToken2022
+            ? getTransferCheckedInstruction2022({
+                source: senderATA,
+                mint,
+                destination: receiverATA,
+                authority: senderSigner,
+                amount: toBaseUnits(String(amount), decimals),
+                decimals,
+              })
+            : getTransferCheckedInstruction(
+                {
+                  source: senderATA,
+                  mint,
+                  destination: receiverATA,
+                  authority: senderSigner,
+                  amount: toBaseUnits(String(amount), decimals),
+                  decimals,
+                },
+                { programAddress: tokenProgramId },
+              ),
         );
       }
 
-      updateTransactionGuard(guardKey, signature);
-      setLastSignature(signature);
+      const { value: latestBlockhash } = await rpc
+        .getLatestBlockhash({ commitment: 'confirmed' })
+        .send();
 
-      await waitForTransactionConfirmation({
-        connection,
-        signature,
-        lastValidBlockHeight,
-        rawBytes,
-        maxRetries: 60,
-        retryDelayMs: 1500,
-      });
+      const transactionMessage = pipe(
+        createTransactionMessage({ version: 0 }),
+        (tx) => setTransactionMessageFeePayerSigner(senderSigner, tx),
+        (tx) =>
+          setTransactionMessageLifetimeUsingBlockhash(latestBlockhash, tx),
+        (tx) => appendTransactionMessageInstructions(instructions, tx),
+      );
+
+      const compiledTx = compileTransaction(transactionMessage);
+      const txEncoder = getTransactionEncoder();
+      const txBytes = txEncoder.encode(compiledTx);
+
+      const standardWallet = (wallet.adapter as any)?.wallet as
+        | {
+            features: Record<string, unknown>;
+            accounts: Array<{ address: string; publicKey: Uint8Array }>;
+          }
+        | undefined;
+
+      if (!standardWallet) {
+        throw new Error('Wallet not available');
+      }
+
+      const account =
+        standardWallet.accounts.find(
+          (item) => item.address === publicKey.toBase58(),
+        ) ?? standardWallet.accounts[0];
+
+      if (!account) {
+        throw new Error('Wallet not available');
+      }
+
+      const signAndSend = standardWallet.features[
+        'solana:signAndSendTransaction'
+      ] as
+        | SolanaSignAndSendTransactionFeature['solana:signAndSendTransaction']
+        | undefined;
+
+      if (!signAndSend) {
+        throw new Error('Wallet does not support signAndSendTransaction');
+      }
+
+      const results = await signAndSend.signAndSendTransaction({
+        account: account as any,
+        transaction: txBytes as Uint8Array,
+        chain: 'solana:mainnet',
+        options: { skipPreflight: true },
+      } as any);
+
+      const result = Array.isArray(results) ? results[0] : results;
+      txSignature = bs58.encode(result.signature);
+
+      let confirmed = false;
+      for (let i = 0; i < 30; i++) {
+        const status = await rpc
+          .getSignatureStatuses([toSignature(txSignature)])
+          .send();
+        if (
+          status.value[0]?.confirmationStatus === 'confirmed' ||
+          status.value[0]?.confirmationStatus === 'finalized'
+        ) {
+          confirmed = true;
+          break;
+        }
+        if (status.value[0]?.err) {
+          throw new Error('Transaction failed on-chain');
+        }
+        await new Promise((r) => setTimeout(r, 1000));
+      }
+      if (!confirmed) {
+        throw new Error('Transaction confirmation timeout');
+      }
 
       const nextTranche = (submission?.paymentDetails?.length || 0) + 1;
-
       const isProject = bounty?.type === 'project';
-      const trancheNumber = isProject ? nextTranche : 1;
-      const paymentDetailsPayload = [
-        {
-          txId: signature,
-          amount,
-          tranche: trancheNumber,
-        },
-      ];
 
       await addPayment({
         id,
-        paymentDetails: paymentDetailsPayload,
+        paymentDetails: [
+          {
+            txId: txSignature,
+            amount,
+            tranche: isProject ? nextTranche : 1,
+          },
+        ],
       });
-      setIsPaying(false);
     } catch (error) {
       log.error(
         `Sponsor unable to pay, user id: ${user?.id}, sponsor id: ${user?.currentSponsorId}, error: ${error?.toString()}, sponsor wallet: ${publicKey?.toBase58()}`,
       );
 
-      const firstName = (() => {
+      const firstName: string = (() => {
         const name =
           (submission as any)?.user?.name ||
           (submission as any)?.user?.firstName ||
           'the winner';
         return typeof name === 'string' && name.trim().length > 0
-          ? name.trim().split(' ')[0]
+          ? (name.trim().split(' ')[0] ?? 'the winner')
           : 'the winner';
       })();
 
       const errorType = classifySolanaError(error);
       const tokenSymbol = bounty?.token ?? 'token';
 
-      if (errorType === 'timeout' && !lastSignature) {
-        setWarning({ firstName: firstName as string, signature: '' });
-        setIsPaying(false);
-      } else if (errorType === 'rpc' || errorType === 'unknown') {
-        setWarning({
-          firstName: firstName as string,
-          signature: (lastSignature as string) ?? '',
-        });
-        setIsPaying(false);
+      handleSolanaError({
+        errorType,
+        lastSignature: txSignature || null,
+        tokenSymbol,
+        customMessages: {
+          userRejected: 'Payment cancelled in wallet.',
+          expired: 'Blockhash expired. Payment not sent.',
+        },
+      });
+
+      if (errorType === 'user-rejected') {
+      } else if (errorType === 'timeout' || errorType === 'rpc') {
+        setWarning({ firstName, signature: txSignature || undefined });
+      } else if (txSignature) {
+        setWarning({ firstName, signature: txSignature });
       } else {
-        handleSolanaError({
-          errorType,
-          lastSignature,
-          tokenSymbol,
-          customMessages: {
-            userRejected: 'Payment cancelled in wallet.',
-            expired: 'Blockhash expired. Payment not sent.',
-          },
-        });
-        setIsPaying(false);
+        setWarning({ firstName });
       }
     } finally {
-      cleanupTransactionGuards('payout:');
+      payoutsInFlight.delete(id);
+      setIsPaying(false);
     }
   };
 
@@ -470,10 +410,10 @@ export const PayoutButton = ({ bounty, submission }: Props) => {
             }
             posthog.capture('pay winner_sponsor');
             handlePayout({
-              id: submission?.id as string,
-              token: bounty?.token as string,
+              id: submission.id,
+              token: bounty?.token ?? 'SOL',
               amount: remainingAmount,
-              receiver: new PublicKey(submission.user.walletAddress),
+              receiver: address(submission.user.walletAddress),
             });
           }}
           variant="default"

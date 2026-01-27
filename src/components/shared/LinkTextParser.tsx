@@ -37,7 +37,7 @@ export function LinkTextParser({ text, className, ...props }: Props) {
 
   return (
     <p
-      className={cn('text-sm font-medium text-slate-500', className)}
+      className={cn('text-sm font-medium break-all text-slate-500', className)}
       {...props}
     >
       {parts.map((part, index) => {
@@ -48,7 +48,7 @@ export function LinkTextParser({ text, className, ...props }: Props) {
           return (
             <a
               key={index}
-              className="text-brand-purple hover:underline"
+              className="text-brand-purple break-all hover:underline"
               href={href}
               target="_blank"
               rel="noopener noreferrer"
