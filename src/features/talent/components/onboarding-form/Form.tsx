@@ -6,7 +6,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
-import { ImagePicker } from '@/components/shared/ImagePicker';
+import { ImageUploader } from '@/components/shared/ImageUploader';
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -18,10 +18,8 @@ import {
 } from '@/components/ui/form';
 import { FormFieldWrapper } from '@/components/ui/form-field-wrapper';
 import { Input } from '@/components/ui/input';
-import { useUploadImage } from '@/hooks/use-upload-image';
 import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
-import { IMAGE_SOURCE } from '@/utils/image';
 
 import { extractSocialUsername } from '@/features/social/utils/extractUsername';
 import {
@@ -37,7 +35,6 @@ import { UsernameField } from './fields/Username';
 export const TalentForm = () => {
   const router = useRouter();
   const { user, refetchUser } = useUser();
-  const { uploadAndReplace, uploading } = useUploadImage();
 
   const form = useForm<NewTalentFormData>({
     resolver: zodResolver(
@@ -48,15 +45,15 @@ export const TalentForm = () => {
   const {
     control,
     formState: { errors },
-    setValue,
+    getValues,
     reset,
   } = form;
 
-  const [selectedPhoto, setSelectedPhoto] = useState<File | null>(null);
   const [isLoading, setisLoading] = useState<boolean>(false);
   const [isGooglePhoto, setIsGooglePhoto] = useState<boolean>(
     user?.photo?.includes('googleusercontent.com') || false,
   );
+  const [uploadedPhotoUrl, setUploadedPhotoUrl] = useState<string | null>(null);
   const [skillsRefreshKey, setSkillsRefreshKey] = useState<number>(0);
   const [isUsernameValidating, setUsernameValidating] = useState(false);
 
@@ -108,13 +105,18 @@ export const TalentForm = () => {
 
   useEffect(() => {
     if (user) {
+      const currentLocation = getValues('location');
+      const userLocation = newTalentSchema.shape.location.safeParse(
+        user?.location,
+      ).data;
+
       reset({
         username: user?.username,
         firstName: user?.firstName,
         lastName: user?.lastName,
         skills: newTalentSchema.shape.skills.safeParse(user?.skills).data,
         photo: user?.photo,
-        location: newTalentSchema.shape.location.safeParse(user?.location).data,
+        location: userLocation || currentLocation,
         discord: user.discord || undefined,
         github: extractSocialUsername('github', user.github || '') || undefined,
         twitter:
@@ -127,7 +129,7 @@ export const TalentForm = () => {
       });
       setSkillsRefreshKey((s) => s + 1);
     }
-  }, [user, setValue]);
+  }, [user, getValues, reset]);
 
   const isForcedRedirect = useMemo(() => {
     return router.query.type === 'forced';
@@ -141,8 +143,8 @@ export const TalentForm = () => {
   };
 
   const isSubmitDisabled = useMemo(() => {
-    return isLoading || isUsernameValidating || uploading;
-  }, [isLoading, isUsernameValidating, uploading]);
+    return isLoading || isUsernameValidating;
+  }, [isLoading, isUsernameValidating]);
 
   const onSubmit = async (data: NewTalentFormData) => {
     if (isSubmitDisabled) return false;
@@ -157,18 +159,8 @@ export const TalentForm = () => {
     return toast.promise(
       async () => {
         try {
-          let photoUrl = user?.photo;
-
-          if (selectedPhoto && !isGooglePhoto) {
-            const uploadResult = await uploadAndReplace(
-              selectedPhoto,
-              { folder: 'earn-pfp', source: IMAGE_SOURCE.USER },
-              user?.photo || undefined,
-            );
-            photoUrl = uploadResult.url;
-          } else if (isGooglePhoto) {
-            photoUrl = user?.photo;
-          }
+          const photoUrl =
+            uploadedPhotoUrl || (isGooglePhoto ? user?.photo : data.photo);
 
           await api.post('/api/user/complete-profile/', {
             ...data,
@@ -214,19 +206,18 @@ export const TalentForm = () => {
                 <FormItem className="mt-auto w-fit">
                   <FormLabel className="sr-only">Profile Picture</FormLabel>
                   <FormControl>
-                    <ImagePicker
-                      variant="short"
-                      defaultValue={
-                        field.value ? { url: field.value } : undefined
-                      }
-                      onChange={async (file, previewUrl) => {
-                        setSelectedPhoto(file);
+                    <ImageUploader
+                      source="user"
+                      variant="avatar"
+                      defaultValue={field.value || undefined}
+                      onChange={(result) => {
                         setIsGooglePhoto(false);
-                        field.onChange(previewUrl);
+                        setUploadedPhotoUrl(result.secureUrl);
+                        field.onChange(result.secureUrl);
                       }}
                       onReset={() => {
-                        setSelectedPhoto(null);
                         setIsGooglePhoto(false);
+                        setUploadedPhotoUrl(null);
                         field.onChange('');
                       }}
                     />

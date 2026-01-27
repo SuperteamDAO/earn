@@ -390,6 +390,7 @@ export const ListingsSection = ({
                     navItem.pillPH,
                   )
                 }
+                isPro={isProContext}
               >
                 {isMd ? navItem.label : navItem.mobileLabel || navItem.label}
               </CategoryPill>

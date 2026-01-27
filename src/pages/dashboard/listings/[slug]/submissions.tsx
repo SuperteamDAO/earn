@@ -470,7 +470,7 @@ export default function BountySubmissions({ slug }: Props) {
                       <div className="ml-1.5 h-1.5 w-1.5 rounded-full bg-red-500" />
                     </TabsTrigger>
                   )}
-                  {bounty?.isWinnersAnnounced && (
+                  {bounty?.isWinnersAnnounced && !bounty?.isFndnPaying && (
                     <TabsTrigger value="payments">Payments</TabsTrigger>
                   )}
                 </TabsList>
