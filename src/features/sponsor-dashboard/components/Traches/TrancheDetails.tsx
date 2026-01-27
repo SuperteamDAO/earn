@@ -35,12 +35,14 @@ import { InfoBox } from '../InfoBox';
 interface Props {
   grant: Grant | undefined;
   tranches: GrantTrancheWithApplication[] | undefined;
+  isLoading?: boolean;
   approveOnOpen: () => void;
   rejectedOnOpen: () => void;
 }
 export const TrancheDetails = ({
   grant,
   tranches,
+  isLoading,
   approveOnOpen,
   rejectedOnOpen,
 }: Props) => {
@@ -380,6 +382,10 @@ export const TrancheDetails = ({
             </ScrollArea>
           </div>
         </>
+      ) : isLoading ? (
+        <div className="flex h-full items-center justify-center p-3">
+          <p className="text-sm text-slate-400">Loading...</p>
+        </div>
       ) : (
         <div className="p-3">
           <p className="text-xl font-medium text-slate-500">
