@@ -35,6 +35,6 @@ export const CLOUDINARY_CONFIG = {
 };
 
 export const RATE_LIMIT_CONFIG = {
-  maxRequests: 10,
+  maxRequests: 20,
   windowMs: 60 * 1000,
 };
