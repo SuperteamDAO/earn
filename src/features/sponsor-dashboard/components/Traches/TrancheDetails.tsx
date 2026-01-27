@@ -17,6 +17,10 @@ import { truncateString } from '@/utils/truncateString';
 
 import { type Grant } from '@/features/grants/types';
 import {
+  isTouchingGrassGrant,
+  TOUCHING_GRASS_COPY,
+} from '@/features/grants/utils/touchingGrass';
+import {
   Telegram,
   Twitter,
   Website,
@@ -25,6 +29,7 @@ import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
 import { selectedGrantTrancheAtom } from '../../atoms';
 import { type GrantTrancheWithApplication } from '../../queries/tranches';
+import { ImageGallery } from '../ImageGallery';
 import { InfoBox } from '../InfoBox';
 
 interface Props {
@@ -43,6 +48,7 @@ export const TrancheDetails = ({
   const isPending = selectedTranche?.status === 'Pending';
   const isApproved = selectedTranche?.status === 'Approved';
   const isRejected = selectedTranche?.status === 'Rejected';
+  const isTouchingGrass = isTouchingGrassGrant(grant);
 
   const tokenIcon = tokenList.find(
     (ele) => ele.tokenSymbol === grant?.token,
@@ -293,20 +299,59 @@ export const TrancheDetails = ({
                 content={formattedCreatedAt}
               />
 
-              <InfoBox
-                label="KPIS AND MILESTONES"
-                content={selectedTranche?.GrantApplication?.kpi}
-                isHtml
-              />
+              {!isTouchingGrass && (
+                <InfoBox
+                  label="KPIS AND MILESTONES"
+                  content={selectedTranche?.GrantApplication?.kpi}
+                  isHtml
+                />
+              )}
 
               <InfoBox
-                label="Project Updates"
+                label={
+                  isTouchingGrass
+                    ? TOUCHING_GRASS_COPY.tranche.projectUpdate.label
+                    : 'Project Updates'
+                }
                 content={selectedTranche?.update}
                 isHtml
               />
 
+              {isTouchingGrass && (
+                <>
+                  <ImageGallery
+                    label={TOUCHING_GRASS_COPY.tranche.eventPictures.label}
+                    images={selectedTranche?.eventPictures as string[] | null}
+                  />
+
+                  <ImageGallery
+                    label={TOUCHING_GRASS_COPY.tranche.eventReceipts.label}
+                    images={selectedTranche?.eventReceipts as string[] | null}
+                  />
+
+                  {selectedTranche?.attendeeCount !== null &&
+                    selectedTranche?.attendeeCount !== undefined && (
+                      <InfoBox
+                        label={TOUCHING_GRASS_COPY.tranche.attendeeCount.label}
+                        content={String(selectedTranche.attendeeCount)}
+                      />
+                    )}
+
+                  {selectedTranche?.socialPost && (
+                    <InfoBox
+                      label={TOUCHING_GRASS_COPY.tranche.socialPost.label}
+                      content={selectedTranche.socialPost}
+                    />
+                  )}
+                </>
+              )}
+
               <InfoBox
-                label="Help Wanted"
+                label={
+                  isTouchingGrass
+                    ? TOUCHING_GRASS_COPY.tranche.helpWanted.label
+                    : 'Help Wanted'
+                }
                 content={selectedTranche?.helpWanted}
                 isHtml
               />

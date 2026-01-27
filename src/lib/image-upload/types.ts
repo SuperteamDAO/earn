@@ -1,4 +1,9 @@
-export type ImageSource = 'user' | 'sponsor' | 'description';
+export type ImageSource =
+  | 'user'
+  | 'sponsor'
+  | 'description'
+  | 'grant-event-pictures'
+  | 'grant-event-receipts';
 export type ImageFormat = 'jpeg' | 'png' | 'webp';
 
 export interface UploadResult {

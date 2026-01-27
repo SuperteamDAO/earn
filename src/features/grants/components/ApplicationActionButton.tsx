@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { AlertTriangle, Loader2, Lock, Pencil } from 'lucide-react';
 import posthog from 'posthog-js';
 
+import SuperteamIcon from '@/components/icons/SuperteamIcon';
 import { Button } from '@/components/ui/button';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { useUser } from '@/store/user';
@@ -18,6 +19,10 @@ import { ProBadge } from '@/features/pro/components/ProBadge';
 import { useApplicationState } from '../hooks/useApplicationState';
 import { userApplicationQuery } from '../queries/user-application';
 import { type Grant } from '../types';
+import {
+  isTouchingGrassGrant,
+  isUserEligibleForTouchingGrass,
+} from '../utils/touchingGrass';
 import { GrantModal } from './GrantModal';
 import { InfoWrapper } from './InfoWrapper';
 
@@ -34,6 +39,8 @@ export const ApplicationActionButton = ({
 
   const { region, id, link, isNative, isPublished, isPro, sponsorId } = grant;
   const isUserPro = user?.isPro;
+  const isTouchingGrass = isTouchingGrassGrant(grant);
+  const isUserEligibleTouchingGrass = isUserEligibleForTouchingGrass(user);
 
   const { data: application, isLoading: isUserApplicationLoading } = useQuery({
     ...userApplicationQuery(id),
@@ -61,8 +68,14 @@ export const ApplicationActionButton = ({
   const cooldownTooltipContent = getCooldownTooltipContent() || undefined;
 
   const isGrantSponsor = user?.currentSponsorId === sponsorId;
-  const isProRestricted =
-    isPro && !isUserPro && !isGrantSponsor && applicationState === 'ALLOW NEW';
+  const isProRestricted = isTouchingGrass
+    ? !isUserEligibleTouchingGrass &&
+      !isGrantSponsor &&
+      applicationState === 'ALLOW NEW'
+    : isPro &&
+      !isUserPro &&
+      !isGrantSponsor &&
+      applicationState === 'ALLOW NEW';
   const isNotEligibleForPro = isAuthenticated && isProRestricted;
 
   const isBtnDisabled =
@@ -180,16 +193,23 @@ export const ApplicationActionButton = ({
                     </>
                   )}
                 </Button>
-                {isUserPro &&
+                {((isTouchingGrass && isUserEligibleTouchingGrass) ||
+                  (!isTouchingGrass && isUserPro)) &&
                   isPro &&
                   applicationState === 'ALLOW NEW' &&
                   !isUserApplicationLoading && (
                     <div className="absolute top-1/2 right-4 -translate-y-1/2">
-                      <ProBadge
-                        containerClassName="bg-zinc-700 px-2 py-0.5 gap-1"
-                        iconClassName="size-2.5 text-zinc-400"
-                        textClassName="text-[10px] font-medium text-white"
-                      />
+                      {isTouchingGrass ? (
+                        <div className="flex items-center gap-1 rounded-full bg-zinc-700 px-2 py-0.5">
+                          <SuperteamIcon className="size-2.5 text-zinc-400" />
+                        </div>
+                      ) : (
+                        <ProBadge
+                          containerClassName="bg-zinc-700 px-2 py-0.5 gap-1"
+                          iconClassName="size-2.5 text-zinc-400"
+                          textClassName="text-[10px] font-medium text-white"
+                        />
+                      )}
                     </div>
                   )}
               </div>
@@ -205,14 +225,24 @@ export const ApplicationActionButton = ({
             </p>
           </div>
         )}
-        {isPro && !isUserPro && (
-          <div className="mt-1 md:my-1.5 md:flex">
-            <p className="mx-auto w-full rounded-md bg-gray-50 px-2 py-2 text-center text-xs text-slate-600 md:text-xs">
-              You need to be a part of the <strong>PRO membership</strong> to
-              apply for this grant
-            </p>
-          </div>
-        )}
+        {(isPro || isTouchingGrass) &&
+          (isTouchingGrass ? !isUserEligibleTouchingGrass : !isUserPro) && (
+            <div className="mt-1 md:my-1.5 md:flex">
+              <p className="mx-auto w-full rounded-md bg-gray-50 px-2 py-2 text-center text-xs text-slate-600 md:text-xs">
+                {isTouchingGrass ? (
+                  <>
+                    You need to be a <strong>Superteam member</strong> to be
+                    able to apply for this grant
+                  </>
+                ) : (
+                  <>
+                    You need to be a part of the <strong>PRO membership</strong>{' '}
+                    to apply for this grant
+                  </>
+                )}
+              </p>
+            </div>
+          )}
         {grantCreditConditions && !isPro && (
           <div className="mt-1 md:my-1.5 md:flex">
             <p className="mx-auto w-full rounded-md bg-[#62F6FF10] py-0.5 text-center text-xs font-medium text-[#1A7F86] md:text-xs">

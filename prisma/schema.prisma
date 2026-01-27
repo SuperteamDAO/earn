@@ -289,6 +289,8 @@ model GrantApplication {
   ai                  Json?
   GrantTranche        GrantTranche[]
   CreditLedger        CreditLedger[]
+  lumaLink            String?
+  expenseBreakdown    String?                @db.Text
 
   @@index([likeCount])
   @@index([grantId, userId, applicationStatus])
@@ -316,6 +318,10 @@ model GrantTranche {
   approvedAmount   Float?
   decidedAt        DateTime?
   trancheNumber    Int
+  eventPictures    Json?
+  eventReceipts    Json?
+  attendeeCount    Int?
+  socialPost       String?
 
   @@index([applicationId])
   @@index([grantId])
@@ -777,6 +783,8 @@ enum EmailType {
   REFERRAL_ANNOUNCEMENT
   PRO_FEATURE_ANNOUNCEMENT
   GRANTEE_ACTIVATION
+  SPONSOR_ANNOUNCEMENT_150K
+  KALSHI_GRANTS
 }
 
 enum Role {
