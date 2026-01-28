@@ -46,15 +46,14 @@ import { grantApplicationSchema } from '../../utils/grantApplicationSchema';
 import {
   extractLumaEventSlug,
   getLumaDisplayValue,
-  isTouchingGrassGrant,
   LUMA_LABEL,
-  TOUCHING_GRASS_COPY,
-} from '../../utils/touchingGrass';
+  ST_GRANT_COPY,
+} from '../../utils/stGrant';
 
-const getSteps = (isTouchingGrass: boolean) => [
+const getSteps = (isST: boolean) => [
   { title: 'Basics' },
   { title: 'Details' },
-  { title: isTouchingGrass ? 'Outcomes' : 'Milestones' },
+  { title: isST ? 'Outcomes' : 'Milestones' },
 ];
 
 type FormData = z.infer<ReturnType<typeof grantApplicationSchema>>;
@@ -86,12 +85,11 @@ export const ApplicationModal = ({
     null,
   );
 
-  const { id, token, minReward, maxReward, questions, isPro } = grant;
+  const { id, token, minReward, maxReward, questions, isPro, isST } = grant;
   const isUserPro = user?.isPro;
   const isProGrant = isPro && isUserPro;
   const isNotEligibleForPro = isPro && !isUserPro;
-  const isTouchingGrass = isTouchingGrassGrant(grant);
-  const steps = getSteps(isTouchingGrass);
+  const steps = getSteps(isST === true);
 
   const dynamicResolver = useMemo(
     () =>
@@ -102,10 +100,10 @@ export const ApplicationModal = ({
           token || 'USDC',
           grant.questions,
           user,
-          isTouchingGrass,
+          isST === true,
         ),
       ),
-    [minReward, maxReward, token, grant.questions, user, isTouchingGrass],
+    [minReward, maxReward, token, grant.questions, user, isST],
   );
 
   const [isLoading, setIsLoading] = useState(false);
@@ -323,7 +321,7 @@ export const ApplicationModal = ({
         github,
         answers: answers || [],
         telegram: telegram || user?.telegram || '',
-        ...(isTouchingGrass && {
+        ...(isST && {
           lumaLink,
           expenseBreakdown,
         }),
@@ -372,18 +370,16 @@ export const ApplicationModal = ({
       ],
       1: [
         'projectDetails',
-        ...(isTouchingGrass ? [] : ['projectTimeline' as keyof FormData]),
-        ...(isTouchingGrass ? [] : ['proofOfWork' as keyof FormData]),
+        ...(isST ? [] : ['projectTimeline' as keyof FormData]),
+        ...(isST ? [] : ['proofOfWork' as keyof FormData]),
         'twitter',
-        ...(isTouchingGrass ? [] : ['github' as keyof FormData]),
-        ...(isTouchingGrass
-          ? ['lumaLink' as const, 'expenseBreakdown' as const]
-          : []),
+        ...(isST ? [] : ['github' as keyof FormData]),
+        ...(isST ? ['lumaLink' as const, 'expenseBreakdown' as const] : []),
         ...(questions?.map(
           (_: any, index: number) => `answers.${index}.answer` as const,
         ) || []),
       ],
-      2: ['milestones', ...(isTouchingGrass ? [] : ['kpi' as keyof FormData])],
+      2: ['milestones', ...(isST ? [] : ['kpi' as keyof FormData])],
     };
 
     form.trigger(fieldsToValidate[activeStep]).then((isValid) => {
@@ -413,18 +409,18 @@ export const ApplicationModal = ({
   const isSameAsEmbeddedWallet =
     currentWalletAddress?.toLowerCase() === user?.walletAddress?.toLowerCase();
 
-  const isST = grant.sponsor?.name?.toLowerCase().match(/superteam|solana/);
+  const isSuperteamSponsor = grant.sponsor?.name
+    ?.toLowerCase()
+    .match(/superteam|solana/);
 
   const date = dayjs().format('YYYY-MM-DD');
   return (
     <div className="p-6 pb-0">
       <DialogTitle className="text-lg tracking-normal text-slate-700 sm:text-xl">
-        {isTouchingGrass
-          ? TOUCHING_GRASS_COPY.application.title
-          : 'Grant Application'}
+        {isST ? ST_GRANT_COPY.application.title : 'Grant Application'}
         <p className="mt-1 text-sm font-normal text-slate-500">
-          {isTouchingGrass
-            ? TOUCHING_GRASS_COPY.application.subtitle
+          {isST
+            ? ST_GRANT_COPY.application.subtitle
             : "If you're working on a project that will help the sponsor's ecosystem grow, apply with your proposal here and we'll respond soon!"}
         </p>
         <Progress
@@ -507,13 +503,13 @@ export const ApplicationModal = ({
                   control={form.control}
                   name="projectTitle"
                   label={
-                    isTouchingGrass
-                      ? TOUCHING_GRASS_COPY.application.projectTitle.label
+                    isST
+                      ? ST_GRANT_COPY.application.projectTitle.label
                       : 'Project Title'
                   }
                   description={
-                    isTouchingGrass
-                      ? TOUCHING_GRASS_COPY.application.projectTitle.description
+                    isST
+                      ? ST_GRANT_COPY.application.projectTitle.description
                       : 'What should we call your project?'
                   }
                   isRequired
@@ -521,9 +517,8 @@ export const ApplicationModal = ({
                 >
                   <Input
                     placeholder={
-                      isTouchingGrass
-                        ? TOUCHING_GRASS_COPY.application.projectTitle
-                            .placeholder
+                      isST
+                        ? ST_GRANT_COPY.application.projectTitle.placeholder
                         : 'Project Title'
                     }
                   />
@@ -533,14 +528,13 @@ export const ApplicationModal = ({
                   control={form.control}
                   name="projectOneLiner"
                   label={
-                    isTouchingGrass
-                      ? TOUCHING_GRASS_COPY.application.projectOneLiner.label
+                    isST
+                      ? ST_GRANT_COPY.application.projectOneLiner.label
                       : 'One-Liner Description'
                   }
                   description={
-                    isTouchingGrass
-                      ? TOUCHING_GRASS_COPY.application.projectOneLiner
-                          .description
+                    isST
+                      ? ST_GRANT_COPY.application.projectOneLiner.description
                       : 'Describe your idea in one sentence.'
                   }
                   isRequired
@@ -548,9 +542,8 @@ export const ApplicationModal = ({
                 >
                   <Input
                     placeholder={
-                      isTouchingGrass
-                        ? TOUCHING_GRASS_COPY.application.projectOneLiner
-                            .placeholder
+                      isST
+                        ? ST_GRANT_COPY.application.projectOneLiner.placeholder
                         : 'Sum up your project in one sentence'
                     }
                   />
@@ -560,14 +553,12 @@ export const ApplicationModal = ({
                   control={form.control}
                   name="ask"
                   label={
-                    isTouchingGrass
-                      ? TOUCHING_GRASS_COPY.application.ask.label
+                    isST
+                      ? ST_GRANT_COPY.application.ask.label
                       : "What's the compensation you require to complete this fully?"
                   }
                   description={
-                    isTouchingGrass
-                      ? TOUCHING_GRASS_COPY.application.ask.description
-                      : undefined
+                    isST ? ST_GRANT_COPY.application.ask.description : undefined
                   }
                   isRequired
                   isTokenInput
@@ -582,13 +573,13 @@ export const ApplicationModal = ({
                     placeholder=""
                     required
                     formLabel={
-                      isTouchingGrass
-                        ? TOUCHING_GRASS_COPY.application.telegram.label
+                      isST
+                        ? ST_GRANT_COPY.application.telegram.label
                         : 'Your Telegram username'
                     }
                     formDescription={
-                      isTouchingGrass
-                        ? TOUCHING_GRASS_COPY.application.telegram.description
+                      isST
+                        ? ST_GRANT_COPY.application.telegram.description
                         : undefined
                     }
                     control={form.control}
@@ -604,16 +595,14 @@ export const ApplicationModal = ({
                     <FormItem className={cn('flex flex-col gap-2')}>
                       <div>
                         <FormLabel isRequired>
-                          {isTouchingGrass
-                            ? TOUCHING_GRASS_COPY.application.walletAddress
-                                .label
+                          {isST
+                            ? ST_GRANT_COPY.application.walletAddress.label
                             : 'Your Solana Wallet Address'}
                         </FormLabel>
                         <FormDescription>
-                          {isTouchingGrass ? (
-                            TOUCHING_GRASS_COPY.application.walletAddress
-                              .description
-                          ) : isST ? (
+                          {isST ? (
+                            ST_GRANT_COPY.application.walletAddress.description
+                          ) : isSuperteamSponsor ? (
                             <>
                               This is where you will receive your rewards if you
                               win.{' '}
@@ -662,28 +651,26 @@ export const ApplicationModal = ({
                   control={form.control}
                   name="projectDetails"
                   label={
-                    isTouchingGrass
-                      ? TOUCHING_GRASS_COPY.application.projectDetails.label
+                    isST
+                      ? ST_GRANT_COPY.application.projectDetails.label
                       : 'Project Details'
                   }
                   description={
-                    isTouchingGrass
-                      ? TOUCHING_GRASS_COPY.application.projectDetails
-                          .description
+                    isST
+                      ? ST_GRANT_COPY.application.projectDetails.description
                       : "What is the problem you're trying to solve, and how you're going to solve it?"
                   }
                   isRequired
                   isRichEditor
                   richEditorPlaceholder={
-                    isTouchingGrass
-                      ? TOUCHING_GRASS_COPY.application.projectDetails
-                          .placeholder
+                    isST
+                      ? ST_GRANT_COPY.application.projectDetails.placeholder
                       : 'Describe the problem & solution'
                   }
                   isPro={isProGrant}
                 />
 
-                {isTouchingGrass && (
+                {isST && (
                   <FormField
                     control={form.control}
                     name="lumaLink"
@@ -691,13 +678,10 @@ export const ApplicationModal = ({
                       <FormItem className={cn('flex flex-col gap-2')}>
                         <div>
                           <FormLabel isRequired>
-                            {TOUCHING_GRASS_COPY.application.lumaLink.label}
+                            {ST_GRANT_COPY.application.lumaLink.label}
                           </FormLabel>
                           <FormDescription>
-                            {
-                              TOUCHING_GRASS_COPY.application.lumaLink
-                                .description
-                            }
+                            {ST_GRANT_COPY.application.lumaLink.description}
                           </FormDescription>
                         </div>
                         <div>
@@ -712,8 +696,7 @@ export const ApplicationModal = ({
                                   isProGrant && 'focus-visible:ring-zinc-400',
                                 )}
                                 placeholder={
-                                  TOUCHING_GRASS_COPY.application.lumaLink
-                                    .placeholder
+                                  ST_GRANT_COPY.application.lumaLink.placeholder
                                 }
                                 value={getLumaDisplayValue(field.value || '')}
                                 onChange={(e) => {
@@ -731,7 +714,7 @@ export const ApplicationModal = ({
                   />
                 )}
 
-                {!isTouchingGrass && (
+                {!isST && (
                   <FormField
                     control={form.control}
                     name="projectTimeline"
@@ -781,20 +764,20 @@ export const ApplicationModal = ({
                   control={form.control}
                   name="proofOfWork"
                   label={
-                    isTouchingGrass
-                      ? TOUCHING_GRASS_COPY.application.proofOfWork.label
+                    isST
+                      ? ST_GRANT_COPY.application.proofOfWork.label
                       : 'Proof of Work'
                   }
                   description={
-                    isTouchingGrass
-                      ? TOUCHING_GRASS_COPY.application.proofOfWork.description
+                    isST
+                      ? ST_GRANT_COPY.application.proofOfWork.description
                       : 'Include links to your best work that will make the community trust you to execute on this project.'
                   }
-                  isRequired={!isTouchingGrass}
+                  isRequired={!isST}
                   isRichEditor
                   richEditorPlaceholder={
-                    isTouchingGrass
-                      ? TOUCHING_GRASS_COPY.application.proofOfWork.placeholder
+                    isST
+                      ? ST_GRANT_COPY.application.proofOfWork.placeholder
                       : 'Provide links to your portfolio or previous work'
                   }
                   isPro={isProGrant}
@@ -806,13 +789,13 @@ export const ApplicationModal = ({
                   placeholder="@StarkIndustries"
                   required
                   formLabel={
-                    isTouchingGrass
-                      ? TOUCHING_GRASS_COPY.application.twitter.label
+                    isST
+                      ? ST_GRANT_COPY.application.twitter.label
                       : 'Personal X Profile'
                   }
                   formDescription={
-                    isTouchingGrass
-                      ? TOUCHING_GRASS_COPY.application.twitter.description
+                    isST
+                      ? ST_GRANT_COPY.application.twitter.description
                       : undefined
                   }
                   control={form.control}
@@ -824,7 +807,7 @@ export const ApplicationModal = ({
                   isPro={isProGrant}
                 />
 
-                {!isTouchingGrass && (
+                {!isST && (
                   <SocialInput
                     name="github"
                     socialName={'github'}
@@ -837,22 +820,18 @@ export const ApplicationModal = ({
                   />
                 )}
 
-                {isTouchingGrass && (
+                {isST && (
                   <FormFieldWrapper
                     control={form.control}
                     name="expenseBreakdown"
-                    label={
-                      TOUCHING_GRASS_COPY.application.expenseBreakdown.label
-                    }
+                    label={ST_GRANT_COPY.application.expenseBreakdown.label}
                     description={
-                      TOUCHING_GRASS_COPY.application.expenseBreakdown
-                        .description
+                      ST_GRANT_COPY.application.expenseBreakdown.description
                     }
                     isRequired
                     isRichEditor
                     richEditorPlaceholder={
-                      TOUCHING_GRASS_COPY.application.expenseBreakdown
-                        .placeholder
+                      ST_GRANT_COPY.application.expenseBreakdown.placeholder
                     }
                     isPro={isProGrant}
                   />
@@ -877,26 +856,26 @@ export const ApplicationModal = ({
                   control={form.control}
                   name="milestones"
                   label={
-                    isTouchingGrass
-                      ? TOUCHING_GRASS_COPY.application.milestones.label
+                    isST
+                      ? ST_GRANT_COPY.application.milestones.label
                       : 'Goals and Milestones'
                   }
                   description={
-                    isTouchingGrass
-                      ? TOUCHING_GRASS_COPY.application.milestones.description
+                    isST
+                      ? ST_GRANT_COPY.application.milestones.description
                       : 'List down the things you hope to achieve by the end of project duration.'
                   }
                   isRequired
                   isRichEditor
                   richEditorPlaceholder={
-                    isTouchingGrass
-                      ? TOUCHING_GRASS_COPY.application.milestones.placeholder
+                    isST
+                      ? ST_GRANT_COPY.application.milestones.placeholder
                       : 'Outline your project goals and milestones'
                   }
                   isPro={isProGrant}
                 />
 
-                {!isTouchingGrass && (
+                {!isST && (
                   <FormFieldWrapper
                     control={form.control}
                     name="kpi"
@@ -932,8 +911,8 @@ export const ApplicationModal = ({
                         htmlFor="acknowledgement"
                         className="text-xs text-slate-500"
                       >
-                        {isTouchingGrass
-                          ? TOUCHING_GRASS_COPY.application.acknowledgement
+                        {isST
+                          ? ST_GRANT_COPY.application.acknowledgement
                           : 'To receive grant funding, you may need to send proofs of milestone completion and of outcomes that reflect your application and this grant listing.'}
                         <span className="text-red-500">*</span>
                       </label>

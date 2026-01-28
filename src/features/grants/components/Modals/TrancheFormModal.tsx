@@ -28,27 +28,24 @@ import { SubmissionTerms } from '@/features/listings/components/Submission/Submi
 
 import { userApplicationQuery } from '../../queries/user-application';
 import { type Grant } from '../../types';
-import {
-  isTouchingGrassGrant,
-  TOUCHING_GRASS_COPY,
-} from '../../utils/touchingGrass';
+import { isSTGrant, ST_GRANT_COPY } from '../../utils/stGrant';
 
-const createTrancheFormSchema = (isTouchingGrass: boolean) =>
+const createTrancheFormSchema = (isST: boolean) =>
   z
     .object({
       walletAddress: z.string().min(1, 'Solana Wallet Address is required'),
       projectUpdate: z.string().min(1, 'Project update is required'),
       helpWanted: z.string().optional(),
-      eventPictures: isTouchingGrass
+      eventPictures: isST
         ? z.array(z.string()).min(1, 'At least one event picture is required')
         : z.array(z.string()).optional(),
-      eventReceipts: isTouchingGrass
+      eventReceipts: isST
         ? z.array(z.string()).min(1, 'At least one receipt is required')
         : z.array(z.string()).optional(),
-      attendeeCount: isTouchingGrass
+      attendeeCount: isST
         ? z.number().min(1, 'Attendee count is required')
         : z.number().optional(),
-      socialPost: isTouchingGrass
+      socialPost: isST
         ? z.string().min(1, 'Social post link is required')
         : z.string().optional(),
     })
@@ -64,7 +61,7 @@ const createTrancheFormSchema = (isTouchingGrass: boolean) =>
         }
       }
 
-      if (isTouchingGrass && data.socialPost) {
+      if (isST && data.socialPost) {
         try {
           const url = new URL(data.socialPost);
           if (!url.hostname.includes('.')) {
@@ -91,11 +88,11 @@ export const TrancheFormModal = ({ grant, applicationId, onClose }: Props) => {
   const [isTOSModalOpen, setIsTOSModalOpen] = useState(false);
   const queryClient = useQueryClient();
   const { user, refetchUser } = useUser();
-  const isTouchingGrass = isTouchingGrassGrant(grant);
+  const isST = isSTGrant(grant);
 
   const trancheFormSchema = useMemo(
-    () => createTrancheFormSchema(isTouchingGrass),
-    [isTouchingGrass],
+    () => createTrancheFormSchema(isST),
+    [isST],
   );
 
   type TrancheFormValues = z.infer<typeof trancheFormSchema>;
@@ -130,7 +127,7 @@ export const TrancheFormModal = ({ grant, applicationId, onClose }: Props) => {
         walletAddress: values.walletAddress,
         projectUpdate: values.projectUpdate,
         helpWanted: values.helpWanted,
-        ...(isTouchingGrass && {
+        ...(isST && {
           eventPictures: values.eventPictures,
           eventReceipts: values.eventReceipts,
           attendeeCount: values.attendeeCount,
@@ -161,15 +158,13 @@ export const TrancheFormModal = ({ grant, applicationId, onClose }: Props) => {
   return (
     <div>
       <DialogTitle className="border-b px-8 py-6 text-lg tracking-normal text-slate-700 sm:text-xl">
-        {isTouchingGrass
-          ? TOUCHING_GRASS_COPY.tranche.title
-          : 'Tranche Request Form'}
+        {isST ? ST_GRANT_COPY.tranche.title : 'Tranche Request Form'}
         <p className="mt-3 text-sm font-medium text-slate-700">
-          {isTouchingGrass
-            ? TOUCHING_GRASS_COPY.tranche.subtitle
+          {isST
+            ? ST_GRANT_COPY.tranche.subtitle
             : 'Only apply for a tranche if you have made significant progress. Tranches will be split as follows:'}
         </p>
-        {isTouchingGrass ? (
+        {isST ? (
           <p className="mt-2 text-sm font-normal text-slate-500">
             <span className="font-medium">For event grants</span>: 50% is paid
             upfront after KYC approval, and 50% is paid after the event upon
@@ -198,25 +193,25 @@ export const TrancheFormModal = ({ grant, applicationId, onClose }: Props) => {
               control={form.control}
               name="projectUpdate"
               label={
-                isTouchingGrass
-                  ? TOUCHING_GRASS_COPY.tranche.projectUpdate.label
+                isST
+                  ? ST_GRANT_COPY.tranche.projectUpdate.label
                   : 'Share an update about your project'
               }
               description={
-                isTouchingGrass
-                  ? TOUCHING_GRASS_COPY.tranche.projectUpdate.description
+                isST
+                  ? ST_GRANT_COPY.tranche.projectUpdate.description
                   : 'Tell us about the progress you have made on the project so far.'
               }
               isRequired
               isRichEditor
               richEditorPlaceholder={
-                isTouchingGrass
-                  ? TOUCHING_GRASS_COPY.tranche.projectUpdate.placeholder
+                isST
+                  ? ST_GRANT_COPY.tranche.projectUpdate.placeholder
                   : 'Write your project update...'
               }
             />
 
-            {isTouchingGrass && (
+            {isST && (
               <>
                 <FormField
                   control={form.control}
@@ -229,9 +224,9 @@ export const TrancheFormModal = ({ grant, applicationId, onClose }: Props) => {
                         onChange={field.onChange}
                         maxImages={5}
                         minImages={1}
-                        label={TOUCHING_GRASS_COPY.tranche.eventPictures.label}
+                        label={ST_GRANT_COPY.tranche.eventPictures.label}
                         description={
-                          TOUCHING_GRASS_COPY.tranche.eventPictures.description
+                          ST_GRANT_COPY.tranche.eventPictures.description
                         }
                         allowLargeFiles
                       />
@@ -251,9 +246,9 @@ export const TrancheFormModal = ({ grant, applicationId, onClose }: Props) => {
                         onChange={field.onChange}
                         maxImages={10}
                         minImages={1}
-                        label={TOUCHING_GRASS_COPY.tranche.eventReceipts.label}
+                        label={ST_GRANT_COPY.tranche.eventReceipts.label}
                         description={
-                          TOUCHING_GRASS_COPY.tranche.eventReceipts.description
+                          ST_GRANT_COPY.tranche.eventReceipts.description
                         }
                         allowPdf
                         allowLargeFiles
@@ -270,13 +265,10 @@ export const TrancheFormModal = ({ grant, applicationId, onClose }: Props) => {
                     <FormItem className="flex flex-col gap-2">
                       <div>
                         <FormLabel isRequired>
-                          {TOUCHING_GRASS_COPY.tranche.attendeeCount.label}
+                          {ST_GRANT_COPY.tranche.attendeeCount.label}
                         </FormLabel>
                         <FormDescription>
-                          {
-                            TOUCHING_GRASS_COPY.tranche.attendeeCount
-                              .description
-                          }
+                          {ST_GRANT_COPY.tranche.attendeeCount.description}
                         </FormDescription>
                       </div>
                       <div>
@@ -285,8 +277,7 @@ export const TrancheFormModal = ({ grant, applicationId, onClose }: Props) => {
                             type="text"
                             inputMode="numeric"
                             placeholder={
-                              TOUCHING_GRASS_COPY.tranche.attendeeCount
-                                .placeholder
+                              ST_GRANT_COPY.tranche.attendeeCount.placeholder
                             }
                             {...field}
                             onChange={(e) => {
@@ -329,13 +320,13 @@ export const TrancheFormModal = ({ grant, applicationId, onClose }: Props) => {
                 <FormItem className={cn('flex flex-col gap-2')}>
                   <div>
                     <FormLabel isRequired>
-                      {isTouchingGrass
-                        ? TOUCHING_GRASS_COPY.tranche.walletAddress.label
+                      {isST
+                        ? ST_GRANT_COPY.tranche.walletAddress.label
                         : 'Wallet address for receiving this tranche'}
                     </FormLabel>
                     <FormDescription>
-                      {isTouchingGrass
-                        ? TOUCHING_GRASS_COPY.tranche.walletAddress.description
+                      {isST
+                        ? ST_GRANT_COPY.tranche.walletAddress.description
                         : 'This field is pre-filled with the wallet address you last added for this grant project. If you want to receive the grant tranche payment in a new wallet, please update this field.'}
                     </FormDescription>
                   </div>
@@ -346,7 +337,7 @@ export const TrancheFormModal = ({ grant, applicationId, onClose }: Props) => {
                         {...field}
                       />
                     </FormControl>
-                    {!isTouchingGrass && !isSameAsEmbeddedWallet && (
+                    {!isST && !isSameAsEmbeddedWallet && (
                       <p className="pt-0.5 text-xs text-slate-500">
                         <span
                           className="cursor-pointer underline"
@@ -371,7 +362,7 @@ export const TrancheFormModal = ({ grant, applicationId, onClose }: Props) => {
               )}
             />
 
-            {isTouchingGrass && (
+            {isST && (
               <FormField
                 control={form.control}
                 name="socialPost"
@@ -379,10 +370,10 @@ export const TrancheFormModal = ({ grant, applicationId, onClose }: Props) => {
                   <FormItem className="flex flex-col gap-2">
                     <div>
                       <FormLabel isRequired>
-                        {TOUCHING_GRASS_COPY.tranche.socialPost.label}
+                        {ST_GRANT_COPY.tranche.socialPost.label}
                       </FormLabel>
                       <FormDescription>
-                        {TOUCHING_GRASS_COPY.tranche.socialPost.description}
+                        {ST_GRANT_COPY.tranche.socialPost.description}
                       </FormDescription>
                     </div>
                     <div>
@@ -418,13 +409,13 @@ export const TrancheFormModal = ({ grant, applicationId, onClose }: Props) => {
               control={form.control}
               name="helpWanted"
               label={
-                isTouchingGrass
-                  ? TOUCHING_GRASS_COPY.tranche.helpWanted.label
+                isST
+                  ? ST_GRANT_COPY.tranche.helpWanted.label
                   : 'Any help wanted?'
               }
               description={
-                isTouchingGrass
-                  ? TOUCHING_GRASS_COPY.tranche.helpWanted.description
+                isST
+                  ? ST_GRANT_COPY.tranche.helpWanted.description
                   : "Beyond funding, please detail specific challenges and how our expertise/resources can assist your project's success."
               }
               isRichEditor
@@ -437,10 +428,10 @@ export const TrancheFormModal = ({ grant, applicationId, onClose }: Props) => {
           </form>
         </Form>
         <p className="text-xxs mt-3 w-full pb-6 text-center text-slate-400 sm:pb-0 sm:text-xs">
-          {isTouchingGrass
-            ? TOUCHING_GRASS_COPY.tranche.terms
+          {isST
+            ? ST_GRANT_COPY.tranche.terms
             : 'By applying to this tranche request, you agree to our '}
-          {!isTouchingGrass && (
+          {!isST && (
             <button
               type="button"
               onClick={() => setIsTOSModalOpen(true)}
@@ -450,7 +441,7 @@ export const TrancheFormModal = ({ grant, applicationId, onClose }: Props) => {
               Terms of Use
             </button>
           )}
-          {!isTouchingGrass && '.'}
+          {!isST && '.'}
         </p>
       </div>
       {grant?.sponsor?.name && (

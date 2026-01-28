@@ -38,28 +38,19 @@ export function getLumaDisplayValue(value: string): string {
   return value;
 }
 
-export const isTouchingGrassGrant = (
-  grant: Grant | null | undefined,
-): boolean => {
-  return grant?.slug?.toLowerCase().includes('touching-grass') ?? false;
+export const isSTGrant = (grant: Grant | null | undefined): boolean => {
+  return grant?.isST === true;
 };
 
-export const isTouchingGrassSlug = (
-  slug: string | null | undefined,
-): boolean => {
-  return slug?.toLowerCase().includes('touching-grass') ?? false;
-};
-
-export const isUserEligibleForTouchingGrass = (
+export const isUserEligibleForST = (
   user: {
-    isPro?: boolean;
     superteamLevel?: string | null;
   } | null,
 ): boolean => {
-  return !!(user?.isPro && user?.superteamLevel?.includes('Superteam'));
+  return !!user?.superteamLevel?.includes('Superteam');
 };
 
-export const TOUCHING_GRASS_COPY = {
+export const ST_GRANT_COPY = {
   application: {
     title: 'Event Grant Application',
     subtitle:

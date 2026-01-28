@@ -17,7 +17,7 @@ import { useUser } from '@/store/user';
 import styles from '@/styles/listing-description.module.css';
 import { cn } from '@/utils/cn';
 
-import { isUserEligibleForTouchingGrass } from '@/features/grants/utils/touchingGrass';
+import { isUserEligibleForST } from '@/features/grants/utils/stGrant';
 import { userStatsQuery } from '@/features/home/queries/user-stats';
 import { ProBadge } from '@/features/pro/components/ProBadge';
 import { ProIntro } from '@/features/pro/components/ProIntro';
@@ -27,7 +27,7 @@ interface Props {
   type: BountyType | 'grant';
   sponsorId: string;
   isPro?: boolean;
-  isTouchingGrass?: boolean;
+  isST?: boolean;
 }
 
 export function DescriptionUI({
@@ -35,7 +35,7 @@ export function DescriptionUI({
   type,
   sponsorId,
   isPro = false,
-  isTouchingGrass = false,
+  isST = false,
 }: Props) {
   const { user, isLoading: isUserLoading } = useUser();
   const { data: stats, isLoading: isStatsLoading } = useQuery(userStatsQuery);
@@ -168,14 +168,12 @@ export function DescriptionUI({
 
   const isUserSponsor = user?.currentSponsorId === sponsorId;
 
-  const isUserEligibleTouchingGrass = isUserEligibleForTouchingGrass(user);
-  const shouldBlockForTouchingGrass =
-    isTouchingGrass && !isUserEligibleTouchingGrass && !isUserSponsor;
-  const shouldBlockForPro =
-    !isTouchingGrass && isPro && !user?.isPro && !isUserSponsor;
+  const isUserEligibleST = isUserEligibleForST(user);
+  const shouldBlockForST = isST && !isUserEligibleST && !isUserSponsor;
+  const shouldBlockForPro = !isST && isPro && !user?.isPro && !isUserSponsor;
 
   const isProEligibilityLoading =
-    (isPro || isTouchingGrass) && (isUserLoading || isStatsLoading);
+    (isPro || isST) && (isUserLoading || isStatsLoading);
 
   if (isProEligibilityLoading) {
     return (
@@ -210,7 +208,7 @@ export function DescriptionUI({
     );
   }
 
-  if (shouldBlockForTouchingGrass || shouldBlockForPro) {
+  if (shouldBlockForST || shouldBlockForPro) {
     const randomText =
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit. <br/> Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.';
 
@@ -233,7 +231,7 @@ export function DescriptionUI({
         </div>
         <div className="absolute inset-0 bg-white/0 backdrop-blur-sm" />
         <div className="absolute right-1/2 bottom-1/2 translate-x-1/2 translate-y-1/2 shadow-lg">
-          {isTouchingGrass ? (
+          {isST ? (
             <div className="w-100 rounded-xl bg-white px-8 pt-6 pb-10">
               <SuperteamBadge
                 containerClassName="bg-zinc-200 w-fit px-2 py-0.5 gap-1"

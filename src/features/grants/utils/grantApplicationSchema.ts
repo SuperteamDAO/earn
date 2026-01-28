@@ -13,7 +13,7 @@ import {
   isHandleVerified,
 } from '@/features/social/utils/x-verification';
 
-import { extractLumaEventSlug, LUMA_PREFIX } from './touchingGrass';
+import { extractLumaEventSlug, LUMA_PREFIX } from './stGrant';
 
 const X_USERNAME_REGEX = /^[A-Za-z0-9_]{1,15}$/;
 
@@ -58,7 +58,7 @@ export const grantApplicationSchema = (
   token: string,
   questions?: { order: number; question: string }[],
   user?: User | null,
-  isTouchingGrass?: boolean,
+  isST?: boolean,
 ) =>
   z
     .object({
@@ -82,16 +82,14 @@ export const grantApplicationSchema = (
         .max(maxReward, `Amount cannot exceed ${maxReward || 1} ${token}`),
       projectDetails: z.string().min(1, 'Project details are required'),
       walletAddress: z.string().min(1, 'Solana Wallet Address is required'),
-      projectTimeline: isTouchingGrass
+      projectTimeline: isST
         ? z.string().optional()
         : z.string().min(1, 'Project timeline is required'),
-      proofOfWork: isTouchingGrass
+      proofOfWork: isST
         ? z.string().optional()
         : z.string().min(1, 'Proof of work is required'),
       milestones: z.string().min(1, 'Milestones are required'),
-      kpi: isTouchingGrass
-        ? z.string().optional()
-        : z.string().min(1, 'KPI is required'),
+      kpi: isST ? z.string().optional() : z.string().min(1, 'KPI is required'),
       twitter: twitterProfileSchema,
       github: z
         .preprocess(
@@ -104,8 +102,8 @@ export const grantApplicationSchema = (
         .array(z.object({ question: z.string(), answer: z.string() }))
         .optional(),
       telegram: telegramUsernameSchema,
-      lumaLink: isTouchingGrass ? lumaLinkSchema : z.string().optional(),
-      expenseBreakdown: isTouchingGrass
+      lumaLink: isST ? lumaLinkSchema : z.string().optional(),
+      expenseBreakdown: isST
         ? z.string().min(1, 'Expense breakdown is required')
         : z.string().optional(),
     })

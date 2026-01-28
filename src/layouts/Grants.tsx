@@ -51,7 +51,7 @@ export function GrantPageLayout({
     isApproved = true;
   }
 
-  const isST =
+  const showApplicationStats =
     initialGrant?.isNative &&
     initialGrant?.airtableId &&
     !initialGrant?.title?.toLowerCase().includes('coindcx');
@@ -123,13 +123,14 @@ export function GrantPageLayout({
                 isPublished={initialGrant.isPublished || false}
                 isApproved={isApproved}
                 isPro={initialGrant.isPro}
+                isST={initialGrant.isST}
               />
 
               <div className="mb-10 flex max-w-6xl flex-col items-center justify-center gap-0 md:flex-row md:items-start md:justify-between md:gap-4">
                 <div className="static top-14 w-full md:sticky md:w-auto">
                   <div className="flex flex-col gap-2">
                     <div className="flex w-full flex-col justify-center rounded-xl bg-white py-4 md:w-88">
-                      {isApproved && application && isST ? (
+                      {isApproved && application && showApplicationStats ? (
                         <ApplicationStats
                           application={application}
                           grant={initialGrant}
@@ -140,7 +141,7 @@ export function GrantPageLayout({
                       <div className="hidden w-full md:flex">
                         <ApplicationActionButton grant={initialGrant} />
                       </div>
-                      {isApproved && application && isST ? (
+                      {isApproved && application && showApplicationStats ? (
                         <ApprovalStages
                           application={application}
                           grant={initialGrant}
