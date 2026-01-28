@@ -129,9 +129,9 @@ export const GrantsHeader = ({
                 <>
                   {isTouchingGrass ? (
                     <SuperteamBadge
-                      containerClassName="bg-transparent px-0 py-0 gap-1"
-                      iconClassName="size-3 text-zinc-600"
-                      textClassName="text-xs font-medium text-zinc-800"
+                      containerClassName="bg-transparent p-0 mt-px"
+                      iconClassName="size-4.5 text-zinc-600"
+                      textClassName="hidden"
                     />
                   ) : (
                     <Link href="/earn/pro">

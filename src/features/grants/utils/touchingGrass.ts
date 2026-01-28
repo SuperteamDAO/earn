@@ -63,7 +63,7 @@ export const TOUCHING_GRASS_COPY = {
   application: {
     title: 'Event Grant Application',
     subtitle:
-      "If you're planning to host an event that brings the Solana / Superteam community together, apply with your proposal here and we'll respond soon!",
+      "If you're looking to host an event that will help Solana's or Superteam's ecosystem grow, apply with your proposal here and we'll respond soon!",
     steps: {
       basics: 'Basics',
       details: 'Details',

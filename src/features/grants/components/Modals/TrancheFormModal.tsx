@@ -171,7 +171,11 @@ export const TrancheFormModal = ({ grant, applicationId, onClose }: Props) => {
         </p>
         {isTouchingGrass ? (
           <p className="mt-2 text-sm font-normal text-slate-500">
-            {TOUCHING_GRASS_COPY.tranche.description}
+            <span className="font-medium">For event grants</span>: 50% is paid
+            upfront after KYC approval, and 50% is paid after the event upon
+            submission of required proofs. To receive the second tranche, you
+            must submit event photos and scanned copies of expense receipts from
+            the event.
           </p>
         ) : (
           <ul className="mt-2 list-disc space-y-2 pl-5 text-sm font-normal text-slate-500">
