@@ -21,9 +21,9 @@ export const LiveGrants = ({
     <div>
       {children}
       <div className="mt-1 flex w-full flex-col">
-        {grants?.slice(0, 5).map((grant) => {
-          return <GrantsCardMini grant={grant} key={grant?.id} />;
-        })}
+        {grants?.map((grant) => (
+          <GrantsCardMini grant={grant} key={grant?.id} />
+        ))}
       </div>
     </div>
   );

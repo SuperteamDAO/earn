@@ -23,7 +23,7 @@ import { Dialog, DialogContent, DialogPortal } from '@/components/ui/dialog';
 import { LocalImage } from '@/components/ui/local-image';
 import { Tooltip } from '@/components/ui/tooltip';
 import { Superteams } from '@/constants/Superteam';
-import { tokenList } from '@/constants/tokenList';
+import { getTokenIcon } from '@/constants/tokenList';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import type { User } from '@/interface/user';
@@ -743,7 +743,7 @@ function TrackBox({
               <LocalImage
                 className="h-4 w-4 rounded-full md:h-6 md:w-6"
                 alt={token}
-                src={tokenList.find((t) => t.tokenSymbol === token)?.icon || ''}
+                src={getTokenIcon(token)}
               />
 
               <p className="text-sm font-semibold text-slate-700 md:text-base">

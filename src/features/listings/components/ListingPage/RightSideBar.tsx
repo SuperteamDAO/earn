@@ -1,8 +1,7 @@
-import { useQuery } from '@tanstack/react-query';
 import { TriangleAlert } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 
 const Countdown = dynamic(() => import('react-countdown'), { ssr: false });
 
@@ -10,7 +9,7 @@ import MdTimer from '@/components/icons/MdTimer';
 import TbBriefcase2 from '@/components/icons/TbBriefcase2';
 import { CountDownRenderer } from '@/components/shared/countdownRenderer';
 import { exclusiveSponsorData } from '@/constants/exclusiveSponsors';
-import { tokenList } from '@/constants/tokenList';
+import { getTokenIcon } from '@/constants/tokenList';
 import { useServerTimeSync } from '@/hooks/use-server-time';
 import { type ParentSkills } from '@/interface/skills';
 import { cn } from '@/utils/cn';
@@ -20,15 +19,18 @@ import { cleanRewardPrizes } from '@/utils/rank';
 
 import { RelatedListings } from '@/features/home/components/RelatedListings';
 
-import { submissionCountQuery } from '../../queries/submission-count';
 import type { Listing } from '../../types';
 import { isDeadlineOver } from '../../utils/deadline';
 import { ApprovalStages } from '../Submission/ApprovalStages';
 import { SubmissionActionButton } from '../Submission/SubmissionActionButton';
 import { CompensationAmount } from './CompensationAmount';
 import { ExtraInfoSection } from './ExtraInfoSection';
-import { ListingWinners } from './ListingWinners';
 import { PrizesList } from './PrizesList';
+
+const ListingWinners = dynamic(
+  () => import('./ListingWinners').then((m) => m.ListingWinners),
+  { ssr: false },
+);
 
 function digitsInLargestString(numbers: string[]): number {
   const largest = numbers.reduce((max, current) => {
@@ -65,13 +67,16 @@ export function RightSideBar({
   listing,
   skills,
   isTemplate = false,
+  submissionNumber,
+  isSubmissionNumberLoading = false,
 }: {
   listing: Listing;
   skills?: ParentSkills[];
   isTemplate?: boolean;
+  submissionNumber?: number;
+  isSubmissionNumberLoading?: boolean;
 }) {
   const {
-    id,
     token,
     type,
     deadline,
@@ -88,33 +93,19 @@ export function RightSideBar({
 
   const { serverTime, isSync } = useServerTimeSync();
 
-  const { data: submissionNumber, isLoading: isSubmissionNumberLoading } =
-    useQuery(submissionCountQuery(id!));
-
-  const [submissionRange, setSubmissionRange] = useState('');
-
   const hasHackathonStarted = Hackathon?.startDate
     ? dayjs().isAfter(Hackathon.startDate)
     : true;
 
-  useEffect(() => {
-    if (submissionNumber !== undefined) {
-      if (submissionNumber >= 0 && submissionNumber <= 10) {
-        setSubmissionRange('0-10');
-      } else if (submissionNumber > 10 && submissionNumber <= 25) {
-        setSubmissionRange('10-25');
-      } else if (submissionNumber > 25 && submissionNumber <= 50) {
-        setSubmissionRange('25-50');
-      } else if (submissionNumber > 50 && submissionNumber <= 100) {
-        setSubmissionRange('50-100');
-      } else if (submissionNumber > 100 && submissionNumber <= 200) {
-        setSubmissionRange('100-200');
-      } else if (submissionNumber > 200 && submissionNumber <= 300) {
-        setSubmissionRange('200-300');
-      } else if (submissionNumber > 300) {
-        setSubmissionRange('300+');
-      }
-    }
+  const submissionRange = useMemo(() => {
+    if (submissionNumber === undefined) return '';
+    if (submissionNumber <= 10) return '0-10';
+    if (submissionNumber <= 25) return '10-25';
+    if (submissionNumber <= 50) return '25-50';
+    if (submissionNumber <= 100) return '50-100';
+    if (submissionNumber <= 200) return '100-200';
+    if (submissionNumber <= 300) return '200-300';
+    return '300+';
   }, [submissionNumber]);
 
   const isProject = type === 'project';
@@ -177,10 +168,7 @@ export function RightSideBar({
                           <img
                             className="h-8 w-8 rounded-full"
                             alt="token icon"
-                            src={
-                              tokenList.find((e) => e?.tokenSymbol === token)
-                                ?.icon ?? '/assets/dollar.svg'
-                            }
+                            src={getTokenIcon(token ?? '')}
                           />
                         )}
                         <CompensationAmount

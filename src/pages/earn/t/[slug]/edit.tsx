@@ -4,7 +4,7 @@ import { Edit, Info, Loader2, Plus, Trash } from 'lucide-react';
 import type { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import posthog from 'posthog-js';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
@@ -56,6 +56,15 @@ import { type ProfileFormData, profileSchema } from '@/features/talent/schema';
 import { hasDevSkills } from '@/features/talent/utils/skills';
 import { useUsernameValidation } from '@/features/talent/utils/useUsernameValidation';
 
+const interestDropdown: Option[] = IndustryList.map((i) => ({
+  value: i,
+  label: i,
+}));
+const communityDropdown: Option[] = CommunityList.map((i) => ({
+  value: i,
+  label: i,
+}));
+
 export default function EditProfilePage({ slug }: { slug: string }) {
   const { user, refetchUser } = useUser();
   const { authenticated, ready } = usePrivy();
@@ -68,25 +77,11 @@ export default function EditProfilePage({ slug }: { slug: string }) {
 
   const skills = watch('skills');
 
+  const userRef = useRef(user);
+  userRef.current = user;
+
   const [isLoading, setIsLoading] = useState(false);
   const [uploadedPhotoUrl, setUploadedPhotoUrl] = useState<string | null>(null);
-
-  const interestDropdown = useMemo<Option[]>(
-    () =>
-      IndustryList.map((i) => ({
-        value: i,
-        label: i,
-      })),
-    [IndustryList],
-  );
-  const communityDropdown = useMemo<Option[]>(
-    () =>
-      CommunityList.map((i) => ({
-        value: i,
-        label: i,
-      })),
-    [CommunityList],
-  );
 
   const router = useRouter();
 
@@ -96,84 +91,80 @@ export default function EditProfilePage({ slug }: { slug: string }) {
 
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const { setUsername, isInvalid, validationErrorMessage, username } =
+  const { setUsername, isInvalid, validationErrorMessage, validating } =
     useUsernameValidation();
 
   useEffect(() => {
-    form.clearErrors('username');
-    if (
-      isInvalid &&
-      !!validationErrorMessage &&
-      !form.formState.errors.username?.message
-    ) {
+    if (isInvalid && validationErrorMessage) {
       setError('username', {
         message: validationErrorMessage,
       });
+    } else if (!isInvalid) {
+      form.clearErrors('username');
     }
-  }, [
-    validationErrorMessage,
-    isInvalid,
-    username,
-    form.formState.errors.username?.message,
-  ]);
+  }, [validationErrorMessage, isInvalid, setError, form]);
 
   useEffect(() => {
-    if (user) {
+    const currentUser = userRef.current;
+    if (currentUser) {
       form.reset({
-        username: user.username || undefined,
-        bio: user.bio || undefined,
-        photo: user.photo || undefined,
+        username: currentUser.username || undefined,
+        bio: currentUser.bio || undefined,
+        photo: currentUser.photo || undefined,
         location:
-          profileSchema._def.schema.shape.location.safeParse(user?.location)
-            .data || undefined,
+          profileSchema._def.schema.shape.location.safeParse(
+            currentUser?.location,
+          ).data || undefined,
         skills:
-          profileSchema._def.schema.shape.skills.safeParse(user.skills).data ||
-          undefined,
-        private: user.private || undefined,
-        firstName: user.firstName || undefined,
-        lastName: user.lastName || undefined,
-        discord: user.discord || undefined,
-        github: user.github
-          ? extractSocialUsername('github', user.github) || undefined
+          profileSchema._def.schema.shape.skills.safeParse(currentUser.skills)
+            .data || undefined,
+        private: currentUser.private || undefined,
+        firstName: currentUser.firstName || undefined,
+        lastName: currentUser.lastName || undefined,
+        discord: currentUser.discord || undefined,
+        github: currentUser.github
+          ? extractSocialUsername('github', currentUser.github) || undefined
           : undefined,
-        twitter: user.twitter
-          ? extractSocialUsername('twitter', user.twitter) || undefined
+        twitter: currentUser.twitter
+          ? extractSocialUsername('twitter', currentUser.twitter) || undefined
           : undefined,
-        linkedin: user.linkedin
-          ? extractSocialUsername('linkedin', user.linkedin) || undefined
+        linkedin: currentUser.linkedin
+          ? extractSocialUsername('linkedin', currentUser.linkedin) || undefined
           : undefined,
-        telegram: user.telegram
-          ? extractSocialUsername('telegram', user.telegram) || undefined
+        telegram: currentUser.telegram
+          ? extractSocialUsername('telegram', currentUser.telegram) || undefined
           : undefined,
-        website: user.website || undefined,
+        website: currentUser.website || undefined,
         workPrefernce:
           profileSchema._def.schema.shape.workPrefernce.safeParse(
-            user.workPrefernce,
+            currentUser.workPrefernce,
           ).data || undefined,
         experience:
-          profileSchema._def.schema.shape.experience.safeParse(user.experience)
-            .data || undefined,
+          profileSchema._def.schema.shape.experience.safeParse(
+            currentUser.experience,
+          ).data || undefined,
         cryptoExperience:
           profileSchema._def.schema.shape.cryptoExperience.safeParse(
-            user.cryptoExperience,
+            currentUser.cryptoExperience,
           ).data || undefined,
-        community: user.community
+        community: currentUser.community
           ? profileSchema._def.schema.shape.community.safeParse(
-              JSON.parse(user.community),
+              JSON.parse(currentUser.community),
             ).data || []
           : [],
-        interests: user.interests
+        interests: currentUser.interests
           ? profileSchema._def.schema.shape.interests.safeParse(
-              JSON.parse(user.interests),
+              JSON.parse(currentUser.interests),
             ).data || []
           : [],
-        currentEmployer: user.currentEmployer || undefined,
+        currentEmployer: currentUser.currentEmployer || undefined,
       });
       setSkillsRefreshKey((s) => s + 1);
     }
-  }, [user]);
+  }, [user?.id, form]);
 
   useEffect(() => {
+    let ignore = false;
     const fetchPoW = async () => {
       try {
         const response = await api.get('/api/pow/get', {
@@ -181,18 +172,25 @@ export default function EditProfilePage({ slug }: { slug: string }) {
             userId: user?.id,
           },
         });
-        setPow(response.data);
+        if (!ignore) setPow(response.data);
       } catch (error) {
-        console.log(error);
+        if (!ignore) console.log(error);
       }
     };
 
     if (user?.id) {
       fetchPoW();
     }
+    return () => {
+      ignore = true;
+    };
   }, [user?.id]);
 
   const onSubmit = async (data: ProfileFormData) => {
+    if (validating) {
+      toast.error('Please wait for username validation');
+      return false;
+    }
     if (isInvalid) {
       if (!!validationErrorMessage) {
         setError('username', {
@@ -308,14 +306,14 @@ export default function EditProfilePage({ slug }: { slug: string }) {
   };
 
   useEffect(() => {
+    if (ready && !authenticated) {
+      router.push('/earn');
+      return;
+    }
     if (user && slug !== user?.username) {
       router.push(`/earn/t/${slug}`);
     }
-  }, [slug, router, user]);
-
-  if (ready && !authenticated) {
-    router.push('/earn');
-  }
+  }, [ready, authenticated, user?.username, slug]);
 
   return (
     <Default

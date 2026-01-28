@@ -3,7 +3,7 @@ import type { GetServerSideProps } from 'next';
 import dynamic from 'next/dynamic';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { type JSX, useEffect, useMemo, useState } from 'react';
+import { type JSX, memo, useEffect, useMemo, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 
 import { EmptySection } from '@/components/shared/EmptySection';
@@ -73,6 +73,96 @@ interface TalentProps {
   bgIndex: number;
 }
 
+const getWorkPreferenceText = (workPrefernce?: string): string | null => {
+  if (!workPrefernce || workPrefernce === 'Not looking for Work') {
+    return null;
+  }
+  const fullTimePatterns = [
+    'Passively looking for fulltime positions',
+    'Actively looking for fulltime positions',
+    'Fulltime',
+  ];
+  const freelancePatterns = [
+    'Passively looking for freelance work',
+    'Actively looking for freelance work',
+    'Freelance',
+  ];
+  const internshipPatterns = ['Actively looking for internships', 'Internship'];
+
+  if (fullTimePatterns.includes(workPrefernce)) {
+    return 'Fulltime Roles';
+  }
+  if (freelancePatterns.includes(workPrefernce)) {
+    return 'Freelance Opportunities';
+  }
+  if (internshipPatterns.includes(workPrefernce)) {
+    return 'Internship Opportunities';
+  }
+
+  return workPrefernce;
+};
+
+const ProfileActionButton = memo(function ProfileActionButton({
+  icon,
+  text,
+  onClick,
+  outline = false,
+  isPro,
+  isMD,
+}: {
+  icon: JSX.Element;
+  text: string;
+  onClick: () => void;
+  outline?: boolean;
+  isPro?: boolean;
+  isMD: boolean;
+}) {
+  if (isMD) {
+    return (
+      <AuthWrapper showCompleteProfileModal allowSponsor>
+        <Button
+          className={cn(
+            'ph-no-capture w-full text-sm font-medium',
+            outline
+              ? isPro
+                ? 'border-zinc-400 bg-zinc-100 text-zinc-600 hover:bg-zinc-200 hover:text-zinc-600'
+                : 'border-slate-400 bg-white text-slate-500 hover:bg-gray-100'
+              : isPro
+                ? 'border-zinc-600 bg-zinc-700 text-white hover:bg-zinc-800 hover:text-white'
+                : 'border-brand-purple/5 bg-brand-purple/10 text-brand-purple hover:bg-brand-purple/20',
+          )}
+          onClick={onClick}
+          variant={outline ? 'outline' : 'default'}
+        >
+          {icon}
+          {text}
+        </Button>
+      </AuthWrapper>
+    );
+  }
+
+  return (
+    <AuthWrapper showCompleteProfileModal allowSponsor>
+      <Button
+        aria-label={text}
+        onClick={onClick}
+        className={cn(
+          'inline-flex h-9 w-9 items-center justify-center rounded border p-2 text-sm font-medium transition',
+          outline
+            ? isPro
+              ? 'border-zinc-400 bg-zinc-100 text-zinc-600 hover:bg-zinc-200 hover:text-zinc-600'
+              : 'border-slate-400 bg-white text-slate-500 hover:bg-gray-100'
+            : isPro
+              ? 'border-zinc-600 bg-zinc-700 text-white hover:bg-zinc-800 hover:text-white'
+              : 'border-indigo-100 bg-indigo-100 text-indigo-600 hover:bg-indigo-200',
+        )}
+      >
+        {icon}
+      </Button>
+    </AuthWrapper>
+  );
+});
+
 function TalentProfile({ talent, stats, bgIndex }: TalentProps) {
   const [activeTab, setActiveTab] = useState<'activity' | 'projects'>(
     'activity',
@@ -81,6 +171,19 @@ function TalentProfile({ talent, stats, bgIndex }: TalentProps) {
     {},
   );
   const { ref, inView } = useInView();
+
+  const feedParams = useMemo(
+    () => ({
+      filter: 'new' as const,
+      timePeriod: '',
+      isWinner: false,
+      take: 5,
+      userId: talent?.id,
+      takeOnlyType: activeTab === 'activity' ? undefined : ('pow' as const),
+    }),
+    [talent?.id, activeTab],
+  );
+
   const {
     data: feed,
     isLoading,
@@ -88,14 +191,7 @@ function TalentProfile({ talent, stats, bgIndex }: TalentProps) {
     hasNextPage,
     isFetchingNextPage,
     refetch,
-  } = useGetFeed({
-    filter: 'new',
-    timePeriod: '',
-    isWinner: false,
-    take: 5,
-    userId: talent?.id,
-    takeOnlyType: activeTab === 'activity' ? undefined : 'pow',
-  });
+  } = useGetFeed(feedParams);
 
   useEffect(() => {
     if (inView && hasNextPage) {
@@ -104,22 +200,24 @@ function TalentProfile({ talent, stats, bgIndex }: TalentProps) {
   }, [inView, fetchNextPage, hasNextPage]);
 
   const handleToggleSubskills = (index: number) => {
-    setShowSubskills({
-      ...showSubskills,
-      [index]: !showSubskills[index],
-    });
+    setShowSubskills((prev) => ({
+      ...prev,
+      [index]: !prev[index],
+    }));
   };
   const { user } = useUser();
 
   useEffect(() => {
-    const track = async () => {
-      if (user?.id && talent?.id && user.id !== talent?.id) {
-        const { default: posthog } = await import('posthog-js');
-        posthog.capture('clicked profile_talent');
-      }
+    let ignore = false;
+    if (user?.id && talent?.id && user.id !== talent?.id) {
+      import('posthog-js').then(({ default: posthog }) => {
+        if (!ignore) posthog.capture('clicked profile_talent');
+      });
+    }
+    return () => {
+      ignore = true;
     };
-    track();
-  }, [talent, user?.id]);
+  }, [talent?.id, user?.id]);
 
   const {
     isOpen: isOpenPow,
@@ -129,12 +227,15 @@ function TalentProfile({ talent, stats, bgIndex }: TalentProps) {
 
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const socialLinks = [
-    { Icon: Twitter, link: talent?.twitter },
-    { Icon: Linkedin, link: talent?.linkedin },
-    { Icon: GitHub, link: talent?.github },
-    { Icon: Website, link: talent?.website },
-  ];
+  const socialLinks = useMemo(
+    () => [
+      { Icon: Twitter, link: talent?.twitter },
+      { Icon: Linkedin, link: talent?.linkedin },
+      { Icon: GitHub, link: talent?.github },
+      { Icon: Website, link: talent?.website },
+    ],
+    [talent?.twitter, talent?.linkedin, talent?.github, talent?.website],
+  );
 
   const router = useRouter();
 
@@ -147,38 +248,6 @@ function TalentProfile({ talent, stats, bgIndex }: TalentProps) {
   };
 
   const isMD = useMediaQuery('(min-width: 768px)');
-
-  const getWorkPreferenceText = (workPrefernce?: string): string | null => {
-    if (!workPrefernce || workPrefernce === 'Not looking for Work') {
-      return null;
-    }
-    const fullTimePatterns = [
-      'Passively looking for fulltime positions',
-      'Actively looking for fulltime positions',
-      'Fulltime',
-    ];
-    const freelancePatterns = [
-      'Passively looking for freelance work',
-      'Actively looking for freelance work',
-      'Freelance',
-    ];
-    const internshipPatterns = [
-      'Actively looking for internships',
-      'Internship',
-    ];
-
-    if (fullTimePatterns.includes(workPrefernce)) {
-      return 'Fulltime Roles';
-    }
-    if (freelancePatterns.includes(workPrefernce)) {
-      return 'Freelance Opportunities';
-    }
-    if (internshipPatterns.includes(workPrefernce)) {
-      return 'Internship Opportunities';
-    }
-
-    return workPrefernce;
-  };
 
   const workPreferenceText = getWorkPreferenceText(talent?.workPrefernce);
 
@@ -207,84 +276,45 @@ function TalentProfile({ talent, stats, bgIndex }: TalentProps) {
       : `Talent profile on Superteam Earn. ${statsStr}`;
   }, [talent, workPreferenceText, stats, isPublicProfile]);
 
-  const renderButton = (
-    icon: JSX.Element,
-    text: string,
-    onClickHandler: () => void,
-    outline: boolean = false,
-  ) => {
-    if (isMD) {
-      return (
-        <AuthWrapper showCompleteProfileModal allowSponsor>
-          <Button
-            className={cn(
-              'ph-no-capture w-full text-sm font-medium',
-              outline
-                ? talent?.isPro
-                  ? 'border-zinc-400 bg-zinc-100 text-zinc-600 hover:bg-zinc-200 hover:text-zinc-600'
-                  : 'border-slate-400 bg-white text-slate-500 hover:bg-gray-100'
-                : talent?.isPro
-                  ? 'border-zinc-600 bg-zinc-700 text-white hover:bg-zinc-800 hover:text-white'
-                  : 'border-brand-purple/5 bg-brand-purple/10 text-brand-purple hover:bg-brand-purple/20',
-            )}
-            onClick={onClickHandler}
-            variant={outline ? 'outline' : 'default'}
-          >
-            {icon}
-            {text}
-          </Button>
-        </AuthWrapper>
-      );
-    }
-
-    return (
-      <AuthWrapper showCompleteProfileModal allowSponsor>
-        <Button
-          aria-label={text}
-          onClick={onClickHandler}
-          className={cn(
-            'inline-flex h-9 w-9 items-center justify-center rounded border p-2 text-sm font-medium transition',
-            outline
-              ? talent?.isPro
-                ? 'border-zinc-400 bg-zinc-100 text-zinc-600 hover:bg-zinc-200 hover:text-zinc-600'
-                : 'border-slate-400 bg-white text-slate-500 hover:bg-gray-100'
-              : talent?.isPro
-                ? 'border-zinc-600 bg-zinc-700 text-white hover:bg-zinc-800 hover:text-white'
-                : 'border-indigo-100 bg-indigo-100 text-indigo-600 hover:bg-indigo-200',
-          )}
-        >
-          {icon}
-        </Button>
-      </AuthWrapper>
+  const ogImage = useMemo(() => {
+    const path = talent?.isPro
+      ? `${getURL()}api/dynamic-og/pro-talent/`
+      : `${getURL()}api/dynamic-og/talent/`;
+    const url = new URL(path);
+    url.searchParams.set('name', `${talent?.firstName} ${talent?.lastName}`);
+    url.searchParams.set('username', talent?.username!);
+    url.searchParams.set('skills', JSON.stringify(talent?.skills));
+    url.searchParams.set(
+      'totalEarned',
+      stats?.totalWinnings?.toFixed(0) || '0',
     );
-  };
-
-  const ogImagePath = talent?.isPro
-    ? `${getURL()}api/dynamic-og/pro-talent/`
-    : `${getURL()}api/dynamic-og/talent/`;
-  const ogImage = new URL(ogImagePath);
-  ogImage.searchParams.set('name', `${talent?.firstName} ${talent?.lastName}`);
-  ogImage.searchParams.set('username', talent?.username!);
-  ogImage.searchParams.set('skills', JSON.stringify(talent?.skills));
-  ogImage.searchParams.set(
-    'totalEarned',
-    stats?.totalWinnings?.toFixed(0) || '0',
-  );
-  ogImage.searchParams.set(
-    'submissionCount',
-    stats?.participations?.toString(),
-  );
-  ogImage.searchParams.set('winnerCount', stats?.wins?.toString());
-  if (talent?.photo) {
-    ogImage.searchParams.set('photo', talent.photo);
-  }
+    url.searchParams.set('submissionCount', stats?.participations?.toString());
+    url.searchParams.set('winnerCount', stats?.wins?.toString());
+    if (talent?.photo) {
+      url.searchParams.set('photo', talent.photo);
+    }
+    return url;
+  }, [
+    talent?.isPro,
+    talent?.firstName,
+    talent?.lastName,
+    talent?.username,
+    talent?.skills,
+    talent?.photo,
+    stats?.totalWinnings,
+    stats?.participations,
+    stats?.wins,
+  ]);
 
   const title =
     talent?.firstName && talent?.lastName
       ? `${talent?.firstName} ${talent?.lastName} | Superteam Earn Talent`
       : 'Superteam Earn';
 
-  const feedItems = feed?.pages.flatMap((page) => page) ?? [];
+  const feedItems = useMemo(
+    () => feed?.pages.flatMap((page) => page) ?? [],
+    [feed?.pages],
+  );
 
   // Generate JSON-LD schemas for public profiles only
   const personSchema = isPublicProfile
@@ -423,13 +453,23 @@ function TalentProfile({ talent, stats, bgIndex }: TalentProps) {
                 </p>
               </div>
               <div className="flex w-auto gap-3 md:w-[160px] md:flex-col">
-                {user?.id === talent?.id &&
-                  renderButton(
-                    <SquarePen />,
-                    'Edit Profile',
-                    handleEditProfileClick,
-                  )}
-                {renderButton(<ShareIcon />, 'Share', onOpen, true)}
+                {user?.id === talent?.id && (
+                  <ProfileActionButton
+                    icon={<SquarePen />}
+                    text="Edit Profile"
+                    onClick={handleEditProfileClick}
+                    isPro={talent?.isPro}
+                    isMD={isMD}
+                  />
+                )}
+                <ProfileActionButton
+                  icon={<ShareIcon />}
+                  text="Share"
+                  onClick={onOpen}
+                  outline
+                  isPro={talent?.isPro}
+                  isMD={isMD}
+                />
               </div>
             </div>
             <ShareProfile
@@ -439,7 +479,7 @@ function TalentProfile({ talent, stats, bgIndex }: TalentProps) {
               id={talent?.id}
             />
             <Separator className="my-8" />
-            <div className="flex w-full flex-col gap-12 md:flex-row md:gap-[6.25rem]">
+            <div className="flex w-full flex-col gap-12 md:flex-row md:gap-25">
               <div className="w-full md:w-1/2">
                 <p className="mb-4 font-medium text-slate-900">Details</p>
                 {workPreferenceText && (
@@ -531,7 +571,7 @@ function TalentProfile({ talent, stats, bgIndex }: TalentProps) {
               </div>
             </div>
             <Separator className="mt-8 mb-4" />
-            <div className="flex flex-col justify-between gap-12 md:flex-row md:gap-[6.25rem]">
+            <div className="flex flex-col justify-between gap-12 md:flex-row md:gap-25">
               <div className="flex w-full gap-6 md:w-1/2">
                 {socialLinks.map(({ Icon, link }, i) => {
                   return <Icon link={link} className="h-5 w-5" key={i} />;
@@ -667,6 +707,16 @@ const hashStringToInt = (input: string): number => {
   return Math.abs(hash);
 };
 
+interface SubmissionStats {
+  participations: bigint;
+  wins: bigint;
+  listingWinnings: number | null;
+}
+
+interface GrantStats {
+  grantWinnings: number | null;
+}
+
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { slug } = context.query;
   try {
@@ -677,62 +727,62 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
     const username = Array.isArray(slug) ? slug[0] : (slug as string);
 
-    const talent = await prisma.user.findUnique({
-      where: { username },
-      select: {
-        id: true,
-        twitter: true,
-        linkedin: true,
-        github: true,
-        website: true,
-        username: true,
-        workPrefernce: true,
-        firstName: true,
-        lastName: true,
-        skills: true,
-        photo: true,
-        currentEmployer: true,
-        location: true,
-        private: true,
-        isPro: true,
-      },
-    });
+    const [talent, submissionStats, grantStats] = await Promise.all([
+      prisma.user.findUnique({
+        where: { username },
+        select: {
+          id: true,
+          twitter: true,
+          linkedin: true,
+          github: true,
+          website: true,
+          username: true,
+          workPrefernce: true,
+          firstName: true,
+          lastName: true,
+          skills: true,
+          photo: true,
+          currentEmployer: true,
+          location: true,
+          private: true,
+          isPro: true,
+        },
+      }),
+      prisma.$queryRaw<SubmissionStats[]>`
+        SELECT
+          COUNT(*) as participations,
+          SUM(CASE WHEN s.isWinner = 1 AND b.isWinnersAnnounced = 1 THEN 1 ELSE 0 END) as wins,
+          COALESCE(SUM(CASE WHEN s.isWinner = 1 AND b.isWinnersAnnounced = 1 THEN s.rewardInUSD ELSE 0 END), 0) as listingWinnings
+        FROM Submission s
+        LEFT JOIN Bounties b ON s.listingId = b.id
+        INNER JOIN User u ON s.userId = u.id
+        WHERE u.username = ${username}
+      `,
+      prisma.$queryRaw<GrantStats[]>`
+        SELECT COALESCE(SUM(ga.approvedAmountInUSD), 0) as grantWinnings
+        FROM GrantApplication ga
+        INNER JOIN User u ON ga.userId = u.id
+        WHERE u.username = ${username}
+          AND ga.applicationStatus IN ('Approved', 'Completed')
+      `,
+    ]);
 
     if (!talent) {
       return { props: { talent: null } };
     }
 
-    const userId = talent.id;
+    const subStats = submissionStats[0] || {
+      participations: 0n,
+      wins: 0n,
+      listingWinnings: 0,
+    };
+    const gStats = grantStats[0] || { grantWinnings: 0 };
 
-    const [participations, wins, listingAgg, grantAgg] = await Promise.all([
-      prisma.submission.count({ where: { userId } }),
-      prisma.submission.count({
-        where: {
-          userId,
-          isWinner: true,
-          listing: { isWinnersAnnounced: true },
-        },
-      }),
-      prisma.submission.aggregate({
-        where: {
-          userId,
-          isWinner: true,
-          listing: { isWinnersAnnounced: true },
-        },
-        _sum: { rewardInUSD: true },
-      }),
-      prisma.grantApplication.aggregate({
-        where: {
-          userId,
-          applicationStatus: { in: ['Approved', 'Completed'] },
-        },
-        _sum: { approvedAmountInUSD: true },
-      }),
-    ]);
-
-    const listingWinnings = listingAgg._sum.rewardInUSD || 0;
-    const grantWinnings = grantAgg._sum.approvedAmountInUSD || 0;
-    const totalWinnings = (listingWinnings || 0) + (grantWinnings || 0);
+    const participations = Number(subStats.participations);
+    const wins = Number(subStats.wins);
+    const listingWinnings = subStats.listingWinnings || 0;
+    const grantWinnings = gStats.grantWinnings || 0;
+    const totalWinnings = listingWinnings + grantWinnings;
 
     const stats = { participations, wins, totalWinnings };
 

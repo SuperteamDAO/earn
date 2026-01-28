@@ -367,6 +367,7 @@ model Submission {
   @@index([listingId, userId, isActive, isArchived])
   @@index([listingId, isWinner, isActive, isArchived])
   @@index([userId, listingId, createdAt])
+  @@index([userId, isWinner])
   @@index([createdAt(sort: Desc)])
   @@index([likeCount(sort: Desc), createdAt(sort: Desc)])
 }

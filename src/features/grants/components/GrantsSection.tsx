@@ -1,3 +1,5 @@
+import { useCallback } from 'react';
+
 import { AnimateChangeInHeight } from '@/components/shared/AnimateChangeInHeight';
 import { EmptySection } from '@/components/shared/EmptySection';
 import { useBreakpoint } from '@/hooks/use-breakpoint';
@@ -11,6 +13,9 @@ import { CATEGORY_NAV_ITEMS } from '@/features/navbar/constants';
 import { type GrantContext, useGrants } from '../hooks/useGrants';
 import { useGrantState } from '../hooks/useGrantState';
 import { GrantsCard } from './GrantsCard';
+
+const SKELETON_COUNT = 5;
+const skeletonArray = Array.from({ length: SKELETON_COUNT }, (_, i) => i);
 
 interface GrantSectionProps {
   type: GrantContext;
@@ -59,15 +64,17 @@ export const GrantsSection = ({
     skill,
   });
 
+  const handleAllCategoryClick = useCallback(() => {
+    handleCategoryChange('All', 'all_navpill');
+  }, [handleCategoryChange]);
+
   if (hideWhenEmpty && !isLoading && !grants?.length) {
     return null;
   }
 
   const renderContent = () => {
     if (isLoading) {
-      return Array.from({ length: 5 }).map((_, index) => (
-        <ListingCardSkeleton key={index} />
-      ));
+      return skeletonArray.map((index) => <ListingCardSkeleton key={index} />);
     }
 
     if (error) {
@@ -117,7 +124,7 @@ export const GrantsSection = ({
             key="all"
             phEvent="all_navpill"
             isActive={activeCategory === 'All'}
-            onClick={() => handleCategoryChange('All', 'all_navpill')}
+            onClick={handleAllCategoryClick}
             isPro={isProContext}
           >
             All

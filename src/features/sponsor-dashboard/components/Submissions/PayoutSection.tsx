@@ -12,7 +12,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { tokenList } from '@/constants/tokenList';
+import { getTokenIcon } from '@/constants/tokenList';
 import { type SubmissionWithUser } from '@/interface/submission';
 import { cn } from '@/utils/cn';
 import { getRankLabels } from '@/utils/rank';
@@ -53,7 +53,7 @@ const PaymentDetailsRow = ({
             <div className="flex items-center gap-1">
               <img
                 className="h-4 w-4 rounded-full"
-                src={tokenList.find((t) => t.tokenSymbol === token)?.icon || ''}
+                src={getTokenIcon(token)}
                 alt={`${token}`}
               />
               <p className="text-sm font-medium text-slate-700">
@@ -267,11 +267,7 @@ export const PayoutSection = ({
                     <TableCell>
                       <div className="flex items-center gap-2">
                         <img
-                          src={
-                            tokenList.find(
-                              (ele) => ele.tokenSymbol === bounty.token,
-                            )?.icon
-                          }
+                          src={getTokenIcon(bounty.token ?? '')}
                           alt={bounty.token}
                           className="h-4 w-4"
                         />

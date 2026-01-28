@@ -1,4 +1,3 @@
-import { useQuery } from '@tanstack/react-query';
 import { Check, Clock, File, MessageSquare, Pause } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -19,7 +18,6 @@ import { dayjs } from '@/utils/dayjs';
 import { BoostButton } from '@/features/listing-builder/components/Form/Boost/BoostButton';
 import { ProBadge } from '@/features/pro/components/ProBadge';
 
-import { submissionCountQuery } from '../../queries/submission-count';
 import { type Listing, type ListingHackathon } from '../../types';
 import { getListingIcon } from '../../utils/getListingIcon';
 import { BookmarkListing } from './BookmarkListing';
@@ -186,10 +184,14 @@ export function ListingHeader({
   listing,
   isTemplate = false,
   commentCount,
+  submissionNumber,
+  isSubmissionNumberLoading = false,
 }: {
   listing: Listing;
   isTemplate?: boolean;
   commentCount?: number;
+  submissionNumber?: number;
+  isSubmissionNumberLoading?: boolean;
 }) {
   const {
     type,
@@ -217,9 +219,6 @@ export function ListingHeader({
   const hasHackathonStarted = dayjs(serverTime()).isAfter(Hackathon?.startDate);
   const isProject = type === 'project';
   const isHackathon = type === 'hackathon';
-
-  const { data: submissionNumber, isLoading: isSubmissionNumberLoading } =
-    useQuery(submissionCountQuery(listing.id!));
 
   const statusIconStyles = 'w-5 h-5';
   let statusText = '';

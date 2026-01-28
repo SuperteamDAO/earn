@@ -4,7 +4,14 @@ import type { ReactNode } from 'react';
 import { cn } from '@/utils/cn';
 
 import { Header } from '@/features/navbar/components/Header';
-import { ProUpgradeOverlay } from '@/features/pro/components/ProUpgradeOverlay';
+
+const ProUpgradeOverlay = dynamic(
+  () =>
+    import('@/features/pro/components/ProUpgradeOverlay').then(
+      (mod) => mod.ProUpgradeOverlay,
+    ),
+  { ssr: false },
+);
 
 interface IDefaultProps {
   readonly meta: ReactNode;

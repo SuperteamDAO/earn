@@ -4,7 +4,7 @@ import { SuperteamBadge } from '@/components/shared/SuperteamBadge';
 import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
 import { LocalImage } from '@/components/ui/local-image';
 import { ASSET_URL } from '@/constants/ASSET_URL';
-import { tokenList } from '@/constants/tokenList';
+import { getTokenIcon } from '@/constants/tokenList';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 
 import { ProBadge } from '@/features/pro/components/ProBadge';
@@ -32,7 +32,7 @@ export const GrantsCard = ({ grant }: { grant: GrantWithApplicationCount }) => {
     ? sponsor.logo.replace('/upload/', '/upload/c_scale,w_128,h_128,f_auto/')
     : ASSET_URL + '/logo/sponsor-logo.png';
 
-  const tokenIcon = tokenList.find((ele) => ele.tokenSymbol === token)?.icon;
+  const tokenIcon = getTokenIcon(token ?? '');
 
   return (
     <Link

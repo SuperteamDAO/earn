@@ -12,7 +12,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { tokenList } from '@/constants/tokenList';
+import { getTokenIcon } from '@/constants/tokenList';
 import { type GrantTrancheModel } from '@/prisma/models/GrantTranche';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
@@ -51,7 +51,7 @@ const PaymentDetailsRow = ({
             <div className="flex items-center gap-1">
               <img
                 className="h-4 w-4 rounded-full"
-                src={tokenList.find((t) => t.tokenSymbol === token)?.icon || ''}
+                src={getTokenIcon(token)}
                 alt={`${token}`}
               />
               <p className="text-sm font-medium text-slate-700">
@@ -111,7 +111,7 @@ const GrantTrancheRow = ({
             <div className="flex items-center gap-1">
               <img
                 className="h-4 w-4 rounded-full"
-                src={tokenList.find((t) => t.tokenSymbol === token)?.icon || ''}
+                src={getTokenIcon(token)}
                 alt={`${token}`}
               />
               <p className="text-sm font-medium text-slate-700">
@@ -244,11 +244,7 @@ export const PaymentsHistoryTab = ({
                         <div className="flex items-center gap-1">
                           <img
                             className="h-4 w-4 rounded-full"
-                            src={
-                              tokenList.find(
-                                (t) => t.tokenSymbol === grant?.token,
-                              )?.icon || ''
-                            }
+                            src={getTokenIcon(grant?.token ?? '')}
                             alt={grant?.token}
                           />
                           <p className="text-sm font-medium text-slate-700">
@@ -264,11 +260,7 @@ export const PaymentsHistoryTab = ({
                           <img
                             className="h-4 w-4 rounded-full"
                             alt={grant?.token}
-                            src={
-                              tokenList.find(
-                                (t) => t.tokenSymbol === grant?.token,
-                              )?.icon || ''
-                            }
+                            src={getTokenIcon(grant?.token ?? '')}
                           />
                           <p className="text-sm font-medium text-slate-700">
                             {grantee.totalPaid}{' '}
@@ -362,11 +354,7 @@ export const PaymentsHistoryTab = ({
                         <div className="flex items-center gap-1">
                           <img
                             className="h-4 w-4 rounded-full"
-                            src={
-                              tokenList.find(
-                                (t) => t.tokenSymbol === grant?.token,
-                              )?.icon || ''
-                            }
+                            src={getTokenIcon(grant?.token ?? '')}
                             alt={grant?.token}
                           />
                           <p className="text-sm font-medium text-slate-700">
@@ -382,11 +370,7 @@ export const PaymentsHistoryTab = ({
                           <img
                             className="h-4 w-4 rounded-full"
                             alt={grant?.token}
-                            src={
-                              tokenList.find(
-                                (t) => t.tokenSymbol === grant?.token,
-                              )?.icon || ''
-                            }
+                            src={getTokenIcon(grant?.token ?? '')}
                           />
                           <p className="text-sm font-medium text-slate-700">
                             {grantee.totalPaid}{' '}

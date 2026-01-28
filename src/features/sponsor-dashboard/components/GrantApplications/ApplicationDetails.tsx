@@ -13,7 +13,7 @@ import { CircularProgress } from '@/components/ui/progress';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Tooltip } from '@/components/ui/tooltip';
 import { Superteams } from '@/constants/Superteam';
-import { tokenList } from '@/constants/tokenList';
+import { getTokenIcon } from '@/constants/tokenList';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
 import { truncateString } from '@/utils/truncateString';
@@ -70,9 +70,7 @@ export const ApplicationDetails = ({
 
   const queryClient = useQueryClient();
 
-  const tokenIcon = tokenList.find(
-    (ele) => ele.tokenSymbol === grant?.token,
-  )?.icon;
+  const tokenIcon = getTokenIcon(grant?.token ?? '');
 
   const formattedCreatedAt = dayjs(selectedApplication?.createdAt).format(
     'DD MMM YYYY',

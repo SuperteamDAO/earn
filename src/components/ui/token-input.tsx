@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { tokenList } from '@/constants/tokenList';
+import { getTokenIcon } from '@/constants/tokenList';
 import { cn } from '@/utils/cn';
 
 import { Input } from './input';
@@ -57,10 +57,7 @@ function TokenInput({
           data-slot="token-input-icon"
           className="h-4 w-4 rounded-full"
           alt="token"
-          src={
-            tokenList.filter((e) => e?.tokenSymbol === token)[0]?.icon ??
-            '/assets/dollar.svg'
-          }
+          src={getTokenIcon(token ?? '')}
         />
         <p
           data-slot="token-input-symbol"
