@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { ArrowUpRight, Heart, MessageCircle } from 'lucide-react';
 import Link from 'next/link';
-import React, { type Dispatch, type SetStateAction, useState } from 'react';
+import React, { useState } from 'react';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
@@ -27,7 +27,7 @@ interface Props {
     date: number;
   }[];
   id: string;
-  setUpdate: Dispatch<SetStateAction<boolean>>;
+  onUpdate: () => void;
   link: string;
 }
 
@@ -37,7 +37,7 @@ export const SubmissionCard = ({
   winner,
   talent,
   likes,
-  setUpdate,
+  onUpdate,
   link,
 }: Props) => {
   const { user } = useUser();
@@ -53,7 +53,7 @@ export const SubmissionCard = ({
       .then()
       .finally(() => {
         setIsLoading(false);
-        setUpdate((prev: boolean) => !prev);
+        onUpdate();
       });
 
     toast.promise(likePromise, {

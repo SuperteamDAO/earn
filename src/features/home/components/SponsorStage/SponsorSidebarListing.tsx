@@ -8,7 +8,7 @@ import posthog from 'posthog-js';
 import { Button } from '@/components/ui/button';
 import { Tooltip } from '@/components/ui/tooltip';
 import { ASSET_URL } from '@/constants/ASSET_URL';
-import { tokenList } from '@/constants/tokenList';
+import { getTokenIcon } from '@/constants/tokenList';
 import { useBreakpoint } from '@/hooks/use-breakpoint';
 import { dayjs } from '@/utils/dayjs';
 
@@ -59,10 +59,6 @@ export function SponsorListing() {
         '/upload/c_scale,w_128,h_128,f_auto/',
       )
     : `${ASSET_URL}/logo/sponsor-logo.png`;
-
-  const tokenIcon =
-    tokenList.filter((e) => e?.tokenSymbol === listing.token)[0]?.icon ??
-    '/assets/dollar.svg';
 
   const status = getListingStatus(listing);
   const statusColors = getColorStyles(status);
@@ -116,7 +112,7 @@ export function SponsorListing() {
                 <img
                   className="h-5 w-5 rounded-full"
                   alt={'green dollar'}
-                  src={tokenIcon}
+                  src={getTokenIcon(listing.token ?? '')}
                 />
 
                 {listing?.type === 'grant' && (

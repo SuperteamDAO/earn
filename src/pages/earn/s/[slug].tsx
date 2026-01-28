@@ -248,21 +248,25 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const slug = params?.slug;
 
   if (typeof slug !== 'string') {
-    return {
-      notFound: true,
-    };
+    return { notFound: true };
   }
 
   const sponsor = await prisma.sponsors.findUnique({
-    where: {
-      slug,
+    where: { slug },
+    select: {
+      id: true,
+      name: true,
+      slug: true,
+      bio: true,
+      logo: true,
+      url: true,
+      twitter: true,
+      isVerified: true,
     },
   });
 
   if (!sponsor) {
-    return {
-      notFound: true,
-    };
+    return { notFound: true };
   }
 
   const stats = await getSponsorStats(sponsor.id);

@@ -18,7 +18,7 @@ const COOKIE_OPTIONS = {
   secure: process.env.NODE_ENV === 'production',
   expires: 30,
   sameSite: 'lax' as const,
-};
+} as const;
 
 export const useUser = () => {
   const { authenticated, ready, logout } = usePrivy();
@@ -75,25 +75,30 @@ export const useUser = () => {
     isUserLoading: !ready || isLoading,
   });
 
+  const userId = user?.id;
+  const userEmail = user?.email;
+  const isTalentFilled = user?.isTalentFilled;
+  const currentSponsorId = user?.currentSponsorId;
+
   useEffect(() => {
     if (isLoading || !ready) return;
 
-    if (!user) {
+    if (!userId) {
       if (posthog._isIdentified()) posthog.reset();
       return;
     }
 
-    const profileComplete = user.isTalentFilled || !!user.currentSponsorId;
+    const profileComplete = isTalentFilled || !!currentSponsorId;
 
     if (profileComplete) {
       const alreadyIdentified = posthog._isIdentified();
-      const sameUser = posthog.get_distinct_id() === String(user.id);
+      const sameUser = posthog.get_distinct_id() === String(userId);
 
       if (!alreadyIdentified || !sameUser) {
-        posthog.identify(user.id, { email: user.email });
+        posthog.identify(userId, { email: userEmail });
       }
     }
-  }, [user, isLoading, ready]);
+  }, [userId, userEmail, isTalentFilled, currentSponsorId, isLoading, ready]);
 
   return {
     user: user || null,

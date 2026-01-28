@@ -35,7 +35,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Tooltip } from '@/components/ui/tooltip';
-import { tokenList } from '@/constants/tokenList';
+import { getTokenIcon } from '@/constants/tokenList';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
@@ -178,6 +178,7 @@ export const ListingTable = ({
                 column="submissions"
                 currentSort={currentSort}
                 setSort={onSort}
+                initialDirection="desc"
                 className={cn(thClassName, 'text-center')}
               >
                 Submissions
@@ -186,6 +187,7 @@ export const ListingTable = ({
                 column="deadline"
                 currentSort={currentSort}
                 setSort={onSort}
+                initialDirection="desc"
                 className={cn(thClassName)}
               >
                 Deadline
@@ -289,11 +291,7 @@ export const ListingTable = ({
                       <img
                         className="h-5 w-5 rounded-full"
                         alt={'green dollar'}
-                        src={
-                          tokenList.filter(
-                            (e) => e?.tokenSymbol === listing.token,
-                          )[0]?.icon ?? '/assets/dollar.svg'
-                        }
+                        src={getTokenIcon(listing.token ?? '')}
                       />
 
                       {listing?.type === 'grant' && (

@@ -1,7 +1,7 @@
 import Link from 'next/link';
 
 import { Button } from '@/components/ui/button';
-import { tokenList } from '@/constants/tokenList';
+import { getTokenIcon } from '@/constants/tokenList';
 
 import { grantAmount } from '../utils/grantAmount';
 
@@ -12,7 +12,7 @@ interface GrantAmountProps {
 }
 
 const GrantAmount = ({ token, minReward, maxReward }: GrantAmountProps) => {
-  const tokenIcon = tokenList.find((ele) => ele.tokenSymbol === token)?.icon;
+  const tokenIcon = getTokenIcon(token ?? '');
 
   return (
     <div className="-mt-2 flex items-center">

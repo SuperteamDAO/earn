@@ -4,6 +4,7 @@ import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import posthog from 'posthog-js';
+import { useCallback } from 'react';
 
 import MdArrowForward from '@/components/icons/MdArrowForward';
 import { AnimateChangeInHeight } from '@/components/shared/AnimateChangeInHeight';
@@ -108,6 +109,7 @@ interface NonSponsorSidebarContentProps {
   currentPath: string;
   showSponsorBanner: boolean;
   showProIntro: boolean;
+  onBookmarksClick: () => void;
 }
 
 const NonSponsorSidebarContent = ({
@@ -118,6 +120,7 @@ const NonSponsorSidebarContent = ({
   currentPath,
   showSponsorBanner,
   showProIntro,
+  onBookmarksClick,
 }: NonSponsorSidebarContentProps) => (
   <>
     <div className="flex flex-col gap-4">
@@ -135,7 +138,7 @@ const NonSponsorSidebarContent = ({
         <SectionHeader
           title="BOOKMARKS"
           href="/earn/bookmarks"
-          onLinkClick={() => posthog.capture('bookmarks_sidebar')}
+          onLinkClick={onBookmarksClick}
         />
       </YourBookmarks>
     )}
@@ -182,6 +185,10 @@ export const HomeSideBar = ({ type }: SideBarProps) => {
     flow.source === 'sidebar' && flow.status !== 'idle';
   const shouldRenderProIntro = (showProIntro ?? false) || isSidebarFlowActive;
 
+  const handleBookmarksClick = useCallback(() => {
+    posthog.capture('bookmarks_sidebar');
+  }, []);
+
   const renderContent = () => {
     if (isFeed) {
       return <FeedSidebarContent recentEarners={recentEarners} />;
@@ -204,6 +211,7 @@ export const HomeSideBar = ({ type }: SideBarProps) => {
         currentPath={router.asPath}
         showSponsorBanner={showSponsorBanner}
         showProIntro={shouldRenderProIntro}
+        onBookmarksClick={handleBookmarksClick}
       />
     );
   };

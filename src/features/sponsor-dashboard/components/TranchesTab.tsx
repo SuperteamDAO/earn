@@ -287,6 +287,7 @@ export const TranchesTab = ({ slug }: Props) => {
               <TrancheDetails
                 grant={grant}
                 tranches={tranches}
+                isLoading={isTrancheLoading}
                 approveOnOpen={approveOnOpen}
                 rejectedOnOpen={rejectedOnOpen}
               />

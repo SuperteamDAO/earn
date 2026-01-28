@@ -171,61 +171,41 @@ export default function SponsorListings({ tab: queryTab }: { tab: string }) {
   } = useDisclosure();
 
   const filteredListings = useMemo(() => {
-    const filterListingsByType = () => {
-      if (!allListings) return [];
-      if (activeTab === 'all') {
-        return allListings;
-      }
-      return allListings.filter((listing) => listing.type === activeTab);
-    };
+    if (!allListings) return [];
 
-    const filterListingsByStatus = (listings: ListingWithSubmissions[]) => {
-      if (activeStatus) {
-        return listings.filter(
-          (listing) => getListingStatus(listing) === activeStatus,
-        );
-      }
-      return listings;
-    };
+    const searchLower = searchText?.toLowerCase();
+    const result: ListingWithSubmissions[] = [];
 
-    let filtered = filterListingsByType();
-    filtered = filterListingsByStatus(filtered);
-
-    if (searchText) {
-      filtered = filtered.filter((listing) =>
-        listing.title
-          ? listing.title.toLowerCase().includes(searchText.toLowerCase())
-          : false,
-      );
+    for (const listing of allListings) {
+      if (activeTab !== 'all' && listing.type !== activeTab) continue;
+      if (activeStatus && getListingStatus(listing) !== activeStatus) continue;
+      if (searchLower && !listing.title?.toLowerCase().includes(searchLower))
+        continue;
+      result.push(listing);
     }
 
     if (currentSort.direction && currentSort.column) {
-      return [...filtered].sort((a, b) => {
-        const factor = currentSort.direction === 'asc' ? 1 : -1;
-
+      const factor = currentSort.direction === 'asc' ? 1 : -1;
+      return result.toSorted((a, b) => {
         switch (currentSort.column) {
           case 'title':
-            const titleA = a.title || '';
-            const titleB = b.title || '';
-            return titleA.localeCompare(titleB) * factor;
-
+            return (a.title || '').localeCompare(b.title || '') * factor;
           case 'submissions':
-            const submissionsA = a.submissionCount ?? 0;
-            const submissionsB = b.submissionCount ?? 0;
-            return (submissionsB - submissionsA) * factor;
-
-          case 'deadline':
+            return (
+              ((a.submissionCount ?? 0) - (b.submissionCount ?? 0)) * factor
+            );
+          case 'deadline': {
             const deadlineA = a.deadline ? new Date(a.deadline).getTime() : 0;
             const deadlineB = b.deadline ? new Date(b.deadline).getTime() : 0;
-            return (deadlineB - deadlineA) * factor;
-
+            return (deadlineA - deadlineB) * factor;
+          }
           default:
             return 0;
         }
       });
     }
 
-    return filtered;
+    return result;
   }, [allListings, activeTab, activeStatus, searchText, currentSort]);
 
   const paginatedListings = useMemo(() => {
@@ -473,7 +453,7 @@ export default function SponsorListings({ tab: queryTab }: { tab: string }) {
               <div className="flex gap-4">
                 <Button
                   disabled={currentPage <= 0}
-                  onClick={() => setCurrentPage(currentPage - 1)}
+                  onClick={() => setCurrentPage((prev) => prev - 1)}
                   size="sm"
                   variant="outline"
                 >
@@ -486,7 +466,7 @@ export default function SponsorListings({ tab: queryTab }: { tab: string }) {
                     (currentPage + 1) * listingsPerPage >=
                     filteredListings.length
                   }
-                  onClick={() => setCurrentPage(currentPage + 1)}
+                  onClick={() => setCurrentPage((prev) => prev + 1)}
                   size="sm"
                   variant="outline"
                 >

@@ -1,6 +1,6 @@
 export { UPLOAD_CONFIGS } from './config';
 export { ImageUploadError } from './errors';
-export { MAX_FILE_SIZE } from './schemas';
+export { MAX_FILE_SIZE, MAX_FILE_SIZE_LARGE } from './schemas';
 export { detectFormat, validateImageBuffer } from './security/magic-bytes';
 export type {
   ImageSource,

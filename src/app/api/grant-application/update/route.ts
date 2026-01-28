@@ -11,6 +11,10 @@ import { queueAgent } from '@/features/agents/utils/queueAgent';
 import { getUserSession } from '@/features/auth/utils/getUserSession';
 import { grantApplicationSchema } from '@/features/grants/utils/grantApplicationSchema';
 import { syncGrantApplicationWithAirtable } from '@/features/grants/utils/syncGrantApplicationWithAirtable';
+import {
+  isTouchingGrassSlug,
+  isUserEligibleForTouchingGrass,
+} from '@/features/grants/utils/touchingGrass';
 import { validateGrantRequest } from '@/features/grants/utils/validateGrantRequest';
 import { extractSocialUsername } from '@/features/social/utils/extractUsername';
 
@@ -24,12 +28,15 @@ async function updateGrantApplication(
     where: { id: userId },
   });
 
+  const isTouchingGrass = isTouchingGrassSlug(grant.slug);
+
   const validationResult = grantApplicationSchema(
     grant.minReward,
     grant.maxReward,
     grant.token,
     grant.questions,
     user as any,
+    isTouchingGrass,
   ).safeParse({
     ...data,
     twitter:
@@ -79,14 +86,18 @@ async function updateGrantApplication(
     projectOneLiner: validatedData.projectOneLiner,
     projectDetails: validatedData.projectDetails,
     projectTimeline: dayjs(validatedData.projectTimeline).format('D MMMM YYYY'),
-    proofOfWork: validatedData.proofOfWork,
+    proofOfWork: validatedData.proofOfWork || '',
     milestones: validatedData.milestones,
-    kpi: validatedData.kpi,
+    kpi: validatedData.kpi || '',
     walletAddress: validatedData.walletAddress,
     ask: validatedData.ask,
     twitter: validatedData.twitter,
     github: validatedData.github,
     answers: validatedData.answers || [],
+    ...(isTouchingGrass && {
+      lumaLink: validatedData.lumaLink,
+      expenseBreakdown: validatedData.expenseBreakdown,
+    }),
   };
 
   return prisma.grantApplication.update({
@@ -150,7 +161,38 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { grant } = await validateGrantRequest(userId as string, grantId);
+    const { grant, user } = await validateGrantRequest(
+      userId as string,
+      grantId,
+    );
+
+    const isTouchingGrass = isTouchingGrassSlug(grant.slug);
+
+    if (grant.isPro) {
+      if (isTouchingGrass) {
+        if (!isUserEligibleForTouchingGrass(user)) {
+          logger.debug(`User is not eligible for touching grass grant`, {
+            grantId,
+            userId,
+            isPro: user.isPro,
+            superteamLevel: user.superteamLevel,
+          });
+          return NextResponse.json(
+            { error: 'This grant is only available to Superteam members' },
+            { status: 403 },
+          );
+        }
+      } else if (!user.isPro) {
+        logger.debug(`User is not eligible for pro grant`, {
+          grantId,
+          userId,
+        });
+        return NextResponse.json(
+          { error: 'This grant is only available for PRO members' },
+          { status: 403 },
+        );
+      }
+    }
 
     const result = await updateGrantApplication(
       userId as string,

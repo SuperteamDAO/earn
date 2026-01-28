@@ -1,54 +1,33 @@
 import { useQuery } from '@tanstack/react-query';
+import parse, {
+  domToReact,
+  type HTMLReactParserOptions,
+} from 'html-react-parser';
 import { ChevronDown } from 'lucide-react';
-import dynamic from 'next/dynamic';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import SuperteamIcon from '@/components/icons/SuperteamIcon';
+import { SuperteamBadge } from '@/components/shared/SuperteamBadge';
 import { Button } from '@/components/ui/button';
 import { CircularProgress } from '@/components/ui/progress';
 import { type BountyType } from '@/generated/prisma/enums';
 import { useMediaQuery } from '@/hooks/use-media-query';
+import { domPurify } from '@/lib/domPurify';
 import { useUser } from '@/store/user';
 import styles from '@/styles/listing-description.module.css';
 import { cn } from '@/utils/cn';
 
+import { isUserEligibleForTouchingGrass } from '@/features/grants/utils/touchingGrass';
 import { userStatsQuery } from '@/features/home/queries/user-stats';
 import { ProBadge } from '@/features/pro/components/ProBadge';
 import { ProIntro } from '@/features/pro/components/ProIntro';
-
-const DescriptionSkeleton = () => (
-  <div className="animate-pulse space-y-6">
-    <div className="space-y-2">
-      <div className="h-4 w-full rounded bg-slate-100" />
-      <div className="h-4 w-[95%] rounded bg-slate-100" />
-      <div className="h-4 w-[88%] rounded bg-slate-100" />
-      <div className="h-4 w-[70%] rounded bg-slate-100" />
-    </div>
-    <div className="space-y-2">
-      <div className="h-4 w-full rounded bg-slate-100" />
-      <div className="h-4 w-[92%] rounded bg-slate-100" />
-      <div className="h-4 w-[85%] rounded bg-slate-100" />
-      <div className="h-4 w-full rounded bg-slate-100" />
-      <div className="h-4 w-[60%] rounded bg-slate-100" />
-    </div>
-    <div className="space-y-2">
-      <div className="h-4 w-[90%] rounded bg-slate-100" />
-      <div className="h-4 w-full rounded bg-slate-100" />
-      <div className="h-4 w-[75%] rounded bg-slate-100" />
-    </div>
-  </div>
-);
-
-const HtmlContent = dynamic(() => import('./HtmlContent'), {
-  ssr: false,
-  loading: () => <DescriptionSkeleton />,
-});
 
 interface Props {
   description?: string;
   type: BountyType | 'grant';
   sponsorId: string;
   isPro?: boolean;
+  isTouchingGrass?: boolean;
 }
 
 export function DescriptionUI({
@@ -56,17 +35,42 @@ export function DescriptionUI({
   type,
   sponsorId,
   isPro = false,
+  isTouchingGrass = false,
 }: Props) {
   const { user, isLoading: isUserLoading } = useUser();
-  const { data: stats, isLoading: isStatsLoading } = useQuery({
-    ...userStatsQuery,
-    enabled: isPro,
-  });
+  const { data: stats, isLoading: isStatsLoading } = useQuery(userStatsQuery);
 
+  const options = useMemo(() => {
+    const memoizedOptions: HTMLReactParserOptions = {
+      replace: (domNode: any) => {
+        const { name, children, attribs } = domNode;
+        if (name === 'p' && (!children || children.length === 0)) {
+          return <br />;
+        }
+        if (name === 'a' && attribs) {
+          return (
+            <a {...attribs} target="_blank" rel="noopener noreferrer">
+              {domToReact(children, memoizedOptions)}
+            </a>
+          );
+        }
+        return domNode;
+      },
+    };
+
+    return memoizedOptions;
+  }, []);
+
+  //to resolve a chain of hydration errors
+  const [isMounted, setIsMounted] = useState(false);
   const [showMore, setShowMore] = useState(true);
   const [showCollapser, setShowCollapser] = useState(false);
   const descriptionRef = useRef<HTMLDivElement>(null);
   const isNotMD = useMediaQuery('(max-width: 767px)');
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const decideCollapser = useCallback(() => {
     if (descriptionRef.current) {
@@ -76,25 +80,139 @@ export function DescriptionUI({
         setShowMore(false);
       }
     }
-  }, [isNotMD]);
+  }, [isNotMD, setShowCollapser, setShowMore]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
       decideCollapser();
     }, 0);
     return () => clearTimeout(timer);
-  }, [decideCollapser]);
+  }, [decideCollapser, isMounted]);
+
+  const descriptionContent = useMemo(() => {
+    if (!isMounted) return null;
+
+    // Safely parse JSON-encoded descriptions with fallback
+    let normalizedDescription = description ?? '';
+    if (normalizedDescription.startsWith('"')) {
+      try {
+        normalizedDescription = JSON.parse(normalizedDescription) as string;
+      } catch {
+        // Fallback: use original string if JSON parsing fails
+        normalizedDescription = description ?? '';
+      }
+    }
+
+    return parse(
+      domPurify(normalizedDescription, {
+        ALLOWED_TAGS: [
+          'a',
+          'p',
+          'br',
+          'strong',
+          'em',
+          'b',
+          'i',
+          'u',
+          's',
+          'blockquote',
+          'pre',
+          'code',
+          'ul',
+          'ol',
+          'li',
+          'h1',
+          'h2',
+          'h3',
+          'h4',
+          'h5',
+          'h6',
+          'hr',
+          'table',
+          'thead',
+          'tbody',
+          'tr',
+          'td',
+          'th',
+          'span',
+          'img',
+        ],
+        ALLOWED_ATTR: [
+          'href',
+          'target',
+          'rel',
+          'src',
+          'alt',
+          'title',
+          'width',
+          'height',
+          'colspan',
+          'rowspan',
+          'class',
+        ],
+        FORBID_TAGS: [
+          'script',
+          'iframe',
+          'style',
+          'meta',
+          'link',
+          'object',
+          'embed',
+          'base',
+          'form',
+        ],
+      }),
+      options,
+    );
+  }, [isMounted, description, options]);
 
   const isUserSponsor = user?.currentSponsorId === sponsorId;
-  const isProEligibilityLoading =
-    isPro && !isUserSponsor && (isUserLoading || isStatsLoading);
-  const shouldShowProGate =
-    isPro && !isUserSponsor && !user?.isPro && !isProEligibilityLoading;
-  const shouldShowDescriptionSkeleton = isProEligibilityLoading;
 
-  if (shouldShowProGate) {
+  const isUserEligibleTouchingGrass = isUserEligibleForTouchingGrass(user);
+  const shouldBlockForTouchingGrass =
+    isTouchingGrass && !isUserEligibleTouchingGrass && !isUserSponsor;
+  const shouldBlockForPro =
+    !isTouchingGrass && isPro && !user?.isPro && !isUserSponsor;
+
+  const isProEligibilityLoading =
+    (isPro || isTouchingGrass) && (isUserLoading || isStatsLoading);
+
+  if (isProEligibilityLoading) {
+    return (
+      <div className="w-full overflow-visible border-b-2 border-slate-200 pb-4 md:border-0">
+        <div className="relative w-full overflow-visible rounded-xl bg-white">
+          <div className="mt-4 w-full overflow-visible pb-7">
+            <div className="space-y-4">
+              <div className="h-4 w-full rounded bg-slate-100" />
+              <div className="h-4 w-5/6 rounded bg-slate-100" />
+              <div className="h-4 w-full rounded bg-slate-100" />
+              <div className="h-4 w-4/5 rounded bg-slate-100" />
+              <div className="h-4 w-full rounded bg-slate-100" />
+              <div className="h-4 w-3/4 rounded bg-slate-100" />
+              <div className="h-4 w-full rounded bg-slate-100" />
+              <div className="h-4 w-5/6 rounded bg-slate-100" />
+              <div className="h-4 w-4/5 rounded bg-slate-100" />
+              <div className="h-4 w-full rounded bg-slate-100" />
+              <div className="h-4 w-full rounded bg-slate-100" />
+              <div className="h-4 w-5/6 rounded bg-slate-100" />
+              <div className="h-4 w-full rounded bg-slate-100" />
+              <div className="h-4 w-4/5 rounded bg-slate-100" />
+              <div className="h-4 w-full rounded bg-slate-100" />
+              <div className="h-4 w-5/6 rounded bg-slate-100" />
+              <div className="h-4 w-full rounded bg-slate-100" />
+              <div className="h-4 w-4/5 rounded bg-slate-100" />
+              <div className="h-4 w-full rounded bg-slate-100" />
+              <div className="h-4 w-3/4 rounded bg-slate-100" />
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (shouldBlockForTouchingGrass || shouldBlockForPro) {
     const randomText =
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.';
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. <br/> Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.';
 
     const isUserEligibleForPro =
       (stats && (stats.totalWinnings ?? 0) >= 1000) ||
@@ -115,7 +233,22 @@ export function DescriptionUI({
         </div>
         <div className="absolute inset-0 bg-white/0 backdrop-blur-sm" />
         <div className="absolute right-1/2 bottom-1/2 translate-x-1/2 translate-y-1/2 shadow-lg">
-          {!isUserEligibleForPro ? (
+          {isTouchingGrass ? (
+            <div className="w-100 rounded-xl bg-white px-8 pt-6 pb-10">
+              <SuperteamBadge
+                containerClassName="bg-zinc-200 w-fit px-2 py-0.5 gap-1"
+                iconClassName="size-3 text-zinc-500"
+                textClassName="text-sm text-zinc-800 text-medium"
+              />
+              <p className="mt-4 text-xl font-medium text-zinc-800">
+                This grant is only available to Superteam Members
+              </p>
+              <p className="text-md mt-4 mb-4 font-medium text-slate-500">
+                To be eligible, you need to become a Superteam member of your
+                region
+              </p>
+            </div>
+          ) : !isUserEligibleForPro ? (
             <div className="w-100 rounded-xl bg-white px-8 pt-6 pb-10">
               <ProBadge
                 containerClassName="bg-zinc-200 w-fit px-2 py-0.5 gap-1"
@@ -187,11 +320,7 @@ export function DescriptionUI({
           <div
             className={`${styles.content} mt-4 w-full overflow-visible pb-7`}
           >
-            {shouldShowDescriptionSkeleton ? (
-              <DescriptionSkeleton />
-            ) : (
-              <HtmlContent description={description} />
-            )}
+            {descriptionContent}
           </div>
           {!showMore && (
             <div

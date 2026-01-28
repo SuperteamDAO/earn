@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
 import { LocalImage } from '@/components/ui/local-image';
 import { ASSET_URL } from '@/constants/ASSET_URL';
-import { tokenList } from '@/constants/tokenList';
+import { getTokenIcon } from '@/constants/tokenList';
 import { useServerTimeSync } from '@/hooks/use-server-time';
 import { timeAgoShort } from '@/utils/timeAgo';
 
@@ -87,11 +87,7 @@ export const ListingCardMini = ({ bounty }: { bounty: Listing }) => {
                   <img
                     className="mr-0.5 h-4 w-4 rounded-full"
                     alt={token}
-                    src={
-                      tokenList.find((ele) => {
-                        return ele.tokenSymbol === token;
-                      })?.icon
-                    }
+                    src={getTokenIcon(token ?? '')}
                   />
                 )}
                 <div className="flex items-baseline">
