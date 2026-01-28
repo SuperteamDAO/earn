@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 
 export const revalidate = 86400;
 
-const baseUrl = 'https://earn.superteam.fun';
+const baseUrl = 'https://superteam.fun';
 
 function isProduction(): boolean {
   return process.env.NEXT_PUBLIC_VERCEL_ENV === 'production';
@@ -40,62 +40,88 @@ export async function GET(): Promise<NextResponse> {
   }
 
   const staticRoutes: MetadataRoute.Sitemap = [
+    // ST routes
     {
-      url: baseUrl,
+      url: `${baseUrl}/`,
       lastModified: now,
-      changeFrequency: 'daily',
+      changeFrequency: 'weekly',
       priority: 1.0,
     },
     {
-      url: `${baseUrl}/jobs/`,
+      url: `${baseUrl}/collaborate/`,
       lastModified: now,
-      changeFrequency: 'daily',
-      priority: 0.95,
+      changeFrequency: 'monthly',
+      priority: 0.8,
     },
     {
-      url: `${baseUrl}/bounties/`,
+      url: `${baseUrl}/fast-track/`,
       lastModified: now,
-      changeFrequency: 'daily',
-      priority: 0.95,
+      changeFrequency: 'monthly',
+      priority: 0.8,
     },
     {
-      url: `${baseUrl}/grants/`,
+      url: `${baseUrl}/member-perks/`,
       lastModified: now,
-      changeFrequency: 'daily',
-      priority: 0.9,
-    },
-    {
-      url: `${baseUrl}/all/`,
-      lastModified: now,
-      changeFrequency: 'daily',
-      priority: 0.9,
+      changeFrequency: 'weekly',
+      priority: 0.7,
     },
     {
       url: `${baseUrl}/projects/`,
       lastModified: now,
+      changeFrequency: 'weekly',
+      priority: 0.8,
+    },
+    // Earn routes
+    {
+      url: `${baseUrl}/earn/jobs/`,
+      lastModified: now,
       changeFrequency: 'daily',
       priority: 0.95,
     },
     {
-      url: `${baseUrl}/sponsor/`,
+      url: `${baseUrl}/earn/bounties/`,
+      lastModified: now,
+      changeFrequency: 'daily',
+      priority: 0.95,
+    },
+    {
+      url: `${baseUrl}/earn/grants/`,
+      lastModified: now,
+      changeFrequency: 'daily',
+      priority: 0.9,
+    },
+    {
+      url: `${baseUrl}/earn/all/`,
+      lastModified: now,
+      changeFrequency: 'daily',
+      priority: 0.9,
+    },
+    {
+      url: `${baseUrl}/earn/projects/`,
+      lastModified: now,
+      changeFrequency: 'daily',
+      priority: 0.95,
+    },
+    {
+      url: `${baseUrl}/earn/sponsor/`,
       lastModified: now,
       changeFrequency: 'weekly',
       priority: 0.8,
     },
     {
-      url: `${baseUrl}/new/`,
+      url: `${baseUrl}/earn/new/`,
       lastModified: now,
       changeFrequency: 'daily',
       priority: 0.8,
     },
     {
-      url: `${baseUrl}/feed/`,
+      url: `${baseUrl}/earn/feed/`,
       lastModified: now,
       changeFrequency: 'hourly',
       priority: 0.8,
     },
     {
-      url: `${baseUrl}/search/`,
+      url: `${baseUrl}/earn/search/`,
       lastModified: now,
       changeFrequency: 'monthly',
       priority: 0.7,

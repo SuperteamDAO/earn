@@ -2,7 +2,7 @@ import { atom, useAtomValue, useSetAtom } from 'jotai';
 
 export type ProUpgradeFlowSource = 'dialog' | 'sidebar' | 'banner';
 
-export type ProUpgradeFlowStatus = 'idle' | 'loading' | 'expanding' | 'full';
+type ProUpgradeFlowStatus = 'idle' | 'loading' | 'expanding' | 'full';
 
 export interface ProUpgradeOriginRect {
   readonly left: number;

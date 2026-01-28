@@ -19,6 +19,11 @@
   --font-sans: var(--font-sans);
   --font-mono: var(--font-mono);
 
+  /* ST fonts - mapped from Next.js font variables */
+  --font-primary: var(--font-satoshi);
+  --font-secondary: var(--font-archivo);
+  --font-display: var(--font-dm-sans);
+
   --text-xxs: 0.625rem;
   --text-xxs--line-height: 0.875rem;
 
@@ -384,47 +389,6 @@ pre hr {
   overscroll-behavior: none;
   outline: none !important;
   padding: 0rem 1rem;
-}
-
-.earn-loader {
-  display: inline-block;
-  position: relative;
-  width: 80px;
-  height: 80px;
-}
-
-.earn-loader div {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  box-shadow: inset 0 0 0 4px #6366f1;
-  border-radius: 50%;
-  width: 72px;
-  height: 72px;
-  transform: translate(-50%, -50%) scale(0);
-  transform-origin: center;
-  opacity: 0;
-  will-change: transform, opacity;
-  animation: earn-loader 1s cubic-bezier(0, 0.2, 0.8, 1) infinite;
-}
-
-.earn-loader div:nth-child(2) {
-  animation-delay: -0.5s;
-}
-
-@keyframes earn-loader {
-  0% {
-    transform: translate(-50%, -50%) scale(0);
-    opacity: 0;
-  }
-  5% {
-    transform: translate(-50%, -50%) scale(0);
-    opacity: 1;
-  }
-  100% {
-    transform: translate(-50%, -50%) scale(1);
-    opacity: 0;
-  }
 }
 
 .tiptap img {

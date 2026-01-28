@@ -40,7 +40,7 @@ export function ReviewAiBanner({ listing }: ReviewAiBannerProps) {
 
   return (
     <Link
-      href={`/dashboard/listings/${listing.slug}/submissions`}
+      href={`/earn/dashboard/listings/${listing.slug}/submissions`}
       className="relative flex items-center justify-between overflow-hidden rounded-xl bg-slate-100 px-10 py-8"
       onClick={handleReviewWithAiClick}
       prefetch={false}

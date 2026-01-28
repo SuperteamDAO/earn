@@ -37,7 +37,7 @@ export const GrantsCard = ({ grant }: { grant: GrantWithApplicationCount }) => {
   return (
     <Link
       className="block w-full rounded-md px-2 py-4 hover:bg-gray-100 hover:no-underline sm:px-4"
-      href={`/grants/${slug}`}
+      href={`/earn/grants/${slug}`}
     >
       <div className="flex w-full items-center justify-between">
         <div className="flex w-full">
@@ -51,7 +51,7 @@ export const GrantsCard = ({ grant }: { grant: GrantWithApplicationCount }) => {
               {title}
             </p>
             <Link
-              href={`/s/${sponsor?.slug}`}
+              href={`/earn/s/${sponsor?.slug}`}
               onClick={(e) => e.stopPropagation()}
               className="flex w-min items-center gap-1 hover:underline"
             >

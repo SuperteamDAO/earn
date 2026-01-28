@@ -35,10 +35,21 @@ async function updateSubmission(
 
   const existingSubmission = await prisma.submission.findFirst({
     where: { userId, listingId },
+    select: {
+      id: true,
+      status: true,
+      label: true,
+    },
   });
 
   if (!existingSubmission) {
     throw new Error('Submission not found');
+  }
+  if (
+    existingSubmission.status === 'Rejected' ||
+    existingSubmission.label === 'Spam'
+  ) {
+    throw new Error('Submission cannot be edited after rejection');
   }
 
   const formattedData = {

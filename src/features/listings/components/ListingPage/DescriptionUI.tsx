@@ -79,11 +79,9 @@ export function DescriptionUI({
   }, [isNotMD, setShowCollapser, setShowMore]);
 
   useEffect(() => {
-    // Use a timeout to ensure the DOM has been updated
     const timer = setTimeout(() => {
       decideCollapser();
     }, 0);
-
     return () => clearTimeout(timer);
   }, [decideCollapser, isMounted]);
 

@@ -23,6 +23,8 @@ export const RelatedListings = ({
   exclusiveSponsorId,
   excludeIds: ids,
 }: LiveListingProps) => {
+  const deadline = useMemo(() => dayjs().add(1, 'day').toISOString(), []);
+
   const { data: relatedListings } = useQuery(
     relatedlistingsQuery({
       take: SHOW_LIMIT,
@@ -30,28 +32,34 @@ export const RelatedListings = ({
     }),
   );
 
-  const deadline = useMemo(() => dayjs().add(1, 'day').toISOString(), []);
-
-  const { data: liveListings } = useQuery({
-    ...liveListingsQuery({
-      take: SHOW_LIMIT - (relatedListings?.length ?? SHOW_LIMIT),
+  const { data: liveListings } = useQuery(
+    liveListingsQuery({
+      take: SHOW_LIMIT,
       deadline,
       order: 'asc',
       type: isHackathon ? 'hackathon' : undefined,
       excludeIds: ids ? ids : undefined,
       exclusiveSponsorId,
     }),
-    enabled: (relatedListings?.length ?? 0) < SHOW_LIMIT,
-  });
+  );
+
+  const combinedListings = useMemo(() => {
+    const related = relatedListings ?? [];
+    if (related.length >= SHOW_LIMIT) return related.slice(0, SHOW_LIMIT);
+
+    const relatedIds = new Set(related.map((l) => l.id));
+    const remaining = (liveListings ?? [])
+      .filter((l) => !relatedIds.has(l.id))
+      .slice(0, SHOW_LIMIT - related.length);
+
+    return [...related, ...remaining];
+  }, [relatedListings, liveListings]);
 
   return (
     <div>
       {children}
       <div className="mt-1 flex w-full flex-col">
-        {[
-          ...(relatedListings ? relatedListings : []),
-          ...(liveListings ? liveListings : []),
-        ]?.map((listing) => (
+        {combinedListings.map((listing) => (
           <ListingCardMini bounty={listing} key={listing?.id} />
         ))}
       </div>

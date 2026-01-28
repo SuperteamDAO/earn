@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 export async function GET(): Promise<NextResponse> {
   const isProduction = process.env.NEXT_PUBLIC_VERCEL_ENV === 'production';
 
-  const baseUrl = 'https://earn.superteam.fun';
+  const baseUrl = 'https://superteam.fun';
 
   // For preview/staging environments, disallow everything
   if (!isProduction) {
@@ -19,10 +19,10 @@ Disallow: /`;
 
   const robotsTxt = `User-agent: *
 Allow: /
-Disallow: /dashboard/
+Disallow: /earn/dashboard/
 Disallow: /auth/
-Disallow: /signin
-Disallow: /signup
+Disallow: /earn/signin
+Disallow: /earn/signup
 Sitemap: ${baseUrl}/sitemap-index.xml`;
 
   return new NextResponse(robotsTxt, {

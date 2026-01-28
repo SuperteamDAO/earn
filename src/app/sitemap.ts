@@ -14,7 +14,7 @@ import {
   getParentSkillSlugs,
 } from '@/features/listings/utils/skill';
 
-const baseUrl = 'https://earn.superteam.fun';
+const baseUrl = 'https://superteam.fun';
 const MAX_URLS_PER_SITEMAP = 50000;
 
 export const revalidate = 86400; // 1 day
@@ -419,7 +419,7 @@ export default async function sitemap(props: {
     });
 
     return listings.map((listing): MetadataRoute.Sitemap[number] => ({
-      url: `${baseUrl}/listing/${listing.slug}/`,
+      url: `${baseUrl}/earn/listing/${listing.slug}/`,
       lastModified: listing.updatedAt,
       changeFrequency:
         listing.deadline && listing.deadline > now ? 'weekly' : 'monthly',
@@ -451,7 +451,7 @@ export default async function sitemap(props: {
     });
 
     return sponsors.map((sponsor): MetadataRoute.Sitemap[number] => ({
-      url: `${baseUrl}/s/${sponsor.slug}/`,
+      url: `${baseUrl}/earn/s/${sponsor.slug}/`,
       lastModified: sponsor.updatedAt,
       changeFrequency: 'weekly',
       priority: 0.7,
@@ -481,7 +481,7 @@ export default async function sitemap(props: {
     });
 
     return grants.map((grant): MetadataRoute.Sitemap[number] => ({
-      url: `${baseUrl}/grants/${grant.slug}/`,
+      url: `${baseUrl}/earn/grants/${grant.slug}/`,
       lastModified: grant.updatedAt,
       changeFrequency: 'monthly',
       priority: 0.8,
@@ -514,7 +514,7 @@ export default async function sitemap(props: {
     return talentProfiles
       .filter((talent) => talent.username)
       .map((talent) => ({
-        url: `${baseUrl}/t/${talent.username}/`,
+        url: `${baseUrl}/earn/t/${talent.username}/`,
         lastModified: talent.updatedAt,
         changeFrequency: 'monthly',
         priority: 0.6,
@@ -537,7 +537,7 @@ export default async function sitemap(props: {
     );
 
     return skillSlugs.map((slug): MetadataRoute.Sitemap[number] => ({
-      url: `${baseUrl}/skill/${slug}/`,
+      url: `${baseUrl}/earn/skill/${slug}/`,
       lastModified: now,
       changeFrequency: 'weekly',
       priority: 0.7,
@@ -563,7 +563,7 @@ export default async function sitemap(props: {
     );
 
     return categorySlugs.map((slug): MetadataRoute.Sitemap[number] => ({
-      url: `${baseUrl}/category/${slug}/`,
+      url: `${baseUrl}/earn/category/${slug}/`,
       lastModified: now,
       changeFrequency: 'weekly',
       priority: 0.8,
@@ -589,7 +589,7 @@ export default async function sitemap(props: {
     );
 
     return regionSlugs.map((slug): MetadataRoute.Sitemap[number] => ({
-      url: `${baseUrl}/regions/${slug}/`,
+      url: `${baseUrl}/earn/regions/${slug}/`,
       lastModified: now,
       changeFrequency: 'weekly',
       priority: 0.8,
@@ -615,7 +615,7 @@ export default async function sitemap(props: {
     );
 
     return combinations.map((slug): MetadataRoute.Sitemap[number] => ({
-      url: `${baseUrl}/opportunities/${slug}/`,
+      url: `${baseUrl}/earn/opportunities/${slug}/`,
       lastModified: now,
       changeFrequency: 'daily',
       priority: 0.7,

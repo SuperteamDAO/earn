@@ -82,10 +82,10 @@ export function SelectSponsor({
       // Redirect god mode users to main sponsor dashboard if on any /dashboard/* page except /dashboard/listings
       if (
         user?.role === 'GOD' &&
-        router.asPath.startsWith('/dashboard/') &&
-        router.asPath !== '/dashboard/listings'
+        router.asPath.startsWith('/earn/dashboard/') &&
+        router.asPath !== '/earn/dashboard/listings'
       ) {
-        router.push('/dashboard/listings/');
+        router.push('/earn/dashboard/listings/');
       }
     }
   };

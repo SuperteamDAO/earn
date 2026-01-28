@@ -104,14 +104,14 @@ export function Slug() {
               <FormLabel className="">Customise URL (Slug)</FormLabel>
               <FormDescription className="cursor-pointer">
                 <CopyButton
-                  text={`https://earn.superteam.fun/listing/${slug}`}
+                  text={`https://superteam.fun/earn/listing/${slug}`}
                   contentProps={{
                     side: 'right',
                     className: 'px-1.5 py-0.5 text-[0.6875rem]',
                   }}
                 >
                   <button className="max-w-md cursor-pointer truncate text-slate-400">
-                    <span>https://earn.superteam.fun/listing/</span>
+                    <span>https://superteam.fun/earn/listing/</span>
                     <span className="underline underline-offset-2">{slug}</span>
                   </button>
                 </CopyButton>

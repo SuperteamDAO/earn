@@ -25,7 +25,7 @@ export const NavItem = ({
   const router = useRouter();
   const currentPath = router.asPath.split('?')[0];
   const isExternalLink = link?.startsWith('https://');
-  const resolvedLink = isExternalLink ? link : `/dashboard${link}`;
+  const resolvedLink = isExternalLink ? link : `/earn/dashboard${link}`;
   const isActiveLink = resolvedLink
     ? currentPath?.startsWith(resolvedLink)
     : false;

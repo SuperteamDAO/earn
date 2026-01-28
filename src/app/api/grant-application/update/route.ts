@@ -64,11 +64,19 @@ async function updateGrantApplication(
     },
     select: {
       id: true,
+      applicationStatus: true,
+      label: true,
     },
   });
 
   if (!prevApplication) {
     throw new Error('Application not found');
+  }
+  if (
+    prevApplication.applicationStatus === 'Rejected' ||
+    prevApplication.label === 'Spam'
+  ) {
+    throw new Error('Grant application cannot be edited after rejection');
   }
 
   const formattedData = {

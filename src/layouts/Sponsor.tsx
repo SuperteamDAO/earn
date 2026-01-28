@@ -19,7 +19,6 @@ import MdList from '@/components/icons/MdList';
 import MdOutlineChatBubbleOutline from '@/components/icons/MdOutlineChatBubbleOutline';
 import RiUserSettingsLine from '@/components/icons/RiUserSettingsLine';
 import { EntityNameModal } from '@/components/modals/EntityNameModal';
-import { LoadingSection } from '@/components/shared/LoadingSection';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -34,6 +33,7 @@ import { SolanaWalletProvider } from '@/context/SolanaWallet';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
+import { SponsorContentSkeleton } from '@/layouts/SponsorLayoutSkeleton';
 import { useUser } from '@/store/user';
 import Sparkle from '@/svg/sparkle';
 import { cn } from '@/utils/cn';
@@ -142,7 +142,7 @@ export function SponsorLayout({
       user &&
       !user?.currentSponsorId
     ) {
-      router.push('/');
+      router.push('/earn');
     }
   }, [user, authenticated, ready, user, isUserLoading]);
 
@@ -151,15 +151,15 @@ export function SponsorLayout({
     enabled: !!user,
   });
 
-  if (!ready) {
-    return <LoadingSection />;
-  }
-
   if (ready && !authenticated) {
     return <Login isOpen={true} onClose={() => {}} />;
   }
 
-  const isHackathonRoute = router.asPath.startsWith('/dashboard/hackathon');
+  const isLoading = !ready || (authenticated && isUserLoading);
+
+  const isHackathonRoute = router.asPath.startsWith(
+    '/earn/dashboard/hackathon',
+  );
   const isLocalProfileVisible =
     Superteams.some(
       (team) =>
@@ -221,10 +221,6 @@ export function SponsorLayout({
         },
       ];
 
-  const showLoading = !isHackathonRoute
-    ? !user?.currentSponsor?.id
-    : !user?.hackathonId && user?.role !== 'GOD';
-
   const showContent = isHackathonRoute
     ? user?.hackathonId || user?.role === 'GOD'
     : user?.currentSponsor?.id;
@@ -239,7 +235,7 @@ export function SponsorLayout({
           <Meta
             title="Superteam Earn | Work to Earn in Crypto"
             description="Explore the latest bounties on Superteam Earn, offering opportunities in the crypto space across Design, Development, and Content."
-            canonical="https://earn.superteam.fun"
+            canonical="https://superteam.fun/earn"
           />
         }
       >
@@ -345,7 +341,7 @@ export function SponsorLayout({
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent
-                      className="w-[calc(var(--radix-dropdown-menu-trigger-width)+0rem)] font-medium text-slate-500"
+                      className="min-w-[200px] font-medium text-slate-500"
                       align="start"
                     >
                       <DropdownMenuItem
@@ -391,7 +387,7 @@ export function SponsorLayout({
                   className={cn('w-full gap-2 py-5.5 text-base')}
                   variant="default"
                 >
-                  <Link href="/dashboard/new/?type=hackathon">
+                  <Link href="/earn/dashboard/new/?type=hackathon">
                     <Plus className="h-3 w-3" />
                     <p
                       className={cn(
@@ -422,15 +418,14 @@ export function SponsorLayout({
               </NavItem>
             ))}
           </div>
-          {showLoading && <LoadingSection />}
-          {showContent && (
+          {(showContent || isLoading) && (
             <div
               className={cn(
                 'w-full flex-1 overflow-x-auto bg-white py-5 pr-8 pl-4 transition-[margin-left] duration-300 ease-in-out',
                 isCollapsible ? 'ml-20' : 'ml-0',
               )}
             >
-              {children}
+              {isLoading ? <SponsorContentSkeleton /> : children}
             </div>
           )}
         </div>

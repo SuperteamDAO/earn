@@ -97,7 +97,7 @@ export const TrancheDetails = ({
                   </div>
 
                   <Link
-                    href={`/t/${selectedTranche?.GrantApplication?.user?.username}`}
+                    href={`/earn/t/${selectedTranche?.GrantApplication?.user?.username}`}
                     className="text-brand-purple flex w-full items-center gap-1 text-xs font-medium whitespace-nowrap"
                     rel="noopener noreferrer"
                     target="_blank"
