@@ -12,7 +12,7 @@ export const GetStarted = ({
   return (
     <AuthWrapper
       hideLoginOverlay={!showLoginOverlay}
-      redirectTo="/new/talent?type=popup"
+      redirectTo="/earn/new/talent?type=popup"
       className="w-full"
       onLoginCloseCallback={() => setIsLoginOpen?.(false)}
       onLoginOpenCallback={() => setIsLoginOpen?.(true)}

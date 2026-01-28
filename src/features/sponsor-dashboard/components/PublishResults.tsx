@@ -142,7 +142,7 @@ export function PublishResults({
         queryKey: ['sponsor-dashboard-listing', bounty?.slug],
       });
       router.push(
-        `/dashboard/listings/${bounty?.slug}/submissions?tab=payments`,
+        `/earn/dashboard/listings/${bounty?.slug}/submissions?tab=payments`,
       );
       setTimeout(() => {
         showSurvey?.();

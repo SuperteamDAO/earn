@@ -133,7 +133,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       });
       return {
         'Sr no': i + 1,
-        'Profile Link': `https://earn.superteam.fun/t/${user.username}`,
+        'Profile Link': `https://superteam.fun/earn/t/${user.username}`,
         Name: `${user.firstName} ${user.lastName}`,
         'Submission Link': submission.link || '',
         ...eligibility,

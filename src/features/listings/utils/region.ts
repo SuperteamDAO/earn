@@ -206,7 +206,7 @@ function getSuperteamCodes(): readonly string[] {
   return Superteams.map((st) => st.code.toUpperCase());
 }
 
-export function getEligibleCountries() {
+function getEligibleCountries() {
   const superteamCodes = getSuperteamCodes();
 
   return countries.filter((country) => {

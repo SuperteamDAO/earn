@@ -1,5 +1,4 @@
 import type { Ratelimit } from '@upstash/ratelimit';
-import type { NextApiResponse } from 'next';
 import { NextResponse } from 'next/server';
 
 import logger from '@/lib/logger';
@@ -93,43 +92,6 @@ async function checkRateLimit(
       error: 'Internal server error during rate limiting. Please try again.',
     };
   }
-}
-
-/**
- * Rate limiting function for Pages API endpoints.
- * Maintains backward compatibility with existing implementations.
- * Sets appropriate headers and sends a response if rate-limited or an error occurs.
- * @returns {Promise<boolean>} True if the request can proceed, false otherwise.
- */
-export async function checkAndApplyRateLimit(
-  res: NextApiResponse,
-  options: ApplyRateLimitOptions,
-): Promise<boolean> {
-  const checkResult = await checkRateLimit(options);
-
-  if (checkResult.result) {
-    const { limit, remaining, reset } = checkResult.result;
-    res.setHeader('X-RateLimit-Limit', limit.toString());
-    res.setHeader('X-RateLimit-Remaining', remaining.toString());
-    res.setHeader('X-RateLimit-Reset', Math.floor(reset / 1000).toString());
-  }
-
-  if (!checkResult.allowed) {
-    if (checkResult.result?.retryAfter) {
-      res.status(429).json({
-        message: 'Too many requests. Please wait before trying again.',
-        retryAfter: checkResult.result.retryAfter,
-      });
-    } else if (checkResult.error) {
-      const statusCode = checkResult.error.includes('identifier') ? 400 : 500;
-      res.status(statusCode).json({
-        message: checkResult.error,
-      });
-    }
-    return false;
-  }
-
-  return true;
 }
 
 /**

@@ -70,7 +70,7 @@ export const SubmissionPanel = ({
                   </p>
                   <Link
                     className="text-brand-purple flex w-full items-center text-xs font-medium whitespace-nowrap"
-                    href={`/t/${selectedSubmission?.user?.username}`}
+                    href={`/earn/t/${selectedSubmission?.user?.username}`}
                   >
                     View Profile <ArrowRight className="inline-block h-3 w-3" />
                   </Link>

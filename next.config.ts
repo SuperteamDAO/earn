@@ -25,7 +25,7 @@ const baseCsp = `
   default-src 'self';
   script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://us-assets.i.posthog.com https://www.google-analytics.com https://challenges.cloudflare.com;
   style-src 'self' 'unsafe-inline' https://unpkg.com https://fonts.googleapis.com https://us.posthog.com;
-  img-src 'self' blob: data: https://res.cloudinary.com https://*.googleusercontent.com https://googletagmanager.com;
+  img-src 'self' blob: data: https://res.cloudinary.com https://*.googleusercontent.com https://googletagmanager.com https://dl.airtable.com https://*.airtableusercontent.com;
   connect-src 'self' blob:  https://auth.privy.io https://*.rpc.privy.systems https://api.mainnet-beta.solana.com https://api.devnet.solana.com https://api.testnet.solana.com https://us.i.posthog.com https://app.posthog.com https://internal-j.posthog.com https://us.posthog.com https://*.helius-rpc.com wss://mainnet.helius-rpc.com https://ipapi.co wss://earn-vibe-production.up.railway.app https://verify.walletconnect.com https://verify.walletconnect.org https://res.cloudinary.com https://api.cloudinary.com https://www.google-analytics.com https://privy.earn.superteam.fun;
   media-src 'self' blob: data: https://res.cloudinary.com;
   font-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com;
@@ -158,6 +158,11 @@ const nextConfig: NextConfig = {
       {
         source: '/docs-keep/:path*',
         destination: 'https://us.i.posthog.com/:path*',
+      },
+      {
+        source: '/api/geo/world.geojson',
+        destination:
+          'https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson',
       },
       {
         source: '/cdn/coinmarketcap/:path*',

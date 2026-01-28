@@ -66,7 +66,7 @@ export const MobileNavbar = ({
               <Menu className="size-5 text-gray-400" />
             </div>
             <Link
-              href="/"
+              href="/earn"
               className="flex items-center hover:no-underline"
               onClick={() => {
                 posthog.capture('homepage logo click_universal');

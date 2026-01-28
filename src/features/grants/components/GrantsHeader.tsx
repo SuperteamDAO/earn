@@ -70,7 +70,7 @@ export const GrantsHeader = ({
     <div className="w-full bg-white">
       <div className="mx-auto flex w-full max-w-7xl flex-col items-start justify-start gap-5 py-10 md:flex-row md:justify-between">
         <div className="flex flex-col items-start gap-2 md:flex-row">
-          <Link href={`/s/${sponsor?.slug}`}>
+          <Link href={`/earn/s/${sponsor?.slug}`}>
             <img
               className="h-16 w-16 rounded-md object-cover"
               alt={sponsor?.name}
@@ -87,7 +87,7 @@ export const GrantsHeader = ({
 
             <div className="flex flex-wrap items-center gap-1 md:gap-3">
               <Link
-                href={`/s/${sponsor?.slug}`}
+                href={`/earn/s/${sponsor?.slug}`}
                 className="group flex items-center gap-1"
                 onClick={() => {
                   posthog.capture('sponsor_grant', {
@@ -124,7 +124,7 @@ export const GrantsHeader = ({
               <ListingHeaderSeparator />
               {isPro && (
                 <>
-                  <Link href="/pro">
+                  <Link href="/earn/pro">
                     <ProBadge
                       containerClassName="bg-transparent px-0 py-0 gap-1"
                       iconClassName="size-3 text-zinc-600"
@@ -146,20 +146,20 @@ export const GrantsHeader = ({
         <div className="mx-auto my-auto flex h-full w-full max-w-7xl items-center justify-start gap-4 border-b border-slate-200">
           <ListingTabLink
             className="pointer-events-none hidden md:flex md:w-[22rem]"
-            href={`/grants/${slug}/`}
+            href={`/earn/grants/${slug}/`}
             text={isApproved ? 'Your Ongoing Grant' : 'Prizes'}
             isActive={false}
           />
 
           <ListingTabLink
-            href={`/grants/${slug}/`}
+            href={`/earn/grants/${slug}/`}
             text="Details"
             isActive={!router.asPath.split('/')[3]?.includes('references')}
           />
 
           {references && references?.length > 0 && (
             <ListingTabLink
-              href={`/grants/${slug}/references`}
+              href={`/earn/grants/${slug}/references`}
               text="References"
               isActive={!!router.asPath.split('/')[3]?.includes('references')}
             />

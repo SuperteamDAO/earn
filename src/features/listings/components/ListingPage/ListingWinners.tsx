@@ -52,7 +52,7 @@ export function ListingWinners({ bounty }: Props) {
   const openWinnerLink = () => {
     return tweetEmbedLink(
       tweetTemplate(
-        'https://earn.superteam.fun/listing/' + bounty?.slug + '/winner',
+        'https://superteam.fun/earn/listing/' + bounty?.slug + '/winner',
       ),
     );
   };
@@ -127,8 +127,8 @@ export function ListingWinners({ bounty }: Props) {
                   key={submission.id}
                   href={
                     !isProject
-                      ? `/feed/submission/${submission?.id}`
-                      : `/t/${submission?.user?.username}`
+                      ? `/earn/feed/submission/${submission?.id}`
+                      : `/earn/t/${submission?.user?.username}`
                   }
                   passHref
                   className="flex cursor-pointer flex-col items-center justify-center"
@@ -185,8 +185,8 @@ export function ListingWinners({ bounty }: Props) {
                   key={submission.id}
                   href={
                     !isProject
-                      ? `/feed/submission/${submission?.id}`
-                      : `/t/${submission?.user?.username}`
+                      ? `/earn/feed/submission/${submission?.id}`
+                      : `/earn/t/${submission?.user?.username}`
                   }
                   className="inline-block"
                 >
@@ -202,7 +202,7 @@ export function ListingWinners({ bounty }: Props) {
           {extraBonusSubmissions > 0 && (
             <>
               <Link
-                href={`/listing/${bounty.slug}/submission`}
+                href={`/earn/listing/${bounty.slug}/submission`}
                 className="flex items-center justify-center rounded-full bg-slate-200"
                 style={{
                   width: isMD ? '44px' : '36px',

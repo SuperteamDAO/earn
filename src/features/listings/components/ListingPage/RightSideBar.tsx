@@ -1,8 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
 import { TriangleAlert } from 'lucide-react';
+import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
-import Countdown from 'react-countdown';
+
+const Countdown = dynamic(() => import('react-countdown'), { ssr: false });
 
 import MdTimer from '@/components/icons/MdTimer';
 import TbBriefcase2 from '@/components/icons/TbBriefcase2';
@@ -265,7 +267,7 @@ export function RightSideBar({
                     />
                     <div className="flex flex-col items-start">
                       <p className="text-lg font-medium text-black md:text-xl">
-                        {isSync ? (
+                        {isSync && deadline ? (
                           <Countdown
                             date={deadline}
                             now={serverTime}
@@ -292,9 +294,9 @@ export function RightSideBar({
                   />
                   <div className="flex flex-col items-start">
                     <p className="text-lg font-medium text-black md:text-xl">
-                      {isSync ? (
+                      {isSync && Hackathon?.startDate ? (
                         <Countdown
-                          date={Hackathon?.startDate}
+                          date={Hackathon.startDate}
                           now={serverTime}
                           renderer={CountDownRenderer}
                           zeroPadDays={1}
