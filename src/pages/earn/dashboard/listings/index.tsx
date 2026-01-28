@@ -192,12 +192,12 @@ export default function SponsorListings({ tab: queryTab }: { tab: string }) {
             return (a.title || '').localeCompare(b.title || '') * factor;
           case 'submissions':
             return (
-              ((b.submissionCount ?? 0) - (a.submissionCount ?? 0)) * factor
+              ((a.submissionCount ?? 0) - (b.submissionCount ?? 0)) * factor
             );
           case 'deadline': {
             const deadlineA = a.deadline ? new Date(a.deadline).getTime() : 0;
             const deadlineB = b.deadline ? new Date(b.deadline).getTime() : 0;
-            return (deadlineB - deadlineA) * factor;
+            return (deadlineA - deadlineB) * factor;
           }
           default:
             return 0;

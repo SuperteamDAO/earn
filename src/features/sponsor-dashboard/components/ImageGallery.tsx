@@ -123,7 +123,7 @@ export const ImageGallery = ({ label, images }: ImageGalleryProps) => {
           <div className="flex items-center justify-between border-b border-slate-200 bg-slate-50 px-4 py-3">
             <button
               onClick={() => setIsOpen(false)}
-              className="focus-visible:fing-brand-purple/40 rocus-visible:ring-brand-purple/40 rr:ge2late-700 focus-rntuisebnoon rounded-md p-1.5 text-slate-500 transition-colors hover:bg-white"
+              className="focus-visible:ring-brand-purple/40 rounded-md p-1.5 text-slate-500 transition-colors hover:bg-white focus:outline-none focus-visible:ring-2"
               aria-label="Close gallery"
             >
               <X className="h-5 w-5" />

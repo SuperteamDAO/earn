@@ -40,22 +40,26 @@ export function DescriptionUI({
   const { user, isLoading: isUserLoading } = useUser();
   const { data: stats, isLoading: isStatsLoading } = useQuery(userStatsQuery);
 
-  const options: HTMLReactParserOptions = {
-    replace: (domNode: any) => {
-      const { name, children, attribs } = domNode;
-      if (name === 'p' && (!children || children.length === 0)) {
-        return <br />;
-      }
-      if (name === 'a' && attribs) {
-        return (
-          <a {...attribs} target="_blank" rel="noopener noreferrer">
-            {domToReact(children, options)}
-          </a>
-        );
-      }
-      return domNode;
-    },
-  };
+  const options = useMemo(() => {
+    const memoizedOptions: HTMLReactParserOptions = {
+      replace: (domNode: any) => {
+        const { name, children, attribs } = domNode;
+        if (name === 'p' && (!children || children.length === 0)) {
+          return <br />;
+        }
+        if (name === 'a' && attribs) {
+          return (
+            <a {...attribs} target="_blank" rel="noopener noreferrer">
+              {domToReact(children, memoizedOptions)}
+            </a>
+          );
+        }
+        return domNode;
+      },
+    };
+
+    return memoizedOptions;
+  }, []);
 
   //to resolve a chain of hydration errors
   const [isMounted, setIsMounted] = useState(false);

@@ -178,6 +178,7 @@ export const ListingTable = ({
                 column="submissions"
                 currentSort={currentSort}
                 setSort={onSort}
+                initialDirection="desc"
                 className={cn(thClassName, 'text-center')}
               >
                 Submissions
@@ -186,6 +187,7 @@ export const ListingTable = ({
                 column="deadline"
                 currentSort={currentSort}
                 setSort={onSort}
+                initialDirection="desc"
                 className={cn(thClassName)}
               >
                 Deadline
