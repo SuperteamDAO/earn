@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import posthog from 'posthog-js';
 
 import BsFillCircleFill from '@/components/icons/BsFillCircleFill';
+import { SuperteamBadge } from '@/components/shared/SuperteamBadge';
 import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
 import { LocalImage } from '@/components/ui/local-image';
 import { PulseIcon } from '@/svg/pulse-icon';
@@ -15,6 +16,7 @@ import { StatusBadge } from '@/features/listings/components/ListingPage/StatusBa
 import { ProBadge } from '@/features/pro/components/ProBadge';
 
 import { type GrantWithApplicationCount } from '../types';
+import { isTouchingGrassGrant } from '../utils/touchingGrass';
 
 interface Props {
   grant: GrantWithApplicationCount;
@@ -45,6 +47,7 @@ export const GrantsHeader = ({
   isApproved,
   isPro,
 }: Props) => {
+  const isTouchingGrass = isTouchingGrassGrant(grant);
   let statusTextColor = '';
   let statusText = '';
   let statusIcon = (
@@ -124,13 +127,21 @@ export const GrantsHeader = ({
               <ListingHeaderSeparator />
               {isPro && (
                 <>
-                  <Link href="/earn/pro">
-                    <ProBadge
-                      containerClassName="bg-transparent px-0 py-0 gap-1"
-                      iconClassName="size-3 text-zinc-600"
-                      textClassName="text-xs font-medium text-zinc-800"
+                  {isTouchingGrass ? (
+                    <SuperteamBadge
+                      containerClassName="bg-transparent p-0 mt-px"
+                      iconClassName="size-4.5 text-zinc-600"
+                      textClassName="hidden"
                     />
-                  </Link>
+                  ) : (
+                    <Link href="/earn/pro">
+                      <ProBadge
+                        containerClassName="bg-transparent px-0 py-0 gap-1"
+                        iconClassName="size-3 text-zinc-600"
+                        textClassName="text-xs font-medium text-zinc-800"
+                      />
+                    </Link>
+                  )}
                   <ListingHeaderSeparator />
                 </>
               )}

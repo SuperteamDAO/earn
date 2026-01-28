@@ -1,5 +1,6 @@
 import Link from 'next/link';
 
+import { SuperteamBadge } from '@/components/shared/SuperteamBadge';
 import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
 import { LocalImage } from '@/components/ui/local-image';
 import { ASSET_URL } from '@/constants/ASSET_URL';
@@ -10,6 +11,7 @@ import { ProBadge } from '@/features/pro/components/ProBadge';
 
 import type { GrantWithApplicationCount } from '../types';
 import { grantAmount } from '../utils/grantAmount';
+import { isTouchingGrassGrant } from '../utils/touchingGrass';
 
 export const GrantsCard = ({ grant }: { grant: GrantWithApplicationCount }) => {
   const {
@@ -23,6 +25,8 @@ export const GrantsCard = ({ grant }: { grant: GrantWithApplicationCount }) => {
     totalApplications,
     isPro,
   } = grant;
+
+  const isTouchingGrass = isTouchingGrassGrant(grant);
 
   const sponsorLogo = sponsor?.logo
     ? sponsor.logo.replace('/upload/', '/upload/c_scale,w_128,h_128,f_auto/')
@@ -56,7 +60,7 @@ export const GrantsCard = ({ grant }: { grant: GrantWithApplicationCount }) => {
               </p>
               <div>{!!sponsor?.isVerified && <VerifiedBadge />}</div>
             </Link>
-            <div className="mt-[1px] flex items-center gap-1 sm:gap-3">
+            <div className="mt-px flex items-center gap-1 sm:gap-2">
               <div className="flex items-center justify-start sm:hidden">
                 <LocalImage
                   className="mr-0.5 h-3.5 w-3.5 rounded-full"
@@ -106,11 +110,19 @@ export const GrantsCard = ({ grant }: { grant: GrantWithApplicationCount }) => {
               {!!isPro && (
                 <>
                   <p className="flex text-xs text-slate-300 md:text-sm">|</p>
-                  <ProBadge
-                    containerClassName="bg-transparent p-0 gap-1"
-                    iconClassName="size-2.5 text-zinc-500"
-                    textClassName="text-xxs font-medium text-zinc-700"
-                  />
+                  {isTouchingGrass ? (
+                    <SuperteamBadge
+                      containerClassName="bg-transparent p-0 mt-px"
+                      iconClassName="size-3.5 text-zinc-600"
+                      textClassName="hidden"
+                    />
+                  ) : (
+                    <ProBadge
+                      containerClassName="bg-transparent p-0 gap-1 mt-px"
+                      iconClassName="size-2.5 text-zinc-500"
+                      textClassName="text-xxs font-medium text-zinc-700"
+                    />
+                  )}
                 </>
               )}
             </div>

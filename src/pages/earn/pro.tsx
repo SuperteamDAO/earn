@@ -43,7 +43,7 @@ export default function ProPage({ potentialSession }: HomePageProps) {
           <Meta
             title="Superteam Earn | Work to Earn in Crypto"
             description="Explore the latest bounties on Superteam Earn, offering opportunities in the crypto space across Design, Development, and Content."
-            canonical="https://superteam.fun/earn"
+            canonical="https://superteam.fun/earn/pro"
             og={ASSET_URL + `/og/pro.png`}
           />
         </>

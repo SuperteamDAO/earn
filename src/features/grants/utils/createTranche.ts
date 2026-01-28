@@ -3,6 +3,106 @@ import { prisma } from '@/prisma';
 
 import { addOnboardingInfoToAirtable } from './addOnboardingInfoToAirtable';
 import { addPaymentInfoToAirtable } from './addPaymentInfoToAirtable';
+import { isTouchingGrassSlug } from './touchingGrass';
+
+const CLOUDINARY_HOST = 'res.cloudinary.com';
+const MAX_EVENT_PICTURES = 5;
+const MAX_EVENT_RECEIPTS = 10;
+
+const parseHttpUrl = (value: string): URL | null => {
+  try {
+    const parsed = new URL(value);
+    if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
+      return null;
+    }
+    return parsed;
+  } catch {
+    return null;
+  }
+};
+
+const isCloudinaryUrl = (value: string) => {
+  const parsed = parseHttpUrl(value);
+  if (!parsed) return false;
+  const host = parsed.hostname.toLowerCase();
+  return host === CLOUDINARY_HOST || host.endsWith(`.${CLOUDINARY_HOST}`);
+};
+
+const normalizeImageUrls = (
+  value: unknown,
+  { label, required, max }: { label: string; required: boolean; max: number },
+): string[] | undefined => {
+  if (value === undefined || value === null) {
+    if (required) {
+      throw new Error(`${label} are required.`);
+    }
+    return undefined;
+  }
+  if (!Array.isArray(value)) {
+    throw new Error(`${label} must be a list of image URLs.`);
+  }
+  if (value.length === 0) {
+    if (required) {
+      throw new Error(`At least one ${label.toLowerCase()} is required.`);
+    }
+    return undefined;
+  }
+  if (value.length > max) {
+    throw new Error(`${label} must be ${max} or fewer images.`);
+  }
+  return value.map((entry) => {
+    if (typeof entry !== 'string') {
+      throw new Error(`${label} must contain valid file URLs.`);
+    }
+    const trimmed = entry.trim();
+    if (!isCloudinaryUrl(trimmed)) {
+      throw new Error(`${label} must be Cloudinary URLs.`);
+    }
+    return trimmed;
+  });
+};
+
+const normalizeSocialPost = (
+  value: unknown,
+  required: boolean,
+): string | undefined => {
+  if (value === undefined || value === null || value === '') {
+    if (required) {
+      throw new Error('Social post link is required.');
+    }
+    return undefined;
+  }
+  if (typeof value !== 'string') {
+    throw new Error('Social post link must be a valid URL.');
+  }
+  const trimmed = value.trim();
+  const urlCandidate =
+    trimmed.startsWith('http://') || trimmed.startsWith('https://')
+      ? trimmed
+      : `https://${trimmed}`;
+  const parsed = parseHttpUrl(urlCandidate);
+  if (!parsed || !parsed.hostname.includes('.')) {
+    throw new Error('Social post link must be a valid URL.');
+  }
+  return parsed.toString();
+};
+
+const normalizeAttendeeCount = (
+  value: unknown,
+  required: boolean,
+): number | undefined => {
+  if (value === undefined || value === null || value === '') {
+    if (required) {
+      throw new Error('Attendee count is required.');
+    }
+    return undefined;
+  }
+  const parsed = typeof value === 'number' ? value : Number(value);
+  if (!Number.isFinite(parsed) || parsed <= 0 || !Number.isInteger(parsed)) {
+    throw new Error('Attendee count must be a positive whole number.');
+  }
+  return parsed;
+};
 
 type CreateTrancheProps = {
   applicationId: string;
@@ -10,6 +110,10 @@ type CreateTrancheProps = {
   update?: string;
   walletAddress?: string;
   isFirstTranche?: boolean;
+  eventPictures?: string[];
+  eventReceipts?: string[];
+  attendeeCount?: number;
+  socialPost?: string;
 };
 
 export async function createTranche({
@@ -18,6 +122,10 @@ export async function createTranche({
   update,
   walletAddress,
   isFirstTranche,
+  eventPictures,
+  eventReceipts,
+  attendeeCount,
+  socialPost,
 }: CreateTrancheProps) {
   const application = await prisma.grantApplication.findUniqueOrThrow({
     where: { id: applicationId },
@@ -35,6 +143,9 @@ export async function createTranche({
     logger.error(errorMessage);
     throw new Error(errorMessage);
   }
+
+  const isTouchingGrass = isTouchingGrassSlug(application.grant?.slug);
+  const requiresEventProof = isTouchingGrass && !isFirstTranche;
 
   const existingTranches = application.GrantTranche.filter(
     (tranche) => tranche.status !== 'Rejected',
@@ -83,6 +194,25 @@ export async function createTranche({
       throw new Error(errorMessage);
     }
   }
+
+  const normalizedEventPictures = normalizeImageUrls(eventPictures, {
+    label: 'Event pictures',
+    required: requiresEventProof,
+    max: MAX_EVENT_PICTURES,
+  });
+  const normalizedEventReceipts = normalizeImageUrls(eventReceipts, {
+    label: 'Event receipts',
+    required: requiresEventProof,
+    max: MAX_EVENT_RECEIPTS,
+  });
+  const normalizedAttendeeCount = normalizeAttendeeCount(
+    attendeeCount,
+    requiresEventProof,
+  );
+  const normalizedSocialPost = normalizeSocialPost(
+    socialPost,
+    requiresEventProof,
+  );
 
   let trancheAmount = 0;
   const totalTranches = application.totalTranches ?? 0;
@@ -144,6 +274,16 @@ export async function createTranche({
       trancheNumber: existingTranches + 1,
       ...(isFirstTranche && { approvedAmount: trancheAmount }),
       ...(isFirstTranche && { decidedAt: new Date().toISOString() }),
+      ...(normalizedEventPictures && {
+        eventPictures: normalizedEventPictures,
+      }),
+      ...(normalizedEventReceipts && {
+        eventReceipts: normalizedEventReceipts,
+      }),
+      ...(normalizedAttendeeCount !== undefined && {
+        attendeeCount: normalizedAttendeeCount,
+      }),
+      ...(normalizedSocialPost && { socialPost: normalizedSocialPost }),
     },
     include: {
       GrantApplication: {

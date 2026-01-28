@@ -20,6 +20,10 @@ import { truncateString } from '@/utils/truncateString';
 
 import { type Grant } from '@/features/grants/types';
 import {
+  isTouchingGrassGrant,
+  TOUCHING_GRASS_COPY,
+} from '@/features/grants/utils/touchingGrass';
+import {
   GitHub,
   Telegram,
   Twitter,
@@ -62,6 +66,7 @@ export const ApplicationDetails = ({
   const isCompleted = selectedApplication?.applicationStatus === 'Completed';
 
   const isNativeAndNonST = !grant?.airtableId && grant?.isNative;
+  const isTouchingGrass = isTouchingGrassGrant(grant);
 
   const queryClient = useQueryClient();
 
@@ -407,45 +412,96 @@ export const ApplicationDetails = ({
               </div>
 
               <InfoBox
-                label="Project Title"
+                label={
+                  isTouchingGrass
+                    ? TOUCHING_GRASS_COPY.application.projectTitle.label
+                    : 'Project Title'
+                }
                 content={selectedApplication?.projectTitle}
               />
 
               <InfoBox
-                label="One-Liner Description"
+                label={
+                  isTouchingGrass
+                    ? TOUCHING_GRASS_COPY.application.projectOneLiner.label
+                    : 'One-Liner Description'
+                }
                 content={selectedApplication?.projectOneLiner}
               />
 
               <InfoBox
-                label="Project Details"
+                label={
+                  isTouchingGrass
+                    ? TOUCHING_GRASS_COPY.application.projectDetails.label
+                    : 'Project Details'
+                }
                 content={selectedApplication?.projectDetails}
                 isHtml
               />
 
-              <InfoBox label="Twitter" content={selectedApplication?.twitter} />
-              <InfoBox label="Github" content={selectedApplication?.github} />
-              <InfoBox
-                label="Deadline"
-                content={selectedApplication?.projectTimeline}
-              />
+              {isTouchingGrass && (selectedApplication as any)?.lumaLink && (
+                <InfoBox
+                  label={TOUCHING_GRASS_COPY.application.lumaLink.label}
+                  content={(selectedApplication as any)?.lumaLink}
+                />
+              )}
 
               <InfoBox
-                label="Proof of Work"
+                label={
+                  isTouchingGrass
+                    ? TOUCHING_GRASS_COPY.application.twitter.label
+                    : 'Twitter'
+                }
+                content={selectedApplication?.twitter}
+              />
+              {!isTouchingGrass && (
+                <InfoBox label="Github" content={selectedApplication?.github} />
+              )}
+              {!isTouchingGrass && (
+                <InfoBox
+                  label="Deadline"
+                  content={selectedApplication?.projectTimeline}
+                />
+              )}
+
+              <InfoBox
+                label={
+                  isTouchingGrass
+                    ? TOUCHING_GRASS_COPY.application.proofOfWork.label
+                    : 'Proof of Work'
+                }
                 content={selectedApplication?.proofOfWork}
                 isHtml
               />
 
+              {isTouchingGrass &&
+                (selectedApplication as any)?.expenseBreakdown && (
+                  <InfoBox
+                    label={
+                      TOUCHING_GRASS_COPY.application.expenseBreakdown.label
+                    }
+                    content={(selectedApplication as any)?.expenseBreakdown}
+                    isHtml
+                  />
+                )}
+
               <InfoBox
-                label="Goals and Milestones"
+                label={
+                  isTouchingGrass
+                    ? TOUCHING_GRASS_COPY.application.milestones.label
+                    : 'Goals and Milestones'
+                }
                 content={selectedApplication?.milestones}
                 isHtml
               />
 
-              <InfoBox
-                label="Primary Key Performance Indicator"
-                content={selectedApplication?.kpi}
-                isHtml
-              />
+              {!isTouchingGrass && (
+                <InfoBox
+                  label="Primary Key Performance Indicator"
+                  content={selectedApplication?.kpi}
+                  isHtml
+                />
+              )}
 
               {Array.isArray(selectedApplication?.answers) &&
                 selectedApplication.answers.map(

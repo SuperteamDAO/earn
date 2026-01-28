@@ -33,7 +33,7 @@ const baseCsp = `
   base-uri 'self';
   form-action 'self';
   child-src 'self' https://auth.privy.io https://verify.walletconnect.com https://verify.walletconnect.org https://privy.earn.superteam.fun;
-  frame-src 'self' https://auth.privy.io https://*.sumsub.com https://verify.walletconnect.com https://verify.walletconnect.org https://www.youtube.com https://challenges.cloudflare.com https://privy.earn.superteam.fun;
+  frame-src 'self' https://auth.privy.io https://*.sumsub.com https://verify.walletconnect.com https://verify.walletconnect.org https://www.youtube.com https://challenges.cloudflare.com https://privy.earn.superteam.fun https://res.cloudinary.com;
   frame-ancestors 'self' https://*.sumsub.com;
   worker-src 'self';
   manifest-src 'self';
