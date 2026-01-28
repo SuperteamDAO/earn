@@ -1,4 +1,4 @@
-import posthog from 'posthog-js';
+import posthog, { type PostHogInterface } from 'posthog-js';
 
 import { getURL } from './utils/validUrl';
 
@@ -17,6 +17,6 @@ posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY!, {
 
 declare global {
   interface Window {
-    posthog: typeof posthog;
+    posthog: PostHogInterface;
   }
 }
