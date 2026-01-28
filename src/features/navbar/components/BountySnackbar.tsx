@@ -28,7 +28,8 @@ export const BountySnackbar = () => {
 
   const { asPath, query } = router;
 
-  const showSnackbar = asPath.split('/')[1] === 'earn/listings';
+  const showSnackbar =
+    asPath.split('/')[1] === 'earn' && asPath.split('/')[2] === 'listings';
 
   if (!bountySnackbar) return null;
 

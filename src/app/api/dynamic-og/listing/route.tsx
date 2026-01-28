@@ -154,7 +154,7 @@ export async function GET(request: Request) {
                     objectFit: 'contain',
                   }}
                   alt="logo"
-                  src={`https://earn.superteam.fun/assets/${listingIcon}`}
+                  src={`https://superteam.fun/assets/${listingIcon}`}
                   width="64px"
                   height="64px"
                 />
