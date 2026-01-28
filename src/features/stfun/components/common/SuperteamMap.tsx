@@ -63,6 +63,12 @@ function getSuperteamAlpha3Codes(): string[] {
   return [...new Set(allCodes)];
 }
 
+const MIN_COUNTRY_RENDER_SIZE_PX = 3;
+const NORMALIZED_MARKER_RADIUS_PX = 1.2;
+const COUNTRY_MARKER_OVERRIDES = new Map<string, readonly [number, number]>([
+  ['SGP', [103.8198, 1.3521] as const],
+]);
+
 interface SuperteamMapProps {
   hoveredSuperteam: string | null;
   onHoverChange: (code: string | null) => void;
@@ -99,6 +105,16 @@ export default function SuperteamMap({
     },
     [onHoverChange],
   );
+
+  const handleCountryClick = useCallback((iso3Code: string) => {
+    const superteamCode = iso3ToSuperteamMapRef.current?.get(iso3Code);
+    if (!superteamCode) return;
+
+    const superteam = Superteams.find((st) => st.code === superteamCode);
+    if (superteam?.link) {
+      window.open(superteam.link, '_blank', 'noopener,noreferrer');
+    }
+  }, []);
 
   // Effect to update map colors when hoveredSuperteam changes
   useEffect(() => {
@@ -151,6 +167,30 @@ export default function SuperteamMap({
         }
       }
     });
+
+    svg.selectAll('.country-markers circle').each(function (d: any) {
+      const element = d3.select(this);
+      const isHovered = hoveredIso3Codes.includes(d.iso3);
+
+      if (hoveredSuperteam) {
+        if (isHovered) {
+          element
+            .attr('fill', hoverHighlightColor)
+            .attr('stroke', hoverHighlightColor)
+            .attr('stroke-width', 1);
+        } else {
+          element
+            .attr('fill', dimmedColor)
+            .attr('stroke', dimmedColor)
+            .attr('stroke-width', 0.5);
+        }
+      } else {
+        element
+          .attr('fill', highlightColor)
+          .attr('stroke', highlightColor)
+          .attr('stroke-width', 0.5);
+      }
+    });
   }, [hoveredSuperteam]);
 
   useEffect(() => {
@@ -168,6 +208,29 @@ export default function SuperteamMap({
 
     const projection = d3.geoNaturalEarth1();
     const path = d3.geoPath().projection(projection);
+    const getMarkerPosition = (marker: any): [number, number] | null => {
+      if (marker.feature) {
+        const [cx, cy] = path.centroid(marker.feature);
+        if (Number.isFinite(cx) && Number.isFinite(cy)) {
+          return [cx, cy];
+        }
+
+        return null;
+      }
+
+      if (marker.coordinates) {
+        const projected = projection(marker.coordinates);
+        if (
+          projected &&
+          Number.isFinite(projected[0]) &&
+          Number.isFinite(projected[1])
+        ) {
+          return [projected[0], projected[1]];
+        }
+      }
+
+      return null;
+    };
 
     const svg = d3
       .select(containerRef.current)
@@ -220,6 +283,8 @@ export default function SuperteamMap({
 
     let resizeHandler: (() => void) | null = null;
     let worldData: any = null;
+    let markerGroup: any = null;
+    let normalizedMarkers: any[] = [];
 
     const initMap = async () => {
       const response = await fetch('/api/geo/world.geojson');
@@ -235,6 +300,44 @@ export default function SuperteamMap({
 
       // Fit the entire globe to the viewport
       projection.fitSize([width, height], worldData);
+
+      const featureById = new Map<string, any>();
+      for (const feature of worldData.features) {
+        if (feature?.id) {
+          featureById.set(feature.id, feature);
+        }
+      }
+
+      const markerCandidates: any[] = [];
+      for (const iso3 of superteamCodes) {
+        const feature = featureById.get(iso3);
+        if (feature) {
+          const [[x0, y0], [x1, y1]] = path.bounds(feature);
+          const widthPx = x1 - x0;
+          const heightPx = y1 - y0;
+
+          if (
+            widthPx <= MIN_COUNTRY_RENDER_SIZE_PX &&
+            heightPx <= MIN_COUNTRY_RENDER_SIZE_PX
+          ) {
+            markerCandidates.push({ iso3, feature });
+          }
+        } else {
+          const override = COUNTRY_MARKER_OVERRIDES.get(iso3);
+          if (override) {
+            markerCandidates.push({ iso3, coordinates: override });
+          }
+        }
+      }
+
+      normalizedMarkers = markerCandidates.flatMap((marker) => {
+        const position = getMarkerPosition(marker);
+        if (!position) {
+          return [];
+        }
+
+        return [{ ...marker, position }];
+      });
 
       // Countries group
       const countriesGroup = svg.append('g').attr('class', 'countries');
@@ -271,16 +374,33 @@ export default function SuperteamMap({
         })
         .on('click', function (_event: any, d: any) {
           if (superteamCodes.includes(d.id)) {
-            const superteamCode = iso3ToSuperteamMapRef.current?.get(d.id);
-            if (superteamCode) {
-              const superteam = Superteams.find(
-                (st) => st.code === superteamCode,
-              );
-              if (superteam?.link) {
-                window.open(superteam.link, '_blank', 'noopener,noreferrer');
-              }
-            }
+            handleCountryClick(d.id);
           }
+        });
+
+      markerGroup = svg.append('g').attr('class', 'country-markers');
+      markerGroup
+        .selectAll('circle')
+        .data(normalizedMarkers)
+        .enter()
+        .append('circle')
+        .attr('data-iso3', (d: any) => d.iso3)
+        .attr('r', NORMALIZED_MARKER_RADIUS_PX)
+        .attr('cx', (d: any) => d.position[0])
+        .attr('cy', (d: any) => d.position[1])
+        .attr('fill', highlightColor)
+        .attr('stroke', highlightColor)
+        .attr('stroke-width', 0.5)
+        .style('cursor', 'pointer')
+        .style('transition', 'fill 0.2s ease, stroke 0.2s ease')
+        .on('mouseenter', function (_event: any, d: any) {
+          handleCountryHover(d.iso3);
+        })
+        .on('mouseleave', function () {
+          handleCountryHover(null);
+        })
+        .on('click', function (_event: any, d: any) {
+          handleCountryClick(d.iso3);
         });
 
       resizeHandler = () => {
@@ -293,6 +413,13 @@ export default function SuperteamMap({
 
         svg.attr('width', width).attr('height', height);
         svg.selectAll('.countries path').attr('d', path as any);
+
+        if (markerGroup) {
+          markerGroup
+            .selectAll('circle')
+            .attr('cx', (d: any) => getMarkerPosition(d)?.[0] ?? 0)
+            .attr('cy', (d: any) => getMarkerPosition(d)?.[1] ?? 0);
+        }
       };
 
       window.addEventListener('resize', resizeHandler);
@@ -308,7 +435,7 @@ export default function SuperteamMap({
         window.removeEventListener('resize', resizeHandler);
       }
     };
-  }, [handleCountryHover]);
+  }, [handleCountryHover, handleCountryClick]);
 
   return (
     <div
