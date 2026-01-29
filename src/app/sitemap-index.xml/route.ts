@@ -1,14 +1,12 @@
 import { NextResponse } from 'next/server';
 
+import { getSiteUrl, isProductionEnv } from '@/lib/site-url';
+
 import { generateSitemaps } from '../sitemap';
 
 export const revalidate = 86400;
 
-const baseUrl = 'https://superteam.fun';
-
-function isProduction(): boolean {
-  return process.env.NEXT_PUBLIC_VERCEL_ENV === 'production';
-}
+const baseUrl = getSiteUrl();
 
 /**
  * Escapes XML special characters to prevent injection attacks
@@ -43,7 +41,7 @@ function buildSitemapIndex(sitemapUrls: string[]): string {
 export async function GET(): Promise<NextResponse> {
   try {
     // Get all sitemap IDs from generateSitemaps()
-    if (!isProduction()) {
+    if (!isProductionEnv()) {
       return new NextResponse(
         '<?xml version="1.0" encoding="UTF-8"?>\n<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"></sitemapindex>',
         {

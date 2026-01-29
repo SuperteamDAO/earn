@@ -1,6 +1,7 @@
 import type { MetadataRoute } from 'next';
 
 import { countries } from '@/constants/country';
+import { getSiteUrl, isProductionEnv } from '@/lib/site-url';
 import { prisma } from '@/prisma';
 
 import { getAllCategorySlugs } from '@/features/listings/utils/category';
@@ -14,14 +15,10 @@ import {
   getParentSkillSlugs,
 } from '@/features/listings/utils/skill';
 
-const baseUrl = 'https://superteam.fun';
+const baseUrl = getSiteUrl();
 const MAX_URLS_PER_SITEMAP = 50000;
 
 export const revalidate = 86400; // 1 day
-
-function isProduction(): boolean {
-  return process.env.NEXT_PUBLIC_VERCEL_ENV === 'production';
-}
 
 // Sitemap organization:
 // /sitemap.xml: Static routes (handled by sitemap.xml/route.ts)
@@ -193,7 +190,7 @@ function calculateSitemapCount(totalCount: number): number {
 
 export async function generateSitemaps(): Promise<Array<{ id: number }>> {
   // Only generate sitemaps in production
-  if (!isProduction()) {
+  if (!isProductionEnv()) {
     return []; // Return empty for non-production
   }
 
@@ -383,7 +380,7 @@ export default async function sitemap(props: {
   const now = new Date();
 
   // Only generate dynamic sitemaps in production
-  if (!isProduction()) {
+  if (!isProductionEnv()) {
     return [];
   }
 

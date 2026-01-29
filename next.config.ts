@@ -106,7 +106,11 @@ const nextConfig: NextConfig = {
       ],
     });
 
-    if (process.env.NEXT_PUBLIC_VERCEL_ENV === 'preview') {
+    const isPreviewEnv =
+      process.env.VERCEL_ENV === 'preview' ||
+      process.env.NEXT_PUBLIC_VERCEL_ENV === 'preview';
+
+    if (isPreviewEnv) {
       headers.push({
         source: '/:path*',
         headers: [{ key: 'X-Robots-Tag', value: 'noindex' }],

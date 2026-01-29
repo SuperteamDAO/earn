@@ -1,9 +1,10 @@
 import { NextResponse } from 'next/server';
 
-export async function GET(): Promise<NextResponse> {
-  const isProduction = process.env.NEXT_PUBLIC_VERCEL_ENV === 'production';
+import { getSiteUrl, isProductionEnv } from '@/lib/site-url';
 
-  const baseUrl = 'https://superteam.fun';
+export async function GET(): Promise<NextResponse> {
+  const isProduction = isProductionEnv();
+  const baseUrl = getSiteUrl();
 
   // For preview/staging environments, disallow everything
   if (!isProduction) {
