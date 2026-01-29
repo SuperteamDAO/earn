@@ -13,7 +13,6 @@ import { getURL } from '@/utils/validUrl';
 
 import { GrantsPop } from '@/features/conversion-popups/components/GrantsPop';
 import { type GrantWithApplicationCount } from '@/features/grants/types';
-import { isTouchingGrassGrant } from '@/features/grants/utils/touchingGrass';
 import { DescriptionUI } from '@/features/listings/components/ListingPage/DescriptionUI';
 
 interface InitialGrant {
@@ -48,7 +47,7 @@ function Grants({ grant: initialGrant }: InitialGrant) {
         isPro={initialGrant?.isPro}
         type="grant"
         sponsorId={initialGrant?.sponsorId ?? ''}
-        isTouchingGrass={isTouchingGrassGrant(initialGrant)}
+        isST={initialGrant?.isST}
       />
     </GrantPageLayout>
   );

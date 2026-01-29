@@ -19,10 +19,7 @@ import { truncatePublicKey } from '@/utils/truncatePublicKey';
 import { truncateString } from '@/utils/truncateString';
 
 import { type Grant } from '@/features/grants/types';
-import {
-  isTouchingGrassGrant,
-  TOUCHING_GRASS_COPY,
-} from '@/features/grants/utils/touchingGrass';
+import { isSTGrant, ST_GRANT_COPY } from '@/features/grants/utils/stGrant';
 import {
   GitHub,
   Telegram,
@@ -66,7 +63,7 @@ export const ApplicationDetails = ({
   const isCompleted = selectedApplication?.applicationStatus === 'Completed';
 
   const isNativeAndNonST = !grant?.airtableId && grant?.isNative;
-  const isTouchingGrass = isTouchingGrassGrant(grant);
+  const isST = isSTGrant(grant);
 
   const queryClient = useQueryClient();
 
@@ -413,8 +410,8 @@ export const ApplicationDetails = ({
 
               <InfoBox
                 label={
-                  isTouchingGrass
-                    ? TOUCHING_GRASS_COPY.application.projectTitle.label
+                  isST
+                    ? ST_GRANT_COPY.application.projectTitle.label
                     : 'Project Title'
                 }
                 content={selectedApplication?.projectTitle}
@@ -422,8 +419,8 @@ export const ApplicationDetails = ({
 
               <InfoBox
                 label={
-                  isTouchingGrass
-                    ? TOUCHING_GRASS_COPY.application.projectOneLiner.label
+                  isST
+                    ? ST_GRANT_COPY.application.projectOneLiner.label
                     : 'One-Liner Description'
                 }
                 content={selectedApplication?.projectOneLiner}
@@ -431,33 +428,31 @@ export const ApplicationDetails = ({
 
               <InfoBox
                 label={
-                  isTouchingGrass
-                    ? TOUCHING_GRASS_COPY.application.projectDetails.label
+                  isST
+                    ? ST_GRANT_COPY.application.projectDetails.label
                     : 'Project Details'
                 }
                 content={selectedApplication?.projectDetails}
                 isHtml
               />
 
-              {isTouchingGrass && (selectedApplication as any)?.lumaLink && (
+              {isST && (selectedApplication as any)?.lumaLink && (
                 <InfoBox
-                  label={TOUCHING_GRASS_COPY.application.lumaLink.label}
+                  label={ST_GRANT_COPY.application.lumaLink.label}
                   content={(selectedApplication as any)?.lumaLink}
                 />
               )}
 
               <InfoBox
                 label={
-                  isTouchingGrass
-                    ? TOUCHING_GRASS_COPY.application.twitter.label
-                    : 'Twitter'
+                  isST ? ST_GRANT_COPY.application.twitter.label : 'Twitter'
                 }
                 content={selectedApplication?.twitter}
               />
-              {!isTouchingGrass && (
+              {!isST && (
                 <InfoBox label="Github" content={selectedApplication?.github} />
               )}
-              {!isTouchingGrass && (
+              {!isST && (
                 <InfoBox
                   label="Deadline"
                   content={selectedApplication?.projectTimeline}
@@ -466,36 +461,33 @@ export const ApplicationDetails = ({
 
               <InfoBox
                 label={
-                  isTouchingGrass
-                    ? TOUCHING_GRASS_COPY.application.proofOfWork.label
+                  isST
+                    ? ST_GRANT_COPY.application.proofOfWork.label
                     : 'Proof of Work'
                 }
                 content={selectedApplication?.proofOfWork}
                 isHtml
               />
 
-              {isTouchingGrass &&
-                (selectedApplication as any)?.expenseBreakdown && (
-                  <InfoBox
-                    label={
-                      TOUCHING_GRASS_COPY.application.expenseBreakdown.label
-                    }
-                    content={(selectedApplication as any)?.expenseBreakdown}
-                    isHtml
-                  />
-                )}
+              {isST && (selectedApplication as any)?.expenseBreakdown && (
+                <InfoBox
+                  label={ST_GRANT_COPY.application.expenseBreakdown.label}
+                  content={(selectedApplication as any)?.expenseBreakdown}
+                  isHtml
+                />
+              )}
 
               <InfoBox
                 label={
-                  isTouchingGrass
-                    ? TOUCHING_GRASS_COPY.application.milestones.label
+                  isST
+                    ? ST_GRANT_COPY.application.milestones.label
                     : 'Goals and Milestones'
                 }
                 content={selectedApplication?.milestones}
                 isHtml
               />
 
-              {!isTouchingGrass && (
+              {!isST && (
                 <InfoBox
                   label="Primary Key Performance Indicator"
                   content={selectedApplication?.kpi}

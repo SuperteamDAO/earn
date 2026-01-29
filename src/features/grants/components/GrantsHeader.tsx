@@ -16,7 +16,6 @@ import { StatusBadge } from '@/features/listings/components/ListingPage/StatusBa
 import { ProBadge } from '@/features/pro/components/ProBadge';
 
 import { type GrantWithApplicationCount } from '../types';
-import { isTouchingGrassGrant } from '../utils/touchingGrass';
 
 interface Props {
   grant: GrantWithApplicationCount;
@@ -34,6 +33,7 @@ interface Props {
   isPublished: boolean;
   isApproved: boolean;
   isPro?: boolean;
+  isST?: boolean;
 }
 export const GrantsHeader = ({
   grant,
@@ -46,8 +46,8 @@ export const GrantsHeader = ({
   isPublished,
   isApproved,
   isPro,
+  isST,
 }: Props) => {
-  const isTouchingGrass = isTouchingGrassGrant(grant);
   let statusTextColor = '';
   let statusText = '';
   let statusIcon = (
@@ -125,23 +125,25 @@ export const GrantsHeader = ({
                 text={statusText}
               />
               <ListingHeaderSeparator />
-              {isPro && (
+              {isST && (
                 <>
-                  {isTouchingGrass ? (
-                    <SuperteamBadge
-                      containerClassName="bg-transparent p-0 mt-px"
-                      iconClassName="size-4.5 text-zinc-600"
-                      textClassName="hidden"
+                  <SuperteamBadge
+                    containerClassName="bg-transparent p-0 mt-px"
+                    iconClassName="size-4.5 text-zinc-600"
+                    textClassName="hidden"
+                  />
+                  <ListingHeaderSeparator />
+                </>
+              )}
+              {isPro && !isST && (
+                <>
+                  <Link href="/earn/pro">
+                    <ProBadge
+                      containerClassName="bg-transparent px-0 py-0 gap-1"
+                      iconClassName="size-3 text-zinc-600"
+                      textClassName="text-xs font-medium text-zinc-800"
                     />
-                  ) : (
-                    <Link href="/earn/pro">
-                      <ProBadge
-                        containerClassName="bg-transparent px-0 py-0 gap-1"
-                        iconClassName="size-3 text-zinc-600"
-                        textClassName="text-xs font-medium text-zinc-800"
-                      />
-                    </Link>
-                  )}
+                  </Link>
                   <ListingHeaderSeparator />
                 </>
               )}

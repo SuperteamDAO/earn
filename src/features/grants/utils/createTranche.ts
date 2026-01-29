@@ -3,7 +3,6 @@ import { prisma } from '@/prisma';
 
 import { addOnboardingInfoToAirtable } from './addOnboardingInfoToAirtable';
 import { addPaymentInfoToAirtable } from './addPaymentInfoToAirtable';
-import { isTouchingGrassSlug } from './touchingGrass';
 
 const CLOUDINARY_HOST = 'res.cloudinary.com';
 const MAX_EVENT_PICTURES = 5;
@@ -144,8 +143,8 @@ export async function createTranche({
     throw new Error(errorMessage);
   }
 
-  const isTouchingGrass = isTouchingGrassSlug(application.grant?.slug);
-  const requiresEventProof = isTouchingGrass && !isFirstTranche;
+  const isST = application.grant?.isST === true;
+  const requiresEventProof = isST && !isFirstTranche;
 
   const existingTranches = application.GrantTranche.filter(
     (tranche) => tranche.status !== 'Rejected',
