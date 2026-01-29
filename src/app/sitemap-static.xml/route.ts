@@ -31,7 +31,8 @@ export async function GET(): Promise<NextResponse> {
       {
         headers: {
           'Content-Type': 'application/xml; charset=UTF-8',
-          'Cache-Control': 'public, max-age=3600, s-maxage=3600',
+          'Cache-Control':
+            'public, max-age=3600, s-maxage=3600, stale-while-revalidate=86400, stale-if-error=86400',
         },
       },
     );
@@ -154,7 +155,8 @@ export async function GET(): Promise<NextResponse> {
   return new NextResponse(xml, {
     headers: {
       'Content-Type': 'application/xml; charset=UTF-8',
-      'Cache-Control': 'public, max-age=86400, s-maxage=86400',
+      'Cache-Control':
+        'public, max-age=86400, s-maxage=86400, stale-while-revalidate=86400, stale-if-error=86400',
     },
   });
 }

@@ -39,44 +39,44 @@ function buildSitemapIndex(sitemapUrls: string[]): string {
 }
 
 export async function GET(): Promise<NextResponse> {
-  try {
-    // Get all sitemap IDs from generateSitemaps()
-    if (!isProductionEnv()) {
-      return new NextResponse(
-        '<?xml version="1.0" encoding="UTF-8"?>\n<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"></sitemapindex>',
-        {
-          headers: {
-            'Content-Type': 'application/xml; charset=UTF-8',
-            'Cache-Control': 'public, max-age=3600, s-maxage=3600',
-          },
+  // Get all sitemap IDs from generateSitemaps()
+  if (!isProductionEnv()) {
+    return new NextResponse(
+      '<?xml version="1.0" encoding="UTF-8"?>\n<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"></sitemapindex>',
+      {
+        headers: {
+          'Content-Type': 'application/xml; charset=UTF-8',
+          'Cache-Control':
+            'public, max-age=3600, s-maxage=3600, stale-while-revalidate=86400, stale-if-error=86400',
         },
-      );
-    }
-
-    const sitemaps = await generateSitemaps();
-
-    // Start with static sitemap
-    const sitemapUrls: string[] = [`${baseUrl}/sitemap-static.xml`];
-
-    // Add dynamic sitemaps
-    const dynamicSitemapUrls = sitemaps.map(
-      (sitemap) => `${baseUrl}/sitemap/${sitemap.id}.xml`,
-    );
-    sitemapUrls.push(...dynamicSitemapUrls);
-
-    const sitemapIndexXML = buildSitemapIndex(sitemapUrls);
-
-    return new NextResponse(sitemapIndexXML, {
-      headers: {
-        'Content-Type': 'application/xml; charset=UTF-8',
-        'Content-Length': Buffer.byteLength(sitemapIndexXML).toString(),
-        'Cache-Control': 'public, max-age=3600, s-maxage=3600',
       },
-    });
-  } catch (error) {
-    console.error('Error generating sitemap index:', error);
-    return new NextResponse('Error generating sitemap index', {
-      status: 500,
-    });
+    );
   }
+
+  let sitemaps: Array<{ id: number }> = [];
+  try {
+    sitemaps = await generateSitemaps();
+  } catch (error) {
+    console.error('Error generating sitemap IDs:', error);
+  }
+
+  // Start with static sitemap
+  const sitemapUrls: string[] = [`${baseUrl}/sitemap-static.xml`];
+
+  // Add dynamic sitemaps
+  const dynamicSitemapUrls = sitemaps.map(
+    (sitemap) => `${baseUrl}/sitemap/${sitemap.id}.xml`,
+  );
+  sitemapUrls.push(...dynamicSitemapUrls);
+
+  const sitemapIndexXML = buildSitemapIndex(sitemapUrls);
+
+  return new NextResponse(sitemapIndexXML, {
+    headers: {
+      'Content-Type': 'application/xml; charset=UTF-8',
+      'Content-Length': Buffer.byteLength(sitemapIndexXML).toString(),
+      'Cache-Control':
+        'public, max-age=3600, s-maxage=3600, stale-while-revalidate=86400, stale-if-error=86400',
+    },
+  });
 }

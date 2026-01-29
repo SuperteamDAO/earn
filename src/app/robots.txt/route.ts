@@ -24,6 +24,7 @@ Disallow: /earn/dashboard/
 Disallow: /auth/
 Disallow: /earn/signin
 Disallow: /earn/signup
+Sitemap: ${baseUrl}/sitemap.xml
 Sitemap: ${baseUrl}/sitemap-index.xml`;
 
   return new NextResponse(robotsTxt, {
