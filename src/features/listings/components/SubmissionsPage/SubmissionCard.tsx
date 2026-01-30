@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { ArrowUpRight, Heart, MessageCircle } from 'lucide-react';
 import Link from 'next/link';
-import React, { type Dispatch, type SetStateAction, useState } from 'react';
+import React, { useState } from 'react';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
@@ -27,7 +27,7 @@ interface Props {
     date: number;
   }[];
   id: string;
-  setUpdate: Dispatch<SetStateAction<boolean>>;
+  onUpdate: () => void;
   link: string;
 }
 
@@ -37,7 +37,7 @@ export const SubmissionCard = ({
   winner,
   talent,
   likes,
-  setUpdate,
+  onUpdate,
   link,
 }: Props) => {
   const { user } = useUser();
@@ -53,7 +53,7 @@ export const SubmissionCard = ({
       .then()
       .finally(() => {
         setIsLoading(false);
-        setUpdate((prev: boolean) => !prev);
+        onUpdate();
       });
 
     toast.promise(likePromise, {
@@ -71,7 +71,7 @@ export const SubmissionCard = ({
   return (
     <div className="relative w-full cursor-pointer overflow-hidden rounded-md bg-white md:w-60">
       <div className="mb-2 flex w-full justify-between gap-2">
-        <Link href={`/t/${talent?.username}`}>
+        <Link href={`/earn/t/${talent?.username}`}>
           <div className="flex gap-2">
             <EarnAvatar
               className="h-6 w-6"
@@ -92,7 +92,7 @@ export const SubmissionCard = ({
         )}
       </div>
 
-      <Link href={`/feed/submission/${id}`} className="block w-full">
+      <Link href={`/earn/feed/submission/${id}`} className="block w-full">
         <img
           className="h-48 w-full rounded-sm object-contain"
           alt={'card'}
@@ -129,7 +129,7 @@ export const SubmissionCard = ({
           />
           <span>{likes?.length}</span>
         </Button>
-        <Link href={`/feed/submission/${id}`}>
+        <Link href={`/earn/feed/submission/${id}`}>
           <MessageCircle
             size={'1.23rem'}
             fill={'#CBD5E1'}

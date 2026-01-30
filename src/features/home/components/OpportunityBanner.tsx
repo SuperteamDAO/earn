@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import { useMemo } from 'react';
 
 import { ASSET_URL } from '@/constants/ASSET_URL';
 
@@ -13,8 +14,13 @@ interface OpportunityBannerProps {
 }
 
 export function OpportunityBanner({ tags }: OpportunityBannerProps) {
-  const displayName = getOpportunityDisplayName(tags);
-  const description = getOpportunityDescription(tags);
+  const { displayName, description } = useMemo(
+    () => ({
+      displayName: getOpportunityDisplayName(tags),
+      description: getOpportunityDescription(tags),
+    }),
+    [tags],
+  );
 
   return (
     <div className="relative flex h-52 w-full flex-col items-center md:h-72">

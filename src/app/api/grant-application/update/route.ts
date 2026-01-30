@@ -10,6 +10,7 @@ import { safeStringify } from '@/utils/safeStringify';
 import { queueAgent } from '@/features/agents/utils/queueAgent';
 import { getUserSession } from '@/features/auth/utils/getUserSession';
 import { grantApplicationSchema } from '@/features/grants/utils/grantApplicationSchema';
+import { isUserEligibleForST } from '@/features/grants/utils/stGrant';
 import { syncGrantApplicationWithAirtable } from '@/features/grants/utils/syncGrantApplicationWithAirtable';
 import { validateGrantRequest } from '@/features/grants/utils/validateGrantRequest';
 import { extractSocialUsername } from '@/features/social/utils/extractUsername';
@@ -24,12 +25,15 @@ async function updateGrantApplication(
     where: { id: userId },
   });
 
+  const isST = grant.isST === true;
+
   const validationResult = grantApplicationSchema(
     grant.minReward,
     grant.maxReward,
     grant.token,
     grant.questions,
     user as any,
+    isST,
   ).safeParse({
     ...data,
     twitter:
@@ -57,11 +61,19 @@ async function updateGrantApplication(
     },
     select: {
       id: true,
+      applicationStatus: true,
+      label: true,
     },
   });
 
   if (!prevApplication) {
     throw new Error('Application not found');
+  }
+  if (
+    prevApplication.applicationStatus === 'Rejected' ||
+    prevApplication.label === 'Spam'
+  ) {
+    throw new Error('Grant application cannot be edited after rejection');
   }
 
   const formattedData = {
@@ -71,14 +83,18 @@ async function updateGrantApplication(
     projectOneLiner: validatedData.projectOneLiner,
     projectDetails: validatedData.projectDetails,
     projectTimeline: dayjs(validatedData.projectTimeline).format('D MMMM YYYY'),
-    proofOfWork: validatedData.proofOfWork,
+    proofOfWork: validatedData.proofOfWork || '',
     milestones: validatedData.milestones,
-    kpi: validatedData.kpi,
+    kpi: validatedData.kpi || '',
     walletAddress: validatedData.walletAddress,
     ask: validatedData.ask,
     twitter: validatedData.twitter,
     github: validatedData.github,
     answers: validatedData.answers || [],
+    ...(isST && {
+      lumaLink: validatedData.lumaLink,
+      expenseBreakdown: validatedData.expenseBreakdown,
+    }),
   };
 
   return prisma.grantApplication.update({
@@ -142,7 +158,33 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { grant } = await validateGrantRequest(userId as string, grantId);
+    const { grant, user } = await validateGrantRequest(
+      userId as string,
+      grantId,
+    );
+
+    if (grant.isST) {
+      if (!isUserEligibleForST(user)) {
+        logger.debug(`User is not eligible for ST grant`, {
+          grantId,
+          userId,
+          superteamLevel: user.superteamLevel,
+        });
+        return NextResponse.json(
+          { error: 'This grant is only available to Superteam members' },
+          { status: 403 },
+        );
+      }
+    } else if (grant.isPro && !user.isPro) {
+      logger.debug(`User is not eligible for pro grant`, {
+        grantId,
+        userId,
+      });
+      return NextResponse.json(
+        { error: 'This grant is only available for PRO members' },
+        { status: 403 },
+      );
+    }
 
     const result = await updateGrantApplication(
       userId as string,

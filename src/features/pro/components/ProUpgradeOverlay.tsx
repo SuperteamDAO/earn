@@ -133,7 +133,7 @@ const generateConfettiPieces = (count: number): readonly ConfettiPiece[] => {
   });
 };
 
-export const ProBenefitItem = ({ text }: ProBenefitItemProps) => {
+const ProBenefitItem = ({ text }: ProBenefitItemProps) => {
   return (
     <div className="flex items-center gap-1 md:gap-3">
       <div className="flex size-4 items-center justify-center rounded-full bg-zinc-600">
@@ -549,7 +549,7 @@ export const ProUpgradeOverlay = () => {
                       return;
                     }
 
-                    const shareUrl = `${getURL()}t/${user.username}/pro`;
+                    const shareUrl = `${getURL()}earn/t/${user.username}/pro`;
                     const message = `Hanging out with the 1% on @SuperteamEarn`;
                     const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(message)}&url=${encodeURIComponent(shareUrl)}`;
 

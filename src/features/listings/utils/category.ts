@@ -1,9 +1,4 @@
-export const CATEGORIES = [
-  'Content',
-  'Design',
-  'Development',
-  'Other',
-] as const;
+const CATEGORIES = ['Content', 'Design', 'Development', 'Other'] as const;
 
 export type CategoryType = (typeof CATEGORIES)[number];
 
@@ -40,10 +35,6 @@ const CATEGORY_DATA: Record<CategoryType, Omit<CategoryInfo, 'name'>> = {
       'Browse other opportunities on Superteam Earn. Find diverse bounties and projects across various specializations in the web3 space.',
   },
 };
-
-export function generateCategorySlug(name: CategoryType): string {
-  return CATEGORY_DATA[name].slug;
-}
 
 export function findCategoryBySlug(slug: string): CategoryInfo | null {
   const normalizedSlug = slug.toLowerCase().trim();

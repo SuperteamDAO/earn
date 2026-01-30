@@ -140,7 +140,7 @@ export function RanksTable({
                 </TableCell>
                 <TableCell className="h-full pr-8 sm:px-2">
                   <Link
-                    href={`/t/${row.username}`}
+                    href={`/earn/t/${row.username}`}
                     target="_blank"
                     className="ph-no-capture flex items-center gap-2"
                     onClick={() => {
@@ -239,7 +239,7 @@ export function RanksTable({
                 <TableCell className="sticky bottom-0 z-100 border-b-0 px-1 md:px-2">
                   <Link
                     className="ph-no-capture flex items-center gap-2"
-                    href={`/t/${user.username}`}
+                    href={`/earn/t/${user.username}`}
                     onClick={() => {
                       posthog.capture('profile click_leaderboard', {
                         clicked_username: user.username,

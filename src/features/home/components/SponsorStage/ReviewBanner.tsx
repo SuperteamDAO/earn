@@ -35,7 +35,7 @@ export function ReviewBanner({ listing }: ReviewBannerProps) {
 
   return (
     <Link
-      href={`/dashboard/listings/${listing.slug}/submissions`}
+      href={`/earn/dashboard/listings/${listing.slug}/submissions`}
       className="relative flex items-center justify-between overflow-hidden rounded-xl bg-slate-100 px-10 py-8"
       onClick={handleAnnounceWinnersClick}
       prefetch={false}

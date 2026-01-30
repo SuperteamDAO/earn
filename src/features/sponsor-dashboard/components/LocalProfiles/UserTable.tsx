@@ -226,7 +226,7 @@ const MemberRow = ({ user }: { user: LocalProfile }) => {
       <TableCell>
         <Link
           className="inline-flex items-center gap-1 text-[0.9rem] font-medium text-slate-500"
-          href={`/t/${user.username}`}
+          href={`/earn/t/${user.username}`}
           onClick={(e) => e.stopPropagation()}
           rel="noopener noreferrer"
           target="_blank"

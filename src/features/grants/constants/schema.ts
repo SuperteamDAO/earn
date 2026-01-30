@@ -39,6 +39,7 @@ export const grantsSelect = {
   totalPaid: true,
   logo: true,
   isPro: true,
+  isST: true,
   sponsor: {
     select: {
       id: true,

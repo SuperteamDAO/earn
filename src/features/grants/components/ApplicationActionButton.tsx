@@ -18,6 +18,7 @@ import { ProBadge } from '@/features/pro/components/ProBadge';
 import { useApplicationState } from '../hooks/useApplicationState';
 import { userApplicationQuery } from '../queries/user-application';
 import { type Grant } from '../types';
+import { isUserEligibleForST } from '../utils/stGrant';
 import { GrantModal } from './GrantModal';
 import { InfoWrapper } from './InfoWrapper';
 
@@ -32,8 +33,10 @@ export const ApplicationActionButton = ({
   const { authenticated } = usePrivy();
   const isAuthenticated = authenticated;
 
-  const { region, id, link, isNative, isPublished, isPro, sponsorId } = grant;
+  const { region, id, link, isNative, isPublished, isPro, isST, sponsorId } =
+    grant;
   const isUserPro = user?.isPro;
+  const isUserEligibleST = isUserEligibleForST(user);
 
   const { data: application, isLoading: isUserApplicationLoading } = useQuery({
     ...userApplicationQuery(id),
@@ -61,8 +64,12 @@ export const ApplicationActionButton = ({
   const cooldownTooltipContent = getCooldownTooltipContent() || undefined;
 
   const isGrantSponsor = user?.currentSponsorId === sponsorId;
-  const isProRestricted =
-    isPro && !isUserPro && !isGrantSponsor && applicationState === 'ALLOW NEW';
+  const isProRestricted = isST
+    ? !isUserEligibleST && !isGrantSponsor && applicationState === 'ALLOW NEW'
+    : isPro &&
+      !isUserPro &&
+      !isGrantSponsor &&
+      applicationState === 'ALLOW NEW';
   const isNotEligibleForPro = isAuthenticated && isProRestricted;
 
   const isBtnDisabled =
@@ -180,7 +187,8 @@ export const ApplicationActionButton = ({
                     </>
                   )}
                 </Button>
-                {isUserPro &&
+                {!isST &&
+                  isUserPro &&
                   isPro &&
                   applicationState === 'ALLOW NEW' &&
                   !isUserApplicationLoading && (
@@ -205,11 +213,20 @@ export const ApplicationActionButton = ({
             </p>
           </div>
         )}
-        {isPro && !isUserPro && (
+        {(isPro || isST) && (isST ? !isUserEligibleST : !isUserPro) && (
           <div className="mt-1 md:my-1.5 md:flex">
             <p className="mx-auto w-full rounded-md bg-gray-50 px-2 py-2 text-center text-xs text-slate-600 md:text-xs">
-              You need to be a part of the <strong>PRO membership</strong> to
-              apply for this grant
+              {isST ? (
+                <>
+                  You need to be a <strong>Superteam member</strong> to be able
+                  to apply for this grant
+                </>
+              ) : (
+                <>
+                  You need to be a part of the <strong>PRO membership</strong>{' '}
+                  to apply for this grant
+                </>
+              )}
             </p>
           </div>
         )}

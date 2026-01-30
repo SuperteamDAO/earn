@@ -43,11 +43,17 @@ import {
 import { userApplicationQuery } from '../../queries/user-application';
 import { type Grant } from '../../types';
 import { grantApplicationSchema } from '../../utils/grantApplicationSchema';
+import {
+  extractLumaEventSlug,
+  getLumaDisplayValue,
+  LUMA_LABEL,
+  ST_GRANT_COPY,
+} from '../../utils/stGrant';
 
-const steps = [
+const getSteps = (isST: boolean) => [
   { title: 'Basics' },
   { title: 'Details' },
-  { title: 'Milestones' },
+  { title: isST ? 'Outcomes' : 'Milestones' },
 ];
 
 type FormData = z.infer<ReturnType<typeof grantApplicationSchema>>;
@@ -79,10 +85,11 @@ export const ApplicationModal = ({
     null,
   );
 
-  const { id, token, minReward, maxReward, questions, isPro } = grant;
+  const { id, token, minReward, maxReward, questions, isPro, isST } = grant;
   const isUserPro = user?.isPro;
   const isProGrant = isPro && isUserPro;
   const isNotEligibleForPro = isPro && !isUserPro;
+  const steps = getSteps(isST === true);
 
   const dynamicResolver = useMemo(
     () =>
@@ -93,9 +100,10 @@ export const ApplicationModal = ({
           token || 'USDC',
           grant.questions,
           user,
+          isST === true,
         ),
       ),
-    [minReward, maxReward, token, grant.questions, user],
+    [minReward, maxReward, token, grant.questions, user, isST],
   );
 
   const [isLoading, setIsLoading] = useState(false);
@@ -135,6 +143,8 @@ export const ApplicationModal = ({
                 )?.find((a) => a.question === q.question)?.answer || '',
             }))
           : [],
+      lumaLink: (grantApplication as any)?.lumaLink || '',
+      expenseBreakdown: (grantApplication as any)?.expenseBreakdown || '',
     },
   });
 
@@ -290,7 +300,9 @@ export const ApplicationModal = ({
         github,
         answers,
         telegram,
-      } = data;
+        lumaLink,
+        expenseBreakdown,
+      } = data as FormData & { lumaLink?: string; expenseBreakdown?: string };
 
       const apiAction = !!grantApplication ? 'update' : 'create';
 
@@ -309,6 +321,10 @@ export const ApplicationModal = ({
         github,
         answers: answers || [],
         telegram: telegram || user?.telegram || '',
+        ...(isST && {
+          lumaLink,
+          expenseBreakdown,
+        }),
       });
 
       form.reset();
@@ -338,7 +354,12 @@ export const ApplicationModal = ({
     e.preventDefault();
     const fieldsToValidate: Record<
       number,
-      (keyof FormData | `answers.${number}.answer`)[]
+      (
+        | keyof FormData
+        | `answers.${number}.answer`
+        | 'lumaLink'
+        | 'expenseBreakdown'
+      )[]
     > = {
       0: [
         'projectTitle',
@@ -349,15 +370,16 @@ export const ApplicationModal = ({
       ],
       1: [
         'projectDetails',
-        'projectTimeline',
-        'proofOfWork',
+        ...(isST ? [] : ['projectTimeline' as keyof FormData]),
+        ...(isST ? [] : ['proofOfWork' as keyof FormData]),
         'twitter',
-        'github',
+        ...(isST ? [] : ['github' as keyof FormData]),
+        ...(isST ? ['lumaLink' as const, 'expenseBreakdown' as const] : []),
         ...(questions?.map(
           (_: any, index: number) => `answers.${index}.answer` as const,
         ) || []),
       ],
-      2: ['milestones', 'kpi'],
+      2: ['milestones', ...(isST ? [] : ['kpi' as keyof FormData])],
     };
 
     form.trigger(fieldsToValidate[activeStep]).then((isValid) => {
@@ -387,17 +409,19 @@ export const ApplicationModal = ({
   const isSameAsEmbeddedWallet =
     currentWalletAddress?.toLowerCase() === user?.walletAddress?.toLowerCase();
 
-  const isST = grant.sponsor?.name?.toLowerCase().match(/superteam|solana/);
+  const isSuperteamSponsor = grant.sponsor?.name
+    ?.toLowerCase()
+    .match(/superteam|solana/);
 
   const date = dayjs().format('YYYY-MM-DD');
   return (
     <div className="p-6 pb-0">
       <DialogTitle className="text-lg tracking-normal text-slate-700 sm:text-xl">
-        Grant Application
+        {isST ? ST_GRANT_COPY.application.title : 'Grant Application'}
         <p className="mt-1 text-sm font-normal text-slate-500">
-          If you&apos;re working on a project that will help the sponsor&apos;s
-          ecosystem grow, apply with your proposal here and we&apos;ll respond
-          soon!
+          {isST
+            ? ST_GRANT_COPY.application.subtitle
+            : "If you're working on a project that will help the sponsor's ecosystem grow, apply with your proposal here and we'll respond soon!"}
         </p>
         <Progress
           className={cn(
@@ -478,29 +502,64 @@ export const ApplicationModal = ({
                 <FormFieldWrapper
                   control={form.control}
                   name="projectTitle"
-                  label="Project Title"
-                  description="What should we call your project?"
+                  label={
+                    isST
+                      ? ST_GRANT_COPY.application.projectTitle.label
+                      : 'Project Title'
+                  }
+                  description={
+                    isST
+                      ? ST_GRANT_COPY.application.projectTitle.description
+                      : 'What should we call your project?'
+                  }
                   isRequired
                   isPro={isProGrant}
                 >
-                  <Input placeholder="Project Title" />
+                  <Input
+                    placeholder={
+                      isST
+                        ? ST_GRANT_COPY.application.projectTitle.placeholder
+                        : 'Project Title'
+                    }
+                  />
                 </FormFieldWrapper>
 
                 <FormFieldWrapper
                   control={form.control}
                   name="projectOneLiner"
-                  label="One-Liner Description"
-                  description="Describe your idea in one sentence."
+                  label={
+                    isST
+                      ? ST_GRANT_COPY.application.projectOneLiner.label
+                      : 'One-Liner Description'
+                  }
+                  description={
+                    isST
+                      ? ST_GRANT_COPY.application.projectOneLiner.description
+                      : 'Describe your idea in one sentence.'
+                  }
                   isRequired
                   isPro={isProGrant}
                 >
-                  <Input placeholder="Sum up your project in one sentence" />
+                  <Input
+                    placeholder={
+                      isST
+                        ? ST_GRANT_COPY.application.projectOneLiner.placeholder
+                        : 'Sum up your project in one sentence'
+                    }
+                  />
                 </FormFieldWrapper>
 
                 <FormFieldWrapper
                   control={form.control}
                   name="ask"
-                  label="What's the compensation you require to complete this fully?"
+                  label={
+                    isST
+                      ? ST_GRANT_COPY.application.ask.label
+                      : "What's the compensation you require to complete this fully?"
+                  }
+                  description={
+                    isST ? ST_GRANT_COPY.application.ask.description : undefined
+                  }
                   isRequired
                   isTokenInput
                   token={token}
@@ -513,7 +572,16 @@ export const ApplicationModal = ({
                     socialName={'telegram'}
                     placeholder=""
                     required
-                    formLabel="Your Telegram username"
+                    formLabel={
+                      isST
+                        ? ST_GRANT_COPY.application.telegram.label
+                        : 'Your Telegram username'
+                    }
+                    formDescription={
+                      isST
+                        ? ST_GRANT_COPY.application.telegram.description
+                        : undefined
+                    }
                     control={form.control}
                     height="h-9"
                     showIcon={false}
@@ -527,10 +595,14 @@ export const ApplicationModal = ({
                     <FormItem className={cn('flex flex-col gap-2')}>
                       <div>
                         <FormLabel isRequired>
-                          Your Solana Wallet Address
+                          {isST
+                            ? ST_GRANT_COPY.application.walletAddress.label
+                            : 'Your Solana Wallet Address'}
                         </FormLabel>
                         <FormDescription>
                           {isST ? (
+                            ST_GRANT_COPY.application.walletAddress.description
+                          ) : isSuperteamSponsor ? (
                             <>
                               This is where you will receive your rewards if you
                               win.{' '}
@@ -578,65 +650,136 @@ export const ApplicationModal = ({
                 <FormFieldWrapper
                   control={form.control}
                   name="projectDetails"
-                  label="Project Details"
-                  description="What is the problem you're trying to solve, and how you're going to solve it?"
+                  label={
+                    isST
+                      ? ST_GRANT_COPY.application.projectDetails.label
+                      : 'Project Details'
+                  }
+                  description={
+                    isST
+                      ? ST_GRANT_COPY.application.projectDetails.description
+                      : "What is the problem you're trying to solve, and how you're going to solve it?"
+                  }
                   isRequired
                   isRichEditor
-                  richEditorPlaceholder="Describe the problem & solution"
+                  richEditorPlaceholder={
+                    isST
+                      ? ST_GRANT_COPY.application.projectDetails.placeholder
+                      : 'Describe the problem & solution'
+                  }
                   isPro={isProGrant}
                 />
 
-                <FormField
-                  control={form.control}
-                  name="projectTimeline"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-col gap-2">
-                      <div>
-                        <FormLabel isRequired>
-                          {`Deadline (in ${Intl.DateTimeFormat().resolvedOptions().timeZone})`}
-                        </FormLabel>
-                        <FormDescription>
-                          What is the expected completion date for the project?
-                        </FormDescription>
-                      </div>
-                      <div>
-                        <FormControl>
-                          <DateTimePicker
-                            value={
-                              field.value
-                                ? dayjs(field.value, 'YYYY-MM-DD').toDate()
-                                : undefined
-                            }
-                            onChange={(selectedDate) => {
-                              if (selectedDate) {
-                                field.onChange(
-                                  dayjs(selectedDate).format('YYYY-MM-DD'),
-                                );
-                              } else {
-                                field.onChange(undefined);
+                {isST && (
+                  <FormField
+                    control={form.control}
+                    name="lumaLink"
+                    render={({ field }) => (
+                      <FormItem className={cn('flex flex-col gap-2')}>
+                        <div>
+                          <FormLabel isRequired>
+                            {ST_GRANT_COPY.application.lumaLink.label}
+                          </FormLabel>
+                          <FormDescription>
+                            {ST_GRANT_COPY.application.lumaLink.description}
+                          </FormDescription>
+                        </div>
+                        <div>
+                          <FormControl>
+                            <div className="flex h-10.75 items-center">
+                              <div className="flex h-full items-center justify-center rounded-l-md border border-r-0 border-slate-300 bg-slate-50 px-3 text-xs font-medium text-slate-600 shadow-xs md:justify-start md:text-sm">
+                                {LUMA_LABEL}
+                              </div>
+                              <Input
+                                className={cn(
+                                  'h-full rounded-l-none',
+                                  isProGrant && 'focus-visible:ring-zinc-400',
+                                )}
+                                placeholder={
+                                  ST_GRANT_COPY.application.lumaLink.placeholder
+                                }
+                                value={getLumaDisplayValue(field.value || '')}
+                                onChange={(e) => {
+                                  const value = e.currentTarget.value;
+                                  const slug = extractLumaEventSlug(value);
+                                  field.onChange(slug || value);
+                                }}
+                              />
+                            </div>
+                          </FormControl>
+                          <FormMessage className="pt-1" />
+                        </div>
+                      </FormItem>
+                    )}
+                  />
+                )}
+
+                {!isST && (
+                  <FormField
+                    control={form.control}
+                    name="projectTimeline"
+                    render={({ field }) => (
+                      <FormItem className="flex flex-col gap-2">
+                        <div>
+                          <FormLabel isRequired>
+                            {`Deadline (in ${Intl.DateTimeFormat().resolvedOptions().timeZone})`}
+                          </FormLabel>
+                          <FormDescription>
+                            What is the expected completion date for the
+                            project?
+                          </FormDescription>
+                        </div>
+                        <div>
+                          <FormControl>
+                            <DateTimePicker
+                              value={
+                                field.value
+                                  ? dayjs(field.value, 'YYYY-MM-DD').toDate()
+                                  : undefined
                               }
-                            }}
-                            min={dayjs(date, 'YYYY-MM-DD').toDate()}
-                            hideTime={true}
-                            minDateTooltipContent="Deadline cannot be in the past"
-                            defaultDisplayValue="Pick a date"
-                            isPro={isProGrant}
-                          />
-                        </FormControl>
-                        <FormMessage className="pt-1" />
-                      </div>
-                    </FormItem>
-                  )}
-                />
+                              onChange={(selectedDate) => {
+                                if (selectedDate) {
+                                  field.onChange(
+                                    dayjs(selectedDate).format('YYYY-MM-DD'),
+                                  );
+                                } else {
+                                  field.onChange(undefined);
+                                }
+                              }}
+                              min={dayjs(date, 'YYYY-MM-DD').toDate()}
+                              hideTime={true}
+                              minDateTooltipContent="Deadline cannot be in the past"
+                              defaultDisplayValue="Pick a date"
+                              isPro={isProGrant}
+                            />
+                          </FormControl>
+                          <FormMessage className="pt-1" />
+                        </div>
+                      </FormItem>
+                    )}
+                  />
+                )}
 
                 <FormFieldWrapper
                   control={form.control}
                   name="proofOfWork"
-                  label="Proof of Work"
-                  description="Include links to your best work that will make the community trust you to execute on this project."
-                  isRequired
+                  label={
+                    isST
+                      ? ST_GRANT_COPY.application.proofOfWork.label
+                      : 'Proof of Work'
+                  }
+                  description={
+                    isST
+                      ? ST_GRANT_COPY.application.proofOfWork.description
+                      : 'Include links to your best work that will make the community trust you to execute on this project.'
+                  }
+                  isRequired={!isST}
                   isRichEditor
-                  richEditorPlaceholder="Provide links to your portfolio or previous work"
+                  richEditorPlaceholder={
+                    isST
+                      ? ST_GRANT_COPY.application.proofOfWork.placeholder
+                      : 'Provide links to your portfolio or previous work'
+                  }
                   isPro={isProGrant}
                 />
 
@@ -645,7 +788,16 @@ export const ApplicationModal = ({
                   socialName={'twitter'}
                   placeholder="@StarkIndustries"
                   required
-                  formLabel="Personal X Profile"
+                  formLabel={
+                    isST
+                      ? ST_GRANT_COPY.application.twitter.label
+                      : 'Personal X Profile'
+                  }
+                  formDescription={
+                    isST
+                      ? ST_GRANT_COPY.application.twitter.description
+                      : undefined
+                  }
                   control={form.control}
                   height="h-9"
                   showVerification
@@ -654,16 +806,36 @@ export const ApplicationModal = ({
                   onVerify={handleVerifyClick}
                   isPro={isProGrant}
                 />
-                <SocialInput
-                  name="github"
-                  socialName={'github'}
-                  placeholder="TonyStark"
-                  formLabel="Personal Github Profile"
-                  formDescription="If this is a dev-based grant, please add your best github profile here."
-                  control={form.control}
-                  height="h-9"
-                  isPro={isProGrant}
-                />
+
+                {!isST && (
+                  <SocialInput
+                    name="github"
+                    socialName={'github'}
+                    placeholder="TonyStark"
+                    formLabel="Personal Github Profile"
+                    formDescription="If this is a dev-based grant, please add your best github profile here."
+                    control={form.control}
+                    height="h-9"
+                    isPro={isProGrant}
+                  />
+                )}
+
+                {isST && (
+                  <FormFieldWrapper
+                    control={form.control}
+                    name="expenseBreakdown"
+                    label={ST_GRANT_COPY.application.expenseBreakdown.label}
+                    description={
+                      ST_GRANT_COPY.application.expenseBreakdown.description
+                    }
+                    isRequired
+                    isRichEditor
+                    richEditorPlaceholder={
+                      ST_GRANT_COPY.application.expenseBreakdown.placeholder
+                    }
+                    isPro={isProGrant}
+                  />
+                )}
 
                 {questions?.map((question: any, index: number) => (
                   <FormFieldWrapper
@@ -683,24 +855,38 @@ export const ApplicationModal = ({
                 <FormFieldWrapper
                   control={form.control}
                   name="milestones"
-                  label="Goals and Milestones"
-                  description="List down the things you hope to achieve by the end of project duration."
+                  label={
+                    isST
+                      ? ST_GRANT_COPY.application.milestones.label
+                      : 'Goals and Milestones'
+                  }
+                  description={
+                    isST
+                      ? ST_GRANT_COPY.application.milestones.description
+                      : 'List down the things you hope to achieve by the end of project duration.'
+                  }
                   isRequired
                   isRichEditor
-                  richEditorPlaceholder="Outline your project goals and milestones"
+                  richEditorPlaceholder={
+                    isST
+                      ? ST_GRANT_COPY.application.milestones.placeholder
+                      : 'Outline your project goals and milestones'
+                  }
                   isPro={isProGrant}
                 />
 
-                <FormFieldWrapper
-                  control={form.control}
-                  name="kpi"
-                  label="Primary Key Performance Indicator"
-                  description="What metric will you track to indicate success/failure of the project? At what point will it be a success? Could be anything, e.g. installs, users, views, TVL, etc."
-                  isRequired
-                  isRichEditor
-                  richEditorPlaceholder="What's the key metric for success"
-                  isPro={isProGrant}
-                />
+                {!isST && (
+                  <FormFieldWrapper
+                    control={form.control}
+                    name="kpi"
+                    label="Primary Key Performance Indicator"
+                    description="What metric will you track to indicate success/failure of the project? At what point will it be a success? Could be anything, e.g. installs, users, views, TVL, etc."
+                    isRequired
+                    isRichEditor
+                    richEditorPlaceholder="What's the key metric for success"
+                    isPro={isProGrant}
+                  />
+                )}
 
                 {!grantApplication && (
                   <div className="flex flex-col gap-2">
@@ -725,9 +911,9 @@ export const ApplicationModal = ({
                         htmlFor="acknowledgement"
                         className="text-xs text-slate-500"
                       >
-                        To receive grant funding, you may need to send proofs of
-                        milestone completion and of outcomes that reflect your
-                        application and this grant listing.
+                        {isST
+                          ? ST_GRANT_COPY.application.acknowledgement
+                          : 'To receive grant funding, you may need to send proofs of milestone completion and of outcomes that reflect your application and this grant listing.'}
                         <span className="text-red-500">*</span>
                       </label>
                     </div>

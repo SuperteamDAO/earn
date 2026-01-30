@@ -1,10 +1,16 @@
-import { tokenList } from '@/constants/tokenList';
+import { getTokenIcon } from '@/constants/tokenList';
 import { cn } from '@/utils/cn';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 
 import { type GrantWithApplicationCount } from '../types';
 import { grantAmount } from '../utils/grantAmount';
 import { DollarIcon, PayoutIcon, TimeToPayIcon } from './icons';
+
+const currencyFormatter = new Intl.NumberFormat('en-US', {
+  maximumFractionDigits: 0,
+  currency: 'USD',
+  style: 'currency',
+});
 
 interface GrantStatsProps {
   grant: GrantWithApplicationCount;
@@ -18,10 +24,7 @@ export const GrantStats = ({ grant }: GrantStatsProps) => {
           <img
             className="h-8 w-8 rounded-full"
             alt={'green doller'}
-            src={
-              tokenList.filter((e) => e?.tokenSymbol === grant.token)[0]
-                ?.icon ?? '/assets/dollar.svg'
-            }
+            src={getTokenIcon(grant.token || 'USDC')}
           />
           <p className="text-lg font-semibold text-slate-700 md:text-xl">
             {grantAmount({
@@ -57,11 +60,7 @@ export const GrantStats = ({ grant }: GrantStatsProps) => {
               <PayoutIcon />
               <p className="text-lg font-medium text-slate-700 md:text-xl">
                 {grant.totalApproved
-                  ? new Intl.NumberFormat('en-US', {
-                      maximumFractionDigits: 0,
-                      currency: 'USD',
-                      style: 'currency',
-                    }).format(
+                  ? currencyFormatter.format(
                       Math.round(
                         grant?.totalApproved / grant?.totalApplications,
                       ),

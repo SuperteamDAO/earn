@@ -34,7 +34,7 @@ export function PaymentPendingBanner({ listing }: PaymentPendingBannerProps) {
 
   return (
     <Link
-      href={`/dashboard/listings/${listing.slug}/submissions?tab=payments`}
+      href={`/earn/dashboard/listings/${listing.slug}/submissions?tab=payments`}
       className="relative flex items-center justify-between overflow-hidden rounded-xl bg-slate-100 px-10 py-8"
       onClick={handleClearPaymentsClick}
       prefetch={false}

@@ -12,7 +12,7 @@ type PromptProps = Pick<
 >;
 
 const descriptionPromptBounty = (props: PromptProps) => `
-You are an AI assistant tasked with drafting bounty listings for Superteam Earn (https://earn.superteam.fun/). Your goal is to create listings that are clear, straightforward, well-structured, and sound like they were written by a real person. Write naturally - avoid corporate buzzwords and overly polished language.
+You are an AI assistant tasked with drafting bounty listings for Superteam Earn (https://superteam.fun/earn/). Your goal is to create listings that are clear, straightforward, well-structured, and sound like they were written by a real person. Write naturally - avoid corporate buzzwords and overly polished language.
 
 **🚨 CRITICAL WARNING: ABSOLUTELY NO RANDOM LINKS 🚨**
 **Under NO circumstances should you add any links, URLs, citations, or references from web search results or any external sources. ONLY use links that are explicitly provided in the <company-description> or user's message. This restriction is MANDATORY and NON-NEGOTIABLE.**
@@ -161,7 +161,7 @@ Generate a bounty listing draft using the information above. Structure the draft
 `;
 
 const descriptionPromptProject = (props: PromptProps) => `
-You are an AI assistant tasked with drafting project listings for Superteam Earn (https://earn.superteam.fun/). Your goal is to create listings that are clear, straightforward, well-structured, detailed yet concise (target 200-400 words), and sound like genuine freelance project postings written by real people. Write naturally - avoid corporate speak and marketing jargon. Remember, these are *projects*: applicants apply, one is selected, and *then* they do the work.
+You are an AI assistant tasked with drafting project listings for Superteam Earn (https://superteam.fun/earn/). Your goal is to create listings that are clear, straightforward, well-structured, detailed yet concise (target 200-400 words), and sound like genuine freelance project postings written by real people. Write naturally - avoid corporate speak and marketing jargon. Remember, these are *projects*: applicants apply, one is selected, and *then* they do the work.
 
 **🚨 CRITICAL WARNING: ABSOLUTELY NO RANDOM LINKS 🚨**
 **Under NO circumstances should you add any links, URLs, citations, or references from web search results or any external sources. ONLY use links that are explicitly provided in the <company-description> or user's message. This restriction is MANDATORY and NON-NEGOTIABLE.**
@@ -294,9 +294,9 @@ Explicitly reason through the compensation calculations and formatting. This inv
 `;
 
 const descriptionPromptHackathon = (props: PromptProps) => `
-You need to make drafts for hackathon side-tracks that get listed on Superteam Earn (https://earn.superteam.fun/). 
+You need to make drafts for hackathon side-tracks that get listed on Superteam Earn (https://superteam.fun/earn/). 
 
-You are an AI assistant tasked with drafting bounty listings for Superteam Earn (https://earn.superteam.fun/). Superteam Earn hosts specific tracks or challenges sponsored by different companies as part of a larger hackathon. Participants build and submit their work based on the track's scope to compete for rewards.
+You are an AI assistant tasked with drafting bounty listings for Superteam Earn (https://superteam.fun/earn/). Superteam Earn hosts specific tracks or challenges sponsored by different companies as part of a larger hackathon. Participants build and submit their work based on the track's scope to compete for rewards.
 Your goal is to create listings that are clear, straightforward, well-structured, and sound like they were written by a real person. Write naturally - avoid corporate buzzwords and overly polished language.
 
 **🚨 CRITICAL WARNING: ABSOLUTELY NO RANDOM LINKS 🚨**

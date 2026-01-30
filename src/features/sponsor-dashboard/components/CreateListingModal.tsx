@@ -24,23 +24,23 @@ export const CreateListingModal = ({
 
   useEffect(() => {
     if (isOpen) {
-      router.prefetch('/dashboard/new');
+      router.prefetch('/earn/dashboard/new');
     }
   }, [isOpen, router]);
 
   const handleCreateBounty = () => {
     posthog.capture('create new bounty_sponsor');
-    router.push('/dashboard/new?type=bounty');
+    router.push('/earn/dashboard/new?type=bounty');
   };
 
   const handleCreateProject = () => {
     posthog.capture('create new project_sponsor');
-    router.push('/dashboard/new?type=project');
+    router.push('/earn/dashboard/new?type=project');
   };
 
   // const handleCreateHackathon = (hackathon: string) => {
   //   posthog.capture('create new hackathon_sponsor');
-  //   router.push(`/dashboard/new?type=hackathon&hackathon=${hackathon}`);
+  //   router.push(`/earn/dashboard/new?type=hackathon&hackathon=${hackathon}`);
   // };
 
   const isMD = useMediaQuery('(min-width: 768px)');

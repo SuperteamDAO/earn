@@ -1,9 +1,10 @@
 import { NextResponse } from 'next/server';
 
-export async function GET(): Promise<NextResponse> {
-  const isProduction = process.env.NEXT_PUBLIC_VERCEL_ENV === 'production';
+import { getSiteUrl, isProductionEnv } from '@/lib/site-url';
 
-  const baseUrl = 'https://earn.superteam.fun';
+export async function GET(): Promise<NextResponse> {
+  const isProduction = isProductionEnv();
+  const baseUrl = getSiteUrl();
 
   // For preview/staging environments, disallow everything
   if (!isProduction) {
@@ -19,10 +20,11 @@ Disallow: /`;
 
   const robotsTxt = `User-agent: *
 Allow: /
-Disallow: /dashboard/
+Disallow: /earn/dashboard/
 Disallow: /auth/
-Disallow: /signin
-Disallow: /signup
+Disallow: /earn/signin
+Disallow: /earn/signup
+Sitemap: ${baseUrl}/sitemap.xml
 Sitemap: ${baseUrl}/sitemap-index.xml`;
 
   return new NextResponse(robotsTxt, {

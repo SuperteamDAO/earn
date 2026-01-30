@@ -1,4 +1,3 @@
-import { useQuery } from '@tanstack/react-query';
 import { Check, Clock, File, MessageSquare, Pause } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -19,7 +18,6 @@ import { dayjs } from '@/utils/dayjs';
 import { BoostButton } from '@/features/listing-builder/components/Form/Boost/BoostButton';
 import { ProBadge } from '@/features/pro/components/ProBadge';
 
-import { submissionCountQuery } from '../../queries/submission-count';
 import { type Listing, type ListingHackathon } from '../../types';
 import { getListingIcon } from '../../utils/getListingIcon';
 import { BookmarkListing } from './BookmarkListing';
@@ -31,7 +29,7 @@ import { StatusBadge } from './StatusBadge';
 
 const SponsorLogo = ({ sponsor }: { sponsor: SponsorType | undefined }) => {
   return (
-    <Link href={`/s/${sponsor?.slug}`}>
+    <Link href={`/earn/s/${sponsor?.slug}`}>
       <img
         className="mr-2 h-12 w-12 rounded-md object-cover md:h-16 md:w-16"
         alt={sponsor?.name}
@@ -99,7 +97,7 @@ const HeaderSub = ({
   return (
     <div className="flex flex-wrap items-center gap-1 md:gap-2">
       <Link
-        href={`/s/${sponsor?.slug}`}
+        href={`/earn/s/${sponsor?.slug}`}
         className="group flex items-center gap-1"
         onClick={() => {
           posthog.capture('sponsor_listing', {
@@ -117,7 +115,7 @@ const HeaderSub = ({
       <ListingHeaderSeparator />
       {isHackathon ? (
         <div className="flex items-center">
-          <Link href={`/hackathon/${Hackathon?.slug}`}>
+          <Link href={`/earn/hackathon/${Hackathon?.slug}`}>
             <img
               className="h-[1rem]"
               alt={type}
@@ -155,7 +153,7 @@ const HeaderSub = ({
       <ListingHeaderSeparator />
       {isPro && (
         <>
-          <Link href="/pro">
+          <Link href="/earn/pro">
             <ProBadge
               containerClassName="bg-transparent px-0 py-0 gap-1"
               iconClassName="size-3 text-zinc-600"
@@ -186,10 +184,14 @@ export function ListingHeader({
   listing,
   isTemplate = false,
   commentCount,
+  submissionNumber,
+  isSubmissionNumberLoading = false,
 }: {
   listing: Listing;
   isTemplate?: boolean;
   commentCount?: number;
+  submissionNumber?: number;
+  isSubmissionNumberLoading?: boolean;
 }) {
   const {
     type,
@@ -217,9 +219,6 @@ export function ListingHeader({
   const hasHackathonStarted = dayjs(serverTime()).isAfter(Hackathon?.startDate);
   const isProject = type === 'project';
   const isHackathon = type === 'hackathon';
-
-  const { data: submissionNumber, isLoading: isSubmissionNumberLoading } =
-    useQuery(submissionCountQuery(listing.id!));
 
   const statusIconStyles = 'w-5 h-5';
   let statusText = '';
@@ -325,7 +324,7 @@ export function ListingHeader({
           {!isSubmissionPage && (
             <ListingTabLink
               className="pointer-events-none hidden px-0 md:flex md:w-[23rem]"
-              href={`/listing/${slug}/`}
+              href={`/earn/listing/${slug}/`}
               text={
                 type === 'project'
                   ? isWinnersAnnounced
@@ -340,7 +339,9 @@ export function ListingHeader({
 
           <ListingTabLink
             href={
-              !isTemplate ? `/listing/${slug}/` : `/templates/listings/${slug}/`
+              !isTemplate
+                ? `/earn/listing/${slug}/`
+                : `/earn/templates/listings/${slug}/`
             }
             text="Details"
             isActive={!router.asPath.split('/')[3]?.includes('submission')}
@@ -351,7 +352,7 @@ export function ListingHeader({
           {!isProject && isWinnersAnnounced && (
             <ListingTabLink
               onClick={() => posthog.capture('submissions tab_listing')}
-              href={`/listing/${slug}/submission`}
+              href={`/earn/listing/${slug}/submission`}
               text="Submissions"
               isActive={!!router.asPath.split('/')[3]?.includes('submission')}
               subText={

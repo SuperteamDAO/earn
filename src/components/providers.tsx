@@ -5,8 +5,6 @@ import { type Session } from 'next-auth';
 import { SessionProvider } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 
-import { fontMono, fontSans } from '@/theme/fonts';
-
 export default function Providers({
   children,
   session,
@@ -15,8 +13,6 @@ export default function Providers({
   session?: Session | null;
 }) {
   const [queryClient] = useState(() => new QueryClient());
-
-  const wsUrl = process.env.NEXT_PUBLIC_RPC_WS_URL;
 
   return (
     <SessionProvider session={session}>
@@ -29,11 +25,9 @@ export default function Providers({
                 rpc: createSolanaRpc(
                   `https://${process.env.NEXT_PUBLIC_RPC_URL}`,
                 ),
-                ...(wsUrl
-                  ? {
-                      rpcSubscriptions: createSolanaRpcSubscriptions(wsUrl),
-                    }
-                  : {}),
+                rpcSubscriptions: createSolanaRpcSubscriptions(
+                  `${process.env.NEXT_PUBLIC_RPC_WS_URL}`,
+                ),
               },
             },
           },
@@ -42,12 +36,6 @@ export default function Providers({
       >
         <QueryClientProvider client={queryClient}>
           <PrivyInitFlagBridge />
-          <style jsx global>{`
-            :root {
-              --font-sans: ${fontSans.style.fontFamily};
-              --font-mono: ${fontMono.style.fontFamily};
-            }
-          `}</style>
           {children}
         </QueryClientProvider>
       </PrivyProvider>

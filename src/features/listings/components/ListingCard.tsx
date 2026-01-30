@@ -5,7 +5,7 @@ import MdModeComment from '@/components/icons/MdModeComment';
 import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ASSET_URL } from '@/constants/ASSET_URL';
-import { tokenList } from '@/constants/tokenList';
+import { getTokenIcon } from '@/constants/tokenList';
 import { useServerTimeSync } from '@/hooks/use-server-time';
 import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';
@@ -82,14 +82,14 @@ export const ListingCard = ({ bounty }: { bounty: Listing }) => {
     ? sponsor.logo.replace('/upload/', '/upload/c_scale,w_128,h_128,f_auto/')
     : `${ASSET_URL}/logo/sponsor-logo.png`;
 
-  const tokenIcon = tokenList.find((ele) => ele.tokenSymbol === token)?.icon;
-
   const isVariable = compensationType === 'variable';
   const showToken = !isVariable || (isVariable && isWinnersAnnounced);
 
+  const tokenIcon = getTokenIcon(token ?? '');
+
   return (
     <Link
-      href={`/listing/${slug}`}
+      href={`/earn/listing/${slug}`}
       className={cn(
         'block w-full rounded-md px-2 py-4 no-underline hover:bg-gray-100 sm:px-4',
         isFeatured && isBeforeDeadline ? 'bg-purple-50' : '',
@@ -108,7 +108,7 @@ export const ListingCard = ({ bounty }: { bounty: Listing }) => {
               {title}
             </p>
             <Link
-              href={`/s/${sponsor?.slug}`}
+              href={`/earn/s/${sponsor?.slug}`}
               onClick={(e) => e.stopPropagation()}
               className="flex w-min items-center gap-1 hover:underline"
             >

@@ -1,6 +1,6 @@
 import { CircularProgress } from '@/components/ui/progress';
 import { Separator } from '@/components/ui/separator';
-import { tokenList } from '@/constants/tokenList';
+import { getTokenIcon } from '@/constants/tokenList';
 import { cn } from '@/utils/cn';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 
@@ -35,10 +35,7 @@ export const ApplicationStats = ({ application, grant }: ApplicationStats) => {
             <img
               className="h-5 w-5 rounded-full"
               alt={'green doller'}
-              src={
-                tokenList.filter((e) => e?.tokenSymbol === grant.token)[0]
-                  ?.icon ?? '/assets/dollar.svg'
-              }
+              src={getTokenIcon(grant.token ?? '')}
             />
             <p className="font-semibold text-slate-600">
               {formatNumberWithSuffix(

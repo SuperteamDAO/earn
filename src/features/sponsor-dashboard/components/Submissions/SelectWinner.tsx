@@ -9,7 +9,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { tokenList } from '@/constants/tokenList';
+import { getTokenIcon } from '@/constants/tokenList';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import { cleanRewards, nthLabelGenerator, sortRank } from '@/utils/rank';
@@ -170,11 +170,7 @@ export const SelectWinner = ({
                               {bounty?.token && (
                                 <div className="flex items-center gap-1">
                                   <img
-                                    src={
-                                      tokenList.find(
-                                        (t) => t.tokenSymbol === bounty?.token,
-                                      )?.icon
-                                    }
+                                    src={getTokenIcon(bounty?.token ?? '')}
                                     alt="token"
                                     className="h-4 w-4"
                                   />
@@ -228,11 +224,7 @@ export const SelectWinner = ({
                         <div className="flex items-center gap-2">
                           {bounty?.token && (
                             <img
-                              src={
-                                tokenList.find(
-                                  (t) => t.tokenSymbol === bounty?.token,
-                                )?.icon
-                              }
+                              src={getTokenIcon(bounty?.token ?? '')}
                               alt={bounty.token}
                               className="h-5 w-5 rounded-full"
                             />

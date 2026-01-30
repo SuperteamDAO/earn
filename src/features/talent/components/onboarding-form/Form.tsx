@@ -45,7 +45,7 @@ export const TalentForm = () => {
   const {
     control,
     formState: { errors },
-    setValue,
+    getValues,
     reset,
   } = form;
 
@@ -105,13 +105,18 @@ export const TalentForm = () => {
 
   useEffect(() => {
     if (user) {
+      const currentLocation = getValues('location');
+      const userLocation = newTalentSchema.shape.location.safeParse(
+        user?.location,
+      ).data;
+
       reset({
         username: user?.username,
         firstName: user?.firstName,
         lastName: user?.lastName,
         skills: newTalentSchema.shape.skills.safeParse(user?.skills).data,
         photo: user?.photo,
-        location: newTalentSchema.shape.location.safeParse(user?.location).data,
+        location: userLocation || currentLocation,
         discord: user.discord || undefined,
         github: extractSocialUsername('github', user.github || '') || undefined,
         twitter:
@@ -124,7 +129,7 @@ export const TalentForm = () => {
       });
       setSkillsRefreshKey((s) => s + 1);
     }
-  }, [user, setValue]);
+  }, [user, getValues, reset]);
 
   const isForcedRedirect = useMemo(() => {
     return router.query.type === 'forced';
