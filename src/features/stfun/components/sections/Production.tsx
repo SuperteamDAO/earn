@@ -174,36 +174,6 @@ export default function Production() {
               })
             }
           />
-          <IllustrationCard
-            className="min-h-[300px] min-w-[240px] md:col-start-2 md:row-start-4 md:row-end-6 lg:col-start-2 lg:row-start-6 lg:-row-end-1"
-            text="Superteam Handbook"
-            imageUrl={`${ASSET_URL}/st/cards/founders_league_new.png`}
-            onClick={() =>
-              window.open(
-                'https://docs.superteam.fun/the-superteam-handbook/',
-                '_blank',
-              )
-            }
-          />
-          <IllustrationCard
-            className="min-h-[300px] min-w-[240px] md:col-start-2 md:row-start-1 md:row-end-3 lg:col-start-1 lg:row-start-4 lg:row-end-7"
-            text="Members' Lounge"
-            imageUrl={`${ASSET_URL}/st/cards/ecosystem_calls_new.png`}
-            onClick={() =>
-              window.open(
-                'https://x.com/superteam/status/1852284030537900442',
-                '_blank',
-              )
-            }
-          />
-          <IllustrationCard
-            className="min-h-[300px] min-w-[240px] md:col-start-2 md:row-start-7 md:row-end-6 lg:col-start-3 lg:row-start-4 lg:row-end-7"
-            text="Fast Track"
-            imageUrl={`${ASSET_URL}/st/cards/alphasquad_new.png`}
-            onClick={() =>
-              window.open('https://superteam.fun/fast-track/', '_blank')
-            }
-          />
         </div>
       </div>
     </div>
