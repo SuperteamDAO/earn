@@ -10,7 +10,6 @@ import Collab from '@/features/stfun/components/sections/Collab';
 import Geographies from '@/features/stfun/components/sections/Geographies';
 import Hero from '@/features/stfun/components/sections/Hero';
 import LoveRespect from '@/features/stfun/components/sections/LoveRespect';
-import Partners from '@/features/stfun/components/sections/Partners';
 import Production from '@/features/stfun/components/sections/Production';
 
 export default function Home() {
@@ -43,8 +42,6 @@ export default function Home() {
       />
 
       <Geographies />
-
-      <Partners />
 
       <Production />
 
