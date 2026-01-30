@@ -388,7 +388,7 @@ export const Superteams = [
     link: 'https://x.com/superteamie',
   },
   {
-    name: 'Superteam Spain',
+    name: 'La Familia',
     icons: basePath + 'logos/spain.jpg',
     banner: basePath + 'banners/spain',
     region: 'Spain' as Region,
