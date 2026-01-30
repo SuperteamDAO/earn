@@ -10,12 +10,13 @@ import { Button } from '@/components/ui/button';
 import { CopyButton } from '@/components/ui/copy-tooltip';
 import { CircularProgress } from '@/components/ui/progress';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { tokenList } from '@/constants/tokenList';
+import { getTokenIcon } from '@/constants/tokenList';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
 import { truncateString } from '@/utils/truncateString';
 
 import { type Grant } from '@/features/grants/types';
+import { isSTGrant, ST_GRANT_COPY } from '@/features/grants/utils/stGrant';
 import {
   Telegram,
   Twitter,
@@ -25,17 +26,20 @@ import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
 import { selectedGrantTrancheAtom } from '../../atoms';
 import { type GrantTrancheWithApplication } from '../../queries/tranches';
+import { ImageGallery } from '../ImageGallery';
 import { InfoBox } from '../InfoBox';
 
 interface Props {
   grant: Grant | undefined;
   tranches: GrantTrancheWithApplication[] | undefined;
+  isLoading?: boolean;
   approveOnOpen: () => void;
   rejectedOnOpen: () => void;
 }
 export const TrancheDetails = ({
   grant,
   tranches,
+  isLoading,
   approveOnOpen,
   rejectedOnOpen,
 }: Props) => {
@@ -43,10 +47,9 @@ export const TrancheDetails = ({
   const isPending = selectedTranche?.status === 'Pending';
   const isApproved = selectedTranche?.status === 'Approved';
   const isRejected = selectedTranche?.status === 'Rejected';
+  const isST = isSTGrant(grant);
 
-  const tokenIcon = tokenList.find(
-    (ele) => ele.tokenSymbol === grant?.token,
-  )?.icon;
+  const tokenIcon = getTokenIcon(grant?.token ?? '');
 
   const formattedCreatedAt = dayjs(selectedTranche?.createdAt).format(
     'DD MMM YYYY',
@@ -89,7 +92,7 @@ export const TrancheDetails = ({
                   </div>
 
                   <Link
-                    href={`/t/${selectedTranche?.GrantApplication?.user?.username}`}
+                    href={`/earn/t/${selectedTranche?.GrantApplication?.user?.username}`}
                     className="text-brand-purple flex w-full items-center gap-1 text-xs font-medium whitespace-nowrap"
                     rel="noopener noreferrer"
                     target="_blank"
@@ -293,20 +296,57 @@ export const TrancheDetails = ({
                 content={formattedCreatedAt}
               />
 
-              <InfoBox
-                label="KPIS AND MILESTONES"
-                content={selectedTranche?.GrantApplication?.kpi}
-                isHtml
-              />
+              {!isST && (
+                <InfoBox
+                  label="KPIS AND MILESTONES"
+                  content={selectedTranche?.GrantApplication?.kpi}
+                  isHtml
+                />
+              )}
 
               <InfoBox
-                label="Project Updates"
+                label={
+                  isST
+                    ? ST_GRANT_COPY.tranche.projectUpdate.label
+                    : 'Project Updates'
+                }
                 content={selectedTranche?.update}
                 isHtml
               />
 
+              {isST && (
+                <>
+                  <ImageGallery
+                    label={ST_GRANT_COPY.tranche.eventPictures.label}
+                    images={selectedTranche?.eventPictures as string[] | null}
+                  />
+
+                  <ImageGallery
+                    label={ST_GRANT_COPY.tranche.eventReceipts.label}
+                    images={selectedTranche?.eventReceipts as string[] | null}
+                  />
+
+                  {selectedTranche?.attendeeCount !== null &&
+                    selectedTranche?.attendeeCount !== undefined && (
+                      <InfoBox
+                        label={ST_GRANT_COPY.tranche.attendeeCount.label}
+                        content={String(selectedTranche.attendeeCount)}
+                      />
+                    )}
+
+                  {selectedTranche?.socialPost && (
+                    <InfoBox
+                      label={ST_GRANT_COPY.tranche.socialPost.label}
+                      content={selectedTranche.socialPost}
+                    />
+                  )}
+                </>
+              )}
+
               <InfoBox
-                label="Help Wanted"
+                label={
+                  isST ? ST_GRANT_COPY.tranche.helpWanted.label : 'Help Wanted'
+                }
                 content={selectedTranche?.helpWanted}
                 isHtml
               />
@@ -335,6 +375,10 @@ export const TrancheDetails = ({
             </ScrollArea>
           </div>
         </>
+      ) : isLoading ? (
+        <div className="flex h-full items-center justify-center p-3">
+          <p className="text-sm text-slate-400">Loading...</p>
+        </div>
       ) : (
         <div className="p-3">
           <p className="text-xl font-medium text-slate-500">

@@ -2,7 +2,7 @@ import Link from 'next/link';
 
 import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
 import { ASSET_URL } from '@/constants/ASSET_URL';
-import { tokenList } from '@/constants/tokenList';
+import { getTokenIcon } from '@/constants/tokenList';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 
 import { type GrantWithApplicationCount } from '../types';
@@ -24,7 +24,7 @@ export const GrantsCardMini = ({
     totalApplications,
   } = grant;
 
-  const tokenIcon = tokenList.find((ele) => ele.tokenSymbol === token)?.icon;
+  const tokenIcon = getTokenIcon(token ?? '');
 
   const sponsorLogo = sponsor?.logo
     ? sponsor.logo.replace('/upload/', '/upload/c_scale,w_128,h_128,f_auto/')
@@ -32,7 +32,7 @@ export const GrantsCardMini = ({
   return (
     <Link
       className="block w-full rounded-md bg-white px-2 py-4 hover:bg-gray-100 hover:no-underline"
-      href={`/grants/${slug}`}
+      href={`/earn/grants/${slug}`}
     >
       <div className="ph-no-capture flex w-full items-center justify-between">
         <div className="flex w-full">
@@ -46,7 +46,7 @@ export const GrantsCardMini = ({
               {title}
             </p>
             <Link
-              href={`/s/${sponsor?.slug}`}
+              href={`/earn/s/${sponsor?.slug}`}
               onClick={(e) => e.stopPropagation()}
               className="flex w-fit items-center gap-1 hover:underline"
             >

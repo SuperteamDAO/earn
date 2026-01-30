@@ -42,7 +42,7 @@ const MobileSponsorDrawer = ({
             <div className="flex items-center gap-3">
               <Link
                 className="ph-no-capture"
-                href="/new/sponsor/"
+                href="/earn/new/sponsor/"
                 onClick={() => posthog.capture('login_navbar')}
               >
                 <Button variant="ghost" className="text-base text-slate-500">
@@ -52,7 +52,7 @@ const MobileSponsorDrawer = ({
               <Separator orientation="vertical" className="h-5 bg-slate-300" />
               <Link
                 className="ph-no-capture"
-                href="/new/sponsor/"
+                href="/earn/new/sponsor/"
                 onClick={() => posthog.capture('get started_sponsor navbar')}
               >
                 <Button
@@ -68,7 +68,7 @@ const MobileSponsorDrawer = ({
           {user && !user.currentSponsorId && (
             <Link
               className="ph-no-capture"
-              href="/new/sponsor/"
+              href="/earn/new/sponsor/"
               onClick={() => posthog.capture('get started_sponsor navbar')}
             >
               <Button variant="ghost" className="text-brand-purple text-base">
@@ -80,7 +80,7 @@ const MobileSponsorDrawer = ({
           {user && !!user.currentSponsorId && (
             <Link
               className="ph-no-capture"
-              href="/dashboard/listings/?open=1"
+              href="/earn/dashboard/listings/?open=1"
               onClick={() => posthog.capture('create a listing_sponsor navbar')}
             >
               <Button variant="outline" className="text-brand-purple text-base">
@@ -145,7 +145,7 @@ export const MobileNavbar = () => {
 
       <div className="absolute left-1/2 -translate-x-1/2">
         <Link
-          href="/"
+          href="/earn"
           className="flex items-center gap-2 hover:no-underline"
           onClick={() => {
             posthog.capture('homepage logo click_universal');
@@ -182,7 +182,7 @@ export const MobileNavbar = () => {
       {ready && !authenticated && (
         <Link
           className="ph-no-capture"
-          href="/new/sponsor/"
+          href="/earn/new/sponsor/"
           onClick={() => posthog.capture('login_navbar')}
         >
           <Button variant="ghost" className="text-brand-purple mr-2 text-base">

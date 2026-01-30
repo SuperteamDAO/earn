@@ -126,7 +126,7 @@ export const Footer = () => {
   const handleRegionChange = (value: string): void => {
     if (value === 'Global') {
       setSelectedRegion('Global');
-      router.push('/');
+      router.push('/earn');
       return;
     }
 
@@ -135,18 +135,18 @@ export const Footer = () => {
     // Check if it's a Superteam region
     const superteam = Superteams.find((t) => t.region === value);
     if (superteam?.slug) {
-      router.push(`/regions/${superteam.slug.toLowerCase()}`);
+      router.push(`/earn/regions/${superteam.slug.toLowerCase()}`);
     } else {
       // It's a country or region, generate slug from the name
       const slug = generateSlug(value);
-      router.push(`/regions/${slug}`);
+      router.push(`/earn/regions/${slug}`);
     }
   };
 
   const handleSkillChange = (value: string): void => {
     if (value === 'All') {
       setSelectedSkill('All');
-      router.push('/');
+      router.push('/earn');
       return;
     }
 
@@ -154,21 +154,21 @@ export const Footer = () => {
 
     // Generate slug from skill name (e.g., 'Frontend' -> 'frontend')
     const slug = value.toLowerCase().replace(/\s+/g, '-');
-    router.push(`/skill/${slug}`);
+    router.push(`/earn/skill/${slug}`);
   };
 
   const opportunities = [
-    { text: 'Bounties', href: '/bounties' },
-    { text: 'Projects', href: '/projects' },
-    { text: 'Jobs', href: '/jobs' },
-    { text: 'Grants', href: '/grants' },
+    { text: 'Bounties', href: '/earn/bounties' },
+    { text: 'Projects', href: '/earn/projects' },
+    { text: 'Jobs', href: '/earn/jobs' },
+    { text: 'Grants', href: '/earn/grants' },
   ];
 
   const categories = [
-    { text: 'Content', href: '/category/content' },
-    { text: 'Design', href: '/category/design' },
-    { text: 'Development', href: '/category/development' },
-    { text: 'Others', href: '/category/other' },
+    { text: 'Content', href: '/earn/category/content' },
+    { text: 'Design', href: '/earn/category/design' },
+    { text: 'Development', href: '/earn/category/development' },
+    { text: 'Others', href: '/earn/category/other' },
   ];
 
   const about = [
@@ -176,8 +176,8 @@ export const Footer = () => {
       text: 'FAQ',
       href: 'https://superteamdao.notion.site/Superteam-Earn-FAQ-aedaa039b25741b1861167d68aa880b1?pvs=4',
     },
-    { text: 'Terms', href: '/terms-of-use.pdf' },
-    { text: 'Privacy Policy', href: '/privacy-policy.pdf' },
+    { text: 'Terms', href: '/earn/terms-of-use.pdf' },
+    { text: 'Privacy Policy', href: '/earn/privacy-policy.pdf' },
     {
       text: 'Changelog',
       href: 'https://superteamdao.notion.site/Superteam-Earn-Changelog-faf0c85972a742699ecc07a52b569827',

@@ -5,7 +5,6 @@ import { useEffect } from 'react';
 import { toast } from 'sonner';
 
 import { ErrorSection } from '@/components/shared/ErrorSection';
-import { LoadingSection } from '@/components/shared/LoadingSection';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { useUser } from '@/store/user';
@@ -18,6 +17,7 @@ import { sponsorDashboardListingQuery } from '@/features/sponsor-dashboard/queri
 
 import { AUTO_GENERATE_STORAGE_KEY } from '../constants';
 import { ListingBuilderProvider } from './ListingBuilderProvider';
+import { ListingBuilderSkeleton } from './ListingBuilderSkeleton';
 
 interface ListingBuilderLayout {
   route: 'new' | 'edit' | 'duplicate';
@@ -59,7 +59,7 @@ export function ListingBuilder({ route, slug }: ListingBuilderLayout) {
       const error = listingError as any;
       if (error?.response?.status === 403) {
         toast.error('This listing does not belong to you');
-        router.push('/dashboard/listings');
+        router.push('/earn/dashboard/listings');
         return;
       }
     }
@@ -73,7 +73,7 @@ export function ListingBuilder({ route, slug }: ListingBuilderLayout) {
         listing.sponsorId !== user?.currentSponsorId &&
         user?.role !== 'GOD'
       ) {
-        router.push('/dashboard/listings');
+        router.push('/earn/dashboard/listings');
         return;
       }
     }
@@ -109,26 +109,23 @@ export function ListingBuilder({ route, slug }: ListingBuilderLayout) {
     return <Login isOpen={true} onClose={() => {}} />;
   }
 
-  if (!ready) {
-    return <LoadingSection />;
-  }
-
   const showContent = user?.currentSponsor?.id || user?.role === 'GOD';
-  if (!user || !authenticated || !showContent) {
-    return <LoadingSection />;
-  }
 
-  if (isListingLoading || isHackathonLoading || isSwitchingSponsor) {
-    return <LoadingSection />;
-  }
-
-  // Don't show error page if we're redirecting due to 403 error
   const is403Error =
     listingError &&
     (listingError as any)?.response?.status === 403 &&
     user?.role !== 'GOD';
-  if (is403Error) {
-    return <LoadingSection />;
+  if (
+    !user ||
+    !authenticated ||
+    !showContent ||
+    !ready ||
+    isListingLoading ||
+    isHackathonLoading ||
+    isSwitchingSponsor ||
+    is403Error
+  ) {
+    return <ListingBuilderSkeleton />;
   }
 
   if (route !== 'new' && (!slug || !listing)) {
@@ -138,7 +135,7 @@ export function ListingBuilder({ route, slug }: ListingBuilderLayout) {
           <Meta
             title="Superteam Earn | Work to Earn in Crypto"
             description="Explore the latest bounties on Superteam Earn, offering opportunities in the crypto space across Design, Development, and Content."
-            canonical="https://earn.superteam.fun"
+            canonical="https://superteam.fun"
           />
         }
       >

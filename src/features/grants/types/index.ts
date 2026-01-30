@@ -47,6 +47,7 @@ interface Grant {
   isNative?: boolean;
   ai?: GrantsAi;
   isPro?: boolean;
+  isST?: boolean;
 }
 
 interface GrantWithApplicationCount extends Grant {

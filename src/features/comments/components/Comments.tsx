@@ -1,10 +1,16 @@
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useSetAtom } from 'jotai';
 import { ArrowRight, Loader2 } from 'lucide-react';
 import posthog from 'posthog-js';
-import { type Dispatch, type SetStateAction, useEffect, useState } from 'react';
+import {
+  type Dispatch,
+  type SetStateAction,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 
 import { ErrorInfo } from '@/components/shared/ErrorInfo';
-import { Loading } from '@/components/shared/Loading';
 import { Button } from '@/components/ui/button';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 import type { Comment } from '@/interface/comments';
@@ -14,6 +20,7 @@ import { type CommentRefType } from '@/prisma/enums';
 import { cn } from '@/utils/cn';
 
 import { validUsernamesAtom } from '../atoms';
+import { commentsQuery } from '../queries/comments';
 import { sortComments } from '../utils';
 import { Comment as CommentUI } from './Comment';
 import { CommentForm } from './CommentForm';
@@ -52,104 +59,114 @@ export const Comments = ({
   onSuccess,
   isListingAndUserPro = false,
 }: Props) => {
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(false);
-  const [comments, setComments] = useState<Comment[]>([]);
-  const [defaultSuggestions, setDefaultSuggestions] = useState<
-    Map<string, User>
-  >(new Map());
+  const queryClient = useQueryClient();
   const setValidUsernames = useSetAtom(validUsernamesAtom);
+  const [localComments, setLocalComments] = useState<Comment[]>([]);
+  const [loadedPages, setLoadedPages] = useState(1);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+
+  const {
+    data: commentsData,
+    isLoading,
+    isError,
+  } = useQuery(commentsQuery({ refId, skip: 0, take }));
+
+  useEffect(() => {
+    if (commentsData) {
+      setCount(commentsData.count);
+      setValidUsernames(commentsData.validUsernames);
+    }
+  }, [commentsData, setCount, setValidUsernames]);
+
+  const comments = useMemo(() => {
+    const serverComments = commentsData?.result ?? [];
+    const combined = [...localComments, ...serverComments];
+    const deduped = Array.from(
+      new Map(combined.map((c) => [c.id, c])).values(),
+    );
+    return sortComments(deduped);
+  }, [commentsData?.result, localComments]);
+
+  const defaultSuggestions = useMemo(() => {
+    const suggestions = new Map<string, User>();
+    if (poc?.id) {
+      suggestions.set(poc.id, poc);
+    }
+    comments.forEach((comment) => {
+      suggestions.set(comment.authorId, comment.author);
+    });
+    return suggestions;
+  }, [comments, poc]);
 
   const deleteComment = async (commentId: string) => {
     posthog.capture('delete_comment');
-    const commentIndex = comments.findIndex(
-      (comment) => comment.id === commentId,
-    );
-    if (commentIndex > -1) {
-      await api.delete(`/api/comment/${commentId}/delete`);
-      setComments((prevComments) => {
-        const newComments = [...prevComments];
-        newComments.splice(commentIndex, 1);
-        return newComments;
-      });
-    } else {
-      throw new Error('Comment not found');
-    }
+    await api.delete(`/api/comment/${commentId}/delete`);
+    setLocalComments((prev) => prev.filter((c) => c.id !== commentId));
+    queryClient.invalidateQueries({ queryKey: ['comments', refId] });
   };
 
   const pinComment = async (commentId: string, isPinned: boolean) => {
     posthog.capture('pin_comment');
-    const commentIndex = comments.findIndex(
-      (comment) => comment.id === commentId,
+    await api.post(`/api/comment/${commentId}/pin`, { isPinned });
+    setLocalComments((prev) =>
+      sortComments(
+        prev.map((c) => (c.id === commentId ? { ...c, isPinned } : c)),
+      ),
     );
-    if (commentIndex > -1) {
-      try {
-        await api.post(`/api/comment/${commentId}/pin`, {
-          isPinned,
-        });
-        setComments((prevComments) => {
-          const newComments = [...prevComments];
-          if (newComments[commentIndex]) {
-            newComments[commentIndex] = {
-              ...newComments[commentIndex],
-              isPinned,
-            };
-          }
-          return sortComments(newComments);
-        });
-      } catch (error) {
-        console.error('Failed to pin/unpin comment:', error);
-        throw error;
-      }
-    } else {
-      throw new Error('Comment not found');
-    }
+    queryClient.invalidateQueries({ queryKey: ['comments', refId] });
   };
 
-  const getComments = async (skip = 0, take = 10) => {
-    setIsLoading(true);
+  const loadMoreComments = async () => {
+    setIsLoadingMore(true);
     try {
-      const commentsData = await api.get(`/api/comment/${refId}`, {
-        params: {
-          skip,
-          take,
-        },
+      const response = await api.get(`/api/comment/${refId}`, {
+        params: { skip: loadedPages * take, take },
       });
-      const allComments = commentsData.data.result as Comment[];
-
-      const sortedComments = sortComments(allComments);
-
-      setCount(commentsData.data.count);
-      setComments([...comments, ...sortedComments]);
-      setDefaultSuggestions((prevSuggestions) => {
-        const newSuggestions = new Map(prevSuggestions);
-        if (poc && poc.id) {
-          newSuggestions.set(poc.id, poc);
-        }
-        allComments.forEach((comment) => {
-          newSuggestions.set(comment.authorId, comment.author);
-        });
-        return newSuggestions;
-      });
-      setValidUsernames(commentsData.data.validUsernames as string[]);
+      const newComments = response.data.result as Comment[];
+      setLocalComments((prev) => [...prev, ...newComments]);
+      setLoadedPages((p) => p + 1);
     } catch (e) {
-      setError(true);
+      console.error('Failed to load more comments:', e);
     }
-    setIsLoading(false);
+    setIsLoadingMore(false);
   };
 
   useEffect(() => {
-    if (!isLoading) return;
-    getComments(0, take);
+    const handleUpdate = () => {
+      queryClient.invalidateQueries({ queryKey: ['comments', refId] });
+    };
+    window.addEventListener('update-comments', handleUpdate);
+    return () => window.removeEventListener('update-comments', handleUpdate);
+  }, [queryClient, refId]);
 
-    window.addEventListener('update-comments', () => {
-      getComments();
-    });
-  }, []);
+  if (isLoading) {
+    return (
+      <div className="flex w-full flex-col items-start gap-4 rounded-xl bg-white">
+        <div className="flex w-full gap-2 pt-4">
+          <div className="h-5 w-5 animate-pulse rounded bg-slate-100" />
+          <div className="h-5 w-24 animate-pulse rounded bg-slate-100" />
+        </div>
+        <div className="flex w-full gap-3">
+          <div className="h-10 w-10 shrink-0 animate-pulse rounded-full bg-slate-100" />
+          <div className="h-20 w-full animate-pulse rounded-lg bg-slate-100" />
+        </div>
+        <div className="flex w-full flex-col gap-5 pb-4">
+          {[1, 2].map((i) => (
+            <div key={i} className="flex w-full gap-3">
+              <div className="h-8 w-8 shrink-0 animate-pulse rounded-full bg-slate-100" />
+              <div className="flex-1 space-y-2">
+                <div className="h-4 w-32 animate-pulse rounded bg-slate-100" />
+                <div className="h-4 w-full animate-pulse rounded bg-slate-100" />
+                <div className="h-4 w-3/4 animate-pulse rounded bg-slate-100" />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
 
-  if (isLoading && !comments?.length) return <Loading />;
-
-  if (error) return <ErrorInfo />;
+  if (isError) return <ErrorInfo />;
 
   return (
     <div
@@ -175,11 +192,8 @@ export const Comments = ({
         refId={refId}
         poc={poc}
         onSuccess={(newComment) => {
-          setCount((count) => count + 1);
-          setComments((prevComments) => {
-            const newComments = [newComment, ...prevComments];
-            return sortComments(newComments);
-          });
+          setCount((c) => c + 1);
+          setLocalComments((prev) => sortComments([newComment, ...prev]));
           onSuccess?.(newComment);
         }}
         isTemplate={isTemplate}
@@ -215,18 +229,18 @@ export const Comments = ({
           );
         })}
       </div>
-      {!!comments.length && comments.length !== count && (
+      {!!comments.length && comments.length < count && (
         <div className="flex w-full justify-center rounded-md">
           <Button
             className={cn(
               'text-sm font-normal text-slate-400 hover:bg-slate-400 hover:text-white',
               'disabled:hover:bg-transparent disabled:hover:text-slate-400',
             )}
-            disabled={!!isLoading}
-            onClick={() => getComments(comments.length)}
+            disabled={isLoadingMore}
+            onClick={loadMoreComments}
             variant="ghost"
           >
-            {isLoading ? (
+            {isLoadingMore ? (
               <>
                 <span>Fetching Comments...</span>
                 <Loader2 className="ml-2 h-4 w-4 animate-spin" />

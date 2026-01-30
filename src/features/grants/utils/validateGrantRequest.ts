@@ -8,6 +8,7 @@ export async function validateGrantRequest(userId: string, grantId: string) {
     select: {
       id: true,
       title: true,
+      slug: true,
       isActive: true,
       isPublished: true,
       region: true,
@@ -18,6 +19,12 @@ export async function validateGrantRequest(userId: string, grantId: string) {
       isNative: true,
       airtableId: true,
       isPro: true,
+      isST: true,
+      sponsor: {
+        select: {
+          slug: true,
+        },
+      },
     },
   });
 

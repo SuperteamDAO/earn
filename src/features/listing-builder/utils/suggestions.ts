@@ -11,11 +11,11 @@ const bountySuggestions: Suggestions[] = [
     suggestions: [
       {
         label: 'Twitter Thread on Rome Protocol',
-        link: 'https://earn.superteam.fun/listing/write-a-twitter-thread-on-rome-protocol/',
+        link: 'https://superteam.fun/earn/listing/write-a-twitter-thread-on-rome-protocol/',
       },
       {
         label: 'History of Bonk [Twitter Thread]',
-        link: 'https://earn.superteam.fun/listing/history-of-bonk-twitter-thread/',
+        link: 'https://superteam.fun/earn/listing/history-of-bonk-twitter-thread/',
       },
     ],
   },
@@ -24,11 +24,11 @@ const bountySuggestions: Suggestions[] = [
     suggestions: [
       {
         label: 'Deep Dive on ONDC Network',
-        link: 'https://earn.superteam.fun/listing/deep-dive-on-the-state-of-the-ondc-network/',
+        link: 'https://superteam.fun/earn/listing/deep-dive-on-the-state-of-the-ondc-network/',
       },
       {
         label: 'Deep Dive on Monaco Protocol',
-        link: 'https://earn.superteam.fun/listing/deep-dive-on-monaco-protocol-article/',
+        link: 'https://superteam.fun/earn/listing/deep-dive-on-monaco-protocol-article/',
       },
     ],
   },
@@ -37,11 +37,11 @@ const bountySuggestions: Suggestions[] = [
     suggestions: [
       {
         label: 'Design y00ts Dashboard',
-        link: 'https://earn.superteam.fun/listing/y00ts-royalty-dashboard-design/',
+        link: 'https://superteam.fun/earn/listing/y00ts-royalty-dashboard-design/',
       },
       {
         label: 'Redesign Symmetry App',
-        link: 'https://earn.superteam.fun/listing/redesign-symmetry-app/',
+        link: 'https://superteam.fun/earn/listing/redesign-symmetry-app/',
       },
     ],
   },

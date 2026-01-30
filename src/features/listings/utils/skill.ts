@@ -7,7 +7,7 @@ import {
 /**
  * Generates a URL-friendly slug from a skill name
  */
-export function generateSkillSlug(name: string): string {
+function generateSkillSlug(name: string): string {
   // Handle special characters before slugification
   const slug = name
     .toLowerCase()

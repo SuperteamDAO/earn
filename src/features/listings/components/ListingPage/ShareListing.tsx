@@ -108,8 +108,9 @@ export function ShareListing({
 
 function MainContent({ listing, grant, source }: SourceType) {
   const listingLink = React.useCallback(() => {
-    if (source === 'listing') return `${getURL()}listing/${listing?.slug}/`;
-    else return `${getURL()}grants/${grant?.slug}/`;
+    if (source === 'listing')
+      return `${getURL()}earn/listing/${listing?.slug}/`;
+    else return `${getURL()}earn/grants/${grant?.slug}/`;
   }, [source, listing?.slug, grant?.slug]);
 
   const shareMessage = (
@@ -190,7 +191,7 @@ function MainContent({ listing, grant, source }: SourceType) {
         onClick={onListingLinkCopy}
       >
         <span className="truncate font-normal text-slate-500">
-          earn.superteam.fun/{source === 'grant' ? 'grants' : 'listing'}/
+          superteam.fun/earn/{source === 'grant' ? 'grants' : 'listing'}/
           {source === 'grant' ? grant?.slug : listing?.slug}
         </span>
         {hasCopied ? (

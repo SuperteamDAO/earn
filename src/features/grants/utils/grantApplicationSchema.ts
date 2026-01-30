@@ -13,6 +13,8 @@ import {
   isHandleVerified,
 } from '@/features/social/utils/x-verification';
 
+import { extractLumaEventSlug, LUMA_PREFIX } from './stGrant';
+
 const X_USERNAME_REGEX = /^[A-Za-z0-9_]{1,15}$/;
 
 const twitterProfileSchema = z
@@ -32,12 +34,31 @@ const twitterProfileSchema = z
     return handle ? `https://x.com/${handle}` : val;
   });
 
+const lumaLinkSchema = z
+  .string()
+  .trim()
+  .min(1, 'Luma event link is required')
+  .refine(
+    (val) => {
+      const slug = extractLumaEventSlug(val);
+      return slug !== null && slug.length > 0;
+    },
+    {
+      message: 'Please enter a valid Luma event link (e.g., lu.ma/your-event)',
+    },
+  )
+  .transform((val) => {
+    const slug = extractLumaEventSlug(val);
+    return slug ? `${LUMA_PREFIX}${slug}` : val;
+  });
+
 export const grantApplicationSchema = (
   minReward: number,
   maxReward: number,
   token: string,
   questions?: { order: number; question: string }[],
   user?: User | null,
+  isST?: boolean,
 ) =>
   z
     .object({
@@ -61,10 +82,14 @@ export const grantApplicationSchema = (
         .max(maxReward, `Amount cannot exceed ${maxReward || 1} ${token}`),
       projectDetails: z.string().min(1, 'Project details are required'),
       walletAddress: z.string().min(1, 'Solana Wallet Address is required'),
-      projectTimeline: z.string().min(1, 'Project timeline is required'),
-      proofOfWork: z.string().min(1, 'Proof of work is required'),
+      projectTimeline: isST
+        ? z.string().optional()
+        : z.string().min(1, 'Project timeline is required'),
+      proofOfWork: isST
+        ? z.string().optional()
+        : z.string().min(1, 'Proof of work is required'),
       milestones: z.string().min(1, 'Milestones are required'),
-      kpi: z.string().min(1, 'KPI is required'),
+      kpi: isST ? z.string().optional() : z.string().min(1, 'KPI is required'),
       twitter: twitterProfileSchema,
       github: z
         .preprocess(
@@ -77,6 +102,10 @@ export const grantApplicationSchema = (
         .array(z.object({ question: z.string(), answer: z.string() }))
         .optional(),
       telegram: telegramUsernameSchema,
+      lumaLink: isST ? lumaLinkSchema : z.string().optional(),
+      expenseBreakdown: isST
+        ? z.string().min(1, 'Expense breakdown is required')
+        : z.string().optional(),
     })
     .superRefine((data, ctx) => {
       if (data.walletAddress) {

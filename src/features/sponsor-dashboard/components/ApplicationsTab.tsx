@@ -4,7 +4,6 @@ import { LucideFlag } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
-import { LoadingSection } from '@/components/shared/LoadingSection';
 import { Button } from '@/components/ui/button';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
@@ -361,10 +360,6 @@ export const ApplicationsTab = ({ slug }: Props) => {
     rejectedMultipleOnOpen();
   };
 
-  if (isApplicationsLoading) {
-    return <LoadingSection />;
-  }
-
   return (
     <>
       <div className="flex w-full items-start bg-white">
@@ -413,6 +408,7 @@ export const ApplicationsTab = ({ slug }: Props) => {
                 applications={applications}
                 approveOnOpen={approveOnOpen}
                 rejectedOnOpen={rejectedOnOpen}
+                isLoading={isApplicationsLoading}
               />
             )}
           </div>

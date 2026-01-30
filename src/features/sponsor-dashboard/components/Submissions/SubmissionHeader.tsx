@@ -97,7 +97,7 @@ export const SubmissionHeader = ({
     verifyPaymentOnOpen();
   };
 
-  const listingPath = `listing/${bounty?.slug}`;
+  const listingPath = `earn/listing/${bounty?.slug}`;
 
   const bountyStatus = getListingStatus(bounty);
   const isProject = bounty?.type === 'project';
@@ -191,9 +191,9 @@ export const SubmissionHeader = ({
 
   const getListingUrl = () => {
     if (bounty?.type === 'grant') {
-      return `${getURL()}grants/${bounty.slug}`;
+      return `${getURL()}earn/grants/${bounty.slug}`;
     }
-    return `${getURL()}listing/${bounty?.slug}`;
+    return `${getURL()}earn/listing/${bounty?.slug}`;
   };
 
   const pastDeadline = isDeadlineOver(bounty?.deadline);
@@ -301,7 +301,7 @@ export const SubmissionHeader = ({
                     <Link
                       href={
                         bounty
-                          ? `/dashboard/${isHackathonPage ? 'hackathon' : 'listings'}/${bounty.slug}/edit/`
+                          ? `/earn/dashboard/${isHackathonPage ? 'hackathon' : 'listings'}/${bounty.slug}/edit/`
                           : ''
                       }
                     >
@@ -457,7 +457,7 @@ export const SubmissionHeader = ({
             }}
             onClick={() => {
               router.push(
-                `/dashboard/listings/${bounty?.slug}/submissions?tab=payments`,
+                `/earn/dashboard/listings/${bounty?.slug}/submissions?tab=payments`,
               );
             }}
           >

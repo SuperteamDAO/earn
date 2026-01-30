@@ -66,16 +66,6 @@ export async function DELETE(request: NextRequest) {
 
     const { publicId, source } = validationResult.data;
 
-    if (!validatePublicIdFolder(publicId, source)) {
-      logger.warn(
-        `Public ID ${publicId} does not match expected folder for source ${source}`,
-      );
-      return NextResponse.json(
-        { error: 'Invalid public ID for the specified source' },
-        { status: 400 },
-      );
-    }
-
     const user = await prisma.user.findUnique({
       where: { id: userId },
       select: {
@@ -101,6 +91,16 @@ export async function DELETE(request: NextRequest) {
     }
 
     if (source === 'description') {
+      if (!validatePublicIdFolder(publicId, source)) {
+        logger.warn(
+          `Public ID ${publicId} does not match expected folder for source ${source}`,
+        );
+        return NextResponse.json(
+          { error: 'Invalid public ID for the specified source' },
+          { status: 400 },
+        );
+      }
+
       if (!user.currentSponsorId && user.UserSponsors.length === 0) {
         logger.warn(
           `User ${userId} attempted to delete description image without sponsor access`,

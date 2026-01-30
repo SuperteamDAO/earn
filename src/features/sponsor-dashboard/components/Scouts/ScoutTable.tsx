@@ -118,7 +118,7 @@ export function ScoutTable({ bountyId, scouts, setInvited }: Props) {
                 <TableCell className="h-full w-fit text-xs">
                   <Link
                     className="ph-no-capture flex items-center gap-2"
-                    href={`/t/${scout.username}`}
+                    href={`/earn/t/${scout.username}`}
                     onClick={() => {
                       posthog.capture('profile click_scouts', {
                         clicked_username: scout.username,
@@ -223,7 +223,7 @@ export function ScoutTable({ bountyId, scouts, setInvited }: Props) {
                   <div className="flex h-8 items-start gap-2">
                     <Link
                       className="ph-no-capture block h-full"
-                      href={`/t/${scout.username}`}
+                      href={`/earn/t/${scout.username}`}
                       onClick={() => {
                         posthog.capture('view profile_scouts', {
                           clicked_username: scout.username,

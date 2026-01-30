@@ -18,7 +18,7 @@ export function SidebarBannerCypherpunk({ className }: SidebarPosterProps) {
   const { data: stats } = useQuery(statsDataQuery('cypherpunk'));
   const CLOSE_DATE = stats?.deadline;
   return (
-    <Link href="/hackathon/cypherpunk">
+    <Link href="/earn/hackathon/cypherpunk">
       <div
         className={`relative flex h-fit w-full flex-col items-center overflow-hidden rounded-lg border border-white/20 bg-[#F8F5FF] ${className}`}
       >

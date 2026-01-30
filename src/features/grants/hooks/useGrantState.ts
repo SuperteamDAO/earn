@@ -4,9 +4,13 @@ import { useCallback, useMemo } from 'react';
 
 import { GrantCategorySchema } from '../constants/schema';
 
-const defaultCategory = GrantCategorySchema._def.defaultValue();
+const DEFAULT_CATEGORY = GrantCategorySchema._def.defaultValue();
 
 type QueryParamUpdates = Partial<Record<'grantCategory', string | null>>;
+
+const PARAM_DEFAULTS: Record<keyof QueryParamUpdates, unknown> = {
+  grantCategory: DEFAULT_CATEGORY,
+} as const;
 
 export const useGrantState = () => {
   const router = useRouter();
@@ -21,14 +25,10 @@ export const useGrantState = () => {
     (updates: QueryParamUpdates) => {
       const newParams = new URLSearchParams(Array.from(searchParams.entries()));
 
-      const paramDefaults: Record<keyof QueryParamUpdates, unknown> = {
-        grantCategory: defaultCategory,
-      };
-
       for (const key in updates) {
         const typedKey = key as keyof QueryParamUpdates;
         const value = updates[typedKey];
-        const defaultValueForKey = paramDefaults[typedKey];
+        const defaultValueForKey = PARAM_DEFAULTS[typedKey];
 
         if (
           value === null ||
@@ -45,12 +45,12 @@ export const useGrantState = () => {
       const newPath = `${window.location.pathname}${queryString ? `?${queryString}` : ''}`;
       router.replace(newPath, { scroll: false });
     },
-    [searchParams, router, defaultCategory],
+    [searchParams, router],
   );
 
   const activeCategory = useMemo(
-    (): string => searchParams.get('grantCategory') ?? defaultCategory,
-    [searchParams, defaultCategory],
+    (): string => searchParams.get('grantCategory') ?? DEFAULT_CATEGORY,
+    [searchParams],
   );
 
   const handleCategoryChange = useCallback(
@@ -60,7 +60,7 @@ export const useGrantState = () => {
         posthog.capture(posthogEvent);
       }
     },
-    [updateQueryParams, posthog],
+    [updateQueryParams],
   );
 
   return {

@@ -1,6 +1,6 @@
 import Link from 'next/link';
 
-import { tokenList } from '@/constants/tokenList';
+import { getTokenIcon } from '@/constants/tokenList';
 import { type TrackProps } from '@/interface/hackathon';
 
 export const TrackBox = ({
@@ -12,7 +12,7 @@ export const TrackBox = ({
 }: TrackProps) => {
   return (
     <Link
-      href={`/listing/${slug}`}
+      href={`/earn/listing/${slug}`}
       className="flex flex-col justify-between rounded-lg border border-slate-200 p-3 md:p-4"
     >
       <div className="flex items-center gap-3">
@@ -34,7 +34,7 @@ export const TrackBox = ({
         <img
           className="h-4 w-4 rounded-full md:h-6 md:w-6"
           alt={token}
-          src={tokenList.find((t) => t.tokenSymbol === token)?.icon || ''}
+          src={getTokenIcon(token)}
         />
         <span className="text-sm font-semibold text-slate-700 md:text-base">
           {rewardAmount?.toLocaleString('en-us')}

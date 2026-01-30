@@ -4,8 +4,8 @@ import { findCategoryBySlug, getAllCategorySlugs } from './category';
 import { generateSlug, getAllRegionSlugs } from './region';
 import { findSkillBySlug, getAllSkillSlugs } from './skill';
 
-export const OPPORTUNITY_TYPES = ['bounties', 'projects', 'grants'] as const;
-export type OpportunityType = (typeof OPPORTUNITY_TYPES)[number];
+const OPPORTUNITY_TYPES = ['bounties', 'projects', 'grants'] as const;
+type OpportunityType = (typeof OPPORTUNITY_TYPES)[number];
 
 export interface ParsedOpportunityTags {
   readonly region?: string;

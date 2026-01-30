@@ -1,0 +1,25 @@
+{
+  "rewrites": [
+    { "source": "/build", "destination": "https://build.superteam.fun/build" },
+    {
+      "source": "/build/",
+      "destination": "https://build.superteam.fun/build/"
+    },
+    {
+      "source": "/build/:path*",
+      "destination": "https://build.superteam.fun/build/:path*"
+    },
+    {
+      "source": "/hackathon",
+      "destination": "https://hackathon.superteam.fun/hackathon"
+    },
+    {
+      "source": "/hackathon/",
+      "destination": "https://hackathon.superteam.fun/hackathon/"
+    },
+    {
+      "source": "/hackathon/:path*",
+      "destination": "https://hackathon.superteam.fun/hackathon/:path*"
+    }
+  ]
+}

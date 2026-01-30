@@ -1,0 +1,18 @@
+import type { GetServerSideProps, NextPage } from 'next';
+
+const Bounty: NextPage = () => {
+  return null;
+};
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const { slug } = context.params as { slug: string };
+
+  return {
+    redirect: {
+      destination: `/earn/listing/${slug}/`,
+      permanent: true,
+    },
+  };
+};
+
+export default Bounty;

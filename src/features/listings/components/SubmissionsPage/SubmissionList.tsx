@@ -1,4 +1,4 @@
-import { type Dispatch, type SetStateAction, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 import type { SubmissionWithUser } from '@/interface/submission';
@@ -11,13 +11,13 @@ interface Props {
   bounty: Listing;
   submissions: SubmissionWithUser[];
   endTime: string;
-  setUpdate: Dispatch<SetStateAction<boolean>>;
+  onUpdate: () => void;
 }
 export const SubmissionList = ({
   bounty,
   submissions,
   endTime,
-  setUpdate,
+  onUpdate,
 }: Props) => {
   const [isEndTimePassed, setIsEndTimePassed] = useState(false);
 
@@ -44,7 +44,7 @@ export const SubmissionList = ({
                   key={submission.id}
                   winner={!!bounty?.isWinnersAnnounced && !!submission.isWinner}
                   link={submission.link ?? ''}
-                  setUpdate={setUpdate}
+                  onUpdate={onUpdate}
                   winnerPosition={submission.winnerPosition}
                 />
               );

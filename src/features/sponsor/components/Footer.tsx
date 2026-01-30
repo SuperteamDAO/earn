@@ -54,8 +54,8 @@ export const Footer = () => {
   const about: FooterLink[] = [
     { text: 'Pricing', href: '#pricing' },
     { text: 'Customers', href: '#trusted-by' },
-    { text: 'Terms & Conditions', href: '/terms-of-use.pdf' },
-    { text: 'Privacy Policy', href: '/privacy-policy.pdf' },
+    { text: 'Terms & Conditions', href: '/earn/terms-of-use.pdf' },
+    { text: 'Privacy Policy', href: '/earn/privacy-policy.pdf' },
   ];
 
   const resources: FooterLink[] = [
@@ -71,9 +71,9 @@ export const Footer = () => {
   ];
 
   const opportunities: FooterLink[] = [
-    { text: 'Bounty', href: '/bounties' },
-    { text: 'Project', href: '/projects' },
-    { text: 'Grants', href: '/grants' },
+    { text: 'Bounty', href: '/earn/bounties' },
+    { text: 'Project', href: '/earn/projects' },
+    { text: 'Grants', href: '/earn/grants' },
   ];
 
   return (

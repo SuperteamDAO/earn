@@ -1,9 +1,10 @@
 import Link from 'next/link';
 
+import { SuperteamBadge } from '@/components/shared/SuperteamBadge';
 import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
 import { LocalImage } from '@/components/ui/local-image';
 import { ASSET_URL } from '@/constants/ASSET_URL';
-import { tokenList } from '@/constants/tokenList';
+import { getTokenIcon } from '@/constants/tokenList';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 
 import { ProBadge } from '@/features/pro/components/ProBadge';
@@ -22,18 +23,19 @@ export const GrantsCard = ({ grant }: { grant: GrantWithApplicationCount }) => {
     totalApproved,
     totalApplications,
     isPro,
+    isST,
   } = grant;
 
   const sponsorLogo = sponsor?.logo
     ? sponsor.logo.replace('/upload/', '/upload/c_scale,w_128,h_128,f_auto/')
     : ASSET_URL + '/logo/sponsor-logo.png';
 
-  const tokenIcon = tokenList.find((ele) => ele.tokenSymbol === token)?.icon;
+  const tokenIcon = getTokenIcon(token ?? '');
 
   return (
     <Link
       className="block w-full rounded-md px-2 py-4 hover:bg-gray-100 hover:no-underline sm:px-4"
-      href={`/grants/${slug}`}
+      href={`/earn/grants/${slug}`}
     >
       <div className="flex w-full items-center justify-between">
         <div className="flex w-full">
@@ -47,7 +49,7 @@ export const GrantsCard = ({ grant }: { grant: GrantWithApplicationCount }) => {
               {title}
             </p>
             <Link
-              href={`/s/${sponsor?.slug}`}
+              href={`/earn/s/${sponsor?.slug}`}
               onClick={(e) => e.stopPropagation()}
               className="flex w-min items-center gap-1 hover:underline"
             >
@@ -56,7 +58,7 @@ export const GrantsCard = ({ grant }: { grant: GrantWithApplicationCount }) => {
               </p>
               <div>{!!sponsor?.isVerified && <VerifiedBadge />}</div>
             </Link>
-            <div className="mt-[1px] flex items-center gap-1 sm:gap-3">
+            <div className="mt-px flex items-center gap-1 sm:gap-2">
               <div className="flex items-center justify-start sm:hidden">
                 <LocalImage
                   className="mr-0.5 h-3.5 w-3.5 rounded-full"
@@ -103,11 +105,21 @@ export const GrantsCard = ({ grant }: { grant: GrantWithApplicationCount }) => {
                   </p>
                 </div>
               )}
-              {!!isPro && (
+              {!!isST && (
+                <>
+                  <p className="flex text-xs text-slate-300 md:text-sm">|</p>
+                  <SuperteamBadge
+                    containerClassName="bg-transparent p-0 mt-px"
+                    iconClassName="size-3.5 text-zinc-600"
+                    textClassName="hidden"
+                  />
+                </>
+              )}
+              {!!isPro && !isST && (
                 <>
                   <p className="flex text-xs text-slate-300 md:text-sm">|</p>
                   <ProBadge
-                    containerClassName="bg-transparent p-0 gap-1"
+                    containerClassName="bg-transparent p-0 gap-1 mt-px"
                     iconClassName="size-2.5 text-zinc-500"
                     textClassName="text-xxs font-medium text-zinc-700"
                   />

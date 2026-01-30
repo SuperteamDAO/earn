@@ -7,6 +7,7 @@ import { ChevronDown } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import SuperteamIcon from '@/components/icons/SuperteamIcon';
+import { SuperteamBadge } from '@/components/shared/SuperteamBadge';
 import { Button } from '@/components/ui/button';
 import { CircularProgress } from '@/components/ui/progress';
 import { type BountyType } from '@/generated/prisma/enums';
@@ -16,6 +17,7 @@ import { useUser } from '@/store/user';
 import styles from '@/styles/listing-description.module.css';
 import { cn } from '@/utils/cn';
 
+import { isUserEligibleForST } from '@/features/grants/utils/stGrant';
 import { userStatsQuery } from '@/features/home/queries/user-stats';
 import { ProBadge } from '@/features/pro/components/ProBadge';
 import { ProIntro } from '@/features/pro/components/ProIntro';
@@ -25,6 +27,7 @@ interface Props {
   type: BountyType | 'grant';
   sponsorId: string;
   isPro?: boolean;
+  isST?: boolean;
 }
 
 export function DescriptionUI({
@@ -32,26 +35,31 @@ export function DescriptionUI({
   type,
   sponsorId,
   isPro = false,
+  isST = false,
 }: Props) {
   const { user, isLoading: isUserLoading } = useUser();
   const { data: stats, isLoading: isStatsLoading } = useQuery(userStatsQuery);
 
-  const options: HTMLReactParserOptions = {
-    replace: (domNode: any) => {
-      const { name, children, attribs } = domNode;
-      if (name === 'p' && (!children || children.length === 0)) {
-        return <br />;
-      }
-      if (name === 'a' && attribs) {
-        return (
-          <a {...attribs} target="_blank" rel="noopener noreferrer">
-            {domToReact(children, options)}
-          </a>
-        );
-      }
-      return domNode;
-    },
-  };
+  const options = useMemo(() => {
+    const memoizedOptions: HTMLReactParserOptions = {
+      replace: (domNode: any) => {
+        const { name, children, attribs } = domNode;
+        if (name === 'p' && (!children || children.length === 0)) {
+          return <br />;
+        }
+        if (name === 'a' && attribs) {
+          return (
+            <a {...attribs} target="_blank" rel="noopener noreferrer">
+              {domToReact(children, memoizedOptions)}
+            </a>
+          );
+        }
+        return domNode;
+      },
+    };
+
+    return memoizedOptions;
+  }, []);
 
   //to resolve a chain of hydration errors
   const [isMounted, setIsMounted] = useState(false);
@@ -75,11 +83,9 @@ export function DescriptionUI({
   }, [isNotMD, setShowCollapser, setShowMore]);
 
   useEffect(() => {
-    // Use a timeout to ensure the DOM has been updated
     const timer = setTimeout(() => {
       decideCollapser();
     }, 0);
-
     return () => clearTimeout(timer);
   }, [decideCollapser, isMounted]);
 
@@ -160,7 +166,15 @@ export function DescriptionUI({
     );
   }, [isMounted, description, options]);
 
-  const isProEligibilityLoading = isPro && (isUserLoading || isStatsLoading);
+  const isUserSponsor = user?.currentSponsorId === sponsorId;
+
+  const isUserEligibleST = isUserEligibleForST(user);
+  const shouldBlockForST = isST && !isUserEligibleST && !isUserSponsor;
+  const shouldBlockForPro = !isST && isPro && !user?.isPro && !isUserSponsor;
+
+  const isProEligibilityLoading =
+    (isPro || isST) && (isUserLoading || isStatsLoading);
+
   if (isProEligibilityLoading) {
     return (
       <div className="w-full overflow-visible border-b-2 border-slate-200 pb-4 md:border-0">
@@ -194,8 +208,7 @@ export function DescriptionUI({
     );
   }
 
-  const isUserSponsor = user?.currentSponsorId === sponsorId;
-  if (isPro && !user?.isPro && !isUserSponsor) {
+  if (shouldBlockForST || shouldBlockForPro) {
     const randomText =
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit. <br/> Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.';
 
@@ -218,7 +231,22 @@ export function DescriptionUI({
         </div>
         <div className="absolute inset-0 bg-white/0 backdrop-blur-sm" />
         <div className="absolute right-1/2 bottom-1/2 translate-x-1/2 translate-y-1/2 shadow-lg">
-          {!isUserEligibleForPro ? (
+          {isST ? (
+            <div className="w-100 rounded-xl bg-white px-8 pt-6 pb-10">
+              <SuperteamBadge
+                containerClassName="bg-zinc-200 w-fit px-2 py-0.5 gap-1"
+                iconClassName="size-3 text-zinc-500"
+                textClassName="text-sm text-zinc-800 text-medium"
+              />
+              <p className="mt-4 text-xl font-medium text-zinc-800">
+                This grant is only available to Superteam Members
+              </p>
+              <p className="text-md mt-4 mb-4 font-medium text-slate-500">
+                To be eligible, you need to become a Superteam member of your
+                region
+              </p>
+            </div>
+          ) : !isUserEligibleForPro ? (
             <div className="w-100 rounded-xl bg-white px-8 pt-6 pb-10">
               <ProBadge
                 containerClassName="bg-zinc-200 w-fit px-2 py-0.5 gap-1"

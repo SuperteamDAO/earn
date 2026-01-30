@@ -405,7 +405,7 @@ export const tokenList: Token[] = [
     tokenName: 'DMCP',
     tokenSymbol: 'DMCP',
     mintAddress: '81YHAzq9yfptVbNTHiYuMVKVQ6ZNs3XeQFFENnNUpump',
-    icon: 'https://earn.superteam.fun/assets/dollar.svg',
+    icon: 'https://superteam.fun/assets/dollar.svg',
     decimals: 6,
   },
   {
@@ -591,3 +591,10 @@ export const tokenList: Token[] = [
     decimals: 9,
   },
 ];
+
+const tokenIconMap = new Map<string, string>(
+  tokenList.map((t) => [t.tokenSymbol, t.icon]),
+);
+
+export const getTokenIcon = (symbol: string): string =>
+  tokenIconMap.get(symbol) ?? '/assets/dollar.svg';

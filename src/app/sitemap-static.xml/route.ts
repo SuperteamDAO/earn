@@ -1,13 +1,11 @@
 import type { MetadataRoute } from 'next';
 import { NextResponse } from 'next/server';
 
+import { getSiteUrl, isProductionEnv } from '@/lib/site-url';
+
 export const revalidate = 86400;
 
-const baseUrl = 'https://earn.superteam.fun';
-
-function isProduction(): boolean {
-  return process.env.NEXT_PUBLIC_VERCEL_ENV === 'production';
-}
+const baseUrl = getSiteUrl();
 
 /**
  * Escapes XML special characters to prevent injection attacks
@@ -27,75 +25,102 @@ export async function GET(): Promise<NextResponse> {
   const now = new Date();
 
   // Only generate sitemap in production
-  if (!isProduction()) {
+  if (!isProductionEnv()) {
     return new NextResponse(
       '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"></urlset>',
       {
         headers: {
           'Content-Type': 'application/xml; charset=UTF-8',
-          'Cache-Control': 'public, max-age=3600, s-maxage=3600',
+          'Cache-Control':
+            'public, max-age=3600, s-maxage=3600, stale-while-revalidate=86400, stale-if-error=86400',
         },
       },
     );
   }
 
   const staticRoutes: MetadataRoute.Sitemap = [
+    // ST routes
     {
-      url: baseUrl,
+      url: `${baseUrl}/`,
       lastModified: now,
-      changeFrequency: 'daily',
+      changeFrequency: 'weekly',
       priority: 1.0,
     },
     {
-      url: `${baseUrl}/jobs/`,
+      url: `${baseUrl}/collaborate/`,
       lastModified: now,
-      changeFrequency: 'daily',
-      priority: 0.95,
+      changeFrequency: 'monthly',
+      priority: 0.8,
     },
     {
-      url: `${baseUrl}/bounties/`,
+      url: `${baseUrl}/fast-track/`,
       lastModified: now,
-      changeFrequency: 'daily',
-      priority: 0.95,
+      changeFrequency: 'monthly',
+      priority: 0.8,
     },
     {
-      url: `${baseUrl}/grants/`,
+      url: `${baseUrl}/member-perks/`,
       lastModified: now,
-      changeFrequency: 'daily',
-      priority: 0.9,
-    },
-    {
-      url: `${baseUrl}/all/`,
-      lastModified: now,
-      changeFrequency: 'daily',
-      priority: 0.9,
+      changeFrequency: 'weekly',
+      priority: 0.7,
     },
     {
       url: `${baseUrl}/projects/`,
       lastModified: now,
+      changeFrequency: 'weekly',
+      priority: 0.8,
+    },
+    // Earn routes
+    {
+      url: `${baseUrl}/earn/jobs/`,
+      lastModified: now,
       changeFrequency: 'daily',
       priority: 0.95,
     },
     {
-      url: `${baseUrl}/sponsor/`,
+      url: `${baseUrl}/earn/bounties/`,
+      lastModified: now,
+      changeFrequency: 'daily',
+      priority: 0.95,
+    },
+    {
+      url: `${baseUrl}/earn/grants/`,
+      lastModified: now,
+      changeFrequency: 'daily',
+      priority: 0.9,
+    },
+    {
+      url: `${baseUrl}/earn/all/`,
+      lastModified: now,
+      changeFrequency: 'daily',
+      priority: 0.9,
+    },
+    {
+      url: `${baseUrl}/earn/projects/`,
+      lastModified: now,
+      changeFrequency: 'daily',
+      priority: 0.95,
+    },
+    {
+      url: `${baseUrl}/earn/sponsor/`,
       lastModified: now,
       changeFrequency: 'weekly',
       priority: 0.8,
     },
     {
-      url: `${baseUrl}/new/`,
+      url: `${baseUrl}/earn/new/`,
       lastModified: now,
       changeFrequency: 'daily',
       priority: 0.8,
     },
     {
-      url: `${baseUrl}/feed/`,
+      url: `${baseUrl}/earn/feed/`,
       lastModified: now,
       changeFrequency: 'hourly',
       priority: 0.8,
     },
     {
-      url: `${baseUrl}/search/`,
+      url: `${baseUrl}/earn/search/`,
       lastModified: now,
       changeFrequency: 'monthly',
       priority: 0.7,
@@ -130,7 +155,8 @@ export async function GET(): Promise<NextResponse> {
   return new NextResponse(xml, {
     headers: {
       'Content-Type': 'application/xml; charset=UTF-8',
-      'Cache-Control': 'public, max-age=86400, s-maxage=86400',
+      'Cache-Control':
+        'public, max-age=86400, s-maxage=86400, stale-while-revalidate=86400, stale-if-error=86400',
     },
   });
 }

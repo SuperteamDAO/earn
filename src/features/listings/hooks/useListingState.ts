@@ -201,7 +201,7 @@ export const useListingState = ({
         posthog.capture(posthogEvent);
       }
     },
-    [updateQueryParams, posthog],
+    [updateQueryParams],
   );
 
   const handleCategoryChange = useCallback(
@@ -212,7 +212,7 @@ export const useListingState = ({
         posthog.capture(posthogEvent);
       }
     },
-    [updateQueryParams, posthog],
+    [updateQueryParams],
   );
 
   const handleStatusChange = useCallback(

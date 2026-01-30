@@ -32,6 +32,13 @@ const Stat = ({ value, label, isPro }: StatProps) => {
   );
 };
 
+const currencyFormatter = new Intl.NumberFormat('en-US', {
+  style: 'currency',
+  currency: 'USD',
+  maximumFractionDigits: 0,
+  notation: 'compact',
+});
+
 export const UserStatsBanner = () => {
   const { user, isLoading: isUserLoading } = useUser();
   const { ready } = usePrivy();
@@ -41,7 +48,7 @@ export const UserStatsBanner = () => {
 
   if (!ready || isLoading || isUserLoading) {
     return (
-      <Skeleton className="mx-auto h-[170px] max-h-[300px] rounded-xl bg-indigo-600 p-6 md:h-[100px] md:p-10"></Skeleton>
+      <Skeleton className="mx-auto h-[170px] max-h-[300px] rounded-xl bg-indigo-600 p-6 md:h-[100px] md:p-10" />
     );
   }
 
@@ -112,12 +119,7 @@ export const UserStatsBanner = () => {
       {stats && (stats.wins ?? 0) > 0 && (
         <div className="z-10 flex justify-between gap-4 sm:gap-8 md:justify-start">
           <Stat
-            value={new Intl.NumberFormat('en-US', {
-              style: 'currency',
-              currency: 'USD',
-              maximumFractionDigits: 0,
-              notation: 'compact',
-            }).format(stats.totalWinnings ?? 0)}
+            value={currencyFormatter.format(stats.totalWinnings ?? 0)}
             label="Total Earned"
             isPro={isPro ?? false}
           />

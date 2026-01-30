@@ -66,7 +66,7 @@ export async function signInWithPopup<
   }
 
   const defaultCallbackUrl = openInNewWindow
-    ? `${window.location.origin}/auth/popup-callback`
+    ? `${window.location.origin}/earn/auth/popup-callback`
     : window.location.href;
 
   const { callbackUrl = defaultCallbackUrl, redirect = true } = options ?? {}; // openInNewWindow already extracted above

@@ -3,8 +3,7 @@ import posthog from 'posthog-js';
 import { useEffect, useRef, useState } from 'react';
 
 import MdArrowForward from '@/components/icons/MdArrowForward';
-import { ASSET_URL } from '@/constants/ASSET_URL';
-import { tokenList } from '@/constants/tokenList';
+import { getTokenIcon } from '@/constants/tokenList';
 import { type User } from '@/interface/user';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import { getURL } from '@/utils/validUrl';
@@ -30,13 +29,14 @@ const Earner = ({
   username,
   id,
 }: EarnerProps) => {
-  const tokenObj = tokenList.find((t) => t.tokenSymbol === token);
-  const tokenIcon = tokenObj
-    ? tokenObj.icon
-    : ASSET_URL + '/landingsponsor/icons/usdc.svg';
+  const tokenIcon = getTokenIcon(token ?? '');
 
   return (
-    <Link href={`${getURL()}t/${username}`} className="block" prefetch={false}>
+    <Link
+      href={`${getURL()}earn/t/${username}`}
+      className="block"
+      prefetch={false}
+    >
       <div className="my-4 flex w-full items-center">
         <div className="mr-3 flex items-center justify-center">
           <EarnAvatar id={id} avatar={avatar} />
@@ -101,7 +101,7 @@ export const RecentEarners = ({ earners }: { earners?: User[] }) => {
           RECENT EARNERS
         </span>
         <Link
-          href="/leaderboard"
+          href="/earn/leaderboard"
           className="ph-no-capture text-brand-purple flex items-center text-xs font-medium"
           onClick={() => {
             posthog.capture('view leaderboard_homepage');

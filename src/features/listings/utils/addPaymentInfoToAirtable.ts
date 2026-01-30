@@ -78,7 +78,7 @@ function submissionToAirtable(
 
   const rank = getRankLabels(validatedSubmission.winnerPosition)?.toUpperCase();
   const listingUrl =
-    'https://earn.superteam.fun/listing/' + validatedSubmission.listing.slug;
+    'https://superteam.fun/earn/listing/' + validatedSubmission.listing.slug;
   const listingTitle = validatedSubmission.listing.title;
 
   const purposeOfPayment =
