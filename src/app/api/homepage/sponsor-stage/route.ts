@@ -85,6 +85,12 @@ interface ListingWithStage {
   sortDate: Date;
 }
 
+const isListingVerified = (listing: BountyWithStageFields) =>
+  listing.status === 'OPEN' && listing.isPublished && !listing.isArchived;
+
+const isListingReviewable = (listing: BountyWithStageFields) =>
+  isListingVerified(listing) && !listing.isWinnersAnnounced;
+
 function determineSponsorStage(
   listing: BountyWithStageFields,
   hasUnpaidWinners: boolean,
@@ -97,12 +103,22 @@ function determineSponsorStage(
   const commitmentDate = listing.commitmentDate
     ? dayjs(listing.commitmentDate)
     : null;
+  const isVerifiedListing = isListingVerified(listing);
+  const isReviewableListing = isListingReviewable(listing);
 
-  if (
-    commitmentDate &&
-    commitmentDate.isBefore(now) &&
-    !listing.isWinnersAnnounced
-  ) {
+  if (listing.status === 'VERIFYING') {
+    const verificationDate = listing.publishedAt
+      ? dayjs(listing.publishedAt)
+      : listing.updatedAt
+        ? dayjs(listing.updatedAt)
+        : now;
+    return {
+      stage: SponsorStage.UNDER_VERIFICATION,
+      sortDate: verificationDate.toDate(),
+    };
+  }
+
+  if (commitmentDate && commitmentDate.isBefore(now) && isReviewableListing) {
     return {
       stage: SponsorStage.REVIEW_URGENT,
       sortDate: commitmentDate.toDate(),
@@ -110,6 +126,7 @@ function determineSponsorStage(
   }
 
   if (
+    isVerifiedListing &&
     listing.isWinnersAnnounced &&
     listing.type === 'bounty' &&
     hasUnpaidWinners &&
@@ -124,7 +141,7 @@ function determineSponsorStage(
     };
   }
 
-  if (deadline && deadline.isBefore(now) && !listing.isWinnersAnnounced) {
+  if (deadline && deadline.isBefore(now) && isReviewableListing) {
     const hasAiReview =
       listing.type === 'bounty'
         ? (listing.ai as BountiesAi)?.evaluationCompleted === true
@@ -139,20 +156,8 @@ function determineSponsorStage(
     }
   }
 
-  if (listing.status === 'VERIFYING') {
-    const verificationDate = listing.publishedAt
-      ? dayjs(listing.publishedAt)
-      : listing.updatedAt
-        ? dayjs(listing.updatedAt)
-        : now;
-    return {
-      stage: SponsorStage.UNDER_VERIFICATION,
-      sortDate: verificationDate.toDate(),
-    };
-  }
-
   const isActiveListing =
-    listing.isPublished &&
+    isVerifiedListing &&
     listing.isActive &&
     !listing.isArchived &&
     deadline &&
@@ -366,9 +371,11 @@ export async function GET(_request: NextRequest) {
             status: 'OPEN',
             isPublished: true,
             isActive: true,
+            isArchived: false,
           },
           {
             status: 'VERIFYING',
+            isArchived: false,
           },
         ],
       },
@@ -445,16 +452,17 @@ export async function GET(_request: NextRequest) {
       const commitmentDate = listing.commitmentDate
         ? dayjs(listing.commitmentDate)
         : null;
+      const isReviewableListing = isListingReviewable(listing);
       if (
         commitmentDate &&
         commitmentDate.isBefore(now) &&
-        !listing.isWinnersAnnounced
+        isReviewableListing
       ) {
         urgentListingIds.push(listing.id);
       }
 
       const isActiveListing =
-        listing.isPublished &&
+        isListingVerified(listing) &&
         listing.isActive &&
         !listing.isArchived &&
         listing.deadline &&

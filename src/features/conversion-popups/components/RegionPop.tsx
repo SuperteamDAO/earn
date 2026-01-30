@@ -52,10 +52,10 @@ export const RegionPop = ({ st }: { st: Superteam }) => {
     posthog.capture('conversion pop up_initiated', {
       'Popup Source': 'Region Pop-up',
     });
-  }, 5_000);
+  }, 7_000);
 
   const activateQuery = useMemo(
-    () => !authenticated && popupsShowed < 2,
+    () => !authenticated && popupsShowed < 1,
     [authenticated, popupsShowed],
   );
 
@@ -72,7 +72,7 @@ export const RegionPop = ({ st }: { st: Superteam }) => {
       !initated.current &&
       ready &&
       !authenticated &&
-      popupsShowed < 2 &&
+      popupsShowed < 1 &&
       !open &&
       process.env.NEXT_PUBLIC_VERCEL_ENV === 'production'
     ) {
