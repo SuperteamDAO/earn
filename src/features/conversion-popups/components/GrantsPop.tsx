@@ -52,7 +52,7 @@ export const GrantsPop = () => {
     posthog.capture('conversion pop up_initiated', {
       'Popup Source': 'Grants Pop-up',
     });
-  }, 5_000);
+  }, 7_000);
 
   const isMD = useBreakpoint('md');
 
@@ -62,7 +62,7 @@ export const GrantsPop = () => {
       !initated.current &&
       ready &&
       !authenticated &&
-      popupsShowed < 2 &&
+      popupsShowed < 1 &&
       !open &&
       process.env.NEXT_PUBLIC_VERCEL_ENV === 'production'
     ) {

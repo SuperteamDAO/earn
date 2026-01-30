@@ -607,8 +607,7 @@ export const ApplicationModal = ({
                               This is where you will receive your rewards if you
                               win.{' '}
                               <span className="font-semibold">
-                                Make sure this address can accept both USDT &
-                                USDC.
+                                Make sure this address can accept USDG.
                               </span>
                             </>
                           ) : (

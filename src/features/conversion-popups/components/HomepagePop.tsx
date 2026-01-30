@@ -75,10 +75,10 @@ export const HomepagePop = () => {
     posthog.capture('conversion pop up_initiated', {
       'Popup Source': 'Homepage Pop-up',
     });
-  }, 4000);
+  }, 7_000);
 
   const activateQuery = useMemo(
-    () => ready && !authenticated && popupsShowed < 2,
+    () => ready && !authenticated && popupsShowed < 1,
     [ready, authenticated, popupsShowed],
   );
 
@@ -99,7 +99,7 @@ export const HomepagePop = () => {
       !initated.current &&
       ready &&
       !authenticated &&
-      popupsShowed < 2 &&
+      popupsShowed < 1 &&
       !open &&
       process.env.NEXT_PUBLIC_VERCEL_ENV === 'production'
     ) {
