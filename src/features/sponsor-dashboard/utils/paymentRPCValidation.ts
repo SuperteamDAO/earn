@@ -6,12 +6,14 @@ import logger from '@/lib/logger';
 import { getRpc } from '@/features/wallet/utils/getConnection';
 
 const LAMPORTS_PER_SOL = 1_000_000_000n;
+const USD_TOLERANCE_PERCENT = 0.005; // 0.5% tolerance in USD terms
 
 interface ValidatePaymentParams {
   txId: string;
   recipientPublicKey: string;
   expectedAmount: number;
   tokenMint: Token;
+  tokenPriceUSD?: number;
 }
 
 export interface ValidationResult {
@@ -29,11 +31,25 @@ export async function validatePayment({
   recipientPublicKey,
   expectedAmount,
   tokenMint,
+  tokenPriceUSD,
 }: ValidatePaymentParams): Promise<ValidationResult> {
   const rpc = getRpc();
   const maxRetries = 3;
   const delayMs = 5000;
-  const difference = 0.01;
+
+  // Calculate allowed deviation: 0.5% of expected amount in USD terms.
+  // This is equivalent to 0.5% of the expected token amount, even when USD price is unavailable.
+  const getAllowedDifference = (expected: number): number => {
+    if (expected <= 0) {
+      return 0;
+    }
+    if (tokenPriceUSD && tokenPriceUSD > 0) {
+      const expectedUSD = expected * tokenPriceUSD;
+      const toleranceUSD = expectedUSD * USD_TOLERANCE_PERCENT;
+      return toleranceUSD / tokenPriceUSD; // Convert back to token amount
+    }
+    return expected * USD_TOLERANCE_PERCENT;
+  };
 
   try {
     logger.debug(`Getting Transaction Information from RPC for txId: ${txId}`);
@@ -111,9 +127,10 @@ export async function validatePayment({
       const actualTransferAmount =
         Number(postBalance - preBalance) / Number(LAMPORTS_PER_SOL);
 
+      const allowedDiff = getAllowedDifference(expectedAmount);
       if (
         expectedAmount > 0 &&
-        Math.abs(actualTransferAmount - expectedAmount) > difference
+        Math.abs(actualTransferAmount - expectedAmount) > allowedDiff
       ) {
         return {
           isValid: false,
@@ -160,9 +177,10 @@ export async function validatePayment({
     const postAmount = parseFloat(postAmountStr);
     const actualTransferAmount = postAmount - preAmount;
 
+    const allowedDiff = getAllowedDifference(expectedAmount);
     if (
       expectedAmount > 0 &&
-      Math.abs(actualTransferAmount - expectedAmount) > difference
+      Math.abs(actualTransferAmount - expectedAmount) > allowedDiff
     ) {
       return {
         isValid: false,
