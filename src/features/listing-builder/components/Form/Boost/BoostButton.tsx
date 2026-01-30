@@ -128,7 +128,7 @@ export const BoostButton = ({
               className: 'bg-slate-800 text-white border-slate-800 relative',
             }}
           >
-            <Link href={`/dashboard/listings/${slug}/edit?boost=true`}>
+            <Link href={`/earn/dashboard/listings/${slug}/edit?boost=true`}>
               <Button
                 variant="outline"
                 className="border-slate-300 shadow"
@@ -146,7 +146,7 @@ export const BoostButton = ({
     } else {
       return (
         <Link
-          href={`/dashboard/listings/${slug}/edit?boost=true`}
+          href={`/earn/dashboard/listings/${slug}/edit?boost=true`}
           className="hidden sm:block"
         >
           <Button

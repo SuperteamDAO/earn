@@ -50,7 +50,7 @@ export function Header() {
       <div className={cn('mx-auto flex w-full justify-between px-6 py-2')}>
         <div className="flex items-center gap-6">
           <Link
-            href="/"
+            href="/earn"
             onClick={() => posthog.capture('homepage logo click_universal')}
             className="flex items-center gap-3 hover:no-underline"
           >
@@ -69,7 +69,7 @@ export function Header() {
               queryClient.invalidateQueries({
                 queryKey: ['sponsor-dashboard-listing', slug],
               });
-              router.push('/dashboard/listings');
+              router.push('/earn/dashboard/listings');
             }}
           >
             <ChevronLeft /> Go Back

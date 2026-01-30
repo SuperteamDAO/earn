@@ -8,7 +8,7 @@ import posthog from 'posthog-js';
 import { Button } from '@/components/ui/button';
 import { Tooltip } from '@/components/ui/tooltip';
 import { ASSET_URL } from '@/constants/ASSET_URL';
-import { tokenList } from '@/constants/tokenList';
+import { getTokenIcon } from '@/constants/tokenList';
 import { useBreakpoint } from '@/hooks/use-breakpoint';
 import { dayjs } from '@/utils/dayjs';
 
@@ -60,10 +60,6 @@ export function SponsorListing() {
       )
     : `${ASSET_URL}/logo/sponsor-logo.png`;
 
-  const tokenIcon =
-    tokenList.filter((e) => e?.tokenSymbol === listing.token)[0]?.icon ??
-    '/assets/dollar.svg';
-
   const status = getListingStatus(listing);
   const statusColors = getColorStyles(status);
 
@@ -76,7 +72,7 @@ export function SponsorListing() {
       </span>
 
       <Link
-        href={`/listing/${listing.slug}`}
+        href={`/earn/listing/${listing.slug}`}
         className="block overflow-hidden rounded-lg border border-gray-200 bg-white transition-colors hover:border-gray-300"
       >
         <div className="flex flex-col">
@@ -116,7 +112,7 @@ export function SponsorListing() {
                 <img
                   className="h-5 w-5 rounded-full"
                   alt={'green dollar'}
-                  src={tokenIcon}
+                  src={getTokenIcon(listing.token ?? '')}
                 />
 
                 {listing?.type === 'grant' && (
@@ -182,7 +178,7 @@ export function SponsorListing() {
                 asChild
               >
                 <Link
-                  href="/dashboard/listings"
+                  href="/earn/dashboard/listings"
                   onClick={() => {
                     posthog.capture('view dashboard_sponsor sidebar listing', {
                       stage: 'UNDER_VERIFICATION',
@@ -209,7 +205,7 @@ export function SponsorListing() {
                   asChild
                 >
                   <Link
-                    href={`/dashboard/listings/${listing.slug}/submissions`}
+                    href={`/earn/dashboard/listings/${listing.slug}/submissions`}
                     onClick={() => {
                       posthog.capture(
                         'view submissions_sponsor sidebar listing',
@@ -237,7 +233,7 @@ export function SponsorListing() {
                   asChild
                 >
                   <Link
-                    href={`/dashboard/listings/${listing.slug}/edit?boost=true`}
+                    href={`/earn/dashboard/listings/${listing.slug}/edit?boost=true`}
                     onClick={() => {
                       posthog.capture('boost listing_sponsor sidebar listing', {
                         stage: 'BOOST',
@@ -265,7 +261,7 @@ export function SponsorListing() {
                 asChild
               >
                 <Link
-                  href={`/dashboard/listings/${listing.slug}/submissions`}
+                  href={`/earn/dashboard/listings/${listing.slug}/submissions`}
                   onClick={() => {
                     posthog.capture(
                       'view submissions_sponsor sidebar listing',
@@ -295,7 +291,7 @@ export function SponsorListing() {
                 asChild
               >
                 <Link
-                  href={`/dashboard/listings/${listing.slug}/submissions`}
+                  href={`/earn/dashboard/listings/${listing.slug}/submissions`}
                   onClick={() => {
                     posthog.capture(
                       'view submissions_sponsor sidebar listing',
@@ -325,7 +321,7 @@ export function SponsorListing() {
                 asChild
               >
                 <Link
-                  href={`/dashboard/listings/${listing.slug}/submissions`}
+                  href={`/earn/dashboard/listings/${listing.slug}/submissions`}
                   onClick={() => {
                     posthog.capture(
                       'announce winners_sponsor sidebar listing',
@@ -355,7 +351,7 @@ export function SponsorListing() {
                 asChild
               >
                 <Link
-                  href={`/dashboard/listings/${listing.slug}/submissions`}
+                  href={`/earn/dashboard/listings/${listing.slug}/submissions`}
                   onClick={() => {
                     posthog.capture(
                       'announce winners_sponsor sidebar listing',
@@ -385,7 +381,7 @@ export function SponsorListing() {
                 asChild
               >
                 <Link
-                  href={`/dashboard/listings/${listing.slug}/submissions?tab=payments`}
+                  href={`/earn/dashboard/listings/${listing.slug}/submissions?tab=payments`}
                   onClick={() => {
                     posthog.capture('clear payments_sponsor sidebar listing', {
                       stage: 'PAYMENT_PENDING',

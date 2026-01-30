@@ -2,7 +2,7 @@ import { randomUUID } from 'crypto';
 
 import { redis } from './redis';
 
-export interface RedisLockOptions {
+interface RedisLockOptions {
   readonly ttlSeconds?: number;
 }
 

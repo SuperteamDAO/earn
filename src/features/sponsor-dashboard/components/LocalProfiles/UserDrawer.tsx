@@ -93,7 +93,7 @@ export const UserDrawer = ({
               </div>
 
               <Link
-                href={`/t/${user.username}`}
+                href={`/earn/t/${user.username}`}
                 className="flex items-center pl-6 text-[0.9rem] font-medium whitespace-nowrap text-slate-500 hover:text-slate-600"
                 rel="noopener noreferrer"
                 target="_blank"

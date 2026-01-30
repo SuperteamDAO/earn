@@ -15,6 +15,22 @@ interface GrantApplicationWithUserAndGrant extends GrantApplicationModel {
   };
 }
 
+function getValidDeadline(projectTimeline: string, createdAt: Date): string {
+  const timelineDate = new Date(projectTimeline);
+  if (!isNaN(timelineDate.getTime())) {
+    return projectTimeline;
+  }
+
+  const fallbackDate = new Date(createdAt);
+  fallbackDate.setDate(fallbackDate.getDate() + 10);
+
+  const day = fallbackDate.getDate();
+  const month = fallbackDate.toLocaleString('en-US', { month: 'long' });
+  const year = fallbackDate.getFullYear();
+
+  return `${day} ${month} ${year}`;
+}
+
 interface GrantApplicationAirtableSchema {
   earnApplicationId: string;
   Title: string;
@@ -76,7 +92,10 @@ export function convertGrantApplicationToAirtable(
     Grants: [grantApplication.grant.airtableId!],
     Description: turndownService.turndown(grantApplication.projectDetails),
     'Discord Handle': grantApplication.user.discord ?? undefined,
-    Deadline: grantApplication.projectTimeline,
+    Deadline: getValidDeadline(
+      grantApplication.projectTimeline,
+      grantApplication.createdAt,
+    ),
     Type: 'Earn',
     'Grant Listing Title (Earn)': grantApplication.grant.title,
     ...(applicantSuperteamRegionRecordId

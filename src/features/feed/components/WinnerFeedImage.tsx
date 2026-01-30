@@ -1,6 +1,6 @@
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { LocalImage } from '@/components/ui/local-image';
-import { tokenList } from '@/constants/tokenList';
+import { getTokenIcon } from '@/constants/tokenList';
 import { getRankLabels } from '@/utils/rank';
 
 import { type Rewards } from '@/features/listings/types';
@@ -27,7 +27,7 @@ export const WinnerFeedImage = ({
         <LocalImage
           className="h-8 w-8 md:h-16 md:w-16"
           alt={`${token} icon`}
-          src={tokenList.find((t) => t.tokenSymbol === token)?.icon || ''}
+          src={getTokenIcon(token ?? '')}
         />
         <p className="text-2xl font-semibold text-white md:text-5xl">
           {!!grantApplicationAmount ? (

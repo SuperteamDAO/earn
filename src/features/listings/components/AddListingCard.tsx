@@ -17,7 +17,7 @@ export const AddListingCard = ({
   const { user } = useUser();
   const displayType =
     listingType.charAt(0).toUpperCase() + listingType.slice(1);
-  const createUrl = '/dashboard/listings?open=1';
+  const createUrl = '/earn/dashboard/listings?open=1';
   const sponsorName = user?.currentSponsor?.name || 'Your Company Name';
   const sponsorSlug = user?.currentSponsor?.slug;
 
@@ -47,7 +47,7 @@ export const AddListingCard = ({
             </p>
             {sponsorSlug ? (
               <Link
-                href={`/s/${sponsorSlug}`}
+                href={`/earn/s/${sponsorSlug}`}
                 onClick={(e) => e.stopPropagation()}
                 className="flex w-min items-center gap-1 hover:underline"
               >

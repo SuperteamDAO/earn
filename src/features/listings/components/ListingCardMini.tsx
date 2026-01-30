@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
 import { LocalImage } from '@/components/ui/local-image';
 import { ASSET_URL } from '@/constants/ASSET_URL';
-import { tokenList } from '@/constants/tokenList';
+import { getTokenIcon } from '@/constants/tokenList';
 import { useServerTimeSync } from '@/hooks/use-server-time';
 import { timeAgoShort } from '@/utils/timeAgo';
 
@@ -51,7 +51,7 @@ export const ListingCardMini = ({ bounty }: { bounty: Listing }) => {
   return (
     <Link
       className="ph-no-capture w-full rounded-md px-2 py-4 hover:bg-gray-100 hover:no-underline"
-      href={`/listing/${slug}`}
+      href={`/earn/listing/${slug}`}
     >
       <div className="ph-no-capture flex w-full items-center justify-between">
         <div className="flex w-full">
@@ -72,7 +72,7 @@ export const ListingCardMini = ({ bounty }: { bounty: Listing }) => {
               {title}
             </p>
             <Link
-              href={`/s/${sponsor?.slug}`}
+              href={`/earn/s/${sponsor?.slug}`}
               onClick={(e) => e.stopPropagation()}
               className="flex w-min items-center gap-1 hover:underline"
             >
@@ -87,11 +87,7 @@ export const ListingCardMini = ({ bounty }: { bounty: Listing }) => {
                   <img
                     className="mr-0.5 h-4 w-4 rounded-full"
                     alt={token}
-                    src={
-                      tokenList.find((ele) => {
-                        return ele.tokenSymbol === token;
-                      })?.icon
-                    }
+                    src={getTokenIcon(token ?? '')}
                   />
                 )}
                 <div className="flex items-baseline">

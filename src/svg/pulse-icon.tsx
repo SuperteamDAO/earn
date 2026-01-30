@@ -22,7 +22,7 @@ export const PulseIcon = ({
           height: h - 1,
           backgroundColor: bg,
           opacity: 0.8,
-          animation: isPulsing ? `pulse 1250ms infinite` : undefined,
+          animation: isPulsing ? 'pulse-ring 1250ms infinite' : undefined,
         }}
       />
       <div
@@ -30,7 +30,7 @@ export const PulseIcon = ({
         style={{ backgroundColor: text }}
       />
       <style jsx>{`
-        @keyframes pulse {
+        @keyframes pulse-ring {
           0% {
             transform: scale(0.75);
             box-shadow: 0 0 0 0 ${bg};

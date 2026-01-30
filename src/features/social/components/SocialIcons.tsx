@@ -1,7 +1,6 @@
 import Link from 'next/link';
 import React from 'react';
 
-import FaDiscord from '@/components/icons/FaDiscord';
 import FaGithub from '@/components/icons/FaGithub';
 import FaGlobe from '@/components/icons/FaGlobe';
 import FaLinkedin from '@/components/icons/FaLinkedin';
@@ -81,12 +80,8 @@ const Website = ({ link, ...props }: IndividualSocialIconProps) => (
   <SocialIcon as={FaGlobe} link={link} {...props} />
 );
 
-const Discord = ({ link, ...props }: IndividualSocialIconProps) => (
-  <SocialIcon as={FaDiscord} link={link} {...props} />
-);
-
 const GitHub = ({ link, ...props }: IndividualSocialIconProps) => (
   <SocialIcon as={FaGithub} link={link} {...props} />
 );
 
-export { Discord, GitHub, Linkedin, Telegram, Twitter, Website };
+export { GitHub, Linkedin, Telegram, Twitter, Website };

@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
-import { tokenList } from '@/constants/tokenList';
+import { getTokenIcon } from '@/constants/tokenList';
 
 const CustomNumberInput = ({
   value,
@@ -168,7 +168,7 @@ export const ApproveModal = ({
               <img
                 className="h-5 w-5 rounded-full"
                 alt={`${token} icon`}
-                src={tokenList.find((t) => t.tokenSymbol === token)?.icon || ''}
+                src={getTokenIcon(token)}
               />
               <p className="ml-1 font-semibold text-slate-600">
                 {ask} <span className="text-slate-400">{token}</span>
@@ -191,9 +191,7 @@ export const ApproveModal = ({
                 <img
                   className="mr-1 h-5 w-5 rounded-full"
                   alt={`${token} icon`}
-                  src={
-                    tokenList.find((t) => t.tokenSymbol === token)?.icon || ''
-                  }
+                  src={getTokenIcon(token)}
                 />
                 {token}
               </div>

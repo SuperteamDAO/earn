@@ -474,10 +474,7 @@ function formatTime(milliseconds: number): string {
   if (!hours) return `${minutes}m`;
   return `${hours}h ${minutes}m`;
 }
-export function estimateTime(
-  totalApplications: number,
-  singular = false,
-): string {
+function estimateTime(totalApplications: number, singular = false): string {
   console.log('total applications', totalApplications);
   const lowerBoundSeconds = totalApplications * 10;
   const upperBoundSeconds = totalApplications * 20;

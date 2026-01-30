@@ -155,7 +155,7 @@ export interface UseMinimalTiptapEditorProps extends UseEditorOptions {
   imageSetting: ImageSetting;
 }
 
-export interface MinimalTiptapEditorReturn {
+interface MinimalTiptapEditorReturn {
   editor: Editor | null;
   getPendingImageDeletions: () => string[];
   processPendingDeletions: () => Promise<void>;

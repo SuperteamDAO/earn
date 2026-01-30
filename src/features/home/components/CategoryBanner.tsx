@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import posthog from 'posthog-js';
-import { useEffect, useState } from 'react';
+import { useMemo } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { ASSET_URL } from '@/constants/ASSET_URL';
@@ -57,13 +57,12 @@ const banners: CategoryBanner[] = [
 ];
 
 export function CategoryBanner({ category }: { category: CategoryTypes }) {
-  const [banner, setBanner] = useState<CategoryBanner | null>(null);
-
   const { user } = useUser();
 
-  useEffect(() => {
-    setBanner(banners.find((b) => b.type === category) ?? null);
-  }, [category]);
+  const banner = useMemo(
+    () => banners.find((b) => b.type === category) ?? null,
+    [category],
+  );
 
   if (!banner) return null;
 

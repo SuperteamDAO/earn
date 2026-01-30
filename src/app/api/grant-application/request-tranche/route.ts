@@ -21,7 +21,16 @@ export async function POST(request: Request) {
 
     const { userId } = session.data;
     const body = await request.json();
-    const { applicationId, helpWanted, projectUpdate, walletAddress } = body;
+    const {
+      applicationId,
+      helpWanted,
+      projectUpdate,
+      walletAddress,
+      eventPictures,
+      eventReceipts,
+      attendeeCount,
+      socialPost,
+    } = body;
 
     logger.debug(`Request body: ${safeStringify(body)}`);
     logger.debug(`User ID: ${userId}`);
@@ -49,6 +58,10 @@ export async function POST(request: Request) {
             helpWanted,
             update: projectUpdate,
             walletAddress,
+            eventPictures,
+            eventReceipts,
+            attendeeCount,
+            socialPost,
           });
         },
         { ttlSeconds: 300 },

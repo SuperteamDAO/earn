@@ -4,6 +4,7 @@ import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import posthog from 'posthog-js';
+import { useCallback } from 'react';
 
 import MdArrowForward from '@/components/icons/MdArrowForward';
 import { AnimateChangeInHeight } from '@/components/shared/AnimateChangeInHeight';
@@ -84,7 +85,7 @@ const FeedSidebarContent = ({ recentEarners }: FeedSidebarContentProps) => (
   <>
     <VibeCard />
     <LiveListings>
-      <SectionHeader title="LIVE LISTINGS" href="/" />
+      <SectionHeader title="LIVE LISTINGS" href="/earn" />
     </LiveListings>
     <HowItWorks />
     <RecentEarners earners={recentEarners} />
@@ -108,6 +109,7 @@ interface NonSponsorSidebarContentProps {
   currentPath: string;
   showSponsorBanner: boolean;
   showProIntro: boolean;
+  onBookmarksClick: () => void;
 }
 
 const NonSponsorSidebarContent = ({
@@ -118,6 +120,7 @@ const NonSponsorSidebarContent = ({
   currentPath,
   showSponsorBanner,
   showProIntro,
+  onBookmarksClick,
 }: NonSponsorSidebarContentProps) => (
   <>
     <div className="flex flex-col gap-4">
@@ -130,12 +133,12 @@ const NonSponsorSidebarContent = ({
       />
     </div>
     <HowItWorks />
-    {currentPath !== '/bookmarks' && !!bookmarks?.length && (
+    {currentPath !== '/earn/bookmarks' && !!bookmarks?.length && (
       <YourBookmarks>
         <SectionHeader
           title="BOOKMARKS"
-          href="/bookmarks"
-          onLinkClick={() => posthog.capture('bookmarks_sidebar')}
+          href="/earn/bookmarks"
+          onLinkClick={onBookmarksClick}
         />
       </YourBookmarks>
     )}
@@ -166,7 +169,7 @@ export const HomeSideBar = ({ type }: SideBarProps) => {
   const isSponsor = !!(ready && !isUserLoading && user?.currentSponsorId);
   const isFeed = type === 'feed';
   const showSponsorBanner =
-    router.asPath === '/' &&
+    router.asPath === '/earn' &&
     ready &&
     !isUserLoading &&
     (!user || (!user.isTalentFilled && !user.currentSponsorId));
@@ -181,6 +184,10 @@ export const HomeSideBar = ({ type }: SideBarProps) => {
   const isSidebarFlowActive =
     flow.source === 'sidebar' && flow.status !== 'idle';
   const shouldRenderProIntro = (showProIntro ?? false) || isSidebarFlowActive;
+
+  const handleBookmarksClick = useCallback(() => {
+    posthog.capture('bookmarks_sidebar');
+  }, []);
 
   const renderContent = () => {
     if (isFeed) {
@@ -204,6 +211,7 @@ export const HomeSideBar = ({ type }: SideBarProps) => {
         currentPath={router.asPath}
         showSponsorBanner={showSponsorBanner}
         showProIntro={shouldRenderProIntro}
+        onBookmarksClick={handleBookmarksClick}
       />
     );
   };

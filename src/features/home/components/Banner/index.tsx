@@ -54,7 +54,7 @@ export function BannerCarousel({ totalUsers }: BannerCarouselProps) {
         return () => clearTimeout(resumeTimer);
       }
     }
-  }, [isPopupOpen, carouselApi, popupsShowed, plugin]);
+  }, [isPopupOpen, carouselApi, popupsShowed]);
 
   return (
     <Carousel

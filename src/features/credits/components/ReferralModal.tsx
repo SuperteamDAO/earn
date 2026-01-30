@@ -33,7 +33,7 @@ export function ReferralModal({ isOpen, onClose }: ReferralModalProps) {
   };
 
   const code = (user?.referralCode || '').toUpperCase();
-  const shareUrl = useMemo(() => `earn.superteam.fun/r/${code}`, [code]);
+  const shareUrl = useMemo(() => `superteam.fun/earn/r/${code}`, [code]);
 
   const { data } = useQuery<VerifyResponse>({
     queryKey: ['referral.verify.self', code],

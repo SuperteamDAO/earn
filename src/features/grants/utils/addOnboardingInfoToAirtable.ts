@@ -19,6 +19,22 @@ interface GrantApplicationWithUserAndGrant extends GrantApplicationModel {
   };
 }
 
+function getValidDeadline(projectTimeline: string, createdAt: Date): string {
+  const timelineDate = new Date(projectTimeline);
+  if (!isNaN(timelineDate.getTime())) {
+    return projectTimeline;
+  }
+
+  const fallbackDate = new Date(createdAt);
+  fallbackDate.setDate(fallbackDate.getDate() + 10);
+
+  const day = fallbackDate.getDate();
+  const month = fallbackDate.toLocaleString('en-US', { month: 'long' });
+  const year = fallbackDate.getFullYear();
+
+  return `${day} ${month} ${year}`;
+}
+
 interface RecipientAirtableSchema {
   Name: string;
   Applicants: string[];
@@ -38,7 +54,10 @@ function grantApplicationToAirtable(
     Grant: [grantApplication.grant.airtableId!],
     'Email ID': grantApplication.user.email,
     Amount: grantApplication.approvedAmount,
-    Deadline: grantApplication.projectTimeline,
+    Deadline: getValidDeadline(
+      grantApplication.projectTimeline,
+      grantApplication.createdAt,
+    ),
   };
 }
 

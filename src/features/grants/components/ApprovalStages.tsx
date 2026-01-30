@@ -1,4 +1,5 @@
 import { useAtom } from 'jotai';
+import { useCallback, useMemo } from 'react';
 
 import FaCheck from '@/components/icons/FaCheck';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
@@ -10,6 +11,27 @@ import {
 } from '../atoms/applicationStateAtom';
 import { type GrantApplicationWithTranchesAndUser } from '../queries/user-application';
 import { type GrantWithApplicationCount } from '../types';
+
+const STATE_ORDER: ApplicationState[] = [
+  'ALLOW NEW',
+  'APPLIED',
+  'ALLOW EDIT',
+  'COOLDOWN',
+  'KYC PENDING',
+  'KYC APPROVED',
+  'TRANCHE1 PENDING',
+  'TRANCHE1 APPROVED',
+  'TRANCHE1 PAID',
+  'TRANCHE2 PENDING',
+  'TRANCHE2 APPROVED',
+  'TRANCHE2 PAID',
+  'TRANCHE3 PENDING',
+  'TRANCHE3 APPROVED',
+  'TRANCHE3 PAID',
+  'TRANCHE4 PENDING',
+  'TRANCHE4 APPROVED',
+  'TRANCHE4 PAID',
+];
 
 interface Props {
   application: GrantApplicationWithTranchesAndUser;
@@ -58,77 +80,62 @@ const ConnectingLine = ({
 export const ApprovalStages = ({ application, grant }: Props) => {
   const [applicationState] = useAtom(applicationStateAtom(grant.id));
 
-  const isStateCompleted = (state: ApplicationState) => {
-    const stateOrder: ApplicationState[] = [
-      'ALLOW NEW',
-      'APPLIED',
-      'ALLOW EDIT',
-      'COOLDOWN',
-      'KYC PENDING',
-      'KYC APPROVED',
-      'TRANCHE1 PENDING',
-      'TRANCHE1 APPROVED',
-      'TRANCHE1 PAID',
-      'TRANCHE2 PENDING',
-      'TRANCHE2 APPROVED',
-      'TRANCHE2 PAID',
-      'TRANCHE3 PENDING',
-      'TRANCHE3 APPROVED',
-      'TRANCHE3 PAID',
-      'TRANCHE4 PENDING',
-      'TRANCHE4 APPROVED',
-      'TRANCHE4 PAID',
-    ];
+  const isStateCompleted = useCallback(
+    (state: ApplicationState) => {
+      const currentStateIndex = STATE_ORDER.indexOf(applicationState);
+      const checkStateIndex = STATE_ORDER.indexOf(state);
+      return currentStateIndex >= checkStateIndex && checkStateIndex !== -1;
+    },
+    [applicationState],
+  );
 
-    const currentStateIndex = stateOrder.indexOf(applicationState);
-    const checkStateIndex = stateOrder.indexOf(state);
-
-    return currentStateIndex >= checkStateIndex && checkStateIndex !== -1;
-  };
-
-  const getTrancheStatus = (trancheNum: number) => {
-    if (isStateCompleted(`TRANCHE${trancheNum} PAID` as ApplicationState))
-      return 'Paid';
-    if (isStateCompleted(`TRANCHE${trancheNum} APPROVED` as ApplicationState))
-      return 'Approved';
-    if (isStateCompleted(`TRANCHE${trancheNum} PENDING` as ApplicationState))
+  const getTrancheStatus = useCallback(
+    (trancheNum: number) => {
+      if (isStateCompleted(`TRANCHE${trancheNum} PAID` as ApplicationState))
+        return 'Paid';
+      if (isStateCompleted(`TRANCHE${trancheNum} APPROVED` as ApplicationState))
+        return 'Approved';
+      if (isStateCompleted(`TRANCHE${trancheNum} PENDING` as ApplicationState))
+        return 'Pending';
       return 'Pending';
-    return 'Pending';
-  };
+    },
+    [isStateCompleted],
+  );
 
-  const tranchesCount = application?.totalTranches ?? 0;
+  const tranches = useMemo(() => {
+    const tranchesCount = application?.totalTranches ?? 0;
+    return Array.from({ length: tranchesCount }, (_, i) => {
+      const approvedAmount = application?.approvedAmount ?? 0;
+      const currentTranche = application?.GrantTranche?.find(
+        (tranche) =>
+          tranche.trancheNumber === i + 1 && tranche.status !== 'Rejected',
+      );
+      let amount;
 
-  const tranches = Array.from({ length: tranchesCount }, (_, i) => {
-    const approvedAmount = application?.approvedAmount ?? 0;
-    const currentTranche = application?.GrantTranche?.find(
-      (tranche) =>
-        tranche.trancheNumber === i + 1 && tranche.status !== 'Rejected',
-    );
-    let amount;
-
-    if (currentTranche) {
-      amount =
-        currentTranche.status === 'Pending'
-          ? currentTranche.ask
-          : currentTranche.approvedAmount;
-    } else {
-      if (approvedAmount <= 5000) {
-        amount = approvedAmount * 0.5;
+      if (currentTranche) {
+        amount =
+          currentTranche.status === 'Pending'
+            ? currentTranche.ask
+            : currentTranche.approvedAmount;
       } else {
-        if (i === 0 || i === 1) {
-          amount = approvedAmount * 0.3;
+        if (approvedAmount <= 5000) {
+          amount = approvedAmount * 0.5;
         } else {
-          amount = approvedAmount * 0.4;
+          if (i === 0 || i === 1) {
+            amount = approvedAmount * 0.3;
+          } else {
+            amount = approvedAmount * 0.4;
+          }
         }
       }
-    }
 
-    return {
-      status: getTrancheStatus(i + 1),
-      amount: Math.floor(amount ?? 0),
-      decidedAt: currentTranche?.decidedAt,
-    };
-  });
+      return {
+        status: getTrancheStatus(i + 1),
+        amount: Math.floor(amount ?? 0),
+        decidedAt: currentTranche?.decidedAt,
+      };
+    });
+  }, [application, getTrancheStatus]);
 
   return (
     <div className="relative mt-6">

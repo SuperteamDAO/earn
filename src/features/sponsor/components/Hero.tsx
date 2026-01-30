@@ -15,9 +15,9 @@ export function Hero() {
   const { user } = useUser();
 
   function getStartedWhere(isAuthenticated: boolean, isSponsor: boolean) {
-    if (!isAuthenticated) return '/new/sponsor';
-    if (!isSponsor) return '/new/sponsor';
-    return '/dashboard/listings/?open=1';
+    if (!isAuthenticated) return '/earn/new/sponsor';
+    if (!isSponsor) return '/earn/new/sponsor';
+    return '/earn/dashboard/listings/?open=1';
   }
   return (
     <div className="relative flex w-full flex-col items-center justify-start overflow-hidden pb-[1rem]">

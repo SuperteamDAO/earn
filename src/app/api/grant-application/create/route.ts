@@ -11,6 +11,7 @@ import { queueAgent } from '@/features/agents/utils/queueAgent';
 import { getUserSession } from '@/features/auth/utils/getUserSession';
 import { queueEmail } from '@/features/emails/utils/queueEmail';
 import { grantApplicationSchema } from '@/features/grants/utils/grantApplicationSchema';
+import { isUserEligibleForST } from '@/features/grants/utils/stGrant';
 import { syncGrantApplicationWithAirtable } from '@/features/grants/utils/syncGrantApplicationWithAirtable';
 import { validateGrantRequest } from '@/features/grants/utils/validateGrantRequest';
 import { extractSocialUsername } from '@/features/social/utils/extractUsername';
@@ -25,12 +26,15 @@ async function createGrantApplication(
     where: { id: userId },
   });
 
+  const isST = grant.isST === true;
+
   const validationResult = grantApplicationSchema(
     grant.minReward,
     grant.maxReward,
     grant.token,
     grant.questions,
     user as any,
+    isST,
   ).safeParse({
     ...data,
     twitter:
@@ -63,14 +67,18 @@ async function createGrantApplication(
     projectOneLiner: validatedData.projectOneLiner,
     projectDetails: validatedData.projectDetails,
     projectTimeline: dayjs(validatedData.projectTimeline).format('D MMMM YYYY'),
-    proofOfWork: validatedData.proofOfWork,
+    proofOfWork: validatedData.proofOfWork || '',
     milestones: validatedData.milestones,
-    kpi: validatedData.kpi,
+    kpi: validatedData.kpi || '',
     walletAddress: validatedData.walletAddress,
     ask: validatedData.ask,
     twitter: validatedData.twitter,
     github: validatedData.github,
     answers: validatedData.answers || [],
+    ...(isST && {
+      lumaLink: validatedData.lumaLink,
+      expenseBreakdown: validatedData.expenseBreakdown,
+    }),
   };
 
   return await prisma.grantApplication.create({
@@ -121,7 +129,19 @@ export async function POST(request: NextRequest) {
       grantId,
     });
 
-    if (grant.isPro && !user.isPro) {
+    if (grant.isST) {
+      if (!isUserEligibleForST(user)) {
+        logger.debug(`User is not eligible for ST grant`, {
+          grantId,
+          userId,
+          superteamLevel: user.superteamLevel,
+        });
+        return NextResponse.json(
+          { error: 'This grant is only available to Superteam members' },
+          { status: 403 },
+        );
+      }
+    } else if (grant.isPro && !user.isPro) {
       logger.debug(`User is not eligible for pro grant`, {
         grantId,
         userId,

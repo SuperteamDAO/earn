@@ -13,12 +13,13 @@ import { CircularProgress } from '@/components/ui/progress';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Tooltip } from '@/components/ui/tooltip';
 import { Superteams } from '@/constants/Superteam';
-import { tokenList } from '@/constants/tokenList';
+import { getTokenIcon } from '@/constants/tokenList';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
 import { truncateString } from '@/utils/truncateString';
 
 import { type Grant } from '@/features/grants/types';
+import { isSTGrant, ST_GRANT_COPY } from '@/features/grants/utils/stGrant';
 import {
   GitHub,
   Telegram,
@@ -43,6 +44,7 @@ interface Props {
   isMultiSelectOn: boolean;
   approveOnOpen: () => void;
   rejectedOnOpen: () => void;
+  isLoading?: boolean;
 }
 export const ApplicationDetails = ({
   grant,
@@ -50,6 +52,7 @@ export const ApplicationDetails = ({
   isMultiSelectOn,
   approveOnOpen,
   rejectedOnOpen,
+  isLoading,
 }: Props) => {
   const [selectedApplication, setSelectedApplication] = useAtom(
     selectedGrantApplicationAtom,
@@ -60,12 +63,11 @@ export const ApplicationDetails = ({
   const isCompleted = selectedApplication?.applicationStatus === 'Completed';
 
   const isNativeAndNonST = !grant?.airtableId && grant?.isNative;
+  const isST = isSTGrant(grant);
 
   const queryClient = useQueryClient();
 
-  const tokenIcon = tokenList.find(
-    (ele) => ele.tokenSymbol === grant?.token,
-  )?.icon;
+  const tokenIcon = getTokenIcon(grant?.token ?? '');
 
   const formattedCreatedAt = dayjs(selectedApplication?.createdAt).format(
     'DD MMM YYYY',
@@ -106,7 +108,7 @@ export const ApplicationDetails = ({
     <div className="w-full rounded-r-xl bg-white">
       {applications?.length ? (
         <>
-          <div className="sticky top-[3rem] z-20 rounded-t-xl border-b border-slate-200 bg-white py-1">
+          <div className="sticky top-12 z-20 rounded-t-xl border-b border-slate-200 bg-white py-1">
             <div className="flex w-full items-center justify-between px-4 py-2">
               <div className="flex w-full items-center gap-2">
                 <EarnAvatar
@@ -135,7 +137,7 @@ export const ApplicationDetails = ({
                     )}
                   </span>
                   <Link
-                    href={`/t/${selectedApplication?.user?.username}`}
+                    href={`/earn/t/${selectedApplication?.user?.username}`}
                     className="text-brand-purple flex w-full items-center gap-1 text-xs font-medium whitespace-nowrap"
                     rel="noopener noreferrer"
                     target="_blank"
@@ -407,45 +409,91 @@ export const ApplicationDetails = ({
               </div>
 
               <InfoBox
-                label="Project Title"
+                label={
+                  isST
+                    ? ST_GRANT_COPY.application.projectTitle.label
+                    : 'Project Title'
+                }
                 content={selectedApplication?.projectTitle}
               />
 
               <InfoBox
-                label="One-Liner Description"
+                label={
+                  isST
+                    ? ST_GRANT_COPY.application.projectOneLiner.label
+                    : 'One-Liner Description'
+                }
                 content={selectedApplication?.projectOneLiner}
               />
 
               <InfoBox
-                label="Project Details"
+                label={
+                  isST
+                    ? ST_GRANT_COPY.application.projectDetails.label
+                    : 'Project Details'
+                }
                 content={selectedApplication?.projectDetails}
                 isHtml
               />
 
-              <InfoBox label="Twitter" content={selectedApplication?.twitter} />
-              <InfoBox label="Github" content={selectedApplication?.github} />
-              <InfoBox
-                label="Deadline"
-                content={selectedApplication?.projectTimeline}
-              />
+              {isST && (selectedApplication as any)?.lumaLink && (
+                <InfoBox
+                  label={ST_GRANT_COPY.application.lumaLink.label}
+                  content={(selectedApplication as any)?.lumaLink}
+                />
+              )}
 
               <InfoBox
-                label="Proof of Work"
+                label={
+                  isST ? ST_GRANT_COPY.application.twitter.label : 'Twitter'
+                }
+                content={selectedApplication?.twitter}
+              />
+              {!isST && (
+                <InfoBox label="Github" content={selectedApplication?.github} />
+              )}
+              {!isST && (
+                <InfoBox
+                  label="Deadline"
+                  content={selectedApplication?.projectTimeline}
+                />
+              )}
+
+              <InfoBox
+                label={
+                  isST
+                    ? ST_GRANT_COPY.application.proofOfWork.label
+                    : 'Proof of Work'
+                }
                 content={selectedApplication?.proofOfWork}
                 isHtml
               />
 
+              {isST && (selectedApplication as any)?.expenseBreakdown && (
+                <InfoBox
+                  label={ST_GRANT_COPY.application.expenseBreakdown.label}
+                  content={(selectedApplication as any)?.expenseBreakdown}
+                  isHtml
+                />
+              )}
+
               <InfoBox
-                label="Goals and Milestones"
+                label={
+                  isST
+                    ? ST_GRANT_COPY.application.milestones.label
+                    : 'Goals and Milestones'
+                }
                 content={selectedApplication?.milestones}
                 isHtml
               />
 
-              <InfoBox
-                label="Primary Key Performance Indicator"
-                content={selectedApplication?.kpi}
-                isHtml
-              />
+              {!isST && (
+                <InfoBox
+                  label="Primary Key Performance Indicator"
+                  content={selectedApplication?.kpi}
+                  isHtml
+                />
+              )}
 
               {Array.isArray(selectedApplication?.answers) &&
                 selectedApplication.answers.map(
@@ -464,7 +512,7 @@ export const ApplicationDetails = ({
             </div>
           </div>
         </>
-      ) : (
+      ) : isLoading ? null : (
         <div className="p-3">
           <p className="text-xl font-medium text-slate-500">
             No applications found

@@ -10,6 +10,7 @@ interface SortableTHProps extends React.HTMLAttributes<HTMLTableCellElement> {
   column: string;
   currentSort: { column: string; direction: SortDirection };
   setSort: (column: string, direction: SortDirection) => void;
+  initialDirection?: SortDirection;
   children: ReactNode;
 }
 
@@ -18,12 +19,13 @@ export const SortableTH = ({
   column,
   currentSort,
   setSort,
+  initialDirection = 'asc',
   className,
   ...props
 }: SortableTHProps) => {
   const handleSort = () => {
     if (currentSort.column !== column) {
-      setSort(column, 'asc');
+      setSort(column, initialDirection);
     } else {
       setSort(column, currentSort.direction === 'asc' ? 'desc' : 'asc');
     }

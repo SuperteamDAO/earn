@@ -7,11 +7,33 @@ import { useEffect } from 'react';
 
 import { useDisclosure } from '@/hooks/use-disclosure';
 
-import { Login } from '@/features/auth/components/Login';
-import { CreditDrawer } from '@/features/credits/components/CreditDrawer';
-import { ReferralModal } from '@/features/credits/components/ReferralModal';
-import { WalletDrawer } from '@/features/wallet/components/WalletDrawer';
 import { tokenAssetsQuery } from '@/features/wallet/queries/fetch-assets';
+
+const Login = dynamic(
+  () => import('@/features/auth/components/Login').then((mod) => mod.Login),
+  { ssr: false },
+);
+const CreditDrawer = dynamic(
+  () =>
+    import('@/features/credits/components/CreditDrawer').then(
+      (mod) => mod.CreditDrawer,
+    ),
+  { ssr: false },
+);
+const ReferralModal = dynamic(
+  () =>
+    import('@/features/credits/components/ReferralModal').then(
+      (mod) => mod.ReferralModal,
+    ),
+  { ssr: false },
+);
+const WalletDrawer = dynamic(
+  () =>
+    import('@/features/wallet/components/WalletDrawer').then(
+      (mod) => mod.WalletDrawer,
+    ),
+  { ssr: false },
+);
 
 const SearchModal = dynamic(() =>
   import('@/features/search/components/SearchModal').then(

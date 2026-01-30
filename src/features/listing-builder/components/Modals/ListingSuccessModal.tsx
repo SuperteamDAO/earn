@@ -31,7 +31,7 @@ export const ListingSuccessModal = () => {
 
   const listingLink = useCallback(
     (medium?: 'twitter' | 'telegram') =>
-      `${getURL()}listing/${slug}/${medium ? `?utm_source=superteamearn&utm_medium=${medium}&utm_campaign=sharelisting` : ``}`,
+      `${getURL()}earn/listing/${slug}/${medium ? `?utm_source=superteamearn&utm_medium=${medium}&utm_campaign=sharelisting` : ``}`,
     [type, slug],
   );
 
@@ -41,7 +41,7 @@ export const ListingSuccessModal = () => {
   const { hasCopied, onCopy } = useClipboard(listingLink());
 
   const handleInvite = useMemo(
-    () => `/dashboard/listings/${slug}/submissions?scout`,
+    () => `/earn/dashboard/listings/${slug}/submissions?scout`,
     [slug],
   );
 
@@ -74,7 +74,7 @@ export const ListingSuccessModal = () => {
               onClick={onCopy}
             >
               <span className="truncate font-normal text-slate-500">
-                earn.superteam.fun/listing/{slug}
+                superteam.fun/earn/listing/{slug}
               </span>
               {hasCopied ? (
                 <Check className="h-5 w-5 text-slate-400" />
@@ -100,7 +100,7 @@ export const ListingSuccessModal = () => {
               </Link>
 
               <Link
-                href={`/listing/${slug?.replace(/^[-\s]+|[-\s]+$/g, '')}`}
+                href={`/earn/listing/${slug?.replace(/^[-\s]+|[-\s]+$/g, '')}`}
                 className="flex items-center gap-1 hover:text-slate-700"
               >
                 {'View Listing'}

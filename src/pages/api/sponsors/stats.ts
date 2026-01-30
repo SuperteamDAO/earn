@@ -142,12 +142,6 @@ export async function getSponsorStats(
     eligibleBountiesWithMinSubmissions.length > 0
       ? (completedBounties / eligibleBountiesWithMinSubmissions.length) * 100
       : 0;
-  console.log('completionRate', completionRate);
-  console.log('completedBounties', completedBounties);
-  console.log(
-    'eligibleBountiesWithMinSubmissions',
-    eligibleBountiesWithMinSubmissions.length,
-  );
 
   return {
     yearOnPlatform,
