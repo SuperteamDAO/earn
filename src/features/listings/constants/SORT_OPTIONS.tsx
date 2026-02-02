@@ -84,7 +84,7 @@ export const getListingSortOptions = (
       icon: (
         <img
           alt={'USDC'}
-          src={'https://s2.coinmarketcap.com/static/img/coins/128x128/3408.png'}
+          src={'/cdn/coinmarketcap/static/img/coins/128x128/3408.png'}
           className="size-4"
         />
       ),
@@ -95,7 +95,7 @@ export const getListingSortOptions = (
       icon: (
         <img
           alt={'USDC'}
-          src={'https://s2.coinmarketcap.com/static/img/coins/128x128/3408.png'}
+          src={'/cdn/coinmarketcap/static/img/coins/128x128/3408.png'}
           className="size-4"
         />
       ),
@@ -120,7 +120,7 @@ export const HACKATHON_SORT_OPTIONS: readonly HackathonSortOptions[] = [
     icon: (
       <img
         alt={'USDC'}
-        src={'https://s2.coinmarketcap.com/static/img/coins/128x128/3408.png'}
+        src={'/cdn/coinmarketcap/static/img/coins/128x128/3408.png'}
         className="size-4"
       />
     ),
@@ -131,7 +131,7 @@ export const HACKATHON_SORT_OPTIONS: readonly HackathonSortOptions[] = [
     icon: (
       <img
         alt={'USDC'}
-        src={'https://s2.coinmarketcap.com/static/img/coins/128x128/3408.png'}
+        src={'/cdn/coinmarketcap/static/img/coins/128x128/3408.png'}
         className="size-4"
       />
     ),
