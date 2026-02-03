@@ -15,7 +15,7 @@ export function ErrorInfo({
       </span>
       <span className="text-sm text-slate-500">
         {message ||
-          'There seems to be an error. Contact support@superteamearn.com to get help'}
+          'There seems to be an error. Contact support@superteam.fun to get help'}
       </span>
     </div>
   );

@@ -16,7 +16,7 @@ export function ErrorSection({
         </span>
         <span className="mt-2 text-slate-500">
           {message ||
-            'There seems to be an error. Contact support@superteamearn.com to get help'}
+            'There seems to be an error. Contact support@superteam.fun to get help'}
         </span>
       </div>
     </div>
