@@ -61,7 +61,8 @@ interface Props {
   onSurveyOpen: () => void;
 }
 
-type FormData = z.infer<ReturnType<typeof submissionSchema>>;
+type SubmissionFormInput = z.input<ReturnType<typeof submissionSchema>>;
+type FormData = z.output<ReturnType<typeof submissionSchema>>;
 
 export const SubmissionDrawer = ({
   isOpen,
@@ -110,7 +111,7 @@ export const SubmissionDrawer = ({
   const { user, refetchUser } = useUser();
   const isNotEligibleForPro = isPro && !user?.isPro;
 
-  const form = useForm<FormData>({
+  const form = useForm<SubmissionFormInput, unknown, FormData>({
     resolver: zodResolver(
       submissionSchema(listing, minRewardAsk || 0, maxRewardAsk || 0, user),
     ),

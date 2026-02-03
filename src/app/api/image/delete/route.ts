@@ -1,5 +1,6 @@
 import { headers } from 'next/headers';
 import { type NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 
 import {
   deleteImage,
@@ -52,13 +53,14 @@ export async function DELETE(request: NextRequest) {
 
     const validationResult = deleteRequestSchema.safeParse(rawBody);
     if (!validationResult.success) {
+      const errorDetails = z.treeifyError(validationResult.error);
       logger.warn(
-        `Invalid delete request body: ${safeStringify(validationResult.error.format())}`,
+        `Invalid delete request body: ${safeStringify(errorDetails)}`,
       );
       return NextResponse.json(
         {
           error: 'Invalid request body',
-          details: validationResult.error.format(),
+          details: errorDetails,
         },
         { status: 400 },
       );

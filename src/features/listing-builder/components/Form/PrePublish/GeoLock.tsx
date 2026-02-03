@@ -26,8 +26,10 @@ export function GeoLock() {
                 ) : (
                   <>
                     Participation restricted to{' '}
-                    {field.value?.charAt(0).toUpperCase() +
-                      field.value?.slice(1).toLowerCase()}
+                    {field.value
+                      ? field.value.charAt(0).toUpperCase() +
+                        field.value.slice(1).toLowerCase()
+                      : ''}
                   </>
                 )}
               </FormDescription>

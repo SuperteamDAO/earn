@@ -52,7 +52,12 @@ import {
   workExp,
   workType,
 } from '@/features/talent/constants';
-import { type ProfileFormData, profileSchema } from '@/features/talent/schema';
+import {
+  type ProfileFormData,
+  type ProfileFormInput,
+  profileSchema,
+  profileSchemaBase,
+} from '@/features/talent/schema';
 import { hasDevSkills } from '@/features/talent/utils/skills';
 import { useUsernameValidation } from '@/features/talent/utils/useUsernameValidation';
 
@@ -69,7 +74,7 @@ export default function EditProfilePage({ slug }: { slug: string }) {
   const { user, refetchUser } = useUser();
   const { authenticated, ready } = usePrivy();
 
-  const form = useForm<ProfileFormData>({
+  const form = useForm<ProfileFormInput, unknown, ProfileFormData>({
     resolver: zodResolver(profileSchema),
     mode: 'onBlur',
   });
@@ -112,12 +117,11 @@ export default function EditProfilePage({ slug }: { slug: string }) {
         bio: currentUser.bio || undefined,
         photo: currentUser.photo || undefined,
         location:
-          profileSchema._def.schema.shape.location.safeParse(
-            currentUser?.location,
-          ).data || undefined,
-        skills:
-          profileSchema._def.schema.shape.skills.safeParse(currentUser.skills)
+          profileSchemaBase.shape.location.safeParse(currentUser?.location)
             .data || undefined,
+        skills:
+          profileSchemaBase.shape.skills.safeParse(currentUser.skills).data ||
+          undefined,
         private: currentUser.private || undefined,
         firstName: currentUser.firstName || undefined,
         lastName: currentUser.lastName || undefined,
@@ -136,24 +140,23 @@ export default function EditProfilePage({ slug }: { slug: string }) {
           : undefined,
         website: currentUser.website || undefined,
         workPrefernce:
-          profileSchema._def.schema.shape.workPrefernce.safeParse(
+          profileSchemaBase.shape.workPrefernce.safeParse(
             currentUser.workPrefernce,
           ).data || undefined,
         experience:
-          profileSchema._def.schema.shape.experience.safeParse(
-            currentUser.experience,
-          ).data || undefined,
+          profileSchemaBase.shape.experience.safeParse(currentUser.experience)
+            .data || undefined,
         cryptoExperience:
-          profileSchema._def.schema.shape.cryptoExperience.safeParse(
+          profileSchemaBase.shape.cryptoExperience.safeParse(
             currentUser.cryptoExperience,
           ).data || undefined,
         community: currentUser.community
-          ? profileSchema._def.schema.shape.community.safeParse(
+          ? profileSchemaBase.shape.community.safeParse(
               JSON.parse(currentUser.community),
             ).data || []
           : [],
         interests: currentUser.interests
-          ? profileSchema._def.schema.shape.interests.safeParse(
+          ? profileSchemaBase.shape.interests.safeParse(
               JSON.parse(currentUser.interests),
             ).data || []
           : [],

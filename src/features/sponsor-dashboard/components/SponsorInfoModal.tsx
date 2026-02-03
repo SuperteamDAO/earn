@@ -17,6 +17,7 @@ import { useUser } from '@/store/user';
 import { SocialInput } from '@/features/social/components/SocialInput';
 import {
   type UserSponsorDetails,
+  type UserSponsorDetailsInput,
   userSponsorDetailsSchema,
 } from '@/features/sponsor/utils/sponsorFormSchema';
 import { useUsernameValidation } from '@/features/talent/utils/useUsernameValidation';
@@ -32,7 +33,7 @@ export const SponsorInfoModal = ({
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [uploadedPhotoUrl, setUploadedPhotoUrl] = useState<string | null>(null);
 
-  const form = useForm<UserSponsorDetails>({
+  const form = useForm<UserSponsorDetailsInput, unknown, UserSponsorDetails>({
     resolver: zodResolver(userSponsorDetailsSchema),
     defaultValues: {
       firstName: user?.firstName || '',

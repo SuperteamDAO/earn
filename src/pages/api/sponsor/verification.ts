@@ -1,4 +1,5 @@
 import type { NextApiResponse } from 'next';
+import { z } from 'zod';
 
 import earncognitoClient from '@/lib/earncognitoClient';
 import logger from '@/lib/logger';
@@ -31,7 +32,7 @@ async function verification(req: NextApiRequestWithUser, res: NextApiResponse) {
 
     if (!validationResult.success) {
       return res.status(400).json({
-        error: JSON.stringify(validationResult.error.formErrors),
+        error: JSON.stringify(z.flattenError(validationResult.error)),
         message: 'Invalid verification data',
       });
     }

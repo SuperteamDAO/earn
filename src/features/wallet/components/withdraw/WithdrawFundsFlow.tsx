@@ -30,6 +30,7 @@ import { fetchTokenUSDValue } from '../../utils/fetchTokenUSDValue';
 import { getRpc } from '../../utils/getConnection';
 import {
   type WithdrawFormData,
+  type WithdrawFormInput,
   withdrawFormSchema,
 } from '../../utils/withdrawFormSchema';
 import { ATAConfirmation } from './ATAConfirmation';
@@ -61,7 +62,7 @@ export function WithdrawFundsFlow({
   const { wallets } = useWallets();
   const { signAndSendTransaction } = useSignAndSendTransaction();
 
-  const form = useForm<WithdrawFormData>({
+  const form = useForm<WithdrawFormInput, unknown, WithdrawFormData>({
     resolver: zodResolver(withdrawFormSchema),
     defaultValues: {
       tokenAddress: tokens[0]?.tokenAddress ?? '',

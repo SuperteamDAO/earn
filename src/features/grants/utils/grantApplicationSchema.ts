@@ -72,8 +72,10 @@ export const grantApplicationSchema = (
         .max(150, 'Description must be less than 150 characters'),
       ask: z
         .number({
-          required_error: 'Grant amount is required',
-          invalid_type_error: 'Please enter a valid number',
+          error: (issue) =>
+            issue.input === undefined
+              ? 'Grant amount is required'
+              : 'Please enter a valid number',
         })
         .min(
           Math.max(1, minReward),
@@ -92,12 +94,11 @@ export const grantApplicationSchema = (
       kpi: isST ? z.string().optional() : z.string().min(1, 'KPI is required'),
       twitter: twitterProfileSchema,
       github: z
-        .preprocess(
-          (val) => (val === '' ? undefined : val),
-          githubUsernameSchema.optional().nullable(),
-        )
+        .string()
         .optional()
-        .nullable(),
+        .nullable()
+        .transform((val) => (val === '' ? undefined : val))
+        .pipe(githubUsernameSchema.optional().nullable()),
       answers: z
         .array(z.object({ question: z.string(), answer: z.string() }))
         .optional(),

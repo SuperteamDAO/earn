@@ -1,5 +1,5 @@
 import { openrouter } from '@openrouter/ai-sdk-provider';
-import { generateObject } from 'ai';
+import { generateObject, zodSchema } from 'ai';
 import { headers } from 'next/headers';
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
@@ -20,14 +20,14 @@ import { generateListingRewardsPrompt } from './prompts';
 
 const requestBodySchema = z.object({
   description: z.string().min(1, 'Description cannot be empty'),
-  type: z.nativeEnum(BountyType),
+  type: z.enum(BountyType),
   token: z.string(),
   tokenUsdValue: z.number(),
 });
 export type RewardInputSchema = z.infer<typeof requestBodySchema>;
 
 const responseSchema = z.object({
-  compensationType: z.nativeEnum(CompensationType).default('fixed'),
+  compensationType: z.enum(CompensationType).default('fixed'),
   maxBonusSpots: z.coerce
     .number()
     .min(0)
@@ -92,10 +92,10 @@ export async function POST(request: Request) {
       if (!parsedBody.success) {
         logger.error(
           'Invalid request body',
-          safeStringify(parsedBody.error.errors),
+          safeStringify(parsedBody.error.issues),
         );
         return NextResponse.json(
-          { error: 'Invalid request body', details: parsedBody.error.errors },
+          { error: 'Invalid request body', details: parsedBody.error.issues },
           { status: 400 },
         );
       }
@@ -118,12 +118,14 @@ export async function POST(request: Request) {
       system:
         'Your role is to generate proper rewards for listings, strictly adhering to the rules provided with each description and type.',
       prompt,
-      schema: responseSchema as any,
+      schema: zodSchema(responseSchema),
     });
 
-    logger.info('Generated rewards object: ', safeStringify(object));
+    const parsed = responseSchema.parse(object);
 
-    const rewardsRecord: Record<string, number> = object.rewards.reduce(
+    logger.info('Generated rewards object: ', safeStringify(parsed));
+
+    const rewardsRecord: Record<string, number> = parsed.rewards.reduce(
       (
         acc: Record<string, number>,
         rewardItem: { rank: string; amount: number },
@@ -135,7 +137,7 @@ export async function POST(request: Request) {
     );
 
     const finalResponse: TRewardsGenerateResponse = {
-      ...object,
+      ...parsed,
       rewards: rewardsRecord,
     };
 

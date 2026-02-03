@@ -59,7 +59,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       );
       return res.status(400).json({
         error: 'Invalid user details data',
-        details: validationResult.error.errors,
+        details: validationResult.error.issues,
       });
     }
 

@@ -24,6 +24,7 @@ import { useUser } from '@/store/user';
 import { extractSocialUsername } from '@/features/social/utils/extractUsername';
 import {
   type NewTalentFormData,
+  type NewTalentFormInput,
   newTalentSchema,
   socialSuperRefine,
 } from '@/features/talent/schema';
@@ -36,7 +37,7 @@ export const TalentForm = () => {
   const router = useRouter();
   const { user, refetchUser } = useUser();
 
-  const form = useForm<NewTalentFormData>({
+  const form = useForm<NewTalentFormInput, unknown, NewTalentFormData>({
     resolver: zodResolver(
       newTalentSchema.superRefine((data, ctx) => socialSuperRefine(data, ctx)),
     ),

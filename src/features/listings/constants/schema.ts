@@ -6,9 +6,16 @@ export const ListingTabSchema = z
   .union([z.enum(['all', 'bounties', 'projects']), z.string().min(1)])
   .default('all');
 export const OrderDirectionSchema = z.enum(['asc', 'desc']).default('asc');
-export const ListingCategorySchema = z
-  .enum(['For You', 'All', 'Content', 'Design', 'Development', 'Other'])
-  .default('All');
+export const ListingCategoryEnum = z.enum([
+  'For You',
+  'All',
+  'Content',
+  'Design',
+  'Development',
+  'Other',
+]);
+export const ListingCategorySchema = ListingCategoryEnum.default('All');
+export const ListingCategoryOptions = ListingCategoryEnum.options;
 export const ListingStatusSchema = z
   .enum(['open', 'review', 'completed', 'all'])
   .default('open');

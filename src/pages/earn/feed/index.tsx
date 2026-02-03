@@ -29,7 +29,7 @@ export default function FeedPage({ id, type }: Props) {
   );
 }
 
-const UUIDSchema = z.string().uuid();
+const UUIDSchema = z.uuid();
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { query } = context;
 

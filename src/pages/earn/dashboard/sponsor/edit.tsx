@@ -31,6 +31,7 @@ import { useSlugValidation } from '@/features/sponsor/hooks/useSlugValidation';
 import { useSponsorNameValidation } from '@/features/sponsor/hooks/useSponsorNameValidation';
 import {
   type SponsorBase,
+  type SponsorBaseInput,
   sponsorBaseSchema,
 } from '@/features/sponsor/utils/sponsorFormSchema';
 import { sponsorQuery } from '@/features/sponsor-dashboard/queries/sponsor';
@@ -44,7 +45,7 @@ export default function UpdateSponsor() {
   const [initialLogo, setInitialLogo] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const form = useForm<SponsorBase>({
+  const form = useForm<SponsorBaseInput, unknown, SponsorBase>({
     resolver: zodResolver(sponsorBaseSchema),
     mode: 'onBlur',
     defaultValues: {

@@ -53,16 +53,17 @@ export function TitleAndType() {
   const type = useWatch({ name: 'type', control: form.control });
   const title = useWatch({ control: form.control, name: 'title' });
   const listingId = useWatch({ control: form.control, name: 'id' });
+  const typeValue = type ?? 'bounty';
 
   const suggestions = useMemo(() => {
-    return getSuggestions(title, type);
-  }, [title, type]);
+    return getSuggestions(title, typeValue);
+  }, [title, typeValue]);
 
   const isEditing = useAtomValue(isEditingAtom);
   const placeholder = useMemo(() => {
-    if (type === 'project') return 'Frontend Development for Superteam';
+    if (typeValue === 'project') return 'Frontend Development for Superteam';
     else return 'Write a Deep Dive on IBRL';
-  }, [type]);
+  }, [typeValue]);
 
   const debouncedTitle = useDebounce(title);
   const slugifiedTitle = useMemo(() => {
@@ -235,7 +236,7 @@ function Type() {
       form.setValue('eligibility', []);
     }
     const values = form.getValues();
-    setPrevCompType(values.compensationType);
+    setPrevCompType(values.compensationType ?? 'fixed');
     if (newType !== 'project') {
       form.setValue('compensationType', 'fixed');
       form.setValue(

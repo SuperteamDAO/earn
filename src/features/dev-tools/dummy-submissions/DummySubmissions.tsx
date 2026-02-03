@@ -25,7 +25,11 @@ import {
 import { submissionsQuery } from '@/features/sponsor-dashboard/queries/submissions';
 
 import { useCreateDummySubmissions } from './mutation';
-import { type DummySubmissionsSchema, dummySubmissionsSchema } from './schema';
+import {
+  type DummySubmissionsInput,
+  type DummySubmissionsSchema,
+  dummySubmissionsSchema,
+} from './schema';
 
 interface DummySubmissionsProps {
   listingId: string;
@@ -40,7 +44,7 @@ export function DummySubmissionsForm({
   const queryClient = useQueryClient();
   const createDummySubmissions = useCreateDummySubmissions();
 
-  const form = useForm<DummySubmissionsSchema>({
+  const form = useForm<DummySubmissionsInput, unknown, DummySubmissionsSchema>({
     resolver: zodResolver(dummySubmissionsSchema),
     defaultValues: {
       listingId,

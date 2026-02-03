@@ -1,5 +1,5 @@
 import { openrouter } from '@openrouter/ai-sdk-provider';
-import { generateObject } from 'ai';
+import { generateObject, zodSchema } from 'ai';
 import { headers } from 'next/headers';
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
@@ -54,10 +54,10 @@ export async function POST(request: Request) {
       if (!parsedBody.success) {
         logger.error(
           'Invalid request body',
-          safeStringify(parsedBody.error.errors),
+          safeStringify(parsedBody.error.issues),
         );
         return NextResponse.json(
-          { error: 'Invalid request body', details: parsedBody.error.errors },
+          { error: 'Invalid request body', details: parsedBody.error.issues },
           { status: 400 },
         );
       }
@@ -86,10 +86,10 @@ export async function POST(request: Request) {
           },
         }),
         prompt,
-        schema: responseSchema as any,
+        schema: zodSchema(responseSchema),
         system: 'Your role is to extract the token mentioned in the listings.',
       });
-      object = result.object;
+      object = responseSchema.parse(result.object);
       logger.info(
         'Generated eligibility token object with primary model: ',
         safeStringify(object),
@@ -104,11 +104,11 @@ export async function POST(request: Request) {
         const result = await generateObject({
           model: openrouter('google/gemini-2.0-flash-lite-001'),
           prompt,
-          schema: responseSchema as any,
+          schema: zodSchema(responseSchema),
           system:
             'Your role is to extract the token mentioned in the listings.',
         });
-        object = result.object;
+        object = responseSchema.parse(result.object);
         logger.info(
           'Generated eligibility token object with fallback model: ',
           safeStringify(object),

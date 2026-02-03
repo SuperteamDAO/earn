@@ -12,14 +12,14 @@ import {
 import { Tooltip } from '@/components/ui/tooltip';
 import { useBreakpoint } from '@/hooks/use-breakpoint';
 
-import { type NewTalentFormData } from '@/features/talent/schema';
+import { type NewTalentFormInput } from '@/features/talent/schema';
 
 interface Props {
   skillsRefreshKey: number;
 }
 
 export function SkillsField({ skillsRefreshKey }: Props) {
-  const form = useFormContext<NewTalentFormData>();
+  const form = useFormContext<NewTalentFormInput>();
   const { control, trigger } = form;
 
   const isSM = useBreakpoint('sm');

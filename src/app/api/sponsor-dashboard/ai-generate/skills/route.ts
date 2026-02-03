@@ -1,5 +1,5 @@
 import { openrouter } from '@openrouter/ai-sdk-provider';
-import { generateObject } from 'ai';
+import { generateObject, zodSchema } from 'ai';
 import { headers } from 'next/headers';
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
@@ -55,10 +55,10 @@ export async function POST(request: Request) {
       if (!parsedBody.success) {
         logger.error(
           'Invalid request body',
-          safeStringify(parsedBody.error.errors),
+          safeStringify(parsedBody.error.issues),
         );
         return NextResponse.json(
-          { error: 'Invalid request body', details: parsedBody.error.errors },
+          { error: 'Invalid request body', details: parsedBody.error.issues },
           { status: 400 },
         );
       }
@@ -81,12 +81,14 @@ export async function POST(request: Request) {
       system:
         'Your role is to generate proper skills for listings, strictly adhering to the rules provided with each description and type.',
       prompt,
-      schema: responseSchema as any,
+      schema: zodSchema(responseSchema),
     });
 
-    logger.info('Generated skills object: ', safeStringify(object));
+    const parsed = responseSchema.parse(object);
 
-    return NextResponse.json(object.skills, { status: 200 });
+    logger.info('Generated skills object: ', safeStringify(parsed));
+
+    return NextResponse.json(parsed.skills, { status: 200 });
   } catch (error) {
     logger.error('Error generating skills:', safeStringify(error));
     return NextResponse.json(

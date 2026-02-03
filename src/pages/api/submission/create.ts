@@ -1,4 +1,5 @@
 import type { NextApiResponse } from 'next';
+import { z } from 'zod';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
@@ -32,7 +33,7 @@ export async function createSubmission(
   ).safeParse(data);
 
   if (!validationResult.success) {
-    throw new Error(JSON.stringify(validationResult.error.formErrors));
+    throw new Error(JSON.stringify(z.flattenError(validationResult.error)));
   }
 
   const validatedData = validationResult.data;

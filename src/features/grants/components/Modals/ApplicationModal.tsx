@@ -56,7 +56,8 @@ const getSteps = (isST: boolean) => [
   { title: isST ? 'Outcomes' : 'Milestones' },
 ];
 
-type FormData = z.infer<ReturnType<typeof grantApplicationSchema>>;
+type FormInput = z.input<ReturnType<typeof grantApplicationSchema>>;
+type FormData = z.output<ReturnType<typeof grantApplicationSchema>>;
 
 interface Props {
   grant: Grant;
@@ -107,7 +108,7 @@ export const ApplicationModal = ({
   );
 
   const [isLoading, setIsLoading] = useState(false);
-  const form = useForm<FormData>({
+  const form = useForm<FormInput, unknown, FormData>({
     resolver: dynamicResolver,
     defaultValues: {
       projectTitle: grantApplication?.projectTitle || '',

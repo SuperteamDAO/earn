@@ -10,7 +10,7 @@ import { validateListingSponsorAuth } from '@/features/auth/utils/checkListingSp
 import { validateSession } from '@/features/auth/utils/getSponsorSession';
 
 const ParamsSchema = z.object({
-  id: z.string().uuid(),
+  id: z.uuid(),
 });
 
 export async function GET(

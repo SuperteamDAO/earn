@@ -45,7 +45,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       );
       return res.status(400).json({
         error: 'Invalid sponsor data',
-        details: validationResult.error.errors,
+        details: validationResult.error.issues,
       });
     }
 

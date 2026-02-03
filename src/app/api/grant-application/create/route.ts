@@ -1,6 +1,7 @@
 import { waitUntil } from '@vercel/functions';
 import { headers } from 'next/headers';
 import { type NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
@@ -48,7 +49,7 @@ async function createGrantApplication(
   });
 
   if (!validationResult.success) {
-    throw new Error(JSON.stringify(validationResult.error.formErrors));
+    throw new Error(JSON.stringify(z.flattenError(validationResult.error)));
   }
 
   const validatedData = validationResult.data;

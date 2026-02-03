@@ -2,7 +2,7 @@ import { openrouter } from '@openrouter/ai-sdk-provider';
 import { convertToModelMessages, streamText } from 'ai';
 import { headers } from 'next/headers';
 import { type NextRequest, NextResponse } from 'next/server';
-import { ZodError } from 'zod';
+import { z, ZodError } from 'zod';
 
 import logger from '@/lib/logger';
 import { aiGenerateRateLimiter } from '@/lib/ratelimit';
@@ -55,6 +55,7 @@ export async function POST(req: NextRequest) {
       hackathonName,
     });
 
+    const modelMessages = await convertToModelMessages(messages);
     const result = streamText({
       model: openrouter('google/gemini-2.5-flash', {
         extraBody: {
@@ -67,7 +68,7 @@ export async function POST(req: NextRequest) {
         },
       }),
       system: systemPrompt,
-      messages: convertToModelMessages(messages),
+      messages: modelMessages,
       headers: {
         'HTTP-Referer': process.env.NEXT_PUBLIC_SITE_URL,
         'X-Title': 'Superteam Earn - AI Listing Builder',
@@ -77,11 +78,11 @@ export async function POST(req: NextRequest) {
     return result.toUIMessageStreamResponse();
   } catch (error) {
     if (error instanceof ZodError) {
-      logger.error('Validation error:', safeStringify(error.errors));
+      logger.error('Validation error:', safeStringify(error.issues));
       return new Response(
         JSON.stringify({
           error: 'Invalid input data',
-          details: error.flatten(),
+          details: z.flattenError(error),
         }),
         {
           status: 400,

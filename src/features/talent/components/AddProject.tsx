@@ -33,7 +33,8 @@ const PowSchema = z.object({
   skills: z.enum(allSkills).array().min(1, 'Required').default([]),
   subSkills: z.enum(allSubSkills).array().min(1, 'Required').default([]),
 });
-type PowFormData = z.infer<typeof PowSchema>;
+type PowFormInput = z.input<typeof PowSchema>;
+type PowFormData = z.output<typeof PowSchema>;
 
 type AddProjectProps = {
   isOpen: boolean;
@@ -56,7 +57,7 @@ export const AddProject = ({
   upload,
   onNewPow,
 }: AddProjectProps) => {
-  const form = useForm<PowFormData>({
+  const form = useForm<PowFormInput, unknown, PowFormData>({
     resolver: zodResolver(PowSchema),
   });
   const { handleSubmit, setValue, watch, control } = form;

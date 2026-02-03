@@ -40,6 +40,7 @@ import { useSlugValidation } from '@/features/sponsor/hooks/useSlugValidation';
 import { useSponsorNameValidation } from '@/features/sponsor/hooks/useSponsorNameValidation';
 import {
   shouldUpdateUser,
+  type SponsorFormInput,
   sponsorFormSchema,
   type SponsorFormValues,
   transformFormToApiData,
@@ -60,7 +61,7 @@ const CreateSponsor = () => {
   const [acknowledgementAccepted, setAcknowledgementAccepted] = useState(false);
   const [acknowledgementError, setAcknowledgementError] = useState('');
 
-  const form = useForm<SponsorFormValues>({
+  const form = useForm<SponsorFormInput, unknown, SponsorFormValues>({
     resolver: zodResolver(sponsorFormSchema),
     mode: 'onBlur',
     defaultValues: {

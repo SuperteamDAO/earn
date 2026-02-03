@@ -1,5 +1,6 @@
 import { headers } from 'next/headers';
 import { type NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 
 import {
   generateSignedUploadParams,
@@ -56,13 +57,12 @@ export async function POST(request: NextRequest) {
 
     const validationResult = signRequestSchema.safeParse(rawBody);
     if (!validationResult.success) {
-      logger.warn(
-        `Invalid sign request body: ${safeStringify(validationResult.error.format())}`,
-      );
+      const errorDetails = z.treeifyError(validationResult.error);
+      logger.warn(`Invalid sign request body: ${safeStringify(errorDetails)}`);
       return NextResponse.json(
         {
           error: 'Invalid request body',
-          details: validationResult.error.format(),
+          details: errorDetails,
         },
         { status: 400, headers: rateLimitHeaders },
       );

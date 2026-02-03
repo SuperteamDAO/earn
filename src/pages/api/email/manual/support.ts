@@ -10,7 +10,7 @@ import { supportEmailTemplate } from '@/features/emails/components/supportEmailT
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 const supportEmailSchema = z.object({
-  email: z.string().email(),
+  email: z.email(),
   subject: z.string().min(1),
   description: z.string().min(10),
 });
@@ -57,7 +57,7 @@ export default async function handler(
     logger.error('Error in support email API:', safeStringify(error));
 
     if (error instanceof z.ZodError) {
-      return res.status(400).json({ error: error.errors });
+      return res.status(400).json({ error: error.issues });
     }
 
     return res.status(500).json({ error: 'Internal server error' });
