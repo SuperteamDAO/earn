@@ -34,6 +34,7 @@ import { type ListingWithSubmissions } from '@/features/listings/types';
 import {
   type ValidatePaymentResult,
   type VerifyPaymentsFormData,
+  type VerifyPaymentsFormInput,
   verifyPaymentsSchema,
 } from '../../types';
 
@@ -93,7 +94,11 @@ export const VerifyPaymentModal = ({
     });
   };
 
-  const form = useForm<VerifyPaymentsFormData>({
+  const form = useForm<
+    VerifyPaymentsFormInput,
+    unknown,
+    VerifyPaymentsFormData
+  >({
     resolver: zodResolver(verifyPaymentsSchema),
   });
   const {

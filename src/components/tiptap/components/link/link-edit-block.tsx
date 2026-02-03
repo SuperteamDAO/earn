@@ -28,6 +28,8 @@ const formSchema = z.object({
   text: z.string().optional(),
   isNewTab: z.boolean().default(false),
 });
+type LinkFormInput = z.input<typeof formSchema>;
+type LinkFormData = z.output<typeof formSchema>;
 
 interface LinkEditorProps extends React.HTMLAttributes<HTMLDivElement> {
   defaultUrl?: string;
@@ -40,7 +42,7 @@ export const LinkEditBlock = React.forwardRef<HTMLDivElement, LinkEditorProps>(
   ({ onSave, defaultIsNewTab, defaultUrl, defaultText, className }, ref) => {
     const formRef = React.useRef<HTMLDivElement>(null);
 
-    const form = useForm<z.infer<typeof formSchema>>({
+    const form = useForm<LinkFormInput, unknown, LinkFormData>({
       resolver: zodResolver(formSchema),
       defaultValues: {
         url: defaultUrl,
@@ -52,7 +54,7 @@ export const LinkEditBlock = React.forwardRef<HTMLDivElement, LinkEditorProps>(
 
     React.useImperativeHandle(ref, () => formRef.current as HTMLDivElement);
 
-    const handleSubmit = async (data: z.infer<typeof formSchema>) => {
+    const handleSubmit = async (data: LinkFormData) => {
       onSave(data.url, data.text, data.isNewTab);
     };
 

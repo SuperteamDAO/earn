@@ -49,6 +49,7 @@ export const verifyPaymentsSchema = z.object({
         .object({
           submissionId: z.string(),
           link: z.string().optional(),
+          txId: z.string().optional(),
           isVerified: z.boolean(),
         })
         .refine(
@@ -82,6 +83,7 @@ export const verifyPaymentsSchema = z.object({
     }),
 });
 
+export type VerifyPaymentsFormInput = z.input<typeof verifyPaymentsSchema>;
 export type VerifyPaymentsFormData = z.infer<typeof verifyPaymentsSchema>;
 
 export type ValidatePaymentResult = {

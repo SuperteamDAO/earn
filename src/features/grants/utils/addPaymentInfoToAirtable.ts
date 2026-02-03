@@ -27,7 +27,7 @@ const AirtableInputSchema = z.object({
     projectOneLiner: z.string().optional(),
     projectTitle: z.string().optional(),
     user: z.object({
-      email: z.string().email(),
+      email: z.email(),
       username: z.string(),
       location: z.string().nullable(),
       kycName: z.string().min(1, 'KYC Name is required'),
@@ -52,9 +52,7 @@ const AirtableInputSchema = z.object({
     id: z.string(),
     approvedAmount: z.number().positive('Approved amount must be positive'),
     status: z.literal('Approved', {
-      errorMap: () => ({
-        message: "Tranche status must be 'Approved' to add payment info",
-      }),
+      error: "Tranche status must be 'Approved' to add payment info",
     }),
   }),
 });
@@ -171,12 +169,13 @@ export async function addPaymentInfoToAirtable(
   });
 
   if (!validationResult.success) {
-    const errorMessages = validationResult.error.errors
+    const errorMessages = validationResult.error.issues
       .map((e) => `${e.path.join('.')}: ${e.message}`)
       .join('; ');
+    const errorDetails = z.treeifyError(validationResult.error);
     logger.error(
       `Input validation failed for addPaymentInfoToAirtable (Tranche ID: ${trancheIdForLogging}). Errors: ${errorMessages}`,
-      { validationErrors: validationResult.error.format() },
+      { validationErrors: errorDetails },
     );
     throw new Error(
       `Invalid input data for Airtable payment info: ${errorMessages}`,
@@ -336,7 +335,7 @@ export async function addPaymentInfoToAirtable(
       );
     } else if (error instanceof z.ZodError) {
       logger.error(
-        `Input Validation Error Details: ${safeStringify(error.errors)}`,
+        `Input Validation Error Details: ${safeStringify(error.issues)}`,
       );
     } else {
       logger.error(`Non-API Error Details: ${safeStringify(error)}`);

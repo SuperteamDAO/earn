@@ -40,7 +40,7 @@ async function user(req: NextApiRequestWithUser, res: NextApiResponse) {
       );
       return res.status(403).json({
         error: 'Invalid sponsor data',
-        details: validationResult.error.errors,
+        details: validationResult.error.issues,
       });
     }
 

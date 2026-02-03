@@ -12,7 +12,7 @@ import { safeStringify } from '@/utils/safeStringify';
 
 import { type FeedPostType, FeedPostTypeSchema } from '@/features/feed/types';
 
-const UUIDSchema = z.string().uuid();
+const UUIDSchema = z.uuid();
 
 export default async function handler(
   req: NextApiRequest,

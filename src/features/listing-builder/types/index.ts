@@ -3,6 +3,7 @@ import { type z } from 'zod';
 import { type createListingFormSchema } from './schema';
 
 type ListingFormSchema = ReturnType<typeof createListingFormSchema>;
+export type ListingFormInput = z.input<ListingFormSchema>;
 export type ListingFormData = z.infer<ListingFormSchema>;
 export type ValidationFields = Partial<Record<keyof ListingFormData, true>>;
 

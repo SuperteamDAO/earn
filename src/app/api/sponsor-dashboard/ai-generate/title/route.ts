@@ -1,5 +1,5 @@
 import { openrouter } from '@openrouter/ai-sdk-provider';
-import { generateObject } from 'ai';
+import { generateObject, zodSchema } from 'ai';
 import { headers } from 'next/headers';
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
@@ -16,7 +16,7 @@ import { generateListingTitlePrompt } from './prompt';
 
 const requestBodySchema = z.object({
   description: z.string().min(1, 'Description cannot be empty'),
-  type: z.nativeEnum(BountyType),
+  type: z.enum(BountyType),
 });
 
 const responseSchema = z.object({
@@ -56,10 +56,10 @@ export async function POST(request: Request) {
       if (!parsedBody.success) {
         logger.error(
           'Invalid request body',
-          safeStringify(parsedBody.error.errors),
+          safeStringify(parsedBody.error.issues),
         );
         return NextResponse.json(
-          { error: 'Invalid request body', details: parsedBody.error.errors },
+          { error: 'Invalid request body', details: parsedBody.error.issues },
           { status: 400 },
         );
       }
@@ -83,7 +83,7 @@ export async function POST(request: Request) {
       system:
         'You generate concise, compelling listing titles for provided listing description. Follow the prompt rules and strictly satisfy the response schema.',
       prompt,
-      schema: responseSchema as any,
+      schema: zodSchema(responseSchema),
     });
 
     logger.info('Generated eligibility title object: ', safeStringify(object));

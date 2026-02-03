@@ -10,7 +10,7 @@ import {
 
 import { getUserSession } from '@/features/auth/utils/getUserSession';
 import {
-  ListingCategorySchema,
+  ListingCategoryOptions,
   QueryParamsSchema,
 } from '@/features/listings/constants/schema';
 import { buildListingQuery } from '@/features/listings/utils/query-builder';
@@ -29,7 +29,7 @@ export async function GET(request: NextRequest) {
     const validationResult = CountQueryParamsSchema.safeParse(queryParams);
     if (!validationResult.success) {
       return NextResponse.json(
-        { errors: validationResult.error.flatten() },
+        { errors: z.flattenError(validationResult.error) },
         { status: 400 },
       );
     }
@@ -54,7 +54,7 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    const categories = ListingCategorySchema._def.innerType.options;
+    const categories = ListingCategoryOptions;
 
     if (queryData.context === 'bookmarks' && !user?.id) {
       const emptyCategoryCounts: Record<string, number> = {};
@@ -102,7 +102,7 @@ export async function GET(request: NextRequest) {
 
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { message: 'Invalid query parameters', errors: error.flatten() },
+        { message: 'Invalid query parameters', errors: z.flattenError(error) },
         { status: 400 },
       );
     }

@@ -100,7 +100,9 @@ function RewardsFooter({
     [type, maxBonusSpots, rewards],
   );
 
-  const deadlineMoreThan72HoursLeft = hasMoreThan72HoursLeft(deadline);
+  const deadlineMoreThan72HoursLeft = deadline
+    ? hasMoreThan72HoursLeft(deadline)
+    : false;
   const submitListingMutation = useAtomValue(submitListingMutationAtom);
 
   const { data: tokenUsdValueData } = useQuery(

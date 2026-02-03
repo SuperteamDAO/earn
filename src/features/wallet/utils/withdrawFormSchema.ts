@@ -16,4 +16,5 @@ export const withdrawFormSchema = z.object({
     .refine((val) => validateSolAddress(val), solErrorMessage),
 });
 
+export type WithdrawFormInput = z.input<typeof withdrawFormSchema>;
 export type WithdrawFormData = z.infer<typeof withdrawFormSchema>;

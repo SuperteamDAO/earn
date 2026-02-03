@@ -10,6 +10,7 @@ import { checkListingSponsorAuth } from '@/features/auth/utils/checkListingSpons
 import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
 import { queueEmail } from '@/features/emails/utils/queueEmail';
 import { validatePayment } from '@/features/sponsor-dashboard/utils/paymentRPCValidation';
+import { fetchTokenUSDValue } from '@/features/wallet/utils/fetchTokenUSDValue';
 
 async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   const userId = req.userId;
@@ -123,12 +124,22 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       });
     }
 
+    let tokenPriceUSD: number | undefined;
+    try {
+      tokenPriceUSD = await fetchTokenUSDValue(dbToken.mintAddress);
+    } catch (err) {
+      logger.warn(
+        `Failed to fetch token price for ${dbToken.tokenSymbol}, falling back to fixed tolerance`,
+      );
+    }
+
     logger.debug(`Validating transaction for submission ID: ${id}`);
     const validationResult = await validatePayment({
       txId: paymentDetail.txId,
       recipientPublicKey: user.walletAddress!,
       expectedAmount: paymentDetail.amount,
       tokenMint: dbToken,
+      tokenPriceUSD,
     });
 
     if (!validationResult.isValid) {

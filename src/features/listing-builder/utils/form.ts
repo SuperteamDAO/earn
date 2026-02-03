@@ -8,7 +8,7 @@ import { type Listing } from '@/features/listings/types';
 
 import { type GeneratedListingData } from '../atoms';
 import { DEADLINE_FORMAT } from '../constants';
-import { type ListingFormData } from '../types';
+import { type ListingFormData, type ListingFormInput } from '../types';
 import { createListingFormSchema } from '../types/schema';
 import { calculateTotalRewardsForPodium } from './rewards';
 
@@ -38,12 +38,54 @@ export const getListingDefaults = ({
     hackathons,
   });
 
-  // Get the inner schema by unwrapping the ZodEffects
-  const getInnerSchema = (schema: z.ZodTypeAny): z.ZodObject<any> => {
-    if (schema instanceof z.ZodEffects) {
-      return getInnerSchema(schema.innerType());
+  const unwrapSchema = (schema: z.ZodTypeAny): z.ZodTypeAny => {
+    if (schema instanceof z.ZodPipe) {
+      return unwrapSchema(schema.in as z.ZodTypeAny);
     }
-    return schema as z.ZodObject<any>;
+    if (
+      schema instanceof z.ZodDefault ||
+      schema instanceof z.ZodOptional ||
+      schema instanceof z.ZodNullable ||
+      schema instanceof z.ZodCatch ||
+      schema instanceof z.ZodLazy ||
+      schema instanceof z.ZodPromise
+    ) {
+      return unwrapSchema(schema.unwrap() as z.ZodTypeAny);
+    }
+    return schema;
+  };
+
+  // Get the inner schema by unwrapping Zod pipes and wrappers.
+  const getInnerSchema = (schema: z.ZodTypeAny): z.ZodObject<any> =>
+    unwrapSchema(schema) as z.ZodObject<any>;
+
+  const resolveDefault = (
+    schema: z.ZodTypeAny,
+  ): { hasDefault: boolean; value?: unknown } => {
+    if (schema instanceof z.ZodDefault) {
+      return { hasDefault: true, value: schema.parse(undefined) };
+    }
+    if (schema instanceof z.ZodPipe) {
+      return resolveDefault(schema.in as z.ZodTypeAny);
+    }
+    if (
+      schema instanceof z.ZodOptional ||
+      schema instanceof z.ZodNullable ||
+      schema instanceof z.ZodCatch ||
+      schema instanceof z.ZodLazy ||
+      schema instanceof z.ZodPromise
+    ) {
+      return resolveDefault(schema.unwrap() as z.ZodTypeAny);
+    }
+    return { hasDefault: false };
+  };
+
+  const fallbackDefault = (schema: z.ZodTypeAny) => {
+    if (schema instanceof z.ZodObject) return {};
+    if (schema instanceof z.ZodArray) return [];
+    if (schema instanceof z.ZodString) return '';
+    if (schema instanceof z.ZodBoolean) return false;
+    return undefined;
   };
 
   const innerSchema = getInnerSchema(schema);
@@ -54,33 +96,12 @@ export const getListingDefaults = ({
   for (const [key, value] of Object.entries(shape)) {
     const zodValue = value as z.ZodTypeAny;
 
-    if (zodValue instanceof z.ZodDefault) {
-      defaults[key] = zodValue._def.defaultValue();
-    } else if (zodValue instanceof z.ZodOptional) {
-      if (zodValue._def.innerType instanceof z.ZodObject) {
-        defaults[key] = {};
-      } else if (zodValue._def.innerType instanceof z.ZodArray) {
-        defaults[key] = [];
-      } else if (zodValue._def.innerType instanceof z.ZodString) {
-        defaults[key] = '';
-      } else if (zodValue._def.innerType instanceof z.ZodBoolean) {
-        defaults[key] = false;
-      } else {
-        defaults[key] = undefined;
-      }
-    } else if ('defaultValue' in zodValue._def) {
-      defaults[key] = zodValue._def.defaultValue;
-    } else {
-      if (zodValue instanceof z.ZodObject) {
-        defaults[key] = {};
-      } else if (zodValue instanceof z.ZodArray) {
-        defaults[key] = [];
-      } else if (zodValue instanceof z.ZodString) {
-        defaults[key] = '';
-      } else {
-        defaults[key] = undefined;
-      }
+    const resolvedDefault = resolveDefault(zodValue);
+    if (resolvedDefault.hasDefault) {
+      defaults[key] = resolvedDefault.value;
+      continue;
     }
+    defaults[key] = fallbackDefault(unwrapSchema(zodValue));
   }
 
   defaults['type'] = type;
@@ -143,7 +164,7 @@ export const getListingDefaults = ({
 
 export const cleanTemplate = (
   template: Listing,
-  prevValues: ListingFormData,
+  prevValues: ListingFormInput,
 ) => {
   const reTemplate: Partial<
     Listing & { color: string; emoji: string; Bounties: string }

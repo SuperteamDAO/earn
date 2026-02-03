@@ -38,7 +38,14 @@ export const SponsorVerificationForm = () => {
     name: 'id',
   });
 
-  const form = useForm<z.infer<typeof sponsorVerificationSchema>>({
+  type SponsorVerificationInput = z.input<typeof sponsorVerificationSchema>;
+  type SponsorVerificationData = z.output<typeof sponsorVerificationSchema>;
+
+  const form = useForm<
+    SponsorVerificationInput,
+    unknown,
+    SponsorVerificationData
+  >({
     resolver: zodResolver(sponsorVerificationSchema),
     defaultValues: {
       superteamLead: '',
@@ -55,9 +62,7 @@ export const SponsorVerificationForm = () => {
   const hasFilledVerificationInfo = !!user?.currentSponsor?.verificationInfo;
   const commitToDeadline = form.watch('commitToDeadline');
 
-  const onSubmit = async (
-    values: z.infer<typeof sponsorVerificationSchema>,
-  ) => {
+  const onSubmit = async (values: SponsorVerificationData) => {
     try {
       setIsSubmitting(true);
 

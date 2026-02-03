@@ -15,12 +15,12 @@ import {
 } from './useHackathons';
 
 const DEFAULT_STATUS_VALUE: HackathonStatus =
-  HackathonStatusSchema._def.defaultValue();
+  HackathonStatusSchema.parse(undefined);
 const DEFAULT_ORDER_VALUE: HackathonOrderDirection =
-  HackathonOrderDirectionSchema._def.defaultValue();
+  HackathonOrderDirectionSchema.parse(undefined);
 const DEFAULT_SORT_BY_VALUE: HackathonSortOption =
-  HackathonSortOptionSchema._def.defaultValue();
-const defaultName = HackathonSchema._def.defaultValue();
+  HackathonSortOptionSchema.parse(undefined);
+const defaultName = HackathonSchema.parse(undefined);
 
 type QueryParamUpdates = Partial<
   Record<

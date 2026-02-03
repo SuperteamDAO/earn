@@ -18,7 +18,7 @@ export async function GET(request: NextRequest) {
     const validationResult = HackathonQueryParamsSchema.safeParse(queryParams);
     if (!validationResult.success) {
       return NextResponse.json(
-        { errors: validationResult.error.flatten() },
+        { errors: z.flattenError(validationResult.error) },
         { status: 400 },
       );
     }
@@ -57,7 +57,7 @@ export async function GET(request: NextRequest) {
     console.error('Error in API handler:', error);
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { message: 'Invalid query parameters', errors: error.flatten() },
+        { message: 'Invalid query parameters', errors: z.flattenError(error) },
         { status: 400 },
       );
     }

@@ -51,7 +51,7 @@ export function PaymentType() {
             <div className="">
               <FormLabel className="">Payment Type</FormLabel>
               <FormDescription>
-                {descriptionByType(field.value)}
+                {descriptionByType(field.value ?? 'fixed')}
               </FormDescription>
             </div>
             <FormControl className="flex items-center">
@@ -75,7 +75,7 @@ export function PaymentType() {
                   }
                   form.saveDraft();
                 }}
-                value={field.value}
+                value={field.value ?? 'fixed'}
               >
                 <SelectTrigger className="w-32 font-medium text-slate-600">
                   <SelectValue />

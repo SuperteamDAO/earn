@@ -5,9 +5,9 @@ import earncognitoClient from '@/lib/earncognitoClient';
 
 const reportListingSchema = z.object({
   listingTitle: z.string().min(1, 'Listing title is required'),
-  listingUrl: z.string().url('A valid listing URL is required'),
+  listingUrl: z.url('A valid listing URL is required'),
   reasonTitle: z.string().min(1, 'Reason for reporting is required'),
-  userEmail: z.string().email('A valid user email is required'),
+  userEmail: z.email('A valid user email is required'),
   reasonSubtext: z.string().optional(),
 });
 
@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     if (error instanceof ZodError) {
       return NextResponse.json(
-        { error: 'Invalid payload', details: error.errors },
+        { error: 'Invalid payload', details: error.issues },
         { status: 400 },
       );
     }

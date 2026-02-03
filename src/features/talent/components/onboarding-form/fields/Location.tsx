@@ -13,12 +13,12 @@ import { countries } from '@/constants/country';
 import { api } from '@/lib/api';
 
 import {
-  type NewTalentFormData,
+  type NewTalentFormInput,
   newTalentSchema,
 } from '@/features/talent/schema';
 
 export function LocationField() {
-  const form = useFormContext<NewTalentFormData>();
+  const form = useFormContext<NewTalentFormInput>();
   const { control, watch, setValue } = form;
 
   useEffect(() => {

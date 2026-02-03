@@ -16,7 +16,7 @@ import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 
 import { usernameRandomQuery } from '@/features/talent/queries/random-username';
-import { type NewTalentFormData } from '@/features/talent/schema';
+import { type NewTalentFormInput } from '@/features/talent/schema';
 import { useUsernameValidation } from '@/features/talent/utils/useUsernameValidation';
 
 export function UsernameField({
@@ -24,7 +24,7 @@ export function UsernameField({
 }: {
   setUsernameValidating: (val: boolean) => void;
 }) {
-  const form = useFormContext<NewTalentFormData>();
+  const form = useFormContext<NewTalentFormInput>();
   const {
     control,
     formState: { errors },

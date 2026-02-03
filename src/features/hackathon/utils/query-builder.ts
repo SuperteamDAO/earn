@@ -13,8 +13,8 @@ import {
 } from '@/features/listings/utils/region';
 
 import {
+  HackathonNameOptions,
   type HackathonQueryParamsSchema,
-  HackathonSchema,
   type HackathonStatusSchema,
 } from '../constants/schema';
 
@@ -86,7 +86,7 @@ export async function buildHackathonQuery(
     type: 'hackathon',
   };
 
-  const allHackathonNames = HackathonSchema._def.innerType.options.filter(
+  const allHackathonNames = HackathonNameOptions.filter(
     (option: string) => option !== 'All',
   );
 

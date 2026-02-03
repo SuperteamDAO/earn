@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
   const validationResult = UpdateGrantTrancheSchema.safeParse(body);
 
   if (!validationResult.success) {
-    const errorMessage = validationResult.error.errors
+    const errorMessage = validationResult.error.issues
       .map((err) => `${err.path.join('.')}: ${err.message}`)
       .join(', ');
     logger.warn('Invalid request body:', errorMessage);

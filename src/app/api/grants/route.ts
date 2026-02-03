@@ -23,7 +23,7 @@ export async function GET(request: NextRequest) {
     const validationResult = GrantQueryParamsSchema.safeParse(queryParams);
     if (!validationResult.success) {
       return NextResponse.json(
-        { errors: validationResult.error.flatten() },
+        { errors: z.flattenError(validationResult.error) },
         { status: 400 },
       );
     }
@@ -74,7 +74,7 @@ export async function GET(request: NextRequest) {
 
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { message: 'Invalid query parameters', errors: error.flatten() },
+        { message: 'Invalid query parameters', errors: z.flattenError(error) },
         { status: 400 },
       );
     }

@@ -39,7 +39,6 @@ const paymentSchema = (maxAmount: number, token: string) =>
         `${maxAmount} ${token} is the total amount remaining to be paid. Tx amount here can't be higher than the remaining amount to be paid.`,
       ),
     transactionLink: z
-      .string()
       .url('Invalid URL')
       .min(1, 'Transaction link is required')
       .refine((link) => {
@@ -51,7 +50,8 @@ const paymentSchema = (maxAmount: number, token: string) =>
       }, 'Invalid transaction link. Must be a solscan.io or solana.fm link with a valid transaction ID.'),
   });
 
-type PaymentFormInputs = z.infer<ReturnType<typeof paymentSchema>>;
+type PaymentFormInput = z.input<ReturnType<typeof paymentSchema>>;
+type PaymentFormInputs = z.output<ReturnType<typeof paymentSchema>>;
 
 export const RecordPaymentModal = ({
   applicationId,
@@ -64,7 +64,7 @@ export const RecordPaymentModal = ({
 }: RecordPaymentModalProps) => {
   const maxAmount = approvedAmount - totalPaid;
 
-  const form = useForm<PaymentFormInputs>({
+  const form = useForm<PaymentFormInput, unknown, PaymentFormInputs>({
     resolver: zodResolver(paymentSchema(maxAmount, token)),
     defaultValues: {
       amount: 0,

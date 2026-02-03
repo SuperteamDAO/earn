@@ -18,7 +18,7 @@ const AirtableInputSchema = z.object({
     id: z.string(),
     winnerPosition: z.number(),
     user: z.object({
-      email: z.string().email(),
+      email: z.email(),
       username: z.string(),
       location: z.string().nullable(),
       walletAddress: z.string().min(1, 'Wallet address is required'),
@@ -151,12 +151,13 @@ export async function addPaymentInfoToAirtable(
   });
 
   if (!validationResult.success) {
-    const errorMessages = validationResult.error.errors
+    const errorMessages = validationResult.error.issues
       .map((e) => `${e.path.join('.')}: ${e.message}`)
       .join('; ');
+    const errorDetails = z.treeifyError(validationResult.error);
     logger.error(
       `Input validation failed for addPaymentInfoToAirtable (Submission ID: ${submissionIdForLogging}). Errors: ${errorMessages}`,
-      { validationErrors: validationResult.error.format() },
+      { validationErrors: errorDetails },
     );
     throw new Error(
       `Invalid input data for Airtable payment info: ${errorMessages}`,
@@ -312,7 +313,7 @@ export async function addPaymentInfoToAirtable(
       );
     } else if (error instanceof z.ZodError) {
       logger.error(
-        `Input Validation Error Details: ${safeStringify(error.errors)}`,
+        `Input Validation Error Details: ${safeStringify(error.issues)}`,
       );
     } else {
       logger.error(`Non-API Error Details: ${safeStringify(error)}`);

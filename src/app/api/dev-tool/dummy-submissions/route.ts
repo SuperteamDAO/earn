@@ -1,4 +1,5 @@
 import { type NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 
 import logger from '@/lib/logger';
 import { createSubmission } from '@/pages/api/submission/create';
@@ -77,7 +78,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           error: 'Invalid request body',
-          details: validationResult.error.flatten(),
+          details: z.flattenError(validationResult.error),
         },
         { status: 400 },
       );

@@ -35,20 +35,23 @@ const hardDomPurify = (dirty: string | Node, cfg?: IsoDomPurify.Config) =>
   });
 
 const formSchema = z.object({
-  email: z.string().email({ message: 'Please enter a valid email address' }),
-  subject: z.preprocess(
-    (val) => hardDomPurify(val as unknown as string),
-    z.string().min(1, { message: 'Subject is required' }),
-  ),
-  description: z.preprocess(
-    (val) => hardDomPurify(val as unknown as string),
-    z
-      .string()
-      .min(10, { message: 'Description must be at least 10 valid characters' }),
-  ),
+  email: z.email({ error: 'Please enter a valid email address' }),
+  subject: z
+    .string()
+    .transform((val) => hardDomPurify(val))
+    .pipe(z.string().min(1, { message: 'Subject is required' })),
+  description: z
+    .string()
+    .transform((val) => hardDomPurify(val))
+    .pipe(
+      z.string().min(10, {
+        message: 'Description must be at least 10 valid characters',
+      }),
+    ),
 });
 
-type FormData = z.infer<typeof formSchema>;
+type SupportFormInput = z.input<typeof formSchema>;
+type FormData = z.output<typeof formSchema>;
 
 interface ModalFormProps {
   children: React.ReactNode;
@@ -60,7 +63,7 @@ export function SupportFormDialog({ children, onSubmit }: ModalFormProps) {
   const [open, setOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const form = useForm<FormData>({
+  const form = useForm<SupportFormInput, unknown, FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       email: user?.email || '',

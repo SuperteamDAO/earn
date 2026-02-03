@@ -20,7 +20,7 @@ import {
   MAX_PODIUMS,
   MAX_REWARD,
 } from '../constants';
-import { type ListingFormData, type ValidationFields } from '.';
+import { type ListingFormInput, type ValidationFields } from '.';
 
 export const eligibilityQuestionSchema = z.object({
   order: z.number(),
@@ -41,6 +41,11 @@ interface ListingFormSchemaOptions {
   pastListing?: Listing;
   hackathons?: HackathonModel[];
 }
+
+const BountyTypeSchema = z.enum(BountyType);
+const CompensationTypeSchema = z.enum(CompensationType);
+const StatusSchema = z.enum(status);
+
 export const createListingFormSchema = ({
   isGod,
   isEditing,
@@ -157,26 +162,25 @@ export const createListingFormSchema = ({
           },
         ),
       description: z.string().trim().min(1, 'Required'),
-      type: z
-        .nativeEnum(BountyType)
-        .default('bounty')
-        .refine((data) => {
-          if (data === 'hackathon') {
-            return !!hackathons && hackathons.length > 0;
-          }
-          return true;
-        }, 'Hackathon is not allowed for now'),
+      type: BountyTypeSchema.default('bounty').refine((data) => {
+        if (data === 'hackathon') {
+          return !!hackathons && hackathons.length > 0;
+        }
+        return true;
+      }, 'Hackathon is not allowed for now'),
       region: z.string().trim().min(1).max(256).default('Global'),
       referredBy: z.string().trim().min(1).max(256).optional().nullable(),
       deadline: z
         .string()
         .trim()
-        .datetime({
-          message: 'Required',
-          local: true,
-          offset: true,
-        })
         .min(1, 'Required')
+        .pipe(
+          z.iso.datetime({
+            error: 'Required',
+            local: true,
+            offset: true,
+          }),
+        )
         .default(dayjs().add(7, 'day').format(DEADLINE_FORMAT).replace('Z', ''))
         .refine((date) => {
           if (isGod && isEditing) return true;
@@ -194,12 +198,14 @@ export const createListingFormSchema = ({
       commitmentDate: z
         .string()
         .trim()
-        .datetime({
-          message: 'Required',
-          local: true,
-          offset: true,
-        })
-        .min(1, 'Required'),
+        .min(1, 'Required')
+        .pipe(
+          z.iso.datetime({
+            error: 'Required',
+            local: true,
+            offset: true,
+          }),
+        ),
       templateId: z.string().optional().nullable(),
       eligibility: z.array(eligibilityQuestionSchema).optional().nullable(),
       skills: skillsArraySchema,
@@ -208,7 +214,7 @@ export const createListingFormSchema = ({
         .enum(
           tokenList.map((token) => token.tokenSymbol) as [string, ...string[]],
           {
-            errorMap: () => ({ message: 'Token Not Allowed' }),
+            error: 'Token Not Allowed',
           },
         )
         .default('USDC'),
@@ -221,7 +227,7 @@ export const createListingFormSchema = ({
         .optional()
         .nullable(),
       rewards: rewardsSchema.optional().nullable(),
-      compensationType: z.nativeEnum(CompensationType).default('fixed'),
+      compensationType: CompensationTypeSchema.default('fixed'),
       minRewardAsk: z
         .number()
         .min(0)
@@ -277,10 +283,12 @@ export const createListingFormSchema = ({
           },
         ),
       isPrivate: z.boolean().default(false),
-      isPro: z.preprocess(
-        (val) => (val === null || val === undefined ? false : val),
-        z.boolean().default(false),
-      ),
+      isPro: z
+        .boolean()
+        .optional()
+        .nullable()
+        .transform((val) => val ?? false)
+        .pipe(z.boolean()),
       hackathonId: z.string().optional().nullable(),
 
       // values that will not be set on any API, but useful for response
@@ -289,9 +297,9 @@ export const createListingFormSchema = ({
       isWinnersAnnounced: z.boolean().optional().nullable(),
       totalWinnersSelected: z.number().optional().nullable(),
       totalPaymentsMade: z.number().optional().nullable(),
-      status: z.nativeEnum(status).optional().nullable(),
+      status: StatusSchema.optional().nullable(),
       publishedAt: z
-        .union([z.string().datetime(), z.date(), z.null()])
+        .union([z.iso.datetime(), z.date(), z.null()])
         .optional()
         .nullable(),
       sponsorId: z.string().optional().nullable(),
@@ -301,8 +309,8 @@ export const createListingFormSchema = ({
     });
 };
 
-export const createListingRefinements = async (
-  data: ListingFormData,
+export const createListingRefinements = (
+  data: Partial<ListingFormInput>,
   ctx: z.RefinementCtx,
   hackathons?: HackathonModel[],
   pick?: ValidationFields,
@@ -383,7 +391,7 @@ export const createListingRefinements = async (
             message: 'Required',
             minimum: 1,
             inclusive: true,
-            type: 'number',
+            origin: 'number',
           });
         }
       }
@@ -467,7 +475,7 @@ export const createListingRefinements = async (
 // used in backend APIs only, not on frontend,
 // meant to not hinder UX (like cache rewards while switching between listing type or compensation type)
 export const backendListingRefinements = async (
-  data: ListingFormData,
+  data: ListingFormInput,
   ctx: z.RefinementCtx,
   checkSlugFn: (slug: string, id?: string) => Promise<boolean>,
 ) => {

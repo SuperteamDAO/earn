@@ -10,7 +10,10 @@ import { safeStringify } from '@/utils/safeStringify';
 import { type NextApiRequestWithUser } from '@/features/auth/types';
 import { withAuth } from '@/features/auth/utils/withAuth';
 import { extractSocialUsername } from '@/features/social/utils/extractUsername';
-import { profileSchema, usernameSuperRefine } from '@/features/talent/schema';
+import {
+  profileSchemaBase,
+  usernameSuperRefine,
+} from '@/features/talent/schema';
 
 const allowedFields = [
   'username',
@@ -50,7 +53,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
     return res.status(404).json({ error: 'User not found' });
   }
   const filteredData = filterAllowedFields(req.body, allowedFields);
-  type SchemaKeys = keyof typeof profileSchema._def.schema.shape;
+  type SchemaKeys = keyof typeof profileSchemaBase.shape;
   const keysToValidate = Object.keys(filteredData).reduce<
     Record<SchemaKeys, true>
   >(
@@ -60,10 +63,10 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
     },
     {} as Record<SchemaKeys, true>,
   );
-  const partialSchema = profileSchema._def.schema
+  const partialSchema = profileSchemaBase
     .pick(keysToValidate)
-    .superRefine((data, ctx) => {
-      usernameSuperRefine(data, ctx, user.id);
+    .superRefine(async (data, ctx) => {
+      await usernameSuperRefine(data, ctx, user.id);
     });
   const updatedData = await partialSchema.parseAsync({
     ...filteredData,

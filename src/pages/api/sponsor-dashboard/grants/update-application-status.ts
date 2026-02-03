@@ -81,7 +81,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   const validationResult = UpdateGrantApplicationSchema.safeParse(req.body);
 
   if (!validationResult.success) {
-    const errorMessage = validationResult.error.errors
+    const errorMessage = validationResult.error.issues
       .map((err) => `${err.path.join('.')}: ${err.message}`)
       .join(', ');
     logger.warn('Invalid request body:', errorMessage);

@@ -95,7 +95,8 @@ export const TrancheFormModal = ({ grant, applicationId, onClose }: Props) => {
     [isST],
   );
 
-  type TrancheFormValues = z.infer<typeof trancheFormSchema>;
+  type TrancheFormInput = z.input<typeof trancheFormSchema>;
+  type TrancheFormValues = z.output<typeof trancheFormSchema>;
 
   const { data: grantApplication } = useQuery(userApplicationQuery(grant.id));
 
@@ -106,7 +107,7 @@ export const TrancheFormModal = ({ grant, applicationId, onClose }: Props) => {
           ?.walletAddress
       : grantApplication?.walletAddress;
 
-  const form = useForm<TrancheFormValues>({
+  const form = useForm<TrancheFormInput, unknown, TrancheFormValues>({
     resolver: zodResolver(trancheFormSchema),
     defaultValues: {
       walletAddress: lastWalletAddress || '',

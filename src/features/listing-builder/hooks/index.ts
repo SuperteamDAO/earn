@@ -22,14 +22,45 @@ import {
   skillsKeyAtom,
   submitListingMutationAtom,
 } from '../atoms';
-import { type ListingFormData, type ValidationFields } from '../types';
+import {
+  type ListingFormData,
+  type ListingFormInput,
+  type ValidationFields,
+} from '../types';
 import {
   createListingFormSchema,
   createListingRefinements,
 } from '../types/schema';
 import { getListingDefaults, refineReadyListing } from '../utils/form';
 
-export interface UseListingFormReturn extends UseFormReturn<ListingFormData> {
+type ListingFormSchema = ReturnType<typeof createListingFormSchema>;
+type ListingFormShape = ListingFormSchema['shape'];
+
+const unwrapToObjectSchema = (schema: z.ZodTypeAny): z.ZodObject<any> => {
+  let current: z.ZodTypeAny = schema;
+  while (true) {
+    if (current instanceof z.ZodPipe) {
+      current = current.in as z.ZodTypeAny;
+      continue;
+    }
+    if (
+      current instanceof z.ZodDefault ||
+      current instanceof z.ZodOptional ||
+      current instanceof z.ZodNullable ||
+      current instanceof z.ZodCatch ||
+      current instanceof z.ZodLazy ||
+      current instanceof z.ZodPromise
+    ) {
+      current = current.unwrap() as z.ZodTypeAny;
+      continue;
+    }
+    break;
+  }
+  return current as z.ZodObject<any>;
+};
+
+export interface UseListingFormReturn
+  extends UseFormReturn<ListingFormInput, unknown, ListingFormData> {
   saveDraft: () => void;
   submitListing: () => Promise<ListingFormData & { reason?: string }>;
   resetForm: () => void;
@@ -39,15 +70,19 @@ export interface UseListingFormReturn extends UseFormReturn<ListingFormData> {
 }
 
 export const useListingForm = (
-  defaultValues?: ListingFormData,
+  defaultValues?: ListingFormInput,
   hackathons?: HackathonModel[],
 ): UseListingFormReturn => {
-  let formMethods: UseFormReturn<ListingFormData> | null = null;
+  let formMethods: UseFormReturn<
+    ListingFormInput,
+    unknown,
+    ListingFormData
+  > | null = null;
   let isNewFormInitialized = false;
 
   try {
     //eslint-disable-next-line
-    formMethods = useFormContext<ListingFormData>();
+    formMethods = useFormContext<ListingFormInput, unknown, ListingFormData>();
   } catch (error) {
     // No existing form context
   }
@@ -70,7 +105,7 @@ export const useListingForm = (
   });
   if (!formMethods || !Object.keys(formMethods).length) {
     //eslint-disable-next-line
-    formMethods = useForm<ListingFormData>({
+    formMethods = useForm<ListingFormInput, unknown, ListingFormData>({
       resolver: zodResolver(formSchema),
       defaultValues,
       mode: 'onTouched',
@@ -124,7 +159,11 @@ export const useListingForm = (
       isProcessing: true,
     }));
     try {
-      const dataToSave = getValues();
+      const rawValues = getValues();
+      const dataToSave = {
+        ...rawValues,
+        isPro: rawValues.isPro ?? false,
+      };
 
       if (dataToSave.deadline) {
         if (!dataToSave.deadline.endsWith('Z'))
@@ -194,7 +233,7 @@ export const useListingForm = (
   }, [isEditing]);
 
   const submitListing = useCallback(async () => {
-    const formData = refineReadyListing(getValues());
+    const formData = refineReadyListing(getValues() as ListingFormData);
     const data = await submitListingMutation.mutateAsync(formData);
     queryClient.invalidateQueries({
       queryKey: ['sponsor-dashboard-listing', data.slug],
@@ -256,11 +295,13 @@ export const useListingForm = (
         values.rewards = rewardsObject;
       }
 
-      const innerSchema = formSchema._def.schema;
+      const innerSchema = unwrapToObjectSchema(
+        formSchema,
+      ) as z.ZodObject<ListingFormShape>;
       const partialSchema = innerSchema
         .pick(fields)
         .superRefine((data, ctx) => {
-          createListingRefinements(data as any, ctx, hackathons, fields);
+          createListingRefinements(data, ctx, hackathons, fields);
         });
 
       try {
@@ -271,7 +312,7 @@ export const useListingForm = (
         return true;
       } catch (error) {
         if (error instanceof z.ZodError) {
-          error.errors.forEach((err) => {
+          error.issues.forEach((err) => {
             const fieldName = err.path.join('.') as keyof ListingFormData;
             formMethods.setError(fieldName, {
               type: err.code,

@@ -16,6 +16,7 @@ import {
   validatePayment,
   type ValidationResult,
 } from '@/features/sponsor-dashboard/utils/paymentRPCValidation';
+import { fetchTokenUSDValue } from '@/features/wallet/utils/fetchTokenUSDValue';
 
 async function wait(ms: number) {
   return await new Promise((resolve) => setTimeout(resolve, ms));
@@ -73,6 +74,15 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       return res
         .status(400)
         .json({ error: "Token doesn't exist for this listing" });
+    }
+
+    let tokenPriceUSD: number | undefined;
+    try {
+      tokenPriceUSD = await fetchTokenUSDValue(dbToken.mintAddress);
+    } catch (err) {
+      logger.warn(
+        `Failed to fetch token price for ${dbToken.tokenSymbol}, falling back to fixed tolerance`,
+      );
     }
 
     const validationResults: ValidatePaymentResult[] = [];
@@ -167,6 +177,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           recipientPublicKey: walletAddress!,
           expectedAmount,
           tokenMint: dbToken,
+          tokenPriceUSD,
         });
 
         if (!rpcValidationResult.isValid) {

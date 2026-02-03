@@ -5,4 +5,5 @@ export const dummySubmissionsSchema = z.object({
   count: z.number().min(1).max(30),
 });
 
+export type DummySubmissionsInput = z.input<typeof dummySubmissionsSchema>;
 export type DummySubmissionsSchema = z.infer<typeof dummySubmissionsSchema>;

@@ -53,7 +53,8 @@ const disputeFormSchema = z.object({
   description: z.string().min(10, 'Description must be at least 10 characters'),
 });
 
-type DisputeFormData = z.infer<typeof disputeFormSchema>;
+type DisputeFormInput = z.input<typeof disputeFormSchema>;
+type DisputeFormData = z.output<typeof disputeFormSchema>;
 
 export function DisputeModal({ isOpen, onClose, entry }: DisputeModalProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -68,7 +69,7 @@ export function DisputeModal({ isOpen, onClose, entry }: DisputeModalProps) {
         : 'BOUNTY'
       : 'GRANT';
 
-  const form = useForm<DisputeFormData>({
+  const form = useForm<DisputeFormInput, unknown, DisputeFormData>({
     resolver: zodResolver(disputeFormSchema),
     defaultValues: {
       description: '',

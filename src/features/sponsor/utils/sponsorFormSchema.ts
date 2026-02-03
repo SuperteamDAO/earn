@@ -57,8 +57,11 @@ export const sponsorFormSchema = z.object({
   user: userSponsorDetailsSchema.optional(),
 });
 
+export type SponsorBaseInput = z.input<typeof sponsorBaseSchema>;
 export type SponsorBase = z.infer<typeof sponsorBaseSchema>;
+export type UserSponsorDetailsInput = z.input<typeof userSponsorDetailsSchema>;
 export type UserSponsorDetails = z.infer<typeof userSponsorDetailsSchema>;
+export type SponsorFormInput = z.input<typeof sponsorFormSchema>;
 export type SponsorFormValues = z.infer<typeof sponsorFormSchema>;
 
 export const transformFormToApiData = (data: SponsorFormValues) => {
