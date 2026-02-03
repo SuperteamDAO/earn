@@ -214,7 +214,7 @@ export const Footer = () => {
               <MdOutlineMail
                 className="'transition-opacity size-5 cursor-pointer text-slate-500 opacity-100 grayscale duration-200 hover:opacity-80"
                 onClick={() => {
-                  window.open('mailto:support@superteam.com', '_blank');
+                  window.open('mailto:support@superteam.fun', '_blank');
                 }}
               />
             </div>

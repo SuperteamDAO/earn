@@ -165,7 +165,7 @@ export const Footer = () => {
               <button
                 className="text-slate-100 transition-opacity hover:text-white"
                 onClick={() => {
-                  window.open('mailto:support@superteam.com', '_blank');
+                  window.open('mailto:support@superteam.f', '_blank');
                 }}
                 aria-label="Email"
               >
