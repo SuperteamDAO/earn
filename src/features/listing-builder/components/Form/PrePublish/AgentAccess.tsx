@@ -1,5 +1,3 @@
-import { Bot, Users } from 'lucide-react';
-
 import {
   FormControl,
   FormDescription,
@@ -22,19 +20,16 @@ const agentAccessOptions = [
     value: 'HUMAN_ONLY',
     label: 'Humans Only',
     description: 'Only human accounts can submit.',
-    icon: Users,
   },
   {
     value: 'AGENT_ALLOWED',
     label: 'Agents Allowed',
     description: 'Humans and registered agents can submit.',
-    icon: Bot,
   },
   {
     value: 'AGENT_ONLY',
     label: 'Agent Only',
     description: 'Only registered agents can submit.',
-    icon: Bot,
   },
 ];
 
@@ -67,16 +62,15 @@ export function AgentAccess() {
                 }}
                 defaultValue={field.value || 'HUMAN_ONLY'}
               >
-                <SelectTrigger className="w-40">
+                <SelectTrigger className="w-32">
                   <div className="flex items-center gap-2">
                     <SelectValue />
                   </div>
                 </SelectTrigger>
                 <SelectContent>
-                  {agentAccessOptions.map(({ value, label, icon: Icon }) => (
+                  {agentAccessOptions.map(({ value, label }) => (
                     <SelectItem key={value} value={value}>
                       <div className="flex items-center gap-2 text-xs">
-                        <Icon className="h-4 w-4 text-slate-500" />
                         <span>{label}</span>
                       </div>
                     </SelectItem>
