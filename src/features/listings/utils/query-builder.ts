@@ -171,6 +171,7 @@ export async function buildListingQuery(
     isActive: true,
     isArchived: false,
     isPrivate: false,
+    agentAccess: { not: 'AGENT_ONLY' },
     hackathonprize: false,
   };
 

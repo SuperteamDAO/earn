@@ -19,6 +19,7 @@ export async function createSubmission(
   listingId: string,
   data: any,
   listing: any,
+  options?: { isAgent?: boolean; agentId?: string },
 ) {
   const user = await prisma.user.findUniqueOrThrow({
     where: { id: userId },
@@ -29,6 +30,7 @@ export async function createSubmission(
     listing.minRewardAsk || 0,
     listing.maxRewardAsk || 0,
     user as any,
+    { isAgent: options?.isAgent },
   ).safeParse(data);
 
   if (!validationResult.success) {
@@ -37,7 +39,7 @@ export async function createSubmission(
 
   const validatedData = validationResult.data;
 
-  if (validatedData.telegram && !user.telegram) {
+  if (validatedData.telegram && !user.telegram && !options?.isAgent) {
     await prisma.user.update({
       where: { id: userId },
       data: { telegram: validatedData.telegram },
@@ -53,6 +55,7 @@ export async function createSubmission(
   return prisma.submission.create({
     data: {
       userId,
+      agentId: options?.agentId || null,
       listingId,
       link: validatedData.link || '',
       tweet: validatedData.tweet || '',

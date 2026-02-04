@@ -1,4 +1,4 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
+import type { NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
@@ -6,18 +6,11 @@ import { type EnumBountyTypeFilter } from '@/prisma/commonInputTypes';
 import { type BountyType } from '@/prisma/enums';
 import { type BountiesFindManyArgs } from '@/prisma/models/Bounties';
 
-import { getPrivyToken } from '@/features/auth/utils/getPrivyToken';
+import { type NextApiRequestWithAgent } from '@/features/auth/types';
+import { withAgentAuth } from '@/features/auth/utils/withAgentAuth';
 import { listingSelect } from '@/features/listings/constants/schema';
-import {
-  filterRegionCountry,
-  getCombinedRegion,
-  getParentRegions,
-} from '@/features/listings/utils/region';
 
-export default async function listings(
-  req: NextApiRequest,
-  res: NextApiResponse,
-) {
+async function handler(req: NextApiRequestWithAgent, res: NextApiResponse) {
   const params = req.query;
 
   const type = params.type as EnumBountyTypeFilter | BountyType | undefined;
@@ -29,20 +22,6 @@ export default async function listings(
     excludeIds = [excludeIds];
   }
 
-  const privyDid = await getPrivyToken(req);
-  let userRegion;
-  let userLocation;
-  if (privyDid) {
-    const user = await prisma.user.findFirst({
-      where: { privyDid },
-      select: { location: true },
-    });
-    userRegion = user?.location
-      ? getCombinedRegion(user?.location, true)
-      : undefined;
-    userLocation = user?.location;
-  }
-
   const listingQueryOptions: BountiesFindManyArgs = {
     where: {
       id: {
@@ -52,21 +31,10 @@ export default async function listings(
       isActive: true,
       isPrivate: false,
       isArchived: false,
-      agentAccess: { not: 'AGENT_ONLY' },
       status: 'OPEN',
       deadline: { gte: deadline },
       type: type || { in: ['bounty', 'project'] },
-      region: {
-        in: userRegion?.name
-          ? [
-              'Global',
-              userRegion.name,
-              ...(filterRegionCountry(userRegion, userLocation || '').country ||
-                []),
-              ...(getParentRegions(userRegion) || []),
-            ]
-          : ['Global'],
-      },
+      agentAccess: { in: ['AGENT_ALLOWED', 'AGENT_ONLY'] },
       sponsorId: exclusiveSponsorId,
     },
     select: listingSelect,
@@ -86,3 +54,5 @@ export default async function listings(
     });
   }
 }
+
+export default withAgentAuth(handler);

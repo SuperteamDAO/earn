@@ -58,6 +58,7 @@ export const listingSelect = {
   compensationType: true,
   minRewardAsk: true,
   maxRewardAsk: true,
+  agentAccess: true,
   status: true,
   isPro: true,
   _count: {

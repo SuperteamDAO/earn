@@ -1,4 +1,5 @@
 import type { Ratelimit } from '@upstash/ratelimit';
+import { type NextApiResponse } from 'next';
 import { NextResponse } from 'next/server';
 
 import logger from '@/lib/logger';
@@ -135,4 +136,50 @@ export async function checkAndApplyRateLimitApp(
   }
 
   return null;
+}
+
+/**
+ * Rate limiting function for Pages Router API endpoints.
+ * Returns a boolean indicating whether the request should proceed.
+ */
+export async function checkAndApplyRateLimitPages(
+  options: ApplyRateLimitOptions & { res: NextApiResponse },
+): Promise<boolean> {
+  const { res, ...rateLimitOptions } = options;
+  const checkResult = await checkRateLimit(rateLimitOptions);
+
+  if (!checkResult.allowed) {
+    const headers: Record<string, string> = {};
+
+    if (checkResult.result) {
+      const { limit, remaining, reset } = checkResult.result;
+      headers['X-RateLimit-Limit'] = limit.toString();
+      headers['X-RateLimit-Remaining'] = remaining.toString();
+      headers['X-RateLimit-Reset'] = Math.floor(reset / 1000).toString();
+    }
+
+    if (checkResult.result?.retryAfter) {
+      headers['Retry-After'] = checkResult.result.retryAfter.toString();
+      res.setHeader('Retry-After', headers['Retry-After']);
+      res.setHeader('X-RateLimit-Limit', headers['X-RateLimit-Limit'] || '');
+      res.setHeader(
+        'X-RateLimit-Remaining',
+        headers['X-RateLimit-Remaining'] || '',
+      );
+      res.setHeader('X-RateLimit-Reset', headers['X-RateLimit-Reset'] || '');
+      res.status(429).json({
+        message: 'Too many requests. Please wait before trying again.',
+        retryAfter: checkResult.result.retryAfter,
+      });
+      return false;
+    }
+
+    if (checkResult.error) {
+      const statusCode = checkResult.error.includes('identifier') ? 400 : 500;
+      res.status(statusCode).json({ message: checkResult.error });
+      return false;
+    }
+  }
+
+  return true;
 }

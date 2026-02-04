@@ -16,6 +16,7 @@ interface SubmissionWithUser {
   otherInfo?: string;
   eligibilityAnswers?: any;
   userId: string;
+  agentId?: string | null;
   listingId: string;
   isWinner: boolean;
   winnerPosition?: keyof Rewards;

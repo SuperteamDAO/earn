@@ -51,6 +51,7 @@ model Bounties {
   referredBy         String?
   publishedAt        DateTime?
   isPrivate          Boolean            @default(false)
+  agentAccess        AgentAccess        @default(HUMAN_ONLY)
   hackathonId        String?
   compensationType   CompensationType   @default(fixed)
   maxRewardAsk       Float?
@@ -335,6 +336,7 @@ model Submission {
   status             SubmissionStatus @default(Pending)
   eligibilityAnswers Json?            @default("[]")
   userId             String
+  agentId            String?
   listingId          String
   isWinner           Boolean          @default(false)
   winnerPosition     Int?
@@ -352,6 +354,7 @@ model Submission {
   rewardInUSD        Float            @default(0)
   listing            Bounties         @relation(fields: [listingId], references: [id])
   user               User             @relation(fields: [userId], references: [id])
+  agent              Agent?           @relation(fields: [agentId], references: [id])
   ogImage            String?          @db.Text
   notes              String?          @db.VarChar(10000)
   Comments           Comment[]
@@ -371,6 +374,7 @@ model Submission {
   @@index([userId, isWinner])
   @@index([createdAt(sort: Desc)])
   @@index([likeCount(sort: Desc), createdAt(sort: Desc)])
+  @@index([agentId])
 }
 
 model Sponsors {
@@ -481,6 +485,9 @@ model User {
   telegramUsers      TelegramUser[]
   emailLogs          emailLogs[]
   isPro              Boolean              @default(false)
+  isAgent            Boolean              @default(false)
+  agentProfile       Agent?
+  claimedAgents      Agent[]              @relation("AgentClaimedBy")
 
   @@index([currentSponsorId])
   @@index([hackathonId])
@@ -509,6 +516,31 @@ model Scouts {
   @@index([listingId, score(sort: Desc)])
   @@index([userId, listingId, invited])
   @@index([score(sort: Desc)])
+}
+
+model Agent {
+  id              String      @id @default(uuid())
+  name            String
+  userId          String      @unique
+  apiKeyHash      String      @unique
+  apiKeyPrefix    String
+  claimCodeHash   String      @unique
+  claimCodePrefix String
+  status          AgentStatus @default(ACTIVE)
+  claimedByUserId String?
+  claimedAt       DateTime?
+  lastUsedAt      DateTime?
+  metadata        Json?
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  user          User         @relation(fields: [userId], references: [id])
+  claimedByUser User?        @relation("AgentClaimedBy", fields: [claimedByUserId], references: [id])
+  submissions   Submission[]
+
+  @@index([userId])
+  @@index([claimedByUserId])
+  @@index([status])
 }
 
 model TalentRankings {
@@ -797,6 +829,17 @@ enum Role {
 enum Source {
   NATIVE
   IMPORT
+}
+
+enum AgentStatus {
+  ACTIVE
+  REVOKED
+}
+
+enum AgentAccess {
+  HUMAN_ONLY
+  AGENT_ALLOWED
+  AGENT_ONLY
 }
 
 enum ApplicationType {

@@ -212,6 +212,10 @@ export const SubmissionActionButton = ({
   let isSubmitDisabled = false;
 
   function getButtonState() {
+    if (listing.agentAccess === 'AGENT_ONLY') {
+      return 'agent_only';
+    }
+
     if (
       isWinnersAnnounced &&
       isFndnPaying &&
@@ -248,6 +252,13 @@ export const SubmissionActionButton = ({
   }
 
   switch (buttonState) {
+    case 'agent_only':
+      buttonText = 'Agent Only';
+      buttonBG = 'bg-zinc-300';
+      isBtnDisabled = true;
+      isSubmitDisabled = true;
+      btnLoadingText = null;
+      break;
     case 'rejected':
       buttonText = isProject
         ? 'Application Rejected'

@@ -69,6 +69,7 @@ interface User {
   referralCode?: string;
   referredById?: string | null;
   isPro?: boolean;
+  isAgent?: boolean;
 }
 
 type PrismaUserWithoutKYC = UserGetPayload<{
