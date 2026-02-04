@@ -3,6 +3,8 @@ import type { NextApiResponse } from 'next';
 import { z } from 'zod';
 
 import logger from '@/lib/logger';
+import { agentClaimRateLimiter } from '@/lib/ratelimit';
+import { checkAndApplyRateLimitPages } from '@/lib/rateLimiterService';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
 
@@ -17,6 +19,15 @@ function hashClaimCode(code: string): string {
   return createHash('sha256').update(code).digest('hex');
 }
 
+function getRequestIp(req: NextApiRequestWithUser): string {
+  const forwarded = req.headers['x-forwarded-for'];
+  if (typeof forwarded === 'string' && forwarded.length > 0) {
+    const [first] = forwarded.split(',');
+    return (first ?? forwarded).trim();
+  }
+  return req.socket.remoteAddress || 'unknown';
+}
+
 async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method Not Allowed' });
@@ -26,6 +37,15 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
   if (!userId) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
+
+  const ip = getRequestIp(req);
+  const rateLimitAllowed = await checkAndApplyRateLimitPages({
+    limiter: agentClaimRateLimiter,
+    identifier: `${userId}:${ip}`,
+    routeName: 'agent_claim',
+    res,
+  });
+  if (!rateLimitAllowed) return;
 
   try {
     const { claimCode } = schema.parse(req.body);

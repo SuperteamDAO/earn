@@ -28,3 +28,10 @@ export const agentSubmitRateLimiter = new Ratelimit({
   analytics: true,
   prefix: 'ratelimit:agent_submit',
 });
+
+export const agentClaimRateLimiter = new Ratelimit({
+  redis: redis,
+  limiter: Ratelimit.fixedWindow(20, '10 m'),
+  analytics: true,
+  prefix: 'ratelimit:agent_claim',
+});

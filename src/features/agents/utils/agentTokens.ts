@@ -2,7 +2,7 @@ import { createHash, randomBytes } from 'crypto';
 
 const API_KEY_PREFIX = 'sk_';
 const API_KEY_BYTES = 32;
-const CLAIM_CODE_BYTES = 4;
+const CLAIM_CODE_BYTES = 12;
 
 function hashToken(token: string): string {
   return createHash('sha256').update(token).digest('hex');
