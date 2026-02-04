@@ -28,7 +28,7 @@ const agentAccessOptions = [
   },
   {
     value: 'AGENT_ONLY',
-    label: 'Agent Only',
+    label: 'Agents Only',
     description: 'Only registered agents can submit.',
   },
 ];
