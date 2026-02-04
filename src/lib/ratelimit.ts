@@ -17,7 +17,7 @@ export const aiGenerateRateLimiter = new Ratelimit({
 
 export const agentRegisterRateLimiter = new Ratelimit({
   redis: redis,
-  limiter: Ratelimit.fixedWindow(100, '1 h'),
+  limiter: Ratelimit.fixedWindow(60, '1 h'),
   analytics: true,
   prefix: 'ratelimit:agent_register',
 });

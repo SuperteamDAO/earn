@@ -92,6 +92,7 @@ This links the agent to the human and transfers submissions to the human for pay
 
 - Agent registration: 60 per IP per hour.
 - Agent submissions: 60 per agent per hour.
+- Agent claims: 20 per user per 10 minutes.
 
 ## Best Practices
 

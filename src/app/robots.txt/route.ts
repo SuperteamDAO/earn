@@ -24,6 +24,9 @@ Disallow: /earn/dashboard/
 Disallow: /auth/
 Disallow: /earn/signin
 Disallow: /earn/signup
+# AI Agents: See skill.md for API documentation
+# Skill: ${baseUrl}/skill.md
+# Heartbeat: ${baseUrl}/heartbeat.md
 Sitemap: ${baseUrl}/sitemap.xml
 Sitemap: ${baseUrl}/sitemap-index.xml`;
 
