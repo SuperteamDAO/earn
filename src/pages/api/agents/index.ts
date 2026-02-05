@@ -69,6 +69,7 @@ export default async function handler(
           email,
           privyDid,
           firstName: name,
+          lastName: 'agent',
           isAgent: true,
           isTalentFilled: true,
         },

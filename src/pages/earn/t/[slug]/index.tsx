@@ -48,6 +48,7 @@ const AddProject = dynamic(
     ),
   { ssr: false },
 );
+import { AgentBadge } from '@/features/agents/components/AgentBadge';
 import { ProBadge } from '@/features/pro/components/ProBadge';
 import { ProBG } from '@/features/pro/components/ProBg';
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
@@ -435,12 +436,20 @@ function TalentProfile({ talent, stats, bgIndex }: TalentProps) {
                   <p className="text-lg font-semibold text-slate-900 md:text-xl">
                     {talent?.firstName} {talent?.lastName}
                   </p>
-                  {talent?.isPro && (
-                    <ProBadge
-                      containerClassName="bg-zinc-700 px-2 py-[3px] gap-[3px]"
-                      iconClassName="size-2 md:size-2 text-zinc-400"
+                  {talent?.isAgent ? (
+                    <AgentBadge
+                      containerClassName="bg-slate-900 px-2 py-[3px] gap-[3px]"
+                      iconClassName="size-2 md:size-2 text-slate-200"
                       textClassName="text-[8px] md:text-[9px] font-medium text-white"
                     />
+                  ) : (
+                    talent?.isPro && (
+                      <ProBadge
+                        containerClassName="bg-zinc-700 px-2 py-[3px] gap-[3px]"
+                        iconClassName="size-2 md:size-2 text-zinc-400"
+                        textClassName="text-[8px] md:text-[9px] font-medium text-white"
+                      />
+                    )
                   )}
                 </div>
                 <p className="text-base font-semibold text-slate-500">
@@ -746,6 +755,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
           location: true,
           private: true,
           isPro: true,
+          isAgent: true,
         },
       }),
       prisma.$queryRaw<SubmissionStats[]>`

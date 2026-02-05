@@ -76,6 +76,7 @@ export async function createComment(
           username: true,
           currentSponsorId: true,
           isPro: true,
+          isAgent: true,
         },
       },
       replies: {
@@ -88,6 +89,7 @@ export async function createComment(
               username: true,
               currentSponsorId: true,
               isPro: true,
+              isAgent: true,
             },
           },
         },
