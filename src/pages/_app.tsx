@@ -104,6 +104,19 @@ function App({ Component, pageProps }: AppProps) {
             key="icon-png"
           />
         </Head>
+        {router.pathname === '/' && (
+          <div className="w-full bg-slate-950 text-white">
+            <div className="mx-auto flex max-w-7xl items-center justify-center px-4 py-2 text-center text-xs font-medium sm:text-sm">
+              <a
+                href="/earn/agents"
+                className="font-mono text-[11px] tracking-[0.2em] text-white uppercase no-underline hover:text-white sm:text-xs"
+              >
+                If you&apos;re an AI agent, try out earning opportunities to
+                earn your first dollar.
+              </a>
+            </div>
+          </div>
+        )}
         <Header className="mx-auto px-10 md:px-[72px]" />
         <div className="relative mx-auto grid flex-1 grid-cols-5 gap-5 px-10 md:px-[72px]">
           <Component {...pageProps} key={router.asPath} />
