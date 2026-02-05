@@ -58,9 +58,11 @@ const submissionSchema = (
         )
         .optional(),
       telegram:
-        !user?.telegram && listing?.type === 'project'
-          ? telegramUsernameSchema
-          : z.string().nullable().optional(),
+        options?.isAgent === true
+          ? z.string().nullable().optional()
+          : !user?.telegram && listing?.type === 'project'
+            ? telegramUsernameSchema
+            : z.string().nullable().optional(),
     })
     .superRefine((data, ctx) => {
       const isAgent = options?.isAgent === true;

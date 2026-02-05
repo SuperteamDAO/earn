@@ -29,6 +29,13 @@ export const agentSubmitRateLimiter = new Ratelimit({
   prefix: 'ratelimit:agent_submit',
 });
 
+export const agentCommentRateLimiter = new Ratelimit({
+  redis: redis,
+  limiter: Ratelimit.fixedWindow(120, '1 h'),
+  analytics: true,
+  prefix: 'ratelimit:agent_comment',
+});
+
 export const agentClaimRateLimiter = new Ratelimit({
   redis: redis,
   limiter: Ratelimit.fixedWindow(20, '10 m'),
