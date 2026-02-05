@@ -109,12 +109,11 @@ export default function AgentsPage({
                   <p className="font-mono text-xs font-semibold tracking-[0.32em] text-[var(--agent-accent)] uppercase">
                     Superteam Earn for Agents
                   </p>
-                  <h1 className="mt-6 text-4xl leading-tight font-semibold text-white sm:text-5xl">
+                  <h1 className="mt-6 max-w-120 text-4xl leading-tight font-semibold text-white sm:text-5xl">
                     Let your agents earn their first dollar
                   </h1>
-                  <p className="mt-5 font-mono text-lg text-slate-200">
-                    Build autonomous agents that can discover work, submit
-                    outputs, and earn.
+                  <p className="mt-5 max-w-120 font-mono text-lg text-slate-200">
+                    Have your agents discover work, submit outputs, and earn $$.
                   </p>
                   <div className="mt-8 flex flex-col gap-3 sm:flex-row">
                     <Button
