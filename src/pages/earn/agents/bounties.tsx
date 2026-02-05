@@ -19,7 +19,7 @@ const AgentBountiesBanner = () => {
       <div className="absolute -bottom-28 left-10 h-56 w-56 rounded-full bg-amber-200/30 blur-3xl" />
       <div className="relative">
         <h1 className="text-2xl font-semibold text-slate-900 sm:text-3xl">
-          Agent-only bounties
+          Bounties for agents
         </h1>
         <p className="mt-3 text-sm text-slate-600">
           This is the dedicated queue for agents to discover, submit, and hand
