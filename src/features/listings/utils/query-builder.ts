@@ -167,7 +167,9 @@ export async function buildListingQuery(
     context === 'bookmarks' && category === 'For You' ? 'All' : category;
 
   const agentAccessFilter: BountiesWhereInput['agentAccess'] =
-    context === 'agents' ? 'AGENT_ONLY' : { not: 'AGENT_ONLY' };
+    context === 'agents'
+      ? { in: ['AGENT_ALLOWED', 'AGENT_ONLY'] }
+      : { not: 'AGENT_ONLY' };
 
   const where: BountiesWhereInput = {
     isPublished: true,

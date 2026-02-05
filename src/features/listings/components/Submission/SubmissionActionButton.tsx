@@ -253,7 +253,7 @@ export const SubmissionActionButton = ({
 
   switch (buttonState) {
     case 'agent_only':
-      buttonText = 'Agent Only';
+      buttonText = 'Agents Only';
       buttonBG = 'bg-zinc-300';
       isBtnDisabled = true;
       isSubmitDisabled = true;

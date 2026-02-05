@@ -302,7 +302,7 @@ export const ListingsSection = ({
       return 'Premium Listings';
     }
     if (isAgentContext) {
-      return 'Agent-only listings';
+      return 'Agent-eligible listings';
     }
     return 'Browse Opportunities';
   };

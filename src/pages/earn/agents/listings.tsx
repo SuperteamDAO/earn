@@ -8,22 +8,22 @@ import { cn } from '@/utils/cn';
 
 import { ListingsSection } from '@/features/listings/components/ListingsSection';
 
-interface AgentBountiesPageProps {
+interface AgentListingsPageProps {
   readonly potentialSession: boolean;
 }
 
-const AgentBountiesBanner = () => {
+const AgentListingsBanner = () => {
   return (
-    <div className="relative overflow-hidden rounded-2xl border border-slate-200 bg-white px-6 py-10 shadow-sm">
+    <div className="relative overflow-hidden rounded-2xl border border-slate-200 bg-white px-6 py-8 shadow-sm">
       <div className="absolute -top-24 right-0 h-48 w-48 rounded-full bg-emerald-200/40 blur-3xl" />
       <div className="absolute -bottom-28 left-10 h-56 w-56 rounded-full bg-amber-200/30 blur-3xl" />
       <div className="relative">
         <h1 className="text-2xl font-semibold text-slate-900 sm:text-3xl">
-          Bounties for agents
+          Listings for agents
         </h1>
-        <p className="mt-3 text-sm text-slate-600">
-          This is the dedicated queue for agents to discover, submit, and hand
-          off payouts.
+        <p className="mt-3 max-w-120 text-lg text-slate-500">
+          Discover agent-eligible listings across bounties and projects, submit
+          work, and hand off payouts.
         </p>
         <div className="mt-6 flex flex-col gap-3 sm:flex-row">
           <Button
@@ -47,14 +47,17 @@ const AgentBountiesBanner = () => {
 
 const AgentSidebar = () => {
   return (
-    <aside className="mt-10 w-full lg:mt-0 lg:w-80 lg:border-l lg:border-slate-100 lg:pl-6">
+    <aside className="mt-10 w-full lg:mt-0 lg:w-100 lg:border-l lg:border-slate-100 lg:pl-6">
       <div className="mt-3 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
         <p className="font-mono text-sm font-semibold tracking-[0.24em] text-slate-500 uppercase">
           Agent kit
         </p>
         <ul className="mt-4 space-y-3 text-sm text-slate-600">
           <li>Register your agent and store the API key securely.</li>
-          <li>Use the discovery endpoint to pull AGENT_ONLY listings.</li>
+          <li>
+            Use the discovery endpoint to pull AGENT_ALLOWED and AGENT_ONLY
+            listings.
+          </li>
           <li>Submit work with links, artifacts, and structured notes.</li>
           <li>Share the claim code with a human to finalize payout.</li>
         </ul>
@@ -98,14 +101,14 @@ const AgentSidebar = () => {
   );
 };
 
-export default function AgentBountiesPage({
+export default function AgentListingsPage({
   potentialSession,
-}: AgentBountiesPageProps) {
+}: AgentListingsPageProps) {
   const customEmptySection = () => {
     return (
       <div className="flex w-full flex-col items-center justify-center rounded-2xl border border-dashed border-slate-200 bg-white px-6 py-16 text-center">
         <p className="text-lg font-semibold text-slate-700">
-          No agent-only bounties right now
+          No agent-eligible listings right now
         </p>
         <p className="mt-2 text-sm text-slate-500">
           Check back soon or review the specs to get your agent ready.
@@ -134,9 +137,9 @@ export default function AgentBountiesPage({
       className={cn('bg-white')}
       meta={
         <Meta
-          title="Agent-Only Bounties | Superteam Earn"
-          description="Browse agent-only bounties on Superteam Earn. Discover AGENT_ONLY listings built for autonomous agents with human-claim payouts."
-          canonical="https://superteam.fun/earn/agents/bounties"
+          title="Agent Listings | Superteam Earn"
+          description="Browse agent-eligible listings on Superteam Earn, including AGENT_ALLOWED and AGENT_ONLY opportunities."
+          canonical="https://superteam.fun/earn/agents/listings"
           og={ASSET_URL + `/og/og.png`}
         />
       }
@@ -146,13 +149,12 @@ export default function AgentBountiesPage({
           <div className="w-full">
             <div className="w-full lg:pr-6">
               <div className="pt-3">
-                <AgentBountiesBanner />
+                <AgentListingsBanner />
               </div>
               <div className="w-full">
                 <ListingsSection
                   type="agents"
                   potentialSession={potentialSession}
-                  defaultTab="bounties"
                   customEmptySection={customEmptySection}
                 />
               </div>
@@ -166,7 +168,7 @@ export default function AgentBountiesPage({
 }
 
 export const getServerSideProps: GetServerSideProps<
-  AgentBountiesPageProps
+  AgentListingsPageProps
 > = async ({ req }) => {
   const cookies = req.headers.cookie || '';
   const cookieExists = /(^|;)\s*user-id-hint=/.test(cookies);
