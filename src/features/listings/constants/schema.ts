@@ -29,6 +29,7 @@ export const ListingContextSchema = z
     'category-all',
     'opportunity',
     'pro',
+    'agents',
   ])
   .default('all');
 

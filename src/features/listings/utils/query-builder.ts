@@ -166,12 +166,15 @@ export async function buildListingQuery(
   const effectiveCategory =
     context === 'bookmarks' && category === 'For You' ? 'All' : category;
 
+  const agentAccessFilter: BountiesWhereInput['agentAccess'] =
+    context === 'agents' ? 'AGENT_ONLY' : { not: 'AGENT_ONLY' };
+
   const where: BountiesWhereInput = {
     isPublished: true,
     isActive: true,
     isArchived: false,
     isPrivate: false,
-    agentAccess: { not: 'AGENT_ONLY' },
+    agentAccess: agentAccessFilter,
     hackathonprize: false,
   };
 

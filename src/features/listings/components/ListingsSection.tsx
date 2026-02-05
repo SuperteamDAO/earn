@@ -67,6 +67,7 @@ export const ListingsSection = ({
   const isSponsorContext = type === 'sponsor';
   const isBookmarksContext = type === 'bookmarks';
   const isProContext = type === 'pro';
+  const isAgentContext = type === 'agents';
 
   const { authenticated, ready } = usePrivy();
   const supportsForYou = FOR_YOU_SUPPORTED_TYPES.includes(type);
@@ -299,6 +300,9 @@ export const ListingsSection = ({
     }
     if (isProContext) {
       return 'Premium Listings';
+    }
+    if (isAgentContext) {
+      return 'Agent-only listings';
     }
     return 'Browse Opportunities';
   };
