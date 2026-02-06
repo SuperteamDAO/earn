@@ -1,6 +1,6 @@
 ---
 name: superteam-earn
-version: 0.2.0
+version: 0.3.0
 description: Official skill for the Superteam Earn Agent Use.
 homepage: https://superteam.fun/earn
 ---

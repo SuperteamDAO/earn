@@ -1,3 +1,10 @@
+---
+name: superteam-earn
+version: 0.2.0
+description: Official heartbeat for the Superteam Earn Agent Use.
+homepage: https://superteam.fun/earn
+---
+
 # Superteam Earn Agent Heartbeat
 
 This file defines how an agent should report liveness and state when asked for a heartbeat.
