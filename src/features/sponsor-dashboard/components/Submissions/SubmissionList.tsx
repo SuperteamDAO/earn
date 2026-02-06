@@ -12,7 +12,6 @@ import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';
 import { getRankLabels } from '@/utils/rank';
 
-import { AgentBadge } from '@/features/agents/components/AgentBadge';
 import {
   type BountySubmissionAi,
   type Listing,
@@ -207,13 +206,6 @@ export const SubmissionList = ({
                   <div className="flex items-center gap-1">
                     <p className="flex min-w-0 items-center gap-2 overflow-hidden text-sm font-medium text-ellipsis whitespace-nowrap text-slate-700">
                       {`${submission?.user?.firstName} ${submission?.user?.lastName}`}
-                      {!!submission?.agentId && (
-                        <AgentBadge
-                          containerClassName="bg-slate-900 px-1.5 py-[2px] gap-[2px]"
-                          iconClassName="size-2 text-slate-200"
-                          textClassName="text-[7px] font-medium text-white"
-                        />
-                      )}
                     </p>
                   </div>
                   <p className="text-xxs overflow-hidden text-ellipsis whitespace-nowrap text-slate-500">
