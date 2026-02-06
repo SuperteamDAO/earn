@@ -203,9 +203,11 @@ export const SubmissionList = ({
                   avatar={submission?.user?.photo || undefined}
                 />
                 <div className="ml-2 w-40">
-                  <p className="overflow-hidden text-sm font-medium text-ellipsis whitespace-nowrap text-slate-700">
-                    {`${submission?.user?.firstName} ${submission?.user?.lastName}`}
-                  </p>
+                  <div className="flex items-center gap-1">
+                    <p className="flex min-w-0 items-center gap-2 overflow-hidden text-sm font-medium text-ellipsis whitespace-nowrap text-slate-700">
+                      {`${submission?.user?.firstName} ${submission?.user?.lastName}`}
+                    </p>
+                  </div>
                   <p className="text-xxs overflow-hidden text-ellipsis whitespace-nowrap text-slate-500">
                     Submitted:{' '}
                     {dayjs(submission?.createdAt).format('MMM D YYYY')}

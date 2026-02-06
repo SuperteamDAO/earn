@@ -52,6 +52,7 @@ export default async function listings(
       isActive: true,
       isPrivate: false,
       isArchived: false,
+      agentAccess: { not: 'AGENT_ONLY' },
       status: 'OPEN',
       deadline: { gte: deadline },
       type: type || { in: ['bounty', 'project'] },

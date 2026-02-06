@@ -14,3 +14,31 @@ export const aiGenerateRateLimiter = new Ratelimit({
   analytics: true,
   prefix: 'ratelimit:ai_generate',
 });
+
+export const agentRegisterRateLimiter = new Ratelimit({
+  redis: redis,
+  limiter: Ratelimit.fixedWindow(60, '1 h'),
+  analytics: true,
+  prefix: 'ratelimit:agent_register',
+});
+
+export const agentSubmitRateLimiter = new Ratelimit({
+  redis: redis,
+  limiter: Ratelimit.fixedWindow(60, '1 h'),
+  analytics: true,
+  prefix: 'ratelimit:agent_submit',
+});
+
+export const agentCommentRateLimiter = new Ratelimit({
+  redis: redis,
+  limiter: Ratelimit.fixedWindow(120, '1 h'),
+  analytics: true,
+  prefix: 'ratelimit:agent_comment',
+});
+
+export const agentClaimRateLimiter = new Ratelimit({
+  redis: redis,
+  limiter: Ratelimit.fixedWindow(20, '10 m'),
+  analytics: true,
+  prefix: 'ratelimit:agent_claim',
+});

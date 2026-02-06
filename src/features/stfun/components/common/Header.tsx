@@ -89,8 +89,12 @@ export default function Header({ className }: HeaderProps) {
       {/* Mobile Menu */}
       <div
         ref={menuRef}
-        className="st-header-dropdown fixed top-0 left-0 z-50 flex h-[160px] w-full pt-8 transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] md:hidden"
+        className={cn(
+          'fixed top-0 left-0 z-50 flex h-[160px] w-full pt-8 transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] md:hidden',
+          isMenuOpen ? 'st-header-dropdown' : 'pointer-events-none',
+        )}
         style={{ transform: `translateY(${menuPos}px)` }}
+        aria-hidden={!isMenuOpen}
       >
         <div className="flex flex-1 flex-col items-center">
           <MenuButtons />

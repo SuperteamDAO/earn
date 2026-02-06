@@ -46,6 +46,7 @@ export interface Listing {
   publishedAt?: string;
   isPrivate?: boolean;
   isPro?: boolean;
+  agentAccess?: 'HUMAN_ONLY' | 'AGENT_ALLOWED' | 'AGENT_ONLY';
   Hackathon?: ListingHackathon;
   compensationType?: 'fixed' | 'range' | 'variable';
   minRewardAsk?: number;
