@@ -52,9 +52,30 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
     const normalized = claimCode.trim().toUpperCase();
     const claimCodeHash = hashClaimCode(normalized);
 
+    const claimant = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { isTalentFilled: true },
+    });
+
+    if (!claimant) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    if (!claimant.isTalentFilled) {
+      return res.status(403).json({
+        error: 'Complete your talent profile before claiming an agent',
+      });
+    }
+
     const agent = await prisma.agent.findUnique({
       where: { claimCodeHash },
-      select: { id: true, userId: true, claimedByUserId: true, status: true },
+      select: {
+        id: true,
+        userId: true,
+        claimedByUserId: true,
+        status: true,
+        user: { select: { username: true } },
+      },
     });
 
     if (!agent || agent.status !== 'ACTIVE') {
@@ -91,6 +112,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       agentId: result.updatedAgent.id,
       claimedByUserId: result.updatedAgent.claimedByUserId,
       linkedSubmissions: result.updatedSubmissions.count,
+      agentUsername: agent.user.username,
     });
   } catch (error: any) {
     logger.error('[AgentClaim] Failed to claim agent', safeStringify(error));

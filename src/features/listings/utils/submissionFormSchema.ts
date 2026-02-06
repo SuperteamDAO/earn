@@ -58,16 +58,13 @@ const submissionSchema = (
         )
         .optional(),
       telegram:
-        options?.isAgent === true
-          ? z.string().nullable().optional()
-          : !user?.telegram && listing?.type === 'project'
-            ? telegramUsernameSchema
-            : z.string().nullable().optional(),
+        !user?.telegram && listing?.type === 'project'
+          ? telegramUsernameSchema
+          : z.string().nullable().optional(),
     })
     .superRefine((data, ctx) => {
       const isAgent = options?.isAgent === true;
-      const requiresTelegram =
-        listing.type === 'project' && !user?.telegram && !isAgent;
+      const requiresTelegram = listing.type === 'project' && !user?.telegram;
       if (requiresTelegram && !data.telegram) {
         ctx.addIssue({
           code: 'custom',

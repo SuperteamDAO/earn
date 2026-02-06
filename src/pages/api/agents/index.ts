@@ -6,12 +6,14 @@ import logger from '@/lib/logger';
 import { agentRegisterRateLimiter } from '@/lib/ratelimit';
 import { checkAndApplyRateLimitPages } from '@/lib/rateLimiterService';
 import { prisma } from '@/prisma';
+import { PrismaClientKnownRequestError } from '@/prisma/internal/prismaNamespace';
 import { safeStringify } from '@/utils/safeStringify';
 
 import {
   generateApiKey,
   generateClaimCode,
 } from '@/features/agents/utils/agentTokens';
+import { generateUniqueRandomUsername } from '@/features/talent/utils/generateUniqueRandomUsername';
 
 const schema = z.object({
   name: z.string().min(2).max(80),
@@ -58,41 +60,75 @@ export default async function handler(
     const userId = crypto.randomUUID();
     const email = `agent+${userId}@agents.superteam.fun`;
     const privyDid = `agent:${userId}`;
+    const firstNameSeed = name.trim().split(/\s+/)[0];
 
     const { apiKey, apiKeyHash, apiKeyPrefix } = generateApiKey();
     const { claimCode, claimCodeHash, claimCodePrefix } = generateClaimCode();
 
-    const agent = await prisma.$transaction(async (tx) => {
-      await tx.user.create({
-        data: {
-          id: userId,
-          email,
-          privyDid,
-          firstName: name,
-          lastName: 'agent',
-          isAgent: true,
-          isTalentFilled: true,
-        },
-      });
+    let username: string | null = null;
+    let agent: { id: string; name: string; userId: string } | null = null;
 
-      return tx.agent.create({
-        data: {
-          name,
-          userId,
-          apiKeyHash,
-          apiKeyPrefix,
-          claimCodeHash,
-          claimCodePrefix,
-          status: 'ACTIVE',
-        },
-        select: { id: true, name: true, userId: true },
-      });
-    });
+    for (let attempt = 0; attempt < 3; attempt++) {
+      username = await generateUniqueRandomUsername(firstNameSeed);
+      if (!username) break;
+
+      try {
+        agent = await prisma.$transaction(async (tx) => {
+          await tx.user.create({
+            data: {
+              id: userId,
+              email,
+              privyDid,
+              username,
+              firstName: name,
+              lastName: 'agent',
+              isAgent: true,
+              isTalentFilled: true,
+            },
+          });
+
+          return tx.agent.create({
+            data: {
+              name,
+              userId,
+              apiKeyHash,
+              apiKeyPrefix,
+              claimCodeHash,
+              claimCodePrefix,
+              status: 'ACTIVE',
+            },
+            select: { id: true, name: true, userId: true },
+          });
+        });
+
+        break;
+      } catch (error: any) {
+        const duplicateField = error.meta?.target;
+        const isUsernameCollision =
+          error instanceof PrismaClientKnownRequestError &&
+          error.code === 'P2002' &&
+          ((Array.isArray(duplicateField) &&
+            duplicateField.includes('username')) ||
+            (typeof duplicateField === 'string' &&
+              duplicateField.includes('username')));
+
+        if (isUsernameCollision) {
+          continue;
+        }
+
+        throw error;
+      }
+    }
+
+    if (!agent || !username) {
+      throw new Error('Could not generate a unique username for this agent');
+    }
 
     return res.status(201).json({
       agentId: agent.id,
       userId: agent.userId,
       name: agent.name,
+      username,
       apiKey,
       claimCode,
     });

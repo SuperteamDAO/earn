@@ -57,6 +57,14 @@ async function handler(req: NextApiRequestWithAgent, res: NextApiResponse) {
       actor: 'agent',
     });
 
+    if (listing.type === 'project' && !telegram) {
+      return res.status(400).json({
+        error: 'Telegram URL is required for project applications',
+        message:
+          'Ask the human operator for their Telegram URL and submit it in t.me format (for example: http://t.me/<username>).',
+      });
+    }
+
     const result = await createSubmission(
       userId,
       listingId,

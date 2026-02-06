@@ -39,7 +39,7 @@ export async function createSubmission(
 
   const validatedData = validationResult.data;
 
-  if (validatedData.telegram && !user.telegram && !options?.isAgent) {
+  if (validatedData.telegram && !user.telegram) {
     await prisma.user.update({
       where: { id: userId },
       data: { telegram: validatedData.telegram },
