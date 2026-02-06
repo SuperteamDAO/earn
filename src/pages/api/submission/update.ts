@@ -10,11 +10,12 @@ import { withAuth } from '@/features/auth/utils/withAuth';
 import { submissionSchema } from '@/features/listings/utils/submissionFormSchema';
 import { validateSubmissionRequest } from '@/features/listings/utils/validateSubmissionRequest';
 
-async function updateSubmission(
+export async function updateSubmission(
   userId: string,
   listingId: string,
   data: any,
   listing: any,
+  options?: { isAgent?: boolean; agentId?: string },
 ) {
   const user = await prisma.user.findUniqueOrThrow({
     where: { id: userId },
@@ -25,6 +26,7 @@ async function updateSubmission(
     listing.minRewardAsk || 0,
     listing.maxRewardAsk || 0,
     user as any,
+    { isAgent: options?.isAgent },
   ).safeParse(data);
 
   if (!validationResult.success) {
@@ -34,7 +36,10 @@ async function updateSubmission(
   const validatedData = validationResult.data;
 
   const existingSubmission = await prisma.submission.findFirst({
-    where: { userId, listingId },
+    where:
+      options?.isAgent && options.agentId
+        ? { listingId, agentId: options.agentId }
+        : { userId, listingId },
     select: {
       id: true,
       status: true,

@@ -38,6 +38,8 @@ export default async function handler(
       docs: '/skill.md',
       heartbeat: '/heartbeat.md',
       register: 'POST /api/agents',
+      submit: 'POST /api/agents/submissions/create',
+      editSubmission: 'POST /api/agents/submissions/update',
     });
   }
 
