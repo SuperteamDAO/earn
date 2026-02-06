@@ -488,98 +488,106 @@ function TalentProfile({ talent, stats, bgIndex }: TalentProps) {
               id={talent?.id}
             />
             <Separator className="my-8" />
-            <div className="flex w-full flex-col gap-12 md:flex-row md:gap-25">
-              <div className="w-full md:w-1/2">
-                <p className="mb-4 font-medium text-slate-900">Details</p>
-                {workPreferenceText && (
-                  <p className="mt-3 text-slate-400">
-                    Looking for{' '}
-                    <span className="text-slate-500">{workPreferenceText}</span>
-                  </p>
-                )}
-                {talent?.currentEmployer && (
-                  <p className="mt-3 text-slate-400">
-                    Works at{' '}
-                    <span className="text-slate-500">
-                      {talent?.currentEmployer}
-                    </span>
-                  </p>
-                )}
-                {talent?.location && (
-                  <p className="mt-3 text-slate-400">
-                    Based in{' '}
-                    <span className="text-slate-500">{talent?.location}</span>
-                  </p>
-                )}
-              </div>
-              <div className="w-full md:w-1/2">
-                <p className="font-medium text-slate-900">Skills</p>
-                {Array.isArray(talent.skills) ? (
-                  talent.skills.map((skillItem: any, index: number) => {
-                    return skillItem ? (
-                      <div className="mt-4" key={index}>
-                        <p className="text-xs font-medium text-slate-400">
-                          {skillItem.skills.toUpperCase()}
-                        </p>
-                        <div className="flex items-center">
-                          <div className="mt-2 flex flex-wrap gap-2">
-                            {skillItem.subskills
-                              .slice(0, 3)
-                              .map((subskill: string, subIndex: number) => (
-                                <div
-                                  key={subIndex}
-                                  className="rounded bg-[#EFF1F5] px-3 py-1 text-sm font-medium text-[#64739C]"
+            {!talent?.isAgent && (
+              <>
+                <div className="flex w-full flex-col gap-12 md:flex-row md:gap-25">
+                  <div className="w-full md:w-1/2">
+                    <p className="mb-4 font-medium text-slate-900">Details</p>
+                    {workPreferenceText && (
+                      <p className="mt-3 text-slate-400">
+                        Looking for{' '}
+                        <span className="text-slate-500">
+                          {workPreferenceText}
+                        </span>
+                      </p>
+                    )}
+                    {talent?.currentEmployer && (
+                      <p className="mt-3 text-slate-400">
+                        Works at{' '}
+                        <span className="text-slate-500">
+                          {talent?.currentEmployer}
+                        </span>
+                      </p>
+                    )}
+                    {talent?.location && (
+                      <p className="mt-3 text-slate-400">
+                        Based in{' '}
+                        <span className="text-slate-500">
+                          {talent?.location}
+                        </span>
+                      </p>
+                    )}
+                  </div>
+                  <div className="w-full md:w-1/2">
+                    <p className="font-medium text-slate-900">Skills</p>
+                    {Array.isArray(talent.skills) ? (
+                      talent.skills.map((skillItem: any, index: number) => {
+                        return skillItem ? (
+                          <div className="mt-4" key={index}>
+                            <p className="text-xs font-medium text-slate-400">
+                              {skillItem.skills.toUpperCase()}
+                            </p>
+                            <div className="flex items-center">
+                              <div className="mt-2 flex flex-wrap gap-2">
+                                {skillItem.subskills
+                                  .slice(0, 3)
+                                  .map((subskill: string, subIndex: number) => (
+                                    <div
+                                      key={subIndex}
+                                      className="rounded bg-[#EFF1F5] px-3 py-1 text-sm font-medium text-[#64739C]"
+                                    >
+                                      {subskill}
+                                    </div>
+                                  ))}
+                              </div>
+                              {skillItem.subskills.length > 3 && (
+                                <button
+                                  aria-label="Toggle subskills"
+                                  className={cn(
+                                    'mt-2 ml-1 p-1 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-hidden',
+                                    'rounded transition hover:bg-gray-100',
+                                  )}
+                                  onClick={() => handleToggleSubskills(index)}
                                 >
-                                  {subskill}
-                                </div>
-                              ))}
-                          </div>
-                          {skillItem.subskills.length > 3 && (
-                            <button
-                              aria-label="Toggle subskills"
-                              className={cn(
-                                'mt-2 ml-1 p-1 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-hidden',
-                                'rounded transition hover:bg-gray-100',
+                                  {showSubskills[index] ? (
+                                    <ChevronUp className="h-4 w-4" />
+                                  ) : (
+                                    <ChevronDown className="h-4 w-4" />
+                                  )}
+                                </button>
                               )}
-                              onClick={() => handleToggleSubskills(index)}
-                            >
-                              {showSubskills[index] ? (
-                                <ChevronUp className="h-4 w-4" />
-                              ) : (
-                                <ChevronDown className="h-4 w-4" />
-                              )}
-                            </button>
-                          )}
-                        </div>
+                            </div>
 
-                        {showSubskills[index] && (
-                          <div
-                            className={cn(
-                              'mt-2 flex flex-wrap gap-2',
-                              'transition-all duration-300 ease-in-out',
+                            {showSubskills[index] && (
+                              <div
+                                className={cn(
+                                  'mt-2 flex flex-wrap gap-2',
+                                  'transition-all duration-300 ease-in-out',
+                                )}
+                              >
+                                {skillItem.subskills
+                                  .slice(3)
+                                  .map((subskill: string, subIndex: number) => (
+                                    <div
+                                      key={subIndex}
+                                      className="rounded bg-[#EFF1F5] px-3 py-1 text-sm font-medium text-[#64739C]"
+                                    >
+                                      {subskill}
+                                    </div>
+                                  ))}
+                              </div>
                             )}
-                          >
-                            {skillItem.subskills
-                              .slice(3)
-                              .map((subskill: string, subIndex: number) => (
-                                <div
-                                  key={subIndex}
-                                  className="rounded bg-[#EFF1F5] px-3 py-1 text-sm font-medium text-[#64739C]"
-                                >
-                                  {subskill}
-                                </div>
-                              ))}
                           </div>
-                        )}
-                      </div>
-                    ) : null;
-                  })
-                ) : (
-                  <p>No skills available</p>
-                )}
-              </div>
-            </div>
-            <Separator className="mt-8 mb-4" />
+                        ) : null;
+                      })
+                    ) : (
+                      <p>No skills available</p>
+                    )}
+                  </div>
+                </div>
+                <Separator className="mt-8 mb-4" />
+              </>
+            )}
             <div className="flex flex-col justify-between gap-12 md:flex-row md:gap-25">
               <div className="flex w-full gap-6 md:w-1/2">
                 {socialLinks.map(({ Icon, link }, i) => {
@@ -765,8 +773,10 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
           COALESCE(SUM(CASE WHEN s.isWinner = 1 AND b.isWinnersAnnounced = 1 THEN s.rewardInUSD ELSE 0 END), 0) as listingWinnings
         FROM Submission s
         LEFT JOIN Bounties b ON s.listingId = b.id
-        INNER JOIN User u ON s.userId = u.id
-        WHERE u.username = ${username}
+        INNER JOIN User u ON u.username = ${username}
+        LEFT JOIN Agent a ON a.userId = u.id
+        WHERE s.userId = u.id
+          OR (a.id IS NOT NULL AND s.agentId = a.id)
       `,
       prisma.$queryRaw<GrantStats[]>`
         SELECT COALESCE(SUM(ga.approvedAmountInUSD), 0) as grantWinnings
