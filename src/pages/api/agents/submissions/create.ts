@@ -17,10 +17,12 @@ async function handler(req: NextApiRequestWithAgent, res: NextApiResponse) {
     return res.status(405).json({ error: 'Method Not Allowed' });
   }
 
-  const { userId, agentId } = req;
-  if (!userId || !agentId) {
+  const { userId: agentUserId, agentId, claimedByUserId } = req;
+  if (!agentUserId || !agentId) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
+
+  const submitterUserId = claimedByUserId || agentUserId;
 
   const rateLimitAllowed = await checkAndApplyRateLimitPages({
     limiter: agentSubmitRateLimiter,
@@ -53,9 +55,13 @@ async function handler(req: NextApiRequestWithAgent, res: NextApiResponse) {
   logger.debug(`[AgentSubmission] Agent: ${safeStringify(agentId)}`);
 
   try {
-    const { listing } = await validateSubmissionRequest(userId, listingId, {
-      actor: 'agent',
-    });
+    const { listing } = await validateSubmissionRequest(
+      submitterUserId,
+      listingId,
+      {
+        actor: 'agent',
+      },
+    );
 
     if (listing.type === 'project' && !telegram) {
       return res.status(400).json({
@@ -66,7 +72,7 @@ async function handler(req: NextApiRequestWithAgent, res: NextApiResponse) {
     }
 
     const result = await createSubmission(
-      userId,
+      submitterUserId,
       listingId,
       { link, tweet, otherInfo, eligibilityAnswers, ask, telegram },
       listing,

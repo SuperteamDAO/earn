@@ -10,6 +10,7 @@ import { safeStringify } from '@/utils/safeStringify';
 type AgentSession = {
   agentId: string;
   userId: string;
+  claimedByUserId: string | null;
 };
 
 function hashToken(token: string): string {
@@ -38,7 +39,7 @@ export async function getAgentSession(
 
     const agent = await prisma.agent.findUnique({
       where: { apiKeyHash },
-      select: { id: true, userId: true, status: true },
+      select: { id: true, userId: true, claimedByUserId: true, status: true },
     });
 
     if (!agent || agent.status !== 'ACTIVE') {
@@ -48,7 +49,11 @@ export async function getAgentSession(
       return null;
     }
 
-    return { agentId: agent.id, userId: agent.userId };
+    return {
+      agentId: agent.id,
+      userId: agent.userId,
+      claimedByUserId: agent.claimedByUserId,
+    };
   } catch (error) {
     logger.error(
       'Unauthorized, Error verifying agent API key',

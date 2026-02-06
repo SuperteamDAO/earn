@@ -14,4 +14,5 @@ export interface NextApiRequestWithSponsor extends NextApiRequest {
 export interface NextApiRequestWithAgent extends NextApiRequest {
   userId?: string;
   agentId?: string;
+  claimedByUserId?: string;
 }

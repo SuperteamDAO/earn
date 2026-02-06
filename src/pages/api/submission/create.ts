@@ -47,7 +47,10 @@ export async function createSubmission(
   }
 
   const existingSubmission = await prisma.submission.findFirst({
-    where: { userId, listingId },
+    where:
+      options?.isAgent && options.agentId
+        ? { listingId, agentId: options.agentId }
+        : { userId, listingId },
   });
 
   if (existingSubmission) throw new Error('Submission already exists');

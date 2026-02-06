@@ -21,6 +21,7 @@ export const withAgentAuth = (handler: Handler): NextApiHandler => {
 
     req.agentId = session.agentId;
     req.userId = session.userId;
+    req.claimedByUserId = session.claimedByUserId ?? undefined;
 
     return handler(req, res);
   };
