@@ -4,7 +4,7 @@ import type { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
@@ -29,7 +29,7 @@ export default function ClaimPage({
   agentUsername,
   status,
 }: ClaimPageProps) {
-  const { authenticated } = usePrivy();
+  const { authenticated, ready } = usePrivy();
   const router = useRouter();
   const { user, isLoading: isUserLoading } = useUser();
   const [isLoginOpen, setIsLoginOpen] = useState(false);
@@ -39,11 +39,29 @@ export default function ClaimPage({
   const [claimedAgentUsername, setClaimedAgentUsername] = useState(
     agentUsername || null,
   );
+  const hasPrivyOAuthParams = useMemo(() => {
+    const state = router.query.privy_oauth_state;
+    const provider = router.query.privy_oauth_provider;
+    const code = router.query.privy_oauth_code;
+    return Boolean(state || provider || code);
+  }, [
+    router.query.privy_oauth_code,
+    router.query.privy_oauth_provider,
+    router.query.privy_oauth_state,
+  ]);
+
+  useEffect(() => {
+    if (hasPrivyOAuthParams) {
+      setIsLoginOpen(true);
+    }
+  }, [hasPrivyOAuthParams]);
 
   const isInvalid = status === 'invalid';
-  const isProfileCheckPending = authenticated && isUserLoading;
+  const isAuthCallbackInProgress = hasPrivyOAuthParams;
+  const isAuthCheckPending = !ready;
+  const isProfileCheckPending = ready && authenticated && isUserLoading;
   const isTalentProfileIncomplete =
-    authenticated && !isUserLoading && !!user && !user.isTalentFilled;
+    ready && authenticated && !isUserLoading && !!user && !user.isTalentFilled;
 
   const redirectToTalentProfile = () => {
     void router.push({
@@ -56,7 +74,14 @@ export default function ClaimPage({
   };
 
   const handleClaim = async () => {
-    if (isInvalid || isClaimed || isProfileCheckPending) return;
+    if (
+      isInvalid ||
+      isClaimed ||
+      isProfileCheckPending ||
+      isAuthCallbackInProgress
+    )
+      return;
+    if (isAuthCheckPending) return;
     if (!authenticated) {
       setIsLoginOpen(true);
       return;
@@ -138,21 +163,24 @@ export default function ClaimPage({
                 isInvalid ||
                 isClaimed ||
                 isClaiming ||
+                isAuthCallbackInProgress ||
+                isAuthCheckPending ||
                 isProfileCheckPending ||
                 isTalentProfileIncomplete
               }
             >
               {isClaimed
                 ? 'Claimed'
-                : isClaiming
-                  ? 'Claiming...'
-                  : isProfileCheckPending
-                    ? 'Checking Profile...'
-                    : isTalentProfileIncomplete
-                      ? 'Complete Profile to Claim'
-                      : authenticated
-                        ? 'Claim Agent'
-                        : 'Sign In to Claim'}
+                : isClaiming ||
+                    isAuthCallbackInProgress ||
+                    isAuthCheckPending ||
+                    isProfileCheckPending
+                  ? 'loading..'
+                  : isTalentProfileIncomplete
+                    ? 'Complete Profile to Claim'
+                    : authenticated
+                      ? 'Claim Agent'
+                      : 'Sign In to Claim'}
             </Button>
             {isTalentProfileIncomplete && !isInvalid && !isClaimed && (
               <div className="rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-700">
@@ -166,16 +194,6 @@ export default function ClaimPage({
                   Complete Talent Profile
                 </Button>
               </div>
-            )}
-            {!authenticated && !isInvalid && (
-              <p className="text-xs text-slate-500">
-                You must be signed in to confirm the claim.
-              </p>
-            )}
-            {authenticated && isProfileCheckPending && !isInvalid && (
-              <p className="text-xs text-slate-500">
-                Checking your profile completion status...
-              </p>
             )}
           </div>
         </div>
