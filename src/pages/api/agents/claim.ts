@@ -5,11 +5,13 @@ import { z } from 'zod';
 import logger from '@/lib/logger';
 import { agentClaimRateLimiter } from '@/lib/ratelimit';
 import { checkAndApplyRateLimitPages } from '@/lib/rateLimiterService';
+import { LockNotAcquiredError, withRedisLock } from '@/lib/with-redis-lock';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { type NextApiRequestWithUser } from '@/features/auth/types';
 import { withAuth } from '@/features/auth/utils/withAuth';
+import { createPayment } from '@/features/listings/utils/createPayment';
 
 const schema = z.object({
   claimCode: z.string().min(4).max(64),
@@ -54,7 +56,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
 
     const claimant = await prisma.user.findUnique({
       where: { id: userId },
-      select: { isTalentFilled: true },
+      select: { isTalentFilled: true, isKYCVerified: true },
     });
 
     if (!claimant) {
@@ -107,6 +109,28 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
 
       return { updatedAgent, updatedSubmissions };
     });
+
+    if (claimant.isKYCVerified) {
+      try {
+        await withRedisLock(
+          `locks:create-payment:${userId}`,
+          async () => {
+            await createPayment({ userId });
+          },
+          { ttlSeconds: 300 },
+        );
+      } catch (paymentSyncError) {
+        if (paymentSyncError instanceof LockNotAcquiredError) {
+          logger.warn(
+            `[AgentClaim] Payment sync already in progress for user ${userId}`,
+          );
+        } else {
+          logger.error(
+            `[AgentClaim] Post-claim payment sync failed for user ${userId}: ${safeStringify(paymentSyncError)}`,
+          );
+        }
+      }
+    }
 
     return res.status(200).json({
       agentId: result.updatedAgent.id,
