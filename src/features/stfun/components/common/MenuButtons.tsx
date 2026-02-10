@@ -13,6 +13,12 @@ export default function MenuButtons() {
       >
         Instagrants
       </Link>
+      <Link
+        href="/member-perks"
+        className="font-secondary text-[14px] font-bold text-white"
+      >
+        Member Perks
+      </Link>
       <PrimaryButton
         className="bg-white"
         href="/earn"
