@@ -32,7 +32,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { StatusPill } from '@/components/ui/status-pill';
 import { Tooltip } from '@/components/ui/tooltip';
-import { PDTG } from '@/constants/Telegram';
+import { JTTG } from '@/constants/Telegram';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { type SubmissionWithUser } from '@/interface/submission';
 import { api } from '@/lib/api';
@@ -387,7 +387,7 @@ export const SubmissionHeader = ({
                       : 'submissions'}
                     .{' '}
                     <a
-                      href={PDTG}
+                      href={JTTG}
                       target="_blank"
                       rel="noreferrer"
                       className="text-brand-purple underline"

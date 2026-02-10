@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { Separator } from '@/components/ui/separator';
-import { PDTG } from '@/constants/Telegram';
+import { JTTG } from '@/constants/Telegram';
 import { api } from '@/lib/api';
 
 interface ExportSheetsModalProps {
@@ -219,7 +219,7 @@ export const ExportSheetsModal = ({
 
             <div className="mx-auto mt-2 -mb-2 flex flex-col items-center gap-2">
               <a
-                href={PDTG}
+                href={JTTG}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-center"

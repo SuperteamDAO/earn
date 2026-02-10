@@ -35,6 +35,9 @@ async function handler(req: NextApiRequestWithAgent, res: NextApiResponse) {
       deadline: { gte: deadline },
       type: type || { in: ['bounty', 'project'] },
       agentAccess: { in: ['AGENT_ALLOWED', 'AGENT_ONLY'] },
+      sponsor: {
+        isVerified: true,
+      },
       sponsorId: exclusiveSponsorId,
     },
     select: listingSelect,

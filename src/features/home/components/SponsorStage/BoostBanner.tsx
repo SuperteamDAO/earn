@@ -145,7 +145,7 @@ export function BoostBanner({ listing }: BoostBannerProps) {
               }}
             >
               <img
-                src="/assets/sponsor/pratik.webp"
+                src="/assets/sponsor/jill.png"
                 alt="Get Help"
                 width={28}
                 height={28}

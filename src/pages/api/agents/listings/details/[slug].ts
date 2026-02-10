@@ -17,6 +17,9 @@ async function getAgentListingDetailsBySlug(slug: string): Promise<any> {
       slug,
       isActive: true,
       agentAccess: { in: ['AGENT_ALLOWED', 'AGENT_ONLY'] },
+      sponsor: {
+        isVerified: true,
+      },
     },
     include: {
       sponsor: {

@@ -182,6 +182,14 @@ export async function buildListingQuery(
 
   const andConditions: BountiesWhereInput[] = [];
 
+  if (context === 'agents') {
+    andConditions.push({
+      sponsor: {
+        isVerified: true,
+      },
+    });
+  }
+
   if (context === 'home') {
     andConditions.push({
       language: { in: ['eng', 'sco'] },
