@@ -96,6 +96,7 @@ function App({ Component, pageProps }: AppProps) {
   if (isST) {
     return (
       <div className={`${stFontVariables} st-app flex min-h-screen flex-col`}>
+        <TopLoader />
         <Head>
           <link
             rel="icon"
