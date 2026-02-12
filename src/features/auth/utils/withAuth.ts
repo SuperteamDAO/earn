@@ -24,11 +24,15 @@ export const withAuth = (handler: Handler): NextApiHandler => {
       where: { privyDid },
       select: { id: true },
     });
-    logger.debug(
-      `Authorised, User found with for privy did ${privyDid} has user Id ${user?.id}`,
-    );
 
-    req.userId = user?.id;
+    if (!user?.id) {
+      logger.warn(`Unauthorized, no user found for privy did ${privyDid}`);
+      return res.status(403).json({ error: 'User has no record.' });
+    }
+
+    logger.debug(`Authorised user ${user.id} for privy did ${privyDid}`);
+
+    req.userId = user.id;
     return handler(req, res);
   };
 };

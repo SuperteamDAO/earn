@@ -30,9 +30,7 @@ export function TalentButton({
           {isLoading ? (
             <span>Redirecting...</span>
           ) : (
-            <span>
-              Continue as Talent <span className="ml-1">-&gt;</span>
-            </span>
+            <span>Continue as Talent</span>
           )}
         </Button>
       </Link>

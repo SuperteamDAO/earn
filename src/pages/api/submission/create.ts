@@ -75,6 +75,10 @@ export async function createSubmission(
 }
 
 async function submission(req: NextApiRequestWithUser, res: NextApiResponse) {
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method Not Allowed' });
+  }
+
   const { userId } = req;
 
   if (!userId) {
@@ -94,9 +98,6 @@ async function submission(req: NextApiRequestWithUser, res: NextApiResponse) {
     telegram: telegramUsername,
   } = req.body;
   const telegram = extractSocialUsername('telegram', telegramUsername);
-  console.log('telegramUsername', telegramUsername);
-
-  console.log('telegram', telegram);
 
   logger.debug(`Request body: ${safeStringify(req.body)}`);
   logger.debug(`User: ${safeStringify(userId)}`);

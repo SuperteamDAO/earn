@@ -17,6 +17,7 @@ export async function validateSubmissionRequest(
   ]);
 
   if (!user) throw new Error('User not found');
+  if (user.isBlocked) throw new Error('User is blocked');
   if (!listing) throw new Error('Listing not found');
   if (!listing.isActive) throw new Error('Listing not available');
   if (!listing.isPublished) throw new Error('Listing is not published');
