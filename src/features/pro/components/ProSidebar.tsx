@@ -1,8 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
+import { type CSSProperties } from 'react';
 
 import FaCheck from '@/components/icons/FaCheck';
 import { CircularProgress } from '@/components/ui/progress';
 import { Separator } from '@/components/ui/separator';
+import { useBreakpoint } from '@/hooks/use-breakpoint';
 import { useUser } from '@/store/user';
 
 import { userStatsQuery } from '@/features/home/queries/user-stats';
@@ -14,7 +16,7 @@ const ProBenefitItem = ({ text }: { text: string }) => {
   return (
     <div className="flex items-center gap-3">
       <div className="flex size-6 items-center justify-center rounded-full bg-zinc-200">
-        <FaCheck className="size-3 text-zinc-500" />
+        <FaCheck className="size-3 text-zinc-700" />
       </div>
       <span className="text-sm whitespace-nowrap text-slate-500">{text}</span>
     </div>
@@ -80,9 +82,14 @@ const ProEligibility = ({ totalWinnings }: { totalWinnings: number }) => {
   );
 };
 
-export const ProSidebar = () => {
+interface ProSidebarProps {
+  desktopHeight?: number;
+}
+
+export const ProSidebar = ({ desktopHeight }: ProSidebarProps) => {
   const { data: stats, isLoading: isStatsLoading } = useQuery(userStatsQuery);
   const { user, isLoading: isUserLoading } = useUser();
+  const isLg = useBreakpoint('lg');
   const isPro = user?.isPro;
 
   const isProEligibilityLoading = isUserLoading || isStatsLoading;
@@ -91,10 +98,17 @@ export const ProSidebar = () => {
     !isPro &&
     ((stats && (stats.totalWinnings ?? 0) >= 1000) ||
       user?.superteamLevel?.includes('Superteam'));
+  const sidebarStyle = isLg
+    ? ({
+        height: desktopHeight,
+      } satisfies CSSProperties)
+    : undefined;
+  const sidebarClassName =
+    'flex w-full flex-col py-3 lg:min-h-0 lg:w-130 lg:border-l lg:border-slate-100 lg:pl-5';
 
   if (isProEligibilityLoading) {
     return (
-      <div className="flex h-full w-full flex-col py-3 lg:w-130 lg:border-l lg:border-slate-100 lg:pl-6">
+      <div className={sidebarClassName} style={sidebarStyle}>
         <Separator className="mb-4 lg:hidden" />
         <div className="space-y-4">
           <div className="h-4 w-24 rounded bg-slate-100" />
@@ -144,33 +158,35 @@ export const ProSidebar = () => {
   }
 
   return (
-    <div className="flex h-full w-full flex-col py-3 lg:w-130 lg:border-l lg:border-slate-100 lg:pl-6">
+    <div className={sidebarClassName} style={sidebarStyle}>
       <Separator className="mb-4 lg:hidden" />
-      {isPro ? (
-        <>
-          <p className="text-[0.95rem] font-medium text-slate-400">PERKS</p>
-          <PerksList />
-          <ProPerksCards />
-        </>
-      ) : (
-        <>
-          {isUserEligibleForPro ? (
-            <ProIntro origin="sidebar" />
-          ) : (
-            <ProEligibility totalWinnings={stats?.totalWinnings ?? 0} />
-          )}
-          <Separator className="my-8" />
-          <p className="text-[0.95rem] font-medium text-slate-400">
-            Pro Benefits
-          </p>
-          <PerksList />
-          <Separator className="my-8" />
-          <p className="text-[0.95rem] font-medium text-slate-400">
-            Pro Ecosystem Perks
-          </p>
-          <ProPerksCards />
-        </>
-      )}
+      <div className="flex flex-col lg:min-h-0 lg:flex-1">
+        {isPro ? (
+          <>
+            <p className="text-[0.95rem] font-medium text-slate-400">PERKS</p>
+            <PerksList />
+            <ProPerksCards className="lg:min-h-0 lg:flex-1" />
+          </>
+        ) : (
+          <>
+            {isUserEligibleForPro ? (
+              <ProIntro origin="sidebar" />
+            ) : (
+              <ProEligibility totalWinnings={stats?.totalWinnings ?? 0} />
+            )}
+            <Separator className="my-8" />
+            <p className="text-[0.95rem] font-medium text-slate-400">
+              Pro Benefits
+            </p>
+            <PerksList />
+            <Separator className="my-8" />
+            <p className="text-[0.95rem] font-medium text-slate-400">
+              Pro Ecosystem Perks
+            </p>
+            <ProPerksCards className="lg:min-h-0 lg:flex-1" />
+          </>
+        )}
+      </div>
     </div>
   );
 };
