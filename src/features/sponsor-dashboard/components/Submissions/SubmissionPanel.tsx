@@ -13,7 +13,6 @@ import { truncateString } from '@/utils/truncateString';
 
 import { AgentBadge } from '@/features/agents/components/AgentBadge';
 import type { Listing } from '@/features/listings/types';
-import { getListingStatus } from '@/features/listings/utils/status';
 import {
   GitHub,
   Telegram,
@@ -48,9 +47,8 @@ export const SubmissionPanel = ({
   const isProject = bounty?.type === 'project';
 
   const [selectedSubmission] = useAtom(selectedSubmissionAtom);
-  const listingStatus = getListingStatus(bounty);
-  const shouldHideTxLinks =
-    bounty?.isFndnPaying && listingStatus === 'Completed';
+  const shouldHideTxLinks = bounty?.isFndnPaying;
+  const paymentTxId = selectedSubmission?.paymentDetails?.[0]?.txId;
 
   return (
     <div className="sticky top-[3rem] w-full">
@@ -122,12 +120,13 @@ export const SubmissionPanel = ({
                   selectedSubmission?.winnerPosition &&
                   selectedSubmission?.isPaid &&
                   !isProject &&
-                  !shouldHideTxLinks && (
+                  !shouldHideTxLinks &&
+                  paymentTxId && (
                     <Button
                       className="mr-4 border-slate-300 text-slate-600"
                       onClick={() => {
                         window.open(
-                          `https://solscan.io/tx/${selectedSubmission?.paymentDetails?.[0]?.txId}?cluster=${process.env.NEXT_PUBLIC_PAYMENT_CLUSTER}`,
+                          `https://solscan.io/tx/${paymentTxId}?cluster=${process.env.NEXT_PUBLIC_PAYMENT_CLUSTER}`,
                           '_blank',
                         );
                       }}
