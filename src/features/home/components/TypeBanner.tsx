@@ -18,15 +18,15 @@ type TypeBanner = {
 const banners: Record<TypeTypes, TypeBanner> = {
   bounties: {
     img: ASSET_URL + '/banner/banner',
-    heading: 'Crypto Bounties & Web3 Tasks',
+    heading: 'Crypto Bounties & Web3 Freelance Opportunities',
     description:
-      'Complete bounties and earn cryptocurrency. Browse the latest web3 bounties from top Solana projects — from development and design to content creation. Get paid in USDC, SOL, and other tokens.',
+      'Complete short-term crypto bounties from top Solana teams and get rewarded for real work. From development and design to content creation, ship fast, build your portfolio, and earn in USDC, SOL, and other tokens.',
   },
   projects: {
     img: ASSET_URL + '/banner/banner',
-    heading: 'Crypto Jobs & Web3 Opportunities',
+    heading: 'Remote Crypto Jobs & Web3 Freelance Projects',
     description:
-      "Discover the best remote crypto jobs and web3 careers in the Solana ecosystem. Whether you're a developer, designer, or content creator, find bounties, freelance projects, and opportunities that pay in crypto.",
+      'Explore long-term web3 freelance work with top Solana teams. Apply to remote crypto jobs across development, design, operations, and content, and get paid in USDC, SOL, and other tokens while contributing meaningful work with real teams.',
   },
 };
 

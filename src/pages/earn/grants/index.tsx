@@ -1,20 +1,15 @@
-import { ErrorInfo } from '@/components/shared/ErrorInfo';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
-import { Skeleton } from '@/components/ui/skeleton';
 import { ASSET_URL } from '@/constants/ASSET_URL';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 
 import { GrantsPop } from '@/features/conversion-popups/components/GrantsPop';
+import { SeoFaq } from '@/features/home/components/SeoFaq';
 import { GrantEntry } from '@/features/grants/components/GrantEntry';
 import { useGrants } from '@/features/grants/hooks/useGrants';
 
 function Grants() {
-  const {
-    data: grants,
-    isLoading,
-    isError,
-  } = useGrants({
+  const { data: grants } = useGrants({
     context: 'all',
     category: 'All',
   });
@@ -38,51 +33,36 @@ function Grants() {
           src={'/home/bg_grad.svg'}
         />
         <div className="my-16 flex flex-col gap-4 text-center">
-          <p className="px-2 text-4xl font-bold md:text-5xl">
-            Need funds to build out your idea?
-          </p>
+          <h1 className="px-2 text-4xl font-bold md:text-5xl">
+            Crypto Grants &amp; Web3 Funding for Builders
+          </h1>
           <p className="mx-auto max-w-2xl text-lg text-gray-600 md:text-xl">
-            Discover the complete list of crypto grants available to support
-            your project. Fast, equity-free funding without the hassle.
+            Explore equity-free crypto grants designed to help founders and
+            builders ship in the Solana ecosystem. Apply for fast, transparent
+            funding to develop products, research ideas, and grow projects.
           </p>
           <p className="mt-3 text-sm text-slate-400 md:text-base">
             Equity-Free • No Bullshit • Fast AF
           </p>
         </div>
         <div className="container mx-auto mb-12 max-w-7xl px-4">
-          {isError && <ErrorInfo />}
           <div className="flex flex-wrap justify-center gap-10">
-            {isLoading &&
-              Array.from({ length: 6 }).map((_, i) => (
-                <div key={i} className="w-full max-w-[20rem]">
-                  <div className="mx-auto w-full overflow-hidden rounded-lg border shadow-md sm:w-80">
-                    <Skeleton className="h-[180px] w-full rounded-none" />
-                    <div className="flex flex-col gap-2 px-4 pt-1.5 pb-4">
-                      <Skeleton className="h-7 w-3/4" />
-                      <div className="flex items-center gap-1">
-                        <Skeleton className="h-4 w-4 rounded-full" />
-                        <Skeleton className="h-4 w-24" />
-                      </div>
-                      <Skeleton className="mt-1 h-9 w-full" />
-                    </div>
-                  </div>
-                </div>
-              ))}
-            {!isLoading &&
-              !isError &&
-              grants?.map((grant) => (
-                <div key={grant?.id} className="w-full max-w-[20rem]">
-                  <GrantEntry
-                    title={grant?.title}
-                    slug={grant.slug}
-                    minReward={grant?.minReward}
-                    maxReward={grant?.maxReward}
-                    token={grant?.token}
-                    logo={grant?.logo}
-                  />
-                </div>
-              ))}
+            {grants?.map((grant) => (
+              <div key={grant?.id} className="w-full max-w-[20rem]">
+                <GrantEntry
+                  title={grant?.title}
+                  slug={grant.slug}
+                  minReward={grant?.minReward}
+                  maxReward={grant?.maxReward}
+                  token={grant?.token}
+                  logo={grant?.logo}
+                />
+              </div>
+            ))}
           </div>
+        </div>
+        <div className="container mx-auto mb-12 max-w-md px-4">
+          <SeoFaq />
         </div>
       </div>
     </Default>
