@@ -4,6 +4,7 @@ import Link from 'next/link';
 import posthog from 'posthog-js';
 
 import { Button } from '@/components/ui/button';
+import { JTTG } from '@/constants/Telegram';
 import { useUser } from '@/store/user';
 
 import {
@@ -138,7 +139,7 @@ export function BoostBanner({ listing }: BoostBannerProps) {
             className="flex items-center gap-3 text-sm text-slate-400 underline underline-offset-4 hover:text-slate-700"
           >
             <Link
-              href="https://t.me/pratikdholani/"
+              href={JTTG}
               onClick={(e) => {
                 e.stopPropagation();
                 handleGetHelpClick();
