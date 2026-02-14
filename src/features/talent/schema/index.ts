@@ -99,14 +99,14 @@ export const socialSuperRefine = async (
     if (!data.github) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: 'Github is requierd',
+        message: 'Github is required',
         path: ['github'],
       });
     }
   } else if (!data.twitter) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
-      message: 'X is requierd',
+      message: 'X is required',
       path: ['twitter'],
     });
   }
