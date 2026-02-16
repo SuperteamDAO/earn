@@ -13,11 +13,22 @@ import { getSponsorSession } from '@/features/auth/utils/getSponsorSession';
 import { queueEmail } from '@/features/emails/utils/queueEmail';
 import { addPaymentInfoToAirtable } from '@/features/grants/utils/addPaymentInfoToAirtable';
 
-const UpdateGrantTrancheSchema = z.object({
-  id: z.string(),
-  approvedAmount: z.union([z.number().min(0), z.null()]).optional(),
-  status: z.enum(['Approved', 'Rejected']),
-});
+const UpdateGrantTrancheSchema = z
+  .object({
+    id: z.string(),
+    approvedAmount: z.number().positive().optional(),
+    status: z.enum(['Approved', 'Rejected']),
+  })
+  .superRefine((value, ctx) => {
+    if (value.status !== 'Approved') return;
+    if (value.approvedAmount === undefined) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['approvedAmount'],
+        message: 'approvedAmount is required when approving a tranche',
+      });
+    }
+  });
 
 export async function POST(request: NextRequest) {
   const body = await request.json();
@@ -85,6 +96,16 @@ export async function POST(request: NextRequest) {
         let totalTranches = application.totalTranches;
 
         if (status === 'Approved') {
+          if (approvedAmount === undefined) {
+            return NextResponse.json(
+              {
+                error: 'Invalid approved amount',
+                message: 'Approved amount is required for approved tranches.',
+              },
+              { status: 400 },
+            );
+          }
+
           const approvedTranches = await prisma.grantTranche.findMany({
             where: {
               applicationId: currentTranche.applicationId,
@@ -102,13 +123,13 @@ export async function POST(request: NextRequest) {
           );
 
           if (
-            totalApprovedSoFar + approvedAmount! >
+            totalApprovedSoFar + approvedAmount >
             application.approvedAmount
           ) {
             return NextResponse.json(
               {
                 error: 'Invalid approved amount',
-                message: `Total approved tranches (${totalApprovedSoFar + approvedAmount!}) would exceed grant's approved amount (${application.approvedAmount})`,
+                message: `Total approved tranches (${totalApprovedSoFar + approvedAmount}) would exceed grant's approved amount (${application.approvedAmount})`,
               },
               { status: 400 },
             );
@@ -124,7 +145,7 @@ export async function POST(request: NextRequest) {
           });
           if (
             totalTranches - existingTranches === 0 &&
-            application.totalPaid + approvedAmount! < application.approvedAmount
+            application.totalPaid + approvedAmount < application.approvedAmount
           ) {
             totalTranches! += 1;
           }
