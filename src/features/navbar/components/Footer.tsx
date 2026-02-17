@@ -13,7 +13,7 @@ import { cn } from '@/utils/cn';
 
 import {
   findCountryBySlug,
-  generateSlug,
+  getRegionSlug,
 } from '@/features/listings/utils/region';
 import { GitHub, Twitter } from '@/features/social/components/SocialIcons';
 
@@ -132,15 +132,7 @@ export const Footer = () => {
 
     setSelectedRegion(value);
 
-    // Check if it's a Superteam region
-    const superteam = Superteams.find((t) => t.region === value);
-    if (superteam?.slug) {
-      router.push(`/earn/regions/${superteam.slug.toLowerCase()}`);
-    } else {
-      // It's a country or region, generate slug from the name
-      const slug = generateSlug(value);
-      router.push(`/earn/regions/${slug}`);
-    }
+    router.push(`/earn/regions/${getRegionSlug(value)}`);
   };
 
   const handleSkillChange = (value: string): void => {

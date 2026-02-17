@@ -12,6 +12,7 @@ import { cn } from '@/utils/cn';
 import { HACKATHONS } from '@/features/hackathon/constants/hackathons';
 import { sponsorStageQuery } from '@/features/home/queries/sponsor-stage';
 import { SponsorStage } from '@/features/home/types/sponsor-stage';
+import { getRegionSlug } from '@/features/listings/utils/region';
 import { CATEGORY_NAV_ITEMS } from '@/features/navbar/constants';
 
 const SKELETON_COUNT = 5;
@@ -199,7 +200,7 @@ export const ListingsSection = ({
     if (type === 'home') {
       basePath = '/earn/all';
     } else if (type === 'region') {
-      basePath = `/earn/regions/${region}/all`;
+      basePath = `/earn/regions/${getRegionSlug(region || '')}/all`;
     } else if (type === 'skill' && skill) {
       basePath = `/earn/skill/${skill}/all`;
     } else {
