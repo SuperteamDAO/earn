@@ -6,6 +6,7 @@ import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 
 import Providers from '@/components/providers';
+import { ST_ROUTES } from '@/constants/ST_ROUTES';
 import { fontVariables } from '@/theme/fonts';
 import { stFontVariables } from '@/theme/fonts-st';
 
@@ -23,14 +24,6 @@ const TopLoader = dynamic(
   () => import('@/components/ui/toploader').then((mod) => mod.TopLoader),
   { ssr: false },
 );
-
-const ST_ROUTES = [
-  '/',
-  '/collaborate',
-  '/fast-track',
-  '/member-perks',
-  '/projects',
-];
 
 function isSTRoute(pathname: string): boolean {
   return ST_ROUTES.includes(pathname);

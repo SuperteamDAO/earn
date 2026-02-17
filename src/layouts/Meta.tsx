@@ -2,6 +2,7 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 
 import { ASSET_URL } from '@/constants/ASSET_URL';
+import { ST_ROUTES } from '@/constants/ST_ROUTES';
 import { AppConfig } from '@/utils/AppConfig';
 import { STConfig } from '@/utils/STConfig';
 
@@ -11,14 +12,6 @@ type IMetaProps = {
   readonly canonical?: string;
   readonly og?: string;
 };
-
-const ST_ROUTES = [
-  '/',
-  '/collaborate',
-  '/fast-track',
-  '/member-perks',
-  '/projects',
-];
 
 const Meta = (props: IMetaProps) => {
   const router = useRouter();
