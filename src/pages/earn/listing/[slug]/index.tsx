@@ -85,7 +85,10 @@ function ListingDetails({
           )}
           <DescriptionUI
             description={initialListing?.description}
-            isPro={initialListing?.isPro ?? false}
+            isPro={
+              (initialListing?.isPro ?? false) &&
+              !(initialListing?.isWinnersAnnounced ?? false)
+            }
             type={initialListing?.type ?? 'bounty'}
             sponsorId={initialListing?.sponsorId ?? ''}
           />

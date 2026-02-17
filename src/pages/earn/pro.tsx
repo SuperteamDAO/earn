@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { type GetServerSideProps } from 'next';
+import { useEffect, useRef, useState } from 'react';
 
 import ProIcon from '@/components/icons/ProIcon';
 import { ASSET_URL } from '@/constants/ASSET_URL';
@@ -19,6 +20,27 @@ interface HomePageProps {
 
 export default function ProPage({ potentialSession }: HomePageProps) {
   const { data: stats } = useQuery(userStatsQuery);
+  const leftColumnRef = useRef<HTMLDivElement>(null);
+  const [leftColumnHeight, setLeftColumnHeight] = useState<number>();
+
+  useEffect(() => {
+    const element = leftColumnRef.current;
+    if (!element) return;
+
+    const updateLeftColumnHeight = () => {
+      setLeftColumnHeight(element.getBoundingClientRect().height);
+    };
+
+    const frameId = requestAnimationFrame(updateLeftColumnHeight);
+    const resizeObserver = new ResizeObserver(updateLeftColumnHeight);
+    resizeObserver.observe(element);
+
+    return () => {
+      cancelAnimationFrame(frameId);
+      resizeObserver.disconnect();
+    };
+  }, []);
+
   const customEmptySection = () => {
     return (
       <div className="flex w-full flex-col items-center justify-center py-16">
@@ -51,7 +73,7 @@ export default function ProPage({ potentialSession }: HomePageProps) {
     >
       <div className={cn('mx-auto w-full px-2 lg:px-6')}>
         <div className="mx-auto flex w-full max-w-7xl flex-col items-start justify-between p-0 lg:flex-row">
-          <div className="w-full">
+          <div ref={leftColumnRef} className="w-full">
             <div className="w-full lg:pr-6">
               <div className="pt-3">
                 <ProBanner totalEarnings={stats?.totalWinnings ?? 0} />
@@ -66,7 +88,7 @@ export default function ProPage({ potentialSession }: HomePageProps) {
               </div>
             </div>
           </div>
-          <ProSidebar />
+          <ProSidebar desktopHeight={leftColumnHeight} />
         </div>
       </div>
     </Default>

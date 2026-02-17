@@ -11,8 +11,8 @@ import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
 import { truncateString } from '@/utils/truncateString';
 
+import { AgentBadge } from '@/features/agents/components/AgentBadge';
 import type { Listing } from '@/features/listings/types';
-import { getListingStatus } from '@/features/listings/utils/status';
 import {
   GitHub,
   Telegram,
@@ -47,9 +47,8 @@ export const SubmissionPanel = ({
   const isProject = bounty?.type === 'project';
 
   const [selectedSubmission] = useAtom(selectedSubmissionAtom);
-  const listingStatus = getListingStatus(bounty);
-  const shouldHideTxLinks =
-    bounty?.isFndnPaying && listingStatus === 'Completed';
+  const shouldHideTxLinks = bounty?.isFndnPaying;
+  const paymentTxId = selectedSubmission?.paymentDetails?.[0]?.txId;
 
   return (
     <div className="sticky top-[3rem] w-full">
@@ -65,9 +64,18 @@ export const SubmissionPanel = ({
                 />
 
                 <div>
-                  <p className="w-full font-medium whitespace-nowrap text-slate-900">
-                    {`${selectedSubmission?.user?.firstName}'s Submission`}
-                  </p>
+                  <div className="flex items-center gap-2">
+                    <p className="w-full font-medium whitespace-nowrap text-slate-900">
+                      {`${selectedSubmission?.user?.firstName}'s Submission`}
+                    </p>
+                    {!!selectedSubmission?.agentId && (
+                      <AgentBadge
+                        containerClassName="bg-slate-900 px-2 py-[3px] gap-[3px]"
+                        iconClassName="size-2 text-slate-200"
+                        textClassName="text-[8px] font-medium text-white"
+                      />
+                    )}
+                  </div>
                   <Link
                     className="text-brand-purple flex w-full items-center text-xs font-medium whitespace-nowrap"
                     href={`/earn/t/${selectedSubmission?.user?.username}`}
@@ -112,12 +120,13 @@ export const SubmissionPanel = ({
                   selectedSubmission?.winnerPosition &&
                   selectedSubmission?.isPaid &&
                   !isProject &&
-                  !shouldHideTxLinks && (
+                  !shouldHideTxLinks &&
+                  paymentTxId && (
                     <Button
                       className="mr-4 border-slate-300 text-slate-600"
                       onClick={() => {
                         window.open(
-                          `https://solscan.io/tx/${selectedSubmission?.paymentDetails?.[0]?.txId}?cluster=${process.env.NEXT_PUBLIC_PAYMENT_CLUSTER}`,
+                          `https://solscan.io/tx/${paymentTxId}?cluster=${process.env.NEXT_PUBLIC_PAYMENT_CLUSTER}`,
                           '_blank',
                         );
                       }}

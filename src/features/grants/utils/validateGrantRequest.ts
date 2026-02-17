@@ -44,6 +44,10 @@ export async function validateGrantRequest(userId: string, grantId: string) {
     throw new Error('User not found');
   }
 
+  if (user.isBlocked) {
+    throw new Error('User is blocked');
+  }
+
   if (user.isTalentFilled === false) {
     throw new Error('Profile not completed');
   }

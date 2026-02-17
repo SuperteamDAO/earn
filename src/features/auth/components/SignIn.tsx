@@ -152,22 +152,22 @@ export const SignIn = ({
           Need help? Reach out to us at{' '}
           {isMD ? (
             <CopyButton
-              text="support@superteamearn.com"
+              text="support@superteam.fun"
               contentProps={{
                 className: 'px-1.5 py-0.5 text-[0.6875rem]',
               }}
             >
               <p className="underline hover:text-slate-500">
-                support@superteamearn.com
+                support@superteam.fun
               </p>
             </CopyButton>
           ) : (
             <a
-              href="mailto:support@superteamearn.com"
+              href="mailto:support@superteam.fun"
               className="underline hover:text-slate-500"
               target="_blank"
             >
-              support@superteamearn.com
+              support@superteam.fun
             </a>
           )}
         </p>

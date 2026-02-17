@@ -257,6 +257,12 @@ export async function createTranche({
     throw new Error(errorMessage);
   }
 
+  if (!Number.isFinite(trancheAmount) || trancheAmount <= 0) {
+    const errorMessage = `Calculated invalid tranche amount (${trancheAmount}) for application ${applicationId}`;
+    logger.error(errorMessage);
+    throw new Error(errorMessage);
+  }
+
   logger.info(
     `Creating tranche ${existingTranches + 1} for application ${applicationId} with amount ${trancheAmount}`,
   );

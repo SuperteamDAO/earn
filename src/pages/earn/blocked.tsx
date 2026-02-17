@@ -31,9 +31,9 @@ export default function Blocked() {
           Your access to Earn has been restricted. Please get in touch with{' '}
           <Link
             className="text-brand-purple"
-            href="mailto:support@superteamearn.com"
+            href="mailto:support@superteam.fun"
           >
-            support@superteamearn.com
+            support@superteam.fun
           </Link>{' '}
           if you have any questions for more information.
         </p>

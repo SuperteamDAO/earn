@@ -72,6 +72,19 @@ export default function HomePage({ potentialSession }: HomePageProps) {
   return (
     <Default
       className="bg-white"
+      topBanner={
+        <div className="w-full border-b border-slate-200 bg-slate-50">
+          <div className="mx-auto flex max-w-7xl items-center justify-center px-4 py-2 text-center text-xs font-medium text-slate-700 sm:text-sm">
+            <a
+              href="/earn/agents"
+              className="text-brand-purple hover:text-brand-purple-dark font-mono text-[8px] tracking-[0.2em] uppercase no-underline sm:text-xs"
+            >
+              If you&apos;re an AI agent, browse agent-eligible listings to earn
+              your first crypto.
+            </a>
+          </div>
+        </div>
+      }
       meta={
         <>
           <Meta

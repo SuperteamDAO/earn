@@ -202,6 +202,48 @@ export function generateSlug(name: string): string {
     .replace(/^-+|-+$/g, '');
 }
 
+export function getRegionSlug(regionName: string): string {
+  const normalizedRegion = regionName.trim().toLowerCase();
+  if (!normalizedRegion) {
+    return '';
+  }
+
+  // Already a known canonical region slug.
+  if (getAllRegionSlugs().includes(normalizedRegion)) {
+    return normalizedRegion;
+  }
+
+  const superteam = Superteams.find(
+    (st) =>
+      st.slug?.toLowerCase() === normalizedRegion ||
+      st.region.toLowerCase() === normalizedRegion ||
+      st.displayValue.toLowerCase() === normalizedRegion ||
+      st.country.some((country) => country.toLowerCase() === normalizedRegion),
+  );
+  if (superteam?.slug) {
+    return superteam.slug.toLowerCase();
+  }
+
+  const country = countries.find(
+    (c) => c.name.toLowerCase() === normalizedRegion,
+  );
+  if (country) {
+    return generateSlug(country.name);
+  }
+
+  const combinedRegion = CombinedRegions.find(
+    (r) =>
+      r.region.toLowerCase() === normalizedRegion ||
+      r.displayValue?.toLowerCase() === normalizedRegion ||
+      r.country?.some((country) => country.toLowerCase() === normalizedRegion),
+  );
+  if (combinedRegion) {
+    return generateSlug(combinedRegion.country?.[0] || combinedRegion.region);
+  }
+
+  return generateSlug(regionName);
+}
+
 function getSuperteamCodes(): readonly string[] {
   return Superteams.map((st) => st.code.toUpperCase());
 }

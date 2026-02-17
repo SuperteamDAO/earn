@@ -41,7 +41,7 @@ export default async function handler(
     logger.info('Sending Support Request Email');
     const { data, error } = await resend.emails.send({
       from: `Earn Support Form <support-form@superteamearn.com>`,
-      to: ['support@superteamearn.com'],
+      to: ['support@superteam.fun'],
       replyTo: email,
       subject: `Support Request: ${subject}`,
       react: supportEmailTemplate({ from: email, subject, description }),

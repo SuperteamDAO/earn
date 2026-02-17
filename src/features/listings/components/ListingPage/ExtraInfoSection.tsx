@@ -7,6 +7,7 @@ import { dayjs } from '@/utils/dayjs';
 import { getURLSanitized } from '@/utils/getURLSanitized';
 
 import type { ListingHackathon } from '../../types';
+import { getRegionSlug } from '../../utils/region';
 
 interface ExtraInfoSectionProps {
   skills?: ParentSkills[];
@@ -41,7 +42,7 @@ export function ExtraInfoSection({
           <p className="h-full text-slate-500">
             This {isGrant ? 'grant' : 'listing'} is only open for people in{' '}
             <Link
-              href={`/earn/regions/${region.toLowerCase().replace(/\s+/g, '-')}`}
+              href={`/earn/regions/${getRegionSlug(region)}`}
               className="font-semibold text-slate-500 hover:text-slate-700 hover:underline"
             >
               {region}

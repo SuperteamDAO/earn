@@ -14,11 +14,9 @@ export async function getPrivyToken(
       }),
 ): Promise<string | null> {
   try {
-    logger.debug('Request Cookies', safeStringify(req.cookies));
-    logger.debug('Request Headers', safeStringify(req.headers));
     let accessToken = req.headers?.authorization?.replace('Bearer ', '');
     if (accessToken) {
-      logger.info('Access token found in `authorization` header', accessToken);
+      logger.debug('Auth token found in `authorization` header');
     }
 
     // COOKIE IS NEEDED FOR SSR AUTH (getServerSideProps)
@@ -42,16 +40,15 @@ export async function getPrivyToken(
       .auth()
       .verifyAuthToken(accessToken);
     logger.debug(
-      'Authorized, found full privy claim from token',
-      verifiedClaims,
+      `Authorized token for Privy user ${verifiedClaims.user_id}`,
+      safeStringify({ appId: verifiedClaims.app_id, sessionId: 'redacted' }),
     );
 
     return verifiedClaims.user_id;
   } catch (error) {
-    logger.error(
-      'Unauthorized, Error verifying auth token ',
-      safeStringify(error),
-    );
+    const errorMessage =
+      error instanceof Error ? error.message : 'Unknown auth token error';
+    logger.error(`Unauthorized, Error verifying auth token: ${errorMessage}`);
     return null;
   }
 }

@@ -1,4 +1,4 @@
-import { PDTG } from '@/constants/Telegram';
+import { JTTG } from '@/constants/Telegram';
 
 import { styles } from '../utils/styles';
 
@@ -14,7 +14,7 @@ export const WelcomeSponsorTemplate = () => {
       <p style={styles.textWithMargin}>
         If you need any help related to setting up your listing on Earn,
         don&apos;t hesitate to contact me on&nbsp;
-        <a href={PDTG} style={styles.link}>
+        <a href={JTTG} style={styles.link}>
           Telegram
         </a>
         .

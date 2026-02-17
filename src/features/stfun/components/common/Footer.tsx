@@ -30,7 +30,7 @@ export default function Footer() {
               Superteam Earn
             </a>
             <a
-              href="https://docs.google.com/presentation/d/1m78Nu7YKdkckN5bu-pNsw3gdczEdMU_R/edit#slide=id.p1"
+              href="/branding"
               target="_blank"
               rel="noopener noreferrer"
               className="footer-text"

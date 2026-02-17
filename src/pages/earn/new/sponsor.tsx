@@ -26,7 +26,7 @@ import { Input } from '@/components/ui/input';
 import { MultiSelect } from '@/components/ui/multi-select';
 import { Separator } from '@/components/ui/separator';
 import { Tooltip } from '@/components/ui/tooltip';
-import { PDTG } from '@/constants/Telegram';
+import { JTTG } from '@/constants/Telegram';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { api } from '@/lib/api';
@@ -553,8 +553,8 @@ const CreateSponsor = () => {
                     <p className="text-center text-yellow-500">
                       If you want access to the existing account, contact us on
                       Telegram at{' '}
-                      <Link href={PDTG} target="_blank">
-                        @pratikdholani
+                      <Link href={JTTG} target="_blank">
+                        @jilltodkar
                       </Link>
                     </p>
                   )}

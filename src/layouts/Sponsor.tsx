@@ -30,7 +30,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Tooltip } from '@/components/ui/tooltip';
 import { Superteams, unofficialSuperteams } from '@/constants/Superteam';
-import { PDTG } from '@/constants/Telegram';
+import { JTTG } from '@/constants/Telegram';
 import { SolanaWalletProvider } from '@/context/SolanaWallet';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { Default } from '@/layouts/Default';
@@ -222,7 +222,7 @@ export function SponsorLayout({
         },
         {
           name: 'Get Help',
-          link: PDTG,
+          link: JTTG,
           icon: MdOutlineChatBubbleOutline,
           posthog: 'get help_sponsor',
         },

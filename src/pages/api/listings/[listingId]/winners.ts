@@ -31,6 +31,12 @@ export async function getWinningSubmissionsByListingId(listingId: string) {
     },
   });
 
+  result.sort((a, b) => {
+    if (!a.winnerPosition) return 1;
+    if (!b.winnerPosition) return -1;
+    return Number(a.winnerPosition) - Number(b.winnerPosition);
+  });
+
   return convertDatesToISO(result) as unknown as SubmissionWithUser[];
 }
 
