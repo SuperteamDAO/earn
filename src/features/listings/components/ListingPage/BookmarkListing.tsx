@@ -188,7 +188,7 @@ export const BookmarkListing = ({ id, isTemplate = false }: Props) => {
       ? optimisticIsBookmarked
       : actualIsBookmarked;
 
-  const baseDisplayCount = bookmarks.length + 1;
+  const baseDisplayCount = bookmarks.length;
   const optimisticDelta =
     optimisticIsBookmarked !== undefined
       ? optimisticIsBookmarked && !actualIsBookmarked
