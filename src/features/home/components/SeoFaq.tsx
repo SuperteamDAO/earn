@@ -16,36 +16,56 @@ const FAQ_BY_PAGE: Record<string, FaqItem[]> = {
     {
       question: 'What is Superteam Earn?',
       answer:
-        'Superteam Earn is the leading platform for crypto bounties, web3 jobs, and Solana ecosystem opportunities. It connects talented freelancers and builders with top crypto projects looking for development, design, content, and growth support.',
+        'Superteam Earn is a platform where anyone can earn crypto by completing bounties, applying to projects, or securing grants from teams across the Solana ecosystem. Create a profile, showcase your work, and get rewarded for contributing to real products.',
+    },
+    {
+      question: 'How does Superteam Earn work?',
+      answer:
+        'Sponsors post opportunities such as bounties, projects, and grants. Anyone can apply or submit work, and rewards are distributed once the work is reviewed and approved. Everything happens through a single profile so your contributions build over time.',
     },
     {
       question: 'Who is it for?',
       answer:
-        'Whether you are a developer, designer, writer, or community builder, Superteam Earn helps you find paid crypto work that matches your skills. Both newcomers exploring web3 and experienced professionals can find opportunities here.',
+        'Anyone building in web3 — developers, designers, writers, researchers, community contributors, and operators — can participate. Whether you\'re new to crypto or already experienced, you can start contributing and earning.',
     },
     {
-      question: 'What can you do here?',
+      question: 'What\'s the difference between bounties, projects, and grants?',
       answer:
-        'Browse and complete bounties for quick payouts, apply to longer-term freelance projects, or discover crypto grants to fund your ideas. All earnings are paid in crypto tokens like USDC and SOL.',
+        'Bounties are short-term tasks where multiple participants submit work. Projects are longer-term roles where one applicant is selected to collaborate with a team. Grants provide equity-free funding to help builders develop larger ideas or products.',
+    },
+    {
+      question: 'How do I get started?',
+      answer:
+        'Create your profile, explore crypto bounties or web3 opportunities, and submit your work. Completing smaller tasks helps you build a track record and unlock better opportunities (PRO) over time.',
     },
   ],
   '/earn/bounties': [
     {
-      question: 'How do Bounties work?',
+      question: 'What are crypto bounties?',
       answer:
-        'Sponsors post bounties with clear requirements, deadlines, and reward amounts. You browse open bounties, complete the task, and submit your work before the deadline. Sponsors review all submissions and select winners who receive the posted reward in crypto. No interviews or lengthy applications — just deliver quality work and get paid.',
+        'A crypto bounty is a task posted by a team where anyone can submit work to earn rewards. Sponsors publish bounty listings with clear requirements, participants submit before the deadline, and the best entries are selected based on quality and alignment with the brief. Payments are typically made in USDC, SOL, or other tokens.',
     },
     {
-      question: 'Who should apply to Bounties?',
+      question: 'Who should apply to crypto bounties?',
       answer:
-        'Bounties are ideal for developers, designers, writers, and marketers who want to earn crypto by completing well-defined tasks. Whether you are new to web3 or an experienced contributor, bounties let you build a track record, earn tokens like USDC and SOL, and connect with leading Solana projects.',
+        'Bounties are ideal for developers, designers, writers, researchers, and community contributors who want to build proof of work, grow their portfolio, and earn crypto for short-term tasks.',
+    },
+    {
+      question: 'Are crypto bounties beginner friendly?',
+      answer:
+        'Yes. Many bounties are designed for newcomers looking to gain experience in Web3. Completing smaller tasks helps you build a track record.',
+    },
+    {
+      question: 'How do I increase my chances of winning a bounty?',
+      answer:
+        'Read the requirements carefully, follow submission guidelines, and focus on quality rather than speed. Strong submissions usually demonstrate clear thinking, creativity, and attention to detail.',
     },
   ],
   '/earn/projects': [
     {
       question: 'How do Projects work?',
       answer:
-        'Sponsors post project listings describing the scope, timeline, and compensation. You apply with your Earn profile and a short pitch explaining why you are the right fit. The sponsor reviews applications, selects a freelancer, and work begins. Once completed, you get paid in crypto tokens like USDC or SOL.',
+        'Sponsors post project listings describing the scope, timeline, and compensation. You apply with your Earn profile and a short pitch explaining why you are the right fit. The sponsor reviews applications, selects a freelancer, and work begins. Once completed, you get paid in crypto tokens like USDC, SOL, or other tokens.',
     },
     {
       question: 'Who should apply to Projects?',

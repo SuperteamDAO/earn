@@ -4,7 +4,6 @@ import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 
 import { GrantsPop } from '@/features/conversion-popups/components/GrantsPop';
-import { SeoFaq } from '@/features/home/components/SeoFaq';
 import { GrantEntry } from '@/features/grants/components/GrantEntry';
 import { useGrants } from '@/features/grants/hooks/useGrants';
 
@@ -34,12 +33,11 @@ function Grants() {
         />
         <div className="my-16 flex flex-col gap-4 text-center">
           <h1 className="px-2 text-4xl font-bold md:text-5xl">
-            Crypto Grants &amp; Web3 Funding for Builders
+            Crypto Grants &amp; Web3 Funding
           </h1>
           <p className="mx-auto max-w-2xl text-lg text-gray-600 md:text-xl">
-            Explore equity-free crypto grants designed to help founders and
-            builders ship in the Solana ecosystem. Apply for fast, transparent
-            funding to develop products, research ideas, and grow projects.
+            Explore equity-free crypto grants that help founders and builders
+            turn ideas into real products in the Solana ecosystem.
           </p>
           <p className="mt-3 text-sm text-slate-400 md:text-base">
             Equity-Free • No Bullshit • Fast AF
@@ -60,9 +58,6 @@ function Grants() {
               </div>
             ))}
           </div>
-        </div>
-        <div className="container mx-auto mb-12 max-w-md px-4">
-          <SeoFaq />
         </div>
       </div>
     </Default>

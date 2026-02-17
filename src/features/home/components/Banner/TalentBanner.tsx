@@ -61,8 +61,9 @@ export function HomeTalentBanner({ totalUsers }: HomeTalentBannerProps) {
         <br /> &amp; Web3 Freelance Jobs
       </h1>
       <p className="relative z-10 mt-2.5 max-w-full text-sm leading-[130%] text-white [text-shadow:_0_1px_2px_rgb(0_0_0_/1)] md:mt-4 md:max-w-[30rem] md:text-lg">
-        Discover crypto bounties and remote Web3 freelance opportunities from
-        world-class teams, all with a single profile.
+        Explore remote web3 freelance work and crypto bounties from top Solana
+        teams. Apply, submit your work, and get paid in USDC, SOL, and other
+        tokens.
       </p>
       <div className="relative z-10 mt-auto flex flex-col items-center gap-3 pt-4 md:flex-row md:gap-4">
         <button className="ph-no-capture hover:bg-brand-purple w-full rounded-md bg-white px-9 py-3 text-sm font-medium text-[#3223A0] hover:text-white md:w-auto">

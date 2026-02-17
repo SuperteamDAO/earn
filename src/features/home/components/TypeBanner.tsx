@@ -26,7 +26,7 @@ const banners: Record<TypeTypes, TypeBanner> = {
     img: ASSET_URL + '/banner/banner',
     heading: 'Remote Crypto Jobs & Web3 Freelance Projects',
     description:
-      'Explore long-term web3 freelance work with top Solana teams. Apply to remote crypto jobs across development, design, operations, and content, and get paid in USDC, SOL, and other tokens while contributing meaningful work with real teams.',
+      'Explore long-term Web3 freelance work with top Solana teams. Apply for remote crypto jobs across development, design, operations, and content, and get paid in USDC, SOL, or other tokens.',
   },
 };
 
