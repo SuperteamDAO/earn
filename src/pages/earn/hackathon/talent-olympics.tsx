@@ -182,7 +182,7 @@ export default function TalentOlympics({ countryLeaders, rankings }: Props) {
         <Meta
           title="Talent Olympics | Superteam Earn"
           description="Explore the latest bounties on Superteam Earn, offering opportunities in the crypto space across Design, Development, and Content."
-          canonical="https://superteam.fun/earn/hackathon/talent-olympics"
+          canonical="https://superteam.fun/earn/hackathon/talent-olympics/"
         />
       }
     >
