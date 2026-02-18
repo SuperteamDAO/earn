@@ -2,7 +2,6 @@ import { waitUntil } from '@vercel/functions';
 import { headers } from 'next/headers';
 import { type NextRequest, NextResponse } from 'next/server';
 
-import { SIX_MONTHS } from '@/constants/SIX_MONTHS';
 import earncognitoClient from '@/lib/earncognitoClient';
 import logger from '@/lib/logger';
 import { LockNotAcquiredError, withRedisLock } from '@/lib/with-redis-lock';
@@ -18,6 +17,7 @@ import {
   awardReferralFirstSubmissionBonusesForListing,
 } from '@/features/credits/utils/allocateCredits';
 import { queueEmail } from '@/features/emails/utils/queueEmail';
+import { isKycExpired } from '@/features/kyc/utils/isKycExpired';
 import { BONUS_REWARD_POSITION } from '@/features/listing-builder/constants';
 import { calculateTotalPrizes } from '@/features/listing-builder/utils/rewards';
 import { type Rewards } from '@/features/listings/types';
@@ -97,6 +97,7 @@ export async function POST(
                   username: true,
                   isKYCVerified: true,
                   kycVerifiedAt: true,
+                  kycExpiresAt: true,
                   kycCountry: true,
                 },
               },
@@ -426,16 +427,12 @@ export async function POST(
               if (listing.type !== 'project' && listing.isFndnPaying) {
                 for (const winner of winners) {
                   const user = winner.user;
-                  const isKycExpired =
-                    !user.kycVerifiedAt ||
-                    Date.now() - new Date(user.kycVerifiedAt).getTime() >
-                      SIX_MONTHS;
+                  const kycExpired = isKycExpired({
+                    kycVerifiedAt: user.kycVerifiedAt,
+                    kycExpiresAt: user.kycExpiresAt,
+                  });
 
-                  if (
-                    user.isKYCVerified &&
-                    user.kycVerifiedAt &&
-                    !isKycExpired
-                  ) {
+                  if (user.isKYCVerified && !kycExpired) {
                     const kycCountryCheck = checkKycCountryMatchesRegion(
                       user.kycCountry,
                       listing.region,

@@ -10,7 +10,6 @@ import { createPortal } from 'react-dom';
 import { Button } from '@/components/ui/button';
 import { Drawer, DrawerContent } from '@/components/ui/drawer';
 import { Tooltip } from '@/components/ui/tooltip';
-import { SIX_MONTHS } from '@/constants/SIX_MONTHS';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { useServerTimeSync } from '@/hooks/use-server-time';
@@ -22,6 +21,7 @@ import { AuthWrapper } from '@/features/auth/components/AuthWrapper';
 import { Nudge } from '@/features/credits/components/Nudge';
 import { ReferralModal } from '@/features/credits/components/ReferralModal';
 import { CreditIcon } from '@/features/credits/icon/credit';
+import { isKycExpired as getKycExpiredStatus } from '@/features/kyc/utils/isKycExpired';
 import { SurveyModal } from '@/features/listings/components/Submission/Survey';
 import { ProBadge } from '@/features/pro/components/ProBadge';
 
@@ -222,9 +222,10 @@ export const SubmissionActionButton = ({
       submission?.isWinner &&
       dayjs(listing.winnersAnnouncedAt).isAfter(dayjs.utc('2025-08-06'))
     ) {
-      const isKycExpired =
-        !submission?.kycVerifiedAt ||
-        Date.now() - new Date(submission.kycVerifiedAt).getTime() > SIX_MONTHS;
+      const isKycExpired = getKycExpiredStatus({
+        kycVerifiedAt: submission?.kycVerifiedAt,
+        kycExpiresAt: submission?.kycExpiresAt,
+      });
 
       if (!submission?.isKYCVerified || isKycExpired) {
         return 'kyc';

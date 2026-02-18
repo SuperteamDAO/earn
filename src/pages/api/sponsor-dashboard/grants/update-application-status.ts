@@ -2,7 +2,6 @@ import axios from 'axios';
 import type { NextApiResponse } from 'next';
 import { z } from 'zod';
 
-import { SIX_MONTHS } from '@/constants/SIX_MONTHS';
 import { tokenList } from '@/constants/tokenList';
 import logger from '@/lib/logger';
 import { LockNotAcquiredError, withRedisLock } from '@/lib/with-redis-lock';
@@ -18,6 +17,7 @@ import { addGrantWinBonusCredit } from '@/features/credits/utils/allocateCredits
 import { queueEmail } from '@/features/emails/utils/queueEmail';
 import { convertGrantApplicationToAirtable } from '@/features/grants/utils/convertGrantApplicationToAirtable';
 import { createTranche } from '@/features/grants/utils/createTranche';
+import { isKycExpired } from '@/features/kyc/utils/isKycExpired';
 import { fetchTokenUSDValue } from '@/features/wallet/utils/fetchTokenUSDValue';
 
 const MAX_RECORDS = 10;
@@ -43,11 +43,12 @@ const checkAndUpdateKYCStatus = async (
     where: { id: userId },
   });
 
-  const isKycExpired =
-    !user.kycVerifiedAt ||
-    Date.now() - new Date(user.kycVerifiedAt).getTime() > SIX_MONTHS;
+  const kycExpired = isKycExpired({
+    kycVerifiedAt: user.kycVerifiedAt,
+    kycExpiresAt: user.kycExpiresAt,
+  });
 
-  if (user.isKYCVerified && user.kycVerifiedAt && !isKycExpired) {
+  if (user.isKYCVerified && !kycExpired) {
     await withRedisLock(
       `locks:create-tranche:${grantApplicationId}:first-tranche`,
       async () => {

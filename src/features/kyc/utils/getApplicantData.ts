@@ -7,6 +7,29 @@ import { SUMSUB_BASE_URL } from '../constants/SUMSUB_BASE_URL';
 import { createSumSubHeaders } from './createSumSubHeaders';
 import { handleSumSubError } from './handleSumSubError';
 
+const parseSumsubDate = (value: unknown): Date | null => {
+  if (typeof value !== 'string' || !value.trim()) {
+    return null;
+  }
+
+  const parsed = new Date(value);
+  return Number.isNaN(parsed.getTime()) ? null : parsed;
+};
+
+const getDocumentExpiryDate = (doc: any): Date | null => {
+  const candidates = [doc?.extendedValidUntil, doc?.validUntil]
+    .map(parseSumsubDate)
+    .filter((date): date is Date => date !== null);
+
+  if (candidates.length === 0) {
+    return null;
+  }
+
+  return candidates.reduce((latest, current) =>
+    current.getTime() > latest.getTime() ? current : latest,
+  );
+};
+
 export const getApplicantData = async (
   userId: string,
   secretKey: string,
@@ -18,6 +41,7 @@ export const getApplicantData = async (
   dob: string;
   idNumber: string;
   idType: string;
+  documentExpiresAt: Date | null;
 }> => {
   const applicantUrl = `/resources/applicants/-;externalUserId=${userId}/one`;
   const method = 'GET';
@@ -214,6 +238,7 @@ export const getApplicantData = async (
 
     const idNumber = approvedIdDoc?.number || '';
     const idType = approvedIdDoc?.idDocType || '';
+    const documentExpiresAt = getDocumentExpiryDate(approvedIdDoc);
 
     return {
       id,
@@ -222,6 +247,7 @@ export const getApplicantData = async (
       dob,
       idNumber,
       idType,
+      documentExpiresAt,
     };
   } catch (error) {
     logger.error(

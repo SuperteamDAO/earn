@@ -475,6 +475,7 @@ model User {
   kycIDNumber        String?
   kycIDType          String?
   kycVerifiedAt      DateTime?
+  kycExpiresAt       DateTime?
   CreditLedger       CreditLedger[]
   blockRationale     String?
   linkedTwitter      Json?

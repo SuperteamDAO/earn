@@ -45,6 +45,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
           select: {
             isKYCVerified: true,
             kycVerifiedAt: true,
+            kycExpiresAt: true,
             kycCountry: true,
           },
         },
@@ -57,6 +58,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       isWinner?: boolean;
       isKYCVerified?: boolean;
       kycVerifiedAt?: Date;
+      kycExpiresAt?: Date;
       isPaid?: boolean;
       winnerPosition?: number;
       id?: string;
@@ -76,6 +78,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       responseData.winnerPosition = submission.winnerPosition ?? undefined;
       responseData.paymentSynced = submission.paymentSynced;
       responseData.kycVerifiedAt = submission.user.kycVerifiedAt ?? undefined;
+      responseData.kycExpiresAt = submission.user.kycExpiresAt ?? undefined;
       responseData.kycCountry = submission.user.kycCountry ?? undefined;
       responseData.listingRegion = submission.listing.region ?? undefined;
     }

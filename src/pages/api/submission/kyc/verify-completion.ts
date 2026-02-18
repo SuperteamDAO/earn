@@ -59,7 +59,14 @@ const handler = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
           `locks:create-payment:${userId}`,
           async () => {
             const wasAlreadyVerified = submission.user.isKYCVerified ?? false;
-            const { fullName, country, dob, idNumber, idType } = applicantData;
+            const {
+              fullName,
+              country,
+              dob,
+              idNumber,
+              idType,
+              documentExpiresAt,
+            } = applicantData;
 
             await prisma.user.update({
               where: { id: userId },
@@ -71,6 +78,7 @@ const handler = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
                 kycIDNumber: idNumber,
                 kycIDType: idType,
                 kycVerifiedAt: new Date(),
+                kycExpiresAt: documentExpiresAt,
               },
             });
 

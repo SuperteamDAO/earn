@@ -1,7 +1,7 @@
 import { useAtom } from 'jotai';
 import { useEffect } from 'react';
 
-import { SIX_MONTHS } from '@/constants/SIX_MONTHS';
+import { isKycExpired } from '@/features/kyc/utils/isKycExpired';
 
 import { applicationStateAtom } from '../atoms/applicationStateAtom';
 import { type GrantApplicationWithTranchesAndUser } from '../queries/user-application';
@@ -66,12 +66,12 @@ export const useApplicationState = (
         if (!application.user.isKYCVerified) {
           setApplicationState('KYC PENDING');
         } else if (application.user.isKYCVerified) {
-          const kycVerifiedAt = application.user.kycVerifiedAt;
-          const isKycExpired =
-            kycVerifiedAt &&
-            Date.now() - new Date(kycVerifiedAt).getTime() > SIX_MONTHS;
+          const kycExpired = isKycExpired({
+            kycVerifiedAt: application.user.kycVerifiedAt,
+            kycExpiresAt: application.user.kycExpiresAt,
+          });
 
-          if (isKycExpired && trancheNumber === 0) {
+          if (kycExpired && trancheNumber === 0) {
             setApplicationState('KYC PENDING');
           } else if (trancheNumber === 0) {
             setApplicationState('KYC APPROVED');

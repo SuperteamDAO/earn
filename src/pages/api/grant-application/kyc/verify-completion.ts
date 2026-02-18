@@ -60,7 +60,14 @@ const handler = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
         await withRedisLock(
           `locks:create-tranche:${grantApplicationId}:first-tranche`,
           async () => {
-            const { fullName, country, dob, idNumber, idType } = applicantData;
+            const {
+              fullName,
+              country,
+              dob,
+              idNumber,
+              idType,
+              documentExpiresAt,
+            } = applicantData;
 
             await prisma.user.update({
               where: { id: userId },
@@ -72,6 +79,7 @@ const handler = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
                 kycIDNumber: idNumber,
                 kycIDType: idType,
                 kycVerifiedAt: new Date(),
+                kycExpiresAt: documentExpiresAt,
               },
             });
 
