@@ -175,7 +175,7 @@ function ListingBuilderProvider({
   const hackathonSlug = params?.get('hackathon');
   const hackathonId = hackathons?.find((h) => h.slug === hackathonSlug)?.id;
   const defaultListing = listing
-    ? transformListingToFormListing(listing)
+    ? transformListingToFormListing(listing, isST)
     : getListingDefaults({
         isGod,
         isEditing: !!isEditing,

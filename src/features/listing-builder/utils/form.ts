@@ -168,6 +168,7 @@ export const cleanTemplate = (
   reTemplate.isFndnPaying = prevValues.isFndnPaying;
   reTemplate.hackathonId = prevValues.hackathonId || undefined;
   reTemplate.eligibility = (prevValues.eligibility as any) || undefined;
+  reTemplate.token = prevValues.token || reTemplate.token;
 
   delete reTemplate.isFeatured;
   delete reTemplate.isActive;
@@ -187,6 +188,7 @@ export const cleanTemplate = (
 
 export function transformListingToFormListing(
   listing: Listing,
+  isST = false,
 ): ListingFormData {
   return {
     id: listing.id,
@@ -224,7 +226,7 @@ export function transformListingToFormListing(
     maxRewardAsk: listing.maxRewardAsk,
     minRewardAsk: listing.minRewardAsk,
     pocSocials: listing.pocSocials || '',
-    token: listing.token || 'USDC',
+    token: listing.token || (isST ? 'USDG' : 'USDC'),
     isFndnPaying: listing.isFndnPaying || false,
     skills: listing.skills || [],
     hackathonId: listing.hackathonId,

@@ -2,8 +2,8 @@ import { tokenList } from '@/constants/tokenList';
 
 export const generateListingTokenPrompt = (info: string) => {
   const allowedTokenSymbols =
-    tokenList.map((token) => token.tokenSymbol).join(', ') || 'USDC';
-  const safeAllowedTokens = allowedTokenSymbols || 'USDC';
+    tokenList.map((token) => token.tokenSymbol).join(', ') || 'USDG';
+  const safeAllowedTokens = allowedTokenSymbols || 'USDG';
 
   return `
 Analyze the following listing info to identify the reward token mentioned for payment or pricing.

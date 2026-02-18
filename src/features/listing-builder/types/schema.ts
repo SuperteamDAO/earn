@@ -211,7 +211,7 @@ export const createListingFormSchema = ({
             errorMap: () => ({ message: 'Token Not Allowed' }),
           },
         )
-        .default('USDC'),
+        .default(isST ? 'USDG' : 'USDC'),
       rewardAmount: z
         .number({
           message: 'Required',
