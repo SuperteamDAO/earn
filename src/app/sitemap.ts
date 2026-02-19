@@ -497,13 +497,18 @@ export default async function sitemap(props: {
       });
 
       return talentProfiles
-        .filter((talent) => talent.username)
-        .map((talent) => ({
-          url: `${baseUrl}/earn/t/${talent.username}/`,
-          lastModified: talent.updatedAt,
-          changeFrequency: 'monthly',
-          priority: 0.6,
-        }));
+        .flatMap((talent) => {
+          const username = talent.username?.trim();
+          if (!username) return [];
+          return [
+            {
+              url: `${baseUrl}/earn/t/${username}/`,
+              lastModified: talent.updatedAt,
+              changeFrequency: 'monthly' as const,
+              priority: 0.6,
+            },
+          ];
+        });
     }
 
     // Skills
