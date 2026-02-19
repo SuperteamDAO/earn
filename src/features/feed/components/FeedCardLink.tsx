@@ -2,6 +2,7 @@ import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import { type ReactNode } from 'react';
 
+import { useExternalLinkDialog } from '@/components/shared/ExternalLinkDialogProvider';
 import { cn } from '@/utils/cn';
 import { getURLSanitized } from '@/utils/getURLSanitized';
 
@@ -14,6 +15,9 @@ export const FeedCardLink = ({
   style?: React.HTMLAttributes<HTMLDivElement>['className'];
   children: ReactNode;
 }) => {
+  const { handleExternalLinkClick } = useExternalLinkDialog();
+  const sanitizedHref = getURLSanitized(href ?? '#');
+
   return (
     <div
       className={cn(
@@ -22,10 +26,11 @@ export const FeedCardLink = ({
       )}
     >
       <Link
-        href={getURLSanitized(href ?? '#')}
+        href={sanitizedHref}
         rel="noopener noreferrer"
         target="_blank"
         className="hover:decoration-brand-purple flex items-center gap-3 hover:underline hover:underline-offset-2"
+        onClick={(event) => handleExternalLinkClick(event, sanitizedHref)}
       >
         <span className="text-brand-purple text-xs font-medium md:text-base">
           {children}

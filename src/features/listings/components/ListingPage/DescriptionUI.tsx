@@ -7,6 +7,7 @@ import { ChevronDown } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import SuperteamIcon from '@/components/icons/SuperteamIcon';
+import { useExternalLinkDialog } from '@/components/shared/ExternalLinkDialogProvider';
 import { SuperteamBadge } from '@/components/shared/SuperteamBadge';
 import { Button } from '@/components/ui/button';
 import { CircularProgress } from '@/components/ui/progress';
@@ -38,6 +39,7 @@ export function DescriptionUI({
   isST = false,
 }: Props) {
   const { user, isLoading: isUserLoading } = useUser();
+  const { handleExternalLinkClick } = useExternalLinkDialog();
   const { data: stats, isLoading: isStatsLoading } = useQuery(userStatsQuery);
 
   const options = useMemo(() => {
@@ -48,8 +50,16 @@ export function DescriptionUI({
           return <br />;
         }
         if (name === 'a' && attribs) {
+          const href = attribs.href ?? '';
+
           return (
-            <a {...attribs} target="_blank" rel="noopener noreferrer">
+            <a
+              {...attribs}
+              href={href}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={(event) => handleExternalLinkClick(event, href)}
+            >
               {domToReact(children, memoizedOptions)}
             </a>
           );
@@ -59,7 +69,7 @@ export function DescriptionUI({
     };
 
     return memoizedOptions;
-  }, []);
+  }, [handleExternalLinkClick]);
 
   //to resolve a chain of hydration errors
   const [isMounted, setIsMounted] = useState(false);

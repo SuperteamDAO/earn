@@ -5,6 +5,8 @@ import { type Session } from 'next-auth';
 import { SessionProvider } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 
+import { ExternalLinkDialogProvider } from '@/components/shared/ExternalLinkDialogProvider';
+
 export default function Providers({
   children,
   session,
@@ -35,8 +37,10 @@ export default function Providers({
         appId={process.env.NEXT_PUBLIC_PRIVY_APP_ID!}
       >
         <QueryClientProvider client={queryClient}>
-          <PrivyInitFlagBridge />
-          {children}
+          <ExternalLinkDialogProvider>
+            <PrivyInitFlagBridge />
+            {children}
+          </ExternalLinkDialogProvider>
         </QueryClientProvider>
       </PrivyProvider>
     </SessionProvider>
