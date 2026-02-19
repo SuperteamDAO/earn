@@ -698,8 +698,11 @@ export const SubmissionDrawer = ({
                           name={`eligibilityAnswers.${index}.answer`}
                           render={({ field }) => (
                             <FormItem className={cn('flex flex-col gap-2')}>
-                              <div>
-                                <FormLabel isRequired={!e.optional}>
+                              <div className="min-w-0">
+                                <FormLabel
+                                  isRequired={!e.optional}
+                                  className="[overflow-wrap:anywhere] break-words"
+                                >
                                   {e.question}
                                 </FormLabel>
                               </div>
