@@ -59,6 +59,10 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
 
     const filteredData = filterAllowedFields(req.body, allowedFields);
 
+    if (filteredData.username && typeof filteredData.username === 'string') {
+      filteredData.username = filteredData.username.trim();
+    }
+
     const referralCodeRaw = (req.body?.referralCode || '')
       .toString()
       .trim()

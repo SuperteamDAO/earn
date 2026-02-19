@@ -497,9 +497,9 @@ export default async function sitemap(props: {
       });
 
       return talentProfiles
-        .filter((talent) => talent.username)
+        .filter((talent) => talent.username?.trim())
         .map((talent) => ({
-          url: `${baseUrl}/earn/t/${talent.username}/`,
+          url: `${baseUrl}/earn/t/${talent.username!.trim()}/`,
           lastModified: talent.updatedAt,
           changeFrequency: 'monthly',
           priority: 0.6,

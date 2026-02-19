@@ -50,6 +50,11 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
     return res.status(404).json({ error: 'User not found' });
   }
   const filteredData = filterAllowedFields(req.body, allowedFields);
+
+  if (filteredData.username && typeof filteredData.username === 'string') {
+    filteredData.username = filteredData.username.trim();
+  }
+
   type SchemaKeys = keyof typeof profileSchema._def.schema.shape;
   const keysToValidate = Object.keys(filteredData).reduce<
     Record<SchemaKeys, true>
