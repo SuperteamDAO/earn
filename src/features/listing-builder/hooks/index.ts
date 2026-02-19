@@ -22,7 +22,11 @@ import {
   skillsKeyAtom,
   submitListingMutationAtom,
 } from '../atoms';
-import { type ListingFormData, type ValidationFields } from '../types';
+import {
+  type ListingFormData,
+  type SubmitListingResponse,
+  type ValidationFields,
+} from '../types';
 import {
   createListingFormSchema,
   createListingRefinements,
@@ -31,7 +35,7 @@ import { getListingDefaults, refineReadyListing } from '../utils/form';
 
 export interface UseListingFormReturn extends UseFormReturn<ListingFormData> {
   saveDraft: () => void;
-  submitListing: () => Promise<ListingFormData & { reason?: string }>;
+  submitListing: () => Promise<SubmitListingResponse>;
   resetForm: () => void;
   validateRewards: () => Promise<boolean>;
   validateBasics: () => Promise<boolean>;

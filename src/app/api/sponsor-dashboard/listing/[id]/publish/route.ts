@@ -52,6 +52,14 @@ export async function POST(
       return listingAuthResult.error;
     }
     const listing = listingAuthResult.listing;
+    const previouslyPublishedListingsCount = await prisma.bounties.count({
+      where: {
+        sponsorId: userSponsorId,
+        publishedAt: {
+          not: null,
+        },
+      },
+    });
 
     const body = await request.json();
     logger.debug(`Request body: ${safeStringify(body)}`);
@@ -124,6 +132,8 @@ export async function POST(
       data,
     });
     logger.debug(`Publish Listing Successful`, { id });
+    const isFirstPublishedListing =
+      result.isPublished && previouslyPublishedListingsCount === 0;
 
     await handlePostSaveOperations({
       result,
@@ -139,6 +149,7 @@ export async function POST(
       {
         ...result,
         reason,
+        isFirstPublishedListing,
       },
       { status: 200 },
     );
