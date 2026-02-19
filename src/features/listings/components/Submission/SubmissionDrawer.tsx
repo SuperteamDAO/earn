@@ -544,7 +544,7 @@ export const SubmissionDrawer = ({
 
   return (
     <SideDrawer isOpen={isOpen} onClose={handleClose}>
-      <SideDrawerContent className="px-2 sm:p-4">
+      <SideDrawerContent className="w-screen max-w-2xl px-2 sm:p-4">
         <X
           className="absolute top-10 right-4 z-10 h-4 w-4 text-slate-400 sm:top-8 sm:right-8"
           onClick={handleClose}
@@ -555,7 +555,7 @@ export const SubmissionDrawer = ({
             style={{ width: '100%', height: '100%' }}
           >
             <div className="flex h-full flex-col justify-between gap-6">
-              <ScrollArea className="h-full overflow-y-auto rounded-lg border border-slate-200 px-2 shadow-[0px_1px_3px_rgba(0,0,0,0.08),_0px_1px_2px_rgba(0,0,0,0.06)]">
+              <ScrollArea className="h-full overflow-x-hidden overflow-y-auto rounded-lg border border-slate-200 px-2 shadow-[0px_1px_3px_rgba(0,0,0,0.08),_0px_1px_2px_rgba(0,0,0,0.06)]">
                 <div className="mb-4 border-b border-slate-100 bg-white py-3">
                   <p className="text-lg font-medium text-slate-700">
                     {headerText}
@@ -701,7 +701,7 @@ export const SubmissionDrawer = ({
                               <div className="min-w-0">
                                 <FormLabel
                                   isRequired={!e.optional}
-                                  className="[overflow-wrap:anywhere] break-words"
+                                  className="[overflow-wrap:anywhere]"
                                 >
                                   {e.question}
                                 </FormLabel>

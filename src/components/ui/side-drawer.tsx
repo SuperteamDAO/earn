@@ -40,7 +40,7 @@ export function SideDrawer({
       />
       <div
         className={cn(
-          'fixed inset-y-0 right-0 z-60 h-full bg-white shadow-xl duration-300',
+          'fixed inset-y-0 right-0 z-60 h-full max-w-full overflow-x-hidden bg-white shadow-xl duration-300',
           'data-[state=open]:animate-in data-[state=closed]:animate-out',
           'data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right',
           className,
@@ -63,7 +63,9 @@ export const SideDrawerContent = ({
   children: React.ReactNode;
   className?: string;
 }) => (
-  <div className={cn('h-full w-full max-w-2xl sm:max-w-2xl', className)}>
+  <div
+    className={cn('h-full w-full max-w-2xl min-w-0 sm:max-w-2xl', className)}
+  >
     {children}
   </div>
 );
