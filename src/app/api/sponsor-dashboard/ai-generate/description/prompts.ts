@@ -24,10 +24,10 @@ ${props.company} // Information about the company/protocol. Include URL if provi
 </company-description>
 
 <token-name>
-${tokenList.find((s) => s.tokenSymbol === (props.token || 'USDC'))?.tokenName || 'USDC'}
+${tokenList.find((s) => s.tokenSymbol === (props.token || 'USDG'))?.tokenName || 'USDG'}
 </token-name>
 <token-symbol>
-${props.token || 'USDC'}
+${props.token || 'USDG'}
 </token-symbol>
 <token-amount-in-usd>
 ${props.tokenUsdAmount || 1}
@@ -89,9 +89,10 @@ Generate a bounty listing draft using the information above. Structure the draft
 **Do not reason in the output, only do this in reasoning tokens**
 
 ## Reward Structure
-*   Use the content from <rewards> to understand the total reward pool and how it should be distributed (e.g., "split $1000 between top 2", "1st gets 500 SOL, 2nd gets 250 SOL", "total $1500 USDC, 60% 1st, 40% 2nd").
+*   Use the content from <rewards> to understand the total reward pool and how it should be distributed (e.g., "split $1000 between top 2", "1st gets 500 SOL, 2nd gets 250 SOL", "total $1500 USDG, 60% 1st, 40% 2nd").
 *   Present the rewards clearly as a bulleted list specifying amounts for different placements (1st, 2nd, etc.) and any bonus awards.
-*   The primary reward currency/token is specified by <token-symbol> (e.g., 'SOL', 'USDC') and <token-name>.
+*   The primary reward currency/token is specified by <token-symbol> (e.g., 'SOL', 'USDG') and <token-name>.
+*   If the user mentions '$' amounts but does not specify a token, default those amounts to <token-symbol> (never assume USDC).
 *   **Apply these calculation and formatting rules:**
     *   Calculate the specific reward amount for each podium spot and bonus spot based on the distribution described in <rewards>.
     *   **VERY IMPORTANT: WHILE CALCULATING REWARD AMOUNTS, DECIDE TO INCLUDE BONUS REWARDS ONLY IF BONUS WORD IS USED EXPLICITLY IN REWARDS**
@@ -100,7 +101,7 @@ Generate a bounty listing draft using the information above. Structure the draft
     *   Include bonus awards *only if* explicitly mentioned in <rewards>. If you are to add bonus spots, remember that all bonus spots **must** receive the same reward amount.
     *   While bonus spots are optional, podium spots are COMPULSORY, you absolutely must prioritize and add podium spots
     *   **Currency Conversion and Rounding:**
-        *   If <rewards> specifies the total or individual amounts in USD (e.g., "$1000") AND the specified <token-symbol> is **not** 'USDC' (or another stablecoin assumed to be 1:1 with USD), you **must** calculate the reward amounts in the target token.
+        *   If <rewards> specifies the total or individual amounts in USD (e.g., "$1000") AND the specified <token-symbol> is **not** 'USDC' or 'USDG' (or another stablecoin assumed to be 1:1 with USD), you **must** calculate the reward amounts in the target token.
         *   Use the provided <token-amount-in-usd> for conversion: 'Reward in Token = Reward in USD / <token-amount-in-usd>'.
         *   **Rounding Rules for Calculated Token Amounts:**
             *   **If \`<token-amount-in-usd>\` > 100:** Round the calculated token amount to **2 decimal places**. (e.g., 0.0376 zBTC becomes 0.04 zBTC).
@@ -109,8 +110,8 @@ Generate a bounty listing draft using the information above. Structure the draft
                 *   If the calculated amount is >= 100 and < 1000: Round to the **nearest 10**. (e.g., 578 JUP becomes 580 JUP, 823 JUP becomes 820 JUP).
                 *   If the calculated amount is < 100: Round to the **nearest integer** (no decimals). (e.g., 57.3 JUP becomes 57 JUP, 9.8 JUP becomes 10 JUP).
         *   If <rewards> specifies amounts directly in a token (e.g., "500 SOL"), use those token amounts directly without conversion or the special rounding rules above.
-        *   If <rewards> specifies amounts in USD and the <token-symbol> is 'USDC' (or similar stablecoin), use the USD amounts directly with the <token-symbol> (e.g., 500 USDC). No conversion or special rounding needed. Here, if possible try to split the amount in readable / rounded amounts (e.g., 1000$ -> 1st 500$, 2nd 300$, 3rd 200$).
-    *   While Auto calculating podium spots, try to keep the rewards descending in amounts (e.g. 1st 500 USDC, 2nd 300 USDC, 3rd 100 USDC, etc), avoid giving all podium ranks the same reward amount unless explicitly mentioned in <rewards>.
+        *   If <rewards> specifies amounts in USD and the <token-symbol> is 'USDC' or 'USDG' (or a similar stablecoin), use the USD amounts directly with the <token-symbol> (e.g., 500 USDG). No conversion or special rounding needed. Here, if possible try to split the amount in readable / rounded amounts (e.g., 1000$ -> 1st 500$, 2nd 300$, 3rd 200$).
+    *   While Auto calculating podium spots, try to keep the rewards descending in amounts (e.g. 1st 500 USDG, 2nd 300 USDG, 3rd 100 USDG, etc), avoid giving all podium ranks the same reward amount unless explicitly mentioned in <rewards>.
     *   **Formatting:**
         *   List each podium place clearly: '1st Place: [Amount] <token-symbol>'
         *   List bonus awards like: 'Bonus Awards: [Number] winners receive [Amount] <token-symbol> each'.
@@ -143,14 +144,14 @@ Generate a bounty listing draft using the information above. Structure the draft
     *   Output Format:
         *   1st Place: 0.04 zBTC
         *   2nd Place: 0.02 zBTC
-*   **Example Scenario 3 (USDC - No Conversion/Rounding):**
-    *   Input <rewards>: "1st 500 USDC, 2nd 300 USDC, 3rd 100 USDC"
-    *   Input <token-symbol>: 'USDC'
+*   **Example Scenario 3 (USDG - No Conversion/Rounding):**
+    *   Input <rewards>: "1st 500 USDG, 2nd 300 USDG, 3rd 100 USDG"
+    *   Input <token-symbol>: 'USDG'
     *   Input <token-amount-in-usd>: '1'
     *   Output Format:
-        *   1st Place: 500 USDC
-        *   2nd Place: 300 USDC
-        *   3rd Place: 100 USDC
+        *   1st Place: 500 USDG
+        *   2nd Place: 300 USDG
+        *   3rd Place: 100 USDG
 
 **Final Checks:**
 
@@ -173,10 +174,10 @@ ${props.company} // Information about the company/protocol. Include URL if provi
 </company-description>
 
 <token-name>
-${tokenList.find((s) => s.tokenSymbol === (props.token || 'USDC'))?.tokenName || 'USDC'}
+${tokenList.find((s) => s.tokenSymbol === (props.token || 'USDG'))?.tokenName || 'USDG'}
 </token-name>
 <token-symbol>
-${props.token || 'USDC'}
+${props.token || 'USDG'}
 </token-symbol>
 <token-amount-in-usd>
 ${props.tokenUsdAmount || 1}
@@ -232,11 +233,12 @@ Explicitly reason through the compensation calculations and formatting. This inv
 
 ## Compensation
 *   **Extract** compensation information from the user's message to understand the payment structure (Fixed, Range, or Variable) and the amount(s).
-*   The primary payment currency/token is specified by <token-symbol> (e.g., 'SOL', 'USDC') and <token-name>.
+*   The primary payment currency/token is specified by <token-symbol> (e.g., 'SOL', 'USDG') and <token-name>.
+*   If the user mentions '$' amounts but does not specify a token, default those amounts to <token-symbol> (never assume USDC).
 *   **Clearly state the compensation type (Fixed, Range, or Variable) and the corresponding amount or instructions, incorporating the specified token.**
 *   **Apply these calculation, rounding, and formatting rules:**
     *   **Currency Conversion and Rounding:**
-        *   If the user's message specifies the amount(s) in USD (e.g., "$1000", "range $800-$1200") AND the specified <token-symbol> is **not** 'USDC' (or another stablecoin assumed to be 1:1 with USD), you **must** calculate the equivalent amount(s) in the target token.
+        *   If the user's message specifies the amount(s) in USD (e.g., "$1000", "range $800-$1200") AND the specified <token-symbol> is **not** 'USDC' or 'USDG' (or another stablecoin assumed to be 1:1 with USD), you **must** calculate the equivalent amount(s) in the target token.
         *   Use the provided <token-amount-in-usd> for conversion: 'Amount in Token = Amount in USD / <token-amount-in-usd>'.
         *   **Rounding Rules for Calculated Token Amounts:**
             *   **If \`<token-amount-in-usd>\` > 100:** Round the calculated token amount to **2 decimal places**. (e.g., 0.0376 zBTC becomes 0.04 zBTC).
@@ -245,13 +247,13 @@ Explicitly reason through the compensation calculations and formatting. This inv
                 *   If the calculated amount is >= 100 and < 1000: Round to the **nearest 10**. (e.g., 578 JUP becomes 580 JUP, 823 JUP becomes 820 JUP).
                 *   If the calculated amount is < 100: Round to the **nearest integer** (no decimals). (e.g., 57.3 JUP becomes 57 JUP, 9.8 JUP becomes 10 JUP).
         *   If the user's message specifies amount(s) directly in a token (e.g., "500 SOL", "range 5-8 SOL"), use those token amounts directly without conversion or the special rounding rules above.
-        *   If the user's message specifies amount(s) in USD and the <token-symbol> is 'USDC' (or similar stablecoin), use the USD amounts directly with the <token-symbol> (e.g., 1000 USDC). No conversion or special rounding needed.
+        *   If the user's message specifies amount(s) in USD and the <token-symbol> is 'USDC' or 'USDG' (or a similar stablecoin), use the USD amounts directly with the <token-symbol> (e.g., 1000 USDG). No conversion or special rounding needed.
     *   **Formatting based on Type:**
         *   **Fixed:**
-            *   If no conversion/special rounding needed (USDC or token amount given): "Fixed payment of [Amount] <token-symbol> upon successful completion." (e.g., "Fixed payment of 1000 USDC...", "Fixed payment of 5 SOL...")
+            *   If no conversion/special rounding needed (USDG/USDC or token amount given): "Fixed payment of [Amount] <token-symbol> upon successful completion." (e.g., "Fixed payment of 1000 USDG...", "Fixed payment of 5 SOL...")
             *   If converted from USD (applying rounding rules): "Fixed payment of [Calculated & Rounded Token Amount] <token-symbol> upon successful completion." (e.g., "Fixed payment of 1200 JUP...", "Fixed payment of 0.04 zBTC...")
         *   **Range:**
-            *   If no conversion/special rounding needed: "Compensation range: [Min Amount] - [Max Amount] <token-symbol>. Please state your desired rate within this range in your application." (e.g., "...range: 800 - 1200 USDC...", "...range: 5 - 8 SOL...")
+            *   If no conversion/special rounding needed: "Compensation range: [Min Amount] - [Max Amount] <token-symbol>. Please state your desired rate within this range in your application." (e.g., "...range: 800 - 1200 USDG...", "...range: 5 - 8 SOL...")
             *   If converted from USD (applying rounding rules to both min/max): "Compensation range: [Calc. & Rounded Min Token] - [Calc. & Rounded Max Token] <token-symbol>. Please state your desired rate within this range in your application." (e.g., "...range: 700 - 960 JUP ...", "...range: 0.04 - 0.05 zBTC ...")
         *   **Variable:** "Compensation: Variable. Please provide your project quote in <token-symbol> in your application." (e.g., "...quote in SOL...")
     *   If payment milestones are mentioned in <compensation>, list them clearly after stating the total compensation.
@@ -277,11 +279,11 @@ Explicitly reason through the compensation calculations and formatting. This inv
     *   Calculation Min: 350 / 0.50 = 700 JUP. Rounding (>=100, <1000): Nearest 10 -> 700 JUP.
     *   Calculation Max: 480 / 0.50 = 960 JUP. Rounding (>=100, <1000): Nearest 10 -> 960 JUP.
     *   Output Format: "Compensation range: 700 - 960 JUP. Please state your desired rate within this range in your application."
-*   **Example Scenario 4 (Range, USDC - No Conversion/Rounding):**
-    *   Input <compensation>: "Range 800-1200 USDC"
-    *   Input <token-symbol>: 'USDC'
+*   **Example Scenario 4 (Range, USDG - No Conversion/Rounding):**
+    *   Input <compensation>: "Range 800-1200 USDG"
+    *   Input <token-symbol>: 'USDG'
     *   Input <token-amount-in-usd>: '1'
-    *   Output Format: "Compensation range: 800 - 1200 USDC. Please state your desired rate within this range in your application."
+    *   Output Format: "Compensation range: 800 - 1200 USDG. Please state your desired rate within this range in your application."
 
 **Important Considerations:**
 
@@ -312,10 +314,10 @@ ${props.company} // Information about the company/protocol. Include URL if provi
 </company-description>
 
 <token-name>
-${tokenList.find((s) => s.tokenSymbol === (props.token || 'USDC'))?.tokenName || 'USDC'}
+${tokenList.find((s) => s.tokenSymbol === (props.token || 'USDG'))?.tokenName || 'USDG'}
 </token-name>
 <token-symbol>
-${props.token || 'USDC'}
+${props.token || 'USDG'}
 </token-symbol>
 <token-amount-in-usd>
 ${props.tokenUsdAmount || 1}
@@ -379,9 +381,10 @@ Generate a bounty listing draft using the information above. Structure the draft
 **Do not reason in the output, only do this in reasoning tokens**
 
 ## Reward Structure
-*   Use the content from <rewards> to understand the total reward pool and how it should be distributed (e.g., "split $1000 between top 2", "1st gets 500 SOL, 2nd gets 250 SOL", "total $1500 USDC, 60% 1st, 40% 2nd").
+*   Use the content from <rewards> to understand the total reward pool and how it should be distributed (e.g., "split $1000 between top 2", "1st gets 500 SOL, 2nd gets 250 SOL", "total $1500 USDG, 60% 1st, 40% 2nd").
 *   Present the rewards clearly as a bulleted list specifying amounts for different placements (1st, 2nd, etc.) and any bonus awards.
-*   The primary reward currency/token is specified by <token-symbol> (e.g., 'SOL', 'USDC') and <token-name>.
+*   The primary reward currency/token is specified by <token-symbol> (e.g., 'SOL', 'USDG') and <token-name>.
+*   If the user mentions '$' amounts but does not specify a token, default those amounts to <token-symbol> (never assume USDC).
 *   **Apply these calculation and formatting rules:**
     *   Calculate the specific reward amount for each podium spot and bonus spot based on the distribution described in <rewards>.
     *   **VERY IMPORTANT: WHILE CALCULATING REWARD AMOUNTS, DECIDE TO INCLUDE BONUS REWARDS ONLY IF BONUS WORD IS USED EXPLICITLY IN REWARDS**
@@ -390,7 +393,7 @@ Generate a bounty listing draft using the information above. Structure the draft
     *   Include bonus awards *only if* explicitly mentioned in <rewards>. If you are to add bonus spots, remember that all bonus spots **must** receive the same reward amount.
     *   While bonus spots are optional, podium spots are COMPULSORY, you absolutely must prioritize and add podium spots
     *   **Currency Conversion and Rounding:**
-        *   If <rewards> specifies the total or individual amounts in USD (e.g., "$1000") AND the specified <token-symbol> is **not** 'USDC' (or another stablecoin assumed to be 1:1 with USD), you **must** calculate the reward amounts in the target token.
+        *   If <rewards> specifies the total or individual amounts in USD (e.g., "$1000") AND the specified <token-symbol> is **not** 'USDC' or 'USDG' (or another stablecoin assumed to be 1:1 with USD), you **must** calculate the reward amounts in the target token.
         *   Use the provided <token-amount-in-usd> for conversion: 'Reward in Token = Reward in USD / <token-amount-in-usd>'.
         *   **Rounding Rules for Calculated Token Amounts:**
             *   **If \`<token-amount-in-usd>\` > 100:** Round the calculated token amount to **2 decimal places**. (e.g., 0.0376 zBTC becomes 0.04 zBTC).
@@ -399,8 +402,8 @@ Generate a bounty listing draft using the information above. Structure the draft
                 *   If the calculated amount is >= 100 and < 1000: Round to the **nearest 10**. (e.g., 578 JUP becomes 580 JUP, 823 JUP becomes 820 JUP).
                 *   If the calculated amount is < 100: Round to the **nearest integer** (no decimals). (e.g., 57.3 JUP becomes 57 JUP, 9.8 JUP becomes 10 JUP).
         *   If <rewards> specifies amounts directly in a token (e.g., "500 SOL"), use those token amounts directly without conversion or the special rounding rules above.
-        *   If <rewards> specifies amounts in USD and the <token-symbol> is 'USDC' (or similar stablecoin), use the USD amounts directly with the <token-symbol> (e.g., 500 USDC). No conversion or special rounding needed. Here, if possible try to split the amount in readable / rounded amounts (e.g., 1000$ -> 1st 500$, 2nd 300$, 3rd 200$).
-    *   While Auto calculating podium spots, try to keep the rewards descending in amounts (e.g. 1st 500 USDC, 2nd 300 USDC, 3rd 100 USDC, etc), avoid giving all podium ranks the same reward amount unless explicitly mentioned in <rewards>.
+        *   If <rewards> specifies amounts in USD and the <token-symbol> is 'USDC' or 'USDG' (or a similar stablecoin), use the USD amounts directly with the <token-symbol> (e.g., 500 USDG). No conversion or special rounding needed. Here, if possible try to split the amount in readable / rounded amounts (e.g., 1000$ -> 1st 500$, 2nd 300$, 3rd 200$).
+    *   While Auto calculating podium spots, try to keep the rewards descending in amounts (e.g. 1st 500 USDG, 2nd 300 USDG, 3rd 100 USDG, etc), avoid giving all podium ranks the same reward amount unless explicitly mentioned in <rewards>.
     *   **Formatting:**
         *   List each podium place clearly: '1st Place: [Amount] <token-symbol>'
         *   List bonus awards like: 'Bonus Awards: [Number] winners receive [Amount] <token-symbol> each'.
@@ -433,14 +436,14 @@ Generate a bounty listing draft using the information above. Structure the draft
     *   Output Format:
         *   1st Place: 0.04 zBTC
         *   2nd Place: 0.02 zBTC
-*   **Example Scenario 3 (USDC - No Conversion/Rounding):**
-    *   Input <rewards>: "1st 500 USDC, 2nd 300 USDC, 3rd 100 USDC"
-    *   Input <token-symbol>: 'USDC'
+*   **Example Scenario 3 (USDG - No Conversion/Rounding):**
+    *   Input <rewards>: "1st 500 USDG, 2nd 300 USDG, 3rd 100 USDG"
+    *   Input <token-symbol>: 'USDG'
     *   Input <token-amount-in-usd>: '1'
     *   Output Format:
-        *   1st Place: 500 USDC
-        *   2nd Place: 300 USDC
-        *   3rd Place: 100 USDC
+        *   1st Place: 500 USDG
+        *   2nd Place: 300 USDG
+        *   3rd Place: 100 USDG
 
 **Final Checks:**
 

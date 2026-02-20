@@ -15,10 +15,10 @@ export function generateListingRewardsPrompt({
   tokenUsdValue,
   type,
 }: RewardInputSchema): string {
-  const targetTokenSymbol = token || 'USDC';
+  const targetTokenSymbol = token || 'USDG';
   const targetTokenName =
     tokenList.find((s) => s.tokenSymbol === targetTokenSymbol)?.tokenName ||
-    'USDC';
+    'Global Dollar (USDG)';
   const targetTokenUsdValue = tokenUsdValue || 1;
 
   let prompt = `You are an expert data extraction AI. Analyze the provided listing description for a '${type}' listing and extract the reward details according to the rules below. Your goal is to generate a precise JSON object matching the specified schema.
@@ -60,8 +60,8 @@ ${description}
 **2. Amount Conversion Logic (Apply wherever amounts are extracted):**
    *   All numeric amounts in the final JSON (\`rewards[].amount\`, \`minRewardAsk\`, \`maxRewardAsk\`) MUST be denominated in the target token: \`${targetTokenSymbol}\`.
    *   If an amount is found in the input text specified in USD (e.g., "$1000", "1000 dollars"):
-      *   If the target token (\`${targetTokenSymbol}\`) is 'USDC' or similar 1:1 stablecoin, use the numeric USD value directly.
-      *   If the target token is something other than 'USDC' or stable coin, convert the USD amount: \`amount_in_target_token = usd_amount / ${targetTokenUsdValue}\`.
+      *   If the target token (\`${targetTokenSymbol}\`) is 'USDC' or 'USDG' (or a similar 1:1 stablecoin), use the numeric USD value directly.
+      *   If the target token is something other than 'USDC'/'USDG' or another stablecoin, convert the USD amount: \`amount_in_target_token = usd_amount / ${targetTokenUsdValue}\`.
    *   If an amount is found already specified in the target token (e.g., "500 ${targetTokenSymbol}"), use that numeric value directly.
    *   If an amount is found in a *different* token, try to find an associated USD value to convert; otherwise, ignore this conflicting amount. Prioritize USD or direct target token mentions.
    *   Round converted amounts reasonably (e.g., 2-4 decimal places). Ensure amounts are > 0.00 and <= ${MAX_REWARD}.
@@ -85,7 +85,7 @@ ${description}
    *   **Bonus Rewards:** Only include a reward with \`rank: "${BONUS_REWARD_POSITION}"\` if the word "bonus" is explicitly associated with that reward amount in the text. A bonus reward alone without podium rewards is stritcly invalid.
    *   If no specific reward amounts are clearly mentioned for any rank, return an empty array \`[]\`.
    *   *Example (Input: "1st $500, 2nd $300", Target: SOL, SOL USD: 150):* \`[ { "rank": "1", "amount": 3.33 }, { "rank": "2", "amount": 2.00 } ]\`
-   *   *Example (Input: "1st 1000 USDC, plus $100 bonus", Target: USDC):* \`[ { "rank": "1", "amount": 1000 }, { "rank": "${BONUS_REWARD_POSITION}", "amount": 100 } ]\`
+   *   *Example (Input: "1st 1000 USDG, plus $100 bonus", Target: USDG):* \`[ { "rank": "1", "amount": 1000 }, { "rank": "${BONUS_REWARD_POSITION}", "amount": 100 } ]\`
 
 **5. Bonus Spots (\`maxBonusSpots: number | null\`):**
    *   Identify the number of bonus spots/winners mentioned (0 to ${MAX_BONUS_SPOTS}).
@@ -122,7 +122,7 @@ ${description}
       *   Apply the **Amount Conversion Logic** (Rule 2) *separately* to both the minimum and maximum values to get them in \`${targetTokenSymbol}\`.
       *   **CRITICAL:** You MUST populate BOTH \`minRewardAsk\` AND \`maxRewardAsk\` with the final numeric values in \`${targetTokenSymbol}\`. Both fields are mandatory for the 'range' type. \`maxRewardAsk\` must be greater than \`minRewardAsk\`.
       *   *Example (Input: "Range $1000-$1500", Target: SOL, SOL USD: 150):* \`minRewardAsk: 6.67\`, \`maxRewardAsk: 10.00\`
-      *   *Example (Input: "Range 500-800 USDC", Target: USDC):* \`minRewardAsk: 500\`, \`maxRewardAsk: 800\`
+      *   *Example (Input: "Range 500-800 USDG", Target: USDG):* \`minRewardAsk: 500\`, \`maxRewardAsk: 800\`
    *   **If \`compensationType\` is 'fixed' or 'variable':**
       *   Set both \`minRewardAsk\` and \`maxRewardAsk\` to \`0\`.
 `;

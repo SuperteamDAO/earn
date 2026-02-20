@@ -1,3 +1,4 @@
+import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
@@ -19,11 +20,15 @@ export default function Blocked() {
   return (
     <Default
       meta={
-        <Meta
-          title="Blocked | Superteam Earn"
-          description="Explore the latest bounties on Superteam Earn, offering opportunities in the crypto space across Design, Development, and Content."
-          canonical="https://superteam.fun/earn"
-        />
+        <>
+          <Meta
+            title="Blocked | Superteam Earn"
+            description="Explore the latest bounties on Superteam Earn, offering opportunities in the crypto space across Design, Development, and Content."
+          />
+          <Head>
+            <meta name="robots" content="noindex, nofollow" />
+          </Head>
+        </>
       }
     >
       <div className="mx-auto mt-10 max-w-[800px] px-4">

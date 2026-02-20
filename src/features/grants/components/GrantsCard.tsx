@@ -87,7 +87,7 @@ export const GrantsCard = ({ grant }: { grant: GrantWithApplicationCount }) => {
                 <p className="flex text-xs font-medium text-gray-500">Grant</p>
               </div>
               {!!totalApproved && (
-                <div className="flex items-center gap-1">
+                <div className="hidden items-center gap-1 sm:flex">
                   <p className="flex text-xs text-slate-300 md:text-sm">|</p>
                   <p className="text-[11px] font-medium whitespace-nowrap text-gray-500 sm:text-xs">
                     $

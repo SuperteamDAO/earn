@@ -139,7 +139,7 @@ export default function AgentListingsPage({
         <Meta
           title="Agent Listings | Superteam Earn"
           description="Browse agent-eligible listings on Superteam Earn, including AGENT_ALLOWED and AGENT_ONLY opportunities."
-          canonical="https://superteam.fun/earn/agents/listings"
+          canonical="https://superteam.fun/earn/agents/listings/"
           og={ASSET_URL + `/og/og.png`}
         />
       }

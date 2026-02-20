@@ -11,6 +11,7 @@ import { ErrorSection } from '@/components/shared/ErrorSection';
 import { type User } from '@/interface/user';
 import { Default } from '@/layouts/Default';
 import { useUser } from '@/store/user';
+import { normalizeCanonicalUrl } from '@/utils/canonical';
 import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';
 import { getURLSanitized } from '@/utils/getURLSanitized';
@@ -104,6 +105,9 @@ export function ListingPageLayout({
 
   const router = useRouter();
   const isSubmissionPage = router.pathname.endsWith('/submission');
+  const canonicalUrl = initialListing?.slug
+    ? normalizeCanonicalUrl(`${getURL()}earn/listing/${initialListing.slug}/`)
+    : undefined;
 
   return (
     <Default
@@ -122,10 +126,8 @@ export function ListingPageLayout({
                 : '| Apply Here'
             }`}
           />
-          <link
-            rel="canonical"
-            href={`${getURL()}earn/listing/${initialListing?.slug}/`}
-          />
+          {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
+          {canonicalUrl && <meta property="og:url" content={canonicalUrl} />}
           <meta
             property="og:title"
             content={`${initialListing?.title || 'Listing'} | Superteam Earn`}

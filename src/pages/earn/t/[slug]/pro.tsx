@@ -4,6 +4,7 @@ import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
 import { prisma } from '@/prisma';
+import { normalizeCanonicalUrl } from '@/utils/canonical';
 import { getURL } from '@/utils/validUrl';
 
 interface ProSharePageProps {
@@ -28,6 +29,9 @@ export default function ProSharePage({
   }, []);
 
   const ogImagePath = `${getURL()}api/dynamic-og/pro-x/`;
+  const canonicalUrl = talent?.username
+    ? normalizeCanonicalUrl(`${getURL()}earn/t/${talent.username}/`)
+    : undefined;
   const ogImage = new URL(ogImagePath);
   ogImage.searchParams.set(
     'name',
@@ -49,7 +53,8 @@ export default function ProSharePage({
     <Head>
       <title>{title}</title>
       <meta name="description" content={description} />
-      <link rel="canonical" href={`${getURL()}earn/t/${talent?.username}/`} />
+      {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
+      {canonicalUrl && <meta property="og:url" content={canonicalUrl} />}
       <meta property="og:title" content={title} />
       <meta property="og:description" content={description} />
       <meta property="og:image" content={ogImage.toString()} />

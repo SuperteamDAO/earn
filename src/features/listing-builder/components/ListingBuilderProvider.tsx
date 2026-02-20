@@ -105,7 +105,7 @@ function ListingEditor({
       <Meta
         title="Superteam Earn | Work to Earn in Crypto"
         description="Explore the latest bounties on Superteam Earn, offering opportunities in the crypto space across Design, Development, and Content."
-        canonical="https://superteam.fun"
+        noIndex
       />
       <div className="flex min-h-[10vh] flex-col px-3 md:hidden">
         <Header />
@@ -179,7 +179,7 @@ function ListingBuilderProvider({
   const hackathonSlug = params?.get('hackathon');
   const hackathonId = hackathons?.find((h) => h.slug === hackathonSlug)?.id;
   const defaultListing = listing
-    ? transformListingToFormListing(listing)
+    ? transformListingToFormListing(listing, isST)
     : (() => {
         const defaults = getListingDefaults({
           isGod,

@@ -4,6 +4,7 @@ import { useRouter } from 'next/router';
 import { ASSET_URL } from '@/constants/ASSET_URL';
 import { ST_ROUTES } from '@/constants/ST_ROUTES';
 import { AppConfig } from '@/utils/AppConfig';
+import { normalizeCanonicalUrl } from '@/utils/canonical';
 import { STConfig } from '@/utils/STConfig';
 
 type IMetaProps = {
@@ -11,18 +12,25 @@ type IMetaProps = {
   readonly description: string;
   readonly canonical?: string;
   readonly og?: string;
+  readonly noIndex?: boolean;
 };
 
 const Meta = (props: IMetaProps) => {
   const router = useRouter();
   const isSTRoute = ST_ROUTES.includes(router.pathname);
   const isEarnRoute = router.pathname.startsWith('/earn');
+  const isDashboardRoute = router.pathname.startsWith('/earn/dashboard');
+  const shouldNoIndex = props.noIndex || isDashboardRoute;
   const config = isSTRoute ? STConfig : AppConfig;
   const twitterSite = isSTRoute ? '@Superteam' : '@SuperteamEarn';
   const defaultOg = isSTRoute
     ? `${ASSET_URL}/st/og/og.png`
     : `${ASSET_URL}/og/og.png`;
   const ogImage = props.og ?? defaultOg;
+  const normalizedCanonical = props.canonical
+    ? normalizeCanonicalUrl(props.canonical)
+    : undefined;
+  const canonicalForIndexable = shouldNoIndex ? undefined : normalizedCanonical;
 
   return (
     <Head>
@@ -71,8 +79,14 @@ const Meta = (props: IMetaProps) => {
         </>
       )}
       <meta name="description" content={props.description} key="description" />
-      {props.canonical && (
-        <link rel="canonical" href={props.canonical} key="canonical" />
+      {shouldNoIndex && (
+        <>
+          <meta name="robots" content="noindex, nofollow" key="robots" />
+          <meta name="googlebot" content="noindex, nofollow" key="googlebot" />
+        </>
+      )}
+      {canonicalForIndexable && (
+        <link rel="canonical" href={canonicalForIndexable} key="canonical" />
       )}
       <meta name="theme-color" content="#5522e0" key="theme-color" />
       <meta property="og:title" content={props.title} key="og:title" />
@@ -81,8 +95,8 @@ const Meta = (props: IMetaProps) => {
         content={props.description}
         key="og:description"
       />
-      {props.canonical && (
-        <meta property="og:url" content={props.canonical} key="og:url" />
+      {canonicalForIndexable && (
+        <meta property="og:url" content={canonicalForIndexable} key="og:url" />
       )}
       <meta property="og:locale" content={config.locale} key="og:locale" />
       <meta

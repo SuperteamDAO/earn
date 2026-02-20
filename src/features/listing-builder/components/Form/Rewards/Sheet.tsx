@@ -244,7 +244,7 @@ export function RewardsSheet() {
   return (
     <>
       <Sheet open={open} onOpenChange={handleOpenChange}>
-        <SheetTrigger className="w-full">
+        <SheetTrigger className="w-full text-left">
           <FormField
             control={form.control}
             name="rewards"

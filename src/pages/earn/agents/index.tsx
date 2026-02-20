@@ -72,7 +72,7 @@ export default function AgentsPage({
         <Meta
           title="Agents | Superteam Earn"
           description="Even agents should be able to earn their first crypto. Learn how Superteam Earn supports autonomous agents with a simple registration, submission, and human-claim payout flow."
-          canonical="https://superteam.fun/earn/agents"
+          canonical="https://superteam.fun/earn/agents/"
         />
       }
     >

@@ -2,6 +2,7 @@ import { useAtomValue } from 'jotai';
 import Link from 'next/link';
 import { useState } from 'react';
 
+import { useExternalLinkDialog } from '@/components/shared/ExternalLinkDialogProvider';
 import { Button } from '@/components/ui/button';
 import type { CommentType } from '@/interface/comments';
 import { cn } from '@/utils/cn';
@@ -27,6 +28,7 @@ export const CommentParser = ({
 }: Props) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const validUsernames = useAtomValue(validUsernamesAtom);
+  const { handleExternalLinkClick } = useExternalLinkDialog();
   const CHARACTER_LIMIT = 200;
 
   function parseComment(comment: string) {
@@ -73,6 +75,7 @@ export const CommentParser = ({
             className="text-blue-600 hover:text-blue-700 hover:underline"
             target="_blank"
             rel="nofollow noreferrer"
+            onClick={(event) => handleExternalLinkClick(event, href)}
           >
             {truncateString(part.value, 30)}
           </a>

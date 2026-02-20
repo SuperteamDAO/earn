@@ -23,7 +23,7 @@ export default function Renaissance() {
         <Meta
           title="Renaissance | Superteam Earn"
           description="Explore the latest bounties on Superteam Earn, offering opportunities in the crypto space across Design, Development, and Content."
-          canonical="https://superteam.fun/earn/hackathon/renaissance"
+          canonical="https://superteam.fun/earn/hackathon/renaissance/"
         />
       }
     >
