@@ -302,7 +302,9 @@ export function ListingHeader({
         )}
       </div>
       <div className="mb-5 flex w-full flex-col gap-1 md:hidden">
-        <ListingTitle title={title} />
+        <p className="text-lg font-semibold tracking-tight text-slate-700 sm:text-xl">
+          {title}
+        </p>
         <HeaderSub
           sponsor={sponsor}
           title={title}

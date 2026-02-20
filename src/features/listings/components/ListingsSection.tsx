@@ -315,7 +315,7 @@ export const ListingsSection = ({
           <p className="mb-2 text-xl font-semibold text-slate-700">Bookmarks</p>
         ) : (
           <div className="flex items-center">
-            <p className="text-lg font-semibold text-slate-800">{getTitle()}</p>
+            <h2 className="text-lg font-semibold text-slate-800">{getTitle()}</h2>
 
             <div className="hidden items-center md:flex">
               <Separator orientation="vertical" className="mx-3 h-6" />

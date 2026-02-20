@@ -102,14 +102,14 @@ export const GrantsSection = ({
 
   return (
     <div className={cn('mx-auto my-10 w-[98%] md:w-full')}>
-      <p
+      <h2
         className={cn(
           'mb-1.5 text-lg font-semibold',
           isProContext ? 'text-zinc-800' : 'text-slate-800',
         )}
       >
         {getTitle()}
-      </p>
+      </h2>
 
       <div
         className={cn(
