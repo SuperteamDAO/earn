@@ -5,6 +5,10 @@ import { type createListingFormSchema } from './schema';
 type ListingFormSchema = ReturnType<typeof createListingFormSchema>;
 export type ListingFormData = z.infer<ListingFormSchema>;
 export type ValidationFields = Partial<Record<keyof ListingFormData, true>>;
+export type SubmitListingResponse = ListingFormData & {
+  reason?: string;
+  isFirstPublishedListing?: boolean;
+};
 
 export type ListingStatus =
   | 'draft'

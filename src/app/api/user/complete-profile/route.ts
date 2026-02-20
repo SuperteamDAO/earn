@@ -1,4 +1,6 @@
-import type { NextApiResponse } from 'next';
+import { waitUntil } from '@vercel/functions';
+import { headers } from 'next/headers';
+import { type NextRequest, NextResponse } from 'next/server';
 
 import logger from '@/lib/logger';
 import { privy } from '@/lib/privy';
@@ -10,8 +12,8 @@ import { generateUniqueReferralCode } from '@/utils/referralCodeGenerator';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { userSelectOptions } from '@/features/auth/constants/userSelectOptions';
-import { type NextApiRequestWithUser } from '@/features/auth/types';
-import { withAuth } from '@/features/auth/utils/withAuth';
+import { getUserSession } from '@/features/auth/utils/getUserSession';
+import { refreshUserMembershipLevel } from '@/features/membership/utils/refreshUserMembershipLevel';
 import { extractSocialUsername } from '@/features/social/utils/extractUsername';
 import {
   profileSchema,
@@ -42,24 +44,41 @@ const allowedFields = [
   'private',
 ];
 
-async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
-  const userId = req.userId;
+export async function POST(request: NextRequest) {
+  const sessionResponse = await getUserSession(await headers());
 
-  logger.debug(`Request body: ${safeStringify(req.body)}`);
+  if (sessionResponse.status !== 200 || !sessionResponse.data) {
+    logger.warn(`Authentication failed: ${sessionResponse.error}`);
+    return NextResponse.json(
+      { error: sessionResponse.error },
+      { status: sessionResponse.status },
+    );
+  }
+
+  const { userId } = sessionResponse.data;
+
+  let body: Record<string, unknown>;
+  try {
+    body = (await request.json()) as Record<string, unknown>;
+  } catch {
+    return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
+  }
+
+  logger.debug(`Request body: ${safeStringify(body)}`);
 
   try {
     const user = await prisma.user.findUnique({
-      where: { id: userId as string },
+      where: { id: userId },
     });
 
     if (!user) {
       logger.warn(`User not found for user ID: ${userId}`);
-      return res.status(404).json({ error: 'User not found' });
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
-    const filteredData = filterAllowedFields(req.body, allowedFields);
+    const filteredData = filterAllowedFields(body, allowedFields);
 
-    const referralCodeRaw = (req.body?.referralCode || '')
+    const referralCodeRaw = (body?.referralCode || '')
       .toString()
       .trim()
       .toUpperCase();
@@ -99,9 +118,10 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
           logger.warn(
             `Photo verification failed for user ${userId}: ${filteredData.photo}`,
           );
-          return res.status(400).json({
-            error: 'Invalid photo: Image does not exist in our storage',
-          });
+          return NextResponse.json(
+            { error: 'Invalid photo: Image does not exist in our storage' },
+            { status: 400 },
+          );
         }
         logger.info(
           `Photo verification successful for user ${userId}: ${filteredData.photo}`,
@@ -124,25 +144,42 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       },
       {} as Record<SchemaKeys, true>,
     );
+
     const partialSchema = profileSchema._def.schema
       .pick(keysToValidate)
       .superRefine((data, ctx) => {
         socialSuperRefine(data, ctx);
         usernameSuperRefine(data, ctx, user.id);
       });
+
+    const github =
+      typeof filteredData.github === 'string' ? filteredData.github : undefined;
+    const twitter =
+      typeof filteredData.twitter === 'string'
+        ? filteredData.twitter
+        : undefined;
+    const linkedin =
+      typeof filteredData.linkedin === 'string'
+        ? filteredData.linkedin
+        : undefined;
+    const telegram =
+      typeof filteredData.telegram === 'string'
+        ? filteredData.telegram
+        : undefined;
+
     const updatedData = await partialSchema.parseAsync({
       ...filteredData,
-      github: filteredData.github
-        ? extractSocialUsername('github', filteredData.github) || undefined
+      github: github
+        ? extractSocialUsername('github', github) || undefined
         : undefined,
-      twitter: filteredData.twitter
-        ? extractSocialUsername('twitter', filteredData.twitter) || undefined
+      twitter: twitter
+        ? extractSocialUsername('twitter', twitter) || undefined
         : undefined,
-      linkedin: filteredData.linkedin
-        ? extractSocialUsername('linkedin', filteredData.linkedin) || undefined
+      linkedin: linkedin
+        ? extractSocialUsername('linkedin', linkedin) || undefined
         : undefined,
-      telegram: filteredData.telegram
-        ? extractSocialUsername('telegram', filteredData.telegram) || undefined
+      telegram: telegram
+        ? extractSocialUsername('telegram', telegram) || undefined
         : undefined,
     });
 
@@ -168,8 +205,8 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       });
       await prisma.emailSettings.create({
         data: {
-          user: { connect: { id: userId as string } },
-          category: category as string,
+          user: { connect: { id: userId } },
+          category,
         },
       });
     }
@@ -196,7 +233,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
 
     await prisma.user.update({
       where: {
-        id: userId as string,
+        id: userId,
       },
       data: {
         ...updatedData,
@@ -218,29 +255,30 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       },
     });
 
+    waitUntil(
+      refreshUserMembershipLevel({
+        userId,
+        email: user.email,
+        currentSuperteamLevel: user.superteamLevel ?? null,
+      }),
+    );
+
     const result = await prisma.user.findUnique({
-      where: { id: userId as string },
+      where: { id: userId },
       select: userSelectOptions,
     });
 
     logger.info(`User onboarded successfully for user ID: ${userId}`);
-    return res.status(200).json(result);
+    return NextResponse.json(result, { status: 200 });
   } catch (error: any) {
     logger.error(
       `Error occurred while onboarding user ${userId}: ${safeStringify(error)}`,
     );
-    return res.status(500).json({
-      message: `Error occurred while updating user ${userId}: ${error.message}`,
-    });
+    return NextResponse.json(
+      {
+        message: `Error occurred while updating user ${userId}: ${error.message}`,
+      },
+      { status: 500 },
+    );
   }
 }
-
-export default withAuth(handler);
-
-export const config = {
-  api: {
-    bodyParser: {
-      sizeLimit: '10mb',
-    },
-  },
-};

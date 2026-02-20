@@ -1,7 +1,7 @@
-import { useAtom } from 'jotai';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { Check, ChevronRight, Copy, Plus } from 'lucide-react';
 import Link from 'next/link';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useWatch } from 'react-hook-form';
 
 import FaXTwitter from '@/components/icons/FaXTwitter';
@@ -11,13 +11,14 @@ import { useClipboard } from '@/hooks/use-clipboard';
 import { tweetEmbedLink } from '@/utils/socialEmbeds';
 import { getURL } from '@/utils/validUrl';
 
-import { confirmModalAtom } from '../../atoms';
+import { confirmModalAtom, showFirstPublishSurveyAtom } from '../../atoms';
 import { useListingForm } from '../../hooks';
 import { Survey } from './Survey';
 
 export const ListingSuccessModal = () => {
   const [confirmModal] = useAtom(confirmModalAtom);
-  const [surveyOpen, setSurveyOpen] = useState(true);
+  const shouldShowSurvey = useAtomValue(showFirstPublishSurveyAtom);
+  const setShowFirstPublishSurvey = useSetAtom(showFirstPublishSurveyAtom);
 
   const form = useListingForm();
   const slug = useWatch({
@@ -110,7 +111,12 @@ export const ListingSuccessModal = () => {
           </div>
         </div>
 
-        <Survey open={surveyOpen} setOpen={setSurveyOpen} />
+        {shouldShowSurvey && (
+          <Survey
+            open={confirmModal === 'SUCCESS' && shouldShowSurvey}
+            setOpen={(open) => setShowFirstPublishSurvey(open)}
+          />
+        )}
       </DialogContent>
     </Dialog>
   );

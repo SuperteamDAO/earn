@@ -86,6 +86,7 @@ export const ApplicationModal = ({
   );
 
   const { id, token, minReward, maxReward, questions, isPro, isST } = grant;
+  const tokenLabel = token ?? 'token';
   const isUserPro = user?.isPro;
   const isProGrant = isPro && isUserPro;
   const isNotEligibleForPro = isPro && !isUserPro;
@@ -607,7 +608,7 @@ export const ApplicationModal = ({
                               This is where you will receive your rewards if you
                               win.{' '}
                               <span className="font-semibold">
-                                Make sure this address can accept USDG.
+                                Make sure this address can accept {tokenLabel}.
                               </span>
                             </>
                           ) : (

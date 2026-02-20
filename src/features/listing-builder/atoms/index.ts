@@ -10,7 +10,11 @@ import { api } from '@/lib/api';
 import { type HackathonModel } from '@/prisma/models/Hackathon';
 import { convertUndefinedToNull } from '@/utils/undefinedToNull';
 
-import { type ListingFormData, type ListingStatus } from '../types';
+import {
+  type ListingFormData,
+  type ListingStatus,
+  type SubmitListingResponse,
+} from '../types';
 import { type TEligibilityQuestion } from '../types/schema';
 
 export interface GeneratedListingData {
@@ -49,6 +53,7 @@ const draftQueueAtom = atom<SaveQueueState>({
 const confirmModalAtom = atom<
   'SUCCESS' | 'VERIFICATION_SHOW_FORM' | 'VERIFICATION_SHOW_MODAL' | undefined
 >(undefined);
+const showFirstPublishSurveyAtom = atom(false);
 const previewAtom = atom(false);
 
 const saveDraftMutationAtom = atomWithMutation(() => ({
@@ -83,7 +88,7 @@ const submitListingMutationAtom = atomWithMutation((get) => ({
     const isEditing = get(isEditingAtom);
     const endpoint = '/api/sponsor-dashboard/listing/';
     const action = isEditing ? 'update' : 'publish';
-    const response = await api.post<ListingFormData & { reason?: string }>(
+    const response = await api.post<SubmitListingResponse>(
       `${endpoint}${data.id}/${action}`,
       {
         ...convertUndefinedToNull(data),
@@ -108,6 +113,7 @@ export {
   listingStatusAtom,
   previewAtom,
   saveDraftMutationAtom,
+  showFirstPublishSurveyAtom,
   skillsKeyAtom,
   store,
   submitListingMutationAtom,
