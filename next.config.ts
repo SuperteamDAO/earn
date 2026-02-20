@@ -155,6 +155,15 @@ const nextConfig: NextConfig = {
 
     return headers;
   },
+  async redirects() {
+    return [
+      {
+        source: '/earn/api/email/unsubscribe/:path*',
+        destination: '/api/email/unsubscribe/:path*',
+        permanent: true,
+      },
+    ];
+  },
   async rewrites() {
     return [
       {
