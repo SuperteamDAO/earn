@@ -19,10 +19,40 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
   try {
     logger.debug(`Fetching grant details for slug: ${slug}`);
     const grant = await prisma.grants.findFirst({
-      where: {
-        slug,
-      },
-      include: {
+      where: { slug },
+      select: {
+        id: true,
+        title: true,
+        slug: true,
+        description: true,
+        shortDescription: true,
+        token: true,
+        minReward: true,
+        maxReward: true,
+        totalPaid: true,
+        totalApproved: true,
+        historicalApplications: true,
+        link: true,
+        sponsorId: true,
+        pocId: true,
+        isPublished: true,
+        isFeatured: true,
+        isActive: true,
+        isArchived: true,
+        createdAt: true,
+        updatedAt: true,
+        skills: true,
+        logo: true,
+        region: true,
+        questions: true,
+        pocSocials: true,
+        status: true,
+        avgResponseTime: true,
+        isNative: true,
+        airtableId: true,
+        references: true,
+        isPro: true,
+        isST: true,
         sponsor: {
           select: {
             name: true,
