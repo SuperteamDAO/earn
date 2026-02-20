@@ -2,7 +2,6 @@ import axios from 'axios';
 import type { NextApiResponse } from 'next';
 import { z } from 'zod';
 
-import { SIX_MONTHS } from '@/constants/SIX_MONTHS';
 import { tokenList } from '@/constants/tokenList';
 import logger from '@/lib/logger';
 import { LockNotAcquiredError, withRedisLock } from '@/lib/with-redis-lock';
@@ -43,11 +42,7 @@ const checkAndUpdateKYCStatus = async (
     where: { id: userId },
   });
 
-  const isKycExpired =
-    !user.kycVerifiedAt ||
-    Date.now() - new Date(user.kycVerifiedAt).getTime() > SIX_MONTHS;
-
-  if (user.isKYCVerified && user.kycVerifiedAt && !isKycExpired) {
+  if (user.isKYCVerified && user.kycVerifiedAt) {
     await withRedisLock(
       `locks:create-tranche:${grantApplicationId}:first-tranche`,
       async () => {

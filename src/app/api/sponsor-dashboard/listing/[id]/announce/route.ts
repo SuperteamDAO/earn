@@ -2,7 +2,6 @@ import { waitUntil } from '@vercel/functions';
 import { headers } from 'next/headers';
 import { type NextRequest, NextResponse } from 'next/server';
 
-import { SIX_MONTHS } from '@/constants/SIX_MONTHS';
 import earncognitoClient from '@/lib/earncognitoClient';
 import logger from '@/lib/logger';
 import { LockNotAcquiredError, withRedisLock } from '@/lib/with-redis-lock';
@@ -426,16 +425,8 @@ export async function POST(
               if (listing.type !== 'project' && listing.isFndnPaying) {
                 for (const winner of winners) {
                   const user = winner.user;
-                  const isKycExpired =
-                    !user.kycVerifiedAt ||
-                    Date.now() - new Date(user.kycVerifiedAt).getTime() >
-                      SIX_MONTHS;
 
-                  if (
-                    user.isKYCVerified &&
-                    user.kycVerifiedAt &&
-                    !isKycExpired
-                  ) {
+                  if (user.isKYCVerified && user.kycVerifiedAt) {
                     const kycCountryCheck = checkKycCountryMatchesRegion(
                       user.kycCountry,
                       listing.region,
