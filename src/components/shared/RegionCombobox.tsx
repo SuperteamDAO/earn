@@ -82,6 +82,12 @@ interface RegionComboboxProps {
   regions?: boolean;
 
   /**
+   * Whether the combobox should be disabled.
+   * @default false
+   */
+  disabled?: boolean;
+
+  /**
    * Object containing class names for specific subcomponents.
    */
   classNames?: {
@@ -107,6 +113,7 @@ export function RegionCombobox({
   superteams = false,
   unset,
   regions: allowRegions = false,
+  disabled = false,
   className,
   classNames,
 }: RegionComboboxProps): JSX.Element {
@@ -199,14 +206,25 @@ export function RegionCombobox({
   );
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
+    <Popover
+      open={disabled ? false : open}
+      onOpenChange={(nextOpen) => {
+        if (disabled) {
+          setOpen(false);
+          return;
+        }
+        setOpen(nextOpen);
+      }}
+    >
       <PopoverTrigger asChild>
         <Button
           variant="outline"
           role="combobox"
+          disabled={disabled}
           aria-expanded={open}
           className={cn(
             'w-32 justify-start px-3 text-xs text-slate-600',
+            disabled && 'cursor-not-allowed',
             className,
           )}
         >
