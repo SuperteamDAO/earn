@@ -10,6 +10,7 @@ import {
   FormItem,
   FormLabel,
 } from '@/components/ui/form';
+import { Tooltip } from '@/components/ui/tooltip';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 
@@ -71,8 +72,10 @@ export function GeoLock() {
             </div>
             <FormControl className="flex items-center">
               <div
-                title={isRegionLocked ? lockTooltip : undefined}
-                className={cn(isRegionLocked && 'cursor-not-allowed')}
+                className={cn(
+                  'relative',
+                  isRegionLocked && 'cursor-not-allowed',
+                )}
               >
                 <RegionCombobox
                   superteams
@@ -89,6 +92,14 @@ export function GeoLock() {
                   }}
                   regions
                 />
+                {isRegionLocked && (
+                  <Tooltip
+                    content={lockTooltip}
+                    triggerClassName="absolute inset-0 z-10 cursor-not-allowed rounded-md bg-transparent"
+                  >
+                    <span className="sr-only">{lockTooltip}</span>
+                  </Tooltip>
+                )}
               </div>
             </FormControl>
           </FormItem>
