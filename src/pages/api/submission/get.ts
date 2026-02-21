@@ -22,6 +22,12 @@ async function submission(req: NextApiRequestWithUser, res: NextApiResponse) {
         userId,
         listingId: id,
       },
+      omit: {
+        ai: true,
+        label: true,
+        notes: true,
+        paymentDetails: true,
+      },
     });
 
     if (!result) {
