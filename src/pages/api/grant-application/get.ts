@@ -24,6 +24,12 @@ async function application(req: NextApiRequestWithUser, res: NextApiResponse) {
         applicationStatus: { not: { in: ['Completed'] } },
       },
       orderBy: { createdAt: 'desc' },
+      omit: {
+        ai: true,
+        label: true,
+        notes: true,
+        paymentDetails: true,
+      },
       include: {
         GrantTranche: {
           orderBy: { createdAt: 'asc' },
