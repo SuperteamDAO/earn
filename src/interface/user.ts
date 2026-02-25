@@ -19,7 +19,6 @@ interface User {
   role?: string;
   talent?: boolean;
   sponsor?: boolean;
-  superteamLevel?: string;
   isTalentFilled?: boolean;
   bio?: string;
   location?: string;
@@ -39,7 +38,23 @@ interface User {
   website?: string;
   telegram?: string;
   currentSponsorId?: string;
+  peopleId?: string;
   currentSponsor?: SponsorType;
+  people?: {
+    id: string;
+    chapterId?: string | null;
+    type?: string | null;
+    chapter?: {
+      id: string;
+      name: string;
+      region: string;
+      displayValue?: string | null;
+      code?: string | null;
+      countries?: unknown;
+      icons?: string | null;
+      sponsorId?: string | null;
+    } | null;
+  } | null;
   UserSponsors?: UserSponsor[];
   PoW?: PoW[];
   private?: boolean;
@@ -62,7 +77,6 @@ interface User {
   stRecommended?: boolean;
   acceptedTOS?: boolean;
   emailSettings?: EmailSettingsModel[];
-  stLead?: string;
   isBlocked?: boolean;
   isKYCVerified: boolean;
   linkedTwitter?: string[];

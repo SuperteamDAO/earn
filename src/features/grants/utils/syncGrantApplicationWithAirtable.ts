@@ -1,6 +1,5 @@
 import axios from 'axios';
 
-import { Superteams } from '@/constants/Superteam';
 import logger from '@/lib/logger';
 import { type GrantApplicationModel } from '@/prisma/models/GrantApplication';
 import {
@@ -9,6 +8,7 @@ import {
   airtableUrl,
   fetchAirtableRecordId,
 } from '@/utils/airtable';
+import { getRegionNameForLocation } from '@/utils/chapterRegion';
 
 import { convertGrantApplicationToAirtable } from './convertGrantApplicationToAirtable';
 
@@ -47,20 +47,12 @@ export async function syncGrantApplicationWithAirtable(
     process.env.AIRTABLE_GRANTS_REGIONS_TABLE_NAME!,
   );
 
-  const superteam = Superteams.find(
-    (s) =>
-      s.country.some(
-        (c) => c.toLowerCase() === application.user.location?.toLowerCase(),
-      ) || s.region === application.user.location,
-  );
-
-  const regionName = superteam ? superteam.region : 'Global';
+  const regionName = await getRegionNameForLocation(application.user.location);
 
   logger.info(
     {
       applicationId,
       userLocation: user.location,
-      foundSuperteam: superteam?.displayValue,
       determinedRegionName: regionName,
     },
     `Superteam lookup result for Application ID: ${applicationId}. Region: ${regionName}`,
@@ -72,7 +64,7 @@ export async function syncGrantApplicationWithAirtable(
   const region = await fetchAirtableRecordId(
     grantsRegionAirtableURL,
     'Name',
-    superteam ? superteam.region : 'Global',
+    regionName,
     grantsAirtableConfig,
   );
   logger.info(

@@ -7,6 +7,7 @@ import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { useUser } from '@/store/user';
 
 import { userStatsQuery } from '@/features/home/queries/user-stats';
+import { isEligiblePeopleType } from '@/features/membership/utils/peopleEligibility';
 import { useProUpgradeFlow } from '@/features/pro/state/pro-upgrade-flow';
 
 import { ProIntro } from './ProIntro';
@@ -27,10 +28,9 @@ export const ProIntroDialog = () => {
       ? true
       : localStorage.getItem('proIntroDialogShown') === 'true';
   const hasEarnedEnough = (stats.totalWinnings ?? 0) >= 1000;
+  const hasEligibleMembership = isEligiblePeopleType(user?.people?.type);
   const shouldAutoShow =
-    !dialogSeen &&
-    !user.isPro &&
-    (hasEarnedEnough || user.superteamLevel?.includes('Superteam'));
+    !dialogSeen && !user.isPro && (hasEarnedEnough || hasEligibleMembership);
   const dialogOpen = shouldAutoShow || isDialogFlowActive;
 
   const handleOpenChange = (open: boolean) => {

@@ -1,3 +1,4 @@
+import { useQuery } from '@tanstack/react-query';
 import { Check, ChevronsUpDown, Earth } from 'lucide-react';
 import React, { type JSX, useMemo } from 'react';
 
@@ -17,8 +18,9 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { countries } from '@/constants/country';
-import { Superteams } from '@/constants/Superteam';
 import { cn } from '@/utils/cn';
+
+import { chaptersQuery } from '@/features/chapters/queries/chapters';
 
 interface CountryOption {
   value: string;
@@ -117,24 +119,26 @@ export function RegionCombobox({
   className,
   classNames,
 }: RegionComboboxProps): JSX.Element {
+  const { data: chapters = [] } = useQuery(chaptersQuery);
+
   const options: SelectOption[] = useMemo(() => {
     const regions: SelectOption[] = [];
     if (global)
       regions.push({ value: 'Global', label: 'Global', code: 'Global' });
     if (superteams) {
-      const superteamCountries = Superteams.flatMap((region) =>
-        region.code.toLowerCase(),
+      const chapterCountries = chapters.flatMap((chapter) =>
+        chapter.code.toLowerCase(),
       );
 
       const nonSuperteamCountries = countries.filter(
-        (country) => !superteamCountries.includes(country.code.toLowerCase()),
+        (country) => !chapterCountries.includes(country.code.toLowerCase()),
       );
       regions.push({
-        label: 'Superteam Regions',
-        options: Superteams.map((region) => ({
-          value: region.region ?? '-',
-          label: region.displayValue,
-          code: region.code,
+        label: 'Chapter Regions',
+        options: chapters.map((chapter) => ({
+          value: chapter.region,
+          label: chapter.displayValue,
+          code: chapter.code,
         })),
       });
       regions.push({
@@ -172,7 +176,7 @@ export function RegionCombobox({
       });
     }
     return regions;
-  }, [global, superteams, allowRegions]);
+  }, [global, superteams, allowRegions, chapters]);
   const [open, setOpen] = React.useState(false);
   const listRef = React.useRef<HTMLDivElement>(null);
 

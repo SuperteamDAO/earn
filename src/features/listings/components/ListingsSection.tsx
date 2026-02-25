@@ -9,6 +9,7 @@ import { useBreakpoint } from '@/hooks/use-breakpoint';
 import { useScrollShadow } from '@/hooks/use-scroll-shadow';
 import { cn } from '@/utils/cn';
 
+import { chaptersQuery } from '@/features/chapters/queries/chapters';
 import { HACKATHONS } from '@/features/hackathon/constants/hackathons';
 import { sponsorStageQuery } from '@/features/home/queries/sponsor-stage';
 import { SponsorStage } from '@/features/home/types/sponsor-stage';
@@ -77,6 +78,7 @@ export const ListingsSection = ({
     ...sponsorStageQuery,
     enabled: false,
   });
+  const { data: chapters = [] } = useQuery(chaptersQuery);
 
   const shouldShowAddListingCard = useMemo(() => {
     if (type !== 'home') return false;
@@ -200,7 +202,7 @@ export const ListingsSection = ({
     if (type === 'home') {
       basePath = '/earn/all';
     } else if (type === 'region') {
-      basePath = `/earn/regions/${getRegionSlug(region || '')}/all`;
+      basePath = `/earn/regions/${getRegionSlug(region || '', chapters)}/all`;
     } else if (type === 'skill' && skill) {
       basePath = `/earn/skill/${skill}/all`;
     } else {

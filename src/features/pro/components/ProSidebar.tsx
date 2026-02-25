@@ -8,6 +8,7 @@ import { useBreakpoint } from '@/hooks/use-breakpoint';
 import { useUser } from '@/store/user';
 
 import { userStatsQuery } from '@/features/home/queries/user-stats';
+import { isEligiblePeopleType } from '@/features/membership/utils/peopleEligibility';
 
 import { ProIntro } from './ProIntro';
 import { ProPerksCards } from './ProPerksCard';
@@ -91,13 +92,13 @@ export const ProSidebar = ({ desktopHeight }: ProSidebarProps) => {
   const { user, isLoading: isUserLoading } = useUser();
   const isLg = useBreakpoint('lg');
   const isPro = user?.isPro;
+  const hasEligibleMembership = isEligiblePeopleType(user?.people?.type);
 
   const isProEligibilityLoading = isUserLoading || isStatsLoading;
 
   const isUserEligibleForPro =
     !isPro &&
-    ((stats && (stats.totalWinnings ?? 0) >= 1000) ||
-      user?.superteamLevel?.includes('Superteam'));
+    ((stats && (stats.totalWinnings ?? 0) >= 1000) || hasEligibleMembership);
   const sidebarStyle = isLg
     ? ({
         height: desktopHeight,

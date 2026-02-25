@@ -265,7 +265,7 @@ export async function POST(request: NextRequest) {
     await refreshUserMembershipLevel({
       userId,
       email: user.email,
-      currentSuperteamLevel: user.superteamLevel ?? null,
+      currentPeopleId: user.peopleId ?? null,
     });
 
     const result = await prisma.user.findUnique({

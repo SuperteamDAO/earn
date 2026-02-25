@@ -21,7 +21,9 @@ interface Grant {
     slug: string;
     isVerified: boolean;
     entityName?: string;
-    st?: boolean;
+    chapter?: {
+      id: string;
+    } | null;
   };
   pocId?: string;
   poc?: User;

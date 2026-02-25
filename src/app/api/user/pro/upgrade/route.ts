@@ -7,6 +7,7 @@ import { safeStringify } from '@/utils/safeStringify';
 
 import { userSelectOptions } from '@/features/auth/constants/userSelectOptions';
 import { getUserSession } from '@/features/auth/utils/getUserSession';
+import { isEligiblePeopleType } from '@/features/membership/utils/peopleEligibility';
 
 export async function POST() {
   try {
@@ -29,7 +30,15 @@ export async function POST() {
 
     const existingUser = await prisma.user.findUnique({
       where: { id: userId },
-      select: { isPro: true, superteamLevel: true },
+      select: {
+        isPro: true,
+        peopleId: true,
+        people: {
+          select: {
+            type: true,
+          },
+        },
+      },
     });
 
     if (existingUser?.isPro) {
@@ -79,11 +88,11 @@ export async function POST() {
     }
 
     const totalWinnings = stats[0].totalWinnings;
+    const hasEligibleMembership = isEligiblePeopleType(
+      existingUser?.people?.type,
+    );
 
-    if (
-      totalWinnings < 1000 &&
-      !existingUser?.superteamLevel?.includes('Superteam')
-    ) {
+    if (totalWinnings < 1000 && !hasEligibleMembership) {
       logger.warn(
         `User ${userId} attempted to upgrade to pro but only earned $${totalWinnings}`,
       );

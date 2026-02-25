@@ -29,7 +29,6 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Tooltip } from '@/components/ui/tooltip';
-import { Superteams, unofficialSuperteams } from '@/constants/Superteam';
 import { JTTG } from '@/constants/Telegram';
 import { SolanaWalletProvider } from '@/context/SolanaWallet';
 import { useDisclosure } from '@/hooks/use-disclosure';
@@ -190,22 +189,18 @@ export function SponsorLayout({
     [router.asPath],
   );
 
-  const isLocalProfileVisible = useMemo(
-    () =>
-      Superteams.some(
-        (team) =>
-          team.name === user?.currentSponsor?.name &&
-          (user?.stLead?.toLowerCase() === team.region.toLowerCase() ||
-            user?.stLead === 'MAHADEV'),
-      ) ||
-      unofficialSuperteams.some(
-        (team) =>
-          team.name === user?.currentSponsor?.name &&
-          (user?.stLead?.toLowerCase() === team.region.toLowerCase() ||
-            user?.stLead === 'MAHADEV'),
-      ),
-    [user?.currentSponsor?.name, user?.stLead],
-  );
+  const isLocalProfileVisible = useMemo(() => {
+    const sponsorChapterId = user?.currentSponsor?.chapter?.id;
+    if (!sponsorChapterId) return false;
+    if (user?.role === 'GOD') return true;
+    const isCoreMember = user?.people?.type?.toUpperCase() === 'CORE';
+    return isCoreMember && user?.people?.chapterId === sponsorChapterId;
+  }, [
+    user?.currentSponsor?.chapter?.id,
+    user?.people?.chapterId,
+    user?.people?.type,
+    user?.role,
+  ]);
 
   if (ready && !authenticated) {
     return <Login isOpen={true} onClose={() => {}} />;

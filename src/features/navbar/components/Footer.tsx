@@ -1,3 +1,4 @@
+import { useQuery } from '@tanstack/react-query';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
@@ -7,10 +8,10 @@ import { RegionCombobox } from '@/components/shared/RegionCombobox';
 import { SkillsCombobox } from '@/components/shared/SkillsCombobox';
 import { SupportFormDialog } from '@/components/shared/SupportFormDialog';
 import { LocalImage } from '@/components/ui/local-image';
-import { Superteams } from '@/constants/Superteam';
 import { skillSubSkillMap } from '@/interface/skills';
 import { cn } from '@/utils/cn';
 
+import { chaptersQuery } from '@/features/chapters/queries/chapters';
 import {
   findCountryBySlug,
   getRegionSlug,
@@ -56,6 +57,7 @@ const FooterColumn = ({
 export const Footer = () => {
   const currentYear = new Date().getFullYear();
   const router = useRouter();
+  const { data: chapters = [] } = useQuery(chaptersQuery);
 
   const [selectedRegion, setSelectedRegion] = useState<string>('Global');
   const [selectedSkill, setSelectedSkill] = useState<string>('All');
@@ -64,7 +66,7 @@ export const Footer = () => {
     const path = router.asPath.toLowerCase();
 
     // Check if it's a Superteam region page
-    const matchedSuperteam = Superteams.find((team) =>
+    const matchedSuperteam = chapters.find((team) =>
       path.includes(`/regions/${team.slug?.toLowerCase()}`),
     );
 
@@ -75,7 +77,7 @@ export const Footer = () => {
       const slugMatch = path.match(/\/regions\/([^/?]+)/);
       if (slugMatch) {
         const slug = slugMatch[1];
-        const country = findCountryBySlug(slug || '');
+        const country = findCountryBySlug(slug || '', chapters);
         if (country) {
           setSelectedRegion(country.name);
         } else {
@@ -121,7 +123,7 @@ export const Footer = () => {
     } else {
       setSelectedSkill('All');
     }
-  }, [router.asPath]);
+  }, [router.asPath, chapters]);
 
   const handleRegionChange = (value: string): void => {
     if (value === 'Global') {
@@ -132,7 +134,7 @@ export const Footer = () => {
 
     setSelectedRegion(value);
 
-    router.push(`/earn/regions/${getRegionSlug(value)}`);
+    router.push(`/earn/regions/${getRegionSlug(value, chapters)}`);
   };
 
   const handleSkillChange = (value: string): void => {

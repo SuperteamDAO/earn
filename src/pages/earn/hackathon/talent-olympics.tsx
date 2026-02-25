@@ -22,7 +22,6 @@ import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { Dialog, DialogContent, DialogPortal } from '@/components/ui/dialog';
 import { LocalImage } from '@/components/ui/local-image';
 import { Tooltip } from '@/components/ui/tooltip';
-import { Superteams } from '@/constants/Superteam';
 import { getTokenIcon } from '@/constants/tokenList';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { useMediaQuery } from '@/hooks/use-media-query';
@@ -1185,15 +1184,44 @@ LIMIT 10;
 
   const countryLeaderLength = countryLeaders.length;
   if (countryLeaderLength < 10) {
-    const restSuperteams = Superteams.filter(
-      (s) =>
-        countryLeaderLength === 0 ||
-        !countryLeaders.some((c) => s.country.includes(c.location)),
-    ).slice(0, 10 - countryLeaderLength);
+    const chapters = await prisma.chapter.findMany({
+      select: {
+        countries: true,
+        region: true,
+      },
+    });
+
+    const chapterLocations = chapters
+      .flatMap((chapter) => {
+        const countries = Array.isArray(chapter.countries)
+          ? chapter.countries.filter(
+              (country): country is string => typeof country === 'string',
+            )
+          : [];
+        return countries.length ? countries : [chapter.region];
+      })
+      .filter((location): location is string => Boolean(location?.trim()))
+      .filter(
+        (location, index, arr) =>
+          arr.findIndex(
+            (item) => item.toLowerCase() === location.toLowerCase(),
+          ) === index,
+      );
+
+    const restChapterLocations = chapterLocations
+      .filter(
+        (location) =>
+          countryLeaderLength === 0 ||
+          !countryLeaders.some(
+            (leader) =>
+              leader.location.toLowerCase() === location.toLowerCase(),
+          ),
+      )
+      .slice(0, 10 - countryLeaderLength);
 
     for (let i = 0; i < 10 - countryLeaderLength; i++) {
       countryLeaders.push({
-        location: restSuperteams[i]?.country[0] ?? 'na',
+        location: restChapterLocations[i] ?? 'na',
         submission_count: 0,
       });
     }

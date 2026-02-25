@@ -5,6 +5,7 @@ import {
   type BountiesOrderByWithRelationInput,
   type BountiesWhereInput,
 } from '@/prisma/models/Bounties';
+import { getChapterRegions } from '@/utils/chapterRegion';
 
 import {
   filterRegionCountry,
@@ -110,8 +111,9 @@ export async function buildHackathonQuery(
   }
 
   if (user?.isTalentFilled && (context === 'all' || context === 'home')) {
+    const chapterRegions = await getChapterRegions();
     const userRegion = user?.location
-      ? getCombinedRegion(user?.location, true)
+      ? getCombinedRegion(user?.location, true, chapterRegions)
       : undefined;
 
     where.region = {

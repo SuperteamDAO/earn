@@ -1,7 +1,7 @@
 import { Logger } from 'tslog';
 
 const logger = new Logger({
-  minLevel: process.env.IS_LOCAL === 'true' ? 99999 : 2,
+  minLevel: process.env.IS_LOCAL === 'true' ? 2 : 2,
   prettyLogTimeZone: 'UTC',
   prettyErrorStackTemplate:
     '  • {{fileName}}\t{{method}}\n\t{{filePathWithLine}}',

@@ -6,6 +6,10 @@ import { type UserModel } from '@/prisma/models/User';
 
 import { type ListingWithSponsor } from '@/features/auth/utils/checkListingSponsorAuth';
 
+type UserWithMembership = UserModel & {
+  people?: { type?: string | null } | null;
+};
+
 const fetchHackathon = async (
   hackathonId?: string,
 ): Promise<HackathonModel | undefined> => {
@@ -25,9 +29,16 @@ const fetchHackathon = async (
   return hackathon || undefined;
 };
 
-const fetchUser = async (userId: string): Promise<UserModel> => {
+const fetchUser = async (userId: string): Promise<UserWithMembership> => {
   const user = await prisma.user.findUnique({
     where: { id: userId },
+    include: {
+      people: {
+        select: {
+          type: true,
+        },
+      },
+    },
   });
 
   if (!user) {
@@ -58,7 +69,7 @@ export const buildListingContext = async ({
       sponsorDetails: {
         isVerified: sponsor.isVerified,
         isCaution: sponsor.isCaution,
-        st: sponsor.st,
+        hasChapter: !!sponsor.chapter,
       },
       userRole: user.role,
     });

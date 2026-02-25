@@ -38,6 +38,20 @@ export async function validateGrantRequest(userId: string, grantId: string) {
 
   const user = await prisma.user.findUnique({
     where: { id: userId },
+    select: {
+      id: true,
+      isBlocked: true,
+      isTalentFilled: true,
+      isPro: true,
+      location: true,
+      peopleId: true,
+      people: {
+        select: {
+          chapterId: true,
+          type: true,
+        },
+      },
+    },
   });
 
   if (!user) {

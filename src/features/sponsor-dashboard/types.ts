@@ -17,8 +17,21 @@ export type ScoutRowType = {
   userId: string;
 };
 
+type UserWithChapter = PrismaUserWithoutKYC & {
+  peopleId?: string | null;
+  people?: {
+    id: string;
+    chapterId?: string | null;
+    chapter?: {
+      id: string;
+      name: string;
+      icons?: string | null;
+    } | null;
+  } | null;
+};
+
 export interface GrantApplicationWithUser extends GrantApplicationModel {
-  user: PrismaUserWithoutKYC;
+  user: UserWithChapter;
   totalEarnings?: number;
   GrantTranche?: GrantTrancheModel[];
 }

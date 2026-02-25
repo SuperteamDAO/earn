@@ -90,7 +90,13 @@ let regionSlugsSet: Set<string> | null = null;
 let skillSlugsSet: Set<string> | null = null;
 let categorySlugsSet: Set<string> | null = null;
 
-function getRegionSlugsSet(): Set<string> {
+function getRegionSlugsSet(regionSlugs?: readonly string[]): Set<string> {
+  if (regionSlugs) {
+    const slugs = regionSlugs.map((s) => s.toLowerCase());
+    const aliases = Object.keys(getMultiCountryRegionAliases());
+    return new Set([...slugs, ...aliases]);
+  }
+
   if (!regionSlugsSet) {
     const slugs = getAllRegionSlugs().map((s) => s.toLowerCase());
     // Add multi-country region aliases (e.g., 'eu', 'gcc')
@@ -120,8 +126,8 @@ function isOpportunityType(segment: string): segment is OpportunityType {
   return OPPORTUNITY_TYPES.includes(segment as OpportunityType);
 }
 
-function isRegion(segment: string): boolean {
-  return getRegionSlugsSet().has(segment.toLowerCase());
+function isRegion(segment: string, regionSlugs?: readonly string[]): boolean {
+  return getRegionSlugsSet(regionSlugs).has(segment.toLowerCase());
 }
 
 /**
@@ -142,6 +148,7 @@ function isSkill(segment: string): boolean {
 
 export function parseOpportunityTags(
   slugs: string[] | undefined,
+  regionSlugs?: readonly string[],
 ): ParsedOpportunityTags {
   if (!slugs || slugs.length === 0) {
     return {};
@@ -166,7 +173,7 @@ export function parseOpportunityTags(
       continue;
     }
 
-    if (!result.region && isRegion(segment)) {
+    if (!result.region && isRegion(segment, regionSlugs)) {
       // Normalize aliases like 'eu' -> 'european-union'
       result.region = normalizeRegionSlug(segment);
       continue;
@@ -186,7 +193,10 @@ export function parseOpportunityTags(
   return result;
 }
 
-export function validateOpportunityTags(slugs: string[] | undefined): boolean {
+export function validateOpportunityTags(
+  slugs: string[] | undefined,
+  regionSlugs?: readonly string[],
+): boolean {
   if (!slugs || slugs.length === 0) {
     return true;
   }
@@ -200,7 +210,7 @@ export function validateOpportunityTags(slugs: string[] | undefined): boolean {
   for (const segment of allSegments) {
     const isValid =
       isOpportunityType(segment) ||
-      isRegion(segment) ||
+      isRegion(segment, regionSlugs) ||
       isCategory(segment) ||
       isSkill(segment);
 

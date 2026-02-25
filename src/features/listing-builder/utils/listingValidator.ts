@@ -16,7 +16,11 @@ import { checkSlug } from './getValidSlug';
 
 interface ListingValidatorParams {
   listing: ListingWithSponsor;
-  sponsor: SponsorsModel;
+  sponsor: SponsorsModel & {
+    chapter?: {
+      id: string;
+    } | null;
+  };
   user: UserModel;
   hackathon: HackathonModel | undefined;
   isEditing: boolean;
@@ -35,14 +39,14 @@ export const validateListing = async ({
       id: listing.id,
       isGod: user?.role === 'GOD',
       isEditing,
-      isST: !!sponsor?.st,
+      isST: !!sponsor?.chapter,
       hackathonId: hackathon?.id,
       pastListing: listing,
     });
     const listingSchema = createListingFormSchema({
       isGod: user?.role === 'GOD',
       isEditing,
-      isST: !!sponsor?.st,
+      isST: !!sponsor?.chapter,
       hackathons: hackathon ? [hackathon] : [],
       pastListing: isEditing ? (listing as any) : undefined,
     });

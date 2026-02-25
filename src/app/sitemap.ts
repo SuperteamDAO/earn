@@ -3,6 +3,7 @@ import type { MetadataRoute } from 'next';
 import { countries } from '@/constants/country';
 import { getSiteUrl, isProductionEnv } from '@/lib/site-url';
 import { prisma } from '@/prisma';
+import { getChapterRegions } from '@/utils/chapterRegion';
 
 import { getAllCategorySlugs } from '@/features/listings/utils/category';
 import {
@@ -19,6 +20,7 @@ const baseUrl = getSiteUrl();
 const MAX_URLS_PER_SITEMAP = 50000;
 
 let cachedOpportunityCombinations: readonly string[] | null = null;
+let cachedRegionSlugs: readonly string[] | null = null;
 
 export const revalidate = 86400; // 1 day
 
@@ -66,7 +68,8 @@ async function getGrantsCount(): Promise<number> {
 }
 
 async function getRegionsCount(): Promise<number> {
-  return getAllRegionSlugs().length;
+  const regionSlugs = await getRegionSlugsForSitemap();
+  return regionSlugs.length;
 }
 
 /**
@@ -90,13 +93,23 @@ function getMultiCountryRegionAliases(): string[] {
  * - Regions: /regions/{slug}/
  * - Skills: /skill/{slug}/
  */
-function generateOpportunityCombinations(): readonly string[] {
+async function getRegionSlugsForSitemap(): Promise<readonly string[]> {
+  if (cachedRegionSlugs) {
+    return cachedRegionSlugs;
+  }
+
+  const chapterRegions = await getChapterRegions();
+  cachedRegionSlugs = getAllRegionSlugs(chapterRegions);
+  return cachedRegionSlugs;
+}
+
+async function generateOpportunityCombinations(): Promise<readonly string[]> {
   if (cachedOpportunityCombinations) {
     return cachedOpportunityCombinations;
   }
 
   const types = ['bounties', 'projects', 'grants'] as const;
-  const baseRegions = getAllRegionSlugs();
+  const baseRegions = await getRegionSlugsForSitemap();
   // Include both full slugs and short aliases for multi-country regions
   const multiCountryAliases = getMultiCountryRegionAliases();
   const regions = [...baseRegions, ...multiCountryAliases];
@@ -135,7 +148,8 @@ function generateOpportunityCombinations(): readonly string[] {
 }
 
 async function getOpportunitiesCount(): Promise<number> {
-  return generateOpportunityCombinations().length;
+  const combinations = await generateOpportunityCombinations();
+  return combinations.length;
 }
 
 async function getSkillsCount(): Promise<number> {
@@ -569,7 +583,7 @@ export default async function sitemap(props: {
     ) {
       const sitemapIndex = sitemapId - boundaries.regionsStart;
       const offset = sitemapIndex * MAX_URLS_PER_SITEMAP;
-      const allRegionSlugs = getAllRegionSlugs();
+      const allRegionSlugs = await getRegionSlugsForSitemap();
 
       if (allRegionSlugs.length === 0) {
         return [];
@@ -595,7 +609,7 @@ export default async function sitemap(props: {
     ) {
       const sitemapIndex = sitemapId - boundaries.opportunitiesStart;
       const offset = sitemapIndex * MAX_URLS_PER_SITEMAP;
-      const allCombinations = generateOpportunityCombinations();
+      const allCombinations = await generateOpportunityCombinations();
 
       if (allCombinations.length === 0) {
         return [];

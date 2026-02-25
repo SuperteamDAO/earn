@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 
 import {
   Avatar,
@@ -12,11 +12,11 @@ import { Card, CardContent } from '@/components/ui/card';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ASSET_URL } from '@/constants/ASSET_URL';
-import { type Superteam, Superteams } from '@/constants/Superteam';
 import { api } from '@/lib/api';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import { roundToNearestThousand } from '@/utils/number';
 
+import { chaptersQuery } from '@/features/chapters/queries/chapters';
 import { totalsQuery } from '@/features/home/queries/totals';
 import { userCountQuery } from '@/features/home/queries/user-count';
 import { liveOpportunitiesQuery } from '@/features/listings/queries/live-opportunities';
@@ -28,11 +28,39 @@ const dummyUsers = [
 ];
 
 export const TalentImageCard = () => {
-  const [st, setST] = useState<Superteam>();
-  const people = useMemo(
-    () => [...(st?.people || []), ...dummyUsers].slice(0, 3),
-    [st?.people],
-  );
+  const { data: chapters = [] } = useQuery(chaptersQuery);
+
+  const { data: countryCode } = useQuery({
+    queryKey: ['location-country-code'],
+    queryFn: async () => {
+      const response = await api.get<{ country_code?: string }>(
+        '/api/location',
+      );
+      return response.data.country_code?.trim().toLowerCase() || null;
+    },
+    staleTime: 5 * 60 * 1000,
+    gcTime: 5 * 60 * 1000,
+  });
+
+  const chapterFromLocation = useMemo(() => {
+    if (!countryCode) return null;
+    return (
+      chapters.find(
+        (chapter) => chapter.code?.trim().toLowerCase() === countryCode,
+      ) || null
+    );
+  }, [chapters, countryCode]);
+
+  const people = useMemo(() => {
+    if (!chapterFromLocation) return dummyUsers;
+
+    const chapterLead = {
+      name: `${chapterFromLocation.displayValue} Lead`,
+      pfp: chapterFromLocation.icons || `${ASSET_URL}/superteams/globe.png`,
+    };
+
+    return [chapterLead, ...dummyUsers].slice(0, 3);
+  }, [chapterFromLocation]);
 
   const { data: liveOpportunities } = useQuery({
     ...liveOpportunitiesQuery,
@@ -45,29 +73,6 @@ export const TalentImageCard = () => {
   const { data: stat } = useQuery({
     ...userCountQuery,
   });
-
-  useEffect(() => {
-    const fetchLocation = async () => {
-      try {
-        const response = await api.get('/api/location');
-        const locationData = response.data;
-
-        if (locationData && locationData.country_code) {
-          const superteam = Superteams.find(
-            (ct) =>
-              ct.code.toLowerCase() === locationData.country_code.toLowerCase(),
-          );
-
-          if (superteam) {
-            setST(superteam);
-          }
-        }
-      } catch (error) {
-        console.error('Failed to fetch location:', error);
-      }
-    };
-    fetchLocation();
-  }, []);
 
   return (
     <div className="relative h-full w-full">

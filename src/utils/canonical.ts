@@ -18,14 +18,3 @@ export const normalizeCanonicalUrl = (url: string): string => {
     return trimmedUrl;
   }
 };
-
-export const canonicalFromPath = (
-  path: string,
-  baseUrl = 'https://superteam.fun',
-): string => {
-  const parsedUrl = new URL(path || '/', baseUrl);
-  parsedUrl.search = '';
-  parsedUrl.hash = '';
-  parsedUrl.pathname = addTrailingSlash(parsedUrl.pathname);
-  return parsedUrl.toString();
-};

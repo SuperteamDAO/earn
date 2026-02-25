@@ -15,6 +15,8 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 
+import { chaptersQuery } from '@/features/chapters/queries/chapters';
+
 import { userSubmissionQuery } from '../../queries/user-submission-status';
 import { getCombinedRegion } from '../../utils/region';
 
@@ -107,14 +109,15 @@ export const KYCModal = ({
   });
 
   const queryClient = useQueryClient();
+  const { data: chapters = [] } = useQuery(chaptersQuery);
 
   const regionDisplayName = useMemo(() => {
     if (!region || region === 'Global') {
       return 'the geo-locked country';
     }
-    const regionObject = getCombinedRegion(region);
+    const regionObject = getCombinedRegion(region, false, chapters);
     return regionObject?.displayValue || regionObject?.name || region;
-  }, [region]);
+  }, [chapters, region]);
 
   const config = {
     lang: 'en',

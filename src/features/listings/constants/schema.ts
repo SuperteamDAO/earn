@@ -83,7 +83,11 @@ export const listingSelect = {
       slug: true,
       logo: true,
       isVerified: true,
-      st: true,
+      chapter: {
+        select: {
+          id: true,
+        },
+      },
     },
   },
 } satisfies BountiesSelect;

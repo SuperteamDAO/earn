@@ -2,7 +2,7 @@ import { ImageResponse } from 'next/og';
 
 import { ASSET_URL } from '@/constants/ASSET_URL';
 import { CUSTOM_FLAGS } from '@/constants/CUSTOM_FLAGS';
-import { Superteams } from '@/constants/Superteam';
+import { findChapterByRegionInput } from '@/utils/chapterRegion';
 import { loadGoogleFont } from '@/utils/ogHelpers';
 
 import 'flag-icons/css/flag-icons.min.css';
@@ -37,8 +37,8 @@ export async function GET(request: Request) {
       loadGoogleFont('Inter:wght@700', allText),
     ]);
 
-    const superteam = Superteams.find((s) => s.displayValue === region);
-    const isSuperteam = !!superteam;
+    const chapter = region ? await findChapterByRegionInput(region) : null;
+    const isSuperteam = !!chapter;
 
     // Use pastel backgrounds like other OG images
     const bgColors = ['#FFFBEB', '#FAFAF9', '#ECFDF5', '#EFF6FF', '#EEF2FF'];
@@ -335,7 +335,7 @@ export async function GET(request: Request) {
                 objectFit: 'cover',
               }}
               alt="logo"
-              src={superteam?.banner || ''}
+              src={chapter?.banner || ''}
             />
           </div>
         </div>

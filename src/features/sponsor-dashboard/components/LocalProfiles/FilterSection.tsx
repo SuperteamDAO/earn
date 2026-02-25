@@ -12,7 +12,6 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
-import { type Superteam } from '@/constants/Superteam';
 import { skillSubSkillMap } from '@/interface/skills';
 import { api } from '@/lib/api';
 
@@ -23,7 +22,6 @@ interface FilterSectionProps {
   >;
   debouncedSetSearchText: (value: string) => void;
   setCurrentPage: React.Dispatch<React.SetStateAction<number>>;
-  superteam: Superteam | undefined;
 }
 
 export const FilterSection = ({
@@ -31,7 +29,6 @@ export const FilterSection = ({
   setCheckedItems,
   debouncedSetSearchText,
   setCurrentPage,
-  superteam,
 }: FilterSectionProps) => {
   const mainSkills = Object.keys(skillSubSkillMap);
   const selectedSkillsCount =
@@ -45,7 +42,7 @@ export const FilterSection = ({
   const exportMutation = useMutation({
     mutationFn: async () => {
       const response = await api.get(
-        `/api/sponsor-dashboard/local-talent/export/?superteamRegion=${superteam?.region}&superteamCountries=${superteam?.country}`,
+        `/api/sponsor-dashboard/local-talent/export/`,
       );
       return response.data;
     },

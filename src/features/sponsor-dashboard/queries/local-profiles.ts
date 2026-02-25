@@ -1,6 +1,5 @@
 import { queryOptions } from '@tanstack/react-query';
 
-import { Superteams, unofficialSuperteams } from '@/constants/Superteam';
 import { api } from '@/lib/api';
 
 export interface LocalProfile {
@@ -25,32 +24,15 @@ export interface LocalProfile {
   createdAt: string;
 }
 
-const fetchLocalProfiles = async ({
-  sponsorName,
-}: {
-  sponsorName: string;
-}): Promise<LocalProfile[]> => {
-  const matchedSuperteam =
-    Superteams.find(
-      (team) => team.name.toLowerCase() === sponsorName.toLowerCase(),
-    ) ||
-    unofficialSuperteams.find(
-      (team) => team.name.toLowerCase() === sponsorName.toLowerCase(),
-    );
-
-  const matchedSuperteamRegion = matchedSuperteam?.region;
-  const matchedSuperteamCountries = matchedSuperteam?.country;
-
-  const { data } = await api.get(
-    `/api/sponsor-dashboard/local-talent/?superteamRegion=${matchedSuperteamRegion}&superteamCountries=${matchedSuperteamCountries}`,
-  );
+const fetchLocalProfiles = async (): Promise<LocalProfile[]> => {
+  const { data } = await api.get(`/api/sponsor-dashboard/local-talent/`);
   return data;
 };
 
-export const localProfilesQuery = (sponsorName: string) =>
+export const localProfilesQuery = (enabled = true) =>
   queryOptions({
-    queryKey: ['localProfiles', sponsorName],
-    queryFn: () => fetchLocalProfiles({ sponsorName }),
-    enabled: !!sponsorName,
+    queryKey: ['localProfiles'],
+    queryFn: () => fetchLocalProfiles(),
+    enabled,
     retry: false,
   });

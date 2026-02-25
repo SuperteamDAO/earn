@@ -1,13 +1,18 @@
+import type { ChapterRegionData } from '@/interface/chapter';
+
 import {
   filterRegionCountry,
   getCombinedRegion,
   getParentRegions,
 } from '@/features/listings/utils/region';
 
-export function getUserRegion(userLocation?: string | null): string[] | null {
+export function getUserRegion(
+  userLocation?: string | null,
+  chapters: ChapterRegionData[] = [],
+): string[] | null {
   if (!userLocation) return null;
 
-  const matchedRegion = getCombinedRegion(userLocation, true);
+  const matchedRegion = getCombinedRegion(userLocation, true, chapters);
 
   if (matchedRegion?.name) {
     return [

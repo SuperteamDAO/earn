@@ -1,4 +1,4 @@
-import { useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import debounce from 'lodash.debounce';
 import { ArrowRight, Search } from 'lucide-react';
 import Link from 'next/link';
@@ -12,6 +12,7 @@ import { Input } from '@/components/ui/input';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 
+import { chaptersQuery } from '@/features/chapters/queries/chapters';
 import { GrantsCard } from '@/features/grants/components/GrantsCard';
 import { ListingCard } from '@/features/listings/components/ListingCard';
 
@@ -32,11 +33,12 @@ export function SearchModal({ isOpen, onClose }: Props) {
   const queryClient = useQueryClient();
 
   const { user } = useUser();
+  const { data: chapters = [] } = useQuery(chaptersQuery);
 
   const userRegion = useMemo(() => {
     if (!user) return null;
-    return getUserRegion(user.location);
-  }, [user]);
+    return getUserRegion(user.location, chapters);
+  }, [chapters, user]);
 
   const searchParams = useSearchParams();
 
