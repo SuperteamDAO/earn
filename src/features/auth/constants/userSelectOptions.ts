@@ -30,7 +30,7 @@ export const userSelectOptions: UserSelect = {
   twitter: true,
   website: true,
   workPrefernce: true,
-  stLead: true,
+  peopleId: true,
   isBlocked: true,
   role: true,
   createdAt: true,
@@ -39,7 +39,6 @@ export const userSelectOptions: UserSelect = {
   referredById: true,
   isPro: true,
   isAgent: true,
-  superteamLevel: true,
 
   currentSponsor: {
     select: {
@@ -49,8 +48,36 @@ export const userSelectOptions: UserSelect = {
       isVerified: true,
       entityName: true,
       slug: true,
-      st: true,
+      chapter: {
+        select: {
+          id: true,
+          region: true,
+          displayValue: true,
+          code: true,
+          countries: true,
+          icons: true,
+        },
+      },
       verificationInfo: true,
+    },
+  },
+  people: {
+    select: {
+      id: true,
+      chapterId: true,
+      type: true,
+      chapter: {
+        select: {
+          id: true,
+          name: true,
+          region: true,
+          displayValue: true,
+          code: true,
+          countries: true,
+          icons: true,
+          sponsorId: true,
+        },
+      },
     },
   },
   UserSponsors: {

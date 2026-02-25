@@ -12,45 +12,54 @@ import { type NextApiRequestWithSponsor } from '@/features/auth/types';
 import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
 
 async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
-  const params = req.query;
   const userId = req.userId;
-
-  logger.debug(`Query params: ${safeStringify(params)}`);
-
-  const superteamRegion = params.superteamRegion as string;
-  const superteamCountriesParam = params.superteamCountries as
-    | string
-    | string[];
-
-  let superteamCountries: string[];
-  if (typeof superteamCountriesParam === 'string') {
-    superteamCountries = superteamCountriesParam.includes(',')
-      ? superteamCountriesParam.split(',').map((c) => c.trim())
-      : [superteamCountriesParam];
-  } else if (Array.isArray(superteamCountriesParam)) {
-    superteamCountries = superteamCountriesParam;
-  } else {
-    superteamCountries = [];
-  }
-
-  if (!superteamRegion || !superteamCountries.length) {
-    return res.status(400).json({ error: 'Missing required parameters' });
-  }
 
   try {
     const requestingUser = await prisma.user.findUnique({
       where: { id: userId as string },
-      select: { stLead: true },
+      select: {
+        role: true,
+        people: {
+          select: {
+            chapterId: true,
+            type: true,
+          },
+        },
+        currentSponsor: {
+          select: {
+            chapter: {
+              select: {
+                id: true,
+                region: true,
+                countries: true,
+              },
+            },
+          },
+        },
+      },
     });
 
-    const leadRegion = requestingUser?.stLead;
+    const sponsorChapter = requestingUser?.currentSponsor?.chapter;
+    if (!sponsorChapter) {
+      return res.status(400).json({ error: 'Sponsor chapter not configured' });
+    }
 
-    if (
-      leadRegion?.toLowerCase() !== superteamRegion.toLowerCase() &&
-      leadRegion !== 'MAHADEV'
-    ) {
+    const isCoreMember = requestingUser?.people?.type?.toUpperCase() === 'CORE';
+    const isAuthorizedCoreForChapter =
+      isCoreMember && requestingUser?.people?.chapterId === sponsorChapter.id;
+    if (requestingUser?.role !== 'GOD' && !isAuthorizedCoreForChapter) {
       return res.status(403).json({ error: 'Unauthorized' });
     }
+
+    const countriesFromChapter = Array.isArray(sponsorChapter.countries)
+      ? sponsorChapter.countries.filter(
+          (country): country is string => typeof country === 'string',
+        )
+      : [];
+    const superteamCountries = countriesFromChapter.length
+      ? countriesFromChapter
+      : [sponsorChapter.region];
+    const superteamRegion = sponsorChapter.region;
 
     logger.debug('Fetching user details with optimized query');
 

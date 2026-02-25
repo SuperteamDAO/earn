@@ -39,6 +39,7 @@ import type { PoW } from '@/interface/pow';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { api } from '@/lib/api';
+import { prisma } from '@/prisma';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 
@@ -60,14 +61,24 @@ const interestDropdown: Option[] = IndustryList.map((i) => ({
   value: i,
   label: i,
 }));
-const communityDropdown: Option[] = CommunityList.map((i) => ({
-  value: i,
-  label: i,
-}));
 
-export default function EditProfilePage({ slug }: { slug: string }) {
+interface EditProfilePageProps {
+  slug: string;
+  chapterNames: string[];
+}
+
+export default function EditProfilePage({
+  slug,
+  chapterNames,
+}: EditProfilePageProps) {
   const { user, refetchUser } = useUser();
   const { authenticated, ready } = usePrivy();
+  const communityDropdown: Option[] = [...chapterNames, ...CommunityList].map(
+    (name) => ({
+      value: name,
+      label: name,
+    }),
+  );
 
   const form = useForm<ProfileFormData>({
     resolver: zodResolver(profileSchema),
@@ -747,7 +758,19 @@ export default function EditProfilePage({ slug }: { slug: string }) {
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { slug } = context.query;
+  const chapters = await prisma.chapter.findMany({
+    select: {
+      name: true,
+    },
+    orderBy: {
+      name: 'asc',
+    },
+  });
+
   return {
-    props: { slug },
+    props: {
+      slug,
+      chapterNames: chapters.map((chapter) => chapter.name),
+    },
   };
 };

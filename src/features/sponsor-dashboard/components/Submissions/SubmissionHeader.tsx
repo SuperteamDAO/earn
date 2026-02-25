@@ -197,8 +197,9 @@ export const SubmissionHeader = ({
   };
 
   const pastDeadline = isDeadlineOver(bounty?.deadline);
-  const canStLeadEditInReview = Boolean(
-    user?.stLead &&
+  const isCoreMember = user?.people?.type?.toUpperCase() === 'CORE';
+  const canCoreMemberEditInReview = Boolean(
+    isCoreMember &&
       bounty?.isPublished &&
       !bounty?.isWinnersAnnounced &&
       pastDeadline &&
@@ -301,7 +302,7 @@ export const SubmissionHeader = ({
                 (bounty?.isPublished &&
                   !pastDeadline &&
                   bounty.type !== 'grant') ||
-                canStLeadEditInReview
+                canCoreMemberEditInReview
               ) &&
                 !isHackathonPage &&
                 getEditText() && (

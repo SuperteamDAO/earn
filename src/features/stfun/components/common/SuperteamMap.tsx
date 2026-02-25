@@ -2,15 +2,17 @@
 
 import lookup from 'country-code-lookup';
 import * as d3 from 'd3';
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 
-import { Superteams } from '@/constants/Superteam';
+import type { ChapterRegionData } from '@/interface/chapter';
 
 // Map from superteam code to ISO3 codes (for countries like Balkan that have multiple)
-function getSuperteamCodeToIso3Map(): Map<string, string[]> {
+function getSuperteamCodeToIso3Map(
+  chapters: ChapterRegionData[],
+): Map<string, string[]> {
   const codeMap = new Map<string, string[]>();
 
-  for (const st of Superteams) {
+  for (const st of chapters) {
     const iso3Codes: string[] = [];
 
     if (st.code === 'BALKAN') {
@@ -39,9 +41,11 @@ function getSuperteamCodeToIso3Map(): Map<string, string[]> {
 }
 
 // Reverse map: ISO3 code to superteam code
-function getIso3ToSuperteamCodeMap(): Map<string, string> {
+function getIso3ToSuperteamCodeMap(
+  chapters: ChapterRegionData[],
+): Map<string, string> {
   const reverseMap = new Map<string, string>();
-  const codeMap = getSuperteamCodeToIso3Map();
+  const codeMap = getSuperteamCodeToIso3Map(chapters);
 
   for (const [superteamCode, iso3Codes] of codeMap) {
     for (const iso3 of iso3Codes) {
@@ -52,8 +56,8 @@ function getIso3ToSuperteamCodeMap(): Map<string, string> {
   return reverseMap;
 }
 
-function getSuperteamAlpha3Codes(): string[] {
-  const codeMap = getSuperteamCodeToIso3Map();
+function getSuperteamAlpha3Codes(chapters: ChapterRegionData[]): string[] {
+  const codeMap = getSuperteamCodeToIso3Map(chapters);
   const allCodes: string[] = [];
 
   for (const codes of codeMap.values()) {
@@ -70,26 +74,26 @@ const COUNTRY_MARKER_OVERRIDES = new Map<string, readonly [number, number]>([
 ]);
 
 interface SuperteamMapProps {
+  chapters: ChapterRegionData[];
   hoveredSuperteam: string | null;
   onHoverChange: (code: string | null) => void;
 }
 
 export default function SuperteamMap({
+  chapters,
   hoveredSuperteam,
   onHoverChange,
 }: SuperteamMapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const svgRef = useRef<SVGSVGElement | null>(null);
-  const superteamCodeMapRef = useRef<Map<string, string[]> | null>(null);
-  const iso3ToSuperteamMapRef = useRef<Map<string, string> | null>(null);
-
-  // Initialize maps once
-  if (!superteamCodeMapRef.current) {
-    superteamCodeMapRef.current = getSuperteamCodeToIso3Map();
-  }
-  if (!iso3ToSuperteamMapRef.current) {
-    iso3ToSuperteamMapRef.current = getIso3ToSuperteamCodeMap();
-  }
+  const superteamCodeMap = useMemo(
+    () => getSuperteamCodeToIso3Map(chapters),
+    [chapters],
+  );
+  const iso3ToSuperteamMap = useMemo(
+    () => getIso3ToSuperteamCodeMap(chapters),
+    [chapters],
+  );
 
   const handleCountryHover = useCallback(
     (iso3Code: string | null) => {
@@ -98,30 +102,33 @@ export default function SuperteamMap({
         return;
       }
 
-      const superteamCode = iso3ToSuperteamMapRef.current?.get(iso3Code);
+      const superteamCode = iso3ToSuperteamMap.get(iso3Code);
       if (superteamCode) {
         onHoverChange(superteamCode);
       }
     },
-    [onHoverChange],
+    [iso3ToSuperteamMap, onHoverChange],
   );
 
-  const handleCountryClick = useCallback((iso3Code: string) => {
-    const superteamCode = iso3ToSuperteamMapRef.current?.get(iso3Code);
-    if (!superteamCode) return;
+  const handleCountryClick = useCallback(
+    (iso3Code: string) => {
+      const superteamCode = iso3ToSuperteamMap.get(iso3Code);
+      if (!superteamCode) return;
 
-    const superteam = Superteams.find((st) => st.code === superteamCode);
-    if (superteam?.link) {
-      window.open(superteam.link, '_blank', 'noopener,noreferrer');
-    }
-  }, []);
+      const superteam = chapters.find((st) => st.code === superteamCode);
+      if (superteam?.link) {
+        window.open(superteam.link, '_blank', 'noopener,noreferrer');
+      }
+    },
+    [chapters, iso3ToSuperteamMap],
+  );
 
   // Effect to update map colors when hoveredSuperteam changes
   useEffect(() => {
-    if (!svgRef.current || !superteamCodeMapRef.current) return;
+    if (!svgRef.current) return;
 
     const svg = d3.select(svgRef.current);
-    const superteamCodes = getSuperteamAlpha3Codes();
+    const superteamCodes = getSuperteamAlpha3Codes(chapters);
 
     const defaultColor = '#1f1f1f';
     const highlightColor = '#5522DF';
@@ -130,7 +137,7 @@ export default function SuperteamMap({
 
     // Get the ISO3 codes for the hovered superteam
     const hoveredIso3Codes = hoveredSuperteam
-      ? superteamCodeMapRef.current.get(hoveredSuperteam) || []
+      ? superteamCodeMap.get(hoveredSuperteam) || []
       : [];
 
     svg.selectAll('.countries path').each(function (d: any) {
@@ -191,12 +198,12 @@ export default function SuperteamMap({
           .attr('stroke-width', 0.5);
       }
     });
-  }, [hoveredSuperteam]);
+  }, [chapters, hoveredSuperteam, superteamCodeMap]);
 
   useEffect(() => {
     if (!containerRef.current) return;
 
-    const superteamCodes = getSuperteamAlpha3Codes();
+    const superteamCodes = getSuperteamAlpha3Codes(chapters);
 
     const defaultColor = '#1f1f1f';
     const defaultStroke = '#2a2a2a';
@@ -435,7 +442,7 @@ export default function SuperteamMap({
         window.removeEventListener('resize', resizeHandler);
       }
     };
-  }, [handleCountryHover, handleCountryClick]);
+  }, [chapters, handleCountryHover, handleCountryClick]);
 
   return (
     <div

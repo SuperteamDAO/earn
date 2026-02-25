@@ -20,6 +20,7 @@ import { cn } from '@/utils/cn';
 
 import { isUserEligibleForST } from '@/features/grants/utils/stGrant';
 import { userStatsQuery } from '@/features/home/queries/user-stats';
+import { isEligiblePeopleType } from '@/features/membership/utils/peopleEligibility';
 import { ProBadge } from '@/features/pro/components/ProBadge';
 import { ProIntro } from '@/features/pro/components/ProIntro';
 
@@ -222,9 +223,9 @@ export function DescriptionUI({
     const randomText =
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit. <br/> Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.';
 
+    const hasEligibleMembership = isEligiblePeopleType(user?.people?.type);
     const isUserEligibleForPro =
-      (stats && (stats.totalWinnings ?? 0) >= 1000) ||
-      user?.superteamLevel?.includes('Superteam');
+      (stats && (stats.totalWinnings ?? 0) >= 1000) || hasEligibleMembership;
 
     return (
       <div className="relative h-180 w-full overflow-hidden border-b-2 border-slate-200 md:border-0">

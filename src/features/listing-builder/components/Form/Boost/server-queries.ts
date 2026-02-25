@@ -6,6 +6,7 @@ import {
   skillSubSkillMap,
 } from '@/interface/skills';
 import { prisma } from '@/prisma';
+import { getChapterRegions } from '@/utils/chapterRegion';
 
 import { buildFeaturedAvailabilityWhere } from '@/features/listing-builder/utils/featured-availability';
 import { getCombinedRegion } from '@/features/listings/utils/region';
@@ -57,7 +58,12 @@ export async function getEmailEstimate(
     return 0;
   }
 
-  const regionObject = getCombinedRegion(region || 'GLOBAL');
+  const chapterRegions = await getChapterRegions();
+  const regionObject = getCombinedRegion(
+    region || 'GLOBAL',
+    false,
+    chapterRegions,
+  );
   const countries = regionObject?.country || [];
 
   const count = await prisma.user.count({

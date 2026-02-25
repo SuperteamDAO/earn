@@ -22,6 +22,7 @@ import { cn } from '@/utils/cn';
 
 import { HACKATHONS } from '@/features/hackathon/constants/hackathons';
 import { userStatsQuery } from '@/features/home/queries/user-stats';
+import { isEligiblePeopleType } from '@/features/membership/utils/peopleEligibility';
 import { ProBadge } from '@/features/pro/components/ProBadge';
 import { ProIntro } from '@/features/pro/components/ProIntro';
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
@@ -74,6 +75,7 @@ export const MobileDrawer = ({
   const { isOpen, onClose, onOpen } = useDisclosure();
 
   const { user } = useUser();
+  const hasEligibleMembership = isEligiblePeopleType(user?.people?.type);
 
   const isLoggedIn = !!user && authenticated && ready;
 
@@ -82,7 +84,7 @@ export const MobileDrawer = ({
     user?.isTalentFilled &&
     !isStatsLoading &&
     ((stats?.totalWinnings && stats.totalWinnings >= 1000) ||
-      user?.superteamLevel?.includes('Superteam'))
+      hasEligibleMembership)
   );
 
   return (

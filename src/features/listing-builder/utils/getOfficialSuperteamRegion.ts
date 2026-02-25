@@ -1,12 +1,11 @@
-import { Superteams } from '@/constants/Superteam';
 import { type SponsorType } from '@/interface/sponsor';
 
-type SponsorRegionInput = Pick<SponsorType, 'name' | 'slug'> | null | undefined;
+type SponsorRegionInput =
+  | Pick<SponsorType, 'name' | 'slug' | 'chapter'>
+  | null
+  | undefined;
 
 const normalize = (value?: string | null) => value?.trim().toLowerCase() || '';
-
-const removeSuperteamPrefix = (value: string) =>
-  value.replace(/^superteam[\s-]*/i, '').trim();
 
 export const getOfficialSuperteamRegion = (
   sponsor: SponsorRegionInput,
@@ -15,26 +14,17 @@ export const getOfficialSuperteamRegion = (
     return null;
   }
 
+  if (sponsor.chapter?.region) {
+    return sponsor.chapter.region;
+  }
+
   const sponsorName = normalize(sponsor.name);
   const sponsorSlug = normalize(sponsor.slug);
-  const sponsorNameNoPrefix = removeSuperteamPrefix(sponsorName);
-  const sponsorSlugNoPrefix = removeSuperteamPrefix(sponsorSlug);
+  const normalized = sponsorName || sponsorSlug;
+  if (!normalized) return null;
 
-  const matchedSuperteam = Superteams.find((team) => {
-    const teamName = normalize(team.name);
-    const teamSlug = normalize(team.slug);
-    const teamRegion = normalize(team.region);
-    const teamDisplayValue = normalize(team.displayValue);
+  const regionFromName = normalized.replace(/^superteam[\s-]*/i, '').trim();
+  if (!regionFromName) return null;
 
-    return (
-      sponsorName === teamName ||
-      sponsorSlug === teamSlug ||
-      sponsorSlugNoPrefix === teamSlug ||
-      sponsorNameNoPrefix === teamSlug ||
-      sponsorNameNoPrefix === teamRegion ||
-      sponsorNameNoPrefix === teamDisplayValue
-    );
-  });
-
-  return matchedSuperteam?.region || null;
+  return regionFromName.charAt(0).toUpperCase() + regionFromName.slice(1);
 };

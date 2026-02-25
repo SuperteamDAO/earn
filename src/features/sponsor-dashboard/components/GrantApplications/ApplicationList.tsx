@@ -7,7 +7,6 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { StatusPill } from '@/components/ui/status-pill';
 import { Tooltip } from '@/components/ui/tooltip';
-import { Superteams } from '@/constants/Superteam';
 import {
   type GrantApplicationStatus,
   type SubmissionLabels,
@@ -124,13 +123,7 @@ export const ApplicationList = ({
             color: labelColor,
             border: labelBorder,
           } = colorMap[applicationLabel];
-          const isSuperteamMember =
-            application?.user.superteamLevel?.includes('Superteam') || false;
-          const superteam = isSuperteamMember
-            ? Superteams.find(
-                (s) => s.name === application?.user.superteamLevel,
-              )
-            : undefined;
+          const chapter = application?.user.people?.chapter;
           return (
             <div
               key={application?.id}
@@ -167,12 +160,10 @@ export const ApplicationList = ({
                     <p className="overflow-hidden text-xs font-medium text-ellipsis whitespace-nowrap text-slate-500">
                       {`${application?.user?.firstName} ${application?.user?.lastName}`}
                     </p>
-                    {superteam && (
-                      <Tooltip
-                        content={application?.user?.superteamLevel + ' Member'}
-                      >
+                    {chapter?.icons && (
+                      <Tooltip content={`${chapter.name} Member`}>
                         <img
-                          src={superteam.icons}
+                          src={chapter.icons}
                           alt="Superteam Member"
                           className="size-3 rounded-full"
                         />

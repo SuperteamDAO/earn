@@ -1,5 +1,3 @@
-import { Superteams } from '@/constants/Superteam';
-
 export const IndustryList = [
   'DAOs',
   'DeFi',
@@ -35,10 +33,7 @@ export const workType = [
 
 export const USERNAME_PATTERN = /^[a-zA-Z0-9_-]+$/;
 
-const superteams = Superteams.map((team) => team.name);
-
 export const CommunityList = [
-  ...superteams,
   'SuperWomenDao',
   'LamportDAO',
   "Grape / Dean's List",

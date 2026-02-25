@@ -1,3 +1,4 @@
+import { useQuery } from '@tanstack/react-query';
 import { ExternalLink } from 'lucide-react';
 import Link from 'next/link';
 import posthog from 'posthog-js';
@@ -5,6 +6,8 @@ import posthog from 'posthog-js';
 import { type ParentSkills } from '@/interface/skills';
 import { dayjs } from '@/utils/dayjs';
 import { getURLSanitized } from '@/utils/getURLSanitized';
+
+import { chaptersQuery } from '@/features/chapters/queries/chapters';
 
 import type { ListingHackathon } from '../../types';
 import { getRegionSlug } from '../../utils/region';
@@ -32,6 +35,8 @@ export function ExtraInfoSection({
   hideWinnerAnnouncement = false,
   isFndnPaying = false,
 }: ExtraInfoSectionProps) {
+  const { data: chapters = [] } = useQuery(chaptersQuery);
+
   return (
     <div className="flex w-full flex-col gap-8 pt-2 md:w-[23rem]">
       {region && region !== 'Global' && (
@@ -42,7 +47,7 @@ export function ExtraInfoSection({
           <p className="h-full text-slate-500">
             This {isGrant ? 'grant' : 'listing'} is only open for people in{' '}
             <Link
-              href={`/earn/regions/${getRegionSlug(region)}`}
+              href={`/earn/regions/${getRegionSlug(region, chapters)}`}
               className="font-semibold text-slate-500 hover:text-slate-700 hover:underline"
             >
               {region}

@@ -1,9 +1,11 @@
 import type { NextPageContext } from 'next';
 
 import { JsonLd } from '@/components/shared/JsonLd';
-import { type Superteam, Superteams } from '@/constants/Superteam';
+import { countries } from '@/constants/country';
+import { type ChapterDisplay } from '@/interface/chapter';
 import { Home } from '@/layouts/Home';
 import { Meta } from '@/layouts/Meta';
+import { prisma } from '@/prisma';
 import {
   generateBreadcrumbListSchema,
   generateRegionalOrganizationSchema,
@@ -11,15 +13,28 @@ import {
 import { getURL } from '@/utils/validUrl';
 
 import { ListingsSection } from '@/features/listings/components/ListingsSection';
-import { findCountryBySlug } from '@/features/listings/utils/region';
 
 interface AllRegionsPageProps {
   readonly slug: string;
-  readonly st?: Superteam;
+  readonly st?: ChapterDisplay;
   readonly countryData?: {
     readonly name: string;
     readonly code: string;
   };
+}
+
+function slugify(input: string): string {
+  return input
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+function parseCountries(rawCountries: unknown): string[] {
+  if (!Array.isArray(rawCountries)) return [];
+  return rawCountries.filter(
+    (country): country is string => typeof country === 'string',
+  );
 }
 
 export default function AllRegionsPage({
@@ -113,7 +128,38 @@ export async function getServerSideProps(context: NextPageContext) {
   const { slug } = context.query;
   const slugString = (slug as string)?.toLowerCase() || '';
 
-  const st = Superteams.find((team) => team.slug?.toLowerCase() === slugString);
+  const chapter = await prisma.chapter.findUnique({
+    where: { slug: slugString },
+    select: {
+      name: true,
+      icons: true,
+      banner: true,
+      region: true,
+      displayValue: true,
+      countries: true,
+      code: true,
+      hello: true,
+      nationality: true,
+      slug: true,
+      link: true,
+    },
+  });
+
+  const st = chapter
+    ? ({
+        name: chapter.name,
+        icons: chapter.icons || '',
+        banner: chapter.banner || '',
+        region: chapter.region,
+        displayValue: chapter.displayValue || chapter.region,
+        country: parseCountries(chapter.countries),
+        code: chapter.code || '',
+        hello: chapter.hello || '',
+        nationality: chapter.nationality || '',
+        slug: chapter.slug,
+        link: chapter.link || '',
+      } satisfies ChapterDisplay)
+    : null;
 
   if (st) {
     return {
@@ -121,7 +167,7 @@ export async function getServerSideProps(context: NextPageContext) {
     };
   }
 
-  const country = findCountryBySlug(slugString);
+  const country = countries.find((item) => slugify(item.name) === slugString);
 
   if (country) {
     return {

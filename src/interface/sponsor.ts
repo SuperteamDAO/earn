@@ -10,7 +10,14 @@ interface SponsorType {
   entityName?: string;
   isVerified?: boolean;
   isCaution?: boolean;
-  st?: boolean;
+  chapter?: {
+    id: string;
+    region?: string;
+    displayValue?: string | null;
+    code?: string | null;
+    countries?: unknown;
+    icons?: string | null;
+  } | null;
   verificationInfo?: {
     superteamLead: string;
     fundingSource: string;

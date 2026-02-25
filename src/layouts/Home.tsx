@@ -4,7 +4,7 @@ import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import { type ReactNode, useMemo } from 'react';
 
-import { type Superteam } from '@/constants/Superteam';
+import { type ChapterDisplay } from '@/interface/chapter';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { cn } from '@/utils/cn';
@@ -44,7 +44,7 @@ interface HomeProps {
     | 'category'
     | 'category-all'
     | 'opportunity';
-  readonly st?: Superteam;
+  readonly st?: ChapterDisplay;
   readonly countryData?: CountryData;
   readonly skillData?: SkillData;
   readonly categoryData?: CategoryData;

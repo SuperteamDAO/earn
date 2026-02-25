@@ -1,4 +1,5 @@
 'use client';
+import { useQuery } from '@tanstack/react-query';
 import { ChevronsUpDown } from 'lucide-react';
 import React, { type JSX, useMemo } from 'react';
 
@@ -18,9 +19,10 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { ASSET_URL } from '@/constants/ASSET_URL';
-import { Superteams, unofficialSuperteams } from '@/constants/Superteam';
 import { useBreakpoint } from '@/hooks/use-breakpoint';
 import { cn } from '@/utils/cn';
+
+import { chaptersQuery } from '@/features/chapters/queries/chapters';
 
 interface SuperteamOption {
   value: string;
@@ -96,18 +98,18 @@ export function SuperteamCombobox({
   className,
   classNames,
 }: SuperteamComboboxProps): JSX.Element {
+  const { data: chapters = [] } = useQuery(chaptersQuery);
+
   const options: SuperteamOption[] = useMemo(() => {
-    const baseOptions = [...Superteams, ...unofficialSuperteams].map(
-      (superteam) => ({
-        value: superteam.name ?? '-',
-        label: superteam.name,
-        code: superteam.code,
-        icon: superteam.icons,
-      }),
-    );
+    const baseOptions = chapters.map((chapter) => ({
+      value: chapter.name,
+      label: chapter.name,
+      code: chapter.code,
+      icon: chapter.icons || '',
+    }));
 
     return baseOptions;
-  }, []);
+  }, [chapters]);
 
   const [open, setOpen] = React.useState(false);
 

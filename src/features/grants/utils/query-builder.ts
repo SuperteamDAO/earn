@@ -1,20 +1,20 @@
 import type { z } from 'zod';
 
 import { countries } from '@/constants/country';
-import { Superteams } from '@/constants/Superteam';
 import { type JsonValue } from '@/prisma/internal/prismaNamespace';
 import { type GrantsWhereInput } from '@/prisma/models';
+import {
+  findChapterByRegionInput,
+  getRegionsForChapterPage,
+  getRegionsForCountryPageUsingChapters,
+  getRegionsForMultiCountryRegionPageUsingChapters,
+  getRegionsForUserLocationUsingChapters,
+} from '@/utils/chapterRegion';
 
 import {
   type GrantCategorySchema,
   type GrantQueryParamsSchema,
 } from '@/features/grants/constants/schema';
-import {
-  getRegionsForCountryPage,
-  getRegionsForMultiCountryRegionPage,
-  getRegionsForSuperteamPage,
-  getRegionsForUserLocation,
-} from '@/features/listings/utils/region';
 import { findSkillBySlug } from '@/features/listings/utils/skill';
 
 type BuildGrantsQueryArgs = z.infer<typeof GrantQueryParamsSchema>;
@@ -63,8 +63,10 @@ function getSkillFilter(
   }
 }
 
-function getUserRegionFilter(userLocation: string | null): string[] {
-  return getRegionsForUserLocation(userLocation);
+async function getUserRegionFilter(
+  userLocation: string | null,
+): Promise<string[]> {
+  return getRegionsForUserLocationUsingChapters(userLocation);
 }
 
 export async function buildGrantsQuery(
@@ -89,18 +91,16 @@ export async function buildGrantsQuery(
 
   if (user?.isTalentFilled && (context === 'all' || context === 'home')) {
     where.region = {
-      in: getUserRegionFilter(user.location),
+      in: await getUserRegionFilter(user.location),
     };
   }
 
   if (context === 'region' && region) {
     // Check if this is a superteam region first
-    const st = Superteams.find(
-      (team) => team.region.toLowerCase() === region.toLowerCase(),
-    );
+    const chapter = await findChapterByRegionInput(region);
 
-    if (st) {
-      const regionList = getRegionsForSuperteamPage(st.region);
+    if (chapter) {
+      const regionList = await getRegionsForChapterPage(chapter.region);
       where.region = {
         in: regionList,
       };
@@ -116,13 +116,18 @@ export async function buildGrantsQuery(
           Array.isArray(country.regions)
         ) {
           // Multi-country region page (EU, GCC, etc.)
-          const regionList = getRegionsForMultiCountryRegionPage(country.name);
+          const regionList =
+            await getRegionsForMultiCountryRegionPageUsingChapters(
+              country.name,
+            );
           where.region = {
             in: regionList,
           };
         } else {
           // Regular country page
-          const regionList = getRegionsForCountryPage(country.name);
+          const regionList = await getRegionsForCountryPageUsingChapters(
+            country.name,
+          );
           where.region = {
             in: regionList,
           };

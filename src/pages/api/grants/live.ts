@@ -2,6 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { getChapterRegions } from '@/utils/chapterRegion';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { getPrivyToken } from '@/features/auth/utils/getPrivyToken';
@@ -29,13 +30,14 @@ export default async function grants(
     const privyDid = await getPrivyToken(req);
     let userRegion: string[] | null | undefined = null;
     if (privyDid) {
+      const chapterRegions = await getChapterRegions();
       const user = await prisma.user.findFirst({
         where: { privyDid },
         select: { location: true },
       });
 
       const matchedRegion = user?.location
-        ? getCombinedRegion(user?.location, true)
+        ? getCombinedRegion(user?.location, true, chapterRegions)
         : undefined;
 
       if (matchedRegion?.name) {

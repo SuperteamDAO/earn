@@ -1,10 +1,10 @@
 import Image from 'next/image';
 
 import { UserFlag } from '@/components/shared/UserFlag';
-import { type Region, type Superteam } from '@/constants/Superteam';
+import { type ChapterDisplay } from '@/interface/chapter';
 
 const customBannerPosition: Partial<
-  Record<Region, Partial<React.CSSProperties>>
+  Record<string, Partial<React.CSSProperties>>
 > = {
   'South Korea': {
     objectPosition: 'bottom',
@@ -32,7 +32,7 @@ const customBannerPosition: Partial<
   },
 };
 
-export function RegionBanner({ st }: { st: Superteam }) {
+export function RegionBanner({ st }: { st: ChapterDisplay }) {
   return (
     <div className="relative flex h-72 w-full flex-col items-center">
       <Image

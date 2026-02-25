@@ -2,7 +2,6 @@ import axios from 'axios';
 import lookup from 'country-code-lookup';
 import { z } from 'zod';
 
-import { Superteams } from '@/constants/Superteam';
 import logger from '@/lib/logger';
 import { type GrantApplicationModel } from '@/prisma/models/GrantApplication';
 import { type GrantTrancheModel } from '@/prisma/models/GrantTranche';
@@ -12,6 +11,7 @@ import {
   airtableUrl,
   fetchAirtableRecordId,
 } from '@/utils/airtable';
+import { getRegionNameForLocation } from '@/utils/chapterRegion';
 import { safeStringify } from '@/utils/safeStringify';
 
 const AirtableInputSchema = z.object({
@@ -246,14 +246,9 @@ export async function addPaymentInfoToAirtable(
     logger.info(
       `Determining region and fetching Airtable Region ID for Tranche ID: ${validatedTrancheId}`,
     );
-    const superteam = Superteams.find(
-      (s) =>
-        s.country.some(
-          (c) => c.toLowerCase() === application.user.location?.toLowerCase(),
-        ) || s.region === application.user.location,
+    const regionName = await getRegionNameForLocation(
+      application.user.location,
     );
-
-    const regionName = superteam ? superteam.region : 'Global';
 
     logger.info(
       `Determined region name: '${regionName}' based on user location: '${application.user.location ?? 'N/A'}' for Tranche ID: ${validatedTrancheId}`,

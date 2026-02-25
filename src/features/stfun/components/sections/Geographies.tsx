@@ -3,11 +3,15 @@
 import { useState } from 'react';
 
 import { UserFlag } from '@/components/shared/UserFlag';
-import { Superteams } from '@/constants/Superteam';
+import type { ChapterRegionData } from '@/interface/chapter';
 
 import SuperteamMap from '../common/SuperteamMap';
 
-export default function Geographies() {
+interface GeographiesProps {
+  chapters: ChapterRegionData[];
+}
+
+export default function Geographies({ chapters }: GeographiesProps) {
   const [hoveredSuperteam, setHoveredSuperteam] = useState<string | null>(null);
 
   return (
@@ -34,7 +38,7 @@ export default function Geographies() {
             aria-label="Superteam regional chapters"
             className="flex flex-wrap justify-center gap-2.5 md:gap-3"
           >
-            {Superteams.map((superteam) => {
+            {chapters.map((superteam) => {
               const showFlag = !superteam.icons;
               const isHovered = hoveredSuperteam === superteam.code;
               const hasLink = Boolean(superteam.link && superteam.link.trim());
@@ -52,7 +56,7 @@ export default function Geographies() {
                       </div>
                     ) : (
                       <img
-                        src={superteam.icons}
+                        src={superteam.icons || undefined}
                         alt=""
                         aria-hidden="true"
                         className="h-full w-auto object-cover"
@@ -73,7 +77,7 @@ export default function Geographies() {
                 <li key={superteam.slug} className="contents">
                   {hasLink ? (
                     <a
-                      href={superteam.link}
+                      href={superteam.link || ''}
                       target="_blank"
                       rel="noopener noreferrer"
                       aria-label={`${superteam.name} - Solana community in ${superteam.country[0] || superteam.displayValue}`}
@@ -100,6 +104,7 @@ export default function Geographies() {
 
           <div className="-mx-2 w-[calc(100%+16px)] md:-mx-4 md:w-[calc(100%+32px)]">
             <SuperteamMap
+              chapters={chapters}
               hoveredSuperteam={hoveredSuperteam}
               onHoverChange={setHoveredSuperteam}
             />
@@ -113,18 +118,20 @@ export default function Geographies() {
             Superteam Locations - Global Web3 &amp; Solana Communities
           </h3>
           <ul className="list-disc space-y-1 pl-5">
-            {Superteams.filter((st) => st.link).map((st) => (
-              <li key={st.slug}>
-                <a
-                  href={st.link}
-                  className="text-blue-400 hover:underline"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  {st.name}
-                </a>
-              </li>
-            ))}
+            {chapters
+              .filter((st) => st.link)
+              .map((st) => (
+                <li key={st.slug}>
+                  <a
+                    href={st.link || ''}
+                    className="text-blue-400 hover:underline"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {st.name}
+                  </a>
+                </li>
+              ))}
           </ul>
         </div>
       </noscript>
