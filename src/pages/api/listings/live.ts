@@ -5,6 +5,7 @@ import { prisma } from '@/prisma';
 import { type EnumBountyTypeFilter } from '@/prisma/commonInputTypes';
 import { type BountyType } from '@/prisma/enums';
 import { type BountiesFindManyArgs } from '@/prisma/models/Bounties';
+import { getChapterRegions } from '@/utils/chapterRegion';
 
 import { getPrivyToken } from '@/features/auth/utils/getPrivyToken';
 import { listingSelect } from '@/features/listings/constants/schema';
@@ -33,12 +34,13 @@ export default async function listings(
   let userRegion;
   let userLocation;
   if (privyDid) {
+    const chapterRegions = await getChapterRegions();
     const user = await prisma.user.findFirst({
       where: { privyDid },
       select: { location: true },
     });
     userRegion = user?.location
-      ? getCombinedRegion(user?.location, true)
+      ? getCombinedRegion(user?.location, true, chapterRegions)
       : undefined;
     userLocation = user?.location;
   }

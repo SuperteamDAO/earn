@@ -1,3 +1,5 @@
+import { isEligiblePeopleType } from '@/features/membership/utils/peopleEligibility';
+
 import type { Grant } from '../types';
 
 export const LUMA_PREFIX = 'https://lu.ma/';
@@ -44,10 +46,17 @@ export const isSTGrant = (grant: Grant | null | undefined): boolean => {
 
 export const isUserEligibleForST = (
   user: {
-    superteamLevel?: string | null;
+    peopleId?: string | null;
+    people?: {
+      chapterId?: string | null;
+      type?: string | null;
+    } | null;
   } | null,
 ): boolean => {
-  return !!user?.superteamLevel?.includes('Superteam');
+  if (!user?.people || !isEligiblePeopleType(user.people.type)) {
+    return false;
+  }
+  return Boolean(user.peopleId || user.people.chapterId);
 };
 
 export const ST_GRANT_COPY = {

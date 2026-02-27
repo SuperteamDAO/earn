@@ -2,7 +2,6 @@ import axios from 'axios';
 import lookup from 'country-code-lookup';
 import { z } from 'zod';
 
-import { Superteams } from '@/constants/Superteam';
 import logger from '@/lib/logger';
 import {
   airtableConfig,
@@ -10,6 +9,7 @@ import {
   airtableUrl,
   fetchAirtableRecordId,
 } from '@/utils/airtable';
+import { getRegionNameForLocation } from '@/utils/chapterRegion';
 import { getRankLabels } from '@/utils/rank';
 import { safeStringify } from '@/utils/safeStringify';
 
@@ -226,14 +226,7 @@ export async function addPaymentInfoToAirtable(
     logger.info(
       `Determining region and fetching Airtable Region ID for Submission ID: ${validatedSubmissionId}`,
     );
-    const superteam = Superteams.find(
-      (s) =>
-        s.country.some(
-          (c) => c.toLowerCase() === submission.user.location?.toLowerCase(),
-        ) || s.region === submission.user.location,
-    );
-
-    const regionName = superteam ? superteam.region : 'Global';
+    const regionName = await getRegionNameForLocation(submission.user.location);
 
     logger.info(
       `Determined region name: '${regionName}' based on user location: '${submission.user.location ?? 'N/A'}' for Submission ID: ${validatedSubmissionId}`,

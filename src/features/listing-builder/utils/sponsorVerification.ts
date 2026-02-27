@@ -17,8 +17,8 @@ interface SponsorVerificationResult {
 const shouldVerifyHackathonListing = (
   type: BountyType,
   user: { role: string },
-  sponsor: { st: boolean },
-): boolean => type === 'hackathon' && user?.role !== 'GOD' && !sponsor.st;
+  sponsor: { chapter?: { id: string } | null },
+): boolean => type === 'hackathon' && user?.role !== 'GOD' && !sponsor.chapter;
 
 const shouldSkipVerification = (
   sponsor: { isVerified: boolean },
@@ -116,7 +116,11 @@ const checkOverdueListings = async (
 };
 
 interface SponsorVerificationProps {
-  sponsor: SponsorsModel;
+  sponsor: SponsorsModel & {
+    chapter?: {
+      id: string;
+    } | null;
+  };
   listing: ListingWithSponsor;
   user: UserModel;
   validatedListing: ListingFormData;

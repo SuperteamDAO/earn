@@ -4,7 +4,11 @@ import { type SponsorsModel } from '@/prisma/models/Sponsors';
 import { type ListingFormData } from '../types';
 
 interface IsFndnPayingCheckProps {
-  sponsor: SponsorsModel;
+  sponsor: SponsorsModel & {
+    chapter?: {
+      id: string;
+    } | null;
+  };
   validatedListing: ListingFormData;
 }
 export const isFndnPayingCheck = ({
@@ -13,10 +17,10 @@ export const isFndnPayingCheck = ({
 }: IsFndnPayingCheckProps) => {
   const { type, isFndnPaying: rawIsFndnPaying } = validatedListing;
   const isFndnPaying =
-    sponsor?.st && type !== 'project' ? rawIsFndnPaying : false;
+    sponsor?.chapter && type !== 'project' ? rawIsFndnPaying : false;
   logger.info('Is Foundation Paying', {
     isFndnPaying,
-    st: sponsor?.st,
+    hasChapter: !!sponsor?.chapter,
     type,
     rawIsFndnPaying,
   });

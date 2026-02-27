@@ -78,7 +78,11 @@ async function getHackathonListings(
             name: true,
             logo: true,
             isVerified: true,
-            st: true,
+            chapter: {
+              select: {
+                id: true,
+              },
+            },
           },
         },
         Hackathon: {

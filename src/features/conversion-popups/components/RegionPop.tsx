@@ -29,9 +29,9 @@ import {
   DrawerTitle,
 } from '@/components/ui/drawer';
 import { ASSET_URL } from '@/constants/ASSET_URL';
-import { type Superteam } from '@/constants/Superteam';
 import { useBreakpoint } from '@/hooks/use-breakpoint';
 import { useTimeout } from '@/hooks/use-timeout';
+import { type ChapterDisplay } from '@/interface/chapter';
 import { cn } from '@/utils/cn';
 
 import { userCountQuery } from '@/features/home/queries/user-count';
@@ -39,7 +39,7 @@ import { userCountQuery } from '@/features/home/queries/user-count';
 import { popupOpenAtom, popupsShowedAtom, popupTimeoutAtom } from '../atoms';
 import { GetStarted } from './GetStarted';
 
-export const RegionPop = ({ st }: { st: Superteam }) => {
+export const RegionPop = ({ st }: { st: ChapterDisplay }) => {
   const [popupsShowed, setPopupsShowed] = useAtom(popupsShowedAtom);
   const setPopupTimeout = useSetAtom(popupTimeoutAtom);
 
@@ -122,7 +122,7 @@ const Mobile = ({
 }: {
   open: boolean;
   setOpen: (e: boolean) => void;
-  st: Superteam;
+  st: ChapterDisplay;
   totalUsers: number | undefined;
 }) => {
   const [isLoginOpen, setIsLoginOpen] = useState(false);
@@ -161,7 +161,7 @@ const Desktop = ({
 }: {
   open: boolean;
   setOpen: (e: boolean) => void;
-  st: Superteam;
+  st: ChapterDisplay;
   totalUsers: number | undefined;
 }) => {
   const [isLoginOpen, setIsLoginOpen] = useState(false);
@@ -203,7 +203,7 @@ const People = ({
   st,
   totalUsers,
 }: {
-  st: Superteam;
+  st: ChapterDisplay;
   totalUsers: number | undefined;
 }) => {
   const people = useMemo(

@@ -3,6 +3,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { status as Status } from '@/prisma/enums';
+import { getChapterRegions } from '@/utils/chapterRegion';
 
 import { getPrivyToken } from '@/features/auth/utils/getPrivyToken';
 import {
@@ -65,13 +66,14 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
 
   const privyDid = await getPrivyToken(req);
   if (privyDid && !userRegion) {
+    const chapterRegions = await getChapterRegions();
     const user = await prisma.user.findFirst({
       where: { privyDid },
       select: { location: true },
     });
     if (user?.location) {
       const matchedRegion = user.location
-        ? getCombinedRegion(user.location, true)
+        ? getCombinedRegion(user.location, true, chapterRegions)
         : undefined;
       if (matchedRegion?.name) {
         userRegion = [

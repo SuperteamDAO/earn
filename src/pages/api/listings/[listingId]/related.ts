@@ -1,6 +1,5 @@
 import { type NextApiRequest, type NextApiResponse } from 'next';
 
-import { CombinedRegions } from '@/constants/Superteam';
 import {
   type ParentSkills,
   type Skills,
@@ -10,6 +9,7 @@ import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { type BountyType } from '@/prisma/enums';
 import { empty, join, raw, sql } from '@/prisma/internal/prismaNamespace';
+import { getRegionNameForLocation } from '@/utils/chapterRegion';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { getPrivyToken } from '@/features/auth/utils/getPrivyToken';
@@ -32,10 +32,7 @@ export default async function relatedListings(
         where: { privyDid },
         select: { location: true },
       });
-      const matchedRegion = CombinedRegions.find(
-        (region) => user?.location && region.country.includes(user?.location),
-      );
-      userRegion = matchedRegion?.region;
+      userRegion = await getRegionNameForLocation(user?.location);
     }
 
     const listing = await prisma.bounties.findUnique({

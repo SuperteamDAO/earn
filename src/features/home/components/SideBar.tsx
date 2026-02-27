@@ -15,6 +15,7 @@ import { useUser } from '@/store/user';
 import { recentEarnersQuery } from '@/features/listings/queries/recent-earners';
 import { yourBookmarksQuery } from '@/features/listings/queries/your-bookmarks';
 import { type Listing } from '@/features/listings/types';
+import { isEligiblePeopleType } from '@/features/membership/utils/peopleEligibility';
 import { ProIntro } from '@/features/pro/components/ProIntro';
 import { useProUpgradeFlow } from '@/features/pro/state/pro-upgrade-flow';
 
@@ -165,6 +166,7 @@ export const HomeSideBar = ({ type }: SideBarProps) => {
   const { data: bookmarks } = useQuery(yourBookmarksQuery({ take: 5 }));
 
   const { data: stats, isLoading: isStatsLoading } = useQuery(userStatsQuery);
+  const hasEligibleMembership = isEligiblePeopleType(user?.people?.type);
 
   const isSponsor = !!(ready && !isUserLoading && user?.currentSponsorId);
   const isFeed = type === 'feed';
@@ -179,7 +181,7 @@ export const HomeSideBar = ({ type }: SideBarProps) => {
     user?.isTalentFilled &&
     !isStatsLoading &&
     ((stats?.totalWinnings && stats.totalWinnings >= 1000) ||
-      user?.superteamLevel?.includes('Superteam'))
+      hasEligibleMembership)
   );
   const isSidebarFlowActive =
     flow.source === 'sidebar' && flow.status !== 'idle';

@@ -1,3 +1,4 @@
+import { useQuery } from '@tanstack/react-query';
 import { type GetServerSideProps } from 'next';
 import NProgress from 'nprogress';
 import { useEffect, useMemo, useState } from 'react';
@@ -10,6 +11,7 @@ import { Meta } from '@/layouts/Meta';
 import { useUser } from '@/store/user';
 import { generateWebSiteSchema } from '@/utils/json-ld';
 
+import { chaptersQuery } from '@/features/chapters/queries/chapters';
 import { DropdownFilter } from '@/features/search/components/DropdownFilter';
 import { PillsFilter } from '@/features/search/components/PillsFilter';
 import { QueryInput } from '@/features/search/components/QueryInput';
@@ -24,7 +26,11 @@ interface SearchProps {
 
 const SearchPage = ({ initialQuery = '' }: SearchProps) => {
   const { user } = useUser();
-  const userRegion = useMemo(() => getUserRegion(user?.location), [user]);
+  const { data: chapters = [] } = useQuery(chaptersQuery);
+  const userRegion = useMemo(
+    () => getUserRegion(user?.location, chapters),
+    [chapters, user],
+  );
   const [isQueryEmpty, setIsQueryEmpty] = useState(initialQuery.trim() === '');
 
   const {

@@ -5,7 +5,7 @@ import { prisma } from '@/prisma';
 import { type BountiesGetPayload } from '@/prisma/models/Bounties';
 
 export type ListingWithSponsor = BountiesGetPayload<{
-  include: { sponsor: true };
+  include: { sponsor: { include: { chapter: true } } };
 }>;
 
 export const checkListingSponsorAuth = async (
@@ -27,7 +27,13 @@ export const checkListingSponsorAuth = async (
 
   const listing = await prisma.bounties.findUnique({
     where: { id: listingId },
-    include: { sponsor: true },
+    include: {
+      sponsor: {
+        include: {
+          chapter: true,
+        },
+      },
+    },
   });
 
   if (!listing) {

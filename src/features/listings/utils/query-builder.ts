@@ -1,12 +1,18 @@
 import type { z } from 'zod';
 
 import { countries } from '@/constants/country';
-import { Superteams } from '@/constants/Superteam';
 import { type JsonValue } from '@/prisma/internal/prismaNamespace';
 import {
   type BountiesOrderByWithRelationInput,
   type BountiesWhereInput,
 } from '@/prisma/models/Bounties';
+import {
+  findChapterByRegionInput,
+  getRegionsForChapterPage,
+  getRegionsForCountryPageUsingChapters,
+  getRegionsForMultiCountryRegionPageUsingChapters,
+  getRegionsForUserLocationUsingChapters,
+} from '@/utils/chapterRegion';
 
 import { HACKATHONS } from '@/features/hackathon/constants/hackathons';
 import {
@@ -16,12 +22,6 @@ import {
 } from '@/features/listings/constants/schema';
 
 import { getCountryNameFromSlug } from './parse-opportunity-tags';
-import {
-  getRegionsForCountryPage,
-  getRegionsForMultiCountryRegionPage,
-  getRegionsForSuperteamPage,
-  getRegionsForUserLocation,
-} from './region';
 import { findSkillBySlug } from './skill';
 
 type BuildListingQueryArgs = z.infer<typeof QueryParamsSchema>;
@@ -149,8 +149,10 @@ function getOrderBy(
   return isDefaultSort ? [{ isFeatured: 'desc' }, primarySort] : primarySort;
 }
 
-function getUserRegionFilter(userLocation: string | null): string[] {
-  return getRegionsForUserLocation(userLocation);
+async function getUserRegionFilter(
+  userLocation: string | null,
+): Promise<string[]> {
+  return getRegionsForUserLocationUsingChapters(userLocation);
 }
 
 export async function buildListingQuery(
@@ -203,7 +205,7 @@ export async function buildListingQuery(
 
   if (user?.isTalentFilled && (context === 'all' || context === 'home')) {
     where.region = {
-      in: getUserRegionFilter(user.location),
+      in: await getUserRegionFilter(user.location),
     };
   }
 
@@ -241,12 +243,10 @@ export async function buildListingQuery(
   }
 
   if ((context === 'region' || context === 'region-all') && region) {
-    const st = Superteams.find(
-      (team) => team.region.toLowerCase() === region.toLowerCase(),
-    );
+    const chapter = await findChapterByRegionInput(region);
 
-    if (st) {
-      const regionList = getRegionsForSuperteamPage(st.region);
+    if (chapter) {
+      const regionList = await getRegionsForChapterPage(chapter.region);
       andConditions.push({
         OR: [
           {
@@ -256,7 +256,7 @@ export async function buildListingQuery(
           },
           {
             sponsor: {
-              name: st.name,
+              name: chapter.name,
             },
           },
         ],
@@ -273,7 +273,10 @@ export async function buildListingQuery(
           Array.isArray(country.regions)
         ) {
           // Multi-country region page (EU, GCC, etc.)
-          const regionList = getRegionsForMultiCountryRegionPage(country.name);
+          const regionList =
+            await getRegionsForMultiCountryRegionPageUsingChapters(
+              country.name,
+            );
           andConditions.push({
             OR: [
               {
@@ -285,7 +288,9 @@ export async function buildListingQuery(
           });
         } else {
           // Regular country page
-          const regionList = getRegionsForCountryPage(country.name);
+          const regionList = await getRegionsForCountryPageUsingChapters(
+            country.name,
+          );
           andConditions.push({
             OR: [
               {
@@ -378,14 +383,10 @@ export async function buildListingQuery(
       // Convert slug to proper name for lookup (e.g., 'european-union' -> 'European Union')
       const regionName = getCountryNameFromSlug(region);
 
-      const st = Superteams.find(
-        (team) =>
-          team.region.toLowerCase() === region.toLowerCase() ||
-          team.slug?.toLowerCase() === region.toLowerCase(),
-      );
+      const chapter = await findChapterByRegionInput(region);
 
-      if (st) {
-        const regionList = getRegionsForSuperteamPage(st.region);
+      if (chapter) {
+        const regionList = await getRegionsForChapterPage(chapter.region);
         andConditions.push({
           OR: [
             {
@@ -395,7 +396,7 @@ export async function buildListingQuery(
             },
             {
               sponsor: {
-                name: st.name,
+                name: chapter.name,
               },
             },
           ],
@@ -412,9 +413,10 @@ export async function buildListingQuery(
             Array.isArray(country.regions)
           ) {
             // Multi-country region page (EU, GCC, etc.)
-            const regionList = getRegionsForMultiCountryRegionPage(
-              country.name,
-            );
+            const regionList =
+              await getRegionsForMultiCountryRegionPageUsingChapters(
+                country.name,
+              );
             andConditions.push({
               OR: [
                 {
@@ -426,7 +428,9 @@ export async function buildListingQuery(
             });
           } else {
             // Regular country page
-            const regionList = getRegionsForCountryPage(country.name);
+            const regionList = await getRegionsForCountryPageUsingChapters(
+              country.name,
+            );
             andConditions.push({
               OR: [
                 {

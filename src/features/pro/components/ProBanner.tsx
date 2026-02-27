@@ -12,6 +12,7 @@ import { cn } from '@/utils/cn';
 
 import { AuthWrapper } from '@/features/auth/components/AuthWrapper';
 import { userStatsQuery } from '@/features/home/queries/user-stats';
+import { isEligiblePeopleType } from '@/features/membership/utils/peopleEligibility';
 
 import { ProBadge } from './ProBadge';
 import { ProUpgradeButton } from './ProUpgradeButton';
@@ -133,6 +134,7 @@ export function ProBanner({ totalEarnings }: ProBannerProps) {
   const { data: stats, isLoading: isStatsLoading } = useQuery(userStatsQuery);
   const isPro = user?.isPro ?? false;
   const { authenticated } = usePrivy();
+  const hasEligibleMembership = isEligiblePeopleType(user?.people?.type);
 
   const isLoading = isUserLoading || isStatsLoading;
 
@@ -140,8 +142,7 @@ export function ProBanner({ totalEarnings }: ProBannerProps) {
     !isPro &&
     authenticated &&
     user &&
-    ((stats && (stats.totalWinnings ?? 0) >= 1000) ||
-      user?.superteamLevel?.includes('Superteam'));
+    ((stats && (stats.totalWinnings ?? 0) >= 1000) || hasEligibleMembership);
 
   return (
     <div className="relative flex flex-col gap-4 overflow-hidden rounded-xl bg-zinc-800 px-6 pb-8 text-white sm:pb-10 md:px-11">

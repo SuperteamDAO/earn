@@ -6,11 +6,6 @@ import { useEffect, useRef, useState } from 'react';
 
 import { UserFlag } from '@/components/shared/UserFlag';
 import { Button } from '@/components/ui/button';
-import {
-  type Superteam,
-  Superteams,
-  unofficialSuperteams,
-} from '@/constants/Superteam';
 import { SponsorLayout } from '@/layouts/Sponsor';
 import { useUser } from '@/store/user';
 
@@ -33,8 +28,9 @@ export default function LocalProfiles() {
   const [checkedItems, setCheckedItems] = useState<Record<string, boolean>>({});
 
   const { user } = useUser();
+  const sponsorChapter = user?.currentSponsor?.chapter;
   const { data: allUsers, isLoading } = useQuery(
-    localProfilesQuery(user?.currentSponsor?.name || ''),
+    localProfilesQuery(Boolean(sponsorChapter?.id)),
   );
 
   const debouncedSetSearchTextRef = useRef<
@@ -122,27 +118,20 @@ export default function LocalProfiles() {
     setCurrentPage(1);
   };
 
-  const superteam =
-    Superteams.find(
-      (st) =>
-        st.name.toLowerCase() === user?.currentSponsor?.name.toLowerCase(),
-    ) ||
-    unofficialSuperteams.find(
-      (st) =>
-        st.name.toLowerCase() === user?.currentSponsor?.name.toLowerCase(),
-    );
-
   return (
     <SponsorLayout>
       <div className="mb-4 flex justify-between">
         <div className="flex items-center gap-2">
-          {superteam?.code && <UserFlag location={superteam.code} isCode />}
+          {sponsorChapter?.code && (
+            <UserFlag location={sponsorChapter.code} isCode />
+          )}
           <p className="text-lg font-semibold text-slate-800">
             Local Earn Profiles
           </p>
           <div className="mx-1 h-[60%] border-r border-slate-200" />
           <p className="text-slate-500">
-            All profiles that are based in {superteam?.displayValue}
+            All profiles that are based in{' '}
+            {sponsorChapter?.displayValue || sponsorChapter?.region}
           </p>
         </div>
         <FilterSection
@@ -152,7 +141,6 @@ export default function LocalProfiles() {
             debouncedSetSearchTextRef.current?.(value);
           }}
           setCurrentPage={setCurrentPage}
-          superteam={superteam as Superteam}
         />
       </div>
       {isLoading && <UserTableSkeleton rows={10} />}

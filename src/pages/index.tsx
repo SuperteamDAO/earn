@@ -1,9 +1,10 @@
+import type { GetServerSideProps } from 'next';
 import Head from 'next/head';
 
 import { JsonLd } from '@/components/shared/JsonLd';
 import { ASSET_URL } from '@/constants/ASSET_URL';
-import { Superteams } from '@/constants/Superteam';
 import { Meta } from '@/layouts/Meta';
+import { prisma } from '@/prisma';
 import { generateSuperteamChaptersSchema } from '@/utils/json-ld';
 
 import Collab from '@/features/stfun/components/sections/Collab';
@@ -12,7 +13,36 @@ import Hero from '@/features/stfun/components/sections/Hero';
 import LoveRespect from '@/features/stfun/components/sections/LoveRespect';
 import Production from '@/features/stfun/components/sections/Production';
 
-export default function Home() {
+interface HomePageProps {
+  readonly chapters: Array<{
+    name: string;
+    region: string;
+    displayValue: string;
+    slug: string;
+    code: string;
+    country: string[];
+    icons?: string;
+    link?: string;
+  }>;
+  readonly chaptersForSchema: Array<{
+    name: string;
+    displayValue: string;
+    slug: string;
+    code: string;
+    country: string[];
+    icons?: string;
+    link?: string;
+  }>;
+}
+
+function parseCountries(rawCountries: unknown): string[] {
+  if (!Array.isArray(rawCountries)) return [];
+  return rawCountries.filter(
+    (country): country is string => typeof country === 'string',
+  );
+}
+
+export default function Home({ chapters, chaptersForSchema }: HomePageProps) {
   return (
     <>
       <Meta
@@ -21,7 +51,7 @@ export default function Home() {
         canonical="https://superteam.fun/"
         og={`${ASSET_URL}/st/og/og-home.png`}
       />
-      <JsonLd data={generateSuperteamChaptersSchema(Superteams)} />
+      <JsonLd data={generateSuperteamChaptersSchema(chaptersForSchema)} />
       <Head>
         <link
           rel="preload"
@@ -41,7 +71,7 @@ export default function Home() {
         buttonVisible={false}
       />
 
-      <Geographies />
+      <Geographies chapters={chapters} />
 
       <Production />
 
@@ -51,3 +81,48 @@ export default function Home() {
     </>
   );
 }
+
+export const getServerSideProps: GetServerSideProps<
+  HomePageProps
+> = async () => {
+  const chapters = await prisma.chapter.findMany({
+    select: {
+      name: true,
+      region: true,
+      displayValue: true,
+      slug: true,
+      code: true,
+      countries: true,
+      icons: true,
+      link: true,
+    },
+  });
+
+  const chaptersForSchema = chapters.map((chapter) => ({
+    name: chapter.name,
+    displayValue: chapter.displayValue || chapter.name,
+    slug: chapter.slug,
+    code: chapter.code || '',
+    country: parseCountries(chapter.countries),
+    icons: chapter.icons || undefined,
+    link: chapter.link || undefined,
+  }));
+
+  const chaptersForGeographies = chapters.map((chapter) => ({
+    name: chapter.name,
+    region: chapter.region,
+    displayValue: chapter.displayValue || chapter.region,
+    slug: chapter.slug,
+    code: chapter.code || '',
+    country: parseCountries(chapter.countries),
+    icons: chapter.icons || undefined,
+    link: chapter.link || undefined,
+  }));
+
+  return {
+    props: {
+      chapters: chaptersForGeographies,
+      chaptersForSchema,
+    },
+  };
+};

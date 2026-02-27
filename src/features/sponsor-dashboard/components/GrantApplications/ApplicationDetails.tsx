@@ -12,7 +12,6 @@ import { CopyButton } from '@/components/ui/copy-tooltip';
 import { CircularProgress } from '@/components/ui/progress';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Tooltip } from '@/components/ui/tooltip';
-import { Superteams } from '@/constants/Superteam';
 import { getTokenIcon } from '@/constants/tokenList';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
@@ -95,15 +94,10 @@ export const ApplicationDetails = ({
     );
   };
 
-  const superteam = useMemo(() => {
-    const isSuperteamMember =
-      selectedApplication?.user.superteamLevel?.includes('Superteam') || false;
-    return isSuperteamMember
-      ? Superteams.find(
-          (s) => s.name === selectedApplication?.user.superteamLevel,
-        )
-      : undefined;
-  }, [selectedApplication]);
+  const chapter = useMemo(
+    () => selectedApplication?.user.people?.chapter,
+    [selectedApplication],
+  );
   return (
     <div className="w-full rounded-r-xl bg-white">
       {applications?.length ? (
@@ -122,14 +116,10 @@ export const ApplicationDetails = ({
                     <p className="w-fit text-base font-medium whitespace-nowrap text-slate-900">
                       {`${selectedApplication?.user?.firstName}`}
                     </p>
-                    {superteam && (
-                      <Tooltip
-                        content={
-                          selectedApplication?.user?.superteamLevel + ' Member'
-                        }
-                      >
+                    {chapter?.icons && (
+                      <Tooltip content={`${chapter.name} Member`}>
                         <img
-                          src={superteam.icons}
+                          src={chapter.icons}
                           alt="Superteam Member"
                           className="size-4 rounded-full"
                         />
@@ -369,17 +359,13 @@ export const ApplicationDetails = ({
                 </div>
               </div>
 
-              {grant?.sponsor?.st && (
+              {grant?.sponsor?.chapter && (
                 <div className="mb-4">
                   <p className="mb-1 text-xs font-semibold text-slate-400 uppercase">
                     SUPERTEAM MEMBER?
                   </p>
                   <p className="text-sm font-medium whitespace-nowrap text-slate-600">
-                    {selectedApplication?.user.superteamLevel?.includes(
-                      'Superteam',
-                    )
-                      ? `Yes (${selectedApplication?.user.superteamLevel})`
-                      : `No`}
+                    {chapter ? `Yes (${chapter.name})` : `No`}
                   </p>
                 </div>
               )}

@@ -29,7 +29,11 @@ export default async function getHackathon(
             slug: true,
             logo: true,
             isVerified: true,
-            st: true,
+            chapter: {
+              select: {
+                id: true,
+              },
+            },
           },
         },
       },

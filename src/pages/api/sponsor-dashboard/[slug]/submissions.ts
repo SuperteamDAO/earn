@@ -51,7 +51,20 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
             discord: true,
             telegram: true,
             website: true,
-            superteamLevel: true,
+            peopleId: true,
+            people: {
+              select: {
+                id: true,
+                chapterId: true,
+                chapter: {
+                  select: {
+                    id: true,
+                    name: true,
+                    icons: true,
+                  },
+                },
+              },
+            },
             Submission: {
               select: {
                 isWinner: true,

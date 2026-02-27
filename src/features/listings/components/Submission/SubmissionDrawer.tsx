@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { Loader2, Lock, X } from 'lucide-react';
 import { useRouter } from 'next/router';
@@ -33,6 +33,7 @@ import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 
 import { usePopupAuth } from '@/features/auth/hooks/use-popup-auth';
+import { chaptersQuery } from '@/features/chapters/queries/chapters';
 import { CreditIcon } from '@/features/credits/icon/credit';
 import { SocialInput } from '@/features/social/components/SocialInput';
 import { XVerificationModal } from '@/features/social/components/XVerificationModal';
@@ -86,6 +87,7 @@ export const SubmissionDrawer = ({
     region,
     isPro,
   } = listing;
+  const { data: chapters = [] } = useQuery(chaptersQuery);
 
   const queryClient = useQueryClient();
   const isProject = type === 'project';
@@ -192,11 +194,11 @@ export const SubmissionDrawer = ({
     if (!region || region === 'Global') {
       return `I acknowledge that if I win, I will have to complete KYC verification to receive my prize money.`;
     }
-    const regionObject = getCombinedRegion(region);
+    const regionObject = getCombinedRegion(region, false, chapters);
     const regionDisplayName =
       regionObject?.displayValue || regionObject?.name || region;
     return `I acknowledge that if I win, I will have to complete KYC verification that proves I am from ${regionDisplayName}`;
-  }, [region]);
+  }, [chapters, region]);
 
   useEffect(() => {
     if (needsXVerification) {

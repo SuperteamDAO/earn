@@ -168,7 +168,7 @@ export async function POST(request: NextRequest) {
         logger.debug(`User is not eligible for ST grant`, {
           grantId,
           userId,
-          superteamLevel: user.superteamLevel,
+          peopleId: user.peopleId,
         });
         return NextResponse.json(
           { error: 'This grant is only available to Superteam members' },

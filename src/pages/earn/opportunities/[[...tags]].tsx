@@ -5,6 +5,7 @@ import { JsonLd } from '@/components/shared/JsonLd';
 import { ASSET_URL } from '@/constants/ASSET_URL';
 import { Home } from '@/layouts/Home';
 import { Meta } from '@/layouts/Meta';
+import { getChapterRegions } from '@/utils/chapterRegion';
 import { generateBreadcrumbListSchema } from '@/utils/json-ld';
 
 import { GrantsSection } from '@/features/grants/components/GrantsSection';
@@ -19,6 +20,7 @@ import {
   parseOpportunityTags,
   validateOpportunityTags,
 } from '@/features/listings/utils/parse-opportunity-tags';
+import { getAllRegionSlugs } from '@/features/listings/utils/region';
 
 interface OpportunitiesPageProps {
   readonly parsedTags: {
@@ -105,13 +107,16 @@ export const getServerSideProps: GetServerSideProps<
   const tagsArray =
     typeof tags === 'string' ? [tags] : Array.isArray(tags) ? tags : [];
 
-  if (!validateOpportunityTags(tagsArray)) {
+  const chapterRegions = await getChapterRegions();
+  const regionSlugs = getAllRegionSlugs(chapterRegions);
+
+  if (!validateOpportunityTags(tagsArray, regionSlugs)) {
     return {
       notFound: true,
     };
   }
 
-  const parsedTags = parseOpportunityTags(tagsArray);
+  const parsedTags = parseOpportunityTags(tagsArray, regionSlugs);
 
   return {
     props: {

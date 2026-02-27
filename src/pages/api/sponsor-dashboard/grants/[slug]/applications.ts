@@ -155,7 +155,20 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
             telegram: true,
             community: true,
             experience: true,
-            superteamLevel: true,
+            peopleId: true,
+            people: {
+              select: {
+                id: true,
+                chapterId: true,
+                chapter: {
+                  select: {
+                    id: true,
+                    name: true,
+                    icons: true,
+                  },
+                },
+              },
+            },
             location: true,
             cryptoExperience: true,
             workPrefernce: true,
@@ -170,7 +183,6 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
             surveysShown: true,
             stRecommended: true,
             acceptedTOS: true,
-            stLead: true,
             isBlocked: true,
             privyDid: true,
             isKYCVerified: true,

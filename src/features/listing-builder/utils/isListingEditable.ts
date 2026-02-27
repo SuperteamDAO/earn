@@ -43,9 +43,9 @@ export const isListingEditable = ({
     return true;
   }
 
-  const isStLead = !!user?.stLead;
+  const isCore = user.people.type?.toUpperCase() === 'CORE';
 
-  if (isStLead && listing?.isWinnersAnnounced) {
+  if (isCore && listing?.isWinnersAnnounced) {
     return false;
   }
 
@@ -57,7 +57,7 @@ export const isListingEditable = ({
     return !isDeadlineOver(listing.deadline ?? undefined);
   }
 
-  if (isStLead && listingStatus === 'In Review') {
+  if (isCore && listingStatus === 'In Review') {
     return true;
   }
 
