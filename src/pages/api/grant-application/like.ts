@@ -22,13 +22,12 @@ async function grantApplication(
       });
     }
 
-    const { updatedData: updatedGrant } = await updateLike(
-      'grantApplication',
-      id,
-      userId!,
-    );
+    await updateLike('grantApplication', id, userId!);
 
-    return res.status(200).json(updatedGrant);
+    return res.status(200).json({
+      data: { ok: true },
+      message: 'Operation successful',
+    });
   } catch (error: any) {
     logger.error(
       `Error updating submission like for user=${req.userId}: ${error.message}`,

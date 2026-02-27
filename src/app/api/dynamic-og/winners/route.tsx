@@ -1,3 +1,4 @@
+import Avatar from 'boring-avatars';
 import { ImageResponse } from 'next/og';
 
 import { ExternalImage } from '@/components/ui/cloudinary-image';
@@ -12,6 +13,27 @@ const formatter = new Intl.NumberFormat('en-US', {
   style: 'decimal',
   maximumFractionDigits: 2,
 });
+
+const BORING_AVATAR_COLORS = [
+  '#da4c65',
+  '#5e25c2',
+  '#d433ab',
+  '#2e53af',
+  '#ceea94',
+  '#92a1c6',
+  '#f0ab3d',
+  '#c271b4',
+];
+
+const getAvatarSeed = (winner: SubmissionWithUser) => {
+  return (
+    winner?.user?.id ||
+    [winner?.user?.firstName, winner?.user?.lastName, winner?.id]
+      .filter(Boolean)
+      .join('-') ||
+    `winner-${winner?.id}`
+  );
+};
 
 export async function GET(request: Request) {
   try {
@@ -111,17 +133,22 @@ export async function GET(request: Request) {
                     }
                   />
                 ) : (
-                  <ExternalImage
+                  <div
                     style={{
                       width: '126.26px',
                       height: '126.26px',
-                      objectFit: 'cover',
                       borderRadius: '999999px',
                       display: 'flex',
+                      overflow: 'hidden',
                     }}
-                    alt={`${winner?.user?.firstName} ${winner?.user?.lastName}`}
-                    src={'/fallback/avatar.png'}
-                  />
+                  >
+                    <Avatar
+                      size="100%"
+                      name={getAvatarSeed(winner)}
+                      variant="marble"
+                      colors={BORING_AVATAR_COLORS}
+                    />
+                  </div>
                 )}
                 <div
                   style={{
