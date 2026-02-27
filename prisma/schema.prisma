@@ -279,6 +279,7 @@ model GrantApplication {
   approvedAmount      Float                  @default(0)
   approvedAmountInUSD Float                  @default(0)
   decidedAt           DateTime?
+  paidAt              DateTime?
   totalPaid           Float                  @default(0)
   isShipped           Boolean                @default(false)
   paymentDetails      Json?
