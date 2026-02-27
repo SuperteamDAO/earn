@@ -90,6 +90,7 @@ interface StrippedSubmission {
   id: string;
   winnerPosition: keyof Rewards | undefined;
   user: {
+    id: string | undefined;
     firstName: string | undefined;
     lastName: string | undefined;
     photo: string | undefined;
@@ -121,6 +122,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         id: s.id,
         winnerPosition: s.winnerPosition,
         user: {
+          id: s.user.id,
           firstName: s.user.firstName,
           lastName: s.user.lastName,
           photo: s.user.photo,
