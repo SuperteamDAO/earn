@@ -1,4 +1,3 @@
-import Avatar from 'boring-avatars';
 import { ImageResponse } from 'next/og';
 
 import { ExternalImage } from '@/components/ui/cloudinary-image';
@@ -25,6 +24,8 @@ const BORING_AVATAR_COLORS = [
   '#c271b4',
 ];
 
+const AVATAR_SIZE = 80;
+
 const getAvatarSeed = (winner: SubmissionWithUser) => {
   return (
     winner?.user?.id ||
@@ -33,6 +34,80 @@ const getAvatarSeed = (winner: SubmissionWithUser) => {
       .join('-') ||
     `winner-${winner?.id}`
   );
+};
+
+const hashCode = (value: string) => {
+  let hash = 0;
+
+  for (let i = 0; i < value.length; i += 1) {
+    const char = value.charCodeAt(i);
+    hash = (hash << 5) - hash + char;
+    hash &= hash;
+  }
+
+  return Math.abs(hash);
+};
+
+const getDigit = (number: number, index: number) =>
+  Math.floor((number / 10 ** index) % 10);
+
+const getBoolean = (number: number, index: number) =>
+  !(getDigit(number, index) % 2);
+
+const getUnit = (number: number, range: number, index?: number) => {
+  const value = number % range;
+  return index && getDigit(number, index) % 2 === 0 ? -value : value;
+};
+
+const getRandomColor = (number: number) =>
+  BORING_AVATAR_COLORS[number % BORING_AVATAR_COLORS.length];
+
+const getMarbleData = (seed: string) => {
+  const hash = hashCode(seed);
+
+  return Array.from({ length: 4 }, (_, index) => ({
+    color: getRandomColor(hash + index),
+    translateX: getUnit(hash * (index + 1), AVATAR_SIZE / 2 - (index + 17), 1),
+    translateY: getUnit(hash * (index + 1), AVATAR_SIZE / 2 - (index + 17), 2),
+    rotate: getUnit(hash * (index + 1), 360),
+    isSquare: getBoolean(hash, 2),
+  }));
+};
+
+const createBoringAvatarSvgDataUri = (seed: string) => {
+  const [bg, layerRect, layerCircle, layerLine] = getMarbleData(seed);
+
+  const svg = `
+    <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect width="80" height="80" fill="${bg?.color}" />
+      <rect
+        x="10"
+        y="30"
+        width="80"
+        height="${layerRect?.isSquare ? 80 : 10}"
+        fill="${layerRect?.color}"
+        transform="translate(${layerRect?.translateX} ${layerRect?.translateY}) rotate(${layerRect?.rotate} 40 40)"
+      />
+      <circle
+        cx="40"
+        cy="40"
+        r="16"
+        fill="${layerCircle?.color}"
+        transform="translate(${layerCircle?.translateX} ${layerCircle?.translateY})"
+      />
+      <line
+        x1="0"
+        y1="40"
+        x2="80"
+        y2="40"
+        stroke-width="2"
+        stroke="${layerLine?.color}"
+        transform="translate(${layerLine?.translateX} ${layerLine?.translateY}) rotate(${layerLine?.rotate} 40 40)"
+      />
+    </svg>
+  `;
+
+  return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
 };
 
 export async function GET(request: Request) {
@@ -133,22 +208,17 @@ export async function GET(request: Request) {
                     }
                   />
                 ) : (
-                  <div
+                  <img
                     style={{
                       width: '126.26px',
                       height: '126.26px',
+                      objectFit: 'cover',
                       borderRadius: '999999px',
                       display: 'flex',
-                      overflow: 'hidden',
                     }}
-                  >
-                    <Avatar
-                      size="100%"
-                      name={getAvatarSeed(winner)}
-                      variant="marble"
-                      colors={BORING_AVATAR_COLORS}
-                    />
-                  </div>
+                    alt={`${winner?.user?.firstName} ${winner?.user?.lastName}`}
+                    src={createBoringAvatarSvgDataUri(getAvatarSeed(winner))}
+                  />
                 )}
                 <div
                   style={{
