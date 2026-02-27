@@ -279,7 +279,6 @@ model GrantApplication {
   approvedAmount      Float                  @default(0)
   approvedAmountInUSD Float                  @default(0)
   decidedAt           DateTime?
-  paidAt              DateTime?
   totalPaid           Float                  @default(0)
   isShipped           Boolean                @default(false)
   paymentDetails      Json?
@@ -320,6 +319,7 @@ model GrantTranche {
   Grant            Grants             @relation(fields: [grantId], references: [id])
   approvedAmount   Float?
   decidedAt        DateTime?
+  paidAt           DateTime?
   trancheNumber    Int
   eventPictures    Json?
   eventReceipts    Json?
@@ -454,6 +454,8 @@ model User {
   peopleId           String?              @unique
   currentSponsor     Sponsors?            @relation(fields: [currentSponsorId], references: [id])
   people             People?              @relation("UserToPeople", fields: [peopleId], references: [id])
+  accounts           Account[]
+  sessions           Session[]
   UserSponsors       UserSponsors[]
   poc                Bounties[]           @relation("poc")
   templates          BountiesTemplates[]  @relation("poc")
@@ -501,6 +503,42 @@ model User {
   @@index([lastName])
   @@index([location])
   @@index([referredById])
+}
+
+model Account {
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([provider, providerAccountId])
+  @@index([userId])
+}
+
+model Session {
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([sessionToken])
+  @@index([userId])
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
 }
 
 model Scouts {
