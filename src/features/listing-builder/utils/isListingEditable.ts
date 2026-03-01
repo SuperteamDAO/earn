@@ -43,7 +43,7 @@ export const isListingEditable = ({
     return true;
   }
 
-  const isCore = user.people.type?.toUpperCase() === 'CORE';
+  const isCore = user?.people?.type?.toUpperCase() === 'CORE';
 
   if (isCore && listing?.isWinnersAnnounced) {
     return false;
