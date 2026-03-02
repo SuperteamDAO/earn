@@ -113,10 +113,21 @@ export const getRegionTooltipLabel = (
   region: string | undefined,
   isGrant: boolean = false,
 ) => {
+  const normalizedRegion = region?.trim() || '';
+  let isoCountry: string | undefined;
+
+  if (/^[a-zA-Z]{2,3}$/.test(normalizedRegion)) {
+    try {
+      isoCountry = lookup.byIso(normalizedRegion)?.country;
+    } catch {
+      isoCountry = undefined;
+    }
+  }
+
   const country =
-    getCombinedRegion(region || '')?.name ||
-    lookup.byIso(region || '')?.country ||
-    region ||
+    getCombinedRegion(normalizedRegion)?.name ||
+    isoCountry ||
+    normalizedRegion ||
     'your region';
 
   switch (region) {
