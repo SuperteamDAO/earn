@@ -113,7 +113,11 @@ export const getRegionTooltipLabel = (
   region: string | undefined,
   isGrant: boolean = false,
 ) => {
-  const country = getCombinedRegion(region || '')?.name;
+  const country =
+    getCombinedRegion(region || '')?.name ||
+    lookup.byIso(region || '')?.country ||
+    region ||
+    'your region';
 
   switch (region) {
     case 'Global':
