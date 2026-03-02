@@ -35,18 +35,21 @@ export const validateListing = async ({
   formData,
 }: ListingValidatorParams): Promise<ListingFormData> => {
   try {
+    const isSuperteamSponsor =
+      sponsor?.slug?.trim().toLowerCase() === 'superteam';
+    const isST = !!sponsor?.chapter || isSuperteamSponsor;
     logger.info('Processing Listings ZOD Validation ', {
       id: listing.id,
       isGod: user?.role === 'GOD',
       isEditing,
-      isST: !!sponsor?.chapter,
+      isST,
       hackathonId: hackathon?.id,
       pastListing: listing,
     });
     const listingSchema = createListingFormSchema({
       isGod: user?.role === 'GOD',
       isEditing,
-      isST: !!sponsor?.chapter,
+      isST,
       hackathons: hackathon ? [hackathon] : [],
       pastListing: isEditing ? (listing as any) : undefined,
     });
