@@ -101,7 +101,7 @@ export function ExtraInfoSection({
       {isFndnPaying && (
         <div className="flex w-full flex-col items-start gap-2 text-sm">
           <p className="h-full font-semibold text-slate-600">KYC REQUIRED</p>
-          <p className="text-slate-500">
+          <p className="pr-1 text-slate-500">
             Winners will be required to complete KYC to receive their prize
             money.
           </p>
@@ -113,7 +113,7 @@ export function ExtraInfoSection({
           <p className="h-full text-center font-semibold text-slate-600">
             CONTACT
           </p>
-          <div>
+          <div className="pr-2">
             <a
               className="ph-no-capture inline items-center font-medium text-[#64768b]"
               href={getURLSanitized(pocSocials)}
