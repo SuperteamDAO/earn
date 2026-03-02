@@ -147,18 +147,32 @@ export function userRegionEligibilty({
   region: string | undefined;
   userLocation: string | undefined;
 }) {
+  const normalizeRegionValue = (value: string | undefined) => {
+    const normalized = value?.trim().toLowerCase() || '';
+    if (normalized === 'ireland' || normalized === 'ireland (open ni and roi)')
+      return 'ireland (ni and roi)';
+    return normalized;
+  };
+
   if (region === 'Global') {
     return true;
   }
 
   const regionObject = region ? getCombinedRegion(region) : null;
+  const normalizedUserLocation = normalizeRegionValue(userLocation);
 
   const isEligible =
     !!(
       userLocation &&
-      (regionObject?.name === userLocation ||
-        regionObject?.country?.includes(userLocation) ||
-        regionObject?.regions?.includes(userLocation))
+      (normalizeRegionValue(region) === normalizedUserLocation ||
+        normalizeRegionValue(regionObject?.name) === normalizedUserLocation ||
+        regionObject?.country?.some(
+          (country) => normalizeRegionValue(country) === normalizedUserLocation,
+        ) ||
+        regionObject?.regions?.some(
+          (regionName) =>
+            normalizeRegionValue(regionName) === normalizedUserLocation,
+        ))
     ) || false;
 
   return isEligible;
