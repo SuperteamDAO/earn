@@ -49,6 +49,13 @@ export function DescriptionUI({
         if (name === 'p' && (!children || children.length === 0)) {
           return <br />;
         }
+        if (name === 'h1') {
+          return (
+            <p className={styles.descriptionH1}>
+              {domToReact(children, memoizedOptions)}
+            </p>
+          );
+        }
         if (name === 'a' && attribs) {
           const href = attribs.href ?? '';
 

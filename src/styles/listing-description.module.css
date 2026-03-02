@@ -93,6 +93,17 @@
   font-weight: 700;
 }
 
+.content .descriptionH1 {
+  font-size: var(--content-h1-size);
+  line-height: var(--content-h1-line-height);
+  margin-top: var(--content-h1-margin-top);
+  margin-bottom: var(--content-h1-margin-bottom);
+  letter-spacing: var(--content-h1-tracking);
+  color: var(--content-heading-color);
+  font-weight: 700;
+  white-space: normal;
+}
+
 .content h2 {
   font-size: var(--content-h2-size);
   line-height: var(--content-h2-line-height);

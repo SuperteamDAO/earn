@@ -14,12 +14,6 @@ import React, { useEffect, useState } from 'react';
 import Countdown from 'react-countdown';
 
 import { CountDownRenderer } from '@/components/shared/countdownRenderer';
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from '@/components/ui/accordion';
 import { Button } from '@/components/ui/button';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { Tooltip } from '@/components/ui/tooltip';
@@ -137,7 +131,6 @@ export default function Mobius({ hackathon }: { hackathon: Hackathon }) {
       <div className="mx-auto mt-5 w-full max-w-5xl px-4 md:mt-24 xl:mt-28">
         <GrandPrize />
         <Tracks />
-        <FAQs />
       </div>
     </Default>
   );
@@ -450,67 +443,6 @@ const TrackBox = ({
     </Link>
   );
 };
-
-const faqs: { question: string; answer: string }[] = [
-  {
-    question: 'What is Sonic Mobius Hackathon?',
-    answer:
-      'Sonic Mobius Hackathon is hosted by SonicSVM and is the first SVM hackathon on Solana to empower builders to launch games and applications on Sonic.',
-  },
-  {
-    question: 'Can I submit my final project without registering first?',
-    answer:
-      'We highly recommend all hackathon builders register before submitting their projects, as we’ll verify submissions against the registered Twitter/X account. However, if you’re unable to register, we’ll consider the submission details as final.',
-  },
-  {
-    question: 'Can I submit multiple projects?',
-    answer:
-      'Yes, your team can submit projects to multiple tracks. However, each project is limited to one submission per track.',
-  },
-  {
-    question: 'Can I submit my project to multiple tracks?',
-    answer:
-      'No, one project can only be submitted to one track. Please select the most relevant track at the submission page.',
-  },
-  {
-    question: 'I want to participate but don’t have a team. What should I do?',
-    answer:
-      "You can join our <a href='https://t.me/+S_eelN_07xswYTdl' target='_blank'>Hackathon channel</a> and post a request to find teammates.",
-  },
-  {
-    question: 'I have a team but no idea. What should I do?',
-    answer:
-      "Check out the <a href='https://www.notion.so/19a2d67d7b5f8091af6ad2957c575360?pvs=21' target='_blank'>idea board</a> or join the <a href='https://t.me/+S_eelN_07xswYTdl' target='_blank'>Hackathon channel</a> to discuss and brainstorm ideas.",
-  },
-];
-
-function FAQs() {
-  return (
-    <div className="mt-4 flex flex-col items-center px-1 py-8 md:mt-8">
-      <h2 className="pb-2 text-4xl font-bold md:text-5xl">FAQ</h2>
-      <div className="w-full max-w-[35rem]">
-        <Accordion type="single" collapsible>
-          {faqs.map((f) => (
-            <AccordionItem
-              key={f.question}
-              value={f.question}
-              className="my-4 rounded-lg border shadow-md"
-            >
-              <AccordionTrigger className="rounded px-4 py-3 text-left font-normal text-slate-500 hover:bg-black/5 hover:no-underline focus:no-underline data-[state=open]:bg-black/5">
-                <span className="flex-1 text-left text-sm sm:text-base">
-                  {f.question}
-                </span>
-              </AccordionTrigger>
-              <AccordionContent className="px-4 pt-3 text-sm text-slate-700 sm:text-base [&_a]:text-blue-700">
-                <div dangerouslySetInnerHTML={{ __html: f.answer }} />
-              </AccordionContent>
-            </AccordionItem>
-          ))}
-        </Accordion>
-      </div>
-    </div>
-  );
-}
 
 export const getServerSideProps: GetServerSideProps = async ({}) => {
   const hackathon = await prisma.hackathon.findUnique({

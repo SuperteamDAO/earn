@@ -23,7 +23,6 @@ import { userStatsQuery } from '../queries/user-stats';
 import { HowItWorks } from './HowItWorks';
 import { RecentActivity } from './RecentActivity';
 import { RecentEarners } from './RecentEarners';
-import { SeoFaq } from './SeoFaq';
 import { SponsorBanner } from './SponsorBanner';
 import { SponsorFeatures } from './SponsorFeatures';
 import { SponsorResources } from './SponsorResources';
@@ -89,7 +88,6 @@ const FeedSidebarContent = ({ recentEarners }: FeedSidebarContentProps) => (
       <SectionHeader title="LIVE LISTINGS" href="/earn" />
     </LiveListings>
     <HowItWorks />
-    <SeoFaq />
     <RecentEarners earners={recentEarners} />
   </>
 );
@@ -135,7 +133,6 @@ const NonSponsorSidebarContent = ({
       />
     </div>
     <HowItWorks />
-    <SeoFaq />
     {currentPath !== '/earn/bookmarks' && !!bookmarks?.length && (
       <YourBookmarks>
         <SectionHeader

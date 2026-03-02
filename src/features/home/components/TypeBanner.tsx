@@ -20,7 +20,7 @@ const banners: Record<TypeTypes, TypeBanner> = {
     img: ASSET_URL + '/banner/banner',
     heading: 'Crypto Bounties & Web3 Freelance Opportunities',
     description:
-      'Complete short-term crypto bounties from top Solana teams and get rewarded for real work. From development and design to content creation, ship fast, build your portfolio, and earn in USDC, SOL, and other tokens.',
+      'Complete short-term crypto bounties from top Solana teams and get rewarded for real work. From development and design to content creation — ship fast, build your PoW, and earn in USDC, SOL, and other Solana tokens.',
   },
   projects: {
     img: ASSET_URL + '/banner/banner',

@@ -11,12 +11,6 @@ import FaPlay from '@/components/icons/FaPlay';
 import TbBell from '@/components/icons/TbBell';
 import TbBellRinging from '@/components/icons/TbBellRinging';
 import { UserFlag } from '@/components/shared/UserFlag';
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from '@/components/ui/accordion';
 import { Button } from '@/components/ui/button';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { Dialog, DialogContent, DialogPortal } from '@/components/ui/dialog';
@@ -30,7 +24,6 @@ import type { User } from '@/interface/user';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { api } from '@/lib/api';
-import { domPurify } from '@/lib/domPurify';
 import { prisma } from '@/prisma';
 import { type SubscribeHackathonModel } from '@/prisma/models/SubscribeHackathon';
 import { useUser } from '@/store/user';
@@ -216,7 +209,6 @@ export default function TalentOlympics({ countryLeaders, rankings }: Props) {
         <div className="mx-auto max-w-7xl overflow-x-hidden px-4">
           {hackathonIsOn && <Leaderboard leaders={countryLeaders} />}
           <Rankings rankings={rankings} />
-          <FAQs />
         </div>
       </div>
     </Default>
@@ -835,71 +827,6 @@ function Rankings({
     </div>
   );
 }
-const faqs: { question: string; answer: string }[] = [
-  {
-    question: 'What is the Talent Olympics?',
-    answer:
-      'Talent Olympics is like a virtual job fair, except with users applying with real proof of work.',
-  },
-  {
-    question: 'How do I enter the competition?',
-    answer:
-      'By submitting to any of the ten challenges under the Frontend and Rust tracks.',
-  },
-  {
-    question: 'Which teams are hiring?',
-    answer:
-      'Over 50 Solana teams are hiring. In no particular order, here is the list of teams that are hiring: Transfero, Jungle, Khiza, Rippio, Moby Up, Coinlivre, Meta Pool, Prism, Bonk, MH Ventures, Bandit, Turbine, Future, Prizm, MoonThat, Jito, Flash, Mirror World, Pyth, Galaxe, Nosana, Sanctum, Tensor, Metaplex, Backpack, Parcl, Helio, Streamflow, Helius, DeCharge, Orca, Iron, Proto map, SolanaID, WifiDabba, Drift, Squads, Light Protocol, Mango, Sonar Watch, Kamino, Openbook, Staking facilities, Solana Beach, Noenomad, Linum Labs, DUX, VW Trucks & Bus, TRUTHER, Infratoken, One Percent, Bitfinix, etc.',
-  },
-  {
-    question: 'Does winning a Talent Olympics bounty guarantee a job?',
-    answer:
-      'Winning one or multiple tracks does not guarantee a job, but greatly increases your chances of catching the eye of the hiring partners.',
-  },
-  {
-    question: 'Can I participate in any track or challenge?',
-    answer:
-      "Yes, you can participate in any track, and any number of challenges as you'd like. But remember, that quality of your submission is the most important thing.",
-  },
-  {
-    question: 'What is the prize split like?',
-    answer:
-      "The individual prizes for each challenge are mentioned in the listings themselves. On top of that, there's a separate prize pool of $10,000 for the best overall participants. We will consider both the quality (most important criteria) and the number of challenges that participants have submitted to for the grand prize, based on the reviews from our partners.",
-  },
-];
-
-function FAQs() {
-  return (
-    <div className="flex flex-col items-center py-8">
-      <h2 className="text-xl font-bold">FAQ</h2>
-      <div className="w-full max-w-[35rem]">
-        <Accordion type="single" collapsible>
-          {faqs.map((f) => (
-            <AccordionItem
-              key={f.question}
-              value={f.question}
-              className="my-4 rounded-lg border shadow-md"
-            >
-              <AccordionTrigger className="rounded px-4 py-3 text-left hover:bg-black/5 data-[state=open]:bg-black/5">
-                <span className="flex-1 text-left text-sm sm:text-base">
-                  {f.question}
-                </span>
-              </AccordionTrigger>
-              <AccordionContent className="px-4 text-sm sm:text-base">
-                <div
-                  dangerouslySetInnerHTML={{
-                    __html: domPurify(f.answer),
-                  }}
-                />
-              </AccordionContent>
-            </AccordionItem>
-          ))}
-        </Accordion>
-      </div>
-    </div>
-  );
-}
-
 const CountDownRenderer = ({
   days,
   hours,

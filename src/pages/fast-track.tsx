@@ -3,8 +3,6 @@ import { Meta } from '@/layouts/Meta';
 
 import FastTrackContainer from '@/features/stfun/components/common/FastTrackContainer';
 import Accelerator from '@/features/stfun/components/sections/Accelerator';
-import FastTrackFaq from '@/features/stfun/components/sections/FastTrackFaq';
-
 // Pre-generate stars at module level for consistency
 function generateStars(count: number, width: number, height: number): string {
   const stars = [];
@@ -70,7 +68,6 @@ export default function FastTrack() {
 
         <div className="flex-1">
           <Accelerator />
-          <FastTrackFaq />
         </div>
       </div>
     </>

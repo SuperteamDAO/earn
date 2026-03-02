@@ -8,7 +8,6 @@ import { cn } from '@/utils/cn';
 import { generateOrganizationSchema } from '@/utils/json-ld';
 
 import { CallOut } from '@/features/sponsor/components/CallOut';
-import { FAQs } from '@/features/sponsor/components/FAQs';
 import { Footer } from '@/features/sponsor/components/Footer';
 import { Header } from '@/features/sponsor/components/Header';
 import { Hero } from '@/features/sponsor/components/Hero';
@@ -84,7 +83,6 @@ const Sponsor = () => {
           <Testimonials />
           <SuperteamNetwork />
           <Pricing />
-          <FAQs />
           <CallOut />
           <Footer />
         </div>

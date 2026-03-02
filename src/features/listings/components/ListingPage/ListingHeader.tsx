@@ -79,6 +79,7 @@ const HeaderSub = ({
   statusTextColor,
   region,
   isPro,
+  isWinnersAnnounced,
 }: {
   sponsor: SponsorType | undefined;
   title: string | undefined;
@@ -93,6 +94,7 @@ const HeaderSub = ({
   statusTextColor: string;
   region: string | undefined;
   isPro: boolean | undefined;
+  isWinnersAnnounced: boolean | undefined;
 }) => {
   return (
     <div className="flex flex-wrap items-center gap-1 md:gap-2">
@@ -151,7 +153,7 @@ const HeaderSub = ({
         />
       </div>
       <ListingHeaderSeparator />
-      {isPro && (
+      {isPro && !isWinnersAnnounced && (
         <>
           <Link href="/earn/pro">
             <ProBadge
@@ -286,6 +288,7 @@ export function ListingHeader({
                 statusTextColor={statusTextColor}
                 region={region}
                 isPro={isPro}
+                isWinnersAnnounced={isWinnersAnnounced}
               />
             </div>
           </div>
@@ -302,7 +305,9 @@ export function ListingHeader({
         )}
       </div>
       <div className="mb-5 flex w-full flex-col gap-1 md:hidden">
-        <ListingTitle title={title} />
+        <p className="text-lg font-semibold tracking-tight text-slate-700 sm:text-xl">
+          {title}
+        </p>
         <HeaderSub
           sponsor={sponsor}
           title={title}
@@ -317,6 +322,7 @@ export function ListingHeader({
           statusTextColor={statusTextColor}
           region={region}
           isPro={isPro}
+          isWinnersAnnounced={isWinnersAnnounced}
         />
       </div>
       <div className="flex h-10 w-full max-w-7xl items-center">

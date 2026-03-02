@@ -7,8 +7,15 @@ import { GrantsPop } from '@/features/conversion-popups/components/GrantsPop';
 import { GrantEntry } from '@/features/grants/components/GrantEntry';
 import { useGrants } from '@/features/grants/hooks/useGrants';
 
+const SKELETON_COUNT = 6;
+const skeletonArray = Array.from({ length: SKELETON_COUNT }, (_, i) => i);
+
 function Grants() {
-  const { data: grants } = useGrants({
+  const {
+    data: grants,
+    isLoading,
+    error,
+  } = useGrants({
     context: 'all',
     category: 'All',
   });
@@ -36,8 +43,8 @@ function Grants() {
             Crypto Grants &amp; Web3 Funding
           </h1>
           <p className="mx-auto max-w-2xl text-lg text-gray-600 md:text-xl">
-            Explore equity-free crypto grants that help founders and builders
-            turn ideas into real products in the Solana ecosystem.
+            Explore equity-free crypto grants that help you turn ideas into real
+            products in the Solana ecosystem.
           </p>
           <p className="mt-3 text-sm text-slate-400 md:text-base">
             Equity-Free • No Bullshit • Fast AF
@@ -45,18 +52,31 @@ function Grants() {
         </div>
         <div className="container mx-auto mb-12 max-w-7xl px-4">
           <div className="flex flex-wrap justify-center gap-10">
-            {grants?.map((grant) => (
-              <div key={grant?.id} className="w-full max-w-[20rem]">
-                <GrantEntry
-                  title={grant?.title}
-                  slug={grant.slug}
-                  minReward={grant?.minReward}
-                  maxReward={grant?.maxReward}
-                  token={grant?.token}
-                  logo={grant?.logo}
+            {isLoading ? (
+              skeletonArray.map((i) => (
+                <div
+                  key={i}
+                  className="h-48 w-full max-w-[20rem] animate-pulse rounded-lg bg-gray-200"
                 />
-              </div>
-            ))}
+              ))
+            ) : error ? (
+              <p className="text-gray-500">
+                Failed to load grants. Please try again later.
+              </p>
+            ) : (
+              grants?.map((grant) => (
+                <div key={grant?.id} className="w-full max-w-[20rem]">
+                  <GrantEntry
+                    title={grant?.title}
+                    slug={grant.slug}
+                    minReward={grant?.minReward}
+                    maxReward={grant?.maxReward}
+                    token={grant?.token}
+                    logo={grant?.logo}
+                  />
+                </div>
+              ))
+            )}
           </div>
         </div>
       </div>
