@@ -4,6 +4,7 @@ import {
 } from '@sumsub/websdk/types/types';
 import SumsubWebSdk from '@sumsub/websdk-react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { isAxiosError } from 'axios';
 import { toast } from 'sonner';
 
 import { api } from '@/lib/api';
@@ -11,6 +12,27 @@ import { api } from '@/lib/api';
 import { userApplicationQuery } from '../../queries/user-application';
 
 type MessageType = Parameters<MessageHandler>[0];
+
+const getKycRejectionReason = (error: unknown): string | null => {
+  if (!isAxiosError(error)) {
+    return null;
+  }
+
+  const responseData = error.response?.data;
+
+  if (
+    responseData &&
+    typeof responseData === 'object' &&
+    'message' in responseData &&
+    responseData.message === 'KYC_REJECTED' &&
+    'error' in responseData &&
+    typeof responseData.error === 'string'
+  ) {
+    return responseData.error;
+  }
+
+  return null;
+};
 
 const fetchVerificationStatus = async (grantApplicationId: string) => {
   const { data } = await api.get(
@@ -62,6 +84,16 @@ export const KYCModal = ({
       'reviewStatus' in payload
     ) {
       const result = await checkVerification();
+      if (result.error) {
+        const kycRejectionReason = getKycRejectionReason(result.error);
+        if (kycRejectionReason) {
+          toast.error(kycRejectionReason);
+        } else {
+          toast.error('KYC verification check failed. Please try again.');
+        }
+        return;
+      }
+
       if (result.data === 'verified') {
         toast.success(
           'Your KYC is verified! You will receive your first tranche in around a week.',

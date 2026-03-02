@@ -6,7 +6,7 @@ import SumsubWebSdk from '@sumsub/websdk-react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { isAxiosError } from 'axios';
 import { Loader2, X } from 'lucide-react';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
@@ -45,16 +45,32 @@ const getMismatchRegionDisplayName = (
     responseData &&
     typeof responseData === 'object' &&
     'message' in responseData &&
-    responseData.message === 'KYC_REJECTED'
+    responseData.message === 'KYC_REJECTED' &&
+    'regionDisplayName' in responseData &&
+    typeof responseData.regionDisplayName === 'string'
   ) {
-    if (
-      'regionDisplayName' in responseData &&
-      typeof responseData.regionDisplayName === 'string'
-    ) {
-      return responseData.regionDisplayName;
-    }
+    return responseData.regionDisplayName || fallback;
+  }
 
-    return fallback;
+  return null;
+};
+
+const getKycRejectionReason = (error: unknown): string | null => {
+  if (!isAxiosError(error)) {
+    return null;
+  }
+
+  const responseData = error.response?.data;
+
+  if (
+    responseData &&
+    typeof responseData === 'object' &&
+    'message' in responseData &&
+    responseData.message === 'KYC_REJECTED' &&
+    'error' in responseData &&
+    typeof responseData.error === 'string'
+  ) {
+    return responseData.error;
   }
 
   return null;
@@ -81,13 +97,6 @@ export const KYCModal = ({
   }, [region]);
 
   const [showDisclaimer, setShowDisclaimer] = useState(shouldShowDisclaimer);
-
-  useEffect(() => {
-    if (isOpen) {
-      setShowDisclaimer(shouldShowDisclaimer);
-    }
-  }, [isOpen, shouldShowDisclaimer]);
-
   const {
     data: accessToken,
     isLoading: isTokenLoading,
@@ -200,6 +209,19 @@ export const KYCModal = ({
                 <p className="text-xs text-red-600">
                   {`Your KYC document doesn't belong to ${mismatchRegionDisplayName}. Please verify again with a KYC document that belongs to ${mismatchRegionDisplayName}.`}
                 </p>
+              </div>
+            );
+          }
+
+          const kycRejectionReason = getKycRejectionReason(error);
+
+          if (kycRejectionReason) {
+            return (
+              <div className="flex flex-col gap-1 text-left">
+                <p className="text-sm font-semibold text-red-600">
+                  KYC Rejected
+                </p>
+                <p className="text-xs text-red-600">{kycRejectionReason}</p>
               </div>
             );
           }

@@ -51,6 +51,15 @@ const handler = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
       appToken,
     );
 
+    if (typeof result === 'object' && result?.status === 'failed') {
+      return res.status(400).json({
+        message: 'KYC_REJECTED',
+        error: result.reason,
+        rejectType: result.rejectType,
+        rejectLabels: result.rejectLabels,
+      });
+    }
+
     if (result === 'verified') {
       if (grantApplication.user.isKYCVerified) {
         return res.status(200).json({ message: 'KYC already verified' });

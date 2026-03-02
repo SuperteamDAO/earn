@@ -14,7 +14,17 @@ export const checkVerificationStatus = async (
   appToken: string,
   maxAttempts = 10,
   delay = 1000,
-): Promise<string | null> => {
+): Promise<
+  | 'verified'
+  | 'timedOut'
+  | {
+      status: 'failed';
+      reason: string;
+      rejectType?: string;
+      rejectLabels?: string[];
+    }
+  | null
+> => {
   const url = `/resources/applicants/${applicantId}/status`;
   const method = 'GET';
   const body = '';
@@ -30,7 +40,40 @@ export const checkVerificationStatus = async (
         return 'verified';
       }
       if (reviewStatus === 'RED') {
-        return 'failed';
+        const reviewResult = response.data?.reviewResult;
+        const rejectType =
+          typeof reviewResult?.reviewRejectType === 'string'
+            ? reviewResult.reviewRejectType
+            : undefined;
+        const rejectLabels = Array.isArray(reviewResult?.rejectLabels)
+          ? reviewResult.rejectLabels.filter(
+              (label: unknown): label is string => typeof label === 'string',
+            )
+          : undefined;
+        const moderationComment =
+          typeof reviewResult?.moderationComment === 'string'
+            ? reviewResult.moderationComment.trim()
+            : '';
+        const clientComment =
+          typeof reviewResult?.clientComment === 'string'
+            ? reviewResult.clientComment.trim()
+            : '';
+
+        const reason =
+          clientComment ||
+          moderationComment ||
+          (rejectLabels?.length
+            ? `Rejected due to: ${rejectLabels.join(', ')}`
+            : rejectType
+              ? `Rejected (${rejectType})`
+              : 'Your verification was rejected. Please review your details and try again.');
+
+        return {
+          status: 'failed',
+          reason,
+          rejectType,
+          rejectLabels,
+        };
       }
     } catch (error) {
       logger.error(
