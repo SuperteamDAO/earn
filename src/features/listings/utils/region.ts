@@ -181,6 +181,23 @@ export function checkKycCountryMatchesRegion(
 
   const kycCountryName = countryLookup.country;
   const regionObject = getCombinedRegion(listingRegion);
+  const regionDisplayName =
+    regionObject?.displayValue || regionObject?.name || listingRegion;
+
+  // Sumsub returns GBR for Northern Ireland driving licenses.
+  // Ireland-restricted listings should allow this path.
+  const normalizedRegion = regionDisplayName.trim().toLowerCase();
+  if (
+    kycCountry.toUpperCase() === 'GBR' &&
+    (normalizedRegion === 'ireland' ||
+      normalizedRegion === 'ire' ||
+      normalizedRegion === 'ireland (ni and roi)')
+  ) {
+    return {
+      isValid: true,
+      regionDisplayName,
+    };
+  }
 
   if (!regionObject) {
     const isValid =
@@ -203,8 +220,7 @@ export function checkKycCountryMatchesRegion(
 
   return {
     isValid: isEligible,
-    regionDisplayName:
-      regionObject.displayValue || regionObject.name || listingRegion,
+    regionDisplayName,
   };
 }
 
