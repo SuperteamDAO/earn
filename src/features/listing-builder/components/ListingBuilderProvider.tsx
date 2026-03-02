@@ -166,9 +166,7 @@ function ListingBuilderProvider({
 }: Props) {
   const { user } = useUser();
   const isGod = user?.role === 'GOD';
-  const isSuperteamSponsor =
-    user?.currentSponsor?.slug?.trim().toLowerCase() === 'superteam';
-  const isST = !!user?.currentSponsor?.chapter || isSuperteamSponsor;
+  const isST = !!user?.currentSponsor?.chapter;
   const officialSuperteamRegion = getOfficialSuperteamRegion(
     user?.currentSponsor,
   );
