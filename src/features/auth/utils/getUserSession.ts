@@ -37,7 +37,7 @@ export async function getUserSession(
 
     const user = await prisma.user.findUnique({
       where: { privyDid },
-      select: { id: true },
+      select: { id: true, isBlocked: true },
     });
 
     logger.info(`User with privyDid: ${privyDid} found`, { privyDid, ...user });
@@ -47,6 +47,15 @@ export async function getUserSession(
       return {
         status: 403,
         error: 'User has no record or is unauthorized',
+        data: null,
+      };
+    }
+
+    if (user.isBlocked) {
+      logger.warn(`Blocked user attempted access: ${user.id}`);
+      return {
+        status: 403,
+        error: 'User is blocked',
         data: null,
       };
     }

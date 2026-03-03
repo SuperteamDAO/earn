@@ -65,12 +65,25 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
   }
 
   const privyDid = await getPrivyToken(req);
+  let user: {
+    location: string | null;
+    isBlocked: boolean;
+  } | null = null;
+
+  if (privyDid) {
+    user = await prisma.user.findFirst({
+      where: { privyDid },
+      select: { location: true, isBlocked: true },
+    });
+
+    if (user?.isBlocked) {
+      logger.warn(`Blocked user attempted listing/grant search: ${privyDid}`);
+      return res.status(403).json({ error: 'User is blocked' });
+    }
+  }
+
   if (privyDid && !userRegion) {
     const chapterRegions = await getChapterRegions();
-    const user = await prisma.user.findFirst({
-      where: { privyDid },
-      select: { location: true },
-    });
     if (user?.location) {
       const matchedRegion = user.location
         ? getCombinedRegion(user.location, true, chapterRegions)

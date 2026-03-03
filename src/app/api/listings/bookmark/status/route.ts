@@ -34,6 +34,12 @@ export async function GET(request: NextRequest) {
 
     const headerList = await headers();
     const session = await getUserSession(headerList);
+    if (session.error === 'User is blocked') {
+      return NextResponse.json(
+        { error: session.error },
+        { status: session.status },
+      );
+    }
     const userId = session.data?.userId ?? null;
     const response = result.map((bookmark) => ({
       ...bookmark,

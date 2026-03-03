@@ -22,6 +22,12 @@ export async function GET(request: NextRequest) {
 
   try {
     const session = await getUserSession(requestHeaders);
+    if (session.error === 'User is blocked') {
+      return NextResponse.json(
+        { error: session.error },
+        { status: session.status },
+      );
+    }
 
     const { searchParams } = new URL(request.url);
     const queryParams = Object.fromEntries(searchParams.entries());

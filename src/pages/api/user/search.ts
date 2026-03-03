@@ -4,6 +4,8 @@ import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
 
+import { getPrivyToken } from '@/features/auth/utils/getPrivyToken';
+
 const MAX_COMMENT_SUGGESTIONS = 5;
 
 export default async function searchUser(
@@ -24,6 +26,19 @@ export default async function searchUser(
   }
 
   try {
+    const privyDid = await getPrivyToken(req);
+    if (privyDid) {
+      const user = await prisma.user.findUnique({
+        where: { privyDid },
+        select: { id: true, isBlocked: true },
+      });
+
+      if (user?.isBlocked) {
+        logger.warn(`Blocked user attempted user search: ${user.id}`);
+        return res.status(403).json({ error: 'User is blocked' });
+      }
+    }
+
     let takeNum = Number(take) || MAX_COMMENT_SUGGESTIONS;
     if (takeNum > MAX_COMMENT_SUGGESTIONS) takeNum = MAX_COMMENT_SUGGESTIONS;
     logger.debug(`Query parameter: ${query}, Take number: ${takeNum}`);

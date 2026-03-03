@@ -22,12 +22,17 @@ export const withAuth = (handler: Handler): NextApiHandler => {
 
     const user = await prisma.user.findUnique({
       where: { privyDid },
-      select: { id: true },
+      select: { id: true, isBlocked: true },
     });
 
     if (!user?.id) {
       logger.warn(`Unauthorized, no user found for privy did ${privyDid}`);
       return res.status(403).json({ error: 'User has no record.' });
+    }
+
+    if (user.isBlocked) {
+      logger.warn(`Blocked user attempted access: ${user.id}`);
+      return res.status(403).json({ error: 'User is blocked' });
     }
 
     logger.debug(`Authorised user ${user.id} for privy did ${privyDid}`);

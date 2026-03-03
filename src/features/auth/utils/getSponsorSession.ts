@@ -54,12 +54,22 @@ export async function getSponsorSession(
         role: true,
         hackathonId: true,
         id: true,
+        isBlocked: true,
       },
     });
     logger.info(`User with privyDid: ${privyDid} found`, {
       privyDid,
       ...user,
     });
+
+    if (user?.isBlocked) {
+      logger.warn(`Blocked sponsor user attempted access: ${user.id}`);
+      return {
+        status: 403,
+        error: 'User is blocked',
+        data: null,
+      };
+    }
 
     if (!user || !user.currentSponsorId) {
       logger.warn('User does not have a current sponsor or is unauthorized');

@@ -30,8 +30,16 @@ export default async function relatedListings(
     if (privyDid) {
       const user = await prisma.user.findFirst({
         where: { privyDid },
-        select: { location: true },
+        select: { id: true, location: true, isBlocked: true },
       });
+
+      if (user?.isBlocked) {
+        logger.warn(
+          `Blocked user attempted related-listings lookup: ${user.id}`,
+        );
+        return res.status(403).json({ error: 'User is blocked' });
+      }
+
       userRegion = await getRegionNameForLocation(user?.location);
     }
 

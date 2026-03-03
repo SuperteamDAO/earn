@@ -29,8 +29,14 @@ export const withSponsorAuth = (handler: Handler): NextApiHandler => {
           role: true,
           hackathonId: true,
           id: true,
+          isBlocked: true,
         },
       });
+
+      if (user?.isBlocked) {
+        logger.warn(`Blocked sponsor user attempted access: ${user.id}`);
+        return res.status(403).json({ error: 'User is blocked' });
+      }
 
       if (!user || !user.currentSponsorId) {
         logger.warn('User does not have a current sponsor or is unauthorized');
