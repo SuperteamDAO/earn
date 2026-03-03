@@ -85,52 +85,57 @@ export function Banner({
   return (
     <div className="mb-6 flex w-full flex-col gap-4 xl:flex-row xl:items-center">
       <div className="w-full rounded-md border border-slate-200 bg-white px-6 py-5 text-white">
-        <div className="flex flex-col gap-2 lg:flex-row lg:items-center lg:gap-6">
-          {showSkeleton ? (
-            <div className="flex shrink-0 items-center gap-3 pb-1 lg:pb-0">
-              <Skeleton className="h-12 w-12 rounded-md" />
-              <div>
-                <Skeleton className="h-5 w-32" />
-                <Skeleton className="mt-2 h-5 w-[170px]" />
-              </div>
-            </div>
-          ) : (
-            <Link
-              href={`/earn/s/${sponsor?.slug}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group flex shrink-0 items-center gap-3 pb-1 transition-opacity hover:opacity-80 lg:pb-0"
-            >
-              <EarnAvatar
-                className="h-12 w-12 rounded-md object-contain"
-                id={sponsor?.name}
-                avatar={sponsor?.logo}
-              />
-
-              <div>
-                <div className="flex items-center">
-                  <div className="flex w-min items-center gap-1">
-                    <p className="text-lg font-semibold whitespace-nowrap text-slate-900 group-hover:underline">
-                      {sponsor?.name}
-                    </p>
-                    <div>
-                      {!!user?.currentSponsor?.isVerified && (
-                        <VerifiedBadgeLarge />
-                      )}
-                    </div>
-                    <ExternalLink className="ml-1 h-4 w-4 text-slate-400 opacity-0 transition-opacity group-hover:opacity-100" />
-                  </div>
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:gap-6">
+          <div className="min-w-0 flex-1">
+            {showSkeleton ? (
+              <div className="flex min-w-0 items-center gap-3 pb-1 lg:pb-0">
+                <Skeleton className="h-12 w-12 rounded-md" />
+                <div className="min-w-0">
+                  <Skeleton className="h-5 w-32" />
+                  <Skeleton className="mt-2 h-5 w-[170px]" />
                 </div>
-                <p className="-mt-0.5 text-[1.05rem] font-normal whitespace-nowrap text-slate-500">
-                  {!isHackathon
-                    ? `Sponsor since ${stats?.yearOnPlatform}`
-                    : 'Hackathon'}
-                </p>
               </div>
-            </Link>
-          )}
-          <div className="block h-0.5 w-full border-t border-slate-200 lg:h-14 lg:w-0.5 lg:border-r" />
-          <div className="flex gap-6 xl:gap-4 2xl:gap-6 [@media(min-width:1305px)]:gap-6">
+            ) : (
+              <Link
+                href={`/earn/s/${sponsor?.slug}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group flex min-w-0 items-center gap-3 overflow-hidden pb-1 transition-opacity hover:opacity-80 lg:pb-0"
+                title={sponsor?.name}
+              >
+                <EarnAvatar
+                  className="h-12 w-12 rounded-md object-contain"
+                  id={sponsor?.name}
+                  avatar={sponsor?.logo}
+                />
+
+                <div className="min-w-0">
+                  <div className="flex items-center">
+                    <div className="flex min-w-0 items-center gap-1">
+                      <p className="min-w-0 truncate text-lg font-semibold text-slate-900 group-hover:underline">
+                        {sponsor?.name}
+                      </p>
+                      {!!user?.currentSponsor?.isVerified && (
+                        <div className="shrink-0">
+                          <VerifiedBadgeLarge />
+                        </div>
+                      )}
+                      <ExternalLink className="ml-1 h-4 w-4 shrink-0 text-slate-400 opacity-0 transition-opacity group-hover:opacity-100" />
+                    </div>
+                  </div>
+                  <p className="-mt-0.5 truncate text-[1.05rem] font-normal text-slate-500">
+                    {!isHackathon
+                      ? `Sponsor since ${stats?.yearOnPlatform}`
+                      : 'Hackathon'}
+                  </p>
+                </div>
+              </Link>
+            )}
+          </div>
+
+          <div className="block h-0.5 w-full border-t border-slate-200 lg:h-14 lg:w-0.5 lg:shrink-0 lg:border-t-0 lg:border-r" />
+
+          <div className="grid grid-cols-3 gap-6 sm:gap-8 lg:shrink-0 lg:gap-6 xl:gap-4 2xl:gap-6 [@media(min-width:1305px)]:gap-6">
             <StatsTooltip
               label={!isHackathon ? 'Rewarded' : 'Total Prizes'}
               tooltipText={tooltipTextReward}
