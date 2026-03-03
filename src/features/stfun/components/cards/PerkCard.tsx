@@ -13,6 +13,14 @@ interface PerkCardProps {
   className?: string;
 }
 
+const ESCAPED_UNDERSCORE_REGEX = /\\_/g;
+const TELEGRAM_URL_REGEX = /\bhttps?:\/\/t\.me\/([A-Za-z0-9_]{5,32})\/?/gi;
+
+const normalizePerkDescription = (text: string) =>
+  text
+    .replace(ESCAPED_UNDERSCORE_REGEX, '_')
+    .replace(TELEGRAM_URL_REGEX, '@$1');
+
 export default function PerkCard({
   name,
   description,
@@ -20,6 +28,8 @@ export default function PerkCard({
   imgUrl,
   className,
 }: PerkCardProps) {
+  const normalizedDescription = normalizePerkDescription(description);
+
   return (
     <div
       className={cn(
@@ -41,7 +51,7 @@ export default function PerkCard({
           </h2>
         </div>
         <p className="font-primary mt-[16px] leading-[1.6] font-medium text-white">
-          {description}
+          {normalizedDescription}
         </p>
       </div>
       <div className="flex gap-4">
