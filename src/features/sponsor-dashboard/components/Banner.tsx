@@ -83,7 +83,7 @@ export function Banner({
   const showSkeleton = !sponsorId || isLoading;
 
   return (
-    <div className="mb-6 flex w-full flex-col gap-4 xl:flex-row xl:items-center">
+    <div className="mb-6 flex w-full flex-col gap-4 2xl:flex-row 2xl:items-center">
       <div className="w-full rounded-md border border-slate-200 bg-white px-6 py-5 text-white">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:gap-6">
           <div className="min-w-0 flex-1">
@@ -135,7 +135,7 @@ export function Banner({
 
           <div className="block h-0.5 w-full border-t border-slate-200 lg:h-14 lg:w-0.5 lg:shrink-0 lg:border-t-0 lg:border-r" />
 
-          <div className="grid grid-cols-3 gap-6 sm:gap-8 lg:shrink-0 lg:gap-6 xl:gap-4 2xl:gap-6 [@media(min-width:1305px)]:gap-6">
+          <div className="grid grid-cols-3 gap-6 sm:gap-8 lg:shrink-0 lg:gap-6 2xl:gap-4 2xl:gap-6 [@media(min-width:1305px)]:gap-6">
             <StatsTooltip
               label={!isHackathon ? 'Rewarded' : 'Total Prizes'}
               tooltipText={tooltipTextReward}
@@ -173,7 +173,7 @@ export function Banner({
         </div>
       </div>
 
-      <div className="xl:w-[60%] xl:max-w-[400px]">
+      <div className="2xl:w-[60%] 2xl:max-w-[400px]">
         <HelpBanner />
       </div>
     </div>
