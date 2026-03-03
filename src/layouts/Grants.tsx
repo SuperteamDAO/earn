@@ -85,6 +85,8 @@ export function GrantPageLayout({
   };
 
   const rewardText = getRewardText();
+  const grant = initialGrant?.id ? initialGrant : null;
+  const isLoadError = initialGrant === null;
 
   return (
     <Default
@@ -112,22 +114,31 @@ export function GrantPageLayout({
       }
     >
       <div className="bg-white">
-        {initialGrant !== null && !initialGrant?.id && <EmptySection />}
-        {initialGrant !== null && !!initialGrant?.id && (
+        {!grant && (
+          <EmptySection
+            title={isLoadError ? 'Unable to load grant' : undefined}
+            message={
+              isLoadError
+                ? 'Please refresh the page and try again in a moment.'
+                : undefined
+            }
+          />
+        )}
+        {grant && (
           <div className="mx-auto w-full px-2 lg:px-6">
             <div className="mx-auto w-full max-w-7xl">
               <GrantsHeader
-                grant={initialGrant}
-                title={initialGrant?.title ?? ''}
-                sponsor={initialGrant?.sponsor}
-                status={initialGrant?.status}
-                region={initialGrant?.region}
-                slug={initialGrant?.slug}
-                references={initialGrant.references}
-                isPublished={initialGrant.isPublished || false}
+                grant={grant}
+                title={grant.title}
+                sponsor={grant.sponsor}
+                status={grant.status}
+                region={grant.region}
+                slug={grant.slug}
+                references={grant.references}
+                isPublished={grant.isPublished || false}
                 isApproved={isApproved}
-                isPro={initialGrant.isPro}
-                isST={initialGrant.isST}
+                isPro={grant.isPro}
+                isST={grant.isST}
               />
 
               <div className="mb-10 flex max-w-6xl flex-col items-center justify-center gap-0 md:flex-row md:items-start md:justify-between md:gap-4">
@@ -137,36 +148,32 @@ export function GrantPageLayout({
                       {isApproved && application && showApplicationStats ? (
                         <ApplicationStats
                           application={application}
-                          grant={initialGrant}
+                          grant={grant}
                         />
                       ) : (
-                        <GrantStats grant={initialGrant} />
+                        <GrantStats grant={grant} />
                       )}
                       <div className="hidden w-full md:flex">
-                        <ApplicationActionButton grant={initialGrant} />
+                        <ApplicationActionButton grant={grant} />
                       </div>
                       {isApproved && application && showApplicationStats ? (
                         <ApprovalStages
                           application={application}
-                          grant={initialGrant}
+                          grant={grant}
                         />
                       ) : (
                         <>
                           <div>
                             <ExtraInfoSection
                               skills={iterableSkills}
-                              region={initialGrant.region}
-                              requirements={initialGrant.requirements}
-                              pocSocials={initialGrant.pocSocials}
+                              region={grant.region}
+                              requirements={grant.requirements}
+                              pocSocials={grant.pocSocials}
                               isGrant
                             />
                           </div>
                           <div className="hidden w-full pt-8 md:block">
-                            <LiveGrants
-                              excludeIds={
-                                initialGrant.id ? [initialGrant.id] : undefined
-                              }
-                            >
+                            <LiveGrants excludeIds={[grant.id]}>
                               <p className="h-full text-start text-sm font-semibold text-slate-600">
                                 LIVE GRANTS
                               </p>
@@ -194,7 +201,7 @@ export function GrantPageLayout({
                       ))}
                     </div>
                   </div>
-                  {initialGrant?.pocSocials && (
+                  {grant.pocSocials && (
                     <div className="flex w-full flex-col items-start text-sm md:hidden">
                       <p className="h-full text-center font-semibold text-slate-600">
                         CONTACT
@@ -202,7 +209,7 @@ export function GrantPageLayout({
                       <p>
                         <Link
                           className="ph-no-capture font-medium text-[#64768b]"
-                          href={getURLSanitized(initialGrant.pocSocials)}
+                          href={getURLSanitized(grant.pocSocials)}
                           onClick={() => posthog.capture('reach out_listing')}
                         >
                           Reach out
@@ -218,7 +225,7 @@ export function GrantPageLayout({
               </div>
             </div>
             <div className="sticky bottom-14 z-40 mb-10 w-full border-t border-slate-100 bg-white py-1 md:hidden">
-              <ApplicationActionButton grant={initialGrant} />
+              <ApplicationActionButton grant={grant} />
             </div>
           </div>
         )}

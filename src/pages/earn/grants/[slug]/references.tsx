@@ -1,9 +1,8 @@
 import type { GetServerSideProps } from 'next';
 
 import { GrantPageLayout } from '@/layouts/Grants';
-import { api } from '@/lib/api';
-import { getURL } from '@/utils/validUrl';
 
+import { getGrantBySlug } from '@/features/grants/queries/get-grant-by-slug';
 import { type GrantWithApplicationCount } from '@/features/grants/types';
 import { ReferenceCard } from '@/features/listings/components/ListingPage/ReferenceCard';
 
@@ -37,21 +36,36 @@ function Grants({ grant }: GrantsDetailsProps) {
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { slug } = context.query;
+  const rawSlug = context.params?.slug;
+  const slug = Array.isArray(rawSlug) ? rawSlug[0] : rawSlug;
 
-  let grantData;
-  try {
-    const grantDetails = await api.get(`${getURL()}api/grants/${slug}`);
-    grantData = grantDetails.data;
-  } catch (e) {
-    console.error(e);
-    grantData = null;
+  if (!slug) {
+    return {
+      notFound: true,
+    };
   }
 
-  return {
-    props: {
-      grant: grantData,
-    },
-  };
+  try {
+    const grantData = await getGrantBySlug(slug);
+
+    if (!grantData) {
+      return {
+        notFound: true,
+      };
+    }
+
+    return {
+      props: {
+        grant: grantData,
+      },
+    };
+  } catch (e) {
+    console.error(e);
+    return {
+      props: {
+        grant: null,
+      },
+    };
+  }
 };
 export default Grants;

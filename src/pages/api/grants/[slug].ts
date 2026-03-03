@@ -1,8 +1,9 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
-import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
+
+import { getGrantBySlug } from '@/features/grants/queries/get-grant-by-slug';
 
 export default async function user(req: NextApiRequest, res: NextApiResponse) {
   const params = req.query;
@@ -18,68 +19,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
 
   try {
     logger.debug(`Fetching grant details for slug: ${slug}`);
-    const grant = await prisma.grants.findFirst({
-      where: { slug },
-      select: {
-        id: true,
-        title: true,
-        slug: true,
-        description: true,
-        shortDescription: true,
-        token: true,
-        minReward: true,
-        maxReward: true,
-        totalPaid: true,
-        totalApproved: true,
-        historicalApplications: true,
-        link: true,
-        sponsorId: true,
-        pocId: true,
-        isPublished: true,
-        isFeatured: true,
-        isActive: true,
-        isArchived: true,
-        createdAt: true,
-        updatedAt: true,
-        skills: true,
-        logo: true,
-        region: true,
-        questions: true,
-        pocSocials: true,
-        status: true,
-        avgResponseTime: true,
-        isNative: true,
-        airtableId: true,
-        references: true,
-        isPro: true,
-        isST: true,
-        sponsor: {
-          select: {
-            name: true,
-            logo: true,
-            slug: true,
-            isVerified: true,
-            entityName: true,
-          },
-        },
-        _count: {
-          select: {
-            GrantApplication: {
-              where: {
-                OR: [
-                  {
-                    applicationStatus: 'Approved',
-                  },
-                  {
-                    applicationStatus: 'Completed',
-                  },
-                ],
-              },
-            },
-          },
-        },
-      },
-    });
+    const grant = await getGrantBySlug(slug);
 
     if (!grant) {
       logger.warn(`No grant found with slug: ${slug}`);
@@ -88,14 +28,8 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
       });
     }
 
-    const totalApplications =
-      grant._count.GrantApplication + grant.historicalApplications;
-
     logger.info(`Grant details fetched successfully for slug: ${slug}`);
-    return res.status(200).json({
-      ...grant,
-      totalApplications,
-    });
+    return res.status(200).json(grant);
   } catch (error: any) {
     logger.error(
       `Error occurred while fetching grant with slug=${slug}: ${safeStringify(error)}`,

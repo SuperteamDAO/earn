@@ -4,19 +4,18 @@ import { useEffect } from 'react';
 
 import { JsonLd } from '@/components/shared/JsonLd';
 import { GrantPageLayout } from '@/layouts/Grants';
-import { api } from '@/lib/api';
 import {
   generateBreadcrumbListSchema,
   generateMonetaryGrantSchema,
 } from '@/utils/json-ld';
-import { getURL } from '@/utils/validUrl';
 
 import { GrantsPop } from '@/features/conversion-popups/components/GrantsPop';
+import { getGrantBySlug } from '@/features/grants/queries/get-grant-by-slug';
 import { type GrantWithApplicationCount } from '@/features/grants/types';
 import { DescriptionUI } from '@/features/listings/components/ListingPage/DescriptionUI';
 
 interface InitialGrant {
-  grant: GrantWithApplicationCount;
+  grant: GrantWithApplicationCount | null;
 }
 
 function Grants({ grant: initialGrant }: InitialGrant) {
@@ -54,21 +53,36 @@ function Grants({ grant: initialGrant }: InitialGrant) {
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { slug } = context.query;
+  const rawSlug = context.params?.slug;
+  const slug = Array.isArray(rawSlug) ? rawSlug[0] : rawSlug;
 
-  let grantData;
-  try {
-    const grantDetails = await api.get(`${getURL()}api/grants/${slug}`);
-    grantData = grantDetails.data;
-  } catch (e) {
-    console.error(e);
-    grantData = null;
+  if (!slug) {
+    return {
+      notFound: true,
+    };
   }
 
-  return {
-    props: {
-      grant: grantData,
-    },
-  };
+  try {
+    const grantData = await getGrantBySlug(slug);
+
+    if (!grantData) {
+      return {
+        notFound: true,
+      };
+    }
+
+    return {
+      props: {
+        grant: grantData,
+      },
+    };
+  } catch (e) {
+    console.error(e);
+    return {
+      props: {
+        grant: null,
+      },
+    };
+  }
 };
 export default Grants;
