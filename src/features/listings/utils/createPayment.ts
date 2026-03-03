@@ -1,5 +1,6 @@
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { getChapterRegions } from '@/utils/chapterRegion';
 
 import { addPaymentInfoToAirtable } from './addPaymentInfoToAirtable';
 import { checkKycCountryMatchesRegion } from './region';
@@ -10,6 +11,7 @@ type CreatePaymentProps = {
 
 export async function createPayment({ userId }: CreatePaymentProps) {
   const ANNOUNCEMENT_CUTOFF_DATE = new Date('2025-08-06');
+  const chapterRegions = await getChapterRegions();
 
   const submissions = await prisma.submission.findMany({
     where: {
@@ -152,6 +154,7 @@ export async function createPayment({ userId }: CreatePaymentProps) {
       const kycCountryCheck = checkKycCountryMatchesRegion(
         submission.user.kycCountry,
         submission.listing.region,
+        chapterRegions,
       );
 
       if (!kycCountryCheck.isValid) {

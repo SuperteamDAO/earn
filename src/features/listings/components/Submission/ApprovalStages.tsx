@@ -6,6 +6,7 @@ import { useUser } from '@/store/user';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import { getPayoutCopy } from '@/utils/payout-date';
 
+import { chaptersQuery } from '@/features/chapters/queries/chapters';
 import type { Listing } from '@/features/listings/types';
 
 import { userSubmissionQuery } from '../../queries/user-submission-status';
@@ -58,6 +59,7 @@ export const ApprovalStages = ({ listing }: Props) => {
   const { user } = useUser();
   const { authenticated, ready } = usePrivy();
   const isAuthenticated = authenticated;
+  const { data: chapters = [] } = useQuery(chaptersQuery);
 
   const { data: submission, isLoading: isUserSubmissionLoading } = useQuery({
     ...userSubmissionQuery(listing.id!, user?.id),
@@ -74,6 +76,7 @@ export const ApprovalStages = ({ listing }: Props) => {
   const kycCountryCheck = checkKycCountryMatchesRegion(
     (submission as any).kycCountry,
     (submission as any).listingRegion || listing.region,
+    chapters,
   );
   const isKycValidForRegion = isKycVerified && kycCountryCheck.isValid;
 

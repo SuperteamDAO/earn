@@ -22,24 +22,17 @@ export const RegionLabel = ({
     : null;
   const code = regionObject?.code;
 
-  const regionTooltipLabel = getRegionTooltipLabel(region, isGrant);
+  const regionTooltipLabel = getRegionTooltipLabel(region, isGrant, chapters);
 
   let displayValue = 'Global';
 
   if (region !== 'Global' && region) {
     const details = lookup.byCountry(region);
-    console.log('region object', regionObject);
-    console.log('region details', details);
-    if (regionObject?.regions?.length)
-      displayValue = regionObject?.displayValue || regionObject?.name || region;
-    else
-      displayValue =
-        details?.internet ||
-        details?.iso3 ||
-        regionObject?.displayValue ||
-        region;
-
-    console.log('final display value', displayValue);
+    displayValue =
+      details?.internet ||
+      details?.iso3 ||
+      regionObject?.displayValue ||
+      region;
   }
 
   return (

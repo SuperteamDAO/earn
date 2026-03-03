@@ -1,4 +1,5 @@
 import { prisma } from '@/prisma';
+import { getChapterRegions } from '@/utils/chapterRegion';
 
 import { userRegionEligibilty } from '@/features/listings/utils/region';
 
@@ -66,9 +67,11 @@ export async function validateGrantRequest(userId: string, grantId: string) {
     throw new Error('Profile not completed');
   }
 
+  const chapterRegions = await getChapterRegions();
   const isUserEligibleByRegion = userRegionEligibilty({
     region: grant.region,
     userLocation: user.location || '',
+    chapters: chapterRegions,
   });
 
   if (!isUserEligibleByRegion) {

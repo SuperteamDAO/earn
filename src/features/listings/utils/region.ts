@@ -3,6 +3,22 @@ import lookup from 'country-code-lookup';
 import { countries } from '@/constants/country';
 import type { ChapterRegionData } from '@/interface/chapter';
 
+function normalizeRegionValue(value: string | null | undefined): string {
+  return (value || '').trim().toLowerCase();
+}
+
+function isChapterRegionMatch(
+  chapter: ChapterRegionData,
+  normalizedRegion: string,
+): boolean {
+  return (
+    normalizeRegionValue(chapter.region) === normalizedRegion ||
+    normalizeRegionValue(chapter.displayValue) === normalizedRegion ||
+    normalizeRegionValue(chapter.name) === normalizedRegion ||
+    normalizeRegionValue(chapter.slug) === normalizedRegion
+  );
+}
+
 export const getCombinedRegion = (
   region: string,
   lookupSTCountries: boolean = false,
@@ -11,46 +27,46 @@ export const getCombinedRegion = (
   let regionObject:
     | {
         name?: string;
+        region?: string;
         code: string;
         country?: string[];
         displayValue?: string;
+        slug?: string;
         regions?: string[];
       }
     | undefined;
+  const normalizedRegion = normalizeRegionValue(region);
+  if (!normalizedRegion) {
+    return undefined;
+  }
+
   if (lookupSTCountries) {
     regionObject = chapters.find((chapter) =>
-      chapter.country
-        .map((c) => c.toLowerCase())
-        .includes(region?.toLowerCase()),
+      chapter.country.some(
+        (country) => normalizeRegionValue(country) === normalizedRegion,
+      ),
     );
   }
-  if (!regionObject) {
-    const normalizedRegion = region?.toLowerCase();
-    regionObject = chapters.find((chapter) => {
-      return (
-        chapter.region.toLowerCase().includes(normalizedRegion) ||
-        chapter.displayValue.toLowerCase().includes(normalizedRegion) ||
-        chapter.name.toLowerCase().includes(normalizedRegion)
-      );
-    });
-  }
+
   if (!regionObject) {
     regionObject = chapters.find((chapter) =>
-      chapter.country
-        .map((country) => country.toLowerCase())
-        .includes(region?.toLowerCase()),
+      isChapterRegionMatch(chapter, normalizedRegion),
     );
   }
+
+  if (!regionObject) {
+    regionObject = chapters.find((chapter) =>
+      chapter.country.some(
+        (country) => normalizeRegionValue(country) === normalizedRegion,
+      ),
+    );
+  }
+
   if (regionObject?.displayValue) {
     regionObject = {
       ...regionObject,
       name: regionObject.displayValue,
     };
-  }
-  if (!regionObject) {
-    regionObject = countries.find(
-      (country) => country.name.toLowerCase() === region?.toLowerCase(),
-    );
   }
 
   return regionObject;
@@ -112,28 +128,21 @@ export const filterRegionCountry = (
 export const getRegionTooltipLabel = (
   region: string | undefined,
   isGrant: boolean = false,
+  chapters: ChapterRegionData[] = [],
 ) => {
   const normalizedRegion = region?.trim() || '';
-  let isoCountry: string | undefined;
-
-  if (/^[a-zA-Z]{2,3}$/.test(normalizedRegion)) {
-    try {
-      isoCountry = lookup.byIso(normalizedRegion)?.country;
-    } catch {
-      isoCountry = undefined;
-    }
-  }
+  const regionObject = getCombinedRegion(normalizedRegion, false, chapters);
 
   const country =
-    getCombinedRegion(normalizedRegion)?.name ||
-    isoCountry ||
+    regionObject?.displayValue ||
+    regionObject?.name ||
     normalizedRegion ||
     'your region';
 
-  switch (region) {
-    case 'Global':
+  switch (normalizeRegionValue(region)) {
+    case 'global':
       return 'This listing is open to everyone in the world!';
-    case 'BALKAN':
+    case 'balkan':
       return `You need to be a resident of one of the Balkan countries to be able to participate in this ${isGrant ? 'grant' : 'listing'}`;
     default:
       return `You need to be a resident of ${country} to participate in this ${isGrant ? 'grant' : 'listing'} `;
@@ -143,35 +152,31 @@ export const getRegionTooltipLabel = (
 export function userRegionEligibilty({
   region,
   userLocation,
+  chapters = [],
 }: {
   region: string | undefined;
   userLocation: string | undefined;
+  chapters?: ChapterRegionData[];
 }) {
-  const normalizeRegionValue = (value: string | undefined) => {
-    const normalized = value?.trim().toLowerCase() || '';
-    if (normalized === 'ireland' || normalized === 'ireland (open ni and roi)')
-      return 'ireland (ni and roi)';
-    return normalized;
-  };
-
-  if (region === 'Global') {
+  if (normalizeRegionValue(region) === 'global') {
     return true;
   }
 
-  const regionObject = region ? getCombinedRegion(region) : null;
+  const regionObject = region
+    ? getCombinedRegion(region, false, chapters)
+    : null;
   const normalizedUserLocation = normalizeRegionValue(userLocation);
 
   const isEligible =
     !!(
       userLocation &&
       (normalizeRegionValue(region) === normalizedUserLocation ||
+        normalizeRegionValue(regionObject?.region) === normalizedUserLocation ||
         normalizeRegionValue(regionObject?.name) === normalizedUserLocation ||
+        normalizeRegionValue(regionObject?.displayValue) ===
+          normalizedUserLocation ||
         regionObject?.country?.some(
           (country) => normalizeRegionValue(country) === normalizedUserLocation,
-        ) ||
-        regionObject?.regions?.some(
-          (regionName) =>
-            normalizeRegionValue(regionName) === normalizedUserLocation,
         ))
     ) || false;
 
@@ -181,56 +186,40 @@ export function userRegionEligibilty({
 export function checkKycCountryMatchesRegion(
   kycCountry: string | null | undefined,
   listingRegion: string | null | undefined,
+  chapters: ChapterRegionData[] = [],
 ): {
   isValid: boolean;
   regionDisplayName: string;
 } {
-  if (!listingRegion || listingRegion === 'Global') {
+  if (!listingRegion || normalizeRegionValue(listingRegion) === 'global') {
     return { isValid: true, regionDisplayName: 'Global' };
   }
 
+  const regionObject = getCombinedRegion(listingRegion, false, chapters);
+  const regionDisplayName =
+    regionObject?.displayValue || regionObject?.name || listingRegion;
+
   if (!kycCountry) {
-    const regionObject = getCombinedRegion(listingRegion);
     return {
       isValid: false,
-      regionDisplayName:
-        regionObject?.displayValue || regionObject?.name || listingRegion,
+      regionDisplayName,
     };
   }
 
   const countryLookup = lookup.byIso(kycCountry);
   if (!countryLookup || !countryLookup.country) {
-    const regionObject = getCombinedRegion(listingRegion);
     return {
       isValid: false,
-      regionDisplayName:
-        regionObject?.displayValue || regionObject?.name || listingRegion,
-    };
-  }
-
-  const kycCountryName = countryLookup.country;
-  const regionObject = getCombinedRegion(listingRegion);
-  const regionDisplayName =
-    regionObject?.displayValue || regionObject?.name || listingRegion;
-
-  // Sumsub returns GBR for Northern Ireland driving licenses.
-  // Ireland-restricted listings should allow this path.
-  const normalizedRegion = regionDisplayName.trim().toLowerCase();
-  if (
-    kycCountry.toUpperCase() === 'GBR' &&
-    (normalizedRegion === 'ireland' ||
-      normalizedRegion === 'ire' ||
-      normalizedRegion === 'ireland (ni and roi)')
-  ) {
-    return {
-      isValid: true,
       regionDisplayName,
     };
   }
 
+  const kycCountryName = countryLookup.country;
+
   if (!regionObject) {
     const isValid =
-      listingRegion.toLowerCase() === kycCountryName.toLowerCase();
+      normalizeRegionValue(listingRegion) ===
+      normalizeRegionValue(kycCountryName);
     return {
       isValid,
       regionDisplayName: listingRegion,
@@ -238,12 +227,14 @@ export function checkKycCountryMatchesRegion(
   }
 
   const isEligible =
-    regionObject.name?.toLowerCase() === kycCountryName.toLowerCase() ||
+    normalizeRegionValue(regionObject.name) ===
+      normalizeRegionValue(kycCountryName) ||
+    normalizeRegionValue(regionObject.region) ===
+      normalizeRegionValue(kycCountryName) ||
+    normalizeRegionValue(regionObject.displayValue) ===
+      normalizeRegionValue(kycCountryName) ||
     regionObject.country?.some(
-      (c) => c.toLowerCase() === kycCountryName.toLowerCase(),
-    ) ||
-    regionObject.regions?.some(
-      (r) => r.toLowerCase() === kycCountryName.toLowerCase(),
+      (c) => normalizeRegionValue(c) === normalizeRegionValue(kycCountryName),
     ) ||
     false;
 

@@ -3,6 +3,7 @@ import type { NextApiResponse } from 'next';
 import logger from '@/lib/logger';
 import { LockNotAcquiredError, withRedisLock } from '@/lib/with-redis-lock';
 import { prisma } from '@/prisma';
+import { getChapterRegions } from '@/utils/chapterRegion';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { type NextApiRequestWithUser } from '@/features/auth/types';
@@ -25,6 +26,7 @@ const handler = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
       where: { id: submissionId, userId },
       include: { user: true, listing: true },
     });
+    const chapterRegions = await getChapterRegions();
 
     const isAllowed =
       submission.isWinner &&
@@ -86,6 +88,7 @@ const handler = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
             const kycCountryCheck = checkKycCountryMatchesRegion(
               country,
               submission.listing.region,
+              chapterRegions,
             );
 
             if (!kycCountryCheck.isValid) {

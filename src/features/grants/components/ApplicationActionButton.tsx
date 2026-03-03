@@ -9,6 +9,7 @@ import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 
 import { AuthWrapper } from '@/features/auth/components/AuthWrapper';
+import { chaptersQuery } from '@/features/chapters/queries/chapters';
 import {
   getRegionTooltipLabel,
   userRegionEligibilty,
@@ -42,6 +43,7 @@ export const ApplicationActionButton = ({
     ...userApplicationQuery(id),
     enabled: !!user?.id,
   });
+  const { data: chapters = [] } = useQuery(chaptersQuery);
 
   const { buttonConfig, hasApplied, applicationState, tranches } =
     useApplicationState(application, grant);
@@ -51,9 +53,10 @@ export const ApplicationActionButton = ({
   const isUserEligibleByRegion = userRegionEligibilty({
     region,
     userLocation: user?.location,
+    chapters,
   });
 
-  const regionTooltipLabel = getRegionTooltipLabel(region);
+  const regionTooltipLabel = getRegionTooltipLabel(region, false, chapters);
 
   const getCooldownTooltipContent = () => {
     if (applicationState !== 'COOLDOWN' || !application?.decidedAt) return null;

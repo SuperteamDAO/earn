@@ -6,6 +6,7 @@ import earncognitoClient from '@/lib/earncognitoClient';
 import logger from '@/lib/logger';
 import { LockNotAcquiredError, withRedisLock } from '@/lib/with-redis-lock';
 import { prisma } from '@/prisma';
+import { getChapterRegions } from '@/utils/chapterRegion';
 import { dayjs } from '@/utils/dayjs';
 import { safeStringify } from '@/utils/safeStringify';
 
@@ -423,6 +424,7 @@ export async function POST(
               });
 
               if (listing.type !== 'project' && listing.isFndnPaying) {
+                const chapterRegions = await getChapterRegions();
                 for (const winner of winners) {
                   const user = winner.user;
 
@@ -430,6 +432,7 @@ export async function POST(
                     const kycCountryCheck = checkKycCountryMatchesRegion(
                       user.kycCountry,
                       listing.region,
+                      chapterRegions,
                     );
 
                     if (!kycCountryCheck.isValid) {

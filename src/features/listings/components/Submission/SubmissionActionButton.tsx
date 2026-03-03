@@ -18,6 +18,7 @@ import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 
 import { AuthWrapper } from '@/features/auth/components/AuthWrapper';
+import { chaptersQuery } from '@/features/chapters/queries/chapters';
 import { Nudge } from '@/features/credits/components/Nudge';
 import { ReferralModal } from '@/features/credits/components/ReferralModal';
 import { CreditIcon } from '@/features/credits/icon/credit';
@@ -126,6 +127,7 @@ export const SubmissionActionButton = ({
 
   const { user } = useUser();
   const { creditBalance } = useCreditBalance();
+  const { data: chapters = [] } = useQuery(chaptersQuery);
 
   const { authenticated, ready } = usePrivy();
 
@@ -135,6 +137,7 @@ export const SubmissionActionButton = ({
   const isUserEligibleByRegion = userRegionEligibilty({
     region,
     userLocation: user?.location,
+    chapters,
   });
 
   const { data: submission, isLoading: isUserSubmissionLoading } = useQuery({
@@ -152,7 +155,7 @@ export const SubmissionActionButton = ({
 
   const { serverTime, manualSync } = useServerTimeSync();
 
-  const regionTooltipLabel = getRegionTooltipLabel(region);
+  const regionTooltipLabel = getRegionTooltipLabel(region, false, chapters);
 
   const bountyDraftStatus = getListingDraftStatus(status, isPublished);
 
@@ -228,6 +231,7 @@ export const SubmissionActionButton = ({
         const kycCountryCheck = checkKycCountryMatchesRegion(
           submission?.kycCountry,
           submission?.listingRegion || listing.region,
+          chapters,
         );
         if (!kycCountryCheck.isValid) {
           return 'kyc_rejected';

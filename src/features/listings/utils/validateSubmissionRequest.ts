@@ -1,4 +1,5 @@
 import { prisma } from '@/prisma';
+import { getChapterRegions } from '@/utils/chapterRegion';
 
 import { isDeadlineOver } from './deadline';
 import { userRegionEligibilty } from './region';
@@ -11,9 +12,10 @@ export async function validateSubmissionRequest(
   const actor = options?.actor ?? 'user';
   const isAgent = actor === 'agent';
 
-  const [user, listing] = await Promise.all([
+  const [user, listing, chapterRegions] = await Promise.all([
     prisma.user.findUnique({ where: { id: userId } }),
     prisma.bounties.findUnique({ where: { id: listingId } }),
+    getChapterRegions(),
   ]);
 
   if (!user) throw new Error('User not found');
@@ -40,6 +42,7 @@ export async function validateSubmissionRequest(
     !userRegionEligibilty({
       region: listing.region,
       userLocation: user.location || '',
+      chapters: chapterRegions,
     })
   )
     throw new Error('Region not eligible');
