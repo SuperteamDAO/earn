@@ -163,12 +163,12 @@ export const ProSidebar = () => {
             ) : (
               <ProEligibility totalWinnings={stats?.totalWinnings ?? 0} />
             )}
-            <Separator className="my-8" />
+            <Separator className="my-5" />
             <p className="text-[0.95rem] font-medium text-slate-400">
               Pro Benefits
             </p>
             <PerksList />
-            <Separator className="my-8" />
+            <Separator className="my-5" />
             <p className="text-[0.95rem] font-medium text-slate-400">
               Pro Ecosystem Perks
             </p>
