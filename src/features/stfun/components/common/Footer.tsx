@@ -30,6 +30,14 @@ export default function Footer() {
               Superteam Earn
             </a>
             <a
+              href="https://airtable.com/appPZ5nE1OqZiBKx7/shrjTq2Nt07UhRXQ7/tbl9632RzL9BJv4G0"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="footer-text"
+            >
+              Payment Pipeline
+            </a>
+            <a
               href="/branding"
               target="_blank"
               rel="noopener noreferrer"
