@@ -4,7 +4,11 @@ import { countries } from '@/constants/country';
 import type { ChapterRegionData } from '@/interface/chapter';
 
 function normalizeRegionValue(value: string | null | undefined): string {
-  return (value || '').trim().toLowerCase();
+  const normalized = (value || '').trim().toLowerCase();
+  if (normalized === 'ireland' || normalized === 'ireland (open ni and roi)') {
+    return 'ireland (ni and roi)';
+  }
+  return normalized;
 }
 
 function isChapterRegionMatch(
@@ -69,6 +73,22 @@ export const getCombinedRegion = (
     };
   }
 
+  if (!regionObject) {
+    const countryFallback = countries.find(
+      (country) =>
+        normalizeRegionValue(country.name) === normalizedRegion ||
+        normalizeRegionValue(country.displayValue) === normalizedRegion,
+    );
+    if (countryFallback) {
+      regionObject = {
+        name: countryFallback.name,
+        code: countryFallback.code,
+        displayValue: countryFallback.displayValue,
+        regions: countryFallback.regions,
+      };
+    }
+  }
+
   return regionObject;
 };
 
@@ -131,11 +151,21 @@ export const getRegionTooltipLabel = (
   chapters: ChapterRegionData[] = [],
 ) => {
   const normalizedRegion = region?.trim() || '';
+  let isoCountry: string | undefined;
+  if (/^[a-zA-Z]{2,3}$/.test(normalizedRegion)) {
+    try {
+      isoCountry = lookup.byIso(normalizedRegion)?.country;
+    } catch {
+      isoCountry = undefined;
+    }
+  }
+
   const regionObject = getCombinedRegion(normalizedRegion, false, chapters);
 
   const country =
     regionObject?.displayValue ||
     regionObject?.name ||
+    isoCountry ||
     normalizedRegion ||
     'your region';
 
@@ -177,6 +207,10 @@ export function userRegionEligibilty({
           normalizedUserLocation ||
         regionObject?.country?.some(
           (country) => normalizeRegionValue(country) === normalizedUserLocation,
+        ) ||
+        regionObject?.regions?.some(
+          (regionName) =>
+            normalizeRegionValue(regionName) === normalizedUserLocation,
         ))
     ) || false;
 
@@ -216,6 +250,18 @@ export function checkKycCountryMatchesRegion(
 
   const kycCountryName = countryLookup.country;
 
+  // Sumsub returns GBR for Northern Ireland driving licenses.
+  // Ireland-restricted listings should allow this path.
+  if (
+    kycCountry.toUpperCase() === 'GBR' &&
+    normalizeRegionValue(regionDisplayName) === 'ireland (ni and roi)'
+  ) {
+    return {
+      isValid: true,
+      regionDisplayName,
+    };
+  }
+
   if (!regionObject) {
     const isValid =
       normalizeRegionValue(listingRegion) ===
@@ -235,6 +281,9 @@ export function checkKycCountryMatchesRegion(
       normalizeRegionValue(kycCountryName) ||
     regionObject.country?.some(
       (c) => normalizeRegionValue(c) === normalizeRegionValue(kycCountryName),
+    ) ||
+    regionObject.regions?.some(
+      (r) => normalizeRegionValue(r) === normalizeRegionValue(kycCountryName),
     ) ||
     false;
 

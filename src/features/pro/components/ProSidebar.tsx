@@ -1,10 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
-import { type CSSProperties } from 'react';
 
 import FaCheck from '@/components/icons/FaCheck';
 import { CircularProgress } from '@/components/ui/progress';
 import { Separator } from '@/components/ui/separator';
-import { useBreakpoint } from '@/hooks/use-breakpoint';
 import { useUser } from '@/store/user';
 
 import { userStatsQuery } from '@/features/home/queries/user-stats';
@@ -83,14 +81,9 @@ const ProEligibility = ({ totalWinnings }: { totalWinnings: number }) => {
   );
 };
 
-interface ProSidebarProps {
-  desktopHeight?: number;
-}
-
-export const ProSidebar = ({ desktopHeight }: ProSidebarProps) => {
+export const ProSidebar = () => {
   const { data: stats, isLoading: isStatsLoading } = useQuery(userStatsQuery);
   const { user, isLoading: isUserLoading } = useUser();
-  const isLg = useBreakpoint('lg');
   const isPro = user?.isPro;
   const hasEligibleMembership = isEligiblePeopleType(user?.people?.type);
 
@@ -99,17 +92,12 @@ export const ProSidebar = ({ desktopHeight }: ProSidebarProps) => {
   const isUserEligibleForPro =
     !isPro &&
     ((stats && (stats.totalWinnings ?? 0) >= 1000) || hasEligibleMembership);
-  const sidebarStyle = isLg
-    ? ({
-        height: desktopHeight,
-      } satisfies CSSProperties)
-    : undefined;
   const sidebarClassName =
-    'flex w-full flex-col py-3 lg:min-h-0 lg:w-130 lg:border-l lg:border-slate-100 lg:pl-5';
+    'flex w-full flex-col py-3 lg:sticky lg:top-14 lg:h-[calc(100vh-3.5rem)] lg:min-h-0 lg:w-130 lg:border-l lg:border-slate-100 lg:pl-5';
 
   if (isProEligibilityLoading) {
     return (
-      <div className={sidebarClassName} style={sidebarStyle}>
+      <div className={sidebarClassName}>
         <Separator className="mb-4 lg:hidden" />
         <div className="space-y-4">
           <div className="h-4 w-24 rounded bg-slate-100" />
@@ -159,7 +147,7 @@ export const ProSidebar = ({ desktopHeight }: ProSidebarProps) => {
   }
 
   return (
-    <div className={sidebarClassName} style={sidebarStyle}>
+    <div className={sidebarClassName}>
       <Separator className="mb-4 lg:hidden" />
       <div className="flex flex-col lg:min-h-0 lg:flex-1">
         {isPro ? (

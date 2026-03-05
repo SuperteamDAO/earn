@@ -34,16 +34,16 @@ const ProPerkCard = ({ perk }: ProPerkCardProps) => {
   const shouldShowCta = authenticated && isPro && hasCtaLink;
 
   return (
-    <div className="w-full rounded-xl border border-slate-100 bg-zinc-100 px-4 pt-6 pb-8">
-      <div className="flex flex-col items-start gap-3">
+    <div className="w-full rounded-xl border border-slate-100 bg-zinc-100 px-4 py-5">
+      <div className="flex flex-col items-start gap-2">
         <img
           src={perk.logo}
           alt={perk.header}
-          className="size-10 rounded-md object-contain"
+          className="size-8 rounded-md object-contain"
         />
 
-        <h3 className="text-lg font-semibold text-zinc-800">{perk.header}</h3>
-        <p className="text-zinc-600">{perk.description}</p>
+        <h3 className="text-base font-semibold text-zinc-800">{perk.header}</h3>
+        <p className="text-sm text-zinc-600">{perk.description}</p>
         {shouldShowCta && (
           <Button
             className="mt-2 w-full rounded-lg bg-zinc-800 font-semibold text-white shadow transition-all hover:bg-zinc-900 hover:shadow-lg"
@@ -112,7 +112,7 @@ export const ProPerksCards = ({ className }: ProPerksCardsProps) => {
   if (isLoading) {
     return (
       <div className={cn('mt-4 min-h-0', className)}>
-        <div className="hide-scrollbar flex max-h-[70vh] flex-col gap-4 overflow-y-auto pr-2 lg:h-full lg:max-h-none">
+        <div className="lg:hide-scrollbar flex flex-col gap-4 pr-0 lg:h-full lg:overflow-y-auto lg:pr-2">
           <div className="h-24 animate-pulse rounded-lg bg-zinc-200" />
           <div className="h-24 animate-pulse rounded-lg bg-zinc-200" />
         </div>
@@ -133,7 +133,7 @@ export const ProPerksCards = ({ className }: ProPerksCardsProps) => {
     >
       <div
         className={cn(
-          'pointer-events-none absolute inset-x-0 top-0 z-20 h-36',
+          'pointer-events-none absolute inset-x-0 top-0 z-20 hidden h-36 lg:block',
           'bg-linear-to-b from-white/95 via-white/70 to-transparent',
           'transition-opacity duration-200',
           showTopShadow ? 'opacity-100' : 'opacity-0',
@@ -142,7 +142,7 @@ export const ProPerksCards = ({ className }: ProPerksCardsProps) => {
       <div
         ref={scrollContainerRef}
         className={cn(
-          'hide-scrollbar max-h-[70vh] overflow-y-auto pt-2 lg:h-full lg:max-h-none',
+          'lg:hide-scrollbar pt-2 lg:h-full lg:overflow-y-auto',
           shouldShowCta ? 'pb-10' : 'pb-8',
         )}
       >
@@ -154,7 +154,7 @@ export const ProPerksCards = ({ className }: ProPerksCardsProps) => {
       </div>
       <div
         className={cn(
-          'pointer-events-none absolute inset-x-0 bottom-0 z-20 h-40',
+          'pointer-events-none absolute inset-x-0 bottom-0 z-20 hidden h-40 lg:block',
           'bg-linear-to-t from-white/95 via-white/70 to-transparent',
           'transition-opacity duration-200',
           showBottomShadow ? 'opacity-100' : 'opacity-0',
@@ -162,7 +162,7 @@ export const ProPerksCards = ({ className }: ProPerksCardsProps) => {
       />
       <div
         className={cn(
-          'pointer-events-none absolute inset-x-0 bottom-4 z-30 flex justify-center',
+          'pointer-events-none absolute inset-x-0 bottom-4 z-30 hidden justify-center lg:flex',
           'transition-opacity duration-200',
           showBottomShadow ? 'opacity-100' : 'opacity-0',
         )}
