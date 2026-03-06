@@ -802,39 +802,59 @@ model ProPerks {
 }
 
 model Chapter {
-  id                String             @id @default(uuid()) @db.Char(36)
-  name              String             @unique @db.VarChar(100)
-  slug              String             @unique @db.VarChar(120)
-  region            String             @db.VarChar(100)
-  displayValue      String?            @db.VarChar(100)
-  code              String?            @db.VarChar(40)
-  countries         Json?
-  memberForm        String?            @db.VarChar(255)
-  active            Boolean            @default(true)
-  community         String?            @db.VarChar(255)
-  pocName           String?            @db.VarChar(255)
-  pocEmail          String?            @db.VarChar(255)
-  twitterUsername   String?            @db.VarChar(100)
-  link              String?            @db.VarChar(255)
-  icons             String?            @db.Text
-  banner            String?            @db.Text
-  hello             String?            @db.VarChar(80)
-  nationality       String?            @db.VarChar(120)
-  tgChatId          String?
-  tgThreadId        String?
-  registeredBy      String?
-  sponsorId         String?            @unique
-  createdAt         DateTime           @default(now())
-  updatedAt         DateTime           @updatedAt
-  sponsor           Sponsors?          @relation(fields: [sponsorId], references: [id])
-  people            People[]
-  communityEarnings CommunityEarning[]
-  events            Event[]
-  jobs              Job[]
-  vcExternalGrants  VcExternalGrant[]
-  lumaEventReviews  LumaEventReview[]
+  id                  String             @id @default(uuid()) @db.Char(36)
+  name                String             @unique @db.VarChar(100)
+  slug                String             @unique @db.VarChar(120)
+  region              String             @db.VarChar(100)
+  displayValue        String?            @db.VarChar(100)
+  code                String?            @db.VarChar(40)
+  countries           Json?
+  memberForm          String?            @db.VarChar(255)
+  active              Boolean            @default(true)
+  community           String?            @db.VarChar(255)
+  pocName             String?            @db.VarChar(255)
+  pocEmail            String?            @db.VarChar(255)
+  twitterUsername     String?            @db.VarChar(100)
+  link                String?            @db.VarChar(255)
+  icons               String?            @db.Text
+  banner              String?            @db.Text
+  hello               String?            @db.VarChar(80)
+  nationality         String?            @db.VarChar(120)
+  airtableBaseId      String?            @db.VarChar(50)
+  tgChatId            String?
+  tgThreadId          String?
+  registeredBy        String?
+  sponsorId           String?            @unique
+  createdAt           DateTime           @default(now())
+  updatedAt           DateTime           @updatedAt
+  sponsor             Sponsors?          @relation(fields: [sponsorId], references: [id])
+  people              People[]
+  communityEarnings   CommunityEarning[]
+  events              Event[]
+  jobs                Job[]
+  vcExternalGrants    VcExternalGrant[]
+  lumaEventReviews    LumaEventReview[]
+  memberInvites       MemberInvite[]
+  welcomeEmailSubject String?            @db.VarChar(255)
+  welcomeEmailBody    String?            @db.Text
 
   @@index([region])
+}
+
+model MemberInvite {
+  id        String    @id @default(uuid()) @db.Char(36)
+  email     String
+  chapterId String    @db.Char(36)
+  invitedBy String    @db.Char(36)
+  status    String    @default("pending") @db.VarChar(20)
+  expiresAt DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  chapter   Chapter   @relation(fields: [chapterId], references: [id])
+
+  @@unique([email, chapterId])
+  @@index([email])
+  @@index([chapterId])
 }
 
 model People {
@@ -846,6 +866,13 @@ model People {
   chapterId         String?            @db.Char(36)
   type              String?            @db.VarChar(50)
   xUsername         String?            @db.VarChar(100)
+  telegram          String?            @db.VarChar(100)
+  discord           String?            @db.VarChar(100)
+  solWallet         String?            @db.VarChar(50)
+  city              String?            @db.VarChar(100)
+  skills            String?            @db.Text
+  proofOfWork       String?            @db.Text
+  source            String             @default("Legacy") @db.VarChar(50)
   airtableRecordId  String             @db.VarChar(50)
   createdAt         DateTime           @default(now())
   updatedAt         DateTime           @default(now()) @updatedAt
