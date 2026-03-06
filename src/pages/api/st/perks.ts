@@ -12,6 +12,10 @@ export default async function handler(
         headers: {
           Authorization: `Bearer ${process.env.AIRTABLE_API_TOKEN}`,
         },
+        params: {
+          'sort[0][field]': 'created',
+          'sort[0][direction]': 'desc',
+        },
       },
     );
 

@@ -77,6 +77,10 @@ export const getServerSideProps: GetServerSideProps = async () => {
         headers: {
           Authorization: `Bearer ${process.env.AIRTABLE_API_TOKEN}`,
         },
+        params: {
+          'sort[0][field]': 'created',
+          'sort[0][direction]': 'desc',
+        },
       },
     );
 
