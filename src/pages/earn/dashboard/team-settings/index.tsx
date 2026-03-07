@@ -1,6 +1,14 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import debounce from 'lodash.debounce';
-import { ChevronLeft, ChevronRight, Copy, Plus, Search, X } from 'lucide-react';
+import {
+  Check,
+  ChevronLeft,
+  ChevronRight,
+  Copy,
+  MoreHorizontal,
+  Plus,
+  Search,
+} from 'lucide-react';
 import posthog from 'posthog-js';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
@@ -8,9 +16,17 @@ import { toast } from 'sonner';
 import { ErrorSection } from '@/components/shared/ErrorSection';
 import { Button } from '@/components/ui/button';
 import { CopyButton } from '@/components/ui/copy-tooltip';
-import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuPortal,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
-import { Separator } from '@/components/ui/separator';
 import { StatusPill } from '@/components/ui/status-pill';
 import {
   Table,
@@ -54,6 +70,22 @@ const roleStyles: Record<
     borderColor: 'border-blue-300',
   },
 } as const;
+
+const ROLE_OPTIONS: ReadonlyArray<{
+  value: Role;
+  label: string;
+}> = [
+  {
+    value: 'MEMBER',
+    label: 'Member',
+  },
+  {
+    value: 'ADMIN',
+    label: 'Admin',
+  },
+] as const;
+
+const getRoleLabel = (role: Role) => (role === 'ADMIN' ? 'Admin' : 'Member');
 
 const Index = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -113,16 +145,20 @@ const Index = () => {
     return userSponsor.role === 'ADMIN';
   }, [user]);
 
+  const invalidateMemberData = async () => {
+    await queryClient.invalidateQueries({
+      queryKey: ['members', user?.currentSponsorId],
+    });
+  };
+
   const removeMemberMutation = useMutation({
     mutationFn: async (userId: string) => {
       await api.post('/api/sponsor-dashboard/members/remove', {
         id: userId,
       });
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ['members', user?.currentSponsorId],
-      });
+    onSuccess: async () => {
+      await invalidateMemberData();
       toast.success('Member removed successfully');
     },
     onError: (error) => {
@@ -131,11 +167,33 @@ const Index = () => {
     },
   });
 
-  const onRemoveMember = (userId: string | undefined) => {
-    if (userId) {
-      removeMemberMutation.mutate(userId);
-    }
+  const updateMemberRoleMutation = useMutation({
+    mutationFn: async ({ userId, role }: { userId: string; role: Role }) => {
+      await api.post('/api/sponsor-dashboard/members/update-role', {
+        id: userId,
+        role,
+      });
+    },
+    onSuccess: async (_data, variables) => {
+      await invalidateMemberData();
+      toast.success(
+        `${getRoleLabel(variables.role)} role updated successfully`,
+      );
+    },
+    onError: (error) => {
+      console.error('Error updating member role:', error);
+      toast.error('Failed to update role. Please try again.');
+    },
+  });
+
+  const onRemoveMember = async (userId: string) => {
+    await removeMemberMutation.mutateAsync(userId);
   };
+
+  const onChangeMemberRole = async (userId: string, role: Role) => {
+    await updateMemberRoleMutation.mutateAsync({ userId, role });
+  };
+
   return (
     <SponsorLayout>
       {isOpen && <InviteMembers isOpen={isOpen} onClose={onClose} />}
@@ -255,10 +313,20 @@ const Index = () => {
                       </CopyButton>
                     </TableCell>
                     <TableCell>
-                      <RemoveMemberModal
+                      <MemberActionsMenu
                         member={member}
                         isAdminLoggedIn={isAdminLoggedIn}
                         onRemoveMember={onRemoveMember}
+                        onChangeMemberRole={onChangeMemberRole}
+                        isRemovingMember={
+                          removeMemberMutation.isPending &&
+                          removeMemberMutation.variables === member.userId
+                        }
+                        isUpdatingMemberRole={
+                          updateMemberRoleMutation.isPending &&
+                          updateMemberRoleMutation.variables?.userId ===
+                            member.userId
+                        }
                       />
                     </TableCell>
                   </TableRow>
@@ -307,77 +375,110 @@ const Index = () => {
   );
 };
 
-const RemoveMemberModal = ({
+const MemberActionsMenu = ({
   member,
   isAdminLoggedIn,
   onRemoveMember,
+  onChangeMemberRole,
+  isRemovingMember,
+  isUpdatingMemberRole,
 }: {
   member: UserSponsor;
   isAdminLoggedIn: boolean;
-  onRemoveMember: (userId: string | undefined) => void;
+  onRemoveMember: (userId: string) => Promise<void>;
+  onChangeMemberRole: (userId: string, role: Role) => Promise<void>;
+  isRemovingMember: boolean;
+  isUpdatingMemberRole: boolean;
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const { user } = useUser();
+  const currentRole = member.role ?? 'MEMBER';
 
-  const removeMember = async (userId: string | undefined) => {
-    await onRemoveMember(userId);
-    setIsOpen(false);
+  const isCurrentUser = useMemo(
+    () => member.userId === user?.id || member.user?.email === user?.email,
+    [member.user?.email, member.userId, user?.email, user?.id],
+  );
+
+  const canManageMember = isAdminLoggedIn && !isCurrentUser;
+
+  const handleRemoveMember = async () => {
+    if (!member.userId) return;
+
+    try {
+      await onRemoveMember(member.userId);
+      setIsOpen(false);
+    } catch {
+      return;
+    }
   };
 
-  const isSameUser = useMemo(
-    () => member?.user?.email !== user?.email,
-    [member],
-  );
+  const handleRoleChange = async (role: Role) => {
+    if (!member.userId || role === currentRole) return;
+
+    try {
+      await onChangeMemberRole(member.userId, role);
+      setIsOpen(false);
+    } catch {
+      return;
+    }
+  };
 
   return (
     <div className="flex items-center justify-end">
-      {isAdminLoggedIn && isSameUser && (
-        <Button
-          onClick={() => setIsOpen(true)}
-          size="sm"
-          className="ph-no-capture text-brand-purple bg-brand-purple-50 border-brand-purple/50 rounded-lg border px-2 py-0.5 text-[0.65rem] hover:bg-indigo-100"
-        >
-          Remove
-        </Button>
-      )}
-      <Dialog
-        key={member.userId}
-        open={isOpen}
-        onOpenChange={(open) => setIsOpen(open)}
-      >
-        <DialogContent className="m-0 p-0" hideCloseIcon>
-          <DialogTitle className="text-md -mb-1 px-6 pt-4 font-semibold text-slate-900">
-            Remove Member?
-          </DialogTitle>
-          <Separator />
-          <div className="px-6 pb-6 text-[0.95rem]">
-            <p className="mb-4 text-slate-500">
-              Are you sure you want to remove{' '}
-              <span className="font-semibold">{member.user?.email}</span> from
-              accessing your sponsor dashboard? You can invite them back again
-              later if needed.
-            </p>
-
-            <div className="flex gap-3">
-              <div className="w-1/2" />
-              <Button variant="ghost" onClick={() => setIsOpen(false)}>
-                Close
-              </Button>
-              <Button
-                className="flex-1 rounded-lg border border-red-500 bg-red-50 text-red-600 hover:bg-red-100"
-                onClick={() => {
-                  removeMember(member.userId);
-                }}
+      {canManageMember && (
+        <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
+          <DropdownMenuTrigger asChild>
+            <Button
+              type="button"
+              size="icon"
+              variant="ghost"
+              className="h-8 w-8 rounded-full text-slate-500 hover:bg-slate-100 hover:text-slate-700"
+              aria-label={`Manage ${member.user?.email ?? 'member'}`}
+            >
+              <MoreHorizontal className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-48 border-slate-200">
+            <DropdownMenuItem
+              disabled={isRemovingMember || isUpdatingMemberRole}
+              className="text-red-600 focus:text-red-600"
+              onSelect={(event) => {
+                event.preventDefault();
+                void handleRemoveMember();
+              }}
+            >
+              {isRemovingMember ? 'Removing...' : 'Remove from team'}
+            </DropdownMenuItem>
+            <DropdownMenuSub>
+              <DropdownMenuSubTrigger
+                disabled={isUpdatingMemberRole || isRemovingMember}
               >
-                <div className="rounded-full bg-red-600 p-0.5">
-                  <X className="size-2 text-white" />
-                </div>
-                Remove Member
-              </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+                Change role
+              </DropdownMenuSubTrigger>
+              <DropdownMenuPortal>
+                <DropdownMenuSubContent className="w-40 border-slate-200">
+                  {ROLE_OPTIONS.map((roleOption) => (
+                    <DropdownMenuItem
+                      key={roleOption.value}
+                      disabled={isUpdatingMemberRole}
+                      className="justify-between"
+                      onSelect={(event) => {
+                        event.preventDefault();
+                        void handleRoleChange(roleOption.value);
+                      }}
+                    >
+                      <span>{roleOption.label}</span>
+                      {currentRole === roleOption.value && (
+                        <Check className="h-4 w-4 text-slate-500" />
+                      )}
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuSubContent>
+              </DropdownMenuPortal>
+            </DropdownMenuSub>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      )}
     </div>
   );
 };
