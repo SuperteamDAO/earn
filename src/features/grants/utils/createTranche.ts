@@ -1,5 +1,8 @@
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { getChapterRegions } from '@/utils/chapterRegion';
+
+import { checkKycCountryMatchesRegion } from '@/features/listings/utils/region';
 
 import { addOnboardingInfoToAirtable } from './addOnboardingInfoToAirtable';
 import { addPaymentInfoToAirtable } from './addPaymentInfoToAirtable';
@@ -140,6 +143,19 @@ export async function createTranche({
   if (application.user.isKYCVerified !== true) {
     const errorMessage = `User is not verified for application ${applicationId}`;
     logger.error(errorMessage);
+    throw new Error(errorMessage);
+  }
+
+  const chapterRegions = await getChapterRegions();
+  const kycCountryCheck = checkKycCountryMatchesRegion(
+    application.user.kycCountry,
+    application.grant.region,
+    chapterRegions,
+  );
+
+  if (!kycCountryCheck.isValid) {
+    const errorMessage = `KYC country ${application.user.kycCountry} does not match grant region ${application.grant.region} for application ${applicationId}`;
+    logger.warn(errorMessage);
     throw new Error(errorMessage);
   }
 

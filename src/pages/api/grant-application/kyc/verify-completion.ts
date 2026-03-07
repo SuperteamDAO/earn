@@ -3,6 +3,7 @@ import type { NextApiResponse } from 'next';
 import logger from '@/lib/logger';
 import { LockNotAcquiredError, withRedisLock } from '@/lib/with-redis-lock';
 import { prisma } from '@/prisma';
+import { getChapterRegions } from '@/utils/chapterRegion';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { type NextApiRequestWithUser } from '@/features/auth/types';
@@ -10,6 +11,7 @@ import { withAuth } from '@/features/auth/utils/withAuth';
 import { createTranche } from '@/features/grants/utils/createTranche';
 import { checkVerificationStatus } from '@/features/kyc/utils/checkVerificationStatus';
 import { getApplicantData } from '@/features/kyc/utils/getApplicantData';
+import { checkKycCountryMatchesRegion } from '@/features/listings/utils/region';
 
 const handler = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
   const userId = req.userId;
@@ -20,10 +22,11 @@ const handler = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
   }
 
   try {
-    const grantApplication = await prisma.grantApplication.findUniqueOrThrow({
-      where: { id: grantApplicationId },
+    const grantApplication = await prisma.grantApplication.findFirstOrThrow({
+      where: { id: grantApplicationId, userId },
       include: { user: true, grant: true },
     });
+    const chapterRegions = await getChapterRegions();
 
     const isAllowed =
       grantApplication.grant.id !== 'c72940f7-81ae-4c03-9bfe-9979d4371267' &&
@@ -52,12 +55,8 @@ const handler = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
     );
 
     if (result === 'verified') {
-      if (grantApplication.user.isKYCVerified) {
-        return res.status(200).json({ message: 'KYC already verified' });
-      }
-
       try {
-        await withRedisLock(
+        const verificationOutcome = await withRedisLock(
           `locks:create-tranche:${grantApplicationId}:first-tranche`,
           async () => {
             const { fullName, country, dob, idNumber, idType } = applicantData;
@@ -75,13 +74,46 @@ const handler = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
               },
             });
 
-            await createTranche({
-              applicationId: grantApplicationId,
-              isFirstTranche: true,
+            const kycCountryCheck = checkKycCountryMatchesRegion(
+              country,
+              grantApplication.grant.region,
+              chapterRegions,
+            );
+
+            if (!kycCountryCheck.isValid) {
+              logger.warn(
+                `KYC country mismatch for grant application ${grantApplicationId}: KYC country ${country} does not match grant region ${grantApplication.grant.region}`,
+              );
+              return {
+                message: 'KYC_REJECTED',
+                error: `Your KYC document doesn't belong to ${kycCountryCheck.regionDisplayName}. Please verify again with a KYC document that belongs to ${kycCountryCheck.regionDisplayName}.`,
+                regionDisplayName: kycCountryCheck.regionDisplayName,
+              } as const;
+            }
+
+            const existingTranche = await prisma.grantTranche.findFirst({
+              where: {
+                applicationId: grantApplicationId,
+                status: { not: 'Rejected' },
+              },
+              select: { id: true },
             });
+
+            if (!existingTranche) {
+              await createTranche({
+                applicationId: grantApplicationId,
+                isFirstTranche: true,
+              });
+            }
+
+            return { message: 'verified' } as const;
           },
           { ttlSeconds: 300 },
         );
+
+        if (verificationOutcome.message === 'KYC_REJECTED') {
+          return res.status(400).json(verificationOutcome);
+        }
       } catch (lockError) {
         if (lockError instanceof LockNotAcquiredError) {
           return res.status(409).json({

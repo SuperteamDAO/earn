@@ -8,6 +8,7 @@ import { LockNotAcquiredError, withRedisLock } from '@/lib/with-redis-lock';
 import { prisma } from '@/prisma';
 import { type SubmissionLabels } from '@/prisma/enums';
 import { airtableConfig, airtableUpsert, airtableUrl } from '@/utils/airtable';
+import { getChapterRegions } from '@/utils/chapterRegion';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { type NextApiRequestWithSponsor } from '@/features/auth/types';
@@ -17,6 +18,7 @@ import { addGrantWinBonusCredit } from '@/features/credits/utils/allocateCredits
 import { queueEmail } from '@/features/emails/utils/queueEmail';
 import { convertGrantApplicationToAirtable } from '@/features/grants/utils/convertGrantApplicationToAirtable';
 import { createTranche } from '@/features/grants/utils/createTranche';
+import { checkKycCountryMatchesRegion } from '@/features/listings/utils/region';
 import { fetchTokenUSDValue } from '@/features/wallet/utils/fetchTokenUSDValue';
 
 const MAX_RECORDS = 10;
@@ -43,15 +45,30 @@ const checkAndUpdateKYCStatus = async (
   });
 
   if (user.isKYCVerified && user.kycVerifiedAt) {
+    const grantApplication = await prisma.grantApplication.findUniqueOrThrow({
+      where: { id: grantApplicationId },
+      select: {
+        walletAddress: true,
+        grant: { select: { region: true } },
+      },
+    });
+    const chapterRegions = await getChapterRegions();
+    const kycCountryCheck = checkKycCountryMatchesRegion(
+      user.kycCountry,
+      grantApplication.grant.region,
+      chapterRegions,
+    );
+
+    if (!kycCountryCheck.isValid) {
+      logger.warn(
+        `Skipping first tranche creation for application ${grantApplicationId} because KYC country ${user.kycCountry} does not match grant region ${grantApplication.grant.region}`,
+      );
+      return;
+    }
+
     await withRedisLock(
       `locks:create-tranche:${grantApplicationId}:first-tranche`,
       async () => {
-        const grantApplication =
-          await prisma.grantApplication.findUniqueOrThrow({
-            where: { id: grantApplicationId },
-            select: { walletAddress: true },
-          });
-
         await createTranche({
           applicationId: grantApplicationId,
           walletAddress: grantApplication.walletAddress || undefined,

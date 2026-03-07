@@ -7,6 +7,7 @@ export type ApplicationState =
   | 'ALLOW EDIT'
   | 'COOLDOWN'
   | 'KYC PENDING'
+  | 'KYC REJECTED'
   | 'KYC APPROVED'
   | 'TRANCHE1 PENDING'
   | 'TRANCHE1 APPROVED'
@@ -22,6 +23,9 @@ export type ApplicationState =
   | 'TRANCHE4 PAID';
 
 export const applicationStateAtom = atomFamily(
-  (_grantId: string) => atom<ApplicationState>('ALLOW NEW'),
+  (grantId: string) => {
+    void grantId;
+    return atom<ApplicationState>('ALLOW NEW');
+  },
   (a, b) => a === b,
 );

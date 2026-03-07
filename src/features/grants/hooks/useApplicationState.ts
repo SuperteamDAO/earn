@@ -1,5 +1,9 @@
+import { useQuery } from '@tanstack/react-query';
 import { useAtom } from 'jotai';
 import { useEffect } from 'react';
+
+import { chaptersQuery } from '@/features/chapters/queries/chapters';
+import { checkKycCountryMatchesRegion } from '@/features/listings/utils/region';
 
 import { applicationStateAtom } from '../atoms/applicationStateAtom';
 import { type GrantApplicationWithTranchesAndUser } from '../queries/user-application';
@@ -13,11 +17,20 @@ export const useApplicationState = (
     applicationStateAtom(grant.id),
   );
   const tranches = application?.totalTranches ?? 0;
+  const { data: chapters = [] } = useQuery(chaptersQuery);
 
   const isST =
     grant.isNative &&
     grant.airtableId &&
     !grant.title.toLowerCase().includes('coindcx');
+
+  const isKycRejected =
+    application?.user.isKYCVerified === true &&
+    !checkKycCountryMatchesRegion(
+      application.user.kycCountry,
+      grant.region,
+      chapters,
+    ).isValid;
 
   const isInCooldownPeriod = () => {
     if (
@@ -63,10 +76,10 @@ export const useApplicationState = (
       if (isST) {
         if (!application.user.isKYCVerified) {
           setApplicationState('KYC PENDING');
+        } else if (isKycRejected) {
+          setApplicationState('KYC REJECTED');
         } else if (application.user.isKYCVerified) {
           if (trancheNumber === 0) {
-            setApplicationState('KYC PENDING');
-          } else if (trancheNumber === 0) {
             setApplicationState('KYC APPROVED');
           } else if (trancheNumber === 1) {
             const trancheStatus = validTranches[0]?.status;
@@ -106,7 +119,14 @@ export const useApplicationState = (
         setApplicationState('APPLIED');
       }
     }
-  }, [application, grant.id, grant.isNative, isST, setApplicationState]);
+  }, [
+    application,
+    grant.id,
+    grant.isNative,
+    isKycRejected,
+    isST,
+    setApplicationState,
+  ]);
 
   const getButtonConfig = () => {
     switch (applicationState) {
@@ -139,6 +159,14 @@ export const useApplicationState = (
           text: 'Submit KYC',
           bg: 'bg-brand-purple',
           isDisabled: false,
+          loadingText: null,
+        };
+
+      case 'KYC REJECTED':
+        return {
+          text: 'KYC Rejected',
+          bg: 'bg-red-600',
+          isDisabled: true,
           loadingText: null,
         };
 
