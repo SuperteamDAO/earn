@@ -111,12 +111,11 @@ export const Comment = ({
     .some((part) => URL_REGEX.test(part));
 
   useEffect(() => {
-    const reply = localStorage.getItem(`comment-${refId}-${comment.id}`);
-    if (reply) {
-      setNewReply(reply);
+    const saved = sessionStorage.getItem(`comment-${refId}-${comment.id}`);
+    if (saved) {
+      setNewReply(saved);
       setShowReplies(true);
       setShowReplyInput(true);
-      localStorage.removeItem(`comment-${refId}-${comment.id}`);
     }
   }, []);
 
@@ -211,7 +210,11 @@ export const Comment = ({
   );
 
   useEffect(() => {
-    localStorage.setItem(`comment-${refId}-${comment.id}`, newReply);
+    if (newReply) {
+      sessionStorage.setItem(`comment-${refId}-${comment.id}`, newReply);
+    } else {
+      sessionStorage.removeItem(`comment-${refId}-${comment.id}`);
+    }
   }, [newReply]);
 
   const isMobile = useMediaQuery('(max-width: 768px)');
