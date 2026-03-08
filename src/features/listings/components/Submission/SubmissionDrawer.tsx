@@ -369,6 +369,10 @@ export const SubmissionDrawer = ({
       const success = await popupSignIn('twitter');
 
       if (success) {
+        // Invalidate cached user data so refetchUser() fetches fresh
+        // linkedTwitter from DB instead of returning stale cache
+        await queryClient.invalidateQueries({ queryKey: ['user'] });
+
         let attempts = 0;
         const maxAttempts = 5;
         const pollForUpdate = async (): Promise<boolean> => {
