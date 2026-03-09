@@ -248,6 +248,40 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       }),
     );
 
+    if (result[0]?.grant.airtableId) {
+      console.log('is an airtable grant');
+      try {
+        const config = airtableConfig(process.env.AIRTABLE_GRANTS_API_TOKEN!);
+        const url = airtableUrl(
+          process.env.AIRTABLE_GRANTS_BASE_ID!,
+          process.env.AIRTABLE_GRANTS_TABLE_NAME!,
+        );
+        const airtableData = result.map((r) =>
+          convertGrantApplicationToAirtable(r),
+        );
+        const airtablePayload = airtableUpsert(
+          'earnApplicationId',
+          airtableData.map((a) => ({ fields: a })),
+        );
+        logger.info('Starting Airtable sync...');
+        const syncPromise = axios.patch(
+          url,
+          JSON.stringify(airtablePayload),
+          config,
+        );
+        logger.info('Waiting for Airtable sync to complete...');
+        const response = await syncPromise;
+        logger.info('Airtable sync completed successfully');
+        logger.info('Airtable sync completed with response:', {
+          status: response.status,
+          data: response.data,
+          applicationIds: result.map((r) => r.id),
+        });
+      } catch (err) {
+        logger.error('Error syncing with Airtable', err);
+      }
+    }
+
     if (isApproved) {
       const totalIncrementAmountInUSD = updatedData.reduce(
         (acc, currentApplicant) => {
@@ -299,40 +333,6 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           triggeredBy: userId,
         });
       });
-    }
-
-    if (result[0]?.grant.airtableId) {
-      console.log('is an airtable grant');
-      try {
-        const config = airtableConfig(process.env.AIRTABLE_GRANTS_API_TOKEN!);
-        const url = airtableUrl(
-          process.env.AIRTABLE_GRANTS_BASE_ID!,
-          process.env.AIRTABLE_GRANTS_TABLE_NAME!,
-        );
-        const airtableData = result.map((r) =>
-          convertGrantApplicationToAirtable(r),
-        );
-        const airtablePayload = airtableUpsert(
-          'earnApplicationId',
-          airtableData.map((a) => ({ fields: a })),
-        );
-        logger.info('Starting Airtable sync...');
-        const syncPromise = axios.patch(
-          url,
-          JSON.stringify(airtablePayload),
-          config,
-        );
-        logger.info('Waiting for Airtable sync to complete...');
-        const response = await syncPromise;
-        logger.info('Airtable sync completed successfully');
-        logger.info('Airtable sync completed with response:', {
-          status: response.status,
-          data: response.data,
-          applicationIds: result.map((r) => r.id),
-        });
-      } catch (err) {
-        logger.error('Error syncing with Airtable', err);
-      }
     }
 
     return res.status(200).json(result);
