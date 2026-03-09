@@ -34,7 +34,13 @@ async function application(req: NextApiRequestWithUser, res: NextApiResponse) {
         GrantTranche: {
           orderBy: { createdAt: 'asc' },
         },
-        user: true,
+        user: {
+          select: {
+            isKYCVerified: true,
+            kycCountry: true,
+            kycVerifiedAt: true,
+          },
+        },
       },
     });
 
