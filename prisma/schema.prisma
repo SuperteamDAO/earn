@@ -847,6 +847,7 @@ model MemberInvite {
   chapterId String    @db.Char(36)
   invitedBy String    @db.Char(36)
   status    String    @default("pending") @db.VarChar(20)
+  token     String?   @unique @db.Char(36)
   expiresAt DateTime?
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
