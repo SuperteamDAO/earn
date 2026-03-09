@@ -136,7 +136,12 @@ export async function createTranche({
         orderBy: { createdAt: 'asc' },
       },
       grant: true,
-      user: true,
+      user: {
+        select: {
+          isKYCVerified: true,
+          kycCountry: true,
+        },
+      },
     },
   });
 
