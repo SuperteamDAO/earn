@@ -13,6 +13,11 @@ interface MemberPerksProps {
   comingSoon: any[];
 }
 
+interface AirtablePerkRecord {
+  createdTime?: string;
+  fields: Record<string, any>;
+}
+
 export default function MemberPerks({
   liveNow,
   completed,
@@ -50,41 +55,60 @@ export default function MemberPerks({
           buttonVisible={false}
         />
 
-        <p className="section-heading center-text mt-[128px] mb-[48px] text-[24px] leading-[26px] md:text-[32px] lg:mb-0 lg:leading-[35px]">
-          Live Now
-        </p>
-        <PerksGrid perks={liveNow} />
+        {liveNow.length > 0 && (
+          <>
+            <p className="section-heading center-text mt-[128px] mb-[48px] text-[24px] leading-[26px] md:text-[32px] lg:mb-0 lg:leading-[35px]">
+              Live Now
+            </p>
+            <PerksGrid perks={liveNow} />
+          </>
+        )}
 
-        <p className="section-heading center-text mt-[128px] mb-[48px] text-[24px] leading-[26px] md:text-[32px] lg:mb-0 lg:leading-[35px]">
-          Completed
-        </p>
-        <PerksGrid perks={completed} />
+        {completed.length > 0 && (
+          <>
+            <p className="section-heading center-text mt-[128px] mb-[48px] text-[24px] leading-[26px] md:text-[32px] lg:mb-0 lg:leading-[35px]">
+              Completed
+            </p>
+            <PerksGrid perks={completed} />
+          </>
+        )}
 
-        <p className="section-heading center-text mt-[128px] mb-[48px] text-[24px] leading-[26px] md:text-[32px] lg:mb-0 lg:leading-[35px]">
-          Coming Soon
-        </p>
-        <PerksGrid perks={comingSoon} />
+        {comingSoon.length > 0 && (
+          <>
+            <p className="section-heading center-text mt-[128px] mb-[48px] text-[24px] leading-[26px] md:text-[32px] lg:mb-0 lg:leading-[35px]">
+              Coming Soon
+            </p>
+            <PerksGrid perks={comingSoon} />
+          </>
+        )}
       </section>
     </>
   );
 }
 
 export const getServerSideProps: GetServerSideProps = async () => {
-  try {
-    const result = await axios(
-      `https://api.airtable.com/v0/${process.env.AIRTABLE_BASE_ID}/${process.env.AIRTABLE_PERKS_TABLE}`,
-      {
-        headers: {
-          Authorization: `Bearer ${process.env.AIRTABLE_API_TOKEN}`,
-        },
-        params: {
-          'sort[0][field]': 'created',
-          'sort[0][direction]': 'desc',
-        },
-      },
-    );
+  const airtableUrl = `https://api.airtable.com/v0/${process.env.AIRTABLE_BASE_ID}/${process.env.AIRTABLE_PERKS_TABLE}`;
 
-    const records = result?.data?.records ?? [];
+  try {
+    const result = await axios(airtableUrl, {
+      headers: {
+        Authorization: `Bearer ${process.env.AIRTABLE_API_TOKEN}`,
+      },
+    });
+
+    const records: AirtablePerkRecord[] =
+      result?.data?.records
+        ?.slice()
+        .sort((a: AirtablePerkRecord, b: AirtablePerkRecord) => {
+          const aCreatedTime = a.createdTime
+            ? new Date(a.createdTime).getTime()
+            : 0;
+          const bCreatedTime = b.createdTime
+            ? new Date(b.createdTime).getTime()
+            : 0;
+
+          return bCreatedTime - aCreatedTime;
+        }) ?? [];
 
     const liveNow = records.filter(
       (item: any) => item.fields['Status'] === 'Live now',
@@ -103,8 +127,29 @@ export const getServerSideProps: GetServerSideProps = async () => {
         comingSoon,
       },
     };
-  } catch (error) {
-    console.error('Error fetching perks:', error);
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      console.error('Error fetching perks from Airtable', {
+        message: error.message,
+        code: error.code,
+        status: error.response?.status,
+        statusText: error.response?.statusText,
+        responseData: error.response?.data,
+        request: {
+          method: error.config?.method?.toUpperCase() ?? 'GET',
+          url: error.config?.url ?? airtableUrl,
+          params: error.config?.params,
+        },
+        env: {
+          hasBaseId: Boolean(process.env.AIRTABLE_BASE_ID),
+          hasPerksTable: Boolean(process.env.AIRTABLE_PERKS_TABLE),
+          hasApiToken: Boolean(process.env.AIRTABLE_API_TOKEN),
+        },
+      });
+    } else {
+      console.error('Unexpected error fetching perks:', error);
+    }
+
     return {
       props: {
         liveNow: [],
