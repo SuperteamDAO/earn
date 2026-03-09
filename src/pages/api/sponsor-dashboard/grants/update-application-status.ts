@@ -42,6 +42,11 @@ const checkAndUpdateKYCStatus = async (
 ) => {
   const user = await prisma.user.findUniqueOrThrow({
     where: { id: userId },
+    select: {
+      isKYCVerified: true,
+      kycVerifiedAt: true,
+      kycCountry: true,
+    },
   });
 
   if (user.isKYCVerified && user.kycVerifiedAt) {
