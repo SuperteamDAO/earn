@@ -19,13 +19,12 @@ async function submission(req: NextApiRequestWithUser, res: NextApiResponse) {
       });
     }
 
-    const { updatedData: updatedSubmission } = await updateLike(
-      'submission',
-      id,
-      userId!,
-    );
+    await updateLike('submission', id, userId!);
 
-    return res.status(200).json(updatedSubmission);
+    return res.status(200).json({
+      data: { ok: true },
+      message: 'Operation successful',
+    });
   } catch (error: any) {
     logger.error(
       `Error updating submission like for user=${req.userId}: ${error.message}`,

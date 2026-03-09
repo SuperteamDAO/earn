@@ -20,10 +20,13 @@ async function poWLike(req: NextApiRequestWithUser, res: NextApiResponse) {
       });
     }
 
-    const { updatedData: updatedPoW } = await updateLike('poW', id, userId!);
+    await updateLike('poW', id, userId!);
 
     logger.info(`Successfully updated PoW like for id ${id}`);
-    return res.status(200).json(updatedPoW);
+    return res.status(200).json({
+      data: { ok: true },
+      message: 'Operation successful',
+    });
   } catch (error: any) {
     logger.error(
       `Error updating PoW like for id ${req.body?.id}:`,
