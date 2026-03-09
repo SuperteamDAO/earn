@@ -36,6 +36,10 @@ const UpdateGrantApplicationSchema = z.object({
   applicationStatus: z.string(),
 });
 
+export const config = {
+  maxDuration: 300,
+};
+
 const checkAndUpdateKYCStatus = async (
   userId: string,
   grantApplicationId: string,

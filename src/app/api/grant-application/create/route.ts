@@ -16,6 +16,8 @@ import { syncGrantApplicationWithAirtable } from '@/features/grants/utils/syncGr
 import { validateGrantRequest } from '@/features/grants/utils/validateGrantRequest';
 import { extractSocialUsername } from '@/features/social/utils/extractUsername';
 
+export const maxDuration = 300;
+
 async function createGrantApplication(
   userId: string,
   grantId: string,
