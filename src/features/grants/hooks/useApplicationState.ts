@@ -18,6 +18,9 @@ export const useApplicationState = (
   );
   const tranches = application?.totalTranches ?? 0;
   const { data: chapters = [] } = useQuery(chaptersQuery);
+  const hasExistingTranche = application?.GrantTranche.some(
+    (tranche) => tranche.status !== 'Rejected',
+  );
 
   const isST =
     grant.isNative &&
@@ -25,6 +28,7 @@ export const useApplicationState = (
     !grant.title.toLowerCase().includes('coindcx');
 
   const isKycRejected =
+    !hasExistingTranche &&
     application?.user.isKYCVerified === true &&
     !checkKycCountryMatchesRegion(
       application.user.kycCountry,

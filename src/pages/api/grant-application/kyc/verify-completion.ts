@@ -74,13 +74,21 @@ const handler = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
               },
             });
 
+            const existingTranche = await prisma.grantTranche.findFirst({
+              where: {
+                applicationId: grantApplicationId,
+                status: { not: 'Rejected' },
+              },
+              select: { id: true },
+            });
+
             const kycCountryCheck = checkKycCountryMatchesRegion(
               country,
               grantApplication.grant.region,
               chapterRegions,
             );
 
-            if (!kycCountryCheck.isValid) {
+            if (!kycCountryCheck.isValid && !existingTranche) {
               logger.warn(
                 `KYC country mismatch for grant application ${grantApplicationId}: KYC country ${country} does not match grant region ${grantApplication.grant.region}`,
               );
@@ -90,14 +98,6 @@ const handler = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
                 regionDisplayName: kycCountryCheck.regionDisplayName,
               } as const;
             }
-
-            const existingTranche = await prisma.grantTranche.findFirst({
-              where: {
-                applicationId: grantApplicationId,
-                status: { not: 'Rejected' },
-              },
-              select: { id: true },
-            });
 
             if (!existingTranche) {
               await createTranche({
