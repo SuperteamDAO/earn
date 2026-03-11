@@ -2,10 +2,12 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
-import { type SubmissionModel } from '@/prisma/models/Submission';
 import { safeStringify } from '@/utils/safeStringify';
 
-const sortSubmissions = (a: SubmissionModel, b: SubmissionModel) => {
+const sortSubmissions = (
+  a: { readonly winnerPosition: number | null; readonly createdAt: Date },
+  b: { readonly winnerPosition: number | null; readonly createdAt: Date },
+) => {
   if (a.winnerPosition && b.winnerPosition) {
     return (
       (Number(a.winnerPosition) || Number.MAX_VALUE) -
@@ -68,7 +70,15 @@ export async function getSubmissionsData(
       listingId: bounty.id,
       ...(isWinner ? { isWinner } : {}),
     },
-    include: {
+    select: {
+      id: true,
+      link: true,
+      isWinner: true,
+      winnerPosition: true,
+      like: true,
+      likeCount: true,
+      rewardInUSD: true,
+      createdAt: true,
       user: {
         select: {
           id: true,
@@ -76,7 +86,6 @@ export async function getSubmissionsData(
           lastName: true,
           photo: true,
           username: true,
-          walletAddress: true,
         },
       },
     },
