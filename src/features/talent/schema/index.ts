@@ -1,7 +1,6 @@
 import { z } from 'zod';
 
 import { skillsArraySchema } from '@/interface/skills';
-import { api } from '@/lib/api';
 import { getURL } from '@/utils/validUrl';
 
 import {
@@ -111,6 +110,30 @@ export const socialSuperRefine = async (
     });
   }
 };
+
+async function isUsernameAvailableViaHttp(
+  username: string,
+  userId: string,
+): Promise<boolean> {
+  const params = new URLSearchParams({
+    username,
+    userId,
+  });
+  const response = await fetch(
+    `${getURL()}api/user/username?${params.toString()}`,
+    {
+      cache: 'no-store',
+    },
+  );
+
+  if (!response.ok) {
+    throw new Error('Failed to check username availability');
+  }
+
+  const data = (await response.json()) as { available?: boolean };
+  return Boolean(data.available);
+}
+
 export const usernameSuperRefine = async (
   data: Partial<ProfileFormData>,
   ctx: z.RefinementCtx,
@@ -126,14 +149,7 @@ export const usernameSuperRefine = async (
     try {
       const available = options?.isUsernameAvailable
         ? await options.isUsernameAvailable(data.username, userId)
-        : (
-            await api.get(`${getURL()}api/user/username`, {
-              params: {
-                username: data.username,
-                userId,
-              },
-            })
-          ).data.available;
+        : await isUsernameAvailableViaHttp(data.username, userId);
       if (!available) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
