@@ -99,15 +99,18 @@ export const CommentForm = ({
   );
 
   useEffect(() => {
-    const comment = localStorage.getItem(`comment-${refId}`);
-    if (comment) {
-      setNewComment(comment);
-      localStorage.removeItem(`comment-${refId}`);
+    const saved = sessionStorage.getItem(`comment-${refId}`);
+    if (saved) {
+      setNewComment(saved);
     }
   }, []);
 
   useEffect(() => {
-    localStorage.setItem(`comment-${refId}`, newComment);
+    if (newComment) {
+      sessionStorage.setItem(`comment-${refId}`, newComment);
+    } else {
+      sessionStorage.removeItem(`comment-${refId}`);
+    }
   }, [newComment]);
 
   useEffect(() => {
