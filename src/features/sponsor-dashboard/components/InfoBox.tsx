@@ -1,6 +1,7 @@
 import parse, { type HTMLReactParserOptions } from 'html-react-parser';
 
 import { LinkTextParser } from '@/components/shared/LinkTextParser';
+
 import styles from '@/styles/info-box.module.css';
 
 const options: HTMLReactParserOptions = {

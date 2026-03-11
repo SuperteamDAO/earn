@@ -11,7 +11,6 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import styles from '@/styles/listing-description.module.css';
 
 import {
   descriptionKeyAtom,
@@ -21,6 +20,8 @@ import {
 
 import { useListingForm } from '../../../hooks';
 import { Templates } from './Templates';
+
+import styles from '@/styles/listing-description.module.css';
 
 export function DescriptionAndTemplate() {
   const form = useListingForm();

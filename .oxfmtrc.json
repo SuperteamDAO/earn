@@ -1,0 +1,59 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "singleQuote": true,
+  "semi": true,
+  "trailingComma": "all",
+  "tabWidth": 2,
+  "arrowParens": "always",
+  "printWidth": 80,
+  "sortImports": {
+    "sortSideEffects": false,
+    "internalPattern": ["@/"],
+    "groups": [
+      "side_effect",
+      ["builtin", "external"],
+      "internal",
+      "feature-internal",
+      ["parent", "sibling", "index"],
+      "style",
+      "unknown"
+    ],
+    "customGroups": [
+      {
+        "groupName": "feature-internal",
+        "selector": "internal",
+        "elementNamePattern": ["@/features/**"]
+      }
+    ]
+  },
+  "sortTailwindcss": {
+    "functions": ["cn", "clsx", "cva"]
+  },
+  "sortPackageJson": true,
+  "ignorePatterns": [
+    "node_modules",
+    "coverage",
+    ".pnp",
+    ".pnp.js",
+    "src/generated/",
+    "src/components/icons/**/*.tsx",
+    ".changeset",
+    ".github",
+    ".next/",
+    "**/next-env.d.ts",
+    "build",
+    "out/",
+    ".pnpm-debug.log*",
+    ".DS_Store",
+    "*.pem",
+    "dist",
+    "pnpm-lock.yaml",
+    "npm-debug.log*",
+    "yarn-debug.log*",
+    "yarn-error.log*",
+    ".env*.local",
+    ".vercel",
+    "*.tsbuildinfo",
+    "next-env.d.ts"
+  ]
+}

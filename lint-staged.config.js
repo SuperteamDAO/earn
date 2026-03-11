@@ -4,7 +4,7 @@
  */
 
 module.exports = {
-  '*.{js,jsx,ts,tsx}': ['eslint --fix', 'eslint'],
+  '*.{js,jsx,ts,tsx}': ['oxlint --fix --quiet', 'oxfmt --write'],
   '**/*.ts?(x)': () => 'pnpm check-types',
-  '*.{json,yaml}': ['prettier --write'],
+  '*.{json,yaml,yml}': ['oxfmt --write'],
 };

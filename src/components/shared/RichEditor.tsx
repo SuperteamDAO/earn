@@ -22,9 +22,10 @@ import React, {
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import styles from '@/styles/rich-editor.module.css';
 import { cn } from '@/utils/cn';
 import { getURLSanitized } from '@/utils/getURLSanitized';
+
+import styles from '@/styles/rich-editor.module.css';
 
 interface RichEditorProps {
   id: string;

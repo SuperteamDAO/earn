@@ -42,7 +42,7 @@ export function RegionBanner({ st }: { st: ChapterDisplay }) {
         height={290}
         className="h-full w-full object-cover object-center"
         style={{
-          ...(customBannerPosition[st.region] || {}),
+          ...customBannerPosition[st.region],
         }}
       />
       <div className="absolute inset-0 block h-full w-full bg-[rgba(64,65,108,0.75)]" />

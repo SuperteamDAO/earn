@@ -123,7 +123,7 @@ export const TokenAmountInput = ({
           min="0"
           onKeyDown={(e) => {
             if (
-              !/[0-9]|\.|\.|\Backspace|\Tab|\Delete|\ArrowLeft|\ArrowRight/.test(
+              !/[0-9]|\.|\.|\Backspace|Tab|\Delete|ArrowLeft|ArrowRight/.test(
                 e.key,
               ) ||
               (e.key === '.' && e.currentTarget.value.includes('.'))

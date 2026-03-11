@@ -1,4 +1,6 @@
 'use client';
+import 'react-image-crop/dist/ReactCrop.css';
+
 import { Slot } from '@radix-ui/react-slot';
 import { CropIcon, RotateCcwIcon } from 'lucide-react';
 import {
@@ -25,8 +27,6 @@ import ReactCrop, {
 
 import { Button } from '@/components/ui/button';
 import { cn } from '@/utils/cn';
-
-import 'react-image-crop/dist/ReactCrop.css';
 
 const centerAspectCrop = (
   mediaWidth: number,

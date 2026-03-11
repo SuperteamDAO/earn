@@ -27,13 +27,13 @@ import { useUser } from '@/store/user';
 
 import { SocialInput } from '@/features/social/components/SocialInput';
 import { extractSocialUsername } from '@/features/social/utils/extractUsername';
+import { sponsorQuery } from '@/features/sponsor-dashboard/queries/sponsor';
 import { useSlugValidation } from '@/features/sponsor/hooks/useSlugValidation';
 import { useSponsorNameValidation } from '@/features/sponsor/hooks/useSponsorNameValidation';
 import {
   type SponsorBase,
   sponsorBaseSchema,
 } from '@/features/sponsor/utils/sponsorFormSchema';
-import { sponsorQuery } from '@/features/sponsor-dashboard/queries/sponsor';
 import { IndustryList } from '@/features/talent/constants';
 
 export default function UpdateSponsor() {

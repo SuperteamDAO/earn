@@ -340,25 +340,25 @@ export const SubmissionActionButton = ({
         }
         isBtnDisabled = Boolean(
           pastDeadline ||
-            (user?.id &&
-              user?.isTalentFilled &&
-              (!hasHackathonStarted || !isUserEligibleByRegion)) ||
-            (!isAuthenticated ? false : !hasHackathonStarted) ||
-            (isAuthenticated &&
-              user?.id &&
-              user?.isTalentFilled &&
-              creditBalance === 0 &&
-              (isProject || isBounty) &&
-              !isPro) ||
-            (isNotPublished && !isListingSponsor),
+          (user?.id &&
+            user?.isTalentFilled &&
+            (!hasHackathonStarted || !isUserEligibleByRegion)) ||
+          (!isAuthenticated ? false : !hasHackathonStarted) ||
+          (isAuthenticated &&
+            user?.id &&
+            user?.isTalentFilled &&
+            creditBalance === 0 &&
+            (isProject || isBounty) &&
+            !isPro) ||
+          (isNotPublished && !isListingSponsor),
         );
         isSubmitDisabled = Boolean(
           pastDeadline ||
-            (user?.id &&
-              user?.isTalentFilled &&
-              (isNotPublished ||
-                !hasHackathonStarted ||
-                !isUserEligibleByRegion)),
+          (user?.id &&
+            user?.isTalentFilled &&
+            (isNotPublished ||
+              !hasHackathonStarted ||
+              !isUserEligibleByRegion)),
         );
         btnLoadingText = 'Checking Submission..';
       }

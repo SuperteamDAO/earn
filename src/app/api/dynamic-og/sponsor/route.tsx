@@ -23,138 +23,136 @@ export async function GET(request: Request) {
     ]);
 
     return new ImageResponse(
-      (
+      <div
+        style={{
+          height: '100%',
+          width: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          padding: '50px 100px',
+          background: 'white',
+          position: 'relative',
+        }}
+      >
         <div
           style={{
-            height: '100%',
-            width: '100%',
             display: 'flex',
-            flexDirection: 'column',
-            padding: '50px 100px',
-            background: 'white',
-            position: 'relative',
+            background: '#F8FAFC',
+            position: 'absolute',
+            height: '50%',
+            width: '200%',
+          }}
+        ></div>
+        <img
+          style={{
+            width: '108px',
+            height: '28px',
+            objectFit: 'contain',
+            display: 'block',
+            marginLeft: 'auto',
+          }}
+          alt="pfp"
+          src={ASSET_URL + '/logo/logo-grayed.png'}
+        />
+        <div
+          style={{
+            display: 'flex',
+            gap: '54px',
+            marginTop: '84px',
+            alignItems: 'center',
           }}
         >
           <div
             style={{
+              width: '276px',
+              height: '276px',
+              background: 'white',
+              borderRadius: '30px',
               display: 'flex',
-              background: '#F8FAFC',
-              position: 'absolute',
-              height: '50%',
-              width: '200%',
-            }}
-          ></div>
-          <img
-            style={{
-              width: '108px',
-              height: '28px',
-              objectFit: 'contain',
-              display: 'block',
-              marginLeft: 'auto',
-            }}
-            alt="pfp"
-            src={ASSET_URL + '/logo/logo-grayed.png'}
-          />
-          <div
-            style={{
-              display: 'flex',
-              gap: '54px',
-              marginTop: '84px',
               alignItems: 'center',
+              justifyContent: 'center',
             }}
           >
-            <div
+            <img
               style={{
                 width: '276px',
                 height: '276px',
+                objectFit: 'contain',
                 background: 'white',
                 borderRadius: '30px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
               }}
-            >
-              <img
-                style={{
-                  width: '276px',
-                  height: '276px',
-                  objectFit: 'contain',
-                  background: 'white',
-                  borderRadius: '30px',
-                }}
-                alt="logo"
-                src={sponsorLogo as string}
-              />
-            </div>
-            <div
-              style={{
-                alignSelf: 'flex-end',
-                paddingBottom: '16px',
-                display: 'flex',
-                flexDirection: 'column',
-              }}
-            >
-              <div
-                style={{
-                  fontSize: 48,
-                  fontStyle: 'normal',
-                  color: 'black',
-                  lineHeight: 1.4,
-                  whiteSpace: 'pre-wrap',
-                  fontFamily: '"Bold"',
-                }}
-              >
-                {title}
-              </div>
-              <div
-                style={{
-                  display: 'flex',
-                  fontSize: 34,
-                  fontStyle: 'normal',
-                  color: '#64748B',
-                  lineHeight: 1.4,
-                  whiteSpace: 'pre-wrap',
-                  fontFamily: '"Medium"',
-                  marginTop: '-8px',
-                }}
-              >
-                @{slug}
-              </div>
-            </div>
+              alt="logo"
+              src={sponsorLogo as string}
+            />
           </div>
           <div
             style={{
+              alignSelf: 'flex-end',
+              paddingBottom: '16px',
               display: 'flex',
-              fontSize: 34,
-              fontStyle: 'normal',
-              alignItems: 'center',
-              gap: '8px',
-              color: '#64748B',
-              lineHeight: 1.4,
-              whiteSpace: 'pre-wrap',
-              fontFamily: '"Medium"',
-              marginLeft: 'auto',
-              marginTop: '74px',
+              flexDirection: 'column',
             }}
           >
-            View Opportunities
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="34"
-              height="34"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
+            <div
+              style={{
+                fontSize: 48,
+                fontStyle: 'normal',
+                color: 'black',
+                lineHeight: 1.4,
+                whiteSpace: 'pre-wrap',
+                fontFamily: '"Bold"',
+              }}
             >
-              <path d="M5 12h14" />
-              <path d="m12 5 7 7-7 7" />
-            </svg>
+              {title}
+            </div>
+            <div
+              style={{
+                display: 'flex',
+                fontSize: 34,
+                fontStyle: 'normal',
+                color: '#64748B',
+                lineHeight: 1.4,
+                whiteSpace: 'pre-wrap',
+                fontFamily: '"Medium"',
+                marginTop: '-8px',
+              }}
+            >
+              @{slug}
+            </div>
           </div>
         </div>
-      ),
+        <div
+          style={{
+            display: 'flex',
+            fontSize: 34,
+            fontStyle: 'normal',
+            alignItems: 'center',
+            gap: '8px',
+            color: '#64748B',
+            lineHeight: 1.4,
+            whiteSpace: 'pre-wrap',
+            fontFamily: '"Medium"',
+            marginLeft: 'auto',
+            marginTop: '74px',
+          }}
+        >
+          View Opportunities
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="34"
+            height="34"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M5 12h14" />
+            <path d="m12 5 7 7-7 7" />
+          </svg>
+        </div>
+      </div>,
       {
         width: 1200,
         height: 630,

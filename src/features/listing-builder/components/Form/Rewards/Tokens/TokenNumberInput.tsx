@@ -5,8 +5,10 @@ import { cn } from '@/utils/cn';
 
 import { TokenLabel } from './TokenLabel';
 
-interface TokenNumberInputProps
-  extends Omit<React.ComponentProps<typeof Input>, 'onChange' | 'value'> {
+interface TokenNumberInputProps extends Omit<
+  React.ComponentProps<typeof Input>,
+  'onChange' | 'value'
+> {
   value?: number | null;
   min?: number;
   max?: number;

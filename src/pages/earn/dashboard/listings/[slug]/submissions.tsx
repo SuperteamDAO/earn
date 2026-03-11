@@ -238,10 +238,10 @@ export default function BountySubmissions({ slug }: Props) {
     () =>
       Boolean(
         bounty?.type !== 'project' &&
-          bounty?.rewards?.[BONUS_REWARD_POSITION] &&
-          bounty?.maxBonusSpots &&
-          remainings &&
-          selectedSubmissionIds.size > remainings.bonus,
+        bounty?.rewards?.[BONUS_REWARD_POSITION] &&
+        bounty?.maxBonusSpots &&
+        remainings &&
+        selectedSubmissionIds.size > remainings.bonus,
       ),
     [bounty, selectedSubmissionIds, remainings],
   );

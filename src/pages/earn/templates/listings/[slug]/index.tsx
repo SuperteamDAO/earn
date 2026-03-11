@@ -12,7 +12,7 @@ interface BountyDetailsProps {
   bounty: Listing | null;
 }
 
-function BountyDetails({ bounty: bounty }: BountyDetailsProps) {
+function BountyDetails({ bounty }: BountyDetailsProps) {
   return (
     <ListingPageLayout isTemplate listing={bounty}>
       {bounty?.isWinnersAnnounced && (

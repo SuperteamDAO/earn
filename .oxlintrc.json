@@ -1,0 +1,38 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["oxc", "unicorn", "typescript", "import", "react", "nextjs"],
+  "rules": {
+    "import/no-duplicates": ["error", { "prefer-inline": true }],
+    "react/exhaustive-deps": "off",
+    "nextjs/no-img-element": "off",
+    "@typescript-eslint/consistent-type-imports": [
+      "error",
+      {
+        "prefer": "type-imports",
+        "fixStyle": "inline-type-imports"
+      }
+    ],
+    "@typescript-eslint/no-non-null-asserted-optional-chain": "off",
+    "@typescript-eslint/no-explicit-any": "off",
+    "eslint/no-unused-vars": [
+      "warn",
+      {
+        "caughtErrors": "none",
+        "argsIgnorePattern": "^_",
+        "varsIgnorePattern": "^_"
+      }
+    ]
+  },
+  "ignorePatterns": [
+    "node_modules/**",
+    "out/**",
+    "public/**/*",
+    "**/__next_data_cache_handler.js",
+    "**/*.cache.js",
+    "pnpm-lock.yaml",
+    "src/generated/**",
+    "next-env.d.ts",
+    ".next/**",
+    "src/components/icons/**/*.tsx"
+  ]
+}

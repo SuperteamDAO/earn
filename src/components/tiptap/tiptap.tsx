@@ -18,8 +18,10 @@ import {
 
 import editorStyles from './styles/index.module.css';
 
-export interface MinimalTiptapProps
-  extends Omit<UseMinimalTiptapEditorProps, 'onUpdate'> {
+export interface MinimalTiptapProps extends Omit<
+  UseMinimalTiptapEditorProps,
+  'onUpdate'
+> {
   value?: UseMinimalTiptapEditorProps['value'];
   onChange?: UseMinimalTiptapEditorProps['onUpdate'];
   className?: string;

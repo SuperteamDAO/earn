@@ -165,7 +165,7 @@ export async function POST(request: NextRequest) {
             const commitedAi = {
               ...(!!ai ? ai : {}),
               evaluation: {
-                ...(ai?.evaluation || {}),
+                ...ai?.evaluation,
                 finalLabel: calculatedLabel,
               },
               commited: true,
@@ -231,7 +231,7 @@ export async function POST(request: NextRequest) {
             const commitedAi = {
               ...(!!ai ? ai : {}),
               evaluation: {
-                ...(ai?.evaluation || {}),
+                ...ai?.evaluation,
                 finalLabel: label,
               },
               commited: true,

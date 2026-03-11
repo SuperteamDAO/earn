@@ -80,7 +80,7 @@ function TokenInput({
         min="0"
         onKeyDown={(e) => {
           if (
-            !/[0-9.]|\Backspace|\Tab|\Delete|\ArrowLeft|\ArrowRight/.test(e.key)
+            !/[0-9.]|\Backspace|Tab|\Delete|ArrowLeft|ArrowRight/.test(e.key)
           ) {
             e.preventDefault();
           }

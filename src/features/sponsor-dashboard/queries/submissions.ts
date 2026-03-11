@@ -15,7 +15,6 @@ const fetchSubmissions = async (
 
 export const submissionsQuery = (slug: string, isHackathon?: boolean) =>
   queryOptions({
-    // eslint-disable-next-line @tanstack/query/exhaustive-deps
     queryKey: ['sponsor-submissions', slug],
     queryFn: () => fetchSubmissions(slug, isHackathon),
     enabled: !!slug,

@@ -1,10 +1,10 @@
+import 'flag-icons/css/flag-icons.min.css';
+
 import { useEffect, useState } from 'react';
 
 import { countries } from '@/constants/country';
 import { CUSTOM_FLAGS } from '@/constants/CUSTOM_FLAGS';
 import { cn } from '@/utils/cn';
-
-import 'flag-icons/css/flag-icons.min.css';
 
 type FlagSize =
   | '12px'

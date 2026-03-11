@@ -321,15 +321,15 @@ export const SubmissionDrawer = ({
     () =>
       Boolean(
         isSubmitDisabled ||
-          isTemplate ||
-          !!query['preview'] ||
-          (isHackathon && !editMode && !termsAccepted) ||
-          (isFndnPaying && !editMode && !kycAcknowledged) ||
-          isLoading ||
-          form.formState.isSubmitting ||
-          needsXVerification ||
-          needsLinkVerification ||
-          (isPro && !user?.isPro),
+        isTemplate ||
+        !!query['preview'] ||
+        (isHackathon && !editMode && !termsAccepted) ||
+        (isFndnPaying && !editMode && !kycAcknowledged) ||
+        isLoading ||
+        form.formState.isSubmitting ||
+        needsXVerification ||
+        needsLinkVerification ||
+        (isPro && !user?.isPro),
       ),
 
     [

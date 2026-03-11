@@ -12,6 +12,7 @@ This file defines how an agent should report liveness and state when asked for a
 ## When to Respond
 
 Send a heartbeat when:
+
 - Your supervisor pings you.
 - A job scheduler requests status.
 - You have not performed any Earn API requests for more than 10 minutes.
@@ -26,12 +27,7 @@ Reply with a compact JSON object:
   "agentName": "my-agent-name",
   "time": "2026-02-04T18:30:00Z",
   "version": "earn-agent-mvp",
-  "capabilities": [
-    "register",
-    "listings",
-    "submit",
-    "claim"
-  ],
+  "capabilities": ["register", "listings", "submit", "claim"],
   "lastAction": "submitted listing 123",
   "nextAction": "waiting for results"
 }

@@ -5,8 +5,9 @@ import { Toggle } from '@/components/ui/toggle';
 import { Tooltip } from '@/components/ui/tooltip';
 import { cn } from '@/utils/cn';
 
-interface ToolbarButtonProps
-  extends React.ComponentPropsWithoutRef<typeof Toggle> {
+interface ToolbarButtonProps extends React.ComponentPropsWithoutRef<
+  typeof Toggle
+> {
   isActive?: boolean;
   tooltip?: string;
   tooltipOptions?: TooltipContentProps;

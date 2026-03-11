@@ -15,7 +15,6 @@ import { type BountyType } from '@/generated/prisma/enums';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { domPurify } from '@/lib/domPurify';
 import { useUser } from '@/store/user';
-import styles from '@/styles/listing-description.module.css';
 import { cn } from '@/utils/cn';
 
 import { isUserEligibleForST } from '@/features/grants/utils/stGrant';
@@ -23,6 +22,8 @@ import { userStatsQuery } from '@/features/home/queries/user-stats';
 import { isEligiblePeopleType } from '@/features/membership/utils/peopleEligibility';
 import { ProBadge } from '@/features/pro/components/ProBadge';
 import { ProIntro } from '@/features/pro/components/ProIntro';
+
+import styles from '@/styles/listing-description.module.css';
 
 interface Props {
   description?: string;

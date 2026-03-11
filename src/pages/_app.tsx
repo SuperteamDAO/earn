@@ -1,3 +1,6 @@
+import '../styles/globals.css';
+import '../styles/st-globals.css';
+
 import { GoogleAnalytics } from '@next/third-parties/google';
 import type { AppProps } from 'next/app';
 import dynamic from 'next/dynamic';
@@ -12,9 +15,6 @@ import { stFontVariables } from '@/theme/fonts-st';
 
 import Footer from '@/features/stfun/components/common/Footer';
 import Header from '@/features/stfun/components/common/Header';
-
-import '../styles/globals.css';
-import '../styles/st-globals.css';
 
 const Toaster = dynamic(() => import('sonner').then((mod) => mod.Toaster), {
   ssr: false,

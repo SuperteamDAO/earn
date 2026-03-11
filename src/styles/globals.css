@@ -2,7 +2,7 @@
 @import 'tw-animate-css';
 
 @plugin 'tailwind-scrollbar';
-@plugin "@tailwindcss/typography";
+@plugin '@tailwindcss/typography';
 
 @custom-variant dark (&:is(.dark *));
 
@@ -101,7 +101,8 @@
   --animate-slide-in-from-right: slide-in-from-right 1s ease-out;
   --animate-slide-out-to-right: slide-out-to-right 1s ease-in;
   --animate-float: float 2s ease-in-out infinite;
-  --animate-skeleton-pulse: skeleton-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  --animate-skeleton-pulse: skeleton-pulse 2s cubic-bezier(0.4, 0, 0.6, 1)
+    infinite;
   --animate-shake: shake 0.5s ease-in-out;
 
   @keyframes caret-blink {
@@ -307,35 +308,68 @@ body {
   opacity: 1 !important;
 }
 
-.wallet-header-button .wallet-adapter-button.wallet-adapter-button-trigger:hover,
-.wallet-header-button .wallet-adapter-button.wallet-adapter-button-trigger:active,
-.wallet-payout-button .wallet-adapter-button.wallet-adapter-button-trigger:hover,
-.wallet-payout-button .wallet-adapter-button.wallet-adapter-button-trigger:active {
-  background-color: color-mix(in srgb, var(--primary) 90%, transparent) !important;
+.wallet-header-button
+  .wallet-adapter-button.wallet-adapter-button-trigger:hover,
+.wallet-header-button
+  .wallet-adapter-button.wallet-adapter-button-trigger:active,
+.wallet-payout-button
+  .wallet-adapter-button.wallet-adapter-button-trigger:hover,
+.wallet-payout-button
+  .wallet-adapter-button.wallet-adapter-button-trigger:active {
+  background-color: color-mix(
+    in srgb,
+    var(--primary) 90%,
+    transparent
+  ) !important;
 }
 
-.wallet-header-button .wallet-adapter-button.wallet-adapter-button-trigger:not([disabled]):hover,
-.wallet-payout-button .wallet-adapter-button.wallet-adapter-button-trigger:not([disabled]):hover {
-  background-color: color-mix(in srgb, var(--primary) 90%, transparent) !important;
+.wallet-header-button
+  .wallet-adapter-button.wallet-adapter-button-trigger:not([disabled]):hover,
+.wallet-payout-button
+  .wallet-adapter-button.wallet-adapter-button-trigger:not([disabled]):hover {
+  background-color: color-mix(
+    in srgb,
+    var(--primary) 90%,
+    transparent
+  ) !important;
 }
 
 .wallet-header-button .wallet-adapter-button-end-icon,
-.wallet-header-button .wallet-adapter-button.wallet-adapter-button-trigger .wallet-adapter-button-end-icon,
-.wallet-header-button .wallet-adapter-button.wallet-adapter-button-trigger .wallet-adapter-button-start-icon,
-.wallet-header-button .wallet-adapter-button.wallet-adapter-button-trigger .wallet-adapter-button-end-icon img,
-.wallet-header-button .wallet-adapter-button.wallet-adapter-button-trigger .wallet-adapter-button-start-icon img,
+.wallet-header-button
+  .wallet-adapter-button.wallet-adapter-button-trigger
+  .wallet-adapter-button-end-icon,
+.wallet-header-button
+  .wallet-adapter-button.wallet-adapter-button-trigger
+  .wallet-adapter-button-start-icon,
+.wallet-header-button
+  .wallet-adapter-button.wallet-adapter-button-trigger
+  .wallet-adapter-button-end-icon
+  img,
+.wallet-header-button
+  .wallet-adapter-button.wallet-adapter-button-trigger
+  .wallet-adapter-button-start-icon
+  img,
 .wallet-payout-button .wallet-adapter-button-end-icon,
-.wallet-payout-button .wallet-adapter-button.wallet-adapter-button-trigger .wallet-adapter-button-end-icon,
-.wallet-payout-button .wallet-adapter-button.wallet-adapter-button-trigger .wallet-adapter-button-start-icon,
-.wallet-payout-button .wallet-adapter-button.wallet-adapter-button-trigger .wallet-adapter-button-end-icon img,
-.wallet-payout-button .wallet-adapter-button.wallet-adapter-button-trigger .wallet-adapter-button-start-icon img {
+.wallet-payout-button
+  .wallet-adapter-button.wallet-adapter-button-trigger
+  .wallet-adapter-button-end-icon,
+.wallet-payout-button
+  .wallet-adapter-button.wallet-adapter-button-trigger
+  .wallet-adapter-button-start-icon,
+.wallet-payout-button
+  .wallet-adapter-button.wallet-adapter-button-trigger
+  .wallet-adapter-button-end-icon
+  img,
+.wallet-payout-button
+  .wallet-adapter-button.wallet-adapter-button-trigger
+  .wallet-adapter-button-start-icon
+  img {
   display: none !important;
 }
 
 .bg-white {
   background-color: #fff;
 }
-
 
 .listing-description > *:first-child {
   margin-top: 0 !important;

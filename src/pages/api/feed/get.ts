@@ -179,7 +179,7 @@ export default async function handler(
                 lte: endDate,
               },
               ...winnerFilter,
-              ...(profileSubmissionFilter || {}),
+              ...profileSubmissionFilter,
               listing: profileUserId ? {} : { isPrivate: false },
             },
             skip: parseInt(skip as string, 10),
@@ -209,7 +209,7 @@ export default async function handler(
         ? await prisma.submission.findFirst({
             where: {
               id: highlightId,
-              ...(profileSubmissionFilter || {}),
+              ...profileSubmissionFilter,
             },
             include: submissionInclude,
           })
