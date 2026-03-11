@@ -10,7 +10,7 @@ import { getURLSanitized } from '@/utils/getURLSanitized';
 import { chaptersQuery } from '@/features/chapters/queries/chapters';
 
 import type { ListingHackathon } from '../../types';
-import { getRegionSlug } from '../../utils/region';
+import { getCombinedRegion, getRegionSlug } from '../../utils/region';
 
 interface ExtraInfoSectionProps {
   skills?: ParentSkills[];
@@ -36,6 +36,9 @@ export function ExtraInfoSection({
   isFndnPaying = false,
 }: ExtraInfoSectionProps) {
   const { data: chapters = [] } = useQuery(chaptersQuery);
+  const regionObject = getCombinedRegion(region || '', false, chapters);
+  const regionDisplayName =
+    regionObject?.displayValue || regionObject?.name || region;
 
   return (
     <div className="flex w-full flex-col gap-8 pt-2 md:w-[23rem]">
@@ -102,8 +105,18 @@ export function ExtraInfoSection({
         <div className="flex w-full flex-col items-start gap-2 text-sm">
           <p className="h-full font-semibold text-slate-600">KYC REQUIRED</p>
           <p className="pr-1 text-slate-500">
-            Winners will be required to complete KYC to receive their prize
-            money.
+            {region && region !== 'Global' ? (
+              <>
+                Winners will be required to complete KYC from{' '}
+                {regionDisplayName || 'their region'} to receive their prize
+                money.
+              </>
+            ) : (
+              <>
+                Winners will be required to complete KYC to receive their prize
+                money.
+              </>
+            )}
           </p>
         </div>
       )}
