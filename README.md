@@ -25,7 +25,7 @@
 
 - <img src="https://avatars.githubusercontent.com/u/9950313" title="NodeJS" alt="nodejs" width="28" height="28" /> [NodeJS](https://nodejs.org/en)
 - <img src="https://avatars.githubusercontent.com/u/2452804" title="MySQL" alt="mysql" width="28" height="28" /> [MySQL](https://www.mysql.com)
-- <img src="https://avatars.githubusercontent.com/u/21320719" title="pnpm" alt="pnpm" width="28" height="28" /> [pnpm](https://pnpm.io)
+- <img src="https://bun.sh/logo-avatar.svg" title="Bun" alt="bun" width="28" height="28" /> [Bun](https://bun.sh)
 - <img src="https://avatars.githubusercontent.com/u/81824329" title="Privy" alt="privy" width="28" height="28" /> [Privy](https://www.privy.io)
 - <img src="https://avatars.githubusercontent.com/u/1460763" title="Cloudinary" alt="cloudinary" width="28" height="28" /> [Cloudinary](https://cloudinary.com)
 - <img src="https://avatars.githubusercontent.com/u/109384852" title="Resend" alt="resend" width="28" height="28" /> [Resend](https://resend.com)
@@ -47,13 +47,13 @@
 3. Install the dependencies:
 
    ```bash
-   pnpm i
+   bun install
    ```
 
 4. Install the MariaDB adapter (required for local MySQL development):
 
    ```bash
-   pnpm add @prisma/adapter-mariadb
+   bun add @prisma/adapter-mariadb
    ```
 
    Then, uncomment the MariaDB adapter code in `src/prisma.ts`:
@@ -232,7 +232,7 @@
 
 6. Run the development server
    ```bash
-   pnpm dev
+   bun run dev
    ```
 
 ## ⭐Contributing

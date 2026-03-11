@@ -5,6 +5,6 @@
 
 module.exports = {
   '*.{js,jsx,ts,tsx}': ['oxlint --fix --quiet', 'oxfmt --write'],
-  '**/*.ts?(x)': () => 'pnpm check-types',
+  '**/*.ts?(x)': () => 'bun run check-types',
   '*.{json,yaml,yml}': ['oxfmt --write'],
 };
