@@ -55,7 +55,7 @@ export const VerifyPaymentModal = ({
   const [selectedToken, setSelectedToken] = useState<(typeof tokenList)[0]>();
   const [showMultiplePayments, setShowMultiplePayments] = useState(false);
   const queryClient = useQueryClient();
-  const { data, isLoading, error } = useQuery({
+  const { data, isLoading, error, refetch } = useQuery({
     ...listingSubmissionsQuery({
       slug: listing?.slug ?? '',
       isWinner: true,
@@ -107,64 +107,71 @@ export const VerifyPaymentModal = ({
     watch,
   } = form;
 
+  const resetFormOptions = {
+    keepErrors: false,
+    keepDirty: false,
+    keepIsSubmitted: false,
+    keepTouched: false,
+    keepIsValid: false,
+    keepSubmitCount: false,
+  } as const;
+
+  const syncPaymentLinks = (listingSubmissionData: typeof data = data) => {
+    if (!listingSubmissionData?.submission || !listingSubmissionData?.bounty) {
+      return;
+    }
+
+    const isProject = listing?.type === 'project';
+
+    if (isProject) {
+      reset(
+        {
+          paymentLinks: [
+            {
+              submissionId:
+                listingSubmissionData.submission.find(
+                  (sub) => sub.winnerPosition === 1,
+                )?.id || '',
+              link: '',
+              isVerified: false,
+              txId: '',
+            },
+          ],
+        },
+        resetFormOptions,
+      );
+    } else {
+      reset(
+        {
+          paymentLinks: listingSubmissionData.submission
+            .filter((sub) => sub.winnerPosition !== null)
+            .sort((a, b) => (a.winnerPosition || 0) - (b.winnerPosition || 0))
+            .map((submission) => ({
+              submissionId: submission.id,
+              link: '',
+              isVerified: submission.isPaid,
+              txId: submission.paymentDetails?.[0]?.txId || '',
+            })),
+        },
+        resetFormOptions,
+      );
+    }
+
+    if (listingSubmissionData.bounty.token) {
+      setSelectedToken(
+        tokenList.find(
+          (token) => token.tokenSymbol === listingSubmissionData.bounty.token,
+        ),
+      );
+    }
+  };
+
   // eslint-disable-next-line react-hooks/incompatible-library
   const paymentLinks = watch('paymentLinks');
 
   useEffect(() => {
-    if (data?.submission && data?.bounty && isOpen) {
-      const isProject = listing?.type === 'project';
-
-      if (isProject) {
-        reset(
-          {
-            paymentLinks: [
-              {
-                submissionId:
-                  data.submission.find((sub) => sub.winnerPosition === 1)?.id ||
-                  '',
-                link: '',
-                isVerified: false,
-                txId: '',
-              },
-            ],
-          },
-          {
-            keepErrors: false,
-            keepDirty: false,
-            keepIsSubmitted: false,
-            keepTouched: false,
-            keepIsValid: false,
-            keepSubmitCount: false,
-          },
-        );
-      } else {
-        reset(
-          {
-            paymentLinks: data.submission
-              .filter((sub) => sub.winnerPosition !== null)
-              .sort((a, b) => (a.winnerPosition || 0) - (b.winnerPosition || 0))
-              .map((submission) => ({
-                submissionId: submission.id,
-                link: '',
-                isVerified: submission.isPaid,
-                txId: submission.paymentDetails?.[0]?.txId || '',
-              })),
-          },
-          {
-            keepErrors: true,
-            keepDirty: true,
-            keepIsSubmitted: true,
-            keepTouched: true,
-            keepIsValid: false,
-            keepSubmitCount: true,
-          },
-        );
-      }
-
-      if (data?.bounty?.token)
-        setSelectedToken(
-          tokenList.find((s) => s.tokenSymbol === data?.bounty?.token),
-        );
+    if (isOpen) {
+      syncPaymentLinks();
     }
   }, [data?.bounty.slug, reset, listing?.type, isOpen]);
 
@@ -252,8 +259,8 @@ export const VerifyPaymentModal = ({
 
   const tryAgain = async () => {
     await refetchQueries();
-
-    reset({});
+    const { data: refreshedData } = await refetch();
+    syncPaymentLinks(refreshedData ?? data);
     setStatus('idle');
     setShowMultiplePayments(false);
     clearErrors();
