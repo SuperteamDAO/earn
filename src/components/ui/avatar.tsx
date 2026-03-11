@@ -49,12 +49,12 @@ function AvatarFallback({
 }
 
 const avatarBadgeVariants = cva(
-  'absolute size-4 rounded-full bg-background flex items-stretch justify-stretch *:grow *:rounded-full',
+  'bg-background absolute flex size-4 items-stretch justify-stretch rounded-full *:grow *:rounded-full',
   {
     variants: {
       position: {
         bottomLeft: 'bottom-0 -left-1',
-        bottomRight: 'bottom-0 -right-1',
+        bottomRight: '-right-1 bottom-0',
         topLeft: 'top-0 -left-1',
         topRight: 'top-0 -right-1',
       },
@@ -66,7 +66,8 @@ const avatarBadgeVariants = cva(
 );
 
 export interface AvatarBadgeProps
-  extends React.HTMLAttributes<HTMLDivElement>,
+  extends
+    React.HTMLAttributes<HTMLDivElement>,
     VariantProps<typeof avatarBadgeVariants> {
   children?:
     | React.ReactElement<any, string | React.JSXElementConstructor<any>>

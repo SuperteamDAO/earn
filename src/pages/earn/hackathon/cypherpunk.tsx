@@ -182,13 +182,12 @@ function HeroMini({
   const [countdownDate, setCountdownDate] = useState<Date>(
     dayjs.utc(START_DATE).toDate(),
   );
-  const [status, setStatus] = useState<'Start In' | 'Close In' | 'Closed'>(
-    () =>
-      dayjs().isAfter(dayjs(CLOSE_DATE))
-        ? 'Closed'
-        : dayjs().isAfter(dayjs(START_DATE))
-          ? 'Close In'
-          : 'Start In',
+  const [status, setStatus] = useState<'Start In' | 'Close In' | 'Closed'>(() =>
+    dayjs().isAfter(dayjs(CLOSE_DATE))
+      ? 'Closed'
+      : dayjs().isAfter(dayjs(START_DATE))
+        ? 'Close In'
+        : 'Start In',
   );
 
   useEffect(() => {

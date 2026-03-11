@@ -1,6 +1,6 @@
-import { type Address } from '@solana/kit';
 import { TOKEN_PROGRAM_ADDRESS } from '@solana-program/token';
 import { TOKEN_2022_PROGRAM_ADDRESS } from '@solana-program/token-2022';
+import { type Address } from '@solana/kit';
 
 import { tokenList } from '@/constants/tokenList';
 

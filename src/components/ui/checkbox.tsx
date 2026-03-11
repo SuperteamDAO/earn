@@ -5,8 +5,9 @@ import { type ClassNameValue } from 'tailwind-merge';
 
 import { cn } from '@/utils/cn';
 
-interface CheckboxProps
-  extends React.ComponentProps<typeof CheckboxPrimitive.Root> {
+interface CheckboxProps extends React.ComponentProps<
+  typeof CheckboxPrimitive.Root
+> {
   classNames?: {
     indicatorClassName?: ClassNameValue;
   };

@@ -1,8 +1,8 @@
+import SumsubWebSdk from '@sumsub/websdk-react';
 import {
   type AnyEventPayload,
   type MessageHandler,
 } from '@sumsub/websdk/types/types';
-import SumsubWebSdk from '@sumsub/websdk-react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { isAxiosError } from 'axios';
 import { Loader2 } from 'lucide-react';

@@ -200,10 +200,10 @@ export const SubmissionHeader = ({
   const isCoreMember = user?.people?.type?.toUpperCase() === 'CORE';
   const canCoreMemberEditInReview = Boolean(
     isCoreMember &&
-      bounty?.isPublished &&
-      !bounty?.isWinnersAnnounced &&
-      pastDeadline &&
-      bounty?.type !== 'grant',
+    bounty?.isPublished &&
+    !bounty?.isWinnersAnnounced &&
+    pastDeadline &&
+    bounty?.type !== 'grant',
   );
 
   const totalPodiumSpots = remainings

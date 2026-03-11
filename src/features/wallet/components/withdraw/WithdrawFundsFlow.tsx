@@ -3,12 +3,12 @@ import {
   useSignAndSendTransaction,
   useWallets,
 } from '@privy-io/react-auth/solana';
-import { address, type Signature } from '@solana/kit';
 import {
   findAssociatedTokenPda,
   TOKEN_PROGRAM_ADDRESS,
 } from '@solana-program/token';
 import { TOKEN_2022_PROGRAM_ADDRESS } from '@solana-program/token-2022';
+import { address, type Signature } from '@solana/kit';
 import { useQueryClient } from '@tanstack/react-query';
 import { isAxiosError } from 'axios';
 import bs58 from 'bs58';

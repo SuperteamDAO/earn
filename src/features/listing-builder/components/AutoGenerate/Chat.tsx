@@ -8,11 +8,12 @@ import TextareaAutosize from 'react-textarea-autosize';
 import { MarkdownRenderer } from '@/components/shared/MarkdownRenderer';
 import { Button } from '@/components/ui/button';
 import { DialogClose } from '@/components/ui/dialog';
-import styles from '@/styles/listing-description.module.css';
 
 import { ProgressiveBlurOut } from './extras/ProgressiveBlurOut';
 import { SparkleLoading } from './extras/SparkleLoading';
 import { TextLightSweep } from './extras/TextLightSweep';
+
+import styles from '@/styles/listing-description.module.css';
 
 interface AutoGenerateChatProps {
   description: string;

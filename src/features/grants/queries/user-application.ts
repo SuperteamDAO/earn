@@ -10,8 +10,7 @@ interface GrantApplicationUserKycState {
   kycVerifiedAt: Date | null;
 }
 
-export interface GrantApplicationWithTranchesAndUser
-  extends GrantApplicationModel {
+export interface GrantApplicationWithTranchesAndUser extends GrantApplicationModel {
   GrantTranche: GrantTrancheModel[];
   user: GrantApplicationUserKycState;
 }

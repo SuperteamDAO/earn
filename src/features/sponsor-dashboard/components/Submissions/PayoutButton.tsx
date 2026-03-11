@@ -1,4 +1,19 @@
 import {
+  getSetComputeUnitLimitInstruction,
+  getSetComputeUnitPriceInstruction,
+} from '@solana-program/compute-budget';
+import { getTransferSolInstruction } from '@solana-program/system';
+import {
+  findAssociatedTokenPda,
+  getCreateAssociatedTokenIdempotentInstruction,
+  getTransferCheckedInstruction,
+  TOKEN_PROGRAM_ADDRESS,
+} from '@solana-program/token';
+import {
+  getTransferCheckedInstruction as getTransferCheckedInstruction2022,
+  TOKEN_2022_PROGRAM_ADDRESS,
+} from '@solana-program/token-2022';
+import {
   type Address,
   address,
   appendTransactionMessageInstructions,
@@ -15,26 +30,11 @@ import {
 } from '@solana/kit';
 import { useWallet } from '@solana/wallet-adapter-react';
 import type { SolanaSignAndSendTransactionFeature } from '@solana/wallet-standard-features';
-import {
-  getSetComputeUnitLimitInstruction,
-  getSetComputeUnitPriceInstruction,
-} from '@solana-program/compute-budget';
-import { getTransferSolInstruction } from '@solana-program/system';
-import {
-  findAssociatedTokenPda,
-  getCreateAssociatedTokenIdempotentInstruction,
-  getTransferCheckedInstruction,
-  TOKEN_PROGRAM_ADDRESS,
-} from '@solana-program/token';
-import {
-  getTransferCheckedInstruction as getTransferCheckedInstruction2022,
-  TOKEN_2022_PROGRAM_ADDRESS,
-} from '@solana-program/token-2022';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import bs58 from 'bs58';
 import { Loader2 } from 'lucide-react';
-import dynamic from 'next/dynamic';
 import { log } from 'next-axiom';
+import dynamic from 'next/dynamic';
 import posthog from 'posthog-js';
 import { useState } from 'react';
 

@@ -26,8 +26,7 @@ interface ImageActionsProps {
   onCopyLink?: () => void;
 }
 
-interface ActionButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+interface ActionButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   icon: React.ReactNode;
   tooltip: string;
 }

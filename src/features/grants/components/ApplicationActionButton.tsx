@@ -79,8 +79,8 @@ export const ApplicationActionButton = ({
     buttonConfig.isDisabled ||
     Boolean(
       !isPublished ||
-        (user?.id && user?.isTalentFilled && !isUserEligibleByRegion) ||
-        isNotEligibleForPro,
+      (user?.id && user?.isTalentFilled && !isUserEligibleByRegion) ||
+      isNotEligibleForPro,
     );
 
   const getButtonText = () => {

@@ -13,6 +13,7 @@ import {
   twitterRegex,
 } from '@/features/social/utils/regex';
 
+import { type ListingFormData, type ValidationFields } from '.';
 import {
   BONUS_REWARD_POSITION,
   DEADLINE_FORMAT,
@@ -20,7 +21,6 @@ import {
   MAX_PODIUMS,
   MAX_REWARD,
 } from '../constants';
-import { type ListingFormData, type ValidationFields } from '.';
 
 export const eligibilityQuestionSchema = z.object({
   order: z.number(),

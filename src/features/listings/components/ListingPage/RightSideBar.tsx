@@ -34,8 +34,8 @@ const ListingWinners = dynamic(
 
 function digitsInLargestString(numbers: string[]): number {
   const largest = numbers.reduce((max, current) => {
-    const cleanedCurrent = current.replace(/[,\.]/g, '');
-    const cleanedMax = max.replace(/[,\.]/g, '');
+    const cleanedCurrent = current.replace(/[,.]/g, '');
+    const cleanedMax = max.replace(/[,.]/g, '');
 
     return cleanedCurrent.length > cleanedMax.length
       ? current
@@ -45,7 +45,7 @@ function digitsInLargestString(numbers: string[]): number {
         : max;
   }, '');
 
-  return largest.replace(/[,\.]/g, '').length;
+  return largest.replace(/[,.]/g, '').length;
 }
 
 function getOrdinalSuffix(day: number): string {

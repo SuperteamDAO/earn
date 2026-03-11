@@ -8,8 +8,8 @@ import { safeStringify } from '@/utils/safeStringify';
 import { type NextApiRequestWithUser } from '@/features/auth/types';
 import { withAuth } from '@/features/auth/utils/withAuth';
 import { extractSocialUsername } from '@/features/social/utils/extractUsername';
-import { sponsorBaseSchema } from '@/features/sponsor/utils/sponsorFormSchema';
 import { createSponsorEmailSettings } from '@/features/sponsor-dashboard/utils/createSponsorEmailSettings';
+import { sponsorBaseSchema } from '@/features/sponsor/utils/sponsorFormSchema';
 
 async function user(req: NextApiRequestWithUser, res: NextApiResponse) {
   const userId = req.userId;
