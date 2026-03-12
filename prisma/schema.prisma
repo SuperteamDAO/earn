@@ -321,7 +321,7 @@ model GrantTranche {
   eventPictures    Json?
   eventReceipts    Json?
   attendeeCount    Int?
-  socialPost       String?
+  socialPost       String?            @db.VarChar(500)
 
   @@index([applicationId])
   @@index([grantId])
@@ -870,6 +870,7 @@ model People {
   city              String?            @db.VarChar(100)
   skills            String?            @db.Text
   proofOfWork       String?            @db.Text
+  bestWorkUrl       String?            @db.VarChar(500)
   source            String             @default("Legacy") @db.VarChar(50)
   airtableRecordId  String             @db.VarChar(50)
   createdAt         DateTime           @default(now())
