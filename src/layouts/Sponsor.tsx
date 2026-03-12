@@ -1,6 +1,6 @@
 import { usePrivy } from '@privy-io/react-auth';
 import { useQuery } from '@tanstack/react-query';
-import { useSetAtom } from 'jotai';
+import { useAtomValue, useSetAtom } from 'jotai';
 import { Lock, Pencil, PencilLine, Plus, Users } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
@@ -20,7 +20,6 @@ import { type IconType } from '@/components/icons/helpers/GenIcon';
 import MdList from '@/components/icons/MdList';
 import MdOutlineChatBubbleOutline from '@/components/icons/MdOutlineChatBubbleOutline';
 import RiUserSettingsLine from '@/components/icons/RiUserSettingsLine';
-import { EntityNameModal } from '@/components/modals/EntityNameModal';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -30,7 +29,6 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Tooltip } from '@/components/ui/tooltip';
 import { JTTG } from '@/constants/Telegram';
-import { SolanaWalletProvider } from '@/context/SolanaWallet';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
@@ -83,6 +81,14 @@ const SponsorInfoModal = dynamic(
   { ssr: false },
 );
 
+const EntityNameModal = dynamic(
+  () =>
+    import('@/components/modals/EntityNameModal').then(
+      (m) => m.EntityNameModal,
+    ),
+  { ssr: false },
+);
+
 interface LinkItemProps {
   name: string;
   link?: string;
@@ -114,6 +120,7 @@ export function SponsorLayout({
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const setAutoGenerateOpen = useSetAtom(isAutoGenerateOpenAtom);
+  const isAutoGenerateOpen = useAtomValue(isAutoGenerateOpenAtom);
 
   const handleMouseEnter = useCallback(() => {
     if (!isCollapsible) return;
@@ -262,208 +269,212 @@ export function SponsorLayout({
   const isAnyModalOpen = isOpen || isSponsorInfoModalOpen || isEntityModalOpen;
 
   return (
-    <SolanaWalletProvider>
-      <Default
-        className="bg-white"
-        meta={
-          <Meta
-            title="Superteam Earn | Work to Earn in Crypto"
-            description="Explore the latest bounties on Superteam Earn, offering opportunities in the crypto space across Design, Development, and Content."
-            noIndex
-          />
-        }
-      >
+    <Default
+      className="bg-white"
+      meta={
+        <Meta
+          title="Superteam Earn | Work to Earn in Crypto"
+          description="Explore the latest bounties on Superteam Earn, offering opportunities in the crypto space across Design, Development, and Content."
+          noIndex
+        />
+      }
+    >
+      {isSponsorInfoModalOpen && (
         <SponsorInfoModal
           onClose={onSponsorInfoModalClose}
           isOpen={isSponsorInfoModalOpen}
         />
+      )}
 
-        {/* {router.pathname === '/dashboard/listings' && (
+      {/* {router.pathname === '/dashboard/listings' && (
           <SponsorAnnouncements isAnyModalOpen={isAnyModalOpen} />
         )} */}
 
-        <ProListingsAnnouncement isAnyModalOpen={isAnyModalOpen} />
+      <ProListingsAnnouncement isAnyModalOpen={isAnyModalOpen} />
 
+      {isEntityModalOpen && (
         <EntityNameModal
           isOpen={isEntityModalOpen}
           onClose={handleEntityClose}
         />
+      )}
 
-        <div className="flex min-h-[80vh] px-3 md:hidden">
-          <p className="pt-20 text-center text-xl font-medium text-slate-500">
-            The Sponsor Dashboard on Earn is not optimized for mobile yet.
-            Please use a desktop to check out the Sponsor Dashboard
-          </p>
-        </div>
-        <div className="hidden min-h-[max(100vh,1000px)] justify-start transition-all duration-300 ease-in-out hover:shadow-lg md:flex">
-          <div
-            className={cn(
-              'sponsor-dashboard-sidebar overflow-x-hidden border-r border-slate-200 bg-white pt-5 whitespace-nowrap',
-              'transition-all duration-300 ease-in-out',
-              'transition-shadow hover:shadow-lg',
-              isCollapsible ? 'fixed' : 'static',
-              isExpanded
-                ? ['w-64 max-w-64 min-w-64', 'expanded']
-                : ['w-20 max-w-20 min-w-20'],
-              'top-12 bottom-0 left-0 z-10',
-            )}
-            onMouseEnter={handleMouseEnter}
-            onMouseLeave={handleMouseLeave}
-          >
-            {user?.role === 'GOD' && (
-              <div className={cn('pb-6', isExpanded ? 'pr-4 pl-6' : 'px-4')}>
-                {isHackathonRoute ? (
-                  <SelectHackathon isExpanded={isExpanded} />
-                ) : (
-                  <SelectSponsor isExpanded={isExpanded} />
-                )}
-              </div>
-            )}
+      <div className="flex min-h-[80vh] px-3 md:hidden">
+        <p className="pt-20 text-center text-xl font-medium text-slate-500">
+          The Sponsor Dashboard on Earn is not optimized for mobile yet. Please
+          use a desktop to check out the Sponsor Dashboard
+        </p>
+      </div>
+      <div className="hidden min-h-[max(100vh,1000px)] justify-start transition-all duration-300 ease-in-out hover:shadow-lg md:flex">
+        <div
+          className={cn(
+            'sponsor-dashboard-sidebar overflow-x-hidden border-r border-slate-200 bg-white pt-5 whitespace-nowrap',
+            'transition-all duration-300 ease-in-out',
+            'transition-shadow hover:shadow-lg',
+            isCollapsible ? 'fixed' : 'static',
+            isExpanded
+              ? ['w-64 max-w-64 min-w-64', 'expanded']
+              : ['w-20 max-w-20 min-w-20'],
+            'top-12 bottom-0 left-0 z-10',
+          )}
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+        >
+          {user?.role === 'GOD' && (
+            <div className={cn('pb-6', isExpanded ? 'pr-4 pl-6' : 'px-4')}>
+              {isHackathonRoute ? (
+                <SelectHackathon isExpanded={isExpanded} />
+              ) : (
+                <SelectSponsor isExpanded={isExpanded} />
+              )}
+            </div>
+          )}
+          {isOpen && (
             <CreateListingModal
               isOpen={isOpen}
               onClose={onClose}
               hackathons={hackathons}
             />
-            <AutoGenerateDialog hackathons={hackathons} />
-            <div
-              className={cn(
-                'flex items-center justify-between px-4 pb-6',
-                isExpanded ? 'pr-4 pl-6' : 'px-4',
-              )}
-            >
-              {!isHackathonRoute ? (
-                <DropdownMenu>
-                  <Tooltip
-                    content={
-                      "Creating a new listing has been temporarily locked for you since you have 5 listings which are 'In Review'. Please announce the winners for such listings to create new listings."
-                    }
-                    disabled={
-                      !(
+          )}
+          {isAutoGenerateOpen && <AutoGenerateDialog hackathons={hackathons} />}
+          <div
+            className={cn(
+              'flex items-center justify-between px-4 pb-6',
+              isExpanded ? 'pr-4 pl-6' : 'px-4',
+            )}
+          >
+            {!isHackathonRoute ? (
+              <DropdownMenu>
+                <Tooltip
+                  content={
+                    "Creating a new listing has been temporarily locked for you since you have 5 listings which are 'In Review'. Please announce the winners for such listings to create new listings."
+                  }
+                  disabled={
+                    !(
+                      isCreateListingAllowed !== undefined &&
+                      isCreateListingAllowed === false &&
+                      user?.role !== 'GOD'
+                    )
+                  }
+                >
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      className={cn(
+                        'ph-no-capture w-full gap-2 py-5.5 text-base',
+                        'disabled:cursor-not-allowed disabled:opacity-50',
+                      )}
+                      disabled={
                         isCreateListingAllowed !== undefined &&
                         isCreateListingAllowed === false &&
                         user?.role !== 'GOD'
-                      )
-                    }
-                  >
-                    <DropdownMenuTrigger asChild>
-                      <Button
+                      }
+                      variant="default"
+                    >
+                      <Plus className="h-3 w-3" />
+                      <p
                         className={cn(
-                          'ph-no-capture w-full gap-2 py-5.5 text-base',
-                          'disabled:cursor-not-allowed disabled:opacity-50',
+                          'nav-item-text transition-all duration-200 ease-in-out',
+                          isExpanded
+                            ? ['static ml-0 opacity-100']
+                            : ['absolute -ml-[9999px] opacity-0'],
                         )}
-                        disabled={
-                          isCreateListingAllowed !== undefined &&
-                          isCreateListingAllowed === false &&
-                          user?.role !== 'GOD'
-                        }
-                        variant="default"
                       >
-                        <Plus className="h-3 w-3" />
-                        <p
-                          className={cn(
-                            'nav-item-text transition-all duration-200 ease-in-out',
-                            isExpanded
-                              ? ['static ml-0 opacity-100']
-                              : ['absolute -ml-[9999px] opacity-0'],
-                          )}
-                        >
-                          <span>Create New Listing</span>
-                        </p>
-                        {isCreateListingAllowed !== undefined &&
-                          isCreateListingAllowed === false &&
-                          user?.role !== 'GOD' && <Lock className="h-4 w-4" />}
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent
-                      className="min-w-[200px] font-medium text-slate-500"
-                      align="start"
+                        <span>Create New Listing</span>
+                      </p>
+                      {isCreateListingAllowed !== undefined &&
+                        isCreateListingAllowed === false &&
+                        user?.role !== 'GOD' && <Lock className="h-4 w-4" />}
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent
+                    className="min-w-[200px] font-medium text-slate-500"
+                    align="start"
+                  >
+                    <DropdownMenuItem
+                      className="flex items-center justify-between"
+                      onClick={() => {
+                        posthog.capture('new generate with ai_sponsor');
+                        setAutoGenerateOpen(true);
+                      }}
                     >
-                      <DropdownMenuItem
-                        className="flex items-center justify-between"
-                        onClick={() => {
-                          posthog.capture('new generate with ai_sponsor');
-                          setAutoGenerateOpen(true);
-                        }}
-                      >
-                        <span className="flex items-center gap-2 text-sm">
-                          <Sparkle className="h-4 w-4" />
-                          Generate with AI
+                      <span className="flex items-center gap-2 text-sm">
+                        <Sparkle className="h-4 w-4" />
+                        Generate with AI
+                      </span>
+                      <span>
+                        <span className="rounded-full bg-emerald-50 px-1.5 py-0.5 text-[0.65rem] text-emerald-600">
+                          2m
                         </span>
-                        <span>
-                          <span className="rounded-full bg-emerald-50 px-1.5 py-0.5 text-[0.65rem] text-emerald-600">
-                            2m
-                          </span>
-                        </span>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        className="flex items-center justify-between"
-                        onClick={() => {
-                          posthog.capture('new start from scratch_sponsor');
-                          onOpen();
-                        }}
-                      >
-                        <span className="flex items-center gap-2 text-sm">
-                          <PencilLine className="h-4 w-4" />
-                          Start from Scratch
-                        </span>
-                        <span>
-                          <span className="rounded-full bg-indigo-50 px-1.5 py-0.5 text-[0.65rem] text-indigo-600">
-                            10m
-                          </span>
-                        </span>
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </Tooltip>
-                </DropdownMenu>
-              ) : (
-                <Button
-                  asChild
-                  className={cn('w-full gap-2 py-5.5 text-base')}
-                  variant="default"
-                >
-                  <Link href="/earn/dashboard/new/?type=hackathon">
-                    <Plus className="h-3 w-3" />
-                    <p
-                      className={cn(
-                        'nav-item-text transition-opacity duration-200 ease-in-out',
-                        isExpanded
-                          ? ['static ml-0 opacity-100']
-                          : ['absolute -ml-[9999px] opacity-0'],
-                      )}
+                      </span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      className="flex items-center justify-between"
+                      onClick={() => {
+                        posthog.capture('new start from scratch_sponsor');
+                        onOpen();
+                      }}
                     >
-                      Create New Track
-                    </p>
-                  </Link>
-                </Button>
-              )}
-            </div>
-            {LinkItems.map((link) => (
-              <NavItem
-                onClick={() => {
-                  if (link.posthog) posthog.capture(link.posthog);
-                }}
-                className="ph-no-capture"
-                key={link.name}
-                link={link.link}
-                icon={link.icon}
-                isExpanded={isExpanded}
+                      <span className="flex items-center gap-2 text-sm">
+                        <PencilLine className="h-4 w-4" />
+                        Start from Scratch
+                      </span>
+                      <span>
+                        <span className="rounded-full bg-indigo-50 px-1.5 py-0.5 text-[0.65rem] text-indigo-600">
+                          10m
+                        </span>
+                      </span>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </Tooltip>
+              </DropdownMenu>
+            ) : (
+              <Button
+                asChild
+                className={cn('w-full gap-2 py-5.5 text-base')}
+                variant="default"
               >
-                {link.name}
-              </NavItem>
-            ))}
+                <Link href="/earn/dashboard/new/?type=hackathon">
+                  <Plus className="h-3 w-3" />
+                  <p
+                    className={cn(
+                      'nav-item-text transition-opacity duration-200 ease-in-out',
+                      isExpanded
+                        ? ['static ml-0 opacity-100']
+                        : ['absolute -ml-[9999px] opacity-0'],
+                    )}
+                  >
+                    Create New Track
+                  </p>
+                </Link>
+              </Button>
+            )}
           </div>
-          {(showContent || isLoading) && (
-            <div
-              className={cn(
-                'w-full flex-1 overflow-x-auto bg-white py-5 pr-8 pl-4 transition-[margin-left] duration-300 ease-in-out',
-                isCollapsible ? 'ml-20' : 'ml-0',
-              )}
+          {LinkItems.map((link) => (
+            <NavItem
+              onClick={() => {
+                if (link.posthog) posthog.capture(link.posthog);
+              }}
+              className="ph-no-capture"
+              key={link.name}
+              link={link.link}
+              icon={link.icon}
+              isExpanded={isExpanded}
             >
-              {isLoading ? <SponsorContentSkeleton /> : children}
-            </div>
-          )}
+              {link.name}
+            </NavItem>
+          ))}
         </div>
-      </Default>
-    </SolanaWalletProvider>
+        {(showContent || isLoading) && (
+          <div
+            className={cn(
+              'w-full flex-1 overflow-x-auto bg-white py-5 pr-8 pl-4 transition-[margin-left] duration-300 ease-in-out',
+              isCollapsible ? 'ml-20' : 'ml-0',
+            )}
+          >
+            {isLoading ? <SponsorContentSkeleton /> : children}
+          </div>
+        )}
+      </div>
+    </Default>
   );
 }

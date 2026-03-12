@@ -13,12 +13,16 @@ import { ST_ROUTES } from '@/constants/ST_ROUTES';
 import { fontVariables } from '@/theme/fonts';
 import { stFontVariables } from '@/theme/fonts-st';
 
-import Footer from '@/features/stfun/components/common/Footer';
-import Header from '@/features/stfun/components/common/Header';
-
 const Toaster = dynamic(() => import('sonner').then((mod) => mod.Toaster), {
   ssr: false,
 });
+
+const STFooter = dynamic(
+  () => import('@/features/stfun/components/common/Footer'),
+);
+const STHeader = dynamic(
+  () => import('@/features/stfun/components/common/Header'),
+);
 
 const TopLoader = dynamic(
   () => import('@/components/ui/toploader').then((mod) => mod.TopLoader),
@@ -111,10 +115,10 @@ function App({ Component, pageProps }: AppProps) {
             </div>
           </div>
         )}
-        <Header className="mx-auto px-10 md:px-[72px]" />
+        <STHeader className="mx-auto px-10 md:px-[72px]" />
         <div className="relative mx-auto grid flex-1 grid-cols-5 gap-5 px-10 md:px-[72px]">
           <Component {...pageProps} key={router.asPath} />
-          <Footer />
+          <STFooter />
         </div>
         <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_TRACKING_ID!} />
       </div>

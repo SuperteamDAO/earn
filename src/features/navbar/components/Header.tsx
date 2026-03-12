@@ -35,10 +35,12 @@ const WalletDrawer = dynamic(
   { ssr: false },
 );
 
-const SearchModal = dynamic(() =>
-  import('@/features/search/components/SearchModal').then(
-    (mod) => mod.SearchModal,
-  ),
+const SearchModal = dynamic(
+  () =>
+    import('@/features/search/components/SearchModal').then(
+      (mod) => mod.SearchModal,
+    ),
+  { ssr: false },
 );
 const BottomBar = dynamic(() =>
   import('./BottomBar').then((mod) => mod.BottomBar),
@@ -170,7 +172,13 @@ export const Header = () => {
 
   return (
     <>
-      <Login isOpen={isLoginOpen} onClose={onLoginClose} onOpen={onLoginOpen} />
+      {isLoginOpen && (
+        <Login
+          isOpen={isLoginOpen}
+          onClose={onLoginClose}
+          onOpen={onLoginOpen}
+        />
+      )}
       <BountySnackbar />
       <GrantSnackbar />
       <div className="sticky top-0 z-40">
@@ -189,7 +197,9 @@ export const Header = () => {
         onCreditOpen={openCreditWithEvent}
         onReferralOpen={openReferralWithEvent}
       />
-      <SearchModal isOpen={isSearchOpen} onClose={onSearchClose} />
+      {isSearchOpen && (
+        <SearchModal isOpen={isSearchOpen} onClose={onSearchClose} />
+      )}
       <div className="fixed bottom-0 z-60 w-full">
         <BottomBar
           onSearchOpen={searchOpenWithEvent}
@@ -197,15 +207,21 @@ export const Header = () => {
           walletBalance={walletBalance || 0}
         />
       </div>
-      <WalletDrawer
-        tokens={tokens || []}
-        isLoading={isLoading}
-        error={error}
-        isOpen={isWalletOpen}
-        onClose={onWalletClose}
-      />
-      <ReferralModal isOpen={isReferralOpen} onClose={onReferralClose} />
-      <CreditDrawer isOpen={isCreditOpen} onClose={onCreditClose} />
+      {isWalletOpen && (
+        <WalletDrawer
+          tokens={tokens || []}
+          isLoading={isLoading}
+          error={error}
+          isOpen={isWalletOpen}
+          onClose={onWalletClose}
+        />
+      )}
+      {isReferralOpen && (
+        <ReferralModal isOpen={isReferralOpen} onClose={onReferralClose} />
+      )}
+      {isCreditOpen && (
+        <CreditDrawer isOpen={isCreditOpen} onClose={onCreditClose} />
+      )}
     </>
   );
 };

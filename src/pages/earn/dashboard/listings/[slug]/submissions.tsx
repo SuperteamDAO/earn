@@ -2,6 +2,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { atom, useAtom } from 'jotai';
 import { LucideFlag } from 'lucide-react';
 import type { GetServerSideProps } from 'next';
+import dynamic from 'next/dynamic';
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/router';
 import posthog from 'posthog-js';
@@ -12,6 +13,7 @@ import { Button } from '@/components/ui/button';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { SolanaWalletProvider } from '@/context/SolanaWallet';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import type { SubmissionWithUser } from '@/interface/submission';
 import { SponsorLayout } from '@/layouts/Sponsor';
@@ -28,10 +30,8 @@ import {
   selectedSubmissionIdsAtom,
 } from '@/features/sponsor-dashboard/atoms';
 import { PublishResults } from '@/features/sponsor-dashboard/components/PublishResults';
-import { ScoutTable } from '@/features/sponsor-dashboard/components/Scouts/ScoutTable';
 import { MultiActionModal } from '@/features/sponsor-dashboard/components/Submissions/Modals/MultiActionModal';
 import { Survey } from '@/features/sponsor-dashboard/components/Submissions/Modals/Survey';
-import { PayoutSection } from '@/features/sponsor-dashboard/components/Submissions/PayoutSection';
 import { SubmissionHeader } from '@/features/sponsor-dashboard/components/Submissions/SubmissionHeader';
 import { SubmissionList } from '@/features/sponsor-dashboard/components/Submissions/SubmissionList';
 import { SubmissionPanel } from '@/features/sponsor-dashboard/components/Submissions/SubmissionPanel';
@@ -45,6 +45,22 @@ import { type ScoutRowType } from '@/features/sponsor-dashboard/types';
 interface Props {
   slug: string;
 }
+
+const ScoutTable = dynamic(
+  () =>
+    import('@/features/sponsor-dashboard/components/Scouts/ScoutTable').then(
+      (mod) => mod.ScoutTable,
+    ),
+  { ssr: false },
+);
+
+const PayoutSection = dynamic(
+  () =>
+    import('@/features/sponsor-dashboard/components/Submissions/PayoutSection').then(
+      (mod) => mod.PayoutSection,
+    ),
+  { ssr: false },
+);
 
 const surveyOpenAtom = atom(false);
 
@@ -567,7 +583,9 @@ export default function BountySubmissions({ slug }: Props) {
               )}
             <TabsContent value="payments">
               {submissions && bounty && (
-                <PayoutSection submissions={submissions} bounty={bounty} />
+                <SolanaWalletProvider>
+                  <PayoutSection submissions={submissions} bounty={bounty} />
+                </SolanaWalletProvider>
               )}
             </TabsContent>
           </Tabs>
