@@ -3,16 +3,11 @@ import { queryOptions } from '@tanstack/react-query';
 import { api } from '@/lib/api';
 import { type GrantApplicationModel } from '@/prisma/models/GrantApplication';
 import { type GrantTrancheModel } from '@/prisma/models/GrantTranche';
-
-interface GrantApplicationUserKycState {
-  isKYCVerified: boolean;
-  kycCountry: string | null;
-  kycVerifiedAt: Date | null;
-}
+import { type UserModel } from '@/prisma/models/User';
 
 export interface GrantApplicationWithTranchesAndUser extends GrantApplicationModel {
   GrantTranche: GrantTrancheModel[];
-  user: GrantApplicationUserKycState;
+  user: UserModel;
 }
 
 const fetchUserApplication = async (grantId: string) => {

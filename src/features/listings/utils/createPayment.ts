@@ -1,9 +1,7 @@
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
-import { getChapterRegions } from '@/utils/chapterRegion';
 
 import { addPaymentInfoToAirtable } from './addPaymentInfoToAirtable';
-import { checkKycCountryMatchesRegion } from './region';
 
 type CreatePaymentProps = {
   userId: string;
@@ -11,7 +9,6 @@ type CreatePaymentProps = {
 
 export async function createPayment({ userId }: CreatePaymentProps) {
   const ANNOUNCEMENT_CUTOFF_DATE = new Date('2025-08-06');
-  const chapterRegions = await getChapterRegions();
 
   const submissions = await prisma.submission.findMany({
     where: {
@@ -147,19 +144,6 @@ export async function createPayment({ userId }: CreatePaymentProps) {
       ) {
         const errorMessage = `Listing type "${submission.listing.type}" is not supported for payment.`;
         logger.error(errorMessage);
-        errors.push({ submissionId, error: errorMessage });
-        continue;
-      }
-
-      const kycCountryCheck = checkKycCountryMatchesRegion(
-        submission.user.kycCountry,
-        submission.listing.region,
-        chapterRegions,
-      );
-
-      if (!kycCountryCheck.isValid) {
-        const errorMessage = `KYC country ${submission.user.kycCountry} does not match listing region ${submission.listing.region} for submission ${submissionId}`;
-        logger.warn(errorMessage);
         errors.push({ submissionId, error: errorMessage });
         continue;
       }

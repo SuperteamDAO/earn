@@ -1,8 +1,5 @@
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
-import { getChapterRegions } from '@/utils/chapterRegion';
-
-import { checkKycCountryMatchesRegion } from '@/features/listings/utils/region';
 
 import { addOnboardingInfoToAirtable } from './addOnboardingInfoToAirtable';
 import { addPaymentInfoToAirtable } from './addPaymentInfoToAirtable';
@@ -136,12 +133,7 @@ export async function createTranche({
         orderBy: { createdAt: 'asc' },
       },
       grant: true,
-      user: {
-        select: {
-          isKYCVerified: true,
-          kycCountry: true,
-        },
-      },
+      user: true,
     },
   });
 
@@ -158,21 +150,6 @@ export async function createTranche({
     (tranche) => tranche.status !== 'Rejected',
   ).length;
   const maxTranches = 4;
-
-  if (existingTranches === 0) {
-    const chapterRegions = await getChapterRegions();
-    const kycCountryCheck = checkKycCountryMatchesRegion(
-      application.user.kycCountry,
-      application.grant.region,
-      chapterRegions,
-    );
-
-    if (!kycCountryCheck.isValid) {
-      const errorMessage = `KYC country ${application.user.kycCountry} does not match grant region ${application.grant.region} for application ${applicationId}`;
-      logger.warn(errorMessage);
-      throw new Error(errorMessage);
-    }
-  }
 
   if (existingTranches >= maxTranches) {
     const errorMessage = `All tranches have already been created for application ${applicationId}`;

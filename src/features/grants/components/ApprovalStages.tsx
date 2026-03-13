@@ -18,7 +18,6 @@ const STATE_ORDER: ApplicationState[] = [
   'ALLOW EDIT',
   'COOLDOWN',
   'KYC PENDING',
-  'KYC REJECTED',
   'KYC APPROVED',
   'TRANCHE1 PENDING',
   'TRANCHE1 APPROVED',
@@ -80,7 +79,6 @@ const ConnectingLine = ({
 
 export const ApprovalStages = ({ application, grant }: Props) => {
   const [applicationState] = useAtom(applicationStateAtom(grant.id));
-  const isKycRejected = applicationState === 'KYC REJECTED';
 
   const isStateCompleted = useCallback(
     (state: ApplicationState) => {
@@ -175,14 +173,8 @@ export const ApprovalStages = ({ application, grant }: Props) => {
           />
 
           <div>
-            <Heading>
-              {isKycRejected ? 'KYC Rejected' : 'KYC Successful'}
-            </Heading>
-            <Subheading>
-              {isKycRejected
-                ? 'Documents do not match the grant region'
-                : 'Documents verified'}
-            </Subheading>
+            <Heading>KYC Successful</Heading>
+            <Subheading>Documents verified</Subheading>
           </div>
         </div>
 

@@ -8,7 +8,6 @@ import { LockNotAcquiredError, withRedisLock } from '@/lib/with-redis-lock';
 import { prisma } from '@/prisma';
 import { type SubmissionLabels } from '@/prisma/enums';
 import { airtableConfig, airtableUpsert, airtableUrl } from '@/utils/airtable';
-import { getChapterRegions } from '@/utils/chapterRegion';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { type NextApiRequestWithSponsor } from '@/features/auth/types';
@@ -18,7 +17,6 @@ import { addGrantWinBonusCredit } from '@/features/credits/utils/allocateCredits
 import { queueEmail } from '@/features/emails/utils/queueEmail';
 import { convertGrantApplicationToAirtable } from '@/features/grants/utils/convertGrantApplicationToAirtable';
 import { createTranche } from '@/features/grants/utils/createTranche';
-import { checkKycCountryMatchesRegion } from '@/features/listings/utils/region';
 import { fetchTokenUSDValue } from '@/features/wallet/utils/fetchTokenUSDValue';
 
 const MAX_RECORDS = 10;
@@ -36,48 +34,24 @@ const UpdateGrantApplicationSchema = z.object({
   applicationStatus: z.string(),
 });
 
-export const config = {
-  maxDuration: 300,
-};
-
 const checkAndUpdateKYCStatus = async (
   userId: string,
   grantApplicationId: string,
 ) => {
   const user = await prisma.user.findUniqueOrThrow({
     where: { id: userId },
-    select: {
-      isKYCVerified: true,
-      kycVerifiedAt: true,
-      kycCountry: true,
-    },
   });
 
   if (user.isKYCVerified && user.kycVerifiedAt) {
-    const grantApplication = await prisma.grantApplication.findUniqueOrThrow({
-      where: { id: grantApplicationId },
-      select: {
-        walletAddress: true,
-        grant: { select: { region: true } },
-      },
-    });
-    const chapterRegions = await getChapterRegions();
-    const kycCountryCheck = checkKycCountryMatchesRegion(
-      user.kycCountry,
-      grantApplication.grant.region,
-      chapterRegions,
-    );
-
-    if (!kycCountryCheck.isValid) {
-      logger.warn(
-        `Skipping first tranche creation for application ${grantApplicationId} because KYC country ${user.kycCountry} does not match grant region ${grantApplication.grant.region}`,
-      );
-      return;
-    }
-
     await withRedisLock(
       `locks:create-tranche:${grantApplicationId}:first-tranche`,
       async () => {
+        const grantApplication =
+          await prisma.grantApplication.findUniqueOrThrow({
+            where: { id: grantApplicationId },
+            select: { walletAddress: true },
+          });
+
         await createTranche({
           applicationId: grantApplicationId,
           walletAddress: grantApplication.walletAddress || undefined,
@@ -248,40 +222,6 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       }),
     );
 
-    if (result[0]?.grant.airtableId) {
-      console.log('is an airtable grant');
-      try {
-        const config = airtableConfig(process.env.AIRTABLE_GRANTS_API_TOKEN!);
-        const url = airtableUrl(
-          process.env.AIRTABLE_GRANTS_BASE_ID!,
-          process.env.AIRTABLE_GRANTS_TABLE_NAME!,
-        );
-        const airtableData = result.map((r) =>
-          convertGrantApplicationToAirtable(r),
-        );
-        const airtablePayload = airtableUpsert(
-          'earnApplicationId',
-          airtableData.map((a) => ({ fields: a })),
-        );
-        logger.info('Starting Airtable sync...');
-        const syncPromise = axios.patch(
-          url,
-          JSON.stringify(airtablePayload),
-          config,
-        );
-        logger.info('Waiting for Airtable sync to complete...');
-        const response = await syncPromise;
-        logger.info('Airtable sync completed successfully');
-        logger.info('Airtable sync completed with response:', {
-          status: response.status,
-          data: response.data,
-          applicationIds: result.map((r) => r.id),
-        });
-      } catch (err) {
-        logger.error('Error syncing with Airtable', err);
-      }
-    }
-
     if (isApproved) {
       const totalIncrementAmountInUSD = updatedData.reduce(
         (acc, currentApplicant) => {
@@ -333,6 +273,40 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           triggeredBy: userId,
         });
       });
+    }
+
+    if (result[0]?.grant.airtableId) {
+      console.log('is an airtable grant');
+      try {
+        const config = airtableConfig(process.env.AIRTABLE_GRANTS_API_TOKEN!);
+        const url = airtableUrl(
+          process.env.AIRTABLE_GRANTS_BASE_ID!,
+          process.env.AIRTABLE_GRANTS_TABLE_NAME!,
+        );
+        const airtableData = result.map((r) =>
+          convertGrantApplicationToAirtable(r),
+        );
+        const airtablePayload = airtableUpsert(
+          'earnApplicationId',
+          airtableData.map((a) => ({ fields: a })),
+        );
+        logger.info('Starting Airtable sync...');
+        const syncPromise = axios.patch(
+          url,
+          JSON.stringify(airtablePayload),
+          config,
+        );
+        logger.info('Waiting for Airtable sync to complete...');
+        const response = await syncPromise;
+        logger.info('Airtable sync completed successfully');
+        logger.info('Airtable sync completed with response:', {
+          status: response.status,
+          data: response.data,
+          applicationIds: result.map((r) => r.id),
+        });
+      } catch (err) {
+        logger.error('Error syncing with Airtable', err);
+      }
     }
 
     return res.status(200).json(result);

@@ -29,7 +29,6 @@ import { userSubmissionQuery } from '../../queries/user-submission-status';
 import { type Listing } from '../../types';
 import { isDeadlineOver } from '../../utils/deadline';
 import {
-  checkKycCountryMatchesRegion,
   getRegionTooltipLabel,
   userRegionEligibilty,
 } from '../../utils/region';
@@ -228,14 +227,6 @@ export const SubmissionActionButton = ({
         return 'kyc';
       }
       if (submission?.isKYCVerified && !submission.isPaid) {
-        const kycCountryCheck = checkKycCountryMatchesRegion(
-          submission?.kycCountry,
-          submission?.listingRegion || listing.region,
-          chapters,
-        );
-        if (!kycCountryCheck.isValid) {
-          return 'kyc_rejected';
-        }
         return 'kyc_done';
       }
       if (submission?.isKYCVerified && submission.isPaid) {
@@ -291,13 +282,6 @@ export const SubmissionActionButton = ({
     case 'kyc_done':
       buttonText = 'Processing Payment';
       buttonBG = 'bg-green-600';
-      isBtnDisabled = true;
-      btnLoadingText = null;
-      break;
-
-    case 'kyc_rejected':
-      buttonText = 'KYC Rejected';
-      buttonBG = 'bg-red-600';
       isBtnDisabled = true;
       btnLoadingText = null;
       break;
@@ -378,7 +362,7 @@ export const SubmissionActionButton = ({
   } else if (
     !isNotEligible &&
     isWinnersAnnounced &&
-    !['kyc', 'kyc_done', 'kyc_rejected', 'paid'].includes(buttonState)
+    !['kyc', 'kyc_done', 'paid'].includes(buttonState)
   ) {
     buttonText = 'Winners Announced';
     buttonBG = 'bg-gray-500';
@@ -488,7 +472,6 @@ export const SubmissionActionButton = ({
           listingId={id!}
           onClose={() => setIsKYCModalOpen(false)}
           submissionId={submission.id}
-          region={region}
         />
       )}
 

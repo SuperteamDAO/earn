@@ -350,7 +350,6 @@ export function RightSideBar({
               commitmentDate={listing.commitmentDate}
               Hackathon={listing.Hackathon}
               hideWinnerAnnouncement={inReview}
-              isFndnPaying={listing.isFndnPaying}
             />
           </div>
           <div className="hidden w-full py-8 text-sm md:block">

@@ -6,11 +6,9 @@ import { useUser } from '@/store/user';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import { getPayoutCopy } from '@/utils/payout-date';
 
-import { chaptersQuery } from '@/features/chapters/queries/chapters';
 import type { Listing } from '@/features/listings/types';
 
 import { userSubmissionQuery } from '../../queries/user-submission-status';
-import { checkKycCountryMatchesRegion } from '../../utils/region';
 
 interface Props {
   listing: Listing;
@@ -59,7 +57,6 @@ export const ApprovalStages = ({ listing }: Props) => {
   const { user } = useUser();
   const { authenticated, ready } = usePrivy();
   const isAuthenticated = authenticated;
-  const { data: chapters = [] } = useQuery(chaptersQuery);
 
   const { data: submission, isLoading: isUserSubmissionLoading } = useQuery({
     ...userSubmissionQuery(listing.id!, user?.id),
@@ -72,13 +69,6 @@ export const ApprovalStages = ({ listing }: Props) => {
   const isPaid = submission.isPaid;
 
   const isPaymentSynced = submission.paymentSynced ?? false;
-
-  const kycCountryCheck = checkKycCountryMatchesRegion(
-    (submission as any).kycCountry,
-    (submission as any).listingRegion || listing.region,
-    chapters,
-  );
-  const isKycValidForRegion = isKycVerified && kycCountryCheck.isValid;
 
   const isHackathon = listing.type === 'hackathon';
   const wonTitle = isHackathon ? 'Hackathon Track Won' : 'Bounty Won';
@@ -97,7 +87,7 @@ export const ApprovalStages = ({ listing }: Props) => {
           </div>
           <ConnectingLine
             isStartComplete={true}
-            isEndComplete={isKycValidForRegion}
+            isEndComplete={isKycVerified}
           />
           <div>
             <Heading>{wonTitle}</Heading>
@@ -109,10 +99,10 @@ export const ApprovalStages = ({ listing }: Props) => {
 
         <div className="relative flex items-start gap-4">
           <div className="relative z-10">
-            {isKycValidForRegion ? <CheckIcon /> : <PendingIcon />}
+            {isKycVerified ? <CheckIcon /> : <PendingIcon />}
           </div>
           <ConnectingLine
-            isStartComplete={isKycValidForRegion}
+            isStartComplete={isKycVerified}
             isEndComplete={isPaymentSynced}
           />
           <div>
