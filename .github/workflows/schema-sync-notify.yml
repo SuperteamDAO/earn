@@ -1,0 +1,49 @@
+name: Notify Schema Sync Orchestrator
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - prisma/schema.prisma
+
+permissions:
+  contents: read
+
+jobs:
+  notify:
+    if: github.actor != 'github-actions[bot]' && !contains(github.event.head_commit.message, '[schema-sync]')
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Dispatch schema sync request
+        shell: bash
+        env:
+          DISPATCH_URL: ${{ secrets.SCHEMA_SYNC_DISPATCH_URL }}
+          DISPATCH_TOKEN: ${{ secrets.SCHEMA_SYNC_DISPATCH_TOKEN }}
+          SOURCE_REPO: ${{ github.repository }}
+          SOURCE_SHA: ${{ github.sha }}
+          SOURCE_BRANCH: ${{ github.ref_name }}
+        run: |
+          payload="$(
+            jq -n \
+              --arg source_repo "$SOURCE_REPO" \
+              --arg source_sha "$SOURCE_SHA" \
+              --arg source_branch "$SOURCE_BRANCH" \
+              '{
+                event_type: "schema_sync_requested",
+                client_payload: {
+                  source_repo: $source_repo,
+                  source_sha: $source_sha,
+                  source_branch: $source_branch
+                }
+              }'
+          )"
+
+          curl --fail --silent --show-error \
+            -X POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer $DISPATCH_TOKEN" \
+            -H "Content-Type: application/json" \
+            "$DISPATCH_URL" \
+            --data "$payload"
