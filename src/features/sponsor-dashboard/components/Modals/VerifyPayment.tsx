@@ -18,7 +18,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import { JTTG } from '@/constants/Telegram';
-import { tokenList } from '@/constants/tokenList';
+import { type Token, useTokenList } from '@/constants/tokenList';
 import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
@@ -49,10 +49,11 @@ export const VerifyPaymentModal = ({
   onClose,
 }: VerifyPaymentModalProps) => {
   const { user } = useUser();
+  const tokens = useTokenList();
   const [status, setStatus] = useState<
     'idle' | 'retry' | 'loading' | 'success' | 'error'
   >('idle');
-  const [selectedToken, setSelectedToken] = useState<(typeof tokenList)[0]>();
+  const [selectedToken, setSelectedToken] = useState<Token>();
   const [showMultiplePayments, setShowMultiplePayments] = useState(false);
   const queryClient = useQueryClient();
   const { data, isLoading, error, refetch } = useQuery({
@@ -159,7 +160,7 @@ export const VerifyPaymentModal = ({
 
     if (listingSubmissionData.bounty.token) {
       setSelectedToken(
-        tokenList.find(
+        tokens.find(
           (token) => token.tokenSymbol === listingSubmissionData.bounty.token,
         ),
       );
@@ -173,7 +174,7 @@ export const VerifyPaymentModal = ({
     if (isOpen) {
       syncPaymentLinks();
     }
-  }, [data?.bounty.slug, reset, listing?.type, isOpen]);
+  }, [data?.bounty.slug, reset, listing?.type, isOpen, tokens]);
 
   useEffect(() => {
     reset({});

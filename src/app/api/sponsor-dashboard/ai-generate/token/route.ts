@@ -7,6 +7,7 @@ import { z } from 'zod';
 import logger from '@/lib/logger';
 import { aiGenerateRateLimiter } from '@/lib/ratelimit';
 import { checkAndApplyRateLimitApp } from '@/lib/rateLimiterService';
+import { getTokenList } from '@/server/tokenList';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { getSponsorSession } from '@/features/auth/utils/getSponsorSession';
@@ -73,7 +74,11 @@ export async function POST(request: Request) {
       throw e;
     }
 
-    const prompt = generateListingTokenPrompt(description);
+    const tokens = await getTokenList();
+    const prompt = generateListingTokenPrompt(
+      description,
+      tokens.map((token) => token.tokenSymbol),
+    );
 
     let object: TTokenGenerateResponse;
 

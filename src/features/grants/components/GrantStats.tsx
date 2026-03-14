@@ -1,4 +1,4 @@
-import { getTokenIcon } from '@/constants/tokenList';
+import { useTokenLookup } from '@/constants/tokenList';
 import { cn } from '@/utils/cn';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 
@@ -17,6 +17,8 @@ interface GrantStatsProps {
 }
 
 export const GrantStats = ({ grant }: GrantStatsProps) => {
+  const { getIcon } = useTokenLookup();
+
   return (
     <>
       <div className="flex w-full items-center justify-between gap-3">
@@ -24,7 +26,7 @@ export const GrantStats = ({ grant }: GrantStatsProps) => {
           <img
             className="h-8 w-8 rounded-full"
             alt={'green doller'}
-            src={getTokenIcon(grant.token || 'USDC')}
+            src={getIcon(grant.token || 'USDC')}
           />
           <p className="text-lg font-semibold text-slate-700 md:text-xl">
             {grantAmount({

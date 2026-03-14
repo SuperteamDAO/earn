@@ -7,6 +7,7 @@ import { ZodError } from 'zod';
 import logger from '@/lib/logger';
 import { aiGenerateRateLimiter } from '@/lib/ratelimit';
 import { checkAndApplyRateLimitApp } from '@/lib/rateLimiterService';
+import { getTokenBySymbol } from '@/server/tokenList';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { getSponsorSession } from '@/features/auth/utils/getSponsorSession';
@@ -48,9 +49,14 @@ export async function POST(req: NextRequest) {
     } = parsed;
     logger.debug('Request body: ', safeStringify(parsed));
 
+    const tokenMetadata = await getTokenBySymbol(token, {
+      includeInactive: true,
+    });
+
     const systemPrompt = getDescriptionPrompt(listingType, {
       company,
       token,
+      tokenName: tokenMetadata?.tokenName,
       tokenUsdAmount,
       hackathonName,
     });

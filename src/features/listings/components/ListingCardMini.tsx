@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
 import { LocalImage } from '@/components/ui/local-image';
 import { ASSET_URL } from '@/constants/ASSET_URL';
-import { getTokenIcon } from '@/constants/tokenList';
+import { useTokenLookup } from '@/constants/tokenList';
 import { useServerTimeSync } from '@/hooks/use-server-time';
 import { timeAgoShort } from '@/utils/timeAgo';
 
@@ -13,6 +13,7 @@ import { getListingIcon } from '../utils/getListingIcon';
 import { CompensationAmount } from './ListingPage/CompensationAmount';
 
 export const ListingCardMini = ({ bounty }: { bounty: Listing }) => {
+  const { getIcon } = useTokenLookup();
   const {
     rewardAmount,
     deadline,
@@ -87,7 +88,7 @@ export const ListingCardMini = ({ bounty }: { bounty: Listing }) => {
                   <img
                     className="mr-0.5 h-4 w-4 rounded-full"
                     alt={token}
-                    src={getTokenIcon(token ?? '')}
+                    src={getIcon(token)}
                   />
                 )}
                 <div className="flex items-baseline">

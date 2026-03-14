@@ -5,7 +5,7 @@ import MdModeComment from '@/components/icons/MdModeComment';
 import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ASSET_URL } from '@/constants/ASSET_URL';
-import { getTokenIcon } from '@/constants/tokenList';
+import { useTokenLookup } from '@/constants/tokenList';
 import { useServerTimeSync } from '@/hooks/use-server-time';
 import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';
@@ -42,6 +42,7 @@ export const ListingCardSkeleton = () => {
 };
 
 export const ListingCard = ({ bounty }: { bounty: Listing }) => {
+  const { getIcon } = useTokenLookup();
   const {
     rewardAmount,
     deadline,
@@ -85,7 +86,7 @@ export const ListingCard = ({ bounty }: { bounty: Listing }) => {
   const isVariable = compensationType === 'variable';
   const showToken = !isVariable || (isVariable && isWinnersAnnounced);
 
-  const tokenIcon = getTokenIcon(token ?? '');
+  const tokenIcon = getIcon(token);
 
   return (
     <Link

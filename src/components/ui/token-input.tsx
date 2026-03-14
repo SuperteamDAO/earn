@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { getTokenIcon } from '@/constants/tokenList';
+import { useTokenLookup } from '@/constants/tokenList';
 import { cn } from '@/utils/cn';
 
 import { Input } from './input';
@@ -18,6 +18,8 @@ function TokenInput({
   value?: number | null;
   isPro?: boolean;
 }) {
+  const { getIcon } = useTokenLookup();
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value;
 
@@ -57,7 +59,7 @@ function TokenInput({
           data-slot="token-input-icon"
           className="h-4 w-4 rounded-full"
           alt="token"
-          src={getTokenIcon(token ?? '')}
+          src={getIcon(token)}
         />
         <p
           data-slot="token-input-symbol"

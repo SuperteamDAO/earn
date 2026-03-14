@@ -1,6 +1,5 @@
 import { z } from 'zod';
 
-import { tokenList } from '@/constants/tokenList';
 import { skillsArraySchema } from '@/interface/skills';
 import { BountyType, CompensationType, status } from '@/prisma/enums';
 import { type HackathonModel } from '@/prisma/models/Hackathon';
@@ -205,12 +204,9 @@ export const createListingFormSchema = ({
       skills: skillsArraySchema,
 
       token: z
-        .enum(
-          tokenList.map((token) => token.tokenSymbol) as [string, ...string[]],
-          {
-            errorMap: () => ({ message: 'Token Not Allowed' }),
-          },
-        )
+        .string()
+        .trim()
+        .min(1, 'Token Not Allowed')
         .default(isST ? 'USDG' : 'USDC'),
       rewardAmount: z
         .number({
@@ -473,6 +469,7 @@ export const backendListingRefinements = async (
   data: ListingFormData,
   ctx: z.RefinementCtx,
   checkSlugFn: (slug: string, id?: string) => Promise<boolean>,
+  isTokenAllowed?: (tokenSymbol: string) => Promise<boolean>,
 ) => {
   if (data.slug) {
     const slugExists = await checkSlugFn(data.slug, data.id || undefined);
@@ -481,6 +478,17 @@ export const backendListingRefinements = async (
         code: z.ZodIssueCode.custom,
         message: 'Slug already exists. Please try another.',
         path: ['slug'],
+      });
+    }
+  }
+
+  if (data.token && isTokenAllowed) {
+    const tokenAllowed = await isTokenAllowed(data.token);
+    if (!tokenAllowed) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Token Not Allowed',
+        path: ['token'],
       });
     }
   }

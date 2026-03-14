@@ -1,5 +1,3 @@
-import { tokenList } from '@/constants/tokenList';
-
 import { type AutoGenerateChatInput } from '@/features/listing-builder/components/AutoGenerate/schema';
 import {
   MAX_BONUS_SPOTS,
@@ -9,7 +7,9 @@ import {
 type PromptProps = Pick<
   AutoGenerateChatInput,
   'company' | 'token' | 'tokenUsdAmount' | 'hackathonName'
->;
+> & {
+  tokenName?: string | null;
+};
 
 const descriptionPromptBounty = (props: PromptProps) => `
 You are an AI assistant tasked with drafting bounty listings for Superteam Earn (https://superteam.fun/earn/). Your goal is to create listings that are clear, straightforward, well-structured, and sound like they were written by a real person. Write naturally - avoid corporate buzzwords and overly polished language.
@@ -24,7 +24,7 @@ ${props.company} // Information about the company/protocol. Include URL if provi
 </company-description>
 
 <token-name>
-${tokenList.find((s) => s.tokenSymbol === (props.token || 'USDG'))?.tokenName || 'USDG'}
+${props.tokenName || 'USDG'}
 </token-name>
 <token-symbol>
 ${props.token || 'USDG'}
@@ -174,7 +174,7 @@ ${props.company} // Information about the company/protocol. Include URL if provi
 </company-description>
 
 <token-name>
-${tokenList.find((s) => s.tokenSymbol === (props.token || 'USDG'))?.tokenName || 'USDG'}
+${props.tokenName || 'USDG'}
 </token-name>
 <token-symbol>
 ${props.token || 'USDG'}
@@ -314,7 +314,7 @@ ${props.company} // Information about the company/protocol. Include URL if provi
 </company-description>
 
 <token-name>
-${tokenList.find((s) => s.tokenSymbol === (props.token || 'USDG'))?.tokenName || 'USDG'}
+${props.tokenName || 'USDG'}
 </token-name>
 <token-symbol>
 ${props.token || 'USDG'}

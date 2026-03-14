@@ -9,7 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { tokenList } from '@/constants/tokenList';
+import { useTokenByMintAddress } from '@/constants/tokenList';
 
 import type { TokenAsset } from '../../types/TokenAsset';
 
@@ -30,6 +30,8 @@ export const TokenAmountInput = ({
   onAmountChange,
   className,
 }: TokenAmountInputProps) => {
+  const tokenMetadata = useTokenByMintAddress(selectedToken?.tokenAddress);
+
   const handleMaxClick = () => {
     if (selectedToken) {
       onAmountChange(selectedToken.amount.toString());
@@ -47,9 +49,7 @@ export const TokenAmountInput = ({
   };
 
   const getMaxDecimals = (): number => {
-    const tokenAddress = selectedToken?.tokenAddress;
-    const meta = tokenList.find((t) => t.mintAddress === tokenAddress);
-    return meta?.decimals ?? 9;
+    return tokenMetadata?.decimals ?? 9;
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {

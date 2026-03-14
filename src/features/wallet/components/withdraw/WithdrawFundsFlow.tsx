@@ -18,7 +18,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
-import { tokenList } from '@/constants/tokenList';
+import { getTokenBySymbol } from '@/constants/tokenList';
 import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 import { classifySolanaError } from '@/utils/solanaTransactionHelpers';
@@ -130,9 +130,7 @@ export function WithdrawFundsFlow({
         const ataCreationCostInUSD = solUSDValue * 0.0021;
         const tokenAmountToCharge = ataCreationCostInUSD / tokenUSDValue;
 
-        const tokenDetails = tokenList.find(
-          (token) => token.tokenSymbol === selectedToken?.tokenSymbol,
-        );
+        const tokenDetails = await getTokenBySymbol(selectedToken?.tokenSymbol);
         const power = tokenDetails?.decimals as number;
         const cost = Math.ceil(tokenAmountToCharge * 10 ** power);
 

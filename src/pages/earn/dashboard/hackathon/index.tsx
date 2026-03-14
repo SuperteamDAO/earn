@@ -29,7 +29,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Tooltip } from '@/components/ui/tooltip';
-import { tokenList } from '@/constants/tokenList';
+import { useTokenLookup } from '@/constants/tokenList';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { SponsorLayout } from '@/layouts/Sponsor';
 import { api } from '@/lib/api';
@@ -46,6 +46,7 @@ import { ListingTableSkeleton } from '@/features/sponsor-dashboard/components/Li
 import { type SponsorStats } from '@/features/sponsor-dashboard/types';
 
 export default function Hackathon() {
+  const { getIcon } = useTokenLookup();
   const router = useRouter();
   const { user } = useUser();
   const [totalBounties, setTotalBounties] = useState(0);
@@ -242,11 +243,7 @@ export default function Hackathon() {
                           <img
                             className="h-5 w-5 rounded-full"
                             alt={'green dollar'}
-                            src={
-                              tokenList.filter(
-                                (e) => e?.tokenSymbol === currentBounty.token,
-                              )[0]?.icon ?? '/assets/dollar.svg'
-                            }
+                            src={getIcon(currentBounty.token)}
                           />
                           <p className="text-sm font-medium text-slate-700">
                             {(currentBounty.rewardAmount || 0).toLocaleString(

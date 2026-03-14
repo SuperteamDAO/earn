@@ -12,7 +12,7 @@ import { CopyButton } from '@/components/ui/copy-tooltip';
 import { CircularProgress } from '@/components/ui/progress';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Tooltip } from '@/components/ui/tooltip';
-import { getTokenIcon } from '@/constants/tokenList';
+import { useTokenLookup } from '@/constants/tokenList';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
 import { truncateString } from '@/utils/truncateString';
@@ -53,6 +53,7 @@ export const ApplicationDetails = ({
   rejectedOnOpen,
   isLoading,
 }: Props) => {
+  const { getIcon } = useTokenLookup();
   const [selectedApplication, setSelectedApplication] = useAtom(
     selectedGrantApplicationAtom,
   );
@@ -66,7 +67,7 @@ export const ApplicationDetails = ({
 
   const queryClient = useQueryClient();
 
-  const tokenIcon = getTokenIcon(grant?.token ?? '');
+  const tokenIcon = getIcon(grant?.token);
 
   const formattedCreatedAt = dayjs(selectedApplication?.createdAt).format(
     'DD MMM YYYY',

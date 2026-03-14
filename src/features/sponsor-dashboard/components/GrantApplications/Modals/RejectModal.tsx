@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { Separator } from '@/components/ui/separator';
-import { getTokenIcon } from '@/constants/tokenList';
+import { useTokenLookup } from '@/constants/tokenList';
 
 interface RejectModalProps {
   rejectIsOpen: boolean;
@@ -26,6 +26,7 @@ export const RejectGrantApplicationModal = ({
   token,
   onRejectGrant,
 }: RejectModalProps) => {
+  const { getIcon } = useTokenLookup();
   const [loading, setLoading] = useState<boolean>(false);
 
   const rejectGrant = async () => {
@@ -62,7 +63,7 @@ export const RejectGrantApplicationModal = ({
               <img
                 className="h-5 w-5 rounded-full"
                 alt={`${token} icon`}
-                src={getTokenIcon(token)}
+                src={getIcon(token)}
               />
               <p className="ml-1 font-semibold text-slate-600">
                 {ask} <span className="text-slate-400">{token}</span>

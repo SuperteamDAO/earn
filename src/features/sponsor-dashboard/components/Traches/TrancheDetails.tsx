@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import { CopyButton } from '@/components/ui/copy-tooltip';
 import { CircularProgress } from '@/components/ui/progress';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { getTokenIcon } from '@/constants/tokenList';
+import { useTokenLookup } from '@/constants/tokenList';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
 import { truncateString } from '@/utils/truncateString';
@@ -43,13 +43,14 @@ export const TrancheDetails = ({
   approveOnOpen,
   rejectedOnOpen,
 }: Props) => {
+  const { getIcon } = useTokenLookup();
   const selectedTranche = useAtomValue(selectedGrantTrancheAtom);
   const isPending = selectedTranche?.status === 'Pending';
   const isApproved = selectedTranche?.status === 'Approved';
   const isRejected = selectedTranche?.status === 'Rejected';
   const isST = isSTGrant(grant);
 
-  const tokenIcon = getTokenIcon(grant?.token ?? '');
+  const tokenIcon = getIcon(grant?.token);
 
   const formattedCreatedAt = dayjs(selectedTranche?.createdAt).format(
     'DD MMM YYYY',

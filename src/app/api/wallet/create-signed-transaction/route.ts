@@ -35,9 +35,9 @@ import bs58 from 'bs58';
 import { headers } from 'next/headers';
 import { type NextRequest, NextResponse } from 'next/server';
 
-import { tokenList } from '@/constants/tokenList';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { getTokenByMintAddress } from '@/server/tokenList';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { getUserSession } from '@/features/auth/utils/getUserSession';
@@ -282,7 +282,7 @@ export async function POST(request: NextRequest) {
       ? TOKEN_2022_PROGRAM_ADDRESS
       : TOKEN_PROGRAM_ADDRESS;
 
-    const token = tokenList.find((e) => e.mintAddress === tokenAddress);
+    const token = await getTokenByMintAddress(tokenAddress);
     if (!token) throw new Error('Invalid token selected');
 
     const [feePayerATA] = await findAssociatedTokenPda({

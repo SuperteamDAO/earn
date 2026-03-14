@@ -1,6 +1,6 @@
 import { CircularProgress } from '@/components/ui/progress';
 import { Separator } from '@/components/ui/separator';
-import { getTokenIcon } from '@/constants/tokenList';
+import { useTokenLookup } from '@/constants/tokenList';
 import { cn } from '@/utils/cn';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 
@@ -13,6 +13,7 @@ interface ApplicationStats {
 }
 
 export const ApplicationStats = ({ application, grant }: ApplicationStats) => {
+  const { getIcon } = useTokenLookup();
   const totalPaid = application.GrantTranche.reduce(
     (acc, curr) =>
       acc + (curr.status === 'Paid' ? curr.approvedAmount || 0 : 0),
@@ -35,7 +36,7 @@ export const ApplicationStats = ({ application, grant }: ApplicationStats) => {
             <img
               className="h-5 w-5 rounded-full"
               alt={'green doller'}
-              src={getTokenIcon(grant.token ?? '')}
+              src={getIcon(grant.token)}
             />
             <p className="font-semibold text-slate-600">
               {formatNumberWithSuffix(
