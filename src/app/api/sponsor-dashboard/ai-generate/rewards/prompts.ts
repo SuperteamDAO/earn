@@ -1,5 +1,3 @@
-import { tokenList } from '@/constants/tokenList';
-
 import {
   BONUS_REWARD_POSITION,
   MAX_BONUS_SPOTS,
@@ -12,13 +10,12 @@ import { type RewardInputSchema } from './route';
 export function generateListingRewardsPrompt({
   description,
   token,
+  tokenName,
   tokenUsdValue,
   type,
-}: RewardInputSchema): string {
+}: RewardInputSchema & { tokenName?: string | null }): string {
   const targetTokenSymbol = token || 'USDG';
-  const targetTokenName =
-    tokenList.find((s) => s.tokenSymbol === targetTokenSymbol)?.tokenName ||
-    'Global Dollar (USDG)';
+  const targetTokenName = tokenName || 'Global Dollar (USDG)';
   const targetTokenUsdValue = tokenUsdValue || 1;
 
   let prompt = `You are an expert data extraction AI. Analyze the provided listing description for a '${type}' listing and extract the reward details according to the rules below. Your goal is to generate a precise JSON object matching the specified schema.

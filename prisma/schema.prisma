@@ -154,6 +154,22 @@ model BountiesTemplates {
   @@index([type])
 }
 
+model TokenMetadata {
+  id          String   @id @default(uuid())
+  tokenName   String   @db.VarChar(191)
+  tokenSymbol String   @unique @db.VarChar(64)
+  mintAddress String   @unique @db.VarChar(191)
+  icon        String   @db.VarChar(2048)
+  decimals    Int
+  sortOrder   Int      @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([isActive, sortOrder])
+  @@index([sortOrder])
+}
+
 model Comment {
   id               String            @id @default(uuid())
   message          String            @db.VarChar(5000)

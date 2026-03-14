@@ -2,7 +2,7 @@ import Link from 'next/link';
 
 import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
 import { ASSET_URL } from '@/constants/ASSET_URL';
-import { getTokenIcon } from '@/constants/tokenList';
+import { useTokenLookup } from '@/constants/tokenList';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 
 import { type GrantWithApplicationCount } from '../types';
@@ -13,6 +13,7 @@ export const GrantsCardMini = ({
 }: {
   grant: GrantWithApplicationCount;
 }) => {
+  const { getIcon } = useTokenLookup();
   const {
     sponsor,
     slug,
@@ -24,7 +25,7 @@ export const GrantsCardMini = ({
     totalApplications,
   } = grant;
 
-  const tokenIcon = getTokenIcon(token ?? '');
+  const tokenIcon = getIcon(token);
 
   const sponsorLogo = sponsor?.logo
     ? sponsor.logo.replace('/upload/', '/upload/c_scale,w_128,h_128,f_auto/')

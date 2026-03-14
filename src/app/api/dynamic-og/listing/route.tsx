@@ -1,7 +1,7 @@
 import { ImageResponse } from 'next/og';
 
 import { ASSET_URL } from '@/constants/ASSET_URL';
-import { getTokenIcon } from '@/constants/tokenList';
+import { getTokenIcon } from '@/server/tokenList';
 import { convertToJpegUrl } from '@/utils/cloudinary';
 import { formatNumber, formatString, loadGoogleFont } from '@/utils/ogHelpers';
 import { getURL } from '@/utils/validUrl';
@@ -70,7 +70,7 @@ export async function GET(request: Request) {
         break;
     }
 
-    const icon = resolveAbsoluteUrl(getTokenIcon(token) ?? null);
+    const icon = resolveAbsoluteUrl((await getTokenIcon(token)) ?? null);
 
     const capitalizedType = type
       ? type?.charAt(0).toUpperCase() + type?.slice(1).toLowerCase()

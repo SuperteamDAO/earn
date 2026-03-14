@@ -1,6 +1,6 @@
 import { type Address } from '@solana/kit';
 
-import { tokenList } from '@/constants/tokenList';
+import { loadTokenList } from '@/constants/tokenList';
 
 import { type TokenActivity } from '../types/TokenActivity';
 import { fetchTokenUSDValue } from './fetchTokenUSDValue';
@@ -10,6 +10,7 @@ export async function fetchWalletActivity(
   rpc: SolanaRpc,
   walletAddress: Address,
 ): Promise<TokenActivity[]> {
+  const tokenList = await loadTokenList();
   const signaturesResponse = await rpc
     .getSignaturesForAddress(walletAddress, { limit: 50 })
     .send();

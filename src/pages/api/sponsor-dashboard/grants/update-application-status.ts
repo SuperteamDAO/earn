@@ -2,11 +2,11 @@ import axios from 'axios';
 import type { NextApiResponse } from 'next';
 import { z } from 'zod';
 
-import { tokenList } from '@/constants/tokenList';
 import logger from '@/lib/logger';
 import { LockNotAcquiredError, withRedisLock } from '@/lib/with-redis-lock';
 import { prisma } from '@/prisma';
 import { type SubmissionLabels } from '@/prisma/enums';
+import { getTokenBySymbol } from '@/server/tokenList';
 import { airtableConfig, airtableUpsert, airtableUrl } from '@/utils/airtable';
 import { safeStringify } from '@/utils/safeStringify';
 
@@ -170,9 +170,12 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
               `Approved amount ${parsedAmount} exceeds maximum reward limit of ${currentApplicant.grant.maxReward} for application ${currentApplicant.id}`,
             );
           }
-          const token = tokenList.find(
-            (t) => t.tokenSymbol === currentApplicant.grant.token!,
-          );
+          const token = await getTokenBySymbol(currentApplicant.grant.token);
+          if (!token) {
+            throw new Error(
+              `Token ${currentApplicant.grant.token} is missing from token metadata`,
+            );
+          }
           const tokenUSDValue = await fetchTokenUSDValue(token?.mintAddress!);
           const usdValue = tokenUSDValue * parsedAmount;
           const totalTranches = parsedAmount > 5000 ? 3 : 2;

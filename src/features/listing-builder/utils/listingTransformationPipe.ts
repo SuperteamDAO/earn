@@ -1,10 +1,10 @@
 import { franc } from 'franc';
 
-import { tokenList } from '@/constants/tokenList';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { type BountiesUncheckedUpdateInput } from '@/prisma/models/Bounties';
 import { type SponsorsModel } from '@/prisma/models/Sponsors';
+import { getTokenBySymbol } from '@/server/tokenList';
 import { cleanSkills } from '@/utils/cleanSkills';
 
 import { type ListingWithSponsor } from '@/features/auth/utils/checkListingSponsorAuth';
@@ -120,9 +120,9 @@ export const transformToPrismaData = async ({
   if (!isVerifying) {
     if (!isEditing) {
       if (validatedListing.token && amount > 0) {
-        const token = tokenList.find(
-          (t) => t.tokenSymbol === validatedListing.token,
-        );
+        const token = await getTokenBySymbol(validatedListing.token, {
+          includeInactive: true,
+        });
         if (token?.mintAddress) {
           try {
             tokenUsdAtPublish = await fetchTokenUSDValue(token.mintAddress);
@@ -138,9 +138,9 @@ export const transformToPrismaData = async ({
         let priceToUse = listing.tokenUsdAtPublish as number | undefined;
 
         if (tokenChanged && validatedListing.token) {
-          const token = tokenList.find(
-            (t) => t.tokenSymbol === validatedListing.token,
-          );
+          const token = await getTokenBySymbol(validatedListing.token, {
+            includeInactive: true,
+          });
           if (token?.mintAddress) {
             try {
               priceToUse = await fetchTokenUSDValue(token.mintAddress);

@@ -35,7 +35,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Tooltip } from '@/components/ui/tooltip';
-import { getTokenIcon } from '@/constants/tokenList';
+import { useTokenLookup } from '@/constants/tokenList';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
@@ -87,6 +87,7 @@ export const ListingTable = ({
   currentSort,
   onSort,
 }: ListingTableProps) => {
+  const { getIcon } = useTokenLookup();
   const [selectedListing, setSelectedListing] =
     useState<ListingWithSubmissions>({});
 
@@ -291,7 +292,7 @@ export const ListingTable = ({
                       <img
                         className="h-5 w-5 rounded-full"
                         alt={'green dollar'}
-                        src={getTokenIcon(listing.token ?? '')}
+                        src={getIcon(listing.token)}
                       />
 
                       {listing?.type === 'grant' && (

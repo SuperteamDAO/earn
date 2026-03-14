@@ -1,8 +1,8 @@
 import { type NextApiResponse } from 'next';
 
-import { tokenList } from '@/constants/tokenList';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { getTokenBySymbol } from '@/server/tokenList';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { type NextApiRequestWithSponsor } from '@/features/auth/types';
@@ -69,7 +69,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     if (!listing.isWinnersAnnounced)
       return res.status(400).json({ error: 'Listing not announced' });
 
-    const dbToken = tokenList.find((t) => t.tokenSymbol === listing.token);
+    const dbToken = await getTokenBySymbol(listing.token);
     if (!dbToken) {
       return res
         .status(400)

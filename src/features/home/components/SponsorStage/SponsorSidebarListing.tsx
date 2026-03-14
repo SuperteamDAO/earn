@@ -8,7 +8,7 @@ import posthog from 'posthog-js';
 import { Button } from '@/components/ui/button';
 import { Tooltip } from '@/components/ui/tooltip';
 import { ASSET_URL } from '@/constants/ASSET_URL';
-import { getTokenIcon } from '@/constants/tokenList';
+import { useTokenLookup } from '@/constants/tokenList';
 import { useBreakpoint } from '@/hooks/use-breakpoint';
 import { dayjs } from '@/utils/dayjs';
 
@@ -27,6 +27,7 @@ function formatDeadlineDate(deadline: string | undefined): string {
 }
 
 export function SponsorListing() {
+  const { getIcon } = useTokenLookup();
   const isLg = useBreakpoint('lg');
 
   const { data, isLoading } = useQuery({
@@ -112,7 +113,7 @@ export function SponsorListing() {
                 <img
                   className="h-5 w-5 rounded-full"
                   alt={'green dollar'}
-                  src={getTokenIcon(listing.token ?? '')}
+                  src={getIcon(listing.token)}
                 />
 
                 {listing?.type === 'grant' && (

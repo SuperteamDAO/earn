@@ -2,7 +2,7 @@ import { TOKEN_PROGRAM_ADDRESS } from '@solana-program/token';
 import { TOKEN_2022_PROGRAM_ADDRESS } from '@solana-program/token-2022';
 import { type Address } from '@solana/kit';
 
-import { tokenList } from '@/constants/tokenList';
+import { loadTokenList } from '@/constants/tokenList';
 
 import { type TokenAsset } from '../types/TokenAsset';
 import { fetchTokenUSDValue } from './fetchTokenUSDValue';
@@ -12,6 +12,7 @@ export async function fetchUserTokens(
   rpc: SolanaRpc,
   walletAddress: Address,
 ): Promise<TokenAsset[]> {
+  const tokenList = await loadTokenList();
   const [solBalanceResponse, tokenAccountsResponse, token2022AccountsResponse] =
     await Promise.all([
       rpc.getBalance(walletAddress).send(),

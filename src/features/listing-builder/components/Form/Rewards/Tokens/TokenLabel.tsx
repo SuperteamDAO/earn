@@ -1,7 +1,7 @@
 import { type ClassValue } from 'clsx';
 import { useWatch } from 'react-hook-form';
 
-import { tokenList } from '@/constants/tokenList';
+import { type Token, useToken } from '@/constants/tokenList';
 import { cn } from '@/utils/cn';
 
 import { useListingForm } from '../../../../hooks';
@@ -14,7 +14,7 @@ interface Props {
   showName?: boolean;
   postfix?: string;
   amount?: number | null;
-  token?: (typeof tokenList)[0];
+  token?: Token;
   classNames?: {
     icon?: ClassValue;
     symbol?: ClassValue;
@@ -50,8 +50,8 @@ export function TokenLabel({
   });
 
   const searchSymbol = symbol || formToken;
-  const token =
-    preToken || tokenList.find((token) => token.tokenSymbol === searchSymbol);
+  const resolvedToken = useToken(searchSymbol);
+  const token = preToken || resolvedToken;
 
   if (!token) return null;
   return (

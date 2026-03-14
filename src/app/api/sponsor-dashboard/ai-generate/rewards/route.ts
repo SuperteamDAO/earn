@@ -8,6 +8,7 @@ import logger from '@/lib/logger';
 import { aiGenerateRateLimiter } from '@/lib/ratelimit';
 import { checkAndApplyRateLimitApp } from '@/lib/rateLimiterService';
 import { BountyType, CompensationType } from '@/prisma/enums';
+import { getTokenBySymbol } from '@/server/tokenList';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { getSponsorSession } from '@/features/auth/utils/getSponsorSession';
@@ -111,7 +112,13 @@ export async function POST(request: Request) {
       throw e;
     }
 
-    const prompt = generateListingRewardsPrompt(input);
+    const tokenMetadata = await getTokenBySymbol(input.token, {
+      includeInactive: true,
+    });
+    const prompt = generateListingRewardsPrompt({
+      ...input,
+      tokenName: tokenMetadata?.tokenName,
+    });
 
     const { object } = await generateObject({
       model: openrouter('google/gemini-2.5-flash'),
