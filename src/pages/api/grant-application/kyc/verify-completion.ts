@@ -20,8 +20,8 @@ const handler = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
   }
 
   try {
-    const grantApplication = await prisma.grantApplication.findUniqueOrThrow({
-      where: { id: grantApplicationId },
+    const grantApplication = await prisma.grantApplication.findFirstOrThrow({
+      where: { id: grantApplicationId, userId },
       include: { user: true, grant: true },
     });
 
