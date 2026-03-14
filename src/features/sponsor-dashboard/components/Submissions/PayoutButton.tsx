@@ -48,7 +48,7 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
-import { tokenList } from '@/constants/tokenList';
+import { getTokenBySymbol } from '@/constants/tokenList';
 import { type SubmissionWithUser } from '@/interface/submission';
 import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
@@ -170,7 +170,7 @@ export const PayoutButton = ({ bounty, submission }: Props) => {
     try {
       const senderAddress = address(publicKey.toBase58());
       const senderSigner: TransactionSigner = createNoopSigner(senderAddress);
-      const tokenDetails = tokenList.find((e) => e.tokenSymbol === token);
+      const tokenDetails = await getTokenBySymbol(token);
 
       const instructions: Instruction[] = [
         getSetComputeUnitLimitInstruction({ units: 200_000 }),

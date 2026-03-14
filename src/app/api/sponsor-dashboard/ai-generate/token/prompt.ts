@@ -1,8 +1,8 @@
-import { tokenList } from '@/constants/tokenList';
-
-export const generateListingTokenPrompt = (info: string) => {
-  const allowedTokenSymbols =
-    tokenList.map((token) => token.tokenSymbol).join(', ') || 'USDG';
+export const generateListingTokenPrompt = (
+  info: string,
+  allowedTokens: string[],
+) => {
+  const allowedTokenSymbols = allowedTokens.join(', ') || 'USDG';
   const safeAllowedTokens = allowedTokenSymbols || 'USDG';
 
   return `

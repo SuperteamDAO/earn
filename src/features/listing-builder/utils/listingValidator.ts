@@ -3,6 +3,7 @@ import logger from '@/lib/logger';
 import { type HackathonModel } from '@/prisma/models/Hackathon';
 import { type SponsorsModel } from '@/prisma/models/Sponsors';
 import { type UserModel } from '@/prisma/models/User';
+import { getTokenBySymbol } from '@/server/tokenList';
 
 import { type ListingWithSponsor } from '@/features/auth/utils/checkListingSponsorAuth';
 
@@ -64,7 +65,9 @@ export const validateListing = async ({
     });
     const superValidator = innerSchema.superRefine(async (data, ctx) => {
       await createListingRefinements(data, ctx, hackathon ? [hackathon] : []);
-      await backendListingRefinements(data, ctx, checkSlug);
+      await backendListingRefinements(data, ctx, checkSlug, async (token) =>
+        Boolean(await getTokenBySymbol(token)),
+      );
     });
     const validatedData = await superValidator.parseAsync({
       ...(isEditing ? listing : {}),

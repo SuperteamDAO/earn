@@ -23,7 +23,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import { tokenList } from '@/constants/tokenList';
+import { useTokenList } from '@/constants/tokenList';
 import { cn } from '@/utils/cn';
 
 import { useListingForm } from '../../../../hooks';
@@ -31,6 +31,7 @@ import { TokenLabel } from './TokenLabel';
 
 export function TokenSelect() {
   const form = useListingForm();
+  const tokens = useTokenList();
   return (
     <FormField
       name="token"
@@ -101,7 +102,7 @@ export function TokenSelect() {
                     </p>
                   </CommandEmpty>
                   <CommandGroup>
-                    {tokenList.map((token) => (
+                    {tokens.map((token) => (
                       <CommandItem
                         value={token.tokenName}
                         key={token.tokenSymbol}
