@@ -1,10 +1,10 @@
 import dayjs from 'dayjs';
 import type { NextApiResponse } from 'next';
-import Papa from 'papaparse';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { csvUpload, str2ab } from '@/utils/cloudinary';
+import { serializeCsv } from '@/utils/csv';
 import { plainTextFromHtmlTurndown } from '@/utils/plainTextFromHtml';
 import { safeStringify } from '@/utils/safeStringify';
 
@@ -96,7 +96,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     });
 
     logger.debug('Converting JSON to CSV');
-    const csv = Papa.unparse(finalJson);
+    const csv = serializeCsv(finalJson);
     const fileName = `${grant.slug || grantId}-applications-${Date.now()}`;
     const file = str2ab(csv, fileName);
 

@@ -1,18 +1,32 @@
 import { useCallback, useRef, useState, useSyncExternalStore } from 'react';
 
 interface ElementSize {
+  bottom: number;
   height: number;
+  left: number;
+  right: number;
+  top: number;
   width: number;
+  x: number;
+  y: number;
 }
 
 const EMPTY_SIZE: ElementSize = Object.freeze({
+  x: 0,
+  y: 0,
+  top: 0,
+  right: 0,
+  bottom: 0,
+  left: 0,
   width: 0,
   height: 0,
 });
 
 function readElementSize(element: Element): ElementSize {
-  const { width, height } = element.getBoundingClientRect();
-  return { width, height };
+  const { x, y, top, right, bottom, left, width, height } =
+    element.getBoundingClientRect();
+
+  return { x, y, top, right, bottom, left, width, height };
 }
 
 export function useElementSize<T extends Element = HTMLDivElement>() {

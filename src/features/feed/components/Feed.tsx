@@ -1,6 +1,5 @@
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import { useInView } from 'react-intersection-observer';
 
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 import {
@@ -10,6 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { useInView } from '@/hooks/use-in-view';
 import { FeedPageLayout } from '@/layouts/Feed';
 import { cn } from '@/utils/cn';
 

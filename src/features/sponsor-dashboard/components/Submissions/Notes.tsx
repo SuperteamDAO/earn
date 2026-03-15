@@ -1,6 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAtom, useSetAtom } from 'jotai';
-import debounce from 'lodash.debounce';
 import { Loader2 } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
@@ -8,6 +7,7 @@ import { type SubmissionWithUser } from '@/interface/submission';
 import { api } from '@/lib/api';
 import { Wand } from '@/svg/wand';
 import { cn } from '@/utils/cn';
+import { debounce } from '@/utils/debounce';
 
 import { type ProjectApplicationAi } from '@/features/listings/types';
 

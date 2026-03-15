@@ -1,4 +1,3 @@
-import debounce from 'lodash.debounce';
 import {
   ChevronLeft,
   ChevronRight,
@@ -35,6 +34,7 @@ import { SponsorLayout } from '@/layouts/Sponsor';
 import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 import { dayjs } from '@/utils/dayjs';
+import { debounce } from '@/utils/debounce';
 
 import { type ListingWithSubmissions } from '@/features/listings/types';
 import { formatDeadline } from '@/features/listings/utils/deadline';

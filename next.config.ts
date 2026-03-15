@@ -92,7 +92,6 @@ const nextConfig: NextConfig = {
       'react-hook-form',
       'sonner',
       'tailwind-merge',
-      'typescript-cookie',
       'vaul',
       'zod',
     ],

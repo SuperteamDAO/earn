@@ -1,9 +1,9 @@
-import debounce from 'lodash.debounce';
 import { useEffect, useState } from 'react';
 
 import { api } from '@/lib/api';
 import logger from '@/lib/logger';
 import { useUser } from '@/store/user';
+import { debounce } from '@/utils/debounce';
 
 export const useSponsorNameValidation = (initialValue = '') => {
   const [sponsorName, setSponsorName] = useState(initialValue);

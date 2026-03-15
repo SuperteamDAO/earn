@@ -4,7 +4,6 @@ import dynamic from 'next/dynamic';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { type JSX, memo, useEffect, useMemo, useState } from 'react';
-import { useInView } from 'react-intersection-observer';
 
 import { EmptySection } from '@/components/shared/EmptySection';
 import { JsonLd } from '@/components/shared/JsonLd';
@@ -13,6 +12,7 @@ import { Button } from '@/components/ui/button';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { Separator } from '@/components/ui/separator';
 import { useDisclosure } from '@/hooks/use-disclosure';
+import { useInView } from '@/hooks/use-in-view';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import type { User } from '@/interface/user';
 import { Default } from '@/layouts/Default';

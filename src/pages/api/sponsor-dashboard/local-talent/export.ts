@@ -1,11 +1,11 @@
 import type { NextApiResponse } from 'next';
-import Papa from 'papaparse';
 
 import { type Prisma } from '@/generated/prisma/client';
 import { type Skills } from '@/interface/skills';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { csvUpload, str2ab } from '@/utils/cloudinary';
+import { serializeCsv } from '@/utils/csv';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { type NextApiRequestWithSponsor } from '@/features/auth/types';
@@ -181,7 +181,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     });
 
     logger.debug('Converting JSON to CSV');
-    const csv = Papa.unparse(finalJson);
+    const csv = serializeCsv(finalJson);
     const fileName = `${superteamRegion}-local-profiles-${Date.now()}`;
     const file = str2ab(csv, fileName);
 

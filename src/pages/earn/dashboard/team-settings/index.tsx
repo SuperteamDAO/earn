@@ -1,5 +1,4 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import debounce from 'lodash.debounce';
 import {
   Check,
   ChevronLeft,
@@ -43,6 +42,7 @@ import { SponsorLayout } from '@/layouts/Sponsor';
 import { api } from '@/lib/api';
 import { type Role } from '@/prisma/enums';
 import { useUser } from '@/store/user';
+import { debounce } from '@/utils/debounce';
 
 import { Banner } from '@/features/sponsor-dashboard/components/Banner';
 import { InviteMembers } from '@/features/sponsor-dashboard/components/Members/InviteMembers';

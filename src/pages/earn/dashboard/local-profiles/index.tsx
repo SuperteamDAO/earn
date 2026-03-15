@@ -1,5 +1,4 @@
 import { useQuery } from '@tanstack/react-query';
-import debounce from 'lodash.debounce';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import posthog from 'posthog-js';
 import { useEffect, useRef, useState } from 'react';
@@ -8,6 +7,7 @@ import { UserFlag } from '@/components/shared/UserFlag';
 import { Button } from '@/components/ui/button';
 import { SponsorLayout } from '@/layouts/Sponsor';
 import { useUser } from '@/store/user';
+import { debounce } from '@/utils/debounce';
 
 import { FilterSection } from '@/features/sponsor-dashboard/components/LocalProfiles/FilterSection';
 import { UserTable } from '@/features/sponsor-dashboard/components/LocalProfiles/UserTable';

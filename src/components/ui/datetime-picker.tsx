@@ -147,7 +147,7 @@ export type DateTimePickerProps = {
   isPro?: boolean;
 };
 
-export type DateTimeRenderTriggerProps = {
+type DateTimeRenderTriggerProps = {
   value: Date | undefined;
   open: boolean;
   timezone?: string;

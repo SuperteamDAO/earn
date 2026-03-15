@@ -1,5 +1,4 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import debounce from 'lodash.debounce';
 import { ArrowRight, Search } from 'lucide-react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
@@ -11,6 +10,7 @@ import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
+import { debounce } from '@/utils/debounce';
 
 import { chaptersQuery } from '@/features/chapters/queries/chapters';
 import { GrantsCard } from '@/features/grants/components/GrantsCard';

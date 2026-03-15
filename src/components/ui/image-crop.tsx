@@ -2,7 +2,7 @@
 import 'react-image-crop/dist/ReactCrop.css';
 
 import { Slot } from '@radix-ui/react-slot';
-import { CropIcon, RotateCcwIcon } from 'lucide-react';
+import { CropIcon } from 'lucide-react';
 import {
   type ComponentProps,
   createContext,
@@ -133,7 +133,7 @@ const useImageCrop = () => {
   return context;
 };
 
-export type ImageCropProps = {
+type ImageCropProps = {
   file: File;
   maxImageSize?: number;
   onCrop?: (croppedImage: string) => void;
@@ -223,7 +223,7 @@ export const ImageCrop = ({
     </ImageCropContext.Provider>
   );
 };
-export type ImageCropContentProps = {
+type ImageCropContentProps = {
   style?: CSSProperties;
   className?: string;
 };
@@ -267,7 +267,7 @@ export const ImageCropContent = ({
     </div>
   );
 };
-export type ImageCropApplyProps = ComponentProps<'button'> & {
+type ImageCropApplyProps = ComponentProps<'button'> & {
   asChild?: boolean;
 };
 export const ImageCropApply = ({
@@ -294,58 +294,3 @@ export const ImageCropApply = ({
     </Button>
   );
 };
-export type ImageCropResetProps = ComponentProps<'button'> & {
-  asChild?: boolean;
-};
-export const ImageCropReset = ({
-  asChild = false,
-  children,
-  onClick,
-  ...props
-}: ImageCropResetProps) => {
-  const { resetCrop } = useImageCrop();
-  const handleClick = (e: MouseEvent<HTMLButtonElement>) => {
-    resetCrop();
-    onClick?.(e);
-  };
-  if (asChild) {
-    return (
-      <Slot onClick={handleClick} {...props}>
-        {children}
-      </Slot>
-    );
-  }
-  return (
-    <Button onClick={handleClick} size="icon" variant="ghost" {...props}>
-      {children ?? <RotateCcwIcon className="size-4" />}
-    </Button>
-  );
-};
-
-export type CropperProps = Omit<ReactCropProps, 'onChange'> & {
-  file: File;
-  maxImageSize?: number;
-  onCrop?: (croppedImage: string) => void;
-  onChange?: ReactCropProps['onChange'];
-};
-export const Cropper = ({
-  onChange,
-  onComplete,
-  onCrop,
-  style,
-  className,
-  file,
-  maxImageSize,
-  ...props
-}: CropperProps) => (
-  <ImageCrop
-    file={file}
-    maxImageSize={maxImageSize}
-    onChange={onChange}
-    onComplete={onComplete}
-    onCrop={onCrop}
-    {...props}
-  >
-    <ImageCropContent className={className} style={style} />
-  </ImageCrop>
-);

@@ -6,11 +6,11 @@ import axios from 'axios';
 import { useRouter } from 'next/router';
 import posthog from 'posthog-js';
 import { useEffect } from 'react';
-import { getCookie, removeCookie, setCookie } from 'typescript-cookie';
 
 import { useForcedProfileRedirect } from '@/hooks/use-forced-profile-redirect';
 import { type User } from '@/interface/user';
 import { api } from '@/lib/api';
+import { getCookie, removeCookie, setCookie } from '@/utils/cookie';
 
 const USER_ID_COOKIE_NAME = 'user-id-hint';
 const COOKIE_OPTIONS = {
@@ -120,7 +120,7 @@ export const useUpdateUser = () => {
         queryClient.setQueryData(['user'], updatedUser);
 
         const currentUserId = getCookie(USER_ID_COOKIE_NAME);
-        if (updatedUser.id !== currentUserId) {
+        if (updatedUser.id && updatedUser.id !== currentUserId) {
           setCookie(USER_ID_COOKIE_NAME, updatedUser.id, COOKIE_OPTIONS);
         }
       }

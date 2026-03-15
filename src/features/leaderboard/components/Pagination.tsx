@@ -1,10 +1,10 @@
-import debounce from 'lodash.debounce';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/utils/cn';
+import { debounce } from '@/utils/debounce';
 
 interface Props {
   page: number;

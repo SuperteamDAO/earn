@@ -1,5 +1,6 @@
-import debounce from 'lodash.debounce';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+
+import { debounce } from '@/utils/debounce';
 
 import { CategoryPill } from '@/features/listings/components/CategoryPill';
 

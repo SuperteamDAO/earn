@@ -1,10 +1,10 @@
-import debounce from 'lodash.debounce';
 import { type KeyboardEvent, useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { type User } from '@/interface/user';
 import { api } from '@/lib/api';
 import { cn } from '@/utils/cn';
+import { debounce } from '@/utils/debounce';
 
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 

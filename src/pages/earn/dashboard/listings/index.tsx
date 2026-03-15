@@ -1,5 +1,4 @@
 import { useQuery } from '@tanstack/react-query';
-import debounce from 'lodash.debounce';
 import {
   ChevronDown,
   ChevronLeft,
@@ -33,6 +32,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { SponsorLayout } from '@/layouts/Sponsor';
 import { useUser } from '@/store/user';
+import { debounce } from '@/utils/debounce';
 
 import { type ListingWithSubmissions } from '@/features/listings/types';
 import { getColorStyles } from '@/features/listings/utils/getColorStyles';

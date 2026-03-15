@@ -1,5 +1,4 @@
 import { useQuery } from '@tanstack/react-query';
-import debounce from 'lodash.debounce';
 import { CheckIcon } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
@@ -14,6 +13,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
+import { debounce } from '@/utils/debounce';
 
 import { usernameRandomQuery } from '@/features/talent/queries/random-username';
 import { type NewTalentFormData } from '@/features/talent/schema';

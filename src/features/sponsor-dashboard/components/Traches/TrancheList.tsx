@@ -1,5 +1,4 @@
 import { useAtom } from 'jotai';
-import debounce from 'lodash.debounce';
 import { Search } from 'lucide-react';
 import { useEffect, useRef } from 'react';
 
@@ -10,6 +9,7 @@ import {
   type GrantTrancheStatus,
 } from '@/prisma/enums';
 import { cn } from '@/utils/cn';
+import { debounce } from '@/utils/debounce';
 import { nthLabelGenerator } from '@/utils/rank';
 
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';

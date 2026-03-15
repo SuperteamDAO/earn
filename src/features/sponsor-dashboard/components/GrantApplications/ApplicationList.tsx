@@ -1,5 +1,4 @@
 import { useAtom } from 'jotai';
-import debounce from 'lodash.debounce';
 import { Search } from 'lucide-react';
 import { useEffect, useRef } from 'react';
 
@@ -12,6 +11,7 @@ import {
   type SubmissionLabels,
 } from '@/prisma/enums';
 import { cn } from '@/utils/cn';
+import { debounce } from '@/utils/debounce';
 
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 

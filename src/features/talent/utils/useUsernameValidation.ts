@@ -1,9 +1,9 @@
-import debounce from 'lodash.debounce';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { api } from '@/lib/api';
 import logger from '@/lib/logger';
 import { useUser } from '@/store/user';
+import { debounce } from '@/utils/debounce';
 
 import { USERNAME_PATTERN } from '../constants';
 

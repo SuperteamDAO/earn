@@ -1,10 +1,11 @@
 // used for api route, dont add use client here.
 
+import slugify from 'slugify';
+
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { type BountiesGetPayload } from '@/prisma/models/Bounties';
 import { safeStringify } from '@/utils/safeStringify';
-import { slugify } from '@/utils/slugify';
 
 import { fetchSlugCheck } from '../queries/slug-check';
 
@@ -31,7 +32,7 @@ export const generateUniqueSlug = async (
   title: string,
   id?: string,
 ): Promise<string> => {
-  const baseSlug = slugify(title, { lower: true });
+  const baseSlug = slugify(title, { lower: true, strict: true });
 
   const existingSlugs = await prisma.bounties
     .findMany({

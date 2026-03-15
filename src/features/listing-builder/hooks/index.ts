@@ -1,13 +1,13 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useQueryClient } from '@tanstack/react-query';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
-import debounce from 'lodash.debounce';
 import { useCallback, useEffect, useRef } from 'react';
 import { useForm, useFormContext, type UseFormReturn } from 'react-hook-form';
 import { z } from 'zod';
 
 import { type HackathonModel } from '@/prisma/models/Hackathon';
 import { dayjs } from '@/utils/dayjs';
+import { debounce } from '@/utils/debounce';
 
 import {
   descriptionKeyAtom,

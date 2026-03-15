@@ -1,4 +1,3 @@
-import debounce from 'lodash.debounce';
 import { Info } from 'lucide-react';
 import { useMemo } from 'react';
 
@@ -11,6 +10,7 @@ import {
 } from '@/components/ui/select';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Tooltip } from '@/components/ui/tooltip';
+import { debounce } from '@/utils/debounce';
 
 import { type SKILL, type TIMEFRAME } from '../types';
 import { SearchInput } from './SearchInput';

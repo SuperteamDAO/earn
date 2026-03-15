@@ -1,5 +1,4 @@
 import { useAtom } from 'jotai';
-import debounce from 'lodash.debounce';
 import { Search } from 'lucide-react';
 import { type Dispatch, type SetStateAction, useEffect, useRef } from 'react';
 
@@ -10,6 +9,7 @@ import type { SubmissionWithUser } from '@/interface/submission';
 import { type SubmissionLabels } from '@/prisma/enums';
 import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';
+import { debounce } from '@/utils/debounce';
 import { getRankLabels } from '@/utils/rank';
 
 import {

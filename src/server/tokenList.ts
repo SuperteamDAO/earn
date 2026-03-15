@@ -82,7 +82,7 @@ const normalizeIpfsUrlToProxyPath = (url: URL) => {
   return null;
 };
 
-export function normalizeTokenIcon(icon?: string | null): string {
+function normalizeTokenIcon(icon?: string | null): string {
   const value = icon?.trim();
   if (!value) return DEFAULT_TOKEN_ICON;
 
@@ -195,9 +195,4 @@ export async function getTokenIcon(
 ): Promise<string | null> {
   const token = await getTokenBySymbol(symbol, { includeInactive: true });
   return token?.icon ?? null;
-}
-
-export async function isActiveTokenSymbol(tokenSymbol?: string | null) {
-  const token = await getTokenBySymbol(tokenSymbol);
-  return Boolean(token);
 }
