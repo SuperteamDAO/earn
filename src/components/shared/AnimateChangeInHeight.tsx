@@ -1,8 +1,8 @@
 import { motion } from 'motion/react';
 import React, { useLayoutEffect, useMemo, useRef, useState } from 'react';
-import useMeasure from 'react-use-measure';
 import { type ClassNameValue } from 'tailwind-merge';
 
+import { useElementSize } from '@/hooks/use-element-size';
 import { cn } from '@/utils/cn';
 
 interface AnimateChangeInHeightProps {
@@ -18,7 +18,7 @@ export const AnimateChangeInHeight = ({
   duration = 0.2,
   disableOnHeightZero = false,
 }: AnimateChangeInHeightProps) => {
-  const [elementRef, bounds] = useMeasure();
+  const [elementRef, bounds] = useElementSize<HTMLDivElement>();
   const prevHeight = useRef(bounds.height);
   const [hasHadNonZeroHeight, setHasHadNonZeroHeight] = useState(
     () => bounds.height !== 0,

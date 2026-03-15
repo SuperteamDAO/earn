@@ -1,9 +1,9 @@
 import axios from 'axios';
 import { type IncomingMessage } from 'http';
-import { buffer } from 'micro';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { type WebhookRequiredHeaders } from 'svix';
 
+import { readRawBody } from '@/lib/raw-body';
 import { webhook } from '@/lib/webhook';
 import { prisma } from '@/prisma';
 
@@ -105,7 +105,7 @@ const webhooks = async (req: NextApiRequest, res: NextApiResponse) => {
   switch (method) {
     case 'POST': {
       try {
-        const payload = (await buffer(req)).toString();
+        const payload = (await readRawBody(req)).toString();
         const headers = req.headers as IncomingMessage['headers'] &
           WebhookRequiredHeaders;
 

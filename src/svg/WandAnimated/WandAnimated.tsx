@@ -1,6 +1,6 @@
-import useMeasure from 'react-use-measure';
 import { type ClassNameValue } from 'tailwind-merge';
 
+import { useElementSize } from '@/hooks/use-element-size';
 import { cn } from '@/utils/cn';
 
 import styles from './WandAnimated.module.css';
@@ -26,7 +26,8 @@ export const WandAnimated = ({
   stickColor?: ClassNameValue;
   starColor?: ClassNameValue;
 }) => {
-  const [ref, { width = DESIGN_BASE_PX }] = useMeasure();
+  const [ref, { width: measuredWidth }] = useElementSize<HTMLDivElement>();
+  const width = measuredWidth || DESIGN_BASE_PX;
 
   const zOuter = width * FACTORS.outer;
   const zMiddle = width * FACTORS.middle;

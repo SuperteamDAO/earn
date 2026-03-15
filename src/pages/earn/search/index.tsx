@@ -1,6 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
 import { type GetServerSideProps } from 'next';
-import NProgress from 'nprogress';
 import { useEffect, useMemo, useState } from 'react';
 
 import { AnimateChangeInHeight } from '@/components/shared/AnimateChangeInHeight';
@@ -8,6 +7,7 @@ import { JsonLd } from '@/components/shared/JsonLd';
 import { ASSET_URL } from '@/constants/ASSET_URL';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
+import { finishTopLoader, startTopLoader } from '@/lib/top-loader';
 import { useUser } from '@/store/user';
 import { generateWebSiteSchema } from '@/utils/json-ld';
 
@@ -69,12 +69,12 @@ const SearchPage = ({ initialQuery = '' }: SearchProps) => {
 
   useEffect(() => {
     if (isFetching) {
-      NProgress.start();
+      startTopLoader();
     } else {
-      NProgress.done();
+      finishTopLoader();
     }
     return () => {
-      NProgress.done();
+      finishTopLoader();
     };
   }, [isFetching]);
 

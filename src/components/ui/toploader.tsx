@@ -1,36 +1,33 @@
 import Router from 'next/router';
-import { configure, done, start } from 'nprogress';
-import { useEffect } from 'react';
+import { useEffect, useSyncExternalStore } from 'react';
+
+import {
+  finishTopLoader,
+  getTopLoaderSnapshot,
+  startTopLoader,
+  subscribeTopLoader,
+} from '@/lib/top-loader';
 
 export const TopLoader = () => {
   const color = '#6366F1';
-  const height = 3;
+  const height = 2;
+  const { progress, visible } = useSyncExternalStore(
+    subscribeTopLoader,
+    getTopLoaderSnapshot,
+    getTopLoaderSnapshot,
+  );
 
-  const boxShadow = `box-shadow:0 0 10px ${color},0 0 5px ${color}`;
-
-  const positionStyle = 'top: 0;';
-  const spinnerPositionStyle = 'top: 15px;';
+  const boxShadow = '0 0 4px rgba(99, 102, 241, 0.28)';
 
   const styles = (
     <style>
-      {`#nprogress{pointer-events:none}#nprogress .bar{background:${color};position:fixed;z-index:1600;${positionStyle}left:0;width:100%;height:${height}px}#nprogress .peg{display:block;position:absolute;right:0;width:100px;height:100%;${boxShadow};opacity:1;-webkit-transform:rotate(3deg) translate(0px,-4px);-ms-transform:rotate(3deg) translate(0px,-4px);transform:rotate(3deg) translate(0px,-4px)}#nprogress .spinner{display:block;position:fixed;z-index:1600;${spinnerPositionStyle}right:15px}#nprogress .spinner-icon{width:18px;height:18px;box-sizing:border-box;border:2px solid transparent;border-top-color:${color};border-left-color:${color};border-radius:50%;-webkit-animation:nprogress-spinner 400ms linear infinite;animation:nprogress-spinner 400ms linear infinite}.nprogress-custom-parent{overflow:hidden;position:relative}.nprogress-custom-parent #nprogress .bar,.nprogress-custom-parent #nprogress .spinner{position:absolute}@-webkit-keyframes nprogress-spinner{0%{-webkit-transform:rotate(0deg)}100%{-webkit-transform:rotate(360deg)}}@keyframes nprogress-spinner{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}`}
+      {`#st-top-loader{pointer-events:none;position:fixed;top:0;left:0;z-index:1600;height:${height}px;width:100%;transform-origin:left center;transition:transform 180ms ease,opacity 220ms ease;will-change:transform,opacity}#st-top-loader .bar{height:100%;width:100%;background:${color};box-shadow:${boxShadow}}`}
     </style>
   );
 
   useEffect(() => {
-    configure({
-      showSpinner: false,
-      trickle: true,
-      trickleSpeed: 200,
-      minimum: 0.08,
-      easing: 'ease',
-      speed: 200,
-      template:
-        '<div class="bar" role="bar"><div class="peg"></div></div><div class="spinner" role="spinner"><div class="spinner-icon"></div></div>',
-    });
-
-    const progressStarted = () => start();
-    const progressComplete = () => done(true);
+    const progressStarted = () => startTopLoader();
+    const progressComplete = () => finishTopLoader();
 
     Router.events.on('routeChangeStart', progressStarted);
     Router.events.on('routeChangeComplete', progressComplete);
@@ -43,5 +40,19 @@ export const TopLoader = () => {
     };
   }, []);
 
-  return styles;
+  return (
+    <>
+      {styles}
+      <div
+        id="st-top-loader"
+        aria-hidden="true"
+        style={{
+          opacity: visible ? 1 : 0,
+          transform: `scaleX(${progress / 100})`,
+        }}
+      >
+        <div className="bar" />
+      </div>
+    </>
+  );
 };

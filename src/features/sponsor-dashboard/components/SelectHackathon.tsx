@@ -1,9 +1,7 @@
 import { useSetAtom } from 'jotai';
-import { useEffect, useState } from 'react';
-import { components } from 'react-select';
-import AsyncSelect from 'react-select/async';
+import { useCallback, useMemo, useState } from 'react';
 
-import type { SponsorType } from '@/interface/sponsor';
+import { AsyncCombobox } from '@/components/ui/async-combobox';
 import { api } from '@/lib/api';
 import { useUpdateUser, useUser } from '@/store/user';
 
@@ -11,14 +9,23 @@ import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
 import { hackathonSponsorAtom } from './SelectSponsor';
 
-interface HackathonOptionType extends SponsorType {
+interface HackathonOptionType {
+  id?: string;
+  slug?: string;
+  name: string;
+  altLogo?: string | null;
+  logo?: string | null;
   role?: string;
 }
 
 interface HackathonOption {
-  value?: string;
-  label?: string;
-  hackathon?: HackathonOptionType;
+  value: string;
+  label: string;
+  hackathon: HackathonOptionType;
+}
+
+function getHackathonRoleLabel(hackathon?: HackathonOptionType) {
+  return hackathon?.role ?? '';
 }
 
 export function SelectHackathon({
@@ -35,31 +42,34 @@ export function SelectHackathon({
   const { user } = useUser();
   const updateUser = useUpdateUser();
 
-  useEffect(() => {
-    if (type !== 'hackathon' && user?.hackathonId) {
-      setSelectedHackathon({
-        value: user?.Hackathon?.id,
-        label: user?.Hackathon?.name,
-        hackathon: user?.Hackathon,
-      });
+  const currentHackathon = useMemo(() => {
+    if (type === 'hackathon') {
+      return selectedHackathon;
     }
-  }, [user]);
 
-  const loadHackathons = (
-    inputValue: string,
-    callback: (options: HackathonOption[]) => void,
-  ) => {
-    api
-      .get(`/api/hackathon/list/`, {
-        params: {
-          searchString: inputValue,
-        },
-      })
-      .then((response) => {
-        const options = [...(response?.data || [])];
-        callback(options);
-      });
-  };
+    if (!user?.hackathonId || !user.Hackathon) {
+      return null;
+    }
+
+    return {
+      value: user.Hackathon.id,
+      label: user.Hackathon.name,
+      hackathon: {
+        ...user.Hackathon,
+        role: undefined,
+      },
+    };
+  }, [selectedHackathon, type, user?.Hackathon, user?.hackathonId]);
+
+  const loadHackathons = useCallback(async (inputValue: string) => {
+    const response = await api.get(`/api/hackathon/list/`, {
+      params: {
+        searchString: inputValue,
+      },
+    });
+
+    return [...(response?.data || [])] as HackathonOption[];
+  }, []);
 
   const updateSponsor = async (hackathonId: string) => {
     try {
@@ -69,7 +79,7 @@ export function SelectHackathon({
     }
   };
 
-  const handleChange = async (option?: any) => {
+  const handleChange = async (option: HackathonOption) => {
     if (type === 'hackathon') {
       setHackathonSponsor(option.value);
       setSelectedHackathon(option);
@@ -78,111 +88,44 @@ export function SelectHackathon({
     }
   };
 
-  const SingleValue = ({ children, ...props }: any) => {
-    const { data, selectProps } = props;
-
-    if (selectProps.menuIsOpen) {
-      return <components.SingleValue {...props}></components.SingleValue>;
-    }
-
-    return (
-      <components.SingleValue {...props}>
+  return (
+    <AsyncCombobox
+      value={currentHackathon}
+      onChange={handleChange}
+      placeholder="Select Hackathon"
+      loadOptions={loadHackathons}
+      isExpanded={isExpanded}
+      renderValue={(option) => (
         <div className="flex items-center py-1">
           <EarnAvatar
-            id={data?.hackathon?.name}
-            avatar={data?.hackathon?.altLogo}
+            id={option.hackathon?.name}
+            avatar={option.hackathon?.altLogo || undefined}
             className="h-6 w-6 rounded-sm"
           />
           <div className="ml-2 hidden md:block">
-            <p className="text-sm text-slate-800">{data?.hackathon?.name}</p>
-            <p className="text-xs text-slate-400">{data?.hackathon?.role}</p>
+            <p className="text-sm text-slate-800">{option.hackathon?.name}</p>
+            <p className="text-xs text-slate-400">
+              {getHackathonRoleLabel(option.hackathon)}
+            </p>
           </div>
         </div>
-      </components.SingleValue>
-    );
-  };
-
-  const Option = (props: any) => {
-    const { data } = props;
-    return (
-      <components.Option {...props}>
+      )}
+      renderOption={(option) => (
         <div className="flex items-center">
           <EarnAvatar
             className="rounded-sm"
-            id={data?.hackathon?.name}
-            avatar={data?.hackathon?.altLogo}
+            id={option.hackathon?.name}
+            avatar={option.hackathon?.altLogo || undefined}
           />
           <div className="ml-2 hidden md:block">
-            <p className="text-sm text-slate-800">{data?.hackathon?.name}</p>
-            <p className="text-xs text-slate-400">{data?.hackathon?.role}</p>
+            <p className="text-sm text-slate-800">{option.hackathon?.name}</p>
+            <p className="text-xs text-slate-400">
+              {getHackathonRoleLabel(option.hackathon)}
+            </p>
           </div>
         </div>
-      </components.Option>
-    );
-  };
-
-  return (
-    <AsyncSelect
-      components={{ SingleValue, Option }}
-      value={selectedHackathon}
-      onChange={(e) => handleChange(e)}
-      placeholder="Select Hackathon"
-      loadOptions={loadHackathons}
-      defaultOptions
-      isClearable={false}
-      isSearchable={true}
-      autoFocus={false}
-      styles={{
-        control: (baseStyles) => ({
-          ...baseStyles,
-          cursor: 'pointer',
-          fontSize: '14px',
-          borderColor: '#94a3b8',
-          '&:hover': {
-            borderColor: '#6366F1',
-          },
-          minHeight: '46px',
-          flexWrap: 'nowrap',
-        }),
-        dropdownIndicator: (base) => ({
-          ...base,
-          color: '#94a3b8',
-          '&:hover': {
-            color: '#94a3b8',
-          },
-          display: isExpanded ? 'block' : 'none',
-        }),
-        indicatorSeparator: (base) => ({
-          ...base,
-          backgroundColor: 'transparent',
-          width: 0,
-        }),
-        option: (base, state) => ({
-          ...base,
-          backgroundColor: state.isSelected ? '#e2e8f0' : 'white',
-          '&:hover': {
-            backgroundColor: '#f1f5f9',
-          },
-        }),
-        menuList: (base) => ({
-          ...base,
-          overflowX: 'hidden',
-
-          '::-webkit-scrollbar': {
-            width: 'calc(var(--spacing) * 1.5)',
-          },
-          '::-webkit-scrollbar-track': {
-            background: 'transparent',
-          },
-          '::-webkit-scrollbar-thumb': {
-            background: 'var(--color-slate-300)',
-            borderRadius: '0.35rem',
-          },
-          '::-webkit-scrollbar-thumb:hover': {
-            background: 'var(--color-slate-300)',
-          },
-        }),
-      }}
+      )}
+      className="border-slate-400"
     />
   );
 }

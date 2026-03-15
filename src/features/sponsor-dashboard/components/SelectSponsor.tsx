@@ -1,10 +1,9 @@
 import { atom, useSetAtom } from 'jotai';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
-import { components } from 'react-select';
-import AsyncSelect from 'react-select/async';
+import { useCallback, useMemo, useState } from 'react';
 
 import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
+import { AsyncCombobox } from '@/components/ui/async-combobox';
 import type { SponsorType } from '@/interface/sponsor';
 import { api } from '@/lib/api';
 import { useUpdateUser, useUser } from '@/store/user';
@@ -19,6 +18,10 @@ interface SponsorOption {
   value: string;
   label: string;
   sponsor: SponsorOptionType;
+}
+
+function getSponsorRoleLabel(sponsor?: SponsorOptionType) {
+  return sponsor?.role ?? '';
 }
 
 export const hackathonSponsorAtom = atom<string | null>(null);
@@ -39,31 +42,34 @@ export function SelectSponsor({
   );
   const setHackathonSponsor = useSetAtom(hackathonSponsorAtom);
 
-  useEffect(() => {
-    if (type !== 'hackathon' && user?.currentSponsor?.id) {
-      setSelectedSponsor({
-        value: user?.currentSponsor?.id,
-        label: user?.currentSponsor?.name,
-        sponsor: user?.currentSponsor,
-      });
+  const currentSponsor = useMemo(() => {
+    if (type === 'hackathon') {
+      return selectedSponsor;
     }
-  }, [user]);
 
-  const loadSponsors = (
-    inputValue: string,
-    callback: (options: SponsorOption[]) => void,
-  ) => {
-    api
-      .get(`/api/sponsors/list/`, {
-        params: {
-          searchString: inputValue,
-        },
-      })
-      .then((response) => {
-        const options = [...(response?.data || [])];
-        callback(options);
-      });
-  };
+    if (!user?.currentSponsor?.id) {
+      return null;
+    }
+
+    return {
+      value: user.currentSponsor.id,
+      label: user.currentSponsor.name,
+      sponsor: {
+        ...user.currentSponsor,
+        role: undefined,
+      },
+    };
+  }, [selectedSponsor, type, user?.currentSponsor]);
+
+  const loadSponsors = useCallback(async (inputValue: string) => {
+    const response = await api.get(`/api/sponsors/list/`, {
+      params: {
+        searchString: inputValue,
+      },
+    });
+
+    return [...(response?.data || [])] as SponsorOption[];
+  }, []);
 
   const updateSponsor = async (sponsorId: string) => {
     try {
@@ -73,7 +79,7 @@ export function SelectSponsor({
     }
   };
 
-  const handleChange = async (option?: any) => {
+  const handleChange = async (option: SponsorOption) => {
     if (type === 'hackathon') {
       setHackathonSponsor(option.value);
       setSelectedSponsor(option);
@@ -90,118 +96,51 @@ export function SelectSponsor({
     }
   };
 
-  const SingleValue = ({ children, ...props }: any) => {
-    const { data, selectProps } = props;
-
-    if (selectProps.menuIsOpen) {
-      return <components.SingleValue {...props}></components.SingleValue>;
-    }
-
-    return (
-      <components.SingleValue {...props}>
+  return (
+    <AsyncCombobox
+      value={currentSponsor}
+      onChange={handleChange}
+      placeholder="Select Sponsor"
+      loadOptions={loadSponsors}
+      isExpanded={isExpanded}
+      renderValue={(option) => (
         <div className="flex items-center py-1">
           <EarnAvatar
-            id={data?.sponsor?.name}
-            avatar={data?.sponsor?.logo}
+            id={option.sponsor?.name}
+            avatar={option.sponsor?.logo}
             className="h-6 w-6 rounded-sm"
           />
           <div className="ml-2 hidden md:block">
             <div className="flex">
-              <p className="text-sm text-slate-800">{data?.sponsor?.name}</p>
+              <p className="text-sm text-slate-800">{option.sponsor?.name}</p>
             </div>
-            <p className="text-xs text-slate-400">{data?.sponsor?.role}</p>
+            <p className="text-xs text-slate-400">
+              {getSponsorRoleLabel(option.sponsor)}
+            </p>
           </div>
         </div>
-      </components.SingleValue>
-    );
-  };
-
-  const Option = (props: any) => {
-    const { data } = props;
-    return (
-      <components.Option {...props}>
+      )}
+      renderOption={(option) => (
         <div className="flex items-center">
           <EarnAvatar
-            id={data?.sponsor?.name}
-            avatar={data?.sponsor?.logo}
+            id={option.sponsor?.name}
+            avatar={option.sponsor?.logo}
             className="rounded-sm"
           />
           <div className="ml-2 hidden md:block">
             <div className="flex flex-wrap items-center">
-              <p className="text-sm text-slate-800">{data?.sponsor?.name}</p>
+              <p className="text-sm text-slate-800">{option.sponsor?.name}</p>
             </div>
             <div className="flex items-center gap-1">
-              <p className="text-xs text-slate-400">{data?.sponsor?.role}</p>
-              {data?.sponsor?.isVerified && <VerifiedBadge />}
+              <p className="text-xs text-slate-400">
+                {getSponsorRoleLabel(option.sponsor)}
+              </p>
+              {option.sponsor?.isVerified && <VerifiedBadge />}
             </div>
           </div>
         </div>
-      </components.Option>
-    );
-  };
-
-  return (
-    <AsyncSelect
-      components={{ SingleValue, Option }}
-      value={selectedSponsor}
-      onChange={(e) => handleChange(e)}
-      placeholder="Select Sponsor"
-      loadOptions={loadSponsors}
-      defaultOptions
-      isClearable={false}
-      isSearchable={true}
-      autoFocus={false}
-      styles={{
-        control: (baseStyles) => ({
-          ...baseStyles,
-          cursor: 'pointer',
-          fontSize: '14px',
-          borderColor: '#cbd5e1',
-          '&:hover': {
-            borderColor: '#6366F1',
-          },
-          minHeight: '46px',
-          flexWrap: 'nowrap',
-        }),
-        dropdownIndicator: (base) => ({
-          ...base,
-          color: '#cbd5e1',
-          '&:hover': {
-            color: '#94a3b8',
-          },
-          display: isExpanded ? 'block' : 'none',
-        }),
-        indicatorSeparator: (base) => ({
-          ...base,
-          backgroundColor: 'transparent',
-          width: 0,
-        }),
-        option: (base, state) => ({
-          ...base,
-          backgroundColor: state.isSelected ? '#e2e8f0' : 'white',
-          '&:hover': {
-            backgroundColor: '#f1f5f9',
-          },
-        }),
-        menuList: (base) => ({
-          ...base,
-          overflowX: 'hidden',
-
-          '::-webkit-scrollbar': {
-            width: 'calc(var(--spacing) * 1.5)',
-          },
-          '::-webkit-scrollbar-track': {
-            background: 'transparent',
-          },
-          '::-webkit-scrollbar-thumb': {
-            background: 'var(--color-slate-300)',
-            borderRadius: '0.35rem',
-          },
-          '::-webkit-scrollbar-thumb:hover': {
-            background: 'var(--color-slate-300)',
-          },
-        }),
-      }}
+      )}
+      className="border-slate-300"
     />
   );
 }

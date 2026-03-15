@@ -1,8 +1,5 @@
 import { v2 as cloudinary } from 'cloudinary';
 
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-const DatauriParser = require('datauri/parser');
-
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
@@ -27,9 +24,13 @@ export const csvUpload = async (
 
 export const str2ab = (str: string, fileName: string) => {
   const buffer = Buffer.from(str, 'utf8');
-  const parser = new DatauriParser();
-  const file64 = parser.format(fileName, buffer);
-  return file64;
+  const mimeType = fileName.endsWith('.csv')
+    ? 'text/csv'
+    : 'application/octet-stream';
+
+  return {
+    content: `data:${mimeType};base64,${buffer.toString('base64')}`,
+  };
 };
 
 export const getCloudinaryFetchUrl = (

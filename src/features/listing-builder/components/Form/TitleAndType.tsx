@@ -4,7 +4,6 @@ import { Link } from 'lucide-react';
 import posthog from 'posthog-js';
 import { useEffect, useMemo, useState } from 'react';
 import { useWatch } from 'react-hook-form';
-import slugify from 'slugify';
 
 import {
   AlertDialog,
@@ -33,6 +32,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import type { CompensationType } from '@/prisma/enums';
+import { slugify } from '@/utils/slugify';
 
 import { getListingIcon } from '@/features/listings/utils/getListingIcon';
 
@@ -68,12 +68,8 @@ export function TitleAndType() {
   const slugifiedTitle = useMemo(() => {
     let slug = slugify(debouncedTitle, {
       lower: true,
-      strict: true,
+      maxLength: 120,
     });
-
-    if (slug.length > 120) {
-      slug = slug.substring(0, 120);
-    }
 
     slug = slug.replace(/[^a-z0-9]+$/, '');
 
