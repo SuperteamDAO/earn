@@ -4,11 +4,7 @@ import { countries } from '@/constants/country';
 import type { ChapterRegionData } from '@/interface/chapter';
 
 function normalizeRegionValue(value: string | null | undefined): string {
-  const normalized = (value || '').trim().toLowerCase();
-  if (normalized === 'ireland' || normalized === 'ireland (open ni and roi)') {
-    return 'ireland (ni and roi)';
-  }
-  return normalized;
+  return (value || '').trim().toLowerCase();
 }
 
 function isChapterRegionMatch(
@@ -106,43 +102,13 @@ export const filterRegionCountry = (
   region: ReturnType<typeof getCombinedRegion>,
   country: string,
 ) => {
-  if (country === 'UK' || country === 'United Kingdom') {
-    return {
-      ...region,
-      country:
-        region?.country?.filter(
-          (c) =>
-            c.toLowerCase() === 'uk' || c.toLowerCase() === 'united kingdom',
-        ) || [],
-    };
-  } else if (country === 'US' || country === 'United States') {
-    return {
-      ...region,
-      country:
-        region?.country?.filter(
-          (c) =>
-            c.toLowerCase() === 'us' || c.toLowerCase() === 'united states',
-        ) || [],
-    };
-  } else if (country === 'UAE' || country === 'United Arab Emirates') {
-    return {
-      ...region,
-      country:
-        region?.country?.filter(
-          (c) =>
-            c.toLowerCase() === 'uae' ||
-            c.toLowerCase() === 'united arab emirates',
-        ) || [],
-    };
-  } else {
-    return {
-      ...region,
-      country:
-        region?.country?.filter(
-          (c) => c.toLowerCase() === country.toLowerCase(),
-        ) || [],
-    };
-  }
+  return {
+    ...region,
+    country:
+      region?.country?.filter(
+        (c) => c.toLowerCase() === country.toLowerCase(),
+      ) || [],
+  };
 };
 
 export const getRegionTooltipLabel = (
