@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
 import { skillsArraySchema } from '@/interface/skills';
+import { canonicalizeRegionValue } from '@/utils/canonicalRegion';
 import { getURL } from '@/utils/validUrl';
 
 import {
@@ -82,7 +83,7 @@ export const profileSchema = z
     currentEmployer: z.string().optional(),
     skills: skillsArraySchema,
     private: z.boolean().default(false),
-    location: z.string(),
+    location: z.string().transform(canonicalizeRegionValue),
   })
   .superRefine((data, ctx) => {
     socialSuperRefine(data, ctx);

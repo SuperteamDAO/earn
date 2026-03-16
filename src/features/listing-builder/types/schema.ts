@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { skillsArraySchema } from '@/interface/skills';
 import { BountyType, CompensationType, status } from '@/prisma/enums';
 import { type HackathonModel } from '@/prisma/models/Hackathon';
+import { canonicalizeRegionValue } from '@/utils/canonicalRegion';
 import { dayjs } from '@/utils/dayjs';
 
 import { type Listing } from '@/features/listings/types';
@@ -165,7 +166,13 @@ export const createListingFormSchema = ({
           }
           return true;
         }, 'Hackathon is not allowed for now'),
-      region: z.string().trim().min(1).max(256).default('Global'),
+      region: z
+        .string()
+        .trim()
+        .min(1)
+        .max(256)
+        .default('Global')
+        .transform(canonicalizeRegionValue),
       referredBy: z.string().trim().min(1).max(256).optional().nullable(),
       deadline: z
         .string()

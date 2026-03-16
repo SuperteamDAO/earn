@@ -10,6 +10,7 @@ import {
   type BountiesModel,
   type BountiesUncheckedCreateInput,
 } from '@/prisma/models/Bounties';
+import { canonicalizeRegionValue } from '@/utils/canonicalRegion';
 import { cleanSkills } from '@/utils/cleanSkills';
 import { safeStringify } from '@/utils/safeStringify';
 
@@ -73,7 +74,7 @@ async function transformToPrismaData(
     pocSocials,
     templateId,
     type,
-    region,
+    region: region ? canonicalizeRegionValue(region) : undefined,
     eligibility: eligibility as InputJsonValue,
     rewardAmount,
     rewards: rewards as InputJsonValue,
