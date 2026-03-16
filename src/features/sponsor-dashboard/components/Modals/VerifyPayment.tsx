@@ -19,6 +19,7 @@ import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import { JTTG } from '@/constants/Telegram';
 import { type Token, useTokenList } from '@/constants/tokenList';
+import { type SubmissionWithUser } from '@/interface/submission';
 import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
@@ -28,8 +29,8 @@ import { truncatePublicKey } from '@/utils/truncatePublicKey';
 
 import { BONUS_REWARD_POSITION } from '@/features/listing-builder/constants';
 import { calculateTotalPrizes } from '@/features/listing-builder/utils/rewards';
-import { listingSubmissionsQuery } from '@/features/listings/queries/submissions';
 import { type ListingWithSubmissions } from '@/features/listings/types';
+import { submissionsQuery } from '@/features/sponsor-dashboard/queries/submissions';
 
 import {
   type ValidatePaymentResult,
@@ -53,16 +54,14 @@ export const VerifyPaymentModal = ({
   const [status, setStatus] = useState<
     'idle' | 'retry' | 'loading' | 'success' | 'error'
   >('idle');
-  const [selectedToken, setSelectedToken] = useState<Token>();
   const [showMultiplePayments, setShowMultiplePayments] = useState(false);
   const queryClient = useQueryClient();
-  const { data, isLoading, error, refetch } = useQuery({
-    ...listingSubmissionsQuery({
-      slug: listing?.slug ?? '',
-      isWinner: true,
-    }),
-    enabled: !!listing?.slug,
-  });
+  const { data, isLoading, error, refetch } = useQuery(
+    submissionsQuery(listing?.slug ?? '', listing?.type === 'hackathon'),
+  );
+  const selectedToken: Token | undefined = tokens.find(
+    (token) => token.tokenSymbol === listing?.token,
+  );
   const totalWinnerRanks = calculateTotalPrizes(
     listing?.rewards ?? {},
     listing?.maxBonusSpots || 0,
@@ -117,8 +116,10 @@ export const VerifyPaymentModal = ({
     keepSubmitCount: false,
   } as const;
 
-  const syncPaymentLinks = (listingSubmissionData: typeof data = data) => {
-    if (!listingSubmissionData?.submission || !listingSubmissionData?.bounty) {
+  const syncPaymentLinks = (
+    listingSubmissionData: SubmissionWithUser[] | undefined = data,
+  ) => {
+    if (!listingSubmissionData || !listing) {
       return;
     }
 
@@ -130,9 +131,8 @@ export const VerifyPaymentModal = ({
           paymentLinks: [
             {
               submissionId:
-                listingSubmissionData.submission.find(
-                  (sub) => sub.winnerPosition === 1,
-                )?.id || '',
+                listingSubmissionData.find((sub) => sub.winnerPosition === 1)
+                  ?.id || '',
               link: '',
               isVerified: false,
               txId: '',
@@ -144,7 +144,7 @@ export const VerifyPaymentModal = ({
     } else {
       reset(
         {
-          paymentLinks: listingSubmissionData.submission
+          paymentLinks: listingSubmissionData
             .filter((sub) => sub.winnerPosition !== null)
             .sort((a, b) => (a.winnerPosition || 0) - (b.winnerPosition || 0))
             .map((submission) => ({
@@ -157,14 +157,6 @@ export const VerifyPaymentModal = ({
         resetFormOptions,
       );
     }
-
-    if (listingSubmissionData.bounty.token) {
-      setSelectedToken(
-        tokens.find(
-          (token) => token.tokenSymbol === listingSubmissionData.bounty.token,
-        ),
-      );
-    }
   };
 
   // eslint-disable-next-line react-hooks/incompatible-library
@@ -174,7 +166,7 @@ export const VerifyPaymentModal = ({
     if (isOpen) {
       syncPaymentLinks();
     }
-  }, [data?.bounty.slug, reset, listing?.type, isOpen, tokens]);
+  }, [data, isOpen, listing]);
 
   useEffect(() => {
     reset({});
@@ -283,9 +275,7 @@ export const VerifyPaymentModal = ({
 
   const addPaymentField = () => {
     const currentLinks = paymentLinks || [];
-    const winnerSubmission = data?.submission.find(
-      (sub) => sub.winnerPosition === 1,
-    );
+    const winnerSubmission = data?.find((sub) => sub.winnerPosition === 1);
     if (winnerSubmission) {
       setValue('paymentLinks', [
         ...currentLinks,
@@ -470,8 +460,8 @@ export const VerifyPaymentModal = ({
               <div className="my-6 flex flex-col gap-6">
                 {(listing?.type === 'bounty' ||
                   listing?.type === 'hackathon') &&
-                  data?.submission
-                    .filter((sub) => sub.winnerPosition !== null)
+                  data
+                    ?.filter((sub) => sub.winnerPosition !== null)
                     .sort(
                       (a, b) =>
                         (a.winnerPosition || 0) - (b.winnerPosition || 0),
@@ -533,23 +523,29 @@ export const VerifyPaymentModal = ({
                                     {selectedToken?.tokenSymbol}
                                   </p>
                                 </div>
-                                <CopyButton
-                                  text={submission.user?.walletAddress || ''}
-                                  contentProps={{
-                                    side: 'right',
-                                    className: 'text-[0.6875rem] px-2 py-0.5',
-                                  }}
-                                >
-                                  <div className="flex items-center gap-1 text-sm text-slate-600">
-                                    <p className="font-medium">
-                                      {truncatePublicKey(
-                                        submission.user?.walletAddress,
-                                        8,
-                                      )}
-                                    </p>
-                                    <CopyIcon className="h-3 w-3" />
-                                  </div>
-                                </CopyButton>
+                                {submission.user?.walletAddress ? (
+                                  <CopyButton
+                                    text={submission.user.walletAddress}
+                                    contentProps={{
+                                      side: 'right',
+                                      className: 'text-[0.6875rem] px-2 py-0.5',
+                                    }}
+                                  >
+                                    <div className="flex items-center gap-1 text-sm text-slate-600">
+                                      <p className="font-medium">
+                                        {truncatePublicKey(
+                                          submission.user.walletAddress,
+                                          8,
+                                        )}
+                                      </p>
+                                      <CopyIcon className="h-3 w-3" />
+                                    </div>
+                                  </CopyButton>
+                                ) : (
+                                  <p className="text-sm text-slate-400">
+                                    Wallet unavailable
+                                  </p>
+                                )}
                               </div>
 
                               <div className="flex w-full flex-col items-start gap-1">
@@ -608,7 +604,7 @@ export const VerifyPaymentModal = ({
                   <div className="flex flex-col gap-6">
                     <div className="flex flex-col gap-4">
                       {(() => {
-                        const winnerSubmission = data?.submission.find(
+                        const winnerSubmission = data?.find(
                           (sub) => sub.winnerPosition === 1,
                         );
                         const totalPrizeAmount = listing?.rewards?.[1] || 0;
@@ -650,25 +646,29 @@ export const VerifyPaymentModal = ({
                                 <p className="w-32 font-normal text-slate-500">
                                   Wallet Address
                                 </p>
-                                <CopyButton
-                                  text={
-                                    winnerSubmission?.user?.walletAddress || ''
-                                  }
-                                  contentProps={{
-                                    side: 'right',
-                                    className: 'text-[0.6875rem] px-2 py-0.5',
-                                  }}
-                                >
-                                  <div className="flex items-center gap-1">
-                                    <p className="text-sm font-medium text-slate-800">
-                                      {truncatePublicKey(
-                                        winnerSubmission?.user?.walletAddress,
-                                        8,
-                                      )}
-                                    </p>
-                                    <CopyIcon className="h-3 w-3" />
-                                  </div>
-                                </CopyButton>
+                                {winnerSubmission?.user?.walletAddress ? (
+                                  <CopyButton
+                                    text={winnerSubmission.user.walletAddress}
+                                    contentProps={{
+                                      side: 'right',
+                                      className: 'text-[0.6875rem] px-2 py-0.5',
+                                    }}
+                                  >
+                                    <div className="flex items-center gap-1">
+                                      <p className="text-sm font-medium text-slate-800">
+                                        {truncatePublicKey(
+                                          winnerSubmission.user.walletAddress,
+                                          8,
+                                        )}
+                                      </p>
+                                      <CopyIcon className="h-3 w-3" />
+                                    </div>
+                                  </CopyButton>
+                                ) : (
+                                  <p className="text-sm text-slate-400">
+                                    Wallet unavailable
+                                  </p>
+                                )}
                               </div>
                             </div>
 
@@ -842,7 +842,7 @@ export const VerifyPaymentModal = ({
                 </Button>
                 <Button
                   className="flex-1 rounded-lg border border-emerald-500 bg-emerald-50 text-emerald-600 hover:bg-emerald-100 hover:text-emerald-600"
-                  disabled={data?.submission.every((sub) => sub.isPaid)}
+                  disabled={data?.every((sub) => sub.isPaid)}
                   type="submit"
                 >
                   <div className="rounded-full bg-emerald-600 p-0.5">
