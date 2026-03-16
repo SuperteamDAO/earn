@@ -989,49 +989,31 @@ model StatsSlackMessage {
   @@unique([messageTs])
 }
 
-model GdpSnapshot {
-  id              String   @id @default(uuid()) @db.Char(36)
-  cronDate        DateTime @db.Date
-  region          String   @db.VarChar(100)
-  totalGdp        Decimal  @default(0) @db.Decimal(15, 2)
-  organicGdp      Decimal  @default(0) @db.Decimal(15, 2)
-  inorganicGdp    Decimal  @default(0) @db.Decimal(15, 2)
-  totalJobs       Decimal  @default(0) @db.Decimal(15, 2)
-  totalJobsCount  Int      @default(0)
-  totalHackathons Decimal  @default(0) @db.Decimal(15, 2)
-  totalContracts  Decimal  @default(0) @db.Decimal(15, 2)
-  totalFunding    Decimal  @default(0) @db.Decimal(15, 2)
-  createdAt       DateTime @default(now())
+model RegionSnapshot {
+  id               String   @id @default(uuid()) @db.Char(36)
+  cronDate         DateTime @db.Date
+  region           String   @db.VarChar(100)
+  totalGdp         Decimal  @default(0) @db.Decimal(15, 2)
+  organicGdp       Decimal  @default(0) @db.Decimal(15, 2)
+  inorganicGdp     Decimal  @default(0) @db.Decimal(15, 2)
+  totalJobs        Decimal  @default(0) @db.Decimal(15, 2)
+  totalJobsCount   Int      @default(0)
+  totalHackathons  Decimal  @default(0) @db.Decimal(15, 2)
+  totalContracts   Decimal  @default(0) @db.Decimal(15, 2)
+  totalFunding     Decimal  @default(0) @db.Decimal(15, 2)
+  virtualAttendees Int      @default(0)
+  irlAttendees     Int      @default(0)
+  totalAttendees   Int      @default(0)
+  virtualEvents    Int      @default(0)
+  irlEvents        Int      @default(0)
+  totalEvents      Int      @default(0)
+  members          Int      @default(0)
+  twitter          Int      @default(0)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
 
   @@unique([cronDate, region])
   @@index([region, cronDate])
-}
-
-model CountrySnapshot {
-  id                     String   @id @default(uuid()) @db.Char(36)
-  cronDate               DateTime @db.Date
-  name                   String   @db.VarChar(100)
-  active                 Int      @default(1)
-  virtualAttendees       Int      @default(0)
-  irlAttendees           Int      @default(0)
-  totalAttendees         Int      @default(0)
-  virtualEvents          Int      @default(0)
-  irlEvents              Int      @default(0)
-  totalEvents            Int      @default(0)
-  members                Int      @default(0)
-  communityCallAttendees Int      @default(0)
-  uniqueXpEarners        Int      @default(0)
-  percentEarningXp       Decimal  @default(0) @db.Decimal(5, 2)
-  discord                Int      @default(0)
-  twitter                Int      @default(0)
-  substack               Int      @default(0)
-  totalFollowers         Int      @default(0)
-  funding                Decimal  @default(0) @db.Decimal(15, 2)
-  jobs                   Int      @default(0)
-  createdAt              DateTime @default(now())
-
-  @@unique([cronDate, name])
-  @@index([name, cronDate])
 }
 
 enum CreditEventType {
