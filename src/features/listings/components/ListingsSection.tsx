@@ -63,6 +63,7 @@ export const ListingsSection = ({
   category,
   defaultTab,
   customEmptySection,
+  initialListings,
 }: ListingsSectionProps) => {
   const isMd = useBreakpoint('md');
   const isLg = useBreakpoint('lg');
@@ -181,6 +182,7 @@ export const ListingsSection = ({
     sponsor,
     skill,
     authenticated,
+    initialListings,
   });
 
   const shouldShowForYou = useMemo(() => {

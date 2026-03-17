@@ -7,6 +7,7 @@ import { JsonLd } from '@/components/shared/JsonLd';
 import { useBreakpoint } from '@/hooks/use-breakpoint';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
+import { prisma } from '@/prisma';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 import {
@@ -20,6 +21,13 @@ import { SponsorStageBanner } from '@/features/home/components/SponsorStage/Spon
 import { UserStatsBanner } from '@/features/home/components/UserStatsBanner';
 import { userCountQuery } from '@/features/home/queries/user-count';
 import { ListingsSection } from '@/features/listings/components/ListingsSection';
+import {
+  listingSelect,
+  QueryParamsSchema,
+} from '@/features/listings/constants/schema';
+import { type Listing } from '@/features/listings/types';
+import { buildListingQuery } from '@/features/listings/utils/query-builder';
+import { reorderFeaturedOngoing } from '@/features/listings/utils/reorderFeaturedOngoing';
 import { ProIntroDialog } from '@/features/pro/components/ProIntroDialog';
 
 const GrantsSection = dynamic(() =>
@@ -58,9 +66,10 @@ const TalentAnnouncements = dynamic(
 
 interface HomePageProps {
   readonly potentialSession: boolean;
+  readonly initialListings: Listing[] | null;
 }
 
-export default function HomePage({ potentialSession }: HomePageProps) {
+export default function HomePage({ potentialSession, initialListings }: HomePageProps) {
   const { authenticated } = usePrivy();
   const { data: totalUsers } = useQuery(userCountQuery);
   const { user } = useUser();
@@ -120,6 +129,7 @@ export default function HomePage({ potentialSession }: HomePageProps) {
                   <ListingsSection
                     type="home"
                     potentialSession={potentialSession}
+                    initialListings={initialListings}
                   />
                   {/* <HackathonSection type="home" /> */}
                   <GrantsSection type="home" />
@@ -147,8 +157,25 @@ export const getServerSideProps: GetServerSideProps<HomePageProps> = async ({
   req,
 }) => {
   const cookies = req.headers.cookie || '';
-
   const cookieExists = /(^|;)\s*user-id-hint=/.test(cookies);
 
-  return { props: { potentialSession: cookieExists } };
+  if (cookieExists) {
+    return { props: { potentialSession: true, initialListings: null } };
+  }
+
+  try {
+    const queryData = QueryParamsSchema.parse({ context: 'home' });
+    const { where, orderBy, take } = buildListingQuery(queryData, null);
+    const raw = await prisma.bounties.findMany({
+      where,
+      orderBy,
+      take,
+      select: listingSelect,
+    });
+    const ordered = reorderFeaturedOngoing(raw);
+    const initialListings = JSON.parse(JSON.stringify(ordered)) as Listing[];
+    return { props: { potentialSession: false, initialListings } };
+  } catch {
+    return { props: { potentialSession: false, initialListings: null } };
+  }
 };

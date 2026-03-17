@@ -108,6 +108,7 @@ export interface ListingTabsProps {
   skill?: string;
   category?: string;
   defaultTab?: 'bounties' | 'projects';
+  initialListings?: Listing[] | null;
 }
 
 type ProjectContextQuestionsType = {
