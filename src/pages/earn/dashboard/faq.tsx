@@ -25,7 +25,7 @@ const faqSections: readonly FAQSection[] = [
         answer: `Superteam Earn is a platform to get work done from crypto-native talent. This can be in the form of bounties (get the same work done by many people) or hiring freelancers in the form of Project listings. Earn can be used to get any small to medium-scale task done, including but not limited to development, writing, design, research, and product feedback.
 <br />
 <br />
-<a style="color: blue" href="https://in.superteam.fun/bounty-menu" target="_blank">Click here</a> to access the Listings Menu, which contains ideas, listing examples, suggested prize ranges, etc.`,
+<a style="color: blue" href="https://docs.google.com/spreadsheets/d/18Pahc-_9WhXezz7DW2kjwE1Iu-ExbOFtoxlPPsavsvg/edit?gid=0#gid=0" target="_blank">Click here</a> to access the Listings Menu, which contains ideas, listing examples, suggested prize ranges, etc.`,
       },
       {
         question: 'Are there any hidden charges to publish a listing?',
