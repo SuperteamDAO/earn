@@ -68,15 +68,19 @@ interface HomePageProps {
   readonly potentialSession: boolean;
   readonly initialListings: Listing[] | null;
   readonly ssrTimestamp: number | null;
+  readonly totalUsers: number;
+  readonly totalSponsors: number;
 }
 
 export default function HomePage({
   potentialSession,
   initialListings,
   ssrTimestamp,
+  totalUsers,
+  totalSponsors,
 }: HomePageProps) {
   const { authenticated } = usePrivy();
-  const { data: totalUsers } = useQuery(userCountQuery);
+  useQuery({ ...userCountQuery, initialData: { totalUsers } });
   const { user } = useUser();
   const isLg = useBreakpoint('lg');
 
@@ -127,7 +131,10 @@ export default function HomePage({
                       )}
                     </>
                   ) : (
-                    <BannerCarousel totalUsers={totalUsers?.totalUsers} />
+                    <BannerCarousel
+                      totalUsers={totalUsers}
+                      totalSponsors={totalSponsors}
+                    />
                   )}
                 </div>
                 <div className="w-full">
@@ -163,19 +170,22 @@ export const getStaticProps: GetStaticProps<HomePageProps> = async () => {
   try {
     const queryData = QueryParamsSchema.parse({ context: 'home' });
     const { where, orderBy, take } = await buildListingQuery(queryData, null);
-    const raw = await prisma.bounties.findMany({
-      where,
-      orderBy,
-      take,
-      select: listingSelect,
-    });
+    const [raw, userCount, sponsorCount] = await Promise.all([
+      prisma.bounties.findMany({ where, orderBy, take, select: listingSelect }),
+      prisma.user.count(),
+      prisma.sponsors.count(),
+    ]);
     const ordered = reorderFeaturedOngoing(raw);
     const initialListings = JSON.parse(JSON.stringify(ordered)) as Listing[];
+    const totalUsers = Math.ceil((userCount - 289) / 10) * 10;
+    const totalSponsors = Math.ceil(sponsorCount / 10) * 10;
     return {
       props: {
         potentialSession: false,
         initialListings,
         ssrTimestamp: Date.now(),
+        totalUsers,
+        totalSponsors,
       },
       revalidate: 60,
     };
@@ -185,6 +195,8 @@ export const getStaticProps: GetStaticProps<HomePageProps> = async () => {
         potentialSession: false,
         initialListings: null,
         ssrTimestamp: null,
+        totalUsers: 0,
+        totalSponsors: 0,
       },
       revalidate: 60,
     };
