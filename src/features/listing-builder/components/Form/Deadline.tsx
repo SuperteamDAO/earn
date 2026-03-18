@@ -81,26 +81,26 @@ export function Deadline() {
 
   // TODO: Debug why zod default for deadline specifically is not working
   useEffect(() => {
-    if (form) {
-      if (type !== 'hackathon') {
-        if (typeof deadline !== 'string') {
-          form.setValue('deadline', handleDeadlineSelection(7));
-        }
-      } else {
-        if (hackathons) {
-          const currentHackathon = hackathons?.find(
-            (s) => s.id === hackathonId,
-          );
-          if (currentHackathon) {
-            form.setValue(
-              'deadline',
-              currentHackathon.deadline as any as string,
-            );
-          }
-        }
+    if (!form) return;
+
+    if (type === 'hackathon') {
+      if (!hackathons) return;
+
+      const currentHackathon = hackathons.find((s) => s.id === hackathonId);
+      if (currentHackathon) {
+        form.setValue('deadline', currentHackathon.deadline as any as string);
       }
+      return;
     }
-  }, [form, deadline, type, hackathons]);
+
+    // Existing listings already have a saved deadline; do not overwrite it on
+    // mount while the form is hydrating.
+    if (isEditing) return;
+
+    if (typeof deadline !== 'string' || !deadline) {
+      form.setValue('deadline', handleDeadlineSelection(7));
+    }
+  }, [deadline, form, hackathonId, hackathons, isEditing, type]);
 
   return (
     <FormField
