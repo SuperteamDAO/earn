@@ -200,11 +200,18 @@ export const useListingForm = (
   const submitListing = useCallback(async () => {
     const formData = refineReadyListing(getValues());
     const data = await submitListingMutation.mutateAsync(formData);
-    queryClient.invalidateQueries({
-      queryKey: ['sponsor-dashboard-listing', data.slug],
-    });
+
+    await Promise.all([
+      queryClient.invalidateQueries({
+        queryKey: ['sponsor-dashboard-listing', data.slug],
+      }),
+      queryClient.invalidateQueries({
+        queryKey: ['dashboard'],
+      }),
+    ]);
+
     return data;
-  }, [getValues, submitListingMutation]);
+  }, [getValues, queryClient, submitListingMutation]);
 
   const resetForm = useCallback(() => {
     if (typeof window !== 'undefined' && window.__clearImageCleanup) {
