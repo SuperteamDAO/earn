@@ -41,7 +41,13 @@ export const ListingCardSkeleton = () => {
   );
 };
 
-export const ListingCard = ({ bounty }: { bounty: Listing }) => {
+export const ListingCard = ({
+  bounty,
+  ssrTimestamp,
+}: {
+  bounty: Listing;
+  ssrTimestamp?: number;
+}) => {
   const { getIcon } = useTokenLookup();
   const {
     rewardAmount,
@@ -62,12 +68,13 @@ export const ListingCard = ({ bounty }: { bounty: Listing }) => {
   } = bounty;
 
   const { serverTime } = useServerTimeSync();
-  const isBeforeDeadline = dayjs(serverTime()).isBefore(dayjs(deadline));
+  const now = ssrTimestamp ?? serverTime();
+  const isBeforeDeadline = dayjs(now).isBefore(dayjs(deadline));
 
   const targetDate =
     isWinnersAnnounced && winnersAnnouncedAt ? winnersAnnouncedAt : deadline;
 
-  const formattedDeadline = timeAgoShort(targetDate!, serverTime());
+  const formattedDeadline = timeAgoShort(targetDate!, now);
 
   let deadlineText;
 
@@ -89,14 +96,18 @@ export const ListingCard = ({ bounty }: { bounty: Listing }) => {
   const tokenIcon = getIcon(token);
 
   return (
-    <Link
-      href={`/earn/listing/${slug}`}
+    <div
       className={cn(
-        'block w-full rounded-md px-2 py-4 no-underline hover:bg-gray-100 sm:px-4',
+        'relative block w-full rounded-md px-2 py-4 no-underline hover:bg-gray-100 sm:px-4',
         isFeatured && isBeforeDeadline ? 'bg-purple-50' : '',
       )}
     >
-      <div className="flex w-full items-center justify-between">
+      <Link
+        href={`/earn/listing/${slug}`}
+        className="absolute inset-0 z-0 rounded-md"
+        aria-label={title ?? ''}
+      />
+      <div className="relative z-[1] flex w-full items-center justify-between">
         <div className="flex w-full">
           <img
             className="mr-3 h-14 w-14 rounded-md sm:mr-5 sm:h-16 sm:w-16"
@@ -110,7 +121,6 @@ export const ListingCard = ({ bounty }: { bounty: Listing }) => {
             </p>
             <Link
               href={`/earn/s/${sponsor?.slug}`}
-              onClick={(e) => e.stopPropagation()}
               className="flex w-min items-center gap-1 hover:underline"
             >
               <p className="w-full text-xs whitespace-nowrap text-slate-500 md:text-sm">
@@ -204,10 +214,9 @@ export const ListingCard = ({ bounty }: { bounty: Listing }) => {
                 </div>
               )}
 
-              {dayjs(serverTime()).isBefore(dayjs(deadline)) &&
-                !isWinnersAnnounced && (
-                  <div className="mx-1 h-2 w-2 rounded-full bg-[#16A35F] sm:mx-0" />
-                )}
+              {isBeforeDeadline && !isWinnersAnnounced && (
+                <div className="mx-1 h-2 w-2 rounded-full bg-[#16A35F] sm:mx-0" />
+              )}
             </div>
           </div>
         </div>
@@ -242,6 +251,6 @@ export const ListingCard = ({ bounty }: { bounty: Listing }) => {
           </div>
         </div>
       </div>
-    </Link>
+    </div>
   );
 };

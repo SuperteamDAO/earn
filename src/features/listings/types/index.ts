@@ -109,6 +109,7 @@ export interface ListingTabsProps {
   category?: string;
   defaultTab?: 'bounties' | 'projects';
   initialListings?: Listing[] | null;
+  ssrTimestamp?: number;
 }
 
 type ProjectContextQuestionsType = {

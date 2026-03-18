@@ -64,6 +64,7 @@ export const ListingsSection = ({
   defaultTab,
   customEmptySection,
   initialListings,
+  ssrTimestamp,
 }: ListingsSectionProps) => {
   const isMd = useBreakpoint('md');
   const isLg = useBreakpoint('lg');
@@ -287,7 +288,11 @@ export const ListingsSection = ({
           />
         )}
         {listings.map((listing) => (
-          <ListingCard key={listing.id} bounty={listing} />
+          <ListingCard
+            key={listing.id}
+            bounty={listing}
+            ssrTimestamp={ssrTimestamp}
+          />
         ))}
         {(type === 'home' || type === 'region' || type === 'skill') && (
           <ViewAllButton

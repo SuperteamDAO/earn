@@ -1,6 +1,6 @@
 import { usePrivy } from '@privy-io/react-auth';
 import { useQuery } from '@tanstack/react-query';
-import { type GetServerSideProps } from 'next';
+import { type GetStaticProps } from 'next';
 import dynamic from 'next/dynamic';
 
 import { JsonLd } from '@/components/shared/JsonLd';
@@ -67,9 +67,14 @@ const TalentAnnouncements = dynamic(
 interface HomePageProps {
   readonly potentialSession: boolean;
   readonly initialListings: Listing[] | null;
+  readonly ssrTimestamp: number | null;
 }
 
-export default function HomePage({ potentialSession, initialListings }: HomePageProps) {
+export default function HomePage({
+  potentialSession,
+  initialListings,
+  ssrTimestamp,
+}: HomePageProps) {
   const { authenticated } = usePrivy();
   const { data: totalUsers } = useQuery(userCountQuery);
   const { user } = useUser();
@@ -130,6 +135,7 @@ export default function HomePage({ potentialSession, initialListings }: HomePage
                     type="home"
                     potentialSession={potentialSession}
                     initialListings={initialListings}
+                    ssrTimestamp={ssrTimestamp ?? undefined}
                   />
                   {/* <HackathonSection type="home" /> */}
                   <GrantsSection type="home" />
@@ -153,19 +159,10 @@ export default function HomePage({ potentialSession, initialListings }: HomePage
   );
 }
 
-export const getServerSideProps: GetServerSideProps<HomePageProps> = async ({
-  req,
-}) => {
-  const cookies = req.headers.cookie || '';
-  const cookieExists = /(^|;)\s*user-id-hint=/.test(cookies);
-
-  if (cookieExists) {
-    return { props: { potentialSession: true, initialListings: null } };
-  }
-
+export const getStaticProps: GetStaticProps<HomePageProps> = async () => {
   try {
     const queryData = QueryParamsSchema.parse({ context: 'home' });
-    const { where, orderBy, take } = buildListingQuery(queryData, null);
+    const { where, orderBy, take } = await buildListingQuery(queryData, null);
     const raw = await prisma.bounties.findMany({
       where,
       orderBy,
@@ -174,8 +171,22 @@ export const getServerSideProps: GetServerSideProps<HomePageProps> = async ({
     });
     const ordered = reorderFeaturedOngoing(raw);
     const initialListings = JSON.parse(JSON.stringify(ordered)) as Listing[];
-    return { props: { potentialSession: false, initialListings } };
+    return {
+      props: {
+        potentialSession: false,
+        initialListings,
+        ssrTimestamp: Date.now(),
+      },
+      revalidate: 60,
+    };
   } catch {
-    return { props: { potentialSession: false, initialListings: null } };
+    return {
+      props: {
+        potentialSession: false,
+        initialListings: null,
+        ssrTimestamp: null,
+      },
+      revalidate: 60,
+    };
   }
 };
