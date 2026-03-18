@@ -99,7 +99,7 @@ interface StrippedSubmission {
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { slug } = context.query;
-  const { req } = context;
+  const { req, res } = context;
   const protocol = req.headers['x-forwarded-proto'] || 'http';
   const host = req.headers.host;
   const fullUrl = `${protocol}://${host}/`;
@@ -134,6 +134,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     bountyData = null;
   }
 
+  res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=600');
   return {
     props: {
       bounty: bountyData,

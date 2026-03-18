@@ -100,6 +100,7 @@ function ListingDetails({
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { slug } = context.query;
+  const { res } = context;
   let listingData;
   try {
     listingData = await getListingDetailsBySlug(String(slug));
@@ -127,6 +128,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
     await Promise.all(prefetchPromises);
   }
+  res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=600');
   return {
     props: {
       listing: listingData,

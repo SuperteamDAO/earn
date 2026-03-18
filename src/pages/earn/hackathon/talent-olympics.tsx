@@ -1162,7 +1162,7 @@ interface CountryLeader {
   location: string;
   submission_count: number;
 }
-export const getServerSideProps: GetServerSideProps = async ({}) => {
+export const getServerSideProps: GetServerSideProps = async ({ res }) => {
   const countryLeaders = await prisma.$queryRaw<CountryLeader[]>`
 SELECT 
     u.location,
@@ -1251,6 +1251,7 @@ LIMIT 10;
     }))
     .sort((a, b) => b.rating - a.rating);
 
+  res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=600');
   return {
     props: {
       countryLeaders: JSON.parse(

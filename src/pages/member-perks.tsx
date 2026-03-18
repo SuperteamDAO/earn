@@ -86,7 +86,7 @@ export default function MemberPerks({
   );
 }
 
-export const getServerSideProps: GetServerSideProps = async () => {
+export const getServerSideProps: GetServerSideProps = async ({ res }) => {
   const airtableUrl = `https://api.airtable.com/v0/${process.env.AIRTABLE_BASE_ID}/${process.env.AIRTABLE_PERKS_TABLE}`;
 
   try {
@@ -120,6 +120,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
       (item: any) => item.fields['Status'] === 'Coming Soon',
     );
 
+    res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=600');
     return {
       props: {
         liveNow,
@@ -150,6 +151,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
       console.error('Unexpected error fetching perks:', error);
     }
 
+    res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=600');
     return {
       props: {
         liveNow: [],

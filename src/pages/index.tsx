@@ -82,9 +82,9 @@ export default function Home({ chapters, chaptersForSchema }: HomePageProps) {
   );
 }
 
-export const getServerSideProps: GetServerSideProps<
-  HomePageProps
-> = async () => {
+export const getServerSideProps: GetServerSideProps<HomePageProps> = async ({
+  res,
+}) => {
   const chapters = await prisma.chapter.findMany({
     select: {
       name: true,
@@ -119,6 +119,7 @@ export const getServerSideProps: GetServerSideProps<
     link: chapter.link || undefined,
   }));
 
+  res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=600');
   return {
     props: {
       chapters: chaptersForGeographies,
