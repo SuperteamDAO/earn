@@ -60,8 +60,8 @@ export default function Cypherpunk({ hackathon }: { hackathon: Hackathon }) {
             content={`https://res.cloudinary.com/dgvnuwspr/image/upload/v1760541751/assets/hackathon/cypherpunk/og-image.png`}
           />
           <Meta
-            title="Cypherpunk | Superteam Earn"
-            description={`Solana Cypherpunk Online Hackathon`}
+            title="Cypherpunk — Submission Tracks | Superteam Earn"
+            description="Submit to Sidetrack bounties of the Solana Cypherpunk Online Hackathon on Superteam Earn. Earn crypto prizes across development, design, and content tracks."
             canonical="https://superteam.fun/earn/hackathon/cypherpunk/"
             og="https://res.cloudinary.com/dgvnuwspr/image/upload/v1760541751/assets/hackathon/cypherpunk/og-image.png"
           />

@@ -1,12 +1,17 @@
+import { QueryClient, dehydrate } from '@tanstack/react-query';
 import { type GetServerSideProps } from 'next';
 
 import { JsonLd } from '@/components/shared/JsonLd';
 import { ASSET_URL } from '@/constants/ASSET_URL';
 import { Home } from '@/layouts/Home';
 import { Meta } from '@/layouts/Meta';
+import { prisma } from '@/prisma';
 import { generateBreadcrumbListSchema } from '@/utils/json-ld';
 
 import { ListingsSection } from '@/features/listings/components/ListingsSection';
+import { listingSelect } from '@/features/listings/constants/schema';
+import { buildListingQuery } from '@/features/listings/utils/query-builder';
+import { reorderFeaturedOngoing } from '@/features/listings/utils/reorderFeaturedOngoing';
 
 interface BountiesPageProps {
   readonly potentialSession: boolean;
@@ -51,5 +56,48 @@ export const getServerSideProps: GetServerSideProps<
   const cookies = req.headers.cookie || '';
   const cookieExists = /(^|;)\s*user-id-hint=/.test(cookies);
 
-  return { props: { potentialSession: cookieExists } };
+  const queryClient = new QueryClient();
+
+  await queryClient.prefetchQuery({
+    queryKey: [
+      'listings',
+      'all',
+      'bounties',
+      'All',
+      'open',
+      'Date',
+      'asc',
+      null,
+      null,
+      null,
+      false,
+    ],
+    queryFn: async () => {
+      const { where, orderBy, take } = await buildListingQuery(
+        {
+          context: 'all',
+          tab: 'bounties',
+          category: 'All',
+          status: 'open',
+          sortBy: 'Date',
+          order: 'asc',
+        },
+        null,
+      );
+      const listings = await prisma.bounties.findMany({
+        where,
+        orderBy,
+        take,
+        select: listingSelect,
+      });
+      return JSON.parse(JSON.stringify(reorderFeaturedOngoing(listings)));
+    },
+  });
+
+  return {
+    props: {
+      potentialSession: cookieExists,
+      dehydratedState: JSON.parse(JSON.stringify(dehydrate(queryClient))),
+    },
+  };
 };

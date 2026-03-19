@@ -83,8 +83,8 @@ export default function Breakout({ hackathon }: { hackathon: Hackathon }) {
             content={`https://res.cloudinary.com/dgvnuwspr/image/upload/assets/hackathon/breakout/og-image.png`}
           />
           <Meta
-            title="Breakout | Superteam Earn"
-            description={`Solana Breakout Online Hackathon`}
+            title="Breakout — Submission Tracks | Superteam Earn"
+            description="Submit to Sidetrack bounties of the Solana Breakout Online Hackathon on Superteam Earn. Earn crypto prizes across development, design, and content tracks."
             canonical="https://superteam.fun/earn/hackathon/breakout/"
             og="https://res.cloudinary.com/dgvnuwspr/image/upload/assets/hackathon/breakout/og-image.png"
           />

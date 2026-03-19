@@ -1,13 +1,19 @@
+import { QueryClient, dehydrate } from '@tanstack/react-query';
+import type { GetServerSideProps } from 'next';
+
 import { ErrorInfo } from '@/components/shared/ErrorInfo';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ASSET_URL } from '@/constants/ASSET_URL';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
+import { prisma } from '@/prisma';
 
 import { GrantsPop } from '@/features/conversion-popups/components/GrantsPop';
 import { GrantEntry } from '@/features/grants/components/GrantEntry';
+import { grantsSelect } from '@/features/grants/constants/schema';
 import { useGrants } from '@/features/grants/hooks/useGrants';
+import { buildGrantsQuery } from '@/features/grants/utils/query-builder';
 
 function Grants() {
   const {
@@ -90,3 +96,38 @@ function Grants() {
 }
 
 export default Grants;
+
+export const getServerSideProps: GetServerSideProps = async () => {
+  const queryClient = new QueryClient();
+
+  await queryClient.prefetchQuery({
+    queryKey: ['grants', 'all', 'All', undefined, undefined, undefined],
+    queryFn: async () => {
+      const { where, take } = await buildGrantsQuery(
+        { context: 'all', category: 'All' },
+        null,
+      );
+      const grants = await prisma.grants.findMany({
+        where,
+        take,
+        orderBy: { createdAt: 'desc' },
+        select: grantsSelect,
+      });
+      return JSON.parse(
+        JSON.stringify(
+          grants.map((grant) => ({
+            ...grant,
+            totalApplications:
+              grant._count.GrantApplication + grant.historicalApplications,
+          })),
+        ),
+      );
+    },
+  });
+
+  return {
+    props: {
+      dehydratedState: JSON.parse(JSON.stringify(dehydrate(queryClient))),
+    },
+  };
+};

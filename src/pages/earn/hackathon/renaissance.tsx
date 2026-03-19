@@ -21,8 +21,8 @@ export default function Renaissance() {
       className="bg-white"
       meta={
         <Meta
-          title="Renaissance | Superteam Earn"
-          description="Explore the latest bounties on Superteam Earn, offering opportunities in the crypto space across Design, Development, and Content."
+          title="Renaissance — Submission Tracks | Superteam Earn"
+          description="Submit to bounty tracks of the Renaissance content hackathon on Superteam Earn. Solana's first-ever content hackathon — earn crypto for writing, design, and more."
           canonical="https://superteam.fun/earn/hackathon/renaissance/"
         />
       }

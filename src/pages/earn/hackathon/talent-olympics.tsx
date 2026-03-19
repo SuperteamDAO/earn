@@ -179,8 +179,8 @@ export default function TalentOlympics({ countryLeaders, rankings }: Props) {
       className="bg-white"
       meta={
         <Meta
-          title="Talent Olympics | Superteam Earn"
-          description="Explore the latest bounties on Superteam Earn, offering opportunities in the crypto space across Design, Development, and Content."
+          title="Talent Olympics — Submission Tracks | Superteam Earn"
+          description="Submit to Front End and Rust developer tracks of the Talent Olympics on Superteam Earn. Complete challenges, earn crypto prizes, and get hired by top Solana teams."
           canonical="https://superteam.fun/earn/hackathon/talent-olympics/"
         />
       }

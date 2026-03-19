@@ -86,10 +86,10 @@ export function useListings({
       status,
       sortBy,
       order,
-      region,
-      sponsor,
-      skill,
-      authenticated,
+      region ?? null,
+      sponsor ?? null,
+      skill ?? null,
+      authenticated ?? null,
     ],
     queryFn: () =>
       fetchListings({
@@ -103,5 +103,6 @@ export function useListings({
         sponsor,
         skill,
       }),
+    staleTime: 60 * 1000,
   });
 }

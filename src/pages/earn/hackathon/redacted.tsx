@@ -74,7 +74,7 @@ export default function Redacted({ hackathon }: { hackathon: Hackathon }) {
             content={`https://res.cloudinary.com/dgvnuwspr/image/upload/v1741616337/assets/hackathon/redacted/redacted-og`}
           />
           <Meta
-            title="Helius [REDACTED] Hackathon | Superteam Earn"
+            title="Helius [REDACTED] — Submission Tracks | Superteam Earn"
             description="Join the Helius Hackathon—a data-driven challenge empowering analysts, data scientists, and on-chain sleuths to expose fraud, build insightful dashboards, and advance Solana’s social layer."
             canonical="https://superteam.fun/earn/hackathon/redacted/"
             og="https://res.cloudinary.com/dgvnuwspr/image/upload/v1741616337/assets/hackathon/redacted/redacted-og"
