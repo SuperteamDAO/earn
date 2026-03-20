@@ -35,8 +35,10 @@ const FooterColumn = ({
             key={link.text}
             href={link.href || ''}
             className="text-sm text-slate-500 hover:text-slate-600"
-            target="_blank"
-            rel="noopener noreferrer"
+            {...(link.href?.startsWith('http') && {
+              target: '_blank',
+              rel: 'noopener noreferrer',
+            })}
           >
             {link.text}
           </Link>

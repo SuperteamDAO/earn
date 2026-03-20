@@ -163,6 +163,42 @@ export function ListingPageLayout({
         {initialListing !== null && !!initialListing?.id && (
           <div className="mx-auto w-full px-2 lg:px-6">
             <div className="mx-auto w-full max-w-7xl">
+              <nav aria-label="Breadcrumb" className="sr-only">
+                <Link href="/earn" className="hover:text-slate-600">
+                  Earn
+                </Link>
+                <span>/</span>
+                {initialListing.type === 'bounty' && (
+                  <Link href="/earn/bounties" className="hover:text-slate-600">
+                    Bounties
+                  </Link>
+                )}
+                {initialListing.type === 'project' && (
+                  <Link href="/earn/projects" className="hover:text-slate-600">
+                    Projects
+                  </Link>
+                )}
+                {initialListing.type === 'hackathon' && (
+                  <Link href="/earn/all" className="hover:text-slate-600">
+                    Hackathons
+                  </Link>
+                )}
+                {initialListing.sponsor && (
+                  <>
+                    <span>/</span>
+                    <Link
+                      href={`/earn/s/${initialListing.sponsor.slug}`}
+                      className="hover:text-slate-600"
+                    >
+                      {initialListing.sponsor.name}
+                    </Link>
+                  </>
+                )}
+                <span>/</span>
+                <span className="truncate text-slate-500">
+                  {initialListing.title}
+                </span>
+              </nav>
               <ListingHeader
                 isTemplate={isTemplate}
                 commentCount={commentCount}
@@ -195,12 +231,13 @@ export function ListingPageLayout({
                     </p>
                     <div className="flex flex-wrap gap-3">
                       {iterableSkills?.map((skill) => (
-                        <div
-                          className="m-0 rounded-sm bg-slate-100 px-4 py-1 text-sm font-medium text-slate-600"
+                        <Link
                           key={skill}
+                          href={`/earn/skill/${skill.toLowerCase().replace(/\s+/g, '-')}`}
+                          className="m-0 rounded-sm bg-slate-100 px-4 py-1 text-xs font-medium text-slate-600 hover:bg-slate-200"
                         >
-                          <p className="text-xs">{skill}</p>
-                        </div>
+                          {skill}
+                        </Link>
                       ))}
                     </div>
                   </div>
