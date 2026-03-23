@@ -41,6 +41,10 @@ import { cn } from '@/utils/cn';
 
 import { isAutoGenerateOpenAtom } from '@/features/listing-builder/atoms';
 import { isCreateListingAllowedQuery } from '@/features/listing-builder/queries/is-create-allowed';
+import {
+  isUserCoreMember,
+  resolveUserMembershipChapterId,
+} from '@/features/membership/utils/userMembership';
 import { NavItem } from '@/features/sponsor-dashboard/components/NavItems';
 import { SelectHackathon } from '@/features/sponsor-dashboard/components/SelectHackathon';
 import { SelectSponsor } from '@/features/sponsor-dashboard/components/SelectSponsor';
@@ -193,10 +197,16 @@ export function SponsorLayout({
     const sponsorChapterId = user?.currentSponsor?.chapter?.id;
     if (!sponsorChapterId) return false;
     if (user?.role === 'GOD') return true;
-    const isCoreMember = user?.people?.type?.toUpperCase() === 'CORE';
-    return isCoreMember && user?.people?.chapterId === sponsorChapterId;
+    return (
+      isUserCoreMember(user) &&
+      resolveUserMembershipChapterId(user) === sponsorChapterId
+    );
   }, [
     user?.currentSponsor?.chapter?.id,
+    user?.chapter?.id,
+    user?.chapterId,
+    user?.membershipType,
+    user?.people?.chapter?.id,
     user?.people?.chapterId,
     user?.people?.type,
     user?.role,

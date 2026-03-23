@@ -6,6 +6,7 @@ import {
 } from '../../listings/types';
 import { isDeadlineOver } from '../../listings/utils/deadline';
 import { getListingStatus } from '../../listings/utils/status';
+import { isUserCoreMember } from '../../membership/utils/userMembership';
 
 type ListingInput =
   | ListingWithSubmissions
@@ -43,7 +44,7 @@ export const isListingEditable = ({
     return true;
   }
 
-  const isCore = user?.people?.type?.toUpperCase() === 'CORE';
+  const isCore = isUserCoreMember(user as any);
 
   if (isCore && listing?.isWinnersAnnounced) {
     return false;

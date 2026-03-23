@@ -13,6 +13,7 @@ import {
 } from '@/prisma/enums';
 import { cn } from '@/utils/cn';
 
+import { resolveUserMembershipChapter } from '@/features/membership/utils/userMembership';
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
 import { selectedGrantApplicationAtom } from '../../atoms';
@@ -123,7 +124,7 @@ export const ApplicationList = ({
             color: labelColor,
             border: labelBorder,
           } = colorMap[applicationLabel];
-          const chapter = application?.user.people?.chapter;
+          const chapter = resolveUserMembershipChapter(application?.user);
           return (
             <div
               key={application?.id}

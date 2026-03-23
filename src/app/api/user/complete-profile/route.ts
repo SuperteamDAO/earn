@@ -224,6 +224,19 @@ export async function POST(request: NextRequest) {
 
     let walletAddress = user.walletAddress;
     if (!walletAddress) {
+      if (!user.privyDid) {
+        logger.warn(
+          `Cannot create wallet for user ${userId} without an attached privyDid`,
+        );
+        return NextResponse.json(
+          {
+            error:
+              'User is missing an Earn authentication identity. Please sign in again.',
+          },
+          { status: 409 },
+        );
+      }
+
       const createWalletResponse = await privy.wallets().create({
         chain_type: 'solana',
         owner: {

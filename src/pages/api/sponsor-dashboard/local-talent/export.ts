@@ -10,6 +10,10 @@ import { safeStringify } from '@/utils/safeStringify';
 
 import { type NextApiRequestWithSponsor } from '@/features/auth/types';
 import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
+import {
+  isUserCoreMember,
+  resolveUserMembershipChapterId,
+} from '@/features/membership/utils/userMembership';
 
 async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   const userId = req.userId;
@@ -19,6 +23,8 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       where: { id: userId as string },
       select: {
         role: true,
+        chapterId: true,
+        membershipType: true,
         people: {
           select: {
             chapterId: true,
@@ -44,9 +50,9 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       return res.status(400).json({ error: 'Sponsor chapter not configured' });
     }
 
-    const isCoreMember = requestingUser?.people?.type?.toUpperCase() === 'CORE';
     const isAuthorizedCoreForChapter =
-      isCoreMember && requestingUser?.people?.chapterId === sponsorChapter.id;
+      isUserCoreMember(requestingUser) &&
+      resolveUserMembershipChapterId(requestingUser) === sponsorChapter.id;
     if (requestingUser?.role !== 'GOD' && !isAuthorizedCoreForChapter) {
       return res.status(403).json({ error: 'Unauthorized' });
     }

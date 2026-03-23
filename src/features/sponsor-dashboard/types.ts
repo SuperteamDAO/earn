@@ -18,7 +18,15 @@ export type ScoutRowType = {
 };
 
 type UserWithChapter = PrismaUserWithoutKYC & {
+  chapterId?: string | null;
+  membershipType?: string | null;
+  membershipDisplayName?: string | null;
   peopleId?: string | null;
+  chapter?: {
+    id: string;
+    name: string;
+    icons?: string | null;
+  } | null;
   people?: {
     id: string;
     chapterId?: string | null;

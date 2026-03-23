@@ -155,7 +155,17 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
             telegram: true,
             community: true,
             experience: true,
+            chapterId: true,
+            membershipType: true,
+            membershipDisplayName: true,
             peopleId: true,
+            chapter: {
+              select: {
+                id: true,
+                name: true,
+                icons: true,
+              },
+            },
             people: {
               select: {
                 id: true,

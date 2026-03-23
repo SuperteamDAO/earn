@@ -1,4 +1,7 @@
-import { isEligiblePeopleType } from '@/features/membership/utils/peopleEligibility';
+import {
+  hasEligibleUserMembership,
+  resolveUserMembershipChapterId,
+} from '@/features/membership/utils/userMembership';
 
 import type { Grant } from '../types';
 
@@ -46,6 +49,8 @@ export const isSTGrant = (grant: Grant | null | undefined): boolean => {
 
 export const isUserEligibleForST = (
   user: {
+    chapterId?: string | null;
+    membershipType?: string | null;
     peopleId?: string | null;
     people?: {
       chapterId?: string | null;
@@ -53,10 +58,10 @@ export const isUserEligibleForST = (
     } | null;
   } | null,
 ): boolean => {
-  if (!user?.people || !isEligiblePeopleType(user.people.type)) {
+  if (!hasEligibleUserMembership(user)) {
     return false;
   }
-  return Boolean(user.peopleId || user.people.chapterId);
+  return Boolean(user?.peopleId || resolveUserMembershipChapterId(user));
 };
 
 export const ST_GRANT_COPY = {

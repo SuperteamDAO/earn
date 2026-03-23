@@ -7,7 +7,7 @@ import { safeStringify } from '@/utils/safeStringify';
 
 import { userSelectOptions } from '@/features/auth/constants/userSelectOptions';
 import { getUserSession } from '@/features/auth/utils/getUserSession';
-import { isEligiblePeopleType } from '@/features/membership/utils/peopleEligibility';
+import { hasEligibleUserMembership } from '@/features/membership/utils/userMembership';
 
 export async function POST() {
   try {
@@ -32,6 +32,8 @@ export async function POST() {
       where: { id: userId },
       select: {
         isPro: true,
+        chapterId: true,
+        membershipType: true,
         peopleId: true,
         people: {
           select: {
@@ -88,9 +90,7 @@ export async function POST() {
     }
 
     const totalWinnings = stats[0].totalWinnings;
-    const hasEligibleMembership = isEligiblePeopleType(
-      existingUser?.people?.type,
-    );
+    const hasEligibleMembership = hasEligibleUserMembership(existingUser);
 
     if (totalWinnings < 1000 && !hasEligibleMembership) {
       logger.warn(

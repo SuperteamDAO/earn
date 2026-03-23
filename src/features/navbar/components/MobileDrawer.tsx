@@ -22,7 +22,7 @@ import { cn } from '@/utils/cn';
 
 import { HACKATHONS } from '@/features/hackathon/constants/hackathons';
 import { userStatsQuery } from '@/features/home/queries/user-stats';
-import { isEligiblePeopleType } from '@/features/membership/utils/peopleEligibility';
+import { hasEligibleUserMembership } from '@/features/membership/utils/userMembership';
 import { ProBadge } from '@/features/pro/components/ProBadge';
 import { ProIntro } from '@/features/pro/components/ProIntro';
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
@@ -75,7 +75,7 @@ export const MobileDrawer = ({
   const { isOpen, onClose, onOpen } = useDisclosure();
 
   const { user } = useUser();
-  const hasEligibleMembership = isEligiblePeopleType(user?.people?.type);
+  const hasEligibleMembership = hasEligibleUserMembership(user);
 
   const isLoggedIn = !!user && authenticated && ready;
 

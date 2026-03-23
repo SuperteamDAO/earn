@@ -448,6 +448,20 @@ model User {
   community          String?              @db.Text
   experience         String?
   location           String?
+  chapterId          String?              @db.Char(36)
+  membershipType     String?              @db.VarChar(50)
+  membershipDisplayName String?           @db.VarChar(255)
+  membershipTelegram String?              @db.VarChar(100)
+  membershipDiscord  String?              @db.VarChar(100)
+  membershipXUsername String?             @db.VarChar(100)
+  membershipSolWallet String?             @db.VarChar(50)
+  membershipSkillsText String?            @db.Text
+  handle             String?              @db.VarChar(255)
+  city               String?              @db.VarChar(100)
+  proofOfWork        String?              @db.Text
+  bestWorkUrl        String?              @db.VarChar(500)
+  source             String?              @db.VarChar(50)
+  airtableRecordId   String?              @db.VarChar(50)
   cryptoExperience   String?
   workPrefernce      String?
   currentEmployer    String?
@@ -462,6 +476,7 @@ model User {
   stRecommended      Boolean              @default(false)
   acceptedTOS        Boolean              @default(false)
   peopleId           String?              @unique
+  chapter            Chapter?             @relation("UserMembershipChapter", fields: [chapterId], references: [id])
   currentSponsor     Sponsors?            @relation(fields: [currentSponsorId], references: [id])
   people             People?              @relation("UserToPeople", fields: [peopleId], references: [id])
   accounts           Account[]
@@ -480,9 +495,12 @@ model User {
   TalentRankings     TalentRankings[]
   Scouts             Scouts[]
   GrantApplication   GrantApplication[]
+  CommunityEarnings  CommunityEarning[]
+  jobs               Job[]
+  vcExternalGrants   VcExternalGrant[]
   SubscribeHackathon SubscribeHackathon[]
   isBlocked          Boolean              @default(false)
-  privyDid           String               @unique
+  privyDid           String?              @unique
   isKYCVerified      Boolean              @default(false)
   kycName            String?
   kycCountry         String?
@@ -506,6 +524,7 @@ model User {
   claimedAgents      Agent[]              @relation("AgentClaimedBy")
 
   @@index([currentSponsorId])
+  @@index([chapterId])
   @@index([hackathonId])
   @@index([email])
   @@index([username])
@@ -841,6 +860,7 @@ model Chapter {
   createdAt           DateTime           @default(now())
   updatedAt           DateTime           @updatedAt
   sponsor             Sponsors?          @relation(fields: [sponsorId], references: [id])
+  users               User[]             @relation("UserMembershipChapter")
   people              People[]
   communityEarnings   CommunityEarning[]
   events              Event[]
@@ -906,6 +926,7 @@ model CommunityEarning {
   id             String   @id @default(uuid()) @db.Char(36)
   createdAt      DateTime @default(now())
   superteamId    String   @db.Char(36)
+  userId         String?  @db.Char(36)
   earningTitle   String   @db.VarChar(255)
   tokenAmount    Decimal  @db.Decimal(15, 2)
   tokenName      String   @db.VarChar(50)
@@ -917,6 +938,9 @@ model CommunityEarning {
   isVerified     Int      @default(1)
   chapter        Chapter  @relation(fields: [superteamId], references: [id])
   people         People   @relation(fields: [peopleId], references: [id])
+  user           User?    @relation(fields: [userId], references: [id])
+
+  @@index([userId])
 }
 
 model Event {
@@ -937,6 +961,7 @@ model Job {
   id          String   @id @default(uuid()) @db.Char(36)
   createdAt   DateTime @default(now())
   superteamId String   @db.Char(36)
+  userId      String?  @db.Char(36)
   peopleId    String   @db.Char(36)
   companyName String   @db.VarChar(255)
   roleTitle   String   @db.VarChar(255)
@@ -946,6 +971,9 @@ model Job {
   isVerified  Int      @default(1)
   chapter     Chapter  @relation(fields: [superteamId], references: [id])
   people      People   @relation(fields: [peopleId], references: [id])
+  user        User?    @relation(fields: [userId], references: [id])
+
+  @@index([userId])
 }
 
 model VcExternalGrant {
@@ -955,12 +983,16 @@ model VcExternalGrant {
   projectName            String   @db.VarChar(255)
   projectUrl             String   @db.VarChar(500)
   vcGrantor              String   @db.VarChar(255)
+  userId                 String?  @db.Char(36)
   peopleId               String   @db.Char(36)
   amountRaisedUsd        Decimal  @db.Decimal(15, 2)
   fundingAnnouncementUrl String?  @db.VarChar(500)
   isVerified             Int      @default(1)
   chapter                Chapter  @relation(fields: [superteamId], references: [id])
   people                 People   @relation(fields: [peopleId], references: [id])
+  user                   User?    @relation(fields: [userId], references: [id])
+
+  @@index([userId])
 }
 
 model LumaEventReview {

@@ -6,7 +6,7 @@ import { Separator } from '@/components/ui/separator';
 import { useUser } from '@/store/user';
 
 import { userStatsQuery } from '@/features/home/queries/user-stats';
-import { isEligiblePeopleType } from '@/features/membership/utils/peopleEligibility';
+import { hasEligibleUserMembership } from '@/features/membership/utils/userMembership';
 
 import { ProIntro } from './ProIntro';
 import { ProPerksCards } from './ProPerksCard';
@@ -85,7 +85,7 @@ export const ProSidebar = () => {
   const { data: stats, isLoading: isStatsLoading } = useQuery(userStatsQuery);
   const { user, isLoading: isUserLoading } = useUser();
   const isPro = user?.isPro;
-  const hasEligibleMembership = isEligiblePeopleType(user?.people?.type);
+  const hasEligibleMembership = hasEligibleUserMembership(user);
 
   const isProEligibilityLoading = isUserLoading || isStatsLoading;
 

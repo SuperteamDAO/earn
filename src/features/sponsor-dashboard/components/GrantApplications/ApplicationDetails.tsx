@@ -19,6 +19,7 @@ import { truncateString } from '@/utils/truncateString';
 
 import { type Grant } from '@/features/grants/types';
 import { isSTGrant, ST_GRANT_COPY } from '@/features/grants/utils/stGrant';
+import { resolveUserMembershipChapter } from '@/features/membership/utils/userMembership';
 import {
   GitHub,
   Telegram,
@@ -96,7 +97,7 @@ export const ApplicationDetails = ({
   };
 
   const chapter = useMemo(
-    () => selectedApplication?.user.people?.chapter,
+    () => resolveUserMembershipChapter(selectedApplication?.user),
     [selectedApplication],
   );
   return (

@@ -13,6 +13,11 @@ export type RefreshUserMembershipLevelInput = {
   currentPeopleId: string | null;
 };
 
+function normalizeNonEmpty(value: string | null | undefined) {
+  const normalized = value?.trim();
+  return normalized ? normalized : null;
+}
+
 export async function refreshUserMembershipLevel({
   userId,
   email,
@@ -53,6 +58,20 @@ export async function refreshUserMembershipLevel({
       orderBy: { updatedAt: 'desc' },
       select: {
         id: true,
+        chapterId: true,
+        type: true,
+        name: true,
+        telegram: true,
+        discord: true,
+        xUsername: true,
+        solWallet: true,
+        skills: true,
+        handle: true,
+        city: true,
+        proofOfWork: true,
+        bestWorkUrl: true,
+        source: true,
+        airtableRecordId: true,
       },
     });
 
@@ -65,6 +84,20 @@ export async function refreshUserMembershipLevel({
       },
       data: {
         peopleId: nextPeopleId,
+        chapterId: normalizeNonEmpty(matchedPerson?.chapterId),
+        membershipType: normalizeNonEmpty(matchedPerson?.type),
+        membershipDisplayName: normalizeNonEmpty(matchedPerson?.name),
+        membershipTelegram: normalizeNonEmpty(matchedPerson?.telegram),
+        membershipDiscord: normalizeNonEmpty(matchedPerson?.discord),
+        membershipXUsername: normalizeNonEmpty(matchedPerson?.xUsername),
+        membershipSolWallet: normalizeNonEmpty(matchedPerson?.solWallet),
+        membershipSkillsText: normalizeNonEmpty(matchedPerson?.skills),
+        handle: normalizeNonEmpty(matchedPerson?.handle),
+        city: normalizeNonEmpty(matchedPerson?.city),
+        proofOfWork: normalizeNonEmpty(matchedPerson?.proofOfWork),
+        bestWorkUrl: normalizeNonEmpty(matchedPerson?.bestWorkUrl),
+        source: normalizeNonEmpty(matchedPerson?.source),
+        airtableRecordId: normalizeNonEmpty(matchedPerson?.airtableRecordId),
       },
     });
 

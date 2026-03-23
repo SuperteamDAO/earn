@@ -12,7 +12,7 @@ import { cn } from '@/utils/cn';
 
 import { AuthWrapper } from '@/features/auth/components/AuthWrapper';
 import { userStatsQuery } from '@/features/home/queries/user-stats';
-import { isEligiblePeopleType } from '@/features/membership/utils/peopleEligibility';
+import { hasEligibleUserMembership } from '@/features/membership/utils/userMembership';
 
 import { ProBadge } from './ProBadge';
 import { ProUpgradeButton } from './ProUpgradeButton';
@@ -134,7 +134,7 @@ export function ProBanner({ totalEarnings }: ProBannerProps) {
   const { data: stats, isLoading: isStatsLoading } = useQuery(userStatsQuery);
   const isPro = user?.isPro ?? false;
   const { authenticated } = usePrivy();
-  const hasEligibleMembership = isEligiblePeopleType(user?.people?.type);
+  const hasEligibleMembership = hasEligibleUserMembership(user);
 
   const isLoading = isUserLoading || isStatsLoading;
 

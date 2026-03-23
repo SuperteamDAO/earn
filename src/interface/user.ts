@@ -31,6 +31,20 @@ interface User {
   skills?: string;
   subSkills?: string;
   workPrefernce?: string;
+  chapterId?: string | null;
+  membershipType?: string | null;
+  membershipDisplayName?: string | null;
+  membershipTelegram?: string | null;
+  membershipDiscord?: string | null;
+  membershipXUsername?: string | null;
+  membershipSolWallet?: string | null;
+  membershipSkillsText?: string | null;
+  handle?: string | null;
+  city?: string | null;
+  proofOfWork?: string | null;
+  bestWorkUrl?: string | null;
+  source?: string | null;
+  airtableRecordId?: string | null;
   discord?: string;
   twitter?: string;
   github?: string;
@@ -40,6 +54,16 @@ interface User {
   currentSponsorId?: string;
   peopleId?: string;
   currentSponsor?: SponsorType;
+  chapter?: {
+    id: string;
+    name?: string | null;
+    region?: string | null;
+    displayValue?: string | null;
+    code?: string | null;
+    countries?: unknown;
+    icons?: string | null;
+    sponsorId?: string | null;
+  } | null;
   people?: {
     id: string;
     chapterId?: string | null;

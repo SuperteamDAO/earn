@@ -96,6 +96,68 @@ export default async function createUser(
         });
       }
 
+      if (!existingUserByEmail.privyDid) {
+        try {
+          const attachedUser = await prisma.user.updateMany({
+            where: {
+              id: existingUserByEmail.id,
+              email: normalizedEmail,
+              privyDid: null,
+            },
+            data: { privyDid },
+          });
+
+          if (attachedUser.count > 0) {
+            logger.info(
+              `Attached privyDid ${privyDid} to existing user ${existingUserByEmail.id}`,
+            );
+            return res.status(200).json({
+              message: `Attached Privy identity to existing user ID: ${existingUserByEmail.id}`,
+              created: false,
+            });
+          }
+        } catch (attachError: unknown) {
+          if (
+            attachError instanceof PrismaClientKnownRequestError &&
+            attachError.code === 'P2002'
+          ) {
+            const userAttachedByPrivyDid = await prisma.user.findUnique({
+              where: { privyDid },
+              select: { id: true, email: true },
+            });
+
+            if (userAttachedByPrivyDid?.email === normalizedEmail) {
+              return res.status(200).json({
+                message: `User already exists with ID: ${userAttachedByPrivyDid.id}`,
+                created: false,
+              });
+            }
+
+            logger.warn(
+              `Privy attachment prevented for email ${normalizedEmail} because privyDid ${privyDid} is already attached to another user`,
+            );
+            return res.status(409).json({
+              error:
+                'User with this email already exists with different authentication method',
+            });
+          }
+
+          throw attachError;
+        }
+
+        const refreshedUserByEmail = await prisma.user.findUnique({
+          where: { email: normalizedEmail },
+          select: { id: true, privyDid: true },
+        });
+
+        if (refreshedUserByEmail?.privyDid === privyDid) {
+          return res.status(200).json({
+            message: `User already exists with ID: ${refreshedUserByEmail.id}`,
+            created: false,
+          });
+        }
+      }
+
       logger.warn(
         `User exists with email ${normalizedEmail} but different privyDid. Existing: ${existingUserByEmail.privyDid}, New: ${privyDid}`,
       );

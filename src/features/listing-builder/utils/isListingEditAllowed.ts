@@ -6,8 +6,10 @@ import { type UserModel } from '@/prisma/models/User';
 
 import { type ListingWithSponsor } from '@/features/auth/utils/checkListingSponsorAuth';
 import { isDeadlineOver } from '@/features/listings/utils/deadline';
+import { isUserCoreMember } from '@/features/membership/utils/userMembership';
 
 type UserWithMembership = UserModel & {
+  membershipType?: string | null;
   people?: { type?: string | null } | null;
 };
 
@@ -16,7 +18,7 @@ export function validateUpdatePermissions(
   user: UserWithMembership,
 ) {
   const isGod = user?.role === 'GOD';
-  const isCore = user?.people?.type === 'CORE';
+  const isCore = isUserCoreMember(user);
   const pastDeadline = isDeadlineOver(listing?.deadline ?? undefined);
 
   logger.info('Check for past deadline of listing', {

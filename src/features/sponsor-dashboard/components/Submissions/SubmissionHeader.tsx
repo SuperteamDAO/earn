@@ -47,6 +47,7 @@ import { isDeadlineOver } from '@/features/listings/utils/deadline';
 import { getColorStyles } from '@/features/listings/utils/getColorStyles';
 import { getListingIcon } from '@/features/listings/utils/getListingIcon';
 import { getListingStatus } from '@/features/listings/utils/status';
+import { isUserCoreMember } from '@/features/membership/utils/userMembership';
 import { ProBadge } from '@/features/pro/components/ProBadge';
 import { VerifyPaymentModal } from '@/features/sponsor-dashboard/components/Modals/VerifyPayment';
 
@@ -197,7 +198,7 @@ export const SubmissionHeader = ({
   };
 
   const pastDeadline = isDeadlineOver(bounty?.deadline);
-  const isCoreMember = user?.people?.type?.toUpperCase() === 'CORE';
+  const isCoreMember = isUserCoreMember(user);
   const canCoreMemberEditInReview = Boolean(
     isCoreMember &&
     bounty?.isPublished &&

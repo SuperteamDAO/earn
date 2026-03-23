@@ -45,6 +45,8 @@ export async function validateGrantRequest(userId: string, grantId: string) {
       isTalentFilled: true,
       isPro: true,
       location: true,
+      chapterId: true,
+      membershipType: true,
       peopleId: true,
       people: {
         select: {
