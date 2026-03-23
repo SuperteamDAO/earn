@@ -1,3 +1,4 @@
+import { useQuery } from '@tanstack/react-query';
 import debounce from 'lodash.debounce';
 import {
   ChevronLeft,
@@ -43,12 +44,17 @@ import { getListingStatus } from '@/features/listings/utils/status';
 import { Banner } from '@/features/sponsor-dashboard/components/Banner';
 import { CreateListingModal } from '@/features/sponsor-dashboard/components/CreateListingModal';
 import { ListingTableSkeleton } from '@/features/sponsor-dashboard/components/ListingTableSkeleton';
+import { activeHackathonsQuery } from '@/features/sponsor-dashboard/queries/active-hackathons';
 import { type SponsorStats } from '@/features/sponsor-dashboard/types';
 
 export default function Hackathon() {
   const { getIcon } = useTokenLookup();
   const router = useRouter();
   const { user } = useUser();
+  const { data: hackathons } = useQuery({
+    ...activeHackathonsQuery(),
+    enabled: !!user,
+  });
   const [totalBounties, setTotalBounties] = useState(0);
   const [bounties, setBounties] = useState<ListingWithSubmissions[]>([]);
   const [isBountiesLoading, setIsBountiesLoading] = useState(true);
@@ -155,6 +161,7 @@ export default function Hackathon() {
       {!isBountiesLoading && !bounties?.length && (
         <>
           <CreateListingModal
+            hackathons={hackathons}
             isOpen={isOpenCreateListing}
             onClose={onCloseCreateListing}
           />
