@@ -146,6 +146,7 @@
     "resend": "^6.4.0",
     "slugify": "^1.6.6",
     "sonner": "^2.0.7",
+    "styled-jsx": "^5.1.6",
     "svix": "^1.81.0",
     "tailwind-merge": "^3.4.0",
     "textarea-caret": "^3.1.0",
