@@ -1,5 +1,6 @@
 import { headers } from 'next/headers';
 import { type NextRequest, NextResponse } from 'next/server';
+import { ZodError } from 'zod';
 
 import logger from '@/lib/logger';
 import { privy } from '@/lib/privy';
@@ -276,6 +277,19 @@ export async function POST(request: NextRequest) {
     logger.info(`User onboarded successfully for user ID: ${userId}`);
     return NextResponse.json(result, { status: 200 });
   } catch (error: any) {
+    if (error instanceof ZodError) {
+      logger.warn(
+        `Validation failed while onboarding user ${userId}: ${safeStringify(error.flatten())}`,
+      );
+      return NextResponse.json(
+        {
+          message: 'Invalid onboarding data',
+          errors: error.flatten(),
+        },
+        { status: 422 },
+      );
+    }
+
     logger.error(
       `Error occurred while onboarding user ${userId}: ${safeStringify(error)}`,
     );
