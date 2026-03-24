@@ -193,9 +193,8 @@ function ListingBuilderProvider({
           hackathonId,
         });
 
-        if (officialSuperteamRegion) {
-          defaults.region = officialSuperteamRegion;
-        }
+        defaults.region =
+          officialSuperteamRegion || defaults.region || 'Global';
 
         return defaults;
       })();
