@@ -556,7 +556,7 @@ export const ApplicationModal = ({
                   label={
                     isST
                       ? ST_GRANT_COPY.application.ask.label
-                      : "What's the compensation you require to complete this fully?"
+                      : "What is the total grant amount you'd like to apply for?"
                   }
                   description={
                     isST ? ST_GRANT_COPY.application.ask.description : undefined
