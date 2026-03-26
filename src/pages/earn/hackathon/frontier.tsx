@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { Info } from 'lucide-react';
 import type { GetServerSideProps } from 'next';
+import Image from 'next/image';
 import { type ReactNode, useEffect, useState } from 'react';
 import Countdown from 'react-countdown';
 
@@ -62,12 +63,7 @@ export default function Frontier({ hackathon }: { hackathon: Hackathon }) {
         />
       }
     >
-      <Hero
-        title={hackathon.name}
-        stats={stats}
-        START_DATE={START_DATE}
-        CLOSE_DATE={CLOSE_DATE}
-      />
+      <Hero stats={stats} START_DATE={START_DATE} CLOSE_DATE={CLOSE_DATE} />
       <div className="mx-auto mt-14 mb-20 w-full max-w-7xl px-4 md:mt-14 xl:mt-16">
         <Tracks tracks={trackData} />
         <FAQs />
@@ -77,12 +73,10 @@ export default function Frontier({ hackathon }: { hackathon: Hackathon }) {
 }
 
 function Hero({
-  title,
   START_DATE,
   CLOSE_DATE,
   stats,
 }: {
-  title: string;
   START_DATE: string | Date;
   CLOSE_DATE: string | Date;
   stats: Stats | undefined;
@@ -106,18 +100,29 @@ function Hero({
   }, [START_DATE, CLOSE_DATE]);
 
   return (
-    <div className="relative flex w-full flex-col items-center border-b border-slate-200 bg-[#FFF1CE] pt-14 pb-25 text-center text-white">
-      <h1 className="max-w-[80%] text-5xl font-semibold tracking-tight text-black sm:max-w-none md:text-7xl">
-        {title}
-      </h1>
-      <div className="mt-4 mb-1 flex w-full max-w-[18.5rem] flex-col items-center gap-4 text-black sm:w-auto sm:max-w-none">
-        <p className="max-w-76 text-sm sm:text-base">
+    <div
+      className="relative flex w-full flex-col items-center border-b border-slate-200 bg-[#FFF1CE] bg-cover bg-center bg-no-repeat pt-14 pb-25 text-center text-white"
+      style={{ backgroundImage: "url('/frontier-bg.webp')" }}
+    >
+      <div className="absolute inset-0 bg-black/35" aria-hidden="true" />
+      <div className="relative w-full max-w-[18rem] sm:max-w-[22rem] md:max-w-[28rem]">
+        <Image
+          src="/frontier-logo.webp"
+          alt="Frontier"
+          width={1120}
+          height={320}
+          priority
+          className="mt-12 h-auto w-full"
+        />
+      </div>
+      <div className="relative mt-4 mb-1 flex w-full max-w-[18.5rem] flex-col items-center gap-4 text-white sm:w-auto sm:max-w-none">
+        <p className="text-sm sm:text-base">
           Submit to side tracks of the latest Solana Global Hackathon
         </p>
         <div className="flex w-full flex-col gap-1 sm:flex-row">
           <Button
             variant="outline"
-            className="mx-auto w-fit gap-3 rounded-[0.5rem] border-black/20 bg-transparent px-8 text-base text-black hover:bg-[#f7d88b]/30"
+            className="mx-auto w-fit gap-3 rounded-[0.5rem] border-white/40 bg-black/20 px-8 text-base text-white hover:bg-black/35"
             onClick={() => {
               const tracksSection = document.getElementById('tracks-section');
               if (tracksSection) {
@@ -208,18 +213,6 @@ function HeroMini({
 
   return (
     <div className="relative flex w-full items-center justify-center gap-8 rounded-md bg-black px-6 py-6 md:flex-row md:gap-12 md:rounded-xl md:px-16">
-      <MiniStat title={'Total Prizes'}>
-        $
-        {stats?.totalRewardAmount.toLocaleString('en-US', {
-          minimumFractionDigits: 0,
-          maximumFractionDigits: 0,
-        }) ?? '-'}
-      </MiniStat>
-
-      <MiniStat className="hidden sm:flex" title={'Tracks'}>
-        {stats?.totalListings ?? '-'}
-      </MiniStat>
-
       <MiniStat
         title={isMd ? `Submissions ${status}` : mobileTitleForCountdown(status)}
       >
@@ -232,6 +225,17 @@ function HeroMini({
         ) : (
           '-'
         )}
+      </MiniStat>
+      <MiniStat title={'Total Prizes'}>
+        $
+        {stats?.totalRewardAmount.toLocaleString('en-US', {
+          minimumFractionDigits: 0,
+          maximumFractionDigits: 0,
+        }) ?? '-'}
+      </MiniStat>
+
+      <MiniStat className="hidden sm:flex" title={'Tracks'}>
+        {stats?.totalListings ?? '-'}
       </MiniStat>
     </div>
   );
