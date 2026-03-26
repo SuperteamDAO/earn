@@ -24,7 +24,6 @@ const tokenSelect = {
 
 const PROXY_HOST_TO_PREFIX = new Map([
   ['s2.coinmarketcap.com', '/cdn/coinmarketcap'],
-  ['wsrv.nl', '/cdn/wsrv'],
   ['statics.solscan.io', '/cdn/solscan'],
   ['assets.coingecko.com', '/cdn/coingecko'],
   ['avatars.githubusercontent.com', '/cdn/github'],
