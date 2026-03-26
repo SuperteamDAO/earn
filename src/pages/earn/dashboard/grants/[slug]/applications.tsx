@@ -9,6 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { SponsorLayout } from '@/layouts/Sponsor';
 import { useUser } from '@/store/user';
 
+import { isAgenticEngineeringGrant } from '@/features/grants/utils/stGrant';
 import { applicationsAtom } from '@/features/sponsor-dashboard/atoms';
 import { ApplicationsTab } from '@/features/sponsor-dashboard/components/ApplicationsTab';
 import { ApplicationHeader } from '@/features/sponsor-dashboard/components/GrantApplications/ApplicationHeader';
@@ -42,10 +43,8 @@ function GrantApplications({ slug }: Props) {
 
   const applications = useAtomValue(applicationsAtom);
 
-  const isST =
-    grant?.isNative &&
-    grant?.airtableId &&
-    grant?.id !== 'c72940f7-81ae-4c03-9bfe-9979d4371267';
+  const hasSpecialTranches =
+    grant?.isST === true || isAgenticEngineeringGrant(grant);
 
   useEffect(() => {
     // Handle 403 errors for non-GOD users
@@ -90,7 +89,7 @@ function GrantApplications({ slug }: Props) {
                   {applications?.length}
                 </div>
               </TabsTrigger>
-              {isST && (
+              {hasSpecialTranches && (
                 <TabsTrigger value="tranches">Tranche Requests</TabsTrigger>
               )}
               <TabsTrigger value="payments">Payments History</TabsTrigger>

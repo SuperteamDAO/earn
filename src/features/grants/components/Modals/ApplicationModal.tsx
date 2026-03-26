@@ -44,8 +44,11 @@ import { userApplicationQuery } from '../../queries/user-application';
 import { type Grant } from '../../types';
 import { grantApplicationSchema } from '../../utils/grantApplicationSchema';
 import {
+  AGENTIC_ENGINEERING_GRANT_COPY,
   extractLumaEventSlug,
+  getGrantFixedAsk,
   getLumaDisplayValue,
+  isAgenticEngineeringGrant,
   LUMA_LABEL,
   ST_GRANT_COPY,
 } from '../../utils/stGrant';
@@ -85,12 +88,20 @@ export const ApplicationModal = ({
     null,
   );
 
-  const { id, token, minReward, maxReward, questions, isPro, isST } = grant;
+  const { id, token, minReward, maxReward, questions, isPro } = grant;
   const tokenLabel = token ?? 'token';
   const isUserPro = user?.isPro;
   const isProGrant = isPro && isUserPro;
   const isNotEligibleForPro = isPro && !isUserPro;
-  const steps = getSteps(isST === true);
+  const isST = grant.isST === true;
+  const isAgenticEngineering = isAgenticEngineeringGrant(grant);
+  const applicationCopy = isST
+    ? ST_GRANT_COPY.application
+    : isAgenticEngineering
+      ? AGENTIC_ENGINEERING_GRANT_COPY.application
+      : null;
+  const fixedAsk = getGrantFixedAsk(grant);
+  const steps = getSteps(isST);
 
   const dynamicResolver = useMemo(
     () =>
@@ -101,10 +112,19 @@ export const ApplicationModal = ({
           token || 'USDC',
           grant.questions,
           user,
-          isST === true,
+          isST,
+          isAgenticEngineering,
         ),
       ),
-    [minReward, maxReward, token, grant.questions, user, isST],
+    [
+      minReward,
+      maxReward,
+      token,
+      grant.questions,
+      user,
+      isST,
+      isAgenticEngineering,
+    ],
   );
 
   const [isLoading, setIsLoading] = useState(false);
@@ -113,7 +133,7 @@ export const ApplicationModal = ({
     defaultValues: {
       projectTitle: grantApplication?.projectTitle || '',
       projectOneLiner: grantApplication?.projectOneLiner || '',
-      ask: grantApplication?.ask || undefined,
+      ask: fixedAsk || grantApplication?.ask || undefined,
       walletAddress: grantApplication?.walletAddress,
       projectDetails: grantApplication?.projectDetails || '',
       projectTimeline: grantApplication?.projectTimeline
@@ -317,7 +337,7 @@ export const ApplicationModal = ({
         milestones,
         kpi,
         walletAddress,
-        ask: ask || null,
+        ask: fixedAsk || ask || null,
         twitter,
         github,
         answers: answers || [],
@@ -366,7 +386,7 @@ export const ApplicationModal = ({
         'projectTitle',
         'projectOneLiner',
         'walletAddress',
-        'ask',
+        ...(isAgenticEngineering ? [] : ['ask' as keyof FormData]),
         'telegram',
       ],
       1: [
@@ -418,11 +438,10 @@ export const ApplicationModal = ({
   return (
     <div className="p-6 pb-0">
       <DialogTitle className="text-lg tracking-normal text-slate-700 sm:text-xl">
-        {isST ? ST_GRANT_COPY.application.title : 'Grant Application'}
+        {applicationCopy?.title ?? 'Grant Application'}
         <p className="mt-1 text-sm font-normal text-slate-500">
-          {isST
-            ? ST_GRANT_COPY.application.subtitle
-            : "If you're working on a project that will help the sponsor's ecosystem grow, apply with your proposal here and we'll respond soon!"}
+          {applicationCopy?.subtitle ??
+            "If you're working on a project that will help the sponsor's ecosystem grow, apply with your proposal here and we'll respond soon!"}
         </p>
         <Progress
           className={cn(
@@ -503,24 +522,18 @@ export const ApplicationModal = ({
                 <FormFieldWrapper
                   control={form.control}
                   name="projectTitle"
-                  label={
-                    isST
-                      ? ST_GRANT_COPY.application.projectTitle.label
-                      : 'Project Title'
-                  }
+                  label={applicationCopy?.projectTitle.label ?? 'Project Title'}
                   description={
-                    isST
-                      ? ST_GRANT_COPY.application.projectTitle.description
-                      : 'What should we call your project?'
+                    applicationCopy?.projectTitle.description ??
+                    'What should we call your project?'
                   }
                   isRequired
                   isPro={isProGrant}
                 >
                   <Input
                     placeholder={
-                      isST
-                        ? ST_GRANT_COPY.application.projectTitle.placeholder
-                        : 'Project Title'
+                      applicationCopy?.projectTitle.placeholder ??
+                      'Project Title'
                     }
                   />
                 </FormFieldWrapper>
@@ -529,43 +542,39 @@ export const ApplicationModal = ({
                   control={form.control}
                   name="projectOneLiner"
                   label={
-                    isST
-                      ? ST_GRANT_COPY.application.projectOneLiner.label
-                      : 'One-Liner Description'
+                    applicationCopy?.projectOneLiner.label ??
+                    'One-Liner Description'
                   }
                   description={
-                    isST
-                      ? ST_GRANT_COPY.application.projectOneLiner.description
-                      : 'Describe your idea in one sentence.'
+                    applicationCopy?.projectOneLiner.description ??
+                    'Describe your idea in one sentence.'
                   }
                   isRequired
                   isPro={isProGrant}
                 >
                   <Input
                     placeholder={
-                      isST
-                        ? ST_GRANT_COPY.application.projectOneLiner.placeholder
-                        : 'Sum up your project in one sentence'
+                      applicationCopy?.projectOneLiner.placeholder ??
+                      'Sum up your project in one sentence'
                     }
                   />
                 </FormFieldWrapper>
 
-                <FormFieldWrapper
-                  control={form.control}
-                  name="ask"
-                  label={
-                    isST
-                      ? ST_GRANT_COPY.application.ask.label
-                      : "What is the total grant amount you'd like to apply for?"
-                  }
-                  description={
-                    isST ? ST_GRANT_COPY.application.ask.description : undefined
-                  }
-                  isRequired
-                  isTokenInput
-                  token={token}
-                  isPro={isProGrant}
-                />
+                {!isAgenticEngineering && (
+                  <FormFieldWrapper
+                    control={form.control}
+                    name="ask"
+                    label={
+                      applicationCopy?.ask?.label ??
+                      "What is the total grant amount you'd like to apply for?"
+                    }
+                    description={applicationCopy?.ask?.description}
+                    isRequired
+                    isTokenInput
+                    token={token}
+                    isPro={isProGrant}
+                  />
+                )}
 
                 {!grantApplication && (
                   <SocialInput
@@ -574,15 +583,10 @@ export const ApplicationModal = ({
                     placeholder=""
                     required
                     formLabel={
-                      isST
-                        ? ST_GRANT_COPY.application.telegram.label
-                        : 'Your Telegram username'
+                      applicationCopy?.telegram.label ??
+                      'Your Telegram username'
                     }
-                    formDescription={
-                      isST
-                        ? ST_GRANT_COPY.application.telegram.description
-                        : undefined
-                    }
+                    formDescription={applicationCopy?.telegram.description}
                     control={form.control}
                     height="h-9"
                     showIcon={false}
@@ -596,13 +600,12 @@ export const ApplicationModal = ({
                     <FormItem className={cn('flex flex-col gap-2')}>
                       <div>
                         <FormLabel isRequired>
-                          {isST
-                            ? ST_GRANT_COPY.application.walletAddress.label
-                            : 'Your Solana Wallet Address'}
+                          {applicationCopy?.walletAddress.label ??
+                            'Your Solana Wallet Address'}
                         </FormLabel>
                         <FormDescription>
-                          {isST ? (
-                            ST_GRANT_COPY.application.walletAddress.description
+                          {applicationCopy?.walletAddress.description ? (
+                            applicationCopy.walletAddress.description
                           ) : isSuperteamSponsor ? (
                             <>
                               This is where you will receive your rewards if you
@@ -651,21 +654,17 @@ export const ApplicationModal = ({
                   control={form.control}
                   name="projectDetails"
                   label={
-                    isST
-                      ? ST_GRANT_COPY.application.projectDetails.label
-                      : 'Project Details'
+                    applicationCopy?.projectDetails.label ?? 'Project Details'
                   }
                   description={
-                    isST
-                      ? ST_GRANT_COPY.application.projectDetails.description
-                      : "What is the problem you're trying to solve, and how you're going to solve it?"
+                    applicationCopy?.projectDetails.description ??
+                    "What is the problem you're trying to solve, and how you're going to solve it?"
                   }
                   isRequired
                   isRichEditor
                   richEditorPlaceholder={
-                    isST
-                      ? ST_GRANT_COPY.application.projectDetails.placeholder
-                      : 'Describe the problem & solution'
+                    applicationCopy?.projectDetails.placeholder ??
+                    'Describe the problem & solution'
                   }
                   isPro={isProGrant}
                 />
@@ -678,10 +677,10 @@ export const ApplicationModal = ({
                       <FormItem className={cn('flex flex-col gap-2')}>
                         <div>
                           <FormLabel isRequired>
-                            {ST_GRANT_COPY.application.lumaLink.label}
+                            {ST_GRANT_COPY.application.lumaLink!.label}
                           </FormLabel>
                           <FormDescription>
-                            {ST_GRANT_COPY.application.lumaLink.description}
+                            {ST_GRANT_COPY.application.lumaLink!.description}
                           </FormDescription>
                         </div>
                         <div>
@@ -696,7 +695,8 @@ export const ApplicationModal = ({
                                   isProGrant && 'focus-visible:ring-zinc-400',
                                 )}
                                 placeholder={
-                                  ST_GRANT_COPY.application.lumaLink.placeholder
+                                  ST_GRANT_COPY.application.lumaLink!
+                                    .placeholder
                                 }
                                 value={getLumaDisplayValue(field.value || '')}
                                 onChange={(e) => {
@@ -722,11 +722,13 @@ export const ApplicationModal = ({
                       <FormItem className="flex flex-col gap-2">
                         <div>
                           <FormLabel isRequired>
-                            {`Deadline (in ${Intl.DateTimeFormat().resolvedOptions().timeZone})`}
+                            {applicationCopy?.projectTimeline?.label
+                              ? `${applicationCopy.projectTimeline.label} (in ${Intl.DateTimeFormat().resolvedOptions().timeZone})`
+                              : `Deadline (in ${Intl.DateTimeFormat().resolvedOptions().timeZone})`}
                           </FormLabel>
                           <FormDescription>
-                            What is the expected completion date for the
-                            project?
+                            {applicationCopy?.projectTimeline?.description ??
+                              'What is the expected completion date for the project?'}
                           </FormDescription>
                         </div>
                         <div>
@@ -763,22 +765,16 @@ export const ApplicationModal = ({
                 <FormFieldWrapper
                   control={form.control}
                   name="proofOfWork"
-                  label={
-                    isST
-                      ? ST_GRANT_COPY.application.proofOfWork.label
-                      : 'Proof of Work'
-                  }
+                  label={applicationCopy?.proofOfWork.label ?? 'Proof of Work'}
                   description={
-                    isST
-                      ? ST_GRANT_COPY.application.proofOfWork.description
-                      : 'Include links to your best work that will make the community trust you to execute on this project.'
+                    applicationCopy?.proofOfWork.description ??
+                    'Include links to your best work that will make the community trust you to execute on this project.'
                   }
                   isRequired={!isST}
                   isRichEditor
                   richEditorPlaceholder={
-                    isST
-                      ? ST_GRANT_COPY.application.proofOfWork.placeholder
-                      : 'Provide links to your portfolio or previous work'
+                    applicationCopy?.proofOfWork.placeholder ??
+                    'Provide links to your portfolio or previous work'
                   }
                   isPro={isProGrant}
                 />
@@ -789,15 +785,9 @@ export const ApplicationModal = ({
                   placeholder="@StarkIndustries"
                   required
                   formLabel={
-                    isST
-                      ? ST_GRANT_COPY.application.twitter.label
-                      : 'Personal X Profile'
+                    applicationCopy?.twitter.label ?? 'Personal X Profile'
                   }
-                  formDescription={
-                    isST
-                      ? ST_GRANT_COPY.application.twitter.description
-                      : undefined
-                  }
+                  formDescription={applicationCopy?.twitter.description}
                   control={form.control}
                   height="h-9"
                   showVerification
@@ -812,8 +802,14 @@ export const ApplicationModal = ({
                     name="github"
                     socialName={'github'}
                     placeholder="TonyStark"
-                    formLabel="Personal Github Profile"
-                    formDescription="If this is a dev-based grant, please add your best github profile here."
+                    formLabel={
+                      applicationCopy?.github?.label ??
+                      'Personal Github Profile'
+                    }
+                    formDescription={
+                      applicationCopy?.github?.description ??
+                      'If this is a dev-based grant, please add your best github profile here.'
+                    }
                     control={form.control}
                     height="h-9"
                     isPro={isProGrant}
@@ -824,14 +820,14 @@ export const ApplicationModal = ({
                   <FormFieldWrapper
                     control={form.control}
                     name="expenseBreakdown"
-                    label={ST_GRANT_COPY.application.expenseBreakdown.label}
+                    label={ST_GRANT_COPY.application.expenseBreakdown!.label}
                     description={
-                      ST_GRANT_COPY.application.expenseBreakdown.description
+                      ST_GRANT_COPY.application.expenseBreakdown!.description
                     }
                     isRequired
                     isRichEditor
                     richEditorPlaceholder={
-                      ST_GRANT_COPY.application.expenseBreakdown.placeholder
+                      ST_GRANT_COPY.application.expenseBreakdown!.placeholder
                     }
                     isPro={isProGrant}
                   />
@@ -856,21 +852,17 @@ export const ApplicationModal = ({
                   control={form.control}
                   name="milestones"
                   label={
-                    isST
-                      ? ST_GRANT_COPY.application.milestones.label
-                      : 'Goals and Milestones'
+                    applicationCopy?.milestones.label ?? 'Goals and Milestones'
                   }
                   description={
-                    isST
-                      ? ST_GRANT_COPY.application.milestones.description
-                      : 'List down the things you hope to achieve by the end of project duration.'
+                    applicationCopy?.milestones.description ??
+                    'List down the things you hope to achieve by the end of project duration.'
                   }
                   isRequired
                   isRichEditor
                   richEditorPlaceholder={
-                    isST
-                      ? ST_GRANT_COPY.application.milestones.placeholder
-                      : 'Outline your project goals and milestones'
+                    applicationCopy?.milestones.placeholder ??
+                    'Outline your project goals and milestones'
                   }
                   isPro={isProGrant}
                 />
@@ -879,11 +871,20 @@ export const ApplicationModal = ({
                   <FormFieldWrapper
                     control={form.control}
                     name="kpi"
-                    label="Primary Key Performance Indicator"
-                    description="What metric will you track to indicate success/failure of the project? At what point will it be a success? Could be anything, e.g. installs, users, views, TVL, etc."
+                    label={
+                      applicationCopy?.kpi?.label ??
+                      'Primary Key Performance Indicator'
+                    }
+                    description={
+                      applicationCopy?.kpi?.description ??
+                      'What metric will you track to indicate success/failure of the project? At what point will it be a success? Could be anything, e.g. installs, users, views, TVL, etc.'
+                    }
                     isRequired
                     isRichEditor
-                    richEditorPlaceholder="What's the key metric for success"
+                    richEditorPlaceholder={
+                      applicationCopy?.kpi?.placeholder ??
+                      "What's the key metric for success"
+                    }
                     isPro={isProGrant}
                   />
                 )}
@@ -911,9 +912,8 @@ export const ApplicationModal = ({
                         htmlFor="acknowledgement"
                         className="text-xs text-slate-500"
                       >
-                        {isST
-                          ? ST_GRANT_COPY.application.acknowledgement
-                          : 'To receive grant funding, you may need to send proofs of milestone completion and of outcomes that reflect your application and this grant listing.'}
+                        {applicationCopy?.acknowledgement ??
+                          'To receive grant funding, you may need to send proofs of milestone completion and of outcomes that reflect your application and this grant listing.'}
                         <span className="text-red-500">*</span>
                       </label>
                     </div>

@@ -18,7 +18,11 @@ import { truncatePublicKey } from '@/utils/truncatePublicKey';
 import { truncateString } from '@/utils/truncateString';
 
 import { type Grant } from '@/features/grants/types';
-import { isSTGrant, ST_GRANT_COPY } from '@/features/grants/utils/stGrant';
+import {
+  AGENTIC_ENGINEERING_GRANT_COPY,
+  isAgenticEngineeringGrant,
+  ST_GRANT_COPY,
+} from '@/features/grants/utils/stGrant';
 import {
   GitHub,
   Telegram,
@@ -63,7 +67,14 @@ export const ApplicationDetails = ({
   const isCompleted = selectedApplication?.applicationStatus === 'Completed';
 
   const isNativeAndNonST = !grant?.airtableId && grant?.isNative;
-  const isST = isSTGrant(grant);
+  const isST = grant?.isST === true;
+  const isAgenticEngineering = isAgenticEngineeringGrant(grant);
+  const hasManagedTranches = isST || isAgenticEngineering;
+  const applicationCopy = isST
+    ? ST_GRANT_COPY.application
+    : isAgenticEngineering
+      ? AGENTIC_ENGINEERING_GRANT_COPY.application
+      : null;
 
   const queryClient = useQueryClient();
 
@@ -187,6 +198,7 @@ export const ApplicationDetails = ({
                   </Button>
                 )}
                 {isApproved &&
+                  !hasManagedTranches &&
                   (!grant?.airtableId ||
                     grant?.title.toLowerCase().includes('coindcx')) && (
                     <>
@@ -425,40 +437,37 @@ export const ApplicationDetails = ({
 
               {isST && (selectedApplication as any)?.lumaLink && (
                 <InfoBox
-                  label={ST_GRANT_COPY.application.lumaLink.label}
+                  label={ST_GRANT_COPY.application.lumaLink!.label}
                   content={(selectedApplication as any)?.lumaLink}
                 />
               )}
 
               <InfoBox
-                label={
-                  isST ? ST_GRANT_COPY.application.twitter.label : 'Twitter'
-                }
+                label={applicationCopy?.twitter.label ?? 'Twitter'}
                 content={selectedApplication?.twitter}
               />
               {!isST && (
-                <InfoBox label="Github" content={selectedApplication?.github} />
+                <InfoBox
+                  label={applicationCopy?.github?.label ?? 'Github'}
+                  content={selectedApplication?.github}
+                />
               )}
               {!isST && (
                 <InfoBox
-                  label="Deadline"
+                  label={applicationCopy?.projectTimeline?.label ?? 'Deadline'}
                   content={selectedApplication?.projectTimeline}
                 />
               )}
 
               <InfoBox
-                label={
-                  isST
-                    ? ST_GRANT_COPY.application.proofOfWork.label
-                    : 'Proof of Work'
-                }
+                label={applicationCopy?.proofOfWork.label ?? 'Proof of Work'}
                 content={selectedApplication?.proofOfWork}
                 isHtml
               />
 
               {isST && (selectedApplication as any)?.expenseBreakdown && (
                 <InfoBox
-                  label={ST_GRANT_COPY.application.expenseBreakdown.label}
+                  label={ST_GRANT_COPY.application.expenseBreakdown!.label}
                   content={(selectedApplication as any)?.expenseBreakdown}
                   isHtml
                 />
@@ -466,9 +475,7 @@ export const ApplicationDetails = ({
 
               <InfoBox
                 label={
-                  isST
-                    ? ST_GRANT_COPY.application.milestones.label
-                    : 'Goals and Milestones'
+                  applicationCopy?.milestones.label ?? 'Goals and Milestones'
                 }
                 content={selectedApplication?.milestones}
                 isHtml
@@ -476,7 +483,10 @@ export const ApplicationDetails = ({
 
               {!isST && (
                 <InfoBox
-                  label="Primary Key Performance Indicator"
+                  label={
+                    applicationCopy?.kpi?.label ??
+                    'Primary Key Performance Indicator'
+                  }
                   content={selectedApplication?.kpi}
                   isHtml
                 />

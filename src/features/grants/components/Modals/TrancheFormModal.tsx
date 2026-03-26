@@ -28,13 +28,30 @@ import { SubmissionTerms } from '@/features/listings/components/Submission/Submi
 
 import { userApplicationQuery } from '../../queries/user-application';
 import { type Grant } from '../../types';
-import { isSTGrant, ST_GRANT_COPY } from '../../utils/stGrant';
+import {
+  AGENTIC_ENGINEERING_GRANT_COPY,
+  COLOSSEUM_ARENA_LABEL,
+  COLOSSEUM_ARENA_PREFIX,
+  extractArenaColosseumPath,
+  extractGithubRepoPath,
+  getArenaColosseumDisplayValue,
+  getGithubRepoDisplayValue,
+  GITHUB_REPO_LABEL,
+  GITHUB_REPO_PREFIX,
+  isAgenticEngineeringGrant,
+  ST_GRANT_COPY,
+} from '../../utils/stGrant';
 
-const createTrancheFormSchema = (isST: boolean) =>
-  z
+const createTrancheFormSchema = (
+  isST: boolean,
+  isAgenticEngineering: boolean,
+) => {
+  return z
     .object({
       walletAddress: z.string().min(1, 'Solana Wallet Address is required'),
-      projectUpdate: z.string().min(1, 'Project update is required'),
+      projectUpdate: isAgenticEngineering
+        ? z.string().optional()
+        : z.string().min(1, 'Project update is required'),
       helpWanted: z.string().optional(),
       eventPictures: isST
         ? z.array(z.string()).min(1, 'At least one event picture is required')
@@ -48,6 +65,18 @@ const createTrancheFormSchema = (isST: boolean) =>
       socialPost: isST
         ? z.string().min(1, 'Social post link is required')
         : z.string().optional(),
+      colosseumLink: isAgenticEngineering
+        ? z.string().min(1, 'Colosseum link is required')
+        : z.string().optional(),
+      githubRepo: isAgenticEngineering
+        ? z.string().min(1, 'GitHub repo is required')
+        : z.string().optional(),
+      aiReceipt: isAgenticEngineering
+        ? z
+            .array(z.string())
+            .min(1, 'AI subscription receipt is required')
+            .max(1, 'Only one AI subscription receipt can be uploaded')
+        : z.array(z.string()).optional(),
     })
     .superRefine((data, ctx) => {
       if (data.walletAddress) {
@@ -75,7 +104,32 @@ const createTrancheFormSchema = (isST: boolean) =>
           });
         }
       }
+
+      if (
+        isAgenticEngineering &&
+        data.colosseumLink &&
+        !extractArenaColosseumPath(data.colosseumLink)
+      ) {
+        ctx.addIssue({
+          code: 'custom',
+          path: ['colosseumLink'],
+          message: 'Please enter a valid Colosseum Arena URL',
+        });
+      }
+
+      if (
+        isAgenticEngineering &&
+        data.githubRepo &&
+        !extractGithubRepoPath(data.githubRepo)
+      ) {
+        ctx.addIssue({
+          code: 'custom',
+          path: ['githubRepo'],
+          message: 'Please enter a valid GitHub repository URL',
+        });
+      }
     });
+};
 
 interface Props {
   grant: Grant;
@@ -88,11 +142,17 @@ export const TrancheFormModal = ({ grant, applicationId, onClose }: Props) => {
   const [isTOSModalOpen, setIsTOSModalOpen] = useState(false);
   const queryClient = useQueryClient();
   const { user, refetchUser } = useUser();
-  const isST = isSTGrant(grant);
+  const isST = grant.isST === true;
+  const isAgenticEngineering = isAgenticEngineeringGrant(grant);
+  const trancheCopy = isST
+    ? ST_GRANT_COPY.tranche
+    : isAgenticEngineering
+      ? AGENTIC_ENGINEERING_GRANT_COPY.tranche
+      : null;
 
   const trancheFormSchema = useMemo(
-    () => createTrancheFormSchema(isST),
-    [isST],
+    () => createTrancheFormSchema(isST, isAgenticEngineering),
+    [isST, isAgenticEngineering],
   );
 
   type TrancheFormValues = z.infer<typeof trancheFormSchema>;
@@ -116,6 +176,9 @@ export const TrancheFormModal = ({ grant, applicationId, onClose }: Props) => {
       eventReceipts: [],
       attendeeCount: undefined,
       socialPost: '',
+      colosseumLink: '',
+      githubRepo: '',
+      aiReceipt: [],
     },
   });
 
@@ -132,6 +195,11 @@ export const TrancheFormModal = ({ grant, applicationId, onClose }: Props) => {
           eventReceipts: values.eventReceipts,
           attendeeCount: values.attendeeCount,
           socialPost: values.socialPost,
+        }),
+        ...(isAgenticEngineering && {
+          colosseumLink: values.colosseumLink,
+          githubRepo: values.githubRepo,
+          aiReceipt: values.aiReceipt?.[0],
         }),
       });
       form.reset();
@@ -158,19 +226,14 @@ export const TrancheFormModal = ({ grant, applicationId, onClose }: Props) => {
   return (
     <div>
       <DialogTitle className="border-b px-8 py-6 text-lg tracking-normal text-slate-700 sm:text-xl">
-        {isST ? ST_GRANT_COPY.tranche.title : 'Tranche Request Form'}
+        {trancheCopy?.title ?? 'Tranche Request Form'}
         <p className="mt-3 text-sm font-medium text-slate-700">
-          {isST
-            ? ST_GRANT_COPY.tranche.subtitle
-            : 'Only apply for a tranche if you have made significant progress. Tranches will be split as follows:'}
+          {trancheCopy?.subtitle ??
+            'Only apply for a tranche if you have made significant progress. Tranches will be split as follows:'}
         </p>
-        {isST ? (
+        {trancheCopy?.description ? (
           <p className="mt-2 text-sm font-normal text-slate-500">
-            <span className="font-medium">For event grants</span>: 50% is paid
-            upfront after KYC approval, and 50% is paid after the event upon
-            submission of required proofs. To receive the second tranche, you
-            must submit event photos and scanned copies of expense receipts from
-            the event.
+            {trancheCopy.description}
           </p>
         ) : (
           <ul className="mt-2 list-disc space-y-2 pl-5 text-sm font-normal text-slate-500">
@@ -189,27 +252,26 @@ export const TrancheFormModal = ({ grant, applicationId, onClose }: Props) => {
       <div className="px-8 py-4">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <FormFieldWrapper
-              control={form.control}
-              name="projectUpdate"
-              label={
-                isST
-                  ? ST_GRANT_COPY.tranche.projectUpdate.label
-                  : 'Share an update about your project'
-              }
-              description={
-                isST
-                  ? ST_GRANT_COPY.tranche.projectUpdate.description
-                  : 'Tell us about the progress you have made on the project so far.'
-              }
-              isRequired
-              isRichEditor
-              richEditorPlaceholder={
-                isST
-                  ? ST_GRANT_COPY.tranche.projectUpdate.placeholder
-                  : 'Write your project update...'
-              }
-            />
+            {!isAgenticEngineering && (
+              <FormFieldWrapper
+                control={form.control}
+                name="projectUpdate"
+                label={
+                  trancheCopy?.projectUpdate?.label ??
+                  'Share an update about your project'
+                }
+                description={
+                  trancheCopy?.projectUpdate?.description ??
+                  'Tell us about the progress you have made on the project so far.'
+                }
+                isRequired
+                isRichEditor
+                richEditorPlaceholder={
+                  trancheCopy?.projectUpdate?.placeholder ??
+                  'Write your project update...'
+                }
+              />
+            )}
 
             {isST && (
               <>
@@ -224,10 +286,8 @@ export const TrancheFormModal = ({ grant, applicationId, onClose }: Props) => {
                         onChange={field.onChange}
                         maxImages={5}
                         minImages={1}
-                        label={ST_GRANT_COPY.tranche.eventPictures.label}
-                        description={
-                          ST_GRANT_COPY.tranche.eventPictures.description
-                        }
+                        label={trancheCopy?.eventPictures?.label}
+                        description={trancheCopy?.eventPictures?.description}
                         allowLargeFiles
                       />
                       <FormMessage />
@@ -246,10 +306,8 @@ export const TrancheFormModal = ({ grant, applicationId, onClose }: Props) => {
                         onChange={field.onChange}
                         maxImages={10}
                         minImages={1}
-                        label={ST_GRANT_COPY.tranche.eventReceipts.label}
-                        description={
-                          ST_GRANT_COPY.tranche.eventReceipts.description
-                        }
+                        label={trancheCopy?.eventReceipts?.label}
+                        description={trancheCopy?.eventReceipts?.description}
                         allowPdf
                         allowLargeFiles
                       />
@@ -265,10 +323,10 @@ export const TrancheFormModal = ({ grant, applicationId, onClose }: Props) => {
                     <FormItem className="flex flex-col gap-2">
                       <div>
                         <FormLabel isRequired>
-                          {ST_GRANT_COPY.tranche.attendeeCount.label}
+                          {trancheCopy?.attendeeCount?.label}
                         </FormLabel>
                         <FormDescription>
-                          {ST_GRANT_COPY.tranche.attendeeCount.description}
+                          {trancheCopy?.attendeeCount?.description}
                         </FormDescription>
                       </div>
                       <div>
@@ -277,7 +335,7 @@ export const TrancheFormModal = ({ grant, applicationId, onClose }: Props) => {
                             type="text"
                             inputMode="numeric"
                             placeholder={
-                              ST_GRANT_COPY.tranche.attendeeCount.placeholder
+                              trancheCopy?.attendeeCount?.placeholder
                             }
                             {...field}
                             onChange={(e) => {
@@ -313,6 +371,123 @@ export const TrancheFormModal = ({ grant, applicationId, onClose }: Props) => {
               </>
             )}
 
+            {isAgenticEngineering && (
+              <>
+                <FormField
+                  control={form.control}
+                  name="colosseumLink"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-col gap-2">
+                      <div>
+                        <FormLabel isRequired>
+                          {trancheCopy?.colosseumLink?.label}
+                        </FormLabel>
+                        <FormDescription>
+                          {trancheCopy?.colosseumLink?.description}
+                        </FormDescription>
+                      </div>
+                      <div>
+                        <FormControl>
+                          <div className="flex h-10 items-center">
+                            <div className="flex h-full items-center justify-center rounded-l-md border border-r-0 border-slate-300 bg-slate-50 px-3 text-xs font-medium text-slate-600 shadow-xs md:text-sm">
+                              {COLOSSEUM_ARENA_LABEL}
+                            </div>
+                            <Input
+                              className="h-full rounded-l-none"
+                              placeholder={
+                                trancheCopy?.colosseumLink?.placeholder
+                              }
+                              value={getArenaColosseumDisplayValue(
+                                field.value || '',
+                              )}
+                              onChange={(e) => {
+                                const value = e.currentTarget.value;
+                                const path = extractArenaColosseumPath(value);
+                                field.onChange(
+                                  path
+                                    ? `${COLOSSEUM_ARENA_PREFIX}/${path}`
+                                    : value
+                                      ? `${COLOSSEUM_ARENA_PREFIX}/${value.replace(/^\/+/, '')}`
+                                      : '',
+                                );
+                              }}
+                            />
+                          </div>
+                        </FormControl>
+                        <FormMessage className="pt-1" />
+                      </div>
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="githubRepo"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-col gap-2">
+                      <div>
+                        <FormLabel isRequired>
+                          {trancheCopy?.githubRepo?.label}
+                        </FormLabel>
+                        <FormDescription>
+                          {trancheCopy?.githubRepo?.description}
+                        </FormDescription>
+                      </div>
+                      <div>
+                        <FormControl>
+                          <div className="flex h-10 items-center">
+                            <div className="flex h-full items-center justify-center rounded-l-md border border-r-0 border-slate-300 bg-slate-50 px-3 text-xs font-medium text-slate-600 shadow-xs md:text-sm">
+                              {GITHUB_REPO_LABEL}
+                            </div>
+                            <Input
+                              className="h-full rounded-l-none"
+                              placeholder={trancheCopy?.githubRepo?.placeholder}
+                              value={getGithubRepoDisplayValue(
+                                field.value || '',
+                              )}
+                              onChange={(e) => {
+                                const value = e.currentTarget.value;
+                                const path = extractGithubRepoPath(value);
+                                field.onChange(
+                                  path
+                                    ? `${GITHUB_REPO_PREFIX}${path}`
+                                    : value
+                                      ? `${GITHUB_REPO_PREFIX}${value.replace(/^\/+/, '')}`
+                                      : '',
+                                );
+                              }}
+                            />
+                          </div>
+                        </FormControl>
+                        <FormMessage className="pt-1" />
+                      </div>
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="aiReceipt"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-col gap-2">
+                      <MultiImageUploader
+                        source="grant-agentic-receipts"
+                        value={(field.value as string[]) || []}
+                        onChange={field.onChange}
+                        maxImages={1}
+                        minImages={1}
+                        label={trancheCopy?.aiReceipt?.label}
+                        description={trancheCopy?.aiReceipt?.description}
+                        allowPdf
+                        allowLargeFiles
+                      />
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </>
+            )}
+
             <FormField
               control={form.control}
               name="walletAddress"
@@ -320,14 +495,12 @@ export const TrancheFormModal = ({ grant, applicationId, onClose }: Props) => {
                 <FormItem className={cn('flex flex-col gap-2')}>
                   <div>
                     <FormLabel isRequired>
-                      {isST
-                        ? ST_GRANT_COPY.tranche.walletAddress.label
-                        : 'Wallet address for receiving this tranche'}
+                      {trancheCopy?.walletAddress.label ??
+                        'Wallet address for receiving this tranche'}
                     </FormLabel>
                     <FormDescription>
-                      {isST
-                        ? ST_GRANT_COPY.tranche.walletAddress.description
-                        : 'This field is pre-filled with the wallet address you last added for this grant project. If you want to receive the grant tranche payment in a new wallet, please update this field.'}
+                      {trancheCopy?.walletAddress.description ??
+                        'This field is pre-filled with the wallet address you last added for this grant project. If you want to receive the grant tranche payment in a new wallet, please update this field.'}
                     </FormDescription>
                   </div>
                   <div>
@@ -370,10 +543,10 @@ export const TrancheFormModal = ({ grant, applicationId, onClose }: Props) => {
                   <FormItem className="flex flex-col gap-2">
                     <div>
                       <FormLabel isRequired>
-                        {ST_GRANT_COPY.tranche.socialPost.label}
+                        {trancheCopy?.socialPost?.label}
                       </FormLabel>
                       <FormDescription>
-                        {ST_GRANT_COPY.tranche.socialPost.description}
+                        {trancheCopy?.socialPost?.description}
                       </FormDescription>
                     </div>
                     <div>
@@ -384,7 +557,7 @@ export const TrancheFormModal = ({ grant, applicationId, onClose }: Props) => {
                           </div>
                           <Input
                             className="h-full rounded-l-none"
-                            placeholder="x.com/yourpost"
+                            placeholder={trancheCopy?.socialPost?.placeholder}
                             value={
                               field.value?.replace(/^https?:\/\//, '') || ''
                             }
@@ -408,15 +581,10 @@ export const TrancheFormModal = ({ grant, applicationId, onClose }: Props) => {
             <FormFieldWrapper
               control={form.control}
               name="helpWanted"
-              label={
-                isST
-                  ? ST_GRANT_COPY.tranche.helpWanted.label
-                  : 'Any help wanted?'
-              }
+              label={trancheCopy?.helpWanted.label ?? 'Any help wanted?'}
               description={
-                isST
-                  ? ST_GRANT_COPY.tranche.helpWanted.description
-                  : "Beyond funding, please detail specific challenges and how our expertise/resources can assist your project's success."
+                trancheCopy?.helpWanted.description ??
+                "Beyond funding, please detail specific challenges and how our expertise/resources can assist your project's success."
               }
               isRichEditor
               richEditorPlaceholder="Enter details..."

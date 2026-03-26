@@ -3,6 +3,7 @@ import { prisma } from '@/prisma';
 
 import { addOnboardingInfoToAirtable } from './addOnboardingInfoToAirtable';
 import { addPaymentInfoToAirtable } from './addPaymentInfoToAirtable';
+import { isAgenticEngineeringGrant } from './stGrant';
 
 const CLOUDINARY_HOST = 'res.cloudinary.com';
 const MAX_EVENT_PICTURES = 5;
@@ -103,6 +104,75 @@ const normalizeAttendeeCount = (
   return parsed;
 };
 
+const normalizeSingleCloudinaryFile = (
+  value: unknown,
+  { label, required }: { label: string; required: boolean },
+): string | undefined => {
+  if (value === undefined || value === null || value === '') {
+    if (required) {
+      throw new Error(`${label} is required.`);
+    }
+    return undefined;
+  }
+
+  if (typeof value !== 'string') {
+    throw new Error(`${label} must be a valid file URL.`);
+  }
+
+  const trimmed = value.trim();
+  if (!isCloudinaryUrl(trimmed)) {
+    throw new Error(`${label} must be a Cloudinary URL.`);
+  }
+
+  return trimmed;
+};
+
+const normalizeSpecificHostUrl = (
+  value: unknown,
+  {
+    label,
+    required,
+    host,
+    minPathSegments,
+  }: {
+    label: string;
+    required: boolean;
+    host: string;
+    minPathSegments: number;
+  },
+): string | undefined => {
+  if (value === undefined || value === null || value === '') {
+    if (required) {
+      throw new Error(`${label} is required.`);
+    }
+    return undefined;
+  }
+
+  if (typeof value !== 'string') {
+    throw new Error(`${label} must be a valid URL.`);
+  }
+
+  const trimmed = value.trim();
+  const urlCandidate =
+    trimmed.startsWith('http://') || trimmed.startsWith('https://')
+      ? trimmed
+      : `https://${trimmed.replace(/^\/+/, '')}`;
+  const parsed = parseHttpUrl(urlCandidate);
+
+  if (!parsed) {
+    throw new Error(`${label} must be a valid URL.`);
+  }
+
+  const normalizedHost = parsed.hostname.toLowerCase().replace(/^www\./, '');
+  const pathSegments = parsed.pathname.split('/').filter(Boolean);
+
+  if (normalizedHost !== host || pathSegments.length < minPathSegments) {
+    throw new Error(`${label} must be a valid ${host} URL.`);
+  }
+
+  return parsed.toString();
+};
+
 type CreateTrancheProps = {
   applicationId: string;
   helpWanted?: string;
@@ -113,6 +183,9 @@ type CreateTrancheProps = {
   eventReceipts?: string[];
   attendeeCount?: number;
   socialPost?: string;
+  colosseumLink?: string;
+  githubRepo?: string;
+  aiReceipt?: string;
 };
 
 export async function createTranche({
@@ -125,6 +198,9 @@ export async function createTranche({
   eventReceipts,
   attendeeCount,
   socialPost,
+  colosseumLink,
+  githubRepo,
+  aiReceipt,
 }: CreateTrancheProps) {
   const application = await prisma.grantApplication.findUniqueOrThrow({
     where: { id: applicationId },
@@ -144,11 +220,14 @@ export async function createTranche({
   }
 
   const isST = application.grant?.isST === true;
+  const isAgenticEngineering = isAgenticEngineeringGrant(application.grant);
   const requiresEventProof = isST && !isFirstTranche;
 
   const existingTranches = application.GrantTranche.filter(
     (tranche) => tranche.status !== 'Rejected',
   ).length;
+  const requiresAgenticFinalProof =
+    isAgenticEngineering && !isFirstTranche && existingTranches === 1;
   const maxTranches = 4;
 
   if (existingTranches >= maxTranches) {
@@ -212,6 +291,22 @@ export async function createTranche({
     socialPost,
     requiresEventProof,
   );
+  const normalizedColosseumLink = normalizeSpecificHostUrl(colosseumLink, {
+    label: 'Colosseum link',
+    required: requiresAgenticFinalProof,
+    host: 'arena.colosseum.org',
+    minPathSegments: 1,
+  });
+  const normalizedGithubRepo = normalizeSpecificHostUrl(githubRepo, {
+    label: 'GitHub repo',
+    required: requiresAgenticFinalProof,
+    host: 'github.com',
+    minPathSegments: 2,
+  });
+  const normalizedAiReceipt = normalizeSingleCloudinaryFile(aiReceipt, {
+    label: 'AI subscription receipt',
+    required: requiresAgenticFinalProof,
+  });
 
   let trancheAmount = 0;
   const totalTranches = application.totalTranches ?? 0;
@@ -289,6 +384,11 @@ export async function createTranche({
         attendeeCount: normalizedAttendeeCount,
       }),
       ...(normalizedSocialPost && { socialPost: normalizedSocialPost }),
+      ...(normalizedColosseumLink && {
+        colosseumLink: normalizedColosseumLink,
+      }),
+      ...(normalizedGithubRepo && { githubRepo: normalizedGithubRepo }),
+      ...(normalizedAiReceipt && { aiReceipt: normalizedAiReceipt }),
     },
     include: {
       GrantApplication: {

@@ -2,19 +2,144 @@ import { isEligiblePeopleType } from '@/features/membership/utils/peopleEligibil
 
 import type { Grant } from '../types';
 
+type ApplicationCopy = {
+  title: string;
+  subtitle: string;
+  projectTitle: {
+    label: string;
+    description: string;
+    placeholder: string;
+  };
+  projectOneLiner: {
+    label: string;
+    description: string;
+    placeholder: string;
+  };
+  ask?: {
+    label: string;
+    description: string;
+  };
+  telegram: {
+    label: string;
+    description: string;
+  };
+  walletAddress: {
+    label: string;
+    description: string;
+  };
+  projectDetails: {
+    label: string;
+    description: string;
+    placeholder: string;
+  };
+  lumaLink?: {
+    label: string;
+    description: string;
+    placeholder: string;
+  };
+  proofOfWork: {
+    label: string;
+    description: string;
+    placeholder: string;
+  };
+  twitter: {
+    label: string;
+    description: string;
+  };
+  github?: {
+    label: string;
+    description: string;
+  };
+  expenseBreakdown?: {
+    label: string;
+    description: string;
+    placeholder: string;
+  };
+  projectTimeline?: {
+    label: string;
+    description: string;
+  };
+  milestones: {
+    label: string;
+    description: string;
+    placeholder: string;
+  };
+  kpi?: {
+    label: string;
+    description: string;
+    placeholder: string;
+  };
+  acknowledgement: string;
+};
+
+type TrancheCopy = {
+  title: string;
+  subtitle: string;
+  description?: string;
+  projectUpdate?: {
+    label: string;
+    description: string;
+    placeholder: string;
+  };
+  eventPictures?: {
+    label: string;
+    description: string;
+  };
+  eventReceipts?: {
+    label: string;
+    description: string;
+  };
+  attendeeCount?: {
+    label: string;
+    description: string;
+    placeholder: string;
+  };
+  colosseumLink?: {
+    label: string;
+    description: string;
+    placeholder: string;
+  };
+  githubRepo?: {
+    label: string;
+    description: string;
+    placeholder: string;
+  };
+  aiReceipt?: {
+    label: string;
+    description: string;
+  };
+  walletAddress: {
+    label: string;
+    description: string;
+  };
+  socialPost?: {
+    label: string;
+    description: string;
+    placeholder: string;
+  };
+  helpWanted: {
+    label: string;
+    description: string;
+  };
+  terms: string;
+};
+
 export const LUMA_PREFIX = 'https://lu.ma/';
 export const LUMA_LABEL = 'lu.ma/';
+export const COLOSSEUM_ARENA_PREFIX = 'https://arena.colosseum.org/';
+export const COLOSSEUM_ARENA_LABEL = 'arena.colosseum.org/';
+export const GITHUB_REPO_PREFIX = 'https://github.com/';
+export const GITHUB_REPO_LABEL = 'github.com/';
+export const AGENTIC_ENGINEERING_FIXED_ASK = 100;
 
 export function extractLumaEventSlug(input: string): string | null {
   if (!input) return null;
   const trimmed = input.trim();
 
-  // If it's just the slug (no dots/slashes), return as-is
   if (!/[./]/.test(trimmed)) {
     return trimmed;
   }
 
-  // Add protocol if missing
   const urlWithProtocol = trimmed.startsWith('http')
     ? trimmed
     : `https://${trimmed}`;
@@ -23,9 +148,11 @@ export function extractLumaEventSlug(input: string): string | null {
     const parsedUrl = new URL(urlWithProtocol);
     const hostname = parsedUrl.hostname.toLowerCase();
     const normalizedHost = hostname.replace(/^www\./, '');
+
     if (!['lu.ma', 'luma.com'].includes(normalizedHost)) {
       return null;
     }
+
     const pathSegments = parsedUrl.pathname.split('/').filter(Boolean);
     return pathSegments[0] || null;
   } catch {
@@ -40,8 +167,111 @@ export function getLumaDisplayValue(value: string): string {
   return value;
 }
 
+function extractHostedPath(
+  input: string,
+  {
+    prefix,
+    hosts,
+    minSegments = 1,
+  }: {
+    prefix: string;
+    hosts: string[];
+    minSegments?: number;
+  },
+): string | null {
+  if (!input) return null;
+
+  const trimmed = input.trim();
+  const normalizedPrefix = prefix.endsWith('/') ? prefix : `${prefix}/`;
+  const normalizedInput =
+    trimmed.startsWith('http://') || trimmed.startsWith('https://')
+      ? trimmed
+      : `${normalizedPrefix}${trimmed.replace(/^\/+/, '')}`;
+
+  try {
+    const url = new URL(normalizedInput);
+    const hostname = url.hostname.toLowerCase().replace(/^www\./, '');
+
+    if (!hosts.includes(hostname)) {
+      return null;
+    }
+
+    const path = `${url.pathname}${url.search}${url.hash}`.replace(/^\/+/, '');
+    const pathSegments = url.pathname.split('/').filter(Boolean);
+    if (pathSegments.length < minSegments) {
+      return null;
+    }
+
+    return path;
+  } catch {
+    return null;
+  }
+}
+
+export function extractArenaColosseumPath(input: string): string | null {
+  return extractHostedPath(input, {
+    prefix: COLOSSEUM_ARENA_PREFIX,
+    hosts: ['arena.colosseum.org'],
+  });
+}
+
+export function getArenaColosseumDisplayValue(value: string): string {
+  if (!value) return '';
+  if (value.startsWith(COLOSSEUM_ARENA_PREFIX)) {
+    return value.slice(COLOSSEUM_ARENA_PREFIX.length).replace(/^\/+/, '');
+  }
+  return value.replace(/^\/+/, '');
+}
+
+export function extractGithubRepoPath(input: string): string | null {
+  return extractHostedPath(input, {
+    prefix: GITHUB_REPO_PREFIX,
+    hosts: ['github.com'],
+    minSegments: 2,
+  });
+}
+
+export function getGithubRepoDisplayValue(value: string): string {
+  if (!value) return '';
+  if (value.startsWith(GITHUB_REPO_PREFIX)) {
+    return value.slice(GITHUB_REPO_PREFIX.length).replace(/^\/+/, '');
+  }
+  return value.replace(/^\/+/, '');
+}
+
 export const isSTGrant = (grant: Grant | null | undefined): boolean => {
   return grant?.isST === true;
+};
+
+export const isAgenticEngineeringGrant = (
+  grant: { title?: string | null } | null | undefined,
+): boolean => {
+  return grant?.title?.toLowerCase().includes('agentic engineering') ?? false;
+};
+
+export const getGrantFixedAsk = (
+  grant:
+    | {
+        title?: string | null;
+        minReward?: number | null;
+        maxReward?: number | null;
+      }
+    | null
+    | undefined,
+): number | null => {
+  if (!grant || !isAgenticEngineeringGrant(grant)) {
+    return null;
+  }
+
+  if (
+    typeof grant.minReward === 'number' &&
+    typeof grant.maxReward === 'number' &&
+    grant.minReward === grant.maxReward
+  ) {
+    return grant.minReward;
+  }
+
+  return AGENTIC_ENGINEERING_FIXED_ASK;
 };
 
 export const isUserEligibleForST = (
@@ -59,16 +289,14 @@ export const isUserEligibleForST = (
   return Boolean(user.peopleId || user.people.chapterId);
 };
 
-export const ST_GRANT_COPY = {
+export const ST_GRANT_COPY: {
+  application: ApplicationCopy;
+  tranche: TrancheCopy;
+} = {
   application: {
     title: 'Event Grant Application',
     subtitle:
       "If you're looking to host an event that will help Solana's or Superteam's ecosystem grow, apply with your proposal here and we'll respond soon!",
-    steps: {
-      basics: 'Basics',
-      details: 'Details',
-      outcomes: 'Outcomes',
-    },
     projectTitle: {
       label: 'Event Title',
       description: "What's the name of the event you're planning to host?",
@@ -173,5 +401,106 @@ export const ST_GRANT_COPY = {
     },
     terms:
       'By submitting this payout request, you confirm that you have submitted photos and receipts for the event, and that all submitted information is accurate.',
+  },
+};
+
+export const AGENTIC_ENGINEERING_GRANT_COPY: {
+  application: ApplicationCopy;
+  tranche: TrancheCopy;
+} = {
+  application: {
+    title: 'Agentic Engineering Grant Application',
+    subtitle:
+      'Share your Agentic Engineering project plan and the strongest proof that you can ship it fast. The grant amount is fixed at 100 USDG.',
+    projectTitle: {
+      label: 'Project Title',
+      description: 'What should we call your project?',
+      placeholder: 'Project Title',
+    },
+    projectOneLiner: {
+      label: 'One Line Description',
+      description: 'Describe your project in one line.',
+      placeholder: 'A concise one-line description',
+    },
+    telegram: {
+      label: 'TG username',
+      description: 'How can we reach you quickly if we have questions?',
+    },
+    walletAddress: {
+      label: 'Wallet Address',
+      description: 'Where should the grant funds be sent if you are approved?',
+    },
+    projectDetails: {
+      label: 'Project Details',
+      description: 'Describe the problem statement and your proposed solution.',
+      placeholder: 'Describe the problem statement and your solution',
+    },
+    projectTimeline: {
+      label: 'Deadline',
+      description: 'What is the target deadline for shipping this project?',
+    },
+    proofOfWork: {
+      label: 'Proof of Work',
+      description:
+        'Share prior work, demos, shipped agents, or anything else that proves you can execute.',
+      placeholder: 'Share links and context for your strongest proof of work',
+    },
+    twitter: {
+      label: 'Personal X Profile',
+      description: 'Helpful for understanding your background and public work.',
+    },
+    github: {
+      label: 'Personal Github Profile',
+      description: 'Optional, but helpful if you build in public or ship code.',
+    },
+    milestones: {
+      label: 'Goals and Milestones',
+      description:
+        'List the goals and milestones you plan to hit before the deadline.',
+      placeholder: 'Outline the milestones you plan to complete',
+    },
+    kpi: {
+      label: 'Primary KPI',
+      description:
+        'What is the single main metric that will indicate whether this project succeeded?',
+      placeholder: 'Define the primary KPI for success',
+    },
+    acknowledgement:
+      'I understand that to receive the final tranche, I must submit the Colosseum project link, GitHub repo, and my AI subscription receipt.',
+  },
+  tranche: {
+    title: 'Final Tranche Request',
+    subtitle:
+      'Submit the final proofs for your Agentic Engineering grant to unlock tranche 2.',
+    description:
+      'Share your Colosseum project link, GitHub repository, AI subscription receipt, payout wallet, and anything else that will help the sponsor review the final tranche.',
+    colosseumLink: {
+      label: "Link to your project's Colosseum link",
+      description: 'Paste the path after the Colosseum Arena host.',
+      placeholder: 'projects/your-project',
+    },
+    githubRepo: {
+      label: 'Link to the Github Repo',
+      description:
+        'If the repo is private, share access with <>@superteam.fun.',
+      placeholder: 'owner/repo',
+    },
+    aiReceipt: {
+      label: 'Upload your AI Subscription Receipt',
+      description:
+        'The receipt should mention your name or entity. Upload a PDF or PNG.',
+    },
+    walletAddress: {
+      label: 'Solana Wallet Address',
+      description:
+        'This field is pre-filled with the wallet address you last added for this grant project.',
+    },
+    helpWanted: {
+      label: 'Anything Else?',
+      description:
+        'Share anything else that will help the sponsor review this payout request.',
+    },
+    terms:
+      'By submitting this payout request, you confirm that the links and receipt are accurate and belong to this project.',
   },
 };
