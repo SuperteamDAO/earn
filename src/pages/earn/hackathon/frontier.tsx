@@ -15,6 +15,7 @@ import {
 } from '@/components/ui/accordion';
 import { Button } from '@/components/ui/button';
 import { Tooltip } from '@/components/ui/tooltip';
+import { ASSET_URL } from '@/constants/ASSET_URL';
 import { useBreakpoint } from '@/hooks/use-breakpoint';
 import { type TrackProps } from '@/interface/hackathon';
 import { Default } from '@/layouts/Default';
@@ -60,6 +61,7 @@ export default function Frontier({ hackathon }: { hackathon: Hackathon }) {
           title="Frontier | Superteam Earn"
           description="Solana Frontier Online Hackathon"
           canonical="https://superteam.fun/earn/hackathon/frontier/"
+          og={ASSET_URL + '/hackathon/frontier/og.webp'}
         />
       }
     >
@@ -102,12 +104,14 @@ function Hero({
   return (
     <div
       className="relative flex w-full flex-col items-center border-b border-slate-200 bg-[#FFF1CE] bg-cover bg-center bg-no-repeat pt-14 pb-25 text-center text-white"
-      style={{ backgroundImage: "url('/frontier-bg.webp')" }}
+      style={{
+        backgroundImage: `url('${ASSET_URL + '/hackathon/frontier/bg.webp'}')`,
+      }}
     >
       <div className="absolute inset-0 bg-black/35" aria-hidden="true" />
       <div className="relative w-full max-w-[18rem] sm:max-w-[22rem] md:max-w-[28rem]">
         <Image
-          src="/frontier-logo.webp"
+          src={ASSET_URL + '/hackathon/frontier/logo.webp'}
           alt="Frontier"
           width={1120}
           height={320}
