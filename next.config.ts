@@ -189,6 +189,10 @@ const nextConfig: NextConfig = {
         destination: 'https://s2.coinmarketcap.com/:path*',
       },
       {
+        source: '/cdn/bnbstatic/:path*',
+        destination: 'https://bin.bnbstatic.com/:path*',
+      },
+      {
         source: '/cdn/solscan/:path*',
         destination: 'https://statics.solscan.io/:path*',
       },
