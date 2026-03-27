@@ -471,7 +471,7 @@ export const AGENTIC_ENGINEERING_GRANT_COPY: {
   tranche: {
     title: 'Final Tranche Request',
     subtitle:
-      'Submit the final proofs for your Agentic Engineering grant to unlock tranche 2.',
+      'Submit the final proofs for your Agentic Engineering grant to unlock the second tranche.',
     description:
       'Share your Colosseum project link, GitHub repository, AI subscription receipt, payout wallet, and anything else that will help the sponsor review the final tranche.',
     colosseumLink: {
