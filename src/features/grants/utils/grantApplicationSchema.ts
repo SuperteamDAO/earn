@@ -107,8 +107,13 @@ export const grantApplicationSchema = (
       proofOfWork: isST
         ? z.string().optional()
         : z.string().min(1, 'Proof of work is required'),
-      milestones: z.string().min(1, 'Milestones are required'),
-      kpi: isST ? z.string().optional() : z.string().min(1, 'KPI is required'),
+      milestones: isAgenticEngineering
+        ? z.string().optional()
+        : z.string().min(1, 'Milestones are required'),
+      kpi:
+        isST || isAgenticEngineering
+          ? z.string().optional()
+          : z.string().min(1, 'KPI is required'),
       twitter: twitterProfileSchema,
       github: z
         .preprocess(

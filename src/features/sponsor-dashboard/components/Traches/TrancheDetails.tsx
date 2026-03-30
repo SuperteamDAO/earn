@@ -72,6 +72,11 @@ export const TrancheDetails = ({
 
   const totalPaid = selectedTranche?.GrantApplication?.totalPaid || 0;
   const approvedAmount = selectedTranche?.GrantApplication?.approvedAmount || 0;
+  const aiReceiptFiles = Array.isArray(selectedTranche?.aiReceipts)
+    ? selectedTranche.aiReceipts.filter(
+        (receipt): receipt is string => typeof receipt === 'string',
+      )
+    : [];
 
   const paidPercentage = (totalPaid / approvedAmount) * 100;
 
@@ -375,11 +380,7 @@ export const TrancheDetails = ({
                       AGENTIC_ENGINEERING_GRANT_COPY.tranche.aiReceipt?.label ||
                       'AI Subscription Receipt'
                     }
-                    images={
-                      selectedTranche?.aiReceipt
-                        ? [selectedTranche.aiReceipt]
-                        : null
-                    }
+                    images={aiReceiptFiles.length > 0 ? aiReceiptFiles : null}
                   />
                 </>
               )}

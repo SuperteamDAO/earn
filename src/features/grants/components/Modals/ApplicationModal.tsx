@@ -400,7 +400,10 @@ export const ApplicationModal = ({
           (_: any, index: number) => `answers.${index}.answer` as const,
         ) || []),
       ],
-      2: ['milestones', ...(isST ? [] : ['kpi' as keyof FormData])],
+      2: [
+        ...(isAgenticEngineering ? [] : ['milestones' as keyof FormData]),
+        ...(isST || isAgenticEngineering ? [] : ['kpi' as keyof FormData]),
+      ],
     };
 
     form.trigger(fieldsToValidate[activeStep]).then((isValid) => {
@@ -858,7 +861,7 @@ export const ApplicationModal = ({
                     applicationCopy?.milestones.description ??
                     'List down the things you hope to achieve by the end of project duration.'
                   }
-                  isRequired
+                  isRequired={!isAgenticEngineering}
                   isRichEditor
                   richEditorPlaceholder={
                     applicationCopy?.milestones.placeholder ??
@@ -879,7 +882,7 @@ export const ApplicationModal = ({
                       applicationCopy?.kpi?.description ??
                       'What metric will you track to indicate success/failure of the project? At what point will it be a success? Could be anything, e.g. installs, users, views, TVL, etc.'
                     }
-                    isRequired
+                    isRequired={!isAgenticEngineering}
                     isRichEditor
                     richEditorPlaceholder={
                       applicationCopy?.kpi?.placeholder ??
