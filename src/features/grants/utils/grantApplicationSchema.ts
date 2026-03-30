@@ -13,7 +13,11 @@ import {
   isHandleVerified,
 } from '@/features/social/utils/x-verification';
 
-import { extractLumaEventSlug, LUMA_PREFIX } from './stGrant';
+import {
+  AGENTIC_ENGINEERING_FIXED_ASK,
+  extractLumaEventSlug,
+  LUMA_PREFIX,
+} from './stGrant';
 
 const X_USERNAME_REGEX = /^[A-Za-z0-9_]{1,15}$/;
 
@@ -58,9 +62,16 @@ export const grantApplicationSchema = (
   token: string,
   questions?: { order: number; question: string }[],
   user?: User | null,
-  isST?: boolean,
-) =>
-  z
+  isST = false,
+  isAgenticEngineering = false,
+) => {
+  const fixedAsk = isAgenticEngineering
+    ? minReward === maxReward && minReward > 0
+      ? minReward
+      : AGENTIC_ENGINEERING_FIXED_ASK
+    : undefined;
+
+  return z
     .object({
       projectTitle: z
         .string()
@@ -70,16 +81,24 @@ export const grantApplicationSchema = (
         .string()
         .min(1, 'One-liner description is required')
         .max(150, 'Description must be less than 150 characters'),
-      ask: z
-        .number({
-          required_error: 'Grant amount is required',
-          invalid_type_error: 'Please enter a valid number',
-        })
-        .min(
-          Math.max(1, minReward),
-          `Amount must be at least ${Math.max(1, minReward || 1)} ${token}`,
-        )
-        .max(maxReward, `Amount cannot exceed ${maxReward || 1} ${token}`),
+      ask: z.preprocess(
+        (value) => {
+          if (value === '' || value === null || value === undefined) {
+            return fixedAsk ?? value;
+          }
+          return value;
+        },
+        z
+          .number({
+            required_error: 'Grant amount is required',
+            invalid_type_error: 'Please enter a valid number',
+          })
+          .min(
+            Math.max(1, minReward),
+            `Amount must be at least ${Math.max(1, minReward || 1)} ${token}`,
+          )
+          .max(maxReward, `Amount cannot exceed ${maxReward || 1} ${token}`),
+      ),
       projectDetails: z.string().min(1, 'Project details are required'),
       walletAddress: z.string().min(1, 'Solana Wallet Address is required'),
       projectTimeline: isST
@@ -165,4 +184,17 @@ export const grantApplicationSchema = (
           });
         }
       }
+
+      if (
+        isAgenticEngineering &&
+        typeof fixedAsk === 'number' &&
+        data.ask !== fixedAsk
+      ) {
+        ctx.addIssue({
+          code: 'custom',
+          path: ['ask'],
+          message: `Grant amount is fixed at ${fixedAsk} ${token}`,
+        });
+      }
     });
+};

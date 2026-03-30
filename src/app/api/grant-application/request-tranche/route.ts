@@ -30,6 +30,9 @@ export async function POST(request: Request) {
       eventReceipts,
       attendeeCount,
       socialPost,
+      colosseumLink,
+      githubRepo,
+      aiReceipt,
     } = body;
 
     logger.debug(`Request body: ${safeStringify(body)}`);
@@ -62,6 +65,9 @@ export async function POST(request: Request) {
             eventReceipts,
             attendeeCount,
             socialPost,
+            colosseumLink,
+            githubRepo,
+            aiReceipt,
           });
         },
         { ttlSeconds: 300 },

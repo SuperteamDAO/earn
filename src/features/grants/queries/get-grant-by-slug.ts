@@ -73,6 +73,8 @@ export const getGrantBySlug = async (slug: string) => {
 
   return {
     ...grant,
+    createdAt: grant.createdAt.toISOString(),
+    updatedAt: grant.updatedAt.toISOString(),
     totalApplications,
   };
 };

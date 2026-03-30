@@ -11,7 +11,11 @@ import { queueAgent } from '@/features/agents/utils/queueAgent';
 import { getUserSession } from '@/features/auth/utils/getUserSession';
 import { queueEmail } from '@/features/emails/utils/queueEmail';
 import { grantApplicationSchema } from '@/features/grants/utils/grantApplicationSchema';
-import { isUserEligibleForST } from '@/features/grants/utils/stGrant';
+import {
+  getGrantFixedAsk,
+  isAgenticEngineeringGrant,
+  isUserEligibleForST,
+} from '@/features/grants/utils/stGrant';
 import { syncGrantApplicationWithAirtable } from '@/features/grants/utils/syncGrantApplicationWithAirtable';
 import { validateGrantRequest } from '@/features/grants/utils/validateGrantRequest';
 import { extractSocialUsername } from '@/features/social/utils/extractUsername';
@@ -29,6 +33,8 @@ async function createGrantApplication(
   });
 
   const isST = grant.isST === true;
+  const isAgenticEngineering = isAgenticEngineeringGrant(grant);
+  const fixedAsk = getGrantFixedAsk(grant);
 
   const validationResult = grantApplicationSchema(
     grant.minReward,
@@ -37,6 +43,7 @@ async function createGrantApplication(
     grant.questions,
     user as any,
     isST,
+    isAgenticEngineering,
   ).safeParse({
     ...data,
     twitter:
@@ -73,7 +80,7 @@ async function createGrantApplication(
     milestones: validatedData.milestones,
     kpi: validatedData.kpi || '',
     walletAddress: validatedData.walletAddress,
-    ask: validatedData.ask,
+    ask: fixedAsk ?? validatedData.ask,
     twitter: validatedData.twitter,
     github: validatedData.github,
     answers: validatedData.answers || [],

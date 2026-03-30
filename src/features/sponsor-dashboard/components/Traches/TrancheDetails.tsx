@@ -16,7 +16,11 @@ import { truncatePublicKey } from '@/utils/truncatePublicKey';
 import { truncateString } from '@/utils/truncateString';
 
 import { type Grant } from '@/features/grants/types';
-import { isSTGrant, ST_GRANT_COPY } from '@/features/grants/utils/stGrant';
+import {
+  AGENTIC_ENGINEERING_GRANT_COPY,
+  isAgenticEngineeringGrant,
+  ST_GRANT_COPY,
+} from '@/features/grants/utils/stGrant';
 import {
   Telegram,
   Twitter,
@@ -48,7 +52,13 @@ export const TrancheDetails = ({
   const isPending = selectedTranche?.status === 'Pending';
   const isApproved = selectedTranche?.status === 'Approved';
   const isRejected = selectedTranche?.status === 'Rejected';
-  const isST = isSTGrant(grant);
+  const isST = grant?.isST === true;
+  const isAgenticEngineering = isAgenticEngineeringGrant(grant);
+  const trancheCopy = isST
+    ? ST_GRANT_COPY.tranche
+    : isAgenticEngineering
+      ? AGENTIC_ENGINEERING_GRANT_COPY.tranche
+      : null;
 
   const tokenIcon = getIcon(grant?.token);
 
@@ -305,49 +315,77 @@ export const TrancheDetails = ({
                 />
               )}
 
-              <InfoBox
-                label={
-                  isST
-                    ? ST_GRANT_COPY.tranche.projectUpdate.label
-                    : 'Project Updates'
-                }
-                content={selectedTranche?.update}
-                isHtml
-              />
+              {!isAgenticEngineering && (
+                <InfoBox
+                  label={trancheCopy?.projectUpdate?.label ?? 'Project Updates'}
+                  content={selectedTranche?.update}
+                  isHtml
+                />
+              )}
 
               {isST && (
                 <>
                   <ImageGallery
-                    label={ST_GRANT_COPY.tranche.eventPictures.label}
+                    label={ST_GRANT_COPY.tranche.eventPictures!.label}
                     images={selectedTranche?.eventPictures as string[] | null}
                   />
 
                   <ImageGallery
-                    label={ST_GRANT_COPY.tranche.eventReceipts.label}
+                    label={ST_GRANT_COPY.tranche.eventReceipts!.label}
                     images={selectedTranche?.eventReceipts as string[] | null}
                   />
 
                   {selectedTranche?.attendeeCount !== null &&
                     selectedTranche?.attendeeCount !== undefined && (
                       <InfoBox
-                        label={ST_GRANT_COPY.tranche.attendeeCount.label}
+                        label={ST_GRANT_COPY.tranche.attendeeCount!.label}
                         content={String(selectedTranche.attendeeCount)}
                       />
                     )}
 
                   {selectedTranche?.socialPost && (
                     <InfoBox
-                      label={ST_GRANT_COPY.tranche.socialPost.label}
+                      label={ST_GRANT_COPY.tranche.socialPost!.label}
                       content={selectedTranche.socialPost}
                     />
                   )}
                 </>
               )}
 
+              {isAgenticEngineering && (
+                <>
+                  <InfoBox
+                    label={
+                      AGENTIC_ENGINEERING_GRANT_COPY.tranche.colosseumLink
+                        ?.label || 'Colosseum Link'
+                    }
+                    content={selectedTranche?.colosseumLink}
+                  />
+
+                  <InfoBox
+                    label={
+                      AGENTIC_ENGINEERING_GRANT_COPY.tranche.githubRepo
+                        ?.label || 'GitHub Repo'
+                    }
+                    content={selectedTranche?.githubRepo}
+                  />
+
+                  <ImageGallery
+                    label={
+                      AGENTIC_ENGINEERING_GRANT_COPY.tranche.aiReceipt?.label ||
+                      'AI Subscription Receipt'
+                    }
+                    images={
+                      selectedTranche?.aiReceipt
+                        ? [selectedTranche.aiReceipt]
+                        : null
+                    }
+                  />
+                </>
+              )}
+
               <InfoBox
-                label={
-                  isST ? ST_GRANT_COPY.tranche.helpWanted.label : 'Help Wanted'
-                }
+                label={trancheCopy?.helpWanted.label ?? 'Help Wanted'}
                 content={selectedTranche?.helpWanted}
                 isHtml
               />

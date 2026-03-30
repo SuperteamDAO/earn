@@ -9,6 +9,7 @@ const imageSourceSchema = z.enum([
   'description',
   'grant-event-pictures',
   'grant-event-receipts',
+  'grant-agentic-receipts',
 ]);
 
 const contentTypeSchema = z.enum([
@@ -27,6 +28,7 @@ const publicIdSchema = z
 const LARGE_FILE_SOURCES: string[] = [
   'grant-event-pictures',
   'grant-event-receipts',
+  'grant-agentic-receipts',
 ];
 
 export const signRequestSchema = z
