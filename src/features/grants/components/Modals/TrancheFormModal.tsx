@@ -405,9 +405,9 @@ export const TrancheFormModal = ({ grant, applicationId, onClose }: Props) => {
                                 const path = extractArenaColosseumPath(value);
                                 field.onChange(
                                   path
-                                    ? `${COLOSSEUM_ARENA_PREFIX}/${path}`
+                                    ? `${COLOSSEUM_ARENA_PREFIX}${path}`
                                     : value
-                                      ? `${COLOSSEUM_ARENA_PREFIX}/${value.replace(/^\/+/, '')}`
+                                      ? `${COLOSSEUM_ARENA_PREFIX}${value.replace(/^\/+/, '')}`
                                       : '',
                                 );
                               }}

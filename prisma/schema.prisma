@@ -340,7 +340,7 @@ model GrantTranche {
   socialPost       String?            @db.VarChar(500)
   colosseumLink    String?            @db.VarChar(500)
   githubRepo       String?            @db.VarChar(500)
-  aiReceipt        String?            @db.VarChar(500)
+  aiReceipts       Json?
 
   @@index([applicationId])
   @@index([grantId])

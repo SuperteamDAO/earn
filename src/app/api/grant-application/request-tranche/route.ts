@@ -33,6 +33,7 @@ export async function POST(request: Request) {
       colosseumLink,
       githubRepo,
       aiReceipt,
+      aiReceipts,
     } = body;
 
     logger.debug(`Request body: ${safeStringify(body)}`);
@@ -67,7 +68,12 @@ export async function POST(request: Request) {
             socialPost,
             colosseumLink,
             githubRepo,
-            aiReceipt,
+            aiReceipts:
+              Array.isArray(aiReceipts) && aiReceipts.length > 0
+                ? aiReceipts
+                : typeof aiReceipt === 'string' && aiReceipt.trim()
+                  ? [aiReceipt]
+                  : undefined,
           });
         },
         { ttlSeconds: 300 },

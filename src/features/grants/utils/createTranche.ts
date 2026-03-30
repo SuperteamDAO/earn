@@ -8,6 +8,7 @@ import { isAgenticEngineeringGrant } from './stGrant';
 const CLOUDINARY_HOST = 'res.cloudinary.com';
 const MAX_EVENT_PICTURES = 5;
 const MAX_EVENT_RECEIPTS = 10;
+const MAX_AGENTIC_RECEIPTS = 3;
 
 const parseHttpUrl = (value: string): URL | null => {
   try {
@@ -30,25 +31,39 @@ const isCloudinaryUrl = (value: string) => {
 
 const normalizeImageUrls = (
   value: unknown,
-  { label, required, max }: { label: string; required: boolean; max: number },
+  {
+    label,
+    required,
+    max,
+    itemType = 'files',
+    requiredMessage,
+  }: {
+    label: string;
+    required: boolean;
+    max: number;
+    itemType?: 'files' | 'images';
+    requiredMessage?: string;
+  },
 ): string[] | undefined => {
   if (value === undefined || value === null) {
     if (required) {
-      throw new Error(`${label} are required.`);
+      throw new Error(requiredMessage ?? `${label} are required.`);
     }
     return undefined;
   }
   if (!Array.isArray(value)) {
-    throw new Error(`${label} must be a list of image URLs.`);
+    throw new Error(`${label} must be a list of ${itemType} URLs.`);
   }
   if (value.length === 0) {
     if (required) {
-      throw new Error(`At least one ${label.toLowerCase()} is required.`);
+      throw new Error(
+        requiredMessage ?? `At least one ${label.toLowerCase()} is required.`,
+      );
     }
     return undefined;
   }
   if (value.length > max) {
-    throw new Error(`${label} must be ${max} or fewer images.`);
+    throw new Error(`${label} must be ${max} or fewer ${itemType}.`);
   }
   return value.map((entry) => {
     if (typeof entry !== 'string') {
@@ -104,29 +119,6 @@ const normalizeAttendeeCount = (
   return parsed;
 };
 
-const normalizeSingleCloudinaryFile = (
-  value: unknown,
-  { label, required }: { label: string; required: boolean },
-): string | undefined => {
-  if (value === undefined || value === null || value === '') {
-    if (required) {
-      throw new Error(`${label} is required.`);
-    }
-    return undefined;
-  }
-
-  if (typeof value !== 'string') {
-    throw new Error(`${label} must be a valid file URL.`);
-  }
-
-  const trimmed = value.trim();
-  if (!isCloudinaryUrl(trimmed)) {
-    throw new Error(`${label} must be a Cloudinary URL.`);
-  }
-
-  return trimmed;
-};
-
 const normalizeSpecificHostUrl = (
   value: unknown,
   {
@@ -170,7 +162,10 @@ const normalizeSpecificHostUrl = (
     throw new Error(`${label} must be a valid ${host} URL.`);
   }
 
-  return parsed.toString();
+  return new URL(
+    `${pathSegments.join('/')}${parsed.search}${parsed.hash}`,
+    `https://${host}/`,
+  ).toString();
 };
 
 type CreateTrancheProps = {
@@ -185,7 +180,7 @@ type CreateTrancheProps = {
   socialPost?: string;
   colosseumLink?: string;
   githubRepo?: string;
-  aiReceipt?: string;
+  aiReceipts?: string[];
 };
 
 export async function createTranche({
@@ -200,7 +195,7 @@ export async function createTranche({
   socialPost,
   colosseumLink,
   githubRepo,
-  aiReceipt,
+  aiReceipts,
 }: CreateTrancheProps) {
   const application = await prisma.grantApplication.findUniqueOrThrow({
     where: { id: applicationId },
@@ -277,11 +272,14 @@ export async function createTranche({
     label: 'Event pictures',
     required: requiresEventProof,
     max: MAX_EVENT_PICTURES,
+    itemType: 'images',
+    requiredMessage: 'At least one event picture is required.',
   });
   const normalizedEventReceipts = normalizeImageUrls(eventReceipts, {
     label: 'Event receipts',
     required: requiresEventProof,
     max: MAX_EVENT_RECEIPTS,
+    requiredMessage: 'At least one event receipt is required.',
   });
   const normalizedAttendeeCount = normalizeAttendeeCount(
     attendeeCount,
@@ -303,9 +301,11 @@ export async function createTranche({
     host: 'github.com',
     minPathSegments: 2,
   });
-  const normalizedAiReceipt = normalizeSingleCloudinaryFile(aiReceipt, {
-    label: 'AI subscription receipt',
+  const normalizedAiReceipts = normalizeImageUrls(aiReceipts, {
+    label: 'AI subscription receipts',
     required: requiresAgenticFinalProof,
+    max: MAX_AGENTIC_RECEIPTS,
+    requiredMessage: 'AI subscription receipt is required.',
   });
 
   let trancheAmount = 0;
@@ -388,7 +388,7 @@ export async function createTranche({
         colosseumLink: normalizedColosseumLink,
       }),
       ...(normalizedGithubRepo && { githubRepo: normalizedGithubRepo }),
-      ...(normalizedAiReceipt && { aiReceipt: normalizedAiReceipt }),
+      ...(normalizedAiReceipts && { aiReceipts: normalizedAiReceipts }),
     },
     include: {
       GrantApplication: {

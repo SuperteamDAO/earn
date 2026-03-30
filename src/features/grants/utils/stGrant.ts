@@ -475,20 +475,20 @@ export const AGENTIC_ENGINEERING_GRANT_COPY: {
     description:
       'Share your Colosseum project link, GitHub repository, AI subscription receipt, payout wallet, and anything else that will help the sponsor review the final tranche.',
     colosseumLink: {
-      label: "Link to your project's Colosseum link",
+      label: "Link to your project's Colosseum profile",
       description: 'Paste the path after the Colosseum Arena host.',
-      placeholder: 'projects/your-project',
+      placeholder: 'projects/explore/your-project',
     },
     githubRepo: {
       label: 'Link to the Github Repo',
       description:
-        'If the repo is private, share access with <>@superteam.fun.',
+        'If the repo is private, share access with abhwshek@gmail.com.',
       placeholder: 'owner/repo',
     },
     aiReceipt: {
       label: 'Upload your AI Subscription Receipt',
       description:
-        'The receipt should mention your name or entity. Upload a PDF or PNG.',
+        'The receipt should mention your name or entity. Upload up to 3 PDFs or PNGs.',
     },
     walletAddress: {
       label: 'Solana Wallet Address',
