@@ -47,25 +47,27 @@ function GrantApplications({ slug }: Props) {
     grant?.isST === true || isAgenticEngineeringGrant(grant);
 
   useEffect(() => {
-    // Handle 403 errors for non-GOD users
-    if (grantError && !isSwitchingSponsor && user?.role !== 'GOD') {
+    if (grantError && !isSwitchingSponsor) {
       const error = grantError as any;
       if (error?.response?.status === 403) {
-        toast.error('This grant does not belong to you');
-        router.push('/earn/dashboard/listings');
+        const hasSponsorId = error?.response?.data?.sponsorId;
+        if (!hasSponsorId) {
+          toast.error('This grant does not belong to you');
+          router.push('/earn/dashboard/listings');
+        }
       }
     }
-  }, [grantError, router, user?.role, isSwitchingSponsor]);
+  }, [grantError, router, isSwitchingSponsor]);
 
   useEffect(() => {
-    if (
-      grant &&
-      grant.sponsorId !== user?.currentSponsorId &&
-      user?.role !== 'GOD'
-    ) {
+    if (!grant || !user?.currentSponsorId || isSwitchingSponsor) {
+      return;
+    }
+
+    if (grant.sponsorId !== user.currentSponsorId) {
       router.push('/earn/dashboard/listings');
     }
-  }, [grant, user?.currentSponsorId, user?.role, router]);
+  }, [grant, user?.currentSponsorId, router, isSwitchingSponsor]);
 
   return (
     <SponsorLayout isCollapsible>

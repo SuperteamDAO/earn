@@ -37,14 +37,26 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
     const { error } = await checkGrantSponsorAuth(req.userSponsorId, grant.id);
     if (error) {
+      const canAccessRequestedSponsor =
+        error.sponsorId &&
+        (req.role === 'GOD' ||
+          !!(await prisma.userSponsors.findFirst({
+            where: {
+              userId: req.userId as string,
+              sponsorId: error.sponsorId,
+            },
+            select: {
+              sponsorId: true,
+            },
+          })));
+
       const response: {
         error: string;
         sponsorId?: string;
       } = {
         error: error.message,
       };
-      // Include sponsorId for GOD users to enable auto-switching
-      if (req.role === 'GOD' && error.sponsorId) {
+      if (canAccessRequestedSponsor && error.sponsorId) {
         response.sponsorId = error.sponsorId;
       }
       return res.status(error.status).json(response);
