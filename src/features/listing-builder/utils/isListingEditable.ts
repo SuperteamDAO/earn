@@ -20,6 +20,11 @@ type UserInput =
   | User
   | {
       role: string;
+      currentSponsor?: {
+        chapter?: {
+          id?: string | null;
+        } | null;
+      } | null;
       [key: string]: any;
     }
   | null;
@@ -43,9 +48,11 @@ export const isListingEditable = ({
     return true;
   }
 
-  const isCore = user?.people?.type?.toUpperCase() === 'CORE';
+  const isLinkedChapterSponsorMember = Boolean(
+    user?.currentSponsor?.chapter?.id,
+  );
 
-  if (isCore && listing?.isWinnersAnnounced) {
+  if (isLinkedChapterSponsorMember && listing?.isWinnersAnnounced) {
     return false;
   }
 
@@ -57,7 +64,7 @@ export const isListingEditable = ({
     return !isDeadlineOver(listing.deadline ?? undefined);
   }
 
-  if (isCore && listingStatus === 'In Review') {
+  if (isLinkedChapterSponsorMember && listingStatus === 'In Review') {
     return true;
   }
 
