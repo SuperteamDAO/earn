@@ -29,8 +29,8 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { TokenIcon } from '@/components/ui/token-icon';
 import { Tooltip } from '@/components/ui/tooltip';
-import { useTokenLookup } from '@/constants/tokenList';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { SponsorLayout } from '@/layouts/Sponsor';
 import { api } from '@/lib/api';
@@ -48,7 +48,6 @@ import { activeHackathonsQuery } from '@/features/sponsor-dashboard/queries/acti
 import { type SponsorStats } from '@/features/sponsor-dashboard/types';
 
 export default function Hackathon() {
-  const { getIcon } = useTokenLookup();
   const router = useRouter();
   const { user } = useUser();
   const { data: hackathons } = useQuery({
@@ -247,10 +246,10 @@ export default function Hackathon() {
                       </TableCell>
                       <TableCell className="py-2">
                         <div className="flex items-center justify-start gap-1">
-                          <img
+                          <TokenIcon
                             className="h-5 w-5 rounded-full"
-                            alt={'green dollar'}
-                            src={getIcon(currentBounty.token)}
+                            alt={currentBounty.token || 'token'}
+                            symbol={currentBounty.token}
                           />
                           <p className="text-sm font-medium text-slate-700">
                             {(currentBounty.rewardAmount || 0).toLocaleString(

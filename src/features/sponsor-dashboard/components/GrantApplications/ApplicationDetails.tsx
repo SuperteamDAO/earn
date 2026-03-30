@@ -11,8 +11,8 @@ import { Button } from '@/components/ui/button';
 import { CopyButton } from '@/components/ui/copy-tooltip';
 import { CircularProgress } from '@/components/ui/progress';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { TokenIcon } from '@/components/ui/token-icon';
 import { Tooltip } from '@/components/ui/tooltip';
-import { useTokenLookup } from '@/constants/tokenList';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
 import { truncateString } from '@/utils/truncateString';
@@ -57,7 +57,6 @@ export const ApplicationDetails = ({
   rejectedOnOpen,
   isLoading,
 }: Props) => {
-  const { getIcon } = useTokenLookup();
   const [selectedApplication, setSelectedApplication] = useAtom(
     selectedGrantApplicationAtom,
   );
@@ -77,8 +76,6 @@ export const ApplicationDetails = ({
       : null;
 
   const queryClient = useQueryClient();
-
-  const tokenIcon = getIcon(grant?.token);
 
   const formattedCreatedAt = dayjs(selectedApplication?.createdAt).format(
     'DD MMM YYYY',
@@ -254,10 +251,10 @@ export const ApplicationDetails = ({
                   <p className="mr-3 text-sm font-semibold whitespace-nowrap text-slate-400">
                     APPROVED
                   </p>
-                  <img
+                  <TokenIcon
                     className="mr-0.5 h-4 w-4 rounded-full"
-                    src={tokenIcon}
                     alt="token"
+                    symbol={grant?.token}
                   />
 
                   <p className="text-sm font-semibold whitespace-nowrap text-slate-600">
@@ -357,10 +354,10 @@ export const ApplicationDetails = ({
                   ASK
                 </p>
                 <div className="flex items-center gap-0.5">
-                  <img
+                  <TokenIcon
                     className="mr-0.5 h-4 w-4 rounded-full"
-                    src={tokenIcon}
                     alt="token"
+                    symbol={grant?.token}
                   />
 
                   <p className="text-sm font-semibold whitespace-nowrap text-slate-600">

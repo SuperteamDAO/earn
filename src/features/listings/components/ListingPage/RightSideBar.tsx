@@ -8,8 +8,8 @@ const Countdown = dynamic(() => import('react-countdown'), { ssr: false });
 import MdTimer from '@/components/icons/MdTimer';
 import TbBriefcase2 from '@/components/icons/TbBriefcase2';
 import { CountDownRenderer } from '@/components/shared/countdownRenderer';
+import { TokenIcon } from '@/components/ui/token-icon';
 import { exclusiveSponsorData } from '@/constants/exclusiveSponsors';
-import { useTokenLookup } from '@/constants/tokenList';
 import { useServerTimeSync } from '@/hooks/use-server-time';
 import { type ParentSkills } from '@/interface/skills';
 import { cn } from '@/utils/cn';
@@ -76,7 +76,6 @@ export function RightSideBar({
   submissionNumber?: number;
   isSubmissionNumberLoading?: boolean;
 }) {
-  const { getIcon } = useTokenLookup();
   const {
     token,
     type,
@@ -166,10 +165,10 @@ export function RightSideBar({
                         )}
                       >
                         {!showUsdSymbolOnly && (
-                          <img
+                          <TokenIcon
                             className="h-8 w-8 rounded-full"
                             alt="token icon"
-                            src={getIcon(token)}
+                            symbol={token}
                           />
                         )}
                         <CompensationAmount

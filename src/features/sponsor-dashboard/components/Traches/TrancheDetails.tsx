@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import { CopyButton } from '@/components/ui/copy-tooltip';
 import { CircularProgress } from '@/components/ui/progress';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { useTokenLookup } from '@/constants/tokenList';
+import { TokenIcon } from '@/components/ui/token-icon';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
 import { truncateString } from '@/utils/truncateString';
@@ -47,7 +47,6 @@ export const TrancheDetails = ({
   approveOnOpen,
   rejectedOnOpen,
 }: Props) => {
-  const { getIcon } = useTokenLookup();
   const selectedTranche = useAtomValue(selectedGrantTrancheAtom);
   const isPending = selectedTranche?.status === 'Pending';
   const isApproved = selectedTranche?.status === 'Approved';
@@ -59,8 +58,6 @@ export const TrancheDetails = ({
     : isAgenticEngineering
       ? AGENTIC_ENGINEERING_GRANT_COPY.tranche
       : null;
-
-  const tokenIcon = getIcon(grant?.token);
 
   const formattedCreatedAt = dayjs(selectedTranche?.createdAt).format(
     'DD MMM YYYY',
@@ -176,10 +173,10 @@ export const TrancheDetails = ({
                 <p className="mr-3 text-sm font-semibold whitespace-nowrap text-slate-400">
                   TOTAL GRANT
                 </p>
-                <img
+                <TokenIcon
                   className="mr-0.5 h-4 w-4 rounded-full"
-                  src={tokenIcon}
                   alt="token"
+                  symbol={grant?.token}
                 />
 
                 <p className="text-sm font-semibold whitespace-nowrap text-slate-600">
@@ -270,10 +267,10 @@ export const TrancheDetails = ({
                     APPROVED TRANCHE AMOUNT
                   </p>
                   <div className="flex items-center gap-0.5">
-                    <img
+                    <TokenIcon
                       className="mr-0.5 h-4 w-4 rounded-full"
-                      src={tokenIcon}
                       alt="token"
+                      symbol={grant?.token}
                     />
 
                     <p className="text-sm font-semibold whitespace-nowrap text-slate-600">
@@ -291,10 +288,10 @@ export const TrancheDetails = ({
                     TRANCHE ASK
                   </p>
                   <div className="flex items-center gap-0.5">
-                    <img
+                    <TokenIcon
                       className="mr-0.5 h-4 w-4 rounded-full"
-                      src={tokenIcon}
                       alt="token"
+                      symbol={grant?.token}
                     />
 
                     <p className="text-sm font-semibold whitespace-nowrap text-slate-600">
