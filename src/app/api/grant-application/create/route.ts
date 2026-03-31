@@ -12,6 +12,7 @@ import { getUserSession } from '@/features/auth/utils/getUserSession';
 import { queueEmail } from '@/features/emails/utils/queueEmail';
 import { grantApplicationSchema } from '@/features/grants/utils/grantApplicationSchema';
 import {
+  COINDCX_GRANT_ID,
   getGrantFixedAsk,
   isAgenticEngineeringGrant,
   isUserEligibleForST,
@@ -180,7 +181,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (grant.title.toLowerCase().includes('coindcx')) {
+    if (grant.id === COINDCX_GRANT_ID) {
       const rejectedApplication = await prisma.grantApplication.findFirst({
         where: {
           grantId,

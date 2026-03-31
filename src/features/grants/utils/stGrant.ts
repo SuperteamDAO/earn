@@ -131,6 +131,7 @@ export const COLOSSEUM_ARENA_LABEL = 'arena.colosseum.org/';
 export const GITHUB_REPO_PREFIX = 'https://github.com/';
 export const GITHUB_REPO_LABEL = 'github.com/';
 export const AGENTIC_ENGINEERING_FIXED_ASK = 100;
+export const COINDCX_GRANT_ID = 'c72940f7-81ae-4c03-9bfe-9979d4371267';
 
 export function extractLumaEventSlug(input: string): string | null {
   if (!input) return null;
@@ -241,29 +242,6 @@ export function getGithubRepoDisplayValue(value: string): string {
 
 export const isSTGrant = (grant: Grant | null | undefined): boolean => {
   return grant?.isST === true;
-};
-
-export const hasManagedGrantTranches = (
-  grant:
-    | Pick<Grant, 'id' | 'title' | 'isNative' | 'airtableId' | 'isST'>
-    | null
-    | undefined,
-): boolean => {
-  if (!grant) {
-    return false;
-  }
-
-  if (isAgenticEngineeringGrant(grant)) {
-    return true;
-  }
-
-  const isLegacyManagedGrant =
-    grant.isNative === true &&
-    Boolean(grant.airtableId) &&
-    grant.id !== 'c72940f7-81ae-4c03-9bfe-9979d4371267' &&
-    !grant.title.toLowerCase().includes('coindcx');
-
-  return grant.isST === true || isLegacyManagedGrant;
 };
 
 export const isAgenticEngineeringGrant = (

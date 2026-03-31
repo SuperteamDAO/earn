@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { applicationStateAtom } from '../atoms/applicationStateAtom';
 import { type GrantApplicationWithTranchesAndUser } from '../queries/user-application';
 import { type Grant } from '../types';
-import { hasManagedGrantTranches } from '../utils/stGrant';
+import { COINDCX_GRANT_ID, isAgenticEngineeringGrant } from '../utils/stGrant';
 
 export const useApplicationState = (
   application: GrantApplicationWithTranchesAndUser | undefined,
@@ -15,13 +15,14 @@ export const useApplicationState = (
   );
   const tranches = application?.totalTranches ?? 0;
 
-  const hasSpecialTranches = hasManagedGrantTranches(grant);
+  const hasSpecialTranches =
+    (grant.isNative && grant.airtableId) || isAgenticEngineeringGrant(grant);
 
   const isInCooldownPeriod = () => {
     if (
       !application ||
       application.applicationStatus !== 'Rejected' ||
-      !grant.title.toLowerCase().includes('coindcx')
+      grant.id !== COINDCX_GRANT_ID
     ) {
       return false;
     }

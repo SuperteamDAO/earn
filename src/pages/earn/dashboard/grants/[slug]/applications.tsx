@@ -9,7 +9,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { SponsorLayout } from '@/layouts/Sponsor';
 import { useUser } from '@/store/user';
 
-import { hasManagedGrantTranches } from '@/features/grants/utils/stGrant';
+import {
+  COINDCX_GRANT_ID,
+  isAgenticEngineeringGrant,
+} from '@/features/grants/utils/stGrant';
 import { applicationsAtom } from '@/features/sponsor-dashboard/atoms';
 import { ApplicationsTab } from '@/features/sponsor-dashboard/components/ApplicationsTab';
 import { ApplicationHeader } from '@/features/sponsor-dashboard/components/GrantApplications/ApplicationHeader';
@@ -43,7 +46,9 @@ function GrantApplications({ slug }: Props) {
 
   const applications = useAtomValue(applicationsAtom);
 
-  const hasSpecialTranches = hasManagedGrantTranches(grant);
+  const hasSpecialTranches =
+    (grant?.isNative && grant?.airtableId && grant?.id !== COINDCX_GRANT_ID) ||
+    isAgenticEngineeringGrant(grant);
 
   useEffect(() => {
     if (grantError && !isSwitchingSponsor) {

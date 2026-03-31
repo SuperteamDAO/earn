@@ -20,6 +20,7 @@ import { truncateString } from '@/utils/truncateString';
 import { type Grant } from '@/features/grants/types';
 import {
   AGENTIC_ENGINEERING_GRANT_COPY,
+  COINDCX_GRANT_ID,
   isAgenticEngineeringGrant,
   ST_GRANT_COPY,
 } from '@/features/grants/utils/stGrant';
@@ -196,8 +197,7 @@ export const ApplicationDetails = ({
                 )}
                 {isApproved &&
                   !hasManagedTranches &&
-                  (!grant?.airtableId ||
-                    grant?.title.toLowerCase().includes('coindcx')) && (
+                  (!grant?.airtableId || grant?.id === COINDCX_GRANT_ID) && (
                     <>
                       <MarkCompleted
                         isCompleted={isCompleted}
