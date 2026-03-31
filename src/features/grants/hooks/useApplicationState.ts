@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { applicationStateAtom } from '../atoms/applicationStateAtom';
 import { type GrantApplicationWithTranchesAndUser } from '../queries/user-application';
 import { type Grant } from '../types';
-import { isAgenticEngineeringGrant } from '../utils/stGrant';
+import { hasManagedGrantTranches } from '../utils/stGrant';
 
 export const useApplicationState = (
   application: GrantApplicationWithTranchesAndUser | undefined,
@@ -15,8 +15,7 @@ export const useApplicationState = (
   );
   const tranches = application?.totalTranches ?? 0;
 
-  const hasSpecialTranches =
-    grant.isST === true || isAgenticEngineeringGrant(grant);
+  const hasSpecialTranches = hasManagedGrantTranches(grant);
 
   const isInCooldownPeriod = () => {
     if (

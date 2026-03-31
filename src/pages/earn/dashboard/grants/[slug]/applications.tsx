@@ -9,7 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { SponsorLayout } from '@/layouts/Sponsor';
 import { useUser } from '@/store/user';
 
-import { isAgenticEngineeringGrant } from '@/features/grants/utils/stGrant';
+import { hasManagedGrantTranches } from '@/features/grants/utils/stGrant';
 import { applicationsAtom } from '@/features/sponsor-dashboard/atoms';
 import { ApplicationsTab } from '@/features/sponsor-dashboard/components/ApplicationsTab';
 import { ApplicationHeader } from '@/features/sponsor-dashboard/components/GrantApplications/ApplicationHeader';
@@ -43,8 +43,7 @@ function GrantApplications({ slug }: Props) {
 
   const applications = useAtomValue(applicationsAtom);
 
-  const hasSpecialTranches =
-    grant?.isST === true || isAgenticEngineeringGrant(grant);
+  const hasSpecialTranches = hasManagedGrantTranches(grant);
 
   useEffect(() => {
     if (grantError && !isSwitchingSponsor) {
