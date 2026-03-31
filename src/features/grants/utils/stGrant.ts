@@ -130,7 +130,7 @@ export const COLOSSEUM_ARENA_PREFIX = 'https://arena.colosseum.org/';
 export const COLOSSEUM_ARENA_LABEL = 'arena.colosseum.org/';
 export const GITHUB_REPO_PREFIX = 'https://github.com/';
 export const GITHUB_REPO_LABEL = 'github.com/';
-export const AGENTIC_ENGINEERING_FIXED_ASK = 100;
+export const AGENTIC_ENGINEERING_FIXED_ASK = 200;
 export const COINDCX_GRANT_ID = 'c72940f7-81ae-4c03-9bfe-9979d4371267';
 
 export function extractLumaEventSlug(input: string): string | null {
@@ -411,8 +411,7 @@ export const AGENTIC_ENGINEERING_GRANT_COPY: {
 } = {
   application: {
     title: 'Agentic Engineering Grant Application',
-    subtitle:
-      'Share your Agentic Engineering project plan and the strongest proof that you can ship it fast. The grant amount is fixed at 100 USDG.',
+    subtitle: `Share your Agentic Engineering project plan and the strongest proof that you can ship it fast. The grant amount is fixed at ${AGENTIC_ENGINEERING_FIXED_ASK} USDG.`,
     projectTitle: {
       label: 'Project Title',
       description: 'What should we call your project?',
