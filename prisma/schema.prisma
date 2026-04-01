@@ -903,6 +903,10 @@ model People {
   @@unique([airtableRecordId])
   @@index([chapterId])
   @@index([email])
+  @@index([type, region])
+  @@index([type, email])
+  @@index([type, name])
+  @@index([type, handle])
 }
 
 model CommunityEarning {
@@ -923,17 +927,19 @@ model CommunityEarning {
 }
 
 model Event {
-  id              String   @id @default(uuid()) @db.Char(36)
-  createdAt       DateTime @default(now())
-  superteamId     String   @db.Char(36)
-  eventTitle      String   @db.VarChar(255)
-  eventLumaLink   String?  @db.VarChar(500)
-  eventDate       DateTime @db.Date
-  eventType       String   @db.VarChar(50)
-  eventCategory   String   @db.VarChar(100)
+  id              String    @id @default(uuid()) @db.Char(36)
+  createdAt       DateTime  @default(now())
+  superteamId     String    @db.Char(36)
+  eventTitle      String    @db.VarChar(255)
+  eventLumaLink   String?   @db.VarChar(500)
+  eventDate       DateTime  @db.Date
+  eventType       String    @db.VarChar(50)
+  eventCategory   String    @db.VarChar(100)
   eventAttendance Int
-  isVerified      Int      @default(1)
-  chapter         Chapter  @relation(fields: [superteamId], references: [id])
+  isVerified      Int       @default(1)
+  lumaEventId     String?   @unique @db.VarChar(100)
+  lastSyncedAt    DateTime?
+  chapter         Chapter   @relation(fields: [superteamId], references: [id])
 }
 
 model Job {
