@@ -193,7 +193,7 @@ export const DesktopNavbar = ({
                   key={hackathon.slug}
                   className={cn(
                     'flex items-center py-2 font-medium',
-                    'h-[1.85rem]',
+                    'h-[1.65rem]',
                   )}
                   prefetch={false}
                 >

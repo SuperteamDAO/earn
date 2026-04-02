@@ -7,29 +7,26 @@ import { statsDataQuery } from '@/queries/hackathon';
 import { dayjs } from '@/utils/dayjs';
 import { roundToNearestTenThousand } from '@/utils/number';
 
-const base = `/hackathon/cypherpunk/`;
-const baseAsset = (filename: string) => base + filename;
-
 interface SidebarPosterProps {
   className?: string;
 }
 
-export function SidebarBannerCypherpunk({ className }: SidebarPosterProps) {
-  const { data: stats } = useQuery(statsDataQuery('cypherpunk'));
+export function SidebarBanner({ className }: SidebarPosterProps) {
+  const { data: stats } = useQuery(statsDataQuery('frontier'));
   const CLOSE_DATE = stats?.deadline;
   return (
-    <Link href="/earn/hackathon/cypherpunk">
+    <Link href="/earn/hackathon/frontier">
       <div
-        className={`relative flex h-fit w-full flex-col items-center overflow-hidden rounded-lg border border-white/20 bg-[#F8F5FF] ${className}`}
+        className={`bg-brand-purple/5 border-brand-purple/4 relative flex h-fit w-full flex-col items-center overflow-hidden rounded-lg border ${className}`}
       >
         <ExternalImage
-          src={baseAsset('home-banner-square')}
-          alt="Cypherpunk Hackathon"
-          className="absolute top-0 left-0 w-full object-contain"
+          src={'/hackathon/frontier/sidebar-banner'}
+          alt="Frontier Hackathon"
+          className="top-0 left-0 w-full object-contain"
         />
 
-        <div className="relative z-10 flex h-full w-full flex-col px-8 pt-36 pb-6 text-black">
-          <p className="relative z-10 mt-2 text-xl leading-[120%] font-semibold text-black">
+        <div className="relative z-10 flex h-full w-full flex-col px-4 pt-2 pb-5 text-black">
+          <p className="relative z-10 mt-2 text-lg leading-[120%] font-semibold text-slate-800">
             Are you a dev? We have prizes worth $
             {roundToNearestTenThousand(
               stats?.totalRewardAmount ?? 0,
@@ -37,18 +34,15 @@ export function SidebarBannerCypherpunk({ className }: SidebarPosterProps) {
             )?.toLocaleString('en-us') || '0'}
             + for you
           </p>
-          <p className="relative z-10 mt-3 text-sm leading-[130%] text-black/80 md:text-base">
-            Submit to any of the Cypherpunk side tracks on Earn and stand to win
+          <p className="relative z-10 mt-3 text-sm leading-[130%] text-slate-600 md:text-base">
+            Submit to any of the Frontier side tracks on Earn and stand to win
             from $
             {roundToNearestTenThousand(
               stats?.totalRewardAmount ?? 0,
               true,
             )?.toLocaleString('en-us') || '0'}
             +. Deadline for submissions is{' '}
-            {dayjs(CLOSE_DATE)
-              .utc()
-              .add(1, 'minute')
-              .format('MMM D (h:mmA [UTC])')}
+            {dayjs(CLOSE_DATE).utc().add(1, 'minute').format('MMM D')}
           </p>
 
           <Button className={`mt-4 text-base`}>View Tracks</Button>

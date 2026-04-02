@@ -15,6 +15,7 @@ import {
 } from '@/utils/json-ld';
 
 import { ProListingsAnnouncement } from '@/features/announcements/components/ProListingsAnnouncement';
+import { HackathonSection } from '@/features/hackathon/components/HackathonSection';
 import { BannerCarousel } from '@/features/home/components/Banner';
 import { SponsorStageBanner } from '@/features/home/components/SponsorStage/SponsorStageBanner';
 import { UserStatsBanner } from '@/features/home/components/UserStatsBanner';
@@ -121,7 +122,7 @@ export default function HomePage({ potentialSession }: HomePageProps) {
                     type="home"
                     potentialSession={potentialSession}
                   />
-                  {/* <HackathonSection type="home" /> */}
+                  <HackathonSection type="home" />
                   <GrantsSection type="home" />
                 </div>
               </div>
