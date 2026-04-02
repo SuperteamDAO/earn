@@ -42,7 +42,7 @@ export function SidebarBanner({ className }: SidebarPosterProps) {
               true,
             )?.toLocaleString('en-us') || '0'}
             +. Deadline for submissions is{' '}
-            {dayjs(CLOSE_DATE).utc().add(1, 'minute').format('MMM D')}
+            {dayjs(CLOSE_DATE).utc().add(1, 'minute').format('MMM D')}.
           </p>
 
           <Button className={`mt-4 text-base`}>View Tracks</Button>
