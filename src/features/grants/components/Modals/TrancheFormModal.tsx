@@ -1,5 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import axios from 'axios';
 import { useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -41,6 +42,10 @@ import {
   isAgenticEngineeringGrant,
   ST_GRANT_COPY,
 } from '../../utils/stGrant';
+import {
+  WALLET_ADDRESS_CONFLICT_CODE,
+  WALLET_ADDRESS_CONFLICT_MESSAGE,
+} from '../../utils/walletAddressOwnership.constants';
 
 const createTrancheFormSchema = (
   isST: boolean,
@@ -211,6 +216,21 @@ export const TrancheFormModal = ({ grant, applicationId, onClose }: Props) => {
       onClose();
     } catch (error: any) {
       console.error('Error submitting tranche request:', error);
+
+      if (
+        axios.isAxiosError(error) &&
+        error.response?.data?.code === WALLET_ADDRESS_CONFLICT_CODE
+      ) {
+        form.setError('walletAddress', {
+          type: 'server',
+          message:
+            error.response.data.message ||
+            error.response.data.error ||
+            WALLET_ADDRESS_CONFLICT_MESSAGE,
+        });
+        return;
+      }
+
       toast.error(
         error.response?.data?.message || 'Failed to submit tranche request',
       );

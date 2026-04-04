@@ -17,6 +17,11 @@ import {
 } from '@/features/grants/utils/stGrant';
 import { syncGrantApplicationWithAirtable } from '@/features/grants/utils/syncGrantApplicationWithAirtable';
 import { validateGrantRequest } from '@/features/grants/utils/validateGrantRequest';
+import { validateWalletAddressOwnership } from '@/features/grants/utils/validateWalletAddressOwnership';
+import {
+  WALLET_ADDRESS_CONFLICT_CODE,
+  WALLET_ADDRESS_CONFLICT_MESSAGE,
+} from '@/features/grants/utils/walletAddressOwnership.constants';
 import { extractSocialUsername } from '@/features/social/utils/extractUsername';
 
 async function updateGrantApplication(
@@ -47,7 +52,7 @@ async function updateGrantApplication(
       data.twitter !== undefined
         ? extractSocialUsername('twitter', data.twitter) || ''
         : undefined,
-    github: !!data.github
+    github: data.github
       ? extractSocialUsername('github', data.github) || ''
       : null,
   });
@@ -57,6 +62,12 @@ async function updateGrantApplication(
   }
 
   const validatedData = validationResult.data;
+
+  await validateWalletAddressOwnership({
+    grant,
+    userId,
+    walletAddress: validatedData.walletAddress,
+  });
 
   const prevApplication = await prisma.grantApplication.findFirst({
     where: {
@@ -237,6 +248,17 @@ export async function POST(request: NextRequest) {
         grantId,
       },
     );
+
+    if (error.message === WALLET_ADDRESS_CONFLICT_MESSAGE) {
+      return NextResponse.json(
+        {
+          code: WALLET_ADDRESS_CONFLICT_CODE,
+          error: WALLET_ADDRESS_CONFLICT_MESSAGE,
+          message: WALLET_ADDRESS_CONFLICT_MESSAGE,
+        },
+        { status: 409 },
+      );
+    }
 
     let statusCode = 403;
     try {

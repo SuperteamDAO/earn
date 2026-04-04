@@ -4,6 +4,7 @@ import { prisma } from '@/prisma';
 import { addOnboardingInfoToAirtable } from './addOnboardingInfoToAirtable';
 import { addPaymentInfoToAirtable } from './addPaymentInfoToAirtable';
 import { isAgenticEngineeringGrant } from './stGrant';
+import { validateWalletAddressOwnership } from './validateWalletAddressOwnership';
 
 const CLOUDINARY_HOST = 'res.cloudinary.com';
 const MAX_EVENT_PICTURES = 5;
@@ -307,6 +308,14 @@ export async function createTranche({
     max: MAX_AGENTIC_RECEIPTS,
     requiredMessage: 'AI subscription receipt is required.',
   });
+
+  if (walletAddress) {
+    await validateWalletAddressOwnership({
+      grant: application.grant,
+      userId: application.userId,
+      walletAddress,
+    });
+  }
 
   let trancheAmount = 0;
   const totalTranches = application.totalTranches ?? 0;

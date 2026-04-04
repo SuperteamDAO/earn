@@ -19,6 +19,11 @@ import {
 } from '@/features/grants/utils/stGrant';
 import { syncGrantApplicationWithAirtable } from '@/features/grants/utils/syncGrantApplicationWithAirtable';
 import { validateGrantRequest } from '@/features/grants/utils/validateGrantRequest';
+import { validateWalletAddressOwnership } from '@/features/grants/utils/validateWalletAddressOwnership';
+import {
+  WALLET_ADDRESS_CONFLICT_CODE,
+  WALLET_ADDRESS_CONFLICT_MESSAGE,
+} from '@/features/grants/utils/walletAddressOwnership.constants';
 import { extractSocialUsername } from '@/features/social/utils/extractUsername';
 
 export const maxDuration = 300;
@@ -62,6 +67,12 @@ async function createGrantApplication(
   }
 
   const validatedData = validationResult.data;
+
+  await validateWalletAddressOwnership({
+    grant,
+    userId,
+    walletAddress: validatedData.walletAddress,
+  });
 
   if (validatedData.telegram && !user.telegram) {
     await prisma.user.update({
@@ -280,6 +291,17 @@ export async function POST(request: NextRequest) {
     console.error(
       `User ${userId} unable to apply for grant: ${safeStringify(error)}`,
     );
+
+    if (error.message === WALLET_ADDRESS_CONFLICT_MESSAGE) {
+      return NextResponse.json(
+        {
+          code: WALLET_ADDRESS_CONFLICT_CODE,
+          error: WALLET_ADDRESS_CONFLICT_MESSAGE,
+          message: WALLET_ADDRESS_CONFLICT_MESSAGE,
+        },
+        { status: 409 },
+      );
+    }
 
     let statusCode = 403;
     try {

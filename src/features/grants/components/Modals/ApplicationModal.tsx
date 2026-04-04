@@ -1,5 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useQueryClient } from '@tanstack/react-query';
+import axios from 'axios';
 import { Check, Loader2, Lock } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -52,6 +53,10 @@ import {
   LUMA_LABEL,
   ST_GRANT_COPY,
 } from '../../utils/stGrant';
+import {
+  WALLET_ADDRESS_CONFLICT_CODE,
+  WALLET_ADDRESS_CONFLICT_MESSAGE,
+} from '../../utils/walletAddressOwnership.constants';
 
 const getSteps = (isST: boolean) => [
   { title: 'Basics' },
@@ -325,7 +330,7 @@ export const ApplicationModal = ({
         expenseBreakdown,
       } = data as FormData & { lumaLink?: string; expenseBreakdown?: string };
 
-      const apiAction = !!grantApplication ? 'update' : 'create';
+      const apiAction = grantApplication ? 'update' : 'create';
 
       await api.post(`/api/grant-application/${apiAction}/`, {
         grantId: id,
@@ -364,6 +369,21 @@ export const ApplicationModal = ({
       onClose();
     } catch (e) {
       setIsLoading(false);
+
+      if (
+        axios.isAxiosError(e) &&
+        e.response?.data?.code === WALLET_ADDRESS_CONFLICT_CODE
+      ) {
+        form.setError('walletAddress', {
+          type: 'server',
+          message:
+            e.response.data.message ||
+            e.response.data.error ||
+            WALLET_ADDRESS_CONFLICT_MESSAGE,
+        });
+        return;
+      }
+
       toast.error('Failed to submit application', {
         description:
           'Please try again later or contact support if the issue persists.',
