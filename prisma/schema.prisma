@@ -212,7 +212,6 @@ model Grants {
   minReward              Float?
   maxReward              Float?
   totalPaid              Float              @default(0)
-  totalApproved          Float              @default(0)
   historicalApplications Int                @default(0)
   historicalPaid         Float              @default(0)
   link                   String?
@@ -255,7 +254,6 @@ model Grants {
   @@index([slug])
   @@index([sponsorId, isActive, isArchived, status])
   @@index([createdAt(sort: Desc)])
-  @@index([totalApproved(sort: Desc)])
   @@index([isPublished, isActive, isArchived, isPrivate, status])
   @@index([region, isPublished, isActive, isArchived])
   @@index([sponsorId, isPublished, isActive, isArchived])
@@ -263,8 +261,6 @@ model Grants {
   @@index([status, isPublished, isActive])
   @@index([region, status, isPublished])
   @@index([minReward, maxReward])
-  @@index([totalPaid, totalApproved])
-  @@index([historicalApplications, totalApproved])
 }
 
 model GrantApplication {

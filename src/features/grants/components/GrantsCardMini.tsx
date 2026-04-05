@@ -20,7 +20,7 @@ export const GrantsCardMini = ({
     minReward,
     maxReward,
     token,
-    totalApproved,
+    approvedAmountTotal,
     totalApplications,
   } = grant;
 
@@ -70,13 +70,15 @@ export const GrantsCardMini = ({
                   <p className="text-xs font-medium text-gray-400">{token}</p>
                 </div>
               </div>
-              {!!totalApproved && (
+              {!!approvedAmountTotal && (
                 <div className="flex items-center gap-3">
                   <p className="flex text-xs text-slate-300 lg:text-sm">|</p>
                   <p className="text-xs font-medium whitespace-nowrap text-gray-500 md:text-[0.71875rem]">
                     $
                     {formatNumberWithSuffix(
-                      Number((totalApproved / totalApplications).toFixed(2)),
+                      Number(
+                        (approvedAmountTotal / totalApplications).toFixed(2),
+                      ),
                     )}
                     <span className="ml-[0.3] text-xs font-medium text-gray-400 [word-spacing:-0.09rem] md:text-[0.6875rem]">
                       {' '}

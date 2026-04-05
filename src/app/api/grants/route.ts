@@ -58,11 +58,19 @@ export async function GET(request: NextRequest) {
       select: grantsSelect,
     });
 
-    const grantsWithTotalApplications = grants.map((grant) => ({
-      ...grant,
-      totalApplications:
-        grant._count.GrantApplication + grant.historicalApplications,
-    }));
+    const grantsWithTotalApplications = grants.map((grant) => {
+      const { GrantApplication, _count, ...grantData } = grant;
+
+      return {
+        ...grantData,
+        approvedAmountTotal: GrantApplication.reduce(
+          (sum, application) => sum + (application.approvedAmountInUSD || 0),
+          0,
+        ),
+        totalApplications:
+          _count.GrantApplication + grant.historicalApplications,
+      };
+    });
 
     return NextResponse.json(grantsWithTotalApplications, {
       headers: {

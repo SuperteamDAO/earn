@@ -63,10 +63,24 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     }
 
     const totalApplications = grant.GrantApplication.length;
+    const approvedAmountTotal = grant.GrantApplication.reduce(
+      (sum, application) => {
+        if (
+          application.applicationStatus !== 'Approved' &&
+          application.applicationStatus !== 'Completed'
+        ) {
+          return sum;
+        }
+
+        return sum + (application.approvedAmountInUSD || 0);
+      },
+      0,
+    );
 
     logger.info(`Grant details fetched successfully for slug=${slug}`);
     return res.status(200).json({
       ...grant,
+      approvedAmountTotal,
       totalApplications,
       grantTrancheCount,
     });

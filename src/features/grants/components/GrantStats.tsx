@@ -59,10 +59,10 @@ export const GrantStats = ({ grant }: GrantStatsProps) => {
             <div className="flex items-center">
               <PayoutIcon />
               <p className="text-lg font-medium text-slate-700 md:text-xl">
-                {grant.totalApproved
+                {grant.approvedAmountTotal
                   ? currencyFormatter.format(
                       Math.round(
-                        grant?.totalApproved / grant?.totalApplications,
+                        grant.approvedAmountTotal / grant.totalApplications,
                       ),
                     )
                   : '—'}
@@ -80,7 +80,7 @@ export const GrantStats = ({ grant }: GrantStatsProps) => {
               <p className="text-lg font-medium text-slate-700 md:text-xl">
                 $
                 {formatNumberWithSuffix(
-                  Math.round(grant?.totalApproved || 0),
+                  Math.round(grant.approvedAmountTotal || 0),
                   1,
                   true,
                 )}

@@ -250,24 +250,6 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     );
 
     if (isApproved) {
-      const totalIncrementAmountInUSD = updatedData.reduce(
-        (acc, currentApplicant) => {
-          if (currentApplicant.approvedAmountInUSD !== undefined) {
-            return acc + currentApplicant.approvedAmountInUSD;
-          }
-          return acc;
-        },
-        0,
-      );
-      await prisma.grants.update({
-        where: { id: grantId },
-        data: {
-          totalApproved: {
-            increment: totalIncrementAmountInUSD,
-          },
-        },
-      });
-
       await Promise.all(
         result.map((application) =>
           addGrantWinBonusCredit(application.userId, application.id),
