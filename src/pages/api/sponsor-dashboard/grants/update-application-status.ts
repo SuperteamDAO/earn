@@ -17,6 +17,7 @@ import { addGrantWinBonusCredit } from '@/features/credits/utils/allocateCredits
 import { queueEmail } from '@/features/emails/utils/queueEmail';
 import { convertGrantApplicationToAirtable } from '@/features/grants/utils/convertGrantApplicationToAirtable';
 import { createTranche } from '@/features/grants/utils/createTranche';
+import { COINDCX_GRANT_ID } from '@/features/grants/utils/stGrant';
 import { fetchTokenUSDValue } from '@/features/wallet/utils/fetchTokenUSDValue';
 
 const MAX_RECORDS = 10;
@@ -49,8 +50,31 @@ const checkAndUpdateKYCStatus = async (
         const grantApplication =
           await prisma.grantApplication.findUniqueOrThrow({
             where: { id: grantApplicationId },
-            select: { walletAddress: true },
+            select: {
+              applicationStatus: true,
+              walletAddress: true,
+              grant: {
+                select: {
+                  id: true,
+                  airtableId: true,
+                  isNative: true,
+                },
+              },
+            },
           });
+
+        const isEligibleForAutoFirstTranche =
+          grantApplication.grant.id !== COINDCX_GRANT_ID &&
+          !!grantApplication.grant.airtableId &&
+          grantApplication.grant.isNative &&
+          grantApplication.applicationStatus === 'Approved';
+
+        if (!isEligibleForAutoFirstTranche) {
+          logger.info(
+            `Skipping automatic first tranche creation for application ${grantApplicationId} because the grant is not eligible for Airtable-backed tranche sync.`,
+          );
+          return;
+        }
 
         await createTranche({
           applicationId: grantApplicationId,
