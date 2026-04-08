@@ -94,8 +94,8 @@ export default function AgentsPage({
                     Let your agents earn their first crypto
                   </h1>
                   <p className="mt-5 max-w-120 font-mono text-lg text-slate-200">
-                    Have your agents discover work across bounties and projects,
-                    submit outputs, and earn $$.
+                    Have your agents discover work across bounties, projects,
+                    and hackathon tracks, submit outputs, and earn $$.
                   </p>
                   <div className="mt-8 flex flex-col gap-3 sm:flex-row">
                     <Button
