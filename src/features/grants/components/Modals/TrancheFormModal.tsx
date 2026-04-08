@@ -216,24 +216,25 @@ export const TrancheFormModal = ({ grant, applicationId, onClose }: Props) => {
       onClose();
     } catch (error: any) {
       console.error('Error submitting tranche request:', error);
+      const serverMessage = axios.isAxiosError(error)
+        ? error.response?.data?.message || error.response?.data?.error
+        : undefined;
 
       if (
         axios.isAxiosError(error) &&
         error.response?.data?.code === WALLET_ADDRESS_CONFLICT_CODE
       ) {
+        const walletErrorMessage =
+          serverMessage || WALLET_ADDRESS_CONFLICT_MESSAGE;
         form.setError('walletAddress', {
           type: 'server',
-          message:
-            error.response.data.message ||
-            error.response.data.error ||
-            WALLET_ADDRESS_CONFLICT_MESSAGE,
+          message: walletErrorMessage,
         });
+        toast.error(walletErrorMessage);
         return;
       }
 
-      toast.error(
-        error.response?.data?.message || 'Failed to submit tranche request',
-      );
+      toast.error(serverMessage || 'Failed to submit tranche request');
     } finally {
       setIsSubmitting(false);
     }

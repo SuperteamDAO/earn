@@ -369,25 +369,28 @@ export const ApplicationModal = ({
       onClose();
     } catch (e) {
       setIsLoading(false);
+      const serverMessage = axios.isAxiosError(e)
+        ? e.response?.data?.message || e.response?.data?.error
+        : undefined;
 
       if (
         axios.isAxiosError(e) &&
         e.response?.data?.code === WALLET_ADDRESS_CONFLICT_CODE
       ) {
+        const walletErrorMessage =
+          serverMessage || WALLET_ADDRESS_CONFLICT_MESSAGE;
         form.setError('walletAddress', {
           type: 'server',
-          message:
-            e.response.data.message ||
-            e.response.data.error ||
-            WALLET_ADDRESS_CONFLICT_MESSAGE,
+          message: walletErrorMessage,
         });
+        toast.error(walletErrorMessage);
         return;
       }
 
-      toast.error('Failed to submit application', {
-        description:
-          'Please try again later or contact support if the issue persists.',
-      });
+      toast.error(
+        serverMessage ||
+          'Failed to submit application. Please try again or contact support.',
+      );
     }
   };
 
