@@ -179,7 +179,7 @@ export async function buildListingQuery(
     isArchived: false,
     isPrivate: false,
     agentAccess: agentAccessFilter,
-    hackathonprize: false,
+    ...(context !== 'bookmarks' && { hackathonprize: false }),
   };
 
   const andConditions: BountiesWhereInput[] = [];
@@ -493,10 +493,14 @@ export async function buildListingQuery(
         where.type = 'project';
         break;
       case 'all':
-        where.OR = [
-          { type: { not: 'hackathon' } },
-          { type: 'hackathon', isFeatured: true },
-        ];
+        if (context === 'bookmarks') {
+          where.type = { in: ['bounty', 'project', 'hackathon'] };
+        } else {
+          where.OR = [
+            { type: { not: 'hackathon' } },
+            { type: 'hackathon', isFeatured: true },
+          ];
+        }
         break;
     }
   } else if (HACKATHONS.some((hackathon) => hackathon.slug === tab)) {
