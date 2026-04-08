@@ -42,6 +42,25 @@ export interface UseListingFormReturn extends UseFormReturn<ListingFormData> {
   validateEligibilityQuestions: () => Promise<boolean>;
 }
 
+function normalizeDraftPayload(values: ListingFormData): ListingFormData {
+  const payload: ListingFormData = {
+    ...values,
+  };
+
+  if (payload.deadline && !payload.deadline.endsWith('Z')) {
+    payload.deadline += dayjs().format('Z');
+  }
+  if (payload.commitmentDate && !payload.commitmentDate.endsWith('Z')) {
+    payload.commitmentDate += dayjs().format('Z');
+  }
+
+  return payload;
+}
+
+function getDraftPayloadKey(payload: ListingFormData): string {
+  return JSON.stringify(payload);
+}
+
 export const useListingForm = (
   defaultValues?: ListingFormData,
   hackathons?: HackathonModel[],
@@ -93,6 +112,8 @@ export const useListingForm = (
 
   const [, setHideAutoSave] = useAtom(hideAutoSaveAtom);
   const queueRefRef = useRef(queueRef);
+  const lastSavedPayloadKeyRef = useRef<string | null>(null);
+  const isHydratingSavedFieldsRef = useRef(false);
 
   useEffect(() => {
     queueRefRef.current = queueRef;
@@ -111,12 +132,22 @@ export const useListingForm = (
       console.log('[DRAFT_DEBUG] Skipping - isEditing=true');
       return;
     }
+
+    const dataToSave = normalizeDraftPayload(getValues());
+    const payloadKey = getDraftPayloadKey(dataToSave);
+
     if (queueRefRef.current.isProcessing) {
       console.log('[DRAFT_DEBUG] Already processing, queuing next');
       setQueueRef((q) => ({
         ...q,
         shouldProcessNext: true,
       }));
+      return;
+    }
+
+    if (payloadKey === lastSavedPayloadKeyRef.current) {
+      console.log('[DRAFT_DEBUG] Skipping save for unchanged payload');
+      setHideAutoSave(false);
       return;
     }
 
@@ -128,16 +159,6 @@ export const useListingForm = (
       isProcessing: true,
     }));
     try {
-      const dataToSave = getValues();
-
-      if (dataToSave.deadline) {
-        if (!dataToSave.deadline.endsWith('Z'))
-          dataToSave.deadline += dayjs().format('Z');
-      }
-      if (dataToSave.commitmentDate) {
-        if (!dataToSave.commitmentDate.endsWith('Z'))
-          dataToSave.commitmentDate += dayjs().format('Z');
-      }
       console.log(
         '[DRAFT_DEBUG] Calling API with id:',
         dataToSave.id,
@@ -151,9 +172,23 @@ export const useListingForm = (
         'slug:',
         data.slug,
       );
+      lastSavedPayloadKeyRef.current = getDraftPayloadKey({
+        ...dataToSave,
+        id: data.id,
+        slug: dataToSave.slug || data.slug,
+      });
       setHideAutoSave(false);
-      formMethods.setValue('id', data.id);
-      if (!dataToSave.slug) formMethods.setValue('slug', data.slug);
+      isHydratingSavedFieldsRef.current = true;
+      try {
+        if (formMethods.getValues('id') !== data.id) {
+          formMethods.setValue('id', data.id);
+        }
+        if (!dataToSave.slug && formMethods.getValues('slug') !== data.slug) {
+          formMethods.setValue('slug', data.slug);
+        }
+      } finally {
+        isHydratingSavedFieldsRef.current = false;
+      }
       setQueueRef((q) => ({
         ...q,
       }));
@@ -193,9 +228,16 @@ export const useListingForm = (
       isEditing,
       stack: new Error().stack?.split('\n').slice(1, 4).join('\n'),
     });
+    if (isEditing || isHydratingSavedFieldsRef.current) return;
+
+    const payloadKey = getDraftPayloadKey(normalizeDraftPayload(getValues()));
+    if (payloadKey === lastSavedPayloadKeyRef.current) {
+      return;
+    }
+
     setHideAutoSave(true);
-    if (!isEditing) debouncedSaveRef.current?.();
-  }, [isEditing]);
+    debouncedSaveRef.current?.();
+  }, [isEditing, getValues]);
 
   const submitListing = useCallback(async () => {
     const formData = refineReadyListing(getValues());
