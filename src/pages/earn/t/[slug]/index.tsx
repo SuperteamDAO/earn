@@ -811,18 +811,25 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     const stats = { participations, wins, totalWinnings };
 
     const isOnLeaderboard = totalWinnings > 0;
-    const hasRecentSubmission = isOnLeaderboard
+    const hasRecentActivity = isOnLeaderboard
       ? false
-      : await prisma.submission
-          .findFirst({
+      : await Promise.all([
+          prisma.submission.findFirst({
             where: {
               userId: talent.id,
               createdAt: { gte: threeMonthsAgo },
             },
             select: { id: true },
-          })
-          .then((r) => !!r);
-    const shouldNoIndex = !isOnLeaderboard && !hasRecentSubmission;
+          }),
+          prisma.grantApplication.findFirst({
+            where: {
+              userId: talent.id,
+              createdAt: { gte: threeMonthsAgo },
+            },
+            select: { id: true },
+          }),
+        ]).then(([submission, grantApp]) => !!submission || !!grantApp);
+    const shouldNoIndex = !isOnLeaderboard && !hasRecentActivity;
 
     const bgIndex = talent?.id ? hashStringToInt(talent.id) % 5 : 0;
     const bgNum = bgIndex + 1;
