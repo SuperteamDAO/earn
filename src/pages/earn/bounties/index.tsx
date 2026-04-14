@@ -1,4 +1,5 @@
 import { type GetServerSideProps } from 'next';
+import Link from 'next/link';
 
 import { JsonLd } from '@/components/shared/JsonLd';
 import { ASSET_URL } from '@/constants/ASSET_URL';
@@ -15,7 +16,7 @@ interface BountiesPageProps {
 export default function BountiesPage({ potentialSession }: BountiesPageProps) {
   const breadcrumbSchema = generateBreadcrumbListSchema([
     { name: 'Home', url: '/' },
-    { name: 'Crypto Bounties' },
+    { name: 'Crypto Bounties', url: '/earn/bounties/' },
   ]);
 
   return (
@@ -34,6 +35,11 @@ export default function BountiesPage({ potentialSession }: BountiesPageProps) {
         </>
       }
     >
+      <nav aria-label="Breadcrumb" className="sr-only">
+        <Link href="/earn">Home</Link>
+        <span>/</span>
+        <Link href="/earn/bounties">Crypto Bounties</Link>
+      </nav>
       <div className="w-full">
         <ListingsSection
           type="all"
