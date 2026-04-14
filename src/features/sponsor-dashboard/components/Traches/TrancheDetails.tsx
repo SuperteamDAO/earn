@@ -10,13 +10,17 @@ import { Button } from '@/components/ui/button';
 import { CopyButton } from '@/components/ui/copy-tooltip';
 import { CircularProgress } from '@/components/ui/progress';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { useTokenLookup } from '@/constants/tokenList';
+import { TokenIcon } from '@/components/ui/token-icon';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
 import { truncateString } from '@/utils/truncateString';
 
 import { type Grant } from '@/features/grants/types';
-import { isSTGrant, ST_GRANT_COPY } from '@/features/grants/utils/stGrant';
+import {
+  AGENTIC_ENGINEERING_GRANT_COPY,
+  isAgenticEngineeringGrant,
+  ST_GRANT_COPY,
+} from '@/features/grants/utils/stGrant';
 import {
   Telegram,
   Twitter,
@@ -43,14 +47,17 @@ export const TrancheDetails = ({
   approveOnOpen,
   rejectedOnOpen,
 }: Props) => {
-  const { getIcon } = useTokenLookup();
   const selectedTranche = useAtomValue(selectedGrantTrancheAtom);
   const isPending = selectedTranche?.status === 'Pending';
   const isApproved = selectedTranche?.status === 'Approved';
   const isRejected = selectedTranche?.status === 'Rejected';
-  const isST = isSTGrant(grant);
-
-  const tokenIcon = getIcon(grant?.token);
+  const isST = grant?.isST === true;
+  const isAgenticEngineering = isAgenticEngineeringGrant(grant);
+  const trancheCopy = isST
+    ? ST_GRANT_COPY.tranche
+    : isAgenticEngineering
+      ? AGENTIC_ENGINEERING_GRANT_COPY.tranche
+      : null;
 
   const formattedCreatedAt = dayjs(selectedTranche?.createdAt).format(
     'DD MMM YYYY',
@@ -62,6 +69,11 @@ export const TrancheDetails = ({
 
   const totalPaid = selectedTranche?.GrantApplication?.totalPaid || 0;
   const approvedAmount = selectedTranche?.GrantApplication?.approvedAmount || 0;
+  const aiReceiptFiles = Array.isArray(selectedTranche?.aiReceipts)
+    ? selectedTranche.aiReceipts.filter(
+        (receipt): receipt is string => typeof receipt === 'string',
+      )
+    : [];
 
   const paidPercentage = (totalPaid / approvedAmount) * 100;
 
@@ -161,10 +173,10 @@ export const TrancheDetails = ({
                 <p className="mr-3 text-sm font-semibold whitespace-nowrap text-slate-400">
                   TOTAL GRANT
                 </p>
-                <img
+                <TokenIcon
                   className="mr-0.5 h-4 w-4 rounded-full"
-                  src={tokenIcon}
                   alt="token"
+                  symbol={grant?.token}
                 />
 
                 <p className="text-sm font-semibold whitespace-nowrap text-slate-600">
@@ -255,10 +267,10 @@ export const TrancheDetails = ({
                     APPROVED TRANCHE AMOUNT
                   </p>
                   <div className="flex items-center gap-0.5">
-                    <img
+                    <TokenIcon
                       className="mr-0.5 h-4 w-4 rounded-full"
-                      src={tokenIcon}
                       alt="token"
+                      symbol={grant?.token}
                     />
 
                     <p className="text-sm font-semibold whitespace-nowrap text-slate-600">
@@ -276,10 +288,10 @@ export const TrancheDetails = ({
                     TRANCHE ASK
                   </p>
                   <div className="flex items-center gap-0.5">
-                    <img
+                    <TokenIcon
                       className="mr-0.5 h-4 w-4 rounded-full"
-                      src={tokenIcon}
                       alt="token"
+                      symbol={grant?.token}
                     />
 
                     <p className="text-sm font-semibold whitespace-nowrap text-slate-600">
@@ -305,49 +317,73 @@ export const TrancheDetails = ({
                 />
               )}
 
-              <InfoBox
-                label={
-                  isST
-                    ? ST_GRANT_COPY.tranche.projectUpdate.label
-                    : 'Project Updates'
-                }
-                content={selectedTranche?.update}
-                isHtml
-              />
+              {!isAgenticEngineering && (
+                <InfoBox
+                  label={trancheCopy?.projectUpdate?.label ?? 'Project Updates'}
+                  content={selectedTranche?.update}
+                  isHtml
+                />
+              )}
 
               {isST && (
                 <>
                   <ImageGallery
-                    label={ST_GRANT_COPY.tranche.eventPictures.label}
+                    label={ST_GRANT_COPY.tranche.eventPictures!.label}
                     images={selectedTranche?.eventPictures as string[] | null}
                   />
 
                   <ImageGallery
-                    label={ST_GRANT_COPY.tranche.eventReceipts.label}
+                    label={ST_GRANT_COPY.tranche.eventReceipts!.label}
                     images={selectedTranche?.eventReceipts as string[] | null}
                   />
 
                   {selectedTranche?.attendeeCount !== null &&
                     selectedTranche?.attendeeCount !== undefined && (
                       <InfoBox
-                        label={ST_GRANT_COPY.tranche.attendeeCount.label}
+                        label={ST_GRANT_COPY.tranche.attendeeCount!.label}
                         content={String(selectedTranche.attendeeCount)}
                       />
                     )}
 
                   {selectedTranche?.socialPost && (
                     <InfoBox
-                      label={ST_GRANT_COPY.tranche.socialPost.label}
+                      label={ST_GRANT_COPY.tranche.socialPost!.label}
                       content={selectedTranche.socialPost}
                     />
                   )}
                 </>
               )}
 
+              {isAgenticEngineering && (
+                <>
+                  <InfoBox
+                    label={
+                      AGENTIC_ENGINEERING_GRANT_COPY.tranche.colosseumLink
+                        ?.label || 'Colosseum Link'
+                    }
+                    content={selectedTranche?.colosseumLink}
+                  />
+
+                  <InfoBox
+                    label={
+                      AGENTIC_ENGINEERING_GRANT_COPY.tranche.githubRepo
+                        ?.label || 'GitHub Repo'
+                    }
+                    content={selectedTranche?.githubRepo}
+                  />
+
+                  <ImageGallery
+                    label={
+                      AGENTIC_ENGINEERING_GRANT_COPY.tranche.aiReceipt?.label ||
+                      'AI Subscription Receipt'
+                    }
+                    images={aiReceiptFiles.length > 0 ? aiReceiptFiles : null}
+                  />
+                </>
+              )}
+
               <InfoBox
-                label={
-                  isST ? ST_GRANT_COPY.tranche.helpWanted.label : 'Help Wanted'
-                }
+                label={trancheCopy?.helpWanted.label ?? 'Help Wanted'}
                 content={selectedTranche?.helpWanted}
                 isHtml
               />

@@ -12,7 +12,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { useTokenLookup } from '@/constants/tokenList';
+import { TokenIcon } from '@/components/ui/token-icon';
 import { type SubmissionWithUser } from '@/interface/submission';
 import { cn } from '@/utils/cn';
 import { getRankLabels } from '@/utils/rank';
@@ -36,8 +36,6 @@ const PaymentDetailsRow = ({
   }>;
   token: string;
 }) => {
-  const { getIcon } = useTokenLookup();
-
   return (
     <>
       <TableCell>
@@ -53,10 +51,10 @@ const PaymentDetailsRow = ({
         {paymentDetails.map((payment, index) => (
           <div className="my-2 flex items-center justify-between" key={index}>
             <div className="flex items-center gap-1">
-              <img
+              <TokenIcon
                 className="h-4 w-4 rounded-full"
-                src={getIcon(token)}
                 alt={`${token}`}
+                symbol={token}
               />
               <p className="text-sm font-medium text-slate-700">
                 {payment.amount} <span className="text-slate-400">{token}</span>
@@ -99,7 +97,6 @@ export const PayoutSection = ({
   submissions: SubmissionWithUser[];
   bounty: Listing;
 }) => {
-  const { getIcon } = useTokenLookup();
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
   const { connected: walletConnected } = useWallet();
 
@@ -269,9 +266,9 @@ export const PayoutSection = ({
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2">
-                        <img
-                          src={getIcon(bounty.token)}
-                          alt={bounty.token}
+                        <TokenIcon
+                          symbol={bounty.token}
+                          alt={bounty.token || 'token'}
                           className="h-4 w-4"
                         />
                         <span className="font-medium text-slate-900">

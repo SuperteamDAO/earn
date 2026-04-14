@@ -3,9 +3,9 @@ export const HACKATHONS: {
   slug: string;
   logo: string;
 }[] = [
-  // {
-  //   label: 'Cypherpunk',
-  //   slug: 'cypherpunk',
-  //   logo: '/hackathon/cypherpunk/logo',
-  // },
+  {
+    label: 'Frontier',
+    slug: 'frontier',
+    logo: '/hackathon/frontier/logo.webp',
+  },
 ];

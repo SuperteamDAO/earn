@@ -4,8 +4,8 @@ import IoIosStar from '@/components/icons/IoIosStar';
 import MdModeComment from '@/components/icons/MdModeComment';
 import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
 import { Skeleton } from '@/components/ui/skeleton';
+import { TokenIcon } from '@/components/ui/token-icon';
 import { ASSET_URL } from '@/constants/ASSET_URL';
-import { useTokenLookup } from '@/constants/tokenList';
 import { useServerTimeSync } from '@/hooks/use-server-time';
 import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';
@@ -93,8 +93,6 @@ export const ListingCard = ({
   const isVariable = compensationType === 'variable';
   const showToken = !isVariable || (isVariable && isWinnersAnnounced);
 
-  const tokenIcon = getIcon(token);
-
   return (
     <div
       className={cn(
@@ -131,10 +129,10 @@ export const ListingCard = ({
             <div className="mt-px flex items-center gap-1 sm:gap-2">
               <div className="flex items-center justify-start sm:hidden">
                 {!!showToken && (
-                  <img
+                  <TokenIcon
                     className="mr-0.5 h-3.5 w-3.5 rounded-full"
-                    alt={token}
-                    src={tokenIcon}
+                    alt={token ?? 'token'}
+                    symbol={token}
                   />
                 )}
                 <div className="flex items-baseline">
@@ -227,10 +225,10 @@ export const ListingCard = ({
           )}
         >
           {!!showToken && (
-            <img
+            <TokenIcon
               className="mt-1 mr-1 h-4 w-4 rounded-full sm:mt-0.5"
-              alt={token}
-              src={tokenIcon}
+              alt={token ?? 'token'}
+              symbol={token}
             />
           )}
           <div className="flex items-baseline gap-1">

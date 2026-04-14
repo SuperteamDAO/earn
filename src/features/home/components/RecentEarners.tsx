@@ -3,7 +3,7 @@ import posthog from 'posthog-js';
 import { useEffect, useRef, useState } from 'react';
 
 import MdArrowForward from '@/components/icons/MdArrowForward';
-import { useTokenLookup } from '@/constants/tokenList';
+import { TokenIcon } from '@/components/ui/token-icon';
 import { type User } from '@/interface/user';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import { getURL } from '@/utils/validUrl';
@@ -29,9 +29,6 @@ const Earner = ({
   username,
   id,
 }: EarnerProps) => {
-  const { getIcon } = useTokenLookup();
-  const tokenIcon = getIcon(token);
-
   return (
     <Link
       href={`${getURL()}earn/t/${username}`}
@@ -51,10 +48,10 @@ const Earner = ({
           </p>
         </div>
         <div className="ml-auto flex items-center gap-1">
-          <img
+          <TokenIcon
             className="h-5 w-5 rounded-full"
             alt={`${token} icon`}
-            src={tokenIcon}
+            symbol={token}
           />
 
           <span className="text-sm font-medium text-gray-600">

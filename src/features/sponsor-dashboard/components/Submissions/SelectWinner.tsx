@@ -9,7 +9,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { useTokenLookup } from '@/constants/tokenList';
+import { TokenIcon } from '@/components/ui/token-icon';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import { cleanRewards, nthLabelGenerator, sortRank } from '@/utils/rank';
@@ -37,7 +37,6 @@ export const SelectWinner = ({
   onWinnersAnnounceOpen,
   isMultiSelectOn,
 }: Props) => {
-  const { getIcon } = useTokenLookup();
   const rewards = sortRank(cleanRewards(bounty?.rewards));
 
   const [selectedSubmission] = useAtom(selectedSubmissionAtom);
@@ -170,8 +169,8 @@ export const SelectWinner = ({
                             <div className="flex items-center gap-1">
                               {bounty?.token && (
                                 <div className="flex items-center gap-1">
-                                  <img
-                                    src={getIcon(bounty?.token)}
+                                  <TokenIcon
+                                    symbol={bounty.token}
                                     alt="token"
                                     className="h-4 w-4"
                                   />
@@ -224,8 +223,8 @@ export const SelectWinner = ({
                         <div className="mx-3 h-4 w-px bg-slate-200" />
                         <div className="flex items-center gap-2">
                           {bounty?.token && (
-                            <img
-                              src={getIcon(bounty?.token)}
+                            <TokenIcon
+                              symbol={bounty.token}
                               alt={bounty.token}
                               className="h-5 w-5 rounded-full"
                             />

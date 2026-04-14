@@ -16,9 +16,7 @@ export const isFndnPayingCheck = ({
   validatedListing,
 }: IsFndnPayingCheckProps) => {
   const { type, isFndnPaying: rawIsFndnPaying } = validatedListing;
-  const isSuperteamSponsor =
-    sponsor?.slug?.trim().toLowerCase() === 'superteam';
-  const isEligibleSponsor = !!sponsor?.chapter || isSuperteamSponsor;
+  const isEligibleSponsor = !!sponsor?.chapter;
   const isFndnPaying =
     isEligibleSponsor && type !== 'project' ? rawIsFndnPaying : false;
   logger.info('Is Foundation Paying', {

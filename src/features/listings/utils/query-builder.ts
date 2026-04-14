@@ -493,10 +493,14 @@ export async function buildListingQuery(
         where.type = 'project';
         break;
       case 'all':
-        where.OR = [
-          { type: { not: 'hackathon' } },
-          { type: 'hackathon', isFeatured: true },
-        ];
+        if (context === 'agents') {
+          where.type = { in: ['bounty', 'project', 'hackathon'] };
+        } else {
+          where.OR = [
+            { type: { not: 'hackathon' } },
+            { type: 'hackathon', isFeatured: true },
+          ];
+        }
         break;
     }
   } else if (HACKATHONS.some((hackathon) => hackathon.slug === tab)) {

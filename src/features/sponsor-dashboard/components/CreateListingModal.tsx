@@ -12,9 +12,13 @@ import { type HackathonModel } from '@/prisma/models/Hackathon';
 import { BountyIcon } from '@/svg/bounty-icon';
 import { ProjectIcon } from '@/svg/project-icon';
 
+import { getVisibleHackathons } from '@/features/hackathon/utils/getVisibleHackathons';
+import { getListingIcon } from '@/features/listings/utils/getListingIcon';
+
 export const CreateListingModal = ({
   isOpen = false,
   onClose,
+  hackathons,
 }: {
   isOpen: boolean;
   onClose: () => void;
@@ -38,10 +42,12 @@ export const CreateListingModal = ({
     router.push('/earn/dashboard/new?type=project');
   };
 
-  // const handleCreateHackathon = (hackathon: string) => {
-  //   posthog.capture('create new hackathon_sponsor');
-  //   router.push(`/earn/dashboard/new?type=hackathon&hackathon=${hackathon}`);
-  // };
+  const handleCreateHackathon = (hackathon: string) => {
+    posthog.capture('create new hackathon_sponsor');
+    router.push(`/earn/dashboard/new?type=hackathon&hackathon=${hackathon}`);
+  };
+
+  const visibleHackathons = getVisibleHackathons(hackathons);
 
   const isMD = useMediaQuery('(min-width: 768px)');
 
@@ -128,28 +134,27 @@ export const CreateListingModal = ({
                     </p>
                   </span>
                 </Button>
-                {/* <Button
-                  className="col-span-2 flex h-55 flex-col gap-4 whitespace-normal text-slate-500 hover:text-slate-500"
-                  variant="outline"
-                  onClick={() => {
-                    handleCreateHackathon('cypherpunk');
-                  }}
-                >
-                  <CypherpunkLogo
-                    styles={{
-                      width: '12rem',
+                {visibleHackathons.map((hackathon) => (
+                  <Button
+                    key={hackathon.id}
+                    className="col-span-2 flex h-55 flex-col gap-4 whitespace-normal text-slate-500 hover:text-slate-500"
+                    variant="outline"
+                    onClick={() => {
+                      handleCreateHackathon(hackathon.slug);
                     }}
-                  />
-                  <span className="flex max-w-6/12 flex-col gap-1">
-                    <h3 className="text-base font-medium text-slate-900">
-                      Cypherpunk Sidetrack
-                    </h3>
-                    <p className="text-sm font-normal">
-                      Get developers participating in Cypherpunk to build on top
-                      of your project
-                    </p>
-                  </span>
-                </Button> */}
+                  >
+                    {getListingIcon('hackathon', 'size-12 fill-slate-500')}
+                    <span className="flex max-w-6/12 flex-col gap-1">
+                      <h3 className="text-base font-medium text-slate-900">
+                        {hackathon.name} Track
+                      </h3>
+                      <p className="text-sm font-normal">
+                        Get developers participating in {hackathon.name} to
+                        build on top of your project
+                      </p>
+                    </span>
+                  </Button>
+                ))}
               </div>
             </div>
           </motion.div>

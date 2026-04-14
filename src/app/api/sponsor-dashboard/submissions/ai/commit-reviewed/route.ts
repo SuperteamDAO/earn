@@ -17,6 +17,26 @@ import {
 } from '@/features/listings/types';
 import { convertTextToNotesHTML } from '@/features/sponsor-dashboard/utils/convertTextToNotesHTML';
 
+const UPDATE_BATCH_SIZE = 10;
+
+const runInBatches = async <T, R>(
+  items: T[],
+  processItem: (item: T, index: number) => Promise<R>,
+  batchSize = UPDATE_BATCH_SIZE,
+): Promise<R[]> => {
+  const results: R[] = [];
+
+  for (let start = 0; start < items.length; start += batchSize) {
+    const batch = items.slice(start, start + batchSize);
+    const batchResults = await Promise.all(
+      batch.map((item, batchIndex) => processItem(item, start + batchIndex)),
+    );
+    results.push(...batchResults);
+  }
+
+  return results;
+};
+
 export async function POST(request: NextRequest) {
   const body = await request.json();
   const { id } = body;
@@ -73,11 +93,12 @@ export async function POST(request: NextRequest) {
             'Pending',
       );
 
-      const data = await Promise.all(
-        applicationsWithAIReview.map(async (appl) => {
+      const data = await runInBatches(
+        applicationsWithAIReview,
+        async (appl) => {
           const aiReview = (appl.ai as unknown as ProjectApplicationAi)?.review;
           const commitedAi = {
-            ...(!!aiReview ? { review: aiReview } : {}),
+            ...(aiReview ? { review: aiReview } : {}),
             commited: true,
           };
           let correctedLabel: SubmissionLabels = appl?.label || 'Unreviewed';
@@ -94,7 +115,7 @@ export async function POST(request: NextRequest) {
               ai: commitedAi,
             },
           });
-        }),
+        },
       );
 
       return NextResponse.json(data);
@@ -122,11 +143,12 @@ export async function POST(request: NextRequest) {
         (u) => !(u.ai as unknown as BountySubmissionAi)?.evaluation?.finalLabel,
       );
 
-      const processedWithFinalLabel = await Promise.all(
-        submissionsWithFinalLabel.map(async (submission) => {
+      const processedWithFinalLabel = await runInBatches(
+        submissionsWithFinalLabel,
+        async (submission) => {
           const ai = submission.ai as unknown as BountySubmissionAi;
           const commitedAi = {
-            ...(!!ai ? ai : {}),
+            ...(ai ? ai : {}),
             commited: true,
           };
 
@@ -138,7 +160,7 @@ export async function POST(request: NextRequest) {
               ai: commitedAi,
             },
           });
-        }),
+        },
       );
 
       let processedWithoutFinalLabel: any[] = [];
@@ -158,12 +180,13 @@ export async function POST(request: NextRequest) {
           }
         });
 
-        const processedLowQuality = await Promise.all(
-          lowQualitySubmissions.map(async (submission) => {
+        const processedLowQuality = await runInBatches(
+          lowQualitySubmissions,
+          async (submission) => {
             const ai = submission.ai as unknown as BountySubmissionAi;
             const calculatedLabel: SubmissionLabels = 'Low_Quality';
             const commitedAi = {
-              ...(!!ai ? ai : {}),
+              ...(ai ? ai : {}),
               evaluation: {
                 ...ai?.evaluation,
                 finalLabel: calculatedLabel,
@@ -179,7 +202,7 @@ export async function POST(request: NextRequest) {
                 ai: commitedAi,
               },
             });
-          }),
+          },
         );
 
         const sortedRemainingSubmissions = remainingSubmissions.sort((a, b) => {
@@ -211,8 +234,9 @@ export async function POST(request: NextRequest) {
 
         const bottom25Percentile = Math.ceil(totalRemainingSubmissions * 0.25);
 
-        const processedRemainingSubmissions = await Promise.all(
-          sortedRemainingSubmissions.map(async (submission, index) => {
+        const processedRemainingSubmissions = await runInBatches(
+          sortedRemainingSubmissions,
+          async (submission, index) => {
             const ai = submission.ai as unknown as BountySubmissionAi;
 
             let label: SubmissionLabels = 'Unreviewed';
@@ -229,7 +253,7 @@ export async function POST(request: NextRequest) {
             }
 
             const commitedAi = {
-              ...(!!ai ? ai : {}),
+              ...(ai ? ai : {}),
               evaluation: {
                 ...ai?.evaluation,
                 finalLabel: label,
@@ -245,7 +269,7 @@ export async function POST(request: NextRequest) {
                 ai: commitedAi,
               },
             });
-          }),
+          },
         );
 
         processedWithoutFinalLabel = [

@@ -72,11 +72,19 @@ export default async function grants(
       select: grantsSelect,
     });
 
-    const grantsWithTotalApplications = grants.map((grant) => ({
-      ...grant,
-      totalApplications:
-        grant._count.GrantApplication + grant.historicalApplications,
-    }));
+    const grantsWithTotalApplications = grants.map((grant) => {
+      const { GrantApplication, _count, ...grantData } = grant;
+
+      return {
+        ...grantData,
+        approvedAmountTotal: GrantApplication.reduce(
+          (sum, application) => sum + (application.approvedAmountInUSD || 0),
+          0,
+        ),
+        totalApplications:
+          _count.GrantApplication + grant.historicalApplications,
+      };
+    });
 
     logger.info(`Fetched ${grants.length} grants successfully`);
     return res.status(200).json(grantsWithTotalApplications);
