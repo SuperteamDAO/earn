@@ -268,7 +268,12 @@ export function ListingHeader({
           >
             <div className="flex gap-1">
               <div className="hidden md:flex">
-                <ListingTitle title={title} />
+                <p
+                  aria-hidden="true"
+                  className="text-lg font-semibold tracking-tight text-slate-700 sm:text-xl"
+                >
+                  {title}
+                </p>
               </div>
             </div>
             <div className="hidden md:flex">
