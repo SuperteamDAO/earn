@@ -213,16 +213,13 @@ export const SubmissionActionButton = ({
   let isSubmitDisabled = false;
 
   function getButtonState() {
-    if (listing.agentAccess === 'AGENT_ONLY') {
-      return 'agent_only';
-    }
-
-    if (
+    const isWinnerKycFlow =
       isWinnersAnnounced &&
       isFndnPaying &&
       submission?.isWinner &&
-      dayjs(listing.winnersAnnouncedAt).isAfter(dayjs.utc('2025-08-06'))
-    ) {
+      dayjs(listing.winnersAnnouncedAt).isAfter(dayjs.utc('2025-08-06'));
+
+    if (isWinnerKycFlow) {
       if (!submission?.isKYCVerified) {
         return 'kyc';
       }
@@ -232,6 +229,10 @@ export const SubmissionActionButton = ({
       if (submission?.isKYCVerified && submission.isPaid) {
         return 'paid';
       }
+    }
+
+    if (listing.agentAccess === 'AGENT_ONLY') {
+      return 'agent_only';
     }
 
     if (isSubmitted && !pastDeadline && submissionStatus === 'Rejected')
