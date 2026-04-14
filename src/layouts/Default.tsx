@@ -51,7 +51,6 @@ export const Default = ({
       {topBanner}
       <Header />
       <div className="flex flex-1 flex-col">{children}</div>
-      {!hideFooter && <Footer />}
       {/* sr-only static links — always in SSR HTML so Googlebot can follow them regardless of footer ssr:false */}
       <nav aria-label="Site links" className="sr-only">
         <Link href="/earn/bounties">Crypto Bounties</Link>
@@ -80,6 +79,7 @@ export const Default = ({
         <Link href="/earn/regions/georgia">Superteam Georgia</Link>
         <Link href="/earn/regions/balkan">Superteam Balkan</Link>
       </nav>
+      {!hideFooter && <Footer />}
       <ProUpgradeOverlay />
     </div>
   );
