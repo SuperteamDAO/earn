@@ -10,6 +10,7 @@ import FaDiscord from '@/components/icons/FaDiscord';
 import FaPlay from '@/components/icons/FaPlay';
 import TbBell from '@/components/icons/TbBell';
 import TbBellRinging from '@/components/icons/TbBellRinging';
+import { JsonLd } from '@/components/shared/JsonLd';
 import { UserFlag } from '@/components/shared/UserFlag';
 import {
   Accordion,
@@ -36,6 +37,7 @@ import { useUser } from '@/store/user';
 import { TalentOlympicsHeader } from '@/svg/talent-olympics-header';
 import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';
+import { generateBreadcrumbListSchema } from '@/utils/json-ld';
 
 import { AuthWrapper } from '@/features/auth/components/AuthWrapper';
 
@@ -178,11 +180,35 @@ export default function TalentOlympics({ countryLeaders, rankings }: Props) {
     <Default
       className="bg-white"
       meta={
-        <Meta
-          title="Talent Olympics — Submission Tracks | Superteam Earn"
-          description="Submit to Front End and Rust developer tracks of the Talent Olympics on Superteam Earn. Complete challenges, earn crypto prizes, and get hired by top Solana teams."
-          canonical="https://superteam.fun/earn/hackathon/talent-olympics/"
-        />
+        <>
+          <Meta
+            title="Talent Olympics — Submission Tracks | Superteam Earn"
+            description="Submit to Front End and Rust developer tracks of the Talent Olympics on Superteam Earn. Complete challenges, earn crypto prizes, and get hired by top Solana teams."
+            canonical="https://superteam.fun/earn/hackathon/talent-olympics/"
+          />
+          <JsonLd
+            data={[
+              generateBreadcrumbListSchema([
+                { name: 'Home', url: '/' },
+                { name: 'Hackathons', url: '/hackathon/all/' },
+                { name: 'Talent Olympics' },
+              ]),
+              {
+                '@context': 'https://schema.org',
+                '@type': 'Event',
+                name: 'Talent Olympics',
+                description:
+                  'Submit to Front End and Rust developer tracks of the Talent Olympics on Superteam Earn. Complete challenges, earn crypto prizes, and get hired by top Solana teams.',
+                url: 'https://superteam.fun/earn/hackathon/talent-olympics/',
+                organizer: {
+                  '@type': 'Organization',
+                  name: 'Superteam Earn',
+                  url: 'https://superteam.fun/',
+                },
+              },
+            ]}
+          />
+        </>
       }
     >
       <div>

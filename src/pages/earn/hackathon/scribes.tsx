@@ -1,14 +1,18 @@
-import { useQuery } from '@tanstack/react-query';
+import { QueryClient, dehydrate, useQuery } from '@tanstack/react-query';
+import type { GetServerSideProps } from 'next';
 import Countdown from 'react-countdown';
 
 import { TrackBox } from '@/components/hackathon/TrackBox';
 import { CountDownRenderer } from '@/components/shared/countdownRenderer';
+import { JsonLd } from '@/components/shared/JsonLd';
 import { Button } from '@/components/ui/button';
 import { ASSET_URL } from '@/constants/ASSET_URL';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
+import { prisma } from '@/prisma';
 import { statsDataQuery, trackDataQuery } from '@/queries/hackathon';
 import { ScribesLogo } from '@/svg/scribes-logo';
+import { generateBreadcrumbListSchema } from '@/utils/json-ld';
 
 export default function Scribes() {
   const slug = 'scribes';
@@ -20,11 +24,35 @@ export default function Scribes() {
     <Default
       className="bg-white"
       meta={
-        <Meta
-          title="Solana Scribes — Submission Tracks | Superteam Earn"
-          description="Submit to bounty tracks of the Solana Scribes content hackathon by Lamport DAO on Superteam Earn. Earn crypto prizes for your writing and content skills."
-          canonical="https://superteam.fun/earn/hackathon/scribes/"
-        />
+        <>
+          <Meta
+            title="Solana Scribes — Submission Tracks | Superteam Earn"
+            description="Submit to bounty tracks of the Solana Scribes content hackathon by Lamport DAO on Superteam Earn. Earn crypto prizes for your writing and content skills."
+            canonical="https://superteam.fun/earn/hackathon/scribes/"
+          />
+          <JsonLd
+            data={[
+              generateBreadcrumbListSchema([
+                { name: 'Home', url: '/' },
+                { name: 'Hackathons', url: '/hackathon/all/' },
+                { name: 'Solana Scribes' },
+              ]),
+              {
+                '@context': 'https://schema.org',
+                '@type': 'Event',
+                name: 'Solana Scribes — Content Hackathon',
+                description:
+                  'Submit to bounty tracks of the Solana Scribes content hackathon by Lamport DAO on Superteam Earn. Earn crypto prizes for your writing and content skills.',
+                url: 'https://superteam.fun/earn/hackathon/scribes/',
+                organizer: {
+                  '@type': 'Organization',
+                  name: 'Superteam Earn',
+                  url: 'https://superteam.fun/',
+                },
+              },
+            ]}
+          />
+        </>
       }
     >
       <div>
@@ -95,3 +123,87 @@ export default function Scribes() {
     </Default>
   );
 }
+
+export const getServerSideProps: GetServerSideProps = async () => {
+  const slug = 'scribes';
+  const queryClient = new QueryClient();
+
+  const hackathon = await prisma.hackathon.findUnique({ where: { slug } });
+
+  await Promise.all([
+    queryClient.prefetchQuery({
+      queryKey: ['tracks', slug],
+      queryFn: async () => {
+        const result = await prisma.bounties.findMany({
+          where: { Hackathon: { slug }, isPublished: true },
+          select: {
+            title: true,
+            token: true,
+            rewardAmount: true,
+            slug: true,
+            sponsor: {
+              select: {
+                name: true,
+                slug: true,
+                logo: true,
+                isVerified: true,
+                chapter: { select: { id: true } },
+              },
+            },
+          },
+          orderBy: { usdValue: 'desc' },
+        });
+        return JSON.parse(JSON.stringify(result));
+      },
+    }),
+    queryClient.prefetchQuery({
+      queryKey: ['stats', slug],
+      queryFn: async () => {
+        if (!hackathon)
+          return {
+            totalRewardAmount: 0,
+            totalListings: 0,
+            deadline: null,
+            startDate: null,
+            announceDate: null,
+          };
+        const [totalListings, totalRewardAmount] = await Promise.all([
+          prisma.bounties.count({
+            where: {
+              hackathonId: hackathon.id,
+              isActive: true,
+              isArchived: false,
+              status: 'OPEN',
+              isPublished: true,
+            },
+          }),
+          prisma.bounties.aggregate({
+            _sum: { usdValue: true },
+            where: {
+              hackathonId: hackathon.id,
+              isActive: true,
+              isArchived: false,
+              status: 'OPEN',
+              isPublished: true,
+            },
+          }),
+        ]);
+        return JSON.parse(
+          JSON.stringify({
+            totalRewardAmount: totalRewardAmount._sum.usdValue || 0,
+            totalListings,
+            deadline: hackathon.deadline,
+            startDate: hackathon.startDate,
+            announceDate: hackathon.announceDate,
+          }),
+        );
+      },
+    }),
+  ]);
+
+  return {
+    props: {
+      dehydratedState: JSON.parse(JSON.stringify(dehydrate(queryClient))),
+    },
+  };
+};

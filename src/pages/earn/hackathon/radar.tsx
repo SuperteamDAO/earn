@@ -1,15 +1,19 @@
-import { useQuery } from '@tanstack/react-query';
+import { QueryClient, dehydrate, useQuery } from '@tanstack/react-query';
+import type { GetServerSideProps } from 'next';
 import { useMemo } from 'react';
 import Countdown from 'react-countdown';
 
 import { TrackBox } from '@/components/hackathon/TrackBox';
 import { CountDownRenderer } from '@/components/shared/countdownRenderer';
+import { JsonLd } from '@/components/shared/JsonLd';
 import { Button } from '@/components/ui/button';
 import { ASSET_URL } from '@/constants/ASSET_URL';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
+import { prisma } from '@/prisma';
 import { statsDataQuery, trackDataQuery } from '@/queries/hackathon';
 import { RadarLogo } from '@/svg/radar-logo';
+import { generateBreadcrumbListSchema } from '@/utils/json-ld';
 
 export default function Radar() {
   const slug = 'radar';
@@ -57,12 +61,36 @@ export default function Radar() {
     <Default
       className="bg-white"
       meta={
-        <Meta
-          title="Radar — Submission Tracks | Superteam Earn"
-          description="Submit to exclusive bounty tracks of the Radar Solana Global Hackathon on Superteam Earn. Find development, design, and content tracks to earn crypto prizes."
-          canonical="https://superteam.fun/earn/hackathon/radar/"
-          og={ASSET_URL + `/og/hackathon/${slug}.png`}
-        />
+        <>
+          <Meta
+            title="Radar — Submission Tracks | Superteam Earn"
+            description="Submit to exclusive bounty tracks of the Radar Solana Global Hackathon on Superteam Earn. Find development, design, and content tracks to earn crypto prizes."
+            canonical="https://superteam.fun/earn/hackathon/radar/"
+            og={ASSET_URL + `/og/hackathon/${slug}.png`}
+          />
+          <JsonLd
+            data={[
+              generateBreadcrumbListSchema([
+                { name: 'Home', url: '/' },
+                { name: 'Hackathons', url: '/hackathon/all/' },
+                { name: 'Radar' },
+              ]),
+              {
+                '@context': 'https://schema.org',
+                '@type': 'Event',
+                name: 'Radar — Solana Global Hackathon',
+                description:
+                  'Submit to exclusive bounty tracks of the Radar Solana Global Hackathon on Superteam Earn. Find development, design, and content tracks to earn crypto prizes.',
+                url: 'https://superteam.fun/earn/hackathon/radar/',
+                organizer: {
+                  '@type': 'Organization',
+                  name: 'Superteam Earn',
+                  url: 'https://superteam.fun/',
+                },
+              },
+            ]}
+          />
+        </>
       }
     >
       <div className="animate-fadeIn">
@@ -164,3 +192,87 @@ export default function Radar() {
     </Default>
   );
 }
+
+export const getServerSideProps: GetServerSideProps = async () => {
+  const slug = 'radar';
+  const queryClient = new QueryClient();
+
+  const hackathon = await prisma.hackathon.findUnique({ where: { slug } });
+
+  await Promise.all([
+    queryClient.prefetchQuery({
+      queryKey: ['tracks', slug],
+      queryFn: async () => {
+        const result = await prisma.bounties.findMany({
+          where: { Hackathon: { slug }, isPublished: true },
+          select: {
+            title: true,
+            token: true,
+            rewardAmount: true,
+            slug: true,
+            sponsor: {
+              select: {
+                name: true,
+                slug: true,
+                logo: true,
+                isVerified: true,
+                chapter: { select: { id: true } },
+              },
+            },
+          },
+          orderBy: { usdValue: 'desc' },
+        });
+        return JSON.parse(JSON.stringify(result));
+      },
+    }),
+    queryClient.prefetchQuery({
+      queryKey: ['stats', slug],
+      queryFn: async () => {
+        if (!hackathon)
+          return {
+            totalRewardAmount: 0,
+            totalListings: 0,
+            deadline: null,
+            startDate: null,
+            announceDate: null,
+          };
+        const [totalListings, totalRewardAmount] = await Promise.all([
+          prisma.bounties.count({
+            where: {
+              hackathonId: hackathon.id,
+              isActive: true,
+              isArchived: false,
+              status: 'OPEN',
+              isPublished: true,
+            },
+          }),
+          prisma.bounties.aggregate({
+            _sum: { usdValue: true },
+            where: {
+              hackathonId: hackathon.id,
+              isActive: true,
+              isArchived: false,
+              status: 'OPEN',
+              isPublished: true,
+            },
+          }),
+        ]);
+        return JSON.parse(
+          JSON.stringify({
+            totalRewardAmount: totalRewardAmount._sum.usdValue || 0,
+            totalListings,
+            deadline: hackathon.deadline,
+            startDate: hackathon.startDate,
+            announceDate: hackathon.announceDate,
+          }),
+        );
+      },
+    }),
+  ]);
+
+  return {
+    props: {
+      dehydratedState: JSON.parse(JSON.stringify(dehydrate(queryClient))),
+    },
+  };
+};

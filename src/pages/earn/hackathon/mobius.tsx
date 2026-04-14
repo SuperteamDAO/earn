@@ -14,6 +14,7 @@ import React, { useEffect, useState } from 'react';
 import Countdown from 'react-countdown';
 
 import { CountDownRenderer } from '@/components/shared/countdownRenderer';
+import { JsonLd } from '@/components/shared/JsonLd';
 import {
   Accordion,
   AccordionContent,
@@ -32,6 +33,7 @@ import { type HackathonGetPayload } from '@/prisma/models/Hackathon';
 import { PulseIcon } from '@/svg/pulse-icon';
 import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';
+import { generateBreadcrumbListSchema } from '@/utils/json-ld';
 
 const orbitron = Orbitron({
   subsets: ['latin'],
@@ -129,6 +131,28 @@ export default function Mobius({ hackathon }: { hackathon: Hackathon }) {
             description={`Join the first-ever SVM hackathon on Solana – Sonic Mobius Hackathon – with a $1,000,000 prize pool! Build, launch on Sonic SVM Mainnet, and onboard the next billion users.`}
             canonical="https://superteam.fun/earn/hackathon/mobius/"
             og="https://res.cloudinary.com/dgvnuwspr/image/upload/v1740832046/assets/hackathon/mobius/sonic-mobius-og.png"
+          />
+          <JsonLd
+            data={[
+              generateBreadcrumbListSchema([
+                { name: 'Home', url: '/' },
+                { name: 'Hackathons', url: '/hackathon/all/' },
+                { name: 'Sonic Mobius' },
+              ]),
+              {
+                '@context': 'https://schema.org',
+                '@type': 'Event',
+                name: 'Sonic Mobius — SVM Hackathon',
+                description:
+                  'Join the first-ever SVM hackathon on Solana – Sonic Mobius Hackathon – with a $1,000,000 prize pool! Build, launch on Sonic SVM Mainnet, and onboard the next billion users.',
+                url: 'https://superteam.fun/earn/hackathon/mobius/',
+                organizer: {
+                  '@type': 'Organization',
+                  name: 'Superteam Earn',
+                  url: 'https://superteam.fun/',
+                },
+              },
+            ]}
           />
         </>
       }
@@ -358,7 +382,7 @@ function GrandPrize() {
           </span>
           <span className="pr-0 text-xs leading-[0.85rem] font-medium text-slate-500 md:text-sm md:leading-[1.0625rem]">
             Up to four of the best overall projects across all tracks will be
-            chosen by Mobius’ panel of top judges from the Solana ecosystem as
+            chosen by Mobius' panel of top judges from the Solana ecosystem as
             the Grand Prize winners.
           </span>
         </div>
@@ -460,7 +484,7 @@ const faqs: { question: string; answer: string }[] = [
   {
     question: 'Can I submit my final project without registering first?',
     answer:
-      'We highly recommend all hackathon builders register before submitting their projects, as we’ll verify submissions against the registered Twitter/X account. However, if you’re unable to register, we’ll consider the submission details as final.',
+      "We highly recommend all hackathon builders register before submitting their projects, as we'll verify submissions against the registered Twitter/X account. However, if you're unable to register, we'll consider the submission details as final.",
   },
   {
     question: 'Can I submit multiple projects?',
@@ -473,7 +497,7 @@ const faqs: { question: string; answer: string }[] = [
       'No, one project can only be submitted to one track. Please select the most relevant track at the submission page.',
   },
   {
-    question: 'I want to participate but don’t have a team. What should I do?',
+    question: "I want to participate but don't have a team. What should I do?",
     answer:
       "You can join our <a href='https://t.me/+S_eelN_07xswYTdl' target='_blank'>Hackathon channel</a> and post a request to find teammates.",
   },

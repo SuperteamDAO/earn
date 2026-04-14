@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { QueryClient, dehydrate, useQuery } from '@tanstack/react-query';
 import { type GetServerSideProps } from 'next';
 import { Outfit } from 'next/font/google';
 import { useEffect, useState } from 'react';
@@ -6,6 +6,7 @@ import Countdown from 'react-countdown';
 
 import { TrackBox } from '@/components/hackathon/TrackBox';
 import { CountDownRenderer } from '@/components/shared/countdownRenderer';
+import { JsonLd } from '@/components/shared/JsonLd';
 import {
   Accordion,
   AccordionContent,
@@ -21,6 +22,7 @@ import { type HackathonGetPayload } from '@/prisma/models/Hackathon';
 import { statsDataQuery, trackDataQuery } from '@/queries/hackathon';
 import { RedactedLogo } from '@/svg/redacted';
 import { dayjs } from '@/utils/dayjs';
+import { generateBreadcrumbListSchema } from '@/utils/json-ld';
 
 const outfit = Outfit({
   subsets: ['latin'],
@@ -75,9 +77,31 @@ export default function Redacted({ hackathon }: { hackathon: Hackathon }) {
           />
           <Meta
             title="Helius [REDACTED] — Submission Tracks | Superteam Earn"
-            description="Join the Helius Hackathon—a data-driven challenge empowering analysts, data scientists, and on-chain sleuths to expose fraud, build insightful dashboards, and advance Solana’s social layer."
+            description="Join the Helius Hackathon—a data-driven challenge empowering analysts, data scientists, and on-chain sleuths to expose fraud, build insightful dashboards, and advance Solana's social layer."
             canonical="https://superteam.fun/earn/hackathon/redacted/"
             og="https://res.cloudinary.com/dgvnuwspr/image/upload/v1741616337/assets/hackathon/redacted/redacted-og"
+          />
+          <JsonLd
+            data={[
+              generateBreadcrumbListSchema([
+                { name: 'Home', url: '/' },
+                { name: 'Hackathons', url: '/hackathon/all/' },
+                { name: 'Helius [REDACTED]' },
+              ]),
+              {
+                '@context': 'https://schema.org',
+                '@type': 'Event',
+                name: 'Helius [REDACTED] Hackathon',
+                description:
+                  "Join the Helius Hackathon - a data-driven challenge empowering analysts, data scientists, and on-chain sleuths to expose fraud, build insightful dashboards, and advance Solana's social layer.",
+                url: 'https://superteam.fun/earn/hackathon/redacted/',
+                organizer: {
+                  '@type': 'Organization',
+                  name: 'Superteam Earn',
+                  url: 'https://superteam.fun/',
+                },
+              },
+            ]}
           />
         </>
       }
@@ -101,7 +125,7 @@ export default function Redacted({ hackathon }: { hackathon: Hackathon }) {
               {dayjs.utc(CLOSE_DATE).format('MMM.DD, YYYY')} (UTC)
             </p>
             <p className="mt-4 md:text-xl">
-              Strengthen Solana’s social layer by{' '}
+              Strengthen Solana's social layer by{' '}
               <span className="text-orange-500">uncovering</span> and reporting
               fake activity and fraud
             </p>
@@ -163,15 +187,77 @@ export default function Redacted({ hackathon }: { hackathon: Hackathon }) {
 }
 
 export const getServerSideProps: GetServerSideProps = async ({}) => {
+  const slug = 'redacted';
+  const queryClient = new QueryClient();
+
   const hackathon = await prisma.hackathon.findUnique({
-    where: {
-      slug: 'redacted',
-    },
-    include: {
-      Sponsor: true,
-    },
+    where: { slug },
+    include: { Sponsor: true },
   });
   if (!hackathon) throw Error('Hackathon not found');
+
+  await Promise.all([
+    queryClient.prefetchQuery({
+      queryKey: ['tracks', slug],
+      queryFn: async () => {
+        const result = await prisma.bounties.findMany({
+          where: { Hackathon: { slug }, isPublished: true },
+          select: {
+            title: true,
+            token: true,
+            rewardAmount: true,
+            slug: true,
+            sponsor: {
+              select: {
+                name: true,
+                slug: true,
+                logo: true,
+                isVerified: true,
+                chapter: { select: { id: true } },
+              },
+            },
+          },
+          orderBy: { usdValue: 'desc' },
+        });
+        return JSON.parse(JSON.stringify(result));
+      },
+    }),
+    queryClient.prefetchQuery({
+      queryKey: ['stats', slug],
+      queryFn: async () => {
+        const [totalListings, totalRewardAmount] = await Promise.all([
+          prisma.bounties.count({
+            where: {
+              hackathonId: hackathon.id,
+              isActive: true,
+              isArchived: false,
+              status: 'OPEN',
+              isPublished: true,
+            },
+          }),
+          prisma.bounties.aggregate({
+            _sum: { usdValue: true },
+            where: {
+              hackathonId: hackathon.id,
+              isActive: true,
+              isArchived: false,
+              status: 'OPEN',
+              isPublished: true,
+            },
+          }),
+        ]);
+        return JSON.parse(
+          JSON.stringify({
+            totalRewardAmount: totalRewardAmount._sum.usdValue || 0,
+            totalListings,
+            deadline: hackathon.deadline,
+            startDate: hackathon.startDate,
+            announceDate: hackathon.announceDate,
+          }),
+        );
+      },
+    }),
+  ]);
 
   return {
     props: {
@@ -186,6 +272,7 @@ export const getServerSideProps: GetServerSideProps = async ({}) => {
           updatedAt: hackathon?.Sponsor?.updatedAt.toISOString() || null,
         },
       },
+      dehydratedState: JSON.parse(JSON.stringify(dehydrate(queryClient))),
     },
   };
 };
@@ -212,7 +299,7 @@ const faqs: { question: string; answer: string }[] = [
   {
     question: 'How are winners chosen?',
     answer:
-      'Bounty sponsors are responsible for choosing winners for each bounty based on the bounty’s description, judgement criteria, and submission guidelines. After the 1-month submission period ends, bounty sponsors have two weeks to review all of the submissions and select winners. The decision of the sponsors when it comes to picking the winners of their bounties will be final.<br /><br /> <strong>Note:</strong> Pay attention to the judgement criteria and submission guidelines to avoid a situation where your submission is disqualified for failing to meet the bounty’s rules.',
+      "Bounty sponsors are responsible for choosing winners for each bounty based on the bounty's description, judgement criteria, and submission guidelines. After the 1-month submission period ends, bounty sponsors have two weeks to review all of the submissions and select winners. The decision of the sponsors when it comes to picking the winners of their bounties will be final.<br /><br /> <strong>Note:</strong> Pay attention to the judgement criteria and submission guidelines to avoid a situation where your submission is disqualified for failing to meet the bounty's rules.",
   },
   {
     question: 'How are winners paid?',
@@ -222,7 +309,7 @@ const faqs: { question: string; answer: string }[] = [
   {
     question: 'I have questions. Who should I contact?',
     answer:
-      'For general questions, join this public <a href="https://t.me/redacted_hackathon" target="_blank">Telegram group</a>. If your question is specific to a particular bounty, please use the "Reach Out" link of the bounty listing page or reach out to the bounty’s sponsor directly through other channels. All sponsors should have a public Discord, Telegram, or X account where you can ask questions. If you’re unable to get in touch with the bounty’s sponsor, please ask <a href="https://t.me/bradyowen" target="_blank">@bradyowen</a> in the public Telegram group for help.',
+      'For general questions, join this public <a href="https://t.me/redacted_hackathon" target="_blank">Telegram group</a>. If your question is specific to a particular bounty, please use the "Reach Out" link of the bounty listing page or reach out to the bounty\'s sponsor directly through other channels. All sponsors should have a public Discord, Telegram, or X account where you can ask questions. If you\'re unable to get in touch with the bounty\'s sponsor, please ask <a href="https://t.me/bradyowen" target="_blank">@bradyowen</a> in the public Telegram group for help.',
   },
 ];
 
