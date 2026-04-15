@@ -9,9 +9,13 @@ import { sponsorCountQuery } from '../../queries/sponsor-count';
 
 interface HomeSponsorBannerProps {
   readonly totalUsers?: number | null;
+  readonly totalSponsors?: number | null;
 }
 
-export function HomeSponsorBanner({ totalUsers }: HomeSponsorBannerProps) {
+export function HomeSponsorBanner({
+  totalUsers,
+  totalSponsors,
+}: HomeSponsorBannerProps) {
   const { data } = useQuery(sponsorCountQuery);
   return (
     <Link
@@ -111,7 +115,7 @@ export function HomeSponsorBanner({ totalUsers }: HomeSponsorBannerProps) {
         Reach{' '}
         {roundToNearestTenThousand(totalUsers || 0, true)?.toLocaleString(
           'en-us',
-        ) || '0'}
+        )}
         + top-tier talent in under 5 clicks. Get high-quality work done across
         content, development, and design.
       </p>
@@ -125,12 +129,12 @@ export function HomeSponsorBanner({ totalUsers }: HomeSponsorBannerProps) {
           Get Started
         </button>
         <div className="flex w-fit items-center">
-          {data?.totalSponsors !== null && (
+          {(totalSponsors ?? data?.totalSponsors) != null && (
             <p className="relative ml-[0.6875rem] text-[0.8rem] text-black md:text-[0.875rem]">
               Join{' '}
-              {roundToNearestTenth(data?.totalSponsors || 0)?.toLocaleString(
-                'en-us',
-              )}
+              {roundToNearestTenth(
+                totalSponsors ?? data!.totalSponsors!,
+              )?.toLocaleString('en-us')}
               + others
             </p>
           )}
