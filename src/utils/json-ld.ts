@@ -234,7 +234,7 @@ export function generateRegionalOrganizationSchema(region: {
     '@context': 'https://schema.org',
     '@type': 'Organization',
     name: `Superteam Earn ${region.displayValue}`,
-    url: `${baseUrl}regions/${region.slug}/`,
+    url: `${baseUrl}earn/regions/${region.slug}/`,
     description: `Superteam Earn ${region.displayValue} - Discover bounties and grants in the ${region.displayValue} crypto community`,
   };
 }
@@ -543,7 +543,7 @@ export function generateSuperteamChaptersSchema(
         '@context': 'https://schema.org',
         '@type': 'Organization' as const,
         name: st.name,
-        url: `${baseUrl}regions/${st.slug}/`,
+        url: `${baseUrl}earn/regions/${st.slug}/`,
         logo: st.icons || undefined,
         description: `${st.name} - Solana and Web3 talent community in ${areaServed}. Find crypto bounties, blockchain jobs, and grants.`,
         sameAs: sameAs.length > 0 ? sameAs : undefined,
