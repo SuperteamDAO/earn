@@ -463,8 +463,6 @@ model User {
   peopleId           String?              @unique
   currentSponsor     Sponsors?            @relation(fields: [currentSponsorId], references: [id])
   people             People?              @relation("UserToPeople", fields: [peopleId], references: [id])
-  accounts           Account[]
-  sessions           Session[]
   UserSponsors       UserSponsors[]
   poc                Bounties[]           @relation("poc")
   templates          BountiesTemplates[]  @relation("poc")
@@ -526,7 +524,7 @@ model Account {
   scope             String?
   id_token          String? @db.Text
   session_state     String?
-  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user              People  @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@id([provider, providerAccountId])
   @@index([userId])
@@ -536,7 +534,7 @@ model Session {
   sessionToken String   @unique
   userId       String
   expires      DateTime
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user         People   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@id([sessionToken])
   @@index([userId])
@@ -847,6 +845,7 @@ model Chapter {
   vcExternalGrants    VcExternalGrant[]
   lumaEventReviews    LumaEventReview[]
   memberInvites       MemberInvite[]
+  publicJoinOtps      PublicJoinOtp[]
   welcomeEmailSubject String?            @db.VarChar(255)
   welcomeEmailBody    String?            @db.Text
 
@@ -870,11 +869,26 @@ model MemberInvite {
   @@index([chapterId])
 }
 
+model PublicJoinOtp {
+  id         String    @id @default(uuid()) @db.Char(36)
+  email      String    @db.VarChar(255)
+  chapterId  String    @db.Char(36)
+  codeHash   String    @db.VarChar(255)
+  attempts   Int       @default(0)
+  expiresAt  DateTime
+  verifiedAt DateTime?
+  consumedAt DateTime?
+  createdAt  DateTime  @default(now())
+  chapter    Chapter   @relation(fields: [chapterId], references: [id])
+
+  @@index([email, chapterId])
+  @@index([expiresAt])
+}
+
 model People {
   id                String             @id @default(uuid()) @db.Char(36)
   name              String             @db.VarChar(255)
   email             String?            @db.VarChar(255)
-  handle            String?            @db.VarChar(255)
   region            String             @db.VarChar(100)
   chapterId         String?            @db.Char(36)
   type              String?            @db.VarChar(50)
@@ -895,6 +909,8 @@ model People {
   vcExternalGrants  VcExternalGrant[]
   chapter           Chapter?           @relation(fields: [chapterId], references: [id])
   user              User?              @relation("UserToPeople")
+  accounts          Account[]
+  sessions          Session[]
 
   @@unique([airtableRecordId])
   @@index([chapterId])
@@ -902,7 +918,6 @@ model People {
   @@index([type, region])
   @@index([type, email])
   @@index([type, name])
-  @@index([type, handle])
 }
 
 model CommunityEarning {
@@ -991,7 +1006,8 @@ model StatsSlackMessage {
   recordId  String   @db.Char(36)
   createdAt DateTime @default(now())
 
-  @@unique([messageTs])
+  @@unique([channelId, messageTs])
+  @@index([formType, recordId])
 }
 
 model RegionSnapshot {
@@ -1071,6 +1087,7 @@ enum EmailType {
   PENDING_GRANT_USDG
   APPROVED_GRANT_USDG
   PASSKEY_DEPRECATION
+  EITHERWAY_FRONTIER_ANNOUNCEMENT
 }
 
 enum Role {
