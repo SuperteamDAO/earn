@@ -821,6 +821,7 @@ model Chapter {
   countries           Json?
   memberForm          String?            @db.VarChar(255)
   active              Boolean            @default(true)
+  isHistorical        Boolean            @default(false)
   community           String?            @db.VarChar(255)
   pocName             String?            @db.VarChar(255)
   pocEmail            String?            @db.VarChar(255)
