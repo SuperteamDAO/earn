@@ -157,11 +157,10 @@ export const ImageCrop = ({
   const [completedCrop, setCompletedCrop] = useState<PixelCrop | null>(null);
   const [initialCrop, setInitialCrop] = useState<PercentCrop>();
   useEffect(() => {
-    const reader = new FileReader();
-    reader.addEventListener('load', () =>
-      setImgSrc(reader.result?.toString() || ''),
-    );
-    reader.readAsDataURL(file);
+    const objectUrl = URL.createObjectURL(file);
+    setImgSrc(objectUrl);
+
+    return () => URL.revokeObjectURL(objectUrl);
   }, [file]);
   const onImageLoad = useCallback(
     (e: SyntheticEvent<HTMLImageElement>) => {
