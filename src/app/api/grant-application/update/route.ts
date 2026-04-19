@@ -88,10 +88,10 @@ async function updateGrantApplication(
     throw new Error('Application not found');
   }
   if (
-    prevApplication.applicationStatus === 'Rejected' ||
+    prevApplication.applicationStatus !== 'Pending' ||
     prevApplication.label === 'Spam'
   ) {
-    throw new Error('Grant application cannot be edited after rejection');
+    throw new Error('Grant application can only be edited while pending review');
   }
 
   const formattedData = {
