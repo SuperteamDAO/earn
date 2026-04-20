@@ -287,7 +287,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     if (result[0]?.grant.airtableId) {
       console.log('is an airtable grant');
       try {
-        const config = airtableConfig(process.env.AIRTABLE_GRANTS_API_TOKEN!);
+        const config = airtableConfig(process.env.AIRTABLE_API_TOKEN!);
         const url = airtableUrl(
           process.env.AIRTABLE_GRANTS_BASE_ID!,
           process.env.AIRTABLE_GRANTS_TABLE_NAME!,

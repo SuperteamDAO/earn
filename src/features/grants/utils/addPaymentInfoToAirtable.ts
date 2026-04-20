@@ -191,14 +191,14 @@ export async function addPaymentInfoToAirtable(
 
   try {
     logger.debug(`Checking Airtable environment variables.`);
-    const airtableApiKey = process.env.AIRTABLE_GRANTS_API_TOKEN;
+    const airtableApiKey = process.env.AIRTABLE_API_TOKEN;
     const paymentsBaseId = process.env.AIRTABLE_PAYMENTS_BASE_ID;
     const paymentsTable = process.env.AIRTABLE_PAYMENTS_TABLE_NAME;
     const regionsTable = process.env.AIRTABLE_PAYMENTS_REGIONS_TABLE_NAME;
 
     if (!airtableApiKey || !paymentsBaseId || !paymentsTable || !regionsTable) {
       const missingVars = [
-        !airtableApiKey && 'AIRTABLE_GRANTS_API_TOKEN',
+        !airtableApiKey && 'AIRTABLE_API_TOKEN',
         !paymentsBaseId && 'AIRTABLE_PAYMENTS_BASE_ID',
         !paymentsTable && 'AIRTABLE_PAYMENTS_TABLE_NAME',
         !regionsTable && 'AIRTABLE_PAYMENTS_REGIONS_TABLE_NAME',
