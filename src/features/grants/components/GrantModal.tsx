@@ -67,6 +67,7 @@ export const GrantModal = ({
               applicationId={applicationId!}
               grantId={grant.id}
               onClose={onClose}
+              region={grant.region ?? undefined}
             />
           )}
           {newTrancheFormStates.includes(applicationState) && (
