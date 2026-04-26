@@ -105,7 +105,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     if (preSponsor && preSponsor.name !== name) {
       try {
         const gdpAirtableConfig = airtableConfig(
-          process.env.AIRTABLE_GDP_API_TOKEN!,
+          process.env.AIRTABLE_API_TOKEN!,
         );
         const sponsorAirtableURL = airtableUrl(
           process.env.AIRTABLE_GDP_BASE_ID!,
