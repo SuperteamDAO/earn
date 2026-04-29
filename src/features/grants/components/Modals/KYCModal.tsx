@@ -61,6 +61,7 @@ export const KYCModal = ({
   onClose: () => void;
   region?: string;
 }) => {
+  const verificationProcessedRef = useRef(false);
   const stageRef = useRef<'identity' | 'poa'>('identity');
   const [stage, setStage] = useState<'identity' | 'poa'>('identity');
 
@@ -124,6 +125,10 @@ export const KYCModal = ({
       type === 'idCheck.onApplicantStatusChanged' &&
       'reviewStatus' in payload
     ) {
+      if (verificationProcessedRef.current) {
+        return;
+      }
+
       if (stageRef.current === 'identity') {
         const result = await checkVerification();
         if (result.error) {
@@ -136,7 +141,15 @@ export const KYCModal = ({
           return;
         }
 
-        if (result.data === 'verified') {
+        if (
+          result.data === 'verified' ||
+          (typeof result.data === 'object' &&
+            result.data !== null &&
+            'message' in result.data &&
+            (result.data as { message?: string }).message ===
+              'KYC already verified')
+        ) {
+          verificationProcessedRef.current = true;
           toast.success(
             'Your KYC is verified! You will receive your first tranche in around a week.',
           );
@@ -184,6 +197,7 @@ export const KYCModal = ({
           'status' in data &&
           (data as { status?: string }).status === 'verified'
         ) {
+          verificationProcessedRef.current = true;
           toast.success(
             'Verified! You will receive your first tranche in around a week.',
           );

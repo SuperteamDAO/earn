@@ -44,11 +44,8 @@ export const isMainDocCountryRejection = (result: {
 
   // Ensure "Main doc country" is the ONLY specific regulation violation
   // Other regulation sub-types (age, duplicate, etc.) should block override
-  const specificRegulationIds = result.buttonIds.filter(
-    (id) =>
-      id.toLowerCase().startsWith('regulationsviolations_') ||
-      (!id.toLowerCase().startsWith('regulationsviolations') &&
-        id.toLowerCase() !== 'regulationsviolations'),
+  const specificRegulationIds = result.buttonIds.filter((id) =>
+    id.toLowerCase().startsWith('regulationsviolations_'),
   );
 
   return (
