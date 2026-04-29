@@ -133,8 +133,14 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       });
     }
     const grantId = currentApplications[0]?.grant.id;
+    if (!grantId) {
+      logger.warn('Could not determine grant ID from current applications');
+      return res
+        .status(404)
+        .json({ error: 'All records should have same and valid grant ID' });
+    }
+
     if (
-      grantId &&
       !currentApplications.every(
         (application) => application.grant.id === grantId,
       )
