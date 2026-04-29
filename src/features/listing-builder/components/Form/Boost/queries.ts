@@ -1,6 +1,7 @@
 import { queryOptions } from '@tanstack/react-query';
 
 import { loadTokenList } from '@/constants/tokenList';
+import { isInKindReward } from '@/lib/rewards/inKind';
 
 import { fetchTokenUSDValue } from '@/features/wallet/utils/fetchTokenUSDValue';
 
@@ -11,6 +12,7 @@ export const tokenUsdValueQuery = (tokenSymbol?: string | null) => {
     queryKey: ['boost.tokenUsdValue', tokenSymbol],
     queryFn: async (): Promise<number> => {
       if (!tokenSymbol) throw new Error('No token symbol');
+      if (isInKindReward(tokenSymbol)) return 0;
       const tokens = await loadTokenList();
       const mintAddress = tokens.find(
         (token) => token.tokenSymbol === tokenSymbol,

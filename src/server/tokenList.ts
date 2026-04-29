@@ -1,3 +1,8 @@
+import {
+  IN_KIND_REWARD_ICON,
+  IN_KIND_REWARD_TOKEN,
+  isInKindReward,
+} from '@/lib/rewards/inKind';
 import { prisma } from '@/prisma';
 
 export interface Token {
@@ -10,7 +15,7 @@ export interface Token {
   isActive: boolean;
 }
 
-const DEFAULT_TOKEN_ICON = '/assets/dollar.svg';
+const DEFAULT_TOKEN_ICON = IN_KIND_REWARD_ICON;
 
 const tokenSelect = {
   tokenName: true,
@@ -160,6 +165,9 @@ export async function getTokenBySymbol(
   },
 ): Promise<Token | null> {
   if (!tokenSymbol) return null;
+  if (isInKindReward(tokenSymbol)) {
+    return IN_KIND_REWARD_TOKEN as Token;
+  }
 
   const token = await prisma.tokenMetadata.findFirst({
     where: {
@@ -199,6 +207,9 @@ export async function getTokenIcon(
 }
 
 export async function isActiveTokenSymbol(tokenSymbol?: string | null) {
+  if (isInKindReward(tokenSymbol)) {
+    return true;
+  }
   const token = await getTokenBySymbol(tokenSymbol);
   return Boolean(token);
 }

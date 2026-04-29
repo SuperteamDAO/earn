@@ -145,15 +145,13 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         .json({ error: 'All records should have same and valid grant ID' });
     }
 
-    currentApplications.forEach(async (currentApplicant) => {
-      const { error } = await checkGrantSponsorAuth(
-        req.userSponsorId,
-        currentApplicant.grantId,
-      );
-      if (error) {
-        return res.status(error.status).json({ error: error.message });
-      }
-    });
+    const { error: authError } = await checkGrantSponsorAuth(
+      req.userSponsorId,
+      grantId,
+    );
+    if (authError) {
+      return res.status(authError.status).json({ error: authError.message });
+    }
 
     const commonUpdateField = {
       applicationStatus,
@@ -274,14 +272,16 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     }
 
     if (result[0]?.grant.isNative === true) {
-      result.forEach(async (r) => {
-        await queueEmail({
-          type: isApproved ? 'grantApproved' : 'grantRejected',
-          id: r.id,
-          userId: r.userId,
-          triggeredBy: userId,
-        });
-      });
+      await Promise.all(
+        result.map((r) =>
+          queueEmail({
+            type: isApproved ? 'grantApproved' : 'grantRejected',
+            id: r.id,
+            userId: r.userId,
+            triggeredBy: userId,
+          }),
+        ),
+      );
     }
 
     if (result[0]?.grant.airtableId) {

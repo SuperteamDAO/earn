@@ -1,6 +1,7 @@
 import { franc } from 'franc';
 
 import logger from '@/lib/logger';
+import { isInKindReward } from '@/lib/rewards/inKind';
 import { prisma } from '@/prisma';
 import { type BountiesUncheckedUpdateInput } from '@/prisma/models/Bounties';
 import { type SponsorsModel } from '@/prisma/models/Sponsors';
@@ -97,6 +98,7 @@ export const transformToPrismaData = async ({
     sponsor,
     validatedListing,
   });
+  const isInKind = isInKindReward(token);
 
   const calculateRewardAmount = (
     data: ListingFormData,
@@ -117,7 +119,7 @@ export const transformToPrismaData = async ({
   const nextToken = token ?? undefined;
   const tokenChanged = prevToken !== nextToken;
 
-  if (!isVerifying) {
+  if (!isVerifying && !isInKind) {
     if (!isEditing) {
       if (validatedListing.token && amount > 0) {
         const token = await getTokenBySymbol(validatedListing.token, {
@@ -157,6 +159,19 @@ export const transformToPrismaData = async ({
     }
   }
 
+  const pricingData: Pick<
+    BountiesUncheckedUpdateInput,
+    'usdValue' | 'tokenUsdAtPublish'
+  > = isInKind
+    ? {
+        usdValue: null,
+        tokenUsdAtPublish: null,
+      }
+    : {
+        ...(includeUsdValue ? { usdValue } : {}),
+        ...(typeof tokenUsdAtPublish === 'number' ? { tokenUsdAtPublish } : {}),
+      };
+
   let autoIsFeatured = false;
   let shouldRemoveFeatured = false;
   try {
@@ -180,7 +195,7 @@ export const transformToPrismaData = async ({
 
   const baseData: BountiesUncheckedUpdateInput = {
     title,
-    ...(includeUsdValue ? { usdValue } : {}),
+    ...pricingData,
     ...(autoIsFeatured ? { isFeatured: true } : {}),
     ...(shouldRemoveFeatured ? { isFeatured: false } : {}),
     skills,
@@ -218,7 +233,6 @@ export const transformToPrismaData = async ({
 
     return {
       ...baseData,
-      ...(typeof tokenUsdAtPublish === 'number' ? { tokenUsdAtPublish } : {}),
       maxBonusSpots: maxBonusSpots || 0,
       // Preserve immutable fields from existing listing
       isWinnersAnnounced: listing.isWinnersAnnounced,
@@ -240,7 +254,6 @@ export const transformToPrismaData = async ({
 
     return {
       ...baseData,
-      ...(typeof tokenUsdAtPublish === 'number' ? { tokenUsdAtPublish } : {}),
       maxBonusSpots,
       // Set initial state for new publication
       status: isVerifying ? 'VERIFYING' : 'OPEN',

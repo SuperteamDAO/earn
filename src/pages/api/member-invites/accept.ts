@@ -8,7 +8,18 @@ import { handleInviteAcceptance } from '@/features/auth/utils/handleInvite';
 import { withAuth } from '@/features/auth/utils/withAuth';
 
 async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
-  logger.debug(`Request body: ${safeStringify(req.body)}`);
+  const sanitizedBody =
+    req.body && typeof req.body === 'object'
+      ? {
+          ...req.body,
+          token:
+            typeof req.body.token === 'string' && req.body.token.length > 0
+              ? '[REDACTED]'
+              : req.body.token,
+        }
+      : req.body;
+
+  logger.debug(`Request body: ${safeStringify(sanitizedBody)}`);
 
   if (req.method !== 'POST') {
     logger.warn(`Method not allowed: ${req.method}`);
