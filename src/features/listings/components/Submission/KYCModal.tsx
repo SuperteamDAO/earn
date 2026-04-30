@@ -31,30 +31,6 @@ const fetchVerificationStatus = async (submissionId: string) => {
 
 const VERIFICATION_PENDING_ERROR = 'VERIFICATION_PENDING';
 
-const getMismatchRegionDisplayName = (
-  error: unknown,
-  fallback: string,
-): string | null => {
-  if (!isAxiosError(error)) {
-    return null;
-  }
-
-  const responseData = error.response?.data;
-
-  if (
-    responseData &&
-    typeof responseData === 'object' &&
-    'message' in responseData &&
-    responseData.message === 'KYC_REJECTED' &&
-    'regionDisplayName' in responseData &&
-    typeof responseData.regionDisplayName === 'string'
-  ) {
-    return responseData.regionDisplayName || fallback;
-  }
-
-  return null;
-};
-
 const getKycRejectionReason = (error: unknown): string | null => {
   if (!isAxiosError(error)) {
     return null;
@@ -231,24 +207,6 @@ export const KYCModal = ({
                 }
               }, 0);
               return undefined;
-            }
-
-            const mismatchRegionDisplayName = getMismatchRegionDisplayName(
-              error,
-              regionDisplayName,
-            );
-
-            if (mismatchRegionDisplayName) {
-              return (
-                <div className="flex flex-col gap-1 text-left">
-                  <p className="text-sm font-semibold text-red-600">
-                    Not Eligible
-                  </p>
-                  <p className="text-xs text-red-600">
-                    {`Sorry, we couldn't verify that you are a resident of ${mismatchRegionDisplayName}. Only the residents of ${mismatchRegionDisplayName} are eligible for this reward. Please contact support@superteamearn.com if there's been a mistake.`}
-                  </p>
-                </div>
-              );
             }
 
             if (

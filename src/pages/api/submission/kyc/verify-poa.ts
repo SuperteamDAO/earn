@@ -40,7 +40,7 @@ const handler = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
       new Date(submission.listing.winnersAnnouncedAt) > new Date('2025-08-06');
 
     if (!isAllowed) {
-      return res.status(200).json({ message: 'Not allowed' });
+      return res.status(403).json({ message: 'Not allowed' });
     }
 
     const secretKey = process.env.SUMSUB_SECRET_KEY;
@@ -81,7 +81,7 @@ const handler = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
       await withRedisLock(
         `locks:create-payment:${userId}`,
         async () => {
-          await createPayment({ userId });
+          await createPayment({ userId, submissionIds: [submissionId] });
         },
         { ttlSeconds: 300 },
       );

@@ -5,14 +5,19 @@ import { addPaymentInfoToAirtable } from './addPaymentInfoToAirtable';
 
 type CreatePaymentProps = {
   userId: string;
+  submissionIds?: string[];
 };
 
-export async function createPayment({ userId }: CreatePaymentProps) {
+export async function createPayment({
+  userId,
+  submissionIds,
+}: CreatePaymentProps) {
   const ANNOUNCEMENT_CUTOFF_DATE = new Date('2025-08-06');
 
   const submissions = await prisma.submission.findMany({
     where: {
       userId,
+      ...(submissionIds ? { id: { in: submissionIds } } : {}),
       paymentSynced: false,
       winnerPosition: { not: null },
       listing: {
