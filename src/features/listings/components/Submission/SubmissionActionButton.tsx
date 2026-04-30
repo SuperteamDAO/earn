@@ -374,7 +374,7 @@ export const SubmissionActionButton = ({
 
   if (isLocationCooldown && buttonState === 'submit') {
     buttonText = 'Ineligible';
-    buttonBG = 'bg-zinc-300';
+    buttonBG = 'bg-brand-purple-400';
     isBtnDisabled = true;
     isSubmitDisabled = true;
   }

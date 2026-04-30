@@ -114,7 +114,7 @@ export const ApplicationActionButton = ({
 
   const getButtonBg = () => {
     if (isLocationCooldown && applicationState === 'ALLOW NEW') {
-      return 'bg-zinc-300';
+      return 'bg-brand-purple-400';
     }
     if (isProRestricted && !isUserApplicationLoading) {
       if (!isAuthenticated) {
