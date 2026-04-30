@@ -447,6 +447,7 @@ model User {
   community          String?              @db.Text
   experience         String?
   location           String?
+  locationUpdatedAt  DateTime?
   cryptoExperience   String?
   workPrefernce      String?
   currentEmployer    String?

@@ -2,6 +2,7 @@ import { prisma } from '@/prisma';
 import { getChapterRegions } from '@/utils/chapterRegion';
 
 import { isDeadlineOver } from './deadline';
+import { getLocationCooldown } from './locationCooldown';
 import { userRegionEligibilty } from './region';
 
 export async function validateSubmissionRequest(
@@ -46,6 +47,17 @@ export async function validateSubmissionRequest(
     })
   )
     throw new Error('Region not eligible');
+  if (!isAgent) {
+    const cooldown = getLocationCooldown({
+      locationUpdatedAt: user.locationUpdatedAt,
+      listingRegion: listing.region,
+      userLocation: user.location,
+      chapters: chapterRegions,
+    });
+    if (cooldown.inCooldown) {
+      throw new Error('Location cooldown active');
+    }
+  }
   if (isDeadlineOver(listing.deadline || ''))
     throw new Error('Submissions closed');
 

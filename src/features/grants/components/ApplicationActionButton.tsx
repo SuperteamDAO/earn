@@ -11,6 +11,10 @@ import { cn } from '@/utils/cn';
 import { AuthWrapper } from '@/features/auth/components/AuthWrapper';
 import { chaptersQuery } from '@/features/chapters/queries/chapters';
 import {
+  getLocationCooldown,
+  locationCooldownTooltip,
+} from '@/features/listings/utils/locationCooldown';
+import {
   getRegionTooltipLabel,
   userRegionEligibilty,
 } from '@/features/listings/utils/region';
@@ -58,7 +62,18 @@ export const ApplicationActionButton = ({
 
   const regionTooltipLabel = getRegionTooltipLabel(region, false, chapters);
 
+  const locationCooldown = getLocationCooldown({
+    locationUpdatedAt: user?.locationUpdatedAt ?? null,
+    listingRegion: region,
+    userLocation: user?.location,
+    chapters,
+  });
+  const isLocationCooldown = locationCooldown.inCooldown;
+
   const getCooldownTooltipContent = () => {
+    if (isLocationCooldown) {
+      return locationCooldownTooltip(locationCooldown.daysRemaining);
+    }
     if (applicationState !== 'COOLDOWN' || !application?.decidedAt) return null;
 
     return `You must wait 30 days from the decision date of your last application before reapplying for this grant.`;
@@ -80,10 +95,14 @@ export const ApplicationActionButton = ({
     Boolean(
       !isPublished ||
       (user?.id && user?.isTalentFilled && !isUserEligibleByRegion) ||
+      (user?.id && user?.isTalentFilled && isLocationCooldown) ||
       isNotEligibleForPro,
     );
 
   const getButtonText = () => {
+    if (isLocationCooldown && applicationState === 'ALLOW NEW') {
+      return 'Ineligible';
+    }
     if (isProRestricted && !isUserApplicationLoading) {
       if (!isAuthenticated) {
         return 'Check Eligibility';
@@ -94,6 +113,9 @@ export const ApplicationActionButton = ({
   };
 
   const getButtonBg = () => {
+    if (isLocationCooldown && applicationState === 'ALLOW NEW') {
+      return 'bg-zinc-300';
+    }
     if (isProRestricted && !isUserApplicationLoading) {
       if (!isAuthenticated) {
         return 'bg-zinc-700';
