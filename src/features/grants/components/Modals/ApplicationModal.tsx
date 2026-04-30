@@ -85,6 +85,10 @@ export const ApplicationModal = ({
   const [isTOSModalOpen, setIsTOSModalOpen] = useState(false);
   const [acknowledgementAccepted, setAcknowledgementAccepted] = useState(false);
   const [acknowledgementError, setAcknowledgementError] = useState('');
+  const [feedbackAcknowledgementAccepted, setFeedbackAcknowledgementAccepted] =
+    useState(false);
+  const [feedbackAcknowledgementError, setFeedbackAcknowledgementError] =
+    useState('');
   const verificationModal = useDisclosure();
   const [verificationStatus, setVerificationStatus] = useState<
     'loading' | 'error'
@@ -301,12 +305,25 @@ export const ApplicationModal = ({
   const queryClient = useQueryClient();
 
   const validateAcknowledgement = () => {
-    if (!grantApplication && !acknowledgementAccepted) {
-      setAcknowledgementError('Acknowledgement required');
-      return false;
+    if (grantApplication) {
+      setAcknowledgementError('');
+      setFeedbackAcknowledgementError('');
+      return true;
     }
-    setAcknowledgementError('');
-    return true;
+    let isValid = true;
+    if (!acknowledgementAccepted) {
+      setAcknowledgementError('Acknowledgement required');
+      isValid = false;
+    } else {
+      setAcknowledgementError('');
+    }
+    if (!feedbackAcknowledgementAccepted) {
+      setFeedbackAcknowledgementError('Acknowledgement required');
+      isValid = false;
+    } else {
+      setFeedbackAcknowledgementError('');
+    }
+    return isValid;
   };
 
   const submitApplication = async (data: FormData) => {
@@ -945,6 +962,38 @@ export const ApplicationModal = ({
                     </div>
                     {acknowledgementError && (
                       <FormMessage>{acknowledgementError}</FormMessage>
+                    )}
+                    <div className="flex items-start space-x-2">
+                      <Checkbox
+                        id="feedback-acknowledgement"
+                        className={cn(
+                          'mt-1',
+                          isProGrant
+                            ? 'border-zinc-400 data-[state=checked]:border-zinc-800 data-[state=checked]:bg-zinc-800'
+                            : 'data-[state=checked]:border-brand-purple data-[state=checked]:bg-brand-purple',
+                        )}
+                        checked={feedbackAcknowledgementAccepted}
+                        onCheckedChange={(checked) => {
+                          setFeedbackAcknowledgementAccepted(
+                            checked as boolean,
+                          );
+                          if (checked) {
+                            setFeedbackAcknowledgementError('');
+                          }
+                        }}
+                      />
+                      <label
+                        htmlFor="feedback-acknowledgement"
+                        className="text-xs text-slate-500"
+                      >
+                        I understand that sponsors will not be able to send
+                        individual feedback to applicants. I have factored this
+                        in before applying to avoid disappointment.
+                        <span className="text-red-500">*</span>
+                      </label>
+                    </div>
+                    {feedbackAcknowledgementError && (
+                      <FormMessage>{feedbackAcknowledgementError}</FormMessage>
                     )}
                   </div>
                 )}
