@@ -99,13 +99,11 @@ function getStaticRoutes(now: Date): MetadataRoute.Sitemap {
       priority: 0.8,
     },
     {
-      url: `${baseUrl}/earn/feed/`,
       lastModified: now,
       changeFrequency: 'hourly',
       priority: 0.8,
     },
     {
-      url: `${baseUrl}/earn/search/`,
       lastModified: now,
       changeFrequency: 'monthly',
       priority: 0.7,
