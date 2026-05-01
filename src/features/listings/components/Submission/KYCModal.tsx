@@ -4,7 +4,6 @@ import {
   type MessageHandler,
 } from '@sumsub/websdk/types/types';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { isAxiosError } from 'axios';
 import { Loader2, X } from 'lucide-react';
 import { useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
@@ -30,27 +29,6 @@ const fetchVerificationStatus = async (submissionId: string) => {
 };
 
 const VERIFICATION_PENDING_ERROR = 'VERIFICATION_PENDING';
-
-const getKycRejectionReason = (error: unknown): string | null => {
-  if (!isAxiosError(error)) {
-    return null;
-  }
-
-  const responseData = error.response?.data;
-
-  if (
-    responseData &&
-    typeof responseData === 'object' &&
-    'message' in responseData &&
-    responseData.message === 'KYC_REJECTED' &&
-    'error' in responseData &&
-    typeof responseData.error === 'string'
-  ) {
-    return responseData.error;
-  }
-
-  return null;
-};
 
 export const KYCModal = ({
   submissionId,
@@ -219,21 +197,8 @@ export const KYCModal = ({
                     Not Eligible
                   </p>
                   <p className="text-xs text-red-600">
-                    {`Sorry, we couldn't verify that you are a resident of ${regionDisplayName}. Only the residents of ${regionDisplayName} are eligible for this reward. Please contact support@superteamearn.com if there's been a mistake.`}
+                    {`Sorry, we couldn't verify that you are a resident of ${regionDisplayName}. Only the residents of ${regionDisplayName} are eligible for this reward. Please contact support@superteam.fun if there's been a mistake.`}
                   </p>
-                </div>
-              );
-            }
-
-            const kycRejectionReason = getKycRejectionReason(error);
-
-            if (kycRejectionReason) {
-              return (
-                <div className="flex flex-col gap-1 text-left">
-                  <p className="text-sm font-semibold text-red-600">
-                    KYC Rejected
-                  </p>
-                  <p className="text-xs text-red-600">{kycRejectionReason}</p>
                 </div>
               );
             }
@@ -292,7 +257,7 @@ export const KYCModal = ({
                     Not Eligible
                   </p>
                   <p className="text-xs text-red-600">
-                    {`Sorry, we couldn't verify that you are a resident of ${regionDisplayName}. Only the residents of ${regionDisplayName} are eligible for this reward. Please contact support@superteamearn.com if there's been a mistake.`}
+                    {`Sorry, we couldn't verify that you are a resident of ${regionDisplayName}. Only the residents of ${regionDisplayName} are eligible for this reward. Please contact support@superteam.fun if there's been a mistake.`}
                   </p>
                 </div>
               );

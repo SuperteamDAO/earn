@@ -4,7 +4,6 @@ import {
   type MessageHandler,
 } from '@sumsub/websdk/types/types';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { isAxiosError } from 'axios';
 import { X } from 'lucide-react';
 import { useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
@@ -18,27 +17,6 @@ import { userApplicationQuery } from '../../queries/user-application';
 import { getCombinedRegion } from '../../../listings/utils/region';
 
 type MessageType = Parameters<MessageHandler>[0];
-
-const getKycRejectionReason = (error: unknown): string | null => {
-  if (!isAxiosError(error)) {
-    return null;
-  }
-
-  const responseData = error.response?.data;
-
-  if (
-    responseData &&
-    typeof responseData === 'object' &&
-    'message' in responseData &&
-    responseData.message === 'KYC_REJECTED' &&
-    'error' in responseData &&
-    typeof responseData.error === 'string'
-  ) {
-    return responseData.error;
-  }
-
-  return null;
-};
 
 const fetchVerificationStatus = async (grantApplicationId: string) => {
   const { data } = await api.get(
@@ -132,12 +110,7 @@ export const KYCModal = ({
       if (stageRef.current === 'identity') {
         const result = await checkVerification();
         if (result.error) {
-          const kycRejectionReason = getKycRejectionReason(result.error);
-          if (kycRejectionReason) {
-            toast.error(kycRejectionReason);
-          } else {
-            toast.error('KYC verification check failed. Please try again.');
-          }
+          toast.error('KYC verification check failed. Please try again.');
           return;
         }
 
@@ -178,7 +151,7 @@ export const KYCModal = ({
           (result.data as { status?: string }).status === 'region_mismatch'
         ) {
           toast.error(
-            `Sorry, we couldn't verify that you are a resident of ${regionDisplayName}. Only the residents of ${regionDisplayName} are eligible for this reward. Please contact support@superteamearn.com if there's been a mistake.`,
+            `Sorry, we couldn't verify that you are a resident of ${regionDisplayName}. Only the residents of ${regionDisplayName} are eligible for this reward. Please contact support@superteam.fun if there's been a mistake.`,
           );
           return;
         }
@@ -215,7 +188,7 @@ export const KYCModal = ({
           (data as { status?: string }).status === 'ineligible'
         ) {
           toast.error(
-            `Sorry, we couldn't verify that you are a resident of ${regionDisplayName}. Only the residents of ${regionDisplayName} are eligible for this reward. Please contact support@superteamearn.com if there's been a mistake.`,
+            `Sorry, we couldn't verify that you are a resident of ${regionDisplayName}. Only the residents of ${regionDisplayName} are eligible for this reward. Please contact support@superteam.fun if there's been a mistake.`,
           );
         }
       }

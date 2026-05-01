@@ -1,12 +1,8 @@
-import axios from 'axios';
 import type { NextApiResponse } from 'next';
 
 import { type NextApiRequestWithUser } from '@/features/auth/types';
 import { withAuth } from '@/features/auth/utils/withAuth';
-import { SUMSUB_BASE_URL } from '@/features/kyc/constants/SUMSUB_BASE_URL';
-import { type SumSubBaseResponse } from '@/features/kyc/types/SumSubBaseResponse';
-import { createSumSubHeaders } from '@/features/kyc/utils/createSumSubHeaders';
-import { handleSumSubError } from '@/features/kyc/utils/handleSumSubError';
+import { createSumsubAccessToken } from '@/features/kyc/utils/createSumsubAccessToken';
 
 const handler = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
   const userId = req.userId;
@@ -20,20 +16,15 @@ const handler = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
       return res.status(500).json({ message: 'Missing environment variables' });
     }
 
-    const url = '/resources/accessTokens/sdk';
-    const method = 'POST';
-    const body = JSON.stringify({ ttlInSecs: 600, userId, levelName });
-    const headers = createSumSubHeaders(method, url, body, secretKey, appToken);
-
-    const response = await axios.post<SumSubBaseResponse>(
-      `${SUMSUB_BASE_URL}${url}`,
-      { ttlInSecs: 600, userId, levelName },
-      { headers },
+    const result = await createSumsubAccessToken(
+      userId,
+      levelName,
+      secretKey,
+      appToken,
     );
 
-    return res.status(200).json(response.data);
+    return res.status(200).json(result);
   } catch (error) {
-    handleSumSubError(error);
     const message =
       error instanceof Error ? error.message : 'Internal server error';
     return res.status(400).json({ message });
