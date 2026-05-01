@@ -261,6 +261,13 @@ async function getTalentProfilesCount(): Promise<number> {
       },
       isTalentFilled: true,
       private: false,
+      TalentRankings: {
+        some: {
+          totalEarnedInUSD: {
+            gt: 0,
+          },
+        },
+      },
     },
   });
 }
@@ -605,6 +612,13 @@ export default async function sitemap(props: {
           },
           isTalentFilled: true,
           private: false,
+          TalentRankings: {
+            some: {
+              totalEarnedInUSD: {
+                gt: 0,
+              },
+            },
+          },
         },
         select: {
           username: true,
