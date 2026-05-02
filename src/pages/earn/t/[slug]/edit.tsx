@@ -759,7 +759,7 @@ export default function EditProfilePage({
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { slug } = context.query;
   const chapters = await prisma.chapter.findMany({
-    where: { isHistorical: false },
+    where: { active: true },
     select: {
       name: true,
     },
