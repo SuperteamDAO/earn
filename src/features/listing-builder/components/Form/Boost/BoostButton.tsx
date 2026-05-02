@@ -6,6 +6,7 @@ import posthog from 'posthog-js';
 
 import { Button } from '@/components/ui/button';
 import { Tooltip } from '@/components/ui/tooltip';
+import { isInKindReward } from '@/lib/rewards/inKind';
 
 const BoostArrow = () => (
   <svg
@@ -60,10 +61,15 @@ export const BoostButton = ({
     usdValue,
     skills,
     slug,
+    token,
     compensationType,
     type,
     isPrivate,
   } = listing;
+
+  if (isInKindReward(token)) {
+    return null;
+  }
 
   const deadlineMoreThan72HoursLeft = hasMoreThan72HoursLeft(deadline ?? '');
 

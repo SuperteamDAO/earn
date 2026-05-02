@@ -821,7 +821,6 @@ model Chapter {
   countries           Json?
   memberForm          String?            @db.VarChar(255)
   active              Boolean            @default(true)
-  isHistorical        Boolean            @default(false)
   community           String?            @db.VarChar(255)
   pocName             String?            @db.VarChar(255)
   pocEmail            String?            @db.VarChar(255)
@@ -889,9 +888,8 @@ model PublicJoinOtp {
 model People {
   id                String             @id @default(uuid()) @db.Char(36)
   name              String             @db.VarChar(255)
-  email             String?            @db.VarChar(255)
-  region            String             @db.VarChar(100)
-  chapterId         String?            @db.Char(36)
+  email             String             @unique @db.VarChar(255)
+  chapterId         String             @db.Char(36)
   type              String?            @db.VarChar(50)
   xUsername         String?            @db.VarChar(100)
   telegram          String?            @db.VarChar(100)
@@ -908,15 +906,13 @@ model People {
   communityEarnings CommunityEarning[]
   jobs              Job[]
   vcExternalGrants  VcExternalGrant[]
-  chapter           Chapter?           @relation(fields: [chapterId], references: [id])
+  chapter           Chapter            @relation(fields: [chapterId], references: [id])
   user              User?              @relation("UserToPeople")
   accounts          Account[]
   sessions          Session[]
 
   @@unique([airtableRecordId])
   @@index([chapterId])
-  @@index([email])
-  @@index([type, region])
   @@index([type, email])
   @@index([type, name])
 }
@@ -1012,27 +1008,35 @@ model StatsSlackMessage {
 }
 
 model RegionSnapshot {
-  id               String   @id @default(uuid()) @db.Char(36)
-  cronDate         DateTime @db.Date
-  region           String   @db.VarChar(100)
-  totalGdp         Decimal  @default(0) @db.Decimal(15, 2)
-  organicGdp       Decimal  @default(0) @db.Decimal(15, 2)
-  inorganicGdp     Decimal  @default(0) @db.Decimal(15, 2)
-  totalJobs        Decimal  @default(0) @db.Decimal(15, 2)
-  totalJobsCount   Int      @default(0)
-  totalHackathons  Decimal  @default(0) @db.Decimal(15, 2)
-  totalContracts   Decimal  @default(0) @db.Decimal(15, 2)
-  totalFunding     Decimal  @default(0) @db.Decimal(15, 2)
-  virtualAttendees Int      @default(0)
-  irlAttendees     Int      @default(0)
-  totalAttendees   Int      @default(0)
-  virtualEvents    Int      @default(0)
-  irlEvents        Int      @default(0)
-  totalEvents      Int      @default(0)
-  members          Int      @default(0)
-  twitter          Int      @default(0)
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
+  id                     String   @id @default(uuid()) @db.Char(36)
+  cronDate               DateTime @db.Date
+  region                 String   @db.VarChar(100)
+  totalGdp               Decimal  @default(0) @db.Decimal(15, 2)
+  organicGdp             Decimal  @default(0) @db.Decimal(15, 2)
+  inorganicGdp           Decimal  @default(0) @db.Decimal(15, 2)
+  totalBounties          Decimal  @default(0) @db.Decimal(15, 2)
+  totalGrants            Decimal  @default(0) @db.Decimal(15, 2)
+  totalJobs              Decimal  @default(0) @db.Decimal(15, 2)
+  totalJobsCount         Int      @default(0)
+  totalHackathons        Decimal  @default(0) @db.Decimal(15, 2)
+  totalContracts         Decimal  @default(0) @db.Decimal(15, 2)
+  totalFunding           Decimal  @default(0) @db.Decimal(15, 2)
+  earnProfiles           Int      @default(0)
+  totalGrantApplications Int      @default(0)
+  totalSubmissions       Int      @default(0)
+  totalUniqueEarners     Int      @default(0)
+  allTimeUniqueEarners   Int      @default(0)
+  totalEarnings          Decimal  @default(0) @db.Decimal(15, 2)
+  virtualAttendees       Int      @default(0)
+  irlAttendees           Int      @default(0)
+  totalAttendees         Int      @default(0)
+  virtualEvents          Int      @default(0)
+  irlEvents              Int      @default(0)
+  totalEvents            Int      @default(0)
+  members                Int      @default(0)
+  twitter                Int      @default(0)
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
 
   @@unique([cronDate, region])
   @@index([region, cronDate])

@@ -108,9 +108,9 @@ export function HomeSponsorBanner({
           fill="black"
         />
       </svg>
-      <p className="relative z-10 text-2xl leading-[120%] font-bold text-black md:text-[28px]">
+      <h1 className="relative z-10 text-2xl leading-[120%] font-bold text-black md:text-[28px]">
         Become a Sponsor
-      </p>
+      </h1>
       <p className="relative z-10 mt-1 max-w-[18rem] text-sm leading-[130%] text-black sm:max-w-md md:mt-1 md:max-w-[20rem] md:text-lg lg:max-w-sm xl:max-w-[25rem]">
         Reach{' '}
         {roundToNearestTenThousand(totalUsers || 0, true)?.toLocaleString(

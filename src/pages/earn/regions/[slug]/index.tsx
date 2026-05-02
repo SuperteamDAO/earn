@@ -132,7 +132,7 @@ export async function getServerSideProps(context: NextPageContext) {
   const slugString = (slug as string)?.toLowerCase() || '';
 
   const chapter = await prisma.chapter.findFirst({
-    where: { slug: slugString, isHistorical: false },
+    where: { slug: slugString, active: true },
     select: {
       name: true,
       icons: true,

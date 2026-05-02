@@ -56,10 +56,10 @@ export function HomeTalentBanner({ totalUsers }: HomeTalentBannerProps) {
         className="absolute inset-0 bg-black/30 md:bg-black/20"
         aria-hidden="true"
       />
-      <p className="relative z-10 text-2xl leading-[120%] font-bold text-white md:text-[28px]">
+      <h1 className="relative z-10 text-2xl leading-[120%] font-bold text-white md:text-[28px]">
         Find Your Next High
         <br /> Paying Crypto Gig
-      </p>
+      </h1>
       <p className="relative z-10 mt-2.5 max-w-full text-sm leading-[130%] text-white [text-shadow:_0_1px_2px_rgb(0_0_0_/1)] md:mt-4 md:max-w-[30rem] md:text-lg">
         Participate in bounties or apply to freelance gigs of world-class crypto
         companies, all with a single profile.
