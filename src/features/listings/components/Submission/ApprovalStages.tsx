@@ -2,6 +2,7 @@ import { usePrivy } from '@privy-io/react-auth';
 import { useQuery } from '@tanstack/react-query';
 
 import FaCheck from '@/components/icons/FaCheck';
+import { getRewardTokenDisplayName } from '@/lib/rewards/inKind';
 import { useUser } from '@/store/user';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import { getPayoutCopy } from '@/utils/payout-date';
@@ -73,7 +74,7 @@ export const ApprovalStages = ({ listing }: Props) => {
   const isHackathon = listing.type === 'hackathon';
   const wonTitle = isHackathon ? 'Hackathon Track Won' : 'Bounty Won';
 
-  const token = listing.token || 'USDC';
+  const token = getRewardTokenDisplayName(listing.token || 'USDC');
   const rewardAmount = submission.winnerPosition
     ? (listing.rewards?.[Number(submission.winnerPosition)] ?? 0)
     : 0;

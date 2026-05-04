@@ -38,6 +38,7 @@ export async function getChapterRegions(): Promise<ChapterRegion[]> {
   }
 
   const chapters = await prisma.chapter.findMany({
+    where: { active: true },
     select: {
       name: true,
       region: true,

@@ -1184,6 +1184,7 @@ LIMIT 10;
   const countryLeaderLength = countryLeaders.length;
   if (countryLeaderLength < 10) {
     const chapters = await prisma.chapter.findMany({
+      where: { active: true },
       select: {
         countries: true,
         region: true,

@@ -69,7 +69,7 @@ export async function addOnboardingInfoToAirtable(
     `Starting addOnboardingInfoToAirtable for application ${applicationId}`,
   );
   try {
-    const apiToken = process.env.AIRTABLE_GRANTS_API_TOKEN;
+    const apiToken = process.env.AIRTABLE_API_TOKEN;
     const baseId = process.env.AIRTABLE_GRANTS_BASE_ID;
     const recipientsTable = process.env.AIRTABLE_RECIPIENTS_TABLE;
     const applicantsTable = process.env.AIRTABLE_GRANTS_TABLE_NAME;
