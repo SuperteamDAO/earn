@@ -48,7 +48,6 @@ export const ListingCard = ({
   bounty: Listing;
   ssrTimestamp?: number;
 }) => {
-  const { getIcon } = useTokenLookup();
   const {
     rewardAmount,
     deadline,
