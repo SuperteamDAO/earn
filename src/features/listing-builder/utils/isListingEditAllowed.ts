@@ -7,32 +7,28 @@ import { type UserModel } from '@/prisma/models/User';
 import { type ListingWithSponsor } from '@/features/auth/utils/checkListingSponsorAuth';
 import { isDeadlineOver } from '@/features/listings/utils/deadline';
 
-type UserWithMembership = UserModel & {
-  people?: { type?: string | null } | null;
-};
-
 export function validateUpdatePermissions(
   listing: ListingWithSponsor,
-  user: UserWithMembership,
+  user: UserModel,
 ) {
   const isGod = user?.role === 'GOD';
-  const isCore = user?.people?.type === 'CORE';
+  const isLinkedChapterSponsorMember = Boolean(listing?.sponsor?.chapter?.id);
   const pastDeadline = isDeadlineOver(listing?.deadline ?? undefined);
 
   logger.info('Check for past deadline of listing', {
     id: listing.id,
     pastDeadline,
     deadline: listing?.deadline,
-    isCore,
+    isLinkedChapterSponsorMember,
     isWinnersAnnounced: listing?.isWinnersAnnounced,
   });
 
   if (isGod) return null;
 
-  if (isCore && listing?.isWinnersAnnounced) {
+  if (isLinkedChapterSponsorMember && listing?.isWinnersAnnounced) {
     logger.warn('Listing winners are announced, hence cannot be edited', {
       id: listing.id,
-      isCore,
+      isLinkedChapterSponsorMember,
     });
     return NextResponse.json(
       { message: 'Listing winners are announced, hence cannot be edited' },
@@ -40,10 +36,10 @@ export function validateUpdatePermissions(
     );
   }
 
-  if (pastDeadline && !isCore) {
+  if (pastDeadline && !isLinkedChapterSponsorMember) {
     logger.warn('Listing is past deadline, hence cannot be edited', {
       id: listing.id,
-      isCore,
+      isLinkedChapterSponsorMember,
       isWinnersAnnounced: listing?.isWinnersAnnounced,
     });
     return NextResponse.json(

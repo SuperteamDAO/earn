@@ -1,4 +1,5 @@
 import logger from '@/lib/logger';
+import { isInKindReward } from '@/lib/rewards/inKind';
 import { type SponsorsModel } from '@/prisma/models/Sponsors';
 
 import { type ListingFormData } from '../types';
@@ -15,18 +16,19 @@ export const isFndnPayingCheck = ({
   sponsor,
   validatedListing,
 }: IsFndnPayingCheckProps) => {
-  const { type, isFndnPaying: rawIsFndnPaying } = validatedListing;
-  const isSuperteamSponsor =
-    sponsor?.slug?.trim().toLowerCase() === 'superteam';
-  const isEligibleSponsor = !!sponsor?.chapter || isSuperteamSponsor;
+  const { type, token, isFndnPaying: rawIsFndnPaying } = validatedListing;
+  const isEligibleSponsor = !!sponsor?.chapter;
   const isFndnPaying =
-    isEligibleSponsor && type !== 'project' ? rawIsFndnPaying : false;
+    isEligibleSponsor && type !== 'project' && !isInKindReward(token)
+      ? rawIsFndnPaying
+      : false;
   logger.info('Is Foundation Paying', {
     isFndnPaying,
     isEligibleSponsor,
     hasChapter: !!sponsor?.chapter,
     sponsorSlug: sponsor?.slug,
     type,
+    token,
     rawIsFndnPaying,
   });
   return isFndnPaying;

@@ -6,6 +6,9 @@ posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY!, {
   api_host: `${getURL()}docs-keep`,
   ui_host: process.env.NEXT_PUBLIC_POSTHOG_HOST || 'https://app.posthog.com',
   autocapture: false,
+  logs: {
+    captureConsoleLogs: true,
+  },
   loaded: (posthog) => {
     if (process.env.NODE_ENV !== 'production') posthog.debug();
     window.posthog = posthog;

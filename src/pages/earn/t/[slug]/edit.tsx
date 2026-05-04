@@ -760,6 +760,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const { res } = context;
   const { slug } = context.query;
   const chapters = await prisma.chapter.findMany({
+    where: { active: true },
     select: {
       name: true,
     },

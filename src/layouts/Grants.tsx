@@ -20,6 +20,7 @@ import { GrantStats } from '@/features/grants/components/GrantStats';
 import { userApplicationQuery } from '@/features/grants/queries/user-application';
 import { type GrantWithApplicationCount } from '@/features/grants/types';
 import { grantAmount } from '@/features/grants/utils/grantAmount';
+import { COINDCX_GRANT_ID } from '@/features/grants/utils/stGrant';
 import { LiveGrants } from '@/features/home/components/LiveGrants';
 import { ExtraInfoSection } from '@/features/listings/components/ListingPage/ExtraInfoSection';
 import { grantSnackbarAtom } from '@/features/navbar/components/GrantSnackbar';
@@ -54,7 +55,7 @@ export function GrantPageLayout({
   const showApplicationStats =
     initialGrant?.isNative &&
     initialGrant?.airtableId &&
-    !initialGrant?.title?.toLowerCase().includes('coindcx');
+    initialGrant?.id !== COINDCX_GRANT_ID;
 
   useEffect(() => {
     if (initialGrant) {

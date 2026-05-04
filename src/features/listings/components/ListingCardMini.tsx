@@ -3,9 +3,10 @@ import Link from 'next/link';
 
 import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
 import { LocalImage } from '@/components/ui/local-image';
+import { TokenIcon } from '@/components/ui/token-icon';
 import { ASSET_URL } from '@/constants/ASSET_URL';
-import { useTokenLookup } from '@/constants/tokenList';
 import { useServerTimeSync } from '@/hooks/use-server-time';
+import { getRewardTokenDisplayName } from '@/lib/rewards/inKind';
 import { timeAgoShort } from '@/utils/timeAgo';
 
 import { type Listing } from '../types';
@@ -13,7 +14,6 @@ import { getListingIcon } from '../utils/getListingIcon';
 import { CompensationAmount } from './ListingPage/CompensationAmount';
 
 export const ListingCardMini = ({ bounty }: { bounty: Listing }) => {
-  const { getIcon } = useTokenLookup();
   const {
     rewardAmount,
     deadline,
@@ -31,6 +31,7 @@ export const ListingCardMini = ({ bounty }: { bounty: Listing }) => {
 
   const isVariable = compensationType === 'variable';
   const showToken = !isVariable || (isVariable && isWinnersAnnounced);
+  const tokenLabel = getRewardTokenDisplayName(token);
 
   const { serverTime } = useServerTimeSync();
   const isBeforeDeadline = dayjs(serverTime()).isBefore(dayjs(deadline));
@@ -85,10 +86,10 @@ export const ListingCardMini = ({ bounty }: { bounty: Listing }) => {
             <div className="mt-px flex flex-wrap items-center gap-1">
               <div className="flex items-center justify-start">
                 {!!showToken && (
-                  <img
+                  <TokenIcon
                     className="mr-0.5 h-4 w-4 rounded-full"
-                    alt={token}
-                    src={getIcon(token)}
+                    alt={token ?? 'token'}
+                    symbol={token}
                   />
                 )}
                 <div className="flex items-baseline">
@@ -101,7 +102,9 @@ export const ListingCardMini = ({ bounty }: { bounty: Listing }) => {
                     className="text-xs font-semibold whitespace-nowrap text-slate-600"
                   />
                   {!!showToken && (
-                    <p className="text-xs font-medium text-gray-400">{token}</p>
+                    <p className="text-xs font-medium text-gray-400">
+                      {tokenLabel}
+                    </p>
                   )}
                 </div>
                 <p className="ml-1 text-xs text-slate-300 md:text-sm">|</p>

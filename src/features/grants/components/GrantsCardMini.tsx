@@ -1,8 +1,8 @@
 import Link from 'next/link';
 
 import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
+import { TokenIcon } from '@/components/ui/token-icon';
 import { ASSET_URL } from '@/constants/ASSET_URL';
-import { useTokenLookup } from '@/constants/tokenList';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 
 import { type GrantWithApplicationCount } from '../types';
@@ -13,7 +13,6 @@ export const GrantsCardMini = ({
 }: {
   grant: GrantWithApplicationCount;
 }) => {
-  const { getIcon } = useTokenLookup();
   const {
     sponsor,
     slug,
@@ -21,11 +20,9 @@ export const GrantsCardMini = ({
     minReward,
     maxReward,
     token,
-    totalApproved,
+    approvedAmountTotal,
     totalApplications,
   } = grant;
-
-  const tokenIcon = getIcon(token);
 
   const sponsorLogo = sponsor?.logo
     ? sponsor.logo.replace('/upload/', '/upload/c_scale,w_128,h_128,f_auto/')
@@ -58,10 +55,10 @@ export const GrantsCardMini = ({
             </Link>
             <div className="mt-px flex items-center gap-1 sm:gap-3">
               <div className="flex items-center justify-start gap-1">
-                <img
+                <TokenIcon
                   className="flex h-3 rounded-full sm:h-4"
-                  alt={token}
-                  src={tokenIcon}
+                  alt={token ?? 'token'}
+                  symbol={token}
                 />
                 <div className="flex items-baseline gap-0.5">
                   <p className="text-xs font-semibold whitespace-nowrap text-slate-600">
@@ -73,13 +70,15 @@ export const GrantsCardMini = ({
                   <p className="text-xs font-medium text-gray-400">{token}</p>
                 </div>
               </div>
-              {!!totalApproved && (
+              {!!approvedAmountTotal && (
                 <div className="flex items-center gap-3">
                   <p className="flex text-xs text-slate-300 lg:text-sm">|</p>
                   <p className="text-xs font-medium whitespace-nowrap text-gray-500 md:text-[0.71875rem]">
                     $
                     {formatNumberWithSuffix(
-                      Number((totalApproved / totalApplications).toFixed(2)),
+                      Number(
+                        (approvedAmountTotal / totalApplications).toFixed(2),
+                      ),
                     )}
                     <span className="ml-[0.3] text-xs font-medium text-gray-400 [word-spacing:-0.09rem] md:text-[0.6875rem]">
                       {' '}

@@ -23,6 +23,18 @@ const responseSchema = z.object({
   title: z.string().min(1).max(100),
 });
 export type TTitleGenerateResponse = z.infer<typeof responseSchema>;
+const AI_GENERATION_TIMEOUT_MS = 15000;
+
+const getFallbackTitle = (
+  _description: string,
+  type: BountyType,
+): TTitleGenerateResponse => {
+  const typeLabel = type.replace(/_/g, ' ').trim();
+
+  return {
+    title: `${typeLabel} Opportunity`.slice(0, 100),
+  };
+};
 
 export async function POST(request: Request) {
   try {
@@ -78,15 +90,48 @@ export async function POST(request: Request) {
 
     const prompt = generateListingTitlePrompt(description, type);
 
-    const { object } = await generateObject({
-      model: openrouter('google/gemini-2.0-flash-lite-001'),
-      system:
-        'You generate concise, compelling listing titles for provided listing description. Follow the prompt rules and strictly satisfy the response schema.',
-      prompt,
-      schema: responseSchema as any,
-    });
+    const generateTitleWithModel = async (modelName: string) => {
+      const { object } = await generateObject({
+        model: openrouter(modelName),
+        system:
+          'You generate concise, compelling listing titles for provided listing description. Follow the prompt rules and strictly satisfy the response schema.',
+        prompt,
+        schema: responseSchema as any,
+        abortSignal: AbortSignal.timeout(AI_GENERATION_TIMEOUT_MS),
+      });
+      return object;
+    };
 
-    logger.info('Generated eligibility title object: ', safeStringify(object));
+    let object: TTitleGenerateResponse;
+    try {
+      object = await generateTitleWithModel('google/gemini-2.5-flash');
+      logger.info(
+        'Generated eligibility title object with primary model: ',
+        safeStringify(object),
+      );
+    } catch (primaryModelError) {
+      logger.warn(
+        'Primary title model failed, trying fallback model:',
+        safeStringify(primaryModelError),
+      );
+      try {
+        object = await generateTitleWithModel(
+          'google/gemini-2.0-flash-lite-001',
+        );
+        logger.info(
+          'Generated eligibility title object with fallback model: ',
+          safeStringify(object),
+        );
+      } catch (fallbackModelError) {
+        logger.error(
+          'Both title models failed. Returning deterministic fallback. Primary error:',
+          safeStringify(primaryModelError),
+          'Fallback error:',
+          safeStringify(fallbackModelError),
+        );
+        object = getFallbackTitle(description, type);
+      }
+    }
 
     return NextResponse.json(object, { status: 200 });
   } catch (error) {

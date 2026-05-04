@@ -33,7 +33,7 @@ async function handler(req: NextApiRequestWithAgent, res: NextApiResponse) {
       isArchived: false,
       status: 'OPEN',
       deadline: { gte: deadline },
-      type: type || { in: ['bounty', 'project'] },
+      type: type || { in: ['bounty', 'project', 'hackathon'] },
       agentAccess: { in: ['AGENT_ALLOWED', 'AGENT_ONLY'] },
       sponsor: {
         isVerified: true,

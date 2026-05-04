@@ -22,6 +22,13 @@ const responseSchema = z.object({
   skills: skillsArraySchema,
 });
 export type TSkillsGenerateResponse = z.infer<typeof responseSchema>;
+const AI_GENERATION_TIMEOUT_MS = 15000;
+
+const getFallbackSkills = (
+  _description: string,
+): TSkillsGenerateResponse['skills'] => {
+  return [{ skills: 'Other', subskills: ['Product Manager'] }];
+};
 
 export async function POST(request: Request) {
   try {
@@ -76,17 +83,52 @@ export async function POST(request: Request) {
 
     const prompt = generateListingSkillsPrompt(description);
 
-    const { object } = await generateObject({
-      model: openrouter('google/gemini-2.5-flash'),
-      system:
-        'Your role is to generate proper skills for listings, strictly adhering to the rules provided with each description and type.',
-      prompt,
-      schema: responseSchema as any,
-    });
+    const generateSkillsWithModel = async (modelName: string) => {
+      const { object } = await generateObject({
+        model: openrouter(modelName),
+        system:
+          'Your role is to generate proper skills for listings, strictly adhering to the rules provided with each description and type.',
+        prompt,
+        schema: responseSchema as any,
+        abortSignal: AbortSignal.timeout(AI_GENERATION_TIMEOUT_MS),
+      });
+      return object.skills;
+    };
 
-    logger.info('Generated skills object: ', safeStringify(object));
+    let generatedSkills: TSkillsGenerateResponse['skills'];
+    try {
+      generatedSkills = await generateSkillsWithModel(
+        'google/gemini-2.5-flash',
+      );
+      logger.info(
+        'Generated skills object with primary model: ',
+        safeStringify(generatedSkills),
+      );
+    } catch (primaryModelError) {
+      logger.warn(
+        'Primary skills model failed, trying fallback model:',
+        safeStringify(primaryModelError),
+      );
+      try {
+        generatedSkills = await generateSkillsWithModel(
+          'google/gemini-2.0-flash-lite-001',
+        );
+        logger.info(
+          'Generated skills object with fallback model: ',
+          safeStringify(generatedSkills),
+        );
+      } catch (fallbackModelError) {
+        logger.error(
+          'Both skills models failed. Returning deterministic fallback. Primary error:',
+          safeStringify(primaryModelError),
+          'Fallback error:',
+          safeStringify(fallbackModelError),
+        );
+        generatedSkills = getFallbackSkills(description);
+      }
+    }
 
-    return NextResponse.json(object.skills, { status: 200 });
+    return NextResponse.json(generatedSkills, { status: 200 });
   } catch (error) {
     logger.error('Error generating skills:', safeStringify(error));
     return NextResponse.json(

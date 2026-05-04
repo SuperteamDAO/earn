@@ -7,10 +7,9 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useWatch } from 'react-hook-form';
 
 import FaXTwitter from '@/components/icons/FaXTwitter';
-import { LocalImage } from '@/components/ui/local-image';
 import { Separator } from '@/components/ui/separator';
 import { Slider } from '@/components/ui/slider';
-import { useTokenLookup } from '@/constants/tokenList';
+import { TokenIcon } from '@/components/ui/token-icon';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 
 import { useListingForm } from '@/features/listing-builder/hooks';
@@ -43,7 +42,6 @@ export function BoostContent({
   boostStep: number;
   setBoostStep: (s: number) => void;
 }) {
-  const { getIcon } = useTokenLookup();
   const form = useListingForm();
   const [hasInteracted, setHasInteracted] = useState(false);
   const SWITCH_FRACTION = 0.1;
@@ -234,7 +232,11 @@ export function BoostContent({
       <div className="mx-20 flex items-center justify-around">
         <div className="text-center">
           <p className="relative flex items-center gap-2 text-4xl font-semibold text-slate-900">
-            <LocalImage src={getIcon(token)} alt={token!} className="size-8" />
+            <TokenIcon
+              symbol={token}
+              alt={token ?? 'token'}
+              className="size-8"
+            />
             <AnimatePresence mode="popLayout">
               <motion.span
                 key={`tokens-${Math.round(previewTokens * 1000)}`}
