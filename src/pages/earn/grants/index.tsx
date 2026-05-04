@@ -38,12 +38,12 @@ function Grants() {
           src={'/home/bg_grad.svg'}
         />
         <div className="my-16 flex flex-col gap-4 text-center">
-          <p className="px-2 text-4xl font-bold md:text-5xl">
-            Need funds to build out your idea?
-          </p>
+          <h1 className="px-2 text-4xl font-bold md:text-5xl">
+            Crypto Grants & Web3 Funding
+          </h1>
           <p className="mx-auto max-w-2xl text-lg text-gray-600 md:text-xl">
-            Discover the complete list of crypto grants available to support
-            your project. Fast, equity-free funding without the hassle.
+            Explore equity-free crypto grants that help you turn ideas into real
+            products in the Solana ecosystem.
           </p>
           <p className="mt-3 text-sm text-slate-400 md:text-base">
             Equity-Free • No Bullshit • Fast AF

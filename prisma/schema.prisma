@@ -212,7 +212,6 @@ model Grants {
   minReward              Float?
   maxReward              Float?
   totalPaid              Float              @default(0)
-  totalApproved          Float              @default(0)
   historicalApplications Int                @default(0)
   historicalPaid         Float              @default(0)
   link                   String?
@@ -255,7 +254,6 @@ model Grants {
   @@index([slug])
   @@index([sponsorId, isActive, isArchived, status])
   @@index([createdAt(sort: Desc)])
-  @@index([totalApproved(sort: Desc)])
   @@index([isPublished, isActive, isArchived, isPrivate, status])
   @@index([region, isPublished, isActive, isArchived])
   @@index([sponsorId, isPublished, isActive, isArchived])
@@ -263,8 +261,6 @@ model Grants {
   @@index([status, isPublished, isActive])
   @@index([region, status, isPublished])
   @@index([minReward, maxReward])
-  @@index([totalPaid, totalApproved])
-  @@index([historicalApplications, totalApproved])
 }
 
 model GrantApplication {
@@ -338,6 +334,9 @@ model GrantTranche {
   eventReceipts    Json?
   attendeeCount    Int?
   socialPost       String?            @db.VarChar(500)
+  colosseumLink    String?            @db.VarChar(500)
+  githubRepo       String?            @db.VarChar(500)
+  aiReceipts       Json?
 
   @@index([applicationId])
   @@index([grantId])
@@ -464,8 +463,6 @@ model User {
   peopleId           String?              @unique
   currentSponsor     Sponsors?            @relation(fields: [currentSponsorId], references: [id])
   people             People?              @relation("UserToPeople", fields: [peopleId], references: [id])
-  accounts           Account[]
-  sessions           Session[]
   UserSponsors       UserSponsors[]
   poc                Bounties[]           @relation("poc")
   templates          BountiesTemplates[]  @relation("poc")
@@ -527,7 +524,7 @@ model Account {
   scope             String?
   id_token          String? @db.Text
   session_state     String?
-  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user              People  @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@id([provider, providerAccountId])
   @@index([userId])
@@ -537,7 +534,7 @@ model Session {
   sessionToken String   @unique
   userId       String
   expires      DateTime
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user         People   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@id([sessionToken])
   @@index([userId])
@@ -848,6 +845,7 @@ model Chapter {
   vcExternalGrants    VcExternalGrant[]
   lumaEventReviews    LumaEventReview[]
   memberInvites       MemberInvite[]
+  publicJoinOtps      PublicJoinOtp[]
   welcomeEmailSubject String?            @db.VarChar(255)
   welcomeEmailBody    String?            @db.Text
 
@@ -871,13 +869,27 @@ model MemberInvite {
   @@index([chapterId])
 }
 
+model PublicJoinOtp {
+  id         String    @id @default(uuid()) @db.Char(36)
+  email      String    @db.VarChar(255)
+  chapterId  String    @db.Char(36)
+  codeHash   String    @db.VarChar(255)
+  attempts   Int       @default(0)
+  expiresAt  DateTime
+  verifiedAt DateTime?
+  consumedAt DateTime?
+  createdAt  DateTime  @default(now())
+  chapter    Chapter   @relation(fields: [chapterId], references: [id])
+
+  @@index([email, chapterId])
+  @@index([expiresAt])
+}
+
 model People {
   id                String             @id @default(uuid()) @db.Char(36)
   name              String             @db.VarChar(255)
-  email             String?            @db.VarChar(255)
-  handle            String?            @db.VarChar(255)
-  region            String             @db.VarChar(100)
-  chapterId         String?            @db.Char(36)
+  email             String             @unique @db.VarChar(255)
+  chapterId         String             @db.Char(36)
   type              String?            @db.VarChar(50)
   xUsername         String?            @db.VarChar(100)
   telegram          String?            @db.VarChar(100)
@@ -894,12 +906,15 @@ model People {
   communityEarnings CommunityEarning[]
   jobs              Job[]
   vcExternalGrants  VcExternalGrant[]
-  chapter           Chapter?           @relation(fields: [chapterId], references: [id])
+  chapter           Chapter            @relation(fields: [chapterId], references: [id])
   user              User?              @relation("UserToPeople")
+  accounts          Account[]
+  sessions          Session[]
 
   @@unique([airtableRecordId])
   @@index([chapterId])
-  @@index([email])
+  @@index([type, email])
+  @@index([type, name])
 }
 
 model CommunityEarning {
@@ -920,17 +935,19 @@ model CommunityEarning {
 }
 
 model Event {
-  id              String   @id @default(uuid()) @db.Char(36)
-  createdAt       DateTime @default(now())
-  superteamId     String   @db.Char(36)
-  eventTitle      String   @db.VarChar(255)
-  eventLumaLink   String?  @db.VarChar(500)
-  eventDate       DateTime @db.Date
-  eventType       String   @db.VarChar(50)
-  eventCategory   String   @db.VarChar(100)
+  id              String    @id @default(uuid()) @db.Char(36)
+  createdAt       DateTime  @default(now())
+  superteamId     String    @db.Char(36)
+  eventTitle      String    @db.VarChar(255)
+  eventLumaLink   String?   @db.VarChar(500)
+  eventDate       DateTime  @db.Date
+  eventType       String    @db.VarChar(50)
+  eventCategory   String    @db.VarChar(100)
   eventAttendance Int
-  isVerified      Int      @default(1)
-  chapter         Chapter  @relation(fields: [superteamId], references: [id])
+  isVerified      Int       @default(1)
+  lumaEventId     String?   @unique @db.VarChar(100)
+  lastSyncedAt    DateTime?
+  chapter         Chapter   @relation(fields: [superteamId], references: [id])
 }
 
 model Job {
@@ -986,31 +1003,40 @@ model StatsSlackMessage {
   recordId  String   @db.Char(36)
   createdAt DateTime @default(now())
 
-  @@unique([messageTs])
+  @@unique([channelId, messageTs])
+  @@index([formType, recordId])
 }
 
 model RegionSnapshot {
-  id               String   @id @default(uuid()) @db.Char(36)
-  cronDate         DateTime @db.Date
-  region           String   @db.VarChar(100)
-  totalGdp         Decimal  @default(0) @db.Decimal(15, 2)
-  organicGdp       Decimal  @default(0) @db.Decimal(15, 2)
-  inorganicGdp     Decimal  @default(0) @db.Decimal(15, 2)
-  totalJobs        Decimal  @default(0) @db.Decimal(15, 2)
-  totalJobsCount   Int      @default(0)
-  totalHackathons  Decimal  @default(0) @db.Decimal(15, 2)
-  totalContracts   Decimal  @default(0) @db.Decimal(15, 2)
-  totalFunding     Decimal  @default(0) @db.Decimal(15, 2)
-  virtualAttendees Int      @default(0)
-  irlAttendees     Int      @default(0)
-  totalAttendees   Int      @default(0)
-  virtualEvents    Int      @default(0)
-  irlEvents        Int      @default(0)
-  totalEvents      Int      @default(0)
-  members          Int      @default(0)
-  twitter          Int      @default(0)
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
+  id                     String   @id @default(uuid()) @db.Char(36)
+  cronDate               DateTime @db.Date
+  region                 String   @db.VarChar(100)
+  totalGdp               Decimal  @default(0) @db.Decimal(15, 2)
+  organicGdp             Decimal  @default(0) @db.Decimal(15, 2)
+  inorganicGdp           Decimal  @default(0) @db.Decimal(15, 2)
+  totalBounties          Decimal  @default(0) @db.Decimal(15, 2)
+  totalGrants            Decimal  @default(0) @db.Decimal(15, 2)
+  totalJobs              Decimal  @default(0) @db.Decimal(15, 2)
+  totalJobsCount         Int      @default(0)
+  totalHackathons        Decimal  @default(0) @db.Decimal(15, 2)
+  totalContracts         Decimal  @default(0) @db.Decimal(15, 2)
+  totalFunding           Decimal  @default(0) @db.Decimal(15, 2)
+  earnProfiles           Int      @default(0)
+  totalGrantApplications Int      @default(0)
+  totalSubmissions       Int      @default(0)
+  totalUniqueEarners     Int      @default(0)
+  allTimeUniqueEarners   Int      @default(0)
+  totalEarnings          Decimal  @default(0) @db.Decimal(15, 2)
+  virtualAttendees       Int      @default(0)
+  irlAttendees           Int      @default(0)
+  totalAttendees         Int      @default(0)
+  virtualEvents          Int      @default(0)
+  irlEvents              Int      @default(0)
+  totalEvents            Int      @default(0)
+  members                Int      @default(0)
+  twitter                Int      @default(0)
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
 
   @@unique([cronDate, region])
   @@index([region, cronDate])
@@ -1066,6 +1092,7 @@ enum EmailType {
   PENDING_GRANT_USDG
   APPROVED_GRANT_USDG
   PASSKEY_DEPRECATION
+  EITHERWAY_FRONTIER_ANNOUNCEMENT
 }
 
 enum Role {

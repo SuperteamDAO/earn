@@ -53,7 +53,6 @@ const submissionSchema = (
           z.object({
             question: z.string(),
             answer: z.string(),
-            optional: z.boolean().optional().nullable(),
           }),
         )
         .optional(),
@@ -149,9 +148,13 @@ const submissionSchema = (
           });
         } else {
           listing?.eligibility?.forEach((question, index) => {
-            const answer = data.eligibilityAnswers?.[index]?.answer;
-            const optional = data.eligibilityAnswers?.[index]?.optional;
-            if (!optional && (!answer || answer.trim() === '')) {
+            const byQuestion = data.eligibilityAnswers?.find(
+              (entry) => entry.question === question.question,
+            );
+            const byIndex = data.eligibilityAnswers?.[index];
+            const answer = (byQuestion?.answer ?? byIndex?.answer)?.trim();
+            const optional = Boolean(question.optional);
+            if (!optional && !answer) {
               ctx.addIssue({
                 code: 'custom',
                 path: ['eligibilityAnswers', index, 'answer'],

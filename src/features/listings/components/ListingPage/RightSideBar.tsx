@@ -8,10 +8,11 @@ const Countdown = dynamic(() => import('react-countdown'), { ssr: false });
 import MdTimer from '@/components/icons/MdTimer';
 import TbBriefcase2 from '@/components/icons/TbBriefcase2';
 import { CountDownRenderer } from '@/components/shared/countdownRenderer';
+import { TokenIcon } from '@/components/ui/token-icon';
 import { exclusiveSponsorData } from '@/constants/exclusiveSponsors';
-import { useTokenLookup } from '@/constants/tokenList';
 import { useServerTimeSync } from '@/hooks/use-server-time';
 import { type ParentSkills } from '@/interface/skills';
+import { getRewardTokenDisplayName } from '@/lib/rewards/inKind';
 import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
@@ -76,7 +77,6 @@ export function RightSideBar({
   submissionNumber?: number;
   isSubmissionNumberLoading?: boolean;
 }) {
-  const { getIcon } = useTokenLookup();
   const {
     token,
     type,
@@ -110,18 +110,19 @@ export function RightSideBar({
   }, [submissionNumber]);
 
   const isProject = type === 'project';
+  const tokenLabel = getRewardTokenDisplayName(token);
 
   const router = useRouter();
 
   const largestDigits = useMemo(() => {
     const consideringDigitsArray = cleanRewardPrizes(rewards).map(
-      (c) => formatNumberWithSuffix(c, 2, true) + (token || '') + '',
+      (c) => formatNumberWithSuffix(c, 2, true) + tokenLabel,
     );
     consideringDigitsArray.push(
-      formatNumberWithSuffix(rewardAmount || 0, 2, true) + (token || '') + '',
+      formatNumberWithSuffix(rewardAmount || 0, 2, true) + tokenLabel,
     );
     return digitsInLargestString(consideringDigitsArray);
-  }, [rewards, token, rewardAmount]);
+  }, [rewards, rewardAmount, tokenLabel]);
 
   const showUsdSymbolOnly = useMemo(() => {
     if (listing?.Hackathon?.slug === 'mobius') return true;
@@ -166,10 +167,10 @@ export function RightSideBar({
                         )}
                       >
                         {!showUsdSymbolOnly && (
-                          <img
+                          <TokenIcon
                             className="h-8 w-8 rounded-full"
                             alt="token icon"
-                            src={getIcon(token)}
+                            symbol={token}
                           />
                         )}
                         <CompensationAmount
@@ -201,7 +202,7 @@ export function RightSideBar({
                           widthPrize={widthOfPrize}
                           totalReward={rewardAmount ?? 0}
                           maxBonusSpots={maxBonusSpots ?? 0}
-                          token={!showUsdSymbolOnly ? token || '' : 'USD'}
+                          token={!showUsdSymbolOnly ? tokenLabel : 'USD'}
                           rewards={rewards}
                           showUsdSymbol={showUsdSymbolOnly}
                         />

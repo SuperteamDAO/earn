@@ -122,7 +122,6 @@ export const SubmissionDrawer = ({
           ? listing.eligibility.map((q) => ({
               question: q.question,
               answer: '',
-              optional: q.optional,
             }))
           : [],
     },
@@ -267,7 +266,6 @@ export const SubmissionDrawer = ({
                     ? (eligibilityAnswers as Array<{
                         question: string;
                         answer: string;
-                        optional?: boolean;
                       }>)
                     : [];
 
@@ -279,7 +277,6 @@ export const SubmissionDrawer = ({
                     return {
                       question: currentQuestion.question,
                       answer: matchByText.answer || '',
-                      optional: currentQuestion.optional,
                     };
                   }
 
@@ -288,14 +285,12 @@ export const SubmissionDrawer = ({
                     return {
                       question: currentQuestion.question,
                       answer: matchByIndex.answer,
-                      optional: currentQuestion.optional,
                     };
                   }
 
                   return {
                     question: currentQuestion.question,
                     answer: '',
-                    optional: currentQuestion.optional,
                   };
                 })
               : [];

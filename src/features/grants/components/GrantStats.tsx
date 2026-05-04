@@ -1,4 +1,4 @@
-import { useTokenLookup } from '@/constants/tokenList';
+import { TokenIcon } from '@/components/ui/token-icon';
 import { cn } from '@/utils/cn';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 
@@ -17,16 +17,14 @@ interface GrantStatsProps {
 }
 
 export const GrantStats = ({ grant }: GrantStatsProps) => {
-  const { getIcon } = useTokenLookup();
-
   return (
     <>
       <div className="flex w-full items-center justify-between gap-3">
         <div className="flex items-center gap-2">
-          <img
+          <TokenIcon
             className="h-8 w-8 rounded-full"
-            alt={'green doller'}
-            src={getIcon(grant.token || 'USDC')}
+            alt={grant.token || 'USDC'}
+            symbol={grant.token || 'USDC'}
           />
           <p className="text-lg font-semibold text-slate-700 md:text-xl">
             {grantAmount({
@@ -61,10 +59,10 @@ export const GrantStats = ({ grant }: GrantStatsProps) => {
             <div className="flex items-center">
               <PayoutIcon />
               <p className="text-lg font-medium text-slate-700 md:text-xl">
-                {grant.totalApproved
+                {grant.approvedAmountTotal
                   ? currencyFormatter.format(
                       Math.round(
-                        grant?.totalApproved / grant?.totalApplications,
+                        grant.approvedAmountTotal / grant.totalApplications,
                       ),
                     )
                   : '—'}
@@ -82,7 +80,7 @@ export const GrantStats = ({ grant }: GrantStatsProps) => {
               <p className="text-lg font-medium text-slate-700 md:text-xl">
                 $
                 {formatNumberWithSuffix(
-                  Math.round(grant?.totalApproved || 0),
+                  Math.round(grant.approvedAmountTotal || 0),
                   1,
                   true,
                 )}

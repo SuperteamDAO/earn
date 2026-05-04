@@ -9,6 +9,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { SponsorLayout } from '@/layouts/Sponsor';
 import { useUser } from '@/store/user';
 
+import {
+  COINDCX_GRANT_ID,
+  isAgenticEngineeringGrant,
+} from '@/features/grants/utils/stGrant';
 import { applicationsAtom } from '@/features/sponsor-dashboard/atoms';
 import { ApplicationsTab } from '@/features/sponsor-dashboard/components/ApplicationsTab';
 import { ApplicationHeader } from '@/features/sponsor-dashboard/components/GrantApplications/ApplicationHeader';
@@ -42,31 +46,32 @@ function GrantApplications({ slug }: Props) {
 
   const applications = useAtomValue(applicationsAtom);
 
-  const isST =
-    grant?.isNative &&
-    grant?.airtableId &&
-    grant?.id !== 'c72940f7-81ae-4c03-9bfe-9979d4371267';
+  const hasSpecialTranches =
+    (grant?.isNative && grant?.airtableId && grant?.id !== COINDCX_GRANT_ID) ||
+    isAgenticEngineeringGrant(grant);
 
   useEffect(() => {
-    // Handle 403 errors for non-GOD users
-    if (grantError && !isSwitchingSponsor && user?.role !== 'GOD') {
+    if (grantError && !isSwitchingSponsor) {
       const error = grantError as any;
       if (error?.response?.status === 403) {
-        toast.error('This grant does not belong to you');
-        router.push('/earn/dashboard/listings');
+        const hasSponsorId = error?.response?.data?.sponsorId;
+        if (!hasSponsorId) {
+          toast.error('This grant does not belong to you');
+          router.push('/earn/dashboard/listings');
+        }
       }
     }
-  }, [grantError, router, user?.role, isSwitchingSponsor]);
+  }, [grantError, router, isSwitchingSponsor]);
 
   useEffect(() => {
-    if (
-      grant &&
-      grant.sponsorId !== user?.currentSponsorId &&
-      user?.role !== 'GOD'
-    ) {
+    if (!grant || !user?.currentSponsorId || isSwitchingSponsor) {
+      return;
+    }
+
+    if (grant.sponsorId !== user.currentSponsorId) {
       router.push('/earn/dashboard/listings');
     }
-  }, [grant, user?.currentSponsorId, user?.role, router]);
+  }, [grant, user?.currentSponsorId, router, isSwitchingSponsor]);
 
   return (
     <SponsorLayout isCollapsible>
@@ -90,7 +95,7 @@ function GrantApplications({ slug }: Props) {
                   {applications?.length}
                 </div>
               </TabsTrigger>
-              {isST && (
+              {hasSpecialTranches && (
                 <TabsTrigger value="tranches">Tranche Requests</TabsTrigger>
               )}
               <TabsTrigger value="payments">Payments History</TabsTrigger>

@@ -1,4 +1,7 @@
+import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { cn } from '@/utils/cn';
+
+import { HACKATHONS } from '@/features/hackathon/constants/hackathons';
 
 import { type ListingContext, type ListingTab } from '../hooks/useListings';
 
@@ -47,6 +50,7 @@ interface ListingTabsProps {
 }
 
 export const ListingTabs = ({
+  type,
   activeTab,
   handleTabChange,
   isPro,
@@ -63,9 +67,10 @@ export const ListingTabs = ({
           <span>{tab.title}</span>
         </ListingTabTrigger>
       ))}
-      {/* {type === 'home' &&
+      {type === 'home' &&
         HACKATHONS.map((hackathon) => (
           <ListingTabTrigger
+            isPro={isPro}
             key={hackathon.slug}
             isActive={activeTab === hackathon.slug}
             onClick={() =>
@@ -78,10 +83,10 @@ export const ListingTabs = ({
             <ExternalImage
               src={hackathon.logo}
               alt={hackathon.label}
-              className="my-[0.1875rem] ml-0 h-3.5 object-contain"
+              className="my-[0.1875rem] -ml-1 h-3 object-contain"
             />
           </ListingTabTrigger>
-        ))} */}
+        ))}
     </div>
   );
 };

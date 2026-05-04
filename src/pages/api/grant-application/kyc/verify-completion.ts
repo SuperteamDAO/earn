@@ -8,6 +8,7 @@ import { safeStringify } from '@/utils/safeStringify';
 import { type NextApiRequestWithUser } from '@/features/auth/types';
 import { withAuth } from '@/features/auth/utils/withAuth';
 import { createTranche } from '@/features/grants/utils/createTranche';
+import { COINDCX_GRANT_ID } from '@/features/grants/utils/stGrant';
 import { checkVerificationStatus } from '@/features/kyc/utils/checkVerificationStatus';
 import { getApplicantData } from '@/features/kyc/utils/getApplicantData';
 
@@ -26,7 +27,7 @@ const handler = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
     });
 
     const isAllowed =
-      grantApplication.grant.id !== 'c72940f7-81ae-4c03-9bfe-9979d4371267' &&
+      grantApplication.grant.id !== COINDCX_GRANT_ID &&
       !!grantApplication.grant.airtableId &&
       grantApplication.grant.isNative &&
       grantApplication.applicationStatus === 'Approved';
