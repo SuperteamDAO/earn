@@ -40,7 +40,9 @@ export async function getUserSession(
       select: { id: true, isBlocked: true },
     });
 
-    logger.info(`User with privyDid: ${privyDid} found`, { privyDid, ...user });
+    logger.info(
+      `Authenticated user session for user ID: ${user?.id}, privyDid: ${privyDid}`,
+    );
 
     if (!user) {
       logger.warn('User has no record or is unauthorized');
