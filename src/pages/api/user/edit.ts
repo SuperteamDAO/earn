@@ -37,9 +37,7 @@ const allowedFields = [
 
 async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
   const userId = req.userId;
-  logger.info(
-    `Handling request for user ID: ${userId} - ${safeStringify(req.body)}`,
-  );
+  logger.info(`Handling profile update request for user ID: ${userId}`);
 
   const user = await prisma.user.findUnique({
     where: { id: userId as string },
@@ -144,9 +142,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       },
     });
 
-    logger.info(
-      `User profile updated successfully: ${safeStringify(updatedUser)}`,
-    );
+    logger.info(`User profile updated successfully for user ID: ${userId}`);
     return res.json(updatedUser);
   } catch (error: any) {
     logger.error(`Error updating user profile: ${safeStringify(error)}`);

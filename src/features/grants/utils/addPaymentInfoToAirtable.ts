@@ -283,7 +283,6 @@ export async function addPaymentInfoToAirtable(
 
     logger.info(
       `Attempting to add payment info to Airtable for Tranche ID: ${validatedTrancheId}`,
-      safeStringify(airtableData),
     );
 
     const airtablePayload = airtableInsert([{ fields: airtableData }], true);
@@ -318,13 +317,8 @@ export async function addPaymentInfoToAirtable(
     logger.error(baseMessage);
 
     if (error.response) {
-      logger.error(
-        `Airtable API Error Response: ${safeStringify(error.response.data)}`,
-      );
+      logger.error('Airtable API Error Response received');
       logger.error(`Airtable API Error Status: ${error.response.status}`);
-      logger.error(
-        `Airtable API Error Headers: ${safeStringify(error.response.headers)}`,
-      );
     } else if (error.request) {
       logger.error(
         `Airtable API No Response Received (Network Error?): ${safeStringify(error.request)}`,
