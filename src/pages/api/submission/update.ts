@@ -89,6 +89,7 @@ async function submission(req: NextApiRequestWithUser, res: NextApiResponse) {
     const { listing, user } = await validateSubmissionRequest(
       userId as string,
       listingId,
+      { skipLocationCooldown: true },
     );
 
     if (listing.isPro && !user.isPro) {
