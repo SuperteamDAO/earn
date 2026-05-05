@@ -69,9 +69,11 @@ export const ApplicationActionButton = ({
     chapters,
   });
   const isLocationCooldown = locationCooldown.inCooldown;
+  const isNewApplicationLocationCooldown =
+    isLocationCooldown && applicationState === 'ALLOW NEW';
 
   const getCooldownTooltipContent = () => {
-    if (isLocationCooldown) {
+    if (isNewApplicationLocationCooldown) {
       return locationCooldownTooltip(locationCooldown.daysRemaining);
     }
     if (applicationState !== 'COOLDOWN' || !application?.decidedAt) return null;
@@ -95,12 +97,12 @@ export const ApplicationActionButton = ({
     Boolean(
       !isPublished ||
       (user?.id && user?.isTalentFilled && !isUserEligibleByRegion) ||
-      (user?.id && user?.isTalentFilled && isLocationCooldown) ||
+      (user?.id && user?.isTalentFilled && isNewApplicationLocationCooldown) ||
       isNotEligibleForPro,
     );
 
   const getButtonText = () => {
-    if (isLocationCooldown && applicationState === 'ALLOW NEW') {
+    if (isNewApplicationLocationCooldown) {
       return 'Ineligible';
     }
     if (isProRestricted && !isUserApplicationLoading) {
@@ -113,7 +115,7 @@ export const ApplicationActionButton = ({
   };
 
   const getButtonBg = () => {
-    if (isLocationCooldown && applicationState === 'ALLOW NEW') {
+    if (isNewApplicationLocationCooldown) {
       return 'bg-brand-purple-400';
     }
     if (isProRestricted && !isUserApplicationLoading) {
