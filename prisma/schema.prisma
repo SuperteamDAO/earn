@@ -447,6 +447,7 @@ model User {
   community          String?              @db.Text
   experience         String?
   location           String?
+  locationUpdatedAt  DateTime?
   cryptoExperience   String?
   workPrefernce      String?
   currentEmployer    String?
@@ -812,42 +813,40 @@ model ProPerks {
 }
 
 model Chapter {
-  id                  String             @id @default(uuid()) @db.Char(36)
-  name                String             @unique @db.VarChar(100)
-  slug                String             @unique @db.VarChar(120)
-  region              String             @db.VarChar(100)
-  displayValue        String?            @db.VarChar(100)
-  code                String?            @db.VarChar(40)
-  countries           Json?
-  memberForm          String?            @db.VarChar(255)
-  active              Boolean            @default(true)
-  community           String?            @db.VarChar(255)
-  pocName             String?            @db.VarChar(255)
-  pocEmail            String?            @db.VarChar(255)
-  twitterUsername     String?            @db.VarChar(100)
-  link                String?            @db.VarChar(255)
-  icons               String?            @db.Text
-  banner              String?            @db.Text
-  hello               String?            @db.VarChar(80)
-  nationality         String?            @db.VarChar(120)
-  airtableBaseId      String?            @db.VarChar(50)
-  tgChatId            String?
-  tgThreadId          String?
-  registeredBy        String?
-  sponsorId           String?            @unique
-  createdAt           DateTime           @default(now())
-  updatedAt           DateTime           @updatedAt
-  sponsor             Sponsors?          @relation(fields: [sponsorId], references: [id])
-  people              People[]
-  communityEarnings   CommunityEarning[]
-  events              Event[]
-  jobs                Job[]
-  vcExternalGrants    VcExternalGrant[]
-  lumaEventReviews    LumaEventReview[]
-  memberInvites       MemberInvite[]
-  publicJoinOtps      PublicJoinOtp[]
-  welcomeEmailSubject String?            @db.VarChar(255)
-  welcomeEmailBody    String?            @db.Text
+  id                String             @id @default(uuid()) @db.Char(36)
+  name              String             @unique @db.VarChar(100)
+  slug              String             @unique @db.VarChar(120)
+  region            String             @db.VarChar(100)
+  displayValue      String?            @db.VarChar(100)
+  code              String?            @db.VarChar(40)
+  countries         Json?
+  memberForm        String?            @db.VarChar(255)
+  active            Boolean            @default(true)
+  community         String?            @db.VarChar(255)
+  pocName           String?            @db.VarChar(255)
+  pocEmail          String?            @db.VarChar(255)
+  twitterUsername   String?            @db.VarChar(100)
+  link              String?            @db.VarChar(255)
+  icons             String?            @db.Text
+  banner            String?            @db.Text
+  hello             String?            @db.VarChar(80)
+  nationality       String?            @db.VarChar(120)
+  airtableBaseId    String?            @db.VarChar(50)
+  tgChatId          String?
+  tgThreadId        String?
+  registeredBy      String?
+  sponsorId         String?            @unique
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  sponsor           Sponsors?          @relation(fields: [sponsorId], references: [id])
+  people            People[]
+  communityEarnings CommunityEarning[]
+  events            Event[]
+  jobs              Job[]
+  vcExternalGrants  VcExternalGrant[]
+  lumaEventReviews  LumaEventReview[]
+  memberInvites     MemberInvite[]
+  publicJoinOtps    PublicJoinOtp[]
 
   @@index([region])
 }
@@ -924,11 +923,13 @@ model CommunityEarning {
   earningTitle   String   @db.VarChar(255)
   tokenAmount    Decimal  @db.Decimal(15, 2)
   tokenName      String   @db.VarChar(50)
+  usdValue       Decimal  @db.Decimal(15, 2)
   category       String   @db.VarChar(50)
   dateOfEarning  DateTime @db.Date
   peopleId       String   @db.Char(36)
   sponsorName    String   @db.VarChar(255)
   contractLength Int?
+  proofOfEarning String?  @db.Text
   isVerified     Int      @default(1)
   chapter        Chapter  @relation(fields: [superteamId], references: [id])
   people         People   @relation(fields: [peopleId], references: [id])
