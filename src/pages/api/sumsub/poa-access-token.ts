@@ -10,7 +10,7 @@ const handler = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
   try {
     const secretKey = process.env.SUMSUB_SECRET_KEY;
     const appToken = process.env.SUMSUB_API_KEY;
-    const levelName = process.env.SUMSUB_LEVEL_NAME;
+    const levelName = process.env.SUMSUB_POA_LEVEL_NAME;
 
     if (!secretKey || !appToken || !userId || !levelName) {
       return res.status(500).json({ message: 'Missing environment variables' });

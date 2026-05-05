@@ -502,6 +502,7 @@ export const SubmissionActionButton = ({
           listingId={id!}
           onClose={() => setIsKYCModalOpen(false)}
           submissionId={submission.id}
+          region={region}
         />
       )}
 

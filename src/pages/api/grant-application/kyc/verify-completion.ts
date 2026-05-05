@@ -1,5 +1,7 @@
 import type { NextApiResponse } from 'next';
 
+import lookup from 'country-code-lookup';
+
 import logger from '@/lib/logger';
 import { LockNotAcquiredError, withRedisLock } from '@/lib/with-redis-lock';
 import { prisma } from '@/prisma';
@@ -11,6 +13,10 @@ import { createTranche } from '@/features/grants/utils/createTranche';
 import { COINDCX_GRANT_ID } from '@/features/grants/utils/stGrant';
 import { checkVerificationStatus } from '@/features/kyc/utils/checkVerificationStatus';
 import { getApplicantData } from '@/features/kyc/utils/getApplicantData';
+import { approveApplicant } from '@/features/kyc/utils/approveApplicant';
+import { isMainDocCountryRejection } from '@/features/kyc/utils/isMainDocCountryRejection';
+import { userRegionEligibilty } from '@/features/listings/utils/region';
+import { getChapterRegions } from '@/utils/chapterRegion';
 
 const handler = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
   const userId = req.userId;
@@ -33,7 +39,7 @@ const handler = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
       grantApplication.applicationStatus === 'Approved';
 
     if (!isAllowed) {
-      return res.status(200).json({ message: 'Not allowed' });
+      return res.status(403).json({ message: 'Not allowed' });
     }
 
     const secretKey = process.env.SUMSUB_SECRET_KEY;
@@ -57,12 +63,34 @@ const handler = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
         return res.status(200).json({ message: 'KYC already verified' });
       }
 
+      const { fullName, country, dob, idNumber, idType } = applicantData;
+
+      let poaRequired = false;
+      if (grantApplication.grant.region) {
+        const region = grantApplication.grant.region;
+        const isGbrNiException =
+          country.toUpperCase() === 'GBR' &&
+          region.trim().toLowerCase() === 'ireland (ni and roi)';
+
+        if (!isGbrNiException) {
+          const chapters = await getChapterRegions();
+          const countryInfo = lookup.byIso(country);
+          const countryName = countryInfo?.country ?? country;
+          const isRegionMatch = userRegionEligibilty({
+            region,
+            userLocation: countryName,
+            chapters,
+          });
+          if (!isRegionMatch) {
+            poaRequired = true;
+          }
+        }
+      }
+
       try {
         await withRedisLock(
           `locks:create-tranche:${grantApplicationId}:first-tranche`,
           async () => {
-            const { fullName, country, dob, idNumber, idType } = applicantData;
-
             await prisma.user.update({
               where: { id: userId },
               data: {
@@ -76,10 +104,12 @@ const handler = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
               },
             });
 
-            await createTranche({
-              applicationId: grantApplicationId,
-              isFirstTranche: true,
-            });
+            if (!poaRequired) {
+              await createTranche({
+                applicationId: grantApplicationId,
+                isFirstTranche: true,
+              });
+            }
           },
           { ttlSeconds: 300 },
         );
@@ -91,6 +121,82 @@ const handler = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
           });
         }
         throw lockError;
+      }
+
+      if (poaRequired) {
+        return res.status(200).json({ status: 'poa_required' });
+      }
+    }
+
+    if (
+      result !== null &&
+      result !== 'verified' &&
+      result !== 'timedOut' &&
+      typeof result === 'object' &&
+      result.status === 'failed' &&
+      isMainDocCountryRejection(result)
+    ) {
+      const chapters = await getChapterRegions();
+      const isRegionMatch = userRegionEligibilty({
+        region: grantApplication.grant.region,
+        userLocation: grantApplication.user.location ?? undefined,
+        chapters,
+      });
+
+      if (!isRegionMatch) {
+        return res.status(200).json({ status: 'region_mismatch' });
+      }
+
+      if (isRegionMatch) {
+        logger.info(
+          `Grant KYC: overriding country regulation for grantApplicationId ${grantApplicationId} — user location matches grant region ${grantApplication.grant.region}`,
+        );
+
+        await approveApplicant(
+          applicantId,
+          secretKey,
+          appToken,
+          `Region verified: user location matches grant region ${grantApplication.grant.region}`,
+        );
+
+        try {
+          await withRedisLock(
+            `locks:create-tranche:${grantApplicationId}:first-tranche`,
+            async () => {
+              const { fullName, country, dob, idNumber, idType } =
+                applicantData;
+
+              await prisma.user.update({
+                where: { id: userId },
+                data: {
+                  isKYCVerified: true,
+                  kycName: fullName,
+                  kycCountry: country,
+                  kycDOB: dob,
+                  kycIDNumber: idNumber,
+                  kycIDType: idType,
+                  kycVerifiedAt: new Date(),
+                },
+              });
+
+              await createTranche({
+                applicationId: grantApplicationId,
+                isFirstTranche: true,
+              });
+            },
+            { ttlSeconds: 300 },
+          );
+        } catch (lockError) {
+          if (lockError instanceof LockNotAcquiredError) {
+            return res.status(409).json({
+              message:
+                'First tranche creation already in progress for this application',
+            });
+          }
+          throw lockError;
+        }
+
+        return res.status(200).json('verified');
       }
     }
 
