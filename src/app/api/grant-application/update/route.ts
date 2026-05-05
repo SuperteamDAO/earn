@@ -179,6 +179,7 @@ export async function POST(request: NextRequest) {
     const { grant, user } = await validateGrantRequest(
       userId as string,
       grantId,
+      { skipLocationCooldown: true },
     );
 
     if (grant.isST) {
