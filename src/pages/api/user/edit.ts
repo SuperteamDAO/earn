@@ -126,6 +126,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
     const locationChanged =
       updatedData.location !== undefined &&
       updatedData.location !== user.location;
+    const hadExistingLocation = Boolean(user.location?.trim());
 
     const updatedUser = await prisma.user.update({
       where: { id: userId },
@@ -142,7 +143,9 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
         community: updatedData.community
           ? JSON.stringify(updatedData.community)
           : undefined,
-        ...(locationChanged ? { locationUpdatedAt: new Date() } : {}),
+        ...(locationChanged && hadExistingLocation
+          ? { locationUpdatedAt: new Date() }
+          : {}),
       },
       select: {
         email: true,

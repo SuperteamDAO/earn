@@ -4,7 +4,11 @@ import { getChapterRegions } from '@/utils/chapterRegion';
 import { getLocationCooldown } from '@/features/listings/utils/locationCooldown';
 import { userRegionEligibilty } from '@/features/listings/utils/region';
 
-export async function validateGrantRequest(userId: string, grantId: string) {
+export async function validateGrantRequest(
+  userId: string,
+  grantId: string,
+  options?: { skipLocationCooldown?: boolean },
+) {
   const grant = await prisma.grants.findUnique({
     where: { id: grantId },
     select: {
@@ -80,14 +84,16 @@ export async function validateGrantRequest(userId: string, grantId: string) {
     throw new Error('Region not eligible');
   }
 
-  const cooldown = getLocationCooldown({
-    locationUpdatedAt: user.locationUpdatedAt,
-    listingRegion: grant.region,
-    userLocation: user.location,
-    chapters: chapterRegions,
-  });
-  if (cooldown.inCooldown) {
-    throw new Error('Location cooldown active');
+  if (!options?.skipLocationCooldown) {
+    const cooldown = getLocationCooldown({
+      locationUpdatedAt: user.locationUpdatedAt,
+      listingRegion: grant.region,
+      userLocation: user.location,
+      chapters: chapterRegions,
+    });
+    if (cooldown.inCooldown) {
+      throw new Error('Location cooldown active');
+    }
   }
 
   return { grant, user };

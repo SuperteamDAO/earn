@@ -8,7 +8,7 @@ import { userRegionEligibilty } from './region';
 export async function validateSubmissionRequest(
   userId: string,
   listingId: string,
-  options?: { actor?: 'user' | 'agent' },
+  options?: { actor?: 'user' | 'agent'; skipLocationCooldown?: boolean },
 ) {
   const actor = options?.actor ?? 'user';
   const isAgent = actor === 'agent';
@@ -47,7 +47,7 @@ export async function validateSubmissionRequest(
     })
   )
     throw new Error('Region not eligible');
-  if (!isAgent) {
+  if (!isAgent && !options?.skipLocationCooldown) {
     const cooldown = getLocationCooldown({
       locationUpdatedAt: user.locationUpdatedAt,
       listingRegion: listing.region,
