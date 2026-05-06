@@ -223,9 +223,6 @@ const nextConfig: NextConfig = {
     ];
   },
   skipTrailingSlashRedirect: true,
-  logging: {
-    browserToTerminal: true,
-  },
 };
 
 const combinedConfig = withAxiom(withPWA(nextConfig));

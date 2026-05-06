@@ -515,8 +515,8 @@ interface SuperteamInput {
   readonly slug: string;
   readonly code: string;
   readonly country: readonly string[];
-  readonly icons?: string;
-  readonly link?: string;
+  readonly icons?: string | null;
+  readonly link?: string | null;
 }
 
 /**
