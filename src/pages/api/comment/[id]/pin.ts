@@ -16,7 +16,9 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
     logger.warn(`Invalid isPinned value: ${isPinned}`);
     return res.status(400).json({ error: 'isPinned must be a boolean value' });
   }
-  logger.info(`Request Params: ${safeStringify(req.query)}`);
+  logger.info(
+    `Comment pin toggle requested; commentId=${typeof req.query.id === 'string' ? req.query.id : 'missing'}`,
+  );
 
   if (req.method !== 'POST') {
     logger.warn(`Method not allowed: ${req.method}`);

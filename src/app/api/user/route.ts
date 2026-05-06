@@ -33,7 +33,7 @@ export async function GET(_request: NextRequest) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
-    logger.info(`User data retrieved successfully: ${safeStringify(result)}`);
+    logger.info(`User data retrieved successfully for user ID: ${result.id}`);
     return NextResponse.json(result);
   } catch (err) {
     logger.error(

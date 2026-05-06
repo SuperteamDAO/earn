@@ -37,9 +37,7 @@ const allowedFields = [
 
 async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
   const userId = req.userId;
-  logger.info(
-    `Handling request for user ID: ${userId} - ${safeStringify(req.body)}`,
-  );
+  logger.info(`Handling profile update request for user ID: ${userId}`);
 
   const user = await prisma.user.findUnique({
     where: { id: userId as string },
@@ -123,6 +121,11 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
   try {
     logger.debug(`Updated data to be saved: ${safeStringify(updatedData)}`);
 
+    const locationChanged =
+      updatedData.location !== undefined &&
+      updatedData.location !== user.location;
+    const hadExistingLocation = Boolean(user.location?.trim());
+
     const updatedUser = await prisma.user.update({
       where: { id: userId },
       data: {
@@ -138,15 +141,16 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
         community: updatedData.community
           ? JSON.stringify(updatedData.community)
           : undefined,
+        ...(locationChanged && hadExistingLocation
+          ? { locationUpdatedAt: new Date() }
+          : {}),
       },
       select: {
         email: true,
       },
     });
 
-    logger.info(
-      `User profile updated successfully: ${safeStringify(updatedUser)}`,
-    );
+    logger.info(`User profile updated successfully for user ID: ${userId}`);
     return res.json(updatedUser);
   } catch (error: any) {
     logger.error(`Error updating user profile: ${safeStringify(error)}`);

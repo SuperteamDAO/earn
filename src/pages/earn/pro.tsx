@@ -50,6 +50,9 @@ export default function ProPage({ potentialSession }: HomePageProps) {
         </>
       }
     >
+      <h1 className="sr-only">
+        Earn Pro — Exclusive Opportunities for Top Earners
+      </h1>
       <div className={cn('mx-auto w-full px-2 lg:px-6')}>
         <div className="mx-auto flex w-full max-w-7xl flex-col items-start justify-between p-0 lg:flex-row">
           <div className="w-full lg:pr-6">

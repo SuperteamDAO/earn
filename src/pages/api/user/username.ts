@@ -8,14 +8,15 @@ import { type NextApiRequestWithUser } from '@/features/auth/types';
 import { withAuth } from '@/features/auth/utils/withAuth';
 
 async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
-  logger.info(`Request query: ${safeStringify(req.query)}`);
-
   if (req.method !== 'GET') {
     logger.warn(`Method not allowed: ${req.method}`);
     return res.status(405).send('Method Not Allowed');
   }
 
   const { username, userId } = req.query;
+  logger.info(
+    `Username availability check requested; usernameLength=${typeof username === 'string' ? username.length : 0}, hasUserId=${typeof userId === 'string'}`,
+  );
 
   if (!username || typeof username !== 'string') {
     logger.warn('Invalid username parameter');

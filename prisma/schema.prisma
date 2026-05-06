@@ -447,6 +447,7 @@ model User {
   community          String?              @db.Text
   experience         String?
   location           String?
+  locationUpdatedAt  DateTime?
   cryptoExperience   String?
   workPrefernce      String?
   currentEmployer    String?
@@ -812,43 +813,40 @@ model ProPerks {
 }
 
 model Chapter {
-  id                  String             @id @default(uuid()) @db.Char(36)
-  name                String             @unique @db.VarChar(100)
-  slug                String             @unique @db.VarChar(120)
-  region              String             @db.VarChar(100)
-  displayValue        String?            @db.VarChar(100)
-  code                String?            @db.VarChar(40)
-  countries           Json?
-  memberForm          String?            @db.VarChar(255)
-  active              Boolean            @default(true)
-  isHistorical        Boolean            @default(false)
-  community           String?            @db.VarChar(255)
-  pocName             String?            @db.VarChar(255)
-  pocEmail            String?            @db.VarChar(255)
-  twitterUsername     String?            @db.VarChar(100)
-  link                String?            @db.VarChar(255)
-  icons               String?            @db.Text
-  banner              String?            @db.Text
-  hello               String?            @db.VarChar(80)
-  nationality         String?            @db.VarChar(120)
-  airtableBaseId      String?            @db.VarChar(50)
-  tgChatId            String?
-  tgThreadId          String?
-  registeredBy        String?
-  sponsorId           String?            @unique
-  createdAt           DateTime           @default(now())
-  updatedAt           DateTime           @updatedAt
-  sponsor             Sponsors?          @relation(fields: [sponsorId], references: [id])
-  people              People[]
-  communityEarnings   CommunityEarning[]
-  events              Event[]
-  jobs                Job[]
-  vcExternalGrants    VcExternalGrant[]
-  lumaEventReviews    LumaEventReview[]
-  memberInvites       MemberInvite[]
-  publicJoinOtps      PublicJoinOtp[]
-  welcomeEmailSubject String?            @db.VarChar(255)
-  welcomeEmailBody    String?            @db.Text
+  id                String             @id @default(uuid()) @db.Char(36)
+  name              String             @unique @db.VarChar(100)
+  slug              String             @unique @db.VarChar(120)
+  region            String             @db.VarChar(100)
+  displayValue      String?            @db.VarChar(100)
+  code              String?            @db.VarChar(40)
+  countries         Json?
+  memberForm        String?            @db.VarChar(255)
+  active            Boolean            @default(true)
+  community         String?            @db.VarChar(255)
+  pocName           String?            @db.VarChar(255)
+  pocEmail          String?            @db.VarChar(255)
+  twitterUsername   String?            @db.VarChar(100)
+  link              String?            @db.VarChar(255)
+  icons             String?            @db.Text
+  banner            String?            @db.Text
+  hello             String?            @db.VarChar(80)
+  nationality       String?            @db.VarChar(120)
+  airtableBaseId    String?            @db.VarChar(50)
+  tgChatId          String?
+  tgThreadId        String?
+  registeredBy      String?
+  sponsorId         String?            @unique
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  sponsor           Sponsors?          @relation(fields: [sponsorId], references: [id])
+  people            People[]
+  communityEarnings CommunityEarning[]
+  events            Event[]
+  jobs              Job[]
+  vcExternalGrants  VcExternalGrant[]
+  lumaEventReviews  LumaEventReview[]
+  memberInvites     MemberInvite[]
+  publicJoinOtps    PublicJoinOtp[]
 
   @@index([region])
 }
@@ -889,9 +887,8 @@ model PublicJoinOtp {
 model People {
   id                String             @id @default(uuid()) @db.Char(36)
   name              String             @db.VarChar(255)
-  email             String?            @db.VarChar(255)
-  region            String             @db.VarChar(100)
-  chapterId         String?            @db.Char(36)
+  email             String             @unique @db.VarChar(255)
+  chapterId         String             @db.Char(36)
   type              String?            @db.VarChar(50)
   xUsername         String?            @db.VarChar(100)
   telegram          String?            @db.VarChar(100)
@@ -908,15 +905,13 @@ model People {
   communityEarnings CommunityEarning[]
   jobs              Job[]
   vcExternalGrants  VcExternalGrant[]
-  chapter           Chapter?           @relation(fields: [chapterId], references: [id])
+  chapter           Chapter            @relation(fields: [chapterId], references: [id])
   user              User?              @relation("UserToPeople")
   accounts          Account[]
   sessions          Session[]
 
   @@unique([airtableRecordId])
   @@index([chapterId])
-  @@index([email])
-  @@index([type, region])
   @@index([type, email])
   @@index([type, name])
 }
@@ -928,11 +923,13 @@ model CommunityEarning {
   earningTitle   String   @db.VarChar(255)
   tokenAmount    Decimal  @db.Decimal(15, 2)
   tokenName      String   @db.VarChar(50)
+  usdValue       Decimal  @db.Decimal(15, 2)
   category       String   @db.VarChar(50)
   dateOfEarning  DateTime @db.Date
   peopleId       String   @db.Char(36)
   sponsorName    String   @db.VarChar(255)
   contractLength Int?
+  proofOfEarning String?  @db.Text
   isVerified     Int      @default(1)
   chapter        Chapter  @relation(fields: [superteamId], references: [id])
   people         People   @relation(fields: [peopleId], references: [id])
@@ -1012,30 +1009,82 @@ model StatsSlackMessage {
 }
 
 model RegionSnapshot {
-  id               String   @id @default(uuid()) @db.Char(36)
-  cronDate         DateTime @db.Date
-  region           String   @db.VarChar(100)
-  totalGdp         Decimal  @default(0) @db.Decimal(15, 2)
-  organicGdp       Decimal  @default(0) @db.Decimal(15, 2)
-  inorganicGdp     Decimal  @default(0) @db.Decimal(15, 2)
-  totalJobs        Decimal  @default(0) @db.Decimal(15, 2)
-  totalJobsCount   Int      @default(0)
-  totalHackathons  Decimal  @default(0) @db.Decimal(15, 2)
-  totalContracts   Decimal  @default(0) @db.Decimal(15, 2)
-  totalFunding     Decimal  @default(0) @db.Decimal(15, 2)
-  virtualAttendees Int      @default(0)
-  irlAttendees     Int      @default(0)
-  totalAttendees   Int      @default(0)
-  virtualEvents    Int      @default(0)
-  irlEvents        Int      @default(0)
-  totalEvents      Int      @default(0)
-  members          Int      @default(0)
-  twitter          Int      @default(0)
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
+  id                     String   @id @default(uuid()) @db.Char(36)
+  cronDate               DateTime @db.Date
+  region                 String   @db.VarChar(100)
+  totalGdp               Decimal  @default(0) @db.Decimal(15, 2)
+  organicGdp             Decimal  @default(0) @db.Decimal(15, 2)
+  inorganicGdp           Decimal  @default(0) @db.Decimal(15, 2)
+  totalBounties          Decimal  @default(0) @db.Decimal(15, 2)
+  totalGrants            Decimal  @default(0) @db.Decimal(15, 2)
+  totalJobs              Decimal  @default(0) @db.Decimal(15, 2)
+  totalJobsCount         Int      @default(0)
+  totalHackathons        Decimal  @default(0) @db.Decimal(15, 2)
+  totalContracts         Decimal  @default(0) @db.Decimal(15, 2)
+  totalFunding           Decimal  @default(0) @db.Decimal(15, 2)
+  earnProfiles           Int      @default(0)
+  totalGrantApplications Int      @default(0)
+  totalSubmissions       Int      @default(0)
+  totalUniqueEarners     Int      @default(0)
+  allTimeUniqueEarners   Int      @default(0)
+  totalEarnings          Decimal  @default(0) @db.Decimal(15, 2)
+  virtualAttendees       Int      @default(0)
+  irlAttendees           Int      @default(0)
+  totalAttendees         Int      @default(0)
+  virtualEvents          Int      @default(0)
+  irlEvents              Int      @default(0)
+  totalEvents            Int      @default(0)
+  members                Int      @default(0)
+  twitter                Int      @default(0)
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
 
   @@unique([cronDate, region])
   @@index([region, cronDate])
+}
+
+model LegacyGdpEarning {
+  id                String   @id @db.Char(32)
+  source            String   @db.VarChar(50)
+  sourceRowNumber   Int
+  sourceRecordId    String?  @db.VarChar(100)
+  name              String   @db.VarChar(500)
+  type              String   @db.VarChar(50)
+  sponsor           String?  @db.VarChar(255)
+  sponsorNew        String?  @db.VarChar(255)
+  foundation        String?  @db.VarChar(50)
+  region            String   @db.VarChar(100)
+  date              DateTime @db.Date
+  month             String   @db.VarChar(7)
+  amount            Decimal  @default(0) @db.Decimal(15, 2)
+  amountUsd         Decimal  @default(0) @db.Decimal(15, 2)
+  organicGdp        Decimal  @default(0) @db.Decimal(15, 2)
+  inorganicGdp      Decimal  @default(0) @db.Decimal(15, 2)
+  totalBounties     Decimal  @default(0) @db.Decimal(15, 2)
+  totalGrants       Decimal  @default(0) @db.Decimal(15, 2)
+  totalJobs         Decimal  @default(0) @db.Decimal(15, 2)
+  totalContracts    Decimal  @default(0) @db.Decimal(15, 2)
+  totalHackathons   Decimal  @default(0) @db.Decimal(15, 2)
+  currency          String?  @db.VarChar(50)
+  token             String?  @db.VarChar(50)
+  coingeckoId       String?  @db.VarChar(100)
+  duplicate         Boolean  @default(false)
+  isCurrentMonth    Boolean  @default(false)
+  rainmakerName     String?  @db.VarChar(255)
+  earner            String?  @db.Text
+  memberEarner      String?  @db.Text
+  allEarners        String?  @db.Text
+  earnApplicationId String?  @db.VarChar(100)
+  earnBountyId      String?  @db.VarChar(100)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@unique([source, sourceRowNumber])
+  @@index([region, month])
+  @@index([month])
+  @@index([type])
+  @@index([earnApplicationId])
+  @@index([earnBountyId])
 }
 
 enum CreditEventType {

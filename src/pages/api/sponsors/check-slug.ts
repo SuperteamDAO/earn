@@ -8,14 +8,15 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
-  logger.info(`Request query: ${safeStringify(req.query)}`);
-
   if (req.method !== 'GET') {
     logger.warn(`Method not allowed: ${req.method}`);
     return res.status(405).end('Method Not Allowed');
   }
 
   const { slug } = req.query;
+  logger.info(
+    `Sponsor slug availability check requested; slugLength=${typeof slug === 'string' ? slug.length : 0}`,
+  );
 
   if (!slug || typeof slug !== 'string') {
     logger.warn('Invalid slug parameter');

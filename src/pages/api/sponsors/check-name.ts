@@ -8,14 +8,15 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
-  logger.info(`Request query: ${safeStringify(req.query)}`);
-
   if (req.method !== 'GET') {
     logger.warn(`Method not allowed: ${req.method}`);
     return res.status(405).end('Method Not Allowed');
   }
 
   const { name } = req.query;
+  logger.info(
+    `Sponsor name availability check requested; nameLength=${typeof name === 'string' ? name.length : 0}`,
+  );
 
   if (!name || typeof name !== 'string') {
     logger.warn('Invalid name parameter');
