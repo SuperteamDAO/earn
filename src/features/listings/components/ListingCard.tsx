@@ -7,7 +7,6 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { TokenIcon } from '@/components/ui/token-icon';
 import { ASSET_URL } from '@/constants/ASSET_URL';
 import { useServerTimeSync } from '@/hooks/use-server-time';
-import { getRewardTokenDisplayName } from '@/lib/rewards/inKind';
 import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';
 import { timeAgoShort } from '@/utils/timeAgo';
@@ -85,7 +84,6 @@ export const ListingCard = ({ bounty }: { bounty: Listing }) => {
 
   const isVariable = compensationType === 'variable';
   const showToken = !isVariable || (isVariable && isWinnersAnnounced);
-  const tokenLabel = getRewardTokenDisplayName(token);
 
   return (
     <Link
@@ -137,9 +135,7 @@ export const ListingCard = ({ bounty }: { bounty: Listing }) => {
                   />
 
                   {!!showToken && (
-                    <p className="text-xs font-medium text-gray-400">
-                      {tokenLabel}
-                    </p>
+                    <p className="text-xs font-medium text-gray-400">{token}</p>
                   )}
                 </div>
                 <p className="ml-1 text-[10px] text-slate-300">|</p>
@@ -237,7 +233,7 @@ export const ListingCard = ({ bounty }: { bounty: Listing }) => {
 
             {!!showToken && (
               <p className="text-xs font-medium text-gray-400 sm:text-base">
-                {tokenLabel}
+                {token}
               </p>
             )}
           </div>

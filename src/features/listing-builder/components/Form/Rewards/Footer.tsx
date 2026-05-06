@@ -8,7 +8,6 @@ import { useWatch } from 'react-hook-form';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
-import { isInKindReward } from '@/lib/rewards/inKind';
 
 import { submitListingMutationAtom } from '@/features/listing-builder/atoms';
 import {
@@ -72,7 +71,6 @@ function RewardsFooter({
     control: form.control,
     name: 'token',
   });
-  const isInKind = isInKindReward(token);
   const compensationType = useWatch({
     control: form.control,
     name: 'compensationType',
@@ -112,13 +110,14 @@ function RewardsFooter({
     typeof tokenUsdValueData === 'number' ? tokenUsdValueData : 1;
 
   const totalUsdPrize = useMemo(() => {
-    if (type !== 'project') return tokenUsdValue * (rewardAmount || 0);
+    if (type !== 'project') return (tokenUsdValue || 1) * (rewardAmount || 0);
     else {
       if (compensationType === 'fixed')
-        return tokenUsdValue * (rewardAmount || 0);
+        return (tokenUsdValue || 1) * (rewardAmount || 0);
       else if (compensationType === 'range')
         return (
-          tokenUsdValue * (((minRewardAsk || 0) + (maxRewardAsk || 0)) / 2)
+          (tokenUsdValue || 1) *
+          (((minRewardAsk || 0) + (maxRewardAsk || 0)) / 2)
         );
       else if (compensationType === 'variable') return 1000;
     }
@@ -135,7 +134,6 @@ function RewardsFooter({
   const prevRewardAmountTokens = Number(rewardAmount) || 0;
   const targetBoostTokens = useMemo(() => {
     if (panel !== 'boost') return prevRewardAmountTokens;
-    if (tokenUsdValue <= 0) return prevRewardAmountTokens;
     const estimatedUsdValue = computeEstimatedUsdValue(
       rewardAmount,
       tokenUsdValue,
@@ -145,7 +143,8 @@ function RewardsFooter({
       estimatedUsdValue,
       isFeatureAvailable,
     );
-    return targetUSD / tokenUsdValue;
+    const usd = tokenUsdValue || 1;
+    return targetUSD / usd;
   }, [
     boostStep,
     isFeatureAvailable,
@@ -317,7 +316,6 @@ function RewardsFooter({
                 return;
               }
               if (
-                !isInKind &&
                 compensationType === 'fixed' &&
                 deadlineMoreThan72HoursLeft &&
                 type !== 'hackathon' &&

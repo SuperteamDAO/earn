@@ -1,7 +1,6 @@
 import { ArrowRight } from 'lucide-react';
 import React from 'react';
 
-import { getRewardTokenDisplayName } from '@/lib/rewards/inKind';
 import { cn } from '@/utils/cn';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 
@@ -28,10 +27,8 @@ export const CompensationAmount = ({
   showUsdSymbol,
   isWinnersAnnounced,
 }: CompensationAmountType) => {
-  const tokenLabel = getRewardTokenDisplayName(token);
-
   const Token = () => {
-    return <span className="ml-1 text-slate-400">{tokenLabel}</span>;
+    return <span className="ml-1 text-slate-400">{token}</span>;
   };
 
   const renderCompensation = () => {
@@ -65,11 +62,11 @@ export const CompensationAmount = ({
           );
         }
       case 'variable':
-        if (tokenLabel && !isWinnersAnnounced) {
+        if (token && !isWinnersAnnounced) {
           return (
             <>
               {showUsdSymbol ? '$' : ''}
-              {tokenLabel}
+              {token}
             </>
           );
         }
