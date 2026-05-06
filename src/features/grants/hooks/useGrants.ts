@@ -56,5 +56,6 @@ export function useGrants({
         sponsor,
         skill,
       }),
+    staleTime: 60 * 1000,
   });
 }

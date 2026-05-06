@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { QueryClient, dehydrate, useQuery } from '@tanstack/react-query';
 import { Info } from 'lucide-react';
 import type { GetServerSideProps } from 'next';
 import React, { useEffect, useState } from 'react';
@@ -6,6 +6,7 @@ import Countdown from 'react-countdown';
 
 import { TrackBox } from '@/components/hackathon/TrackBox';
 import { CountDownRenderer } from '@/components/shared/countdownRenderer';
+import { JsonLd } from '@/components/shared/JsonLd';
 import {
   Accordion,
   AccordionContent,
@@ -31,6 +32,7 @@ import { CypherpunkLogo } from '@/svg/cypherpunk-logo';
 import { PulseIcon } from '@/svg/pulse-icon';
 import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';
+import { generateBreadcrumbListSchema } from '@/utils/json-ld';
 
 const base = `/hackathon/cypherpunk/`;
 const baseAsset = (filename: string) => base + filename;
@@ -60,10 +62,32 @@ export default function Cypherpunk({ hackathon }: { hackathon: Hackathon }) {
             content={`https://res.cloudinary.com/dgvnuwspr/image/upload/v1760541751/assets/hackathon/cypherpunk/og-image.png`}
           />
           <Meta
-            title="Cypherpunk | Superteam Earn"
-            description={`Solana Cypherpunk Online Hackathon`}
+            title="Cypherpunk — Submission Tracks | Superteam Earn"
+            description="Submit to Sidetrack bounties of the Solana Cypherpunk Online Hackathon on Superteam Earn. Earn crypto prizes across development, design, and content tracks."
             canonical="https://superteam.fun/earn/hackathon/cypherpunk/"
             og="https://res.cloudinary.com/dgvnuwspr/image/upload/v1760541751/assets/hackathon/cypherpunk/og-image.png"
+          />
+          <JsonLd
+            data={[
+              generateBreadcrumbListSchema([
+                { name: 'Home', url: '/' },
+                { name: 'Hackathons', url: '/hackathon/all/' },
+                { name: 'Cypherpunk' },
+              ]),
+              {
+                '@context': 'https://schema.org',
+                '@type': 'Event',
+                name: 'Cypherpunk — Solana Online Hackathon',
+                description:
+                  'Submit to Sidetrack bounties of the Solana Cypherpunk Online Hackathon on Superteam Earn. Earn crypto prizes across development, design, and content tracks.',
+                url: 'https://superteam.fun/earn/hackathon/cypherpunk/',
+                organizer: {
+                  '@type': 'Organization',
+                  name: 'Superteam Earn',
+                  url: 'https://superteam.fun/',
+                },
+              },
+            ]}
           />
         </>
       }
@@ -316,7 +340,7 @@ const faqs: { question: string; answer: string }[] = [
     question:
       'How are Sidetracks different from the main Colosseum Cypherpunk tracks?',
     answer:
-      'Sidetracks are extra challenges hosted by Superteam Earn, separate from Colosseum’s Cypherpunk tracks. They offer additional opportunities to build unique projects and win special prizes.',
+      "Sidetracks are extra challenges hosted by Superteam Earn, separate from Colosseum's Cypherpunk tracks. They offer additional opportunities to build unique projects and win special prizes.",
   },
   {
     question: 'Do I need to submit separately to Sidetracks on Superteam Earn?',
@@ -326,22 +350,22 @@ const faqs: { question: string; answer: string }[] = [
   {
     question: 'When will Sidetrack winners be announced?',
     answer:
-      'Sidetrack winners will be announced shortly after the main Colosseum Cypherpunk winners. If you submitted a project to a Sidetrack, we’ll email you directly when winners are announced.',
+      "Sidetrack winners will be announced shortly after the main Colosseum Cypherpunk winners. If you submitted a project to a Sidetrack, we'll email you directly when winners are announced.",
   },
   {
     question: 'Can I submit my project to multiple Sidetracks?',
     answer:
-      'Yes, you’re welcome to submit your project to as many Sidetracks as you like, as long as your submission fits each Sidetrack’s requirements.',
+      "Yes, you're welcome to submit your project to as many Sidetracks as you like, as long as your submission fits each Sidetrack's requirements.",
   },
   {
     question: 'Where can I find developer resources for my project?',
     answer:
-      'Check out <a href="https://www.colosseum.com/cypherpunk/resources" target="_blank">Colosseum’s Developer Resources page</a>. You’ll find documentation, tools, tutorials, and everything you need to build on Solana.',
+      'Check out <a href="https://www.colosseum.com/cypherpunk/resources" target="_blank">Colosseum\'s Developer Resources page</a>. You\'ll find documentation, tools, tutorials, and everything you need to build on Solana.',
   },
   {
     question: 'What is the evaluation criteria for Sidetracks?',
     answer:
-      'Each Sidetrack sponsor defines their own evaluation criteria. Be sure to carefully review the description and judging guidelines for each Sidetrack you’re submitting to.',
+      "Each Sidetrack sponsor defines their own evaluation criteria. Be sure to carefully review the description and judging guidelines for each Sidetrack you're submitting to.",
   },
 ];
 
@@ -378,15 +402,77 @@ function FAQs() {
 }
 
 export const getServerSideProps: GetServerSideProps = async ({}) => {
+  const slug = 'cypherpunk';
+  const queryClient = new QueryClient();
+
   const hackathon = await prisma.hackathon.findUnique({
-    where: {
-      slug: 'cypherpunk',
-    },
-    include: {
-      Sponsor: true,
-    },
+    where: { slug },
+    include: { Sponsor: true },
   });
   if (!hackathon) throw Error('Hackathon not found');
+
+  await Promise.all([
+    queryClient.prefetchQuery({
+      queryKey: ['tracks', slug],
+      queryFn: async () => {
+        const result = await prisma.bounties.findMany({
+          where: { Hackathon: { slug }, isPublished: true },
+          select: {
+            title: true,
+            token: true,
+            rewardAmount: true,
+            slug: true,
+            sponsor: {
+              select: {
+                name: true,
+                slug: true,
+                logo: true,
+                isVerified: true,
+                chapter: { select: { id: true } },
+              },
+            },
+          },
+          orderBy: { usdValue: 'desc' },
+        });
+        return JSON.parse(JSON.stringify(result));
+      },
+    }),
+    queryClient.prefetchQuery({
+      queryKey: ['stats', slug],
+      queryFn: async () => {
+        const [totalListings, totalRewardAmount] = await Promise.all([
+          prisma.bounties.count({
+            where: {
+              hackathonId: hackathon.id,
+              isActive: true,
+              isArchived: false,
+              status: 'OPEN',
+              isPublished: true,
+            },
+          }),
+          prisma.bounties.aggregate({
+            _sum: { usdValue: true },
+            where: {
+              hackathonId: hackathon.id,
+              isActive: true,
+              isArchived: false,
+              status: 'OPEN',
+              isPublished: true,
+            },
+          }),
+        ]);
+        return JSON.parse(
+          JSON.stringify({
+            totalRewardAmount: totalRewardAmount._sum.usdValue || 0,
+            totalListings,
+            deadline: hackathon.deadline,
+            startDate: hackathon.startDate,
+            announceDate: hackathon.announceDate,
+          }),
+        );
+      },
+    }),
+  ]);
 
   return {
     props: {
@@ -401,6 +487,7 @@ export const getServerSideProps: GetServerSideProps = async ({}) => {
           updatedAt: hackathon?.Sponsor?.updatedAt.toISOString() || null,
         },
       },
+      dehydratedState: JSON.parse(JSON.stringify(dehydrate(queryClient))),
     },
   };
 };
