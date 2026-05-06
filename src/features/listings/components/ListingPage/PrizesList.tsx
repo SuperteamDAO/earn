@@ -1,7 +1,6 @@
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
-import { getRewardTokenDisplayName } from '@/lib/rewards/inKind';
 import { cn } from '@/utils/cn';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import { nthLabelGenerator } from '@/utils/rank';
@@ -40,7 +39,6 @@ export function PrizesList({
   showUsdSymbol?: boolean;
 }) {
   const iterableRewards: [string, number][] = Object.entries(rewards);
-  const tokenLabel = getRewardTokenDisplayName(token);
   const [visibleRewards, setVisibleRewards] =
     useState<[string, number][]>(iterableRewards);
   const [seeAll, setSeeAll] = useState(true);
@@ -97,7 +95,7 @@ export function PrizesList({
                 {showUsdSymbol && '$'}
                 {formatNumberWithSuffix(step[1], 2, true)}
               </p>
-              <p className="font-semibold text-slate-400">{tokenLabel}</p>
+              <p className="font-semibold text-slate-400">{token}</p>
             </div>
             <LabelOrAction
               setSeeAll={setSeeAll}

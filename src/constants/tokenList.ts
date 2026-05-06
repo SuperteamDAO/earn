@@ -2,12 +2,6 @@
 
 import { type ReactNode, useEffect, useSyncExternalStore } from 'react';
 
-import {
-  IN_KIND_REWARD_ICON,
-  IN_KIND_REWARD_TOKEN,
-  isInKindReward,
-} from '@/lib/rewards/inKind';
-
 export interface Token {
   tokenName: string;
   tokenSymbol: string;
@@ -22,7 +16,7 @@ type TokenListApiResponse = {
   tokens: Token[];
 };
 
-const DEFAULT_TOKEN_ICON = IN_KIND_REWARD_ICON;
+const DEFAULT_TOKEN_ICON = '/assets/dollar.svg';
 
 const listeners = new Set<() => void>();
 
@@ -80,13 +74,8 @@ export async function loadTokenList(force = false): Promise<Token[]> {
   return tokenListPromise;
 }
 
-export const getTokenBySymbolSync = (symbol?: string | null) => {
-  if (isInKindReward(symbol)) {
-    return IN_KIND_REWARD_TOKEN as Token;
-  }
-
-  return tokenListState.find((token) => token.tokenSymbol === symbol);
-};
+export const getTokenBySymbolSync = (symbol?: string | null) =>
+  tokenListState.find((token) => token.tokenSymbol === symbol);
 
 export const getTokenByMintAddressSync = (mintAddress?: string | null) =>
   tokenListState.find((token) => token.mintAddress === mintAddress);
@@ -128,9 +117,6 @@ export function useTokenList(): Token[] {
 
 export const useToken = (symbol?: string | null) => {
   const tokens = useTokenList();
-  if (isInKindReward(symbol)) {
-    return IN_KIND_REWARD_TOKEN as Token;
-  }
   return tokens.find((token) => token.tokenSymbol === symbol);
 };
 
@@ -144,24 +130,13 @@ export function useTokenLookup() {
 
   return {
     tokens,
-    getBySymbol: (symbol?: string | null) => {
-      if (isInKindReward(symbol)) {
-        return IN_KIND_REWARD_TOKEN as Token;
-      }
-      return tokens.find((token) => token.tokenSymbol === symbol);
-    },
+    getBySymbol: (symbol?: string | null) =>
+      tokens.find((token) => token.tokenSymbol === symbol),
     getByMintAddress: (mintAddress?: string | null) =>
       tokens.find((token) => token.mintAddress === mintAddress),
-    getIcon: (symbol?: string | null) => {
-      if (isInKindReward(symbol)) {
-        return IN_KIND_REWARD_TOKEN.icon;
-      }
-
-      return (
-        tokens.find((token) => token.tokenSymbol === symbol)?.icon ??
-        DEFAULT_TOKEN_ICON
-      );
-    },
+    getIcon: (symbol?: string | null) =>
+      tokens.find((token) => token.tokenSymbol === symbol)?.icon ??
+      DEFAULT_TOKEN_ICON,
   };
 }
 

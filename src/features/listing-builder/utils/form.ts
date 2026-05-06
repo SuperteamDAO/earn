@@ -1,6 +1,5 @@
 import { z } from 'zod';
 
-import { isInKindReward } from '@/lib/rewards/inKind';
 import { type BountyType, type CompensationType } from '@/prisma/enums';
 import { type HackathonModel } from '@/prisma/models/Hackathon';
 import { dayjs } from '@/utils/dayjs';
@@ -166,9 +165,7 @@ export const cleanTemplate = (
   reTemplate.region = prevValues.region;
   reTemplate.isPrivate = prevValues.isPrivate;
   reTemplate.agentAccess = prevValues.agentAccess;
-  reTemplate.isFndnPaying = isInKindReward(prevValues.token)
-    ? false
-    : prevValues.isFndnPaying;
+  reTemplate.isFndnPaying = prevValues.isFndnPaying;
   reTemplate.hackathonId = prevValues.hackathonId || undefined;
   reTemplate.eligibility = (prevValues.eligibility as any) || undefined;
   reTemplate.token = prevValues.token || reTemplate.token;
@@ -230,9 +227,7 @@ export function transformListingToFormListing(
     minRewardAsk: listing.minRewardAsk,
     pocSocials: listing.pocSocials || '',
     token: listing.token || (isST ? 'USDG' : 'USDC'),
-    isFndnPaying: isInKindReward(listing.token)
-      ? false
-      : listing.isFndnPaying || false,
+    isFndnPaying: listing.isFndnPaying || false,
     skills: listing.skills || [],
     hackathonId: listing.hackathonId,
     status: listing.status,
