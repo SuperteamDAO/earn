@@ -473,11 +473,11 @@ export const AGENTIC_ENGINEERING_GRANT_COPY: {
     subtitle:
       'Submit the final proofs for your Agentic Engineering grant to unlock the second tranche.',
     description:
-      'Share your Colosseum project link, GitHub repository, AI subscription receipt, payout wallet, and anything else that will help the sponsor review the final tranche.',
+      'Share your project URL, GitHub repository, AI subscription receipt, payout wallet, and anything else that will help the sponsor review the final tranche.',
     colosseumLink: {
-      label: "Link to your project's Colosseum profile",
-      description: 'Paste the path after the Colosseum Arena host.',
-      placeholder: 'projects/explore/your-project',
+      label: "Link to your project's URL",
+      description: 'URL that showcases your project',
+      placeholder: 'https://your-project-url.com',
     },
     githubRepo: {
       label: 'Link to the Github Repo',
@@ -488,7 +488,7 @@ export const AGENTIC_ENGINEERING_GRANT_COPY: {
     aiReceipt: {
       label: 'Upload your AI Subscription Receipt',
       description:
-        'The receipt should mention your name or entity. Upload up to 3 PDFs or PNGs.',
+        'The receipt should mention your name or entity, and total to at least $200. Upload up to 3 PDFs or PNGs.',
     },
     walletAddress: {
       label: 'Solana Wallet Address',
