@@ -156,8 +156,10 @@ const SearchPage = ({ initialQuery = '' }: SearchProps) => {
 };
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
+  const { res } = context;
   const query = (context.query.q as string)?.trim() || '';
 
+  res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=600');
   return {
     props: {
       initialQuery: query,
