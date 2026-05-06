@@ -1043,6 +1043,50 @@ model RegionSnapshot {
   @@index([region, cronDate])
 }
 
+model LegacyGdpEarning {
+  id                String   @id @db.Char(32)
+  source            String   @db.VarChar(50)
+  sourceRowNumber   Int
+  sourceRecordId    String?  @db.VarChar(100)
+  name              String   @db.VarChar(500)
+  type              String   @db.VarChar(50)
+  sponsor           String?  @db.VarChar(255)
+  sponsorNew        String?  @db.VarChar(255)
+  foundation        String?  @db.VarChar(50)
+  region            String   @db.VarChar(100)
+  date              DateTime @db.Date
+  month             String   @db.VarChar(7)
+  amount            Decimal  @default(0) @db.Decimal(15, 2)
+  amountUsd         Decimal  @default(0) @db.Decimal(15, 2)
+  organicGdp        Decimal  @default(0) @db.Decimal(15, 2)
+  inorganicGdp      Decimal  @default(0) @db.Decimal(15, 2)
+  totalBounties     Decimal  @default(0) @db.Decimal(15, 2)
+  totalGrants       Decimal  @default(0) @db.Decimal(15, 2)
+  totalJobs         Decimal  @default(0) @db.Decimal(15, 2)
+  totalContracts    Decimal  @default(0) @db.Decimal(15, 2)
+  totalHackathons   Decimal  @default(0) @db.Decimal(15, 2)
+  currency          String?  @db.VarChar(50)
+  token             String?  @db.VarChar(50)
+  coingeckoId       String?  @db.VarChar(100)
+  duplicate         Boolean  @default(false)
+  isCurrentMonth    Boolean  @default(false)
+  rainmakerName     String?  @db.VarChar(255)
+  earner            String?  @db.Text
+  memberEarner      String?  @db.Text
+  allEarners        String?  @db.Text
+  earnApplicationId String?  @db.VarChar(100)
+  earnBountyId      String?  @db.VarChar(100)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@unique([source, sourceRowNumber])
+  @@index([region, month])
+  @@index([month])
+  @@index([type])
+  @@index([earnApplicationId])
+  @@index([earnBountyId])
+}
+
 enum CreditEventType {
   SUBMISSION
   SPAM_PENALTY
