@@ -37,14 +37,9 @@ export default async function getHackathon(
           },
         },
       },
-      orderBy: [
-        {
-          usdValue: { sort: 'desc', nulls: 'last' },
-        },
-        {
-          createdAt: 'desc',
-        },
-      ],
+      orderBy: {
+        usdValue: 'desc',
+      },
     });
     res.status(200).json(result);
   } catch (err) {

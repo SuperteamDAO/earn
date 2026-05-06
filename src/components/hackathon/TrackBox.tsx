@@ -2,7 +2,6 @@ import Link from 'next/link';
 
 import { TokenIcon } from '@/components/ui/token-icon';
 import { type TrackProps } from '@/interface/hackathon';
-import { getRewardTokenDisplayName } from '@/lib/rewards/inKind';
 
 export const TrackBox = ({
   title,
@@ -11,8 +10,6 @@ export const TrackBox = ({
   rewardAmount,
   slug,
 }: TrackProps) => {
-  const tokenLabel = getRewardTokenDisplayName(token);
-
   return (
     <Link
       href={`/earn/listing/${slug}`}
@@ -43,7 +40,7 @@ export const TrackBox = ({
           {rewardAmount?.toLocaleString('en-us')}
         </span>
         <span className="text-sm font-semibold text-slate-400 md:text-base">
-          {tokenLabel}
+          {token}
         </span>
       </div>
     </Link>
