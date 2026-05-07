@@ -1,9 +1,13 @@
+import Link from 'next/link';
+
 import { ErrorInfo } from '@/components/shared/ErrorInfo';
+import { JsonLd } from '@/components/shared/JsonLd';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ASSET_URL } from '@/constants/ASSET_URL';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
+import { generateBreadcrumbListSchema } from '@/utils/json-ld';
 
 import { GrantsPop } from '@/features/conversion-popups/components/GrantsPop';
 import { GrantEntry } from '@/features/grants/components/GrantEntry';
@@ -19,18 +23,31 @@ function Grants() {
     category: 'All',
   });
 
+  const breadcrumbSchema = generateBreadcrumbListSchema([
+    { name: 'Home', url: '/' },
+    { name: 'Crypto Grants', url: '/earn/grants/' },
+  ]);
+
   return (
     <Default
       meta={
-        <Meta
-          title="Grants | Superteam Earn"
-          description="Discover Solana Grants for Development, Art, Content, and more to fund your ideas"
-          canonical="https://superteam.fun/earn/grants/"
-          og={ASSET_URL + `/og/grants.png`}
-        />
+        <>
+          <Meta
+            title="Grants | Superteam Earn"
+            description="Discover Solana Grants for Development, Art, Content, and more to fund your ideas"
+            canonical="https://superteam.fun/earn/grants/"
+            og={ASSET_URL + `/og/grants.png`}
+          />
+          <JsonLd data={[breadcrumbSchema]} />
+        </>
       }
     >
       <GrantsPop />
+      <nav aria-label="Breadcrumb" className="sr-only">
+        <Link href="/earn">Home</Link>
+        <span>/</span>
+        <Link href="/earn/grants">Crypto Grants</Link>
+      </nav>
       <div className="relative flex min-h-screen w-full flex-col justify-center bg-neutral-100">
         <ExternalImage
           className="absolute top-0 right-0 left-0 h-full w-full"
