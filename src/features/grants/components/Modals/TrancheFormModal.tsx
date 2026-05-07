@@ -31,11 +31,7 @@ import { userApplicationQuery } from '../../queries/user-application';
 import { type Grant } from '../../types';
 import {
   AGENTIC_ENGINEERING_GRANT_COPY,
-  COLOSSEUM_ARENA_LABEL,
-  COLOSSEUM_ARENA_PREFIX,
-  extractArenaColosseumPath,
   extractGithubRepoPath,
-  getArenaColosseumDisplayValue,
   getGithubRepoDisplayValue,
   GITHUB_REPO_LABEL,
   GITHUB_REPO_PREFIX,
@@ -46,6 +42,30 @@ import {
   WALLET_ADDRESS_CONFLICT_CODE,
   WALLET_ADDRESS_CONFLICT_MESSAGE,
 } from '../../utils/walletAddressOwnership.constants';
+
+const normalizeProjectUrl = (value: string) => {
+  const trimmed = value.trim();
+  if (!trimmed) return null;
+
+  const urlCandidate =
+    trimmed.startsWith('http://') || trimmed.startsWith('https://')
+      ? trimmed
+      : `https://${trimmed}`;
+
+  try {
+    const parsed = new URL(urlCandidate);
+    if (
+      (parsed.protocol === 'http:' || parsed.protocol === 'https:') &&
+      parsed.hostname.includes('.')
+    ) {
+      return parsed.toString();
+    }
+  } catch {
+    return null;
+  }
+
+  return null;
+};
 
 const createTrancheFormSchema = (
   isST: boolean,
@@ -113,12 +133,12 @@ const createTrancheFormSchema = (
       if (
         isAgenticEngineering &&
         data.colosseumLink &&
-        !extractArenaColosseumPath(data.colosseumLink)
+        !normalizeProjectUrl(data.colosseumLink)
       ) {
         ctx.addIssue({
           code: 'custom',
           path: ['colosseumLink'],
-          message: 'Please enter a valid Colosseum Arena URL',
+          message: 'Please enter a valid project URL',
         });
       }
 
@@ -202,9 +222,9 @@ export const TrancheFormModal = ({ grant, applicationId, onClose }: Props) => {
           socialPost: values.socialPost,
         }),
         ...(isAgenticEngineering && {
-          colosseumLink: values.colosseumLink,
+          colosseumLink: normalizeProjectUrl(values.colosseumLink || ''),
           githubRepo: values.githubRepo,
-          aiReceipt: values.aiReceipt?.[0],
+          aiReceipts: values.aiReceipt,
         }),
       });
       form.reset();
@@ -409,31 +429,12 @@ export const TrancheFormModal = ({ grant, applicationId, onClose }: Props) => {
                       </div>
                       <div>
                         <FormControl>
-                          <div className="flex h-10 items-center">
-                            <div className="flex h-full items-center justify-center rounded-l-md border border-r-0 border-slate-300 bg-slate-50 px-3 text-xs font-medium text-slate-600 shadow-xs md:text-sm">
-                              {COLOSSEUM_ARENA_LABEL}
-                            </div>
-                            <Input
-                              className="h-full rounded-l-none"
-                              placeholder={
-                                trancheCopy?.colosseumLink?.placeholder
-                              }
-                              value={getArenaColosseumDisplayValue(
-                                field.value || '',
-                              )}
-                              onChange={(e) => {
-                                const value = e.currentTarget.value;
-                                const path = extractArenaColosseumPath(value);
-                                field.onChange(
-                                  path
-                                    ? `${COLOSSEUM_ARENA_PREFIX}${path}`
-                                    : value
-                                      ? `${COLOSSEUM_ARENA_PREFIX}${value.replace(/^\/+/, '')}`
-                                      : '',
-                                );
-                              }}
-                            />
-                          </div>
+                          <Input
+                            placeholder={
+                              trancheCopy?.colosseumLink?.placeholder
+                            }
+                            {...field}
+                          />
                         </FormControl>
                         <FormMessage className="pt-1" />
                       </div>
@@ -495,7 +496,7 @@ export const TrancheFormModal = ({ grant, applicationId, onClose }: Props) => {
                         source="grant-agentic-receipts"
                         value={(field.value as string[]) || []}
                         onChange={field.onChange}
-                        maxImages={1}
+                        maxImages={3}
                         minImages={1}
                         label={trancheCopy?.aiReceipt?.label}
                         description={trancheCopy?.aiReceipt?.description}
