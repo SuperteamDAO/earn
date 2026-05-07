@@ -169,41 +169,6 @@ const normalizeSpecificHostUrl = (
   ).toString();
 };
 
-const normalizeGenericUrl = (
-  value: unknown,
-  {
-    label,
-    required,
-  }: {
-    label: string;
-    required: boolean;
-  },
-): string | undefined => {
-  if (value === undefined || value === null || value === '') {
-    if (required) {
-      throw new Error(`${label} is required.`);
-    }
-    return undefined;
-  }
-
-  if (typeof value !== 'string') {
-    throw new Error(`${label} must be a valid URL.`);
-  }
-
-  const trimmed = value.trim();
-  const urlCandidate =
-    trimmed.startsWith('http://') || trimmed.startsWith('https://')
-      ? trimmed
-      : `https://${trimmed}`;
-  const parsed = parseHttpUrl(urlCandidate);
-
-  if (!parsed || !parsed.hostname.includes('.')) {
-    throw new Error(`${label} must be a valid URL.`);
-  }
-
-  return parsed.toString();
-};
-
 type CreateTrancheProps = {
   applicationId: string;
   helpWanted?: string;
@@ -325,9 +290,11 @@ export async function createTranche({
     socialPost,
     requiresEventProof,
   );
-  const normalizedColosseumLink = normalizeGenericUrl(colosseumLink, {
-    label: 'Project URL',
+  const normalizedColosseumLink = normalizeSpecificHostUrl(colosseumLink, {
+    label: 'Colosseum link',
     required: requiresAgenticFinalProof,
+    host: 'arena.colosseum.org',
+    minPathSegments: 1,
   });
   const normalizedGithubRepo = normalizeSpecificHostUrl(githubRepo, {
     label: 'GitHub repo',
