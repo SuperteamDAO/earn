@@ -108,7 +108,12 @@ const submissionSchema = (
         }
       }
 
-      if (!isAgent && data.tweet && isXUrl(data.tweet)) {
+      if (
+        !isAgent &&
+        data.tweet &&
+        isXUrl(data.tweet) &&
+        !isXInternalStatusUrl(data.tweet)
+      ) {
         const handle = extractXHandle(data.tweet);
         if (handle) {
           const verifiedHandles = user?.linkedTwitter || [];
@@ -122,7 +127,12 @@ const submissionSchema = (
         }
       }
 
-      if (!isAgent && data.link && isXUrl(data.link)) {
+      if (
+        !isAgent &&
+        data.link &&
+        isXUrl(data.link) &&
+        !isXInternalStatusUrl(data.link)
+      ) {
         const handle = extractXHandle(data.link);
         if (handle) {
           const verifiedHandles = user?.linkedTwitter || [];
