@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
 
 import IoIosStar from '@/components/icons/IoIosStar';
 import MdModeComment from '@/components/icons/MdModeComment';
@@ -61,6 +62,11 @@ export const ListingCard = ({ bounty }: { bounty: Listing }) => {
     isPro,
   } = bounty;
 
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const { serverTime } = useServerTimeSync();
   const isBeforeDeadline = dayjs(serverTime()).isBefore(dayjs(deadline));
 
@@ -91,6 +97,7 @@ export const ListingCard = ({ bounty }: { bounty: Listing }) => {
   return (
     <Link
       href={`/earn/listing/${slug}`}
+      suppressHydrationWarning
       className={cn(
         'block w-full rounded-md px-2 py-4 no-underline hover:bg-gray-100 sm:px-4',
         isFeatured && isBeforeDeadline ? 'bg-purple-50' : '',
@@ -158,7 +165,10 @@ export const ListingCard = ({ bounty }: { bounty: Listing }) => {
                 |
               </p>
               <div className="flex items-center gap-1">
-                <p className="text-[10px] whitespace-nowrap text-gray-500 sm:text-xs">
+                <p
+                  suppressHydrationWarning
+                  className="text-[10px] whitespace-nowrap text-gray-500 sm:text-xs"
+                >
                   {deadlineText}
                 </p>
               </div>
@@ -189,7 +199,7 @@ export const ListingCard = ({ bounty }: { bounty: Listing }) => {
                   <p>{_count?.Comments}</p>
                 </div>
               )}
-              {!!isFeatured && isBeforeDeadline && (
+              {!!isFeatured && mounted && isBeforeDeadline && (
                 <div
                   className={cn(
                     'flex items-center gap-1',
@@ -204,7 +214,8 @@ export const ListingCard = ({ bounty }: { bounty: Listing }) => {
                 </div>
               )}
 
-              {dayjs(serverTime()).isBefore(dayjs(deadline)) &&
+              {mounted &&
+                dayjs(serverTime()).isBefore(dayjs(deadline)) &&
                 !isWinnersAnnounced && (
                   <div className="mx-1 h-2 w-2 rounded-full bg-[#16A35F] sm:mx-0" />
                 )}
