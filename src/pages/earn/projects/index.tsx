@@ -93,14 +93,18 @@ export const getServerSideProps: GetServerSideProps<
         take,
         select: listingSelect,
       });
-      return JSON.parse(JSON.stringify(reorderFeaturedOngoing(listings)));
+      return reorderFeaturedOngoing(listings).map((l) => ({
+        ...l,
+        deadline: l.deadline?.toISOString() ?? null,
+        winnersAnnouncedAt: l.winnersAnnouncedAt?.toISOString() ?? null,
+      }));
     },
   });
 
   return {
     props: {
       potentialSession: cookieExists,
-      dehydratedState: JSON.parse(JSON.stringify(dehydrate(queryClient))),
+      dehydratedState: dehydrate(queryClient),
     },
   };
 };

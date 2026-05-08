@@ -219,7 +219,7 @@ export const getServerSideProps: GetServerSideProps = async ({}) => {
           },
           orderBy: { usdValue: 'desc' },
         });
-        return JSON.parse(JSON.stringify(result));
+        return result;
       },
     }),
     queryClient.prefetchQuery({
@@ -246,15 +246,13 @@ export const getServerSideProps: GetServerSideProps = async ({}) => {
             },
           }),
         ]);
-        return JSON.parse(
-          JSON.stringify({
-            totalRewardAmount: totalRewardAmount._sum.usdValue || 0,
-            totalListings,
-            deadline: hackathon.deadline,
-            startDate: hackathon.startDate,
-            announceDate: hackathon.announceDate,
-          }),
-        );
+        return {
+          totalRewardAmount: totalRewardAmount._sum.usdValue || 0,
+          totalListings,
+          deadline: hackathon.deadline?.toISOString() ?? null,
+          startDate: hackathon.startDate?.toISOString() ?? null,
+          announceDate: hackathon.announceDate?.toISOString() ?? null,
+        };
       },
     }),
   ]);
@@ -272,7 +270,7 @@ export const getServerSideProps: GetServerSideProps = async ({}) => {
           updatedAt: hackathon?.Sponsor?.updatedAt.toISOString() || null,
         },
       },
-      dehydratedState: JSON.parse(JSON.stringify(dehydrate(queryClient))),
+      dehydratedState: dehydrate(queryClient),
     },
   };
 };

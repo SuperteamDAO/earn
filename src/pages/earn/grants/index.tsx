@@ -113,21 +113,17 @@ export const getServerSideProps: GetServerSideProps = async () => {
         orderBy: { createdAt: 'desc' },
         select: grantsSelect,
       });
-      return JSON.parse(
-        JSON.stringify(
-          grants.map((grant) => ({
-            ...grant,
-            totalApplications:
-              grant._count.GrantApplication + grant.historicalApplications,
-          })),
-        ),
-      );
+      return grants.map((grant) => ({
+        ...grant,
+        totalApplications:
+          grant._count.GrantApplication + grant.historicalApplications,
+      }));
     },
   });
 
   return {
     props: {
-      dehydratedState: JSON.parse(JSON.stringify(dehydrate(queryClient))),
+      dehydratedState: dehydrate(queryClient),
     },
   };
 };
