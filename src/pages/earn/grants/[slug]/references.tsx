@@ -56,7 +56,11 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
     return {
       props: {
-        grant: JSON.parse(JSON.stringify(grantData)),
+        grant: {
+          ...grantData,
+          createdAt: grantData.createdAt.toISOString(),
+          updatedAt: grantData.updatedAt.toISOString(),
+        },
       },
     };
   } catch (e) {

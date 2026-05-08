@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 
 import IoIosStar from '@/components/icons/IoIosStar';
 import MdModeComment from '@/components/icons/MdModeComment';
@@ -42,6 +43,7 @@ export const ListingCardSkeleton = () => {
 };
 
 export const ListingCard = ({ bounty }: { bounty: Listing }) => {
+  const router = useRouter();
   const { getIcon } = useTokenLookup();
   const {
     rewardAmount,
@@ -108,16 +110,28 @@ export const ListingCard = ({ bounty }: { bounty: Listing }) => {
             <p className="line-clamp-1 text-sm font-semibold text-slate-700 sm:text-base">
               {title}
             </p>
-            <Link
-              href={`/earn/s/${sponsor?.slug}`}
-              onClick={(e) => e.stopPropagation()}
-              className="flex w-min items-center gap-1 hover:underline"
+            <span
+              role="link"
+              tabIndex={0}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                router.push(`/earn/s/${sponsor?.slug}`);
+              }}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  router.push(`/earn/s/${sponsor?.slug}`);
+                }
+              }}
+              className="flex w-min cursor-pointer items-center gap-1 hover:underline"
             >
               <p className="w-full text-xs whitespace-nowrap text-slate-500 md:text-sm">
                 {sponsor?.name}
               </p>
               <div>{!!sponsor?.isVerified && <VerifiedBadge />}</div>
-            </Link>
+            </span>
             <div className="mt-px flex items-center gap-1 sm:gap-2">
               <div className="flex items-center justify-start sm:hidden">
                 {!!showToken && (
