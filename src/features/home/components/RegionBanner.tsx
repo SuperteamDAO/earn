@@ -40,9 +40,11 @@ export function RegionBanner({ st }: { st: ChapterDisplay }) {
         alt={st.name}
         width={1440}
         height={290}
-        className="h-full w-full object-cover object-center"
+        className="h-full w-full"
         style={{
-          ...customBannerPosition[st.region],
+          objectFit: customBannerPosition[st.region] ? 'cover' : 'fill',
+          objectPosition:
+            customBannerPosition[st.region]?.objectPosition ?? 'center',
         }}
       />
       <div className="absolute inset-0 block h-full w-full bg-[rgba(64,65,108,0.75)]" />
