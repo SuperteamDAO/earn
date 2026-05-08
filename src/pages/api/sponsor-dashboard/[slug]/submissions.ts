@@ -7,32 +7,33 @@ import { type NextApiRequestWithSponsor } from '@/features/auth/types';
 import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
 
 async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
-  const userId = req.userId;
   const params = req.query;
 
   const slug = params.slug as string;
   const isHackathon = params.isHackathon === 'true';
 
   try {
-    const user = await prisma.user.findUnique({
-      where: {
-        id: userId as string,
-      },
-    });
-
-    if (!user) {
-      logger.warn(`Unauthorized access attempt by user ${userId}`);
+    if (!req.userSponsorId) {
+      logger.warn(`Unauthorized access attempt by user ${req.userId}`);
       return res.status(403).json({ error: 'Unauthorized' });
     }
+
+    const sponsorScope = { sponsor: { id: req.userSponsorId } };
+    const hackathonScope = req.hackathonId
+      ? { hackathonId: req.hackathonId }
+      : null;
+
+    const listingScope =
+      isHackathon && hackathonScope
+        ? { OR: [sponsorScope, hackathonScope] }
+        : sponsorScope;
 
     const query = await prisma.submission.findMany({
       where: {
         listing: {
           slug,
           isActive: true,
-          ...(isHackathon
-            ? { hackathonId: user.hackathonId }
-            : { sponsor: { id: req.userSponsorId } }),
+          ...listingScope,
         },
         isActive: true,
         isArchived: false,

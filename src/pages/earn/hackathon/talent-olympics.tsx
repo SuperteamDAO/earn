@@ -20,9 +20,8 @@ import {
 import { Button } from '@/components/ui/button';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { Dialog, DialogContent, DialogPortal } from '@/components/ui/dialog';
-import { LocalImage } from '@/components/ui/local-image';
+import { TokenIcon } from '@/components/ui/token-icon';
 import { Tooltip } from '@/components/ui/tooltip';
-import { useTokenLookup } from '@/constants/tokenList';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import type { User } from '@/interface/user';
@@ -703,8 +702,6 @@ function TrackBox({
   link,
   hackathonIsOn,
 }: TrackProps) {
-  const { getIcon } = useTokenLookup();
-
   return (
     <Tooltip
       content={!hackathonIsOn ? 'Details to be revealed on July 11.' : null}
@@ -741,10 +738,10 @@ function TrackBox({
               </div>
             </div>
             <div className="mt-3 flex items-center justify-end gap-1">
-              <LocalImage
+              <TokenIcon
                 className="h-4 w-4 rounded-full md:h-6 md:w-6"
-                alt={token}
-                src={getIcon(token)}
+                alt={token ?? 'token'}
+                symbol={token}
               />
 
               <p className="text-sm font-semibold text-slate-700 md:text-base">

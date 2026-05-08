@@ -34,7 +34,6 @@ export const grantsSelect = {
   minReward: true,
   maxReward: true,
   token: true,
-  totalApproved: true,
   historicalApplications: true,
   totalPaid: true,
   logo: true,
@@ -59,6 +58,17 @@ export const grantsSelect = {
           ],
         },
       },
+    },
+  },
+  GrantApplication: {
+    where: {
+      OR: [
+        { applicationStatus: 'Approved' },
+        { applicationStatus: 'Completed' },
+      ],
+    },
+    select: {
+      approvedAmountInUSD: true,
     },
   },
 } satisfies GrantsSelect;

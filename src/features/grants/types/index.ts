@@ -42,7 +42,7 @@ interface Grant {
   references: References[];
   requirements?: string;
   applicationStatus?: 'Pending' | 'Approved' | 'Rejected' | 'Completed';
-  totalApproved: number;
+  approvedAmountTotal: number;
   historicalApplications: number;
   avgResponseTime?: string;
   airtableId?: string;

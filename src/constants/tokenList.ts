@@ -55,6 +55,7 @@ export async function loadTokenList(force = false): Promise<Token[]> {
 
   tokenListPromise = fetch('/api/tokens', {
     credentials: 'same-origin',
+    cache: 'no-store',
   })
     .then(async (response) => {
       if (!response.ok) {

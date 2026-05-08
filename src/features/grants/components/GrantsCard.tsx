@@ -3,8 +3,8 @@ import Link from 'next/link';
 import { SuperteamBadge } from '@/components/shared/SuperteamBadge';
 import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
 import { LocalImage } from '@/components/ui/local-image';
+import { TokenIcon } from '@/components/ui/token-icon';
 import { ASSET_URL } from '@/constants/ASSET_URL';
-import { useTokenLookup } from '@/constants/tokenList';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 
 import { ProBadge } from '@/features/pro/components/ProBadge';
@@ -13,7 +13,6 @@ import type { GrantWithApplicationCount } from '../types';
 import { grantAmount } from '../utils/grantAmount';
 
 export const GrantsCard = ({ grant }: { grant: GrantWithApplicationCount }) => {
-  const { getIcon } = useTokenLookup();
   const {
     sponsor,
     slug,
@@ -21,7 +20,7 @@ export const GrantsCard = ({ grant }: { grant: GrantWithApplicationCount }) => {
     minReward,
     maxReward,
     token,
-    totalApproved,
+    approvedAmountTotal,
     totalApplications,
     isPro,
     isST,
@@ -30,8 +29,6 @@ export const GrantsCard = ({ grant }: { grant: GrantWithApplicationCount }) => {
   const sponsorLogo = sponsor?.logo
     ? sponsor.logo.replace('/upload/', '/upload/c_scale,w_128,h_128,f_auto/')
     : ASSET_URL + '/logo/sponsor-logo.png';
-
-  const tokenIcon = getIcon(token);
 
   return (
     <Link
@@ -61,10 +58,10 @@ export const GrantsCard = ({ grant }: { grant: GrantWithApplicationCount }) => {
             </Link>
             <div className="mt-px flex items-center gap-1 sm:gap-2">
               <div className="flex items-center justify-start sm:hidden">
-                <LocalImage
+                <TokenIcon
                   className="mr-0.5 h-3.5 w-3.5 rounded-full"
                   alt={token!}
-                  src={tokenIcon!}
+                  symbol={token}
                 />
                 <div className="flex items-baseline">
                   <p className="text-xs font-semibold whitespace-nowrap text-slate-600 sm:text-base">
@@ -87,7 +84,7 @@ export const GrantsCard = ({ grant }: { grant: GrantWithApplicationCount }) => {
                 />
                 <p className="flex text-xs font-medium text-gray-500">Grant</p>
               </div>
-              {!!totalApproved && (
+              {!!approvedAmountTotal && (
                 <div className="hidden items-center gap-1 sm:flex">
                   <p className="flex text-xs text-slate-300 md:text-sm">|</p>
                   <p className="text-[11px] font-medium whitespace-nowrap text-gray-500 sm:text-xs">
@@ -95,7 +92,8 @@ export const GrantsCard = ({ grant }: { grant: GrantWithApplicationCount }) => {
                     {formatNumberWithSuffix(
                       Number(
                         (
-                          Number(totalApproved) / Number(totalApplications)
+                          Number(approvedAmountTotal) /
+                          Number(totalApplications)
                         ).toFixed(2),
                       ),
                     )}
@@ -130,10 +128,10 @@ export const GrantsCard = ({ grant }: { grant: GrantWithApplicationCount }) => {
           </div>
         </div>
         <div className="mr-3 hidden items-center justify-start sm:flex">
-          <LocalImage
+          <TokenIcon
             className="mr-1 h-4 w-4 rounded-full"
             alt={token!}
-            src={tokenIcon!}
+            symbol={token}
           />
           <div className="flex items-baseline gap-1">
             <p className="text-xs font-semibold whitespace-nowrap text-slate-600 sm:text-base">

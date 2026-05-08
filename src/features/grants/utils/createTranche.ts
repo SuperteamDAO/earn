@@ -3,10 +3,13 @@ import { prisma } from '@/prisma';
 
 import { addOnboardingInfoToAirtable } from './addOnboardingInfoToAirtable';
 import { addPaymentInfoToAirtable } from './addPaymentInfoToAirtable';
+import { isAgenticEngineeringGrant } from './stGrant';
+import { validateWalletAddressOwnership } from './validateWalletAddressOwnership';
 
 const CLOUDINARY_HOST = 'res.cloudinary.com';
 const MAX_EVENT_PICTURES = 5;
 const MAX_EVENT_RECEIPTS = 10;
+const MAX_AGENTIC_RECEIPTS = 3;
 
 const parseHttpUrl = (value: string): URL | null => {
   try {
@@ -29,25 +32,39 @@ const isCloudinaryUrl = (value: string) => {
 
 const normalizeImageUrls = (
   value: unknown,
-  { label, required, max }: { label: string; required: boolean; max: number },
+  {
+    label,
+    required,
+    max,
+    itemType = 'files',
+    requiredMessage,
+  }: {
+    label: string;
+    required: boolean;
+    max: number;
+    itemType?: 'files' | 'images';
+    requiredMessage?: string;
+  },
 ): string[] | undefined => {
   if (value === undefined || value === null) {
     if (required) {
-      throw new Error(`${label} are required.`);
+      throw new Error(requiredMessage ?? `${label} are required.`);
     }
     return undefined;
   }
   if (!Array.isArray(value)) {
-    throw new Error(`${label} must be a list of image URLs.`);
+    throw new Error(`${label} must be a list of ${itemType} URLs.`);
   }
   if (value.length === 0) {
     if (required) {
-      throw new Error(`At least one ${label.toLowerCase()} is required.`);
+      throw new Error(
+        requiredMessage ?? `At least one ${label.toLowerCase()} is required.`,
+      );
     }
     return undefined;
   }
   if (value.length > max) {
-    throw new Error(`${label} must be ${max} or fewer images.`);
+    throw new Error(`${label} must be ${max} or fewer ${itemType}.`);
   }
   return value.map((entry) => {
     if (typeof entry !== 'string') {
@@ -103,6 +120,55 @@ const normalizeAttendeeCount = (
   return parsed;
 };
 
+const normalizeSpecificHostUrl = (
+  value: unknown,
+  {
+    label,
+    required,
+    host,
+    minPathSegments,
+  }: {
+    label: string;
+    required: boolean;
+    host: string;
+    minPathSegments: number;
+  },
+): string | undefined => {
+  if (value === undefined || value === null || value === '') {
+    if (required) {
+      throw new Error(`${label} is required.`);
+    }
+    return undefined;
+  }
+
+  if (typeof value !== 'string') {
+    throw new Error(`${label} must be a valid URL.`);
+  }
+
+  const trimmed = value.trim();
+  const urlCandidate =
+    trimmed.startsWith('http://') || trimmed.startsWith('https://')
+      ? trimmed
+      : `https://${trimmed.replace(/^\/+/, '')}`;
+  const parsed = parseHttpUrl(urlCandidate);
+
+  if (!parsed) {
+    throw new Error(`${label} must be a valid URL.`);
+  }
+
+  const normalizedHost = parsed.hostname.toLowerCase().replace(/^www\./, '');
+  const pathSegments = parsed.pathname.split('/').filter(Boolean);
+
+  if (normalizedHost !== host || pathSegments.length < minPathSegments) {
+    throw new Error(`${label} must be a valid ${host} URL.`);
+  }
+
+  return new URL(
+    `${pathSegments.join('/')}${parsed.search}${parsed.hash}`,
+    `https://${host}/`,
+  ).toString();
+};
+
 type CreateTrancheProps = {
   applicationId: string;
   helpWanted?: string;
@@ -113,6 +179,9 @@ type CreateTrancheProps = {
   eventReceipts?: string[];
   attendeeCount?: number;
   socialPost?: string;
+  colosseumLink?: string;
+  githubRepo?: string;
+  aiReceipts?: string[];
 };
 
 export async function createTranche({
@@ -125,6 +194,9 @@ export async function createTranche({
   eventReceipts,
   attendeeCount,
   socialPost,
+  colosseumLink,
+  githubRepo,
+  aiReceipts,
 }: CreateTrancheProps) {
   const application = await prisma.grantApplication.findUniqueOrThrow({
     where: { id: applicationId },
@@ -144,11 +216,14 @@ export async function createTranche({
   }
 
   const isST = application.grant?.isST === true;
+  const isAgenticEngineering = isAgenticEngineeringGrant(application.grant);
   const requiresEventProof = isST && !isFirstTranche;
 
   const existingTranches = application.GrantTranche.filter(
     (tranche) => tranche.status !== 'Rejected',
   ).length;
+  const requiresAgenticFinalProof =
+    isAgenticEngineering && !isFirstTranche && existingTranches === 1;
   const maxTranches = 4;
 
   if (existingTranches >= maxTranches) {
@@ -198,11 +273,14 @@ export async function createTranche({
     label: 'Event pictures',
     required: requiresEventProof,
     max: MAX_EVENT_PICTURES,
+    itemType: 'images',
+    requiredMessage: 'At least one event picture is required.',
   });
   const normalizedEventReceipts = normalizeImageUrls(eventReceipts, {
     label: 'Event receipts',
     required: requiresEventProof,
     max: MAX_EVENT_RECEIPTS,
+    requiredMessage: 'At least one event receipt is required.',
   });
   const normalizedAttendeeCount = normalizeAttendeeCount(
     attendeeCount,
@@ -212,6 +290,32 @@ export async function createTranche({
     socialPost,
     requiresEventProof,
   );
+  const normalizedColosseumLink = normalizeSpecificHostUrl(colosseumLink, {
+    label: 'Colosseum link',
+    required: requiresAgenticFinalProof,
+    host: 'arena.colosseum.org',
+    minPathSegments: 1,
+  });
+  const normalizedGithubRepo = normalizeSpecificHostUrl(githubRepo, {
+    label: 'GitHub repo',
+    required: requiresAgenticFinalProof,
+    host: 'github.com',
+    minPathSegments: 2,
+  });
+  const normalizedAiReceipts = normalizeImageUrls(aiReceipts, {
+    label: 'AI subscription receipts',
+    required: requiresAgenticFinalProof,
+    max: MAX_AGENTIC_RECEIPTS,
+    requiredMessage: 'AI subscription receipt is required.',
+  });
+
+  if (walletAddress) {
+    await validateWalletAddressOwnership({
+      grant: application.grant,
+      userId: application.userId,
+      walletAddress,
+    });
+  }
 
   let trancheAmount = 0;
   const totalTranches = application.totalTranches ?? 0;
@@ -289,6 +393,11 @@ export async function createTranche({
         attendeeCount: normalizedAttendeeCount,
       }),
       ...(normalizedSocialPost && { socialPost: normalizedSocialPost }),
+      ...(normalizedColosseumLink && {
+        colosseumLink: normalizedColosseumLink,
+      }),
+      ...(normalizedGithubRepo && { githubRepo: normalizedGithubRepo }),
+      ...(normalizedAiReceipts && { aiReceipts: normalizedAiReceipts }),
     },
     include: {
       GrantApplication: {

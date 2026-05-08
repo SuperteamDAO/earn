@@ -21,6 +21,15 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       where: {
         id: userId as string,
       },
+      select: {
+        currentSponsorId: true,
+        role: true,
+        UserSponsors: {
+          select: {
+            sponsorId: true,
+          },
+        },
+      },
     });
 
     if (!user) {
@@ -81,8 +90,14 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       } = {
         message: `Listing with slug=${slug} does not belong to user ${userId}`,
       };
-      // Include sponsorId for GOD users to enable auto-switching
-      if (user.role === 'GOD' && result?.sponsorId) {
+      const canAccessRequestedSponsor =
+        result?.sponsorId &&
+        (user.role === 'GOD' ||
+          user.UserSponsors.some(
+            (membership) => membership.sponsorId === result.sponsorId,
+          ));
+
+      if (canAccessRequestedSponsor && result?.sponsorId) {
         response.sponsorId = result.sponsorId;
       }
       return res.status(403).json(response);

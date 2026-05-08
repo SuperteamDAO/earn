@@ -1,5 +1,6 @@
 import { headers } from 'next/headers';
 import { type NextRequest, NextResponse } from 'next/server';
+import { ZodError } from 'zod';
 
 import logger from '@/lib/logger';
 import { privy } from '@/lib/privy';
@@ -19,6 +20,21 @@ import {
   socialSuperRefine,
   usernameSuperRefine,
 } from '@/features/talent/schema';
+
+function isZodValidationError(error: unknown): error is ZodError {
+  if (error instanceof ZodError) return true;
+
+  if (!error || typeof error !== 'object') return false;
+
+  const candidate = error as {
+    name?: unknown;
+    flatten?: unknown;
+  };
+
+  return (
+    candidate.name === 'ZodError' && typeof candidate.flatten === 'function'
+  );
+}
 
 const allowedFields = [
   'username',
@@ -42,6 +58,25 @@ const allowedFields = [
   'skills',
   'private',
 ];
+
+function normalizeSocialInput(value: unknown): string | undefined {
+  if (typeof value !== 'string') return undefined;
+
+  const trimmedValue = value.trim();
+  if (!trimmedValue) return undefined;
+
+  return trimmedValue.replace(/^@/, '');
+}
+
+function normalizeLinkedSocialInput(
+  platform: 'github' | 'twitter' | 'linkedin' | 'telegram',
+  value: unknown,
+): string | undefined {
+  const normalizedValue = normalizeSocialInput(value);
+  if (!normalizedValue) return undefined;
+
+  return extractSocialUsername(platform, normalizedValue) || normalizedValue;
+}
 
 export async function POST(request: NextRequest) {
   const sessionResponse = await getUserSession(await headers());
@@ -159,35 +194,12 @@ export async function POST(request: NextRequest) {
         });
       });
 
-    const github =
-      typeof filteredData.github === 'string' ? filteredData.github : undefined;
-    const twitter =
-      typeof filteredData.twitter === 'string'
-        ? filteredData.twitter
-        : undefined;
-    const linkedin =
-      typeof filteredData.linkedin === 'string'
-        ? filteredData.linkedin
-        : undefined;
-    const telegram =
-      typeof filteredData.telegram === 'string'
-        ? filteredData.telegram
-        : undefined;
-
     const updatedData = await partialSchema.parseAsync({
       ...filteredData,
-      github: github
-        ? extractSocialUsername('github', github) || undefined
-        : undefined,
-      twitter: twitter
-        ? extractSocialUsername('twitter', twitter) || undefined
-        : undefined,
-      linkedin: linkedin
-        ? extractSocialUsername('linkedin', linkedin) || undefined
-        : undefined,
-      telegram: telegram
-        ? extractSocialUsername('telegram', telegram) || undefined
-        : undefined,
+      github: normalizeLinkedSocialInput('github', filteredData.github),
+      twitter: normalizeLinkedSocialInput('twitter', filteredData.twitter),
+      linkedin: normalizeLinkedSocialInput('linkedin', filteredData.linkedin),
+      telegram: normalizeLinkedSocialInput('telegram', filteredData.telegram),
     });
 
     const correctedSkills = updatedData.skills
@@ -276,6 +288,19 @@ export async function POST(request: NextRequest) {
     logger.info(`User onboarded successfully for user ID: ${userId}`);
     return NextResponse.json(result, { status: 200 });
   } catch (error: any) {
+    if (isZodValidationError(error)) {
+      logger.warn(
+        `Validation failed while onboarding user ${userId}: ${safeStringify(error.flatten())}`,
+      );
+      return NextResponse.json(
+        {
+          message: 'Invalid onboarding data',
+          errors: error.flatten(),
+        },
+        { status: 422 },
+      );
+    }
+
     logger.error(
       `Error occurred while onboarding user ${userId}: ${safeStringify(error)}`,
     );

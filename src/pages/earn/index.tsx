@@ -7,6 +7,7 @@ import { JsonLd } from '@/components/shared/JsonLd';
 import { useBreakpoint } from '@/hooks/use-breakpoint';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
+import { prisma } from '@/prisma';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 import {
@@ -58,11 +59,17 @@ const TalentAnnouncements = dynamic(
 
 interface HomePageProps {
   readonly potentialSession: boolean;
+  readonly totalUsers: number;
+  readonly totalSponsors: number;
 }
 
-export default function HomePage({ potentialSession }: HomePageProps) {
+export default function HomePage({
+  potentialSession,
+  totalUsers,
+  totalSponsors,
+}: HomePageProps) {
   const { authenticated } = usePrivy();
-  const { data: totalUsers } = useQuery(userCountQuery);
+  useQuery({ ...userCountQuery, initialData: { totalUsers } });
   const { user } = useUser();
   const isLg = useBreakpoint('lg');
 
@@ -113,7 +120,10 @@ export default function HomePage({ potentialSession }: HomePageProps) {
                       )}
                     </>
                   ) : (
-                    <BannerCarousel totalUsers={totalUsers?.totalUsers} />
+                    <BannerCarousel
+                      totalUsers={totalUsers}
+                      totalSponsors={totalSponsors}
+                    />
                   )}
                 </div>
                 <div className="w-full">
@@ -150,5 +160,15 @@ export const getServerSideProps: GetServerSideProps<HomePageProps> = async ({
 
   const cookieExists = /(^|;)\s*user-id-hint=/.test(cookies);
 
-  return { props: { potentialSession: cookieExists } };
+  const [userCount, sponsorCount] = await Promise.all([
+    prisma.user.count(),
+    prisma.sponsors.count(),
+  ]);
+
+  const totalUsers = Math.ceil((userCount - 289) / 10) * 10;
+  const totalSponsors = Math.ceil(sponsorCount / 10) * 10;
+
+  return {
+    props: { potentialSession: cookieExists, totalUsers, totalSponsors },
+  };
 };

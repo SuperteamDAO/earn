@@ -11,14 +11,19 @@ import { Button } from '@/components/ui/button';
 import { CopyButton } from '@/components/ui/copy-tooltip';
 import { CircularProgress } from '@/components/ui/progress';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { TokenIcon } from '@/components/ui/token-icon';
 import { Tooltip } from '@/components/ui/tooltip';
-import { useTokenLookup } from '@/constants/tokenList';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
 import { truncateString } from '@/utils/truncateString';
 
 import { type Grant } from '@/features/grants/types';
-import { isSTGrant, ST_GRANT_COPY } from '@/features/grants/utils/stGrant';
+import {
+  AGENTIC_ENGINEERING_GRANT_COPY,
+  COINDCX_GRANT_ID,
+  isAgenticEngineeringGrant,
+  ST_GRANT_COPY,
+} from '@/features/grants/utils/stGrant';
 import {
   GitHub,
   Telegram,
@@ -53,7 +58,6 @@ export const ApplicationDetails = ({
   rejectedOnOpen,
   isLoading,
 }: Props) => {
-  const { getIcon } = useTokenLookup();
   const [selectedApplication, setSelectedApplication] = useAtom(
     selectedGrantApplicationAtom,
   );
@@ -63,11 +67,16 @@ export const ApplicationDetails = ({
   const isCompleted = selectedApplication?.applicationStatus === 'Completed';
 
   const isNativeAndNonST = !grant?.airtableId && grant?.isNative;
-  const isST = isSTGrant(grant);
+  const isST = grant?.isST === true;
+  const isAgenticEngineering = isAgenticEngineeringGrant(grant);
+  const hasManagedTranches = isST || isAgenticEngineering;
+  const applicationCopy = isST
+    ? ST_GRANT_COPY.application
+    : isAgenticEngineering
+      ? AGENTIC_ENGINEERING_GRANT_COPY.application
+      : null;
 
   const queryClient = useQueryClient();
-
-  const tokenIcon = getIcon(grant?.token);
 
   const formattedCreatedAt = dayjs(selectedApplication?.createdAt).format(
     'DD MMM YYYY',
@@ -187,8 +196,8 @@ export const ApplicationDetails = ({
                   </Button>
                 )}
                 {isApproved &&
-                  (!grant?.airtableId ||
-                    grant?.title.toLowerCase().includes('coindcx')) && (
+                  !hasManagedTranches &&
+                  (!grant?.airtableId || grant?.id === COINDCX_GRANT_ID) && (
                     <>
                       <MarkCompleted
                         isCompleted={isCompleted}
@@ -242,10 +251,10 @@ export const ApplicationDetails = ({
                   <p className="mr-3 text-sm font-semibold whitespace-nowrap text-slate-400">
                     APPROVED
                   </p>
-                  <img
+                  <TokenIcon
                     className="mr-0.5 h-4 w-4 rounded-full"
-                    src={tokenIcon}
                     alt="token"
+                    symbol={grant?.token}
                   />
 
                   <p className="text-sm font-semibold whitespace-nowrap text-slate-600">
@@ -345,10 +354,10 @@ export const ApplicationDetails = ({
                   ASK
                 </p>
                 <div className="flex items-center gap-0.5">
-                  <img
+                  <TokenIcon
                     className="mr-0.5 h-4 w-4 rounded-full"
-                    src={tokenIcon}
                     alt="token"
+                    symbol={grant?.token}
                   />
 
                   <p className="text-sm font-semibold whitespace-nowrap text-slate-600">
@@ -425,40 +434,37 @@ export const ApplicationDetails = ({
 
               {isST && (selectedApplication as any)?.lumaLink && (
                 <InfoBox
-                  label={ST_GRANT_COPY.application.lumaLink.label}
+                  label={ST_GRANT_COPY.application.lumaLink!.label}
                   content={(selectedApplication as any)?.lumaLink}
                 />
               )}
 
               <InfoBox
-                label={
-                  isST ? ST_GRANT_COPY.application.twitter.label : 'Twitter'
-                }
+                label={applicationCopy?.twitter.label ?? 'Twitter'}
                 content={selectedApplication?.twitter}
               />
               {!isST && (
-                <InfoBox label="Github" content={selectedApplication?.github} />
+                <InfoBox
+                  label={applicationCopy?.github?.label ?? 'Github'}
+                  content={selectedApplication?.github}
+                />
               )}
               {!isST && (
                 <InfoBox
-                  label="Deadline"
+                  label={applicationCopy?.projectTimeline?.label ?? 'Deadline'}
                   content={selectedApplication?.projectTimeline}
                 />
               )}
 
               <InfoBox
-                label={
-                  isST
-                    ? ST_GRANT_COPY.application.proofOfWork.label
-                    : 'Proof of Work'
-                }
+                label={applicationCopy?.proofOfWork.label ?? 'Proof of Work'}
                 content={selectedApplication?.proofOfWork}
                 isHtml
               />
 
               {isST && (selectedApplication as any)?.expenseBreakdown && (
                 <InfoBox
-                  label={ST_GRANT_COPY.application.expenseBreakdown.label}
+                  label={ST_GRANT_COPY.application.expenseBreakdown!.label}
                   content={(selectedApplication as any)?.expenseBreakdown}
                   isHtml
                 />
@@ -466,9 +472,7 @@ export const ApplicationDetails = ({
 
               <InfoBox
                 label={
-                  isST
-                    ? ST_GRANT_COPY.application.milestones.label
-                    : 'Goals and Milestones'
+                  applicationCopy?.milestones.label ?? 'Goals and Milestones'
                 }
                 content={selectedApplication?.milestones}
                 isHtml
@@ -476,7 +480,10 @@ export const ApplicationDetails = ({
 
               {!isST && (
                 <InfoBox
-                  label="Primary Key Performance Indicator"
+                  label={
+                    applicationCopy?.kpi?.label ??
+                    'Primary Key Performance Indicator'
+                  }
                   content={selectedApplication?.kpi}
                   isHtml
                 />

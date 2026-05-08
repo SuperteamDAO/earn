@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { applicationStateAtom } from '../atoms/applicationStateAtom';
 import { type GrantApplicationWithTranchesAndUser } from '../queries/user-application';
 import { type Grant } from '../types';
+import { COINDCX_GRANT_ID, isAgenticEngineeringGrant } from '../utils/stGrant';
 
 export const useApplicationState = (
   application: GrantApplicationWithTranchesAndUser | undefined,
@@ -14,16 +15,14 @@ export const useApplicationState = (
   );
   const tranches = application?.totalTranches ?? 0;
 
-  const isST =
-    grant.isNative &&
-    grant.airtableId &&
-    !grant.title.toLowerCase().includes('coindcx');
+  const hasSpecialTranches =
+    (grant.isNative && grant.airtableId) || isAgenticEngineeringGrant(grant);
 
   const isInCooldownPeriod = () => {
     if (
       !application ||
       application.applicationStatus !== 'Rejected' ||
-      !grant.title.toLowerCase().includes('coindcx')
+      grant.id !== COINDCX_GRANT_ID
     ) {
       return false;
     }
@@ -60,7 +59,7 @@ export const useApplicationState = (
       );
       const trancheNumber = validTranches.length;
 
-      if (isST) {
+      if (hasSpecialTranches) {
         if (!application.user.isKYCVerified) {
           setApplicationState('KYC PENDING');
         } else if (application.user.isKYCVerified) {
@@ -106,7 +105,13 @@ export const useApplicationState = (
         setApplicationState('APPLIED');
       }
     }
-  }, [application, grant.id, grant.isNative, isST, setApplicationState]);
+  }, [
+    application,
+    grant.id,
+    grant.isNative,
+    hasSpecialTranches,
+    setApplicationState,
+  ]);
 
   const getButtonConfig = () => {
     switch (applicationState) {

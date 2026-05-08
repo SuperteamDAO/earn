@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
-import { useTokenLookup } from '@/constants/tokenList';
+import { TokenIcon } from '@/components/ui/token-icon';
 
 const CustomNumberInput = ({
   value,
@@ -113,7 +113,6 @@ export const ApproveTrancheModal = ({
   grantApprovedAmount,
   grantTotalPaid,
 }: ApproveModalProps) => {
-  const { getIcon } = useTokenLookup();
   const [approvedAmount, setApprovedAmount] = useState<number | undefined>(ask);
   const [loading, setLoading] = useState<boolean>(false);
   const [warningMessage, setWarningMessage] = useState<string | null>(null);
@@ -170,10 +169,10 @@ export const ApproveTrancheModal = ({
           <div className="mb-6 flex items-center justify-between">
             <p className="text-slate-500">Tranche Payment</p>
             <div className="flex items-center">
-              <img
+              <TokenIcon
                 className="h-5 w-5 rounded-full"
                 alt={`${token} icon`}
-                src={getIcon(token)}
+                symbol={token}
               />
               <p className="ml-1 font-semibold text-slate-600">
                 {ask} <span className="text-slate-400">{token}</span>
@@ -193,10 +192,10 @@ export const ApproveTrancheModal = ({
                 max={remainingAmount}
               />
               <div className="flex items-center rounded-r-md border border-l-0 bg-white px-3 text-[0.95rem] text-slate-400">
-                <img
+                <TokenIcon
                   className="mr-1 h-5 w-5 rounded-full"
                   alt={`${token} icon`}
-                  src={getIcon(token)}
+                  symbol={token}
                 />
                 {token}
               </div>

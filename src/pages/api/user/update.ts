@@ -28,6 +28,27 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
 
     if (user.role === 'GOD') {
       allowedFields.push('currentSponsorId', 'hackathonId');
+    } else if (typeof req.body.currentSponsorId === 'string') {
+      const sponsorMembership = await prisma.userSponsors.findFirst({
+        where: {
+          userId: userId as string,
+          sponsorId: req.body.currentSponsorId,
+        },
+        select: {
+          sponsorId: true,
+        },
+      });
+
+      if (!sponsorMembership) {
+        logger.warn(
+          `User ${userId} attempted to switch to unauthorized sponsor ${req.body.currentSponsorId}`,
+        );
+        return res.status(403).json({
+          error: 'You do not have access to this sponsor profile',
+        });
+      }
+
+      allowedFields.push('currentSponsorId');
     }
 
     const updatedData = filterAllowedFields(req.body, allowedFields);

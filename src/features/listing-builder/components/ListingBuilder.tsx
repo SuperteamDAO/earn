@@ -42,7 +42,9 @@ export function ListingBuilder({ route, slug }: ListingBuilderLayout) {
     refetch: refetchListing,
   } = useQuery({
     ...sponsorDashboardListingQuery(slug || ''),
-    refetchOnMount: false,
+    // Always refresh the edit form from the server so deadline edits do not
+    // reopen from stale React Query cache.
+    refetchOnMount: 'always',
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
   });

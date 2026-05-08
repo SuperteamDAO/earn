@@ -73,7 +73,7 @@ export async function POST(request: NextRequest) {
       applicationsWithAIReview.map(async (appl) => {
         const aiReview = (appl.ai as unknown as GrantApplicationAi)?.review;
         const commitedAi = {
-          ...(!!aiReview ? { review: aiReview } : {}),
+          ...(aiReview ? { review: aiReview } : {}),
           commited: true,
         };
         return await prisma.grantApplication.update({

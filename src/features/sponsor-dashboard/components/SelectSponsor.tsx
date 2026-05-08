@@ -79,9 +79,9 @@ export function SelectSponsor({
       setSelectedSponsor(option);
     } else {
       await updateSponsor(option.value);
-      // Redirect god mode users to main sponsor dashboard if on any /dashboard/* page except /dashboard/listings
+      // Redirect to the listings index after a sponsor switch so page-level data
+      // doesn't stay bound to the previously selected sponsor.
       if (
-        user?.role === 'GOD' &&
         router.asPath.startsWith('/earn/dashboard/') &&
         router.asPath !== '/earn/dashboard/listings'
       ) {

@@ -42,12 +42,14 @@ interface VerifyPaymentModalProps {
   isOpen: boolean;
   onClose: () => void;
   listing: ListingWithSubmissions | undefined;
+  isHackathonPage?: boolean;
 }
 
 export const VerifyPaymentModal = ({
   listing,
   isOpen,
   onClose,
+  isHackathonPage = false,
 }: VerifyPaymentModalProps) => {
   const { user } = useUser();
   const tokens = useTokenList();
@@ -56,9 +58,10 @@ export const VerifyPaymentModal = ({
   >('idle');
   const [showMultiplePayments, setShowMultiplePayments] = useState(false);
   const queryClient = useQueryClient();
-  const { data, isLoading, error, refetch } = useQuery(
-    submissionsQuery(listing?.slug ?? '', listing?.type === 'hackathon'),
-  );
+  const { data, isLoading, error, refetch } = useQuery({
+    ...submissionsQuery(listing?.slug ?? '', isHackathonPage),
+    enabled: isOpen && !!listing?.slug,
+  });
   const selectedToken: Token | undefined = tokens.find(
     (token) => token.tokenSymbol === listing?.token,
   );

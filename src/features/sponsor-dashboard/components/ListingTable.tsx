@@ -34,8 +34,8 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { TokenIcon } from '@/components/ui/token-icon';
 import { Tooltip } from '@/components/ui/tooltip';
-import { useTokenLookup } from '@/constants/tokenList';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
@@ -87,7 +87,6 @@ export const ListingTable = ({
   currentSort,
   onSort,
 }: ListingTableProps) => {
-  const { getIcon } = useTokenLookup();
   const [selectedListing, setSelectedListing] =
     useState<ListingWithSubmissions>({});
 
@@ -289,10 +288,10 @@ export const ListingTable = ({
                   </TableCell>
                   <TableCell className="py-2 pr-6">
                     <div className="flex items-center justify-start gap-1">
-                      <img
+                      <TokenIcon
                         className="h-5 w-5 rounded-full"
-                        alt={'green dollar'}
-                        src={getIcon(listing.token)}
+                        alt={listing.token || 'token'}
+                        symbol={listing.token}
                       />
 
                       {listing?.type === 'grant' && (

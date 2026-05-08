@@ -4,7 +4,7 @@ export const HackathonOrderDirectionSchema = z
   .enum(['asc', 'desc'])
   .default('desc');
 export const HackathonSchema = z
-  .enum(['Mobius', 'Redacted', 'Breakout', 'All'])
+  .enum(['Mobius', 'Redacted', 'Breakout', 'Frontier', 'All'])
   .default('All');
 export const HackathonStatusSchema = z
   .enum(['open', 'review', 'completed'])

@@ -148,11 +148,9 @@ export default function BountySubmissions({ slug }: Props) {
   });
 
   useEffect(() => {
-    // Don't show error toast if we're switching sponsors or if user is GOD mode
-    if (bountyError && !isSwitchingSponsor && user?.role !== 'GOD') {
+    if (bountyError && !isSwitchingSponsor) {
       const error = bountyError as any;
       if (error?.response?.status === 403) {
-        // Don't show error if it's a sponsor mismatch that will be auto-switched
         const hasSponsorId = error?.response?.data?.sponsorId;
         if (!hasSponsorId) {
           toast.error('This listing does not belong to you');
@@ -325,8 +323,11 @@ export default function BountySubmissions({ slug }: Props) {
 
   useEffect(() => {
     if (bounty && user?.currentSponsorId) {
-      // Only redirect non-GOD users on sponsor mismatch
-      if (bounty.sponsorId !== user.currentSponsorId && user.role !== 'GOD') {
+      if (isSwitchingSponsor) {
+        return;
+      }
+
+      if (bounty.sponsorId !== user.currentSponsorId) {
         router.push('/earn/dashboard/listings');
         return;
       }
@@ -350,7 +351,7 @@ export default function BountySubmissions({ slug }: Props) {
             : 0) - (bonusWinnerSelected || 0),
       });
     }
-  }, [bounty, submissions, user?.currentSponsorId, user?.role, router]);
+  }, [bounty, submissions, user?.currentSponsorId, router, isSwitchingSponsor]);
 
   useEffect(() => {
     if (searchParams?.has('scout')) posthog.capture('scout tab_scout');

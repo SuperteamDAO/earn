@@ -112,6 +112,8 @@ export function SponsorLayout({
   const { query } = router;
   const [isExpanded, setIsExpanded] = useState(() => !isCollapsible);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const canSelectSponsor =
+    user?.role === 'GOD' || (user?.UserSponsors?.length ?? 0) > 0;
 
   const setAutoGenerateOpen = useSetAtom(isAutoGenerateOpenAtom);
 
@@ -310,7 +312,7 @@ export function SponsorLayout({
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
           >
-            {user?.role === 'GOD' && (
+            {canSelectSponsor && (
               <div className={cn('pb-6', isExpanded ? 'pr-4 pl-6' : 'px-4')}>
                 {isHackathonRoute ? (
                   <SelectHackathon isExpanded={isExpanded} />

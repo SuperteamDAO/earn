@@ -279,9 +279,13 @@ s.name LIKE CONCAT('%', ?, '%')
     b.region,
     b.createdAt,
     b.updatedAt,
-    b.totalApproved,
     b.historicalApplications,
     JSON_OBJECT('name', s.name, 'logo', s.logo, 'isVerified', s.isVerified, 'slug', s.slug) as sponsor,
+    (
+      SELECT COALESCE(SUM(ga.approvedAmountInUSD), 0)
+      FROM GrantApplication ga
+      WHERE ga.grantId = b.id AND (ga.applicationStatus = 'Approved' OR ga.applicationStatus = 'Completed')
+    ) as approvedAmountTotal,
     (
       SELECT COUNT(*)
       FROM GrantApplication ga
@@ -335,6 +339,7 @@ s.name LIKE CONCAT('%', ?, '%')
 
       grants = grants.map((g) => ({
         ...g,
+        approvedAmountTotal: Number(g.approvedAmountTotal),
         approvedApplications: Number(g.approvedApplications),
         _count: {
           GrantApplication: Number(g.approvedApplications),

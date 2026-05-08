@@ -493,6 +493,7 @@ export const SubmissionHeader = ({
         listing={bounty}
         isOpen={verifyPaymentIsOpen}
         onClose={verifyPaymentOnClose}
+        isHackathonPage={isHackathonPage}
       />
 
       <UnpublishModal

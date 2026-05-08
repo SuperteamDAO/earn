@@ -12,7 +12,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { useTokenLookup } from '@/constants/tokenList';
+import { TokenIcon } from '@/components/ui/token-icon';
 import { type GrantTrancheModel } from '@/prisma/models/GrantTranche';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
@@ -43,18 +43,16 @@ const PaymentDetailsRow = ({
   paymentDetails: GrantPaymentDetailProps[];
   token: string;
 }) => {
-  const { getIcon } = useTokenLookup();
-
   return (
     <>
       <TableCell>
         {paymentDetails.map((payment, index) => (
           <div className="my-2 flex items-center justify-between" key={index}>
             <div className="flex items-center gap-1">
-              <img
+              <TokenIcon
                 className="h-4 w-4 rounded-full"
-                src={getIcon(token)}
                 alt={`${token}`}
+                symbol={token}
               />
               <p className="text-sm font-medium text-slate-700">
                 {payment.amount} <span className="text-slate-400">{token}</span>
@@ -105,18 +103,16 @@ const GrantTrancheRow = ({
   paymentDetails: GrantTrancheModel[];
   token: string;
 }) => {
-  const { getIcon } = useTokenLookup();
-
   return (
     <>
       <TableCell>
         {paymentDetails.map((payment, index) => (
           <div className="my-2 flex items-center justify-between" key={index}>
             <div className="flex items-center gap-1">
-              <img
+              <TokenIcon
                 className="h-4 w-4 rounded-full"
-                src={getIcon(token)}
                 alt={`${token}`}
+                symbol={token}
               />
               <p className="text-sm font-medium text-slate-700">
                 {payment.approvedAmount}{' '}
@@ -154,7 +150,6 @@ export const PaymentsHistoryTab = ({
   grantId: string | undefined;
   grant: Grant | undefined;
 }) => {
-  const { getIcon } = useTokenLookup();
   const { user } = useUser();
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
   const [searchTerm, setSearchTerm] = useState('');
@@ -247,10 +242,10 @@ export const PaymentsHistoryTab = ({
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-1">
-                          <img
+                          <TokenIcon
                             className="h-4 w-4 rounded-full"
-                            src={getIcon(grant?.token)}
                             alt={grant?.token}
+                            symbol={grant?.token}
                           />
                           <p className="text-sm font-medium text-slate-700">
                             {grantee.approvedAmount}{' '}
@@ -262,10 +257,10 @@ export const PaymentsHistoryTab = ({
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-1">
-                          <img
+                          <TokenIcon
                             className="h-4 w-4 rounded-full"
                             alt={grant?.token}
-                            src={getIcon(grant?.token)}
+                            symbol={grant?.token}
                           />
                           <p className="text-sm font-medium text-slate-700">
                             {grantee.totalPaid}{' '}
@@ -357,10 +352,10 @@ export const PaymentsHistoryTab = ({
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-1">
-                          <img
+                          <TokenIcon
                             className="h-4 w-4 rounded-full"
-                            src={getIcon(grant?.token)}
                             alt={grant?.token}
+                            symbol={grant?.token}
                           />
                           <p className="text-sm font-medium text-slate-700">
                             {grantee.approvedAmount}{' '}
@@ -372,10 +367,10 @@ export const PaymentsHistoryTab = ({
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-1">
-                          <img
+                          <TokenIcon
                             className="h-4 w-4 rounded-full"
                             alt={grant?.token}
-                            src={getIcon(grant?.token)}
+                            symbol={grant?.token}
                           />
                           <p className="text-sm font-medium text-slate-700">
                             {grantee.totalPaid}{' '}

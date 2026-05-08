@@ -41,6 +41,7 @@ import { Banner } from '@/features/sponsor-dashboard/components/Banner';
 import { CreateListingModal } from '@/features/sponsor-dashboard/components/CreateListingModal';
 import { ListingTable } from '@/features/sponsor-dashboard/components/ListingTable';
 import { ListingTableSkeleton } from '@/features/sponsor-dashboard/components/ListingTableSkeleton';
+import { activeHackathonsQuery } from '@/features/sponsor-dashboard/queries/active-hackathons';
 import { dashboardQuery } from '@/features/sponsor-dashboard/queries/dashboard';
 import { sponsorStatsQuery } from '@/features/sponsor-dashboard/queries/sponsor-stats';
 
@@ -75,6 +76,10 @@ export default function SponsorListings({ tab: queryTab }: { tab: string }) {
     direction: 'asc' | 'desc' | null;
   }>({ column: '', direction: null });
   const listingsPerPage = 15;
+  const { data: hackathons } = useQuery({
+    ...activeHackathonsQuery(),
+    enabled: !!user,
+  });
 
   const activeTab = useMemo((): DashboardTab => {
     const tabParam = searchParams.get('tab');
@@ -431,6 +436,7 @@ export default function SponsorListings({ tab: queryTab }: { tab: string }) {
             )}
           </Tabs>
           <CreateListingModal
+            hackathons={hackathons}
             isOpen={isOpenCreateListing}
             onClose={onCloseCreateListing}
           />

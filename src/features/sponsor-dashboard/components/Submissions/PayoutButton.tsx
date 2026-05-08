@@ -166,12 +166,27 @@ export const PayoutButton = ({ bounty, submission }: Props) => {
     setIsPaying(true);
     const rpc = getRpc();
     let txSignature = '';
+    let payoutStage:
+      | 'start'
+      | 'resolve-token'
+      | 'build-instructions'
+      | 'fetch-blockhash'
+      | 'wallet-sign-and-send'
+      | 'confirm-transaction'
+      | 'persist-payment'
+      | 'completed' = 'start';
+
+    log.info(
+      `[PayoutFlow] Starting payout, submission id: ${id}, user id: ${user?.id}, sponsor id: ${user?.currentSponsorId}, sponsor wallet: ${publicKey?.toBase58()}, winner wallet: ${receiver}, token: ${token}, amount: ${amount}`,
+    );
 
     try {
       const senderAddress = address(publicKey.toBase58());
       const senderSigner: TransactionSigner = createNoopSigner(senderAddress);
+      payoutStage = 'resolve-token';
       const tokenDetails = await getTokenBySymbol(token);
 
+      payoutStage = 'build-instructions';
       const instructions: Instruction[] = [
         getSetComputeUnitLimitInstruction({ units: 200_000 }),
         getSetComputeUnitPriceInstruction({ microLamports: 50_000n }),
@@ -234,6 +249,7 @@ export const PayoutButton = ({ bounty, submission }: Props) => {
         );
       }
 
+      payoutStage = 'fetch-blockhash';
       const { value: latestBlockhash } = await rpc
         .getLatestBlockhash({ commitment: 'confirmed' })
         .send();
@@ -280,6 +296,7 @@ export const PayoutButton = ({ bounty, submission }: Props) => {
         throw new Error('Wallet does not support signAndSendTransaction');
       }
 
+      payoutStage = 'wallet-sign-and-send';
       const results = await signAndSend.signAndSendTransaction({
         account: account as any,
         transaction: txBytes as Uint8Array,
@@ -290,6 +307,7 @@ export const PayoutButton = ({ bounty, submission }: Props) => {
       const result = Array.isArray(results) ? results[0] : results;
       txSignature = bs58.encode(result.signature);
 
+      payoutStage = 'confirm-transaction';
       let confirmed = false;
       for (let i = 0; i < 30; i++) {
         const status = await rpc
@@ -314,6 +332,7 @@ export const PayoutButton = ({ bounty, submission }: Props) => {
       const nextTranche = (submission?.paymentDetails?.length || 0) + 1;
       const isProject = bounty?.type === 'project';
 
+      payoutStage = 'persist-payment';
       await addPayment({
         id,
         paymentDetails: [
@@ -324,9 +343,14 @@ export const PayoutButton = ({ bounty, submission }: Props) => {
           },
         ],
       });
+      payoutStage = 'completed';
+      log.info(
+        `[PayoutFlow] Payout completed, submission id: ${id}, user id: ${user?.id}, sponsor id: ${user?.currentSponsorId}, tx signature: ${txSignature}`,
+      );
     } catch (error) {
+      const failedAt = payoutStage;
       log.error(
-        `Sponsor unable to pay, user id: ${user?.id}, sponsor id: ${user?.currentSponsorId}, error: ${error?.toString()}, sponsor wallet: ${publicKey?.toBase58()}`,
+        `Sponsor unable to pay, user id: ${user?.id}, sponsor id: ${user?.currentSponsorId}, submission id: ${id}, stage: ${failedAt}, tx signature: ${txSignature || 'none'}, error: ${error?.toString()}, sponsor wallet: ${publicKey?.toBase58()}`,
       );
 
       const firstName: string = (() => {

@@ -22,6 +22,8 @@ async function wait(ms: number) {
   return await new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+const PROJECT_PAYMENT_OVERPAY_TOLERANCE_PERCENT = 0.005; // 0.5%
+
 export const config = {
   maxDuration: 300,
 };
@@ -193,7 +195,9 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
             throw new Error('Invalid payment amount');
           }
 
-          if (actualPaidAmount > remainingAmount) {
+          const maxAllowedAmount =
+            remainingAmount * (1 + PROJECT_PAYMENT_OVERPAY_TOLERANCE_PERCENT);
+          if (actualPaidAmount > maxAllowedAmount) {
             throw new Error(
               `Payment amount (${actualPaidAmount}) exceeds remaining amount (${remainingAmount})`,
             );

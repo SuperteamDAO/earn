@@ -3,7 +3,8 @@ export type ImageSource =
   | 'sponsor'
   | 'description'
   | 'grant-event-pictures'
-  | 'grant-event-receipts';
+  | 'grant-event-receipts'
+  | 'grant-agentic-receipts';
 export type ImageFormat = 'jpeg' | 'png' | 'webp';
 
 export interface UploadResult {

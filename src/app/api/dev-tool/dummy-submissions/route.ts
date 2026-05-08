@@ -42,7 +42,6 @@ function generateSubmissionData(listing: any, user: any) {
         question: q.question || q.title || `Question ${index + 1}`,
         answer:
           answers[index]?.answer || `Sample answer for question ${index + 1}`,
-        optional: q.optional || false,
       }));
     }
 

@@ -37,12 +37,20 @@ export function useAutoSwitchSponsor({
         axiosError?.response?.status === 403 &&
         axiosError?.response?.data?.sponsorId
       ) {
-        // Only proceed if user is GOD mode (wait for user to load)
-        if (!user || user?.role !== 'GOD') {
+        if (!user) {
           return;
         }
 
         const sponsorId = axiosError.response.data.sponsorId;
+        const canAccessSponsor =
+          user.role === 'GOD' ||
+          (user.UserSponsors ?? []).some(
+            (membership) => membership.sponsorId === sponsorId,
+          );
+
+        if (!canAccessSponsor) {
+          return;
+        }
 
         // Don't switch if already switching or if already on this sponsor
         if (isSwitching || user.currentSponsorId === sponsorId) {
@@ -107,6 +115,7 @@ export function useAutoSwitchSponsor({
     handleAutoSwitch();
   }, [
     error,
+    user,
     user?.role,
     user?.currentSponsorId,
     isSwitching,

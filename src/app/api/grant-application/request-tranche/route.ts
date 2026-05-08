@@ -7,6 +7,10 @@ import { safeStringify } from '@/utils/safeStringify';
 
 import { getUserSession } from '@/features/auth/utils/getUserSession';
 import { createTranche } from '@/features/grants/utils/createTranche';
+import {
+  WALLET_ADDRESS_CONFLICT_CODE,
+  WALLET_ADDRESS_CONFLICT_MESSAGE,
+} from '@/features/grants/utils/walletAddressOwnership.constants';
 
 export async function POST(request: Request) {
   try {
@@ -30,6 +34,10 @@ export async function POST(request: Request) {
       eventReceipts,
       attendeeCount,
       socialPost,
+      colosseumLink,
+      githubRepo,
+      aiReceipt,
+      aiReceipts,
     } = body;
 
     logger.debug(`Request body: ${safeStringify(body)}`);
@@ -62,6 +70,14 @@ export async function POST(request: Request) {
             eventReceipts,
             attendeeCount,
             socialPost,
+            colosseumLink,
+            githubRepo,
+            aiReceipts:
+              Array.isArray(aiReceipts) && aiReceipts.length > 0
+                ? aiReceipts
+                : typeof aiReceipt === 'string' && aiReceipt.trim()
+                  ? [aiReceipt]
+                  : undefined,
           });
         },
         { ttlSeconds: 300 },
@@ -76,6 +92,16 @@ export async function POST(request: Request) {
           {
             error: 'Tranche creation already in progress',
             message: `Tranche creation is already being processed for application with id=${applicationId}.`,
+          },
+          { status: 409 },
+        );
+      }
+      if (error.message === WALLET_ADDRESS_CONFLICT_MESSAGE) {
+        return NextResponse.json(
+          {
+            code: WALLET_ADDRESS_CONFLICT_CODE,
+            error: WALLET_ADDRESS_CONFLICT_MESSAGE,
+            message: WALLET_ADDRESS_CONFLICT_MESSAGE,
           },
           { status: 409 },
         );
