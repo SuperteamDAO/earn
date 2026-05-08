@@ -97,7 +97,6 @@ export const ListingCard = ({ bounty }: { bounty: Listing }) => {
   return (
     <Link
       href={`/earn/listing/${slug}`}
-      suppressHydrationWarning
       className={cn(
         'block w-full rounded-md px-2 py-4 no-underline hover:bg-gray-100 sm:px-4',
         isFeatured && isBeforeDeadline ? 'bg-purple-50' : '',
