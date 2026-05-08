@@ -243,7 +243,6 @@ model Grants {
   emailSender            String?
   replyToEmail           String?
   emailSalutation        String?
-  communityLink          String?
   isPro                  Boolean            @default(false)
   isST                   Boolean            @default(false)
 
@@ -831,7 +830,6 @@ model Chapter {
   banner            String?            @db.Text
   hello             String?            @db.VarChar(80)
   nationality       String?            @db.VarChar(120)
-  airtableBaseId    String?            @db.VarChar(50)
   tgChatId          String?
   tgThreadId        String?
   registeredBy      String?
