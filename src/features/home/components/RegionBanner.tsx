@@ -30,6 +30,27 @@ const customBannerPosition: Partial<
   Singapore: {
     objectPosition: '50% 30%',
   },
+  Spain: {
+    objectFit: 'fill',
+  },
+  Poland: {
+    objectFit: 'fill',
+  },
+  Ukraine: {
+    objectFit: 'fill',
+  },
+  Netherlands: {
+    objectFit: 'fill',
+  },
+  Indonesia: {
+    objectFit: 'fill',
+  },
+  India: {
+    objectFit: 'fill',
+  },
+  Australia: {
+    objectFit: 'fill',
+  },
 };
 
 export function RegionBanner({ st }: { st: ChapterDisplay }) {
@@ -40,11 +61,9 @@ export function RegionBanner({ st }: { st: ChapterDisplay }) {
         alt={st.name}
         width={1440}
         height={290}
-        className="h-full w-full"
+        className="h-full w-full object-cover object-center"
         style={{
-          objectFit: customBannerPosition[st.region] ? 'cover' : 'fill',
-          objectPosition:
-            customBannerPosition[st.region]?.objectPosition ?? 'center',
+          ...customBannerPosition[st.region],
         }}
       />
       <div className="absolute inset-0 block h-full w-full bg-[rgba(64,65,108,0.75)]" />
