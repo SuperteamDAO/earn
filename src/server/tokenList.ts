@@ -19,6 +19,18 @@ export interface JupiterToken {
   isVerified: boolean;
 }
 
+export type AddVerifiedJupiterTokenResult =
+  | {
+      type: 'success';
+      token: Token;
+    }
+  | {
+      type: 'unverified-token';
+    }
+  | {
+      type: 'symbol-conflict';
+    };
+
 const DEFAULT_TOKEN_ICON = '/assets/dollar.svg';
 const TOKEN_ICON_PROXY_PATH = '/api/token-icon';
 
@@ -193,9 +205,9 @@ export async function searchTokenList(query: string): Promise<Token[]> {
 
 export async function addVerifiedJupiterToken(
   jupiterToken: JupiterToken,
-): Promise<Token> {
+): Promise<AddVerifiedJupiterTokenResult> {
   if (!jupiterToken.isVerified) {
-    throw new Error('Jupiter token is not verified');
+    return { type: 'unverified-token' };
   }
 
   const conflictingSymbolToken = await getTokenBySymbol(jupiterToken.symbol, {
@@ -206,7 +218,7 @@ export async function addVerifiedJupiterToken(
     conflictingSymbolToken &&
     conflictingSymbolToken.mintAddress !== jupiterToken.id
   ) {
-    throw new Error('Token symbol already exists');
+    return { type: 'symbol-conflict' };
   }
 
   const maxSortOrderToken = await prisma.tokenMetadata.findFirst({
@@ -235,7 +247,10 @@ export async function addVerifiedJupiterToken(
     select: tokenSelect,
   });
 
-  return normalizeTokenRecord(token);
+  return {
+    type: 'success',
+    token: normalizeTokenRecord(token),
+  };
 }
 
 export async function getTokenList(options?: {

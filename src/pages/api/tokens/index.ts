@@ -33,13 +33,7 @@ async function searchJupiterTokens(query: string): Promise<JupiterToken[]> {
 
 const handleError = (error: unknown, res: NextApiResponse) => {
   console.error('Failed to load token metadata', error);
-  const isTokenSymbolConflict =
-    error instanceof Error && error.message === 'Token symbol already exists';
-  const message = isTokenSymbolConflict
-    ? error.message
-    : 'Failed to load token metadata';
-
-  return res.status(isTokenSymbolConflict ? 409 : 500).json({ error: message });
+  return res.status(500).json({ error: 'Failed to load token metadata' });
 };
 
 const handlePost = withSponsorAuth(async (req, res) => {
@@ -62,12 +56,17 @@ const handlePost = withSponsorAuth(async (req, res) => {
       return res.status(404).json({ error: 'Token not found on Jupiter' });
     }
 
-    if (!jupiterToken.isVerified) {
+    const result = await addVerifiedJupiterToken(jupiterToken);
+
+    if (result.type === 'unverified-token') {
       return res.status(400).json({ error: 'Token is not verified' });
     }
 
-    const token = await addVerifiedJupiterToken(jupiterToken);
-    return res.status(200).json({ token });
+    if (result.type === 'symbol-conflict') {
+      return res.status(409).json({ error: 'Token symbol already exists' });
+    }
+
+    return res.status(200).json({ token: result.token });
   } catch (error) {
     return handleError(error, res);
   }
