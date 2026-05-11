@@ -767,7 +767,7 @@ export const SubmissionDrawer = ({
                         socialName={'telegram'}
                         placeholder="Telegram username"
                         required
-                        formLabel="Telegram username"
+                        formLabel="Your Telegram username"
                         control={form.control}
                         height="h-9"
                         readOnly={!!user?.telegram}
