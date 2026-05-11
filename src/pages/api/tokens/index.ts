@@ -9,6 +9,8 @@ import {
 } from '@/server/tokenList';
 import { setCacheHeaders } from '@/utils/cacheControl';
 
+import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
+
 const JUPITER_TOKEN_SEARCH_URL = 'https://api.jup.ag/tokens/v2/search';
 
 async function searchJupiterTokens(query: string): Promise<JupiterToken[]> {
@@ -28,6 +30,48 @@ async function searchJupiterTokens(query: string): Promise<JupiterToken[]> {
       }))
     : [];
 }
+
+const handleError = (error: unknown, res: NextApiResponse) => {
+  console.error('Failed to load token metadata', error);
+  const isTokenSymbolConflict =
+    error instanceof Error && error.message === 'Token symbol already exists';
+  const message = isTokenSymbolConflict
+    ? error.message
+    : 'Failed to load token metadata';
+
+  return res.status(isTokenSymbolConflict ? 409 : 500).json({ error: message });
+};
+
+const handlePost = withSponsorAuth(async (req, res) => {
+  try {
+    const mintAddress =
+      typeof req.body?.mintAddress === 'string'
+        ? req.body.mintAddress.trim()
+        : '';
+
+    if (!mintAddress) {
+      return res.status(400).json({ error: 'Mint address is required' });
+    }
+
+    const jupiterTokens = await searchJupiterTokens(mintAddress);
+    const jupiterToken = jupiterTokens.find(
+      (token) => token.id === mintAddress,
+    );
+
+    if (!jupiterToken) {
+      return res.status(404).json({ error: 'Token not found on Jupiter' });
+    }
+
+    if (!jupiterToken.isVerified) {
+      return res.status(400).json({ error: 'Token is not verified' });
+    }
+
+    const token = await addVerifiedJupiterToken(jupiterToken);
+    return res.status(200).json({ token });
+  } catch (error) {
+    return handleError(error, res);
+  }
+});
 
 export default async function handler(
   req: NextApiRequest,
@@ -56,42 +100,12 @@ export default async function handler(
     }
 
     if (req.method === 'POST') {
-      const mintAddress =
-        typeof req.body?.mintAddress === 'string'
-          ? req.body.mintAddress.trim()
-          : '';
-
-      if (!mintAddress) {
-        return res.status(400).json({ error: 'Mint address is required' });
-      }
-
-      const jupiterTokens = await searchJupiterTokens(mintAddress);
-      const jupiterToken = jupiterTokens.find(
-        (token) => token.id === mintAddress,
-      );
-
-      if (!jupiterToken) {
-        return res.status(404).json({ error: 'Token not found on Jupiter' });
-      }
-
-      if (!jupiterToken.isVerified) {
-        return res.status(400).json({ error: 'Token is not verified' });
-      }
-
-      const token = await addVerifiedJupiterToken(jupiterToken);
-      return res.status(200).json({ token });
+      return handlePost(req, res);
     }
 
     res.setHeader('Allow', ['GET', 'POST']);
     return res.status(405).json({ error: 'Method not allowed' });
   } catch (error) {
-    console.error('Failed to load token metadata', error);
-    const isTokenSymbolConflict =
-      error instanceof Error && error.message === 'Token symbol already exists';
-    const message = isTokenSymbolConflict
-      ? error.message
-      : 'Failed to load token metadata';
-
-    res.status(isTokenSymbolConflict ? 409 : 500).json({ error: message });
+    return handleError(error, res);
   }
 }
