@@ -117,6 +117,7 @@ export const SubmissionDrawer = ({
       submissionSchema(listing, minRewardAsk || 0, maxRewardAsk || 0, user),
     ),
     defaultValues: {
+      telegram: user?.telegram || '',
       eligibilityAnswers:
         Array.isArray(listing.eligibility) && listing.eligibility.length > 0
           ? listing.eligibility.map((q) => ({
@@ -126,6 +127,12 @@ export const SubmissionDrawer = ({
           : [],
     },
   });
+
+  useEffect(() => {
+    if (isOpen && isProject && user?.telegram) {
+      form.setValue('telegram', user.telegram);
+    }
+  }, [form, isOpen, isProject, user?.telegram]);
 
   const router = useRouter();
   const { query } = router;
@@ -236,6 +243,7 @@ export const SubmissionDrawer = ({
       tweet: '',
       otherInfo: '',
       ask: null,
+      telegram: user?.telegram || '',
       eligibilityAnswers: Array.isArray(listing.eligibility)
         ? listing.eligibility.map((q) => ({
             question: q.question,
@@ -300,6 +308,7 @@ export const SubmissionDrawer = ({
             tweet,
             otherInfo,
             ask,
+            telegram: user?.telegram || '',
             eligibilityAnswers: reconciledAnswers,
           });
         } catch (error) {
@@ -310,7 +319,7 @@ export const SubmissionDrawer = ({
     };
 
     fetchData();
-  }, [id, editMode, form.reset, listing.eligibility]);
+  }, [id, editMode, form.reset, listing.eligibility, user?.telegram]);
 
   const isDisabled = useMemo(
     () =>
@@ -752,16 +761,16 @@ export const SubmissionDrawer = ({
                         isPro={isPro}
                       />
                     )}
-                    {isProject && !user?.telegram && !editMode && (
+                    {isProject && (
                       <SocialInput
                         name="telegram"
                         socialName={'telegram'}
-                        placeholder=""
+                        placeholder="Telegram username"
                         required
-                        formLabel="Your Telegram username"
+                        formLabel="Telegram username"
                         control={form.control}
                         height="h-9"
-                        showIcon={false}
+                        readOnly={!!user?.telegram}
                         isPro={isPro}
                       />
                     )}
