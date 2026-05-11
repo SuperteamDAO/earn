@@ -1,6 +1,10 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
+import logger from '@/lib/logger';
+import { safeStringify } from '@/utils/safeStringify';
+
 const MAX_ICON_SIZE_BYTES = 5 * 1024 * 1024;
+const UPSTREAM_FETCH_TIMEOUT_MS = 5000;
 const CACHE_CONTROL =
   'public, max-age=86400, s-maxage=86400, stale-while-revalidate=604800';
 
@@ -45,9 +49,16 @@ export default async function handler(
     return res.status(400).end();
   }
 
+  const abortController = new AbortController();
+  const timeout = setTimeout(
+    () => abortController.abort(),
+    UPSTREAM_FETCH_TIMEOUT_MS,
+  );
+
   try {
     const iconResponse = await fetch(iconUrl, {
       redirect: 'follow',
+      signal: abortController.signal,
       headers: {
         Accept:
           'image/avif,image/webp,image/png,image/jpeg,image/svg+xml,image/*',
@@ -83,7 +94,9 @@ export default async function handler(
     res.setHeader('X-Content-Type-Options', 'nosniff');
     return res.status(200).send(icon);
   } catch (error) {
-    console.error('Failed to proxy token icon', error);
+    logger.error(`Failed to proxy token icon: ${safeStringify(error)}`);
     return res.status(502).end();
+  } finally {
+    clearTimeout(timeout);
   }
 }

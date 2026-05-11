@@ -54,7 +54,7 @@ type AddTokenResponse = {
 };
 
 const supportEmail = 'support@superteam.fun';
-const defaultTokenIcon = '/tokens/dollar.svg';
+const defaultTokenIcon = '/assets/dollar.svg';
 
 const getTokenIconSrc = (icon?: string | null) => {
   const value = icon?.trim();
