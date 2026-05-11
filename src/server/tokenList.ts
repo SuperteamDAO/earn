@@ -40,7 +40,6 @@ const PROXY_HOST_TO_PREFIX = new Map([
   ['avatars.githubusercontent.com', '/cdn/github'],
   ['api.phantom.app', '/cdn/phantom'],
   ['arweave.net', '/cdn/arweave'],
-  ['ipfs.io', '/cdn/ipfs-io'],
   ['imagedelivery.net', '/cdn/imagedelivery'],
 ]);
 
@@ -66,6 +65,9 @@ const IPFS_SUBDOMAIN_SUFFIXES = [
 const joinUrlParts = (pathname: string, search: string, hash: string) =>
   `${pathname}${search}${hash}`;
 
+const normalizeRemoteIconToProxyPath = (url: string) =>
+  `${TOKEN_ICON_PROXY_PATH}?url=${encodeURIComponent(url)}`;
+
 const isDirectlyAllowedHost = (hostname: string) =>
   DIRECT_ALLOWED_HOSTS.has(hostname) ||
   DIRECT_ALLOWED_HOST_SUFFIXES.some((suffix) => hostname.endsWith(suffix));
@@ -74,7 +76,7 @@ const normalizeIpfsUrlToProxyPath = (url: URL) => {
   const hostname = url.hostname.toLowerCase();
 
   if (url.pathname.startsWith('/ipfs/')) {
-    return `/cdn/ipfs-io${joinUrlParts(url.pathname, url.search, url.hash)}`;
+    return normalizeRemoteIconToProxyPath(url.toString());
   }
 
   for (const suffix of IPFS_SUBDOMAIN_SUFFIXES) {
@@ -83,14 +85,24 @@ const normalizeIpfsUrlToProxyPath = (url: URL) => {
     const cid = hostname.slice(0, -suffix.length);
     if (!cid) break;
 
-    return `/cdn/ipfs-io/ipfs/${cid}${joinUrlParts(
-      url.pathname,
-      url.search,
-      url.hash,
-    )}`;
+    return normalizeRemoteIconToProxyPath(
+      `https://ipfs.io/ipfs/${cid}${joinUrlParts(
+        url.pathname,
+        url.search,
+        url.hash,
+      )}`,
+    );
   }
 
   return null;
+};
+
+const normalizeCdnIpfsPathToProxyPath = (path: string) => {
+  if (!path.startsWith('/cdn/ipfs-io/')) return null;
+
+  return normalizeRemoteIconToProxyPath(
+    `https://ipfs.io/${path.slice('/cdn/ipfs-io/'.length)}`,
+  );
 };
 
 export function normalizeTokenIcon(icon?: string | null): string {
@@ -98,6 +110,9 @@ export function normalizeTokenIcon(icon?: string | null): string {
   if (!value) return DEFAULT_TOKEN_ICON;
 
   if (value.startsWith('/')) {
+    const ipfsProxyPath = normalizeCdnIpfsPathToProxyPath(value);
+    if (ipfsProxyPath) return ipfsProxyPath;
+
     if (
       value.startsWith('/cdn/') ||
       value.startsWith('/assets/') ||
@@ -147,7 +162,7 @@ export function normalizeTokenIcon(icon?: string | null): string {
     return joinUrlParts(url.pathname, url.search, url.hash);
   }
 
-  return `${TOKEN_ICON_PROXY_PATH}?url=${encodeURIComponent(url.toString())}`;
+  return normalizeRemoteIconToProxyPath(url.toString());
 }
 
 const normalizeTokenRecord = <T extends Token>(token: T): T => ({

@@ -16,6 +16,7 @@ const PRIVATE_HOST_PATTERNS = [
 ];
 
 const isPrivateHost = (hostname: string) =>
+  hostname.toLowerCase().endsWith('.localhost') ||
   PRIVATE_HOST_PATTERNS.some((pattern) => pattern.test(hostname));
 
 export default async function handler(

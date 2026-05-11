@@ -60,6 +60,12 @@ const getTokenIconSrc = (icon?: string | null) => {
   const value = icon?.trim();
   if (!value) return defaultTokenIcon;
 
+  if (value.startsWith('/cdn/ipfs-io/')) {
+    return `/api/token-icon?url=${encodeURIComponent(
+      `https://ipfs.io/${value.slice('/cdn/ipfs-io/'.length)}`,
+    )}`;
+  }
+
   if (value.startsWith('/')) return value;
 
   try {
