@@ -10,7 +10,17 @@ export interface Token {
   isActive: boolean;
 }
 
+export interface JupiterToken {
+  id: string;
+  name: string;
+  symbol: string;
+  icon?: string | null;
+  decimals: number;
+  isVerified: boolean;
+}
+
 const DEFAULT_TOKEN_ICON = '/assets/dollar.svg';
+const TOKEN_ICON_PROXY_PATH = '/api/token-icon';
 
 const tokenSelect = {
   tokenName: true,
@@ -88,7 +98,11 @@ export function normalizeTokenIcon(icon?: string | null): string {
   if (!value) return DEFAULT_TOKEN_ICON;
 
   if (value.startsWith('/')) {
-    if (value.startsWith('/cdn/') || value.startsWith('/assets/')) {
+    if (
+      value.startsWith('/cdn/') ||
+      value.startsWith('/assets/') ||
+      value.startsWith(`${TOKEN_ICON_PROXY_PATH}?`)
+    ) {
       return value;
     }
 
@@ -133,13 +147,81 @@ export function normalizeTokenIcon(icon?: string | null): string {
     return joinUrlParts(url.pathname, url.search, url.hash);
   }
 
-  return DEFAULT_TOKEN_ICON;
+  return `${TOKEN_ICON_PROXY_PATH}?url=${encodeURIComponent(url.toString())}`;
 }
 
 const normalizeTokenRecord = <T extends Token>(token: T): T => ({
   ...token,
   icon: normalizeTokenIcon(token.icon),
 });
+
+export async function searchTokenList(query: string): Promise<Token[]> {
+  const search = query.trim();
+  if (!search) return [];
+
+  const tokens = await prisma.tokenMetadata.findMany({
+    where: {
+      isActive: true,
+      OR: [
+        { tokenName: { contains: search } },
+        { tokenSymbol: { contains: search } },
+        { mintAddress: { contains: search } },
+      ],
+    },
+    orderBy: [{ sortOrder: 'asc' }, { tokenSymbol: 'asc' }],
+    select: tokenSelect,
+    take: 25,
+  });
+
+  return tokens.map(normalizeTokenRecord);
+}
+
+export async function addVerifiedJupiterToken(
+  jupiterToken: JupiterToken,
+): Promise<Token> {
+  if (!jupiterToken.isVerified) {
+    throw new Error('Jupiter token is not verified');
+  }
+
+  const conflictingSymbolToken = await getTokenBySymbol(jupiterToken.symbol, {
+    includeInactive: true,
+  });
+
+  if (
+    conflictingSymbolToken &&
+    conflictingSymbolToken.mintAddress !== jupiterToken.id
+  ) {
+    throw new Error('Token symbol already exists');
+  }
+
+  const maxSortOrderToken = await prisma.tokenMetadata.findFirst({
+    orderBy: { sortOrder: 'desc' },
+    select: { sortOrder: true },
+  });
+
+  const token = await prisma.tokenMetadata.upsert({
+    where: { mintAddress: jupiterToken.id },
+    update: {
+      tokenName: jupiterToken.name,
+      tokenSymbol: jupiterToken.symbol,
+      icon: jupiterToken.icon || DEFAULT_TOKEN_ICON,
+      decimals: jupiterToken.decimals,
+      isActive: true,
+    },
+    create: {
+      tokenName: jupiterToken.name,
+      tokenSymbol: jupiterToken.symbol,
+      mintAddress: jupiterToken.id,
+      icon: jupiterToken.icon || DEFAULT_TOKEN_ICON,
+      decimals: jupiterToken.decimals,
+      sortOrder: (maxSortOrderToken?.sortOrder ?? 0) + 1,
+      isActive: true,
+    },
+    select: tokenSelect,
+  });
+
+  return normalizeTokenRecord(token);
+}
 
 export async function getTokenList(options?: {
   includeInactive?: boolean;

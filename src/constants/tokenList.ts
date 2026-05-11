@@ -37,6 +37,21 @@ export const setTokenList = (tokens: Token[]) => {
   notifyListeners();
 };
 
+export const addTokenToList = (token: Token) => {
+  const existingTokenIndex = tokenListState.findIndex(
+    (currentToken) => currentToken.mintAddress === token.mintAddress,
+  );
+
+  if (existingTokenIndex >= 0) {
+    const nextTokens = [...tokenListState];
+    nextTokens[existingTokenIndex] = token;
+    setTokenList(nextTokens);
+    return;
+  }
+
+  setTokenList([...tokenListState, token]);
+};
+
 export const getTokenListSnapshot = () => tokenListState;
 
 export const subscribeToTokenList = (listener: () => void) => {
