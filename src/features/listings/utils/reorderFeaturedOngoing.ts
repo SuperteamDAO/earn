@@ -4,6 +4,8 @@ interface MinimalListing {
   readonly deadline: Date | null;
 }
 
+const MAX_FEATURED_LISTINGS = 2;
+
 function isOngoingListing(listing: MinimalListing): boolean {
   if (listing.isWinnersAnnounced === true) {
     return false;
@@ -18,19 +20,36 @@ function isOngoingListing(listing: MinimalListing): boolean {
   return deadline >= now;
 }
 
+function getDeadlineTime(listing: MinimalListing): number {
+  if (!listing.deadline) {
+    return Number.POSITIVE_INFINITY;
+  }
+
+  return new Date(listing.deadline).getTime();
+}
+
 export function reorderFeaturedOngoing<T extends MinimalListing>(
   listings: T[],
 ): T[] {
-  const featuredOngoing: T[] = [];
-  const others: T[] = [];
+  const promotedFeatured = listings
+    .filter(
+      (listing) => listing.isFeatured === true && isOngoingListing(listing),
+    )
+    .sort((a, b) => getDeadlineTime(a) - getDeadlineTime(b))
+    .slice(0, MAX_FEATURED_LISTINGS);
 
-  for (const listing of listings) {
-    if (listing.isFeatured === true && isOngoingListing(listing)) {
-      featuredOngoing.push(listing);
-    } else {
-      others.push(listing);
-    }
-  }
+  const promotedFeaturedSet = new Set(promotedFeatured);
 
-  return [...featuredOngoing, ...others];
+  const others = listings
+    .filter((listing) => !promotedFeaturedSet.has(listing))
+    .map((listing) => {
+      if (listing.isFeatured === true && isOngoingListing(listing)) {
+        return { ...listing, isFeatured: false } as T;
+      }
+
+      return listing;
+    })
+    .sort((a, b) => getDeadlineTime(a) - getDeadlineTime(b));
+
+  return [...promotedFeatured, ...others];
 }
