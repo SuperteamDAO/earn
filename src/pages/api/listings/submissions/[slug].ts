@@ -95,25 +95,43 @@ export async function getSubmissionsData(
 
   submission.sort(sortSubmissions);
 
+  interface RawAiData {
+    commited?: boolean;
+    evaluation?: {
+      criteriaScore?: number;
+      qualityScore?: number;
+      totalScore?: number;
+      notes?: string;
+    };
+    review?: {
+      scores?: {
+        skills?: number;
+        experience?: number;
+        application?: number;
+      };
+      shortNote?: string;
+    };
+  }
+
   const publicSubmissions = submission.map((s) => {
-    const raw = s.ai as any;
+    const raw = s.ai as RawAiData | null;
     const publicAi =
       raw?.commited === true
         ? {
             commited: true as const,
             evaluation: raw.evaluation
               ? {
-                  criteriaScore: raw.evaluation.criteriaScore as number | undefined,
-                  qualityScore: raw.evaluation.qualityScore as number | undefined,
-                  totalScore: raw.evaluation.totalScore as number | undefined,
-                  notes: raw.evaluation.notes as string | undefined,
+                  criteriaScore: raw.evaluation.criteriaScore,
+                  qualityScore: raw.evaluation.qualityScore,
+                  totalScore: raw.evaluation.totalScore,
+                  notes: raw.evaluation.notes,
                 }
               : raw.review?.scores
                 ? {
-                    criteriaScore: raw.review.scores.skills as number | undefined,
-                    qualityScore: raw.review.scores.experience as number | undefined,
-                    totalScore: raw.review.scores.application as number | undefined,
-                    notes: raw.review.shortNote as string | undefined,
+                    criteriaScore: raw.review.scores.skills,
+                    qualityScore: raw.review.scores.experience,
+                    totalScore: raw.review.scores.application,
+                    notes: raw.review.shortNote,
                   }
                 : undefined,
           }

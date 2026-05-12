@@ -5,8 +5,8 @@ import type { SubmissionWithUser } from '@/interface/submission';
 import { dayjs } from '@/utils/dayjs';
 
 import { type Listing } from '../../types';
+import type { PublicAiData } from './AiScoreTag';
 import { AiReviewBanner } from './AiReviewBanner';
-import { type PublicAiData } from './AiScoreTag';
 import { SubmissionCard } from './SubmissionCard';
 
 interface Props {
@@ -27,9 +27,7 @@ export const SubmissionList = ({
     setIsEndTimePassed(dayjs(endTime).valueOf() < Date.now());
   }, [endTime]);
 
-  const hasAiReview = submissions.some(
-    (s) => (s.ai as unknown as PublicAiData)?.commited === true,
-  );
+  const hasAiReview = submissions.some((s) => s.ai?.commited === true);
 
   return (
     <div className="mt-4 flex min-h-screen w-full flex-col items-center md:items-start">

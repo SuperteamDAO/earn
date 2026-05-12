@@ -16,7 +16,8 @@ import { getURLSanitized } from '@/utils/getURLSanitized';
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
 import { type Rewards } from '../../types';
-import { AiScoreTag, type PublicAiData } from './AiScoreTag';
+import type { PublicAiData } from './AiScoreTag';
+import { AiScoreTag } from './AiScoreTag';
 import { Badge } from './Badge';
 
 interface Props {
