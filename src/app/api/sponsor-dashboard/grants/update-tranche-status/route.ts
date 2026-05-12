@@ -16,7 +16,7 @@ import { addPaymentInfoToAirtable } from '@/features/grants/utils/addPaymentInfo
 const UpdateGrantTrancheSchema = z
   .object({
     id: z.string(),
-    approvedAmount: z.number().positive().optional(),
+    approvedAmount: z.number().finite().positive().optional(),
     status: z.enum(['Approved', 'Rejected']),
   })
   .superRefine((value, ctx) => {
@@ -101,6 +101,16 @@ export async function POST(request: NextRequest) {
               {
                 error: 'Invalid approved amount',
                 message: 'Approved amount is required for approved tranches.',
+              },
+              { status: 400 },
+            );
+          }
+
+          if (approvedAmount > currentTranche.ask) {
+            return NextResponse.json(
+              {
+                error: 'Invalid approved amount',
+                message: `Approved amount (${approvedAmount}) cannot exceed tranche requested amount (${currentTranche.ask}).`,
               },
               { status: 400 },
             );
