@@ -16,6 +16,7 @@ import { getURLSanitized } from '@/utils/getURLSanitized';
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
 import { type Rewards } from '../../types';
+import { AiScoreTag, type PublicAiData } from './AiScoreTag';
 import { Badge } from './Badge';
 
 interface Props {
@@ -29,6 +30,8 @@ interface Props {
   id: string;
   onUpdate: () => void;
   link: string;
+  label?: string;
+  aiData?: PublicAiData;
 }
 
 export const SubmissionCard = ({
@@ -39,6 +42,8 @@ export const SubmissionCard = ({
   likes,
   onUpdate,
   link,
+  label,
+  aiData,
 }: Props) => {
   const { user } = useUser();
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -91,6 +96,12 @@ export const SubmissionCard = ({
           </div>
         )}
       </div>
+
+      {label && aiData?.commited && (
+        <div className="mb-2">
+          <AiScoreTag label={label} aiData={aiData} />
+        </div>
+      )}
 
       <Link href={`/earn/feed/submission/${id}`} className="block w-full">
         <img

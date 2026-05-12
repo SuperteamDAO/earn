@@ -79,6 +79,8 @@ export async function getSubmissionsData(
       likeCount: true,
       rewardInUSD: true,
       createdAt: true,
+      label: true,
+      ai: true,
       user: {
         select: {
           id: true,
@@ -93,7 +95,34 @@ export async function getSubmissionsData(
 
   submission.sort(sortSubmissions);
 
-  return { bounty, submission };
+  const publicSubmissions = submission.map((s) => {
+    const raw = s.ai as any;
+    const publicAi =
+      raw?.commited === true
+        ? {
+            commited: true as const,
+            evaluation: raw.evaluation
+              ? {
+                  criteriaScore: raw.evaluation.criteriaScore as number | undefined,
+                  qualityScore: raw.evaluation.qualityScore as number | undefined,
+                  totalScore: raw.evaluation.totalScore as number | undefined,
+                  notes: raw.evaluation.notes as string | undefined,
+                }
+              : raw.review?.scores
+                ? {
+                    criteriaScore: raw.review.scores.skills as number | undefined,
+                    qualityScore: raw.review.scores.experience as number | undefined,
+                    totalScore: raw.review.scores.application as number | undefined,
+                    notes: raw.review.shortNote as string | undefined,
+                  }
+                : undefined,
+          }
+        : null;
+
+    return { ...s, ai: publicAi };
+  });
+
+  return { bounty, submission: publicSubmissions };
 }
 
 export default async function user(req: NextApiRequest, res: NextApiResponse) {
