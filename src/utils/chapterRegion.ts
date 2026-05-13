@@ -125,6 +125,14 @@ export async function getRegionNameForLocation(
   return chapter?.region || 'Global';
 }
 
+export function getAirtablePaymentsRegionName(regionName: string): string {
+  if (normalize(regionName) === 'united arab emirates') {
+    return 'UAE';
+  }
+
+  return regionName;
+}
+
 function getMultiCountryRegionsContainingCountry(
   countryName: string,
   chapterRegions: ChapterRegion[],

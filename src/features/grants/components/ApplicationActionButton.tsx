@@ -23,6 +23,7 @@ import { ProBadge } from '@/features/pro/components/ProBadge';
 import { useApplicationState } from '../hooks/useApplicationState';
 import { userApplicationQuery } from '../queries/user-application';
 import { type Grant } from '../types';
+import { grantApplicationCooldownTooltip } from '../utils/grantApplicationCooldown';
 import { isUserEligibleForST } from '../utils/stGrant';
 import { GrantModal } from './GrantModal';
 import { InfoWrapper } from './InfoWrapper';
@@ -78,7 +79,7 @@ export const ApplicationActionButton = ({
     }
     if (applicationState !== 'COOLDOWN' || !application?.decidedAt) return null;
 
-    return `You must wait 30 days from the decision date of your last application before reapplying for this grant.`;
+    return grantApplicationCooldownTooltip(application.decidedAt);
   };
 
   const cooldownTooltipContent = getCooldownTooltipContent() || undefined;

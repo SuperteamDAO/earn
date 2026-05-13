@@ -60,10 +60,7 @@ function getOrderBy(
 
   switch (sortBy) {
     case 'Prize':
-      return [
-        { usdValue: { sort: order, nulls: 'last' } },
-        { createdAt: 'desc' },
-      ];
+      return { usdValue: { sort: order, nulls: 'last' } };
     case 'Submissions':
       return { Submission: { _count: order } };
     default:

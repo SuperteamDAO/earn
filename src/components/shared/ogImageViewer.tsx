@@ -42,9 +42,10 @@ export const OgImageViewer = ({
   className,
   isWinnersAnnounced = true,
 }: Props) => {
+  const cachedImageUrl = imageUrl === 'error' ? null : imageUrl;
   const [fallbackImage] = useState(getRandomFallbackImage());
   const [currentImageUrl, setCurrentImageUrl] = useState<string | null>(
-    imageUrl || null,
+    cachedImageUrl || null,
   );
   const [isUpdating, setIsUpdating] = useState(false);
 
@@ -55,8 +56,7 @@ export const OgImageViewer = ({
   } = useQuery({
     ...ogImageQuery(externalUrl!),
     retry: 1,
-    enabled:
-      !imageUrl && isWinnersAnnounced && !!externalUrl && imageUrl !== 'error',
+    enabled: !cachedImageUrl && isWinnersAnnounced && !!externalUrl,
   });
 
   useEffect(() => {
@@ -81,7 +81,7 @@ export const OgImageViewer = ({
   }, [error, type, id, fallbackImage]);
 
   useEffect(() => {
-    if (isUpdating || currentImageUrl || imageUrl === 'error') return;
+    if (isUpdating || currentImageUrl) return;
 
     const updateOgImage = async () => {
       setIsUpdating(true);
@@ -121,7 +121,7 @@ export const OgImageViewer = ({
     if (ogData) {
       updateOgImage();
     }
-  }, [ogData, type, id, fallbackImage, isUpdating, currentImageUrl, imageUrl]);
+  }, [ogData, type, id, fallbackImage, isUpdating, currentImageUrl]);
 
   const handleImageError = useCallback(() => {
     if (isUpdating) return;

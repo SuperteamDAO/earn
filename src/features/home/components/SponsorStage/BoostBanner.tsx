@@ -5,7 +5,6 @@ import posthog from 'posthog-js';
 
 import { Button } from '@/components/ui/button';
 import { JTTG } from '@/constants/Telegram';
-import { isInKindReward } from '@/lib/rewards/inKind';
 import { useUser } from '@/store/user';
 
 import {
@@ -44,10 +43,6 @@ export function BoostBanner({ listing }: BoostBannerProps) {
     emailEstimateQuery(skills, region as string | undefined),
   );
   const emailImpressions = resolveEmailImpressions(skills, emailEstimate);
-
-  if (isInKindReward(listing.token)) {
-    return null;
-  }
 
   if (isFeaturedLoading || isEmailLoading) {
     return null;

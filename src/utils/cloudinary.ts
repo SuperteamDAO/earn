@@ -36,6 +36,7 @@ export const getCloudinaryFetchUrl = (
   url: string | null | undefined,
 ): string | null => {
   if (!url) return null;
+  if (url === 'error') return null;
 
   if (url.includes('res.cloudinary.com')) return url;
 

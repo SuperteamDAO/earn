@@ -1,8 +1,3 @@
-import {
-  IN_KIND_REWARD_ICON,
-  IN_KIND_REWARD_TOKEN,
-  isInKindReward,
-} from '@/lib/rewards/inKind';
 import { prisma } from '@/prisma';
 
 export interface Token {
@@ -15,7 +10,29 @@ export interface Token {
   isActive: boolean;
 }
 
-const DEFAULT_TOKEN_ICON = IN_KIND_REWARD_ICON;
+export interface JupiterToken {
+  id: string;
+  name: string;
+  symbol: string;
+  icon?: string | null;
+  decimals: number;
+  isVerified: boolean;
+}
+
+export type AddVerifiedJupiterTokenResult =
+  | {
+      type: 'success';
+      token: Token;
+    }
+  | {
+      type: 'unverified-token';
+    }
+  | {
+      type: 'symbol-conflict';
+    };
+
+const DEFAULT_TOKEN_ICON = '/assets/dollar.svg';
+const TOKEN_ICON_PROXY_PATH = '/api/token-icon';
 
 const tokenSelect = {
   tokenName: true,
@@ -35,7 +52,6 @@ const PROXY_HOST_TO_PREFIX = new Map([
   ['avatars.githubusercontent.com', '/cdn/github'],
   ['api.phantom.app', '/cdn/phantom'],
   ['arweave.net', '/cdn/arweave'],
-  ['ipfs.io', '/cdn/ipfs-io'],
   ['imagedelivery.net', '/cdn/imagedelivery'],
 ]);
 
@@ -61,6 +77,9 @@ const IPFS_SUBDOMAIN_SUFFIXES = [
 const joinUrlParts = (pathname: string, search: string, hash: string) =>
   `${pathname}${search}${hash}`;
 
+const normalizeRemoteIconToProxyPath = (url: string) =>
+  `${TOKEN_ICON_PROXY_PATH}?url=${encodeURIComponent(url)}`;
+
 const isDirectlyAllowedHost = (hostname: string) =>
   DIRECT_ALLOWED_HOSTS.has(hostname) ||
   DIRECT_ALLOWED_HOST_SUFFIXES.some((suffix) => hostname.endsWith(suffix));
@@ -69,7 +88,7 @@ const normalizeIpfsUrlToProxyPath = (url: URL) => {
   const hostname = url.hostname.toLowerCase();
 
   if (url.pathname.startsWith('/ipfs/')) {
-    return `/cdn/ipfs-io${joinUrlParts(url.pathname, url.search, url.hash)}`;
+    return normalizeRemoteIconToProxyPath(url.toString());
   }
 
   for (const suffix of IPFS_SUBDOMAIN_SUFFIXES) {
@@ -78,14 +97,24 @@ const normalizeIpfsUrlToProxyPath = (url: URL) => {
     const cid = hostname.slice(0, -suffix.length);
     if (!cid) break;
 
-    return `/cdn/ipfs-io/ipfs/${cid}${joinUrlParts(
-      url.pathname,
-      url.search,
-      url.hash,
-    )}`;
+    return normalizeRemoteIconToProxyPath(
+      `https://ipfs.io/ipfs/${cid}${joinUrlParts(
+        url.pathname,
+        url.search,
+        url.hash,
+      )}`,
+    );
   }
 
   return null;
+};
+
+const normalizeCdnIpfsPathToProxyPath = (path: string) => {
+  if (!path.startsWith('/cdn/ipfs-io/')) return null;
+
+  return normalizeRemoteIconToProxyPath(
+    `https://ipfs.io/${path.slice('/cdn/ipfs-io/'.length)}`,
+  );
 };
 
 export function normalizeTokenIcon(icon?: string | null): string {
@@ -93,7 +122,14 @@ export function normalizeTokenIcon(icon?: string | null): string {
   if (!value) return DEFAULT_TOKEN_ICON;
 
   if (value.startsWith('/')) {
-    if (value.startsWith('/cdn/') || value.startsWith('/assets/')) {
+    const ipfsProxyPath = normalizeCdnIpfsPathToProxyPath(value);
+    if (ipfsProxyPath) return ipfsProxyPath;
+
+    if (
+      value.startsWith('/cdn/') ||
+      value.startsWith('/assets/') ||
+      value.startsWith(`${TOKEN_ICON_PROXY_PATH}?`)
+    ) {
       return value;
     }
 
@@ -138,13 +174,84 @@ export function normalizeTokenIcon(icon?: string | null): string {
     return joinUrlParts(url.pathname, url.search, url.hash);
   }
 
-  return DEFAULT_TOKEN_ICON;
+  return normalizeRemoteIconToProxyPath(url.toString());
 }
 
 const normalizeTokenRecord = <T extends Token>(token: T): T => ({
   ...token,
   icon: normalizeTokenIcon(token.icon),
 });
+
+export async function searchTokenList(query: string): Promise<Token[]> {
+  const search = query.trim();
+  if (!search) return [];
+
+  const tokens = await prisma.tokenMetadata.findMany({
+    where: {
+      isActive: true,
+      OR: [
+        { tokenName: { contains: search } },
+        { tokenSymbol: { contains: search } },
+        { mintAddress: { contains: search } },
+      ],
+    },
+    orderBy: [{ sortOrder: 'asc' }, { tokenSymbol: 'asc' }],
+    select: tokenSelect,
+    take: 25,
+  });
+
+  return tokens.map(normalizeTokenRecord);
+}
+
+export async function addVerifiedJupiterToken(
+  jupiterToken: JupiterToken,
+): Promise<AddVerifiedJupiterTokenResult> {
+  if (!jupiterToken.isVerified) {
+    return { type: 'unverified-token' };
+  }
+
+  const conflictingSymbolToken = await getTokenBySymbol(jupiterToken.symbol, {
+    includeInactive: true,
+  });
+
+  if (
+    conflictingSymbolToken &&
+    conflictingSymbolToken.mintAddress !== jupiterToken.id
+  ) {
+    return { type: 'symbol-conflict' };
+  }
+
+  const maxSortOrderToken = await prisma.tokenMetadata.findFirst({
+    orderBy: { sortOrder: 'desc' },
+    select: { sortOrder: true },
+  });
+
+  const token = await prisma.tokenMetadata.upsert({
+    where: { mintAddress: jupiterToken.id },
+    update: {
+      tokenName: jupiterToken.name,
+      tokenSymbol: jupiterToken.symbol,
+      icon: jupiterToken.icon || DEFAULT_TOKEN_ICON,
+      decimals: jupiterToken.decimals,
+      isActive: true,
+    },
+    create: {
+      tokenName: jupiterToken.name,
+      tokenSymbol: jupiterToken.symbol,
+      mintAddress: jupiterToken.id,
+      icon: jupiterToken.icon || DEFAULT_TOKEN_ICON,
+      decimals: jupiterToken.decimals,
+      sortOrder: (maxSortOrderToken?.sortOrder ?? 0) + 1,
+      isActive: true,
+    },
+    select: tokenSelect,
+  });
+
+  return {
+    type: 'success',
+    token: normalizeTokenRecord(token),
+  };
+}
 
 export async function getTokenList(options?: {
   includeInactive?: boolean;
@@ -165,9 +272,6 @@ export async function getTokenBySymbol(
   },
 ): Promise<Token | null> {
   if (!tokenSymbol) return null;
-  if (isInKindReward(tokenSymbol)) {
-    return IN_KIND_REWARD_TOKEN as Token;
-  }
 
   const token = await prisma.tokenMetadata.findFirst({
     where: {
@@ -207,9 +311,6 @@ export async function getTokenIcon(
 }
 
 export async function isActiveTokenSymbol(tokenSymbol?: string | null) {
-  if (isInKindReward(tokenSymbol)) {
-    return true;
-  }
   const token = await getTokenBySymbol(tokenSymbol);
   return Boolean(token);
 }
