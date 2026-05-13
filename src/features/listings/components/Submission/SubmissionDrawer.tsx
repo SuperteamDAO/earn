@@ -128,12 +128,6 @@ export const SubmissionDrawer = ({
     },
   });
 
-  useEffect(() => {
-    if (isOpen && isProject && user?.telegram) {
-      form.setValue('telegram', user.telegram);
-    }
-  }, [form, isOpen, isProject, user?.telegram]);
-
   const router = useRouter();
   const { query } = router;
 
