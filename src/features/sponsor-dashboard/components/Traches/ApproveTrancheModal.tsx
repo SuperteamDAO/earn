@@ -147,6 +147,13 @@ export const ApproveTrancheModal = ({
   const [warningMessage, setWarningMessage] = useState<string | null>(null);
 
   const remainingAmount = grantApprovedAmount - grantTotalPaid;
+  const maxApprovalAmount =
+    ask === undefined ? remainingAmount : Math.min(remainingAmount, ask);
+  const isInvalidApprovalAmount =
+    approvedAmount === undefined ||
+    !Number.isFinite(approvedAmount) ||
+    approvedAmount === 0 ||
+    approvedAmount > maxApprovalAmount;
   const defaultEmailBody = getTrancheApprovedEmailBody({
     granteeName,
     projectTitle,
@@ -182,8 +189,7 @@ export const ApproveTrancheModal = ({
   };
 
   const approveTranche = async () => {
-    if (approvedAmount === undefined || approvedAmount === 0 || !trancheId)
-      return;
+    if (isInvalidApprovalAmount || !trancheId) return;
 
     const customEmailBody = emailBody.trim();
     const emailValidation = validateCustomEmailBody(customEmailBody);
@@ -272,7 +278,7 @@ export const ApproveTrancheModal = ({
                 value={approvedAmount || 0}
                 onChange={handleAmountChange}
                 min={1}
-                max={remainingAmount}
+                max={maxApprovalAmount}
               />
               <div className="flex items-center rounded-r-md border border-l-0 bg-white px-3 text-[0.95rem] text-slate-400">
                 <TokenIcon
@@ -336,8 +342,7 @@ export const ApproveTrancheModal = ({
                 className="flex-1 rounded-l-lg rounded-r-none border border-emerald-500 bg-emerald-50 text-emerald-600 hover:bg-emerald-100 hover:text-emerald-600"
                 disabled={
                   loading ||
-                  approvedAmount === 0 ||
-                  (warningMessage?.includes('exceeds') ?? false) ||
+                  isInvalidApprovalAmount ||
                   (enableCustomEmail &&
                     isCustomEmailOpen &&
                     (!getCustomEmailPlainText(emailBody) || !!emailError))
