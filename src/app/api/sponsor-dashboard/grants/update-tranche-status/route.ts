@@ -12,12 +12,14 @@ import { checkGrantSponsorAuth } from '@/features/auth/utils/checkGrantSponsorAu
 import { getSponsorSession } from '@/features/auth/utils/getSponsorSession';
 import { queueEmail } from '@/features/emails/utils/queueEmail';
 import { addPaymentInfoToAirtable } from '@/features/grants/utils/addPaymentInfoToAirtable';
+import { validateCustomEmailBody } from '@/features/sponsor-dashboard/utils/customEmailSanitizer';
 
 const UpdateGrantTrancheSchema = z
   .object({
     id: z.string(),
     approvedAmount: z.number().positive().optional(),
     status: z.enum(['Approved', 'Rejected']),
+    emailBody: z.string().trim().min(1).max(5000).optional(),
   })
   .superRefine((value, ctx) => {
     if (value.status !== 'Approved') return;
@@ -57,7 +59,21 @@ export async function POST(request: NextRequest) {
       { status: session.status },
     );
   }
-  const { id, status, approvedAmount } = validationResult.data;
+  const { id, status, approvedAmount, emailBody } = validationResult.data;
+  const emailValidation = emailBody ? validateCustomEmailBody(emailBody) : null;
+
+  if (emailValidation && !emailValidation.isValid) {
+    logger.warn('Invalid custom email body:', emailValidation.error);
+    return NextResponse.json(
+      {
+        error: 'Invalid custom email body',
+        details: emailValidation.error,
+      },
+      { status: 400 },
+    );
+  }
+
+  const sanitizedEmailBody = emailValidation?.sanitized;
   const { userId, userSponsorId } = session.data;
   try {
     return await withRedisLock(
@@ -213,6 +229,11 @@ export async function POST(request: NextRequest) {
                 id: result.id,
                 userId: result.GrantApplication.userId,
                 triggeredBy: userId,
+                otherInfo: sanitizedEmailBody
+                  ? {
+                      customEmailBody: sanitizedEmailBody,
+                    }
+                  : undefined,
               });
             }
 
@@ -222,6 +243,11 @@ export async function POST(request: NextRequest) {
                 id: result.id,
                 userId: result.GrantApplication.userId,
                 triggeredBy: userId,
+                otherInfo: sanitizedEmailBody
+                  ? {
+                      customEmailBody: sanitizedEmailBody,
+                    }
+                  : undefined,
               });
             }
           })(),

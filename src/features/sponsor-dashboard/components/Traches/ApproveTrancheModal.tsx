@@ -1,11 +1,24 @@
 import { Check, ChevronDown, ChevronUp } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 
+import { RichEditor } from '@/components/shared/RichEditor';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import { TokenIcon } from '@/components/ui/token-icon';
+
+import {
+  getCustomEmailPlainText,
+  validateCustomEmailBody,
+} from '../../utils/customEmailSanitizer';
+import { getTrancheApprovedEmailBody } from '../../utils/grantEmailCopy';
 
 const CustomNumberInput = ({
   value,
@@ -96,8 +109,16 @@ interface ApproveModalProps {
   trancheId: string | undefined;
   ask: number | undefined;
   granteeName: string | null | undefined;
+  projectTitle: string | null | undefined;
+  sponsorName: string | null | undefined;
+  salutation: string | null | undefined;
   token: string;
-  onApproveTranche: (trancheId: string, approvedAmount: number) => void;
+  enableCustomEmail: boolean;
+  onApproveTranche: (
+    trancheId: string,
+    approvedAmount: number,
+    emailBody?: string,
+  ) => void;
   grantApprovedAmount: number;
   grantTotalPaid: number;
 }
@@ -108,16 +129,32 @@ export const ApproveTrancheModal = ({
   approveOnClose,
   ask,
   granteeName,
+  projectTitle,
+  sponsorName,
+  salutation,
   token,
+  enableCustomEmail,
   onApproveTranche,
   grantApprovedAmount,
   grantTotalPaid,
 }: ApproveModalProps) => {
   const [approvedAmount, setApprovedAmount] = useState<number | undefined>(ask);
+  const [emailBody, setEmailBody] = useState('');
+  const [hasEditedEmail, setHasEditedEmail] = useState(false);
+  const [isCustomEmailOpen, setIsCustomEmailOpen] = useState(false);
+  const [emailError, setEmailError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [warningMessage, setWarningMessage] = useState<string | null>(null);
 
   const remainingAmount = grantApprovedAmount - grantTotalPaid;
+  const defaultEmailBody = getTrancheApprovedEmailBody({
+    granteeName,
+    projectTitle,
+    sponsorName,
+    approvedAmount,
+    token,
+    salutation,
+  });
 
   const handleAmountChange = (value: number) => {
     if (value > remainingAmount) {
@@ -130,15 +167,40 @@ export const ApproveTrancheModal = ({
       setWarningMessage(null);
     }
     setApprovedAmount(value);
+    if (!hasEditedEmail) {
+      setEmailBody(
+        getTrancheApprovedEmailBody({
+          granteeName,
+          projectTitle,
+          sponsorName,
+          approvedAmount: value,
+          token,
+          salutation,
+        }),
+      );
+    }
   };
 
   const approveTranche = async () => {
     if (approvedAmount === undefined || approvedAmount === 0 || !trancheId)
       return;
 
+    const customEmailBody = emailBody.trim();
+    const emailValidation = validateCustomEmailBody(customEmailBody);
+    if (enableCustomEmail && isCustomEmailOpen && !emailValidation.isValid) {
+      setEmailError(emailValidation.error);
+      return;
+    }
+
     setLoading(true);
     try {
-      await onApproveTranche(trancheId, approvedAmount);
+      await onApproveTranche(
+        trancheId,
+        approvedAmount,
+        enableCustomEmail && isCustomEmailOpen
+          ? emailValidation.sanitized
+          : undefined,
+      );
       approveOnClose();
     } catch (e) {
       console.error(e);
@@ -149,9 +211,30 @@ export const ApproveTrancheModal = ({
 
   useEffect(() => {
     setApprovedAmount(ask);
+    setEmailBody(
+      getTrancheApprovedEmailBody({
+        granteeName,
+        projectTitle,
+        sponsorName,
+        approvedAmount: ask,
+        token,
+        salutation,
+      }),
+    );
+    setHasEditedEmail(false);
+    setIsCustomEmailOpen(false);
+    setEmailError(null);
     setWarningMessage(null);
     setLoading(false);
-  }, [trancheId, ask]);
+  }, [
+    trancheId,
+    ask,
+    granteeName,
+    projectTitle,
+    sponsorName,
+    salutation,
+    token,
+  ]);
 
   return (
     <Dialog open={approveIsOpen} onOpenChange={approveOnClose}>
@@ -208,34 +291,111 @@ export const ApproveTrancheModal = ({
             </p>
           )}
 
+          {enableCustomEmail && isCustomEmailOpen && (
+            <div className="mb-6">
+              <div className="mb-2 flex items-center justify-between gap-3">
+                <p className="font-medium text-slate-600">Email Body</p>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  className="h-auto px-2 py-1 text-xs font-semibold text-slate-500"
+                  onClick={() => {
+                    setEmailBody(defaultEmailBody);
+                    setHasEditedEmail(false);
+                  }}
+                  disabled={loading || emailBody === defaultEmailBody}
+                >
+                  Reset
+                </Button>
+              </div>
+              <RichEditor
+                id="approve-tranche-email-body"
+                height="h-[190px]"
+                value={emailBody}
+                onChange={(value) => {
+                  setEmailBody(value);
+                  setHasEditedEmail(true);
+                  setEmailError(validateCustomEmailBody(value).error);
+                }}
+                error={!!emailError}
+                placeholder="Write the email body"
+              />
+              {emailError && (
+                <p className="mt-2 text-sm text-red-500">{emailError}</p>
+              )}
+            </div>
+          )}
+
           <div className="flex gap-3">
             <div className="w-1/2" />
             <Button variant="ghost" onClick={approveOnClose} disabled={loading}>
               Close
             </Button>
-            <Button
-              className="flex-1 rounded-lg border border-emerald-500 bg-emerald-50 text-emerald-600 hover:bg-emerald-100 hover:text-emerald-600"
-              disabled={
-                loading ||
-                approvedAmount === 0 ||
-                (warningMessage?.includes('exceeds') ?? false)
-              }
-              onClick={approveTranche}
-            >
-              {loading ? (
-                <>
-                  <span className="loading loading-spinner mr-2" />
-                  <span>Approving</span>
-                </>
-              ) : (
-                <>
-                  <div className="mr-2 rounded-full bg-emerald-600 p-0.5">
-                    <Check className="size-2.5 text-white" />
-                  </div>
-                  <span>Approve Tranche</span>
-                </>
+            <div className="flex flex-1">
+              <Button
+                className="flex-1 rounded-l-lg rounded-r-none border border-emerald-500 bg-emerald-50 text-emerald-600 hover:bg-emerald-100 hover:text-emerald-600"
+                disabled={
+                  loading ||
+                  approvedAmount === 0 ||
+                  (warningMessage?.includes('exceeds') ?? false) ||
+                  (enableCustomEmail &&
+                    isCustomEmailOpen &&
+                    (!getCustomEmailPlainText(emailBody) || !!emailError))
+                }
+                onClick={approveTranche}
+              >
+                {loading ? (
+                  <>
+                    <span className="loading loading-spinner mr-2" />
+                    <span>
+                      {isCustomEmailOpen
+                        ? 'Approving with Custom Email'
+                        : 'Approving'}
+                    </span>
+                  </>
+                ) : (
+                  <>
+                    <div className="mr-2 rounded-full bg-emerald-600 p-0.5">
+                      <Check className="size-2.5 text-white" />
+                    </div>
+                    <span>
+                      {isCustomEmailOpen
+                        ? 'Approve with Custom Email'
+                        : 'Approve Tranche'}
+                    </span>
+                  </>
+                )}
+              </Button>
+              {enableCustomEmail && (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      type="button"
+                      className="rounded-l-none rounded-r-lg border border-l-0 border-emerald-500 bg-emerald-50 px-2 text-emerald-600 hover:bg-emerald-100 hover:text-emerald-600"
+                      disabled={loading}
+                      aria-label="Approve tranche options"
+                    >
+                      <ChevronDown className="size-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="z-70 w-56">
+                    {isCustomEmailOpen ? (
+                      <DropdownMenuItem
+                        onClick={() => setIsCustomEmailOpen(false)}
+                      >
+                        Use default email
+                      </DropdownMenuItem>
+                    ) : (
+                      <DropdownMenuItem
+                        onClick={() => setIsCustomEmailOpen(true)}
+                      >
+                        Approve with custom email
+                      </DropdownMenuItem>
+                    )}
+                  </DropdownMenuContent>
+                </DropdownMenu>
               )}
-            </Button>
+            </div>
           </div>
         </div>
       </DialogContent>

@@ -143,13 +143,21 @@ export const TranchesTab = ({ slug }: Props) => {
   };
 
   const rejectGrantMutation = useMutation({
-    mutationFn: async (trancheId: string) => {
+    mutationFn: async ({
+      trancheId,
+      emailBody,
+    }: {
+      trancheId: string;
+      emailBody?: string;
+    }) => {
+      const customEmailBody = emailBody?.trim();
       await api.post('/api/sponsor-dashboard/grants/update-tranche-status', {
         id: trancheId,
         status: 'Rejected',
+        ...(customEmailBody ? { emailBody: customEmailBody } : {}),
       });
     },
-    onMutate: async (trancheId) => {
+    onMutate: async ({ trancheId }) => {
       const previousTranches = queryClient.getQueryData<TranchesReturn>([
         'sponsor-tranches',
         grant?.slug,
@@ -195,14 +203,18 @@ export const TranchesTab = ({ slug }: Props) => {
     mutationFn: async ({
       trancheId,
       approvedAmount,
+      emailBody,
     }: {
       trancheId: string;
       approvedAmount: number;
+      emailBody?: string;
     }) => {
+      const customEmailBody = emailBody?.trim();
       await api.post('/api/sponsor-dashboard/grants/update-tranche-status', {
         id: trancheId,
         status: 'Approved',
         approvedAmount,
+        ...(customEmailBody ? { emailBody: customEmailBody } : {}),
       });
     },
     onMutate: async ({ trancheId, approvedAmount }) => {
@@ -248,12 +260,16 @@ export const TranchesTab = ({ slug }: Props) => {
     },
   });
 
-  const handleApproveTranche = (trancheId: string, approvedAmount: number) => {
-    approveGrantMutation.mutate({ trancheId, approvedAmount });
+  const handleApproveTranche = (
+    trancheId: string,
+    approvedAmount: number,
+    emailBody?: string,
+  ) => {
+    approveGrantMutation.mutate({ trancheId, approvedAmount, emailBody });
   };
 
-  const handleRejectTranche = (trancheId: string) => {
-    rejectGrantMutation.mutate(trancheId);
+  const handleRejectTranche = (trancheId: string, emailBody?: string) => {
+    rejectGrantMutation.mutate({ trancheId, emailBody });
   };
   return (
     <>
@@ -311,7 +327,11 @@ export const TranchesTab = ({ slug }: Props) => {
         rejectOnClose={rejectedOnClose}
         ask={selectedTranche?.ask}
         granteeName={selectedTranche?.GrantApplication?.user?.firstName}
+        projectTitle={selectedTranche?.GrantApplication?.projectTitle}
+        sponsorName={grant?.sponsor?.name}
+        salutation={grant?.emailSalutation}
         token={grant?.token || 'USDC'}
+        enableCustomEmail={grant?.isNative === true}
         onRejectTranche={handleRejectTranche}
       />
 
@@ -321,7 +341,11 @@ export const TranchesTab = ({ slug }: Props) => {
         approveOnClose={approveOnClose}
         ask={selectedTranche?.ask}
         granteeName={selectedTranche?.GrantApplication?.user?.firstName}
+        projectTitle={selectedTranche?.GrantApplication?.projectTitle}
+        sponsorName={grant?.sponsor?.name}
+        salutation={grant?.emailSalutation}
         token={grant?.token || 'USDC'}
+        enableCustomEmail={grant?.isNative === true}
         onApproveTranche={handleApproveTranche}
         grantApprovedAmount={
           selectedTranche?.GrantApplication?.approvedAmount || 0
