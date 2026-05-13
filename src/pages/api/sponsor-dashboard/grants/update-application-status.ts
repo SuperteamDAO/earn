@@ -18,6 +18,7 @@ import { queueEmail } from '@/features/emails/utils/queueEmail';
 import { convertGrantApplicationToAirtable } from '@/features/grants/utils/convertGrantApplicationToAirtable';
 import { createTranche } from '@/features/grants/utils/createTranche';
 import { COINDCX_GRANT_ID } from '@/features/grants/utils/stGrant';
+import { validateCustomEmailBody } from '@/features/sponsor-dashboard/utils/customEmailSanitizer';
 import { fetchTokenUSDValue } from '@/features/wallet/utils/fetchTokenUSDValue';
 
 const MAX_RECORDS = 10;
@@ -33,6 +34,7 @@ const UpdateGrantApplicationSchema = z.object({
     .min(1, 'Data array cannot be empty')
     .max(MAX_RECORDS, `Only max ${MAX_RECORDS} records allowed in data`),
   applicationStatus: z.string(),
+  emailBody: z.string().trim().min(1).max(5000).optional(),
 });
 
 const checkAndUpdateKYCStatus = async (
@@ -110,7 +112,18 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     });
   }
 
-  const { data, applicationStatus } = validationResult.data;
+  const { data, applicationStatus, emailBody } = validationResult.data;
+  const emailValidation = emailBody ? validateCustomEmailBody(emailBody) : null;
+
+  if (emailValidation && !emailValidation.isValid) {
+    logger.warn('Invalid custom email body:', emailValidation.error);
+    return res.status(400).json({
+      error: 'Invalid custom email body',
+      details: emailValidation.error,
+    });
+  }
+
+  const sanitizedEmailBody = emailValidation?.sanitized;
 
   try {
     const currentApplications = await prisma.grantApplication.findMany({
@@ -285,6 +298,11 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
             id: r.id,
             userId: r.userId,
             triggeredBy: userId,
+            otherInfo: sanitizedEmailBody
+              ? {
+                  customEmailBody: sanitizedEmailBody,
+                }
+              : undefined,
           }),
         ),
       );

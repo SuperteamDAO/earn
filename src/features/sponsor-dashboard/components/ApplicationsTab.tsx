@@ -29,6 +29,14 @@ interface Props {
   slug: string;
 }
 
+const isEditableKeyboardTarget = (target: EventTarget | null) => {
+  if (!(target instanceof Element)) return false;
+
+  return !!target.closest(
+    'input, textarea, select, [contenteditable="true"], [role="textbox"]',
+  );
+};
+
 export const ApplicationsTab = ({ slug }: Props) => {
   const [searchText, setSearchText] = useState('');
   const [selectedFilters, setSelectedFilters] = useState<
@@ -148,6 +156,7 @@ export const ApplicationsTab = ({ slug }: Props) => {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (!applications.length) return;
+      if (isEditableKeyboardTarget(e.target)) return;
 
       const currentIndex = applications.findIndex(
         (sub) => sub.id === selectedApplication?.id,
@@ -181,15 +190,19 @@ export const ApplicationsTab = ({ slug }: Props) => {
     mutationFn: async ({
       applicationId,
       approvedAmount,
+      emailBody,
     }: {
       applicationId: string;
       approvedAmount: number;
+      emailBody?: string;
     }) => {
+      const customEmailBody = emailBody?.trim();
       const response = await api.post(
         '/api/sponsor-dashboard/grants/update-application-status',
         {
           data: [{ id: applicationId, approvedAmount }],
           applicationStatus: 'Approved',
+          ...(customEmailBody ? { emailBody: customEmailBody } : {}),
         },
       );
       return response.data;
@@ -344,15 +357,19 @@ export const ApplicationsTab = ({ slug }: Props) => {
     }
   };
 
-  const handleRejectGrant = (applicationId: string) => {
-    rejectGrantApplications.mutate([applicationId]);
+  const handleRejectGrant = (applicationId: string, emailBody?: string) => {
+    rejectGrantApplications.mutate({
+      applicationIds: [applicationId],
+      emailBody,
+    });
   };
 
   const handleApproveGrant = (
     applicationId: string,
     approvedAmount: number,
+    emailBody?: string,
   ) => {
-    approveGrantMutation.mutate({ applicationId, approvedAmount });
+    approveGrantMutation.mutate({ applicationId, approvedAmount, emailBody });
   };
 
   const handleModalAction = (actionType: 'reject' | 'spam') => {
@@ -501,7 +518,11 @@ export const ApplicationsTab = ({ slug }: Props) => {
         rejectOnClose={rejectedOnClose}
         ask={selectedApplication?.ask}
         granteeName={selectedApplication?.user?.firstName}
+        grantTitle={grant?.title}
+        projectTitle={selectedApplication?.projectTitle}
+        salutation={grant?.emailSalutation}
         token={grant?.token || 'USDC'}
+        enableCustomEmail={grant?.isNative === true}
         onRejectGrant={handleRejectGrant}
       />
 
@@ -511,7 +532,11 @@ export const ApplicationsTab = ({ slug }: Props) => {
         approveOnClose={approveOnClose}
         ask={selectedApplication?.ask}
         granteeName={selectedApplication?.user?.firstName}
+        grantTitle={grant?.title}
+        projectTitle={selectedApplication?.projectTitle}
+        salutation={grant?.emailSalutation}
         token={grant?.token || 'USDC'}
+        enableCustomEmail={grant?.isNative === true}
         onApproveGrant={handleApproveGrant}
         max={grant?.maxReward}
       />

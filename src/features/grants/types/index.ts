@@ -46,6 +46,7 @@ interface Grant {
   historicalApplications: number;
   avgResponseTime?: string;
   airtableId?: string;
+  emailSalutation?: string | null;
   isNative?: boolean;
   ai?: GrantsAi;
   isPro?: boolean;
