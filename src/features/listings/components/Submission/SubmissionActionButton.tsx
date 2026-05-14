@@ -220,7 +220,13 @@ export const SubmissionActionButton = ({
       dayjs(listing.winnersAnnouncedAt).isAfter(dayjs.utc('2025-08-06'));
 
     if (isWinnerKycFlow) {
-      if (!submission?.isKYCVerified) {
+      if (submission?.regionVerificationStatus === 'Ineligible') {
+        return 'region_ineligible';
+      }
+      if (
+        !submission?.isKYCVerified ||
+        submission?.regionVerificationStatus === 'PoaRequired'
+      ) {
         return 'kyc';
       }
       if (submission?.isKYCVerified && !submission.isPaid) {
@@ -277,6 +283,13 @@ export const SubmissionActionButton = ({
       buttonText = 'Submit KYC';
       buttonBG = 'bg-brand-purple';
       isBtnDisabled = false;
+      btnLoadingText = null;
+      break;
+
+    case 'region_ineligible':
+      buttonText = 'Not Eligible';
+      buttonBG = 'bg-red-600';
+      isBtnDisabled = true;
       btnLoadingText = null;
       break;
 
@@ -474,6 +487,11 @@ export const SubmissionActionButton = ({
           onClose={() => setIsKYCModalOpen(false)}
           submissionId={submission.id}
           region={region}
+          initialStage={
+            submission.regionVerificationStatus === 'PoaRequired'
+              ? 'poa'
+              : 'identity'
+          }
         />
       )}
 

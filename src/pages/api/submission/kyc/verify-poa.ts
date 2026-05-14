@@ -15,6 +15,7 @@ import { getPoAApplicantId } from '@/features/kyc/utils/getPoAApplicantId';
 import { getPoACountry } from '@/features/kyc/utils/getPoACountry';
 import { createPayment } from '@/features/listings/utils/createPayment';
 import { userRegionEligibilty } from '@/features/listings/utils/region';
+import { REGION_VERIFICATION_STATUS } from '@/features/listings/utils/regionVerification';
 
 const handler = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
   const userId = req.userId;
@@ -74,6 +75,14 @@ const handler = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
     });
 
     if (!isRegionMatch) {
+      await prisma.submission.update({
+        where: { id: submissionId },
+        data: {
+          regionVerificationStatus: REGION_VERIFICATION_STATUS.Ineligible,
+          regionVerificationCountry: rawPoaCountry,
+          regionVerificationVerifiedAt: null,
+        },
+      });
       return res.status(200).json({ status: 'ineligible' });
     }
 
@@ -81,6 +90,14 @@ const handler = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
       await withRedisLock(
         `locks:create-payment:${userId}`,
         async () => {
+          await prisma.submission.update({
+            where: { id: submissionId },
+            data: {
+              regionVerificationStatus: REGION_VERIFICATION_STATUS.PoaVerified,
+              regionVerificationCountry: rawPoaCountry,
+              regionVerificationVerifiedAt: new Date(),
+            },
+          });
           await createPayment({ userId, submissionIds: [submissionId] });
         },
         { ttlSeconds: 300 },

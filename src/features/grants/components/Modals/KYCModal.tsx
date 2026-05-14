@@ -33,15 +33,17 @@ export const KYCModal = ({
   grantId,
   onClose,
   region,
+  initialStage = 'identity',
 }: {
   applicationId: string;
   grantId: string;
   onClose: () => void;
   region?: string;
+  initialStage?: 'identity' | 'poa';
 }) => {
   const verificationProcessedRef = useRef(false);
-  const stageRef = useRef<'identity' | 'poa'>('identity');
-  const [stage, setStage] = useState<'identity' | 'poa'>('identity');
+  const stageRef = useRef<'identity' | 'poa'>(initialStage);
+  const [stage, setStage] = useState<'identity' | 'poa'>(initialStage);
 
   const shouldShowDisclaimer = useMemo(() => {
     return Boolean(region && region !== 'Global');

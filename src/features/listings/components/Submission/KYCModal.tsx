@@ -36,17 +36,19 @@ export const KYCModal = ({
   onClose,
   isOpen,
   region,
+  initialStage = 'identity',
 }: {
   submissionId: string;
   listingId: string;
   onClose: () => void;
   isOpen: boolean;
   region?: string;
+  initialStage?: 'identity' | 'poa';
 }) => {
   const modalRef = useRef<HTMLDivElement>(null);
   const verificationProcessedRef = useRef(false);
-  const stageRef = useRef<'identity' | 'poa'>('identity');
-  const [stage, setStage] = useState<'identity' | 'poa'>('identity');
+  const stageRef = useRef<'identity' | 'poa'>(initialStage);
+  const [stage, setStage] = useState<'identity' | 'poa'>(initialStage);
 
   const shouldShowDisclaimer = useMemo(() => {
     return Boolean(region && region !== 'Global');

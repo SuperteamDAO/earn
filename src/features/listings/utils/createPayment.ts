@@ -1,7 +1,9 @@
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { getChapterRegions } from '@/utils/chapterRegion';
 
 import { addPaymentInfoToAirtable } from './addPaymentInfoToAirtable';
+import { canPaySubmissionForRegion } from './regionVerification';
 
 type CreatePaymentProps = {
   userId: string;
@@ -31,6 +33,8 @@ export async function createPayment({
       id: true,
       winnerPosition: true,
       paymentSynced: true,
+      regionVerificationStatus: true,
+      regionVerificationCountry: true,
       listing: {
         select: {
           id: true,
@@ -73,6 +77,7 @@ export async function createPayment({
 
   const processedSubmissions = [];
   const errors = [];
+  const chapters = await getChapterRegions();
 
   for (const submission of submissions) {
     const submissionId = submission.id;
@@ -95,6 +100,21 @@ export async function createPayment({
       if (submission.user.isKYCVerified !== true) {
         const errorMessage = `User is not verified for submission ${submissionId}`;
         logger.error(errorMessage);
+        errors.push({ submissionId, error: errorMessage });
+        continue;
+      }
+
+      if (
+        !canPaySubmissionForRegion({
+          region: submission.listing.region,
+          kycCountry: submission.user.kycCountry,
+          regionVerificationStatus: submission.regionVerificationStatus,
+          regionVerificationCountry: submission.regionVerificationCountry,
+          chapters,
+        })
+      ) {
+        const errorMessage = `Region verification is required before payment for submission ${submissionId}`;
+        logger.warn(errorMessage);
         errors.push({ submissionId, error: errorMessage });
         continue;
       }

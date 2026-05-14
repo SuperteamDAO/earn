@@ -1,5 +1,7 @@
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { getChapterRegions } from '@/utils/chapterRegion';
+import { canPaySubmissionForRegion } from '@/features/listings/utils/regionVerification';
 
 import { addOnboardingInfoToAirtable } from './addOnboardingInfoToAirtable';
 import { addPaymentInfoToAirtable } from './addPaymentInfoToAirtable';
@@ -211,6 +213,21 @@ export async function createTranche({
 
   if (application.user.isKYCVerified !== true) {
     const errorMessage = `User is not verified for application ${applicationId}`;
+    logger.error(errorMessage);
+    throw new Error(errorMessage);
+  }
+
+  const chapters = await getChapterRegions();
+  if (
+    !canPaySubmissionForRegion({
+      region: application.grant.region,
+      kycCountry: application.user.kycCountry,
+      regionVerificationStatus: application.regionVerificationStatus,
+      regionVerificationCountry: application.regionVerificationCountry,
+      chapters,
+    })
+  ) {
+    const errorMessage = `Region verification is required before tranche creation for application ${applicationId}`;
     logger.error(errorMessage);
     throw new Error(errorMessage);
   }

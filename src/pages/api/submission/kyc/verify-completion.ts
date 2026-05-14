@@ -1,7 +1,5 @@
 import type { NextApiResponse } from 'next';
 
-import lookup from 'country-code-lookup';
-
 import logger from '@/lib/logger';
 import { LockNotAcquiredError, withRedisLock } from '@/lib/with-redis-lock';
 import { prisma } from '@/prisma';
@@ -11,10 +9,12 @@ import { type NextApiRequestWithUser } from '@/features/auth/types';
 import { withAuth } from '@/features/auth/utils/withAuth';
 import { checkVerificationStatus } from '@/features/kyc/utils/checkVerificationStatus';
 import { getApplicantData } from '@/features/kyc/utils/getApplicantData';
-import { approveApplicant } from '@/features/kyc/utils/approveApplicant';
 import { isMainDocCountryRejection } from '@/features/kyc/utils/isMainDocCountryRejection';
 import { createPayment } from '@/features/listings/utils/createPayment';
-import { userRegionEligibilty } from '@/features/listings/utils/region';
+import {
+  getKycRegionVerificationStatus,
+  REGION_VERIFICATION_STATUS,
+} from '@/features/listings/utils/regionVerification';
 import { getChapterRegions } from '@/utils/chapterRegion';
 
 const handler = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
@@ -51,38 +51,22 @@ const handler = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
     }
 
     const applicantData = await getApplicantData(userId, secretKey, appToken);
-    const { id: applicantId } = applicantData;
     const result = await checkVerificationStatus(
-      applicantId,
+      applicantData.id,
       secretKey,
       appToken,
     );
 
     if (result === 'verified') {
-      const wasAlreadyVerified = submission.user.isKYCVerified ?? false;
       const { fullName, country, dob, idNumber, idType } = applicantData;
-
-      let poaRequired = false;
-      if (!wasAlreadyVerified && submission.listing.region) {
-        const region = submission.listing.region;
-        const isGbrNiException =
-          country.toUpperCase() === 'GBR' &&
-          region.trim().toLowerCase() === 'ireland (ni and roi)';
-
-        if (!isGbrNiException) {
-          const chapters = await getChapterRegions();
-          const countryInfo = lookup.byIso(country);
-          const countryName = countryInfo?.country ?? country;
-          const isRegionMatch = userRegionEligibilty({
-            region,
-            userLocation: countryName,
-            chapters,
-          });
-          if (!isRegionMatch) {
-            poaRequired = true;
-          }
-        }
-      }
+      const chapters = await getChapterRegions();
+      const regionVerificationStatus = getKycRegionVerificationStatus({
+        region: submission.listing.region,
+        kycCountry: country,
+        chapters,
+      });
+      const poaRequired =
+        regionVerificationStatus === REGION_VERIFICATION_STATUS.PoaRequired;
 
       try {
         await withRedisLock(
@@ -101,8 +85,17 @@ const handler = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
               },
             });
 
-            if (!wasAlreadyVerified && !poaRequired) {
-              await createPayment({ userId });
+            await prisma.submission.update({
+              where: { id: submissionId },
+              data: {
+                regionVerificationStatus,
+                regionVerificationCountry: country,
+                regionVerificationVerifiedAt: poaRequired ? null : new Date(),
+              },
+            });
+
+            if (!poaRequired) {
+              await createPayment({ userId, submissionIds: [submissionId] });
             }
           },
           { ttlSeconds: 300 },
@@ -129,69 +122,29 @@ const handler = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
       result.status === 'failed' &&
       isMainDocCountryRejection(result)
     ) {
-      const chapters = await getChapterRegions();
-      const isRegionMatch = userRegionEligibilty({
-        region: submission.listing.region,
-        userLocation: submission.user.location ?? undefined,
-        chapters,
+      const { fullName, country, dob, idNumber, idType } = applicantData;
+      await prisma.user.update({
+        where: { id: userId },
+        data: {
+          isKYCVerified: true,
+          kycName: fullName,
+          kycCountry: country,
+          kycDOB: dob,
+          kycIDNumber: idNumber,
+          kycIDType: idType,
+          kycVerifiedAt: new Date(),
+        },
+      });
+      await prisma.submission.update({
+        where: { id: submissionId },
+        data: {
+          regionVerificationStatus: REGION_VERIFICATION_STATUS.PoaRequired,
+          regionVerificationCountry: country,
+          regionVerificationVerifiedAt: null,
+        },
       });
 
-      if (!isRegionMatch) {
-        return res.status(200).json({ status: 'region_mismatch' });
-      }
-
-      if (isRegionMatch) {
-        logger.info(
-          `Submission KYC: overriding country regulation for submissionId ${submissionId} — user location matches listing region ${submission.listing.region}`,
-        );
-
-        await approveApplicant(
-          applicantId,
-          secretKey,
-          appToken,
-          `Region verified: user location matches listing region ${submission.listing.region}`,
-        );
-
-        try {
-          await withRedisLock(
-            `locks:create-payment:${userId}`,
-            async () => {
-              const wasAlreadyVerified =
-                submission.user.isKYCVerified ?? false;
-              const { fullName, country, dob, idNumber, idType } =
-                applicantData;
-
-              await prisma.user.update({
-                where: { id: userId },
-                data: {
-                  isKYCVerified: true,
-                  kycName: fullName,
-                  kycCountry: country,
-                  kycDOB: dob,
-                  kycIDNumber: idNumber,
-                  kycIDType: idType,
-                  kycVerifiedAt: new Date(),
-                },
-              });
-
-              if (!wasAlreadyVerified) {
-                await createPayment({ userId });
-              }
-            },
-            { ttlSeconds: 300 },
-          );
-        } catch (lockError) {
-          if (lockError instanceof LockNotAcquiredError) {
-            return res.status(409).json({
-              message:
-                'Payment processing already in progress for this user',
-            });
-          }
-          throw lockError;
-        }
-
-        return res.status(200).json('verified');
-      }
+      return res.status(200).json({ status: 'poa_required' });
     }
 
     return res.status(200).json(result);
