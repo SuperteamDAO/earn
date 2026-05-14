@@ -34,6 +34,9 @@ export const getPoAApplicantId = async (
       `Failed to get PoA applicant ID for userId ${userId}: ${safeStringify(error)}`,
     );
     if (axios.isAxiosError(error)) {
+      if (error.response?.status === 404) {
+        throw new Error('Sumsub: PoA applicant not found');
+      }
       throw new Error(
         `Sumsub: ${error.message || 'Failed to retrieve PoA applicant'}`,
       );

@@ -32,6 +32,7 @@ import {
   getRegionTooltipLabel,
   userRegionEligibilty,
 } from '../../utils/region';
+import { KYC_REGION_VERIFICATION_CUTOFF } from '../../utils/regionVerification';
 import { getListingDraftStatus } from '../../utils/status';
 import { EasterEgg } from './EasterEgg';
 import { KYCModal } from './KYCModal';
@@ -217,7 +218,9 @@ export const SubmissionActionButton = ({
       isWinnersAnnounced &&
       isFndnPaying &&
       submission?.isWinner &&
-      dayjs(listing.winnersAnnouncedAt).isAfter(dayjs.utc('2025-08-06'));
+      dayjs(listing.winnersAnnouncedAt).isAfter(
+        dayjs.utc(KYC_REGION_VERIFICATION_CUTOFF),
+      );
 
     if (isWinnerKycFlow) {
       if (submission?.regionVerificationStatus === 'Ineligible') {
@@ -280,7 +283,10 @@ export const SubmissionActionButton = ({
       break;
 
     case 'kyc':
-      buttonText = 'Submit KYC';
+      buttonText =
+        submission?.regionVerificationStatus === 'PoaRequired'
+          ? 'Submit Proof of Address'
+          : 'Submit KYC';
       buttonBG = 'bg-brand-purple';
       isBtnDisabled = false;
       btnLoadingText = null;

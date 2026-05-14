@@ -150,6 +150,9 @@ export const KYCModal = ({
             'status' in data &&
             (data as { status?: string }).status === 'poa_required'
           ) {
+            await queryClient.invalidateQueries({
+              queryKey: userSubmissionQuery(listingId, user?.id).queryKey,
+            });
             stageRef.current = 'poa';
             setStage('poa');
             throw new Error(VERIFICATION_PENDING_ERROR);
@@ -238,7 +241,43 @@ export const KYCModal = ({
             'status' in data &&
             (data as { status?: string }).status === 'ineligible'
           ) {
+            await queryClient.invalidateQueries({
+              queryKey: userSubmissionQuery(listingId, user?.id).queryKey,
+            });
             throw new Error('POA_INELIGIBLE');
+          }
+
+          if (
+            typeof data === 'object' &&
+            data !== null &&
+            'status' in data &&
+            (data as { status?: string }).status === 'poa_rejected'
+          ) {
+            throw new Error(
+              'message' in data && typeof data.message === 'string'
+                ? data.message
+                : 'Proof of address was rejected. Please try again.',
+            );
+          }
+
+          if (
+            typeof data === 'object' &&
+            data !== null &&
+            'status' in data &&
+            (data as { status?: string }).status === 'poa_not_started'
+          ) {
+            throw new Error('Please start the proof of address verification.');
+          }
+
+          if (
+            typeof data === 'object' &&
+            data !== null &&
+            'status' in data &&
+            (data as { status?: string }).status === 'payment_failed'
+          ) {
+            throw new Error(
+              'Payment could not be created after PoA verification. Please try again.',
+            );
           }
 
           throw new Error(VERIFICATION_PENDING_ERROR);
@@ -272,7 +311,9 @@ export const KYCModal = ({
               return undefined;
             }
 
-            return 'Proof of address verification failed. Please try again.';
+            return error instanceof Error
+              ? error.message
+              : 'Proof of address verification failed. Please try again.';
           },
         });
       }

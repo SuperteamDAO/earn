@@ -12,14 +12,16 @@ export const REGION_VERIFICATION_STATUS = {
   Ineligible: 'Ineligible',
 } as const;
 
+export const KYC_REGION_VERIFICATION_CUTOFF = new Date('2025-08-06');
+
 export type RegionVerificationStatus =
   (typeof REGION_VERIFICATION_STATUS)[keyof typeof REGION_VERIFICATION_STATUS];
 
-export function isGeoLockedRegion(region: string | null | undefined): boolean {
+function isGeoLockedRegion(region: string | null | undefined): boolean {
   return Boolean(region && region.trim().toLowerCase() !== 'global');
 }
 
-export function countryCodeToCountryName(country: string | null | undefined) {
+function countryCodeToCountryName(country: string | null | undefined) {
   if (!country) return undefined;
   return lookup.byIso(country)?.country ?? country;
 }

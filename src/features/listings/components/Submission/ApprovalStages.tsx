@@ -8,6 +8,7 @@ import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import { getPayoutCopy } from '@/utils/payout-date';
 
 import type { Listing } from '@/features/listings/types';
+import { REGION_VERIFICATION_STATUS } from '@/features/listings/utils/regionVerification';
 
 import { userSubmissionQuery } from '../../queries/user-submission-status';
 
@@ -23,6 +24,12 @@ const CheckIcon = () => (
 
 const PendingIcon = () => (
   <div className="flex h-9 w-9 items-center justify-center rounded-full border-4 border-slate-200 bg-slate-200 text-slate-200" />
+);
+
+const FailureIcon = () => (
+  <div className="flex h-9 w-9 items-center justify-center rounded-full border-4 border-red-600 bg-white text-red-600">
+    <span className="text-lg leading-none font-semibold">!</span>
+  </div>
 );
 
 const Heading = ({ children }: { children: React.ReactNode }) => (
@@ -68,6 +75,14 @@ export const ApprovalStages = ({ listing }: Props) => {
 
   const isKycVerified = submission.isKYCVerified ?? false;
   const isPaid = submission.isPaid;
+  const isPoaRequired =
+    submission.regionVerificationStatus ===
+    REGION_VERIFICATION_STATUS.PoaRequired;
+  const isRegionIneligible =
+    submission.regionVerificationStatus ===
+    REGION_VERIFICATION_STATUS.Ineligible;
+  const isRegionVerified =
+    !isPoaRequired && !isRegionIneligible && isKycVerified;
 
   const isPaymentSynced = submission.paymentSynced ?? false;
 
@@ -88,7 +103,7 @@ export const ApprovalStages = ({ listing }: Props) => {
           </div>
           <ConnectingLine
             isStartComplete={true}
-            isEndComplete={isKycVerified}
+            isEndComplete={isRegionVerified}
           />
           <div>
             <Heading>{wonTitle}</Heading>
@@ -100,15 +115,33 @@ export const ApprovalStages = ({ listing }: Props) => {
 
         <div className="relative flex items-start gap-4">
           <div className="relative z-10">
-            {isKycVerified ? <CheckIcon /> : <PendingIcon />}
+            {isRegionVerified ? (
+              <CheckIcon />
+            ) : isRegionIneligible ? (
+              <FailureIcon />
+            ) : (
+              <PendingIcon />
+            )}
           </div>
           <ConnectingLine
-            isStartComplete={isKycVerified}
+            isStartComplete={isRegionVerified}
             isEndComplete={isPaymentSynced}
           />
           <div>
-            <Heading>KYC Successful</Heading>
-            <Subheading>Documents verified</Subheading>
+            <Heading>
+              {isPoaRequired
+                ? 'Proof of Address Required'
+                : isRegionIneligible
+                  ? 'Region Verification Failed'
+                  : 'KYC Successful'}
+            </Heading>
+            <Subheading>
+              {isPoaRequired
+                ? 'Address proof needed'
+                : isRegionIneligible
+                  ? 'Region verification failed'
+                  : 'Documents verified'}
+            </Subheading>
           </div>
         </div>
 

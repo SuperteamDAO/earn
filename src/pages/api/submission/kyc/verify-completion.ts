@@ -13,6 +13,7 @@ import { isMainDocCountryRejection } from '@/features/kyc/utils/isMainDocCountry
 import { createPayment } from '@/features/listings/utils/createPayment';
 import {
   getKycRegionVerificationStatus,
+  KYC_REGION_VERIFICATION_CUTOFF,
   REGION_VERIFICATION_STATUS,
 } from '@/features/listings/utils/regionVerification';
 import { getChapterRegions } from '@/utils/chapterRegion';
@@ -37,7 +38,7 @@ const handler = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
       submission.listing.isFndnPaying &&
       !submission.isPaid &&
       submission.listing.winnersAnnouncedAt &&
-      new Date(submission.listing.winnersAnnouncedAt) > new Date('2025-08-06');
+      submission.listing.winnersAnnouncedAt > KYC_REGION_VERIFICATION_CUTOFF;
 
     if (!isAllowed) {
       return res.status(403).json({ message: 'Not allowed' });

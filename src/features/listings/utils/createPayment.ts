@@ -3,7 +3,10 @@ import { prisma } from '@/prisma';
 import { getChapterRegions } from '@/utils/chapterRegion';
 
 import { addPaymentInfoToAirtable } from './addPaymentInfoToAirtable';
-import { canPaySubmissionForRegion } from './regionVerification';
+import {
+  canPaySubmissionForRegion,
+  KYC_REGION_VERIFICATION_CUTOFF,
+} from './regionVerification';
 
 type CreatePaymentProps = {
   userId: string;
@@ -14,8 +17,6 @@ export async function createPayment({
   userId,
   submissionIds,
 }: CreatePaymentProps) {
-  const ANNOUNCEMENT_CUTOFF_DATE = new Date('2025-08-06');
-
   const submissions = await prisma.submission.findMany({
     where: {
       userId,
@@ -26,7 +27,7 @@ export async function createPayment({
         type: { in: ['bounty', 'hackathon'] },
         isWinnersAnnounced: true,
         isFndnPaying: true,
-        winnersAnnouncedAt: { gte: ANNOUNCEMENT_CUTOFF_DATE },
+        winnersAnnouncedAt: { gte: KYC_REGION_VERIFICATION_CUTOFF },
       },
     },
     select: {
