@@ -68,12 +68,6 @@ export const GrantModal = ({
               grantId={grant.id}
               onClose={onClose}
               region={grant.region ?? undefined}
-              initialStage={
-                editableGrantApplication?.regionVerificationStatus ===
-                'PoaRequired'
-                  ? 'poa'
-                  : 'identity'
-              }
             />
           )}
           {newTrancheFormStates.includes(applicationState) && (

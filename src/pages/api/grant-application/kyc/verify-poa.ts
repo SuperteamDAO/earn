@@ -15,7 +15,6 @@ import { COINDCX_GRANT_ID } from '@/features/grants/utils/stGrant';
 import { checkVerificationStatus } from '@/features/kyc/utils/checkVerificationStatus';
 import { getPoAApplicantId } from '@/features/kyc/utils/getPoAApplicantId';
 import { getPoACountry } from '@/features/kyc/utils/getPoACountry';
-import { REGION_VERIFICATION_STATUS } from '@/features/listings/utils/regionVerification';
 import { userRegionEligibilty } from '@/features/listings/utils/region';
 
 const handler = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
@@ -74,14 +73,6 @@ const handler = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
     });
 
     if (!isRegionMatch) {
-      await prisma.grantApplication.update({
-        where: { id: grantApplicationId },
-        data: {
-          regionVerificationStatus: REGION_VERIFICATION_STATUS.Ineligible,
-          regionVerificationCountry: rawPoaCountry,
-          regionVerificationVerifiedAt: null,
-        },
-      });
       return res.status(200).json({ status: 'ineligible' });
     }
 
@@ -89,14 +80,6 @@ const handler = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
       await withRedisLock(
         `locks:create-tranche:${grantApplicationId}:first-tranche`,
         async () => {
-          await prisma.grantApplication.update({
-            where: { id: grantApplicationId },
-            data: {
-              regionVerificationStatus: REGION_VERIFICATION_STATUS.PoaVerified,
-              regionVerificationCountry: rawPoaCountry,
-              regionVerificationVerifiedAt: new Date(),
-            },
-          });
           await createTranche({
             applicationId: grantApplicationId,
             isFirstTranche: true,

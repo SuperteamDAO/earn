@@ -302,9 +302,6 @@ model GrantApplication {
   CreditLedger        CreditLedger[]
   lumaLink            String?
   expenseBreakdown    String?                @db.Text
-  regionVerificationStatus     RegionVerificationStatus @default(NotRequired)
-  regionVerificationCountry    String?
-  regionVerificationVerifiedAt DateTime?
 
   @@index([likeCount])
   @@index([grantId, userId, applicationStatus])
