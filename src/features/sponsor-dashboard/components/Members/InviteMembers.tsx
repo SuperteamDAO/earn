@@ -3,7 +3,6 @@ import { CheckCircle2, Send } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { FormLabel } from '@/components/ui/form';
@@ -66,25 +65,16 @@ export function InviteMembers({ isOpen, onClose }: Props) {
 
         {inviteMutation.isSuccess ? (
           <div className="px-6 pb-6 text-[0.95rem]">
-            <Alert
-              variant="default"
-              className="mb-4 flex flex-col items-center justify-center py-5 text-center"
-            >
-              <div className="mb-3 flex items-center gap-2">
-                <CheckCircle2 className="mb-1 h-5 w-5 text-green-500" />
-                <AlertTitle className="text-xl font-bold">
-                  Sent Invite!
-                </AlertTitle>
-              </div>
-              <AlertDescription>
+            <div className="py-6 text-center">
+              <CheckCircle2 className="mx-auto mb-3 h-12 w-12 text-green-600" />
+              <h3 className="mb-2 text-lg font-semibold">Invite Sent!</h3>
+              <p className="text-muted-foreground text-sm">
                 Your team member will receive an email with a link to join
                 Superteam Earn.
-              </AlertDescription>
-            </Alert>
-
-            <div className="flex gap-3">
-              <div className="w-1/2" />
-              <Button className="flex-1" onClick={onClose}>
+              </p>
+            </div>
+            <div className="flex justify-end">
+              <Button variant="ghost" onClick={onClose}>
                 Close
               </Button>
             </div>

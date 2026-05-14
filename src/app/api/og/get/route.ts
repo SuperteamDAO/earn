@@ -7,6 +7,14 @@ import { safeStringify } from '@/utils/safeStringify';
 
 type UnfurlResult = Awaited<ReturnType<typeof unfurl>>;
 
+const normalizeUnfurlUrl = (url: string): string => {
+  const trimmedUrl = url.trim();
+
+  if (/^https?:\/\//i.test(trimmedUrl)) return trimmedUrl;
+
+  return `https://${trimmedUrl}`;
+};
+
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const url = searchParams.get('url');
@@ -21,17 +29,19 @@ export async function GET(request: NextRequest) {
     );
   }
 
+  const unfurlUrl = normalizeUnfurlUrl(url);
+
   try {
-    logger.debug(`Unfurling URL: ${url}`);
+    logger.debug(`Unfurling URL: ${unfurlUrl}`);
     const metadata = await Promise.race<UnfurlResult>([
-      unfurl(url),
+      unfurl(unfurlUrl),
       new Promise((_, reject) =>
         setTimeout(() => reject(new Error('Timeout')), 5000),
       ),
     ]);
 
     if (!metadata.open_graph?.images?.[0]?.url) {
-      logger.warn(`No OG image found for URL: ${url}`);
+      logger.warn(`No OG image found for URL: ${unfurlUrl}`);
       return NextResponse.json({ result: 'error' });
     }
 
@@ -41,10 +51,10 @@ export async function GET(request: NextRequest) {
         metadata.open_graph.images[0].url;
     }
 
-    logger.info(`Successfully unfurled URL: ${url}`);
+    logger.info(`Successfully unfurled URL: ${unfurlUrl}`);
     return NextResponse.json({ result: metadata.open_graph });
   } catch (error: any) {
-    logger.warn(`Error unfurling URL: ${url}`, safeStringify(error));
+    logger.warn(`Error unfurling URL: ${unfurlUrl}`, safeStringify(error));
     return NextResponse.json({ result: 'error' }, { status: 200 });
   }
 }
