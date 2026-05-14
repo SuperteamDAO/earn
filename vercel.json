@@ -1,4 +1,10 @@
 {
+  "crons": [
+    {
+      "path": "/api/cron/fortnightly-grants-summary",
+      "schedule": "0 9 */14 * *"
+    }
+  ],
   "rewrites": [
     { "source": "/build", "destination": "https://build.superteam.fun/build" },
     {
