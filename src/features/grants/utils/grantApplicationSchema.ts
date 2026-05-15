@@ -186,7 +186,7 @@ export const grantApplicationSchema = (
             ctx.addIssue({
               code: 'custom',
               path: ['answers', index, 'answer'],
-              message: `Answer for "${question.question}" is required`,
+              message: 'This field is required',
             });
             return;
           }
