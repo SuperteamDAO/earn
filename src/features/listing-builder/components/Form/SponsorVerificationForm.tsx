@@ -1,6 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useQuery } from '@tanstack/react-query';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
 import { toast } from 'sonner';
 import type * as z from 'zod';
@@ -19,18 +20,33 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { SideDrawer, SideDrawerContent } from '@/components/ui/side-drawer';
 import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 
+import { chaptersQuery } from '@/features/chapters/queries/chapters';
 import { SocialInput } from '@/features/social/components/SocialInput';
 import { sponsorVerificationSchema } from '@/features/sponsor/utils/sponsorVerificationSchema';
 
 import { useListingForm } from '../../hooks';
 
+type CoreMember = {
+  id: string;
+  name: string;
+};
+
 export const SponsorVerificationForm = () => {
   const { refetchUser } = useUser();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [hasSubmitted, setHasSubmitted] = useState(false);
+  const isSubmittingRef = useRef(false);
 
   const listingForm = useListingForm();
   const id = useWatch({
@@ -50,15 +66,43 @@ export const SponsorVerificationForm = () => {
     },
   });
 
-  const { user } = useUser();
-
-  const hasFilledVerificationInfo = !!user?.currentSponsor?.verificationInfo;
   const commitToDeadline = form.watch('commitToDeadline');
+  const superteamName = useWatch({
+    control: form.control,
+    name: 'superteamName',
+  });
+
+  const { data: chapters = [] } = useQuery(chaptersQuery);
+  const selectedChapter = useMemo(
+    () => chapters.find((chapter) => chapter.name === superteamName),
+    [chapters, superteamName],
+  );
+  const hasNoAssociation = superteamName === 'No association';
+
+  const { data: coreMembers = [], isLoading: isLoadingCoreMembers } = useQuery({
+    queryKey: ['chapter-core-members', selectedChapter?.id],
+    queryFn: async () => {
+      const response = await api.get<{ coreMembers: CoreMember[] }>(
+        `/api/chapters/${selectedChapter?.id}/core-members`,
+      );
+      return response.data.coreMembers;
+    },
+    enabled: Boolean(selectedChapter?.id) && !hasNoAssociation,
+    staleTime: 5 * 60 * 1000,
+    gcTime: 5 * 60 * 1000,
+  });
+
+  useEffect(() => {
+    form.setValue('superteamLead', '');
+  }, [form, superteamName]);
 
   const onSubmit = async (
     values: z.infer<typeof sponsorVerificationSchema>,
   ) => {
+    if (isSubmittingRef.current) return;
+
     try {
+      isSubmittingRef.current = true;
       setIsSubmitting(true);
 
       const payload = {
@@ -70,6 +114,7 @@ export const SponsorVerificationForm = () => {
       };
 
       await api.post('/api/sponsor/verification', payload);
+      setHasSubmitted(true);
       await refetchUser();
 
       toast.success('Verification information updated successfully');
@@ -80,6 +125,7 @@ export const SponsorVerificationForm = () => {
           'Failed to update verification information',
       );
     } finally {
+      isSubmittingRef.current = false;
       setIsSubmitting(false);
     }
   };
@@ -87,7 +133,7 @@ export const SponsorVerificationForm = () => {
   return (
     <SideDrawer isOpen={true} onClose={() => null}>
       <SideDrawerContent className="overflow-auto py-6 sm:max-w-lg sm:px-6">
-        {!hasFilledVerificationInfo ? (
+        {!hasSubmitted ? (
           <div className="flex h-full flex-col">
             <div className="w-fit rounded-full bg-blue-50 p-6">
               <VerifiedBadge style={{ width: '30px', height: '30px' }} />
@@ -113,36 +159,18 @@ export const SponsorVerificationForm = () => {
               >
                 <FormField
                   control={form.control}
-                  name="superteamLead"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="mb-1 text-slate-500" isRequired>
-                        Is there a Superteam Lead that can vouch for you?
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Enter Superteam Lead name"
-                          {...field}
-                          value={field.value || ''}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
                   name="superteamName"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className="mb-1 text-slate-500" isRequired>
-                        Which Superteam does this lead represent?
+                        Which Superteam are you associated with?
                       </FormLabel>
                       <FormControl>
                         <SuperteamCombobox
                           value={field.value || null}
-                          onChange={(value) => field.onChange(value || '')}
+                          onChange={(value) => {
+                            field.onChange(value || '');
+                          }}
                           placeholder="Select a Superteam"
                           className="w-full"
                           classNames={{
@@ -157,6 +185,72 @@ export const SponsorVerificationForm = () => {
                   )}
                 />
 
+                <FormField
+                  control={form.control}
+                  name="superteamLead"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="mb-1 text-slate-500" isRequired>
+                        Is there a Superteam lead that can vouch for you?
+                      </FormLabel>
+                      <FormControl>
+                        {hasNoAssociation ? (
+                          <Input
+                            placeholder="Enter their name"
+                            {...field}
+                            value={field.value || ''}
+                          />
+                        ) : !selectedChapter ? (
+                          <Input
+                            disabled
+                            placeholder="Select a Superteam first"
+                            value=""
+                          />
+                        ) : isLoadingCoreMembers ? (
+                          <Input
+                            disabled
+                            placeholder="Loading Leads..."
+                            value=""
+                          />
+                        ) : coreMembers.length === 0 ? (
+                          <Input
+                            disabled
+                            placeholder="No Leads found for this Superteam"
+                            value=""
+                          />
+                        ) : (
+                          <Select
+                            value={
+                              coreMembers.find(
+                                (member) => member.name === field.value,
+                              )?.id
+                            }
+                            onValueChange={(memberId) => {
+                              const selectedMember = coreMembers.find(
+                                (member) => member.id === memberId,
+                              );
+                              field.onChange(selectedMember?.name || '');
+                            }}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select a Lead" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {coreMembers.map((member) => (
+                                <SelectItem key={member.id} value={member.id}>
+                                  <div className="flex flex-col">
+                                    <span>{member.name}</span>
+                                  </div>
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        )}
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
                 <FormField
                   control={form.control}
                   name="fundingSource"
