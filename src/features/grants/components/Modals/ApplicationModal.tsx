@@ -42,8 +42,11 @@ import {
 } from '@/features/social/utils/x-verification';
 
 import { userApplicationQuery } from '../../queries/user-application';
-import { type Grant } from '../../types';
-import { grantApplicationSchema } from '../../utils/grantApplicationSchema';
+import { type Grant, type GrantQuestion } from '../../types';
+import {
+  grantApplicationSchema,
+  normalizeGrantQuestionLinkAnswer,
+} from '../../utils/grantApplicationSchema';
 import {
   AGENTIC_ENGINEERING_GRANT_COPY,
   extractLumaEventSlug,
@@ -162,7 +165,7 @@ export const ApplicationModal = ({
       telegram: extractSocialUsername('telegram', user?.telegram || '') || '',
       answers:
         Array.isArray(questions) && questions.length > 0
-          ? questions.map((q) => ({
+          ? questions.map((q: GrantQuestion) => ({
               question: q.question,
               answer:
                 (
@@ -362,7 +365,20 @@ export const ApplicationModal = ({
         ask: fixedAsk || ask || null,
         twitter,
         github,
-        answers: answers || [],
+        answers:
+          answers?.map((answer, index) => {
+            const question = questions?.[index];
+            return {
+              ...answer,
+              question: question?.question ?? answer.question,
+              optional: question?.optional,
+              type: question?.type,
+              answer:
+                question?.type === 'link' && answer.answer
+                  ? normalizeGrantQuestionLinkAnswer(answer.answer)
+                  : answer.answer,
+            };
+          }) || [],
         telegram: telegram || user?.telegram || '',
         ...(isST && {
           lumaLink,
@@ -437,7 +453,8 @@ export const ApplicationModal = ({
         ...(isST ? [] : ['github' as keyof FormData]),
         ...(isST ? ['lumaLink' as const, 'expenseBreakdown' as const] : []),
         ...(questions?.map(
-          (_: any, index: number) => `answers.${index}.answer` as const,
+          (_: GrantQuestion, index: number) =>
+            `answers.${index}.answer` as const,
         ) || []),
       ],
       2: [
@@ -876,17 +893,76 @@ export const ApplicationModal = ({
                   />
                 )}
 
-                {questions?.map((question: any, index: number) => (
-                  <FormFieldWrapper
-                    key={question.order}
-                    control={form.control}
-                    name={`answers.${index}.answer`}
-                    label={question.question}
-                    isRequired
-                    isRichEditor
-                    isPro={isProGrant}
-                  />
-                ))}
+                {questions?.map((question: GrantQuestion, index: number) => {
+                  if (question.type === 'link') {
+                    return (
+                      <FormField
+                        key={question.order ?? index}
+                        control={form.control}
+                        name={`answers.${index}.answer`}
+                        render={({ field }) => (
+                          <FormItem className="flex flex-col gap-2">
+                            <div className="min-w-0">
+                              <FormLabel
+                                isRequired={!question.optional}
+                                className="[overflow-wrap:anywhere]"
+                              >
+                                {question.question}
+                              </FormLabel>
+                            </div>
+                            <div>
+                              <FormControl>
+                                <div className="flex h-9 items-center">
+                                  <div className="flex h-full items-center justify-center rounded-l-md border border-r-0 border-slate-300 bg-slate-50 px-3 text-xs font-medium text-slate-600 shadow-xs md:justify-start md:text-sm">
+                                    https://
+                                  </div>
+                                  <Input
+                                    className={cn(
+                                      'h-full rounded-l-none',
+                                      isProGrant &&
+                                        'focus-visible:ring-zinc-400',
+                                    )}
+                                    placeholder="Add a link..."
+                                    value={
+                                      field.value?.replace(
+                                        /^https?:\/\//i,
+                                        '',
+                                      ) || ''
+                                    }
+                                    onChange={(e) => {
+                                      const value =
+                                        e.currentTarget.value.replace(
+                                          /^https?:\/\//i,
+                                          '',
+                                        );
+                                      field.onChange(
+                                        value ? `https://${value}` : '',
+                                      );
+                                    }}
+                                    autoComplete="off"
+                                  />
+                                </div>
+                              </FormControl>
+                              <FormMessage className="pt-1" />
+                            </div>
+                          </FormItem>
+                        )}
+                      />
+                    );
+                  }
+
+                  return (
+                    <FormFieldWrapper
+                      key={question.order ?? index}
+                      control={form.control}
+                      name={`answers.${index}.answer`}
+                      label={question.question}
+                      isRequired={!question.optional}
+                      isRichEditor
+                      isPro={isProGrant}
+                    />
+                  );
+                })}
               </div>
             )}
             {activeStep === 2 && (

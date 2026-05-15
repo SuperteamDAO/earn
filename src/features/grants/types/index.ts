@@ -3,6 +3,13 @@ import type { User } from '@/interface/user';
 
 import { type References } from '@/features/listings/types';
 
+export type GrantQuestion = {
+  order: number;
+  question: string;
+  optional?: boolean;
+  type?: 'text' | 'link';
+};
+
 interface Grant {
   id: string;
   title: string;
@@ -35,7 +42,7 @@ interface Grant {
   updatedAt?: string;
   minReward?: number;
   maxReward?: number;
-  questions?: any;
+  questions?: GrantQuestion[];
   pocSocials?: string;
   status: string;
   region: string;
