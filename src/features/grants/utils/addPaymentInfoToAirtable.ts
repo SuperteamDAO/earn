@@ -11,7 +11,10 @@ import {
   airtableUrl,
   fetchAirtableRecordId,
 } from '@/utils/airtable';
-import { getRegionNameForLocation } from '@/utils/chapterRegion';
+import {
+  getAirtablePaymentsRegionName,
+  getRegionNameForLocation,
+} from '@/utils/chapterRegion';
 import { safeStringify } from '@/utils/safeStringify';
 
 const AirtableInputSchema = z.object({
@@ -246,9 +249,10 @@ export async function addPaymentInfoToAirtable(
     logger.info(
       `Determining region and fetching Airtable Region ID for Tranche ID: ${validatedTrancheId}`,
     );
-    const regionName = await getRegionNameForLocation(
+    const chapterRegionName = await getRegionNameForLocation(
       application.user.location,
     );
+    const regionName = getAirtablePaymentsRegionName(chapterRegionName);
 
     logger.info(
       `Determined region name: '${regionName}' based on user location: '${application.user.location ?? 'N/A'}' for Tranche ID: ${validatedTrancheId}`,

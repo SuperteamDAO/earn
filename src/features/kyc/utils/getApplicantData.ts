@@ -7,6 +7,8 @@ import { SUMSUB_BASE_URL } from '../constants/SUMSUB_BASE_URL';
 import { createSumSubHeaders } from './createSumSubHeaders';
 import { handleSumSubError } from './handleSumSubError';
 
+const MISSING_ID_NUMBER_FALLBACK = 'REDACTED';
+
 export const getApplicantData = async (
   userId: string,
   secretKey: string,
@@ -212,7 +214,11 @@ export const getApplicantData = async (
       throw new Error('Sumsub: No ID documents found for applicant');
     }
 
-    const idNumber = approvedIdDoc?.number || '';
+    const idNumber =
+      typeof approvedIdDoc?.number === 'string' &&
+      approvedIdDoc.number.trim().length > 0
+        ? approvedIdDoc.number
+        : MISSING_ID_NUMBER_FALLBACK;
     const idType = approvedIdDoc?.idDocType || '';
 
     return {
