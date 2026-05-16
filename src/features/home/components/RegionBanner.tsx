@@ -30,6 +30,27 @@ const customBannerPosition: Partial<
   Singapore: {
     objectPosition: '50% 30%',
   },
+  Spain: {
+    objectFit: 'fill',
+  },
+  Poland: {
+    objectFit: 'fill',
+  },
+  Ukraine: {
+    objectFit: 'fill',
+  },
+  Netherlands: {
+    objectFit: 'fill',
+  },
+  Indonesia: {
+    objectFit: 'fill',
+  },
+  India: {
+    objectFit: 'fill',
+  },
+  Australia: {
+    objectFit: 'fill',
+  },
 };
 
 export function RegionBanner({ st }: { st: ChapterDisplay }) {

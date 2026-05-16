@@ -1,4 +1,3 @@
-import { useQueryClient } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
@@ -10,14 +9,9 @@ interface UseAutoSwitchSponsorOptions {
   queryKey?: string[];
 }
 
-export function useAutoSwitchSponsor({
-  error,
-  refetch,
-  queryKey,
-}: UseAutoSwitchSponsorOptions) {
+export function useAutoSwitchSponsor({ error }: UseAutoSwitchSponsorOptions) {
   const { user } = useUser();
   const updateUser = useUpdateUser();
-  const queryClient = useQueryClient();
   const [isSwitching, setIsSwitching] = useState(false);
 
   useEffect(() => {
@@ -57,58 +51,33 @@ export function useAutoSwitchSponsor({
           return;
         }
 
-        // Cancel any pending queries immediately to prevent retries
-        if (queryKey) {
-          queryClient.cancelQueries({ queryKey });
-        }
-
         setIsSwitching(true);
 
-        // Show toast immediately (synchronously)
         toast.loading('Incorrect sponsor, switching to correct one', {
           id: 'sponsor-switch',
         });
 
-        // Use requestAnimationFrame to ensure toast is rendered before async operation
-        requestAnimationFrame(async () => {
-          const startTime = Date.now();
-          const minDelay = 3000; // 3 seconds minimum delay
+        let isReloading = false;
 
-          try {
-            // Switch sponsor
-            await updateUser.mutateAsync({ currentSponsorId: sponsorId });
+        try {
+          await updateUser.mutateAsync({ currentSponsorId: sponsorId });
 
-            // Calculate remaining time to ensure minimum 3 seconds of loading toast
-            const elapsedTime = Date.now() - startTime;
-            const remainingTime = Math.max(0, minDelay - elapsedTime);
+          toast.success('Switched to the correct sponsor', {
+            id: 'sponsor-switch',
+          });
 
-            // Wait for remaining time if needed
-            if (remainingTime > 0) {
-              await new Promise((resolve) =>
-                setTimeout(resolve, remainingTime),
-              );
-            }
-
-            toast.success('Switched to the correct sponsor', {
-              id: 'sponsor-switch',
-            });
-
-            // Invalidate relevant queries
-            if (queryKey) {
-              queryClient.invalidateQueries({ queryKey });
-            }
-
-            // Refetch the data
-            refetch();
-          } catch (switchError) {
-            toast.error('Failed to switch sponsor', {
-              id: 'sponsor-switch',
-            });
-            console.error('Failed to auto-switch sponsor:', switchError);
-          } finally {
+          isReloading = true;
+          window.location.reload();
+        } catch (switchError) {
+          toast.error('Failed to switch sponsor', {
+            id: 'sponsor-switch',
+          });
+          console.error('Failed to auto-switch sponsor:', switchError);
+        } finally {
+          if (!isReloading) {
             setIsSwitching(false);
           }
-        });
+        }
       }
     };
 
@@ -120,9 +89,6 @@ export function useAutoSwitchSponsor({
     user?.currentSponsorId,
     isSwitching,
     updateUser,
-    refetch,
-    queryClient,
-    queryKey,
   ]);
 
   return { isSwitching };

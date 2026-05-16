@@ -4,7 +4,8 @@ import { useEffect } from 'react';
 import { applicationStateAtom } from '../atoms/applicationStateAtom';
 import { type GrantApplicationWithTranchesAndUser } from '../queries/user-application';
 import { type Grant } from '../types';
-import { COINDCX_GRANT_ID, isAgenticEngineeringGrant } from '../utils/stGrant';
+import { isGrantApplicationInCooldown } from '../utils/grantApplicationCooldown';
+import { isAgenticEngineeringGrant } from '../utils/stGrant';
 
 export const useApplicationState = (
   application: GrantApplicationWithTranchesAndUser | undefined,
@@ -18,29 +19,15 @@ export const useApplicationState = (
   const hasSpecialTranches =
     (grant.isNative && grant.airtableId) || isAgenticEngineeringGrant(grant);
 
-  const isInCooldownPeriod = () => {
-    if (
-      !application ||
-      application.applicationStatus !== 'Rejected' ||
-      grant.id !== COINDCX_GRANT_ID
-    ) {
-      return false;
-    }
-
-    const decidedAt = application.decidedAt;
-    if (!decidedAt) return false;
-
-    const thirtyDaysInMs = 30 * 24 * 60 * 60 * 1000;
-    const timeSinceDecision = Date.now() - new Date(decidedAt).getTime();
-
-    return timeSinceDecision < thirtyDaysInMs;
-  };
-
   useEffect(() => {
     if (!application) return;
 
-    if (isInCooldownPeriod()) {
-      setApplicationState('COOLDOWN');
+    if (application.applicationStatus === 'Rejected') {
+      setApplicationState(
+        isGrantApplicationInCooldown(application.decidedAt)
+          ? 'COOLDOWN'
+          : 'ALLOW NEW',
+      );
       return;
     }
 
@@ -133,7 +120,7 @@ export const useApplicationState = (
 
       case 'COOLDOWN':
         return {
-          text: 'Reapply Later',
+          text: 'Cooldown period',
           bg: 'bg-gray-500',
           isDisabled: true,
           loadingText: null,

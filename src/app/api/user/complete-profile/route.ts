@@ -231,7 +231,7 @@ export async function POST(request: NextRequest) {
     }
 
     logger.info(
-      `Completing user profile with data: ${safeStringify(updatedData)}`,
+      `Completing user profile for user ID: ${userId}; fields: ${Object.keys(updatedData).join(', ')}`,
     );
 
     let walletAddress = user.walletAddress;
@@ -244,7 +244,7 @@ export async function POST(request: NextRequest) {
       });
       walletAddress = createWalletResponse.address;
     } else {
-      logger.info(`Using existing wallet for user ${userId}: ${walletAddress}`);
+      logger.info(`Using existing wallet for user ID: ${userId}`);
     }
 
     const referralCode =

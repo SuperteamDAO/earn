@@ -9,7 +9,10 @@ import {
   airtableUrl,
   fetchAirtableRecordId,
 } from '@/utils/airtable';
-import { getRegionNameForLocation } from '@/utils/chapterRegion';
+import {
+  getAirtablePaymentsRegionName,
+  getRegionNameForLocation,
+} from '@/utils/chapterRegion';
 import { getRankLabels } from '@/utils/rank';
 import { safeStringify } from '@/utils/safeStringify';
 
@@ -226,7 +229,10 @@ export async function addPaymentInfoToAirtable(
     logger.info(
       `Determining region and fetching Airtable Region ID for Submission ID: ${validatedSubmissionId}`,
     );
-    const regionName = await getRegionNameForLocation(submission.user.location);
+    const chapterRegionName = await getRegionNameForLocation(
+      submission.user.location,
+    );
+    const regionName = getAirtablePaymentsRegionName(chapterRegionName);
 
     logger.info(
       `Determined region name: '${regionName}' based on user location: '${submission.user.location ?? 'N/A'}' for Submission ID: ${validatedSubmissionId}`,
@@ -257,7 +263,6 @@ export async function addPaymentInfoToAirtable(
 
     logger.info(
       `Attempting to add payment info to Airtable for Submission ID: ${validatedSubmissionId}`,
-      safeStringify(airtableData),
     );
 
     const airtablePayload = airtableInsert([{ fields: airtableData }], true);
@@ -292,13 +297,8 @@ export async function addPaymentInfoToAirtable(
     logger.error(baseMessage);
 
     if (error.response) {
-      logger.error(
-        `Airtable API Error Response: ${safeStringify(error.response.data)}`,
-      );
+      logger.error('Airtable API Error Response received');
       logger.error(`Airtable API Error Status: ${error.response.status}`);
-      logger.error(
-        `Airtable API Error Headers: ${safeStringify(error.response.headers)}`,
-      );
     } else if (error.request) {
       logger.error(
         `Airtable API No Response Received (Network Error?): ${safeStringify(error.request)}`,

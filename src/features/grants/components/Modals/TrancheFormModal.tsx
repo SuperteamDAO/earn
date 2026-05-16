@@ -80,7 +80,7 @@ const createTrancheFormSchema = (
         ? z
             .array(z.string())
             .min(1, 'AI subscription receipt is required')
-            .max(1, 'Only one AI subscription receipt can be uploaded')
+            .max(3, 'Up to 3 AI subscription receipts can be uploaded')
         : z.array(z.string()).optional(),
     })
     .superRefine((data, ctx) => {
@@ -204,7 +204,7 @@ export const TrancheFormModal = ({ grant, applicationId, onClose }: Props) => {
         ...(isAgenticEngineering && {
           colosseumLink: values.colosseumLink,
           githubRepo: values.githubRepo,
-          aiReceipt: values.aiReceipt?.[0],
+          aiReceipts: values.aiReceipt,
         }),
       });
       form.reset();
@@ -495,7 +495,7 @@ export const TrancheFormModal = ({ grant, applicationId, onClose }: Props) => {
                         source="grant-agentic-receipts"
                         value={(field.value as string[]) || []}
                         onChange={field.onChange}
-                        maxImages={1}
+                        maxImages={3}
                         minImages={1}
                         label={trancheCopy?.aiReceipt?.label}
                         description={trancheCopy?.aiReceipt?.description}

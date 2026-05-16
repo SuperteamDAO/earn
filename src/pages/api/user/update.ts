@@ -60,7 +60,9 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
         .json({ error: 'No valid fields provided for update' });
     }
 
-    logger.info(`Updating user with data: ${safeStringify(updatedData)}`);
+    logger.info(
+      `Updating user ${userId} fields: ${Object.keys(updatedData).join(', ')}`,
+    );
 
     await prisma.user.update({
       where: { id: userId as string },

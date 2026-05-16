@@ -7,7 +7,9 @@ import { tweetLinkRegex } from '@/features/social/utils/regex';
 import { telegramUsernameSchema } from '@/features/social/utils/schema';
 import {
   extractXHandle,
+  INVALID_X_STATUS_LINK_MESSAGE,
   isHandleVerified,
+  isXInternalStatusUrl,
   isXUrl,
 } from '@/features/social/utils/x-verification';
 
@@ -28,7 +30,13 @@ const submissionSchema = (
       tweet: z
         .union([
           z.literal(''),
-          z.string().regex(tweetLinkRegex, 'Invalid tweet link'),
+          z
+            .string()
+            .refine(
+              (value) =>
+                tweetLinkRegex.test(value) || isXInternalStatusUrl(value),
+              'Invalid tweet link',
+            ),
         ])
         .optional(),
       otherInfo: z.string().optional(),
@@ -80,7 +88,32 @@ const submissionSchema = (
         });
       }
 
-      if (!isAgent && data.tweet && isXUrl(data.tweet)) {
+      if (listing.type === 'bounty' && data.tweet) {
+        if (isXInternalStatusUrl(data.tweet)) {
+          ctx.addIssue({
+            code: 'custom',
+            path: ['tweet'],
+            message: INVALID_X_STATUS_LINK_MESSAGE,
+          });
+        }
+      }
+
+      if (listing.type === 'bounty' && data.link) {
+        if (isXInternalStatusUrl(data.link)) {
+          ctx.addIssue({
+            code: 'custom',
+            path: ['link'],
+            message: INVALID_X_STATUS_LINK_MESSAGE,
+          });
+        }
+      }
+
+      if (
+        !isAgent &&
+        data.tweet &&
+        isXUrl(data.tweet) &&
+        !isXInternalStatusUrl(data.tweet)
+      ) {
         const handle = extractXHandle(data.tweet);
         if (handle) {
           const verifiedHandles = user?.linkedTwitter || [];
@@ -94,7 +127,12 @@ const submissionSchema = (
         }
       }
 
-      if (!isAgent && data.link && isXUrl(data.link)) {
+      if (
+        !isAgent &&
+        data.link &&
+        isXUrl(data.link) &&
+        !isXInternalStatusUrl(data.link)
+      ) {
         const handle = extractXHandle(data.link);
         if (handle) {
           const verifiedHandles = user?.linkedTwitter || [];

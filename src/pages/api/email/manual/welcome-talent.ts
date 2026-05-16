@@ -53,11 +53,11 @@ export async function handler(
       replyTo: replyToEmail,
     });
 
-    logger.info(`Welcome email sent successfully to: ${normalizedEmail}`);
+    logger.info('Welcome talent email sent successfully');
     return res.status(200).json({ message: 'Ok' });
   } catch (error: any) {
     logger.error(
-      `Error occurred while sending welcome email to ${normalizedEmail}: ${safeStringify(error)}`,
+      `Error occurred while sending welcome talent email: ${safeStringify(error)}`,
     );
     return res.status(500).json({ error: 'Something went wrong.' });
   }

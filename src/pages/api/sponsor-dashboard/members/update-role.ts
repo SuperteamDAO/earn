@@ -27,7 +27,7 @@ async function updateMemberRole(
   }
 
   if (!id || !role || !VALID_ROLES.includes(role)) {
-    logger.warn(`Invalid role update request: ${safeStringify(req.body)}`);
+    logger.warn('Invalid role update request');
     return res.status(400).json({ error: 'Invalid role update request' });
   }
 
