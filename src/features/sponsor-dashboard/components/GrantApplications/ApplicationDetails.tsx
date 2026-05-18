@@ -17,7 +17,7 @@ import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
 import { truncateString } from '@/utils/truncateString';
 
-import { type Grant } from '@/features/grants/types';
+import { type Grant, type GrantQuestion } from '@/features/grants/types';
 import {
   AGENTIC_ENGINEERING_GRANT_COPY,
   COINDCX_GRANT_ID,
@@ -75,6 +75,14 @@ export const ApplicationDetails = ({
     : isAgenticEngineering
       ? AGENTIC_ENGINEERING_GRANT_COPY.application
       : null;
+
+  const getAnswerQuestion = (answer: any): GrantQuestion | undefined =>
+    grant?.questions?.find((question) => question.question === answer.question);
+
+  const isLinkAnswer = (answer: any) => {
+    const grantQuestion = getAnswerQuestion(answer);
+    return answer.type === 'link' || grantQuestion?.type === 'link';
+  };
 
   const queryClient = useQueryClient();
 
@@ -491,14 +499,19 @@ export const ApplicationDetails = ({
 
               {Array.isArray(selectedApplication?.answers) &&
                 selectedApplication.answers.map(
-                  (answer: any, answerIndex: number) => (
-                    <InfoBox
-                      key={answerIndex}
-                      label={answer.question}
-                      content={answer.answer}
-                      isHtml
-                    />
-                  ),
+                  (answer: any, answerIndex: number) => {
+                    const grantQuestion = getAnswerQuestion(answer);
+                    const isOptional =
+                      answer.optional ?? grantQuestion?.optional;
+                    return (
+                      <InfoBox
+                        key={answerIndex}
+                        label={`${answer.question}${isOptional ? ' (Optional)' : ''}`}
+                        content={answer.answer}
+                        isHtml={!isLinkAnswer(answer)}
+                      />
+                    );
+                  },
                 )}
             </ScrollArea>
             <div className="w-1/3 max-w-[20rem] p-4">
