@@ -160,6 +160,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
               select: {
                 id: true,
                 chapterId: true,
+                type: true,
                 chapter: {
                   select: {
                     id: true,
