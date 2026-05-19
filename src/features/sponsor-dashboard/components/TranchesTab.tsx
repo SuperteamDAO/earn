@@ -145,16 +145,16 @@ export const TranchesTab = ({ slug }: Props) => {
   const rejectGrantMutation = useMutation({
     mutationFn: async ({
       trancheId,
-      emailBody,
+      customNote,
     }: {
       trancheId: string;
-      emailBody?: string;
+      customNote?: string;
     }) => {
-      const customEmailBody = emailBody?.trim();
+      const reviewerNote = customNote?.trim();
       await api.post('/api/sponsor-dashboard/grants/update-tranche-status', {
         id: trancheId,
         status: 'Rejected',
-        ...(customEmailBody ? { emailBody: customEmailBody } : {}),
+        ...(reviewerNote ? { customNote: reviewerNote } : {}),
       });
     },
     onMutate: async ({ trancheId }) => {
@@ -203,18 +203,18 @@ export const TranchesTab = ({ slug }: Props) => {
     mutationFn: async ({
       trancheId,
       approvedAmount,
-      emailBody,
+      customNote,
     }: {
       trancheId: string;
       approvedAmount: number;
-      emailBody?: string;
+      customNote?: string;
     }) => {
-      const customEmailBody = emailBody?.trim();
+      const reviewerNote = customNote?.trim();
       await api.post('/api/sponsor-dashboard/grants/update-tranche-status', {
         id: trancheId,
         status: 'Approved',
         approvedAmount,
-        ...(customEmailBody ? { emailBody: customEmailBody } : {}),
+        ...(reviewerNote ? { customNote: reviewerNote } : {}),
       });
     },
     onMutate: async ({ trancheId, approvedAmount }) => {
@@ -263,13 +263,13 @@ export const TranchesTab = ({ slug }: Props) => {
   const handleApproveTranche = (
     trancheId: string,
     approvedAmount: number,
-    emailBody?: string,
+    customNote?: string,
   ) => {
-    approveGrantMutation.mutate({ trancheId, approvedAmount, emailBody });
+    approveGrantMutation.mutate({ trancheId, approvedAmount, customNote });
   };
 
-  const handleRejectTranche = (trancheId: string, emailBody?: string) => {
-    rejectGrantMutation.mutate({ trancheId, emailBody });
+  const handleRejectTranche = (trancheId: string, customNote?: string) => {
+    rejectGrantMutation.mutate({ trancheId, customNote });
   };
   return (
     <>

@@ -190,19 +190,19 @@ export const ApplicationsTab = ({ slug }: Props) => {
     mutationFn: async ({
       applicationId,
       approvedAmount,
-      emailBody,
+      customNote,
     }: {
       applicationId: string;
       approvedAmount: number;
-      emailBody?: string;
+      customNote?: string;
     }) => {
-      const customEmailBody = emailBody?.trim();
+      const reviewerNote = customNote?.trim();
       const response = await api.post(
         '/api/sponsor-dashboard/grants/update-application-status',
         {
           data: [{ id: applicationId, approvedAmount }],
           applicationStatus: 'Approved',
-          ...(customEmailBody ? { emailBody: customEmailBody } : {}),
+          ...(reviewerNote ? { customNote: reviewerNote } : {}),
         },
       );
       return response.data;
@@ -357,19 +357,19 @@ export const ApplicationsTab = ({ slug }: Props) => {
     }
   };
 
-  const handleRejectGrant = (applicationId: string, emailBody?: string) => {
+  const handleRejectGrant = (applicationId: string, customNote?: string) => {
     rejectGrantApplications.mutate({
       applicationIds: [applicationId],
-      emailBody,
+      customNote,
     });
   };
 
   const handleApproveGrant = (
     applicationId: string,
     approvedAmount: number,
-    emailBody?: string,
+    customNote?: string,
   ) => {
-    approveGrantMutation.mutate({ applicationId, approvedAmount, emailBody });
+    approveGrantMutation.mutate({ applicationId, approvedAmount, customNote });
   };
 
   const handleModalAction = (actionType: 'reject' | 'spam') => {

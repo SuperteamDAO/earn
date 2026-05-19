@@ -1,7 +1,6 @@
 import { ChevronDown, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
-import { RichEditor } from '@/components/shared/RichEditor';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import {
@@ -12,12 +11,15 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Separator } from '@/components/ui/separator';
 import { TokenIcon } from '@/components/ui/token-icon';
+import { cn } from '@/utils/cn';
 
 import {
   getCustomEmailPlainText,
-  validateCustomEmailBody,
+  sanitizeCustomEmailBody,
+  validateCustomEmailNote,
 } from '../../utils/customEmailSanitizer';
 import { getTrancheRejectedEmailBody } from '../../utils/grantEmailCopy';
+import { CustomNoteEditor } from '../GrantApplications/Modals/CustomNoteEditor';
 
 interface RejectTrancheProps {
   rejectIsOpen: boolean;
@@ -30,7 +32,7 @@ interface RejectTrancheProps {
   salutation: string | null | undefined;
   token: string;
   enableCustomEmail: boolean;
-  onRejectTranche: (trancheId: string, emailBody?: string) => void;
+  onRejectTranche: (trancheId: string, customNote?: string) => void;
 }
 
 export const RejectTrancheModal = ({
@@ -47,24 +49,27 @@ export const RejectTrancheModal = ({
   onRejectTranche,
 }: RejectTrancheProps) => {
   const [loading, setLoading] = useState<boolean>(false);
-  const [emailBody, setEmailBody] = useState('');
+  const [customNote, setCustomNote] = useState('');
   const [isCustomEmailOpen, setIsCustomEmailOpen] = useState(false);
   const [emailError, setEmailError] = useState<string | null>(null);
 
-  const defaultEmailBody = getTrancheRejectedEmailBody({
+  const previewEmailBody = getTrancheRejectedEmailBody({
     granteeName,
     projectTitle,
     sponsorName,
     salutation,
+    reviewerNote: sanitizeCustomEmailBody(customNote),
   });
 
   const rejectTranche = async () => {
     if (!trancheId) return;
 
-    const customEmailBody = emailBody.trim();
-    const emailValidation = validateCustomEmailBody(customEmailBody);
-    if (enableCustomEmail && isCustomEmailOpen && !emailValidation.isValid) {
-      setEmailError(emailValidation.error);
+    const noteValidation = validateCustomEmailNote({
+      noteHtml: customNote.trim(),
+      fullEmailHtml: previewEmailBody,
+    });
+    if (enableCustomEmail && isCustomEmailOpen && !noteValidation.isValid) {
+      setEmailError(noteValidation.error);
       return;
     }
 
@@ -73,7 +78,7 @@ export const RejectTrancheModal = ({
       await onRejectTranche(
         trancheId,
         enableCustomEmail && isCustomEmailOpen
-          ? emailValidation.sanitized
+          ? noteValidation.sanitized
           : undefined,
       );
     } catch (e) {
@@ -85,11 +90,11 @@ export const RejectTrancheModal = ({
   };
 
   useEffect(() => {
-    setEmailBody(defaultEmailBody);
+    setCustomNote('');
     setIsCustomEmailOpen(false);
     setEmailError(null);
     setLoading(false);
-  }, [trancheId, defaultEmailBody]);
+  }, [trancheId]);
 
   return (
     <Dialog open={rejectIsOpen} onOpenChange={rejectOnClose}>
@@ -119,34 +124,28 @@ export const RejectTrancheModal = ({
           </div>
 
           {enableCustomEmail && isCustomEmailOpen && (
-            <div className="mb-6">
-              <div className="mb-2 flex items-center justify-between gap-3">
-                <p className="font-medium text-slate-600">Email Body</p>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  className="h-auto px-2 py-1 text-xs font-semibold text-slate-500"
-                  onClick={() => setEmailBody(defaultEmailBody)}
-                  disabled={loading || emailBody === defaultEmailBody}
-                >
-                  Reset
-                </Button>
-              </div>
-              <RichEditor
-                id="reject-tranche-email-body"
-                height="h-[190px]"
-                value={emailBody}
-                onChange={(value) => {
-                  setEmailBody(value);
-                  setEmailError(validateCustomEmailBody(value).error);
-                }}
-                error={!!emailError}
-                placeholder="Write the email body"
-              />
-              {emailError && (
-                <p className="mt-2 text-sm text-red-500">{emailError}</p>
-              )}
-            </div>
+            <CustomNoteEditor
+              id="reject-tranche-custom-note"
+              value={customNote}
+              previewHtml={previewEmailBody}
+              error={emailError}
+              onChange={(value) => {
+                const sanitizedNote = sanitizeCustomEmailBody(value);
+                setCustomNote(value);
+                setEmailError(
+                  validateCustomEmailNote({
+                    noteHtml: value,
+                    fullEmailHtml: getTrancheRejectedEmailBody({
+                      granteeName,
+                      projectTitle,
+                      sponsorName,
+                      salutation,
+                      reviewerNote: sanitizedNote,
+                    }),
+                  }).error,
+                );
+              }}
+            />
           )}
 
           <div className="flex gap-3">
@@ -156,12 +155,17 @@ export const RejectTrancheModal = ({
             </Button>
             <div className="flex flex-1">
               <Button
-                className="flex-1 rounded-l-lg rounded-r-none border border-red-500 bg-red-50 text-red-600 hover:bg-red-100"
+                className={cn(
+                  'flex-1 border border-red-500 bg-red-50 text-red-600 hover:bg-red-100',
+                  enableCustomEmail
+                    ? 'rounded-l-lg rounded-r-none'
+                    : 'rounded-lg',
+                )}
                 disabled={
                   loading ||
                   (enableCustomEmail &&
                     isCustomEmailOpen &&
-                    (!getCustomEmailPlainText(emailBody) || !!emailError))
+                    (!getCustomEmailPlainText(customNote) || !!emailError))
                 }
                 onClick={rejectTranche}
               >
@@ -170,7 +174,7 @@ export const RejectTrancheModal = ({
                     <span className="loading loading-spinner mr-2" />
                     <span>
                       {isCustomEmailOpen
-                        ? 'Rejecting with Custom Email'
+                        ? 'Rejecting with Custom Note'
                         : 'Rejecting'}
                     </span>
                   </>
@@ -181,7 +185,7 @@ export const RejectTrancheModal = ({
                     </div>
                     <span>
                       {isCustomEmailOpen
-                        ? 'Reject with Custom Email'
+                        ? 'Reject with Custom Note'
                         : 'Reject Tranche'}
                     </span>
                   </>
@@ -210,7 +214,7 @@ export const RejectTrancheModal = ({
                       <DropdownMenuItem
                         onClick={() => setIsCustomEmailOpen(true)}
                       >
-                        Reject with custom email
+                        Reject with custom note
                       </DropdownMenuItem>
                     )}
                   </DropdownMenuContent>

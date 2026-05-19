@@ -13,7 +13,7 @@ type RejectGrantApplicationsInput =
   | string[]
   | {
       applicationIds: string[];
-      emailBody?: string;
+      customNote?: string;
     };
 
 const parseRejectGrantApplicationsInput = (
@@ -72,9 +72,9 @@ export const useRejectGrantApplications = (slug: string) => {
 
   return useMutation({
     mutationFn: async (input: RejectGrantApplicationsInput) => {
-      const { applicationIds, emailBody } =
+      const { applicationIds, customNote } =
         parseRejectGrantApplicationsInput(input);
-      const customEmailBody = emailBody?.trim();
+      const reviewerNote = customNote?.trim();
       const batchSize = 10;
       for (let i = 0; i < applicationIds.length; i += batchSize) {
         const batch = applicationIds.slice(i, i + batchSize);
@@ -83,7 +83,7 @@ export const useRejectGrantApplications = (slug: string) => {
           {
             data: batch.map((id) => ({ id })),
             applicationStatus: 'Rejected',
-            ...(customEmailBody ? { emailBody: customEmailBody } : {}),
+            ...(reviewerNote ? { customNote: reviewerNote } : {}),
           },
         );
       }

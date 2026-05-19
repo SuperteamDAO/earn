@@ -18,7 +18,11 @@ import { queueEmail } from '@/features/emails/utils/queueEmail';
 import { convertGrantApplicationToAirtable } from '@/features/grants/utils/convertGrantApplicationToAirtable';
 import { createTranche } from '@/features/grants/utils/createTranche';
 import { COINDCX_GRANT_ID } from '@/features/grants/utils/stGrant';
-import { validateCustomEmailBody } from '@/features/sponsor-dashboard/utils/customEmailSanitizer';
+import { validateCustomEmailNote } from '@/features/sponsor-dashboard/utils/customEmailSanitizer';
+import {
+  getGrantApprovedEmailBody,
+  getGrantRejectedEmailBody,
+} from '@/features/sponsor-dashboard/utils/grantEmailCopy';
 import { fetchTokenUSDValue } from '@/features/wallet/utils/fetchTokenUSDValue';
 
 const MAX_RECORDS = 10;
@@ -34,7 +38,7 @@ const UpdateGrantApplicationSchema = z.object({
     .min(1, 'Data array cannot be empty')
     .max(MAX_RECORDS, `Only max ${MAX_RECORDS} records allowed in data`),
   applicationStatus: z.string(),
-  emailBody: z.string().trim().min(1).max(5000).optional(),
+  customNote: z.string().trim().min(1).max(5000).optional(),
 });
 
 const checkAndUpdateKYCStatus = async (
@@ -112,18 +116,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     });
   }
 
-  const { data, applicationStatus, emailBody } = validationResult.data;
-  const emailValidation = emailBody ? validateCustomEmailBody(emailBody) : null;
-
-  if (emailValidation && !emailValidation.isValid) {
-    logger.warn('Invalid custom email body:', emailValidation.error);
-    return res.status(400).json({
-      error: 'Invalid custom email body',
-      details: emailValidation.error,
-    });
-  }
-
-  const sanitizedEmailBody = emailValidation?.sanitized;
+  const { data, applicationStatus, customNote } = validationResult.data;
 
   try {
     const currentApplications = await prisma.grantApplication.findMany({
@@ -134,6 +127,11 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       },
       include: {
         grant: true,
+        user: {
+          select: {
+            firstName: true,
+          },
+        },
       },
     });
 
@@ -172,13 +170,49 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       return res.status(authError.status).json({ error: authError.message });
     }
 
+    const isApproved = applicationStatus === 'Approved';
+    let sanitizedCustomNote: string | undefined;
+    if (customNote) {
+      for (const [index, application] of currentApplications.entries()) {
+        const approvedAmount = data[index]?.approvedAmount ?? undefined;
+        const fullEmailHtml = isApproved
+          ? getGrantApprovedEmailBody({
+              granteeName: application.user?.firstName,
+              grantTitle: application.grant.title,
+              projectTitle: application.projectTitle,
+              approvedAmount: approvedAmount ?? undefined,
+              token: application.grant.token || 'USDC',
+              salutation: application.grant.emailSalutation,
+              reviewerNote: customNote,
+            })
+          : getGrantRejectedEmailBody({
+              granteeName: application.user?.firstName,
+              grantTitle: application.grant.title,
+              projectTitle: application.projectTitle,
+              salutation: application.grant.emailSalutation,
+              reviewerNote: customNote,
+            });
+        const noteValidation = validateCustomEmailNote({
+          noteHtml: customNote,
+          fullEmailHtml,
+        });
+        if (!noteValidation.isValid) {
+          logger.warn('Invalid custom note:', noteValidation.error);
+          return res.status(400).json({
+            error: 'Invalid custom note',
+            details: noteValidation.error,
+          });
+        }
+        sanitizedCustomNote = noteValidation.sanitized;
+      }
+    }
+
     const commonUpdateField = {
       applicationStatus,
       decidedAt: new Date().toISOString(),
       decidedBy: userId,
     };
 
-    const isApproved = applicationStatus === 'Approved';
     const updatedData: {
       applicationStatus: string;
       decidedAt: string;
@@ -298,9 +332,9 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
             id: r.id,
             userId: r.userId,
             triggeredBy: userId,
-            otherInfo: sanitizedEmailBody
+            otherInfo: sanitizedCustomNote
               ? {
-                  customEmailBody: sanitizedEmailBody,
+                  customEmailNote: sanitizedCustomNote,
                 }
               : undefined,
           }),

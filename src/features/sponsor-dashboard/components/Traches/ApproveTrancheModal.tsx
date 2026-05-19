@@ -1,7 +1,6 @@
 import { Check, ChevronDown, ChevronUp } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 
-import { RichEditor } from '@/components/shared/RichEditor';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import {
@@ -13,12 +12,15 @@ import {
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import { TokenIcon } from '@/components/ui/token-icon';
+import { cn } from '@/utils/cn';
 
 import {
   getCustomEmailPlainText,
-  validateCustomEmailBody,
+  sanitizeCustomEmailBody,
+  validateCustomEmailNote,
 } from '../../utils/customEmailSanitizer';
 import { getTrancheApprovedEmailBody } from '../../utils/grantEmailCopy';
+import { CustomNoteEditor } from '../GrantApplications/Modals/CustomNoteEditor';
 
 const CustomNumberInput = ({
   value,
@@ -117,7 +119,7 @@ interface ApproveModalProps {
   onApproveTranche: (
     trancheId: string,
     approvedAmount: number,
-    emailBody?: string,
+    customNote?: string,
   ) => void;
   grantApprovedAmount: number;
   grantTotalPaid: number;
@@ -139,8 +141,7 @@ export const ApproveTrancheModal = ({
   grantTotalPaid,
 }: ApproveModalProps) => {
   const [approvedAmount, setApprovedAmount] = useState<number | undefined>(ask);
-  const [emailBody, setEmailBody] = useState('');
-  const [hasEditedEmail, setHasEditedEmail] = useState(false);
+  const [customNote, setCustomNote] = useState('');
   const [isCustomEmailOpen, setIsCustomEmailOpen] = useState(false);
   const [emailError, setEmailError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
@@ -154,13 +155,14 @@ export const ApproveTrancheModal = ({
     !Number.isFinite(approvedAmount) ||
     approvedAmount === 0 ||
     approvedAmount > maxApprovalAmount;
-  const defaultEmailBody = getTrancheApprovedEmailBody({
+  const previewEmailBody = getTrancheApprovedEmailBody({
     granteeName,
     projectTitle,
     sponsorName,
     approvedAmount,
     token,
     salutation,
+    reviewerNote: sanitizeCustomEmailBody(customNote),
   });
 
   const handleAmountChange = (value: number) => {
@@ -174,27 +176,17 @@ export const ApproveTrancheModal = ({
       setWarningMessage(null);
     }
     setApprovedAmount(value);
-    if (!hasEditedEmail) {
-      setEmailBody(
-        getTrancheApprovedEmailBody({
-          granteeName,
-          projectTitle,
-          sponsorName,
-          approvedAmount: value,
-          token,
-          salutation,
-        }),
-      );
-    }
   };
 
   const approveTranche = async () => {
     if (isInvalidApprovalAmount || !trancheId) return;
 
-    const customEmailBody = emailBody.trim();
-    const emailValidation = validateCustomEmailBody(customEmailBody);
-    if (enableCustomEmail && isCustomEmailOpen && !emailValidation.isValid) {
-      setEmailError(emailValidation.error);
+    const noteValidation = validateCustomEmailNote({
+      noteHtml: customNote.trim(),
+      fullEmailHtml: previewEmailBody,
+    });
+    if (enableCustomEmail && isCustomEmailOpen && !noteValidation.isValid) {
+      setEmailError(noteValidation.error);
       return;
     }
 
@@ -204,7 +196,7 @@ export const ApproveTrancheModal = ({
         trancheId,
         approvedAmount,
         enableCustomEmail && isCustomEmailOpen
-          ? emailValidation.sanitized
+          ? noteValidation.sanitized
           : undefined,
       );
       approveOnClose();
@@ -217,17 +209,7 @@ export const ApproveTrancheModal = ({
 
   useEffect(() => {
     setApprovedAmount(ask);
-    setEmailBody(
-      getTrancheApprovedEmailBody({
-        granteeName,
-        projectTitle,
-        sponsorName,
-        approvedAmount: ask,
-        token,
-        salutation,
-      }),
-    );
-    setHasEditedEmail(false);
+    setCustomNote('');
     setIsCustomEmailOpen(false);
     setEmailError(null);
     setWarningMessage(null);
@@ -298,38 +280,30 @@ export const ApproveTrancheModal = ({
           )}
 
           {enableCustomEmail && isCustomEmailOpen && (
-            <div className="mb-6">
-              <div className="mb-2 flex items-center justify-between gap-3">
-                <p className="font-medium text-slate-600">Email Body</p>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  className="h-auto px-2 py-1 text-xs font-semibold text-slate-500"
-                  onClick={() => {
-                    setEmailBody(defaultEmailBody);
-                    setHasEditedEmail(false);
-                  }}
-                  disabled={loading || emailBody === defaultEmailBody}
-                >
-                  Reset
-                </Button>
-              </div>
-              <RichEditor
-                id="approve-tranche-email-body"
-                height="h-[190px]"
-                value={emailBody}
-                onChange={(value) => {
-                  setEmailBody(value);
-                  setHasEditedEmail(true);
-                  setEmailError(validateCustomEmailBody(value).error);
-                }}
-                error={!!emailError}
-                placeholder="Write the email body"
-              />
-              {emailError && (
-                <p className="mt-2 text-sm text-red-500">{emailError}</p>
-              )}
-            </div>
+            <CustomNoteEditor
+              id="approve-tranche-custom-note"
+              value={customNote}
+              previewHtml={previewEmailBody}
+              error={emailError}
+              onChange={(value) => {
+                const sanitizedNote = sanitizeCustomEmailBody(value);
+                setCustomNote(value);
+                setEmailError(
+                  validateCustomEmailNote({
+                    noteHtml: value,
+                    fullEmailHtml: getTrancheApprovedEmailBody({
+                      granteeName,
+                      projectTitle,
+                      sponsorName,
+                      approvedAmount,
+                      token,
+                      salutation,
+                      reviewerNote: sanitizedNote,
+                    }),
+                  }).error,
+                );
+              }}
+            />
           )}
 
           <div className="flex gap-3">
@@ -339,13 +313,18 @@ export const ApproveTrancheModal = ({
             </Button>
             <div className="flex flex-1">
               <Button
-                className="flex-1 rounded-l-lg rounded-r-none border border-emerald-500 bg-emerald-50 text-emerald-600 hover:bg-emerald-100 hover:text-emerald-600"
+                className={cn(
+                  'flex-1 border border-emerald-500 bg-emerald-50 text-emerald-600 hover:bg-emerald-100 hover:text-emerald-600',
+                  enableCustomEmail
+                    ? 'rounded-l-lg rounded-r-none'
+                    : 'rounded-lg',
+                )}
                 disabled={
                   loading ||
                   isInvalidApprovalAmount ||
                   (enableCustomEmail &&
                     isCustomEmailOpen &&
-                    (!getCustomEmailPlainText(emailBody) || !!emailError))
+                    (!getCustomEmailPlainText(customNote) || !!emailError))
                 }
                 onClick={approveTranche}
               >
@@ -354,7 +333,7 @@ export const ApproveTrancheModal = ({
                     <span className="loading loading-spinner mr-2" />
                     <span>
                       {isCustomEmailOpen
-                        ? 'Approving with Custom Email'
+                        ? 'Approving with Custom Note'
                         : 'Approving'}
                     </span>
                   </>
@@ -365,7 +344,7 @@ export const ApproveTrancheModal = ({
                     </div>
                     <span>
                       {isCustomEmailOpen
-                        ? 'Approve with Custom Email'
+                        ? 'Approve with Custom Note'
                         : 'Approve Tranche'}
                     </span>
                   </>
@@ -394,7 +373,7 @@ export const ApproveTrancheModal = ({
                       <DropdownMenuItem
                         onClick={() => setIsCustomEmailOpen(true)}
                       >
-                        Approve with custom email
+                        Approve with custom note
                       </DropdownMenuItem>
                     )}
                   </DropdownMenuContent>

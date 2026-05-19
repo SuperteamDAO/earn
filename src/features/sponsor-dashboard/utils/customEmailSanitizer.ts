@@ -3,6 +3,7 @@ import { domPurify } from '@/lib/domPurify';
 const EMAIL_ALLOWED_TAGS = ['a', 'br', 'em', 'li', 'ol', 'p', 'strong', 'ul'];
 
 const EMAIL_ALLOWED_ATTR = ['href', 'rel', 'target'];
+export const CUSTOM_EMAIL_MAX_CHARS = 5000;
 
 const normalizeHtml = (html: string) => html.trim().replace(/\s+/g, ' ');
 
@@ -37,6 +38,48 @@ export const validateCustomEmailBody = (html: string) => {
       sanitized,
       error:
         'Email body contains unsupported or unsafe HTML. Please remove scripts, embeds, or unsupported formatting.',
+    };
+  }
+
+  return {
+    isValid: true,
+    sanitized,
+    error: null,
+  };
+};
+
+export const validateCustomEmailNote = ({
+  noteHtml,
+  fullEmailHtml,
+}: {
+  noteHtml: string;
+  fullEmailHtml: string;
+}) => {
+  const sanitized = sanitizeCustomEmailBody(noteHtml);
+  const fullEmailPlainText = getCustomEmailPlainText(fullEmailHtml);
+
+  if (!getCustomEmailPlainText(sanitized)) {
+    return {
+      isValid: false,
+      sanitized,
+      error: 'Custom note cannot be empty.',
+    };
+  }
+
+  if (normalizeHtml(sanitized) !== normalizeHtml(noteHtml)) {
+    return {
+      isValid: false,
+      sanitized,
+      error:
+        'Custom note contains unsupported or unsafe HTML. Please remove scripts, embeds, or unsupported formatting.',
+    };
+  }
+
+  if (fullEmailPlainText.length > CUSTOM_EMAIL_MAX_CHARS) {
+    return {
+      isValid: false,
+      sanitized,
+      error: `Email must be ${CUSTOM_EMAIL_MAX_CHARS.toLocaleString()} characters or fewer including the note.`,
     };
   }
 

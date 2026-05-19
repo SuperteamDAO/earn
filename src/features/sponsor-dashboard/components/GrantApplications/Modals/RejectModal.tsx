@@ -2,7 +2,6 @@ import { ChevronDown, X } from 'lucide-react';
 import posthog from 'posthog-js';
 import { useEffect, useState } from 'react';
 
-import { RichEditor } from '@/components/shared/RichEditor';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import {
@@ -13,12 +12,15 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Separator } from '@/components/ui/separator';
 import { TokenIcon } from '@/components/ui/token-icon';
+import { cn } from '@/utils/cn';
 
 import {
   getCustomEmailPlainText,
-  validateCustomEmailBody,
+  sanitizeCustomEmailBody,
+  validateCustomEmailNote,
 } from '../../../utils/customEmailSanitizer';
 import { getGrantRejectedEmailBody } from '../../../utils/grantEmailCopy';
+import { CustomNoteEditor } from './CustomNoteEditor';
 
 interface RejectModalProps {
   rejectIsOpen: boolean;
@@ -31,7 +33,7 @@ interface RejectModalProps {
   salutation: string | null | undefined;
   token: string;
   enableCustomEmail: boolean;
-  onRejectGrant: (applicationId: string, emailBody?: string) => void;
+  onRejectGrant: (applicationId: string, customNote?: string) => void;
 }
 
 export const RejectGrantApplicationModal = ({
@@ -48,24 +50,27 @@ export const RejectGrantApplicationModal = ({
   onRejectGrant,
 }: RejectModalProps) => {
   const [loading, setLoading] = useState<boolean>(false);
-  const [emailBody, setEmailBody] = useState('');
+  const [customNote, setCustomNote] = useState('');
   const [isCustomEmailOpen, setIsCustomEmailOpen] = useState(false);
   const [emailError, setEmailError] = useState<string | null>(null);
 
-  const defaultEmailBody = getGrantRejectedEmailBody({
+  const previewEmailBody = getGrantRejectedEmailBody({
     granteeName,
     grantTitle,
     projectTitle,
     salutation,
+    reviewerNote: sanitizeCustomEmailBody(customNote),
   });
 
   const rejectGrant = async () => {
     if (!applicationId) return;
 
-    const customEmailBody = emailBody.trim();
-    const emailValidation = validateCustomEmailBody(customEmailBody);
-    if (enableCustomEmail && isCustomEmailOpen && !emailValidation.isValid) {
-      setEmailError(emailValidation.error);
+    const noteValidation = validateCustomEmailNote({
+      noteHtml: customNote.trim(),
+      fullEmailHtml: previewEmailBody,
+    });
+    if (enableCustomEmail && isCustomEmailOpen && !noteValidation.isValid) {
+      setEmailError(noteValidation.error);
       return;
     }
 
@@ -75,7 +80,7 @@ export const RejectGrantApplicationModal = ({
       await onRejectGrant(
         applicationId,
         enableCustomEmail && isCustomEmailOpen
-          ? emailValidation.sanitized
+          ? noteValidation.sanitized
           : undefined,
       );
     } catch (e) {
@@ -87,11 +92,11 @@ export const RejectGrantApplicationModal = ({
   };
 
   useEffect(() => {
-    setEmailBody(defaultEmailBody);
+    setCustomNote('');
     setIsCustomEmailOpen(false);
     setEmailError(null);
     setLoading(false);
-  }, [applicationId, defaultEmailBody]);
+  }, [applicationId]);
 
   return (
     <Dialog open={rejectIsOpen} onOpenChange={rejectOnClose}>
@@ -121,37 +126,28 @@ export const RejectGrantApplicationModal = ({
           </div>
 
           {enableCustomEmail && isCustomEmailOpen && (
-            <div className="mb-6">
-              <div className="mb-2 flex items-center justify-between gap-3">
-                <p className="font-medium text-slate-600">Email Body</p>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  className="h-auto px-2 py-1 text-xs font-semibold text-slate-500"
-                  onClick={() => {
-                    setEmailBody(defaultEmailBody);
-                    setEmailError(null);
-                  }}
-                  disabled={loading || emailBody === defaultEmailBody}
-                >
-                  Reset
-                </Button>
-              </div>
-              <RichEditor
-                id="reject-grant-email-body"
-                height="h-[190px]"
-                value={emailBody}
-                onChange={(value) => {
-                  setEmailBody(value);
-                  setEmailError(validateCustomEmailBody(value).error);
-                }}
-                error={!!emailError}
-                placeholder="Write the email body"
-              />
-              {emailError && (
-                <p className="mt-2 text-sm text-red-500">{emailError}</p>
-              )}
-            </div>
+            <CustomNoteEditor
+              id="reject-grant-custom-note"
+              value={customNote}
+              previewHtml={previewEmailBody}
+              error={emailError}
+              onChange={(value) => {
+                const sanitizedNote = sanitizeCustomEmailBody(value);
+                setCustomNote(value);
+                setEmailError(
+                  validateCustomEmailNote({
+                    noteHtml: value,
+                    fullEmailHtml: getGrantRejectedEmailBody({
+                      granteeName,
+                      grantTitle,
+                      projectTitle,
+                      salutation,
+                      reviewerNote: sanitizedNote,
+                    }),
+                  }).error,
+                );
+              }}
+            />
           )}
 
           <div className="flex gap-3">
@@ -161,12 +157,17 @@ export const RejectGrantApplicationModal = ({
             </Button>
             <div className="flex flex-1">
               <Button
-                className="flex-1 rounded-l-lg rounded-r-none border border-red-500 bg-red-50 text-red-600 hover:bg-red-100"
+                className={cn(
+                  'flex-1 border border-red-500 bg-red-50 text-red-600 hover:bg-red-100',
+                  enableCustomEmail
+                    ? 'rounded-l-lg rounded-r-none'
+                    : 'rounded-lg',
+                )}
                 disabled={
                   loading ||
                   (enableCustomEmail &&
                     isCustomEmailOpen &&
-                    (!getCustomEmailPlainText(emailBody) || !!emailError))
+                    (!getCustomEmailPlainText(customNote) || !!emailError))
                 }
                 onClick={rejectGrant}
               >
@@ -175,7 +176,7 @@ export const RejectGrantApplicationModal = ({
                     <span className="loading loading-spinner mr-2" />
                     <span>
                       {isCustomEmailOpen
-                        ? 'Rejecting with Custom Email'
+                        ? 'Rejecting with Custom Note'
                         : 'Rejecting'}
                     </span>
                   </>
@@ -186,7 +187,7 @@ export const RejectGrantApplicationModal = ({
                     </div>
                     <span>
                       {isCustomEmailOpen
-                        ? 'Reject with Custom Email'
+                        ? 'Reject with Custom Note'
                         : 'Reject Grant'}
                     </span>
                   </>
@@ -215,7 +216,7 @@ export const RejectGrantApplicationModal = ({
                       <DropdownMenuItem
                         onClick={() => setIsCustomEmailOpen(true)}
                       >
-                        Reject with custom email
+                        Reject with custom note
                       </DropdownMenuItem>
                     )}
                   </DropdownMenuContent>
