@@ -23,6 +23,7 @@ export default function FeedPage({ id, type }: Props) {
           description="Discover the best work on Earn. Browse popular submissions, recent activity, and winning entries from the Superteam community."
           canonical="https://superteam.fun/earn/feed/"
           og={ASSET_URL + `/og/og.png`}
+          noIndex
         />
       }
     />
