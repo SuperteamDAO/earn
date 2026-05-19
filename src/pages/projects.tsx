@@ -62,7 +62,7 @@ export default function Projects({ projects }: ProjectsPageProps) {
   );
 }
 
-export const getServerSideProps: GetServerSideProps = async () => {
+export const getServerSideProps: GetServerSideProps = async ({ res }) => {
   try {
     const result = await axios(
       `https://api.airtable.com/v0/${process.env.AIRTABLE_BASE_ID}/${process.env.AIRTABLE_PROJECTS_TABLE}`,
@@ -77,6 +77,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
       (item: any) => item.fields['Rank'] && item.fields['Country'],
     );
 
+    res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=600');
     return {
       props: {
         projects: filtered ?? [],
@@ -84,6 +85,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
     };
   } catch (error) {
     console.error('Error fetching projects:', error);
+    res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=600');
     return {
       props: {
         projects: [],
