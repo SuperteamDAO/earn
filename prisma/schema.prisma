@@ -373,6 +373,9 @@ model Submission {
   CreditLedger       CreditLedger[]
   ai                 Json?
   paymentSynced      Boolean          @default(false)
+  regionVerificationStatus     RegionVerificationStatus @default(NotRequired)
+  regionVerificationCountry    String?
+  regionVerificationVerifiedAt DateTime?
 
   @@index([id, listingId])
   @@index([isWinner])
@@ -1248,4 +1251,12 @@ enum GrantTrancheStatus {
   Approved
   Paid
   Rejected
+}
+
+enum RegionVerificationStatus {
+  NotRequired
+  KycCountryMatched
+  PoaRequired
+  PoaVerified
+  Ineligible
 }

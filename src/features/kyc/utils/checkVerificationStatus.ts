@@ -22,6 +22,7 @@ export const checkVerificationStatus = async (
       reason: string;
       rejectType?: string;
       rejectLabels?: string[];
+      buttonIds?: string[];
     }
   | null
 > => {
@@ -68,11 +69,18 @@ export const checkVerificationStatus = async (
               ? `Rejected (${rejectType})`
               : 'Your verification was rejected. Please review your details and try again.');
 
+        const buttonIds = Array.isArray(reviewResult?.buttonIds)
+          ? reviewResult.buttonIds.filter(
+              (id: unknown): id is string => typeof id === 'string',
+            )
+          : undefined;
+
         return {
           status: 'failed',
           reason,
           rejectType,
           rejectLabels,
+          buttonIds,
         };
       }
     } catch (error) {

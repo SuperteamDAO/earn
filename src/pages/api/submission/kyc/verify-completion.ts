@@ -9,7 +9,14 @@ import { type NextApiRequestWithUser } from '@/features/auth/types';
 import { withAuth } from '@/features/auth/utils/withAuth';
 import { checkVerificationStatus } from '@/features/kyc/utils/checkVerificationStatus';
 import { getApplicantData } from '@/features/kyc/utils/getApplicantData';
+import { isMainDocCountryRejection } from '@/features/kyc/utils/isMainDocCountryRejection';
 import { createPayment } from '@/features/listings/utils/createPayment';
+import {
+  getKycRegionVerificationStatus,
+  KYC_REGION_VERIFICATION_CUTOFF,
+  REGION_VERIFICATION_STATUS,
+} from '@/features/listings/utils/regionVerification';
+import { getChapterRegions } from '@/utils/chapterRegion';
 
 const handler = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
   const userId = req.userId;
@@ -31,10 +38,10 @@ const handler = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
       submission.listing.isFndnPaying &&
       !submission.isPaid &&
       submission.listing.winnersAnnouncedAt &&
-      new Date(submission.listing.winnersAnnouncedAt) > new Date('2025-08-06');
+      submission.listing.winnersAnnouncedAt > KYC_REGION_VERIFICATION_CUTOFF;
 
     if (!isAllowed) {
-      return res.status(200).json({ message: 'Not allowed' });
+      return res.status(403).json({ message: 'Not allowed' });
     }
 
     const secretKey = process.env.SUMSUB_SECRET_KEY;
@@ -45,21 +52,27 @@ const handler = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
     }
 
     const applicantData = await getApplicantData(userId, secretKey, appToken);
-    const { id: applicantId } = applicantData;
     const result = await checkVerificationStatus(
-      applicantId,
+      applicantData.id,
       secretKey,
       appToken,
     );
 
     if (result === 'verified') {
+      const { fullName, country, dob, idNumber, idType } = applicantData;
+      const chapters = await getChapterRegions();
+      const regionVerificationStatus = getKycRegionVerificationStatus({
+        region: submission.listing.region,
+        kycCountry: country,
+        chapters,
+      });
+      const poaRequired =
+        regionVerificationStatus === REGION_VERIFICATION_STATUS.PoaRequired;
+
       try {
         await withRedisLock(
           `locks:create-payment:${userId}`,
           async () => {
-            const wasAlreadyVerified = submission.user.isKYCVerified ?? false;
-            const { fullName, country, dob, idNumber, idType } = applicantData;
-
             await prisma.user.update({
               where: { id: userId },
               data: {
@@ -73,8 +86,17 @@ const handler = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
               },
             });
 
-            if (!wasAlreadyVerified) {
-              await createPayment({ userId });
+            await prisma.submission.update({
+              where: { id: submissionId },
+              data: {
+                regionVerificationStatus,
+                regionVerificationCountry: country,
+                regionVerificationVerifiedAt: poaRequired ? null : new Date(),
+              },
+            });
+
+            if (!poaRequired) {
+              await createPayment({ userId, submissionIds: [submissionId] });
             }
           },
           { ttlSeconds: 300 },
@@ -87,6 +109,43 @@ const handler = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
         }
         throw lockError;
       }
+
+      if (poaRequired) {
+        return res.status(200).json({ status: 'poa_required' });
+      }
+    }
+
+    if (
+      result !== null &&
+      result !== 'verified' &&
+      result !== 'timedOut' &&
+      typeof result === 'object' &&
+      result.status === 'failed' &&
+      isMainDocCountryRejection(result)
+    ) {
+      const { fullName, country, dob, idNumber, idType } = applicantData;
+      await prisma.user.update({
+        where: { id: userId },
+        data: {
+          isKYCVerified: true,
+          kycName: fullName,
+          kycCountry: country,
+          kycDOB: dob,
+          kycIDNumber: idNumber,
+          kycIDType: idType,
+          kycVerifiedAt: new Date(),
+        },
+      });
+      await prisma.submission.update({
+        where: { id: submissionId },
+        data: {
+          regionVerificationStatus: REGION_VERIFICATION_STATUS.PoaRequired,
+          regionVerificationCountry: country,
+          regionVerificationVerifiedAt: null,
+        },
+      });
+
+      return res.status(200).json({ status: 'poa_required' });
     }
 
     return res.status(200).json(result);
