@@ -275,6 +275,7 @@ export const ApproveModal = ({
               id="approve-grant-custom-note"
               value={customNote}
               previewHtml={previewEmailBody}
+              emailType="approval"
               error={emailError}
               onChange={(value) => {
                 const sanitizedNote = sanitizeCustomEmailBody(value);

@@ -1,9 +1,19 @@
 import { domPurify } from '@/lib/domPurify';
 
-const EMAIL_ALLOWED_TAGS = ['a', 'br', 'em', 'li', 'ol', 'p', 'strong', 'ul'];
+const EMAIL_ALLOWED_TAGS = [
+  'a',
+  'br',
+  'em',
+  'li',
+  'ol',
+  'p',
+  'strong',
+  'u',
+  'ul',
+];
 
 const EMAIL_ALLOWED_ATTR = ['href', 'rel', 'target'];
-export const CUSTOM_EMAIL_MAX_CHARS = 5000;
+export const CUSTOM_EMAIL_MAX_CHARS = 4000;
 
 const normalizeHtml = (html: string) => html.trim().replace(/\s+/g, ' ');
 

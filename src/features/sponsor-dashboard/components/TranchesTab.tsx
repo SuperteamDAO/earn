@@ -271,6 +271,9 @@ export const TranchesTab = ({ slug }: Props) => {
   const handleRejectTranche = (trancheId: string, customNote?: string) => {
     rejectGrantMutation.mutate({ trancheId, customNote });
   };
+
+  const enableCustomEmail = grant?.isNative === true || grant?.isST === true;
+
   return (
     <>
       <div className="flex w-full items-start bg-white">
@@ -331,7 +334,7 @@ export const TranchesTab = ({ slug }: Props) => {
         sponsorName={grant?.sponsor?.name}
         salutation={grant?.emailSalutation}
         token={grant?.token || 'USDC'}
-        enableCustomEmail={grant?.isNative === true}
+        enableCustomEmail={enableCustomEmail}
         onRejectTranche={handleRejectTranche}
       />
 
@@ -345,7 +348,7 @@ export const TranchesTab = ({ slug }: Props) => {
         sponsorName={grant?.sponsor?.name}
         salutation={grant?.emailSalutation}
         token={grant?.token || 'USDC'}
-        enableCustomEmail={grant?.isNative === true}
+        enableCustomEmail={enableCustomEmail}
         onApproveTranche={handleApproveTranche}
         grantApprovedAmount={
           selectedTranche?.GrantApplication?.approvedAmount || 0

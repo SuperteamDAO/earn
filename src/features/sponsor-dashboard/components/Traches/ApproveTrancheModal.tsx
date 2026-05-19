@@ -284,6 +284,7 @@ export const ApproveTrancheModal = ({
               id="approve-tranche-custom-note"
               value={customNote}
               previewHtml={previewEmailBody}
+              emailType="approval"
               error={emailError}
               onChange={(value) => {
                 const sanitizedNote = sanitizeCustomEmailBody(value);

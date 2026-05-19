@@ -130,6 +130,7 @@ export const RejectGrantApplicationModal = ({
               id="reject-grant-custom-note"
               value={customNote}
               previewHtml={previewEmailBody}
+              emailType="rejection"
               error={emailError}
               onChange={(value) => {
                 const sanitizedNote = sanitizeCustomEmailBody(value);

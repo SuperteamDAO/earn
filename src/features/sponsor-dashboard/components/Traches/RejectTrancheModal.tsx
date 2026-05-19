@@ -128,6 +128,7 @@ export const RejectTrancheModal = ({
               id="reject-tranche-custom-note"
               value={customNote}
               previewHtml={previewEmailBody}
+              emailType="rejection"
               error={emailError}
               onChange={(value) => {
                 const sanitizedNote = sanitizeCustomEmailBody(value);
