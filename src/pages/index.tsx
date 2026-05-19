@@ -21,8 +21,8 @@ interface HomePageProps {
     slug: string;
     code: string;
     country: string[];
-    icons?: string;
-    link?: string;
+    icons?: string | null;
+    link?: string | null;
   }>;
   readonly chaptersForSchema: Array<{
     name: string;
@@ -30,8 +30,8 @@ interface HomePageProps {
     slug: string;
     code: string;
     country: string[];
-    icons?: string;
-    link?: string;
+    icons?: string | null;
+    link?: string | null;
   }>;
 }
 
@@ -105,8 +105,8 @@ export const getServerSideProps: GetServerSideProps<
     slug: chapter.slug,
     code: chapter.code || '',
     country: parseCountries(chapter.countries),
-    icons: chapter.icons || undefined,
-    link: chapter.link || undefined,
+    icons: chapter.icons ?? null,
+    link: chapter.link ?? null,
   }));
 
   const chaptersForGeographies = chapters.map((chapter) => ({
@@ -116,8 +116,8 @@ export const getServerSideProps: GetServerSideProps<
     slug: chapter.slug,
     code: chapter.code || '',
     country: parseCountries(chapter.countries),
-    icons: chapter.icons || undefined,
-    link: chapter.link || undefined,
+    icons: chapter.icons ?? null,
+    link: chapter.link ?? null,
   }));
 
   return {

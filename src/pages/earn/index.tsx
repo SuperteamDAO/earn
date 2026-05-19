@@ -1,6 +1,6 @@
 import { usePrivy } from '@privy-io/react-auth';
 import { useQuery } from '@tanstack/react-query';
-import { type GetServerSideProps } from 'next';
+import { type GetStaticProps } from 'next';
 import dynamic from 'next/dynamic';
 
 import { JsonLd } from '@/components/shared/JsonLd';
@@ -21,6 +21,13 @@ import { SponsorStageBanner } from '@/features/home/components/SponsorStage/Spon
 import { UserStatsBanner } from '@/features/home/components/UserStatsBanner';
 import { userCountQuery } from '@/features/home/queries/user-count';
 import { ListingsSection } from '@/features/listings/components/ListingsSection';
+import {
+  listingSelect,
+  QueryParamsSchema,
+} from '@/features/listings/constants/schema';
+import { type Listing } from '@/features/listings/types';
+import { buildListingQuery } from '@/features/listings/utils/query-builder';
+import { reorderFeaturedOngoing } from '@/features/listings/utils/reorderFeaturedOngoing';
 import { ProIntroDialog } from '@/features/pro/components/ProIntroDialog';
 
 const GrantsSection = dynamic(() =>
@@ -59,12 +66,16 @@ const TalentAnnouncements = dynamic(
 
 interface HomePageProps {
   readonly potentialSession: boolean;
+  readonly initialListings: Listing[] | null;
+  readonly ssrTimestamp: number | null;
   readonly totalUsers: number;
   readonly totalSponsors: number;
 }
 
 export default function HomePage({
   potentialSession,
+  initialListings,
+  ssrTimestamp,
   totalUsers,
   totalSponsors,
 }: HomePageProps) {
@@ -130,6 +141,8 @@ export default function HomePage({
                   <ListingsSection
                     type="home"
                     potentialSession={potentialSession}
+                    initialListings={initialListings}
+                    ssrTimestamp={ssrTimestamp ?? undefined}
                   />
                   {/* <HackathonSection type="home" /> */}
                   <GrantsSection type="home" />
@@ -153,22 +166,39 @@ export default function HomePage({
   );
 }
 
-export const getServerSideProps: GetServerSideProps<HomePageProps> = async ({
-  req,
-}) => {
-  const cookies = req.headers.cookie || '';
-
-  const cookieExists = /(^|;)\s*user-id-hint=/.test(cookies);
-
-  const [userCount, sponsorCount] = await Promise.all([
-    prisma.user.count(),
-    prisma.sponsors.count(),
-  ]);
-
-  const totalUsers = Math.ceil((userCount - 289) / 10) * 10;
-  const totalSponsors = Math.ceil(sponsorCount / 10) * 10;
-
-  return {
-    props: { potentialSession: cookieExists, totalUsers, totalSponsors },
-  };
+export const getStaticProps: GetStaticProps<HomePageProps> = async () => {
+  try {
+    const queryData = QueryParamsSchema.parse({ context: 'home' });
+    const { where, orderBy, take } = await buildListingQuery(queryData, null);
+    const [raw, userCount, sponsorCount] = await Promise.all([
+      prisma.bounties.findMany({ where, orderBy, take, select: listingSelect }),
+      prisma.user.count(),
+      prisma.sponsors.count(),
+    ]);
+    const ordered = reorderFeaturedOngoing(raw);
+    const initialListings = JSON.parse(JSON.stringify(ordered)) as Listing[];
+    const totalUsers = Math.ceil((userCount - 289) / 10) * 10;
+    const totalSponsors = Math.ceil(sponsorCount / 10) * 10;
+    return {
+      props: {
+        potentialSession: false,
+        initialListings,
+        ssrTimestamp: Date.now(),
+        totalUsers,
+        totalSponsors,
+      },
+      revalidate: 60,
+    };
+  } catch {
+    return {
+      props: {
+        potentialSession: false,
+        initialListings: null,
+        ssrTimestamp: null,
+        totalUsers: 0,
+        totalSponsors: 0,
+      },
+      revalidate: 60,
+    };
+  }
 };
