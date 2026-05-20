@@ -3,6 +3,8 @@ import { Resend } from 'resend';
 import { z } from 'zod';
 
 import logger from '@/lib/logger';
+import { supportEmailRateLimiter } from '@/lib/ratelimit';
+import { checkAndApplyRateLimitPages } from '@/lib/rateLimiterService';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { supportEmailTemplate } from '@/features/emails/components/supportEmailTemplate';
@@ -10,9 +12,9 @@ import { supportEmailTemplate } from '@/features/emails/components/supportEmailT
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 const supportEmailSchema = z.object({
-  email: z.string().email(),
-  subject: z.string().min(1),
-  description: z.string().min(10),
+  email: z.string().trim().toLowerCase().email(),
+  subject: z.string().trim().min(1),
+  description: z.string().trim().min(10),
 });
 
 type SuccessResponse = {
@@ -22,7 +24,19 @@ type SuccessResponse = {
 
 type ErrorResponse = {
   error: string | z.ZodIssue[];
+  message?: string;
+  retryAfter?: number;
 };
+
+function getRequestIp(req: NextApiRequest): string {
+  const forwarded = req.headers['x-forwarded-for'];
+  if (typeof forwarded === 'string' && forwarded.length > 0) {
+    const [first] = forwarded.split(',');
+    return (first ?? forwarded).trim();
+  }
+
+  return req.socket.remoteAddress || 'unknown';
+}
 
 export default async function handler(
   req: NextApiRequest,
@@ -37,6 +51,23 @@ export default async function handler(
     logger.debug(`Request body: ${safeStringify(req.body)}`);
 
     const { email, subject, description } = supportEmailSchema.parse(body);
+    const ip = getRequestIp(req);
+
+    const ipRateLimitAllowed = await checkAndApplyRateLimitPages({
+      limiter: supportEmailRateLimiter,
+      identifier: `ip:${ip}`,
+      routeName: 'support_email_ip',
+      res,
+    });
+    if (!ipRateLimitAllowed) return;
+
+    const emailRateLimitAllowed = await checkAndApplyRateLimitPages({
+      limiter: supportEmailRateLimiter,
+      identifier: `email:${email}`,
+      routeName: 'support_email_email',
+      res,
+    });
+    if (!emailRateLimitAllowed) return;
 
     logger.info('Sending Support Request Email');
     const { data, error } = await resend.emails.send({
