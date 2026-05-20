@@ -2,14 +2,10 @@ import { franc } from 'franc';
 import { headers } from 'next/headers';
 import { NextResponse } from 'next/server';
 
-import earncognitoClient from '@/lib/earncognitoClient';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { type InputJsonValue } from '@/prisma/internal/prismaNamespace';
-import {
-  type BountiesModel,
-  type BountiesUncheckedCreateInput,
-} from '@/prisma/models/Bounties';
+import { type BountiesUncheckedCreateInput } from '@/prisma/models/Bounties';
 import { canonicalizeRegionValue } from '@/utils/canonicalRegion';
 import { cleanSkills } from '@/utils/cleanSkills';
 import { safeStringify } from '@/utils/safeStringify';
@@ -103,22 +99,6 @@ async function saveListing(
     : await prisma.bounties.create({ data });
 }
 
-async function handleDiscordNotification(result: BountiesModel): Promise<void> {
-  if (result.status !== 'VERIFYING') {
-    return;
-  }
-
-  try {
-    logger.info('Updating Discord Verification message', { id: result.id });
-    await earncognitoClient.post(`/telegram/verify-listing`, {
-      listingId: result.id,
-    });
-    logger.info('Updated Discord Verification message', { id: result.id });
-  } catch (err) {
-    logger.error('Failed to update Verification Message to discord', err);
-  }
-}
-
 export async function POST(request: Request) {
   try {
     const sessionResult = await validateSession(await headers());
@@ -172,8 +152,6 @@ export async function POST(request: Request) {
 
     const result = await saveListing(body.id || undefined, prismaData);
     logger.debug(`Draft saved successfully: ${result.id}`);
-
-    await handleDiscordNotification(result);
 
     return NextResponse.json(result, { status: 200 });
   } catch (error) {
