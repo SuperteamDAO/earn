@@ -69,7 +69,6 @@ export default async function handler(
     const body = req.body;
     logger.debug(`Request body: ${safeStringify(req.body)}`);
 
-    const { email, subject, description } = supportEmailSchema.parse(body);
     const ip = getRequestIp(req);
 
     const ipRateLimitAllowed = await checkAndApplyRateLimitPages({
@@ -79,6 +78,7 @@ export default async function handler(
       res,
     });
     if (!ipRateLimitAllowed) return;
+    const { email, subject, description } = supportEmailSchema.parse(body);
 
     const emailRateLimitAllowed = await checkAndApplyRateLimitPages({
       limiter: supportEmailRateLimiter,
