@@ -183,6 +183,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     await queueEmail({
       type: 'addPayment',
       id,
+      userId: result.userId,
       triggeredBy: userId,
     });
 
