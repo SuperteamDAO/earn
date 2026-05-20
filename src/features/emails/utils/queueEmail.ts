@@ -2,6 +2,7 @@ import { Queue } from 'bullmq';
 import Redis from 'ioredis';
 
 import logger from '@/lib/logger';
+import { prisma } from '@/prisma';
 
 type EmailType =
   | 'addPayment'
@@ -44,6 +45,37 @@ interface EmailNotificationParams {
 const redis = new Redis(process.env.REDIS_URL!, { maxRetriesPerRequest: null });
 const logicQueue = new Queue('logicQueue', { connection: redis });
 
+async function isBlockedRecipient(userId?: string) {
+  if (!userId) {
+    return false;
+  }
+
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { email: true },
+  });
+
+  if (!user?.email) {
+    return false;
+  }
+
+  const normalizedEmail = user.email.toLowerCase();
+  const blockedEmail = await prisma.blockedEmail.findUnique({
+    where: { email: normalizedEmail },
+    select: { reason: true },
+  });
+
+  if (!blockedEmail) {
+    return false;
+  }
+
+  logger.info(
+    `Skipping queued email for blocked recipient: userId=${userId}, email=${normalizedEmail}, reason=${blockedEmail.reason ?? 'unspecified'}`,
+  );
+
+  return true;
+}
+
 export async function queueEmail({
   type,
   id,
@@ -57,6 +89,10 @@ export async function queueEmail({
   );
 
   try {
+    if (await isBlockedRecipient(userId)) {
+      return;
+    }
+
     const job = await logicQueue.add(
       'processLogic',
       {
