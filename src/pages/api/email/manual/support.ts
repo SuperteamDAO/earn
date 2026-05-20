@@ -11,8 +11,27 @@ import { supportEmailTemplate } from '@/features/emails/components/supportEmailT
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
+const blockedEmailDomains = new Set([
+  'example.com',
+  'example.net',
+  'example.org',
+  'invalid',
+  'localhost',
+  'test.com',
+]);
+
 const supportEmailSchema = z.object({
-  email: z.string().trim().toLowerCase().email(),
+  email: z
+    .string()
+    .trim()
+    .toLowerCase()
+    .email()
+    .refine(
+      (email) => !blockedEmailDomains.has(email.split('@').at(-1) ?? ''),
+      {
+        message: 'Please use a valid email address',
+      },
+    ),
   subject: z.string().trim().min(1),
   description: z.string().trim().min(10),
 });
