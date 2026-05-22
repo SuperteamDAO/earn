@@ -6,7 +6,6 @@ import { LocalImage } from '@/components/ui/local-image';
 import { TokenIcon } from '@/components/ui/token-icon';
 import { ASSET_URL } from '@/constants/ASSET_URL';
 import { useServerTimeSync } from '@/hooks/use-server-time';
-import { getRewardTokenDisplayName } from '@/lib/rewards/inKind';
 import { timeAgoShort } from '@/utils/timeAgo';
 
 import { type Listing } from '../types';
@@ -31,7 +30,6 @@ export const ListingCardMini = ({ bounty }: { bounty: Listing }) => {
 
   const isVariable = compensationType === 'variable';
   const showToken = !isVariable || (isVariable && isWinnersAnnounced);
-  const tokenLabel = getRewardTokenDisplayName(token);
 
   const { serverTime } = useServerTimeSync();
   const isBeforeDeadline = dayjs(serverTime()).isBefore(dayjs(deadline));
@@ -102,9 +100,7 @@ export const ListingCardMini = ({ bounty }: { bounty: Listing }) => {
                     className="text-xs font-semibold whitespace-nowrap text-slate-600"
                   />
                   {!!showToken && (
-                    <p className="text-xs font-medium text-gray-400">
-                      {tokenLabel}
-                    </p>
+                    <p className="text-xs font-medium text-gray-400">{token}</p>
                   )}
                 </div>
                 <p className="ml-1 text-xs text-slate-300 md:text-sm">|</p>

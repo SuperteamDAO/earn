@@ -77,7 +77,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
     });
 
     if (user?.isBlocked) {
-      logger.warn(`Blocked user attempted listing/grant search: ${privyDid}`);
+      logger.warn('Blocked user attempted listing/grant search');
       return res.status(403).json({ error: 'User is blocked' });
     }
   }

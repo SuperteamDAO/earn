@@ -12,14 +12,15 @@ export default async function searchUser(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
-  logger.info(`Request query ${safeStringify(req.query)}`);
-
   if (req.method !== 'GET') {
     logger.warn(`Method not allowed: ${req.method}`);
     return res.status(405).end(`Method Not Allowed`);
   }
 
   const { query, take } = req.query;
+  logger.info(
+    `User search requested; queryLength=${typeof query === 'string' ? query.length : 0}, take=${typeof take === 'string' ? take : 'default'}`,
+  );
   if (!query) {
     logger.warn('Query parameter is required');
     return res.status(400).json({ error: 'Query is required' });

@@ -7,7 +7,6 @@ import { Button } from '@/components/ui/button';
 import { Tooltip } from '@/components/ui/tooltip';
 import { useBreakpoint } from '@/hooks/use-breakpoint';
 import { type SubmissionWithUser } from '@/interface/submission';
-import { getRewardTokenDisplayName } from '@/lib/rewards/inKind';
 import { cn } from '@/utils/cn';
 import { nthLabelGenerator } from '@/utils/rank';
 import { tweetEmbedLink } from '@/utils/socialEmbeds';
@@ -73,7 +72,6 @@ export function ListingWinners({ bounty }: Props) {
     ],
     [submissions],
   );
-  const tokenLabel = getRewardTokenDisplayName(bounty?.token);
   const extraBonusSubmissions = useMemo(
     () => bonusSubmissions.length - sliceValue,
     [bonusSubmissions, sliceValue],
@@ -164,7 +162,7 @@ export function ListingWinners({ bounty }: Props) {
                           Number(submission?.winnerPosition) as keyof Rewards
                         ] ?? 0,
                       )}{' '}
-                    {tokenLabel}
+                    {bounty?.token}
                   </p>
                 </Link>
               ))}

@@ -4,7 +4,6 @@ import { type NextApiRequestCookies } from 'next/dist/server/api-utils';
 
 import logger from '@/lib/logger';
 import { privy } from '@/lib/privy';
-import { safeStringify } from '@/utils/safeStringify';
 
 export async function getPrivyToken(
   req:
@@ -39,10 +38,7 @@ export async function getPrivyToken(
       .utils()
       .auth()
       .verifyAuthToken(accessToken);
-    logger.debug(
-      `Authorized token for Privy user ${verifiedClaims.user_id}`,
-      safeStringify({ appId: verifiedClaims.app_id, sessionId: 'redacted' }),
-    );
+    logger.debug('Authorized Privy token');
 
     return verifiedClaims.user_id;
   } catch (error) {

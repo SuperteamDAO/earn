@@ -9,14 +9,15 @@ export default async function checkUsername(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
-  logger.info(`Request query: ${safeStringify(req.query)}`);
-
   if (req.method !== 'GET') {
     logger.warn(`Method not allowed: ${req.method}`);
     return res.status(405).end('Method Not Allowed');
   }
 
   const { firstName } = req.query;
+  logger.info(
+    `Random username requested; hasFirstName=${typeof firstName === 'string'}`,
+  );
 
   if (firstName && typeof firstName !== 'string') {
     logger.warn('Invalid firstName parameter');

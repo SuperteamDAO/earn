@@ -11,7 +11,9 @@ async function comment(req: NextApiRequestWithUser, res: NextApiResponse) {
   const params = req.query;
   const commentId = params.id as string;
   const userId = req.userId;
-  logger.info(`Request Params: ${safeStringify(req.query)}`);
+  logger.info(
+    `Comment delete requested; commentId=${typeof req.query.id === 'string' ? req.query.id : 'missing'}`,
+  );
 
   if (req.method !== 'DELETE') {
     logger.warn(`Method not allowed: ${req.method}`);

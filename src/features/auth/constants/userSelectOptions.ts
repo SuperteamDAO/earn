@@ -8,6 +8,7 @@ export const userSelectOptions: UserSelect = {
   username: true,
   id: true,
   location: true,
+  locationUpdatedAt: true,
   currentSponsorId: true,
   walletAddress: true,
   skills: true,

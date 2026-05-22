@@ -224,6 +224,7 @@ const nextConfig: NextConfig = {
   },
   skipTrailingSlashRedirect: true,
   logging: {
+    // @ts-ignore — valid option, missing from Next.js type definitions
     browserToTerminal: true,
   },
 };

@@ -10,9 +10,9 @@ import { safeStringify } from '@/utils/safeStringify';
 import { queueAgent } from '@/features/agents/utils/queueAgent';
 import { getUserSession } from '@/features/auth/utils/getUserSession';
 import { queueEmail } from '@/features/emails/utils/queueEmail';
+import { isGrantApplicationInCooldown } from '@/features/grants/utils/grantApplicationCooldown';
 import { grantApplicationSchema } from '@/features/grants/utils/grantApplicationSchema';
 import {
-  COINDCX_GRANT_ID,
   getGrantFixedAsk,
   isAgenticEngineeringGrant,
   isUserEligibleForST,
@@ -192,38 +192,30 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (grant.id === COINDCX_GRANT_ID) {
-      const rejectedApplication = await prisma.grantApplication.findFirst({
-        where: {
-          grantId,
-          userId,
-          applicationStatus: 'Rejected',
-          decidedAt: { gte: dayjs().subtract(30, 'day').toDate() },
-        },
-        orderBy: { decidedAt: 'desc' },
+    const rejectedApplication = await prisma.grantApplication.findFirst({
+      where: {
+        grantId,
+        userId,
+        applicationStatus: 'Rejected',
+        decidedAt: { gte: dayjs().subtract(30, 'day').toDate() },
+      },
+      orderBy: { decidedAt: 'desc' },
+    });
+
+    if (
+      rejectedApplication?.decidedAt &&
+      isGrantApplicationInCooldown(rejectedApplication.decidedAt)
+    ) {
+      logger.debug(`User in grant application cooldown period`, {
+        grantId,
+        userId,
       });
-
-      if (rejectedApplication?.decidedAt) {
-        const remainingDays = Math.ceil(
-          (30 * 24 * 60 * 60 * 1000 -
-            new Date(rejectedApplication.decidedAt).getTime()) /
-            (24 * 60 * 60 * 1000),
-        );
-
-        if (remainingDays > 0) {
-          logger.debug(`User in cooldown period`, {
-            grantId,
-            userId,
-            remainingDays,
-          });
-          return NextResponse.json(
-            {
-              error: `You must wait 30 days before reapplying for this grant.`,
-            },
-            { status: 429 },
-          );
-        }
-      }
+      return NextResponse.json(
+        {
+          error: `You must wait 30 days before reapplying for this grant.`,
+        },
+        { status: 429 },
+      );
     }
 
     const result = await createGrantApplication(
