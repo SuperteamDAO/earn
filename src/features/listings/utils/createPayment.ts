@@ -5,7 +5,9 @@ import { getChapterRegions } from '@/utils/chapterRegion';
 import { addPaymentInfoToAirtable } from './addPaymentInfoToAirtable';
 import {
   canPaySubmissionForRegion,
+  getEffectiveRegionVerificationStatus,
   KYC_REGION_VERIFICATION_CUTOFF,
+  REGION_VERIFICATION_STATUS,
 } from './regionVerification';
 
 type CreatePaymentProps = {
@@ -59,6 +61,7 @@ export async function createPayment({
           kycIDNumber: true,
           kycIDType: true,
           kycCountry: true,
+          kycVerifiedAt: true,
           isKYCVerified: true,
           isAgent: true,
         },
@@ -103,6 +106,37 @@ export async function createPayment({
         logger.error(errorMessage);
         errors.push({ submissionId, error: errorMessage });
         continue;
+      }
+
+      if (
+        getEffectiveRegionVerificationStatus({
+          region: submission.listing.region,
+          kycCountry: submission.user.kycCountry,
+          regionVerificationStatus: submission.regionVerificationStatus,
+          chapters,
+        }) !== submission.regionVerificationStatus
+      ) {
+        const effectiveStatus = getEffectiveRegionVerificationStatus({
+          region: submission.listing.region,
+          kycCountry: submission.user.kycCountry,
+          regionVerificationStatus: submission.regionVerificationStatus,
+          chapters,
+        });
+
+        await prisma.submission.update({
+          where: { id: submissionId },
+          data: {
+            regionVerificationStatus: effectiveStatus,
+            regionVerificationCountry: submission.user.kycCountry,
+            regionVerificationVerifiedAt:
+              effectiveStatus === REGION_VERIFICATION_STATUS.PoaRequired
+                ? null
+                : submission.user.kycVerifiedAt ?? new Date(),
+          },
+        });
+
+        submission.regionVerificationStatus = effectiveStatus;
+        submission.regionVerificationCountry = submission.user.kycCountry;
       }
 
       if (

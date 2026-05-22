@@ -2,10 +2,15 @@ import type { NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { getChapterRegions } from '@/utils/chapterRegion';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { type NextApiRequestWithUser } from '@/features/auth/types';
 import { withAuth } from '@/features/auth/utils/withAuth';
+import {
+  getEffectiveRegionVerificationStatus,
+  REGION_VERIFICATION_STATUS,
+} from '@/features/listings/utils/regionVerification';
 
 async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
   const { listingId } = req.query;
@@ -76,6 +81,15 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
     };
 
     if (submission?.listing.isWinnersAnnounced) {
+      const chapters = await getChapterRegions();
+      const effectiveRegionVerificationStatus =
+        getEffectiveRegionVerificationStatus({
+          region: submission.listing.region,
+          kycCountry: submission.user.kycCountry,
+          regionVerificationStatus: submission.regionVerificationStatus,
+          chapters,
+        });
+
       responseData.isWinner = submission.isWinner;
       responseData.isKYCVerified = submission.user.isKYCVerified;
       responseData.isPaid = submission.isPaid;
@@ -85,11 +99,15 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       responseData.kycCountry = submission.user.kycCountry ?? undefined;
       responseData.listingRegion = submission.listing.region ?? undefined;
       responseData.regionVerificationStatus =
-        submission.regionVerificationStatus;
+        effectiveRegionVerificationStatus;
       responseData.regionVerificationCountry =
-        submission.regionVerificationCountry;
+        submission.regionVerificationCountry ?? submission.user.kycCountry;
       responseData.regionVerificationVerifiedAt =
-        submission.regionVerificationVerifiedAt ?? undefined;
+        submission.regionVerificationVerifiedAt ??
+        (effectiveRegionVerificationStatus ===
+        REGION_VERIFICATION_STATUS.KycCountryMatched
+          ? submission.user.kycVerifiedAt ?? undefined
+          : undefined);
     }
 
     logger.info(

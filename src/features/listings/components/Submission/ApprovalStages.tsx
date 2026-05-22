@@ -82,6 +82,8 @@ export const ApprovalStages = ({ listing }: Props) => {
     REGION_VERIFICATION_STATUS.Ineligible;
   const isRegionVerified =
     !isPoaRequired && !isRegionIneligible && isKycVerified;
+  const regionVerifiedAt =
+    submission.regionVerificationVerifiedAt ?? submission.kycVerifiedAt;
 
   const isPaymentSynced = submission.paymentSynced ?? false;
 
@@ -159,7 +161,7 @@ export const ApprovalStages = ({ listing }: Props) => {
                 ? 'Payment completed'
                 : getPayoutCopy({
                     winnerAnnouncedAt: listing.winnersAnnouncedAt,
-                    kycVerifiedAt: submission.kycVerifiedAt,
+                    kycVerifiedAt: regionVerifiedAt,
                   })}
             </Subheading>
           </div>

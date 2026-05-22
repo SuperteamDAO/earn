@@ -75,6 +75,37 @@ export function getKycRegionVerificationStatus({
     : REGION_VERIFICATION_STATUS.PoaRequired;
 }
 
+export function getEffectiveRegionVerificationStatus({
+  region,
+  kycCountry,
+  regionVerificationStatus,
+  chapters,
+}: {
+  region: string | null | undefined;
+  kycCountry: string | null | undefined;
+  regionVerificationStatus: RegionVerificationStatus | null | undefined;
+  chapters: ChapterRegionData[];
+}): RegionVerificationStatus {
+  if (!isGeoLockedRegion(region)) {
+    return REGION_VERIFICATION_STATUS.NotRequired;
+  }
+
+  if (
+    regionVerificationStatus === REGION_VERIFICATION_STATUS.KycCountryMatched ||
+    regionVerificationStatus === REGION_VERIFICATION_STATUS.PoaRequired ||
+    regionVerificationStatus === REGION_VERIFICATION_STATUS.PoaVerified ||
+    regionVerificationStatus === REGION_VERIFICATION_STATUS.Ineligible
+  ) {
+    return regionVerificationStatus;
+  }
+
+  return getKycRegionVerificationStatus({
+    region,
+    kycCountry,
+    chapters,
+  });
+}
+
 export function canPaySubmissionForRegion({
   region,
   kycCountry,
@@ -90,11 +121,18 @@ export function canPaySubmissionForRegion({
 }) {
   if (!isGeoLockedRegion(region)) return true;
 
-  if (regionVerificationStatus === REGION_VERIFICATION_STATUS.Ineligible) {
+  const effectiveStatus = getEffectiveRegionVerificationStatus({
+    region,
+    kycCountry,
+    regionVerificationStatus,
+    chapters,
+  });
+
+  if (effectiveStatus === REGION_VERIFICATION_STATUS.Ineligible) {
     return false;
   }
 
-  if (regionVerificationStatus === REGION_VERIFICATION_STATUS.PoaVerified) {
+  if (effectiveStatus === REGION_VERIFICATION_STATUS.PoaVerified) {
     return isCountryEligibleForRegion({
       country: regionVerificationCountry,
       region,

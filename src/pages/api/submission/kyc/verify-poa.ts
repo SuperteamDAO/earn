@@ -14,6 +14,7 @@ import { getPoAApplicantId } from '@/features/kyc/utils/getPoAApplicantId';
 import { getPoACountry } from '@/features/kyc/utils/getPoACountry';
 import { createPayment } from '@/features/listings/utils/createPayment';
 import {
+  getEffectiveRegionVerificationStatus,
   isCountryEligibleForRegion,
   KYC_REGION_VERIFICATION_CUTOFF,
   REGION_VERIFICATION_STATUS,
@@ -37,19 +38,42 @@ const handler = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
       include: { user: true, listing: true },
     });
 
+    const chapters = await getChapterRegions();
+    const effectiveRegionVerificationStatus =
+      getEffectiveRegionVerificationStatus({
+        region: submission.listing.region,
+        kycCountry: submission.user.kycCountry,
+        regionVerificationStatus: submission.regionVerificationStatus,
+        chapters,
+      });
+
     const isAllowed =
       submission.isWinner &&
       submission.listing.isWinnersAnnounced &&
       submission.listing.isFndnPaying &&
       !submission.isPaid &&
       submission.user.isKYCVerified &&
-      submission.regionVerificationStatus ===
-        REGION_VERIFICATION_STATUS.PoaRequired &&
+      effectiveRegionVerificationStatus === REGION_VERIFICATION_STATUS.PoaRequired &&
       submission.listing.winnersAnnouncedAt &&
       submission.listing.winnersAnnouncedAt > KYC_REGION_VERIFICATION_CUTOFF;
 
     if (!isAllowed) {
       return res.status(403).json({ message: 'Not allowed' });
+    }
+
+    if (
+      submission.regionVerificationStatus !==
+      REGION_VERIFICATION_STATUS.PoaRequired
+    ) {
+      await prisma.submission.update({
+        where: { id: submissionId },
+        data: {
+          regionVerificationStatus: REGION_VERIFICATION_STATUS.PoaRequired,
+          regionVerificationCountry:
+            submission.regionVerificationCountry ?? submission.user.kycCountry,
+          regionVerificationVerifiedAt: null,
+        },
+      });
     }
 
     const secretKey = process.env.SUMSUB_SECRET_KEY;
@@ -103,7 +127,6 @@ const handler = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
       return res.status(200).json({ status: 'poa_pending' });
     }
 
-    const chapters = await getChapterRegions();
     const isRegionMatch = isCountryEligibleForRegion({
       country: rawPoaCountry,
       region: submission.listing.region,
@@ -157,7 +180,7 @@ const handler = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
           `Submission PoA verified but payment creation failed: submissionId=${submissionId}, result=${safeStringify(paymentResult)}`,
         );
 
-        return res.status(500).json({
+        return res.status(200).json({
           status: 'payment_failed',
           message: 'Payment could not be created after PoA verification',
         });

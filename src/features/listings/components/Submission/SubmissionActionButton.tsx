@@ -411,7 +411,7 @@ export const SubmissionActionButton = ({
   } else if (
     !isNotEligible &&
     isWinnersAnnounced &&
-    !['kyc', 'kyc_done', 'paid'].includes(buttonState)
+    !['kyc', 'kyc_done', 'paid', 'region_ineligible'].includes(buttonState)
   ) {
     buttonText = 'Winners Announced';
     buttonBG = 'bg-gray-500';
