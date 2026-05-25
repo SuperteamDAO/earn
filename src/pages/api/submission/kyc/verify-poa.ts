@@ -167,15 +167,6 @@ const handler = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
       );
 
       if (!didProcessSubmission) {
-        await prisma.submission.update({
-          where: { id: submissionId },
-          data: {
-            regionVerificationStatus: REGION_VERIFICATION_STATUS.PoaRequired,
-            regionVerificationCountry: rawPoaCountry,
-            regionVerificationVerifiedAt: null,
-          },
-        });
-
         logger.error(
           `Submission PoA verified but payment creation failed: submissionId=${submissionId}, result=${safeStringify(paymentResult)}`,
         );

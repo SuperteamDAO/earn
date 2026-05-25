@@ -17,13 +17,34 @@ export const getPoAApplicantId = async (
     throw new Error('Sumsub: SUMSUB_POA_LEVEL_NAME environment variable not set');
   }
 
-  const url = `/resources/applicants/-;externalUserId=${userId};levelName=${levelName}/one`;
   const method = 'GET';
   const body = '';
-  const headers = createSumSubHeaders(method, url, body, secretKey, appToken);
 
   try {
-    const response = await axios.get(`${SUMSUB_BASE_URL}${url}`, { headers });
+    const lookupApplicant = async (url: string) => {
+      const headers = createSumSubHeaders(
+        method,
+        url,
+        body,
+        secretKey,
+        appToken,
+      );
+      return await axios.get(`${SUMSUB_BASE_URL}${url}`, { headers });
+    };
+
+    const primaryUrl = `/resources/applicants/-;externalUserId=${userId};levelName=${levelName}/one`;
+    const fallbackUrl = `/resources/applicants/-;externalUserId=${userId}/one`;
+
+    let response;
+    try {
+      response = await lookupApplicant(primaryUrl);
+    } catch (error) {
+      if (!axios.isAxiosError(error) || error.response?.status !== 400) {
+        throw error;
+      }
+      response = await lookupApplicant(fallbackUrl);
+    }
+
     const id = response.data?.id;
     if (!id) {
       throw new Error('Sumsub: PoA applicant ID not found in response');

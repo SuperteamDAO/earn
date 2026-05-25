@@ -70,6 +70,20 @@ export const getPoACountry = async (
 
       return relevantAddress?.country ?? null;
     }
+
+    const idDocs = response.data?.info?.idDocs;
+    if (Array.isArray(idDocs)) {
+      const poaDocument = idDocs.find(
+        (doc) =>
+          doc &&
+          typeof doc === 'object' &&
+          typeof doc.country === 'string' &&
+          doc.country.trim(),
+      );
+
+      return poaDocument?.country ?? null;
+    }
+
     return null;
   } catch (error) {
     logger.error(
