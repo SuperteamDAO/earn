@@ -353,14 +353,11 @@ export const KYCModal = ({
             <div className="flex flex-col justify-between px-6 pt-6">
               <div className="flex flex-col gap-4">
                 <h2 className="text-xl font-semibold text-slate-900">
-                  Before You Start
+                  Disclaimer
                 </h2>
                 <p className="text-base text-slate-600">
-                  This reward is only open to residents of {regionDisplayName}.
-                  We'll ask you to verify your identity. If your ID document
-                  doesn't confirm your {regionDisplayName} residency, we'll
-                  also ask for a proof of address (utility bill, bank
-                  statement, or lease agreement).
+                  Keep your physical KYC documents from {regionDisplayName}{' '}
+                  ready to complete KYC.
                 </p>
               </div>
               <div className="flex gap-3 pt-6">
