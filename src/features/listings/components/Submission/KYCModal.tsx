@@ -158,15 +158,6 @@ export const KYCModal = ({
             throw new Error(VERIFICATION_PENDING_ERROR);
           }
 
-          if (
-            typeof data === 'object' &&
-            data !== null &&
-            'status' in data &&
-            (data as { status?: string }).status === 'region_mismatch'
-          ) {
-            throw new Error('REGION_MISMATCH');
-          }
-
           throw new Error(VERIFICATION_PENDING_ERROR);
         });
 
@@ -190,22 +181,6 @@ export const KYCModal = ({
                 }
               }, 0);
               return undefined;
-            }
-
-            if (
-              error instanceof Error &&
-              error.message === 'REGION_MISMATCH'
-            ) {
-              return (
-                <div className="flex flex-col gap-1 text-left">
-                  <p className="text-sm font-semibold text-red-600">
-                    Not Eligible
-                  </p>
-                  <p className="text-xs text-red-600">
-                    {`Sorry, we couldn't verify that you are a resident of ${regionDisplayName}. Only the residents of ${regionDisplayName} are eligible for this reward. Please contact support@superteam.fun if there's been a mistake.`}
-                  </p>
-                </div>
-              );
             }
 
             return 'KYC verification check failed. Please try again.';

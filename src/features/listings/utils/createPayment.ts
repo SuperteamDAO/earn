@@ -108,20 +108,14 @@ export async function createPayment({
         continue;
       }
 
-      if (
-        getEffectiveRegionVerificationStatus({
-          region: submission.listing.region,
-          kycCountry: submission.user.kycCountry,
-          regionVerificationStatus: submission.regionVerificationStatus,
-          chapters,
-        }) !== submission.regionVerificationStatus
-      ) {
-        const effectiveStatus = getEffectiveRegionVerificationStatus({
-          region: submission.listing.region,
-          kycCountry: submission.user.kycCountry,
-          regionVerificationStatus: submission.regionVerificationStatus,
-          chapters,
-        });
+      const effectiveStatus = getEffectiveRegionVerificationStatus({
+        region: submission.listing.region,
+        kycCountry: submission.user.kycCountry,
+        regionVerificationStatus: submission.regionVerificationStatus,
+        chapters,
+      });
+
+      if (effectiveStatus !== submission.regionVerificationStatus) {
 
         await prisma.submission.update({
           where: { id: submissionId },
