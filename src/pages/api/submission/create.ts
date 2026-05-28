@@ -38,6 +38,8 @@ export async function createSubmission(
   }
 
   const validatedData = validationResult.data;
+  const submissionTelegram =
+    listing.type === 'project' ? validatedData.telegram || null : null;
 
   if (validatedData.telegram && !user.telegram) {
     await prisma.user.update({
@@ -65,6 +67,7 @@ export async function createSubmission(
       otherInfo: validatedData.otherInfo || '',
       eligibilityAnswers: validatedData.eligibilityAnswers || [],
       ask: validatedData.ask || null,
+      telegram: submissionTelegram,
     },
     include: {
       listing: {

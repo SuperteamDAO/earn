@@ -288,7 +288,7 @@ export const SubmissionDrawer = ({
             params: { id },
           });
 
-          const { link, tweet, otherInfo, eligibilityAnswers, ask } =
+          const { link, tweet, otherInfo, eligibilityAnswers, ask, telegram } =
             response.data;
 
           const reconciledAnswers =
@@ -332,7 +332,7 @@ export const SubmissionDrawer = ({
             tweet,
             otherInfo,
             ask,
-            telegram: user?.telegram || '',
+            telegram: telegram || user?.telegram || '',
             eligibilityAnswers: reconciledAnswers,
           });
         } catch (error) {
@@ -798,7 +798,6 @@ export const SubmissionDrawer = ({
                         formLabel="Your Telegram username"
                         control={form.control}
                         height="h-9"
-                        readOnly={!!user?.telegram}
                         isPro={isPro}
                       />
                     )}
