@@ -51,7 +51,6 @@ const PROXY_HOST_TO_PREFIX = new Map([
   ['assets.coingecko.com', '/cdn/coingecko'],
   ['avatars.githubusercontent.com', '/cdn/github'],
   ['api.phantom.app', '/cdn/phantom'],
-  ['arweave.net', '/cdn/arweave'],
   ['imagedelivery.net', '/cdn/imagedelivery'],
 ]);
 
@@ -117,6 +116,14 @@ const normalizeCdnIpfsPathToProxyPath = (path: string) => {
   );
 };
 
+const normalizeCdnArweavePathToProxyPath = (path: string) => {
+  if (!path.startsWith('/cdn/arweave/')) return null;
+
+  return normalizeRemoteIconToProxyPath(
+    `https://arweave.net/${path.slice('/cdn/arweave/'.length)}`,
+  );
+};
+
 export function normalizeTokenIcon(icon?: string | null): string {
   const value = icon?.trim();
   if (!value) return DEFAULT_TOKEN_ICON;
@@ -124,6 +131,9 @@ export function normalizeTokenIcon(icon?: string | null): string {
   if (value.startsWith('/')) {
     const ipfsProxyPath = normalizeCdnIpfsPathToProxyPath(value);
     if (ipfsProxyPath) return ipfsProxyPath;
+
+    const arweaveProxyPath = normalizeCdnArweavePathToProxyPath(value);
+    if (arweaveProxyPath) return arweaveProxyPath;
 
     if (
       value.startsWith('/cdn/') ||
@@ -156,6 +166,10 @@ export function normalizeTokenIcon(icon?: string | null): string {
   }
 
   const hostname = url.hostname.toLowerCase();
+  if (hostname === 'arweave.net') {
+    return normalizeRemoteIconToProxyPath(url.toString());
+  }
+
   const proxyPrefix = PROXY_HOST_TO_PREFIX.get(hostname);
   if (proxyPrefix) {
     return `${proxyPrefix}${joinUrlParts(url.pathname, url.search, url.hash)}`;

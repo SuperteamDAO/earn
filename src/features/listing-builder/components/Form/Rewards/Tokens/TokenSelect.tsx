@@ -66,6 +66,12 @@ const getTokenIconSrc = (icon?: string | null) => {
     )}`;
   }
 
+  if (value.startsWith('/cdn/arweave/')) {
+    return `/api/token-icon?url=${encodeURIComponent(
+      `https://arweave.net/${value.slice('/cdn/arweave/'.length)}`,
+    )}`;
+  }
+
   if (value.startsWith('/')) return value;
 
   try {
@@ -116,7 +122,7 @@ function ReachOutMessage({ jupiterUrl }: { jupiterUrl?: string }) {
           <a
             target="_blank"
             href={jupiterUrl}
-            className="text-blue-700 hover:underline"
+            className="text-[#1C4CE7] hover:underline"
           >
             Jupiter link
           </a>
