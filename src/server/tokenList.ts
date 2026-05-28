@@ -1,4 +1,5 @@
 import { prisma } from '@/prisma';
+import { sortTokenSearchResults } from '@/utils/tokenSearch';
 
 export interface Token {
   tokenName: string;
@@ -211,10 +212,13 @@ export async function searchTokenList(query: string): Promise<Token[]> {
     },
     orderBy: [{ sortOrder: 'asc' }, { tokenSymbol: 'asc' }],
     select: tokenSelect,
-    take: 25,
+    take: 100,
   });
 
-  return tokens.map(normalizeTokenRecord);
+  return sortTokenSearchResults(tokens.map(normalizeTokenRecord), search).slice(
+    0,
+    25,
+  );
 }
 
 export async function addVerifiedJupiterToken(

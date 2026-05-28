@@ -8,6 +8,7 @@ import {
   searchTokenList,
 } from '@/server/tokenList';
 import { setCacheHeaders } from '@/utils/cacheControl';
+import { sortJupiterTokenSearchResults } from '@/utils/tokenSearch';
 
 import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
 
@@ -24,10 +25,13 @@ async function searchJupiterTokens(query: string): Promise<JupiterToken[]> {
 
   const tokens = (await response.json()) as JupiterToken[];
   return Array.isArray(tokens)
-    ? tokens.map((token) => ({
-        ...token,
-        icon: normalizeTokenIcon(token.icon),
-      }))
+    ? sortJupiterTokenSearchResults(
+        tokens.map((token) => ({
+          ...token,
+          icon: normalizeTokenIcon(token.icon),
+        })),
+        query,
+      )
     : [];
 }
 
