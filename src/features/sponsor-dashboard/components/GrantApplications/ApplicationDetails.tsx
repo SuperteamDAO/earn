@@ -17,13 +17,14 @@ import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
 import { truncateString } from '@/utils/truncateString';
 
-import { type Grant } from '@/features/grants/types';
+import { type Grant, type GrantQuestion } from '@/features/grants/types';
 import {
   AGENTIC_ENGINEERING_GRANT_COPY,
   COINDCX_GRANT_ID,
   isAgenticEngineeringGrant,
   ST_GRANT_COPY,
 } from '@/features/grants/utils/stGrant';
+import { isEligiblePeopleType } from '@/features/membership/utils/peopleEligibility';
 import {
   GitHub,
   Telegram,
@@ -76,6 +77,14 @@ export const ApplicationDetails = ({
       ? AGENTIC_ENGINEERING_GRANT_COPY.application
       : null;
 
+  const getAnswerQuestion = (answer: any): GrantQuestion | undefined =>
+    grant?.questions?.find((question) => question.question === answer.question);
+
+  const isLinkAnswer = (answer: any) => {
+    const grantQuestion = getAnswerQuestion(answer);
+    return answer.type === 'link' || grantQuestion?.type === 'link';
+  };
+
   const queryClient = useQueryClient();
 
   const formattedCreatedAt = dayjs(selectedApplication?.createdAt).format(
@@ -105,7 +114,10 @@ export const ApplicationDetails = ({
   };
 
   const chapter = useMemo(
-    () => selectedApplication?.user.people?.chapter,
+    () =>
+      isEligiblePeopleType(selectedApplication?.user.people?.type)
+        ? selectedApplication?.user.people?.chapter
+        : null,
     [selectedApplication],
   );
   return (
@@ -491,14 +503,19 @@ export const ApplicationDetails = ({
 
               {Array.isArray(selectedApplication?.answers) &&
                 selectedApplication.answers.map(
-                  (answer: any, answerIndex: number) => (
-                    <InfoBox
-                      key={answerIndex}
-                      label={answer.question}
-                      content={answer.answer}
-                      isHtml
-                    />
-                  ),
+                  (answer: any, answerIndex: number) => {
+                    const grantQuestion = getAnswerQuestion(answer);
+                    const isOptional =
+                      answer.optional ?? grantQuestion?.optional;
+                    return (
+                      <InfoBox
+                        key={answerIndex}
+                        label={`${answer.question}${isOptional ? ' (Optional)' : ''}`}
+                        content={answer.answer}
+                        isHtml={!isLinkAnswer(answer)}
+                      />
+                    );
+                  },
                 )}
             </ScrollArea>
             <div className="w-1/3 max-w-[20rem] p-4">

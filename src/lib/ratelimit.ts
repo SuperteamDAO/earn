@@ -42,3 +42,10 @@ export const agentClaimRateLimiter = new Ratelimit({
   analytics: true,
   prefix: 'ratelimit:agent_claim',
 });
+
+export const supportEmailRateLimiter = new Ratelimit({
+  redis: redis,
+  limiter: Ratelimit.fixedWindow(5, '1 h'),
+  analytics: true,
+  prefix: 'ratelimit:support_email',
+});

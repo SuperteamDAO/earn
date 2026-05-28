@@ -898,6 +898,7 @@ model People {
   bestWorkUrl       String?            @db.VarChar(500)
   source            String             @default("Legacy") @db.VarChar(50)
   airtableRecordId  String             @db.VarChar(50)
+  purgedAt          DateTime?
   createdAt         DateTime           @default(now())
   updatedAt         DateTime           @default(now()) @updatedAt
   communityEarnings CommunityEarning[]
