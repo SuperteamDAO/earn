@@ -1,3 +1,4 @@
+import { X } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import posthog, { type Survey } from 'posthog-js';
 import { useEffect, useState } from 'react';
@@ -75,7 +76,15 @@ export function Survey({ open, setOpen }: Props) {
                 transition={{ type: 'spring', bounce: 0, duration: 0.5 }}
                 className="bg-slate-100 p-1"
               >
-                <div className="bg-background rounded-lg border-[0.09375rem] border-dashed border-slate-300 p-5">
+                <div className="bg-background relative rounded-lg border-[0.09375rem] border-dashed border-slate-300 p-5">
+                  <button
+                    type="button"
+                    aria-label="Close survey"
+                    onClick={() => setOpen(false)}
+                    className="text-muted-foreground hover:text-foreground absolute top-3 right-3 rounded-sm p-1 transition-colors"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
                   <DialogHeader>
                     <DialogHeader className="font-medium">
                       How likely are you to recommend other companies to use
