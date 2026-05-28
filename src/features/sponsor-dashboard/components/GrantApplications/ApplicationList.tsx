@@ -13,6 +13,7 @@ import {
 } from '@/prisma/enums';
 import { cn } from '@/utils/cn';
 
+import { isEligiblePeopleType } from '@/features/membership/utils/peopleEligibility';
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
 import { selectedGrantApplicationAtom } from '../../atoms';
@@ -123,7 +124,12 @@ export const ApplicationList = ({
             color: labelColor,
             border: labelBorder,
           } = colorMap[applicationLabel];
-          const chapter = application?.user.people?.chapter;
+          const isEligibleMember = isEligiblePeopleType(
+            application?.user.people?.type,
+          );
+          const chapter = isEligibleMember
+            ? application?.user.people?.chapter
+            : null;
           return (
             <div
               key={application?.id}

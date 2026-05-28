@@ -39,7 +39,9 @@ import { SocialInput } from '@/features/social/components/SocialInput';
 import { XVerificationModal } from '@/features/social/components/XVerificationModal';
 import {
   extractXHandle,
+  INVALID_X_STATUS_LINK_MESSAGE,
   isHandleVerified,
+  isXInternalStatusUrl,
   isXUrl,
 } from '@/features/social/utils/x-verification';
 
@@ -133,8 +135,16 @@ export const SubmissionDrawer = ({
 
   const tweetValue = form.watch('tweet');
   const linkValue = form.watch('link');
+  const hasInvalidTweetStatusFormat =
+    isBounty && !!tweetValue && isXInternalStatusUrl(tweetValue);
+  const hasInvalidLinkStatusFormat =
+    isBounty && !!linkValue && isXInternalStatusUrl(linkValue);
 
   const needsXVerification = useMemo(() => {
+    if (hasInvalidTweetStatusFormat) {
+      return false;
+    }
+
     if (!tweetValue || !isXUrl(tweetValue)) {
       return false;
     }
@@ -146,9 +156,13 @@ export const SubmissionDrawer = ({
 
     const verifiedHandles = user?.linkedTwitter || [];
     return !isHandleVerified(handle, verifiedHandles);
-  }, [tweetValue, user?.linkedTwitter]);
+  }, [hasInvalidTweetStatusFormat, tweetValue, user?.linkedTwitter]);
 
   const needsLinkVerification = useMemo(() => {
+    if (hasInvalidLinkStatusFormat) {
+      return false;
+    }
+
     if (!linkValue || !isXUrl(linkValue)) {
       return false;
     }
@@ -160,7 +174,7 @@ export const SubmissionDrawer = ({
 
     const verifiedHandles = user?.linkedTwitter || [];
     return !isHandleVerified(handle, verifiedHandles);
-  }, [linkValue, user?.linkedTwitter]);
+  }, [hasInvalidLinkStatusFormat, linkValue, user?.linkedTwitter]);
 
   const isTweetVerified = useMemo(() => {
     if (!tweetValue || !isXUrl(tweetValue)) {
@@ -201,7 +215,12 @@ export const SubmissionDrawer = ({
   }, [chapters, region]);
 
   useEffect(() => {
-    if (needsXVerification) {
+    if (hasInvalidTweetStatusFormat) {
+      form.setError('tweet', {
+        type: 'manual',
+        message: INVALID_X_STATUS_LINK_MESSAGE,
+      });
+    } else if (needsXVerification) {
       form.setError('tweet', {
         type: 'manual',
         message: 'We need to verify that you own this X account',
@@ -210,7 +229,12 @@ export const SubmissionDrawer = ({
       form.clearErrors('tweet');
     }
 
-    if (needsLinkVerification) {
+    if (hasInvalidLinkStatusFormat) {
+      form.setError('link', {
+        type: 'manual',
+        message: INVALID_X_STATUS_LINK_MESSAGE,
+      });
+    } else if (needsLinkVerification) {
       form.setError('link', {
         type: 'manual',
         message: 'We need to verify that you own this X account',
@@ -218,7 +242,13 @@ export const SubmissionDrawer = ({
     } else {
       form.clearErrors('link');
     }
-  }, [needsXVerification, needsLinkVerification, form]);
+  }, [
+    hasInvalidTweetStatusFormat,
+    hasInvalidLinkStatusFormat,
+    needsXVerification,
+    needsLinkVerification,
+    form,
+  ]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -325,6 +355,8 @@ export const SubmissionDrawer = ({
         (isFndnPaying && !editMode && !kycAcknowledged) ||
         isLoading ||
         form.formState.isSubmitting ||
+        hasInvalidTweetStatusFormat ||
+        hasInvalidLinkStatusFormat ||
         needsXVerification ||
         needsLinkVerification ||
         (isPro && !user?.isPro),
@@ -341,6 +373,8 @@ export const SubmissionDrawer = ({
       kycAcknowledged,
       isLoading,
       form.formState.isSubmitting,
+      hasInvalidTweetStatusFormat,
+      hasInvalidLinkStatusFormat,
       needsXVerification,
       needsLinkVerification,
       isPro,
