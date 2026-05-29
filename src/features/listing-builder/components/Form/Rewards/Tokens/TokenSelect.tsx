@@ -421,7 +421,7 @@ export function TokenSelect() {
                           jupiterUrl={
                             unverifiedJupiterToken
                               ? `https://jup.ag/tokens/${unverifiedJupiterToken.id}`
-                              : undefined
+                              : 'https://jup.ag/terminal'
                           }
                         />
                       )}
