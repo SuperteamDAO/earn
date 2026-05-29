@@ -1,10 +1,12 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
+import { lookup } from 'node:dns/promises';
 import { isIP } from 'node:net';
 
 import logger from '@/lib/logger';
 import { safeStringify } from '@/utils/safeStringify';
 
 const MAX_ICON_SIZE_BYTES = 5 * 1024 * 1024;
+const MAX_REDIRECTS = 4;
 const UPSTREAM_FETCH_TIMEOUT_MS = 5000;
 const CACHE_CONTROL =
   'public, max-age=86400, s-maxage=86400, stale-while-revalidate=604800';
@@ -144,6 +146,63 @@ const isPrivateHost = (hostname: string) => {
   );
 };
 
+const hasPrivateResolvedAddress = async (hostname: string) => {
+  if (isIP(stripIpv6Brackets(hostname))) {
+    return isPrivateIp(hostname);
+  }
+
+  const addresses = await lookup(hostname, { all: true });
+  return addresses.some(({ address }) => isPrivateIp(address));
+};
+
+const isValidRemoteIconUrl = async (url: URL) => {
+  if (!['https:', 'http:'].includes(url.protocol)) {
+    return false;
+  }
+
+  if (url.username || url.password) {
+    return false;
+  }
+
+  if (isPrivateHost(url.hostname)) {
+    return false;
+  }
+
+  return !(await hasPrivateResolvedAddress(url.hostname));
+};
+
+const fetchIcon = async (initialUrl: URL, signal: AbortSignal) => {
+  let currentUrl = initialUrl;
+
+  for (let redirectCount = 0; redirectCount <= MAX_REDIRECTS; redirectCount++) {
+    if (!(await isValidRemoteIconUrl(currentUrl))) {
+      return null;
+    }
+
+    const response = await fetch(currentUrl, {
+      redirect: 'manual',
+      signal,
+      headers: {
+        Accept:
+          'image/avif,image/webp,image/png,image/jpeg,image/svg+xml,image/*',
+      },
+    });
+
+    if (![301, 302, 303, 307, 308].includes(response.status)) {
+      return response;
+    }
+
+    const location = response.headers.get('location');
+    if (!location) {
+      return response;
+    }
+
+    currentUrl = new URL(location, currentUrl);
+  }
+
+  return null;
+};
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
@@ -166,7 +225,7 @@ export default async function handler(
     return res.status(400).end();
   }
 
-  if (isPrivateHost(iconUrl.hostname)) {
+  if (!(await isValidRemoteIconUrl(iconUrl))) {
     return res.status(400).end();
   }
 
@@ -177,22 +236,14 @@ export default async function handler(
   );
 
   try {
-    const iconResponse = await fetch(iconUrl, {
-      redirect: 'follow',
-      signal: abortController.signal,
-      headers: {
-        Accept:
-          'image/avif,image/webp,image/png,image/jpeg,image/svg+xml,image/*',
-      },
-    });
+    const iconResponse = await fetchIcon(iconUrl, abortController.signal);
+
+    if (!iconResponse) {
+      return res.status(400).end();
+    }
 
     if (!iconResponse.ok) {
       return res.status(404).end();
-    }
-
-    const finalUrl = new URL(iconResponse.url);
-    if (isPrivateHost(finalUrl.hostname)) {
-      return res.status(400).end();
     }
 
     const contentType = iconResponse.headers.get('content-type') || '';

@@ -45,23 +45,6 @@ const tokenSelect = {
   isActive: true,
 } as const;
 
-const PROXY_HOST_TO_PREFIX = new Map([
-  ['s2.coinmarketcap.com', '/cdn/coinmarketcap'],
-  ['bin.bnbstatic.com', '/cdn/bnbstatic'],
-  ['statics.solscan.io', '/cdn/solscan'],
-  ['assets.coingecko.com', '/cdn/coingecko'],
-  ['avatars.githubusercontent.com', '/cdn/github'],
-  ['api.phantom.app', '/cdn/phantom'],
-  ['imagedelivery.net', '/cdn/imagedelivery'],
-]);
-
-const DIRECT_ALLOWED_HOSTS = new Set(['res.cloudinary.com', 'dl.airtable.com']);
-
-const DIRECT_ALLOWED_HOST_SUFFIXES = [
-  '.googleusercontent.com',
-  '.airtableusercontent.com',
-];
-
 const SAME_APP_HOSTS = new Set([
   'superteam.fun',
   'www.superteam.fun',
@@ -79,10 +62,6 @@ const joinUrlParts = (pathname: string, search: string, hash: string) =>
 
 const normalizeRemoteIconToProxyPath = (url: string) =>
   `${TOKEN_ICON_PROXY_PATH}?url=${encodeURIComponent(url)}`;
-
-const isDirectlyAllowedHost = (hostname: string) =>
-  DIRECT_ALLOWED_HOSTS.has(hostname) ||
-  DIRECT_ALLOWED_HOST_SUFFIXES.some((suffix) => hostname.endsWith(suffix));
 
 const normalizeIpfsUrlToProxyPath = (url: URL) => {
   const hostname = url.hostname.toLowerCase();
@@ -109,20 +88,28 @@ const normalizeIpfsUrlToProxyPath = (url: URL) => {
   return null;
 };
 
-const normalizeCdnIpfsPathToProxyPath = (path: string) => {
-  if (!path.startsWith('/cdn/ipfs-io/')) return null;
+const CDN_PREFIX_TO_REMOTE_ORIGIN = new Map([
+  ['/cdn/coinmarketcap/', 'https://s2.coinmarketcap.com/'],
+  ['/cdn/bnbstatic/', 'https://bin.bnbstatic.com/'],
+  ['/cdn/solscan/', 'https://statics.solscan.io/'],
+  ['/cdn/coingecko/', 'https://assets.coingecko.com/'],
+  ['/cdn/github/', 'https://avatars.githubusercontent.com/'],
+  ['/cdn/phantom/', 'https://api.phantom.app/'],
+  ['/cdn/arweave/', 'https://arweave.net/'],
+  ['/cdn/ipfs-io/', 'https://ipfs.io/'],
+  ['/cdn/imagedelivery/', 'https://imagedelivery.net/'],
+]);
 
-  return normalizeRemoteIconToProxyPath(
-    `https://ipfs.io/${path.slice('/cdn/ipfs-io/'.length)}`,
-  );
-};
+const normalizeCdnPathToProxyPath = (path: string) => {
+  for (const [prefix, remoteOrigin] of CDN_PREFIX_TO_REMOTE_ORIGIN) {
+    if (!path.startsWith(prefix)) continue;
 
-const normalizeCdnArweavePathToProxyPath = (path: string) => {
-  if (!path.startsWith('/cdn/arweave/')) return null;
+    return normalizeRemoteIconToProxyPath(
+      `${remoteOrigin}${path.slice(prefix.length)}`,
+    );
+  }
 
-  return normalizeRemoteIconToProxyPath(
-    `https://arweave.net/${path.slice('/cdn/arweave/'.length)}`,
-  );
+  return null;
 };
 
 export function normalizeTokenIcon(icon?: string | null): string {
@@ -130,14 +117,10 @@ export function normalizeTokenIcon(icon?: string | null): string {
   if (!value) return DEFAULT_TOKEN_ICON;
 
   if (value.startsWith('/')) {
-    const ipfsProxyPath = normalizeCdnIpfsPathToProxyPath(value);
-    if (ipfsProxyPath) return ipfsProxyPath;
-
-    const arweaveProxyPath = normalizeCdnArweavePathToProxyPath(value);
-    if (arweaveProxyPath) return arweaveProxyPath;
+    const cdnProxyPath = normalizeCdnPathToProxyPath(value);
+    if (cdnProxyPath) return cdnProxyPath;
 
     if (
-      value.startsWith('/cdn/') ||
       value.startsWith('/assets/') ||
       value.startsWith(`${TOKEN_ICON_PROXY_PATH}?`)
     ) {
@@ -167,22 +150,9 @@ export function normalizeTokenIcon(icon?: string | null): string {
   }
 
   const hostname = url.hostname.toLowerCase();
-  if (hostname === 'arweave.net') {
-    return normalizeRemoteIconToProxyPath(url.toString());
-  }
-
-  const proxyPrefix = PROXY_HOST_TO_PREFIX.get(hostname);
-  if (proxyPrefix) {
-    return `${proxyPrefix}${joinUrlParts(url.pathname, url.search, url.hash)}`;
-  }
-
   const ipfsProxyPath = normalizeIpfsUrlToProxyPath(url);
   if (ipfsProxyPath) {
     return ipfsProxyPath;
-  }
-
-  if (isDirectlyAllowedHost(hostname)) {
-    return url.toString();
   }
 
   if (SAME_APP_HOSTS.has(hostname)) {

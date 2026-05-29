@@ -62,34 +62,6 @@ type AddTokenResponse = {
 const supportEmail = 'support@superteam.fun';
 const defaultTokenIcon = '/assets/dollar.svg';
 
-const getTokenIconSrc = (icon?: string | null) => {
-  const value = icon?.trim();
-  if (!value) return defaultTokenIcon;
-
-  if (value.startsWith('/cdn/ipfs-io/')) {
-    return `/api/token-icon?url=${encodeURIComponent(
-      `https://ipfs.io/${value.slice('/cdn/ipfs-io/'.length)}`,
-    )}`;
-  }
-
-  if (value.startsWith('/cdn/arweave/')) {
-    return `/api/token-icon?url=${encodeURIComponent(
-      `https://arweave.net/${value.slice('/cdn/arweave/'.length)}`,
-    )}`;
-  }
-
-  if (value.startsWith('/')) return value;
-
-  try {
-    const url = new URL(value);
-    if (!['https:', 'http:'].includes(url.protocol)) return defaultTokenIcon;
-
-    return `/api/token-icon?url=${encodeURIComponent(url.toString())}`;
-  } catch {
-    return defaultTokenIcon;
-  }
-};
-
 function TokenSearchLabel({
   icon,
   name,
@@ -104,7 +76,7 @@ function TokenSearchLabel({
   return (
     <div className="flex min-w-0 items-center gap-2">
       <img
-        src={getTokenIconSrc(icon)}
+        src={icon || defaultTokenIcon}
         alt={symbol || name}
         className="h-4 w-4 shrink-0"
       />

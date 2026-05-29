@@ -14,7 +14,10 @@ import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
 
 const JUPITER_TOKEN_SEARCH_URL = 'https://api.jup.ag/tokens/v2/search';
 
-async function searchJupiterTokens(query: string): Promise<JupiterToken[]> {
+async function searchJupiterTokens(
+  query: string,
+  options?: { normalizeIcons?: boolean },
+): Promise<JupiterToken[]> {
   const response = await fetch(
     `${JUPITER_TOKEN_SEARCH_URL}?query=${encodeURIComponent(query)}`,
   );
@@ -24,15 +27,17 @@ async function searchJupiterTokens(query: string): Promise<JupiterToken[]> {
   }
 
   const tokens = (await response.json()) as JupiterToken[];
-  return Array.isArray(tokens)
-    ? sortJupiterTokenSearchResults(
-        tokens.map((token) => ({
+  if (!Array.isArray(tokens)) return [];
+
+  const normalizedTokens =
+    options?.normalizeIcons === false
+      ? tokens
+      : tokens.map((token) => ({
           ...token,
           icon: normalizeTokenIcon(token.icon),
-        })),
-        query,
-      )
-    : [];
+        }));
+
+  return sortJupiterTokenSearchResults(normalizedTokens, query);
 }
 
 const handleError = (error: unknown, res: NextApiResponse) => {
@@ -51,7 +56,9 @@ const handlePost = withSponsorAuth(async (req, res) => {
       return res.status(400).json({ error: 'Mint address is required' });
     }
 
-    const jupiterTokens = await searchJupiterTokens(mintAddress);
+    const jupiterTokens = await searchJupiterTokens(mintAddress, {
+      normalizeIcons: false,
+    });
     const jupiterToken = jupiterTokens.find(
       (token) => token.id === mintAddress,
     );
