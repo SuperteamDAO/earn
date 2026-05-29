@@ -362,6 +362,7 @@ model Submission {
   paymentDetails     Json?
   otherInfo          String?          @db.Text
   ask                Float?
+  telegram           String?          @db.Text
   label              SubmissionLabels @default(Unreviewed)
   rewardInUSD        Float            @default(0)
   listing            Bounties         @relation(fields: [listingId], references: [id])
