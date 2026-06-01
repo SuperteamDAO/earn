@@ -134,7 +134,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     bountyData = null;
   }
 
-  res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=600');
+  if (bountyData?.id) {
+    res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=600');
+  }
   return {
     props: {
       bounty: bountyData,

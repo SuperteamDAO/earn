@@ -151,7 +151,7 @@ export const getServerSideProps: GetServerSideProps = async ({ res }) => {
       console.error('Unexpected error fetching perks:', error);
     }
 
-    res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=600');
+    res.setHeader('Cache-Control', 'no-store');
     return {
       props: {
         liveNow: [],

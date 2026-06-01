@@ -757,7 +757,6 @@ export default function EditProfilePage({
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { res } = context;
   const { slug } = context.query;
   const chapters = await prisma.chapter.findMany({
     where: { active: true },
@@ -769,7 +768,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     },
   });
 
-  res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=600');
   return {
     props: {
       slug,

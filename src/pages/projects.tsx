@@ -85,7 +85,7 @@ export const getServerSideProps: GetServerSideProps = async ({ res }) => {
     };
   } catch (error) {
     console.error('Error fetching projects:', error);
-    res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=600');
+    res.setHeader('Cache-Control', 'no-store');
     return {
       props: {
         projects: [],

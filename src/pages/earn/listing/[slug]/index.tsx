@@ -127,8 +127,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     }
 
     await Promise.all(prefetchPromises);
+    res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=600');
   }
-  res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=600');
   return {
     props: {
       listing: listingData,

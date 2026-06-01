@@ -75,7 +75,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     };
   } catch (e) {
     console.log(e);
-    res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=600');
+    res.setHeader('Cache-Control', 'no-store');
     return {
       props: {
         slug,
