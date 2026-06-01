@@ -21,8 +21,8 @@ interface HomePageProps {
     slug: string;
     code: string;
     country: string[];
-    icons?: string | null;
-    link?: string | null;
+    icons: string | null;
+    link: string | null;
   }>;
   readonly chaptersForSchema: Array<{
     name: string;
@@ -30,8 +30,8 @@ interface HomePageProps {
     slug: string;
     code: string;
     country: string[];
-    icons?: string | null;
-    link?: string | null;
+    icons: string | null;
+    link: string | null;
   }>;
 }
 

@@ -1,4 +1,5 @@
 import { prisma } from '@/prisma';
+import { sortTokenSearchResults } from '@/utils/tokenSearch';
 
 export interface Token {
   tokenName: string;
@@ -10,7 +11,29 @@ export interface Token {
   isActive: boolean;
 }
 
+export interface JupiterToken {
+  id: string;
+  name: string;
+  symbol: string;
+  icon?: string | null;
+  decimals: number;
+  isVerified: boolean;
+}
+
+export type AddVerifiedJupiterTokenResult =
+  | {
+      type: 'success';
+      token: Token;
+    }
+  | {
+      type: 'unverified-token';
+    }
+  | {
+      type: 'symbol-conflict';
+    };
+
 const DEFAULT_TOKEN_ICON = '/assets/dollar.svg';
+const TOKEN_ICON_PROXY_PATH = '/api/token-icon';
 
 const tokenSelect = {
   tokenName: true,
@@ -21,25 +44,6 @@ const tokenSelect = {
   sortOrder: true,
   isActive: true,
 } as const;
-
-const PROXY_HOST_TO_PREFIX = new Map([
-  ['s2.coinmarketcap.com', '/cdn/coinmarketcap'],
-  ['bin.bnbstatic.com', '/cdn/bnbstatic'],
-  ['statics.solscan.io', '/cdn/solscan'],
-  ['assets.coingecko.com', '/cdn/coingecko'],
-  ['avatars.githubusercontent.com', '/cdn/github'],
-  ['api.phantom.app', '/cdn/phantom'],
-  ['arweave.net', '/cdn/arweave'],
-  ['ipfs.io', '/cdn/ipfs-io'],
-  ['imagedelivery.net', '/cdn/imagedelivery'],
-]);
-
-const DIRECT_ALLOWED_HOSTS = new Set(['res.cloudinary.com', 'dl.airtable.com']);
-
-const DIRECT_ALLOWED_HOST_SUFFIXES = [
-  '.googleusercontent.com',
-  '.airtableusercontent.com',
-];
 
 const SAME_APP_HOSTS = new Set([
   'superteam.fun',
@@ -56,15 +60,14 @@ const IPFS_SUBDOMAIN_SUFFIXES = [
 const joinUrlParts = (pathname: string, search: string, hash: string) =>
   `${pathname}${search}${hash}`;
 
-const isDirectlyAllowedHost = (hostname: string) =>
-  DIRECT_ALLOWED_HOSTS.has(hostname) ||
-  DIRECT_ALLOWED_HOST_SUFFIXES.some((suffix) => hostname.endsWith(suffix));
+const normalizeRemoteIconToProxyPath = (url: string) =>
+  `${TOKEN_ICON_PROXY_PATH}?url=${encodeURIComponent(url)}`;
 
 const normalizeIpfsUrlToProxyPath = (url: URL) => {
   const hostname = url.hostname.toLowerCase();
 
   if (url.pathname.startsWith('/ipfs/')) {
-    return `/cdn/ipfs-io${joinUrlParts(url.pathname, url.search, url.hash)}`;
+    return normalizeRemoteIconToProxyPath(url.toString());
   }
 
   for (const suffix of IPFS_SUBDOMAIN_SUFFIXES) {
@@ -73,11 +76,37 @@ const normalizeIpfsUrlToProxyPath = (url: URL) => {
     const cid = hostname.slice(0, -suffix.length);
     if (!cid) break;
 
-    return `/cdn/ipfs-io/ipfs/${cid}${joinUrlParts(
-      url.pathname,
-      url.search,
-      url.hash,
-    )}`;
+    return normalizeRemoteIconToProxyPath(
+      `https://ipfs.io/ipfs/${cid}${joinUrlParts(
+        url.pathname,
+        url.search,
+        url.hash,
+      )}`,
+    );
+  }
+
+  return null;
+};
+
+const CDN_PREFIX_TO_REMOTE_ORIGIN = new Map([
+  ['/cdn/coinmarketcap/', 'https://s2.coinmarketcap.com/'],
+  ['/cdn/bnbstatic/', 'https://bin.bnbstatic.com/'],
+  ['/cdn/solscan/', 'https://statics.solscan.io/'],
+  ['/cdn/coingecko/', 'https://assets.coingecko.com/'],
+  ['/cdn/github/', 'https://avatars.githubusercontent.com/'],
+  ['/cdn/phantom/', 'https://api.phantom.app/'],
+  ['/cdn/arweave/', 'https://arweave.net/'],
+  ['/cdn/ipfs-io/', 'https://ipfs.io/'],
+  ['/cdn/imagedelivery/', 'https://imagedelivery.net/'],
+]);
+
+const normalizeCdnPathToProxyPath = (path: string) => {
+  for (const [prefix, remoteOrigin] of CDN_PREFIX_TO_REMOTE_ORIGIN) {
+    if (!path.startsWith(prefix)) continue;
+
+    return normalizeRemoteIconToProxyPath(
+      `${remoteOrigin}${path.slice(prefix.length)}`,
+    );
   }
 
   return null;
@@ -88,7 +117,13 @@ export function normalizeTokenIcon(icon?: string | null): string {
   if (!value) return DEFAULT_TOKEN_ICON;
 
   if (value.startsWith('/')) {
-    if (value.startsWith('/cdn/') || value.startsWith('/assets/')) {
+    const cdnProxyPath = normalizeCdnPathToProxyPath(value);
+    if (cdnProxyPath) return cdnProxyPath;
+
+    if (
+      value.startsWith('/assets/') ||
+      value.startsWith(`${TOKEN_ICON_PROXY_PATH}?`)
+    ) {
       return value;
     }
 
@@ -115,31 +150,96 @@ export function normalizeTokenIcon(icon?: string | null): string {
   }
 
   const hostname = url.hostname.toLowerCase();
-  const proxyPrefix = PROXY_HOST_TO_PREFIX.get(hostname);
-  if (proxyPrefix) {
-    return `${proxyPrefix}${joinUrlParts(url.pathname, url.search, url.hash)}`;
-  }
-
   const ipfsProxyPath = normalizeIpfsUrlToProxyPath(url);
   if (ipfsProxyPath) {
     return ipfsProxyPath;
-  }
-
-  if (isDirectlyAllowedHost(hostname)) {
-    return url.toString();
   }
 
   if (SAME_APP_HOSTS.has(hostname)) {
     return joinUrlParts(url.pathname, url.search, url.hash);
   }
 
-  return DEFAULT_TOKEN_ICON;
+  return normalizeRemoteIconToProxyPath(url.toString());
 }
 
 const normalizeTokenRecord = <T extends Token>(token: T): T => ({
   ...token,
   icon: normalizeTokenIcon(token.icon),
 });
+
+export async function searchTokenList(query: string): Promise<Token[]> {
+  const search = query.trim();
+  if (!search) return [];
+
+  const tokens = await prisma.tokenMetadata.findMany({
+    where: {
+      isActive: true,
+      OR: [
+        { tokenName: { contains: search } },
+        { tokenSymbol: { contains: search } },
+        { mintAddress: { contains: search } },
+      ],
+    },
+    orderBy: [{ sortOrder: 'asc' }, { tokenSymbol: 'asc' }],
+    select: tokenSelect,
+    take: 100,
+  });
+
+  return sortTokenSearchResults(tokens.map(normalizeTokenRecord), search).slice(
+    0,
+    25,
+  );
+}
+
+export async function addVerifiedJupiterToken(
+  jupiterToken: JupiterToken,
+): Promise<AddVerifiedJupiterTokenResult> {
+  if (!jupiterToken.isVerified) {
+    return { type: 'unverified-token' };
+  }
+
+  const conflictingSymbolToken = await getTokenBySymbol(jupiterToken.symbol, {
+    includeInactive: true,
+  });
+
+  if (
+    conflictingSymbolToken &&
+    conflictingSymbolToken.mintAddress !== jupiterToken.id
+  ) {
+    return { type: 'symbol-conflict' };
+  }
+
+  const maxSortOrderToken = await prisma.tokenMetadata.findFirst({
+    orderBy: { sortOrder: 'desc' },
+    select: { sortOrder: true },
+  });
+
+  const token = await prisma.tokenMetadata.upsert({
+    where: { mintAddress: jupiterToken.id },
+    update: {
+      tokenName: jupiterToken.name,
+      tokenSymbol: jupiterToken.symbol,
+      icon: jupiterToken.icon || DEFAULT_TOKEN_ICON,
+      decimals: jupiterToken.decimals,
+      isActive: true,
+    },
+    create: {
+      tokenName: jupiterToken.name,
+      tokenSymbol: jupiterToken.symbol,
+      mintAddress: jupiterToken.id,
+      icon: jupiterToken.icon || DEFAULT_TOKEN_ICON,
+      decimals: jupiterToken.decimals,
+      sortOrder: (maxSortOrderToken?.sortOrder ?? 0) + 1,
+      isActive: true,
+    },
+    select: tokenSelect,
+  });
+
+  return {
+    type: 'success',
+    token: normalizeTokenRecord(token),
+  };
+}
 
 export async function getTokenList(options?: {
   includeInactive?: boolean;

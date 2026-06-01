@@ -18,6 +18,7 @@ export interface ChapterDisplay {
 }
 
 export interface ChapterRegionData {
+  id?: string;
   name: string;
   region: string;
   displayValue: string;

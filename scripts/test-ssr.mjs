@@ -21,6 +21,11 @@ async function testSSR() {
       },
     });
 
+    if (!res.ok) {
+      console.log(`❌ Request failed (status: ${res.status})`);
+      return;
+    }
+
     const ttfb = Date.now() - start;
     html = await res.text();
     const total = Date.now() - start;
@@ -83,7 +88,6 @@ async function testSSR() {
     }
 
     // 4. Performance note
-    const dbTime = Date.now() - start - (Date.now() - start);
     console.log(`\n⚡ Performance: Page response took ${Date.now() - start}ms total`);
     if (Date.now() - start > 3000) {
       console.log('   ⚠️  Response is slow (>3s). DB query may need optimization.');

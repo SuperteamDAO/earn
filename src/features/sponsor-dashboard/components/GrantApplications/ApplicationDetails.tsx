@@ -24,6 +24,7 @@ import {
   isAgenticEngineeringGrant,
   ST_GRANT_COPY,
 } from '@/features/grants/utils/stGrant';
+import { isEligiblePeopleType } from '@/features/membership/utils/peopleEligibility';
 import {
   GitHub,
   Telegram,
@@ -113,7 +114,10 @@ export const ApplicationDetails = ({
   };
 
   const chapter = useMemo(
-    () => selectedApplication?.user.people?.chapter,
+    () =>
+      isEligiblePeopleType(selectedApplication?.user.people?.type)
+        ? selectedApplication?.user.people?.chapter
+        : null,
     [selectedApplication],
   );
   return (

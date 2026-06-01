@@ -152,10 +152,9 @@ export function BottomBar({
         <Button
           variant="ghost"
           className={cn(
-            setColor(
-              user?.username ? `/earn/t/${user.username}/` : '',
-              router.asPath,
-            ),
+            user?.username
+              ? setColor(`/earn/t/${user.username}/`, router.asPath)
+              : 'text-slate-500',
             'w-12 hover:bg-transparent active:bg-transparent',
           )}
           asChild

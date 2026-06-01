@@ -28,7 +28,6 @@ import {
 import { type Listing } from '@/features/listings/types';
 import { buildListingQuery } from '@/features/listings/utils/query-builder';
 import { reorderFeaturedOngoing } from '@/features/listings/utils/reorderFeaturedOngoing';
-import { ProIntroDialog } from '@/features/pro/components/ProIntroDialog';
 
 const GrantsSection = dynamic(() =>
   import('@/features/grants/components/GrantsSection').then(
@@ -40,26 +39,10 @@ const HomeSideBar = dynamic(() =>
   import('@/features/home/components/SideBar').then((mod) => mod.HomeSideBar),
 );
 
-const InstallPWAModal = dynamic(
-  () =>
-    import('@/components/modals/InstallPWAModal').then(
-      (mod) => mod.InstallPWAModal,
-    ),
-  { ssr: false },
-);
-
 const HomepagePop = dynamic(
   () =>
     import('@/features/conversion-popups/components/HomepagePop').then(
       (mod) => mod.HomepagePop,
-    ),
-  { ssr: false },
-);
-
-const TalentAnnouncements = dynamic(
-  () =>
-    import('@/features/announcements/components/TalentAnnouncements').then(
-      (mod) => mod.TalentAnnouncements,
     ),
   { ssr: false },
 );
@@ -157,11 +140,8 @@ export default function HomePage({
           </div>
         </div>
       </div>
-      <InstallPWAModal />
       <HomepagePop />
-      <TalentAnnouncements />
       <ProListingsAnnouncement />
-      {authenticated && <ProIntroDialog />}
     </Default>
   );
 }
@@ -189,7 +169,8 @@ export const getStaticProps: GetStaticProps<HomePageProps> = async () => {
       },
       revalidate: 60,
     };
-  } catch {
+  } catch (error) {
+    console.error('getStaticProps(/earn) failed', error);
     return {
       props: {
         potentialSession: false,

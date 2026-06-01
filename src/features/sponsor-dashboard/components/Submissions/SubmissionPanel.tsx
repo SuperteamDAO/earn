@@ -169,7 +169,11 @@ export const SubmissionPanel = ({
               <div className="flex gap-2">
                 <Telegram
                   className="h-[0.9rem] w-[0.9rem] text-slate-600"
-                  link={selectedSubmission?.user?.telegram || ''}
+                  link={
+                    selectedSubmission?.telegram ||
+                    selectedSubmission?.user?.telegram ||
+                    ''
+                  }
                 />
 
                 <Twitter

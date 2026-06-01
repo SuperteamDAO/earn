@@ -12,12 +12,18 @@ import { checkGrantSponsorAuth } from '@/features/auth/utils/checkGrantSponsorAu
 import { getSponsorSession } from '@/features/auth/utils/getSponsorSession';
 import { queueEmail } from '@/features/emails/utils/queueEmail';
 import { addPaymentInfoToAirtable } from '@/features/grants/utils/addPaymentInfoToAirtable';
+import { validateCustomEmailNote } from '@/features/sponsor-dashboard/utils/customEmailSanitizer';
+import {
+  getTrancheApprovedEmailBody,
+  getTrancheRejectedEmailBody,
+} from '@/features/sponsor-dashboard/utils/grantEmailCopy';
 
 const UpdateGrantTrancheSchema = z
   .object({
     id: z.string(),
     approvedAmount: z.number().finite().positive().optional(),
     status: z.enum(['Approved', 'Rejected']),
+    customNote: z.string().trim().min(1).max(5000).optional(),
   })
   .superRefine((value, ctx) => {
     if (value.status !== 'Approved') return;
@@ -57,7 +63,7 @@ export async function POST(request: NextRequest) {
       { status: session.status },
     );
   }
-  const { id, status, approvedAmount } = validationResult.data;
+  const { id, status, approvedAmount, customNote } = validationResult.data;
   const { userId, userSponsorId } = session.data;
   try {
     return await withRedisLock(
@@ -65,6 +71,22 @@ export async function POST(request: NextRequest) {
       async () => {
         const currentTranche = await prisma.grantTranche.findUniqueOrThrow({
           where: { id },
+          include: {
+            Grant: {
+              include: {
+                sponsor: true,
+              },
+            },
+            GrantApplication: {
+              include: {
+                user: {
+                  select: {
+                    firstName: true,
+                  },
+                },
+              },
+            },
+          },
         });
 
         const { error } = await checkGrantSponsorAuth(
@@ -76,6 +98,43 @@ export async function POST(request: NextRequest) {
             { error: error.message },
             { status: error.status },
           );
+        }
+
+        let sanitizedCustomNote: string | undefined;
+        if (customNote) {
+          const fullEmailHtml =
+            status === 'Approved'
+              ? getTrancheApprovedEmailBody({
+                  granteeName: currentTranche.GrantApplication.user?.firstName,
+                  projectTitle: currentTranche.GrantApplication.projectTitle,
+                  sponsorName: currentTranche.Grant.sponsor.name,
+                  approvedAmount,
+                  token: currentTranche.Grant.token || 'USDC',
+                  salutation: currentTranche.Grant.emailSalutation,
+                  reviewerNote: customNote,
+                })
+              : getTrancheRejectedEmailBody({
+                  granteeName: currentTranche.GrantApplication.user?.firstName,
+                  projectTitle: currentTranche.GrantApplication.projectTitle,
+                  sponsorName: currentTranche.Grant.sponsor.name,
+                  salutation: currentTranche.Grant.emailSalutation,
+                  reviewerNote: customNote,
+                });
+          const noteValidation = validateCustomEmailNote({
+            noteHtml: customNote,
+            fullEmailHtml,
+          });
+          if (!noteValidation.isValid) {
+            logger.warn('Invalid custom note:', noteValidation.error);
+            return NextResponse.json(
+              {
+                error: 'Invalid custom note',
+                details: noteValidation.error,
+              },
+              { status: 400 },
+            );
+          }
+          sanitizedCustomNote = noteValidation.sanitized;
         }
 
         const updateData: any = {
@@ -223,6 +282,11 @@ export async function POST(request: NextRequest) {
                 id: result.id,
                 userId: result.GrantApplication.userId,
                 triggeredBy: userId,
+                otherInfo: sanitizedCustomNote
+                  ? {
+                      customEmailNote: sanitizedCustomNote,
+                    }
+                  : undefined,
               });
             }
 
@@ -232,6 +296,11 @@ export async function POST(request: NextRequest) {
                 id: result.id,
                 userId: result.GrantApplication.userId,
                 triggeredBy: userId,
+                otherInfo: sanitizedCustomNote
+                  ? {
+                      customEmailNote: sanitizedCustomNote,
+                    }
+                  : undefined,
               });
             }
           })(),

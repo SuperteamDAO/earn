@@ -362,6 +362,7 @@ model Submission {
   paymentDetails     Json?
   otherInfo          String?          @db.Text
   ask                Float?
+  telegram           String?          @db.Text
   label              SubmissionLabels @default(Unreviewed)
   rewardInUSD        Float            @default(0)
   listing            Bounties         @relation(fields: [listingId], references: [id])
@@ -898,6 +899,7 @@ model People {
   bestWorkUrl       String?            @db.VarChar(500)
   source            String             @default("Legacy") @db.VarChar(50)
   airtableRecordId  String             @db.VarChar(50)
+  purgedAt          DateTime?
   createdAt         DateTime           @default(now())
   updatedAt         DateTime           @default(now()) @updatedAt
   communityEarnings CommunityEarning[]

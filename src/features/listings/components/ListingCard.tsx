@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
 
 import IoIosStar from '@/components/icons/IoIosStar';
 import MdModeComment from '@/components/icons/MdModeComment';
@@ -67,7 +68,11 @@ export const ListingCard = ({
   } = bounty;
 
   const { serverTime } = useServerTimeSync();
-  const now = ssrTimestamp ?? serverTime();
+  const [hasHydrated, setHasHydrated] = useState(false);
+  useEffect(() => {
+    setHasHydrated(true);
+  }, []);
+  const now = !hasHydrated && ssrTimestamp ? ssrTimestamp : serverTime();
   const isBeforeDeadline = dayjs(now).isBefore(dayjs(deadline));
 
   const targetDate =
@@ -101,10 +106,10 @@ export const ListingCard = ({
     >
       <Link
         href={`/earn/listing/${slug}`}
-        className="absolute inset-0 z-0 rounded-md"
-        aria-label={title ?? ''}
+        className="absolute inset-0 z-10 rounded-md"
+        aria-label={title ? `Open listing: ${title}` : 'Open listing'}
       />
-      <div className="relative z-[1] flex w-full items-center justify-between">
+      <div className="relative z-0 flex w-full items-center justify-between">
         <div className="flex w-full">
           <img
             className="mr-3 h-14 w-14 rounded-md sm:mr-5 sm:h-16 sm:w-16"
@@ -118,7 +123,7 @@ export const ListingCard = ({
             </p>
             <Link
               href={`/earn/s/${sponsor?.slug}`}
-              className="flex w-min items-center gap-1 hover:underline"
+              className="relative z-20 flex w-min items-center gap-1 hover:underline"
             >
               <p className="w-full text-xs whitespace-nowrap text-slate-500 md:text-sm">
                 {sponsor?.name}

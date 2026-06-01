@@ -35,6 +35,7 @@ interface SubmissionWithUser {
   user: User;
   listing?: Listing;
   ask?: number;
+  telegram?: string | null;
   label: SubmissionLabels;
   notes?: string;
   totalEarnings?: number;

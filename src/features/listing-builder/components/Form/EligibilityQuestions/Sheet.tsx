@@ -48,7 +48,7 @@ export function EligibilityQuestionsSheet() {
   const subtext = useMemo(
     () =>
       type === 'project'
-        ? `Applicant's names, email IDs, and SOL wallet are collected by default. Please use this space to ask about anything else!`
+        ? `Applicant's names, email IDs, SOL wallet, and Telegram username are collected by default. Please use this space to ask about anything else!`
         : `The main ${type === 'bounty' ? 'bounty' : 'hackathon'} submission link, the submitter's names, email IDs, and SOL wallet are collected by default. Please use this space to ask about anything else!`,
     [type],
   );

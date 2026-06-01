@@ -496,7 +496,16 @@ export const ApplicationModal = ({
 
   const date = dayjs().format('YYYY-MM-DD');
   return (
-    <div className="p-6 pb-0">
+    <div
+      className={cn(
+        'p-6 pb-0',
+        'max-sm:[&_input]:text-base',
+        'max-sm:[&_.ProseMirror]:px-3!',
+        'max-sm:[&_.ProseMirror]:py-0!',
+        'max-sm:[&_.ProseMirror]:text-base!',
+        'max-sm:[&_.ProseMirror_*]:text-base!',
+      )}
+    >
       <DialogTitle className="text-lg tracking-normal text-slate-700 sm:text-xl">
         {applicationCopy?.title ?? 'Grant Application'}
         <p className="mt-1 text-sm font-normal text-slate-500">
