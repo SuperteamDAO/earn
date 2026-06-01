@@ -26,7 +26,6 @@ export async function handlePostSaveOperations(context: PostSaveParams) {
   try {
     await handleDiscordNotifications({
       result,
-      originalListing,
       listingId,
       isEditing,
       isVerifying,
@@ -61,14 +60,12 @@ export async function handlePostSaveOperations(context: PostSaveParams) {
 
 async function handleDiscordNotifications({
   result,
-  originalListing,
   listingId,
   isEditing,
   isVerifying,
   reason,
 }: {
   result: BountiesModel;
-  originalListing?: ListingWithSponsor;
   listingId: string;
   isEditing: boolean;
   isVerifying: boolean;
@@ -76,28 +73,13 @@ async function handleDiscordNotifications({
 }) {
   try {
     if (!isEditing) {
-      if (isVerifying && originalListing?.status !== 'VERIFYING') {
-        logger.info('Sending Discord Verification message', { id: listingId });
+      const discordStatus = result.isPublished
+        ? 'Published'
+        : isVerifying
+          ? `To be Verified${reason ? `: ${reason}` : ''}`
+          : 'Draft Added';
 
-        if (!process.env.EARNCOGNITO_URL) {
-          throw new Error('ENV EARNCOGNITO_URL not provided');
-        }
-
-        await earncognitoClient.post(`/telegram/verify-listing`, {
-          listingId: result.id,
-          reason,
-        });
-
-        logger.info('Sent Discord Verification message', { id: listingId });
-      } else {
-        const discordStatus = result.isPublished
-          ? 'Published'
-          : isVerifying
-            ? 'To be Verified'
-            : 'Draft Added';
-
-        await sendDiscordListingUpdate(listingId, discordStatus);
-      }
+      await sendDiscordListingUpdate(listingId, discordStatus);
     } else {
       await sendDiscordListingUpdate(listingId, 'Updated');
     }
