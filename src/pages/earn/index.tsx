@@ -21,7 +21,6 @@ import { SponsorStageBanner } from '@/features/home/components/SponsorStage/Spon
 import { UserStatsBanner } from '@/features/home/components/UserStatsBanner';
 import { userCountQuery } from '@/features/home/queries/user-count';
 import { ListingsSection } from '@/features/listings/components/ListingsSection';
-import { ProIntroDialog } from '@/features/pro/components/ProIntroDialog';
 
 const GrantsSection = dynamic(() =>
   import('@/features/grants/components/GrantsSection').then(
@@ -33,26 +32,10 @@ const HomeSideBar = dynamic(() =>
   import('@/features/home/components/SideBar').then((mod) => mod.HomeSideBar),
 );
 
-const InstallPWAModal = dynamic(
-  () =>
-    import('@/components/modals/InstallPWAModal').then(
-      (mod) => mod.InstallPWAModal,
-    ),
-  { ssr: false },
-);
-
 const HomepagePop = dynamic(
   () =>
     import('@/features/conversion-popups/components/HomepagePop').then(
       (mod) => mod.HomepagePop,
-    ),
-  { ssr: false },
-);
-
-const TalentAnnouncements = dynamic(
-  () =>
-    import('@/features/announcements/components/TalentAnnouncements').then(
-      (mod) => mod.TalentAnnouncements,
     ),
   { ssr: false },
 );
@@ -144,11 +127,8 @@ export default function HomePage({
           </div>
         </div>
       </div>
-      <InstallPWAModal />
       <HomepagePop />
-      <TalentAnnouncements />
       <ProListingsAnnouncement />
-      {authenticated && <ProIntroDialog />}
     </Default>
   );
 }
