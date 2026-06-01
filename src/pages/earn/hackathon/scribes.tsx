@@ -34,7 +34,7 @@ export default function Scribes() {
             data={[
               generateBreadcrumbListSchema([
                 { name: 'Home', url: '/' },
-                { name: 'Hackathons', url: '/hackathon/all/' },
+                { name: 'Hackathons', url: '/earn/hackathon/all/' },
                 { name: 'Solana Scribes' },
               ]),
               {

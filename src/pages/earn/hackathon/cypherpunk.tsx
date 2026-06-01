@@ -71,7 +71,7 @@ export default function Cypherpunk({ hackathon }: { hackathon: Hackathon }) {
             data={[
               generateBreadcrumbListSchema([
                 { name: 'Home', url: '/' },
-                { name: 'Hackathons', url: '/hackathon/all/' },
+                { name: 'Hackathons', url: '/earn/hackathon/all/' },
                 { name: 'Cypherpunk' },
               ]),
               {
@@ -215,8 +215,6 @@ function HeroMini({
   );
 
   useEffect(() => {
-    console.log('start date', START_DATE);
-    console.log('close date', CLOSE_DATE);
     function updateStatus() {
       if (dayjs().isAfter(dayjs(CLOSE_DATE))) {
         setStatus('Closed');
@@ -360,7 +358,7 @@ const faqs: { question: string; answer: string }[] = [
   {
     question: 'Where can I find developer resources for my project?',
     answer:
-      'Check out <a href="https://www.colosseum.com/cypherpunk/resources" target="_blank">Colosseum\'s Developer Resources page</a>. You\'ll find documentation, tools, tutorials, and everything you need to build on Solana.',
+      'Check out <a href="https://www.colosseum.com/cypherpunk/resources" target="_blank" rel="noopener noreferrer">Colosseum\'s Developer Resources page</a>. You\'ll find documentation, tools, tutorials, and everything you need to build on Solana.',
   },
   {
     question: 'What is the evaluation criteria for Sidetracks?',

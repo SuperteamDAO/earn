@@ -190,7 +190,7 @@ export default function TalentOlympics({ countryLeaders, rankings }: Props) {
             data={[
               generateBreadcrumbListSchema([
                 { name: 'Home', url: '/' },
-                { name: 'Hackathons', url: '/hackathon/all/' },
+                { name: 'Hackathons', url: '/earn/hackathon/all/' },
                 { name: 'Talent Olympics' },
               ]),
               {

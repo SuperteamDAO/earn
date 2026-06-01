@@ -47,7 +47,14 @@ export function useGrants({
   skill,
 }: GrantsParams) {
   return useQuery({
-    queryKey: ['grants', context, category, region, sponsor, skill],
+    queryKey: [
+      'grants',
+      context,
+      category,
+      region ?? null,
+      sponsor ?? null,
+      skill ?? null,
+    ],
     queryFn: () =>
       fetchGrants({
         context,

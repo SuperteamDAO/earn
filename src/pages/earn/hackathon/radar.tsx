@@ -72,7 +72,7 @@ export default function Radar() {
             data={[
               generateBreadcrumbListSchema([
                 { name: 'Home', url: '/' },
-                { name: 'Hackathons', url: '/hackathon/all/' },
+                { name: 'Hackathons', url: '/earn/hackathon/all/' },
                 { name: 'Radar' },
               ]),
               {
@@ -82,6 +82,8 @@ export default function Radar() {
                 description:
                   'Submit to exclusive bounty tracks of the Radar Solana Global Hackathon on Superteam Earn. Find development, design, and content tracks to earn crypto prizes.',
                 url: 'https://superteam.fun/earn/hackathon/radar/',
+                startDate,
+                endDate: deadline,
                 organizer: {
                   '@type': 'Organization',
                   name: 'Superteam Earn',
@@ -197,76 +199,80 @@ export const getServerSideProps: GetServerSideProps = async () => {
   const slug = 'radar';
   const queryClient = new QueryClient();
 
-  const hackathon = await prisma.hackathon.findUnique({ where: { slug } });
+  try {
+    const hackathon = await prisma.hackathon.findUnique({ where: { slug } });
 
-  await Promise.all([
-    queryClient.prefetchQuery({
-      queryKey: ['tracks', slug],
-      queryFn: async () => {
-        const result = await prisma.bounties.findMany({
-          where: { Hackathon: { slug }, isPublished: true },
-          select: {
-            title: true,
-            token: true,
-            rewardAmount: true,
-            slug: true,
-            sponsor: {
-              select: {
-                name: true,
-                slug: true,
-                logo: true,
-                isVerified: true,
-                chapter: { select: { id: true } },
+    await Promise.all([
+      queryClient.prefetchQuery({
+        queryKey: ['tracks', slug],
+        queryFn: async () => {
+          const result = await prisma.bounties.findMany({
+            where: { Hackathon: { slug }, isPublished: true },
+            select: {
+              title: true,
+              token: true,
+              rewardAmount: true,
+              slug: true,
+              sponsor: {
+                select: {
+                  name: true,
+                  slug: true,
+                  logo: true,
+                  isVerified: true,
+                  chapter: { select: { id: true } },
+                },
               },
             },
-          },
-          orderBy: { usdValue: 'desc' },
-        });
-        return result;
-      },
-    }),
-    queryClient.prefetchQuery({
-      queryKey: ['stats', slug],
-      queryFn: async () => {
-        if (!hackathon)
+            orderBy: { usdValue: 'desc' },
+          });
+          return result;
+        },
+      }),
+      queryClient.prefetchQuery({
+        queryKey: ['stats', slug],
+        queryFn: async () => {
+          if (!hackathon)
+            return {
+              totalRewardAmount: 0,
+              totalListings: 0,
+              deadline: null,
+              startDate: null,
+              announceDate: null,
+            };
+          const [totalListings, totalRewardAmount] = await Promise.all([
+            prisma.bounties.count({
+              where: {
+                hackathonId: hackathon.id,
+                isActive: true,
+                isArchived: false,
+                status: 'OPEN',
+                isPublished: true,
+              },
+            }),
+            prisma.bounties.aggregate({
+              _sum: { usdValue: true },
+              where: {
+                hackathonId: hackathon.id,
+                isActive: true,
+                isArchived: false,
+                status: 'OPEN',
+                isPublished: true,
+              },
+            }),
+          ]);
           return {
-            totalRewardAmount: 0,
-            totalListings: 0,
-            deadline: null,
-            startDate: null,
-            announceDate: null,
+            totalRewardAmount: totalRewardAmount._sum.usdValue || 0,
+            totalListings,
+            deadline: hackathon.deadline?.toISOString() ?? null,
+            startDate: hackathon.startDate?.toISOString() ?? null,
+            announceDate: hackathon.announceDate?.toISOString() ?? null,
           };
-        const [totalListings, totalRewardAmount] = await Promise.all([
-          prisma.bounties.count({
-            where: {
-              hackathonId: hackathon.id,
-              isActive: true,
-              isArchived: false,
-              status: 'OPEN',
-              isPublished: true,
-            },
-          }),
-          prisma.bounties.aggregate({
-            _sum: { usdValue: true },
-            where: {
-              hackathonId: hackathon.id,
-              isActive: true,
-              isArchived: false,
-              status: 'OPEN',
-              isPublished: true,
-            },
-          }),
-        ]);
-        return {
-          totalRewardAmount: totalRewardAmount._sum.usdValue || 0,
-          totalListings,
-          deadline: hackathon.deadline?.toISOString() ?? null,
-          startDate: hackathon.startDate?.toISOString() ?? null,
-          announceDate: hackathon.announceDate?.toISOString() ?? null,
-        };
-      },
-    }),
-  ]);
+        },
+      }),
+    ]);
+  } catch (e) {
+    console.error(e);
+  }
 
   return {
     props: {

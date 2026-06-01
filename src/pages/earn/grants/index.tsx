@@ -101,7 +101,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
   const queryClient = new QueryClient();
 
   await queryClient.prefetchQuery({
-    queryKey: ['grants', 'all', 'All', undefined, undefined, undefined],
+    queryKey: ['grants', 'all', 'All', null, null, null],
     queryFn: async () => {
       const { where, take } = await buildGrantsQuery(
         { context: 'all', category: 'All' },

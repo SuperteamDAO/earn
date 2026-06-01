@@ -85,7 +85,7 @@ export default function Redacted({ hackathon }: { hackathon: Hackathon }) {
             data={[
               generateBreadcrumbListSchema([
                 { name: 'Home', url: '/' },
-                { name: 'Hackathons', url: '/hackathon/all/' },
+                { name: 'Hackathons', url: '/earn/hackathon/all/' },
                 { name: 'Helius [REDACTED]' },
               ]),
               {
