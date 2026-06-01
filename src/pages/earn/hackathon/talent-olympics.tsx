@@ -1242,7 +1242,7 @@ LIMIT 10;
           countryLeaderLength === 0 ||
           !countryLeaders.some(
             (leader) =>
-              leader.location.toLowerCase() === location.toLowerCase(),
+              leader.location?.toLowerCase() === location.toLowerCase(),
           ),
       )
       .slice(0, 10 - countryLeaderLength);
