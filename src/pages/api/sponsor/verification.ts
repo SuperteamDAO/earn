@@ -13,6 +13,10 @@ import { sponsorVerificationSchema } from '@/features/sponsor/utils/sponsorVerif
 async function verification(req: NextApiRequestWithUser, res: NextApiResponse) {
   const { userId } = req;
 
+  if (req.method !== 'POST') {
+    return res.status(405).json({ message: 'Method not allowed' });
+  }
+
   logger.debug(`Request body: ${safeStringify(req.body)}`);
   const { telegram, ...rest } = req.body;
   const telegramUsernameExtracted = extractSocialUsername('telegram', telegram);
@@ -21,10 +25,6 @@ async function verification(req: NextApiRequestWithUser, res: NextApiResponse) {
     ...rest,
     telegram: telegramUsernameExtracted,
   };
-
-  if (req.method !== 'POST') {
-    return res.status(405).json({ message: 'Method not allowed' });
-  }
 
   try {
     const validationResult = sponsorVerificationSchema.safeParse(data);
@@ -46,6 +46,27 @@ async function verification(req: NextApiRequestWithUser, res: NextApiResponse) {
       return res.status(404).json({ message: 'User not found' });
     }
 
+    const listing = await prisma.bounties.findFirst({
+      where: {
+        id: validationResult.data.listingId,
+        sponsorId: user.currentSponsorId,
+      },
+      select: {
+        id: true,
+        status: true,
+      },
+    });
+
+    if (!listing) {
+      return res.status(404).json({ message: 'Listing not found' });
+    }
+
+    if (listing.status !== 'VERIFYING') {
+      return res.status(409).json({
+        message: 'Listing is not awaiting sponsor verification',
+      });
+    }
+
     const sponsor = await prisma.sponsors.update({
       where: {
         id: user.currentSponsorId,
@@ -55,28 +76,31 @@ async function verification(req: NextApiRequestWithUser, res: NextApiResponse) {
       },
     });
 
-    // logger.info('Sending Telegram DM to Superteam Lead', {
-    //   listingId: validationResult.data.listingId,
-    //   superteamName: validationResult.data.superteamName,
-    //   superteamLead: validationResult.data.superteamLead,
-    // });
-    // try {
-    //   if (!process.env.EARNCOGNITO_URL) {
-    //     throw new Error('ENV EARNCOGNITO_URL not provided');
-    //   }
-    //   await earncognitoClient.post(`/telegram/verify-listing/dm-st`, {
-    //     listingId: validationResult.data.listingId,
-    //     superteamName: validationResult.data.superteamName,
-    //     superteamLead: validationResult.data.superteamLead,
-    //   });
-    //   logger.info('Sent Telegram DM to Superteam Lead', {
-    //     listingId: validationResult.data.listingId,
-    //     superteamName: validationResult.data.superteamName,
-    //     superteamLead: validationResult.data.superteamLead,
-    //   });
-    // } catch (err) {
-    //   logger.error('Failed to send Telegram DM to Superteam Lead', err);
-    // }
+    logger.info('Sending Telegram vouch request to Superteam Lead', {
+      listingId: validationResult.data.listingId,
+      superteamName: validationResult.data.superteamName,
+      superteamLead: validationResult.data.superteamLead,
+    });
+    try {
+      if (!process.env.EARNCOGNITO_URL) {
+        throw new Error('ENV EARNCOGNITO_URL not provided');
+      }
+      await earncognitoClient.post(`/telegram/verify-listing/dm-st`, {
+        listingId: validationResult.data.listingId,
+        superteamName: validationResult.data.superteamName,
+        superteamLead: validationResult.data.superteamLead,
+      });
+      logger.info('Sent Telegram vouch request to Superteam Lead', {
+        listingId: validationResult.data.listingId,
+        superteamName: validationResult.data.superteamName,
+        superteamLead: validationResult.data.superteamLead,
+      });
+    } catch (err) {
+      logger.error(
+        'Failed to send Telegram vouch request to Superteam Lead',
+        err,
+      );
+    }
 
     logger.info('Sending Discord Verification message', {
       listingId: validationResult.data.listingId,

@@ -295,7 +295,7 @@ export const ApproveTrancheModal = ({
             </div>
 
             {warningMessage && (
-              <p className="mb-4 text-center text-sm text-yellow-500">
+              <p className="mb-4 text-center text-sm text-red-500">
                 {warningMessage}
               </p>
             )}
@@ -336,7 +336,7 @@ export const ApproveTrancheModal = ({
               <div className="flex flex-1">
                 <Button
                   className={cn(
-                    'flex-1 border border-emerald-500 bg-emerald-50 text-emerald-600 hover:bg-emerald-100 hover:text-emerald-600',
+                    'flex-1 border border-emerald-500 bg-emerald-50 text-emerald-600 hover:bg-emerald-100 hover:text-emerald-600 disabled:border-slate-300 disabled:bg-slate-100 disabled:text-slate-400 disabled:opacity-100',
                     enableCustomEmail
                       ? 'rounded-l-lg rounded-r-none'
                       : 'rounded-lg',

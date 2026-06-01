@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { URL_REGEX } from '@/constants/URL_REGEX';
 import { type User } from '@/interface/user';
 
+import { extractSocialUsername } from '@/features/social/utils/extractUsername';
 import { tweetLinkRegex } from '@/features/social/utils/regex';
 import { telegramUsernameSchema } from '@/features/social/utils/schema';
 import {
@@ -14,6 +15,11 @@ import {
 } from '@/features/social/utils/x-verification';
 
 import { type Listing } from '../types';
+
+const projectTelegramSchema = z.preprocess((value) => {
+  if (typeof value !== 'string') return value;
+  return extractSocialUsername('telegram', value) || value;
+}, telegramUsernameSchema);
 
 const submissionSchema = (
   listing: Listing,
@@ -65,20 +71,12 @@ const submissionSchema = (
         )
         .optional(),
       telegram:
-        !user?.telegram && listing?.type === 'project'
-          ? telegramUsernameSchema
+        listing?.type === 'project'
+          ? projectTelegramSchema
           : z.string().nullable().optional(),
     })
     .superRefine((data, ctx) => {
       const isAgent = options?.isAgent === true;
-      const requiresTelegram = listing.type === 'project' && !user?.telegram;
-      if (requiresTelegram && !data.telegram) {
-        ctx.addIssue({
-          code: 'custom',
-          path: ['telegram'],
-          message: 'Telegram is required',
-        });
-      }
 
       if (listing.type !== 'project' && !data.link) {
         ctx.addIssue({
