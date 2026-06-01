@@ -22,6 +22,18 @@ import {
 } from './stGrant';
 
 const X_USERNAME_REGEX = /^[A-Za-z0-9_]{1,15}$/;
+const USDG_TOKEN = 'USDG';
+
+const roundUsdGrantAmount = (value: unknown, token: string) => {
+  if (token !== USDG_TOKEN) return value;
+  if (value === '' || value === null || value === undefined) return value;
+
+  const numericValue = typeof value === 'number' ? value : Number(value);
+
+  if (!Number.isFinite(numericValue)) return value;
+
+  return Math.round(numericValue);
+};
 
 export const normalizeGrantQuestionLinkAnswer = (answer: string) => {
   const trimmed = answer.trim();
@@ -94,7 +106,7 @@ export const grantApplicationSchema = (
           if (value === '' || value === null || value === undefined) {
             return fixedAsk ?? value;
           }
-          return value;
+          return roundUsdGrantAmount(value, token);
         },
         z
           .number({
