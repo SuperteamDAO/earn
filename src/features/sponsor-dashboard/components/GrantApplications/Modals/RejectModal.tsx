@@ -11,6 +11,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Separator } from '@/components/ui/separator';
+import { Switch } from '@/components/ui/switch';
 import { TokenIcon } from '@/components/ui/token-icon';
 import { cn } from '@/utils/cn';
 
@@ -34,7 +35,11 @@ interface RejectModalProps {
   salutation: string | null | undefined;
   token: string;
   enableCustomEmail: boolean;
-  onRejectGrant: (applicationId: string, customNote?: string) => void;
+  onRejectGrant: (
+    applicationId: string,
+    customNote?: string,
+    skipCooldown?: boolean,
+  ) => void;
 }
 
 export const RejectGrantApplicationModal = ({
@@ -53,6 +58,7 @@ export const RejectGrantApplicationModal = ({
   const [loading, setLoading] = useState<boolean>(false);
   const [customNote, setCustomNote] = useState('');
   const [isCustomEmailOpen, setIsCustomEmailOpen] = useState(false);
+  const [skipCooldown, setSkipCooldown] = useState(false);
   const [emailError, setEmailError] = useState<string | null>(null);
 
   const previewEmailBody = getGrantRejectedEmailBody({
@@ -66,6 +72,7 @@ export const RejectGrantApplicationModal = ({
   const closeAndDiscardCustomNote = () => {
     setCustomNote('');
     setIsCustomEmailOpen(false);
+    setSkipCooldown(false);
     setEmailError(null);
     rejectOnClose();
   };
@@ -97,6 +104,7 @@ export const RejectGrantApplicationModal = ({
         enableCustomEmail && isCustomEmailOpen
           ? noteValidation.sanitized
           : undefined,
+        skipCooldown,
       );
     } catch (e) {
       console.error(e);
@@ -109,9 +117,18 @@ export const RejectGrantApplicationModal = ({
   useEffect(() => {
     setCustomNote('');
     setIsCustomEmailOpen(false);
+    setSkipCooldown(false);
     setEmailError(null);
     setLoading(false);
   }, [applicationId]);
+
+  const rejectButtonText = isCustomEmailOpen
+    ? 'Reject with Custom Note'
+    : 'Reject Grant';
+
+  const rejectingText = isCustomEmailOpen
+    ? 'Rejecting with Custom Note'
+    : 'Rejecting';
 
   return (
     <>
@@ -144,6 +161,22 @@ export const RejectGrantApplicationModal = ({
                   {ask} <span className="text-slate-400">{token}</span>
                 </p>
               </div>
+            </div>
+
+            <div className="mb-6 flex items-center justify-between gap-4">
+              <div>
+                <p className="text-sm font-medium text-slate-500">
+                  Apply 30-day cooldown
+                </p>
+                <p className="mt-0.5 text-xs text-slate-400">
+                  Turn off to let them reapply immediately.
+                </p>
+              </div>
+              <Switch
+                checked={!skipCooldown}
+                disabled={loading}
+                onCheckedChange={(checked) => setSkipCooldown(!checked)}
+              />
             </div>
 
             {enableCustomEmail && isCustomEmailOpen && (
@@ -196,22 +229,14 @@ export const RejectGrantApplicationModal = ({
                   {loading ? (
                     <>
                       <span className="loading loading-spinner mr-2" />
-                      <span>
-                        {isCustomEmailOpen
-                          ? 'Rejecting with Custom Note'
-                          : 'Rejecting'}
-                      </span>
+                      <span>{rejectingText}</span>
                     </>
                   ) : (
                     <>
                       <div className="rounded-full bg-red-600 p-0.5">
                         <X className="size-2 text-white" />
                       </div>
-                      <span>
-                        {isCustomEmailOpen
-                          ? 'Reject with Custom Note'
-                          : 'Reject Grant'}
-                      </span>
+                      <span>{rejectButtonText}</span>
                     </>
                   )}
                 </Button>

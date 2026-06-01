@@ -197,6 +197,7 @@ export async function POST(request: NextRequest) {
         grantId,
         userId,
         applicationStatus: 'Rejected',
+        isCooldownSkipped: false,
         decidedAt: { gte: dayjs().subtract(30, 'day').toDate() },
       },
       orderBy: { decidedAt: 'desc' },
