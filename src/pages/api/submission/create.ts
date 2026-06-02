@@ -7,6 +7,7 @@ import { safeStringify } from '@/utils/safeStringify';
 import { queueAgent } from '@/features/agents/utils/queueAgent';
 import { type NextApiRequestWithUser } from '@/features/auth/types';
 import { withAuth } from '@/features/auth/utils/withAuth';
+import { LockNotAcquiredError, withRedisLock } from '@/lib/with-redis-lock';
 import { consumeCredit } from '@/features/credits/utils/allocateCredits';
 import { canUserSubmit } from '@/features/credits/utils/canUserSubmit';
 import { queueEmail } from '@/features/emails/utils/queueEmail';
@@ -121,27 +122,38 @@ async function submission(req: NextApiRequestWithUser, res: NextApiResponse) {
       });
     }
 
-    if (!isHackathon && !isPro) {
-      const hasCredits = await canUserSubmit(userId as string);
-      if (!hasCredits) {
-        logger.warn(`User ${userId} has insufficient credits for submission`);
-        return res.status(403).json({
-          error: 'Insufficient credits',
-          message: 'You need at least 1 credit to make a submission.',
-        });
-      }
-    }
-
-    const result = await createSubmission(
-      userId as string,
-      listingId,
-      { link, tweet, otherInfo, eligibilityAnswers, ask, telegram },
-      listing,
-    );
+    let result: Awaited<ReturnType<typeof createSubmission>>;
 
     if (!isHackathon && !isPro) {
-      await consumeCredit(userId, result.id);
-      logger.info(`Consumed 1 credit from user ${userId} for submission`);
+      result = await withRedisLock(
+        `locks:submission:${userId}`,
+        async () => {
+          const hasCredits = await canUserSubmit(userId as string);
+          if (!hasCredits) {
+            logger.warn(
+              `User ${userId} has insufficient credits for submission`,
+            );
+            throw new Error('Insufficient credits');
+          }
+          const submission = await createSubmission(
+            userId as string,
+            listingId,
+            { link, tweet, otherInfo, eligibilityAnswers, ask, telegram },
+            listing,
+          );
+          await consumeCredit(userId, submission.id);
+          logger.info(`Consumed 1 credit from user ${userId} for submission`);
+          return submission;
+        },
+        { ttlSeconds: 30 },
+      );
+    } else {
+      result = await createSubmission(
+        userId as string,
+        listingId,
+        { link, tweet, otherInfo, eligibilityAnswers, ask, telegram },
+        listing,
+      );
     }
 
     await queueEmail({
@@ -169,9 +181,16 @@ async function submission(req: NextApiRequestWithUser, res: NextApiResponse) {
 
     return res.status(200).json(result);
   } catch (error: any) {
-    const statusCode = error.message.includes('Validation') ? 400 : 403;
     logger.error(`User ${userId} unable to submit: ${safeStringify(error)}`);
 
+    if (error instanceof LockNotAcquiredError) {
+      return res.status(429).json({
+        error: 'Too many requests',
+        message: 'A submission is already in progress. Please try again.',
+      });
+    }
+
+    const statusCode = error.message.includes('Validation') ? 400 : 403;
     return res.status(statusCode).json({
       error: error.message,
       message: `User ${userId} unable to submit: ${error.message}`,
