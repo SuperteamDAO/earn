@@ -22,6 +22,9 @@ import {
   MAX_REWARD,
 } from '../constants';
 
+const noHtmlDelimiters = (value: string) => !/[<>]/.test(value);
+const noHtmlMessage = 'HTML characters are not allowed';
+
 export const eligibilityQuestionSchema = z.object({
   order: z.number(),
   question: z
@@ -126,7 +129,12 @@ export const createListingFormSchema = ({
   return z
     .object({
       id: z.string().optional().nullish(),
-      title: z.string().trim().min(1, 'Required').max(80),
+      title: z
+        .string()
+        .trim()
+        .min(1, 'Required')
+        .max(80)
+        .refine(noHtmlDelimiters, noHtmlMessage),
       slug: z
         .string()
         .trim()
