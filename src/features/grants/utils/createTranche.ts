@@ -10,6 +10,8 @@ const CLOUDINARY_HOST = 'res.cloudinary.com';
 const MAX_EVENT_PICTURES = 5;
 const MAX_EVENT_RECEIPTS = 10;
 const MAX_AGENTIC_RECEIPTS = 3;
+export const TRANCHE_APPLICATION_UNAUTHORIZED_MESSAGE =
+  'Not authorized to request a tranche for this application';
 
 const parseHttpUrl = (value: string): URL | null => {
   try {
@@ -206,6 +208,7 @@ const normalizeGenericUrl = (
 
 type CreateTrancheProps = {
   applicationId: string;
+  requesterUserId?: string;
   helpWanted?: string;
   update?: string;
   walletAddress?: string;
@@ -221,6 +224,7 @@ type CreateTrancheProps = {
 
 export async function createTranche({
   applicationId,
+  requesterUserId,
   helpWanted,
   update,
   walletAddress,
@@ -243,6 +247,13 @@ export async function createTranche({
       user: true,
     },
   });
+
+  if (requesterUserId && application.userId !== requesterUserId) {
+    logger.warn(
+      `User ${requesterUserId} is not authorized to request a tranche for application ${applicationId}`,
+    );
+    throw new Error(TRANCHE_APPLICATION_UNAUTHORIZED_MESSAGE);
+  }
 
   if (application.user.isKYCVerified !== true) {
     const errorMessage = `User is not verified for application ${applicationId}`;
