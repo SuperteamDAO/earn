@@ -122,15 +122,15 @@ export async function POST(request: NextRequest) {
     let listingUrl;
 
     if (listingType === 'GRANT') {
-      const listing = await prisma.grantApplication.findUnique({
-        where: { id: submissionId },
+      const listing = await prisma.grantApplication.findFirst({
+        where: { id: submissionId, userId },
         select: { grant: { select: { title: true, slug: true } } },
       });
       listingTitle = listing?.grant?.title;
       listingUrl = `https://superteam.fun/earn/grants/${listing?.grant?.slug}`;
     } else {
-      const listing = await prisma.submission.findUnique({
-        where: { id: submissionId },
+      const listing = await prisma.submission.findFirst({
+        where: { id: submissionId, userId },
         select: { listing: { select: { title: true, slug: true } } },
       });
       listingTitle = listing?.listing?.title;
