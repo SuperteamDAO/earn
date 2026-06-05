@@ -15,6 +15,13 @@ export const aiGenerateRateLimiter = new Ratelimit({
   prefix: 'ratelimit:ai_generate',
 });
 
+export const submissionReviewRateLimiter = new Ratelimit({
+  redis: redis,
+  limiter: Ratelimit.fixedWindow(5, '1 m'),
+  analytics: true,
+  prefix: 'ratelimit:submission_review',
+});
+
 export const agentRegisterRateLimiter = new Ratelimit({
   redis: redis,
   limiter: Ratelimit.fixedWindow(60, '1 h'),

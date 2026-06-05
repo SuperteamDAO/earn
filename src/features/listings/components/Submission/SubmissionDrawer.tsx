@@ -1,7 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
-import { Loader2, Lock, X } from 'lucide-react';
+import { Loader2, Lock, Sparkles, X } from 'lucide-react';
 import { useRouter } from 'next/router';
 import posthog from 'posthog-js';
 import { type JSX, useEffect, useMemo, useState } from 'react';
@@ -45,11 +45,14 @@ import {
   isXUrl,
 } from '@/features/social/utils/x-verification';
 
+import { type SubmissionReviewResult } from '@/app/api/submission/review-draft/route';
+
 import { submissionCountQuery } from '../../queries/submission-count';
 import { userSubmissionQuery } from '../../queries/user-submission-status';
 import { type Listing } from '../../types';
 import { getCombinedRegion } from '../../utils/region';
 import { submissionSchema } from '../../utils/submissionFormSchema';
+import { AiReviewPanel } from './AiReviewPanel';
 import { SubmissionTerms } from './SubmissionTerms';
 
 interface Props {
@@ -99,6 +102,8 @@ export const SubmissionDrawer = ({
   const [isTOSModalOpen, setIsTOSModalOpen] = useState(false);
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [kycAcknowledged, setKycAcknowledged] = useState(false);
+  const [aiReview, setAiReview] = useState<SubmissionReviewResult | null>(null);
+  const [isReviewing, setIsReviewing] = useState(false);
   const {
     isOpen: isVerificationModalOpen,
     onOpen: onVerificationModalOpen,
@@ -134,6 +139,28 @@ export const SubmissionDrawer = ({
 
   const tweetValue = form.watch('tweet');
   const linkValue = form.watch('link');
+  const eligibilityAnswersValue = form.watch('eligibilityAnswers');
+  const askValue = form.watch('ask');
+
+  const canReview = useMemo(() => {
+    if (!isProject && !linkValue?.trim()) return false;
+    if (compensationType !== 'fixed' && !askValue) return false;
+    const requiredQuestions = (listing.eligibility ?? []).filter(
+      (q: any) => !q.optional,
+    );
+    const allRequiredAnswered = requiredQuestions.every((_: any, i: number) =>
+      eligibilityAnswersValue?.[i]?.answer?.trim(),
+    );
+    if (!allRequiredAnswered) return false;
+    return true;
+  }, [
+    isProject,
+    linkValue,
+    compensationType,
+    askValue,
+    eligibilityAnswersValue,
+    listing.eligibility,
+  ]);
   const hasInvalidTweetStatusFormat =
     isBounty && !!tweetValue && isXInternalStatusUrl(tweetValue);
   const hasInvalidLinkStatusFormat =
@@ -275,7 +302,30 @@ export const SubmissionDrawer = ({
     });
     setTermsAccepted(false);
     setKycAcknowledged(false);
+    setAiReview(null);
     onClose();
+  };
+
+  const handleReviewDraft = async () => {
+    if (isReviewing) return;
+    const values = form.getValues();
+    setIsReviewing(true);
+    setAiReview(null);
+    try {
+      const { data } = await api.post('/api/submission/review-draft', {
+        listingId: id,
+        link: values.link || '',
+        tweet: values.tweet || '',
+        otherInfo: values.otherInfo || '',
+        ask: values.ask || null,
+        eligibilityAnswers: values.eligibilityAnswers || [],
+      });
+      setAiReview(data);
+    } catch {
+      toast.error('Could not get AI review. Please try again.');
+    } finally {
+      setIsReviewing(false);
+    }
   };
 
   useEffect(() => {
@@ -809,6 +859,11 @@ export const SubmissionDrawer = ({
                       isPro={isPro}
                     />
                   </div>
+                  {aiReview && (
+                    <div className="mb-4">
+                      <AiReviewPanel review={aiReview} isPro={isPro} />
+                    </div>
+                  )}
                 </div>
               </ScrollArea>
 
@@ -861,6 +916,41 @@ export const SubmissionDrawer = ({
                       {regionAckCopy}
                     </label>
                   </div>
+                )}
+
+                {!isTemplate && !editMode && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className={cn(
+                      'mb-2 h-9 w-full gap-2 text-sm text-slate-600',
+                      isPro && 'border-zinc-300 text-zinc-600',
+                      !canReview && 'cursor-not-allowed opacity-50',
+                    )}
+                    onClick={handleReviewDraft}
+                    disabled={isReviewing || !canReview}
+                    title={
+                      !canReview
+                        ? 'Fill in all required fields to enable AI review'
+                        : undefined
+                    }
+                  >
+                    {isReviewing ? (
+                      <>
+                        <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                        <span>Reviewing...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Sparkles className="h-3.5 w-3.5" />
+                        <span>
+                          {canReview
+                            ? 'Check my submission'
+                            : 'Fill required fields to review'}
+                        </span>
+                      </>
+                    )}
+                  </Button>
                 )}
 
                 <div className="relative w-full">
