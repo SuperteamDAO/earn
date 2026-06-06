@@ -14,6 +14,7 @@ type RejectGrantApplicationsInput =
   | {
       applicationIds: string[];
       customNote?: string;
+      skipCooldown?: boolean;
     };
 
 const parseRejectGrantApplicationsInput = (
@@ -72,7 +73,7 @@ export const useRejectGrantApplications = (slug: string) => {
 
   return useMutation({
     mutationFn: async (input: RejectGrantApplicationsInput) => {
-      const { applicationIds, customNote } =
+      const { applicationIds, customNote, skipCooldown } =
         parseRejectGrantApplicationsInput(input);
       const reviewerNote = customNote?.trim();
       const batchSize = 10;
@@ -84,13 +85,15 @@ export const useRejectGrantApplications = (slug: string) => {
             data: batch.map((id) => ({ id })),
             applicationStatus: 'Rejected',
             ...(reviewerNote ? { customNote: reviewerNote } : {}),
+            ...(skipCooldown ? { skipCooldown } : {}),
           },
         );
       }
       return applicationIds;
     },
     onMutate: async (input) => {
-      const { applicationIds } = parseRejectGrantApplicationsInput(input);
+      const { applicationIds, skipCooldown } =
+        parseRejectGrantApplicationsInput(input);
 
       await queryClient.cancelQueries({
         queryKey: ['sponsor-applications', slug],
@@ -112,6 +115,7 @@ export const useRejectGrantApplications = (slug: string) => {
               ? {
                   ...application,
                   applicationStatus: GrantApplicationStatus.Rejected,
+                  isCooldownSkipped: !!skipCooldown,
                   label:
                     application.label === 'Unreviewed' ||
                     application.label === 'Pending'

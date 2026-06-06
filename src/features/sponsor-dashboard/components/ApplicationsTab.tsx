@@ -357,10 +357,15 @@ export const ApplicationsTab = ({ slug }: Props) => {
     }
   };
 
-  const handleRejectGrant = (applicationId: string, customNote?: string) => {
+  const handleRejectGrant = (
+    applicationId: string,
+    customNote?: string,
+    skipCooldown?: boolean,
+  ) => {
     rejectGrantApplications.mutate({
       applicationIds: [applicationId],
       customNote,
+      skipCooldown,
     });
   };
 
