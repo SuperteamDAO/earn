@@ -11,6 +11,9 @@ interface JsonLdProps {
 export function JsonLd({ data }: JsonLdProps) {
   const jsonLdArray = Array.isArray(data) ? data : [data];
 
+  const serializeJsonLd = (schema: Record<string, any>) =>
+    JSON.stringify(schema, null, 0).replace(/</g, '\\u003c');
+
   return (
     <Head>
       {jsonLdArray.map((schema, index) => (
@@ -18,7 +21,7 @@ export function JsonLd({ data }: JsonLdProps) {
           key={`json-ld-${index}`}
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify(schema, null, 0),
+            __html: serializeJsonLd(schema),
           }}
         />
       ))}
