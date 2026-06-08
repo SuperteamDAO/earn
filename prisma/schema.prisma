@@ -296,7 +296,7 @@ model GrantApplication {
   likeCount           Int                    @default(0)
   Comments            Comment[]
   decidedBy           String?
-  notes               String?                @db.VarChar(1000)
+  notes               String?                @db.Text
   ai                  Json?
   GrantTranche        GrantTranche[]
   CreditLedger        CreditLedger[]

@@ -3,7 +3,7 @@ import dayjs from 'dayjs';
 import { useAtom } from 'jotai';
 import { ArrowRight, Check, Copy, X } from 'lucide-react';
 import Link from 'next/link';
-import { useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import MdOutlineAccountBalanceWallet from '@/components/icons/MdOutlineAccountBalanceWallet';
 import MdOutlineMail from '@/components/icons/MdOutlineMail';
@@ -51,6 +51,15 @@ interface Props {
   rejectedOnOpen: () => void;
   isLoading?: boolean;
 }
+
+const NOTES_WIDTH_STORAGE_KEY = 'grantApplicationNotesWidthPercent';
+const DEFAULT_NOTES_WIDTH = 34;
+const MIN_NOTES_WIDTH = 28;
+const MAX_NOTES_WIDTH = 55;
+
+const clampNotesWidth = (value: number) =>
+  Math.min(MAX_NOTES_WIDTH, Math.max(MIN_NOTES_WIDTH, value));
+
 export const ApplicationDetails = ({
   grant,
   applications,
@@ -62,6 +71,8 @@ export const ApplicationDetails = ({
   const [selectedApplication, setSelectedApplication] = useAtom(
     selectedGrantApplicationAtom,
   );
+  const splitContainerRef = useRef<HTMLDivElement>(null);
+  const [notesWidth, setNotesWidth] = useState(DEFAULT_NOTES_WIDTH);
   const isPending = selectedApplication?.applicationStatus === 'Pending';
   const isApproved = selectedApplication?.applicationStatus === 'Approved';
   const isRejected = selectedApplication?.applicationStatus === 'Rejected';
@@ -89,6 +100,45 @@ export const ApplicationDetails = ({
 
   const formattedCreatedAt = dayjs(selectedApplication?.createdAt).format(
     'DD MMM YYYY',
+  );
+
+  useEffect(() => {
+    const storedWidth = Number(
+      window.localStorage.getItem(NOTES_WIDTH_STORAGE_KEY),
+    );
+    if (Number.isFinite(storedWidth) && storedWidth > 0) {
+      setNotesWidth(clampNotesWidth(storedWidth));
+    }
+  }, []);
+
+  const updateNotesWidthFromPointer = useCallback((clientX: number) => {
+    const container = splitContainerRef.current;
+    if (!container) return;
+
+    const rect = container.getBoundingClientRect();
+    const nextWidth = ((rect.right - clientX) / rect.width) * 100;
+    const clampedWidth = clampNotesWidth(nextWidth);
+
+    setNotesWidth(clampedWidth);
+    window.localStorage.setItem(NOTES_WIDTH_STORAGE_KEY, String(clampedWidth));
+  }, []);
+
+  const handleResizePointerDown = useCallback(
+    (event: React.PointerEvent<HTMLButtonElement>) => {
+      event.preventDefault();
+      event.currentTarget.setPointerCapture(event.pointerId);
+      updateNotesWidthFromPointer(event.clientX);
+    },
+    [updateNotesWidthFromPointer],
+  );
+
+  const handleResizePointerMove = useCallback(
+    (event: React.PointerEvent<HTMLButtonElement>) => {
+      if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+        updateNotesWidthFromPointer(event.clientX);
+      }
+    },
+    [updateNotesWidthFromPointer],
   );
 
   const updateApplicationState = (
@@ -356,10 +406,14 @@ export const ApplicationDetails = ({
             </div>
           </div>
 
-          <div className="relative z-10 flex max-h-[39.7rem] w-full">
+          <div
+            ref={splitContainerRef}
+            className="relative z-10 flex max-h-[39.7rem] w-full"
+          >
             <ScrollArea
               type="auto"
-              className="flex w-2/3 flex-1 flex-col overflow-y-auto px-4"
+              className="flex min-w-0 flex-col overflow-y-auto px-4"
+              style={{ flexBasis: `${100 - notesWidth}%` }}
             >
               <div className="mb-4 pt-2">
                 <p className="mb-1 text-xs font-semibold text-slate-400 uppercase">
@@ -518,7 +572,19 @@ export const ApplicationDetails = ({
                   },
                 )}
             </ScrollArea>
-            <div className="w-1/3 max-w-[20rem] p-4">
+            <button
+              aria-label="Resize notes panel"
+              className="group flex w-3 shrink-0 cursor-col-resize items-stretch justify-center self-stretch focus:outline-none"
+              onPointerDown={handleResizePointerDown}
+              onPointerMove={handleResizePointerMove}
+              type="button"
+            >
+              <span className="h-full w-px bg-slate-200 transition-colors group-hover:bg-slate-300 group-focus-visible:bg-slate-400" />
+            </button>
+            <div
+              className="min-h-0 min-w-0 shrink-0 p-4"
+              style={{ flexBasis: `${notesWidth}%` }}
+            >
               <Notes slug={grant?.slug} />
             </div>
           </div>
