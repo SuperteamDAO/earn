@@ -7,6 +7,7 @@ import logger from '@/lib/logger';
 import { LockNotAcquiredError, withRedisLock } from '@/lib/with-redis-lock';
 import { prisma } from '@/prisma';
 import { dayjs } from '@/utils/dayjs';
+import { getChapterRegions } from '@/utils/chapterRegion';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { validateListingSponsorAuth } from '@/features/auth/utils/checkListingSponsorAuth';
@@ -21,6 +22,10 @@ import { BONUS_REWARD_POSITION } from '@/features/listing-builder/constants';
 import { calculateTotalPrizes } from '@/features/listing-builder/utils/rewards';
 import { type Rewards } from '@/features/listings/types';
 import { createPayment } from '@/features/listings/utils/createPayment';
+import {
+  getKycRegionVerificationStatus,
+  REGION_VERIFICATION_STATUS,
+} from '@/features/listings/utils/regionVerification';
 
 export const maxDuration = 300;
 
@@ -422,11 +427,48 @@ export async function POST(
               });
 
               if (listing.type !== 'project' && listing.isFndnPaying) {
+                const chapters = await getChapterRegions();
                 for (const winner of winners) {
                   const user = winner.user;
 
                   if (user.isKYCVerified && user.kycVerifiedAt) {
-                    await createPayment({ userId: winner.userId });
+                    const regionVerificationStatus =
+                      getKycRegionVerificationStatus({
+                        region: listing.region,
+                        kycCountry: user.kycCountry,
+                        chapters,
+                      });
+
+                    if (
+                      regionVerificationStatus ===
+                      REGION_VERIFICATION_STATUS.PoaRequired
+                    ) {
+                      await prisma.submission.update({
+                        where: { id: winner.id },
+                        data: {
+                          regionVerificationStatus,
+                          regionVerificationCountry: user.kycCountry,
+                          regionVerificationVerifiedAt: null,
+                        },
+                      });
+                      logger.warn(
+                        `Skipping payment info addition for winner ${user.username} because proof of address is required for listing ${id}`,
+                      );
+                      continue;
+                    }
+
+                    await prisma.submission.update({
+                      where: { id: winner.id },
+                      data: {
+                        regionVerificationStatus,
+                        regionVerificationCountry: user.kycCountry,
+                        regionVerificationVerifiedAt: new Date(),
+                      },
+                    });
+                    await createPayment({
+                      userId: winner.userId,
+                      submissionIds: [winner.id],
+                    });
                   } else {
                     logger.warn(
                       `Skipping payment info addition for winner ${winner.user.username} because they are not KYC verified`,
