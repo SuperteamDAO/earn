@@ -4,6 +4,16 @@ import posthog from 'posthog-js';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -43,6 +53,8 @@ export default function AiReviewModal({ applications, grant }: Props) {
     'INIT',
   );
   const [progress, setProgress] = useState(0);
+  const [isReplaceNotesDialogOpen, setIsReplaceNotesDialogOpen] =
+    useState(false);
   const [completedStats, setCompletedStats] = useState({
     totalReviewed: 0,
     lowQuality: 0,
@@ -82,6 +94,23 @@ export default function AiReviewModal({ applications, grant }: Props) {
 
   const totalApplications = useMemo(() => {
     return unreviewedApplications?.length;
+  }, [unreviewedApplications]);
+
+  const replaceNotesCount = useMemo(() => {
+    return (
+      unreviewedApplications?.filter((appl) => {
+        const ai = appl.ai as GrantApplicationAi | undefined;
+        const predictedLabel = ai?.review?.predictedLabel;
+
+        return (
+          !ai?.commited &&
+          predictedLabel !== 'Unreviewed' &&
+          predictedLabel !== 'Pending' &&
+          !!ai?.review?.shortNote?.trim() &&
+          !!appl.notes?.trim()
+        );
+      }).length || 0
+    );
   }, [unreviewedApplications]);
 
   const estimatedTime = useMemo(() => {
@@ -223,228 +252,267 @@ export default function AiReviewModal({ applications, grant }: Props) {
   }
 
   return (
-    <Dialog
-      open={open}
-      onOpenChange={(s) => {
-        if (state === 'PROCESSING') return;
-        if (s === false) posthog.capture('close_ai review grants');
-        setOpen(s);
-      }}
-    >
-      {!!grant?.isActive &&
-        !grant?.isArchived &&
-        !!(grant?.ai as GrantsAi)?.context &&
-        !!unreviewedApplications?.length && (
-          <DialogTrigger asChild>
-            <button
-              className="ph-no-capture"
-              onClick={() => {
-                posthog.capture('open_ai review grants');
-              }}
-            >
-              <p className="mb-1 text-xs text-slate-400">
-                {unreviewedApplications?.length} Applications to review
-              </p>
-              <div className="group bg-background relative inline-flex h-10 overflow-hidden rounded-[calc(1.5px+0.375rem-2px)] p-[1.5px] pb-[1.8px] shadow-[0px_2px_2.3px_0px_#0000002B] focus:outline-hidden">
-                <span className="absolute inset-[-1000%] animate-[spin_2s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#FF79C1_0%,#76C5FF_50%,#FF79C1_100%)]" />
-                <span className="ph-no-capture bg-background inline-flex h-full w-full cursor-pointer items-center justify-center gap-2 rounded-md px-4 py-1 text-sm font-medium text-slate-500 backdrop-blur-3xl group-hover:bg-slate-50">
-                  <img src="/assets/ai-wand.svg" alt="Auto Review AI" />
-                  Review with AI
-                </span>
-              </div>
-            </button>
-          </DialogTrigger>
-        )}
-      <DialogContent className="p-0 sm:max-w-md" hideCloseIcon>
-        <Card className="border-0 shadow-none">
-          <CardHeader className="flex flex-row items-center justify-between border-b p-0 px-6 py-3">
-            <DialogTitle className="text-xl font-semibold">
-              Review with AI
-            </DialogTitle>
-            {/* <div className="flex items-center text-muted-foreground"> */}
-            {/*   <span className="text-sm">Powered by</span> */}
-            {/*   <svg */}
-            {/*     className="ml-2 h-5 w-5" */}
-            {/*     viewBox="0 0 24 24" */}
-            {/*     fill="none" */}
-            {/*     xmlns="http://www.w3.org/2000/svg" */}
-            {/*   > */}
-            {/*     <path */}
-            {/*       d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" */}
-            {/*       stroke="currentColor" */}
-            {/*       strokeWidth="2" */}
-            {/*       strokeLinecap="round" */}
-            {/*       strokeLinejoin="round" */}
-            {/*     /> */}
-            {/*   </svg> */}
-            {/*   <span className="ml-1 text-sm">ChatGPT</span> */}
-            {/* </div> */}
-          </CardHeader>
+    <>
+      <Dialog
+        open={open}
+        onOpenChange={(s) => {
+          if (state === 'PROCESSING') return;
+          if (s === false) posthog.capture('close_ai review grants');
+          setOpen(s);
+        }}
+      >
+        {!!grant?.isActive &&
+          !grant?.isArchived &&
+          !!(grant?.ai as GrantsAi)?.context &&
+          !!unreviewedApplications?.length && (
+            <DialogTrigger asChild>
+              <button
+                className="ph-no-capture"
+                onClick={() => {
+                  posthog.capture('open_ai review grants');
+                }}
+              >
+                <p className="mb-1 text-xs text-slate-400">
+                  {unreviewedApplications?.length} Applications to review
+                </p>
+                <div className="group bg-background relative inline-flex h-10 overflow-hidden rounded-[calc(1.5px+0.375rem-2px)] p-[1.5px] pb-[1.8px] shadow-[0px_2px_2.3px_0px_#0000002B] focus:outline-hidden">
+                  <span className="absolute inset-[-1000%] animate-[spin_2s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#FF79C1_0%,#76C5FF_50%,#FF79C1_100%)]" />
+                  <span className="ph-no-capture bg-background inline-flex h-full w-full cursor-pointer items-center justify-center gap-2 rounded-md px-4 py-1 text-sm font-medium text-slate-500 backdrop-blur-3xl group-hover:bg-slate-50">
+                    <img src="/assets/ai-wand.svg" alt="Auto Review AI" />
+                    Review with AI
+                  </span>
+                </div>
+              </button>
+            </DialogTrigger>
+          )}
+        <DialogContent className="p-0 sm:max-w-md" hideCloseIcon>
+          <Card className="border-0 shadow-none">
+            <CardHeader className="flex flex-row items-center justify-between border-b p-0 px-6 py-3">
+              <DialogTitle className="text-xl font-semibold">
+                Review with AI
+              </DialogTitle>
+              {/* <div className="flex items-center text-muted-foreground"> */}
+              {/*   <span className="text-sm">Powered by</span> */}
+              {/*   <svg */}
+              {/*     className="ml-2 h-5 w-5" */}
+              {/*     viewBox="0 0 24 24" */}
+              {/*     fill="none" */}
+              {/*     xmlns="http://www.w3.org/2000/svg" */}
+              {/*   > */}
+              {/*     <path */}
+              {/*       d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" */}
+              {/*       stroke="currentColor" */}
+              {/*       strokeWidth="2" */}
+              {/*       strokeLinecap="round" */}
+              {/*       strokeLinejoin="round" */}
+              {/*     /> */}
+              {/*   </svg> */}
+              {/*   <span className="ml-1 text-sm">ChatGPT</span> */}
+              {/* </div> */}
+            </CardHeader>
 
-          {state === 'INIT' && (
-            <>
-              <CardContent className="px-6 py-4">
-                <div className="space-y-2 font-medium">
-                  <div className="flex items-center justify-between">
-                    <span className="flex items-center gap-2 text-base text-slate-500">
-                      Unreviewed Applications
-                      <Tooltip
-                        content="We will only review unreviewed submissions. If you’ve already reviewed some submissions, those will remain untouched."
-                        contentProps={{
-                          style: {
-                            zIndex: '100',
-                          },
-                        }}
-                      >
-                        <InfoIcon className="h-4 w-4 text-slate-400" />
-                      </Tooltip>
-                    </span>
-                    <span className="text-xl font-semibold">
-                      {totalApplications}
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-base text-slate-500">
-                      Credits Used
-                    </span>
-                    <div className="flex items-center gap-2">
-                      <span className="rounded-full bg-green-100 px-2 py-0 text-sm text-green-700">
-                        Free
+            {state === 'INIT' && (
+              <>
+                <CardContent className="px-6 py-4">
+                  <div className="space-y-2 font-medium">
+                    <div className="flex items-center justify-between">
+                      <span className="flex items-center gap-2 text-base text-slate-500">
+                        Unreviewed Applications
+                        <Tooltip
+                          content="We will only review unreviewed submissions. If you’ve already reviewed some submissions, those will remain untouched."
+                          contentProps={{
+                            style: {
+                              zIndex: '100',
+                            },
+                          }}
+                        >
+                          <InfoIcon className="h-4 w-4 text-slate-400" />
+                        </Tooltip>
+                      </span>
+                      <span className="text-xl font-semibold">
+                        {totalApplications}
                       </span>
                     </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-base text-slate-500">
+                        Credits Used
+                      </span>
+                      <div className="flex items-center gap-2">
+                        <span className="rounded-full bg-green-100 px-2 py-0 text-sm text-green-700">
+                          Free
+                        </span>
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-between text-slate-500">
+                      <span className="text-base">Estimated Time</span>
+                      <span className="text-lg">{estimatedTime}</span>
+                    </div>
                   </div>
-                  <div className="flex items-center justify-between text-slate-500">
-                    <span className="text-base">Estimated Time</span>
-                    <span className="text-lg">{estimatedTime}</span>
+                </CardContent>
+                <CardFooter className="flex flex-col px-6">
+                  <Button
+                    className="ph-no-capture mt-4 w-full"
+                    size="lg"
+                    onClick={() => {
+                      if (replaceNotesCount > 0) {
+                        setIsReplaceNotesDialogOpen(true);
+                        return;
+                      }
+                      onReviewClick?.();
+                    }}
+                  >
+                    <Wand2 className="mr-2 h-5 w-5" />
+                    Proceed
+                  </Button>
+
+                  <p className="text-muted-foreground mt-2 text-center text-sm">
+                    AI can make mistakes. Check important info before approving
+                    or rejecting a grant application.
+                  </p>
+                </CardFooter>
+              </>
+            )}
+            {state === 'PROCESSING' && (
+              <>
+                <CardContent className="mt-8 flex flex-col items-center justify-center space-y-8 p-8">
+                  <div className="relative h-2 w-2/4 max-w-md overflow-hidden rounded-md bg-[#f1f5f9]">
+                    <Progress
+                      value={progress}
+                      className="w-full bg-slate-100"
+                      indicatorClassName="bg-linear-to-r from-[#FF79C1] to-[#76C5FF]"
+                    />
                   </div>
-                </div>
-              </CardContent>
-              <CardFooter className="flex flex-col px-6">
-                <Button
-                  className="ph-no-capture mt-4 w-full"
-                  size="lg"
-                  onClick={() => {
-                    onReviewClick?.();
-                  }}
-                >
-                  <Wand2 className="mr-2 h-5 w-5" />
-                  Proceed
-                </Button>
 
-                <p className="text-muted-foreground mt-2 text-center text-sm">
-                  AI can make mistakes. Check important info before approving or
-                  rejecting a grant application.
-                </p>
-              </CardFooter>
-            </>
-          )}
-          {state === 'PROCESSING' && (
-            <>
-              <CardContent className="mt-8 flex flex-col items-center justify-center space-y-8 p-8">
-                <div className="relative h-2 w-2/4 max-w-md overflow-hidden rounded-md bg-[#f1f5f9]">
-                  <Progress
-                    value={progress}
-                    className="w-full bg-slate-100"
-                    indicatorClassName="bg-linear-to-r from-[#FF79C1] to-[#76C5FF]"
-                  />
-                </div>
-
-                <div className="text-center">
-                  <p className="text-sm font-medium text-slate-500">
-                    {`We're reviewing your submissions right now. Sit back and
+                  <div className="text-center">
+                    <p className="text-sm font-medium text-slate-500">
+                      {`We're reviewing your submissions right now. Sit back and
                     relax, or contemplate your life choices for a moment.`}
+                    </p>
+                  </div>
+                </CardContent>
+                <CardFooter className="w-full bg-slate-50 py-3 text-center text-base text-slate-500">
+                  <p className="w-full text-sm">
+                    Approx. {estimatedTimeSingular} remaining
                   </p>
-                </div>
-              </CardContent>
-              <CardFooter className="w-full bg-slate-50 py-3 text-center text-base text-slate-500">
-                <p className="w-full text-sm">
-                  Approx. {estimatedTimeSingular} remaining
-                </p>
-              </CardFooter>
-            </>
-          )}
-          {state === 'DONE' && (
-            <>
-              <CardContent className="flex flex-col items-center space-y-8 p-8 text-center">
-                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-emerald-50">
-                  <Check className="h-8 w-8 stroke-[2.5] text-emerald-700" />
-                </div>
+                </CardFooter>
+              </>
+            )}
+            {state === 'DONE' && (
+              <>
+                <CardContent className="flex flex-col items-center space-y-8 p-8 text-center">
+                  <div className="flex h-16 w-16 items-center justify-center rounded-full bg-emerald-50">
+                    <Check className="h-8 w-8 stroke-[2.5] text-emerald-700" />
+                  </div>
 
-                <div className="space-y-2">
-                  <h2 className="text-xl font-semibold">
-                    Successfully Reviewed
-                  </h2>
-                  <p className="mx-auto w-4/5 text-sm text-slate-500">
-                    Remember, AI can make mistakes. Check before finalizing.
-                  </p>
-                </div>
+                  <div className="space-y-2">
+                    <h2 className="text-xl font-semibold">
+                      Successfully Reviewed
+                    </h2>
+                    <p className="mx-auto w-4/5 text-sm text-slate-500">
+                      Remember, AI can make mistakes. Check before finalizing.
+                    </p>
+                  </div>
 
-                <div className="w-full space-y-2">
-                  <StatItem
-                    label="Total Reviewed"
-                    value={completedStats.totalReviewed}
-                    dotColor="bg-blue-400"
-                  />
-                  <StatItem
-                    label="High Quality"
-                    value={completedStats.highQuality}
-                    dotColor="bg-violet-400"
-                  />
-                  <StatItem
-                    label="Low Quality"
-                    value={completedStats.lowQuality}
-                    dotColor="bg-stone-400"
-                  />
-                  <StatItem
-                    label="Mid Quality"
-                    value={completedStats.midQuality}
-                    dotColor="bg-cyan-400"
-                  />
-                  <StatItem
-                    label="Total time saved"
-                    value={formatTime(completedStats.totalHoursSaved)}
-                    dotColor="bg-green-400"
-                  />
-                </div>
+                  <div className="w-full space-y-2">
+                    <StatItem
+                      label="Total Reviewed"
+                      value={completedStats.totalReviewed}
+                      dotColor="bg-blue-400"
+                    />
+                    <StatItem
+                      label="High Quality"
+                      value={completedStats.highQuality}
+                      dotColor="bg-violet-400"
+                    />
+                    <StatItem
+                      label="Low Quality"
+                      value={completedStats.lowQuality}
+                      dotColor="bg-stone-400"
+                    />
+                    <StatItem
+                      label="Mid Quality"
+                      value={completedStats.midQuality}
+                      dotColor="bg-cyan-400"
+                    />
+                    <StatItem
+                      label="Total time saved"
+                      value={formatTime(completedStats.totalHoursSaved)}
+                      dotColor="bg-green-400"
+                    />
+                  </div>
 
-                <Button
-                  variant="outline"
-                  className="w-full border-[#e2e8f0] text-[#62748e]"
-                  onClick={onComplete}
-                >
-                  Have a look
-                </Button>
-              </CardContent>
-            </>
-          )}
-          {state === 'ERROR' && (
-            <>
-              <CardContent className="flex flex-col items-center space-y-8 p-8 text-center">
-                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-red-50">
-                  <XCircle className="h-8 w-8 stroke-[2.5] text-red-600" />
-                </div>
+                  <Button
+                    variant="outline"
+                    className="w-full border-[#e2e8f0] text-[#62748e]"
+                    onClick={onComplete}
+                  >
+                    Have a look
+                  </Button>
+                </CardContent>
+              </>
+            )}
+            {state === 'ERROR' && (
+              <>
+                <CardContent className="flex flex-col items-center space-y-8 p-8 text-center">
+                  <div className="flex h-16 w-16 items-center justify-center rounded-full bg-red-50">
+                    <XCircle className="h-8 w-8 stroke-[2.5] text-red-600" />
+                  </div>
 
-                <div className="space-y-2">
-                  <h2 className="text-xl font-semibold">Review Failed</h2>
-                  <p className="mx-auto w-4/5 text-sm text-slate-500">
-                    Something went wrong while reviewing the applications.
-                    Please try again.
-                  </p>
-                </div>
+                  <div className="space-y-2">
+                    <h2 className="text-xl font-semibold">Review Failed</h2>
+                    <p className="mx-auto w-4/5 text-sm text-slate-500">
+                      Something went wrong while reviewing the applications.
+                      Please try again.
+                    </p>
+                  </div>
 
-                <Button
-                  variant="outline"
-                  className="w-full border-[#e2e8f0] text-[#62748e]"
-                  onClick={() => setState('INIT')}
-                >
-                  Try Again
-                </Button>
-              </CardContent>
-            </>
-          )}
-        </Card>
-      </DialogContent>
-    </Dialog>
+                  <Button
+                    variant="outline"
+                    className="w-full border-[#e2e8f0] text-[#62748e]"
+                    onClick={() => setState('INIT')}
+                  >
+                    Try Again
+                  </Button>
+                </CardContent>
+              </>
+            )}
+          </Card>
+        </DialogContent>
+      </Dialog>
+      <AlertDialog
+        open={isReplaceNotesDialogOpen}
+        onOpenChange={setIsReplaceNotesDialogOpen}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Replace existing notes?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Some applications already have notes written by your team.
+              Continuing with AI review will replace those notes with
+              AI-generated review notes.
+              {replaceNotesCount > 0 && (
+                <span className="mt-2 block">
+                  {replaceNotesCount}{' '}
+                  {replaceNotesCount === 1 ? 'application' : 'applications'}{' '}
+                  will have notes replaced.
+                </span>
+              )}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                setIsReplaceNotesDialogOpen(false);
+                onReviewClick?.();
+              }}
+            >
+              Continue with AI
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
   );
 }
 
