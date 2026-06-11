@@ -3,6 +3,7 @@ import {
   ChevronDown,
   CopyIcon,
   Loader2,
+  Plus,
   ShieldCheck,
 } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
@@ -462,9 +463,9 @@ export function TokenSelect() {
                               />
                               <Button
                                 type="button"
-                                variant="outline"
+                                variant="link"
                                 size="sm"
-                                className="ml-auto h-7 border-[#1C4CE7]/30 bg-[#1C4CE7]/5 px-3 font-medium text-[#1C4CE7] hover:border-[#1C4CE7]/50 hover:bg-[#1C4CE7]/10 hover:text-[#1C4CE7]"
+                                className="ml-auto flex h-7 items-center gap-1 px-0 text-[0.9rem]"
                                 disabled={!!addingMintAddress}
                                 onClick={() =>
                                   addJupiterToken(
@@ -476,7 +477,10 @@ export function TokenSelect() {
                                 {addingMintAddress === result.token.id ? (
                                   <Loader2 className="h-3 w-3 animate-spin" />
                                 ) : (
-                                  'Add'
+                                  <>
+                                    <Plus className="h-4 w-4" />
+                                    <span>Add</span>
+                                  </>
                                 )}
                               </Button>
                             </div>
