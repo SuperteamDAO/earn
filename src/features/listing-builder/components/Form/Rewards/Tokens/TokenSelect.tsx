@@ -83,18 +83,28 @@ type TokenSearchResult =
 const supportEmail = 'support@superteam.fun';
 const defaultTokenIcon = '/assets/dollar.svg';
 
-function JupiterVerifiedIcon() {
+const getJupiterTokenUrl = (mintAddress: string) =>
+  `https://jup.ag/tokens/${mintAddress}`;
+
+const openJupiterTokenPage = (mintAddress: string) => {
+  window.open(getJupiterTokenUrl(mintAddress), '_blank', 'noopener,noreferrer');
+};
+
+function JupiterVerifiedIcon({ mintAddress }: { mintAddress: string }) {
   return (
     <Tooltip
       content="Verified on Jupiter"
       contentProps={{ side: 'top' }}
-      triggerClassName="ml-1 inline-flex cursor-help align-middle"
+      triggerClassName="ml-1 inline-flex align-middle"
       disableOnClickClose
     >
       <ShieldCheck
         className="h-3.5 w-3.5 text-[#1C4CE7]"
         aria-label="Verified on Jupiter"
-        onClick={(event) => event.stopPropagation()}
+        onClick={(event) => {
+          event.stopPropagation();
+          openJupiterTokenPage(mintAddress);
+        }}
       />
     </Tooltip>
   );
@@ -122,11 +132,24 @@ function TokenSearchLabel({
         <p className="truncate text-sm">
           {name}
           {symbol ? <span className="text-slate-500"> ({symbol})</span> : null}
-          <JupiterVerifiedIcon />
+          <JupiterVerifiedIcon mintAddress={mintAddress} />
         </p>
-        <p className="truncate text-xs text-slate-500">
-          {truncatePublicKey(mintAddress, 6)}
-        </p>
+        <Tooltip
+          content="Open in another tab"
+          contentProps={{ side: 'top' }}
+          triggerClassName="block w-fit cursor-pointer"
+          disableOnClickClose
+        >
+          <p
+            className="truncate text-xs text-slate-500 hover:underline"
+            onClick={(event) => {
+              event.stopPropagation();
+              openJupiterTokenPage(mintAddress);
+            }}
+          >
+            {truncatePublicKey(mintAddress, 6)}
+          </p>
+        </Tooltip>
       </div>
     </div>
   );
