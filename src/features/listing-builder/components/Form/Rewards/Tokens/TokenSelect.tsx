@@ -116,11 +116,13 @@ function TokenSearchLabel({
   name,
   symbol,
   mintAddress,
+  isVerifiedOnJupiter,
 }: {
   icon?: string | null;
   name: string;
   symbol?: string | null;
   mintAddress: string;
+  isVerifiedOnJupiter?: boolean;
 }) {
   return (
     <div className="flex min-w-0 items-center gap-2">
@@ -133,7 +135,9 @@ function TokenSearchLabel({
         <p className="truncate text-sm">
           {name}
           {symbol ? <span className="text-slate-500"> ({symbol})</span> : null}
-          <JupiterVerifiedIcon mintAddress={mintAddress} />
+          {isVerifiedOnJupiter && (
+            <JupiterVerifiedIcon mintAddress={mintAddress} />
+          )}
         </p>
         <Tooltip
           content="Open in another tab"
@@ -440,6 +444,9 @@ export function TokenSelect() {
                                 name={result.token.tokenName}
                                 symbol={result.token.tokenSymbol}
                                 mintAddress={result.token.mintAddress}
+                                isVerifiedOnJupiter={
+                                  result.token.isVerifiedOnJupiter
+                                }
                               />
                               <Check
                                 className={cn(
@@ -460,6 +467,7 @@ export function TokenSelect() {
                                 name={result.token.name}
                                 symbol={result.token.symbol}
                                 mintAddress={result.token.id}
+                                isVerifiedOnJupiter={result.token.isVerified}
                               />
                               <Button
                                 type="button"
