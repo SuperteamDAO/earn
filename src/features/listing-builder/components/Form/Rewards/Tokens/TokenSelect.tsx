@@ -1,4 +1,10 @@
-import { Check, ChevronDown, CopyIcon, Loader2 } from 'lucide-react';
+import {
+  Check,
+  ChevronDown,
+  CopyIcon,
+  Loader2,
+  ShieldCheck,
+} from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 
@@ -24,6 +30,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
+import { Tooltip } from '@/components/ui/tooltip';
 import {
   addTokenToList,
   type Token,
@@ -76,6 +83,23 @@ type TokenSearchResult =
 const supportEmail = 'support@superteam.fun';
 const defaultTokenIcon = '/assets/dollar.svg';
 
+function JupiterVerifiedIcon() {
+  return (
+    <Tooltip
+      content="Verified on Jupiter"
+      contentProps={{ side: 'top' }}
+      triggerClassName="ml-1 inline-flex cursor-help align-middle"
+      disableOnClickClose
+    >
+      <ShieldCheck
+        className="h-3.5 w-3.5 text-[#1C4CE7]"
+        aria-label="Verified on Jupiter"
+        onClick={(event) => event.stopPropagation()}
+      />
+    </Tooltip>
+  );
+}
+
 function TokenSearchLabel({
   icon,
   name,
@@ -98,6 +122,7 @@ function TokenSearchLabel({
         <p className="truncate text-sm">
           {name}
           {symbol ? <span className="text-slate-500"> ({symbol})</span> : null}
+          <JupiterVerifiedIcon />
         </p>
         <p className="truncate text-xs text-slate-500">
           {truncatePublicKey(mintAddress, 6)}
