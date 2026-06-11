@@ -53,6 +53,7 @@ function Grants({ grant: initialGrant }: InitialGrant) {
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
+  const { res } = context;
   const rawSlug = context.params?.slug;
   const slug = Array.isArray(rawSlug) ? rawSlug[0] : rawSlug;
 
@@ -71,6 +72,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       };
     }
 
+    res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=600');
     return {
       props: {
         grant: grantData,
@@ -78,6 +80,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     };
   } catch (e) {
     console.error(e);
+    res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=600');
     return {
       props: {
         grant: null,
