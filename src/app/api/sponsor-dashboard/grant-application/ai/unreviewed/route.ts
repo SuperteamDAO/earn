@@ -52,6 +52,7 @@ export async function GET(request: NextRequest) {
       select: {
         id: true,
         label: true,
+        notes: true,
         ai: true,
         applicationStatus: true,
       },
