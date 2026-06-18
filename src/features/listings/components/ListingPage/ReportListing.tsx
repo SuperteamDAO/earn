@@ -160,7 +160,6 @@ export function ReportListing({
       listingTitle: listing.title,
       listingUrl: `${process.env.NEXT_PUBLIC_SITE_URL}/earn/listing/${listing.slug}/`,
       reasonTitle,
-      userEmail: user.email,
       reasonSubtext,
     });
     setSubmitted(true);
