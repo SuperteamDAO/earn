@@ -13,6 +13,11 @@ import { queueEmail } from '@/features/emails/utils/queueEmail';
 import { isGrantApplicationInCooldown } from '@/features/grants/utils/grantApplicationCooldown';
 import { grantApplicationSchema } from '@/features/grants/utils/grantApplicationSchema';
 import {
+  sanitizeGrantApplicationAnswers,
+  sanitizeGrantApplicationHtml,
+  sanitizeGrantApplicationText,
+} from '@/features/grants/utils/sanitizeGrantApplicationHtml';
+import {
   getGrantFixedAsk,
   isAgenticEngineeringGrant,
   isUserEligibleForST,
@@ -84,21 +89,25 @@ async function createGrantApplication(
   const formattedData = {
     userId,
     grantId,
-    projectTitle: validatedData.projectTitle,
-    projectOneLiner: validatedData.projectOneLiner,
-    projectDetails: validatedData.projectDetails,
+    projectTitle: sanitizeGrantApplicationText(validatedData.projectTitle),
+    projectOneLiner: sanitizeGrantApplicationText(
+      validatedData.projectOneLiner,
+    ),
+    projectDetails: sanitizeGrantApplicationHtml(validatedData.projectDetails),
     projectTimeline: dayjs(validatedData.projectTimeline).format('D MMMM YYYY'),
-    proofOfWork: validatedData.proofOfWork || '',
-    milestones: validatedData.milestones,
-    kpi: validatedData.kpi || '',
+    proofOfWork: sanitizeGrantApplicationHtml(validatedData.proofOfWork) || '',
+    milestones: sanitizeGrantApplicationHtml(validatedData.milestones),
+    kpi: sanitizeGrantApplicationHtml(validatedData.kpi) || '',
     walletAddress: validatedData.walletAddress,
     ask: fixedAsk ?? validatedData.ask,
     twitter: validatedData.twitter,
     github: validatedData.github,
-    answers: validatedData.answers || [],
+    answers: sanitizeGrantApplicationAnswers(validatedData.answers) || [],
     ...(isST && {
       lumaLink: validatedData.lumaLink,
-      expenseBreakdown: validatedData.expenseBreakdown,
+      expenseBreakdown: sanitizeGrantApplicationHtml(
+        validatedData.expenseBreakdown,
+      ),
     }),
   };
 

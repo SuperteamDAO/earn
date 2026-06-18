@@ -56,3 +56,10 @@ export const supportEmailRateLimiter = new Ratelimit({
   analytics: true,
   prefix: 'ratelimit:support_email',
 });
+
+export const reportListingRateLimiter = new Ratelimit({
+  redis: redis,
+  limiter: Ratelimit.fixedWindow(5, '1 h'),
+  analytics: true,
+  prefix: 'ratelimit:report_listing',
+});
