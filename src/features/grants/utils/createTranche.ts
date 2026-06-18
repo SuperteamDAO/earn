@@ -3,6 +3,7 @@ import { prisma } from '@/prisma';
 
 import { addOnboardingInfoToAirtable } from './addOnboardingInfoToAirtable';
 import { addPaymentInfoToAirtable } from './addPaymentInfoToAirtable';
+import { sanitizeGrantApplicationHtml } from './sanitizeGrantApplicationHtml';
 import { isAgenticEngineeringGrant } from './stGrant';
 import { validateWalletAddressOwnership } from './validateWalletAddressOwnership';
 
@@ -420,8 +421,8 @@ export async function createTranche({
       applicationId,
       ask: trancheAmount,
       status: isFirstTranche ? 'Approved' : 'Pending',
-      helpWanted,
-      update,
+      helpWanted: sanitizeGrantApplicationHtml(helpWanted),
+      update: sanitizeGrantApplicationHtml(update),
       walletAddress,
       grantId: application.grantId,
       trancheNumber: existingTranches + 1,

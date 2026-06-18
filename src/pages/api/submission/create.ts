@@ -10,6 +10,10 @@ import { withAuth } from '@/features/auth/utils/withAuth';
 import { consumeCredit } from '@/features/credits/utils/allocateCredits';
 import { canUserSubmit } from '@/features/credits/utils/canUserSubmit';
 import { queueEmail } from '@/features/emails/utils/queueEmail';
+import {
+  sanitizeGrantApplicationAnswers,
+  sanitizeGrantApplicationHtml,
+} from '@/features/grants/utils/sanitizeGrantApplicationHtml';
 import { submissionSchema } from '@/features/listings/utils/submissionFormSchema';
 import { validateSubmissionRequest } from '@/features/listings/utils/validateSubmissionRequest';
 import { extractSocialUsername } from '@/features/social/utils/extractUsername';
@@ -64,8 +68,9 @@ export async function createSubmission(
       listingId,
       link: validatedData.link || '',
       tweet: validatedData.tweet || '',
-      otherInfo: validatedData.otherInfo || '',
-      eligibilityAnswers: validatedData.eligibilityAnswers || [],
+      otherInfo: sanitizeGrantApplicationHtml(validatedData.otherInfo),
+      eligibilityAnswers:
+        sanitizeGrantApplicationAnswers(validatedData.eligibilityAnswers) || [],
       ask: validatedData.ask || null,
       telegram: submissionTelegram,
     },
