@@ -14,6 +14,7 @@ import {
   createListingRefinements,
 } from '../types/schema';
 import { checkSlug } from './getValidSlug';
+import { getValidListingRegion } from './validateListingRegion';
 
 interface ListingValidatorParams {
   listing: ListingWithSponsor;
@@ -63,6 +64,16 @@ export const validateListing = async ({
     });
     const superValidator = innerSchema.superRefine(async (data, ctx) => {
       await createListingRefinements(data, ctx, hackathon ? [hackathon] : []);
+      const validRegion = await getValidListingRegion(data.region);
+      if (!validRegion) {
+        ctx.addIssue({
+          code: 'custom',
+          message: 'Invalid region selected',
+          path: ['region'],
+        });
+      } else {
+        data.region = validRegion;
+      }
       await backendListingRefinements(data, ctx, checkSlug, async (token) =>
         Boolean(await getTokenBySymbol(token)),
       );
