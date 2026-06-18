@@ -1,15 +1,20 @@
 import { prisma } from '@/prisma';
 import { dayjs } from '@/utils/dayjs';
 
-export async function creditAggregate(userId: string) {
+type PrismaLike = Pick<typeof prisma, 'creditLedger' | 'user'>;
+
+export async function creditAggregate(
+  userId: string,
+  client: PrismaLike = prisma,
+) {
   const effectiveMonth = dayjs.utc().startOf('month').toDate();
 
   const [creditAggregate, user] = await Promise.all([
-    prisma.creditLedger.aggregate({
+    client.creditLedger.aggregate({
       where: { userId, effectiveMonth },
       _sum: { change: true },
     }),
-    prisma.user.findUnique({
+    client.user.findUnique({
       where: { id: userId },
       select: { isPro: true },
     }),
