@@ -37,6 +37,7 @@ type HackathonStatus = 'Open' | 'Closed';
 const SLUG = 'world-cup';
 const WORLD_CUP_ASSET_BASE = `${ASSET_URL}/hackathon/world-cup`;
 const WORLD_CUP_BG_IMAGE = `${WORLD_CUP_ASSET_BASE}/bg.png`;
+const WORLD_CUP_MOBILE_BG_IMAGE = `${WORLD_CUP_ASSET_BASE}/bg-mobile.png`;
 const WORLD_CUP_OG_IMAGE = `${WORLD_CUP_ASSET_BASE}/og.png`;
 const WORLD_CUP_TX_LOGO = `${WORLD_CUP_ASSET_BASE}/txLogo.png`;
 
@@ -130,19 +131,27 @@ function Hero({
     .format('D MMMM')} - ${dayjs.utc(CLOSE_DATE).format('D MMMM')}`;
 
   return (
-    <section className="px-2 pt-2 sm:px-4">
-      <div className="relative mx-auto flex min-h-[19rem] w-full max-w-[91rem] flex-col items-center overflow-hidden rounded-lg border border-slate-200 bg-[#17275a] text-center text-white shadow-sm sm:min-h-[25rem] md:min-h-[25.5rem]">
+    <section className="px-3 pt-4 sm:px-4 md:px-2 md:pt-2">
+      <div className="relative mx-auto flex min-h-[25.5rem] w-full max-w-[91rem] flex-col items-center overflow-hidden rounded-xl border border-slate-200 bg-[#17275a] text-center text-white shadow-sm sm:min-h-[27.5rem] md:min-h-[25.5rem]">
+        <Image
+          src={WORLD_CUP_MOBILE_BG_IMAGE}
+          alt=""
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover object-center md:hidden"
+        />
         <Image
           src={WORLD_CUP_BG_IMAGE}
           alt=""
           fill
           priority
           sizes="100vw"
-          className="object-cover object-center"
+          className="hidden object-cover object-center md:block"
         />
         <div
           className={cn(
-            'absolute top-0 left-1/2 z-10 flex -translate-x-1/2 items-center gap-3 rounded-b-[1.15rem] bg-slate-950/38 px-5 py-3 text-xl font-medium shadow-[inset_0_0_0_1px_rgba(255,255,255,0.1),0_10px_24px_rgba(15,23,42,0.24)] backdrop-blur-2xl sm:px-6 sm:text-2xl md:gap-2 md:px-4 md:pt-3 md:pb-3 md:text-sm',
+            'absolute top-0 left-1/2 z-10 flex -translate-x-1/2 items-center gap-2 rounded-b-[1rem] bg-slate-950/38 px-4 py-2 text-base font-medium whitespace-nowrap shadow-[inset_0_0_0_1px_rgba(255,255,255,0.1),0_10px_24px_rgba(15,23,42,0.24)] backdrop-blur-2xl sm:px-5 sm:text-lg md:gap-2 md:px-4 md:pt-3 md:pb-3 md:text-sm',
             status === 'Closed' ? 'text-[#FDFFA4]' : 'text-[#9bff63]',
           )}
         >
@@ -157,8 +166,8 @@ function Hero({
           {status === 'Open' && 'Submissions open'}
           {status === 'Closed' && 'In Review'}
         </div>
-        <div className="relative z-10 mt-16 flex flex-col items-center sm:mt-20 md:mt-[6.5rem]">
-          <div className="mb-5 flex items-center justify-center gap-4 text-2xl font-normal text-white md:mb-4 md:gap-3 md:text-base">
+        <div className="relative z-10 mt-[6.75rem] flex flex-col items-center sm:mt-[7.5rem] md:mt-[6.5rem]">
+          <div className="mb-4 flex items-center justify-center gap-2 text-sm font-normal text-white sm:mb-5 sm:gap-3 sm:text-base md:mb-4 md:gap-3 md:text-base">
             <span>Powered by</span>
             <Image
               src={WORLD_CUP_TX_LOGO}
@@ -166,7 +175,7 @@ function Hero({
               width={112}
               height={70}
               priority
-              className="h-11 w-auto object-contain md:h-9"
+              className="h-7 w-auto object-contain sm:h-8 md:h-9"
             />
           </div>
           <Image
@@ -175,19 +184,19 @@ function Hero({
             width={1000}
             height={324}
             priority
-            className="h-auto w-[18.5rem] drop-shadow-[0_8px_0_rgba(17,24,39,0.62)] sm:w-[37rem] md:w-[27.5rem]"
+            className="h-auto w-[15rem] drop-shadow-[0_8px_0_rgba(17,24,39,0.62)] sm:w-[19rem] md:w-[27.5rem]"
           />
           <div
             className={cn(
               archivoHeavy.className,
-              'mt-8 rounded-full bg-[#03030340] px-8 py-3 text-lg font-black tracking-wide text-white uppercase shadow-[inset_0_2px_3px_rgba(255,255,255,0.12),0_4px_12px_rgba(15,23,42,0.3)] backdrop-blur-lg sm:px-11 sm:py-4 sm:text-2xl md:mt-5 md:px-6 md:py-3 md:text-sm',
+              'mt-5 rounded-full bg-[#03030340] px-6 py-2.5 text-sm font-black tracking-wide text-white uppercase shadow-[inset_0_2px_3px_rgba(255,255,255,0.12),0_4px_12px_rgba(15,23,42,0.3)] backdrop-blur-lg sm:mt-6 sm:px-8 sm:py-3 sm:text-base md:mt-5 md:px-6 md:py-3 md:text-sm',
             )}
           >
             {dateRange}
           </div>
         </div>
       </div>
-      <div className="relative z-20 -mt-2 flex justify-center sm:-mt-9">
+      <div className="relative z-20 -mt-6 flex justify-center sm:-mt-10 md:-mt-9">
         {isCountdownReady ? (
           <Countdown
             date={countdownDate}
@@ -252,11 +261,12 @@ function DigitalTimerShell({
     <div
       className={cn(
         digital7Italic.className,
-        'border-[5px] border-[#d8d8d0] bg-[#111] px-4 py-3 text-[2rem] leading-none tracking-normal uppercase shadow-[0_8px_12px_rgba(15,23,42,0.35),inset_0_0_14px_rgba(0,0,0,0.5)] sm:px-8 sm:py-4 sm:text-[3.5rem] md:px-6 md:py-3 md:text-[2.25rem] [&_.timer-unit]:text-[0.58em]',
-        isReview ? 'text-[#FDFFA4]' : 'text-[#ff1d17]',
+        'border-2 border-[#B7B7AB] bg-[#101010] px-3 py-3 text-[1.5rem] leading-none tracking-normal uppercase shadow-[0_8px_12px_rgba(15,23,42,0.35),inset_0_0_14px_rgba(0,0,0,0.5),inset_0_1px_10px_rgba(255,255,255,0.5)] sm:border-[5px] sm:px-8 sm:py-4 sm:text-[3.5rem] md:px-6 md:py-3 md:text-[2.25rem] [&_.timer-unit]:text-[0.58em]',
+        isReview ? 'text-[#FDFFA4]' : 'text-[#FF0404]',
       )}
       style={{
         fontStyle: 'italic',
+        WebkitTextStroke: '0.5px #510000',
         textShadow: '0 0 6px rgba(255, 29, 23, 0.8)',
       }}
     >
@@ -360,10 +370,10 @@ function WorldCupTrackCard({
   return (
     <Link
       href={`/earn/listing/${track.slug}`}
-      className="grid overflow-hidden rounded-md bg-[#F8F8F8] text-left shadow-[inset_0_0_0_1px_#F0F0F0] transition hover:bg-[#7C35F622] focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 sm:grid-cols-[13.5rem_1fr]"
+      className="grid grid-cols-[8.75rem_1fr] overflow-hidden rounded-md bg-[#F8F8F8] text-left shadow-[inset_0_0_0_1px_#F0F0F0] transition hover:bg-[#7C35F622] focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 sm:grid-cols-[13.5rem_1fr]"
     >
       <div
-        className="min-h-36 bg-[#183372] bg-cover bg-center sm:min-h-0"
+        className="min-h-36 bg-[#183372] bg-cover bg-center"
         style={{
           backgroundImage: `linear-gradient(rgba(26, 64, 151, 0.12), rgba(26, 64, 151, 0.12)), url('${image}')`,
         }}
@@ -371,10 +381,10 @@ function WorldCupTrackCard({
       />
       <div className="flex min-h-36 flex-col justify-between px-4 py-4">
         <div>
-          <h3 className="text-sm font-semibold text-[#0F172B]">
+          <h3 className="text-[12px] font-semibold text-[#0F172B] sm:text-sm">
             {track.title}
           </h3>
-          <p className="mt-2 line-clamp-3 text-xs leading-relaxed text-[#62748E]">
+          <p className="mt-2 text-[11px] leading-[1.25] text-[#62748E] sm:line-clamp-3 sm:text-xs sm:leading-relaxed">
             {description}
           </p>
         </div>
@@ -395,7 +405,7 @@ const DEFAULT_TRACK_DESCRIPTION =
   'Build with live World Cup data across markets, agents, and fan experiences.';
 
 const trackDescriptions = [
-  'The flagship track. Autonomous agents and tools trading on live odds, market-making signal generation, model-driven strategies, agent-playable data flows.',
+  'The flagship track. Autonomous agents and tools trading on live odds: market-making signal generation, model-driven strategies, agent-playable data flows.',
   'Markets, resolution and settlement built on verifiable World Cup data: outcome markets, oracle tooling, on-chain proof integrations.',
   'Product fans actually use during the tournament: live match apps, social predictions, fantasy mechanics, second-screen experiences.',
 ];
