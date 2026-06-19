@@ -4,8 +4,8 @@ export const HACKATHONS: {
   logo: string;
 }[] = [
   {
-    label: 'Frontier',
-    slug: 'frontier',
-    logo: '/hackathon/frontier/logo.webp',
+    label: 'World Cup',
+    slug: 'world-cup',
+    logo: 'hackathon/world-cup/logo.png',
   },
 ];

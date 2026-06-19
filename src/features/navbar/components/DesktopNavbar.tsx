@@ -191,10 +191,7 @@ export const DesktopNavbar = ({
                 <Link
                   href={`/earn/hackathon/${hackathon.slug}`}
                   key={hackathon.slug}
-                  className={cn(
-                    'flex items-center py-2 font-medium',
-                    'h-[1.65rem]',
-                  )}
+                  className={cn('flex items-center py-2 font-medium', 'h-11')}
                   prefetch={false}
                 >
                   <ExternalImage
