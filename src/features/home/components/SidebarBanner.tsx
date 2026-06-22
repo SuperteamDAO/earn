@@ -49,15 +49,10 @@ export function SidebarBanner({ className }: SidebarPosterProps) {
             )?.toLocaleString('en-us') || '0'}
             + for you
           </p>
-          <p className="relative z-10 mt-3 text-sm leading-[130%] text-slate-600 md:text-base">
-            Submit to any of the World Cup tracks on Earn and stand to win from
-            $
-            {roundToNearestTenThousand(
-              stats?.totalRewardAmount ?? 0,
-              true,
-            )?.toLocaleString('en-us') || '0'}
-            +. Deadline for submissions is{' '}
-            {dayjs(CLOSE_DATE).utc().add(1, 'minute').format('MMM D')}.
+          <p className="relative z-10 mt-3 text-sm leading-[130%] text-[#62748E] md:text-base">
+            Build products or agents using TxLine&apos;s live World Cup data API
+            on Solana. $50K across three tracks: markets, trading agents, and
+            fan experiences.
           </p>
 
           <Button className={`mt-4 text-base`}>View Tracks</Button>
@@ -180,7 +175,7 @@ function SidebarTimerShell({
       style={{
         fontStyle: 'italic',
         WebkitTextStroke: '0.5px #510000',
-        textShadow: '0 0 6px rgba(255, 29, 23, 0.8)',
+        textShadow: '0 0 2px rgba(255, 29, 23, 0.35)',
       }}
     >
       {children}

@@ -23,18 +23,20 @@ export function HomeWorldCupHackathonBanner() {
       <h1 className="relative z-10 max-w-[22rem] text-2xl leading-[120%] font-bold text-white md:max-w-[30rem] md:text-[28px]">
         Don&apos;t just watch, win prizes worth $50K this World Cup!
       </h1>
-      <p className="relative z-10 mt-2.5 max-w-[20rem] text-sm leading-[130%] text-white/90 md:mt-4 md:max-w-[25rem] md:text-lg">
+      <p className="relative z-10 mt-2.5 max-w-full text-sm leading-[130%] text-white [text-shadow:_0_1px_2px_rgb(0_0_0_/1)] md:mt-4 md:max-w-[30rem] md:text-lg">
         Build products or agents using TxLine&apos;s live World Cup data API on
         Solana. $50K across three tracks.
       </p>
-      <button
-        className="ph-no-capture relative z-10 mt-auto w-full rounded-md bg-[#6366F1] px-9 py-3 text-sm font-medium text-white hover:bg-[#5558E8] md:w-auto"
-        onClick={() => {
-          posthog.capture('world_cup_hackathon_banner');
-        }}
-      >
-        View Tracks
-      </button>
+      <div className="relative z-10 mt-auto flex flex-col items-center gap-3 pt-4 md:flex-row md:gap-4">
+        <button
+          className="ph-no-capture hover:bg-brand-purple w-full rounded-md bg-white px-9 py-3 text-sm font-medium text-[#3223A0] hover:text-white md:w-auto"
+          onClick={() => {
+            posthog.capture('world_cup_hackathon_banner');
+          }}
+        >
+          View Tracks
+        </button>
+      </div>
     </Link>
   );
 }

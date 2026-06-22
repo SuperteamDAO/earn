@@ -70,10 +70,10 @@ export function BannerCarousel({
     >
       <CarouselContent>
         <CarouselItem>
-          <HomeWorldCupHackathonBanner />
+          <HomeTalentBanner totalUsers={totalUsers} />
         </CarouselItem>
         <CarouselItem>
-          <HomeTalentBanner totalUsers={totalUsers} />
+          <HomeWorldCupHackathonBanner />
         </CarouselItem>
         <CarouselItem>
           <HomeSponsorBanner
