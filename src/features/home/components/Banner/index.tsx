@@ -17,6 +17,7 @@ import {
 
 import { HomeSponsorBanner } from './SponsorBanner';
 import { HomeTalentBanner } from './TalentBanner';
+import { HomeWorldCupHackathonBanner } from './WorldCupHackathonBanner';
 
 interface BannerCarouselProps {
   readonly totalUsers?: number | null;
@@ -68,6 +69,9 @@ export function BannerCarousel({
       setApi={setCarouselApi}
     >
       <CarouselContent>
+        <CarouselItem>
+          <HomeWorldCupHackathonBanner />
+        </CarouselItem>
         <CarouselItem>
           <HomeTalentBanner totalUsers={totalUsers} />
         </CarouselItem>

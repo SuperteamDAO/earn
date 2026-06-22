@@ -370,7 +370,7 @@ function WorldCupTrackCard({
   return (
     <Link
       href={`/earn/listing/${track.slug}`}
-      className="grid grid-cols-[8.75rem_1fr] overflow-hidden rounded-md bg-[#F8F8F8] text-left shadow-[inset_0_0_0_1px_#F0F0F0] transition hover:bg-[#7C35F622] focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 sm:grid-cols-[13.5rem_1fr]"
+      className="grid grid-cols-[8.75rem_1fr] overflow-hidden rounded-md bg-[#F8F8F8] text-left shadow-[inset_0_0_0_1px_#F0F0F0] transition focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 active:bg-[#7C35F622] sm:grid-cols-[13.5rem_1fr] [@media(hover:hover)]:hover:bg-[#7C35F622]"
     >
       <div
         className="min-h-36 bg-[#183372] bg-cover bg-center"
