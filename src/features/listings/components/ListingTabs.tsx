@@ -16,7 +16,6 @@ interface ListingTabTriggerProps {
   onClick: () => void;
   children: React.ReactNode;
   isPro?: boolean;
-  className?: string;
 }
 
 const ListingTabTrigger = ({
@@ -24,7 +23,6 @@ const ListingTabTrigger = ({
   onClick,
   children,
   isPro,
-  className,
 }: ListingTabTriggerProps) => (
   <button
     onClick={onClick}
@@ -38,7 +36,6 @@ const ListingTabTrigger = ({
           : 'after:bg-brand-purple/80 after:absolute after:bottom-[-5px] after:left-0 after:h-px after:w-full md:after:bottom-[-9px]',
       ],
       !isActive && 'text-slate-500',
-      className,
     )}
   >
     {children}
@@ -76,10 +73,6 @@ export const ListingTabs = ({
             isPro={isPro}
             key={hackathon.slug}
             isActive={activeTab === hackathon.slug}
-            className={cn(
-              hackathon.slug === 'world-cup' &&
-                'after:bottom-[-3px] md:after:bottom-[-6px]',
-            )}
             onClick={() =>
               handleTabChange(
                 hackathon.slug as ListingTab,
@@ -90,7 +83,7 @@ export const ListingTabs = ({
             <ExternalImage
               src={hackathon.logo}
               alt={hackathon.label}
-              className="my-[0.1875rem] -ml-1 h-5 object-contain"
+              className="my-[0.10rem] h-4 scale-130 object-contain"
             />
           </ListingTabTrigger>
         ))}

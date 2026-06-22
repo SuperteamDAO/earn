@@ -175,7 +175,6 @@ function SidebarTimerShell({
       style={{
         fontStyle: 'italic',
         WebkitTextStroke: '0.5px #510000',
-        textShadow: '0 0 2px rgba(255, 29, 23, 0.35)',
       }}
     >
       {children}

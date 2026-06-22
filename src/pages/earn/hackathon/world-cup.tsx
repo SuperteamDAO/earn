@@ -294,7 +294,6 @@ function DigitalTimerShell({
       style={{
         fontStyle: 'italic',
         WebkitTextStroke: '0.5px #510000',
-        textShadow: '0 0 6px rgba(255, 29, 23, 0.8)',
       }}
     >
       {children}
