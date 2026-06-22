@@ -14,6 +14,8 @@ interface SidebarPosterProps {
   className?: string;
 }
 
+type CountdownMode = 'Begins' | 'Left' | 'Review';
+
 const digital7Italic = localFont({
   src: '../../../../public/fonts/digital-7-italic.ttf',
   display: 'swap',
@@ -22,12 +24,13 @@ const digital7Italic = localFont({
 export function SidebarBanner({ className }: SidebarPosterProps) {
   const { data: stats } = useQuery(statsDataQuery('world-cup'));
   const CLOSE_DATE = stats?.deadline;
+  const START_DATE = stats?.startDate;
   return (
     <Link href="/earn/hackathon/world-cup" className="mt-5 block">
       <div
         className={`bg-brand-purple/5 border-brand-purple/4 relative flex h-fit w-full flex-col items-center rounded-lg border p-2 ${className}`}
       >
-        <SidebarDigitalTimer deadline={CLOSE_DATE} />
+        <SidebarDigitalTimer deadline={CLOSE_DATE} startDate={START_DATE} />
 
         <div className="w-full overflow-hidden rounded-md">
           <ExternalImage
@@ -64,26 +67,62 @@ export function SidebarBanner({ className }: SidebarPosterProps) {
   );
 }
 
-function SidebarDigitalTimer({ deadline }: { deadline?: string | Date }) {
+function SidebarDigitalTimer({
+  deadline,
+  startDate,
+}: {
+  deadline?: string | Date;
+  startDate?: string | Date;
+}) {
+  const [countdownMode, setCountdownMode] = useState<CountdownMode>('Left');
+  const [countdownDate, setCountdownDate] = useState<Date | null>(null);
   const [isCountdownReady, setIsCountdownReady] = useState(false);
 
   useEffect(() => {
-    setIsCountdownReady(true);
-  }, []);
+    if (!deadline || !startDate) return;
 
-  if (!deadline) return null;
+    setIsCountdownReady(true);
+
+    function updateTimer() {
+      const now = dayjs();
+
+      if (now.isAfter(dayjs(deadline))) {
+        setCountdownMode('Review');
+        setCountdownDate(dayjs.utc(deadline).toDate());
+      } else if (now.isBefore(dayjs(startDate))) {
+        setCountdownMode('Begins');
+        setCountdownDate(dayjs.utc(startDate).toDate());
+      } else {
+        setCountdownMode('Left');
+        setCountdownDate(dayjs.utc(deadline).toDate());
+      }
+    }
+
+    updateTimer();
+
+    const intervalId = window.setInterval(updateTimer, 1000);
+
+    return () => window.clearInterval(intervalId);
+  }, [deadline, startDate]);
+
+  if (!deadline || !startDate || !countdownDate) return null;
 
   return (
     <div className="absolute top-0 left-1/2 z-20 -translate-x-1/2 -translate-y-1/2">
       {isCountdownReady ? (
         <Countdown
-          date={dayjs.utc(deadline).toDate()}
-          renderer={SidebarTimerRenderer}
+          date={countdownDate}
+          renderer={(props) => (
+            <SidebarTimerRenderer {...props} mode={countdownMode} />
+          )}
           zeroPadTime={2}
           zeroPadDays={2}
         />
       ) : (
-        <SidebarTimerShell>
+        <SidebarTimerShell isReview={countdownMode === 'Review'}>
+          {countdownMode === 'Begins' && (
+            <span className="mr-4">BEGINS IN</span>
+          )}
           <SidebarTimerUnit value="00" unit="D" />
           <SidebarTimerSeparator />
           <SidebarTimerUnit value="00" unit="H" />
@@ -91,7 +130,7 @@ function SidebarDigitalTimer({ deadline }: { deadline?: string | Date }) {
           <SidebarTimerUnit value="00" unit="M" />
           <SidebarTimerSeparator />
           <SidebarTimerUnit value="00" unit="S" />
-          <span className="ml-4">LEFT</span>
+          {countdownMode === 'Left' && <span className="ml-4">LEFT</span>}
         </SidebarTimerShell>
       )}
     </div>
@@ -103,14 +142,17 @@ function SidebarTimerRenderer({
   hours,
   minutes,
   seconds,
-  completed,
-}: CountdownRenderProps) {
-  if (completed) {
+  mode,
+}: CountdownRenderProps & {
+  mode: CountdownMode;
+}) {
+  if (mode === 'Review') {
     return <SidebarTimerShell isReview>In Review</SidebarTimerShell>;
   }
 
   return (
     <SidebarTimerShell>
+      {mode === 'Begins' && <span className="mr-4">BEGINS IN</span>}
       <SidebarTimerUnit value={days} unit="D" />
       <SidebarTimerSeparator />
       <SidebarTimerUnit value={padTimeUnit(hours)} unit="H" />
@@ -118,7 +160,7 @@ function SidebarTimerRenderer({
       <SidebarTimerUnit value={padTimeUnit(minutes)} unit="M" />
       <SidebarTimerSeparator />
       <SidebarTimerUnit value={padTimeUnit(seconds)} unit="S" />
-      <span className="ml-4">LEFT</span>
+      {mode === 'Left' && <span className="ml-4">LEFT</span>}
     </SidebarTimerShell>
   );
 }

@@ -140,6 +140,8 @@ function Hero({
   const dateRange = `${dayjs
     .utc(START_DATE)
     .format('D MMMM')} - ${dayjs.utc(CLOSE_DATE).format('D MMMM')}`;
+  const isUpcoming = countdownMode === 'Begins';
+  const isReview = status === 'Closed';
 
   return (
     <section className="px-3 pt-4 sm:px-4 md:px-2 md:pt-2">
@@ -163,22 +165,36 @@ function Hero({
         <div
           className={cn(
             'absolute top-0 left-1/2 z-10 flex -translate-x-1/2 items-center gap-2 rounded-b-[1rem] bg-slate-950/38 px-4 py-2 text-base font-medium whitespace-nowrap shadow-[inset_0_0_0_1px_rgba(255,255,255,0.1),0_10px_24px_rgba(15,23,42,0.24)] backdrop-blur-2xl sm:px-5 sm:text-lg md:gap-2 md:px-4 md:pt-3 md:pb-3 md:text-sm',
-            status === 'Closed' ? 'text-[#FDFFA4]' : 'text-[#9bff63]',
+            isUpcoming || isReview ? 'text-[#FDFFA4]' : 'text-[#9bff63]',
           )}
         >
-          <span className="grid size-4 place-items-center rounded-full bg-[#97E9593D] md:size-3.5">
+          <span
+            className={cn(
+              'grid size-4 place-items-center rounded-full md:size-3.5',
+              isUpcoming || isReview ? 'bg-[#FFED4C3D]' : 'bg-[#97E9593D]',
+            )}
+          >
             <span
               className={cn(
                 'size-1.5 rounded-full font-semibold shadow-[1px_1px_2px_rgba(0,0,0,0.2)] md:size-1.5',
-                status === 'Closed' ? 'bg-[#FFED4C]' : 'bg-[#97E959]',
+                isUpcoming || isReview ? 'bg-[#FFED4C]' : 'bg-[#97E959]',
               )}
             />
           </span>
-          {status === 'Open' && 'Submissions open'}
-          {status === 'Closed' && 'In Review'}
+          {isUpcoming && 'Submissions open soon'}
+          {!isUpcoming && status === 'Open' && 'Submissions open'}
+          {isReview && 'In Review'}
         </div>
         <div className="relative z-10 mt-[6.75rem] flex flex-col items-center sm:mt-[7.5rem] md:mt-[6.5rem]">
-          <div className="mb-4 flex items-center justify-center gap-2 text-sm font-normal text-white sm:mb-5 sm:gap-3 sm:text-base md:mb-4 md:gap-3 md:text-base">
+          <Image
+            src={heroLogo}
+            alt="World Cup"
+            width={1000}
+            height={324}
+            priority
+            className="h-auto w-[15rem] drop-shadow-[0_8px_0_rgba(17,24,39,0.62)] sm:w-[19rem] md:w-[27.5rem]"
+          />
+          <div className="mt-4 flex items-center justify-center gap-2 text-sm font-normal text-white sm:mt-5 sm:gap-3 sm:text-base md:mt-4 md:gap-3 md:text-base">
             <span>Powered by</span>
             <Image
               src={WORLD_CUP_TX_LOGO}
@@ -189,14 +205,6 @@ function Hero({
               className="h-7 w-auto object-contain sm:h-8 md:h-9"
             />
           </div>
-          <Image
-            src={heroLogo}
-            alt="World Cup"
-            width={1000}
-            height={324}
-            priority
-            className="h-auto w-[15rem] drop-shadow-[0_8px_0_rgba(17,24,39,0.62)] sm:w-[19rem] md:w-[27.5rem]"
-          />
           <div
             className={cn(
               archivoHeavy.className,
@@ -328,7 +336,7 @@ function PrizeSummary({ stats }: { stats: Stats | undefined }) {
       <div className="rounded-md bg-[#6366F11C] px-5 py-4 text-[14px] leading-relaxed font-medium text-[#4b5796]">
         A World Cup hackathon for builders who want real-time match data wired
         into real products. $50K across three tracks: markets, trading agents,
-        and fan experiences. All powered by TXLINE&apos;s live football API on
+        and fan experiences. All powered by TxLINE's live football API on
         Solana.
       </div>
     </section>
@@ -424,9 +432,9 @@ const DEFAULT_TRACK_DESCRIPTION =
   'Build with live World Cup data across markets, agents, and fan experiences.';
 
 const trackDescriptions = [
-  'The flagship track. Autonomous agents and tools trading on live odds: market-making signal generation, model-driven strategies, agent-playable data flows.',
+  'The flagship track. Create autonomous agents that ingest TxLINE’s live odds and scores, detect signals, run strategies, and execute decisions without manual input.',
   'Markets, resolution and settlement built on verifiable World Cup data: outcome markets, oracle tooling, on-chain proof integrations.',
-  'Product fans actually use during the tournament: live match apps, social predictions, fantasy mechanics, second-screen experiences.',
+  'Build fan-facing World Cup apps, games, bots, or social experiences that use TxLINE’s live match data to update instantly during games and keep fans engaged.',
 ];
 
 function getTrackDescription(index: number): string {
