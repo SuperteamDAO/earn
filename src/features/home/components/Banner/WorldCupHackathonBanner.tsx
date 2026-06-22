@@ -7,7 +7,7 @@ export function HomeWorldCupHackathonBanner() {
   return (
     <Link
       href="/earn/hackathon/world-cup"
-      className="relative mx-auto flex h-full w-full flex-col items-start overflow-hidden rounded-[0.5rem] p-5 md:p-10"
+      className="relative mx-auto flex h-full w-full flex-col overflow-hidden rounded-[0.5rem] p-5 md:p-10"
       prefetch={false}
     >
       <div className="absolute inset-0 overflow-hidden bg-[#1E2C67]">
@@ -27,7 +27,7 @@ export function HomeWorldCupHackathonBanner() {
         Build products or agents using TxLine&apos;s live World Cup data API on
         Solana. $50K across three tracks.
       </p>
-      <div className="relative z-10 mt-auto flex flex-col items-center gap-3 pt-4 md:flex-row md:gap-4">
+      <div className="relative z-10 mt-4 flex flex-col items-center gap-3 md:flex-row md:gap-4">
         <button
           className="ph-no-capture hover:bg-brand-purple w-full rounded-md bg-white px-9 py-3 text-sm font-medium text-[#3223A0] hover:text-white md:w-auto"
           onClick={() => {
