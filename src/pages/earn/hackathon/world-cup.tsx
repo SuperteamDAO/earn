@@ -33,6 +33,7 @@ type Hackathon = HackathonGetPayload<{
 }>;
 
 type HackathonStatus = 'Open' | 'Closed';
+type CountdownMode = 'Begins' | 'Left' | 'Review';
 
 const SLUG = 'world-cup';
 const WORLD_CUP_ASSET_BASE = `${ASSET_URL}/hackathon/world-cup`;
@@ -102,6 +103,7 @@ function Hero({
   heroLogo: string;
 }) {
   const [status, setStatus] = useState<HackathonStatus>('Open');
+  const [countdownMode, setCountdownMode] = useState<CountdownMode>('Left');
   const [isCountdownReady, setIsCountdownReady] = useState(false);
   const [countdownDate, setCountdownDate] = useState<Date>(
     dayjs.utc(CLOSE_DATE).toDate(),
@@ -109,13 +111,22 @@ function Hero({
 
   useEffect(() => {
     setIsCountdownReady(true);
-    setCountdownDate(dayjs.utc(CLOSE_DATE).toDate());
 
     function updateStatus() {
-      if (dayjs().isAfter(dayjs(CLOSE_DATE))) {
+      const now = dayjs();
+
+      if (now.isAfter(dayjs(CLOSE_DATE))) {
         setStatus('Closed');
+        setCountdownMode('Review');
+        setCountdownDate(dayjs.utc(CLOSE_DATE).toDate());
+      } else if (now.isBefore(dayjs(START_DATE))) {
+        setStatus('Open');
+        setCountdownMode('Begins');
+        setCountdownDate(dayjs.utc(START_DATE).toDate());
       } else {
         setStatus('Open');
+        setCountdownMode('Left');
+        setCountdownDate(dayjs.utc(CLOSE_DATE).toDate());
       }
     }
 
@@ -200,12 +211,17 @@ function Hero({
         {isCountdownReady ? (
           <Countdown
             date={countdownDate}
-            renderer={(props) => <DigitalTimer {...props} status={status} />}
+            renderer={(props) => (
+              <DigitalTimer {...props} mode={countdownMode} status={status} />
+            )}
             zeroPadTime={2}
             zeroPadDays={2}
           />
         ) : (
           <DigitalTimerShell isReview={status === 'Closed'}>
+            {countdownMode === 'Begins' && (
+              <span className="mr-4">BEGINS IN</span>
+            )}
             <TimerUnit value="00" unit="D" />
             <TimerSeparator />
             <TimerUnit value="00" unit="H" />
@@ -213,7 +229,7 @@ function Hero({
             <TimerUnit value="00" unit="M" />
             <TimerSeparator />
             <TimerUnit value="00" unit="S" />
-            <span className="ml-2">LEFT</span>
+            {countdownMode === 'Left' && <span className="ml-4">LEFT</span>}
           </DigitalTimerShell>
         )}
       </div>
@@ -226,14 +242,17 @@ function DigitalTimer({
   hours,
   minutes,
   seconds,
+  mode,
   status,
 }: CountdownRenderProps & {
+  mode: CountdownMode;
   status: HackathonStatus;
 }) {
   return (
     <DigitalTimerShell isReview={status === 'Closed'}>
-      {status !== 'Closed' ? (
+      {status !== 'Closed' && mode !== 'Review' ? (
         <>
+          {mode === 'Begins' && <span className="mr-4">BEGINS IN</span>}
           <TimerUnit value={days} unit="D" />
           <TimerSeparator />
           <TimerUnit value={padTimeUnit(hours)} unit="H" />
@@ -241,7 +260,7 @@ function DigitalTimer({
           <TimerUnit value={padTimeUnit(minutes)} unit="M" />
           <TimerSeparator />
           <TimerUnit value={padTimeUnit(seconds)} unit="S" />
-          <span className="ml-4">LEFT</span>
+          {mode === 'Left' && <span className="ml-4">LEFT</span>}
         </>
       ) : (
         'In Review'
