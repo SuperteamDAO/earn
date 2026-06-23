@@ -12,9 +12,15 @@ export function HomeWorldCupHackathonBanner() {
     >
       <div className="absolute inset-0 overflow-hidden bg-[#1E2C67]">
         <ExternalImage
+          src="hackathon/world-cup/banner-mobile.png"
+          alt="World Cup Hackathon stadium background"
+          className="h-full w-full object-cover object-center md:hidden"
+          loading="eager"
+        />
+        <ExternalImage
           src="hackathon/world-cup/bg.png"
           alt="World Cup Hackathon stadium background"
-          className="h-full w-full scale-x-[-1] object-cover object-center"
+          className="hidden h-full w-full scale-x-[-1] object-cover object-center md:block"
           loading="eager"
         />
       </div>
