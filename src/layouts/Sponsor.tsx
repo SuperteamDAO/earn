@@ -182,7 +182,7 @@ export function SponsorLayout({
   }, [user, authenticated, ready, isUserLoading]);
 
   const { data: hackathons } = useQuery({
-    ...activeHackathonsQuery(user?.currentSponsorId),
+    ...activeHackathonsQuery(),
     enabled: !!user,
   });
 

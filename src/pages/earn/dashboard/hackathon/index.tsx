@@ -51,7 +51,7 @@ export default function Hackathon() {
   const router = useRouter();
   const { user } = useUser();
   const { data: hackathons } = useQuery({
-    ...activeHackathonsQuery(user?.currentSponsorId),
+    ...activeHackathonsQuery(),
     enabled: !!user,
   });
   const [totalBounties, setTotalBounties] = useState(0);

@@ -31,7 +31,7 @@ export function ListingBuilder({ route, slug }: ListingBuilderLayout) {
   const queryClient = useQueryClient();
 
   const { data: hackathons, isLoading: isHackathonLoading } = useQuery({
-    ...activeHackathonsQuery(user?.currentSponsorId),
+    ...activeHackathonsQuery(),
     enabled: !!user,
   });
 
