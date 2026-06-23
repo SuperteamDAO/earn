@@ -169,7 +169,7 @@ function SidebarTimerShell({
 }) {
   return (
     <div
-      className={`${digital7Italic.className} border-2 border-[#B7B7AB] bg-[#101010] px-3 py-3 text-[1.5rem] leading-none tracking-normal whitespace-nowrap uppercase shadow-[0_8px_12px_rgba(15,23,42,0.35),inset_0_0_14px_rgba(0,0,0,0.5),inset_0_1px_10px_rgba(255,255,255,0.5)] [&_.timer-unit]:text-[0.58em] ${
+      className={`${digital7Italic.className} flex w-[16rem] items-center justify-center border-2 border-[#B7B7AB] bg-[#101010] px-3 py-3 text-[1.5rem] leading-none tracking-normal whitespace-nowrap uppercase shadow-[0_8px_12px_rgba(15,23,42,0.35),inset_0_0_14px_rgba(0,0,0,0.5),inset_0_1px_10px_rgba(255,255,255,0.5)] [&_.timer-unit]:text-[0.58em] ${
         isReview ? 'text-[#FDFFA4]' : 'text-[#FF0404]'
       }`}
       style={{
