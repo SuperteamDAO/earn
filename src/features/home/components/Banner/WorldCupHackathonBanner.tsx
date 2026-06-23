@@ -29,7 +29,7 @@ export function HomeWorldCupHackathonBanner() {
       </p>
       <div className="relative z-10 mt-4 flex flex-col items-center gap-3 md:flex-row md:gap-4">
         <button
-          className="ph-no-capture hover:bg-brand-purple w-full rounded-md bg-white px-9 py-3 text-sm font-medium text-[#3223A0] hover:text-white md:w-auto"
+          className="ph-no-capture w-full rounded-md bg-[#6366F1] px-9 py-3 text-sm font-medium text-white md:w-auto"
           onClick={() => {
             posthog.capture('world_cup_hackathon_banner');
           }}

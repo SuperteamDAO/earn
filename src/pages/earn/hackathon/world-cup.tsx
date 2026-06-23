@@ -145,7 +145,7 @@ function Hero({
 
   return (
     <section className="px-3 pt-4 sm:px-4 md:px-2 md:pt-2">
-      <div className="relative mx-auto flex min-h-[25.5rem] w-full max-w-[91rem] flex-col items-center overflow-hidden rounded-xl border border-slate-200 bg-[#17275a] text-center text-white shadow-sm sm:min-h-[27.5rem] md:min-h-[25.5rem]">
+      <div className="relative mx-auto flex min-h-[22rem] w-full max-w-[91rem] flex-col items-center overflow-hidden rounded-xl border border-slate-200 bg-[#17275a] text-center text-white shadow-sm sm:min-h-[27.5rem] md:min-h-[25.5rem]">
         <Image
           src={WORLD_CUP_MOBILE_BG_IMAGE}
           alt=""
@@ -493,7 +493,7 @@ function FAQs() {
                 <span className="absolute top-0 left-1/2 h-full w-px -translate-x-1/2 bg-current transition-transform duration-200 ease-out group-data-[state=open]:scale-y-0" />
               </span>
             </AccordionTrigger>
-            <AccordionContent className="pb-4 text-sm leading-relaxed text-[#9C9C9C]">
+            <AccordionContent className="-mx-4 bg-[#FAFBFA] px-4 pb-4 text-sm leading-relaxed text-[#727272]">
               {typeof faq.answer === 'string' ? (
                 <div
                   dangerouslySetInnerHTML={{

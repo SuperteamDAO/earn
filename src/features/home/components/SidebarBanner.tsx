@@ -42,12 +42,12 @@ export function SidebarBanner({ className }: SidebarPosterProps) {
 
         <div className="relative z-10 flex h-full w-full flex-col px-4 pt-2 pb-5 text-black">
           <p className="relative z-10 mt-2 text-lg leading-[120%] font-semibold text-slate-800">
-            Are you a dev? We have prizes worth $
+            Don't just watch, win prizes worth $
             {roundToNearestTenThousand(
               stats?.totalRewardAmount ?? 0,
               true,
-            )?.toLocaleString('en-us') || '0'}
-            + for you
+            )?.toLocaleString('en-us') || '0'}{' '}
+            this World Cup!
           </p>
           <p className="relative z-10 mt-3 text-sm leading-[130%] text-[#62748E] md:text-base">
             Build products or agents using TxLine&apos;s live World Cup data API
