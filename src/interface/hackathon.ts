@@ -6,6 +6,8 @@ export interface TrackProps {
     logo: string;
     chapter?: {
       id: string;
+      code: string | undefined;
+      name: string | undefined;
     } | null;
   };
   token: string;
