@@ -1,5 +1,6 @@
 import Link from 'next/link';
 
+import { UserFlag } from '@/components/shared/UserFlag';
 import { TokenIcon } from '@/components/ui/token-icon';
 import { type TrackProps } from '@/interface/hackathon';
 
@@ -25,8 +26,19 @@ export const TrackBox = ({
           <span className="line-clamp-2 text-sm font-medium text-slate-900 md:text-base">
             {title}
           </span>
-          <span className="text-sm font-normal text-slate-500 md:text-base">
+          <span className="flex items-center gap-2 text-sm font-normal text-slate-500 md:text-base">
             {sponsor.name}
+            {sponsor?.chapter?.code && sponsor?.chapter?.name && (
+              <span className="inline-flex items-center gap-1 rounded-md bg-slate-100 px-1.5 py-0.5 text-xs text-slate-600">
+                <UserFlag
+                  location={sponsor.chapter.code}
+                  size="14px"
+                  isCode
+                  aria-hidden="true"
+                />
+                <span>{sponsor.chapter.name} Only</span>
+              </span>
+            )}
           </span>
         </div>
       </div>

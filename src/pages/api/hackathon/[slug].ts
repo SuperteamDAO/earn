@@ -32,6 +32,8 @@ export default async function getHackathon(
             chapter: {
               select: {
                 id: true,
+                code: true,
+                name: true,
               },
             },
           },
