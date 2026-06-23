@@ -21,7 +21,6 @@ import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';
 import { cleanRewards } from '@/utils/rank';
 
-import { DummySubmissionsForm } from '@/features/dev-tools/dummy-submissions/DummySubmissions';
 import { BONUS_REWARD_POSITION } from '@/features/listing-builder/constants';
 import {
   selectedSubmissionAtom,
@@ -443,7 +442,6 @@ export default function BountySubmissions({ slug }: Props) {
           {surveyOpen && bounty?.type !== 'grant' && (
             <Survey open={surveyOpen} setOpen={setSurveyOpen} />
           )}
-          <DummySubmissionsForm listingId={bounty?.id || ''} slug={slug} />
           <SubmissionHeader
             bounty={bounty}
             remainings={remainings}

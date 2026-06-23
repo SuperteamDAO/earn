@@ -24,6 +24,7 @@ interface GrantSectionProps {
   skill?: string;
   category?: string;
   hideWhenEmpty?: boolean;
+  hideCategoryPills?: boolean;
 }
 
 export const GrantsSection = ({
@@ -33,6 +34,7 @@ export const GrantsSection = ({
   skill,
   category: categoryProp,
   hideWhenEmpty,
+  hideCategoryPills,
 }: GrantSectionProps) => {
   const { activeCategory, handleCategoryChange } = useGrantState();
   const isProContext = type === 'pro';
@@ -118,7 +120,7 @@ export const GrantsSection = ({
         )}
       />
 
-      {type !== 'category' && type !== 'category-all' && (
+      {!hideCategoryPills && type !== 'category' && type !== 'category-all' && (
         <div className="mb-2 flex gap-1 overflow-x-auto pb-1">
           <CategoryPill
             key="all"

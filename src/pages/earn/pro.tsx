@@ -65,7 +65,7 @@ export default function ProPage({ potentialSession }: HomePageProps) {
                 potentialSession={potentialSession}
                 customEmptySection={customEmptySection}
               />
-              <GrantsSection type="pro" />
+              <GrantsSection hideWhenEmpty type="pro" />
             </div>
           </div>
           <ProSidebar />

@@ -142,8 +142,10 @@ export async function buildGrantsQuery(
   }
 
   if (context === 'sponsor' && sponsor) {
+    const sponsorKey = sponsor.toLowerCase();
+
     where.sponsor = {
-      name: sponsor,
+      slug: sponsorKey,
     };
   }
 

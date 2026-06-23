@@ -53,10 +53,11 @@ export function TitleAndType() {
   const type = useWatch({ name: 'type', control: form.control });
   const title = useWatch({ control: form.control, name: 'title' });
   const listingId = useWatch({ control: form.control, name: 'id' });
+  const safeTitle = typeof title === 'string' ? title : '';
 
   const suggestions = useMemo(() => {
-    return getSuggestions(title, type);
-  }, [title, type]);
+    return getSuggestions(safeTitle, type);
+  }, [safeTitle, type]);
 
   const isEditing = useAtomValue(isEditingAtom);
   const placeholder = useMemo(() => {
@@ -64,7 +65,7 @@ export function TitleAndType() {
     else return 'Write a Deep Dive on IBRL';
   }, [type]);
 
-  const debouncedTitle = useDebounce(title);
+  const debouncedTitle = useDebounce(safeTitle);
   const slugifiedTitle = useMemo(() => {
     let slug = slugify(debouncedTitle, {
       lower: true,
@@ -181,7 +182,7 @@ export function TitleAndType() {
                 )}
               </div>
               <div className="shrink-0 text-right text-xs whitespace-nowrap text-slate-400">
-                {80 - (title?.length || 0)} characters left
+                {80 - safeTitle.length} characters left
               </div>
             </div>
           </FormItem>

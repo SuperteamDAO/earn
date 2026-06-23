@@ -18,6 +18,7 @@ import { validateSession } from '@/features/auth/utils/getSponsorSession';
 import type { ListingFormData } from '@/features/listing-builder/types';
 import { getValidSlug } from '@/features/listing-builder/utils/getValidSlug';
 import { validateDraftPermissions } from '@/features/listing-builder/utils/isListingDraftable';
+import { getValidListingRegion } from '@/features/listing-builder/utils/validateListingRegion';
 
 async function transformToPrismaData(
   formData: Partial<ListingFormData>,
@@ -128,6 +129,17 @@ export async function POST(request: Request) {
       );
     }
     logger.debug(`Request body: ${safeStringify(body)}`);
+
+    if (body.region) {
+      const validRegion = await getValidListingRegion(body.region);
+      if (!validRegion) {
+        return NextResponse.json(
+          { error: 'Invalid region selected' },
+          { status: 400 },
+        );
+      }
+      body.region = validRegion;
+    }
 
     let listing: ListingWithSponsor | undefined;
     if (body.id) {
