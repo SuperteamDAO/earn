@@ -8,9 +8,9 @@ const fetchActiveHackathons = async (): Promise<HackathonModel[]> => {
   return data;
 };
 
-export const activeHackathonsQuery = () =>
+export const activeHackathonsQuery = (sponsorId?: string) =>
   queryOptions({
-    queryKey: ['active-hackathons'],
+    queryKey: ['active-hackathons', sponsorId],
     queryFn: () => fetchActiveHackathons(),
     retry: false,
     refetchOnMount: false,

@@ -77,7 +77,7 @@ export default function SponsorListings({ tab: queryTab }: { tab: string }) {
   }>({ column: '', direction: null });
   const listingsPerPage = 15;
   const { data: hackathons } = useQuery({
-    ...activeHackathonsQuery(),
+    ...activeHackathonsQuery(user?.currentSponsorId),
     enabled: !!user,
   });
 
