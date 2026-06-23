@@ -6,8 +6,25 @@ import { prisma } from '@/prisma';
 import { type NextApiRequestWithSponsor } from '@/features/auth/types';
 import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
 
-async function handler(_: NextApiRequestWithSponsor, res: NextApiResponse) {
+async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   try {
+    if (req.role !== 'GOD') {
+      const sponsor = await prisma.sponsors.findUnique({
+        where: { id: req.userSponsorId },
+        select: {
+          chapter: {
+            select: {
+              id: true,
+            },
+          },
+        },
+      });
+
+      if (!sponsor?.chapter) {
+        return res.status(200).json([]);
+      }
+    }
+
     const now = new Date();
     const hackathons = await prisma.hackathon.findMany({
       where: {
