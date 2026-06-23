@@ -375,8 +375,8 @@ type Track = {
 
 const DEFAULT_TRACK_IMAGE = `${WORLD_CUP_ASSET_BASE}/trading.png`;
 const trackImages = [
-  DEFAULT_TRACK_IMAGE,
   `${WORLD_CUP_ASSET_BASE}/prediction.png`,
+  DEFAULT_TRACK_IMAGE,
   `${WORLD_CUP_ASSET_BASE}/consumer.png`,
 ];
 
@@ -431,8 +431,8 @@ const DEFAULT_TRACK_DESCRIPTION =
   'Build with live World Cup data across markets, agents, and fan experiences.';
 
 const trackDescriptions = [
-  'The flagship track. Create autonomous agents that ingest TxLINE’s live odds and scores, detect signals, run strategies, and execute decisions without manual input.',
-  'Markets, resolution and settlement built on verifiable World Cup data: outcome markets, oracle tooling, on-chain proof integrations.',
+  'The flagship track. Markets, resolution and settlement built on verifiable World Cup data: outcome markets, oracle tooling, on-chain proof integrations.',
+  'Create autonomous agents that ingest TxLINE’s live odds and scores, detect signals, run strategies, and execute decisions without manual input.',
   'Build fan-facing World Cup apps, games, bots, or social experiences that use TxLINE’s live match data to update instantly during games and keep fans engaged.',
 ];
 
