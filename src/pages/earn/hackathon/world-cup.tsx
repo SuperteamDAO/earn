@@ -288,7 +288,7 @@ function DigitalTimerShell({
     <div
       className={cn(
         digital7Italic.className,
-        'flex w-[18rem] items-center justify-center border-2 border-[#B7B7AB] bg-[#101010] px-3 py-3 text-[1.6rem] leading-none tracking-normal uppercase shadow-[0_8px_12px_rgba(15,23,42,0.35),inset_0_0_14px_rgba(0,0,0,0.5),inset_0_1px_10px_rgba(255,255,255,0.5)] sm:w-[38rem] sm:border-[5px] sm:px-8 sm:py-4 sm:text-[3.5rem] md:w-[25rem] md:px-6 md:py-3 md:text-[2.25rem] [&_.timer-unit]:text-[0.58em]',
+        'flex w-[18rem] items-center justify-center border-2 border-[#B7B7AB] bg-[#101010] px-3 py-3 text-[1.6rem] leading-none tracking-normal uppercase shadow-[0_8px_12px_rgba(15,23,42,0.35),inset_0_0_14px_rgba(0,0,0,0.5),inset_0_1px_10px_rgba(255,255,255,0.5)] sm:w-[38rem] sm:border-[5px] sm:px-8 sm:py-4 sm:text-[3.5rem] md:w-[28rem] md:px-6 md:py-3 md:text-[2.25rem] [&_.timer-unit]:text-[0.58em]',
         isReview ? 'text-[#FDFFA4]' : 'text-[#FF0404]',
       )}
       style={{
