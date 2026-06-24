@@ -50,9 +50,9 @@ export function SidebarBanner({ className }: SidebarPosterProps) {
             this World Cup!
           </p>
           <p className="relative z-10 mt-3 text-sm leading-[130%] text-[#62748E] md:text-base">
-            Build products or agents using TxLine&apos;s live World Cup data API
-            on Solana. $50K across three tracks: markets, trading agents, and
-            fan experiences.
+            Build products or agents using TxODDS’ live World Cup data API on
+            Solana. $50K across three tracks: markets, trading agents, and fan
+            experiences.
           </p>
 
           <Button className={`mt-4 text-base`}>View Tracks</Button>
