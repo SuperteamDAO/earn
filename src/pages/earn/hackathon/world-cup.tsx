@@ -40,7 +40,7 @@ const WORLD_CUP_ASSET_BASE = `${ASSET_URL}/hackathon/world-cup`;
 const WORLD_CUP_BG_IMAGE = `${WORLD_CUP_ASSET_BASE}/bg.png`;
 const WORLD_CUP_MOBILE_BG_IMAGE = `${WORLD_CUP_ASSET_BASE}/bg-mobile.png`;
 const WORLD_CUP_OG_IMAGE = `${WORLD_CUP_ASSET_BASE}/og.png`;
-const WORLD_CUP_TX_LOGO = `${WORLD_CUP_ASSET_BASE}/txLogo.png`;
+const WORLD_CUP_TX_LOGO = `${WORLD_CUP_ASSET_BASE}/txOdds.png`;
 
 const digital7Italic = localFont({
   src: '../../../../public/fonts/digital-7-italic.ttf',
@@ -198,11 +198,11 @@ function Hero({
             <span>Powered by</span>
             <Image
               src={WORLD_CUP_TX_LOGO}
-              alt="TxLINE"
+              alt="TxODDS"
               width={112}
               height={70}
               priority
-              className="h-7 w-auto object-contain sm:h-8 md:h-9"
+              className="h-3 w-auto object-contain sm:h-3 md:h-4"
             />
           </div>
           <div
@@ -335,8 +335,7 @@ function PrizeSummary({ stats }: { stats: Stats | undefined }) {
       <div className="rounded-md bg-[#6366F11C] px-5 py-4 text-[14px] leading-relaxed font-medium text-[#4b5796]">
         A World Cup hackathon for builders who want real-time match data wired
         into real products. $50K across three tracks: markets, trading agents,
-        and fan experiences. All powered by TxLINE's live football API on
-        Solana.
+        and fan experiences. All powered by TxODDS’ live football API on Solana.
       </div>
     </section>
   );
@@ -432,8 +431,8 @@ const DEFAULT_TRACK_DESCRIPTION =
 
 const trackDescriptions = [
   'The flagship track. Markets, resolution and settlement built on verifiable World Cup data: outcome markets, oracle tooling, on-chain proof integrations.',
-  'Create autonomous agents that ingest TxLINE’s live odds and scores, detect signals, run strategies, and execute decisions without manual input.',
-  'Build fan-facing World Cup apps, games, bots, or social experiences that use TxLINE’s live match data to update instantly during games and keep fans engaged.',
+  'Create autonomous agents that ingest TxODDS’ live odds and scores, detect signals, run strategies, and execute decisions without manual input.',
+  'Build fan-facing World Cup apps, games, bots, or social experiences that use TxODDS’ live match data to update instantly during games and keep fans engaged.',
 ];
 
 function getTrackDescription(index: number): string {
@@ -462,7 +461,7 @@ const faqs: { question: string; answer: ReactNode | string }[] = [
   },
   {
     question:
-      'Are previous or legacy projects allowed if they integrate TxLINE now?',
+      'Are previous or legacy projects allowed if they integrate TxODDS now?',
     answer:
       'No. All submissions must be built specifically for this hackathon/initiative.',
   },

@@ -30,7 +30,7 @@ export function HomeWorldCupHackathonBanner() {
         Don&apos;t just watch, win prizes worth $50K this World Cup!
       </h1>
       <p className="relative z-10 mt-2.5 max-w-full text-sm leading-[130%] text-white [text-shadow:_0_1px_2px_rgb(0_0_0_/1)] min-[380px]:max-[406px]:max-w-[18rem] md:mt-4 md:max-w-[30rem] md:text-lg">
-        Build products or agents using TxLine&apos;s live World Cup data API on
+        Build products or agents using TxODDS’ live World Cup data API on
         Solana. $50K across three tracks.
       </p>
       <div className="relative z-10 mt-4 flex flex-col items-center gap-3 md:flex-row md:gap-4">
