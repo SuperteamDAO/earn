@@ -40,7 +40,7 @@ const WORLD_CUP_ASSET_BASE = `${ASSET_URL}/hackathon/world-cup`;
 const WORLD_CUP_BG_IMAGE = `${WORLD_CUP_ASSET_BASE}/bg.png`;
 const WORLD_CUP_MOBILE_BG_IMAGE = `${WORLD_CUP_ASSET_BASE}/bg-mobile.png`;
 const WORLD_CUP_OG_IMAGE = `${WORLD_CUP_ASSET_BASE}/og.png`;
-const WORLD_CUP_TX_LOGO = `${WORLD_CUP_ASSET_BASE}/txLogo.png`;
+const WORLD_CUP_TX_LOGO = `${WORLD_CUP_ASSET_BASE}/txOdds.png`;
 
 const digital7Italic = localFont({
   src: '../../../../public/fonts/digital-7-italic.ttf',
@@ -202,7 +202,7 @@ function Hero({
               width={112}
               height={70}
               priority
-              className="h-7 w-auto object-contain sm:h-8 md:h-9"
+              className="h-3 w-auto object-contain sm:h-3 md:h-4"
             />
           </div>
           <div
