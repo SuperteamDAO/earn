@@ -2,6 +2,8 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
 import { privy } from '@/lib/privy';
+import { userCreateRateLimiter } from '@/lib/ratelimit';
+import { checkAndApplyRateLimitPages } from '@/lib/rateLimiterService';
 import { prisma } from '@/prisma';
 import { PrismaClientKnownRequestError } from '@/prisma/internal/prismaNamespace';
 import { safeStringify } from '@/utils/safeStringify';
@@ -37,6 +39,16 @@ function getPrivyLinkedEmail(linkedAccounts: unknown[]): string | null {
   return null;
 }
 
+function getRequestIp(req: NextApiRequest): string {
+  const forwarded = req.headers['x-forwarded-for'];
+  if (typeof forwarded === 'string' && forwarded.length > 0) {
+    const [first] = forwarded.split(',');
+    return (first ?? forwarded).trim();
+  }
+
+  return req.socket.remoteAddress || 'unknown';
+}
+
 export default async function createUser(
   req: NextApiRequest,
   res: NextApiResponse<CreateUserResponse | { error: string }>,
@@ -46,6 +58,15 @@ export default async function createUser(
   }
 
   logger.debug(`Request body: ${safeStringify(req.body)}`);
+
+  const ip = getRequestIp(req);
+  const rateLimitAllowed = await checkAndApplyRateLimitPages({
+    limiter: userCreateRateLimiter,
+    identifier: ip,
+    routeName: 'user_create',
+    res,
+  });
+  if (!rateLimitAllowed) return;
 
   try {
     const privyDid = await getPrivyToken(req);
