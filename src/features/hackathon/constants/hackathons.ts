@@ -6,6 +6,6 @@ export const HACKATHONS: {
   {
     label: 'World Cup',
     slug: 'world-cup',
-    logo: 'hackathon/world-cup/logo.png',
+    logo: '/hackathon/world-cup/logo.png',
   },
 ];
