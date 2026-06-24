@@ -297,7 +297,7 @@ model GrantApplication {
   likeCount           Int                    @default(0)
   Comments            Comment[]
   decidedBy           String?
-  notes               String?                @db.VarChar(1000)
+  notes               String?                @db.Text
   ai                  Json?
   GrantTranche        GrantTranche[]
   CreditLedger        CreditLedger[]
@@ -1005,6 +1005,20 @@ model LumaEventReview {
   addedToCalendar  Int      @default(0)
   isVerified       Int      @default(1)
   chapter          Chapter  @relation(fields: [superteamId], references: [id])
+}
+
+model InstagrantReviewAssessment {
+  id                 String   @id @default(uuid()) @db.Char(36)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+  grantApplicationId String   @db.VarChar(191)
+  reviewerPeopleId   String   @db.Char(36)
+  score              Int?
+  notes              String?  @db.Text
+
+  @@unique([grantApplicationId, reviewerPeopleId])
+  @@index([reviewerPeopleId])
+  @@index([grantApplicationId])
 }
 
 model StatsSlackMessage {

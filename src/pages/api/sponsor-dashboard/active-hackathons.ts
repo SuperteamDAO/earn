@@ -15,6 +15,11 @@ async function handler(_: NextApiRequestWithSponsor, res: NextApiResponse) {
           not: null,
           gt: now,
         },
+        Sponsor: {
+          chapter: {
+            isNot: null,
+          },
+        },
       },
       select: {
         id: true,
