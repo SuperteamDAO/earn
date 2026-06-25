@@ -228,7 +228,7 @@
     ```
     > **Note:** Public endpoints have rate limits. For development, consider using devnet: `wss://api.devnet.solana.com`
 
-❗NOTE: If you are facing any issues with setup, feel free to contact [Abhishek](https://twitter.com/abhwshek) or [Jayesh](https://twitter.com/jayeshvp24)
+Facing an issue? Please feel free to reach out to [Jill](https://twitter.com/jilltodkar) or [Abhishek](https://twitter.com/abhwshek) on Twitter.
 
 6. Run the development server
    ```bash
@@ -239,7 +239,7 @@
 
 We welcome contributions from everyone! Whether it's submitting an issue, a pull request, or suggesting new ideas, your input is highly valued. Check out our [contributing guide](CONTRIBUTING.md) for guidelines on how to proceed.
 
-Facing an issue? Please feel free to reach out to [Abhishek](https://twitter.com/abhwshek), [Jayesh](https://twitter.com/jayeshvp24) or [Pratik](https://twitter.com/jayeshvp24)
+Facing an issue? Please feel free to reach out to [Jill](https://twitter.com/jilltodkar) or [Abhishek](https://twitter.com/abhwshek) on Twitter.
 
 ### Why should you contribute to Earn?
 

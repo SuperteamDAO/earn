@@ -6,7 +6,7 @@ import { safeStringify } from '@/utils/safeStringify';
 
 import { getPrivyToken } from '@/features/auth/utils/getPrivyToken';
 import { WelcomeSponsorTemplate } from '@/features/emails/components/welcomeSponsorTemplate';
-import { pratikEmail, replyToEmail } from '@/features/emails/utils/fromEmails';
+import { senderEmail, replyToEmail } from '@/features/emails/utils/fromEmails';
 import { resend } from '@/features/emails/utils/resend';
 
 export default async function handler(
@@ -44,7 +44,7 @@ export default async function handler(
   try {
     logger.debug(`Sending welcome email to: ${normalizedEmail}`);
     await resend.emails.send({
-      from: pratikEmail,
+      from: senderEmail,
       to: [normalizedEmail],
       subject: 'Welcome!',
       react: WelcomeSponsorTemplate(),
