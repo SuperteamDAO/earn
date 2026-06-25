@@ -4,7 +4,7 @@ import { getChapterRegions } from '@/utils/chapterRegion';
 
 const normalizeRegion = (value: string) => value.trim().toLowerCase();
 
-export async function getAllowedListingRegions() {
+async function getAllowedListingRegions() {
   const chapters = await getChapterRegions();
   const chapterCountryCodes = new Set(
     chapters.map((chapter) => chapter.code.toLowerCase()).filter(Boolean),

@@ -297,8 +297,3 @@ export async function getTokenIcon(
   const token = await getTokenBySymbol(symbol, { includeInactive: true });
   return token?.icon ?? null;
 }
-
-export async function isActiveTokenSymbol(tokenSymbol?: string | null) {
-  const token = await getTokenBySymbol(tokenSymbol);
-  return Boolean(token);
-}
