@@ -1,8 +1,11 @@
 import { CharacterCount, Placeholder } from '@tiptap/extensions';
-import { EditorContent, useEditor } from '@tiptap/react';
+import { type Editor, EditorContent, useEditor } from '@tiptap/react';
+import { BubbleMenu } from '@tiptap/react/menus';
 import StarterKit from '@tiptap/starter-kit';
+import { Bold, Italic, List, ListOrdered } from 'lucide-react';
 import * as React from 'react';
 
+import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/utils/cn';
 
@@ -248,6 +251,67 @@ const useNotesEditor = ({
   return editor;
 };
 
+const NotesSelectionMenu = ({ editor }: { editor: Editor }) => {
+  const buttons = [
+    {
+      label: 'Bold',
+      icon: <Bold className="h-4 w-4" />,
+      isActive: () => editor.isActive('bold'),
+      action: () => editor.chain().focus().toggleBold().run(),
+    },
+    {
+      label: 'Italic',
+      icon: <Italic className="h-4 w-4" />,
+      isActive: () => editor.isActive('italic'),
+      action: () => editor.chain().focus().toggleItalic().run(),
+    },
+    {
+      label: 'Numbered list',
+      icon: <ListOrdered className="h-4 w-4" />,
+      isActive: () => editor.isActive('orderedList'),
+      action: () => editor.chain().focus().toggleOrderedList().run(),
+    },
+    {
+      label: 'Bullet list',
+      icon: <List className="h-4 w-4" />,
+      isActive: () => editor.isActive('bulletList'),
+      action: () => editor.chain().focus().toggleBulletList().run(),
+    },
+  ];
+
+  return (
+    <BubbleMenu
+      editor={editor}
+      shouldShow={({ editor }) =>
+        editor.isEditable && !editor.state.selection.empty
+      }
+    >
+      <div className="bg-background text-muted-foreground flex h-8 overflow-hidden rounded-md border shadow-md">
+        {buttons.map((button, index) => (
+          <Button
+            key={button.label}
+            aria-label={button.label}
+            type="button"
+            variant="ghost"
+            size="sm"
+            className={cn(
+              'h-full rounded-none border-l px-2',
+              index === 0 && 'border-l-0',
+              button.isActive() && 'bg-muted',
+            )}
+            onMouseDown={(event) => {
+              event.preventDefault();
+              button.action();
+            }}
+          >
+            {button.icon}
+          </Button>
+        ))}
+      </div>
+    </BubbleMenu>
+  );
+};
+
 export const NotesRichEditor: React.FC<NotesRichEditorProps> = ({
   value,
   onChange,
@@ -276,8 +340,14 @@ export const NotesRichEditor: React.FC<NotesRichEditorProps> = ({
   }
 
   return (
-    <div className="h-full w-full" key={id}>
-      <ScrollArea className="h-full w-full" type="always" key={id}>
+    <div className="flex h-full min-h-0 w-full flex-col" key={id}>
+      <NotesSelectionMenu editor={editor} />
+      <ScrollArea
+        className="min-h-0 w-full flex-1"
+        type="auto"
+        key={id}
+        viewportProps={{ className: 'size-full rounded-[inherit] pr-3' }}
+      >
         <EditorContent
           key={id}
           editor={editor}
@@ -295,14 +365,13 @@ export const NotesRichEditor: React.FC<NotesRichEditorProps> = ({
             height: 100%;
             display: flex;
             flex-direction: column;
-            min-height: 25rem !important;
-            max-height: 25rem;
+            min-height: 100%;
             padding-left: 0rem !important;
             padding-right: 0px !important;
             word-break: break-word;
             overflow-wrap: break-word;
             word-wrap: break-word;
-            overflow-x: hidden;
+            overflow: visible;
             max-width: 100%;
             box-sizing: border-box;
           }
