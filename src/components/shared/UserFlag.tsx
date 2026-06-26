@@ -20,13 +20,18 @@ type FlagSize =
   | '52px'
   | '64px';
 
-interface Props {
+interface Props extends React.HTMLAttributes<HTMLDivElement> {
   location: string;
   size?: FlagSize;
   isCode?: boolean;
 }
 
-export function UserFlag({ location, size = '16px', isCode = false }: Props) {
+export function UserFlag({
+  location,
+  size = '16px',
+  isCode = false,
+  ...rest
+}: Props) {
   const [code, setCode] = useState<string | null>(null);
   const [isCustomFlag, setIsCustomFlag] = useState<boolean>(false);
 
@@ -62,19 +67,26 @@ export function UserFlag({ location, size = '16px', isCode = false }: Props) {
 
   return isCustomFlag ? (
     <div
-      className="flex items-center justify-center rounded-full border border-slate-50 bg-contain bg-center bg-no-repeat"
+      {...rest}
+      className={cn(
+        'flex items-center justify-center rounded-full border border-slate-50 bg-contain bg-center bg-no-repeat',
+        rest.className,
+      )}
       style={{
         ...flagStyles,
         backgroundImage: `url('${CUSTOM_FLAGS[code]}')`,
+        ...rest.style,
       }}
     />
   ) : (
     <div
+      {...rest}
       className={cn(
         'flex items-center justify-center rounded-full border border-slate-50',
         `fi fi-${code} fis`,
+        rest.className,
       )}
-      style={flagStyles}
+      style={{ ...flagStyles, ...rest.style }}
     />
   );
 }
