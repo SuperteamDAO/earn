@@ -1,0 +1,11 @@
+allowBuilds:
+  '@prisma/engines': set this to true or false
+  '@reown/appkit': set this to true or false
+  bufferutil: set this to true or false
+  core-js: set this to true or false
+  keccak: set this to true or false
+  msgpackr-extract: set this to true or false
+  prisma: set this to true or false
+  protobufjs: set this to true or false
+  sharp: set this to true or false
+  utf-8-validate: set this to true or false
