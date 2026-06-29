@@ -65,6 +65,7 @@ const getSteps = (isST: boolean) => [
   { title: 'Basics' },
   { title: 'Details' },
   { title: isST ? 'Outcomes' : 'Milestones' },
+  { title: 'Preview' },
 ];
 
 type FormData = z.infer<ReturnType<typeof grantApplicationSchema>>;
@@ -1016,9 +1017,203 @@ export const ApplicationModal = ({
                     isPro={isProGrant}
                   />
                 )}
+              </div>
+            )}
+            {activeStep === 3 && (
+              <div className="mb-5 flex flex-col gap-5 text-sm">
+                <div>
+                  <h3 className="mb-2 font-semibold text-slate-800">Basics</h3>
+                  <div className="flex flex-col gap-3 rounded-md border border-slate-200 bg-slate-50 p-4">
+                    <div>
+                      <span className="font-medium text-slate-500">
+                        Project Title:
+                      </span>
+                      <p className="mt-1">{form.getValues('projectTitle')}</p>
+                    </div>
+                    <div>
+                      <span className="font-medium text-slate-500">
+                        One-Liner:
+                      </span>
+                      <p className="mt-1">
+                        {form.getValues('projectOneLiner')}
+                      </p>
+                    </div>
+                    {!isAgenticEngineering && form.getValues('ask') && (
+                      <div>
+                        <span className="font-medium text-slate-500">
+                          Ask Amount:
+                        </span>
+                        <p className="mt-1">
+                          {form.getValues('ask')} {tokenLabel}
+                        </p>
+                      </div>
+                    )}
+                    <div>
+                      <span className="font-medium text-slate-500">
+                        Wallet Address:
+                      </span>
+                      <p className="mt-1 break-all">
+                        {form.getValues('walletAddress')}
+                      </p>
+                    </div>
+                    {form.getValues('telegram') && (
+                      <div>
+                        <span className="font-medium text-slate-500">
+                          Telegram:
+                        </span>
+                        <p className="mt-1">{form.getValues('telegram')}</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <div>
+                  <h3 className="mb-2 font-semibold text-slate-800">Details</h3>
+                  <div className="flex flex-col gap-3 rounded-md border border-slate-200 bg-slate-50 p-4">
+                    <div>
+                      <span className="font-medium text-slate-500">
+                        Project Details:
+                      </span>
+                      <div
+                        className="prose prose-sm mt-1 max-w-none"
+                        dangerouslySetInnerHTML={{
+                          __html: form.getValues('projectDetails'),
+                        }}
+                      />
+                    </div>
+                    {!isST && form.getValues('projectTimeline') && (
+                      <div>
+                        <span className="font-medium text-slate-500">
+                          Deadline:
+                        </span>
+                        <p className="mt-1">
+                          {form.getValues('projectTimeline')}
+                        </p>
+                      </div>
+                    )}
+                    {form.getValues('proofOfWork') && (
+                      <div>
+                        <span className="font-medium text-slate-500">
+                          Proof of Work:
+                        </span>
+                        <div
+                          className="prose prose-sm mt-1 max-w-none"
+                          dangerouslySetInnerHTML={{
+                            __html: form.getValues('proofOfWork')!,
+                          }}
+                        />
+                      </div>
+                    )}
+                    <div className="flex gap-4">
+                      {form.getValues('twitter') && (
+                        <div>
+                          <span className="font-medium text-slate-500">
+                            Twitter:
+                          </span>
+                          <p className="mt-1">{form.getValues('twitter')}</p>
+                        </div>
+                      )}
+                      {!isST && form.getValues('github') && (
+                        <div>
+                          <span className="font-medium text-slate-500">
+                            Github:
+                          </span>
+                          <p className="mt-1">{form.getValues('github')}</p>
+                        </div>
+                      )}
+                    </div>
+                    {isST && form.getValues('lumaLink') && (
+                      <div>
+                        <span className="font-medium text-slate-500">
+                          Luma Event:
+                        </span>
+                        <p className="mt-1">{form.getValues('lumaLink')}</p>
+                      </div>
+                    )}
+                    {isST && form.getValues('expenseBreakdown') && (
+                      <div>
+                        <span className="font-medium text-slate-500">
+                          Expense Breakdown:
+                        </span>
+                        <div
+                          className="prose prose-sm mt-1 max-w-none"
+                          dangerouslySetInnerHTML={{
+                            __html: form.getValues('expenseBreakdown')!,
+                          }}
+                        />
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {(questions?.length ?? 0) > 0 && (
+                  <div>
+                    <h3 className="mb-2 font-semibold text-slate-800">
+                      Custom Questions
+                    </h3>
+                    <div className="flex flex-col gap-4 rounded-md border border-slate-200 bg-slate-50 p-4">
+                      {questions?.map((q, i) => (
+                        <div key={i}>
+                          <span className="font-medium text-slate-500">
+                            {q.question}
+                          </span>
+                          {q.type === 'link' ? (
+                            <p className="mt-1">
+                              {form.getValues(`answers.${i}.answer`)}
+                            </p>
+                          ) : (
+                            <div
+                              className="prose prose-sm mt-1 max-w-none"
+                              dangerouslySetInnerHTML={{
+                                __html:
+                                  form.getValues(`answers.${i}.answer`) || '',
+                              }}
+                            />
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                <div>
+                  <h3 className="mb-2 font-semibold text-slate-800">
+                    {isST ? 'Outcomes' : 'Milestones'}
+                  </h3>
+                  <div className="flex flex-col gap-3 rounded-md border border-slate-200 bg-slate-50 p-4">
+                    {!isAgenticEngineering && form.getValues('milestones') && (
+                      <div>
+                        <span className="font-medium text-slate-500">
+                          Goals and Milestones:
+                        </span>
+                        <div
+                          className="prose prose-sm mt-1 max-w-none"
+                          dangerouslySetInnerHTML={{
+                            __html: form.getValues('milestones')!,
+                          }}
+                        />
+                      </div>
+                    )}
+                    {!isST &&
+                      !isAgenticEngineering &&
+                      form.getValues('kpi') && (
+                        <div>
+                          <span className="font-medium text-slate-500">
+                            KPI:
+                          </span>
+                          <div
+                            className="prose prose-sm mt-1 max-w-none"
+                            dangerouslySetInnerHTML={{
+                              __html: form.getValues('kpi')!,
+                            }}
+                          />
+                        </div>
+                      )}
+                  </div>
+                </div>
 
                 {!grantApplication && (
-                  <div className="flex flex-col gap-2">
+                  <div className="mt-2 flex flex-col gap-2">
                     <div className="flex items-start space-x-2">
                       <Checkbox
                         id="acknowledgement"
