@@ -1,15 +1,4 @@
-import {
-  Calendar,
-  ChevronLeft,
-  ChevronRight,
-  Menu,
-  Play,
-  Search,
-  Star,
-  Timer,
-  User,
-  X,
-} from 'lucide-react';
+import { Menu, Search, User, X } from 'lucide-react';
 import Head from 'next/head';
 import Link from 'next/link';
 import {
@@ -31,13 +20,6 @@ const navItems = [
   { label: 'Grants', href: '/earn/grants' },
   { label: 'Talent', href: '/earn/new/talent' },
   { label: 'Sponsors', href: '/earn/sponsor' },
-];
-
-const metadataItems = [
-  { icon: Star, label: 'Avalanche Ecosystem' },
-  { icon: Timer, label: 'Bounties, Projects & Grants' },
-  { icon: Calendar, label: 'Paid in USDC / AVAX' },
-  { icon: ChevronRight, label: 'Remote-first' },
 ];
 
 function revealStyle(delay: number): CSSProperties {
@@ -93,6 +75,7 @@ type StandalonePage = {
 
 const AvalancheEarnLanding: StandalonePage = function AvalancheEarnLanding() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [hasJoinedWaitlist, setHasJoinedWaitlist] = useState(false);
   const canonical = getEarnCanonical();
 
   return (
@@ -230,85 +213,57 @@ const AvalancheEarnLanding: StandalonePage = function AvalancheEarnLanding() {
             </div>
           </div>
 
-          <section className="relative z-10 flex flex-1 flex-col justify-end px-4 pb-8 sm:px-6 md:px-12 md:pb-16">
-            <div className="flex flex-col items-start gap-8 lg:flex-row lg:items-end lg:justify-between">
-              <div className="max-w-5xl flex-1">
-                <div
-                  className="avalanche-animate-blur-fade-up mb-6 flex flex-wrap items-center gap-3 text-xs font-medium text-zinc-50/80 sm:gap-6 sm:text-sm md:mb-8"
-                  style={revealStyle(300)}
-                >
-                  {metadataItems.map(({ icon: Icon, label }) => (
-                    <span
-                      key={label}
-                      className="inline-flex items-center gap-2"
-                    >
-                      <Icon
-                        size={16}
-                        aria-hidden="true"
-                        className={cn(
-                          label === 'Avalanche Ecosystem' && 'fill-zinc-50',
-                        )}
-                      />
-                      {label}
-                    </span>
-                  ))}
-                </div>
-
+          <section className="relative z-10 flex flex-1 flex-col items-center justify-center px-4 pb-8 text-center sm:px-6 md:px-12 md:pb-16">
+            <div className="w-full max-w-5xl">
+              <div className="mx-auto max-w-4xl">
                 <h1
-                  className="avalanche-animate-blur-fade-up mb-4 max-w-4xl text-4xl leading-[1.02] font-normal tracking-[-0.04em] text-zinc-50 sm:text-5xl md:mb-6 md:text-6xl lg:text-7xl"
+                  className="avalanche-animate-blur-fade-up mb-6 text-5xl leading-[1.02] font-normal tracking-[-0.04em] text-zinc-50 sm:text-6xl md:text-7xl lg:text-8xl"
                   style={revealStyle(400)}
                 >
-                  Build What&apos;s Next on Avalanche
+                  Join the Waitlist
                 </h1>
 
                 <p
-                  className="avalanche-animate-blur-fade-up mb-6 max-w-2xl text-base leading-relaxed text-zinc-300 sm:text-lg md:mb-12 md:text-xl"
+                  className="avalanche-animate-blur-fade-up mx-auto mb-10 max-w-3xl text-xl leading-relaxed font-semibold text-zinc-300 sm:text-2xl md:text-3xl"
                   style={revealStyle(500)}
                 >
-                  Discover bounties, grants, and high-impact project work from
-                  teams building across the Avalanche ecosystem.
+                  Get early access to Avalanche Earn, the marketplace for
+                  bounties, grants, and project work launching soon.
                 </p>
 
-                <div className="flex flex-wrap items-center gap-3 sm:gap-4">
-                  <Link
-                    href="/earn/new/talent"
-                    className="avalanche-animate-blur-fade-up inline-flex min-h-11 items-center gap-2 rounded-full bg-zinc-50 px-6 py-2.5 text-sm font-semibold text-zinc-950 no-underline transition-[background-color,transform] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:bg-zinc-200 focus-visible:ring-2 focus-visible:ring-zinc-50/70 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950 active:scale-[0.98] sm:px-8 sm:py-3"
-                    style={revealStyle(600)}
-                  >
-                    <Play
-                      size={18}
-                      aria-hidden="true"
-                      className="fill-zinc-950"
-                    />
-                    <span>Start Earning</span>
-                  </Link>
-                  <Link
-                    href="/earn/new/sponsor"
-                    className="avalanche-liquid-glass avalanche-animate-blur-fade-up inline-flex min-h-11 items-center rounded-full px-6 py-2.5 text-sm font-semibold text-zinc-50 no-underline transition-[color,transform] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:text-zinc-200 focus-visible:ring-2 focus-visible:ring-zinc-50/70 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950 active:scale-[0.98] sm:px-8 sm:py-3"
-                    style={revealStyle(700)}
-                  >
-                    Post an Opportunity
-                  </Link>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-3 lg:justify-end">
-                <Link
-                  href="/earn/new/talent"
-                  className="avalanche-liquid-glass avalanche-animate-blur-fade-up inline-flex min-h-11 items-center gap-2 rounded-full px-4 py-2.5 text-sm font-medium text-zinc-50 no-underline transition-[color,transform] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:text-zinc-200 focus-visible:ring-2 focus-visible:ring-zinc-50/70 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950 active:scale-[0.98] sm:px-6 sm:py-3"
-                  style={revealStyle(800)}
+                <form
+                  className="avalanche-animate-blur-fade-up mx-auto flex w-full max-w-3xl flex-col gap-4 sm:flex-row"
+                  style={revealStyle(650)}
+                  onSubmit={(event) => {
+                    event.preventDefault();
+                    setHasJoinedWaitlist(true);
+                  }}
                 >
-                  <ChevronLeft size={18} aria-hidden="true" />
-                  <span>For Talent</span>
-                </Link>
-                <Link
-                  href="/earn/new/sponsor"
-                  className="avalanche-liquid-glass avalanche-animate-blur-fade-up inline-flex min-h-11 items-center gap-2 rounded-full px-4 py-2.5 text-sm font-medium text-zinc-50 no-underline transition-[color,transform] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:text-zinc-200 focus-visible:ring-2 focus-visible:ring-zinc-50/70 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950 active:scale-[0.98] sm:px-6 sm:py-3"
-                  style={revealStyle(900)}
+                  <label htmlFor="waitlist-email" className="sr-only">
+                    Email address
+                  </label>
+                  <input
+                    id="waitlist-email"
+                    name="email"
+                    type="email"
+                    autoComplete="email"
+                    required
+                    placeholder="you@company.com"
+                    className="min-h-16 flex-1 rounded-[1.75rem] border border-zinc-500/60 bg-zinc-950/55 px-6 text-lg font-semibold text-zinc-50 shadow-[inset_0_1px_1px_rgba(255,255,255,0.08)] backdrop-blur-md transition-[border-color,background-color] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] placeholder:text-zinc-500 focus-visible:border-zinc-200 focus-visible:ring-2 focus-visible:ring-zinc-50/70 focus-visible:outline-none sm:min-h-20 sm:rounded-[2rem] sm:px-8 sm:text-2xl"
+                  />
+                  <button
+                    type="submit"
+                    className="min-h-16 rounded-[1.75rem] bg-[#e84142] px-8 text-lg font-bold text-zinc-50 transition-[background-color,transform] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:bg-[#ff3536] focus-visible:ring-2 focus-visible:ring-zinc-50/70 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950 active:scale-[0.98] sm:min-h-20 sm:rounded-[2rem] sm:px-12 sm:text-2xl"
+                  >
+                    Get Notified
+                  </button>
+                </form>
+                <p
+                  aria-live="polite"
+                  className="mt-4 min-h-6 text-sm font-medium text-zinc-300"
                 >
-                  <span>For Teams</span>
-                  <ChevronRight size={18} aria-hidden="true" />
-                </Link>
+                  {hasJoinedWaitlist ? 'Thanks, we will be in touch soon.' : ''}
+                </p>
               </div>
             </div>
           </section>
