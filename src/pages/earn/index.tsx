@@ -1,12 +1,7 @@
-import { Menu, Search, User, X } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 import Head from 'next/head';
 import Link from 'next/link';
-import {
-  type CSSProperties,
-  type ReactElement,
-  type ReactNode,
-  useState,
-} from 'react';
+import { type CSSProperties, type ReactElement, useState } from 'react';
 
 import { Meta } from '@/layouts/Meta';
 import { cn } from '@/utils/cn';
@@ -38,34 +33,6 @@ function getEarnCanonical() {
   } catch {
     return undefined;
   }
-}
-
-function NavIconButton({
-  href,
-  label,
-  children,
-  delay,
-  className,
-}: {
-  readonly href: string;
-  readonly label: string;
-  readonly children: ReactNode;
-  readonly delay: number;
-  readonly className?: string;
-}) {
-  return (
-    <Link
-      href={href}
-      aria-label={label}
-      className={cn(
-        'avalanche-liquid-glass avalanche-animate-blur-fade-up inline-flex h-10 w-10 items-center justify-center rounded-full text-zinc-50 transition-[color,transform] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:text-zinc-200 focus-visible:ring-2 focus-visible:ring-zinc-50/70 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950 active:scale-[0.98]',
-        className,
-      )}
-      style={revealStyle(delay)}
-    >
-      {children}
-    </Link>
-  );
 }
 
 type StandalonePage = {
@@ -124,17 +91,6 @@ const AvalancheEarnLanding: StandalonePage = function AvalancheEarnLanding() {
             </div>
 
             <div className="flex items-center gap-3">
-              <Link
-                href="/earn/search"
-                className="avalanche-liquid-glass avalanche-animate-blur-fade-up hidden items-center gap-2 rounded-full px-4 py-2 text-sm font-medium text-zinc-50 no-underline transition-[color,transform] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:text-zinc-200 focus-visible:ring-2 focus-visible:ring-zinc-50/70 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950 active:scale-[0.98] sm:inline-flex md:px-6"
-                style={revealStyle(350)}
-              >
-                <span>Search</span>
-                <Search size={18} aria-hidden="true" />
-              </Link>
-              <NavIconButton href="/earn/signin" label="Sign in" delay={400}>
-                <User size={18} aria-hidden="true" />
-              </NavIconButton>
               <button
                 type="button"
                 aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
@@ -194,22 +150,6 @@ const AvalancheEarnLanding: StandalonePage = function AvalancheEarnLanding() {
                   {item.label}
                 </Link>
               ))}
-            </div>
-            <div className="mt-4 grid grid-cols-2 gap-3 border-t border-zinc-800 pt-4 sm:hidden">
-              <Link
-                href="/earn/search"
-                className="avalanche-liquid-glass inline-flex min-h-11 items-center justify-center gap-2 rounded-full px-4 py-2 text-sm font-medium text-zinc-50 no-underline focus-visible:ring-2 focus-visible:ring-zinc-50/70"
-              >
-                <span>Search</span>
-                <Search size={18} aria-hidden="true" />
-              </Link>
-              <Link
-                href="/earn/signin"
-                className="avalanche-liquid-glass inline-flex min-h-11 items-center justify-center gap-2 rounded-full px-4 py-2 text-sm font-medium text-zinc-50 no-underline focus-visible:ring-2 focus-visible:ring-zinc-50/70"
-              >
-                <span>Profile</span>
-                <User size={18} aria-hidden="true" />
-              </Link>
             </div>
           </div>
 
