@@ -1,7 +1,7 @@
 export const AppConfig = {
-  site_name: 'Superteam Earn',
-  title: 'Superteam Earn',
+  site_name: 'Avalanche Earn',
+  title: 'Avalanche Earn',
   description:
-    'Find crypto bounties, web3 jobs, and Solana opportunities. Earn crypto for your skills in development, design, and content.',
+    'Find Avalanche bounties, grants, and project work. Build for leading Avalanche teams, earn in crypto, and apply with one profile.',
   locale: 'en',
 };

@@ -1,7 +1,7 @@
 {
-  "name": "Superteam Earn",
-  "short_name": "Earn",
-  "start_url": "/",
+  "name": "Avalanche Earn",
+  "short_name": "Avax Earn",
+  "start_url": "/earn",
   "icons": [
     {
       "src": "/android-chrome-192x192.png",
@@ -14,8 +14,8 @@
       "type": "image/png"
     }
   ],
-  "theme_color": "#ffffff",
-  "background_color": "#ffffff",
+  "theme_color": "#070707",
+  "background_color": "#070707",
   "display": "standalone",
   "orientation": "portrait"
 }
