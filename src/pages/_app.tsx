@@ -26,6 +26,10 @@ const TopLoader = dynamic(
   { ssr: false },
 );
 
+type StandaloneComponent = AppProps['Component'] & {
+  standalonePage?: boolean;
+};
+
 function isSTRoute(pathname: string): boolean {
   return ST_ROUTES.includes(pathname);
 }
@@ -33,6 +37,7 @@ function isSTRoute(pathname: string): boolean {
 function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
   const isST = isSTRoute(router.pathname);
+  const PageComponent = Component as StandaloneComponent;
 
   useEffect(() => {
     if (!isST || typeof window === 'undefined') {
@@ -86,6 +91,14 @@ function App({ Component, pageProps }: AppProps) {
       document.body.style.backgroundColor = '';
     };
   }, [isST]);
+
+  if (PageComponent.standalonePage) {
+    return (
+      <div className={fontVariables}>
+        <Component {...pageProps} key={router.asPath} />
+      </div>
+    );
+  }
 
   if (isST) {
     return (
