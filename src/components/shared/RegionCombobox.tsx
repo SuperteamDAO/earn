@@ -208,6 +208,7 @@ export function RegionCombobox({
       }),
     [options],
   );
+  const selectedOption = value ? findOptionByValue(value) : undefined;
 
   return (
     <Popover
@@ -245,9 +246,7 @@ export function RegionCombobox({
             </span>
           )}
           <p className="truncate">
-            {value
-              ? findOptionByValue(value)?.label || placeholder
-              : placeholder}
+            {value ? selectedOption?.label || value : placeholder}
           </p>
           <ChevronsUpDown className="ml-auto h-4 w-4 shrink-0 opacity-50" />
         </Button>

@@ -14,7 +14,10 @@ import {
   createListingRefinements,
 } from '../types/schema';
 import { checkSlug } from './getValidSlug';
-import { getValidListingRegion } from './validateListingRegion';
+import {
+  getValidListingRegion,
+  isChapterSponsorEditingRegionToGlobal,
+} from './validateListingRegion';
 
 interface ListingValidatorParams {
   listing: ListingWithSponsor;
@@ -69,6 +72,19 @@ export const validateListing = async ({
         ctx.addIssue({
           code: 'custom',
           message: 'Invalid region selected',
+          path: ['region'],
+        });
+      } else if (
+        isEditing &&
+        isChapterSponsorEditingRegionToGlobal({
+          currentRegion: listing.region,
+          nextRegion: validRegion,
+          hasChapter: !!sponsor.chapter,
+        })
+      ) {
+        ctx.addIssue({
+          code: 'custom',
+          message: 'Chapter sponsors cannot edit a listing region to Global',
           path: ['region'],
         });
       } else {

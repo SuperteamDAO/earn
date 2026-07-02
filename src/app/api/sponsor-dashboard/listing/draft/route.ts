@@ -18,7 +18,10 @@ import { validateSession } from '@/features/auth/utils/getSponsorSession';
 import type { ListingFormData } from '@/features/listing-builder/types';
 import { getValidSlug } from '@/features/listing-builder/utils/getValidSlug';
 import { validateDraftPermissions } from '@/features/listing-builder/utils/isListingDraftable';
-import { getValidListingRegion } from '@/features/listing-builder/utils/validateListingRegion';
+import {
+  getValidListingRegion,
+  isChapterSponsorEditingRegionToGlobal,
+} from '@/features/listing-builder/utils/validateListingRegion';
 
 async function transformToPrismaData(
   formData: Partial<ListingFormData>,
@@ -148,6 +151,21 @@ export async function POST(request: Request) {
         return result.error;
       }
       listing = result.listing;
+    }
+
+    if (
+      listing &&
+      body.region &&
+      isChapterSponsorEditingRegionToGlobal({
+        currentRegion: listing.region,
+        nextRegion: body.region,
+        hasChapter: !!listing.sponsor.chapter,
+      })
+    ) {
+      return NextResponse.json(
+        { error: 'Chapter sponsors cannot edit a listing region to Global' },
+        { status: 400 },
+      );
     }
 
     const isDraftNotAllowed = validateDraftPermissions(listing);

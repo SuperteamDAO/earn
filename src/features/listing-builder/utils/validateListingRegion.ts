@@ -32,3 +32,20 @@ export async function getValidListingRegion(value?: string | null) {
 
   return normalizedAllowedRegions.get(normalizeRegion(canonicalRegion)) || null;
 }
+
+export function isChapterSponsorEditingRegionToGlobal({
+  currentRegion,
+  nextRegion,
+  hasChapter,
+}: {
+  currentRegion?: string | null;
+  nextRegion?: string | null;
+  hasChapter?: boolean;
+}) {
+  if (!hasChapter) return false;
+
+  return (
+    normalizeRegion(canonicalizeRegionValue(nextRegion || '')) === 'global' &&
+    normalizeRegion(canonicalizeRegionValue(currentRegion || '')) !== 'global'
+  );
+}
