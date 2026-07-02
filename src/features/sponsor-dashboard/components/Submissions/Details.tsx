@@ -20,7 +20,9 @@ const isTweetStatusUrl = (url: string | undefined | null): boolean => {
   if (!url || typeof url !== 'string') return false;
   try {
     const trimmed = url.trim();
-    const urlWithProtocol = trimmed.startsWith('http') ? trimmed : `https://${trimmed}`;
+    const urlWithProtocol = trimmed.startsWith('http')
+      ? trimmed
+      : `https://${trimmed}`;
     const parsed = new URL(urlWithProtocol);
     const host = parsed.hostname.toLowerCase();
     if (!host.includes('twitter.com') && !host.includes('x.com')) {

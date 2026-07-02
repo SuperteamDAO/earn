@@ -1,4 +1,5 @@
 import type { NextApiResponse } from 'next';
+import { z } from 'zod';
 
 import logger from '@/lib/logger';
 
@@ -9,7 +10,9 @@ function extractTweetId(url: string): string | null {
   if (!url || typeof url !== 'string') return null;
   try {
     const trimmed = url.trim();
-    const urlWithProtocol = trimmed.startsWith('http') ? trimmed : `https://${trimmed}`;
+    const urlWithProtocol = trimmed.startsWith('http')
+      ? trimmed
+      : `https://${trimmed}`;
     const parsed = new URL(urlWithProtocol);
     const host = parsed.hostname.toLowerCase();
     if (!host.includes('twitter.com') && !host.includes('x.com')) {
@@ -29,37 +32,59 @@ function extractTweetId(url: string): string | null {
   }
 }
 
+const tweetStatsQuerySchema = z.object({
+  url: z
+    .string({
+      required_error: 'Missing or invalid tweetUrl parameter',
+    })
+    .trim()
+    .min(1, 'Missing or invalid tweetUrl parameter')
+    .refine((url) => !!extractTweetId(url), {
+      message: 'Invalid Twitter/X post URL',
+    }),
+});
+
 async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
-  const { url: tweetUrl } = req.query;
+  const validation = tweetStatsQuerySchema.safeParse(req.query);
 
-  if (!tweetUrl || typeof tweetUrl !== 'string') {
-    return res.status(400).json({ error: 'Missing or invalid tweetUrl parameter' });
-  }
-
-  const tweetId = extractTweetId(tweetUrl);
-  if (!tweetId) {
-    return res.status(400).json({ error: 'Invalid Twitter/X post URL' });
-  }
-
-  const bearerToken = process.env.TWITTER_BEARER_TOKEN || process.env.X_BEARER_TOKEN;
-
-  if (!bearerToken) {
-    logger.warn('Twitter/X API bearer token is not configured. Returning simulated mock metrics.');
-    // Generate deterministic mock stats based on the tweetId
-    const seed = parseInt(tweetId.slice(-4), 10) || 1234;
-    const views = Math.floor(seed * 1.5) + 120;
-    const likes = Math.floor(views * 0.08) + 5;
-    const retweets = Math.floor(likes * 0.15) + 1;
-    const comments = Math.floor(likes * 0.10) + 1;
-
-    return res.status(200).json({
-      views,
-      likes,
-      retweets,
-      comments,
-      isMocked: true,
+  if (!validation.success) {
+    const errorMessage = validation.error.errors
+      .map((err) => err.message)
+      .join(', ');
+    logger.warn(`Tweet stats validation failed: ${errorMessage}`);
+    return res.status(403).json({
+      error: errorMessage,
+      message: 'Validation failed: Invalid request query parameters',
     });
   }
+
+  const { url: tweetUrl } = validation.data;
+  const tweetId = extractTweetId(tweetUrl)!;
+
+  const bearerToken =
+    process.env.TWITTER_BEARER_TOKEN || process.env.X_BEARER_TOKEN;
+
+  if (!bearerToken) {
+    logger.warn(
+      'Twitter/X API bearer token is not configured. Returning 0 metrics.',
+    );
+    return res.status(200).json({
+      data: {
+        views: 0,
+        likes: 0,
+        retweets: 0,
+        comments: 0,
+        isMocked: false,
+        isAvailable: false,
+      },
+      message: 'Operation successful',
+    });
+  }
+
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => {
+    controller.abort();
+  }, 5000);
 
   try {
     const response = await fetch(
@@ -68,23 +93,24 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
         headers: {
           Authorization: `Bearer ${bearerToken}`,
         },
-      }
+        signal: controller.signal,
+      },
     );
 
     if (!response.ok) {
-      logger.error(`Twitter API responded with status ${response.status}: ${await response.text()}`);
-      // Fallback to mock data if API limits or errors occur
-      const seed = parseInt(tweetId.slice(-4), 10) || 1234;
-      const views = Math.floor(seed * 1.5) + 120;
-      const likes = Math.floor(views * 0.08) + 5;
-      const retweets = Math.floor(likes * 0.15) + 1;
-      const comments = Math.floor(likes * 0.10) + 1;
+      logger.error(
+        `Twitter API responded with status ${response.status}: ${await response.text()}`,
+      );
       return res.status(200).json({
-        views,
-        likes,
-        retweets,
-        comments,
-        isMocked: true,
+        data: {
+          views: 0,
+          likes: 0,
+          retweets: 0,
+          comments: 0,
+          isMocked: false,
+          isAvailable: false,
+        },
+        message: 'Operation successful',
       });
     }
 
@@ -92,19 +118,52 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
     const metrics = json.data?.public_metrics;
 
     if (!metrics) {
-      return res.status(404).json({ error: 'Tweet not found or metrics unavailable' });
+      logger.warn(
+        `Metrics not found in Twitter API response for tweetId: ${tweetId}`,
+      );
+      return res.status(200).json({
+        data: {
+          views: 0,
+          likes: 0,
+          retweets: 0,
+          comments: 0,
+          isMocked: false,
+          isAvailable: false,
+        },
+        message: 'Operation successful',
+      });
     }
 
     return res.status(200).json({
-      views: metrics.impression_count || 0,
-      likes: metrics.like_count || 0,
-      retweets: (metrics.retweet_count || 0) + (metrics.quote_count || 0),
-      comments: metrics.reply_count || 0,
-      isMocked: false,
+      data: {
+        views: metrics.impression_count || 0,
+        likes: metrics.like_count || 0,
+        retweets: (metrics.retweet_count || 0) + (metrics.quote_count || 0),
+        comments: metrics.reply_count || 0,
+        isMocked: false,
+        isAvailable: true,
+      },
+      message: 'Operation successful',
     });
-  } catch (error) {
-    logger.error('Error fetching Twitter/X post metrics:', error);
-    return res.status(500).json({ error: 'Failed to fetch Twitter/X post metrics' });
+  } catch (error: any) {
+    if (error.name === 'AbortError') {
+      logger.error('Twitter API request timed out after 5 seconds');
+    } else {
+      logger.error('Error fetching Twitter/X post metrics:', error);
+    }
+    return res.status(200).json({
+      data: {
+        views: 0,
+        likes: 0,
+        retweets: 0,
+        comments: 0,
+        isMocked: false,
+        isAvailable: false,
+      },
+      message: 'Operation successful',
+    });
+  } finally {
+    clearTimeout(timeoutId);
   }
 }
 
