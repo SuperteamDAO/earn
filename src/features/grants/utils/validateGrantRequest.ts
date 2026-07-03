@@ -7,7 +7,7 @@ import { userRegionEligibilty } from '@/features/listings/utils/region';
 export async function validateGrantRequest(
   userId: string,
   grantId: string,
-  options?: { skipLocationCooldown?: boolean },
+  options?: { skipLocationCooldown?: boolean; skipStatusCheck?: boolean },
 ) {
   const grant = await prisma.grants.findUnique({
     where: { id: grantId },
@@ -17,6 +17,7 @@ export async function validateGrantRequest(
       slug: true,
       isActive: true,
       isPublished: true,
+      status: true,
       region: true,
       minReward: true,
       maxReward: true,
@@ -40,6 +41,10 @@ export async function validateGrantRequest(
 
   if (grant.isActive === false || grant.isPublished === false) {
     throw new Error('Grant is not active');
+  }
+
+  if (!options?.skipStatusCheck && grant.status !== 'OPEN') {
+    throw new Error('Grant is closed');
   }
 
   const user = await prisma.user.findUnique({

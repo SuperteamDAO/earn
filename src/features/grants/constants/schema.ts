@@ -37,6 +37,7 @@ export const grantsSelect = {
   historicalApplications: true,
   totalPaid: true,
   logo: true,
+  status: true,
   isPro: true,
   isST: true,
   sponsor: {

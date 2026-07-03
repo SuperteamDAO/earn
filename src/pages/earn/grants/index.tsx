@@ -79,6 +79,7 @@ function Grants() {
                     maxReward={grant?.maxReward}
                     token={grant?.token}
                     logo={grant?.logo}
+                    status={grant?.status}
                   />
                 </div>
               ))}

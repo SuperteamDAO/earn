@@ -41,6 +41,7 @@ export const ApplicationActionButton = ({
 
   const { region, id, link, isNative, isPublished, isPro, isST, sponsorId } =
     grant;
+  const isClosedForNewApplications = grant.status !== 'OPEN';
   const isUserPro = user?.isPro;
   const isUserEligibleST = isUserEligibleForST(user);
 
@@ -97,12 +98,16 @@ export const ApplicationActionButton = ({
     buttonConfig.isDisabled ||
     Boolean(
       !isPublished ||
+      (isClosedForNewApplications && applicationState === 'ALLOW NEW') ||
       (user?.id && user?.isTalentFilled && !isUserEligibleByRegion) ||
       (user?.id && user?.isTalentFilled && isNewApplicationLocationCooldown) ||
       isNotEligibleForPro,
     );
 
   const getButtonText = () => {
+    if (isClosedForNewApplications && applicationState === 'ALLOW NEW') {
+      return 'Closed';
+    }
     if (isNewApplicationLocationCooldown) {
       return 'Ineligible';
     }

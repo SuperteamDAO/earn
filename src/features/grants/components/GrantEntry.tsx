@@ -39,15 +39,19 @@ export const GrantEntry = ({
   token,
   slug,
   logo,
+  status,
 }: {
   title: string;
   rewardAmount?: number;
   token?: string;
   slug: string;
   logo?: string;
+  status?: string;
   minReward?: number;
   maxReward?: number;
 }) => {
+  const isClosed = status !== 'OPEN';
+
   return (
     <Link
       className="mx-auto block w-full cursor-pointer overflow-hidden rounded-lg border shadow-md transition-all duration-300 hover:shadow-lg sm:w-80"
@@ -77,7 +81,7 @@ export const GrantEntry = ({
             variant="outline"
             className="hover:bg-brand-purple w-full border-slate-300 bg-gray-100 text-sm font-medium text-slate-400 hover:text-white"
           >
-            Apply Now
+            {isClosed ? 'Closed' : 'Apply Now'}
           </Button>
         </Link>
       </div>
