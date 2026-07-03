@@ -33,11 +33,7 @@ export const useApplicationState = (
     }
 
     if (application.applicationStatus === 'Pending') {
-      if (grant.isNative) {
-        setApplicationState('ALLOW EDIT');
-      } else {
-        setApplicationState('APPLIED');
-      }
+      setApplicationState('ALLOW EDIT');
       return;
     }
 
