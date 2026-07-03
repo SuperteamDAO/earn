@@ -222,6 +222,7 @@ model Grants {
   isFeatured             Boolean            @default(false)
   isActive               Boolean            @default(true)
   isArchived             Boolean            @default(false)
+  isPaused               Boolean            @default(false)
   createdAt              DateTime           @default(now())
   updatedAt              DateTime           @updatedAt
   skills                 Json?

@@ -38,6 +38,7 @@ interface Grant {
   isFeatured?: boolean;
   isActive?: boolean;
   isArchived?: boolean;
+  isPaused?: boolean;
   createdAt?: string;
   updatedAt?: string;
   minReward?: number;
