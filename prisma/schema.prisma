@@ -303,6 +303,7 @@ model GrantApplication {
   CreditLedger        CreditLedger[]
   lumaLink            String?
   expenseBreakdown    String?                @db.Text
+  applicationIpCountry String?
 
   @@index([likeCount])
   @@index([grantId, userId, applicationStatus])

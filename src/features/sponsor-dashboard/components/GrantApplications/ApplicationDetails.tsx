@@ -1,7 +1,7 @@
 import { useQueryClient } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import { useAtom } from 'jotai';
-import { ArrowRight, Check, Copy, X } from 'lucide-react';
+import { AlertTriangle, ArrowRight, Check, Copy, MapPin, X } from 'lucide-react';
 import Link from 'next/link';
 import { useMemo } from 'react';
 
@@ -400,6 +400,36 @@ export const ApplicationDetails = ({
                   {formattedCreatedAt}
                 </p>
               </div>
+
+              {grant?.region?.toLowerCase() !== 'global' &&
+                selectedApplication?.user?.location && (
+                  <div className="mb-4">
+                    <p className="mb-1 text-xs font-semibold text-slate-400 uppercase">
+                      LOCATION
+                    </p>
+                    <div className="flex flex-col gap-1">
+                      <div className="flex items-center gap-1 text-sm font-medium text-slate-600">
+                        <MapPin className="h-3.5 w-3.5 text-slate-400" />
+                        <span>Profile: {selectedApplication.user.location}</span>
+                      </div>
+                      {selectedApplication.applicationIpCountry && (
+                        <div className="flex items-center gap-1 text-sm font-medium text-slate-600">
+                          <MapPin className="h-3.5 w-3.5 text-slate-400" />
+                          <span>
+                            IP at apply:{' '}
+                            {selectedApplication.applicationIpCountry}
+                          </span>
+                          {selectedApplication.applicationIpCountry.toLowerCase() !==
+                            selectedApplication.user.location?.toLowerCase() && (
+                            <Tooltip content="IP country differs from profile location">
+                              <AlertTriangle className="h-3.5 w-3.5 text-amber-500" />
+                            </Tooltip>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
 
               <div className="mb-4">
                 <p className="mt-1 text-xs font-semibold text-slate-400 uppercase">

@@ -1,9 +1,11 @@
 import { waitUntil } from '@vercel/functions';
+import lookup from 'country-code-lookup';
 import { headers } from 'next/headers';
 import { type NextRequest, NextResponse } from 'next/server';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { getChapterRegions } from '@/utils/chapterRegion';
 import { dayjs } from '@/utils/dayjs';
 import { safeStringify } from '@/utils/safeStringify';
 
@@ -29,6 +31,7 @@ import {
   WALLET_ADDRESS_CONFLICT_CODE,
   WALLET_ADDRESS_CONFLICT_MESSAGE,
 } from '@/features/grants/utils/walletAddressOwnership.constants';
+import { userRegionEligibilty } from '@/features/listings/utils/region';
 import { extractSocialUsername } from '@/features/social/utils/extractUsername';
 
 export const maxDuration = 300;
@@ -38,6 +41,7 @@ async function createGrantApplication(
   grantId: string,
   data: any,
   grant: any,
+  applicationIpCountry?: string,
 ) {
   const user = await prisma.user.findUniqueOrThrow({
     where: { id: userId },
@@ -103,6 +107,7 @@ async function createGrantApplication(
     twitter: validatedData.twitter,
     github: validatedData.github,
     answers: sanitizeGrantApplicationAnswers(validatedData.answers) || [],
+    applicationIpCountry: applicationIpCountry ?? null,
     ...(isST && {
       lumaLink: validatedData.lumaLink,
       expenseBreakdown: sanitizeGrantApplicationHtml(
@@ -158,6 +163,37 @@ export async function POST(request: NextRequest) {
       userId,
       grantId,
     });
+
+    let applicationIpCountry: string | undefined;
+    const ipCountryCode = request.headers.get('x-vercel-ip-country');
+    if (ipCountryCode && grant.region?.toLowerCase() !== 'global') {
+      const ipCountryName = lookup.byIso(ipCountryCode)?.country;
+      if (ipCountryName) {
+        applicationIpCountry = ipCountryName;
+        const chapterRegions = await getChapterRegions();
+        const isIpEligible = userRegionEligibilty({
+          region: grant.region,
+          userLocation: ipCountryName,
+          chapters: chapterRegions,
+        });
+        if (!isIpEligible) {
+          logger.warn('IP country ineligible for regional grant', {
+            userId,
+            grantId,
+            grantRegion: grant.region,
+            ipCountry: ipCountryName,
+            storedLocation: user.location,
+          });
+          return NextResponse.json(
+            {
+              error:
+                'You are not eligible to apply for this grant from your current location.',
+            },
+            { status: 403 },
+          );
+        }
+      }
+    }
 
     if (grant.isST) {
       if (!isUserEligibleForST(user)) {
@@ -233,6 +269,7 @@ export async function POST(request: NextRequest) {
       grantId,
       { ...applicationData, telegram },
       grant,
+      applicationIpCountry,
     );
 
     waitUntil(
