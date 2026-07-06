@@ -291,18 +291,13 @@ export function SponsorLayout({
           onClose={handleEntityClose}
         />
 
-        <div className="flex min-h-[80vh] px-3 md:hidden">
-          <p className="pt-20 text-center text-xl font-medium text-slate-500">
-            The Sponsor Dashboard on Earn is not optimized for mobile yet.
-            Please use a desktop to check out the Sponsor Dashboard
-          </p>
-        </div>
-        <div className="hidden min-h-[max(100vh,1000px)] justify-start transition-all duration-300 ease-in-out hover:shadow-lg md:flex">
+        <div className="flex min-h-[max(100vh,1000px)] flex-col justify-start transition-all duration-300 ease-in-out md:flex-row md:hover:shadow-lg">
           <div
             className={cn(
               'sponsor-dashboard-sidebar overflow-x-hidden border-r border-slate-200 bg-white pt-5 whitespace-nowrap',
               'transition-all duration-300 ease-in-out',
               'transition-shadow hover:shadow-lg',
+              'hidden md:flex md:flex-col',
               isCollapsible ? 'fixed' : 'static',
               isExpanded
                 ? ['w-64 max-w-64 min-w-64', 'expanded']
@@ -457,14 +452,125 @@ export function SponsorLayout({
           {(showContent || isLoading) && (
             <div
               className={cn(
-                'w-full flex-1 overflow-x-auto bg-white py-5 pr-8 pl-4 transition-[margin-left] duration-300 ease-in-out',
-                isCollapsible ? 'ml-20' : 'ml-0',
+                'w-full flex-1 overflow-x-auto bg-white py-5 pr-4 pl-4 pb-20 transition-[margin-left] duration-300 ease-in-out md:pr-8 md:pb-5',
+                isCollapsible ? 'md:ml-20' : 'ml-0',
               )}
             >
+              {/* Mobile-only top strip: sponsor selector + create button */}
+              <div className="mb-4 flex items-center justify-between md:hidden">
+                {canSelectSponsor && (
+                  <div className="min-w-0 flex-1">
+                    {isHackathonRoute ? (
+                      <SelectHackathon isExpanded={true} />
+                    ) : (
+                      <SelectSponsor isExpanded={true} />
+                    )}
+                  </div>
+                )}
+                {!isHackathonRoute ? (
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button
+                        className="ph-no-capture ml-3 shrink-0 gap-1.5"
+                        size="sm"
+                        disabled={
+                          isCreateListingAllowed !== undefined &&
+                          isCreateListingAllowed === false &&
+                          user?.role !== 'GOD'
+                        }
+                      >
+                        <Plus className="h-3.5 w-3.5" />
+                        New
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent
+                      className="min-w-[200px] font-medium text-slate-500"
+                      align="end"
+                    >
+                      <DropdownMenuItem
+                        className="flex items-center justify-between"
+                        onClick={() => {
+                          posthog.capture('new generate with ai_sponsor');
+                          setAutoGenerateOpen(true);
+                        }}
+                      >
+                        <span className="flex items-center gap-2 text-sm">
+                          <Sparkle className="h-4 w-4" />
+                          Generate with AI
+                        </span>
+                        <span className="rounded-full bg-emerald-50 px-1.5 py-0.5 text-[0.65rem] text-emerald-600">
+                          2m
+                        </span>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        className="flex items-center justify-between"
+                        onClick={() => {
+                          posthog.capture('new start from scratch_sponsor');
+                          onOpen();
+                        }}
+                      >
+                        <span className="flex items-center gap-2 text-sm">
+                          <PencilLine className="h-4 w-4" />
+                          Start from Scratch
+                        </span>
+                        <span className="rounded-full bg-indigo-50 px-1.5 py-0.5 text-[0.65rem] text-indigo-600">
+                          10m
+                        </span>
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                ) : (
+                  <Button size="sm" className="ml-3 shrink-0 gap-1.5" asChild>
+                    <Link href="/earn/dashboard/new/?type=hackathon">
+                      <Plus className="h-3.5 w-3.5" />
+                      New Track
+                    </Link>
+                  </Button>
+                )}
+              </div>
               {isLoading ? <SponsorContentSkeleton /> : children}
             </div>
           )}
         </div>
+
+        {/* Mobile bottom navigation */}
+        <nav className="fixed bottom-0 left-0 right-0 z-50 flex items-stretch border-t border-slate-200 bg-white md:hidden">
+          {LinkItems.map((link) => {
+            const Icon = link.icon;
+            const resolvedLink = link.link?.startsWith('https://')
+              ? link.link
+              : `/earn/dashboard${link.link}`;
+            const isActive = router.asPath
+              .split('?')[0]
+              ?.startsWith(resolvedLink || '');
+            return (
+              <Link
+                key={link.name}
+                href={resolvedLink || '#'}
+                target={link.link?.startsWith('https://') ? '_blank' : undefined}
+                rel={
+                  link.link?.startsWith('https://')
+                    ? 'noopener noreferrer'
+                    : undefined
+                }
+                onClick={() => {
+                  if (link.posthog) posthog.capture(link.posthog);
+                }}
+                className={cn(
+                  'flex flex-1 flex-col items-center justify-center gap-0.5 py-2 text-xs font-medium transition-colors',
+                  isActive
+                    ? 'text-indigo-600'
+                    : 'text-slate-500 hover:text-indigo-600',
+                )}
+              >
+                <Icon className="h-5 w-5" />
+                <span className="max-w-[60px] truncate text-center leading-tight">
+                  {link.name}
+                </span>
+              </Link>
+            );
+          })}
+        </nav>
       </Default>
     </SolanaWalletProvider>
   );

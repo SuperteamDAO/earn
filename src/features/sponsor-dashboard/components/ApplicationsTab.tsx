@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useAtom } from 'jotai';
-import { LucideFlag } from 'lucide-react';
+import { ChevronLeft, LucideFlag } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
@@ -39,6 +39,7 @@ const isEditableKeyboardTarget = (target: EventTarget | null) => {
 
 export const ApplicationsTab = ({ slug }: Props) => {
   const [searchText, setSearchText] = useState('');
+  const [mobileView, setMobileView] = useState<'list' | 'detail'>('list');
   const [selectedFilters, setSelectedFilters] = useState<
     Set<GrantApplicationStatus | SubmissionLabels>
   >(new Set());
@@ -385,8 +386,8 @@ export const ApplicationsTab = ({ slug }: Props) => {
   return (
     <>
       <div className="flex w-full items-start bg-white">
-        <div className="grid min-h-[600px] w-full grid-cols-[23rem_1fr] bg-white">
-          <div className="h-full w-full">
+        <div className="flex min-h-[600px] w-full flex-col md:grid md:grid-cols-[23rem_1fr] bg-white">
+          <div className={`h-full w-full ${mobileView === 'detail' ? 'hidden md:block' : 'block'}`}>
             <ApplicationList
               selectedFilters={selectedFilters}
               onFilterChange={setSelectedFilters}
@@ -401,10 +402,20 @@ export const ApplicationsTab = ({ slug }: Props) => {
                   (application) => application.applicationStatus === 'Pending',
                 ).length === 0
               }
+              onItemClick={() => setMobileView('detail')}
             />
           </div>
 
-          <div className="h-full w-full rounded-r-xl border-t border-r border-b border-slate-200 bg-white">
+          <div className={`h-full w-full rounded-r-xl border-t border-r border-b border-slate-200 bg-white ${mobileView === 'list' ? 'hidden md:block' : 'block'}`}>
+            {mobileView === 'detail' && (
+              <button
+                className="md:hidden flex items-center gap-1 px-3 py-2 text-sm font-medium text-slate-500 hover:text-slate-700"
+                onClick={() => setMobileView('list')}
+              >
+                <ChevronLeft className="h-4 w-4" />
+                Back to list
+              </button>
+            )}
             {!applications?.length && !searchText && !isApplicationsLoading ? (
               <>
                 <ExternalImage

@@ -346,7 +346,7 @@ export default function SponsorListings({ tab: queryTab }: { tab: string }) {
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
-          <div className="relative w-64 lg:w-35 xl:w-64">
+          <div className="relative w-full lg:w-35 xl:w-64">
             <Search className="pointer-events-none absolute top-1/2 left-3 size-3.5 -translate-y-1/2 text-slate-400" />
             <Input
               className="focus-visible:ring-brand-purple h-9 rounded-lg border-slate-300 bg-white pl-9 font-normal placeholder:text-xs placeholder:text-slate-500"
@@ -375,7 +375,7 @@ export default function SponsorListings({ tab: queryTab }: { tab: string }) {
             }
             onValueChange={handleTabChange}
           >
-            <TabsList>
+            <TabsList className="flex-nowrap overflow-x-auto">
               <TabsTrigger value="all">All</TabsTrigger>
               <TabsTrigger value="bounties">Bounties</TabsTrigger>
               <TabsTrigger value="projects">Projects</TabsTrigger>

@@ -34,6 +34,7 @@ interface Props {
     filters: Set<GrantApplicationStatus | SubmissionLabels>,
   ) => void;
   isToggleDisabled: boolean;
+  onItemClick?: () => void;
 }
 
 export const ApplicationList = ({
@@ -46,6 +47,7 @@ export const ApplicationList = ({
   selectedFilters,
   onFilterChange,
   isToggleDisabled,
+  onItemClick,
 }: Props) => {
   const debouncedSetSearchTextRef = useRef<
     ReturnType<typeof debounce> | undefined
@@ -105,7 +107,7 @@ export const ApplicationList = ({
       </div>
       <div
         ref={scrollContainerRef}
-        className="scrollbar-thin scrollbar-w-1 scrollbar-track-white scrollbar-thumb-slate-200 hover:scrollbar-thumb-slate-300 h-[42rem] w-full overflow-y-auto rounded-bl-lg border-t bg-white"
+        className="scrollbar-thin scrollbar-w-1 scrollbar-track-white scrollbar-thumb-slate-200 hover:scrollbar-thumb-slate-300 h-[60dvh] md:h-[42rem] w-full overflow-y-auto rounded-bl-lg border-t bg-white"
       >
         {applications?.map((application) => {
           const applicationStatus = application?.applicationStatus;
@@ -143,6 +145,7 @@ export const ApplicationList = ({
               )}
               onClick={() => {
                 setSelectedApplication(application);
+                onItemClick?.();
               }}
             >
               <div className="flex items-center">

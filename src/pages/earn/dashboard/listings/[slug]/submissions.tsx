@@ -1,6 +1,6 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { atom, useAtom } from 'jotai';
-import { LucideFlag } from 'lucide-react';
+import { ChevronLeft, LucideFlag } from 'lucide-react';
 import type { GetServerSideProps } from 'next';
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/router';
@@ -57,6 +57,7 @@ export default function BountySubmissions({ slug }: Props) {
   );
 
   const [searchText, setSearchText] = useState('');
+  const [mobileView, setMobileView] = useState<'list' | 'detail'>('list');
 
   const [remainings, setRemainings] = useState<{
     podiums: number;
@@ -478,22 +479,34 @@ export default function BountySubmissions({ slug }: Props) {
             )}
 
             <TabsContent value="submissions" className="w-full px-0">
-              <div className="grid h-160 w-full grid-cols-[23rem_1fr] bg-white">
-                <SubmissionList
-                  listing={bounty}
-                  selectedFilters={selectedFilters}
-                  onFilterChange={setSelectedFilters}
-                  submissions={filteredSubmissions}
-                  setSearchText={setSearchText}
-                  type={bounty?.type}
-                  isToggled={isToggled}
-                  toggleSubmission={toggleSubmission}
-                  isAllToggled={isToggledAll}
-                  toggleAllSubmissions={toggleAllSubmissions}
-                  isMultiSelectDisabled={isMultiSelectDisabled}
-                />
+              <div className="flex w-full flex-col md:grid md:h-160 md:grid-cols-[23rem_1fr] bg-white">
+                <div className={mobileView === 'detail' ? 'hidden md:block' : 'block'}>
+                  <SubmissionList
+                    listing={bounty}
+                    selectedFilters={selectedFilters}
+                    onFilterChange={setSelectedFilters}
+                    submissions={filteredSubmissions}
+                    setSearchText={setSearchText}
+                    type={bounty?.type}
+                    isToggled={isToggled}
+                    toggleSubmission={toggleSubmission}
+                    isAllToggled={isToggledAll}
+                    toggleAllSubmissions={toggleAllSubmissions}
+                    isMultiSelectDisabled={isMultiSelectDisabled}
+                    onItemClick={() => setMobileView('detail')}
+                  />
+                </div>
 
-                <div className="h-full w-full rounded-r-xl border-t border-r border-b border-slate-200 bg-white">
+                <div className={`h-full w-full rounded-r-xl border-t border-r border-b border-slate-200 bg-white ${mobileView === 'list' ? 'hidden md:block' : 'block'}`}>
+                  {mobileView === 'detail' && (
+                    <button
+                      className="md:hidden flex items-center gap-1 px-3 py-2 text-sm font-medium text-slate-500 hover:text-slate-700"
+                      onClick={() => setMobileView('list')}
+                    >
+                      <ChevronLeft className="h-4 w-4" />
+                      Back to list
+                    </button>
+                  )}
                   {!filteredSubmissions?.length &&
                   !searchText &&
                   !isSubmissionsLoading ? (
