@@ -431,8 +431,8 @@ const DEFAULT_TRACK_DESCRIPTION =
 
 const trackDescriptions = [
   'The flagship track. Markets, resolution and settlement built on verifiable World Cup data: outcome markets, oracle tooling, on-chain proof integrations.',
-  'Create autonomous agents that ingest TxODDS’ live odds and scores, detect signals, run strategies, and execute decisions without manual input.',
   'Build fan-facing World Cup apps, games, bots, or social experiences that use TxODDS’ live match data to update instantly during games and keep fans engaged.',
+  'Create autonomous agents that ingest TxODDS’ live odds and scores, detect signals, run strategies, and execute decisions without manual input.',
 ];
 
 function getTrackDescription(index: number): string {
