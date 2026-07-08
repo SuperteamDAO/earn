@@ -1,7 +1,10 @@
 import { Logger } from 'tslog';
 
 const logger = new Logger({
-  minLevel: process.env.IS_LOCAL === 'true' ? 2 : 2,
+  // tslog levels: DEBUG=2, INFO=3. Locally surface DEBUG; in production
+  // start at INFO so debug logs (which include full request bodies) are
+  // not emitted to the log sink.
+  minLevel: process.env.IS_LOCAL === 'true' ? 2 : 3,
   prettyLogTimeZone: 'UTC',
   prettyErrorStackTemplate:
     '  • {{fileName}}\t{{method}}\n\t{{filePathWithLine}}',
