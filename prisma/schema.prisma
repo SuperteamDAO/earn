@@ -127,7 +127,6 @@ model BountiesTemplates {
   region           String           @default("Global")
   applicationType  ApplicationType  @default(fixed)
   status           status           @default(OPEN)
-  timeToComplete   String?
   token            String?
   references       Json?
   referredBy       String?
@@ -214,7 +213,6 @@ model Grants {
   maxReward              Float?
   totalPaid              Float              @default(0)
   historicalApplications Int                @default(0)
-  historicalPaid         Float              @default(0)
   link                   String?
   sponsorId              String
   pocId                  String
@@ -888,39 +886,41 @@ model PublicJoinOtp {
 }
 
 model People {
-  id                 String                   @id @default(uuid()) @db.Char(36)
-  name               String                   @db.VarChar(255)
-  email              String                   @unique @db.VarChar(255)
-  chapterId          String                   @db.Char(36)
-  type               String?                  @db.VarChar(50)
-  xUsername          String?                  @db.VarChar(100)
-  telegram           String?                  @db.VarChar(100)
-  discord            String?                  @db.VarChar(100)
-  solWallet          String?                  @db.VarChar(50)
-  city               String?                  @db.VarChar(100)
-  skills             String?                  @db.Text
-  proofOfWork        String?                  @db.Text
-  bestWorkUrl        String?                  @db.VarChar(500)
-  memberAppSignedUp  Boolean                  @default(false)
-  source             String                   @default("Legacy") @db.VarChar(50)
-  airtableRecordId   String                   @db.VarChar(50)
-  purgedAt           DateTime?
-  createdAt          DateTime                 @default(now())
-  updatedAt          DateTime                 @default(now()) @updatedAt
-  communityEarnings  CommunityEarning[]
-  jobs               Job[]
-  vcExternalGrants   VcExternalGrant[]
-  chapter            Chapter                  @relation(fields: [chapterId], references: [id])
-  user               User?                    @relation("UserToPeople")
-  accounts           Account[]
-  sessions           Session[]
-  forumTopics        ForumTopic[]
-  forumReplies       ForumReply[]
-  forumMentions      ForumTopicMention[]      @relation("ForumTopicMentionMember")
-  createdMentions    ForumTopicMention[]      @relation("ForumTopicMentionCreator")
-  shipmentOverlays   MemberShipmentOverlay[]
-  ecosystemUpdates   EcosystemProjectUpdate[] @relation("EcosystemProjectUpdateAuthor")
-  librarySubmissions LibraryResource[]        @relation("LibraryResourceSubmitter")
+  id                String                  @id @default(uuid()) @db.Char(36)
+  name              String                  @db.VarChar(255)
+  email             String                  @unique @db.VarChar(255)
+  chapterId         String                  @db.Char(36)
+  type              String?                 @db.VarChar(50)
+  xUsername         String?                 @db.VarChar(100)
+  telegram          String?                 @db.VarChar(100)
+  discord           String?                 @db.VarChar(100)
+  solWallet         String?                 @db.VarChar(50)
+  city              String?                 @db.VarChar(100)
+  skills            String?                 @db.Text
+  username          String?                 @unique @db.VarChar(40)
+  photo             String?                 @db.Text
+  bio               String?                 @db.Text
+  role              String?                 @db.VarChar(20)
+  proofOfWork       String?                 @db.Text
+  bestWorkUrl       String?                 @db.VarChar(500)
+  memberAppSignedUp Boolean                 @default(false)
+  source            String                  @default("Legacy") @db.VarChar(50)
+  airtableRecordId  String                  @db.VarChar(50)
+  purgedAt          DateTime?
+  createdAt         DateTime                @default(now())
+  updatedAt         DateTime                @default(now()) @updatedAt
+  communityEarnings CommunityEarning[]
+  jobs              Job[]
+  vcExternalGrants  VcExternalGrant[]
+  chapter           Chapter                 @relation(fields: [chapterId], references: [id])
+  user              User?                   @relation("UserToPeople")
+  accounts          Account[]
+  sessions          Session[]
+  forumTopics       ForumTopic[]
+  forumReplies      ForumReply[]
+  forumMentions     ForumTopicMention[]     @relation("ForumTopicMentionMember")
+  createdMentions   ForumTopicMention[]     @relation("ForumTopicMentionCreator")
+  shipmentOverlays  MemberShipmentOverlay[]
 
   @@unique([airtableRecordId])
   @@index([chapterId])
@@ -1233,12 +1233,6 @@ enum CommentType {
   WINNER_ANNOUNCEMENT
 }
 
-enum JobType {
-  parttime
-  fulltime
-  internship
-}
-
 enum CompensationType {
   fixed
   range
@@ -1309,7 +1303,6 @@ model ForumTopic {
   authorId             String              @db.Char(36)
   category             String?             @db.VarChar(80)
   launchDate           DateTime?
-  launchUrl            String?             @db.VarChar(500)
   resolvedAt           DateTime?
   introducedAt         DateTime?
   introducedById       String?             @db.Char(36)
@@ -1361,7 +1354,6 @@ model ForumTopicMention {
   topicId     String     @db.Char(36)
   memberId    String     @db.Char(36)
   createdById String     @db.Char(36)
-  emailSentAt DateTime?
   createdAt   DateTime   @default(now())
   topic       ForumTopic @relation(fields: [topicId], references: [id], onDelete: Cascade)
   member      People     @relation("ForumTopicMentionMember", fields: [memberId], references: [id])
@@ -1395,25 +1387,6 @@ model MemberPointBalance {
   memberId    String   @id @db.Char(36)
   totalPoints Int      @default(0)
   updatedAt   DateTime @updatedAt
-}
-
-model MemberDirectoryRank {
-  memberId      String   @id @db.Char(36)
-  directoryRank Int      @map("rank")
-  score         Float
-  shipmentCount Int      @default(0)
-  introCount    Int      @default(0)
-  totalPoints   Int      @default(0)
-  bountyWins    Int      @default(0)
-  hackathonWins Int      @default(0)
-  hasBio        Boolean  @default(false)
-  hasPhotoOrX   Boolean  @default(false)
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-
-  @@index([directoryRank])
-  @@index([score])
-  @@index([updatedAt])
 }
 
 model MemberVote {
@@ -1482,73 +1455,6 @@ model MemberBadge {
   @@index([badgeId])
 }
 
-model EcosystemProject {
-  id           String                   @id @default(uuid()) @db.Char(36)
-  slug         String                   @unique @db.VarChar(120)
-  name         String                   @db.VarChar(160)
-  website      String?                  @db.VarChar(500)
-  xUrl         String?                  @db.VarChar(500)
-  logoUrl      String?                  @db.VarChar(500)
-  heroImageUrl String?                  @db.VarChar(500)
-  category     String?                  @db.VarChar(60)
-  description  String                   @db.VarChar(240)
-  submitterId  String                   @db.Char(36)
-  status       String                   @default("pending") @db.VarChar(40)
-  approvedAt   DateTime?
-  approvedById String?                  @db.Char(36)
-  createdAt    DateTime                 @default(now())
-  updatedAt    DateTime                 @updatedAt
-  updates      EcosystemProjectUpdate[]
-
-  @@index([submitterId])
-  @@index([status, name])
-}
-
-model EcosystemProjectUpdate {
-  id          String           @id @default(uuid()) @db.Char(36)
-  projectId   String           @db.Char(36)
-  authorId    String           @db.Char(36)
-  body        String           @db.Text
-  url         String?          @db.VarChar(500)
-  helpfulAt   DateTime?
-  helpfulById String?          @db.Char(36)
-  isHidden    Boolean          @default(false)
-  createdAt   DateTime         @default(now())
-  updatedAt   DateTime         @updatedAt
-  project     EcosystemProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  author      People           @relation("EcosystemProjectUpdateAuthor", fields: [authorId], references: [id])
-
-  @@index([projectId, createdAt])
-  @@index([authorId])
-}
-
-model LibraryResource {
-  id               String    @id @default(uuid()) @db.Char(36)
-  slug             String    @unique @db.VarChar(160)
-  title            String    @db.VarChar(200)
-  description      String?   @db.Text
-  url              String    @db.VarChar(500)
-  type             String?   @db.VarChar(40)
-  category         String?   @db.VarChar(40)
-  source           String?   @db.VarChar(160)
-  topics           String?   @db.VarChar(400)
-  estimatedMinutes Int?
-  coverImageUrl    String?   @db.VarChar(500)
-  submitterId      String?   @db.Char(36)
-  submitter        People?   @relation("LibraryResourceSubmitter", fields: [submitterId], references: [id])
-  status           String    @default("pending") @db.VarChar(40)
-  approvedAt       DateTime?
-  approvedById     String?   @db.Char(36)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([submitterId])
-  @@index([status, title])
-  @@index([status, category])
-  @@index([status, type])
-}
-
 model MemberPerk {
   id                     String    @id @default(uuid()) @db.Char(36)
   title                  String    @db.VarChar(160)
@@ -1572,17 +1478,4 @@ model MemberPerk {
 
   @@index([status, sortOrder])
   @@index([expiresAt])
-}
-
-model CoworkingSpace {
-  id              String   @id @default(uuid()) @db.Char(36)
-  slug            String   @unique @db.VarChar(180)
-  name            String   @db.VarChar(180)
-  registrationUrl String?  @db.VarChar(500)
-  status          String   @default("UNKNOWN") @db.VarChar(20)
-  sortOrder       Int      @default(0)
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-
-  @@index([status, sortOrder])
 }
