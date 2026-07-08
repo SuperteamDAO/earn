@@ -187,7 +187,7 @@ export async function POST(request: NextRequest) {
           return NextResponse.json(
             {
               error:
-                'You are not eligible to apply for this grant from your current location.',
+                'You are not eligible to apply for this grant. Your current location does not match the grant\'s eligible region.',
             },
             { status: 403 },
           );

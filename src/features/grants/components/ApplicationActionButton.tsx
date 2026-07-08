@@ -55,11 +55,15 @@ export const ApplicationActionButton = ({
 
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const isUserEligibleByRegion = userRegionEligibilty({
-    region,
-    userLocation: user?.location,
-    chapters,
-  });
+  const isKYCVerified = user?.isKYCVerified === true;
+
+  const isUserEligibleByRegion =
+    isKYCVerified ||
+    userRegionEligibilty({
+      region,
+      userLocation: user?.location,
+      chapters,
+    });
 
   const regionTooltipLabel = getRegionTooltipLabel(region, false, chapters);
 
@@ -69,7 +73,7 @@ export const ApplicationActionButton = ({
     userLocation: user?.location,
     chapters,
   });
-  const isLocationCooldown = locationCooldown.inCooldown;
+  const isLocationCooldown = !isKYCVerified && locationCooldown.inCooldown;
   const isNewApplicationLocationCooldown =
     isLocationCooldown && applicationState === 'ALLOW NEW';
 

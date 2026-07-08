@@ -1,3 +1,5 @@
+import lookup from 'country-code-lookup';
+
 import { prisma } from '@/prisma';
 import { getChapterRegions } from '@/utils/chapterRegion';
 
@@ -51,6 +53,8 @@ export async function validateGrantRequest(
       isPro: true,
       location: true,
       locationUpdatedAt: true,
+      isKYCVerified: true,
+      kycCountry: true,
       peopleId: true,
       people: {
         select: {
@@ -74,17 +78,28 @@ export async function validateGrantRequest(
   }
 
   const chapterRegions = await getChapterRegions();
+
+  const hasKycRegion = user.isKYCVerified === true && !!user.kycCountry;
+  const kycCountryName = hasKycRegion
+    ? (lookup.byIso(user.kycCountry!)?.country ?? user.kycCountry!)
+    : null;
+  const effectiveLocation = kycCountryName ?? user.location ?? '';
+
   const isUserEligibleByRegion = userRegionEligibilty({
     region: grant.region,
-    userLocation: user.location || '',
+    userLocation: effectiveLocation,
     chapters: chapterRegions,
   });
 
   if (!isUserEligibleByRegion) {
-    throw new Error('Region not eligible');
+    throw new Error(
+      hasKycRegion
+        ? 'Your KYC-verified country is not eligible for this grant.'
+        : 'Your region is not eligible for this grant.',
+    );
   }
 
-  if (!options?.skipLocationCooldown) {
+  if (!options?.skipLocationCooldown && !hasKycRegion) {
     const cooldown = getLocationCooldown({
       locationUpdatedAt: user.locationUpdatedAt,
       listingRegion: grant.region,

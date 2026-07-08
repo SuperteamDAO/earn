@@ -40,6 +40,7 @@ export const userSelectOptions: UserSelect = {
   referredById: true,
   isPro: true,
   isAgent: true,
+  isKYCVerified: true,
 
   currentSponsor: {
     select: {
