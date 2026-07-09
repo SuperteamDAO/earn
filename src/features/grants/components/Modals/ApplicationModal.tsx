@@ -1267,35 +1267,32 @@ export const ApplicationModal = ({
                       {isST ? 'Outcomes' : 'Milestones'}
                     </h3>
                     <div className="flex flex-col gap-3 rounded-md border border-slate-200 bg-slate-50 p-4">
-                      {!isAgenticEngineering &&
-                        form.getValues('milestones') && (
-                          <div>
-                            <span className="font-medium text-slate-500">
-                              Goals and Milestones:
-                            </span>
-                            <div
-                              className="prose prose-sm mt-1 max-w-none"
-                              dangerouslySetInnerHTML={{
-                                __html: form.getValues('milestones')!,
-                              }}
-                            />
-                          </div>
-                        )}
-                      {!isST &&
-                        !isAgenticEngineering &&
-                        form.getValues('kpi') && (
-                          <div>
-                            <span className="font-medium text-slate-500">
-                              KPI:
-                            </span>
-                            <div
-                              className="prose prose-sm mt-1 max-w-none"
-                              dangerouslySetInnerHTML={{
-                                __html: form.getValues('kpi')!,
-                              }}
-                            />
-                          </div>
-                        )}
+                      {form.getValues('milestones') && (
+                        <div>
+                          <span className="font-medium text-slate-500">
+                            Goals and Milestones:
+                          </span>
+                          <div
+                            className="prose prose-sm mt-1 max-w-none"
+                            dangerouslySetInnerHTML={{
+                              __html: form.getValues('milestones')!,
+                            }}
+                          />
+                        </div>
+                      )}
+                      {!isST && form.getValues('kpi') && (
+                        <div>
+                          <span className="font-medium text-slate-500">
+                            KPI:
+                          </span>
+                          <div
+                            className="prose prose-sm mt-1 max-w-none"
+                            dangerouslySetInnerHTML={{
+                              __html: form.getValues('kpi')!,
+                            }}
+                          />
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
