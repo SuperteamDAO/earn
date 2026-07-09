@@ -39,10 +39,14 @@ export const RecordPaymentButton = ({
         onPaymentRecorded={onPaymentRecorded}
       />
       <Button
-        className={cn('bg-brand-purple text-sm', className)}
+        className={cn(
+          'bg-brand-purple shrink-0 px-2 text-sm sm:px-3',
+          className,
+        )}
         onClick={() => recordPaymentOnOpen()}
       >
-        Record Payment
+        <span className="sm:hidden">Pay</span>
+        <span className="hidden sm:inline">Record Payment</span>
       </Button>
     </>
   );

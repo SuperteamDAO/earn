@@ -70,9 +70,9 @@ export const SubmissionPanel = ({
                   avatar={selectedSubmission?.user?.photo || undefined}
                 />
 
-                <div>
+                <div className="min-w-0">
                   <div className="flex items-center gap-2">
-                    <p className="w-full font-medium whitespace-nowrap text-slate-900">
+                    <p className="max-w-[11rem] truncate font-medium text-slate-900 sm:max-w-none">
                       {`${selectedSubmission?.user?.firstName}'s Submission`}
                     </p>
                     {!!selectedSubmission?.agentId && (
@@ -84,13 +84,13 @@ export const SubmissionPanel = ({
                     )}
                   </div>
                   <Link
-                    className="text-brand-purple flex w-full items-center text-xs font-medium whitespace-nowrap"
+                    className="text-brand-purple flex w-full items-center text-xs font-medium"
                     href={`/earn/t/${selectedSubmission?.user?.username}`}
                   >
                     View Profile <ArrowRight className="inline-block h-3 w-3" />
                   </Link>
                 </div>
-                <div className="ml-3 self-start">
+                <div className="ml-2 self-start sm:ml-3">
                   {!isHackathonPage &&
                     selectedSubmission?.status === 'Pending' &&
                     !bounty?.isWinnersAnnounced &&
@@ -103,7 +103,7 @@ export const SubmissionPanel = ({
                     )}
                 </div>
               </div>
-              <div className="ph-no-capture flex shrink-0 items-center justify-start gap-1.5 md:gap-2 md:justify-end">
+              <div className="ph-no-capture flex w-full flex-nowrap items-center justify-start gap-1 overflow-x-auto pb-1 md:w-auto md:justify-end md:gap-2 md:overflow-visible md:pb-0 [&::-webkit-scrollbar]:hidden">
                 {!selectedSubmission?.isWinner &&
                   (bounty?.isWinnersAnnounced
                     ? selectedSubmission?.label === SubmissionLabels.Spam
@@ -120,7 +120,7 @@ export const SubmissionPanel = ({
                       <DialogTrigger asChild>
                         <Button
                           variant="outline"
-                          className="gap-1.5 border-slate-200 text-slate-500 hover:text-slate-700"
+                          className="shrink-0 gap-1.5 border-slate-200 text-slate-500 hover:text-slate-700"
                         >
                           <Pencil className="h-3.5 w-3.5" />
                           <span className="hidden sm:inline">Note</span>
@@ -151,7 +151,7 @@ export const SubmissionPanel = ({
                   !shouldHideTxLinks &&
                   paymentTxId && (
                     <Button
-                      className="mr-4 border-slate-300 text-slate-600"
+                      className="border-slate-300 text-slate-600 md:mr-4"
                       onClick={() => {
                         window.open(
                           `https://solscan.io/tx/${paymentTxId}?cluster=${process.env.NEXT_PUBLIC_PAYMENT_CLUSTER}`,
@@ -161,13 +161,14 @@ export const SubmissionPanel = ({
                       size="default"
                       variant="outline"
                     >
-                      View Payment Tx
+                      <span className="sm:hidden">Payment</span>
+                      <span className="hidden sm:inline">View Payment Tx</span>
                       <ExternalLink className="ml-2 h-4 w-4" />
                     </Button>
-                  )}
+                )}
               </div>
             </div>
-            <div className="flex items-center gap-5 px-5 py-2">
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-2 px-4 py-2 md:px-5">
               {selectedSubmission?.user?.email && (
                 <CopyButton
                   text={selectedSubmission.user.email}

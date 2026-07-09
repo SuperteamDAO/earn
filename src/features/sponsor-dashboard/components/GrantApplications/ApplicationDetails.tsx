@@ -189,9 +189,9 @@ export const ApplicationDetails = ({
                   avatar={selectedApplication?.user?.photo || undefined}
                 />
 
-                <div>
+                <div className="min-w-0">
                   <span className="flex gap-2">
-                    <p className="w-fit text-base font-medium whitespace-nowrap text-slate-900">
+                    <p className="max-w-[10.5rem] truncate text-base font-medium text-slate-900 sm:max-w-none">
                       {`${selectedApplication?.user?.firstName}`}
                     </p>
                     {chapter?.icons && (
@@ -206,7 +206,7 @@ export const ApplicationDetails = ({
                   </span>
                   <Link
                     href={`/earn/t/${selectedApplication?.user?.username}`}
-                    className="text-brand-purple flex w-full items-center gap-1 text-xs font-medium whitespace-nowrap"
+                    className="text-brand-purple flex w-full items-center gap-1 text-xs font-medium"
                     rel="noopener noreferrer"
                     target="_blank"
                   >
@@ -218,7 +218,7 @@ export const ApplicationDetails = ({
                   {isPending && <SelectLabel grantSlug={grant?.slug!} />}
                 </div>
               </div>
-              <div className="ph-no-capture flex shrink-0 items-center justify-start gap-1.5 md:gap-2 md:justify-end">
+              <div className="ph-no-capture flex w-full flex-nowrap items-center justify-start gap-1 overflow-x-auto pb-1 md:w-auto md:justify-end md:gap-2 md:overflow-visible md:pb-0 [&::-webkit-scrollbar]:hidden">
                 {(isPending || selectedApplication?.label === 'Spam') && (
                   <SpamButton
                     grantSlug={grant?.slug!}
@@ -230,7 +230,7 @@ export const ApplicationDetails = ({
                     <DialogTrigger asChild>
                       <Button
                         variant="outline"
-                        className="gap-1.5 border-slate-200 text-slate-500 hover:text-slate-700"
+                        className="shrink-0 gap-1.5 border-slate-200 text-slate-500 hover:text-slate-700"
                       >
                         <Pencil className="h-3.5 w-3.5" />
                         <span className="hidden sm:inline">Note</span>
@@ -250,7 +250,7 @@ export const ApplicationDetails = ({
                 {isPending && (
                   <>
                     <Button
-                      className="rounded-lg border border-emerald-500 bg-emerald-50 text-emerald-600 hover:bg-emerald-100 hover:text-emerald-600 disabled:cursor-not-allowed disabled:opacity-50"
+                      className="shrink-0 rounded-lg border border-emerald-500 bg-emerald-50 px-2.5 text-[13px] text-emerald-600 hover:bg-emerald-100 hover:text-emerald-600 disabled:cursor-not-allowed disabled:opacity-50 sm:px-3 sm:text-sm"
                       disabled={isMultiSelectOn}
                       onClick={approveOnOpen}
                     >
@@ -261,7 +261,7 @@ export const ApplicationDetails = ({
                     </Button>
 
                     <Button
-                      className="rounded-lg border border-red-500 bg-red-50 text-red-600 hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-50"
+                      className="shrink-0 rounded-lg border border-red-500 bg-red-50 px-2.5 text-[13px] text-red-600 hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-50 sm:px-3 sm:text-sm"
                       disabled={isMultiSelectOn}
                       onClick={rejectedOnOpen}
                     >
@@ -274,7 +274,7 @@ export const ApplicationDetails = ({
                 )}
                 {isCompleted && (
                   <Button
-                    className="rounded-lg border border-blue-500 bg-blue-50 text-blue-600 hover:bg-blue-100 disabled:opacity-100"
+                    className="shrink-0 rounded-lg border border-blue-500 bg-blue-50 px-2.5 text-[13px] text-blue-600 hover:bg-blue-100 disabled:opacity-100 sm:px-3 sm:text-sm"
                     disabled={true}
                   >
                     <div className="flex items-center">
@@ -307,7 +307,7 @@ export const ApplicationDetails = ({
                           />
                         )}
                       <Button
-                        className="rounded-lg border border-emerald-500 bg-emerald-50 text-emerald-600 hover:bg-emerald-100 disabled:cursor-not-allowed disabled:opacity-100"
+                        className="shrink-0 rounded-lg border border-emerald-500 bg-emerald-50 px-2.5 text-[13px] text-emerald-600 hover:bg-emerald-100 disabled:cursor-not-allowed disabled:opacity-100 sm:px-3 sm:text-sm"
                         disabled={true}
                       >
                         <div className="rounded-full bg-emerald-600 p-0.5">
@@ -320,7 +320,7 @@ export const ApplicationDetails = ({
                 {isRejected && (
                   <>
                     <Button
-                      className="rounded-lg border border-red-500 bg-red-50 text-red-600 hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-100"
+                      className="shrink-0 rounded-lg border border-red-500 bg-red-50 px-2.5 text-[13px] text-red-600 hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-100 sm:px-3 sm:text-sm"
                       disabled={true}
                     >
                       <div className="flex items-center">

@@ -82,12 +82,12 @@ export const SelectWinner = ({
     <>
       <div>
         {isProject ? (
-          <div className="ph-no-capture flex items-center justify-end gap-2">
+          <div className="ph-no-capture flex w-full flex-nowrap items-center justify-start gap-2 md:w-auto md:justify-end">
             {isPending && (
               <>
                 <Button
                   variant="destructive"
-                  className="rounded-lg border border-red-500 bg-red-50 text-red-600 hover:bg-red-100 disabled:opacity-50"
+                  className="shrink-0 rounded-lg border border-red-500 bg-red-50 px-2.5 text-[13px] text-red-600 hover:bg-red-100 disabled:opacity-50 sm:px-3 sm:text-sm"
                   disabled={isMultiSelectOn}
                   onClick={rejectedOnOpen}
                 >
@@ -99,12 +99,13 @@ export const SelectWinner = ({
                 <Button
                   disabled={isMultiSelectOn}
                   onClick={onWinnersAnnounceOpen}
-                  className="rounded-lg border border-emerald-500 bg-emerald-50 text-emerald-600 hover:bg-emerald-100 disabled:opacity-50"
+                  className="shrink-0 rounded-lg border border-emerald-500 bg-emerald-50 px-2.5 text-[13px] text-emerald-600 hover:bg-emerald-100 disabled:opacity-50 sm:px-3 sm:text-sm"
                 >
                   <div className="rounded-full bg-emerald-600 p-0.5">
                     <Check className="size-1 text-white" />
                   </div>
-                  Announce As Winner
+                  <span className="sm:hidden">Winner</span>
+                  <span className="hidden sm:inline">Announce As Winner</span>
                 </Button>
               </>
             )}
@@ -129,7 +130,8 @@ export const SelectWinner = ({
                           <Trophy className="size-4 text-emerald-600 transition-all duration-300 ease-out" />
                         </div>
                         <span className="text-sm font-semibold text-emerald-600 capitalize">
-                          Select Winner
+                          <span className="sm:hidden">Winner</span>
+                          <span className="hidden sm:inline">Select Winner</span>
                         </span>
                       </div>
                       <ChevronDown className="size-4 text-emerald-600" />

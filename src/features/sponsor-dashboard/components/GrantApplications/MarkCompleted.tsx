@@ -27,7 +27,7 @@ export function MarkCompleted({
     return (
       <Button
         variant="ghost"
-        className="pointer-events-none border-slate-300 text-slate-500"
+        className="pointer-events-none shrink-0 border-slate-300 px-2 text-sm text-slate-500 sm:px-3"
       >
         <Check className="mr-2 h-4 w-4" />
         Completed
@@ -44,15 +44,14 @@ export function MarkCompleted({
         onMarkCompleted={onMarkCompleted}
       />
       <Button
-        className="rounded-lg border border-blue-500 bg-blue-50 px-4 text-blue-600 hover:bg-blue-100"
+        className="shrink-0 rounded-lg border border-blue-500 bg-blue-50 px-2 text-[13px] text-blue-600 hover:bg-blue-100 sm:px-3 sm:text-sm"
         onClick={markAsCompletedOnOpen}
       >
-        <>
-          <div className="rounded-full bg-blue-600 p-0.5">
-            <Check className="size-2 text-white" />
-          </div>
-          <span>Mark as Completed</span>
-        </>
+        <div className="rounded-full bg-blue-600 p-0.5">
+          <Check className="size-2 text-white" />
+        </div>
+        <span className="sm:hidden">Complete</span>
+        <span className="hidden sm:inline">Mark as Completed</span>
       </Button>
     </>
   );
