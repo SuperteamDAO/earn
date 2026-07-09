@@ -37,6 +37,7 @@ import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';
 
 import { usePopupAuth } from '@/features/auth/hooks/use-popup-auth';
+import { sanitizeGrantApplicationHtml } from '@/features/grants/utils/sanitizeGrantApplicationHtml';
 import { SubmissionTerms } from '@/features/listings/components/Submission/SubmissionTerms';
 import { SocialInput } from '@/features/social/components/SocialInput';
 import { XVerificationModal } from '@/features/social/components/XVerificationModal';
@@ -1159,7 +1160,9 @@ export const ApplicationModal = ({
                         <div
                           className="prose prose-sm mt-1 max-w-none"
                           dangerouslySetInnerHTML={{
-                            __html: form.getValues('projectDetails'),
+                            __html: sanitizeGrantApplicationHtml(
+                              form.getValues('projectDetails') || '',
+                            ),
                           }}
                         />
                       </div>
@@ -1181,7 +1184,9 @@ export const ApplicationModal = ({
                           <div
                             className="prose prose-sm mt-1 max-w-none"
                             dangerouslySetInnerHTML={{
-                              __html: form.getValues('proofOfWork')!,
+                              __html: sanitizeGrantApplicationHtml(
+                                form.getValues('proofOfWork') || '',
+                              ),
                             }}
                           />
                         </div>
@@ -1224,21 +1229,15 @@ export const ApplicationModal = ({
                           <div
                             className="prose prose-sm mt-1 max-w-none"
                             dangerouslySetInnerHTML={{
-                              __html: form.getValues('expenseBreakdown')!,
+                              __html: sanitizeGrantApplicationHtml(
+                                form.getValues('expenseBreakdown') || '',
+                              ),
                             }}
                           />
                         </div>
                       )}
-                    </div>
-                  </div>
-
-                  {(questions?.length ?? 0) > 0 && (
-                    <div>
-                      <h3 className="mb-2 font-semibold text-slate-800">
-                        Custom Questions
-                      </h3>
-                      <div className="flex flex-col gap-4 rounded-md border border-slate-200 bg-slate-50 p-4">
-                        {questions?.map((q, i) => (
+                      {(questions?.length ?? 0) > 0 &&
+                        questions?.map((q, i) => (
                           <div key={i}>
                             <span className="font-medium text-slate-500">
                               {q.question}
@@ -1251,16 +1250,16 @@ export const ApplicationModal = ({
                               <div
                                 className="prose prose-sm mt-1 max-w-none"
                                 dangerouslySetInnerHTML={{
-                                  __html:
+                                  __html: sanitizeGrantApplicationHtml(
                                     form.getValues(`answers.${i}.answer`) || '',
+                                  ),
                                 }}
                               />
                             )}
                           </div>
                         ))}
-                      </div>
                     </div>
-                  )}
+                  </div>
 
                   <div>
                     <h3 className="mb-2 font-semibold text-slate-800">
@@ -1270,12 +1269,16 @@ export const ApplicationModal = ({
                       {form.getValues('milestones') && (
                         <div>
                           <span className="font-medium text-slate-500">
-                            Goals and Milestones:
+                            {isST
+                              ? 'Expected Outcomes:'
+                              : 'Goals and Milestones:'}
                           </span>
                           <div
                             className="prose prose-sm mt-1 max-w-none"
                             dangerouslySetInnerHTML={{
-                              __html: form.getValues('milestones')!,
+                              __html: sanitizeGrantApplicationHtml(
+                                form.getValues('milestones') || '',
+                              ),
                             }}
                           />
                         </div>
@@ -1288,7 +1291,9 @@ export const ApplicationModal = ({
                           <div
                             className="prose prose-sm mt-1 max-w-none"
                             dangerouslySetInnerHTML={{
-                              __html: form.getValues('kpi')!,
+                              __html: sanitizeGrantApplicationHtml(
+                                form.getValues('kpi') || '',
+                              ),
                             }}
                           />
                         </div>
