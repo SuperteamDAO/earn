@@ -210,7 +210,7 @@ export default function AiReviewModal({ applications, grant }: Props) {
           <span className="text-base font-medium">AI Review Completed</span>
         </div>
         <div className="text-sm text-slate-500">
-          <p>{`We've added review notes and labelled the submissions as `}</p>
+          <p>{`We've added review notes and labelled the applications as `}</p>
           <span className="mt-1">
             <StatusPill
               className="w-fit text-[10px]"
