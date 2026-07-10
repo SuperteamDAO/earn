@@ -68,28 +68,25 @@ export const ListingTabs = ({
         </ListingTabTrigger>
       ))}
       {type === 'home' &&
-        HACKATHONS.map(
-          (hackathon) =>
-            hackathon.label !== 'Frontier' && (
-              <ListingTabTrigger
-                isPro={isPro}
-                key={hackathon.slug}
-                isActive={activeTab === hackathon.slug}
-                onClick={() =>
-                  handleTabChange(
-                    hackathon.slug as ListingTab,
-                    `${hackathon.slug}_navpill`,
-                  )
-                }
-              >
-                <ExternalImage
-                  src={hackathon.logo}
-                  alt={hackathon.label}
-                  className="my-[0.1875rem] -ml-1 h-3 object-contain"
-                />
-              </ListingTabTrigger>
-            ),
-        )}
+        HACKATHONS.map((hackathon) => (
+          <ListingTabTrigger
+            isPro={isPro}
+            key={hackathon.slug}
+            isActive={activeTab === hackathon.slug}
+            onClick={() =>
+              handleTabChange(
+                hackathon.slug as ListingTab,
+                `${hackathon.slug}_navpill`,
+              )
+            }
+          >
+            <ExternalImage
+              src={hackathon.logo}
+              alt={hackathon.label}
+              className="my-[0.10rem] h-4 scale-130 object-contain"
+            />
+          </ListingTabTrigger>
+        ))}
     </div>
   );
 };

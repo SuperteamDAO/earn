@@ -14,6 +14,10 @@ import {
   createListingRefinements,
 } from '../types/schema';
 import { checkSlug } from './getValidSlug';
+import {
+  getValidListingRegion,
+  isChapterSponsorEditingRegionToGlobal,
+} from './validateListingRegion';
 
 interface ListingValidatorParams {
   listing: ListingWithSponsor;
@@ -63,6 +67,29 @@ export const validateListing = async ({
     });
     const superValidator = innerSchema.superRefine(async (data, ctx) => {
       await createListingRefinements(data, ctx, hackathon ? [hackathon] : []);
+      const validRegion = await getValidListingRegion(data.region);
+      if (!validRegion) {
+        ctx.addIssue({
+          code: 'custom',
+          message: 'Invalid region selected',
+          path: ['region'],
+        });
+      } else if (
+        isEditing &&
+        isChapterSponsorEditingRegionToGlobal({
+          currentRegion: listing.region,
+          nextRegion: validRegion,
+          hasChapter: !!sponsor.chapter,
+        })
+      ) {
+        ctx.addIssue({
+          code: 'custom',
+          message: 'Chapter sponsors cannot edit a listing region to Global',
+          path: ['region'],
+        });
+      } else {
+        data.region = validRegion;
+      }
       await backendListingRefinements(data, ctx, checkSlug, async (token) =>
         Boolean(await getTokenBySymbol(token)),
       );

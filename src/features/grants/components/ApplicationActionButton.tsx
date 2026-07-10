@@ -39,8 +39,17 @@ export const ApplicationActionButton = ({
   const { authenticated } = usePrivy();
   const isAuthenticated = authenticated;
 
-  const { region, id, link, isNative, isPublished, isPro, isST, sponsorId } =
-    grant;
+  const {
+    region,
+    id,
+    link,
+    isNative,
+    isPublished,
+    isPaused,
+    isPro,
+    isST,
+    sponsorId,
+  } = grant;
   const isUserPro = user?.isPro;
   const isUserEligibleST = isUserEligibleForST(user);
 
@@ -84,6 +93,9 @@ export const ApplicationActionButton = ({
 
   const cooldownTooltipContent = getCooldownTooltipContent() || undefined;
 
+  const isPausedForNewApplications =
+    Boolean(isPaused) && applicationState === 'ALLOW NEW';
+
   const isGrantSponsor = user?.currentSponsorId === sponsorId;
   const isProRestricted = isST
     ? !isUserEligibleST && !isGrantSponsor && applicationState === 'ALLOW NEW'
@@ -97,12 +109,16 @@ export const ApplicationActionButton = ({
     buttonConfig.isDisabled ||
     Boolean(
       !isPublished ||
+      isPausedForNewApplications ||
       (user?.id && user?.isTalentFilled && !isUserEligibleByRegion) ||
       (user?.id && user?.isTalentFilled && isNewApplicationLocationCooldown) ||
       isNotEligibleForPro,
     );
 
   const getButtonText = () => {
+    if (isPausedForNewApplications) {
+      return 'Applications Paused';
+    }
     if (isNewApplicationLocationCooldown) {
       return 'Ineligible';
     }
@@ -116,6 +132,9 @@ export const ApplicationActionButton = ({
   };
 
   const getButtonBg = () => {
+    if (isPausedForNewApplications) {
+      return 'bg-gray-500';
+    }
     if (isNewApplicationLocationCooldown) {
       return 'bg-brand-purple-400';
     }
@@ -145,7 +164,10 @@ export const ApplicationActionButton = ({
   };
 
   const grantCreditConditions =
-    user && applicationState === 'ALLOW NEW' && !isUserApplicationLoading;
+    user &&
+    applicationState === 'ALLOW NEW' &&
+    !isUserApplicationLoading &&
+    !isPaused;
 
   return (
     <>

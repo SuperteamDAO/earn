@@ -109,7 +109,7 @@ const getIpv4FromMappedIpv6 = (address: bigint) => {
   return Number(address & 0xffffffffn);
 };
 
-export const isPrivateIp = (hostname: string) => {
+const isPrivateIp = (hostname: string) => {
   const address = stripIpv6Brackets(hostname);
   const ipVersion = isIP(address);
 
@@ -139,7 +139,7 @@ export const isPrivateIp = (hostname: string) => {
   return false;
 };
 
-export const isPrivateHost = (hostname: string) => {
+const isPrivateHost = (hostname: string) => {
   const normalizedHostname = hostname.toLowerCase();
   return (
     normalizedHostname === 'localhost' ||
@@ -148,7 +148,7 @@ export const isPrivateHost = (hostname: string) => {
   );
 };
 
-export const hasPrivateResolvedAddress = async (hostname: string) => {
+const hasPrivateResolvedAddress = async (hostname: string) => {
   if (isIP(stripIpv6Brackets(hostname))) {
     return isPrivateIp(hostname);
   }

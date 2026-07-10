@@ -7,6 +7,10 @@ import { safeStringify } from '@/utils/safeStringify';
 import { queueAgent } from '@/features/agents/utils/queueAgent';
 import { type NextApiRequestWithUser } from '@/features/auth/types';
 import { withAuth } from '@/features/auth/utils/withAuth';
+import {
+  sanitizeGrantApplicationAnswers,
+  sanitizeGrantApplicationHtml,
+} from '@/features/grants/utils/sanitizeGrantApplicationHtml';
 import { submissionSchema } from '@/features/listings/utils/submissionFormSchema';
 import { validateSubmissionRequest } from '@/features/listings/utils/validateSubmissionRequest';
 
@@ -69,8 +73,9 @@ export async function updateSubmission(
   const formattedData = {
     link: validatedData.link || '',
     tweet: validatedData.tweet || '',
-    otherInfo: validatedData.otherInfo || '',
-    eligibilityAnswers: validatedData.eligibilityAnswers || [],
+    otherInfo: sanitizeGrantApplicationHtml(validatedData.otherInfo),
+    eligibilityAnswers:
+      sanitizeGrantApplicationAnswers(validatedData.eligibilityAnswers) || [],
     ask: validatedData.ask || 0,
     telegram: submissionTelegram,
   };

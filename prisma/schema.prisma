@@ -105,6 +105,7 @@ model Bounties {
   @@index([isPublished, isActive, isArchived, isPrivate, hackathonprize, type])
   @@index([region, type, isPublished, isActive])
   @@index([deadline, isWinnersAnnounced, type])
+  @@index([isWinnersAnnounced, isPrivate, type])
 }
 
 model BountiesTemplates {
@@ -126,7 +127,6 @@ model BountiesTemplates {
   region           String           @default("Global")
   applicationType  ApplicationType  @default(fixed)
   status           status           @default(OPEN)
-  timeToComplete   String?
   token            String?
   references       Json?
   referredBy       String?
@@ -214,7 +214,6 @@ model Grants {
   maxReward              Float?
   totalPaid              Float              @default(0)
   historicalApplications Int                @default(0)
-  historicalPaid         Float              @default(0)
   link                   String?
   sponsorId              String
   pocId                  String
@@ -222,6 +221,7 @@ model Grants {
   isFeatured             Boolean            @default(false)
   isActive               Boolean            @default(true)
   isArchived             Boolean            @default(false)
+  isPaused               Boolean            @default(false)
   createdAt              DateTime           @default(now())
   updatedAt              DateTime           @updatedAt
   skills                 Json?
@@ -297,7 +297,7 @@ model GrantApplication {
   likeCount           Int                    @default(0)
   Comments            Comment[]
   decidedBy           String?
-  notes               String?                @db.VarChar(1000)
+  notes               String?                @db.Text
   ai                  Json?
   GrantTranche        GrantTranche[]
   CreditLedger        CreditLedger[]
@@ -387,6 +387,7 @@ model Submission {
   @@index([listingId, isWinner, isActive, isArchived])
   @@index([userId, listingId, createdAt])
   @@index([userId, isWinner])
+  @@index([userId, isWinner, isActive, isArchived])
   @@index([createdAt(sort: Desc)])
   @@index([likeCount(sort: Desc), createdAt(sort: Desc)])
   @@index([agentId])
@@ -886,31 +887,41 @@ model PublicJoinOtp {
 }
 
 model People {
-  id                String             @id @default(uuid()) @db.Char(36)
-  name              String             @db.VarChar(255)
-  email             String             @unique @db.VarChar(255)
-  chapterId         String             @db.Char(36)
-  type              String?            @db.VarChar(50)
-  xUsername         String?            @db.VarChar(100)
-  telegram          String?            @db.VarChar(100)
-  discord           String?            @db.VarChar(100)
-  solWallet         String?            @db.VarChar(50)
-  city              String?            @db.VarChar(100)
-  skills            String?            @db.Text
-  proofOfWork       String?            @db.Text
-  bestWorkUrl       String?            @db.VarChar(500)
-  source            String             @default("Legacy") @db.VarChar(50)
-  airtableRecordId  String             @db.VarChar(50)
+  id                String                  @id @default(uuid()) @db.Char(36)
+  name              String                  @db.VarChar(255)
+  email             String                  @unique @db.VarChar(255)
+  chapterId         String                  @db.Char(36)
+  type              String?                 @db.VarChar(50)
+  xUsername         String?                 @db.VarChar(100)
+  telegram          String?                 @db.VarChar(100)
+  discord           String?                 @db.VarChar(100)
+  solWallet         String?                 @db.VarChar(50)
+  city              String?                 @db.VarChar(100)
+  skills            String?                 @db.Text
+  username          String?                 @unique @db.VarChar(40)
+  photo             String?                 @db.Text
+  bio               String?                 @db.Text
+  role              String?                 @db.VarChar(20)
+  proofOfWork       String?                 @db.Text
+  bestWorkUrl       String?                 @db.VarChar(500)
+  memberAppSignedUp Boolean                 @default(false)
+  source            String                  @default("Legacy") @db.VarChar(50)
+  airtableRecordId  String                  @db.VarChar(50)
   purgedAt          DateTime?
-  createdAt         DateTime           @default(now())
-  updatedAt         DateTime           @default(now()) @updatedAt
+  createdAt         DateTime                @default(now())
+  updatedAt         DateTime                @default(now()) @updatedAt
   communityEarnings CommunityEarning[]
   jobs              Job[]
   vcExternalGrants  VcExternalGrant[]
-  chapter           Chapter            @relation(fields: [chapterId], references: [id])
-  user              User?              @relation("UserToPeople")
+  chapter           Chapter                 @relation(fields: [chapterId], references: [id])
+  user              User?                   @relation("UserToPeople")
   accounts          Account[]
   sessions          Session[]
+  forumTopics       ForumTopic[]
+  forumReplies      ForumReply[]
+  forumMentions     ForumTopicMention[]     @relation("ForumTopicMentionMember")
+  createdMentions   ForumTopicMention[]     @relation("ForumTopicMentionCreator")
+  shipmentOverlays  MemberShipmentOverlay[]
 
   @@unique([airtableRecordId])
   @@index([chapterId])
@@ -998,6 +1009,20 @@ model LumaEventReview {
   chapter          Chapter  @relation(fields: [superteamId], references: [id])
 }
 
+model InstagrantReviewAssessment {
+  id                 String   @id @default(uuid()) @db.Char(36)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+  grantApplicationId String   @db.VarChar(191)
+  reviewerPeopleId   String   @db.Char(36)
+  score              Int?
+  notes              String?  @db.Text
+
+  @@unique([grantApplicationId, reviewerPeopleId])
+  @@index([reviewerPeopleId])
+  @@index([grantApplicationId])
+}
+
 model StatsSlackMessage {
   id        String   @id @default(uuid()) @db.Char(36)
   messageTs String   @db.VarChar(50)
@@ -1076,6 +1101,7 @@ model LegacyGdpEarning {
   earner            String?  @db.Text
   memberEarner      String?  @db.Text
   allEarners        String?  @db.Text
+  earners           Json?
   earnApplicationId String?  @db.VarChar(100)
   earnBountyId      String?  @db.VarChar(100)
   createdAt         DateTime @default(now())
@@ -1208,12 +1234,6 @@ enum CommentType {
   WINNER_ANNOUNCEMENT
 }
 
-enum JobType {
-  parttime
-  fulltime
-  internship
-}
-
 enum CompensationType {
   fixed
   range
@@ -1251,4 +1271,212 @@ enum GrantTrancheStatus {
   Approved
   Paid
   Rejected
+}
+
+model TranslationCache {
+  sourceHash String   @db.Char(40)
+  targetLang String   @db.VarChar(8)
+  sourceLang String   @db.VarChar(8)
+  text       String   @db.Text
+  createdAt  DateTime @default(now())
+
+  @@id([sourceHash, targetLang])
+  @@index([createdAt])
+}
+
+model Feedback {
+  id         String   @id @default(uuid()) @db.Char(36)
+  memberId   String?  @db.Char(36)
+  pathname   String   @db.VarChar(500)
+  message    String   @db.Text
+  screenshot String?  @db.MediumText
+  userAgent  String?  @db.VarChar(500)
+  createdAt  DateTime @default(now())
+
+  @@index([memberId, createdAt])
+  @@index([createdAt])
+}
+
+model ForumTopic {
+  id                   String              @id @default(uuid()) @db.Char(36)
+  title                String              @db.VarChar(255)
+  body                 String              @db.Text
+  authorId             String              @db.Char(36)
+  category             String?             @db.VarChar(80)
+  launchDate           DateTime?
+  resolvedAt           DateTime?
+  introducedAt         DateTime?
+  introducedById       String?             @db.Char(36)
+  introducedExternally Boolean             @default(false)
+  acceptedReplyId      String?             @db.Char(36)
+  amaHostName          String?             @db.VarChar(120)
+  amaHostXHandle       String?             @db.VarChar(40)
+  amaHostPhotoUrl      String?             @db.VarChar(500)
+  amaScheduledAt       DateTime?
+  amaVideoUrl          String?             @db.VarChar(500)
+  isPinned             Boolean             @default(false)
+  isHidden             Boolean             @default(false)
+  createdAt            DateTime            @default(now())
+  updatedAt            DateTime            @updatedAt
+  author               People              @relation(fields: [authorId], references: [id])
+  replies              ForumReply[]
+  mentions             ForumTopicMention[]
+
+  @@index([authorId])
+  @@index([category])
+  @@index([acceptedReplyId])
+  @@index([isHidden, isPinned, updatedAt])
+  @@index([category, launchDate])
+  @@index([category, resolvedAt])
+  @@index([category, introducedAt])
+  @@index([createdAt])
+}
+
+model ForumReply {
+  id              String     @id @default(uuid()) @db.Char(36)
+  topicId         String     @db.Char(36)
+  authorId        String     @db.Char(36)
+  body            String     @db.Text
+  isHidden        Boolean    @default(false)
+  amaAnsweredAt   DateTime?
+  amaAnsweredById String?    @db.Char(36)
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+  topic           ForumTopic @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  author          People     @relation(fields: [authorId], references: [id])
+
+  @@index([topicId, createdAt])
+  @@index([topicId, amaAnsweredAt])
+  @@index([authorId])
+}
+
+model ForumTopicMention {
+  id          String     @id @default(uuid()) @db.Char(36)
+  topicId     String     @db.Char(36)
+  memberId    String     @db.Char(36)
+  createdById String     @db.Char(36)
+  createdAt   DateTime   @default(now())
+  topic       ForumTopic @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  member      People     @relation("ForumTopicMentionMember", fields: [memberId], references: [id])
+  createdBy   People     @relation("ForumTopicMentionCreator", fields: [createdById], references: [id])
+
+  @@unique([topicId, memberId])
+  @@index([memberId, createdAt])
+  @@index([createdById])
+}
+
+model MemberPointEvent {
+  id             String   @id @default(uuid()) @db.Char(36)
+  memberId       String   @db.Char(36)
+  actorId        String?  @db.Char(36)
+  action         String   @db.VarChar(80)
+  points         Int
+  sourceType     String   @db.VarChar(80)
+  sourceId       String?  @db.VarChar(191)
+  reason         String   @db.VarChar(255)
+  idempotencyKey String   @unique @db.VarChar(191)
+  metadata       Json?
+  createdAt      DateTime @default(now())
+
+  @@index([memberId, createdAt])
+  @@index([actorId])
+  @@index([sourceType, sourceId])
+  @@index([action])
+}
+
+model MemberPointBalance {
+  memberId    String   @id @db.Char(36)
+  totalPoints Int      @default(0)
+  updatedAt   DateTime @updatedAt
+}
+
+model MemberVote {
+  id         String   @id @default(uuid()) @db.Char(36)
+  voterId    String   @db.Char(36)
+  targetType String   @db.VarChar(80)
+  targetId   String   @db.VarChar(191)
+  value      Int      @default(1)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([voterId, targetType, targetId])
+  @@index([targetType, targetId])
+  @@index([voterId])
+}
+
+model MemberShipmentOverlay {
+  id          String    @id @default(uuid()) @db.Char(36)
+  memberId    String    @db.Char(36)
+  shipmentKey String    @db.VarChar(191)
+  sourceType  String    @db.VarChar(40)
+  title       String?   @db.VarChar(180)
+  description String?   @db.VarChar(500)
+  href        String?   @db.VarChar(500)
+  imageUrl    String?   @db.VarChar(500)
+  shippedAt   DateTime?
+  isHidden    Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  member      People    @relation(fields: [memberId], references: [id], onDelete: Cascade)
+
+  @@unique([memberId, shipmentKey])
+  @@index([memberId, isHidden, shippedAt])
+  @@index([sourceType, shipmentKey])
+}
+
+model Badge {
+  id          String        @id @default(uuid()) @db.Char(36)
+  slug        String        @unique @db.VarChar(80)
+  name        String        @db.VarChar(120)
+  description String?       @db.VarChar(255)
+  kind        String        @default("system") @db.VarChar(40)
+  isActive    Boolean       @default(true)
+  sortOrder   Int           @default(0)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  members     MemberBadge[]
+}
+
+model MemberBadge {
+  id           String    @id @default(uuid()) @db.Char(36)
+  memberId     String    @db.Char(36)
+  badgeId      String    @db.Char(36)
+  assignedById String?   @db.Char(36)
+  sourceType   String?   @db.VarChar(80)
+  sourceId     String?   @db.VarChar(191)
+  reason       String?   @db.VarChar(255)
+  assignedAt   DateTime  @default(now())
+  removedAt    DateTime?
+  removedById  String?   @db.Char(36)
+  removeReason String?   @db.VarChar(255)
+  badge        Badge     @relation(fields: [badgeId], references: [id])
+
+  @@unique([memberId, badgeId])
+  @@index([memberId])
+  @@index([badgeId])
+}
+
+model MemberPerk {
+  id                     String    @id @default(uuid()) @db.Char(36)
+  title                  String    @db.VarChar(160)
+  slug                   String    @unique @db.VarChar(180)
+  sponsorName            String    @db.VarChar(120)
+  description            String    @db.Text
+  category               String    @default("tools") @db.VarChar(80)
+  logoUrl                String?   @db.VarChar(500)
+  status                 String    @default("DRAFT") @db.VarChar(20)
+  maxValue               String?   @db.VarChar(80)
+  redemptionType         String    @default("IDENTITY") @db.VarChar(20)
+  redemptionCode         String?   @db.VarChar(255)
+  redemptionInstructions String?   @db.Text
+  identityType           String?   @db.VarChar(20)
+  redirectUrl            String?   @db.VarChar(500)
+  startsAt               DateTime?
+  expiresAt              DateTime?
+  sortOrder              Int       @default(0)
+  createdAt              DateTime  @default(now())
+  updatedAt              DateTime  @updatedAt
+
+  @@index([status, sortOrder])
+  @@index([expiresAt])
 }

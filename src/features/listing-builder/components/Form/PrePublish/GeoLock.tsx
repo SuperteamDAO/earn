@@ -32,6 +32,7 @@ export function GeoLock() {
   );
   const fallbackRegion = officialSuperteamRegion || 'Global';
   const isRegionLocked = !!officialSuperteamRegion && !isEditing;
+  const canSelectGlobal = !officialSuperteamRegion || !isEditing;
   const lockTooltip =
     'Contact the global team if you want to add a global listing.';
   const normalizedRegion = region?.trim();
@@ -90,7 +91,7 @@ export function GeoLock() {
                 >
                   <RegionCombobox
                     superteams
-                    global
+                    global={canSelectGlobal}
                     disabled={isRegionLocked}
                     value={field.value}
                     className={cn(
@@ -98,6 +99,7 @@ export function GeoLock() {
                     )}
                     onChange={(e) => {
                       if (isRegionLocked) return;
+                      if (!canSelectGlobal && e === 'Global') return;
                       field.onChange(e);
                       form.clearErrors('region');
                       form.saveDraft();

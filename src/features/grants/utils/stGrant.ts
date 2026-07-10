@@ -1,7 +1,5 @@
 import { isEligiblePeopleType } from '@/features/membership/utils/peopleEligibility';
 
-import type { Grant } from '../types';
-
 type ApplicationCopy = {
   title: string;
   subtitle: string;
@@ -126,8 +124,6 @@ type TrancheCopy = {
 
 export const LUMA_PREFIX = 'https://lu.ma/';
 export const LUMA_LABEL = 'lu.ma/';
-export const COLOSSEUM_ARENA_PREFIX = 'https://arena.colosseum.org/';
-export const COLOSSEUM_ARENA_LABEL = 'arena.colosseum.org/';
 export const GITHUB_REPO_PREFIX = 'https://github.com/';
 export const GITHUB_REPO_LABEL = 'github.com/';
 export const AGENTIC_ENGINEERING_FIXED_ASK = 200;
@@ -209,21 +205,6 @@ function extractHostedPath(
   }
 }
 
-export function extractArenaColosseumPath(input: string): string | null {
-  return extractHostedPath(input, {
-    prefix: COLOSSEUM_ARENA_PREFIX,
-    hosts: ['arena.colosseum.org'],
-  });
-}
-
-export function getArenaColosseumDisplayValue(value: string): string {
-  if (!value) return '';
-  if (value.startsWith(COLOSSEUM_ARENA_PREFIX)) {
-    return value.slice(COLOSSEUM_ARENA_PREFIX.length).replace(/^\/+/, '');
-  }
-  return value.replace(/^\/+/, '');
-}
-
 export function extractGithubRepoPath(input: string): string | null {
   return extractHostedPath(input, {
     prefix: GITHUB_REPO_PREFIX,
@@ -239,10 +220,6 @@ export function getGithubRepoDisplayValue(value: string): string {
   }
   return value.replace(/^\/+/, '');
 }
-
-export const isSTGrant = (grant: Grant | null | undefined): boolean => {
-  return grant?.isST === true;
-};
 
 export const isAgenticEngineeringGrant = (
   grant: { title?: string | null } | null | undefined,
