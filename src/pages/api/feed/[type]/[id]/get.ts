@@ -153,7 +153,7 @@ export default async function handler(
             //@ts-expect-error prisma ts error, this exists based on above include
             sponsorSlug: sub.listing.sponsor.slug,
             type: 'submission',
-            like: sub.like,
+            like: [] as { id: string; date: number }[],
             likeCount: sub.likeCount,
             ogImage: getCloudinaryFetchUrl(sub.ogImage),
             commentCount: sub._count.Comments,
@@ -216,7 +216,7 @@ export default async function handler(
             username: pow.user.username,
             type: 'pow',
             link: pow.link,
-            like: pow.like,
+            like: [] as { id: string; date: number }[],
             likeCount: pow.likeCount,
             ogImage: getCloudinaryFetchUrl(pow.ogImage),
             commentCount: pow._count.Comments,
@@ -283,7 +283,7 @@ export default async function handler(
             sponsorSlug: ga.grant.sponsor.slug,
             type: 'grant-application',
             grantApplicationAmount: ga.approvedAmount,
-            like: ga.like,
+            like: [] as { id: string; date: number }[],
             likeCount: ga.likeCount,
             commentCount: ga._count.Comments,
             recentCommenters: ga.Comments,
@@ -292,6 +292,32 @@ export default async function handler(
         break;
       }
     }
+    if (feedPost && feedPost.length > 0) {
+      const targetTypeMapForFeed: Record<string, 'SUBMISSION' | 'POW' | 'GRANT_APPLICATION'> = {
+        submission: 'SUBMISSION',
+        pow: 'POW',
+        grantApplication: 'GRANT_APPLICATION',
+      };
+      const feedType = targetTypeMapForFeed[type]!;
+      const feedIds = feedPost.map((p: any) => p.id).filter(Boolean);
+      const likes = feedIds.length > 0
+        ? await prisma.likes.findMany({
+            where: { targetType: feedType, targetId: { in: feedIds } },
+            select: { targetId: true, userId: true, createdAt: true },
+          })
+        : [];
+      const likesMap = new Map<string, { id: string; date: number }[]>();
+      for (const like of likes) {
+        const arr = likesMap.get(like.targetId) ?? [];
+        arr.push({ id: like.userId, date: like.createdAt.getTime() });
+        likesMap.set(like.targetId, arr);
+      }
+      feedPost = feedPost.map((p: any) => ({
+        ...p,
+        like: likesMap.get(p.id) || [],
+      }));
+    }
+
     if (!feedPost) {
       logger.warn(`No Posts found for type ${type} with ID ${id}`);
       res.status(404).send({

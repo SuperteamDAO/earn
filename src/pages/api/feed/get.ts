@@ -375,9 +375,55 @@ export default async function handler(
       grantApplications.unshift(grantApplicationHighlighted);
     }
 
-    logger.info(
-      `Fetched ${submissions.length} submissions, ${pow.length} PoWs and ${grantApplications} grant applications`,
-    );
+    const subIds = submissions.map((s) => s.id);
+    const powIds = pow.map((p) => p.id);
+    const gaIds = grantApplications.map((ga) => ga.id);
+
+    const [subLikes, poWLikes, gaLikes] = await Promise.all([
+      subIds.length > 0
+        ? prisma.likes.findMany({
+            where: {
+              targetType: 'SUBMISSION',
+              targetId: { in: subIds },
+            },
+            select: { targetId: true, userId: true, createdAt: true },
+          })
+        : [],
+      powIds.length > 0
+        ? prisma.likes.findMany({
+            where: {
+              targetType: 'POW',
+              targetId: { in: powIds },
+            },
+            select: { targetId: true, userId: true, createdAt: true },
+          })
+        : [],
+      gaIds.length > 0
+        ? prisma.likes.findMany({
+            where: {
+              targetType: 'GRANT_APPLICATION',
+              targetId: { in: gaIds },
+            },
+            select: { targetId: true, userId: true, createdAt: true },
+          })
+        : [],
+    ]);
+
+    const likesByTargetId = (
+      likes: { targetId: string; userId: string; createdAt: Date }[],
+    ) => {
+      const map = new Map<string, { id: string; date: number }[]>();
+      for (const like of likes) {
+        const arr = map.get(like.targetId) ?? [];
+        arr.push({ id: like.userId, date: like.createdAt.getTime() });
+        map.set(like.targetId, arr);
+      }
+      return map;
+    };
+
+    const subLikesMap = likesByTargetId(subLikes);
+    const poWLikesMap = likesByTargetId(poWLikes);
+    const gaLikesMap = likesByTargetId(gaLikes);
 
     const results = [
       ...submissions.map((sub) => ({
@@ -451,7 +497,7 @@ export default async function handler(
             ? sub.listing.sponsor.slug
             : null,
         type: 'submission',
-        like: sub.like,
+        like: subLikesMap.get(sub.id) || [],
         likeCount: sub.likeCount,
         ogImage: !sub.listing.isPrivate
           ? getCloudinaryFetchUrl(sub.ogImage)
@@ -472,7 +518,7 @@ export default async function handler(
         username: pow.user.username,
         type: 'pow',
         link: pow.link,
-        like: pow.like,
+        like: poWLikesMap.get(pow.id) || [],
         likeCount: pow.likeCount,
         ogImage: getCloudinaryFetchUrl(pow.ogImage),
         commentCount: pow._count.Comments,
@@ -506,7 +552,7 @@ export default async function handler(
             : null,
         type: 'grant-application',
         grantApplicationAmount: ga.approvedAmount,
-        like: ga.like,
+        like: gaLikesMap.get(ga.id) || [],
         likeCount: ga.likeCount,
         commentCount: ga._count.Comments,
         recentCommenters: ga.Comments,
