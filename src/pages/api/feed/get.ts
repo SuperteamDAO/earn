@@ -47,8 +47,13 @@ export default async function handler(
   const isOwnerProfile =
     typeof profileUserId === 'string' && currentUserId === profileUserId;
 
-  const highlightType = req.query.highlightType as FeedPostType;
-  const highlightId = req.query.highlightId as string | undefined;
+  let highlightType = req.query.highlightType as FeedPostType | undefined;
+  let highlightId = req.query.highlightId as string | undefined;
+  if (cursor) {
+    // Don't re-pin highlight on paginated requests — it would replay page 1
+    highlightId = undefined;
+    highlightType = undefined;
+  }
   const takeOnlyType = req.query.takeOnlyType as FeedPostType | undefined;
 
   try {
@@ -432,7 +437,7 @@ export default async function handler(
 
     // Step 6: Build cursor for next page
     const lastItem = feedItems[feedItems.length - 1]!;
-    const nextCursor = results.length === take
+    const nextCursor = feedItems.length === take
       ? encodeCursor(
           filter === 'popular'
             ? {

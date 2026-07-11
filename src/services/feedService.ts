@@ -34,7 +34,14 @@ export function encodeCursor(c: FeedCursor): string {
 
 export function decodeCursor(encoded: string): FeedCursor | null {
   try {
-    return JSON.parse(Buffer.from(encoded, 'base64').toString('utf8'));
+    const raw = JSON.parse(Buffer.from(encoded, 'base64').toString('utf8'));
+    if (typeof raw !== 'object' || raw === null || typeof raw.id !== 'string') {
+      return null;
+    }
+    if (raw.sortDate !== undefined && typeof raw.sortDate !== 'string') return null;
+    if (raw.likeCount !== undefined && typeof raw.likeCount !== 'number') return null;
+    if (raw.createdAt !== undefined && typeof raw.createdAt !== 'string') return null;
+    return raw as FeedCursor;
   } catch {
     return null;
   }
@@ -154,19 +161,23 @@ async function getSingleTypePage(
     params.push(...branchParams);
 
     if (cursor) {
+      // Wrap in derived table so sortDate / likeCount / createdAt are referenceable
       if (isPopular) {
-        sql += ` AND (likeCount, createdAt, id) < (${addParam(params, cursor.likeCount!)}, ${addParam(params, cursor.createdAt!)}, ${addParam(params, cursor.id)})`;
+        sql = `SELECT * FROM (${sql}) AS base WHERE (likeCount, createdAt, id) < (?, ?, ?) ORDER BY likeCount DESC, createdAt DESC, id DESC`;
+        params.push(cursor.likeCount!, cursor.createdAt!, cursor.id);
       } else {
-        sql += ` AND (COALESCE(sortDate, createdAt), id) < (${addParam(params, cursor.sortDate!)}, ${addParam(params, cursor.id)})`;
+        sql = `SELECT * FROM (${sql}) AS base WHERE (sortDate, id) < (?, ?) ORDER BY sortDate DESC, id DESC`;
+        params.push(cursor.sortDate!, cursor.id);
+      }
+    } else {
+      if (isPopular) {
+        sql += ` ORDER BY likeCount DESC, createdAt DESC, id DESC`;
+      } else {
+        sql += ` ORDER BY sortDate DESC, id DESC`;
       }
     }
-
-    if (isPopular) {
-      sql += ` ORDER BY likeCount DESC, createdAt DESC, id DESC`;
-    } else {
-      sql += ` ORDER BY sortDate DESC, id DESC`;
-    }
-    sql += ` LIMIT ${addParam(params, take)}`;
+    sql += ` LIMIT ?`;
+    params.push(take);
   }
 
   const rows = await prisma.$queryRawUnsafe<FeedItem[]>(sql, ...params);
