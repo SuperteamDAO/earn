@@ -296,7 +296,7 @@ export default async function handler(
       const targetTypeMapForFeed: Record<string, 'SUBMISSION' | 'POW' | 'GRANT_APPLICATION'> = {
         submission: 'SUBMISSION',
         pow: 'POW',
-        grantApplication: 'GRANT_APPLICATION',
+        'grant-application': 'GRANT_APPLICATION',
       };
       const feedType = targetTypeMapForFeed[type]!;
       const feedIds = feedPost.map((p: any) => p.id).filter(Boolean);
