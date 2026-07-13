@@ -435,7 +435,7 @@ export const ApplicationModal = ({
     }
   };
 
-  const handleNext = (e: React.MouseEvent) => {
+    const handleNext = (e: React.MouseEvent) => {
     e.preventDefault();
     const fieldsToValidate: Record<
       number,
@@ -471,7 +471,7 @@ export const ApplicationModal = ({
       ],
     };
 
-    form.trigger(fieldsToValidate[activeStep]).then((isValid) => {
+    form.trigger(fieldsToValidate[activeStep] as any).then((isValid) => {
       if (isValid) {
         const nextStep = activeStep + 1;
         setActiveStep(nextStep);
@@ -481,6 +481,7 @@ export const ApplicationModal = ({
       }
     });
   };
+
 
   const handleBack = () => {
     const nextStep = activeStep - 1;
