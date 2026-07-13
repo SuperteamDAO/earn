@@ -17,7 +17,13 @@ interface TweetMetrics {
   isAvailable?: boolean;
 }
 
-export const TweetStats = ({ url }: { url: string }) => {
+export const TweetStats = ({
+  submissionId,
+  type,
+}: {
+  submissionId: string;
+  type: 'link' | 'tweet';
+}) => {
   const [metrics, setMetrics] = useState<TweetMetrics | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -29,7 +35,7 @@ export const TweetStats = ({ url }: { url: string }) => {
       setError(null);
       try {
         const res = await fetch(
-          `/api/twitter/tweet-stats?url=${encodeURIComponent(url)}`,
+          `/api/twitter/tweet-stats?submissionId=${submissionId}&type=${type}`,
         );
         if (!res.ok) {
           const errData = await res.json().catch(() => ({}));
@@ -56,7 +62,7 @@ export const TweetStats = ({ url }: { url: string }) => {
     return () => {
       active = false;
     };
-  }, [url]);
+  }, [submissionId, type]);
 
   if (loading) {
     return (

@@ -2,6 +2,7 @@ import type { NextApiResponse } from 'next';
 import { z } from 'zod';
 
 import logger from '@/lib/logger';
+import { prisma } from '@/prisma';
 
 import { type NextApiRequestWithUser } from '@/features/auth/types';
 import { withAuth } from '@/features/auth/utils/withAuth';
@@ -33,15 +34,15 @@ function extractTweetId(url: string): string | null {
 }
 
 const tweetStatsQuerySchema = z.object({
-  url: z
+  submissionId: z
     .string({
-      required_error: 'Missing or invalid tweetUrl parameter',
+      required_error: 'Missing or invalid submissionId parameter',
     })
     .trim()
-    .min(1, 'Missing or invalid tweetUrl parameter')
-    .refine((url) => !!extractTweetId(url), {
-      message: 'Invalid Twitter/X post URL',
-    }),
+    .min(1, 'Missing or invalid submissionId parameter'),
+  type: z.enum(['link', 'tweet'], {
+    required_error: 'Missing or invalid type parameter',
+  }),
 });
 
 async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
@@ -52,14 +53,69 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       .map((err) => err.message)
       .join(', ');
     logger.warn(`Tweet stats validation failed: ${errorMessage}`);
-    return res.status(403).json({
+    return res.status(400).json({
       error: errorMessage,
       message: 'Validation failed: Invalid request query parameters',
     });
   }
 
-  const { url: tweetUrl } = validation.data;
-  const tweetId = extractTweetId(tweetUrl)!;
+  const { submissionId, type } = validation.data;
+
+  let tweetUrl: string | null = null;
+  try {
+    const submission = await prisma.submission.findUnique({
+      where: { id: submissionId },
+      select: { link: true, tweet: true },
+    });
+
+    if (!submission) {
+      logger.warn(`Submission not found: ${submissionId}`);
+      return res.status(404).json({
+        error: 'Submission not found',
+        message: 'Submission not found',
+      });
+    }
+
+    tweetUrl = type === 'link' ? submission.link : submission.tweet;
+  } catch (error: any) {
+    logger.error(`Error querying submission ${submissionId}:`, error);
+    return res.status(500).json({
+      error: error.message,
+      message: 'Failed to retrieve submission details',
+    });
+  }
+
+  if (!tweetUrl) {
+    return res.status(200).json({
+      data: {
+        views: 0,
+        likes: 0,
+        retweets: 0,
+        comments: 0,
+        isMocked: false,
+        isAvailable: false,
+      },
+      message: 'No URL found in submission',
+    });
+  }
+
+  const tweetId = extractTweetId(tweetUrl);
+  if (!tweetId) {
+    logger.warn(
+      `Invalid Twitter/X post URL in submission ${submissionId} ${type}: ${tweetUrl}`,
+    );
+    return res.status(200).json({
+      data: {
+        views: 0,
+        likes: 0,
+        retweets: 0,
+        comments: 0,
+        isMocked: false,
+        isAvailable: false,
+      },
+      message: 'Invalid Twitter/X post URL',
+    });
+  }
 
   const bearerToken =
     process.env.TWITTER_BEARER_TOKEN || process.env.X_BEARER_TOKEN;

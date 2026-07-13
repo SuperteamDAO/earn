@@ -65,7 +65,7 @@ export const Details = ({ bounty, isHackathonPage }: Props) => {
               }
             />
             {isTweetStatusUrl(selectedSubmission?.link) && (
-              <TweetStats url={selectedSubmission!.link!} />
+              <TweetStats submissionId={selectedSubmission!.id} type="link" />
             )}
             <InfoBox
               label="Tweet Link"
@@ -76,7 +76,7 @@ export const Details = ({ bounty, isHackathonPage }: Props) => {
               }
             />
             {isTweetStatusUrl(selectedSubmission?.tweet) && (
-              <TweetStats url={selectedSubmission!.tweet!} />
+              <TweetStats submissionId={selectedSubmission!.id} type="tweet" />
             )}
           </>
         )}
