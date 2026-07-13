@@ -3,6 +3,7 @@ import { z } from 'zod';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { safeStringify } from '@/utils/safeStringify';
 
 import { type NextApiRequestWithUser } from '@/features/auth/types';
 import { withAuth } from '@/features/auth/utils/withAuth';
@@ -78,9 +79,11 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
 
     tweetUrl = type === 'link' ? submission.link : submission.tweet;
   } catch (error: any) {
-    logger.error(`Error querying submission ${submissionId}:`, error);
+    logger.error(
+      `Error querying submission ${submissionId}: ${safeStringify(error)}`,
+    );
     return res.status(500).json({
-      error: error.message,
+      error: 'Internal Server Error',
       message: 'Failed to retrieve submission details',
     });
   }
@@ -205,7 +208,9 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
     if (error.name === 'AbortError') {
       logger.error('Twitter API request timed out after 5 seconds');
     } else {
-      logger.error('Error fetching Twitter/X post metrics:', error);
+      logger.error(
+        `Error fetching Twitter/X post metrics: ${safeStringify(error)}`,
+      );
     }
     return res.status(200).json({
       data: {
