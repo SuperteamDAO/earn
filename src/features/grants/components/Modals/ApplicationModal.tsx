@@ -1092,7 +1092,7 @@ export const ApplicationModal = ({
                 )}
               </div>
             )}
-            <Sheet open={isPreviewOpen} onOpenChange={setIsPreviewOpen}>
+                        <Sheet open={isPreviewOpen} onOpenChange={setIsPreviewOpen}>
               <SheetContent
                 side="right"
                 className="z-[100] w-full overflow-y-auto bg-white sm:max-w-xl"
@@ -1143,7 +1143,16 @@ export const ApplicationModal = ({
                           <span className="font-medium text-slate-500">
                             Telegram:
                           </span>
-                          <p className="mt-1">{form.getValues('telegram')}</p>
+                          <p className="mt-1">
+                            <a
+                              href={form.getValues('telegram').startsWith('http') ? form.getValues('telegram') : `https://t.me/${form.getValues('telegram').replace('@', '')}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-brand-purple hover:underline"
+                            >
+                              {form.getValues('telegram')}
+                            </a>
+                          </p>
                         </div>
                       )}
                     </div>
@@ -1198,7 +1207,16 @@ export const ApplicationModal = ({
                             <span className="font-medium text-slate-500">
                               Twitter:
                             </span>
-                            <p className="mt-1">{form.getValues('twitter')}</p>
+                            <p className="mt-1">
+                              <a
+                                href={form.getValues('twitter').startsWith('http') ? form.getValues('twitter') : `https://x.com/${form.getValues('twitter').replace('@', '')}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-brand-purple hover:underline"
+                              >
+                                {form.getValues('twitter')}
+                              </a>
+                            </p>
                           </div>
                         )}
                         {!isST && form.getValues('github') && (
@@ -1206,7 +1224,16 @@ export const ApplicationModal = ({
                             <span className="font-medium text-slate-500">
                               Github:
                             </span>
-                            <p className="mt-1">{form.getValues('github')}</p>
+                            <p className="mt-1">
+                              <a
+                                href={form.getValues('github').startsWith('http') ? form.getValues('github') : `https://github.com/${form.getValues('github')}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-brand-purple hover:underline"
+                              >
+                                {form.getValues('github')}
+                              </a>
+                            </p>
                           </div>
                         )}
                       </div>
@@ -1216,9 +1243,14 @@ export const ApplicationModal = ({
                             Luma Event:
                           </span>
                           <p className="mt-1">
-                            {getLumaDisplayValue(
-                              form.getValues('lumaLink') || '',
-                            )}
+                            <a
+                              href={form.getValues('lumaLink').startsWith('http') ? form.getValues('lumaLink') : `https://lu.ma/${form.getValues('lumaLink')}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-brand-purple hover:underline"
+                            >
+                              {getLumaDisplayValue(form.getValues('lumaLink') || '')}
+                            </a>
                           </p>
                         </div>
                       )}
@@ -1245,7 +1277,18 @@ export const ApplicationModal = ({
                             </span>
                             {q.type === 'link' ? (
                               <p className="mt-1">
-                                {form.getValues(`answers.${i}.answer`)}
+                                {form.getValues(`answers.${i}.answer`) ? (
+                                  <a
+                                    href={form.getValues(`answers.${i}.answer`).startsWith('http') ? form.getValues(`answers.${i}.answer`) : `https://${form.getValues(`answers.${i}.answer`)}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-brand-purple hover:underline"
+                                  >
+                                    {form.getValues(`answers.${i}.answer`)}
+                                  </a>
+                                ) : (
+                                  '-'
+                                )}
                               </p>
                             ) : (
                               <div
@@ -1304,6 +1347,10 @@ export const ApplicationModal = ({
                 </div>
               </SheetContent>
             </Sheet>
+
+                      
+                            
+    
 
             <div className="mt-8 flex gap-2">
               {activeStep > 0 && (
