@@ -23,6 +23,12 @@ import {
 import { FormFieldWrapper } from '@/components/ui/form-field-wrapper';
 import { Input } from '@/components/ui/input';
 import { Progress } from '@/components/ui/progress';
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+} from '@/components/ui/sheet';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { api } from '@/lib/api';
 import { type GrantApplicationModel } from '@/prisma/models/GrantApplication';
@@ -31,6 +37,7 @@ import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';
 
 import { usePopupAuth } from '@/features/auth/hooks/use-popup-auth';
+import { sanitizeGrantApplicationHtml } from '@/features/grants/utils/sanitizeGrantApplicationHtml';
 import { SubmissionTerms } from '@/features/listings/components/Submission/SubmissionTerms';
 import { SocialInput } from '@/features/social/components/SocialInput';
 import { XVerificationModal } from '@/features/social/components/XVerificationModal';
@@ -92,6 +99,7 @@ export const ApplicationModal = ({
     useState(false);
   const [feedbackAcknowledgementError, setFeedbackAcknowledgementError] =
     useState('');
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const verificationModal = useDisclosure();
   const [verificationStatus, setVerificationStatus] = useState<
     'loading' | 'error'
@@ -427,7 +435,7 @@ export const ApplicationModal = ({
     }
   };
 
-  const handleNext = (e: React.MouseEvent) => {
+    const handleNext = (e: React.MouseEvent) => {
     e.preventDefault();
     const fieldsToValidate: Record<
       number,
@@ -463,7 +471,7 @@ export const ApplicationModal = ({
       ],
     };
 
-    form.trigger(fieldsToValidate[activeStep]).then((isValid) => {
+    form.trigger(fieldsToValidate[activeStep] as any).then((isValid) => {
       if (isValid) {
         const nextStep = activeStep + 1;
         setActiveStep(nextStep);
@@ -473,6 +481,7 @@ export const ApplicationModal = ({
       }
     });
   };
+
 
   const handleBack = () => {
     const nextStep = activeStep - 1;
@@ -1016,9 +1025,8 @@ export const ApplicationModal = ({
                     isPro={isProGrant}
                   />
                 )}
-
                 {!grantApplication && (
-                  <div className="flex flex-col gap-2">
+                  <div className="mt-2 flex flex-col gap-2">
                     <div className="flex items-start space-x-2">
                       <Checkbox
                         id="acknowledgement"
@@ -1084,6 +1092,266 @@ export const ApplicationModal = ({
                 )}
               </div>
             )}
+                        <Sheet open={isPreviewOpen} onOpenChange={setIsPreviewOpen}>
+              <SheetContent
+                side="right"
+                className="z-[100] w-full overflow-y-auto bg-white sm:max-w-xl"
+              >
+                <SheetHeader className="mb-6">
+                  <SheetTitle>Application Preview</SheetTitle>
+                </SheetHeader>
+                <div className="mb-5 flex flex-col gap-5 text-sm">
+                  <div>
+                    <h3 className="mb-2 font-semibold text-slate-800">
+                      Basics
+                    </h3>
+                    <div className="flex flex-col gap-3 rounded-md border border-slate-200 bg-slate-50 p-4">
+                      <div>
+                        <span className="font-medium text-slate-500">
+                          Project Title:
+                        </span>
+                        <p className="mt-1">{form.getValues('projectTitle')}</p>
+                      </div>
+                      <div>
+                        <span className="font-medium text-slate-500">
+                          One-Liner:
+                        </span>
+                        <p className="mt-1">
+                          {form.getValues('projectOneLiner')}
+                        </p>
+                      </div>
+                      {!isAgenticEngineering && form.getValues('ask') && (
+                        <div>
+                          <span className="font-medium text-slate-500">
+                            Ask Amount:
+                          </span>
+                          <p className="mt-1">
+                            {form.getValues('ask')} {tokenLabel}
+                          </p>
+                        </div>
+                      )}
+                      <div>
+                        <span className="font-medium text-slate-500">
+                          Wallet Address:
+                        </span>
+                        <p className="mt-1 break-all">
+                          {form.getValues('walletAddress')}
+                        </p>
+                      </div>
+                      {form.getValues('telegram') && (
+                        <div>
+                          <span className="font-medium text-slate-500">
+                            Telegram:
+                          </span>
+                          <p className="mt-1">
+                            <a
+                              href={form.getValues('telegram').startsWith('http') ? form.getValues('telegram') : `https://t.me/${form.getValues('telegram').replace('@', '')}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-brand-purple hover:underline"
+                            >
+                              {form.getValues('telegram')}
+                            </a>
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  <div>
+                    <h3 className="mb-2 font-semibold text-slate-800">
+                      Details
+                    </h3>
+                    <div className="flex flex-col gap-3 rounded-md border border-slate-200 bg-slate-50 p-4">
+                      <div>
+                        <span className="font-medium text-slate-500">
+                          Project Details:
+                        </span>
+                        <div
+                          className="prose prose-sm mt-1 max-w-none"
+                          dangerouslySetInnerHTML={{
+                            __html: sanitizeGrantApplicationHtml(
+                              form.getValues('projectDetails') || '',
+                            ),
+                          }}
+                        />
+                      </div>
+                      {!isST && form.getValues('projectTimeline') && (
+                        <div>
+                          <span className="font-medium text-slate-500">
+                            Deadline:
+                          </span>
+                          <p className="mt-1">
+                            {form.getValues('projectTimeline')}
+                          </p>
+                        </div>
+                      )}
+                      {form.getValues('proofOfWork') && (
+                        <div>
+                          <span className="font-medium text-slate-500">
+                            Proof of Work:
+                          </span>
+                          <div
+                            className="prose prose-sm mt-1 max-w-none"
+                            dangerouslySetInnerHTML={{
+                              __html: sanitizeGrantApplicationHtml(
+                                form.getValues('proofOfWork') || '',
+                              ),
+                            }}
+                          />
+                        </div>
+                      )}
+                      <div className="flex gap-4">
+                        {form.getValues('twitter') && (
+                          <div>
+                            <span className="font-medium text-slate-500">
+                              Twitter:
+                            </span>
+                            <p className="mt-1">
+                              <a
+                                href={form.getValues('twitter').startsWith('http') ? form.getValues('twitter') : `https://x.com/${form.getValues('twitter').replace('@', '')}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-brand-purple hover:underline"
+                              >
+                                {form.getValues('twitter')}
+                              </a>
+                            </p>
+                          </div>
+                        )}
+                        {!isST && form.getValues('github') && (
+                          <div>
+                            <span className="font-medium text-slate-500">
+                              Github:
+                            </span>
+                            <p className="mt-1">
+                              <a
+                                href={form.getValues('github').startsWith('http') ? form.getValues('github') : `https://github.com/${form.getValues('github')}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-brand-purple hover:underline"
+                              >
+                                {form.getValues('github')}
+                              </a>
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                      {isST && form.getValues('lumaLink') && (
+                        <div>
+                          <span className="font-medium text-slate-500">
+                            Luma Event:
+                          </span>
+                          <p className="mt-1">
+                            <a
+                              href={form.getValues('lumaLink').startsWith('http') ? form.getValues('lumaLink') : `https://lu.ma/${form.getValues('lumaLink')}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-brand-purple hover:underline"
+                            >
+                              {getLumaDisplayValue(form.getValues('lumaLink') || '')}
+                            </a>
+                          </p>
+                        </div>
+                      )}
+                      {isST && form.getValues('expenseBreakdown') && (
+                        <div>
+                          <span className="font-medium text-slate-500">
+                            Expense Breakdown:
+                          </span>
+                          <div
+                            className="prose prose-sm mt-1 max-w-none"
+                            dangerouslySetInnerHTML={{
+                              __html: sanitizeGrantApplicationHtml(
+                                form.getValues('expenseBreakdown') || '',
+                              ),
+                            }}
+                          />
+                        </div>
+                      )}
+                      {(questions?.length ?? 0) > 0 &&
+                        questions?.map((q, i) => (
+                          <div key={i}>
+                            <span className="font-medium text-slate-500">
+                              {q.question}
+                            </span>
+                            {q.type === 'link' ? (
+                              <p className="mt-1">
+                                {form.getValues(`answers.${i}.answer`) ? (
+                                  <a
+                                    href={form.getValues(`answers.${i}.answer`).startsWith('http') ? form.getValues(`answers.${i}.answer`) : `https://${form.getValues(`answers.${i}.answer`)}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-brand-purple hover:underline"
+                                  >
+                                    {form.getValues(`answers.${i}.answer`)}
+                                  </a>
+                                ) : (
+                                  '-'
+                                )}
+                              </p>
+                            ) : (
+                              <div
+                                className="prose prose-sm mt-1 max-w-none"
+                                dangerouslySetInnerHTML={{
+                                  __html: sanitizeGrantApplicationHtml(
+                                    form.getValues(`answers.${i}.answer`) || '',
+                                  ),
+                                }}
+                              />
+                            )}
+                          </div>
+                        ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <h3 className="mb-2 font-semibold text-slate-800">
+                      {isST ? 'Outcomes' : 'Milestones'}
+                    </h3>
+                    <div className="flex flex-col gap-3 rounded-md border border-slate-200 bg-slate-50 p-4">
+                      {form.getValues('milestones') && (
+                        <div>
+                          <span className="font-medium text-slate-500">
+                            {isST
+                              ? 'Expected Outcomes:'
+                              : 'Goals and Milestones:'}
+                          </span>
+                          <div
+                            className="prose prose-sm mt-1 max-w-none"
+                            dangerouslySetInnerHTML={{
+                              __html: sanitizeGrantApplicationHtml(
+                                form.getValues('milestones') || '',
+                              ),
+                            }}
+                          />
+                        </div>
+                      )}
+                      {!isST && form.getValues('kpi') && (
+                        <div>
+                          <span className="font-medium text-slate-500">
+                            KPI:
+                          </span>
+                          <div
+                            className="prose prose-sm mt-1 max-w-none"
+                            dangerouslySetInnerHTML={{
+                              __html: sanitizeGrantApplicationHtml(
+                                form.getValues('kpi') || '',
+                              ),
+                            }}
+                          />
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </SheetContent>
+            </Sheet>
+
+                      
+                            
+    
+
             <div className="mt-8 flex gap-2">
               {activeStep > 0 && (
                 <Button
@@ -1096,32 +1364,46 @@ export const ApplicationModal = ({
                 </Button>
               )}
               {activeStep === steps.length - 1 ? (
-                <Button
-                  className={cn(
-                    'ph-no-capture w-full',
-                    isNotEligibleForPro
-                      ? 'bg-zinc-300 text-zinc-700 disabled:opacity-100'
-                      : isProGrant && 'bg-zinc-800 hover:bg-black',
-                  )}
-                  disabled={isLoading || (isPro && !isUserPro)}
-                  type="submit"
-                >
-                  {isLoading ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      <span>Applying...</span>
-                    </>
-                  ) : isNotEligibleForPro ? (
-                    <span className="flex items-center gap-2">
-                      <Lock className="h-4 w-4" />
-                      <span>Not Eligible</span>
-                    </span>
-                  ) : grantApplication ? (
-                    <span>Update</span>
-                  ) : (
-                    'Apply'
-                  )}
-                </Button>
+                <>
+                  <Button
+                    className={cn(
+                      'ph-no-capture w-full',
+                      isProGrant &&
+                        'border-zinc-800 text-zinc-800 hover:bg-zinc-100',
+                    )}
+                    onClick={() => setIsPreviewOpen(true)}
+                    variant="outline"
+                    type="button"
+                  >
+                    Preview
+                  </Button>
+                  <Button
+                    className={cn(
+                      'ph-no-capture w-full',
+                      isNotEligibleForPro
+                        ? 'bg-zinc-300 text-zinc-700 disabled:opacity-100'
+                        : isProGrant && 'bg-zinc-800 hover:bg-black',
+                    )}
+                    disabled={isLoading || (isPro && !isUserPro)}
+                    type="submit"
+                  >
+                    {isLoading ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        <span>Applying...</span>
+                      </>
+                    ) : isNotEligibleForPro ? (
+                      <span className="flex items-center gap-2">
+                        <Lock className="h-4 w-4" />
+                        <span>Not Eligible</span>
+                      </span>
+                    ) : grantApplication ? (
+                      <span>Update</span>
+                    ) : (
+                      'Apply'
+                    )}
+                  </Button>
+                </>
               ) : (
                 <Button
                   className={cn(
