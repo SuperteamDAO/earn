@@ -74,7 +74,11 @@ export function InviteMembers({ isOpen, onClose }: Props) {
               </p>
             </div>
             <div className="flex justify-end">
-              <Button variant="ghost" onClick={onClose}>
+              <Button
+                variant="outline"
+                onClick={onClose}
+                className="w-full border-slate-200 bg-white text-slate-700 shadow-sm hover:bg-slate-50 sm:w-auto"
+              >
                 Close
               </Button>
             </div>
@@ -146,12 +150,13 @@ export function InviteMembers({ isOpen, onClose }: Props) {
               </div>
             </div>
 
-            <div className="flex gap-3">
-              <div className="w-1/2" />
+            <div className="flex flex-col gap-3 sm:flex-row">
+              <div className="hidden sm:block sm:w-1/2" />
               <Button
-                variant="ghost"
+                variant="outline"
                 onClick={onClose}
                 disabled={inviteMutation.isPending}
+                className="w-full border-slate-200 bg-white text-slate-700 shadow-sm hover:bg-slate-50 sm:ml-auto sm:w-auto"
               >
                 Close
               </Button>

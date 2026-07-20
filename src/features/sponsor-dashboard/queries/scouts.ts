@@ -18,7 +18,7 @@ export const scoutsQuery = ({ bountyId }: { bountyId: string }) =>
       data.map((scout) => ({
         id: scout.id,
         userId: scout.userId,
-        skills: [...new Set(scout.skills)],
+        skills: Array.isArray(scout.skills) ? [...new Set(scout.skills)] : [],
         dollarsEarned: scout.dollarsEarned,
         score: scout.score,
         recommended: scout.user.stRecommended ?? false,

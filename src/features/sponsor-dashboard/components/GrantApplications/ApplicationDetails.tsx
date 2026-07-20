@@ -250,7 +250,7 @@ export const ApplicationDetails = ({
                 {isPending && (
                   <>
                     <Button
-                      className="shrink-0 rounded-lg border border-emerald-500 bg-emerald-50 px-2.5 text-[13px] text-emerald-600 hover:bg-emerald-100 hover:text-emerald-600 disabled:cursor-not-allowed disabled:opacity-50 sm:px-3 sm:text-sm"
+                      className="shrink-0 rounded-lg border border-emerald-500 bg-emerald-50 px-2.5 text-[13px] text-emerald-600 hover:bg-emerald-100 hover:text-emerald-600 disabled:cursor-not-allowed disabled:opacity-50 max-[390px]:gap-1 max-[390px]:px-2 max-[390px]:text-xs sm:px-3 sm:text-sm"
                       disabled={isMultiSelectOn}
                       onClick={approveOnOpen}
                     >
@@ -261,7 +261,7 @@ export const ApplicationDetails = ({
                     </Button>
 
                     <Button
-                      className="shrink-0 rounded-lg border border-red-500 bg-red-50 px-2.5 text-[13px] text-red-600 hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-50 sm:px-3 sm:text-sm"
+                      className="shrink-0 rounded-lg border border-red-500 bg-red-50 px-2.5 text-[13px] text-red-600 hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-50 max-[390px]:gap-1 max-[390px]:px-2 max-[390px]:text-xs sm:px-3 sm:text-sm"
                       disabled={isMultiSelectOn}
                       onClick={rejectedOnOpen}
                     >
@@ -274,7 +274,7 @@ export const ApplicationDetails = ({
                 )}
                 {isCompleted && (
                   <Button
-                    className="shrink-0 rounded-lg border border-blue-500 bg-blue-50 px-2.5 text-[13px] text-blue-600 hover:bg-blue-100 disabled:opacity-100 sm:px-3 sm:text-sm"
+                    className="shrink-0 rounded-lg border border-blue-500 bg-blue-50 px-2.5 text-[13px] text-blue-600 hover:bg-blue-100 disabled:opacity-100 max-[390px]:gap-1 max-[390px]:px-2 max-[390px]:text-xs sm:px-3 sm:text-sm"
                     disabled={true}
                   >
                     <div className="flex items-center">
@@ -307,7 +307,7 @@ export const ApplicationDetails = ({
                           />
                         )}
                       <Button
-                        className="shrink-0 rounded-lg border border-emerald-500 bg-emerald-50 px-2.5 text-[13px] text-emerald-600 hover:bg-emerald-100 disabled:cursor-not-allowed disabled:opacity-100 sm:px-3 sm:text-sm"
+                        className="shrink-0 rounded-lg border border-emerald-500 bg-emerald-50 px-2.5 text-[13px] text-emerald-600 hover:bg-emerald-100 disabled:cursor-not-allowed disabled:opacity-100 max-[390px]:gap-1 max-[390px]:px-2 max-[390px]:text-xs sm:px-3 sm:text-sm"
                         disabled={true}
                       >
                         <div className="rounded-full bg-emerald-600 p-0.5">
@@ -320,7 +320,7 @@ export const ApplicationDetails = ({
                 {isRejected && (
                   <>
                     <Button
-                      className="shrink-0 rounded-lg border border-red-500 bg-red-50 px-2.5 text-[13px] text-red-600 hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-100 sm:px-3 sm:text-sm"
+                      className="shrink-0 rounded-lg border border-red-500 bg-red-50 px-2.5 text-[13px] text-red-600 hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-100 max-[390px]:gap-1 max-[390px]:px-2 max-[390px]:text-xs sm:px-3 sm:text-sm"
                       disabled={true}
                     >
                       <div className="flex items-center">

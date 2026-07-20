@@ -343,10 +343,13 @@ export const NotesRichEditor: React.FC<NotesRichEditorProps> = ({
     <div className="flex h-full min-h-0 w-full flex-col" key={id}>
       <NotesSelectionMenu editor={editor} />
       <ScrollArea
-        className="min-h-0 w-full flex-1"
-        type="auto"
+        className="min-h-0 w-full flex-1 touch-pan-y overscroll-contain"
+        type="always"
         key={id}
-        viewportProps={{ className: 'size-full rounded-[inherit] pr-3' }}
+        viewportProps={{
+          className:
+            'size-full rounded-[inherit] pr-3 touch-pan-y overscroll-contain',
+        }}
       >
         <EditorContent
           key={id}

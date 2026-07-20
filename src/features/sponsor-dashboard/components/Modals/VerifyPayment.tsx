@@ -338,9 +338,14 @@ export const VerifyPaymentModal = ({
                 </p>
               </div>
             </div>
-            <div className="flex gap-3">
-              <div className="w-1/2" />
-              <Button variant="ghost" type="button" onClick={onClose}>
+            <div className="flex flex-col gap-3 sm:flex-row">
+              <div className="hidden sm:block sm:w-1/2" />
+              <Button
+                variant="outline"
+                type="button"
+                onClick={onClose}
+                className="w-full border-slate-200 bg-white text-slate-700 shadow-sm hover:bg-slate-50 sm:ml-auto sm:w-auto"
+              >
                 Close
               </Button>
               <Button
@@ -378,9 +383,14 @@ export const VerifyPaymentModal = ({
             </div>
 
             {listing?.totalPaymentsMade !== totalWinnerRanks && (
-              <div className="flex gap-3">
-                <div className="w-1/2" />
-                <Button variant="ghost" type="button" onClick={onClose}>
+              <div className="flex flex-col gap-3 sm:flex-row">
+                <div className="hidden sm:block sm:w-1/2" />
+                <Button
+                  variant="outline"
+                  type="button"
+                  onClick={onClose}
+                  className="w-full border-slate-200 bg-white text-slate-700 shadow-sm hover:bg-slate-50 sm:ml-auto sm:w-auto"
+                >
                   Close
                 </Button>
                 <Button
@@ -416,9 +426,14 @@ export const VerifyPaymentModal = ({
               </div>
             </div>
 
-            <div className="mt-8 flex gap-3">
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <div className="w-3/5" />
-              <Button variant="ghost" type="button" onClick={onClose}>
+              <Button
+                variant="outline"
+                type="button"
+                onClick={onClose}
+                className="w-full border-slate-200 bg-white text-slate-700 shadow-sm hover:bg-slate-50 sm:w-auto"
+              >
                 Close
               </Button>
               <Button
@@ -838,9 +853,14 @@ export const VerifyPaymentModal = ({
                 }}
               />
 
-              <div className="flex gap-3">
-                <div className="w-1/2" />
-                <Button variant="ghost" type="button" onClick={onClose}>
+              <div className="flex flex-col gap-3 sm:flex-row">
+                <div className="hidden sm:block sm:w-1/2" />
+                <Button
+                  variant="outline"
+                  type="button"
+                  onClick={onClose}
+                  className="w-full border-slate-200 bg-white text-slate-700 shadow-sm hover:bg-slate-50 sm:ml-auto sm:w-auto"
+                >
                   Close
                 </Button>
                 <Button

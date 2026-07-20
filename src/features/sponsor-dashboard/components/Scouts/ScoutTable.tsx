@@ -127,7 +127,7 @@ export function ScoutTable({ bountyId, scouts, setInvited }: Props) {
                     target="_blank"
                   >
                     <EarnAvatar id={scout.id} avatar={scout.pfp || undefined} />
-                    <div className="align-start flex flex-col justify-center gap-1 md:justify-start">
+                    <div className="flex flex-col items-start justify-center gap-1 md:justify-start">
                       <div className="flex gap-1">
                         <p className="max-w-[14rem] overflow-hidden text-xs text-ellipsis text-slate-800">
                           {scout.name}
@@ -219,7 +219,7 @@ export function ScoutTable({ bountyId, scouts, setInvited }: Props) {
                     )}
                   </div>
                 </TableCell>
-                <TableCell className="items-left pl-0">
+                <TableCell className="pl-0">
                   <div className="flex h-8 items-start gap-2">
                     <Link
                       className="ph-no-capture block h-full"
@@ -251,7 +251,7 @@ export function ScoutTable({ bountyId, scouts, setInvited }: Props) {
         )}
       </Table>
       {scouts.length === 0 && (
-        <div className="mx-auto my-12 flex w-full flex-col items-center gap-3">
+        <div className="mx-auto my-12 flex w-full max-w-md flex-col items-center gap-3 px-4 text-center">
           <div className="flex items-center justify-center rounded-full bg-slate-100 p-5">
             <svg
               width="54"
@@ -282,7 +282,7 @@ export function ScoutTable({ bountyId, scouts, setInvited }: Props) {
           <div className="flex flex-col items-center gap-0 py-4 text-base">
             <p className="font-semibold">No Profiles Found</p>
             <p className="font-normal text-slate-500">
-              We couldn’t find any suitable matches for your listing.
+              We couldn't find any suitable matches for your listing.
             </p>
           </div>
         </div>

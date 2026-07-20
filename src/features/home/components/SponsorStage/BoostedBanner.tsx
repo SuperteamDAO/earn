@@ -12,7 +12,7 @@ export function BoostedBanner({ listing }: BoostedBannerProps) {
   const { user } = useUser();
 
   return (
-    <div className="relative flex items-center justify-between overflow-hidden rounded-xl bg-slate-100 px-10 py-16">
+    <div className="relative flex flex-col gap-6 overflow-hidden rounded-xl bg-slate-100 px-4 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-10 sm:py-16">
       <div className="flex flex-col gap-6">
         <div className="flex flex-col gap-4">
           <div className="flex h-6 w-6 items-center justify-center rounded-lg">

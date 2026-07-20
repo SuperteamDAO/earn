@@ -74,13 +74,20 @@ export async function loadTokenList(force = false): Promise<Token[]> {
   })
     .then(async (response) => {
       if (!response.ok) {
-        throw new Error('Failed to load token metadata');
+        throw new Error(
+          `Failed to load token metadata: ${response.status} ${response.statusText}`,
+        );
       }
 
       const data = (await response.json()) as TokenListApiResponse;
       const tokens = Array.isArray(data.tokens) ? data.tokens : [];
       setTokenList(tokens);
       return tokens;
+    })
+    .catch((error) => {
+      console.warn('Token metadata unavailable, using empty token list.', error);
+      setTokenList([]);
+      return [];
     })
     .finally(() => {
       tokenListPromise = null;

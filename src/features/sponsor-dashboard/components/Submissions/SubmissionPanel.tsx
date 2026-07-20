@@ -70,14 +70,14 @@ export const SubmissionPanel = ({
                   avatar={selectedSubmission?.user?.photo || undefined}
                 />
 
-                <div className="min-w-0">
-                  <div className="flex items-center gap-2">
-                    <p className="max-w-[11rem] truncate font-medium text-slate-900 sm:max-w-none">
+                <div className="min-w-0 flex-1">
+                  <div className="flex min-w-0 items-center gap-2">
+                    <p className="min-w-0 truncate font-medium text-slate-900">
                       {`${selectedSubmission?.user?.firstName}'s Submission`}
                     </p>
                     {!!selectedSubmission?.agentId && (
                       <AgentBadge
-                        containerClassName="bg-slate-900 px-2 py-[3px] gap-[3px]"
+                        containerClassName="shrink-0 bg-slate-900 px-2 py-[3px] gap-[3px]"
                         iconClassName="size-2 text-slate-200"
                         textClassName="text-[8px] font-medium text-white"
                       />

@@ -453,8 +453,8 @@ export default function BountySubmissions({ slug }: Props) {
           <Tabs value={activeTab} onValueChange={handleTabChange}>
             {bounty?.isPublished && (
               <>
-                <TabsList className="mt-3 w-full flex-nowrap overflow-x-auto [&::-webkit-scrollbar]:hidden gap-4 font-medium text-slate-400">
-                  <TabsTrigger value="submissions">
+                <TabsList className="mt-3 w-full justify-start gap-4 overflow-x-auto px-2 pb-1 [&::-webkit-scrollbar]:hidden font-medium text-slate-400">
+                  <TabsTrigger value="submissions" className="shrink-0">
                     Submissions
                     <div className="text-xxs ml-2 rounded-full bg-slate-200 px-2 py-0.5 text-slate-500">
                       {submissions?.length}
@@ -463,7 +463,7 @@ export default function BountySubmissions({ slug }: Props) {
                   {!bounty?.isWinnersAnnounced && !isExpired && (
                     <TabsTrigger
                       value="scout"
-                      className={cn('ph-no-capture')}
+                      className={cn('ph-no-capture shrink-0')}
                       onClick={() => posthog.capture('scout tab_scout')}
                     >
                       Scout Talent
@@ -471,7 +471,9 @@ export default function BountySubmissions({ slug }: Props) {
                     </TabsTrigger>
                   )}
                   {bounty?.isWinnersAnnounced && !bounty?.isFndnPaying && (
-                    <TabsTrigger value="payments">Payments</TabsTrigger>
+                    <TabsTrigger value="payments" className="shrink-0">
+                      Payments
+                    </TabsTrigger>
                   )}
                 </TabsList>
                 <div className="h-[1.5px] w-full bg-slate-200/70" />
@@ -597,24 +599,24 @@ export default function BountySubmissions({ slug }: Props) {
               }}
               unsetDefaultPosition
               hideCloseIcon
-              className="fixed bottom-4 left-1/2 w-fit max-w-[95vw] -translate-x-1/2 overflow-hidden px-5 py-2"
+              className="fixed bottom-[calc(5rem+env(safe-area-inset-bottom))] left-1/2 w-[calc(100vw-1rem)] max-w-[calc(100vw-1rem)] -translate-x-1/2 overflow-hidden px-3 py-2 sm:bottom-[calc(env(safe-area-inset-bottom)+1rem)] sm:w-fit sm:max-w-[95vw] sm:px-5"
             >
-              <div className="mx-auto w-fit rounded-lg">
+              <div className="mx-auto w-full rounded-lg sm:w-fit">
                 {multiBonusPodiumsOverSelected && (
                   <p className="pb-2 text-center text-sm text-red-500">
                     You have {remainings?.bonus || 0} bonus spots available
                   </p>
                 )}
-                <div className="flex items-center gap-2">
-                  <p className="text-sm font-medium whitespace-nowrap">
+                <div className="flex max-w-full items-center gap-1 overflow-x-auto whitespace-nowrap pr-1 [&::-webkit-scrollbar]:hidden sm:gap-2">
+                  <p className="shrink-0 text-xs font-medium sm:text-sm whitespace-nowrap">
                     {selectedSubmissionIds.size} Selected
                   </p>
 
-                  <div className="h-4 w-px bg-slate-300" />
+                  <div className="h-4 w-px shrink-0 bg-slate-300" />
 
                   <Button
                     size="sm"
-                    className="px-2 font-semibold text-slate-500"
+                    className="shrink-0 px-2 py-1 text-xs font-semibold text-slate-500 sm:px-2 sm:py-2 sm:text-sm"
                     onClick={() => {
                       setSelectedSubmissionIds(new Set());
                     }}
@@ -626,11 +628,11 @@ export default function BountySubmissions({ slug }: Props) {
 
                   <Button
                     size="sm"
-                    className="rounded-lg border border-orange-300 bg-orange-50 text-orange-600 hover:bg-orange-100 disabled:opacity-50"
+                    className="shrink-0 rounded-lg border border-orange-300 bg-orange-50 px-2 py-1 text-xs text-orange-600 hover:bg-orange-100 disabled:opacity-50 sm:px-3 sm:py-2 sm:text-sm"
                     disabled={selectedSubmissionIds.size === 0}
                     onClick={() => handleModalAction('spam')}
                   >
-                    <LucideFlag className="size-3.5" />
+                    <LucideFlag className="size-3 sm:size-3.5" />
                     <span className="sm:hidden">Spam</span>
                     <span className="hidden sm:inline">Mark as Spam</span>
                   </Button>
@@ -638,7 +640,7 @@ export default function BountySubmissions({ slug }: Props) {
                   {isProject && (
                     <Button
                       size="sm"
-                      className="rounded-lg border border-red-300 bg-red-50 text-red-600 hover:bg-red-100 disabled:opacity-50"
+                      className="shrink-0 rounded-lg border border-red-300 bg-red-50 px-2 py-1 text-xs text-red-600 hover:bg-red-100 disabled:opacity-50 sm:px-3 sm:py-2 sm:text-sm"
                       disabled={selectedSubmissionIds.size === 0}
                       onClick={() => handleModalAction('reject')}
                     >
@@ -648,6 +650,7 @@ export default function BountySubmissions({ slug }: Props) {
                         viewBox="0 0 13 13"
                         fill="none"
                         xmlns="http://www.w3.org/2000/svg"
+                        className="size-3 sm:size-3.5"
                       >
                         <path
                           d="M6.11111 0.777832C9.49056 0.777832 12.2222 3.5095 12.2222 6.88894C12.2222 10.2684 9.49056 13.0001 6.11111 13.0001C2.73167 13.0001 0 10.2684 0 6.88894C0 3.5095 2.73167 0.777832 6.11111 0.777832ZM8.305 3.83339L6.11111 6.02728L3.91722 3.83339L3.05556 4.69505L5.24944 6.88894L3.05556 9.08283L3.91722 9.9445L6.11111 7.75061L8.305 9.9445L9.16667 9.08283L6.97278 6.88894L9.16667 4.69505L8.305 3.83339Z"
@@ -661,7 +664,7 @@ export default function BountySubmissions({ slug }: Props) {
 
                   <Button
                     size="sm"
-                    className="rounded-lg border border-purple-300 bg-purple-50 text-purple-600 hover:bg-purple-100 disabled:opacity-50"
+                    className="shrink-0 rounded-lg border border-purple-300 bg-purple-50 px-2 py-1 text-xs text-purple-600 hover:bg-purple-100 disabled:opacity-50 sm:px-3 sm:py-2 sm:text-sm"
                     disabled={selectedSubmissionIds.size === 0}
                     onClick={() => handleModalAction('shortlist')}
                   >
@@ -672,7 +675,7 @@ export default function BountySubmissions({ slug }: Props) {
                   {!isProject && (
                     <Button
                       size="sm"
-                      className="rounded-lg border border-blue-300 bg-blue-50 text-blue-600 hover:bg-blue-100 disabled:opacity-50"
+                      className="shrink-0 rounded-lg border border-blue-300 bg-blue-50 px-2 py-1 text-xs text-blue-600 hover:bg-blue-100 disabled:opacity-50 sm:px-3 sm:py-2 sm:text-sm"
                       disabled={
                         selectedSubmissionIds.size === 0 ||
                         multiBonusPodiumsOverSelected

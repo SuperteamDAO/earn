@@ -200,7 +200,7 @@ export const PaymentsHistoryTab = ({
         </div>
       </div>
       <div className="overflow-x-auto rounded-md border border-slate-200 bg-white">
-        <Table>
+        <Table className="min-w-[760px]">
           <TableHeader>
             <TableRow className="text-slate-100">
               <GrantTh>Approved Grant Title</GrantTh>
@@ -223,7 +223,7 @@ export const PaymentsHistoryTab = ({
                 return (
                   <React.Fragment key={grantee.id}>
                     <TableRow>
-                      <TableCell>
+                      <TableCell className="py-3">
                         <div className="flex items-center gap-2">
                           <EarnAvatar
                             id={grantee.userId}
@@ -240,7 +240,7 @@ export const PaymentsHistoryTab = ({
                           </div>
                         </div>
                       </TableCell>
-                      <TableCell>
+                      <TableCell className="py-3">
                         <div className="flex items-center gap-1">
                           <TokenIcon
                             className="h-4 w-4 rounded-full"
@@ -255,7 +255,7 @@ export const PaymentsHistoryTab = ({
                           </p>
                         </div>
                       </TableCell>
-                      <TableCell>
+                      <TableCell className="py-3">
                         <div className="flex items-center gap-1">
                           <TokenIcon
                             className="h-4 w-4 rounded-full"
@@ -270,7 +270,7 @@ export const PaymentsHistoryTab = ({
                           </p>
                         </div>
                       </TableCell>
-                      <TableCell>
+                      <TableCell className="py-3">
                         <div className="flex items-center gap-3">
                           <Progress
                             className="h-1.5 w-20 rounded-full"
@@ -281,7 +281,7 @@ export const PaymentsHistoryTab = ({
                           </p>
                         </div>
                       </TableCell>
-                      <TableCell className="p-0 text-right">
+                      <TableCell className="p-0 py-3 text-right">
                         <div className="flex items-center gap-2">
                           {isNativeAndNonST && (
                             <RecordPaymentButton
@@ -333,7 +333,7 @@ export const PaymentsHistoryTab = ({
                 return (
                   <React.Fragment key={grantee.id}>
                     <TableRow>
-                      <TableCell>
+                      <TableCell className="py-3">
                         <div className="flex items-center gap-2">
                           <EarnAvatar
                             id={grantee.userId}
@@ -350,7 +350,7 @@ export const PaymentsHistoryTab = ({
                           </div>
                         </div>
                       </TableCell>
-                      <TableCell>
+                      <TableCell className="py-3">
                         <div className="flex items-center gap-1">
                           <TokenIcon
                             className="h-4 w-4 rounded-full"
@@ -365,7 +365,7 @@ export const PaymentsHistoryTab = ({
                           </p>
                         </div>
                       </TableCell>
-                      <TableCell>
+                      <TableCell className="py-3">
                         <div className="flex items-center gap-1">
                           <TokenIcon
                             className="h-4 w-4 rounded-full"
@@ -380,7 +380,7 @@ export const PaymentsHistoryTab = ({
                           </p>
                         </div>
                       </TableCell>
-                      <TableCell>
+                      <TableCell className="py-3">
                         <div className="flex items-center gap-3">
                           <Progress
                             className="h-1.5 w-20 rounded-full"
@@ -391,7 +391,7 @@ export const PaymentsHistoryTab = ({
                           </p>
                         </div>
                       </TableCell>
-                      <TableCell className="p-0 text-right">
+                      <TableCell className="p-0 py-3 text-right">
                         {grantee.GrantTranche &&
                           grantee.GrantTranche.length > 0 && (
                             <div className="flex items-center gap-2">

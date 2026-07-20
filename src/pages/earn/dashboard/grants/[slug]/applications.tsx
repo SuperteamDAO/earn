@@ -88,17 +88,21 @@ function GrantApplications({ slug }: Props) {
             defaultValue="applications"
             onValueChange={(value) => setActiveTab(value)}
           >
-            <TabsList className="w-full flex-nowrap overflow-x-auto [&::-webkit-scrollbar]:hidden gap-2 font-medium text-slate-400 focus-visible:ring-0">
-              <TabsTrigger value="applications">
+            <TabsList className="w-full justify-start gap-2 overflow-x-auto px-2 pb-1 [&::-webkit-scrollbar]:hidden font-medium text-slate-400 focus-visible:ring-0">
+              <TabsTrigger value="applications" className="shrink-0">
                 Applications
                 <div className="text-xxs ml-2 rounded-full bg-slate-200 px-2 py-0.5 text-slate-500">
                   {applications?.length}
                 </div>
               </TabsTrigger>
               {hasSpecialTranches && (
-                <TabsTrigger value="tranches">Tranche Requests</TabsTrigger>
+                <TabsTrigger value="tranches" className="shrink-0">
+                  Tranche Requests
+                </TabsTrigger>
               )}
-              <TabsTrigger value="payments">Payments History</TabsTrigger>
+              <TabsTrigger value="payments" className="shrink-0">
+                Payments History
+              </TabsTrigger>
             </TabsList>
             <div className="h-0.5 w-full bg-slate-200" />
             <TabsContent value="applications" className="w-full px-0">

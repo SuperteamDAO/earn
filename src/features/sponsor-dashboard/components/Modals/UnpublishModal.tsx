@@ -99,12 +99,13 @@ export const UnpublishModal = ({
         <div className="px-6 pb-6 text-[0.95rem]">
           <div className="mb-4 text-slate-500">{dialogContent.subtext}</div>
 
-          <div className="flex gap-3">
-            <div className="w-1/2" />
+          <div className="flex flex-col gap-3 sm:flex-row">
+            <div className="hidden sm:block sm:w-1/2" />
             <Button
-              variant="ghost"
+              variant="outline"
               onClick={unpublishOnClose}
               disabled={updateMutation.isPending}
+              className="w-full border-slate-200 bg-white text-slate-700 shadow-sm hover:bg-slate-50 sm:ml-auto sm:w-auto"
             >
               Close
             </Button>

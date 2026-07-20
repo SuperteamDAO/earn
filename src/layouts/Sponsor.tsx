@@ -32,6 +32,7 @@ import { Tooltip } from '@/components/ui/tooltip';
 import { JTTG } from '@/constants/Telegram';
 import { SolanaWalletProvider } from '@/context/SolanaWallet';
 import { useDisclosure } from '@/hooks/use-disclosure';
+import { useMediaQuery } from '@/hooks/use-media-query';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { SponsorContentSkeleton } from '@/layouts/SponsorLayoutSkeleton';
@@ -42,6 +43,7 @@ import { cn } from '@/utils/cn';
 import { isAutoGenerateOpenAtom } from '@/features/listing-builder/atoms';
 import { isCreateListingAllowedQuery } from '@/features/listing-builder/queries/is-create-allowed';
 import { NavItem } from '@/features/sponsor-dashboard/components/NavItems';
+import { MobileDesktopOnlyDialog } from '@/features/sponsor-dashboard/components/MobileDesktopOnlyDialog';
 import { SelectHackathon } from '@/features/sponsor-dashboard/components/SelectHackathon';
 import { SelectSponsor } from '@/features/sponsor-dashboard/components/SelectSponsor';
 import { activeHackathonsQuery } from '@/features/sponsor-dashboard/queries/active-hackathons';
@@ -107,6 +109,11 @@ export function SponsorLayout({
     onOpen: onSponsorInfoModalOpen,
     onClose: onSponsorInfoModalClose,
   } = useDisclosure();
+  const {
+    isOpen: isMobileDesktopOnlyOpen,
+    onOpen: onMobileDesktopOnlyOpen,
+    onClose: onMobileDesktopOnlyClose,
+  } = useDisclosure();
 
   const [isEntityModalOpen, setIsEntityModalOpen] = useState(false);
   const { query } = router;
@@ -114,8 +121,25 @@ export function SponsorLayout({
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const canSelectSponsor =
     user?.role === 'GOD' || (user?.UserSponsors?.length ?? 0) > 0;
+  const isTeamSettingsVisible = useMemo(() => {
+    if (user?.role === 'GOD') return true;
+    const currentSponsorLink = user?.UserSponsors?.find(
+      (s) => s.sponsorId === user?.currentSponsorId,
+    );
+    return currentSponsorLink?.role === 'ADMIN';
+  }, [user?.UserSponsors, user?.currentSponsorId, user?.role]);
 
   const setAutoGenerateOpen = useSetAtom(isAutoGenerateOpenAtom);
+  const isMobile = useMediaQuery('(max-width: 767px)');
+
+  const openMobileDesktopOnlyNotice = (flow: 'ai' | 'scratch') => {
+    onMobileDesktopOnlyOpen();
+    posthog.capture(
+      flow === 'ai'
+        ? 'new generate with ai_sponsor_mobile_desktop_only'
+        : 'new start from scratch_sponsor_mobile_desktop_only',
+    );
+  };
 
   const handleMouseEnter = useCallback(() => {
     if (!isCollapsible) return;
@@ -230,11 +254,15 @@ export function SponsorLayout({
           link: '/listings',
           icon: BiListUl,
         },
-        {
-          name: 'Team Settings',
-          link: '/team-settings',
-          icon: RiUserSettingsLine,
-        },
+        ...(isTeamSettingsVisible
+          ? [
+              {
+                name: 'Team Settings',
+                link: '/team-settings',
+                icon: RiUserSettingsLine,
+              },
+            ]
+          : []),
         ...(isLocalProfileVisible
           ? [
               {
@@ -278,6 +306,13 @@ export function SponsorLayout({
         <SponsorInfoModal
           onClose={onSponsorInfoModalClose}
           isOpen={isSponsorInfoModalOpen}
+        />
+
+        <MobileDesktopOnlyDialog
+          open={isMobileDesktopOnlyOpen}
+          onOpenChange={onMobileDesktopOnlyClose}
+          title="Continue on desktop"
+          description="Creating and editing listings is optimized for desktop. Please continue on a larger screen to choose a listing type or finish setup."
         />
 
         {/* {router.pathname === '/dashboard/listings' && (
@@ -378,6 +413,10 @@ export function SponsorLayout({
                       <DropdownMenuItem
                         className="flex items-center justify-between"
                         onClick={() => {
+                          if (isMobile) {
+                            openMobileDesktopOnlyNotice('ai');
+                            return;
+                          }
                           posthog.capture('new generate with ai_sponsor');
                           setAutoGenerateOpen(true);
                         }}
@@ -395,6 +434,10 @@ export function SponsorLayout({
                       <DropdownMenuItem
                         className="flex items-center justify-between"
                         onClick={() => {
+                          if (isMobile) {
+                            openMobileDesktopOnlyNotice('scratch');
+                            return;
+                          }
                           posthog.capture('new start from scratch_sponsor');
                           onOpen();
                         }}
@@ -456,8 +499,8 @@ export function SponsorLayout({
                 isCollapsible ? 'md:ml-20' : 'ml-0',
               )}
             >
-              {/* Mobile-only top strip: sponsor selector + create button */}
-              <div className="mb-4 flex items-center justify-between md:hidden">
+              {/* Mobile-only top strip: sponsor selector + quick actions */}
+              <div className="mb-4 flex flex-col gap-3 md:hidden">
                 {canSelectSponsor && (
                   <div className="min-w-0 flex-1">
                     {isHackathonRoute ? (
@@ -467,66 +510,100 @@ export function SponsorLayout({
                     )}
                   </div>
                 )}
-                {!isHackathonRoute ? (
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button
-                        className="ph-no-capture ml-3 shrink-0 gap-1.5"
-                        size="sm"
-                        disabled={
-                          isCreateListingAllowed !== undefined &&
-                          isCreateListingAllowed === false &&
-                          user?.role !== 'GOD'
-                        }
-                      >
-                        <Plus className="h-3.5 w-3.5" />
-                        New
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent
-                      className="min-w-[200px] font-medium text-slate-500"
-                      align="end"
+                <div className="flex items-center gap-2">
+                  {isTeamSettingsVisible && (
+                    <Button
+                      asChild
+                      size="sm"
+                      variant="outline"
+                      className="min-w-0 flex-1 gap-1.5 border-slate-200 text-slate-600"
                     >
-                      <DropdownMenuItem
-                        className="flex items-center justify-between"
-                        onClick={() => {
-                          posthog.capture('new generate with ai_sponsor');
-                          setAutoGenerateOpen(true);
-                        }}
+                      <Link href="/earn/dashboard/team-settings">
+                        <Users className="h-3.5 w-3.5" />
+                        Team
+                      </Link>
+                    </Button>
+                  )}
+                  {!isHackathonRoute ? (
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button
+                          className="ph-no-capture min-w-0 flex-1 gap-1.5"
+                          size="sm"
+                          disabled={
+                            isCreateListingAllowed !== undefined &&
+                            isCreateListingAllowed === false &&
+                            user?.role !== 'GOD'
+                          }
+                        >
+                          <Plus className="h-3.5 w-3.5" />
+                          New
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent
+                        className="min-w-[200px] font-medium text-slate-500"
+                        align="end"
                       >
-                        <span className="flex items-center gap-2 text-sm">
-                          <Sparkle className="h-4 w-4" />
-                          Generate with AI
-                        </span>
-                        <span className="rounded-full bg-emerald-50 px-1.5 py-0.5 text-[0.65rem] text-emerald-600">
-                          2m
-                        </span>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        className="flex items-center justify-between"
-                        onClick={() => {
-                          posthog.capture('new start from scratch_sponsor');
-                          onOpen();
-                        }}
-                      >
-                        <span className="flex items-center gap-2 text-sm">
-                          <PencilLine className="h-4 w-4" />
-                          Start from Scratch
-                        </span>
-                        <span className="rounded-full bg-indigo-50 px-1.5 py-0.5 text-[0.65rem] text-indigo-600">
-                          10m
-                        </span>
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                ) : (
-                  <Button size="sm" className="ml-3 shrink-0 gap-1.5" asChild>
-                    <Link href="/earn/dashboard/new/?type=hackathon">
+                        <DropdownMenuItem
+                          className="flex items-center justify-between"
+                          onClick={() => {
+                            if (isMobile) {
+                              openMobileDesktopOnlyNotice('ai');
+                              return;
+                            }
+                            posthog.capture('new generate with ai_sponsor');
+                            setAutoGenerateOpen(true);
+                          }}
+                        >
+                          <span className="flex items-center gap-2 text-sm">
+                            <Sparkle className="h-4 w-4" />
+                            Generate with AI
+                          </span>
+                          <span className="rounded-full bg-emerald-50 px-1.5 py-0.5 text-[0.65rem] text-emerald-600">
+                            2m
+                          </span>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          className="flex items-center justify-between"
+                          onClick={() => {
+                            if (isMobile) {
+                              openMobileDesktopOnlyNotice('scratch');
+                              return;
+                            }
+                            posthog.capture('new start from scratch_sponsor');
+                            onOpen();
+                          }}
+                        >
+                          <span className="flex items-center gap-2 text-sm">
+                            <PencilLine className="h-4 w-4" />
+                            Start from Scratch
+                          </span>
+                          <span className="rounded-full bg-indigo-50 px-1.5 py-0.5 text-[0.65rem] text-indigo-600">
+                            10m
+                          </span>
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  ) : isMobile ? (
+                    <Button
+                      size="sm"
+                      className="min-w-0 flex-1 gap-1.5"
+                      onClick={() => {
+                        openMobileDesktopOnlyNotice('scratch');
+                      }}
+                    >
                       <Plus className="h-3.5 w-3.5" />
                       New Track
-                    </Link>
-                  </Button>
-                )}
+                    </Button>
+                  ) : (
+                    <Button size="sm" className="min-w-0 flex-1 gap-1.5" asChild>
+                      <Link href="/earn/dashboard/new/?type=hackathon">
+                        <Plus className="h-3.5 w-3.5" />
+                        New Track
+                      </Link>
+                    </Button>
+                  )}
+                </div>
               </div>
               {isLoading ? <SponsorContentSkeleton /> : children}
             </div>

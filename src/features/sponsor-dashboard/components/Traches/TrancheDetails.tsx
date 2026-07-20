@@ -90,7 +90,7 @@ export const TrancheDetails = ({
       {tranches?.length ? (
         <>
           <div className="sticky top-[3rem] rounded-t-xl border-b border-slate-200 bg-white py-1">
-            <div className="flex w-full items-center justify-between px-4 py-2">
+            <div className="flex w-full flex-col gap-2 px-4 py-2 md:flex-row md:items-center md:justify-between">
               <div className="flex min-w-0 flex-1 items-center gap-2">
                 <EarnAvatar
                   className="h-10 w-10"
@@ -103,8 +103,7 @@ export const TrancheDetails = ({
                 <div className="min-w-0">
                   <div className="flex items-center gap-2">
                     <p className="max-w-[10.5rem] truncate text-base font-medium text-slate-900 sm:max-w-none">
-                      {`${selectedTranche?.GrantApplication?.user?.firstName}`}
-                      ’s Application
+                      {`${selectedTranche?.GrantApplication?.user?.firstName}'s Application`}
                     </p>
                     <p className="flex items-center gap-1 text-xs font-semibold whitespace-nowrap text-green-600">
                       <VerifiedBadge className="text-green-600" />
