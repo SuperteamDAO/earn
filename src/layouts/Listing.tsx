@@ -74,10 +74,9 @@ export function ListingPageLayout({
     }
   }, [initialListing, submissionNumber, setBountySnackbar]);
 
-  const encodedTitle = encodeURIComponent(initialListing?.title || '');
   const ogImage = new URL(`${getURL()}api/dynamic-og/listing/`);
 
-  ogImage.searchParams.set('title', encodedTitle);
+  ogImage.searchParams.set('title', initialListing?.title || '');
   ogImage.searchParams.set(
     'reward',
     initialListing?.rewardAmount?.toString() || '',
