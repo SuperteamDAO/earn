@@ -367,7 +367,6 @@ model Submission {
   telegram           String?          @db.Text
   label              SubmissionLabels @default(Unreviewed)
   rewardInUSD        Float            @default(0)
-  dedupeKey          String?          @unique @db.VarChar(191)
   listing            Bounties         @relation(fields: [listingId], references: [id])
   user               User             @relation(fields: [userId], references: [id])
   agent              Agent?           @relation(fields: [agentId], references: [id])
@@ -782,7 +781,6 @@ model CreditLedger {
   submission     Submission?       @relation(fields: [submissionId], references: [id])
   application    GrantApplication? @relation(fields: [applicationId], references: [id])
   decision       SubmissionStatus?
-  idempotencyKey String?           @unique @db.VarChar(191)
 
   @@index([userId])
   @@index([submissionId])

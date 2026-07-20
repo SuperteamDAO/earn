@@ -2,7 +2,6 @@ import type { NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
-import { PrismaClientKnownRequestError } from '@/prisma/internal/prismaNamespace';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { queueAgent } from '@/features/agents/utils/queueAgent';
@@ -20,18 +19,6 @@ import { validateSubmissionRequest } from '@/features/listings/utils/validateSub
 import { extractSocialUsername } from '@/features/social/utils/extractUsername';
 
 type PrismaLike = Pick<typeof prisma, 'user' | 'submission'>;
-
-function submissionDedupeKey(
-  userId: string,
-  listingId: string,
-  options?: { isAgent?: boolean; agentId?: string },
-) {
-  if (options?.isAgent && options.agentId) {
-    return `agent:${options.agentId}:listing:${listingId}`;
-  }
-
-  return `user:${userId}:listing:${listingId}`;
-}
 
 export async function createSubmission(
   userId: string,
@@ -78,38 +65,25 @@ export async function createSubmission(
 
   if (existingSubmission) throw new Error('Submission already exists');
 
-  try {
-    return await client.submission.create({
-      data: {
-        userId,
-        agentId: options?.agentId || null,
-        listingId,
-        dedupeKey: submissionDedupeKey(userId, listingId, options),
-        link: validatedData.link || '',
-        tweet: validatedData.tweet || '',
-        otherInfo: sanitizeGrantApplicationHtml(validatedData.otherInfo),
-        eligibilityAnswers:
-          sanitizeGrantApplicationAnswers(validatedData.eligibilityAnswers) ||
-          [],
-        ask: validatedData.ask || null,
-        telegram: submissionTelegram,
+  return client.submission.create({
+    data: {
+      userId,
+      agentId: options?.agentId || null,
+      listingId,
+      link: validatedData.link || '',
+      tweet: validatedData.tweet || '',
+      otherInfo: sanitizeGrantApplicationHtml(validatedData.otherInfo),
+      eligibilityAnswers:
+        sanitizeGrantApplicationAnswers(validatedData.eligibilityAnswers) || [],
+      ask: validatedData.ask || null,
+      telegram: submissionTelegram,
+    },
+    include: {
+      listing: {
+        select: { pocId: true },
       },
-      include: {
-        listing: {
-          select: { pocId: true },
-        },
-      },
-    });
-  } catch (error) {
-    if (
-      error instanceof PrismaClientKnownRequestError &&
-      error.code === 'P2002'
-    ) {
-      throw new Error('Submission already exists');
-    }
-
-    throw error;
-  }
+    },
+  });
 }
 
 async function submission(req: NextApiRequestWithUser, res: NextApiResponse) {
@@ -159,39 +133,35 @@ async function submission(req: NextApiRequestWithUser, res: NextApiResponse) {
       });
     }
 
-    const result =
-      !isHackathon && !isPro
-        ? await prisma.$transaction(async (tx) => {
-            await tx.$queryRaw`
-              SELECT id FROM \`User\`
-              WHERE id = ${userId as string}
-              FOR UPDATE
-            `;
+    const result = await prisma.$transaction(async (tx) => {
+      await tx.$queryRaw`
+        SELECT id FROM \`User\`
+        WHERE id = ${userId as string}
+        FOR UPDATE
+      `;
 
-            const hasCredits = await canUserSubmit(userId as string, tx);
-            if (!hasCredits) {
-              throw new Error('Insufficient credits');
-            }
+      if (!isHackathon && !isPro) {
+        const hasCredits = await canUserSubmit(userId as string, tx);
+        if (!hasCredits) {
+          throw new Error('Insufficient credits');
+        }
+      }
 
-            const submission = await createSubmission(
-              userId as string,
-              listingId,
-              { link, tweet, otherInfo, eligibilityAnswers, ask, telegram },
-              listing,
-              { client: tx },
-            );
+      const submission = await createSubmission(
+        userId as string,
+        listingId,
+        { link, tweet, otherInfo, eligibilityAnswers, ask, telegram },
+        listing,
+        { client: tx },
+      );
 
-            await consumeCredit(userId, submission.id, tx);
-            logger.info(`Consumed 1 credit from user ${userId} for submission`);
+      if (!isHackathon && !isPro) {
+        await consumeCredit(userId, submission.id, tx);
+        logger.info(`Consumed 1 credit from user ${userId} for submission`);
+      }
 
-            return submission;
-          })
-        : await createSubmission(
-            userId as string,
-            listingId,
-            { link, tweet, otherInfo, eligibilityAnswers, ask, telegram },
-            listing,
-          );
+      return submission;
+    });
 
     await queueEmail({
       type: 'submissionTalent',

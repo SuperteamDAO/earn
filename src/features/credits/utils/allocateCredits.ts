@@ -1,6 +1,5 @@
 import { prisma } from '@/prisma';
 import { CreditEventType, SubmissionLabels } from '@/prisma/enums';
-import { PrismaClientKnownRequestError } from '@/prisma/internal/prismaNamespace';
 import { dayjs } from '@/utils/dayjs';
 
 const currentMonth = dayjs.utc().startOf('month').toDate();
@@ -21,17 +20,9 @@ export async function consumeCredit(
         type: CreditEventType.SUBMISSION,
         effectiveMonth: currentMonth,
         change: -1,
-        idempotencyKey: `submission:${submissionId}:credit-debit`,
       },
     });
   } catch (error) {
-    if (
-      error instanceof PrismaClientKnownRequestError &&
-      error.code === 'P2002'
-    ) {
-      return;
-    }
-
     console.error('[CreditAllocation] Failed to consume credit', {
       userId,
       submissionId,
