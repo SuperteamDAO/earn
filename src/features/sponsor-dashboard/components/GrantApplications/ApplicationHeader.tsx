@@ -138,7 +138,7 @@ export const ApplicationHeader = ({
   };
 
   return (
-    <div className="mb-2 flex items-center justify-between">
+    <div className="mb-2 flex flex-wrap items-center justify-between gap-3">
       <button className="sr-only" />
       <div>
         <Breadcrumb className="text-slate-400">

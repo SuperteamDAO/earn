@@ -222,7 +222,7 @@ export const SubmissionHeader = ({
     bountyStatus === 'In Review';
 
   return (
-    <div className="mb-2 flex items-center justify-between gap-12">
+    <div className="mb-2 flex flex-wrap items-center justify-between gap-3 md:gap-12">
       <div>
         <Breadcrumb className="text-slate-400">
           <BreadcrumbList>
@@ -355,7 +355,7 @@ export const SubmissionHeader = ({
         </div>
       </div>
       {!isProject && !bounty?.isWinnersAnnounced && (
-        <div className="flex flex-col items-end">
+        <div className="flex w-full flex-col items-stretch md:w-auto md:items-end">
           {activeTab === 'submissions' && (
             <>
               <Tooltip
@@ -380,7 +380,7 @@ export const SubmissionHeader = ({
                   onClick={onWinnersAnnounceOpen}
                   animate={true}
                   classNames={{
-                    button: 'w-52 h-11',
+                    button: 'w-full md:w-52 h-11',
                   }}
                 >
                   <Check className="size-4" />
@@ -388,7 +388,7 @@ export const SubmissionHeader = ({
                 </ShinyButton>
               </Tooltip>
               {showWarning && (
-                <div className="my-2 flex w-52">
+                <div className="my-2 flex w-full md:w-52">
                   <p className="text-xxs text-red-400">
                     There aren&apos;t enough eligible{' '}
                     {bounty?.type === 'project'

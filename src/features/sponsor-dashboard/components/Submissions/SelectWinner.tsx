@@ -114,7 +114,7 @@ export const SelectWinner = ({
             {!isValueSelected ? (
               <DropdownMenu>
                 <div className="relative flex">
-                  <DropdownMenuTrigger asChild className="min-w-[180px]">
+                  <DropdownMenuTrigger asChild className="md:min-w-[180px]">
                     <Button
                       variant="outline"
                       disabled={

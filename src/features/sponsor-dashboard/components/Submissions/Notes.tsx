@@ -160,7 +160,7 @@ export const Notes = ({ slug }: Props) => {
         className="h-full w-full"
       >
         <NotesRichEditor
-          className="h-full max-h-[25rem] min-h-[25rem] w-full resize-none !border-0 py-0 text-sm whitespace-pre-wrap text-slate-500 !shadow-none !ring-0 placeholder:text-slate-400 focus:!border-0 focus:!shadow-none focus:!ring-0 focus:!outline-none focus-visible:!ring-0 focus-visible:!ring-offset-0 focus-visible:!outline-hidden"
+          className="h-full max-h-[12rem] min-h-[12rem] w-full md:max-h-[25rem] md:min-h-[25rem] resize-none !border-0 py-0 text-sm whitespace-pre-wrap text-slate-500 !shadow-none !ring-0 placeholder:text-slate-400 focus:!border-0 focus:!shadow-none focus:!ring-0 focus:!outline-none focus-visible:!ring-0 focus-visible:!ring-offset-0 focus-visible:!outline-hidden"
           key={submissionId + (selectedSubmission?.label || 'label')}
           id={submissionId + (selectedSubmission?.label || 'label')}
           onChange={handleChange}

@@ -291,7 +291,7 @@ export function SponsorLayout({
           onClose={handleEntityClose}
         />
 
-        <div className="flex min-h-[max(100vh,1000px)] flex-col justify-start transition-all duration-300 ease-in-out md:flex-row md:hover:shadow-lg">
+        <div className="flex min-h-[max(100vh,1000px)] flex-col justify-start overflow-x-hidden transition-all duration-300 ease-in-out md:flex-row md:hover:shadow-lg">
           <div
             className={cn(
               'sponsor-dashboard-sidebar overflow-x-hidden border-r border-slate-200 bg-white pt-5 whitespace-nowrap',

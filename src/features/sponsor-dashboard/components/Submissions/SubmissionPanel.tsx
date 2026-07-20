@@ -1,10 +1,16 @@
 import { useAtom } from 'jotai';
-import { ArrowRight, ExternalLink } from 'lucide-react';
+import { ArrowRight, ExternalLink, Pencil } from 'lucide-react';
 import Link from 'next/link';
 
 import MdOutlineAccountBalanceWallet from '@/components/icons/MdOutlineAccountBalanceWallet';
 import { Button } from '@/components/ui/button';
 import { CopyButton } from '@/components/ui/copy-tooltip';
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
 import type { SubmissionWithUser } from '@/interface/submission';
 import { SubmissionLabels } from '@/prisma/enums';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
@@ -23,6 +29,7 @@ import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
 import { selectedSubmissionAtom } from '../../atoms';
 import { Details } from './Details';
+import { Notes } from './Notes';
 import { SelectLabel } from './SelectLabel';
 import { SelectWinner } from './SelectWinner';
 import { SpamButton } from './SpamButton';
@@ -55,8 +62,8 @@ export const SubmissionPanel = ({
       {submissions.length ? (
         <>
           <div className="rounded-t-xl border-b border-slate-200 bg-white py-1">
-            <div className="flex w-full items-center justify-between px-4 pt-3">
-              <div className="flex w-full items-center gap-2">
+            <div className="flex w-full flex-col gap-2 px-4 pt-3 md:flex-row md:items-center md:justify-between">
+              <div className="flex min-w-0 flex-1 items-center gap-2">
                 <EarnAvatar
                   className="h-10 w-10"
                   id={selectedSubmission?.user?.id}
@@ -96,7 +103,7 @@ export const SubmissionPanel = ({
                     )}
                 </div>
               </div>
-              <div className="ph-no-capture flex w-full items-center justify-end gap-2">
+              <div className="ph-no-capture flex shrink-0 items-center justify-start gap-1.5 md:gap-2 md:justify-end">
                 {!selectedSubmission?.isWinner &&
                   (bounty?.isWinnersAnnounced
                     ? selectedSubmission?.label === SubmissionLabels.Spam
@@ -107,6 +114,27 @@ export const SubmissionPanel = ({
                       isMultiSelectOn={!!isMultiSelectOn}
                     />
                   )}
+                {!isHackathonPage && (
+                  <div className="md:hidden">
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className="gap-1.5 border-slate-200 text-slate-500 hover:text-slate-700"
+                        >
+                          <Pencil className="h-3.5 w-3.5" />
+                          <span className="hidden sm:inline">Note</span>
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className="w-[min(320px,90vw)] p-0">
+                        <DialogTitle className="sr-only">Notes</DialogTitle>
+                        {selectedSubmission && (
+                          <Notes key={selectedSubmission.id} slug={bounty?.slug} />
+                        )}
+                      </DialogContent>
+                    </Dialog>
+                  </div>
+                )}
                 {!bounty?.isWinnersAnnounced && !isHackathonPage && (
                   <SelectWinner
                     onWinnersAnnounceOpen={onWinnersAnnounceOpen}

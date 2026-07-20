@@ -188,18 +188,20 @@ export const SubmissionList = ({
             >
               <div className="flex items-center">
                 {!isMultiSelectDisabled && (
-                  <Checkbox
-                    className="data-[state=checked]:border-brand-purple data-[state=checked]:bg-brand-purple mr-2 disabled:invisible"
-                    checked={isToggled && isToggled(submission.id)}
-                    disabled={
-                      submission?.status !== 'Pending' ||
-                      !!submission?.winnerPosition ||
-                      isMultiSelectDisabled
-                    }
-                    onCheckedChange={() =>
-                      toggleSubmission && toggleSubmission(submission.id)
-                    }
-                  />
+                  <div onClick={(e) => e.stopPropagation()}>
+                    <Checkbox
+                      className="data-[state=checked]:border-brand-purple data-[state=checked]:bg-brand-purple mr-2 disabled:invisible"
+                      checked={isToggled && isToggled(submission.id)}
+                      disabled={
+                        submission?.status !== 'Pending' ||
+                        !!submission?.winnerPosition ||
+                        isMultiSelectDisabled
+                      }
+                      onCheckedChange={() =>
+                        toggleSubmission && toggleSubmission(submission.id)
+                      }
+                    />
+                  </div>
                 )}
                 <EarnAvatar
                   id={submission?.user?.id}

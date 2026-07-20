@@ -453,7 +453,7 @@ export default function BountySubmissions({ slug }: Props) {
           <Tabs value={activeTab} onValueChange={handleTabChange}>
             {bounty?.isPublished && (
               <>
-                <TabsList className="mt-3 gap-4 font-medium text-slate-400">
+                <TabsList className="mt-3 w-full flex-nowrap overflow-x-auto [&::-webkit-scrollbar]:hidden gap-4 font-medium text-slate-400">
                   <TabsTrigger value="submissions">
                     Submissions
                     <div className="text-xxs ml-2 rounded-full bg-slate-200 px-2 py-0.5 text-slate-500">
@@ -597,7 +597,7 @@ export default function BountySubmissions({ slug }: Props) {
               }}
               unsetDefaultPosition
               hideCloseIcon
-              className="fixed bottom-4 left-1/2 w-fit max-w-none -translate-x-1/2 overflow-hidden px-5 py-2"
+              className="fixed bottom-4 left-1/2 w-fit max-w-[95vw] -translate-x-1/2 overflow-hidden px-5 py-2"
             >
               <div className="mx-auto w-fit rounded-lg">
                 {multiBonusPodiumsOverSelected && (
@@ -605,34 +605,39 @@ export default function BountySubmissions({ slug }: Props) {
                     You have {remainings?.bonus || 0} bonus spots available
                   </p>
                 )}
-                <div className="flex items-center gap-3">
-                  <p className="text-base font-medium whitespace-nowrap">
+                <div className="flex items-center gap-2">
+                  <p className="text-sm font-medium whitespace-nowrap">
                     {selectedSubmissionIds.size} Selected
                   </p>
 
                   <div className="h-4 w-px bg-slate-300" />
 
                   <Button
+                    size="sm"
                     className="px-2 font-semibold text-slate-500"
                     onClick={() => {
                       setSelectedSubmissionIds(new Set());
                     }}
                     variant="ghost"
                   >
-                    UNSELECT ALL
+                    <span className="sm:hidden">Clear</span>
+                    <span className="hidden sm:inline">UNSELECT ALL</span>
                   </Button>
 
                   <Button
+                    size="sm"
                     className="rounded-lg border border-orange-300 bg-orange-50 text-orange-600 hover:bg-orange-100 disabled:opacity-50"
                     disabled={selectedSubmissionIds.size === 0}
                     onClick={() => handleModalAction('spam')}
                   >
-                    <LucideFlag className="size-1" />
-                    Mark as Spam
+                    <LucideFlag className="size-3.5" />
+                    <span className="sm:hidden">Spam</span>
+                    <span className="hidden sm:inline">Mark as Spam</span>
                   </Button>
 
                   {isProject && (
                     <Button
+                      size="sm"
                       className="rounded-lg border border-red-300 bg-red-50 text-red-600 hover:bg-red-100 disabled:opacity-50"
                       disabled={selectedSubmissionIds.size === 0}
                       onClick={() => handleModalAction('reject')}
@@ -649,20 +654,24 @@ export default function BountySubmissions({ slug }: Props) {
                           fill="#E11D48"
                         />
                       </svg>
-                      Reject All
+                      <span className="sm:hidden">Reject</span>
+                      <span className="hidden sm:inline">Reject All</span>
                     </Button>
                   )}
 
                   <Button
+                    size="sm"
                     className="rounded-lg border border-purple-300 bg-purple-50 text-purple-600 hover:bg-purple-100 disabled:opacity-50"
                     disabled={selectedSubmissionIds.size === 0}
                     onClick={() => handleModalAction('shortlist')}
                   >
-                    Shortlist All
+                    <span className="sm:hidden">Shortlist</span>
+                    <span className="hidden sm:inline">Shortlist All</span>
                   </Button>
 
                   {!isProject && (
                     <Button
+                      size="sm"
                       className="rounded-lg border border-blue-300 bg-blue-50 text-blue-600 hover:bg-blue-100 disabled:opacity-50"
                       disabled={
                         selectedSubmissionIds.size === 0 ||
@@ -670,8 +679,11 @@ export default function BountySubmissions({ slug }: Props) {
                       }
                       onClick={() => handleModalAction('bonus')}
                     >
-                      Assign {selectedSubmissionIds.size} Bonus
-                      {selectedSubmissionIds.size > 1 ? 'es' : ''}
+                      <span className="sm:hidden">Bonus</span>
+                      <span className="hidden sm:inline">
+                        Assign {selectedSubmissionIds.size} Bonus
+                        {selectedSubmissionIds.size > 1 ? 'es' : ''}
+                      </span>
                     </Button>
                   )}
                 </div>

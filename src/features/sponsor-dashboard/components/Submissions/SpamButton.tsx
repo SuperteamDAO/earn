@@ -115,8 +115,10 @@ export const SpamButton = ({ listingSlug, isMultiSelectOn }: Props) => {
         onClick={handleSpamClick}
         disabled={isMarkedAsSpam || isMultiSelectOn}
       >
-        <LucideFlag className="size-1 text-orange-500" />
-        {isMarkedAsSpam ? 'Marked as Spam' : 'Spam'}
+        <LucideFlag className="size-3.5 text-orange-500" />
+        <span className="hidden sm:inline">
+          {isMarkedAsSpam ? 'Marked as Spam' : 'Spam'}
+        </span>
       </Button>
 
       <SpamConfirmationDialog

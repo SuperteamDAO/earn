@@ -466,7 +466,7 @@ export const ApplicationsTab = ({ slug }: Props) => {
           }}
           unsetDefaultPosition
           hideCloseIcon
-          className="fixed bottom-4 left-1/2 w-fit max-w-none -translate-x-1/2 overflow-hidden px-5 py-2"
+          className="fixed bottom-4 left-1/2 w-fit max-w-[95vw] -translate-x-1/2 overflow-hidden px-5 py-2"
         >
           <div className="mx-auto w-fit rounded-lg">
             {selectedApplicationIds.size > 100 && (
@@ -475,33 +475,38 @@ export const ApplicationsTab = ({ slug }: Props) => {
               </p>
             )}
 
-            <div className="flex items-center gap-3">
-              <p className="text-base font-medium whitespace-nowrap">
+            <div className="flex items-center gap-2">
+              <p className="text-sm font-medium whitespace-nowrap">
                 {selectedApplicationIds.size} Selected
               </p>
 
               <div className="h-4 w-px bg-slate-300" />
 
               <Button
+                size="sm"
                 className="px-2 font-semibold text-slate-500"
                 onClick={() => {
                   setSelectedApplicationIds(new Set());
                 }}
                 variant="ghost"
               >
-                UNSELECT ALL
+                <span className="sm:hidden">Clear</span>
+                <span className="hidden sm:inline">UNSELECT ALL</span>
               </Button>
 
               <Button
+                size="sm"
                 className="rounded-lg border border-orange-300 bg-orange-50 text-orange-600 hover:bg-orange-100 disabled:opacity-50"
                 disabled={selectedApplicationIds.size === 0}
                 onClick={() => handleModalAction('spam')}
               >
-                <LucideFlag className="size-1" />
-                Mark as Spam
+                <LucideFlag className="size-3.5" />
+                <span className="sm:hidden">Spam</span>
+                <span className="hidden sm:inline">Mark as Spam</span>
               </Button>
 
               <Button
+                size="sm"
                 className="rounded-lg border border-red-300 bg-red-50 text-red-600 hover:bg-red-100 disabled:opacity-50"
                 disabled={
                   selectedApplicationIds.size === 0 ||
@@ -521,7 +526,8 @@ export const ApplicationsTab = ({ slug }: Props) => {
                     fill="#E11D48"
                   />
                 </svg>
-                Reject All
+                <span className="sm:hidden">Reject</span>
+                <span className="hidden sm:inline">Reject All</span>
               </Button>
             </div>
           </div>

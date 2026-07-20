@@ -149,12 +149,14 @@ export const ApplicationList = ({
               }}
             >
               <div className="flex items-center">
-                <Checkbox
-                  className="data-[state=checked]:border-brand-purple data-[state=checked]:bg-brand-purple mr-2 disabled:invisible"
-                  checked={isToggled(application.id)}
-                  disabled={application?.applicationStatus !== 'Pending'}
-                  onCheckedChange={() => toggleApplication(application.id)}
-                />
+                <div onClick={(e) => e.stopPropagation()}>
+                  <Checkbox
+                    className="data-[state=checked]:border-brand-purple data-[state=checked]:bg-brand-purple mr-2 disabled:invisible"
+                    checked={isToggled(application.id)}
+                    disabled={application?.applicationStatus !== 'Pending'}
+                    onCheckedChange={() => toggleApplication(application.id)}
+                  />
+                </div>
 
                 <EarnAvatar
                   id={application?.user?.id}

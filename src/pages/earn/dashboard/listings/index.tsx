@@ -277,8 +277,8 @@ export default function SponsorListings({ tab: queryTab }: { tab: string }) {
     <SponsorLayout>
       <Banner stats={sponsorStats} isLoading={isStatsLoading} />
       <div className="mb-4 flex w-full flex-col justify-between gap-2 lg:flex-row lg:items-center">
-        <div className="flex items-center whitespace-nowrap">
-          <p className="text-lg font-semibold text-slate-800">My Listings </p>
+        <div className="flex min-w-0 flex-wrap items-center">
+          <p className="text-lg font-semibold text-slate-800">My Listings</p>
           <Separator className="mx-3 h-6 w-px bg-slate-300" />
           <p className="text-slate-500">
             The one place to manage your listings
@@ -375,7 +375,7 @@ export default function SponsorListings({ tab: queryTab }: { tab: string }) {
             }
             onValueChange={handleTabChange}
           >
-            <TabsList className="flex-nowrap overflow-x-auto">
+            <TabsList className="w-full flex-nowrap overflow-x-auto [&::-webkit-scrollbar]:hidden">
               <TabsTrigger value="all">All</TabsTrigger>
               <TabsTrigger value="bounties">Bounties</TabsTrigger>
               <TabsTrigger value="projects">Projects</TabsTrigger>
