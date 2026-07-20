@@ -236,7 +236,7 @@ export const ApplicationDetails = ({
                         <span className="hidden sm:inline">Note</span>
                       </Button>
                     </DialogTrigger>
-                    <DialogContent className="w-[min(320px,90vw)] p-0">
+                    <DialogContent className="w-[min(320px,90vw)] overflow-hidden p-0">
                       <DialogTitle className="sr-only">Notes</DialogTitle>
                       {selectedApplication && (
                         <Notes

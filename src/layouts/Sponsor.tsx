@@ -313,6 +313,7 @@ export function SponsorLayout({
           onOpenChange={onMobileDesktopOnlyClose}
           title="Continue on desktop"
           description="Creating and editing listings is optimized for desktop. Please continue on a larger screen to choose a listing type or finish setup."
+          actionLabel="Understood"
         />
 
         {/* {router.pathname === '/dashboard/listings' && (
@@ -525,65 +526,26 @@ export function SponsorLayout({
                     </Button>
                   )}
                   {!isHackathonRoute ? (
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button
-                          className="ph-no-capture min-w-0 flex-1 gap-1.5"
-                          size="sm"
-                          disabled={
-                            isCreateListingAllowed !== undefined &&
-                            isCreateListingAllowed === false &&
-                            user?.role !== 'GOD'
-                          }
-                        >
-                          <Plus className="h-3.5 w-3.5" />
-                          New
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent
-                        className="min-w-[200px] font-medium text-slate-500"
-                        align="end"
-                      >
-                        <DropdownMenuItem
-                          className="flex items-center justify-between"
-                          onClick={() => {
-                            if (isMobile) {
-                              openMobileDesktopOnlyNotice('ai');
-                              return;
-                            }
-                            posthog.capture('new generate with ai_sponsor');
-                            setAutoGenerateOpen(true);
-                          }}
-                        >
-                          <span className="flex items-center gap-2 text-sm">
-                            <Sparkle className="h-4 w-4" />
-                            Generate with AI
-                          </span>
-                          <span className="rounded-full bg-emerald-50 px-1.5 py-0.5 text-[0.65rem] text-emerald-600">
-                            2m
-                          </span>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          className="flex items-center justify-between"
-                          onClick={() => {
-                            if (isMobile) {
-                              openMobileDesktopOnlyNotice('scratch');
-                              return;
-                            }
-                            posthog.capture('new start from scratch_sponsor');
-                            onOpen();
-                          }}
-                        >
-                          <span className="flex items-center gap-2 text-sm">
-                            <PencilLine className="h-4 w-4" />
-                            Start from Scratch
-                          </span>
-                          <span className="rounded-full bg-indigo-50 px-1.5 py-0.5 text-[0.65rem] text-indigo-600">
-                            10m
-                          </span>
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
+                    <Button
+                      className="ph-no-capture min-w-0 flex-1 gap-1.5"
+                      size="sm"
+                      onClick={() => {
+                        if (isMobile) {
+                          openMobileDesktopOnlyNotice('scratch');
+                          return;
+                        }
+                        posthog.capture('new start from scratch_sponsor');
+                        onOpen();
+                      }}
+                      disabled={
+                        isCreateListingAllowed !== undefined &&
+                        isCreateListingAllowed === false &&
+                        user?.role !== 'GOD'
+                      }
+                    >
+                      <Plus className="h-3.5 w-3.5" />
+                      New
+                    </Button>
                   ) : isMobile ? (
                     <Button
                       size="sm"

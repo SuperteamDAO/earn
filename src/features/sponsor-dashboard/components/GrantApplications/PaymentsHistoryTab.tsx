@@ -47,7 +47,10 @@ const PaymentDetailsRow = ({
     <>
       <TableCell>
         {paymentDetails.map((payment, index) => (
-          <div className="my-2 flex items-center justify-between" key={index}>
+          <div
+            className="my-1 flex items-center justify-between md:my-2"
+            key={index}
+          >
             <div className="flex items-center gap-1">
               <TokenIcon
                 className="h-4 w-4 rounded-full"
@@ -63,7 +66,10 @@ const PaymentDetailsRow = ({
       </TableCell>
       <TableCell>
         {paymentDetails.map((payment, index) => (
-          <div className="my-2 flex items-center justify-between" key={index}>
+          <div
+            className="my-1.5 flex items-center justify-between md:my-2"
+            key={index}
+          >
             <p className="text-sm font-medium text-slate-500">
               Milestone {payment.tranche}
             </p>
@@ -75,7 +81,7 @@ const PaymentDetailsRow = ({
           {paymentDetails.map(
             (payment, index) =>
               payment.txId && (
-                <div key={index} className="my-2">
+                <div key={index} className="my-1.5 md:my-2">
                   <a
                     className="flex items-center gap-1"
                     href={payment.txId}
@@ -107,7 +113,7 @@ const GrantTrancheRow = ({
     <>
       <TableCell>
         {paymentDetails.map((payment, index) => (
-          <div className="my-2 flex items-center justify-between" key={index}>
+          <div className="my-1.5 flex items-center justify-between" key={index}>
             <div className="flex items-center gap-1">
               <TokenIcon
                 className="h-4 w-4 rounded-full"
@@ -135,9 +141,20 @@ const GrantTrancheRow = ({
   );
 };
 
-const GrantTh = ({ children }: { children?: string }) => {
+const GrantTh = ({
+  children,
+  className,
+}: {
+  children?: string;
+  className?: string;
+}) => {
   return (
-    <TableHead className="text-xs font-medium tracking-tight text-slate-500 uppercase">
+    <TableHead
+      className={cn(
+        'px-0.5 text-xs font-medium tracking-tight text-slate-500 uppercase md:px-2',
+        className,
+      )}
+    >
       {children}
     </TableHead>
   );
@@ -188,26 +205,26 @@ export const PaymentsHistoryTab = ({
 
   return (
     <div>
-      <div className="mt-3 mb-1.5">
+      <div className="mt-1.5 mb-1">
         <div className="relative">
           <Input
             placeholder="Search by project title or grantee name..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="h-10 pl-10"
+            className="h-9 pl-10"
           />
           <Search className="absolute top-3 left-3 size-4 text-slate-400" />
         </div>
       </div>
       <div className="overflow-x-auto rounded-md border border-slate-200 bg-white">
-        <Table className="min-w-[760px]">
+          <Table className="min-w-[680px]">
           <TableHeader>
             <TableRow className="text-slate-100">
-              <GrantTh>Approved Grant Title</GrantTh>
+              <GrantTh className="pl-0">Approved Grant Title</GrantTh>
               <GrantTh>Approved</GrantTh>
               <GrantTh>Paid Out</GrantTh>
               <GrantTh>% Paid</GrantTh>
-              <GrantTh />
+              <GrantTh className="pr-0" />
             </TableRow>
           </TableHeader>
           <TableBody className="w-full">
@@ -222,16 +239,16 @@ export const PaymentsHistoryTab = ({
                 const isExpanded = expandedRows.has(grantee.id);
                 return (
                   <React.Fragment key={grantee.id}>
-                    <TableRow>
-                      <TableCell className="py-3">
-                        <div className="flex items-center gap-2">
+                    <TableRow className="align-middle">
+                      <TableCell className="px-0.5 py-1.5 md:px-2 md:py-3">
+                        <div className="flex items-center gap-1.5">
                           <EarnAvatar
                             id={grantee.userId}
                             avatar={grantee.user.photo!}
                             className="h-9 w-9"
                           />
-                          <div className="flex flex-col">
-                            <p className="text-sm font-medium text-slate-700">
+                          <div className="min-w-0 flex flex-col">
+                            <p className="max-w-[120px] truncate text-sm font-medium text-slate-700 md:max-w-none md:whitespace-normal md:overflow-visible md:text-clip">
                               {grantee?.projectTitle}
                             </p>
                             <p className="text-xs text-slate-500">
@@ -240,7 +257,7 @@ export const PaymentsHistoryTab = ({
                           </div>
                         </div>
                       </TableCell>
-                      <TableCell className="py-3">
+                      <TableCell className="px-0.5 py-2 md:px-2 md:py-3">
                         <div className="flex items-center gap-1">
                           <TokenIcon
                             className="h-4 w-4 rounded-full"
@@ -255,7 +272,7 @@ export const PaymentsHistoryTab = ({
                           </p>
                         </div>
                       </TableCell>
-                      <TableCell className="py-3">
+                      <TableCell className="px-0.5 py-2 md:px-2 md:py-3">
                         <div className="flex items-center gap-1">
                           <TokenIcon
                             className="h-4 w-4 rounded-full"
@@ -270,10 +287,10 @@ export const PaymentsHistoryTab = ({
                           </p>
                         </div>
                       </TableCell>
-                      <TableCell className="py-3">
-                        <div className="flex items-center gap-3">
+                      <TableCell className="px-0.5 py-2 md:px-2 md:py-3">
+                        <div className="flex items-center gap-2">
                           <Progress
-                            className="h-1.5 w-20 rounded-full"
+                            className="h-1.5 w-16 rounded-full"
                             value={paidPercentage}
                           />
                           <p className="text-sm font-medium text-slate-500">
@@ -281,7 +298,7 @@ export const PaymentsHistoryTab = ({
                           </p>
                         </div>
                       </TableCell>
-                      <TableCell className="p-0 py-3 text-right">
+                      <TableCell className="p-0 px-0.5 py-1.5 text-right md:px-2 md:py-3">
                         <div className="flex items-center gap-2">
                           {isNativeAndNonST && (
                             <RecordPaymentButton
@@ -309,7 +326,7 @@ export const PaymentsHistoryTab = ({
                     </TableRow>
                     {isExpanded && grantee.paymentDetails && (
                       <TableRow>
-                        <TableCell />
+                      <TableCell className="px-0.5 py-2 md:px-2 md:py-3" />
                         <PaymentDetailsRow
                           paymentDetails={
                             grantee.paymentDetails as unknown as GrantPaymentDetailProps[]
@@ -333,15 +350,15 @@ export const PaymentsHistoryTab = ({
                 return (
                   <React.Fragment key={grantee.id}>
                     <TableRow>
-                      <TableCell className="py-3">
-                        <div className="flex items-center gap-2">
+                      <TableCell className="px-0.5 py-2 md:px-2 md:py-3">
+                        <div className="flex items-center gap-1.5">
                           <EarnAvatar
                             id={grantee.userId}
                             avatar={grantee.user.photo!}
                             className="h-9 w-9"
                           />
-                          <div className="flex flex-col">
-                            <p className="text-sm font-medium text-slate-700">
+                          <div className="min-w-0 flex flex-col">
+                            <p className="max-w-[120px] truncate text-sm font-medium text-slate-700 md:max-w-none md:whitespace-normal md:overflow-visible md:text-clip">
                               {grantee?.projectTitle}
                             </p>
                             <p className="text-xs text-slate-500">
@@ -350,7 +367,7 @@ export const PaymentsHistoryTab = ({
                           </div>
                         </div>
                       </TableCell>
-                      <TableCell className="py-3">
+                      <TableCell className="px-0.5 py-2 md:px-2 md:py-3">
                         <div className="flex items-center gap-1">
                           <TokenIcon
                             className="h-4 w-4 rounded-full"
@@ -365,7 +382,7 @@ export const PaymentsHistoryTab = ({
                           </p>
                         </div>
                       </TableCell>
-                      <TableCell className="py-3">
+                      <TableCell className="px-0.5 py-2 md:px-2 md:py-3">
                         <div className="flex items-center gap-1">
                           <TokenIcon
                             className="h-4 w-4 rounded-full"
@@ -380,8 +397,8 @@ export const PaymentsHistoryTab = ({
                           </p>
                         </div>
                       </TableCell>
-                      <TableCell className="py-3">
-                        <div className="flex items-center gap-3">
+                      <TableCell className="px-0.5 py-2 md:px-2 md:py-3">
+                        <div className="flex items-center gap-2.5">
                           <Progress
                             className="h-1.5 w-20 rounded-full"
                             value={paidPercentage}
@@ -391,7 +408,7 @@ export const PaymentsHistoryTab = ({
                           </p>
                         </div>
                       </TableCell>
-                      <TableCell className="p-0 py-3 text-right">
+                      <TableCell className="p-0 px-0.5 py-2 text-right md:px-2 md:py-3">
                         {grantee.GrantTranche &&
                           grantee.GrantTranche.length > 0 && (
                             <div className="flex items-center gap-2">
@@ -412,7 +429,7 @@ export const PaymentsHistoryTab = ({
                       grantee.GrantTranche &&
                       grantee.GrantTranche.length > 0 && (
                         <TableRow>
-                          <TableCell />
+                          <TableCell className="px-0.5 py-2 md:px-2 md:py-3" />
                           <GrantTrancheRow
                             paymentDetails={grantee.GrantTranche}
                             token={grant?.token || 'USDC'}

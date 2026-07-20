@@ -126,7 +126,7 @@ export const SubmissionPanel = ({
                           <span className="hidden sm:inline">Note</span>
                         </Button>
                       </DialogTrigger>
-                      <DialogContent className="w-[min(320px,90vw)] p-0">
+                      <DialogContent className="max-h-[calc(100dvh-1rem)] w-[min(320px,90vw)] overflow-hidden p-0">
                         <DialogTitle className="sr-only">Notes</DialogTitle>
                         {selectedSubmission && (
                           <Notes key={selectedSubmission.id} slug={bounty?.slug} />

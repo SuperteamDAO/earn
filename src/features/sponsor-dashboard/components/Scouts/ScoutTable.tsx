@@ -55,13 +55,13 @@ export function ScoutTable({ bountyId, scouts, setInvited }: Props) {
         scouts.length === 0 ? 'h-25rem' : 'h-auto',
       )}
     >
-      <Table>
+      <Table className="min-w-[54rem] sm:min-w-full">
         <TableHeader>
           <TableRow className="bg-slate-50">
-            <TableHead className="text-xs font-medium text-slate-500">
+            <TableHead className="px-3 py-3 text-xs font-medium text-slate-500 md:px-2">
               User
             </TableHead>
-            <TableHead className="px-1 text-center text-xs font-medium text-slate-500 md:px-2">
+            <TableHead className="px-3 py-3 text-center text-xs font-medium text-slate-500 md:px-2">
               <div className="flex items-center justify-center gap-2">
                 $ Earned
                 <Tooltip
@@ -74,7 +74,7 @@ export function ScoutTable({ bountyId, scouts, setInvited }: Props) {
                 </Tooltip>
               </div>
             </TableHead>
-            <TableHead className="px-1 text-center text-xs font-medium text-slate-500 md:px-2">
+            <TableHead className="px-3 py-3 text-center text-xs font-medium text-slate-500 md:px-2">
               <div className="flex items-center justify-center gap-2">
                 Match Score
                 <Tooltip
@@ -90,7 +90,7 @@ export function ScoutTable({ bountyId, scouts, setInvited }: Props) {
                 </Tooltip>
               </div>
             </TableHead>
-            <TableHead className="px-1 text-left text-xs font-medium text-slate-500 md:px-2">
+            <TableHead className="px-3 py-3 text-left text-xs font-medium text-slate-500 md:px-2">
               <div className="flex items-center gap-2">
                 Matched Skills
                 <Tooltip
@@ -106,7 +106,7 @@ export function ScoutTable({ bountyId, scouts, setInvited }: Props) {
                 </Tooltip>
               </div>
             </TableHead>
-            <TableHead className="px-1 text-left text-xs font-medium text-slate-500 md:px-2">
+            <TableHead className="px-3 py-3 text-left text-xs font-medium text-slate-500 md:px-2">
               Invites Left: {invitesLeft}/{MAX_INVITES}
             </TableHead>
           </TableRow>
@@ -115,9 +115,9 @@ export function ScoutTable({ bountyId, scouts, setInvited }: Props) {
           <TableBody className="text-sm font-medium text-slate-500">
             {scouts.map((scout) => (
               <TableRow key={scout.id + scout.invited}>
-                <TableCell className="h-full w-fit text-xs">
+                <TableCell className="h-full w-fit px-3 py-3 text-xs md:px-2 md:py-2">
                   <Link
-                    className="ph-no-capture flex items-center gap-2"
+                    className="ph-no-capture flex items-center gap-3"
                     href={`/earn/t/${scout.username}`}
                     onClick={() => {
                       posthog.capture('profile click_scouts', {
@@ -127,9 +127,9 @@ export function ScoutTable({ bountyId, scouts, setInvited }: Props) {
                     target="_blank"
                   >
                     <EarnAvatar id={scout.id} avatar={scout.pfp || undefined} />
-                    <div className="flex flex-col items-start justify-center gap-1 md:justify-start">
-                      <div className="flex gap-1">
-                        <p className="max-w-[14rem] overflow-hidden text-xs text-ellipsis text-slate-800">
+                    <div className="flex min-w-0 flex-col items-start justify-center gap-1 md:justify-start">
+                      <div className="flex min-w-0 gap-1">
+                        <p className="max-w-[12rem] overflow-hidden text-xs text-ellipsis text-slate-800 md:max-w-[14rem]">
                           {scout.name}
                         </p>
                         {scout.recommended && (
@@ -144,27 +144,27 @@ export function ScoutTable({ bountyId, scouts, setInvited }: Props) {
                           </Tooltip>
                         )}
                       </div>
-                      <p className="max-w-[7rem] overflow-x-hidden text-ellipsis">
+                      <p className="max-w-[8rem] overflow-x-hidden text-ellipsis md:max-w-[7rem]">
                         @{scout.username}
                       </p>
                     </div>
                   </Link>
                 </TableCell>
-                <TableCell className="h-full px-1 md:px-2">
+                <TableCell className="h-full px-3 py-3 md:px-2 md:py-2">
                   <div className="flex justify-center gap-2">
                     <p className="text-center text-slate-600">
                       {formatter(scout.dollarsEarned)}
                     </p>
                   </div>
                 </TableCell>
-                <TableCell className="h-full px-1 md:px-2">
+                <TableCell className="h-full px-3 py-3 md:px-2 md:py-2">
                   <div className="flex items-center justify-center gap-3">
                     <p className="text-center text-slate-600">{scout.score}</p>
                     <ScoreBar score={scout.score} />
                   </div>
                 </TableCell>
-                <TableCell className="h-full px-1 md:px-2">
-                  <div className="flex h-full gap-2 text-center">
+                <TableCell className="h-full px-3 py-3 md:px-2 md:py-2">
+                  <div className="flex h-full flex-wrap gap-2 text-center">
                     {scout.skills
                       .filter((s) => s !== null)
                       .slice(0, MAX_SHOW_SKILLS)
@@ -219,7 +219,7 @@ export function ScoutTable({ bountyId, scouts, setInvited }: Props) {
                     )}
                   </div>
                 </TableCell>
-                <TableCell className="pl-0">
+                <TableCell className="px-3 py-3 pl-3 md:px-2 md:py-2">
                   <div className="flex h-8 items-start gap-2">
                     <Link
                       className="ph-no-capture block h-full"

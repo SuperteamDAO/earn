@@ -14,7 +14,7 @@ export const MobileDesktopOnlyDialog = ({
   onOpenChange,
   title,
   description,
-  actionLabel = 'Continue on desktop',
+  actionLabel = 'Understood',
 }: MobileDesktopOnlyDialogProps) => {
   if (!open) return null;
 
