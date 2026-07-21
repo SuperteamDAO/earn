@@ -38,7 +38,7 @@ const bufferToArrayBuffer = (buffer: Buffer): ArrayBuffer =>
 
 const loadLocalOgFont = async () => {
   localFontPromise ??= readFile(
-    join(process.cwd(), 'public/fonts/Satoshi-Variable.woff2'),
+    join(process.cwd(), 'public/fonts/DMSans-Variable.ttf'),
   ).then(bufferToArrayBuffer);
 
   return localFontPromise;
