@@ -41,6 +41,7 @@ export const userSelectOptions: UserSelect = {
   isPro: true,
   isAgent: true,
   isKYCVerified: true,
+  kycCountry: true,
 
   currentSponsor: {
     select: {

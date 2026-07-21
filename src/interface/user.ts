@@ -80,6 +80,7 @@ interface User {
   emailSettings?: EmailSettingsModel[];
   isBlocked?: boolean;
   isKYCVerified: boolean;
+  kycCountry?: string | null;
   linkedTwitter?: string[];
   referralCode?: string;
   referredById?: string | null;
