@@ -1,5 +1,6 @@
 import { usePrivy } from '@privy-io/react-auth';
 import { useQuery } from '@tanstack/react-query';
+import lookup from 'country-code-lookup';
 import { AlertTriangle, Loader2, Lock, Pencil } from 'lucide-react';
 import posthog from 'posthog-js';
 
@@ -55,13 +56,22 @@ export const ApplicationActionButton = ({
 
   const { isOpen, onOpen, onClose } = useDisclosure();
 
+  const isKYCVerified = user?.isKYCVerified === true;
+  const hasKycRegion = isKYCVerified && !!user?.kycCountry;
+  const kycCountryName = hasKycRegion
+    ? (lookup.byIso(user.kycCountry!)?.country ?? user.kycCountry!)
+    : null;
+
   const isUserEligibleByRegion = userRegionEligibilty({
     region,
-    userLocation: user?.location,
+    userLocation: kycCountryName ?? user?.location,
     chapters,
   });
 
-  const regionTooltipLabel = getRegionTooltipLabel(region, false, chapters);
+  const regionTooltipLabel =
+    hasKycRegion && !isUserEligibleByRegion
+      ? 'Your KYC-verified country is not eligible for this grant.'
+      : getRegionTooltipLabel(region, false, chapters);
 
   const locationCooldown = getLocationCooldown({
     locationUpdatedAt: user?.locationUpdatedAt ?? null,
@@ -69,7 +79,7 @@ export const ApplicationActionButton = ({
     userLocation: user?.location,
     chapters,
   });
-  const isLocationCooldown = locationCooldown.inCooldown;
+  const isLocationCooldown = !hasKycRegion && locationCooldown.inCooldown;
   const isNewApplicationLocationCooldown =
     isLocationCooldown && applicationState === 'ALLOW NEW';
 
