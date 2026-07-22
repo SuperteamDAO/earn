@@ -23,12 +23,10 @@ import {
   createTransactionMessage,
   getBase64EncodedWireTransaction,
   type Instruction,
-  type KeyPairSigner,
   partiallySignTransactionMessageWithSigners,
   pipe,
   setTransactionMessageFeePayerSigner,
   setTransactionMessageLifetimeUsingBlockhash,
-  signTransactionMessageWithSigners,
   type TransactionSigner,
 } from '@solana/kit';
 import bs58 from 'bs58';
@@ -36,6 +34,12 @@ import { headers } from 'next/headers';
 import { type NextRequest, NextResponse } from 'next/server';
 
 import logger from '@/lib/logger';
+import {
+  walletAtaCreationRateLimiter,
+  walletAtaPairRateLimiter,
+  walletWithdrawRateLimiter,
+} from '@/lib/ratelimit';
+import { checkAndApplyRateLimitApp } from '@/lib/rateLimiterService';
 import { prisma } from '@/prisma';
 import { getTokenByMintAddress } from '@/server/tokenList';
 import { safeStringify } from '@/utils/safeStringify';
@@ -115,85 +119,6 @@ function createAppropriateTransferInstruction(
   }
 }
 
-async function createFeePayerATA(
-  rpc: SolanaRpc,
-  tokenMint: Address,
-  feePayerSigner: KeyPairSigner,
-  programId: Address,
-): Promise<boolean> {
-  try {
-    const [feePayerATA] = await findAssociatedTokenPda({
-      mint: tokenMint,
-      owner: feePayerSigner.address,
-      tokenProgram: programId,
-    });
-
-    const { value: latestBlockhash } = await rpc
-      .getLatestBlockhash({ commitment: 'finalized' })
-      .send();
-
-    const createATAInstruction = getCreateAssociatedTokenInstruction({
-      payer: feePayerSigner,
-      ata: feePayerATA,
-      owner: feePayerSigner.address,
-      mint: tokenMint,
-      tokenProgram: programId,
-    });
-
-    const computeBudgetInstructions = [
-      getSetComputeUnitLimitInstruction({ units: 200000 }),
-      getSetComputeUnitPriceInstruction({ microLamports: 100000n }),
-    ];
-
-    const transactionMessage = pipe(
-      createTransactionMessage({ version: 0 }),
-      (tx) => setTransactionMessageFeePayerSigner(feePayerSigner, tx),
-      (tx) => setTransactionMessageLifetimeUsingBlockhash(latestBlockhash, tx),
-      (tx) =>
-        appendTransactionMessageInstructions(
-          [...computeBudgetInstructions, createATAInstruction],
-          tx,
-        ),
-    );
-
-    const signedTransaction =
-      await signTransactionMessageWithSigners(transactionMessage);
-
-    const encodedTransaction =
-      getBase64EncodedWireTransaction(signedTransaction);
-    const signature = await rpc
-      .sendTransaction(encodedTransaction, {
-        skipPreflight: false,
-        encoding: 'base64',
-      })
-      .send();
-
-    // Poll for confirmation (getSignatureStatuses doesn't wait)
-    const maxAttempts = 30;
-    for (let i = 0; i < maxAttempts; i++) {
-      const { value } = await rpc.getSignatureStatuses([signature]).send();
-      const status = value[0];
-      if (status?.err) {
-        logger.error(`${safeStringify(status.err)}`);
-        return false;
-      }
-      if (
-        status?.confirmationStatus === 'confirmed' ||
-        status?.confirmationStatus === 'finalized'
-      ) {
-        logger.info(`Created fee payer ATA: ${feePayerATA}`);
-        return true;
-      }
-      await new Promise((r) => setTimeout(r, 500));
-    }
-    logger.error('Transaction confirmation timeout');
-    return false;
-  } catch (error) {
-    logger.error(`Error creating fee payer ATA: ${safeStringify(error)}`);
-    return false;
-  }
-}
-
 export async function POST(request: NextRequest) {
   try {
     const headersList = await headers();
@@ -217,11 +142,23 @@ export async function POST(request: NextRequest) {
       `req body: ${safeStringify({ recipientAddress, amount, tokenAddress })}`,
     );
 
+    const withdrawRateLimitResponse = await checkAndApplyRateLimitApp({
+      limiter: walletWithdrawRateLimiter,
+      identifier: userId,
+      routeName: 'walletWithdraw',
+    });
+    if (withdrawRateLimitResponse) {
+      return withdrawRateLimitResponse;
+    }
+
     const rpc = getRpc();
 
     if (!process.env.FEEPAYER_PRIVATE_KEY) {
       logger.error('Fee payer private key not configured');
-      throw new Error('Fee payer private key not configured');
+      return NextResponse.json(
+        { error: 'Wallet withdrawals are temporarily unavailable' },
+        { status: 503 },
+      );
     }
 
     const feePayerKeyPair = await createKeyPairFromBytes(
@@ -296,17 +233,15 @@ export async function POST(request: NextRequest) {
       .send();
 
     if (!feePayerATAInfo.value) {
-      const success = await createFeePayerATA(
-        rpc,
-        tokenMint,
-        feePayerSigner,
-        programId,
+      logger.error('Fee payer ATA is missing', {
+        tokenAddress,
+        tokenSymbol: token.tokenSymbol,
+        feePayer: feePayerSigner.address,
+      });
+      return NextResponse.json(
+        { error: 'Token withdrawal is temporarily unavailable' },
+        { status: 503 },
       );
-      if (!success) {
-        logger.error('Failed to create fee payer ATA');
-        throw new Error('Failed to create fee payer ATA');
-      }
-      logger.info('Fee payer ATA created successfully');
     }
 
     const user = await prisma.user.findUniqueOrThrow({
@@ -338,6 +273,26 @@ export async function POST(request: NextRequest) {
       .getAccountInfo(receiverATA, { encoding: 'base64' })
       .send();
     const receiverATAWasMissing = !receiverATAInfo.value;
+
+    if (receiverATAWasMissing) {
+      const ataRateLimitResponse = await checkAndApplyRateLimitApp({
+        limiter: walletAtaCreationRateLimiter,
+        identifier: userId,
+        routeName: 'walletAtaCreation',
+      });
+      if (ataRateLimitResponse) {
+        return ataRateLimitResponse;
+      }
+
+      const pairRateLimitResponse = await checkAndApplyRateLimitApp({
+        limiter: walletAtaPairRateLimiter,
+        identifier: `${userId}:${tokenAddress}:${recipientAddress}`,
+        routeName: 'walletAtaPair',
+      });
+      if (pairRateLimitResponse) {
+        return pairRateLimitResponse;
+      }
+    }
 
     const allInstructions: Instruction[] = [
       getSetComputeUnitLimitInstruction({ units: 200000 }),
