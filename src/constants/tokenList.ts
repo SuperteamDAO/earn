@@ -10,6 +10,7 @@ export interface Token {
   decimals: number;
   sortOrder?: number;
   isActive?: boolean;
+  isVerifiedOnJupiter: boolean;
 }
 
 type TokenListApiResponse = {
