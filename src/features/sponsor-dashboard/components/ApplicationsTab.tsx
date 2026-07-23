@@ -402,6 +402,7 @@ export const ApplicationsTab = ({ slug }: Props) => {
                   (application) => application.applicationStatus === 'Pending',
                 ).length === 0
               }
+              grantSlug={slug}
               onItemClick={() => setMobileView('detail')}
             />
           </div>

@@ -495,6 +495,7 @@ export default function BountySubmissions({ slug }: Props) {
                     isAllToggled={isToggledAll}
                     toggleAllSubmissions={toggleAllSubmissions}
                     isMultiSelectDisabled={isMultiSelectDisabled}
+                    isHackathonPage={false}
                     onItemClick={() => setMobileView('detail')}
                   />
                 </div>

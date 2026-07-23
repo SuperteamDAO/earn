@@ -262,12 +262,13 @@ export default function BountySubmissions({ listing }: Props) {
                       listing={bounty}
                       selectedFilters={selectedFilters}
                       onFilterChange={setSelectedFilters}
-                      submissions={filteredSubmissions}
-                      setSearchText={setSearchText}
-                      type={bounty?.type}
-                      isMultiSelectDisabled
-                      onItemClick={() => setMobileView('detail')}
-                    />
+                    submissions={filteredSubmissions}
+                    setSearchText={setSearchText}
+                    type={bounty?.type}
+                    isMultiSelectDisabled
+                    isHackathonPage
+                    onItemClick={() => setMobileView('detail')}
+                  />
                   </div>
 
                   <div

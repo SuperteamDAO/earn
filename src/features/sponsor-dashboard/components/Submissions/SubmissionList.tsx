@@ -7,7 +7,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { StatusPill } from '@/components/ui/status-pill';
 import type { SubmissionWithUser } from '@/interface/submission';
-import { type SubmissionLabels } from '@/prisma/enums';
+import { type BountyType, type SubmissionLabels } from '@/prisma/enums';
 import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';
 import { getRankLabels } from '@/utils/rank';
@@ -23,6 +23,7 @@ import { selectedSubmissionAtom } from '../../atoms';
 import { labelMenuOptions } from '../../constants';
 import { colorMap } from '../../utils/statusColorMap';
 import { MultiSelectFilter } from './MultiSelectFilter';
+import { SelectLabel } from './SelectLabel';
 
 interface Props {
   listing?: Listing;
@@ -38,6 +39,7 @@ interface Props {
   toggleAllSubmissions?: () => void;
   isAllToggled?: boolean;
   isMultiSelectDisabled: boolean;
+  isHackathonPage: boolean | undefined;
   onItemClick?: () => void;
 }
 
@@ -53,6 +55,7 @@ export const SubmissionList = ({
   toggleAllSubmissions,
   isAllToggled,
   isMultiSelectDisabled,
+  isHackathonPage,
   onItemClick,
 }: Props) => {
   const [selectedSubmission, setSelectedSubmission] = useAtom(
@@ -220,14 +223,29 @@ export const SubmissionList = ({
                 </div>
               </div>
 
-              <StatusPill
-                className="w-fit px-2 py-0.5 text-[10px]"
-                color={color}
-                backgroundColor={bg}
-                borderColor={border}
-              >
-                {getSubmissionLabel(submission)}
-              </StatusPill>
+              <div className="ml-auto flex w-min flex-col justify-end gap-1 align-bottom">
+                {!isHackathonPage &&
+                submission?.status === 'Pending' &&
+                !listing?.isWinnersAnnounced &&
+                !submission.isWinner &&
+                submission?.label !== 'Spam' &&
+                listing?.slug ? (
+                  <SelectLabel
+                    type={listing?.type as BountyType | 'grant' | undefined}
+                    listingSlug={listing.slug}
+                    submission={submission}
+                  />
+                ) : (
+                  <StatusPill
+                    className="w-fit px-2 py-0.5 text-[10px]"
+                    color={color}
+                    backgroundColor={bg}
+                    borderColor={border}
+                  >
+                    {getSubmissionLabel(submission)}
+                  </StatusPill>
+                )}
+              </div>
             </div>
           );
         })}
