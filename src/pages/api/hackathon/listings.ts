@@ -2,6 +2,7 @@ import type { NextApiResponse } from 'next';
 
 import { prisma } from '@/prisma';
 import { status } from '@/prisma/enums';
+import { parseBoundedIntegerParam } from '@/utils/apiPagination';
 
 import { type NextApiRequestWithUser } from '@/features/auth/types';
 import { withAuth } from '@/features/auth/utils/withAuth';
@@ -26,8 +27,25 @@ async function getHackathonListings(
 
   const params = req.query;
   const searchText = params.searchText as string;
-  const skip = params.take ? parseInt(params.skip as string, 10) : 0;
-  const take = params.take ? parseInt(params.take as string, 10) : 15;
+  const skipResult = parseBoundedIntegerParam(params.skip, {
+    defaultValue: 0,
+    maxValue: 1000,
+    name: 'skip',
+  });
+  const takeResult = parseBoundedIntegerParam(params.take, {
+    defaultValue: 15,
+    maxValue: 50,
+    minValue: 1,
+    name: 'take',
+  });
+  if (!skipResult.ok) {
+    return res.status(400).json({ error: skipResult.error });
+  }
+  if (!takeResult.ok) {
+    return res.status(400).json({ error: takeResult.error });
+  }
+  const skip = skipResult.value;
+  const take = takeResult.value;
   const whereSearch = searchText
     ? {
         title: {
