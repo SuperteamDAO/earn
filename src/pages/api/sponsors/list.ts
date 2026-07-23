@@ -2,6 +2,7 @@ import type { NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { parseBoundedIntegerParam } from '@/utils/apiPagination';
 
 import { type NextApiRequestWithSponsor } from '@/features/auth/types';
 import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
@@ -11,7 +12,16 @@ async function sponsors(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
   const userId = req.userId;
   const searchString = params.searchString as string;
-  const take = params.take ? parseInt(params.take as string, 10) : 50;
+  const takeResult = parseBoundedIntegerParam(params.take, {
+    defaultValue: 50,
+    maxValue: 100,
+    minValue: 1,
+    name: 'take',
+  });
+  if (!takeResult.ok) {
+    return res.status(400).json({ error: takeResult.error });
+  }
+  const take = takeResult.value;
   let finalSponsors = [];
 
   try {

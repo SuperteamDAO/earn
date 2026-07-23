@@ -2,6 +2,7 @@ import type { NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { parseBoundedIntegerParam } from '@/utils/apiPagination';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { type NextApiRequestWithSponsor } from '@/features/auth/types';
@@ -10,8 +11,25 @@ import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
 async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   const params = req.query;
   const sponsorId = req.userSponsorId;
-  const skip = params.skip ? parseInt(params.skip as string, 10) : 0;
-  const take = params.take ? parseInt(params.take as string, 10) : 15;
+  const skipResult = parseBoundedIntegerParam(params.skip, {
+    defaultValue: 0,
+    maxValue: 1000,
+    name: 'skip',
+  });
+  const takeResult = parseBoundedIntegerParam(params.take, {
+    defaultValue: 15,
+    maxValue: 50,
+    minValue: 1,
+    name: 'take',
+  });
+  if (!skipResult.ok) {
+    return res.status(400).json({ error: skipResult.error });
+  }
+  if (!takeResult.ok) {
+    return res.status(400).json({ error: takeResult.error });
+  }
+  const skip = skipResult.value;
+  const take = takeResult.value;
   const searchText = params.searchText as string;
 
   logger.debug(`Query params: ${safeStringify(params)}`);
