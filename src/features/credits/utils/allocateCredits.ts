@@ -5,9 +5,15 @@ import { dayjs } from '@/utils/dayjs';
 const currentMonth = dayjs.utc().startOf('month').toDate();
 const nextMonth = dayjs.utc().add(1, 'month').startOf('month').toDate();
 
-export async function consumeCredit(userId: string, submissionId: string) {
+type PrismaLike = Pick<typeof prisma, 'creditLedger'>;
+
+export async function consumeCredit(
+  userId: string,
+  submissionId: string,
+  client: PrismaLike = prisma,
+) {
   try {
-    await prisma.creditLedger.create({
+    await client.creditLedger.create({
       data: {
         userId,
         submissionId,

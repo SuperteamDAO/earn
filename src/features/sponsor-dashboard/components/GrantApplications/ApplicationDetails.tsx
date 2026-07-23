@@ -215,7 +215,12 @@ export const ApplicationDetails = ({
                   </Link>
                 </div>
                 <div className="self-start">
-                  {isPending && <SelectLabel grantSlug={grant?.slug!} />}
+                  {isPending && (
+                    <SelectLabel
+                      grantSlug={grant?.slug!}
+                      application={undefined}
+                    />
+                  )}
                 </div>
               </div>
               <div className="ph-no-capture flex w-full flex-nowrap items-center justify-start gap-1 overflow-x-auto pb-1 md:w-auto md:justify-end md:gap-2 md:overflow-visible md:pb-0 [&::-webkit-scrollbar]:hidden">

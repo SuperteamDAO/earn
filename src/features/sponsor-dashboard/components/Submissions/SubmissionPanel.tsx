@@ -99,6 +99,7 @@ export const SubmissionPanel = ({
                       <SelectLabel
                         type={bounty?.type}
                         listingSlug={bounty?.slug!}
+                        submission={undefined}
                       />
                     )}
                 </div>

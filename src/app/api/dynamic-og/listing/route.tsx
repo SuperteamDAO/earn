@@ -1,24 +1,79 @@
 import { ImageResponse } from 'next/og';
+import { readFile } from 'node:fs/promises';
+import { join } from 'node:path';
 
 import { ASSET_URL } from '@/constants/ASSET_URL';
+import logger from '@/lib/logger';
 import { getTokenIcon } from '@/server/tokenList';
 import { convertToJpegUrl } from '@/utils/cloudinary';
 import { formatNumber, formatString, loadGoogleFont } from '@/utils/ogHelpers';
+import { safeStringify } from '@/utils/safeStringify';
 import { getURL } from '@/utils/validUrl';
 
-export async function GET(request: Request) {
-  try {
-    const { searchParams } = new URL(request.url);
+let localFontPromise: Promise<ArrayBuffer> | null = null;
 
+const getStableIndex = (value: string, modulo: number) => {
+  let hash = 0;
+
+  for (let i = 0; i < value.length; i += 1) {
+    hash = (hash * 31 + value.charCodeAt(i)) >>> 0;
+  }
+
+  return hash % modulo;
+};
+
+const safeDecodeURIComponent = (value: string) => {
+  try {
+    return decodeURIComponent(value);
+  } catch {
+    return value;
+  }
+};
+
+const bufferToArrayBuffer = (buffer: Buffer): ArrayBuffer =>
+  buffer.buffer.slice(
+    buffer.byteOffset,
+    buffer.byteOffset + buffer.byteLength,
+  ) as ArrayBuffer;
+
+const loadLocalOgFont = async () => {
+  localFontPromise ??= readFile(
+    join(process.cwd(), 'public/fonts/DMSans-Variable.ttf'),
+  ).then(bufferToArrayBuffer);
+
+  return localFontPromise;
+};
+
+const loadOgFont = async (font: string, text: string) => {
+  try {
+    return await loadGoogleFont(font, text);
+  } catch (error) {
+    logger.warn(
+      `Listing OG font fetch failed for ${font}, falling back to local font: ${safeStringify(error)}`,
+    );
+    return loadLocalOgFont();
+  }
+};
+
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url);
+
+  const requestContext = {
+    title: searchParams.get('title'),
+    token: searchParams.get('token'),
+    sponsor: searchParams.get('sponsor'),
+    type: searchParams.get('type'),
+    compensationType: searchParams.get('compensationType'),
+  };
+
+  try {
     const bgColors = ['#FFFBEB', '#FAFAF9', '#ECFDF5', '#EFF6FF', '#EEF2FF'];
-    const randomIndex = Math.floor(Math.random() * bgColors.length);
-    const bgColor = bgColors[randomIndex];
 
     const getParam = (name: any, processFn = (x: any) => x) =>
       searchParams.has(name) ? processFn(searchParams.get(name)) : null;
 
     const title = getParam('title', (x) =>
-      formatString(decodeURIComponent(x), 100),
+      formatString(safeDecodeURIComponent(x), 100),
     );
     const type = getParam('type');
     const resolveAbsoluteUrl = (url: string | null): string | null => {
@@ -48,13 +103,17 @@ export async function GET(request: Request) {
     const sponsor = getParam('sponsor', (x) => formatString(x, 16));
     const token = getParam('token', (x) => formatString(x, 100));
     const isSponsorVerified = getParam('isSponsorVerified', (x) => x) || false;
+    const bgColor =
+      bgColors[
+        getStableIndex(`${title || ''}${sponsor || ''}`, bgColors.length)
+      ];
 
     const allText = `${title || ''}${type || ''}${sponsor || ''}${token || ''}${reward || ''}${minRewardAsk || ''}${maxRewardAsk || ''}`;
 
     const [interMedium, interSemiBold, interBold] = await Promise.all([
-      loadGoogleFont('Inter:wght@500', allText),
-      loadGoogleFont('Inter:wght@600', allText),
-      loadGoogleFont('Inter:wght@700', allText),
+      loadOgFont('Inter:wght@500', allText),
+      loadOgFont('Inter:wght@600', allText),
+      loadOgFont('Inter:wght@700', allText),
     ]);
 
     let displayReward;
@@ -91,7 +150,7 @@ export async function GET(request: Request) {
       }
     })();
 
-    return new ImageResponse(
+    const response = new ImageResponse(
       <div
         style={{
           height: '100%',
@@ -295,8 +354,20 @@ export async function GET(request: Request) {
         ],
       },
     );
+
+    response.headers.set(
+      'Cache-Control',
+      'public, max-age=86400, s-maxage=604800, stale-while-revalidate=2592000',
+    );
+
+    return response;
   } catch (e: any) {
-    console.log(`${e.message}`);
+    logger.error(
+      `Listing OG image generation failed: ${safeStringify({
+        ...requestContext,
+        error: e,
+      })}`,
+    );
     return new Response(`Failed to generate the image`, {
       status: 500,
     });

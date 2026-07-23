@@ -237,7 +237,7 @@ export const SubmissionList = ({
                   />
                 ) : (
                   <StatusPill
-                    className="w-fit px-2 py-0.5 text-[10px]"
+                    className="ml-auto w-fit px-2 py-0.5 text-[10px]"
                     color={color}
                     backgroundColor={bg}
                     borderColor={border}

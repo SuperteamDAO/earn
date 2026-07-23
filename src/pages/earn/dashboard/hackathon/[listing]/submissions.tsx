@@ -259,6 +259,7 @@ export default function BountySubmissions({ listing }: Props) {
                     className={mobileView === 'detail' ? 'hidden md:block' : 'block'}
                   >
                     <SubmissionList
+                      isHackathonPage={true}
                       listing={bounty}
                       selectedFilters={selectedFilters}
                       onFilterChange={setSelectedFilters}
