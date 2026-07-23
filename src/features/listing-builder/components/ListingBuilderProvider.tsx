@@ -118,8 +118,7 @@ function ListingEditor({
       <div className="flex min-h-[10vh] flex-col px-3 md:hidden">
         <Header />
         <p className="w-full pt-20 text-center text-xl font-medium text-slate-500">
-          The Sponsor Dashboard on Earn is not optimized for mobile yet. Please
-          use a desktop to check out the Sponsor Dashboard
+          Continue on desktop to create, edit, duplicate, or boost listings.
         </p>
       </div>
       <Form {...form}>

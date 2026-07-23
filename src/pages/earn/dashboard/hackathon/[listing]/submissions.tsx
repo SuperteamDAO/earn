@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { useSetAtom } from 'jotai';
+import { ChevronLeft } from 'lucide-react';
 import type { GetServerSideProps } from 'next';
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/router';
@@ -42,6 +43,7 @@ export default function BountySubmissions({ listing }: Props) {
   const setSelectedSubmission = useSetAtom(selectedSubmissionAtom);
 
   const [searchText, setSearchText] = useState('');
+  const [mobileView, setMobileView] = useState<'list' | 'detail'>('list');
 
   const [remainings, setRemainings] = useState<{
     podiums: number;
@@ -213,7 +215,7 @@ export default function BountySubmissions({ listing }: Props) {
           <Tabs
             defaultValue={searchParams?.has('scout') ? 'scout' : 'submissions'}
           >
-            <TabsList className="mt-4 gap-4 border-b font-medium text-slate-400">
+            <TabsList className="mt-4 w-full flex-nowrap gap-4 overflow-x-auto border-b font-medium text-slate-400 [&::-webkit-scrollbar]:hidden">
               <TabsTrigger value="submissions">Submissions</TabsTrigger>
 
               {bounty?.isPublished &&
@@ -252,21 +254,36 @@ export default function BountySubmissions({ listing }: Props) {
 
             <TabsContent value="submissions" className="w-full px-0">
               <div className="flex w-full items-start bg-white">
-                <div className="grid min-h-[600px] w-full grid-cols-[23rem_1fr] bg-white">
-                  <div className="h-full w-full">
+                <div className="flex min-h-[600px] w-full flex-col md:grid md:grid-cols-[23rem_1fr] bg-white">
+                  <div
+                    className={mobileView === 'detail' ? 'hidden md:block' : 'block'}
+                  >
                     <SubmissionList
                       isHackathonPage={true}
                       listing={bounty}
                       selectedFilters={selectedFilters}
                       onFilterChange={setSelectedFilters}
-                      submissions={filteredSubmissions}
-                      setSearchText={setSearchText}
-                      type={bounty?.type}
-                      isMultiSelectDisabled
-                    />
+                    submissions={filteredSubmissions}
+                    setSearchText={setSearchText}
+                    type={bounty?.type}
+                    isMultiSelectDisabled
+                    isHackathonPage
+                    onItemClick={() => setMobileView('detail')}
+                  />
                   </div>
 
-                  <div className="h-full w-full rounded-r-xl border-t border-r border-b border-slate-200 bg-white">
+                  <div
+                    className={`h-full w-full rounded-r-xl border-t border-r border-b border-slate-200 bg-white ${mobileView === 'list' ? 'hidden md:block' : 'block'}`}
+                  >
+                    {mobileView === 'detail' && (
+                      <button
+                        className="md:hidden flex items-center gap-1 px-3 py-2 text-sm font-medium text-slate-500 hover:text-slate-700"
+                        onClick={() => setMobileView('list')}
+                      >
+                        <ChevronLeft className="h-4 w-4" />
+                        Back to list
+                      </button>
+                    )}
                     {!filteredSubmissions?.length &&
                     !searchText &&
                     !isSubmissionsLoading ? (

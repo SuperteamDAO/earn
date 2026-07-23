@@ -134,6 +134,7 @@ export function PublishResults({
 
   useEffect(() => {
     if (!isWinnersAnnounced || bounty?.isWinnersAnnounced) return;
+    const dashboardSection = bounty?.type === 'hackathon' ? 'hackathon' : 'listings';
     const timer = setTimeout(() => {
       queryClient.invalidateQueries({
         queryKey: ['sponsor-submissions', bounty?.slug],
@@ -142,7 +143,7 @@ export function PublishResults({
         queryKey: ['sponsor-dashboard-listing', bounty?.slug],
       });
       router.push(
-        `/earn/dashboard/listings/${bounty?.slug}/submissions?tab=payments`,
+        `/earn/dashboard/${dashboardSection}/${bounty?.slug}/submissions?tab=payments`,
       );
       setTimeout(() => {
         showSurvey?.();
@@ -155,6 +156,7 @@ export function PublishResults({
     isWinnersAnnounced,
     bounty?.slug,
     bounty?.id,
+    bounty?.type,
     router,
     queryClient,
     onClose,
@@ -232,12 +234,13 @@ export function PublishResults({
                 </Alert>
               )}
 
-              <div className="flex gap-3">
-                <div className="w-1/2" />
+              <div className="flex flex-col gap-3 sm:flex-row">
+                <div className="hidden sm:block sm:w-1/2" />
                 <Button
-                  variant="ghost"
+                  variant="outline"
                   onClick={onClose}
                   disabled={isPublishingResults}
+                  className="w-full border-slate-200 bg-white text-slate-700 shadow-sm hover:bg-slate-50 sm:ml-auto sm:w-auto"
                 >
                   Close
                 </Button>

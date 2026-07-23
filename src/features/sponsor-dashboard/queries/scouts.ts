@@ -15,16 +15,22 @@ export const scoutsQuery = ({ bountyId }: { bountyId: string }) =>
     queryKey: ['scouts', bountyId],
     queryFn: () => fetchScouts(bountyId as string),
     select: (data) =>
-      data.map((scout) => ({
-        id: scout.id,
-        userId: scout.userId,
-        skills: [...new Set(scout.skills)],
-        dollarsEarned: scout.dollarsEarned,
-        score: scout.score,
-        recommended: scout.user.stRecommended ?? false,
-        invited: scout.invited,
-        pfp: scout.user.photo ?? null,
-        name: (scout.user.firstName ?? '') + ' ' + (scout.user.lastName ?? ''),
-        username: scout.user.username ?? null,
-      })),
+      data
+        .filter((scout) => !!scout?.user)
+        .map((scout) => ({
+          id: scout.id,
+          userId: scout.userId,
+          skills: Array.isArray(scout.skills)
+            ? [...new Set(scout.skills)]
+            : [],
+          dollarsEarned: scout.dollarsEarned,
+          score: Number(scout.score) || 0,
+          recommended: scout.user?.stRecommended ?? false,
+          invited: scout.invited,
+          pfp: scout.user?.photo ?? null,
+          name:
+            `${scout.user?.firstName ?? ''} ${scout.user?.lastName ?? ''}`.trim() ||
+            'Anonymous User',
+          username: scout.user?.username ?? null,
+        })),
   });

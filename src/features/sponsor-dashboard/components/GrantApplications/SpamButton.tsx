@@ -100,7 +100,7 @@ export const SpamButton = ({ grantSlug, isMultiSelectOn }: Props) => {
     <>
       <Button
         variant="destructive"
-        className={`rounded-lg border disabled:opacity-100 ${
+        className={`shrink-0 rounded-lg border px-3 text-sm disabled:opacity-100 ${
           isMarkedAsSpam
             ? 'border-orange-300 bg-orange-100 text-orange-600 hover:bg-orange-200'
             : 'border-orange-200 bg-orange-50 text-orange-500 hover:bg-orange-100 disabled:opacity-70'
@@ -108,8 +108,10 @@ export const SpamButton = ({ grantSlug, isMultiSelectOn }: Props) => {
         onClick={handleSpamClick}
         disabled={isMarkedAsSpam || isMultiSelectOn}
       >
-        <LucideFlag className="size-1 text-orange-500" />
-        {isMarkedAsSpam ? 'Marked as Spam' : 'Spam'}
+        <LucideFlag className="size-3.5 text-orange-500" />
+        <span className="hidden sm:inline">
+          {isMarkedAsSpam ? 'Marked as Spam' : 'Spam'}
+        </span>
       </Button>
 
       <SpamConfirmationDialog

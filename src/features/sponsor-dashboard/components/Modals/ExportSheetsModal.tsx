@@ -129,9 +129,13 @@ export const ExportSheetsModal = ({
                 </p>
               </div>
             </div>
-            <div className="flex gap-3">
-              <div className="flex-1" />
-              <Button variant="ghost" type="button" onClick={handleClose}>
+            <div className="flex justify-end gap-3">
+              <Button
+                variant="outline"
+                type="button"
+                onClick={handleClose}
+                className="w-full border-slate-200 bg-white text-slate-700 shadow-sm hover:bg-slate-50 sm:w-auto"
+              >
                 Cancel
               </Button>
             </div>
@@ -161,16 +165,20 @@ export const ExportSheetsModal = ({
               </div>
             </div>
 
-            <div className="flex gap-3">
-              <div className="flex-1" />
-              <Button variant="ghost" type="button" onClick={handleClose}>
+            <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+              <Button
+                variant="outline"
+                type="button"
+                onClick={handleClose}
+                className="w-full border-slate-200 bg-white text-slate-700 shadow-sm hover:bg-slate-50 sm:w-auto"
+              >
                 Close
               </Button>
               <a
                 href={sheetUrl || '#'}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex-1"
+                className="w-full sm:w-auto"
               >
                 <Button className="w-full rounded-lg border border-emerald-500 bg-emerald-50 text-emerald-600 hover:bg-emerald-100 hover:text-emerald-600">
                   <ExternalLink className="size-4" />
@@ -204,13 +212,17 @@ export const ExportSheetsModal = ({
               </div>
             </div>
 
-            <div className="mt-4 flex gap-3">
-              <div className="flex-1" />
-              <Button variant="ghost" type="button" onClick={handleClose}>
+            <div className="mt-4 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+              <Button
+                variant="outline"
+                type="button"
+                onClick={handleClose}
+                className="w-full border-slate-200 bg-white text-slate-700 shadow-sm hover:bg-slate-50 sm:w-auto"
+              >
                 Close
               </Button>
               <Button
-                className="flex-1 rounded-lg border border-indigo-500 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 hover:text-indigo-600"
+                className="w-full rounded-lg border border-indigo-500 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 hover:text-indigo-600 sm:w-auto"
                 onClick={handleRetry}
               >
                 Try Again
@@ -241,12 +253,17 @@ export const ExportSheetsModal = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose} modal>
-      <DialogContent className="m-0 max-w-xl p-0" hideCloseIcon>
-        <DialogTitle className="text-md -mb-1 px-6 pt-4 font-semibold text-slate-900">
+      <DialogContent
+        className="m-0 max-h-[calc(100dvh-1rem)] w-[calc(100vw-1rem)] max-w-[calc(100vw-1rem)] overflow-hidden p-0 sm:max-w-xl"
+        hideCloseIcon
+      >
+        <DialogTitle className="text-md -mb-1 px-4 pt-4 font-semibold text-slate-900 sm:px-6">
           Export to Google Sheets
         </DialogTitle>
         <Separator />
-        <div className="px-6 pb-6 text-[0.95rem]">{renderContent()}</div>
+        <div className="px-4 pb-4 text-[0.95rem] sm:px-6 sm:pb-6">
+          {renderContent()}
+        </div>
       </DialogContent>
     </Dialog>
   );
