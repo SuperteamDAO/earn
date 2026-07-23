@@ -1,3 +1,4 @@
+import { isValid, parseISO } from 'date-fns';
 import type { NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
@@ -15,11 +16,15 @@ async function handler(req: NextApiRequestWithAgent, res: NextApiResponse) {
 
   const type = params.type as EnumBountyTypeFilter | BountyType | undefined;
   const take = params.take ? parseInt(params.take as string, 10) : 10;
-  const deadline = params.deadline
-    ? new Date(params.deadline as string)
-    : new Date();
+  const deadlineParam = params.deadline;
+  const deadline =
+    deadlineParam === undefined || typeof deadlineParam !== 'string'
+      ? deadlineParam === undefined
+        ? new Date()
+        : new Date(Number.NaN)
+      : parseISO(deadlineParam);
 
-  if (Number.isNaN(deadline.getTime())) {
+  if (!isValid(deadline)) {
     return res.status(400).json({
       message:
         'Invalid deadline. Pass a value that can be parsed as an ISO-8601 date.',
