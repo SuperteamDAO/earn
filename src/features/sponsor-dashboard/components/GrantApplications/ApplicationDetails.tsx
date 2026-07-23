@@ -209,7 +209,12 @@ export const ApplicationDetails = ({
                   </Link>
                 </div>
                 <div className="self-start">
-                  {isPending && <SelectLabel grantSlug={grant?.slug!} />}
+                  {isPending && (
+                    <SelectLabel
+                      grantSlug={grant?.slug!}
+                      application={undefined}
+                    />
+                  )}
                 </div>
               </div>
               <div className="ph-no-capture flex w-full items-center justify-end gap-2">

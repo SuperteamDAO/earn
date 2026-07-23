@@ -480,6 +480,7 @@ export default function BountySubmissions({ slug }: Props) {
             <TabsContent value="submissions" className="w-full px-0">
               <div className="grid h-160 w-full grid-cols-[23rem_1fr] bg-white">
                 <SubmissionList
+                  isHackathonPage={false}
                   listing={bounty}
                   selectedFilters={selectedFilters}
                   onFilterChange={setSelectedFilters}
