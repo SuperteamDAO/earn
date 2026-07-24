@@ -292,7 +292,6 @@ model GrantApplication {
   isShipped           Boolean                @default(false)
   paymentDetails      Json?
   totalTranches       Int                    @default(0)
-  like                Json?
   likeCount           Int                    @default(0)
   Comments            Comment[]
   decidedBy           String?
@@ -357,7 +356,6 @@ model Submission {
   isArchived         Boolean          @default(false)
   createdAt          DateTime         @default(now())
   updatedAt          DateTime         @updatedAt
-  like               Json?
   likeCount          Int              @default(0)
   isPaid             Boolean          @default(false)
   paymentDetails     Json?
@@ -504,6 +502,7 @@ model User {
   isAgent            Boolean              @default(false)
   agentProfile       Agent?
   claimedAgents      Agent[]              @relation("AgentClaimedBy")
+  likes              Likes[]
 
   @@index([currentSponsorId])
   @@index([hackathonId])
@@ -624,7 +623,6 @@ model PoW {
   createdAt   DateTime  @default(now())
   subSkills   Json?
   updatedAt   DateTime  @updatedAt
-  like        Json?
   likeCount   Int       @default(0)
   user        User      @relation(fields: [userId], references: [id])
   ogImage     String?   @db.Text
@@ -1127,6 +1125,25 @@ enum CreditEventType {
   REFERRAL_FIRST_SUBMISSION_BONUS_INVITEE
   REFERRAL_FIRST_SUBMISSION_BONUS_INVITER
   REFERRAL_INVITEE_WIN_BONUS_INVITER
+}
+
+model Likes {
+  id         String         @id @default(uuid())
+  userId     String
+  targetType LikeTargetType
+  targetId   String
+  createdAt  DateTime       @default(now())
+  user       User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, targetType, targetId])
+  @@index([targetType, targetId, createdAt])
+  @@index([userId])
+}
+
+enum LikeTargetType {
+  SUBMISSION
+  POW
+  GRANT_APPLICATION
 }
 
 enum TalentRankingSkills {
