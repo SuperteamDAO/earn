@@ -15,15 +15,19 @@ interface GetFeedParams {
   userId?: string;
 }
 
+interface FeedResponse {
+  data: FeedDataProps[];
+  nextCursor: string | null;
+}
+
 const fetchFeed = async ({
   pageParam,
   ...params
-}: GetFeedParams & { pageParam: number }) => {
-  const { data } = await api.get<FeedDataProps[]>('/api/feed/get', {
-    params: {
-      ...params,
-      skip: pageParam,
-    },
+}: GetFeedParams & { pageParam: string | null }) => {
+  const queryParams: Record<string, unknown> = { ...params };
+  if (pageParam) queryParams.cursor = pageParam;
+  const { data } = await api.get<FeedResponse>('/api/feed/get', {
+    params: queryParams,
   });
   return data;
 };
@@ -32,11 +36,7 @@ export const useGetFeed = (params: GetFeedParams) => {
   return useInfiniteQuery({
     queryKey: ['feed', params],
     queryFn: ({ pageParam }) => fetchFeed({ ...params, pageParam }),
-    initialPageParam: 0,
-    getNextPageParam: (lastPage, allPages) => {
-      return lastPage.length === 0
-        ? undefined
-        : allPages.length * (params.take ?? 15);
-    },
+    initialPageParam: null as string | null,
+    getNextPageParam: (lastPage) => lastPage.nextCursor,
   });
 };
