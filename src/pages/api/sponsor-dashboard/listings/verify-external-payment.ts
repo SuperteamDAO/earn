@@ -103,7 +103,9 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     // transaction replay attacks where a txId from a paid submission is reused
     // for a different winner.
     if (txIds.length === 0) {
-      return res.status(400).json({ error: 'No valid transaction IDs provided' });
+      return res
+        .status(400)
+        .json({ error: 'No valid transaction IDs provided' });
     }
 
     const submissionsUsingTxIds: Array<{
@@ -122,9 +124,9 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       ...new Set(
         submissionsUsingTxIds
           .flatMap((sub): (string | undefined)[] =>
-            (
-              (sub.paymentDetails as Array<{ txId?: string }> | null) ?? []
-            ).map((p) => p.txId),
+            ((sub.paymentDetails as Array<{ txId?: string }> | null) ?? []).map(
+              (p) => p.txId,
+            ),
           )
           .filter((txId): txId is string => !!txId && txIds.includes(txId)),
       ),
