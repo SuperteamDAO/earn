@@ -129,7 +129,9 @@ export async function GET(request: Request) {
         break;
     }
 
-    const icon = resolveAbsoluteUrl((await getTokenIcon(token)) ?? null);
+    const icon = resolveAbsoluteUrl(
+      (await getTokenIcon(token, { format: 'png' })) ?? null,
+    );
 
     const capitalizedType = type
       ? type?.charAt(0).toUpperCase() + type?.slice(1).toLowerCase()
