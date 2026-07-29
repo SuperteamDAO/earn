@@ -13,6 +13,10 @@ import {
   type VerifyPaymentsFormData,
 } from '@/features/sponsor-dashboard/types';
 import {
+  findUsedPaymentTxIds,
+  normalizePaymentTxId,
+} from '@/features/sponsor-dashboard/utils/paymentReplayCheck';
+import {
   validatePayment,
   type ValidationResult,
 } from '@/features/sponsor-dashboard/utils/paymentRPCValidation';
@@ -89,7 +93,10 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
     const validationResults: ValidatePaymentResult[] = [];
 
-    const txIds = paymentLinks.map((link) => link.txId).filter(Boolean);
+    const txIds = paymentLinks
+      .map((link) => link.txId)
+      .filter(Boolean)
+      .map(normalizePaymentTxId);
     const duplicateTxIds = txIds.filter(
       (txId, index) => txIds.indexOf(txId) !== index,
     );
@@ -103,32 +110,12 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     // transaction replay attacks where a txId from a paid submission is reused
     // for a different winner.
     if (txIds.length === 0) {
-      return res.status(400).json({ error: 'No valid transaction IDs provided' });
+      return res
+        .status(400)
+        .json({ error: 'No valid transaction IDs provided' });
     }
 
-    const submissionsUsingTxIds: Array<{
-      id: string;
-      paymentDetails: unknown;
-    }> = await prisma.submission.findMany({
-      where: {
-        OR: txIds.map((txId) => ({
-          paymentDetails: { string_contains: txId },
-        })),
-      },
-      select: { id: true, paymentDetails: true },
-    });
-
-    const alreadyUsedTxIds = [
-      ...new Set(
-        submissionsUsingTxIds
-          .flatMap((sub): (string | undefined)[] =>
-            (
-              (sub.paymentDetails as Array<{ txId?: string }> | null) ?? []
-            ).map((p) => p.txId),
-          )
-          .filter((txId): txId is string => !!txId && txIds.includes(txId)),
-      ),
-    ];
+    const alreadyUsedTxIds = await findUsedPaymentTxIds(txIds);
 
     if (alreadyUsedTxIds.length > 0) {
       return res.status(400).json({
