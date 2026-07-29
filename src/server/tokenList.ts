@@ -293,7 +293,22 @@ export async function getTokenByMintAddress(
 
 export async function getTokenIcon(
   symbol?: string | null,
+  options?: {
+    format?: 'png';
+  },
 ): Promise<string | null> {
   const token = await getTokenBySymbol(symbol, { includeInactive: true });
-  return token?.icon ?? null;
+  const icon = token?.icon;
+
+  if (!icon || options?.format !== 'png') {
+    return icon ?? null;
+  }
+
+  if (!icon.startsWith(`${TOKEN_ICON_PROXY_PATH}?`)) {
+    return icon;
+  }
+
+  const proxyUrl = new URL(icon, 'https://superteam.fun');
+  proxyUrl.searchParams.set('format', 'png');
+  return `${proxyUrl.pathname}${proxyUrl.search}`;
 }

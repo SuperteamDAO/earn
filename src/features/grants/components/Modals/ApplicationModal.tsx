@@ -435,7 +435,7 @@ export const ApplicationModal = ({
     }
   };
 
-    const handleNext = (e: React.MouseEvent) => {
+  const handleNext = (e: React.MouseEvent) => {
     e.preventDefault();
     const fieldsToValidate: Record<
       number,
@@ -482,7 +482,6 @@ export const ApplicationModal = ({
     });
   };
 
-
   const handleBack = () => {
     const nextStep = activeStep - 1;
     setActiveStep(nextStep);
@@ -504,6 +503,23 @@ export const ApplicationModal = ({
     .match(/superteam|solana/);
 
   const date = dayjs().format('YYYY-MM-DD');
+  const telegramPreviewValue = form.getValues('telegram') || '';
+  const twitterPreviewValue = form.getValues('twitter') || '';
+  const githubPreviewValue = form.getValues('github') || '';
+  const lumaPreviewValue = form.getValues('lumaLink') || '';
+  const telegramPreviewHref = telegramPreviewValue.startsWith('http')
+    ? telegramPreviewValue
+    : `https://t.me/${telegramPreviewValue.replace('@', '')}`;
+  const twitterPreviewHref = twitterPreviewValue.startsWith('http')
+    ? twitterPreviewValue
+    : `https://x.com/${twitterPreviewValue.replace('@', '')}`;
+  const githubPreviewHref = githubPreviewValue.startsWith('http')
+    ? githubPreviewValue
+    : `https://github.com/${githubPreviewValue}`;
+  const lumaPreviewHref = lumaPreviewValue.startsWith('http')
+    ? lumaPreviewValue
+    : `https://lu.ma/${lumaPreviewValue}`;
+
   return (
     <div
       className={cn(
@@ -1092,7 +1108,7 @@ export const ApplicationModal = ({
                 )}
               </div>
             )}
-                        <Sheet open={isPreviewOpen} onOpenChange={setIsPreviewOpen}>
+            <Sheet open={isPreviewOpen} onOpenChange={setIsPreviewOpen}>
               <SheetContent
                 side="right"
                 className="z-[100] w-full overflow-y-auto bg-white sm:max-w-xl"
@@ -1138,19 +1154,19 @@ export const ApplicationModal = ({
                           {form.getValues('walletAddress')}
                         </p>
                       </div>
-                      {form.getValues('telegram') && (
+                      {telegramPreviewValue && (
                         <div>
                           <span className="font-medium text-slate-500">
                             Telegram:
                           </span>
                           <p className="mt-1">
                             <a
-                              href={form.getValues('telegram').startsWith('http') ? form.getValues('telegram') : `https://t.me/${form.getValues('telegram').replace('@', '')}`}
+                              href={telegramPreviewHref}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="text-brand-purple hover:underline"
                             >
-                              {form.getValues('telegram')}
+                              {telegramPreviewValue}
                             </a>
                           </p>
                         </div>
@@ -1202,54 +1218,54 @@ export const ApplicationModal = ({
                         </div>
                       )}
                       <div className="flex gap-4">
-                        {form.getValues('twitter') && (
+                        {twitterPreviewValue && (
                           <div>
                             <span className="font-medium text-slate-500">
                               Twitter:
                             </span>
                             <p className="mt-1">
                               <a
-                                href={form.getValues('twitter').startsWith('http') ? form.getValues('twitter') : `https://x.com/${form.getValues('twitter').replace('@', '')}`}
+                                href={twitterPreviewHref}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="text-brand-purple hover:underline"
                               >
-                                {form.getValues('twitter')}
+                                {twitterPreviewValue}
                               </a>
                             </p>
                           </div>
                         )}
-                        {!isST && form.getValues('github') && (
+                        {!isST && githubPreviewValue && (
                           <div>
                             <span className="font-medium text-slate-500">
                               Github:
                             </span>
                             <p className="mt-1">
                               <a
-                                href={form.getValues('github').startsWith('http') ? form.getValues('github') : `https://github.com/${form.getValues('github')}`}
+                                href={githubPreviewHref}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="text-brand-purple hover:underline"
                               >
-                                {form.getValues('github')}
+                                {githubPreviewValue}
                               </a>
                             </p>
                           </div>
                         )}
                       </div>
-                      {isST && form.getValues('lumaLink') && (
+                      {isST && lumaPreviewValue && (
                         <div>
                           <span className="font-medium text-slate-500">
                             Luma Event:
                           </span>
                           <p className="mt-1">
                             <a
-                              href={form.getValues('lumaLink').startsWith('http') ? form.getValues('lumaLink') : `https://lu.ma/${form.getValues('lumaLink')}`}
+                              href={lumaPreviewHref}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="text-brand-purple hover:underline"
                             >
-                              {getLumaDisplayValue(form.getValues('lumaLink') || '')}
+                              {getLumaDisplayValue(lumaPreviewValue)}
                             </a>
                           </p>
                         </div>
@@ -1270,38 +1286,45 @@ export const ApplicationModal = ({
                         </div>
                       )}
                       {(questions?.length ?? 0) > 0 &&
-                        questions?.map((q, i) => (
-                          <div key={i}>
-                            <span className="font-medium text-slate-500">
-                              {q.question}
-                            </span>
-                            {q.type === 'link' ? (
-                              <p className="mt-1">
-                                {form.getValues(`answers.${i}.answer`) ? (
-                                  <a
-                                    href={form.getValues(`answers.${i}.answer`).startsWith('http') ? form.getValues(`answers.${i}.answer`) : `https://${form.getValues(`answers.${i}.answer`)}`}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="text-brand-purple hover:underline"
-                                  >
-                                    {form.getValues(`answers.${i}.answer`)}
-                                  </a>
-                                ) : (
-                                  '-'
-                                )}
-                              </p>
-                            ) : (
-                              <div
-                                className="prose prose-sm mt-1 max-w-none"
-                                dangerouslySetInnerHTML={{
-                                  __html: sanitizeGrantApplicationHtml(
-                                    form.getValues(`answers.${i}.answer`) || '',
-                                  ),
-                                }}
-                              />
-                            )}
-                          </div>
-                        ))}
+                        questions?.map((q, i) => {
+                          const answerValue =
+                            form.getValues(`answers.${i}.answer`) || '';
+                          const answerHref = answerValue.startsWith('http')
+                            ? answerValue
+                            : `https://${answerValue}`;
+
+                          return (
+                            <div key={i}>
+                              <span className="font-medium text-slate-500">
+                                {q.question}
+                              </span>
+                              {q.type === 'link' ? (
+                                <p className="mt-1">
+                                  {answerValue ? (
+                                    <a
+                                      href={answerHref}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="text-brand-purple hover:underline"
+                                    >
+                                      {answerValue}
+                                    </a>
+                                  ) : (
+                                    '-'
+                                  )}
+                                </p>
+                              ) : (
+                                <div
+                                  className="prose prose-sm mt-1 max-w-none"
+                                  dangerouslySetInnerHTML={{
+                                    __html:
+                                      sanitizeGrantApplicationHtml(answerValue),
+                                  }}
+                                />
+                              )}
+                            </div>
+                          );
+                        })}
                     </div>
                   </div>
 
@@ -1347,10 +1370,6 @@ export const ApplicationModal = ({
                 </div>
               </SheetContent>
             </Sheet>
-
-                      
-                            
-    
 
             <div className="mt-8 flex gap-2">
               {activeStep > 0 && (
