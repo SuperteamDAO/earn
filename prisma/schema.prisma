@@ -815,31 +815,31 @@ model ProPerks {
 }
 
 model Chapter {
-  id                String             @id @default(uuid()) @db.Char(36)
-  name              String             @unique @db.VarChar(100)
-  slug              String             @unique @db.VarChar(120)
-  region            String             @db.VarChar(100)
-  displayValue      String?            @db.VarChar(100)
-  code              String?            @db.VarChar(40)
+  id                String                 @id @default(uuid()) @db.Char(36)
+  name              String                 @unique @db.VarChar(100)
+  slug              String                 @unique @db.VarChar(120)
+  region            String                 @db.VarChar(100)
+  displayValue      String?                @db.VarChar(100)
+  code              String?                @db.VarChar(40)
   countries         Json?
-  memberForm        String?            @db.VarChar(255)
-  active            Boolean            @default(true)
-  community         String?            @db.VarChar(255)
-  pocName           String?            @db.VarChar(255)
-  pocEmail          String?            @db.VarChar(255)
-  twitterUsername   String?            @db.VarChar(100)
-  link              String?            @db.VarChar(255)
-  icons             String?            @db.Text
-  banner            String?            @db.Text
-  hello             String?            @db.VarChar(80)
-  nationality       String?            @db.VarChar(120)
+  memberForm        String?                @db.VarChar(255)
+  active            Boolean                @default(true)
+  community         String?                @db.VarChar(255)
+  pocName           String?                @db.VarChar(255)
+  pocEmail          String?                @db.VarChar(255)
+  twitterUsername   String?                @db.VarChar(100)
+  link              String?                @db.VarChar(255)
+  icons             String?                @db.Text
+  banner            String?                @db.Text
+  hello             String?                @db.VarChar(80)
+  nationality       String?                @db.VarChar(120)
   tgChatId          String?
   tgThreadId        String?
   registeredBy      String?
-  sponsorId         String?            @unique
-  createdAt         DateTime           @default(now())
-  updatedAt         DateTime           @updatedAt
-  sponsor           Sponsors?          @relation(fields: [sponsorId], references: [id])
+  sponsorId         String?                @unique
+  createdAt         DateTime               @default(now())
+  updatedAt         DateTime               @updatedAt
+  sponsor           Sponsors?              @relation(fields: [sponsorId], references: [id])
   people            People[]
   communityEarnings CommunityEarning[]
   events            Event[]
@@ -848,6 +848,8 @@ model Chapter {
   lumaEventReviews  LumaEventReview[]
   memberInvites     MemberInvite[]
   publicJoinOtps    PublicJoinOtp[]
+  resourceDoc       ChapterResourceDoc?
+  memberHistory     MemberChapterHistory[]
 
   @@index([region])
 }
@@ -886,41 +888,49 @@ model PublicJoinOtp {
 }
 
 model People {
-  id                String                  @id @default(uuid()) @db.Char(36)
-  name              String                  @db.VarChar(255)
-  email             String                  @unique @db.VarChar(255)
-  chapterId         String                  @db.Char(36)
-  type              String?                 @db.VarChar(50)
-  xUsername         String?                 @db.VarChar(100)
-  telegram          String?                 @db.VarChar(100)
-  discord           String?                 @db.VarChar(100)
-  solWallet         String?                 @db.VarChar(50)
-  city              String?                 @db.VarChar(100)
-  skills            String?                 @db.Text
-  username          String?                 @unique @db.VarChar(40)
-  photo             String?                 @db.Text
-  bio               String?                 @db.Text
-  role              String?                 @db.VarChar(20)
-  proofOfWork       String?                 @db.Text
-  bestWorkUrl       String?                 @db.VarChar(500)
-  memberAppSignedUp Boolean                 @default(false)
-  source            String                  @default("Legacy") @db.VarChar(50)
-  airtableRecordId  String                  @db.VarChar(50)
-  purgedAt          DateTime?
-  createdAt         DateTime                @default(now())
-  updatedAt         DateTime                @default(now()) @updatedAt
-  communityEarnings CommunityEarning[]
-  jobs              Job[]
-  vcExternalGrants  VcExternalGrant[]
-  chapter           Chapter                 @relation(fields: [chapterId], references: [id])
-  user              User?                   @relation("UserToPeople")
-  accounts          Account[]
-  sessions          Session[]
-  forumTopics       ForumTopic[]
-  forumReplies      ForumReply[]
-  forumMentions     ForumTopicMention[]     @relation("ForumTopicMentionMember")
-  createdMentions   ForumTopicMention[]     @relation("ForumTopicMentionCreator")
-  shipmentOverlays  MemberShipmentOverlay[]
+  id                   String                  @id @default(uuid()) @db.Char(36)
+  name                 String                  @db.VarChar(255)
+  email                String                  @unique @db.VarChar(255)
+  chapterId            String                  @db.Char(36)
+  type                 String?                 @db.VarChar(50)
+  xUsername            String?                 @db.VarChar(100)
+  telegram             String?                 @db.VarChar(100)
+  discord              String?                 @db.VarChar(100)
+  solWallet            String?                 @db.VarChar(50)
+  city                 String?                 @db.VarChar(100)
+  skills               String?                 @db.Text
+  username             String?                 @unique @db.VarChar(40)
+  photo                String?                 @db.Text
+  bio                  String?                 @db.Text
+  shortBio             String?                 @db.VarChar(100)
+  role                 String?                 @db.VarChar(20)
+  proofOfWork          String?                 @db.Text
+  bestWorkUrl          String?                 @db.VarChar(500)
+  linkedin             String?                 @db.VarChar(100)
+  calendarUrl          String?                 @db.VarChar(500)
+  memberAppSignedUp    Boolean                 @default(false)
+  source               String                  @default("Legacy") @db.VarChar(50)
+  airtableRecordId     String                  @db.VarChar(50)
+  purgedAt             DateTime?
+  createdAt            DateTime                @default(now())
+  updatedAt            DateTime                @default(now()) @updatedAt
+  communityEarnings    CommunityEarning[]
+  jobs                 Job[]
+  vcExternalGrants     VcExternalGrant[]
+  chapter              Chapter                 @relation(fields: [chapterId], references: [id])
+  user                 User?                   @relation("UserToPeople")
+  accounts             Account[]
+  sessions             Session[]
+  forumTopics          ForumTopic[]
+  forumReplies         ForumReply[]
+  forumMentions        ForumTopicMention[]     @relation("ForumTopicMentionMember")
+  createdMentions      ForumTopicMention[]     @relation("ForumTopicMentionCreator")
+  shipmentOverlays     MemberShipmentOverlay[]
+  kudosGiven           Kudos[]                 @relation("KudosGiver")
+  kudosReceived        Kudos[]                 @relation("KudosRecipient")
+  levelOverlay         MemberLevel?
+  levelUpgradeRequests LevelUpgradeRequest[]
+  chapterHistory       MemberChapterHistory[]
 
   @@unique([airtableRecordId])
   @@index([chapterId])
@@ -1332,20 +1342,25 @@ model ForumTopic {
 }
 
 model ForumReply {
-  id              String     @id @default(uuid()) @db.Char(36)
-  topicId         String     @db.Char(36)
-  authorId        String     @db.Char(36)
-  body            String     @db.Text
-  isHidden        Boolean    @default(false)
+  id              String       @id @default(uuid()) @db.Char(36)
+  topicId         String       @db.Char(36)
+  parentReplyId   String?      @db.Char(36)
+  authorId        String       @db.Char(36)
+  body            String       @db.Text
+  isHidden        Boolean      @default(false)
   amaAnsweredAt   DateTime?
-  amaAnsweredById String?    @db.Char(36)
-  createdAt       DateTime   @default(now())
-  updatedAt       DateTime   @updatedAt
-  topic           ForumTopic @relation(fields: [topicId], references: [id], onDelete: Cascade)
-  author          People     @relation(fields: [authorId], references: [id])
+  amaAnsweredById String?      @db.Char(36)
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+  topic           ForumTopic   @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  parentReply     ForumReply?  @relation("ForumReplyThread", fields: [parentReplyId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  childReplies    ForumReply[] @relation("ForumReplyThread")
+  author          People       @relation(fields: [authorId], references: [id])
 
+  @@index([topicId, parentReplyId, createdAt])
   @@index([topicId, createdAt])
   @@index([topicId, amaAnsweredAt])
+  @@index([parentReplyId])
   @@index([authorId])
 }
 
@@ -1403,6 +1418,23 @@ model MemberVote {
   @@index([voterId])
 }
 
+model Kudos {
+  id          String   @id @default(uuid()) @db.Char(36)
+  giverId     String   @db.Char(36)
+  recipientId String   @db.Char(36)
+  reaction    String   @db.VarChar(16)
+  message     String   @db.VarChar(300)
+  isHidden    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  giver       People   @relation("KudosGiver", fields: [giverId], references: [id])
+  recipient   People   @relation("KudosRecipient", fields: [recipientId], references: [id])
+
+  @@index([isHidden, createdAt])
+  @@index([giverId, recipientId, createdAt])
+  @@index([giverId, createdAt])
+  @@index([recipientId, createdAt])
+}
+
 model MemberShipmentOverlay {
   id          String    @id @default(uuid()) @db.Char(36)
   memberId    String    @db.Char(36)
@@ -1423,59 +1455,72 @@ model MemberShipmentOverlay {
   @@index([sourceType, shipmentKey])
 }
 
-model Badge {
-  id          String        @id @default(uuid()) @db.Char(36)
-  slug        String        @unique @db.VarChar(80)
-  name        String        @db.VarChar(120)
-  description String?       @db.VarChar(255)
-  kind        String        @default("system") @db.VarChar(40)
-  isActive    Boolean       @default(true)
-  sortOrder   Int           @default(0)
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
-  members     MemberBadge[]
-}
-
-model MemberBadge {
-  id           String    @id @default(uuid()) @db.Char(36)
-  memberId     String    @db.Char(36)
-  badgeId      String    @db.Char(36)
-  assignedById String?   @db.Char(36)
-  sourceType   String?   @db.VarChar(80)
-  sourceId     String?   @db.VarChar(191)
-  reason       String?   @db.VarChar(255)
-  assignedAt   DateTime  @default(now())
-  removedAt    DateTime?
-  removedById  String?   @db.Char(36)
-  removeReason String?   @db.VarChar(255)
-  badge        Badge     @relation(fields: [badgeId], references: [id])
-
-  @@unique([memberId, badgeId])
-  @@index([memberId])
-  @@index([badgeId])
-}
-
 model MemberPerk {
-  id                     String    @id @default(uuid()) @db.Char(36)
-  title                  String    @db.VarChar(160)
-  slug                   String    @unique @db.VarChar(180)
-  sponsorName            String    @db.VarChar(120)
-  description            String    @db.Text
-  category               String    @default("tools") @db.VarChar(80)
-  logoUrl                String?   @db.VarChar(500)
-  status                 String    @default("DRAFT") @db.VarChar(20)
-  maxValue               String?   @db.VarChar(80)
-  redemptionType         String    @default("IDENTITY") @db.VarChar(20)
-  redemptionCode         String?   @db.VarChar(255)
-  redemptionInstructions String?   @db.Text
-  identityType           String?   @db.VarChar(20)
-  redirectUrl            String?   @db.VarChar(500)
-  startsAt               DateTime?
-  expiresAt              DateTime?
-  sortOrder              Int       @default(0)
-  createdAt              DateTime  @default(now())
-  updatedAt              DateTime  @updatedAt
+  id                String   @id @default(uuid()) @db.Char(36)
+  title             String   @db.VarChar(160)
+  description       String   @db.Text
+  imageUrl          String   @db.VarChar(500)
+  claimInstructions String   @db.Text
+  published         Boolean  @default(false)
+  chapterIds        Json?
+  category          String?  @db.VarChar(80)
+  minLevel          Int      @default(1)
+  sortOrder         Int      @default(0)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
 
-  @@index([status, sortOrder])
-  @@index([expiresAt])
+  @@index([published, sortOrder])
+}
+
+model MemberLevel {
+  memberId  String   @id @db.Char(36)
+  level     Int      @default(1)
+  updatedAt DateTime @updatedAt
+  member    People   @relation(fields: [memberId], references: [id])
+}
+
+model MemberChapterHistory {
+  id        String    @id @default(uuid()) @db.Char(36)
+  memberId  String    @db.Char(36)
+  chapterId String    @db.Char(36)
+  joinedAt  DateTime?
+  leftAt    DateTime?
+  createdAt DateTime  @default(now())
+  member    People    @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  chapter   Chapter   @relation(fields: [chapterId], references: [id])
+
+  @@index([memberId, leftAt])
+  @@index([chapterId])
+}
+
+model LevelUpgradeRequest {
+  id             String    @id @default(uuid()) @db.Char(36)
+  memberId       String    @db.Char(36)
+  requestedLevel Int
+  message        String    @db.Text
+  status         String    @default("pending") @db.VarChar(20)
+  perkTitle      String?   @db.VarChar(160)
+  reviewedById   String?   @db.Char(36)
+  reviewedAt     DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  member         People    @relation(fields: [memberId], references: [id])
+
+  @@index([status, createdAt])
+  @@index([memberId, status])
+}
+
+model ChapterResourceDoc {
+  chapterId   String   @id @db.Char(36)
+  markdown    String   @db.Text
+  updatedById String?  @db.Char(36)
+  updatedAt   DateTime @updatedAt
+  chapter     Chapter  @relation(fields: [chapterId], references: [id])
+}
+
+model PortalDocument {
+  slug        String   @id @db.VarChar(80)
+  markdown    String   @db.Text
+  updatedById String?  @db.Char(36)
+  updatedAt   DateTime @updatedAt
 }
