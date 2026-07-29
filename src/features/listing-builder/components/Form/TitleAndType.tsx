@@ -67,7 +67,7 @@ export function TitleAndType() {
 
   const debouncedTitle = useDebounce(safeTitle);
   const slugifiedTitle = useMemo(() => {
-    let slug = slugify(debouncedTitle, {
+    let slug = slugify(debouncedTitle.replace(/\|/g, ''), {
       lower: true,
       strict: true,
     });
