@@ -2,6 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { parseBoundedIntegerParam } from '@/utils/apiPagination';
 import { getChapterRegions } from '@/utils/chapterRegion';
 import { safeStringify } from '@/utils/safeStringify';
 
@@ -21,7 +22,15 @@ export default async function grants(
     logger.debug('Fetching grants from database');
 
     const params = req.query;
-    const take = params.take ? parseInt(params.take as string, 10) : 100;
+    const takeResult = parseBoundedIntegerParam(params.take, {
+      defaultValue: 100,
+      maxValue: 100,
+      name: 'take',
+    });
+    if (!takeResult.ok) {
+      return res.status(400).json({ error: takeResult.error });
+    }
+    const take = takeResult.value;
     let excludeIds = params['excludeIds[]'];
     if (typeof excludeIds === 'string') {
       excludeIds = [excludeIds];
