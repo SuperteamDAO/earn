@@ -7,8 +7,42 @@ import { SUMSUB_BASE_URL } from '../constants/SUMSUB_BASE_URL';
 import { createSumSubHeaders } from './createSumSubHeaders';
 
 type SumsubApplicant = {
-  id?: string;
-  sourceKey?: string;
+  readonly id: string | undefined;
+  readonly sourceKey: string | undefined;
+};
+
+type SumsubErrorResponse = {
+  readonly code: unknown;
+  readonly message: unknown;
+  readonly description: unknown;
+};
+
+const SUMSUB_SOURCE_KEY_REQUEST_TIMEOUT_MS = 10_000;
+
+const matchesDuplicateApplicantMessage = (value: unknown): boolean =>
+  typeof value === 'string' &&
+  [
+    'applicant already exists',
+    'applicant with externaluserid already exists',
+  ].includes(value.toLowerCase());
+
+const isApplicantAlreadyExistsError = (error: unknown): boolean => {
+  if (!axios.isAxiosError(error)) {
+    return false;
+  }
+
+  if (error.response?.status === 409) {
+    return true;
+  }
+
+  const data = error.response?.data as Partial<SumsubErrorResponse> | undefined;
+
+  return (
+    data?.code === 'applicant_already_exists' ||
+    data?.code === 'applicant_exists' ||
+    matchesDuplicateApplicantMessage(data?.message) ||
+    matchesDuplicateApplicantMessage(data?.description)
+  );
 };
 
 const getApplicantByExternalUserId = async (
@@ -24,6 +58,7 @@ const getApplicantByExternalUserId = async (
   try {
     const response = await axios.get<SumsubApplicant>(`${SUMSUB_BASE_URL}${url}`, {
       headers,
+      timeout: SUMSUB_SOURCE_KEY_REQUEST_TIMEOUT_MS,
     });
     return response.data;
   } catch (error) {
@@ -51,7 +86,7 @@ const createApplicantWithSourceKey = async ({
   sourceKey: string;
   secretKey: string;
   appToken: string;
-}) => {
+}): Promise<boolean> => {
   const url = `/resources/applicants?levelName=${encodeURIComponent(levelName)}`;
   const method = 'POST';
   const body = JSON.stringify({
@@ -67,15 +102,11 @@ const createApplicantWithSourceKey = async ({
         externalUserId: userId,
         sourceKey,
       },
-      { headers },
+      { headers, timeout: SUMSUB_SOURCE_KEY_REQUEST_TIMEOUT_MS },
     );
     return true;
   } catch (error) {
-    if (
-      axios.isAxiosError(error) &&
-      (error.response?.status === 409 ||
-        safeStringify(error.response?.data).toLowerCase().includes('exist'))
-    ) {
+    if (isApplicantAlreadyExistsError(error)) {
       logger.info('Sumsub applicant already exists during source key setup', {
         userId,
         sourceKey,
@@ -104,7 +135,7 @@ export const ensureApplicantSourceKey = async ({
   sourceKey: string;
   secretKey: string;
   appToken: string;
-}) => {
+}): Promise<boolean> => {
   const applicant = await getApplicantByExternalUserId(
     userId,
     secretKey,

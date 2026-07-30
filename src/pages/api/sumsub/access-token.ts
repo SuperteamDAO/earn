@@ -7,6 +7,23 @@ import { ensureApplicantSourceKey } from '@/features/kyc/utils/ensureApplicantSo
 import { isEligiblePeopleType } from '@/features/membership/utils/peopleEligibility';
 import { prisma } from '@/prisma';
 
+const getEligiblePeopleType = async (
+  userId: string,
+): Promise<string | null | undefined> => {
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: {
+      people: {
+        select: {
+          type: true,
+        },
+      },
+    },
+  });
+
+  return user?.people?.type;
+};
+
 const handler = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
   const userId = req.userId;
 
@@ -21,18 +38,17 @@ const handler = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
     }
 
     if (memberSourceKey) {
-      const user = await prisma.user.findUnique({
-        where: { id: userId },
-        select: {
-          people: {
-            select: {
-              type: true,
-            },
-          },
-        },
-      });
+      let peopleType;
 
-      if (isEligiblePeopleType(user?.people?.type)) {
+      try {
+        peopleType = await getEligiblePeopleType(userId);
+      } catch {
+        return res
+          .status(500)
+          .json({ message: 'Failed to load user KYC eligibility' });
+      }
+
+      if (isEligiblePeopleType(peopleType)) {
         await ensureApplicantSourceKey({
           userId,
           levelName,
