@@ -344,38 +344,41 @@ model GrantTranche {
 }
 
 model Submission {
-  id                 String           @id @default(uuid())
-  link               String?          @db.VarChar(500)
-  tweet              String?          @db.VarChar(500)
-  status             SubmissionStatus @default(Pending)
-  eligibilityAnswers Json?            @default("[]")
-  userId             String
-  agentId            String?
-  listingId          String
-  isWinner           Boolean          @default(false)
-  winnerPosition     Int?
-  isActive           Boolean          @default(true)
-  isArchived         Boolean          @default(false)
-  createdAt          DateTime         @default(now())
-  updatedAt          DateTime         @updatedAt
-  like               Json?
-  likeCount          Int              @default(0)
-  isPaid             Boolean          @default(false)
-  paymentDetails     Json?
-  otherInfo          String?          @db.Text
-  ask                Float?
-  telegram           String?          @db.Text
-  label              SubmissionLabels @default(Unreviewed)
-  rewardInUSD        Float            @default(0)
-  listing            Bounties         @relation(fields: [listingId], references: [id])
-  user               User             @relation(fields: [userId], references: [id])
-  agent              Agent?           @relation(fields: [agentId], references: [id])
-  ogImage            String?          @db.Text
-  notes              String?          @db.VarChar(10000)
-  Comments           Comment[]
-  CreditLedger       CreditLedger[]
-  ai                 Json?
-  paymentSynced      Boolean          @default(false)
+  id                           String                   @id @default(uuid())
+  link                         String?                  @db.VarChar(500)
+  tweet                        String?                  @db.VarChar(500)
+  status                       SubmissionStatus         @default(Pending)
+  eligibilityAnswers           Json?                    @default("[]")
+  userId                       String
+  agentId                      String?
+  listingId                    String
+  isWinner                     Boolean                  @default(false)
+  winnerPosition               Int?
+  isActive                     Boolean                  @default(true)
+  isArchived                   Boolean                  @default(false)
+  createdAt                    DateTime                 @default(now())
+  updatedAt                    DateTime                 @updatedAt
+  like                         Json?
+  likeCount                    Int                      @default(0)
+  isPaid                       Boolean                  @default(false)
+  paymentDetails               Json?
+  otherInfo                    String?                  @db.Text
+  ask                          Float?
+  telegram                     String?                  @db.Text
+  label                        SubmissionLabels         @default(Unreviewed)
+  rewardInUSD                  Float                    @default(0)
+  listing                      Bounties                 @relation(fields: [listingId], references: [id])
+  user                         User                     @relation(fields: [userId], references: [id])
+  agent                        Agent?                   @relation(fields: [agentId], references: [id])
+  ogImage                      String?                  @db.Text
+  notes                        String?                  @db.VarChar(10000)
+  Comments                     Comment[]
+  CreditLedger                 CreditLedger[]
+  ai                           Json?
+  paymentSynced                Boolean                  @default(false)
+  regionVerificationStatus     RegionVerificationStatus @default(NotRequired)
+  regionVerificationCountry    String?
+  regionVerificationVerifiedAt DateTime?
 
   @@index([id, listingId])
   @@index([isWinner])
@@ -1268,6 +1271,14 @@ enum SubmissionStatus {
   Pending
   Approved
   Rejected
+}
+
+enum RegionVerificationStatus {
+  NotRequired
+  KycCountryMatched
+  PoaRequired
+  PoaVerified
+  Ineligible
 }
 
 enum GrantTrancheStatus {
