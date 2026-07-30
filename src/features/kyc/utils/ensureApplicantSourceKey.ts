@@ -49,7 +49,7 @@ const getApplicantByExternalUserId = async (
   userId: string,
   secretKey: string,
   appToken: string,
-): Promise<SumsubApplicant | null> => {
+): Promise<SumsubApplicant | null | undefined> => {
   const url = `/resources/applicants/-;externalUserId=${userId}/one`;
   const method = 'GET';
   const body = '';
@@ -70,7 +70,7 @@ const getApplicantByExternalUserId = async (
       userId,
       error: safeStringify(error),
     });
-    return null;
+    return undefined;
   }
 };
 
@@ -141,6 +141,10 @@ export const ensureApplicantSourceKey = async ({
     secretKey,
     appToken,
   );
+
+  if (applicant === undefined) {
+    return false;
+  }
 
   if (!applicant?.id) {
     return createApplicantWithSourceKey({
