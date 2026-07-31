@@ -5,23 +5,42 @@ import { withAuth } from '@/features/auth/utils/withAuth';
 import { createSumsubAccessToken } from '@/features/kyc/utils/createSumsubAccessToken';
 import { ensureApplicantSourceKey } from '@/features/kyc/utils/ensureApplicantSourceKey';
 import { isEligiblePeopleType } from '@/features/membership/utils/peopleEligibility';
+import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { safeStringify } from '@/utils/safeStringify';
+
+type PeopleTypeLookupResult =
+  | {
+      readonly ok: true;
+      readonly peopleType: string | null | undefined;
+    }
+  | {
+      readonly ok: false;
+    };
 
 const getEligiblePeopleType = async (
   userId: string,
-): Promise<string | null | undefined> => {
-  const user = await prisma.user.findUnique({
-    where: { id: userId },
-    select: {
-      people: {
-        select: {
-          type: true,
+): Promise<PeopleTypeLookupResult> => {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        people: {
+          select: {
+            type: true,
+          },
         },
       },
-    },
-  });
+    });
 
-  return user?.people?.type;
+    return { ok: true, peopleType: user?.people?.type };
+  } catch (error) {
+    logger.warn('Skipping Sumsub member source key setup after lookup error', {
+      userId,
+      error: safeStringify(error),
+    });
+    return { ok: false };
+  }
 };
 
 const handler = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
@@ -38,17 +57,12 @@ const handler = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
     }
 
     if (memberSourceKey) {
-      let peopleType;
+      const peopleTypeLookup = await getEligiblePeopleType(userId);
 
-      try {
-        peopleType = await getEligiblePeopleType(userId);
-      } catch {
-        return res
-          .status(500)
-          .json({ message: 'Failed to load user KYC eligibility' });
-      }
-
-      if (isEligiblePeopleType(peopleType)) {
+      if (
+        peopleTypeLookup.ok &&
+        isEligiblePeopleType(peopleTypeLookup.peopleType)
+      ) {
         await ensureApplicantSourceKey({
           userId,
           levelName,

@@ -86,7 +86,7 @@ const createApplicantWithSourceKey = async ({
   sourceKey: string;
   secretKey: string;
   appToken: string;
-}): Promise<boolean> => {
+}): Promise<void> => {
   const url = `/resources/applicants?levelName=${encodeURIComponent(levelName)}`;
   const method = 'POST';
   const body = JSON.stringify({
@@ -104,14 +104,17 @@ const createApplicantWithSourceKey = async ({
       },
       { headers, timeout: SUMSUB_SOURCE_KEY_REQUEST_TIMEOUT_MS },
     );
-    return true;
+    logger.info('Created Sumsub applicant with member source key', {
+      userId,
+      sourceKey,
+    });
   } catch (error) {
     if (isApplicantAlreadyExistsError(error)) {
       logger.info('Sumsub applicant already exists during source key setup', {
         userId,
         sourceKey,
       });
-      return false;
+      return;
     }
 
     logger.warn('Skipping Sumsub source key setup after create error', {
@@ -119,7 +122,6 @@ const createApplicantWithSourceKey = async ({
       sourceKey,
       error: safeStringify(error),
     });
-    return false;
   }
 };
 
@@ -135,7 +137,7 @@ export const ensureApplicantSourceKey = async ({
   sourceKey: string;
   secretKey: string;
   appToken: string;
-}): Promise<boolean> => {
+}): Promise<void> => {
   const applicant = await getApplicantByExternalUserId(
     userId,
     secretKey,
@@ -143,17 +145,18 @@ export const ensureApplicantSourceKey = async ({
   );
 
   if (applicant === undefined) {
-    return false;
+    return;
   }
 
   if (!applicant?.id) {
-    return createApplicantWithSourceKey({
+    await createApplicantWithSourceKey({
       userId,
       levelName,
       sourceKey,
       secretKey,
       appToken,
     });
+    return;
   }
 
   if (applicant.sourceKey !== sourceKey) {
@@ -163,6 +166,4 @@ export const ensureApplicantSourceKey = async ({
       sourceKey,
     });
   }
-
-  return false;
 };
