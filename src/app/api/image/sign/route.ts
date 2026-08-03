@@ -100,7 +100,16 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    const signedParams = generateSignedUploadParams(source);
+    const grantImageSources = new Set([
+      'grant-event-pictures',
+      'grant-event-receipts',
+      'grant-agentic-receipts',
+    ]);
+    const signedParams = generateSignedUploadParams(
+      source,
+      undefined,
+      grantImageSources.has(source) ? userId : undefined,
+    );
 
     logger.info(`Image upload signature generated for user ${userId}`, {
       source,

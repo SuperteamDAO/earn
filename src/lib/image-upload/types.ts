@@ -23,6 +23,7 @@ export interface SignedUploadParams {
   apiKey: string;
   folder: string;
   publicId?: string;
+  context?: string;
   eager?: string;
 }
 

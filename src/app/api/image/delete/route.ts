@@ -5,6 +5,7 @@ import {
   deleteImage,
   deleteRequestSchema,
   extractPublicIdFromUrl,
+  getImageOwnerId,
   ImageUploadError,
   UPLOAD_CONFIGS,
 } from '@/lib/image-upload';
@@ -23,10 +24,54 @@ function escapeLikePattern(str: string): string {
 
 function validatePublicIdFolder(
   publicId: string,
-  source: 'user' | 'sponsor' | 'description',
+  source: keyof typeof UPLOAD_CONFIGS,
 ): boolean {
   const config = UPLOAD_CONFIGS[source];
   return publicId.startsWith(config.folder + '/');
+}
+
+type GrantImageSource =
+  | 'grant-event-pictures'
+  | 'grant-event-receipts'
+  | 'grant-agentic-receipts';
+
+function jsonContainsPublicId(value: unknown, publicId: string): boolean {
+  if (!Array.isArray(value)) return false;
+
+  return value.some((item) => {
+    if (typeof item !== 'string') return false;
+    return extractPublicIdFromUrl(item) === publicId;
+  });
+}
+
+async function isLegacyGrantImageOwnedByUser(
+  publicId: string,
+  source: GrantImageSource,
+  userId: string,
+): Promise<boolean> {
+  if (!validatePublicIdFolder(publicId, source)) return false;
+
+  const tranches = await prisma.grantTranche.findMany({
+    where: {
+      GrantApplication: { userId },
+    },
+    select: {
+      eventPictures: true,
+      eventReceipts: true,
+      aiReceipts: true,
+    },
+  });
+
+  const fieldBySource = {
+    'grant-event-pictures': 'eventPictures',
+    'grant-event-receipts': 'eventReceipts',
+    'grant-agentic-receipts': 'aiReceipts',
+  } as const;
+  const field = fieldBySource[source];
+
+  return tranches.some((tranche) =>
+    jsonContainsPublicId(tranche[field], publicId),
+  );
 }
 
 export async function DELETE(request: NextRequest) {
@@ -214,6 +259,42 @@ export async function DELETE(request: NextRequest) {
           { status: 403 },
         );
       }
+    } else if (
+      source === 'grant-event-pictures' ||
+      source === 'grant-event-receipts' ||
+      source === 'grant-agentic-receipts'
+    ) {
+      if (!validatePublicIdFolder(publicId, source)) {
+        return NextResponse.json(
+          { error: 'Invalid public ID for the specified source' },
+          { status: 400 },
+        );
+      }
+
+      const imageOwnerId = await getImageOwnerId(publicId);
+      const isMetadataOwner = imageOwnerId === userId;
+      const isLegacyOwner =
+        imageOwnerId === null &&
+        (await isLegacyGrantImageOwnedByUser(publicId, source, userId));
+
+      if (!isMetadataOwner && !isLegacyOwner) {
+        logger.warn(
+          `User ${userId} attempted to delete a grant image they do not own`,
+          { publicId, source },
+        );
+        return NextResponse.json(
+          { error: 'You do not have permission to delete this grant image' },
+          { status: 403 },
+        );
+      }
+    } else {
+      // Keep this default-deny guard even though Zod currently makes the branch
+      // unreachable. It prevents future schema additions from silently gaining
+      // delete access without an explicit authorization policy.
+      logger.error('Image source has no deletion authorization policy', {
+        source,
+      });
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
     logger.info(`Deleting image with public ID: ${publicId}`);

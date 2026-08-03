@@ -2,6 +2,7 @@ export {
   deleteImage,
   extractPublicIdFromUrl,
   generateSignedUploadParams,
+  getImageOwnerId,
 } from './cloudinary-client';
 export { UPLOAD_CONFIGS } from './config';
 export { ImageUploadError } from './errors';
