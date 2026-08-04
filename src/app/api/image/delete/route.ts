@@ -6,7 +6,9 @@ import {
   deleteRequestSchema,
   extractPublicIdFromUrl,
   getImageOwnerId,
+  type GrantImageSource,
   ImageUploadError,
+  isGrantImageSource,
   UPLOAD_CONFIGS,
 } from '@/lib/image-upload';
 import logger from '@/lib/logger';
@@ -29,11 +31,6 @@ function validatePublicIdFolder(
   const config = UPLOAD_CONFIGS[source];
   return publicId.startsWith(config.folder + '/');
 }
-
-type GrantImageSource =
-  | 'grant-event-pictures'
-  | 'grant-event-receipts'
-  | 'grant-agentic-receipts';
 
 function jsonContainsPublicId(value: unknown, publicId: string): boolean {
   if (!Array.isArray(value)) return false;
@@ -240,11 +237,7 @@ export async function DELETE(request: NextRequest) {
           { status: 403 },
         );
       }
-    } else if (
-      source === 'grant-event-pictures' ||
-      source === 'grant-event-receipts' ||
-      source === 'grant-agentic-receipts'
-    ) {
+    } else if (isGrantImageSource(source)) {
       const isLegacyOwner = await isLegacyGrantImageOwnedByUser(
         publicId,
         source,
