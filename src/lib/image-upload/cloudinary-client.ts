@@ -61,6 +61,7 @@ export async function getImageOwnerId(
     try {
       const resource = await cloudinary.api.resource(publicId, {
         resource_type: resourceType,
+        context: true,
       });
       const ownerId = resource.context?.custom?.owner_id;
       return typeof ownerId === 'string' && ownerId ? ownerId : null;
