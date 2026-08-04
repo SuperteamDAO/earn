@@ -1,5 +1,7 @@
 import { v2 as cloudinary } from 'cloudinary';
 
+import logger from '@/lib/logger';
+
 import { CLOUDINARY_CONFIG, UPLOAD_CONFIGS } from './config';
 import type { ImageSource, SignedUploadParams } from './types';
 
@@ -82,7 +84,18 @@ export async function deleteImage(publicId: string): Promise<boolean> {
         resource_type: resourceType,
       });
       if (result.result === 'ok') return true;
-    } catch {}
+    } catch (error: any) {
+      const isNotFound =
+        error?.http_code === 404 || error?.error?.http_code === 404;
+      if (isNotFound) continue;
+
+      logger.error('Cloudinary asset deletion failed', {
+        publicId,
+        resourceType,
+        error,
+      });
+      throw error;
+    }
   }
 
   return false;
