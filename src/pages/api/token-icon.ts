@@ -3,9 +3,11 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import logger from '@/lib/logger';
 import { isSafeRemoteUrl, safeRemoteFetch } from '@/utils/safeRemoteFetch';
 import { safeStringify } from '@/utils/safeStringify';
-import { sanitizeTokenIcon } from '@/utils/tokenIconImage';
+import {
+  MAX_TOKEN_ICON_SIZE_BYTES,
+  sanitizeTokenIcon,
+} from '@/utils/tokenIconImage';
 
-const MAX_ICON_SIZE_BYTES = 5 * 1024 * 1024;
 const MAX_REDIRECTS = 4;
 const UPSTREAM_FETCH_TIMEOUT_MS = 5000;
 const CACHE_CONTROL =
@@ -70,7 +72,7 @@ export default async function handler(
       },
       maxRedirects: MAX_REDIRECTS,
       timeoutMs: UPSTREAM_FETCH_TIMEOUT_MS,
-      maxResponseBytes: MAX_ICON_SIZE_BYTES,
+      maxResponseBytes: MAX_TOKEN_ICON_SIZE_BYTES,
     });
 
     if (!iconResponse.ok) {
@@ -79,12 +81,12 @@ export default async function handler(
 
     const contentType = iconResponse.headers.get('content-type') || '';
     const contentLength = Number(iconResponse.headers.get('content-length'));
-    if (contentLength > MAX_ICON_SIZE_BYTES) {
+    if (contentLength > MAX_TOKEN_ICON_SIZE_BYTES) {
       return res.status(413).end();
     }
 
     const icon = Buffer.from(await iconResponse.arrayBuffer());
-    if (icon.byteLength > MAX_ICON_SIZE_BYTES) {
+    if (icon.byteLength > MAX_TOKEN_ICON_SIZE_BYTES) {
       return res.status(413).end();
     }
 
