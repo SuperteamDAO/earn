@@ -6,7 +6,7 @@ import { useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Tooltip } from '@/components/ui/tooltip';
 import { useBreakpoint } from '@/hooks/use-breakpoint';
-import { type SubmissionWithUser } from '@/interface/submission';
+import { type ListingWinner } from '@/interface/submission';
 import { cn } from '@/utils/cn';
 import { nthLabelGenerator } from '@/utils/rank';
 import { tweetEmbedLink } from '@/utils/socialEmbeds';
@@ -24,7 +24,7 @@ interface Props {
 }
 
 const getOrRemoveBonuses = (
-  submissions: SubmissionWithUser[],
+  submissions: ListingWinner[],
   removeBonus: boolean,
 ) => {
   if (removeBonus)
