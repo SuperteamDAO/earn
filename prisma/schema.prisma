@@ -696,9 +696,11 @@ model emailLogs {
 
 model ResendLogs {
   id        String   @id @default(uuid())
+  emailId   String?
   email     String
   subject   String
   status    String
+  webhookKey String? @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -706,6 +708,7 @@ model ResendLogs {
   @@index([createdAt(sort: Desc)])
   @@index([status])
   @@index([email, status])
+  @@index([emailId])
 }
 
 model SubscribeBounty {
@@ -766,6 +769,21 @@ model BlockedEmail {
   email     String   @unique
   reason    String?
   createdAt DateTime @default(now())
+}
+
+model EmailBounceLog {
+  id                 String   @id @default(uuid())
+  email              String   @unique
+  bounceType         String?
+  diagnosticCode     String?
+  consecutiveBounces Int      @default(0)
+  lastBounceAt       DateTime?
+  suppressedAt       DateTime?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  @@index([suppressedAt])
+  @@index([lastBounceAt(sort: Desc)])
 }
 
 model CreditLedger {
