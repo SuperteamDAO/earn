@@ -234,19 +234,24 @@ export const Footer = () => {
             <p className="mb-4 text-sm text-slate-500 md:mb-0">
               © {currentYear} Superteam. All rights reserved.
             </p>
-            <div className="flex flex-col items-start gap-4 md:flex-row md:items-center md:gap-6">
-              <div className="flex items-center">
-                <p className="mr-2 text-sm font-medium text-slate-500">SKILL</p>
+            <div className="grid w-full grid-cols-2 gap-3 md:flex md:w-auto md:items-center md:gap-6">
+              <div className="flex min-w-0 flex-col gap-1 md:flex-row md:items-center md:gap-2">
+                <p className="shrink-0 text-sm font-medium text-slate-500">
+                  SKILL
+                </p>
                 <SkillsCombobox
                   placeholder="Skill"
                   value={selectedSkill}
                   onChange={handleSkillChange}
                   all
-                  className={cn(selectedSkill !== 'All' && 'w-fit')}
+                  className={cn(
+                    'w-full md:w-32',
+                    selectedSkill !== 'All' && 'md:w-fit',
+                  )}
                 />
               </div>
-              <div className="flex items-center">
-                <p className="mr-2 text-sm font-medium text-slate-500">
+              <div className="flex min-w-0 flex-col gap-1 md:flex-row md:items-center md:gap-2">
+                <p className="shrink-0 text-sm font-medium text-slate-500">
                   REGION
                 </p>
                 <RegionCombobox
@@ -256,7 +261,10 @@ export const Footer = () => {
                   global
                   superteams
                   regions
-                  className={cn(selectedRegion !== 'Global' && 'w-fit')}
+                  className={cn(
+                    'w-full md:w-32',
+                    selectedRegion !== 'Global' && 'md:w-fit',
+                  )}
                 />
               </div>
             </div>

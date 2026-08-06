@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useAtom } from 'jotai';
-import { LucideFlag } from 'lucide-react';
+import { ChevronLeft, LucideFlag } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
@@ -39,6 +39,7 @@ const isEditableKeyboardTarget = (target: EventTarget | null) => {
 
 export const ApplicationsTab = ({ slug }: Props) => {
   const [searchText, setSearchText] = useState('');
+  const [mobileView, setMobileView] = useState<'list' | 'detail'>('list');
   const [selectedFilters, setSelectedFilters] = useState<
     Set<GrantApplicationStatus | SubmissionLabels>
   >(new Set());
@@ -385,8 +386,8 @@ export const ApplicationsTab = ({ slug }: Props) => {
   return (
     <>
       <div className="flex w-full items-start bg-white">
-        <div className="grid min-h-[600px] w-full grid-cols-[23rem_1fr] bg-white">
-          <div className="h-full w-full">
+        <div className="flex min-h-[600px] w-full flex-col md:grid md:grid-cols-[23rem_1fr] bg-white">
+          <div className={`h-full w-full ${mobileView === 'detail' ? 'hidden md:block' : 'block'}`}>
             <ApplicationList
               selectedFilters={selectedFilters}
               onFilterChange={setSelectedFilters}
@@ -402,10 +403,20 @@ export const ApplicationsTab = ({ slug }: Props) => {
                 ).length === 0
               }
               grantSlug={slug}
+              onItemClick={() => setMobileView('detail')}
             />
           </div>
 
-          <div className="h-full w-full rounded-r-xl border-t border-r border-b border-slate-200 bg-white">
+          <div className={`h-full w-full rounded-r-xl border-t border-r border-b border-slate-200 bg-white ${mobileView === 'list' ? 'hidden md:block' : 'block'}`}>
+            {mobileView === 'detail' && (
+              <button
+                className="md:hidden flex items-center gap-1 px-3 py-2 text-sm font-medium text-slate-500 hover:text-slate-700"
+                onClick={() => setMobileView('list')}
+              >
+                <ChevronLeft className="h-4 w-4" />
+                Back to list
+              </button>
+            )}
             {!applications?.length && !searchText && !isApplicationsLoading ? (
               <>
                 <ExternalImage
@@ -456,43 +467,48 @@ export const ApplicationsTab = ({ slug }: Props) => {
           }}
           unsetDefaultPosition
           hideCloseIcon
-          className="fixed bottom-4 left-1/2 w-fit max-w-none -translate-x-1/2 overflow-hidden px-5 py-2"
+          className="fixed bottom-[calc(5rem+env(safe-area-inset-bottom))] left-1/2 w-[calc(100vw-1rem)] max-w-[calc(100vw-1rem)] -translate-x-1/2 overflow-hidden px-3 py-2 sm:bottom-4 sm:w-fit sm:max-w-[95vw] sm:px-5"
         >
-          <div className="mx-auto w-fit rounded-lg">
+          <div className="mx-auto w-full rounded-lg sm:w-fit">
             {selectedApplicationIds.size > 100 && (
               <p className="pb-2 text-center text-red-500">
                 Cannot select more than 100 applications
               </p>
             )}
 
-            <div className="flex items-center gap-3">
-              <p className="text-base font-medium whitespace-nowrap">
+            <div className="flex max-w-full items-center gap-1 overflow-x-auto whitespace-nowrap pr-1 [&::-webkit-scrollbar]:hidden sm:gap-2">
+              <p className="shrink-0 text-xs font-medium sm:text-sm whitespace-nowrap">
                 {selectedApplicationIds.size} Selected
               </p>
 
-              <div className="h-4 w-px bg-slate-300" />
+              <div className="h-4 w-px shrink-0 bg-slate-300" />
 
               <Button
-                className="px-2 font-semibold text-slate-500"
+                size="sm"
+                className="shrink-0 px-2 py-1 text-xs font-semibold text-slate-500 sm:px-2 sm:py-2 sm:text-sm"
                 onClick={() => {
                   setSelectedApplicationIds(new Set());
                 }}
                 variant="ghost"
               >
-                UNSELECT ALL
+                <span className="sm:hidden">Clear</span>
+                <span className="hidden sm:inline">UNSELECT ALL</span>
               </Button>
 
               <Button
-                className="rounded-lg border border-orange-300 bg-orange-50 text-orange-600 hover:bg-orange-100 disabled:opacity-50"
+                size="sm"
+                className="shrink-0 rounded-lg border border-orange-300 bg-orange-50 px-2 py-1 text-xs text-orange-600 hover:bg-orange-100 disabled:opacity-50 sm:px-3 sm:py-2 sm:text-sm"
                 disabled={selectedApplicationIds.size === 0}
                 onClick={() => handleModalAction('spam')}
               >
-                <LucideFlag className="size-1" />
-                Mark as Spam
+                <LucideFlag className="size-3 sm:size-3.5" />
+                <span className="sm:hidden">Spam</span>
+                <span className="hidden sm:inline">Mark as Spam</span>
               </Button>
 
               <Button
-                className="rounded-lg border border-red-300 bg-red-50 text-red-600 hover:bg-red-100 disabled:opacity-50"
+                size="sm"
+                className="shrink-0 rounded-lg border border-red-300 bg-red-50 px-2 py-1 text-xs text-red-600 hover:bg-red-100 disabled:opacity-50 sm:px-3 sm:py-2 sm:text-sm"
                 disabled={
                   selectedApplicationIds.size === 0 ||
                   selectedApplicationIds.size > 100
@@ -505,13 +521,15 @@ export const ApplicationsTab = ({ slug }: Props) => {
                   viewBox="0 0 13 13"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
+                  className="size-3 sm:size-3.5"
                 >
                   <path
                     d="M6.11111 0.777832C9.49056 0.777832 12.2222 3.5095 12.2222 6.88894C12.2222 10.2684 9.49056 13.0001 6.11111 13.0001C2.73167 13.0001 0 10.2684 0 6.88894C0 3.5095 2.73167 0.777832 6.11111 0.777832ZM8.305 3.83339L6.11111 6.02728L3.91722 3.83339L3.05556 4.69505L5.24944 6.88894L3.05556 9.08283L3.91722 9.9445L6.11111 7.75061L8.305 9.9445L9.16667 9.08283L6.97278 6.88894L9.16667 4.69505L8.305 3.83339Z"
                     fill="#E11D48"
                   />
                 </svg>
-                Reject All
+                <span className="sm:hidden">Reject</span>
+                <span className="hidden sm:inline">Reject All</span>
               </Button>
             </div>
           </div>

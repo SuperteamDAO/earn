@@ -14,6 +14,7 @@ import { ProjectIcon } from '@/svg/project-icon';
 
 import { getVisibleHackathons } from '@/features/hackathon/utils/getVisibleHackathons';
 import { getListingIcon } from '@/features/listings/utils/getListingIcon';
+import { MobileDesktopOnlyDialog } from './MobileDesktopOnlyDialog';
 
 export const CreateListingModal = ({
   isOpen = false,
@@ -51,7 +52,17 @@ export const CreateListingModal = ({
 
   const isMD = useMediaQuery('(min-width: 768px)');
 
-  if (!isMD) return null;
+  if (!isMD) {
+    return (
+      <MobileDesktopOnlyDialog
+        open={isOpen}
+        onOpenChange={onClose}
+        title="Continue on desktop"
+        description="Creating a new listing is optimized for desktop. Please continue on a larger screen to choose a listing type and complete setup."
+      />
+    );
+  }
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent

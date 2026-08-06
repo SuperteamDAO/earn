@@ -40,6 +40,7 @@ interface Props {
   isAllToggled?: boolean;
   isMultiSelectDisabled: boolean;
   isHackathonPage: boolean | undefined;
+  onItemClick?: () => void;
 }
 
 export const SubmissionList = ({
@@ -55,6 +56,7 @@ export const SubmissionList = ({
   isAllToggled,
   isMultiSelectDisabled,
   isHackathonPage,
+  onItemClick,
 }: Props) => {
   const [selectedSubmission, setSelectedSubmission] = useAtom(
     selectedSubmissionAtom,
@@ -167,7 +169,7 @@ export const SubmissionList = ({
       </div>
       <div
         ref={scrollContainerRef}
-        className="scrollbar-thin scrollbar-w-1 scrollbar-track-white scrollbar-thumb-slate-200 hover:scrollbar-thumb-slate-300 h-[42rem] w-full overflow-y-auto rounded-bl-lg border-t bg-white"
+        className="scrollbar-thin scrollbar-w-1 scrollbar-track-white scrollbar-thumb-slate-200 hover:scrollbar-thumb-slate-300 h-[60dvh] md:h-[42rem] w-full overflow-y-auto rounded-bl-lg border-t bg-white"
       >
         {submissions.map((submission) => {
           const { bg, color, border } = getSubmissionColors(submission);
@@ -184,22 +186,25 @@ export const SubmissionList = ({
               )}
               onClick={() => {
                 setSelectedSubmission(submission);
+                onItemClick?.();
               }}
             >
               <div className="flex items-center">
                 {!isMultiSelectDisabled && (
-                  <Checkbox
-                    className="data-[state=checked]:border-brand-purple data-[state=checked]:bg-brand-purple mr-2 disabled:invisible"
-                    checked={isToggled && isToggled(submission.id)}
-                    disabled={
-                      submission?.status !== 'Pending' ||
-                      !!submission?.winnerPosition ||
-                      isMultiSelectDisabled
-                    }
-                    onCheckedChange={() =>
-                      toggleSubmission && toggleSubmission(submission.id)
-                    }
-                  />
+                  <div onClick={(e) => e.stopPropagation()}>
+                    <Checkbox
+                      className="data-[state=checked]:border-brand-purple data-[state=checked]:bg-brand-purple mr-2 disabled:invisible"
+                      checked={isToggled && isToggled(submission.id)}
+                      disabled={
+                        submission?.status !== 'Pending' ||
+                        !!submission?.winnerPosition ||
+                        isMultiSelectDisabled
+                      }
+                      onCheckedChange={() =>
+                        toggleSubmission && toggleSubmission(submission.id)
+                      }
+                    />
+                  </div>
                 )}
                 <EarnAvatar
                   id={submission?.user?.id}

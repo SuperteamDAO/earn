@@ -56,13 +56,13 @@ export const CustomNoteEditor = ({
               Preview
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-h-[86vh] max-w-2xl gap-0 overflow-hidden p-0">
+          <DialogContent className="max-h-[calc(100dvh-1rem)] max-w-[calc(100vw-1rem)] gap-0 overflow-hidden p-0 sm:max-w-2xl">
             <div className="border-b border-slate-200 px-5 py-4">
               <DialogTitle className="text-base font-semibold text-slate-700">
                 Email Preview
               </DialogTitle>
             </div>
-            <div className="max-h-[70vh] overflow-y-auto bg-slate-50 px-4 py-5">
+            <div className="max-h-[70vh] overflow-y-auto overscroll-contain bg-slate-50 px-4 py-5 touch-pan-y">
               <div className="mx-auto rounded-md border border-slate-200 bg-white px-5 py-4 shadow-sm">
                 <div
                   className="prose prose-sm max-w-none text-slate-600"

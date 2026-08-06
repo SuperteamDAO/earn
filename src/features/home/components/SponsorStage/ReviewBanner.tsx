@@ -37,7 +37,7 @@ export function ReviewBanner({ listing }: ReviewBannerProps) {
   return (
     <Link
       href={`/earn/dashboard/listings/${listing.slug}/submissions`}
-      className="relative flex items-center justify-between overflow-hidden rounded-xl bg-slate-100 px-10 py-8"
+      className="relative flex flex-col gap-6 overflow-hidden rounded-xl bg-slate-100 px-4 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-10 sm:py-8"
       onClick={handleAnnounceWinnersClick}
       prefetch={false}
     >
@@ -58,12 +58,12 @@ export function ReviewBanner({ listing }: ReviewBannerProps) {
           </div>
         </div>
 
-        <div className="flex items-center gap-8">
-          <Button>Announce Winners</Button>
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-8">
+          <Button className="w-full sm:w-auto">Announce Winners</Button>
           <Button
             variant="ghost"
             asChild
-            className="flex items-center gap-3 text-sm text-slate-400 underline underline-offset-4 hover:text-slate-700"
+            className="flex items-center justify-center gap-3 text-sm text-slate-400 underline underline-offset-4 hover:text-slate-700 sm:justify-start"
           >
             <Link
               href={JTTG}

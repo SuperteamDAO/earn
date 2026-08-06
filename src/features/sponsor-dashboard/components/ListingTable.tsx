@@ -37,6 +37,7 @@ import {
 import { TokenIcon } from '@/components/ui/token-icon';
 import { Tooltip } from '@/components/ui/tooltip';
 import { useDisclosure } from '@/hooks/use-disclosure';
+import { useMediaQuery } from '@/hooks/use-media-query';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 import { getURL } from '@/utils/validUrl';
@@ -54,6 +55,7 @@ import {
 } from '@/features/listings/utils/status';
 
 import { DeleteDraftModal } from './Modals/DeleteDraftModal';
+import { MobileDesktopOnlyDialog } from './MobileDesktopOnlyDialog';
 import { UnpublishModal } from './Modals/UnpublishModal';
 import { VerifyPaymentModal } from './Modals/VerifyPayment';
 import { SponsorPrize } from './SponsorPrize';
@@ -89,8 +91,18 @@ export const ListingTable = ({
 }: ListingTableProps) => {
   const [selectedListing, setSelectedListing] =
     useState<ListingWithSubmissions>({});
+  const [desktopOnlyAction, setDesktopOnlyAction] = useState<{
+    open: boolean;
+    title: string;
+    description: string;
+  }>({
+    open: false,
+    title: '',
+    description: '',
+  });
 
   const router = useRouter();
+  const isMobile = useMediaQuery('(max-width: 767px)');
 
   const { user } = useUser();
 
@@ -127,6 +139,14 @@ export const ListingTable = ({
     verifyPaymentOnOpen();
   };
 
+  const openDesktopOnlyNotice = (title: string, description: string) => {
+    setDesktopOnlyAction({
+      open: true,
+      title,
+      description,
+    });
+  };
+
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text).then(
       () => {
@@ -159,6 +179,15 @@ export const ListingTable = ({
         listing={selectedListing}
         isOpen={verifyPaymentIsOpen}
         onClose={verifyPaymentOnClose}
+      />
+
+      <MobileDesktopOnlyDialog
+        open={desktopOnlyAction.open}
+        onOpenChange={(open) =>
+          setDesktopOnlyAction((prev) => ({ ...prev, open }))
+        }
+        title={desktopOnlyAction.title}
+        description={desktopOnlyAction.description}
       />
 
       <div className="w-full overflow-x-auto rounded-md border border-slate-200">
@@ -260,6 +289,42 @@ export const ListingTable = ({
                         </p>
                       );
 
+                      if (listing.isPublished) {
+                        return (
+                          <Link
+                            className="ph-no-capture flex items-center gap-1"
+                            href={href}
+                            onClick={onClick}
+                          >
+                            {titleElement}
+                            {listing.isPro && (
+                              <ProIcon className="size-3.5 text-slate-400" />
+                            )}
+                          </Link>
+                        );
+                      }
+
+                      if (isClickable && isMobile) {
+                        return (
+                          <button
+                            type="button"
+                            className="ph-no-capture flex items-center gap-1 text-left"
+                            onClick={() => {
+                              posthog.capture('edit listing_sponsor');
+                              openDesktopOnlyNotice(
+                                'Continue on desktop',
+                                'Editing a listing is currently optimized for desktop. Please continue on a larger screen to update the listing.',
+                              );
+                            }}
+                          >
+                            {titleElement}
+                            {listing.isPro && (
+                              <ProIcon className="size-3.5 text-slate-400" />
+                            )}
+                          </button>
+                        );
+                      }
+
                       return isClickable ? (
                         <Link
                           className="ph-no-capture flex items-center gap-1"
@@ -351,21 +416,39 @@ export const ListingTable = ({
                         )}
                       </Button>
                     ) : isListingEditable({ listing, user }) ? (
-                      <Link
-                        href={`/earn/dashboard/listings/${listing.slug}/edit`}
-                      >
+                      isMobile ? (
                         <Button
                           variant="ghost"
                           size="sm"
                           className="text-[13px] font-medium text-slate-500 hover:bg-slate-200"
                           onClick={() => {
                             posthog.capture('edit listing_sponsor');
+                            openDesktopOnlyNotice(
+                              'Continue on desktop',
+                              'Editing a listing is currently optimized for desktop. Please continue on a larger screen to update the listing.',
+                            );
                           }}
                         >
                           <Pencil className="h-4 w-4" />
                           Edit
                         </Button>
-                      </Link>
+                      ) : (
+                        <Link
+                          href={`/earn/dashboard/listings/${listing.slug}/edit`}
+                        >
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="text-[13px] font-medium text-slate-500 hover:bg-slate-200"
+                            onClick={() => {
+                              posthog.capture('edit listing_sponsor');
+                            }}
+                          >
+                            <Pencil className="h-4 w-4" />
+                            Edit
+                          </Button>
+                        </Link>
+                      )
                     ) : (
                       <></>
                     )}
@@ -407,7 +490,7 @@ export const ListingTable = ({
                           </DropdownMenuItem>
                         )}
 
-                        {isListingEditable({ listing, user }) && (
+                        {!isMobile && isListingEditable({ listing, user }) && (
                           <Link
                             className="block"
                             href={`/earn/dashboard/listings/${listing.slug}/edit`}
@@ -425,6 +508,14 @@ export const ListingTable = ({
                             className="ph-no-capture cursor-pointer text-sm font-medium text-slate-500"
                             onClick={() => {
                               posthog.capture('duplicate listing_sponsor');
+                              if (isMobile) {
+                                openDesktopOnlyNotice(
+                                  'Continue on desktop',
+                                  'Duplicating a listing is currently optimized for desktop. Please continue on a larger screen to duplicate the listing.',
+                                );
+                                return;
+                              }
+
                               window.open(
                                 `${router.basePath}/earn/dashboard/listings/${listing.slug}/duplicate`,
                                 '_blank',

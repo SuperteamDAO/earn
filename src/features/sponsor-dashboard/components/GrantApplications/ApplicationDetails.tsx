@@ -1,7 +1,7 @@
 import { useQueryClient } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import { useAtom } from 'jotai';
-import { ArrowRight, Check, Copy, X } from 'lucide-react';
+import { ArrowRight, Check, Copy, Pencil, X } from 'lucide-react';
 import Link from 'next/link';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
@@ -9,6 +9,12 @@ import MdOutlineAccountBalanceWallet from '@/components/icons/MdOutlineAccountBa
 import MdOutlineMail from '@/components/icons/MdOutlineMail';
 import { Button } from '@/components/ui/button';
 import { CopyButton } from '@/components/ui/copy-tooltip';
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
 import { CircularProgress } from '@/components/ui/progress';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { TokenIcon } from '@/components/ui/token-icon';
@@ -175,17 +181,17 @@ export const ApplicationDetails = ({
       {applications?.length ? (
         <>
           <div className="sticky top-12 z-20 rounded-t-xl border-b border-slate-200 bg-white py-1">
-            <div className="flex w-full items-center justify-between px-4 py-2">
-              <div className="flex w-full items-center gap-2">
+            <div className="flex w-full flex-col gap-2 px-4 py-2 md:flex-row md:items-center md:justify-between">
+              <div className="flex min-w-0 flex-1 items-center gap-2">
                 <EarnAvatar
                   className="h-10 w-10"
                   id={selectedApplication?.user?.id}
                   avatar={selectedApplication?.user?.photo || undefined}
                 />
 
-                <div>
+                <div className="min-w-0">
                   <span className="flex gap-2">
-                    <p className="w-fit text-base font-medium whitespace-nowrap text-slate-900">
+                    <p className="max-w-[10.5rem] truncate text-base font-medium text-slate-900 sm:max-w-none">
                       {`${selectedApplication?.user?.firstName}`}
                     </p>
                     {chapter?.icons && (
@@ -200,7 +206,7 @@ export const ApplicationDetails = ({
                   </span>
                   <Link
                     href={`/earn/t/${selectedApplication?.user?.username}`}
-                    className="text-brand-purple flex w-full items-center gap-1 text-xs font-medium whitespace-nowrap"
+                    className="text-brand-purple flex w-full items-center gap-1 text-xs font-medium"
                     rel="noopener noreferrer"
                     target="_blank"
                   >
@@ -217,17 +223,39 @@ export const ApplicationDetails = ({
                   )}
                 </div>
               </div>
-              <div className="ph-no-capture flex w-full items-center justify-end gap-2">
+              <div className="ph-no-capture flex w-full flex-nowrap items-center justify-start gap-1 overflow-x-auto pb-1 md:w-auto md:justify-end md:gap-2 md:overflow-visible md:pb-0 [&::-webkit-scrollbar]:hidden">
                 {(isPending || selectedApplication?.label === 'Spam') && (
                   <SpamButton
                     grantSlug={grant?.slug!}
                     isMultiSelectOn={isMultiSelectOn}
                   />
                 )}
+                <div className="md:hidden">
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button
+                        variant="outline"
+                        className="shrink-0 gap-1.5 border-slate-200 text-slate-500 hover:text-slate-700"
+                      >
+                        <Pencil className="h-3.5 w-3.5" />
+                        <span className="hidden sm:inline">Note</span>
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="w-[min(320px,90vw)] overflow-hidden p-0">
+                      <DialogTitle className="sr-only">Notes</DialogTitle>
+                      {selectedApplication && (
+                        <Notes
+                          key={selectedApplication.id}
+                          slug={grant?.slug}
+                        />
+                      )}
+                    </DialogContent>
+                  </Dialog>
+                </div>
                 {isPending && (
                   <>
                     <Button
-                      className="rounded-lg border border-emerald-500 bg-emerald-50 text-emerald-600 hover:bg-emerald-100 hover:text-emerald-600 disabled:cursor-not-allowed disabled:opacity-50"
+                      className="shrink-0 rounded-lg border border-emerald-500 bg-emerald-50 px-2.5 text-[13px] text-emerald-600 hover:bg-emerald-100 hover:text-emerald-600 disabled:cursor-not-allowed disabled:opacity-50 max-[390px]:gap-1 max-[390px]:px-2 max-[390px]:text-xs sm:px-3 sm:text-sm"
                       disabled={isMultiSelectOn}
                       onClick={approveOnOpen}
                     >
@@ -238,7 +266,7 @@ export const ApplicationDetails = ({
                     </Button>
 
                     <Button
-                      className="rounded-lg border border-red-500 bg-red-50 text-red-600 hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-50"
+                      className="shrink-0 rounded-lg border border-red-500 bg-red-50 px-2.5 text-[13px] text-red-600 hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-50 max-[390px]:gap-1 max-[390px]:px-2 max-[390px]:text-xs sm:px-3 sm:text-sm"
                       disabled={isMultiSelectOn}
                       onClick={rejectedOnOpen}
                     >
@@ -251,7 +279,7 @@ export const ApplicationDetails = ({
                 )}
                 {isCompleted && (
                   <Button
-                    className="rounded-lg border border-blue-500 bg-blue-50 text-blue-600 hover:bg-blue-100 disabled:opacity-100"
+                    className="shrink-0 rounded-lg border border-blue-500 bg-blue-50 px-2.5 text-[13px] text-blue-600 hover:bg-blue-100 disabled:opacity-100 max-[390px]:gap-1 max-[390px]:px-2 max-[390px]:text-xs sm:px-3 sm:text-sm"
                     disabled={true}
                   >
                     <div className="flex items-center">
@@ -284,7 +312,7 @@ export const ApplicationDetails = ({
                           />
                         )}
                       <Button
-                        className="rounded-lg border border-emerald-500 bg-emerald-50 text-emerald-600 hover:bg-emerald-100 disabled:cursor-not-allowed disabled:opacity-100"
+                        className="shrink-0 rounded-lg border border-emerald-500 bg-emerald-50 px-2.5 text-[13px] text-emerald-600 hover:bg-emerald-100 disabled:cursor-not-allowed disabled:opacity-100 max-[390px]:gap-1 max-[390px]:px-2 max-[390px]:text-xs sm:px-3 sm:text-sm"
                         disabled={true}
                       >
                         <div className="rounded-full bg-emerald-600 p-0.5">
@@ -297,7 +325,7 @@ export const ApplicationDetails = ({
                 {isRejected && (
                   <>
                     <Button
-                      className="rounded-lg border border-red-500 bg-red-50 text-red-600 hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-100"
+                      className="shrink-0 rounded-lg border border-red-500 bg-red-50 px-2.5 text-[13px] text-red-600 hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-100 max-[390px]:gap-1 max-[390px]:px-2 max-[390px]:text-xs sm:px-3 sm:text-sm"
                       disabled={true}
                     >
                       <div className="flex items-center">
@@ -312,7 +340,7 @@ export const ApplicationDetails = ({
               </div>
             </div>
 
-            <div className="flex items-center gap-4 px-4 py-2">
+            <div className="flex flex-wrap items-center gap-2 px-4 py-2 md:gap-4">
               {isApproved && (
                 <div className="flex items-center">
                   <p className="mr-3 text-sm font-semibold whitespace-nowrap text-slate-400">
@@ -415,11 +443,10 @@ export const ApplicationDetails = ({
             ref={splitContainerRef}
             className="relative z-10 flex max-h-[39.7rem] w-full"
           >
-            <ScrollArea
-              type="auto"
-              className="flex min-w-0 flex-col overflow-y-auto px-4"
-              style={{ flexBasis: `${100 - notesWidth}%` }}
-            >
+          <ScrollArea
+            type="auto"
+            className="flex min-w-0 flex-1 flex-col overflow-y-auto px-4 md:w-2/3 md:flex-none"
+          >
               <div className="mb-4 pt-2">
                 <p className="mb-1 text-xs font-semibold text-slate-400 uppercase">
                   ASK
@@ -579,7 +606,7 @@ export const ApplicationDetails = ({
             </ScrollArea>
             <button
               aria-label="Resize notes panel"
-              className="group flex w-3 shrink-0 cursor-col-resize items-stretch justify-center self-stretch focus:outline-none"
+              className="group hidden w-3 shrink-0 cursor-col-resize items-stretch justify-center self-stretch focus:outline-none md:flex"
               onPointerDown={handleResizePointerDown}
               onPointerMove={handleResizePointerMove}
               type="button"
@@ -587,7 +614,7 @@ export const ApplicationDetails = ({
               <span className="h-full w-px bg-slate-200 transition-colors group-hover:bg-slate-300 group-focus-visible:bg-slate-400" />
             </button>
             <div
-              className="min-h-0 min-w-0 shrink-0 p-4"
+              className="hidden min-h-0 min-w-0 shrink-0 p-4 md:block"
               style={{ flexBasis: `${notesWidth}%` }}
             >
               <Notes slug={grant?.slug} />

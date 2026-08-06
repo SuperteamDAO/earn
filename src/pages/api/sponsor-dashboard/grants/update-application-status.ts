@@ -239,24 +239,29 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
             ? parseInt(data[k]?.approvedAmount + '', 10)
             : 0;
 
-          if (!currentApplicant.grant.maxReward) {
+          const maxReward = currentApplicant.grant.maxReward;
+          if (maxReward !== null && parsedAmount > maxReward) {
             throw new Error(
-              `Grant ${currentApplicant.grantId} has no maximum reward limit set`,
-            );
-          }
-          if (parsedAmount > currentApplicant.grant.maxReward) {
-            throw new Error(
-              `Approved amount ${parsedAmount} exceeds maximum reward limit of ${currentApplicant.grant.maxReward} for application ${currentApplicant.id}`,
+              `Approved amount ${parsedAmount} exceeds maximum reward limit of ${maxReward} for application ${currentApplicant.id}`,
             );
           }
           const token = await getTokenBySymbol(currentApplicant.grant.token);
-          if (!token) {
-            throw new Error(
-              `Token ${currentApplicant.grant.token} is missing from token metadata`,
+          let usdValue = 0;
+          if (token?.mintAddress) {
+            try {
+              const tokenUSDValue = await fetchTokenUSDValue(token.mintAddress);
+              usdValue = tokenUSDValue * parsedAmount;
+            } catch (error) {
+              logger.warn(
+                `Unable to fetch USD value for token ${currentApplicant.grant.token}, continuing without USD snapshot`,
+                error,
+              );
+            }
+          } else {
+            logger.warn(
+              `Token ${currentApplicant.grant.token} is missing from token metadata, continuing without USD snapshot`,
             );
           }
-          const tokenUSDValue = await fetchTokenUSDValue(token?.mintAddress!);
-          const usdValue = tokenUSDValue * parsedAmount;
           const totalTranches = parsedAmount > 5000 ? 3 : 2;
           approvedData = {
             approvedAmount: parsedAmount,

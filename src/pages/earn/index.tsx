@@ -94,7 +94,7 @@ export default function HomePage({
                 <div className="pt-3">
                   {potentialSession || authenticated ? (
                     <>
-                      {!!user?.currentSponsorId && isLg ? (
+                      {!!user?.currentSponsorId ? (
                         <div className="mt-3">
                           <SponsorStageBanner />
                         </div>

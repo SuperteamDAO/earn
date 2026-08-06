@@ -16,10 +16,15 @@ interface AgentNotificationParams {
   otherInfo?: any;
 }
 
-const redis = new Redis(process.env.AGENT_REDIS_URL!, {
-  maxRetriesPerRequest: null,
-});
-const logicQueue = new Queue('agentLogicQueue', { connection: redis });
+const redisUrl = process.env.AGENT_REDIS_URL?.trim();
+const redis = redisUrl
+  ? new Redis(redisUrl, {
+      maxRetriesPerRequest: null,
+    })
+  : null;
+const logicQueue = redis
+  ? new Queue('agentLogicQueue', { connection: redis })
+  : null;
 
 export async function queueAgent({
   type,
@@ -27,6 +32,13 @@ export async function queueAgent({
   userId,
   otherInfo,
 }: AgentNotificationParams): Promise<void> {
+  if (!logicQueue) {
+    logger.warn(
+      `Skipping agent queue because AGENT_REDIS_URL is not configured: type=${type}, id=${id}`,
+    );
+    return;
+  }
+
   try {
     const job = await logicQueue.add(
       'processLogic',

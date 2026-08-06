@@ -34,6 +34,7 @@ import { StatusPill } from '@/components/ui/status-pill';
 import { Tooltip } from '@/components/ui/tooltip';
 import { JTTG } from '@/constants/Telegram';
 import { useDisclosure } from '@/hooks/use-disclosure';
+import { useMediaQuery } from '@/hooks/use-media-query';
 import { type SubmissionWithUser } from '@/interface/submission';
 import { api } from '@/lib/api';
 import { SubmissionLabels, SubmissionStatus } from '@/prisma/enums';
@@ -74,6 +75,7 @@ export const SubmissionHeader = ({
 }: Props) => {
   const router = useRouter();
   const { user } = useUser();
+  const isMobile = useMediaQuery('(max-width: 767px)');
 
   const {
     isOpen: verifyPaymentIsOpen,
@@ -222,8 +224,8 @@ export const SubmissionHeader = ({
     bountyStatus === 'In Review';
 
   return (
-    <div className="mb-2 flex items-center justify-between gap-12">
-      <div>
+    <div className="mb-2 flex flex-col gap-4 md:flex-row md:flex-wrap md:items-start md:justify-between md:gap-12">
+      <div className="min-w-0 flex-1">
         <Breadcrumb className="text-slate-400">
           <BreadcrumbList>
             <BreadcrumbItem>
@@ -237,125 +239,138 @@ export const SubmissionHeader = ({
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
-        <div className="mb-2 flex items-center gap-2">
-          <div className="ml-1 flex items-center gap-2">
-            {getListingIcon(bounty?.type!, 'size-5')}
-            <p className="text-xl font-bold text-slate-800">{bounty?.title}</p>
-          </div>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <div className="cursor-pointer rounded-md p-2 text-slate-400 transition-all hover:bg-slate-100 hover:text-slate-500">
-                <MoreVertical className="h-4 w-4" />
-              </div>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="w-48 text-slate-500">
-              {!isHackathonPage && (
-                <>
-                  <DropdownMenuItem
-                    disabled={exportMutation.isPending}
-                    onClick={() => exportSubmissionsCsv()}
-                    className="cursor-pointer"
-                  >
-                    {exportMutation.isPending ? (
-                      <>
-                        <span className="loading loading-spinner" />
-                        Exporting...
-                      </>
-                    ) : (
-                      <>
-                        <Download className="size-4" />
-                        Export CSV
-                      </>
-                    )}
-                  </DropdownMenuItem>
-
-                  <DropdownMenuItem
-                    onClick={exportSheetsOnOpen}
-                    className="cursor-pointer"
-                  >
-                    <Sheet className="size-4" />
-                    Export to Google Sheets
-                  </DropdownMenuItem>
-                </>
-              )}
-
-              <DropdownMenuItem
-                onClick={() =>
-                  window.open(`${router.basePath}/${listingPath}`, '_blank')
-                }
-                className="cursor-pointer"
-              >
-                <ExternalLink className="size-4" />
-                View Listing
-              </DropdownMenuItem>
-
-              <DropdownMenuItem
-                onClick={() => copyToClipboard(getListingUrl())}
-                className="cursor-pointer"
-              >
-                <CopyIcon className="size-4" />
-                Copy Link
-              </DropdownMenuItem>
-
-              {!!(
-                (user?.role === 'GOD' && bounty?.type !== 'grant') ||
-                (bounty?.isPublished &&
-                  !pastDeadline &&
-                  bounty.type !== 'grant') ||
-                canCoreMemberEditInReview
-              ) &&
-                !isHackathonPage &&
-                getEditText() && (
-                  <DropdownMenuItem className="cursor-pointer" asChild>
-                    <Link
-                      href={
-                        bounty
-                          ? `/earn/dashboard/${isHackathonPage ? 'hackathon' : 'listings'}/${bounty.slug}/edit/`
-                          : ''
-                      }
+        <div className="mb-2 flex min-w-0 flex-col gap-3">
+          <div className="flex min-w-0 items-start gap-2">
+            {getListingIcon(bounty?.type!, 'size-5 shrink-0 mt-1')}
+            <div className="min-w-0 flex-1">
+              <p className="break-words text-lg font-bold text-slate-800 sm:text-xl">
+                {bounty?.title}
+              </p>
+            </div>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button
+                  type="button"
+                  className="rounded-md p-2 text-slate-400 transition-all hover:bg-slate-100 hover:text-slate-500"
+                >
+                  <MoreVertical className="h-4 w-4" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-48 text-slate-500">
+                {!isHackathonPage && (
+                  <>
+                    <DropdownMenuItem
+                      disabled={exportMutation.isPending}
+                      onClick={() => exportSubmissionsCsv()}
+                      className="cursor-pointer"
                     >
-                      <Pencil className="size-4" />
-                      {getEditText()}
-                    </Link>
-                  </DropdownMenuItem>
+                      {exportMutation.isPending ? (
+                        <>
+                          <span className="loading loading-spinner" />
+                          Exporting...
+                        </>
+                      ) : (
+                        <>
+                          <Download className="size-4" />
+                          Export CSV
+                        </>
+                      )}
+                    </DropdownMenuItem>
+
+                    <DropdownMenuItem
+                      onClick={exportSheetsOnOpen}
+                      className="cursor-pointer"
+                    >
+                      <Sheet className="size-4" />
+                      Export to Google Sheets
+                    </DropdownMenuItem>
+                  </>
                 )}
-            </DropdownMenuContent>
-          </DropdownMenu>
-          <StatusPill
-            className="mr-2 ml-2 w-fit text-[0.8rem]"
-            color={getColorStyles(bountyStatus).color}
-            backgroundColor={getColorStyles(bountyStatus).bgColor}
-            borderColor={getColorStyles(bountyStatus).borderColor}
-          >
-            {bountyStatus}
-          </StatusPill>
 
-          {bounty?.isPro && (
-            <ProBadge
-              containerClassName="mr-2 bg-gray-200 px-3 py-1 gap-1"
-              iconClassName="size-3 text-zinc-400"
-              textClassName="text-xs font-medium text-zinc-600"
-            />
-          )}
+                <DropdownMenuItem
+                  onClick={() =>
+                    window.open(`${router.basePath}/${listingPath}`, '_blank')
+                  }
+                  className="cursor-pointer"
+                >
+                  <ExternalLink className="size-4" />
+                  View Listing
+                </DropdownMenuItem>
 
-          <BoostButton listing={bounty!} />
+                <DropdownMenuItem
+                  onClick={() => copyToClipboard(getListingUrl())}
+                  className="cursor-pointer"
+                >
+                  <CopyIcon className="size-4" />
+                  Copy Link
+                </DropdownMenuItem>
 
-          <div className="ml-4 -translate-y-2.5">
-            <AiReviewProjectApplicationsModal
-              listing={bounty}
-              applications={submissions}
-            />
+                {!!(
+                  (user?.role === 'GOD' && bounty?.type !== 'grant') ||
+                  (bounty?.isPublished &&
+                    !pastDeadline &&
+                    bounty.type !== 'grant') ||
+                  canCoreMemberEditInReview
+                ) &&
+                  !isHackathonPage &&
+                  getEditText() &&
+                  !isMobile && (
+                    <DropdownMenuItem className="cursor-pointer" asChild>
+                      <Link
+                        href={
+                          bounty
+                            ? `/earn/dashboard/${isHackathonPage ? 'hackathon' : 'listings'}/${bounty.slug}/edit/`
+                            : ''
+                        }
+                      >
+                        <Pencil className="size-4" />
+                        {getEditText()}
+                      </Link>
+                    </DropdownMenuItem>
+                  )}
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
-          <div className="ml-4 -translate-y-2.5">
-            <AiReviewBountiesSubmissionsModal
-              listing={bounty}
-              submissions={submissions}
-            />
+
+          <div className="flex flex-wrap items-center gap-2">
+            <StatusPill
+              className="w-fit text-[0.8rem]"
+              color={getColorStyles(bountyStatus).color}
+              backgroundColor={getColorStyles(bountyStatus).bgColor}
+              borderColor={getColorStyles(bountyStatus).borderColor}
+            >
+              {bountyStatus}
+            </StatusPill>
+
+            {bounty?.isPro && (
+              <ProBadge
+                containerClassName="bg-gray-200 px-3 py-1 gap-1"
+                iconClassName="size-3 text-zinc-400"
+                textClassName="text-xs font-medium text-zinc-600"
+              />
+            )}
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2">
+            <BoostButton listing={bounty!} />
+
+            <div className="shrink-0">
+              <AiReviewProjectApplicationsModal
+                listing={bounty}
+                applications={submissions}
+              />
+            </div>
+            <div className="shrink-0">
+              <AiReviewBountiesSubmissionsModal
+                listing={bounty}
+                submissions={submissions}
+              />
+            </div>
           </div>
         </div>
       </div>
       {!isProject && !bounty?.isWinnersAnnounced && (
-        <div className="flex flex-col items-end">
+        <div className="flex w-full flex-col items-stretch md:w-auto md:items-end">
           {activeTab === 'submissions' && (
             <>
               <Tooltip
@@ -372,7 +387,6 @@ export const SubmissionHeader = ({
                 <ShinyButton
                   disabled={
                     !afterAnnounceDate ||
-                    isHackathonPage ||
                     remainings?.podiums !== 0 ||
                     (remainings?.bonus > 0 &&
                       submissions.filter((s) => !s.isWinner).length > 0)
@@ -380,7 +394,7 @@ export const SubmissionHeader = ({
                   onClick={onWinnersAnnounceOpen}
                   animate={true}
                   classNames={{
-                    button: 'w-52 h-11',
+                    button: 'w-full md:w-52 h-11',
                   }}
                 >
                   <Check className="size-4" />
@@ -388,7 +402,7 @@ export const SubmissionHeader = ({
                 </ShinyButton>
               </Tooltip>
               {showWarning && (
-                <div className="my-2 flex w-52">
+                <div className="my-2 flex w-full md:w-52">
                   <p className="text-xxs text-red-400">
                     There aren&apos;t enough eligible{' '}
                     {bounty?.type === 'project'
@@ -442,7 +456,7 @@ export const SubmissionHeader = ({
       )}
 
       {isProject && !bounty?.isWinnersAnnounced && bounty?.isPublished && (
-        <div className="flex flex-row-reverse items-center gap-8">
+        <div className="flex w-full items-center justify-center px-4 text-center md:basis-full md:justify-end md:px-0 md:text-right">
           <p className="text-slate-800">
             {`Didn't find a suitable candidate? `}
             <span

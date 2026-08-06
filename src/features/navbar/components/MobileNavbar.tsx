@@ -2,6 +2,7 @@ import { usePrivy } from '@privy-io/react-auth';
 import { Gift, Menu } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import posthog from 'posthog-js';
 
 import { Button } from '@/components/ui/button';
@@ -42,9 +43,12 @@ export const MobileNavbar = ({
   } = useDisclosure();
 
   const { authenticated, ready } = usePrivy();
+  const router = useRouter();
 
   const { user } = useUser();
   const { creditBalance } = useCreditBalance();
+
+  const isDashboardRoute = router.pathname.startsWith('/earn/dashboard');
 
   const openCreditDrawer = () => {
     posthog.capture('open_credits');
@@ -88,6 +92,20 @@ export const MobileNavbar = ({
           />
 
           <div className="flex items-center gap-1">
+            {ready && authenticated && user?.currentSponsorId && !isDashboardRoute && (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="gap-1.5 text-xs font-semibold text-sky-600 hover:text-sky-700"
+                onClick={() => posthog.capture('sponsor dashboard_navbar')}
+                asChild
+              >
+                <Link href="/earn/dashboard/listings">
+                  Dashboard
+                  <div className="h-1.5 w-1.5 rounded-full bg-sky-400" />
+                </Link>
+              </Button>
+            )}
             {ready && authenticated && user?.isTalentFilled && (
               <div className="flex items-center gap-1">
                 <Button

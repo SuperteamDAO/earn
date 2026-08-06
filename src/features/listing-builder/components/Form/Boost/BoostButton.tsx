@@ -3,9 +3,13 @@ import { differenceInHours } from 'date-fns';
 import { RocketIcon } from 'lucide-react';
 import Link from 'next/link';
 import posthog from 'posthog-js';
+import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Tooltip } from '@/components/ui/tooltip';
+import { type Listing } from '@/features/listings/types';
+import { useMediaQuery } from '@/hooks/use-media-query';
+import { MobileDesktopOnlyDialog } from '@/features/sponsor-dashboard/components/MobileDesktopOnlyDialog';
 
 const BoostArrow = () => (
   <svg
@@ -19,8 +23,6 @@ const BoostArrow = () => (
     <path d="M6 0L12 6H0L6 0Z" />
   </svg>
 );
-
-import { type Listing } from '@/features/listings/types';
 
 import { BOOST_STEP_TO_AMOUNT_USD } from './constants';
 import { emailEstimateQuery, featuredAvailabilityQuery } from './queries';
@@ -39,6 +41,8 @@ export const BoostButton = ({
   listing?: Listing;
   showDate?: boolean;
 }) => {
+  const isMobile = useMediaQuery('(max-width: 767px)');
+  const [isDesktopOnlyOpen, setIsDesktopOnlyOpen] = useState(false);
   const { data: featuredData } = useQuery({
     ...featuredAvailabilityQuery(),
     enabled: !!listing,
@@ -113,6 +117,30 @@ export const BoostButton = ({
       hoursUntilSeventyTwoHoursLeft >= 24
         ? `${Math.floor(hoursUntilSeventyTwoHoursLeft / 24)}d`
         : `${hoursUntilSeventyTwoHoursLeft}h`;
+
+    if (isMobile) {
+      return (
+        <>
+          <Button
+            variant="outline"
+            className="w-full justify-center gap-2 rounded-lg border-slate-300 px-4 text-sm font-medium"
+            onClick={() => {
+              posthog.capture('clicked_boost cta');
+              setIsDesktopOnlyOpen(true);
+            }}
+          >
+            <RocketIcon className="size-4 shrink-0 text-emerald-500" />
+            <p className="font-semibold text-slate-600">Boost</p>
+          </Button>
+          <MobileDesktopOnlyDialog
+            open={isDesktopOnlyOpen}
+            onOpenChange={setIsDesktopOnlyOpen}
+            title="Continue on desktop"
+            description="Boosting a listing is currently optimized for desktop. Please continue on a larger screen to edit boost settings."
+          />
+        </>
+      );
+    }
 
     if (showDate) {
       return (
