@@ -1,4 +1,4 @@
-import { buildAgentListingsFilter } from './live_filter';
+import { buildAgentListingsFilter } from './live-filter';
 
 describe('Agent Listings Filter Builder', () => {
   it('should include AGENT_ALLOWED and default to current date floor', () => {
