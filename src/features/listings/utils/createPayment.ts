@@ -1,31 +1,43 @@
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { getChapterRegions } from '@/utils/chapterRegion';
 
 import { addPaymentInfoToAirtable } from './addPaymentInfoToAirtable';
+import {
+  canPaySubmissionForRegion,
+  getEffectiveRegionVerificationStatus,
+  KYC_REGION_VERIFICATION_CUTOFF,
+  REGION_VERIFICATION_STATUS,
+} from './regionVerification';
 
 type CreatePaymentProps = {
   userId: string;
+  submissionIds?: string[];
 };
 
-export async function createPayment({ userId }: CreatePaymentProps) {
-  const ANNOUNCEMENT_CUTOFF_DATE = new Date('2025-08-06');
-
+export async function createPayment({
+  userId,
+  submissionIds,
+}: CreatePaymentProps) {
   const submissions = await prisma.submission.findMany({
     where: {
       userId,
+      ...(submissionIds ? { id: { in: submissionIds } } : {}),
       paymentSynced: false,
       winnerPosition: { not: null },
       listing: {
         type: { in: ['bounty', 'hackathon'] },
         isWinnersAnnounced: true,
         isFndnPaying: true,
-        winnersAnnouncedAt: { gte: ANNOUNCEMENT_CUTOFF_DATE },
+        winnersAnnouncedAt: { gte: KYC_REGION_VERIFICATION_CUTOFF },
       },
     },
     select: {
       id: true,
       winnerPosition: true,
       paymentSynced: true,
+      regionVerificationStatus: true,
+      regionVerificationCountry: true,
       listing: {
         select: {
           id: true,
@@ -49,6 +61,7 @@ export async function createPayment({ userId }: CreatePaymentProps) {
           kycIDNumber: true,
           kycIDType: true,
           kycCountry: true,
+          kycVerifiedAt: true,
           isKYCVerified: true,
           isAgent: true,
         },
@@ -68,6 +81,7 @@ export async function createPayment({ userId }: CreatePaymentProps) {
 
   const processedSubmissions = [];
   const errors = [];
+  const chapters = await getChapterRegions();
 
   for (const submission of submissions) {
     const submissionId = submission.id;
@@ -90,6 +104,46 @@ export async function createPayment({ userId }: CreatePaymentProps) {
       if (submission.user.isKYCVerified !== true) {
         const errorMessage = `User is not verified for submission ${submissionId}`;
         logger.error(errorMessage);
+        errors.push({ submissionId, error: errorMessage });
+        continue;
+      }
+
+      const effectiveStatus = getEffectiveRegionVerificationStatus({
+        region: submission.listing.region,
+        kycCountry: submission.user.kycCountry,
+        regionVerificationStatus: submission.regionVerificationStatus,
+        chapters,
+      });
+
+      if (effectiveStatus !== submission.regionVerificationStatus) {
+
+        await prisma.submission.update({
+          where: { id: submissionId },
+          data: {
+            regionVerificationStatus: effectiveStatus,
+            regionVerificationCountry: submission.user.kycCountry,
+            regionVerificationVerifiedAt:
+              effectiveStatus === REGION_VERIFICATION_STATUS.PoaRequired
+                ? null
+                : submission.user.kycVerifiedAt ?? new Date(),
+          },
+        });
+
+        submission.regionVerificationStatus = effectiveStatus;
+        submission.regionVerificationCountry = submission.user.kycCountry;
+      }
+
+      if (
+        !canPaySubmissionForRegion({
+          region: submission.listing.region,
+          kycCountry: submission.user.kycCountry,
+          regionVerificationStatus: submission.regionVerificationStatus,
+          regionVerificationCountry: submission.regionVerificationCountry,
+          chapters,
+        })
+      ) {
+        const errorMessage = `Region verification is required before payment for submission ${submissionId}`;
+        logger.warn(errorMessage);
         errors.push({ submissionId, error: errorMessage });
         continue;
       }

@@ -36,6 +36,7 @@ import {
   getRegionTooltipLabel,
   userRegionEligibilty,
 } from '../../utils/region';
+import { KYC_REGION_VERIFICATION_CUTOFF } from '../../utils/regionVerification';
 import { getListingDraftStatus } from '../../utils/status';
 import { EasterEgg } from './EasterEgg';
 import { KYCModal } from './KYCModal';
@@ -239,10 +240,18 @@ export const SubmissionActionButton = ({
       isWinnersAnnounced &&
       isFndnPaying &&
       submission?.isWinner &&
-      dayjs(listing.winnersAnnouncedAt).isAfter(dayjs.utc('2025-08-06'));
+      dayjs(listing.winnersAnnouncedAt).isAfter(
+        dayjs.utc(KYC_REGION_VERIFICATION_CUTOFF),
+      );
 
     if (isWinnerKycFlow) {
-      if (!submission?.isKYCVerified) {
+      if (submission?.regionVerificationStatus === 'Ineligible') {
+        return 'region_ineligible';
+      }
+      if (
+        !submission?.isKYCVerified ||
+        submission?.regionVerificationStatus === 'PoaRequired'
+      ) {
         return 'kyc';
       }
       if (submission?.isKYCVerified && !submission.isPaid) {
@@ -296,9 +305,19 @@ export const SubmissionActionButton = ({
       break;
 
     case 'kyc':
-      buttonText = 'Submit KYC';
+      buttonText =
+        submission?.regionVerificationStatus === 'PoaRequired'
+          ? 'Submit Proof of Address'
+          : 'Submit KYC';
       buttonBG = 'bg-brand-purple';
       isBtnDisabled = false;
+      btnLoadingText = null;
+      break;
+
+    case 'region_ineligible':
+      buttonText = 'Not Eligible';
+      buttonBG = 'bg-red-600';
+      isBtnDisabled = true;
       btnLoadingText = null;
       break;
 
@@ -392,7 +411,7 @@ export const SubmissionActionButton = ({
   } else if (
     !isNotEligible &&
     isWinnersAnnounced &&
-    !['kyc', 'kyc_done', 'paid'].includes(buttonState)
+    !['kyc', 'kyc_done', 'paid', 'region_ineligible'].includes(buttonState)
   ) {
     buttonText = 'Winners Announced';
     buttonBG = 'bg-gray-500';
@@ -502,6 +521,12 @@ export const SubmissionActionButton = ({
           listingId={id!}
           onClose={() => setIsKYCModalOpen(false)}
           submissionId={submission.id}
+          region={region}
+          initialStage={
+            submission.regionVerificationStatus === 'PoaRequired'
+              ? 'poa'
+              : 'identity'
+          }
         />
       )}
 

@@ -4,7 +4,6 @@ import {
   type MessageHandler,
 } from '@sumsub/websdk/types/types';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { isAxiosError } from 'axios';
 import { Loader2, X } from 'lucide-react';
 import { useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
@@ -31,66 +30,25 @@ const fetchVerificationStatus = async (submissionId: string) => {
 
 const VERIFICATION_PENDING_ERROR = 'VERIFICATION_PENDING';
 
-const getMismatchRegionDisplayName = (
-  error: unknown,
-  fallback: string,
-): string | null => {
-  if (!isAxiosError(error)) {
-    return null;
-  }
-
-  const responseData = error.response?.data;
-
-  if (
-    responseData &&
-    typeof responseData === 'object' &&
-    'message' in responseData &&
-    responseData.message === 'KYC_REJECTED' &&
-    'regionDisplayName' in responseData &&
-    typeof responseData.regionDisplayName === 'string'
-  ) {
-    return responseData.regionDisplayName || fallback;
-  }
-
-  return null;
-};
-
-const getKycRejectionReason = (error: unknown): string | null => {
-  if (!isAxiosError(error)) {
-    return null;
-  }
-
-  const responseData = error.response?.data;
-
-  if (
-    responseData &&
-    typeof responseData === 'object' &&
-    'message' in responseData &&
-    responseData.message === 'KYC_REJECTED' &&
-    'error' in responseData &&
-    typeof responseData.error === 'string'
-  ) {
-    return responseData.error;
-  }
-
-  return null;
-};
-
 export const KYCModal = ({
   submissionId,
   listingId,
   onClose,
   isOpen,
   region,
+  initialStage = 'identity',
 }: {
   submissionId: string;
   listingId: string;
   onClose: () => void;
   isOpen: boolean;
   region?: string;
+  initialStage?: 'identity' | 'poa';
 }) => {
   const modalRef = useRef<HTMLDivElement>(null);
   const verificationProcessedRef = useRef(false);
+  const stageRef = useRef<'identity' | 'poa'>(initialStage);
+  const [stage, setStage] = useState<'identity' | 'poa'>(initialStage);
 
   const shouldShowDisclaimer = useMemo(() => {
     return Boolean(region && region !== 'Global');
@@ -102,9 +60,13 @@ export const KYCModal = ({
     isLoading: isTokenLoading,
     refetch,
   } = useQuery({
-    queryKey: ['sumsubToken'],
+    queryKey: ['sumsubToken', stage],
     queryFn: async () => {
-      const { data } = await api.post('/api/sumsub/access-token');
+      const endpoint =
+        stage === 'poa'
+          ? '/api/sumsub/poa-access-token'
+          : '/api/sumsub/access-token';
+      const { data } = await api.post(endpoint);
       return data.token;
     },
   });
@@ -114,6 +76,17 @@ export const KYCModal = ({
   const { refetch: checkVerification } = useQuery({
     queryKey: ['verification-status', submissionId],
     queryFn: () => fetchVerificationStatus(submissionId),
+    enabled: false,
+  });
+
+  const { refetch: checkPoaVerification } = useQuery({
+    queryKey: ['poa-verification-status', submissionId],
+    queryFn: async () => {
+      const { data } = await api.get('/api/submission/kyc/verify-poa', {
+        params: { submissionId },
+      });
+      return data;
+    },
     enabled: false,
   });
 
@@ -146,89 +119,179 @@ export const KYCModal = ({
         return;
       }
 
-      const verificationPromise = checkVerification().then(async (result) => {
-        if (result.error) {
-          throw result.error;
-        }
+      if (stageRef.current === 'identity') {
+        const verificationPromise = checkVerification().then(async (result) => {
+          if (result.error) {
+            throw result.error;
+          }
 
-        const data = result.data;
+          const data = result.data;
 
-        if (
-          data === 'verified' ||
-          (typeof data === 'object' &&
-            data !== null &&
-            'message' in data &&
-            (data as { message?: string }).message === 'KYC already verified')
-        ) {
-          verificationProcessedRef.current = true;
-
-          await queryClient.invalidateQueries({
-            queryKey: userSubmissionQuery(listingId, user?.id).queryKey,
-          });
-          onClose();
-
-          return data;
-        }
-
-        throw new Error(VERIFICATION_PENDING_ERROR);
-      });
-
-      const verificationToast = toast.promise(verificationPromise, {
-        loading: 'Verifying your KYC submission...',
-        success:
-          'Your KYC is verified! You will receive your payment in around a week.',
-        error: (error) => {
           if (
-            error instanceof Error &&
-            error.message === VERIFICATION_PENDING_ERROR
+            data === 'verified' ||
+            (typeof data === 'object' &&
+              data !== null &&
+              'message' in data &&
+              (data as { message?: string }).message === 'KYC already verified')
           ) {
-            setTimeout(() => {
-              if (
-                typeof verificationToast === 'string' ||
-                typeof verificationToast === 'number'
-              ) {
-                toast.dismiss(verificationToast);
-              } else {
-                toast.dismiss();
-              }
-            }, 0);
-            return undefined;
+            verificationProcessedRef.current = true;
+
+            await queryClient.invalidateQueries({
+              queryKey: userSubmissionQuery(listingId, user?.id).queryKey,
+            });
+            onClose();
+
+            return data;
           }
 
-          const mismatchRegionDisplayName = getMismatchRegionDisplayName(
-            error,
-            regionDisplayName,
-          );
+          if (
+            typeof data === 'object' &&
+            data !== null &&
+            'status' in data &&
+            (data as { status?: string }).status === 'poa_required'
+          ) {
+            await queryClient.invalidateQueries({
+              queryKey: userSubmissionQuery(listingId, user?.id).queryKey,
+            });
+            stageRef.current = 'poa';
+            setStage('poa');
+            throw new Error(VERIFICATION_PENDING_ERROR);
+          }
 
-          if (mismatchRegionDisplayName) {
-            return (
-              <div className="flex flex-col gap-1 text-left">
-                <p className="text-sm font-semibold text-red-600">
-                  KYC Rejected
-                </p>
-                <p className="text-xs text-red-600">
-                  {`Your KYC document doesn't belong to ${mismatchRegionDisplayName}. Please verify again with a KYC document that belongs to ${mismatchRegionDisplayName}.`}
-                </p>
-              </div>
+          throw new Error(VERIFICATION_PENDING_ERROR);
+        });
+
+        const verificationToast = toast.promise(verificationPromise, {
+          loading: 'Verifying your KYC submission...',
+          success:
+            'Your KYC is verified! You will receive your payment in around a week.',
+          error: (error) => {
+            if (
+              error instanceof Error &&
+              error.message === VERIFICATION_PENDING_ERROR
+            ) {
+              setTimeout(() => {
+                if (
+                  typeof verificationToast === 'string' ||
+                  typeof verificationToast === 'number'
+                ) {
+                  toast.dismiss(verificationToast);
+                } else {
+                  toast.dismiss();
+                }
+              }, 0);
+              return undefined;
+            }
+
+            return 'KYC verification check failed. Please try again.';
+          },
+        });
+      } else {
+        const poaPromise = checkPoaVerification().then(async (result) => {
+          if (result.error) {
+            throw result.error;
+          }
+
+          const data = result.data;
+
+          if (
+            typeof data === 'object' &&
+            data !== null &&
+            'status' in data &&
+            (data as { status?: string }).status === 'verified'
+          ) {
+            verificationProcessedRef.current = true;
+
+            await queryClient.invalidateQueries({
+              queryKey: userSubmissionQuery(listingId, user?.id).queryKey,
+            });
+            onClose();
+
+            return data;
+          }
+
+          if (
+            typeof data === 'object' &&
+            data !== null &&
+            'status' in data &&
+            (data as { status?: string }).status === 'ineligible'
+          ) {
+            await queryClient.invalidateQueries({
+              queryKey: userSubmissionQuery(listingId, user?.id).queryKey,
+            });
+            throw new Error('POA_INELIGIBLE');
+          }
+
+          if (
+            typeof data === 'object' &&
+            data !== null &&
+            'status' in data &&
+            (data as { status?: string }).status === 'poa_rejected'
+          ) {
+            throw new Error(
+              'message' in data && typeof data.message === 'string'
+                ? data.message
+                : 'Proof of address was rejected. Please try again.',
             );
           }
 
-          const kycRejectionReason = getKycRejectionReason(error);
+          if (
+            typeof data === 'object' &&
+            data !== null &&
+            'status' in data &&
+            (data as { status?: string }).status === 'poa_not_started'
+          ) {
+            throw new Error('Please start the proof of address verification.');
+          }
 
-          if (kycRejectionReason) {
-            return (
-              <div className="flex flex-col gap-1 text-left">
-                <p className="text-sm font-semibold text-red-600">
-                  KYC Rejected
-                </p>
-                <p className="text-xs text-red-600">{kycRejectionReason}</p>
-              </div>
+          if (
+            typeof data === 'object' &&
+            data !== null &&
+            'status' in data &&
+            (data as { status?: string }).status === 'payment_failed'
+          ) {
+            throw new Error(
+              'Payment could not be created after PoA verification. Please try again.',
             );
           }
 
-          return 'KYC verification check failed. Please try again.';
-        },
-      });
+          throw new Error(VERIFICATION_PENDING_ERROR);
+        });
+
+        toast.promise(poaPromise, {
+          loading: 'Verifying your proof of address...',
+          success:
+            'Verified! You will receive your payment in around a week.',
+          error: (error) => {
+            if (
+              error instanceof Error &&
+              error.message === 'POA_INELIGIBLE'
+            ) {
+              return (
+                <div className="flex flex-col gap-1 text-left">
+                  <p className="text-sm font-semibold text-red-600">
+                    Not Eligible
+                  </p>
+                  <p className="text-xs text-red-600">
+                    {`Sorry, we couldn't verify that you are a resident of ${regionDisplayName}. Only the residents of ${regionDisplayName} are eligible for this reward. Please contact support@superteam.fun if there's been a mistake.`}
+                  </p>
+                </div>
+              );
+            }
+
+            if (
+              error instanceof Error &&
+              error.message === VERIFICATION_PENDING_ERROR
+            ) {
+              return undefined;
+            }
+
+            return error instanceof Error
+              ? error.message
+              : 'Proof of address verification failed. Please try again.';
+          },
+        });
+      }
     }
   }
 
@@ -300,6 +363,7 @@ export const KYCModal = ({
 
               {accessToken && (
                 <SumsubWebSdk
+                  key={stage}
                   accessToken={accessToken}
                   expirationHandler={async () => {
                     const result = await refetch();
