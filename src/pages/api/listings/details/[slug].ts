@@ -2,9 +2,91 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { type BountiesSelect } from '@/prisma/models/Bounties';
 import { convertDatesToISO, safeStringify } from '@/utils/safeStringify';
 
-export async function getListingDetailsBySlug(slug: string): Promise<any> {
+import { type PublicListingDetails } from '@/features/listings/types';
+
+const publicListingDetailsSelect = {
+  id: true,
+  title: true,
+  slug: true,
+  description: true,
+  deadline: true,
+  commitmentDate: true,
+  eligibility: true,
+  status: true,
+  token: true,
+  rewardAmount: true,
+  rewards: true,
+  maxBonusSpots: true,
+  sponsorId: true,
+  isPublished: true,
+  skills: true,
+  type: true,
+  requirements: true,
+  isWinnersAnnounced: true,
+  region: true,
+  pocSocials: true,
+  publishedAt: true,
+  isPrivate: true,
+  agentAccess: true,
+  hackathonId: true,
+  compensationType: true,
+  maxRewardAsk: true,
+  minRewardAsk: true,
+  isFndnPaying: true,
+  winnersAnnouncedAt: true,
+  isPro: true,
+  sponsor: {
+    select: {
+      name: true,
+      logo: true,
+      slug: true,
+      url: true,
+      entityName: true,
+      isVerified: true,
+      isCaution: true,
+    },
+  },
+  poc: {
+    select: {
+      id: true,
+      firstName: true,
+      lastName: true,
+      username: true,
+      photo: true,
+    },
+  },
+  Hackathon: {
+    select: {
+      logo: true,
+      altLogo: true,
+      startDate: true,
+      deadline: true,
+      name: true,
+      description: true,
+      slug: true,
+      announceDate: true,
+      sponsorId: true,
+      Sponsor: {
+        select: {
+          name: true,
+          logo: true,
+          slug: true,
+          url: true,
+          entityName: true,
+          isVerified: true,
+          isCaution: true,
+        },
+      },
+    },
+  },
+} satisfies BountiesSelect;
+
+export async function getListingDetailsBySlug(
+  slug: string,
+): Promise<PublicListingDetails | null> {
   if (!slug) {
     throw new Error('Missing required query parameters: slug');
   }
@@ -13,52 +95,13 @@ export async function getListingDetailsBySlug(slug: string): Promise<any> {
     where: {
       slug,
       isActive: true,
+      isPublished: true,
+      isArchived: false,
     },
-    include: {
-      sponsor: {
-        select: {
-          name: true,
-          logo: true,
-          slug: true,
-          entityName: true,
-          isVerified: true,
-          isCaution: true,
-        },
-      },
-      poc: {
-        select: {
-          id: true,
-          firstName: true,
-          lastName: true,
-          username: true,
-          photo: true,
-        },
-      },
-      Hackathon: {
-        select: {
-          logo: true,
-          altLogo: true,
-          startDate: true,
-          name: true,
-          description: true,
-          slug: true,
-          announceDate: true,
-          sponsorId: true,
-          Sponsor: {
-            select: {
-              name: true,
-              logo: true,
-              entityName: true,
-              isVerified: true,
-              isCaution: true,
-            },
-          },
-        },
-      },
-    },
+    select: publicListingDetailsSelect,
   });
 
-  return convertDatesToISO(result);
+  return convertDatesToISO(result) as unknown as PublicListingDetails | null;
 }
 
 export default async function handler(
