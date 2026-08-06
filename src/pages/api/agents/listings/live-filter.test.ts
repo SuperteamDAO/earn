@@ -1,14 +1,29 @@
 import { buildAgentListingsFilter } from './live-filter';
 
 describe('Agent Listings Filter Builder', () => {
-  it('should include AGENT_ALLOWED and default to current date floor', () => {
+  it('should include AGENT_ALLOWED and AGENT_ONLY and default to start-of-day UTC cutoff', () => {
     const filter = buildAgentListingsFilter({});
-    expect(filter.where.agentAccess.in).toContain('AGENT_ALLOWED');
+    expect(filter.where.agentAccess.in).toEqual(['AGENT_ONLY', 'AGENT_ALLOWED']);
     expect(filter.where.status).toBe('OPEN');
-    expect(filter.where.deadline.gte).toBeInstanceOf(Date);
+    expect(filter.take).toBe(10);
+    expect(filter.skip).toBe(0);
+    
+    const now = new Date();
+    const expectedUTCStart = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
+    expect(filter.where.deadline.gte.getTime()).toBe(expectedUTCStart.getTime());
   });
 
-  it('should throw clear error on invalid deadline', () => {
+  it('should cap take parameter at 50', () => {
+    const filter = buildAgentListingsFilter({ take: 100, skip: 5 });
+    expect(filter.take).toBe(50);
+    expect(filter.skip).toBe(5);
+  });
+
+  it('should reject explicitly empty deadline strings', () => {
+    expect(() => buildAgentListingsFilter({ deadline: '' })).toThrow('Invalid ISO-8601');
+  });
+
+  it('should throw clear error on invalid deadline string', () => {
     expect(() => buildAgentListingsFilter({ deadline: 'invalid-date' })).toThrow('Invalid ISO-8601');
   });
 });
