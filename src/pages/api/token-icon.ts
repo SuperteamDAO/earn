@@ -1,25 +1,17 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import sharp from 'sharp';
 
 import logger from '@/lib/logger';
 import { isSafeRemoteUrl, safeRemoteFetch } from '@/utils/safeRemoteFetch';
 import { safeStringify } from '@/utils/safeStringify';
+import {
+  MAX_TOKEN_ICON_SIZE_BYTES,
+  sanitizeTokenIcon,
+} from '@/utils/tokenIconImage';
 
-const MAX_ICON_SIZE_BYTES = 5 * 1024 * 1024;
-const MAX_ICON_PIXELS = 16 * 1024 * 1024;
 const MAX_REDIRECTS = 4;
 const UPSTREAM_FETCH_TIMEOUT_MS = 5000;
 const CACHE_CONTROL =
   'public, max-age=86400, s-maxage=86400, stale-while-revalidate=604800';
-const PNG_CONTENT_TYPE = 'image/png';
-
-const convertToPng = (image: Buffer) =>
-  sharp(image, {
-    failOn: 'error',
-    limitInputPixels: MAX_ICON_PIXELS,
-  })
-    .png()
-    .toBuffer();
 
 const sendImage = (
   res: NextApiResponse,
@@ -28,6 +20,7 @@ const sendImage = (
 ) => {
   res.setHeader('Cache-Control', CACHE_CONTROL);
   res.setHeader('Content-Type', contentType);
+  res.setHeader('Content-Security-Policy', "default-src 'none'; sandbox");
   res.setHeader('X-Content-Type-Options', 'nosniff');
   return res.status(200).send(image);
 };
@@ -79,7 +72,7 @@ export default async function handler(
       },
       maxRedirects: MAX_REDIRECTS,
       timeoutMs: UPSTREAM_FETCH_TIMEOUT_MS,
-      maxResponseBytes: MAX_ICON_SIZE_BYTES,
+      maxResponseBytes: MAX_TOKEN_ICON_SIZE_BYTES,
     });
 
     if (!iconResponse.ok) {
@@ -87,41 +80,35 @@ export default async function handler(
     }
 
     const contentType = iconResponse.headers.get('content-type') || '';
-    if (!contentType.toLowerCase().startsWith('image/')) {
-      return res.status(415).end();
-    }
-
     const contentLength = Number(iconResponse.headers.get('content-length'));
-    if (contentLength > MAX_ICON_SIZE_BYTES) {
+    if (contentLength > MAX_TOKEN_ICON_SIZE_BYTES) {
       return res.status(413).end();
     }
 
     const icon = Buffer.from(await iconResponse.arrayBuffer());
-    if (icon.byteLength > MAX_ICON_SIZE_BYTES) {
+    if (icon.byteLength > MAX_TOKEN_ICON_SIZE_BYTES) {
       return res.status(413).end();
     }
 
-    if (requiresPng) {
-      try {
-        return sendImage(res, await convertToPng(icon), PNG_CONTENT_TYPE);
-      } catch (error) {
-        logger.warn(
-          `Failed to convert token icon to PNG: ${safeStringify({
-            iconUrl: iconUrl.toString(),
-            contentType,
-            error,
-          })}`,
-        );
-        return res.status(415).end();
-      }
+    try {
+      const sanitizedIcon = await sanitizeTokenIcon(icon, contentType, {
+        forcePng: requiresPng,
+      });
+      return sendImage(res, sanitizedIcon.image, sanitizedIcon.contentType);
+    } catch (error) {
+      logger.warn(
+        `Failed to sanitize token icon: ${safeStringify({
+          iconUrl: iconUrl.toString(),
+          contentType,
+          error,
+        })}`,
+      );
+      return res.status(415).end();
     }
-
-    return sendImage(res, icon, contentType);
   } catch (error) {
     logger.error(
       `Failed to proxy token icon: ${safeStringify({
         iconUrl: iconUrl.toString(),
-        requiresPng,
         error,
       })}`,
     );
