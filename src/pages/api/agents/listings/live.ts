@@ -24,7 +24,7 @@ async function handler(req: NextApiRequestWithAgent, res: NextApiResponse) {
     return res.status(400).json({ error: takeResult.error });
   }
   const take = takeResult.value;
-  const deadline = params.deadline as string;
+  const deadline = (params.deadline as string) || new Date().toISOString();
   const exclusiveSponsorId = params.exclusiveSponsorId as string | undefined;
   let excludeIds = params['excludeIds[]'];
   if (typeof excludeIds === 'string') {
