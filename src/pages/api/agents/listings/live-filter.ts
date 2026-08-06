@@ -28,6 +28,17 @@ export interface AgentListingFilterResult {
 }
 
 /**
+ * Strictly parses and validates ISO-8601 formatted date strings.
+ */
+export function isValidISO8601String(str: string): boolean {
+  if (typeof str !== 'string' || str.trim() === '') return false;
+  const isoRegex = /^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2}:\d{2}(\.\d{3})?Z?)?$/;
+  if (!isoRegex.test(str.trim())) return false;
+  const date = new Date(str);
+  return !isNaN(date.getTime()) && date.toISOString().startsWith(str.split('T')[0]);
+}
+
+/**
  * Builds Prisma query filter options for live agent listings.
  * 
  * @param query - Input query options containing optional deadline, take, and skip.
@@ -46,14 +57,10 @@ export function buildAgentListingsFilter(query: AgentListingFilterQuery): AgentL
   let deadlineFloor: Date;
 
   if (query.deadline !== undefined) {
-    if (typeof query.deadline !== 'string' || query.deadline.trim() === '') {
+    if (!isValidISO8601String(query.deadline)) {
       throw new Error("Invalid ISO-8601 deadline parameter");
     }
-    const parsed = new Date(query.deadline);
-    if (isNaN(parsed.getTime())) {
-      throw new Error("Invalid ISO-8601 deadline parameter");
-    }
-    deadlineFloor = parsed;
+    deadlineFloor = new Date(query.deadline);
   } else {
     const now = new Date();
     deadlineFloor = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));

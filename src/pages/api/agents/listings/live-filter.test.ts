@@ -1,6 +1,22 @@
 import { buildAgentListingsFilter } from './live-filter';
 
 describe('Agent Listings Filter Builder', () => {
+  let dateSpy: jest.SpyInstance;
+
+  beforeEach(() => {
+    // Freeze time deterministically to 2026-08-06T12:00:00.000Z
+    const fixedNow = new Date('2026-08-06T12:00:00.000Z');
+    dateSpy = jest.spyOn(global, 'Date').mockImplementation((...args) => {
+      if (args.length === 0) return fixedNow;
+      // @ts-expect-error - Standard mock Date constructor forwarding
+      return new (Reflect.construct(Date, args, Date))();
+    });
+  });
+
+  afterEach(() => {
+    dateSpy.mockRestore();
+  });
+
   it('should include AGENT_ALLOWED and AGENT_ONLY and default to start-of-day UTC cutoff', () => {
     const filter = buildAgentListingsFilter({});
     expect(filter.where.agentAccess.in).toEqual(['AGENT_ONLY', 'AGENT_ALLOWED']);
@@ -8,8 +24,7 @@ describe('Agent Listings Filter Builder', () => {
     expect(filter.take).toBe(10);
     expect(filter.skip).toBe(0);
     
-    const now = new Date();
-    const expectedUTCStart = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
+    const expectedUTCStart = new Date(Date.UTC(2026, 7, 6));
     expect(filter.where.deadline.gte.getTime()).toBe(expectedUTCStart.getTime());
   });
 
