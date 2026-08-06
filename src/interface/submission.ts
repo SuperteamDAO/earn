@@ -42,4 +42,16 @@ interface SubmissionWithUser {
   ai?: ProjectApplicationAi;
 }
 
-export type { SubmissionWithUser };
+interface ListingWinner {
+  id: string;
+  winnerPosition: number | null;
+  user: {
+    id: string;
+    username: string | null;
+    firstName: string | null;
+    lastName: string | null;
+    photo: string | null;
+  };
+}
+
+export type { ListingWinner, SubmissionWithUser };
