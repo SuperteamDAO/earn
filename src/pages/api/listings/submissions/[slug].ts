@@ -75,7 +75,6 @@ export async function getSubmissionsData(
       link: true,
       isWinner: true,
       winnerPosition: true,
-      like: true,
       likeCount: true,
       rewardInUSD: true,
       createdAt: true,
@@ -91,9 +90,28 @@ export async function getSubmissionsData(
     },
   });
 
-  submission.sort(sortSubmissions);
+  const subIds = submission.map((s) => s.id);
+  const likes = subIds.length > 0
+    ? await prisma.likes.findMany({
+        where: { targetType: 'SUBMISSION', targetId: { in: subIds } },
+        select: { targetId: true, userId: true, createdAt: true },
+      })
+    : [];
+  const likesMap = new Map<string, { id: string; date: number }[]>();
+  for (const like of likes) {
+    const arr = likesMap.get(like.targetId) ?? [];
+    arr.push({ id: like.userId, date: like.createdAt.getTime() });
+    likesMap.set(like.targetId, arr);
+  }
 
-  return { bounty, submission };
+  const submissionWithLikes = submission.map((s) => ({
+    ...s,
+    like: likesMap.get(s.id) || [],
+  }));
+
+  submissionWithLikes.sort(sortSubmissions);
+
+  return { bounty, submission: submissionWithLikes };
 }
 
 export default async function user(req: NextApiRequest, res: NextApiResponse) {
