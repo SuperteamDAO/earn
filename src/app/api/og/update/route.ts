@@ -8,14 +8,44 @@ import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { getUserSession } from '@/features/auth/utils/getUserSession';
-import {
-  fetchOgMetadata,
-  type OgMetadataResult,
-} from '@/features/og/utils/fetchOgMetadata';
+import { fetchOgMetadata } from '@/features/og/utils/fetchOgMetadata';
 import {
   getOgImageValue,
+  type OgImageTarget,
   parseOgImageUpdateRequest,
 } from '@/features/og/utils/ogImageUpdate';
+
+const findOgRecord = (type: OgImageTarget, id: string) => {
+  const query = {
+    where: { id },
+    select: { link: true, ogImage: true },
+  } as const;
+
+  return type === 'submission'
+    ? prisma.submission.findUnique(query)
+    : prisma.poW.findUnique(query);
+};
+
+const updateOgRecord = async (
+  type: OgImageTarget,
+  id: string,
+  imageUrl: string,
+) => {
+  const update = {
+    where: {
+      id,
+      OR: [{ ogImage: null }, { ogImage: 'error' }],
+    },
+    data: { ogImage: imageUrl },
+  };
+
+  const result =
+    type === 'submission'
+      ? await prisma.submission.updateMany(update)
+      : await prisma.poW.updateMany(update);
+
+  return result.count;
+};
 
 export async function POST(request: NextRequest) {
   try {
@@ -58,95 +88,42 @@ export async function POST(request: NextRequest) {
     logger.debug(`OG image update: ${safeStringify(updateRequest)}`);
 
     const { type, id } = updateRequest;
-    let result: OgMetadataResult;
-    let imageUrl: string;
+    const record = await findOgRecord(type, id);
 
-    if (type === 'submission') {
-      const submission = await prisma.submission.findUnique({
-        where: { id },
-        select: { link: true, ogImage: true },
-      });
-
-      if (!submission) {
-        return NextResponse.json(
-          { success: false, error: 'Record not found' },
-          { status: 404 },
-        );
-      }
-
-      if (submission?.ogImage && submission.ogImage !== 'error') {
-        logger.warn(`OG image already exists for submission ${id}`);
-        return NextResponse.json(
-          { success: false, error: 'Image already exists' },
-          { status: 409 },
-        );
-      }
-
-      if (!submission.link) {
-        return NextResponse.json(
-          { success: false, error: 'Record has no source URL' },
-          { status: 422 },
-        );
-      }
-
-      result = await fetchOgMetadata(submission.link);
-      imageUrl = getOgImageValue(result);
-      const updateResult = await prisma.submission.updateMany({
-        where: {
-          id,
-          OR: [{ ogImage: null }, { ogImage: 'error' }],
-        },
-        data: { ogImage: imageUrl },
-      });
-
-      if (updateResult.count !== 1) {
-        return NextResponse.json(
-          { success: false, error: 'Image already exists' },
-          { status: 409 },
-        );
-      }
-    } else {
-      const pow = await prisma.poW.findUnique({
-        where: { id },
-        select: { link: true, ogImage: true },
-      });
-
-      if (!pow) {
-        return NextResponse.json(
-          { success: false, error: 'Record not found' },
-          { status: 404 },
-        );
-      }
-
-      if (pow?.ogImage && pow.ogImage !== 'error') {
-        logger.warn(`OG image already exists for PoW ${id}`);
-        return NextResponse.json(
-          { success: false, error: 'Image already exists' },
-          { status: 409 },
-        );
-      }
-
-      result = await fetchOgMetadata(pow.link);
-      imageUrl = getOgImageValue(result);
-      const updateResult = await prisma.poW.updateMany({
-        where: {
-          id,
-          OR: [{ ogImage: null }, { ogImage: 'error' }],
-        },
-        data: { ogImage: imageUrl },
-      });
-
-      if (updateResult.count !== 1) {
-        return NextResponse.json(
-          { success: false, error: 'Image already exists' },
-          { status: 409 },
-        );
-      }
+    if (!record) {
+      return NextResponse.json(
+        { success: false, error: 'Record not found' },
+        { status: 404 },
+      );
     }
 
-    logger.info(
-      `Successfully updated ogImage for ${type} with ID: ${id} and result ${safeStringify(result)}`,
-    );
+    if (record.ogImage && record.ogImage !== 'error') {
+      logger.warn(`OG image already exists for ${type} ${id}`);
+      return NextResponse.json(
+        { success: false, error: 'Image already exists' },
+        { status: 409 },
+      );
+    }
+
+    if (!record.link) {
+      return NextResponse.json(
+        { success: false, error: 'Record has no source URL' },
+        { status: 422 },
+      );
+    }
+
+    const result = await fetchOgMetadata(record.link);
+    const imageUrl = getOgImageValue(result);
+    const updatedCount = await updateOgRecord(type, id, imageUrl);
+
+    if (updatedCount !== 1) {
+      return NextResponse.json(
+        { success: false, error: 'Image already exists' },
+        { status: 409 },
+      );
+    }
+
+    logger.info(`Successfully updated ogImage for ${type} with ID: ${id}`);
     return NextResponse.json({ success: true, imageUrl });
   } catch (error) {
     logger.error(`Error updating ogImage: ${safeStringify(error)}`);
