@@ -41,7 +41,7 @@ async function handler(req: NextApiRequestWithAgent, res: NextApiResponse) {
       isPrivate: false,
       isArchived: false,
       status: 'OPEN',
-      deadline: { gte: deadline },
+      ...(deadline ? { deadline: { gte: deadline } } : {}),
       type: type || { in: ['bounty', 'project', 'hackathon'] },
       agentAccess: { in: ['AGENT_ALLOWED', 'AGENT_ONLY'] },
       sponsor: {
