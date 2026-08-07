@@ -1,3 +1,10 @@
+export interface AgentListing {
+  id?: string;
+  agentAccess?: string;
+  status?: string;
+  deadline?: string;
+}
+
 export function getLiveListingsCutoffDate(customDeadline?: string): Date {
   if (customDeadline) {
     const parsed = new Date(customDeadline);
@@ -7,7 +14,10 @@ export function getLiveListingsCutoffDate(customDeadline?: string): Date {
   return new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0, 0));
 }
 
-export function filterAgentEligibleListings(listings: any[], cutoffDate: Date) {
+export function filterAgentEligibleListings(
+  listings: readonly AgentListing[],
+  cutoffDate: Date
+): AgentListing[] {
   return listings.filter((item) => {
     const isAgentAllowed = item.agentAccess === "AGENT_ALLOWED" || item.agentAccess === "AGENT_ONLY";
     const isOpen = item.status === "OPEN";
