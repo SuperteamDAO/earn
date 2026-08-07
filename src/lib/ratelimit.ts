@@ -70,3 +70,24 @@ export const reportListingRateLimiter = new Ratelimit({
   analytics: true,
   prefix: 'ratelimit:report_listing',
 });
+
+export const walletWithdrawRateLimiter = new Ratelimit({
+  redis: redis,
+  limiter: Ratelimit.fixedWindow(30, '10 m'),
+  analytics: true,
+  prefix: 'ratelimit:wallet_withdraw',
+});
+
+export const walletAtaCreationRateLimiter = new Ratelimit({
+  redis: redis,
+  limiter: Ratelimit.fixedWindow(5, '1 h'),
+  analytics: true,
+  prefix: 'ratelimit:wallet_ata_creation',
+});
+
+export const walletAtaPairRateLimiter = new Ratelimit({
+  redis: redis,
+  limiter: Ratelimit.fixedWindow(3, '1 h'),
+  analytics: true,
+  prefix: 'ratelimit:wallet_ata_pair',
+});
