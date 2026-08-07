@@ -1,8 +1,8 @@
 export interface AgentListing {
-  id?: string;
-  agentAccess?: string;
-  status?: string;
-  deadline?: string;
+  readonly id: string | undefined;
+  readonly agentAccess: string | undefined;
+  readonly status: string | undefined;
+  readonly deadline: string | undefined;
 }
 
 export function getLiveListingsCutoffDate(customDeadline?: string): Date {
