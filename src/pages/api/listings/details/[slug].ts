@@ -4,7 +4,12 @@ import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { convertDatesToISO, safeStringify } from '@/utils/safeStringify';
 
-export async function getListingDetailsBySlug(slug: string): Promise<any> {
+import { publicListingDetailsSelect } from '@/features/listings/constants/publicListingDetails';
+import { type PublicListingDetails } from '@/features/listings/types';
+
+export async function getListingDetailsBySlug(
+  slug: string,
+): Promise<PublicListingDetails | null> {
   if (!slug) {
     throw new Error('Missing required query parameters: slug');
   }
@@ -13,52 +18,13 @@ export async function getListingDetailsBySlug(slug: string): Promise<any> {
     where: {
       slug,
       isActive: true,
+      isPublished: true,
+      isArchived: false,
     },
-    include: {
-      sponsor: {
-        select: {
-          name: true,
-          logo: true,
-          slug: true,
-          entityName: true,
-          isVerified: true,
-          isCaution: true,
-        },
-      },
-      poc: {
-        select: {
-          id: true,
-          firstName: true,
-          lastName: true,
-          username: true,
-          photo: true,
-        },
-      },
-      Hackathon: {
-        select: {
-          logo: true,
-          altLogo: true,
-          startDate: true,
-          name: true,
-          description: true,
-          slug: true,
-          announceDate: true,
-          sponsorId: true,
-          Sponsor: {
-            select: {
-              name: true,
-              logo: true,
-              entityName: true,
-              isVerified: true,
-              isCaution: true,
-            },
-          },
-        },
-      },
-    },
+    select: publicListingDetailsSelect,
   });
 
-  return convertDatesToISO(result);
+  return convertDatesToISO(result) as unknown as PublicListingDetails | null;
 }
 
 export default async function handler(
