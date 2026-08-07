@@ -1,5 +1,28 @@
 import axios from 'axios';
 import type { NextApiRequest, NextApiResponse } from 'next';
+import { z } from 'zod';
+
+import logger from '@/lib/logger';
+import {
+  emailValidateHourlyRateLimiter,
+  emailValidateRateLimiter,
+} from '@/lib/ratelimit';
+import { checkAndApplyRateLimitPages } from '@/lib/rateLimiterService';
+import { validateEmailWithZeroBounce } from '@/lib/zerobounce';
+
+const emailValidateSchema = z.object({
+  email: z.string().trim().toLowerCase().max(254).email(),
+});
+
+function getRequestIp(req: NextApiRequest): string {
+  const forwarded = req.headers['x-forwarded-for'];
+  if (typeof forwarded === 'string' && forwarded.length > 0) {
+    const [first] = forwarded.split(',');
+    return (first ?? forwarded).trim();
+  }
+
+  return req.socket.remoteAddress || 'unknown';
+}
 
 export default async function handler(
   req: NextApiRequest,
@@ -9,32 +32,45 @@ export default async function handler(
     return res.status(405).json({ message: 'Method Not Allowed' });
   }
 
-  const { email } = req.body;
-
-  if (!email) {
-    return res.status(400).json({ message: 'Email is required' });
+  const parsed = emailValidateSchema.safeParse(req.body);
+  if (!parsed.success) {
+    return res.status(400).json({ message: 'A valid email is required' });
   }
+  const { email } = parsed.data;
 
   // adding this to eliminate the need for OSS contributors to set up zerobounce themselves
   const isDev = process.env.VERCEL_ENV !== 'production';
   if (isDev) {
-    res.status(200).json({ isValid: true });
+    return res.status(200).json({ isValid: true });
   }
 
+  const ip = getRequestIp(req);
+
+  const withinBurstLimit = await checkAndApplyRateLimitPages({
+    limiter: emailValidateRateLimiter,
+    identifier: `ip:${ip}`,
+    routeName: 'email_validate',
+    res,
+  });
+  if (!withinBurstLimit) return;
+
+  const withinHourlyLimit = await checkAndApplyRateLimitPages({
+    limiter: emailValidateHourlyRateLimiter,
+    identifier: `ip:${ip}`,
+    routeName: 'email_validate_hourly',
+    res,
+  });
+  if (!withinHourlyLimit) return;
+
   try {
-    const { data } = await axios.get(
-      `https://api.zerobounce.net/v2/validate?api_key=${process.env.ZEROBOUNCE_API_KEY}&email=${email}`,
-    );
-
-    const emailIsValid = data.status === 'valid';
-    const isRoleBased =
-      data.status === 'do_not_mail' && data.sub_status === 'role_based';
-
-    const isValid = emailIsValid || isRoleBased;
-
+    const isValid = await validateEmailWithZeroBounce(email);
     return res.status(200).json({ isValid });
   } catch (error) {
-    console.error('Error validating email:', error);
-    return res.status(500).json({ message: 'Error validating email' });
+    const status = axios.isAxiosError(error) ? error.response?.status : null;
+    logger.error(
+      `Error validating email with ZeroBounce (status: ${status ?? 'unknown'})`,
+    );
+    // fail open so a provider outage doesn't block legitimate sign-ins
+    return res.status(200).json({ isValid: true });
   }
 }
