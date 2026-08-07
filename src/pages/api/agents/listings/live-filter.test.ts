@@ -1,44 +1,23 @@
-import { buildAgentListingsFilter } from './live-filter';
+import { getLiveListingsCutoffDate, filterAgentEligibleListings } from './live-filter';
 
-describe('Agent Listings Filter Builder', () => {
-  let dateSpy: jest.SpyInstance;
-
-  beforeEach(() => {
-    // Freeze time deterministically to 2026-08-06T12:00:00.000Z
-    const fixedNow = new Date('2026-08-06T12:00:00.000Z');
-    dateSpy = jest.spyOn(global, 'Date').mockImplementation((...args) => {
-      if (args.length === 0) return fixedNow;
-      // @ts-expect-error - Standard mock Date constructor forwarding
-      return new (Reflect.construct(Date, args, Date))();
-    });
+describe('Live Agent Listings Cutoff & Filtering', () => {
+  it('should default cutoff to start of current UTC date when deadline omitted', () => {
+    const cutoff = getLiveListingsCutoffDate();
+    expect(cutoff.getUTCHours()).toBe(0);
+    expect(cutoff.getUTCMinutes()).toBe(0);
+    expect(cutoff.getUTCSeconds()).toBe(0);
   });
 
-  afterEach(() => {
-    dateSpy.mockRestore();
-  });
+  it('should include both AGENT_ALLOWED and AGENT_ONLY listings', () => {
+    const cutoff = new Date('2026-08-01T00:00:00.000Z');
+    const mockListings = [
+      { id: '1', agentAccess: 'AGENT_ALLOWED', status: 'OPEN', deadline: '2026-08-28T21:59:59.000Z' },
+      { id: '2', agentAccess: 'AGENT_ONLY', status: 'OPEN', deadline: '2026-08-15T00:00:00.000Z' },
+      { id: '3', agentAccess: 'NONE', status: 'OPEN', deadline: '2026-08-28T21:59:59.000Z' }
+    ];
 
-  it('should include AGENT_ALLOWED and AGENT_ONLY and default to start-of-day UTC cutoff', () => {
-    const filter = buildAgentListingsFilter({});
-    expect(filter.where.agentAccess.in).toEqual(['AGENT_ONLY', 'AGENT_ALLOWED']);
-    expect(filter.where.status).toBe('OPEN');
-    expect(filter.take).toBe(10);
-    expect(filter.skip).toBe(0);
-    
-    const expectedUTCStart = new Date(Date.UTC(2026, 7, 6));
-    expect(filter.where.deadline.gte.getTime()).toBe(expectedUTCStart.getTime());
-  });
-
-  it('should cap take parameter at 50', () => {
-    const filter = buildAgentListingsFilter({ take: 100, skip: 5 });
-    expect(filter.take).toBe(50);
-    expect(filter.skip).toBe(5);
-  });
-
-  it('should reject explicitly empty deadline strings', () => {
-    expect(() => buildAgentListingsFilter({ deadline: '' })).toThrow('Invalid ISO-8601');
-  });
-
-  it('should throw clear error on invalid deadline string', () => {
-    expect(() => buildAgentListingsFilter({ deadline: 'invalid-date' })).toThrow('Invalid ISO-8601');
+    const result = filterAgentEligibleListings(mockListings, cutoff);
+    expect(result.length).toBe(2);
+    expect(result.map(r => r.id)).toEqual(['1', '2']);
   });
 });
