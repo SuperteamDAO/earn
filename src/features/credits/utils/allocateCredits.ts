@@ -1,11 +1,13 @@
 import { prisma } from '@/prisma';
 import { CreditEventType, SubmissionLabels } from '@/prisma/enums';
+import { LockNotAcquiredError, withRedisLock } from '@/lib/with-redis-lock';
 import { dayjs } from '@/utils/dayjs';
 
 const currentMonth = dayjs.utc().startOf('month').toDate();
 const nextMonth = dayjs.utc().add(1, 'month').startOf('month').toDate();
 
 type PrismaLike = Pick<typeof prisma, 'creditLedger'>;
+type CreditPenaltyResult = { created: boolean };
 
 export async function consumeCredit(
   userId: string,
@@ -68,27 +70,52 @@ export async function addGrantWinBonusCredit(
   });
 }
 
-export async function addSpamPenaltyCredit(submissionId: string) {
+export async function addSpamPenaltyCredit(
+  submissionId: string,
+): Promise<CreditPenaltyResult> {
   try {
-    const submission = await prisma.submission.findFirst({
-      where: { id: submissionId, label: SubmissionLabels.Spam },
-      select: { id: true, userId: true },
-    });
+    return await withRedisLock(
+      `locks:credit-penalty:submission:${submissionId}`,
+      async () => {
+        const submission = await prisma.submission.findFirst({
+          where: { id: submissionId, label: SubmissionLabels.Spam },
+          select: { id: true, userId: true },
+        });
 
-    if (!submission) {
-      throw new Error('Submission not found');
+        if (!submission) {
+          throw new Error('Submission not found');
+        }
+
+        const existingPenalty = await prisma.creditLedger.findFirst({
+          where: {
+            submissionId: submission.id,
+            type: CreditEventType.SPAM_PENALTY,
+          },
+          select: { id: true },
+        });
+
+        if (existingPenalty) {
+          return { created: false };
+        }
+
+        await prisma.creditLedger.create({
+          data: {
+            userId: submission.userId,
+            submissionId: submission.id,
+            type: CreditEventType.SPAM_PENALTY,
+            effectiveMonth: nextMonth,
+            change: -1,
+          },
+        });
+
+        return { created: true };
+      },
+    );
+  } catch (error) {
+    if (error instanceof LockNotAcquiredError) {
+      return { created: false };
     }
 
-    await prisma.creditLedger.create({
-      data: {
-        userId: submission.userId,
-        submissionId: submission.id,
-        type: CreditEventType.SPAM_PENALTY,
-        effectiveMonth: nextMonth,
-        change: -1,
-      },
-    });
-  } catch (error) {
     console.error('[CreditAllocation] Failed to add spam penalty credit', {
       submissionId,
       error,
@@ -100,16 +127,48 @@ export async function addSpamPenaltyCredit(submissionId: string) {
 export async function addSpamPenaltyGrant(
   userId: string,
   applicationId: string,
-) {
-  await prisma.creditLedger.create({
-    data: {
+): Promise<CreditPenaltyResult> {
+  try {
+    return await withRedisLock(
+      `locks:credit-penalty:grant-application:${applicationId}`,
+      async () => {
+        const existingPenalty = await prisma.creditLedger.findFirst({
+          where: {
+            applicationId,
+            type: CreditEventType.GRANT_SPAM_PENALTY,
+          },
+          select: { id: true },
+        });
+
+        if (existingPenalty) {
+          return { created: false };
+        }
+
+        await prisma.creditLedger.create({
+          data: {
+            userId,
+            applicationId,
+            type: CreditEventType.GRANT_SPAM_PENALTY,
+            effectiveMonth: nextMonth,
+            change: -1,
+          },
+        });
+
+        return { created: true };
+      },
+    );
+  } catch (error) {
+    if (error instanceof LockNotAcquiredError) {
+      return { created: false };
+    }
+
+    console.error('[CreditAllocation] Failed to add grant spam penalty credit', {
       userId,
       applicationId,
-      type: CreditEventType.GRANT_SPAM_PENALTY,
-      effectiveMonth: nextMonth,
-      change: -1,
-    },
-  });
+      error,
+    });
+    throw error;
+  }
 }
 
 export async function addCreditDispute(
