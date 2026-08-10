@@ -117,7 +117,10 @@ export const verifyExternalPaymentRequestSchema = z.object({
         }),
     )
     .min(1)
-    .max(25),
+    .refine(
+      (payments) => payments.filter((payment) => payment.txId).length <= 25,
+      { message: 'Cannot verify more than 25 transaction IDs at once' },
+    ),
 });
 
 export const addSubmissionPaymentRequestSchema = z.object({

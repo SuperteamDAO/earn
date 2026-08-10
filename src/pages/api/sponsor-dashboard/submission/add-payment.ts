@@ -202,12 +202,6 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         isPaid: isFullyPaid,
         paymentDetails: finalPaymentDetails,
       },
-      select: {
-        id: true,
-        listingId: true,
-        isPaid: true,
-        paymentDetails: true,
-      },
     });
 
     const bountyId = result.listingId;
