@@ -9,12 +9,7 @@ import { safeStringify } from '@/utils/safeStringify';
 
 import { getPrivyToken } from '@/features/auth/utils/getPrivyToken';
 import { type FeedPostType } from '@/features/feed/types';
-import {
-  decodeCursor,
-  encodeCursor,
-  getFeedLikes,
-  getFeedPage,
-} from '@/services/feedService';
+import { decodeCursor, encodeCursor, getFeedPage } from '@/services/feedService';
 
 export default async function handler(
   req: NextApiRequest,
@@ -49,11 +44,6 @@ export default async function handler(
 
   let highlightType = req.query.highlightType as FeedPostType | undefined;
   let highlightId = req.query.highlightId as string | undefined;
-  if (cursor) {
-    // Don't re-pin highlight on paginated requests — it would replay page 1
-    highlightId = undefined;
-    highlightType = undefined;
-  }
   const takeOnlyType = req.query.takeOnlyType as FeedPostType | undefined;
 
   try {
@@ -152,13 +142,12 @@ export default async function handler(
     const gaIds = feedItems.filter((i) => i.type === 'grant-application').map((i) => i.id);
 
     // Step 3: Batch fetch records + likes
-    const [submissions, powList, gaList, { subLikes, poWLikes, gaLikes }] =
-      await Promise.all([
-        subIds.length > 0
-          ? prisma.submission.findMany({
-              where: { id: { in: subIds } },
-              include: {
-                user: {
+    const [submissions, powList, gaList] = await Promise.all([
+      subIds.length > 0
+        ? prisma.submission.findMany({
+            where: { id: { in: subIds } },
+            include: {
+              user: {
                   select: {
                     firstName: true,
                     lastName: true,
@@ -253,7 +242,6 @@ export default async function handler(
               },
             })
           : ([] as any[]),
-        getFeedLikes(subIds, powIds, gaIds),
       ]);
 
     // Step 4: Build ID maps for ordering
@@ -261,21 +249,12 @@ export default async function handler(
     const powMap = new Map(powList.map((p) => [p.id, p]));
     const gaMap = new Map(gaList.map((g) => [g.id, g]));
 
-    const likesByTargetId = (
-      likes: { targetId: string; userId: string; createdAt: Date }[],
-    ) => {
-      const map = new Map<string, { id: string; date: number }[]>();
-      for (const like of likes) {
-        const arr = map.get(like.targetId) ?? [];
-        arr.push({ id: like.userId, date: like.createdAt.getTime() });
-        map.set(like.targetId, arr);
-      }
-      return map;
-    };
+    const asLikes = (v: unknown): { id: string; date: number }[] =>
+      (v as { id: string; date: number }[] | null) ?? [];
 
-    const subLikesMap = likesByTargetId(subLikes);
-    const poWLikesMap = likesByTargetId(poWLikes);
-    const gaLikesMap = likesByTargetId(gaLikes);
+    const subLikesMap = new Map(submissions.map((s) => [s.id, asLikes(s.like)]));
+    const poWLikesMap = new Map(powList.map((p) => [p.id, asLikes(p.like)]));
+    const gaLikesMap = new Map(gaList.map((g) => [g.id, asLikes(g.like)]));
 
     // Step 5: Build results in UNION order — no in-memory sort needed
     const results: Record<string, unknown>[] = [];
@@ -437,19 +416,15 @@ export default async function handler(
 
     // Step 6: Build cursor for next page
     const lastItem = feedItems[feedItems.length - 1]!;
-    const nextCursor = feedItems.length === take
-      ? encodeCursor(
-          filter === 'popular'
-            ? {
-                likeCount: lastItem.likeCount,
-                createdAt: lastItem.createdAt.toISOString(),
-                id: lastItem.id,
-              }
-            : {
-                sortDate: lastItem.sortDate.toISOString(),
-                id: lastItem.id,
-              },
-        )
+    const nextCursor = feedItems.length >= take
+      ? encodeCursor({
+          type: lastItem.type,
+          sortDate: lastItem.sortDate.toISOString(),
+          ...(filter === 'popular'
+            ? { likeCount: lastItem.likeCount }
+            : {}),
+          id: lastItem.id,
+        })
       : null;
 
     res.status(200).json({ data: results, nextCursor });

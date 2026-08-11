@@ -87,7 +87,7 @@ export const Feed = ({ isWinner = false, id, type, meta }: Props) => {
     );
   };
 
-  const feedItems = data?.pages.flatMap((page) => page) ?? [];
+  const feedItems = data?.pages.flatMap((page) => page.data) ?? [];
 
   return (
     <FeedPageLayout isHomePage meta={meta}>

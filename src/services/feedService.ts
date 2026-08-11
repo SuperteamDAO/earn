@@ -1,11 +1,12 @@
 import { prisma } from '@/prisma';
 
+export type FeedType = 'submission' | 'pow' | 'grant-application';
+
 export interface FeedItem {
   id: string;
-  type: 'submission' | 'pow' | 'grant-application';
+  type: FeedType;
   sortDate: Date;
   likeCount: number;
-  createdAt: Date;
 }
 
 export interface FeedFilters {
@@ -24,9 +25,17 @@ export interface FeedFilters {
 export interface FeedCursor {
   sortDate?: string;
   likeCount?: number;
-  createdAt?: string;
+  type: FeedType;
   id: string;
 }
+
+const ID_COLUMN: Record<FeedType, string> = {
+  submission: 's.id',
+  pow: 'p.id',
+  'grant-application': 'ga.id',
+};
+
+const CURSOR_TYPE_COLUMN = 'type';
 
 export function encodeCursor(c: FeedCursor): string {
   return Buffer.from(JSON.stringify(c), 'utf8').toString('base64');
@@ -35,12 +44,17 @@ export function encodeCursor(c: FeedCursor): string {
 export function decodeCursor(encoded: string): FeedCursor | null {
   try {
     const raw = JSON.parse(Buffer.from(encoded, 'base64').toString('utf8'));
-    if (typeof raw !== 'object' || raw === null || typeof raw.id !== 'string') {
+    if (typeof raw !== 'object' || raw === null) return null;
+    if (typeof raw.id !== 'string') return null;
+    if (
+      raw.type !== 'submission' &&
+      raw.type !== 'pow' &&
+      raw.type !== 'grant-application'
+    ) {
       return null;
     }
     if (raw.sortDate !== undefined && typeof raw.sortDate !== 'string') return null;
     if (raw.likeCount !== undefined && typeof raw.likeCount !== 'number') return null;
-    if (raw.createdAt !== undefined && typeof raw.createdAt !== 'string') return null;
     return raw as FeedCursor;
   } catch {
     return null;
@@ -50,6 +64,119 @@ export function decodeCursor(encoded: string): FeedCursor | null {
 function addParam(params: unknown[], value: unknown): string {
   params.push(value);
   return '?';
+}
+
+interface BranchSql {
+  sql: string;
+  params: unknown[];
+}
+
+// Winner-aware sort date: announced winners sort by the announcement date,
+// everything else by createdAt. Matches the createdAt value the API returns.
+const SUBMISSION_SORT_DATE =
+  'CASE WHEN s.isWinner = 1 AND b.isWinnersAnnounced = 1 AND b.winnersAnnouncedAt IS NOT NULL THEN b.winnersAnnouncedAt ELSE s.createdAt END as sortDate';
+
+function buildSubmissionBranch(filters: FeedFilters): BranchSql {
+  const params: unknown[] = [];
+  const where: string[] = [];
+  where.push(`s.createdAt <= ${addParam(params, filters.endDate)}`);
+  if (filters.startDate) {
+    where.push(`s.createdAt >= ${addParam(params, filters.startDate)}`);
+  }
+  if (filters.isWinner) {
+    where.push('s.isWinner = 1 AND b.isWinnersAnnounced = 1');
+  }
+  if (filters.profileUserId) {
+    if (filters.shouldIncludeAgentSubmissions && filters.profileAgentId) {
+      where.push(
+        `(s.userId = ${addParam(params, filters.profileUserId)} OR s.agentId = ${addParam(params, filters.profileAgentId)})`,
+      );
+    } else {
+      where.push(`s.userId = ${addParam(params, filters.profileUserId)}`);
+    }
+  } else {
+    where.push('b.isPrivate = 0');
+  }
+  const sql = `SELECT s.id, 'submission' as type, ${SUBMISSION_SORT_DATE}, s.likeCount FROM Submission s JOIN Bounties b ON s.listingId = b.id WHERE ${where.join(' AND ')}`;
+  return { sql, params };
+}
+
+function buildPoWBranch(filters: FeedFilters): BranchSql | null {
+  if (filters.isWinner) return null; // PoWs excluded when isWinner filter is active
+  const params: unknown[] = [];
+  const where: string[] = [];
+  where.push(`p.createdAt <= ${addParam(params, filters.endDate)}`);
+  if (filters.startDate) {
+    where.push(`p.createdAt >= ${addParam(params, filters.startDate)}`);
+  }
+  if (filters.profileUserId) {
+    where.push(`p.userId = ${addParam(params, filters.profileUserId)}`);
+  }
+  const sql = `SELECT p.id, 'pow' as type, p.createdAt as sortDate, p.likeCount FROM PoW p WHERE ${where.join(' AND ')}`;
+  return { sql, params };
+}
+
+function buildGrantBranch(filters: FeedFilters): BranchSql {
+  const params: unknown[] = [];
+  const where: string[] = [];
+  where.push(`ga.applicationStatus IN ('Approved', 'Completed')`);
+  where.push(`ga.decidedAt <= ${addParam(params, filters.endDate)}`);
+  if (filters.startDate) {
+    where.push(`ga.decidedAt >= ${addParam(params, filters.startDate)}`);
+  }
+  if (filters.profileUserId) {
+    where.push(`ga.userId = ${addParam(params, filters.profileUserId)}`);
+  }
+  if (!filters.profileUserId) {
+    where.push('g.isPrivate = 0');
+  }
+  const sql = `SELECT ga.id, 'grant-application' as type, COALESCE(ga.decidedAt, ga.createdAt) as sortDate, ga.likeCount FROM GrantApplication ga JOIN Grants g ON ga.grantId = g.id WHERE ${where.join(' AND ')}`;
+  return { sql, params };
+}
+
+function getBranch(type: FeedType, filters: FeedFilters): BranchSql | null {
+  switch (type) {
+    case 'submission':
+      return buildSubmissionBranch(filters);
+    case 'pow':
+      return buildPoWBranch(filters);
+    case 'grant-application':
+      return buildGrantBranch(filters);
+    default:
+      return null;
+  }
+}
+
+function isHighlightInBranches(filters: FeedFilters, hlType?: string): boolean {
+  if (!hlType) return false;
+  if (hlType === 'submission') {
+    return !filters.takeOnlyType || filters.takeOnlyType === 'submission';
+  }
+  if (hlType === 'pow') {
+    return (
+      !filters.isWinner &&
+      (!filters.takeOnlyType || filters.takeOnlyType === 'pow')
+    );
+  }
+  if (hlType === 'grant-application') {
+    return (
+      !filters.takeOnlyType || filters.takeOnlyType === 'grant-application'
+    );
+  }
+  return false;
+}
+
+function buildHighlightSql(
+  hlType: FeedType,
+  hlId: string,
+  filters: FeedFilters,
+): BranchSql | null {
+  const branch = getBranch(hlType, filters);
+  if (!branch) return null;
+  return {
+    sql: `${branch.sql} AND ${ID_COLUMN[hlType]} = ?`,
+    params: [...branch.params, hlId],
+  };
 }
 
 export async function getFeedPage(
@@ -63,118 +190,66 @@ export async function getFeedPage(
   return getUnionPage(filters, cursor, take);
 }
 
+const getOrderExpr = (isPopular: boolean): string =>
+  isPopular
+    ? 'likeCount DESC, sortDate DESC, type DESC, id DESC'
+    : 'sortDate DESC, type DESC, id DESC';
+
+const getOrderBy = (isPopular: boolean): string => `ORDER BY ${getOrderExpr(isPopular)}`;
+
 async function getSingleTypePage(
   filters: FeedFilters,
   cursor: FeedCursor | null,
   take: number,
 ): Promise<FeedItem[]> {
   const isPopular = filters.filter === 'popular';
+  const type = filters.takeOnlyType as FeedType;
+  const branch = getBranch(type, filters);
+  if (!branch) return [];
+
+  const useHighlight =
+    !!filters.highlightId &&
+    filters.highlightType === type &&
+    isHighlightInBranches(filters, filters.highlightType);
+
+  const orderBy = getOrderBy(isPopular);
   const params: unknown[] = [];
+  let sql: string;
 
-  let sql = '';
-
-  switch (filters.takeOnlyType) {
-    case 'submission': {
-      sql = `SELECT s.id, 'submission' as type, COALESCE(b.winnersAnnouncedAt, s.createdAt) as sortDate, s.likeCount, s.createdAt FROM Submission s JOIN Bounties b ON s.listingId = b.id`;
-      const subWhere: string[] = [];
-      subWhere.push(`s.createdAt <= ${addParam(params, filters.endDate)}`);
-      if (filters.startDate) subWhere.push(`s.createdAt >= ${addParam(params, filters.startDate)}`);
-      if (filters.isWinner) {
-        subWhere.push('s.isWinner = 1 AND b.isWinnersAnnounced = 1');
-      }
-      if (filters.profileUserId) {
-        if (filters.shouldIncludeAgentSubmissions && filters.profileAgentId) {
-          subWhere.push(`(s.userId = ${addParam(params, filters.profileUserId)} OR s.agentId = ${addParam(params, filters.profileAgentId)})`);
-        } else {
-          subWhere.push(`s.userId = ${addParam(params, filters.profileUserId)}`);
-        }
-      } else {
-        subWhere.push('b.isPrivate = 0');
-      }
-      sql += ' WHERE ' + subWhere.join(' AND ');
-      break;
-    }
-    case 'pow': {
-      sql = `SELECT p.id, 'pow' as type, p.createdAt as sortDate, p.likeCount, p.createdAt FROM PoW p`;
-      const powWhere: string[] = [];
-      powWhere.push(`p.createdAt <= ${addParam(params, filters.endDate)}`);
-      if (filters.startDate) powWhere.push(`p.createdAt >= ${addParam(params, filters.startDate)}`);
-      if (filters.profileUserId) powWhere.push(`p.userId = ${addParam(params, filters.profileUserId)}`);
-      if (filters.isWinner) return []; // PoWs excluded when isWinner filter is active
-      sql += ' WHERE ' + powWhere.join(' AND ');
-      break;
-    }
-    case 'grant-application': {
-      sql = `SELECT ga.id, 'grant-application' as type, COALESCE(ga.decidedAt, ga.createdAt) as sortDate, ga.likeCount, ga.createdAt FROM GrantApplication ga JOIN Grants g ON ga.grantId = g.id`;
-      const gaWhere: string[] = [];
-      gaWhere.push(`ga.applicationStatus IN ('Approved', 'Completed')`);
-      gaWhere.push(`ga.decidedAt <= ${addParam(params, filters.endDate)}`);
-      if (filters.startDate) gaWhere.push(`ga.decidedAt >= ${addParam(params, filters.startDate)}`);
-      if (filters.profileUserId) gaWhere.push(`ga.userId = ${addParam(params, filters.profileUserId)}`);
-      if (!filters.profileUserId) gaWhere.push('g.isPrivate = 0');
-      sql += ' WHERE ' + gaWhere.join(' AND ');
-      break;
-    }
-    default:
-      return [];
-  }
-
-  const branchParams = [...params];
-
-  // Handle highlight
-  if (filters.highlightId && filters.highlightType === filters.takeOnlyType) {
-    // Final SQL: (hlSql) UNION ALL (SELECT * FROM (branchSql) AS base WHERE base.id != ?)
-    // Params: [hlId, ...branchParams, hlId, hlId, take]
-    const hlId = filters.highlightId;
-    const hlType = filters.takeOnlyType!;
-
-    let hlSql: string;
-    switch (hlType) {
-      case 'submission':
-        hlSql = `SELECT s.id, 'submission' as type, COALESCE(b.winnersAnnouncedAt, s.createdAt) as sortDate, s.likeCount, s.createdAt FROM Submission s JOIN Bounties b ON s.listingId = b.id WHERE s.id = ?`;
-        break;
-      case 'pow':
-        hlSql = `SELECT p.id, 'pow' as type, p.createdAt as sortDate, p.likeCount, p.createdAt FROM PoW p WHERE p.id = ?`;
-        break;
-      case 'grant-application':
-        hlSql = `SELECT ga.id, 'grant-application' as type, COALESCE(ga.decidedAt, ga.createdAt) as sortDate, ga.likeCount, ga.createdAt FROM GrantApplication ga WHERE ga.id = ?`;
-        break;
-      default:
-        hlSql = '';
-    }
-
-    params.length = 0;
-    params.push(hlId); // hlSql WHERE id=?
-    params.push(...branchParams); // branch WHERE conditions
-    params.push(hlId); // base WHERE id != ?
-    params.push(hlId); // CASE WHEN id=?
-    params.push(take); // LIMIT
-
-    const baseSql = `SELECT * FROM (${sql}) AS base WHERE base.id != ?`;
-    if (isPopular) {
-      sql = `SELECT * FROM ((${hlSql}) UNION ALL (${baseSql})) AS combined ORDER BY (CASE WHEN id = ? THEN 1 ELSE 0 END) DESC, likeCount DESC, createdAt DESC, id DESC LIMIT ?`;
-    } else {
-      sql = `SELECT * FROM ((${hlSql}) UNION ALL (${baseSql})) AS combined ORDER BY (CASE WHEN id = ? THEN 1 ELSE 0 END) DESC, sortDate DESC, id DESC LIMIT ?`;
-    }
-  } else {
-    params.length = 0;
-    params.push(...branchParams);
+  if (useHighlight) {
+    const hlId = filters.highlightId!;
+    const hl = buildHighlightSql(type, hlId, filters);
 
     if (cursor) {
-      // Wrap in derived table so sortDate / likeCount / createdAt are referenceable
+      // Pages 2+: exclude the highlight (already shown on page 1), no pin
+      params.push(...branch.params, hlId);
+      sql = `SELECT * FROM (${branch.sql}) AS base WHERE base.id != ?`;
       if (isPopular) {
-        sql = `SELECT * FROM (${sql}) AS base WHERE (likeCount, createdAt, id) < (?, ?, ?) ORDER BY likeCount DESC, createdAt DESC, id DESC`;
-        params.push(cursor.likeCount!, cursor.createdAt!, cursor.id);
+        sql += ` AND (likeCount, sortDate, ${CURSOR_TYPE_COLUMN}, id) < (?, ?, ?, ?)`;
+        params.push(cursor.likeCount!, cursor.sortDate!, cursor.type, cursor.id);
       } else {
-        sql = `SELECT * FROM (${sql}) AS base WHERE (sortDate, id) < (?, ?) ORDER BY sortDate DESC, id DESC`;
-        params.push(cursor.sortDate!, cursor.id);
+        sql += ` AND (sortDate, ${CURSOR_TYPE_COLUMN}, id) < (?, ?, ?)`;
+        params.push(cursor.sortDate!, cursor.type, cursor.id);
+      }
+      sql += ` ${orderBy} LIMIT ?`;
+      params.push(take);
+    } else {
+      // Page 1: pin the highlight on top; it's extra, so normal page size is kept
+      params.push(...hl!.params, ...branch.params, hlId, take, hlId, take + 1);
+      sql = `SELECT * FROM ((${hl!.sql}) UNION ALL (SELECT * FROM (${branch.sql}) AS base WHERE base.id != ? ${getOrderBy(isPopular)} LIMIT ?)) AS combined ORDER BY (CASE WHEN id = ? THEN 1 ELSE 0 END) DESC, ${getOrderExpr(isPopular)} LIMIT ?`;
+    }
+  } else {
+    params.push(...branch.params);
+    if (cursor) {
+      if (isPopular) {
+        sql = `SELECT * FROM (${branch.sql}) AS base WHERE (likeCount, sortDate, ${CURSOR_TYPE_COLUMN}, id) < (?, ?, ?, ?) ${orderBy}`;
+        params.push(cursor.likeCount!, cursor.sortDate!, cursor.type, cursor.id);
+      } else {
+        sql = `SELECT * FROM (${branch.sql}) AS base WHERE (sortDate, ${CURSOR_TYPE_COLUMN}, id) < (?, ?, ?) ${orderBy}`;
+        params.push(cursor.sortDate!, cursor.type, cursor.id);
       }
     } else {
-      if (isPopular) {
-        sql += ` ORDER BY likeCount DESC, createdAt DESC, id DESC`;
-      } else {
-        sql += ` ORDER BY sortDate DESC, id DESC`;
-      }
+      sql = `SELECT * FROM (${branch.sql}) AS base ${orderBy}`;
     }
     sql += ` LIMIT ?`;
     params.push(take);
@@ -190,148 +265,73 @@ async function getUnionPage(
   take: number,
 ): Promise<FeedItem[]> {
   const isPopular = filters.filter === 'popular';
-  const useHighlight = filters.highlightId && filters.highlightType;
-  const branches: string[] = [];
-  const branchParams: unknown[] = [];
+  const branches: BranchSql[] = [];
 
-  // Submission branch
   if (!filters.takeOnlyType || filters.takeOnlyType === 'submission') {
-    let subSql = `SELECT s.id, 'submission' as type, COALESCE(b.winnersAnnouncedAt, s.createdAt) as sortDate, s.likeCount, s.createdAt FROM Submission s JOIN Bounties b ON s.listingId = b.id WHERE s.createdAt <= ${addParam(branchParams, filters.endDate)}`;
-    if (filters.startDate) subSql += ` AND s.createdAt >= ${addParam(branchParams, filters.startDate)}`;
-    if (filters.isWinner) subSql += ' AND s.isWinner = 1 AND b.isWinnersAnnounced = 1';
-    if (filters.profileUserId) {
-      if (filters.shouldIncludeAgentSubmissions && filters.profileAgentId) {
-        subSql += ` AND (s.userId = ${addParam(branchParams, filters.profileUserId)} OR s.agentId = ${addParam(branchParams, filters.profileAgentId)})`;
-      } else {
-        subSql += ` AND s.userId = ${addParam(branchParams, filters.profileUserId)}`;
-      }
-    } else {
-      subSql += ' AND b.isPrivate = 0';
-    }
-    branches.push(subSql);
+    branches.push(buildSubmissionBranch(filters));
   }
-
-  // PoW branch
-  if (!filters.isWinner && (!filters.takeOnlyType || filters.takeOnlyType === 'pow')) {
-    let powSql = `SELECT p.id, 'pow' as type, p.createdAt as sortDate, p.likeCount, p.createdAt FROM PoW p WHERE p.createdAt <= ${addParam(branchParams, filters.endDate)}`;
-    if (filters.startDate) powSql += ` AND p.createdAt >= ${addParam(branchParams, filters.startDate)}`;
-    if (filters.profileUserId) powSql += ` AND p.userId = ${addParam(branchParams, filters.profileUserId)}`;
-    branches.push(powSql);
+  const pow = buildPoWBranch(filters);
+  if (pow && (!filters.takeOnlyType || filters.takeOnlyType === 'pow')) {
+    branches.push(pow);
   }
-
-  // GrantApplication branch
   if (!filters.takeOnlyType || filters.takeOnlyType === 'grant-application') {
-    let gaSql = `SELECT ga.id, 'grant-application' as type, COALESCE(ga.decidedAt, ga.createdAt) as sortDate, ga.likeCount, ga.createdAt FROM GrantApplication ga JOIN Grants g ON ga.grantId = g.id WHERE ga.applicationStatus IN ('Approved', 'Completed') AND ga.decidedAt <= ${addParam(branchParams, filters.endDate)}`;
-    if (filters.startDate) gaSql += ` AND ga.decidedAt >= ${addParam(branchParams, filters.startDate)}`;
-    if (filters.profileUserId) gaSql += ` AND ga.userId = ${addParam(branchParams, filters.profileUserId)}`;
-    if (!filters.profileUserId) gaSql += ' AND g.isPrivate = 0';
-    branches.push(gaSql);
+    branches.push(buildGrantBranch(filters));
   }
 
   if (branches.length === 0) return [];
 
-  const unionSql = branches.join(' UNION ALL ');
+  const unionSql = branches.map((b) => b.sql).join(' UNION ALL ');
+  const branchParams = branches.flatMap((b) => b.params);
+
+  const useHighlight =
+    !!filters.highlightId &&
+    !!filters.highlightType &&
+    isHighlightInBranches(filters, filters.highlightType);
+
+  const orderBy = getOrderBy(isPopular);
   const params: unknown[] = [];
-
-  // Check if highlight matches any branch
-  const hlId = filters.highlightId;
-  const hlType = filters.highlightType;
-  const isInBranches = useHighlight && (
-    (hlType === 'submission' && (!filters.takeOnlyType || filters.takeOnlyType === 'submission')) ||
-    (hlType === 'pow' && !filters.isWinner && (!filters.takeOnlyType || filters.takeOnlyType === 'pow')) ||
-    (hlType === 'grant-application' && (!filters.takeOnlyType || filters.takeOnlyType === 'grant-application'))
-  );
-
-  // Build the final SQL and params array in the correct order (params must match ? appearance order)
   let sql: string;
 
-  if (isInBranches) {
-    // Highlight path: final SQL structure is
-    // (hlSql) UNION ALL (SELECT * FROM (unionSql) AS base WHERE base.id != ?)
-    // ORDER BY CASE WHEN id=? THEN 1 ELSE 0 END DESC, ... LIMIT ?
-    // Params order: [hl_param, ...branchParams, exclude_param, case_param, limit_param]
-
-    let hlSql: string;
-    switch (hlType) {
-      case 'submission':
-        hlSql = `SELECT s.id, 'submission' as type, COALESCE(b.winnersAnnouncedAt, s.createdAt) as sortDate, s.likeCount, s.createdAt FROM Submission s JOIN Bounties b ON s.listingId = b.id WHERE s.id = ?`;
-        break;
-      case 'pow':
-        hlSql = `SELECT p.id, 'pow' as type, p.createdAt as sortDate, p.likeCount, p.createdAt FROM PoW p WHERE p.id = ?`;
-        break;
-      case 'grant-application':
-        hlSql = `SELECT ga.id, 'grant-application' as type, COALESCE(ga.decidedAt, ga.createdAt) as sortDate, ga.likeCount, ga.createdAt FROM GrantApplication ga WHERE ga.id = ?`;
-        break;
-      default:
-        hlSql = '';
-    }
-
-    params.push(hlId!); // hlSql WHERE id=?
-    params.push(...branchParams); // union branches
-    params.push(hlId!); // base WHERE id != ?
-    params.push(hlId!); // CASE WHEN id=?
-    params.push(take); // LIMIT
-
-    const baseSql = `SELECT * FROM (${unionSql}) AS base WHERE base.id != ?`;
-    if (isPopular) {
-      sql = `SELECT * FROM ((${hlSql}) UNION ALL (${baseSql})) AS combined ORDER BY (CASE WHEN id = ? THEN 1 ELSE 0 END) DESC, likeCount DESC, createdAt DESC, id DESC LIMIT ?`;
-    } else {
-      sql = `SELECT * FROM ((${hlSql}) UNION ALL (${baseSql})) AS combined ORDER BY (CASE WHEN id = ? THEN 1 ELSE 0 END) DESC, sortDate DESC, id DESC LIMIT ?`;
-    }
-  } else {
-    // No highlight (or highlight not in branches): push branchParams, then cursor/pagination params
-    params.push(...branchParams);
+  if (useHighlight) {
+    const hlId = filters.highlightId!;
+    const hlType = filters.highlightType as FeedType;
+    const hl = buildHighlightSql(hlType, hlId, filters);
 
     if (cursor) {
+      // Pages 2+: exclude the highlight (already shown on page 1), no pin
+      params.push(...branchParams, hlId);
+      sql = `SELECT * FROM (${unionSql}) AS base WHERE base.id != ?`;
       if (isPopular) {
-        sql = `SELECT * FROM (${unionSql}) AS base WHERE (likeCount, createdAt, id) < (?, ?, ?)`;
-        params.push(cursor.likeCount!, cursor.createdAt!, cursor.id);
+        sql += ` AND (likeCount, sortDate, ${CURSOR_TYPE_COLUMN}, id) < (?, ?, ?, ?)`;
+        params.push(cursor.likeCount!, cursor.sortDate!, cursor.type, cursor.id);
       } else {
-        sql = `SELECT * FROM (${unionSql}) AS base WHERE (sortDate, id) < (?, ?)`;
-        params.push(cursor.sortDate!, cursor.id);
+        sql += ` AND (sortDate, ${CURSOR_TYPE_COLUMN}, id) < (?, ?, ?)`;
+        params.push(cursor.sortDate!, cursor.type, cursor.id);
+      }
+      sql += ` ${orderBy} LIMIT ?`;
+      params.push(take);
+    } else {
+      // Page 1: pin the highlight on top; it's extra, so normal page size is kept
+      params.push(...hl!.params, ...branchParams, hlId, take, hlId, take + 1);
+      sql = `SELECT * FROM ((${hl!.sql}) UNION ALL (SELECT * FROM (${unionSql}) AS base WHERE base.id != ? ${getOrderBy(isPopular)} LIMIT ?)) AS combined ORDER BY (CASE WHEN id = ? THEN 1 ELSE 0 END) DESC, ${getOrderExpr(isPopular)} LIMIT ?`;
+    }
+  } else {
+    params.push(...branchParams);
+    if (cursor) {
+      if (isPopular) {
+        sql = `SELECT * FROM (${unionSql}) AS base WHERE (likeCount, sortDate, ${CURSOR_TYPE_COLUMN}, id) < (?, ?, ?, ?) ${orderBy}`;
+        params.push(cursor.likeCount!, cursor.sortDate!, cursor.type, cursor.id);
+      } else {
+        sql = `SELECT * FROM (${unionSql}) AS base WHERE (sortDate, ${CURSOR_TYPE_COLUMN}, id) < (?, ?, ?) ${orderBy}`;
+        params.push(cursor.sortDate!, cursor.type, cursor.id);
       }
     } else {
-      sql = `SELECT * FROM (${unionSql}) AS base`;
+      sql = `SELECT * FROM (${unionSql}) AS base ${orderBy}`;
     }
-
-    if (isPopular) sql += ' ORDER BY likeCount DESC, createdAt DESC, id DESC';
-    else sql += ' ORDER BY sortDate DESC, id DESC';
-    sql += ' LIMIT ?';
+    sql += ` LIMIT ?`;
     params.push(take);
   }
 
   const rows = await prisma.$queryRawUnsafe<FeedItem[]>(sql, ...params);
   return rows;
-}
-
-export async function getFeedLikes(
-  subIds: string[],
-  powIds: string[],
-  gaIds: string[],
-): Promise<{
-  subLikes: { targetId: string; userId: string; createdAt: Date }[];
-  poWLikes: { targetId: string; userId: string; createdAt: Date }[];
-  gaLikes: { targetId: string; userId: string; createdAt: Date }[];
-}> {
-  const [subLikes, poWLikes, gaLikes] = await Promise.all([
-    subIds.length > 0
-      ? prisma.likes.findMany({
-          where: { targetType: 'SUBMISSION', targetId: { in: subIds } },
-          select: { targetId: true, userId: true, createdAt: true },
-        })
-      : [],
-    powIds.length > 0
-      ? prisma.likes.findMany({
-          where: { targetType: 'POW', targetId: { in: powIds } },
-          select: { targetId: true, userId: true, createdAt: true },
-        })
-      : [],
-    gaIds.length > 0
-      ? prisma.likes.findMany({
-          where: { targetType: 'GRANT_APPLICATION', targetId: { in: gaIds } },
-          select: { targetId: true, userId: true, createdAt: true },
-        })
-      : [],
-  ]);
-  return { subLikes, poWLikes, gaLikes };
 }
