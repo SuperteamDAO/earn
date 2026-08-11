@@ -62,6 +62,58 @@ export interface Listing {
   ai?: ProjectAi | BountiesAi;
 }
 
+/**
+ * Listing data that is safe to expose on the public listing details route.
+ *
+ * Keep internal review configuration out of this contract. The API route also
+ * enforces this boundary with an explicit Prisma select.
+ */
+export type PublicListing = Omit<Listing, 'ai'>;
+
+type PublicListingDetailsFields =
+  | 'id'
+  | 'title'
+  | 'slug'
+  | 'description'
+  | 'deadline'
+  | 'commitmentDate'
+  | 'eligibility'
+  | 'status'
+  | 'token'
+  | 'rewardAmount'
+  | 'rewards'
+  | 'maxBonusSpots'
+  | 'sponsorId'
+  | 'sponsor'
+  | 'poc'
+  | 'isPublished'
+  | 'skills'
+  | 'type'
+  | 'requirements'
+  | 'isWinnersAnnounced'
+  | 'region'
+  | 'pocSocials'
+  | 'publishedAt'
+  | 'isPrivate'
+  | 'agentAccess'
+  | 'hackathonId'
+  | 'compensationType'
+  | 'maxRewardAsk'
+  | 'minRewardAsk'
+  | 'isFndnPaying'
+  | 'winnersAnnouncedAt'
+  | 'isPro'
+  | 'Hackathon';
+
+export type PublicListingDetails = Omit<
+  Pick<PublicListing, PublicListingDetailsFields>,
+  'id' | 'title' | 'slug'
+> & {
+  id: string;
+  title: string;
+  slug: string;
+};
+
 export interface ListingHackathon {
   name: string;
   logo: string;

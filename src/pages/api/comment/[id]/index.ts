@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
+import { parseBoundedIntegerParam } from '@/utils/apiPagination';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { fetchComments } from '@/features/comments/utils/fetchComments';
@@ -13,8 +14,26 @@ export default async function comment(
 
   const params = req.query;
   const refId = params.id as string;
-  const skip = params.skip ? parseInt(params.skip as string, 10) : 0;
-  const take = params.take ? parseInt(params.take as string, 10) : 0;
+  const skipResult = parseBoundedIntegerParam(params.skip, {
+    defaultValue: 0,
+    maxValue: 1000,
+    name: 'skip',
+  });
+  const takeResult = parseBoundedIntegerParam(params.take, {
+    defaultValue: 10,
+    maxValue: 50,
+    name: 'take',
+  });
+
+  if (!skipResult.ok) {
+    return res.status(400).json({ error: skipResult.error });
+  }
+  if (!takeResult.ok) {
+    return res.status(400).json({ error: takeResult.error });
+  }
+
+  const skip = skipResult.value;
+  const take = takeResult.value;
 
   logger.debug(`Fetching comments for listingId=${refId}, skip=${skip}`);
 

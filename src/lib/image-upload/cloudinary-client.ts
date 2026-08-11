@@ -1,5 +1,7 @@
 import { v2 as cloudinary } from 'cloudinary';
 
+import logger from '@/lib/logger';
+
 import { CLOUDINARY_CONFIG, UPLOAD_CONFIGS } from './config';
 import type { ImageSource, SignedUploadParams } from './types';
 
@@ -16,14 +18,18 @@ cloudinary.config({
 export function generateSignedUploadParams(
   source: ImageSource,
   publicId?: string,
+  ownerId?: string,
 ): SignedUploadParams {
   const config = UPLOAD_CONFIGS[source];
   const timestamp = Math.round(Date.now() / 1000);
+  const context = ownerId ? `owner_id=${ownerId}` : undefined;
 
   const paramsToSign: Record<string, string | number> = {
     timestamp,
     folder: config.folder,
   };
+
+  if (context) paramsToSign.context = context;
 
   if (publicId) {
     paramsToSign.public_id = publicId;
@@ -45,17 +51,54 @@ export function generateSignedUploadParams(
     apiKey: CLOUDINARY_CONFIG.apiKey,
     folder: config.folder,
     publicId,
+    context,
     eager: config.eager,
   };
 }
 
-export async function deleteImage(publicId: string): Promise<boolean> {
-  try {
-    const result = await cloudinary.uploader.destroy(publicId);
-    return result.result === 'ok';
-  } catch {
-    return false;
+export async function getImageOwnerId(
+  publicId: string,
+): Promise<string | null> {
+  for (const resourceType of ['image', 'raw'] as const) {
+    try {
+      const resource = await cloudinary.api.resource(publicId, {
+        resource_type: resourceType,
+        context: true,
+      });
+      const ownerId = resource.context?.custom?.owner_id;
+      return typeof ownerId === 'string' && ownerId ? ownerId : null;
+    } catch (error: any) {
+      if (error?.http_code !== 404 && error?.error?.http_code !== 404) {
+        throw error;
+      }
+    }
   }
+
+  return null;
+}
+
+export async function deleteImage(publicId: string): Promise<boolean> {
+  for (const resourceType of ['image', 'raw'] as const) {
+    try {
+      const result = await cloudinary.uploader.destroy(publicId, {
+        resource_type: resourceType,
+      });
+      if (result.result === 'ok') return true;
+    } catch (error: any) {
+      const isNotFound =
+        error?.http_code === 404 || error?.error?.http_code === 404;
+      if (isNotFound) continue;
+
+      logger.error('Cloudinary asset deletion failed', {
+        publicId,
+        resourceType,
+        error,
+      });
+      throw error;
+    }
+  }
+
+  return false;
 }
 
 export function extractPublicIdFromUrl(url: string): string | null {

@@ -3,20 +3,20 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
-import type { SubmissionWithUser } from '@/interface/submission';
+import type { ListingWinner } from '@/interface/submission';
 import { getWinningSubmissionsByListingId } from '@/pages/api/listings/[listingId]/winners';
 import { getListingDetailsBySlug } from '@/pages/api/listings/details/[slug]';
 import { sortRank } from '@/utils/rank';
 import { getURL } from '@/utils/validUrl';
 
 import { BONUS_REWARD_POSITION } from '@/features/listing-builder/constants';
-import { type Listing, type Rewards } from '@/features/listings/types';
+import { type PublicListingDetails } from '@/features/listings/types';
 import { getListingTypeLabel } from '@/features/listings/utils/status';
 
 interface BountyDetailsProps {
-  bounty: Listing | null;
+  bounty: PublicListingDetails | null;
   url: string;
-  submissions: SubmissionWithUser[];
+  submissions: StrippedSubmission[];
 }
 
 function WinnerBounty({
@@ -88,12 +88,12 @@ function WinnerBounty({
 
 interface StrippedSubmission {
   id: string;
-  winnerPosition: keyof Rewards | undefined;
+  winnerPosition: number | null;
   user: {
-    id: string | undefined;
-    firstName: string | undefined;
-    lastName: string | undefined;
-    photo: string | undefined;
+    id: string;
+    firstName: string | null;
+    lastName: string | null;
+    photo: string | null;
   };
 }
 
@@ -104,19 +104,25 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const host = req.headers.host;
   const fullUrl = `${protocol}://${host}/`;
 
-  let bountyData;
+  let bountyData: PublicListingDetails | null;
   const submissions: StrippedSubmission[] = [];
   try {
     bountyData = await getListingDetailsBySlug(String(slug));
+
+    if (!bountyData) {
+      throw new Error('Listing not found');
+    }
 
     let data = await getWinningSubmissionsByListingId(String(bountyData.id));
     data = data.filter((d) => d.winnerPosition !== BONUS_REWARD_POSITION);
     const winners = sortRank(
       data.map((submission) => submission.winnerPosition || NaN),
     );
-    const sortedSubmissions = winners.map((position) =>
-      data.find((d: SubmissionWithUser) => d.winnerPosition === position),
-    ) as SubmissionWithUser[];
+    const sortedSubmissions = winners
+      .map((position) =>
+        data.find((submission) => submission.winnerPosition === position),
+      )
+      .filter((submission): submission is ListingWinner => !!submission);
     sortedSubmissions.forEach((s) => {
       submissions.push({
         id: s.id,

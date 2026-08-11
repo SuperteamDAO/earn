@@ -23,7 +23,7 @@ import { ListingPop } from '@/features/conversion-popups/components/ListingPop';
 import { DescriptionUI } from '@/features/listings/components/ListingPage/DescriptionUI';
 import { listingWinnersQuery } from '@/features/listings/queries/listing-winners';
 import { submissionCountQuery } from '@/features/listings/queries/submission-count';
-import { type Listing } from '@/features/listings/types';
+import { type PublicListingDetails } from '@/features/listings/types';
 
 const ListingWinners = dynamic(
   () =>
@@ -34,7 +34,7 @@ const ListingWinners = dynamic(
 );
 
 interface ListingDetailsProps {
-  listing: Listing | null;
+  listing: PublicListingDetails | null;
   dehydratedState: DehydratedState;
 }
 
@@ -100,7 +100,7 @@ function ListingDetails({
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { slug } = context.query;
-  let listingData;
+  let listingData: PublicListingDetails | null;
   try {
     listingData = await getListingDetailsBySlug(String(slug));
   } catch (e) {

@@ -3,31 +3,51 @@ import { type NextApiRequest, type NextApiResponse } from 'next';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { type CommentFindManyArgs } from '@/prisma/models/Comment';
+import {
+  decodeCursor,
+  encodeCursor,
+  getFeedPage,
+} from '@/services/feedService';
+import { parseBoundedIntegerParam } from '@/utils/apiPagination';
 import { getCloudinaryFetchUrl } from '@/utils/cloudinary';
 import { dayjs } from '@/utils/dayjs';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { getPrivyToken } from '@/features/auth/utils/getPrivyToken';
 import { type FeedPostType } from '@/features/feed/types';
-import { decodeCursor, encodeCursor, getFeedPage } from '@/services/feedService';
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ): Promise<void> {
   logger.debug(`Request query: ${safeStringify(req.query)}`);
-  const {
-    timePeriod,
-    take: takeParam = 15,
-    cursor: cursorParam,
-    isWinner,
-    filter,
-    userId,
-  } = req.query;
+  const { timePeriod, isWinner, filter, userId } = req.query;
+  const takeResult = parseBoundedIntegerParam(req.query.take, {
+    defaultValue: 15,
+    maxValue: 30,
+    name: 'take',
+  });
+  const skipResult = parseBoundedIntegerParam(req.query.skip, {
+    defaultValue: 0,
+    maxValue: 1000,
+    name: 'skip',
+  });
+
+  if (!takeResult.ok) {
+    return res.status(400).json({ error: takeResult.error });
+  }
+  if (!skipResult.ok) {
+    return res.status(400).json({ error: skipResult.error });
+  }
+
+  const take = takeResult.value;
+  const skip = skipResult.value;
 
   const profileUserId = typeof userId === 'string' ? userId : null;
-  const take = Math.min(parseInt(takeParam as string, 10) || 15, 100);
-  const cursor = typeof cursorParam === 'string' ? decodeCursor(cursorParam) : null;
+  const cursor =
+    typeof req.query.cursor === 'string'
+      ? decodeCursor(req.query.cursor)
+      : null;
 
   let currentUserId: string | null = null;
   const privyDid = await getPrivyToken(req);
@@ -44,6 +64,7 @@ export default async function handler(
 
   let highlightType = req.query.highlightType as FeedPostType | undefined;
   let highlightId = req.query.highlightId as string | undefined;
+  if (skip !== 0) highlightId = undefined;
   const takeOnlyType = req.query.takeOnlyType as FeedPostType | undefined;
 
   try {
@@ -137,9 +158,13 @@ export default async function handler(
     }
 
     // Step 2: Separate IDs by type
-    const subIds = feedItems.filter((i) => i.type === 'submission').map((i) => i.id);
+    const subIds = feedItems
+      .filter((i) => i.type === 'submission')
+      .map((i) => i.id);
     const powIds = feedItems.filter((i) => i.type === 'pow').map((i) => i.id);
-    const gaIds = feedItems.filter((i) => i.type === 'grant-application').map((i) => i.id);
+    const gaIds = feedItems
+      .filter((i) => i.type === 'grant-application')
+      .map((i) => i.id);
 
     // Step 3: Batch fetch records + likes
     const [submissions, powList, gaList] = await Promise.all([
@@ -148,101 +173,101 @@ export default async function handler(
             where: { id: { in: subIds } },
             include: {
               user: {
-                  select: {
-                    firstName: true,
-                    lastName: true,
-                    photo: true,
-                    username: true,
-                  },
-                },
-                listing: {
-                  select: {
-                    id: true,
-                    title: true,
-                    rewards: true,
-                    type: true,
-                    slug: true,
-                    isWinnersAnnounced: true,
-                    token: true,
-                    sponsor: {
-                      select: {
-                        name: true,
-                        logo: true,
-                        slug: true,
-                      },
-                    },
-                    winnersAnnouncedAt: true,
-                    isPrivate: true,
-                  },
-                },
-                Comments: commentsInclude,
-                _count: {
-                  select: {
-                    Comments: commentsCountInclude,
-                  },
+                select: {
+                  firstName: true,
+                  lastName: true,
+                  photo: true,
+                  username: true,
                 },
               },
-            })
-          : ([] as any[]),
-        powIds.length > 0
-          ? prisma.poW.findMany({
-              where: { id: { in: powIds } },
-              include: {
-                user: {
-                  select: {
-                    firstName: true,
-                    lastName: true,
-                    photo: true,
-                    username: true,
-                  },
-                },
-                Comments: commentsInclude,
-                _count: {
-                  select: {
-                    Comments: commentsCountInclude,
-                  },
-                },
-              },
-            })
-          : ([] as any[]),
-        gaIds.length > 0
-          ? prisma.grantApplication.findMany({
-              where: { id: { in: gaIds } },
-              include: {
-                user: {
-                  select: {
-                    firstName: true,
-                    lastName: true,
-                    photo: true,
-                    username: true,
-                  },
-                },
-                grant: {
-                  select: {
-                    id: true,
-                    title: true,
-                    slug: true,
-                    token: true,
-                    isPrivate: true,
-                    sponsor: {
-                      select: {
-                        name: true,
-                        logo: true,
-                        slug: true,
-                      },
+              listing: {
+                select: {
+                  id: true,
+                  title: true,
+                  rewards: true,
+                  type: true,
+                  slug: true,
+                  isWinnersAnnounced: true,
+                  token: true,
+                  sponsor: {
+                    select: {
+                      name: true,
+                      logo: true,
+                      slug: true,
                     },
                   },
+                  winnersAnnouncedAt: true,
+                  isPrivate: true,
                 },
-                Comments: commentsInclude,
-                _count: {
-                  select: {
-                    Comments: commentsCountInclude,
+              },
+              Comments: commentsInclude,
+              _count: {
+                select: {
+                  Comments: commentsCountInclude,
+                },
+              },
+            },
+          })
+        : ([] as any[]),
+      powIds.length > 0
+        ? prisma.poW.findMany({
+            where: { id: { in: powIds } },
+            include: {
+              user: {
+                select: {
+                  firstName: true,
+                  lastName: true,
+                  photo: true,
+                  username: true,
+                },
+              },
+              Comments: commentsInclude,
+              _count: {
+                select: {
+                  Comments: commentsCountInclude,
+                },
+              },
+            },
+          })
+        : ([] as any[]),
+      gaIds.length > 0
+        ? prisma.grantApplication.findMany({
+            where: { id: { in: gaIds } },
+            include: {
+              user: {
+                select: {
+                  firstName: true,
+                  lastName: true,
+                  photo: true,
+                  username: true,
+                },
+              },
+              grant: {
+                select: {
+                  id: true,
+                  title: true,
+                  slug: true,
+                  token: true,
+                  isPrivate: true,
+                  sponsor: {
+                    select: {
+                      name: true,
+                      logo: true,
+                      slug: true,
+                    },
                   },
                 },
               },
-            })
-          : ([] as any[]),
-      ]);
+              Comments: commentsInclude,
+              _count: {
+                select: {
+                  Comments: commentsCountInclude,
+                },
+              },
+            },
+          })
+        : ([] as any[]),
+    ]);
 
     // Step 4: Build ID maps for ordering
     const subMap = new Map(submissions.map((s) => [s.id, s]));
@@ -252,7 +277,9 @@ export default async function handler(
     const asLikes = (v: unknown): { id: string; date: number }[] =>
       (v as { id: string; date: number }[] | null) ?? [];
 
-    const subLikesMap = new Map(submissions.map((s) => [s.id, asLikes(s.like)]));
+    const subLikesMap = new Map(
+      submissions.map((s) => [s.id, asLikes(s.like)]),
+    );
     const poWLikesMap = new Map(powList.map((p) => [p.id, asLikes(p.like)]));
     const gaLikesMap = new Map(gaList.map((g) => [g.id, asLikes(g.like)]));
 
@@ -321,7 +348,9 @@ export default async function handler(
             rewards: sub.listing.rewards,
             listingType: sub.listing.type,
             listingSlug:
-              isOwnerProfile || !sub.listing.isPrivate ? sub.listing.slug : null,
+              isOwnerProfile || !sub.listing.isPrivate
+                ? sub.listing.slug
+                : null,
             isWinnersAnnounced: sub.listing.isWinnersAnnounced,
             token: sub.listing.token,
             sponsorName:
@@ -416,16 +445,15 @@ export default async function handler(
 
     // Step 6: Build cursor for next page
     const lastItem = feedItems[feedItems.length - 1]!;
-    const nextCursor = feedItems.length >= take
-      ? encodeCursor({
-          type: lastItem.type,
-          sortDate: lastItem.sortDate.toISOString(),
-          ...(filter === 'popular'
-            ? { likeCount: lastItem.likeCount }
-            : {}),
-          id: lastItem.id,
-        })
-      : null;
+    const nextCursor =
+      feedItems.length >= take
+        ? encodeCursor({
+            type: lastItem.type,
+            sortDate: lastItem.sortDate.toISOString(),
+            ...(filter === 'popular' ? { likeCount: lastItem.likeCount } : {}),
+            id: lastItem.id,
+          })
+        : null;
 
     res.status(200).json({ data: results, nextCursor });
   } catch (error: any) {

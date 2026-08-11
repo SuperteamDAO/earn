@@ -9,6 +9,7 @@ import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { type BountyType } from '@/prisma/enums';
 import { empty, join, raw, sql } from '@/prisma/internal/prismaNamespace';
+import { parseBoundedIntegerParam } from '@/utils/apiPagination';
 import { getRegionNameForLocation } from '@/utils/chapterRegion';
 import { safeStringify } from '@/utils/safeStringify';
 
@@ -20,7 +21,15 @@ export default async function relatedListings(
 ) {
   const params = req.query;
   const listingId = params.listingId as string;
-  const take = params.take ? parseInt(params.take as string, 10) : 5;
+  const takeResult = parseBoundedIntegerParam(params.take, {
+    defaultValue: 5,
+    maxValue: 20,
+    name: 'take',
+  });
+  if (!takeResult.ok) {
+    return res.status(400).json({ error: takeResult.error });
+  }
+  const take = takeResult.value;
   logger.debug(`Request query: ${safeStringify(req.query)}`);
 
   try {
