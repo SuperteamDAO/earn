@@ -44,10 +44,13 @@ export async function GET(request: Request) {
       );
     }
 
-    const response = await fetch(`${baseUrl}?ids=${mintAddress}`, {
-      headers: { 'x-api-key': apiKey },
-      next: { revalidate: 60 },
-    });
+    const response = await fetch(
+      `${baseUrl}?ids=${encodeURIComponent(mintAddress)}`,
+      {
+        headers: { 'x-api-key': apiKey },
+        next: { revalidate: 60 },
+      },
+    );
 
     if (!response.ok) {
       throw new Error(`API error: ${response.status} ${response.statusText}`);
