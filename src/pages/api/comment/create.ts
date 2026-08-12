@@ -1,8 +1,9 @@
 import type { NextApiResponse } from 'next';
+import { z } from 'zod';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
-import { type CommentRefType, type CommentType } from '@/prisma/enums';
+import { CommentRefType, CommentType } from '@/prisma/enums';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { type NextApiRequestWithUser } from '@/features/auth/types';
@@ -20,6 +21,18 @@ type CreateCommentInput = {
   isPinned?: boolean;
   type?: CommentType;
 };
+
+const createCommentSchema = z.object({
+  message: z.string().trim().min(1).max(280),
+  refId: z.string().min(1),
+  refType: z.nativeEnum(CommentRefType),
+  pocId: z.string().nullish(),
+  replyToId: z.string().nullish(),
+  submissionId: z.string().nullish(),
+  replyToUserId: z.string().nullish(),
+  isPinned: z.boolean().optional(),
+  type: z.nativeEnum(CommentType).optional(),
+});
 
 export async function createComment(
   userId: string,
@@ -216,7 +229,15 @@ async function commentHandler(
   );
 
   try {
-    const result = await createComment(userId as string, req.body, {
+    const parsed = createCommentSchema.safeParse(req.body);
+    if (!parsed.success) {
+      logger.warn(
+        `[CommentCreateAPI] Invalid comment payload: ${safeStringify(parsed.error.flatten())}`,
+      );
+      return res.status(400).json({ message: 'Invalid comment payload.' });
+    }
+
+    const result = await createComment(userId as string, parsed.data, {
       logPrefix: 'CommentCreateAPI',
     });
     return res.status(200).json(result);
