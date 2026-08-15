@@ -179,10 +179,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           throw new Error('This submission is already fully paid');
         }
 
-        let expectedAmount = winnerReward;
-        if (isProject) {
-          expectedAmount = 0;
-        }
+        const expectedAmount = isProject ? remainingAmount : winnerReward;
 
         const rpcValidationResult: ValidationResult = await validatePayment({
           txId: paymentLink.txId,
@@ -190,6 +187,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           expectedAmount,
           tokenMint: dbToken,
           tokenPriceUSD,
+          allowPartialPayment: isProject,
         });
 
         if (!rpcValidationResult.isValid) {
