@@ -63,6 +63,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         id: {
           in: paymentLinks.map((d) => d.submissionId),
         },
+        listingId,
         isPaid: false,
       },
       include: {
