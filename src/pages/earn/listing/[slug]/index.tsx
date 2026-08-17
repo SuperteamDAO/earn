@@ -99,10 +99,12 @@ function ListingDetails({
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { slug } = context.query;
+  const { preview, slug } = context.query;
   let listingData: PublicListingDetails | null;
   try {
-    listingData = await getListingDetailsBySlug(String(slug));
+    listingData = await getListingDetailsBySlug(String(slug), {
+      includeUnpublished: preview === '1',
+    });
   } catch (e) {
     console.error(e);
     listingData = null;
