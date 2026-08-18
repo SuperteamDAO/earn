@@ -14,11 +14,13 @@ import { ListingPageLayout } from '@/layouts/Listing';
 import { getSubmissionCount } from '@/pages/api/listings/[listingId]/submission-count';
 import { getWinningSubmissionsByListingId } from '@/pages/api/listings/[listingId]/winners';
 import { getListingDetailsBySlug } from '@/pages/api/listings/details/[slug]';
+import { prisma } from '@/prisma';
 import {
   generateBreadcrumbListSchema,
   generateJobPostingSchema,
 } from '@/utils/json-ld';
 
+import { getPrivyToken } from '@/features/auth/utils/getPrivyToken';
 import { ListingPop } from '@/features/conversion-popups/components/ListingPop';
 import { DescriptionUI } from '@/features/listings/components/ListingPage/DescriptionUI';
 import { listingWinnersQuery } from '@/features/listings/queries/listing-winners';
@@ -102,8 +104,31 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const { preview, slug } = context.query;
   let listingData: PublicListingDetails | null;
   try {
+    let canViewAllUnpublished = false;
+    let unpublishedSponsorIds: string[] | undefined;
+    if (preview === '1') {
+      const privyDid = await getPrivyToken(context.req);
+      if (privyDid) {
+        const previewUser = await prisma.user.findUnique({
+          where: { privyDid },
+          select: {
+            isBlocked: true,
+            role: true,
+            UserSponsors: { select: { sponsorId: true } },
+          },
+        });
+        if (!previewUser?.isBlocked) {
+          canViewAllUnpublished = previewUser?.role === 'GOD';
+          unpublishedSponsorIds = previewUser?.UserSponsors.map(
+            ({ sponsorId }) => sponsorId,
+          );
+        }
+      }
+    }
+
     listingData = await getListingDetailsBySlug(String(slug), {
-      includeUnpublished: preview === '1',
+      canViewAllUnpublished,
+      unpublishedSponsorIds,
     });
   } catch (e) {
     console.error(e);
