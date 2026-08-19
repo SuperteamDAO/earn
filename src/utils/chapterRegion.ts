@@ -254,9 +254,11 @@ export async function getRegionsForUserLocationUsingChapters(
 
   const chapterRegions = await getChapterRegions();
   const chapter = await findChapterByLocation(userLocation);
-  if (!chapter) return ['Global'];
 
-  const regions: string[] = ['Global', userLocation, chapter.region];
+  const regions: string[] = ['Global', userLocation];
+  if (chapter) {
+    regions.push(chapter.region);
+  }
 
   const multiCountryRegionsFromCountries = countries
     .filter(
