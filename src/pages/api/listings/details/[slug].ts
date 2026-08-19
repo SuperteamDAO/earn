@@ -9,6 +9,10 @@ import { type PublicListingDetails } from '@/features/listings/types';
 
 export async function getListingDetailsBySlug(
   slug: string,
+  options: {
+    canViewAllUnpublished?: boolean;
+    unpublishedSponsorIds?: string[];
+  } = {},
 ): Promise<PublicListingDetails | null> {
   if (!slug) {
     throw new Error('Missing required query parameters: slug');
@@ -18,8 +22,19 @@ export async function getListingDetailsBySlug(
     where: {
       slug,
       isActive: true,
-      isPublished: true,
       isArchived: false,
+      ...(options.canViewAllUnpublished
+        ? {
+            OR: [{ isPublished: true }, { isPublished: false }],
+          }
+        : options.unpublishedSponsorIds?.length
+          ? {
+              OR: [
+                { isPublished: true },
+                { sponsorId: { in: options.unpublishedSponsorIds } },
+              ],
+            }
+          : { isPublished: true }),
     },
     select: publicListingDetailsSelect,
   });
