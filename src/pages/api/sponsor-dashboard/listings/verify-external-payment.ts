@@ -10,7 +10,7 @@ import { checkListingSponsorAuth } from '@/features/auth/utils/checkListingSpons
 import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
 import {
   type ValidatePaymentResult,
-  type VerifyPaymentsFormData,
+  verifyExternalPaymentRequestSchema,
 } from '@/features/sponsor-dashboard/types';
 import {
   findUsedPaymentTxIds,
@@ -37,16 +37,21 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
   try {
     logger.debug(`Request body: ${safeStringify(req.body)}`);
-    let { paymentLinks } = req.body as VerifyPaymentsFormData;
-    const { listingId } = req.body as VerifyPaymentsFormData & {
-      listingId: string;
-    };
+
+    const validationResult = verifyExternalPaymentRequestSchema.safeParse(
+      req.body,
+    );
+    if (!validationResult.success) {
+      return res.status(400).json({
+        error: 'Invalid request body',
+        details: validationResult.error.flatten(),
+      });
+    }
+
+    let { paymentLinks } = validationResult.data;
+    const { listingId } = validationResult.data;
 
     paymentLinks = paymentLinks.filter((p) => !!p.link);
-
-    if (!listingId) {
-      return res.status(400).json({ error: 'Listing ID is missing' });
-    }
 
     const { error } = await checkListingSponsorAuth(userSponsorId, listingId);
     if (error) {
@@ -57,16 +62,30 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       where: {
         id: listingId,
       },
+      select: {
+        isWinnersAnnounced: true,
+        rewards: true,
+        token: true,
+        type: true,
+      },
     });
     const submissions = await prisma.submission.findMany({
       where: {
         id: {
           in: paymentLinks.map((d) => d.submissionId),
         },
+        listingId,
         isPaid: false,
       },
-      include: {
-        user: true,
+      select: {
+        id: true,
+        paymentDetails: true,
+        winnerPosition: true,
+        user: {
+          select: {
+            walletAddress: true,
+          },
+        },
       },
     });
 

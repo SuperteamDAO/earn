@@ -9,6 +9,7 @@ import { type NextApiRequestWithSponsor } from '@/features/auth/types';
 import { checkListingSponsorAuth } from '@/features/auth/utils/checkListingSponsorAuth';
 import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
 import { queueEmail } from '@/features/emails/utils/queueEmail';
+import { addSubmissionPaymentRequestSchema } from '@/features/sponsor-dashboard/types';
 import {
   findUsedPaymentTxIds,
   normalizePaymentTxId,
@@ -20,40 +21,41 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   const userId = req.userId;
 
   logger.debug(`Request body: ${safeStringify(req.body)}`);
-  const { id, paymentDetails } = req.body;
 
-  if (
-    !paymentDetails ||
-    !Array.isArray(paymentDetails) ||
-    paymentDetails.length === 0
-  ) {
-    logger.warn('Payment details array is required');
+  const validationResult = addSubmissionPaymentRequestSchema.safeParse(
+    req.body,
+  );
+  if (!validationResult.success) {
+    logger.warn('Invalid add-payment request body');
     return res.status(400).json({
-      error: 'Payment details array is required',
-      message: 'Payment details array is required',
+      error: 'Invalid request body',
+      message: 'Invalid request body',
+      details: validationResult.error.flatten(),
     });
   }
 
-  const paymentDetail = paymentDetails[0];
-  if (
-    !paymentDetail?.txId ||
-    !paymentDetail?.amount ||
-    typeof paymentDetail?.tranche !== 'number'
-  ) {
-    logger.warn('Invalid payment details structure');
-    return res.status(400).json({
-      error: 'Invalid payment details: txId, amount, and tranche are required',
-      message:
-        'Invalid payment details: txId, amount, and tranche are required',
-    });
-  }
+  const { id, paymentDetails } = validationResult.data;
+  const paymentDetail = paymentDetails[0]!;
 
   try {
     const currentSubmission = await prisma.submission.findUnique({
       where: { id },
-      include: {
-        user: true,
-        listing: true,
+      select: {
+        listingId: true,
+        paymentDetails: true,
+        winnerPosition: true,
+        user: {
+          select: {
+            walletAddress: true,
+          },
+        },
+        listing: {
+          select: {
+            rewards: true,
+            token: true,
+            type: true,
+          },
+        },
       },
     });
 
