@@ -2,8 +2,8 @@ import { prisma } from '@/prisma';
 import { CreditEventType, SubmissionLabels } from '@/prisma/enums';
 import { dayjs } from '@/utils/dayjs';
 
-const currentMonth = dayjs.utc().startOf('month').toDate();
-const nextMonth = dayjs.utc().add(1, 'month').startOf('month').toDate();
+const currentMonth = () => dayjs.utc().startOf('month').toDate();
+const nextMonth = () => dayjs.utc().add(1, 'month').startOf('month').toDate();
 
 type PrismaLike = Pick<typeof prisma, 'creditLedger'>;
 
@@ -18,7 +18,7 @@ export async function consumeCredit(
         userId,
         submissionId,
         type: CreditEventType.SUBMISSION,
-        effectiveMonth: currentMonth,
+        effectiveMonth: currentMonth(),
         change: -1,
       },
     });
@@ -39,7 +39,7 @@ export async function addWinBonusCredit(userId: string, submissionId: string) {
         userId,
         submissionId,
         type: CreditEventType.WIN_BONUS,
-        effectiveMonth: nextMonth,
+        effectiveMonth: nextMonth(),
         change: 1,
       },
     });
@@ -62,7 +62,7 @@ export async function addGrantWinBonusCredit(
       userId,
       applicationId,
       type: CreditEventType.GRANT_WIN_BONUS,
-      effectiveMonth: nextMonth,
+      effectiveMonth: nextMonth(),
       change: 1,
     },
   });
@@ -84,7 +84,7 @@ export async function addSpamPenaltyCredit(submissionId: string) {
         userId: submission.userId,
         submissionId: submission.id,
         type: CreditEventType.SPAM_PENALTY,
-        effectiveMonth: nextMonth,
+        effectiveMonth: nextMonth(),
         change: -1,
       },
     });
@@ -106,7 +106,7 @@ export async function addSpamPenaltyGrant(
       userId,
       applicationId,
       type: CreditEventType.GRANT_SPAM_PENALTY,
-      effectiveMonth: nextMonth,
+      effectiveMonth: nextMonth(),
       change: -1,
     },
   });
@@ -122,7 +122,7 @@ export async function addCreditDispute(
       data: {
         userId,
         type: CreditEventType.SPAM_DISPUTE,
-        effectiveMonth: nextMonth,
+        effectiveMonth: nextMonth(),
         change: 0,
         submissionId: id,
         decision: 'Pending',
@@ -133,7 +133,7 @@ export async function addCreditDispute(
       data: {
         userId,
         type: CreditEventType.GRANT_SPAM_DISPUTE,
-        effectiveMonth: nextMonth,
+        effectiveMonth: nextMonth(),
         change: 0,
         applicationId: id,
         decision: 'Pending',
@@ -156,7 +156,7 @@ export async function refundCredits(listingId: string) {
             userId: submission.userId,
             submissionId: submission.id,
             type: CreditEventType.CREDIT_REFUND,
-            effectiveMonth: nextMonth,
+            effectiveMonth: nextMonth(),
             change: +1,
           },
         }),
@@ -190,7 +190,7 @@ export async function addReferralInviterWinBonus(
         userId: inviterUserId,
         submissionId,
         type: CreditEventType.REFERRAL_INVITEE_WIN_BONUS_INVITER,
-        effectiveMonth: nextMonth,
+        effectiveMonth: nextMonth(),
         change: 1,
       },
     });
@@ -263,7 +263,7 @@ export async function awardReferralFirstSubmissionBonusesForListing(
             userId,
             submissionId: earliest.id,
             type: CreditEventType.REFERRAL_FIRST_SUBMISSION_BONUS_INVITEE,
-            effectiveMonth: nextMonth,
+            effectiveMonth: nextMonth(),
             change: 1,
           },
         });
@@ -282,7 +282,7 @@ export async function awardReferralFirstSubmissionBonusesForListing(
             userId: inviterUserId,
             submissionId: earliest.id,
             type: CreditEventType.REFERRAL_FIRST_SUBMISSION_BONUS_INVITER,
-            effectiveMonth: nextMonth,
+            effectiveMonth: nextMonth(),
             change: 1,
           },
         });
