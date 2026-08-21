@@ -24,7 +24,14 @@ async function handler(req: NextApiRequestWithAgent, res: NextApiResponse) {
     return res.status(400).json({ error: takeResult.error });
   }
   const take = takeResult.value;
-  const deadline = params.deadline as string;
+  let parsedDeadline: string = new Date().toISOString();
+  if (params.deadline && typeof params.deadline === 'string') {
+    const d = new Date(params.deadline);
+    if (!isNaN(d.getTime())) {
+      parsedDeadline = d.toISOString();
+    }
+  }
+
   const exclusiveSponsorId = params.exclusiveSponsorId as string | undefined;
   let excludeIds = params['excludeIds[]'];
   if (typeof excludeIds === 'string') {
@@ -41,7 +48,7 @@ async function handler(req: NextApiRequestWithAgent, res: NextApiResponse) {
       isPrivate: false,
       isArchived: false,
       status: 'OPEN',
-      deadline: { gte: deadline },
+      deadline: { gte: parsedDeadline },
       type: type || { in: ['bounty', 'project', 'hackathon'] },
       agentAccess: { in: ['AGENT_ALLOWED', 'AGENT_ONLY'] },
       sponsor: {
