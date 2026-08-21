@@ -8,20 +8,24 @@ import { withAuth } from '@/features/auth/utils/withAuth';
 
 async function submission(req: NextApiRequestWithUser, res: NextApiResponse) {
   const userId = req.userId;
-  const id = req.query.id as string;
+  const rawId = req.query.id;
+  const id = Array.isArray(rawId) ? rawId[0] : rawId;
 
-  if (!id) {
+  if (!id || typeof id !== 'string' || id.trim() === '') {
     return res.status(400).json({
       message: 'Listing ID is required in the query parameters.',
     });
   }
 
+  const cleanId = id.trim();
+
   try {
     const result = await prisma.submission.findFirst({
       where: {
         userId,
-        listingId: id,
+        listingId: cleanId,
       },
+
       omit: {
         ai: true,
         label: true,
