@@ -22,6 +22,20 @@ interface TokenAmountInputProps {
   className?: string;
 }
 
+const EDITING_KEYS = [
+  'Backspace',
+  'Delete',
+  'Tab',
+  'Enter',
+  'Escape',
+  'ArrowLeft',
+  'ArrowRight',
+  'ArrowUp',
+  'ArrowDown',
+  'Home',
+  'End',
+];
+
 export const TokenAmountInput = ({
   tokens,
   selectedToken,
@@ -55,6 +69,24 @@ export const TokenAmountInput = ({
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' || e.key === ' ') {
       handleMaxClick();
+    }
+  };
+
+  const handleAmountKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    // let the browser handle shortcuts (copy, paste, select all, undo)
+    if (e.ctrlKey || e.metaKey || e.altKey) return;
+
+    if (EDITING_KEYS.includes(e.key)) return;
+
+    if (e.key === '.') {
+      if (e.currentTarget.value.includes('.')) {
+        e.preventDefault();
+      }
+      return;
+    }
+
+    if (!/^[0-9]$/.test(e.key)) {
+      e.preventDefault();
     }
   };
 
@@ -121,16 +153,7 @@ export const TokenAmountInput = ({
           placeholder="0.00"
           inputMode="decimal"
           min="0"
-          onKeyDown={(e) => {
-            if (
-              !/[0-9]|\.|\.|\Backspace|Tab|\Delete|ArrowLeft|ArrowRight/.test(
-                e.key,
-              ) ||
-              (e.key === '.' && e.currentTarget.value.includes('.'))
-            ) {
-              e.preventDefault();
-            }
-          }}
+          onKeyDown={handleAmountKeyDown}
         />
       </div>
     </>
