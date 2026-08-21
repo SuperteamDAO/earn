@@ -32,6 +32,7 @@ interface ListingsParams {
   sponsor?: string;
   skill?: string;
   authenticated?: boolean;
+  initialListings?: Listing[] | null;
 }
 
 const fetchListings = async ({
@@ -76,7 +77,21 @@ export function useListings({
   sponsor,
   skill,
   authenticated,
+  initialListings,
 }: ListingsParams) {
+  const isSSRQuery =
+    !!initialListings &&
+    !authenticated &&
+    context === 'home' &&
+    tab === 'all' &&
+    category === 'All' &&
+    (status ?? 'open') === 'open' &&
+    (sortBy ?? 'Date') === 'Date' &&
+    (order ?? 'asc') === 'asc' &&
+    !region &&
+    !sponsor &&
+    !skill;
+
   return useQuery({
     queryKey: [
       'listings',
@@ -103,5 +118,8 @@ export function useListings({
         sponsor,
         skill,
       }),
+    initialData: isSSRQuery ? (initialListings ?? undefined) : undefined,
+    initialDataUpdatedAt: isSSRQuery ? Date.now() : undefined,
+    staleTime: isSSRQuery ? 5 * 60 * 1000 : 0,
   });
 }
