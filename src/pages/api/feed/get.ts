@@ -184,9 +184,9 @@ export default async function handler(
         },
       },
     };
-    const submissions =
-      !takeOnlyType || (takeOnlyType && takeOnlyType === 'submission')
-        ? await prisma.submission.findMany({
+    const [submissions, powRaw, grantApplications] = await Promise.all([
+      !takeOnlyType || takeOnlyType === 'submission'
+        ? prisma.submission.findMany({
             where: {
               createdAt: {
                 ...(startDate ? { gte: startDate } : {}),
@@ -214,131 +214,27 @@ export default async function handler(
                   : [{ createdAt: 'desc' }],
             include: submissionInclude,
           })
-        : [];
-
-    const submissionHighlighted =
-      !submissions.find((s) => s.id === highlightId) &&
-      !!highlightId &&
-      highlightType === 'submission'
-        ? await prisma.submission.findFirst({
+        : Promise.resolve([]),
+      isWinner !== 'true' && (!takeOnlyType || takeOnlyType === 'pow')
+        ? prisma.poW.findMany({
             where: {
-              id: highlightId,
-              ...profileSubmissionFilter,
-            },
-            include: submissionInclude,
-          })
-        : null;
-    if (submissionHighlighted) {
-      submissions.unshift(submissionHighlighted);
-    }
-
-    logger.debug('Fetching PoWs');
-    const poWInclude: PoWInclude = {
-      user: {
-        select: {
-          firstName: true,
-          lastName: true,
-          photo: true,
-          username: true,
-        },
-      },
-      Comments: commentsInclude,
-      _count: {
-        select: {
-          Comments: commentsCountInclude,
-        },
-      },
-    };
-    type UserWithoutKYC = {
-      id: string;
-      firstName: string | null;
-      lastName: string | null;
-      photo: string | null;
-      username: string | null;
-      isKYCVerified: boolean;
-    };
-    type PoWWithUserAndCommentsCount = Omit<
-      PoWGetPayload<{
-        include: typeof poWInclude;
-      }>,
-      'user'
-    > & {
-      user: UserWithoutKYC;
-    };
-    let pow: PoWWithUserAndCommentsCount[] = [];
-    if (isWinner !== 'true') {
-      pow =
-        !takeOnlyType || (takeOnlyType && takeOnlyType === 'pow')
-          ? await prisma.poW.findMany({
-              where: {
-                createdAt: {
-                  ...(startDate ? { gte: startDate } : {}),
-                  lte: endDate,
-                },
-                ...(userId ? { userId: userId as string } : {}),
+              createdAt: {
+                ...(startDate ? { gte: startDate } : {}),
+                lte: endDate,
               },
-              skip,
-              take,
-              orderBy:
-                filter === 'popular'
-                  ? [{ likeCount: 'desc' }, { createdAt: 'desc' }]
-                  : { createdAt: 'desc' },
-              include: poWInclude,
-            })
-          : [];
-    }
-    const powHighlighted =
-      !pow.find((p) => p.id === highlightId) &&
-      !!highlightId &&
-      highlightType === 'pow'
-        ? await prisma.poW.findUnique({
-            where: {
-              id: highlightId,
               ...(userId ? { userId: userId as string } : {}),
             },
+            skip,
+            take,
+            orderBy:
+              filter === 'popular'
+                ? [{ likeCount: 'desc' }, { createdAt: 'desc' }]
+                : { createdAt: 'desc' },
             include: poWInclude,
           })
-        : null;
-    if (powHighlighted) {
-      pow.unshift(powHighlighted);
-    }
-
-    logger.debug(`Fetching grants from ${startDate} to ${endDate}`);
-    const grantApplicationInclude: GrantApplicationInclude = {
-      user: {
-        select: {
-          firstName: true,
-          lastName: true,
-          photo: true,
-          username: true,
-        },
-      },
-      grant: {
-        select: {
-          id: true,
-          title: true,
-          slug: true,
-          token: true,
-          isPrivate: true,
-          sponsor: {
-            select: {
-              name: true,
-              logo: true,
-              slug: true,
-            },
-          },
-        },
-      },
-      Comments: commentsInclude,
-      _count: {
-        select: {
-          Comments: commentsCountInclude,
-        },
-      },
-    };
-    const grantApplications =
-      !takeOnlyType || (takeOnlyType && takeOnlyType === 'grant-application')
-        ? await prisma.grantApplication.findMany({
+        : Promise.resolve([]),
+      !takeOnlyType || takeOnlyType === 'grant-application'
+        ? prisma.grantApplication.findMany({
             where: {
               OR: [
                 {
@@ -363,7 +259,10 @@ export default async function handler(
                 : { decidedAt: 'desc' },
             include: grantApplicationInclude,
           })
-        : [];
+        : Promise.resolve([]),
+    ]);
+
+    const pow = powRaw as unknown as PoWWithUserAndCommentsCount[];
 
     const grantApplicationHighlighted =
       !grantApplications.find((ga) => ga.id === highlightId) &&
@@ -541,7 +440,7 @@ export default async function handler(
       }
     });
 
-    res.status(200).json(results);
+    res.status(200).json(results.slice(0, take));
   } catch (error: any) {
     logger.error(
       `Error occurred while fetching submissions and PoWs: ${safeStringify(error)}`,
